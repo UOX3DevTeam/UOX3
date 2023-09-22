@@ -32,6 +32,14 @@
 
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem ;
+extern CSkills worldSkill ;
+extern cRaces worldRace ;
+extern CWhoList worldWhoList;
+extern CWhoList worldOfflist;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern CServerDefinitions worldFileLookup ;
+extern CNetworkStuff worldNetwork ;
 
 using namespace std::string_literals;
 
@@ -332,7 +340,7 @@ bool CPIPlayCharacter::Handle() {
             CChar *kChar = nullptr;
             CChar *ourChar = nullptr;
             if (actbRec.accountNumber == AccountEntry::INVALID_ACCOUNT) {
-                Network->Disconnect(tSock);
+                worldNetwork.Disconnect(tSock);
                 disconnect = true;
             }
             else {
@@ -343,7 +351,7 @@ bool CPIPlayCharacter::Handle() {
                     }
                 }
                 else {
-                    Network->Disconnect(tSock);
+                    worldNetwork.Disconnect(tSock);
                     disconnect = true;
                 }
             }
@@ -364,8 +372,8 @@ bool CPIPlayCharacter::Handle() {
                     }
                 }
                 if (!disconnect) {
-                    WhoList->FlagUpdate();
-                    OffList->FlagUpdate(); // offline list changes too
+                    worldWhoList.FlagUpdate();
+                    worldOfflist.FlagUpdate(); // offline list changes too
                     if (actbRec.inGame != INVALIDSERIAL) {
                         actbRec.inGame = kChar->GetSerial();
                     }
@@ -399,7 +407,7 @@ bool CPIPlayCharacter::Handle() {
             }
         }
         else {
-            Network->Disconnect(tSock);
+            worldNetwork.Disconnect(tSock);
         }
     }
     return true;
@@ -478,7 +486,7 @@ bool CPIDeleteCharacter::Handle() {
 // o------------------------------------------------------------------------------------------------o
 auto AddNewbieItem(CSocket *socket, CChar *c, const char *str, colour_t pantsColour,
                    colour_t shirtColour) -> void {
-    auto newbieData = FileLookup->FindEntry(str, newbie_def);
+    auto newbieData = worldFileLookup.FindEntry(str, newbie_def);
     if (newbieData == nullptr)
         return;
     
@@ -699,7 +707,7 @@ bool CPICreateCharacter::Handle() {
     // Way too large from a maintenance perspective
     // --> I split certain things out into a few new functions to make this a bit more manageable
     if (ValidateObject(tSock->CurrcharObj())) {
-        Network->Disconnect(tSock);
+        worldNetwork.Disconnect(tSock);
         return false;
     }
     
@@ -1060,7 +1068,7 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
                 mChar->SetBaseSkill(static_cast<std::uint16_t>(skillValue[3] * 10), i);
             }
         }
-        Skills->UpdateSkillLevel(mChar, i);
+        worldSkill.UpdateSkillLevel(mChar, i);
     }
 }
 
@@ -1190,7 +1198,7 @@ void CPICreateCharacter::SetNewCharGenderAndRace(CChar *mChar) {
 // o------------------------------------------------------------------------------------------------o
 auto ShowMessageOfTheDay(CSocket *s) -> void {
     if (s) {
-        auto Updates = FileLookup->FindEntry("MOTD", misc_def);
+        auto Updates = worldFileLookup.FindEntry("MOTD", misc_def);
         if (Updates) {
             std::string updateData = "";
             for (const auto &sec : Updates->collection()) {
@@ -1286,7 +1294,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
             
             CPLoginComplete lc;
             mSock->Send(&lc);
-            Network->SetLastOn(mSock);
+            worldNetwork.SetLastOn(mSock);
             
             std::uint8_t currentHour = worldMain.uoTime.hours ;
             std::uint8_t currentMins = worldMain.uoTime.minutes;
@@ -1303,7 +1311,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
             }
             ShowMessageOfTheDay(mSock);
             if (onCreate) {
-                cScript *onCreateScp = JSMapping->GetScript(static_cast<std::uint16_t>(0)); // 0 == global script
+                cScript *onCreateScp = worldJSMapping.GetScript(static_cast<std::uint16_t>(0)); // 0 == global script
                 if (onCreateScp != nullptr) {
                     onCreateScp->OnCreate(mChar, false, true);
                 }
@@ -1312,7 +1320,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
             bool loginEventHandled = false;
             std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     // 0 == no such event was found
                     // 1 == event was found, and executed
@@ -1324,7 +1332,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
             
             if (!loginEventHandled) {
                 // No script attached to character handled onLoginevent. Let's check global script!
-                cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+                cScript *toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
                 if (toExecute != nullptr) {
                     toExecute->OnLogin(mSock, mChar);
                 }
@@ -1384,7 +1392,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
             }
             
             // Play music associated with region player is logging into!
-            Effects->DoSocketMusic(mSock);
+            worldEffect.DoSocketMusic(mSock);
         }
     }
 }
@@ -1568,14 +1576,14 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
     std::uint8_t fallDirection = static_cast<std::uint8_t>(RandomNum(1, 100) % 2);
     mChar->SetDead(true);
     
-    Effects->PlayDeathSound(mChar);
+    worldEffect.PlayDeathSound(mChar);
     CItem *iCorpse = CreateCorpseItem((*mChar), attacker, fallDirection);
     if (iCorpse != nullptr) {
         // Move items on player to corpse (special exceptions for Young players)
         MoveItemsToCorpse((*mChar), iCorpse);
         
         if (ServerConfig::shared().enabled(ServerSwitch::DEATHANIMATION)) {
-            Effects->DeathAction(mChar, iCorpse, fallDirection);
+            worldEffect.DeathAction(mChar, iCorpse, fallDirection);
         }
         
         // Prevent followers from following ghost of dead player
@@ -1594,12 +1602,12 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
         
         // Spawn blood effect below corpse
         std::uint16_t bloodColour =
-        Races->BloodColour(mChar->GetRace()); // Fetch blood color from race property
+        worldRace.BloodColour(mChar->GetRace()); // Fetch blood color from race property
         if (bloodColour == 0xffff) {
             // If blood colour is 0xffff in the race setup, inherit color of NPC instead!
             bloodColour = mChar->GetSkin();
         }
-        CItem *bloodEffect = Effects->SpawnBloodEffect(iCorpse->WorldNumber(), iCorpse->GetInstanceId(), bloodColour, BLOOD_DEATH);
+        CItem *bloodEffect = worldEffect.SpawnBloodEffect(iCorpse->WorldNumber(), iCorpse->GetInstanceId(), bloodColour, BLOOD_DEATH);
         if (ValidateObject(bloodEffect)) {
             // Set a timestamp for when the bloodeffect was created, and match it to the corpse!
             bloodEffect->SetTempTimer(iCorpse->GetTempTimer());
@@ -1696,7 +1704,7 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
     auto onDeathEventHandled = false;
     std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // If script returns true/1, prevent other scripts with event from running
             if (toExecute->OnDeath(mChar, iCorpse) == 1) {
@@ -1708,7 +1716,7 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
     
     if (!onDeathEventHandled) {
         // No script attached to character handled onDeath. Let's check global script!
-        cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+        cScript *toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
         if (toExecute != nullptr) {
             toExecute->OnDeath(mChar, iCorpse);
         }
@@ -1723,6 +1731,6 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
     
     // Play death music
     if (pSock != nullptr) {
-        Effects->DoSocketMusic(pSock);
+        worldEffect.DoSocketMusic(pSock);
     }
 }

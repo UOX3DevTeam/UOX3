@@ -147,6 +147,5 @@ public:
     ~CGuildCollection();
 };
 
-extern CGuildCollection *GuildSys;
 
 #endif

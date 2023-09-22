@@ -46,6 +46,14 @@
 
 extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
+extern CSkills worldSkill ;
+extern CMagic worldMagic ;
+extern cRaces worldRace ;
+extern CMovement worldMovement ;
+extern CJSMapping worldJSMapping ;
+extern CGuildCollection worldGuildSystem ;
+extern CJSEngine worldJSEngine ;
+extern CMulHandler worldMULHandler ;
 
 void MakeShop(CChar *c);
 void ScriptError(JSContext *cx, const char *txt, ...);
@@ -62,13 +70,13 @@ JSBool CGuildsProps_setProperty([[maybe_unused]] JSContext *cx, [[maybe_unused]]
 JSBool CSpellsProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
     size_t spellId = JSVAL_TO_INT(id);
     
-    if (spellId >= Magic->spells.size()) {
+    if (spellId >= worldMagic.spells.size()) {
         ScriptError(cx, util::format("Spells: Invalid Spell ID (%i) provided", spellId).c_str());
         *vp = JSVAL_NULL;
         return JS_FALSE;
     }
     
-    CSpellInfo *mySpell = &Magic->spells[spellId];
+    CSpellInfo *mySpell = &worldMagic.spells[spellId];
     if (mySpell == nullptr) {
         ScriptError(cx, util::format("Spells: Invalid Spell with spellId %i", spellId).c_str());
         *vp = JSVAL_NULL;
@@ -100,8 +108,8 @@ JSBool CSpellProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp
         size_t i = 0;
         switch (JSVAL_TO_INT(id)) {
             case CSP_ID:
-                for (i = 0; i < Magic->spells.size() && !bDone; ++i) {
-                    if (&Magic->spells[i] == gPriv) {
+                for (i = 0; i < worldMagic.spells.size() && !bDone; ++i) {
+                    if (&worldMagic.spells[i] == gPriv) {
                         *vp = INT_TO_JSVAL(i);
                         bDone = true;
                     }
@@ -136,8 +144,8 @@ JSBool CSpellProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp
                 *vp = STRING_TO_JSVAL(tString);
                 break;
             case CSP_NAME:
-                for (i = 0; i < Magic->spells.size() && !bDone; ++i) {
-                    if (&Magic->spells[i] == gPriv - 1) {
+                for (i = 0; i < worldMagic.spells.size() && !bDone; ++i) {
+                    if (&worldMagic.spells[i] == gPriv - 1) {
                         spellName = worldDictionary.GetEntry(magic_table[i].spell_name);
                         tString = JS_NewStringCopyZ(cx, spellName.c_str());
                         *vp = STRING_TO_JSVAL(tString);
@@ -414,7 +422,7 @@ JSBool CTimerProps_getProperty([[maybe_unused]] JSContext *cx, [[maybe_unused]] 
 JSBool CCreateEntriesProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
     std::uint16_t createEntryId = static_cast<std::uint16_t>(JSVAL_TO_INT(id));
     
-    CreateEntry_st *myCreateEntry = Skills->FindItem(createEntryId);
+    CreateEntry_st *myCreateEntry = worldSkill.FindItem(createEntryId);
     if (myCreateEntry == nullptr) {
         ScriptError(cx, util::format("Invalid create entry ID (%i)", createEntryId).c_str());
         *vp = JSVAL_NULL;
@@ -610,7 +618,7 @@ JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
                 }
                 else {
                     // Otherwise Acquire an object
-                    JSObject *myObj = JSEngine->AcquireObject(IUE_CHAR, pOwner, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myObj = worldJSEngine.AcquireObject(IUE_CHAR, pOwner, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myObj);
                 }
                 break;
@@ -682,7 +690,7 @@ JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
                     {
                         CItem *myCont = CalcItemObjFromSer(TempSerial);
                         if (ValidateObject(myCont)) {
-                            JSObject *myItem = JSEngine->AcquireObject(IUE_ITEM, myCont, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                            JSObject *myItem = worldJSEngine.AcquireObject(IUE_ITEM, myCont, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                             *vp = OBJECT_TO_JSVAL(myItem);
                         }
                         else {
@@ -692,7 +700,7 @@ JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
                     else {
                         CChar *chCont = CalcCharObjFromSer(TempSerial);
                         if (ValidateObject(chCont)) {
-                            JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, chCont, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                            JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, chCont, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                             *vp = OBJECT_TO_JSVAL(myChar);
                         }
                         else {
@@ -860,14 +868,14 @@ JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
                 break;
             case CIP_RACE: {
                 CRace *TempRace = nullptr;
-                TempRace = Races->Race(gPriv->GetRace());
+                TempRace = worldRace.Race(gPriv->GetRace());
                 
                 if (TempRace == nullptr) {
                     *vp = JSVAL_NULL;
                 }
                 else {
                     // Otherwise Acquire an object
-                    JSObject *myRace = JSEngine->AcquireObject(IUE_RACE, TempRace, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myRace = worldJSEngine.AcquireObject(IUE_RACE, TempRace, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myRace);
                 }
                 break;
@@ -1036,7 +1044,7 @@ JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
                     *vp = JSVAL_NULL;
                 }
                 else {
-                    JSObject *myTown = JSEngine->AcquireObject(IUE_REGION, myReg, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myTown = worldJSEngine.AcquireObject(IUE_REGION, myReg, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myTown);
                 }
                 break;
@@ -1086,7 +1094,7 @@ JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
                 }
                 else {
                     // Otherwise Acquire an object
-                    JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, multi, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, multi, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myObj);
                 }
                 break;
@@ -1284,8 +1292,8 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
         return JS_FALSE;
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     JSEncapsulate encaps(cx, vp);
     if (JSVAL_IS_INT(id)) {
@@ -1335,7 +1343,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             case CIP_SCRIPTTRIGGER: {
                 // For backwards compatibility; clears out other scripts and assigns a specific script
                 std::uint16_t scriptId = static_cast<std::uint16_t>(encaps.toInt());
-                cScript *toExecute = JSMapping->GetScript(scriptId);
+                cScript *toExecute = worldJSMapping.GetScript(scriptId);
                 if (toExecute == nullptr) {
                     ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId).c_str());
                 }
@@ -1348,7 +1356,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             case CIP_SCRIPTTRIGGERS: {
                 if (*vp != JSVAL_NULL) {
                     std::uint16_t scriptId = static_cast<std::uint16_t>(encaps.toInt());
-                    cScript *toExecute = JSMapping->GetScript(scriptId);
+                    cScript *toExecute = worldJSMapping.GetScript(scriptId);
                     if (toExecute == nullptr) {
                         ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId).c_str());
                     }
@@ -1363,7 +1371,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
                 break;
             }
             case CIP_WORLDNUMBER:
-                if (!Map->InsideValidWorld(gPriv->GetX(), gPriv->GetY(), static_cast<std::uint8_t>(encaps.toInt())))
+                if (!worldMULHandler.InsideValidWorld(gPriv->GetX(), gPriv->GetY(), static_cast<std::uint8_t>(encaps.toInt())))
                     return JS_FALSE;
                 
                 gPriv->RemoveFromSight();
@@ -1840,7 +1848,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
         if (retVal == JS_FALSE) {
@@ -1859,8 +1867,8 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
         return JS_FALSE;
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     if (JSVAL_IS_INT(id)) {
         CItem *TempItem = nullptr;
@@ -1876,7 +1884,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                     *vp = JSVAL_NULL;
                 }
                 else { // Otherwise Acquire an object
-                    JSObject *accountObj = JSEngine->AcquireObject(IUE_ACCOUNT, accountBlock, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *accountObj = worldJSEngine.AcquireObject(IUE_ACCOUNT, accountBlock, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(accountObj);
                 }
                 break;
@@ -1963,7 +1971,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 }
                 else {
                     // Otherwise Acquire an object
-                    JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, TempObj, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, TempObj, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myChar);
                 }
                 break;
@@ -2023,7 +2031,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 }
                 else {
                     // Otherwise Acquire an object
-                    JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, tempChar, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, tempChar, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myChar);
                 }
                 break;
@@ -2076,7 +2084,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                     *vp = JSVAL_NULL;
                 else {
                     // Otherwise Acquire an object
-                    JSObject *myItem = JSEngine->AcquireObject(IUE_ITEM, TempItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myItem = worldJSEngine.AcquireObject(IUE_ITEM, TempItem, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myItem);
                 }
                 break;
@@ -2106,7 +2114,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 break;
             case CCP_HUNGERRATE: {
                 CRace *TempRace = nullptr;
-                TempRace = Races->Race(gPriv->GetRace());
+                TempRace = worldRace.Race(gPriv->GetRace());
                 
                 // Try to fetch hungerRate from character's race
                 std::uint16_t hungerRate = 0;
@@ -2127,7 +2135,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 break;
             case CCP_THIRSTRATE: {
                 CRace *TempRace = nullptr;
-                TempRace = Races->Race(gPriv->GetRace());
+                TempRace = worldRace.Race(gPriv->GetRace());
                 
                 // Try to fetch thirstRate from character's race
                 std::uint16_t thirstRate = 0;
@@ -2151,14 +2159,14 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 break;
             case CCP_RACE: {
                 CRace *TempRace = nullptr;
-                TempRace = Races->Race(gPriv->GetRace());
+                TempRace = worldRace.Race(gPriv->GetRace());
                 
                 if (TempRace == nullptr) {
                     *vp = JSVAL_NULL;
                 }
                 else {
                     // Otherwise Acquire an object
-                    JSObject *myRace = JSEngine->AcquireObject(IUE_RACE, TempRace, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myRace = worldJSEngine.AcquireObject(IUE_RACE, TempRace, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myRace);
                 }
                 break;
@@ -2237,7 +2245,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                     *vp = JSVAL_NULL;
                 }
                 else {
-                    JSObject *myTown = JSEngine->AcquireObject(IUE_REGION, myReg, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myTown = worldJSEngine.AcquireObject(IUE_REGION, myReg, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myTown);
                 }
                 break;
@@ -2259,7 +2267,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 else {
                     // Should build the town here
                     JSObject *myTown =
-                    JSEngine->AcquireObject(IUE_REGION, worldMain.townRegions[tempTownId], JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    worldJSEngine.AcquireObject(IUE_REGION, worldMain.townRegions[tempTownId], worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myTown);
                 }
                 break;
@@ -2275,7 +2283,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 }
                 else {
                     JSObject *myGuild =
-                    JSEngine->AcquireObject(IUE_GUILD, GuildSys->Guild(tempGuildId), JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    worldJSEngine.AcquireObject(IUE_GUILD, worldGuildSystem.Guild(tempGuildId), worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myGuild);
                 }
                 break;
@@ -2286,7 +2294,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                     *vp = JSVAL_NULL;
                 }
                 else { // Otherwise Acquire an object
-                    JSObject *mySock = JSEngine->AcquireObject(IUE_SOCK, tSock, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *mySock = worldJSEngine.AcquireObject(IUE_SOCK, tSock, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(mySock);
                 }
                 break;
@@ -2351,10 +2359,10 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                     // Otherwise Acquire an object
                     JSObject *myObj = nullptr;
                     if (tempObj->CanBeObjType(CBaseObject::OT_CHAR)) {
-                        myObj = JSEngine->AcquireObject(IUE_CHAR, tempObj, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        myObj = worldJSEngine.AcquireObject(IUE_CHAR, tempObj, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     }
                     else if (tempObj->CanBeObjType(CBaseObject::OT_ITEM)) {
-                        myObj = JSEngine->AcquireObject(IUE_ITEM, tempObj, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        myObj = worldJSEngine.AcquireObject(IUE_ITEM, tempObj, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     }
                     *vp = OBJECT_TO_JSVAL(myObj);
                 }
@@ -2441,7 +2449,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 }
                 else {
                     // Otherwise Acquire an object
-                    JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, tempChar, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, tempChar, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myChar);
                 }
                 break;
@@ -2670,7 +2678,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 }
                 else {
                     // Otherwise Acquire an object
-                    JSObject *myParty = JSEngine->AcquireObject(IUE_PARTY, tempParty, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myParty = worldJSEngine.AcquireObject(IUE_PARTY, tempParty, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myParty);
                 }
                 break;
@@ -2684,7 +2692,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 }
                 else {
                     // Otherwise Acquire an object
-                    JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, multi, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, multi, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myObj);
                 }
                 break;
@@ -2700,7 +2708,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         // ... but keep track of the property value we're trying to retrieve, stored in vp!
         jsval origVp = *vp;
@@ -2721,8 +2729,8 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
         return JS_FALSE;
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     JSEncapsulate encaps(cx, vp);
     
@@ -2795,7 +2803,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             case CCP_SCRIPTTRIGGER: {
                 // For backwards compatibility; clears out other scripts and assigns a specific script
                 std::uint16_t scriptId = static_cast<std::uint16_t>(encaps.toInt());
-                cScript *toExecute = JSMapping->GetScript(scriptId);
+                cScript *toExecute = worldJSMapping.GetScript(scriptId);
                 if (toExecute == nullptr) {
                     ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId).c_str());
                 }
@@ -2808,7 +2816,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             case CCP_SCRIPTTRIGGERS: {
                 if (*vp != JSVAL_NULL) {
                     std::uint16_t scriptId = static_cast<std::uint16_t>(encaps.toInt());
-                    cScript *toExecute = JSMapping->GetScript(scriptId);
+                    cScript *toExecute = worldJSMapping.GetScript(scriptId);
                     if (toExecute == nullptr) {
                         ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId).c_str());
                     }
@@ -2823,7 +2831,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 break;
             }
             case CCP_WORLDNUMBER:
-                if (!Map->InsideValidWorld(gPriv->GetX(), gPriv->GetY(), static_cast<std::uint8_t>(encaps.toInt())))
+                if (!worldMULHandler.InsideValidWorld(gPriv->GetX(), gPriv->GetY(), static_cast<std::uint8_t>(encaps.toInt())))
                     return JS_FALSE;
                 
                 gPriv->RemoveFromSight();
@@ -2909,7 +2917,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 gPriv->SetCommandLevel(static_cast<std::uint8_t>(encaps.toInt()));
                 break;
             case CCP_RACE:
-                Races->ApplyRace(gPriv, static_cast<raceid_t>(encaps.toInt()), true);
+                worldRace.ApplyRace(gPriv, static_cast<raceid_t>(encaps.toInt()), true);
                 break;
             case CCP_MAXHP:
                 gPriv->SetFixedMaxHP(static_cast<std::int16_t>(encaps.toInt()));
@@ -3040,7 +3048,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 break;
             case CCP_GUILD:
                 if (!gPriv->IsNpc()) {
-                    GuildSys->Resign(gPriv->GetSocket());
+                    worldGuildSystem.Resign(gPriv->GetSocket());
                     
                     if (*vp != JSVAL_NULL) {
                         CGuild *myGuild = static_cast<CGuild *>(encaps.toObject());
@@ -3106,7 +3114,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 break;
             case CCP_ATWAR:
                 gPriv->SetWar(encaps.toBool());
-                Movement->CombatWalk(gPriv);
+                worldMovement.CombatWalk(gPriv);
                 break;
             case CCP_SPELLCAST:
                 gPriv->SetSpellCast(static_cast<std::int8_t>(encaps.toInt()));
@@ -3370,7 +3378,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
         if (retVal == JS_FALSE) {
@@ -3402,7 +3410,7 @@ JSBool CRegionProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
                     *vp = JSVAL_NULL;
                 else {
                     // Otherwise Acquire an object
-                    JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, tempMayor, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, tempMayor, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myChar);
                 }
                 break;
@@ -3528,8 +3536,8 @@ JSBool CRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
         return JS_FALSE;
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     JSEncapsulate encaps(cx, vp);
     if (JSVAL_IS_INT(id)) {
@@ -3588,7 +3596,7 @@ JSBool CRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             case CREGP_SCRIPTTRIGGER: {
                 // For backwards compatibility; clears out other scripts and assigns a specific script
                 std::uint16_t scriptId = static_cast<std::uint16_t>(encaps.toInt());
-                cScript *toExecute = JSMapping->GetScript(scriptId);
+                cScript *toExecute = worldJSMapping.GetScript(scriptId);
                 if (toExecute == nullptr) {
                     ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!",scriptId).c_str());
                 }
@@ -3601,7 +3609,7 @@ JSBool CRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             case CREGP_SCRIPTTRIGGERS: {
                 if (*vp != JSVAL_NULL) {
                     std::uint16_t scriptId = static_cast<std::uint16_t>(encaps.toInt());
-                    cScript *toExecute = JSMapping->GetScript(scriptId);
+                    cScript *toExecute = worldJSMapping.GetScript(scriptId);
                     if (toExecute == nullptr) {
                         ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!",scriptId).c_str());
                     }
@@ -3644,7 +3652,7 @@ JSBool CRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
         if (retVal == JS_FALSE) {
@@ -3772,8 +3780,8 @@ JSBool CSpawnRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsv
         return JS_FALSE;
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     JSEncapsulate encaps(cx, vp);
     if (JSVAL_IS_INT(id)) {
@@ -3847,7 +3855,7 @@ JSBool CSpawnRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsv
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
         if (retVal == JS_FALSE) {
@@ -3883,7 +3891,7 @@ JSBool CGuildProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp
                 }
                 else {
                     // Otherwise Acquire an object
-                    JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, gMaster, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, gMaster, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myChar);
                 }
                 break;
@@ -3896,7 +3904,7 @@ JSBool CGuildProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp
                 }
                 else {
                     // Otherwise Acquire an object
-                    JSObject *myItem = JSEngine->AcquireObject(IUE_ITEM, gStone, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myItem = worldJSEngine.AcquireObject(IUE_ITEM, gStone, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myItem);
                 }
                 break;
@@ -3933,8 +3941,8 @@ JSBool CGuildProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp
         return JS_FALSE;
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     JSEncapsulate encaps(cx, vp);
     if (JSVAL_IS_INT(id)) {
@@ -3987,7 +3995,7 @@ JSBool CGuildProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
         if (retVal == JS_FALSE) {
@@ -4009,8 +4017,8 @@ JSBool CRaceProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
         std::uint8_t TempRace = 0;
         switch (JSVAL_TO_INT(id)) {
             case CRP_ID:
-                for (TempRace = 0; TempRace < Races->Count(); ++TempRace) {
-                    if (Races->Race(TempRace) == gPriv) {
+                for (TempRace = 0; TempRace < worldRace.Count(); ++TempRace) {
+                    if (worldRace.Race(TempRace) == gPriv) {
                         *vp = INT_TO_JSVAL(TempRace);
                         break;
                     }
@@ -4067,8 +4075,8 @@ JSBool CRaceProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
         return JS_FALSE;
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     JSEncapsulate encaps(cx, vp);
     if (JSVAL_IS_INT(id)) {
@@ -4116,7 +4124,7 @@ JSBool CRaceProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
     }
     
     // Active script-context might have been lost, so restore it!
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
         if (retVal == JS_FALSE) {
             Console::shared().warning(util::format("Script context lost after setting Race property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",JSVAL_TO_INT(id), origScriptID));
@@ -4132,8 +4140,8 @@ JSBool CSocketProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
         return JS_FALSE;
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     JSEncapsulate encaps(cx, vp);
     if (JSVAL_IS_INT(id)) {
@@ -4256,7 +4264,7 @@ JSBool CSocketProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
         if (retVal == JS_FALSE) {
@@ -4283,7 +4291,7 @@ JSBool CSocketProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
                     *vp = JSVAL_NULL;
                 }
                 else { // Otherwise Acquire an object
-                    JSObject *accountObj = JSEngine->AcquireObject(IUE_ACCOUNT, accountBlock, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *accountObj = worldJSEngine.AcquireObject(IUE_ACCOUNT, accountBlock, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(accountObj);
                 }
                 break;
@@ -4294,7 +4302,7 @@ JSBool CSocketProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
                     *vp = JSVAL_NULL;
                 }
                 else {
-                    JSObject *myObj = JSEngine->AcquireObject(IUE_CHAR, myChar, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myObj = worldJSEngine.AcquireObject(IUE_CHAR, myChar, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myObj);
                 }
                 
@@ -4317,10 +4325,10 @@ JSBool CSocketProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
                 else {
                     JSObject *myObj = nullptr;
                     if (mObj->CanBeObjType(CBaseObject::OT_ITEM)) {
-                        myObj = JSEngine->AcquireObject(IUE_ITEM, mObj,JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        myObj = worldJSEngine.AcquireObject(IUE_ITEM, mObj,worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     }
                     else {
-                        myObj = JSEngine->AcquireObject(IUE_CHAR, mObj,JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        myObj = worldJSEngine.AcquireObject(IUE_CHAR, mObj,worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     }
                     *vp = OBJECT_TO_JSVAL(myObj);
                 }
@@ -4334,10 +4342,10 @@ JSBool CSocketProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
                 else {
                     JSObject *myObj = nullptr;
                     if (mObj->CanBeObjType(CBaseObject::OT_ITEM)) {
-                        myObj = JSEngine->AcquireObject(IUE_ITEM, mObj,JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        myObj = worldJSEngine.AcquireObject(IUE_ITEM, mObj,worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     }
                     else {
-                        myObj = JSEngine->AcquireObject(IUE_CHAR, mObj,JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        myObj = worldJSEngine.AcquireObject(IUE_CHAR, mObj,worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     }
                     *vp = OBJECT_TO_JSVAL(myObj);
                 }
@@ -4435,7 +4443,7 @@ JSBool CSocketProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
                         return JS_TRUE;
                     }
                     
-                    JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, myItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, myItem, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myObj);
                 }
                 // Char
@@ -4447,7 +4455,7 @@ JSBool CSocketProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
                         return JS_TRUE;
                     }
                     
-                    JSObject *myObj = JSEngine->AcquireObject(IUE_CHAR, myChar, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSObject *myObj = worldJSEngine.AcquireObject(IUE_CHAR, myChar, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myObj);
                 }
                 
@@ -4493,8 +4501,8 @@ JSBool CSkillsProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
         return JS_FALSE;
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     JSEncapsulate encaps(cx, vp);
     std::uint8_t skillId = static_cast<std::uint8_t>(JSVAL_TO_INT(id));
@@ -4515,12 +4523,12 @@ JSBool CSkillsProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
         if (skillId == ALLSKILLS) {
             for (i = 0; i < ALLSKILLS; ++i) {
                 myChar->SetBaseSkill(newSkillValue, i);
-                Skills->UpdateSkillLevel(myChar, i);
+                worldSkill.UpdateSkillLevel(myChar, i);
             }
         }
         else {
             myChar->SetBaseSkill(newSkillValue, skillId);
-            Skills->UpdateSkillLevel(myChar, skillId);
+            worldSkill.UpdateSkillLevel(myChar, skillId);
         }
     }
     else if (myClass.ClassName() == "UOXSkillsUsed") {
@@ -4559,7 +4567,7 @@ JSBool CSkillsProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
         if (retVal == JS_FALSE) {
@@ -4635,7 +4643,7 @@ JSBool CAccountProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
                     }
                     else {
                         // Otherwise Acquire an object
-                        JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, TempObj, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, TempObj, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                         *vp = OBJECT_TO_JSVAL(myChar);
                     }
                 }
@@ -4653,7 +4661,7 @@ JSBool CAccountProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
                     }
                     else {
                         // Otherwise Acquire an object
-                        JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, TempObj, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, TempObj, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                         *vp = OBJECT_TO_JSVAL(myChar);
                     }
                 }
@@ -4671,7 +4679,7 @@ JSBool CAccountProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
                     }
                     else {
                         // Otherwise Acquire an object
-                        JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, TempObj, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, TempObj, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                         *vp = OBJECT_TO_JSVAL(myChar);
                     }
                 }
@@ -4689,7 +4697,7 @@ JSBool CAccountProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
                     }
                     else {
                         // Otherwise Acquire an object
-                        JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, TempObj, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, TempObj, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                         *vp = OBJECT_TO_JSVAL(myChar);
                     }
                 }
@@ -4707,7 +4715,7 @@ JSBool CAccountProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
                     }
                     else {
                         // Otherwise Acquire an object
-                        JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, TempObj, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, TempObj, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                         *vp = OBJECT_TO_JSVAL(myChar);
                     }
                 }
@@ -4725,7 +4733,7 @@ JSBool CAccountProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
                     }
                     else {
                         // Otherwise Acquire an object
-                        JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, TempObj, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, TempObj, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                         *vp = OBJECT_TO_JSVAL(myChar);
                     }
                 }
@@ -4743,7 +4751,7 @@ JSBool CAccountProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
                     }
                     else {
                         // Otherwise Acquire an object
-                        JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, TempObj, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, TempObj, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                         *vp = OBJECT_TO_JSVAL(myChar);
                     }
                 }
@@ -4761,7 +4769,7 @@ JSBool CAccountProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
                     }
                     else {
                         // Otherwise Acquire an object
-                        JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, TempObj, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                        JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, TempObj, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                         *vp = OBJECT_TO_JSVAL(myChar);
                     }
                 }
@@ -4838,8 +4846,8 @@ JSBool CAccountProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
         return JS_FALSE;
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     JSEncapsulate encaps(cx, vp);
     
@@ -4938,7 +4946,7 @@ JSBool CAccountProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
         if (retVal == JS_FALSE) {
@@ -5026,8 +5034,8 @@ JSBool CResourceProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval 
         return JS_FALSE;
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     JSEncapsulate encaps(cx, vp);
     if (JSVAL_IS_INT(id)) {
@@ -5062,7 +5070,7 @@ JSBool CResourceProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval 
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
         if (retVal == JS_FALSE) {
@@ -5112,8 +5120,8 @@ JSBool CPartyProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp
         return JS_FALSE;
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     JSEncapsulate encaps(cx, vp);
     if (JSVAL_IS_INT(id)) {
@@ -5144,7 +5152,7 @@ JSBool CPartyProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
         if (retVal == JS_FALSE) {
@@ -5169,7 +5177,7 @@ JSBool CPartyProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp
                     *vp = JSVAL_NULL;
                     return JS_TRUE;
                 }
-                JSObject *myObj = JSEngine->AcquireObject(IUE_CHAR, myChar, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                JSObject *myObj = worldJSEngine.AcquireObject(IUE_CHAR, myChar, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                 *vp = OBJECT_TO_JSVAL(myObj);
             } break;
             case CPARTYP_MEMBERCOUNT:
@@ -5189,7 +5197,7 @@ JSBool CScriptProps_getProperty([[maybe_unused]] JSContext *cx, [[maybe_unused]]
     if (JSVAL_IS_INT(id)) {
         switch (JSVAL_TO_INT(id)) {
             case CSCRIPT_SCRIPTID:
-                *vp = INT_TO_JSVAL(JSMapping->GetScriptId(JS_GetGlobalObject(cx)));
+                *vp = INT_TO_JSVAL(worldJSMapping.GetScriptId(JS_GetGlobalObject(cx)));
                 break;
             default:
                 break;

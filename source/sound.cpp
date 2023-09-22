@@ -15,7 +15,10 @@
 
 using namespace std::string_literals;
 
-cEffects *Effects;
+extern cEffects worldEffect ;
+extern CServerDefinitions worldFileLookup ;
+extern CMulHandler worldMULHandler ;
+extern CMapHandler worldMapHandler ;
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::PlaySound()
@@ -161,7 +164,7 @@ void cEffects::PlayDeathSound(CChar *i) {
     else {
         const std::uint16_t toPlay = worldMain.creatures[i->GetOrgId()].GetSound(SND_DIE);
         if (toPlay != 0x00) {
-            Effects->PlaySound(i, toPlay);
+            worldEffect.PlaySound(i, toPlay);
         }
     }
 }
@@ -185,7 +188,7 @@ void cEffects::PlayBGSound(CSocket &mSock, CChar &mChar) {
     std::vector<CChar *> inRange;
     inRange.reserve(11);
     
-    for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
+    for (auto &MapArea : worldMapHandler.PopulateList(&mChar)) {
         if (MapArea) {
             auto regChars = MapArea->GetCharList();
             for (const auto &tempChar : regChars->collection()) {
@@ -302,7 +305,7 @@ auto cEffects::DoSocketMusic(CSocket *s) -> void {
             sect = std::string("MUSICLIST ") + util::ntos(musicList);
         }
         
-        auto MusicList = FileLookup->FindEntry(sect, regions_def);
+        auto MusicList = worldFileLookup.FindEntry(sect, regions_def);
         if (MusicList) {
             for (const auto &sec : MusicList->collection()) {
                 if (util::upper(sec->tag) == "MUSIC") {
@@ -337,7 +340,7 @@ auto cEffects::PlayTileSound(CChar *mChar, CSocket *mSock) -> void {
     
     bool onHorse = mChar->IsOnHorse();
     bool isRunning = (mChar->GetRunning() > 0);
-    auto artwork = Map->ArtAt(mChar->GetX(), mChar->GetY(), mChar->WorldNumber());
+    auto artwork = worldMULHandler.ArtAt(mChar->GetX(), mChar->GetY(), mChar->WorldNumber());
     std::sort(artwork.begin(), artwork.end(), [](const Tile_st &lhs, const Tile_st &rhs) {
         return (lhs.altitude + lhs.artInfo->Height()) < (rhs.altitude + rhs.artInfo->Height());
     });

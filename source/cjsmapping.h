@@ -102,6 +102,5 @@ public:
     std::uint16_t GetScript(std::uint16_t envokeId) const;
 };
 
-extern CJSMapping *JSMapping;
 
 #endif // __CJSMAPPING_H__

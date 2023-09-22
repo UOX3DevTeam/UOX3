@@ -48,6 +48,5 @@ public:
     void DoSocketMusic(CSocket *s);
 };
 
-extern cEffects *Effects;
 
 #endif

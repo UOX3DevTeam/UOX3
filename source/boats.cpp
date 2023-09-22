@@ -23,6 +23,10 @@
 
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem; 
+extern CWeight worldWeight ;
+extern cEffects worldEffect ;
+extern CMulHandler worldMULHandler ;
+
 #define XP 0
 #define YP 1
 
@@ -103,12 +107,12 @@ auto LeaveBoat(CSocket *s, CItem *p) -> bool {
     std::uint16_t instanceId = mChar->GetInstanceId();
     for (std::int16_t x = x2 - 3; x <= x2 + 4; ++x) {
         for (std::int16_t y = y2 - 3; y <= y2 + 4; ++y) {
-            std::int8_t z = Map->Height(x, y, mChar->GetZ(), worldNumber, instanceId);
-            if (Map->ValidSpawnLocation(x, y, z, worldNumber, instanceId, true) && !FindMulti(x, y, z, worldNumber, instanceId)) {
+            std::int8_t z = worldMULHandler.Height(x, y, mChar->GetZ(), worldNumber, instanceId);
+            if (worldMULHandler.ValidSpawnLocation(x, y, z, worldNumber, instanceId, true) && !FindMulti(x, y, z, worldNumber, instanceId)) {
                 mChar->SetLocation(x, y, z, worldNumber, instanceId);
                 
                 // Freeze player temporarily after teleporting
-                Effects->TempEffect(nullptr, mChar, 1, 1, 1,
+                worldEffect.TempEffect(nullptr, mChar, 1, 1, 1,
                                     5); // 1 second, divided by 5 for 0.2s duration freeze
                 
                 auto myFollowers = mChar->GetFollowerList();
@@ -144,7 +148,7 @@ void PlankStuff(CSocket *s, CItem *p) {
         mChar->SetLocation(p->GetX(), p->GetY(), p->GetZ() + 3);
         
         // Freeze player temporarily after teleporting
-        Effects->TempEffect(nullptr, mChar, 1, 1, 1, 5); // 1 second, divided by 5 for 0.2s duration freeze
+        worldEffect.TempEffect(nullptr, mChar, 1, 1, 1, 5); // 1 second, divided by 5 for 0.2s duration freeze
         
         CMultiObj *boat2 = p->GetMultiObj();
         if (ValidateObject(boat2)) {
@@ -425,21 +429,21 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
                 auto multiSerial = tempItem->GetMulti();
                 // auto boatSerial = b->GetSerial();
                 if (multiSerial != INVALIDSERIAL && multiSerial != b->GetSerial()) {
-                    CTile &tile = Map->SeekTile(tempItem->GetId());
+                    CTile &tile = worldMULHandler.SeekTile(tempItem->GetId());
                     if (tile.CheckFlag(TF_BLOCKING))
                         return true;
                 }
             }
             
-            std::int8_t sz = Map->StaticTop(x, y, boatZ, worldNumber, MAX_Z_STEP);
+            std::int8_t sz = worldMULHandler.StaticTop(x, y, boatZ, worldNumber, MAX_Z_STEP);
             
             if (sz == ILLEGAL_Z) { // map tile
-                auto map = Map->SeekMap(x, y, worldNumber);
+                auto map = worldMULHandler.SeekMap(x, y, worldNumber);
                 if (map.altitude >= cz && !map.CheckFlag(TF_WET) && map.name() != "water") // only tiles on/above the water
                     return true;
             }
             else {
-                auto artwork = Map->ArtAt(x, y, worldNumber);
+                auto artwork = worldMULHandler.ArtAt(x, y, worldNumber);
                 for (auto &tile : artwork) {
                     std::int8_t zt = tile.altitude + tile.height();
                     if (!tile.CheckFlag(TF_WET) && zt >= cz && zt <= (cz + 20) &&
@@ -493,14 +497,14 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     }
     
     const std::int16_t x = b->GetX(), y = b->GetY();
-    std::int8_t z = Map->MapElevation(x, y, worldNumber);
+    std::int8_t z = worldMULHandler.MapElevation(x, y, worldNumber);
     
-    const std::int8_t dynz = Map->DynamicElevation(x, y, z, worldNumber, instanceId, 20);
+    const std::int8_t dynz = worldMULHandler.DynamicElevation(x, y, z, worldNumber, instanceId, 20);
     if (ILLEGAL_Z != dynz) {
         z = dynz;
     }
     else {
-        const std::int8_t staticz = Map->StaticTop(x, y, z, worldNumber, 20);
+        const std::int8_t staticz = worldMULHandler.StaticTop(x, y, z, worldNumber, 20);
         if (ILLEGAL_Z != staticz) {
             z = staticz;
         }
@@ -1097,9 +1101,9 @@ void ModelBoat(CSocket *s, CBoatObj *i) {
             return;
         
         model->SetTempVar(CITV_MOREX, tiller->GetTempVar(CITV_MOREX));
-        Weight->SubtractItemWeight(mChar, model);
+        worldWeight.SubtractItemWeight(mChar, model);
         model->SetWeight(0);
-        Weight->AddItemWeight(mChar, model);
+        worldWeight.AddItemWeight(mChar, model);
         model->SetType(IT_MODELMULTI);
         model->SetMovable(0);
         

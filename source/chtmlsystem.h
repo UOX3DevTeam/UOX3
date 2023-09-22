@@ -69,6 +69,5 @@ public:
     void TemplateInfoGump(CSocket *mySocket);
 };
 
-extern cHTMLTemplates *HTMLTemplates;
 
 #endif

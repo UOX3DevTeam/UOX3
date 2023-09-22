@@ -61,6 +61,9 @@
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
+extern CJSMapping worldJSMapping ;
+extern CGuildCollection worldGuildSystem ;
+extern CMapHandler worldMapHandler ;
 
 bool BuyShop(CSocket *s, CChar *c);
 void CallGuards(CChar *mChar);
@@ -77,7 +80,7 @@ inline bool FindString(std::string toCheck, std::string toFind) {
 auto FindNearbyNPCs(CChar *mChar, distlocs_t distance) -> std::vector<CChar *> {
     std::vector<CChar *> ourNpcs;
     
-    for (auto &CellResponse : MapRegion->PopulateList(mChar)) {
+    for (auto &CellResponse : worldMapHandler.PopulateList(mChar)) {
         if (CellResponse) {
             auto regChars = CellResponse->GetCharList();
             for (auto &nearbyNpc : regChars->collection()) {
@@ -113,7 +116,7 @@ std::uint8_t DoJSResponse([[maybe_unused]] CSocket *mSock, CChar *mChar, const s
         
         std::vector<std::uint16_t> scriptTriggers = nearbyNpc->GetScriptTriggers();
         for (auto i : scriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(i);
+            cScript *toExecute = worldJSMapping.GetScript(i);
             if (toExecute != nullptr) {
                 //|				-1	=> No such function or bad call
                 //|				0	=> Let other NPCs and PCs see it
@@ -153,7 +156,7 @@ std::uint8_t DoJSResponse([[maybe_unused]] CSocket *mSock, CChar *mChar, const s
             
             std::vector<std::uint16_t> scriptTriggers = nearbyItem->GetScriptTriggers();
             for (auto i : scriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(i);
+                cScript *toExecute = worldJSMapping.GetScript(i);
                 if (toExecute != nullptr) {
                     std::int8_t rVal = -1;
                     if (nearbyItem->IsDisabled()) {
@@ -456,7 +459,7 @@ bool WhichResponse(CSocket *mSock, CChar *mChar, std::string text, CChar *tChar 
                 tResp = new CBoatResponse(text, trigWord);
                 break;
             case TW_RESIGN:
-                GuildSys->Resign(mSock);
+                worldGuildSystem.Resign(mSock);
                 break;
             default:
                 // This is to handle the "train <skill>" keywords
@@ -1097,7 +1100,7 @@ bool CVendorSellResponse::Handle(CSocket *mSock, CChar *mChar, CChar *vendorNpc)
     // Check if vendor has onSell script running
     std::vector<std::uint16_t> scriptTriggers = vendorNpc->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // -1 == script doesn't exist, or returned -1
             // 0 == script returned false, 0, or nothing - don't execute hard code
@@ -1272,7 +1275,7 @@ void CHouseMultiResponse::Handle(CSocket *mSock, CChar *mChar) {
         if (realHouse->CanBeObjType(CBaseObject::OT_MULTI)) {
             std::vector<std::uint16_t> scriptTriggers = realHouse->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     //-1 == event not found
                     // 0 == script returned false/0

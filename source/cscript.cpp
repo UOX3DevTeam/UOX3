@@ -22,6 +22,8 @@
 #include "uoxjsclasses.h"
 #include "uoxjsmethods.h"
 #include "uoxjspropertyspecs.h"
+extern CJSMapping worldJSMapping ;
+extern CJSEngine worldJSEngine ;
 
 // o------------------------------------------------------------------------------------------------o
 //|	File		-	cscript.cpp
@@ -199,7 +201,7 @@ static JSFunctionSpec my_functions[] = {
 };
 
 void UOX3ErrorReporter(JSContext *cx, const char *message, JSErrorReport *report) {
-    std::uint16_t scriptNum = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    std::uint16_t scriptNum = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     // If we're loading the world then do NOT print out anything!
     Console::shared().error(
                             util::format("JS script failure: Script Number (%u) Message (%s)", scriptNum, message));
@@ -299,7 +301,7 @@ cScript::cScript(const std::filesystem::path &targFile, std::uint8_t rT) : isFir
         needsChecking[i].set();
     }
     
-    targContext = JSEngine->GetContext(runTime); // JS_NewContext( JSEngine->GetRuntime( runTime ), 0x2000 );
+    targContext = worldJSEngine.GetContext(runTime); // JS_NewContext( worldJSEngine.GetRuntime( runTime ), 0x2000 );
     if (targContext == nullptr)
         return;
     
@@ -434,11 +436,11 @@ bool cScript::OnCreate(CBaseObject *thingCreated, bool dfnCreated, bool isPlayer
     std::uint8_t paramType = 0;
     JSObject *myObj;
     if (thingCreated->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, thingCreated, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, thingCreated, runTime);
         paramType = 1;
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, thingCreated, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, thingCreated, runTime);
     }
     
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -476,10 +478,10 @@ bool cScript::OnDelete(CBaseObject *thingDestroyed) {
     std::uint8_t paramType = 0;
     JSObject *myObj;
     if (thingDestroyed->GetObjType() != CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, thingDestroyed, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, thingDestroyed, runTime);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, thingDestroyed, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, thingDestroyed, runTime);
         paramType = 1;
     }
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -523,13 +525,13 @@ std::int8_t cScript::OnSpeech(const char *speech, CChar *personTalking, CBaseObj
     
     strSpeech = JS_NewStringCopyZ(targContext, util::lower(lwrSpeech).c_str());
     
-    JSObject *ptObj = JSEngine->AcquireObject(IUE_CHAR, personTalking, runTime);
+    JSObject *ptObj = worldJSEngine.AcquireObject(IUE_CHAR, personTalking, runTime);
     JSObject *ttObj = nullptr;
     if (talkingTo->CanBeObjType(CBaseObject::OT_CHAR)) {
-        ttObj = JSEngine->AcquireObject(IUE_CHAR, talkingTo, runTime);
+        ttObj = worldJSEngine.AcquireObject(IUE_CHAR, talkingTo, runTime);
     }
     else if (talkingTo->CanBeObjType(CBaseObject::OT_ITEM)) {
-        ttObj = JSEngine->AcquireObject(IUE_ITEM, talkingTo, runTime);
+        ttObj = worldJSEngine.AcquireObject(IUE_ITEM, talkingTo, runTime);
     }
     
     params[0] = STRING_TO_JSVAL(strSpeech);
@@ -576,18 +578,18 @@ bool cScript::InRange(CBaseObject *srcObj, CBaseObject *objInRange) {
     jsval params[3], rval;
     JSObject *myObj;
     if (srcObj->CanBeObjType(CBaseObject::OT_CHAR)) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, srcObj, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, srcObj, runTime);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, srcObj, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, srcObj, runTime);
     }
     
     JSObject *myObj2;
     if (objInRange->CanBeObjType(CBaseObject::OT_CHAR)) {
-        myObj2 = JSEngine->AcquireObject(IUE_CHAR, objInRange, runTime);
+        myObj2 = worldJSEngine.AcquireObject(IUE_CHAR, objInRange, runTime);
     }
     else {
-        myObj2 = JSEngine->AcquireObject(IUE_ITEM, objInRange, runTime);
+        myObj2 = worldJSEngine.AcquireObject(IUE_ITEM, objInRange, runTime);
     }
     
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -617,14 +619,14 @@ std::int8_t cScript::OnCollide(CSocket *tSock, CChar *objColliding, CBaseObject 
         return RV_NOFUNC;
     
     jsval rval, params[3];
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, objColliding, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, tSock, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, objColliding, runTime);
     JSObject *myObj2 = nullptr;
     if (objCollideWith->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj2 = JSEngine->AcquireObject(IUE_CHAR, objCollideWith, runTime);
+        myObj2 = worldJSEngine.AcquireObject(IUE_CHAR, objCollideWith, runTime);
     }
     else {
-        myObj2 = JSEngine->AcquireObject(IUE_ITEM, objCollideWith, runTime);
+        myObj2 = worldJSEngine.AcquireObject(IUE_ITEM, objCollideWith, runTime);
     }
     
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -657,12 +659,12 @@ std::int8_t cScript::OnMoveDetect(CBaseObject *sourceObj, CChar *charInRange, st
     jsval rval, params[5];
     JSObject *myObj = nullptr;
     if (sourceObj->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, sourceObj, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, sourceObj, runTime);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, sourceObj, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, sourceObj, runTime);
     }
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, charInRange, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, charInRange, runTime);
     
     params[0] = OBJECT_TO_JSVAL(myObj);
     params[1] = OBJECT_TO_JSVAL(charObj);
@@ -692,9 +694,9 @@ std::int8_t cScript::OnSteal(CChar *thief, CItem *theft, CChar *victim) {
     if (!ExistAndVerify(seOnSteal, "onSteal"))
         return RV_NOFUNC;
     
-    JSObject *thiefCharObj = JSEngine->AcquireObject(IUE_CHAR, thief, runTime);
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, theft, runTime);
-    JSObject *victimCharObj = JSEngine->AcquireObject(IUE_CHAR, victim, runTime);
+    JSObject *thiefCharObj = worldJSEngine.AcquireObject(IUE_CHAR, thief, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, theft, runTime);
+    JSObject *victimCharObj = worldJSEngine.AcquireObject(IUE_CHAR, victim, runTime);
     
     jsval params[3], rval;
     params[0] = OBJECT_TO_JSVAL(thiefCharObj);
@@ -726,11 +728,11 @@ std::int8_t cScript::OnDispel(CBaseObject *dispelled) {
     jsval params[2], rval;
     JSObject *myObj;
     if (dispelled->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, dispelled, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, dispelled, runTime);
         params[1] = INT_TO_JSVAL(0);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, dispelled, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, dispelled, runTime);
         params[1] = INT_TO_JSVAL(1);
     }
     
@@ -768,11 +770,11 @@ bool cScript::OnSkill(CBaseObject *skillUse, std::int8_t skillUsed) {
     jsval rval, params[3];
     JSObject *myObj;
     if (skillUse->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, skillUse, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, skillUse, runTime);
         params[2] = INT_TO_JSVAL(0);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, skillUse, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, skillUse, runTime);
         params[2] = INT_TO_JSVAL(1);
     }
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -801,12 +803,12 @@ std::string cScript::OnTooltip(CBaseObject *myObj, CSocket *pSocket) {
     jsval rval, params[2];
     JSObject *tooltipObj = nullptr;
     if (myObj->CanBeObjType(CBaseObject::OT_CHAR)) {
-        tooltipObj = JSEngine->AcquireObject(IUE_CHAR, myObj, runTime);
+        tooltipObj = worldJSEngine.AcquireObject(IUE_CHAR, myObj, runTime);
     }
     else if (myObj->CanBeObjType(CBaseObject::OT_ITEM)) {
-        tooltipObj = JSEngine->AcquireObject(IUE_ITEM, myObj, runTime);
+        tooltipObj = worldJSEngine.AcquireObject(IUE_ITEM, myObj, runTime);
     }
-    JSObject *sockObj = JSEngine->AcquireObject(IUE_SOCK, pSocket, runTime);
+    JSObject *sockObj = worldJSEngine.AcquireObject(IUE_SOCK, pSocket, runTime);
     
     params[0] = OBJECT_TO_JSVAL(tooltipObj);
     params[1] = OBJECT_TO_JSVAL(sockObj);
@@ -859,16 +861,16 @@ std::string cScript::OnNameRequest(CBaseObject *myObj, CChar *nameRequester, std
         // Create JS object reference for myObj, based on whether it's an item or character
         JSObject *nameRequestObj = nullptr;
         if (myObj->CanBeObjType(CBaseObject::OT_CHAR)) {
-            nameRequestObj = JSEngine->AcquireObject(IUE_CHAR, myObj, runTime);
+            nameRequestObj = worldJSEngine.AcquireObject(IUE_CHAR, myObj, runTime);
         }
         else if (myObj->CanBeObjType(CBaseObject::OT_ITEM)) {
-            nameRequestObj = JSEngine->AcquireObject(IUE_ITEM, myObj, runTime);
+            nameRequestObj = worldJSEngine.AcquireObject(IUE_ITEM, myObj, runTime);
         }
         
         // Create JS object reference for the name requester (which might be nullptr!)
         JSObject *nameRequesterObj = nullptr;
         if (nameRequester != nullptr) {
-            nameRequesterObj = JSEngine->AcquireObject(IUE_CHAR, nameRequester, runTime);
+            nameRequesterObj = worldJSEngine.AcquireObject(IUE_CHAR, nameRequester, runTime);
         }
         
         params[0] = OBJECT_TO_JSVAL(nameRequestObj);
@@ -927,8 +929,8 @@ bool cScript::OnAttack(CChar *attacker, CChar *defender) {
         return false;
     
     jsval rval, params[2];
-    JSObject *attObj = JSEngine->AcquireObject(IUE_CHAR, attacker, runTime);
-    JSObject *defObj = JSEngine->AcquireObject(IUE_CHAR, defender, runTime);
+    JSObject *attObj = worldJSEngine.AcquireObject(IUE_CHAR, attacker, runTime);
+    JSObject *defObj = worldJSEngine.AcquireObject(IUE_CHAR, defender, runTime);
     
     params[0] = OBJECT_TO_JSVAL(attObj);
     params[1] = OBJECT_TO_JSVAL(defObj);
@@ -953,8 +955,8 @@ bool cScript::OnDefense(CChar *attacker, CChar *defender) {
         return false;
     
     jsval rval, params[2];
-    JSObject *attObj = JSEngine->AcquireObject(IUE_CHAR, attacker, runTime);
-    JSObject *defObj = JSEngine->AcquireObject(IUE_CHAR, defender, runTime);
+    JSObject *attObj = worldJSEngine.AcquireObject(IUE_CHAR, attacker, runTime);
+    JSObject *defObj = worldJSEngine.AcquireObject(IUE_CHAR, defender, runTime);
     
     params[0] = OBJECT_TO_JSVAL(attObj);
     params[1] = OBJECT_TO_JSVAL(defObj);
@@ -980,7 +982,7 @@ std::int8_t cScript::OnSkillGain(CChar *player, std::int8_t skill, std::uint32_t
         return RV_NOFUNC;
     
     jsval params[3], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, player, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, player, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(skill);
@@ -1008,7 +1010,7 @@ std::int8_t cScript::OnStatGained(CChar *player, std::uint32_t stat, std::int8_t
         return RV_NOFUNC;
     
     jsval rval, params[4];
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, player, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, player, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(stat);
@@ -1036,7 +1038,7 @@ bool cScript::OnStatGain(CChar *player, std::uint32_t stat, std::int8_t skill, s
         return false;
     
     jsval rval, params[4];
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, player, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, player, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(stat);
@@ -1066,8 +1068,8 @@ std::int8_t cScript::OnVirtueGumpPress(CChar *mChar, CChar *tChar, std::uint16_t
         return RV_NOFUNC;
     
     jsval rval, params[3];
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, mChar, runTime);
-    JSObject *targObj = JSEngine->AcquireObject(IUE_CHAR, tChar, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, mChar, runTime);
+    JSObject *targObj = worldJSEngine.AcquireObject(IUE_CHAR, tChar, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = OBJECT_TO_JSVAL(targObj);
@@ -1098,7 +1100,7 @@ std::int8_t cScript::OnQuestGump(CChar *mChar) {
         return RV_NOFUNC;
     
     jsval rval, params[1];
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, mChar, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, mChar, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     JSBool retVal = JS_CallFunctionName(targContext, targObject, "onQuestGump", 1, params, &rval);
@@ -1127,7 +1129,7 @@ std::int8_t cScript::OnHelpButton(CChar *mChar) {
         return RV_NOFUNC;
     
     jsval rval, params[1];
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, mChar, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, mChar, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     JSBool retVal = JS_CallFunctionName(targContext, targObject, "onHelpButton", 1, params, &rval);
@@ -1155,7 +1157,7 @@ std::int8_t cScript::OnWarModeToggle(CChar *mChar) {
         return RV_NOFUNC;
     
     jsval rval, params[1];
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, mChar, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, mChar, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     JSBool retVal =
@@ -1184,7 +1186,7 @@ std::int8_t cScript::OnSpecialMove(CChar *mChar, std::uint8_t abilityId) {
         return RV_NOFUNC;
     
     jsval rval, params[2];
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, mChar, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, mChar, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(abilityId);
@@ -1213,8 +1215,8 @@ std::int8_t cScript::OnDrop(CItem *item, CChar *dropper) {
         return RV_NOFUNC;
     
     jsval params[2], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, dropper, runTime);
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, item, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, dropper, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, item, runTime);
     
     params[0] = OBJECT_TO_JSVAL(itemObj);
     params[1] = OBJECT_TO_JSVAL(charObj);
@@ -1242,9 +1244,9 @@ std::int8_t cScript::OnDropItemOnItem(CItem *item, CChar *dropper, CItem *dest) 
         return RV_NOFUNC;
     
     jsval params[3], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, dropper, runTime);
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, item, runTime);
-    JSObject *destObj = JSEngine->AcquireObject(IUE_ITEM, dest, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, dropper, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, item, runTime);
+    JSObject *destObj = worldJSEngine.AcquireObject(IUE_ITEM, dest, runTime);
     
     params[0] = OBJECT_TO_JSVAL(itemObj);
     params[1] = OBJECT_TO_JSVAL(charObj);
@@ -1277,15 +1279,15 @@ std::int8_t cScript::OnPickup(CItem *item, CChar *pickerUpper, CBaseObject *objC
         return RV_NOFUNC;
     
     jsval params[3], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, pickerUpper, runTime);
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, item, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, pickerUpper, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, item, runTime);
     JSObject *objContObj = nullptr;
     if (objCont != nullptr) {
         if (objCont->GetObjType() == CBaseObject::OT_CHAR) {
-            objContObj = JSEngine->AcquireObject(IUE_CHAR, objCont, runTime);
+            objContObj = worldJSEngine.AcquireObject(IUE_CHAR, objCont, runTime);
         }
         else {
-            objContObj = JSEngine->AcquireObject(IUE_ITEM, objCont, runTime);
+            objContObj = worldJSEngine.AcquireObject(IUE_ITEM, objCont, runTime);
         }
     }
     
@@ -1316,9 +1318,9 @@ bool cScript::OnContRemoveItem(CItem *contItem, CItem *item, CChar *itemRemover)
     
     jsval params[3], rval;
     
-    JSObject *contObj = JSEngine->AcquireObject(IUE_ITEM, contItem, runTime);
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, item, runTime);
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, itemRemover, runTime);
+    JSObject *contObj = worldJSEngine.AcquireObject(IUE_ITEM, contItem, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, item, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, itemRemover, runTime);
     
     params[0] = OBJECT_TO_JSVAL(contObj);
     params[1] = OBJECT_TO_JSVAL(itemObj);
@@ -1346,9 +1348,9 @@ std::int8_t cScript::OnSwing(CItem *swinging, CChar *swinger, CChar *swingTarg) 
         return RV_NOFUNC;
     
     JSObject *itemObj =
-    (ValidateObject(swinging) ? JSEngine->AcquireObject(IUE_ITEM, swinging, runTime) : nullptr);
-    JSObject *attObj = JSEngine->AcquireObject(IUE_CHAR, swinger, runTime);
-    JSObject *defObj = JSEngine->AcquireObject(IUE_CHAR, swingTarg, runTime);
+    (ValidateObject(swinging) ? worldJSEngine.AcquireObject(IUE_ITEM, swinging, runTime) : nullptr);
+    JSObject *attObj = worldJSEngine.AcquireObject(IUE_CHAR, swinger, runTime);
+    JSObject *defObj = worldJSEngine.AcquireObject(IUE_CHAR, swingTarg, runTime);
     
     jsval params[3], rval;
     params[0] = OBJECT_TO_JSVAL(itemObj);
@@ -1377,7 +1379,7 @@ std::int8_t cScript::OnDecay(CItem *decaying) {
         return RV_NOFUNC;
     
     jsval params[1], rval;
-    JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, decaying, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, decaying, runTime);
     params[0] = OBJECT_TO_JSVAL(myObj);
     JSBool retVal = JS_CallFunctionName(targContext, targObject, "onDecay", 1, params, &rval);
     if (retVal == JS_FALSE) {
@@ -1403,13 +1405,13 @@ std::int8_t cScript::OnLeaving(CMultiObj *left, CBaseObject *leaving) {
     
     jsval params[3], rval;
     JSObject *myObj;
-    JSObject *myItem = JSEngine->AcquireObject(IUE_ITEM, left, runTime);
+    JSObject *myItem = worldJSEngine.AcquireObject(IUE_ITEM, left, runTime);
     if (leaving->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, leaving, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, leaving, runTime);
         params[2] = INT_TO_JSVAL(0);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, leaving, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, leaving, runTime);
         params[2] = INT_TO_JSVAL(1);
     }
     params[0] = OBJECT_TO_JSVAL(myItem);
@@ -1438,8 +1440,8 @@ std::int8_t cScript::OnMultiLogout(CMultiObj *iMulti, CChar *cPlayer) {
         return RV_NOFUNC;
     
     jsval params[2], rval;
-    JSObject *myMulti = JSEngine->AcquireObject(IUE_ITEM, iMulti, runTime);
-    JSObject *myPlayer = JSEngine->AcquireObject(IUE_CHAR, cPlayer, runTime);
+    JSObject *myMulti = worldJSEngine.AcquireObject(IUE_ITEM, iMulti, runTime);
+    JSObject *myPlayer = worldJSEngine.AcquireObject(IUE_CHAR, cPlayer, runTime);
     
     params[0] = OBJECT_TO_JSVAL(myMulti);
     params[1] = OBJECT_TO_JSVAL(myPlayer);
@@ -1468,8 +1470,8 @@ std::int8_t cScript::OnEquipAttempt(CChar *equipper, CItem *equipping) {
         return RV_NOFUNC;
     
     jsval rval, params[2];
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, equipper, runTime);
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, equipping, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, equipper, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, equipping, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = OBJECT_TO_JSVAL(itemObj);
@@ -1497,8 +1499,8 @@ std::int8_t cScript::OnEquip(CChar *equipper, CItem *equipping) {
         return RV_NOFUNC;
     
     jsval rval, params[2];
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, equipper, runTime);
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, equipping, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, equipper, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, equipping, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = OBJECT_TO_JSVAL(itemObj);
@@ -1525,8 +1527,8 @@ std::int8_t cScript::OnUnequipAttempt(CChar *equipper, CItem *equipping) {
         return RV_NOFUNC;
     
     jsval rval, params[2];
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, equipper, runTime);
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, equipping, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, equipper, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, equipping, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = OBJECT_TO_JSVAL(itemObj);
@@ -1554,8 +1556,8 @@ std::int8_t cScript::OnUnequip(CChar *equipper, CItem *equipping) {
         return RV_NOFUNC;
     
     jsval rval, params[2];
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, equipper, runTime);
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, equipping, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, equipper, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, equipping, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = OBJECT_TO_JSVAL(itemObj);
@@ -1594,8 +1596,8 @@ std::int8_t cScript::OnUseChecked(CChar *user, CItem *iUsing) {
     
     jsval rval, params[2];
     
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, user, runTime);
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, iUsing, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, user, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, iUsing, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = OBJECT_TO_JSVAL(itemObj);
@@ -1634,8 +1636,8 @@ std::int8_t cScript::OnUseUnChecked(CChar *user, CItem *iUsing) {
     
     jsval rval, params[2];
     
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, user, runTime);
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, iUsing, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, user, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, iUsing, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = OBJECT_TO_JSVAL(itemObj);
@@ -1674,9 +1676,9 @@ std::int8_t cScript::OnDropItemOnNpc(CChar *srcChar, CChar *dstChar, CItem *item
     
     jsval rval, params[3];
     
-    JSObject *srcObj = JSEngine->AcquireObject(IUE_CHAR, srcChar, runTime);
-    JSObject *dstObj = JSEngine->AcquireObject(IUE_CHAR, dstChar, runTime);
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, item, runTime);
+    JSObject *srcObj = worldJSEngine.AcquireObject(IUE_CHAR, srcChar, runTime);
+    JSObject *dstObj = worldJSEngine.AcquireObject(IUE_CHAR, dstChar, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, item, runTime);
     params[0] = OBJECT_TO_JSVAL(srcObj);
     params[1] = OBJECT_TO_JSVAL(dstObj);
     params[2] = OBJECT_TO_JSVAL(itemObj);
@@ -1706,13 +1708,13 @@ std::int8_t cScript::OnEntrance(CMultiObj *left, CBaseObject *leaving) {
     
     jsval params[3], rval;
     JSObject *myObj;
-    JSObject *myItem = JSEngine->AcquireObject(IUE_ITEM, left, runTime);
+    JSObject *myItem = worldJSEngine.AcquireObject(IUE_ITEM, left, runTime);
     if (leaving->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, leaving, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, leaving, runTime);
         params[2] = INT_TO_JSVAL(0);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, leaving, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, leaving, runTime);
         params[2] = INT_TO_JSVAL(1);
     }
     params[0] = OBJECT_TO_JSVAL(myItem);
@@ -1745,18 +1747,18 @@ bool cScript::OutOfRange(CBaseObject *srcObj, CBaseObject *objVanish) {
     
     JSObject *myObj;
     if (srcObj->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, srcObj, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, srcObj, runTime);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, srcObj, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, srcObj, runTime);
     }
     
     JSObject *myObj2;
     if (objVanish->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj2 = JSEngine->AcquireObject(IUE_CHAR, objVanish, runTime);
+        myObj2 = worldJSEngine.AcquireObject(IUE_CHAR, objVanish, runTime);
     }
     else {
-        myObj2 = JSEngine->AcquireObject(IUE_ITEM, objVanish, runTime);
+        myObj2 = worldJSEngine.AcquireObject(IUE_ITEM, objVanish, runTime);
     }
     
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -1782,8 +1784,8 @@ bool cScript::OnLogin(CSocket *sockPlayer, CChar *pPlayer) {
         return false;
     
     jsval params[2], rval;
-    JSObject *sockObj = JSEngine->AcquireObject(IUE_SOCK, sockPlayer, runTime);
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, pPlayer, runTime);
+    JSObject *sockObj = worldJSEngine.AcquireObject(IUE_SOCK, sockPlayer, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, pPlayer, runTime);
     
     params[0] = OBJECT_TO_JSVAL(sockObj);
     params[1] = OBJECT_TO_JSVAL(charObj);
@@ -1811,8 +1813,8 @@ bool cScript::OnLogout(CSocket *sockPlayer, CChar *pPlayer) {
     
     jsval params[2], rval;
     
-    JSObject *sockObj = JSEngine->AcquireObject(IUE_SOCK, sockPlayer, runTime);
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, pPlayer, runTime);
+    JSObject *sockObj = worldJSEngine.AcquireObject(IUE_SOCK, sockPlayer, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, pPlayer, runTime);
     
     params[0] = OBJECT_TO_JSVAL(sockObj);
     params[1] = OBJECT_TO_JSVAL(charObj);
@@ -1839,13 +1841,13 @@ std::int8_t cScript::OnClick(CSocket *sockPlayer, CBaseObject *objClicked) {
     if (!ExistAndVerify(seOnClick, "onClick"))
         return RV_NOFUNC;
     
-    JSObject *sockObj = JSEngine->AcquireObject(IUE_SOCK, sockPlayer, runTime);
+    JSObject *sockObj = worldJSEngine.AcquireObject(IUE_SOCK, sockPlayer, runTime);
     JSObject *myObj;
     if (objClicked->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, objClicked, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, objClicked, runTime);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, objClicked, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, objClicked, runTime);
     }
     
     jsval params[2], rval;
@@ -1874,7 +1876,7 @@ bool cScript::OnFall(CChar *pFall, std::int8_t fallDistance) {
         return false;
     
     jsval params[2], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, pFall, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, pFall, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(fallDistance);
     JSBool retVal = JS_CallFunctionName(targContext, targObject, "onFall", 2, params, &rval);
@@ -1899,7 +1901,7 @@ std::int8_t cScript::OnAISliver(CChar *pSliver) {
         return RV_NOFUNC;
     
     jsval params[1], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, pSliver, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, pSliver, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     JSBool retVal = JS_CallFunctionName(targContext, targObject, "onAISliver", 1, params, &rval);
     if (retVal == JS_FALSE) {
@@ -1945,10 +1947,10 @@ std::int8_t cScript::OnLightChange(CBaseObject *tObject, std::uint8_t lightLevel
     jsval rval, params[2];
     JSObject *myObj;
     if (tObject->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, tObject, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, tObject, runTime);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, tObject, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, tObject, runTime);
     }
     
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -1978,10 +1980,10 @@ bool cScript::OnWeatherChange(CBaseObject *tObject, Weather::type_t element) {
     jsval rval, params[2];
     JSObject *myObj;
     if (tObject->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, tObject, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, tObject, runTime);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, tObject, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, tObject, runTime);
     }
     
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -2011,10 +2013,10 @@ bool cScript::OnTempChange(CBaseObject *tObject, std::int8_t temp) {
     jsval rval, params[2];
     JSObject *myObj;
     if (tObject->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, tObject, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, tObject, runTime);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, tObject, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, tObject, runTime);
     }
     
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -2043,10 +2045,10 @@ bool cScript::OnTimer(CBaseObject *tObject, std::uint16_t timerId) {
     jsval rval, params[2];
     JSObject *myObj;
     if (tObject->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, tObject, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, tObject, runTime);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, tObject, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, tObject, runTime);
     }
     
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -2073,7 +2075,7 @@ std::int8_t cScript::OnStatLoss(CChar *player, std::uint32_t stat, std::uint32_t
         return RV_NOFUNC;
     
     jsval rval, params[3];
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, player, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, player, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(stat);
     params[2] = INT_TO_JSVAL(statLossAmount);
@@ -2099,7 +2101,7 @@ bool cScript::OnStatChange(CChar *player, std::uint32_t stat, std::int32_t statC
         return false;
     
     jsval rval, params[3];
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, player, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, player, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(stat);
     params[2] = INT_TO_JSVAL(statChangeAmount);
@@ -2125,7 +2127,7 @@ std::int8_t cScript::OnSkillLoss(CChar *player, std::int8_t skill, std::uint32_t
         return RV_NOFUNC;
     
     jsval params[3], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, player, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, player, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(skill);
     params[2] = INT_TO_JSVAL(skillLossAmount);
@@ -2151,7 +2153,7 @@ bool cScript::OnSkillChange(CChar *player, std::int8_t skill, std::int32_t skill
         return false;
     
     jsval params[3], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, player, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, player, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(skill);
     params[2] = INT_TO_JSVAL(skillChangeAmount);
@@ -2177,8 +2179,8 @@ std::int8_t cScript::OnDeath(CChar *pDead, CItem *iCorpse) {
         return RV_NOFUNC;
     
     jsval params[2], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, pDead, runTime);
-    JSObject *corpseObj = JSEngine->AcquireObject(IUE_ITEM, iCorpse, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, pDead, runTime);
+    JSObject *corpseObj = worldJSEngine.AcquireObject(IUE_ITEM, iCorpse, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = OBJECT_TO_JSVAL(corpseObj);
     JSBool retVal = JS_CallFunctionName(targContext, targObject, "onDeath", 2, params, &rval);
@@ -2205,7 +2207,7 @@ std::int8_t cScript::OnResurrect(CChar *pAlive) {
         return RV_NOFUNC;
     
     jsval params[1], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, pAlive, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, pAlive, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     JSBool retVal = JS_CallFunctionName(targContext, targObject, "onResurrect", 1, params, &rval);
     if (retVal == JS_FALSE) {
@@ -2231,7 +2233,7 @@ std::int8_t cScript::OnFlagChange(CChar *pChanging, std::uint8_t newStatus, std:
         return RV_NOFUNC;
     
     jsval params[3], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, pChanging, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, pChanging, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(newStatus);
     params[2] = INT_TO_JSVAL(oldStatus);
@@ -2258,7 +2260,7 @@ bool cScript::DoCallback(CSocket *tSock, serial_t targeted, std::uint8_t callNum
     CBaseObject *mObj = nullptr;
     JSObject *myObj2 = nullptr;
     try {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, tSock, runTime);
         if (myObj == nullptr)
             return false;
         
@@ -2277,10 +2279,10 @@ bool cScript::DoCallback(CSocket *tSock, serial_t targeted, std::uint8_t callNum
         }
         else {
             if (objType == 0) {
-                myObj2 = JSEngine->AcquireObject(IUE_ITEM, mObj, runTime);
+                myObj2 = worldJSEngine.AcquireObject(IUE_ITEM, mObj, runTime);
             }
             else {
-                myObj2 = JSEngine->AcquireObject(IUE_CHAR, mObj, runTime);
+                myObj2 = worldJSEngine.AcquireObject(IUE_CHAR, mObj, runTime);
             }
             params[1] = OBJECT_TO_JSVAL(myObj2);
         }
@@ -2314,7 +2316,7 @@ std::int8_t cScript::OnLoyaltyChange(CChar *pChanging, std::int8_t newStatus) {
         return RV_NOFUNC;
     
     jsval params[2], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, pChanging, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, pChanging, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(newStatus);
     JSBool retVal =
@@ -2341,7 +2343,7 @@ std::int8_t cScript::OnHungerChange(CChar *pChanging, std::int8_t newStatus) {
         return RV_NOFUNC;
     
     jsval params[2], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, pChanging, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, pChanging, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(newStatus);
     JSBool retVal =
@@ -2368,7 +2370,7 @@ bool cScript::OnThirstChange(CChar *pChanging, std::int8_t newStatus) {
         return RV_NOFUNC;
     
     jsval params[2], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, pChanging, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, pChanging, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(newStatus);
     JSBool retVal =
@@ -2396,9 +2398,9 @@ std::int8_t cScript::OnStolenFrom(CChar *stealing, CChar *stolenFrom, CItem *sto
     
     jsval params[3], rval;
     
-    JSObject *thiefObj = JSEngine->AcquireObject(IUE_CHAR, stealing, runTime);
-    JSObject *victimObj = JSEngine->AcquireObject(IUE_CHAR, stolenFrom, runTime);
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, stolen, runTime);
+    JSObject *thiefObj = worldJSEngine.AcquireObject(IUE_CHAR, stealing, runTime);
+    JSObject *victimObj = worldJSEngine.AcquireObject(IUE_CHAR, stolenFrom, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, stolen, runTime);
     
     params[0] = OBJECT_TO_JSVAL(thiefObj);
     params[1] = OBJECT_TO_JSVAL(victimObj);
@@ -2428,8 +2430,8 @@ std::int8_t cScript::OnSnooped(CChar *snooped, CChar *snooper, bool success) {
     
     jsval params[3], rval;
     
-    JSObject *thiefObj = JSEngine->AcquireObject(IUE_CHAR, snooped, runTime);
-    JSObject *victimObj = JSEngine->AcquireObject(IUE_CHAR, snooper, runTime);
+    JSObject *thiefObj = worldJSEngine.AcquireObject(IUE_CHAR, snooped, runTime);
+    JSObject *victimObj = worldJSEngine.AcquireObject(IUE_CHAR, snooper, runTime);
     
     params[0] = OBJECT_TO_JSVAL(thiefObj);
     params[1] = OBJECT_TO_JSVAL(victimObj);
@@ -2459,9 +2461,9 @@ std::int8_t cScript::OnSnoopAttempt(CChar *snooped, CItem *pack, CChar *snooper)
     
     jsval params[3], rval;
     
-    JSObject *thiefObj = JSEngine->AcquireObject(IUE_CHAR, snooped, runTime);
-    JSObject *packObj = JSEngine->AcquireObject(IUE_ITEM, pack, runTime);
-    JSObject *victimObj = JSEngine->AcquireObject(IUE_CHAR, snooper, runTime);
+    JSObject *thiefObj = worldJSEngine.AcquireObject(IUE_CHAR, snooped, runTime);
+    JSObject *packObj = worldJSEngine.AcquireObject(IUE_ITEM, pack, runTime);
+    JSObject *victimObj = worldJSEngine.AcquireObject(IUE_CHAR, snooper, runTime);
     
     params[0] = OBJECT_TO_JSVAL(thiefObj);
     params[1] = OBJECT_TO_JSVAL(packObj);
@@ -2528,7 +2530,7 @@ void cScript::SendGumpList(std::int32_t index, CSocket *toSendTo) {
     if (index < 0 || static_cast<size_t>(index) >= gumpDisplays.size())
         return;
     
-    std::uint32_t gumpId = (0xFFFF + JSMapping->GetScriptId(targObject));
+    std::uint32_t gumpId = (0xFFFF + worldJSMapping.GetScriptId(targObject));
     SendVecsAsGump(toSendTo, *(gumpDisplays[index]->one), *(gumpDisplays[index]->two), gumpId,
                    INVALIDSERIAL);
 }
@@ -2577,7 +2579,7 @@ void cScript::HandleGumpPress(CPIGumpMenuSelect *packet) {
     }
     jsval jsvParams[3], jsvRVal;
     
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, pressing, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, pressing, runTime);
     jsvParams[0] = OBJECT_TO_JSVAL(myObj);
     jsvParams[1] = INT_TO_JSVAL(button);
     jsvParams[2] = OBJECT_TO_JSVAL(jsoObject);
@@ -2598,7 +2600,7 @@ void cScript::HandleGumpInput(CPIGumpInput *pressing) {
         return;
     
     jsval params[3], rval;
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, pressing->GetSocket(), runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, pressing->GetSocket(), runTime);
     JSString *gumpReply = nullptr;
     gumpReply = JS_NewStringCopyZ(targContext, pressing->Reply().c_str());
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -2623,7 +2625,7 @@ std::int8_t cScript::OnScrollingGumpPress(CSocket *tSock, std::uint16_t gumpId, 
         return RV_NOFUNC;
     
     jsval params[3], rval;
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, tSock, runTime);
     params[0] = OBJECT_TO_JSVAL(myObj);
     params[1] = INT_TO_JSVAL(gumpId);
     params[2] = INT_TO_JSVAL(buttonId);
@@ -2651,7 +2653,7 @@ bool cScript::OnEnterRegion(CChar *entering, std::uint16_t region) {
     
     jsval params[2], rval;
     
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, entering, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, entering, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(region);
     JSBool retVal = JS_CallFunctionName(targContext, targObject, "onEnterRegion", 2, params, &rval);
@@ -2674,7 +2676,7 @@ bool cScript::OnLeaveRegion(CChar *leaving, std::uint16_t region) {
         return false;
     
     jsval params[2], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, leaving, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, leaving, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(region);
     JSBool retVal = JS_CallFunctionName(targContext, targObject, "onLeaveRegion", 2, params, &rval);
@@ -2701,7 +2703,7 @@ std::int8_t cScript::OnFacetChange(CChar *mChar, const std::uint8_t oldFacet, co
     
     jsval params[3], rval;
     
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, mChar, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, mChar, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(oldFacet);
     params[2] = INT_TO_JSVAL(newFacet);
@@ -2730,13 +2732,13 @@ std::int8_t cScript::OnSpellTargetSelect(CChar *caster, CBaseObject *target, std
         return RV_NOFUNC;
     
     jsval params[4], rval;
-    JSObject *castObj = JSEngine->AcquireObject(IUE_CHAR, caster, runTime);
+    JSObject *castObj = worldJSEngine.AcquireObject(IUE_CHAR, caster, runTime);
     JSObject *targObj;
     if (target->CanBeObjType(CBaseObject::OT_CHAR)) {
-        targObj = JSEngine->AcquireObject(IUE_CHAR, target, runTime);
+        targObj = worldJSEngine.AcquireObject(IUE_CHAR, target, runTime);
     }
     else {
-        targObj = JSEngine->AcquireObject(IUE_ITEM, target, runTime);
+        targObj = worldJSEngine.AcquireObject(IUE_ITEM, target, runTime);
     }
     params[0] = OBJECT_TO_JSVAL(targObj);
     params[1] = OBJECT_TO_JSVAL(castObj);
@@ -2766,13 +2768,13 @@ std::int8_t cScript::OnSpellTarget(CBaseObject *target, CChar *caster, std::uint
         return RV_NOFUNC;
     
     jsval params[4], rval;
-    JSObject *castObj = JSEngine->AcquireObject(IUE_CHAR, caster, runTime);
+    JSObject *castObj = worldJSEngine.AcquireObject(IUE_CHAR, caster, runTime);
     JSObject *targObj;
     if (target->CanBeObjType(CBaseObject::OT_CHAR)) {
-        targObj = JSEngine->AcquireObject(IUE_CHAR, target, runTime);
+        targObj = worldJSEngine.AcquireObject(IUE_CHAR, target, runTime);
     }
     else {
-        targObj = JSEngine->AcquireObject(IUE_ITEM, target, runTime);
+        targObj = worldJSEngine.AcquireObject(IUE_ITEM, target, runTime);
     }
     params[0] = OBJECT_TO_JSVAL(targObj);
     params[1] = OBJECT_TO_JSVAL(castObj);
@@ -2827,7 +2829,7 @@ std::int16_t cScript::OnSpellCast(CChar *tChar, std::uint8_t SpellId) {
         return -2;
     
     jsval params[2], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, tChar, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, tChar, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(SpellId);
@@ -2859,7 +2861,7 @@ std::int16_t cScript::OnScrollCast(CChar *tChar, std::uint8_t SpellId) {
         return -2;
     
     jsval params[2], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, tChar, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, tChar, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(SpellId);
@@ -2889,7 +2891,7 @@ std::int8_t cScript::OnSpellSuccess(CChar *tChar, std::uint8_t SpellId) {
         return RV_NOFUNC;
     
     jsval params[2], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, tChar, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, tChar, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(SpellId);
@@ -2925,7 +2927,7 @@ std::int8_t cScript::OnTalk(CChar *myChar, const char *mySpeech) {
     
     strSpeech = JS_NewStringCopyZ(targContext, util::lower(lwrSpeech).c_str());
     
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, myChar, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, myChar, runTime);
     
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = STRING_TO_JSVAL(strSpeech);
@@ -2962,14 +2964,14 @@ bool cScript::OnSpeechInput(CChar *myChar, CItem *myItem, const char *mySpeech) 
     strSpeech = JS_NewStringCopyZ(targContext, lwrSpeech);
     delete[] lwrSpeech;
     
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, myChar, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, myChar, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     
     if (!ValidateObject(myItem)) {
         params[1] = JSVAL_NULL;
     }
     else {
-        JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, myItem, runTime);
+        JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, myItem, runTime);
         params[1] = OBJECT_TO_JSVAL(itemObj);
     }
     
@@ -3001,7 +3003,7 @@ std::int8_t cScript::OnSpellGain(CItem *book, const std::uint8_t spellNum) {
         return RV_NOFUNC;
     
     jsval params[2], rval;
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, book, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, book, runTime);
     params[0] = OBJECT_TO_JSVAL(itemObj);
     params[1] = INT_TO_JSVAL(spellNum);
     JSBool retVal = JS_CallFunctionName(targContext, targObject, "onSpellGain", 2, params, &rval);
@@ -3028,7 +3030,7 @@ std::int8_t cScript::OnSpellLoss(CItem *book, const std::uint8_t spellNum) {
         return RV_NOFUNC;
     
     jsval params[2], rval;
-    JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, book, runTime);
+    JSObject *itemObj = worldJSEngine.AcquireObject(IUE_ITEM, book, runTime);
     params[0] = OBJECT_TO_JSVAL(itemObj);
     params[1] = INT_TO_JSVAL(spellNum);
     JSBool retVal = JS_CallFunctionName(targContext, targObject, "onSpellLoss", 2, params, &rval);
@@ -3056,7 +3058,7 @@ std::int8_t cScript::OnSkillCheck(CChar *myChar, const std::uint8_t skill, const
         return RV_NOFUNC;
     
     jsval params[5], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, myChar, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, myChar, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     params[1] = INT_TO_JSVAL(skill);
     params[2] = INT_TO_JSVAL(lowSkill);
@@ -3095,17 +3097,17 @@ bool cScript::AreaObjFunc(char *funcName, CBaseObject *srcObject, CBaseObject *t
         return false;
     
     if (srcObject->CanBeObjType(CBaseObject::OT_ITEM)) {
-        srcObj = JSEngine->AcquireObject(IUE_ITEM, srcObject, runTime);
+        srcObj = worldJSEngine.AcquireObject(IUE_ITEM, srcObject, runTime);
     }
     else if (srcObject->CanBeObjType(CBaseObject::OT_CHAR)) {
-        srcObj = JSEngine->AcquireObject(IUE_CHAR, srcObject, runTime);
+        srcObj = worldJSEngine.AcquireObject(IUE_CHAR, srcObject, runTime);
     }
     
     if (tmpObject->CanBeObjType(CBaseObject::OT_ITEM)) {
-        tmpObj = JSEngine->AcquireObject(IUE_ITEM, tmpObject, runTime);
+        tmpObj = worldJSEngine.AcquireObject(IUE_ITEM, tmpObject, runTime);
     }
     else if (tmpObject->CanBeObjType(CBaseObject::OT_CHAR)) {
-        tmpObj = JSEngine->AcquireObject(IUE_CHAR, tmpObject, runTime);
+        tmpObj = worldJSEngine.AcquireObject(IUE_CHAR, tmpObject, runTime);
     }
     
     if (srcObj == nullptr || tmpObj == nullptr) {
@@ -3117,7 +3119,7 @@ bool cScript::AreaObjFunc(char *funcName, CBaseObject *srcObject, CBaseObject *t
     
     if (s != nullptr) {
         JSObject *sockObj = nullptr;
-        sockObj = JSEngine->AcquireObject(IUE_SOCK, s, runTime);
+        sockObj = worldJSEngine.AcquireObject(IUE_SOCK, s, runTime);
         params[2] = OBJECT_TO_JSVAL(sockObj);
     }
     else {
@@ -3152,7 +3154,7 @@ std::int8_t cScript::OnCommand(CSocket *mSock, std::string command) {
         return RV_NOFUNC;
     
     jsval params[2], rval;
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, mSock, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, mSock, runTime);
     JSString *strCmd = nullptr;
     strCmd = JS_NewStringCopyZ(targContext, util::lower(command).c_str());
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -3207,7 +3209,7 @@ bool cScript::ScriptRegistration(std::string scriptType) {
     jsval Func = JSVAL_NULL;
     JS_GetProperty(targContext, targObject, scriptType.c_str(), &Func);
     if (Func == JSVAL_VOID) {
-        Console::shared().warning(util::format("Script Number (%u) does not have a %s function",JSMapping->GetScriptId(targObject),scriptType.c_str()));
+        Console::shared().warning(util::format("Script Number (%u) does not have a %s function",worldJSMapping.GetScriptId(targObject),scriptType.c_str()));
         return false;
     }
     
@@ -3224,7 +3226,7 @@ bool cScript::ScriptRegistration(std::string scriptType) {
 bool cScript::executeCommand(CSocket *s, std::string funcName, std::string executedString) {
     jsval params[2], rval;
     JSString *execString = JS_NewStringCopyZ(targContext, executedString.c_str());
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, s, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, s, runTime);
     params[0] = OBJECT_TO_JSVAL(myObj);
     params[1] = STRING_TO_JSVAL(execString);
     // ExistAndVerify() normally sets our Global Object, but not on custom named functions.
@@ -3249,8 +3251,8 @@ bool cScript::MagicSpellCast(CSocket *mSock, CChar *tChar, bool directCast, std:
         return false;
     
     jsval params[4], rval;
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, tChar, runTime);
-    JSObject *sockObj = JSEngine->AcquireObject(IUE_SOCK, mSock, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, tChar, runTime);
+    JSObject *sockObj = worldJSEngine.AcquireObject(IUE_SOCK, mSock, runTime);
     
     params[0] = OBJECT_TO_JSVAL(sockObj);
     params[1] = OBJECT_TO_JSVAL(charObj);
@@ -3284,10 +3286,10 @@ bool cScript::OnIterate(CBaseObject *a, std::uint32_t &b) {
     
     JSObject *myObj = nullptr;
     if (a->GetObjType() == CBaseObject::OT_CHAR) {
-        myObj = JSEngine->AcquireObject(IUE_CHAR, a, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_CHAR, a, runTime);
     }
     else {
-        myObj = JSEngine->AcquireObject(IUE_ITEM, a, runTime);
+        myObj = worldJSEngine.AcquireObject(IUE_ITEM, a, runTime);
     }
     
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -3298,11 +3300,11 @@ bool cScript::OnIterate(CBaseObject *a, std::uint32_t &b) {
      {
      if( a->GetObjType() == OT_CHAR )
      {
-     JSEngine->ReleaseObject( IUE_CHAR, a );
+     worldJSEngine.ReleaseObject( IUE_CHAR, a );
      }
      else
      {
-     JSEngine->ReleaseObject( IUE_ITEM, a );
+     worldJSEngine.ReleaseObject( IUE_ITEM, a );
      }
      }
      */
@@ -3332,7 +3334,7 @@ bool cScript::OnIterateSpawnRegions(CSpawnRegion *a, std::uint32_t &b) {
     jsval params[1], rval;
     
     JSObject *myObj = nullptr;
-    myObj = JSEngine->AcquireObject(IUE_SPAWNREGION, a, runTime);
+    myObj = worldJSEngine.AcquireObject(IUE_SPAWNREGION, a, runTime);
     
     params[0] = OBJECT_TO_JSVAL(myObj);
     
@@ -3366,7 +3368,7 @@ bool cScript::OnPacketReceive(CSocket *mSock, std::uint16_t packetNum) {
         return false;
     
     jsval rval, params[3];
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, mSock, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, mSock, runTime);
     params[0] = OBJECT_TO_JSVAL(myObj);
     params[1] = INT_TO_JSVAL(static_cast<std::uint8_t>(packetNum % 256));
     params[2] = INT_TO_JSVAL(static_cast<std::uint8_t>(packetNum >> 8));
@@ -3396,8 +3398,8 @@ std::int8_t cScript::OnCharDoubleClick(CChar *currChar, CChar *targChar) {
         return RV_NOFUNC;
     
     jsval params[2], rval;
-    JSObject *srcObj = JSEngine->AcquireObject(IUE_CHAR, currChar, runTime);
-    JSObject *trgObj = JSEngine->AcquireObject(IUE_CHAR, targChar, runTime);
+    JSObject *srcObj = worldJSEngine.AcquireObject(IUE_CHAR, currChar, runTime);
+    JSObject *trgObj = worldJSEngine.AcquireObject(IUE_CHAR, targChar, runTime);
     
     params[0] = OBJECT_TO_JSVAL(srcObj);
     params[1] = OBJECT_TO_JSVAL(trgObj);
@@ -3430,7 +3432,7 @@ std::int8_t cScript::OnSkillGump(CChar *currChar) {
     
     jsval params[1], rval;
     
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, currChar, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, currChar, runTime);
     params[0] = OBJECT_TO_JSVAL(charObj);
     JSBool retVal = JS_CallFunctionName(targContext, targObject, "onSkillGump", 1, params, &rval);
     
@@ -3459,9 +3461,9 @@ std::int8_t cScript::OnUseBandageMacro(CSocket *mSock, CChar *targChar, CItem *b
     
     jsval params[3], rval;
     
-    JSObject *mSockObj = JSEngine->AcquireObject(IUE_SOCK, mSock, runTime);
-    JSObject *targCharObj = JSEngine->AcquireObject(IUE_CHAR, targChar, runTime);
-    JSObject *bandageItemObj = JSEngine->AcquireObject(IUE_ITEM, bandageItem, runTime);
+    JSObject *mSockObj = worldJSEngine.AcquireObject(IUE_SOCK, mSock, runTime);
+    JSObject *targCharObj = worldJSEngine.AcquireObject(IUE_CHAR, targChar, runTime);
+    JSObject *bandageItemObj = worldJSEngine.AcquireObject(IUE_ITEM, bandageItem, runTime);
     params[0] = OBJECT_TO_JSVAL(mSockObj);
     params[1] = OBJECT_TO_JSVAL(targCharObj);
     params[2] = OBJECT_TO_JSVAL(bandageItemObj);
@@ -3495,8 +3497,8 @@ std::int8_t cScript::OnAICombatTarget(CChar *attacker, CChar *target) {
     
     jsval params[2], rval;
     
-    JSObject *attObj = JSEngine->AcquireObject(IUE_CHAR, attacker, runTime);
-    JSObject *targObj = JSEngine->AcquireObject(IUE_CHAR, target, runTime);
+    JSObject *attObj = worldJSEngine.AcquireObject(IUE_CHAR, attacker, runTime);
+    JSObject *targObj = worldJSEngine.AcquireObject(IUE_CHAR, target, runTime);
     
     params[0] = OBJECT_TO_JSVAL(attObj);
     params[1] = OBJECT_TO_JSVAL(targObj);
@@ -3529,8 +3531,8 @@ std::int8_t cScript::OnCombatStart(CChar *attacker, CChar *defender) {
     
     jsval params[2], rval;
     
-    JSObject *attObj = JSEngine->AcquireObject(IUE_CHAR, attacker, runTime);
-    JSObject *defObj = JSEngine->AcquireObject(IUE_CHAR, defender, runTime);
+    JSObject *attObj = worldJSEngine.AcquireObject(IUE_CHAR, attacker, runTime);
+    JSObject *defObj = worldJSEngine.AcquireObject(IUE_CHAR, defender, runTime);
     
     params[0] = OBJECT_TO_JSVAL(attObj);
     params[1] = OBJECT_TO_JSVAL(defObj);
@@ -3562,8 +3564,8 @@ std::int8_t cScript::OnCombatEnd(CChar *currChar, CChar *targChar) {
     
     jsval params[2], rval;
     
-    JSObject *attObj = JSEngine->AcquireObject(IUE_CHAR, currChar, runTime);
-    JSObject *defObj = JSEngine->AcquireObject(IUE_CHAR, targChar, runTime);
+    JSObject *attObj = worldJSEngine.AcquireObject(IUE_CHAR, currChar, runTime);
+    JSObject *defObj = worldJSEngine.AcquireObject(IUE_CHAR, targChar, runTime);
     
     params[0] = OBJECT_TO_JSVAL(attObj);
     params[1] = OBJECT_TO_JSVAL(defObj);
@@ -3596,8 +3598,8 @@ std::int8_t cScript::OnDeathBlow(CChar *mKilled, CChar *mKiller) {
         return RV_NOFUNC;
     
     jsval rval, params[2];
-    JSObject *killedObj = JSEngine->AcquireObject(IUE_CHAR, mKilled, runTime);
-    JSObject *killerObj = JSEngine->AcquireObject(IUE_CHAR, mKiller, runTime);
+    JSObject *killedObj = worldJSEngine.AcquireObject(IUE_CHAR, mKilled, runTime);
+    JSObject *killerObj = worldJSEngine.AcquireObject(IUE_CHAR, mKiller, runTime);
     
     params[0] = OBJECT_TO_JSVAL(killedObj);
     params[1] = OBJECT_TO_JSVAL(killerObj);
@@ -3631,8 +3633,8 @@ std::int16_t cScript::OnCombatDamageCalc(CChar *attacker, CChar *defender, std::
     std::int16_t funcRetVal = -1;
     
     jsval rval, params[4];
-    JSObject *attackerObj = JSEngine->AcquireObject(IUE_CHAR, attacker, runTime);
-    JSObject *defenderObj = JSEngine->AcquireObject(IUE_CHAR, defender, runTime);
+    JSObject *attackerObj = worldJSEngine.AcquireObject(IUE_CHAR, attacker, runTime);
+    JSObject *defenderObj = worldJSEngine.AcquireObject(IUE_CHAR, defender, runTime);
     
     params[0] = OBJECT_TO_JSVAL(attackerObj);
     params[1] = OBJECT_TO_JSVAL(defenderObj);
@@ -3673,11 +3675,11 @@ std::int8_t cScript::OnDamage(CChar *damaged, CChar *attacker, std::int16_t dama
         return RV_NOFUNC;
     
     jsval rval, params[4];
-    JSObject *damagedObj = JSEngine->AcquireObject(IUE_CHAR, damaged, runTime);
+    JSObject *damagedObj = worldJSEngine.AcquireObject(IUE_CHAR, damaged, runTime);
     params[0] = OBJECT_TO_JSVAL(damagedObj);
     
     if (ValidateObject(attacker)) {
-        JSObject *attackerObj = JSEngine->AcquireObject(IUE_CHAR, attacker, runTime);
+        JSObject *attackerObj = worldJSEngine.AcquireObject(IUE_CHAR, attacker, runTime);
         params[1] = OBJECT_TO_JSVAL(attackerObj);
     }
     else {
@@ -3710,10 +3712,10 @@ std::int8_t cScript::OnDamageDeal(CChar *attacker, CChar *damaged, std::int16_t 
         return RV_NOFUNC;
     
     jsval rval, params[4];
-    JSObject *attackerObj = JSEngine->AcquireObject(IUE_CHAR, attacker, runTime);
+    JSObject *attackerObj = worldJSEngine.AcquireObject(IUE_CHAR, attacker, runTime);
     params[0] = OBJECT_TO_JSVAL(attackerObj);
     
-    JSObject *damagedObj = JSEngine->AcquireObject(IUE_CHAR, damaged, runTime);
+    JSObject *damagedObj = worldJSEngine.AcquireObject(IUE_CHAR, damaged, runTime);
     params[1] = OBJECT_TO_JSVAL(damagedObj);
     
     params[2] = INT_TO_JSVAL(damageValue);
@@ -3743,8 +3745,8 @@ std::int8_t cScript::OnBuy(CSocket *tSock, CChar *objVendor) {
         return RV_NOFUNC;
     
     jsval rval, params[3];
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, objVendor, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, tSock, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, objVendor, runTime);
     
     params[0] = OBJECT_TO_JSVAL(myObj);
     params[1] = OBJECT_TO_JSVAL(charObj);
@@ -3774,8 +3776,8 @@ std::int8_t cScript::OnSell(CSocket *tSock, CChar *objVendor) {
         return RV_NOFUNC;
     
     jsval rval, params[3];
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, objVendor, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, tSock, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, objVendor, runTime);
     
     params[0] = OBJECT_TO_JSVAL(myObj);
     params[1] = OBJECT_TO_JSVAL(charObj);
@@ -3810,11 +3812,11 @@ std::int8_t cScript::OnBuyFromVendor(CSocket *tSock, CChar *objVendor, CBaseObje
         return RV_NOFUNC;
     
     jsval rval, params[4];
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, objVendor, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, tSock, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, objVendor, runTime);
     JSObject *myObj2 = nullptr;
     if (objItemBought->GetObjType() == CBaseObject::OT_ITEM) {
-        myObj2 = JSEngine->AcquireObject(IUE_ITEM, objItemBought, runTime);
+        myObj2 = worldJSEngine.AcquireObject(IUE_ITEM, objItemBought, runTime);
     }
     
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -3852,11 +3854,11 @@ std::int8_t cScript::OnSellToVendor(CSocket *tSock, CChar *objVendor, CBaseObjec
         return RV_NOFUNC;
     
     jsval rval, params[4];
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, objVendor, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, tSock, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, objVendor, runTime);
     JSObject *myObj2 = nullptr;
     if (objItemSold->GetObjType() == CBaseObject::OT_ITEM) {
-        myObj2 = JSEngine->AcquireObject(IUE_ITEM, objItemSold, runTime);
+        myObj2 = worldJSEngine.AcquireObject(IUE_ITEM, objItemSold, runTime);
     }
     
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -3892,11 +3894,11 @@ std::int8_t cScript::OnBoughtFromVendor(CSocket *tSock, CChar *objVendor, CBaseO
         return RV_NOFUNC;
     
     jsval rval, params[4];
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, objVendor, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, tSock, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, objVendor, runTime);
     JSObject *myObj2 = nullptr;
     if (objItemBought->GetObjType() == CBaseObject::OT_ITEM) {
-        myObj2 = JSEngine->AcquireObject(IUE_ITEM, objItemBought, runTime);
+        myObj2 = worldJSEngine.AcquireObject(IUE_ITEM, objItemBought, runTime);
     }
     
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -3932,11 +3934,11 @@ std::int8_t cScript::OnSoldToVendor(CSocket *tSock, CChar *objVendor, CBaseObjec
         return RV_NOFUNC;
     
     jsval rval, params[4];
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, objVendor, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, tSock, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, objVendor, runTime);
     JSObject *myObj2 = nullptr;
     if (objItemSold->GetObjType() == CBaseObject::OT_ITEM) {
-        myObj2 = JSEngine->AcquireObject(IUE_ITEM, objItemSold, runTime);
+        myObj2 = worldJSEngine.AcquireObject(IUE_ITEM, objItemSold, runTime);
     }
     
     params[0] = OBJECT_TO_JSVAL(myObj);
@@ -3969,8 +3971,8 @@ std::int8_t cScript::OnHouseCommand(CSocket *tSock, CMultiObj *objMulti, std::ui
         return RV_NOFUNC;
     
     jsval rval, params[3];
-    JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
-    JSObject *multiObj = JSEngine->AcquireObject(IUE_ITEM, objMulti, runTime);
+    JSObject *myObj = worldJSEngine.AcquireObject(IUE_SOCK, tSock, runTime);
+    JSObject *multiObj = worldJSEngine.AcquireObject(IUE_ITEM, objMulti, runTime);
     
     params[0] = OBJECT_TO_JSVAL(myObj);
     params[1] = OBJECT_TO_JSVAL(multiObj);
@@ -4001,9 +4003,9 @@ std::int8_t cScript::OnMakeItem(CSocket *mSock, CChar *objChar, CItem *objItem, 
         return RV_NOFUNC;
     
     jsval rval, params[4];
-    JSObject *mySock = JSEngine->AcquireObject(IUE_SOCK, mSock, runTime);
-    JSObject *myChar = JSEngine->AcquireObject(IUE_CHAR, objChar, runTime);
-    JSObject *myItem = JSEngine->AcquireObject(IUE_ITEM, objItem, runTime);
+    JSObject *mySock = worldJSEngine.AcquireObject(IUE_SOCK, mSock, runTime);
+    JSObject *myChar = worldJSEngine.AcquireObject(IUE_CHAR, objChar, runTime);
+    JSObject *myItem = worldJSEngine.AcquireObject(IUE_ITEM, objItem, runTime);
     
     params[0] = OBJECT_TO_JSVAL(mySock);
     params[1] = OBJECT_TO_JSVAL(myChar);
@@ -4035,7 +4037,7 @@ std::int8_t cScript::OnPathfindEnd(CChar *npc, std::int8_t pathfindResult) {
     if (!ExistAndVerify(seOnPathfindEnd, "onPathfindEnd"))
         return RV_NOFUNC;
     
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, npc, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, npc, runTime);
     
     jsval params[2], rval;
     params[0] = OBJECT_TO_JSVAL(charObj);
@@ -4064,8 +4066,8 @@ std::int8_t cScript::OnEnterEvadeState(CChar *npc, CChar *enemy) {
     if (!ExistAndVerify(seOnEnterEvadeState, "onEnterEvadeState"))
         return RV_NOFUNC;
     
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, npc, runTime);
-    JSObject *enemyObj = JSEngine->AcquireObject(IUE_CHAR, enemy, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, npc, runTime);
+    JSObject *enemyObj = worldJSEngine.AcquireObject(IUE_CHAR, enemy, runTime);
     
     jsval params[2], rval;
     params[0] = OBJECT_TO_JSVAL(charObj);
@@ -4095,8 +4097,8 @@ std::int8_t cScript::OnCarveCorpse(CChar *player, CItem *corpse) {
     if (!ExistAndVerify(seOnCarveCorpse, "onCarveCorpse"))
         return RV_NOFUNC;
     
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, player, runTime);
-    JSObject *corpseObj = JSEngine->AcquireObject(IUE_ITEM, corpse, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, player, runTime);
+    JSObject *corpseObj = worldJSEngine.AcquireObject(IUE_ITEM, corpse, runTime);
     
     jsval params[2], rval;
     params[0] = OBJECT_TO_JSVAL(charObj);
@@ -4124,9 +4126,9 @@ std::int8_t cScript::OnDyeTarget(CChar *player, CItem *dyeTub, CItem *target) {
     if (!ExistAndVerify(seOnDyeTarget, "onDyeTarget"))
         return RV_NOFUNC;
     
-    JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, player, runTime);
-    JSObject *dyeTubObj = JSEngine->AcquireObject(IUE_ITEM, dyeTub, runTime);
-    JSObject *targObj = JSEngine->AcquireObject(IUE_ITEM, target, runTime);
+    JSObject *charObj = worldJSEngine.AcquireObject(IUE_CHAR, player, runTime);
+    JSObject *dyeTubObj = worldJSEngine.AcquireObject(IUE_ITEM, dyeTub, runTime);
+    JSObject *targObj = worldJSEngine.AcquireObject(IUE_ITEM, target, runTime);
     
     jsval params[3], rval;
     params[0] = OBJECT_TO_JSVAL(charObj);

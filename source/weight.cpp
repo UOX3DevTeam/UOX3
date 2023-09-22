@@ -5,6 +5,9 @@
 #include "funcdecl.h"
 #include "mapstuff.h"
 #include "configuration/serverconfig.hpp"
+
+extern CMulHandler worldMULHandler ;
+
 // o------------------------------------------------------------------------------------------------o
 //|	File		-	weight.cpp
 //|	Date		-	Pre-1999
@@ -90,7 +93,6 @@
 // MAX_CHARWEIGHT
 // o------------------------------------------------------------------------------------------------o
 
-CWeight *Weight = nullptr;
 
 // const std::int32_t MAX_PACKWEIGHT = 400000;	// Lets have maximum weight of packs be 400 stones for now
 // o------------------------------------------------------------------------------------------------o
@@ -123,7 +125,7 @@ std::int32_t CWeight::CalcWeight(CItem *pack) {
             contWeight =
             i->GetBaseWeight(); // Find the base container weight, stored when item was created
             if (contWeight == 0) {   // If they have no weight grab the tiledata weight for the item
-                CTile &tile = Map->SeekTile(i->GetId());
+                CTile &tile = worldMULHandler.SeekTile(i->GetId());
                 contWeight =
                 static_cast<std::int32_t>(tile.Weight() * 100); // Add the weight of the container
             }
@@ -165,7 +167,7 @@ std::int32_t CWeight::CalcCharWeight(CChar *mChar) {
                 contWeight = i->GetBaseWeight(); // Find the base container weight, stored when item
                 // was created
                 if (contWeight == 0) { // If they have no weight grab the tiledata weight for the item
-                    CTile &tile = Map->SeekTile(i->GetId());
+                    CTile &tile = worldMULHandler.SeekTile(i->GetId());
                     contWeight =
                     static_cast<std::int32_t>(tile.Weight() * 100); // Add the weight of the container
                 }
@@ -195,7 +197,7 @@ std::int32_t CWeight::CalcCharWeight(CChar *mChar) {
 bool CWeight::CalcAddWeight(CItem *item, std::int32_t &totalWeight) {
     std::int32_t itemWeight = item->GetWeight();
     if (itemWeight == 0) { // If they have no weight find the weight of the tile
-        CTile &tile = Map->SeekTile(item->GetId());
+        CTile &tile = worldMULHandler.SeekTile(item->GetId());
         itemWeight = static_cast<std::int32_t>(tile.Weight() * 100);
     }
     
@@ -226,7 +228,7 @@ bool CWeight::CalcAddWeight(CItem *item, std::int32_t &totalWeight) {
 bool CWeight::CalcSubtractWeight(CItem *item, std::int32_t &totalWeight) {
     std::int32_t itemWeight = item->GetWeight();
     if (itemWeight == 0) { // If they have no weight find the weight of the tile
-        CTile &tile = Map->SeekTile(item->GetId());
+        CTile &tile = worldMULHandler.SeekTile(item->GetId());
         itemWeight = static_cast<std::int32_t>(tile.Weight() * 100);
     }
     

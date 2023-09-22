@@ -32,6 +32,11 @@
 extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
 extern WorldItem worldItem ;
+extern cRaces worldRace ;
+extern CGuildCollection worldGuildSystem ;
+extern CSpeechQueue worldSpeechSystem ;
+extern CJSEngine worldJSEngine ;
+
 using namespace std::string_literals;
 
 //	1.0		29th November, 2000
@@ -481,7 +486,7 @@ CSocket::CSocket(size_t sockNum) : currCharObj(nullptr), idleTimeout(DEFSOCK_IDL
 //|	Purpose		-	Cleans up after CSocket object and closes actual socket
 // o------------------------------------------------------------------------------------------------o
 CSocket::~CSocket() {
-    JSEngine->ReleaseObject(IUE_SOCK, this);
+    worldJSEngine.ReleaseObject(IUE_SOCK, this);
     
     if (ValidateObject(currCharObj)) {
         currCharObj->SetSocket(nullptr);
@@ -1371,7 +1376,7 @@ void CSocket::SysMessage(const std::string txt, ...) {
         Send(&unicodeMessage);
     }
     else {
-        CSpeechEntry &toAdd = SpeechSys->Add();
+        CSpeechEntry &toAdd = worldSpeechSystem.Add();
         toAdd.Speech(msg);
         toAdd.Font(FNT_NORMAL);
         toAdd.Speaker(INVALIDSERIAL);
@@ -1417,7 +1422,7 @@ void CSocket::SysMessageJS(const std::string &uformat, std::uint16_t txtColor, c
         Send(&unicodeMessage);
     }
     else {
-        CSpeechEntry &toAdd = SpeechSys->Add();
+        CSpeechEntry &toAdd = worldSpeechSystem.Add();
         toAdd.Unicode(true);
         toAdd.Speech(msg);
         toAdd.Font(FNT_NORMAL);
@@ -1465,7 +1470,7 @@ void CSocket::SysMessage(std::int32_t dictEntry, ...) {
         Send(&unicodeMessage);
     }
     else {
-        CSpeechEntry &toAdd = SpeechSys->Add();
+        CSpeechEntry &toAdd = worldSpeechSystem.Add();
         toAdd.Unicode(true);
         toAdd.Speech(msg);
         toAdd.Font(FNT_NORMAL);
@@ -1567,7 +1572,7 @@ void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, float secs
         Send(&unicodeMessage);
     }
     else {
-        CSpeechEntry &toAdd = SpeechSys->Add();
+        CSpeechEntry &toAdd = worldSpeechSystem.Add();
         toAdd.Speech(temp);
         toAdd.Font(FNT_NORMAL);
         toAdd.Speaker(getObj->GetSerial());
@@ -1643,7 +1648,7 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
         }
         if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACE) && i->GetRace() != 0 && i->GetRace() != 65535) {// need to check for placeholder race ( )
             charName += " (";
-            charName += Races->Name(i->GetRace());
+            charName += worldRace.Name(i->GetRace());
             charName += ")";
         }
         if (i->GetTownPriv() == 2) {
@@ -1676,7 +1681,7 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
         charName += " (guarded)";
     }
     if (i->GetGuildNumber() != -1 && !i->IsIncognito() && !i->IsDisguised()) {
-        GuildSys->DisplayTitle(this, i);
+        worldGuildSystem.DisplayTitle(this, i);
     }
     
     if (ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE)) {
@@ -1692,7 +1697,7 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
         Send(&unicodeMessage);
     }
     else {
-        CSpeechEntry &toAdd = SpeechSys->Add();
+        CSpeechEntry &toAdd = worldSpeechSystem.Add();
         toAdd.Speech(charName);
         toAdd.Font(FNT_NORMAL);
         toAdd.Speaker(i->GetSerial());
@@ -2008,10 +2013,10 @@ void CSocket::StatWindow(CBaseObject *targObj, bool updateParty) {
         // Item specific
         std::int16_t visRange = MAX_VISRANGE;
         if (mChar->GetSocket() != nullptr) {
-            visRange = mChar->GetSocket()->Range() + Races->VisRange(mChar->GetRace());
+            visRange = mChar->GetSocket()->Range() + worldRace.VisRange(mChar->GetRace());
         }
         else {
-            visRange += Races->VisRange(mChar->GetRace());
+            visRange += worldRace.VisRange(mChar->GetRace());
         }
         
         if (mChar->GetCommandLevel() < CL_CNS && (targObj->GetVisible() != VT_VISIBLE || !ObjInRange(mChar, targObj, static_cast<std::uint16_t>(visRange))))

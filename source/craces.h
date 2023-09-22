@@ -267,6 +267,5 @@ public:
     size_t Count() const;
 };
 
-extern cRaces *Races;
 
 #endif

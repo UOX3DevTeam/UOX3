@@ -15,7 +15,6 @@
 
 using namespace std::string_literals;
 
-CServerDefinitions *FileLookup;
 //==================================================================================================
 auto CurrentWorkingDir() -> std::string { return std::filesystem::current_path().string(); }
 

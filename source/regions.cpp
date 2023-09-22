@@ -18,11 +18,14 @@
 #include "utility/strutil.hpp"
 
 #include "useful.h"
+
+extern CMulHandler worldMULHandler ;
+extern CMapHandler worldMapHandler ;
+
 using namespace std::string_literals;
 
 #define DEBUG_REGIONS 0
 
-CMapHandler *MapRegion;
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	FileSize()
 // o------------------------------------------------------------------------------------------------o
@@ -220,7 +223,7 @@ CMapWorld::CMapWorld() : upperArrayX(0), upperArrayY(0), resourceX(0), resourceY
 //|	Purpose		-	Initializes resource regions for the given world
 // o------------------------------------------------------------------------------------------------o
 CMapWorld::CMapWorld(std::uint8_t worldNum) {
-    auto [mapWidth, mapHeight] = Map->SizeOfMap(worldNum);
+    auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(worldNum);
     upperArrayX = static_cast<std::int16_t>(mapWidth / MapColSize);
     upperArrayY = static_cast<std::int16_t>(mapHeight / MapRowSize);
     resourceX = static_cast<std::uint16_t>(mapWidth / ServerConfig::shared().ushortValues[UShortValue::RESOURCEAREASIZE] );
@@ -354,7 +357,7 @@ void CMapWorld::LoadResources(std::uint8_t worldNum) {
 //|	Purpose		-	Fills and clears the mapWorlds vector.
 // o------------------------------------------------------------------------------------------------o
 auto CMapHandler::startup() -> void {
-    std::uint8_t numWorlds = Map->MapCount();
+    std::uint8_t numWorlds = worldMULHandler.MapCount();
     
     mapWorlds.reserve(numWorlds);
     for (std::uint8_t i = 0; i < numWorlds; ++i) {
@@ -645,8 +648,8 @@ auto CMapHandler::PopulateList(CBaseObject *mObj) -> std::vector<CMapRegion *> {
 // o------------------------------------------------------------------------------------------------o
 auto CMapHandler::PopulateList(std::int16_t x, std::int16_t y, std::uint8_t worldNumber) -> std::vector<CMapRegion *> {
     std::vector<CMapRegion *> nearbyRegions;
-    const std::int16_t xOffset = MapRegion->GetGridX(x);
-    const std::int16_t yOffset = MapRegion->GetGridY(y);
+    const std::int16_t xOffset = worldMapHandler.GetGridX(x);
+    const std::int16_t yOffset = worldMapHandler.GetGridY(y);
     for (std::int8_t counter1 = -1; counter1 <= 1; ++counter1) {
         for (std::int8_t counter2 = -1; counter2 <= 1; ++counter2) {
             CMapRegion *MapArea = GetMapRegion(xOffset + counter1, yOffset + counter2, worldNumber);
@@ -674,8 +677,8 @@ void CMapHandler::Save() {
     std::ofstream writeDestination, houseDestination;
     std::int32_t onePercent = 0;
     std::uint8_t i = 0;
-    for (i = 0; i < Map->MapCount(); ++i) {
-        auto [mapWidth, mapHeight] = Map->SizeOfMap(i);
+    for (i = 0; i < worldMULHandler.MapCount(); ++i) {
+        auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(i);
         onePercent += static_cast<std::int32_t>((mapWidth / MapColSize) * (mapHeight / MapRowSize));
     }
     onePercent = static_cast<std::int32_t>(onePercent / 100.0f);

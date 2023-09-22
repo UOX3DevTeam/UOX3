@@ -7606,7 +7606,7 @@ Oct 13 2003 - giwo
 	Changed CWorldMain::escortRegions to a vector.
 	Removed cFileIO::LoadPreDefSpawnRegions() and moved its contents to the one refrence of it.
 	Removed cWorldMain::ResetDefaults() and allowed the constructor to do the work itself.
-	Removed calcSocketObjFromSock() and used Network->GetSockPtr() in its' place.
+	Removed calcSocketObjFromSock() and used worldNetwork.GetSockPtr() in its' place.
 	Added cSpawnRegion:: WorldNumber(), IncCurrentCharAmt(), and IncCurrentItemAmt().
 	Removed handlers.h from global scope, included it in those files which used it
 	Made Combat::WillResultInCriminal() public and made use of it throughout the source
@@ -8752,7 +8752,7 @@ Changed:
 	Added 'reloaddefs which allows runtime reloading of all definitions
 	(can be time consuming)
 	Fixed a bug with newbie items with text named items
-	Called SpeechSys->poll() just before a world save, so that the
+	Called worldSpeechSystem.poll() just before a world save, so that the
 	broadcast message telling about the save can be sent
 	Warning cleanups
 
@@ -12312,8 +12312,8 @@ Changed:
 	skills.cpp, sound.cpp, speech.cpp, targeting.cpp, targeting.h,
 	townregion.cpp, trade.cpp, uox3.cpp, vendor.cpp, weight.cpp,
 	wholist.cpp:
-	Encapsulated Network->GetSockPtr() in calcSocketObjFromSock
-	Encapsulated Network->FindNetworkPtr() in calcSocketFromSockObj()
+	Encapsulated worldNetwork.GetSockPtr() in calcSocketObjFromSock
+	Encapsulated worldNetwork.FindNetworkPtr() in calcSocketFromSockObj()
 	Changed many sysmessages() to be more dictionary friendly
 	Wrote 2 more target() functions that are dictionary friendly, and
 	converted all target() calls to these 2

@@ -18,6 +18,7 @@
 #include "type/clientversion.hpp"
 #include "cmagic.h"
 #include "cmultiobj.h"
+#include "commands.h"
 #include "combat.h"
 #include "csocket.h"
 
@@ -41,6 +42,12 @@
 extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
 extern CCharStuff worldNPC ;
+extern CMagic worldMagic ;
+extern cRaces worldRace ;
+extern CJSMapping worldJSMapping ;
+extern CGuildCollection worldGuildSystem ;
+extern CCommands serverCommands;
+extern CMulHandler worldMULHandler ;
 
 using namespace std::string_literals;
 // Unknown bytes
@@ -143,7 +150,7 @@ void CPCharLocBody::CopyData(CChar &toCopy) {
     pStream.WriteShort(19, 0xFFFF);
     pStream.WriteShort(21, 0xFFFF);
     pStream.WriteLong(23, 0x0000);
-    auto [width, height] = Map->SizeOfMap(toCopy.WorldNumber());
+    auto [width, height] = worldMULHandler.SizeOfMap(toCopy.WorldNumber());
     auto mapWidth = static_cast<std::uint16_t>(width);
     auto mapHeight = static_cast<std::uint16_t>(height);
     pStream.WriteShort(27, mapWidth);
@@ -3416,7 +3423,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial(CSocket *mSock, CChar *mChar, std::
         {
             pStream.WriteByte(byteOffset, 0x02);
             byteOffset += 2;
-            CGuild *mGuild = GuildSys->Guild(mChar->GetGuildNumber());
+            CGuild *mGuild = worldGuildSystem.Guild(mChar->GetGuildNumber());
             if (mGuild != nullptr) {
                 size_t numRecruits = mGuild->NumRecruits();
                 size_t numMembers = mGuild->NumMembers();
@@ -5730,7 +5737,7 @@ void CPNewSpellBook::CopyData(CItem &obj) {
     for (std::uint8_t i = 0; i < 64; ++i) {
         std::int32_t y = (i % 8);
         std::int32_t x = 15 + static_cast<std::int32_t>(i / 8);
-        if (Magic->HasSpell(&obj, i)) {
+        if (worldMagic.HasSpell(&obj, i)) {
             pStream.WriteByte(x, (pStream.GetByte(x) | static_cast<std::uint8_t>(power(2, y))));
         }
     }
@@ -6039,7 +6046,7 @@ void CPToolTip::CopyItemData(CItem &WorldItem, size_t &totalStringLen, bool addA
     // Custom item tooltips
     std::vector<std::uint16_t> scriptTriggers = WorldItem.GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute1 = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute1 = worldJSMapping.GetScript(scriptTrig);
         if (toExecute1 != nullptr) {
             // Custom tooltip - each word capitalized
             std::string textFromScript1 = toExecute1->OnTooltip(&WorldItem, tSock);
@@ -6062,7 +6069,7 @@ void CPToolTip::CopyItemData(CItem &WorldItem, size_t &totalStringLen, bool addA
     }
     
     // Also check the global script!
-    cScript *toExecuteGlobal = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+    cScript *toExecuteGlobal = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
     if (toExecuteGlobal != nullptr) {
         std::string textFromGlobalScript = toExecuteGlobal->OnTooltip(&WorldItem, tSock);
         if (!textFromGlobalScript.empty()) {
@@ -6419,7 +6426,7 @@ void CPToolTip::CopyCharData(CChar &mChar, size_t &totalStringLen) {
     // Show guild title in character tooltip?
     if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYGUILDTOOLTIP)) {
         if (!mChar.IsIncognito() && !mChar.IsDisguised()) {
-            CGuild *myGuild = GuildSys->Guild(mChar.GetGuildNumber());
+            CGuild *myGuild = worldGuildSystem.Guild(mChar.GetGuildNumber());
             if (myGuild != nullptr) {
                 tempEntry.stringNum = 1042971; // ~1_NOTHING~
                 auto guildTitle = mChar.GetGuildTitle();
@@ -6439,7 +6446,7 @@ void CPToolTip::CopyCharData(CChar &mChar, size_t &totalStringLen) {
     if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACE)) {
         if (mChar.GetRace() != 0 && mChar.GetRace() != 65535 && worldMain.creatures[mChar.GetId()].IsHuman()) { // need to check for placeholder race
             tempEntry.stringNum = 1042971; // ~1_NOTHING~
-            auto raceName = Races->Name(mChar.GetRace());
+            auto raceName = worldRace.Name(mChar.GetRace());
             tempEntry.ourText = util::format("%s", ("("s + raceName + ")"s).c_str());
             FinalizeData(tempEntry, totalStringLen);
         }
@@ -6469,7 +6476,7 @@ void CPToolTip::CopyCharData(CChar &mChar, size_t &totalStringLen) {
     // Custom character tooltips
     std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // Custom tooltip - each word capitalized
             std::string textFromScript = toExecute->OnTooltip(&mChar, tSock);
@@ -7151,7 +7158,7 @@ CPEnableMapDiffs::CPEnableMapDiffs() {
 }
 
 void CPEnableMapDiffs::CopyData() {
-    std::uint8_t mapCount = Map->MapCount();
+    std::uint8_t mapCount = worldMULHandler.MapCount();
     size_t pSize = ((static_cast<size_t>(mapCount) + 1) * 8) + 9;
     
     pStream.ReserveSize(pSize);
@@ -7159,7 +7166,7 @@ void CPEnableMapDiffs::CopyData() {
     pStream.WriteLong(5, mapCount + 1);
     
     for (std::uint8_t i = 0; i < mapCount; ++i) {
-        auto [stadif, mapdif] = Map->DiffCountForMap(i);
+        auto [stadif, mapdif] = worldMULHandler.DiffCountForMap(i);
         pStream.WriteLong(9 + (static_cast<size_t>(i) * 8), static_cast<std::uint32_t>(stadif));
         pStream.WriteLong(13 + (static_cast<size_t>(i) * 8), static_cast<std::uint32_t>(mapdif));
     }

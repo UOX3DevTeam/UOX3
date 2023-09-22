@@ -19,6 +19,8 @@
 #include "utility/strutil.hpp"
 
 extern WorldItem worldItem ;
+extern CServerDefinitions worldFileLookup ;
+extern CMulHandler worldMULHandler ;
 
 using namespace std::string_literals;
 
@@ -38,7 +40,7 @@ auto DoHouseTarget(CSocket *mSock, std::uint16_t houseEntry) -> void {
     std::uint16_t houseId = 0;
     std::string tag, data;
     auto sect = "HOUSE "s + util::ntos(houseEntry);
-    auto House = FileLookup->FindEntry(sect, house_def);
+    auto House = worldFileLookup.FindEntry(sect, house_def);
     if (House) {
         for (const auto &sec : House->collection()) {
             auto tag = sec->tag;
@@ -112,7 +114,7 @@ auto CreateHouseItems(CChar *mChar, std::vector<std::string> houseItems, CItem *
     
     for (const auto &entry : houseItems) {
         auto sect = "HOUSE ITEM "s + entry;
-        HouseItem = FileLookup->FindEntry(sect, house_def);
+        HouseItem = worldFileLookup.FindEntry(sect, house_def);
         if (HouseItem) {
             std::int16_t hiX = x, hiY = y;
             std::int8_t hiZ = z;
@@ -164,12 +166,12 @@ auto CreateHouseItems(CChar *mChar, std::vector<std::string> houseItems, CItem *
                                 // Let's assume default rotation is North/South oriented, and check
                                 // for walls to the left of the addon:
                                 [[maybe_unused]] std::uint16_t ignoreMe = 0;
-                                bool wallFound = (Map->CheckDynamicFlag(
+                                bool wallFound = (worldMULHandler.CheckDynamicFlag(
                                                                         hItem->GetX() - 1, hItem->GetY(), hItem->GetZ(), worldNum,
                                                                         hInstanceId, TF_WALL, ignoreMe));
                                 if (wallFound) {
                                     // What if it's placed in a corner? Look for north wall too:
-                                    bool northWallFound = (Map->CheckDynamicFlag(
+                                    bool northWallFound = (worldMULHandler.CheckDynamicFlag(
                                                                                  hItem->GetX(), hItem->GetY() - 1, hItem->GetZ(), worldNum,
                                                                                  hInstanceId, TF_WALL, ignoreMe));
                                     if (northWallFound) {
@@ -290,7 +292,7 @@ auto CreateHouseItems(CChar *mChar, std::vector<std::string> houseItems, CItem *
 auto CheckForValidHouseLocation(CSocket *mSock, CChar *mChar, std::int16_t x, std::int16_t y, std::int8_t z, std::int16_t spaceX,
                                 std::int16_t spaceY, std::uint8_t worldNum, std::uint16_t instanceId, bool isBoat,
                                 bool isMulti) -> bool {
-    auto [mapWidth, mapHeight] = Map->SizeOfMap(worldNum);
+    auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(worldNum);
     if ((x + spaceX > mapWidth || x - spaceX < 0 || y + spaceY > mapHeight || y - spaceY < 0) &&
         !mChar->IsGM()) {
         if (mSock) {
@@ -365,7 +367,7 @@ auto CheckForValidHouseLocation(CSocket *mSock, CChar *mChar, std::int16_t x, st
                     
                     // Don't allow placing addon if it collides with a blocking tile at same height
                     [[maybe_unused]] std::uint16_t ignoreMe = 0;
-                    bool locationBlocked = (Map->CheckDynamicFlag(
+                    bool locationBlocked = (worldMULHandler.CheckDynamicFlag(
                                                                   curX, curY, z, worldNum, instanceId, TF_BLOCKING, ignoreMe));
                     if (locationBlocked) {
                         if (mSock) {
@@ -410,7 +412,7 @@ auto CheckForValidHouseLocation(CSocket *mSock, CChar *mChar, std::int16_t x, st
                     checkForRoads = true;
                 }
                 
-                std::uint8_t retVal1 = Map->ValidMultiLocation(curX, curY, z, worldNum, instanceId, !isBoat,checkOnlyMultis, checkOnlyNonMultis, checkForRoads);
+                std::uint8_t retVal1 = worldMULHandler.ValidMultiLocation(curX, curY, z, worldNum, instanceId, !isBoat,checkOnlyMultis, checkOnlyNonMultis, checkForRoads);
                 auto retVal2 = FindMulti(curX, curY, z, worldNum, instanceId);
                 
                 if (retVal1 != 1 || retVal2 != nullptr) {
@@ -502,7 +504,7 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
     // Use coordinates if provided in arguments, otherwise rely on values stored on socket
     const std::int16_t x = xLoc > -1 ? xLoc : mSock->GetWord(11);
     const std::int16_t y = yLoc > -1 ? yLoc : mSock->GetWord(13);
-    std::int8_t tileHeight = zLoc != 127 ? 0 : Map->TileHeight(mSock->GetWord(17));
+    std::int8_t tileHeight = zLoc != 127 ? 0 : worldMULHandler.TileHeight(mSock->GetWord(17));
     std::int8_t z = zLoc != 127 ? zLoc : static_cast<std::int8_t>(mSock->GetByte(16) + tileHeight);
     
     if (mSock) {
@@ -541,7 +543,7 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
     std::map<std::string, TagMap> customTagMap;
     
     std::string sect = "HOUSE " + util::ntos(houseEntry);
-    CScriptSection *House = FileLookup->FindEntry(sect, house_def);
+    CScriptSection *House = worldFileLookup.FindEntry(sect, house_def);
     if (House == nullptr)
         return nullptr; // House entry not found
     
@@ -792,7 +794,7 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
         std::int16_t multiY1 = 0;
         std::int16_t multiX2 = 0;
         std::int16_t multiY2 = 0;
-        Map->MultiArea(house, multiX1, multiY1, multiX2, multiY2);
+        worldMULHandler.MultiArea(house, multiX1, multiY1, multiX2, multiY2);
         
         // Set ban location X and Y offsets.
         if (bx == 0 && by == 0) {
@@ -980,7 +982,7 @@ CMultiObj *BuildBaseMulti(std::uint16_t multiId, std::int16_t xLoc = -1, std::in
     std::int16_t multiY1 = 0;
     std::int16_t multiX2 = 0;
     std::int16_t multiY2 = 0;
-    Map->MultiArea(iMulti, multiX1, multiY1, multiX2, multiY2);
+    worldMULHandler.MultiArea(iMulti, multiX1, multiY1, multiX2, multiY2);
     
     // Move characters out of the way
     for (auto &ourChar : FindNearbyChars(xLoc, yLoc, worldNumber, instanceId, std::max(sx, sy))) {

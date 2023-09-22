@@ -26,6 +26,7 @@
 #include "townregion.h"
 #include "utility/strutil.hpp"
 
+extern CServerDefinitions worldFileLookup ;
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	loadCustomTitle()
@@ -36,7 +37,7 @@ void loadCustomTitle() {
     size_t titlecount = 0;
     std::string tag;
     std::string data;
-    CScriptSection *CustomTitle = FileLookup->FindEntry("SKILL", titles_def);
+    CScriptSection *CustomTitle = worldFileLookup.FindEntry("SKILL", titles_def);
     if (CustomTitle == nullptr) {
         return;
     }
@@ -45,7 +46,7 @@ void loadCustomTitle() {
         worldMain.title[titlecount].skill = data;
         ++titlecount;
     }
-    CustomTitle = FileLookup->FindEntry("PROWESS", titles_def);
+    CustomTitle = worldFileLookup.FindEntry("PROWESS", titles_def);
     if (CustomTitle == nullptr) {
         return;
     }
@@ -54,7 +55,7 @@ void loadCustomTitle() {
         worldMain.prowessTitles.push_back(TitlePair(static_cast<std::int16_t>(std::stoi(tag, nullptr, 0)), data));
     }
     
-    CustomTitle = FileLookup->FindEntry("FAME", titles_def);
+    CustomTitle = worldFileLookup.FindEntry("FAME", titles_def);
     if (CustomTitle == nullptr) {
         return;
     }
@@ -68,7 +69,7 @@ void loadCustomTitle() {
     }
     
     // Murder tags now scriptable in SECTION MURDER - Titles.dfn
-    CustomTitle = FileLookup->FindEntry("MURDERER", titles_def);
+    CustomTitle = worldFileLookup.FindEntry("MURDERER", titles_def);
     if (CustomTitle == nullptr) {
         return;
     }
@@ -77,7 +78,7 @@ void loadCustomTitle() {
         worldMain.murdererTags.push_back(TitlePair(static_cast<std::int16_t>(std::stoi(tag, nullptr, 0)), data));
     }
     
-    FileLookup->Dispose(titles_def);
+    worldFileLookup.Dispose(titles_def);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -89,7 +90,7 @@ void loadSkills() {
     std::string skEntry;
     std::string tag, data, UTag;
     std::uint8_t i = 0;
-    for (Script *creatScp = FileLookup->FirstScript(skills_def); !FileLookup->FinishedScripts(skills_def); creatScp = FileLookup->NextScript(skills_def)) {
+    for (Script *creatScp = worldFileLookup.FirstScript(skills_def); !worldFileLookup.FinishedScripts(skills_def); creatScp = worldFileLookup.NextScript(skills_def)) {
         if (creatScp == nullptr)
             continue;
         
@@ -157,7 +158,7 @@ void loadSkills() {
 void loadSpawnRegions() {
     worldMain.spawnRegions.clear();
     std::uint16_t i = 0;
-    for (Script *spnScp = FileLookup->FirstScript(spawn_def);!FileLookup->FinishedScripts(spawn_def); spnScp = FileLookup->NextScript(spawn_def)) {
+    for (Script *spnScp = worldFileLookup.FirstScript(spawn_def);!worldFileLookup.FinishedScripts(spawn_def); spnScp = worldFileLookup.NextScript(spawn_def)) {
         if (spnScp == nullptr)
             continue;
         
@@ -199,7 +200,7 @@ void loadRegions() {
     
     std::uint16_t i = 0;
     std::string regEntry;
-    for (Script *regScp = FileLookup->FirstScript(regions_def);!FileLookup->FinishedScripts(regions_def); regScp = FileLookup->NextScript(regions_def)) {
+    for (Script *regScp = worldFileLookup.FirstScript(regions_def);!worldFileLookup.FinishedScripts(regions_def); regScp = worldFileLookup.NextScript(regions_def)) {
         if (regScp == nullptr)
             continue;
         
@@ -237,7 +238,7 @@ void loadRegions() {
     
     // Load Instant Logout regions from [INSTALOG] section of regions.dfn
     // Note that all the tags below are required to setup valid locations
-    CScriptSection *InstaLog = FileLookup->FindEntry("INSTALOG", regions_def);
+    CScriptSection *InstaLog = worldFileLookup.FindEntry("INSTALOG", regions_def);
     if (InstaLog == nullptr)
         return;
     
@@ -270,7 +271,7 @@ void loadRegions() {
     
     // Load areas valid for SOS coordinates from [SOSAREAS] section of regions.dfn
     // Note that all the tags below are required to setup valid locations
-    CScriptSection *sosAreas = FileLookup->FindEntry("SOSAREAS", regions_def);
+    CScriptSection *sosAreas = worldFileLookup.FindEntry("SOSAREAS", regions_def);
     if (sosAreas == nullptr)
         return;
     
@@ -383,7 +384,7 @@ void loadCreatures() {
     std::string cEntry;
     std::string tag, data, UTag;
     std::uint16_t i = 0;
-    for (Script *creatScp = FileLookup->FirstScript(creatures_def);!FileLookup->FinishedScripts(creatures_def);creatScp = FileLookup->NextScript(creatures_def)) {
+    for (Script *creatScp = worldFileLookup.FirstScript(creatures_def);!worldFileLookup.FinishedScripts(creatures_def);creatScp = worldFileLookup.NextScript(creatures_def)) {
         if (creatScp == nullptr)
             continue;
         
@@ -514,7 +515,7 @@ void loadCreatures() {
         }
     }
     
-    FileLookup->Dispose(creatures_def);
+    worldFileLookup.Dispose(creatures_def);
 }
 
 void ReadWorldTagData(std::istream &inStream, std::string &tag, std::string &data) {
@@ -579,7 +580,7 @@ void loadPlaces() {
     std::string data, UTag, entryName;
     GoPlaces *toAdd = nullptr;
     
-    for (Script *locScp = FileLookup->FirstScript(location_def); !FileLookup->FinishedScripts(location_def); locScp = FileLookup->NextScript(location_def)) {
+    for (Script *locScp = worldFileLookup.FirstScript(location_def); !worldFileLookup.FinishedScripts(location_def); locScp = worldFileLookup.NextScript(location_def)) {
         if (locScp == nullptr) {
             continue;
         }
@@ -639,6 +640,6 @@ void loadPlaces() {
         }
     }
     
-    FileLookup->Dispose(location_def);
+    worldFileLookup.Dispose(location_def);
 }
 

@@ -20,6 +20,8 @@
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
+extern CServerDefinitions worldFileLookup ;
+extern CMulHandler worldMULHandler ;
 
 using namespace std::string_literals;
 
@@ -371,7 +373,7 @@ void CSpawnRegion::SetItemList(std::string newVal) {
 // o------------------------------------------------------------------------------------------------o
 void CSpawnRegion::LoadNPCList(const std::string &npcList) {
     std::string sect = "NPCLIST " + npcList;
-    CScriptSection *CharList = FileLookup->FindEntry(sect, npc_def);
+    CScriptSection *CharList = worldFileLookup.FindEntry(sect, npc_def);
     if (CharList != nullptr) {
         for (std::string npc = CharList->First(); !CharList->AtEnd(); npc = CharList->Next()) {
             if (util::upper(npc) == "NPCLIST") {
@@ -392,7 +394,7 @@ void CSpawnRegion::LoadNPCList(const std::string &npcList) {
 // o------------------------------------------------------------------------------------------------o
 void CSpawnRegion::LoadItemList(const std::string &itemList) {
     std::string sect = "ITEMLIST " + itemList;
-    CScriptSection *ItemList = FileLookup->FindEntry(sect, items_def);
+    CScriptSection *ItemList = worldFileLookup.FindEntry(sect, items_def);
     if (ItemList != nullptr) {
         for (std::string itm = ItemList->First(); !ItemList->AtEnd(); itm = ItemList->Next()) {
             if (util::upper(itm) == "ITEMLIST") {
@@ -587,7 +589,7 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar * {
         ourNPC = worldNPC.NpcListLookup(ourNPC);
     }
     
-    CScriptSection *npcCreate = FileLookup->FindEntry(ourNPC, npc_def);
+    CScriptSection *npcCreate = worldFileLookup.FindEntry(ourNPC, npc_def);
     if (npcCreate == nullptr)
         return nullptr;
     
@@ -698,7 +700,7 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
     for (std::uint8_t a = 0; a < maxSpawnAttempts; ++a) {
         x = RandomNum(x1, x2);
         y = RandomNum(y1, y2);
-        z = Map->MapElevation(x, y, worldNumber);
+        z = worldMULHandler.MapElevation(x, y, worldNumber);
         
         if (defZ != ILLEGAL_Z) {
             // Use the definite Z level defined in the spawn region
@@ -707,14 +709,14 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         }
         else {
             // No definite Z has been defined, look for valid dynamic Z based on prefZ
-            const std::int8_t dynZ = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+            const std::int8_t dynZ = worldMULHandler.DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
             if (ILLEGAL_Z != dynZ) {
                 z = dynZ;
             }
             
             // Even if we got a valid dynamic Z, there might be a better match with statics, based
             // on prefZ
-            const std::int8_t staticZ = Map->StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticZ = worldMULHandler.StaticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticZ && staticZ > z) {
                 z = staticZ;
             }
@@ -758,8 +760,8 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         
         // Since our chosen location has not already been validated, lets validate it with a
         // land-based creature in mind
-        if (!waterCreature && Map->ValidSpawnLocation(x, y, z, worldNumber, instanceId)) {
-            if (onlyOutside == false || !Map->InBuilding(x, y, z, worldNumber, instanceId)) {
+        if (!waterCreature && worldMULHandler.ValidSpawnLocation(x, y, z, worldNumber, instanceId)) {
+            if (onlyOutside == false || !worldMULHandler.InBuilding(x, y, z, worldNumber, instanceId)) {
                 if (z != ILLEGAL_Z) {
                     rValue = true;
                     validLandPos.push_back(Point3(x, y, z));
@@ -770,8 +772,8 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         }
         
         // Otherwise, validate it with a water-based creature in mind instead
-        if ((waterCreature || amphiCreature) && Map->ValidSpawnLocation(x, y, z, worldNumber, instanceId, false)) {
-            if (onlyOutside == false || !Map->InBuilding(x, y, z, worldNumber, instanceId)) {
+        if ((waterCreature || amphiCreature) && worldMULHandler.ValidSpawnLocation(x, y, z, worldNumber, instanceId, false)) {
+            if (onlyOutside == false || !worldMULHandler.InBuilding(x, y, z, worldNumber, instanceId)) {
                 rValue = true;
                 validWaterPos.push_back(Point3(x, y, z));
                 validWaterPosCheck[y + (x << 16)] = z;
@@ -787,13 +789,13 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         y = static_cast<std::int16_t>(currLoc.y);
         z = static_cast<std::int8_t>(currLoc.z);
         // Recalculate the z coordinate to see whether something has changed
-        z2 = Map->MapElevation(x, y, worldNumber);
-        const std::int8_t dynz = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+        z2 = worldMULHandler.MapElevation(x, y, worldNumber);
+        const std::int8_t dynz = worldMULHandler.DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
         if (ILLEGAL_Z != dynz) {
             z2 = dynz;
         }
         else {
-            const std::int8_t staticz = Map->StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticz = worldMULHandler.StaticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticz) {
                 z2 = staticz;
             }
@@ -809,13 +811,13 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         y = static_cast<std::int16_t>(currLoc.y);
         z = static_cast<std::int8_t>(currLoc.z);
         // Recalculate the z coordinate to see whether something has changed
-        z2 = Map->MapElevation(x, y, worldNumber);
-        const std::int8_t dynz = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+        z2 = worldMULHandler.MapElevation(x, y, worldNumber);
+        const std::int8_t dynz = worldMULHandler.DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
         if (ILLEGAL_Z != dynz) {
             z2 = dynz;
         }
         else {
-            const std::int8_t staticz = Map->StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticz = worldMULHandler.StaticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticz) {
                 z2 = staticz;
             }
@@ -852,7 +854,7 @@ bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
     for (std::uint8_t a = 0; a < maxSpawnAttempts; ++a) {
         x = RandomNum(x1, x2);
         y = RandomNum(y1, y2);
-        z = Map->MapElevation(x, y, worldNumber);
+        z = worldMULHandler.MapElevation(x, y, worldNumber);
         
         if (defZ != ILLEGAL_Z) {
             // Use the definite Z level defined in the spawn region
@@ -861,14 +863,14 @@ bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         }
         else {
             // No definite Z has been defined, look for valid dynamic Z based on prefZ
-            const std::int8_t dynZ = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+            const std::int8_t dynZ = worldMULHandler.DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
             if (ILLEGAL_Z != dynZ) {
                 z = dynZ;
             }
             
             // Even if we got a valid dynamic Z, there might be a better match with statics, based
             // on prefZ
-            const std::int8_t staticZ = Map->StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticZ = worldMULHandler.StaticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticZ && staticZ > z) {
                 z = staticZ;
             }
@@ -887,8 +889,8 @@ bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
             }
         }
         
-        if (Map->ValidSpawnLocation(x, y, z, worldNumber, instanceId)) {
-            if (onlyOutside == false || !Map->InBuilding(x, y, z, worldNumber, instanceId)) {
+        if (worldMULHandler.ValidSpawnLocation(x, y, z, worldNumber, instanceId)) {
+            if (onlyOutside == false || !worldMULHandler.InBuilding(x, y, z, worldNumber, instanceId)) {
                 rValue = true;
                 validLandPos.push_back(Point3(x, y, z));
                 validLandPosCheck[y + (x << 16)] = z;
@@ -904,13 +906,13 @@ bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         y = static_cast<std::int16_t>(currLoc.y);
         z = static_cast<std::int8_t>(currLoc.z);
         // Recalculate the z coordinate to see whether something has changed
-        z2 = Map->MapElevation(x, y, worldNumber);
-        const std::int8_t dynz = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+        z2 = worldMULHandler.MapElevation(x, y, worldNumber);
+        const std::int8_t dynz = worldMULHandler.DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
         if (ILLEGAL_Z != dynz) {
             z2 = dynz;
         }
         else {
-            const std::int8_t staticz = Map->StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticz = worldMULHandler.StaticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticz) {
                 z2 = staticz;
             }

@@ -31,6 +31,13 @@
 
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
+extern CSkills worldSkill ;
+extern CMagic worldMagic ;
+extern cRaces worldRace ;
+extern CMovement worldMovement ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern CMapHandler worldMapHandler ;
 
 #define SWINGAT static_cast<std::uint32_t>(1.75) * 1000
 
@@ -179,7 +186,7 @@ bool CHandleCombat::StartAttack(CChar *cAttack, CChar *cTarget) {
     else {
         std::uint16_t toPlay = worldMain.creatures[cAttack->GetId()].GetSound(SND_STARTATTACK);
         if (toPlay != 0x00 && RandomNum(1, 3)) {// 33% chance to play the sound
-            Effects->PlaySound(cAttack, toPlay);
+            worldEffect.PlaySound(cAttack, toPlay);
         }
         
         // if the source is an npc, make sure they're in war mode and reset their movement time
@@ -269,7 +276,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
                             if (LineOfSight(s, ourChar, i->GetX(), i->GetY(), (i->GetZ() + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
                                 // Play Resurrect casting animation
                                 if (i->GetBodyType() == BT_GARGOYLE || ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET)) {
-                                    Effects->PlayNewCharacterAnimation(i, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
+                                    worldEffect.PlayNewCharacterAnimation(i, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                                 }
                                 else {
                                     std::uint16_t castAnim = static_cast<std::uint16_t>(worldMain.creatures[i->GetId()].CastAnimTargetId());
@@ -278,11 +285,11 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
                                     // Play cast anim, but fallback to default attack anim (0x04) with
                                     // anim length of 4 frames if no cast anim was defined in
                                     // creatures.dfn
-                                    Effects->PlayCharacterAnimation(i, (castAnim != 0 ? castAnim : 0x04), 0, (castAnimLength != 0 ? castAnimLength : 4));
+                                    worldEffect.PlayCharacterAnimation(i, (castAnim != 0 ? castAnim : 0x04), 0, (castAnimLength != 0 ? castAnimLength : 4));
                                 }
                                 
                                 NpcResurrectTarget(ourChar);
-                                Effects->PlayStaticAnimation(ourChar, 0x376A, 0x09, 0x06);
+                                worldEffect.PlayStaticAnimation(ourChar, 0x376A, 0x09, 0x06);
                                 i->TextMessage(nullptr, (316 + RandomNum(0, 4)), TALK, false); // Random resurrection speak from NPC healer
                             }
                         }
@@ -302,7 +309,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
                             if (LineOfSight(s, ourChar, i->GetX(), i->GetY(), (i->GetZ() + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
                                 // Play Resurrect casting animation
                                 if (i->GetBodyType() == BT_GARGOYLE || ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET)) {
-                                    Effects->PlayNewCharacterAnimation( i, N_ACT_SPELL,  S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
+                                    worldEffect.PlayNewCharacterAnimation( i, N_ACT_SPELL,  S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                                 }
                                 else {
                                     std::uint16_t castAnim = static_cast<std::uint16_t>( worldMain.creatures[i->GetId()].CastAnimTargetId());
@@ -311,11 +318,11 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
                                     // Play cast anim, but fallback to default attack anim (0x04) with
                                     // anim length of 4 frames if no cast anim was defined in
                                     // creatures.dfn
-                                    Effects->PlayCharacterAnimation( i, (castAnim != 0 ? castAnim : 0x04), 0, (castAnimLength != 0 ? castAnimLength : 4));
+                                    worldEffect.PlayCharacterAnimation( i, (castAnim != 0 ? castAnim : 0x04), 0, (castAnimLength != 0 ? castAnimLength : 4));
                                 }
                                 
                                 NpcResurrectTarget(ourChar);
-                                Effects->PlayStaticAnimation(ourChar, 0x3709, 0x09, 0x19); // Flamestrike effect
+                                worldEffect.PlayStaticAnimation(ourChar, 0x3709, 0x09, 0x19); // Flamestrike effect
                                 i->TextMessage(nullptr, (323 + RandomNum(0, 4)), TALK, false); // Random resurrection speak from evil NPC healer
                             }
                         }
@@ -330,7 +337,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
         else { // if target is a player
             if (ServerConfig::shared().enabled(ServerSwitch::PLAYERPERSECUTION)) {
                 ourChar->SetTarg(i);
-                Skills->Persecute(s);
+                worldSkill.Persecute(s);
                 return;
             }
             else {
@@ -343,7 +350,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
         if (ourChar->GetTarg() != i) {// if player is alive
             std::vector<std::uint16_t> scriptTriggers = ourChar->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     // -1 == script doesn't exist, or returned -1
                     // 0 == script returned false, 0, or nothing - don't execute hard code
@@ -360,7 +367,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
             // combat with this character
             std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     // -1 == script doesn't exist, or returned -1
                     // 0 == script returned false, 0, or nothing - don't execute hard code
@@ -499,7 +506,7 @@ void CHandleCombat::AttackTarget(CChar *cAttack, CChar *cTarget) {
     // Check if OnCombatStart event exists, necessary here to make event run for NPCs attacking
     std::vector<std::uint16_t> scriptTriggers = cAttack->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // -1 == script doesn't exist, or returned -1
             // 0 == script returned false, 0, or nothing - don't execute hard code
@@ -1412,7 +1419,7 @@ void CHandleCombat::CombatAnimsNew(CChar *i) {
                 break; // 0x00
         }
     }
-    Effects->PlayNewCharacterAnimation(i, animToPlay, subAnimToPlay);
+    worldEffect.PlayNewCharacterAnimation(i, animToPlay, subAnimToPlay);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1463,7 +1470,7 @@ void CHandleCombat::CombatOnHorse(CChar *i) {
             animToPlay = ACT_MOUNT_ATT_1H;
             break; // 0x1A
     }
-    Effects->PlayCharacterAnimation(i, animToPlay, 0, frameCount);
+    worldEffect.PlayCharacterAnimation(i, animToPlay, 0, frameCount);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1525,7 +1532,7 @@ void CHandleCombat::CombatOnFoot(CChar *i) {
             }
             break;
     }
-    Effects->PlayCharacterAnimation(i, animToPlay, 0, 7);
+    worldEffect.PlayCharacterAnimation(i, animToPlay, 0, 7);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1599,13 +1606,13 @@ void CHandleCombat::PlaySwingAnimations(CChar *mChar) {
         }
         
         // Play the selected attack animation
-        Effects->PlayCharacterAnimation(mChar, attackAnim, 0, attackAnimLength);
+        worldEffect.PlayCharacterAnimation(mChar, attackAnim, 0, attackAnimLength);
         
         // Play attack sound effect
         if (RandomNum(0, 4)) {// 20% chance of playing SFX when attacking
             std::uint16_t toPlay = worldMain.creatures[charId].GetSound(SND_ATTACK);
             if (toPlay != 0x00) {
-                Effects->PlaySound(mChar, toPlay);
+                worldEffect.PlaySound(mChar, toPlay);
             }
         }
     }
@@ -1634,21 +1641,21 @@ void CHandleCombat::PlayMissedSoundEffect(CChar *p) {
     switch (GetWeaponType(weapon)) {
         case BOWS:
         case XBOWS:
-            Effects->PlaySound(p, RandomNum(0x04c8, 0x04c9));
+            worldEffect.PlaySound(p, RandomNum(0x04c8, 0x04c9));
             break;
         case BLOWGUNS:
-            Effects->PlaySound(p, 0x052F);
+            worldEffect.PlaySound(p, 0x052F);
             break;
         default:
             switch (RandomNum(0, 2)) {
                 case 0:
-                    Effects->PlaySound(p, 0x0238);
+                    worldEffect.PlaySound(p, 0x0238);
                     break;
                 case 1:
-                    Effects->PlaySound(p, 0x0239);
+                    worldEffect.PlaySound(p, 0x0239);
                     break;
                 default:
-                    Effects->PlaySound(p, 0x023A);
+                    worldEffect.PlaySound(p, 0x023A);
                     break;
             }
     }
@@ -1668,48 +1675,48 @@ void CHandleCombat::PlayHitSoundEffect(CChar *p, CItem *weapon) {
         case TWOHND_AXES:
         case DEF_MACES:
         case LG_MACES:
-            Effects->PlaySound(p, RandomNum(0x0232, 0x0233)); // Whoosh Weapons
+            worldEffect.PlaySound(p, RandomNum(0x0232, 0x0233)); // Whoosh Weapons
             break;
         case DEF_SWORDS:
         case DEF_FENCING:
         case TWOHND_FENCING:
         case DUAL_FENCING_STAB:
-            Effects->PlaySound(p, RandomNum(0x023B, 0x023C)); // Stabbing Weapons
+            worldEffect.PlaySound(p, RandomNum(0x023B, 0x023C)); // Stabbing Weapons
             break;
         case BARDICHE:
-            Effects->PlaySound(p, RandomNum(0x0236, 0x0237)); // Bardiche
+            worldEffect.PlaySound(p, RandomNum(0x0236, 0x0237)); // Bardiche
             break;
         case SLASH_SWORDS:
         case DUAL_SWORD:
         case DUAL_FENCING_SLASH:
         case ONEHND_LG_SWORDS:
-            Effects->PlaySound(p, RandomNum(0x023B, 0x023C)); // Slashing Weapons
+            worldEffect.PlaySound(p, RandomNum(0x023B, 0x023C)); // Slashing Weapons
             break;
         case TWOHND_LG_SWORDS:
-            Effects->PlaySound(p, RandomNum(0x0236, 0x0237)); // Large Swords
+            worldEffect.PlaySound(p, RandomNum(0x0236, 0x0237)); // Large Swords
             break;
         case BOWS:
         case XBOWS:
-            Effects->PlaySound(p, 0x0234); // Bows
+            worldEffect.PlaySound(p, 0x0234); // Bows
             break;
         case BLOWGUNS:
-            Effects->PlaySound(p, RandomNum(0x0223, 0x0224)); // Darts
+            worldEffect.PlaySound(p, RandomNum(0x0223, 0x0224)); // Darts
             break;
         case WRESTLING:
         default:
             switch (RandomNum(0, 3)) // Wrestling
             {
                 case 0:
-                    Effects->PlaySound(p, 0x0135);
+                    worldEffect.PlaySound(p, 0x0135);
                     break;
                 case 1:
-                    Effects->PlaySound(p, 0x0137);
+                    worldEffect.PlaySound(p, 0x0137);
                     break;
                 case 2:
-                    Effects->PlaySound(p, 0x013D);
+                    worldEffect.PlaySound(p, 0x013D);
                     break;
                 default:
-                    Effects->PlaySound(p, 0x013B);
+                    worldEffect.PlaySound(p, 0x013B);
                     break;
             }
     }
@@ -1731,7 +1738,7 @@ std::int16_t CHandleCombat::AdjustRaceDamage(CChar *attack, CChar *defend, CItem
     if (weapon->GetRace() == defend->GetRace()) {
         amount = bDamage;
     }
-    CRace *rPtr = Races->Race(defend->GetRace());
+    CRace *rPtr = worldRace.Race(defend->GetRace());
     if (rPtr != nullptr) {
         for (std::int32_t i = LIGHT; i < Weather::numberweather; ++i) {
             if (weapon->GetWeatherDamage(static_cast<Weather::type_t>(i)) && rPtr->AffectedBy(static_cast<Weather::type_t>(i))) {
@@ -1941,7 +1948,7 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(Weather::type_t damageType, CChar
     float damage = 0;
     std::int32_t RaceDamage = 0;
     CItem *mWeapon = GetWeapon(mChar);
-    CRace *rPtr = Races->Race(ourTarg->GetRace());
+    CRace *rPtr = worldRace.Race(ourTarg->GetRace());
     
     switch (damageType) {
         case Weather::NONE:
@@ -1949,7 +1956,7 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(Weather::type_t damageType, CChar
             break;
         case Weather::PHYSICAL:
             // Race Dmg Modification: Bonus percentage.
-            RaceDamage = Races->DamageFromSkill(getFightSkill, mChar->GetRace());
+            RaceDamage = worldRace.DamageFromSkill(getFightSkill, mChar->GetRace());
             if (RaceDamage != 0) {
                 baseDamage += static_cast<std::int16_t>(static_cast<float>(baseDamage) * (static_cast<float>(RaceDamage) / 1000));
             }
@@ -2181,7 +2188,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
             bool parrySuccess = false;
             if (ValidateObject(shield)) {
                 // Perform a skillcheck to potentially give player a skill increase
-                Skills->CheckSkill(ourTarg, PARRYING, 0, 1000);
+                worldSkill.CheckSkill(ourTarg, PARRYING, 0, 1000);
                 
                 // Get parry skill value
                 std::uint16_t defendParry = ourTarg->GetSkill(PARRYING);
@@ -2238,7 +2245,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                 
                 if (parrySuccess) {
                     // Play shield parrying FX
-                    Effects->PlayStaticAnimation(ourTarg, 0x37b9, 10, 16);
+                    worldEffect.PlayStaticAnimation(ourTarg, 0x37b9, 10, 16);
                     
                     auto loShieldDamage = ServerConfig::shared().ushortValues[UShortValue::MINPARRYDAMAGE];
                     auto hiShieldDamage = ServerConfig::shared().ushortValues[UShortValue::MAXPARRYDAMAGE];
@@ -2341,7 +2348,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                 CItem *mWeapon = GetWeapon(ourTarg);
                 if (mWeapon) {
                     // Perform a skillcheck for Bushido regardless of weapon equipped
-                    Skills->CheckSkill(ourTarg, BUSHIDO, 0, 1000);
+                    worldSkill.CheckSkill(ourTarg, BUSHIDO, 0, 1000);
                     
                     // Fetch relevant skill values
                     std::uint16_t defendParry = ourTarg->GetSkill(PARRYING);
@@ -2383,7 +2390,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                         damage = 0;
                         
                         // Play parrying FX
-                        Effects->PlayStaticAnimation(ourTarg, 0x37b9, 10, 16);
+                        worldEffect.PlayStaticAnimation(ourTarg, 0x37b9, 10, 16);
                         
                         if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYHITMSG) && targSock != NULL) {
                             targSock->SysMessage(1982); // You parry the attack!
@@ -2439,7 +2446,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                             getDef = 0;
                             
                             // Play parrying FX
-                            Effects->PlayStaticAnimation(ourTarg, 0x37b9, 10, 16);
+                            worldEffect.PlayStaticAnimation(ourTarg, 0x37b9, 10, 16);
                         }
                     }
                 }
@@ -2478,7 +2485,7 @@ std::int16_t CHandleCombat::CalcDamage(CChar *mChar, CChar *ourTarg, std::uint8_
     
     std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // -1 == event doesn't exist, default to hard code
             // Other value = calculated damage from script
@@ -2544,7 +2551,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
     // Trigger onSwing for scripts attached to attacker
     std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             if (toExecute->OnSwing(mWeapon, &mChar, ourTarg) == 0) {
                 return true;
@@ -2556,7 +2563,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
     if (mWeapon != nullptr) {
         std::vector<std::uint16_t> weaponScriptTriggers = mWeapon->GetScriptTriggers();
         for (auto scriptTrig : weaponScriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 if (toExecute->OnSwing(mWeapon, &mChar, ourTarg) == 0) {
                     return true;
@@ -2581,7 +2588,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
         
         if (mChar.IsNpc()) {
             if (mChar.GetNpcWander() != WT_FLEE && mChar.GetNpcWander() != WT_SCARED) {
-                std::uint8_t charDir = Movement->Direction(&mChar, ourTarg->GetX(), ourTarg->GetY());
+                std::uint8_t charDir = worldMovement.Direction(&mChar, ourTarg->GetX(), ourTarg->GetY());
                 if (mChar.GetDir() != charDir && charDir < 8) {
                     mChar.SetDir(charDir);
                 }
@@ -2602,9 +2609,9 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
             
             if (mChar.IsNpc() || (ammoId != 0 && DeleteItemAmount(&mChar, 1, ammoId, ammoHue) == 1)) {
                 PlaySwingAnimations(&mChar);
-                // Effects->PlayMovingAnimation( &mChar, ourTarg, ammoFX, 0x08, 0x00, 0x00,
+                // worldEffect.PlayMovingAnimation( &mChar, ourTarg, ammoFX, 0x08, 0x00, 0x00,
                 // static_cast<std::uint32_t>( ammoFXHue ), static_cast<std::uint32_t>( ammoFXRender ));
-                Effects->PlayMovingAnimation(mChar.GetX(), mChar.GetY(), mChar.GetZ() + 5,  ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), ammoFX, 0x08, 0x00, 0x00, static_cast<std::uint32_t>(ammoFXHue), static_cast<std::uint32_t>(ammoFXRender));
+                worldEffect.PlayMovingAnimation(mChar.GetX(), mChar.GetY(), mChar.GetZ() + 5,  ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), ammoFX, 0x08, 0x00, 0x00, static_cast<std::uint32_t>(ammoFXHue), static_cast<std::uint32_t>(ammoFXRender));
             }
             else {
                 if (mSock != nullptr) {
@@ -2627,7 +2634,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
         bool skillPassed = false;
         
         // Do a skill check so the fight skill is increased
-        Skills->CheckSkill(&mChar, getFightSkill, 0,
+        worldSkill.CheckSkill(&mChar, getFightSkill, 0,
                            std::min(1000, static_cast<std::int32_t>((getDefTactics * 1.25) + 100)));
         
         // Calculate Hit Chance
@@ -2706,24 +2713,24 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
             // It's a hit!
             CSocket *targSock = ourTarg->GetSocket();
             
-            Skills->CheckSkill(&mChar, TACTICS, 0, 1000);
-            Skills->CheckSkill(ourTarg, TACTICS, 0, 1000);
+            worldSkill.CheckSkill(&mChar, TACTICS, 0, 1000);
+            worldSkill.CheckSkill(ourTarg, TACTICS, 0, 1000);
             
             switch (ourTarg->GetId()) {
                 case 0x025E: // elf/human/garg female
                 case 0x0191:
                 case 0x029B:
-                    Effects->PlaySound(ourTarg, RandomNum(0x014B, 0x014F));
+                    worldEffect.PlaySound(ourTarg, RandomNum(0x014B, 0x014F));
                     break;
                 case 0x025D: // elf/human/garg male
                 case 0x0190:
                 case 0x029A:
-                    Effects->PlaySound(ourTarg, RandomNum(0x0155, 0x0158));
+                    worldEffect.PlaySound(ourTarg, RandomNum(0x0155, 0x0158));
                     break;
                 default: {
                     std::uint16_t toPlay = worldMain.creatures[ourTarg->GetId()].GetSound(SND_DEFEND);
                     if (toPlay != 0x00) {
-                        Effects->PlaySound(ourTarg, toPlay);
+                        worldEffect.PlaySound(ourTarg, toPlay);
                     }
                     break;
                 }
@@ -2789,7 +2796,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                             retDamage /= ServerConfig::shared().shortValues[ShortValue::NPCDAMAGERATE];
                         }
                         mChar.Damage(retDamage, Weather::PHYSICAL, &mChar);
-                        Effects->PlayStaticAnimation(ourTarg, 0x374A, 0, 15);
+                        worldEffect.PlayStaticAnimation(ourTarg, 0x374A, 0, 15);
                     }
                 }
                 else {
@@ -2801,7 +2808,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
             }
             
             for (auto scriptTrig : scriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     toExecute->OnAttack(&mChar, ourTarg);
                 }
@@ -2809,7 +2816,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
             
             std::vector<std::uint16_t> defScriptTriggers = ourTarg->GetScriptTriggers();
             for (auto scriptTrig : defScriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     toExecute->OnDefense(&mChar, ourTarg);
                 }
@@ -2836,7 +2843,7 @@ inline void QuickSwitch(CChar *mChar, CChar *ourTarg, std::int8_t spellNum) {
     
     mChar->SetSpellCast(spellNum);
     mChar->SetTarg(mChar);
-    Magic->CastSpell(nullptr, mChar);
+    worldMagic.CastSpell(nullptr, mChar);
     mChar->StopSpell();
     mChar->SetTarg(ourTarg);
 }
@@ -2850,7 +2857,7 @@ bool CHandleCombat::CastSpell(CChar *mChar, CChar *ourTarg, std::int8_t spellNum
     if (!ValidateObject(mChar) || !ValidateObject(ourTarg) || mChar == ourTarg)
         return false;
     
-    if (mChar->GetMana() <= Magic->spells[spellNum].Mana())
+    if (mChar->GetMana() <= worldMagic.spells[spellNum].Mana())
         return false;
     
     switch (spellNum) {
@@ -3151,16 +3158,16 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
             if (npcAttack->GetSpellCast() != -1) {
                 if (npcAttack->GetBodyType() == BT_HUMAN || npcAttack->GetBodyType() == BT_ELF || npcAttack->GetBodyType() == BT_GARGOYLE) {
                     // "Human" casting
-                    CSpellInfo curSpellCasting = Magic->spells[npcAttack->GetSpellCast()];
-                    Effects->PlaySpellCastingAnimation(npcAttack, curSpellCasting.Action(), false, false); // do the action
+                    CSpellInfo curSpellCasting = worldMagic.spells[npcAttack->GetSpellCast()];
+                    worldEffect.PlaySpellCastingAnimation(npcAttack, curSpellCasting.Action(), false, false); // do the action
                     npcAttack->SetTimer(tNPC_MOVETIME, BuildTimeValue(0.75));
                 }
                 else {
                     // Monster casting
-                    Effects->PlaySpellCastingAnimation(npcAttack, 0, true, monsterAreaCastAnim);
+                    worldEffect.PlaySpellCastingAnimation(npcAttack, 0, true, monsterAreaCastAnim);
                     npcAttack->SetTimer(tNPC_MOVETIME, BuildTimeValue(0.75));
                 }
-                Magic->CastSpell(nullptr, npcAttack);
+                worldMagic.CastSpell(nullptr, npcAttack);
             }
             
             // Adjust spellDelay based on UOX.INI setting:
@@ -3240,7 +3247,7 @@ void CHandleCombat::InvalidateAttacker(CChar *mChar) {
     // Check if OnCombatEnd event exists.
     std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // Check if ourTarg validates as another character. If not, don't use
             if (!ValidateObject(ourTarg)) {
@@ -3261,7 +3268,7 @@ void CHandleCombat::InvalidateAttacker(CChar *mChar) {
         scriptTriggers.clear();
         scriptTriggers = ourTarg->GetScriptTriggers();
         for (auto scriptTrig : scriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 // Check if ourTarg validates as another character. If not, don't use
                 if (!ValidateObject(ourTarg)) {
@@ -3330,8 +3337,8 @@ void CHandleCombat::InvalidateAttacker(CChar *mChar) {
 void CHandleCombat::Kill(CChar *mChar, CChar *ourTarg) {
     if (ValidateObject(mChar)) {
         if (mChar->GetNpcAiType() == AI_GUARD && ourTarg->IsNpc()) {
-            Effects->PlayCharacterAnimation(ourTarg, (RandomNum(0, 1) ? ACT_DIE_BACKWARD : ACT_DIE_FORWARD), 0, 6); // 0x15 or 0x16, either is 6 frames long
-            Effects->PlayDeathSound(ourTarg);
+            worldEffect.PlayCharacterAnimation(ourTarg, (RandomNum(0, 1) ? ACT_DIE_BACKWARD : ACT_DIE_FORWARD), 0, 6); // 0x15 or 0x16, either is 6 frames long
+            worldEffect.PlayDeathSound(ourTarg);
             
             ourTarg->Delete(); // NPC was killed by a Guard, don't leave a corpse behind
             if (mChar->IsAtWar()) {
@@ -3345,8 +3352,8 @@ void CHandleCombat::Kill(CChar *mChar, CChar *ourTarg) {
             
             if (ourTarg->IsNpc()) {
                 // Note: What if ourTarg is a non-human NPC which doesn't have death animation 0x15?
-                Effects->PlayCharacterAnimation(ourTarg, 0x15);
-                Effects->PlayDeathSound(ourTarg);
+                worldEffect.PlayCharacterAnimation(ourTarg, 0x15);
+                worldEffect.PlayDeathSound(ourTarg);
                 
                 ourTarg->Delete(); // eating animals, don't give body
                 if (mChar->IsAtWar()) {
@@ -3407,8 +3414,8 @@ void CHandleCombat::CombatLoop(CSocket *mSock, CChar &mChar) {
                 else if (mChar.IsNpc() && mChar.GetNpcAiType() == AI_GUARD && mChar.GetRegion()->IsGuarded() && ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE)) {
                     validTarg = true;
                     mChar.SetLocation(ourTarg);
-                    Effects->PlaySound(&mChar, 0x01FE);
-                    Effects->PlayStaticAnimation(&mChar, 0x372A, 0x09, 0x06);
+                    worldEffect.PlaySound(&mChar, 0x01FE);
+                    worldEffect.PlayStaticAnimation(&mChar, 0x372A, 0x09, 0x06);
                     mChar.TextMessage(nullptr, 1616, TALK, true); // Halt, scoundrel!
                 }
                 else {
@@ -3454,7 +3461,7 @@ auto CHandleCombat::SpawnGuard(CChar *mChar, CChar *targChar, std::int16_t x, st
     
     auto reUseGuard = false;
     CChar *getGuard = nullptr;
-    auto toCheck = MapRegion->GetMapRegion(mChar);
+    auto toCheck = worldMapHandler.GetMapRegion(mChar);
     if (toCheck) {
         auto regChars = toCheck->GetCharList();
         for (const auto &getGuard : regChars->collection()) {
@@ -3506,8 +3513,8 @@ auto CHandleCombat::SpawnGuard(CChar *mChar, CChar *targChar, std::int16_t x, st
             }
             getGuard->SetTimer(tNPC_SUMMONTIME, BuildTimeValue(25));
             
-            Effects->PlaySound(getGuard, 0x01FE);
-            Effects->PlayStaticAnimation(getGuard, 0x372A, 0x09, 0x06);
+            worldEffect.PlaySound(getGuard, 0x01FE);
+            worldEffect.PlayStaticAnimation(getGuard, 0x372A, 0x09, 0x06);
             
             getGuard->TextMessage(nullptr, 313, TALK, true); // Thou shalt regret thine actions, swine!
         }

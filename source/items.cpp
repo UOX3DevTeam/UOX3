@@ -25,6 +25,10 @@
 using namespace std::string_literals;
 
 extern WorldItem worldItem ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern CServerDefinitions worldFileLookup ;
+extern CMulHandler worldMULHandler ;
 
 itemtypes_t FindItemTypeFromTag(const std::string &strToFind);
 
@@ -258,7 +262,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     scriptEntry = util::trim(util::strip(ssecs[rndEntry], "//"));
                 }
                 
-                auto toFind = FileLookup->FindEntry(scriptEntry, items_def);
+                auto toFind = worldFileLookup.FindEntry(scriptEntry, items_def);
                 if (toFind == nullptr) {
                     Console::shared().warning(util::format("Invalid script entry (%s) called with GET tag, item serial 0x%X", scriptEntry.c_str(), applyTo->GetSerial()));
                 }
@@ -358,7 +362,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                         scriptEntry = util::trim(util::strip(ssecs[rndEntry], "//"));
                     }
                     
-                    CScriptSection *toFind = FileLookup->FindEntry(scriptEntry, items_def);
+                    CScriptSection *toFind = worldFileLookup.FindEntry(scriptEntry, items_def);
                     if (toFind == NULL) {
                         Console::shared().warning(util::format("Invalid script entry (%s) called with %s tag, item serial 0x%X", scriptEntry.c_str(), tagName.c_str(), applyTo->GetSerial()));
                     }
@@ -833,7 +837,7 @@ CItem *WorldItem::CreateItem(CSocket *mSock, CChar *mChar, const std::uint16_t i
         return nullptr;
     
     if (itemId != 0x0000) {
-        if (Map->IsValidTile(itemId)) {
+        if (worldMULHandler.IsValidTile(itemId)) {
             iCreated->SetId(itemId);
         }
     }
@@ -855,7 +859,7 @@ CItem *WorldItem::CreateItem(CSocket *mSock, CChar *mChar, const std::uint16_t i
     
     std::vector<std::uint16_t> scriptTriggers = iCreated->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             toExecute->OnCreate(iCreated, false, false);
         }
@@ -977,7 +981,7 @@ auto WorldItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, con
         return nullptr;
     
     // Look up the relevant LOOTLIST or ITEMLIST from DFNs
-    auto ItemList = FileLookup->FindEntry(sect, items_def);
+    auto ItemList = worldFileLookup.FindEntry(sect, items_def);
     if (ItemList) {
         // Count the number of entries in the list
         const size_t itemListSize = ItemList->NumEntries();
@@ -1172,7 +1176,7 @@ CItem *WorldItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const 
     if (ourItem == "blank") // The lootlist-entry is just a blank filler item
         return nullptr;
     
-    CScriptSection *itemCreate = FileLookup->FindEntry(ourItem, items_def);
+    CScriptSection *itemCreate = worldFileLookup.FindEntry(ourItem, items_def);
     if (itemCreate == nullptr) {
         Console::shared().error(util::format("CreateBaseScriptItem(): Bad script item %s (Item Not Found).", ourItem.c_str()));
         return nullptr;
@@ -1215,7 +1219,7 @@ CItem *WorldItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const 
         // Check for (and run) onCreateDFN() event for newly created item
         std::vector<std::uint16_t> scriptTriggers = iCreated->GetScriptTriggers();
         for (auto scriptTrig : scriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 toExecute->OnCreate(iCreated, true, false);
             }
@@ -1252,7 +1256,7 @@ void WorldItem::GetScriptItemSettings(CItem *iCreated) {
     }
     
     const std::string item = "x" + hexId;
-    CScriptSection *toFind = FileLookup->FindEntrySubStr(item, hard_items_def);
+    CScriptSection *toFind = worldFileLookup.FindEntrySubStr(item, hard_items_def);
     if (toFind != nullptr) {
         ApplyItemSection(iCreated, toFind, item);
     }
@@ -1782,7 +1786,7 @@ void WorldItem::CheckEquipment(CChar *p) {
             }
             
             pSock->SysMessage(2782); // You are not strong enough to keep some of your items equipped!
-            Effects->ItemSound(pSock, iUnequip);
+            worldEffect.ItemSound(pSock, iUnequip);
         });
     }
 }
@@ -1844,7 +1848,7 @@ CItem *WorldItem::DupeItem(CSocket *s, CItem *i, std::uint32_t amount) {
     
     std::vector<std::uint16_t> scriptTriggers = c->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             toExecute->OnCreate(c, false, false);
         }

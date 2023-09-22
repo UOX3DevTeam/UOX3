@@ -35,6 +35,19 @@
 
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem ;
+extern CSkills worldSkill ;
+extern CMagic worldMagic ;
+extern CWhoList worldWhoList;
+extern CWhoList worldOfflist;
+extern PageVector worldGMQueue ;
+extern PageVector worldCounselorQueue ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern CGuildCollection worldGuildSystem ;
+extern CServerDefinitions worldFileLookup ;
+extern CCommands serverCommands;
+extern CNetworkStuff worldNetwork ;
+extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
 
@@ -78,7 +91,7 @@ void BuildGumpFromScripts(CSocket *s, std::uint16_t m) {
     toSend.UserId(INVALIDSERIAL);
     
     std::string sect = std::string("GUMPMENU ") + util::ntos(m);
-    CScriptSection *gump = FileLookup->FindEntry(sect, misc_def);
+    CScriptSection *gump = worldFileLookup.FindEntry(sect, misc_def);
     if (gump == nullptr)
         return;
     
@@ -93,7 +106,7 @@ void BuildGumpFromScripts(CSocket *s, std::uint16_t m) {
         toSend.addCommand(temp);
     }
     sect = std::string("GUMPTEXT ") + util::ntos(m);
-    gump = FileLookup->FindEntry(sect, misc_def);
+    gump = worldFileLookup.FindEntry(sect, misc_def);
     if (gump == nullptr)
         return;
     
@@ -129,7 +142,7 @@ void HandleAccountButton(CSocket *s, std::uint32_t button, CChar *j) {
                 }
                 actbTemp.flag.set(AccountEntry::attributeflag_t::BANNED, true);
                 if (targSocket != nullptr) {
-                    Network->Disconnect(targSocket);
+                    worldNetwork.Disconnect(targSocket);
                 }
             }
             else {
@@ -146,7 +159,7 @@ void HandleAccountButton(CSocket *s, std::uint32_t button, CChar *j) {
                 actbTemp.timeBan = GetMinutesSinceEpoch() + static_cast<std::uint32_t>(1440);
                 
                 if (targSocket != nullptr) {
-                    Network->Disconnect(targSocket);
+                    worldNetwork.Disconnect(targSocket);
                 }
             }
             else {
@@ -247,7 +260,7 @@ void HandleTownstoneButton(CSocket *s, serial_t button, serial_t ser, serial_t t
             }
             break;
         case 61:                                                 // seize townstone!
-            if (!Skills->CheckSkill(mChar, STEALING, 950, 1000)) {// minimum 95.0 stealing
+            if (!worldSkill.CheckSkill(mChar, STEALING, 950, 1000)) {// minimum 95.0 stealing
                 targetRegion = CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceId());
                 if (targetRegion != nullptr) {
                     std::int32_t chanceToSteal = RandomNum(0, targetRegion->GetHealth() / 2);
@@ -258,7 +271,7 @@ void HandleTownstoneButton(CSocket *s, serial_t button, serial_t ser, serial_t t
                                       .c_str()); // Congrats go to you, for you have successfully
                         // dealt %s a nasty blow this day!
                         targetRegion->DoDamage(targetRegion->GetHealth() / 2); // we reduce the region's health by half
-                        for (auto &toCheck : MapRegion->PopulateList(mChar)) {
+                        for (auto &toCheck : worldMapHandler.PopulateList(mChar)) {
                             if (toCheck) {
                                 CItem *iTownStone = nullptr;
                                 auto regItems = toCheck->GetItemList();
@@ -303,8 +316,8 @@ void HandleTownstoneButton(CSocket *s, serial_t button, serial_t ser, serial_t t
             targetRegion = CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(),
                                             mChar->GetInstanceId());
             for (std::uint8_t counter = 0; counter < RandomNum(5, 10); ++counter) {
-                Effects->PlayMovingAnimation(mChar, mChar->GetX() + RandomNum(-6, 6), mChar->GetY() + RandomNum(-6, 6), mChar->GetZ(), 0x36E4, 17, 0, (RandomNum(0, 1) == 1));
-                Effects->PlayStaticAnimation(mChar->GetX() + RandomNum(-6, 6), mChar->GetY() + RandomNum(-6, 6), mChar->GetZ(), 0x373A + RandomNum(0, 4) * 0x10, 0x09, 0, 0);
+                worldEffect.PlayMovingAnimation(mChar, mChar->GetX() + RandomNum(-6, 6), mChar->GetY() + RandomNum(-6, 6), mChar->GetZ(), 0x36E4, 17, 0, (RandomNum(0, 1) == 1));
+                worldEffect.PlayStaticAnimation(mChar->GetX() + RandomNum(-6, 6), mChar->GetY() + RandomNum(-6, 6), mChar->GetZ(), 0x373A + RandomNum(0, 4) * 0x10, 0x09, 0, 0);
             }
             targetRegion->DoDamage(RandomNum(0, targetRegion->GetHealth() / 8)); // we reduce the region's health by half
             break;
@@ -383,7 +396,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     s->TempInt(m); // Store what menu they are in
     
     std::string sect = std::string("ITEMMENU ") + util::ntos(m);
-    CScriptSection *ItemMenu = FileLookup->FindEntry(sect, items_def);
+    CScriptSection *ItemMenu = worldFileLookup.FindEntry(sect, items_def);
     if (ItemMenu == nullptr)
         return;
     
@@ -895,7 +908,7 @@ bool CPIHelpRequest::Handle() {
     
     std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             if (toExecute->OnHelpButton(mChar) == 0) {
                 return true;
@@ -904,7 +917,7 @@ bool CPIHelpRequest::Handle() {
     }
     
     // No individual scripts handling OnHelpButton returned true - let's check global script!
-    cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+    cScript *toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
     if (toExecute != nullptr) {
         if (toExecute->OnHelpButton(mChar) == 0) {
             return true;
@@ -912,7 +925,7 @@ bool CPIHelpRequest::Handle() {
     }
     
     std::string sect = std::string("GMMENU ") + util::ntos(menuNum);
-    CScriptSection *GMMenu = FileLookup->FindEntry(sect, menus_def);
+    CScriptSection *GMMenu = worldFileLookup.FindEntry(sect, menus_def);
     if (GMMenu == nullptr)
         return true;
     
@@ -952,7 +965,7 @@ void CPage(CSocket *s, const std::string &reason) {
     pageToAdd.IsHandled(false);
     pageToAdd.TimeOfPage(time(nullptr));
     
-    serial_t callNum = CounselorQueue->Add(&pageToAdd);
+    serial_t callNum = worldCounselorQueue.Add(&pageToAdd);
     if (callNum != INVALIDSERIAL) {
         mChar->SetPlayerCallNum(callNum);
         if (reason == "OTHER") {
@@ -961,7 +974,7 @@ void CPage(CSocket *s, const std::string &reason) {
         }
         else {
             bool x = false;
-            for (auto &iSock : Network->connClients) {
+            for (auto &iSock : worldNetwork.connClients) {
                 CChar *iChar = iSock->CurrcharObj();
                 if (iChar->IsGMPageable() || iChar->IsCounselor()) {
                     x = true;
@@ -997,7 +1010,7 @@ void GMPage(CSocket *s, const std::string &reason) {
     pageToAdd.WhoPaging(mChar->GetSerial());
     pageToAdd.IsHandled(false);
     pageToAdd.TimeOfPage(time(nullptr));
-    serial_t callNum = GMQueue->Add(&pageToAdd);
+    serial_t callNum = worldGMQueue.Add(&pageToAdd);
     if (callNum != INVALIDSERIAL) {
         mChar->SetPlayerCallNum(callNum);
         if (reason == "OTHER") {
@@ -1006,7 +1019,7 @@ void GMPage(CSocket *s, const std::string &reason) {
         }
         else {
             bool x = false;
-            for (auto &iSock : Network->connClients) {
+            for (auto &iSock : worldNetwork.connClients) {
                 CChar *iChar = iSock->CurrcharObj();
                 if (ValidateObject(iChar)) {
                     if (iChar->IsGMPageable()) {
@@ -1261,7 +1274,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 if (data.empty())
                     return;
                 
-                Skills->NewMakeMenu(s, std::stoi(util::trim(util::strip(data, "//")), nullptr, 0), static_cast<std::uint8_t>(s->AddId()));
+                worldSkill.NewMakeMenu(s, std::stoi(util::trim(util::strip(data, "//")), nullptr, 0), static_cast<std::uint8_t>(s->AddId()));
             }
             break;
         case 'N':
@@ -1523,7 +1536,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
         return;
     }
     
-    CScriptSection *ItemMenu = FileLookup->FindEntry(sect, items_def);
+    CScriptSection *ItemMenu = worldFileLookup.FindEntry(sect, items_def);
     if (ItemMenu == nullptr)
         return;
     
@@ -1681,7 +1694,7 @@ bool CPIGumpMenuSelect::Handle() {
         cScript *toExecute = nullptr;
         std::vector<std::uint16_t> scriptTriggers = tSock->CurrcharObj()->GetScriptTriggers();
         for (auto scriptTrig : scriptTriggers) {
-            toExecute = JSMapping->GetScript(scriptTrig);
+            toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 if (toExecute->OnVirtueGumpPress(tSock->CurrcharObj(), targChar, buttonId) == 1) {
                     return true;
@@ -1689,7 +1702,7 @@ bool CPIGumpMenuSelect::Handle() {
             }
         }
         
-        toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0)); // Global script
+        toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0)); // Global script
         if (toExecute != nullptr) {
             toExecute->OnVirtueGumpPress(tSock->CurrcharObj(), targChar, buttonId);
         }
@@ -1712,12 +1725,12 @@ bool CPIGumpMenuSelect::Handle() {
         return true;
     }
     if (gumpId >= 8000 && gumpId <= 8020) {
-        GuildSys->GumpChoice(tSock);
+        worldGuildSystem.GumpChoice(tSock);
         // guild collection call goes here
         return true;
     }
     else if (gumpId >= 0xFFFF) { // script gump
-        cScript *toExecute = JSMapping->GetScript((gumpId - 0xFFFF));
+        cScript *toExecute = worldJSMapping.GetScript((gumpId - 0xFFFF));
         if (toExecute != nullptr) {
             toExecute->HandleGumpPress(this);
         }
@@ -1731,10 +1744,10 @@ bool CPIGumpMenuSelect::Handle() {
     
     if (buttonId == 1) {
         if (gumpId == 4) {
-            WhoList->GMLeave();
+            worldWhoList.GMLeave();
         }
         else if (gumpId == 11) {
-            OffList->GMLeave();
+            worldOfflist.GMLeave();
         }
         return true;
     }
@@ -1763,7 +1776,7 @@ bool CPIGumpMenuSelect::Handle() {
             HandleTownstoneButton(tSock, buttonId, id, gumpId);
             break; // Townstones
         case 4:
-            WhoList->ButtonSelect(tSock, static_cast<std::uint16_t>(buttonId), static_cast<std::uint8_t>(gumpId));
+            worldWhoList.ButtonSelect(tSock, static_cast<std::uint16_t>(buttonId), static_cast<std::uint8_t>(gumpId));
             break; // Wholist
         case 7:    // Accounts
             CChar *c;
@@ -1779,10 +1792,10 @@ bool CPIGumpMenuSelect::Handle() {
             HandleAddMenuButton(tSock, buttonId);
             break; // Add Menu
         case 11:
-            OffList->ButtonSelect(tSock, static_cast<std::uint16_t>(buttonId), static_cast<std::uint8_t>(gumpId));
+            worldOfflist.ButtonSelect(tSock, static_cast<std::uint16_t>(buttonId), static_cast<std::uint8_t>(gumpId));
             break; // Who's Offline
         case 12:
-            Skills->HandleMakeMenu(tSock, buttonId, static_cast<std::int32_t>(tSock->AddId()));
+            worldSkill.HandleMakeMenu(tSock, buttonId, static_cast<std::int32_t>(tSock->AddId()));
             break; // New Make Menu
         case 13:
             HandleHowToButton(tSock, buttonId);
@@ -1843,7 +1856,7 @@ bool CPIGumpInput::Handle() {
                 if (mSock != nullptr) {
                     std::uint32_t scriptNo = mSock->AddId();
                     if (scriptNo >= 0xFFFF) {
-                        cScript *toExecute = JSMapping->GetScript((scriptNo - 0xFFFF));
+                        cScript *toExecute = worldJSMapping.GetScript((scriptNo - 0xFFFF));
                         if (toExecute != nullptr) {
                             toExecute->HandleGumpInput(this);
                         }
@@ -1854,7 +1867,7 @@ bool CPIGumpInput::Handle() {
         }
             [[fallthrough]]; // Indicate to compiler that fallthrough is intentional to suppress warning
         case 100:
-            GuildSys->GumpInput(this);
+            worldGuildSystem.GumpInput(this);
             break;
         default:
             break;
@@ -1864,7 +1877,7 @@ bool CPIGumpInput::Handle() {
 
 std::string GrabMenuData(std::string sect, size_t entryNum, std::string &tag) {
     std::string data;
-    CScriptSection *sectionData = FileLookup->FindEntry(sect, menus_def);
+    CScriptSection *sectionData = worldFileLookup.FindEntry(sect, menus_def);
     if (sectionData != nullptr) {
         if (sectionData->NumEntries() >= entryNum) {
             tag = sectionData->moveTo(entryNum);
@@ -1890,7 +1903,7 @@ bool CPIGumpChoice::Handle() {
     
     if (main >= JSGUMPMENUOFFSET) { // Between 0x4000 and 0xFFFF
         // Handle button presses via global JS script
-        cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+        cScript *toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
         if (toExecute != nullptr) {
             if (toExecute->OnScrollingGumpPress(tSock, main, sub) == 0) {
                 return true;
@@ -1902,7 +1915,7 @@ bool CPIGumpChoice::Handle() {
         data = GrabMenuData(sect, (static_cast<size_t>(sub) * 2), tag);
         if (!data.empty()) {
             if (main == POLYMORPHMENUOFFSET) {
-                Magic->PolymorphMenu(tSock, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                worldMagic.PolymorphMenu(tSock, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
             }
             else {
                 if (mChar->IsOnHorse()) {
@@ -1911,7 +1924,7 @@ bool CPIGumpChoice::Handle() {
                 else if (mChar->IsFlying()) {
                     mChar->ToggleFlying();
                 }
-                Magic->Polymorph(tSock, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                worldMagic.Polymorph(tSock, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
             }
         }
     }
@@ -1920,15 +1933,15 @@ bool CPIGumpChoice::Handle() {
             sect = std::string("TRACKINGMENU ") + util::ntos(main);
             data = GrabMenuData(sect, (static_cast<size_t>(sub) * 2), tag);
             if (!data.empty() && tag != "What") {
-                Skills->CreateTrackingMenu(tSock, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                worldSkill.CreateTrackingMenu(tSock, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
             }
         }
         else {
-            if (!Skills->CheckSkill(mChar, TRACKING, 0, 1000)) {
+            if (!worldSkill.CheckSkill(mChar, TRACKING, 0, 1000)) {
                 tSock->SysMessage(575); // You fail your attempt at tracking.
                 return true;
             }
-            Skills->Tracking(tSock, static_cast<std::int32_t>(sub - 1));
+            worldSkill.Tracking(tSock, static_cast<std::int32_t>(sub - 1));
         }
     }
     else if (main < ITEMMENUOFFSET) // GM Menus

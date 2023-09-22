@@ -124,6 +124,5 @@ public:
     MapResource_st *GetResource(std::int16_t x, std::int16_t y, std::uint8_t worldNum);
 };
 
-extern CMapHandler *MapRegion;
 
 #endif

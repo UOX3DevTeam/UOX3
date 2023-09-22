@@ -72,6 +72,14 @@
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
+extern CWeight worldWeight ;
+extern cRaces worldRace ;
+extern CBooks worldBook ;
+extern CSpeechQueue worldSpeechSystem ;
+extern CJSEngine worldJSEngine ;
+extern CServerDefinitions worldFileLookup ;
+extern CMulHandler worldMULHandler ;
+extern CMapHandler worldMapHandler ;
 
 const std::uint32_t BIT_MAKERSMARK = 0;
 const std::uint32_t BIT_DOOROPEN = 1;
@@ -296,13 +304,13 @@ auto CItem::SetCont(CBaseObject *newCont, bool removeFromView) -> bool {
                     // soon-to-be-moved to his corpse, so we don't want him to attempt to wear it.
                     contIsGround = false;
                     if (IsPostLoaded()) {
-                        Weight->AddItemWeight(charWearing, this);
+                        worldWeight.AddItemWeight(charWearing, this);
                     }
                 }
                 else if (charWearing->WearItem(this)) {
                     contIsGround = false;
                     if (IsPostLoaded()) {
-                        Weight->AddItemWeight(charWearing, this);
+                        worldWeight.AddItemWeight(charWearing, this);
                     }
                     if (this->GetLayer() == IL_MOUNT && charWearing->IsNpc()) {
                         charWearing->SetOnHorse(true);
@@ -355,7 +363,7 @@ auto CItem::SetCont(CBaseObject *newCont, bool removeFromView) -> bool {
                     ShouldSave(itemHolder->ShouldSave());
                 }
                 if (IsPostLoaded()) {
-                    Weight->AddItemWeight(itemHolder, this);
+                    worldWeight.AddItemWeight(itemHolder, this);
                 }
                 
                 // Update item's townregion to match root container's location
@@ -367,7 +375,7 @@ auto CItem::SetCont(CBaseObject *newCont, bool removeFromView) -> bool {
     
     if (contIsGround) {
         contObj = nullptr;
-        MapRegion->AddItem(this);
+        worldMapHandler.AddItem(this);
         
         // If item has been moved to the ground, make sure we save it
         ShouldSave(true);
@@ -612,7 +620,7 @@ void CItem::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ) 
 // o------------------------------------------------------------------------------------------------o
 void CItem::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ, std::int8_t newLoc, std::uint8_t world, std::uint16_t instance_id) {
     if (GetCont() == nullptr) {
-        MapRegion->ChangeRegion(this, newX, newY, world);
+        worldMapHandler.ChangeRegion(this, newX, newY, world);
     }
     oldLocX = x;
     oldLocY = y;
@@ -739,7 +747,7 @@ auto CItem::GetAmount() const -> std::uint16_t { return amount; }
 auto CItem::SetAmount(std::uint32_t newValue) -> void {
     CBaseObject *getCont = GetCont();
     if (ValidateObject(getCont)) {
-        Weight->SubtractItemWeight(getCont, this);
+        worldWeight.SubtractItemWeight(getCont, this);
     }
     
     if (newValue > MAX_STACK) {
@@ -750,7 +758,7 @@ auto CItem::SetAmount(std::uint32_t newValue) -> void {
     }
     
     if (ValidateObject(getCont)) {
-        Weight->AddItemWeight(getCont, this);
+        worldWeight.AddItemWeight(getCont, this);
     }
     Dirty(UT_UPDATE);
     UpdateRegion();
@@ -1230,7 +1238,7 @@ bool CItem::Save(std::ostream &outStream) {
     if (IsFree())
         return false;
     
-    auto [mapWidth, mapHeight] = Map->SizeOfMap(worldNumber);
+    auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(worldNumber);
     if (GetCont() || (GetX() > 0 && GetX() < mapWidth && GetY() < mapHeight)) {
         DumpHeader(outStream);
         DumpBody(outStream);
@@ -1290,7 +1298,7 @@ auto CItem::RemoveSelfFromCont() -> void {
         if (contObj->GetObjType() == OT_CHAR) { // it's a char!
             CChar *targChar = dynamic_cast<CChar *>(contObj);
             if (ValidateObject(targChar)) {
-                Weight->SubtractItemWeight(targChar, this);
+                worldWeight.SubtractItemWeight(targChar, this);
                 targChar->TakeOffItem(GetLayer());
                 if (ShouldSave() && targChar->ShouldSave()) {
                     UpdateRegion();
@@ -1301,14 +1309,14 @@ auto CItem::RemoveSelfFromCont() -> void {
         else {
             CItem *targItem = dynamic_cast<CItem *>(contObj);
             if (ValidateObject(targItem)) {
-                Weight->SubtractItemWeight(targItem, this);
+                worldWeight.SubtractItemWeight(targItem, this);
                 targItem->GetContainsList()->Remove(this);
                 UpdateRegion();
             }
         }
     }
     else {
-        MapRegion->RemoveItem(this);
+        worldMapHandler.RemoveItem(this);
     }
 }
 
@@ -1875,7 +1883,7 @@ bool CItem::LoadRemnants() {
     
     // Tauriel adding region pointers
     if (!contObj || tempContainerSerial == INVALIDSERIAL) {
-        auto [mapWidth, mapHeight] = Map->SizeOfMap(worldNumber);
+        auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(worldNumber);
         if (GetX() < 0 || GetY() < 0 || GetX() > mapWidth || GetY() > mapHeight)
             return false;
         
@@ -1919,7 +1927,7 @@ void CItem::PostLoadProcessing() {
     CBaseObject::PostLoadProcessing();
     // Add item weight if item doesn't have it yet
     if (GetWeight() < 0 || GetWeight() > MAX_WEIGHT) {
-        SetWeight(Weight->CalcWeight(this));
+        SetWeight(worldWeight.CalcWeight(this));
     }
     
     CBaseObject *tmpObj = nullptr;
@@ -2075,13 +2083,13 @@ void CItem::SetWeight(std::int32_t newVal, bool doWeightUpdate) {
     }
     
     if (ValidateObject(checkCont)) {
-        Weight->SubtractItemWeight(checkCont, this);
+        worldWeight.SubtractItemWeight(checkCont, this);
     }
     
     weight = newVal;
     
     if (ValidateObject(checkCont)) {
-        Weight->AddItemWeight(checkCont, this);
+        worldWeight.AddItemWeight(checkCont, this);
     }
     UpdateRegion();
 }
@@ -2183,7 +2191,7 @@ auto CItem::TextMessage(CSocket *s, std::int32_t dictEntry, float secsFromNow, s
         s->Send(&unicodeMessage);
     }
     else {
-        CSpeechEntry &toAdd = SpeechSys->Add();
+        CSpeechEntry &toAdd = worldSpeechSystem.Add();
         toAdd.Speech(txt);
         toAdd.Font(FNT_NORMAL);
         toAdd.Speaker(GetSerial());
@@ -2429,7 +2437,7 @@ void CItem::RemoveFromSight(CSocket *mSock) {
                     if (ValidateObject(oChar)) {
                         // Get character's visual range
                         auto visRange =
-                        static_cast<std::uint16_t>(oSock->Range() + Races->VisRange(oChar->GetRace()));
+                        static_cast<std::uint16_t>(oSock->Range() + worldRace.VisRange(oChar->GetRace()));
                         
                         // Find the root container (if any) of the container
                         auto rootCont = FindRootContainer(itemCont);
@@ -2579,9 +2587,9 @@ auto CItem::SetSpell(std::uint8_t part, std::uint32_t newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 void CItem::Cleanup() {
     if (!IsFree()) { // We're not the default item in the handler
-        MapRegion->RemoveItem(this);
+        worldMapHandler.RemoveItem(this);
         
-        JSEngine->ReleaseObject(IUE_ITEM, this);
+        worldJSEngine.ReleaseObject(IUE_ITEM, this);
         
         CBaseObject::Cleanup();
         
@@ -2653,7 +2661,7 @@ void CItem::Cleanup() {
         
         if (GetType() == IT_BOOK &&
             (GetTempVar(CITV_MOREX) == 666 || GetTempVar(CITV_MOREX) == 999)) {
-            Books->DeleteBook(this);
+            worldBook.DeleteBook(this);
         }
         
         // Update container tooltip for nearby players
@@ -2697,7 +2705,7 @@ void CItem::Cleanup() {
 auto CItem::UpdateRegion() -> void {
     // Make sure to only mark region as changed if item is supposed to be saved
     if (ShouldSave()) {
-        CMapRegion *curCell = MapRegion->GetMapRegion(this);
+        CMapRegion *curCell = worldMapHandler.GetMapRegion(this);
         curCell->HasRegionChanged(true);
     }
 }
@@ -2955,7 +2963,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
             sect = util::trim(util::strip(sect, "//"));
             
             // Look up the relevant ITEMLIST from DFNs
-            CScriptSection *itemList = FileLookup->FindEntry(sect, items_def);
+            CScriptSection *itemList = worldFileLookup.FindEntry(sect, items_def);
             if (itemList != nullptr) {
                 // Count the number of entries in the list
                 const size_t itemListSize = itemList->NumEntries();

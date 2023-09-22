@@ -14,6 +14,11 @@
 #include "network.h"
 #include "regions.h"
 
+extern cRaces worldRace ;
+extern CMulHandler worldMULHandler ;
+extern CNetworkStuff worldNetwork ;
+extern CMapHandler worldMapHandler ;
+
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	FindPlayersInOldVisrange()
 // o------------------------------------------------------------------------------------------------o
@@ -21,7 +26,7 @@
 // o------------------------------------------------------------------------------------------------o
 auto FindPlayersInOldVisrange(CBaseObject *myObj) -> std::vector<CSocket *> {
     std::vector<CSocket *> nearbyChars;
-    for (auto &mSock : Network->connClients) {
+    for (auto &mSock : worldNetwork.connClients) {
         auto mChar = mSock->CurrcharObj();
         if (ValidateObject(mChar)) {
             if (myObj->GetObjType() == CBaseObject::OT_MULTI) {
@@ -31,7 +36,7 @@ auto FindPlayersInOldVisrange(CBaseObject *myObj) -> std::vector<CSocket *> {
             }
             else {
                 auto visRange =
-                static_cast<std::uint16_t>(mSock->Range() + Races->VisRange(mChar->GetRace()));
+                static_cast<std::uint16_t>(mSock->Range() + worldRace.VisRange(mChar->GetRace()));
                 if (ObjInOldRangeSquare(myObj, mChar, visRange)) {
                     nearbyChars.push_back(mSock);
                 }
@@ -48,10 +53,10 @@ auto FindPlayersInOldVisrange(CBaseObject *myObj) -> std::vector<CSocket *> {
 // o------------------------------------------------------------------------------------------------o
 auto FindPlayersInVisrange(CBaseObject *myObj) -> std::vector<CSocket *> {
     std::vector<CSocket *> nearbyChars;
-    for (auto &mSock : Network->connClients) {
+    for (auto &mSock : worldNetwork.connClients) {
         auto mChar = mSock->CurrcharObj();
         if (ValidateObject(mChar)) {
-            auto visRange = static_cast<std::uint16_t>(mSock->Range() + Races->VisRange(mChar->GetRace()));
+            auto visRange = static_cast<std::uint16_t>(mSock->Range() + worldRace.VisRange(mChar->GetRace()));
             if (ObjInRangeSquare(myObj, mChar, visRange)) {
                 nearbyChars.push_back(mSock);
             }
@@ -67,7 +72,7 @@ auto FindPlayersInVisrange(CBaseObject *myObj) -> std::vector<CSocket *> {
 // o------------------------------------------------------------------------------------------------o
 auto FindNearbyPlayers(CBaseObject *myObj, std::uint16_t distance) -> std::vector<CSocket *> {
     std::vector<CSocket *> nearbyChars;
-    for (auto &mSock : Network->connClients) {
+    for (auto &mSock : worldNetwork.connClients) {
         auto mChar = mSock->CurrcharObj();
         if (ValidateObject(mChar)) {
             if (ObjInRange(mChar, myObj, distance)) {
@@ -81,22 +86,22 @@ auto FindNearbyPlayers(CChar *mChar) -> std::vector<CSocket *> {
     std::uint16_t visRange = MAX_VISRANGE;
     if (mChar->GetSocket() != nullptr) {
         visRange =
-        static_cast<std::uint16_t>(mChar->GetSocket()->Range() + Races->VisRange(mChar->GetRace()));
+        static_cast<std::uint16_t>(mChar->GetSocket()->Range() + worldRace.VisRange(mChar->GetRace()));
     }
     else {
-        visRange += static_cast<std::uint16_t>(Races->VisRange(mChar->GetRace()));
+        visRange += static_cast<std::uint16_t>(worldRace.VisRange(mChar->GetRace()));
     }
     return FindNearbyPlayers(mChar, visRange);
 }
 
 auto FindNearbyPlayers(CBaseObject *mObj) -> std::vector<CSocket *> {
-    std::uint16_t visRange = static_cast<std::uint16_t>(MAX_VISRANGE + Races->VisRange(mObj->GetRace()));
+    std::uint16_t visRange = static_cast<std::uint16_t>(MAX_VISRANGE + worldRace.VisRange(mObj->GetRace()));
     return FindNearbyPlayers(mObj, visRange);
 }
 
 auto FindNearbyPlayers(std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t distance) -> std::vector<CSocket *> {
     std::vector<CSocket *> nearbyChars;
-    for (auto &mSock : Network->connClients) {
+    for (auto &mSock : worldNetwork.connClients) {
         auto mChar = mSock->CurrcharObj();
         if (ValidateObject(mChar)) {
             if (GetDist(Point3(mChar->GetX(), mChar->GetY(), mChar->GetZ()), Point3(x, y, z)) <= distance) {
@@ -115,7 +120,7 @@ auto FindNearbyPlayers(std::int16_t x, std::int16_t y, std::int8_t z, std::uint1
 // o------------------------------------------------------------------------------------------------o
 auto FindNearbyChars(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId, std::uint16_t distance) -> std::vector<CChar *> {
     std::vector<CChar *> ourChars;
-    for (auto &CellResponse : MapRegion->PopulateList(x, y, worldNumber)) {
+    for (auto &CellResponse : worldMapHandler.PopulateList(x, y, worldNumber)) {
         if (CellResponse) {
             auto regChars = CellResponse->GetCharList();
             for (auto &tempChar : regChars->collection()) {
@@ -346,7 +351,7 @@ bool InMulti(std::int16_t x, std::int16_t y, std::int8_t z, CMultiObj *m) {
     const std::uint16_t multiId = static_cast<std::uint16_t>(m->GetId() - 0x4000);
     [[maybe_unused]] std::int32_t length = 0;
     
-    if (!Map->MultiExists(multiId)) {
+    if (!worldMULHandler.MultiExists(multiId)) {
         // the length associated with the multi means one thing
         // the multi it's trying to reference is NOT in the multis.mul file
         // so as a measure... if it's wet, we'll make it a boat
@@ -354,7 +359,7 @@ bool InMulti(std::int16_t x, std::int16_t y, std::int8_t z, CMultiObj *m) {
         Console::shared() << "inmulti() - Bad length in multi file, avoiding stall. Item Name: " << m->GetName() << " " << m->GetSerial() << myendl;
         length = 0;
         
-        auto map1 = Map->SeekMap(m->GetX(), m->GetY(), m->WorldNumber());
+        auto map1 = worldMULHandler.SeekMap(m->GetX(), m->GetY(), m->WorldNumber());
         if (map1.CheckFlag(TF_WET)) { // is it water?
             // NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
             // So either: 1) Let the user fix it in the worldfile once its saved
@@ -371,14 +376,14 @@ bool InMulti(std::int16_t x, std::int16_t y, std::int8_t z, CMultiObj *m) {
         const std::int16_t baseY = m->GetY();
         const std::int8_t baseZ = m->GetZ();
         
-        for (auto &multi : Map->SeekMulti(multiId).items) {
+        for (auto &multi : worldMULHandler.SeekMulti(multiId).items) {
             // Ignore signs and signposts sticking out of buildings
             if (((multi.tileId >= 0x0b95) && (multi.tileId <= 0x0c0e)) || ((multi.tileId == 0x1f28) || (multi.tileId == 0x1f29)))
                 continue;
             
             if ((baseX + multi.offsetX) == x && (baseY + multi.offsetY) == y) {
                 // Find the top Z level of the multi section being examined
-                const std::int8_t multiZ = (baseZ + multi.altitude + Map->TileHeight(multi.tileId));
+                const std::int8_t multiZ = (baseZ + multi.altitude + worldMULHandler.TileHeight(multi.tileId));
                 if (m->GetObjType() == CBaseObject::OT_BOAT) {
                     // We're on a boat!
                     if (abs(multiZ - z) <= zOff)
@@ -423,7 +428,7 @@ auto FindMulti(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t world
     CMultiObj *multi = nullptr;
     std::int32_t ret, dx, dy;
     
-    for (auto &toCheck : MapRegion->PopulateList(x, y, worldNumber)) {
+    for (auto &toCheck : worldMapHandler.PopulateList(x, y, worldNumber)) {
         if (toCheck == nullptr)
             continue;
         
@@ -458,7 +463,7 @@ auto FindMulti(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t world
 //|	Purpose		-	Find items at specified location
 // o------------------------------------------------------------------------------------------------o
 auto GetItemAtXYZ(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId) -> CItem * {
-    auto toCheck =  MapRegion->GetMapRegion(MapRegion->GetGridX(x), MapRegion->GetGridY(y), worldNumber);
+    auto toCheck =  worldMapHandler.GetMapRegion(worldMapHandler.GetGridX(x), worldMapHandler.GetGridY(y), worldNumber);
     if (toCheck) { // no valid region
         auto regItems = toCheck->GetItemList();
         for (const auto &itemCheck : regItems->collection()) {
@@ -482,7 +487,7 @@ CItem *FindItemNearXYZ(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8
     std::uint16_t currDist;
     CItem *currItem = nullptr;
     Point3 targLocation = Point3(x, y, z);
-    for (auto &toCheck : MapRegion->PopulateList(x, y, worldNumber)) {
+    for (auto &toCheck : worldMapHandler.PopulateList(x, y, worldNumber)) {
         if (toCheck == nullptr) // no valid region
             continue;
         
@@ -512,7 +517,7 @@ CItem *FindItemNearXYZ(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8
 // o------------------------------------------------------------------------------------------------o
 auto FindNearbyItems(CBaseObject *mObj, distlocs_t distance) -> std::vector<CItem *> {
     std::vector<CItem *> ourItems;
-    for (auto &CellResponse : MapRegion->PopulateList(mObj)) {
+    for (auto &CellResponse : worldMapHandler.PopulateList(mObj)) {
         if (CellResponse == nullptr)
             continue;
         
@@ -538,7 +543,7 @@ auto FindNearbyItems(CBaseObject *mObj, distlocs_t distance) -> std::vector<CIte
 // o------------------------------------------------------------------------------------------------o
 auto FindNearbyItems(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId, std::uint16_t distance) -> std::vector<CItem *> {
     std::vector<CItem *> ourItems;
-    for (auto &cellResponse : MapRegion->PopulateList(x, y, worldNumber)) {
+    for (auto &cellResponse : worldMapHandler.PopulateList(x, y, worldNumber)) {
         if (cellResponse == nullptr)
             continue;
         
@@ -563,7 +568,7 @@ auto FindNearbyItems(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, s
 // o------------------------------------------------------------------------------------------------o
 auto FindNearbyObjects(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId, std::uint16_t distance) -> std::vector<CBaseObject *> {
     std::vector<CBaseObject *> ourObjects;
-    for (auto &CellResponse : MapRegion->PopulateList(x, y, worldNumber)) {
+    for (auto &CellResponse : worldMapHandler.PopulateList(x, y, worldNumber)) {
         if (CellResponse == nullptr)
             continue;
         

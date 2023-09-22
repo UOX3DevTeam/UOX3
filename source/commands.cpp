@@ -16,6 +16,9 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
+extern CJSMapping worldJSMapping ;
+extern CServerDefinitions worldFileLookup ;
+
 using namespace std::string_literals;
 
 //==================================================================================================
@@ -123,7 +126,7 @@ void CCommands::command(CSocket *s, CChar *mChar, std::string text, bool checkSo
                 s->SysMessage(337); // Access denied.
                 return;
             }
-            cScript *toExecute = JSMapping->GetScript(toFind->second.scriptId);
+            cScript *toExecute = worldJSMapping.GetScript(toFind->second.scriptId);
             if (toExecute != nullptr) { // All commands that execute are of the form:
                 // command_commandname (to avoid possible clashes)
 #if defined(UOX_DEBUG_MODE)
@@ -207,7 +210,7 @@ void CCommands::command(CSocket *s, CChar *mChar, std::string text, bool checkSo
             bool cmdHandled = false;
             std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     // -1 == event doesn't exist, or returned -1
                     // 0 == script returned false, 0, or nothing
@@ -272,7 +275,7 @@ void CCommands::command(CSocket *s, CChar *mChar, std::string text, bool checkSo
 // o------------------------------------------------------------------------------------------------o
 void CCommands::load() {
     std::int16_t commandCount = 0;
-    CScriptSection *commands = FileLookup->FindEntry("COMMAND_OVERRIDE", command_def);
+    CScriptSection *commands = worldFileLookup.FindEntry("COMMAND_OVERRIDE", command_def);
     if (commands == nullptr) {
         initClearance();
         return ;
@@ -312,7 +315,7 @@ void CCommands::load() {
 #if defined(UOX_DEBUG_MODE)
     Console::shared() << myendl;
 #endif
-    CScriptSection *cmdClearance = FileLookup->FindEntry("COMMANDLEVELS", command_def);
+    CScriptSection *cmdClearance = worldFileLookup.FindEntry("COMMANDLEVELS", command_def);
     if (cmdClearance == nullptr) {
         initClearance();
     }
@@ -330,7 +333,7 @@ void CCommands::load() {
         for (auto cIter = clearance.begin(); cIter != clearance.end(); ++cIter) {
             CommandLevel *ourClear = (*cIter).get();
             if (ourClear) {
-                cmdClearance = FileLookup->FindEntry(ourClear->name, command_def);
+                cmdClearance = worldFileLookup.FindEntry(ourClear->name, command_def);
                 if (cmdClearance) {
                     for (const auto &sec : cmdClearance->collection()) {
                         tag = sec->tag;
@@ -371,7 +374,7 @@ void CCommands::load() {
     }
     
     // Now we'll load our JS commands, what fun!
-    CJSMappingSection *commandSection = JSMapping->GetSection(CJSMappingSection::SCPT_COMMAND);
+    CJSMappingSection *commandSection = worldJSMapping.GetSection(CJSMappingSection::SCPT_COMMAND);
     for (cScript *ourScript = commandSection->First(); !commandSection->Finished(); ourScript = commandSection->Next()) {
         if (ourScript != nullptr) {
             ourScript->ScriptRegistration("Command");

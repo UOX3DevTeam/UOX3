@@ -87,6 +87,5 @@ public:
     auto FinishedScripts(definitioncategories_t typeToFind) -> bool;
 };
 
-extern CServerDefinitions *FileLookup;
 
 #endif

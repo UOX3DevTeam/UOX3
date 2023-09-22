@@ -25,6 +25,12 @@
 
 extern CHandleCombat worldCombat ;
 extern WorldItem worldItem ;
+extern CSkills worldSkill ;
+extern CMagic worldMagic ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern CNetworkStuff worldNetwork ;
+extern CMapHandler worldMapHandler ;
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::DeathAction()
@@ -141,7 +147,7 @@ void cEffects::PlayMovingAnimation(CBaseObject *source, CBaseObject *dest, std::
      toSend.LayerId( 0x01 );
      toSend.Unknown( 0x0000 );*/
     
-    for (auto &tSock : Network->connClients) {
+    for (auto &tSock : worldNetwork.connClients) {
         if (ObjInRange(tSock, source, DIST_SAMESCREEN) && ObjInRange(tSock, dest, DIST_SAMESCREEN)) {
             tSock->Send(&toSend);
         }
@@ -355,7 +361,7 @@ void cEffects::PlayStaticAnimation(std::int16_t x, std::int16_t y, std::int8_t z
     toSend.AdjustDir(false);
     toSend.ExplodeOnImpact(explode);
     
-    std::for_each(Network->connClients.begin(), Network->connClients.end(), [&toSend](CSocket *tSock) { tSock->Send(&toSend); });
+    std::for_each(worldNetwork.connClients.begin(), worldNetwork.connClients.end(), [&toSend](CSocket *tSock) { tSock->Send(&toSend); });
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -391,14 +397,14 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, std::uint32_t damage = 0, [[maybe
     std::uint32_t dx, dy, dz;
     // - send the effect (visual and sound)
     if (nItem->GetCont()) {
-        Effects->PlayStaticAnimation(c, 0x36B0, 0x00, 0x09);
+        worldEffect.PlayStaticAnimation(c, 0x36B0, 0x00, 0x09);
         nItem->SetCont(nullptr);
         nItem->SetLocation(c);
-        Effects->PlaySound(c, 0x0207);
+        worldEffect.PlaySound(c, 0x0207);
     }
     else {
-        Effects->PlayStaticAnimation(nItem, 0x36B0, 0x00, 0x09, 0x00);
-        Effects->PlaySound(nItem, 0x0207);
+        worldEffect.PlayStaticAnimation(nItem, 0x36B0, 0x00, 0x09, 0x00);
+        worldEffect.PlaySound(nItem, 0x0207);
     }
     
     std::uint32_t len = nItem->GetTempVar(CITV_MOREX) / 250; // 4 square max damage at 100 alchemy
@@ -415,7 +421,7 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, std::uint32_t damage = 0, [[maybe
     
     if (explodeNearby) {
         // Explode for characters nearby
-        for (auto &Cell : MapRegion->PopulateList(nItem)) {
+        for (auto &Cell : worldMapHandler.PopulateList(nItem)) {
             bool chain = false;
             
             auto regChars = Cell->GetCharList();
@@ -455,7 +461,7 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, std::uint32_t damage = 0, [[maybe
                             if (RandomNum(0, 1) == 1) {
                                 chain = true;
                             }
-                            Effects->TempEffect(c, tempItem, 17, 0, 1, 0);
+                            worldEffect.TempEffect(c, tempItem, 17, 0, 1, 0);
                         }
                     }
                 }
@@ -484,7 +490,7 @@ void cEffects::HandleMakeItemEffect(CTEffect *tMake) {
     
     CChar *src = CalcCharObjFromSer(tMake->Source());
     std::uint16_t iMaking = tMake->More2();
-    CreateEntry_st *toMake = Skills->FindItem(iMaking);
+    CreateEntry_st *toMake = worldSkill.FindItem(iMaking);
     if (toMake == nullptr) {
         return;
     }
@@ -519,9 +525,9 @@ void cEffects::HandleMakeItemEffect(CTEffect *tMake) {
     }
     else {
         // targItem->SetName2( targItem->GetName().c_str() ); // Why was this here?
-        std::int32_t rank = Skills->CalcRankAvg(src, (*toMake));
+        std::int32_t rank = worldSkill.CalcRankAvg(src, (*toMake));
         std::int32_t maxrank = toMake->maxRank;
-        Skills->ApplyRank(sock, targItem, static_cast<std::uint8_t>(rank), static_cast<std::uint8_t>(maxrank));
+        worldSkill.ApplyRank(sock, targItem, static_cast<std::uint8_t>(rank), static_cast<std::uint8_t>(maxrank));
         
         // if we're not a GameMaster, see if we should store our creator
         if (!src->IsGM() && !toMake->skillReqs.empty()) {
@@ -560,7 +566,7 @@ void cEffects::HandleMakeItemEffect(CTEffect *tMake) {
     // Trigger onMakeItem() JS event for character who crafted the item
     std::vector<std::uint16_t> scriptTriggers = src->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             toExecute->OnMakeItem(sock, src, targItem, iMaking);
         }
@@ -769,107 +775,107 @@ auto cEffects::CheckTempeffects() -> void {
             case 27: // Explosion Spell
                 src = CalcCharObjFromSer(Effect->Source());
                 if (ValidateObject(src) && ValidateObject(s)) {
-                    Magic->PlaySound(src, 43);
-                    Magic->DoMoveEffect(43, s, src);
-                    Magic->DoStaticEffect(s, 43);
-                    Magic->MagicDamage(s, Effect->More1(), src, Weather::HEAT);
+                    worldMagic.PlaySound(src, 43);
+                    worldMagic.DoMoveEffect(43, s, src);
+                    worldMagic.DoStaticEffect(s, 43);
+                    worldMagic.MagicDamage(s, Effect->More1(), src, Weather::HEAT);
                     equipCheckNeeded = true;
                 }
                 break;
             case 28: // Magic Arrow Spell
                 src = CalcCharObjFromSer(Effect->Source());
                 if (ValidateObject(src) && ValidateObject(s)) {
-                    Magic->PlaySound(src, 5);
-                    Magic->DoMoveEffect(5, s, src);
+                    worldMagic.PlaySound(src, 5);
+                    worldMagic.DoMoveEffect(5, s, src);
                     //  Caster.MovingParticles(d, 0x36E4, 5, 0, false, false, 3006, 0, 0);
-                    Magic->DoStaticEffect(s, 5);
-                    Magic->MagicDamage(s, Effect->More1(), src, Weather::HEAT);
+                    worldMagic.DoStaticEffect(s, 5);
+                    worldMagic.MagicDamage(s, Effect->More1(), src, Weather::HEAT);
                     equipCheckNeeded = true;
                 }
                 break;
             case 29: // Harm Spell
                 src = CalcCharObjFromSer(Effect->Source());
                 if (ValidateObject(src) && ValidateObject(s)) {
-                    Magic->PlaySound(src, 12);
-                    Magic->DoMoveEffect(12, s, src);
-                    Magic->DoStaticEffect(s, 12);
-                    Magic->MagicDamage(s, Effect->More1(), src, Weather::COLD);
+                    worldMagic.PlaySound(src, 12);
+                    worldMagic.DoMoveEffect(12, s, src);
+                    worldMagic.DoStaticEffect(s, 12);
+                    worldMagic.MagicDamage(s, Effect->More1(), src, Weather::COLD);
                     equipCheckNeeded = true;
                 }
                 break;
             case 30: // Fireball Spell
                 src = CalcCharObjFromSer(Effect->Source());
                 if (ValidateObject(src) && ValidateObject(s)) {
-                    Magic->PlaySound(src, 18);
-                    Magic->DoMoveEffect(18, s, src);
-                    Magic->DoStaticEffect(s, 18);
-                    Magic->MagicDamage(s, Effect->More1(), src, Weather::HEAT);
+                    worldMagic.PlaySound(src, 18);
+                    worldMagic.DoMoveEffect(18, s, src);
+                    worldMagic.DoStaticEffect(s, 18);
+                    worldMagic.MagicDamage(s, Effect->More1(), src, Weather::HEAT);
                     equipCheckNeeded = true;
                 }
                 break;
             case 31: // Lightning Spell
                 src = CalcCharObjFromSer(Effect->Source());
                 if (ValidateObject(src) && ValidateObject(s)) {
-                    Effects->Bolteffect(s);
-                    Magic->PlaySound(src, 30);
-                    Magic->DoMoveEffect(30, s, src);
-                    Magic->DoStaticEffect(s, 30);
-                    Magic->MagicDamage(s, Effect->More1(), src, Weather::LIGHTNING);
+                    worldEffect.Bolteffect(s);
+                    worldMagic.PlaySound(src, 30);
+                    worldMagic.DoMoveEffect(30, s, src);
+                    worldMagic.DoStaticEffect(s, 30);
+                    worldMagic.MagicDamage(s, Effect->More1(), src, Weather::LIGHTNING);
                     equipCheckNeeded = true;
                 }
                 break;
             case 32: // Mind Blast
                 src = CalcCharObjFromSer(Effect->Source());
                 if (ValidateObject(src) && ValidateObject(s)) {
-                    Magic->PlaySound(src, 37);
-                    Magic->DoMoveEffect(37, s, src);
-                    Magic->DoStaticEffect(s, 37);
-                    Magic->MagicDamage(s, Effect->More1(), src, Weather::COLD);
+                    worldMagic.PlaySound(src, 37);
+                    worldMagic.DoMoveEffect(37, s, src);
+                    worldMagic.DoStaticEffect(s, 37);
+                    worldMagic.MagicDamage(s, Effect->More1(), src, Weather::COLD);
                     equipCheckNeeded = true;
                 }
                 break;
             case 33: // Energy Bolt
                 src = CalcCharObjFromSer(Effect->Source());
                 if (ValidateObject(src) && ValidateObject(s)) {
-                    Magic->PlaySound(s, 42);
-                    Magic->DoMoveEffect(42, s, src);
-                    Magic->DoStaticEffect(s, 42);
-                    Magic->MagicDamage(s, Effect->More1(), src, Weather::LIGHTNING);
+                    worldMagic.PlaySound(s, 42);
+                    worldMagic.DoMoveEffect(42, s, src);
+                    worldMagic.DoStaticEffect(s, 42);
+                    worldMagic.MagicDamage(s, Effect->More1(), src, Weather::LIGHTNING);
                     equipCheckNeeded = true;
                 }
                 break;
             case 34: // Chain Lightning
                 src = CalcCharObjFromSer(Effect->Source());
                 if (ValidateObject(src) && ValidateObject(s)) {
-                    Effects->Bolteffect(s);
-                    Magic->PlaySound(s, 49);
-                    Magic->DoMoveEffect(49, s, src);
-                    Magic->DoStaticEffect(s, 49);
-                    Magic->MagicDamage(s, Effect->More1(), src, Weather::LIGHTNING);
+                    worldEffect.Bolteffect(s);
+                    worldMagic.PlaySound(s, 49);
+                    worldMagic.DoMoveEffect(49, s, src);
+                    worldMagic.DoStaticEffect(s, 49);
+                    worldMagic.MagicDamage(s, Effect->More1(), src, Weather::LIGHTNING);
                     equipCheckNeeded = true;
                 }
                 break;
             case 35: // Flame Strike
                 src = CalcCharObjFromSer(Effect->Source());
                 if (ValidateObject(src) && ValidateObject(s)) {
-                    Magic->PlaySound(s, 51);
-                    Magic->DoMoveEffect(51, s, src);
-                    Magic->DoStaticEffect(s, 51);
-                    Magic->MagicDamage(s, Effect->More1(), src, Weather::HEAT);
+                    worldMagic.PlaySound(s, 51);
+                    worldMagic.DoMoveEffect(51, s, src);
+                    worldMagic.DoStaticEffect(s, 51);
+                    worldMagic.MagicDamage(s, Effect->More1(), src, Weather::HEAT);
                     equipCheckNeeded = true;
                 }
                 break;
             case 36: // Meteor Swarm
                 src = CalcCharObjFromSer(Effect->Source());
                 if (ValidateObject(src) && ValidateObject(s)) {
-                    Magic->PlaySound(src, 55);
+                    worldMagic.PlaySound(src, 55);
                     if (s != src) {
-                        Magic->DoMoveEffect(55, s, src);
+                        worldMagic.DoMoveEffect(55, s, src);
                     }
-                    Magic->DoStaticEffect(s, 55);
-                    // Effects->PlaySound( target, 0x160 );
-                    // Effects->PlayMovingAnimation( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
-                    Magic->MagicDamage(s, Effect->More1(), src, Weather::HEAT);
+                    worldMagic.DoStaticEffect(s, 55);
+                    // worldEffect.PlaySound( target, 0x160 );
+                    // worldEffect.PlayMovingAnimation( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
+                    worldMagic.MagicDamage(s, Effect->More1(), src, Weather::HEAT);
                     equipCheckNeeded = true;
                 }
                 break;
@@ -878,7 +884,7 @@ auto cEffects::CheckTempeffects() -> void {
                 std::uint16_t scpNum = 0xFFFF;
                 
                 // Get script associated with effect, if any
-                cScript *tScript = JSMapping->GetScript(Effect->AssocScript());
+                cScript *tScript = worldJSMapping.GetScript(Effect->AssocScript());
                 
                 // items have serials of 0x40000000 and above, and we already know it's not
                 // INVALIDSERIAL
@@ -897,20 +903,20 @@ auto cEffects::CheckTempeffects() -> void {
                     if (tScript == nullptr) {
                         if (Effect->More2() != 0xFFFF){ // A scriptId other than default one was found
                             scpNum = Effect->More2();
-                            tScript = JSMapping->GetScript(scpNum);
+                            tScript = worldJSMapping.GetScript(scpNum);
                         }
                     }
                     
                     // Make sure to check for a specific script via envoke system when the previous
                     // checks ended in the global script.
                     if ((tScript == nullptr || scpNum == 0) && Effect->Source() >= BASEITEMSERIAL) {
-                        if (JSMapping->GetEnvokeByType()->Check( static_cast<std::uint16_t>((static_cast<CItem *>(myObj))->GetType()))) {
-                            scpNum = JSMapping->GetEnvokeByType()->GetScript( static_cast<std::uint16_t>((static_cast<CItem *>(myObj))->GetType()));
-                            tScript = JSMapping->GetScript(scpNum);
+                        if (worldJSMapping.GetEnvokeByType()->Check( static_cast<std::uint16_t>((static_cast<CItem *>(myObj))->GetType()))) {
+                            scpNum = worldJSMapping.GetEnvokeByType()->GetScript( static_cast<std::uint16_t>((static_cast<CItem *>(myObj))->GetType()));
+                            tScript = worldJSMapping.GetScript(scpNum);
                         }
-                        else if (JSMapping->GetEnvokeById()->Check(myObj->GetId())) {
-                            scpNum = JSMapping->GetEnvokeById()->GetScript(myObj->GetId());
-                            tScript = JSMapping->GetScript(scpNum);
+                        else if (worldJSMapping.GetEnvokeById()->Check(myObj->GetId())) {
+                            scpNum = worldJSMapping.GetEnvokeById()->GetScript(myObj->GetId());
+                            tScript = worldJSMapping.GetScript(scpNum);
                         }
                     }
                     
@@ -965,20 +971,20 @@ auto cEffects::CheckTempeffects() -> void {
                         lockedItem->RemoveFromSight();
                         lockedItem->Update();
                         
-                        if (Magic->spells[23].Effect() != INVALIDID) {
-                            Effects->PlaySound(lockedItem, Magic->spells[23].Effect(), true);
+                        if (worldMagic.spells[23].Effect() != INVALIDID) {
+                            worldEffect.PlaySound(lockedItem, worldMagic.spells[23].Effect(), true);
                         }
                         
-                        CMagicStat temp = Magic->spells[23].StaticEffect();
+                        CMagicStat temp = worldMagic.spells[23].StaticEffect();
                         if (temp.Effect() != INVALIDID) {
                             auto iCont = lockedItem->GetCont();
                             if (ValidateObject(iCont) && iCont->CanBeObjType(CBaseObject::OT_CHAR)) {
                                 // Play unlock FX on character holding object
-                                Effects->PlayStaticAnimation(iCont, temp.Effect(), temp.Speed(), temp.Loop());
+                                worldEffect.PlayStaticAnimation(iCont, temp.Effect(), temp.Speed(), temp.Loop());
                             }
                             else {
                                 // Play unlock FX directly on object
-                                Effects->PlayStaticAnimation(lockedItem, temp.Effect(), temp.Speed(), temp.Loop());
+                                worldEffect.PlayStaticAnimation(lockedItem, temp.Effect(), temp.Speed(), temp.Loop());
                             }
                         }
                     }
@@ -1187,13 +1193,13 @@ void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uin
                 effectDuration = static_cast<float>(more2);
                 
                 // Halve effect-duration on resist
-                spellResisted = Magic->CheckResist(more3, dest, 1);
+                spellResisted = worldMagic.CheckResist(more3, dest, 1);
             }
             else {
                 effectDuration = static_cast<float>(source->GetSkill(MAGERY) / 10.0f);
                 
                 // Halve effect-timer on resist
-                spellResisted = Magic->CheckResist(source, dest, 1);
+                spellResisted = worldMagic.CheckResist(source, dest, 1);
             }
             
             if (spellResisted) {
@@ -1220,13 +1226,13 @@ void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uin
                 effectDuration = static_cast<float>(more2);
                 
                 // Halve effect-duration on resist
-                spellResisted = Magic->CheckResist(more3, dest, 3);
+                spellResisted = worldMagic.CheckResist(more3, dest, 3);
             }
             else {
                 effectDuration = static_cast<float>(source->GetSkill(MAGERY) / 10.0f);
                 
                 // Halve effect-timer on resist
-                spellResisted = Magic->CheckResist(source, dest, 1);
+                spellResisted = worldMagic.CheckResist(source, dest, 1);
             }
             
             if (spellResisted) {
@@ -1253,13 +1259,13 @@ void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uin
                 effectDuration = static_cast<float>(more2);
                 
                 // Halve effect-duration on resist
-                spellResisted = Magic->CheckResist(more3, dest, 1);
+                spellResisted = worldMagic.CheckResist(more3, dest, 1);
             }
             else {
                 effectDuration = static_cast<float>(source->GetSkill(MAGERY) / 10.0f);
                 
                 // Halve effect-timer on resist
-                spellResisted = Magic->CheckResist(source, dest, 1);
+                spellResisted = worldMagic.CheckResist(source, dest, 1);
             }
             
             // Halve effect-timer on resist
@@ -1371,7 +1377,7 @@ void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uin
                 effectDuration = static_cast<float>(more2);
                 
                 // Halve effect-duration on resist
-                spellResisted = Magic->CheckResist(more3, dest, 4);
+                spellResisted = worldMagic.CheckResist(more3, dest, 4);
             }
             else {
                 if (dest->GetStrength() < more1) {
@@ -1393,7 +1399,7 @@ void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uin
                 effectDuration = static_cast<float>(source->GetSkill(MAGERY)) / 10.0f;
                 
                 // Halve effect-timer on resist
-                spellResisted = Magic->CheckResist(source, dest, 4);
+                spellResisted = worldMagic.CheckResist(source, dest, 4);
             }
             
             if (spellResisted) {
@@ -1471,43 +1477,43 @@ void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uin
             dest->SetUsingPotion(true);
             break;
         case 27: // Explosion Spell
-            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(Magic->spells[43].DamageDelay())));
+            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(worldMagic.spells[43].DamageDelay())));
             toAdd->More1(more1);
             break;
         case 28: // Magic Arrow Spell
-            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(Magic->spells[5].DamageDelay())));
+            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(worldMagic.spells[5].DamageDelay())));
             toAdd->More1(more1);
             break;
         case 29: // Harm Spell
-            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(Magic->spells[12].DamageDelay())));
+            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(worldMagic.spells[12].DamageDelay())));
             toAdd->More1(more1);
             break;
         case 30: // Fireball Spell
-            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(Magic->spells[18].DamageDelay())));
+            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(worldMagic.spells[18].DamageDelay())));
             toAdd->More1(more1);
             break;
         case 31: // Lightning Spell
-            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(Magic->spells[30].DamageDelay())));
+            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(worldMagic.spells[30].DamageDelay())));
             toAdd->More1(more1);
             break;
         case 32: // Mind Blast Spell
-            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(Magic->spells[37].DamageDelay())));
+            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(worldMagic.spells[37].DamageDelay())));
             toAdd->More1(more1);
             break;
         case 33: // Energy Bolt Spell
-            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(Magic->spells[42].DamageDelay())));
+            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(worldMagic.spells[42].DamageDelay())));
             toAdd->More1(more1);
             break;
         case 34: // Chain Lightning Spell
-            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(Magic->spells[49].DamageDelay())));
+            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(worldMagic.spells[49].DamageDelay())));
             toAdd->More1(more1);
             break;
         case 35: // Flamestrike Spell
-            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(Magic->spells[51].DamageDelay())));
+            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(worldMagic.spells[51].DamageDelay())));
             toAdd->More1(more1);
             break;
         case 36: // Meteor Swarm
-            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(Magic->spells[55].DamageDelay())));
+            toAdd->ExpireTime(BuildTimeValue(static_cast<float>(worldMagic.spells[55].DamageDelay())));
             toAdd->More1(more1);
             break;
         case 40: // Used by JS timers

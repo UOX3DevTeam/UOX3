@@ -389,6 +389,5 @@ public:
     void DumpInFile();
 };
 
-extern CSpeechQueue *SpeechSys;
 
 #endif

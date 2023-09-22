@@ -206,5 +206,4 @@ public:
     auto MapCount() const -> std::uint8_t;
 };
 
-extern CMulHandler *Map;
 #endif

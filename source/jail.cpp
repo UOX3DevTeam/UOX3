@@ -13,9 +13,12 @@
 #include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
+
+extern CServerDefinitions worldFileLookup ;
+
 using namespace std::string_literals;
 
-CJailSystem *JailSys;
+
 
 CJailCell::~CJailCell() {
     for (size_t i = 0; i < playersInJail.size(); ++i) {
@@ -178,7 +181,7 @@ void CJailCell::WriteData(std::ostream &outStream, size_t cellNumber) {
 // hardcoded setup
 // o------------------------------------------------------------------------------------------------o
 auto CJailSystem::ReadSetup() -> void {
-    auto Regions = FileLookup->FindEntry("JAILS", regions_def);
+    auto Regions = worldFileLookup.FindEntry("JAILS", regions_def);
     if (Regions == nullptr) {
         jails.resize(10);
         jails[0].X(5276);

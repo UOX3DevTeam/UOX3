@@ -25,6 +25,14 @@
 
 extern CDictionaryContainer worldDictionary ;
 extern CCharStuff worldNPC ;
+extern CSkills worldSkill ;
+extern cRaces worldRace ;
+extern CJSMapping worldJSMapping ;
+extern CJailSystem worldJailSystem ;
+extern CSpeechQueue worldSpeechSystem ;
+extern CJSEngine worldJSEngine ;
+extern CServerDefinitions worldFileLookup ;
+extern CMulHandler worldMULHandler ;
 
 // Implementation of town regions
 
@@ -89,7 +97,7 @@ CTownRegion::CTownRegion(std::uint16_t region) : regionNum(region), numGuards(DE
 //|	Purpose		-	Deconstructor for CTownRegion class
 // o------------------------------------------------------------------------------------------------o
 CTownRegion::~CTownRegion() {
-    JSEngine->ReleaseObject(IUE_REGION, this);
+    worldJSEngine.ReleaseObject(IUE_REGION, this);
     
     townMember.resize(0);
     alliedTowns.resize(0);
@@ -367,7 +375,7 @@ void CTownRegion::SetMayorSerial(serial_t newValue) { mayorSerial = newValue; }
 //|	Purpose		-	Adds specified character to the town's member list
 // o------------------------------------------------------------------------------------------------o
 bool CTownRegion::AddAsTownMember(CChar &toAdd) {
-    if (Races->CompareByRace(toAdd.GetRace(), race) <= RACE_ENEMY) // if we're racial enemies
+    if (worldRace.CompareByRace(toAdd.GetRace(), race) <= RACE_ENEMY) // if we're racial enemies
         return false; // we can't have a racial enemy in the town!
     
     for (std::uint32_t counter = 0; counter < townMember.size(); ++counter) { // exhaustive error checking
@@ -550,7 +558,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                     OrePref_st toPush;
                     data = util::simplify(data);
                     oreName = oldstrutil::extractSection(data, ",", 0, 0);
-                    toPush.oreIndex = Skills->FindOre(oreName);
+                    toPush.oreIndex = worldSkill.FindOre(oreName);
                     if (toPush.oreIndex != nullptr) {
                         auto csecs = oldstrutil::sections(data, ",");
                         if (csecs.size() > 1) {
@@ -563,7 +571,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                         }
                         else {
                             // Fallback for older skills.dfn setups
-                            toPush.percentChance = 1000 / static_cast<std::uint16_t>(Skills->GetNumberOfOres());
+                            toPush.percentChance = 1000 / static_cast<std::uint16_t>(worldSkill.GetNumberOfOres());
                         }
                         
                         orePreferences.push_back(toPush);
@@ -625,7 +633,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                 }
                 else if (UTag == "SPAWN") {
                     std::string sect = "PREDEFINED_SPAWN " + data;
-                    CScriptSection *predefSpawn = FileLookup->FindEntry(sect, spawn_def);
+                    CScriptSection *predefSpawn = worldFileLookup.FindEntry(sect, spawn_def);
                     if (predefSpawn == nullptr) {
                         Console::shared().warning(util::format("Undefined region spawn %s, check your regions.dfn and spawn.dfn files", data.c_str()));
                     }
@@ -650,7 +658,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                 else if (UTag == "SCRIPT") {
                     std::uint16_t scriptId = static_cast<std::uint16_t>(duint);
                     if (scriptId != 0) {
-                        cScript *toExecute = JSMapping->GetScript(scriptId);
+                        cScript *toExecute = worldJSMapping.GetScript(scriptId);
                         if (toExecute == nullptr) {
                             Console::shared().warning(util::format("SCRIPT tag found with invalid script ID (%s) when loading region data!", util::ntos(scriptId).c_str()));
                         }
@@ -693,9 +701,9 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
     // No ore preference tags found for this region, apply default chance to find ores
     if (!orePrefLoaded) {
         OrePref_st toLoad;
-        size_t numOres = Skills->GetNumberOfOres();
+        size_t numOres = worldSkill.GetNumberOfOres();
         for (size_t myCounter = 0; myCounter < numOres; ++myCounter) {
-            toLoad.oreIndex = Skills->GetOre(myCounter);
+            toLoad.oreIndex = worldSkill.GetOre(myCounter);
             toLoad.percentChance = toLoad.oreIndex->oreChance;
             orePreferences.push_back(toLoad);
         }
@@ -887,7 +895,7 @@ bool CTownRegion::DisplayTownMenu(CItem *used, CSocket *sock, std::int8_t flag) 
     }
     CChar *tChar = sock->CurrcharObj();
     if (!IsMemberOfTown(tChar)) {
-        if (Races->CompareByRace(tChar->GetRace(), race) <= RACE_ENEMY) { // if we're racial enemies
+        if (worldRace.CompareByRace(tChar->GetRace(), race) <= RACE_ENEMY) { // if we're racial enemies
             if (tChar->GetTown() != 255) {
                 SendEnemyGump(sock);
             }
@@ -963,7 +971,7 @@ void CTownRegion::SendEnemyGump(CSocket *sock) {
     
     toSend.addCommand(util::format("button 25 111 %u %i 1 0 61", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // seize townstone
     toSend.addCommand(util::format("button 25 131 %u %i 1 0 62", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // destroy townstone
-    toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
+    toSend.addText(util::format("%s (%s)", name.c_str(), worldRace.Name(race).c_str()));
     toSend.addText(util::format("Population %i", GetPopulation()));
     toSend.addText("Seize Townstone");
     toSend.addText("Attack Townstone");
@@ -1011,7 +1019,7 @@ void CTownRegion::SendPotentialMember(CSocket *sock) {
     toSend.addCommand(util::format("button 25 91 %u %i 1 0 41", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // leave town
     toSend.addCommand(util::format("button 25 111 %u %i 1 0 3", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // view taxes
     
-    toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
+    toSend.addText(util::format("%s (%s)", name.c_str(), worldRace.Name(race).c_str()));
     
     toSend.addText(util::format(worldDictionary.GetEntry(1127, sLang), GetPopulation()));
     toSend.addText(worldDictionary.GetEntry(1128, sLang));
@@ -1062,7 +1070,7 @@ void CTownRegion::SendMayorGump(CSocket *sock) {
     toSend.addCommand(util::format("button 25 280 %u %i 1 0 40", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT],  ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // return to main menu
     toSend.addCommand(util::format("button 25 191 %u %i 1 0 26", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // make ally of other town
     
-    toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
+    toSend.addText(util::format("%s (%s)", name.c_str(), worldRace.Name(race).c_str()));
     toSend.addText(util::format(worldDictionary.GetEntry(1130, sLang), GetPopulation()));
     toSend.addText(worldDictionary.GetEntry(1131, sLang));
     toSend.addText(worldDictionary.GetEntry(1132, sLang));
@@ -1119,7 +1127,7 @@ void CTownRegion::SendDefaultGump(CSocket *sock) {
     
     CChar *mChar = sock->CurrcharObj();
     unicodetypes_t sLang = sock->Language();
-    toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
+    toSend.addText(util::format("%s (%s)", name.c_str(), worldRace.Name(race).c_str()));
     toSend.addText(util::format(worldDictionary.GetEntry(1139, sLang), GetPopulation()));
     toSend.addText(worldDictionary.GetEntry(1140, sLang));
     toSend.addText(worldDictionary.GetEntry(1141, sLang));
@@ -1336,7 +1344,7 @@ bool CTownRegion::PeriodicCheck() {
                 if (taxedAmount > numResources) {
                     std::uint32_t bankAmount = GetBankCount(townMem, resourceId, 0, 0);
                     if (taxedAmount > (numResources + bankAmount)) {
-                        JailSys->JailPlayer(townMem, 900);
+                        worldJailSystem.JailPlayer(townMem, 900);
                     }
                     else {
                         DeleteItemAmount(townMem, numResources, resourceId);
@@ -1420,9 +1428,9 @@ void CTownRegion::ViewTaxes(CSocket *sock) {
     toSend.addCommand(util::format( "text 35 111 %u 3", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // # of resources
     toSend.addCommand(util::format("tilepic 5 111 %u", GetResourceId())); // picture of the resource
     
-    toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
+    toSend.addText(util::format("%s (%s)", name.c_str(), worldRace.Name(race).c_str()));
     toSend.addText(util::format("Population %i", GetPopulation()));
-    CTile &tile = Map->SeekTile(GetResourceId());
+    CTile &tile = worldMULHandler.SeekTile(GetResourceId());
     toSend.addText(util::format("%i %ss", taxedAmount, tile.Name().c_str()));
     toSend.Finalize();
     sock->Send(&toSend);
@@ -1490,7 +1498,7 @@ bool CTownRegion::MakeAlliedTown(std::uint16_t townToMake) {
         return false;
     }
     
-    if (Races->CompareByRace(worldMain.townRegions[townToMake]->GetRace(), race) <= RACE_ENEMY) // if we're racial enemies
+    if (worldRace.CompareByRace(worldMain.townRegions[townToMake]->GetRace(), race) <= RACE_ENEMY) // if we're racial enemies
         return false;
     
     // let's ally ourselves
@@ -1531,7 +1539,7 @@ void CTownRegion::TellMembers(std::int32_t dictEntry, ...) {
                 targetSock->Send(&unicodeMessage);
             }
             else {
-                CSpeechEntry &toAdd = SpeechSys->Add();
+                CSpeechEntry &toAdd = worldSpeechSystem.Add();
                 toAdd.Speech(msg);
                 toAdd.Font(FNT_NORMAL);
                 toAdd.Speaker(INVALIDSERIAL);
@@ -1601,9 +1609,9 @@ auto CTownRegion::SendEnemyTowns(CSocket *sock) -> void {
     
     std::uint8_t enemyCount = 0;
     std::for_each(worldMain.townRegions.begin(), worldMain.townRegions.end(), [this, &enemyCount, &Enemy](const std::pair<std::uint16_t, CTownRegion *> &entry) {
-        if ((entry.first != regionNum) && (Races->CompareByRace(race, entry.second->GetRace()) <= RACE_ENEMY)) {
+        if ((entry.first != regionNum) && (worldRace.CompareByRace(race, entry.second->GetRace()) <= RACE_ENEMY)) {
             ++enemyCount;
-            Enemy.AddData(entry.second->GetName(), Races->Name(entry.second->GetRace()));
+            Enemy.AddData(entry.second->GetName(), worldRace.Name(entry.second->GetRace()));
         }
     });
     

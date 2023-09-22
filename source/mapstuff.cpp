@@ -20,8 +20,10 @@
 #include "townregion.h"
 
 using namespace std::string_literals;
+extern CServerDefinitions worldFileLookup ;
+extern CMulHandler worldMULHandler ;
+extern CMapHandler worldMapHandler ;
 
-CMulHandler *Map = nullptr;
 
 // const std::uint16_t LANDDATA_SIZE		= 0x4000; //(512 * 32)
 
@@ -45,11 +47,11 @@ CMulHandler *Map = nullptr;
 // later
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::LoadMapsDFN(const std::filesystem::path &uopath) -> std::map<int, MapDfnData_st> {
-    auto entrycount = FileLookup->CountOfEntries(maps_def);
+    auto entrycount = worldFileLookup.CountOfEntries(maps_def);
     std::map<int, MapDfnData_st> results;
     
     for (auto i = 0; i < static_cast<int>(entrycount); i++) {
-        auto toFind = FileLookup->FindEntry("MAP "s + std::to_string(i), maps_def);
+        auto toFind = worldFileLookup.FindEntry("MAP "s + std::to_string(i), maps_def);
         if (toFind == nullptr)
             break;
         
@@ -129,7 +131,7 @@ auto CMulHandler::load() -> void {
         Shutdown(FATAL_UOX3_MAP_NOT_FOUND);
     }
     LoadMultis(uodir);
-    FileLookup->Dispose(maps_def);
+    worldFileLookup.Dispose(maps_def);
     Console::shared().printSectionBegin();
 }
 
@@ -156,7 +158,7 @@ auto CMulHandler::LoadTileData(const std::filesystem::path &uodir) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::LoadDFNOverrides() -> void {
     std::uint16_t entryNum;
-    for (auto &mapScp : FileLookup->ScriptListings[maps_def]) {
+    for (auto &mapScp : worldFileLookup.ScriptListings[maps_def]) {
         if (mapScp == nullptr)
             continue;
         
@@ -482,7 +484,7 @@ auto CMulHandler::MultiTile(CItem *i, std::int16_t x, std::int16_t y, std::int8_
     
     if (!MultiExists(multiId)) {
         Console::shared() << "CMulHandler::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
-        auto map1 = Map->SeekMap(i->GetX(), i->GetY(), i->WorldNumber());
+        auto map1 = worldMULHandler.SeekMap(i->GetX(), i->GetY(), i->WorldNumber());
         if (map1.CheckFlag(TF_WET)) // is it water?
         {
             i->SetId(0x4001);
@@ -522,7 +524,7 @@ auto CMulHandler::MultiTile(CItem *i, std::int16_t x, std::int16_t y, std::int8_
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::DynTile(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkOnlyMultis, bool checkOnlyNonMultis) -> CItem * {
     auto rValue = static_cast<CItem *>(nullptr);
-    for (auto &cellResponse : MapRegion->PopulateList(x, y, worldNumber)) {
+    for (auto &cellResponse : worldMapHandler.PopulateList(x, y, worldNumber)) {
         if (cellResponse == nullptr)
             continue;
         
@@ -565,7 +567,7 @@ auto CMulHandler::DynTile(std::int16_t x, std::int16_t y, std::int8_t z, std::ui
 //|	Purpose		-	Checks if statics at/above given coordinates blocks movement, etc
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::DoesStaticBlock(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, bool checkWater) -> bool {
-    auto &artTiles = Map->ArtAt(x, y, worldNumber);
+    auto &artTiles = worldMULHandler.ArtAt(x, y, worldNumber);
     auto rValue = false;
     for (auto &tile : artTiles) {
         auto elev = static_cast<std::int8_t>(tile.altitude + tile.artInfo->ClimbHeight());
@@ -666,7 +668,7 @@ auto CMulHandler::DoesMapBlock(std::int16_t x, std::int16_t y, std::int8_t z, st
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::DoesCharacterBlock(std::uint16_t x, std::uint16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId) -> bool {
     
-    for (auto &cellResponse : MapRegion->PopulateList(x, y, worldNumber)) {
+    for (auto &cellResponse : worldMapHandler.PopulateList(x, y, worldNumber)) {
         if (cellResponse == nullptr)
             continue;
         
@@ -697,7 +699,7 @@ auto CMulHandler::DoesCharacterBlock(std::uint16_t x, std::uint16_t y, std::int8
 auto CMulHandler::CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, tileflags_t toCheck, std::uint16_t &foundtileID, bool checkSpawnSurface) -> bool {
     
     auto rValue = checkSpawnSurface;
-    for (const auto &tile : Map->ArtAt(x, y, worldNumber)) {
+    for (const auto &tile : worldMULHandler.ArtAt(x, y, worldNumber)) {
         const std::int8_t elev = static_cast<std::int8_t>(tile.altitude);
         const std::int8_t tileHeight = static_cast<std::int8_t>(tile.artInfo->ClimbHeight());
         if (checkSpawnSurface) {
@@ -745,7 +747,7 @@ auto CMulHandler::CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z
     }
     else {
         // Search map region of given location for all potentially blocking dynamic items
-        for (auto &cellResponse : MapRegion->PopulateList(x, y, worldNumber)) {
+        for (auto &cellResponse : worldMapHandler.PopulateList(x, y, worldNumber)) {
             if (cellResponse == nullptr)
                 continue;
             
@@ -808,7 +810,7 @@ auto CMulHandler::CheckTileFlag(std::uint16_t itemId, tileflags_t flagToCheck) -
 auto CMulHandler::StaticTop(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::int8_t maxZ) -> std::int8_t {
     auto top = ILLEGAL_Z;
     
-    const auto &artTiles = Map->ArtAt(x, y, worldNumber);
+    const auto &artTiles = worldMULHandler.ArtAt(x, y, worldNumber);
     for (const auto &tile : artTiles) {
         auto tempTop = static_cast<std::int8_t>(tile.altitude + tile.artInfo->ClimbHeight());
         if ((tempTop <= z + maxZ) && (tempTop > top)) {
@@ -844,7 +846,7 @@ auto CMulHandler::DynamicElevation(std::int16_t x, std::int16_t y, std::int8_t z
     }
     else {
         auto MapArea =
-        MapRegion->GetMapRegion(MapRegion->GetGridX(x), MapRegion->GetGridY(y), worldNumber);
+        worldMapHandler.GetMapRegion(worldMapHandler.GetGridX(x), worldMapHandler.GetGridY(y), worldNumber);
         if (MapArea) {
             auto regItems = MapArea->GetItemList();
             for (const auto tempItem : regItems->collection()) {
@@ -915,12 +917,12 @@ auto CMulHandler::Height(std::int16_t x, std::int16_t y, std::int8_t z, std::uin
 // if there is |					a multi or static above them
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::InBuilding(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId) -> bool {
-    auto dynZ = Map->DynamicElevation(x, y, z, worldNumber, instanceId, static_cast<std::int8_t>(127));
+    auto dynZ = worldMULHandler.DynamicElevation(x, y, z, worldNumber, instanceId, static_cast<std::int8_t>(127));
     if (dynZ > (z + 10)) {
         return true;
     }
     else {
-        const std::int8_t staticZ = Map->StaticTop(x, y, z, worldNumber, static_cast<std::int8_t>(127));
+        const std::int8_t staticZ = worldMULHandler.StaticTop(x, y, z, worldNumber, static_cast<std::int8_t>(127));
         if (staticZ > (z + 10)) {
             return true;
         }

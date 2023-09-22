@@ -18,6 +18,9 @@
 #include "townregion.h"
 
 extern WorldItem worldItem ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CalcValue()
 // o------------------------------------------------------------------------------------------------o
@@ -164,7 +167,7 @@ bool CPIBuyItem::Handle() {
             // Check if onBuyFromVendor JS event is present for each item being purchased
             // If return false or 0 has been returned from the script, halt the purchase
             for (auto scriptTrig : bItems[i]->GetScriptTriggers()) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     if (toExecute->OnBuyFromVendor(tSock, npc, bItems[i], amount[i]) == 0) {
                         bItems.clear();
@@ -177,7 +180,7 @@ bool CPIBuyItem::Handle() {
             // Also run the event on the vendor itself. If purchase didn't get blocked on the item
             // side, maybe vendor has a script with something to say about it instead
             for (auto scriptTrig : npc->GetScriptTriggers()) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     if (toExecute->OnBuyFromVendor(tSock, npc, bItems[i], amount[i]) == 0) {
                         bItems.clear();
@@ -208,7 +211,7 @@ bool CPIBuyItem::Handle() {
                     // coins.  I thank thee for thy business.
                 }
                 
-                Effects->GoldSound(tSock, totalGoldCost);
+                worldEffect.GoldSound(tSock, totalGoldCost);
             }
             
             clear = true;
@@ -326,7 +329,7 @@ bool CPIBuyItem::Handle() {
             for (i = 0; i < boughtItems.size(); ++i) {
                 if (boughtItems[i]) {
                     for (auto scriptTrig : boughtItems[i]->GetScriptTriggers()) {
-                        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                         if (toExecute != nullptr) {
                             // If script returns 1, prevent other scripts with event from running
                             if (toExecute->OnBoughtFromVendor(tSock, npc, boughtItems[i], boughtItemAmounts[i]) == 1) {
@@ -336,7 +339,7 @@ bool CPIBuyItem::Handle() {
                     }
                     
                     for (auto scriptTrig : npc->GetScriptTriggers()) {
-                        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                         if (toExecute != nullptr) {
                             // If script returns 1, prevent other scripts with event from running
                             if (toExecute->OnBoughtFromVendor(tSock, npc, boughtItems[i],  boughtItemAmounts[i]) == 1) {
@@ -409,7 +412,7 @@ bool CPISellItem::Handle() {
                 bool saleHalted = false;
                 std::vector<std::uint16_t> jScriptTriggers = j->GetScriptTriggers();
                 for (auto scriptTrig : jScriptTriggers) {
-                    cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                    cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                     if (toExecute != nullptr) {
                         if (toExecute->OnSellToVendor(tSock, n, j, maxsell) == 0) {
                             // Halt sale!
@@ -425,7 +428,7 @@ bool CPISellItem::Handle() {
                 if (!saleHalted) {
                     std::vector<std::uint16_t> nScriptTriggers = n->GetScriptTriggers();
                     for (auto scriptTrig : nScriptTriggers) {
-                        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                         if (toExecute != nullptr) {
                             if (toExecute->OnSellToVendor(tSock, n, j, maxsell) == 0) {
                                 // Halt sale!
@@ -500,7 +503,7 @@ bool CPISellItem::Handle() {
                     // Check for onSoldToVendor event on item
                     std::vector<std::uint16_t> lScriptTriggers = l->GetScriptTriggers();
                     for (auto scriptTrig : lScriptTriggers) {
-                        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                         if (toExecute != nullptr) {
                             // If script returns true/1, prevent other scripts with event from
                             // running
@@ -513,7 +516,7 @@ bool CPISellItem::Handle() {
                     // Check for onSoldToVendor event on vendor
                     std::vector<std::uint16_t> nScriptTriggers = n->GetScriptTriggers();
                     for (auto scriptTrig : nScriptTriggers) {
-                        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                         if (toExecute != nullptr) {
                             // If script returns true/1, prevent other scripts with event from
                             // running
@@ -526,7 +529,7 @@ bool CPISellItem::Handle() {
             }
         }
         
-        Effects->GoldSound(tSock, totgold);
+        worldEffect.GoldSound(tSock, totgold);
         while (totgold > MAX_STACK) {
             worldItem.CreateScriptItem(tSock, mChar, "0x0EED", MAX_STACK, CBaseObject::OT_ITEM, true);
             totgold -= MAX_STACK;

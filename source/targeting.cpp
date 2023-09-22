@@ -34,6 +34,14 @@ extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
+extern CSkills worldSkill ;
+extern CMagic worldMagic ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern CGuildCollection worldGuildSystem ;
+extern CServerDefinitions worldFileLookup ;
+extern CCommands serverCommands;
+extern CMulHandler worldMULHandler ;
 
 using namespace std::string_literals;
 
@@ -115,7 +123,7 @@ void HandleGuildTarget(CSocket *s) {
             trgChar = CalcCharObjFromSer(s->GetDWord(7));
             if (ValidateObject(trgChar)) {
                 if (trgChar->GetGuildNumber() == -1) { // no existing guild
-                    mGuild = GuildSys->Guild(mChar->GetGuildNumber());
+                    mGuild = worldGuildSystem.Guild(mChar->GetGuildNumber());
                     if (mGuild != nullptr) {
                         auto trgSock = trgChar->GetSocket();
                         if (mGuild->Master() == mChar->GetSerial()) {
@@ -171,10 +179,10 @@ void HandleGuildTarget(CSocket *s) {
                         s->SysMessage(1004); // They're not in a guild!
                     }
                     else {
-                        mGuild = GuildSys->Guild(mChar->GetGuildNumber());
+                        mGuild = worldGuildSystem.Guild(mChar->GetGuildNumber());
                         if (mGuild != nullptr) {
                             mGuild->SetGuildRelation(trgChar->GetGuildNumber(), GR_WAR);
-                            tGuild = GuildSys->Guild(trgChar->GetGuildNumber());
+                            tGuild = worldGuildSystem.Guild(trgChar->GetGuildNumber());
                             if (tGuild != nullptr) {
                                 mGuild->TellMembers(1989, tGuild->Name().c_str()); // Your guild has declared war on the guild %s!
                                 tGuild->TellMembers(1005, mGuild->Name().c_str()); // The guild %s has declared war upon you!
@@ -195,10 +203,10 @@ void HandleGuildTarget(CSocket *s) {
                         s->SysMessage(1004); // They're not in a guild!
                     }
                     else {
-                        mGuild = GuildSys->Guild(mChar->GetGuildNumber());
+                        mGuild = worldGuildSystem.Guild(mChar->GetGuildNumber());
                         if (mGuild != nullptr) {
                             mGuild->SetGuildRelation(trgChar->GetGuildNumber(), GR_ALLY);
-                            tGuild = GuildSys->Guild(trgChar->GetGuildNumber());
+                            tGuild = worldGuildSystem.Guild(trgChar->GetGuildNumber());
                             if (tGuild != nullptr) {
                                 mGuild->TellMembers(1990,  tGuild->Name().c_str()); // Your guild has declared the guild %s as an ally!
                                 tGuild->TellMembers(1007, mGuild->Name() .c_str()); // The guild %s has declared you to be an ally!
@@ -215,7 +223,7 @@ void HandleGuildTarget(CSocket *s) {
             trgChar = CalcCharObjFromSer(s->GetDWord(7));
             if (ValidateObject(trgChar)) {
                 if (trgChar->GetGuildNumber() == mChar->GetGuildNumber()) { // In same guild
-                    mGuild = GuildSys->Guild(mChar->GetGuildNumber());
+                    mGuild = worldGuildSystem.Guild(mChar->GetGuildNumber());
                     if (mGuild != nullptr) {
                         s->TempInt2(trgChar->GetSerial());
                         TextEntryGump(s, mChar->GetSerial(), 100, 6, 15, 1684);
@@ -276,7 +284,7 @@ void AddScriptNpc(CSocket *s) {
     CChar *mChar = s->CurrcharObj();
     const std::int16_t coreX = s->GetWord(11);
     const std::int16_t coreY = s->GetWord(13);
-    const std::int8_t coreZ = static_cast<std::int8_t>(s->GetByte(16) + Map->TileHeight(s->GetWord(17)));
+    const std::int8_t coreZ = static_cast<std::int8_t>(s->GetByte(16) + worldMULHandler.TileHeight(s->GetWord(17)));
     worldNPC.CreateNPCxyz(s->XText(), coreX, coreY, coreZ, mChar->WorldNumber(), mChar->GetInstanceId());
 }
 
@@ -310,25 +318,25 @@ void TeleTarget(CSocket *s) {
     else {
         targX = s->GetWord(11);
         targY = s->GetWord(13);
-        targZ = static_cast<std::int8_t>(s->GetByte(16) + Map->TileHeight(s->GetWord(17)));
+        targZ = static_cast<std::int8_t>(s->GetByte(16) + worldMULHandler.TileHeight(s->GetWord(17)));
     }
     CChar *mChar = s->CurrcharObj();
     
     if (mChar->IsGM() || LineOfSight(s, mChar, targX, targY, targZ, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED, false)) {
         if (s->CurrentSpellType() != 2) { // not a wand cast
-            Magic->SubtractMana(mChar, 3);  // subtract mana on scroll or spell
+            worldMagic.SubtractMana(mChar, 3);  // subtract mana on scroll or spell
             if (s->CurrentSpellType() == 0) { // del regs on normal spell
                 Reag_st toDel;
                 toDel.drake = 1;
                 toDel.moss = 1;
-                Magic->DelReagents(mChar, toDel);
+                worldMagic.DelReagents(mChar, toDel);
             }
         }
         
-        Effects->PlaySound(s, 0x01FE, true);
+        worldEffect.PlaySound(s, 0x01FE, true);
         
         mChar->SetLocation(targX, targY, targZ);
-        Effects->PlayStaticAnimation(mChar, 0x372A, 0x09, 0x06);
+        worldEffect.PlayStaticAnimation(mChar, 0x372A, 0x09, 0x06);
     }
     else if (s != nullptr) {
         s->SysMessage(687); // You would like to see if anything was there, but there is too much
@@ -512,7 +520,7 @@ void DVatTarget(CSocket *s) {
     // Look for onDyeTarget event on dye tub
     std::vector<std::uint16_t> scriptTriggers = tempObj->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             if (toExecute->OnDyeTarget(mChar, tempObj, i) == 0) { // return false
                 // Don't continue with hard-coded dyeing
@@ -538,7 +546,7 @@ void DVatTarget(CSocket *s) {
         }
         
         i->SetColour(((s->AddId1()) << 8) + s->AddId2());
-        Effects->PlaySound(s, 0x023E, true);
+        worldEffect.PlaySound(s, 0x023E, true);
     }
     else {
         s->SysMessage(1033); // You can only dye clothes with this.
@@ -573,7 +581,7 @@ void InfoTarget(CSocket *s) {
         }
         
         // manually calculating the ID's if it's a maptype
-        auto map1 = Map->SeekMap(x, y, worldNumber);
+        auto map1 = worldMULHandler.SeekMap(x, y, worldNumber);
         CGumpDisplay mapStat(s, 300, 300);
         mapStat.setTitle("Map Tile");
         mapStat.AddData("Tilenum", map1.tileId, 5);
@@ -583,7 +591,7 @@ void InfoTarget(CSocket *s) {
     }
     else {
         // Static Tile
-        CTile &tile = Map->SeekTile(tileId);
+        CTile &tile = worldMULHandler.SeekTile(tileId);
         
         CGumpDisplay statTile(s, 300, 300);
         statTile.setTitle("Map Tile");
@@ -697,7 +705,7 @@ void Tiling(CSocket *s) {
                 return;
             
             c->SetDecayable(false);
-            c->SetLocation(x, y, s->GetByte(16) + Map->TileHeight(s->GetWord(17)));
+            c->SetLocation(x, y, s->GetByte(16) + worldMULHandler.TileHeight(s->GetWord(17)));
         }
     }
     s->AddId1(0);
@@ -746,7 +754,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
     // Look for onCarveCorpse event on item
     std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             if (toExecute->OnCarveCorpse(mChar, i) == 0) // return false
             {
@@ -757,7 +765,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
     }
     
     // Look for onCarveCorpse in global script
-    cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0)); // Global script
+    cScript *toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0)); // Global script
     if (toExecute != nullptr) {
         if (toExecute->OnCarveCorpse(mChar, i) == 0) // return false
         {
@@ -778,7 +786,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
     // if it's a human corpse
     // Sept 22, 2002 - Corrected the alignment of body parts that are carved.
     if (i->GetTempVar(CITV_MOREY, 2)) {
-        auto toFind = FileLookup->FindEntry("CARVE HUMAN", carve_def);
+        auto toFind = worldFileLookup.FindEntry("CARVE HUMAN", carve_def);
         if (toFind) {
             for (const auto &sec : toFind->collection()) {
                 auto tag = sec->tag;
@@ -819,7 +827,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
     }
     else {
         auto sect = "CARVE "s + util::ntos(i->GetCarve());
-        auto toFind = FileLookup->FindEntry(sect, carve_def);
+        auto toFind = worldFileLookup.FindEntry(sect, carve_def);
         if (toFind) {
             for (const auto &sec : toFind->collection()) {
                 auto tag = sec->tag;
@@ -1202,7 +1210,7 @@ bool BuyShop(CSocket *s, CChar *c) {
     
     std::vector<std::uint16_t> scriptTriggers = c->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             if (toExecute->OnBuy(s, c) == 0)
                 return false;
@@ -1271,7 +1279,7 @@ void NpcResurrectTarget(CChar *i) {
         if (i->IsDead()) {
             std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     if (toExecute->OnResurrect(i) == 1) // if it exists and we don't want hard code, return
                         return;
@@ -1279,7 +1287,7 @@ void NpcResurrectTarget(CChar *i) {
             }
             
             Fame(i, 0);
-            Effects->PlaySound(i, 0x0214);
+            worldEffect.PlaySound(i, 0x0214);
             i->SetId(i->GetOrgId());
             i->SetSkin(i->GetOrgSkin());
             i->SetDead(false);
@@ -1782,7 +1790,7 @@ void SmeltTarget(CSocket *s) {
     
     std::uint16_t iMadeFrom = i->EntryMadeFrom();
     
-    CreateEntry_st *ourCreateEntry = Skills->FindItem(iMadeFrom);
+    CreateEntry_st *ourCreateEntry = worldSkill.FindItem(iMadeFrom);
     if (iMadeFrom == 0 || ourCreateEntry == nullptr) {
         s->SysMessage(1114); // You have no knowledge on how to melt that.
         return;
@@ -1795,7 +1803,7 @@ void SmeltTarget(CSocket *s) {
     }
     float avgMax = ourCreateEntry->AverageMaxSkill();
     
-    Skills->CheckSkill(mChar, MINING, static_cast<std::int16_t>(avgMin), static_cast<std::int16_t>(avgMax));
+    worldSkill.CheckSkill(mChar, MINING, static_cast<std::int16_t>(avgMin), static_cast<std::int16_t>(avgMax));
     
     std::uint8_t sumAmountRestored = 0;
     
@@ -1863,7 +1871,7 @@ void VialTarget(CSocket *mSock) {
                 Karma(mChar, nullptr, -1000);
                 if (targItem->GetTempVar(CITV_MORE, 2) < 4) {
                     mSock->SysMessage(750); // You take a sample of blood from the corpse.
-                    Skills->MakeNecroReg(mSock, nVialId, 0x0E24);
+                    worldSkill.MakeNecroReg(mSock, nVialId, 0x0E24);
                     targItem->SetTempVar(CITV_MORE, 2, targItem->GetTempVar(CITV_MORE, 2) + 1);
                 }
                 else {
@@ -1902,7 +1910,7 @@ void VialTarget(CSocket *mSock) {
                 return;
             }
             if (targChar->Damage(RandomNum(0, 5) + 2, Weather::PHYSICAL)) {
-                Skills->MakeNecroReg(mSock, nVialId, 0x0E24);
+                worldSkill.MakeNecroReg(mSock, nVialId, 0x0E24);
             }
         }
     }
@@ -2028,17 +2036,17 @@ bool CPITargetCursor::Handle() {
                         break;
                         // Magic
                     case TARGET_CASTSPELL:
-                        Magic->CastSpell(tSock, mChar);
+                        worldMagic.CastSpell(tSock, mChar);
                         break;
                         // Skills Functions
                     case TARGET_SMITH:
-                        Skills->Smith(tSock);
+                        worldSkill.Smith(tSock);
                         break;
                     case TARGET_SMELTORE:
-                        Skills->SmeltOre(tSock);
+                        worldSkill.SmeltOre(tSock);
                         break;
                     case TARGET_REPAIRMETAL:
-                        Skills->RepairMetal(tSock);
+                        worldSkill.RepairMetal(tSock);
                         break;
                     case TARGET_SMELT:
                         SmeltTarget(tSock);

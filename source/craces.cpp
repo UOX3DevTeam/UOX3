@@ -21,8 +21,11 @@
 #include "worldmain.h"
 
 extern WorldItem worldItem ;
+extern cRaces worldRace ;
+extern cEffects worldEffect ;
+extern CJSEngine worldJSEngine ;
+extern CServerDefinitions worldFileLookup ;
 
-cRaces *Races = nullptr;
 
 const std::uint8_t MALE = 1;
 const std::uint8_t FEMALE = 2;
@@ -52,7 +55,7 @@ cRaces::cRaces() : initialized(false) {}
 cRaces::~cRaces() {
     if (/* DISABLES CODE */ (false)) {
         // if (initialized){
-        JSEngine->ReleaseObject(IUE_RACE, this);
+        worldJSEngine.ReleaseObject(IUE_RACE, this);
         
         for (size_t i = 0; i < races.size(); ++i) {
             delete races[i];
@@ -87,7 +90,7 @@ void cRaces::load() {
     
     while (!done) {
         sect = std::string("RACE ") + util::ntos(raceCount);
-        CScriptSection *tempSect = FileLookup->FindEntry(sect, race_def);
+        CScriptSection *tempSect = worldFileLookup.FindEntry(sect, race_def);
         if (tempSect == nullptr) {
             done = true;
         }
@@ -100,7 +103,7 @@ void cRaces::load() {
         races.push_back(new CRace(raceCount));
     }
     
-    CScriptSection *CombatMods = FileLookup->FindEntry(std::string("COMBAT MODS"), race_def);
+    CScriptSection *CombatMods = worldFileLookup.FindEntry(std::string("COMBAT MODS"), race_def);
     if (CombatMods != nullptr) {
         tag = CombatMods->First();
         if (tag.empty()) // location didn't exist!!!
@@ -306,8 +309,8 @@ void cRaces::ApplyRace(CChar *s, raceid_t x, bool always) {
             }
         }
         s->Teleport();
-        Effects->PlayStaticAnimation(s, 0x373A, 0, 15);
-        Effects->PlaySound(s, 0x01E9);
+        worldEffect.PlayStaticAnimation(s, 0x373A, 0, 15);
+        worldEffect.PlaySound(s, 0x01E9);
     }
     else {
         if (mSock) {
@@ -1377,7 +1380,7 @@ void CRace::load(size_t sectNum, std::int32_t modCount) {
     std::string UTag;
     std::int32_t raceDiff = 0;
     std::string sect = std::string("RACE ") + util::ntos(sectNum);
-    CScriptSection *RacialPart = FileLookup->FindEntry(sect, race_def);
+    CScriptSection *RacialPart = worldFileLookup.FindEntry(sect, race_def);
     if (RacialPart == nullptr)
         return;
     
@@ -1397,7 +1400,7 @@ void CRace::load(size_t sectNum, std::int32_t modCount) {
                     std::string subData;
                     std::string subSect = std::string("EQUIPLIST ") +
                     util::ntos(static_cast<std::uint8_t>(std::stoul(data, nullptr, 0)));
-                    CScriptSection *RacialEquipment = FileLookup->FindEntry(subSect, race_def);
+                    CScriptSection *RacialEquipment = worldFileLookup.FindEntry(subSect, race_def);
                     if (RacialEquipment == nullptr)
                         break;
                     
@@ -1436,7 +1439,7 @@ void CRace::load(size_t sectNum, std::int32_t modCount) {
                     std::string subData;
                     std::string subSect = std::string("EQUIPLIST ") +
                     util::ntos(static_cast<std::uint8_t>(std::stoul(data, nullptr, 0)));
-                    CScriptSection *RacialEquipment = FileLookup->FindEntry(subSect, race_def);
+                    CScriptSection *RacialEquipment = worldFileLookup.FindEntry(subSect, race_def);
                     if (RacialEquipment == nullptr)
                         break;
                     
@@ -1630,7 +1633,7 @@ void CRace::load(size_t sectNum, std::int32_t modCount) {
                     PoisonResistance(std::stof(data));
                 }
                 else if (UTag == "PARENTRACE") {
-                    CRace *pRace = Races->Race(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                    CRace *pRace = worldRace.Race(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
                     if (pRace != nullptr) {
                         (*this) = (*pRace);
                     }

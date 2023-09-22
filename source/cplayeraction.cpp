@@ -35,6 +35,17 @@ extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
+extern CSkills worldSkill ;
+extern CWeight worldWeight ;
+extern CMagic worldMagic ;
+extern cRaces worldRace ;
+extern CBooks worldBook ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern CGuildCollection worldGuildSystem ;
+extern CServerDefinitions worldFileLookup ;
+extern CMulHandler worldMULHandler ;
+extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
 
@@ -132,7 +143,7 @@ CItem *DoStacking(CSocket *mSock, [[maybe_unused]] CChar *mChar, CItem *i, CItem
         stack->SetAmount(newAmt);
         i->Delete();
         if (mSock != nullptr) {
-            Effects->ItemSound(mSock, stack, false);
+            worldEffect.ItemSound(mSock, stack, false);
         }
         return stack;
     }
@@ -160,7 +171,7 @@ auto AutoStack(CSocket *mSock, CItem *iToStack, CItem *iPack) -> CItem * {
     if (iToStack->IsPileable()) {
         if (mSock != nullptr &&
             (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND)) {
-            Weight->SubtractItemWeight(mChar, iToStack);
+            worldWeight.SubtractItemWeight(mChar, iToStack);
         }
         const std::uint16_t itId = iToStack->GetId();
         const auto itSer = iToStack->GetSerial();
@@ -186,12 +197,12 @@ auto AutoStack(CSocket *mSock, CItem *iToStack, CItem *iPack) -> CItem * {
             }
         }
         if (mSock != nullptr && (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND)) {
-            Weight->AddItemWeight(mChar, iToStack);
+            worldWeight.AddItemWeight(mChar, iToStack);
         }
     }
     iToStack->PlaceInPack();
     if (mSock) {
-        Effects->ItemSound(mSock, iToStack, false);
+        worldEffect.ItemSound(mSock, iToStack, false);
     }
     return iToStack;
 }
@@ -288,7 +299,7 @@ bool CPIGetItem::Handle() {
                         if (ValidateObject(zChar)) {
                             CSocket *zSock = zChar->GetSocket();
                             if (zSock != nullptr) {
-                                Effects->PlaySound(zSock, 0x0057, true);
+                                worldEffect.PlaySound(zSock, 0x0057, true);
                             }
                         }
                     }
@@ -384,7 +395,7 @@ bool CPIGetItem::Handle() {
         }
     }
     
-    CTile &tile = Map->SeekTile(i->GetId());
+    CTile &tile = worldMULHandler.SeekTile(i->GetId());
     if (!ourChar->AllMove() && (i->GetMovable() == 2 || i->IsLockedDown() || (tile.Weight() == 255 && i->GetMovable() != 1))) {
         if (ourChar->GetCommandLevel() < 2 || tSock->PickupSpot() != PL_OWNPACK) {
             tSock->SysMessage(9064); // You cannot pick that up.
@@ -404,7 +415,7 @@ bool CPIGetItem::Handle() {
     // Trigger pickup event for item being picked up
     std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             std::int8_t retStatus = toExecute->OnPickup(i, ourChar, iCont);
             
@@ -422,7 +433,7 @@ bool CPIGetItem::Handle() {
     scriptTriggers.clear();
     scriptTriggers = ourChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             std::int8_t retStatus = toExecute->OnPickup(i, ourChar, iCont);
             
@@ -442,7 +453,7 @@ bool CPIGetItem::Handle() {
         scriptTriggers.clear();
         scriptTriggers = iCont->GetScriptTriggers();
         for (auto scriptTrig : scriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 std::int8_t retStatus = toExecute->OnPickup(i, ourChar, iCont);
                 
@@ -464,7 +475,7 @@ bool CPIGetItem::Handle() {
         }
         
         if (tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND) {
-            if (!Weight->CheckCharWeight(nullptr, ourChar, i, amount)) {
+            if (!worldWeight.CheckCharWeight(nullptr, ourChar, i, amount)) {
                 tSock->SysMessage(1743); // That person can not possibly hold more weight
                 Bounce(tSock, i);
                 return true;
@@ -487,7 +498,7 @@ bool CPIGetItem::Handle() {
             }
         }
     }
-    Effects->PlaySound(tSock, 0x0057, true);
+    worldEffect.PlaySound(tSock, 0x0057, true);
     
     if (i->IsCorpse()) {
         // Store temp tag on corpse with serial of player who looted the corpse last
@@ -501,10 +512,10 @@ bool CPIGetItem::Handle() {
     
     if (iCont == nullptr) {
         // Remove item from mapregion it was in before being picked up
-        MapRegion->RemoveItem(i);
+        worldMapHandler.RemoveItem(i);
         
         // Add item to mapregion of character who picked up item instead
-        MapRegion->AddItem(i);
+        worldMapHandler.AddItem(i);
     }
     i->RemoveFromSight();
     
@@ -515,14 +526,14 @@ bool CPIGetItem::Handle() {
     i->SetRegion(ourChar->GetRegionNum());
     
     if (tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND) {
-        Weight->AddItemWeight(ourChar, i);
+        worldWeight.AddItemWeight(ourChar, i);
     }
     
     if (iCont != nullptr) {
         if (ValidateObject(iCont) && iCont->CanBeObjType(CBaseObject::OT_ITEM)) {
             std::vector<std::uint16_t> contScriptTriggers = iCont->GetScriptTriggers();
             for (auto scriptTrig : contScriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     CItem *contItem = static_cast<CItem *>(iCont);
                     toExecute->OnContRemoveItem(contItem, i, ourChar);
@@ -580,7 +591,7 @@ bool CPIEquipItem::Handle() {
     }
     
     if (tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND) {
-        Weight->SubtractItemWeight(ourChar, i); // SetCont() adds the weight for us (But we also had to add the weight in
+        worldWeight.SubtractItemWeight(ourChar, i); // SetCont() adds the weight for us (But we also had to add the weight in
         // grabItem() since it sets cont as INVALIDSERIAL
     }
     
@@ -600,14 +611,14 @@ bool CPIEquipItem::Handle() {
         return true;
     
     auto raceId = k->GetRace();
-    CRace *race = Races->Race(raceId);
+    CRace *race = worldRace.Race(raceId);
     if (!race->CanEquipItem(i->GetId())) {
         tSock->SysMessage(1981, race->Name().c_str()); // Members of the %s race cannot wear this
         Bounce(tSock, i);
         return true;
     }
     
-    armorclass_t ac1 = Races->ArmorRestrict(raceId);
+    armorclass_t ac1 = worldRace.ArmorRestrict(raceId);
     armorclass_t ac2 = i->GetArmourClass();
     
     if (ac1 != 0 && ((ac1 & ac2) == 0)) { // bit comparison, if they have ANYTHING in common, they can wear it
@@ -634,16 +645,16 @@ bool CPIEquipItem::Handle() {
             Bounce(tSock, i);
             
             if (tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND) {
-                Effects->ItemSound(tSock, i, true);
+                worldEffect.ItemSound(tSock, i, true);
             }
             else {
-                Effects->ItemSound(tSock, i, false);
+                worldEffect.ItemSound(tSock, i, false);
             }
             return true;
         }
     }
     
-    CTile &tile = Map->SeekTile(i->GetId());
+    CTile &tile = worldMULHandler.SeekTile(i->GetId());
     if (!ourChar->AllMove() &&
         (i->GetMovable() == 2 || (i->IsLockedDown() && i->GetOwnerObj() != ourChar) || (tile.Weight() == 255 && i->GetMovable() != 1))) {
         tSock->SysMessage(9064); // You cannot pick that up.
@@ -685,7 +696,7 @@ bool CPIEquipItem::Handle() {
         }
     }
     
-    if (!Weight->CheckCharWeight(ourChar, k, i)) {
+    if (!worldWeight.CheckCharWeight(ourChar, k, i)) {
         tSock->SysMessage(1743); // That person can not possibly hold more weight
         Bounce(tSock, i);
         return true;
@@ -712,10 +723,10 @@ bool CPIEquipItem::Handle() {
     
     auto weaponType = worldCombat.GetCombatSkill(i);
     if (weaponType == SWORDSMANSHIP || weaponType == MACEFIGHTING || weaponType == FENCING) {
-        Effects->PlaySound(tSock, 0x0056, false); // Play unsheath sound if
+        worldEffect.PlaySound(tSock, 0x0056, false); // Play unsheath sound if
     }
     else {
-        Effects->PlaySound(tSock, 0x0057, false);
+        worldEffect.PlaySound(tSock, 0x0057, false);
     }
     return true;
 }
@@ -753,7 +764,7 @@ bool DropOnPC(CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i) {
         }
         else {
             if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                Weight->SubtractItemWeight(mChar, i);
+                worldWeight.SubtractItemWeight(mChar, i);
             }
             mSock->SysMessage(1754); // That character is not online.
             Bounce(mSock, i);
@@ -772,7 +783,7 @@ auto IsOnFoodList(const std::string &sFoodList, const std::uint16_t sItemId) -> 
     auto doesEat = false;
     
     const std::string sect = "FOODLIST "s + sFoodList;
-    auto FoodList = FileLookup->FindEntry(sect, items_def);
+    auto FoodList = worldFileLookup.FindEntry(sect, items_def);
     if (FoodList) {
         for (const auto &sec : FoodList->collection()) {
             auto tag = sec->tag;
@@ -806,7 +817,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
     std::int8_t rVal = 0;
     std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             rVal =
             toExecute->OnDropItemOnNpc(mChar, targNPC, i); // returns 1 if we should bounce it
@@ -817,7 +828,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
                     break;
                 case 0: // bounce, no code, error message handled in script
                     if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                        Weight->SubtractItemWeight(mChar, i);
+                        worldWeight.SubtractItemWeight(mChar, i);
                     }
                     Bounce(mSock, i);
                     return false; // stack not deleted, as we're bouncing
@@ -834,7 +845,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
     if (executeNpc) {
         std::vector<std::uint16_t> targScriptTriggers = targNPC->GetScriptTriggers();
         for (auto scriptTrig : targScriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 rVal = toExecute->OnDropItemOnNpc(mChar, targNPC,
                                                   i); // returns 1 if we should bounce it
@@ -846,7 +857,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
                     case 0: // we want to bounce and return. Handle error message in script
                         // If we want to bounce, then it's safe to assume the item still exists!
                         if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                            Weight->SubtractItemWeight(mChar, i);
+                            worldWeight.SubtractItemWeight(mChar, i);
                         }
                         Bounce(mSock, i);
                         return false; // bouncing, so item exists
@@ -861,9 +872,9 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
     if (targNPC->IsTamed() && (isGM || targNPC->GetOwnerObj() == mChar || worldNPC.CheckPetFriend(mChar, targNPC))) { // do food stuff
         if (targNPC->WillHunger() && IsOnFoodList(targNPC->GetFood(), i->GetId())) {
             if (targNPC->GetHunger() < 6) {
-                Effects->PlaySound(mSock, static_cast<std::uint16_t>(0x003A + RandomNum(0, 2)), true);
+                worldEffect.PlaySound(mSock, static_cast<std::uint16_t>(0x003A + RandomNum(0, 2)), true);
                 if (worldMain.creatures[targNPC->GetId()].IsAnimal()) {
-                    Effects->PlayCharacterAnimation(targNPC, ACT_ANIMAL_EAT, 0, 5);
+                    worldEffect.PlayCharacterAnimation(targNPC, ACT_ANIMAL_EAT, 0, 5);
                 }
                 
                 // Restore loyalty upon feeding pet
@@ -883,7 +894,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
                 
                 std::uint8_t poisonStrength = i->GetPoisoned();
                 if (poisonStrength && targNPC->GetPoisoned() < poisonStrength) {
-                    Effects->PlaySound(mSock, 0x0246, true); // poison sound - SpaceDog
+                    worldEffect.PlaySound(mSock, 0x0246, true); // poison sound - SpaceDog
                     
                     // Apply poison on target
                     targNPC->SetPoisoned(poisonStrength);
@@ -936,7 +947,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
                 mChar->SetBaseSkill(250, trainedIn);
             }
             
-            Skills->UpdateSkillLevel(mChar, trainedIn);
+            worldSkill.UpdateSkillLevel(mChar, trainedIn);
             mSock->UpdateSkill(trainedIn);
             std::uint16_t getAmount = i->GetAmount();
             if (i->GetAmount() > 250) // Paid too much
@@ -946,7 +957,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
             }
             else { // Gave exact change
                 if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                    Weight->SubtractItemWeight(mChar, i);
+                    worldWeight.SubtractItemWeight(mChar, i);
                 }
                 i->Delete();
                 stackDeleted = true;
@@ -954,7 +965,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
             
             mSock->TempObj(nullptr);
             targNPC->SetTrainingPlayerIn(0xFF);
-            Effects->GoldSound(mSock, getAmount, false);
+            worldEffect.GoldSound(mSock, getAmount, false);
         }
         else { // Did not give gold
             dropResult = 1;
@@ -971,7 +982,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
             break;
         case 1: // Bounce
             if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                Weight->SubtractItemWeight(mChar, i);
+                worldWeight.SubtractItemWeight(mChar, i);
             }
             
             Bounce(mSock, i);
@@ -1003,17 +1014,17 @@ bool DropOnChar(CSocket *mSock, CChar *targChar, CItem *i) {
         if (mSock->PickupSpot() != PL_OWNPACK && (GetTotalItemCount(packItem) >= packItem->GetMaxItems() || GetTotalItemCount(packItem) + std::max(static_cast<std::uint32_t>(1), 1 + GetTotalItemCount(i)) > packItem->GetMaxItems())) {
             mSock->SysMessage(1818); // The container is already at capacity.
             if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                Weight->SubtractItemWeight(mChar, i);
+                worldWeight.SubtractItemWeight(mChar, i);
             }
             Bounce(mSock, i);
             return false;
         }
         
         // Can character's backpack hold any more weight?
-        if (!Weight->CheckCharWeight(mChar, targChar, i)) {
+        if (!worldWeight.CheckCharWeight(mChar, targChar, i)) {
             mSock->SysMessage(1743); // That person can not possibly hold more weight
             if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                Weight->SubtractItemWeight(mChar, i);
+                worldWeight.SubtractItemWeight(mChar, i);
             }
             Bounce(mSock, i);
             return false;
@@ -1051,23 +1062,23 @@ bool CheckForValidDropLocation(CSocket *mSock, CChar *nChar, std::uint16_t x, st
         // First, check for a static surface to drop item on
         std::uint16_t foundTileId1 = 0;
         std::uint16_t foundTileId2 = 0;
-        if (!Map->CheckStaticFlag(x, y, z, nChar->WorldNumber(), TF_SURFACE, foundTileId1, false)) {
+        if (!worldMULHandler.CheckStaticFlag(x, y, z, nChar->WorldNumber(), TF_SURFACE, foundTileId1, false)) {
             // Nowhere static to put item? Check dynamic tiles for surface!
-            if (!Map->CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_SURFACE, foundTileId1)) {
+            if (!worldMULHandler.CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_SURFACE, foundTileId1)) {
                 // No static OR dynamic surface was found to place item? Check if map itself blocks
                 // the placement
-                dropLocationBlocked =  Map->DoesMapBlock(x, y, z, nChar->WorldNumber(), true, false, false, false);
+                dropLocationBlocked =  worldMULHandler.DoesMapBlock(x, y, z, nChar->WorldNumber(), true, false, false, false);
             }
         }
         
         if (!dropLocationBlocked) {
             // Some kind of valid surface was found. But is it blocked by...
-            if (Map->CheckStaticFlag(x, y, z, nChar->WorldNumber(), TF_BLOCKING, foundTileId2, false) || Map->CheckStaticFlag(x, y, z, nChar->WorldNumber(), TF_ROOF, foundTileId2, false)) { // ...static items?
+            if (worldMULHandler.CheckStaticFlag(x, y, z, nChar->WorldNumber(), TF_BLOCKING, foundTileId2, false) || worldMULHandler.CheckStaticFlag(x, y, z, nChar->WorldNumber(), TF_ROOF, foundTileId2, false)) { // ...static items?
                 if (foundTileId1 != foundTileId2) {
                     dropLocationBlocked = true;
                 }
             }
-            else if (Map->CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_BLOCKING, foundTileId2) || Map->CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_ROOF, foundTileId2)) { // No? What about dynamic items?
+            else if (worldMULHandler.CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_BLOCKING, foundTileId2) || worldMULHandler.CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_ROOF, foundTileId2)) { // No? What about dynamic items?
                 if (foundTileId1 != foundTileId2) {
                     dropLocationBlocked = true;
                 }
@@ -1107,7 +1118,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
     
     std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             std::int8_t rVal = toExecute->OnDrop(i, nChar); // returns 1 if we should bounce it
             switch (rVal) {
@@ -1124,11 +1135,11 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
         }
     }
     
-    CTile &tile = Map->SeekTile(i->GetId());
+    CTile &tile = worldMULHandler.SeekTile(i->GetId());
     if (!nChar->AllMove() && (i->GetMovable() == 2 || (i->IsLockedDown() && i->GetOwnerObj() != nChar) || (tile.Weight() == 255 && i->GetMovable() != 1))) {
         if (nChar->GetCommandLevel() < 2 || mSock->PickupSpot() != PL_OWNPACK) {
             if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                Weight->SubtractItemWeight(nChar, i);
+                worldWeight.SubtractItemWeight(nChar, i);
             }
             mSock->SysMessage(9064); // You cannot pick that up.
             Bounce(mSock, i);
@@ -1140,7 +1151,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
         // Let's check for a valid drop location for the item, and bounce it if none was found
         if (!CheckForValidDropLocation(mSock, nChar, x, y, z)) {
             if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                Weight->SubtractItemWeight(nChar, i);
+                worldWeight.SubtractItemWeight(nChar, i);
             }
             Bounce(mSock, i);
             mSock->SysMessage(683); // There seems to be something in the way
@@ -1149,18 +1160,18 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
         
         // New location either is not blocking, or has a surface we can put the item on, so let's
         // find the exact Z of where to put it
-        auto newZ = Map->StaticTop(x, y, z, nChar->WorldNumber(), 14 - (z - nChar->GetZ()));
+        auto newZ = worldMULHandler.StaticTop(x, y, z, nChar->WorldNumber(), 14 - (z - nChar->GetZ()));
         if (newZ == ILLEGAL_Z || newZ < z || newZ > z + 14) {
             // No valid static elevation found, use dynamic elevation instead
-            newZ = Map->DynamicElevation(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14);
+            newZ = worldMULHandler.DynamicElevation(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14);
             if (newZ < z || newZ > z + 14) {
                 // No valid dynamic elevation found. Use map elevation instead (don't implicitly
                 // trust Z from client)
-                newZ = Map->MapElevation(x, y, nChar->WorldNumber());
+                newZ = worldMULHandler.MapElevation(x, y, nChar->WorldNumber());
             }
         }
         else {
-            auto dynZ = Map->DynamicElevation(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14);
+            auto dynZ = worldMULHandler.DynamicElevation(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14);
             newZ = ((dynZ >= z && dynZ <= z + 14) ? dynZ : newZ);
         }
         
@@ -1177,7 +1188,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
                 }
                 else {
                     if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                        Weight->SubtractItemWeight(nChar, i);
+                        worldWeight.SubtractItemWeight(nChar, i);
                     }
                     Bounce(mSock, i);
                     mSock->SysMessage(683); // There seems to be something in the way
@@ -1194,7 +1205,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
             }
             else {
                 if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                    Weight->SubtractItemWeight(nChar, i);
+                    worldWeight.SubtractItemWeight(nChar, i);
                 }
                 Bounce(mSock, i);
                 mSock->SysMessage(683); // There seems to be something in the way
@@ -1220,7 +1231,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
         else {
             // Bounces items dropped in illegal locations in 3D UO client!!!
             if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                Weight->SubtractItemWeight(nChar, i);
+                worldWeight.SubtractItemWeight(nChar, i);
             }
             mSock->SysMessage(683); // There seems to be something in the way
             Bounce(mSock, i);
@@ -1230,7 +1241,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
     
     if (!stackDeleted) {
         if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-            Weight->SubtractItemWeight(nChar, i);
+            worldWeight.SubtractItemWeight(nChar, i);
         }
         
         if (nChar->GetMultiObj() != nullptr) {
@@ -1251,7 +1262,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
         
         i->SetHeldOnCursor(false);
         
-        Effects->ItemSound(mSock, i, (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND));
+        worldEffect.ItemSound(mSock, i, (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND));
     }
     // IF client-version is above 6.0.1.7, send approval packet for dropping item. If not, don't.
     CPDropItemApproved lc;
@@ -1266,7 +1277,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
 // o------------------------------------------------------------------------------------------------o
 void DropOnTradeWindow(CSocket &mSock, CChar &mChar, CItem &tradeWindowOne, CItem &iDropped, std::int16_t x, std::int16_t y, std::int8_t gridLoc) {
     if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
-        Weight->SubtractItemWeight(&mChar, &iDropped);
+        worldWeight.SubtractItemWeight(&mChar, &iDropped);
     }
     iDropped.SetCont(&tradeWindowOne);
     iDropped.SetX(x);
@@ -1284,7 +1295,7 @@ void DropOnTradeWindow(CSocket &mSock, CChar &mChar, CItem &tradeWindowOne, CIte
         if (ValidateObject(tw2Owner)) {
             CSocket *tw2Sock = tw2Owner->GetSocket();
             if (tw2Sock != nullptr) {
-                Effects->ItemSound(tw2Sock, &tradeWindowOne, (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND));
+                worldEffect.ItemSound(tw2Sock, &tradeWindowOne, (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND));
             }
         }
     }
@@ -1312,7 +1323,7 @@ bool ValidateLockdownAccess(CChar *mChar, CSocket *mSock, CItem *itemToCheck, bo
 // o------------------------------------------------------------------------------------------------o
 void DropOnSpellBook(CSocket &mSock, CChar &mChar, CItem &spellBook, CItem &iDropped) {
     if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
-        Weight->SubtractItemWeight(&mChar, &iDropped);
+        worldWeight.SubtractItemWeight(&mChar, &iDropped);
     }
     if (iDropped.GetId(1) != 0x1F || iDropped.GetId(2) < 0x2D || iDropped.GetId(2) > 0x72) {
         Bounce(&mSock, &iDropped);
@@ -1363,16 +1374,16 @@ void DropOnSpellBook(CSocket &mSock, CChar &mChar, CItem &spellBook, CItem &iDro
             targSpellNum = (scrollId - 0x1F2D);
         }
         
-        if (Magic->HasSpell(&spellBook, targSpellNum)) {
+        if (worldMagic.HasSpell(&spellBook, targSpellNum)) {
             mSock.SysMessage(1206); // You already have that spell.
             Bounce(&mSock, &iDropped);
             return;
         }
         else {
-            Magic->AddSpell(&spellBook, targSpellNum);
+            worldMagic.AddSpell(&spellBook, targSpellNum);
         }
     }
-    Effects->PlaySound(&mSock, 0x0042, false);
+    worldEffect.PlaySound(&mSock, 0x0042, false);
     if (iDropped.GetAmount() > 1) {
         iDropped.IncAmount(-1);
         Bounce(&mSock, &iDropped);
@@ -1391,7 +1402,7 @@ bool DropOnStack(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDropped
     // Check if player is allowed to drop item on a locked down stack of items
     if (droppedOn.IsLockedDown() && !ValidateLockdownAccess(&mChar, &mSock, &droppedOn, true)) {
         if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
-            Weight->SubtractItemWeight(&mChar, &iDropped);
+            worldWeight.SubtractItemWeight(&mChar, &iDropped);
         }
         mSock.SysMessage(774); // That is locked down and you cannot use it.
         Bounce(&mSock, &iDropped);
@@ -1401,10 +1412,10 @@ bool DropOnStack(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDropped
     bool canHold = true;
     if (droppedOn.GetCont() != nullptr) {
         if (droppedOn.GetContSerial() >= BASEITEMSERIAL) {
-            canHold = Weight->CheckPackWeight(&mChar, static_cast<CItem *>(droppedOn.GetCont()), &iDropped);
+            canHold = worldWeight.CheckPackWeight(&mChar, static_cast<CItem *>(droppedOn.GetCont()), &iDropped);
         }
         else {
-            canHold = Weight->CheckCharWeight(&mChar, static_cast<CChar *>(droppedOn.GetCont()), &iDropped);
+            canHold = worldWeight.CheckCharWeight(&mChar, static_cast<CChar *>(droppedOn.GetCont()), &iDropped);
         }
     }
     if (!canHold) {
@@ -1415,13 +1426,13 @@ bool DropOnStack(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDropped
             mSock.SysMessage(1743); // That person can not possibly hold more weight
         }
         if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
-            Weight->SubtractItemWeight(&mChar, &iDropped);
+            worldWeight.SubtractItemWeight(&mChar, &iDropped);
         }
         Bounce(&mSock, &iDropped);
         return false;
     }
     if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
-        Weight->SubtractItemWeight(&mChar, &iDropped);
+        worldWeight.SubtractItemWeight(&mChar, &iDropped);
     }
     stackDeleted = (DoStacking(&mSock, &mChar, &iDropped, &droppedOn) != &iDropped);
     if (!stackDeleted) { // if the item didn't stack or the stack was full
@@ -1438,10 +1449,10 @@ bool DropOnStack(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDropped
 // o------------------------------------------------------------------------------------------------o
 std::uint16_t HandleAutoStack(CItem *mItem, CItem *mCont, CSocket *mSock, CChar *mChar) {
     // Check that container can hold more weight
-    if (mItem != mCont->GetCont() && !Weight->CheckPackWeight(mChar, mCont, mItem)) {
+    if (mItem != mCont->GetCont() && !worldWeight.CheckPackWeight(mChar, mCont, mItem)) {
         if (mSock != nullptr && ValidateObject(mChar)) {
             if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                Weight->SubtractItemWeight(mChar, mItem);
+                worldWeight.SubtractItemWeight(mChar, mItem);
             }
             mSock->SysMessage(1385); // That pack cannot hold any more weight
             Bounce(mSock, mItem);
@@ -1453,7 +1464,7 @@ std::uint16_t HandleAutoStack(CItem *mItem, CItem *mCont, CSocket *mSock, CChar 
     bool stackDeleted = (AutoStack(mSock, mItem, mCont) != mItem);
     if (!stackDeleted) {
         if (mSock != nullptr && (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND)) {
-            Weight->SubtractItemWeight(mChar, mItem);
+            worldWeight.SubtractItemWeight(mChar, mItem);
         }
         
         return mItem->GetAmount();
@@ -1487,7 +1498,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
                             if (ValidateObject(tw2Char)) {
                                 CSocket *tw2Sock = tw2Char->GetSocket();
                                 if (tw2Sock != nullptr) {
-                                    Effects->ItemSound(tw2Sock, recurseItem, (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND));
+                                    worldEffect.ItemSound(tw2Sock, recurseItem, (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND));
                                 }
                             }
                         }
@@ -1515,7 +1526,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
             }
             else {
                 if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
-                    Weight->SubtractItemWeight(&mChar, &iDropped);
+                    worldWeight.SubtractItemWeight(&mChar, &iDropped);
                 }
                 contOwner->TextMessage(&mSock, 9176, TALK, false); // I can only accept items from the shop owner.
                 
@@ -1525,7 +1536,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
         }
         else if (mChar.GetCommandLevel() < CL_CNS &&  (!contOwner->IsNpc() || !contOwner->IsTamed() || (contOwner->GetId() != 0x0123 && contOwner->GetId() != 0x0124 && contOwner->GetId() != 0x0317) || (contOwner->GetOwnerObj() != &mChar && !worldNPC.CheckPetFriend(&mChar, contOwner)))) {
             if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
-                Weight->SubtractItemWeight(&mChar, &iDropped);
+                worldWeight.SubtractItemWeight(&mChar, &iDropped);
             }
             mSock.SysMessage(1630); // You cannot put items in other players packs!
             Bounce(&mSock, &iDropped);
@@ -1539,7 +1550,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
         if (ValidateObject(iMultiObj) && iMultiObj->IsSecureContainer(&droppedOn)) {
             if (!ValidateLockdownAccess(&mChar, &mSock, &droppedOn, true)) {
                 if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
-                    Weight->SubtractItemWeight(&mChar, &iDropped);
+                    worldWeight.SubtractItemWeight(&mChar, &iDropped);
                 }
                 mSock.SysMessage(774); // That is locked down and you cannot use it.
                 Bounce(&mSock, &iDropped);
@@ -1551,7 +1562,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
     // Check if container can hold more items
     if (iDropped.GetContSerial() != droppedOn.GetSerial() && (mSock.PickupSpot() != PL_OWNPACK && (GetTotalItemCount(&droppedOn) >= droppedOn.GetMaxItems() ||  GetTotalItemCount(&droppedOn) + std::max(static_cast<std::uint32_t>(1), 1 + GetTotalItemCount(&iDropped)) > droppedOn.GetMaxItems()))) {
         if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
-            Weight->SubtractItemWeight(&mChar, &iDropped);
+            worldWeight.SubtractItemWeight(&mChar, &iDropped);
         }
         mSock.SysMessage(1818); // The container is already at capacity.
         Bounce(&mSock, &iDropped);
@@ -1560,10 +1571,10 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
     
     if (mSock.GetByte(5) != 0xFF) { // In a specific spot in a container
         if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
-            Weight->SubtractItemWeight(&mChar, &iDropped);
+            worldWeight.SubtractItemWeight(&mChar, &iDropped);
         }
         
-        if (&droppedOn != iDropped.GetCont() && !Weight->CheckPackWeight(&mChar, &droppedOn, &iDropped)) {
+        if (&droppedOn != iDropped.GetCont() && !worldWeight.CheckPackWeight(&mChar, &droppedOn, &iDropped)) {
             mSock.SysMessage(1385); // That pack cannot hold any more weight
             Bounce(&mSock, &iDropped);
             return false;
@@ -1614,7 +1625,7 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
     bool executeCont = true;
     std::vector<std::uint16_t> scriptTriggers = nItem->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             std::int8_t rVal = toExecute->OnDropItemOnItem(nItem, mChar, nCont); // returns 1 if we should bounce it
             switch (rVal) {
@@ -1624,7 +1635,7 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
                     break;
                 case 0: // bounce, no code, handle player feedback in script
                     if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                        Weight->SubtractItemWeight(mChar, nItem);
+                        worldWeight.SubtractItemWeight(mChar, nItem);
                     }
                     Bounce(mSock, nItem);
                     return; // stack not deleted, as we're bouncing
@@ -1641,7 +1652,7 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
     if (executeCont) {
         std::vector<std::uint16_t> contScriptTriggers = nCont->GetScriptTriggers();
         for (auto scriptTrig : contScriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 std::int8_t rVal = toExecute->OnDropItemOnItem(nItem, mChar,  nCont); // returns 1 if we should bounce it
                 switch (rVal) {
@@ -1651,7 +1662,7 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
                         break;
                     case 0: // bounce, no code, handle player feedback in script
                         if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                            Weight->SubtractItemWeight(mChar, nItem);
+                            worldWeight.SubtractItemWeight(mChar, nItem);
                         }
                         Bounce(mSock, nItem);
                         return; // stack not deleted, as we're bouncing
@@ -1664,11 +1675,11 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
     
     bool stackDeleted = false;
     
-    CTile &tile = Map->SeekTile(nItem->GetId());
+    CTile &tile = worldMULHandler.SeekTile(nItem->GetId());
     if (!mChar->AllMove() && (nItem->GetMovable() == 2 || (nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar) || (tile.Weight() == 255 && nItem->GetMovable() != 1))) {
         if (mChar->GetCommandLevel() < 2 || mSock->PickupSpot() != PL_OWNPACK) {
             if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                Weight->SubtractItemWeight(mChar, nItem);
+                worldWeight.SubtractItemWeight(mChar, nItem);
             }
             mSock->SysMessage(9064); // You cannot pick that up.
             Bounce(mSock, nItem);
@@ -1680,9 +1691,9 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
         DropOnTradeWindow((*mSock), (*mChar), (*nCont), (*nItem), x, y, gridLoc);
     }
     else if (nCont->GetType() == IT_TRASHCONT){ // Trash container
-        Effects->PlaySound(mSock, 0x0042, false);
+        worldEffect.PlaySound(mSock, 0x0042, false);
         if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-            Weight->SubtractItemWeight(mChar, nItem);
+            worldWeight.SubtractItemWeight(mChar, nItem);
         }
         nItem->Delete();
         mSock->SysMessage(1201); // As you let go of the item it disappears.
@@ -1716,11 +1727,11 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
         nItem->SetGridLocation(gridLoc);
         
         if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-            Weight->SubtractItemWeight(mChar, nItem);
+            worldWeight.SubtractItemWeight(mChar, nItem);
         }
     }
     if (!stackDeleted) {
-        Effects->ItemSound(mSock, nItem, (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND));
+        worldEffect.ItemSound(mSock, nItem, (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND));
     }
     
     // Would be nice to do this to instantly update the stats & weight on the container the item is
@@ -1746,7 +1757,7 @@ bool CPIDropItem::Handle() {
     }
     
     // Display overloaded message if character is overloaded as a result of the above
-    if (Weight->IsOverloaded(ourChar)) {
+    if (worldWeight.IsOverloaded(ourChar)) {
         std::int32_t maxWeight = ourChar->GetStrength() * ServerConfig::shared().realNumbers[RealNumberConfig::WEIGHTSTR] + 40;
         std::int32_t currentWeight = ourChar->GetWeight() / 100;
         tSock->SysMessage(1784, currentWeight,  maxWeight); // You are overloaded. Current / Max: %i / %i
@@ -1993,10 +2004,10 @@ void GetFameTitle(CChar *p, std::string &fameTitle) {
         {
             if (p->GetKills() > ServerConfig::shared().ushortValues[UShortValue::MAXKILL] ) {
                 if (p->GetId(2) == 0x91) {
-                    fameTitle = util::format(worldDictionary.GetEntry(1177), Races->Name(p->GetRace()).c_str()) + std::string(" ");
+                    fameTitle = util::format(worldDictionary.GetEntry(1177), worldRace.Name(p->GetRace()).c_str()) + std::string(" ");
                 }
                 else {
-                    fameTitle = util::format(worldDictionary.GetEntry(1178), Races->Name(p->GetRace()).c_str()) + std::string(" ");
+                    fameTitle = util::format(worldDictionary.GetEntry(1178), worldRace.Name(p->GetRace()).c_str()) + std::string(" ");
                 }
             }
             else if (p->GetId(2) == 0x91) {
@@ -2032,7 +2043,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
     cScript *toExecute;
     std::vector<std::uint16_t> scriptTriggers = pdoll->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        toExecute = JSMapping->GetScript(scriptTrig);
+        toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // -1 == script doesn't exist, or returned -1
             // 0 == script returned false, 0, or nothing - don't execute hard code
@@ -2045,7 +2056,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
     }
     
     // Also check global script!
-    toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+    toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
     if (toExecute != nullptr) {
         if (toExecute->OnCharDoubleClick(myChar, pdoll) == 0) {
             // if it exists and we don't want hard code, return
@@ -2073,7 +2084,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
         
         // Append race, if enabled
         if ( ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACEPAPERDOLL) && pdoll->GetRace() != 0 && pdoll->GetRace() != 65535) {
-            tempstr += " ("s + Races->Name(pdoll->GetRace()) + ")";
+            tempstr += " ("s + worldRace.Name(pdoll->GetRace()) + ")";
         }
         
         // Append title, if one exists
@@ -2119,7 +2130,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
         
         // Append race, if enabled
         if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACEPAPERDOLL) && pdoll->GetRace() != 0 && pdoll->GetRace() != 65535) {
-            tempstr += " ("s + Races->Name(pdoll->GetRace()) + ")";
+            tempstr += " ("s + worldRace.Name(pdoll->GetRace()) + ")";
         }
         
         if (pdoll->GetTownTitle() || pdoll->GetTownPriv() == 2) {// TownTitle
@@ -2186,7 +2197,7 @@ void handleCharDoubleClick(CSocket *mSock, serial_t serial, bool keyboard) {
     
     std::vector<std::uint16_t> scriptTriggers = c->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // -1 == script doesn't exist, or returned -1
             // 0 == script returned false, 0, or nothing - don't execute hard code
@@ -2240,7 +2251,7 @@ void handleCharDoubleClick(CSocket *mSock, serial_t serial, bool keyboard) {
                         }
                     }
                     else {
-                        Skills->Snooping(mSock, c, pack);
+                        worldSkill.Snooping(mSock, c, pack);
                         mSock->SysMessage(383); // That is not your beast of burden!
                     }
                 }
@@ -2324,7 +2335,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
                             }
                             else {
                                 if (mChar->GetPackItem() == iUsed) {
-                                    mChar->SetWeight(Weight->CalcCharWeight(mChar));
+                                    mChar->SetWeight(worldWeight.CalcCharWeight(mChar));
                                 }
                                 mSock->OpenPack(iUsed);
                             }
@@ -2338,7 +2349,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
                                 mSock->OpenPack(iUsed, true);
                             }
                             else {
-                                Skills->Snooping(mSock, iChar, iUsed);
+                                worldSkill.Snooping(mSock, iChar, iUsed);
                             }
                         }
                         packOpened = true;
@@ -2347,7 +2358,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
             }
             if (packOpened) {
                 if (canTrap && iUsed->GetTempVar(CITV_MOREZ, 1)) { // Is trapped
-                    Magic->MagicTrap(mChar, iUsed);
+                    worldMagic.MagicTrap(mChar, iUsed);
                 }
             }
             else {
@@ -2377,7 +2388,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
             i = mChar->GetPackItem();
             if (ValidateObject(i)) {
                 if ((iUsed->GetCont() == i || iUsed->GetCont() == mChar) || iUsed->GetLayer() == IL_RIGHTHAND) {
-                    Magic->SpellBook(mSock);
+                    worldMagic.SpellBook(mSock);
                 }
                 else {
                     mSock->SysMessage(403); // If you wish to open a spellbook, it must be equipped or
@@ -2404,10 +2415,10 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
         }
         case IT_BOOK: // Readable book
             if (iUsed->GetTempVar(CITV_MOREX) != 666 && iUsed->GetTempVar(CITV_MOREX) != 999) {
-                Books->OpenPreDefBook(mSock, iUsed);
+                worldBook.OpenPreDefBook(mSock, iUsed);
             }
             else {
-                Books->OpenBook(mSock, iUsed, (iUsed->GetTempVar(CITV_MOREX) == 666));
+                worldBook.OpenBook(mSock, iUsed, (iUsed->GetTempVar(CITV_MOREX) == 666));
             }
             return true;
         case IT_MAGICWAND: // Magic Wands
@@ -2417,7 +2428,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
             
             if (iUsed->GetTempVar(CITV_MOREZ) != 0) {
                 mSock->CurrentSpellType(2);
-                if (Magic->SelectSpell(mSock, iUsed->GetTempVar(CITV_MOREY))) {
+                if (worldMagic.SelectSpell(mSock, iUsed->GetTempVar(CITV_MOREY))) {
                     iUsed->SetTempVar(CITV_MOREZ, iUsed->GetTempVar(CITV_MOREZ) - 1);
                     if (iUsed->GetTempVar(CITV_MOREZ) == 0) { // Number of charges have dropped to zero
                         iUsed->SetType(IT_NOTYPE);
@@ -2566,7 +2577,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
             for (j = 0; j < static_cast<std::uint8_t>(RandomNum(0, 3) + 2); ++j) {
                 std::int16_t wx = (mChar->GetX() + RandomNum(0, 5) - 5);
                 std::int16_t wy = (mChar->GetY() - RandomNum(0, 7));
-                Effects->PlayMovingAnimation(mChar, wx, wy, mChar->GetZ() + 10, 0x36E4, 17, 0, (RandomNum(0, 1) == 1));
+                worldEffect.PlayMovingAnimation(mChar, wx, wy, mChar->GetZ() + 10, 0x36E4, 17, 0, (RandomNum(0, 1) == 1));
                 std::uint16_t animId;
                 switch (RandomNum(0, 4)) {
                     default:
@@ -2586,7 +2597,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
                         animId = 0x377A;
                         break;
                 }
-                Effects->PlayStaticAnimation(wx, wy, mChar->GetZ() + 10, animId, RandomNum(0x04, 0x09), 30, 0);
+                worldEffect.PlayStaticAnimation(wx, wy, mChar->GetZ() + 10, animId, RandomNum(0x04, 0x09), 30, 0);
             }
             return true;
         case IT_RENAMEDEED: // Rename Deed
@@ -2629,7 +2640,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
                     return true;
                 
                 mChar->SetSpeechItem(iUsed); // we're using this as a generic item
-                GuildSys->PlaceStone(mSock, iUsed);
+                worldGuildSystem.PlaceStone(mSock, iUsed);
                 return true;
             }
             else if (itemId == 0x0ED5) { // Check for Guildstone + Guild Type
@@ -2639,7 +2650,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
                     mSock->SysMessage(1984); // You are not a member of this guild!
                 }
                 else if (mChar->GetGuildNumber() == static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MORE))) {
-                    GuildSys->Menu(mSock, BasePage + 1, static_cast<guildid_t>(iUsed->GetTempVar(CITV_MORE))); // more of the stone is the guild number
+                    worldGuildSystem.Menu(mSock, BasePage + 1, static_cast<guildid_t>(iUsed->GetTempVar(CITV_MORE))); // more of the stone is the guild number
                 }
                 else {
                     mSock->SysMessage(438); // You already belong to a guild.
@@ -2797,7 +2808,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
             }
             return true;
         case IT_MAGICSTATUE:
-            if (Skills->CheckSkill(mChar, ITEMID, 0, 10)) {
+            if (worldSkill.CheckSkill(mChar, ITEMID, 0, 10)) {
                 if (itemId == 0x1508) {
                     iUsed->SetId(0x1509);
                 }
@@ -2810,7 +2821,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
             }
             return true;
         case IT_GUILLOTINE:
-            if (Skills->CheckSkill(mChar, ITEMID, 0, 10)) {
+            if (worldSkill.CheckSkill(mChar, ITEMID, 0, 10)) {
                 if (itemId == 0x1245) {
                     iUsed->SetId(0x1230);
                 }
@@ -2918,7 +2929,7 @@ std::map<std::uint16_t, itemtypes_t> idToItemType;
 //|	Purpose		-	Load in and map IDs to item types based on entries in itemtypes.dfn
 // o------------------------------------------------------------------------------------------------o
 auto InitIdToItemType() -> void {
-    auto Itemtypes = FileLookup->FindEntry("ITEMTYPES", items_def);
+    auto Itemtypes = worldFileLookup.FindEntry("ITEMTYPES", items_def);
     if (Itemtypes) {
         std::int32_t sectionCount;
         itemtypes_t iType = IT_COUNT;
@@ -3120,7 +3131,7 @@ bool CPIDblClick::Handle() {
     for (auto scriptTrig : scriptTriggers) {
         // First loop through all scripts, checking for OnUseUnChecked events, which should run
         // before item usage check is performed
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) { // Was a script found?
             // If retVal is -1, event doesn't exist in script
             // If retVal is 0, event exists, but returned false/0, and handles item usage. Don't
@@ -3158,7 +3169,7 @@ bool CPIDblClick::Handle() {
     }
     
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // Check if OnUseChecked event is present in script
             std::int8_t retVal = toExecute->OnUseChecked(ourChar, iUsed);
@@ -3179,15 +3190,15 @@ bool CPIDblClick::Handle() {
         cScript *toExecute = nullptr;
         std::uint16_t envTrig = 0;
         
-        if (JSMapping->GetEnvokeByType()->Check(static_cast<std::uint16_t>(iType))) {
+        if (worldJSMapping.GetEnvokeByType()->Check(static_cast<std::uint16_t>(iType))) {
             // Get script to run by item type
-            envTrig = JSMapping->GetEnvokeByType()->GetScript(static_cast<std::uint16_t>(iType));
-            toExecute = JSMapping->GetScript(envTrig);
+            envTrig = worldJSMapping.GetEnvokeByType()->GetScript(static_cast<std::uint16_t>(iType));
+            toExecute = worldJSMapping.GetScript(envTrig);
         }
-        else if (JSMapping->GetEnvokeById()->Check(itemId)) {
+        else if (worldJSMapping.GetEnvokeById()->Check(itemId)) {
             // Get script to run by item ID
-            envTrig = JSMapping->GetEnvokeById()->GetScript(itemId);
-            toExecute = JSMapping->GetScript(envTrig);
+            envTrig = worldJSMapping.GetEnvokeById()->GetScript(itemId);
+            toExecute = worldJSMapping.GetScript(envTrig);
         }
         
         // Check for the onUse events in envoke scripts!
@@ -3288,7 +3299,7 @@ bool CPISingleClick::Handle() {
         if (ValidateObject(c)) {
             std::vector<std::uint16_t> scriptTriggers = c->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     // If script returns true/1, don't show hard-coded name, and don't run
                     // additional onClick events
@@ -3321,7 +3332,7 @@ bool CPISingleClick::Handle() {
     // October 6, 2002 - Added support for the onClick event
     std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // If script returns true/0, don't show hard-coded name, and don't run additional
             // onClick events

@@ -14,6 +14,9 @@
 #include "utility/strutil.hpp"
 
 extern CDictionaryContainer worldDictionary ;
+extern CJailSystem worldJailSystem ;
+extern CCommands serverCommands;
+extern CNetworkStuff worldNetwork ;
 
 CWhoList *WhoList;
 CWhoList *OffList;
@@ -214,7 +217,7 @@ void CWhoList::ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std:
                     toSendTo->SysMessage(1070); // That player is already in jail!
                 }
                 
-                else if (!JailSys->JailPlayer(targetChar, 0xFFFFFFFF)) {
+                else if (!worldJailSystem.JailPlayer(targetChar, 0xFFFFFFFF)) {
                     toSendTo->SysMessage(1072); // All jails are currently full!
                 }
                 break;
@@ -228,7 +231,7 @@ void CWhoList::ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std:
                 toSendTo->SysMessage(1064); // That player is not in jail!
             }
             else {
-                JailSys->ReleasePlayer(targetChar);
+                worldJailSystem.ReleasePlayer(targetChar);
                 toSendTo->SysMessage(1065, targetChar->GetName().c_str()); // Player %s released.
             }
             break;
@@ -248,7 +251,7 @@ void CWhoList::ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std:
                     return;
                 }
                 toSendTo->SysMessage(1396); // Kicking player.
-                Network->Disconnect(targetChar->GetSocket());
+                worldNetwork.Disconnect(targetChar->GetSocket());
                 break;
             }
         case 205:
@@ -394,7 +397,7 @@ void CWhoList::Update() {
     //--Start User List
     if (online) {
         for (i = 0; i < k; ++i) {
-            CSocket *tSock = Network->GetSockPtr(static_cast<std::uint32_t>(i));
+            CSocket *tSock = worldNetwork.GetSockPtr(static_cast<std::uint32_t>(i));
             CChar *tChar = tSock->CurrcharObj();
             if (!ValidateObject(tChar))
                 continue;

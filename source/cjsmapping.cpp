@@ -13,13 +13,13 @@
 #include "utility/strutil.hpp"
 
 using namespace std::string_literals;
+extern CJSMapping worldJSMapping ;
 
 
 //================================================================================================
 // CJSMappingSection
 //================================================================================================
 
-CJSMapping *JSMapping = nullptr;
 // o------------------------------------------------------------------------------------------------o
 //|	File		-	cjsmapping.cpp
 //|	Date		-	Feb 7, 2005
@@ -587,7 +587,7 @@ auto CEnvoke::Parse() -> void {
                     auto data = sec->data;
                     auto envokeId = static_cast<std::uint16_t>(std::stoul(tag, nullptr, 0));
                     auto scriptId = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
-                    auto verify = JSMapping->GetScript(scriptId);
+                    auto verify = worldJSMapping.GetScript(scriptId);
                     if (verify) {
                         envokeList[envokeId] = scriptId;
                     }

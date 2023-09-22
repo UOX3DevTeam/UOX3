@@ -597,6 +597,5 @@ private:
     bool IsFirewallBlocked(std::uint8_t part[4]);
 };
 
-extern CNetworkStuff *Network;
 
 #endif

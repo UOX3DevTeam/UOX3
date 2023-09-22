@@ -83,6 +83,18 @@
 extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
 extern CCharStuff worldNPC ;
+extern CSkills worldSkill ;
+extern CWeight worldWeight ;
+extern cRaces worldRace ;
+extern CMovement worldMovement ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern CGuildCollection worldGuildSystem ;
+extern CSpeechQueue worldSpeechSystem ;
+extern CJSEngine worldJSEngine ;
+extern CMulHandler worldMULHandler ;
+extern CNetworkStuff worldNetwork ;
+extern CMapHandler worldMapHandler ;
 
 #define DEBUGMOVEMULTIPLIER 1.75
 
@@ -447,7 +459,7 @@ std::int8_t CChar::GetHunger() const { return hunger; }
 bool CChar::SetHunger(std::int8_t newValue) {
     std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
     for (auto i : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(i);
+        cScript *toExecute = worldJSMapping.GetScript(i);
         if (toExecute != nullptr) {
             // If script returns false/0/nothing, prevent hunger from changing, and prevent
             // other scripts with event from running
@@ -480,9 +492,9 @@ void CChar::DoHunger(CSocket *mSock) {
         if (!IsNpc() && mSock != nullptr) { // Do Hunger for player chars
             if (WillHunger() && GetCommandLevel() == CL_PLAYER) {
                 if (GetTimer(tCHAR_HUNGER) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
-                    if (Races->DoesHunger(GetRace())) { // prefer the hunger settings frome the race
-                        hungerRate = Races->GetHungerRate(GetRace());
-                        hungerDamage = Races->GetHungerDamage(GetRace());
+                    if (worldRace.DoesHunger(GetRace())) { // prefer the hunger settings frome the race
+                        hungerRate = worldRace.GetHungerRate(GetRace());
+                        hungerDamage = worldRace.GetHungerDamage(GetRace());
                     }
                     else { // use the global values if there is no race setting
                         hungerRate = ServerConfig::shared().timerSetting[TimerSetting::HUNGERRATE] ;
@@ -529,14 +541,14 @@ void CChar::DoHunger(CSocket *mSock) {
                 }
             }
         }
-        else if (IsNpc() && !IsTamed() && Races->DoesHunger(GetRace())) {
+        else if (IsNpc() && !IsTamed() && worldRace.DoesHunger(GetRace())) {
             // Handle hunger for regular non-tame NPCs
             if (!WillHunger() || GetMounted() || GetStabled())
                 return;
             
             if (GetTimer(tCHAR_HUNGER) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
-                hungerRate = Races->GetHungerRate(GetRace());
-                hungerDamage = Races->GetHungerDamage(GetRace());
+                hungerRate = worldRace.GetHungerRate(GetRace());
+                hungerDamage = worldRace.GetHungerDamage(GetRace());
                 
                 if (GetHunger() > 0) {
                     DecHunger();
@@ -606,7 +618,7 @@ std::int8_t CChar::GetThirst() const { return thirst; }
 bool CChar::SetThirst(std::int8_t newValue) {
     std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
     for (auto i : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(i);
+        cScript *toExecute = worldJSMapping.GetScript(i);
         if (toExecute != nullptr) {
             // If script returns false/0/nothing, prevent thirst from changing, and prevent
             // other scripts with event from running
@@ -639,9 +651,9 @@ void CChar::DoThirst(CSocket *mSock) {
         if (!IsNpc() && mSock != nullptr) { // Do Thirst for player chars
             if (WillThirst() && GetCommandLevel() == CL_PLAYER) {
                 if (GetTimer(tCHAR_THIRST) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
-                    if (Races->DoesThirst(GetRace())) { // prefer the thirst settings frome the race
-                        thirstRate = Races->GetThirstRate(GetRace());
-                        thirstDrain = Races->GetThirstDrain(GetRace());
+                    if (worldRace.DoesThirst(GetRace())) { // prefer the thirst settings frome the race
+                        thirstRate = worldRace.GetThirstRate(GetRace());
+                        thirstDrain = worldRace.GetThirstDrain(GetRace());
                     }
                     else { // use the global values if there is no race setting
                         thirstRate = ServerConfig::shared().timerSetting[TimerSetting::THIRSTRATE];
@@ -688,11 +700,11 @@ void CChar::DoThirst(CSocket *mSock) {
                 }
             }
         }
-        else if (IsNpc() && !IsTamed() && Races->DoesThirst(GetRace())) {
+        else if (IsNpc() && !IsTamed() && worldRace.DoesThirst(GetRace())) {
             if (WillThirst() && !GetMounted() && !GetStabled()) {
                 if (GetTimer(tCHAR_THIRST) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
-                    thirstRate = Races->GetThirstRate(GetRace());
-                    thirstDrain = Races->GetThirstDrain(GetRace());
+                    thirstRate = worldRace.GetThirstRate(GetRace());
+                    thirstDrain = worldRace.GetThirstDrain(GetRace());
                     
                     if (GetThirst() > 0) {
                         DecThirst();
@@ -1491,7 +1503,7 @@ void InitializeWanderArea(CChar *c, std::int16_t xAway, std::int16_t yAway);
 // o------------------------------------------------------------------------------------------------o
 void CChar::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ, std::uint8_t world, std::uint16_t instanceId) {
     Dirty(UT_LOCATION);
-    MapRegion->ChangeRegion(this, newX, newY, world);
+    worldMapHandler.ChangeRegion(this, newX, newY, world);
     oldLocX = x;
     oldLocY = y;
     oldLocZ = z;
@@ -1636,7 +1648,7 @@ skillval_t CChar::GetSkill(std::uint8_t skillToGet) const {
     skillval_t rVal = 0;
     if (skillToGet <= INTELLECT) {
         rVal = skill[skillToGet];
-        std::int32_t modifier = Races->DamageFromSkill(skillToGet, race);
+        std::int32_t modifier = worldRace.DamageFromSkill(skillToGet, race);
         if (modifier != 0) {
             auto toAdd =
             static_cast<skillval_t>(static_cast<float>(skill[skillToGet]) * (static_cast<float>(modifier) / 1000)); // percentage to add
@@ -2027,8 +2039,8 @@ flagcolors_t CChar::FlagColour(CChar *toCompare) {
     
     if (ValidateObject(toCompare)) {
         if (!IsIncognito()) {
-            gComp = GuildSys->Compare(this, toCompare);
-            rComp = Races->Compare(this, toCompare);
+            gComp = worldGuildSystem.Compare(this, toCompare);
+            rComp = worldRace.Compare(this, toCompare);
         }
     }
     
@@ -2090,7 +2102,7 @@ auto CChar::RemoveAllObjectsFromSight(CSocket *mSock) -> void {
         // mSock->CurrcharObj();
         
         // Calculate player's visibility range so we can use it to find nearby objects
-        std::uint16_t visRange = mSock->Range() + Races->VisRange(GetRace());
+        std::uint16_t visRange = mSock->Range() + worldRace.VisRange(GetRace());
         std::uint16_t mCharX = this->GetX();
         std::uint16_t mCharY = this->GetY();
         auto minX = mCharX - visRange;
@@ -2098,7 +2110,7 @@ auto CChar::RemoveAllObjectsFromSight(CSocket *mSock) -> void {
         auto maxX = mCharX + visRange;
         auto maxY = mCharY + visRange;
         
-        for (auto &MapArea : MapRegion->PopulateList(this)) {
+        for (auto &MapArea : worldMapHandler.PopulateList(this)) {
             if (MapArea == nullptr)
                 continue;
             
@@ -2225,7 +2237,7 @@ auto CChar::Teleport() -> void {
     RemoveFromSight();
     Update(nullptr, true);
     if (mSock != nullptr) {
-        std::uint16_t visrange = mSock->Range() + Races->VisRange(GetRace());
+        std::uint16_t visrange = mSock->Range() + worldRace.VisRange(GetRace());
         mSock->StatWindow(this);
         mSock->WalkSequence(-1);
         
@@ -2236,7 +2248,7 @@ auto CChar::Teleport() -> void {
         auto maxX = mCharX + visrange;
         auto maxY = mCharY + visrange;
         
-        for (auto &MapArea : MapRegion->PopulateList(this)) {
+        for (auto &MapArea : worldMapHandler.PopulateList(this)) {
             if (MapArea == nullptr)
                 continue;
             
@@ -2350,7 +2362,7 @@ bool CChar::WearItem(CItem *toWear) {
     // Run event prior to equipping item, allowing script to prevent equip
     std::vector<std::uint16_t> scriptTriggers = toWear->GetScriptTriggers();
     for (auto i : scriptTriggers) {
-        cScript *tScript = JSMapping->GetScript(i);
+        cScript *tScript = worldJSMapping.GetScript(i);
         if (tScript != nullptr) {
             // If script returns false, prevent item from being equipped
             if (tScript->OnEquipAttempt(this, toWear) == 0) {
@@ -2383,7 +2395,7 @@ bool CChar::WearItem(CItem *toWear) {
                 
                 std::vector<std::uint16_t> scriptTriggers = toWear->GetScriptTriggers();
                 for (auto i : scriptTriggers) {
-                    cScript *tScript = JSMapping->GetScript(i);
+                    cScript *tScript = worldJSMapping.GetScript(i);
                     if (tScript != nullptr) {
                         // If script returns 1, prevent other scripts with event from running
                         if (tScript->OnEquip(this, toWear) == 1) {
@@ -2411,7 +2423,7 @@ bool CChar::TakeOffItem(itemlayers_t Layer) {
         // Run event prior to equipping item, allowing script to prevent equip
         std::vector<std::uint16_t> scriptTriggers = itemLayers[Layer]->GetScriptTriggers();
         for (auto i : scriptTriggers) {
-            cScript *tScript = JSMapping->GetScript(i);
+            cScript *tScript = worldJSMapping.GetScript(i);
             if (tScript != nullptr) {
                 if (tScript->OnUnequipAttempt(this, itemLayers[Layer]) == 0) {
                     return false;
@@ -2435,7 +2447,7 @@ bool CChar::TakeOffItem(itemlayers_t Layer) {
         }
         
         for (auto i : scriptTriggers) {
-            cScript *tScript = JSMapping->GetScript(i);
+            cScript *tScript = worldJSMapping.GetScript(i);
             if (tScript != nullptr) {
                 // If script returns true/1, prevent other scripts with event from running
                 if (tScript->OnUnequip(this, itemLayers[Layer]) == 0) {
@@ -2707,7 +2719,7 @@ bool CChar::Save(std::ostream &outStream) {
     if (!IsFree()) {
         std::int16_t mX = GetX();
         std::int16_t mY = GetY();
-        auto [mapWidth, mapHeight] = Map->SizeOfMap(worldNumber);
+        auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(worldNumber);
         if (mX >= 0 && (mX < mapWidth || mX >= 7000)) {
             if (mY >= 0 && (mY < mapHeight || mY >= 7000)) {
                 DumpHeader(outStream);
@@ -3117,11 +3129,11 @@ auto CChar::RemoveOwnedItem(CItem *toRemove) -> void {
 std::uint16_t CChar::GetMaxHP() {
     if ((maxHP_oldstr != GetStrength() || oldRace != GetRace()) && !GetMaxHPFixed()) {
         // if str/race changed since last calculation, recalculate maxHp
-        CRace *pRace = Races->Race(GetRace());
+        CRace *pRace = worldRace.Race(GetRace());
         
         // if race is invalid just use default race
         if (pRace == nullptr) {
-            pRace = Races->Race(0);
+            pRace = worldRace.Race(0);
         }
         
         maxHP = static_cast<std::uint16_t>(GetStrength() +  static_cast<std::uint16_t>((static_cast<float>(GetStrength())) * (static_cast<float>(pRace->HPModifier())) / 100));
@@ -3145,9 +3157,9 @@ void CChar::SetFixedMaxHP(std::int16_t newmaxhp) {
     else {
         SetMaxHPFixed(false);
         
-        CRace *pRace = Races->Race(GetRace());
+        CRace *pRace = worldRace.Race(GetRace());
         if (pRace == nullptr) {
-            pRace = Races->Race(0);
+            pRace = worldRace.Race(0);
         }
         
         maxHP = static_cast<std::uint16_t>(GetStrength() + static_cast<std::uint16_t>((static_cast<float>(GetStrength())) * (static_cast<float>(pRace->HPModifier())) / 100));
@@ -3168,11 +3180,11 @@ void CChar::SetFixedMaxHP(std::int16_t newmaxhp) {
 std::int16_t CChar::GetMaxMana() {
     if ((maxMana_oldint != GetIntelligence() || oldRace != GetRace()) && !GetMaxManaFixed()) {
         // if int/race changed since last calculation, recalculate maxHp
-        CRace *pRace = Races->Race(GetRace());
+        CRace *pRace = worldRace.Race(GetRace());
         
         // if race is invalid just use default race
         if (pRace == nullptr) {
-            pRace = Races->Race(0);
+            pRace = worldRace.Race(0);
         }
         
         maxMana = static_cast<std::int16_t>(GetIntelligence() + static_cast<std::int16_t>((static_cast<float>(GetIntelligence())) * (static_cast<float>(pRace->ManaModifier())) / 100));
@@ -3196,9 +3208,9 @@ void CChar::SetFixedMaxMana(std::int16_t newmaxmana) {
     else {
         SetMaxManaFixed(false);
         
-        CRace *pRace = Races->Race(GetRace());
+        CRace *pRace = worldRace.Race(GetRace());
         if (pRace == nullptr) {
-            pRace = Races->Race(0);
+            pRace = worldRace.Race(0);
         }
         
         maxMana = static_cast<std::int16_t>(GetIntelligence() + static_cast<std::int16_t>((static_cast<float>(GetIntelligence())) * (static_cast<float>(pRace->ManaModifier())) / 100));
@@ -3219,11 +3231,11 @@ void CChar::SetFixedMaxMana(std::int16_t newmaxmana) {
 std::int16_t CChar::GetMaxStam() {
     // If dex/race changed since last calculation, recalculate maxHp
     if ((maxStam_olddex != GetDexterity() || oldRace != GetRace()) && !GetMaxStamFixed()) {
-        CRace *pRace = Races->Race(GetRace());
+        CRace *pRace = worldRace.Race(GetRace());
         
         // if race is invalid just use default race
         if (pRace == nullptr) {
-            pRace = Races->Race(0);
+            pRace = worldRace.Race(0);
         }
         
         // Set max. stamina to dex + stammodifier% of dex
@@ -3247,9 +3259,9 @@ void CChar::SetFixedMaxStam(std::int16_t newmaxstam) {
     else {
         SetMaxStamFixed(false);
         
-        CRace *pRace = Races->Race(GetRace());
+        CRace *pRace = worldRace.Race(GetRace());
         if (pRace == nullptr) {
-            pRace = Races->Race(0);
+            pRace = worldRace.Race(0);
         }
         
         maxStam = static_cast<std::int16_t>(GetDexterity() + static_cast<std::int16_t>((static_cast<float>(GetDexterity())) *  (static_cast<float>(pRace->StamModifier())) / 100));
@@ -4091,12 +4103,12 @@ bool CChar::LoadRemnants() {
         }
     }
     if (rValue) {
-        MapRegion->AddChar(this);
+        worldMapHandler.AddChar(this);
         
         const std::int16_t mx = GetX();
         const std::int16_t my = GetY();
         
-        auto [mapWidth, mapHeight] = Map->SizeOfMap(worldNumber);
+        auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(worldNumber);
         const bool overRight = (mx > mapWidth);
         const bool overBottom = (my > mapHeight);
         
@@ -4170,10 +4182,10 @@ void CChar::PostLoadProcessing() {
     
     std::int32_t maxWeight = GetStrength() * ServerConfig::shared().realNumbers[RealNumberConfig::WEIGHTSTR] + 40;
     if (GetWeight() <= 0 || GetWeight() > MAX_WEIGHT || GetWeight() > maxWeight) {
-        SetWeight(Weight->CalcCharWeight(this));
+        SetWeight(worldWeight.CalcCharWeight(this));
     }
     for (std::uint8_t i = 0; i < ALLSKILLS; ++i) {
-        Skills->UpdateSkillLevel(this, i);
+        worldSkill.UpdateSkillLevel(this, i);
     }
     
     // If character belongs to a player and doesn't have a created timestamp, add one now
@@ -4299,7 +4311,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, boo
                 }
             }
             else {
-                CSpeechEntry &toAdd = SpeechSys->Add();
+                CSpeechEntry &toAdd = worldSpeechSystem.Add();
                 toAdd.Font(static_cast<fonttype_t>(GetFontType()));
                 toAdd.Speech(toSay);
                 toAdd.Speaker(GetSerial());
@@ -4373,7 +4385,7 @@ void CChar::WalkZ(std::int8_t newZ) {
     if (fallDistance > MAX_Z_FALL) {
         std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
         for (auto i : scriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(i);
+            cScript *toExecute = worldJSMapping.GetScript(i);
             if (toExecute != nullptr) {
                 toExecute->OnFall((this), fallDistance);
             }
@@ -4397,9 +4409,9 @@ void CChar::WalkDir(std::int8_t newDir) { dir = newDir; }
 void CChar::Cleanup() {
     if (!IsFree()) // We're not the default item in the handler
     {
-        MapRegion->RemoveChar(this);
+        worldMapHandler.RemoveChar(this);
         
-        JSEngine->ReleaseObject(IUE_CHAR, this);
+        worldJSEngine.ReleaseObject(IUE_CHAR, this);
         
         CBaseObject::Cleanup();
         
@@ -4655,7 +4667,7 @@ void CChar::IncMana(std::int16_t toInc) { SetMana(GetMana() + toInc); }
 // o------------------------------------------------------------------------------------------------o
 void CChar::ToggleCombat() {
     SetWar(!IsAtWar());
-    Movement->CombatWalk(this);
+    worldMovement.CombatWalk(this);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -4984,21 +4996,21 @@ bool CChar::ToggleFlying() {
                 
                 // Play takeoff/landing animation
                 if (!IsFlying()) {
-                    Effects->PlayNewCharacterAnimation(this,N_ACT_LAND); // Action 0x0A, subAction 0x00
+                    worldEffect.PlayNewCharacterAnimation(this,N_ACT_LAND); // Action 0x0A, subAction 0x00
                 }
                 else {
-                    Effects->PlayNewCharacterAnimation(this, N_ACT_TAKEOFF); // Action 0x09, subAction 0x00
+                    worldEffect.PlayNewCharacterAnimation(this, N_ACT_TAKEOFF); // Action 0x09, subAction 0x00
                 }
                 
                 // Send update to nearby characters
-                for (auto &tSend : Network->connClients) {
+                for (auto &tSend : worldNetwork.connClients) {
                     if (tSend) {
                         CChar *mChar = tSend->CurrcharObj();
                         if (ValidateObject(mChar)) {
                             if ((WorldNumber() == mChar->WorldNumber()) &&
                                 (GetInstanceId() == mChar->GetInstanceId())) {
                                 std::uint16_t effRange = static_cast<std::uint16_t>(tSend->Range());
-                                const std::uint16_t visibleRange = static_cast<std::uint16_t>(tSend->Range() + Races->VisRange(mChar->GetRace()));
+                                const std::uint16_t visibleRange = static_cast<std::uint16_t>(tSend->Range() + worldRace.VisRange(mChar->GetRace()));
                                 if (visibleRange >= effRange) {
                                     effRange = visibleRange;
                                 }
@@ -5704,7 +5716,7 @@ void CChar::SetLoyalty(std::uint16_t newValue) {
     if (IsValidNPC()) {
         std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
         for (auto i : scriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(i);
+            cScript *toExecute = worldJSMapping.GetScript(i);
             if (toExecute != nullptr) {
                 // If script returns false/0/nothing, prevent loyalty from changing, and prevent
                 // other scripts with event from running
@@ -7229,7 +7241,7 @@ bool CChar::Damage(std::int16_t damageValue, Weather::type_t damageType, CChar *
     if (ValidateObject(attacker)) {
         std::vector<std::uint16_t> attScriptTriggers = attacker->GetScriptTriggers();
         for (auto i : attScriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(i);
+            cScript *toExecute = worldJSMapping.GetScript(i);
             if (toExecute != nullptr) {
                 // If event returns false, prevent damage!
                 auto retVal = toExecute->OnDamageDeal(attacker, this, damageValue, damageType);
@@ -7241,7 +7253,7 @@ bool CChar::Damage(std::int16_t damageValue, Weather::type_t damageType, CChar *
     
     std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
     for (auto i : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(i);
+        cScript *toExecute = worldJSMapping.GetScript(i);
         if (toExecute != nullptr) {
             // If event returns false, prevent damage!
             auto retVal = toExecute->OnDamage(this, attacker, damageValue, damageType);
@@ -7286,12 +7298,12 @@ bool CChar::Damage(std::int16_t damageValue, Weather::type_t damageType, CChar *
                 bloodType = BLOOD_CRITICAL;
             }
             
-            std::uint16_t bloodColour = Races->BloodColour(GetRace()); // Fetch blood color from race property
+            std::uint16_t bloodColour = worldRace.BloodColour(GetRace()); // Fetch blood color from race property
             if (bloodColour == 0xffff) {
                 // If blood colour is 0xffff in the race setup, inherit color of NPC instead!
                 bloodColour = GetSkin();
             }
-            CItem *bloodEffect = Effects->SpawnBloodEffect(WorldNumber(), GetInstanceId(), bloodColour, bloodType);
+            CItem *bloodEffect = worldEffect.SpawnBloodEffect(WorldNumber(), GetInstanceId(), bloodColour, bloodType);
             if (ValidateObject(bloodEffect)) {
                 // Finally, set blood's location to match that of the character
                 bloodEffect->SetLocation(this);
@@ -7384,7 +7396,7 @@ std::int16_t CChar::GetKarma() const {
 void CChar::Die(CChar *attacker, bool doRepsys) {
     std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
     for (auto i : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(i);
+        cScript *toExecute = worldJSMapping.GetScript(i);
         if (toExecute != nullptr) {
             std::int8_t retStatus = toExecute->OnDeathBlow(this, attacker);
             
@@ -7515,7 +7527,7 @@ void CChar::Dirty(updatetypes_t updateType) {
 void CChar::UpdateRegion() {
     // Make sure to only mark region as changed if this is a character we're supposed to save!
     if (ShouldSave()) {
-        CMapRegion *curCell = MapRegion->GetMapRegion(this);
+        CMapRegion *curCell = worldMapHandler.GetMapRegion(this);
         curCell->HasRegionChanged(true);
     }
 }

@@ -66,6 +66,15 @@
 
 extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
+extern CWeight worldWeight ;
+extern CMagic worldMagic ;
+extern cRaces worldRace ;
+extern CMovement worldMovement ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern CMulHandler worldMULHandler ;
+extern CNetworkStuff worldNetwork ;
+extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
 
@@ -399,7 +408,7 @@ void CMovement::Walking(CSocket *mSock, CChar *c, std::uint8_t dir, std::int16_t
         }
         
         if (ServerConfig::shared().enabled(ServerSwitch::AMBIENTFOOTSTEPS)) {
-            Effects->PlayTileSound(c, mSock);
+            worldEffect.PlayTileSound(c, mSock);
         }
         
         MoveCharForDirection(c, myx, myy, myz);
@@ -519,7 +528,7 @@ bool CMovement::IsOverloaded(CChar *c, CSocket *mSock, std::int16_t sequence) {
     // Who are we going to check for weight restrictions?
     if (!c->IsDead() && !c->IsNpc() && c->GetCommandLevel() < CL_CNS) {
         if (mSock != nullptr) {
-            if (Weight->IsOverloaded(c)) {
+            if (worldWeight.IsOverloaded(c)) {
                 c->IncStamina(-5);
             }
             if (c->GetStamina() <= 0) {
@@ -560,7 +569,7 @@ bool CMovement::IsOverloaded(CChar *c, CSocket *mSock, std::int16_t sequence) {
 // o------------------------------------------------------------------------------------------------o
 auto CMovement::CheckForCharacterAtXYZ(CChar *c, std::int16_t cx, std::int16_t cy, std::int8_t cz) -> bool {
     CMapRegion *MapArea =
-    MapRegion->GetMapRegion(MapRegion->GetGridX(cx), MapRegion->GetGridY(cy), c->WorldNumber()); // check 3 cols... do we really NEED to?
+    worldMapHandler.GetMapRegion(worldMapHandler.GetGridX(cx), worldMapHandler.GetGridY(cy), c->WorldNumber()); // check 3 cols... do we really NEED to?
     if (MapArea) {                                  // no valid region
         auto regChars = MapArea->GetCharList();
         for (const auto &tempChar : regChars->collection()) {
@@ -706,15 +715,15 @@ void CMovement::MoveCharForDirection(CChar *c, std::int16_t newX, std::int16_t n
         if ((c->IsAtWar() || c->GetAttacker() != nullptr || casting) && IsOnline(*c)) {
             // if it's not an NPC, in combat or casting, and it's online
             if (casting && !ServerConfig::shared().enabled(ServerSwitch::SPELLMOVING)) {
-                Effects->PlayStaticAnimation(c, 0x3735, 0, 30);
-                Effects->PlaySound(c, 0x005C);
+                worldEffect.PlayStaticAnimation(c, 0x3735, 0, 30);
+                worldEffect.PlaySound(c, 0x005C);
                 c->TextMessage(c->GetSocket(), 771, EMOTE, false); // The spell fizzles.
                 c->StopSpell();
                 c->SetJSCasting(false);
             }
         }
     }
-    MapRegion->ChangeRegion(c, newX, newY, c->WorldNumber());
+    worldMapHandler.ChangeRegion(c, newX, newY, c->WorldNumber());
     c->WalkXY(newX, newY);
     c->WalkZ(newZ);
 }
@@ -728,7 +737,7 @@ void CMovement::GetBlockingStatics(std::int16_t x, std::int16_t y, std::vector<T
     if (xycount >= XYMAX) // don't overflow
         return;
     
-    auto artwork = Map->ArtAt(x, y, worldNumber);
+    auto artwork = worldMULHandler.ArtAt(x, y, worldNumber);
     for (auto &art : artwork) {
         xyblock.push_back(art);
         ++xycount;
@@ -746,7 +755,7 @@ auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<
     if (xycount >= XYMAX) // don't overflow
         return;
     
-    for (auto &MapArea : MapRegion->PopulateList(x, y, worldNumber)) {
+    for (auto &MapArea : worldMapHandler.PopulateList(x, y, worldNumber)) {
         if (MapArea) {
             auto regItems = MapArea->GetItemList();
             for (const auto &tItem : regItems->collection()) {
@@ -759,7 +768,7 @@ auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<
                             auto tile = Tile_st(tiletype_t::dyn);
                             tile.tileId = tItem->GetId();
                             tile.altitude = tItem->GetZ();
-                            tile.artInfo = &Map->SeekTile(tItem->GetId());
+                            tile.artInfo = &worldMULHandler.SeekTile(tItem->GetId());
                             xyblock.push_back(tile);
                             ++xycount;
                             if (xycount >= XYMAX) {// don't overflow
@@ -771,9 +780,9 @@ auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<
                         const std::uint16_t multiId = (tItem->GetId() - 0x4000);
                         [[maybe_unused]] std::int32_t length = 0;
                         
-                        if (!Map->MultiExists(multiId)) {
+                        if (!worldMULHandler.MultiExists(multiId)) {
                             Console::shared().error("Walking() - Bad length in multi file. Avoiding stall");
-                            auto map1 = Map->SeekMap(tItem->GetX(), tItem->GetY(), tItem->WorldNumber());
+                            auto map1 = worldMULHandler.SeekMap(tItem->GetX(), tItem->GetY(), tItem->WorldNumber());
                             
                             if (map1.CheckFlag(TF_WET)) {// is it water?
                                 tItem->SetId(0x4001);
@@ -784,10 +793,10 @@ auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<
                             length = 0;
                         }
                         else {
-                            for (auto &multi : Map->SeekMulti(multiId).items) {
+                            for (auto &multi : worldMULHandler.SeekMulti(multiId).items) {
                                 if (multi.flag && (tItem->GetX() + multi.offsetX) == x && (tItem->GetY() + multi.offsetY) == y) {
                                     auto tile = Tile_st(tiletype_t::dyn);
-                                    tile.artInfo = &Map->SeekTile(multi.tileId);
+                                    tile.artInfo = &worldMULHandler.SeekTile(multi.tileId);
                                     tile.altitude = multi.altitude + tItem->GetZ();
                                     xyblock.push_back(tile);
                                     ++xycount;
@@ -848,7 +857,7 @@ void CMovement::SendWalkToOtherPlayers(CChar *c, [[maybe_unused]] std::uint8_t d
     
     CPExtMove toSend = (*c);
     
-    for (auto &tSend : Network->connClients) {
+    for (auto &tSend : worldNetwork.connClients) {
         if (tSend == nullptr)
             continue;
         
@@ -861,7 +870,7 @@ void CMovement::SendWalkToOtherPlayers(CChar *c, [[maybe_unused]] std::uint8_t d
         
         effRange = static_cast<std::uint16_t>(tSend->Range());
         const auto visibleRange =
-        static_cast<std::uint16_t>(tSend->Range() + Races->VisRange(mChar->GetRace()));
+        static_cast<std::uint16_t>(tSend->Range() + worldRace.VisRange(mChar->GetRace()));
         if (visibleRange >= effRange) {
             effRange = visibleRange;
         }
@@ -915,7 +924,7 @@ auto CMovement::OutputShoveMessage(CChar *c, CSocket *mSock) -> void {
         return;
     
     // lets cache these vars in advance
-    auto grid = MapRegion->GetMapRegion(c);
+    auto grid = worldMapHandler.GetMapRegion(c);
     if (grid == nullptr)
         return;
     
@@ -938,7 +947,7 @@ auto CMovement::OutputShoveMessage(CChar *c, CSocket *mSock) -> void {
                     
                     // Run onCollide event on character doing the shoving
                     for (auto scriptTrig : scriptTriggers) {
-                        toExecute = JSMapping->GetScript(scriptTrig);
+                        toExecute = worldJSMapping.GetScript(scriptTrig);
                         if (toExecute) {
                             auto retVal = toExecute->OnCollide(mSock, c, ourChar);
                             if (retVal == 0) {
@@ -959,7 +968,7 @@ auto CMovement::OutputShoveMessage(CChar *c, CSocket *mSock) -> void {
                     ourScriptTriggers.shrink_to_fit();
                     ourScriptTriggers = ourChar->GetScriptTriggers();
                     for (auto scriptTrig : ourScriptTriggers) {
-                        toExecute = JSMapping->GetScript(scriptTrig);
+                        toExecute = worldJSMapping.GetScript(scriptTrig);
                         if (toExecute) {
                             auto retVal = toExecute->OnCollide(ourChar->GetSocket(), c, ourChar);
                             if (retVal == 0) {
@@ -1004,7 +1013,7 @@ auto CMovement::OutputShoveMessage(CChar *c, CSocket *mSock) -> void {
 void DoJSInRange(CBaseObject *mObj, CBaseObject *objInRange) {
     std::vector<std::uint16_t> scriptTriggers = mObj->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             toExecute->InRange(mObj, objInRange);
         }
@@ -1019,7 +1028,7 @@ void DoJSInRange(CBaseObject *mObj, CBaseObject *objInRange) {
 void DoJSOutOfRange(CBaseObject *mObj, CBaseObject *objOutOfRange) {
     std::vector<std::uint16_t> scriptTriggers = mObj->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             toExecute->OutOfRange(mObj, objOutOfRange);
         }
@@ -1126,7 +1135,7 @@ void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, item
             MonsterGate(mChar, itemCheck->GetDesc());
             break;
         case IT_RACEGATE: // race gates
-            Races->ApplyRace(mChar, static_cast<raceid_t>(itemCheck->GetTempVar(CITV_MOREX)), itemCheck->GetTempVar(CITV_MOREY) != 0);
+            worldRace.ApplyRace(mChar, static_cast<raceid_t>(itemCheck->GetTempVar(CITV_MOREX)), itemCheck->GetTempVar(CITV_MOREY) != 0);
             break;
         case IT_DAMAGEOBJECT: // damage objects
             if (!mChar->IsInvulnerable()) {
@@ -1135,7 +1144,7 @@ void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, item
             break;
         case IT_SOUNDOBJECT: // sound objects
             if (static_cast<std::uint32_t>(RandomNum(1, 100)) <= itemCheck->GetTempVar(CITV_MOREZ)) {
-                Effects->PlaySound(itemCheck, static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREX)));
+                worldEffect.PlaySound(itemCheck, static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREX)));
             }
             break;
         case IT_MAPCHANGEOBJECT:
@@ -1170,7 +1179,7 @@ void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, item
                         auto nextX = mChar->GetX() + (mChar->GetX() - oldLoc.x);
                         auto nextY = mChar->GetY() + (mChar->GetY() - oldLoc.y);
                         
-                        if (Movement->CalcWalk(mChar, nextX, nextY, oldLoc.x, oldLoc.y, mChar->GetZ(), false) == ILLEGAL_Z) {
+                        if (worldMovement.CalcWalk(mChar, nextX, nextY, oldLoc.x, oldLoc.y, mChar->GetZ(), false) == ILLEGAL_Z) {
                             // Player is moving from boat > open plank, but no place to go from plank
                             // Let's teleport them to nearest valid location off the boat
                             HandleDoubleClickTypes(mSock, mChar, itemCheck, IT_PLANK);
@@ -1195,9 +1204,9 @@ void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, item
 // o------------------------------------------------------------------------------------------------o
 void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, std::int16_t oldx, std::int16_t oldy) {
     // lets cache these vars in advance
-    std::uint16_t visibleRange = static_cast<std::uint16_t>(MAX_VISRANGE + Races->VisRange(mChar->GetRace()));
+    std::uint16_t visibleRange = static_cast<std::uint16_t>(MAX_VISRANGE + worldRace.VisRange(mChar->GetRace()));
     if (mSock != nullptr) {
-        visibleRange = static_cast<std::uint16_t>(mSock->Range() + Races->VisRange(mChar->GetRace()));
+        visibleRange = static_cast<std::uint16_t>(mSock->Range() + worldRace.VisRange(mChar->GetRace()));
     }
     
     const std::int16_t newx = mChar->GetX();
@@ -1238,7 +1247,7 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, std::int16_t o
      */
     std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     std::vector<std::uint16_t> itemScriptTriggers;
-    for (auto &MapArea : MapRegion->PopulateList(newx, newy, mChar->WorldNumber())) {
+    for (auto &MapArea : worldMapHandler.PopulateList(newx, newy, mChar->WorldNumber())) {
         if (MapArea == nullptr) // no valid region
             continue;
         
@@ -1284,13 +1293,13 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, std::int16_t o
             inMoveDetectRange = (std::abs(tItem->GetX() - newx) <= moveDetectRange && std::abs(tItem->GetY() - newy) <= moveDetectRange && std::abs(mChar->GetZ() - tItem->GetZ()) <= 5);
             
             if (EffRange || inMoveDetectRange) {
-                if (!Magic->HandleFieldEffects(mChar, tItem, id)) {
+                if (!worldMagic.HandleFieldEffects(mChar, tItem, id)) {
                     if (!tItem->CanBeObjType(CBaseObject::OT_MULTI)) {
                         bool scriptExecuted = false;
                         auto scriptTriggers = tItem->GetScriptTriggers();
                         for (auto i : scriptTriggers) {
                             // Loop through all scriptIDs registered for item, check for scripts
-                            cScript *toExecute = JSMapping->GetScript(i);
+                            cScript *toExecute = worldJSMapping.GetScript(i);
                             if (toExecute) {
                                 if (EffRange) {
                                     // Script was found, let's check for onCollide event
@@ -1326,13 +1335,13 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, std::int16_t o
                         cScript *toExecute = nullptr;
                         if (scriptTriggers.size() == 0 || !scriptExecuted) {
                             std::uint16_t envTrig = 0;
-                            if (JSMapping->GetEnvokeByType()->Check(static_cast<std::uint16_t>(type))) {
-                                envTrig = JSMapping->GetEnvokeByType()->GetScript(static_cast<std::uint16_t>(type));
-                                toExecute = JSMapping->GetScript(envTrig);
+                            if (worldJSMapping.GetEnvokeByType()->Check(static_cast<std::uint16_t>(type))) {
+                                envTrig = worldJSMapping.GetEnvokeByType()->GetScript(static_cast<std::uint16_t>(type));
+                                toExecute = worldJSMapping.GetScript(envTrig);
                             }
-                            else if (JSMapping->GetEnvokeById()->Check(id)) {
-                                envTrig = JSMapping->GetEnvokeById()->GetScript(id);
-                                toExecute = JSMapping->GetScript(envTrig);
+                            else if (worldJSMapping.GetEnvokeById()->Check(id)) {
+                                envTrig = worldJSMapping.GetEnvokeById()->GetScript(id);
+                                toExecute = worldJSMapping.GetScript(envTrig);
                             }
                         }
                         
@@ -1356,7 +1365,7 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, std::int16_t o
                         if (EffRange) {
                             std::vector<std::uint16_t> charScriptTriggers = mChar->GetScriptTriggers();
                             for (auto scriptTrig : charScriptTriggers) {
-                                toExecute = JSMapping->GetScript(scriptTrig);
+                                toExecute = worldJSMapping.GetScript(scriptTrig);
                                 if (toExecute) {
                                     if (toExecute->OnCollide(mSock, mChar, tItem) == 1) {
                                         break;
@@ -1368,7 +1377,7 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, std::int16_t o
                 }
                 if (EffRange) {
                     HandleObjectCollisions(mSock, mChar, tItem, type);
-                    Magic->GateCollision(mSock, mChar, tItem, type);
+                    worldMagic.GateCollision(mSock, mChar, tItem, type);
                 }
             }
             
@@ -1570,10 +1579,10 @@ void CMovement::BoundingBoxTeleport(CChar *nChar, std::uint16_t fx2Actual, std::
         bool amphibWalk = worldMain.creatures[nChar->GetId()].IsAmphibian();
         for (std::uint16_t m = fx1; m < fx2Actual; m++) {
             for (std::uint16_t n = fy1; n < fy2Actual; n++) {
-                if ((!waterWalk || amphibWalk) && Map->ValidSpawnLocation(m, n, fz1, worldNumber, false)) {
+                if ((!waterWalk || amphibWalk) && worldMULHandler.ValidSpawnLocation(m, n, fz1, worldNumber, false)) {
                     boundingBoxTeleport = true;
                 }
-                else if (waterWalk && Map->ValidSpawnLocation(m, n, fz1, worldNumber, true)) {
+                else if (waterWalk && worldMULHandler.ValidSpawnLocation(m, n, fz1, worldNumber, true)) {
                     boundingBoxTeleport = true;
                 }
                 if (boundingBoxTeleport == true) {
@@ -1996,7 +2005,7 @@ bool CMovement::HandleNPCWander(CChar &mChar) {
                 
                 std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
                 for (auto scriptTrig : scriptTriggers) {
-                    cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                    cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                     if (toExecute != nullptr) {
                         // Reached end of pathfinding, if script returns true/1, prevent other scripts
                         // with event from running
@@ -2076,7 +2085,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                         
                         std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
                         for (auto scriptTrig : scriptTriggers) {
-                            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                             if (toExecute != nullptr) {
                                 // If script returns true/1, prevent other scripts with event from
                                 // running
@@ -2195,7 +2204,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                                 
                                 std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
                                 for (auto scriptTrig : scriptTriggers) {
-                                    cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                                    cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                                     if (toExecute != nullptr) {
                                         // If script returns true/1, prevent other scripts with
                                         // event from running
@@ -2288,13 +2297,13 @@ void CMovement::NpcMovement(CChar &mChar) {
                         case 0xc5: // Chaos Dragon
                         case 0xc6: // Order Dragon
                             // Play only the default idle
-                            Effects->PlayNewCharacterAnimation(&mChar, N_ACT_IDLE, 0, 0);
+                            worldEffect.PlayNewCharacterAnimation(&mChar, N_ACT_IDLE, 0, 0);
                             break;
                         case 0x90: // Sea Horse
                         case 0x5f: // Turkey
                         {
                             // Play only one non-standard idle anim, using old animation packet
-                            Effects->PlayCharacterAnimation(&mChar, 3, 0, 5);
+                            worldEffect.PlayCharacterAnimation(&mChar, 3, 0, 5);
                             break;
                         }
                         case 0x91: // Sea Serpent
@@ -2303,7 +2312,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                         {
                             // Randomize between two non-standard idle anims, using old animation packet
                             auto rndVal = static_cast<std::uint16_t>(RandomNum(3, 4));
-                            Effects->PlayCharacterAnimation(&mChar, rndVal, 0, (rndVal == 3 ? 14 : 19));
+                            worldEffect.PlayCharacterAnimation(&mChar, rndVal, 0, (rndVal == 3 ? 14 : 19));
                             break;
                         }
                         case 0x2b1: // Time Lord
@@ -2312,13 +2321,13 @@ void CMovement::NpcMovement(CChar &mChar) {
                         default:
                             // Randomize between two idles, let client handle which specific anim
                             // to play for each specific creature
-                            Effects->PlayNewCharacterAnimation(&mChar, N_ACT_IDLE, 0, RandomNum(0, 1));
+                            worldEffect.PlayNewCharacterAnimation(&mChar, N_ACT_IDLE, 0, RandomNum(0, 1));
                             break;
                     }
                 }
                 else {
                     if (worldMain.creatures[mChar.GetId()].IsHuman()) {
-                        Effects->PlayCharacterAnimation(&mChar, RandomNum(static_cast<std::uint16_t>(ACT_IDLE_LOOK), static_cast<std::uint16_t>(ACT_IDLE_YAWN)), 0, 5);
+                        worldEffect.PlayCharacterAnimation(&mChar, RandomNum(static_cast<std::uint16_t>(ACT_IDLE_LOOK), static_cast<std::uint16_t>(ACT_IDLE_YAWN)), 0, 5);
                     }
                     else {
                         // With old animation packet, more control is needed of which animation to
@@ -2328,13 +2337,13 @@ void CMovement::NpcMovement(CChar &mChar) {
                             case 0xc5: // Chaos Dragon
                             case 0xc6: // Order Dragon
                                 // Play only the default idle
-                                Effects->PlayCharacterAnimation(&mChar, ACT_MONSTER_IDLE_1, 0, 5);
+                                worldEffect.PlayCharacterAnimation(&mChar, ACT_MONSTER_IDLE_1, 0, 5);
                                 break;
                             case 0x90: // Sea Horse
                             case 0x5f: // Turkey
                             {
                                 // Play only one non-standard idle anim
-                                Effects->PlayCharacterAnimation(&mChar, ACT_ANIMAL_IDLE, 0, 5);
+                                worldEffect.PlayCharacterAnimation(&mChar, ACT_ANIMAL_IDLE, 0, 5);
                                 break;
                             }
                             case 0x91: // Sea Serpent
@@ -2343,7 +2352,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                             {
                                 // Randomize between two non-standard idle anims
                                 auto rndVal = static_cast<std::uint16_t>(RandomNum(3, 4));
-                                Effects->PlayCharacterAnimation(&mChar, rndVal, 0, (rndVal == 3 ? 14 : 19));
+                                worldEffect.PlayCharacterAnimation(&mChar, rndVal, 0, (rndVal == 3 ? 14 : 19));
                                 break;
                             }
                             case 0x2b1: // Time Lord
@@ -2355,12 +2364,12 @@ void CMovement::NpcMovement(CChar &mChar) {
                                     // Animal, excluding birds, which have animation setups like
                                     // monsters
                                     auto rndVal = static_cast<std::uint16_t>(RandomNum(9, 10));
-                                    Effects->PlayCharacterAnimation(&mChar, rndVal, 0, (rndVal == 9 ? 5 : 3));
+                                    worldEffect.PlayCharacterAnimation(&mChar, rndVal, 0, (rndVal == 9 ? 5 : 3));
                                 }
                                 else {
                                     // Monster
                                     auto rndVal = static_cast<std::uint16_t>(RandomNum(17, 18));
-                                    Effects->PlayCharacterAnimation(&mChar, rndVal, 0, 5);
+                                    worldEffect.PlayCharacterAnimation(&mChar, rndVal, 0, 5);
                                 }
                                 break;
                         }
@@ -2377,10 +2386,10 @@ void CMovement::NpcMovement(CChar &mChar) {
 //|	Purpose		-	Get the average Z height level of the maptile at a given coordinate
 // o------------------------------------------------------------------------------------------------o
 void CMovement::GetAverageZ(std::uint8_t nm, std::int16_t x, std::int16_t y, std::int8_t &z, std::int8_t &avg, std::int8_t &top) {
-    std::int8_t zTop = Map->MapElevation(x, y, nm);
-    std::int8_t zLeft = Map->MapElevation(x, y + 1, nm);
-    std::int8_t zRight = Map->MapElevation(x + 1, y, nm);
-    std::int8_t zBottom = Map->MapElevation(x + 1, y + 1, nm);
+    std::int8_t zTop = worldMULHandler.MapElevation(x, y, nm);
+    std::int8_t zLeft = worldMULHandler.MapElevation(x, y + 1, nm);
+    std::int8_t zRight = worldMULHandler.MapElevation(x + 1, y, nm);
+    std::int8_t zBottom = worldMULHandler.MapElevation(x + 1, y + 1, nm);
     
     z = zTop;
     if (zLeft < z) {
@@ -2453,7 +2462,7 @@ void CMovement::GetStartZ(std::uint8_t world, [[maybe_unused]] CChar *c, std::in
     std::int8_t landtop = 0;
     bool landBlock = true;
     
-    auto map = Map->SeekMap(x, y, world);
+    auto map = worldMULHandler.SeekMap(x, y, world);
     
     landBlock = map.CheckFlag(TF_BLOCKING);
     if (landBlock && waterwalk && map.CheckFlag(TF_WET)) {
@@ -2465,7 +2474,7 @@ void CMovement::GetStartZ(std::uint8_t world, [[maybe_unused]] CChar *c, std::in
     GetBlockingStatics(x, y, xyblock, xycount, world);
     GetBlockingDynamics(x, y, xyblock, xycount, world, instanceId);
     
-    bool considerLand = !Map->IsIgnored(map.tileId);
+    bool considerLand = !worldMULHandler.IsIgnored(map.tileId);
     GetAverageZ(world, x, y, landz, landcent, landtop);
     
     bool isset = false;
@@ -2605,7 +2614,7 @@ std::int8_t CMovement::CalcWalk(CChar *c, std::int16_t x, std::int16_t y, std::i
     GetBlockingStatics(x, y, xyblock, xycount, worldNumber);
     GetBlockingDynamics(x, y, xyblock, xycount, worldNumber, instanceId);
     
-    auto map = Map->SeekMap(x, y, c->WorldNumber());
+    auto map = worldMULHandler.SeekMap(x, y, c->WorldNumber());
     
     // Does landtile in target location block movement?
     landBlock = map.CheckFlag(TF_BLOCKING);
@@ -2627,7 +2636,7 @@ std::int8_t CMovement::CalcWalk(CChar *c, std::int16_t x, std::int16_t y, std::i
         }
     }
     
-    bool considerLand = Map->IsIgnored(map.tileId); // Special case for a couple of land-tiles. Returns true if tile
+    bool considerLand = worldMULHandler.IsIgnored(map.tileId); // Special case for a couple of land-tiles. Returns true if tile
     // being checked equals one of those tiles.
     
     std::int8_t startTop = 0;

@@ -15,6 +15,8 @@
 
 #include "regions.h"
 
+extern cRaces worldRace ;
+
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CheckItemRange()
 // o------------------------------------------------------------------------------------------------o
@@ -153,10 +155,10 @@ bool CharInRange(CChar *a, CChar *b) {
     
     std::int16_t visRange = MAX_VISRANGE;
     if (a->GetSocket() != nullptr) {
-        visRange = a->GetSocket()->Range() + Races->VisRange(a->GetRace());
+        visRange = a->GetSocket()->Range() + worldRace.VisRange(a->GetRace());
     }
     else {
-        visRange += Races->VisRange(a->GetRace());
+        visRange += worldRace.VisRange(a->GetRace());
     }
     return ObjInRangeSquare(a, b, static_cast<std::uint16_t>(visRange));
 }

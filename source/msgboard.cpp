@@ -48,6 +48,8 @@
 
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem ;
+extern cEffects worldEffect ;
+extern CServerDefinitions worldFileLookup ;
 
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
@@ -829,7 +831,7 @@ auto MsgBoardPostQuest(CChar *mNPC, const QuestTypes questType) -> bool {
         case QT_ESCORTQUEST:
             msgBoardPost.toggle = QT_ESCORTQUEST;
             tmpSubject = worldDictionary.GetEntry(735); // Escort: Needed!
-            Escort = FileLookup->FindEntry("ESCORTS", msgboard_def);
+            Escort = worldFileLookup.FindEntry("ESCORTS", msgboard_def);
             if (Escort == nullptr) {
                 return false;
             }
@@ -842,7 +844,7 @@ auto MsgBoardPostQuest(CChar *mNPC, const QuestTypes questType) -> bool {
             
             Escort->moveTo(RandomNum(static_cast<size_t>(0), totalEntries - 1));
             sect = "ESCORT "s + Escort->GrabData();
-            EscortData = FileLookup->FindEntry(sect, msgboard_def);
+            EscortData = worldFileLookup.FindEntry(sect, msgboard_def);
             if (EscortData == nullptr) {
                 Console::shared().error(util::format("MsgBoardPostQuest() Couldn't find entry %s", sect.c_str()));
                 return false;
@@ -991,7 +993,7 @@ void MsgBoardQuestEscortArrive(CSocket *mSock, CChar *mNPC) {
     }
     else {// Otherwise pay the poor sod for his time
         worldItem.CreateScriptItem(mSock, mChar, "0x0EED", questReward, CBaseObject::OT_ITEM, true);
-        Effects->GoldSound(mSock, questReward);
+        worldEffect.GoldSound(mSock, questReward);
         
         // Thank you %s for thy service. We have made it safely to %s. Here is thy pay as promised.
         mNPC->TextMessage(mSock, 739, TALK, 0, mChar->GetName().c_str(), destReg->GetName().c_str());

@@ -53,6 +53,20 @@ extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
+extern CSkills worldSkill ;
+extern CMagic worldMagic ;
+extern cRaces worldRace ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern cHTMLTemplates worldHTMLTemplate;
+extern CGuildCollection worldGuildSystem ;
+extern CSpeechQueue worldSpeechSystem ;
+extern CJSEngine worldJSEngine ;
+extern CServerDefinitions worldFileLookup ;
+extern CCommands serverCommands;
+extern CMulHandler worldMULHandler ;
+extern CNetworkStuff worldNetwork ;
+extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
 
@@ -144,10 +158,10 @@ JSBool SE_DoTempEffect(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
             return JS_FALSE;
         }
         if (argc == 8) {
-            Effects->TempEffect(mysrcChar, mydestChar, static_cast<std::int8_t>(targNum), more1, more2, more3, myItemPtr);
+            worldEffect.TempEffect(mysrcChar, mydestChar, static_cast<std::int8_t>(targNum), more1, more2, more3, myItemPtr);
         }
         else {
-            Effects->TempEffect(mysrcChar, mydestChar, static_cast<std::int8_t>(targNum), more1, more2, more3);
+            worldEffect.TempEffect(mysrcChar, mydestChar, static_cast<std::int8_t>(targNum), more1, more2, more3);
         }
     }
     else {
@@ -158,7 +172,7 @@ JSBool SE_DoTempEffect(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
             ScriptError(cx, "DoTempEffect: Invalid target ");
             return JS_FALSE;
         }
-        Effects->TempEffect(mysrcChar, mydestItem, static_cast<std::int8_t>(targNum), more1, more2, more3);
+        worldEffect.TempEffect(mysrcChar, mydestItem, static_cast<std::int8_t>(targNum), more1, more2, more3);
     }
     return JS_TRUE;
 }
@@ -205,7 +219,7 @@ JSBool SE_CalcItemFromSer(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
     
     CItem *newItem = CalcItemObjFromSer(targSerial);
     if (newItem != nullptr) {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, newItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, newItem, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -234,7 +248,7 @@ JSBool SE_CalcMultiFromSer(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
     
     CItem *newMulti = CalcMultiFromSer(targSerial);
     if (newMulti != nullptr) {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, newMulti, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, newMulti, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -263,7 +277,7 @@ JSBool SE_CalcCharFromSer(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
     
     CChar *newChar = CalcCharObjFromSer(targSerial);
     if (newChar != nullptr) {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_CHAR, newChar,JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_CHAR, newChar,worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -379,13 +393,13 @@ JSBool SE_DoMovingEffect(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
     }
     
     if (srcLocation && targLocation) {
-        Effects->PlayMovingAnimation(srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode);
+        worldEffect.PlayMovingAnimation(srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode);
     }
     else if (!srcLocation && targLocation) {
-        Effects->PlayMovingAnimation(src, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode);
+        worldEffect.PlayMovingAnimation(src, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode);
     }
     else {
-        Effects->PlayMovingAnimation(src, trg, effect, speed, loop, explode, hue, renderMode);
+        worldEffect.PlayMovingAnimation(src, trg, effect, speed, loop, explode, hue, renderMode);
     }
     return JS_TRUE;
 }
@@ -409,7 +423,7 @@ JSBool SE_DoStaticEffect([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObje
     std::uint8_t loop = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[5]));
     bool explode = (JSVAL_TO_BOOLEAN(argv[6]) == JS_TRUE);
     
-    Effects->PlayStaticAnimation(targX, targY, targZ, effectId, speed, loop, explode);
+    worldEffect.PlayStaticAnimation(targX, targY, targZ, effectId, speed, loop, explode);
     
     return JS_TRUE;
 }
@@ -450,7 +464,7 @@ JSBool SE_MakeItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, js
         return JS_FALSE;
     }
     std::uint16_t itemMenu = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[2]));
-    CreateEntry_st *toFind = Skills->FindItem(itemMenu);
+    CreateEntry_st *toFind = worldSkill.FindItem(itemMenu);
     if (toFind == nullptr) {
         ScriptError(cx, util::format("MakeItem: Invalid make item (%i)", itemMenu).c_str());
         return JS_FALSE;
@@ -460,7 +474,7 @@ JSBool SE_MakeItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, js
         resourceColour = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[3]));
     }
     
-    Skills->MakeItem(*toFind, player, sock, itemMenu, resourceColour);
+    worldSkill.MakeItem(*toFind, player, sock, itemMenu, resourceColour);
     
     return JS_TRUE;
 }
@@ -581,7 +595,7 @@ JSBool SE_RegisterCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
     std::string toRegister = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
     std::uint8_t execLevel = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[1]));
     bool isEnabled = (JSVAL_TO_BOOLEAN(argv[2]) == JS_TRUE);
-    std::uint16_t scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    std::uint16_t scriptId = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     if (scriptId == 0xFFFF) {
         ScriptError(cx, " RegisterCommand: JS Script has an Invalid ScriptID");
@@ -609,8 +623,8 @@ JSBool SE_RegisterSpell(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
     }
     std::int32_t spellNumber = JSVAL_TO_INT(argv[0]);
     bool isEnabled = (JSVAL_TO_BOOLEAN(argv[1]) == JS_TRUE);
-    cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    Magic->registerSpell(myScript, spellNumber, isEnabled);
+    cScript *myScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    worldMagic.registerSpell(myScript, spellNumber, isEnabled);
     return JS_TRUE;
 }
 
@@ -631,7 +645,7 @@ JSBool SE_RegisterSkill(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
     }
     std::int32_t skillNumber = JSVAL_TO_INT(argv[0]);
     bool isEnabled = (JSVAL_TO_BOOLEAN(argv[1]) == JS_TRUE);
-    std::uint16_t scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    std::uint16_t scriptId = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     if (scriptId != 0xFFFF) {
 #if defined(UOX_DEBUG_MODE)
         Console::shared().print(" ");
@@ -680,12 +694,12 @@ JSBool SE_RegisterPacket(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
     }
     std::uint8_t packet = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[0]));
     std::uint8_t subCmd = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[1]));
-    std::uint16_t scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    std::uint16_t scriptId = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     if (scriptId != 0xFFFF) {
 #if defined(UOX_DEBUG_MODE)
         Console::shared().print(util::format("Registering packet number 0x%X, subcommand 0x%x\n", packet, subCmd));
 #endif
-        Network->RegisterPacket(packet, subCmd, scriptId);
+        worldNetwork.RegisterPacket(packet, subCmd, scriptId);
     }
     return JS_TRUE;
 }
@@ -707,7 +721,7 @@ JSBool SE_RegisterKey(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
     }
     JSEncapsulate encaps(cx, &(argv[0]));
     std::string toRegister = JS_GetStringBytes(JS_ValueToString(cx, argv[1]));
-    std::uint16_t scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    std::uint16_t scriptId = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     if (scriptId == 0xFFFF) {
         ScriptError(cx, "RegisterKey: JS Script has an Invalid ScriptID");
@@ -743,7 +757,7 @@ JSBool SE_RegisterConsoleFunc(JSContext *cx, [[maybe_unused]] JSObject *obj, uin
     }
     std::string funcToRegister = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
     std::string toRegister = JS_GetStringBytes(JS_ValueToString(cx, argv[1]));
-    std::uint16_t scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    std::uint16_t scriptId = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     if (scriptId == 0xFFFF) {
         ScriptError(cx, "RegisterConsoleFunc: JS Script has an Invalid ScriptID");
@@ -810,7 +824,7 @@ JSBool SE_DisableSpell([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
         return JS_FALSE;
     }
     std::int32_t spellNumber = JSVAL_TO_INT(argv[0]);
-    Magic->SetSpellStatus(spellNumber, false);
+    worldMagic.SetSpellStatus(spellNumber, false);
     return JS_TRUE;
 }
 
@@ -840,7 +854,7 @@ JSBool SE_EnableSpell([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject 
         return JS_FALSE;
     }
     std::int32_t spellNumber = JSVAL_TO_INT(argv[0]);
-    Magic->SetSpellStatus(spellNumber, true);
+    worldMagic.SetSpellStatus(spellNumber, true);
     return JS_TRUE;
 }
 
@@ -1047,7 +1061,7 @@ JSBool SE_SpawnNPC(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
     
     cMade = worldNPC.CreateNPCxyz(nnpcNum, x, y, z, world, instanceId, useNpcList);
     if (cMade != nullptr) {
-        JSObject *myobj = JSEngine->AcquireObject(IUE_CHAR, cMade, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myobj = worldJSEngine.AcquireObject(IUE_CHAR, cMade, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myobj);
     }
     else {
@@ -1125,7 +1139,7 @@ JSBool SE_CreateDFNItem(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
     }
     
     if (newItem != nullptr) {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, newItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, newItem, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -1179,7 +1193,7 @@ JSBool SE_CreateBlankItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         if (itemName != "") {
             newItem->SetName(itemName);
         }
-        JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, newItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, newItem, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -1239,7 +1253,7 @@ JSBool SE_CreateHouse(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
             newMulti->SetColour(iColor);
         }
         
-        JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, newMulti, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, newMulti, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -1298,7 +1312,7 @@ JSBool SE_CreateBaseMulti(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             newMulti->SetColour(iColor);
         }
         
-        JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, newMulti, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, newMulti, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -1354,7 +1368,7 @@ JSBool SE_RaceCompareByRace([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
     }
     auto r0 = static_cast<raceid_t>(JSVAL_TO_INT(argv[0]));
     auto r1 = static_cast<raceid_t>(JSVAL_TO_INT(argv[1]));
-    *rval = INT_TO_JSVAL(Races->CompareByRace(r0, r1));
+    *rval = INT_TO_JSVAL(worldRace.CompareByRace(r0, r1));
     
     return JS_TRUE;
 }
@@ -1399,7 +1413,7 @@ JSBool SE_FindMulti(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, j
     }
     CMultiObj *multi = FindMulti(xLoc, yLoc, zLoc, worldNumber, instanceId);
     if (ValidateObject(multi)) {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, multi, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, multi, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -1435,7 +1449,7 @@ JSBool SE_GetItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsv
     CItem *item = GetItemAtXYZ(xLoc, yLoc, zLoc, worldNumber, instanceId);
     if (ValidateObject(item)) {
         JSObject *myObj =
-        JSEngine->AcquireObject(IUE_ITEM, item, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        worldJSEngine.AcquireObject(IUE_ITEM, item, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -1473,7 +1487,7 @@ JSBool SE_FindItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, js
     CItem *item = FindItemNearXYZ(xLoc, yLoc, zLoc, worldNumber, id, instanceId);
     if (ValidateObject(item)) {
         JSObject *myObj =
-        JSEngine->AcquireObject(IUE_ITEM, item, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        worldJSEngine.AcquireObject(IUE_ITEM, item, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -1499,7 +1513,7 @@ JSBool SE_CompareGuildByGuild([[maybe_unused]] JSContext *cx, [[maybe_unused]] J
     }
     guildid_t toCheck = static_cast<guildid_t>(JSVAL_TO_INT(argv[0]));
     guildid_t toCheck2 = static_cast<guildid_t>(JSVAL_TO_INT(argv[1]));
-    *rval = INT_TO_JSVAL(GuildSys->Compare(toCheck, toCheck2));
+    *rval = INT_TO_JSVAL(worldGuildSystem.Compare(toCheck, toCheck2));
     return JS_TRUE;
 }
 
@@ -1529,7 +1543,7 @@ JSBool SE_IsRaceWeakToWeather([[maybe_unused]] JSContext *cx, [[maybe_unused]] J
     }
     auto race = static_cast<raceid_t>(JSVAL_TO_INT(argv[0]));
     auto toCheck = static_cast<weathid_t>(JSVAL_TO_INT(argv[1]));
-    CRace *tRace = Races->Race(race);
+    CRace *tRace = worldRace.Race(race);
     if (tRace == nullptr || toCheck >= Weather::numberweather) {
         return JS_FALSE;
     }
@@ -1548,7 +1562,7 @@ JSBool SE_GetRaceSkillAdjustment([[maybe_unused]] JSContext *cx, [[maybe_unused]
     }
     auto race = static_cast<raceid_t>(JSVAL_TO_INT(argv[0]));
     std::int32_t skill = JSVAL_TO_INT(argv[1]);
-    *rval = INT_TO_JSVAL(Races->DamageFromSkill(skill, race));
+    *rval = INT_TO_JSVAL(worldRace.DamageFromSkill(skill, race));
     return JS_TRUE;
 }
 
@@ -1607,7 +1621,7 @@ JSBool SE_UseItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsv
     std::vector<std::uint16_t> scriptTriggers = myItem->GetScriptTriggers();
     for (auto i : scriptTriggers) {
         // Loop through all scriptIDs registered for item, check for scripts
-        cScript *toExecute = JSMapping->GetScript(i);
+        cScript *toExecute = worldJSMapping.GetScript(i);
         if (toExecute != nullptr) {
             // Script was found, let's check for OnUseUnChecked event
             std::int8_t retVal = toExecute->OnUseUnChecked(mChar, myItem);
@@ -1639,13 +1653,13 @@ JSBool SE_UseItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsv
         std::uint16_t itemId = myItem->GetId();
         std::uint16_t envTrig = 0;
         cScript *toExecute = nullptr;
-        if (JSMapping->GetEnvokeByType()->Check(static_cast<std::uint16_t>(iType))) {
-            envTrig = JSMapping->GetEnvokeByType()->GetScript(static_cast<std::uint16_t>(iType));
-            toExecute = JSMapping->GetScript(envTrig);
+        if (worldJSMapping.GetEnvokeByType()->Check(static_cast<std::uint16_t>(iType))) {
+            envTrig = worldJSMapping.GetEnvokeByType()->GetScript(static_cast<std::uint16_t>(iType));
+            toExecute = worldJSMapping.GetScript(envTrig);
         }
-        else if (JSMapping->GetEnvokeById()->Check(itemId)) {
-            envTrig = JSMapping->GetEnvokeById()->GetScript(itemId);
-            toExecute = JSMapping->GetScript(envTrig);
+        else if (worldJSMapping.GetEnvokeById()->Check(itemId)) {
+            envTrig = worldJSMapping.GetEnvokeById()->GetScript(itemId);
+            toExecute = worldJSMapping.GetScript(envTrig);
         }
         
         // Check for the onUse events in envoke scripts!
@@ -1714,7 +1728,7 @@ JSBool SE_TriggerTrap(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
     auto origObject = obj;
     
     if (myItem->GetTempVar(CITV_MOREZ, 1) == 1 && myItem->GetTempVar(CITV_MOREZ, 2) > 0) { // Is trapped and set to deal more than 0 damage
-        Magic->MagicTrap(mChar, myItem);
+        worldMagic.MagicTrap(mChar, myItem);
     }
     
     // Restore original script context and object
@@ -1739,7 +1753,7 @@ JSBool SE_TriggerEvent(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
     
     std::uint16_t scriptNumberToFire = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     char *eventToFire = JS_GetStringBytes(JS_ValueToString(cx, argv[1]));
-    cScript *toExecute = JSMapping->GetScript(scriptNumberToFire);
+    cScript *toExecute = worldJSMapping.GetScript(scriptNumberToFire);
     
     if (toExecute == nullptr || eventToFire == nullptr)
         return JS_FALSE;
@@ -1774,7 +1788,7 @@ JSBool SE_DoesEventExist(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
     *rval = INT_TO_JSVAL(1);
     std::uint16_t scriptNumberToCheck = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     char *eventToCheck = JS_GetStringBytes(JS_ValueToString(cx, argv[1]));
-    cScript *toExecute = JSMapping->GetScript(scriptNumberToCheck);
+    cScript *toExecute = worldJSMapping.GetScript(scriptNumberToCheck);
     
     if (toExecute == nullptr || eventToCheck == nullptr)
         return JS_FALSE;
@@ -1811,7 +1825,7 @@ JSBool SE_GetPackOwner(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
         pOwner = FindItemOwner(CalcItemObjFromSer(mSerItem));
     }
     if (ValidateObject(pOwner)) {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_CHAR, pOwner, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_CHAR, pOwner, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -1844,7 +1858,7 @@ JSBool SE_FindRootContainer(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
         iRoot = FindRootContainer(CalcItemObjFromSer(mSerItem));
     }
     if (ValidateObject(iRoot)) {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, iRoot, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, iRoot, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -1876,7 +1890,7 @@ JSBool SE_CalcTargetedItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         *rval = JSVAL_NULL;
     }
     else {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, calcedItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, calcedItem, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     return JS_TRUE;
@@ -1905,7 +1919,7 @@ JSBool SE_CalcTargetedChar(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         *rval = JSVAL_NULL;
     }
     else {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_CHAR, calcedChar, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_CHAR, calcedChar, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     return JS_TRUE;
@@ -1925,7 +1939,7 @@ JSBool SE_GetTileIdAtMapCoord([[maybe_unused]] JSContext *cx, [[maybe_unused]] J
     std::uint16_t xLoc = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     std::uint16_t yLoc = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
     std::uint8_t wrldNumber = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2]));
-    auto mMap = Map->SeekMap(xLoc, yLoc, wrldNumber);
+    auto mMap = worldMULHandler.SeekMap(xLoc, yLoc, wrldNumber);
     *rval = INT_TO_JSVAL(mMap.tileId);
     return JS_TRUE;
 }
@@ -1951,7 +1965,7 @@ JSBool SE_StaticInRange([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
     
     for (std::int32_t i = xLoc - radius; i <= (xLoc + radius); ++i) {
         for (std::int32_t j = yLoc - radius; j <= (yLoc + radius); ++j) {
-            auto artwork = Map->ArtAt(xLoc, yLoc, wrldNumber);
+            auto artwork = worldMULHandler.ArtAt(xLoc, yLoc, wrldNumber);
             auto iter = std::find_if(artwork.begin(), artwork.end(), [tileId](const Tile_st &tile) {
                 return tile.tileId == tileId;
             });
@@ -1994,7 +2008,7 @@ JSBool SE_StaticAt([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *ob
     }
     bool tileFound = false;
     
-    auto artwork = Map->ArtAt(xLoc, yLoc, wrldNumber);
+    auto artwork = worldMULHandler.ArtAt(xLoc, yLoc, wrldNumber);
     auto iter = std::find_if(artwork.begin(), artwork.end(),
                              [tileId](const Tile_st &tile) { return tile.tileId == tileId; });
     tileFound = iter != artwork.end();
@@ -2069,7 +2083,7 @@ JSBool SE_GetRaceCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
         ScriptError(cx, "GetRaceCount: Invalid number of arguments (takes 0)");
         return JS_FALSE;
     }
-    *rval = INT_TO_JSVAL(Races->Count());
+    *rval = INT_TO_JSVAL(worldRace.Count());
     return JS_TRUE;
 }
 
@@ -2111,8 +2125,8 @@ JSBool SE_AreaCharacterFunction(JSContext *cx, [[maybe_unused]] JSObject *obj, u
     
     std::vector<CChar *> charsFound;
     std::uint16_t retCounter = 0;
-    cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    for (auto &MapArea : MapRegion->PopulateList(srcObject)) {
+    cScript *myScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    for (auto &MapArea : worldMapHandler.PopulateList(srcObject)) {
         if (MapArea) {
             auto regChars = MapArea->GetCharList();
             for (const auto &tempChar : regChars->collection()) {
@@ -2183,8 +2197,8 @@ JSBool SE_AreaItemFunction(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
     
     std::vector<CItem *> itemsFound;
     std::uint16_t retCounter = 0;
-    cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    for (auto &MapArea : MapRegion->PopulateList(srcObject)) {
+    cScript *myScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    for (auto &MapArea : worldMapHandler.PopulateList(srcObject)) {
         if (MapArea) {
             auto regItems = MapArea->GetItemList();
             for (const auto &tempItem : regItems->collection()) {
@@ -2295,7 +2309,7 @@ JSBool SE_Yell(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval 
         mySock->Send(&unicodeMessage);
     }
     else {
-        CSpeechEntry &toAdd = SpeechSys->Add();
+        CSpeechEntry &toAdd = worldSpeechSystem.Add();
         toAdd.Speech(tmpString);
         toAdd.Font(static_cast<fonttype_t>(myChar->GetFontType()));
         toAdd.Speaker(INVALIDSERIAL);
@@ -2342,39 +2356,39 @@ JSBool SE_Reload([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
             loadSpawnRegions();
             break;
         case 2: // Reload Spells
-            Magic->LoadScript();
+            worldMagic.LoadScript();
             break;
         case 3: // Reload serverCommands
             serverCommands.load();
             break;
         case 4: // Reload DFNs
-            FileLookup->Reload();
+            worldFileLookup.Reload();
             loadSkills();
-            Skills->load();
+            worldSkill.load();
             break;
         case 5: // Reload JScripts
             messageLoop << MSG_RELOADJS;
             break;
         case 6: // Reload HTMLTemplates
-            HTMLTemplates->Unload();
-            HTMLTemplates->load();
+            worldHTMLTemplate.Unload();
+            worldHTMLTemplate.load();
             break;
         case 7: // Reload INI
             ServerConfig::shared().loadConfig(std::filesystem::path()) ;
             break;
         case 8: // Reload Everything
-            FileLookup->Reload();
+            worldFileLookup.Reload();
             UnloadRegions();
             loadRegions();
             UnloadSpawnRegions();
             loadSpawnRegions();
-            Magic->LoadScript();
+            worldMagic.LoadScript();
             serverCommands.load();
             loadSkills();
-            Skills->load();
+            worldSkill.load();
             messageLoop << MSG_RELOADJS;
-            HTMLTemplates->Unload();
-            HTMLTemplates->load();
+            worldHTMLTemplate.Unload();
+            worldHTMLTemplate.load();
             ServerConfig::shared().loadConfig(std::filesystem::path()) ;
             break;
         case 9: // Reload Accounts
@@ -2419,7 +2433,7 @@ JSBool SE_SendStaticStats(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         std::int8_t targetZ = mySock->GetByte(0x10);
         if (targetId != 0) // we might have a static rock or mountain
         {
-            auto artwork = Map->ArtAt(targetX, targetY, worldNumber);
+            auto artwork = worldMULHandler.ArtAt(targetX, targetY, worldNumber);
             for (auto &tile : artwork) {
                 if (targetZ == tile.altitude) {
                     CGumpDisplay staticStat(mySock, 300, 300);
@@ -2434,7 +2448,7 @@ JSBool SE_SendStaticStats(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         else // or it could be a map only
         {
             // manually calculating the ID's if a maptype
-            auto map1 = Map->SeekMap(targetX, targetY, worldNumber);
+            auto map1 = worldMULHandler.SeekMap(targetX, targetY, worldNumber);
             CGumpDisplay mapStat(mySock, 300, 300);
             mapStat.setTitle("Item [Map]");
             mapStat.AddData("ID", targetId, 5);
@@ -2457,7 +2471,7 @@ JSBool SE_GetTileHeight([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
     }
     
     std::uint16_t tileNum = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
-    *rval = INT_TO_JSVAL(Map->TileHeight(tileNum));
+    *rval = INT_TO_JSVAL(worldMULHandler.TileHeight(tileNum));
     return JS_TRUE;
 }
 
@@ -2481,7 +2495,7 @@ JSBool SE_IterateOver(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
     std::uint32_t b = 0;
     std::string objType = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
     auto toCheck = FindObjTypeFromString(objType);
-    cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
+    cScript *myScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
     if (myScript != nullptr) {
         ObjectFactory::shared().IterateOver(toCheck, b, myScript, &SE_IterateFunctor);
     }
@@ -2505,7 +2519,7 @@ bool SE_IterateSpawnRegionsFunctor(CSpawnRegion *a, std::uint32_t &b, void *extr
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_IterateOverSpawnRegions(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
     std::uint32_t b = 0;
-    cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
+    cScript *myScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
     
     if (myScript != nullptr) {
         std::for_each(worldMain.spawnRegions.begin(), worldMain.spawnRegions.end(), [&myScript, &b](std::pair<std::uint16_t, CSpawnRegion *> entry) {
@@ -2642,7 +2656,7 @@ JSBool SE_GetSocketFromIndex(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
     }
     auto index = static_cast<uoxsocket_t>(JSVAL_TO_INT(argv[0]));
     
-    CSocket *mSock = Network->GetSockPtr(index);
+    CSocket *mSock = worldNetwork.GetSockPtr(index);
     CChar *mChar = nullptr;
     if (mSock != nullptr) {
         mChar = mSock->CurrcharObj();
@@ -2654,7 +2668,7 @@ JSBool SE_GetSocketFromIndex(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
     }
     
     JSObject *myObj =
-    JSEngine->AcquireObject(IUE_CHAR, mChar, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+    worldJSEngine.AcquireObject(IUE_CHAR, mChar, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
     *rval = OBJECT_TO_JSVAL(myObj);
     return JS_TRUE;
 }
@@ -2671,12 +2685,12 @@ JSBool SE_ReloadJSFile(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
         return JS_FALSE;
     }
     std::uint16_t scriptId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
-    if (scriptId == JSMapping->GetScriptId(JS_GetGlobalObject(cx))) {
+    if (scriptId == worldJSMapping.GetScriptId(JS_GetGlobalObject(cx))) {
         ScriptError(cx, util::format("ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)",scriptId).c_str());
         return JS_FALSE;
     }
     
-    JSMapping->Reload(scriptId);
+    worldJSMapping.Reload(scriptId);
     
     return JS_TRUE;
 }
@@ -2797,7 +2811,7 @@ JSBool SE_ResourceRegion(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
     std::int16_t x = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
     std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2]));
-    MapResource_st *mRes = MapRegion->GetResource(x, y, worldNum);
+    MapResource_st *mRes = worldMapHandler.GetResource(x, y, worldNum);
     if (mRes == nullptr) {
         ScriptError(cx, "ResourceRegion: Invalid Resource Region");
         return JS_FALSE;
@@ -3027,7 +3041,7 @@ JSBool SE_CreateParty(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
         }
         else {
             Party *tParty = PartyFactory::shared().Create(leader);
-            JSObject *myObj = JSEngine->AcquireObject(IUE_PARTY, tParty, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+            JSObject *myObj = worldJSEngine.AcquireObject(IUE_PARTY, tParty, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
             *rval = OBJECT_TO_JSVAL(myObj);
         }
     }
@@ -3077,7 +3091,7 @@ JSBool SE_GetTownRegion(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
     if (worldMain.townRegions.find(regNum) != worldMain.townRegions.end()) {
         CTownRegion *townReg = worldMain.townRegions[regNum];
         if (townReg != nullptr) {
-            JSObject *myObj = JSEngine->AcquireObject(IUE_REGION, townReg, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+            JSObject *myObj = worldJSEngine.AcquireObject(IUE_REGION, townReg, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
             *rval = OBJECT_TO_JSVAL(myObj);
         }
         else {
@@ -3108,7 +3122,7 @@ JSBool SE_GetSpawnRegion(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
         if (worldMain.spawnRegions.find(spawnRegNum) != worldMain.spawnRegions.end()) {
             CSpawnRegion *spawnReg = worldMain.spawnRegions[spawnRegNum];
             if (spawnReg != nullptr) {
-                JSObject *myObj = JSEngine->AcquireObject(IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                JSObject *myObj = worldJSEngine.AcquireObject(IUE_SPAWNREGION, spawnReg, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                 *rval = OBJECT_TO_JSVAL(myObj);
             }
             else {
@@ -3129,7 +3143,7 @@ JSBool SE_GetSpawnRegion(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
         // Iterate over each spawn region to find the right one
         auto iter = std::find_if(worldMain.spawnRegions.begin(), worldMain.spawnRegions.end(), [&x, &y, &worldNum, &instanceID, &cx, &rval](std::pair<std::uint16_t, CSpawnRegion *> entry) {
             if (entry.second && x >= entry.second->GetX1() && x <= entry.second->GetX2() && y >= entry.second->GetY1() && y <= entry.second->GetY2() && entry.second->GetInstanceId() == instanceID && entry.second->WorldNumber() == worldNum) {
-                JSObject *myObj = JSEngine->AcquireObject(IUE_SPAWNREGION, entry.second, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                JSObject *myObj = worldJSEngine.AcquireObject(IUE_SPAWNREGION, entry.second, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                 *rval = OBJECT_TO_JSVAL(myObj);
                 return true;
             }
@@ -3173,7 +3187,7 @@ JSBool SE_GetMapElevation([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
     std::int16_t x = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
     std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2]));
-    std::int8_t mapElevation = Map->MapElevation(x, y, worldNum);
+    std::int8_t mapElevation = worldMULHandler.MapElevation(x, y, worldNum);
     *rval = INT_TO_JSVAL(mapElevation);
     return JS_TRUE;
 }
@@ -3199,14 +3213,14 @@ JSBool SE_IsInBuilding([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     std::uint16_t instanceId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[4]));
     bool checkHeight = (JSVAL_TO_BOOLEAN(argv[5]) == JS_TRUE);
-    bool isInBuilding = Map->InBuilding(x, y, z, worldNum, instanceId);
+    bool isInBuilding = worldMULHandler.InBuilding(x, y, z, worldNum, instanceId);
     if (!isInBuilding) {
         // No static building was detected. How about a multi?
         CMultiObj *multi = FindMulti(x, y, z, worldNum, instanceId);
         if (ValidateObject(multi)) {
             if (checkHeight) {
                 // Check if there's multi-items over the player's head
-                std::int8_t multiZ = Map->MultiHeight(multi, x, y, z, 127, checkHeight);
+                std::int8_t multiZ = worldMULHandler.MultiHeight(multi, x, y, z, 127, checkHeight);
                 if (multiZ > z) {
                     isInBuilding = true;
                 }
@@ -3238,7 +3252,7 @@ JSBool SE_CheckStaticFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     auto toCheck = static_cast<tileflags_t>(JSVAL_TO_INT(argv[4]));
     [[maybe_unused]] std::uint16_t ignoreMe = 0;
-    bool hasStaticFlag = Map->CheckStaticFlag(x, y, z, worldNum, toCheck, ignoreMe, false);
+    bool hasStaticFlag = worldMULHandler.CheckStaticFlag(x, y, z, worldNum, toCheck, ignoreMe, false);
     *rval = BOOLEAN_TO_JSVAL(hasStaticFlag);
     return JS_TRUE;
 }
@@ -3262,7 +3276,7 @@ JSBool SE_CheckDynamicFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
     std::uint8_t instanceId = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
     auto toCheck = static_cast<tileflags_t>(JSVAL_TO_INT(argv[5]));
     [[maybe_unused]] std::uint16_t ignoreMe = 0;
-    bool hasDynamicFlag = Map->CheckDynamicFlag(x, y, z, worldNum, instanceId, toCheck, ignoreMe);
+    bool hasDynamicFlag = worldMULHandler.CheckDynamicFlag(x, y, z, worldNum, instanceId, toCheck, ignoreMe);
     *rval = BOOLEAN_TO_JSVAL(hasDynamicFlag);
     return JS_TRUE;
 }
@@ -3281,7 +3295,7 @@ JSBool SE_CheckTileFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
     std::uint16_t itemId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     auto flagToCheck = static_cast<tileflags_t>(JSVAL_TO_INT(argv[1]));
     
-    bool tileHasFlag = Map->CheckTileFlag(itemId, flagToCheck);
+    bool tileHasFlag = worldMULHandler.CheckTileFlag(itemId, flagToCheck);
     *rval = BOOLEAN_TO_JSVAL(tileHasFlag);
     return JS_TRUE;
 }
@@ -3302,7 +3316,7 @@ JSBool SE_DoesStaticBlock([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
     std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     bool checkWater = (JSVAL_TO_BOOLEAN(argv[4]) == JS_TRUE);
-    bool staticBlocks = Map->DoesStaticBlock(x, y, z, worldNum, checkWater);
+    bool staticBlocks = worldMULHandler.DoesStaticBlock(x, y, z, worldNum, checkWater);
     *rval = BOOLEAN_TO_JSVAL(staticBlocks);
     return JS_TRUE;
 }
@@ -3327,7 +3341,7 @@ JSBool SE_DoesDynamicBlock([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
     bool waterWalk = (JSVAL_TO_BOOLEAN(argv[6]) == JS_TRUE);
     bool checkOnlyMultis = (JSVAL_TO_BOOLEAN(argv[7]) == JS_TRUE);
     bool checkOnlyNonMultis = (JSVAL_TO_BOOLEAN(argv[8]) == JS_TRUE);
-    bool dynamicBlocks = Map->DoesDynamicBlock(x, y, z, worldNum, instanceId, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis);
+    bool dynamicBlocks = worldMULHandler.DoesDynamicBlock(x, y, z, worldNum, instanceId, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis);
     *rval = BOOLEAN_TO_JSVAL(dynamicBlocks);
     return JS_TRUE;
 }
@@ -3351,7 +3365,7 @@ JSBool SE_DoesMapBlock([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
     bool waterWalk = (JSVAL_TO_BOOLEAN(argv[5]) == JS_TRUE);
     bool checkMultiPlacement = (JSVAL_TO_BOOLEAN(argv[6]) == JS_TRUE);
     bool checkForRoad = (JSVAL_TO_BOOLEAN(argv[7]) == JS_TRUE);
-    bool mapBlocks = Map->DoesMapBlock(x, y, z, worldNum, checkWater, waterWalk, checkMultiPlacement, checkForRoad);
+    bool mapBlocks = worldMULHandler.DoesMapBlock(x, y, z, worldNum, checkWater, waterWalk, checkMultiPlacement, checkForRoad);
     *rval = BOOLEAN_TO_JSVAL(mapBlocks);
     return JS_TRUE;
 }
@@ -3372,7 +3386,7 @@ JSBool SE_DoesCharacterBlock([[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
     std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     std::uint8_t instanceId = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
-    bool characterBlocks = Map->DoesCharacterBlock(x, y, z, worldNum, instanceId);
+    bool characterBlocks = worldMULHandler.DoesCharacterBlock(x, y, z, worldNum, instanceId);
     *rval = BOOLEAN_TO_JSVAL(characterBlocks);
     return JS_TRUE;
 }

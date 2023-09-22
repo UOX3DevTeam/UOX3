@@ -34,14 +34,21 @@
 #include "utility/strutil.hpp"
 #include "wholist.h"
 
+extern CSkills worldSkill ;
+extern CMagic worldMagic ;
+extern CMovement worldMovement ;
+extern CWhoList worldWhoList;
+extern CWhoList worldOfflist;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
 //|	bytebuffer exceptions
 // o------------------------------------------------------------------------------------------------o
 // o------------------------------------------------------------------------------------------------o
 
-ByteBufferBounds::ByteBufferBounds(int offset, int amount, int size)
-: std::out_of_range(""), offset(offset), amount(amount), buffersize(size) {
+ByteBufferBounds::ByteBufferBounds(int offset, int amount, int size) : std::out_of_range(""), offset(offset), amount(amount), buffersize(size) {
     _msg = "Offset : "s + std::to_string(offset) + " Amount: "s + std::to_string(amount) +
     " exceeds buffer size of: "s + std::to_string(size);
 }
@@ -197,7 +204,6 @@ auto ByteBuffer::LogByteBuffer(std::ostream &output, radix_t radix, int entries_
     DumpByteBuffer(output, _bytedata.data(), _bytedata.size(), radix, entries_line);
 }
 
-CNetworkStuff *Network = nullptr;
 
 #define _DEBUG_PACKET 0
 
@@ -269,7 +275,7 @@ void CNetworkStuff::Disconnect(uoxsocket_t s) {
             bool returnState = false;
             std::vector<std::uint16_t> scriptTriggers = currChar->GetScriptTriggers();
             for (auto i : scriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(i);
+                cScript *toExecute = worldJSMapping.GetScript(i);
                 if (toExecute != nullptr) {
                     if (toExecute->OnLogout(connClients[s], currChar)) {
                         returnState = true;
@@ -279,7 +285,7 @@ void CNetworkStuff::Disconnect(uoxsocket_t s) {
             
             if (!returnState) {
                 // No individual scripts handling OnLogout were found - let's check global script!
-                cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+                cScript *toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
                 if (toExecute != nullptr) {
                     toExecute->OnLogout(connClients[s], currChar);
                 }
@@ -300,8 +306,8 @@ void CNetworkStuff::Disconnect(uoxsocket_t s) {
         Console::shared() << "| CATCH: Invalid connClients[] encountered. Ignoring." << myendl;
     }
     worldMain.DecPlayersOnline();
-    WhoList->FlagUpdate();
-    OffList->FlagUpdate();
+    worldWhoList.FlagUpdate();
+    worldOfflist.FlagUpdate();
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -348,7 +354,7 @@ void CNetworkStuff::LogOut(CSocket *s) {
             // allowed
             std::vector<std::uint16_t> scriptTriggers = multi->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     if (toExecute->OnMultiLogout(multi, p) == 1) {
                         valid = true;
@@ -737,7 +743,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
             if (ServerConfig::shared().enabled(ServerSwitch::OVERLOADPACKETS)) {
                 std::map<std::uint16_t, std::uint16_t>::const_iterator pFind = packetOverloads.find(packetId);
                 if (pFind != packetOverloads.end()) {
-                    cScript *pScript = JSMapping->GetScript(pFind->second);
+                    cScript *pScript = worldJSMapping.GetScript(pFind->second);
                     if (pScript != nullptr) {
                         doSwitch = !pScript->OnPacketReceive(mSock, packetId);
                     }
@@ -764,7 +770,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                         
                         std::vector<std::uint16_t> scriptTriggers = ourChar->GetScriptTriggers();
                         for (auto scriptTrig : scriptTriggers) {
-                            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                             if (toExecute != nullptr) {
                                 if (toExecute->OnWarModeToggle(ourChar) == 0) {
                                     return;
@@ -774,7 +780,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                         
                         // No individual scripts handling OnWarModeToggle returned true - let's check
                         // global script!
-                        cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+                        cScript *toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
                         if (toExecute != nullptr) {
                             if (toExecute->OnWarModeToggle(ourChar) == 0) {
                                 return;
@@ -792,8 +798,8 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                         }
                         mSock->Send(buffer, 5);
                         mSock->FlushBuffer();
-                        Movement->CombatWalk(ourChar);
-                        Effects->DoSocketMusic(mSock);
+                        worldMovement.CombatWalk(ourChar);
+                        worldEffect.DoSocketMusic(mSock);
                         ourChar->BreakConcentration(mSock);
                         break;
                     }
@@ -808,29 +814,29 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                             if (std::string(reinterpret_cast<char *>(&buffer[4])) == "bow") {
                                 if (ourChar->GetBodyType() == BT_GARGOYLE || (ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET) && (ourChar->GetSocket() == nullptr || ourChar->GetSocket()->clientType() >= ClientType::SA2D))) {
                                     // If gargoyle, human or elf, and new animation packet is enabled
-                                    Effects->PlayNewCharacterAnimation(ourChar, N_ACT_EMOTE, S_ACT_EMOTE_BOW);
+                                    worldEffect.PlayNewCharacterAnimation(ourChar, N_ACT_EMOTE, S_ACT_EMOTE_BOW);
                                 }
                                 else if ((ourChar->GetBodyType() == BT_HUMAN || ourChar->GetBodyType() == BT_ELF) && !ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET)) {
                                     // If human or elf, and new animation packet is disabled
-                                    Effects->PlayCharacterAnimation(ourChar, ACT_EMOTE_BOW, 0, 5); // 0x20
+                                    worldEffect.PlayCharacterAnimation(ourChar, ACT_EMOTE_BOW, 0, 5); // 0x20
                                 }
                                 else {
                                     // If polymorphed to other creatures
-                                    Effects->PlayCharacterAnimation(ourChar, 0x12, 0,  5); // Monster fidget 1
+                                    worldEffect.PlayCharacterAnimation(ourChar, 0x12, 0,  5); // Monster fidget 1
                                 }
                             }
                             if (std::string(reinterpret_cast<char *>(&buffer[4])) == "salute") {
                                 if (ourChar->GetBodyType() == BT_GARGOYLE || (ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET) && (ourChar->GetSocket() == nullptr || ourChar->GetSocket()->clientType() >= ClientType::SA2D))) {
                                     // If gargoyle, human or elf, and new animation packet is enabled
-                                    Effects->PlayNewCharacterAnimation(ourChar, N_ACT_EMOTE, S_ACT_EMOTE_SALUTE);
+                                    worldEffect.PlayNewCharacterAnimation(ourChar, N_ACT_EMOTE, S_ACT_EMOTE_SALUTE);
                                 }
                                 else if ((ourChar->GetBodyType() == BT_HUMAN ||  ourChar->GetBodyType() == BT_ELF) && !ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET)) {
                                     // If human or elf, and new animation packet is disabled
-                                    Effects->PlayCharacterAnimation(ourChar, ACT_EMOTE_SALUTE, 0,  5); // 0x21
+                                    worldEffect.PlayCharacterAnimation(ourChar, ACT_EMOTE_SALUTE, 0,  5); // 0x21
                                 }
                                 else {
                                     // If polymorphed to other creatures
-                                    Effects->PlayCharacterAnimation(ourChar, 0x11, 0, 5); // Monster fidget 2
+                                    worldEffect.PlayCharacterAnimation(ourChar, 0x11, 0, 5); // Monster fidget 2
                                 }
                             }
                             break;
@@ -845,7 +851,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                                 ++j;
                             }
                             buffer[j] = 0;
-                            Skills->SkillUse(mSock, static_cast<std::uint8_t>(std::stoul(std::string((char *)&buffer[4]))));
+                            worldSkill.SkillUse(mSock, static_cast<std::uint8_t>(std::stoul(std::string((char *)&buffer[4]))));
                             break;
                         }
                         else if (buffer[3] == 0x27 || buffer[3] == 0x56) { // Spell
@@ -866,7 +872,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                                     if (buffer[5] > 0x20) {
                                         book = (book * 10) + (buffer[5] - 0x30);
                                     }
-                                    if (Magic->CheckBook(((book - 1) / 8) + 1, (book - 1) % 8, sBook)) {
+                                    if (worldMagic.CheckBook(((book - 1) / 8) + 1, (book - 1) % 8, sBook)) {
                                         if (ourChar->IsFrozen()) {
                                             if (ourChar->IsCasting()) {
                                                 mSock->SysMessage(762); // You are already casting a spell.
@@ -877,7 +883,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                                         }
                                         else {
                                             mSock->CurrentSpellType(0);
-                                            Magic->SelectSpell(mSock, book);
+                                            worldMagic.SelectSpell(mSock, book);
                                         }
                                     }
                                     else {
@@ -892,7 +898,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                         }
                         else {
                             if (buffer[2] == 0x05 && buffer[3] == 0x43){ // Open spell book
-                                Magic->SpellBook(mSock);
+                                worldMagic.SpellBook(mSock);
                             }
                             break;
                         }
@@ -1177,7 +1183,7 @@ void CNetworkStuff::GetLoginMsg(uoxsocket_t s) {
             // Allow overloading initial connection packets
             std::map<std::uint16_t, std::uint16_t>::const_iterator pFind = packetOverloads.find(packetId);
             if (pFind != packetOverloads.end()) {
-                cScript *pScript = JSMapping->GetScript(pFind->second);
+                cScript *pScript = worldJSMapping.GetScript(pFind->second);
                 if (pScript != nullptr) {
                     pScript->OnPacketReceive(mSock, packetId);
                 }
@@ -1221,7 +1227,7 @@ void CNetworkStuff::GetLoginMsg(uoxsocket_t s) {
             if (ServerConfig::shared().enabled(ServerSwitch::OVERLOADPACKETS)) {
                 std::map<std::uint16_t, std::uint16_t>::const_iterator pFind = packetOverloads.find(packetId);
                 if (pFind != packetOverloads.end()) {
-                    cScript *pScript = JSMapping->GetScript(pFind->second);
+                    cScript *pScript = worldJSMapping.GetScript(pFind->second);
                     if (pScript != nullptr) {
                         doSwitch = !pScript->OnPacketReceive(mSock, packetId);
                     }

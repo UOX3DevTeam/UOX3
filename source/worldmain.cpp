@@ -41,6 +41,13 @@
 #include "townregion.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern cEffects worldEffect ;
+extern CGuildCollection worldGuildSystem ;
+extern CJailSystem worldJailSystem ;
+extern CSpeechQueue worldSpeechSystem ;
+extern CNetworkStuff worldNetwork ;
+extern CMapHandler worldMapHandler ;
+
 // o------------------------------------------------------------------------------------------------o
 //| CWorldMain Constructor & Destructor
 // o------------------------------------------------------------------------------------------------o
@@ -386,9 +393,9 @@ void CWorldMain::SaveNewWorld(bool x) {
         if (ServerConfig::shared().enabled(ServerSwitch::ANNOUNCESAVE)) {
             sysBroadcast(worldDictionary.GetEntry(1615)); // World data saving, you may experience some
             // lag for the next several minutes.
-            SpeechSys->poll();
+            worldSpeechSystem.poll();
         }
-        Network->ClearBuffers();
+        worldNetwork.ClearBuffers();
         
         if (x) {
             Console::shared() << "Starting manual world data save...." << myendl;
@@ -409,10 +416,10 @@ void CWorldMain::SaveNewWorld(bool x) {
         Console::shared().log("Server data save", "server.log");
         RegionSave();
         Console::shared().printDone();
-        MapRegion->Save();
-        GuildSys->Save();
-        JailSys->WriteData();
-        Effects->SaveEffects();
+        worldMapHandler.Save();
+        worldGuildSystem.Save();
+        worldJailSystem.WriteData();
+        worldEffect.SaveEffects();
         uoTime.save(ServerConfig::shared().directoryFor(dirlocation_t::SAVE));
         SaveStatistics();
         

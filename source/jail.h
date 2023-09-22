@@ -69,6 +69,5 @@ public:
     void ReleasePlayer(CChar *toRelase);
 };
 
-extern CJailSystem *JailSys;
 
 #endif

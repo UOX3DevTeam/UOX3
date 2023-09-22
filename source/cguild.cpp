@@ -26,10 +26,11 @@
 
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem ;
+extern CSpeechQueue worldSpeechSystem ;
+extern CJSEngine worldJSEngine ;
 
 using namespace std::string_literals;
 
-CGuildCollection *GuildSys;
 
 #define DEFAULTCHARTER "UOX3 Guildstone"
 #define DEFAULTWEBPAGE "http://www.uox3.org/"
@@ -47,7 +48,7 @@ master(INVALIDSERIAL) {
 }
 
 CGuild::~CGuild() {
-    JSEngine->ReleaseObject(IUE_GUILD, this);
+    worldJSEngine.ReleaseObject(IUE_GUILD, this);
     
     recruits.clear();
     members.clear();
@@ -711,7 +712,7 @@ void CGuild::TellMembers(std::int32_t dictEntry, ...) {
                 targetSock->Send(&unicodeMessage);
             }
             else {
-                CSpeechEntry &toAdd = SpeechSys->Add();
+                CSpeechEntry &toAdd = worldSpeechSystem.Add();
                 toAdd.Speech(oldstrutil::format(512, txt, argptr));
                 toAdd.Font(FNT_NORMAL);
                 toAdd.Speaker(INVALIDSERIAL);

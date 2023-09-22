@@ -62,6 +62,20 @@ extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
+extern CSkills worldSkill ;
+extern CMagic worldMagic ;
+extern CMovement worldMovement ;
+extern CWhoList worldWhoList;
+extern CWhoList worldOfflist;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern CJailSystem worldJailSystem ;
+extern CSpeechQueue worldSpeechSystem ;
+extern CJSEngine worldJSEngine ;
+extern CServerDefinitions worldFileLookup ;
+extern CCommands serverCommands;
+extern CMulHandler worldMULHandler ;
+extern CNetworkStuff worldNetwork ;
 
 void BuildAddMenuGump(CSocket *s, std::uint16_t m); // Menus for item creation
 void SpawnGate(CChar *caster, std::int16_t srcX, std::int16_t srcY, std::int8_t srcZ, std::uint8_t srcWorld, std::int16_t trgX, std::int16_t trgY, std::int8_t trgZ, std::uint8_t trgWorld, std::uint16_t trgInstanceId = 0);
@@ -135,7 +149,7 @@ void MethodSpeech(CBaseObject &speaker, char *message, speechtype_t sType, colou
         }
     }
     else {
-        CSpeechEntry &toAdd = SpeechSys->Add();
+        CSpeechEntry &toAdd = worldSpeechSystem.Add();
         toAdd.Font(fType);
         toAdd.Speech(message);
         toAdd.Speaker(speaker.GetSerial());
@@ -1651,7 +1665,7 @@ JSBool CGump_Send(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             ScriptError(cx, "Send: Passed an invalid Socket");
             return JS_FALSE;
         }
-        std::uint32_t gumpId = (0xFFFF + JSMapping->GetScriptId(JS_GetGlobalObject(cx)));
+        std::uint32_t gumpId = (0xFFFF + worldJSMapping.GetScriptId(JS_GetGlobalObject(cx)));
         SendVecsAsGump(mySock, *(myGump->one), *(myGump->two), gumpId, INVALIDSERIAL);
     }
     else if (myClass.ClassName() == "UOXChar") {
@@ -1662,7 +1676,7 @@ JSBool CGump_Send(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         }
         
         CSocket *mySock = myChar->GetSocket();
-        std::uint32_t gumpId = (0xFFFF + JSMapping->GetScriptId(JS_GetGlobalObject(cx)));
+        std::uint32_t gumpId = (0xFFFF + worldJSMapping.GetScriptId(JS_GetGlobalObject(cx)));
         SendVecsAsGump(mySock, *(myGump->one), *(myGump->two), gumpId, INVALIDSERIAL);
     }
     else {
@@ -1732,8 +1746,8 @@ JSBool CBase_TextMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     bool useUnicode = ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE);
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     if (myClass.ClassName() == "UOXItem") {
         CItem *myItem = static_cast<CItem *>(myObj);
@@ -1791,7 +1805,7 @@ JSBool CBase_TextMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -1876,11 +1890,11 @@ JSBool CBase_GetJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
         // We only want results that have same object serial and timerId as specified
         if (myObjSerial == Effect->Destination() && Effect->More1() == timerId) {
             // Check for a valid script associated with Effect
-            cScript *tScript = JSMapping->GetScript(Effect->AssocScript());
+            cScript *tScript = worldJSMapping.GetScript(Effect->AssocScript());
             if (tScript == nullptr && Effect->More2() != 0xFFFF) {
                 // If no default script was associated with effect, check if another script was
                 // stored in More2
-                tScript = JSMapping->GetScript(Effect->More2());
+                tScript = worldJSMapping.GetScript(Effect->More2());
             }
             
             // If a valid script is associated with Effect, and the Effect's scriptId matches the
@@ -1930,11 +1944,11 @@ JSBool CBase_SetJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
         // We only want to modify the Effect that have same object serial and timerId as specified
         if (myObjSerial == Effect->Destination() && Effect->More1() == timerId) {
             // Check for a valid script associated with Effect
-            cScript *tScript = JSMapping->GetScript(Effect->AssocScript());
+            cScript *tScript = worldJSMapping.GetScript(Effect->AssocScript());
             if (tScript == nullptr && Effect->More2() != 0xFFFF) {
                 // If no default script was associated with effect, check if another script was
                 // stored in More2
-                tScript = JSMapping->GetScript(Effect->More2());
+                tScript = worldJSMapping.GetScript(Effect->More2());
             }
             
             // If a valid script is associated with Effect, and the Effect's scriptId matches the
@@ -1981,11 +1995,11 @@ JSBool CBase_KillJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
     for (auto &Effect : worldMain.tempEffects.collection()) {
         if (myObjSerial == Effect->Destination() && Effect->More1() == timerId) {
             // Check for a valid script associated with Effect
-            cScript *tScript = JSMapping->GetScript(Effect->AssocScript());
+            cScript *tScript = worldJSMapping.GetScript(Effect->AssocScript());
             if (tScript == nullptr && Effect->More2() != 0xFFFF) {
                 // If no default script was associated with effect, check if another script was
                 // stored in More2
-                tScript = JSMapping->GetScript(Effect->More2());
+                tScript = worldJSMapping.GetScript(Effect->More2());
             }
             
             // If a valid script is associated with Effect, and the Effect's scriptId matches the
@@ -2023,13 +2037,13 @@ JSBool CBase_Delete(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc,
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     myObj->Delete();
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -2173,10 +2187,10 @@ JSBool CChar_DoAction(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     
     // Play the requested animation
     if (myChar->GetBodyType() == BT_GARGOYLE || targSubAction != -1) {
-        Effects->PlayNewCharacterAnimation(myChar, targAction, static_cast<std::uint16_t>(targSubAction));
+        worldEffect.PlayNewCharacterAnimation(myChar, targAction, static_cast<std::uint16_t>(targSubAction));
     }
     else {
-        Effects->PlayCharacterAnimation(myChar, targAction, frameDelay, frameCount, playBackwards);
+        worldEffect.PlayCharacterAnimation(myChar, targAction, frameDelay, frameCount, playBackwards);
     }
     return JS_TRUE;
 }
@@ -2343,14 +2357,14 @@ JSBool CSocket_Disconnect(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unus
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
-    Network->Disconnect(targSock);
+    worldNetwork.Disconnect(targSock);
     JS_SetPrivate(cx, obj, nullptr); // yes we should do that...
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -2487,8 +2501,8 @@ JSBool CBase_Teleport(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     if (myClass.ClassName() == "UOXItem") {
         CItem *myItem = static_cast<CItem *>(myObj);
@@ -2515,7 +2529,7 @@ JSBool CBase_Teleport(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             if (mySock == nullptr)
                 return JS_TRUE;
             
-            if (!Map->InsideValidWorld(x, y, world)) {
+            if (!worldMULHandler.InsideValidWorld(x, y, world)) {
                 ScriptError(cx, "Teleport: Not a valid World");
                 return JS_FALSE;
             }
@@ -2541,7 +2555,7 @@ JSBool CBase_Teleport(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -2576,10 +2590,10 @@ JSBool CBase_StaticEffect(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN a
     
     if (myClass.ClassName() == "UOXItem") {
         bool explode = (JSVAL_TO_BOOLEAN(argv[3]) == JS_TRUE);
-        Effects->PlayStaticAnimation(myObj, effectId, speed, loop, explode);
+        worldEffect.PlayStaticAnimation(myObj, effectId, speed, loop, explode);
     }
     else {
-        Effects->PlayStaticAnimation(myObj, effectId, speed, loop);
+        worldEffect.PlayStaticAnimation(myObj, effectId, speed, loop);
     }
     
     return JS_TRUE;
@@ -2615,7 +2629,7 @@ JSBool CMisc_MakeMenu(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     std::int32_t menu = JSVAL_TO_INT(argv[0]);
     std::uint8_t skillNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[1]));
-    Skills->NewMakeMenu(mySock, menu, skillNum);
+    worldSkill.NewMakeMenu(mySock, menu, skillNum);
     return JS_TRUE;
 }
 
@@ -2650,11 +2664,11 @@ JSBool CMisc_SoundEffect(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                 std::uint16_t monsterSoundToPlay = worldMain.creatures[myChar->GetId()].GetSound(
                                                                                                       static_cast<monstersound_t>(tmpMonsterSound));
                 if (monsterSoundToPlay != 0) {
-                    Effects->PlaySound(myChar, monsterSoundToPlay, allHear);
+                    worldEffect.PlaySound(myChar, monsterSoundToPlay, allHear);
                 }
             }
             else {
-                Effects->PlaySound(myObj, soundId, allHear);
+                worldEffect.PlaySound(myObj, soundId, allHear);
             }
         }
     }
@@ -2662,7 +2676,7 @@ JSBool CMisc_SoundEffect(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         CSocket *mySock = static_cast<CSocket *>(myClass.toObject());
         
         if (mySock != nullptr) {
-            Effects->PlaySound(mySock, soundId, allHear);
+            worldEffect.PlaySound(mySock, soundId, allHear);
         }
     }
     
@@ -2690,8 +2704,8 @@ JSBool CMisc_SellTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     CPSellList toSend;
     if (myClass.ClassName() == "UOXSocket") {
@@ -2726,7 +2740,7 @@ JSBool CMisc_SellTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -2759,8 +2773,8 @@ JSBool CMisc_BuyFrom(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     if (myClass.ClassName() == "UOXSocket") {
         CSocket *mySock = static_cast<CSocket *>(myClass.toObject());
@@ -2798,7 +2812,7 @@ JSBool CMisc_BuyFrom(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -2840,7 +2854,7 @@ JSBool CMisc_HasSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
             return JS_TRUE;
         }
         
-        if (Magic->HasSpell(myItem, spellId)) {
+        if (worldMagic.HasSpell(myItem, spellId)) {
             *rval = BOOLEAN_TO_JSVAL(JS_TRUE);
         }
         else {
@@ -2854,7 +2868,7 @@ JSBool CMisc_HasSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
             return JS_FALSE;
         }
         
-        if (Magic->HasSpell(myItem, spellId)) {
+        if (worldMagic.HasSpell(myItem, spellId)) {
             *rval = BOOLEAN_TO_JSVAL(JS_TRUE);
         }
         else {
@@ -2883,8 +2897,8 @@ JSBool CMisc_RemoveSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     std::uint8_t spellId = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[0]));
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     if (myClass.ClassName() == "UOXChar") {
         CChar *myChar = static_cast<CChar *>(myClass.toObject());
@@ -2896,7 +2910,7 @@ JSBool CMisc_RemoveSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         CItem *myItem = FindItemOfType(myChar, IT_SPELLBOOK);
         
         if (ValidateObject(myItem)) {
-            Magic->RemoveSpell(myItem, spellId);
+            worldMagic.RemoveSpell(myItem, spellId);
         }
     }
     else if (myClass.ClassName() == "UOXItem") {
@@ -2906,11 +2920,11 @@ JSBool CMisc_RemoveSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             return JS_FALSE;
         }
         
-        Magic->RemoveSpell(myItem, spellId);
+        worldMagic.RemoveSpell(myItem, spellId);
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -3362,8 +3376,8 @@ JSBool CChar_OpenBank(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     CSocket *mySock = nullptr;
     // Open the bank of myChar to myChar
@@ -3386,7 +3400,7 @@ JSBool CChar_OpenBank(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -3420,13 +3434,13 @@ JSBool CSocket_OpenContainer(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
     CItem *contToOpen = static_cast<CItem *>(JS_GetPrivate(cx, JSVAL_TO_OBJECT(argv[0])));
     if (ValidateObject(contToOpen)) {
         // Keep track of original script that's executing
-        auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-        auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+        auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+        auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
         
         mSock->OpenPack(contToOpen, false);
         
         // Active script-context might have been lost, so restore it...
-        if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+        if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
             // ... by calling a dummy function in original script!
             JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
             if (retVal == JS_FALSE) {
@@ -3462,13 +3476,13 @@ JSBool CChar_OpenLayer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         CItem *iLayer = myChar->GetItemAtLayer(static_cast<itemlayers_t>(JSVAL_TO_INT(argv[1])));
         if (ValidateObject(iLayer)) {
             // Keep track of original script that's executing
-            auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-            auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+            auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+            auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
             
             mySock->OpenPack(iLayer);
             
             // Active script-context might have been lost, so restore it...
-            if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+            if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
                 // ... by calling a dummy function in original script!
                 JSBool retVal =
                 origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
@@ -3529,11 +3543,11 @@ JSBool CChar_TurnToward(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     // Just don't do anything if NewDir eq OldDir
-    std::uint8_t newDir = Movement->Direction(myChar, x, y);
+    std::uint8_t newDir = worldMovement.Direction(myChar, x, y);
     
     if (newDir != myChar->GetDir()) {
         CSocket *mySock = myChar->GetSocket();
@@ -3553,7 +3567,7 @@ JSBool CChar_TurnToward(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -3607,7 +3621,7 @@ JSBool CChar_DirectionTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
     
     // Just don't do anything if NewDir eq OldDir
     
-    std::uint8_t NewDir = Movement->Direction(myChar, x, y);
+    std::uint8_t NewDir = worldMovement.Direction(myChar, x, y);
     
     *rval = INT_TO_JSVAL(NewDir);
     
@@ -3821,7 +3835,7 @@ JSBool CChar_BoltEffect(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN arg
                         [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval) {
     CChar *myChar = static_cast<CChar *>(JS_GetPrivate(cx, obj));
     if (ValidateObject(myChar)) {
-        Effects->Bolteffect(myChar);
+        worldEffect.Bolteffect(myChar);
     }
     
     return JS_TRUE;
@@ -3882,8 +3896,8 @@ JSBool CMisc_CustomTarget(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         return JS_TRUE;
     }
     
-    mySock->scriptForCallBack = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    // mySock->TempInt( static_cast<std::int64_t>( JSMapping->GetScript( JS_GetGlobalObject( cx ))));
+    mySock->scriptForCallBack = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    // mySock->TempInt( static_cast<std::int64_t>( worldJSMapping.GetScript( JS_GetGlobalObject( cx ))));
     std::uint8_t tNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[0]));
     
     constexpr auto maxsize = 512; // Could become long (make sure it's nullptr )
@@ -4041,7 +4055,7 @@ JSBool CBase_StartTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         if (JSVAL_IS_BOOLEAN(argv[2])) // Is it a boolean?  If so, might be calling back into here
         {
             if (JSVAL_TO_BOOLEAN(argv[2]) == JS_TRUE) {
-                Effect->AssocScript(JSMapping->GetScriptId(JS_GetGlobalObject(cx)));
+                Effect->AssocScript(worldJSMapping.GetScriptId(JS_GetGlobalObject(cx)));
             }
             else {
                 Effect->More2(0xFFFF);
@@ -4103,7 +4117,7 @@ JSBool CChar_CheckSkill(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
         isCraftSkill = JSVAL_TO_BOOLEAN(argv[3]);
     }
     *rval =
-    BOOLEAN_TO_JSVAL(Skills->CheckSkill(myChar, skillNum, minSkill, maxSkill, isCraftSkill));
+    BOOLEAN_TO_JSVAL(worldSkill.CheckSkill(myChar, skillNum, minSkill, maxSkill, isCraftSkill));
     return JS_TRUE;
 }
 
@@ -4136,7 +4150,7 @@ JSBool CChar_FindItemLayer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
     }
     
     JSObject *myJSItem =
-    JSEngine->AcquireObject(IUE_ITEM, myItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+    worldJSEngine.AcquireObject(IUE_ITEM, myItem, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
     
     *rval = OBJECT_TO_JSVAL(myJSItem);
     
@@ -4170,7 +4184,7 @@ JSBool CChar_FindItemType(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     JSObject *myJSItem =
-    JSEngine->AcquireObject(IUE_ITEM, myItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+    worldJSEngine.AcquireObject(IUE_ITEM, myItem, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
     
     *rval = OBJECT_TO_JSVAL(myJSItem);
     
@@ -4204,7 +4218,7 @@ JSBool CChar_FindItemSection(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
     }
     
     JSObject *myJSItem =
-    JSEngine->AcquireObject(IUE_ITEM, myItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+    worldJSEngine.AcquireObject(IUE_ITEM, myItem, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
     
     *rval = OBJECT_TO_JSVAL(myJSItem);
     
@@ -4285,7 +4299,7 @@ JSBool CChar_SpeechInput(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     myChar->SetSpeechId(speechId);
-    myChar->SetSpeechCallback(JSMapping->GetScript(JS_GetGlobalObject(cx)));
+    myChar->SetSpeechCallback(worldJSMapping.GetScript(JS_GetGlobalObject(cx)));
     
     return JS_TRUE;
 }
@@ -4313,7 +4327,7 @@ JSBool CChar_CastSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
     
     if (myChar->IsNpc()) {
         myChar->SetSpellCast(spellCast);
-        Magic->CastSpell(nullptr, myChar);
+        worldMagic.CastSpell(nullptr, myChar);
     }
     else {
         CSocket *sock = myChar->GetSocket();
@@ -4321,10 +4335,10 @@ JSBool CChar_CastSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
         if ((argc == 2) && (argv[1] == JSVAL_TRUE)) {
             // Next...
             myChar->SetSpellCast(spellCast);
-            Magic->CastSpell(sock, myChar);
+            worldMagic.CastSpell(sock, myChar);
         }
         else {
-            bool spellSuccess = Magic->SelectSpell(sock, spellCast);
+            bool spellSuccess = worldMagic.SelectSpell(sock, spellCast);
             *rval = BOOLEAN_TO_JSVAL(spellSuccess);
         }
     }
@@ -4348,7 +4362,7 @@ JSBool CChar_MagicEffect(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN ar
         return JS_FALSE;
     }
     
-    Magic->DoStaticEffect(myObj, spellId);
+    worldMagic.DoStaticEffect(myObj, spellId);
     
     return JS_TRUE;
 }
@@ -4575,14 +4589,14 @@ JSBool CItem_SetCont(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, 
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     // return true if the change was successful, false otherwise
     *rval = BOOLEAN_TO_JSVAL(myItem->SetCont(trgObj));
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -5219,8 +5233,8 @@ JSBool CItem_PlaceInPack(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     auto autoStack = (JSVAL_TO_BOOLEAN(argv[0]) == JS_TRUE);
     if (autoStack && ValidateObject(myItem->GetCont())) {
@@ -5238,7 +5252,7 @@ JSBool CItem_PlaceInPack(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -5615,11 +5629,11 @@ JSBool CSocket_WhoList(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     if (sendOnList) {
-        WhoList->FlagUpdate(); // Always update the list of online players...
-        WhoList->SendSocket(mySock);
+        worldWhoList.FlagUpdate(); // Always update the list of online players...
+        worldWhoList.SendSocket(mySock);
     }
     else {
-        OffList->SendSocket(mySock);
+        worldOfflist.SendSocket(mySock);
     }
     
     return JS_TRUE;
@@ -5643,7 +5657,7 @@ JSBool CSocket_Music(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     CSocket *mySock = static_cast<CSocket *>(JS_GetPrivate(cx, obj));
     
     if (mySock != nullptr) {
-        Effects->PlayMusic(mySock, music);
+        worldEffect.PlayMusic(mySock, music);
     }
     
     return JS_TRUE;
@@ -5681,8 +5695,8 @@ JSBool CChar_YellMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     bool useUnicode = ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE);
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     if (myChar->GetNpcAiType() == AI_EVIL || myChar->GetNpcAiType() == AI_EVIL_CASTER) {
         MethodSpeech(*myChar, trgMessage, YELL, 0x0026,
@@ -5696,7 +5710,7 @@ JSBool CChar_YellMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -5740,8 +5754,8 @@ JSBool CChar_WhisperMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
     bool useUnicode = ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE);
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     if (myChar->GetNpcAiType() == AI_EVIL || myChar->GetNpcAiType() == AI_EVIL_CASTER) {
         MethodSpeech(*myChar, trgMessage, WHISPER, 0x0026,
@@ -5755,7 +5769,7 @@ JSBool CChar_WhisperMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -5962,7 +5976,7 @@ JSBool CBase_ApplySection(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             ScriptError(cx, "ApplySection: Invalid Item");
             return JS_FALSE;
         }
-        CScriptSection *toFind = FileLookup->FindEntry(trgSection, items_def);
+        CScriptSection *toFind = worldFileLookup.FindEntry(trgSection, items_def);
         ApplyItemSection(myItem, toFind, trgSection);
     }
     else if (myClass.ClassName() == "UOXChar") {
@@ -5972,7 +5986,7 @@ JSBool CBase_ApplySection(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             return JS_FALSE;
         }
         
-        CScriptSection *toFind = FileLookup->FindEntry(trgSection, npc_def);
+        CScriptSection *toFind = worldFileLookup.FindEntry(trgSection, npc_def);
         worldNPC.ApplyNpcSection(myChar, toFind, trgSection);
     }
     
@@ -5998,13 +6012,13 @@ JSBool CChar_AddSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     CItem *sBook = FindItemOfType(myChar, IT_SPELLBOOK);
     if (ValidateObject(sBook)) {
         // Keep track of original script that's executing
-        auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-        auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+        auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+        auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
         
-        Magic->AddSpell(sBook, spellNum);
+        worldMagic.AddSpell(sBook, spellNum);
         
         // Active script-context might have been lost, so restore it...
-        if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+        if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
             // ... by calling a dummy function in original script!
             JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
             if (retVal == JS_FALSE) {
@@ -6033,8 +6047,8 @@ JSBool CChar_SpellFail(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
     
     CChar *myChar = static_cast<CChar *>(JS_GetPrivate(cx, obj));
     
-    Effects->PlayStaticAnimation(myChar, 0x3735, 0, 30);
-    Effects->PlaySound(myChar, 0x005C);
+    worldEffect.PlayStaticAnimation(myChar, 0x3735, 0, 30);
+    worldEffect.PlaySound(myChar, 0x005C);
     if (!myChar->IsNpc()) {
         CSocket *mSock = myChar->GetSocket();
         if (mSock != nullptr) {
@@ -6066,8 +6080,8 @@ JSBool CBase_Refresh(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     if (myObj->CanBeObjType(CBaseObject::OT_CHAR)) {
         CChar *myChar = static_cast<CChar *>(JS_GetPrivate(cx, obj));
@@ -6087,7 +6101,7 @@ JSBool CBase_Refresh(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -6122,7 +6136,7 @@ JSBool CItem_ApplyRank(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     std::int32_t rank = JSVAL_TO_INT(argv[0]);
     std::int32_t maxrank = JSVAL_TO_INT(argv[1]);
     
-    Skills->ApplyRank(nullptr, myItem, rank, maxrank);
+    worldSkill.ApplyRank(nullptr, myItem, rank, maxrank);
     return JS_TRUE;
 }
 
@@ -6656,8 +6670,8 @@ JSBool CBase_FirstItem(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
     }
     
     if (ValidateObject(firstItem)) {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, firstItem,
-                                                  JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, firstItem,
+                                                  worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -6700,8 +6714,8 @@ JSBool CBase_NextItem(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
     }
     
     if (ValidateObject(nextItem)) {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_ITEM, nextItem,
-                                                  JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_ITEM, nextItem,
+                                                  worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -6811,8 +6825,8 @@ JSBool CChar_WalkTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     cMove->FlushPath();
 #if defined(UOX_DEBUG_MODE)
@@ -6826,14 +6840,14 @@ JSBool CChar_WalkTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     cMove->SetNpcWander(WT_PATHFIND);
     if (ServerConfig::shared().enabled(ServerSwitch::ADVANCEDPATHFINDING)) {
-        Movement->AdvancedPathfinding(cMove, gx, gy, false, maxSteps);
+        worldMovement.AdvancedPathfinding(cMove, gx, gy, false, maxSteps);
     }
     else {
-        Movement->PathFind(cMove, gx, gy, false, maxSteps);
+        worldMovement.PathFind(cMove, gx, gy, false, maxSteps);
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -6915,8 +6929,8 @@ JSBool CChar_RunTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     cMove->FlushPath();
 #if defined(UOX_DEBUG_MODE)
@@ -6931,14 +6945,14 @@ JSBool CChar_RunTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     cMove->SetNpcWander(WT_PATHFIND);
     
     if (ServerConfig::shared().enabled(ServerSwitch::ADVANCEDPATHFINDING)) {
-        Movement->AdvancedPathfinding(cMove, gx, gy, true);
+        worldMovement.AdvancedPathfinding(cMove, gx, gy, true);
     }
     else {
-        Movement->PathFind(cMove, gx, gy, true, maxSteps);
+        worldMovement.PathFind(cMove, gx, gy, true, maxSteps);
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -7088,8 +7102,8 @@ JSBool CItem_Glow(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsv
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     mItem->SetGlowColour(mItem->GetColour());
     
@@ -7110,7 +7124,7 @@ JSBool CItem_Glow(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsv
     mySock->SysMessage(1098); // Item is now glowing.
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -7157,8 +7171,8 @@ JSBool CItem_UnGlow(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, j
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     mItem->SetColour(mItem->GetGlowColour());
     
@@ -7169,7 +7183,7 @@ JSBool CItem_UnGlow(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, j
     mySock->SysMessage(1102); // Item is no longer glowing.
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -7245,7 +7259,7 @@ JSBool CChar_Gate(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         }
     }
     
-    if (!Map->MapExists(destWorld)) {
+    if (!worldMULHandler.MapExists(destWorld)) {
         destWorld = mChar->WorldNumber();
     }
     
@@ -7286,13 +7300,13 @@ JSBool CChar_Recall(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     std::uint8_t destWorld = mItem->GetTempVar(CITV_MORE);
     std::uint16_t destInstanceId = mItem->GetTempVar(CITV_MORE0);
     
-    if (!Map->MapExists(destWorld)) {
+    if (!worldMULHandler.MapExists(destWorld)) {
         destWorld = mChar->WorldNumber();
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     if (mChar->WorldNumber() != destWorld && mChar->GetSocket() != nullptr) {
         mChar->SetLocation(destX, destY, destZ, destWorld, destInstanceId);
@@ -7303,7 +7317,7 @@ JSBool CChar_Recall(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -7407,7 +7421,7 @@ JSBool CChar_SetSkillByName(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
     for (std::uint8_t i = 0; i < ALLSKILLS; ++i) {
         if (skillName == worldMain.skill[i].name) {
             mChar->SetBaseSkill(value, i);
-            Skills->UpdateSkillLevel(mChar, i);
+            worldSkill.UpdateSkillLevel(mChar, i);
             
             if (mSock != nullptr) {
                 mSock->UpdateSkill(i);
@@ -7439,12 +7453,12 @@ JSBool CChar_Kill(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsv
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     for (auto i : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(i);
+        cScript *toExecute = worldJSMapping.GetScript(i);
         if (toExecute != nullptr) {
             std::int8_t retStatus = toExecute->OnDeathBlow(mChar, nullptr);
             
@@ -7459,7 +7473,7 @@ JSBool CChar_Kill(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsv
     HandleDeath(mChar, nullptr);
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -7490,13 +7504,13 @@ JSBool CChar_Resurrect(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     NpcResurrectTarget(mChar);
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -7541,13 +7555,13 @@ JSBool CItem_Dupe(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
     JSObject *dupeItem = nullptr;
     if (dupeInPack && mSock != nullptr) {
         dupeItem =
-        JSEngine->AcquireObject(IUE_ITEM, worldItem.DupeItem(mSock, mItem, mItem->GetAmount()),
-                                JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        worldJSEngine.AcquireObject(IUE_ITEM, worldItem.DupeItem(mSock, mItem, mItem->GetAmount()),
+                                worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
     }
     else {
         CItem *dupeItemTemp = mItem->Dupe();
-        dupeItem = JSEngine->AcquireObject(IUE_ITEM, dupeItemTemp,
-                                           JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        dupeItem = worldJSEngine.AcquireObject(IUE_ITEM, dupeItemTemp,
+                                           worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
     }
     
     *rval = OBJECT_TO_JSVAL(dupeItem);
@@ -7583,8 +7597,8 @@ JSBool CChar_Dupe(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsv
     
     // JS Object for duped character
     JSObject *dupeChar = nullptr;
-    dupeChar = JSEngine->AcquireObject(IUE_CHAR, dupeCharTemp,
-                                       JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+    dupeChar = worldJSEngine.AcquireObject(IUE_CHAR, dupeCharTemp,
+                                       worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
     
     *rval = OBJECT_TO_JSVAL(dupeChar);
     return JS_TRUE;
@@ -7616,7 +7630,7 @@ JSBool CChar_Jail(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         numSecsToJail = static_cast<std::int32_t>(JSVAL_TO_INT(argv[0]));
     }
     
-    JailSys->JailPlayer(myChar, numSecsToJail);
+    worldJailSystem.JailPlayer(myChar, numSecsToJail);
     return JS_TRUE;
 }
 
@@ -7639,7 +7653,7 @@ JSBool CChar_Release(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
         return JS_FALSE;
     }
     
-    JailSys->ReleasePlayer(myChar);
+    worldJailSystem.ReleasePlayer(myChar);
     return JS_TRUE;
 }
 
@@ -8108,7 +8122,7 @@ JSBool CChar_SpellMoveEffect(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
     CMagicMove temp = mySpell->MoveEffect();
     
     if (temp.Effect() != INVALIDID) {
-        Effects->PlayMovingAnimation(source, target, temp.Effect(), temp.Speed(), temp.Loop(),
+        worldEffect.PlayMovingAnimation(source, target, temp.Effect(), temp.Speed(), temp.Loop(),
                                      (temp.Explode() == 1));
     }
     
@@ -8144,7 +8158,7 @@ JSBool CChar_SpellStaticEffect(JSContext *cx, JSObject *obj, uintN argc, jsval *
     CMagicStat temp = mySpell->StaticEffect();
     
     if (temp.Effect() != INVALIDID) {
-        Effects->PlayStaticAnimation(source, temp.Effect(), temp.Speed(), temp.Loop());
+        worldEffect.PlayStaticAnimation(source, temp.Effect(), temp.Speed(), temp.Loop());
     }
     
     return JS_TRUE;
@@ -8281,13 +8295,13 @@ JSBool CItem_Carve(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     *rval = BOOLEAN_TO_JSVAL(NewCarveTarget(mSock, toCarve));
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -8353,7 +8367,7 @@ JSBool CMulti_GetMultiCorner(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
     std::int16_t x2 = 0;
     std::int16_t y2 = 0;
     
-    Map->MultiArea(multiObject, x1, y1, x2, y2);
+    worldMULHandler.MultiArea(multiObject, x1, y1, x2, y2);
     switch (cornerToFind) {
         case 0: // NW
             *rval = STRING_TO_JSVAL(
@@ -8730,8 +8744,8 @@ JSBool CMulti_FirstChar(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
     }
     
     if (ValidateObject(firstChar)) {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_CHAR, firstChar,
-                                                  JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_CHAR, firstChar,
+                                                  worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -8793,8 +8807,8 @@ JSBool CMulti_NextChar(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
     }
     
     if (ValidateObject(nextChar)) {
-        JSObject *myObj = JSEngine->AcquireObject(IUE_CHAR, nextChar,
-                                                  JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_CHAR, nextChar,
+                                                  worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myObj);
     }
     else {
@@ -8951,7 +8965,7 @@ JSBool CBase_CanSee(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
                 }
                 
                 // Include top of item
-                zTop = Map->TileHeight(tObj->GetId());
+                zTop = worldMULHandler.TileHeight(tObj->GetId());
             }
             else {
                 // Include top of head of character. Also, assume all characters are equally tall
@@ -9119,13 +9133,13 @@ JSBool CChar_Damage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     [[maybe_unused]] bool retVal = mChar->Damage(damage.toInt(), element, attacker, doRepsys);
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -9163,13 +9177,13 @@ JSBool CChar_InitiateCombat(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     *rval = BOOLEAN_TO_JSVAL(worldCombat.StartAttack(mChar, ourTarget));
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -9201,13 +9215,13 @@ JSBool CChar_InvalidateAttacker(JSContext *cx, JSObject *obj, uintN argc,
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     worldCombat.InvalidateAttacker(mChar);
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -9609,13 +9623,13 @@ JSBool CChar_Heal(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Keep track of original script that's executing
-    auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    auto origScript = worldJSMapping.GetScript(JS_GetGlobalObject(cx));
+    auto origScriptID = worldJSMapping.GetScriptId(JS_GetGlobalObject(cx));
     
     mChar->Heal(static_cast<std::int16_t>(Heal.toInt()), healer);
     
     // Active script-context might have been lost, so restore it...
-    if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
+    if (origScript != worldJSMapping.GetScript(JS_GetGlobalObject(cx))) {
         // ... by calling a dummy function in original script!
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
@@ -9912,7 +9926,7 @@ JSBool CBase_AddScriptTrigger(JSContext *cx, JSObject *obj, uintN argc, jsval *a
     
     std::uint16_t scriptId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     if (scriptId > 0) {
-        cScript *toExecute = JSMapping->GetScript(scriptId);
+        cScript *toExecute = worldJSMapping.GetScript(scriptId);
         if (toExecute == nullptr) {
             ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) not "
                                          "found in jse_fileassociations.scp!",
@@ -10022,7 +10036,7 @@ JSBool CRegion_AddScriptTrigger(JSContext *cx, JSObject *obj, uintN argc, jsval 
     
     std::uint16_t scriptId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     if (scriptId > 0) {
-        cScript *toExecute = JSMapping->GetScript(scriptId);
+        cScript *toExecute = worldJSMapping.GetScript(scriptId);
         if (toExecute == nullptr) {
             ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) not "
                                          "found in jse_fileassociations.scp!",
@@ -10295,8 +10309,8 @@ JSBool CChar_GetFriendList(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unu
     int i = 0;
     for (auto &tempFriend : *friendList) {
         // Create a new JS Object based on character
-        JSObject *myObj = JSEngine->AcquireObject(IUE_CHAR, tempFriend,
-                                                  JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+        JSObject *myObj = worldJSEngine.AcquireObject(IUE_CHAR, tempFriend,
+                                                  worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
         
         // Convert JS Object to jsval
         jsTempFriend = OBJECT_TO_JSVAL(myObj);
@@ -10389,8 +10403,8 @@ JSBool CChar_GetPetList(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
         if (ValidateObject(pet)) {
             if (pet->GetOwnerObj() == mChar) {
                 // Create a new JS Object based on character
-                JSObject *myObj = JSEngine->AcquireObject(
-                                                          IUE_CHAR, pet, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                JSObject *myObj = worldJSEngine.AcquireObject(
+                                                          IUE_CHAR, pet, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                 
                 // Convert JS Object to jsval
                 jsTempPet = OBJECT_TO_JSVAL(myObj);
@@ -10486,7 +10500,7 @@ JSBool CChar_CalculateControlChance(JSContext *cx, JSObject *obj, uintN argc, js
         return JS_FALSE;
     }
     
-    std::uint16_t petControlChance = Skills->CalculatePetControlChance(mChar, pChar);
+    std::uint16_t petControlChance = worldSkill.CalculatePetControlChance(mChar, pChar);
     
     *rval = INT_TO_JSVAL(petControlChance);
     return JS_TRUE;
@@ -10610,8 +10624,8 @@ JSBool CChar_GetFollowerList(JSContext *cx, JSObject *obj, uintN argc, [[maybe_u
         if (ValidateObject(follower)) {
             if (follower->GetOwnerObj() == mChar) {
                 // Create a new JS Object based on character
-                JSObject *myObj = JSEngine->AcquireObject(
-                                                          IUE_CHAR, follower, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                JSObject *myObj = worldJSEngine.AcquireObject(
+                                                          IUE_CHAR, follower, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
                 
                 // Convert JS Object to jsval
                 jsTempFollower = OBJECT_TO_JSVAL(myObj);
@@ -10771,8 +10785,8 @@ JSBool CParty_GetMember(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
             *rval = JSVAL_NULL;
         }
         else {
-            JSObject *myJSChar = JSEngine->AcquireObject(
-                                                         IUE_CHAR, mChar, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+            JSObject *myJSChar = worldJSEngine.AcquireObject(
+                                                         IUE_CHAR, mChar, worldJSEngine.FindActiveRuntime(JS_GetRuntime(cx)));
             *rval = OBJECT_TO_JSVAL(myJSChar);
         }
     }

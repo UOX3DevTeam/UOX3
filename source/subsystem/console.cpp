@@ -53,6 +53,15 @@ DWORD initial_terminal_state;
 
 #include "teffect.h"
 
+extern CMagic worldMagic ;
+extern cRaces worldRace ;
+extern CJSMapping worldJSMapping ;
+extern cHTMLTemplates worldHTMLTemplate;
+extern CGuildCollection worldGuildSystem ;
+extern CServerDefinitions worldFileLookup ;
+extern CCommands serverCommands;
+extern CNetworkStuff worldNetwork ;
+
 using namespace std::string_literals;
 CEndL myendl;
 
@@ -898,7 +907,7 @@ auto Console::process(std::int32_t c) -> void {
         auto toFind = jskeyHandler.find(c);
         if (toFind != jskeyHandler.end()) {
             if (toFind->second.isEnabled) {
-                cScript *toExecute = JSMapping->GetScript(toFind->second.scriptId);
+                cScript *toExecute = worldJSMapping.GetScript(toFind->second.scriptId);
                 if (toExecute) {
                     // All commands that execute are of the form: command_commandname (to avoid
                     // possible clashes)
@@ -1051,7 +1060,7 @@ auto Console::process(std::int32_t c) -> void {
                     messageLoop << MSG_PRINTDONE;
                     // Reload DFN's
                     messageLoop << "     Loading Server DFN... ";
-                    FileLookup->Reload();
+                    worldFileLookup.Reload();
                     messageLoop << MSG_PRINTDONE;
                     // messageLoop access is REQUIRED, as this function is executing in a different
                     // thread, so we need thread safety
@@ -1059,12 +1068,12 @@ auto Console::process(std::int32_t c) -> void {
                     
                     // Reload the current Spells
                     messageLoop << "     Loading spells... ";
-                    Magic->LoadScript();
+                    worldMagic.LoadScript();
                     messageLoop << MSG_PRINTDONE;
                     // Reload the HTML output templates
                     messageLoop << "     Loading HTML Templates... ";
-                    HTMLTemplates->Unload();
-                    HTMLTemplates->load();
+                    worldHTMLTemplate.Unload();
+                    worldHTMLTemplate.load();
                     worldMain.SetReloadingScripts(false);
                     messageLoop << MSG_PRINTDONE;
                 }
@@ -1080,16 +1089,16 @@ auto Console::process(std::int32_t c) -> void {
                 break;
             case 'D':
                 // Disconnect account 0 (useful when client crashes)
-                for (auto &tSock : Network->connClients) {
+                for (auto &tSock : worldNetwork.connClients) {
                     if (tSock->AcctNo() == 0) {
-                        Network->Disconnect(tSock);
+                        worldNetwork.Disconnect(tSock);
                     }
                 }
                 messageLoop << "CMD: Socket Disconnected(Account 0).";
                 break;
             case 'K': {
-                for (auto &tSock : Network->connClients) {
-                    Network->Disconnect(tSock);
+                for (auto &tSock : worldNetwork.connClients) {
+                    worldNetwork.Disconnect(tSock);
                 }
                 messageLoop << "CMD: All Connections Closed.";
             } break;
@@ -1119,7 +1128,7 @@ auto Console::process(std::int32_t c) -> void {
                 // Display logged in chars
                 messageLoop << "CMD: Current Users in the World:";
                 {
-                    for (auto &iSock : Network->connClients) {
+                    for (auto &iSock : worldNetwork.connClients) {
                         ++j;
                         CChar *mChar = iSock->CurrcharObj();
                         
@@ -1191,13 +1200,13 @@ auto Console::process(std::int32_t c) -> void {
             case 'z':
             case 'Z': {
                 auto loggingEnabled = false;
-                for (auto &snSock : Network->connClients) {
+                for (auto &snSock : worldNetwork.connClients) {
                     if (snSock) {
                         snSock->Logging(!snSock->Logging());
                     }
                 }
-                auto iter = Network->connClients.begin();
-                if (iter != Network->connClients.end()) {
+                auto iter = worldNetwork.connClients.begin();
+                if (iter != worldNetwork.connClients.end()) {
                     loggingEnabled = (*iter)->Logging();
                 }
                 if (loggingEnabled) {
@@ -1215,7 +1224,7 @@ auto Console::process(std::int32_t c) -> void {
                 break;
             case 'f':
             case 'F':
-                FileLookup->DisplayPriorityMap();
+                worldFileLookup.DisplayPriorityMap();
                 break;
             default:
                 temp = util::format("Key \'%c\' [%i] does not perform a function", static_cast<std::int8_t>(c), c);
@@ -1258,8 +1267,8 @@ auto Console::displaySettings() -> void {
     (*this) << "   -Adv. Trade System: ";
     (*this) << activeMap[ServerConfig::shared().enabled(ServerSwitch::TRADESYSTEM)] << myendl;
     
-    (*this) << "   -Races: " << static_cast<std::uint32_t>(Races->Count()) << myendl;
-    (*this) << "   -Guilds: " << static_cast<std::uint32_t>(GuildSys->NumGuilds()) << myendl;
+    (*this) << "   -Races: " << static_cast<std::uint32_t>(worldRace.Count()) << myendl;
+    (*this) << "   -Guilds: " << static_cast<std::uint32_t>(worldGuildSystem.NumGuilds()) << myendl;
     (*this) << "   -Char count: " << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR) << myendl;
     (*this) << "   -Item count: " << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM) << myendl;
     (*this) << "   -Num Accounts: " << static_cast<std::uint32_t>(Account::shared().size()) << myendl;
@@ -1330,7 +1339,7 @@ auto Console::setFuncStatus(const std::string &cmdFunc, bool isEnabled) -> void 
 //|	Purpose		-	Registers console script
 // o------------------------------------------------------------------------------------------------o
 auto Console::registration() -> void {
-    auto spellSection = JSMapping->GetSection(CJSMappingSection::SCPT_CONSOLE);
+    auto spellSection = worldJSMapping.GetSection(CJSMappingSection::SCPT_CONSOLE);
     for (const auto &[spellname, ourScript] : spellSection->collection()) {
         if (ourScript) {
             ourScript->ScriptRegistration("Console");

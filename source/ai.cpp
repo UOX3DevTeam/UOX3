@@ -39,6 +39,10 @@
 #include "townregion.h"
 
 extern CHandleCombat worldCombat ;
+extern cRaces worldRace ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
 
@@ -121,7 +125,7 @@ void HandleGuardAI(CChar &mChar) {
     if (mChar.IsAtWar() && ValidateObject(mChar.GetTarg()))
         return;
     
-    for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
+    for (auto &MapArea : worldMapHandler.PopulateList(&mChar)) {
         if (MapArea == nullptr)
             continue;
         
@@ -151,7 +155,7 @@ void HandleFighterAI(CChar &mChar) {
     // Fetch scriptTriggers attached to mChar
     std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
     
-    for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
+    for (auto &MapArea : worldMapHandler.PopulateList(&mChar)) {
         if (MapArea == nullptr)
             continue;
         
@@ -166,7 +170,7 @@ void HandleFighterAI(CChar &mChar) {
                 // event This event will override target selection entirely
                 bool invalidTarget = false;
                 for (auto scriptTrig : scriptTriggers) {
-                    auto toExecute = JSMapping->GetScript(scriptTrig);
+                    auto toExecute = worldJSMapping.GetScript(scriptTrig);
                     if (toExecute) {
                         std::int8_t retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
                         if (retVal == -1) {
@@ -186,7 +190,7 @@ void HandleFighterAI(CChar &mChar) {
                     }
                 }
                 if (!invalidTarget) {
-                    RaceRelate raceComp = Races->Compare(tempChar, &mChar);
+                    RaceRelate raceComp = worldRace.Compare(tempChar, &mChar);
                     if (!tempChar->IsDead() && (tempChar->IsCriminal() || tempChar->IsMurderer() || raceComp <= RACE_ENEMY)) {
                         if (RandomNum(1, 100) < 85) { // 85% chance to attack current target, 15% chance to pick another
                             worldCombat.AttackTarget(&mChar, tempChar);
@@ -220,7 +224,7 @@ void HandleHealerAI(CChar &mChar) {
                 }
                 else if (realChar->IsInnocent()) {
                     if (mChar.GetBodyType() == BT_GARGOYLE || ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET)) {
-                        Effects->PlayNewCharacterAnimation(&mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
+                        worldEffect.PlayNewCharacterAnimation(&mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                     }
                     else {
                         std::uint16_t castAnim = static_cast<std::uint16_t>(worldMain.creatures[mChar.GetId()].CastAnimTargetId());
@@ -228,11 +232,11 @@ void HandleHealerAI(CChar &mChar) {
                         
                         // Play cast anim, but fallback to default attack anim (0x04) with anim
                         // length of 4 frames if no cast anim was defined in creatures.dfn
-                        Effects->PlayCharacterAnimation(&mChar, (castAnim != 0 ? castAnim : 0x04), 0, (castAnimLength != 0 ? castAnimLength : 4));
+                        worldEffect.PlayCharacterAnimation(&mChar, (castAnim != 0 ? castAnim : 0x04), 0, (castAnimLength != 0 ? castAnimLength : 4));
                     }
                     
                     NpcResurrectTarget(realChar);
-                    Effects->PlayStaticAnimation(realChar, 0x376A, 0x09, 0x06);
+                    worldEffect.PlayStaticAnimation(realChar, 0x376A, 0x09, 0x06);
                     mChar.TextMessage(nullptr, (316 + RandomNum(0, 4)), TALK, false);
                 }
             }
@@ -243,7 +247,7 @@ void HandleHealerAI(CChar &mChar) {
                 mChar.RemoveFromCombatIgnore(realChar->GetSerial());
                 realChar->SetTimer(tCHAR_YOUNGHEAL, BuildTimeValue(static_cast<float>(300))); // Only heal young player max once every 5 minutes
                 mChar.TextMessage(nullptr, 18731, TALK, false); // You look like you need some healing my child.
-                Effects->PlayStaticAnimation(realChar, 0x376A, 0x09, 0x06);
+                worldEffect.PlayStaticAnimation(realChar, 0x376A, 0x09, 0x06);
                 realChar->SetHP(realChar->GetMaxHP());
             }
             else {
@@ -273,7 +277,7 @@ void HandleEvilHealerAI(CChar &mChar) {
             if (LineOfSight(mSock, realChar, mChar.GetX(), mChar.GetY(), (mChar.GetZ() + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
                 if (realChar->IsMurderer()) {
                     if (mChar.GetBodyType() == BT_GARGOYLE || ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET)) {
-                        Effects->PlayNewCharacterAnimation( &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
+                        worldEffect.PlayNewCharacterAnimation( &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                     }
                     else {
                         std::uint16_t castAnim = static_cast<std::uint16_t>(worldMain.creatures[mChar.GetId()].CastAnimTargetId());
@@ -281,11 +285,11 @@ void HandleEvilHealerAI(CChar &mChar) {
                         
                         // Play cast anim, but fallback to default attack anim (0x04) with anim
                         // length of 4 frames if no cast anim was defined in creatures.dfn
-                        Effects->PlayCharacterAnimation(&mChar, (castAnim != 0 ? castAnim : 0x04), 0, (castAnimLength != 0 ? castAnimLength : 4));
+                        worldEffect.PlayCharacterAnimation(&mChar, (castAnim != 0 ? castAnim : 0x04), 0, (castAnimLength != 0 ? castAnimLength : 4));
                     }
                     
                     NpcResurrectTarget(realChar);
-                    Effects->PlayStaticAnimation(realChar, 0x3709, 0x09, 0x19); // Flamestrike
+                    worldEffect.PlayStaticAnimation(realChar, 0x3709, 0x09, 0x19); // Flamestrike
                     // effect
                     mChar.TextMessage(nullptr, (323 + RandomNum(0, 4)), TALK, false);
                 }
@@ -310,7 +314,7 @@ auto HandleEvilAI(CChar &mChar) -> void {
     // Fetch scriptTriggers attached to mChar
     std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
     
-    for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
+    for (auto &MapArea : worldMapHandler.PopulateList(&mChar)) {
         if (MapArea == nullptr)
             continue;
         
@@ -326,7 +330,7 @@ auto HandleEvilAI(CChar &mChar) -> void {
                 // event This event will override target selection entirely
                 bool invalidTarget = false;
                 for (auto scriptTrig : scriptTriggers) {
-                    auto toExecute = JSMapping->GetScript(scriptTrig);
+                    auto toExecute = worldJSMapping.GetScript(scriptTrig);
                     if (toExecute == nullptr)
                         continue;
                     
@@ -357,7 +361,7 @@ auto HandleEvilAI(CChar &mChar) -> void {
                         }
                     }
                     if (!(mChar.GetRace() != 0 && mChar.GetRace() == tempChar->GetRace() && RandomNum(1, 100) > 1)) { // 1% chance of turning on own race
-                        RaceRelate raceComp = Races->Compare(tempChar, &mChar);
+                        RaceRelate raceComp = worldRace.Compare(tempChar, &mChar);
                         if (raceComp < RACE_ALLY) { // Allies
                             if (!((tempChar->GetNpcAiType() == AI_EVIL || tempChar->GetNpcAiType() == AI_EVIL_CASTER) && raceComp > RACE_ENEMY)) {
                                 if (RandomNum(1, 100) < 85) { // 85% chance to attack current
@@ -387,7 +391,7 @@ auto HandleChaoticAI(CChar &mChar) -> void {
     // Fetch scriptTriggers attached to mChar
     std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
     
-    for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
+    for (auto &MapArea : worldMapHandler.PopulateList(&mChar)) {
         if (MapArea == nullptr)
             continue;
         
@@ -403,7 +407,7 @@ auto HandleChaoticAI(CChar &mChar) -> void {
                 // event This event will override target selection entirely
                 bool invalidTarget = false;
                 for (auto scriptTrig : scriptTriggers) {
-                    cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                    cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                     if (toExecute == nullptr)
                         continue;
                     
@@ -448,7 +452,7 @@ auto HandleAnimalAI(CChar &mChar) -> void {
     // Fetch scriptTriggers attached to mChar
     std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
     
-    for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
+    for (auto &MapArea : worldMapHandler.PopulateList(&mChar)) {
         if (MapArea == nullptr)
             continue;
         
@@ -459,7 +463,7 @@ auto HandleAnimalAI(CChar &mChar) -> void {
                 // event This event will override target selection entirely
                 bool invalidTarget = false;
                 for (auto scriptTrig : scriptTriggers) {
-                    cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                    cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                     if (toExecute == nullptr)
                         continue;
                     
@@ -479,7 +483,7 @@ auto HandleAnimalAI(CChar &mChar) -> void {
                 if (invalidTarget)
                     continue;
                 
-                auto raceComp = Races->Compare(tempChar, &mChar);
+                auto raceComp = worldRace.Compare(tempChar, &mChar);
                 if (raceComp <= RACE_ENEMY || (worldMain.creatures[tempChar->GetId()].IsAnimal() && tempChar->GetNpcAiType() == AI_NONE) || (hunger <= 1 && (tempChar->GetNpcAiType() == AI_ANIMAL || worldMain.creatures[tempChar->GetId()].IsHuman()))) {
                     if (RandomNum(1, 100) > 95) { // 5% chance (per AI cycle to attack tempChar)
                         worldCombat.AttackTarget(&mChar, tempChar);
@@ -504,7 +508,7 @@ auto HandleAnimalScaredAI(CChar &mChar) -> void {
     // Fetch scriptTriggers attached to mChar
     std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
     
-    for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
+    for (auto &MapArea : worldMapHandler.PopulateList(&mChar)) {
         if (MapArea == nullptr)
             continue;
         
@@ -515,7 +519,7 @@ auto HandleAnimalScaredAI(CChar &mChar) -> void {
                 // event This event will override target selection entirely
                 bool invalidTarget = false;
                 for (auto scriptTrig : scriptTriggers) {
-                    cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                    cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                     if (toExecute == nullptr)
                         continue;
                     

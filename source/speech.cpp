@@ -21,7 +21,12 @@
 #include "utility/strutil.hpp"
 #include "other/uoxversion.hpp"
 
-
+extern CSkills worldSkill ;
+extern cRaces worldRace ;
+extern CJSMapping worldJSMapping ;
+extern CSpeechQueue worldSpeechSystem ;
+extern CCommands serverCommands;
+extern CNetworkStuff worldNetwork ;
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	ClilocMessage()
@@ -136,7 +141,6 @@ void ClilocMessage(CSocket *mSock, CBaseObject *srcObj, speechtype_t speechType,
     }
 }
 
-CSpeechQueue *SpeechSys;
 
 std::map<std::string, unicodetypes_t> codeLookup;
 
@@ -189,7 +193,7 @@ unicodetypes_t FindLanguage(CSocket *s, std::uint16_t offset) {
 // o------------------------------------------------------------------------------------------------o
 void sysBroadcast(const std::string &txt) {
     if (!txt.empty()) {
-        CSpeechEntry &toAdd = SpeechSys->Add();
+        CSpeechEntry &toAdd = worldSpeechSystem.Add();
         toAdd.Speech(txt);
         toAdd.Font(FNT_NORMAL);
         toAdd.Speaker(INVALIDSERIAL);
@@ -251,7 +255,7 @@ bool CPITalkRequest::Handle() {
     
     std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // If script returned false/0, prevent hard-code (and other scripts with event) from
             // running
@@ -278,7 +282,7 @@ bool CPITalkRequest::Handle() {
         }
         
         if ((Type() == YELL || Type() == ASCIIYELL) && mChar->CanBroadcast()) {
-            CSpeechEntry &toAdd = SpeechSys->Add();
+            CSpeechEntry &toAdd = worldSpeechSystem.Add();
             toAdd.Speech(asciiText);
             toAdd.Font(static_cast<fonttype_t>(mChar->GetFontType()));
             toAdd.Speaker(mChar->GetSerial());
@@ -392,8 +396,8 @@ bool CPITalkRequest::Handle() {
                         }
                     }
                     else if (tChar->GetRace() != mChar->GetRace() && !tChar->IsGM() && !tChar->IsCounselor()) {
-                        auto raceLangMin = Races->LanguageMin(mChar->GetRace());
-                        if (raceLangMin > 0 && Skills->CheckSkill(tChar, SPIRITSPEAK, Races->LanguageMin(mChar->GetRace()), 1000) != 1) {
+                        auto raceLangMin = worldRace.LanguageMin(mChar->GetRace());
+                        if (raceLangMin > 0 && worldSkill.CheckSkill(tChar, SPIRITSPEAK, worldRace.LanguageMin(mChar->GetRace()), 1000) != 1) {
                             tSock->Send(ghostedText);
                         }
                         else {
@@ -501,7 +505,7 @@ void CSpeechQueue::SayIt(CSpeechEntry &toSay) {
         }
         case SPTRG_BROADCASTPC: // ALL PCs everywhere + NPCs in range
         case SPTRG_BROADCASTALL: {
-            for (auto &mSock : Network->connClients) {
+            for (auto &mSock : worldNetwork.connClients) {
                 if (mSock) {
                     auto mChar = mSock->CurrcharObj();
                     if (ValidateObject(mChar)) {

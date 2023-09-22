@@ -21,9 +21,13 @@
 #include "utility/strutil.hpp"
 #include "other/uoxversion.hpp"
 
+extern cRaces worldRace ;
+extern CGuildCollection worldGuildSystem ;
+extern CServerDefinitions worldFileLookup ;
+extern CNetworkStuff worldNetwork ;
+
 using namespace std::string_literals;
 
-cHTMLTemplates *HTMLTemplates;
 
 cHTMLTemplate::cHTMLTemplate() : updateTimer(60), loaded(false), type(ETT_INVALIDTEMPLATE), scheduledUpdate(0) {
     name = "";
@@ -137,7 +141,7 @@ void cHTMLTemplate::process() {
     
     // Get all Network Connections
     {
-        for (auto &tSock : Network->connClients) {
+        for (auto &tSock : worldNetwork.connClients) {
             tChar = tSock->CurrcharObj();
             if (ValidateObject(tChar)) {
                 if (tChar->IsGM()) {
@@ -247,7 +251,7 @@ void cHTMLTemplate::process() {
         std::string myInline = ParsedContent.substr(Pos, SecondPos - Pos + 12);
         std::string PlayerList;
         {
-            for (auto &tSock : Network->connClients) {
+            for (auto &tSock : worldNetwork.connClients) {
                 try {
                     if (tSock) {
                         auto tChar = tSock->CurrcharObj();
@@ -339,7 +343,7 @@ void cHTMLTemplate::process() {
                             sPos = parsedInline.find("%playerrace");
                             while (sPos != std::string::npos) {
                                 raceid_t myRace = tChar->GetRace();
-                                const std::string rName = Races->Name(myRace);
+                                const std::string rName = worldRace.Name(myRace);
                                 size_t raceLenName = rName.length();
                                 
                                 if (raceLenName > 0) {
@@ -370,7 +374,7 @@ void cHTMLTemplate::process() {
     }
     
     // GuildCount
-    std::string GuildCount = util::ntos(static_cast<std::int32_t>(GuildSys->NumGuilds()));
+    std::string GuildCount = util::ntos(static_cast<std::int32_t>(worldGuildSystem.NumGuilds()));
     Pos = ParsedContent.find("%guildcount");
     while (Pos != std::string::npos) {
         (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 11, GuildCount) : ParsedContent.replace(Pos, 11, "");
@@ -386,7 +390,7 @@ void cHTMLTemplate::process() {
         std::string myInline = ParsedContent.substr(Pos, SecondPos - Pos + 11);
         std::string GuildList;
         
-        for (std::int16_t i = 0; i < static_cast<std::int16_t>(GuildSys->NumGuilds()); ++i) {
+        for (std::int16_t i = 0; i < static_cast<std::int16_t>(worldGuildSystem.NumGuilds()); ++i) {
             std::string parsedInline = myInline;
             parsedInline.replace(0, 11, "");
             parsedInline.replace(parsedInline.length() - 11, 11, "");
@@ -398,7 +402,7 @@ void cHTMLTemplate::process() {
             
             // GuildId
             size_t sPos;
-            CGuild *myGuild = GuildSys->Guild(i);
+            CGuild *myGuild = worldGuildSystem.Guild(i);
             
             std::string GuildId = util::ntos(i);
             sPos = parsedInline.find("%guildid");
@@ -644,7 +648,7 @@ cHTMLTemplates::~cHTMLTemplates() { Unload(); }
 //|	Purpose		-	Loads the HTML Templates from the scripts
 // o------------------------------------------------------------------------------------------------o
 auto cHTMLTemplates::load() -> void {
-    for (auto &toCheck : FileLookup->ScriptListings[html_def]) {
+    for (auto &toCheck : worldFileLookup.ScriptListings[html_def]) {
         if (toCheck) {
             size_t NumEntries = toCheck->NumEntries();
             if (NumEntries != 0) {

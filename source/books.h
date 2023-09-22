@@ -25,6 +25,5 @@ public:
     void DeleteBook(CItem *id);        // deletes bok-file.
 };
 
-extern CBooks *Books;
 
 #endif

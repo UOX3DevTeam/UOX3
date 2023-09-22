@@ -47,6 +47,16 @@
 extern WorldWeather worldWeather;
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem ;
+extern cRaces worldRace ;
+extern CWhoList worldWhoList;
+extern PageVector worldGMQueue ;
+extern PageVector worldCounselorQueue ;
+extern cEffects worldEffect ;
+extern cHTMLTemplates worldHTMLTemplate;
+extern CSpeechQueue worldSpeechSystem ;
+extern CCommands serverCommands;
+extern CNetworkStuff worldNetwork ;
+extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals ;
 
@@ -130,13 +140,13 @@ void NextCall(CSocket *s, bool isGM) {
         CloseCall(s, isGM);
     }
     if (isGM) {
-        if (!GMQueue->AnswerNextCall(s, mChar)) {
+        if (!worldGMQueue.AnswerNextCall(s, mChar)) {
             s->SysMessage(347); // The GM queue is currently empty.
         }
     }
     else // Player is a counselor
     {
-        if (!CounselorQueue->AnswerNextCall(s, mChar)) {
+        if (!worldCounselorQueue.AnswerNextCall(s, mChar)) {
             s->SysMessage(348); // The Counselor queue is currently empty.
         }
     }
@@ -231,11 +241,11 @@ void Command_GetLight(CSocket *s) {
         auto lightMax = (*sys).impact[Weather::BRIGHTNESS][Weather::MAX] ;
         if (lightMin < 300 && lightMax < 300) {
             auto i = (*sys).impact[Weather::BRIGHTNESS][Weather::CURRENT] ;
-            if (Races->VisLevel(mChar->GetRace()) > i) {
+            if (worldRace.VisLevel(mChar->GetRace()) > i) {
                 s->SysMessage(1632, 0); // Current light level is %i
             }
             else {
-                s->SysMessage( 1632, static_cast<lightlevel_t>(std::round( i - Races->VisLevel(mChar->GetRace())))); // Current light level is %i
+                s->SysMessage( 1632, static_cast<lightlevel_t>(std::round( i - worldRace.VisLevel(mChar->GetRace())))); // Current light level is %i
             }
         }
         else {
@@ -325,7 +335,7 @@ void Command_GetPost(CSocket *s) {
 auto Command_ShowIds(CSocket *s) -> void {
     VALIDATESOCKET(s);
     CChar *mChar = s->CurrcharObj();
-    CMapRegion *Cell = MapRegion->GetMapRegion(mChar);
+    CMapRegion *Cell = worldMapHandler.GetMapRegion(mChar);
     
     if (Cell) {
         auto regChars = Cell->GetCharList();
@@ -511,7 +521,7 @@ void Command_Shutdown() {
 void Command_Tell(CSocket *s) {
     VALIDATESOCKET(s);
     if (serverCommands.numArguments() > 2) {
-        CSocket *i = Network->GetSockPtr(serverCommands.argument(1));
+        CSocket *i = worldNetwork.GetSockPtr(serverCommands.argument(1));
         std::string txt = serverCommands.commandString(3);
         if (i == nullptr || txt.empty())
             return;
@@ -541,7 +551,7 @@ void Command_Tell(CSocket *s) {
             s->Send(&unicodeMessage);
         }
         else {
-            CSpeechEntry &toAdd = SpeechSys->Add();
+            CSpeechEntry &toAdd = worldSpeechSystem.Add();
             toAdd.Font(static_cast<fonttype_t>(mChar->GetFontType()));
             toAdd.Speech(temp);
             toAdd.Speaker(mChar->GetSerial());
@@ -769,15 +779,15 @@ void Command_CQ(CSocket *s) {
         else if (upperCommand == "TRANSFER"){ // Transfer call from Counselor queue to GM queue
             CChar *mChar = s->CurrcharObj();
             if (mChar->GetCallNum() != 0) {
-                if (CounselorQueue->GotoPos(CounselorQueue->FindCallNum(mChar->GetCallNum()))) {
+                if (worldCounselorQueue.GotoPos(worldCounselorQueue.FindCallNum(mChar->GetCallNum()))) {
                     CHelpRequest pageToAdd;
                     CHelpRequest *currentPage = nullptr;
-                    currentPage = CounselorQueue->Current();
+                    currentPage = worldCounselorQueue.Current();
                     pageToAdd.Reason(currentPage->Reason());
                     pageToAdd.WhoPaging(currentPage->WhoPaging());
                     pageToAdd.IsHandled(false);
                     pageToAdd.TimeOfPage(time(nullptr));
-                    GMQueue->Add(&pageToAdd);
+                    worldGMQueue.Add(&pageToAdd);
                     s->SysMessage(74); // Call successfully transferred to the GM queue.
                     CloseCall(s, false);
                 }
@@ -791,7 +801,7 @@ void Command_CQ(CSocket *s) {
         }
     }
     else {
-        CounselorQueue->SendAsGump(s); // Show the Counselor queue, not GM queue
+        worldCounselorQueue.SendAsGump(s); // Show the Counselor queue, not GM queue
     }
 }
 
@@ -817,7 +827,7 @@ void Command_GQ(CSocket *s) {
         }
     }
     else {
-        GMQueue->SendAsGump(s);
+        worldGMQueue.SendAsGump(s);
     }
 }
 
@@ -914,8 +924,8 @@ auto Command_SpawnKill(CSocket *s) -> void {
                 
                 // Loop through the characters we want to delete from spawn region
                 std::for_each(spCharsToDelete.begin(), spCharsToDelete.end(), [&killed](CChar *charToDelete) {
-                    Effects->Bolteffect(charToDelete);
-                    Effects->PlaySound(charToDelete, 0x0029);
+                    worldEffect.Bolteffect(charToDelete);
+                    worldEffect.PlaySound(charToDelete, 0x0029);
                     charToDelete->Delete();
                     ++killed;
                 });
@@ -938,7 +948,7 @@ void BuildWhoGump(CSocket *s, std::uint8_t commandLevel, std::string title) {
     
     CGumpDisplay Who(s, 400, 300);
     Who.setTitle(title);
-    for (auto &iSock : Network->connClients) {
+    for (auto &iSock : worldNetwork.connClients) {
         CChar *iChar = iSock->CurrcharObj();
         if (iChar->GetCommandLevel() >= commandLevel) {
             auto temp = util::format("%i) %s", j, iChar->GetName().c_str());
@@ -998,7 +1008,7 @@ void Command_ReportBug(CSocket *s) {
     
     s->SysMessage(87); // Thank you for your continuing support, your feedback is important to us
     bool x = false;
-    for (auto &iSock : Network->connClients) {
+    for (auto &iSock : worldNetwork.connClients) {
         CChar *iChar = iSock->CurrcharObj();
         if (ValidateObject(iChar)) {
             if (iChar->IsGMPageable()) {
@@ -1022,8 +1032,8 @@ void Command_ReportBug(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void Command_ForceWho(CSocket *s) {
     VALIDATESOCKET(s);
-    WhoList->ZeroWho();
-    WhoList->SendSocket(s);
+    worldWhoList.ZeroWho();
+    worldWhoList.SendSocket(s);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1226,6 +1236,6 @@ void Command_Temp(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void Command_Status(CSocket *s) {
     VALIDATESOCKET(s);
-    HTMLTemplates->TemplateInfoGump(s);
+    worldHTMLTemplate.TemplateInfoGump(s);
 }
 

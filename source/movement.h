@@ -87,6 +87,5 @@ private:
     void DenyMovement(CSocket *mSock, CChar *s, std::int16_t sequence);
 };
 
-extern CMovement *Movement;
 
 #endif

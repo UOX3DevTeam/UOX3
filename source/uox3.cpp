@@ -107,7 +107,25 @@ extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
-
+extern CSkills worldSkill ;
+extern CMagic worldMagic ;
+extern cRaces worldRace ;
+extern CMovement worldMovement ;
+extern CBooks worldBook ;
+extern PageVector worldGMQueue ;
+extern PageVector worldCounselorQueue ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern cHTMLTemplates worldHTMLTemplate;
+extern CGuildCollection worldGuildSystem ;
+extern CJailSystem worldJailSystem ;
+extern CSpeechQueue worldSpeechSystem ;
+extern CJSEngine worldJSEngine ;
+extern CServerDefinitions worldFileLookup ;
+extern CCommands serverCommands ;
+extern CMulHandler worldMULHandler ;
+extern CNetworkStuff worldNetwork ;
+extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
@@ -131,30 +149,8 @@ auto saveOnShutdown = false;
 //  Classes we will use
 // o------------------------------------------------------------------------------------------------o
 //  Non depdendent class
-auto aSkills = CSkills();                  // no ddependency, no startup
-auto aWeight = CWeight();                  // no dependency, no startup
-auto aMagic = CMagic();                    // No dependent, no startup
-auto aRaces = cRaces();                    // no dependent, no startup
 
-auto aMovement = CMovement();                         // No dependent, no startup
-auto aWhoList = CWhoList();                           // no dependent, no startup
-auto aOffList = CWhoList(false);                      // no dependent, no startup
-auto aBooks = CBooks();                               // no dependent, no startup
-auto aGMQueue = PageVector("GM Queue");               // no dependent, no startup
-auto aCounselorQueue = PageVector("Counselor Queue"); // no dependent, no startup
-auto aJSMapping = CJSMapping();                       // nodepend, no startup
-auto aEffects = cEffects();                           // No dependnt, no startup
-auto aHTMLTemplates = cHTMLTemplates();               // no depend, no startup
-auto aGuildSys = CGuildCollection();                  // no depend, no startup
-auto aJailSys = CJailSystem();                        // no depend, no startup
 // Dependent or have startup()
-auto aSpeechSys = CSpeechQueue();        // has startup
-auto aJSEngine = CJSEngine();            // has startup
-auto aFileLookup = CServerDefinitions(); // has startup
-CCommands serverCommands ;            
-auto aMap = CMulHandler();               // replaced
-auto aNetwork = CNetworkStuff();         // Maybe dependent, has startup
-auto aMapRegion = CMapHandler();         // Dependent (Map->) , has startup
 
 // o------------------------------------------------------------------------------------------------o
 //  FileIO Pre-Declarations
@@ -283,10 +279,10 @@ auto main(std::int32_t argc, char *argv[]) -> int {
         
         if (uiNextCheckConn <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
             // Cut lag on CheckConn by not doing it EVERY loop.
-            Network->CheckConnections();
+            worldNetwork.CheckConnections();
             uiNextCheckConn = BuildTimeValue(1.0f);
         }
-        Network->CheckMessages();
+        worldNetwork.CheckMessages();
         EVENT_TIMER_NOW(stopwatch, Complete net checkmessages, EVENT_TIMER_KEEP);
         tempTime = CheckMilliTimer(tempSecs, tempMilli);
         worldMain.ServerProfile()->IncNetworkTime(tempTime);
@@ -336,7 +332,7 @@ auto main(std::int32_t argc, char *argv[]) -> int {
         worldMain.ServerProfile()->IncAutoTimeCount();
         StartMilliTimer(tempSecs, tempMilli);
         EVENT_TIMER_RESET(stopwatch);
-        Network->ClearBuffers();
+        worldNetwork.ClearBuffers();
         EVENT_TIMER_NOW( stopwatch, Delta for ClearBuffers, EVENT_TIMER_CLEAR );
         tempTime = CheckMilliTimer(tempSecs, tempMilli);
         worldMain.ServerProfile()->IncNetworkTime(tempTime);
@@ -402,7 +398,7 @@ auto main(std::int32_t argc, char *argv[]) -> int {
     Console::shared() << "Closing sockets...";
     netpollthreadclose = true;
     /// HERE
-    Network->SockClose();
+    worldNetwork.SockClose();
     Console::shared().printDone();
     util::net::shutdown() ;
     
@@ -489,14 +485,14 @@ auto startInitialize() -> void {
     Console::shared().printDone();
     generator = std::mt19937(rd()); // Standard mersenne_twister_engine seeded with rd()
     
-    auto packetSection = JSMapping->GetSection(CJSMappingSection::SCPT_PACKET);
+    auto packetSection = worldJSMapping.GetSection(CJSMappingSection::SCPT_PACKET);
     for (const auto &[id, ourScript] : packetSection->collection()) {
         if (ourScript) {
             ourScript->ScriptRegistration("Packet");
         }
     }
     
-    Skills->load();
+    worldSkill.load();
     
     Console::shared() << "Loading Spawn Regions          ";
     loadSpawnRegions();
@@ -506,10 +502,10 @@ auto startInitialize() -> void {
     loadRegions();
     Console::shared().printDone();
     
-    Magic->LoadScript();
+    worldMagic.LoadScript();
     
     Console::shared() << "Loading Races                  ";
-    Races->load();
+    worldRace.load();
     Console::shared().printDone();
     
     Console::shared() << "Loading Weather                ";
@@ -524,10 +520,10 @@ auto startInitialize() -> void {
     
     // Rework that...
     Console::shared() << "Loading World now              ";
-    MapRegion->load();
+    worldMapHandler.load();
     
     Console::shared() << "Loading Guilds                 ";
-    GuildSys->load();
+    worldGuildSystem.load();
     Console::shared().printDone();
     
     Console::shared().printSectionBegin();
@@ -543,12 +539,12 @@ auto startInitialize() -> void {
     
     // no longer Que, because that's taken care of by PageVector
     Console::shared() << "Initializing Jail system       ";
-    JailSys->ReadSetup();
-    JailSys->ReadData();
+    worldJailSystem.ReadSetup();
+    worldJailSystem.ReadData();
     Console::shared().printDone();
     
     Console::shared() << "Initializing Status system     ";
-    HTMLTemplates->load();
+    worldHTMLTemplate.load();
     Console::shared().printDone();
     
     Console::shared() << "Loading custom titles          ";
@@ -556,7 +552,7 @@ auto startInitialize() -> void {
     Console::shared().printDone();
     
     Console::shared() << "Loading temporary Effects      ";
-    Effects->LoadEffects();
+    worldEffect.LoadEffects();
     Console::shared().printDone();
     
     Console::shared() << "Loading creatures              ";
@@ -754,8 +750,8 @@ auto doMessageLoop() -> void {
                 Console::shared() << tVal.data << myendl;
                 break;
             case MSG_RELOADJS:
-                JSEngine->Reload();
-                JSMapping->Reload();
+                worldJSEngine.Reload();
+                worldJSMapping.Reload();
                 Console::shared().printDone();
                 serverCommands.load();
                 break;
@@ -792,30 +788,30 @@ auto doMessageLoop() -> void {
                             loadSpawnRegions();
                             break; // Reload spawn regions
                         case '4':
-                            Magic->LoadScript();
+                            worldMagic.LoadScript();
                             break; // Reload spells
                         case '5':  // Reload commands
-                            JSMapping->Reload(CJSMappingSection::SCPT_COMMAND);
+                            worldJSMapping.Reload(CJSMappingSection::SCPT_COMMAND);
                             serverCommands.load();
                             break;
                         case '6': // Reload definition files
-                            FileLookup->Reload();
+                            worldFileLookup.Reload();
                             loadCreatures();
                             loadCustomTitle();
                             loadSkills();
                             loadPlaces();
-                            Skills->load();
+                            worldSkill.load();
                             break;
                         case '7': // Reload JS
-                            JSEngine->Reload();
-                            JSMapping->Reload();
+                            worldJSEngine.Reload();
+                            worldJSMapping.Reload();
                             Console::shared().printDone();
                             serverCommands.load();
-                            Skills->load();
+                            worldSkill.load();
                             break;
                         case '8': // Reload HTML
-                            HTMLTemplates->Unload();
-                            HTMLTemplates->load();
+                            worldHTMLTemplate.Unload();
+                            worldHTMLTemplate.load();
                             break;
                     }
                     worldMain.SetReloadingScripts(false);
@@ -842,8 +838,8 @@ auto NetworkPollConnectionThread() -> void {
     messageLoop << "Thread: NetworkPollConnection has started";
     netpollthreadclose = false;
     while (!netpollthreadclose) {
-        Network->CheckConnections();
-        Network->CheckLoginMessage();
+        worldNetwork.CheckConnections();
+        worldNetwork.CheckLoginMessage();
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
     }
     messageLoop << "Thread: NetworkPollConnection has Closed";
@@ -883,7 +879,7 @@ auto IsOnline(CChar &mChar) -> bool {
             }
         }
         if (!rValue) {
-            for (auto &tSock : Network->connClients) {
+            for (auto &tSock : worldNetwork.connClients) {
                 if (tSock->CurrcharObj() == &mChar) {
                     rValue = true;
                     break;
@@ -943,7 +939,7 @@ auto CollectGarbage() -> void {
     
     Console::shared() << " Removed " << objectsDeleted << " objects";
     
-    JSEngine->CollectGarbage();
+    worldJSEngine.CollectGarbage();
     Console::shared().printDone();
 }
 
@@ -1092,7 +1088,7 @@ auto CallGuards(CChar *mChar) -> void {
             }
         }
         
-        auto toCheck = MapRegion->GetMapRegion(mChar);
+        auto toCheck = worldMapHandler.GetMapRegion(mChar);
         if (toCheck) {
             auto regChars = toCheck->GetCharList();
             for (const auto &tempChar : regChars->collection()) {
@@ -1167,7 +1163,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
         
         if (mChar.GetRegen(0) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
             if (mChar.GetHP() < maxHP) {
-                if (!ServerConfig::shared().enabled(ServerSwitch::HUNGER) || (mChar.GetHunger() > 0) || (!Races->DoesHunger(mChar.GetRace()) && ((ServerConfig::shared().timerSetting[TimerSetting::HUNGERRATE] == 0) || mChar.IsNpc()))) {
+                if (!ServerConfig::shared().enabled(ServerSwitch::HUNGER) || (mChar.GetHunger() > 0) || (!worldRace.DoesHunger(mChar.GetRace()) && ((ServerConfig::shared().timerSetting[TimerSetting::HUNGERRATE] == 0) || mChar.IsNpc()))) {
                     for (auto c = 0; c <= maxHP; ++c) {
                         if (mChar.GetHP() <= maxHP && (mChar.GetRegen(0) + (c * ServerConfig::shared().timerSetting[TimerSetting::HITPOINTREGEN] * 1000)) <= worldMain.GetUICurrentTime()) {
                             if (mChar.GetSkill(HEALING) < 500) {
@@ -1198,7 +1194,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                 // Continue with stamina regen if  character is not yet fully parched, or if
                 // character is parched but has less than 25% stamina, or if char belongs to
                 // race that does not thirst
-                if (!ServerConfig::shared().enabled(ServerSwitch::THIRST)|| (mChar.GetThirst() > 0) || ((mChar.GetThirst() == 0) && (mStamina < static_cast<std::int16_t>(maxStam * 0.25))) || (!Races->DoesThirst(mChar.GetRace()) && ( ServerConfig::shared().timerSetting[TimerSetting::THIRSTRATE] == 0 || mChar.IsNpc()))) {
+                if (!ServerConfig::shared().enabled(ServerSwitch::THIRST)|| (mChar.GetThirst() > 0) || ((mChar.GetThirst() == 0) && (mStamina < static_cast<std::int16_t>(maxStam * 0.25))) || (!worldRace.DoesThirst(mChar.GetRace()) && ( ServerConfig::shared().timerSetting[TimerSetting::THIRSTRATE] == 0 || mChar.IsNpc()))) {
                     for (auto c = 0; c <= maxStam; ++c) {
                         if ((mChar.GetRegen(1) + (c * ServerConfig::shared().timerSetting[TimerSetting::STAMINAREGEN] * 1000)) <= worldMain.GetUICurrentTime() && mChar.GetStamina() <= maxStam) {
                             mChar.IncStamina(1);
@@ -1221,7 +1217,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
             if (mChar.GetMana() < maxMana) {
                 for (c = 0; c < maxMana + 1; ++c) {
                     if (mChar.GetRegen(2) + (c * ServerConfig::shared().timerSetting[TimerSetting::MANAREGEN] * 1000) <= worldMain.GetUICurrentTime() && mChar.GetMana() <= maxMana) {
-                        Skills->CheckSkill((&mChar), MEDITATION, 0, 1000); // Check Meditation for skill gain ala OSI
+                        worldSkill.CheckSkill((&mChar), MEDITATION, 0, 1000); // Check Meditation for skill gain ala OSI
                         mChar.IncMana(1);         // Gain a mana point
                         if (mChar.GetMana() == maxMana) {
                             if (mChar.IsMeditating()) {
@@ -1352,7 +1348,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                     if (mChar.GetHP() < 1 && !mChar.IsDead()) {
                         std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
                         for (auto &i : scriptTriggers) {
-                            cScript *toExecute = JSMapping->GetScript(i);
+                            cScript *toExecute = worldJSMapping.GetScript(i);
                             if (toExecute) {
                                 std::int8_t retStatus =
                                 toExecute->OnDeathBlow(&mChar, mChar.GetAttacker());
@@ -1436,11 +1432,11 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
         if (doWeather) {
             const std::uint8_t curLevel = worldMain.uoTime.worldLightLevel ;
             lightlevel_t toShow;
-            if (Races->VisLevel(mChar.GetRace()) > curLevel) {
+            if (worldRace.VisLevel(mChar.GetRace()) > curLevel) {
                 toShow = 0;
             }
             else {
-                toShow = static_cast<std::uint8_t>(curLevel - Races->VisLevel(mChar.GetRace()));
+                toShow = static_cast<std::uint8_t>(curLevel - worldRace.VisLevel(mChar.GetRace()));
             }
             if (mChar.IsNpc()) {
                 DoLight(&mChar, toShow);
@@ -1457,7 +1453,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
         worldWeather.doWeatherEffect(mSock, mChar, Weather::STORM);
         
         if (checkFieldEffects) {
-            Magic->CheckFieldEffects(mChar);
+            worldMagic.CheckFieldEffects(mChar);
         }
         
         mChar.UpdateDamageTrack();
@@ -1469,7 +1465,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
     else if (mChar.GetHP() <= 0) {
         std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
         for (auto i : scriptTriggers) {
-            auto toExecute = JSMapping->GetScript(i);
+            auto toExecute = worldJSMapping.GetScript(i);
             if (toExecute) {
                 auto retStatus = toExecute->OnDeathBlow(&mChar, mChar.GetAttacker());
                 
@@ -1512,24 +1508,24 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
         if (mChar.GetTimer(tCHAR_SPELLTIME) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) // Spell is complete target it.
         {
             // Set the recovery time before another spell can be cast
-            mChar.SetTimer( tCHAR_SPELLRECOVERYTIME, BuildTimeValue(static_cast<float>(Magic->spells[spellNum].RecoveryDelay())));
+            mChar.SetTimer( tCHAR_SPELLRECOVERYTIME, BuildTimeValue(static_cast<float>(worldMagic.spells[spellNum].RecoveryDelay())));
             
-            if (Magic->spells[spellNum].RequireTarget()) {
+            if (worldMagic.spells[spellNum].RequireTarget()) {
                 mChar.SetCasting(false);
                 mChar.SetFrozen(false);
                 mChar.Dirty(UT_UPDATE);
                 std::uint8_t cursorType = 0;
-                if (Magic->spells[spellNum].AggressiveSpell()) {
+                if (worldMagic.spells[spellNum].AggressiveSpell()) {
                     cursorType = 1;
                 }
                 else if ((spellNum == 4) || (spellNum == 6) || (spellNum == 7) || (spellNum >= 9 && spellNum <= 11) || (spellNum >= 15 && spellNum <= 17) || (spellNum == 25) || (spellNum == 26) || (spellNum == 29) || (spellNum == 44) || (spellNum == 59)) {
                     cursorType = 2;
                 }
-                mSock->SendTargetCursor(0, TARGET_CASTSPELL, Magic->spells[spellNum].StringToSay().c_str(), cursorType);
+                mSock->SendTargetCursor(0, TARGET_CASTSPELL, worldMagic.spells[spellNum].StringToSay().c_str(), cursorType);
             }
             else {
                 mChar.SetCasting(false);
-                Magic->CastSpell(mSock, &mChar);
+                worldMagic.CastSpell(mSock, &mChar);
                 mChar.SetTimer(tCHAR_SPELLTIME, 0);
                 mChar.SetFrozen(false);
             }
@@ -1539,7 +1535,7 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
             mChar.SetNextAct(75);
             if (!mChar.IsOnHorse() && !mChar.IsFlying()) {
                 // Consider Gargoyle flying as mounted here
-                Effects->PlaySpellCastingAnimation( &mChar, Magic->spells[mChar.GetSpellCast()].Action(), false, false);
+                worldEffect.PlaySpellCastingAnimation( &mChar, worldMagic.spells[mChar.GetSpellCast()].Action(), false, false);
             }
         }
     }
@@ -1550,7 +1546,7 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
         }
         const std::int16_t soundTimer = static_cast<std::int16_t>(ServerConfig::shared().shortValues[ShortValue::AMBIENTSOUND] * 100);
         if (!mChar.IsDead() && (RandomNum(0, soundTimer - 1)) == (soundTimer / 2)) {
-            Effects->PlayBGSound((*mSock), mChar);
+            worldEffect.PlayBGSound((*mSock), mChar);
         }
     }
     
@@ -1561,7 +1557,7 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
     if (mSock->GetTimer(tPC_TRACKING) > worldMain.GetUICurrentTime()) {
         if (mSock->GetTimer(tPC_TRACKINGDISPLAY) <= worldMain.GetUICurrentTime()) {
             mSock->SetTimer(tPC_TRACKINGDISPLAY,BuildTimeValue(static_cast<float>( ServerConfig::shared().ushortValues[UShortValue::MSGREDISPLAYTIME] )));
-            Skills->Track(&mChar);
+            worldSkill.Track(&mChar);
         }
     }
     else {
@@ -1606,7 +1602,7 @@ auto CheckNPC(CChar &mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck
     bool doAICheck = true;
     std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute) {
             if (toExecute->OnAISliver(&mChar) == 1) {
                 // Script returned true or 1, don't do hard-coded AI check
@@ -1618,7 +1614,7 @@ auto CheckNPC(CChar &mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck
     if (doAICheck && checkAI) {
         checkArtificialIntelligence(mChar);
     }
-    Movement->NpcMovement(mChar);
+    worldMovement.NpcMovement(mChar);
     
     if (doRestock) {
         restockNPC(mChar, false);
@@ -1646,7 +1642,7 @@ auto CheckNPC(CChar &mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck
                 mChar.SetTimer(tNPC_SUMMONTIME, BuildTimeValue(25));
                 return;
             }
-            Effects->PlaySound(&mChar, 0x01FE);
+            worldEffect.PlaySound(&mChar, 0x01FE);
             mChar.SetDead(true);
             mChar.Delete();
             return;
@@ -1745,7 +1741,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
                 if ((itemCheck->GetDecayTime() <= worldMain.GetUICurrentTime()) || worldMain.GetOverflow()) {
                     auto scriptTriggers = itemCheck->GetScriptTriggers();
                     for (auto scriptTrig : scriptTriggers) {
-                        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                         if (toExecute) {
                             if (toExecute->OnDecay(itemCheck) == 0) {
                                 // if it exists and we don't want hard code, return
@@ -1755,7 +1751,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
                     }
                     
                     // Check global script! Maybe there's another event there
-                    auto toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+                    auto toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
                     if (toExecute) {
                         if (toExecute->OnDecay(itemCheck) == 0) {
                             // if it exists and we don't want hard code, return
@@ -1822,7 +1818,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
                         if (RandomNum(1, 100) <=
                             static_cast<std::int32_t>(itemCheck->GetTempVar(CITV_MOREZ))) {
                             for (auto &tSock : FindNearbyPlayers(itemCheck,static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREY)))) {
-                                Effects->PlaySound(tSock, static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREX)),false);
+                                worldEffect.PlaySound(tSock, static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREX)),false);
                             }
                         }
                     }
@@ -1973,7 +1969,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
             if (entry.flag.test(AccountEntry::attributeflag_t::ONLINE)) {
                 reallyOn = false; // to start with, there's no one really on
                 {
-                    for (auto &tSock : Network->connClients) {
+                    for (auto &tSock : worldNetwork.connClients) {
                         CChar *tChar = tSock->CurrcharObj();
                         if (!ValidateObject(tChar)) {
                             continue;
@@ -1991,12 +1987,12 @@ auto CWorldMain::CheckAutoTimers() -> void {
         }
         accountFlush = BuildTimeValue(static_cast<float>(ServerConfig::shared().realNumbers[RealNumberConfig::FLUSHTIME]));
     }
-    // Network->On();   //<<<<<< WHAT the HECK, this is why you dont bury mutex locking
+    // worldNetwork.On();   //<<<<<< WHAT the HECK, this is why you dont bury mutex locking
     //  PushConn and PopConn lock and unlock as well (yes, bad)
     //  But now we are doing recursive lock here
     
     if (GetWorldSaveProgress() == SS_NOTSAVING) {
-        for (auto &tSock : Network->connClients) {
+        for (auto &tSock : worldNetwork.connClients) {
             if ((tSock->IdleTimeout() != -1) &&
                 static_cast<std::uint32_t>(tSock->IdleTimeout()) <= GetUICurrentTime()) {
                 CChar *tChar = tSock->CurrcharObj();
@@ -2007,7 +2003,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                     tSock->IdleTimeout(-1);
                     tSock->SysMessage(1246); // You're being disconnected because you
                     // were idle too long.
-                    Network->Disconnect(tSock);
+                    worldNetwork.Disconnect(tSock);
                 }
             }
             else if (((static_cast<std::uint32_t>(tSock->IdleTimeout() + 300 * 1000) <= GetUICurrentTime() && static_cast<std::uint32_t>(tSock->IdleTimeout() + 200 * 1000) >= GetUICurrentTime()) || GetOverflow()) &&  !tSock->WasIdleWarned()) {
@@ -2028,7 +2024,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                         tSock->IdleTimeout(-1);
                         tSock->SysMessage(9047); // Failed to negotiate features with assistant tool.
                         // Disconnecting client...
-                        Network->Disconnect(tSock);
+                        worldNetwork.Disconnect(tSock);
                     }
                 }
             }
@@ -2077,7 +2073,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                     myAccount.flag.set(AccountEntry::attributeflag_t::BANNED, true);
                     myAccount.timeBan =
                     GetMinutesSinceEpoch() + ServerConfig::shared().uintValues[UIntValue::NETTRAFFICTIMEBAN] ;
-                    Network->Disconnect(tSock);
+                    worldNetwork.Disconnect(tSock);
                     continue;
                 }
                 
@@ -2091,7 +2087,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
     else if (GetWorldSaveProgress() == SS_JUSTSAVED) {
         // if we've JUST saved, do NOT kick anyone off (due to a possibly really long save),
         // but reset any offending players to 60 seconds to go before being kicked off
-        for (auto &wsSocket : Network->connClients) {
+        for (auto &wsSocket : worldNetwork.connClients) {
             if (wsSocket) {
                 if (static_cast<std::uint32_t>(wsSocket->IdleTimeout()) < GetUICurrentTime()) {
                     wsSocket->IdleTimeout(BuildTimeValue(60.0F));
@@ -2116,7 +2112,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
             }
         });
         nextCheckTownRegions = BuildTimeValue(10); // do checks every 10 seconds or so, rather than every single time
-        JailSys->PeriodicCheck();
+        worldJailSystem.PeriodicCheck();
     }
     
     if ((nextCheckSpawnRegions <= GetUICurrentTime()) &&  (ServerConfig::shared().realNumbers[RealNumberConfig::CHECKSPAWN] != -1)) {
@@ -2167,7 +2163,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
         nextCheckSpawnRegions = BuildTimeValue( checkSpawnRegionSpeed); // Don't check them TOO often (Keep down the lag)
     }
     
-    HTMLTemplates->poll(ETT_ALLTEMPLATES);
+    worldHTMLTemplate.poll(ETT_ALLTEMPLATES);
     
     const std::uint32_t saveinterval = ServerConfig::shared().uintValues[UIntValue::SAVESTIMER] ;
     if (saveinterval != 0) {
@@ -2254,7 +2250,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
     }
     std::set<CMapRegion *> regionList;
     {
-        for (auto &iSock : Network->connClients) {
+        for (auto &iSock : worldNetwork.connClients) {
             if (iSock) {
                 CChar *mChar = iSock->CurrcharObj();
                 if (!ValidateObject(mChar)) {
@@ -2265,8 +2261,8 @@ auto CWorldMain::CheckAutoTimers() -> void {
                     GenericCheck(iSock, (*mChar), checkFieldEffects, doWeather);
                     CheckPC(iSock, (*mChar));
                     
-                    std::int16_t xOffset = MapRegion->GetGridX(mChar->GetX());
-                    std::int16_t yOffset = MapRegion->GetGridY(mChar->GetY());
+                    std::int16_t xOffset = worldMapHandler.GetGridX(mChar->GetX());
+                    std::int16_t yOffset = worldMapHandler.GetGridY(mChar->GetY());
                     
                     // Restrict the amount of active regions based on how far player is from
                     // the border to the next one. This reduces active regions around a
@@ -2288,7 +2284,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                         // Check 3 x colums
                         for (std::int8_t ctr2 = counter2Start; ctr2 <= counter2End; ++ctr2) {
                             // Check variable y colums
-                            auto tC = MapRegion->GetMapRegion(xOffset + counter, yOffset + ctr2, worldNumber);
+                            auto tC = worldMapHandler.GetMapRegion(xOffset + counter, yOffset + ctr2, worldNumber);
                             if (tC) {
                                 regionList.insert(tC);
                             }
@@ -2397,8 +2393,8 @@ auto CWorldMain::CheckAutoTimers() -> void {
         toRemove.clear();
     }
     
-    Effects->CheckTempeffects();
-    SpeechSys->poll();
+    worldEffect.CheckTempeffects();
+    worldSpeechSystem.poll();
     
     // Implement RefreshItem() / StatWindow() queue here
     std::for_each(worldMain.refreshQueue.begin(), worldMain.refreshQueue.end(), [](std::pair<CBaseObject *, std::uint32_t> entry) {
@@ -2453,39 +2449,18 @@ auto CWorldMain::CheckAutoTimers() -> void {
 // o------------------------------------------------------------------------------------------------o
 auto initClasses() -> void {
     worldMain.ClassesInitialized(true);
-    JSEngine = &aJSEngine;
-    JSMapping = &aJSMapping;
-    Effects = &aEffects;
-    Map = &aMap;
-    Skills = &aSkills;
-    Weight = &aWeight;
-    JailSys = &aJailSys;
-    Network = &aNetwork;
-    Magic = &aMagic;
-    Races = &aRaces;
-    Movement = &aMovement;
-    GuildSys = &aGuildSys;
-    WhoList = &aWhoList;
-    OffList = &aOffList;
-    Books = &aBooks;
-    GMQueue = &aGMQueue;
-    MapRegion = &aMapRegion;
-    SpeechSys = &aSpeechSys;
-    CounselorQueue = &aCounselorQueue;
-    HTMLTemplates = &aHTMLTemplates;
-    FileLookup = &aFileLookup;
     
-    aJSEngine.startup();
-    aFileLookup.startup();
+    worldJSEngine.startup();
+    worldFileLookup.startup();
     serverCommands.startup();
-    aSpeechSys.startup();
+    worldSpeechSystem.startup();
     // Need to do map
-    aNetwork.startup();
-    aMap.load();
-    JSMapping->ResetDefaults();
-    JSMapping->GetEnvokeById()->Parse();
-    JSMapping->GetEnvokeByType()->Parse();
-    aMapRegion.startup();
+    worldNetwork.startup();
+    worldMULHandler.load();
+    worldJSMapping.ResetDefaults();
+    worldJSMapping.GetEnvokeById()->Parse();
+    worldJSMapping.GetEnvokeByType()->Parse();
+    worldMapHandler.startup();
     Account::accountDirectory = ServerConfig::shared().directoryFor(dirlocation_t::ACCOUNT);
 }
 
@@ -2598,14 +2573,9 @@ auto Shutdown(std::int32_t retCode) -> void {
     }
     
     if (worldMain.ClassesInitialized()) {
-        if (HTMLTemplates) {
             Console::shared() << "HTMLTemplates object detected. Writing Offline HTML Now...";
-            HTMLTemplates->poll(ETT_OFFLINE);
+            worldHTMLTemplate.poll(ETT_OFFLINE);
             Console::shared().printDone();
-        }
-        else {
-            Console::shared() << "HTMLTemplates object not found." << myendl;
-        }
         
         Console::shared() << "Destroying class objects and pointers... ";
         // delete any objects that were created (delete takes care of nullptr check =)
@@ -2662,12 +2632,12 @@ auto Shutdown(std::int32_t retCode) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto AdvanceObj(CChar *applyTo, std::uint16_t advObj, bool multiUse) -> void {
     if ((applyTo->GetAdvObj() == 0) || multiUse) {
-        Effects->PlayStaticAnimation(applyTo, 0x373A, 0, 15);
-        Effects->PlaySound(applyTo, 0x01E9);
+        worldEffect.PlayStaticAnimation(applyTo, 0x373A, 0, 15);
+        worldEffect.PlaySound(applyTo, 0x01E9);
         applyTo->SetAdvObj(advObj);
         auto sect = "ADVANCEMENT "s + util::ntos(advObj);
         sect = util::trim(util::strip(sect, "//"));
-        auto Advancement = FileLookup->FindEntry(sect, advance_def);
+        auto Advancement = worldFileLookup.FindEntry(sect, advance_def);
         if (Advancement == nullptr) {
             Console::shared() << "ADVANCEMENT OBJECT: Script section not found, Aborting" << myendl;
             applyTo->SetAdvObj(0);
@@ -2992,8 +2962,8 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
     auto mChar = s->CurrcharObj();
     CPLightLevel toSend(level);
     
-    if ((Races->Affect(mChar->GetRace(), Weather::LIGHT)) && mChar->GetWeathDamage(LIGHT) == 0) {
-        mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(mChar->GetRace(), Weather::LIGHT)))),Weather::LIGHT);
+    if ((worldRace.Affect(mChar->GetRace(), Weather::LIGHT)) && mChar->GetWeathDamage(LIGHT) == 0) {
+        mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(worldRace.Secs(mChar->GetRace(), Weather::LIGHT)))),Weather::LIGHT);
     }
     
     if (mChar->GetFixedLight() != 255) {
@@ -3014,11 +2984,11 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
         const float lightMax = worldWeather[curRegion->GetWeather()].impact[Weather::BRIGHTNESS][Weather::MAX] ;
         if (lightMin < 300 && lightMax < 300) {
             auto i = worldWeather[curRegion->GetWeather()].impact[Weather::BRIGHTNESS][Weather::CURRENT];
-            if (Races->VisLevel(mChar->GetRace()) > i) {
+            if (worldRace.VisLevel(mChar->GetRace()) > i) {
                 toShow = 0;
             }
             else {
-                toShow = static_cast<lightlevel_t>(std::round(i - Races->VisLevel(mChar->GetRace())));
+                toShow = static_cast<lightlevel_t>(std::round(i - worldRace.VisLevel(mChar->GetRace())));
             }
             toSend.Level(toShow);
         }
@@ -3028,11 +2998,11 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
     }
     else {
         if (mChar->InDungeon()) {
-            if (Races->VisLevel(mChar->GetRace()) > dunLevel) {
+            if (worldRace.VisLevel(mChar->GetRace()) > dunLevel) {
                 toShow = 0;
             }
             else {
-                toShow = static_cast<lightlevel_t>(std::round(dunLevel - Races->VisLevel(mChar->GetRace())));
+                toShow = static_cast<lightlevel_t>(std::round(dunLevel - worldRace.VisLevel(mChar->GetRace())));
             }
             toSend.Level(toShow);
         }
@@ -3042,7 +3012,7 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
     auto eventFound = false;
     auto scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        auto toExecute = JSMapping->GetScript(scriptTrig);
+        auto toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute) {
             if (toExecute->OnLightChange(mChar, toShow) == 1) {
                 // A script with the event returned true; prevent other scripts from running
@@ -3054,7 +3024,7 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
     
     if (!eventFound) {
         // Check global script! Maybe there's another event there
-        auto toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+        auto toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
         if (toExecute) {
             toExecute->OnLightChange(mChar, toShow);
         }
@@ -3069,8 +3039,8 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
 //|	Purpose		-	Sets light level for character and applies relevant effects
 // o------------------------------------------------------------------------------------------------o
 auto DoLight(CChar *mChar, std::uint8_t level) -> void {
-    if ((Races->Affect(mChar->GetRace(), Weather::LIGHT)) && (mChar->GetWeathDamage(LIGHT) == 0)) {
-        mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue( static_cast<float>(Races->Secs(mChar->GetRace(), Weather::LIGHT)))), Weather::LIGHT);
+    if ((worldRace.Affect(mChar->GetRace(), Weather::LIGHT)) && (mChar->GetWeathDamage(LIGHT) == 0)) {
+        mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue( static_cast<float>(worldRace.Secs(mChar->GetRace(), Weather::LIGHT)))), Weather::LIGHT);
     }
     
     auto curRegion = mChar->GetRegion();
@@ -3085,21 +3055,21 @@ auto DoLight(CChar *mChar, std::uint8_t level) -> void {
         auto lightMax = (*wSys).impact[Weather::BRIGHTNESS][Weather::MAX];
         if (lightMin < 300 && lightMax < 300) {
             auto i = (*wSys).impact[Weather::BRIGHTNESS][Weather::CURRENT];
-            if (Races->VisLevel(mChar->GetRace()) > i) {
+            if (worldRace.VisLevel(mChar->GetRace()) > i) {
                 toShow = 0;
             }
             else {
-                toShow = static_cast<lightlevel_t>( std::round(i - Races->VisLevel(mChar->GetRace())));
+                toShow = static_cast<lightlevel_t>( std::round(i - worldRace.VisLevel(mChar->GetRace())));
             }
         }
     }
     else {
         if (mChar->InDungeon()) {
-            if (Races->VisLevel(mChar->GetRace()) > dunLevel) {
+            if (worldRace.VisLevel(mChar->GetRace()) > dunLevel) {
                 toShow = 0;
             }
             else {
-                toShow = static_cast<lightlevel_t>( std::round(dunLevel - Races->VisLevel(mChar->GetRace())));
+                toShow = static_cast<lightlevel_t>( std::round(dunLevel - worldRace.VisLevel(mChar->GetRace())));
             }
         }
     }
@@ -3107,7 +3077,7 @@ auto DoLight(CChar *mChar, std::uint8_t level) -> void {
     bool eventFound = false;
     auto scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        auto toExecute = JSMapping->GetScript(scriptTrig);
+        auto toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute) {
             if (toExecute->OnLightChange(mChar, toShow) == 1) {
                 // A script with the event returned true; prevent other scripts from running
@@ -3119,7 +3089,7 @@ auto DoLight(CChar *mChar, std::uint8_t level) -> void {
     
     if (!eventFound) {
         // Check global script! Maybe there's another event there
-        auto toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+        auto toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
         if (toExecute) {
             toExecute->OnLightChange(mChar, toShow);
         }
@@ -3157,7 +3127,7 @@ auto DoLight(CItem *mItem, std::uint8_t level) -> void {
     auto eventFound = false;
     auto scriptTriggers = mItem->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        auto toExecute = JSMapping->GetScript(scriptTrig);
+        auto toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute) {
             if (toExecute->OnLightChange(mItem, toShow) == 1) {
                 // A script with the event returned true; prevent other scripts from running
@@ -3169,7 +3139,7 @@ auto DoLight(CItem *mItem, std::uint8_t level) -> void {
     
     if (!eventFound) {
         // Check global script! Maybe there's another event there
-        auto toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+        auto toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
         if (toExecute) {
             toExecute->OnLightChange(mItem, toShow);
         }
@@ -3247,7 +3217,7 @@ auto GetTileName(CItem &mItem, std::string &itemname) -> size_t {
     std::string temp = mItem.GetName();
     temp = util::trim(util::strip(temp, "//"));
     const std::uint16_t getAmount = mItem.GetAmount();
-    CTile &tile = Map->SeekTile(mItem.GetId());
+    CTile &tile = worldMULHandler.SeekTile(mItem.GetId());
     if (temp.substr(0, 1) == "#") {
         temp = tile.Name();
     }
@@ -3438,7 +3408,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
             // Run onLeaveRegion/onEnterRegion for character
             auto scriptTriggers = mChar.GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
-                auto toExecute = JSMapping->GetScript(scriptTrig);
+                auto toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute) {
                     toExecute->OnLeaveRegion(&mChar, iRegion->GetRegionNum());
                     toExecute->OnEnterRegion(&mChar, calcReg->GetRegionNum());
@@ -3450,7 +3420,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
             scriptTriggers.shrink_to_fit();
             scriptTriggers = iRegion->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
-                auto toExecute = JSMapping->GetScript(scriptTrig);
+                auto toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute) {
                     toExecute->OnLeaveRegion(&mChar, iRegion->GetRegionNum());
                 }
@@ -3461,7 +3431,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
             scriptTriggers.shrink_to_fit();
             scriptTriggers = calcReg->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
-                auto toExecute = JSMapping->GetScript(scriptTrig);
+                auto toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute) {
                     toExecute->OnEnterRegion(&mChar, calcReg->GetRegionNum());
                 }
@@ -3471,14 +3441,14 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
             mChar.SetRegion(calcReg->GetRegionNum());
         }
         if (mSock) {
-            Effects->DoSocketMusic(mSock);
+            worldEffect.DoSocketMusic(mSock);
             DoLight(mSock, worldMain.uoTime.worldLightLevel );
         }
     }
     else {
         // Main region didn't change, but subregion did! Update music
         if (oldSubRegionNum != mChar.GetSubRegion()) {
-            Effects->DoSocketMusic(mSock);
+            worldEffect.DoSocketMusic(mSock);
         }
         
         // Update lighting
@@ -3497,7 +3467,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
 auto CheckCharInsideBuilding(CChar *c, CSocket *mSock, bool doWeatherStuff) -> void {
     if (!c->GetMounted() && !c->GetStabled()) {
         auto wasInBuilding = c->InBuilding();
-        bool isInBuilding = Map->InBuilding(c->GetX(), c->GetY(), c->GetZ(), c->WorldNumber(), c->GetInstanceId());
+        bool isInBuilding = worldMULHandler.InBuilding(c->GetX(), c->GetY(), c->GetZ(), c->WorldNumber(), c->GetInstanceId());
         if (wasInBuilding != isInBuilding) {
             c->SetInBuilding(isInBuilding);
             if (doWeatherStuff) {
@@ -3525,8 +3495,8 @@ auto WillResultInCriminal(CChar *mChar, CChar *targ) -> bool {
     auto rValue = false;
     if (ValidateObject(mChar) && ValidateObject(targ) && mChar != targ) {
         // Make sure they're not racial enemies, or guild members/guild enemies
-        if ((Races->Compare(mChar, targ) > RACE_ENEMY) &&
-            GuildSys->ResultInCriminal(mChar, targ)) {
+        if ((worldRace.Compare(mChar, targ) > RACE_ENEMY) &&
+            worldGuildSystem.ResultInCriminal(mChar, targ)) {
             // Make sure they're not in the same party
             if (!mCharParty || mCharParty->HasMember(targ)) {
                 // Make sure the target is not the aggressor in the fight
@@ -3646,7 +3616,7 @@ auto UpdateFlag(CChar *mChar) -> void {
     if (oldFlag != newFlag) {
         auto scriptTriggers = mChar->GetScriptTriggers();
         for (auto scriptTrig : scriptTriggers) {
-            auto toExecute = JSMapping->GetScript(scriptTrig);
+            auto toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute) {
                 if (toExecute->OnFlagChange(mChar, newFlag, oldFlag) == 1) {
                     break;
@@ -3697,7 +3667,7 @@ auto SocketMapChange(CSocket *sock, CChar *charMoving, CItem *gate) -> void {
     
     std::uint8_t tWorldNum = static_cast<std::uint8_t>(gate->GetTempVar(CITV_MORE));
     std::uint16_t tInstanceId = gate->GetInstanceId();
-    if (!Map->MapExists(tWorldNum))
+    if (!worldMULHandler.MapExists(tWorldNum))
         return;
     
     CChar *toMove = nullptr;
@@ -3777,7 +3747,7 @@ void DoorMacro(CSocket *s) {
         } break;
     }
     
-    for (auto &toCheck : MapRegion->PopulateList(mChar)) {
+    for (auto &toCheck : worldMapHandler.PopulateList(mChar)) {
         if (!toCheck)
             continue;
         
@@ -3791,9 +3761,9 @@ void DoorMacro(CSocket *s) {
             if (itemCheck->GetX() == xc && itemCheck->GetY() == yc && distZ < 7) {
                 if (itemCheck->GetType() == IT_DOOR || itemCheck->GetType() == IT_LOCKEDDOOR) {
                     // only open doors
-                    if (JSMapping->GetEnvokeByType()->Check( static_cast<std::uint16_t>(itemCheck->GetType()))) {
-                        std::uint16_t envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<std::uint16_t>(itemCheck->GetType()));
-                        auto envExecute = JSMapping->GetScript(envTrig);
+                    if (worldJSMapping.GetEnvokeByType()->Check( static_cast<std::uint16_t>(itemCheck->GetType()))) {
+                        std::uint16_t envTrig = worldJSMapping.GetEnvokeByType()->GetScript( static_cast<std::uint16_t>(itemCheck->GetType()));
+                        auto envExecute = worldJSMapping.GetScript(envTrig);
                         if (envExecute) {
                             [[maybe_unused]] std::int8_t retVal = envExecute->OnUseChecked(mChar, itemCheck);
                         }

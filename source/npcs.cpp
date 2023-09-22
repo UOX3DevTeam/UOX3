@@ -30,6 +30,13 @@
 
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
+extern CSkills worldSkill ;
+extern cRaces worldRace ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern CServerDefinitions worldFileLookup ;
+extern CMulHandler worldMULHandler ;
+
 
 using namespace std::string_literals;
 
@@ -50,7 +57,7 @@ GenericList<CChar *> *CCharStuff::GetAlwaysAwakeNPCs() { return &alwaysAwakeNPCs
 auto CCharStuff::AddRandomLoot(CItem *s, const std::string &lootlist, bool shouldSave) -> CItem * {
     CItem *retItem = nullptr;
     std::string sect = "LOOTLIST "s + lootlist;
-    auto lootList = FileLookup->FindEntry(sect, items_def);
+    auto lootList = worldFileLookup.FindEntry(sect, items_def);
     if (lootList) {
         auto i = lootList->NumEntries();
         if (i > 0) {
@@ -107,7 +114,7 @@ auto CCharStuff::AddRandomLoot(CItem *s, const std::string &lootlist, bool shoul
 // o------------------------------------------------------------------------------------------------o
 CChar *CCharStuff::CreateBaseNPC(std::string ourNPC, bool shouldSave) {
     ourNPC = util::trim(util::strip(ourNPC, "//"));
-    CScriptSection *npcCreate = FileLookup->FindEntry(ourNPC, npc_def);
+    CScriptSection *npcCreate = worldFileLookup.FindEntry(ourNPC, npc_def);
     if (npcCreate == nullptr) {
         Console::shared().error(util::format("CreateBaseNPC(): Bad script npc %s (NPC Not Found).", ourNPC.c_str()));
         return nullptr;
@@ -140,7 +147,7 @@ CChar *CCharStuff::CreateBaseNPC(std::string ourNPC, bool shouldSave) {
         
         std::vector<std::uint16_t> scriptTriggers = cCreated->GetScriptTriggers();
         for (auto scriptTrig : scriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 toExecute->OnCreate(cCreated, true, false);
             }
@@ -222,7 +229,7 @@ auto CCharStuff::NpcListLookup(const std::string &npclist) -> std::string {
     auto sect = "NPCLIST "s + npclist;
     sect = util::trim(util::strip(sect, "//"));
     
-    auto npcList = FileLookup->FindEntry(sect, npc_def);
+    auto npcList = worldFileLookup.FindEntry(sect, npc_def);
     if (!npcList)
         return "";
     
@@ -269,7 +276,7 @@ auto CCharStuff::CreateRandomNPC(const std::string &npclist) -> CChar * {
     auto sect = "NPCLIST "s + npclist;
     sect = util::trim(util::strip(sect, "//"));
     
-    auto npcList = FileLookup->FindEntry(sect, npc_def);
+    auto npcList = worldFileLookup.FindEntry(sect, npc_def);
     if (!npcList)
         return nullptr;
     
@@ -387,11 +394,11 @@ void CCharStuff::PostSpawnUpdate(CChar *cCreated) {
     cCreated->SetRegion(tReg->GetRegionNum());
     
     for (std::uint8_t z = 0; z < ALLSKILLS; ++z) {
-        Skills->UpdateSkillLevel(cCreated, z);
+        worldSkill.UpdateSkillLevel(cCreated, z);
     }
     
     // Set hunger timer so NPC's hunger level doesn't instantly drop after spawning
-    auto hungerRate = Races->GetHungerRate(cCreated->GetRace());
+    auto hungerRate = worldRace.GetHungerRate(cCreated->GetRace());
     cCreated->SetTimer(tCHAR_HUNGER, BuildTimeValue(static_cast<float>(hungerRate)));
     
     UpdateFlag(cCreated);
@@ -426,7 +433,7 @@ std::int16_t GetRadius(CChar *c) {
 bool CheckBoundingBox(const std::int16_t xPos, const std::int16_t yPos, const std::int16_t fx1, const std::int16_t fy1, const std::int8_t fz1, const std::int16_t fx2, const std::int16_t fy2, const std::uint8_t worldNumber, const std::uint16_t instanceId) {
     if (xPos >= ((fx1 < fx2) ? fx1 : fx2) && xPos <= ((fx1 < fx2) ? fx2 : fx1)) {
         if (yPos >= ((fy1 < fy2) ? fy1 : fy2) && yPos <= ((fy1 < fy2) ? fy2 : fy1)) {
-            if (fz1 == -1 || abs(fz1 - Map->Height(xPos, yPos, fz1, worldNumber, instanceId)) <= 5)
+            if (fz1 == -1 || abs(fz1 - worldMULHandler.Height(xPos, yPos, fz1, worldNumber, instanceId)) <= 5)
                 return true;
         }
     }
@@ -440,7 +447,7 @@ bool CheckBoundingBox(const std::int16_t xPos, const std::int16_t yPos, const st
 // o------------------------------------------------------------------------------------------------o
 bool CheckBoundingCircle(const std::int16_t xPos, const std::int16_t yPos, const std::int16_t fx1, const std::int16_t fy1, const std::int8_t fz1, const std::int16_t radius, const std::uint8_t worldNumber, const std::uint16_t instanceId) {
     if ((xPos - fx1) * (xPos - fx1) + (yPos - fy1) * (yPos - fy1) <= radius * radius) {
-        if (fz1 == -1 || abs(fz1 - Map->Height(xPos, yPos, fz1, worldNumber, instanceId)) <= 5)
+        if (fz1 == -1 || abs(fz1 - worldMULHandler.Height(xPos, yPos, fz1, worldNumber, instanceId)) <= 5)
             return true;
     }
     return false;
@@ -552,12 +559,12 @@ void CCharStuff::FindSpotForNPC(CChar *cCreated, const std::int16_t originX, con
         yos = originY + RandomNum(static_cast<std::int16_t>(-yAway), yAway);
         
         if (xos >= 1 && yos >= 1) {
-            targZ = Map->Height(xos, yos, z, worldNumber, instanceId);
+            targZ = worldMULHandler.Height(xos, yos, z, worldNumber, instanceId);
             if (!worldMain.creatures[cCreated->GetId()].IsWater()) {
-                foundSpot = Map->ValidSpawnLocation(xos, yos, targZ, worldNumber, instanceId);
+                foundSpot = worldMULHandler.ValidSpawnLocation(xos, yos, targZ, worldNumber, instanceId);
             }
             else if (worldMain.creatures[cCreated->GetId()].IsWater() || (!foundSpot && worldMain.creatures[cCreated->GetId()].IsAmphibian())) {
-                foundSpot =  Map->ValidSpawnLocation(xos, yos, targZ, worldNumber, instanceId, false);
+                foundSpot =  worldMULHandler.ValidSpawnLocation(xos, yos, targZ, worldNumber, instanceId, false);
             }
         }
     }
@@ -578,7 +585,7 @@ auto CCharStuff::LoadShopList(const std::string &list, CChar *c) -> void {
     
     auto sect = "SHOPLIST "s + list;
     sect = util::trim(util::strip(sect, "//"));
-    auto ShoppingList = FileLookup->FindEntry(sect, items_def);
+    auto ShoppingList = worldFileLookup.FindEntry(sect, items_def);
     if (ShoppingList == nullptr)
         return;
     
@@ -674,7 +681,7 @@ void SetRandomName(CChar *s, const std::string &namelist) {
     sect = util::trim(util::strip(sect, "//"));
     std::string tempName;
     
-    CScriptSection *RandomName = FileLookup->FindEntry(sect, npc_def);
+    CScriptSection *RandomName = worldFileLookup.FindEntry(sect, npc_def);
     if (RandomName == nullptr) {
         tempName = std::string("Error Namelist ") + namelist + std::string(" Not Found");
     }
@@ -696,7 +703,7 @@ void SetRandomName(CChar *s, const std::string &namelist) {
 std::uint16_t AddRandomColor(const std::string &colorlist) {
     std::string sect = std::string("RANDOMCOLOR ") + colorlist;
     sect = util::trim(util::strip(sect, "//"));
-    CScriptSection *RandomColours = FileLookup->FindEntry(sect, colors_def);
+    CScriptSection *RandomColours = worldFileLookup.FindEntry(sect, colors_def);
     if (RandomColours == nullptr) {
         Console::shared().warning(util::format("Error Colorlist %s Not Found", colorlist.c_str()));
         return 0;
@@ -1118,7 +1125,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                     scriptEntry = util::trim(util::strip(ssects[rndEntry], "//"));
                 }
                 
-                CScriptSection *toFind = FileLookup->FindEntry(scriptEntry, npc_def);
+                CScriptSection *toFind = worldFileLookup.FindEntry(scriptEntry, npc_def);
                 if (toFind == nullptr) {
                     Console::shared().warning( util::format("Invalid script entry ([%s]) called with GET tag, NPC serial 0x%X", scriptEntry.c_str(), applyTo->GetSerial()));
                 }
@@ -1225,7 +1232,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                         scriptEntry = util::trim(util::strip(ssects[rndEntry], "//"));
                     }
                     
-                    CScriptSection *toFind = FileLookup->FindEntry(scriptEntry, npc_def);
+                    CScriptSection *toFind = worldFileLookup.FindEntry(scriptEntry, npc_def);
                     if (toFind == NULL) {
                         Console::shared().warning(util::format( "Invalid script entry ([%s]) called with %s tag, NPC serial 0x%X", scriptEntry.c_str(), tagName.c_str(), applyTo->GetSerial()));
                     }
@@ -1934,7 +1941,7 @@ bool CCharStuff::CanControlPet(CChar *mChar, CChar *Npc, bool isRestricted, bool
         
         if (checkDifficulty && Npc->IsTamed() && ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY)) {
             // Let's base this on how difficult it is to control the pet, as well
-            std::uint16_t chanceToControl = Skills->CalculatePetControlChance(mChar, Npc);
+            std::uint16_t chanceToControl = worldSkill.CalculatePetControlChance(mChar, Npc);
             std::uint16_t loyaltyGainOnSuccess = ServerConfig::shared().ushortValues[UShortValue::PETLOYALITYGAINSUCCESS];
             std::uint16_t loyaltyLossOnFailure = ServerConfig::shared().ushortValues[UShortValue::PETLOYALITYLOSSFAILURE];
             
@@ -1955,7 +1962,7 @@ bool CCharStuff::CanControlPet(CChar *mChar, CChar *Npc, bool isRestricted, bool
                     Npc->SetLoyalty(std::max(0, Npc->GetLoyalty() - loyaltyLossOnFailure));
                     std::uint16_t soundToPlay =
                     worldMain.creatures[Npc->GetId()].GetSound(SND_STARTATTACK);
-                    Effects->PlaySound(Npc, soundToPlay);
+                    worldEffect.PlaySound(Npc, soundToPlay);
                     
                     if (Npc->GetLoyalty() == 0) {
                         // Reduce player's control slot usage by the amount of control slots taken
@@ -2033,7 +2040,7 @@ void CCharStuff::ReleasePet(CChar *pet) {
     
     // If a summoned creature, unsummon it
     if (pet->GetTimer(tNPC_SUMMONTIME)) {
-        Effects->PlaySound(pet, 0x01FE);
+        worldEffect.PlaySound(pet, 0x01FE);
         pet->Delete();
     }
     
@@ -2134,7 +2141,7 @@ void MonsterGate(CChar *s, const std::string &scriptEntry) {
     
     auto entry = scriptEntry;
     entry = util::trim(util::strip(entry, "//"));
-    CScriptSection *Monster = FileLookup->FindEntry(entry, npc_def);
+    CScriptSection *Monster = worldFileLookup.FindEntry(entry, npc_def);
     if (Monster == nullptr)
         return;
     
@@ -2176,11 +2183,11 @@ void MonsterGate(CChar *s, const std::string &scriptEntry) {
     worldNPC.ApplyNpcSection(s, Monster, scriptEntry, true);
     // Now find real 'skill' based on 'baseskill' (stat modifiers)
     for (std::uint8_t j = 0; j < ALLSKILLS; ++j) {
-        Skills->UpdateSkillLevel(s, j);
+        worldSkill.UpdateSkillLevel(s, j);
     }
     s->Update();
-    Effects->PlayStaticAnimation(s, 0x373A, 0, 15);
-    Effects->PlaySound(s, 0x01E9);
+    worldEffect.PlayStaticAnimation(s, 0x373A, 0, 15);
+    worldEffect.PlaySound(s, 0x01E9);
 }
 
 // o------------------------------------------------------------------------------------------------o

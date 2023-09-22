@@ -43,6 +43,9 @@
 #include "weight.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern CWeight worldWeight ;
+extern CJSMapping worldJSMapping ;
+extern CNetworkStuff worldNetwork ;
 
 const std::uint32_t BIT_FREE = 0;
 const std::uint32_t BIT_DELETED = 1;
@@ -414,13 +417,13 @@ void CBaseObject::SetId(std::uint16_t newValue) {
     }
     
     if (ValidateObject(checkCont)) {
-        Weight->SubtractItemWeight(checkCont, static_cast<CItem *>(this));
+        worldWeight.SubtractItemWeight(checkCont, static_cast<CItem *>(this));
     }
     
     id = newValue;
     
     if (ValidateObject(checkCont)) {
-        Weight->AddItemWeight(checkCont, static_cast<CItem *>(this));
+        worldWeight.AddItemWeight(checkCont, static_cast<CItem *>(this));
     }
     
     Dirty(UT_HIDE);
@@ -747,7 +750,7 @@ void CBaseObject::SetRace(raceid_t newValue) {
 std::string CBaseObject::GetNameRequest(CChar *nameRequester, std::uint8_t requestSource) {
     std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             std::string textFromScript = toExecute->OnNameRequest(this, nameRequester, requestSource);
             if (!textFromScript.empty()) {
@@ -953,7 +956,7 @@ void CBaseObject::RemoveFromMulti(bool fireTrigger) {
                 // First, trigger the OnLeaving event for the multi an object is removed from
                 std::vector<std::uint16_t> scriptTriggers = multis->GetScriptTriggers();
                 for (auto i : scriptTriggers) {
-                    cScript *toExecute = JSMapping->GetScript(i);
+                    cScript *toExecute = worldJSMapping.GetScript(i);
                     if (toExecute != nullptr) {
                         // If script returns true/1, prevent other onLeaving events from triggering
                         if (toExecute->OnLeaving(multis, this) == 1) {
@@ -967,7 +970,7 @@ void CBaseObject::RemoveFromMulti(bool fireTrigger) {
                 // Then, trigger the same event for the object being removed
                 scriptTriggers = GetScriptTriggers();
                 for (auto i : scriptTriggers) {
-                    cScript *toExecute = JSMapping->GetScript(i);
+                    cScript *toExecute = worldJSMapping.GetScript(i);
                     if (toExecute != nullptr) {
                         // If script returns true/1, prevent other onLeaving events from triggering
                         if (toExecute->OnLeaving(multis, this) == 1) {
@@ -1001,7 +1004,7 @@ void CBaseObject::AddToMulti(bool fireTrigger) {
                 // First, trigger the onEntrance script attached to the multi, if any
                 std::vector<std::uint16_t> scriptTriggers = multis->GetScriptTriggers();
                 for (auto i : scriptTriggers) {
-                    cScript *toExecute = JSMapping->GetScript(i);
+                    cScript *toExecute = worldJSMapping.GetScript(i);
                     if (toExecute != nullptr) {
                         // If script returns true/1, prevent other onEntrance events from triggering
                         if (toExecute->OnEntrance(multis, this) == 1) {
@@ -1017,7 +1020,7 @@ void CBaseObject::AddToMulti(bool fireTrigger) {
                 // Then, trigger the onEntrance script attached to the object entering the multi
                 scriptTriggers = GetScriptTriggers();
                 for (auto i : scriptTriggers) {
-                    cScript *toExecute = JSMapping->GetScript(i);
+                    cScript *toExecute = worldJSMapping.GetScript(i);
                     if (toExecute != nullptr) {
                         // If script returns true/1, prevent other onEntrance events from triggering
                         if (toExecute->OnEntrance(multis, this) == 1) {
@@ -1660,7 +1663,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
                 // scriptTrig	= util::ston<std::uint16_t>(data);
                 std::uint16_t scriptId = util::ston<std::uint16_t>(data);
                 if (scriptId != 0 && scriptId != 65535) {
-                    cScript *toExecute = JSMapping->GetScript(scriptId);
+                    cScript *toExecute = worldJSMapping.GetScript(scriptId);
                     if (toExecute == nullptr) {
                         Console::shared().warning(util::format("SCPTRIG tag found with invalid script ID (%s) while loading world data!", data.c_str()));
                     }
@@ -1823,7 +1826,7 @@ void CBaseObject::WorldNumber(std::uint8_t value) {
         // WorldNumber has changed, check for onFacetChange JS event (characters only)
         std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
         for (auto i : scriptTriggers) {
-            cScript *tScript = JSMapping->GetScript(i);
+            cScript *tScript = worldJSMapping.GetScript(i);
             if (tScript != nullptr) {
                 if (tScript->OnFacetChange(static_cast<CChar *>(this), worldNumber, value) == 0) {
                     // Script indicated facet change should not be allowed. Abort!
@@ -1978,7 +1981,7 @@ void CBaseObject::Cleanup() {
     
     std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
     for (auto i : scriptTriggers) {
-        cScript *tScript = JSMapping->GetScript(i);
+        cScript *tScript = worldJSMapping.GetScript(i);
         if (tScript != nullptr) {
             tScript->OnDelete(this);
         }
@@ -1992,7 +1995,7 @@ void CBaseObject::Cleanup() {
     if (ValidateObject(multis)) {
         SetMulti(INVALIDSERIAL, false);
     }
-    for (auto &iSock : Network->connClients) {
+    for (auto &iSock : worldNetwork.connClients) {
         if (iSock) {
             if (iSock->TempObj() != nullptr && iSock->TempObj() == this) {
                 iSock->TempObj(nullptr);

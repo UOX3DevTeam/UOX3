@@ -48,7 +48,8 @@
 
 using namespace std::string_literals;
 
-CBooks *Books = nullptr;
+extern CBooks worldBook ;
+extern CServerDefinitions worldFileLookup ;
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CPINewBookHeader::Handle()
@@ -66,7 +67,7 @@ bool CPINewBookHeader::Handle() {
         auto fileName = ServerConfig::shared().directoryFor(dirlocation_t::BOOK) / std::filesystem::path(util::ntos(bookSer, 16) + ".bok"s);
         
         if (!std::filesystem::exists(fileName)) {
-            Books->CreateBook(fileName, tSock->CurrcharObj(), mBook);
+            worldBook.CreateBook(fileName, tSock->CurrcharObj(), mBook);
         }
         
         std::fstream file(fileName.string(), std::ios::in | std::ios::out | std::ios::binary);
@@ -117,7 +118,7 @@ bool CPINewBookHeader::Handle() {
 auto CBooks::OpenPreDefBook(CSocket *mSock, CItem *i) -> void {
     if (mSock) {
         auto temp = "BOOK "s + util::ntos(i->GetTempVar(CITV_MORE));
-        auto book = FileLookup->FindEntry(temp, misc_def);
+        auto book = worldFileLookup.FindEntry(temp, misc_def);
         if (book) {
             CPNewBookHeader toSend;
             toSend.Serial(i->GetSerial());
@@ -264,7 +265,7 @@ void CBooks::OpenBook(CSocket *mSock, CItem *mBook, bool isWriteable) {
 auto CBooks::ReadPreDefBook(CSocket *mSock, CItem *i, std::uint16_t p) -> void {
     if (mSock) {
         auto temp = "BOOK "s + util::ntos(i->GetTempVar(CITV_MORE));
-        CScriptSection *book = FileLookup->FindEntry(temp, misc_def);
+        CScriptSection *book = worldFileLookup.FindEntry(temp, misc_def);
         if (book) {
             std::uint16_t curPage = p;
             for (const auto &sec : book->collection()) {
@@ -274,7 +275,7 @@ auto CBooks::ReadPreDefBook(CSocket *mSock, CItem *i, std::uint16_t p) -> void {
                     if (curPage == 0) // we found our page
                     {
                         temp = "PAGE "s + sec->data;
-                        auto page = FileLookup->FindEntry(temp, misc_def);
+                        auto page = worldFileLookup.FindEntry(temp, misc_def);
                         if (page) {
                             CPBookPage cpbpSend((*i));
                             cpbpSend.NewPage(p);
@@ -310,7 +311,7 @@ bool CPIBookPage::Handle() {
         if (mBook->GetTempVar(CITV_MOREX) != 666) // Just incase, make sure it is a writable book
         {
             if (mBook->GetTempVar(CITV_MOREX) != 999) {
-                Books->ReadPreDefBook(tSock, mBook, pageNum);
+                worldBook.ReadPreDefBook(tSock, mBook, pageNum);
             }
             return true;
         }
@@ -343,7 +344,7 @@ bool CPIBookPage::Handle() {
         }
         
         if (!std::filesystem::exists(fileName)) {
-            Books->CreateBook(fileName, tSock->CurrcharObj(), mBook);
+            worldBook.CreateBook(fileName, tSock->CurrcharObj(), mBook);
         }
         
         std::fstream file(fileName.string(), std::ios::in | std::ios::out | std::ios::binary);

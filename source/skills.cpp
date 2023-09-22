@@ -33,12 +33,18 @@
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
+extern CMagic worldMagic ;
+extern cRaces worldRace ;
+extern CMovement worldMovement ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+extern CServerDefinitions worldFileLookup ;
+extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
 
 bool CheckItemRange(CChar *mChar, CItem *i);
 
-CSkills *Skills = nullptr;
 
 const std::uint16_t CREATE_MENU_OFFSET = 5000; // This is how we differentiate a menu button from an item
 // button (and the limit on ITEM=# in create.dfn)
@@ -175,7 +181,7 @@ void CSkills::ApplyRank(CSocket *s, CItem *c, std::uint8_t rank, std::uint8_t ma
 // settings
 // o------------------------------------------------------------------------------------------------o
 void CSkills::RegenerateOre(std::int16_t grX, std::int16_t grY, std::uint8_t worldNum) {
-    MapResource_st *orePart = MapRegion->GetResource(grX, grY, worldNum);
+    MapResource_st *orePart = worldMapHandler.GetResource(grX, grY, worldNum);
     std::int16_t oreCeiling = ServerConfig::shared().ushortValues[UShortValue::OREPERAREA] ;
     std::uint16_t oreTimer = ServerConfig::shared().timerSetting[TimerSetting::ORE] ;
     if (static_cast<std::uint32_t>(orePart->oreTime) <= worldMain.GetUICurrentTime()) { // regenerate some more?
@@ -494,7 +500,7 @@ bool CSkills::CheckSkill(CChar *s, std::uint8_t sk, std::int16_t lowSkill, std::
     bool exists = false;
     std::vector<std::uint16_t> scriptTriggers = s->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // If script returns true/1, allows skillcheck to proceed, but also prevents other
             // scripts with event from running
@@ -645,7 +651,7 @@ void CSkills::HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdva
     if (c->IsNpc()) {
         // Check for existence of onSkillGain event for NPC
         for (auto scriptTrig : scriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 // If retVal is -1, event doesn't exist in script
                 // If retVal is 0, event exists, but returned false/0, and handles item usage. Don't
@@ -662,7 +668,7 @@ void CSkills::HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdva
         
         // Check for existence of onSkillChange event for NPC
         for (auto scriptTrig : scriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 toExecute->OnSkillChange(c, sk, amtToGain);
             }
@@ -713,7 +719,7 @@ void CSkills::HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdva
         if (toDec != 0xFF) {
             // Check for existence of onSkillLoss event for player
             for (auto scriptTrig : scriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     // If retVal is -1, event doesn't exist in script
                     // If retVal is 0, event exists, but returned false/0, and handles item usage.
@@ -731,7 +737,7 @@ void CSkills::HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdva
             
             // Check for existence of onSkillChange event for player
             for (auto scriptTrig : scriptTriggers) {
-                cScript *toExecute = JSMapping->GetScript(scriptTrig);
+                cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
                 if (toExecute != nullptr) {
                     toExecute->OnSkillChange(c, toDec, (amtToGain * -1));
                 }
@@ -743,7 +749,7 @@ void CSkills::HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdva
     if (skillCap > static_cast<std::uint16_t>(totalSkill)) {
         // Check for existence of onSkillGain event for player
         for (auto scriptTrig : scriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 // If retVal is -1, event doesn't exist in script
                 // If retVal is 0, event exists, but returned false/0, and handles item usage. Don't
@@ -760,7 +766,7 @@ void CSkills::HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdva
         
         // Check for existence of onSkillChange event for player
         for (auto scriptTrig : scriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 toExecute->OnSkillChange(c, sk, amtToGain);
             }
@@ -799,7 +805,7 @@ void CSkills::SkillUse(CSocket *s, std::uint8_t x) {
         std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
         for (auto scriptTrig : scriptTriggers) {
             // Loop through attached scripts
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 if (toExecute->OnSkill(mChar, x)) {
                     // Look for onSkill JS event in script
@@ -811,7 +817,7 @@ void CSkills::SkillUse(CSocket *s, std::uint8_t x) {
         // If no onSkill event was found in a script already, check if skill has a script
         // attached directly, with onSkill event
         if (doSwitch && worldMain.skill[x].jsScript != 0xFFFF) {
-            cScript *toExecute = JSMapping->GetScript(worldMain.skill[x].jsScript);
+            cScript *toExecute = worldJSMapping.GetScript(worldMain.skill[x].jsScript);
             if (toExecute != nullptr) {
                 if (toExecute->OnSkill(mChar, x)) {
                     doSwitch = false;
@@ -884,7 +890,7 @@ void CSkills::Tracking(CSocket *s, std::int32_t selection) {
 void CSkills::CreateTrackingMenu(CSocket *s, std::uint16_t m) {
     VALIDATESOCKET(s);
     const std::string sect = std::string("TRACKINGMENU ") + util::ntos(m);
-    CScriptSection *TrackStuff = FileLookup->FindEntry(sect, menus_def);
+    CScriptSection *TrackStuff = worldFileLookup.FindEntry(sect, menus_def);
     if (TrackStuff == nullptr)
         return;
     
@@ -921,7 +927,7 @@ void CSkills::CreateTrackingMenu(CSocket *s, std::uint16_t m) {
     line = tag + " " + data;
     toSend.Question(line);
     
-    for (auto &MapArea : MapRegion->PopulateList(mChar)) {
+    for (auto &MapArea : worldMapHandler.PopulateList(mChar)) {
         if (MapArea) {
             auto regChars = MapArea->GetCharList();
             for (const auto &tempChar : regChars->collection()) {
@@ -935,7 +941,7 @@ void CSkills::CreateTrackingMenu(CSocket *s, std::uint16_t m) {
                                 ++MaxTrackingTargets;
                                 
                                 std::int32_t dirMessage = 898; // right next to you.
-                                switch (Movement->Direction(mChar, tempChar->GetX(), tempChar->GetY())) {
+                                switch (worldMovement.Direction(mChar, tempChar->GetX(), tempChar->GetY())) {
                                     case NORTH:
                                         dirMessage = 890;
                                         break; // to the North.
@@ -996,7 +1002,7 @@ void HandleCommonGump(CSocket *mSock, CScriptSection *gumpScript, std::uint16_t 
 void CSkills::TrackingMenu(CSocket *s, std::uint16_t gmindex) {
     VALIDATESOCKET(s);
     const std::string sect = std::string("TRACKINGMENU ") + util::ntos(gmindex);
-    CScriptSection *TrackStuff = FileLookup->FindEntry(sect, menus_def);
+    CScriptSection *TrackStuff = worldFileLookup.FindEntry(sect, menus_def);
     if (TrackStuff == nullptr) {
         return;
     }
@@ -1165,7 +1171,7 @@ void CSkills::AnvilTarget(CSocket *s, CItem &item, MiningData_st *oreType) {
     VALIDATESOCKET(s);
     CChar *mChar = s->CurrcharObj();
     
-    for (auto &MapArea : MapRegion->PopulateList(mChar)) {
+    for (auto &MapArea : worldMapHandler.PopulateList(mChar)) {
         if (MapArea) {
             auto regItems = MapArea->GetItemList();
             for (const auto &tempItem : regItems->collection()) {
@@ -1211,7 +1217,7 @@ CSkills::~CSkills() {
 bool CSkills::LoadMiningData() {
     ores.resize(0);
     // Let's first get our ore list, in SECTION ORE_LIST
-    CScriptSection *oreList = FileLookup->FindEntry("ORE_LIST", skills_def);
+    CScriptSection *oreList = worldFileLookup.FindEntry("ORE_LIST", skills_def);
     bool rValue = false;
     if (oreList != nullptr) {
         std::vector<std::string> oreNameList;
@@ -1225,7 +1231,7 @@ bool CSkills::LoadMiningData() {
             rValue = true;
             CScriptSection *individualOre = nullptr;
             for (auto &oreName : oreNameList) {
-                individualOre = FileLookup->FindEntry(oreName, skills_def);
+                individualOre = worldFileLookup.FindEntry(oreName, skills_def);
                 if (individualOre != nullptr) {
                     MiningData_st toAdd;
                     toAdd.colour = 0;
@@ -1304,7 +1310,7 @@ void CSkills::load() {
     LoadCreateMenus();
     Console::shared().printDone();
     
-    CJSMappingSection *skillSection = JSMapping->GetSection(CJSMappingSection::SCPT_SKILLUSE);
+    CJSMappingSection *skillSection = worldJSMapping.GetSection(CJSMappingSection::SCPT_SKILLUSE);
     for (cScript *ourScript = skillSection->First(); !skillSection->Finished();
          ourScript = skillSection->Next()) {
         if (ourScript != nullptr) {
@@ -1375,8 +1381,8 @@ auto CSkills::LoadCreateMenus() -> void {
     itemsForMenus.clear();
     
     std::uint16_t ourEntry; // our actual entry number
-    for (Script *ourScript = FileLookup->FirstScript(create_def);
-         !FileLookup->FinishedScripts(create_def); ourScript = FileLookup->NextScript(create_def)) {
+    for (Script *ourScript = worldFileLookup.FirstScript(create_def);
+         !worldFileLookup.FinishedScripts(create_def); ourScript = worldFileLookup.NextScript(create_def)) {
         if (ourScript == nullptr) {
             continue;
         }
@@ -1456,7 +1462,7 @@ auto CSkills::LoadCreateMenus() -> void {
                             }
                         }
                         auto resType = "RESOURCE "s + util::trim(util::strip(ssecs[0], "//"));
-                        auto resList = FileLookup->FindEntry(resType, create_def);
+                        auto resList = worldFileLookup.FindEntry(resType, create_def);
                         if (resList) {
                             for (const auto &sec : resList->collection()) {
                                 tmpResource.idList.push_back(static_cast<std::uint16_t>(std::stoul(sec->data, nullptr, 0)));
@@ -1586,11 +1592,11 @@ std::int8_t CSkills::FindSkillPoint(std::uint8_t sk, std::int32_t value) {
 //|	Purpose		-	Advance players stats
 // o------------------------------------------------------------------------------------------------o
 void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
-    CRace *pRace = Races->Race(s->GetRace());
+    CRace *pRace = worldRace.Race(s->GetRace());
     
     // If the Race is invalid just use the default race
     if (pRace == nullptr) {
-        pRace = Races->Race(0);
+        pRace = worldRace.Race(0);
     }
     
     // make sure socket is no npc
@@ -1670,7 +1676,7 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
                         case 0: // Decrease Strength stat
                             // First trigger onStatLoss event
                             for (auto skillTrig : skillUpdTriggers) {
-                                cScript *toExecute = JSMapping->GetScript(skillTrig);
+                                cScript *toExecute = worldJSMapping.GetScript(skillTrig);
                                 if (toExecute != nullptr) {
                                     if (!toExecute->OnStatLoss(s, STRENGTH, 1))
                                         return;
@@ -1684,7 +1690,7 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
                             // Trigger onStatChange event if onStatLoss either didn't exist, or returned
                             // true
                             for (auto skillTrig : skillUpdTriggers) {
-                                cScript *toExecute = JSMapping->GetScript(skillTrig);
+                                cScript *toExecute = worldJSMapping.GetScript(skillTrig);
                                 if (toExecute != nullptr) {
                                     toExecute->OnStatChange(s, STRENGTH, -1);
                                 }
@@ -1693,7 +1699,7 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
                         case 1: // Decrease Dexterity stat
                             // First trigger onStatLoss event
                             for (auto skillTrig : skillUpdTriggers) {
-                                cScript *toExecute = JSMapping->GetScript(skillTrig);
+                                cScript *toExecute = worldJSMapping.GetScript(skillTrig);
                                 if (toExecute != nullptr) {
                                     if (!toExecute->OnStatLoss(s, DEXTERITY, 1))
                                         return;
@@ -1707,7 +1713,7 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
                             // Trigger onStatChange event if onStatLoss either didn't exist, or returned
                             // true
                             for (auto skillTrig : skillUpdTriggers) {
-                                cScript *toExecute = JSMapping->GetScript(skillTrig);
+                                cScript *toExecute = worldJSMapping.GetScript(skillTrig);
                                 if (toExecute != nullptr) {
                                     toExecute->OnStatChange(s, DEXTERITY, -1);
                                 }
@@ -1716,7 +1722,7 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
                         case 2: // Decrease Intelligence stat
                             // First trigger onStatLoss event
                             for (auto skillTrig : skillUpdTriggers) {
-                                cScript *toExecute = JSMapping->GetScript(skillTrig);
+                                cScript *toExecute = worldJSMapping.GetScript(skillTrig);
                                 if (toExecute != nullptr) {
                                     if (!toExecute->OnStatLoss(s, INTELLECT, 1))
                                         return;
@@ -1730,7 +1736,7 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
                             // Trigger onStatChange event if onStatLoss either didn't exist, or returned
                             // true
                             for (auto skillTrig : skillUpdTriggers) {
-                                cScript *toExecute = JSMapping->GetScript(skillTrig);
+                                cScript *toExecute = worldJSMapping.GetScript(skillTrig);
                                 if (toExecute != nullptr) {
                                     toExecute->OnStatChange(s, INTELLECT, -1);
                                 }
@@ -1745,7 +1751,7 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
                 if ((ttlStats + 1) <= serverStatCap) {
                     // First trigger onStatGained
                     for (auto skillTrig : skillUpdTriggers) {
-                        cScript *toExecute = JSMapping->GetScript(skillTrig);
+                        cScript *toExecute = worldJSMapping.GetScript(skillTrig);
                         if (toExecute != nullptr) {
                             if (!toExecute->OnStatGained(s, statCount, sk, 1))
                                 return;
@@ -1770,7 +1776,7 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
                     // Trigger onStatChange event if onStatGained either didn't exist, or returned
                     // true
                     for (auto skillTrig : skillUpdTriggers) {
-                        cScript *toExecute = JSMapping->GetScript(skillTrig);
+                        cScript *toExecute = worldJSMapping.GetScript(skillTrig);
                         if (toExecute != nullptr) {
                             toExecute->OnStatChange(s, statCount, 1);
                         }
@@ -1812,7 +1818,7 @@ void CSkills::NewMakeMenu(CSocket *s, std::int32_t menu, [[maybe_unused]] std::u
     
     CreateMenu_st ourMenu = p->second;
     std::uint32_t textCounter = 0;
-    CScriptSection *GumpHeader = FileLookup->FindEntry("ADDMENU HEADER", misc_def);
+    CScriptSection *GumpHeader = worldFileLookup.FindEntry("ADDMENU HEADER", misc_def);
     if (GumpHeader == nullptr) {
         toSend.addCommand(util::format("resizepic 0 0 %i 400 320", background));
         toSend.addCommand("page 0");
@@ -1845,7 +1851,7 @@ void CSkills::NewMakeMenu(CSocket *s, std::int32_t menu, [[maybe_unused]] std::u
                 toSend.addCommand(built);
             }
         }
-        CScriptSection *GumpText = FileLookup->FindEntry("ADDMENU TEXT", misc_def);
+        CScriptSection *GumpText = worldFileLookup.FindEntry("ADDMENU TEXT", misc_def);
         if (GumpText != nullptr) {
             for (tag = GumpText->First(); !GumpText->AtEnd(); tag = GumpText->Next()) {
                 data = GumpText->GrabData();
@@ -1891,7 +1897,7 @@ void CSkills::NewMakeMenu(CSocket *s, std::int32_t menu, [[maybe_unused]] std::u
                 else {
                     std::int32_t getCir = static_cast<std::int32_t>(iItem.spell * .1);
                     std::int32_t getSpell = iItem.spell - (getCir * 10) + 1;
-                    if (!Magic->CheckBook(getCir, getSpell - 1, spellBook)) {
+                    if (!worldMagic.CheckBook(getCir, getSpell - 1, spellBook)) {
                         canMake = false;
                     }
                 }
@@ -2070,7 +2076,7 @@ void CSkills::MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std
     if (!canMake) {
         // delete anywhere up to half of the resources needed
         if (toMake.soundPlayed) {
-            Effects->PlaySound(sock, toMake.soundPlayed, true);
+            worldEffect.PlaySound(sock, toMake.soundPlayed, true);
         }
         sock->SysMessage(984); // You fail to create the item.
     }
@@ -2087,11 +2093,11 @@ void CSkills::MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std
             player->SkillUsed(true, (*sCounter).skillNumber);
         }
         
-        Effects->TempEffect(player, player, 41, toMake.delay, itemEntry, 0);
+        worldEffect.TempEffect(player, player, 41, toMake.delay, itemEntry, 0);
         if (toMake.soundPlayed) {
             if (toMake.delay > 300) {
                 for (std::int16_t i = 0; i < (toMake.delay / 300); ++i) {
-                    Effects->TempEffect(player, player, 42, 300 * i, toMake.soundPlayed, 0);
+                    worldEffect.TempEffect(player, player, 42, 300 * i, toMake.soundPlayed, 0);
                 }
             }
         }
@@ -2102,7 +2108,7 @@ void CSkills::MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std
         // failed
         std::vector<std::uint16_t> scriptTriggers = player->GetScriptTriggers();
         for (auto scriptTrig : scriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 toExecute->OnMakeItem(sock, player, nullptr, itemEntry);
             }
@@ -2205,7 +2211,7 @@ void CSkills::RepairMetal(CSocket *s) {
     if (CheckSkill(mChar, BLACKSMITHING, minSkill, maxSkill)) {
         j->SetHP(j->GetMaxHP());
         s->SysMessage(989); // You repair the item successfully.
-        Effects->PlaySound(s, 0x002A, true);
+        worldEffect.PlaySound(s, 0x002A, true);
     }
     else {
         s->SysMessage(990); // You fail to repair the item.
@@ -2226,7 +2232,7 @@ void CSkills::Snooping(CSocket *s, CChar *target, CItem *pack) {
     
     std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // If script returns false, prevent hard-code and other scripts with event from running
             if (toExecute->OnSnoopAttempt(target, pack, mChar) == 0) {
@@ -2236,7 +2242,7 @@ void CSkills::Snooping(CSocket *s, CChar *target, CItem *pack) {
     }
     
     // Check for global script version of event
-    cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+    cScript *toExecute = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
     if (toExecute != nullptr) {
         if (toExecute->OnSnoopAttempt(target, pack, mChar) == 0) {
             return;
@@ -2255,10 +2261,10 @@ void CSkills::MakeNecroReg(CSocket *nSocket, CItem *nItem, std::uint16_t itemId)
     
     if (itemId >= 0x1B11 && itemId <= 0x1B1C) {// Make bone powder.
         iCharId->TextMessage(nullptr, 741, EMOTE, 1, iCharId->GetName().c_str()); // %s is grinding some bone into powder
-        Effects->TempEffect(iCharId, iCharId, 9, 0, 0, 0);
-        Effects->TempEffect(iCharId, iCharId, 9, 0, 3, 0);
-        Effects->TempEffect(iCharId, iCharId, 9, 0, 6, 0);
-        Effects->TempEffect(iCharId, iCharId, 9, 0, 9, 0);
+        worldEffect.TempEffect(iCharId, iCharId, 9, 0, 0, 0);
+        worldEffect.TempEffect(iCharId, iCharId, 9, 0, 3, 0);
+        worldEffect.TempEffect(iCharId, iCharId, 9, 0, 6, 0);
+        worldEffect.TempEffect(iCharId, iCharId, 9, 0, 9, 0);
         iItem = worldItem.CreateItem(nSocket, iCharId, 0x0F8F, 1, 0, CBaseObject::OT_ITEM, true);
         if (iItem == nullptr)
             return;

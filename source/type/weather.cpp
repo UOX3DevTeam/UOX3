@@ -25,6 +25,10 @@
 #include "uotime.hpp"
 
 extern CHandleCombat worldCombat ;
+extern cRaces worldRace ;
+extern CJSMapping worldJSMapping ;
+extern cEffects worldEffect ;
+
 using namespace std::string_literals ;
 using Random = effolkronium::random_static ;
 
@@ -414,7 +418,7 @@ auto WorldWeather::doPlayerStuff(CSocket *mSock, CChar *p)->bool {
         if (isStorm) {
             doPlayerWeather(mSock, 5, static_cast<std::int8_t>(temperature), curregion);
             if (p->GetWeathDamage(Weather::STORM) == 0) {
-                p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::STORM)))),Weather::STORM);
+                p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(worldRace.Secs(p->GetRace(), Weather::STORM)))),Weather::STORM);
             }
             if (p->GetWeathDamage(Weather::SNOW) != 0) {
                 p->SetWeathDamage(0, Weather::SNOW);
@@ -430,7 +434,7 @@ auto WorldWeather::doPlayerStuff(CSocket *mSock, CChar *p)->bool {
         else if (isSnowing &&  region.at(curregion).snowThreshold > region.at(curregion).impact[Weather::TEMP][Weather::CURRENT]) {
             doPlayerWeather(mSock, 2, temperature, curregion);
             if (p->GetWeathDamage(Weather::SNOW) == 0) {
-                p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::SNOW)))),Weather::SNOW);
+                p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(worldRace.Secs(p->GetRace(), Weather::SNOW)))),Weather::SNOW);
             }
             if (p->GetWeathDamage(Weather::STORM) != 0) {
                 p->SetWeathDamage(0, Weather::STORM);
@@ -443,7 +447,7 @@ auto WorldWeather::doPlayerStuff(CSocket *mSock, CChar *p)->bool {
         else if (isRaining) {
             doPlayerWeather(mSock, 1, temperature, curregion);
             if (p->GetWeathDamage(Weather::RAIN) == 0) {
-                p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::RAIN)))),Weather::RAIN);
+                p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(worldRace.Secs(p->GetRace(), Weather::RAIN)))),Weather::RAIN);
             }
             if (p->GetWeathDamage(Weather::SNOW) != 0) {
                 p->SetWeathDamage(0, Weather::SNOW);
@@ -466,12 +470,12 @@ auto WorldWeather::doPlayerStuff(CSocket *mSock, CChar *p)->bool {
             }
             sendJSWeather(p, Weather::STORM, temperature);
         }
-        if ((Races->Affect(p->GetRace(), Weather::HEAT)) && p->GetWeathDamage(Weather::HEAT) == 0) {
-            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::HEAT)))),Weather::HEAT);
+        if ((worldRace.Affect(p->GetRace(), Weather::HEAT)) && p->GetWeathDamage(Weather::HEAT) == 0) {
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(worldRace.Secs(p->GetRace(), Weather::HEAT)))),Weather::HEAT);
         }
         
-        if ((Races->Affect(p->GetRace(), Weather::COLD)) && p->GetWeathDamage(Weather::COLD) == 0) {
-            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::COLD)))),Weather::COLD);
+        if ((worldRace.Affect(p->GetRace(), Weather::COLD)) && p->GetWeathDamage(Weather::COLD) == 0) {
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(worldRace.Secs(p->GetRace(), Weather::COLD)))),Weather::COLD);
         }
     }
     return rvalue ;
@@ -509,20 +513,20 @@ auto WorldWeather::doPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8
             s->Send(&rain);
             break;
         case 2:
-            Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            worldEffect.PlaySound(mChar, 0x14 + RandomNum(0, 1));
             s->Send(&snow);
             break;
         case 3:
             s->Send(&rain);
-            Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            worldEffect.PlaySound(mChar, 0x14 + RandomNum(0, 1));
             s->Send(&snow);
             break;
         case 4:
-            Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            worldEffect.PlaySound(mChar, 0x14 + RandomNum(0, 1));
             s->Send(&strmbrw);
             break;
         case 5:
-            Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            worldEffect.PlaySound(mChar, 0x14 + RandomNum(0, 1));
             s->Send(&storm);
             break;
         default:
@@ -538,7 +542,7 @@ auto WorldWeather::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t
     if (element == Weather::NONE || element == Weather::LIGHT || static_cast<int>(element) >= Weather::numberweather)
         return false;
     
-    if (mChar.IsInvulnerable() || mChar.IsDead() || !Races->Affect(mChar.GetRace(), element) || mChar.InBuilding())
+    if (mChar.IsInvulnerable() || mChar.IsDead() || !worldRace.Affect(mChar.GetRace(), element) || mChar.InBuilding())
         return false;
     
     bool didDamage = false;
@@ -553,9 +557,9 @@ auto WorldWeather::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t
         
         float damageModifier = 0;
         std::int32_t damage = 0;
-        float baseDamage = static_cast<float>(Races->Damage(mChar.GetRace(), element));
-        float heatLevel = static_cast<float>(Races->HeatLevel(mChar.GetRace()));
-        float coldLevel = static_cast<float>(Races->ColdLevel(mChar.GetRace()));
+        float baseDamage = static_cast<float>(worldRace.Damage(mChar.GetRace(), element));
+        float heatLevel = static_cast<float>(worldRace.HeatLevel(mChar.GetRace()));
+        float coldLevel = static_cast<float>(worldRace.ColdLevel(mChar.GetRace()));
         
         std::int32_t damageMessage = 0;
         std::uint16_t damageAnim = 0x373A;
@@ -581,10 +585,10 @@ auto WorldWeather::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t
             damageMessage = 1775;
             resistElement = Weather::NONE;
             
-            if (Races->Affect(mChar.GetRace(), Weather::LIGHTNING)) {
-                if (static_cast<std::uint8_t>(RandomNum(1, 100)) <=  Races->Secs(mChar.GetRace(), Weather::LIGHTNING)) {
-                    damage = static_cast<std::int32_t>(Races->Damage(mChar.GetRace(), Weather::LIGHTNING));
-                    Effects->Bolteffect(&mChar);
+            if (worldRace.Affect(mChar.GetRace(), Weather::LIGHTNING)) {
+                if (static_cast<std::uint8_t>(RandomNum(1, 100)) <=  worldRace.Secs(mChar.GetRace(), Weather::LIGHTNING)) {
+                    damage = static_cast<std::int32_t>(worldRace.Damage(mChar.GetRace(), Weather::LIGHTNING));
+                    worldEffect.Bolteffect(&mChar);
                     damageMessage = 1777;
                     damageAnim = 0x0;
                     resistElement = Weather::LIGHTNING;
@@ -626,13 +630,13 @@ auto WorldWeather::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t
                     mSock->SysMessage(damageMessage);
                 }
                 if (damageAnim != 0x0) {
-                    Effects->PlayStaticAnimation((&mChar), damageAnim, 0x09, 0x19);
+                    worldEffect.PlayStaticAnimation((&mChar), damageAnim, 0x09, 0x19);
                 }
-                Effects->PlaySound((&mChar), 0x0208);
+                worldEffect.PlaySound((&mChar), 0x0208);
                 didDamage = true;
             }
         }
-        mChar.SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(mChar.GetRace(), element)))), element);
+        mChar.SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(worldRace.Secs(mChar.GetRace(), element)))), element);
     }
     return didDamage;
     
@@ -642,15 +646,15 @@ auto WorldWeather::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t
 auto WorldWeather::doLightEffect(CSocket *mSock, CChar &mChar)->bool{
     auto didDamage = false;
     
-    if (mChar.IsInvulnerable() || mChar.IsDead() || !Races->Affect(mChar.GetRace(), Weather::LIGHT) || mChar.InBuilding()) {
+    if (mChar.IsInvulnerable() || mChar.IsDead() || !worldRace.Affect(mChar.GetRace(), Weather::LIGHT) || mChar.InBuilding()) {
         return false;
     }
     
     if (mChar.GetWeathDamage(LIGHT) != 0 && mChar.GetWeathDamage(LIGHT) <= worldMain.GetUICurrentTime()) {
         float damageModifier = 0;
         std::int32_t damage = 0;
-        float baseDamage = static_cast<float>(Races->Damage(mChar.GetRace(), Weather::LIGHT));
-        float lightLevel = static_cast<float>(Races->LightLevel(mChar.GetRace()));
+        float baseDamage = static_cast<float>(worldRace.Damage(mChar.GetRace(), Weather::LIGHT));
+        float lightLevel = static_cast<float>(worldRace.LightLevel(mChar.GetRace()));
         float currentLight = 255;
         float lightMin = 255;
         float lightMax = 255;
@@ -739,8 +743,8 @@ auto WorldWeather::doLightEffect(CSocket *mSock, CChar &mChar)->bool{
         
         if (damage > 0) {
             if (mChar.Damage(damage, Weather::LIGHT)) {
-                Effects->PlayStaticAnimation((&mChar), 0x3709, 0x09, 0x19);
-                Effects->PlaySound((&mChar), 0x0208);
+                worldEffect.PlayStaticAnimation((&mChar), 0x3709, 0x09, 0x19);
+                worldEffect.PlaySound((&mChar), 0x0208);
                 didDamage = true;
                 
                 if (message != 0 && mSock != nullptr) {
@@ -748,7 +752,7 @@ auto WorldWeather::doLightEffect(CSocket *mSock, CChar &mChar)->bool{
                 }
             }
         }
-        mChar.SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue( static_cast<float>(Races->Secs(mChar.GetRace(), Weather::LIGHT)))), Weather::LIGHT);
+        mChar.SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue( static_cast<float>(worldRace.Secs(mChar.GetRace(), Weather::LIGHT)))), Weather::LIGHT);
     }
     return didDamage;
     
@@ -772,7 +776,7 @@ auto WorldWeather::doNPCStuff(CChar *p)->bool{
     if (isStorm) {
         sendJSWeather(p, Weather::STORM, temp);
         if (p->GetWeathDamage(Weather::STORM) == 0) {
-            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::STORM)))),Weather::STORM);
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(worldRace.Secs(p->GetRace(), Weather::STORM)))),Weather::STORM);
         }
         if (p->GetWeathDamage(Weather::SNOW) != 0) {
             p->SetWeathDamage(0, Weather::SNOW);
@@ -784,7 +788,7 @@ auto WorldWeather::doNPCStuff(CChar *p)->bool{
     else if (isSnowing && region.at(currval).snowThreshold > this->region.at(currval).impact[Weather::TEMP][Weather::CURRENT]) {
         sendJSWeather(p, Weather::SNOW, temp);
         if (p->GetWeathDamage(Weather::SNOW) == 0) {
-            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::SNOW)))),Weather::SNOW);
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(worldRace.Secs(p->GetRace(), Weather::SNOW)))),Weather::SNOW);
         }
         if (p->GetWeathDamage(Weather::STORM) != 0) {
             p->SetWeathDamage(0, Weather::STORM);
@@ -796,7 +800,7 @@ auto WorldWeather::doNPCStuff(CChar *p)->bool{
     else if (isRaining) {
         sendJSWeather(p, Weather::RAIN, temp);
         if (p->GetWeathDamage(Weather::RAIN) == 0) {
-            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::RAIN)))),Weather::RAIN);
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(worldRace.Secs(p->GetRace(), Weather::RAIN)))),Weather::RAIN);
         }
         if (p->GetWeathDamage(Weather::SNOW) != 0) {
             p->SetWeathDamage(0, Weather::SNOW);
@@ -818,12 +822,12 @@ auto WorldWeather::doNPCStuff(CChar *p)->bool{
         }
     }
     
-    if ((Races->Affect(p->GetRace(), Weather::HEAT)) && p->GetWeathDamage(Weather::HEAT) == 0) {
-        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::HEAT)))),Weather::HEAT);
+    if ((worldRace.Affect(p->GetRace(), Weather::HEAT)) && p->GetWeathDamage(Weather::HEAT) == 0) {
+        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(worldRace.Secs(p->GetRace(), Weather::HEAT)))),Weather::HEAT);
     }
     
-    if ((Races->Affect(p->GetRace(), Weather::COLD)) && p->GetWeathDamage(Weather::COLD) == 0) {
-        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::COLD)))),Weather::COLD);
+    if ((worldRace.Affect(p->GetRace(), Weather::COLD)) && p->GetWeathDamage(Weather::COLD) == 0) {
+        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(worldRace.Secs(p->GetRace(), Weather::COLD)))),Weather::COLD);
     }
     
     return true;
@@ -867,7 +871,7 @@ auto WorldWeather::sendJSWeather(CBaseObject *mObj, Weather::type_t weathType, s
     // Check for events in specific scripts attached to object
     auto scriptTriggers = mObj->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
-        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        cScript *toExecute = worldJSMapping.GetScript(scriptTrig);
         if (toExecute != nullptr) {
             toExecute->OnWeatherChange(mObj, weathType);
             toExecute->OnTempChange(mObj, currentTemp);
@@ -875,7 +879,7 @@ auto WorldWeather::sendJSWeather(CBaseObject *mObj, Weather::type_t weathType, s
     }
     
     // Check global script as well
-    auto toExecuteGlobal = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+    auto toExecuteGlobal = worldJSMapping.GetScript(static_cast<std::uint16_t>(0));
     if (toExecuteGlobal != nullptr) {
         toExecuteGlobal->OnWeatherChange(mObj, weathType);
         toExecuteGlobal->OnTempChange(mObj, currentTemp);

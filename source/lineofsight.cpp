@@ -8,6 +8,10 @@
 #include "regions.h"
 #include "subsystem/console.hpp"
 
+extern CMulHandler worldMULHandler ;
+extern CMapHandler worldMapHandler ;
+
+
 constexpr auto MAX_COLLISIONS = 1024;
 constexpr auto LOSXYMAX = 256; // Maximum items UOX3 can handle on one X/Y square
 
@@ -244,10 +248,10 @@ inline auto Line3D_st::Projection2D() const -> Line2D_st {
 // o------------------------------------------------------------------------------------------------o
 bool MapTileBlocks([[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st LoS, std::int16_t x1, std::int16_t y1, [[maybe_unused]] std::int8_t z, std::int16_t x2, std::int16_t y2, std::uint8_t worldNum, std::int8_t z2Top) {
     // Map tile at previous coordinate along the LoS path
-    auto srcMap = Map->SeekMap(x1, y1, worldNum);
+    auto srcMap = worldMULHandler.SeekMap(x1, y1, worldNum);
     
     // Map tile at next coordinate along the LoS path
-    auto trgMap = Map->SeekMap(x2, y2, worldNum);
+    auto trgMap = worldMULHandler.SeekMap(x2, y2, worldNum);
     
     // Get tileIDs for previous tile in LoS path, and next one
     const std::uint16_t mID1 = srcMap.tileId;
@@ -347,7 +351,7 @@ std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int3
     Vector3D_st *checkLoc = nullptr;
     if (!toCheck->CanBeObjType(CBaseObject::OT_MULTI)) {
         if (toCheck->GetVisible() == VT_VISIBLE && curX >= x1 && curX <= x2 && curY >= y1 && curY <= y2) {
-            CTile &iTile = Map->SeekTile(toCheck->GetId());
+            CTile &iTile = worldMULHandler.SeekTile(toCheck->GetId());
             for (i = 0; i < collisioncount; ++i) {
                 checkLoc = &collisions[i];
                 if (curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()))
@@ -359,9 +363,9 @@ std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int3
         const std::uint16_t multiId = static_cast<std::uint16_t>(toCheck->GetId() - 0x4000);
         [[maybe_unused]] std::int32_t length = 0;
         
-        if (!Map->MultiExists(multiId)) {
+        if (!worldMULHandler.MultiExists(multiId)) {
             Console::shared() << "LoS - Bad length in multi file. Avoiding stall" << myendl;
-            auto map1 = Map->SeekMap(curX, curY, toCheck->WorldNumber());
+            auto map1 = worldMULHandler.SeekMap(curX, curY, toCheck->WorldNumber());
             
             if (map1.CheckFlag(TF_WET)) { // is it water?
                 toCheck->SetId(0x4001);
@@ -372,13 +376,13 @@ std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int3
             length = 0;
         }
         else {
-            for (auto &multi : Map->SeekMulti(multiId).items) {
+            for (auto &multi : worldMULHandler.SeekMulti(multiId).items) {
                 if (multi.flag) {
                     const std::int16_t checkX = (curX + multi.offsetX);
                     const std::int16_t checkY = (curY + multi.offsetY);
                     if (checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2) {
                         const std::int8_t checkZ = (curZ + multi.altitude);
-                        CTile &multiTile = Map->SeekTile(multi.tileId);
+                        CTile &multiTile = worldMULHandler.SeekTile(multi.tileId);
                         for (i = 0; i < collisioncount; ++i) {
                             checkLoc = &collisions[i];
                             if (checkX == checkLoc->x && checkY == checkLoc->y && ((checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height())) || (multiTile.Height() <= 2 && abs(checkLoc->z - checkZ) <= dz))) {
@@ -565,7 +569,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
     
     // We already have to run through all the collisions in this function, so lets just check and
     // push the ID rather than coming back to it later.
-    for (auto &MapArea : MapRegion->PopulateList(startX, startY, worldNumber)) {
+    for (auto &MapArea : worldMapHandler.PopulateList(startX, startY, worldNumber)) {
         if (MapArea == nullptr)
             continue;
         
@@ -582,7 +586,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
             const std::uint16_t idToPush = DynamicCanBlock(toCheck, collisions, collisioncount, distX, distY,  x1, x2, y1, y2, dz);
             if (idToPush != INVALIDID) {
                 auto tile = Tile_st(tiletype_t::art);
-                tile.artInfo = &Map->SeekTile(idToPush);
+                tile.artInfo = &worldMULHandler.SeekTile(idToPush);
                 tile.tileId = idToPush;
                 
                 losItemList.push_back(tile);
@@ -596,7 +600,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
     
     for (i = 0; i < collisioncount; ++i) {
         Vector3D_st &checkLoc = collisions[i];
-        auto artwork = Map->ArtAt(checkLoc.x, checkLoc.y, worldNumber);
+        auto artwork = worldMULHandler.ArtAt(checkLoc.x, checkLoc.y, worldNumber);
         
         // Texture mapping
         if (checkLoc.x == destX && checkLoc.y == destY) {
@@ -668,7 +672,7 @@ bool CheckItemLineOfSight(CChar *mChar, CItem *i) {
         if (mChar->GetInstanceId() != itemOwner->GetInstanceId())
             return false;
         
-        const std::int8_t height = Map->TileHeight(itemOwner->GetId()); // Retrieves actual height of item, unrelated to world-coordinate
+        const std::int8_t height = worldMULHandler.TileHeight(itemOwner->GetId()); // Retrieves actual height of item, unrelated to world-coordinate
         // Can we see the top or bottom of the item
         if (LineOfSight(nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
             inSight = true;
