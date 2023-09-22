@@ -23,6 +23,9 @@
 #include "townregion.h"
 #include "utility/strutil.hpp"
 
+extern CHandleCombat worldCombat ;
+extern WorldItem worldItem ;
+
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::DeathAction()
 // o------------------------------------------------------------------------------------------------o
@@ -76,7 +79,7 @@ CItem *cEffects::SpawnBloodEffect(std::uint8_t worldNum, std::uint16_t instanceI
     }
     
     // Spawn the blood effect item
-    CItem *blood = Items->CreateBaseItem(worldNum, CBaseObject::OT_ITEM, instanceId, false);
+    CItem *blood = worldItem.CreateBaseItem(worldNum, CBaseObject::OT_ITEM, instanceId, false);
     if (ValidateObject(blood)) {
         blood->SetId(bloodEffectId);
         blood->SetColour(bloodColour);
@@ -428,8 +431,8 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, std::uint32_t damage = 0, [[maybe
                     dz = abs(tempChar->GetZ() - nItem->GetZ());
                     if (dx <= len && dy <= len && dz <= len) {
                         if (!tempChar->IsGM() && !tempChar->IsInvulnerable() && (tempChar->IsNpc() || IsOnline((*tempChar)))) {
-                            // std::uint8_t hitLoc = Combat->CalculateHitLoc();
-                            damage = Combat->ApplyDefenseModifiers( Weather::HEAT, c, tempChar, ALCHEMY, 0, (static_cast<std::int32_t>(damage) + (2 - std::min(dx, dy))), true);
+                            // std::uint8_t hitLoc = worldCombat.CalculateHitLoc();
+                            damage = worldCombat.ApplyDefenseModifiers( Weather::HEAT, c, tempChar, ALCHEMY, 0, (static_cast<std::int32_t>(damage) + (2 - std::min(dx, dy))), true);
                             [[maybe_unused]] bool retVal = tempChar->Damage(static_cast<std::int16_t>(damage), Weather::HEAT, c, true);
                         }
                     }
@@ -462,7 +465,7 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, std::uint32_t damage = 0, [[maybe
     else {
         // Only affect character associated with item
         if (!c->IsGM() && !c->IsInvulnerable() && (c->IsNpc() || IsOnline((*c)))) {
-            damage = Combat->ApplyDefenseModifiers(Weather::HEAT, c, c, ALCHEMY, 0, static_cast<std::int32_t>(damage), true);
+            damage = worldCombat.ApplyDefenseModifiers(Weather::HEAT, c, c, ALCHEMY, 0, static_cast<std::int32_t>(damage), true);
             [[maybe_unused]] bool retVal = c->Damage(static_cast<std::int16_t>(damage), Weather::HEAT, c, true);
         }
     }
@@ -506,7 +509,7 @@ void cEffects::HandleMakeItemEffect(CTEffect *tMake) {
     }
     
     // Create the actual item
-    CItem *targItem = Items->CreateScriptItem(sock, src, addItem, amount, CBaseObject::OT_ITEM, true, iColour);
+    CItem *targItem = worldItem.CreateScriptItem(sock, src, addItem, amount, CBaseObject::OT_ITEM, true, iColour);
     for (size_t skCounter = 0; skCounter < toMake->skillReqs.size(); ++skCounter) {
         src->SkillUsed(false, toMake->skillReqs[skCounter].skillNumber);
     }
@@ -987,7 +990,7 @@ auto cEffects::CheckTempeffects() -> void {
                 break;
         }
         if (validChar && equipCheckNeeded) {
-            Items->CheckEquipment(s); // checks equipments for stat requirements
+            worldItem.CheckEquipment(s); // checks equipments for stat requirements
         }
         removeEffects.push_back(Effect);
     }
@@ -1081,7 +1084,7 @@ void ReverseEffect(CTEffect *Effect) {
                 break;
         }
     }
-    Items->CheckEquipment(s);
+    worldItem.CheckEquipment(s);
 }
 
 // o------------------------------------------------------------------------------------------------o

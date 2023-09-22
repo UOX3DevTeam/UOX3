@@ -59,6 +59,9 @@
 #include "wholist.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern CHandleCombat worldCombat ;
+extern WorldItem worldItem ;
+extern CCharStuff worldNPC ;
 
 void BuildAddMenuGump(CSocket *s, std::uint16_t m); // Menus for item creation
 void SpawnGate(CChar *caster, std::int16_t srcX, std::int16_t srcY, std::int8_t srcZ, std::uint8_t srcWorld, std::int16_t trgX, std::int16_t trgY, std::int8_t trgZ, std::uint8_t trgWorld, std::uint16_t trgInstanceId = 0);
@@ -5970,7 +5973,7 @@ JSBool CBase_ApplySection(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         }
         
         CScriptSection *toFind = FileLookup->FindEntry(trgSection, npc_def);
-        Npcs->ApplyNpcSection(myChar, toFind, trgSection);
+        worldNPC.ApplyNpcSection(myChar, toFind, trgSection);
     }
     
     return JS_TRUE;
@@ -7091,7 +7094,7 @@ JSBool CItem_Glow(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsv
     mItem->SetGlowColour(mItem->GetColour());
     
     CItem *glowItem =
-    Items->CreateItem(mySock, mChar, 0x1647, 1, 0, CBaseObject::OT_ITEM); // spawn light emitting object
+    worldItem.CreateItem(mySock, mChar, 0x1647, 1, 0, CBaseObject::OT_ITEM); // spawn light emitting object
     if (glowItem == nullptr)
         return JS_FALSE;
     
@@ -7101,7 +7104,7 @@ JSBool CItem_Glow(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsv
     glowItem->SetMovable(2);
     
     mItem->SetGlow(glowItem->GetSerial());
-    Items->GlowItem(mItem);
+    worldItem.GlowItem(mItem);
     
     mChar->Update(mySock);
     mySock->SysMessage(1098); // Item is now glowing.
@@ -7538,7 +7541,7 @@ JSBool CItem_Dupe(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
     JSObject *dupeItem = nullptr;
     if (dupeInPack && mSock != nullptr) {
         dupeItem =
-        JSEngine->AcquireObject(IUE_ITEM, Items->DupeItem(mSock, mItem, mItem->GetAmount()),
+        JSEngine->AcquireObject(IUE_ITEM, worldItem.DupeItem(mSock, mItem, mItem->GetAmount()),
                                 JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
     }
     else {
@@ -9163,7 +9166,7 @@ JSBool CChar_InitiateCombat(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
     auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
     auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
     
-    *rval = BOOLEAN_TO_JSVAL(Combat->StartAttack(mChar, ourTarget));
+    *rval = BOOLEAN_TO_JSVAL(worldCombat.StartAttack(mChar, ourTarget));
     
     // Active script-context might have been lost, so restore it...
     if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
@@ -9201,7 +9204,7 @@ JSBool CChar_InvalidateAttacker(JSContext *cx, JSObject *obj, uintN argc,
     auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
     auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
     
-    Combat->InvalidateAttacker(mChar);
+    worldCombat.InvalidateAttacker(mChar);
     
     // Active script-context might have been lost, so restore it...
     if (origScript != JSMapping->GetScript(JS_GetGlobalObject(cx))) {
@@ -9739,7 +9742,7 @@ JSBool CChar_Defense(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
     JSEncapsulate resistType(cx, &(argv[1]));
     JSEncapsulate doArmorDamage(cx, &(argv[2]));
     
-    *rval = INT_TO_JSVAL(Combat->CalcDef(mChar, static_cast<std::uint8_t>(hitLoc.toInt()), doArmorDamage.toBool(), static_cast<Weather::type_t>(resistType.toInt())));
+    *rval = INT_TO_JSVAL(worldCombat.CalcDef(mChar, static_cast<std::uint8_t>(hitLoc.toInt()), doArmorDamage.toBool(), static_cast<Weather::type_t>(resistType.toInt())));
     return JS_TRUE;
 }
 

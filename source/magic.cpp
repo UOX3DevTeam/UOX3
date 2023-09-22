@@ -36,6 +36,9 @@
 #include "weight.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern CHandleCombat worldCombat ;
+extern WorldItem worldItem ;
+extern CCharStuff worldNPC ;
 
 using namespace std::string_literals;
 
@@ -124,7 +127,7 @@ const MagicTable_st magic_table[] = {{593, (MAGIC_DEFN)&splClumsy},
 // another at trgX / trgY / trgZ
 // o------------------------------------------------------------------------------------------------o
 void SpawnGate(CChar *caster, std::int16_t srcX, std::int16_t srcY, std::int8_t srcZ, std::uint8_t srcWorld, std::int16_t trgX, std::int16_t trgY, std::int8_t trgZ, std::uint8_t trgWorld, std::uint16_t trgInstanceId) {
-    CItem *g1 = Items->CreateItem(nullptr, caster, 0x0F6C, 1, 0, CBaseObject::OT_ITEM);
+    CItem *g1 = worldItem.CreateItem(nullptr, caster, 0x0F6C, 1, 0, CBaseObject::OT_ITEM);
     if (ValidateObject(g1)) {
         g1->SetDecayable(true);
         g1->SetType(IT_GATE);
@@ -132,7 +135,7 @@ void SpawnGate(CChar *caster, std::int16_t srcX, std::int16_t srcY, std::int8_t 
         g1->SetDecayTime( BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::GATE])) );
         g1->SetDir(1);
         
-        CItem *g2 = Items->CreateItem(nullptr, caster, 0x0F6C, 1, 0, CBaseObject::OT_ITEM);
+        CItem *g2 = worldItem.CreateItem(nullptr, caster, 0x0F6C, 1, 0, CBaseObject::OT_ITEM);
         if (ValidateObject(g2)) {
             g2->SetDecayable(true);
             g2->SetType(IT_GATE);
@@ -178,7 +181,7 @@ bool FieldSpell(CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y,
     std::uint16_t instanceId = caster->GetInstanceId();
     for (std::uint8_t j = 0; j < 5; ++j) {// how about we make this 5, huh?  missing part of the field
         if (id != 0x0080 || (id == 0x0080 && !Movement->CheckForCharacterAtXYZ(caster, fx[j], fy[j], z))) {
-            i = Items->CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
+            i = worldItem.CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
             if (i != nullptr) {
                 i->SetDispellable(true);
                 i->SetDecayable(true);
@@ -1403,7 +1406,7 @@ bool splInvisibility(CChar *caster, CChar *target, [[maybe_unused]] CChar *src, 
     
     // Stop autodefending against targets in combat once you turn invisible
     if (!target->IsNpc()) {
-        Combat->InvalidateAttacker(target);
+        worldCombat.InvalidateAttacker(target);
     }
     return true;
 }
@@ -1521,7 +1524,7 @@ void MassCurseStub(CChar *caster, CChar *target, [[maybe_unused]] std::int8_t cu
     
     std::int32_t j;
     if (target->IsNpc()) {
-        Combat->AttackTarget(caster, target);
+        worldCombat.AttackTarget(caster, target);
     }
     Effects->PlayStaticAnimation(target, 0x374A, 0, 15);
     Effects->PlaySound(target, 0x01FC);
@@ -1638,7 +1641,7 @@ void ChainLightningStub(CChar *caster, CChar *target, std::int8_t curSpell, std:
     }
     
     if (target->IsNpc()) {
-        Combat->AttackTarget(target, caster);
+        worldCombat.AttackTarget(target, caster);
     }
     /*Effects->PlaySound( caster, 0x0029 );*/
     [[maybe_unused]] CChar *def = nullptr;
@@ -1897,7 +1900,7 @@ void MeteorSwarmStub(CChar *caster, CChar *target, std::int8_t curSpell, std::in
     }
     
     if (target->IsNpc()) {
-        Combat->AttackTarget(target, caster);
+        worldCombat.AttackTarget(target, caster);
     }
     
     std::int16_t spellDamage = 0;
@@ -2278,7 +2281,7 @@ bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t i
     std::uint8_t worldNumber = caster->WorldNumber();
     std::uint16_t instanceId = caster->GetInstanceId();
     for (j = 0; j < 4; ++j) { // Draw the corners of our diamond
-        i = Items->CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
+        i = worldItem.CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
         if (i != nullptr) {
             i->SetDispellable(true);
             i->SetDecayable(true);
@@ -2293,7 +2296,7 @@ bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t i
     for (j = -1; j < 2; j = j + 2) {
         for (std::int8_t counter2 = -1; counter2 < 2; counter2 += 2) {
             for (std::int32_t counter3 = 1; counter3 < yOffset; ++counter3) {
-                i = Items->CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
+                i = worldItem.CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
                 if (i != nullptr) {
                     i->SetDispellable(true);
                     i->SetDecayable(true);
@@ -2336,7 +2339,7 @@ bool SquareSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t id
     std::uint16_t instanceId = caster->GetInstanceId();
     for (std::uint8_t j = 0; j < 4; ++j) {// Draw the corners of our diamond
         for (std::int32_t counter = fx[j]; counter < fy[j]; ++counter) {
-            i = Items->CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
+            i = worldItem.CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
             if (i != nullptr) {
                 i->SetDispellable(true);
                 i->SetDecayable(true);
@@ -2379,7 +2382,7 @@ bool FloodSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t id,
     std::uint16_t instanceId = caster->GetInstanceId();
     for (std::int32_t counter1 = minX; counter1 <= maxX; ++counter1) {
         for (std::int32_t counter2 = minY; counter2 <= maxY; ++counter2) {
-            CItem *i = Items->CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
+            CItem *i = worldItem.CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
             if (i != nullptr) {
                 i->SetDispellable(true);
                 i->SetDecayable(true);
@@ -2663,7 +2666,7 @@ void CMagic::SummonMonster(CSocket *s, CChar *caster, std::uint16_t id, std::int
     
     switch (id) {
         case 0: { // summon monster
-            newChar = Npcs->CreateRandomNPC("10000");
+            newChar = worldNPC.CreateRandomNPC("10000");
             if (!ValidateObject(newChar)) {
                 if (validSocket) {
                     s->SysMessage(694); // Contact your shard op to setup the summon list!
@@ -2713,39 +2716,39 @@ void CMagic::SummonMonster(CSocket *s, CChar *caster, std::uint16_t id, std::int
         }
         case 1:                                  // Energy Vortex
             Effects->PlaySound(s, 0x0216, true); // EV
-            newChar = Npcs->CreateNPCxyz("energyvortex-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
+            newChar = worldNPC.CreateNPCxyz("energyvortex-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
             break;
         case 2:                                  // Air Elemental
             Effects->PlaySound(s, 0x0217, true); // AE
-            newChar = Npcs->CreateNPCxyz("airele-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
+            newChar = worldNPC.CreateNPCxyz("airele-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
             break;
         case 3: // Earth Elemental
             Effects->PlaySound(s, 0x0217, true);
-            newChar = Npcs->CreateNPCxyz("earthele-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
+            newChar = worldNPC.CreateNPCxyz("earthele-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
             break;
         case 4: // Fire Elemental
             Effects->PlaySound(s, 0x0217, true);
-            newChar = Npcs->CreateNPCxyz("firele-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
+            newChar = worldNPC.CreateNPCxyz("firele-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
             break;
         case 5: // Water Elemental
             Effects->PlaySound(s, 0x0217, true);
-            newChar = Npcs->CreateNPCxyz("waterele-summon", 0, 0, 0, caster->WorldNumber(),  caster->GetInstanceId());
+            newChar = worldNPC.CreateNPCxyz("waterele-summon", 0, 0, 0, caster->WorldNumber(),  caster->GetInstanceId());
             break;
         case 6:                                  // Blade Spirits
             Effects->PlaySound(s, 0x0212, true); // I don't know if this is the right effect...
-            newChar = Npcs->CreateNPCxyz("bladespirit-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
+            newChar = worldNPC.CreateNPCxyz("bladespirit-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
             break;
         case 7: // Daemon
             Effects->PlaySound(s, 0x0216, true);
-            newChar = Npcs->CreateNPCxyz("daemon-summon", 0, 0, 0, caster->WorldNumber(),  caster->GetInstanceId());
+            newChar = worldNPC.CreateNPCxyz("daemon-summon", 0, 0, 0, caster->WorldNumber(),  caster->GetInstanceId());
             break;
         case 8: // Dupre The Hero
             Effects->PlaySound(s, 0x0246, true);
-            newChar = Npcs->CreateNPCxyz("dupre-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
+            newChar = worldNPC.CreateNPCxyz("dupre-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
             break;
         case 9: // Black Night
             Effects->PlaySound(s, 0x0216, true);
-            newChar = Npcs->CreateNPCxyz("blacknight-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
+            newChar = worldNPC.CreateNPCxyz("blacknight-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceId());
             break;
         default:
             Effects->PlaySound(s, 0x0215, true);
@@ -2810,7 +2813,7 @@ void CMagic::SummonMonster(CSocket *s, CChar *caster, std::uint16_t id, std::int
     else {
         i = caster->GetTarg();
     }
-    Combat->AttackTarget(newChar, i);
+    worldCombat.AttackTarget(newChar, i);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3119,9 +3122,9 @@ void CMagic::MagicDamage(CChar *p, std::int16_t amount, CChar *attacker, Weather
     
     // Allow damage if target is not invulnerable or in a zone safe from aggressive magic
     if (!p->IsInvulnerable() && !p->GetRegion()->IsSafeZone() && p->GetRegion()->CanCastAggressive()) {
-        std::uint8_t hitLoc = Combat->CalculateHitLoc();
-        std::int16_t damage = Combat->ApplyDamageBonuses(element, attacker, p, MAGERY, hitLoc, amount);
-        damage = Combat->ApplyDefenseModifiers(element, attacker, p, MAGERY, hitLoc, damage, true);
+        std::uint8_t hitLoc = worldCombat.CalculateHitLoc();
+        std::int16_t damage = worldCombat.ApplyDamageBonuses(element, attacker, p, MAGERY, hitLoc, amount);
+        damage = worldCombat.ApplyDefenseModifiers(element, attacker, p, MAGERY, hitLoc, damage, true);
         if (damage <= 0) {
             damage = 1;
         }
@@ -4067,7 +4070,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
                             }
                             return;
                         }
-                        Combat->AttackTarget(caster, c);
+                        worldCombat.AttackTarget(caster, c);
                     }
                     if (spells[curSpell].SpellReflectable()) {
                         if (CheckMagicReflect(c)) {

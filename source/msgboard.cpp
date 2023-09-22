@@ -47,6 +47,7 @@
 #include "townregion.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern WorldItem worldItem ;
 
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
@@ -988,9 +989,8 @@ void MsgBoardQuestEscortArrive(CSocket *mSock, CChar *mNPC) {
         // short on gold. I have nothing to pay you with.
         mNPC->TextMessage(mSock, 738, TALK, 0, mChar->GetName().c_str(), destReg->GetName().c_str());
     }
-    else // Otherwise pay the poor sod for his time
-    {
-        Items->CreateScriptItem(mSock, mChar, "0x0EED", questReward, CBaseObject::OT_ITEM, true);
+    else {// Otherwise pay the poor sod for his time
+        worldItem.CreateScriptItem(mSock, mChar, "0x0EED", questReward, CBaseObject::OT_ITEM, true);
         Effects->GoldSound(mSock, questReward);
         
         // Thank you %s for thy service. We have made it safely to %s. Here is thy pay as promised.

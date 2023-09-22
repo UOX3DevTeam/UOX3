@@ -3890,7 +3890,7 @@
 	Increased world-loading speeds by ~35-40%, and saving by ~30-35% (your mileage may vary, this was tested on Windows 7, on an SSD)
 	Included <climits> in mapstuff.h and <stdlib.h> in cdice.cpp to fix a compiling issue in Linux
 	Updated some JS Console Methods in JS/COMMANDS/consoletest.js
-	Made the WIPEABLE bit a member of cBaseObj instead of cItem, so it can be used by both items, spawners, characters and multis - though only works for items and spawners atm
+	Made the WIPEABLE bit a member of cBaseObj instead of WorldItem, so it can be used by both items, spawners, characters and multis - though only works for items and spawners atm
 	Updated the 'WIPE command to not delete non-wipeable items and spawners
 	Fixed a crash-bug in JS/COMMANDS/gumps.js where the 'ISTATS command could crash the server if used on a spawner-object with no spawnsection set
 	Fixed read-only books (setup through DFNDATA/MISC/books.dfn) by updating the MORE dfn-tags in DFNDATA/ITEMS/MISC/books.dfn
@@ -7427,7 +7427,7 @@ July 28 2004 - Maarc
 		Made wiping commands default to Admin-Only.
 		Fixed an issue causing many commands not to function properly, if at all.
 	Fixed display of (# items, # stones) on containers.
-	Added SetDecayable( true ) to cItem::CreateBaseItem() to default items to decayable.
+	Added SetDecayable( true ) to WorldItem::CreateBaseItem() to default items to decayable.
 
 12/7/2003 - giwo
 	Optimized and cleaned up walking code a great deal.
@@ -7457,7 +7457,7 @@ July 28 2004 - Maarc
 	Took our main classes out of global scope, now only files that include their headers will have access to them.
 	Added CServerProfile class to remove our profiling variables from global scope.
 	Simplified a bit of the handling in targeting.cpp, allowing the removal of many functions.
-	Tinkered with lineofsight.cpp a bit allowing the removal of itemids and loscache from cItem class.
+	Tinkered with lineofsight.cpp a bit allowing the removal of itemids and loscache from WorldItem class.
 	Moved doorbase[] out of global scope and into door.cpp.
 	Made use of cSkillClass in cplayeraction.cpp BestSkill().
 
@@ -7504,7 +7504,7 @@ July 28 2004 - Maarc
 	Added cBO::Delete(), and IsDeleted();
 	Added CItem::Spells() to take the place of MoreXYZ in Spellbook handling
 	Removed CItem::Dirty() and CChar::Dirty().
-	Removed cItem::DeleItem() and cCharStuff::DeleteChar().
+	Removed WorldItem::DeleItem() and cCharStuff::DeleteChar().
 	Removed cWM::TotalTownRegions() and TotalSpawnRegions().
 	Removed CChar::SpellAction().
 	Removed CItem::Doordir().
@@ -7584,7 +7584,7 @@ Oct 19 2003 - giwo
 	Added First(), Next() and Finished() functions to cItemHandle and cCharHandle inplace of our Item / Char Count() loops.
 	Added CPICreateCharacter, CPIDeleteCharacter, and CPIPlayCharacter packet classes.
 	Added WEIGHTPERSTR= value to uox.ini.
-	Added a cItem constructor and destructor to handle creating and deleting loscache[] and itemids[].
+	Added a WorldItem constructor and destructor to handle creating and deleting loscache[] and itemids[].
 	Added ADVOBJ, DYEHAIR, DYEBEARD, KILLHAIR, KILLBEARD, KILLPACK, and POLY to DFNTAGS enum to support advance.dfn
 	Removed a good number of function declarations from funcdecl.h and declared them locally in the files that used them.
 	Removed some includes that no longer seem to be used.
@@ -7598,7 +7598,7 @@ Oct 19 2003 - giwo
 	Fixed up some functions in movement.cpp and commented out those that are unused.
 	Reorganized globals.cpp to better match with uox3.h
 	Moved spells[] to CMagic class.
-	Moved itemids[] and loscache[] to cItem class.
+	Moved itemids[] and loscache[] to WorldItem class.
 
 Oct 13 2003 - giwo
 	Changed CWorldMain::logout to a vector logoutLocs.
@@ -7614,7 +7614,7 @@ Oct 13 2003 - giwo
 	Made VialTarget() a part of cTargets class, and MakeNecroReg() a part of cSkills class.
 	Removed necro.cpp from the project
 
-	cItem changes:
+	WorldItem changes:
 		Added:   CreateMulti(), CreateBaseItem(), CreateBaseScriptItem(), PlaceItem(), CreateRandomItem()
 		Removed: SpawnItem(), SpawnItemToPack(), SpawnMulti(), SpawnRandomItem()
 		Rewrote: CreateItem(), CreateScriptItem(), CreateRandomItem()
@@ -7640,7 +7640,7 @@ Oct 04 2003 - giwo
 	Removed some functions from funcdecl.h which did not need to be in the global scope.
 	Replaced getRootPack() and getPackOwner() with FindItemOwner() and an overload to simplify it.
 	Removed getPack() in favor of using CItem::GetPackItem(), also made GetPackItem() a bit more useful.
-	Replaced cItem::PackType with cItem::getPackType(), created enum PackTypes to simplify it, and made it more useful.
+	Replaced WorldItem::PackType with WorldItem::getPackType(), created enum PackTypes to simplify it, and made it more useful.
 	Added some #ifndef's in header files which were missing it.
 	Moved openPack() and openBank() into cSocket class.
 	Moved batchcheck() into cNetworkStuff class, since that was its only usage.
@@ -7708,8 +7708,8 @@ Oct 04 2003 - giwo
 
 		Moved statwindow() into the cSocket class
 		Removed sendItem(), sendPackItem(), and openCorpse()
-		Replaced the aforementioned functions with an improved cItem::Refresh(), cItem::SendToSocket(), and cItem::SendPackItemToSocket().
-		Added cItem::RemoveFromSight() to better handle usage of the CPRemoveItem() packet class
+		Replaced the aforementioned functions with an improved WorldItem::Refresh(), WorldItem::SendToSocket(), and WorldItem::SendPackItemToSocket().
+		Added WorldItem::RemoveFromSight() to better handle usage of the CPRemoveItem() packet class
 		Added cplayeraction.cpp and cPlayerAction.h to move many functions out of global scope.
 		Removed cClick.cpp as the aforementioned file holds its functions now.
 		Moved updateskill() into the cSocket class
@@ -8372,7 +8372,7 @@ Removed:
 Changed
 	Fixed an issue allowing the server to not have a dictionary.ZRO (which would cause a crash when a dictionary entry was called with no language)
 	Fixed an issue causing the server to puke when it attempted a restart
-	Moved SpawnRandomItem() into cItem class
+	Moved SpawnRandomItem() into WorldItem class
 	Moved SpawnRandomMonster() into cCharHandle class
 	Broke necro.dfn into fishing.dfn and digging.dfn
 	Made better use of SpawnRandomItem() and SpawnRandomMonster()
@@ -8518,7 +8518,7 @@ Changed:
 		-Attack flagging issues addressed/worked on
 		-Combat bug causing you swing but never hit when diagonal from enemy fixed
 		-Decay timer reset upon dropping an item on the ground
-		-Cleanup of cItem::decayItem()
+		-Cleanup of WorldItem::decayItem()
 		-Fixed an issue causing creatures to get stuck turning around when nearly dead
 		-Fixed up amount functions to allow for UI32, should allow statwindow to properly display up to 4billion+ gold on a character, as well as allow high-cost item buy/sells
 		-Changed CChar tailitem, GetTailItem() and SetTailItem() to an object pointer

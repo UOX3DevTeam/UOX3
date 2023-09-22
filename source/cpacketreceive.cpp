@@ -35,6 +35,7 @@
 #include "utility/strutil.hpp"
 
 extern CDictionaryContainer worldDictionary ;
+extern CHandleCombat worldCombat ;
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	pSplit()
@@ -1635,7 +1636,7 @@ void CPIAttack::Receive() { tSock->Receive(5, false); }
 bool CPIAttack::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     ourChar->BreakConcentration(tSock);
-    Combat->PlayerAttack(tSock);
+    worldCombat.PlayerAttack(tSock);
     return true;
 }
 

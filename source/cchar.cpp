@@ -81,6 +81,8 @@
 #include "weight.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern CHandleCombat worldCombat ;
+extern CCharStuff worldNPC ;
 
 #define DEBUGMOVEMULTIPLIER 1.75
 
@@ -579,7 +581,7 @@ void CChar::DoHunger(CSocket *mSock) {
                     }
                     
                     // Release the pet
-                    Npcs->ReleasePet(this);
+                    worldNPC.ReleasePet(this);
                 }
                 else if (GetLoyalty() == 0) {
                     // Pet is hungry. Reduce loyalty!
@@ -891,7 +893,7 @@ auto CChar::IsAwake() const -> bool {
 auto CChar::SetAwake(bool newVal) -> void {
     if (IsValidNPC()) {
         mNPC->boolFlags.set(BIT_AWAKE, newVal);
-        auto alwaysAwakeChars = Npcs->GetAlwaysAwakeNPCs();
+        auto alwaysAwakeChars = worldNPC.GetAlwaysAwakeNPCs();
         if (newVal) {
             // NPC awake, add to awake list
             alwaysAwakeChars->Add(this);
@@ -2865,7 +2867,7 @@ auto CChar::AggressorFlagMaintenance() -> void {
     for (auto toRemove : serialsToRemove) {
         RemoveAggressorFlag(toRemove);
         if (ValidateObject(GetTarg()) && GetTarg()->GetSerial() == toRemove) {
-            Combat->InvalidateAttacker(this);
+            worldCombat.InvalidateAttacker(this);
         }
     }
 }
@@ -4508,13 +4510,13 @@ void CChar::Cleanup() {
         }
         
         if (IsGuarded()) {
-            CChar *petGuard = Npcs->GetGuardingFollower(this, this);
+            CChar *petGuard = worldNPC.GetGuardingFollower(this, this);
             if (ValidateObject(petGuard)) {
                 petGuard->SetGuarding(nullptr);
             }
             SetGuarded(false);
         }
-        Npcs->StopPetGuarding(this);
+        worldNPC.StopPetGuarding(this);
         
         // Clear out char's followers
         for (tempChar = activeFollowers.First(); !activeFollowers.Finished();tempChar = activeFollowers.Next()) {
@@ -5799,7 +5801,7 @@ void CChar::DoLoyaltyUpdate() {
                 }
                 
                 // Release the pet
-                Npcs->ReleasePet(this);
+                worldNPC.ReleasePet(this);
                 return;
             }
         }
@@ -7419,7 +7421,7 @@ void CChar::Die(CChar *attacker, bool doRepsys) {
             Console::shared().log(util::format(worldDictionary.GetEntry(1617), GetName().c_str(), attacker->GetName().c_str()), "PvP.log");
         }
         
-        Combat->Kill(attacker, this);
+        worldCombat.Kill(attacker, this);
     }
     else {
         HandleDeath(this, nullptr);

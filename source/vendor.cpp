@@ -17,6 +17,7 @@
 #include "objectfactory.h"
 #include "townregion.h"
 
+extern WorldItem worldItem ;
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CalcValue()
 // o------------------------------------------------------------------------------------------------o
@@ -229,7 +230,7 @@ bool CPIBuyItem::Handle() {
                 iMade = nullptr;
                 if (biTemp->GetAmount() > amount[i]) {
                     if (biTemp->IsPileable()) {
-                        iMade = Items->DupeItem(tSock, biTemp, amount[i]);
+                        iMade = worldItem.DupeItem(tSock, biTemp, amount[i]);
                         if (iMade != nullptr) {
                             iMade->SetCont(p);
                             iMade->PlaceInPack();
@@ -239,7 +240,7 @@ bool CPIBuyItem::Handle() {
                     }
                     else {
                         for (j = 0; j < amount[i]; ++j) {
-                            iMade = Items->DupeItem(tSock, biTemp, 1);
+                            iMade = worldItem.DupeItem(tSock, biTemp, 1);
                             if (iMade != nullptr) {
                                 CItem *biTempCont = static_cast<CItem *>(biTemp->GetCont());
                                 if (biTempCont->GetLayer() == 0x1A) {
@@ -266,7 +267,7 @@ bool CPIBuyItem::Handle() {
                     switch (biTempCont->GetLayer()) {
                         case 0x1A: // Sell Container
                             if (biTemp->IsPileable()) {
-                                iMade = Items->DupeItem(tSock, biTemp, amount[i]);
+                                iMade = worldItem.DupeItem(tSock, biTemp, amount[i]);
                                 if (iMade != nullptr) {
                                     iMade->SetCont(p);
                                     iMade->PlaceInPack();
@@ -276,7 +277,7 @@ bool CPIBuyItem::Handle() {
                             }
                             else {
                                 for (j = 0; j < amount[i]; ++j) {
-                                    iMade = Items->DupeItem(tSock, biTemp, 1);
+                                    iMade = worldItem.DupeItem(tSock, biTemp, 1);
                                     if (iMade != nullptr) {
                                         std::int16_t iMadeHP = iMade->GetHP();
                                         std::int16_t iMadeMaxHP = static_cast<std::int16_t>(iMade->GetMaxHP());
@@ -302,7 +303,7 @@ bool CPIBuyItem::Handle() {
                             }
                             else {
                                 for (j = 0; j < amount[i] - 1; ++j) {
-                                    iMade = Items->DupeItem(tSock, biTemp, 1);
+                                    iMade = worldItem.DupeItem(tSock, biTemp, 1);
                                     if (iMade != nullptr) {
                                         iMade->SetCont(p);
                                         iMade->PlaceInPack();
@@ -483,7 +484,7 @@ bool CPISellItem::Handle() {
                     totgold += (amt * value);
                     
                     if (j->GetAmount() != amt) {
-                        l = Items->DupeItem(tSock, j, amt);
+                        l = worldItem.DupeItem(tSock, j, amt);
                         j->SetAmount(j->GetAmount() - amt);
                     }
                     else {
@@ -527,11 +528,11 @@ bool CPISellItem::Handle() {
         
         Effects->GoldSound(tSock, totgold);
         while (totgold > MAX_STACK) {
-            Items->CreateScriptItem(tSock, mChar, "0x0EED", MAX_STACK, CBaseObject::OT_ITEM, true);
+            worldItem.CreateScriptItem(tSock, mChar, "0x0EED", MAX_STACK, CBaseObject::OT_ITEM, true);
             totgold -= MAX_STACK;
         }
         if (totgold > 0) {
-            Items->CreateScriptItem(tSock, mChar, "0x0EED", totgold, CBaseObject::OT_ITEM, true);
+            worldItem.CreateScriptItem(tSock, mChar, "0x0EED", totgold, CBaseObject::OT_ITEM, true);
         }
     }
     
@@ -568,7 +569,7 @@ void restockNPC(CChar &i, bool stockAll) {
                 if (ServerConfig::shared().enabled(ServerSwitch::TRADESYSTEM)) {
                     CTownRegion *tReg =
                     CalcRegionFromXY(i.GetX(), i.GetY(), i.WorldNumber(), i.GetInstanceId());
-                    Items->StoreItemRandomValue(c, tReg);
+                    worldItem.StoreItemRandomValue(c, tReg);
                 }
             }
         }

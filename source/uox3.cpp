@@ -104,6 +104,10 @@
 
 extern WorldWeather worldWeather;
 extern CDictionaryContainer worldDictionary ;
+extern CHandleCombat worldCombat ;
+extern WorldItem worldItem ;
+extern CCharStuff worldNPC ;
+
 
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
@@ -127,9 +131,6 @@ auto saveOnShutdown = false;
 //  Classes we will use
 // o------------------------------------------------------------------------------------------------o
 //  Non depdendent class
-auto aCombat = CHandleCombat();            // No dependency, startup
-auto aItems = cItem();                     // No startup, no dependency
-auto aNpcs = CCharStuff();                 // nodependency, no startup
 auto aSkills = CSkills();                  // no ddependency, no startup
 auto aWeight = CWeight();                  // no dependency, no startup
 auto aMagic = CMagic();                    // No dependent, no startup
@@ -966,13 +967,13 @@ auto MountCreature(CSocket *sockPtr, CChar *s, CChar *x) -> void {
     if (!ObjInRange(s, x, DIST_NEXTTILE))
         return;
     
-    if (x->GetOwnerObj() == s || Npcs->CheckPetFriend(s, x) || s->IsGM()) {
+    if (x->GetOwnerObj() == s || worldNPC.CheckPetFriend(s, x) || s->IsGM()) {
         if (!ServerConfig::shared().enabled(ServerSwitch::HIDEWHILEMOUNTED)) {
             s->ExposeToView();
         }
         
         s->SetOnHorse(true);
-        auto c = Items->CreateItem(nullptr, s, 0x0915, 1, x->GetSkin(), CBaseObject::OT_ITEM);
+        auto c = worldItem.CreateItem(nullptr, s, 0x0915, 1, x->GetSkin(), CBaseObject::OT_ITEM);
         
         auto xName = GetNpcDictName(x, sockPtr, NRS_SYSTEM);
         c->SetName(xName);
@@ -1085,7 +1086,7 @@ auto CallGuards(CChar *mChar) -> void {
                 }
                 
                 if (CharInRange(mChar, attacker)) {
-                    Combat->SpawnGuard(mChar, attacker, attacker->GetX(), attacker->GetY(),  attacker->GetZ());
+                    worldCombat.SpawnGuard(mChar, attacker, attacker->GetX(), attacker->GetY(),  attacker->GetZ());
                     return;
                 }
             }
@@ -1105,7 +1106,7 @@ auto CallGuards(CChar *mChar) -> void {
                         }
                         
                         if (CharInRange(tempChar, mChar)) {
-                            Combat->SpawnGuard(mChar, tempChar, tempChar->GetX(), tempChar->GetY(), tempChar->GetZ());
+                            worldCombat.SpawnGuard(mChar, tempChar, tempChar->GetX(), tempChar->GetY(), tempChar->GetZ());
                             break;
                         }
                     }
@@ -1135,7 +1136,7 @@ auto CallGuards(CChar *mChar, CChar *targChar) -> void {
                 }
                 
                 if (CharInRange(mChar, targChar)) {
-                    Combat->SpawnGuard(mChar, targChar, targChar->GetX(), targChar->GetY(), targChar->GetZ());
+                    worldCombat.SpawnGuard(mChar, targChar, targChar->GetX(), targChar->GetY(), targChar->GetZ());
                 }
             }
         }
@@ -1237,7 +1238,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
             const float MeditationBonus = (.00075f * mChar.GetSkill(MEDITATION)); // Bonus for Meditation
             std::int32_t NextManaRegen = static_cast<std::int32_t>(ServerConfig::shared().timerSetting[TimerSetting::MANAREGEN] * (1 - MeditationBonus) * 1000);
             if (ServerConfig::shared().enabled(ServerSwitch::ARMORIMPACTSMANA)){ // If armor effects mana regeneration...
-                float ArmorPenalty = Combat->CalcDef((&mChar), 0, false); // Penalty taken due to high def
+                float ArmorPenalty = worldCombat.CalcDef((&mChar), 0, false); // Penalty taken due to high def
                 if (ArmorPenalty > 100){// For def higher then 100, penalty is the same...just in case
                     ArmorPenalty = 100;
                 }
@@ -1493,7 +1494,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
 //|	Purpose		-	Check a PC's status
 // o------------------------------------------------------------------------------------------------o
 auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
-    Combat->CombatLoop(mSock, mChar);
+    worldCombat.CombatLoop(mSock, mChar);
     
     if (mChar.GetSquelched() == 2) {
         if (mSock->GetTimer(tPC_MUTETIME) != 0 &&
@@ -1719,7 +1720,7 @@ auto CheckNPC(CChar &mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck
         }
         mChar.SetOldNpcWander(WT_NONE); // so it won't save this at the wsc file
     }
-    Combat->CombatLoop(nullptr, mChar);
+    worldCombat.CombatLoop(nullptr, mChar);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2373,7 +2374,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
     
     // Check NPCs marked as always active, regardless of whether their region is "awake"
     if (allowAwakeNPCs) {
-        auto alwaysAwakeChars = Npcs->GetAlwaysAwakeNPCs();
+        auto alwaysAwakeChars = worldNPC.GetAlwaysAwakeNPCs();
         std::vector<CChar *> toRemove;
         for (const auto &charCheck : alwaysAwakeChars->collection()) {
             if (ValidateObject(charCheck) && !charCheck->IsFree() && charCheck->IsNpc()) {
@@ -2455,10 +2456,7 @@ auto initClasses() -> void {
     JSEngine = &aJSEngine;
     JSMapping = &aJSMapping;
     Effects = &aEffects;
-    Combat = &aCombat;
-    Items = &aItems;
     Map = &aMap;
-    Npcs = &aNpcs;
     Skills = &aSkills;
     Weight = &aWeight;
     JailSys = &aJailSys;
@@ -2758,7 +2756,7 @@ auto AdvanceObj(CChar *applyTo, std::uint16_t advObj, bool multiUse) -> void {
                     break;
                 case DFNTAG_EQUIPITEM:
                     retItem =
-                    Items->CreateBaseScriptItem(nullptr, cdata, applyTo->WorldNumber(), 1);
+                    worldItem.CreateBaseScriptItem(nullptr, cdata, applyTo->WorldNumber(), 1);
                     if (retItem) {
                         if (!retItem->SetCont(applyTo)) {
                             retItem->SetCont(applyTo->GetPackItem());
@@ -2876,10 +2874,10 @@ auto AdvanceObj(CChar *applyTo, std::uint16_t advObj, bool multiUse) -> void {
                         auto csecs = oldstrutil::sections(cdata, ",");
                         if (!cdata.empty()) {
                             if (csecs.size() > 1) {
-                                retItem = Items->CreateScriptItem(nullptr, applyTo, util::trim(util::strip(csecs[0], "//")),util::ston<std::uint16_t>(util::trim(util::strip(csecs[1], "//"))),CBaseObject::OT_ITEM, true);
+                                retItem = worldItem.CreateScriptItem(nullptr, applyTo, util::trim(util::strip(csecs[0], "//")),util::ston<std::uint16_t>(util::trim(util::strip(csecs[1], "//"))),CBaseObject::OT_ITEM, true);
                             }
                             else {
-                                retItem = Items->CreateScriptItem(nullptr, applyTo, cdata, 1,CBaseObject::OT_ITEM, true);
+                                retItem = worldItem.CreateScriptItem(nullptr, applyTo, cdata, 1,CBaseObject::OT_ITEM, true);
                             }
                         }
                     }

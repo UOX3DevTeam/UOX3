@@ -59,6 +59,8 @@
 #include "townregion.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern WorldItem worldItem ;
+extern CCharStuff worldNPC ;
 
 bool BuyShop(CSocket *s, CChar *c);
 void CallGuards(CChar *mChar);
@@ -877,7 +879,7 @@ bool CPetMultiResponse::Handle(CSocket *mSock, CChar *mChar, CChar *petNpc) {
     if (allSaid) {
         for (auto &nearbyNpc : FindNearbyNPCs(mChar, DIST_CMDRANGE)) {
             if (ValidateObject(nearbyNpc) && nearbyNpc->GetOwnerObj() == mChar) {
-                if (Npcs->CanControlPet(mChar, nearbyNpc, isRestricted, checkDifficulty)) {
+                if (worldNPC.CanControlPet(mChar, nearbyNpc, isRestricted, checkDifficulty)) {
                     std::uint8_t cursorType = 0;
                     if (targId == 25) { // Guard
                         cursorType = 2; // helpful
@@ -899,7 +901,7 @@ bool CPetMultiResponse::Handle(CSocket *mSock, CChar *mChar, CChar *petNpc) {
         }
         
         if (FindString(ourText, util::upper(npcName))) {
-            if (Npcs->CanControlPet(mChar, petNpc, isRestricted, checkDifficulty)) {
+            if (worldNPC.CanControlPet(mChar, petNpc, isRestricted, checkDifficulty)) {
                 mSock->TempObj(petNpc);
                 std::uint8_t cursorType = 0;
                 if (targId == 25) { // Guard
@@ -922,12 +924,12 @@ CPetReleaseResponse::CPetReleaseResponse(const std::string &text) : CBasePetResp
 bool CPetReleaseResponse::Handle(CSocket *mSock, CChar *mChar, CChar *petNpc) {
     std::string npcName = GetNpcDictName(petNpc, mSock, NRS_SYSTEM);
     if (FindString(ourText, util::upper(npcName))) {
-        if (Npcs->CanControlPet(mChar, petNpc, true, false)) {
+        if (worldNPC.CanControlPet(mChar, petNpc, true, false)) {
             // Reduce player's control slot usage by the amount of control slots taken up by the pet
             mChar->SetControlSlotsUsed(std::max(0, mChar->GetControlSlotsUsed() - petNpc->GetControlSlots()));
             
             // Release the pet
-            Npcs->ReleasePet(petNpc);
+            worldNPC.ReleasePet(petNpc);
             
             return false;
         }
@@ -949,8 +951,8 @@ CPetGuardResponse::CPetGuardResponse(bool allVal, const std::string &text)
 bool CPetGuardResponse::Handle(CSocket *mSock, CChar *mChar, CChar *petNpc) {
     std::string npcName = GetNpcDictName(petNpc, mSock, NRS_SYSTEM);
     if (saidAll || FindString(ourText, util::upper(npcName))) {
-        if (Npcs->CanControlPet(mChar, petNpc, false, true)) {
-            Npcs->StopPetGuarding(petNpc);
+        if (worldNPC.CanControlPet(mChar, petNpc, false, true)) {
+            worldNPC.StopPetGuarding(petNpc);
             mSock->SysMessage(1321); // Your pet is now guarding you.
             petNpc->SetNPCAiType(AI_PET_GUARD);
             petNpc->SetGuarding(mChar);
@@ -974,8 +976,8 @@ CPetAttackResponse::CPetAttackResponse(bool allVal, const std::string &text)
 bool CPetAttackResponse::Handle(CSocket *mSock, CChar *mChar, CChar *petNpc) {
     std::string npcName = GetNpcDictName(petNpc, mSock, NRS_SYSTEM);
     if (saidAll || FindString(ourText, util::upper(npcName))) {
-        if (Npcs->CanControlPet(mChar, petNpc, false, true)) {
-            Npcs->StopPetGuarding(petNpc);
+        if (worldNPC.CanControlPet(mChar, petNpc, false, true)) {
+            worldNPC.StopPetGuarding(petNpc);
             mSock->TempObj(petNpc);
             if (saidAll) {
                 mSock->TempInt(1);
@@ -998,8 +1000,8 @@ CPetComeResponse::CPetComeResponse(bool allVal, const std::string &text)
 bool CPetComeResponse::Handle(CSocket *mSock, CChar *mChar, CChar *petNpc) {
     std::string npcName = GetNpcDictName(petNpc, mSock, NRS_SYSTEM);
     if (saidAll || FindString(ourText, util::upper(npcName))) {
-        if (Npcs->CanControlPet(mChar, petNpc, false, true)) {
-            Npcs->StopPetGuarding(petNpc);
+        if (worldNPC.CanControlPet(mChar, petNpc, false, true)) {
+            worldNPC.StopPetGuarding(petNpc);
             petNpc->SetFTarg(mChar);
             petNpc->SetNpcWander(WT_FOLLOW);
             mSock->SysMessage(1318); // Your pet begins following you.
@@ -1020,8 +1022,8 @@ CPetStayResponse::CPetStayResponse(bool allVal, const std::string &text)
 bool CPetStayResponse::Handle(CSocket *mSock, CChar *mChar, CChar *petNpc) {
     std::string npcName = GetNpcDictName(petNpc, mSock, NRS_SYSTEM);
     if (saidAll || FindString(ourText, util::upper(npcName))) {
-        if (Npcs->CanControlPet(mChar, petNpc, false, true)) {
-            Npcs->StopPetGuarding(petNpc);
+        if (worldNPC.CanControlPet(mChar, petNpc, false, true)) {
+            worldNPC.StopPetGuarding(petNpc);
             petNpc->SetFTarg(nullptr);
             petNpc->SetTarg(nullptr);
             petNpc->SetAttacker(nullptr);
@@ -1181,7 +1183,7 @@ bool CVendorGoldResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar, 
                 }
             }
             if (give) {
-                Items->CreateScriptItem(mSock, mChar, "0x0EED", give, CBaseObject::OT_ITEM, true);
+                worldItem.CreateScriptItem(mSock, mChar, "0x0EED", give, CBaseObject::OT_ITEM, true);
             }
             
             // Today's purchases total %i gold. I am keeping %i gold for my self. Here is the

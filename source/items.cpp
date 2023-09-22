@@ -24,7 +24,7 @@
 #include "townregion.h"
 using namespace std::string_literals;
 
-cItem *Items = nullptr;
+extern WorldItem worldItem ;
 
 itemtypes_t FindItemTypeFromTag(const std::string &strToFind);
 
@@ -769,18 +769,18 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                         auto tdata = util::trim(util::strip(csecs[0], "//"));
                         
                         if (tag == DFNTAG_LOOT) {
-                            Items->AddRespawnItem(applyTo, tdata, true, true, iAmount, true);
+                            worldItem.AddRespawnItem(applyTo, tdata, true, true, iAmount, true);
                         }
                         else {
-                            Items->AddRespawnItem(applyTo, tdata, true, false, iAmount, false);
+                            worldItem.AddRespawnItem(applyTo, tdata, true, false, iAmount, false);
                         }
                     }
                     else {
                         if (tag == DFNTAG_LOOT) {
-                            Items->AddRespawnItem(applyTo, cdata, true, true, 1, true);
+                            worldItem.AddRespawnItem(applyTo, cdata, true, true, 1, true);
                         }
                         else {
-                            Items->AddRespawnItem(applyTo, cdata, true, false, 1, false);
+                            worldItem.AddRespawnItem(applyTo, cdata, true, false, 1, false);
                         }
                     }
                 }
@@ -796,7 +796,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::CreateItem()
+//|	Function	-	WorldItem::CreateItem()
 //|	Date		-	10/12/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item and gives it an ID, Colour, and amount, also
@@ -804,7 +804,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
 //|					automatically look for an entry in harditems.dfn and set its
 // location (be it in |					a pack or on the ground).
 // o------------------------------------------------------------------------------------------------o
-CItem *cItem::CreateItem(CSocket *mSock, CChar *mChar, const std::uint16_t itemId, const std::uint16_t iAmount,  const std::uint16_t iColour, const CBaseObject::type_t itemType, bool inPack, bool shouldSave, std::uint8_t worldNumber, std::uint16_t instanceId, std::int16_t xLoc, std::int16_t yLoc, std::int8_t zLoc) {
+CItem *WorldItem::CreateItem(CSocket *mSock, CChar *mChar, const std::uint16_t itemId, const std::uint16_t iAmount,  const std::uint16_t iColour, const CBaseObject::type_t itemType, bool inPack, bool shouldSave, std::uint8_t worldNumber, std::uint16_t instanceId, std::int16_t xLoc, std::int16_t yLoc, std::int8_t zLoc) {
     if (ValidateObject(mChar)) {
         worldNumber = mChar->WorldNumber();
         instanceId = mChar->GetInstanceId();
@@ -865,13 +865,13 @@ CItem *cItem::CreateItem(CSocket *mSock, CChar *mChar, const std::uint16_t itemI
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::CreateScriptItem()
+//|	Function	-	WorldItem::CreateScriptItem()
 //|	Date		-	10/12/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a script item, gives it an amount, and sets
 //|					its location (be it in a pack or on the ground).
 // o------------------------------------------------------------------------------------------------o
-CItem *cItem::CreateScriptItem(CSocket *mSock, CChar *mChar, const std::string &item,  const std::uint16_t iAmount, const CBaseObject::type_t itemType, bool inPack, const std::uint16_t iColor, bool shouldSave) {
+CItem *WorldItem::CreateScriptItem(CSocket *mSock, CChar *mChar, const std::string &item,  const std::uint16_t iAmount, const CBaseObject::type_t itemType, bool inPack, const std::uint16_t iColor, bool shouldSave) {
     
     if (inPack && !ValidateObject(mChar->GetPackItem())) {
         std::string charName = GetNpcDictName(mChar, nullptr, NRS_SYSTEM);
@@ -925,13 +925,13 @@ CItem *cItem::CreateScriptItem(CSocket *mSock, CChar *mChar, const std::string &
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::*CreateRandomItem()
+//|	Function	-	WorldItem::*CreateRandomItem()
 //|	Date		-	10/12/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a random item from an itemlist in specified dfn file,
 //|						gives it a random buy/sell value, and places it
 // o------------------------------------------------------------------------------------------------o
-CItem *cItem::CreateRandomItem(CSocket *mSock, const std::string &itemList) {
+CItem *WorldItem::CreateRandomItem(CSocket *mSock, const std::string &itemList) {
     
     CChar *mChar = mSock->CurrcharObj();
     if (!ValidateObject(mChar))
@@ -953,12 +953,12 @@ CItem *cItem::CreateRandomItem(CSocket *mSock, const std::string &itemList) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::CreateRandomItem()
+//|	Function	-	WorldItem::CreateRandomItem()
 //|	Date		-	10/12/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a random item from an itemlist in specified dfn file
 // o------------------------------------------------------------------------------------------------o
-auto cItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, const std::uint8_t worldNum,  const std::uint16_t instanceId, bool shouldSave, bool useLootlist) -> CItem * {
+auto WorldItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, const std::uint8_t worldNum,  const std::uint16_t instanceId, bool shouldSave, bool useLootlist) -> CItem * {
     
     CItem *iCreated = nullptr;
     std::string sect;
@@ -1111,12 +1111,12 @@ auto cItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, const s
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::CreateMulti()
+//|	Function	-	WorldItem::CreateMulti()
 //|	Date		-	10/12/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a multi, and looks for an entry in harditems.dfn
 // o------------------------------------------------------------------------------------------------o
-CMultiObj *cItem::CreateMulti(const std::string &cName, const std::uint16_t itemId, const bool isBoat, const std::uint16_t worldNum, const std::uint16_t instanceId, const bool isBaseMulti) {
+CMultiObj *WorldItem::CreateMulti(const std::string &cName, const std::uint16_t itemId, const bool isBoat, const std::uint16_t worldNum, const std::uint16_t instanceId, const bool isBaseMulti) {
     
     CMultiObj *mCreated = static_cast<CMultiObj *>(  ObjectFactory::shared().CreateObject((isBoat) ? CBaseObject::OT_BOAT : CBaseObject::OT_MULTI));
     if (mCreated == nullptr)
@@ -1142,7 +1142,7 @@ CMultiObj *cItem::CreateMulti(const std::string &cName, const std::uint16_t item
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item
 // o------------------------------------------------------------------------------------------------o
-CItem *cItem::CreateBaseItem(const std::uint8_t worldNum, const CBaseObject::type_t itemType, const std::uint16_t instanceId, bool shouldSave) {
+CItem *WorldItem::CreateBaseItem(const std::uint8_t worldNum, const CBaseObject::type_t itemType, const std::uint16_t instanceId, bool shouldSave) {
     
     if (itemType != CBaseObject::OT_ITEM && itemType != CBaseObject::OT_SPAWNER)
         return nullptr;
@@ -1160,12 +1160,12 @@ CItem *cItem::CreateBaseItem(const std::uint8_t worldNum, const CBaseObject::typ
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::CreateBaseScriptItem()
+//|	Function	-	WorldItem::CreateBaseScriptItem()
 //|	Date		-	10/12/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item from the scripts
 // o------------------------------------------------------------------------------------------------o
-CItem *cItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const std::uint8_t worldNum, const std::uint16_t iAmount, const std::uint16_t instanceId,  const CBaseObject::type_t itemType, const std::uint16_t iColor, bool shouldSave) {
+CItem *WorldItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const std::uint8_t worldNum, const std::uint16_t iAmount, const std::uint16_t instanceId,  const CBaseObject::type_t itemType, const std::uint16_t iColor, bool shouldSave) {
     
     ourItem = util::trim(util::strip(ourItem, "//"));
     
@@ -1240,12 +1240,12 @@ CItem *cItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const std:
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::GetScriptItemSettings()
+//|	Function	-	WorldItem::GetScriptItemSettings()
 //|	Date		-	10/12/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Grabs item entries from harditems.dfn
 // o------------------------------------------------------------------------------------------------o
-void cItem::GetScriptItemSettings(CItem *iCreated) {
+void WorldItem::GetScriptItemSettings(CItem *iCreated) {
     std::string hexId = util::ntos(iCreated->GetId(), 16);
     while (hexId.size() < 4) {
         hexId = "0" + hexId;
@@ -1260,12 +1260,12 @@ void cItem::GetScriptItemSettings(CItem *iCreated) {
 
 CItem *AutoStack(CSocket *mSock, CItem *iToStack, CItem *iPack);
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::PlaceItem()
+//|	Function	-	WorldItem::PlaceItem()
 //|	Date		-	10/12/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Places an item that was just created
 // o------------------------------------------------------------------------------------------------o
-CItem *cItem::PlaceItem(CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack, std::uint8_t worldNumber, std::uint16_t instanceId, std::int16_t xLoc, std::int16_t yLoc, std::int8_t zLoc) {
+CItem *WorldItem::PlaceItem(CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack, std::uint8_t worldNumber, std::uint16_t instanceId, std::int16_t xLoc, std::int16_t yLoc, std::int8_t zLoc) {
     
     if (ValidateObject(mChar) && inPack) {
         if (iCreated->IsPileable()) {
@@ -1352,11 +1352,11 @@ auto decayItem(CItem &toDecay, const std::uint32_t nextDecayItems, std::uint32_t
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::GetPackType()
+//|	Function	-	WorldItem::GetPackType()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the pack type based on ID
 // o------------------------------------------------------------------------------------------------o
-PackTypes cItem::GetPackType(CItem *i) {
+PackTypes WorldItem::GetPackType(CItem *i) {
     PackTypes packType = PT_UNKNOWN;
     switch (i->GetId()) {
         case 0x2006: // coffin
@@ -1623,11 +1623,11 @@ PackTypes cItem::GetPackType(CItem *i) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::AddRespawnItem()
+//|	Function	-	WorldItem::AddRespawnItem()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spawning of items from spawn objects/containers
 // o------------------------------------------------------------------------------------------------o
-void cItem::AddRespawnItem(CItem *mCont, const std::string &iString, const bool inCont, const bool randomItem, const std::uint16_t itemAmount, bool useLootlist) {
+void WorldItem::AddRespawnItem(CItem *mCont, const std::string &iString, const bool inCont, const bool randomItem, const std::uint16_t itemAmount, bool useLootlist) {
     if (!ValidateObject(mCont) || iString.empty())
         return;
     
@@ -1697,11 +1697,11 @@ void cItem::AddRespawnItem(CItem *mCont, const std::string &iString, const bool 
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::GlowItem()
+//|	Function	-	WorldItem::GlowItem()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle glowing items
 // o------------------------------------------------------------------------------------------------o
-void cItem::GlowItem(CItem *i) {
+void WorldItem::GlowItem(CItem *i) {
     if (i->GetGlow() != INVALIDSERIAL) {
         CItem *j = CalcItemObjFromSer(i->GetGlow());
         if (!ValidateObject(j))
@@ -1740,12 +1740,12 @@ void cItem::GlowItem(CItem *i) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::CheckEquipment()
+//|	Function	-	WorldItem::CheckEquipment()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks equipment of character and validates that they have enough
 // strength |					to have each item equipped
 // o------------------------------------------------------------------------------------------------o
-void cItem::CheckEquipment(CChar *p) {
+void WorldItem::CheckEquipment(CChar *p) {
     if (ValidateObject(p)) {
         CSocket *pSock = p->GetSocket();
         if (pSock == nullptr)
@@ -1788,11 +1788,11 @@ void cItem::CheckEquipment(CChar *p) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::StoreItemRandomValue()
+//|	Function	-	WorldItem::StoreItemRandomValue()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Stores an item's random "good" value (used by trade system)
 // o------------------------------------------------------------------------------------------------o
-void cItem::StoreItemRandomValue(CItem *i, CTownRegion *tReg) {
+void WorldItem::StoreItemRandomValue(CItem *i, CTownRegion *tReg) {
     if (i->GetGood() < 0)
         return;
     
@@ -1815,11 +1815,11 @@ void cItem::StoreItemRandomValue(CItem *i, CTownRegion *tReg) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cItem::DupeItem()
+//|	Function	-	WorldItem::DupeItem()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Duplicates selected item
 // o------------------------------------------------------------------------------------------------o
-CItem *cItem::DupeItem(CSocket *s, CItem *i, std::uint32_t amount) {
+CItem *WorldItem::DupeItem(CSocket *s, CItem *i, std::uint32_t amount) {
     CChar *mChar = s->CurrcharObj();
     CBaseObject *iCont = i->GetCont();
     CItem *charPack = mChar->GetPackItem();

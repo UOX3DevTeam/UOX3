@@ -65,6 +65,7 @@
 #include "weight.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern CHandleCombat worldCombat ;
 
 using namespace std::string_literals;
 
@@ -2042,8 +2043,8 @@ void CMovement::NpcMovement(CChar &mChar) {
                 const std::uint16_t charDist = GetDist(&mChar, l);
                 
                 // NPC is using a ranged weapon, and is within range to shoot at the target
-                CItem *equippedWeapon = Combat->GetWeapon(&mChar);
-                if (charDir < 8 && (charDist <= 1 || ((Combat->GetCombatSkill(equippedWeapon) == ARCHERY || Combat->GetCombatSkill(equippedWeapon) == THROWING) && charDist <= equippedWeapon->GetMaxRange()) || ((mChar.GetNpcAiType() == AI_CASTER ||  mChar.GetNpcAiType() == AI_EVIL_CASTER) && (charDist <= ServerConfig::shared().shortValues[ShortValue::MAXSPELLRANGE] && mChar.GetMana() >= 10)))) {
+                CItem *equippedWeapon = worldCombat.GetWeapon(&mChar);
+                if (charDir < 8 && (charDist <= 1 || ((worldCombat.GetCombatSkill(equippedWeapon) == ARCHERY || worldCombat.GetCombatSkill(equippedWeapon) == THROWING) && charDist <= equippedWeapon->GetMaxRange()) || ((mChar.GetNpcAiType() == AI_CASTER ||  mChar.GetNpcAiType() == AI_EVIL_CASTER) && (charDist <= ServerConfig::shared().shortValues[ShortValue::MAXSPELLRANGE] && mChar.GetMana() >= 10)))) {
                     bool los = LineOfSight(nullptr, &mChar, l->GetX(), l->GetY(), (l->GetZ() + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false);
                     if (los) {
                         // Turn towards target
@@ -2067,7 +2068,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                         mChar.TextMessage(nullptr, worldDictionary.GetEntry(9049), SYSTEM, false); // [Evading]
                         mChar.SetHP(mChar.GetMaxHP());
                         mChar.SetEvadeState(true);
-                        Combat->InvalidateAttacker(&mChar);
+                        worldCombat.InvalidateAttacker(&mChar);
                         // Console::shared().warning( util::format( "EvadeTimer started for NPC (%s,
                         // 0x%X, at %i, %i, %i, %i). Could no longer see or reach target.\n",
                         // mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(),
@@ -2186,7 +2187,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                                 mChar.SetHP(mChar.GetMaxHP());
                                 mChar.SetEvadeState(true);
                                 IgnoreAndEvadeTarget(&mChar);
-                                Combat->InvalidateAttacker(&mChar);
+                                worldCombat.InvalidateAttacker(&mChar);
                                 // Console::shared().warning( util::format( "EvadeTimer started for
                                 // NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(),
                                 // mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(),

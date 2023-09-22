@@ -20,6 +20,8 @@
 #include "utility/strutil.hpp"
 #include "worldmain.h"
 
+extern WorldItem worldItem ;
+
 cRaces *Races = nullptr;
 
 const std::uint8_t MALE = 1;
@@ -273,7 +275,7 @@ void cRaces::ApplyRace(CChar *s, raceid_t x, bool always) {
             else {
                 hairColor = 0x0480;
             }
-            CItem *n = Items->CreateItem(nullptr, s, 0x204C, 1, hairColor, CBaseObject::OT_ITEM);
+            CItem *n = worldItem.CreateItem(nullptr, s, 0x204C, 1, hairColor, CBaseObject::OT_ITEM);
             if (n != nullptr) {
                 n->SetDecayable(false);
                 n->SetLayer(IL_FACIALHAIR);

@@ -24,6 +24,7 @@
 
 #include "uotime.hpp"
 
+extern CHandleCombat worldCombat ;
 using namespace std::string_literals ;
 using Random = effolkronium::random_static ;
 
@@ -616,7 +617,7 @@ auto WorldWeather::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t
             damageAnim = 0x3709;
         }
         
-        damage = Combat->ApplyDefenseModifiers(resistElement, nullptr, &mChar, 0, 0, damage, true);
+        damage = worldCombat.ApplyDefenseModifiers(resistElement, nullptr, &mChar, 0, 0, damage, true);
         
         if (damage > 0) {
             if (mChar.Damage(damage, element)) {
@@ -734,7 +735,7 @@ auto WorldWeather::doLightEffect(CSocket *mSock, CChar &mChar)->bool{
             }
         }
         
-        damage = Combat->ApplyDefenseModifiers(Weather::LIGHT, nullptr, &mChar, 0, 0, damage, true);
+        damage = worldCombat.ApplyDefenseModifiers(Weather::LIGHT, nullptr, &mChar, 0, 0, damage, true);
         
         if (damage > 0) {
             if (mChar.Damage(damage, Weather::LIGHT)) {

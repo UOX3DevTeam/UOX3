@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 
+#include "cbaseobject.h"
 #include "genericlist.h"
 #include "typedefs.h"
 
@@ -66,7 +67,7 @@ enum PackTypes {
     PT_MAILBOX9,
 };
 
-class cItem {
+class WorldItem {
 public:
     CItem *DupeItem(CSocket *s, CItem *i, std::uint32_t amount);
     void GlowItem(CItem *i);
@@ -114,7 +115,7 @@ public:
     GenericList<CChar *> *GetAlwaysAwakeNPCs();
 };
 
-extern cItem *Items;
+extern WorldItem *Items;
 extern CCharStuff *Npcs;
 
 #endif

@@ -7,6 +7,9 @@
 #include "funcdecl.h"
 #include "objectfactory.h"
 
+extern WorldItem worldItem ;
+extern CCharStuff worldNPC ;
+
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	SendTradeStatus()
 //|	Date		-	February 2, 2006
@@ -50,7 +53,7 @@ CItem *CreateTradeWindow(CSocket *mSock, CSocket *nSock, CChar *mChar) {
         return nullptr;
     }
     
-    CItem *tradeWindow = Items->CreateItem(nullptr, mChar, 0x1E5E, 1, 0, CBaseObject::OT_ITEM, false);
+    CItem *tradeWindow = worldItem.CreateItem(nullptr, mChar, 0x1E5E, 1, 0, CBaseObject::OT_ITEM, false);
     if (!ValidateObject(tradeWindow))
         return nullptr;
     
@@ -211,7 +214,7 @@ void CompleteTrade(CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucce
                             CChar *petChar = CalcCharObjFromSer(petSerial);
                             if (ValidateObject(petChar)) {
                                 // Transfer pet to other player
-                                Npcs->FinalizeTransfer(petChar, p1, p2);
+                                worldNPC.FinalizeTransfer(petChar, p1, p2);
                             }
                         }
                         
@@ -250,7 +253,7 @@ void CompleteTrade(CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucce
                             CChar *petChar = CalcCharObjFromSer(petSerial);
                             if (ValidateObject(petChar)) {
                                 // Transfer pet to other player
-                                Npcs->FinalizeTransfer(petChar, p2, p1);
+                                worldNPC.FinalizeTransfer(petChar, p2, p1);
                             }
                         }
                         

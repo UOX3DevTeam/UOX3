@@ -30,7 +30,8 @@
 #include "utility/strutil.hpp"
 
 extern CDictionaryContainer worldDictionary ;
-
+extern CHandleCombat worldCombat ;
+extern WorldItem worldItem ;
 using namespace std::string_literals;
 
 //	1.0		29th November, 2000
@@ -1943,7 +1944,7 @@ void CSocket::StatWindow(CBaseObject *targObj, bool updateParty) {
         toSend.NameChange(mChar != targChar && (mChar->GetCommandLevel() >= CL_GM || targChar->GetOwnerObj() == mChar));
         if (!targChar->IsNpc() && mChar == targChar) {
             toSend.Gold(GetItemAmount(targChar, 0x0EED));
-            toSend.AC(Combat->CalcDef(targChar, 0, false));
+            toSend.AC(worldCombat.CalcDef(targChar, 0, false));
         }
         
         Send(&toSend);
@@ -2049,7 +2050,7 @@ void CSocket::OpenPack(CItem *i, bool isPlayerVendor) {
         contSend.Model(0x4C);
     }
     else {
-        switch (Items->GetPackType(i)) {
+        switch (worldItem.GetPackType(i)) {
             case PT_COFFIN:
                 contSend.Model(0x09);
                 break;
@@ -2225,7 +2226,7 @@ void CSocket::OpenBank(CChar *i) {
     
     // No bankbox was found, so let's create one!
     auto temp = oldstrutil::format(1024, worldDictionary.GetEntry(1283).c_str(), i->GetName().c_str()); // %s's bank box.
-    bankBox = Items->CreateItem(nullptr, i, 0x09AB, 1, 0, CBaseObject::OT_ITEM);
+    bankBox = worldItem.CreateItem(nullptr, i, 0x09AB, 1, 0, CBaseObject::OT_ITEM);
     bankBox->SetName(temp);
     bankBox->SetLayer(IL_BANKBOX);
     bankBox->SetOwner(i);

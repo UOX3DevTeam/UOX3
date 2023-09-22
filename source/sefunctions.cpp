@@ -50,6 +50,9 @@
 #include "other/uoxversion.hpp"
 
 extern CDictionaryContainer worldDictionary ;
+extern CHandleCombat worldCombat ;
+extern WorldItem worldItem ;
+extern CCharStuff worldNPC ;
 
 using namespace std::string_literals;
 
@@ -1042,7 +1045,7 @@ JSBool SE_SpawnNPC(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
     auto origContext = cx;
     auto origObject = obj;
     
-    cMade = Npcs->CreateNPCxyz(nnpcNum, x, y, z, world, instanceId, useNpcList);
+    cMade = worldNPC.CreateNPCxyz(nnpcNum, x, y, z, world, instanceId, useNpcList);
     if (cMade != nullptr) {
         JSObject *myobj = JSEngine->AcquireObject(IUE_CHAR, cMade, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
         *rval = OBJECT_TO_JSVAL(myobj);
@@ -1115,10 +1118,10 @@ JSBool SE_CreateDFNItem(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
     
     CItem *newItem = nullptr;
     if (myChar != nullptr) {
-        newItem = Items->CreateScriptItem(mySock, myChar, bpSectNumber, iAmount, itemType, bInPack, iColor);
+        newItem = worldItem.CreateScriptItem(mySock, myChar, bpSectNumber, iAmount, itemType, bInPack, iColor);
     }
     else {
-        newItem = Items->CreateBaseScriptItem(nullptr, bpSectNumber, worldNumber, iAmount, instanceId, itemType, iColor);
+        newItem = worldItem.CreateBaseScriptItem(nullptr, bpSectNumber, worldNumber, iAmount, instanceId, itemType, iColor);
     }
     
     if (newItem != nullptr) {
@@ -1171,7 +1174,7 @@ JSBool SE_CreateBlankItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
     auto origContext = cx;
     auto origObject = obj;
     
-    newItem = Items->CreateItem(mySock, myChar, itemId, amount, colour, itemType, inPack);
+    newItem = worldItem.CreateItem(mySock, myChar, itemId, amount, colour, itemType, inPack);
     if (newItem != nullptr) {
         if (itemName != "") {
             newItem->SetName(itemName);
@@ -2891,7 +2894,7 @@ JSBool SE_ApplyDamageBonuses(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
         }
     }
     
-    damage = Combat->ApplyDamageBonuses(static_cast<Weather::type_t>(damageType.toInt()), attacker, defender, static_cast<std::uint8_t>(getFightSkill.toInt()), static_cast<std::uint8_t>(hitLoc.toInt()), static_cast<std::int16_t>(baseDamage.toInt()));
+    damage = worldCombat.ApplyDamageBonuses(static_cast<Weather::type_t>(damageType.toInt()), attacker, defender, static_cast<std::uint8_t>(getFightSkill.toInt()), static_cast<std::uint8_t>(hitLoc.toInt()), static_cast<std::int16_t>(baseDamage.toInt()));
     
     *rval = INT_TO_JSVAL(damage);
     return JS_TRUE;
@@ -2951,7 +2954,7 @@ JSBool SE_ApplyDefenseModifiers(JSContext *cx, [[maybe_unused]] JSObject *obj, u
         }
     }
     
-    damage = Combat->ApplyDefenseModifiers(static_cast<Weather::type_t>(damageType.toInt()), attacker, defender, static_cast<std::uint8_t>(getFightSkill.toInt()), static_cast<std::uint8_t>(hitLoc.toInt()), static_cast<std::int16_t>(baseDamage.toInt()), doArmorDamage.toBool());
+    damage = worldCombat.ApplyDefenseModifiers(static_cast<Weather::type_t>(damageType.toInt()), attacker, defender, static_cast<std::uint8_t>(getFightSkill.toInt()), static_cast<std::uint8_t>(hitLoc.toInt()), static_cast<std::int16_t>(baseDamage.toInt()), doArmorDamage.toBool());
     
     *rval = INT_TO_JSVAL(damage);
     return JS_TRUE;

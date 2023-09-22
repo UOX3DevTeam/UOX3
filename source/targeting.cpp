@@ -31,6 +31,9 @@
 #include "townregion.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern CHandleCombat worldCombat ;
+extern WorldItem worldItem ;
+extern CCharStuff worldNPC ;
 
 using namespace std::string_literals;
 
@@ -274,7 +277,7 @@ void AddScriptNpc(CSocket *s) {
     const std::int16_t coreX = s->GetWord(11);
     const std::int16_t coreY = s->GetWord(13);
     const std::int8_t coreZ = static_cast<std::int8_t>(s->GetByte(16) + Map->TileHeight(s->GetWord(17)));
-    Npcs->CreateNPCxyz(s->XText(), coreX, coreY, coreZ, mChar->WorldNumber(), mChar->GetInstanceId());
+    worldNPC.CreateNPCxyz(s->XText(), coreX, coreY, coreZ, mChar->WorldNumber(), mChar->GetInstanceId());
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -689,7 +692,7 @@ void Tiling(CSocket *s) {
     for (std::int16_t x = x1; x <= x2; ++x) {
         for (std::int16_t y = y1; y <= y2; ++y) {
             rndId = addId + RandomNum(static_cast<std::uint16_t>(0), static_cast<std::uint16_t>(rndVal));
-            c = Items->CreateItem(nullptr, s->CurrcharObj(), rndId, 1, 0, CBaseObject::OT_ITEM);
+            c = worldItem.CreateItem(nullptr, s->CurrcharObj(), rndId, 1, 0, CBaseObject::OT_ITEM);
             if (!ValidateObject(c))
                 return;
             
@@ -707,7 +710,7 @@ void Tiling(CSocket *s) {
 //|	Purpose		-	Create body parts after carving up a corpse
 // o------------------------------------------------------------------------------------------------o
 bool CreateBodyPart(CChar *mChar, CItem *corpse, std::string partId, std::int32_t dictEntry) {
-    CItem *toCreate = Items->CreateScriptItem(nullptr, mChar, partId, 1, CBaseObject::OT_ITEM, false, 0x0);
+    CItem *toCreate = worldItem.CreateScriptItem(nullptr, mChar, partId, 1, CBaseObject::OT_ITEM, false, 0x0);
     if (!ValidateObject(toCreate))
         return false;
     
@@ -763,7 +766,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
         }
     }
     
-    auto c = Items->CreateItem(nullptr, mChar, 0x122A, 1, 0, CBaseObject::OT_ITEM); // add the blood puddle
+    auto c = worldItem.CreateItem(nullptr, mChar, 0x122A, 1, 0, CBaseObject::OT_ITEM); // add the blood puddle
     if (c == nullptr)
         return false;
     
@@ -825,10 +828,10 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
                     data = util::trim(util::strip(data, "//"));
                     auto csecs = oldstrutil::sections(data, ",");
                     if (csecs.size() > 1) {
-                        Items->CreateScriptItem(s, mChar, util::trim(util::strip(csecs[0], "//")), static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)), CBaseObject::OT_ITEM, true);
+                        worldItem.CreateScriptItem(s, mChar, util::trim(util::strip(csecs[0], "//")), static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)), CBaseObject::OT_ITEM, true);
                     }
                     else {
-                        Items->CreateScriptItem(s, mChar, data, 0, CBaseObject::OT_ITEM, true);
+                        worldItem.CreateScriptItem(s, mChar, data, 0, CBaseObject::OT_ITEM, true);
                     }
                 }
             }
@@ -915,7 +918,7 @@ void AttackTarget(CSocket *s) {
             
             if (myPet->GetOwnerObj() == mChar) {
                 myPet->FlushPath();
-                Combat->AttackTarget(myPet, target);
+                worldCombat.AttackTarget(myPet, target);
                 if (target->IsInnocent() && target != myPet->GetOwnerObj()) {
                     if (WillResultInCriminal(mChar, target)) {
                         MakeCriminal(mChar);
@@ -948,7 +951,7 @@ void AttackTarget(CSocket *s) {
         }
         
         mPet->FlushPath();
-        Combat->AttackTarget(mPet, target);
+        worldCombat.AttackTarget(mPet, target);
         if (target->IsInnocent() && target != mChar) {
             if (WillResultInCriminal(mChar, target)) {
                 MakeCriminal(mChar);
@@ -1142,7 +1145,7 @@ void TransferTarget(CSocket *s) {
     }
     
     // Check loyalty of pet to old master
-    if (ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY) && !Npcs->CanControlPet(mChar, petChar, true, false, false, true)) {
+    if (ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY) && !worldNPC.CanControlPet(mChar, petChar, true, false, false, true)) {
         s->SysMessage(2379); // The pet refuses to be transferred because it will not obey you sufficiently.
         if (targChar->GetSocket() != nullptr) {
             targChar->GetSocket()->SysMessage(2382, mChar->GetNameRequest(targChar, NRS_SPEECH).c_str()); // The pet will not accept you as a
@@ -1152,7 +1155,7 @@ void TransferTarget(CSocket *s) {
     }
     
     // Check loyalty of pet to new master
-    if (ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY) && !Npcs->CanControlPet(targChar, petChar, true, true, true, true)) {
+    if (ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY) && !worldNPC.CanControlPet(targChar, petChar, true, true, true, true)) {
         s->SysMessage(2380); // The pet refuses to be transferred because it will not obey %s.
         if (targChar->GetSocket() != nullptr) {
             targChar->GetSocket()->SysMessage(2381, mChar->GetNameRequest(targChar, NRS_SPEECH).c_str()); // The pet will not accept you as a master because it does not
@@ -1163,7 +1166,7 @@ void TransferTarget(CSocket *s) {
     
     if (targChar->GetSocket() != nullptr) {
         // Create a pet transfer deed
-        CItem *petTransferDeed = Items->CreateScriptItem(s, mChar, "0x14F0", 1, CBaseObject::OT_ITEM, false, 0);
+        CItem *petTransferDeed = worldItem.CreateScriptItem(s, mChar, "0x14F0", 1, CBaseObject::OT_ITEM, false, 0);
         if (ValidateObject(petTransferDeed)) {
             std::string petName = GetNpcDictName(petChar, nullptr, NRS_SYSTEM);
             petTransferDeed->SetName(util::format("a transfer deed for %s (%s)", petName.c_str(), worldDictionary.GetEntry(3000 + petChar->GetId(), targChar->GetSocket()->Language()).c_str())); // worldMain.creatures[petChar->GetId()].CreatureType().c_str()
@@ -1284,7 +1287,7 @@ void NpcResurrectTarget(CChar *i) {
             // Restore hair
             std::uint16_t hairStyleId = i->GetHairStyle();
             std::uint16_t hairStyleColor = i->GetHairColour();
-            CItem *hairItem = Items->CreateItem(mSock, i, hairStyleId, 1, hairStyleColor, CBaseObject::OT_ITEM);
+            CItem *hairItem = worldItem.CreateItem(mSock, i, hairStyleId, 1, hairStyleColor, CBaseObject::OT_ITEM);
             
             if (hairItem != nullptr) {
                 hairItem->SetDecayable(false);
@@ -1296,7 +1299,7 @@ void NpcResurrectTarget(CChar *i) {
             std::uint16_t beardStyleId = i->GetBeardStyle();
             std::uint16_t beardStyleColor = i->GetBeardColour();
             CItem *beardItem =
-            Items->CreateItem(mSock, i, beardStyleId, 1, beardStyleColor, CBaseObject::OT_ITEM);
+            worldItem.CreateItem(mSock, i, beardStyleId, 1, beardStyleColor, CBaseObject::OT_ITEM);
             
             if (beardItem != nullptr) {
                 beardItem->SetDecayable(false);
@@ -1326,7 +1329,7 @@ void NpcResurrectTarget(CChar *i) {
                     if (j->GetSerial() == i->GetRobe()) {
                         j->Delete();
                         
-                        c = Items->CreateScriptItem(nullptr, i, "resurrection_robe", 1, CBaseObject::OT_ITEM);
+                        c = worldItem.CreateScriptItem(nullptr, i, "resurrection_robe", 1, CBaseObject::OT_ITEM);
                         if (c != nullptr) {
                             c->SetCont(i);
                         }
@@ -1415,7 +1418,7 @@ void FriendTarget(CSocket *s) {
         return;
     }
     
-    if (Npcs->CheckPetFriend(targChar, pet)) {
+    if (worldNPC.CheckPetFriend(targChar, pet)) {
         s->SysMessage(1621); // That person is already a friend of this creature!
         return;
     }
@@ -1441,7 +1444,7 @@ void FriendTarget(CSocket *s) {
     }
     
     // Check loyalty of pet to master
-    if (ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY) && !Npcs->CanControlPet(mChar, pet, false, true, true)) {
+    if (ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY) && !worldNPC.CanControlPet(mChar, pet, false, true, true)) {
         s->SysMessage(2417); // The pet refuses to accept a new friend because it will not obey you
         // sufficiently.
         if (targChar->GetSocket() != nullptr) {
@@ -1452,7 +1455,7 @@ void FriendTarget(CSocket *s) {
     }
     
     // Check loyalty of pet to new friend
-    if (ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY) && !Npcs->CanControlPet(targChar, pet, false, true, true)) {
+    if (ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY) && !worldNPC.CanControlPet(targChar, pet, false, true, true)) {
         s->SysMessage(2419, targChar->GetNameRequest(mChar, NRS_SPEECH).c_str()); // The pet refuses to accept %s as a friend because it
         // will not obey them.
         if (targChar->GetSocket() != nullptr) {
@@ -1505,7 +1508,7 @@ void RemoveFriendTarget(CSocket *s) {
     
     CChar *pet = static_cast<CChar *>(s->TempObj());
     s->TempObj(nullptr);
-    if (!Npcs->CheckPetFriend(targChar, pet)) {
+    if (!worldNPC.CheckPetFriend(targChar, pet)) {
         s->SysMessage(1856); // That player is not on the friend list!
         return;
     }
@@ -1548,12 +1551,12 @@ void GuardTarget(CSocket *s) {
     if (!ValidateObject(petGuarding))
         return;
     
-    Npcs->StopPetGuarding(petGuarding);
+    worldNPC.StopPetGuarding(petGuarding);
     
     CChar *charToGuard = CalcCharObjFromSer(s->GetDWord(7));
     if (ValidateObject(charToGuard)) {
         if (charToGuard != petGuarding->GetOwnerObj() &&
-            !Npcs->CheckPetFriend(charToGuard, petGuarding)) {
+            !worldNPC.CheckPetFriend(charToGuard, petGuarding)) {
             s->SysMessage(1628); // Your pet may only guard you, his friends, and items in your house!
             return;
         }
@@ -1720,7 +1723,7 @@ void MakeStatusTarget(CSocket *sock) {
                                 mypack = targetChar->GetPackItem();
                             }
                             if (!ValidateObject(mypack)) {
-                                CItem *iMade = Items->CreateItem(nullptr, targetChar, 0x0E75, 1, 0, CBaseObject::OT_ITEM);
+                                CItem *iMade = worldItem.CreateItem(nullptr, targetChar, 0x0E75, 1, 0, CBaseObject::OT_ITEM);
                                 if (!ValidateObject(iMade))
                                     return;
                                 
@@ -1801,7 +1804,7 @@ void SmeltTarget(CSocket *s) {
         std::string itemId = util::ntos(ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16);
         std::uint16_t itemColour = ourCreateEntry->resourceNeeded[skCtr].colour;
         sumAmountRestored += amtToRestore;
-        Items->CreateScriptItem(s, mChar, "0x" + itemId, amtToRestore, CBaseObject::OT_ITEM, true, itemColour);
+        worldItem.CreateScriptItem(s, mChar, "0x" + itemId, amtToRestore, CBaseObject::OT_ITEM, true, itemColour);
     }
     
     s->SysMessage(1116, sumAmountRestored); // You melt the item and place %i ingots in your pack.
@@ -1834,7 +1837,7 @@ void VialTarget(CSocket *mSock) {
             return;
         }
         
-        CItem *nDagger = Combat->GetWeapon(mChar);
+        CItem *nDagger = worldCombat.GetWeapon(mChar);
         if (!ValidateObject(nDagger)) {
             mSock->SysMessage(742); // You do not have a dagger in your hands!
             return;

@@ -29,7 +29,8 @@
 #define DBGFILE "combat.cpp"
 #define DEBUG_COMBAT 0
 
-CHandleCombat *Combat = nullptr;
+extern WorldItem worldItem ;
+extern CCharStuff worldNPC ;
 
 #define SWINGAT static_cast<std::uint32_t>(1.75) * 1000
 
@@ -2696,7 +2697,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
             if (getFightSkill == ARCHERY && mWeapon->GetAmmoId() != 0 && !RandomNum(0, 2)) {
                 std::uint16_t ammoId = mWeapon->GetAmmoId();
                 std::uint16_t ammoHue = mWeapon->GetAmmoHue();
-                Items->CreateItem(nullptr, ourTarg, ammoId, 1, ammoHue, CBaseObject::OT_ITEM, false);
+                worldItem.CreateItem(nullptr, ourTarg, ammoId, 1, ammoHue, CBaseObject::OT_ITEM, false);
             }
             
             PlayMissedSoundEffect(&mChar);
@@ -3477,7 +3478,7 @@ auto CHandleCombat::SpawnGuard(CChar *mChar, CChar *targChar, std::int16_t x, st
         getGuard = targRegion->GetRandomGuard();
         if (ValidateObject(getGuard)) {
             getGuard->SetLocation(x, y, z, mChar->WorldNumber(), mChar->GetInstanceId());
-            Npcs->PostSpawnUpdate(getGuard);
+            worldNPC.PostSpawnUpdate(getGuard);
         }
         else {
             return;
@@ -3528,7 +3529,7 @@ void CHandleCombat::PetGuardAttack(CChar *mChar, CChar *owner, CBaseObject *guar
     
     if (!ValidateObject(petGuard)) {
         // No pet guard was passed into function, so let's look for one ourself
-        petGuard = Npcs->GetGuardingFollower(owner, guarded);
+        petGuard = worldNPC.GetGuardingFollower(owner, guarded);
     }
     
     if (ValidateObject(petGuard) &&
@@ -3536,7 +3537,7 @@ void CHandleCombat::PetGuardAttack(CChar *mChar, CChar *owner, CBaseObject *guar
         if (mChar->GetSerial() == petGuard->GetOwner())
             return;
         
-        if (!Npcs->CheckPetFriend(mChar, petGuard)) {
+        if (!worldNPC.CheckPetFriend(mChar, petGuard)) {
             AttackTarget(petGuard, mChar);
         }
         else {

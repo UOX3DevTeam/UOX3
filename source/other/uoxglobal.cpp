@@ -4,8 +4,8 @@
 #include "dictionary.h"
 #include "type/weather.hpp"
 #include "worldmain.h"
-
-
+#include "combat.h"
+#include "classes.h" // worlditem, and ccharstuff 
 using namespace std::string_literals ;
 
 //======================================================================
@@ -22,3 +22,6 @@ using namespace std::string_literals ;
 WorldWeather worldWeather ;
 CWorldMain worldMain ;
 CDictionaryContainer worldDictionary;
+CHandleCombat worldCombat ;
+WorldItem worldItem ;
+CCharStuff worldNPC ;

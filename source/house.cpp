@@ -18,6 +18,8 @@
 #include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
+extern WorldItem worldItem ;
+
 using namespace std::string_literals;
 
 bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype);
@@ -85,7 +87,7 @@ void CreateHouseKey(CSocket *mSock, CChar *mChar, CMultiObj *house, std::uint16_
             scriptName = "house_key";
         }
         
-        CItem *key = Items->CreateScriptItem(mSock, mChar, scriptName, 1, CBaseObject::OT_ITEM, true);
+        CItem *key = worldItem.CreateScriptItem(mSock, mChar, scriptName, 1, CBaseObject::OT_ITEM, true);
         if (ValidateObject(key)) {
             key->SetTempVar(CITV_MORE, house->GetSerial());
             key->SetType(IT_KEY);
@@ -123,7 +125,7 @@ auto CreateHouseItems(CChar *mChar, std::vector<std::string> houseItems, CItem *
                 UTag = util::upper(tag);
                 data = util::trim(util::strip(data, "//"));
                 if (UTag == "ITEM") {
-                    hItem = Items->CreateBaseScriptItem(nullptr, data, worldNum, 1, hInstanceId);
+                    hItem = worldItem.CreateBaseScriptItem(nullptr, data, worldNum, 1, hInstanceId);
                     if (hItem == nullptr) {
                         Console::shared() << "Error in house creation, item " << data
                         << " could not be made" << myendl;
@@ -750,7 +752,7 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
                 temp = "a ship";
             }
         }
-        house = Items->CreateMulti(temp, houseId, isBoat, worldNumber, instanceId);
+        house = worldItem.CreateMulti(temp, houseId, isBoat, worldNumber, instanceId);
         if (house == nullptr) {
             return nullptr;
         }
@@ -834,10 +836,10 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
     else {
         // House addon
         if (ValidateObject(mChar)) {
-            fakeHouse = Items->CreateItem(mSock, mChar, houseId, 1, 0, CBaseObject::OT_ITEM);
+            fakeHouse = worldItem.CreateItem(mSock, mChar, houseId, 1, 0, CBaseObject::OT_ITEM);
         }
         else {
-            fakeHouse = Items->CreateItem(nullptr, nullptr, houseId, 1, 0, CBaseObject::OT_ITEM, false, true,
+            fakeHouse = worldItem.CreateItem(nullptr, nullptr, houseId, 1, 0, CBaseObject::OT_ITEM, false, true,
                                           worldNumber, instanceId, xLoc, yLoc, zLoc);
         }
         if (fakeHouse == nullptr) {
@@ -959,7 +961,7 @@ CMultiObj *BuildBaseMulti(std::uint16_t multiId, std::int16_t xLoc = -1, std::in
     
     CMultiObj *iMulti = nullptr;
     std::string temp = "a multi";
-    iMulti = Items->CreateMulti(temp, multiId, false, worldNumber, instanceId, true);
+    iMulti = worldItem.CreateMulti(temp, multiId, false, worldNumber, instanceId, true);
     if (iMulti == nullptr) {
         return nullptr;
     }

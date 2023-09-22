@@ -88,6 +88,5 @@ public:
     void CombatOnFoot(CChar *mChar);
 };
 
-extern CHandleCombat *Combat;
 
 #endif

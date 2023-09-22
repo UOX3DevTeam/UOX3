@@ -32,6 +32,9 @@
 #include "weight.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern CHandleCombat worldCombat ;
+extern WorldItem worldItem ;
+extern CCharStuff worldNPC ;
 
 using namespace std::string_literals;
 
@@ -250,7 +253,7 @@ bool CPIGetItem::Handle() {
                     if (iOwner->GetOwnerObj() == ourChar) {
                         otherPackCheck = false;
                     }
-                    else if (Npcs->CheckPetFriend(ourChar, static_cast<CChar *>(iOwner))) {
+                    else if (worldNPC.CheckPetFriend(ourChar, static_cast<CChar *>(iOwner))) {
                         otherPackCheck = false;
                     }
                 }
@@ -314,12 +317,12 @@ bool CPIGetItem::Handle() {
                 CChar *corpseTargChar = x->GetOwnerObj();
                 if (ValidateObject(corpseTargChar)) {
                     if (corpseTargChar->IsGuarded()) { // Is the corpse being guarded?
-                        Combat->PetGuardAttack(ourChar, corpseTargChar, corpseTargChar);
+                        worldCombat.PetGuardAttack(ourChar, corpseTargChar, corpseTargChar);
                     }
                     else if (x->IsGuarded()) {
                         CTownRegion *itemTownRegion = x->GetRegion();
                         if (!itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone()) {
-                            Combat->PetGuardAttack(ourChar, corpseTargChar, x);
+                            worldCombat.PetGuardAttack(ourChar, corpseTargChar, x);
                         }
                     }
                 }
@@ -370,7 +373,7 @@ bool CPIGetItem::Handle() {
                         MakeCriminal(ourChar);
                         
                         // Have pet/follower attack the player who picked up the item
-                        Combat->PetGuardAttack(ourChar, nearbyCharOwner, i, nearbyChar);
+                        worldCombat.PetGuardAttack(ourChar, nearbyCharOwner, i, nearbyChar);
                         
                         // Stop guarding item, it is now in someone else's possession
                         nearbyChar->SetGuarding(nullptr);
@@ -707,7 +710,7 @@ bool CPIEquipItem::Handle() {
     CPDropItemApproved lc;
     tSock->Send(&lc);
     
-    auto weaponType = Combat->GetCombatSkill(i);
+    auto weaponType = worldCombat.GetCombatSkill(i);
     if (weaponType == SWORDSMANSHIP || weaponType == MACEFIGHTING || weaponType == FENCING) {
         Effects->PlaySound(tSock, 0x0056, false); // Play unsheath sound if
     }
@@ -855,7 +858,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
         }
     }
     
-    if (targNPC->IsTamed() && (isGM || targNPC->GetOwnerObj() == mChar || Npcs->CheckPetFriend(mChar, targNPC))) { // do food stuff
+    if (targNPC->IsTamed() && (isGM || targNPC->GetOwnerObj() == mChar || worldNPC.CheckPetFriend(mChar, targNPC))) { // do food stuff
         if (targNPC->WillHunger() && IsOnFoodList(targNPC->GetFood(), i->GetId())) {
             if (targNPC->GetHunger() < 6) {
                 Effects->PlaySound(mSock, static_cast<std::uint16_t>(0x003A + RandomNum(0, 2)), true);
@@ -1520,7 +1523,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
                 return false;
             }
         }
-        else if (mChar.GetCommandLevel() < CL_CNS &&  (!contOwner->IsNpc() || !contOwner->IsTamed() || (contOwner->GetId() != 0x0123 && contOwner->GetId() != 0x0124 && contOwner->GetId() != 0x0317) || (contOwner->GetOwnerObj() != &mChar && !Npcs->CheckPetFriend(&mChar, contOwner)))) {
+        else if (mChar.GetCommandLevel() < CL_CNS &&  (!contOwner->IsNpc() || !contOwner->IsTamed() || (contOwner->GetId() != 0x0123 && contOwner->GetId() != 0x0124 && contOwner->GetId() != 0x0317) || (contOwner->GetOwnerObj() != &mChar && !worldNPC.CheckPetFriend(&mChar, contOwner)))) {
             if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
                 Weight->SubtractItemWeight(&mChar, &iDropped);
             }
@@ -2196,7 +2199,7 @@ void handleCharDoubleClick(CSocket *mSock, serial_t serial, bool keyboard) {
     if (c->IsNpc()) {
         CItem *pack = nullptr;
         if (worldMain.creatures[c->GetId()].MountId() != 0) {// Is a mount
-            if ((c->IsTamed() && (c->GetOwnerObj() == mChar || Npcs->CheckPetFriend(mChar, c))) ||
+            if ((c->IsTamed() && (c->GetOwnerObj() == mChar || worldNPC.CheckPetFriend(mChar, c))) ||
                 mChar->GetCommandLevel() >= CL_GM) {
                 if (ObjInRange(mChar, c, DIST_NEXTTILE)) {
                     if (mChar->IsDead()) {
@@ -2228,7 +2231,7 @@ void handleCharDoubleClick(CSocket *mSock, serial_t serial, bool keyboard) {
                 }
                 else {
                     pack = c->GetPackItem();
-                    if (mChar->GetCommandLevel() >= CL_CNS || c->GetOwnerObj() == mChar || Npcs->CheckPetFriend(mChar, c)) {
+                    if (mChar->GetCommandLevel() >= CL_CNS || c->GetOwnerObj() == mChar || worldNPC.CheckPetFriend(mChar, c)) {
                         if (ValidateObject(pack)) {
                             mSock->OpenPack(pack);
                         }
@@ -2433,7 +2436,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
                 if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
                     return true;
                 
-                Items->CreateScriptItem(nullptr, mChar, "townstone", 1, CBaseObject::OT_ITEM);
+                worldItem.CreateScriptItem(nullptr, mChar, "townstone", 1, CBaseObject::OT_ITEM);
                 iUsed->Delete();
             }
             else { // Display Townstone gump
@@ -3053,10 +3056,10 @@ bool ItemIsUsable(CSocket *tSock, CChar *ourChar, CItem *iUsed, itemtypes_t iTyp
                 CTownRegion *itemTownRegion = iUsed->GetRegion();
                 if (!itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone()) {
                     if (iChar->IsGuarded()) { // Is the corpse being guarded?
-                        Combat->PetGuardAttack(ourChar, iChar, iChar);
+                        worldCombat.PetGuardAttack(ourChar, iChar, iChar);
                     }
                     else if (iUsed->IsGuarded()) {
-                        Combat->PetGuardAttack(ourChar, iChar, iUsed);
+                        worldCombat.PetGuardAttack(ourChar, iChar, iUsed);
                     }
                 }
             }
@@ -3066,14 +3069,14 @@ bool ItemIsUsable(CSocket *tSock, CChar *ourChar, CItem *iUsed, itemtypes_t iTyp
             if (ValidateObject(multi)) {
                 CChar *multiOwner = multi->GetOwnerObj();
                 if (ValidateObject(multiOwner) && multiOwner != ourChar) {
-                    Combat->PetGuardAttack(ourChar, multiOwner, iUsed);
+                    worldCombat.PetGuardAttack(ourChar, multiOwner, iUsed);
                 }
             }
             else {
                 CTownRegion *itemTownRegion = iUsed->GetRegion();
                 if (!itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone()) {
                     if (ValidateObject(iChar)) {
-                        Combat->PetGuardAttack(ourChar, iChar, iUsed);
+                        worldCombat.PetGuardAttack(ourChar, iChar, iUsed);
                     }
                 }
             }

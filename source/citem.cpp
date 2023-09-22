@@ -70,6 +70,8 @@
 #include "weight.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern WorldItem worldItem ;
+extern CCharStuff worldNPC ;
 
 const std::uint32_t BIT_MAKERSMARK = 0;
 const std::uint32_t BIT_DOOROPEN = 1;
@@ -357,8 +359,7 @@ auto CItem::SetCont(CBaseObject *newCont, bool removeFromView) -> bool {
                 }
                 
                 // Update item's townregion to match root container's location
-                CTownRegion *tRegion =
-                CalcRegionFromXY(itemHolder->GetX(), itemHolder->GetY(), itemHolder->WorldNumber(), itemHolder->GetInstanceId(), this);
+                CTownRegion *tRegion = CalcRegionFromXY(itemHolder->GetX(), itemHolder->GetY(), itemHolder->WorldNumber(), itemHolder->GetInstanceId(), this);
                 SetRegion((tRegion != nullptr ? tRegion->GetRegionNum() : 0xFF));
             }
         }
@@ -380,7 +381,7 @@ auto CItem::SetCont(CBaseObject *newCont, bool removeFromView) -> bool {
     }
     
     if (GetGlow() != INVALIDSERIAL) {
-        Items->GlowItem(this);
+        worldItem.GlowItem(this);
     }
     
     UpdateRegion();
@@ -1934,7 +1935,7 @@ void CItem::PostLoadProcessing() {
     }
     SetCont(tmpObj);
     
-    Items->StoreItemRandomValue(this, nullptr);
+    worldItem.StoreItemRandomValue(this, nullptr);
     CheckItemIntegrity();
     SetPostLoaded(true);
 }
@@ -2470,7 +2471,7 @@ auto CItem::PlaceInPack() -> void {
     if (!ValidateObject(itemCont))
         return;
     
-    PackTypes packType = Items->GetPackType(static_cast<CItem *>(itemCont));
+    PackTypes packType = worldItem.GetPackType(static_cast<CItem *>(itemCont));
     switch (packType) {
         case PT_PACK:
             SetX((RandomNum(44, 142)));
@@ -2638,7 +2639,7 @@ void CItem::Cleanup() {
                 owner = FindItemOwner(this);
             }
             if (ValidateObject(owner)) {
-                CChar *petGuard = Npcs->GetGuardingFollower(owner, this);
+                CChar *petGuard = worldNPC.GetGuardingFollower(owner, this);
                 if (ValidateObject(petGuard)) {
                     petGuard->SetGuarding(nullptr);
                 }
@@ -2906,10 +2907,10 @@ auto CSpawnItem::HandleItemSpawner() -> bool {
     if (shouldSpawn) {
         std::string listObj = GetSpawnSection();
         if (!listObj.empty()) {
-            Items->AddRespawnItem(this, listObj, false, IsSectionAList(), 1);
+            worldItem.AddRespawnItem(this, listObj, false, IsSectionAList(), 1);
         }
         else if (GetTempVar(CITV_MOREX) != 0) {
-            Items->AddRespawnItem(this, util::ntos(GetTempVar(CITV_MOREX)), false, 1);
+            worldItem.AddRespawnItem(this, util::ntos(GetTempVar(CITV_MOREX)), false, 1);
         }
         else {
             Console::shared().warning("Bad Item Spawner Found, Deleting");
@@ -2924,10 +2925,10 @@ auto CSpawnItem::HandleNPCSpawner() -> bool {
     if (spawnedList.Num() < GetAmount()) {
         std::string listObj = GetSpawnSection();
         if (!listObj.empty()) {
-            Npcs->CreateNPC(this, listObj);
+            worldNPC.CreateNPC(this, listObj);
         }
         else if (GetTempVar(CITV_MOREX) != 0) {
-            Npcs->CreateNPC(this, util::ntos(GetTempVar(CITV_MOREX)));
+            worldNPC.CreateNPC(this, util::ntos(GetTempVar(CITV_MOREX)));
         }
         else {
             Console::shared().warning("Bad Npc/Area Spawner found; SPAWNSECTION or MOREX values missing! Deleting Spawner.");
@@ -2997,7 +2998,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
                                 // The chosen entry contained another ITEMLIST or LOOTLIST
                                 // reference! Let's dive back into it...
                                 for (int i = 0; i < amountToSpawn; i++) {
-                                    CItem *iCreated = Items->CreateRandomItem(this, listEntry, this->WorldNumber(), this->GetInstanceId(), false, useLootList);
+                                    CItem *iCreated = worldItem.CreateRandomItem(this, listEntry, this->WorldNumber(), this->GetInstanceId(), false, useLootList);
                                     if (ValidateObject(iCreated)) {
                                         // Place item in container and randomize location
                                         iCreated->SetCont(this);
@@ -3029,7 +3030,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
                                 }
                                 
                                 // We have a direct item reference, it seems like. Spawn it!
-                                CItem *iCreated = Items->CreateBaseScriptItem( this, listEntry, this->WorldNumber(), amountToSpawn, this->GetInstanceId(), OT_ITEM, 0xFFFF, false);
+                                CItem *iCreated = worldItem.CreateBaseScriptItem( this, listEntry, this->WorldNumber(), amountToSpawn, this->GetInstanceId(), OT_ITEM, 0xFFFF, false);
                                 if (ValidateObject(iCreated)) {
                                     // Place item in container and randomize location
                                     iCreated->SetCont(this);
@@ -3038,7 +3039,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
                                     if (amountToSpawn > 1 && !iCreated->IsPileable()) {
                                         // Eee, item cannot pile, we need to spawn individual ones
                                         for (int i = 1; i < amountToSpawn; i++) {
-                                            CItem *iCreated2 = Items->CreateBaseScriptItem( this, listEntry, this->WorldNumber(), 1, this->GetInstanceId(), OT_ITEM, 0xFFFF, false);
+                                            CItem *iCreated2 = worldItem.CreateBaseScriptItem( this, listEntry, this->WorldNumber(), 1, this->GetInstanceId(), OT_ITEM, 0xFFFF, false);
                                             if (ValidateObject(iCreated2)) {
                                                 // Place item in container and randomize location
                                                 iCreated2->SetCont(this);
@@ -3054,7 +3055,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
             }
         }
         else if (GetTempVar(CITV_MOREX) != 0) {
-            Items->AddRespawnItem(this, util::ntos(GetTempVar(CITV_MOREX)), true, 1);
+            worldItem.AddRespawnItem(this, util::ntos(GetTempVar(CITV_MOREX)), true, 1);
         }
         else {
             Console::shared().warning( "Bad Spawn Container found; missing SPAWNSECTION or MOREX! Deleting Spawner.");

@@ -45,6 +45,7 @@
 #include "uoxjspropertyspecs.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern CHandleCombat worldCombat ;
 
 void MakeShop(CChar *c);
 void ScriptError(JSContext *cx, const char *txt, ...);
@@ -2086,7 +2087,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 *vp = INT_TO_JSVAL(gPriv->GetKarma());
                 break;
             case CCP_ATTACK:
-                *vp = INT_TO_JSVAL(Combat->CalcAttackPower(gPriv, true));
+                *vp = INT_TO_JSVAL(worldCombat.CalcAttackPower(gPriv, true));
                 break;
             case CCP_CANATTACK:
                 *vp = BOOLEAN_TO_JSVAL(gPriv->GetCanAttack());

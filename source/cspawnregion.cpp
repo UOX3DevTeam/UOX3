@@ -18,6 +18,8 @@
 #include "utility/strutil.hpp"
 
 extern CDictionaryContainer worldDictionary ;
+extern WorldItem worldItem ;
+extern CCharStuff worldNPC ;
 
 using namespace std::string_literals;
 
@@ -575,14 +577,14 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar * {
         npcListVector.emplace_back(npcSection, sectionWeight);
     }
     
-    auto ourNPC = Npcs->ChooseNpcToCreate(npcListVector);
+    auto ourNPC = worldNPC.ChooseNpcToCreate(npcListVector);
     if (ourNPC.empty())
         return nullptr;
     
     auto csecs = oldstrutil::sections(util::trim(util::strip(ourNPC, "//")), "=");
     if (util::upper(csecs[0]) == "NPCLIST") {
         // Chosen entry contained another NPCLIST! Let's dive back into it...
-        ourNPC = Npcs->NpcListLookup(ourNPC);
+        ourNPC = worldNPC.NpcListLookup(ourNPC);
     }
     
     CScriptSection *npcCreate = FileLookup->FindEntry(ourNPC, npc_def);
@@ -616,7 +618,7 @@ foundNpcId:
     std::int8_t z;
     if (FindCharSpotToSpawn(x, y, z, waterCreature, amphiCreature)) {
         CChar *CSpawn = nullptr;
-        CSpawn = Npcs->CreateBaseNPC(ourNPC, false);
+        CSpawn = worldNPC.CreateBaseNPC(ourNPC, false);
         
         if (CSpawn != nullptr) {
             // NPCs should always wander the whole spawnregion
@@ -629,7 +631,7 @@ foundNpcId:
             CSpawn->SetSpawned(true);
             CSpawn->ShouldSave(false);
             CSpawn->SetSpawn(static_cast<std::uint32_t>(regionNum));
-            Npcs->PostSpawnUpdate(CSpawn);
+            worldNPC.PostSpawnUpdate(CSpawn);
             IncCurrentCharAmt();
             return CSpawn;
         }
@@ -655,7 +657,7 @@ auto CSpawnRegion::RegionSpawnItem() -> CItem * {
             objType = CBaseObject::OT_SPAWNER;
         }
         
-        ISpawn = Items->CreateBaseScriptItem(nullptr, sItems[RandomNum(static_cast<size_t>(0), sItems.size() - 1)], worldNumber, 1, instanceId, objType, 0xFFFF, false);
+        ISpawn = worldItem.CreateBaseScriptItem(nullptr, sItems[RandomNum(static_cast<size_t>(0), sItems.size() - 1)], worldNumber, 1, instanceId, objType, 0xFFFF, false);
         if (ISpawn != nullptr) {
             ISpawn->SetLocation(x, y, z);
             ISpawn->SetSpawn(static_cast<std::uint32_t>(regionNum));

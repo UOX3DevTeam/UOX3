@@ -25,6 +25,7 @@
 #include "useful.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern WorldItem worldItem ;
 
 using namespace std::string_literals;
 
@@ -1271,7 +1272,7 @@ void CGuildCollection::TransportGuildStone(CSocket *s, guildid_t guildId) {
     
     // Make sure this is the guild master
     if (gList[guildId]->Master() == mChar->GetSerial()) {
-        CItem *gTransportStone = Items->CreateItem(s, mChar, 0x1869, 1, 0, CBaseObject::OT_ITEM, true);
+        CItem *gTransportStone = worldItem.CreateItem(s, mChar, 0x1869, 1, 0, CBaseObject::OT_ITEM, true);
         if (ValidateObject(gTransportStone)) {
             gTransportStone->SetTempVar(CITV_MORE, guildId);
             gTransportStone->SetNewbie(true);
@@ -1711,7 +1712,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
         mChar->SetGuildNumber(gNum);
         s->TempInt(gNum);
         nGuild->NewMember((*mChar));
-        CItem *stone = Items->CreateItem(nullptr, mChar, 0x0ED5, 1, 0, CBaseObject::OT_ITEM);
+        CItem *stone = worldItem.CreateItem(nullptr, mChar, 0x0ED5, 1, 0, CBaseObject::OT_ITEM);
         if (!ValidateObject(stone)) {
             s->ObjMessage(176,deed); // Critical error, unable to spawn guildstone, please contact a GM!
             Console::shared().error(util::format("Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial()));
@@ -1750,7 +1751,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
             Console::shared().error(util::format("Critical error adding guildstone, memory  allocation failed.  Attempted by player 0x%X", mChar->GetSerial()));
             return;
         }
-        CItem *stone = Items->CreateItem(nullptr, mChar, 0x0ED5, 1, 0, CBaseObject::OT_ITEM);
+        CItem *stone = worldItem.CreateItem(nullptr, mChar, 0x0ED5, 1, 0, CBaseObject::OT_ITEM);
         if (!ValidateObject(stone)) {
             s->ObjMessage(176, deed); // Critical error, unable to spawn guildstone, please contact a GM!
             Console::shared().error(util::format("Critical error spawning guildstone, no stone made.  Attempted by player 0x%X",mChar->GetSerial()));

@@ -24,6 +24,7 @@
 #include "utility/strutil.hpp"
 
 extern CDictionaryContainer worldDictionary ;
+extern CCharStuff worldNPC ;
 
 // Implementation of town regions
 
@@ -869,7 +870,7 @@ void CTownRegion::SetMusicList(std::uint16_t newValue) { musicList = newValue; }
 //|	Purpose		-	Spawns and returns a random NPC guard for the townregion
 // o------------------------------------------------------------------------------------------------o
 CChar *CTownRegion::GetRandomGuard() {
-    CChar *ourGuard = Npcs->CreateRandomNPC(guardList);
+    CChar *ourGuard = worldNPC.CreateRandomNPC(guardList);
     ourGuard->SetNPCAiType(AI_GUARD);
     return ourGuard;
 }

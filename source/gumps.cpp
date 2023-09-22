@@ -34,6 +34,7 @@
 #include "other/uoxversion.hpp"
 
 extern CDictionaryContainer worldDictionary ;
+extern WorldItem worldItem ;
 
 using namespace std::string_literals;
 
@@ -1097,8 +1098,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                             serverCommands.command(s, mChar, addCmd);
                         }
                         else {
-                            CItem *newItem =
-                            Items->CreateScriptItem(s, mChar, tmp, num, itemType, true);
+                            CItem *newItem = worldItem.CreateScriptItem(s, mChar, tmp, num, itemType, true);
                             if (ValidateObject(newItem)) {
                                 if (forceDecayOff.m_IntValue == 1) {
                                     newItem->SetDecayable(false);
@@ -1151,7 +1151,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                             serverCommands.command(s, mChar, addCmd);
                         }
                         else {
-                            CItem *newItem = Items->CreateScriptItem(s, mChar, data, 0, itemType, true);
+                            CItem *newItem = worldItem.CreateScriptItem(s, mChar, data, 0, itemType, true);
                             if (ValidateObject(newItem)) {
                                 if (forceDecayOff.m_IntValue == 1) {
                                     newItem->SetDecayable(false);

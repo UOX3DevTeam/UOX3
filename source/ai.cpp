@@ -38,6 +38,7 @@
 #include "utility/strutil.hpp"
 #include "townregion.h"
 
+extern CHandleCombat worldCombat ;
 
 using namespace std::string_literals;
 
@@ -128,7 +129,7 @@ void HandleGuardAI(CChar &mChar) {
         for (const auto &tempChar : regChars->collection()) {
             if (IsValidAttackTarget(mChar, tempChar)) {
                 if (!tempChar->IsDead() && (tempChar->IsCriminal() || tempChar->IsMurderer())) {
-                    Combat->AttackTarget(&mChar, tempChar);
+                    worldCombat.AttackTarget(&mChar, tempChar);
                     mChar.TextMessage(nullptr, 313, TALK, true);
                     return;
                 }
@@ -179,7 +180,7 @@ void HandleFighterAI(CChar &mChar) {
                         }
                         else if (retVal == 1) {
                             // Valid target!
-                            Combat->AttackTarget(&mChar, tempChar);
+                            worldCombat.AttackTarget(&mChar, tempChar);
                             return;
                         }
                     }
@@ -188,7 +189,7 @@ void HandleFighterAI(CChar &mChar) {
                     RaceRelate raceComp = Races->Compare(tempChar, &mChar);
                     if (!tempChar->IsDead() && (tempChar->IsCriminal() || tempChar->IsMurderer() || raceComp <= RACE_ENEMY)) {
                         if (RandomNum(1, 100) < 85) { // 85% chance to attack current target, 15% chance to pick another
-                            Combat->AttackTarget(&mChar, tempChar);
+                            worldCombat.AttackTarget(&mChar, tempChar);
                             return;
                         }
                     }
@@ -337,7 +338,7 @@ auto HandleEvilAI(CChar &mChar) -> void {
                         }
                         else if (retVal == 1) {
                             // Valid target!
-                            Combat->AttackTarget(&mChar, tempChar);
+                            worldCombat.AttackTarget(&mChar, tempChar);
                             return;
                         }
                     }
@@ -361,7 +362,7 @@ auto HandleEvilAI(CChar &mChar) -> void {
                             if (!((tempChar->GetNpcAiType() == AI_EVIL || tempChar->GetNpcAiType() == AI_EVIL_CASTER) && raceComp > RACE_ENEMY)) {
                                 if (RandomNum(1, 100) < 85) { // 85% chance to attack current
                                     // target, 15% chance to pick another
-                                    Combat->AttackTarget(&mChar, tempChar);
+                                    worldCombat.AttackTarget(&mChar, tempChar);
                                     return;
                                 }
                             }
@@ -414,14 +415,14 @@ auto HandleChaoticAI(CChar &mChar) -> void {
                         }
                         else if (retVal == 1) {
                             // Valid target!
-                            Combat->AttackTarget(&mChar, tempChar);
+                            worldCombat.AttackTarget(&mChar, tempChar);
                             return;
                         }
                     }
                 }
                 if (!invalidTarget) {
                     if (RandomNum(1, 100) < 85) { // 85% chance to attack current target, 15% chance to pick another
-                        Combat->AttackTarget(&mChar, tempChar);
+                        worldCombat.AttackTarget(&mChar, tempChar);
                         return;
                     }
                 }
@@ -470,7 +471,7 @@ auto HandleAnimalAI(CChar &mChar) -> void {
                         }
                         else if (retVal == 1) {
                             // Valid target!
-                            Combat->AttackTarget(&mChar, tempChar);
+                            worldCombat.AttackTarget(&mChar, tempChar);
                             return;
                         }
                     }
@@ -481,7 +482,7 @@ auto HandleAnimalAI(CChar &mChar) -> void {
                 auto raceComp = Races->Compare(tempChar, &mChar);
                 if (raceComp <= RACE_ENEMY || (worldMain.creatures[tempChar->GetId()].IsAnimal() && tempChar->GetNpcAiType() == AI_NONE) || (hunger <= 1 && (tempChar->GetNpcAiType() == AI_ANIMAL || worldMain.creatures[tempChar->GetId()].IsHuman()))) {
                     if (RandomNum(1, 100) > 95) { // 5% chance (per AI cycle to attack tempChar)
-                        Combat->AttackTarget(&mChar, tempChar);
+                        worldCombat.AttackTarget(&mChar, tempChar);
                         return;
                     }
                 }
@@ -602,7 +603,7 @@ void checkArtificialIntelligence(CChar &mChar) {
                 return;
             }
             if (ValidateObject(realChar->GetTarg())) {
-                Combat->AttackTarget(&mChar, realChar->GetTarg());
+                worldCombat.AttackTarget(&mChar, realChar->GetTarg());
             }
             break;
         default: {

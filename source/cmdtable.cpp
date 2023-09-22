@@ -46,6 +46,7 @@
 
 extern WorldWeather worldWeather;
 extern CDictionaryContainer worldDictionary ;
+extern WorldItem worldItem ;
 
 using namespace std::string_literals ;
 
@@ -382,7 +383,7 @@ void Command_Tile(CSocket *s) {
         for (std::int16_t x = x1; x <= x2; ++x) {
             for (std::int16_t y = y1; y <= y2; ++y) {
                 rndId = targId + RandomNum(static_cast<std::uint16_t>(0), static_cast<std::uint16_t>(rndVal));
-                CItem *a = Items->CreateItem(nullptr, s->CurrcharObj(), rndId, 1, 0, CBaseObject::OT_ITEM);
+                CItem *a = worldItem.CreateItem(nullptr, s->CurrcharObj(), rndId, 1, 0, CBaseObject::OT_ITEM);
                 if (ValidateObject(a)) { // crash prevention
                     a->SetLocation(x, y, z);
                     a->SetDecayable(false);

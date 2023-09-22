@@ -39,6 +39,8 @@
 #include "townregion.h"
 
 extern CDictionaryContainer worldDictionary ;
+extern CHandleCombat worldCombat ;
+extern CCharStuff worldNPC ;
 
 using namespace std::string_literals;
 // Unknown bytes
@@ -1918,13 +1920,13 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
             }
         }
         if (extended4) {
-            FireResist(Combat->CalcDef(&toCopy, 0, false, Weather::HEAT));
-            ColdResist(Combat->CalcDef(&toCopy, 0, false, Weather::COLD));
-            PoisonResist(Combat->CalcDef(&toCopy, 0, false, Weather::POISON));
-            EnergyResist(Combat->CalcDef(&toCopy, 0, false, Weather::LIGHTNING));
+            FireResist(worldCombat.CalcDef(&toCopy, 0, false, Weather::HEAT));
+            ColdResist(worldCombat.CalcDef(&toCopy, 0, false, Weather::COLD));
+            PoisonResist(worldCombat.CalcDef(&toCopy, 0, false, Weather::POISON));
+            EnergyResist(worldCombat.CalcDef(&toCopy, 0, false, Weather::LIGHTNING));
             Luck(0);
-            DamageMin(Combat->CalcLowDamage(&toCopy));
-            DamageMax(Combat->CalcHighDamage(&toCopy));
+            DamageMin(worldCombat.CalcLowDamage(&toCopy));
+            DamageMax(worldCombat.CalcHighDamage(&toCopy));
             TithingPoints(0);
         }
     }
@@ -5917,37 +5919,37 @@ void CPToolTip::FinalizeData(ToolTipEntry_st tempEntry, size_t &totalStringLen) 
     ourEntries.push_back(tempEntry);
 }
 
-void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmount,
+void CPToolTip::CopyItemData(CItem &WorldItem, size_t &totalStringLen, bool addAmount,
                              bool playerVendor) {
-    std::string cItemName = cItem.GetNameRequest(tSock->CurrcharObj(), NRS_TOOLTIP);
+    std::string cItemName = WorldItem.GetNameRequest(tSock->CurrcharObj(), NRS_TOOLTIP);
     ToolTipEntry_st tempEntry = {};
-    if (cItem.GetType() == IT_HOUSESIGN) {
+    if (WorldItem.GetType() == IT_HOUSESIGN) {
         tempEntry.ourText = " \tA House Sign\t ";
     }
     else if (cItemName[0] == '#') {
         std::string temp;
-        GetTileName(cItem, temp);
-        if (cItem.GetAmount() > 1 && addAmount) {
-            tempEntry.ourText = util::format(" \t%s : %i\t ", temp.c_str(), cItem.GetAmount());
+        GetTileName(WorldItem, temp);
+        if (WorldItem.GetAmount() > 1 && addAmount) {
+            tempEntry.ourText = util::format(" \t%s : %i\t ", temp.c_str(), WorldItem.GetAmount());
         }
         else {
             tempEntry.ourText = util::format(" \t%s\t ", temp.c_str());
         }
     }
     else {
-        if (cItem.GetAmount() > 1 && !cItem.IsCorpse() && addAmount &&
-            cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT &&
-            cItem.GetType() != IT_UNLOCKABLESPAWNCONT) {
-            tempEntry.ourText = util::format(" \t%s : %i\t ", cItemName.c_str(), cItem.GetAmount());
+        if (WorldItem.GetAmount() > 1 && !WorldItem.IsCorpse() && addAmount &&
+            WorldItem.GetType() != IT_SPAWNCONT && WorldItem.GetType() != IT_LOCKEDSPAWNCONT &&
+            WorldItem.GetType() != IT_UNLOCKABLESPAWNCONT) {
+            tempEntry.ourText = util::format(" \t%s : %i\t ", cItemName.c_str(), WorldItem.GetAmount());
         }
         else {
-            if (ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM) && cItem.GetRank() == 10) {
+            if (ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM) && WorldItem.GetRank() == 10) {
                 tempEntry.ourText = util::format(" \t%s %s\t ", cItemName.c_str(),worldDictionary.GetEntry(9140, tSock->Language()).c_str()); // %s of exceptional quality
             }
             else {
-                if (cItem.IsCorpse()) {
+                if (WorldItem.IsCorpse()) {
                     std::string iFlagColor;
-                    CChar *iOwner = cItem.GetOwnerObj();
+                    CChar *iOwner = WorldItem.GetOwnerObj();
                     if (ValidateObject(iOwner)) {
                         // Match up corpse's flag color to that of the owner
                         iFlagColor = tSock->GetHtmlFlagColour(tSock->CurrcharObj(), iOwner);
@@ -5955,7 +5957,7 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
                     else {
                         // No corpse owner, corpse from NPC/monster
                         std::uint8_t flag =
-                        cItem.GetTempVar(CITV_MOREZ); // Get flag from morez value on corpse, to
+                        WorldItem.GetTempVar(CITV_MOREZ); // Get flag from morez value on corpse, to
                         // help determine color of corpse
                         switch (flag) {
                             case 0x01:
@@ -5987,11 +5989,11 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
     FinalizeData(tempEntry, totalStringLen);
     
     // Maker's mark
-    if (ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM) && ServerConfig::shared().enabled(ServerSwitch::MAKERMARK) && cItem.GetRank() == 10 && cItem.GetCreator() != INVALIDSERIAL && cItem.IsMarkedByMaker()) {
-        CChar *cItemCreator = CalcCharObjFromSer(cItem.GetCreator());
+    if (ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM) && ServerConfig::shared().enabled(ServerSwitch::MAKERMARK) && WorldItem.GetRank() == 10 && WorldItem.GetCreator() != INVALIDSERIAL && WorldItem.IsMarkedByMaker()) {
+        CChar *cItemCreator = CalcCharObjFromSer(WorldItem.GetCreator());
         if (ValidateObject(cItemCreator)) {
             tempEntry.stringNum = 1042971; // ~1_NOTHING~
-            tempEntry.ourText = util::format("%s by %s", worldMain.skill[cItem.GetMadeWith() - 1].madeWord.c_str(),cItemCreator->GetName().c_str()); // tailored/tinkered/forged by %s
+            tempEntry.ourText = util::format("%s by %s", worldMain.skill[WorldItem.GetMadeWith() - 1].madeWord.c_str(),cItemCreator->GetName().c_str()); // tailored/tinkered/forged by %s
             // tempEntry.ourText = util::format( "%s %s", worldDictionary.GetEntry(
             // 9141, tSock->Language() ).c_str(), cItemCreator->GetName().c_str()
             // ); // Crafted by %s
@@ -5999,8 +6001,8 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
         }
     }
     
-    if (cItem.IsLockedDown()) {
-        if (ValidateObject(cItem.GetMultiObj()) && cItem.GetMultiObj()->IsSecureContainer(&cItem)) {
+    if (WorldItem.IsLockedDown()) {
+        if (ValidateObject(WorldItem.GetMultiObj()) && WorldItem.GetMultiObj()->IsSecureContainer(&WorldItem)) {
             // Locked down and secure
             tempEntry.stringNum = 501644; // locked down & secure
             FinalizeData(tempEntry, totalStringLen);
@@ -6011,9 +6013,9 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
             FinalizeData(tempEntry, totalStringLen);
         }
     }
-    if (cItem.IsGuarded()) {
-        CTownRegion *itemTownRegion = CalcRegionFromXY(cItem.GetX(), cItem.GetY(),
-                                                       cItem.WorldNumber(), cItem.GetInstanceId());
+    if (WorldItem.IsGuarded()) {
+        CTownRegion *itemTownRegion = CalcRegionFromXY(WorldItem.GetX(), WorldItem.GetY(),
+                                                       WorldItem.WorldNumber(), WorldItem.GetInstanceId());
         if (!itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone()) {
             tempEntry.stringNum = 1042971; // ~1_NOTHING~
             tempEntry.ourText = util::format(
@@ -6021,13 +6023,13 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
             FinalizeData(tempEntry, totalStringLen);
         }
     }
-    if (cItem.IsNewbie()) {
+    if (WorldItem.IsNewbie()) {
         tempEntry.stringNum = 1042971; // ~1_NOTHING~
         tempEntry.ourText =
         util::format("%s", worldDictionary.GetEntry(9055, tSock->Language()).c_str()); // [Blessed]
         FinalizeData(tempEntry, totalStringLen);
     }
-    if (cItem.GetType() == IT_LOCKEDDOOR) {
+    if (WorldItem.GetType() == IT_LOCKEDDOOR) {
         tempEntry.stringNum = 1042971; // ~1_NOTHING~
         tempEntry.ourText =
         util::format("%s", worldDictionary.GetEntry(9050, tSock->Language()).c_str()); // [Locked]
@@ -6035,15 +6037,15 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
     }
     
     // Custom item tooltips
-    std::vector<std::uint16_t> scriptTriggers = cItem.GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = WorldItem.GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute1 = JSMapping->GetScript(scriptTrig);
         if (toExecute1 != nullptr) {
             // Custom tooltip - each word capitalized
-            std::string textFromScript1 = toExecute1->OnTooltip(&cItem, tSock);
+            std::string textFromScript1 = toExecute1->OnTooltip(&WorldItem, tSock);
             if (!textFromScript1.empty()) {
                 std::uint32_t clilocNumFromScript = 0;
-                auto tempTagObj = cItem.GetTempTag("tooltipCliloc");
+                auto tempTagObj = WorldItem.GetTempTag("tooltipCliloc");
                 if (tempTagObj.m_ObjectType == TagMap::TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0) {
                     // Use cliloc set in tooltipCliloc temptag, if present
                     clilocNumFromScript = tempTagObj.m_IntValue;
@@ -6062,10 +6064,10 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
     // Also check the global script!
     cScript *toExecuteGlobal = JSMapping->GetScript(static_cast<std::uint16_t>(0));
     if (toExecuteGlobal != nullptr) {
-        std::string textFromGlobalScript = toExecuteGlobal->OnTooltip(&cItem, tSock);
+        std::string textFromGlobalScript = toExecuteGlobal->OnTooltip(&WorldItem, tSock);
         if (!textFromGlobalScript.empty()) {
             std::uint32_t clilocNumFromScript = 0;
-            auto tempTagObj = cItem.GetTempTag("tooltipCliloc");
+            auto tempTagObj = WorldItem.GetTempTag("tooltipCliloc");
             if (tempTagObj.m_ObjectType == TagMap::TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0) {
                 // Use cliloc set in tooltipCliloc temptag, if present
                 clilocNumFromScript = tempTagObj.m_IntValue;
@@ -6081,8 +6083,8 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
     }
     
     CChar *mChar = tSock->CurrcharObj();
-    if (cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER) {
-        if (cItem.GetType() == IT_LOCKEDCONTAINER) {
+    if (WorldItem.GetType() == IT_CONTAINER || WorldItem.GetType() == IT_LOCKEDCONTAINER) {
+        if (WorldItem.GetType() == IT_LOCKEDCONTAINER) {
             tempEntry.stringNum = 1042971; // ~1_NOTHING~
             tempEntry.ourText = util::format("%s", worldDictionary.GetEntry(9050).c_str(),
                                              tSock->Language()); // [Locked]
@@ -6090,51 +6092,51 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
         }
         
         tempEntry.stringNum = 1050044; // ~1_COUNT~ items, ~2_WEIGHT~ stones
-        // tempEntry.ourText = util::format( "%u\t%i", cItem.GetContainsList()->Num(), (
-        // cItem.GetWeight() / 100 ));
+        // tempEntry.ourText = util::format( "%u\t%i", WorldItem.GetContainsList()->Num(), (
+        // WorldItem.GetWeight() / 100 ));
         tempEntry.ourText =
-        util::format("%u\t%i", GetTotalItemCount(&cItem), (cItem.GetWeight() / 100));
+        util::format("%u\t%i", GetTotalItemCount(&WorldItem), (WorldItem.GetWeight() / 100));
         FinalizeData(tempEntry, totalStringLen);
         
-        if ((cItem.GetWeightMax() / 100) >= 1) {
+        if ((WorldItem.GetWeightMax() / 100) >= 1) {
             tempEntry.stringNum = 1072226; // Capacity: ~1_COUNT~ items, ~2_WEIGHT~ stones
             tempEntry.ourText =
-            util::format("%u\t%i", cItem.GetMaxItems(), (cItem.GetWeightMax() / 100));
+            util::format("%u\t%i", WorldItem.GetMaxItems(), (WorldItem.GetWeightMax() / 100));
             // tempEntry.stringNum = 1060658;
-            // tempEntry.ourText = util::format( "Capacity\t%i Stones", ( cItem.GetWeightMax() / 100
+            // tempEntry.ourText = util::format( "Capacity\t%i Stones", ( WorldItem.GetWeightMax() / 100
             // ));
             FinalizeData(tempEntry, totalStringLen);
         }
     }
-    else if (cItem.GetType() == IT_LOCKEDSPAWNCONT) {
+    else if (WorldItem.GetType() == IT_LOCKEDSPAWNCONT) {
         tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
         tempEntry.ourText = util::format(" \t%s\t ", worldDictionary.GetEntry(9050).c_str(),
                                          tSock->Language()); // [Locked]
         FinalizeData(tempEntry, totalStringLen);
     }
-    else if (cItem.GetType() == IT_HOUSESIGN) {
+    else if (WorldItem.GetType() == IT_HOUSESIGN) {
         tempEntry.stringNum = 1061112; // House Name: ~1_val~
         tempEntry.ourText = cItemName;
         FinalizeData(tempEntry, totalStringLen);
         
-        if (cItem.GetOwnerObj() != nullptr) {
+        if (WorldItem.GetOwnerObj() != nullptr) {
             tempEntry.stringNum = 1061113; // Owner: ~1_val~
-            tempEntry.ourText = cItem.GetOwnerObj()->GetNameRequest(mChar, NRS_TOOLTIP);
+            tempEntry.ourText = WorldItem.GetOwnerObj()->GetNameRequest(mChar, NRS_TOOLTIP);
             FinalizeData(tempEntry, totalStringLen);
         }
     }
-    else if (!cItem.IsCorpse() && cItem.GetType() != IT_POTION &&
-             cItem.GetSectionId() != "potionkeg" && cItem.GetName2() != "#" &&
-             cItem.GetName2() != "") {
+    else if (!WorldItem.IsCorpse() && WorldItem.GetType() != IT_POTION &&
+             WorldItem.GetSectionId() != "potionkeg" && WorldItem.GetName2() != "#" &&
+             WorldItem.GetName2() != "") {
         tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
         tempEntry.ourText = util::format(" \t%s\t ", worldDictionary.GetEntry(9402).c_str(),
                                          tSock->Language()); // [Unidentified]
         FinalizeData(tempEntry, totalStringLen);
     }
-    else if (cItem.GetType() == IT_RECALLRUNE && cItem.GetTempVar(CITV_MOREX) != 0 &&
-             cItem.GetTempVar(CITV_MOREY) != 0) {
+    else if (WorldItem.GetType() == IT_RECALLRUNE && WorldItem.GetTempVar(CITV_MOREX) != 0 &&
+             WorldItem.GetTempVar(CITV_MOREY) != 0) {
         // Add a tooltip that says something about where the recall rune is marked
-        switch (cItem.GetTempVar(CITV_MORE)) {
+        switch (WorldItem.GetTempVar(CITV_MORE)) {
             case 1:                            // Trammel
                 tempEntry.stringNum = 1050045; // ~1_VAL~
                 tempEntry.ourText = "(Trammel)";
@@ -6162,81 +6164,81 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
         }
         FinalizeData(tempEntry, totalStringLen);
     }
-    else if ((cItem.GetWeight() / 100) >= 1 && cItem.GetType() != IT_SPAWNCONT &&
-             cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT) {
-        if ((cItem.GetWeight() / 100) == 1) {
+    else if ((WorldItem.GetWeight() / 100) >= 1 && WorldItem.GetType() != IT_SPAWNCONT &&
+             WorldItem.GetType() != IT_LOCKEDSPAWNCONT && WorldItem.GetType() != IT_UNLOCKABLESPAWNCONT) {
+        if ((WorldItem.GetWeight() / 100) == 1) {
             tempEntry.stringNum = 1072788; // Weight: ~1_WEIGHT~ stone
         }
         else {
             tempEntry.stringNum = 1072789; // Weight: ~1_WEIGHT~ stones
         }
         
-        if (cItem.GetType() == IT_ITEMSPAWNER || cItem.GetType() == IT_NPCSPAWNER) {
-            tempEntry.ourText = util::ntos((cItem.GetWeight() / 100));
+        if (WorldItem.GetType() == IT_ITEMSPAWNER || WorldItem.GetType() == IT_NPCSPAWNER) {
+            tempEntry.ourText = util::ntos((WorldItem.GetWeight() / 100));
         }
         else {
-            CItem *cItemCont = static_cast<CItem *>(cItem.GetCont());
+            CItem *cItemCont = static_cast<CItem *>(WorldItem.GetCont());
             if (ValidateObject(cItemCont) && cItemCont->GetLayer() == IL_SELLCONTAINER) {
-                tempEntry.ourText = util::ntos((cItem.GetWeight() / 100));
+                tempEntry.ourText = util::ntos((WorldItem.GetWeight() / 100));
             }
             else {
-                tempEntry.ourText = util::ntos((cItem.GetWeight() / 100) * cItem.GetAmount());
+                tempEntry.ourText = util::ntos((WorldItem.GetWeight() / 100) * WorldItem.GetAmount());
             }
         }
         FinalizeData(tempEntry, totalStringLen);
     }
-    if (cItem.GetType() == IT_MAGICWAND && cItem.GetTempVar(CITV_MOREZ)) {
+    if (WorldItem.GetType() == IT_MAGICWAND && WorldItem.GetTempVar(CITV_MOREZ)) {
         tempEntry.stringNum = 1060584; // uses remaining: ~1_val~
-        tempEntry.ourText = util::ntos(cItem.GetTempVar(CITV_MOREZ));
+        tempEntry.ourText = util::ntos(WorldItem.GetTempVar(CITV_MOREZ));
         FinalizeData(tempEntry, totalStringLen);
     }
     
     bool hideMagicItemStats = ServerConfig::shared().enabled(ServerSwitch::MAGICSTATS);
-    if (!ServerConfig::shared().enabled(ServerSwitch::BASICTOOLTIPSONLY) && (!hideMagicItemStats || (hideMagicItemStats && (!cItem.GetName2().empty() && cItem.GetName2() == "#")))) {
-        if (cItem.GetLayer() != IL_NONE) {
-            if (cItem.GetHiDamage() > 0) {
+    if (!ServerConfig::shared().enabled(ServerSwitch::BASICTOOLTIPSONLY) && (!hideMagicItemStats || (hideMagicItemStats && (!WorldItem.GetName2().empty() && WorldItem.GetName2() == "#")))) {
+        if (WorldItem.GetLayer() != IL_NONE) {
+            if (WorldItem.GetHiDamage() > 0) {
                 if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYDAMAGETYPE)) {
-                    if (cItem.GetWeatherDamage(Weather::PHYSICAL)) {
+                    if (WorldItem.GetWeatherDamage(Weather::PHYSICAL)) {
                         tempEntry.stringNum = 1060403; // physical damage ~1_val~%
                         tempEntry.ourText = util::ntos(100);
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(Weather::LIGHT)) {
+                    else if (WorldItem.GetWeatherDamage(Weather::LIGHT)) {
                         tempEntry.stringNum = 1042971; // ~1_NOTHING~
                         tempEntry.ourText = util::format("light damage: 100%");
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(Weather::RAIN)) {
+                    else if (WorldItem.GetWeatherDamage(Weather::RAIN)) {
                         tempEntry.stringNum = 1042971; // ~1_NOTHING~
                         tempEntry.ourText = util::format("rain damage: 100%");
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(Weather::COLD)) {
+                    else if (WorldItem.GetWeatherDamage(Weather::COLD)) {
                         tempEntry.stringNum = 1060403; // cold damage ~1_val~%
                         tempEntry.ourText = util::ntos(100);
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(Weather::HEAT)) {
+                    else if (WorldItem.GetWeatherDamage(Weather::HEAT)) {
                         tempEntry.stringNum = 1042971; // ~1_NOTHING~
                         tempEntry.ourText = util::format("fire damage: 100%");
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(Weather::LIGHTNING)) {
+                    else if (WorldItem.GetWeatherDamage(Weather::LIGHTNING)) {
                         tempEntry.stringNum = 1060407; // energy damage ~1_val~%
                         tempEntry.ourText = util::ntos(100);
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(Weather::POISON)) {
+                    else if (WorldItem.GetWeatherDamage(Weather::POISON)) {
                         tempEntry.stringNum = 1060406; // energy damage ~1_val~%
                         tempEntry.ourText = util::ntos(100);
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(Weather::SNOW)) {
+                    else if (WorldItem.GetWeatherDamage(Weather::SNOW)) {
                         tempEntry.stringNum = 1042971; // ~1_NOTHING~
                         tempEntry.ourText = util::format("snow damage: 100%");
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(Weather::STORM)) {
+                    else if (WorldItem.GetWeatherDamage(Weather::STORM)) {
                         tempEntry.stringNum = 1042971; // ~1_NOTHING~
                         tempEntry.ourText = util::format("storm damage: 100%");
                         FinalizeData(tempEntry, totalStringLen);
@@ -6245,18 +6247,18 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
                 
                 tempEntry.stringNum = 1061168; // weapon damage ~1_val~ - ~2_val~
                 tempEntry.ourText =
-                util::format("%i\t%i", cItem.GetLoDamage(), cItem.GetHiDamage());
+                util::format("%i\t%i", WorldItem.GetLoDamage(), WorldItem.GetHiDamage());
                 FinalizeData(tempEntry, totalStringLen);
             }
             
-            if (cItem.GetSpeed() > 0) {
+            if (WorldItem.GetSpeed() > 0) {
                 tempEntry.stringNum = 1061167; // weapon speed ~1_val~
-                tempEntry.ourText = util::ntos(cItem.GetSpeed());
+                tempEntry.ourText = util::ntos(WorldItem.GetSpeed());
                 FinalizeData(tempEntry, totalStringLen);
             }
             
-            if (cItem.GetHiDamage() > 0) {
-                if (cItem.GetLayer() == IL_RIGHTHAND) {
+            if (WorldItem.GetHiDamage() > 0) {
+                if (WorldItem.GetLayer() == IL_RIGHTHAND) {
                     tempEntry.stringNum = 1061824; // one-handed weapon
                 }
                 else {
@@ -6265,8 +6267,8 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
                 FinalizeData(tempEntry, totalStringLen);
             }
             
-            if (Combat->GetCombatSkill(&cItem) != WRESTLING) {
-                switch (Combat->GetCombatSkill(&cItem)) {
+            if (worldCombat.GetCombatSkill(&WorldItem) != WRESTLING) {
+                switch (worldCombat.GetCombatSkill(&WorldItem)) {
                     case SWORDSMANSHIP:
                         tempEntry.stringNum = 1061172; // skill required: swordsmanship
                         break;
@@ -6287,78 +6289,78 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
             }
             
             if ( ServerConfig::shared().enabled(ServerSwitch::DISPLAYRESISTSTATS)) {
-                if (cItem.GetResist(Weather::PHYSICAL) > 0) {
+                if (WorldItem.GetResist(Weather::PHYSICAL) > 0) {
                     tempEntry.stringNum = 1060448; // physical resist ~1_val~%
-                    tempEntry.ourText = util::ntos(cItem.GetResist(Weather::PHYSICAL));
+                    tempEntry.ourText = util::ntos(WorldItem.GetResist(Weather::PHYSICAL));
                     FinalizeData(tempEntry, totalStringLen);
                 }
                 
-                if (cItem.GetResist(Weather::HEAT) > 0) {
+                if (WorldItem.GetResist(Weather::HEAT) > 0) {
                     tempEntry.stringNum = 1060447; // fire resist ~1_val~%
-                    tempEntry.ourText = util::ntos(cItem.GetResist(Weather::HEAT));
+                    tempEntry.ourText = util::ntos(WorldItem.GetResist(Weather::HEAT));
                     FinalizeData(tempEntry, totalStringLen);
                 }
                 
-                if (cItem.GetResist(Weather::COLD) > 0) {
+                if (WorldItem.GetResist(Weather::COLD) > 0) {
                     tempEntry.stringNum = 1060445; // cold resist ~1_val~%
-                    tempEntry.ourText = util::ntos(cItem.GetResist(Weather::COLD));
+                    tempEntry.ourText = util::ntos(WorldItem.GetResist(Weather::COLD));
                     FinalizeData(tempEntry, totalStringLen);
                 }
                 
-                if (cItem.GetResist(Weather::POISON) > 0) {
+                if (WorldItem.GetResist(Weather::POISON) > 0) {
                     tempEntry.stringNum = 1060449; // poison resist ~1_val~%
-                    tempEntry.ourText = util::ntos(cItem.GetResist(Weather::POISON));
+                    tempEntry.ourText = util::ntos(WorldItem.GetResist(Weather::POISON));
                     FinalizeData(tempEntry, totalStringLen);
                 }
                 
-                if (cItem.GetResist(Weather::LIGHTNING) > 0) {
+                if (WorldItem.GetResist(Weather::LIGHTNING) > 0) {
                     tempEntry.stringNum = 1060446; // energy/electrical resist ~1_val~%
-                    tempEntry.ourText = util::ntos(cItem.GetResist(Weather::LIGHTNING));
+                    tempEntry.ourText = util::ntos(WorldItem.GetResist(Weather::LIGHTNING));
                     FinalizeData(tempEntry, totalStringLen);
                 }
             }
             else {
-                if (cItem.GetResist(Weather::PHYSICAL) > 0) {
+                if (WorldItem.GetResist(Weather::PHYSICAL) > 0) {
                     tempEntry.stringNum = 1042971; // ~1_NOTHING~
-                    tempEntry.ourText = util::format("Armor Rating: %s", util::ntos(cItem.GetResist(Weather::PHYSICAL)).c_str());
+                    tempEntry.ourText = util::format("Armor Rating: %s", util::ntos(WorldItem.GetResist(Weather::PHYSICAL)).c_str());
                     FinalizeData(tempEntry, totalStringLen);
                 }
             }
             
-            if (cItem.GetMaxHP() > 1) {
+            if (WorldItem.GetMaxHP() > 1) {
                 tempEntry.stringNum = 1060639; // durability ~1_val~ / ~2_val~
-                tempEntry.ourText = util::format("%i\t%i", cItem.GetHP(), cItem.GetMaxHP());
+                tempEntry.ourText = util::format("%i\t%i", WorldItem.GetHP(), WorldItem.GetMaxHP());
                 FinalizeData(tempEntry, totalStringLen);
             }
             
-            if (cItem.GetStrength2() > 0) {
+            if (WorldItem.GetStrength2() > 0) {
                 tempEntry.stringNum = 1060485; // strength bonus ~1_val~
-                tempEntry.ourText = util::ntos(cItem.GetStrength2());
+                tempEntry.ourText = util::ntos(WorldItem.GetStrength2());
                 FinalizeData(tempEntry, totalStringLen);
             }
-            if (cItem.GetDexterity2() > 0) {
+            if (WorldItem.GetDexterity2() > 0) {
                 tempEntry.stringNum = 1060409; // dexterity bonus ~1_val~
-                tempEntry.ourText = util::ntos(cItem.GetDexterity2());
+                tempEntry.ourText = util::ntos(WorldItem.GetDexterity2());
                 FinalizeData(tempEntry, totalStringLen);
             }
-            if (cItem.GetIntelligence2() > 0) {
+            if (WorldItem.GetIntelligence2() > 0) {
                 tempEntry.stringNum = 1060432; // intelligence bonus ~1_val~
-                tempEntry.ourText = util::ntos(cItem.GetIntelligence2());
+                tempEntry.ourText = util::ntos(WorldItem.GetIntelligence2());
                 FinalizeData(tempEntry, totalStringLen);
             }
             
-            if (cItem.GetStrength() > 1) {
+            if (WorldItem.GetStrength() > 1) {
                 tempEntry.stringNum = 1061170; // strength requirement ~1_val~
-                tempEntry.ourText = util::ntos(cItem.GetStrength());
+                tempEntry.ourText = util::ntos(WorldItem.GetStrength());
                 FinalizeData(tempEntry, totalStringLen);
             }
         }
     }
     
     // Address refresh issue when items in player vendor packs received updated pricing and name
-    if (cItem.GetCont() != nullptr && cItem.GetCont()->CanBeObjType(CBaseObject::OT_ITEM)) {
+    if (WorldItem.GetCont() != nullptr && WorldItem.GetCont()->CanBeObjType(CBaseObject::OT_ITEM)) {
         auto oType = CBaseObject::OT_CBO;
-        CBaseObject *iOwner = FindItemOwner(&cItem, oType);
+        CBaseObject *iOwner = FindItemOwner(&WorldItem, oType);
         if (ValidateObject(iOwner) && iOwner->CanBeObjType(CBaseObject::OT_CHAR)) {
             if (static_cast<CChar *>(iOwner)->GetNpcAiType() == AI_PLAYERVENDOR) {
                 playerVendor = true;
@@ -6367,10 +6369,10 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
     }
     
     if (playerVendor) {
-        if (cItem.GetVendorPrice() > 0) {
+        if (WorldItem.GetVendorPrice() > 0) {
             // First the price
             tempEntry.stringNum = 1043304; // Price: ~1_COST~
-            tempEntry.ourText = util::ntos(cItem.GetVendorPrice());
+            tempEntry.ourText = util::ntos(WorldItem.GetVendorPrice());
             FinalizeData(tempEntry, totalStringLen);
         }
         else {
@@ -6381,13 +6383,13 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
         
         // Then the description
         tempEntry.stringNum = 1043305; // <br>Seller's Description:<br>"~1_DESC~"
-        if (!cItem.GetDesc().empty()) {
+        if (!WorldItem.GetDesc().empty()) {
             // A description has been set for item, use it
-            tempEntry.ourText = cItem.GetDesc();
+            tempEntry.ourText = WorldItem.GetDesc();
         }
         else {
             // No description is set, use default item name
-            tempEntry.ourText = cItem.GetName();
+            tempEntry.ourText = WorldItem.GetName();
         }
         FinalizeData(tempEntry, totalStringLen);
     }
@@ -6500,9 +6502,9 @@ void CPToolTip::CopyData(serial_t objSer, bool addAmount, bool playerVendor) {
         }
     }
     else {
-        CItem *cItem = CalcItemObjFromSer(objSer);
-        if (cItem != nullptr) {
-            CopyItemData((*cItem), totalStringLen, addAmount, playerVendor);
+        CItem *WorldItem = CalcItemObjFromSer(objSer);
+        if (WorldItem != nullptr) {
+            CopyItemData((*WorldItem), totalStringLen, addAmount, playerVendor);
         }
     }
     
@@ -7560,7 +7562,7 @@ void CPPopupMenu::CopyData(CChar &toCopy, CSocket &tSock) {
     
     // Pet commands
     bool playerIsOwner = (ValidateObject(toCopy.GetOwnerObj()) && toCopy.GetOwnerObj() == mChar);
-    bool playerIsFriend = Npcs->CheckPetFriend(mChar, &toCopy);
+    bool playerIsFriend = worldNPC.CheckPetFriend(mChar, &toCopy);
     if (toCopy.IsNpc() && toCopy.GetNpcAiType() != AI_PLAYERVENDOR &&
         toCopy.GetQuestType() != QT_ESCORTQUEST && (toCopy.IsTamed() || toCopy.CanBeHired()) &&
         (playerIsOwner || playerIsFriend)) {

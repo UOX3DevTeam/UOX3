@@ -1245,7 +1245,7 @@ protected:
     CSocket *tSock;
     virtual void InternalReset() override;
     virtual void CopyData(serial_t objSer, bool addAmount = true, bool playerVendor = false);
-    void CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmount = true,
+    void CopyItemData(CItem &WorldItem, size_t &totalStringLen, bool addAmount = true,
                       bool playerVendor = false);
     void CopyCharData(CChar &mChar, size_t &totalStringLen);
     void FinalizeData(ToolTipEntry_st tempEntry, size_t &totalStringLen);
