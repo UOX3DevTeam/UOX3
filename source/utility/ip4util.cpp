@@ -33,6 +33,7 @@ namespace util {
         #pragma warning( push )
         #pragma warning( disable : 4834 )
         #endif
+                        // this is just trying to see if this is a number, or not
                         std::stoul(entry[i]);
         #if defined(_WIN32)
         #pragma warning( pop )

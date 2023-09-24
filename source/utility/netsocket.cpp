@@ -143,7 +143,7 @@ namespace util {
                     return static_cast<status_t>(0);
                 }
                 if (error = WSAECONNRESET || error == WSAENOTCONN){
-                    throw std::SocketPeerClose(errormsg(error));
+                    throw SocketPeerClose(errormsg(error));
                 }
 #else
                 error = errno ;
@@ -267,10 +267,10 @@ namespace util {
             setOption(this->descriptor) ;
             // We are going to reuse the addr
 #if defined(_WIN32)
-            auto optionvalue = 1 ;
-            auto size = sizeof optionvalue ;
-            setsockopt(this->descriptor, SOL_SOCKET, SO_REUSEADDR, static_cast<const char*>(&optionvalue), size);
-            if (setsockopt(descriptor, SOL_SOCKET, SO_REUSEADDR, static_cast<void*>(&optionvalue), size) == SOCKETERROR) {
+            auto optionvalue = static_cast<int>(1) ;
+            auto size = static_cast<int>(sizeof optionvalue) ;
+            setsockopt(this->descriptor, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&optionvalue),size);
+            if (setsockopt(descriptor, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&optionvalue), size) == SOCKETERROR) {
                 // This failed!
                 auto error = WSAGetLastError() ;
                 freeaddrinfo(res);

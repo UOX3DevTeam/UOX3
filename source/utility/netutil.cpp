@@ -243,7 +243,7 @@ namespace util {
 
                 iterations++;
 
-            } while ((dwRetVal == ERROR_BUFFER_OVERFLOW) && (Iterations < MAX_TRIES));
+            } while ((dwRetVal == ERROR_BUFFER_OVERFLOW) && (iterations < MAX_TRIES));
 
             if (dwRetVal == NO_ERROR) {
                 // If successful, output some information from the data we received
