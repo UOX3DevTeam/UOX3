@@ -8,23 +8,10 @@
 #include <cstring>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
-#if defined(_WIN32)
-// We just dont fight it, go ahead and get windows
-#if !defined(NOMINMAX)
-#define NOMINMAX 
-#endif
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-
-#else
-
-#endif
-
-
+#include "nettype.hpp"
 //======================================================================
 namespace util {
     namespace net {
@@ -39,12 +26,22 @@ namespace util {
         // For everythig else, nothing
         auto shutdown(bool complain = false) ->void ;
         
-        // Get the text for error numbers
+        //=================================================================================
+        // close a socket
+        auto closeSocket(sockfd_t descriptor) ->void ;
+        
+        //=================================================================================
+        // Network error message
         auto errormsg(int error) -> std::string;
-        using ip4_t = std::uint32_t ;
+        
+        //=================================================================================
+        // Peer information
+        auto peerInformation(sockfd_t descriptor) -> std::pair<std::string,std::string> ;
+        
         // Get the available IP4's that are on this machine
         auto availIP4() -> std::vector<ip4_t> ;
 
+        
 
     }
 }

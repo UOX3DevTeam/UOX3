@@ -144,6 +144,8 @@
 /* Begin PBXFileReference section */
 		5605D6432ABE339E004BA321 /* netsocket.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = netsocket.cpp; sourceTree = "<group>"; };
 		5605D6442ABE339E004BA321 /* netsocket.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = netsocket.hpp; sourceTree = "<group>"; };
+		5605D66C2AC08B5B004BA321 /* neterror.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = neterror.hpp; sourceTree = "<group>"; };
+		5605D66F2AC08B8B004BA321 /* nettype.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = nettype.hpp; sourceTree = "<group>"; };
 		5611F3262AAF6997009438EA /* assistantfeature.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = assistantfeature.cpp; sourceTree = "<group>"; };
 		5611F3272AAF6997009438EA /* assistantfeature.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = assistantfeature.hpp; sourceTree = "<group>"; };
 		5611F32F2AAF807D009438EA /* startlocation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = startlocation.cpp; sourceTree = "<group>"; };
@@ -3065,14 +3067,16 @@
 		56D6EEC22A9F76DD005355FA /* utility */ = {
 			isa = PBXGroup;
 			children = (
-				568517A62ABDA8A20052C574 /* netutil.cpp */,
-				568517A72ABDA8A20052C574 /* netutil.hpp */,
 				568517A42ABDA7DB0052C574 /* ip4util.cpp */,
 				568517A12ABDA7DB0052C574 /* ip4util.hpp */,
-				56A2625E2ABB3FB200DD2D84 /* random.hpp */,
-				56D6EEC32A9F7707005355FA /* strutil.hpp */,
+				5605D66C2AC08B5B004BA321 /* neterror.hpp */,
 				5605D6432ABE339E004BA321 /* netsocket.cpp */,
 				5605D6442ABE339E004BA321 /* netsocket.hpp */,
+				5605D66F2AC08B8B004BA321 /* nettype.hpp */,
+				568517A62ABDA8A20052C574 /* netutil.cpp */,
+				568517A72ABDA8A20052C574 /* netutil.hpp */,
+				56A2625E2ABB3FB200DD2D84 /* random.hpp */,
+				56D6EEC32A9F7707005355FA /* strutil.hpp */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -3131,7 +3135,7 @@
 				64E2F791293FCE4800546A08 /* Subsystem */,
 				64E2F792293FCE5900546A08 /* Other */,
 				64E2F793293FCE6200546A08 /* JS Engine */,
-				64E2F794293FCE6C00546A08 /* Network */,
+				64E2F794293FCE6C00546A08 /* UNetwork */,
 				64E2F797293FCE8C00546A08 /* OldUtility */,
 				64E2F796293FCE8400546A08 /* UOData */,
 				64A90089293E3DD4009B54DA /* changelogbase.txt */,
@@ -3295,7 +3299,7 @@
 			name = "JS Engine";
 			sourceTree = "<group>";
 		};
-		64E2F794293FCE6C00546A08 /* Network */ = {
+		64E2F794293FCE6C00546A08 /* UNetwork */ = {
 			isa = PBXGroup;
 			children = (
 				64A9009E293E3DD4009B54DA /* cpacketreceive.cpp */,
@@ -3307,7 +3311,7 @@
 				64A900DA293E3DD4009B54DA /* network.cpp */,
 				64A900DB293E3DD4009B54DA /* network.h */,
 			);
-			name = Network;
+			name = UNetwork;
 			sourceTree = "<group>";
 		};
 		64E2F795293FCE7500546A08 /* Script */ = {

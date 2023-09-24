@@ -200,6 +200,7 @@
     <ClCompile Include="..\..\source\eventtimer.cpp" />
     <!-- utility group -->
     <ClCompile Include="..\..\source\utility\ip4util.cpp" />
+    <ClCompile Include="..\..\source\utility\netsocket.cpp" />
     <ClCompile Include="..\..\source\utility\netutil.cpp" />
     <!-- UOData group -->
     <ClCompile Include="..\..\source\mapstuff.cpp" />
@@ -309,10 +310,13 @@
     <ClInclude Include="..\..\source\timeutility.hpp" />
     <ClInclude Include="..\..\source\eventtimer.hpp" />
     <!-- utility group -->
-    <ClInclude Include="..\..\source\utility\strutil.hpp" />
-    <ClInclude Include="..\..\source\utility\random.hpp" />
     <ClInclude Include="..\..\source\utility\ip4util.hpp" />
+    <ClInclude Include="..\..\source\utility\neterror.hpp" />
+    <ClInclude Include="..\..\source\utility\netsocket.hpp" />
+    <ClInclude Include="..\..\source\utility\nettype.hpp" />
     <ClInclude Include="..\..\source\utility\netutil.hpp" />
+    <ClInclude Include="..\..\source\utility\random.hpp" />
+    <ClInclude Include="..\..\source\utility\strutil.hpp" />
     <!-- UOData group -->
     <ClInclude Include="..\..\source\mapclasses.h" />
     <ClInclude Include="..\..\source\mapstuff.h" />

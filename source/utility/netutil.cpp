@@ -2,11 +2,12 @@
 
 #include "netutil.hpp"
 
-#include <stdexcept>
 #include <algorithm>
+#include <cstring>
+#include <stdexcept>
+#include <vector>
 
 #if defined (_WIN32)
-#include <cstring>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
@@ -18,14 +19,25 @@
 #define FREE( x ) HeapFree( GetProcessHeap(), 0, ( x ))
 
 #else
+
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <ifaddrs.h>
 #include <netinet/in.h>
-
+#include <unistd.h>
 #endif
 
+#if !defined(__linux__) && !defined(_WIN32)
+#include <sys/event.h>
+#include <time.h>
+#endif
+#if defined(__linux__)
+#include <sys/epoll.h>
+#endif
+
+#include "neterror.hpp"
+#include "ip4util.hpp"
 #include "strutil.hpp"
 
 using namespace std::string_literals ;
@@ -56,10 +68,10 @@ namespace util {
             }
             if ( LOBYTE(wsa_data.wVersion ) != 2 ||
                 HIBYTE(wsa_data.wVersion ) != 2 ) {
-                WSACleanup( );
+                WSACleanup();
                 throw std::runtime_error("Unable to obtain minimum WinSock version of 2.2 "s);
             }
-            numberOfWSAStartups ++ ;
+            numberOfWSAStartups++ ;
             
 #endif
 
@@ -72,13 +84,13 @@ namespace util {
 #if defined(_WIN32)
             if (numberOfWSAStartups > 0){
                 WSACleanup();
+                numberOfWSAStartups-- ;
             }
             else {
                 if (complain){
                     throw std::runtime_error("Requested shutdown exceeded startup requests"s);
                 }
             }
-
 #endif
 
         }
@@ -112,14 +124,43 @@ namespace util {
 
         }
 
+        //==================================================================================================================
+        auto closeSocket(sockfd_t descrip) -> void {
+#if defined(_WIN32)
+            closesocket(descrip);
+#else
+            ::close(descrip) ;
+#endif
+        }
+        //=================================================================================
+        // Peer information
+        auto peerInformation(sockfd_t descriptor) -> std::pair<std::string,std::string> {
+            if (descriptor == BADSOCKET){
+                throw SocketClose("Can not retrieve peer information, socket is closed");
+            }
+            struct sockaddr_in their_addr;
+            socklen_t size = sizeof their_addr ;
+            auto status = getpeername(descriptor,reinterpret_cast<sockaddr*>(&their_addr),&size) ;
+            if (status == SOCKETERROR){
+                auto error = 0 ;
+#if defined(_WIN32)
+                error = WSAGetLastError() ;
+#else
+                error = errno ;
+#endif
+                throw SocketError("Error getting peer information: "s+errormsg(error));
+            }
+            auto ip = ntohl(their_addr.sin_addr.s_addr) ;
+            auto port = ntohs(their_addr.sin_port);
+            return std::make_pair(IP4Entry::describeIP(ip), std::to_string(port));
+        }
+
         //===================================================================
         auto availIP4() -> std::vector<ip4_t> {
             
             auto rvalue = std::vector<ip4_t>() ;
 
     #if !defined(_WIN32)
-
-
             struct ifaddrs * ifAddrStruct = nullptr;
             struct ifaddrs * ifa = nullptr;
             void * tmpAddrPtr = nullptr;
@@ -172,7 +213,7 @@ namespace util {
 
             PIP_ADAPTER_ADDRESSES pAddresses = NULL;
             ULONG outBufLen = 0;
-            ULONG Iterations = 0;
+            ULONG iterations = 0;
 
             PIP_ADAPTER_ADDRESSES pCurrAddresses = NULL;
             PIP_ADAPTER_UNICAST_ADDRESS pUnicast = NULL;
@@ -200,7 +241,7 @@ namespace util {
                     break;
                 }
 
-                Iterations++;
+                iterations++;
 
             } while ((dwRetVal == ERROR_BUFFER_OVERFLOW) && (Iterations < MAX_TRIES));
 
@@ -229,7 +270,6 @@ namespace util {
                                         // The device has a name, might be intersted
                                         if (device.find("(WSL)") == std::string::npos) {
                                             // we dont want a psuedo WSL device on windows
-
                                             rvalue.push_back(static_cast<ip4_t>(addr));
                                         }
                                     }
@@ -242,12 +282,9 @@ namespace util {
                     pCurrAddresses = pCurrAddresses->Next;
                 }
             }
-            else
-            {
-                if (dwRetVal != ERROR_NO_DATA)
-                {
-                    if (pAddresses)
-                    {
+            else {
+                if (dwRetVal != ERROR_NO_DATA) {
+                    if (pAddresses) {
                         FREE(pAddresses);
                     }
 
@@ -255,8 +292,7 @@ namespace util {
                 }
             }
 
-            if (pAddresses)
-            {
+            if (pAddresses) {
                 FREE(pAddresses);
             }
     #endif
