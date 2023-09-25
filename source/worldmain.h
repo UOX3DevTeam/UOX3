@@ -20,7 +20,6 @@
 #include "typedefs.h"
 #include "type/uotime.hpp"
 #include "uoxstruct.h"
-#include "ip4address.hpp"
 
 class CSpawnRegion;
 class CTownRegion;
@@ -102,7 +101,6 @@ private:
     
     // Timers
     timerval_t worldTimers[tWORLD_COUNT];
-    ip4list_t availableIPs;
     
     // Console & Program Level Vars
     bool error;
@@ -154,7 +152,6 @@ public:
         }
     };
     
-    auto matchIP(const IP4Addr &ip) const -> IP4Addr;
     // Timers
     void SetTimer(CWM_TID timerId, timerval_t newVal);
     timerval_t GetTimer(CWM_TID timerId) const;

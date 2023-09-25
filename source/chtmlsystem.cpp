@@ -300,7 +300,7 @@ void cHTMLTemplate::process() {
                             while (sPos != std::string::npos) {
                                 CSocket *mySock = tChar->GetSocket();
                                 
-                                auto ClientIP = util::format("%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1());
+                                auto ClientIP = util::format("%s", mySock->clientIP.c_str());
                                 (worldMain.GetKeepRun()) ? parsedInline.replace(sPos, 9, ClientIP) : parsedInline.replace(sPos, 9, "");
                                 sPos = parsedInline.find("%playerip");
                             }

@@ -197,15 +197,16 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/uoxjspropertyfuncs.cpp
    ${PROJECT_SOURCE_DIR}/../../source/uoxjspropertyfuncs.h
    ${PROJECT_SOURCE_DIR}/../../source/uoxjspropertyspecs.h
+# network group
+   ${PROJECT_SOURCE_DIR}/../../source/network/networkmgr.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/network/networkmgr.hpp
 # Network group
-   ${PROJECT_SOURCE_DIR}/../../source/cpacketreceive.cpp  
+   ${PROJECT_SOURCE_DIR}/../../source/cpacketreceive.cpp
    ${PROJECT_SOURCE_DIR}/../../source/cpacketreceive.h
    ${PROJECT_SOURCE_DIR}/../../source/cpacketsend.cpp
    ${PROJECT_SOURCE_DIR}/../../source/cpacketsend.h
    ${PROJECT_SOURCE_DIR}/../../source/network.cpp
    ${PROJECT_SOURCE_DIR}/../../source/network.h
-   ${PROJECT_SOURCE_DIR}/../../source/ip4address.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/ip4address.hpp
 # Utility group
    ${PROJECT_SOURCE_DIR}/../../source/stringutility.cpp  
    ${PROJECT_SOURCE_DIR}/../../source/stringutility.hpp

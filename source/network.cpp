@@ -1,13 +1,10 @@
 #include "network.h"
 
+#include <algorithm>
 #include <cassert>
 #include <cctype>
 #include <iomanip>
 #include <memory>
-#if !defined(_WIN32)
-#include <sys/ioctl.h>
-#endif
-
 #include "cchar.h"
 #include "ceffects.h"
 #include "cjsmapping.h"
@@ -24,6 +21,7 @@
 #include "funcdecl.h"
 #include "mapstuff.h"
 #include "movement.h"
+#include "utility/neterror.hpp"
 #include "objectfactory.h"
 #include "osunique.hpp"
 #include "scriptc.h"
@@ -67,8 +65,7 @@ auto ByteBufferBounds::what() const noexcept -> const char * { return _msg.c_str
 //|	Purpose		-	Convert a bool to a string
 //|					the true_value/false_value are returned based on the bool
 // o------------------------------------------------------------------------------------------------o
-auto ByteBuffer::ntos(bool value, const std::string &true_value, const std::string &false_value)
--> std::string {
+auto ByteBuffer::ntos(bool value, const std::string &true_value, const std::string &false_value) -> std::string {
     return (value ? true_value : false_value);
 }
 
@@ -77,9 +74,7 @@ auto ByteBuffer::ntos(bool value, const std::string &true_value, const std::stri
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Formatted dump of a byte buffer
 // o------------------------------------------------------------------------------------------------o
-auto ByteBuffer::DumpByteBuffer(std::ostream &output, const std::uint8_t *buffer,
-                                std::size_t length, radix_t radix, std::size_t entries_line)
--> void {
+auto ByteBuffer::DumpByteBuffer(std::ostream &output, const std::uint8_t *buffer, std::size_t length, radix_t radix, std::size_t entries_line) -> void {
     // number of characters for entry
     auto entry_size = 3; // decimal and octal
     switch (static_cast<int>(radix)) {
@@ -199,17 +194,13 @@ auto ByteBuffer::Fill(std::uint8_t value, int offset, int length) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Formatted dump of a byte buffer
 // o------------------------------------------------------------------------------------------------o
-auto ByteBuffer::LogByteBuffer(std::ostream &output, radix_t radix, int entries_line) const
--> void {
+auto ByteBuffer::LogByteBuffer(std::ostream &output, radix_t radix, int entries_line) const -> void {
     DumpByteBuffer(output, _bytedata.data(), _bytedata.size(), radix, entries_line);
 }
 
 
 #define _DEBUG_PACKET 0
 
-fd_set conn;
-fd_set all;
-fd_set errsock;
 
 void KillTrades(CChar *i);
 void DoorMacro(CSocket *s);
@@ -221,10 +212,8 @@ void sysBroadcast(const std::string &txt);
 //|	Purpose		-	Sends ALL buffered data
 // o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::ClearBuffers() {
-    std::for_each(connClients.begin(), connClients.end(),
-                  [](CSocket *sock) { sock->FlushBuffer(); });
-    std::for_each(loggedInClients.begin(), loggedInClients.end(),
-                  [](CSocket *sock) { sock->FlushBuffer(); });
+    std::for_each(connClients.begin(), connClients.end(), [](CSocket *sock) { sock->FlushBuffer(); });
+    std::for_each(loggedInClients.begin(), loggedInClients.end(), [](CSocket *sock) { sock->FlushBuffer(); });
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -333,9 +322,7 @@ void CNetworkStuff::LogOut(CSocket *s) {
     else {
         auto logoutLocs = worldMain.logoutLocs;
         for (size_t a = 0; a < logoutLocs.size(); ++a) {
-            if (logoutLocs[a].x1 <= x && logoutLocs[a].y1 <= y && logoutLocs[a].x2 >= x &&
-                logoutLocs[a].y2 >= y && logoutLocs[a].worldNum == world &&
-                logoutLocs[a].instanceId == instanceId) {
+            if (logoutLocs[a].x1 <= x && logoutLocs[a].y1 <= y && logoutLocs[a].x2 >= x && logoutLocs[a].y2 >= y && logoutLocs[a].worldNum == world && logoutLocs[a].instanceId == instanceId) {
                 valid = true;
                 break;
             }
@@ -404,60 +391,6 @@ void CNetworkStuff::LogOut(CSocket *s) {
     p->SetSocket(nullptr);
 }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CNetworkStuff::sockInit()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Initializes and binds sockets during startup
-// o------------------------------------------------------------------------------------------------o
-void CNetworkStuff::sockInit() {
-    std::int32_t bcode;
-    
-    worldMain.SetKeepRun(true);
-    worldMain.SetError(false);
-    
-#if !defined(_WIN32)
-    std::int32_t on = 1;
-#endif
-    
-    a_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (a_socket < 0) {
-        Console::shared().error(" Unable to create socket");
-#if defined(_WIN32)
-        Console::shared().error(util::format(" Code %i", WSAGetLastError()));
-#else
-        Console::shared() << myendl;
-#endif
-        worldMain.SetKeepRun(false);
-        worldMain.SetError(true);
-        Shutdown(FATAL_UOX3_ALLOC_NETWORK);
-        return;
-    }
-#if !defined(_WIN32)
-    [[maybe_unused]] int result = setsockopt(a_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-#endif
-    
-    std::uint32_t len_connection_addr = sizeof(struct sockaddr_in);
-    sockaddr_in connection;
-    memset((char *)&connection, 0, len_connection_addr);
-    connection.sin_family = AF_INET;
-    connection.sin_addr.s_addr = htonl(INADDR_ANY);
-    connection.sin_port = htons(ServerConfig::shared().ushortValues[UShortValue::PORT]);
-    bcode = bind(a_socket, (struct sockaddr *)&connection, len_connection_addr);
-    
-    if (bcode < 0) {
-        Console::shared().error(util::format(" Unable to bind socket 1 - Error code: %i", bcode));
-        worldMain.SetKeepRun(false);
-        worldMain.SetError(true);
-        Shutdown(FATAL_UOX3_ALLOC_NETWORK);
-        return;
-    }
-    
-    unsigned long mode = 1;
-    // set the socket to nonblocking
-    ioctlsocket(a_socket, FIONBIO, &mode);
-    
-    listen(a_socket, 42);
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CNetworkStuff::SockClose()
@@ -465,9 +398,8 @@ void CNetworkStuff::sockInit() {
 //|	Purpose		-	Closes all sockets for shutdown
 // o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::SockClose() {
-    closesocket(a_socket);
-    std::for_each(connClients.begin(), connClients.end(),
-                  [](CSocket *sock) { sock->CloseSocket(); });
+    networkMgr.close() ;
+    std::for_each(connClients.begin(), connClients.end(), [](CSocket *sock) { sock->CloseSocket(); });
 }
 
 #if !defined(_WIN32)
@@ -487,122 +419,32 @@ void CNetworkStuff::SockClose() {
 //|	Purpose		-	Checks for connection requests
 // o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::CheckConn() {
-    FD_ZERO(&conn);
-    FD_SET(a_socket, &conn);
-    std::int32_t nfds = a_socket + 1;
-    std::int32_t s = select(nfds, &conn, nullptr, nullptr, &worldMain.uoxTimeout);
-    if (s > 0) {
-        std::int32_t len = sizeof(struct sockaddr_in);
-        SOCKET newClient;
-#if defined(_WIN32)
-        newClient = accept(a_socket, (struct sockaddr *)&client_addr, &len);
-#else
-        newClient = accept(a_socket, (struct sockaddr *)&client_addr, (socklen_t *)&len);
-        if (newClient >= FD_SETSIZE) {
-            Console::shared().error("accept() returning unselectable fd!");
-            closesocket(static_cast<uoxsocket_t>(newClient));
-            return;
-        }
-#endif
-        CSocket *toMake = new CSocket(newClient);
-        // set the ip address of the client;
-        toMake->ipaddress = IP4Addr(client_addr.sin_addr.s_addr);
-        
-        if (newClient < 0) {
-#if defined(_WIN32)
-            std::int32_t errorCode = WSAGetLastError();
-            if (errorCode == WSAEWOULDBLOCK)
-#else
-                std::int32_t errorCode = errno;
-            if (errorCode == EWOULDBLOCK)
-#endif
-            {
-                delete toMake;
-                return;
-            }
-            Console::shared().error("Error at client connection!");
-            worldMain.SetKeepRun(true);
-            worldMain.SetError(true);
-            delete toMake;
-            return;
-        }
-        //	April 5, 2000
-        //	Due to an attack on the shard, and the true inability to determine who did what
-        //	I am implementing a ShitList, any IP on this list will be immediatly dropped.
-        //	This is a light weight firewall attempt to stop some people that are attacking
-        //	a shard that they can easily create new accounts automatically on.
-        //	ListFormat: x.x.x.x --> * means any for that domain class
-        //   _  _  _
-        std::uint8_t part[4];
-        part[0] = static_cast<std::uint8_t>(client_addr.sin_addr.s_addr & 0xFF);
-        part[1] = static_cast<std::uint8_t>((client_addr.sin_addr.s_addr & 0xFF00) >> 8);
-        part[2] = static_cast<std::uint8_t>((client_addr.sin_addr.s_addr & 0xFF0000) >> 16);
-        part[3] = static_cast<std::uint8_t>((client_addr.sin_addr.s_addr & 0xFF000000) >> 24);
-        
-        if (IsFirewallBlocked(part)) {
-            messageLoop << util::format("FIREWALL: Blocking address %i.%i.%i.%i --> Blocked!", part[0], part[1], part[2], part[3]);
-            closesocket(static_cast<uoxsocket_t>(newClient));
-            delete toMake;
-            return;
-        }
-        // Firewall-messages are really only needed when firewall blocks, not when it lets someone
-        // through. Leads to information overload in console. Commenting out.
-        
-        messageLoop << util::format("Client %zu [%i.%i.%i.%i] connected [Total:%lu]", worldMain.GetPlayersOnline(), part[0], part[1], part[2], part[3], worldMain.GetPlayersOnline() + 1);
+    
+    auto newconnection = networkMgr.accept() ;
+    if (newconnection.has_value()) {
+        // sockfd_t,string clientip, string clientport, ip4_t relay
+        auto value = newconnection.value();
+        util::net::NetSocket client(std::get<0>(value),false);
+        auto toMake = new CSocket(client, std::get<1>(value), std::get<2>(value), std::get<3>(value));
+        messageLoop << util::format("Client %zu [%s] connected [Total:%lu]", worldMain.GetPlayersOnline(), std::get<1>(value).c_str(), worldMain.GetPlayersOnline() + 1);
         loggedInClients.push_back(toMake);
-        toMake->ClientIP(client_addr.sin_addr.s_addr);
-        return;
-    }
-    if (s < 0) {
-        Console::shared().error(" Select (Conn) failed!");
-        worldMain.SetKeepRun(false);
-        worldMain.SetError(true);
-        return;
     }
 }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CNetworkStuff::IsFirewallBlocked()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Checks if IP of connecting client is blocked by firewall
-// o------------------------------------------------------------------------------------------------o
-bool CNetworkStuff::IsFirewallBlocked(std::uint8_t part[4]) {
-    bool match[4];
-    for (size_t i = 0; i < slEntries.size(); ++i) {
-        for (std::uint8_t k = 0; k < 4; ++k) {
-            if (slEntries[i].b[k] == -1) {
-                match[k] = true;
-            }
-            else {
-                match[k] = (slEntries[i].b[k] == part[k]);
-            }
-        }
-        if (match[0] && match[1] && match[2] && match[3])
-            return true;
-    }
-    return false;
-}
+//==============================================================================================================
 CNetworkStuff::~CNetworkStuff() {
-    size_t i = 0;
-    size_t s = 0;
-    for (i = 0; i < loggedInClients.size(); ++i) {
-        loggedInClients[i]->FlushBuffer();
-        loggedInClients[i]->CloseSocket();
-        delete loggedInClients[i];
+    for (auto iter = loggedInClients.begin();iter != loggedInClients.end();){
+        (*iter)->FlushBuffer();
+        (*iter)->CloseSocket();
+        iter = loggedInClients.erase(iter) ;
     }
-    for (i = 0; i < connClients.size(); ++i) {
-        connClients[i]->FlushBuffer();
-        connClients[i]->CloseSocket();
-        s = std::max(s, connClients[i]->CliSocket() + 1);
-        delete connClients[i];
+    for (auto iter = connClients.begin(); iter != connClients.end();){
+        (*iter)->FlushBuffer();
+        (*iter)->CloseSocket();
+        iter = connClients.erase(iter) ;
     }
     
     loggedInClients.resize(0);
     connClients.resize(0);
-    closesocket(static_cast<uoxsocket_t>(s));
-#if defined(_WIN32)
-    WSACleanup();
-#endif
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -611,56 +453,39 @@ CNetworkStuff::~CNetworkStuff() {
 //|	Purpose		-	Check for messages from the clients
 // o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::CheckMessage() {
-    FD_ZERO(&all);
-    FD_ZERO(&errsock);
-    std::int32_t nfds = 0;
-    for (auto &tSock : connClients) {
-        auto clientSock = static_cast<uoxsocket_t>(tSock->CliSocket());
-        FD_SET(clientSock, &all);
-        FD_SET(clientSock, &errsock);
-        if (static_cast<int>(clientSock) + 1 > nfds) {
-            nfds = clientSock + 1;
-        }
-    }
-    std::int32_t s = select(nfds, &all, nullptr, &errsock, &worldMain.uoxTimeout);
-    if (s > 0) {
-        size_t oldnow = worldMain.GetPlayersOnline();
-        for (size_t i = 0; i < worldMain.GetPlayersOnline(); ++i) {
-            if (FD_ISSET(connClients[i]->CliSocket(), &errsock)) {
-                Disconnect(static_cast<uoxsocket_t>(i));
-            }
-            if ((FD_ISSET(connClients[i]->CliSocket(), &all)) &&
-                (oldnow == worldMain.GetPlayersOnline())) {
-                try {
-                    GetMsg(static_cast<uoxsocket_t>(i));
-                } catch (socket_error &blah) {
-#if !defined(_WIN32)
-                    Console::shared() << "Client disconnected" << myendl;
-#else
-                    if (blah.ErrorNumber() == WSAECONNRESET) {
-                        Console::shared() << "Client disconnected" << myendl;
-                    }
-                    else if (blah.ErrorNumber() != -1) {
-                        Console::shared()
-                        << "Socket error: " << static_cast<std::int32_t>(blah.ErrorNumber()) << myendl;
-                    }
-#endif
-                    Disconnect(static_cast<uoxsocket_t>(i)); // abnormal error
-                }
+    
+    
+    // The sockets are not blocking, so we could just peek, and if data, read it
+    // Which is what we will do for now, but we can revist using kqueue/epoll(unix) and
+    // WSASelect (windows) later
+    std::vector<CSocket*> disconnect ;
+    for (size_t i= 0 ; i < connClients.size();i++) {
+        try {
+            if (connClients.at(i)->netSocket.peek()){
+                // It has some data!
+                GetMsg(i);
             }
         }
+        catch(const std::exception &e){
+            Console::shared() << e.what() << myendl;
+            disconnect.push_back(connClients.at(i));
+        }
     }
-    else if (s == -1) {
+    // We now have to deal with any disconnects
+    for (auto &entry:disconnect){
+        auto iter = std::find_if(connClients.begin(),connClients.end(),[&entry](const CSocket *sock){
+            return entry == sock ;
+        });
+        if (iter != connClients.end()){
+            Disconnect(std::distance(connClients.begin(), iter)) ;
+        }
     }
 }
 
-CNetworkStuff::CNetworkStuff()
-: peakConnectionCount(0) // Initialize sockets
-{}
+CNetworkStuff::CNetworkStuff() : peakConnectionCount(0) {} // Initialize sockets
 auto CNetworkStuff::startup() -> void {
-    FD_ZERO(&conn);
-    sockInit();
     LoadFirewallEntries();
+    sockInit();
 }
 CSocket *CNetworkStuff::GetSockPtr(uoxsocket_t s) {
     if (static_cast<unsigned>(s) >= connClients.size())
@@ -687,8 +512,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
     
     if (mSock->NewClient()) {
         std::int32_t count = mSock->Receive(4);
-        if (mSock->Buffer()[0] == 0x21 && count < 4) // UOMon
-        {
+        if (mSock->Buffer()[0] == 0x21 && count < 4) { // UOMon
             std::int32_t ho, mi, se, total;
             total = (worldMain.GetUICurrentTime() - worldMain.GetStartTime()) / 1000;
             ho = total / 3600;
@@ -697,8 +521,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
             total -= mi * 60;
             se = total;
             
-            auto uoxmonitor =
-            util::format("UOX LoginServer\r\nUOX3 Server: up for %ih %im %is\r\n", ho, mi, se);
+            auto uoxmonitor = util::format("UOX LoginServer\r\nUOX3 Server: up for %ih %im %is\r\n", ho, mi, se);
             mSock->Send(uoxmonitor.c_str(), static_cast<std::int32_t>(uoxmonitor.size()));
             mSock->NewClient(false);
         }
@@ -721,10 +544,10 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                 // April 5, 2004 - There is a great chance that alot of the times this will be UOG2
                 // connecting to get information from the server
                 if (ServerConfig::shared().enabled(ServerSwitch::UOG)) {
-                    Console::shared() << "UOG Stats request completed. Disconnecting client. [" << static_cast<std::int32_t>(mSock->ClientIP4()) << "." << static_cast<std::int32_t>(mSock->ClientIP3()) << "." << static_cast<std::int32_t>(mSock->ClientIP2()) << "." << static_cast<std::int32_t>(mSock->ClientIP1()) << "]" << myendl;
+                    Console::shared() << "UOG Stats request completed. Disconnecting client. [" << mSock->clientIP << "]" << myendl;
                 }
                 else {
-                    Console::shared() << "Encrypted client attempting to cut in, disconnecting them: IP " << static_cast<std::int32_t>(mSock->ClientIP1()) << "." << static_cast<std::int32_t>(mSock->ClientIP2()) << "." << static_cast<std::int32_t>(mSock->ClientIP3()) << "." << static_cast<std::int32_t>(mSock->ClientIP4()) << myendl;
+                    Console::shared() << "Encrypted client attempting to cut in, disconnecting them: IP " << mSock->clientIP << myendl;
                 }
                 Disconnect(s);
                 return;
@@ -911,8 +734,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                         break;
                     case 0x69:             // Client text change
                         mSock->Receive(3); // What a STUPID message...  It would be useful if
-                        mSock->Receive(
-                                       mSock->GetWord(1)); // it included the color changed to, but it doesn't!
+                        mSock->Receive( mSock->GetWord(1)); // it included the color changed to, but it doesn't!
                         break;
                     case 0xB5: // Open Chat Window
                         mSock->Receive(64);
@@ -1014,19 +836,18 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                     case 0xF0: // ClassicUO Map Tracker, handled by CPIKrriosClientSpecial in
                         // cpacketreceive.cpp
                         break;
-                    default:
-                        FD_ZERO(&all);
-                        FD_SET(mSock->CliSocket(), &all);
-                        std::int32_t nfds;
-                        nfds = static_cast<int>(mSock->CliSocket()) + 1;
-                        if (select(nfds, &all, nullptr, nullptr, &worldMain.uoxTimeout) > 0) {
-                            mSock->Receive(MAXBUFFER);
+                    default: {
+                        try {
+                            if (mSock->netSocket.peek()) {
+                                mSock->Receive(MAXBUFFER);
+                            }
+                            Console::shared() << util::format("Unknown message from client: 0x%02X - Ignored", packetId) << myendl;
                         }
-                        
-                        Console::shared()
-                        << util::format("Unknown message from client: 0x%02X - Ignored", packetId)
-                        << myendl;
+                        catch(const std::exception &e){
+                            std::cerr << e.what()<< std::endl;
+                        }
                         break;
+                    }
                 }
             }
         }
@@ -1042,62 +863,26 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
 //|	Purpose		-	 Check for messages from the clients
 // o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::CheckLoginMessage() {
-    // fd_set all; // This is already defined globally?
-    // fd_set errsock; // This is already defined globally?
-    size_t i;
     
-    // worldMain.uoxTimeout.tv_sec = 0;
-    // worldMain.uoxTimeout.tv_usec = 1; // This causes Windows to wait 1 extra milliseconds
-    // per loop, while Linux waits 1 microseconds, causing performance difference
-    
-    FD_ZERO(&all);
-    FD_ZERO(&errsock);
-    
-    std::int32_t nfds = 0;
-    for (auto &tSock : loggedInClients) {
-        auto clientSock = static_cast<uoxsocket_t>(tSock->CliSocket());
-        FD_SET(clientSock, &all);
-        FD_SET(clientSock, &errsock);
-        if (static_cast<int>(clientSock) + 1 > nfds) {
-            nfds = clientSock + 1;
-        }
-    }
-    
-    std::int32_t s = select(nfds, &all, nullptr, &errsock, &worldMain.uoxTimeout);
-    if (s > 0) {
-        size_t oldnow = loggedInClients.size();
-        for (i = 0; i < loggedInClients.size(); ++i) {
-            if (FD_ISSET(loggedInClients[i]->CliSocket(), &errsock)) {
-                LoginDisconnect(static_cast<uoxsocket_t>(i));
-                continue;
-            }
-            if ((FD_ISSET(loggedInClients[i]->CliSocket(), &all)) && (oldnow == loggedInClients.size())) {
-                try {
-                    GetLoginMsg(static_cast<uoxsocket_t>(i));
-                }
-                catch (socket_error &blah) {
-#if !defined(_WIN32)
-                    messageLoop << "Client disconnected";
-#else
-                    if (blah.ErrorNumber() == WSAECONNRESET) {
-                        messageLoop << "Client disconnected";
-                    }
-                    else if (blah.ErrorNumber() != -1) {
-                        messageLoop << util::format("Socket error: %i", blah.ErrorNumber());
-                    }
-#endif
-                    LoginDisconnect(static_cast<uoxsocket_t>(i)); // abnormal error
-                }
+    auto disconnect = std::vector<CSocket*>() ;
+    for (size_t i = 0; i< loggedInClients.size();i++){
+        try {
+            if (loggedInClients.at(i)->netSocket.peek()){
+                GetLoginMsg(static_cast<uoxsocket_t>(i));
             }
         }
-    }
-    else if (s == -1) {
-#if defined(_WIN32)
-        std::int32_t errorCode = WSAGetLastError();
-        if (errorCode != 10022) {
-            Console::shared() << static_cast<std::int32_t>(errorCode) << myendl;
+        catch (const std::exception &e){
+            messageLoop << e.what() ;
+            disconnect.push_back(loggedInClients.at(i));
         }
-#endif
+    }
+    for (auto &entry:disconnect){
+        auto iter = std::find_if(loggedInClients.begin(),loggedInClients.end(),[&entry](const CSocket* value){
+            return entry == value ;
+        });
+        if (iter != loggedInClients.end()){
+            LoginDisconnect(std::distance(loggedInClients.begin(), iter));
+        }
     }
 }
 
@@ -1206,20 +991,19 @@ void CNetworkStuff::GetLoginMsg(uoxsocket_t s) {
         std::uint8_t *buffer = mSock->Buffer();
         if (mSock->Receive(1, false) > 0) {
             std::uint8_t packetId = buffer[0];
-            if (mSock->FirstPacket() && packetId != 0x80 && packetId != 0x91 && packetId != 0xE4 &&
-                packetId != 0xF1) {
+            if (mSock->FirstPacket() && packetId != 0x80 && packetId != 0x91 && packetId != 0xE4 && packetId != 0xF1) {
                 // April 5, 2004 - Hmmm there are two of these ?
                 if (ServerConfig::shared().enabled(ServerSwitch::UOG)) {
-                    messageLoop << util::format( "UOG Stats Sent or Encrypted client detected. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1());
+                    messageLoop << util::format( "UOG Stats Sent or Encrypted client detected. [%s]", mSock->clientIP.c_str());
                 }
                 else {
-                    messageLoop << util::format("Encrypted client detected. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1());
+                    messageLoop << util::format("Encrypted client detected. [%s]", mSock->clientIP.c_str());
                 }
                 LoginDisconnect(s);
                 return;
             }
             else if (mSock->FirstPacket() && packetId == 0) {
-                messageLoop << util::format("Buffer is empty, no packets to read. Disconnecting client. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1());
+                messageLoop << util::format("Buffer is empty, no packets to read. Disconnecting client. [%s]", mSock->clientIP.c_str());
                 LoginDisconnect(s);
                 return;
             }
@@ -1238,8 +1022,8 @@ void CNetworkStuff::GetLoginMsg(uoxsocket_t s) {
                 try {
                     test = WhichLoginPacket(packetId, mSock);
                 }
-                catch (socket_error &) {
-                    Console::shared().warning(util::format("Bad packet request thrown! [packet ID: 0x%x]", packetId));
+                catch (PacketError &e) {
+                    Console::shared().warning(e.what());
                     mSock->FlushIncoming();
                     return;
                 }
@@ -1279,17 +1063,19 @@ void CNetworkStuff::GetLoginMsg(uoxsocket_t s) {
                         mSock->Receive(3);
                         mSock->Receive(mSock->GetWord(1));
                         break;
-                    default:
-                        std::int32_t nfds;
-                        fd_set all;
-                        FD_ZERO(&all);
-                        FD_SET(mSock->CliSocket(), &all);
-                        nfds = static_cast<uoxsocket_t>(mSock->CliSocket()) + 1;
-                        if (select(nfds, &all, nullptr, nullptr, &worldMain.uoxTimeout) > 0) {
-                            mSock->Receive(MAXBUFFER);
+                    default: {
+                        try {
+                            if (mSock->netSocket.peek()){
+                                mSock->Receive(MAXBUFFER);
+                                messageLoop << util::format("Unknown message from client: 0x%02X - Ignored", packetId);
+                            }
                         }
-                        messageLoop << util::format("Unknown message from client: 0x%02X - Ignored", packetId);
+                        catch(const std::exception &e){
+                            std::cerr <<e.what()<< std::endl;
+                        }
                         break;
+                    }
+                        
                 }
             }
         }
@@ -1313,49 +1099,9 @@ uoxsocket_t CNetworkStuff::FindNetworkPtr(CSocket *toFind) {
 //|	Purpose		-	Loads list of banned IPs from firewall list
 // o------------------------------------------------------------------------------------------------o
 auto CNetworkStuff::LoadFirewallEntries() -> void {
-    std::string token;
-    auto fileToUse = std::filesystem::path("banlist.ini");
-    if (!std::filesystem::exists(fileToUse)) {
-        fileToUse = std::filesystem::path("firewall.ini");
-        if (!std::filesystem::exists(fileToUse)) {
-            fileToUse =  std::filesystem::path();
-        }
-    }
-    if (!fileToUse.empty()) {
-        auto firewallData = std::make_unique<Script>(fileToUse, NUM_DEFS, false);
-        if (firewallData) {
-            std::int16_t p[4];
-            for (const auto &[secName, firewallSect] : firewallData->collection()) {
-                if (firewallSect) {
-                    for (const auto &sec : firewallSect->collection()) {
-                        auto tag = sec->tag;
-                        auto data = sec->data;
-                        if (util::upper(tag) == "IP") {
-                            data = util::trim(util::strip(data, "//"));
-                            if (!data.empty()) {
-                                auto psecs = oldstrutil::sections(data, ".");
-                                if (psecs.size() == 4) { // Wellformed IP address
-                                    for (std::uint8_t i = 0; i < 4; ++i) {
-                                        token = psecs[i];
-                                        if (token == "*") {
-                                            p[i] = -1;
-                                        }
-                                        else {
-                                            p[i] = static_cast<std::int16_t>(std::stoi(token, nullptr, 0));
-                                        }
-                                    }
-                                    slEntries.push_back(FirewallEntry_st(p[0], p[1], p[2], p[3]));
-                                }
-                                else if (data != "\n" && data != "\r") {
-                                    Console::shared().error(util::format( "Malformed IP address in banlist.ini (line: %s)", data.c_str()));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    // These should be config entries
+    // But so where do we look?
+    networkMgr.loadAccessFiles(ServerConfig::shared().directoryFor(dirlocation_t::SAVE)/std::filesystem::path("allow.cfg"),ServerConfig::shared().directoryFor(dirlocation_t::SAVE)/std::filesystem::path("deny.cfg"));
 }
 
 void CNetworkStuff::RegisterPacket(std::uint8_t packet, [[maybe_unused]] std::uint8_t subCmd, std::uint16_t scriptId) {
@@ -1373,3 +1119,8 @@ void CNetworkStuff::CheckMessages() {
 }
 
 size_t CNetworkStuff::PeakConnectionCount() const { return peakConnectionCount; }
+
+//============================================================================
+auto CNetworkStuff::sockInit() ->void {
+    networkMgr.listen(ServerConfig::shared().ushortValues[UShortValue::PORT], ServerConfig::shared().serverString[ServerString::PUBLICIP]);
+}

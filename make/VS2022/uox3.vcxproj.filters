@@ -260,9 +260,6 @@
     <ClCompile Include="..\..\source\network.cpp">
       <Filter>source files\Unetwork</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\ip4address.cpp">
-      <Filter>source files\Unetwork</Filter>
-    </ClCompile>
     <!-- Utility group -->
     <ClCompile Include="..\..\source\stringutility.cpp">
       <Filter>source files\Uutility</Filter>
@@ -367,6 +364,9 @@
     <ClCompile Include="..\..\source\other\uoxglobal.cpp">
       <Filter>source files\other</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\network\networkmgr.cpp">
+      <Filter>source files\network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Script group -->
@@ -447,9 +447,6 @@
       <Filter>source files\Unetwork</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cpacketsend.h">
-      <Filter>source files\Unetwork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\ip4address.hpp">
       <Filter>source files\Unetwork</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\network.h">
@@ -679,6 +676,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\other\uoxversion.hpp">
       <Filter>source files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\network\networkmgr.hpp">
+      <Filter>source files\network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\useful.h">
       <Filter>source files\Uother</Filter>

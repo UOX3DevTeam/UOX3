@@ -45,8 +45,7 @@ struct AccountCharacter {
 struct AccountEntry {
 private:
     auto findFreeCharacter() const -> account::charnum_t;
-    [[maybe_unused]] auto writeOrphanHeader(const std::filesystem::path &path) const
-    -> const AccountEntry &;
+    [[maybe_unused]] auto writeOrphanHeader(const std::filesystem::path &path) const -> const AccountEntry &;
     auto writeOrphan(AccountCharacter entry) -> bool;
     auto packCharacters() -> void;
     
@@ -83,10 +82,8 @@ public:
     std::array<AccountCharacter, CHARACTERCOUNT> character;
     
     AccountEntry();
-    AccountEntry(const std::string &username, const std::string &password,
-                 account::attribute_t attribute = 0, const std::string &contact = "");
-    [[maybe_unused]] auto load(account::acctnum_t accountNumber, std::istream &input)
-    -> AccountEntry &;
+    AccountEntry(const std::string &username, const std::string &password, account::attribute_t attribute = 0, const std::string &contact = "");
+    [[maybe_unused]] auto load(account::acctnum_t accountNumber, std::istream &input) -> AccountEntry &;
     auto save(std::ostream &output) const -> void;
     auto operator[](account::charnum_t characterSlot) const -> const AccountCharacter &;
     auto operator[](account::charnum_t characterSlot) -> AccountCharacter &;
@@ -94,8 +91,7 @@ public:
     auto test(attributeflag_t flag) const -> bool;
     auto set(attributeflag_t flag, bool state) -> void;
     
-    [[maybe_unused]] auto addCharacter(account::charnum_t characterSlot,
-                                       const AccountCharacter &accountCharacter) -> bool;
+    [[maybe_unused]] auto addCharacter(account::charnum_t characterSlot, const AccountCharacter &accountCharacter) -> bool;
     [[maybe_unused]] auto addCharacter(const AccountCharacter &accountCharacter)-> account::charnum_t;
     [[maybe_unused]] auto delCharacter(account::charnum_t characterSlot) -> bool;
 };
@@ -109,8 +105,7 @@ class Account {
     Account();
     std::map<account::acctnum_t, AccountEntry> accounts;
     
-    [[maybe_unused]] auto writeImportHeader(const std::filesystem::path &path) const
-    -> const Account &;
+    [[maybe_unused]] auto writeImportHeader(const std::filesystem::path &path) const -> const Account &;
     [[maybe_unused]] auto version(std::ostream &output) const -> const Account &;
     [[maybe_unused]] auto header(std::ostream &output) const -> const Account &;
     
@@ -138,9 +133,7 @@ public:
     [[maybe_unused]] auto save() const -> const Account &;
     [[maybe_unused]] auto load() -> Account &;
     auto exists(const std::string &username) const -> bool;
-    auto createAccount(const std::string &username, const std::string &password,
-                       account::attribute_t attributes = 0x0000, const std::string &contact = "")
-    -> account::acctnum_t;
+    auto createAccount(const std::string &username, const std::string &password, account::attribute_t attributes = 0x0000, const std::string &contact = "") -> account::acctnum_t;
     auto delAccount(const std::string &username) -> bool;
     auto delAccount(account::acctnum_t accountNumber) -> bool;
     

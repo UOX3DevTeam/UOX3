@@ -6,9 +6,9 @@
 
 #include "type/clientversion.hpp"
 #include "genericlist.h"
-#include "ip4address.hpp"
 #include "typedefs.h"
-
+#include "utility/nettype.hpp"
+#include "utility/netsocket.hpp"
 class CPInputBuffer;
 class CPUOXBuffer;
 class CChar;
@@ -38,7 +38,12 @@ public:
     void SetAccount(AccountEntry &actbBlock);
     
     void InternalReset();
-    IP4Addr ipaddress;
+    
+    util::net::ip4_t forwardIP ;
+    util::net::NetSocket netSocket ; // client
+    std::string clientIP ;
+    std::string clientPort ;
+
     
 private:
     std::vector<std::uint16_t> trigWords;
@@ -73,7 +78,6 @@ private:
     bool logging;
     std::uint8_t range;
     bool cryptclient;
-    size_t cliSocket; // client
     std::int16_t walkSequence;
     size_t postAckCount;
     pickuplocations_t pSpot;
@@ -103,7 +107,6 @@ private:
     
     bool forceOffline;
     
-    std::uint8_t clientip[4];
     
     bool loginComplete;
     CItem *cursorItem; // pointer to item held on mouse cursor
@@ -123,7 +126,8 @@ private:
     timerval_t pcTimers[tPC_COUNT];
     
 public:
-    CSocket(size_t sockNum);
+    CSocket(util::net::NetSocket &clientSocket,const std::string &clientIPAddress, const std::string &clientPort, util::net::ip4_t relayIPAddress);
+    
     ~CSocket();
     
     ClientVersion clientVersion ;
@@ -158,16 +162,12 @@ public:
     std::string XText();
     std::string XText2();
     bool CryptClient() const;
-    size_t CliSocket() const;
+    util::net::sockfd_t CliSocket() const;
     std::uint8_t CurrentSpellType() const;
     std::int32_t OutLength() const;
     std::int32_t InLength() const;
     bool Logging() const;
     CChar *CurrcharObj() const;
-    std::uint8_t ClientIP1() const;
-    std::uint8_t ClientIP2() const;
-    std::uint8_t ClientIP3() const;
-    std::uint8_t ClientIP4() const;
     bool NewClient() const;
     bool TargetOK() const;
     std::uint16_t FirstTrigWord();
@@ -223,16 +223,12 @@ public:
     void WalkSequence(std::int16_t newValue);
     void AcctNo(std::uint16_t newValue);
     void CryptClient(bool newValue);
-    void CliSocket(size_t newValue);
+    void setClient(util::net::NetSocket &client) ;
     void CurrentSpellType(std::uint8_t newValue);
     void OutLength(std::int32_t newValue);
     void InLength(std::int32_t newValue);
     void Logging(bool newValue);
     void CurrcharObj(CChar *newValue);
-    void ClientIP1(std::uint8_t);
-    void ClientIP2(std::uint8_t newValue);
-    void ClientIP3(std::uint8_t newValue);
-    void ClientIP4(std::uint8_t newValue);
     void NewClient(bool newValue);
     void Range(std::uint8_t value);
     void ForceOffline(bool newValue);
@@ -269,7 +265,6 @@ public:
     void SetDWord(size_t offset, std::uint32_t newValue);
     void SetWord(size_t offset, std::uint16_t newValue);
     void SetByte(size_t offset, std::uint8_t newValue);
-    void ClientIP(std::uint32_t newValue);
     void TargetOK(bool newValue);
     void ClickX(std::int16_t newValue);
     void ClickY(std::int16_t newValue);
@@ -287,10 +282,8 @@ public:
     void SysMessage(const std::string txt, ...);
     void SysMessageJS(const std::string &uformat, std::uint16_t txtColor, const std::string &data);
     void SysMessage(std::int32_t dictEntry, ...);
-    void ObjMessage(const std::string &txt, CBaseObject *getObj, float secsFromNow = 0.0f,
-                    std::uint16_t Color = 0x03B2);
-    void ObjMessage(std::int32_t dictEntry, CBaseObject *getObj, float secsFromNow = 0.0f,
-                    std::uint32_t Color = 0x03B2, ...);
+    void ObjMessage(const std::string &txt, CBaseObject *getObj, float secsFromNow = 0.0f, std::uint16_t Color = 0x03B2);
+    void ObjMessage(std::int32_t dictEntry, CBaseObject *getObj, float secsFromNow = 0.0f, std::uint32_t Color = 0x03B2, ...);
     
     void ShowCharName(CChar *i, bool showSer);
     

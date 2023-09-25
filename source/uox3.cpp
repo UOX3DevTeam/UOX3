@@ -83,10 +83,10 @@
 #include "mapstuff.h"
 #include "movement.h"
 #include "msgboard.h"
+#include "network/networkmgr.hpp"
 #include "utility/netutil.hpp"
 #include "objectfactory.h"
 #include "ostype.h"
-#include "other/uoxversion.hpp"
 #include "pagevector.h"
 #include "partysystem.h"
 #include "regions.h"
@@ -99,6 +99,7 @@
 #include "typedefs.h"
 #include "utility/strutil.hpp"
 #include "type/weather.hpp"
+#include "other/uoxversion.hpp"
 #include "weight.h"
 #include "wholist.h"
 
@@ -444,8 +445,6 @@ auto initOperatingSystem() -> void {
 #if !defined(_WIN32)
     // Protection from server-shutdown during mid-worldsave
     signal(SIGINT, app_stopped);
-    signal(SIGPIPE, SIG_IGN); // This appears when we try to write to a broken network connection
-    
 #endif
 }
 
@@ -588,7 +587,7 @@ auto startInitialize() -> void {
     if (externalIP != "" && externalIP != "localhost" && externalIP != "127.0.0.1") {
         Console::shared() << "UOX: listening for incoming connections on External/WAN IP: " << externalIP.c_str() << myendl;
     }
-    
+    /*
     auto deviceIPs = ip4list_t::available();
     for (auto &entry : deviceIPs.ips()) {
         switch (entry.type()) {
@@ -606,6 +605,7 @@ auto startInitialize() -> void {
                 break;
         }
     }
+     */
     Console::shared().turnNormal();
     
     // we've really finished loading here

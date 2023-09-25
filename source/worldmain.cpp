@@ -89,7 +89,6 @@ CWorldMain::CWorldMain() : error(DEFWORLD_ERROR), keepRun(DEFWORLD_KEEPRUN), sec
     spawnRegions.clear();
     uoxTimeout.tv_sec = 0;
     uoxTimeout.tv_usec = 0;
-    availableIPs = ip4list_t::available();
     
 }
 //==================================================================================================
@@ -499,25 +498,6 @@ void CWorldMain::SaveStatistics() {
     statsDestination.close();
 }
 
-auto CWorldMain::matchIP(const IP4Addr &ip) const -> IP4Addr {
-    auto [candidate, match] = availableIPs.bestmatch(ip);
-    if (match == 0) {
-        if (!ServerConfig::shared().serverString[ServerString::PUBLICIP].empty()) {
-            candidate = IP4Addr(ServerConfig::shared().serverString[ServerString::PUBLICIP]);
-        }
-    }
-    else {
-        // We got some kind of match, see if on same network type?
-        if (candidate.type() != ip.type()) {
-            if (ip.type() == IP4Addr::ip4type_t::wan) {
-                if (!ServerConfig::shared().serverString[ServerString::PUBLICIP].empty()) {
-                    candidate = IP4Addr(ServerConfig::shared().serverString[ServerString::PUBLICIP]);
-                }
-            }
-        }
-    }
-    return candidate;
-}
 
 
 

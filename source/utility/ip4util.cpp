@@ -187,14 +187,14 @@ namespace util {
         // IP4List
         //==========================================================================
         //=======================================================================
-        IP4List::IP4List(const std::string &filepath){
+        IP4List::IP4List(const std::filesystem::path &filepath){
             load(filepath);
         }
 
         //=======================================================================
-        auto IP4List::load(const std::string &filepath) ->void {
+        auto IP4List::load(const std::filesystem::path &filepath) ->void {
             entries.clear();
-            auto input = std::ifstream(filepath) ;
+            auto input = std::ifstream(filepath.string()) ;
             if (input.is_open()){
                 // We now read and look for entries
                 auto buffer = std::vector<char>(4096,0) ;
@@ -221,7 +221,7 @@ namespace util {
             }
         }
         //=======================================================================
-        auto IP4List::clear()  -> void {
+        auto IP4List::clear() -> void {
             entries.clear();
         }
 
@@ -263,6 +263,27 @@ namespace util {
         }
 
         //=======================================================================
+        // AllowDeny
+        //======================================================================
+        
+        //=========================================================
+        AllowDeny::AllowDeny(const std::filesystem::path &allowpath, const std::filesystem::path &denypath):AllowDeny() {
+            reload(allowpath,denypath);
+        }
+        //=========================================================
+        auto AllowDeny::reload(const std::filesystem::path &allowpath, const std::filesystem::path &denypath) ->void{
+            allowList.load(allowpath);
+            denyList.load(denypath);
+        }
+        //=========================================================
+        auto AllowDeny::allowIP(ip4_t ipaddress) const  -> bool {
+            if ((allowList.empty() && !denyList.contains(ipaddress)) || (!allowList.empty() && allowList.contains(ipaddress)) ) {
+                return true ;
+            }
+            return false ;
+        }
+
+        //=======================================================================
         // IP4Relay
         //======================================================================
         
@@ -275,6 +296,11 @@ namespace util {
         //=========================================================
         IP4Relay::IP4Relay(const std::string &ip) : IP4Relay() {
             publicIP = IP4Entry(ip).ipValue() ;
+        }
+        
+        //=========================================================
+        auto IP4Relay::setPublicIP(const std::string &publicIP) ->void {
+            this->publicIP = IP4Entry::describeIP(publicIP) ;
         }
 
         //=========================================================
@@ -289,28 +315,6 @@ namespace util {
             return publicIP ;
         }
 
-        //=======================================================================
-        // IPMgr
-        //======================================================================
-
-        //=========================================================================================
-        IPMgr::IPMgr(const std::string &ip, const std::string &denyfile, const std::string &allowfile): firewall(denyfile), whitelist(allowfile),relaymgr(ip) {
-            
-        }
-
-        //=========================================================================================
-        auto IPMgr::relay(ip4_t ip) const ->std::optional<ip4_t> {
-            if ((whitelist.empty() && !firewall.contains(ip)) || (!whitelist.empty() && whitelist.contains(ip)) ) {
-                return relaymgr.relayFor(ip) ;
-            }
-            return {};
-        }
-
-        //=========================================================================================
-        auto IPMgr::reload(const std::string &denyfile, const std::string &allowfile) -> void {
-            firewall = IP4List(denyfile);
-            whitelist = IP4List(allowfile);
-        }
 
     }
 }

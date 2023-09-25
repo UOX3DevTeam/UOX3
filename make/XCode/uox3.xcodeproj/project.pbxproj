@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5605D67A2AC0A918004BA321 /* networkmgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5605D6782AC0A918004BA321 /* networkmgr.cpp */; };
+		5605D67B2AC0BC7D004BA321 /* netsocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5605D6432ABE339E004BA321 /* netsocket.cpp */; };
 		5611F3282AAF6997009438EA /* assistantfeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3262AAF6997009438EA /* assistantfeature.cpp */; };
 		5611F3312AAF807D009438EA /* startlocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F32F2AAF807D009438EA /* startlocation.cpp */; };
 		5611F3362AAF837A009438EA /* startlocconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3342AAF837A009438EA /* startlocconfig.cpp */; };
@@ -71,7 +73,6 @@
 		64A90140293E3DD4009B54DA /* findfuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900C0293E3DD4009B54DA /* findfuncs.cpp */; };
 		64A90141293E3DD4009B54DA /* gumps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900C4293E3DD4009B54DA /* gumps.cpp */; };
 		64A90142293E3DD4009B54DA /* house.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900C5293E3DD4009B54DA /* house.cpp */; };
-		64A90143293E3DD4009B54DA /* ip4address.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900C6293E3DD4009B54DA /* ip4address.cpp */; };
 		64A90144293E3DD4009B54DA /* items.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900C8293E3DD4009B54DA /* items.cpp */; };
 		64A90145293E3DD4009B54DA /* jail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900C9293E3DD4009B54DA /* jail.cpp */; };
 		64A90146293E3DD4009B54DA /* jsencapsulate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900CB293E3DD4009B54DA /* jsencapsulate.cpp */; };
@@ -146,6 +147,8 @@
 		5605D6442ABE339E004BA321 /* netsocket.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = netsocket.hpp; sourceTree = "<group>"; };
 		5605D66C2AC08B5B004BA321 /* neterror.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = neterror.hpp; sourceTree = "<group>"; };
 		5605D66F2AC08B8B004BA321 /* nettype.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = nettype.hpp; sourceTree = "<group>"; };
+		5605D6782AC0A918004BA321 /* networkmgr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = networkmgr.cpp; sourceTree = "<group>"; };
+		5605D6792AC0A918004BA321 /* networkmgr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = networkmgr.hpp; sourceTree = "<group>"; };
 		5611F3262AAF6997009438EA /* assistantfeature.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = assistantfeature.cpp; sourceTree = "<group>"; };
 		5611F3272AAF6997009438EA /* assistantfeature.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = assistantfeature.hpp; sourceTree = "<group>"; };
 		5611F32F2AAF807D009438EA /* startlocation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = startlocation.cpp; sourceTree = "<group>"; };
@@ -1146,8 +1149,6 @@
 		64A900C3293E3DD4009B54DA /* cgump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cgump.h; sourceTree = "<group>"; };
 		64A900C4293E3DD4009B54DA /* gumps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gumps.cpp; sourceTree = "<group>"; };
 		64A900C5293E3DD4009B54DA /* house.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = house.cpp; sourceTree = "<group>"; };
-		64A900C6293E3DD4009B54DA /* ip4address.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ip4address.cpp; sourceTree = "<group>"; };
-		64A900C7293E3DD4009B54DA /* ip4address.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ip4address.hpp; sourceTree = "<group>"; };
 		64A900C8293E3DD4009B54DA /* items.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = items.cpp; sourceTree = "<group>"; };
 		64A900C9293E3DD4009B54DA /* jail.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jail.cpp; sourceTree = "<group>"; };
 		64A900CA293E3DD4009B54DA /* jail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jail.h; sourceTree = "<group>"; };
@@ -1236,6 +1237,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5605D6722AC09E5A004BA321 /* network */ = {
+			isa = PBXGroup;
+			children = (
+				5605D6782AC0A918004BA321 /* networkmgr.cpp */,
+				5605D6792AC0A918004BA321 /* networkmgr.hpp */,
+			);
+			path = network;
+			sourceTree = "<group>";
+		};
 		56A2617A2AB7241E00DD2D84 /* expired */ = {
 			isa = PBXGroup;
 			children = (
@@ -3124,6 +3134,7 @@
 		64A90074293E3DD4009B54DA /* source */ = {
 			isa = PBXGroup;
 			children = (
+				5605D6722AC09E5A004BA321 /* network */,
 				56A2617A2AB7241E00DD2D84 /* expired */,
 				56AAE2612AADF38900D624FC /* type */,
 				56AADE742AABB8F400D624FC /* configuration */,
@@ -3306,8 +3317,6 @@
 				64A9009F293E3DD4009B54DA /* cpacketreceive.h */,
 				64A900A0293E3DD4009B54DA /* cpacketsend.cpp */,
 				64A900A1293E3DD4009B54DA /* cpacketsend.h */,
-				64A900C6293E3DD4009B54DA /* ip4address.cpp */,
-				64A900C7293E3DD4009B54DA /* ip4address.hpp */,
 				64A900DA293E3DD4009B54DA /* network.cpp */,
 				64A900DB293E3DD4009B54DA /* network.h */,
 			);
@@ -3467,11 +3476,13 @@
 				64A9015C293E3DD4009B54DA /* ssection.cpp in Sources */,
 				64A90127293E3DD4009B54DA /* citem.cpp in Sources */,
 				64A90123293E3DD4009B54DA /* cdice.cpp in Sources */,
+				5605D67A2AC0A918004BA321 /* networkmgr.cpp in Sources */,
 				64A9012E293E3DD4009B54DA /* cpacketreceive.cpp in Sources */,
 				64A9012A293E3DD4009B54DA /* cmdtable.cpp in Sources */,
 				56D6EEF82AA13174005355FA /* account.cpp in Sources */,
 				56A2625D2ABB2CA000DD2D84 /* weather.cpp in Sources */,
 				568517842ABC9E8C0052C574 /* uoxglobal.cpp in Sources */,
+				5605D67B2AC0BC7D004BA321 /* netsocket.cpp in Sources */,
 				64A90120293E3DD4009B54DA /* cbaseobject.cpp in Sources */,
 				64A90135293E3DD4009B54DA /* cserverdefinitions.cpp in Sources */,
 				56AAE26C2AAF409C00D624FC /* serverfeature.cpp in Sources */,
@@ -3487,7 +3498,6 @@
 				64A90156293E3DD4009B54DA /* regions.cpp in Sources */,
 				64A90131293E3DD4009B54DA /* craces.cpp in Sources */,
 				56AAE2492AABB95300D624FC /* directorylocation.cpp in Sources */,
-				64A90143293E3DD4009B54DA /* ip4address.cpp in Sources */,
 				64A90144293E3DD4009B54DA /* items.cpp in Sources */,
 				64A90138293E3DD4009B54DA /* cthreadqueue.cpp in Sources */,
 				64A9014B293E3DD4009B54DA /* movement.cpp in Sources */,

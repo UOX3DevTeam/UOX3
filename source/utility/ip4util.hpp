@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include <filesystem>
 #include <string>
 
 #include "netutil.hpp"
@@ -214,7 +215,7 @@ namespace util {
              - Parameters:
               - filepath: The file to load
              */
-            IP4List(const std::string &filepath);
+            IP4List(const std::filesystem::path &filepath);
             
             //===========================================================================
             /**
@@ -223,7 +224,7 @@ namespace util {
              - Parameters:
               - filepath: The file to load
              */
-            auto load(const std::string &filepath) ->void ;
+            auto load(const std::filesystem::path &filepath) ->void ;
             
             //===========================================================================
             /**
@@ -281,6 +282,24 @@ namespace util {
             
         };
 
+        //==========================================================================
+        // AllowDeny
+        //==========================================================================
+        //===========================================================================
+        /**
+         AllowDeny is a combintion firewall consisting of an allow and deny list
+         If a entry is on the allow and only on the allow list it is allowed.
+         If an entry is on the deny list, it is denied.
+         */
+        class AllowDeny {
+            IP4List allowList ;
+            IP4List denyList ;
+        public:
+            AllowDeny() =default;
+            AllowDeny(const std::filesystem::path &allowpath, const std::filesystem::path &denypath);
+            auto reload(const std::filesystem::path &allowpath, const std::filesystem::path &denypath) ->void;
+            auto allowIP(ip4_t ipaddress) const  -> bool ;
+        };
         //=======================================================================
         // IP4Relay
         //======================================================================
@@ -311,6 +330,13 @@ namespace util {
             
             //===========================================================================
             /**
+             Sets the public ip to be used in relay
+             - Parameters:
+              - publicIP: the public ip
+             */
+            auto setPublicIP(const std::string &publicIP) ->void ;
+            //===========================================================================
+            /**
              Returns the ip to relay to for the given ip
              - Parameters:
               - ipvalue: ip to consider what to relay to.
@@ -320,51 +346,6 @@ namespace util {
             
         };
 
-        //=======================================================================
-        // IPMgr
-        //======================================================================
-        /**
-         This consolidates the use of ip4relay and ip4list.
-         Manges our ips.  Maintains a white list (only accept from those ips), and a firewall list (ips we reject at all cost).
-         If there are values in the whitelist, only whitelist values are considered. Otherwise, the firewall list is considered.
-         Provides the ip to relay to.
-         */
-        class IPMgr {
-            
-            IP4Relay relaymgr ;
-            IP4List firewall ;
-            IP4List whitelist ;
-            
-        public:
-            //===========================================================================
-            IPMgr() = default ;
-            //===========================================================================
-            /**
-             Constructor, sets the public ip, the denyfile (firewall) and the allowfile (whitelist).
-             - Parameters:
-              - ip: The public IP (string format)
-              - denyfile: A list of ips to use to block (firewall)
-              - allowfile: A list of ips to allow (whitelist)
-             */
-            IPMgr(const std::string &ip, const std::string &denyfile = "" , const std::string &allowfile = "") ;
-            
-            //===========================================================================
-            /**
-             For a given ip, will check the firewall/whitelist, and then determine the ip to relay.
-             If blocked, will return false, Otherwise, will be true, and the value will the ip to relay to.
-             - Parameters:
-              - ip: The integer format of the ip to check
-             - Returns: Optional value of an ip to relay to.
-             */
-            auto relay(ip4_t ip) const ->std::optional<ip4_t> ;
-            
-            //===========================================================================
-            /**
-             Clears the lists (firewall/allow) and reloads from the specified files.
-             */
-            auto reload(const std::string &denyfile, const std::string &allowfile) -> void ;
-            
-        };
 
     }
 }

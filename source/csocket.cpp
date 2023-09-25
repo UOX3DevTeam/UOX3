@@ -23,6 +23,7 @@
 
 #include "dictionary.h"
 #include "funcdecl.h"
+#include "utility/neterror.hpp"
 #include "partysystem.h"
 #include "configuration/serverconfig.hpp"
 #include "speech.h"
@@ -39,11 +40,6 @@ extern CJSEngine worldJSEngine ;
 
 using namespace std::string_literals;
 
-//	1.0		29th November, 2000
-//			Initial implementation
-//			Stores almost all information currently separated into different vars
-//			Also has logging support, and non-blocking IO support
-//			Makes use of a socket_error exception class
 
 #if defined(UOX_DEBUG_MODE)
 const bool LOGDEFAULT = true;
@@ -123,29 +119,12 @@ void DoPacketLogging(std::ostream &outStream, size_t buffLen, const std::uint8_t
     outStream << std::endl << std::endl;
 }
 
-std::uint32_t socket_error::ErrorNumber() const { return errorNum; }
 
-const char *socket_error::what() const throw() { return runtime_error::what(); }
-
-socket_error::socket_error() : runtime_error(""), errorNum(-1) {}
-
-socket_error::socket_error(const std::string &what_arg) : runtime_error(what_arg), errorNum(-1) {}
-
-socket_error::socket_error(const std::uint32_t errorNumber) : runtime_error(""), errorNum(errorNumber) {}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSocket::CliSocket()
-//|	Date		-	November 29th, 2000
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets socket identifier for our socket
-// o------------------------------------------------------------------------------------------------o
-size_t CSocket::CliSocket() const { return cliSocket; }
-void CSocket::CliSocket(size_t newValue) {
-    cliSocket = newValue;
-    unsigned long mode = 1;
-    // set the socket to nonblocking
-    ioctlsocket(static_cast<uoxsocket_t>(cliSocket), FIONBIO, &mode);
+//===================================================================================================
+void CSocket::setClient(util::net::NetSocket &client){
+    this->netSocket = std::move(client) ;
 }
+util::net::sockfd_t CSocket::CliSocket() const { return netSocket.clientDescriptor(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::CryptClient()
@@ -280,7 +259,7 @@ void CSocket::DyeAll(std::uint8_t newValue) { dyeall = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Closes the open socket
 // o------------------------------------------------------------------------------------------------o
-void CSocket::CloseSocket() { closesocket(static_cast<uoxsocket_t>(cliSocket)); }
+void CSocket::CloseSocket() { netSocket.close(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::FirstPacket()
@@ -475,9 +454,12 @@ const bool DEFSOCK_LOGINCOMPLETE = false;
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	This function basically does what the name implies
 // o------------------------------------------------------------------------------------------------o
-CSocket::CSocket(size_t sockNum) : currCharObj(nullptr), idleTimeout(DEFSOCK_IDLETIMEOUT), clickx(DEFSOCK_CLICKX), clicky(DEFSOCK_CLICKY), clickz(DEFSOCK_CLICKZ), currentSpellType(DEFSOCK_CURSPELLTYPE), outlength(DEFSOCK_OUTLENGTH), inlength(DEFSOCK_INLENGTH), logging(DEFSOCK_LOGGING), range(DEFSOCK_RANGE), cryptclient(DEFSOCK_CRYPTCLIENT), cliSocket(sockNum), walkSequence(DEFSOCK_WALKSEQUENCE), postAckCount(DEFSOCK_POSTACKCOUNT), pSpot(DEFSOCK_PSPOT), pFrom(DEFSOCK_PFROM), pX(DEFSOCK_PX), pY(DEFSOCK_PY), pZ(DEFSOCK_PZ), lang(DEFSOCK_LANG), bytesReceived(DEFSOCK_BYTESRECEIVED), bytesSent(DEFSOCK_BYTESSENT), receivedVersion(DEFSOCK_RECEIVEDVERSION), tmpObj(nullptr), tmpObj2(nullptr), tempint(DEFSOCK_TEMPINT), dyeall(DEFSOCK_DYEALL), newClient(DEFSOCK_NEWCLIENT), firstPacket(DEFSOCK_FIRSTPACKET), loginComplete(DEFSOCK_LOGINCOMPLETE), cursorItem(nullptr), bytesRecvWarningCount(DEFSOCK_BYTESRECEIVEDWARNINGCOUNT), bytesSentWarningCount(DEFSOCK_BYTESSENTWARNINGCOUNT) {
-    
+CSocket::CSocket(util::net::NetSocket &clientSocket,const std::string &clientIPAddress, const std::string &clientPort, util::net::ip4_t relayIPAddress) : currCharObj(nullptr), idleTimeout(DEFSOCK_IDLETIMEOUT), clickx(DEFSOCK_CLICKX), clicky(DEFSOCK_CLICKY), clickz(DEFSOCK_CLICKZ), currentSpellType(DEFSOCK_CURSPELLTYPE), outlength(DEFSOCK_OUTLENGTH), inlength(DEFSOCK_INLENGTH), logging(DEFSOCK_LOGGING), range(DEFSOCK_RANGE), cryptclient(DEFSOCK_CRYPTCLIENT), walkSequence(DEFSOCK_WALKSEQUENCE), postAckCount(DEFSOCK_POSTACKCOUNT), pSpot(DEFSOCK_PSPOT), pFrom(DEFSOCK_PFROM), pX(DEFSOCK_PX), pY(DEFSOCK_PY), pZ(DEFSOCK_PZ), lang(DEFSOCK_LANG), bytesReceived(DEFSOCK_BYTESRECEIVED), bytesSent(DEFSOCK_BYTESSENT), receivedVersion(DEFSOCK_RECEIVEDVERSION), tmpObj(nullptr), tmpObj2(nullptr), tempint(DEFSOCK_TEMPINT), dyeall(DEFSOCK_DYEALL), newClient(DEFSOCK_NEWCLIENT), firstPacket(DEFSOCK_FIRSTPACKET), loginComplete(DEFSOCK_LOGINCOMPLETE), cursorItem(nullptr), bytesRecvWarningCount(DEFSOCK_BYTESRECEIVEDWARNINGCOUNT), bytesSentWarningCount(DEFSOCK_BYTESSENTWARNINGCOUNT) {
     InternalReset();
+    this->setClient(clientSocket);
+    this->clientPort = clientPort ;
+    this->clientIP = clientIPAddress ;
+    this->forwardIP = relayIPAddress ;
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -491,7 +473,6 @@ CSocket::~CSocket() {
     if (ValidateObject(currCharObj)) {
         currCharObj->SetSocket(nullptr);
     }
-    closesocket(static_cast<uoxsocket_t>(cliSocket));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -505,10 +486,8 @@ void CSocket::InternalReset() {
     xtext.reserve(MAXBUFFER);
     xtext2.reserve(MAXBUFFER);
     addid[0] = addid[1] = addid[2] = addid[3] = 0;
-    clientip[0] = clientip[1] = clientip[2] = clientip[3] = 0;
-    // set the socket to nonblocking
-    unsigned long mode = 1;
-    ioctlsocket(static_cast<uoxsocket_t>(cliSocket), FIONBIO, &mode);
+    clientIP = ""s;
+    clientPort = ""s;
     for (std::int32_t mTID = static_cast<std::int32_t>(tPC_SKILLDELAY); mTID < static_cast<std::int32_t>(tPC_COUNT); ++mTID) {
         pcTimers[mTID] = 0;
     }
@@ -554,8 +533,7 @@ bool CSocket::FlushBuffer(bool doLog) {
             std::uint32_t len;
             std::uint8_t xoutbuffer[MAXBUFFER * 2];
             len = Pack(outbuffer, xoutbuffer, outlength);
-            [[maybe_unused]] auto sendResult =
-            send(static_cast<uoxsocket_t>(cliSocket), (char *)xoutbuffer, len, 0);
+            [[maybe_unused]] auto sendResult = netSocket.send((const char *)xoutbuffer, len);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != len) {
                 std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 747" << std::endl;
@@ -563,8 +541,7 @@ bool CSocket::FlushBuffer(bool doLog) {
 #endif
         }
         else {
-            [[maybe_unused]] auto sendResult =
-            send(static_cast<uoxsocket_t>(cliSocket), (char *)&outbuffer[0], outlength, 0);
+            [[maybe_unused]] auto sendResult = netSocket.send((const char *)&outbuffer[0], outlength);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != outlength) {
                 std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 757" << std::endl;
@@ -609,8 +586,7 @@ bool CSocket::FlushLargeBuffer(bool doLog) {
         if (cryptclient) {
             largePackBuffer.resize(static_cast<size_t>(outlength) * static_cast<size_t>(2));
             std::int32_t len = Pack(&largeBuffer[0], &largePackBuffer[0], outlength);
-            [[maybe_unused]] auto sendResult =
-            send(static_cast<uoxsocket_t>(cliSocket), (char *)&largePackBuffer[0], len, 0);
+            [[maybe_unused]] auto sendResult = netSocket.send( (const char *)&largePackBuffer[0], len);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != len) {
                 std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 811"  << std::endl;
@@ -618,8 +594,7 @@ bool CSocket::FlushLargeBuffer(bool doLog) {
 #endif
         }
         else {
-            [[maybe_unused]] auto sendResult =
-            send(static_cast<uoxsocket_t>(cliSocket), (char *)&largeBuffer[0], outlength, 0);
+            [[maybe_unused]] auto sendResult = netSocket.send((char *)&largeBuffer[0], outlength);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != outlength) {
                 std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 821" << std::endl;
@@ -794,7 +769,7 @@ std::int32_t GrabLastError() { return WSAGetLastError(); }
 void CSocket::FlushIncoming() {
     std::int32_t count = 0;
     do {
-        count = static_cast<int>(recv(static_cast<uoxsocket_t>(cliSocket), (char *)&buffer[static_cast<int>(inlength)], 1, 0));
+        count = netSocket.read ( (char *)&buffer[static_cast<int>(inlength)], 1);
     } while (count > 0);
 }
 
@@ -836,39 +811,14 @@ void CSocket::ReceiveLogging(CPInputBuffer *toLog) {
 //|	Purpose		-	Handles receiving of network packets
 // o------------------------------------------------------------------------------------------------o
 std::int32_t CSocket::Receive(std::int32_t x, bool doLog) {
-    std::int32_t count = 0;
-    std::uint8_t recvAttempts = 0;
-    std::uint32_t curTime = GetClock();
-    std::uint32_t nexTime = curTime;
-    do {
-        count = static_cast<int>( recv(static_cast<uoxsocket_t>(cliSocket), (char *)&buffer[inlength], x - inlength, 0));
-        if (count > 0) {
-            inlength += count;
-        }
-        else if (count == -1) {
-            std::int32_t lastError = GrabLastError();
-#if !defined(_WIN32)
-            if (lastError != EWOULDBLOCK)
-#else
-                if (lastError != WSAEWOULDBLOCK)
-#endif
-                    throw socket_error(lastError);
-            std::this_thread::sleep_for(std::chrono::milliseconds(20));
-        }
-        ++recvAttempts;
-        nexTime = GetClock();
-        // You will find the values for the following in the uox.ini file as NETRCVTIMEOUT, and
-        // NETRETRYCOUNT respectively
-        if (recvAttempts == ServerConfig::shared().uintValues[UIntValue::NETRETRYCOUNT] || (nexTime - curTime) > static_cast<std::uint32_t>(ServerConfig::shared().uintValues[UIntValue::NETRCVTIMEOUT] * 1000)) { // looks like we're not going to get it!
-            // April 3, 2004 - If we have some data, then we need to return it. Some of the network
-            // logic is looking at count size. this way we can also validate on the calling side so
-            // we ask for 4 bytes, but only 3 were sent back, adn let the calling routing handle it,
-            // if we call for 4 and get get NOTHING then throw... Just my thoughts -
-            if (count <= 0) {
-                throw socket_error("Socket receive error");
-            }
-        }
-    } while (x != MAXBUFFER && x != inlength);
+    
+    // what is the maximam amount of time we want to try on this, we will use 1000 microsends
+    auto count = netSocket.readRetry( (char *)&buffer[inlength], x - inlength,1000);
+    inlength += count ;
+    if (count == 0) {
+        // We had an issue reading
+        throw util::net::SocketError("Unable to read data from socket") ;
+    }
     if (doLog) {
         ReceiveLogging(nullptr);
     }
@@ -938,37 +888,6 @@ void CSocket::SetAccount(AccountEntry &actbBlock) { accountNum = actbBlock.accou
 std::uint16_t CSocket::AcctNo() const { return accountNum; }
 void CSocket::AcctNo(std::uint16_t newValue) { accountNum = newValue; }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSocket::ClientIP1()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets part 1 of client IP
-// o------------------------------------------------------------------------------------------------o
-std::uint8_t CSocket::ClientIP1() const { return clientip[0]; }
-void CSocket::ClientIP1(std::uint8_t newValue) { clientip[0] = newValue; }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSocket::ClientIP2()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets part 2 of client IP
-// o------------------------------------------------------------------------------------------------o
-std::uint8_t CSocket::ClientIP2() const { return clientip[1]; }
-void CSocket::ClientIP2(std::uint8_t newValue) { clientip[1] = newValue; }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSocket::ClientIP3()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets part 3 of client IP
-// o------------------------------------------------------------------------------------------------o
-std::uint8_t CSocket::ClientIP3() const { return clientip[2]; }
-void CSocket::ClientIP3(std::uint8_t newValue) { clientip[2] = newValue; }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSocket::ClientIP4()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets part 4 of client IP
-// o------------------------------------------------------------------------------------------------o
-std::uint8_t CSocket::ClientIP4() const { return clientip[3]; }
-void CSocket::ClientIP4(std::uint8_t newValue) { clientip[3] = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::NewClient()
@@ -1056,17 +975,6 @@ void CSocket::SetWord(size_t offset, std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 void CSocket::SetByte(size_t offset, std::uint8_t newValue) { buffer[offset] = newValue; }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSocket::ClientIP()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Sets the four parts of the client IP to specified value
-// o------------------------------------------------------------------------------------------------o
-void CSocket::ClientIP(std::uint32_t newValue) {
-    clientip[0] = static_cast<std::uint8_t>(newValue >> 24);
-    clientip[1] = static_cast<std::uint8_t>(newValue >> 16);
-    clientip[2] = static_cast<std::uint8_t>(newValue >> 8);
-    clientip[3] = static_cast<std::uint8_t>(newValue % 256);
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::TargetOK()
@@ -1196,8 +1104,7 @@ void CSocket::Send(CPUOXBuffer *toSend) {
     std::uint32_t len = 0;
     if (cryptclient) {
         len = toSend->Pack();
-        [[maybe_unused]] auto sendResult =
-        send(static_cast<uoxsocket_t>(cliSocket), (char *)toSend->PackedPointer(), len, 0);
+        [[maybe_unused]] auto sendResult = netSocket.send( (const char *)toSend->PackedPointer(), len);
 #if defined(UOX_DEBUG_MODE)
         if (sendResult != len) {
             std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1553" << std::endl;
@@ -1206,8 +1113,7 @@ void CSocket::Send(CPUOXBuffer *toSend) {
     }
     else {
         len = static_cast<std::uint32_t>(toSend->GetPacketStream().GetSize());
-        [[maybe_unused]] auto sendResult =
-        send(static_cast<uoxsocket_t>(cliSocket), (char *)toSend->GetPacketStream().GetBuffer(), len, 0);
+        [[maybe_unused]] auto sendResult = netSocket.send((char *)toSend->GetPacketStream().GetBuffer(), len);
 #if defined(UOX_DEBUG_MODE)
         if (sendResult != len) {
             std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1564" << std::endl;

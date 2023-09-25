@@ -96,7 +96,19 @@ namespace util {
             value.block = true ;
             return *this;
         }
-        
+        //======================================================================
+        auto NetSocket::valid() const ->bool {
+            return this->descriptor != BADSOCKET ;
+        }
+        //======================================================================
+        auto NetSocket::close() const ->void {
+            closeSocket(this->descriptor);
+            this->descriptor = BADSOCKET ;
+        }
+        //======================================================================
+        auto NetSocket::clientDescriptor() const -> util::net::sockfd_t {
+            return this->descriptor ;
+        }
         //======================================================================
         auto NetSocket::create(bool blocking) ->void {
             if (this->valid()){
@@ -116,18 +128,6 @@ namespace util {
             setBlocking(blocking);
         }
         
-        //======================================================================
-        auto NetSocket::valid() const ->bool {
-            return this->descriptor != BADSOCKET;
-        }
-        
-        //======================================================================
-        auto NetSocket::close() -> void {
-            if (this->descriptor != BADSOCKET){
-                closeSocket(this->descriptor);
-                this->descriptor = BADSOCKET;
-            }
-        }
         
         //======================================================================
         auto NetSocket::send(const char* data, iosize_t size) const->status_t {
@@ -213,6 +213,44 @@ namespace util {
             }while (totalProcessed != size && (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now()-now).count()<microseconds));
             return totalProcessed;
         }
+        //======================================================================
+        auto NetSocket::peek() const -> std::optional<std::uint8_t> {
+            auto  data = std::uint8_t(0) ;
+            auto size = 1 ;
+            if (descriptor == BADSOCKET){
+                throw SocketClose("Attempt to read a closed socket");
+            }
+            
+            auto status = recv(descriptor, &data, size,rcvFlag | MSG_PEEK );
+            if (status == SOCKETERROR) {
+                auto error = 0;
+#if defined(_WIN32)
+                error = WSAGetLastError();
+                // Should we worry about WSAETIMEDOUT as well, yes if blocking
+                if (error == WSAEWOULDBLOCK || (this->block && error == WSAETIMEDOUT)) {
+                    return {};
+                }
+                if (error == WSAECONNRESET || error == WSAENOTCONN) {
+                    throw SocketPeerClose(errormsg(error));
+                }
+#else
+                error = errno;
+                if (error == EAGAIN || error == EWOULDBLOCK ) {
+                    return {};
+                }
+                if (error == EPIPE || error == ENOTCONN){
+                    throw SocketPeerClose(errormsg(error));
+                }
+#endif
+                throw SocketError("Error reading socket: "s + errormsg(error));
+            }
+            else if (status == 0){
+                return {};
+            }
+            return data;
+
+        }
+
         //======================================================================
         auto NetSocket::setBlocking(bool state) ->void {
             this->block = state ;
@@ -305,7 +343,7 @@ namespace util {
         //======================================================================
         auto NetSocket::listen(const std::string &ipaddress, const std::string &port, bool blocking) ->void {
             this->bind(ipaddress, port, blocking);
-            ::listen(this->descriptor, 20);
+            ::listen(this->descriptor, 42);
         }
         //======================================================================
         auto NetSocket::connect(const std::string &ipaddress, const std::string &port) ->bool {

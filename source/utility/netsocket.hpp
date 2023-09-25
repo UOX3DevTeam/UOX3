@@ -37,13 +37,15 @@ namespace util {
             
             // If you want to close, and status
             auto valid() const ->bool;
-            auto close() -> void;
+            auto close() const -> void;
+            auto clientDescriptor() const -> util::net::sockfd_t     ;
 
             // We allow you to send and read data
             auto send(const char* data, iosize_t size) const -> status_t;
             auto read(char* data, iosize_t size) const->status_t;
             auto readRetry(char* data, iosize_t size,int microseconds) const -> status_t ;
             auto sendRetry(const char* data,iosize_t size,int microseconds) const ->status_t ;
+            auto peek() const -> std::optional<std::uint8_t> ;
             
             // Socket items
             auto isBlocking() const -> bool ;

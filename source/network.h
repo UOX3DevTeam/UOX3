@@ -17,15 +17,7 @@
 #include <utility>
 #include <vector>
 
-#if !defined(_WIN32)
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#else
-#include <winsock2.h>
-#endif
-
+#include "networkmgr.hpp"
 #include "typedefs.h"
 
 // o------------------------------------------------------------------------------------------------o
@@ -122,14 +114,12 @@ public:
     
     // Dumps a byte buffer, formatted to a provided stream.
     // The entries_line indicate how many bytes to display per line.
-    static auto DumpByteBuffer(std::ostream &output, const std::uint8_t *buffer, std::size_t length,
-                               radix_t radix = radix_t::hex, std::size_t entries_line = 8) -> void;
+    static auto DumpByteBuffer(std::ostream &output, const std::uint8_t *buffer, std::size_t length,radix_t radix = radix_t::hex, std::size_t entries_line = 8) -> void;
     
 private:
     // Convert a bool to a string
     // the true_value/false_value are returned based on the bool
-    static auto ntos(bool value, const std::string &true_value = "true",
-                     const std::string &false_value = "false") -> std::string;
+    static auto ntos(bool value, const std::string &true_value = "true",const std::string &false_value = "false") -> std::string;
     
     // Convert a number to a string, with options on radix, prefix, size, pad
     // Radix indicates the radix the string will represent
@@ -137,14 +127,12 @@ private:
     // size is the minimum size the string must be (if the number is not large enough
     // it will use the "pad" character prepended to the number
     template <typename T>
-    static auto ntos(T value, radix_t radix = radix_t::dec, bool prefix = false, int size = 0,
-                     char pad = '0') -> std::string {
+    static auto ntos(T value, radix_t radix = radix_t::dec, bool prefix = false, int size = 0,char pad = '0') -> std::string {
         if constexpr (std::is_integral_v<T> && !std::is_same_v<T, bool>) {
             // first, thing we need to convert the value to a string
             std::array<char, max_characters_in_number> str;
             
-            if (auto [pc, ec] = std::to_chars(str.data(), str.data() + str.size(), value,
-                                              static_cast<int>(radix));
+            if (auto [pc, ec] = std::to_chars(str.data(), str.data() + str.size(), value,static_cast<int>(radix));
                 ec == std::errc()) {
                 // How many characters did this number take
                 auto numchars = static_cast<int>(std::distance(str.data(), pc));
@@ -216,8 +204,7 @@ public:
     auto operator[](int index) -> std::uint8_t &;
     
     auto Fill(std::uint8_t value, int offset, int length) -> void;
-    auto LogByteBuffer(std::ostream &output, radix_t radix = radix_t::hex,
-                       int entries_line = 8) const -> void;
+    auto LogByteBuffer(std::ostream &output, radix_t radix = radix_t::hex, int entries_line = 8) const -> void;
     
     // we need to read :integral/floating, vectors/list/strings
     template <typename T>
@@ -238,8 +225,7 @@ public:
             std::copy(_bytedata.data() + offset, _bytedata.data() + offset + size,
                       reinterpret_cast<std::uint8_t *>(&value));
             if (reverse && (size > 1)) {
-                std::reverse(reinterpret_cast<std::uint8_t *>(&value),
-                             reinterpret_cast<std::uint8_t *>(&value) + size);
+                std::reverse(reinterpret_cast<std::uint8_t *>(&value), reinterpret_cast<std::uint8_t *>(&value) + size);
             }
             _index = offset + size;
             return value;
@@ -256,28 +242,21 @@ public:
                 auto requested_size = entry_size * amount;
                 // are we exceeding that?
                 if (Exceeds(offset, requested_size)) {
-                    throw ByteBufferBounds(offset, requested_size,
-                                           static_cast<int>(_bytedata.size()));
+                    throw ByteBufferBounds(offset, requested_size, static_cast<int>(_bytedata.size()));
                 }
                 // we need to loop through and read a "character" at a time
                 typename T::value_type character = 0;
                 T rValue;
                 
                 for (auto i = 0; i < amount; ++i) {
-                    std::copy(_bytedata.data() + offset + i * entry_size,
-                              _bytedata.data() + offset + (i + 1) * entry_size,
-                              reinterpret_cast<std::uint8_t *>(&character));
+                    std::copy(_bytedata.data() + offset + i * entry_size, _bytedata.data() + offset + (i + 1) * entry_size, reinterpret_cast<std::uint8_t *>(&character));
                     // should we "reverse it" ?
                     if ((entry_size > 1) && reverse) {
-                        std::reverse(reinterpret_cast<std::uint8_t *>(&character),
-                                     reinterpret_cast<std::uint8_t *>(&character) + entry_size);
+                        std::reverse(reinterpret_cast<std::uint8_t *>(&character), reinterpret_cast<std::uint8_t *>(&character) + entry_size);
                     }
                     // If this is a string, we stop at a null terminator.  Do we really want to do
                     // this?
-                    if constexpr (std::is_same_v<std::string, T> ||
-                                  std::is_same_v<std::wstring, T> ||
-                                  std::is_same_v<std::u16string, T> ||
-                                  std::is_same_v<std::u32string, T>) {
+                    if constexpr (std::is_same_v<std::string, T> || std::is_same_v<std::wstring, T> || std::is_same_v<std::u16string, T> || std::is_same_v<std::u32string, T>) {
                         if (character == 0) {
                             break;
                         }
@@ -313,17 +292,12 @@ public:
                 // We now get to read
                 T input;
                 for (auto i = 0; i < amount; ++i) {
-                    std::copy(_bytedata.begin() + offset + (i * entry_size),
-                              _bytedata.begin() + offset + ((i + 1) * entry_size),
-                              reinterpret_cast<std::uint8_t *>(&input));
+                    std::copy(_bytedata.begin() + offset + (i * entry_size), _bytedata.begin() + offset + ((i + 1) * entry_size), reinterpret_cast<std::uint8_t *>(&input));
                     if (reverse) {
-                        std::reverse(reinterpret_cast<std::uint8_t *>(&input),
-                                     reinterpret_cast<std::uint8_t *>(&input) + entry_size);
+                        std::reverse(reinterpret_cast<std::uint8_t *>(&input), reinterpret_cast<std::uint8_t *>(&input) + entry_size);
                     }
                     // Now put it into the data stream
-                    std::copy(reinterpret_cast<std::uint8_t *>(&input),
-                              reinterpret_cast<std::uint8_t *>(&input) + entry_size,
-                              value + (i * entry_size));
+                    std::copy(reinterpret_cast<std::uint8_t *>(&input), reinterpret_cast<std::uint8_t *>(&input) + entry_size, value + (i * entry_size));
                 }
                 _index = offset + amount * entry_size;
             }
@@ -331,8 +305,7 @@ public:
     }
     
     template <typename T>
-    auto write(int offset, const T *value, int amount = -1, bool reverse = true, bool expand = true)
-    -> ByteBuffer & {
+    auto write(int offset, const T *value, int amount = -1, bool reverse = true, bool expand = true) -> ByteBuffer & {
         if (offset < 0) {
             offset = _index;
         }
@@ -367,8 +340,7 @@ public:
     }
     
     template <typename T>
-    auto write(int offset, const T &value, int amount = -1, bool reverse = true, bool expand = true)
-    -> ByteBuffer & {
+    auto write(int offset, const T &value, int amount = -1, bool reverse = true, bool expand = true) -> ByteBuffer & {
         if (offset < 0) {
             offset = _index;
         }
@@ -386,11 +358,9 @@ public:
             // we need to write it
             T temp = value;
             if (reverse) {
-                std::reverse(reinterpret_cast<std::uint8_t *>(&temp),
-                             reinterpret_cast<std::uint8_t *>(&temp) + size);
+                std::reverse(reinterpret_cast<std::uint8_t *>(&temp), reinterpret_cast<std::uint8_t *>(&temp) + size);
             }
-            std::copy(reinterpret_cast<std::uint8_t *>(&temp),
-                      reinterpret_cast<std::uint8_t *>(&temp) + size, _bytedata.begin() + offset);
+            std::copy(reinterpret_cast<std::uint8_t *>(&temp), reinterpret_cast<std::uint8_t *>(&temp) + size, _bytedata.begin() + offset);
             
             _index = offset + size;
             return *this; // we put this here, versue at the end, for we want a compile error if a
@@ -418,34 +388,28 @@ public:
                 auto requested_size = (write_size + fill_size) * entry_size;
                 // are we exceeding that?
                 if (Exceeds(offset, requested_size, expand)) {
-                    throw ByteBufferBounds(offset, requested_size,
-                                           static_cast<int>(_bytedata.size()));
+                    throw ByteBufferBounds(offset, requested_size, static_cast<int>(_bytedata.size()));
                 }
                 // Ok, so now we get to go and do our thing
                 for (auto i = 0; i < write_size; ++i) {
                     auto entry = value[i];
                     if (reverse && (entry_size > 1)) {
-                        std::reverse(reinterpret_cast<std::uint8_t *>(&entry),
-                                     reinterpret_cast<std::uint8_t *>(&entry) + entry_size);
+                        std::reverse(reinterpret_cast<std::uint8_t *>(&entry), reinterpret_cast<std::uint8_t *>(&entry) + entry_size);
                     }
-                    std::copy(reinterpret_cast<std::uint8_t *>(&entry),
-                              reinterpret_cast<std::uint8_t *>(&entry) + entry_size,
-                              _bytedata.data() + offset + i * entry_size);
+                    std::copy(reinterpret_cast<std::uint8_t *>(&entry), reinterpret_cast<std::uint8_t *>(&entry) + entry_size, _bytedata.data() + offset + i * entry_size);
                 }
                 _index = offset + (write_size * entry_size);
                 
                 // Now we need to do the fill if anyway
                 if (fill_size > 0) {
-                    std::fill(_bytedata.data() + _index,
-                              _bytedata.data() + _index + (fill_size * entry_size), 0);
+                    std::fill(_bytedata.data() + _index, _bytedata.data() + _index + (fill_size * entry_size), 0);
                 }
                 _index += fill_size * entry_size;
             }
             return *this;
         }
         else if constexpr (std::is_array_v<T>) {
-            if constexpr (std::is_integral_v<typename std::remove_extent<T>::type> ||
-                          std::is_floating_point_v<typename std::remove_extent<T>::type>) {
+            if constexpr (std::is_integral_v<typename std::remove_extent<T>::type> || std::is_floating_point_v<typename std::remove_extent<T>::type>) {
                 // It is an array!
                 auto entry_size = static_cast<int>(sizeof(typename std::remove_extent<T>::type));
                 if (amount < 0) {
@@ -454,8 +418,7 @@ public:
                 auto requested_size = amount * entry_size;
                 
                 if (Exceeds(offset, requested_size, expand)) {
-                    throw ByteBufferBounds(offset, requested_size,
-                                           static_cast<int>(_bytedata.size()));
+                    throw ByteBufferBounds(offset, requested_size, static_cast<int>(_bytedata.size()));
                 }
                 // We need to check and loop through if we are reversing;
                 
@@ -463,12 +426,9 @@ public:
                 for (auto i = 0; i < amount; ++i) {
                     auto input = value[i];
                     if (reverse && (entry_size > 1)) {
-                        std::reverse(reinterpret_cast<std::uint8_t *>(&input),
-                                     reinterpret_cast<std::uint8_t *>(&input) + entry_size);
+                        std::reverse(reinterpret_cast<std::uint8_t *>(&input), reinterpret_cast<std::uint8_t *>(&input) + entry_size);
                     }
-                    std::copy(reinterpret_cast<std::uint8_t *>(&input),
-                              reinterpret_cast<std::uint8_t *>(&input) + entry_size,
-                              _bytedata.begin() + offset + (i * entry_size));
+                    std::copy(reinterpret_cast<std::uint8_t *>(&input), reinterpret_cast<std::uint8_t *>(&input) + entry_size, _bytedata.begin() + offset + (i * entry_size));
                 }
                 _index = offset + (entry_size * amount);
                 return *this;
@@ -477,16 +437,9 @@ public:
     }
 };
 
-class socket_error : public std::runtime_error {
-private:
-    std::uint32_t errorNum;
-    
+class PacketError : public std::runtime_error {
 public:
-    socket_error(const std::string &what_arg);
-    socket_error(const std::uint32_t errorNumber);
-    socket_error();
-    std::uint32_t ErrorNumber() const;
-    const char *what() const throw();
+    PacketError(const std::string &message):std::runtime_error(message){}
 };
 
 class CPUOXBuffer {
@@ -567,21 +520,9 @@ public:
     std::vector<CSocket *> connClients, loggedInClients;
     
 private:
-    struct FirewallEntry_st {
-        std::int16_t b[4];
-        FirewallEntry_st(std::int16_t p1, std::int16_t p2, std::int16_t p3, std::int16_t p4) {
-            b[0] = p1;
-            b[1] = p2;
-            b[2] = p3;
-            b[3] = p4;
-        }
-    };
-    
+    NetworkMgr networkMgr;
+
     std::map<std::uint16_t, std::uint16_t> packetOverloads;
-    std::vector<FirewallEntry_st> slEntries;
-    SOCKET a_socket;
-    
-    struct sockaddr_in client_addr;
     
     size_t peakConnectionCount;
     
@@ -593,8 +534,6 @@ private:
     
     void CheckConn();
     void LogOut(CSocket *s);
-    
-    bool IsFirewallBlocked(std::uint8_t part[4]);
 };
 
 

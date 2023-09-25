@@ -1,8 +1,10 @@
 #include "cpacketreceive.h"
 
+#include <algorithm>
 #include <cassert>
 #include <chrono>
 
+#include "subsystem/account.hpp"
 #include "books.h"
 #include "cchar.h"
 #include "ceffects.h"
@@ -13,6 +15,7 @@
 #include "cmagic.h"
 #include "combat.h"
 #include "commands.h"
+#include "subsystem/console.hpp"
 #include "cpacketsend.h"
 #include "craces.h"
 #include "cresponse.h"
@@ -22,9 +25,7 @@
 #include "cthreadqueue.h"
 #include "dictionary.h"
 #include "funcdecl.h"
-#include "ip4address.hpp"
-#include "subsystem/account.hpp"
-#include "subsystem/console.hpp"
+#include "utility/ip4util.hpp"
 
 #include "movement.h"
 #include "pagevector.h"
@@ -34,6 +35,8 @@
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+
+using namespace std::string_literals;
 
 extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
@@ -124,7 +127,7 @@ CPInputBuffer *WhichLoginPacket(std::uint8_t packetId, CSocket *s) {
         default:
             break;
     }
-    throw socket_error("Bad packet request");
+    throw PacketError("Bad packet: "s+ util::format("0x%x2.0x",packetId));
     return nullptr;
 }
 
@@ -412,8 +415,8 @@ bool CPIFirstLogin::Handle() {
         return true;
     }
     if (tSock->AcctNo() != AccountEntry::INVALID_ACCOUNT) {
-        actbTemp->lastIP = CalcSerial(tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1());
-        auto temp = util::format("Client [%i.%i.%i.%i] connected using Account '%s'.", tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(),tSock->ClientIP1(), username.c_str());
+        actbTemp->lastIP = util::net::IP4Entry::describeIP(tSock->clientIP);
+        auto temp = util::format("Client [%s] connected using Account '%s'.", tSock->clientIP.c_str(), username.c_str());
         Console::shared().log(temp, "server.log");
         messageLoop << temp;
         
@@ -426,10 +429,11 @@ bool CPIFirstLogin::Handle() {
         }
         
         // change for IP4Address
-        auto address = worldMain.matchIP(tSock->ipaddress);
+        auto address = tSock->forwardIP ;
+        std::reverse(reinterpret_cast<std::uint8_t*>(&address),reinterpret_cast<std::uint8_t*>(&address)+4);
         
         CPGameServerList toSend(1);
-        toSend.addEntry(ServerConfig::shared().serverString[ServerString::SERVERNAME], address.ipaddr(true));
+        toSend.addEntry(ServerConfig::shared().serverString[ServerString::SERVERNAME], address);
         tSock->Send(&toSend);
     }
     // If socket's ClientType is still CV_DEFAULT, it's an old client,
@@ -517,11 +521,11 @@ std::int16_t CPIServerSelect::ServerNum() {
 }
 
 bool CPIServerSelect::Handle() {
-    auto ip = worldMain.matchIP(tSock->ipaddress);
+    auto ip = tSock->forwardIP ;
     
     auto name = ServerConfig::shared().serverString[ServerString::SERVERNAME];
     auto port = ServerConfig::shared().ushortValues[UShortValue::PORT] ;
-    CPRelay toSend(ip.ipaddr(false), port);
+    CPRelay toSend(ip, port);
     tSock->Send(&toSend);
     // Mark packet as sent. No we need to change how we network.
     return true;

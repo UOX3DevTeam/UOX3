@@ -189,11 +189,12 @@
     <ClCompile Include="..\..\source\sefunctions.cpp" />
     <ClCompile Include="..\..\source\uoxjsmethods.cpp" />
     <ClCompile Include="..\..\source\uoxjspropertyfuncs.cpp" />
+    <!-- network group -->
+    <ClInclude Include="..\..\source\network\networkmgr.cpp" />
     <!-- Network group -->
     <ClCompile Include="..\..\source\cpacketreceive.cpp" />
     <ClCompile Include="..\..\source\cpacketsend.cpp" />
     <ClCompile Include="..\..\source\network.cpp" />
-    <ClCompile Include="..\..\source\ip4address.cpp" />
     <!-- Utility group -->
     <ClCompile Include="..\..\source\stringutility.cpp" />
     <ClCompile Include="..\..\source\timeutility.cpp" />
@@ -300,11 +301,12 @@
     <ClInclude Include="..\..\source\uoxjspropertyenums.h" />
     <ClInclude Include="..\..\source\uoxjspropertyfuncs.h" />
     <ClInclude Include="..\..\source\uoxjspropertyspecs.h" />
+    <!-- network group -->
+    <ClInclude Include="..\..\source\network\networkmgr.hpp" />
     <!-- Network group -->
     <ClInclude Include="..\..\source\cpacketreceive.h" />
     <ClInclude Include="..\..\source\cpacketsend.h" />
     <ClInclude Include="..\..\source\network.h" />
-    <ClInclude Include="..\..\source\ip4address.hpp" />
     <!-- Utility group -->
     <ClInclude Include="..\..\source\stringutility.hpp" />
     <ClInclude Include="..\..\source\timeutility.hpp" />
