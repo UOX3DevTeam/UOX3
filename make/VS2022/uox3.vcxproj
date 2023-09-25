@@ -190,7 +190,7 @@
     <ClCompile Include="..\..\source\uoxjsmethods.cpp" />
     <ClCompile Include="..\..\source\uoxjspropertyfuncs.cpp" />
     <!-- network group -->
-    <ClInclude Include="..\..\source\network\networkmgr.cpp" />
+    <ClCompile Include="..\..\source\network\networkmgr.cpp" />
     <!-- Network group -->
     <ClCompile Include="..\..\source\cpacketreceive.cpp" />
     <ClCompile Include="..\..\source\cpacketsend.cpp" />

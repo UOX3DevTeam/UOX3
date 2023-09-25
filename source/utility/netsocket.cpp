@@ -61,7 +61,7 @@ namespace util {
         }
         
         //======================================================================
-        NetSocket::NetSocket(NetSocket&& value) {
+        NetSocket::NetSocket(NetSocket&& value) noexcept {
             this->descriptor = value.descriptor;
             value.descriptor = BADSOCKET;
             this->rcvFlag = value.rcvFlag ;
@@ -142,7 +142,7 @@ namespace util {
                 if (error == WSAEWOULDBLOCK || (block && error==WSAETIMEDOUT)){
                     return static_cast<status_t>(0);
                 }
-                if (error = WSAECONNRESET || error == WSAENOTCONN){
+                if (error == WSAECONNRESET || error == WSAENOTCONN){
                     throw SocketPeerClose(errormsg(error));
                 }
 #else
@@ -215,7 +215,7 @@ namespace util {
         }
         //======================================================================
         auto NetSocket::peek() const -> std::optional<std::uint8_t> {
-            auto  data = std::uint8_t(0) ;
+            auto  data = static_cast<char>(0) ;
             auto size = 1 ;
             if (descriptor == BADSOCKET){
                 throw SocketClose("Attempt to read a closed socket");
@@ -247,7 +247,7 @@ namespace util {
             else if (status == 0){
                 return {};
             }
-            return data;
+            return static_cast<std::uint8_t>(data);
 
         }
 
@@ -324,6 +324,7 @@ namespace util {
                 throw std::runtime_error("Error setting socket to reuseaddr: "s + errormsg(error));
             }
 #endif
+            // If you start to cast, to get rid of warnings. These sizes sometimes vary across platforms
             auto status = ::bind(this->descriptor,res->ai_addr,res->ai_addrlen);
             if (status == SOCKETERROR){
                 
@@ -375,7 +376,7 @@ namespace util {
                 auto error = 0 ;
 #if defined(_WIN32)
                 error = WSAGetLastError() ;
-                if (error = WSAEWOULDBLOCK) {
+                if (error == WSAEWOULDBLOCK) {
                     return {} ;
                 }
 #else

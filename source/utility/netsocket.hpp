@@ -32,7 +32,7 @@ namespace util {
             NetSocket(const NetSocket&) = delete;
             auto operator=(const NetSocket&)->NetSocket & = delete;
             // We do allow moves however
-            NetSocket(NetSocket &&value);
+            NetSocket(NetSocket &&value) noexcept;
             auto operator=(NetSocket&& value)->NetSocket&;
             
             // If you want to close, and status

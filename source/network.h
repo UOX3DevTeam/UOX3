@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-#include "networkmgr.hpp"
+#include "network/networkmgr.hpp"
 #include "typedefs.h"
 
 // o------------------------------------------------------------------------------------------------o

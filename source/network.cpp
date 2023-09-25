@@ -463,7 +463,7 @@ void CNetworkStuff::CheckMessage() {
         try {
             if (connClients.at(i)->netSocket.peek()){
                 // It has some data!
-                GetMsg(i);
+                GetMsg(static_cast<uoxsocket_t>(i));
             }
         }
         catch(const std::exception &e){

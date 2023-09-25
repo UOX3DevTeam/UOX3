@@ -15,7 +15,7 @@
 #include "utility/netutil.hpp"
 #include "utility/netsocket.hpp"
 
-struct CSocket ;
+class CSocket ;
 //======================================================================
 class NetworkMgr {
     util::net::NetSocket serverSocket ;
