@@ -8,4 +8,8 @@
     made console a singleton
     replace cserverdata with serverconfig, made singleton, and entry processing
     reformated
+    replaced global pointers with globals.  Identified dependencies.  moved to global.cpp (to later to be put in the correct places, this is phase 1).
+    separated network low level to use utilitlies NetSocket.  remove all platfrom/network specific code from UOX proper.  Consolidated network type things (ip forwarding, ip blocking, server socket), NetworkMgr.  Now in a position to start looking at network changes, etc.
+    as a result of network changes, an allow list is now supported. Should deny/allow list file names be in config file?
+    
     
