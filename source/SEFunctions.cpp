@@ -3400,7 +3400,7 @@ bool SE_WillResultInCriminal( JSContext* cx, unsigned argc, JS::Value* vp )
 	CChar *srcChar = nullptr;
 	CChar *trgChar = nullptr;
 
-	if( argv[0] != JSVAL_NULL && argv[1] != JSVAL_NULL )
+	if( !args.get( 0 ).isNull() && !args.get( 1 ).isNull() )
 	{
 		JSObject *srcCharObj = args.get( 0 ).toObjectOrNull();
 		srcChar = JS::GetMaybePtrFromReservedSlot<CChar>( srcCharObj, 0 );
@@ -3582,7 +3582,7 @@ bool SE_GetSpawnRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 		UI16 instanceID = static_cast<UI16>( args.get( 3 ).toInt32());
 
 		// Iterate over each spawn region to find the right one
-		auto iter = std::find_if( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&x, &y, &worldNum, &instanceID, &cx, &rval]( std::pair<UI16, CSpawnRegion*> entry )
+		auto iter = std::find_if( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&x, &y, &worldNum, &instanceID, &cx, &args]( std::pair<UI16, CSpawnRegion*> entry )
 		{
 			if( entry.second && x >= entry.second->GetX1() && x <= entry.second->GetX2() && y >= entry.second->GetY1()
 				&& y <= entry.second->GetY2() && entry.second->GetInstanceId() == instanceID && entry.second->WorldNumber() == worldNum )
@@ -3829,6 +3829,7 @@ bool SE_DoesMapBlock( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args		= JS::CallArgsFromVp(argc, vp);
 	SI16 x			= static_cast<SI16>( args.get( 0 ).toInt32());
 	SI16 y			= static_cast<SI16>( args.get( 1 ).toInt32());
 	SI08 z			= static_cast<SI08>( args.get( 2 ).toInt32());
@@ -3901,7 +3902,7 @@ bool SE_DeleteFile( JSContext* cx, unsigned argc, JS::Value* vp )
 	std::string pathString	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
 
 	// if subFolderName argument was supplied, use it
-	if( subFolderName != nullptr )
+	if( !subFolderName.empty() )
 	{
 		// However, don't allow special characters in the folder name
 		if( strstr( subFolderName, ".." ) || strstr( subFolderName, "\\" ) || strstr( subFolderName, "/" ))

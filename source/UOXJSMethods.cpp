@@ -61,7 +61,7 @@ void ScriptError( JSContext *cx, const char *txt, ... );
 //|	Purpose		-	Adds speech entry of specified type, font, color, etc to the speech queue
 //| Notes		-	Copied that here from SEFunctions.cpp. Default paramters weren't working !?
 //o------------------------------------------------------------------------------------------------o
-void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR sColour = 0x005A, 
+void MethodSpeech( CBaseObject &speaker, const char *message, SpeechType sType, COLOUR sColour = 0x005A, 
 		FontType fType = FNT_NORMAL, SpeechTarget spTrg = SPTRG_PCNPC, SERIAL spokenTo = INVALIDSERIAL, bool useUnicode = false )
 {
 	if( useUnicode )
@@ -1962,9 +1962,8 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	JSEncapsulate myClass( cx, obj );
 	CBaseObject *myObj		= static_cast<CBaseObject*>( myClass.toObject() );
 
-	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
-	char *trgMessage		= JS_GetStringBytes( targMessage );
-	if( trgMessage == nullptr )
+  std::string trgMessage = convertToString( args.get(0).toString() );
+	if( trgMessage.empty() )
 	{
 		ScriptError( cx, "You have to supply a message-text" );
 		return false;
@@ -2030,7 +2029,7 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 		{
 			speechType = OBJ;
 		}
-		MethodSpeech( *myItem, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode );
+		MethodSpeech( *myItem, trgMessage.c_str(), speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode );
 	}
 	else if( myClass.ClassName() == "UOXChar" )
 	{
@@ -2352,8 +2351,8 @@ static bool CBase_Delete( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .Delete(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));

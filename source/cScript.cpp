@@ -293,16 +293,14 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 	if( targContext == nullptr )
 		return;
 
-	targObject = JS_NewObject( targContext, &uox_class );
+	targObject = JS_NewGlobalObject( targContext, &uox_class );
 	if( targObject == nullptr )
 		return;
 
-	JS_LockGCThing( targContext, targObject );
+	//JS_LockGCThing( targContext, targObject );
 
 	// Moved here so it reports errors during script-startup too
 	JS_SetErrorReporter( targContext, UOX3ErrorReporter );
-
-	JS_SetGlobalObject( targContext, targObject );
 
 	JS::InitRealmStandardClasses( targContext );
 	JS_DefineFunctions( targContext, targObject, my_functions );
@@ -334,16 +332,11 @@ void cScript::Cleanup( void )
 	gumpDisplays.resize( 0 );
 
 	JS_UnlockGCThing( targContext, targObject );
-	//JS_RemoveRoot( targContext, &targObject );
 }
 void cScript::CollectGarbage( void )
 {
-	//	if( JS_IsRunning( targContext ) == JS_FALSE )
-	//	{
 	Cleanup();
 	JS_LockGCThing( targContext, targObject );
-	//JS_AddRoot( targContext, &targObject );
-	//	}
 }
 cScript::~cScript()
 {
@@ -354,8 +347,6 @@ cScript::~cScript()
 	}
 	Cleanup();
 	JS_GC( targContext );
-	//	if( targContext != nullptr )
-	//		JS_DestroyContext( targContext );
 }
 
 bool cScript::IsFiring( void )
