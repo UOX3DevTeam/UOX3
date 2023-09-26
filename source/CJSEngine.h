@@ -43,15 +43,17 @@ enum JSPrototypes
 	JSP_COUNT
 };
 
+
+
 class CJSRuntime
 {
 private:
-	typedef std::map<void *, JSObject *>					JSOBJECTMAP;
-	typedef std::map<void *, JSObject *>::iterator			JSOBJECTMAP_ITERATOR;
-	typedef std::map<void *, JSObject *>::const_iterator	JSOBJECTMAP_CITERATOR;
+	using JSOBJECTMAP           = std::map<void *, JSObject * >;
+	using JSOBJECTMAP_ITERATOR  = JSOBJECTMAP::iterator;
+	using JSOBJECTMAP_CITERATOR = JSOBJECTMAP::const_iterator;
 
-	std::vector<JSOBJECTMAP>								objectList;
-	std::vector<JSObject *>									protoList;
+	std::vector< JSOBJECTMAP > objectList;
+  JS::RootedObjectVector *   protoList;
 
 	JSObject * spellsObj;
 	JSObject * skillsObj;

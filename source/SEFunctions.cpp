@@ -1914,7 +1914,7 @@ bool SE_TriggerTrap( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if (className == "UOXChar")
 	{
-		mChar = static_cast<CChar *>( myClass.toObject() );
+    mChar = JS::GetMaybePtrFromReservedSlot<CChar>(myClass.toObjectOrNull(), 0);
 		if( !ValidateObject( mChar ))
 		{
 			mChar = nullptr;
@@ -1922,7 +1922,7 @@ bool SE_TriggerTrap( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else if( className == "UOXSocket" )
 	{
-		mySocket = static_cast<CSocket *>( myClass.toObject() );
+		mySocket = JS::GetMaybePtrFromReservedSlot<CSocket>(myClass.toObjectOrNull(), 0);
 		if( mySocket != nullptr )
 		{
 			mChar = mySocket->CurrcharObj();
@@ -3198,11 +3198,13 @@ bool SE_ResourceRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSObject *jsResource = JS_NewObject( cx, &UOXResource_class, nullptr, obj );
-	JS_DefineProperties( cx, jsResource, CResourceProperties );
+	JSObject *jsResource = JS_NewObject( cx, &UOXResource_class );
+  JS::RootedObject root(cx, jsResource);
+	JS::MutableHandleObject rJSResource( &root );
+	JS_DefineProperties( cx, rJSResource, CResourceProperties );
   JS::SetReservedSlot( jsResource, 0, JS::PrivateValue(mRes) );
 
-	args.rval().setObjectOrNull( jsResource );
+	args.rval().setObject( (*jsResource) );
 
 	return true;
 }
@@ -3893,7 +3895,7 @@ bool SE_DeleteFile( JSContext* cx, unsigned argc, JS::Value* vp )
 		useScriptDataDir = ( args.get( 2 ).toBoolean() );
 	}
 
-	if( strstr( fileName, ".." ) || strstr( fileName, "\\" ) || strstr( fileName, "/" ))
+	if( strstr( fileName.c_str(), ".." ) || strstr( fileName.c_str(), "\\" ) || strstr( fileName.c_str(), "/" ))
 	{
 		ScriptError( cx, "DeleteFile: file names may not contain \".\", \"..\", \"\\\", or \"/\"." );
 		return false;
@@ -3905,7 +3907,7 @@ bool SE_DeleteFile( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( !subFolderName.empty() )
 	{
 		// However, don't allow special characters in the folder name
-		if( strstr( subFolderName, ".." ) || strstr( subFolderName, "\\" ) || strstr( subFolderName, "/" ))
+		if( strstr( subFolderName.c_str(), ".." ) || strstr( subFolderName.c_str(), "\\" ) || strstr( subFolderName.c_str(), "/" ))
 		{
 			ScriptError( cx, "DeleteFile: folder names may not contain \".\", \"..\", \"\\\", or \"/\"." );
 			return false;
