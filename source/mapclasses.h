@@ -11,8 +11,11 @@
 #include "osunique.hpp"
 #include "power.h"
 
-// o------------------------------------------------------------------------------------------------o
 
+#include "uodata/uoflag.hpp"
+
+// o------------------------------------------------------------------------------------------------o
+/*
 enum tileflags_t {
     // Flag:				Also known as:
     TF_FLOORLEVEL = 0, // "Background"
@@ -59,7 +62,7 @@ enum tileflags_t {
     TF_MULTIMOVABLE,
     TF_COUNT
 };
-
+*/
 // o------------------------------------------------------------------------------------------------o
 //  Pre declare tileinfo so we can make it a friend of CBaseTile, CTile, and CLand
 class OTileInfo;
@@ -103,17 +106,17 @@ public:
     auto Flags() const -> std::bitset<64> { return flags; }
     void Flags(std::bitset<64> newVal) { flags = newVal; }
     
-    bool CheckFlag(tileflags_t toCheck) const {
-        if (toCheck >= TF_COUNT) {
+    bool CheckFlag(uo::flag_t toCheck) const {
+        if (static_cast<int>(toCheck) > static_cast<int>(uo::flag_t::STAIRRIGHT)) {
             return false;
         }
-        return flags.test(toCheck);
+        return flags.test(static_cast<int>(toCheck));
     }
-    void SetFlag(tileflags_t toSet, bool newVal) {
-        if (toSet >= TF_COUNT) {
+    void SetFlag(uo::flag_t toSet, bool newVal) {
+        if (static_cast<int>(toSet) >= static_cast<int>(uo::flag_t::STAIRRIGHT)) {
             return;
         }
-        flags.set(toSet, newVal);
+        flags.set(static_cast<int>(toSet), newVal);
     }
 };
 // o------------------------------------------------------------------------------------------------o
@@ -147,7 +150,7 @@ public:
     auto Layer() const -> std::int8_t { return layer; }
     auto Height() const -> std::int8_t { return height; }
     auto ClimbHeight(bool trueHeight = false) const -> std::int8_t {
-        if (CheckFlag(TF_CLIMBABLE) && !trueHeight) {
+        if (CheckFlag(uo::flag_t::CLIMBABLE) && !trueHeight) {
             return height / 2;
         }
         return height;
@@ -215,7 +218,7 @@ struct Tile_st {
         const CLand *terrainInfo;
     };
     constexpr static std::array<std::uint16_t, 11> terrainVoids{430, 431, 432, 433, 434, 475, 580, 610, 611, 612, 613};
-    auto CheckFlag(tileflags_t toCheck) const -> bool {
+    auto CheckFlag(uo::flag_t toCheck) const -> bool {
         if (type != tiletype_t::terrain) {
             return artInfo->CheckFlag(toCheck);
         }

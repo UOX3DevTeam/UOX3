@@ -28,6 +28,7 @@
 #include "ssection.h"
 #include "utility/strutil.hpp"
 #include "townregion.h"
+#include "uodata/uoflag.hpp"
 #include "useful.h"
 #include "weight.h"
 
@@ -1062,9 +1063,9 @@ bool CheckForValidDropLocation(CSocket *mSock, CChar *nChar, std::uint16_t x, st
         // First, check for a static surface to drop item on
         std::uint16_t foundTileId1 = 0;
         std::uint16_t foundTileId2 = 0;
-        if (!worldMULHandler.CheckStaticFlag(x, y, z, nChar->WorldNumber(), TF_SURFACE, foundTileId1, false)) {
+        if (!worldMULHandler.CheckStaticFlag(x, y, z, nChar->WorldNumber(), uo::flag_t::SURFACE, foundTileId1, false)) {
             // Nowhere static to put item? Check dynamic tiles for surface!
-            if (!worldMULHandler.CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_SURFACE, foundTileId1)) {
+            if (!worldMULHandler.CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), uo::flag_t::SURFACE, foundTileId1)) {
                 // No static OR dynamic surface was found to place item? Check if map itself blocks
                 // the placement
                 dropLocationBlocked =  worldMULHandler.DoesMapBlock(x, y, z, nChar->WorldNumber(), true, false, false, false);
@@ -1073,12 +1074,12 @@ bool CheckForValidDropLocation(CSocket *mSock, CChar *nChar, std::uint16_t x, st
         
         if (!dropLocationBlocked) {
             // Some kind of valid surface was found. But is it blocked by...
-            if (worldMULHandler.CheckStaticFlag(x, y, z, nChar->WorldNumber(), TF_BLOCKING, foundTileId2, false) || worldMULHandler.CheckStaticFlag(x, y, z, nChar->WorldNumber(), TF_ROOF, foundTileId2, false)) { // ...static items?
+            if (worldMULHandler.CheckStaticFlag(x, y, z, nChar->WorldNumber(), uo::flag_t::BLOCKING, foundTileId2, false) || worldMULHandler.CheckStaticFlag(x, y, z, nChar->WorldNumber(), uo::flag_t::ROOF, foundTileId2, false)) { // ...static items?
                 if (foundTileId1 != foundTileId2) {
                     dropLocationBlocked = true;
                 }
             }
-            else if (worldMULHandler.CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_BLOCKING, foundTileId2) || worldMULHandler.CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_ROOF, foundTileId2)) { // No? What about dynamic items?
+            else if (worldMULHandler.CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), uo::flag_t::BLOCKING, foundTileId2) || worldMULHandler.CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), uo::flag_t::ROOF, foundTileId2)) { // No? What about dynamic items?
                 if (foundTileId1 != foundTileId2) {
                     dropLocationBlocked = true;
                 }

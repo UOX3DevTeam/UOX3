@@ -45,6 +45,7 @@
 #include "ssection.h"
 #include "utility/strutil.hpp"
 #include "townregion.h"
+#include "uodata/uoflag.hpp"
 #include "uoxjsclasses.h"
 #include "uoxjspropertyspecs.h"
 #include "other/uoxversion.hpp"
@@ -3250,7 +3251,7 @@ JSBool SE_CheckStaticFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
     std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
     std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
-    auto toCheck = static_cast<tileflags_t>(JSVAL_TO_INT(argv[4]));
+    auto toCheck = static_cast<uo::flag_t>(JSVAL_TO_INT(argv[4]));
     [[maybe_unused]] std::uint16_t ignoreMe = 0;
     bool hasStaticFlag = worldMULHandler.CheckStaticFlag(x, y, z, worldNum, toCheck, ignoreMe, false);
     *rval = BOOLEAN_TO_JSVAL(hasStaticFlag);
@@ -3274,7 +3275,7 @@ JSBool SE_CheckDynamicFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
     std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     std::uint8_t instanceId = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
-    auto toCheck = static_cast<tileflags_t>(JSVAL_TO_INT(argv[5]));
+    auto toCheck = static_cast<uo::flag_t>(JSVAL_TO_INT(argv[5]));
     [[maybe_unused]] std::uint16_t ignoreMe = 0;
     bool hasDynamicFlag = worldMULHandler.CheckDynamicFlag(x, y, z, worldNum, instanceId, toCheck, ignoreMe);
     *rval = BOOLEAN_TO_JSVAL(hasDynamicFlag);
@@ -3293,7 +3294,7 @@ JSBool SE_CheckTileFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
     }
     
     std::uint16_t itemId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
-    auto flagToCheck = static_cast<tileflags_t>(JSVAL_TO_INT(argv[1]));
+    auto flagToCheck = static_cast<uo::flag_t>(JSVAL_TO_INT(argv[1]));
     
     bool tileHasFlag = worldMULHandler.CheckTileFlag(itemId, flagToCheck);
     *rval = BOOLEAN_TO_JSVAL(tileHasFlag);

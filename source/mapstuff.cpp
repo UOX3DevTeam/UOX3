@@ -202,105 +202,105 @@ auto CMulHandler::LoadDFNOverrides() -> void {
                         }
                         // BaseTile Flag 1
                         else if (UTag == "ATFLOORLEVEL") {
-                            tile->SetFlag(TF_FLOORLEVEL, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::FLOORLEVEL, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "HOLDABLE") {
-                            tile->SetFlag(TF_HOLDABLE, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::HOLDABLE, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "SIGNGUILDBANNER") {
-                            tile->SetFlag(TF_TRANSPARENT, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::TRANSPARENT, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "WEBDIRTBLOOD") {
-                            tile->SetFlag(TF_TRANSLUCENT, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::TRANSLUCENT, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "WALLVERTTILE") {
-                            tile->SetFlag(TF_WALL, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::WALL, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "DAMAGING") {
-                            tile->SetFlag(TF_DAMAGING, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::DAMAGING, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "BLOCKING") {
-                            tile->SetFlag(TF_BLOCKING, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::BLOCKING, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "LIQUIDWET") {
-                            tile->SetFlag(TF_WET, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::WET, (std::stoi(data, nullptr, 0) != 0));
                         }
                         
                         // BaseTile Flag 2
                         else if (UTag == "UNKNOWNFLAG1") {
-                            tile->SetFlag(TF_UNKNOWN1, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::UNKNOWN1, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "STANDABLE") {
-                            tile->SetFlag(TF_SURFACE, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::SURFACE, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "CLIMBABLE") {
-                            tile->SetFlag(TF_CLIMBABLE, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::CLIMBABLE , (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "STACKABLE") {
-                            tile->SetFlag(TF_STACKABLE, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::STACKABLE, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "WINDOWARCHDOOR") {
-                            tile->SetFlag(TF_WINDOW, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::WINDOW, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "CANNOTSHOOTTHRU") {
-                            tile->SetFlag(TF_NOSHOOT, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::NOSHOOT, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "DISPLAYASA") {
-                            tile->SetFlag(TF_DISPLAYA, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::DISPLAYA, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "DISPLAYASAN") {
-                            tile->SetFlag(TF_DISPLAYAN, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::DISPLAYAN, (std::stoi(data, nullptr, 0) != 0));
                         }
                         
                         // BaseTile Flag 3
                         else if (UTag == "DESCRIPTIONTILE") {
-                            tile->SetFlag(TF_DESCRIPTION, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::DESCRIPTION, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "FADEWITHTRANS") {
-                            tile->SetFlag(TF_FOLIAGE, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::FOLIAGE, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "PARTIALHUE") {
-                            tile->SetFlag(TF_PARTIALHUE, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::PARTIALHUE, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "UNKNOWNFLAG2") {
-                            tile->SetFlag(TF_UNKNOWN2, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::UNKNOWN2, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "MAP") {
-                            tile->SetFlag(TF_MAP, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::MAP, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "CONTAINER") {
-                            tile->SetFlag(TF_CONTAINER, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::CONTAINER, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "EQUIPABLE") {
-                            tile->SetFlag(TF_WEARABLE, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::WEARABLE, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "LIGHTSOURCE") {
-                            tile->SetFlag(TF_LIGHT, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::LIGHT, (std::stoi(data, nullptr, 0) != 0));
                         }
                         // BaseTile Flag 4
                         else if (UTag == "ANIMATED") {
-                            tile->SetFlag(TF_ANIMATED, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::ANIMATED, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "NODIAGONAL") {
-                            tile->SetFlag(TF_NODIAGONAL, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::NODIAGONAL, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "UNKNOWNFLAG3") {
-                            tile->SetFlag(TF_UNKNOWN3, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::UNKNOWN3, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "WHOLEBODYITEM") {
-                            tile->SetFlag(TF_ARMOR, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::ARMOR, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "WALLROOFWEAP") {
-                            tile->SetFlag(TF_ROOF, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::ROOF, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "DOOR") {
-                            tile->SetFlag(TF_DOOR, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::DOOR, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "CLIMBABLEBIT1") {
-                            tile->SetFlag(TF_STAIRBACK, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::STAIRBACK, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "CLIMBABLEBIT2") {
-                            tile->SetFlag(TF_STAIRRIGHT, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::STAIRRIGHT, (std::stoi(data, nullptr, 0) != 0));
                         }
                     }
                 }
@@ -485,7 +485,7 @@ auto CMulHandler::MultiTile(CItem *i, std::int16_t x, std::int16_t y, std::int8_
     if (!MultiExists(multiId)) {
         Console::shared() << "CMulHandler::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
         auto map1 = worldMULHandler.SeekMap(i->GetX(), i->GetY(), i->WorldNumber());
-        if (map1.CheckFlag(TF_WET)) // is it water?
+        if (map1.CheckFlag(uo::flag_t::WET)) // is it water?
         {
             i->SetId(0x4001);
         }
@@ -572,13 +572,13 @@ auto CMulHandler::DoesStaticBlock(std::int16_t x, std::int16_t y, std::int8_t z,
     for (auto &tile : artTiles) {
         auto elev = static_cast<std::int8_t>(tile.altitude + tile.artInfo->ClimbHeight());
         if (checkWater) {
-            if (elev >= z && tile.altitude <= z && (tile.CheckFlag(TF_BLOCKING) || tile.CheckFlag(TF_WET))) {
+            if (elev >= z && tile.altitude <= z && (tile.CheckFlag(uo::flag_t::BLOCKING) || tile.CheckFlag(uo::flag_t::WET))) {
                 rValue = true;
                 break;
             }
         }
         else {
-            if (elev >= z && tile.altitude <= z && (tile.CheckFlag(TF_BLOCKING) && !tile.CheckFlag(TF_WET))) {
+            if (elev >= z && tile.altitude <= z && (tile.CheckFlag(uo::flag_t::BLOCKING) && !tile.CheckFlag(uo::flag_t::WET))) {
                 rValue = true;
                 break;
             }
@@ -612,12 +612,12 @@ auto CMulHandler::DoesDynamicBlock(std::int16_t x, std::int16_t y, std::int8_t z
         if (IsValidTile(dt) && dt != 0) {
             auto tile = SeekTile(dt);
             if (waterWalk) {
-                if (!tile.CheckFlag(TF_WET)) {
+                if (!tile.CheckFlag(uo::flag_t::WET)) {
                     rValue = true;
                 }
             }
             else {
-                if (tile.CheckFlag(TF_ROOF) || tile.CheckFlag(TF_BLOCKING) || (checkWater && tile.CheckFlag(TF_WET)) /*|| !tile.CheckFlag( TF_SURFACE ) */) {
+                if (tile.CheckFlag(uo::flag_t::ROOF) || tile.CheckFlag(uo::flag_t::BLOCKING) || (checkWater && tile.CheckFlag(uo::flag_t::WET)) /*|| !tile.CheckFlag( TF_SURFACE ) */) {
                     rValue = true;
                 }
             }
@@ -640,12 +640,12 @@ auto CMulHandler::DoesMapBlock(std::int16_t x, std::int16_t y, std::int8_t z, st
                 return true;
             
             if (waterWalk) {
-                if (!map.CheckFlag(TF_WET)) {
+                if (!map.CheckFlag(uo::flag_t::WET)) {
                     return true;
                 }
             }
             else {
-                if (map.CheckFlag(TF_WET) || map.CheckFlag(TF_BLOCKING)) {
+                if (map.CheckFlag(uo::flag_t::WET) || map.CheckFlag(uo::flag_t::BLOCKING)) {
                     return true;
                 }
             }
@@ -696,7 +696,7 @@ auto CMulHandler::DoesCharacterBlock(std::uint16_t x, std::uint16_t y, std::int8
 //|	Purpose		-	Checks to see whether any statics at given coordinates has a
 // specific flag
 // o------------------------------------------------------------------------------------------------o
-auto CMulHandler::CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, tileflags_t toCheck, std::uint16_t &foundtileID, bool checkSpawnSurface) -> bool {
+auto CMulHandler::CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, uo::flag_t toCheck, std::uint16_t &foundtileID, bool checkSpawnSurface) -> bool {
     
     auto rValue = checkSpawnSurface;
     for (const auto &tile : worldMULHandler.ArtAt(x, y, worldNumber)) {
@@ -727,7 +727,7 @@ auto CMulHandler::CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z,
 //|	Purpose		-	Checks to see whether any dynamics at given coordinates has a
 // specific flag
 // o------------------------------------------------------------------------------------------------o
-auto CMulHandler::CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, tileflags_t toCheck, std::uint16_t &foundTileId) -> bool {
+auto CMulHandler::CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, uo::flag_t toCheck, std::uint16_t &foundTileId) -> bool {
     
     // Special case for handling multis that cross over between multiple map regions because of size
     CMultiObj *tempMulti = FindMulti(x, y, z, worldNumber, instanceId);
@@ -795,7 +795,7 @@ auto CMulHandler::CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether given tile ID has a specified flag
 // o------------------------------------------------------------------------------------------------o
-auto CMulHandler::CheckTileFlag(std::uint16_t itemId, tileflags_t flagToCheck) -> bool {
+auto CMulHandler::CheckTileFlag(std::uint16_t itemId, uo::flag_t flagToCheck) -> bool {
     if (!SeekTile(itemId).CheckFlag(flagToCheck)) {
         return false;
     }
@@ -1088,7 +1088,7 @@ auto CMulHandler::ValidSpawnLocation(std::int16_t x, std::int16_t y, std::int8_t
     
     // if the static isn't a surface return false
     [[maybe_unused]] std::uint16_t ignoreMe = 0;
-    if (!CheckStaticFlag(x, y, z, worldNumber, (checkWater ? TF_SURFACE : TF_WET), ignoreMe, true))
+    if (!CheckStaticFlag(x, y, z, worldNumber, (checkWater ? uo::flag_t::SURFACE : uo::flag_t::WET), ignoreMe, true))
         return false;
     
     if (DoesMapBlock(x, y, z, worldNumber, checkWater, !checkWater, false, false))

@@ -33,6 +33,7 @@
 #include "stringutility.hpp"
 #include "townregion.h"
 #include "utility/strutil.hpp"
+#include "uodata/uoflag.hpp"
 #include "weight.h"
 
 extern CDictionaryContainer worldDictionary ;
@@ -629,11 +630,11 @@ bool splTeleport(CSocket *sock, CChar *caster, std::int16_t x, std::int16_t y, s
     }
     if (!caster->IsNpc()) {
         CTile &tile = worldMULHandler.SeekTile(sock->GetWord(0x11));
-        if ((tile.Name() == "water") || tile.CheckFlag(TF_WET)) {
+        if ((tile.Name() == "water") || tile.CheckFlag(uo::flag_t::WET)) {
             sock->SysMessage(671); // You can't teleport there!
             return false;
         }
-        if (tile.CheckFlag(TF_ROOF)) { // slanted roof tile!!! naughty naughty
+        if (tile.CheckFlag(uo::flag_t::ROOF)) { // slanted roof tile!!! naughty naughty
             sock->SysMessage(672); // You cannot teleport there!
             return false;
         }

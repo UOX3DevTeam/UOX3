@@ -19,6 +19,7 @@
 #include "regions.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+#include "uodata/uoflag.hpp"
 #include "weight.h"
 
 extern CDictionaryContainer worldDictionary ;
@@ -430,7 +431,7 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
                 // auto boatSerial = b->GetSerial();
                 if (multiSerial != INVALIDSERIAL && multiSerial != b->GetSerial()) {
                     CTile &tile = worldMULHandler.SeekTile(tempItem->GetId());
-                    if (tile.CheckFlag(TF_BLOCKING))
+                    if (tile.CheckFlag(uo::flag_t::BLOCKING))
                         return true;
                 }
             }
@@ -439,14 +440,14 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
             
             if (sz == ILLEGAL_Z) { // map tile
                 auto map = worldMULHandler.SeekMap(x, y, worldNumber);
-                if (map.altitude >= cz && !map.CheckFlag(TF_WET) && map.name() != "water") // only tiles on/above the water
+                if (map.altitude >= cz && !map.CheckFlag(uo::flag_t::WET) && map.name() != "water") // only tiles on/above the water
                     return true;
             }
             else {
                 auto artwork = worldMULHandler.ArtAt(x, y, worldNumber);
                 for (auto &tile : artwork) {
                     std::int8_t zt = tile.altitude + tile.height();
-                    if (!tile.CheckFlag(TF_WET) && zt >= cz && zt <= (cz + 20) &&
+                    if (!tile.CheckFlag(uo::flag_t::WET) && zt >= cz && zt <= (cz + 20) &&
                         (tile.name() != "water"))
                         return true;
                 }

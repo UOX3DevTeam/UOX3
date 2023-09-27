@@ -214,9 +214,9 @@ auto main(std::int32_t argc, char *argv[]) -> int {
         // If we cant read the config file, should we even do anything else ?
         ServerConfig::shared().loadConfig(configFile);
         // Lets get the uodata now, otherwise, we can stop
-        uoManager.load(ServerConfig::shared().directoryFor(dirlocation_t::UODIR),ServerConfig::shared().directoryFor(dirlocation_t::DEFINITION)/std::filesystem::path("maps"),true,ServerConfig::shared().serverSwitch[ServerSwitch::MAPDIFF]) ;
-        std::cout <<"Tile information - Terrain: "<<uoManager.terrainSize()<<" Art: " << uoManager.artSize()<<std::endl;
-        std::cout <<"Multi Information: "<<uoManager.sizeMulti()<<std::endl;
+        //uoManager.load(ServerConfig::shared().directoryFor(dirlocation_t::UODIR),ServerConfig::shared().directoryFor(dirlocation_t::DEFINITION)/std::filesystem::path("maps"),true,ServerConfig::shared().serverSwitch[ServerSwitch::MAPDIFF]) ;
+        //std::cout <<"Tile information - Terrain: "<<uoManager.terrainSize()<<" Art: " << uoManager.artSize()<<std::endl;
+        //std::cout <<"Multi Information: "<<uoManager.sizeMulti()<<std::endl;
         initOperatingSystem() ;
         return 0;
     }
@@ -3224,10 +3224,10 @@ auto GetTileName(CItem &mItem, std::string &itemname) -> size_t {
     }
     
     if (getAmount == 1) {
-        if (tile.CheckFlag(TF_DISPLAYAN)) {
+        if (tile.CheckFlag(uo::flag_t::DISPLAYAN)) {
             temp = "an " + temp;
         }
-        else if (tile.CheckFlag(TF_DISPLAYA)) {
+        else if (tile.CheckFlag(uo::flag_t::DISPLAYA)) {
             temp = "a " + temp;
         }
     }

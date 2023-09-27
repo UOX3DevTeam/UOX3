@@ -1,12 +1,13 @@
 #include <algorithm>
 #include <cmath>
 
+#include "subsystem/console.hpp"
 #include "cchar.h"
 #include "citem.h"
 #include "funcdecl.h"
 #include "mapstuff.h"
 #include "regions.h"
-#include "subsystem/console.hpp"
+#include "uodata/uoflag.hpp"
 
 extern CMulHandler worldMULHandler ;
 extern CMapHandler worldMapHandler ;
@@ -289,32 +290,32 @@ bool CheckFlags(std::uint8_t typeToCheck, Tile_st &toCheck, std::int8_t startZ, 
     switch (typeToCheck) {
         case TREES_BUSHES: // Trees, Shrubs, bushes - if it's blocking but has neither of the flags
             // listed below, assume it's a tree! :P
-            if (toCheck.CheckFlag(TF_FOLIAGE) || ((toCheck.CheckFlag(TF_BLOCKING) && !toCheck.CheckFlag(TF_WALL) && !toCheck.CheckFlag(TF_SURFACE) && !toCheck.CheckFlag(TF_WINDOW)) || (!toCheck.CheckFlag(TF_CLIMBABLE) && !toCheck.CheckFlag(TF_WET) && !toCheck.CheckFlag(TF_ROOF)) || !toCheck.CheckFlag(TF_CONTAINER))) {
+            if (toCheck.CheckFlag(uo::flag_t::FOLIAGE) || ((toCheck.CheckFlag(uo::flag_t::BLOCKING) && !toCheck.CheckFlag(uo::flag_t::WALL) && !toCheck.CheckFlag(uo::flag_t::SURFACE) && !toCheck.CheckFlag(uo::flag_t::WINDOW)) || (!toCheck.CheckFlag(uo::flag_t::CLIMBABLE) && !toCheck.CheckFlag(uo::flag_t::WET) && !toCheck.CheckFlag(uo::flag_t::ROOF)) || !toCheck.CheckFlag(uo::flag_t::CONTAINER))) {
                 return false;
             }
             break;
         case WALLS_CHIMNEYS: // Walls, Chimneys, ovens, not fences
-            if (toCheck.CheckFlag(TF_WALL) || (toCheck.CheckFlag(TF_NOSHOOT) && !toCheck.CheckFlag(TF_SURFACE)) || toCheck.CheckFlag(TF_WINDOW)) {
+            if (toCheck.CheckFlag(uo::flag_t::WALL) || (toCheck.CheckFlag(uo::flag_t::NOSHOOT) && !toCheck.CheckFlag(uo::flag_t::SURFACE)) || toCheck.CheckFlag(uo::flag_t::WINDOW)) {
                 return true;
             }
             break;
         case DOORS: // Doors, not gates
-            if (toCheck.CheckFlag(TF_DOOR))
+            if (toCheck.CheckFlag(uo::flag_t::DOOR))
                 return true;
             break;
         case ROOFING_SLANTED: // Roofing Slanted
-            if (toCheck.CheckFlag(TF_ROOF))
+            if (toCheck.CheckFlag(uo::flag_t::ROOF))
                 return true;
             break;
         case FLOORS_FLAT_ROOFING: // Floors & Flat Roofing (Attacking through floors Roofs)
-            if (toCheck.CheckFlag(TF_SURFACE)) {
+            if (toCheck.CheckFlag(uo::flag_t::SURFACE)) {
                 if (useSurfaceZ ? (startZ != destZ) : ((startZ - 15) != destZ)) {
                     return true;
                 }
             }
             break;
         case LAVA_WATER: // Lava, water
-            if (toCheck.CheckFlag(TF_WET))
+            if (toCheck.CheckFlag(uo::flag_t::WET))
                 return true;
             break;
         default:
@@ -367,7 +368,7 @@ std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int3
             Console::shared() << "LoS - Bad length in multi file. Avoiding stall" << myendl;
             auto map1 = worldMULHandler.SeekMap(curX, curY, toCheck->WorldNumber());
             
-            if (map1.CheckFlag(TF_WET)) { // is it water?
+            if (map1.CheckFlag(uo::flag_t::WET)) { // is it water?
                 toCheck->SetId(0x4001);
             }
             else {

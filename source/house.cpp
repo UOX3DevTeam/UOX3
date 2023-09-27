@@ -17,7 +17,7 @@
 #include "stringutility.hpp"
 #include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
-
+#include "uodata/uoflag.hpp"
 extern WorldItem worldItem ;
 extern CServerDefinitions worldFileLookup ;
 extern CMulHandler worldMULHandler ;
@@ -166,14 +166,10 @@ auto CreateHouseItems(CChar *mChar, std::vector<std::string> houseItems, CItem *
                                 // Let's assume default rotation is North/South oriented, and check
                                 // for walls to the left of the addon:
                                 [[maybe_unused]] std::uint16_t ignoreMe = 0;
-                                bool wallFound = (worldMULHandler.CheckDynamicFlag(
-                                                                        hItem->GetX() - 1, hItem->GetY(), hItem->GetZ(), worldNum,
-                                                                        hInstanceId, TF_WALL, ignoreMe));
+                                bool wallFound = (worldMULHandler.CheckDynamicFlag( hItem->GetX() - 1, hItem->GetY(), hItem->GetZ(), worldNum, hInstanceId, uo::flag_t::WALL, ignoreMe));
                                 if (wallFound) {
                                     // What if it's placed in a corner? Look for north wall too:
-                                    bool northWallFound = (worldMULHandler.CheckDynamicFlag(
-                                                                                 hItem->GetX(), hItem->GetY() - 1, hItem->GetZ(), worldNum,
-                                                                                 hInstanceId, TF_WALL, ignoreMe));
+                                    bool northWallFound = (worldMULHandler.CheckDynamicFlag( hItem->GetX(), hItem->GetY() - 1, hItem->GetZ(), worldNum, hInstanceId, uo::flag_t::WALL, ignoreMe));
                                     if (northWallFound) {
                                         // Randomize between the two directions
                                         if (RandomNum(0, 1)) {
@@ -289,9 +285,7 @@ auto CreateHouseItems(CChar *mChar, std::vector<std::string> houseItems, CItem *
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check whether the chosen location is valid for house placement
 // o------------------------------------------------------------------------------------------------o
-auto CheckForValidHouseLocation(CSocket *mSock, CChar *mChar, std::int16_t x, std::int16_t y, std::int8_t z, std::int16_t spaceX,
-                                std::int16_t spaceY, std::uint8_t worldNum, std::uint16_t instanceId, bool isBoat,
-                                bool isMulti) -> bool {
+auto CheckForValidHouseLocation(CSocket *mSock, CChar *mChar, std::int16_t x, std::int16_t y, std::int8_t z, std::int16_t spaceX, std::int16_t spaceY, std::uint8_t worldNum, std::uint16_t instanceId, bool isBoat,  bool isMulti) -> bool {
     auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(worldNum);
     if ((x + spaceX > mapWidth || x - spaceX < 0 || y + spaceY > mapHeight || y - spaceY < 0) &&
         !mChar->IsGM()) {
@@ -325,14 +319,10 @@ auto CheckForValidHouseLocation(CSocket *mSock, CChar *mChar, std::int16_t x, st
                         
                         if (mItem->GetType() == 12 || mItem->GetType() == 13) {
                             std::int8_t mItemZ = mItem->GetZ();
-                            if ((mItemZ > z) &&
-                                ((mItemZ - z) >= 20)) // Ignore doors on floors above
-                            {
+                            if ((mItemZ > z) && ((mItemZ - z) >= 20)){ // Ignore doors on floors above
                                 continue;
                             }
-                            else if ((mItemZ < z) &&
-                                     (z - mItemZ) >= 20) // Ignore doors on floors below, too!
-                            {
+                            else if ((mItemZ < z) && (z - mItemZ) >= 20) { // Ignore doors on floors below, too!
                                 continue;
                             }
                             
@@ -357,8 +347,7 @@ auto CheckForValidHouseLocation(CSocket *mSock, CChar *mChar, std::int16_t x, st
                             
                             if (GetDist(Point3(x, y, z), mItem->GetLocation()) < 2) {
                                 if (mSock) {
-                                    mSock->SysMessage(
-                                                      9028); // You cannot place a house-addon adjacent to a door.
+                                    mSock->SysMessage(9028); // You cannot place a house-addon adjacent to a door.
                                 }
                                 return false;
                             }
@@ -367,8 +356,7 @@ auto CheckForValidHouseLocation(CSocket *mSock, CChar *mChar, std::int16_t x, st
                     
                     // Don't allow placing addon if it collides with a blocking tile at same height
                     [[maybe_unused]] std::uint16_t ignoreMe = 0;
-                    bool locationBlocked = (worldMULHandler.CheckDynamicFlag(
-                                                                  curX, curY, z, worldNum, instanceId, TF_BLOCKING, ignoreMe));
+                    bool locationBlocked = (worldMULHandler.CheckDynamicFlag( curX, curY, z, worldNum, instanceId, uo::flag_t::BLOCKING, ignoreMe));
                     if (locationBlocked) {
                         if (mSock) {
                             mSock->SysMessage(9097); // You cannot place this house-addon there,

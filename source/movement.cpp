@@ -61,6 +61,7 @@
 #include "configuration/serverconfig.hpp"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+#include "uodata/uoflag.hpp"
 #include "type/weather.hpp"
 #include "weight.h"
 
@@ -784,7 +785,7 @@ auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<
                             Console::shared().error("Walking() - Bad length in multi file. Avoiding stall");
                             auto map1 = worldMULHandler.SeekMap(tItem->GetX(), tItem->GetY(), tItem->WorldNumber());
                             
-                            if (map1.CheckFlag(TF_WET)) {// is it water?
+                            if (map1.CheckFlag(uo::flag_t::WET)) {// is it water?
                                 tItem->SetId(0x4001);
                             }
                             else {
@@ -2430,15 +2431,15 @@ void CMovement::GetAverageZ(std::uint8_t nm, std::int16_t x, std::int16_t y, std
 // o------------------------------------------------------------------------------------------------o
 bool CMovement::IsOk(std::vector<Tile_st> &xyblock, [[maybe_unused]] std::uint16_t &xycount, [[maybe_unused]] std::uint8_t world, std::int8_t ourZ, std::int8_t ourTop, [[maybe_unused]] std::int16_t x, [[maybe_unused]] std::int16_t y, [[maybe_unused]] std::uint16_t instanceId, bool ignoreDoor,  bool waterWalk) {
     for (auto &tile : xyblock) {
-        if (tile.CheckFlag(TF_WET)) {
+        if (tile.CheckFlag(uo::flag_t::WET)) {
             // If blocking object is WET and character can swim, ignore object
             if (waterWalk)
                 continue;
         }
         
-        if (tile.CheckFlag(TF_BLOCKING) || tile.CheckFlag(TF_SURFACE)) {
+        if (tile.CheckFlag(uo::flag_t::BLOCKING) || tile.CheckFlag(uo::flag_t::SURFACE)) {
             // If character ignores doors (GMs/Counselors/Ghosts), and this is a door, ignore.
-            if (ignoreDoor && tile.type == tiletype_t::dyn && (tile.CheckFlag(TF_DOOR) || tile.tileId == 0x692 || tile.tileId == 0x846 || tile.tileId == 0x873 || (tile.tileId >= 0x6F5 && tile.tileId <= 0x6F6)))
+            if (ignoreDoor && tile.type == tiletype_t::dyn && (tile.CheckFlag(uo::flag_t::DOOR) || tile.tileId == 0x692 || tile.tileId == 0x846 || tile.tileId == 0x873 || (tile.tileId >= 0x6F5 && tile.tileId <= 0x6F6)))
                 continue;
             
             std::int8_t checkz = tile.altitude;
@@ -2464,8 +2465,8 @@ void CMovement::GetStartZ(std::uint8_t world, [[maybe_unused]] CChar *c, std::in
     
     auto map = worldMULHandler.SeekMap(x, y, world);
     
-    landBlock = map.CheckFlag(TF_BLOCKING);
-    if (landBlock && waterwalk && map.CheckFlag(TF_WET)) {
+    landBlock = map.CheckFlag(uo::flag_t::BLOCKING);
+    if (landBlock && waterwalk && map.CheckFlag(uo::flag_t::WET)) {
         landBlock = false;
     }
     
@@ -2493,7 +2494,7 @@ void CMovement::GetStartZ(std::uint8_t world, [[maybe_unused]] CChar *c, std::in
     
     for (auto &tile : xyblock) {
         // If the tile is a surface that can be walked on, or swam on...
-        if ((!isset || tile.top() >= zcenter) && (tile.CheckFlag(TF_SURFACE) || (waterwalk && tile.CheckFlag(TF_WET))) && z >= tile.top()) {
+        if ((!isset || tile.top() >= zcenter) && (tile.CheckFlag(uo::flag_t::SURFACE) || (waterwalk && tile.CheckFlag(uo::flag_t::WET))) && z >= tile.top()) {
             // Fetch the base Z position of surface tile
             zlow = tile.altitude;
             
@@ -2617,11 +2618,11 @@ std::int8_t CMovement::CalcWalk(CChar *c, std::int16_t x, std::int16_t y, std::i
     auto map = worldMULHandler.SeekMap(x, y, c->WorldNumber());
     
     // Does landtile in target location block movement?
-    landBlock = map.CheckFlag(TF_BLOCKING);
+    landBlock = map.CheckFlag(uo::flag_t::BLOCKING);
     
     // If it does, but it's WET and character can swim, it doesn't block!
     if (waterWalk) {
-        auto mapIsWet = map.CheckFlag(TF_WET);
+        auto mapIsWet = map.CheckFlag(uo::flag_t::WET);
         if (landBlock) {
             if (mapIsWet || (map.terrainInfo->TextureId() >= 76 && map.terrainInfo->TextureId() <= 111)) {
                 // Swimming creature attempting to move on water! Allow it.
@@ -2662,7 +2663,7 @@ std::int8_t CMovement::CalcWalk(CChar *c, std::int16_t x, std::int16_t y, std::i
     
     // Loop through all objects in the target location
     for (auto &tile : xyblock) {
-        if ((!tile.CheckFlag(TF_BLOCKING) && tile.CheckFlag(TF_SURFACE) && !waterWalk) || (waterWalk && tile.CheckFlag(TF_WET))) {
+        if ((!tile.CheckFlag(uo::flag_t::BLOCKING) && tile.CheckFlag(uo::flag_t::SURFACE) && !waterWalk) || (waterWalk && tile.CheckFlag(uo::flag_t::WET))) {
             std::int8_t itemz = tile.altitude; // Object's current Z position
             std::int8_t itemTop = itemz;
             std::int8_t potentialNewZ =
@@ -2679,7 +2680,7 @@ std::int8_t CMovement::CalcWalk(CChar *c, std::int16_t x, std::int16_t y, std::i
                 testTop = potentialNewZ + charHeight;
             }
             
-            if (!tile.CheckFlag(TF_CLIMBABLE)) {
+            if (!tile.CheckFlag(uo::flag_t::CLIMBABLE)) {
                 itemTop += tile.height();
             }
             

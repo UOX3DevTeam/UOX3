@@ -13,6 +13,7 @@
 #include "mapstuff.h"
 #include "network.h"
 #include "regions.h"
+#include "uodata/uoflag.hpp"
 
 extern cRaces worldRace ;
 extern CMulHandler worldMULHandler ;
@@ -360,7 +361,7 @@ bool InMulti(std::int16_t x, std::int16_t y, std::int8_t z, CMultiObj *m) {
         length = 0;
         
         auto map1 = worldMULHandler.SeekMap(m->GetX(), m->GetY(), m->WorldNumber());
-        if (map1.CheckFlag(TF_WET)) { // is it water?
+        if (map1.CheckFlag(uo::flag_t::WET)) { // is it water?
             // NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
             // So either: 1) Let the user fix it in the worldfile once its saved
             // 2) Destroy the CMultiObj, create a new CBoatObj, and set to the same serial

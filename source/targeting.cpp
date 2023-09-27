@@ -29,6 +29,7 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "townregion.h"
+#include "uodata/uoflag.hpp"
 
 extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
@@ -610,39 +611,40 @@ void InfoTarget(CSocket *s) {
         statTile.AddData("Height", tile.Height(), 0);
         statTile.AddData("Name", tile.Name().c_str());
         statTile.AddData("Flags:", tile.FlagsNum(), 1);
-        statTile.AddData("--> FloorLevel", tile.CheckFlag(TF_FLOORLEVEL));
-        statTile.AddData("--> Holdable", tile.CheckFlag(TF_HOLDABLE));
-        statTile.AddData("--> Transparent", tile.CheckFlag(TF_TRANSPARENT));
-        statTile.AddData("--> Translucent", tile.CheckFlag(TF_TRANSLUCENT));
-        statTile.AddData("--> Wall", tile.CheckFlag(TF_WALL));
-        statTile.AddData("--> Damaging", tile.CheckFlag(TF_DAMAGING));
-        statTile.AddData("--> Blocking", tile.CheckFlag(TF_BLOCKING));
-        statTile.AddData("--> Wet", tile.CheckFlag(TF_WET));
-        statTile.AddData("--> Unknown1", tile.CheckFlag(TF_UNKNOWN1));
-        statTile.AddData("--> Surface", tile.CheckFlag(TF_SURFACE));
-        statTile.AddData("--> Climbable", tile.CheckFlag(TF_CLIMBABLE));
-        statTile.AddData("--> Stackable", tile.CheckFlag(TF_STACKABLE));
-        statTile.AddData("--> Window", tile.CheckFlag(TF_WINDOW));
-        statTile.AddData("--> NoShoot", tile.CheckFlag(TF_NOSHOOT));
-        statTile.AddData("--> DisplayA", tile.CheckFlag(TF_DISPLAYA));
-        statTile.AddData("--> DisplayAn", tile.CheckFlag(TF_DISPLAYAN));
-        statTile.AddData("--> Description", tile.CheckFlag(TF_DESCRIPTION));
-        statTile.AddData("--> Foilage", tile.CheckFlag(TF_FOLIAGE));
-        statTile.AddData("--> PartialHue", tile.CheckFlag(TF_PARTIALHUE));
-        statTile.AddData("--> Unknown2", tile.CheckFlag(TF_UNKNOWN2));
-        statTile.AddData("--> Map", tile.CheckFlag(TF_MAP));
-        statTile.AddData("--> Container", tile.CheckFlag(TF_CONTAINER));
-        statTile.AddData("--> Wearable", tile.CheckFlag(TF_WEARABLE));
-        statTile.AddData("--> Light", tile.CheckFlag(TF_LIGHT));
-        statTile.AddData("--> Animated", tile.CheckFlag(TF_ANIMATED));
-        statTile.AddData("--> NoDiagonal", tile.CheckFlag(TF_NODIAGONAL)); // HOVEROVER in SA clients and later, to determine if
+        statTile.AddData("--> FloorLevel", tile.CheckFlag(uo::flag_t::FLOORLEVEL));
+        statTile.AddData("--> Holdable", tile.CheckFlag(uo::flag_t::HOLDABLE));
+        statTile.AddData("--> Transparent", tile.CheckFlag(uo::flag_t::TRANSPARENT));
+        statTile.AddData("--> Translucent", tile.CheckFlag(uo::flag_t::TRANSLUCENT));
+        statTile.AddData("--> Wall", tile.CheckFlag(uo::flag_t::WALL));
+        statTile.AddData("--> Damaging", tile.CheckFlag(uo::flag_t::DAMAGING));
+        statTile.AddData("--> Blocking", tile.CheckFlag(uo::flag_t::BLOCKING));
+        statTile.AddData("--> Wet", tile.CheckFlag(uo::flag_t::WET));
+        statTile.AddData("--> Unknown1", tile.CheckFlag(uo::flag_t::UNKNOWN1));
+        statTile.AddData("--> Surface", tile.CheckFlag(uo::flag_t::SURFACE));
+        statTile.AddData("--> Climbable", tile.CheckFlag(uo::flag_t::CLIMBABLE));
+        statTile.AddData("--> Stackable", tile.CheckFlag(uo::flag_t::STACKABLE));
+        statTile.AddData("--> Window", tile.CheckFlag(uo::flag_t::WINDOW));
+        statTile.AddData("--> NoShoot", tile.CheckFlag(uo::flag_t::NOSHOOT));
+        statTile.AddData("--> DisplayA", tile.CheckFlag(uo::flag_t::DISPLAYA));
+        statTile.AddData("--> DisplayAn", tile.CheckFlag(uo::flag_t::DISPLAYAN));
+        statTile.AddData("--> Description", tile.CheckFlag(uo::flag_t::DESCRIPTION));
+        statTile.AddData("--> Foilage", tile.CheckFlag(uo::flag_t::FOLIAGE));
+        statTile.AddData("--> PartialHue", tile.CheckFlag(uo::flag_t::PARTIALHUE));
+        statTile.AddData("--> Unknown2", tile.CheckFlag(uo::flag_t::UNKNOWN2));
+        statTile.AddData("--> Map", tile.CheckFlag(uo::flag_t::MAP));
+        statTile.AddData("--> Container", tile.CheckFlag(uo::flag_t::CONTAINER));
+        statTile.AddData("--> Wearable", tile.CheckFlag(uo::flag_t::WEARABLE));
+        statTile.AddData("--> Light", tile.CheckFlag(uo::flag_t::LIGHT));
+        statTile.AddData("--> Animated", tile.CheckFlag(uo::flag_t::ANIMATED));
+        statTile.AddData("--> NoDiagonal", tile.CheckFlag(uo::flag_t::NODIAGONAL)); // HOVEROVER in SA clients and later, to determine if
         // tiles can be moved on by flying gargoyle
-        statTile.AddData("--> Unknown3", tile.CheckFlag(TF_UNKNOWN3));
-        statTile.AddData("--> Armor", tile.CheckFlag(TF_ARMOR));
-        statTile.AddData("--> Roof", tile.CheckFlag(TF_ROOF));
-        statTile.AddData("--> Door", tile.CheckFlag(TF_DOOR));
-        statTile.AddData("--> StairBack", tile.CheckFlag(TF_STAIRBACK));
-        statTile.AddData("--> StairRight", tile.CheckFlag(TF_STAIRRIGHT));
+        statTile.AddData("--> Unknown3", tile.CheckFlag(uo::flag_t::UNKNOWN3));
+        statTile.AddData("--> Armor", tile.CheckFlag(uo::flag_t::ARMOR));
+        statTile.AddData("--> Roof", tile.CheckFlag(uo::flag_t::ROOF));
+        statTile.AddData("--> Door", tile.CheckFlag(uo::flag_t::DOOR));
+        statTile.AddData("--> StairBack", tile.CheckFlag(uo::flag_t::STAIRBACK));
+        statTile.AddData("--> StairRight", tile.CheckFlag(uo::flag_t::STAIRRIGHT));
+        /*
         statTile.AddData("--> AlphaBlend", tile.CheckFlag(TF_ALPHABLEND));
         statTile.AddData("--> UseNewArt", tile.CheckFlag(TF_USENEWART));
         statTile.AddData("--> ArtUsed", tile.CheckFlag(TF_ARTUSED));
@@ -650,6 +652,7 @@ void InfoTarget(CSocket *s) {
         statTile.AddData("--> PixelBleed", tile.CheckFlag(TF_PIXELBLEED));
         statTile.AddData("--> PlayAnimOnce", tile.CheckFlag(TF_PLAYANIMONCE));
         statTile.AddData("--> MultiMovable", tile.CheckFlag(TF_MULTIMOVABLE));
+         */
         statTile.Send(4, false, INVALIDSERIAL);
     }
 }

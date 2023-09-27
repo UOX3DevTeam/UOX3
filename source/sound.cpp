@@ -12,7 +12,7 @@
 #include "ssection.h"
 #include "townregion.h"
 #include "utility/strutil.hpp"
-
+#include "uodata/uoflag.hpp"
 using namespace std::string_literals;
 
 extern cEffects worldEffect ;
@@ -353,10 +353,10 @@ auto cEffects::PlayTileSound(CChar *mChar, CSocket *mSock) -> void {
     });
     
     if (iter != artwork.rend()) {
-        if (iter->artInfo->CheckFlag(TF_WET)) {
+        if (iter->artInfo->CheckFlag(uo::flag_t::WET)) {
             tileType = TT_WATER;
         }
-        if (iter->artInfo->CheckFlag(TF_SURFACE) || iter->artInfo->CheckFlag(TF_CLIMBABLE)) {
+        if (iter->artInfo->CheckFlag(uo::flag_t::SURFACE) || iter->artInfo->CheckFlag(uo::flag_t::CLIMBABLE)) {
             auto pos = iter->artInfo->Name().find("wood");
             if (pos != std::string::npos) {
                 tileType = TT_WOODEN;

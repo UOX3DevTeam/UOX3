@@ -166,9 +166,9 @@ public:
     auto DoesCharacterBlock(std::uint16_t x, std::uint16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId) -> bool;
     auto DynTile(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,std::uint16_t instanceId, bool checkOnlyMultis, bool checkOnlyNonMultis)-> CItem *;
     auto DoesMapBlock(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,bool checkWater, bool waterWalk, bool checkMultiPlacement, bool checkForRoad)-> bool;
-    auto CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,tileflags_t toCheck, std::uint16_t &foundTileId, bool checkSpawnSurface = false)-> bool;
-    auto CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,std::uint16_t instanceId, tileflags_t toCheck, std::uint16_t &foundTileId) -> bool;
-    auto CheckTileFlag(std::uint16_t itemId, tileflags_t flagToCheck) -> bool;
+    auto CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,uo::flag_t toCheck, std::uint16_t &foundTileId, bool checkSpawnSurface = false)-> bool;
+    auto CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,std::uint16_t instanceId, uo::flag_t toCheck, std::uint16_t &foundTileId) -> bool;
+    auto CheckTileFlag(std::uint16_t itemId, uo::flag_t flagToCheck) -> bool;
     
     // height functions
     auto StaticTop(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,std::int8_t maxZ) -> std::int8_t;
