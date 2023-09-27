@@ -281,7 +281,7 @@ namespace uo{
     auto TileInfo::checkUOX3Flag(std::uint32_t tilenumber,const std::string &key, const std::string &value) ->bool {
         auto rvalue = false ;
         try {
-            auto bit = bitForName(key) ;
+            auto bit = uobitForName(key) ;
             auto state = static_cast<bool>(std::stoi(key,nullptr,0));
             artInfo.at(tilenumber).flag.set(bit, state);
             rvalue = true ;

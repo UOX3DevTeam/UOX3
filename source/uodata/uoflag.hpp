@@ -21,7 +21,7 @@ namespace uo {
         ANIMATED,NODIAGONAL,UNKNOWN3,ARMOR,
         ROOF,DOOR,STAIRBACK,STAIRRIGHT
     };
-    auto bitForName(const std::string &name) -> uoflag_t ;
+    auto uobitForName(const std::string &name) -> uoflag_t ;
     
     
     //======================================================================
