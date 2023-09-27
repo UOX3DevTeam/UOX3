@@ -10,10 +10,11 @@
 #include "artmap.hpp"
 #include "terrainmap.hpp"
 
-struct TileInfo ;
 
 //======================================================================
 namespace uo {
+    struct TileInfo;
+
     class UOMap {
         ArtMap artData ;
         TerrainMap terrainData ;
