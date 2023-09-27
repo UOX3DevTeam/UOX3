@@ -10,7 +10,7 @@ namespace uo{
     //======================================================================
     static std::map<std::string,flag_t> NAMEBITMAP {
         {"ATFLOORLEVEL"s,flag_t::FLOORLEVEL},{"HOLDABLE"s,flag_t::HOLDABLE},
-        {"SIGNGUILDBANNER"s,flag_t::TRANSPARENT},{"WEBDIRTBLOOD"s,flag_t::TRANSLUCENT},
+        {"SIGNGUILDBANNER"s,flag_t::UTRANSPARENT},{"WEBDIRTBLOOD"s,flag_t::TRANSLUCENT},
         {"WALLVERTTILE"s,flag_t::WALL},{"DAMAGING"s,flag_t::DAMAGING},
         {"BLOCKING"s,flag_t::BLOCKING},{"LIQUIDWET"s,flag_t::WET},
         {"UNKNOWNFLAG1"s,flag_t::UNKNOWN1},{"STANDABLE"s,flag_t::SURFACE},
@@ -39,7 +39,7 @@ namespace uo{
     // Define flagnames
     //=================================================================================
     const std::unordered_map<std::string,unsigned long long> Flag::flagname_masks{
-        {"background"s,Flag::BACKGROUND},{"weapon"s,Flag::WEAPON},{"transparent"s,Flag::TRANSPARENT},{"translucent"s,Flag::TRANSLUCENT},
+        {"background"s,Flag::BACKGROUND},{"weapon"s,Flag::WEAPON},{"transparent"s,Flag::UTRANSPARENT},{"translucent"s,Flag::TRANSLUCENT},
         {"wall"s,Flag::WALL},{"damaging"s,Flag::DAMAGING},{"impassable"s,Flag::IMPASSABLE},{"wet"s,Flag::WET},
         {"bit9"s,Flag::BIT9},{"surface"s,Flag::SURFACE},{"climbable"s,Flag::CLIMBABLE},{"stackable"s,Flag::STACKABLE},
         {"window"s,Flag::WINDOW},{"noshoot"s,Flag::NOSHOOT},{"articlea"s,Flag::ARTICLEA},{"articlean"s,Flag::ARTICLEAN},

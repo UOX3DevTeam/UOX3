@@ -7,12 +7,14 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+
 namespace uo {
     //====================================================================
     // UOX3 compatability
     //====================================================================
+    // We can not use TRANSPARENT because it gets defined as a "1" on windows
     enum class flag_t {
-        FLOORLEVEL=0,HOLDABLE,TRANSPARENT,TRANSLUCENT,
+        FLOORLEVEL=0,HOLDABLE,UTRANSPARENT,TRANSLUCENT,
         WALL,DAMAGING,BLOCKING,WET,
         UNKNOWN1,SURFACE,CLIMBABLE,STACKABLE,
         WINDOW,NOSHOOT,DISPLAYA,DISPLAYAN,
@@ -31,7 +33,7 @@ namespace uo {
         //====================================================================
         constexpr static auto   BACKGROUND=0x1ull;
         constexpr static auto   WEAPON=0x2ull;
-        constexpr static auto   TRANSPARENT=0x4ull;
+        constexpr static auto   UTRANSPARENT=0x4ull;
         constexpr static auto   TRANSLUCENT=0x8ull;
         
         constexpr static auto   WALL=0x10ull;

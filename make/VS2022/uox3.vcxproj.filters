@@ -370,9 +370,6 @@
     <ClCompile Include="..\..\source\uodata\artmap.cpp">
       <Filter>source files\uodata</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\utility\filemap.cpp">
-      <Filter>source files\uodata</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\uodata\hash.cpp">
       <Filter>source files\uodata</Filter>
     </ClCompile>
@@ -402,6 +399,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\uodata\uotile.cpp">
       <Filter>source files\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\utility\filemap.cpp">
+      <Filter>source files\utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -722,9 +722,6 @@
     <ClInclude Include="..\..\source\uodata\artmap.hpp">
       <Filter>source files\uodata</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\utility\filemap.hpp">
-      <Filter>source files\uodata</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\uodata\hash.hpp">
       <Filter>source files\uodata</Filter>
     </ClInclude>
@@ -754,6 +751,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\uodata\uotile.hpp">
       <Filter>source files\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\utility\filemap.hpp">
+      <Filter>source files\utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -208,7 +208,7 @@ auto CMulHandler::LoadDFNOverrides() -> void {
                             tile->SetFlag(uo::flag_t::HOLDABLE, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "SIGNGUILDBANNER") {
-                            tile->SetFlag(uo::flag_t::TRANSPARENT, (std::stoi(data, nullptr, 0) != 0));
+                            tile->SetFlag(uo::flag_t::UTRANSPARENT, (std::stoi(data, nullptr, 0) != 0));
                         }
                         else if (UTag == "WEBDIRTBLOOD") {
                             tile->SetFlag(uo::flag_t::TRANSLUCENT, (std::stoi(data, nullptr, 0) != 0));

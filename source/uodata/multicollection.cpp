@@ -380,12 +380,12 @@ namespace uo {
             switch (flag) {
                 default:
                 case 0:
-                    item.flag = 1;
+                    item.flag.value = 1;
                     break;
                 case 1:
                     break;
                 case 257:
-                    item.flag = 0x800;
+                    item.flag.value = 0x800;
                     break;
             }
             // we now have some clilocs to read past, have to find out how many
@@ -446,7 +446,7 @@ namespace uo {
                         tile.zoffset = static_cast<int>(temp16);
                         count += 8 ;
                         mul.read(reinterpret_cast<char*>(&flag),flagsize);
-                        tile.flag = flag ;
+                        tile.flag.value = flag ;
                         count += flagsize ;
                         entry.addTile(tile) ;
                     }

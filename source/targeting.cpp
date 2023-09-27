@@ -613,7 +613,7 @@ void InfoTarget(CSocket *s) {
         statTile.AddData("Flags:", tile.FlagsNum(), 1);
         statTile.AddData("--> FloorLevel", tile.CheckFlag(uo::flag_t::FLOORLEVEL));
         statTile.AddData("--> Holdable", tile.CheckFlag(uo::flag_t::HOLDABLE));
-        statTile.AddData("--> Transparent", tile.CheckFlag(uo::flag_t::TRANSPARENT));
+        statTile.AddData("--> Transparent", tile.CheckFlag(uo::flag_t::UTRANSPARENT));
         statTile.AddData("--> Translucent", tile.CheckFlag(uo::flag_t::TRANSLUCENT));
         statTile.AddData("--> Wall", tile.CheckFlag(uo::flag_t::WALL));
         statTile.AddData("--> Damaging", tile.CheckFlag(uo::flag_t::DAMAGING));
