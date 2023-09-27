@@ -8,26 +8,26 @@
 using namespace std::string_literals ;
 namespace uo{
     //======================================================================
-    static std::map<std::string,uoflag_t> NAMEBITMAP {
-        {"ATFLOORLEVEL"s,FLOORLEVEL},{"HOLDABLE"s,HOLDABLE},
-        {"SIGNGUILDBANNER"s,TRANSPARENT},{"WEBDIRTBLOOD"s,TRANSLUCENT},
-        {"WALLVERTTILE"s,WALL},{"DAMAGING"s,DAMAGING},
-        {"BLOCKING"s,BLOCKING},{"LIQUIDWET"s,WET},
-        {"UNKNOWNFLAG1"s,UNKNOWN1},{"STANDABLE"s,SURFACE},
-        {"CLIMBABLE"s,CLIMBABLE},{"STACKABLE"s,STACKABLE},
-        {"WINDOWARCHDOOR"s,WINDOW},{"CANNOTSHOOTTHRU"s,NOSHOOT},
-        {"DISPLAYASA"s,DISPLAYA},{"DISPLAYASAN"s,DISPLAYAN},
-        {"DESCRIPTIONTILE"s,DESCRIPTION},{"FADEWITHTRANS"s,FOLIAGE},
-        {"PARTIALHUE"s,PARTIALHUE},{"UNKNOWNFLAG2"s,UNKNOWN2},
-        {"MAP"s,MAP},{"CONTAINER"s,CONTAINER},
-        {"EQUIPABLE"s,WEARABLE},{"LIGHTSOURCE"s,LIGHT},
-        {"ANIMATED"s,ANIMATED},{"NODIAGONAL"s,NODIAGONAL},
-        {"UNKNOWNFLAG3"s,UNKNOWN3},{"WHOLEBODYITEM"s,ARMOR},
-        {"WALLROOFWEAP"s,ROOF},{"DOOR"s,DOOR},
-        {"CLIMBABLEBIT1"s,STAIRBACK},{"CLIMBABLEBIT2"s,STAIRRIGHT}
+    static std::map<std::string,flag_t> NAMEBITMAP {
+        {"ATFLOORLEVEL"s,flag_t::FLOORLEVEL},{"HOLDABLE"s,flag_t::HOLDABLE},
+        {"SIGNGUILDBANNER"s,flag_t::TRANSPARENT},{"WEBDIRTBLOOD"s,flag_t::TRANSLUCENT},
+        {"WALLVERTTILE"s,flag_t::WALL},{"DAMAGING"s,flag_t::DAMAGING},
+        {"BLOCKING"s,flag_t::BLOCKING},{"LIQUIDWET"s,flag_t::WET},
+        {"UNKNOWNFLAG1"s,flag_t::UNKNOWN1},{"STANDABLE"s,flag_t::SURFACE},
+        {"CLIMBABLE"s,flag_t::CLIMBABLE},{"STACKABLE"s,flag_t::STACKABLE},
+        {"WINDOWARCHDOOR"s,flag_t::WINDOW},{"CANNOTSHOOTTHRU"s,flag_t::NOSHOOT},
+        {"DISPLAYASA"s,flag_t::DISPLAYA},{"DISPLAYASAN"s,flag_t::DISPLAYAN},
+        {"DESCRIPTIONTILE"s,flag_t::DESCRIPTION},{"FADEWITHTRANS"s,flag_t::FOLIAGE},
+        {"PARTIALHUE"s,flag_t::PARTIALHUE},{"UNKNOWNFLAG2"s,flag_t::UNKNOWN2},
+        {"MAP"s,flag_t::MAP},{"CONTAINER"s,flag_t::CONTAINER},
+        {"EQUIPABLE"s,flag_t::WEARABLE},{"LIGHTSOURCE"s,flag_t::LIGHT},
+        {"ANIMATED"s,flag_t::ANIMATED},{"NODIAGONAL"s,flag_t::NODIAGONAL},
+        {"UNKNOWNFLAG3"s,flag_t::UNKNOWN3},{"WHOLEBODYITEM"s,flag_t::ARMOR},
+        {"WALLROOFWEAP"s,flag_t::ROOF},{"DOOR"s,flag_t::DOOR},
+        {"CLIMBABLEBIT1"s,flag_t::STAIRBACK},{"CLIMBABLEBIT2"s,flag_t::STAIRRIGHT}
     };
     //======================================================================
-    auto uobitForName(const std::string &name) -> uoflag_t {
+    auto uobitForName(const std::string &name) -> flag_t {
         auto iter = NAMEBITMAP.find(name) ;
         if (iter == NAMEBITMAP.end()){
             throw std::runtime_error("No flag bit found for: "s+name);
@@ -101,15 +101,15 @@ namespace uo{
     // set a bit number
     //=================================================================================
     //=================================================================================
-    auto Flag::test(uoflag_t bit) const ->bool {
+    auto Flag::test(flag_t bit) const ->bool {
         auto mask = std::uint64_t(1) ;
-        mask = mask << bit ;
+        mask = mask << static_cast<int>(bit) ;
         return this->value & mask ;
     }
     //=================================================================================
-   auto Flag::set(uoflag_t bit, bool state) ->void {
+   auto Flag::set(flag_t bit, bool state) ->void {
        auto mask = std::uint64_t(1) ;
-       mask = mask << bit ;
+       mask = mask << static_cast<int>(bit) ;
        if (state) {
            this->value |= mask ;
        }

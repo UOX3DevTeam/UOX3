@@ -11,7 +11,7 @@ namespace uo {
     //====================================================================
     // UOX3 compatability
     //====================================================================
-    enum flag_t {
+    enum class flag_t {
         FLOORLEVEL=0,HOLDABLE,TRANSPARENT,TRANSLUCENT,
         WALL,DAMAGING,BLOCKING,WET,
         UNKNOWN1,SURFACE,CLIMBABLE,STACKABLE,
@@ -21,13 +21,13 @@ namespace uo {
         ANIMATED,NODIAGONAL,UNKNOWN3,ARMOR,
         ROOF,DOOR,STAIRBACK,STAIRRIGHT
     };
-    auto uobitForName(const std::string &name) -> uoflag_t ;
+    auto uobitForName(const std::string &name) -> flag_t ;
     
     
     //======================================================================
     struct Flag{
-        auto test(uoflag_t bit) const ->bool ;
-        auto set(uoflag_t bit, bool state) ->void ;
+        auto test(flag_t bit) const ->bool ;
+        auto set(flag_t bit, bool state) ->void ;
         //====================================================================
         constexpr static auto   BACKGROUND=0x1ull;
         constexpr static auto   WEAPON=0x2ull;

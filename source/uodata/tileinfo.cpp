@@ -231,10 +231,10 @@ namespace uo{
                             tilenumber = std::stoul(num,nullptr,0) ;
                         }
                     }
-                    else if (line[0] != '{'){
+                    else if (line[0] == '{'){
                         inSection = true ;
                     }
-                    else if (line[0] != '}'){
+                    else if (line[0] == '}'){
                         inSection = false ;
                     }
                     else if (inSection){
