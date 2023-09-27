@@ -11,7 +11,7 @@ namespace uo {
     //====================================================================
     // UOX3 compatability
     //====================================================================
-    enum uoflag_t {
+    enum flag_t {
         FLOORLEVEL=0,HOLDABLE,TRANSPARENT,TRANSLUCENT,
         WALL,DAMAGING,BLOCKING,WET,
         UNKNOWN1,SURFACE,CLIMBABLE,STACKABLE,
