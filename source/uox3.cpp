@@ -129,8 +129,8 @@ extern CMulHandler worldMULHandler ;
 extern CNetworkStuff worldNetwork ;
 extern CMapHandler worldMapHandler ;
 //=====================================
-extern uo::UOMgr uoManager ;
-
+//extern uo::UOMgr uoManager ;
+uo::UOMap uoManager;
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
 //  Global variables

@@ -22,7 +22,7 @@
 #include "regions.h"
 #include "skills.h"
 #include "speech.h"
-#include "uodata/uomgr.hpp"
+//#include "uodata/uomgr.hpp"
 #include "type/weather.hpp"
 #include "weight.h"
 #include "wholist.h"
@@ -74,4 +74,4 @@ CMapHandler worldMapHandler ;
 
 
 // New items
-uo::UOMgr uoManager ;
+//uo::UOMgr uoManager ;
