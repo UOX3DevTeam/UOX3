@@ -1186,21 +1186,21 @@ auto CMulHandler::MapCount() const -> std::uint8_t {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	TileInfo
+//|	OTileInfo
 // o------------------------------------------------------------------------------------------------o
 // o------------------------------------------------------------------------------------------------o
-TileInfo::TileInfo(const std::string &filename) : isHsFormat(false) {
+OTileInfo::OTileInfo(const std::string &filename) : isHsFormat(false) {
     if (!filename.empty()) {
         this->LoadTiles(filename);
     }
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	TileInfo::LoadTiles()
+//|	Function	-	OTileInfo::LoadTiles()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads tiles from tiledata file into memory
 // o------------------------------------------------------------------------------------------------o
-auto TileInfo::LoadTiles(const std::filesystem::path &filename) -> bool {
+auto OTileInfo::LoadTiles(const std::filesystem::path &filename) -> bool {
     auto rValue = false;
     artData.clear();
     terrainData.clear();
@@ -1221,59 +1221,59 @@ auto TileInfo::LoadTiles(const std::filesystem::path &filename) -> bool {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	TileInfo::TerrainInfo()
+//|	Function	-	OTileInfo::TerrainInfo()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns terrain data for given tileId
 // o------------------------------------------------------------------------------------------------o
-auto TileInfo::TerrainInfo(std::uint16_t tileId) const -> const CLand & {
+auto OTileInfo::TerrainInfo(std::uint16_t tileId) const -> const CLand & {
     return terrainData[tileId];
 }
-auto TileInfo::TerrainInfo(std::uint16_t tileId) -> CLand & { return terrainData[tileId]; }
+auto OTileInfo::TerrainInfo(std::uint16_t tileId) -> CLand & { return terrainData[tileId]; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	TileInfo::ArtInfo()
+//|	Function	-	OTileInfo::ArtInfo()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns art/statics data for given tileId
 // o------------------------------------------------------------------------------------------------o
-auto TileInfo::ArtInfo(std::uint16_t tileId) const -> const CTile & { return artData[tileId]; }
-auto TileInfo::ArtInfo(std::uint16_t tileId) -> CTile & { return artData[tileId]; }
+auto OTileInfo::ArtInfo(std::uint16_t tileId) const -> const CTile & { return artData[tileId]; }
+auto OTileInfo::ArtInfo(std::uint16_t tileId) -> CTile & { return artData[tileId]; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	TileInfo::SizeTerrain()
+//|	Function	-	OTileInfo::SizeTerrain()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns size of terrain data loaded by UOX3
 // o------------------------------------------------------------------------------------------------o
-auto TileInfo::SizeTerrain() const -> size_t { return terrainData.size(); }
+auto OTileInfo::SizeTerrain() const -> size_t { return terrainData.size(); }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	TileInfo::SizeArt()
+//|	Function	-	OTileInfo::SizeArt()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns size of art/statics data loaded by UOX3
 // o------------------------------------------------------------------------------------------------o
-auto TileInfo::SizeArt() const -> size_t { return artData.size(); }
+auto OTileInfo::SizeArt() const -> size_t { return artData.size(); }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	TileInfo::CollectionTerrain()
+//|	Function	-	OTileInfo::CollectionTerrain()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns collection of terrain tiles loaded by UOX3
 // o------------------------------------------------------------------------------------------------o
-auto TileInfo::CollectionTerrain() const -> const std::vector<CLand> & { return terrainData; }
-auto TileInfo::CollectionTerrain() -> std::vector<CLand> & { return terrainData; }
+auto OTileInfo::CollectionTerrain() const -> const std::vector<CLand> & { return terrainData; }
+auto OTileInfo::CollectionTerrain() -> std::vector<CLand> & { return terrainData; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	TileInfo::CollectionArt()
+//|	Function	-	OTileInfo::CollectionArt()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns collection of art/statics tiles loaded by UOX3
 // o------------------------------------------------------------------------------------------------o
-auto TileInfo::CollectionArt() const -> const std::vector<CTile> & { return artData; }
-auto TileInfo::CollectionArt() -> std::vector<CTile> & { return artData; }
+auto OTileInfo::CollectionArt() const -> const std::vector<CTile> & { return artData; }
+auto OTileInfo::CollectionArt() -> std::vector<CTile> & { return artData; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	TileInfo::ProcessTerrain()
+//|	Function	-	OTileInfo::ProcessTerrain()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Process terrain data read from tiledata file
 // o------------------------------------------------------------------------------------------------o
-auto TileInfo::ProcessTerrain(std::istream &input) -> void {
+auto OTileInfo::ProcessTerrain(std::istream &input) -> void {
     terrainData.reserve(0x4000);
     std::uint32_t value32 = 0;
     std::uint64_t value64 = 0;
@@ -1320,11 +1320,11 @@ auto TileInfo::ProcessTerrain(std::istream &input) -> void {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	TileInfo::ProcessArt()
+//|	Function	-	OTileInfo::ProcessArt()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Process art/statics data read from tiledata file
 // o------------------------------------------------------------------------------------------------o
-auto TileInfo::ProcessArt(std::istream &input) -> void {
+auto OTileInfo::ProcessArt(std::istream &input) -> void {
     artData.reserve(0xFFFF);
     std::uint32_t value32 = 0;
     std::uint64_t value64 = 0;
@@ -1382,11 +1382,11 @@ auto TileInfo::ProcessArt(std::istream &input) -> void {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	TileInfo::TotalMemory()
+//|	Function	-	OTileInfo::TotalMemory()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate total memory used for loading art/terrain tiledata
 // o------------------------------------------------------------------------------------------------o
-auto TileInfo::TotalMemory() const -> size_t {
+auto OTileInfo::TotalMemory() const -> size_t {
     auto flag = isHsFormat ? 8 : 4;
     auto terrain = flag + 20 + 2;
     auto art = flag + 20 + 23;
@@ -1397,7 +1397,7 @@ auto TileInfo::TotalMemory() const -> size_t {
 //|	TerrainBlock::TerrainBlock()
 // o------------------------------------------------------------------------------------------------o
 // o------------------------------------------------------------------------------------------------o
-TerrainBlock::TerrainBlock(std::uint8_t *data, const TileInfo *info) {
+TerrainBlock::TerrainBlock(std::uint8_t *data, const OTileInfo *info) {
     if (data != nullptr) {
         LoadBlock(data, info);
     }
@@ -1408,7 +1408,7 @@ TerrainBlock::TerrainBlock(std::uint8_t *data, const TileInfo *info) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load details for terrain tiles in a 8x8 block of the map
 // o------------------------------------------------------------------------------------------------o
-auto TerrainBlock::LoadBlock(std::uint8_t *data, const TileInfo *info) -> void {
+auto TerrainBlock::LoadBlock(std::uint8_t *data, const OTileInfo *info) -> void {
     if (data != nullptr) {
         data += 4;
         for (auto y = 0; y < 8; ++y) {
@@ -1439,7 +1439,7 @@ auto TerrainBlock::TerrainTileAt(int x, int y) const -> const Tile_st & {
 //================================================================================
 
 //=========================================================
-ArtBlock::ArtBlock(int length, std::uint8_t *data, const TileInfo *info) {
+ArtBlock::ArtBlock(int length, std::uint8_t *data, const OTileInfo *info) {
     if (data != nullptr) {
         LoadArtBlock(length, data, info);
     }
@@ -1467,7 +1467,7 @@ auto ArtBlock::Clear() -> void {
 //|	Purpose		-	Load details for all art/statics tiles in a given location from
 // statics files
 // o------------------------------------------------------------------------------------------------o
-auto ArtBlock::LoadArtBlock(int length, std::istream &input, const TileInfo *info) -> void {
+auto ArtBlock::LoadArtBlock(int length, std::istream &input, const OTileInfo *info) -> void {
     this->Clear();
     auto count = length / 7;
     auto x = std::uint8_t(0);
@@ -1495,7 +1495,7 @@ auto ArtBlock::LoadArtBlock(int length, std::istream &input, const TileInfo *inf
 //|	Purpose		-	Retrieve details for all art/statics tiles in a given location from
 // memory
 // o------------------------------------------------------------------------------------------------o
-auto ArtBlock::LoadArtBlock(int length, std::uint8_t *data, const TileInfo *info) -> void {
+auto ArtBlock::LoadArtBlock(int length, std::uint8_t *data, const OTileInfo *info) -> void {
     this->Clear();
     
     auto count = length / 7;
@@ -1524,7 +1524,7 @@ auto ArtBlock::LoadArtBlock(int length, std::uint8_t *data, const TileInfo *info
 // o------------------------------------------------------------------------------------------------o
 UltimaMap::UltimaMap() : tileInfo(nullptr), _width(0), _height(0), _diffCount(0), _diffTerrain(0) {}
 //=========================================================
-UltimaMap::UltimaMap(int mapNum, int width, int height, const TileInfo *info) : UltimaMap() {
+UltimaMap::UltimaMap(int mapNum, int width, int height, const OTileInfo *info) : UltimaMap() {
     _width = width;
     _height = height;
     tileInfo = info;

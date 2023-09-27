@@ -62,14 +62,14 @@ enum tileflags_t {
 
 // o------------------------------------------------------------------------------------------------o
 //  Pre declare tileinfo so we can make it a friend of CBaseTile, CTile, and CLand
-class TileInfo;
+class OTileInfo;
 
 // o------------------------------------------------------------------------------------------------o
 //  Frankly, these chould/should have been structures, There really isn't a reason to make the
 //  data private, and then expose everything with accessors.  Just adds a lot of verbage,
 //  that can clutter when maintaining.  Oh well, we stay compatable for now.
 class CBaseTile {
-    friend TileInfo;
+    friend OTileInfo;
     
 protected:
     std::bitset<64> flags; // We are going to use a 64 bit value here, so specify 64 bit.
@@ -119,7 +119,7 @@ public:
 // o------------------------------------------------------------------------------------------------o
 class CTile : public CBaseTile {
 private:
-    friend TileInfo;
+    friend OTileInfo;
     std::uint8_t weight;
     std::int8_t layer;
     std::uint16_t unknown1;
@@ -166,7 +166,7 @@ public:
 };
 // o------------------------------------------------------------------------------------------------o
 class CLand : public CBaseTile {
-    friend TileInfo;
+    friend OTileInfo;
     
 private:
     std::uint16_t textureId;

@@ -13,7 +13,7 @@
 
 #include "mapclasses.h"
 #include "uopdata.hpp"
-class TileInfo;
+class OTileInfo;
 class CTile;
 //==================================================================================================
 // MultiItem_st
@@ -54,7 +54,7 @@ struct CollectionItem_st {
 //==================================================================================================
 class MultiCollection : public UopFile {
     constexpr static auto hsSize = 908592;
-    TileInfo *info;
+    OTileInfo *info;
     std::unordered_map<int, CollectionItem_st> _multis;
     
     std::string _housingBin;
@@ -63,11 +63,11 @@ class MultiCollection : public UopFile {
     auto ProcessData(bool isHS, int index, std::vector<std::uint8_t> &data) -> void;
     
 public:
-    MultiCollection(const std::filesystem::path &uodir = std::filesystem::path(),  TileInfo *info = nullptr);
+    MultiCollection(const std::filesystem::path &uodir = std::filesystem::path(),  OTileInfo *info = nullptr);
     
-    auto LoadMultiCollection(const std::filesystem::path &uodir, TileInfo *info = nullptr) -> bool;
-    auto LoadMultiCollection(const std::filesystem::path &uodir, const std::string &housingbin, TileInfo *info = nullptr) -> bool;
-    auto LoadMul(const std::filesystem::path &uodir, TileInfo *info = nullptr) -> bool;
+    auto LoadMultiCollection(const std::filesystem::path &uodir, OTileInfo *info = nullptr) -> bool;
+    auto LoadMultiCollection(const std::filesystem::path &uodir, const std::string &housingbin, OTileInfo *info = nullptr) -> bool;
+    auto LoadMul(const std::filesystem::path &uodir, OTileInfo *info = nullptr) -> bool;
     auto Size() const -> size_t;
     auto Multis() const -> const std::unordered_map<int, CollectionItem_st> &;
     auto Multis() -> std::unordered_map<int, CollectionItem_st> &;

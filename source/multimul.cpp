@@ -333,7 +333,7 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	MultiCollection::MultiCollection()
 // o------------------------------------------------------------------------------------------------o
-MultiCollection::MultiCollection(const std::filesystem::path &uodir, TileInfo *info) {
+MultiCollection::MultiCollection(const std::filesystem::path &uodir, OTileInfo *info) {
     this->info = info;
     if (!uodir.empty()) {
         LoadMultiCollection(uodir, info);
@@ -345,7 +345,7 @@ MultiCollection::MultiCollection(const std::filesystem::path &uodir, TileInfo *i
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load Multi MUL data from disk
 // o------------------------------------------------------------------------------------------------o
-auto MultiCollection::LoadMultiCollection(const std::filesystem::path &uodir, const std::string &housingbin, TileInfo *info) -> bool {
+auto MultiCollection::LoadMultiCollection(const std::filesystem::path &uodir, const std::string &housingbin, OTileInfo *info) -> bool {
     _multis.clear();
     auto multifile = uodir / std::filesystem::path("MultiCollection.uop");
     auto hash = "build/multicollection/%.6u.bin"s;
@@ -359,7 +359,7 @@ auto MultiCollection::LoadMultiCollection(const std::filesystem::path &uodir, co
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load Multi MUL data from disk
 // o------------------------------------------------------------------------------------------------o
-auto MultiCollection::LoadMul(const std::filesystem::path &uodir, TileInfo *info) -> bool {
+auto MultiCollection::LoadMul(const std::filesystem::path &uodir, OTileInfo *info) -> bool {
     _multis.clear();
     this->info = info;
     auto rValue = false;
@@ -400,7 +400,7 @@ auto MultiCollection::LoadMul(const std::filesystem::path &uodir, TileInfo *info
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load Multi UOP data from disk
 // o------------------------------------------------------------------------------------------------o
-auto MultiCollection::LoadMultiCollection(const std::filesystem::path &uodir, TileInfo *info) -> bool {
+auto MultiCollection::LoadMultiCollection(const std::filesystem::path &uodir, OTileInfo *info) -> bool {
     auto rValue = false;
     // First, see if the uop exists?
     auto multifile = uodir / std::filesystem::path("MultiCollection.uop");

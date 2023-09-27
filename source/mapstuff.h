@@ -19,9 +19,9 @@ class CMultiObj;
 constexpr auto MAX_Z_STEP = std::uint8_t(9);
 constexpr auto MAX_Z_FALL = std::uint8_t(20);
 //===============================================================================================
-// TileInfo
+// OTileInfo
 //===============================================================================================
-class TileInfo {
+class OTileInfo {
     constexpr static auto hsSize = 3188736;
     std::vector<CLand> terrainData;
     std::vector<CTile> artData;
@@ -30,7 +30,7 @@ class TileInfo {
     bool isHsFormat;
     
 public:
-    TileInfo(const std::string &filename = "");
+    OTileInfo(const std::string &filename = "");
     auto LoadTiles(const std::filesystem::path &filename) -> bool;
     auto TerrainInfo(std::uint16_t tileId) const -> const CLand &;
     auto TerrainInfo(std::uint16_t tileId) -> CLand &;
@@ -54,8 +54,8 @@ class TerrainBlock {
     std::array<std::array<Tile_st, 8>, 8> _tiles;
     
 public:
-    TerrainBlock(std::uint8_t *data = nullptr, const TileInfo *info = nullptr);
-    auto LoadBlock(std::uint8_t *data, const TileInfo *info = nullptr) -> void;
+    TerrainBlock(std::uint8_t *data = nullptr, const OTileInfo *info = nullptr);
+    auto LoadBlock(std::uint8_t *data, const OTileInfo *info = nullptr) -> void;
     auto TerrainTileAt(int x, int y) -> Tile_st &;
     auto TerrainTileAt(int x, int y) const -> const Tile_st &;
 };
@@ -65,9 +65,9 @@ class ArtBlock {
     std::array<std::array<std::vector<Tile_st>, 8>, 8> _tiles;
     
 public:
-    ArtBlock(int length = 0, std::uint8_t *data = nullptr, const TileInfo *info = nullptr);
-    auto LoadArtBlock(int length, std::uint8_t *data, const TileInfo *info = nullptr) -> void;
-    auto LoadArtBlock(int length, std::istream &input, const TileInfo *info = nullptr) -> void;
+    ArtBlock(int length = 0, std::uint8_t *data = nullptr, const OTileInfo *info = nullptr);
+    auto LoadArtBlock(int length, std::uint8_t *data, const OTileInfo *info = nullptr) -> void;
+    auto LoadArtBlock(int length, std::istream &input, const OTileInfo *info = nullptr) -> void;
     auto ArtTileAt(int x, int y) -> std::vector<Tile_st> &;
     auto ArtTileAt(int x, int y) const -> const std::vector<Tile_st> &;
     auto Clear() -> void;
@@ -77,7 +77,7 @@ class UltimaMap : public UopFile {
     std::vector<TerrainBlock> _terrain;
     std::vector<ArtBlock> _art;
     
-    const TileInfo *tileInfo;
+    const OTileInfo *tileInfo;
     static constexpr int _totalMaps = 6;
     static constexpr std::array<std::pair<int, int>, _totalMaps> _mapSizes{
         {{7168, 4096}, {7168, 4096}, {2304, 1600}, {2560, 2048}, {1448, 1448}, {1280, 4096}}};
@@ -95,7 +95,7 @@ class UltimaMap : public UopFile {
     
 public:
     UltimaMap();
-    UltimaMap(int mapNum, int width = 0, int height = 0, const TileInfo *info = nullptr);
+    UltimaMap(int mapNum, int width = 0, int height = 0, const OTileInfo *info = nullptr);
     auto Width() const -> int;
     auto Height() const -> int;
     auto DiffArt() const -> int;
@@ -140,7 +140,7 @@ struct MapDfnData_st {
 class CMulHandler {
 private:
     // uo eq5q
-    TileInfo tileInfo;
+    OTileInfo tileInfo;
     MultiCollection multiData;
     std::unordered_map<int, UltimaMap> uoWorlds;
     
