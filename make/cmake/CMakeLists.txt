@@ -214,6 +214,9 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/timeutility.hpp
    ${PROJECT_SOURCE_DIR}/../../source/eventtimer.cpp
    ${PROJECT_SOURCE_DIR}/../../source/eventtimer.hpp
+# utility
+   ${PROJECT_SOURCE_DIR}/../../source/utility/filemap.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/utility/filemap.hpp
    ${PROJECT_SOURCE_DIR}/../../source/utility/ip4util.cpp
    ${PROJECT_SOURCE_DIR}/../../source/utility/ip4util.hpp
    ${PROJECT_SOURCE_DIR}/../../source/utility/neterror.hpp
@@ -232,6 +235,30 @@ add_executable(uox3
     ${PROJECT_SOURCE_DIR}/../../source/multimul.hpp
     ${PROJECT_SOURCE_DIR}/../../source/uopdata.cpp
     ${PROJECT_SOURCE_DIR}/../../source/uopdata.hpp
+# uodata
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/artmap.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/artmap.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/hash.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/hash.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/mapsize.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/mapsize.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/multicollection.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/multicollection.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/terrainmap.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/terrainmap.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/tileinfo.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/tileinfo.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/uoflag.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/uoflag.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/uomap.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/uomap.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/uomgr.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/uomgr.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/uop.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/uop.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/uotile.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/uotile.hpp
+
 )
 
 # *************************************************************************

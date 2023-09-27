@@ -98,8 +98,9 @@
 #include "townregion.h"
 #include "typedefs.h"
 #include "utility/strutil.hpp"
-#include "type/weather.hpp"
+#include "uodata/uomgr.hpp"
 #include "other/uoxversion.hpp"
+#include "type/weather.hpp"
 #include "weight.h"
 #include "wholist.h"
 
@@ -127,6 +128,8 @@ extern CCommands serverCommands ;
 extern CMulHandler worldMULHandler ;
 extern CNetworkStuff worldNetwork ;
 extern CMapHandler worldMapHandler ;
+//=====================================
+extern uo::UOMgr uoManager ;
 
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
@@ -210,9 +213,12 @@ auto main(std::int32_t argc, char *argv[]) -> int {
     try{
         // If we cant read the config file, should we even do anything else ?
         ServerConfig::shared().loadConfig(configFile);
-        // just go ahead and startup up winsock for windows
-        // We also need to look at the signal handlers, for another day
+        // Lets get the uodata now, otherwise, we can stop
+        uoManager.load(ServerConfig::shared().directoryFor(dirlocation_t::UODIR),ServerConfig::shared().directoryFor(dirlocation_t::DEFINITION)/std::filesystem::path("maps"),true,ServerConfig::shared().serverSwitch[ServerSwitch::MAPDIFF]) ;
+        std::cout <<"Tile information - Terrain: "<<uoManager.terrainSize()<<" Art: " << uoManager.artSize()<<std::endl;
+        std::cout <<"Multi Information: "<<uoManager.sizeMulti()<<std::endl;
         initOperatingSystem() ;
+        return 0;
     }
     catch( const std::exception &e){
         std::cerr <<e.what() << std::endl;
@@ -440,8 +446,6 @@ auto adjustInterval(std::chrono::milliseconds interval, std::chrono::millisecond
 //  Initialize the network
 // o------------------------------------------------------------------------------------------------o
 auto initOperatingSystem() -> void {
-    // Startup Winsock2(windows) or signal handers (unix)
-    util::net::startup() ;
 #if !defined(_WIN32)
     // Protection from server-shutdown during mid-worldsave
     signal(SIGINT, app_stopped);
@@ -715,8 +719,7 @@ auto UnloadSpawnRegions() -> void {
 // regions
 // o------------------------------------------------------------------------------------------------o
 auto UnloadRegions() -> void {
-    std::for_each(worldMain.townRegions.begin(), worldMain.townRegions.end(),
-                  [](const std::pair<std::uint16_t, CTownRegion *> &entry) {
+    std::for_each(worldMain.townRegions.begin(), worldMain.townRegions.end(), [](const std::pair<std::uint16_t, CTownRegion *> &entry) {
         if (entry.second) {
             delete entry.second;
         }

@@ -44,8 +44,7 @@ CServerDefinitions::CServerDefinitions() : defaultPriority(0) {}
 auto CServerDefinitions::startup() -> void {
     Console::shared().printSectionBegin();
     Console::shared() << "Loading server scripts..." << myendl;
-    Console::shared() << "   o Clearing AddMenuMap entries("
-    << static_cast<std::uint64_t>(g_mmapAddMenuMap.size()) << ")" << myendl;
+    Console::shared() << "   o Clearing AddMenuMap entries(" << static_cast<std::uint64_t>(g_mmapAddMenuMap.size()) << ")" << myendl;
     g_mmapAddMenuMap.clear();
     ScriptListings.resize(NUM_DEFS);
     ReloadScriptObjects();
@@ -74,17 +73,6 @@ auto CServerDefinitions::Reload() -> bool {
 
 //==================================================================================================
 auto CServerDefinitions::Cleanup() -> void {
-    // We could just do a clear here, unless we are trying to keep the size?
-    /*
-     for (auto slIter = ScriptListings.begin(); slIter != ScriptListings.end(); ++slIter) {
-     auto &toDel = (*slIter);
-     for (size_t j = 0; j < toDel.size(); ++j) {
-     if (toDel[j]) {
-     toDel[j] = nullptr;
-     }
-     }
-     }
-     */
     ScriptListings.clear();
 }
 
@@ -96,17 +84,6 @@ auto CServerDefinitions::Dispose(definitioncategories_t toDispose) -> bool {
     bool retVal = false;
     if (toDispose != NUM_DEFS) {
         ScriptListings[toDispose].clear() ;
-        /*
-         auto &toDel = ScriptListings[toDispose];
-         for (auto dIter = toDel.begin(); dIter != toDel.end(); ++dIter) {
-         Script *toDelete = (*dIter);
-         if (toDelete) {
-         retVal = true;
-         delete toDelete;
-         }
-         }
-         toDel.clear();
-         */
     }
     return retVal;
 }
@@ -116,8 +93,7 @@ auto CServerDefinitions::Dispose(definitioncategories_t toDispose) -> bool {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find a specific CScriptSection from the DFNs in memory
 // o------------------------------------------------------------------------------------------------o
-auto CServerDefinitions::FindEntry(const std::string &toFind, definitioncategories_t typeToFind)
--> CScriptSection * {
+auto CServerDefinitions::FindEntry(const std::string &toFind, definitioncategories_t typeToFind) -> CScriptSection * {
     CScriptSection *rValue = nullptr;
     
     if (!toFind.empty() && typeToFind != NUM_DEFS) {
@@ -138,8 +114,7 @@ auto CServerDefinitions::FindEntry(const std::string &toFind, definitioncategori
 }
 
 //==================================================================================================
-auto CServerDefinitions::FindEntrySubStr(const std::string &toFind, definitioncategories_t typeToFind)
--> CScriptSection * {
+auto CServerDefinitions::FindEntrySubStr(const std::string &toFind, definitioncategories_t typeToFind) -> CScriptSection * {
     CScriptSection *rValue = nullptr;
     if (!toFind.empty() && typeToFind != NUM_DEFS) {
         auto &toDel = ScriptListings[typeToFind];
@@ -199,8 +174,7 @@ auto CServerDefinitions::LoadDFNCategory(definitioncategories_t toLoad) -> void 
     
     std::vector<PrioScan> mSort;
     for (size_t i = 0; i < shortListing->size(); ++i) {
-        mSort.push_back(
-                        PrioScan((*longListing)[i].c_str(), GetPriority((*shortListing)[i].c_str())));
+        mSort.push_back(PrioScan((*longListing)[i].c_str(), GetPriority((*shortListing)[i].c_str())));
     }
     if (!mSort.empty()) {
         std::sort(mSort.begin(), mSort.end());
@@ -297,8 +271,7 @@ auto CServerDefinitions::CleanPriorityMap() -> void { priorityMap.clear(); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Build DFN priority map based on entires from priority.nfo
 // o------------------------------------------------------------------------------------------------o
-auto CServerDefinitions::BuildPriorityMap(definitioncategories_t category, std::uint8_t &wasPrioritized)
--> void {
+auto CServerDefinitions::BuildPriorityMap(definitioncategories_t category, std::uint8_t &wasPrioritized) -> void {
     CDirectoryListing priorityFile(category, "priority.nfo", false);
     std::vector<std::string> *longList = priorityFile.List();
     if (!longList->empty()) {
@@ -409,9 +382,7 @@ auto CDirectoryListing::PopDir() -> void {
 //==================================================================================================
 CDirectoryListing::CDirectoryListing(bool recurse) : extension(".dfn"), doRecursion(recurse) {}
 //==================================================================================================
-CDirectoryListing::CDirectoryListing(const std::string &dir, const std::string &extent,
-                                     bool recurse)
-: doRecursion(recurse) {
+CDirectoryListing::CDirectoryListing(const std::string &dir, const std::string &extent, bool recurse) : doRecursion(recurse) {
     Extension(extent);
     Retrieve(dir);
 }
@@ -502,8 +473,7 @@ auto CDirectoryListing::Extension(const std::string &extent) -> void { extension
 // o------------------------------------------------------------------------------------------------o
 auto CDirectoryListing::Flatten(bool isParent) -> void {
     ClearFlatten();
-    std::for_each(filenameList.begin(), filenameList.end(),
-                  [isParent, this](const std::string &entry) {
+    std::for_each(filenameList.begin(), filenameList.end(), [isParent, this](const std::string &entry) {
         flattenedFull.push_back(entry);
         auto temp = std::string();
         if (!isParent) {

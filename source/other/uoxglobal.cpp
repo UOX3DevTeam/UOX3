@@ -22,6 +22,7 @@
 #include "regions.h"
 #include "skills.h"
 #include "speech.h"
+#include "uodata/uomgr.hpp"
 #include "type/weather.hpp"
 #include "weight.h"
 #include "wholist.h"
@@ -70,3 +71,7 @@ CCommands serverCommands ;
 CMulHandler worldMULHandler ;
 CNetworkStuff worldNetwork ;
 CMapHandler worldMapHandler ;
+
+
+// New items
+uo::UOMgr uoManager ;

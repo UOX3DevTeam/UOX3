@@ -17,7 +17,7 @@
 // // They're also not documented very well either
 // // they accept either a 0 or 1, basically, on or off flags is all they are
 
-// // BaseTile Flag 1					Alternative descriptions (InsideUO)
+// // BaseTile Flag 1					        Alternative descriptions (InsideUO)
 // ATFLOORLEVEL=	// Flag 1, bit 1 (0x01)		Background
 // HOLDABLE=		// Flag 1, bit 2 (0x02)		Weapon
 // SIGNGUILDBANNER=	// Flag 1, bit 3 (0x04)		Transparent
@@ -42,7 +42,7 @@
 // FADEWITHTRANS=	// Flag 3, bit 2 (0x02)		Foliage
 // PARTIALHUE=		// Flag 3, bit 3 (0x04)		Partial Hue
 // UNKNOWNFLAG2=	// Flag 3, bit 4 (0x08)		Unknown
-// MAP=			// Flag 3, bit 5 (0x10)		Map
+// MAP=			    // Flag 3, bit 5 (0x10)		Map
 // CONTAINER=		// Flag 3, bit 6 (0x20)		Container
 // EQUIPABLE=		// Flag 3, bit 7 (0x40)		Wearable
 // LIGHTSOURCE=		// Flag 3, bit 8 (0x80)		LightSource
@@ -53,18 +53,10 @@
 // UNKNOWNFLAG3=	// Flag 4, bit 3 (0x04)		Unknown
 // WHOLEBODYITEM=	// Flag 4, bit 4 (0x08)		Armour
 // WALLROOFWEAP=	// Flag 4, bit 5 (0x10)		Roof
-// DOOR=		// Flag 4, bit 6 (0x20)		Door
+// DOOR=		    // Flag 4, bit 6 (0x20)		Door
 // CLIMBABLEBIT1=	// Flag 4, bit 7 (0x40)		Stair Back
 // CLIMBABLEBIT2=	// Flag 4, bit 8 (0x80)		Stair Right
 
-// Additional flags added with High Seas expansion, purpose unknown:
-// ALPHABLEND=		// Flag 5, bit 1 (0x01)
-// USENEWART=		// Flag 5, bit 2 (0x02)
-// ARTUSED=			// Flag 5, bit 3 (0x04)
-// NOSHADOW=		// Flag 5, bit 4 (0x08)
-// PIXELBLEED=		// Flag 5, bit 5 (0x10)
-// PLAYANIMONCE=	// Flag 5, bit 6 (0x20)
-// MULTIMOVABLE=	// Flag 5, bit 7 (0x40)
 
 // Lacks NoShoot flag
 [TILE 0x02A0]
