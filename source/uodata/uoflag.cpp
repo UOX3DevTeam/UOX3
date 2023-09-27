@@ -8,7 +8,7 @@
 using namespace std::string_literals ;
 namespace uo{
     //======================================================================
-    static std::map<std::string,flag_t> NAMEBITMAP {
+    static std::map<std::string,uoflag_t> NAMEBITMAP {
         {"ATFLOORLEVEL"s,FLOORLEVEL},{"HOLDABLE"s,HOLDABLE},
         {"SIGNGUILDBANNER"s,TRANSPARENT},{"WEBDIRTBLOOD"s,TRANSLUCENT},
         {"WALLVERTTILE"s,WALL},{"DAMAGING"s,DAMAGING},
@@ -27,7 +27,7 @@ namespace uo{
         {"CLIMBABLEBIT1"s,STAIRBACK},{"CLIMBABLEBIT2"s,STAIRRIGHT}
     };
     //======================================================================
-    auto bitForName(const std::string &name) -> flag_t {
+    auto uobitForName(const std::string &name) -> uoflag_t {
         auto iter = NAMEBITMAP.find(name) ;
         if (iter == NAMEBITMAP.end()){
             throw std::runtime_error("No flag bit found for: "s+name);
@@ -101,13 +101,13 @@ namespace uo{
     // set a bit number
     //=================================================================================
     //=================================================================================
-    auto Flag::test(flag_t bit) const ->bool {
+    auto Flag::test(uoflag_t bit) const ->bool {
         auto mask = std::uint64_t(1) ;
         mask = mask << bit ;
         return this->value & mask ;
     }
     //=================================================================================
-   auto Flag::set(flag_t bit, bool state) ->void {
+   auto Flag::set(uoflag_t bit, bool state) ->void {
        auto mask = std::uint64_t(1) ;
        mask = mask << bit ;
        if (state) {

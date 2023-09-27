@@ -367,6 +367,42 @@
     <ClCompile Include="..\..\source\network\networkmgr.cpp">
       <Filter>source files\network</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\uodata\artmap.cpp">
+      <Filter>source files\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\utility\filemap.cpp">
+      <Filter>source files\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\hash.cpp">
+      <Filter>source files\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\mapsize.cpp">
+      <Filter>source files\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\multicollection.cpp">
+      <Filter>source files\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\terrainmap.cpp">
+      <Filter>source files\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\tileinfo.cpp">
+      <Filter>source files\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\uoflag.cpp">
+      <Filter>source files\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\uomap.cpp">
+      <Filter>source files\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\uomgr.cpp">
+      <Filter>source files\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\uop.cpp">
+      <Filter>source files\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\uotile.cpp">
+      <Filter>source files\uodata</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Script group -->
@@ -682,6 +718,42 @@
     </ClInclude>
     <ClInclude Include="..\..\source\useful.h">
       <Filter>source files\Uother</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\artmap.hpp">
+      <Filter>source files\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\utility\filemap.hpp">
+      <Filter>source files\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\hash.hpp">
+      <Filter>source files\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\mapsize.hpp">
+      <Filter>source files\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\multicollection.hpp">
+      <Filter>source files\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\terrainmap.hpp">
+      <Filter>source files\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\tileinfo.hpp">
+      <Filter>source files\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\uoflag.hpp">
+      <Filter>source files\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\uomap.hpp">
+      <Filter>source files\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\uomgr.hpp">
+      <Filter>source files\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\uop.hpp">
+      <Filter>source files\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\uotile.hpp">
+      <Filter>source files\uodata</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
