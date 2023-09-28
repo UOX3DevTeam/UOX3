@@ -12,6 +12,7 @@
 #include "StringUtility.hpp"
 #include "osunique.hpp"
 #include <js/Object.h>
+#include <js\CompilationAndEvaluation.h>
 
 //o------------------------------------------------------------------------------------------------o
 //|	File		-	cScript.cpp
@@ -197,9 +198,9 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 		return;
 	}
 	Console.Error( oldstrutil::format( "Filename: %s\n| Line Number: %i", report->filename, report->lineno ));
-	if( report->linebuf != nullptr || report->tokenptr != nullptr )
+	if( report->linebuf() != nullptr )
 	{
-		Console.Error( oldstrutil::format( "Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
+    Console.Error(oldstrutil::format("Erroneous Line: %s", report->linebuf()));
 	}
 }
 
@@ -213,7 +214,7 @@ std::string g_errorMessage;
 //| Notes		-	Relies on global variable g_errorMessage to pass in error message from
 //|					MethodError function.
 //o------------------------------------------------------------------------------------------------o
-const JSErrorFormatString* ScriptErrorCallback( [[maybe_unused]] void *userRef, [[maybe_unused]] const char *locale, [[maybe_unused]] const uintN errorNumber )
+const JSErrorFormatString* ScriptErrorCallback( [[maybe_unused]] void *userRef, [[maybe_unused]] const unsigned errorNumber )
 {
 	// Return a pointer to a JSErrorFormatString, to the UOX3ErrorReporter function in cScript.cpp
 	static JSErrorFormatString errorFormat;
@@ -293,32 +294,34 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 	if( targContext == nullptr )
 		return;
 
-	targObject = JS_NewGlobalObject( targContext, &uox_class );
+  JS::RealmOptions options;
+  targObject = JS_NewGlobalObject(targContext, &uox_class, nullptr, JS::FireOnNewGlobalHook, options);
 	if( targObject == nullptr )
 		return;
 
-	//JS_LockGCThing( targContext, targObject );
-
+	JS::RootedObject rootObject(targContext, targObject);
 	// Moved here so it reports errors during script-startup too
-	JS_SetErrorReporter( targContext, UOX3ErrorReporter );
+	// TODO Fi error reporter
+	// JS_SetErrorReporter( targContext, UOX3ErrorReporter );
 
 	JS::InitRealmStandardClasses( targContext );
-	JS_DefineFunctions( targContext, targObject, my_functions );
+	JS_DefineFunctions( targContext, rootObject, my_functions );
   JS::CompileOptions compOpt( targContext );
-  JS::RootedScript script(targContext);
-  if (!JS::Compile(targContext, compOpt, targFile, &script)) {
-  
-	}
+  //JS::RootedScript script(targContext);
+  FILE *fFile = fopen(targFile.c_str(), "r");
+  targScript = JS::CompileUtf8File( targContext, compOpt, fFile );
+  fclose(fFile);
 	if( targScript == nullptr )
 	{
 		throw std::runtime_error( "Compilation failed" );
 	}
-	JS::Value rval;
-	bool ok = JS_ExecuteScript( targContext, targObject, targScript, &rval );
+  JS::RootedValue val( targContext );
+  JS::MutableHandleValue rval( &val );
+  JS::RootedScript rootScript(targContext, targScript);
+	bool ok = JS_ExecuteScript( targContext, rootScript, rval );
 	if( !ok )
 	{
-		JSString *str = JS_ValueToString( targContext, rval );
-		Console << "script result: " << JS_GetStringBytes( str ) << myendl;
+    Console << "script result: " << convertToString(targContext, rval.toString());
 	}
 }
 
@@ -331,19 +334,20 @@ void cScript::Cleanup( void )
 	}
 	gumpDisplays.resize( 0 );
 
-	JS_UnlockGCThing( targContext, targObject );
+	// TODO Unroot global
 }
 void cScript::CollectGarbage( void )
 {
 	Cleanup();
-	JS_LockGCThing( targContext, targObject );
+	// TODO Lock Global
 }
 cScript::~cScript()
 {
 	JS_GC( targContext );
 	if( targScript != nullptr )
 	{
-		JS_DestroyScript( targContext, targScript );
+		// TODO Cleanup script
+		//JS_DestroyScript( targContext, targScript );
 	}
 	Cleanup();
 	JS_GC( targContext );
