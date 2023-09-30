@@ -149,6 +149,7 @@ namespace util {
                 error = errno ;
                 if (error == EPIPE || error == ECONNRESET) {
                     throw SocketPeerClose(errormsg(error));
+                    
                 }
                 if (error == EAGAIN || error == EWOULDBLOCK) {
                     return static_cast<status_t>(0);

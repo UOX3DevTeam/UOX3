@@ -231,16 +231,16 @@ public:
     void CheckTimers();
     void DoWorldLight();
     void SaveNewWorld(bool x);
-    auto startup() -> void;
     CWorldMain();
     //auto ServerData() -> CServerData *;
     //auto SetServerData(CServerData &server_data) -> void;
     auto ServerProfile() -> CServerProfile *;
-    
+    auto loadExtra(const std::filesystem::path &path)  -> void ;
+
 private:
     void RegionSave();
     void SaveStatistics();
-    
+    auto saveExtra(const std::filesystem::path &path) const -> bool ;
     //CServerData *sData;
     CServerProfile sProfile;
 };

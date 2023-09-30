@@ -91,8 +91,6 @@ CWorldMain::CWorldMain() : error(DEFWORLD_ERROR), keepRun(DEFWORLD_KEEPRUN), sec
     uoxTimeout.tv_usec = 0;
     
 }
-//==================================================================================================
-auto CWorldMain::startup() -> void {}
 
 
 // o------------------------------------------------------------------------------------------------o
@@ -418,6 +416,7 @@ void CWorldMain::SaveNewWorld(bool x) {
         worldMapHandler.Save();
         worldGuildSystem.Save();
         worldJailSystem.WriteData();
+        this->saveExtra(ServerConfig::shared().directoryFor(dirlocation_t::SAVE) / std::filesystem::path("extraitems.wsc"));
         worldEffect.SaveEffects();
         uoTime.save(ServerConfig::shared().directoryFor(dirlocation_t::SAVE));
         SaveStatistics();
@@ -617,3 +616,34 @@ void CServerProfile::GlobalReceived(std::int32_t newVal) { globalRecv = newVal; 
 std::int32_t CServerProfile::GlobalSent() const { return globalSent; }
 void CServerProfile::GlobalSent(std::int32_t newVal) { globalSent = newVal; }
 
+
+//================================================================================================
+auto CWorldMain::saveExtra(const std::filesystem::path &path) const -> bool {
+    // Write now, we only have spawn facets
+    auto output = std::ofstream(path.string()) ;
+    if (!output.is_open()){
+        return false ;
+    }
+    output << "\t" << SpawnFacet::name << " = " << ServerConfig::shared().spawnFacet.value() <<"\n" ;
+    return true ;
+}
+//================================================================================================
+auto CWorldMain::loadExtra(const std::filesystem::path &path)  -> void {
+    auto input = std::ifstream(path.string()) ;
+    if (input.is_open()){
+        auto buffer = std::vector<char>(4096,0) ;
+        while (input.good() && !input.eof()){
+            input.getline(buffer.data(), buffer.size()-1);
+            if (input.gcount()>0){
+                buffer[input.gcount()] = 0 ;
+                std::string line = buffer.data();
+                line = util::trim(util::strip(line,"//"));
+                if (!line.empty()){
+                    auto [lkey,value] = util::split(line,"=");
+                    auto key = util::upper(lkey) ;
+                    ServerConfig::shared().spawnFacet.setKeyValue(key, value);
+                }
+            }
+        }
+    }
+}

@@ -189,6 +189,8 @@ void loadSpawnRegions() {
 //|	Purpose		-	Load regions from regions.dfn and townregions from regions.wsc
 // o------------------------------------------------------------------------------------------------o
 void loadRegions() {
+    // This is not a good place for this, but for now
+    worldMain.loadExtra(ServerConfig::shared().directoryFor(dirlocation_t::SAVE)/std::filesystem::path("extraitems.wsc"));
     worldMain.townRegions.clear();
     auto regionsFile = ServerConfig::shared().directoryFor(dirlocation_t::SAVE) / std::filesystem::path("regions.wsc");
     bool performLoad = false;

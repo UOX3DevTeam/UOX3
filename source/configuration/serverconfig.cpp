@@ -311,7 +311,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << TimerSetting::nameFor(TimerSetting::POLYMORPH) << " = " << timerSetting[TimerSetting::POLYMORPH] << "\n" ;
     output << "\t" << ClientFeature::name << " = " << this->clientFeature.value() << "\n" ;
     output << "\t" << ServerFeature::name << " = " << this->serverFeature.value()  << "\n" ;
-    output << "\t" << SpawnFacet::name << " = " << spawnFacet.value() <<"\n" ;
+    //output << "\t" << SpawnFacet::name << " = " << spawnFacet.value() <<"\n" ;  // This should be in world main 
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::OVERLOADPACKETS) << " = " << enabled(ServerSwitch::OVERLOADPACKETS) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::ADVANCEDPATHFINDING) << " = " << enabled(ServerSwitch::ADVANCEDPATHFINDING) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::LOOTINGISCRIME) << " = " << enabled(ServerSwitch::LOOTINGISCRIME) << "\n" ;

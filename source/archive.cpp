@@ -66,7 +66,8 @@ void FileArchive() {
         BackupFile(std::filesystem::path("jails.wsc"), backupRoot);
         BackupFile(std::filesystem::path("guilds.wsc"), backupRoot);
         BackupFile(std::filesystem::path("regions.wsc"), backupRoot);
-    }
+        BackupFile(std::filesystem::path("extra.wsc"), backupRoot);
+   }
     else {
         Console::shared() << "Cannot create backup directory, please check available disk space" << myendl;
     }
