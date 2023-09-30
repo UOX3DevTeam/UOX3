@@ -19,7 +19,6 @@
 #include "cthreadqueue.h"
 #include "dictionary.h"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "movement.h"
 #include "utility/neterror.hpp"
 #include "objectfactory.h"

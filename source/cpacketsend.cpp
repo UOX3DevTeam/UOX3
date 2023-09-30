@@ -28,7 +28,6 @@
 
 #include "funcdecl.h"
 
-#include "mapstuff.h"
 #include "msgboard.h"
 #include "osunique.hpp"
 
@@ -38,6 +37,7 @@
 #include "speech.h"
 #include "utility/strutil.hpp"
 #include "townregion.h"
+#include "uodata/uomgr.hpp"
 
 extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
@@ -47,8 +47,7 @@ extern cRaces worldRace ;
 extern CJSMapping worldJSMapping ;
 extern CGuildCollection worldGuildSystem ;
 extern CCommands serverCommands;
-extern CMulHandler worldMULHandler ;
-
+extern uo::UOMgr uoManager;
 using namespace std::string_literals;
 // Unknown bytes
 // 5->8
@@ -150,7 +149,7 @@ void CPCharLocBody::CopyData(CChar &toCopy) {
     pStream.WriteShort(19, 0xFFFF);
     pStream.WriteShort(21, 0xFFFF);
     pStream.WriteLong(23, 0x0000);
-    auto [width, height] = worldMULHandler.SizeOfMap(toCopy.WorldNumber());
+    auto [width, height] = uoManager.sizeOfMap(toCopy.WorldNumber());
     auto mapWidth = static_cast<std::uint16_t>(width);
     auto mapHeight = static_cast<std::uint16_t>(height);
     pStream.WriteShort(27, mapWidth);
@@ -7158,7 +7157,7 @@ CPEnableMapDiffs::CPEnableMapDiffs() {
 }
 
 void CPEnableMapDiffs::CopyData() {
-    std::uint8_t mapCount = worldMULHandler.MapCount();
+    std::uint8_t mapCount = uoManager.size();
     size_t pSize = ((static_cast<size_t>(mapCount) + 1) * 8) + 9;
     
     pStream.ReserveSize(pSize);
@@ -7166,7 +7165,7 @@ void CPEnableMapDiffs::CopyData() {
     pStream.WriteLong(5, mapCount + 1);
     
     for (std::uint8_t i = 0; i < mapCount; ++i) {
-        auto [stadif, mapdif] = worldMULHandler.DiffCountForMap(i);
+        auto [stadif, mapdif] = uoManager.diffCountForMap(i);
         pStream.WriteLong(9 + (static_cast<size_t>(i) * 8), static_cast<std::uint32_t>(stadif));
         pStream.WriteLong(13 + (static_cast<size_t>(i) * 8), static_cast<std::uint32_t>(mapdif));
     }

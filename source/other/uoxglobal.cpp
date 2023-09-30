@@ -15,14 +15,13 @@
 #include "cserverdefinitions.h"
 #include "dictionary.h"
 #include "jail.h"
-#include "mapstuff.h"
 #include "movement.h"
 #include "network.h"
 #include "pagevector.h"
 #include "regions.h"
 #include "skills.h"
 #include "speech.h"
-//#include "uodata/uomgr.hpp"
+#include "uodata/uomgr.hpp"
 #include "type/weather.hpp"
 #include "weight.h"
 #include "wholist.h"
@@ -68,10 +67,9 @@ CSpeechQueue worldSpeechSystem ;
 CJSEngine worldJSEngine ;
 CServerDefinitions worldFileLookup ;
 CCommands serverCommands ;
-CMulHandler worldMULHandler ;
 CNetworkStuff worldNetwork ;
 CMapHandler worldMapHandler ;
 
 
 // New items
-//uo::UOMgr uoManager ;
+uo::UOMgr uoManager ;

@@ -54,6 +54,7 @@ namespace uo{
         auto sizeDiff() const ->size_t ;
         auto setInfo(const TileInfo *info) -> void ;
         auto tileFor(int x, int y) const -> UOTile ;
+        auto size() const ->std::pair<int,int> ;
     };
 
     

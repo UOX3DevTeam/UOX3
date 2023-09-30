@@ -30,9 +30,6 @@
     <Filter Include="source files\Unetwork">
       <UniqueIdentifier>{5dc0e64e-1161-4bdd-b7a9-08309a58eb14}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source files\Uuodata">
-      <UniqueIdentifier>{5fcfac04-c4f0-4c48-804a-8b4f49e615c4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source files\Usubsystem">
       <UniqueIdentifier>{f1c80722-7193-47b7-8c33-b900a0063ae4}</UniqueIdentifier>
     </Filter>
@@ -269,16 +266,6 @@
     </ClCompile>
     <ClCompile Include="..\..\source\eventtimer.cpp">
       <Filter>source files\Uutility</Filter>
-    </ClCompile>
-    <!-- UOData group -->
-    <ClCompile Include="..\..\source\mapstuff.cpp">
-      <Filter>source files\Uuodata</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\multimul.cpp">
-      <Filter>source files\Uuodata</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\uopdata.cpp">
-      <Filter>source files\Uuodata</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\subsystem\console.cpp">
       <Filter>source files\Usubsystem</Filter>
@@ -601,18 +588,6 @@
     </ClInclude>
     <ClInclude Include="..\..\source\worldmain.h">
       <Filter>source files\Usubsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\mapclasses.h">
-      <Filter>source files\Uuodata</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\mapstuff.h">
-      <Filter>source files\Uuodata</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\multimul.hpp">
-      <Filter>source files\Uuodata</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\uopdata.hpp">
-      <Filter>source files\Uuodata</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\eventtimer.hpp">
       <Filter>source files\Uutility</Filter>

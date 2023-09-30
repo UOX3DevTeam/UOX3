@@ -268,9 +268,7 @@ auto ObjectFactory::UnregisterObject(CBaseObject *object) -> bool {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Iterate over all objects of a specified object type
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::IterateOver(CBaseObject::type_t type, std::uint32_t &b, void *extra,
-                                std::function<bool(CBaseObject *, std::uint32_t &, void *)> function)
--> std::uint32_t {
+auto ObjectFactory::IterateOver(CBaseObject::type_t type, std::uint32_t &b, void *extra, std::function<bool(CBaseObject *, std::uint32_t &, void *)> function) -> std::uint32_t {
     auto collection = CollectionForType(type);
     if (collection) {
         // less safe way
@@ -411,9 +409,7 @@ auto ObjectFactory::SizeOfObjects(CBaseObject::type_t type) const -> size_t {
 // o------------------------------------------------------------------------------------------------o
 auto ObjectFactory::ValidObject(CBaseObject *object, CBaseObject::type_t type) -> bool {
     auto findObject = [](CBaseObject *object, factory_collection &collect) {
-        auto iter = std::find_if(
-                                 collect.begin(), collect.end(),
-                                 [object](std::pair<std::uint32_t, CBaseObject *> entry) { return entry.second = object; });
+        auto iter = std::find_if(collect.begin(), collect.end(), [object](std::pair<std::uint32_t, CBaseObject *> entry) { return entry.second = object; });
         if (iter != collect.end()) {
             return true;
         }

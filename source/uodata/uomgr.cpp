@@ -15,7 +15,11 @@ namespace uo {
     
     //======================================================================
     auto UOMgr::loadDefinition(const std::filesystem::path &uodir, const DFNDef &def,bool applyDiff,bool log)->void{
-        world.insert_or_assign(def.number,UOMap(&tileInfo));
+        if (def.number <= world.size()){
+            world.resize(def.number+1) ;
+        }
+        world.at(def.number).setInfo(&tileInfo);
+        world.at(def.number).setValid(true);
         if (log){
             std::clog << "Processing UO map " << def.number<<" data ";
         }
@@ -24,12 +28,13 @@ namespace uo {
         if (std::filesystem::exists(uodir/def.uoppath)) {
             file = uodir/def.uoppath ;
         }
+        
         status = world.at(def.number).loadTerrain(def.number,file , log, def.height, def.width);
         if (!status) {
             if (log){
                 std::clog <<"- FAILED\n";
             }
-            world.erase(def.number);
+            world.at(def.number) = UOMap(&tileInfo);
             return;
         }
         status = world.at(def.number).loadArt(uodir/def.staidxpath, uodir/def.stamulpath, def.height, def.number);
@@ -37,7 +42,7 @@ namespace uo {
             if (log){
                 std::clog <<"- FAILED\n";
             }
-            world.erase(def.number);
+            world.at(def.number) = UOMap(&tileInfo);
             return;
         }
         // do we apply diffs?
@@ -53,7 +58,7 @@ namespace uo {
             std::clog <<"- Completed\n";
         }
     }
-
+    
     //======================================================================
     auto UOMgr::loadDefinition(const std::filesystem::path &uodir, const std::filesystem::path &mapdfn,bool applyDiff,bool log) ->void {
         world.clear() ;
@@ -82,6 +87,7 @@ namespace uo {
                     else if (inSection){
                         if (line[0] == '}'){
                             inSection = false ;
+                            
                             loadDefinition(uodir, dfnData, applyDiff, log);
                         }
                         else if (line[0] != '{'){
@@ -130,7 +136,7 @@ namespace uo {
             throw std::runtime_error("Did not successfully load any UO maps");
         }
     }
-
+    
     //======================================================================
     auto UOMgr::load(const std::filesystem::path &uodir, const std::filesystem::path &mapdef,bool log,bool applyDiff)->void {
         // First we load the tiledata
@@ -158,7 +164,7 @@ namespace uo {
         }
         if (!status){
             status = multiCollection.load(uodir/std::filesystem::path("multi.idx"),uodir/std::filesystem::path("multi.mul"), &tileInfo);
-
+            
         }
         if (log) {
             if (status){
@@ -168,7 +174,7 @@ namespace uo {
                 std::clog <<"- FAILED\n" ;
             }
         }
-
+        
     }
     //======================================================================
     auto UOMgr::terrainSize() const -> size_t {
@@ -197,22 +203,52 @@ namespace uo {
     // World information
     //======================================================================
     auto UOMgr::artTileAt(int world, int x, int y) const ->const std::vector<UOTile>& {
-        auto iter = this->world.find(world);
-        if (iter != this->world.end()){
-            return iter->second.tilesAt(x, y);
+        if (world < this->world.size()){
+            return this->world.at(world).tilesAt(x, y);
         }
         throw std::runtime_error("No world information for: "+std::to_string(world));
     }
     //======================================================================
     auto UOMgr::terrainTileAt(int world, int x, int y) const -> UOTile {
-        auto iter = this->world.find(world);
-        if (iter != this->world.end()){
-            return iter->second.tileTerrainFor(x,y) ;
+        if (world < this->world.size()){
+            return this->world.at(world).tileTerrainFor(x,y) ;
         }
         throw std::runtime_error("No world information for: "+std::to_string(world));
-
+        
     }
-
+    //======================================================================
+    auto UOMgr::existMap(int mapnumber) const ->bool {
+        if (mapnumber <world.size()){
+            return world.at(mapnumber).isValid() ; ;
+        }
+        return false ;
+    }
+    //======================================================================
+    auto UOMgr::validLocation(int x,int y,int mapnumber) const ->bool {
+        if (mapnumber<world.size()) {
+            return world.at(mapnumber).validLocation(x, y);
+        }
+        return false ;
+    }
+    //======================================================================
+    auto UOMgr::sizeOfMap(int mapnumber) const -> std::pair<int,int> {
+        if (mapnumber < this->world.size()){
+            return this->world.at(mapnumber).size();
+        }
+        return std::make_pair(0,0);
+    }
+    //======================================================================
+    auto UOMgr::size() const -> size_t {
+        return this->world.size();
+    }
+    //======================================================================
+    auto UOMgr::diffCountForMap(int mapnumber) const ->std::pair<int,int> {
+        if (mapnumber < this->world.size()){
+            return std::make_pair(this->world.at(mapnumber).sizeArtDiff(),this->world.at(mapnumber).sizeTerrainDiff());
+        }
+        return std::make_pair(0,0);
+    }
+    
     //======================================================================
     auto UOMgr::sizeMulti() const-> size_t {
         return multiCollection.size();
@@ -221,5 +257,8 @@ namespace uo {
     auto UOMgr::multiFor(int multiid) const -> const MultiEntry& {
         return multiCollection.entryFor(multiid);
     }
-
+    //======================================================================
+    auto UOMgr::multiExists(int multiid)const ->bool {
+        return multiCollection.exists(multiid) ;
+    }
 }

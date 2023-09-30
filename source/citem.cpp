@@ -55,7 +55,6 @@
 #include "cspawnregion.h"
 #include "dictionary.h"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "msgboard.h"
 #include "objectfactory.h"
 #include "osunique.hpp"
@@ -67,6 +66,7 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "townregion.h"
+#include "uodata/uomgr.hpp"
 #include "weight.h"
 
 extern CDictionaryContainer worldDictionary ;
@@ -78,8 +78,8 @@ extern CBooks worldBook ;
 extern CSpeechQueue worldSpeechSystem ;
 extern CJSEngine worldJSEngine ;
 extern CServerDefinitions worldFileLookup ;
-extern CMulHandler worldMULHandler ;
 extern CMapHandler worldMapHandler ;
+extern uo::UOMgr uoManager ;
 
 const std::uint32_t BIT_MAKERSMARK = 0;
 const std::uint32_t BIT_DOOROPEN = 1;
@@ -1238,7 +1238,7 @@ bool CItem::Save(std::ostream &outStream) {
     if (IsFree())
         return false;
     
-    auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(worldNumber);
+    auto [mapWidth, mapHeight] = uoManager.sizeOfMap(worldNumber) ;
     if (GetCont() || (GetX() > 0 && GetX() < mapWidth && GetY() < mapHeight)) {
         DumpHeader(outStream);
         DumpBody(outStream);
@@ -1883,7 +1883,7 @@ bool CItem::LoadRemnants() {
     
     // Tauriel adding region pointers
     if (!contObj || tempContainerSerial == INVALIDSERIAL) {
-        auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(worldNumber);
+        auto [mapWidth, mapHeight] = uoManager.sizeOfMap(worldNumber) ;
         if (GetX() < 0 || GetY() < 0 || GetX() > mapWidth || GetY() > mapHeight)
             return false;
         

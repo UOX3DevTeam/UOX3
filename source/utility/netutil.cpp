@@ -48,11 +48,11 @@ namespace util {
         // APIPA ip is form 169.254.*.*
         static constexpr  auto  apipaIP4 = 0xA9FE ;
         static constexpr auto loopback = 0x7F000001;
-
+        
 #if defined(_WIN32)
         static auto numberOfWSAStartups = 0 ;
 #endif
-
+        
         //=================================================================================
         // Intialize the network
         // For windows, this is initialize winsock2.
@@ -74,7 +74,7 @@ namespace util {
             numberOfWSAStartups++ ;
             
 #endif
-
+            
         }
         //=================================================================================
         // shutdown the network
@@ -92,7 +92,7 @@ namespace util {
                 }
             }
 #endif
-
+            
         }
         //====================================================================
         // Get the text for error numbers
@@ -111,9 +111,9 @@ namespace util {
                 if (size > 0) {
                     tempBuffer.resize(size+1,0);
                     WideCharToMultiByte(CP_UTF8, 0, buffer, -1, tempBuffer.data(), static_cast<int>(tempBuffer.size()), NULL, NULL);
-            }
+                }
                 value = tempBuffer.data();
-
+                
 #else
                 value = *buffer;
 #endif
@@ -121,9 +121,9 @@ namespace util {
             }
 #endif
             return value;
-
+            
         }
-
+        
         //==================================================================================================================
         auto closeSocket(sockfd_t descrip) -> void {
 #if defined(_WIN32)
@@ -154,17 +154,17 @@ namespace util {
             auto port = ntohs(their_addr.sin_port);
             return std::make_pair(IP4Entry::describeIP(ip), std::to_string(port));
         }
-
+        
         //===================================================================
         auto availIP4() -> std::vector<ip4_t> {
             
             auto rvalue = std::vector<ip4_t>() ;
-
-    #if !defined(_WIN32)
+            
+#if !defined(_WIN32)
             struct ifaddrs * ifAddrStruct = nullptr;
             struct ifaddrs * ifa = nullptr;
             void * tmpAddrPtr = nullptr;
-
+            
             auto error = getifaddrs(&ifAddrStruct) ;
             if (error == 0){
                 for( ifa = ifAddrStruct; ifa != nullptr; ifa = ifa->ifa_next ){
@@ -188,51 +188,51 @@ namespace util {
                     freeifaddrs( ifAddrStruct );
                 }
             }
-    #else
+#else
             constexpr auto WORKING_BUFFER_SIZE = 15000;
             constexpr auto MAX_TRIES = 3;
-
-
+            
+            
             /* Note: could also use malloc() and free() */
-
+            
             std::string device;
-
+            
             /* Declare and initialize variables */
             DWORD dwSize = 0;
             DWORD dwRetVal = 0;
-
+            
             unsigned int i = 0;
-
+            
             // Set the flags to pass to GetAdaptersAddresses
             ULONG flags = GAA_FLAG_INCLUDE_PREFIX;
-
+            
             // default to unspecified address family (both)
             ULONG family = AF_INET;
-
+            
             LPVOID lpMsgBuf = NULL;
-
+            
             PIP_ADAPTER_ADDRESSES pAddresses = NULL;
             ULONG outBufLen = 0;
             ULONG iterations = 0;
-
+            
             PIP_ADAPTER_ADDRESSES pCurrAddresses = NULL;
             PIP_ADAPTER_UNICAST_ADDRESS pUnicast = NULL;
             PIP_ADAPTER_ANYCAST_ADDRESS pAnycast = NULL;
             PIP_ADAPTER_MULTICAST_ADDRESS pMulticast = NULL;
             IP_ADAPTER_DNS_SERVER_ADDRESS* pDnServer = NULL;
             IP_ADAPTER_PREFIX* pPrefix = NULL;
-
+            
             // Allocate a 15 KB buffer to start with.
             outBufLen = WORKING_BUFFER_SIZE;
-
+            
             do {
                 pAddresses = (IP_ADAPTER_ADDRESSES*)MALLOC(outBufLen);
                 if (pAddresses == nullptr){
                     throw std::runtime_error("Memory allocation files for IP_ADAPTER_ADDRESSES");
                 }
-
+                
                 dwRetVal = GetAdaptersAddresses(family, flags, NULL, pAddresses, &outBufLen);
-
+                
                 if (dwRetVal == ERROR_BUFFER_OVERFLOW) {
                     FREE(pAddresses);
                     pAddresses = NULL;
@@ -240,11 +240,11 @@ namespace util {
                 else {
                     break;
                 }
-
+                
                 iterations++;
-
+                
             } while ((dwRetVal == ERROR_BUFFER_OVERFLOW) && (iterations < MAX_TRIES));
-
+            
             if (dwRetVal == NO_ERROR) {
                 // If successful, output some information from the data we received
                 pCurrAddresses = pAddresses;
@@ -254,7 +254,7 @@ namespace util {
                         if (pUnicast->Address.lpSockaddr->sa_family == AF_INET) {
                             for (i = 0; pUnicast != nullptr; i++) {
                                 const int friendlen = 200;
-
+                                
                                 char friendly[friendlen];
                                 std::memset(friendly, 0, friendlen);
                                 sockaddr_in* sa_in = (sockaddr_in*)pUnicast->Address.lpSockaddr;
@@ -278,7 +278,7 @@ namespace util {
                             }
                         }
                     }
-
+                    
                     pCurrAddresses = pCurrAddresses->Next;
                 }
             }
@@ -287,19 +287,19 @@ namespace util {
                     if (pAddresses) {
                         FREE(pAddresses);
                     }
-
+                    
                     throw std::runtime_error("Unable to get address info");
                 }
             }
-
+            
             if (pAddresses) {
                 FREE(pAddresses);
             }
-    #endif
-
+#endif
+            
             return rvalue ;
         }
-
-
+        
+        
     }
 }

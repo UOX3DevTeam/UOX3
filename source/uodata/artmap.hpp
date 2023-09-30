@@ -56,7 +56,7 @@ namespace uo {
         auto setTileInfo(const TileInfo *info) ->void ;
         auto tilesAt(int x, int y) const -> const std::vector<UOTile>& ;
     };
-
+    
 }
 
 #endif /* artmap_hpp */

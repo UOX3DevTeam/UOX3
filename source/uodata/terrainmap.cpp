@@ -17,11 +17,11 @@
 using namespace std::string_literals ;
 
 namespace uo {
-
-//======================================================================
-//======================================================================
-//  TerrainDiff
-//======================================================================
+    
+    //======================================================================
+    //======================================================================
+    //  TerrainDiff
+    //======================================================================
     //======================================================================
     TerrainDiff::TerrainDiff() {
         diffEntry.clear();
@@ -62,7 +62,7 @@ namespace uo {
         }
         return nullptr;
     }
-
+    
     //======================================================================
     //  TerrainMap
     //======================================================================
@@ -71,7 +71,7 @@ namespace uo {
     //======================================================================
     TerrainMap::TerrainMap():mapHeight(0),data(nullptr),valid(false){
         info = nullptr ;
-
+        
     }
     //======================================================================
     auto TerrainMap::load(const std::filesystem::path &mappath,int mapNumber, int mapHeight, int mapWidth) ->bool {
@@ -129,7 +129,7 @@ namespace uo {
         else {
             // we need to figure out what uop block this would be
             auto [uopblock,blockoffset] = MapSize::uopBlockFor(block) ;
-            offsetdata = data + uopOffsets.at(uopblock) + blockoffset*196 ;
+            offsetdata = data + uopOffsets.at(uopblock) + blockoffset ;
         }
         return offsetdata ;
     }
@@ -137,7 +137,7 @@ namespace uo {
     auto TerrainMap::sizeDiff() const ->size_t {
         return diff.size() ;
     }
-
+    
     //======================================================================
     auto TerrainMap::setInfo(const TileInfo *info) -> void {
         this->info = info;
@@ -159,6 +159,8 @@ namespace uo {
         std::copy(uodata,uodata+2,reinterpret_cast<std::uint8_t*>(&uotile.tileid));
         std::copy(uodata+2,uodata+3,reinterpret_cast<std::uint8_t*>(&alt));
         uotile.altitude = static_cast<int>(alt) ;
+        
+        uotile.info = &info->terrainInfo.at(uotile.tileid);
         return uotile ;
     }
     //======================================================================
@@ -168,7 +170,10 @@ namespace uo {
         }
         return false ;
     }
-
+    //======================================================================
+    auto TerrainMap::size() const -> std::pair<int,int> {
+        return std::make_pair(mapWidth, mapHeight);
+    }
 }
 
 

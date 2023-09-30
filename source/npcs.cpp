@@ -15,7 +15,6 @@
 #include "dictionary.h"
 #include "type/era.hpp"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "movement.h"
 #include "msgboard.h"
 
@@ -27,6 +26,8 @@
 #include "utility/strutil.hpp"
 #include "teffect.h"
 #include "townregion.h"
+#include "uodata/uomgr.hpp"
+#include "uodata/uoxuoadapter.hpp"
 
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
@@ -35,7 +36,7 @@ extern cRaces worldRace ;
 extern CJSMapping worldJSMapping ;
 extern cEffects worldEffect ;
 extern CServerDefinitions worldFileLookup ;
-extern CMulHandler worldMULHandler ;
+extern uo::UOMgr uoManager ;
 
 
 using namespace std::string_literals;
@@ -433,7 +434,7 @@ std::int16_t GetRadius(CChar *c) {
 bool CheckBoundingBox(const std::int16_t xPos, const std::int16_t yPos, const std::int16_t fx1, const std::int16_t fy1, const std::int8_t fz1, const std::int16_t fx2, const std::int16_t fy2, const std::uint8_t worldNumber, const std::uint16_t instanceId) {
     if (xPos >= ((fx1 < fx2) ? fx1 : fx2) && xPos <= ((fx1 < fx2) ? fx2 : fx1)) {
         if (yPos >= ((fy1 < fy2) ? fy1 : fy2) && yPos <= ((fy1 < fy2) ? fy2 : fy1)) {
-            if (fz1 == -1 || abs(fz1 - worldMULHandler.Height(xPos, yPos, fz1, worldNumber, instanceId)) <= 5)
+            if (fz1 == -1 || abs(fz1 - uo::playerElevation(xPos, yPos, fz1, worldNumber, instanceId)) <= 5)
                 return true;
         }
     }
@@ -447,8 +448,9 @@ bool CheckBoundingBox(const std::int16_t xPos, const std::int16_t yPos, const st
 // o------------------------------------------------------------------------------------------------o
 bool CheckBoundingCircle(const std::int16_t xPos, const std::int16_t yPos, const std::int16_t fx1, const std::int16_t fy1, const std::int8_t fz1, const std::int16_t radius, const std::uint8_t worldNumber, const std::uint16_t instanceId) {
     if ((xPos - fx1) * (xPos - fx1) + (yPos - fy1) * (yPos - fy1) <= radius * radius) {
-        if (fz1 == -1 || abs(fz1 - worldMULHandler.Height(xPos, yPos, fz1, worldNumber, instanceId)) <= 5)
+        if (fz1 == -1 || abs(fz1 - uo::playerElevation(xPos, yPos, fz1, worldNumber, instanceId)) <= 5){
             return true;
+        }
     }
     return false;
 }
@@ -559,12 +561,12 @@ void CCharStuff::FindSpotForNPC(CChar *cCreated, const std::int16_t originX, con
         yos = originY + RandomNum(static_cast<std::int16_t>(-yAway), yAway);
         
         if (xos >= 1 && yos >= 1) {
-            targZ = worldMULHandler.Height(xos, yos, z, worldNumber, instanceId);
+            targZ = uo::playerElevation(xos, yos, z, worldNumber, instanceId);
             if (!worldMain.creatures[cCreated->GetId()].IsWater()) {
-                foundSpot = worldMULHandler.ValidSpawnLocation(xos, yos, targZ, worldNumber, instanceId);
+                foundSpot = uo::validSpawnLocation(xos, yos, targZ, worldNumber, instanceId);
             }
             else if (worldMain.creatures[cCreated->GetId()].IsWater() || (!foundSpot && worldMain.creatures[cCreated->GetId()].IsAmphibian())) {
-                foundSpot =  worldMULHandler.ValidSpawnLocation(xos, yos, targZ, worldNumber, instanceId, false);
+                foundSpot =  uo::validSpawnLocation(xos, yos, targZ, worldNumber, instanceId, false);
             }
         }
     }

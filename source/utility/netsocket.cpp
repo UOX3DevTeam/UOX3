@@ -157,7 +157,7 @@ namespace util {
 #endif
                 throw SocketError("Error writing socket: "s + errormsg(error));
             }
-
+            
             return status;
         }
         
@@ -248,9 +248,9 @@ namespace util {
                 return {};
             }
             return static_cast<std::uint8_t>(data);
-
+            
         }
-
+        
         //======================================================================
         auto NetSocket::setBlocking(bool state) ->void {
             this->block = state ;
@@ -336,7 +336,7 @@ namespace util {
 #endif
                 freeaddrinfo(res);
                 throw SocketError("Unable to bind socket: "s + errormsg(error));
-
+                
             }
             freeaddrinfo(res);
             setBlocking(blocking);
@@ -394,7 +394,7 @@ namespace util {
         auto NetSocket::peerInformation() const -> std::pair<std::string,std::string> {
             return  util::net::peerInformation(this->descriptor);
         }
-
+        
     }
 }
 

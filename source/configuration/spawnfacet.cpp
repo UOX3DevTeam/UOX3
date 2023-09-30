@@ -23,6 +23,7 @@ auto SpawnFacet::test(size_t index) const ->bool {
 //======================================================================
 auto SpawnFacet::reset() ->void {
     facets.reset();
+    
 }
 //======================================================================
 auto SpawnFacet::value() const -> std::uint64_t {

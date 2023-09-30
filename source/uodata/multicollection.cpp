@@ -27,6 +27,10 @@ namespace uo {
     MultiTile::MultiTile(std::uint16_t tileid):MultiTile() {
         this->tileid = tileid ;
     }
+    //======================================================================
+    auto MultiTile::checkFlag(flag_t flagbit) const ->bool {
+        return info->flag.test(flagbit);
+    }
     
     //======================================================================
     // MultiEntry
@@ -505,5 +509,12 @@ namespace uo {
         }
         throw std::runtime_error("Multi id does not exist: "s + std::to_string(multiid));
     }
-
+    
+    //======================================================================
+    auto MultiCollection::exists(int multiid) const ->bool{
+        auto iter = multiEntry.find(multiid) ;
+        return iter != multiEntry.end();
+    }
+    
+    
 }

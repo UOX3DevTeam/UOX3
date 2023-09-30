@@ -25,7 +25,11 @@ namespace uo{
     auto BaseTileInfo::describe() const ->std::string {
         return this->name ;
     }
-
+    //======================================================================
+    auto BaseTileInfo::checkFlag(flag_t flagbit) const ->bool {
+        return this->flag.test(flagbit);
+    }
+    
     //======================================================================
     //======================================================================
     // TerrainInfo
@@ -51,7 +55,17 @@ namespace uo{
     auto TerrainInfo::describe() const ->std::string {
         return BaseTileInfo::describe() +","s+ util::format("0x%04x",textureID) ;
     }
-
+    //======================================================================
+    auto TerrainInfo::isRoad() const ->bool {
+        auto rvalue = false ;
+        for (size_t j=0; j< ROADIDS.size();j+=2){
+            if (textureID >= ROADIDS.at(j) && textureID <= ROADIDS.at(j+1)){
+                rvalue = true ;
+            }
+        }
+        return rvalue ;
+    }
+    
     //======================================================================
     // ArtInfo
     //======================================================================
@@ -96,7 +110,13 @@ namespace uo{
     auto ArtInfo::describe() const ->std::string  {
         return BaseTileInfo::describe() + ","s + std::to_string(static_cast<std::uint16_t>(weight))+ "," + std::to_string(static_cast<std::uint16_t>(quality)) + "," + std::to_string(miscData) + "," + util::format("0x%02x",unknown2) + "," + std::to_string(static_cast<std::uint16_t>(quantity)) + "," + util::format("0x%04x",animid) + "," + util::format("0x%02x",unknown3)  + "," + std::to_string(static_cast<std::uint16_t>(hue))  + "," + std::to_string(stackOffset) + "," + std::to_string(static_cast<std::uint16_t>(height));
     }
-
+    auto ArtInfo::climbHeight(bool trueHeight) const -> std::int8_t {
+        if (this->flag.test(flag_t::CLIMBABLE) && !trueHeight){
+            return this->height/2 ;
+        }
+        return this->height ;
+    }
+    
     //======================================================================
     // TileInfo
     //======================================================================
@@ -291,5 +311,5 @@ namespace uo{
         }
         return rvalue ;
     }
-
+    
 }

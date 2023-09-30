@@ -14,7 +14,6 @@
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "jail.h"
-#include "mapstuff.h"
 #include "scriptc.h"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
@@ -22,7 +21,7 @@
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
-
+#include "uodata/uomgr.hpp"
 extern CDictionaryContainer worldDictionary ;
 extern CCharStuff worldNPC ;
 extern CSkills worldSkill ;
@@ -32,7 +31,7 @@ extern CJailSystem worldJailSystem ;
 extern CSpeechQueue worldSpeechSystem ;
 extern CJSEngine worldJSEngine ;
 extern CServerDefinitions worldFileLookup ;
-extern CMulHandler worldMULHandler ;
+extern uo::UOMgr uoManager ;
 
 // Implementation of town regions
 
@@ -1430,8 +1429,8 @@ void CTownRegion::ViewTaxes(CSocket *sock) {
     
     toSend.addText(util::format("%s (%s)", name.c_str(), worldRace.Name(race).c_str()));
     toSend.addText(util::format("Population %i", GetPopulation()));
-    CTile &tile = worldMULHandler.SeekTile(GetResourceId());
-    toSend.addText(util::format("%i %ss", taxedAmount, tile.Name().c_str()));
+    const auto &tile = uoManager.art(GetResourceId()) ;
+    toSend.addText(util::format("%i %ss", taxedAmount, tile.name.c_str()));
     toSend.Finalize();
     sock->Send(&toSend);
 }

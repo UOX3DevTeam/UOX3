@@ -5,14 +5,14 @@
 #include <algorithm>
 #include <stdexcept>
 
-
+#include "tileinfo.hpp"
 using namespace std::string_literals ;
 
 //======================================================================
 namespace uo {
     //======================================================================
-    UOMap::UOMap(TileInfo *info) {
-        this->info = info ;
+    UOMap::UOMap(TileInfo *info):valid(false) {
+        this->setInfo(info) ;
     }
     //======================================================================
     auto UOMap::setInfo(const TileInfo *info) -> void {
@@ -20,7 +20,18 @@ namespace uo {
         artData.setTileInfo(info);
         this->info = info ;
     }
-
+    //======================================================================
+    auto UOMap::size() const ->std::pair<int,int> {
+        return terrainData.size() ;
+    }
+    //======================================================================
+    auto UOMap::validLocation(int x, int y) const ->bool {
+        if (isValid()){
+            auto [width,height] = this->size() ;
+            return (x>= 0 && x< width  && y>=0 && y<height);
+        }
+        return false ;
+    }
     //======================================================================
     auto UOMap::loadTerrain(int mapNumber,const std::filesystem::path &terrainpath,bool log , int mapHeight,int mapWidth) ->bool {
         return terrainData.load(terrainpath, mapNumber,mapHeight,mapWidth);
@@ -35,7 +46,10 @@ namespace uo {
     }
     //======================================================================
     auto UOMap::tileTerrainFor(int x, int y) const -> UOTile {
-        return terrainData.tileFor(x, y);
+        if (isValid()){
+            return terrainData.tileFor(x, y);
+        }
+        throw std::runtime_error("Accessing invalid map for terrain data");
     }
     
     // Art
@@ -51,5 +65,5 @@ namespace uo {
     auto UOMap::tilesAt(int x, int y) const -> const std::vector<UOTile>& {
         return artData.tilesAt(x, y);
     }
-
+    
 }

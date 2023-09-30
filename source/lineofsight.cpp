@@ -5,11 +5,11 @@
 #include "cchar.h"
 #include "citem.h"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "regions.h"
 #include "uodata/uoflag.hpp"
-
-extern CMulHandler worldMULHandler ;
+#include "uodata/uomgr.hpp"
+#include "uodata/uoxuoadapter.hpp"
+extern uo::UOMgr uoManager ;
 extern CMapHandler worldMapHandler ;
 
 
@@ -249,14 +249,14 @@ inline auto Line3D_st::Projection2D() const -> Line2D_st {
 // o------------------------------------------------------------------------------------------------o
 bool MapTileBlocks([[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st LoS, std::int16_t x1, std::int16_t y1, [[maybe_unused]] std::int8_t z, std::int16_t x2, std::int16_t y2, std::uint8_t worldNum, std::int8_t z2Top) {
     // Map tile at previous coordinate along the LoS path
-    auto srcMap = worldMULHandler.SeekMap(x1, y1, worldNum);
+    auto srcMap = uoManager.terrainTileAt(worldNum, x1, y1) ;
     
     // Map tile at next coordinate along the LoS path
-    auto trgMap = worldMULHandler.SeekMap(x2, y2, worldNum);
+    auto trgMap = uoManager.terrainTileAt(worldNum, x2, y2);
     
     // Get tileIDs for previous tile in LoS path, and next one
-    const std::uint16_t mID1 = srcMap.tileId;
-    const std::uint16_t mID2 = trgMap.tileId;
+    const std::uint16_t mID1 = srcMap.tileid;
+    const std::uint16_t mID2 = trgMap.tileid;
     
     // Continue if neither of the two tiles is a NoDraw tile, or a cave entrance tile
     if ((mID1 != 2 && mID2 != 2) && (mID1 != 475 && mID2 != 475)) {
@@ -286,36 +286,36 @@ bool MapTileBlocks([[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st LoS
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check tiledata flags for tile
 // o------------------------------------------------------------------------------------------------o
-bool CheckFlags(std::uint8_t typeToCheck, Tile_st &toCheck, std::int8_t startZ, std::int8_t destZ, bool useSurfaceZ) {
+bool CheckFlags(std::uint8_t typeToCheck, uo::UOTile &toCheck, std::int8_t startZ, std::int8_t destZ, bool useSurfaceZ) {
     switch (typeToCheck) {
         case TREES_BUSHES: // Trees, Shrubs, bushes - if it's blocking but has neither of the flags
             // listed below, assume it's a tree! :P
-            if (toCheck.CheckFlag(uo::flag_t::FOLIAGE) || ((toCheck.CheckFlag(uo::flag_t::BLOCKING) && !toCheck.CheckFlag(uo::flag_t::WALL) && !toCheck.CheckFlag(uo::flag_t::SURFACE) && !toCheck.CheckFlag(uo::flag_t::WINDOW)) || (!toCheck.CheckFlag(uo::flag_t::CLIMBABLE) && !toCheck.CheckFlag(uo::flag_t::WET) && !toCheck.CheckFlag(uo::flag_t::ROOF)) || !toCheck.CheckFlag(uo::flag_t::CONTAINER))) {
+            if (toCheck.checkFlag(uo::flag_t::FOLIAGE) || ((toCheck.checkFlag(uo::flag_t::BLOCKING) && !toCheck.checkFlag(uo::flag_t::WALL) && !toCheck.checkFlag(uo::flag_t::SURFACE) && !toCheck.checkFlag(uo::flag_t::WINDOW)) || (!toCheck.checkFlag(uo::flag_t::CLIMBABLE) && !toCheck.checkFlag(uo::flag_t::WET) && !toCheck.checkFlag(uo::flag_t::ROOF)) || !toCheck.checkFlag(uo::flag_t::CONTAINER))) {
                 return false;
             }
             break;
         case WALLS_CHIMNEYS: // Walls, Chimneys, ovens, not fences
-            if (toCheck.CheckFlag(uo::flag_t::WALL) || (toCheck.CheckFlag(uo::flag_t::NOSHOOT) && !toCheck.CheckFlag(uo::flag_t::SURFACE)) || toCheck.CheckFlag(uo::flag_t::WINDOW)) {
+            if (toCheck.checkFlag(uo::flag_t::WALL) || (toCheck.checkFlag(uo::flag_t::NOSHOOT) && !toCheck.checkFlag(uo::flag_t::SURFACE)) || toCheck.checkFlag(uo::flag_t::WINDOW)) {
                 return true;
             }
             break;
         case DOORS: // Doors, not gates
-            if (toCheck.CheckFlag(uo::flag_t::DOOR))
+            if (toCheck.checkFlag(uo::flag_t::DOOR))
                 return true;
             break;
         case ROOFING_SLANTED: // Roofing Slanted
-            if (toCheck.CheckFlag(uo::flag_t::ROOF))
+            if (toCheck.checkFlag(uo::flag_t::ROOF))
                 return true;
             break;
         case FLOORS_FLAT_ROOFING: // Floors & Flat Roofing (Attacking through floors Roofs)
-            if (toCheck.CheckFlag(uo::flag_t::SURFACE)) {
+            if (toCheck.checkFlag(uo::flag_t::SURFACE)) {
                 if (useSurfaceZ ? (startZ != destZ) : ((startZ - 15) != destZ)) {
                     return true;
                 }
             }
             break;
         case LAVA_WATER: // Lava, water
-            if (toCheck.CheckFlag(uo::flag_t::WET))
+            if (toCheck.checkFlag(uo::flag_t::WET))
                 return true;
             break;
         default:
@@ -352,11 +352,12 @@ std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int3
     Vector3D_st *checkLoc = nullptr;
     if (!toCheck->CanBeObjType(CBaseObject::OT_MULTI)) {
         if (toCheck->GetVisible() == VT_VISIBLE && curX >= x1 && curX <= x2 && curY >= y1 && curY <= y2) {
-            CTile &iTile = worldMULHandler.SeekTile(toCheck->GetId());
+            const auto &iTile = uoManager.art(toCheck->GetId());
             for (i = 0; i < collisioncount; ++i) {
                 checkLoc = &collisions[i];
-                if (curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()))
+                if (curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.height)){
                     return toCheck->GetId();
+                }
             }
         }
     }
@@ -364,11 +365,11 @@ std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int3
         const std::uint16_t multiId = static_cast<std::uint16_t>(toCheck->GetId() - 0x4000);
         [[maybe_unused]] std::int32_t length = 0;
         
-        if (!worldMULHandler.MultiExists(multiId)) {
-            Console::shared() << "LoS - Bad length in multi file. Avoiding stall" << myendl;
-            auto map1 = worldMULHandler.SeekMap(curX, curY, toCheck->WorldNumber());
+        if (!uoManager.multiExists(multiId) ) {
+            Console::shared() << util::format("LoS - Invalid multi: 0x%04x Setting it to 0x1/0x64",multiId) << myendl;
+            auto map1 = uoManager.terrainTileAt(toCheck->WorldNumber(), curX, curY) ;
             
-            if (map1.CheckFlag(uo::flag_t::WET)) { // is it water?
+            if (map1.checkFlag(uo::flag_t::WET)) { // is it water?
                 toCheck->SetId(0x4001);
             }
             else {
@@ -377,17 +378,16 @@ std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int3
             length = 0;
         }
         else {
-            for (auto &multi : worldMULHandler.SeekMulti(multiId).items) {
-                if (multi.flag) {
-                    const std::int16_t checkX = (curX + multi.offsetX);
-                    const std::int16_t checkY = (curY + multi.offsetY);
+            for (const auto &multi : uoManager.multiFor(multiId).tiles) {
+                if (multi.flag.value) {
+                    const std::int16_t checkX = (curX + multi.xoffset);
+                    const std::int16_t checkY = (curY + multi.yoffset);
                     if (checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2) {
-                        const std::int8_t checkZ = (curZ + multi.altitude);
-                        CTile &multiTile = worldMULHandler.SeekTile(multi.tileId);
+                        const std::int8_t checkZ = (curZ + multi.zoffset);
                         for (i = 0; i < collisioncount; ++i) {
                             checkLoc = &collisions[i];
-                            if (checkX == checkLoc->x && checkY == checkLoc->y && ((checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height())) || (multiTile.Height() <= 2 && abs(checkLoc->z - checkZ) <= dz))) {
-                                return multi.tileId;
+                            if (checkX == checkLoc->x && checkY == checkLoc->y && ((checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multi.info->height)) || (multi.info->height <= 2 && abs(checkLoc->z - checkZ) <= dz))) {
+                                return multi.tileid;
                             }
                         }
                     }
@@ -565,7 +565,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
         }
     }
     
-    std::vector<Tile_st> losItemList;
+    std::vector<uo::UOTile> losItemList;
     std::uint16_t itemCount = 0;
     
     // We already have to run through all the collisions in this function, so lets just check and
@@ -586,9 +586,9 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
             
             const std::uint16_t idToPush = DynamicCanBlock(toCheck, collisions, collisioncount, distX, distY,  x1, x2, y1, y2, dz);
             if (idToPush != INVALIDID) {
-                auto tile = Tile_st(tiletype_t::art);
-                tile.artInfo = &worldMULHandler.SeekTile(idToPush);
-                tile.tileId = idToPush;
+                auto tile = uo::UOTile(uo::ART);
+                tile.info = &uoManager.art(idToPush);
+                tile.tileid = idToPush;
                 
                 losItemList.push_back(tile);
                 
@@ -601,7 +601,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
     
     for (i = 0; i < collisioncount; ++i) {
         Vector3D_st &checkLoc = collisions[i];
-        auto artwork = worldMULHandler.ArtAt(checkLoc.x, checkLoc.y, worldNumber);
+        const auto &artwork = uoManager.artTileAt(worldNumber, checkLoc.x, checkLoc.y) ;
         
         // Texture mapping
         if (checkLoc.x == destX && checkLoc.y == destY) {
@@ -673,7 +673,7 @@ bool CheckItemLineOfSight(CChar *mChar, CItem *i) {
         if (mChar->GetInstanceId() != itemOwner->GetInstanceId())
             return false;
         
-        const std::int8_t height = worldMULHandler.TileHeight(itemOwner->GetId()); // Retrieves actual height of item, unrelated to world-coordinate
+        const std::int8_t height = uoManager.art(itemOwner->GetId()).climbHeight() ; // Retrieves actual height of item, unrelated to world-coordinate
         // Can we see the top or bottom of the item
         if (LineOfSight(nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
             inSight = true;

@@ -17,9 +17,9 @@ namespace uo {
     //======================================================================
     //  ArtBlock
     //======================================================================
-//        std::array<std::array<std::vector<UOTile>,8>,8> data ;
-//        TileInfo *info ;
-
+    //        std::array<std::array<std::vector<UOTile>,8>,8> data ;
+    //        TileInfo *info ;
+    
     //======================================================================
     ArtBlock::ArtBlock() {
         auto temp = std::vector<UOTile>() ;
@@ -30,8 +30,8 @@ namespace uo {
     ArtBlock::ArtBlock(const std::uint8_t *ptr, std::uint64_t length,const TileInfo *info ):ArtBlock(){
         load(ptr,length,info) ;
     }
-        
-        
+    
+    
     //======================================================================
     auto ArtBlock::load(const std::uint8_t *ptr, std::uint64_t length,const TileInfo *info ) -> void {
         auto processed = std::uint64_t(0) ;
@@ -66,6 +66,7 @@ namespace uo {
     auto ArtBlock::tileAt(int offsetx, int offsety) -> std::vector<UOTile> & {
         return data.at(offsetx).at(offsety);
     }
+    
     //======================================================================
     //  ArtMap
     //======================================================================
@@ -91,7 +92,7 @@ namespace uo {
         if (mapHeight == 0){
             this->mapHeight = MapSize::MAPSIZE.at(mapNumber).height ;
         }
-
+        
         auto idx = std::ifstream(idxpath.string(),std::ios::binary) ;
         if (!idx.is_open()){
             return false ;
@@ -171,7 +172,7 @@ namespace uo {
             }
         }
         return true ;
-
+        
     }
     //======================================================================
     auto ArtMap::setTileInfo(const TileInfo *info) ->void {
@@ -203,6 +204,6 @@ namespace uo {
         }
         return emptyTile ;
     }
-
+    
 }
 

@@ -8,10 +8,8 @@
 #include <vector>
 
 #include "typedefs.h"
-
+#include "uodata/uotile.hpp"
 class CChar;
-struct Tile_st;
-
 // Maximum Return Value: Number of steps to return (Replaces PATHNUM)
 // NOTE: P_PF_MRV CANNOT EXCEED THE VALUE OF PATHNUM FOR THE TIME BEING
 constexpr auto P_PF_MRV = 22;
@@ -58,12 +56,12 @@ private:
     bool IsFrozen(CChar *c, CSocket *mSock, std::int16_t sequence);
     bool IsOverloaded(CChar *c, CSocket *mSock, std::int16_t sequence);
     
-    bool IsOk(std::vector<Tile_st> &xyblock, std::uint16_t &xycount, std::uint8_t world, std::int8_t ourZ, std::int8_t ourTop, std::int16_t x, std::int16_t y, std::uint16_t instanceId, bool ignoreDoor, bool waterWalk);
+    bool IsOk(std::vector<uo::UOTile> &xyblock, std::uint16_t &xycount, std::uint8_t world, std::int8_t ourZ, std::int8_t ourTop, std::int16_t x, std::int16_t y, std::uint16_t instanceId, bool ignoreDoor, bool waterWalk);
     void GetAverageZ(std::uint8_t nm, std::int16_t x, std::int16_t y, std::int8_t &z, std::int8_t &avg, std::int8_t &top);
     void GetStartZ(std::uint8_t world, CChar *c, std::int16_t x, std::int16_t y, std::int8_t z, std::int8_t &zlow, std::int8_t &ztop, std::uint16_t instanceId, bool waterWalk);
     
-    void GetBlockingStatics(std::int16_t x, std::int16_t y, std::vector<Tile_st> &xyblock, std::uint16_t &xycount, std::uint8_t worldNumber);
-    void GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<Tile_st> &xyblock, std::uint16_t &xycount,  std::uint8_t worldNumber, std::uint16_t instanceId);
+    void GetBlockingStatics(std::int16_t x, std::int16_t y, std::vector<uo::UOTile> &xyblock, std::uint16_t &xycount, std::uint8_t worldNumber);
+    void GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<uo::UOTile> &xyblock, std::uint16_t &xycount,  std::uint8_t worldNumber, std::uint16_t instanceId);
     
     std::uint8_t Direction(std::int16_t sx, std::int16_t sy, std::int16_t dx, std::int16_t dy);
     

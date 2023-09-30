@@ -92,7 +92,7 @@ struct Weather {
             return this->intensity.at(state);
         }
     };
-
+    
     std::vector<Characteristic> weather ;
     Impact impact ;
     float snowThreshold ;
@@ -143,9 +143,9 @@ public:
     auto newDay() ->void ;
     auto newHour() ->void ;
     auto update(const UOTime &uotime) ->void ;
-
+    
     auto load(const std::filesystem::path &path) ->bool ;
-
+    
     auto doPlayerStuff(CSocket *mSock, CChar *p) ->bool;
     auto doPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8_t currentTemp, weathid_t currval) ->void;
     auto doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t element) ->bool;
@@ -159,6 +159,6 @@ public:
         }
         return nullptr ;
     }
-
+    
 };
 #endif /* weather_hpp */

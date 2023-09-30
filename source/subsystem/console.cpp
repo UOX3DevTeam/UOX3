@@ -411,23 +411,23 @@ auto Console::print(const std::string &msg) -> void {
 //| Purpose		-	Writes to the logfile
 // o------------------------------------------------------------------------------------------------o
 auto Console::log(const std::string &msg, const std::string &filename) -> void {
-        if (ServerConfig::shared().enabled(ServerSwitch::CONSOLELOG)) {
-            std::ofstream toWrite;
-            auto realFileName = std::filesystem::path() ;
-            realFileName = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path(filename);
-            
-            char timeStr[256];
-            RealTime(timeStr);
-            
-            toWrite.open(realFileName.string(), std::ios::out | std::ios::app);
-            if (toWrite.is_open()) {
-                toWrite << "[" << timeStr << "] " << msg << std::endl;
-            }
-            toWrite.close();
-            if (logEcho()) {
-                print(util::format("%s%s\n", timeStr, msg.c_str()));
-            }
+    if (ServerConfig::shared().enabled(ServerSwitch::CONSOLELOG)) {
+        std::ofstream toWrite;
+        auto realFileName = std::filesystem::path() ;
+        realFileName = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path(filename);
+        
+        char timeStr[256];
+        RealTime(timeStr);
+        
+        toWrite.open(realFileName.string(), std::ios::out | std::ios::app);
+        if (toWrite.is_open()) {
+            toWrite << "[" << timeStr << "] " << msg << std::endl;
         }
+        toWrite.close();
+        if (logEcho()) {
+            print(util::format("%s%s\n", timeStr, msg.c_str()));
+        }
+    }
 }
 
 // o------------------------------------------------------------------------------------------------o

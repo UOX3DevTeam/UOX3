@@ -40,9 +40,9 @@ namespace util {
         
         // Get the available IP4's that are on this machine
         auto availIP4() -> std::vector<ip4_t> ;
-
         
-
+        
+        
     }
 }
 

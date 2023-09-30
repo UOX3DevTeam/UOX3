@@ -42,7 +42,6 @@
 #include "jail.h"
 #include "jsencapsulate.h"
 #include "magic.h"
-#include "mapstuff.h"
 #include "movement.h"
 #include "network.h"
 #include "osunique.hpp"
@@ -56,6 +55,8 @@
 #include "uoxjsclasses.h"
 #include "uoxjspropertyspecs.h"
 #include "utility/strutil.hpp"
+#include "uodata/uomgr.hpp"
+#include "uodata/uoxuoadapter.hpp"
 #include "wholist.h"
 
 extern CDictionaryContainer worldDictionary ;
@@ -74,7 +75,7 @@ extern CSpeechQueue worldSpeechSystem ;
 extern CJSEngine worldJSEngine ;
 extern CServerDefinitions worldFileLookup ;
 extern CCommands serverCommands;
-extern CMulHandler worldMULHandler ;
+extern uo::UOMgr uoManager ;
 extern CNetworkStuff worldNetwork ;
 
 void BuildAddMenuGump(CSocket *s, std::uint16_t m); // Menus for item creation
@@ -2529,7 +2530,7 @@ JSBool CBase_Teleport(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             if (mySock == nullptr)
                 return JS_TRUE;
             
-            if (!worldMULHandler.InsideValidWorld(x, y, world)) {
+            if (!uoManager.validLocation(x, y, world)) {
                 ScriptError(cx, "Teleport: Not a valid World");
                 return JS_FALSE;
             }
@@ -7259,7 +7260,7 @@ JSBool CChar_Gate(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         }
     }
     
-    if (!worldMULHandler.MapExists(destWorld)) {
+    if (!uoManager.existMap(destWorld)) {
         destWorld = mChar->WorldNumber();
     }
     
@@ -7300,7 +7301,7 @@ JSBool CChar_Recall(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     std::uint8_t destWorld = mItem->GetTempVar(CITV_MORE);
     std::uint16_t destInstanceId = mItem->GetTempVar(CITV_MORE0);
     
-    if (!worldMULHandler.MapExists(destWorld)) {
+    if (!uoManager.existMap(destWorld)) {
         destWorld = mChar->WorldNumber();
     }
     
@@ -8362,29 +8363,20 @@ JSBool CMulti_GetMultiCorner(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
     }
     
     std::uint8_t cornerToFind = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[0]));
-    std::int16_t x1 = 0;
-    std::int16_t y1 = 0;
-    std::int16_t x2 = 0;
-    std::int16_t y2 = 0;
     
-    worldMULHandler.MultiArea(multiObject, x1, y1, x2, y2);
+    auto [x1,y1,x2,y2] = uo::multiCorners(multiObject);
     switch (cornerToFind) {
         case 0: // NW
-            *rval = STRING_TO_JSVAL(
-                                    JS_NewStringCopyZ(cx, (std::to_string(x1) + "," + std::to_string(y1)).c_str()));
+            *rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, (std::to_string(x1) + "," + std::to_string(y1)).c_str()));
             break;
         case 1: // NE
-            *rval = STRING_TO_JSVAL(
-                                    JS_NewStringCopyZ(cx, (std::to_string(x2) + "," + std::to_string(y1)).c_str()));
+            *rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, (std::to_string(x2) + "," + std::to_string(y1)).c_str()));
             break;
         case 2: // SW
-            *rval = STRING_TO_JSVAL(
-                                    JS_NewStringCopyZ(cx, (std::to_string(x1) + "," + std::to_string(y2)).c_str()));
+            *rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, (std::to_string(x1) + "," + std::to_string(y2)).c_str()));
             break;
-        case 3: // SE
-        {
-            *rval = STRING_TO_JSVAL(
-                                    JS_NewStringCopyZ(cx, (std::to_string(x2) + "," + std::to_string(y2)).c_str()));
+        case 3:{ // SE
+            *rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, (std::to_string(x2) + "," + std::to_string(y2)).c_str()));
             break;
         }
         default:
@@ -8965,7 +8957,7 @@ JSBool CBase_CanSee(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
                 }
                 
                 // Include top of item
-                zTop = worldMULHandler.TileHeight(tObj->GetId());
+                zTop = uoManager.art(tObj->GetId()).climbHeight();
             }
             else {
                 // Include top of head of character. Also, assume all characters are equally tall

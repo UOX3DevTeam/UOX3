@@ -35,7 +35,7 @@ namespace util {
         this->length = std::exchange(object.length, 0);
         return *this;
     }
-
+    
     //=================================================================================
     filemap_t::~filemap_t() {
         if (ptr != nullptr ){

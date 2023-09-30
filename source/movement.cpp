@@ -55,13 +55,14 @@
 #include "cserverdefinitions.h"
 #include "csocket.h"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "msgboard.h"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "uodata/uoflag.hpp"
+#include "uodata/uomgr.hpp"
+#include "uodata/uoxuoadapter.hpp"
 #include "type/weather.hpp"
 #include "weight.h"
 
@@ -73,7 +74,7 @@ extern cRaces worldRace ;
 extern CMovement worldMovement ;
 extern CJSMapping worldJSMapping ;
 extern cEffects worldEffect ;
-extern CMulHandler worldMULHandler ;
+extern uo::UOMgr uoManager ;
 extern CNetworkStuff worldNetwork ;
 extern CMapHandler worldMapHandler ;
 
@@ -734,12 +735,12 @@ void CMovement::MoveCharForDirection(CChar *c, std::int16_t newX, std::int16_t n
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a list of static items that block character movement
 // o------------------------------------------------------------------------------------------------o
-void CMovement::GetBlockingStatics(std::int16_t x, std::int16_t y, std::vector<Tile_st> &xyblock, std::uint16_t &xycount, std::uint8_t worldNumber) {
+void CMovement::GetBlockingStatics(std::int16_t x, std::int16_t y, std::vector<uo::UOTile> &xyblock, std::uint16_t &xycount, std::uint8_t worldNumber) {
     if (xycount >= XYMAX) // don't overflow
         return;
     
-    auto artwork = worldMULHandler.ArtAt(x, y, worldNumber);
-    for (auto &art : artwork) {
+    const auto &artwork = uoManager.artTileAt(worldNumber, x, y) ;
+    for (const auto &art : artwork) {
         xyblock.push_back(art);
         ++xycount;
         if (xycount >= XYMAX) // don't overflow
@@ -752,7 +753,7 @@ void CMovement::GetBlockingStatics(std::int16_t x, std::int16_t y, std::vector<T
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a list of dynamic items that block character movement
 // o------------------------------------------------------------------------------------------------o
-auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<Tile_st> &xyblock, std::uint16_t &xycount, std::uint8_t worldNumber, std::uint16_t instanceId) -> void {
+auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<uo::UOTile> &xyblock, std::uint16_t &xycount, std::uint8_t worldNumber, std::uint16_t instanceId) -> void {
     if (xycount >= XYMAX) // don't overflow
         return;
     
@@ -766,10 +767,10 @@ auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<
                         Console::shared().print(util::format("DEBUG: Item X: %i\nItem Y: %i\n", tItem->GetX(), tItem->GetY()));
 #endif
                         if (tItem->GetX() == x && tItem->GetY() == y) {
-                            auto tile = Tile_st(tiletype_t::dyn);
-                            tile.tileId = tItem->GetId();
+                            auto tile = uo::UOTile(uo::DYNAMIC);
+                            tile.tileid = tItem->GetId();
                             tile.altitude = tItem->GetZ();
-                            tile.artInfo = &worldMULHandler.SeekTile(tItem->GetId());
+                            tile.info = &uoManager.art(tItem->GetId()) ;
                             xyblock.push_back(tile);
                             ++xycount;
                             if (xycount >= XYMAX) {// don't overflow
@@ -781,11 +782,11 @@ auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<
                         const std::uint16_t multiId = (tItem->GetId() - 0x4000);
                         [[maybe_unused]] std::int32_t length = 0;
                         
-                        if (!worldMULHandler.MultiExists(multiId)) {
-                            Console::shared().error("Walking() - Bad length in multi file. Avoiding stall");
-                            auto map1 = worldMULHandler.SeekMap(tItem->GetX(), tItem->GetY(), tItem->WorldNumber());
+                        if (!uoManager.multiExists(multiId)) {
+                            Console::shared().error(util::format("Walking() -Multi does not exist: 0x%x04",multiId));
+                            auto map1 = uoManager.terrainTileAt(tItem->WorldNumber(), tItem->GetX(), tItem->GetY());
                             
-                            if (map1.CheckFlag(uo::flag_t::WET)) {// is it water?
+                            if (map1.checkFlag(uo::flag_t::WET)) {// is it water?
                                 tItem->SetId(0x4001);
                             }
                             else {
@@ -794,11 +795,12 @@ auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<
                             length = 0;
                         }
                         else {
-                            for (auto &multi : worldMULHandler.SeekMulti(multiId).items) {
-                                if (multi.flag && (tItem->GetX() + multi.offsetX) == x && (tItem->GetY() + multi.offsetY) == y) {
-                                    auto tile = Tile_st(tiletype_t::dyn);
-                                    tile.artInfo = &worldMULHandler.SeekTile(multi.tileId);
-                                    tile.altitude = multi.altitude + tItem->GetZ();
+                            for (auto &multi : uoManager.multiFor(multiId).tiles) {
+                                if (multi.flag.value && (tItem->GetX() + multi.xoffset) == x && (tItem->GetY() + multi.yoffset) == y) {
+                                    auto tile = uo::UOTile(uo::DYNAMIC);
+                                    tile.info = multi.info ;
+                                    tile.tileid = multi.tileid ;
+                                    tile.altitude = multi.zoffset + tItem->GetZ();
                                     xyblock.push_back(tile);
                                     ++xycount;
                                     if (xycount >= XYMAX) {// don't overflow
@@ -1580,10 +1582,10 @@ void CMovement::BoundingBoxTeleport(CChar *nChar, std::uint16_t fx2Actual, std::
         bool amphibWalk = worldMain.creatures[nChar->GetId()].IsAmphibian();
         for (std::uint16_t m = fx1; m < fx2Actual; m++) {
             for (std::uint16_t n = fy1; n < fy2Actual; n++) {
-                if ((!waterWalk || amphibWalk) && worldMULHandler.ValidSpawnLocation(m, n, fz1, worldNumber, false)) {
+                if ((!waterWalk || amphibWalk) && uo::validSpawnLocation(m, n, fz1, worldNumber, false)) {
                     boundingBoxTeleport = true;
                 }
-                else if (waterWalk && worldMULHandler.ValidSpawnLocation(m, n, fz1, worldNumber, true)) {
+                else if (waterWalk && uo::validSpawnLocation(m, n, fz1, worldNumber, true)) {
                     boundingBoxTeleport = true;
                 }
                 if (boundingBoxTeleport == true) {
@@ -2387,10 +2389,11 @@ void CMovement::NpcMovement(CChar &mChar) {
 //|	Purpose		-	Get the average Z height level of the maptile at a given coordinate
 // o------------------------------------------------------------------------------------------------o
 void CMovement::GetAverageZ(std::uint8_t nm, std::int16_t x, std::int16_t y, std::int8_t &z, std::int8_t &avg, std::int8_t &top) {
-    std::int8_t zTop = worldMULHandler.MapElevation(x, y, nm);
-    std::int8_t zLeft = worldMULHandler.MapElevation(x, y + 1, nm);
-    std::int8_t zRight = worldMULHandler.MapElevation(x + 1, y, nm);
-    std::int8_t zBottom = worldMULHandler.MapElevation(x + 1, y + 1, nm);
+    
+    std::int8_t zTop = uo::mapElevation(x, y, nm);
+    std::int8_t zLeft = uo::mapElevation(x, y+1, nm);
+    std::int8_t zRight = uo::mapElevation(x+1, y, nm);
+    std::int8_t zBottom = uo::mapElevation(x+1, y+1, nm);
     
     z = zTop;
     if (zLeft < z) {
@@ -2429,17 +2432,17 @@ void CMovement::GetAverageZ(std::uint8_t nm, std::int16_t x, std::int16_t y, std
 //|						character's potential new Z and the top of their
 // head
 // o------------------------------------------------------------------------------------------------o
-bool CMovement::IsOk(std::vector<Tile_st> &xyblock, [[maybe_unused]] std::uint16_t &xycount, [[maybe_unused]] std::uint8_t world, std::int8_t ourZ, std::int8_t ourTop, [[maybe_unused]] std::int16_t x, [[maybe_unused]] std::int16_t y, [[maybe_unused]] std::uint16_t instanceId, bool ignoreDoor,  bool waterWalk) {
+bool CMovement::IsOk(std::vector<uo::UOTile> &xyblock, [[maybe_unused]] std::uint16_t &xycount, [[maybe_unused]] std::uint8_t world, std::int8_t ourZ, std::int8_t ourTop, [[maybe_unused]] std::int16_t x, [[maybe_unused]] std::int16_t y, [[maybe_unused]] std::uint16_t instanceId, bool ignoreDoor,  bool waterWalk) {
     for (auto &tile : xyblock) {
-        if (tile.CheckFlag(uo::flag_t::WET)) {
+        if (tile.checkFlag(uo::flag_t::WET)) {
             // If blocking object is WET and character can swim, ignore object
             if (waterWalk)
                 continue;
         }
         
-        if (tile.CheckFlag(uo::flag_t::BLOCKING) || tile.CheckFlag(uo::flag_t::SURFACE)) {
+        if (tile.checkFlag(uo::flag_t::BLOCKING) || tile.checkFlag(uo::flag_t::SURFACE)) {
             // If character ignores doors (GMs/Counselors/Ghosts), and this is a door, ignore.
-            if (ignoreDoor && tile.type == tiletype_t::dyn && (tile.CheckFlag(uo::flag_t::DOOR) || tile.tileId == 0x692 || tile.tileId == 0x846 || tile.tileId == 0x873 || (tile.tileId >= 0x6F5 && tile.tileId <= 0x6F6)))
+            if (ignoreDoor && tile.type == uo::DYNAMIC && (tile.checkFlag(uo::flag_t::DOOR) || tile.tileid == 0x692 || tile.tileid == 0x846 || tile.tileid == 0x873 || (tile.tileid >= 0x6F5 && tile.tileid <= 0x6F6)))
                 continue;
             
             std::int8_t checkz = tile.altitude;
@@ -2463,19 +2466,19 @@ void CMovement::GetStartZ(std::uint8_t world, [[maybe_unused]] CChar *c, std::in
     std::int8_t landtop = 0;
     bool landBlock = true;
     
-    auto map = worldMULHandler.SeekMap(x, y, world);
+    auto map = uoManager.terrainTileAt(world, x, y);
     
-    landBlock = map.CheckFlag(uo::flag_t::BLOCKING);
-    if (landBlock && waterwalk && map.CheckFlag(uo::flag_t::WET)) {
+    landBlock = map.checkFlag(uo::flag_t::BLOCKING);
+    if (landBlock && waterwalk && map.checkFlag(uo::flag_t::WET)) {
         landBlock = false;
     }
     
-    std::vector<Tile_st> xyblock;
+    std::vector<uo::UOTile> xyblock;
     std::uint16_t xycount = 0;
     GetBlockingStatics(x, y, xyblock, xycount, world);
     GetBlockingDynamics(x, y, xyblock, xycount, world, instanceId);
     
-    bool considerLand = !worldMULHandler.IsIgnored(map.tileId);
+    bool considerLand = map.isIgnored();
     GetAverageZ(world, x, y, landz, landcent, landtop);
     
     bool isset = false;
@@ -2494,7 +2497,7 @@ void CMovement::GetStartZ(std::uint8_t world, [[maybe_unused]] CChar *c, std::in
     
     for (auto &tile : xyblock) {
         // If the tile is a surface that can be walked on, or swam on...
-        if ((!isset || tile.top() >= zcenter) && (tile.CheckFlag(uo::flag_t::SURFACE) || (waterwalk && tile.CheckFlag(uo::flag_t::WET))) && z >= tile.top()) {
+        if ((!isset || tile.top() >= zcenter) && (tile.checkFlag(uo::flag_t::SURFACE) || (waterwalk && tile.checkFlag(uo::flag_t::WET))) && z >= tile.top()) {
             // Fetch the base Z position of surface tile
             zlow = tile.altitude;
             
@@ -2611,20 +2614,20 @@ std::int8_t CMovement::CalcWalk(CChar *c, std::int16_t x, std::int16_t y, std::i
     std::uint16_t instanceId = c->GetInstanceId();
     bool landBlock = true;
     
-    std::vector<Tile_st> xyblock;
+    std::vector<uo::UOTile> xyblock;
     GetBlockingStatics(x, y, xyblock, xycount, worldNumber);
     GetBlockingDynamics(x, y, xyblock, xycount, worldNumber, instanceId);
     
-    auto map = worldMULHandler.SeekMap(x, y, c->WorldNumber());
+    auto map = uoManager.terrainTileAt(c->WorldNumber(), x, y);
     
     // Does landtile in target location block movement?
-    landBlock = map.CheckFlag(uo::flag_t::BLOCKING);
+    landBlock = map.checkFlag(uo::flag_t::BLOCKING);
     
     // If it does, but it's WET and character can swim, it doesn't block!
     if (waterWalk) {
-        auto mapIsWet = map.CheckFlag(uo::flag_t::WET);
+        auto mapIsWet = map.checkFlag(uo::flag_t::WET);
         if (landBlock) {
-            if (mapIsWet || (map.terrainInfo->TextureId() >= 76 && map.terrainInfo->TextureId() <= 111)) {
+            if (mapIsWet || (std::get<const uo::TerrainInfo*>(map.info)->textureID >= 76 && std::get<const uo::TerrainInfo*>(map.info)->textureID <= 111)) {
                 // Swimming creature attempting to move on water! Allow it.
                 landBlock = false;
             }
@@ -2637,7 +2640,7 @@ std::int8_t CMovement::CalcWalk(CChar *c, std::int16_t x, std::int16_t y, std::i
         }
     }
     
-    bool considerLand = worldMULHandler.IsIgnored(map.tileId); // Special case for a couple of land-tiles. Returns true if tile
+    bool considerLand = map.isIgnored(); // Special case for a couple of land-tiles. Returns true if tile
     // being checked equals one of those tiles.
     
     std::int8_t startTop = 0;
@@ -2663,7 +2666,7 @@ std::int8_t CMovement::CalcWalk(CChar *c, std::int16_t x, std::int16_t y, std::i
     
     // Loop through all objects in the target location
     for (auto &tile : xyblock) {
-        if ((!tile.CheckFlag(uo::flag_t::BLOCKING) && tile.CheckFlag(uo::flag_t::SURFACE) && !waterWalk) || (waterWalk && tile.CheckFlag(uo::flag_t::WET))) {
+        if ((!tile.checkFlag(uo::flag_t::BLOCKING) && tile.checkFlag(uo::flag_t::SURFACE) && !waterWalk) || (waterWalk && tile.checkFlag(uo::flag_t::WET))) {
             std::int8_t itemz = tile.altitude; // Object's current Z position
             std::int8_t itemTop = itemz;
             std::int8_t potentialNewZ =
@@ -2680,7 +2683,7 @@ std::int8_t CMovement::CalcWalk(CChar *c, std::int16_t x, std::int16_t y, std::i
                 testTop = potentialNewZ + charHeight;
             }
             
-            if (!tile.CheckFlag(uo::flag_t::CLIMBABLE)) {
+            if (!tile.checkFlag(uo::flag_t::CLIMBABLE)) {
                 itemTop += tile.height();
             }
             

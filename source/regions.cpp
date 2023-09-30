@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <filesystem>
+#include <fstream>
 #include <vector>
 
 #include "cbaseobject.h"
@@ -11,15 +12,14 @@
 #include "cmultiobj.h"
 #include "subsystem/console.hpp"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "objectfactory.h"
 #include "configuration/serverconfig.hpp"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
-
+#include "uodata/uomgr.hpp"
 #include "useful.h"
 
-extern CMulHandler worldMULHandler ;
+extern uo::UOMgr uoManager ;
 extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
@@ -223,7 +223,7 @@ CMapWorld::CMapWorld() : upperArrayX(0), upperArrayY(0), resourceX(0), resourceY
 //|	Purpose		-	Initializes resource regions for the given world
 // o------------------------------------------------------------------------------------------------o
 CMapWorld::CMapWorld(std::uint8_t worldNum) {
-    auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(worldNum);
+    auto [mapWidth, mapHeight] = uoManager.sizeOfMap(worldNum) ;
     upperArrayX = static_cast<std::int16_t>(mapWidth / MapColSize);
     upperArrayY = static_cast<std::int16_t>(mapHeight / MapRowSize);
     resourceX = static_cast<std::uint16_t>(mapWidth / ServerConfig::shared().ushortValues[UShortValue::RESOURCEAREASIZE] );
@@ -357,7 +357,7 @@ void CMapWorld::LoadResources(std::uint8_t worldNum) {
 //|	Purpose		-	Fills and clears the mapWorlds vector.
 // o------------------------------------------------------------------------------------------------o
 auto CMapHandler::startup() -> void {
-    std::uint8_t numWorlds = worldMULHandler.MapCount();
+    std::uint8_t numWorlds = uoManager.size();
     
     mapWorlds.reserve(numWorlds);
     for (std::uint8_t i = 0; i < numWorlds; ++i) {
@@ -677,8 +677,8 @@ void CMapHandler::Save() {
     std::ofstream writeDestination, houseDestination;
     std::int32_t onePercent = 0;
     std::uint8_t i = 0;
-    for (i = 0; i < worldMULHandler.MapCount(); ++i) {
-        auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(i);
+    for (i = 0; i < uoManager.size() ; ++i) {
+        auto [mapWidth, mapHeight] = uoManager.sizeOfMap(i) ;
         onePercent += static_cast<std::int32_t>((mapWidth / MapColSize) * (mapHeight / MapRowSize));
     }
     onePercent = static_cast<std::int32_t>(onePercent / 100.0f);

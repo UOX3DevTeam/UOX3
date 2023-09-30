@@ -28,7 +28,6 @@
 #include "funcdecl.h"
 #include "jsencapsulate.h"
 #include "magic.h"
-#include "mapstuff.h"
 #include "movement.h"
 #include "partysystem.h"
 #include "regions.h"
@@ -43,6 +42,8 @@
 #include "uoxjsclasses.h"
 #include "uoxjspropertyenums.h"
 #include "uoxjspropertyspecs.h"
+#include "uodata/uomgr.hpp"
+#include "uodata/uoxuoadapter.hpp"
 
 extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
@@ -53,7 +54,7 @@ extern CMovement worldMovement ;
 extern CJSMapping worldJSMapping ;
 extern CGuildCollection worldGuildSystem ;
 extern CJSEngine worldJSEngine ;
-extern CMulHandler worldMULHandler ;
+extern uo::UOMgr uoManager ;
 
 void MakeShop(CChar *c);
 void ScriptError(JSContext *cx, const char *txt, ...);
@@ -1371,7 +1372,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
                 break;
             }
             case CIP_WORLDNUMBER:
-                if (!worldMULHandler.InsideValidWorld(gPriv->GetX(), gPriv->GetY(), static_cast<std::uint8_t>(encaps.toInt())))
+                if (!uoManager.validLocation(gPriv->GetX(), gPriv->GetY(), static_cast<std::uint8_t>(encaps.toInt())))
                     return JS_FALSE;
                 
                 gPriv->RemoveFromSight();
@@ -2831,7 +2832,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 break;
             }
             case CCP_WORLDNUMBER:
-                if (!worldMULHandler.InsideValidWorld(gPriv->GetX(), gPriv->GetY(), static_cast<std::uint8_t>(encaps.toInt())))
+                if (!uoManager.validLocation(gPriv->GetX(), gPriv->GetY(), static_cast<std::uint8_t>(encaps.toInt())))
                     return JS_FALSE;
                 
                 gPriv->RemoveFromSight();

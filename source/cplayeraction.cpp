@@ -21,7 +21,6 @@
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "magic.h"
-#include "mapstuff.h"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
@@ -29,6 +28,8 @@
 #include "utility/strutil.hpp"
 #include "townregion.h"
 #include "uodata/uoflag.hpp"
+#include "uodata/uomgr.hpp"
+#include "uodata/uoxuoadapter.hpp"
 #include "useful.h"
 #include "weight.h"
 
@@ -45,7 +46,7 @@ extern CJSMapping worldJSMapping ;
 extern cEffects worldEffect ;
 extern CGuildCollection worldGuildSystem ;
 extern CServerDefinitions worldFileLookup ;
-extern CMulHandler worldMULHandler ;
+extern uo::UOMgr uoManager ;
 extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
@@ -396,8 +397,8 @@ bool CPIGetItem::Handle() {
         }
     }
     
-    CTile &tile = worldMULHandler.SeekTile(i->GetId());
-    if (!ourChar->AllMove() && (i->GetMovable() == 2 || i->IsLockedDown() || (tile.Weight() == 255 && i->GetMovable() != 1))) {
+    const auto &tile = uoManager.art(i->GetId());
+    if (!ourChar->AllMove() && (i->GetMovable() == 2 || i->IsLockedDown() || (tile.weight == 255 && i->GetMovable() != 1))) {
         if (ourChar->GetCommandLevel() < 2 || tSock->PickupSpot() != PL_OWNPACK) {
             tSock->SysMessage(9064); // You cannot pick that up.
             if (ourChar->GetCommandLevel() >= 2) {
@@ -655,9 +656,9 @@ bool CPIEquipItem::Handle() {
         }
     }
     
-    CTile &tile = worldMULHandler.SeekTile(i->GetId());
+    const auto &tile = uoManager.art(i->GetId());
     if (!ourChar->AllMove() &&
-        (i->GetMovable() == 2 || (i->IsLockedDown() && i->GetOwnerObj() != ourChar) || (tile.Weight() == 255 && i->GetMovable() != 1))) {
+        (i->GetMovable() == 2 || (i->IsLockedDown() && i->GetOwnerObj() != ourChar) || (tile.weight == 255 && i->GetMovable() != 1))) {
         tSock->SysMessage(9064); // You cannot pick that up.
         Bounce(tSock, i);
         return true;
@@ -1063,23 +1064,23 @@ bool CheckForValidDropLocation(CSocket *mSock, CChar *nChar, std::uint16_t x, st
         // First, check for a static surface to drop item on
         std::uint16_t foundTileId1 = 0;
         std::uint16_t foundTileId2 = 0;
-        if (!worldMULHandler.CheckStaticFlag(x, y, z, nChar->WorldNumber(), uo::flag_t::SURFACE, foundTileId1, false)) {
+        if (!uo::checkStaticFlag(x, y, z, nChar->WorldNumber(), uo::flag_t::SURFACE, foundTileId1, false)) {
             // Nowhere static to put item? Check dynamic tiles for surface!
-            if (!worldMULHandler.CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), uo::flag_t::SURFACE, foundTileId1)) {
+            if (!uo::checkDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), uo::flag_t::SURFACE, foundTileId1)) {
                 // No static OR dynamic surface was found to place item? Check if map itself blocks
                 // the placement
-                dropLocationBlocked =  worldMULHandler.DoesMapBlock(x, y, z, nChar->WorldNumber(), true, false, false, false);
+                dropLocationBlocked =  uo::doesTerrainBlock(x, y, z, nChar->WorldNumber(), true, false, false, false);
             }
         }
         
         if (!dropLocationBlocked) {
             // Some kind of valid surface was found. But is it blocked by...
-            if (worldMULHandler.CheckStaticFlag(x, y, z, nChar->WorldNumber(), uo::flag_t::BLOCKING, foundTileId2, false) || worldMULHandler.CheckStaticFlag(x, y, z, nChar->WorldNumber(), uo::flag_t::ROOF, foundTileId2, false)) { // ...static items?
+            if (uo::checkStaticFlag(x, y, z, nChar->WorldNumber(), uo::flag_t::BLOCKING, foundTileId2, false) || uo::checkStaticFlag(x, y, z, nChar->WorldNumber(), uo::flag_t::ROOF, foundTileId2, false)) { // ...static items?
                 if (foundTileId1 != foundTileId2) {
                     dropLocationBlocked = true;
                 }
             }
-            else if (worldMULHandler.CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), uo::flag_t::BLOCKING, foundTileId2) || worldMULHandler.CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), uo::flag_t::ROOF, foundTileId2)) { // No? What about dynamic items?
+            else if (uo::checkDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), uo::flag_t::BLOCKING, foundTileId2) || uo::checkDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), uo::flag_t::ROOF, foundTileId2)) { // No? What about dynamic items?
                 if (foundTileId1 != foundTileId2) {
                     dropLocationBlocked = true;
                 }
@@ -1136,8 +1137,8 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
         }
     }
     
-    CTile &tile = worldMULHandler.SeekTile(i->GetId());
-    if (!nChar->AllMove() && (i->GetMovable() == 2 || (i->IsLockedDown() && i->GetOwnerObj() != nChar) || (tile.Weight() == 255 && i->GetMovable() != 1))) {
+    const auto &tile =uoManager.art(i->GetId());
+    if (!nChar->AllMove() && (i->GetMovable() == 2 || (i->IsLockedDown() && i->GetOwnerObj() != nChar) || (tile.weight == 255 && i->GetMovable() != 1))) {
         if (nChar->GetCommandLevel() < 2 || mSock->PickupSpot() != PL_OWNPACK) {
             if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
                 worldWeight.SubtractItemWeight(nChar, i);
@@ -1161,18 +1162,18 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
         
         // New location either is not blocking, or has a surface we can put the item on, so let's
         // find the exact Z of where to put it
-        auto newZ = worldMULHandler.StaticTop(x, y, z, nChar->WorldNumber(), 14 - (z - nChar->GetZ()));
+        auto newZ = uo::staticTop(x, y, z, nChar->WorldNumber(), 14 - (z - nChar->GetZ()));
         if (newZ == ILLEGAL_Z || newZ < z || newZ > z + 14) {
             // No valid static elevation found, use dynamic elevation instead
-            newZ = worldMULHandler.DynamicElevation(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14);
+            newZ = uo::dynamicElevation(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14);
             if (newZ < z || newZ > z + 14) {
                 // No valid dynamic elevation found. Use map elevation instead (don't implicitly
                 // trust Z from client)
-                newZ = worldMULHandler.MapElevation(x, y, nChar->WorldNumber());
+                newZ = uo::mapElevation(x, y, nChar->WorldNumber());
             }
         }
         else {
-            auto dynZ = worldMULHandler.DynamicElevation(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14);
+            auto dynZ = uo::dynamicElevation(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14);
             newZ = ((dynZ >= z && dynZ <= z + 14) ? dynZ : newZ);
         }
         
@@ -1180,7 +1181,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
         if (ValidateObject(iMulti)) {
             // Check if new Z plus height of dropped item will make it exceed 20 Z limit per floor
             // in houses, and deny placement if so
-            if (newZ > (nChar->GetZ() + (20 - tile.Height()))) {
+            if (newZ > (nChar->GetZ() + (20 - tile.height))) {
                 // Item is too tall - can't drop it this high up
                 if (nChar->GetCommandLevel() >= 2 || nChar->IsGM()) {
                     // GM override
@@ -1197,7 +1198,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
                 }
             }
         }
-        else if (newZ + tile.Height() > z + tile.Height()) {
+        else if (newZ + tile.height > z + tile.height) {
             // Item is too tall - can't drop it this high up
             if (nChar->GetCommandLevel() >= 2 || nChar->IsGM()) {
                 // GM override
@@ -1676,8 +1677,8 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
     
     bool stackDeleted = false;
     
-    CTile &tile = worldMULHandler.SeekTile(nItem->GetId());
-    if (!mChar->AllMove() && (nItem->GetMovable() == 2 || (nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar) || (tile.Weight() == 255 && nItem->GetMovable() != 1))) {
+    const auto &tile =uoManager.art(nItem->GetId());
+    if (!mChar->AllMove() && (nItem->GetMovable() == 2 || (nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar) || (tile.weight == 255 && nItem->GetMovable() != 1))) {
         if (mChar->GetCommandLevel() < 2 || mSock->PickupSpot() != PL_OWNPACK) {
             if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
                 worldWeight.SubtractItemWeight(mChar, nItem);

@@ -28,14 +28,12 @@
 
 #include "cchar.h"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "osunique.hpp"
 #include "configuration/serverconfig.hpp"
 #include "utility/strutil.hpp"
+#include "uodata/uomgr.hpp"
 
-extern CMulHandler worldMULHandler ;
-
-
+extern uo::UOMgr uoManager ;
 
 const std::uint16_t DEFMULTI_MAXLOCKDOWNS = 256;
 const std::uint16_t DEFMULTI_MAXSECURECONTAINERS = 4;
@@ -55,6 +53,7 @@ const std::uint8_t HOUSEPRIV_FRIEND = 2;
 const std::uint8_t HOUSEPRIV_GUEST = 3;
 
 CMultiObj::CMultiObj(): CItem(), deed(""), maxLockdowns(DEFMULTI_MAXLOCKDOWNS), maxSecureContainers(DEFMULTI_MAXSECURECONTAINERS), maxFriends(DEFMULTI_MAXFRIENDS), maxGuests(DEFMULTI_MAXGUESTS), maxOwners(DEFMULTI_MAXOWNERS), maxBans(DEFMULTI_MAXBANS), maxVendors(DEFMULTI_MAXVENDORS), maxTrashContainers(DEFMULTI_MAXTRASHCONTAINERS), banX(DEFMULTI_BANX), banY(DEFMULTI_BANY), isPublic(false), tradeTimestamp(DEFMULTI_TRADETIMESTAMP) {
+    
     objType = OT_MULTI;
     housePrivList.clear();
 }
@@ -689,7 +688,7 @@ bool CMultiObj::Save(std::ostream &outStream) {
     bool rValue = false;
     if (!IsFree()) {
         rValue = true;
-        auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(worldNumber);
+        auto [mapWidth, mapHeight] = uoManager.sizeOfMap(worldNumber);
         if (GetCont() != nullptr || (GetX() > 0 && GetX() < mapWidth && GetY() < mapHeight)) {
             DumpHeader(outStream);
             DumpBody(outStream);

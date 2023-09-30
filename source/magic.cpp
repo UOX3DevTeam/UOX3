@@ -20,7 +20,6 @@
 #include "csocket.h"
 #include "dictionary.h"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "movement.h"
 #include "objectfactory.h"
 #include "osunique.hpp"
@@ -34,6 +33,8 @@
 #include "townregion.h"
 #include "utility/strutil.hpp"
 #include "uodata/uoflag.hpp"
+#include "uodata/uomgr.hpp"
+#include "uodata/uoxuoadapter.hpp"
 #include "weight.h"
 
 extern CDictionaryContainer worldDictionary ;
@@ -47,7 +48,7 @@ extern CMovement worldMovement ;
 extern CJSMapping worldJSMapping ;
 extern cEffects worldEffect ;
 extern CServerDefinitions worldFileLookup ;
-extern CMulHandler worldMULHandler ;
+extern uo::UOMgr uoManager ;
 extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
@@ -208,7 +209,7 @@ bool FieldSpell(CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y,
                 
                 // Store caster's serial in field item
                 i->SetTempVar(CITV_MOREY, caster->GetSerial());
-                i->SetLocation(fx[j], fy[j], worldMULHandler.Height(fx[j], fy[j], z, worldNumber, instanceId));
+                i->SetLocation(fx[j], fy[j], uo::playerElevation(fx[j], fy[j], z, worldNumber, instanceId));
                 i->SetDir(29);
                 i->SetMovable(2);
                 
@@ -629,12 +630,12 @@ bool splTeleport(CSocket *sock, CChar *caster, std::int16_t x, std::int16_t y, s
         return false;
     }
     if (!caster->IsNpc()) {
-        CTile &tile = worldMULHandler.SeekTile(sock->GetWord(0x11));
-        if ((tile.Name() == "water") || tile.CheckFlag(uo::flag_t::WET)) {
+        const auto &tile = uoManager.art(sock->GetWord(0x11));
+        if ((tile.name == "water") || tile.checkFlag(uo::flag_t::WET)) {
             sock->SysMessage(671); // You can't teleport there!
             return false;
         }
-        if (tile.CheckFlag(uo::flag_t::ROOF)) { // slanted roof tile!!! naughty naughty
+        if (tile.checkFlag(uo::flag_t::ROOF)) { // slanted roof tile!!! naughty naughty
             sock->SysMessage(672); // You cannot teleport there!
             return false;
         }
@@ -1002,7 +1003,7 @@ auto splRecall(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int
         }
         else {
             std::uint8_t worldNum = static_cast<std::uint8_t>(i->GetTempVar(CITV_MORE));
-            if (!worldMULHandler.MapExists(worldNum)) {
+            if (!uoManager.existMap(worldNum)) {
                 worldNum = caster->WorldNumber();
             }
             
@@ -1763,7 +1764,7 @@ bool splGateTravel(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std:
         }
         else {
             std::uint8_t worldNum = static_cast<std::uint8_t>(i->GetTempVar(CITV_MORE));
-            if (!worldMULHandler.MapExists(worldNum)) {
+            if (!uoManager.existMap(worldNum)) {
                 worldNum = caster->WorldNumber();
             }
             if (caster->WorldNumber() != worldNum && !ServerConfig::shared().enabled(ServerSwitch::SPELLWORLDTRAVEL)) {
@@ -2297,7 +2298,7 @@ bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t i
             i->SetDecayTime(BuildTimeValue(static_cast<float>(caster->GetSkill(MAGERY) / 15)));
             i->SetTempVar(CITV_MOREX, caster->GetSkill(MAGERY)); // remember casters magery skill for damage
             i->SetTempVar(CITV_MOREY, caster->GetSerial());
-            i->SetLocation(x + fx[j], y + fy[j], worldMULHandler.Height(x + fx[j], y + fy[j], z, worldNumber, instanceId));
+            i->SetLocation(x + fx[j], y + fy[j], uo::playerElevation(x + fx[j], y + fy[j], z, worldNumber, instanceId));
             i->SetDir(29);
             i->SetMovable(2);
         }
@@ -2314,7 +2315,7 @@ bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t i
                     i->SetTempVar(CITV_MOREY, caster->GetSerial());
                     const std::int16_t newX = x + counter2 * counter3;
                     const std::int16_t newY = y + j * (yOffset - counter3);
-                    i->SetLocation(newX, newY, worldMULHandler.Height(newX, newY, z, worldNumber, instanceId));
+                    i->SetLocation(newX, newY, uo::playerElevation(newX, newY, z, worldNumber, instanceId));
                     i->SetDir(29);
                     i->SetMovable(2);
                 }
@@ -2358,11 +2359,11 @@ bool SquareSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t id
                 switch (j) {
                     case 0:
                     case 2:
-                        i->SetLocation(x + counter, y + (j - 1) * yOffset, worldMULHandler.Height(x + counter, y + (j - 1) * yOffset, z, worldNumber, instanceId));
+                        i->SetLocation(x + counter, y + (j - 1) * yOffset, uo::playerElevation(x + counter, y + (j - 1) * yOffset, z, worldNumber, instanceId));
                         break;
                     case 1:
                     case 3:
-                        i->SetLocation(x + (j - 2) * xOffset, y + counter, worldMULHandler.Height(x + (j - 2) * xOffset, y + counter, z, worldNumber, instanceId));
+                        i->SetLocation(x + (j - 2) * xOffset, y + counter, uo::playerElevation(x + (j - 2) * xOffset, y + counter, z, worldNumber, instanceId));
                         break;
                 }
                 i->SetDir(29);
@@ -2398,7 +2399,7 @@ bool FloodSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t id,
                 i->SetDecayTime(BuildTimeValue(static_cast<float>(caster->GetSkill(MAGERY) / 15)));
                 i->SetTempVar(CITV_MOREX, caster->GetSkill(MAGERY)); // remember casters magery skill for damage
                 i->SetTempVar(CITV_MOREY, caster->GetSerial());
-                i->SetLocation(counter1, counter2, worldMULHandler.Height(counter1, counter2, z, worldNumber, instanceId));
+                i->SetLocation(counter1, counter2, uo::playerElevation(counter1, counter2, z, worldNumber, instanceId));
                 i->SetDir(29);
                 i->SetMovable(2);
             }
@@ -2798,7 +2799,7 @@ void CMagic::SummonMonster(CSocket *s, CChar *caster, std::uint16_t id, std::int
         newChar->SetLocation(caster->GetX() - 1, caster->GetY(), caster->GetZ());
     }
     else {
-        if (worldMULHandler.ValidSpawnLocation(x, y, z, caster->WorldNumber(), caster->GetInstanceId())) {
+        if (uo::validSpawnLocation(x, y, z, caster->WorldNumber(), caster->GetInstanceId())) {
             newChar->SetLocation(x, y, z);
         }
         else {
@@ -4243,7 +4244,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
                 else {
                     x = s->GetWord(11);
                     y = s->GetWord(13);
-                    z = s->GetByte(16) + worldMULHandler.TileHeight(s->GetWord(17));
+                    z = s->GetByte(16) + uoManager.art(s->GetWord(17)).climbHeight() ;
                 }
             }
             else {

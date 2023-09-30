@@ -80,7 +80,6 @@
 #include "subsystem/console.hpp"
 
 #include "magic.h"
-#include "mapstuff.h"
 #include "movement.h"
 #include "msgboard.h"
 #include "network/networkmgr.hpp"
@@ -99,6 +98,7 @@
 #include "typedefs.h"
 #include "utility/strutil.hpp"
 #include "uodata/uomgr.hpp"
+#include "uodata/uoxuoadapter.hpp"
 #include "other/uoxversion.hpp"
 #include "type/weather.hpp"
 #include "weight.h"
@@ -125,12 +125,10 @@ extern CSpeechQueue worldSpeechSystem ;
 extern CJSEngine worldJSEngine ;
 extern CServerDefinitions worldFileLookup ;
 extern CCommands serverCommands ;
-extern CMulHandler worldMULHandler ;
 extern CNetworkStuff worldNetwork ;
 extern CMapHandler worldMapHandler ;
 //=====================================
-//extern uo::UOMgr uoManager ;
-uo::UOMap uoManager;
+extern uo::UOMgr uoManager ;
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
 //  Global variables
@@ -214,11 +212,13 @@ auto main(std::int32_t argc, char *argv[]) -> int {
         // If we cant read the config file, should we even do anything else ?
         ServerConfig::shared().loadConfig(configFile);
         // Lets get the uodata now, otherwise, we can stop
-        //uoManager.load(ServerConfig::shared().directoryFor(dirlocation_t::UODIR),ServerConfig::shared().directoryFor(dirlocation_t::DEFINITION)/std::filesystem::path("maps"),true,ServerConfig::shared().serverSwitch[ServerSwitch::MAPDIFF]) ;
-        //std::cout <<"Tile information - Terrain: "<<uoManager.terrainSize()<<" Art: " << uoManager.artSize()<<std::endl;
-        //std::cout <<"Multi Information: "<<uoManager.sizeMulti()<<std::endl;
+        uoManager.load(ServerConfig::shared().directoryFor(dirlocation_t::UODIR),ServerConfig::shared().directoryFor(dirlocation_t::DEFINITION)/std::filesystem::path("maps"),true,ServerConfig::shared().serverSwitch[ServerSwitch::MAPDIFF]) ;
+        std::cout <<"Tile information - Terrain: "<<uoManager.terrainSize()<<" Art: " << uoManager.artSize()<<std::endl;
+        std::cout <<"Multi Information: "<<uoManager.sizeMulti()<<std::endl;
+        if (uoManager.empty()){
+            throw std::runtime_error("ERROR: Did not load any UO maps");
+        }
         initOperatingSystem() ;
-        return 0;
     }
     catch( const std::exception &e){
         std::cerr <<e.what() << std::endl;
@@ -460,7 +460,7 @@ auto startInitialize() -> void {
     // Let's measure startup time
     auto startupStartTime = std::chrono::high_resolution_clock::now();
     
-//    cwmWorldState = &aWorld;
+    //    cwmWorldState = &aWorld;
     
     Console::shared() << "Initializing and creating class pointers... " << myendl;
     initClasses();
@@ -592,23 +592,23 @@ auto startInitialize() -> void {
         Console::shared() << "UOX: listening for incoming connections on External/WAN IP: " << externalIP.c_str() << myendl;
     }
     /*
-    auto deviceIPs = ip4list_t::available();
-    for (auto &entry : deviceIPs.ips()) {
-        switch (entry.type()) {
-            case IP4Addr::ip4type_t::lan:
-                Console::shared() << "UOX: listening for incoming connections on LAN IP: " << entry.description() << myendl;
-                break;
-            case IP4Addr::ip4type_t::local:
-                Console::shared() << "UOX: listening for incoming connections on Local IP: " << entry.description() << myendl;
-                break;
-            case IP4Addr::ip4type_t::wan:
-                Console::shared() << "UOX: listening for incoming connections on WAN IP: " << entry.description() << myendl;
-                break;
-            default:
-                Console::shared() << "UOX: listening for incoming connections on IP: " << entry.description() << myendl;
-                break;
-        }
-    }
+     auto deviceIPs = ip4list_t::available();
+     for (auto &entry : deviceIPs.ips()) {
+     switch (entry.type()) {
+     case IP4Addr::ip4type_t::lan:
+     Console::shared() << "UOX: listening for incoming connections on LAN IP: " << entry.description() << myendl;
+     break;
+     case IP4Addr::ip4type_t::local:
+     Console::shared() << "UOX: listening for incoming connections on Local IP: " << entry.description() << myendl;
+     break;
+     case IP4Addr::ip4type_t::wan:
+     Console::shared() << "UOX: listening for incoming connections on WAN IP: " << entry.description() << myendl;
+     break;
+     default:
+     Console::shared() << "UOX: listening for incoming connections on IP: " << entry.description() << myendl;
+     break;
+     }
+     }
      */
     Console::shared().turnNormal();
     
@@ -2455,9 +2455,7 @@ auto initClasses() -> void {
     worldFileLookup.startup();
     serverCommands.startup();
     worldSpeechSystem.startup();
-    // Need to do map
     worldNetwork.startup();
-    worldMULHandler.load();
     worldJSMapping.ResetDefaults();
     worldJSMapping.GetEnvokeById()->Parse();
     worldJSMapping.GetEnvokeByType()->Parse();
@@ -2534,9 +2532,9 @@ auto displayBanner() -> void {
     Console::shared().turnYellow();
     Console::shared() << "Compiled by ";
     Console::shared().turnNormal();
-//    Console::shared() << UOXVersion::name << myendl;
+    //    Console::shared() << UOXVersion::name << myendl;
     Console::shared() << "punt" << myendl;
-
+    
     Console::shared().turnYellow();
     Console::shared() << "Contact: ";
     Console::shared().turnNormal();
@@ -2574,9 +2572,9 @@ auto Shutdown(std::int32_t retCode) -> void {
     }
     
     if (worldMain.ClassesInitialized()) {
-            Console::shared() << "HTMLTemplates object detected. Writing Offline HTML Now...";
-            worldHTMLTemplate.poll(ETT_OFFLINE);
-            Console::shared().printDone();
+        Console::shared() << "HTMLTemplates object detected. Writing Offline HTML Now...";
+        worldHTMLTemplate.poll(ETT_OFFLINE);
+        Console::shared().printDone();
         
         Console::shared() << "Destroying class objects and pointers... ";
         // delete any objects that were created (delete takes care of nullptr check =)
@@ -3218,16 +3216,16 @@ auto GetTileName(CItem &mItem, std::string &itemname) -> size_t {
     std::string temp = mItem.GetName();
     temp = util::trim(util::strip(temp, "//"));
     const std::uint16_t getAmount = mItem.GetAmount();
-    CTile &tile = worldMULHandler.SeekTile(mItem.GetId());
+    
     if (temp.substr(0, 1) == "#") {
-        temp = tile.Name();
+        temp =  uoManager.art(mItem.GetId()).name;
     }
     
     if (getAmount == 1) {
-        if (tile.CheckFlag(uo::flag_t::DISPLAYAN)) {
+        if (uoManager.art(mItem.GetId()).checkFlag(uo::flag_t::DISPLAYAN)) {
             temp = "an " + temp;
         }
-        else if (tile.CheckFlag(uo::flag_t::DISPLAYA)) {
+        else if (uoManager.art(mItem.GetId()).checkFlag(uo::flag_t::DISPLAYA)) {
             temp = "a " + temp;
         }
     }
@@ -3468,7 +3466,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
 auto CheckCharInsideBuilding(CChar *c, CSocket *mSock, bool doWeatherStuff) -> void {
     if (!c->GetMounted() && !c->GetStabled()) {
         auto wasInBuilding = c->InBuilding();
-        bool isInBuilding = worldMULHandler.InBuilding(c->GetX(), c->GetY(), c->GetZ(), c->WorldNumber(), c->GetInstanceId());
+        bool isInBuilding = uo::inBuilding(c->GetX(), c->GetY(), c->GetZ(), c->WorldNumber(), c->GetInstanceId());
         if (wasInBuilding != isInBuilding) {
             c->SetInBuilding(isInBuilding);
             if (doWeatherStuff) {
@@ -3668,7 +3666,7 @@ auto SocketMapChange(CSocket *sock, CChar *charMoving, CItem *gate) -> void {
     
     std::uint8_t tWorldNum = static_cast<std::uint8_t>(gate->GetTempVar(CITV_MORE));
     std::uint16_t tInstanceId = gate->GetInstanceId();
-    if (!worldMULHandler.MapExists(tWorldNum))
+    if (!uoManager.existMap(tWorldNum))
         return;
     
     CChar *toMove = nullptr;
@@ -3724,28 +3722,32 @@ void DoorMacro(CSocket *s) {
         case 1: {
             ++xc;
             --yc;
-        } break;
+            break;
+        }
         case 2:
             ++xc;
             break;
         case 3: {
             ++xc;
             ++yc;
-        } break;
+            break;
+        }
         case 4:
             ++yc;
             break;
         case 5: {
             --xc;
             ++yc;
-        } break;
+            break;
+        }
         case 6:
             --xc;
             break;
         case 7: {
             --xc;
             --yc;
-        } break;
+            break;
+        }
     }
     
     for (auto &toCheck : worldMapHandler.PopulateList(mChar)) {

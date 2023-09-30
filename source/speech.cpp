@@ -510,7 +510,12 @@ void CSpeechQueue::SayIt(CSpeechEntry &toSay) {
                     auto mChar = mSock->CurrcharObj();
                     if (ValidateObject(mChar)) {
                         if (mChar->GetCommandLevel() >= toSay.CmdLevel()) {
-                            mSock->Send(&toSend);
+                            try {
+                                mSock->Send(&toSend);
+                            }
+                            catch(...){
+                                // we dont really care if we get an error, could be on a shutdown
+                            }
                         }
                     }
                 }

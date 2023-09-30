@@ -32,8 +32,7 @@ namespace util {
     ///     - value: The string to be trimmed
     ///     - whitespace: optional value to specify the whitespace characters
     /// - Returns: Returns a new string, that has been trimmed
-    inline auto ltrim(const std::string &value, const std::string &whitespace = " \t\v\f\n\r")
-    -> std::string {
+    inline auto ltrim(const std::string &value, const std::string &whitespace = " \t\v\f\n\r") -> std::string {
         if (!value.empty() && !whitespace.empty()) {
             auto loc = value.find_first_not_of(whitespace);
             if (loc == std::string::npos) {
@@ -50,8 +49,7 @@ namespace util {
     ///     - value: The string to be trimmed
     ///     - whitespace: optional value to specify the whitespace characters
     /// - Returns: Returns a new string, that has been trimmed
-    inline auto rtrim(const std::string &value, const std::string &whitespace = " \t\v\f\n\r")
-    -> std::string {
+    inline auto rtrim(const std::string &value, const std::string &whitespace = " \t\v\f\n\r") -> std::string {
         if (!value.empty() && !whitespace.empty()) {
             auto loc = value.find_last_not_of(whitespace);
             if (loc == std::string::npos) {
@@ -68,8 +66,7 @@ namespace util {
     ///     - value: The string to be trimmed
     ///     - whitespace: optional value to specify the whitespace characters
     /// - Returns: Returns a new string , that has been trimmed
-    inline auto trim(const std::string &value, const std::string &whitespace = " \t\v\f\n\r")
-    -> std::string {
+    inline auto trim(const std::string &value, const std::string &whitespace = " \t\v\f\n\r") -> std::string {
         return rtrim(ltrim(value, whitespace), whitespace);
     }
     
@@ -81,8 +78,7 @@ namespace util {
     ///     - value: The string to be simplified
     ///     - whitespace: optional value to specify the whitespace characters
     /// - Returns: Returns a new string, that has been simplified
-    inline auto simplify(const std::string &value, const std::string &whitespace = " \t\v\f\n\r")
-    -> std::string {
+    inline auto simplify(const std::string &value, const std::string &whitespace = " \t\v\f\n\r") -> std::string {
         auto rvalue = std::string();
         auto working = trim(value, whitespace);
         if (!working.empty()) {
@@ -93,10 +89,7 @@ namespace util {
                     if (!rvalue.empty()) {
                         rvalue += std::string(" ");
                     }
-                    rvalue +=
-                    std::string(working.begin() + ewhitespace,
-                                working.begin() + ewhitespace +
-                                (swhitespace - ewhitespace)); // So it has now been appended
+                    rvalue += std::string(working.begin() + ewhitespace, working.begin() + ewhitespace + (swhitespace - ewhitespace)); // So it has now been appended
                     ewhitespace = working.find_first_not_of(whitespace, swhitespace);
                     swhitespace = working.find_first_of(whitespace, ewhitespace);
                     if (swhitespace == std::string::npos) {
@@ -129,8 +122,7 @@ namespace util {
     /// - Returns: Returns a new string , that has been uppercased
     inline auto upper(const std::string &value) -> std::string {
         auto rvalue = std::string();
-        std::transform(value.begin(), value.end(), std::back_inserter(rvalue),
-                       [](unsigned char c) { return std::toupper(c); });
+        std::transform(value.begin(), value.end(), std::back_inserter(rvalue), [](unsigned char c) { return std::toupper(c); });
         return rvalue;
     }
     //=======================================================================
@@ -140,8 +132,7 @@ namespace util {
     /// - Returns: Returns a new string , that has been lower cased
     inline auto lower(const std::string &value) -> std::string {
         auto rvalue = std::string();
-        std::transform(value.begin(), value.end(), std::back_inserter(rvalue),
-                       [](unsigned char c) { return std::tolower(c); });
+        std::transform(value.begin(), value.end(), std::back_inserter(rvalue), [](unsigned char c) { return std::tolower(c); });
         return rvalue;
     }
     
@@ -156,8 +147,7 @@ namespace util {
     ///     - sep: optional, The separator to search for for removal
     ///     - whitespace: optional, if present(not empty), the data is trimmed
     /// - Returns: Returns a new string , that has all data after the separator removed (inclusive)
-    inline auto strip(const std::string &value, const std::string &sep = "//",
-                      const std::string &whitespace = " \t\v\f\n\r") -> std::string {
+    inline auto strip(const std::string &value, const std::string &sep = "//", const std::string &whitespace = " \t\v\f\n\r") -> std::string {
         auto rvalue = std::string();
         auto temp = value;
         if (!sep.empty()) {
@@ -179,9 +169,7 @@ namespace util {
     ///     - sep: The separator to search for to split the string on
     ///     - whitespace: optional, if present(not empty), the two values are trimmed on return
     /// - Returns: Returns a pair of string views containing the two values
-    inline auto split(const std::string &value, const std::string &sep,
-                      const std::string &whitespace = " \t\v\f\n\r")
-    -> std::pair<std::string, std::string> {
+    inline auto split(const std::string &value, const std::string &sep, const std::string &whitespace = " \t\v\f\n\r") -> std::pair<std::string, std::string> {
         auto vfirst = value;
         auto vsecond = std::string();
         if (!sep.empty()) {
@@ -205,8 +193,7 @@ namespace util {
     ///     - sep: The separator to search for to split the string on
     ///     - whitespace: optional, if present(not empty), the two values are trimmed on return
     /// - Returns: Returns a vector containing the values
-    inline auto parse(const std::string value, const std::string &sep,
-                      const std::string whitespace = " \t\v\f\n\r") -> std::vector<std::string> {
+    inline auto parse(const std::string value, const std::string &sep, const std::string whitespace = " \t\v\f\n\r") -> std::vector<std::string> {
         auto rvalue = std::vector<std::string>();
         auto current = std::string::size_type(0);
         if (!sep.empty()) {
@@ -239,8 +226,7 @@ namespace util {
     ///     - trimReturn: Bool to indicate if result should be trimmed. Defaults to true
     /// - Returns: Returns a string\_view of the contents
     /// - Throws: runtime error if separators are not found or the end is before the beginning
-    inline auto contentsOf(const std::string &data, const std::string &sepStart,
-                           const std::string &sepEnd, bool trimReturn = true) -> std::string {
+    inline auto contentsOf(const std::string &data, const std::string &sepStart, const std::string &sepEnd, bool trimReturn = true) -> std::string {
         auto startloc = data.find_first_of(sepStart);
         auto endloc = data.find_last_of(sepEnd);
         if ((startloc == std::string::npos) || (endloc == std::string::npos) || (startloc >= endloc)) {
@@ -321,9 +307,7 @@ namespace util {
         // first, thing we need to convert the value to a string
         std::array<char, max_characters_in_number> str;
         
-        if (auto [pc, ec] =
-            std::to_chars(str.data(), str.data() + str.size(), value, static_cast<int>(radix));
-            ec == std::errc()) {
+        if (auto [pc, ec] = std::to_chars(str.data(), str.data() + str.size(), value, static_cast<int>(radix)); ec == std::errc()) {
             // How many characters did this number take
             auto numchars = static_cast<int>(std::distance(str.data(), pc));
             // what is larger, that is the size of our string
@@ -408,22 +392,19 @@ namespace util {
                     case 'B':
                         // std::from_chars(str_value.data() + 2,str_value.data() + str_value.size(),
                         // value,2);
-                        std::from_chars(str_value.data() + 2, str_value.data() + str_value.size(), value,
-                                        2);
+                        std::from_chars(str_value.data() + 2, str_value.data() + str_value.size(), value, 2);
                         break;
                     case 'x':
                     case 'X':
                         // std::from_chars(str_value.data() + 2,str_value.data() + str_value.size(),
                         // value,16);
-                        std::from_chars(str_value.data() + 2, str_value.data() + str_value.size(), value,
-                                        16);
+                        std::from_chars(str_value.data() + 2, str_value.data() + str_value.size(), value, 16);
                         break;
                     case 'o':
                     case 'O':
                         // std::from_chars(str_value.data() + 2,str_value.data() + str_value.size(),
                         // value,8);
-                        std::from_chars(str_value.data() + 2, str_value.data() + str_value.size(), value,
-                                        8);
+                        std::from_chars(str_value.data() + 2, str_value.data() + str_value.size(), value, 8);
                         break;
                     default:
                         // we dont do anything, we dont undertand so let value be 0
@@ -433,8 +414,7 @@ namespace util {
             else {
                 // auto [ptr,ec] = std::from_chars(str_value.data(),str_value.data() + str_value.size(),
                 // value,radix);
-                auto [ptr, ec] = std::from_chars(str_value.data(), str_value.data() + str_value.size(),
-                                                 value, radix);
+                auto [ptr, ec] = std::from_chars(str_value.data(), str_value.data() + str_value.size(), value, radix);
                 if (ec == std::errc::invalid_argument) {
                     throw std::runtime_error("Invalid argument for number conversion from string.");
                 }
@@ -497,8 +477,7 @@ namespace util {
     ///     - radix: (16,10,8,2) the radix of the output
     ///     - entries per line: the number of byes printed per line (defaults to 8)
     /// - Returns: Nothing
-    inline auto dump(std::ostream &output, const std::uint8_t *buffer, std::size_t length,
-                     int radix = 16, int entries_line = 8) -> void {
+    inline auto dump(std::ostream &output, const std::uint8_t *buffer, std::size_t length, int radix = 16, int entries_line = 8) -> void {
         // number of characters for entry
         auto entry_size = 3; // decimal and octal
         switch (static_cast<int>(radix)) {
@@ -527,8 +506,7 @@ namespace util {
         
         for (std::size_t i = 0; i < length; ++i) {
             auto row = i / entries_line;
-            if (((i % static_cast<std::size_t>(entries_line) == 0) &&
-                 (i >= static_cast<std::size_t>(entries_line))) ||
+            if (((i % static_cast<std::size_t>(entries_line) == 0) && (i >= static_cast<std::size_t>(entries_line))) ||
                 (i == 0)) {
                 // This is a new line!
                 output << ntos(row * entries_line, 10, false, max_address_chars, ' ') << ": ";
@@ -538,8 +516,7 @@ namespace util {
             // If it is an alpha, we want to write it
             if (std::isalpha(static_cast<int>(*(buffer + i))) != 0) {
                 // we want to write this to the string
-                text[(i % entries_line)] =
-                static_cast<char>(*reinterpret_cast<const char *>((buffer + i)));
+                text[(i % entries_line)] = static_cast<char>(*reinterpret_cast<const char *>((buffer + i)));
             }
             else {
                 text[(i % entries_line)] = '.';
@@ -552,8 +529,7 @@ namespace util {
         auto last_line_entry = length % entries_line;
         if (last_line_entry != 0) {
             // we need to put the number of leading spaces
-            output << std::setw(static_cast<int>((entries_line - last_line_entry) * (entry_size + 1)))
-            << "" << std::setw(1) << " " << text << "\n";
+            output << std::setw(static_cast<int>((entries_line - last_line_entry) * (entry_size + 1))) << "" << std::setw(1) << " " << text << "\n";
         }
     }
     
@@ -567,8 +543,7 @@ namespace util {
     ///     - t: the time point
     ///     - format: the format string (defaults to Thu Dec 30 14:13:28 2021)
     /// - Returns: string value of the time point
-    inline auto sysTimeToString(const std::chrono::system_clock::time_point &t,
-                                const std::string &format = "%a %b %d %H:%M:%S %Y") -> std::string {
+    inline auto sysTimeToString(const std::chrono::system_clock::time_point &t, const std::string &format = "%a %b %d %H:%M:%S %Y") -> std::string {
         std::stringstream output;
         auto time = std::chrono::system_clock::to_time_t(t);
         tm myvalue;
@@ -588,9 +563,7 @@ namespace util {
     ///     - str: the string value for the time point
     ///     - format: the string value representing the format (Thu Dec 30 14:13:28 2021)
     /// - Returns: a system time point
-    inline auto stringToSysTime(const std::string &str,
-                                const std::string &format = "%a %b %d %H:%M:%S %Y")
-    -> std::chrono::system_clock::time_point {
+    inline auto stringToSysTime(const std::string &str, const std::string &format = "%a %b %d %H:%M:%S %Y") -> std::chrono::system_clock::time_point {
         std::stringstream timbuf(str);
         tm converted;
         timbuf >> std::get_time(&converted, format.c_str());

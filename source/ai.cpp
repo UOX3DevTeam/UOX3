@@ -30,7 +30,6 @@
 #include "dictionary.h"
 
 #include "funcdecl.h"
-#include "mapstuff.h"
 
 #include "regions.h"
 #include "configuration/serverconfig.hpp"

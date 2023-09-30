@@ -31,14 +31,14 @@ namespace uo {
     }
     //======================================================================
     auto MapSize::uopBlockFor(int block)->std::pair<int,int> {
-        constexpr auto uopBlocksize = 4096 ; // (bytes)
+        constexpr auto byteOffsetForUOP = 0xC4000 ;
         constexpr auto blockSize = 196 ;
-        constexpr auto blocksInUOP = uopBlocksize / blockSize ;
+        constexpr auto blocksInUOP = byteOffsetForUOP/blockSize ;
         
         auto uopBlock = block / blocksInUOP ;
-        auto offset = block % blocksInUOP * blockSize ;
+        auto offset = (block % blocksInUOP) * blockSize ;
         return std::make_pair(uopBlock, offset) ;
     }
-
+    
     
 }

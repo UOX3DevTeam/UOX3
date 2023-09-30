@@ -11,17 +11,18 @@
 
 #include "dictionary.h"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+#include "uodata/uomgr.hpp"
+#include "uodata/uoxuoadapter.hpp"
 
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
 extern CServerDefinitions worldFileLookup ;
-extern CMulHandler worldMULHandler ;
+extern uo::UOMgr uoManager ;
 
 using namespace std::string_literals;
 
@@ -513,8 +514,9 @@ void CSpawnRegion::load(CScriptSection *toScan) {
 void CSpawnRegion::DoRegionSpawn(std::uint32_t &itemsSpawned, std::uint32_t &npcsSpawned) {
     // Only perform the region spawn if the spawn region in question is active
     
-    if (!ServerConfig::shared().spawnFacet.test(static_cast<std::uint32_t>(WorldNumber())))
+    if (!ServerConfig::shared().spawnFacet.test(static_cast<std::uint32_t>(WorldNumber()))){
         return;
+    }
     
     if (sNpcs.empty()) {
         maxCharSpawn = 0;
@@ -700,7 +702,7 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
     for (std::uint8_t a = 0; a < maxSpawnAttempts; ++a) {
         x = RandomNum(x1, x2);
         y = RandomNum(y1, y2);
-        z = worldMULHandler.MapElevation(x, y, worldNumber);
+        z =  uo::mapElevation(x, y, worldNumber);
         
         if (defZ != ILLEGAL_Z) {
             // Use the definite Z level defined in the spawn region
@@ -709,14 +711,14 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         }
         else {
             // No definite Z has been defined, look for valid dynamic Z based on prefZ
-            const std::int8_t dynZ = worldMULHandler.DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+            const std::int8_t dynZ = uo::dynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
             if (ILLEGAL_Z != dynZ) {
                 z = dynZ;
             }
             
             // Even if we got a valid dynamic Z, there might be a better match with statics, based
             // on prefZ
-            const std::int8_t staticZ = worldMULHandler.StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticZ = uo::staticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticZ && staticZ > z) {
                 z = staticZ;
             }
@@ -760,8 +762,8 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         
         // Since our chosen location has not already been validated, lets validate it with a
         // land-based creature in mind
-        if (!waterCreature && worldMULHandler.ValidSpawnLocation(x, y, z, worldNumber, instanceId)) {
-            if (onlyOutside == false || !worldMULHandler.InBuilding(x, y, z, worldNumber, instanceId)) {
+        if (!waterCreature && uo::validSpawnLocation(x, y, z, worldNumber, instanceId)) {
+            if (onlyOutside == false || !uo::inBuilding(x, y, z, worldNumber, instanceId)) {
                 if (z != ILLEGAL_Z) {
                     rValue = true;
                     validLandPos.push_back(Point3(x, y, z));
@@ -772,8 +774,8 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         }
         
         // Otherwise, validate it with a water-based creature in mind instead
-        if ((waterCreature || amphiCreature) && worldMULHandler.ValidSpawnLocation(x, y, z, worldNumber, instanceId, false)) {
-            if (onlyOutside == false || !worldMULHandler.InBuilding(x, y, z, worldNumber, instanceId)) {
+        if ((waterCreature || amphiCreature) && uo::validSpawnLocation(x, y, z, worldNumber, instanceId, false)) {
+            if (onlyOutside == false || !uo::inBuilding(x, y, z, worldNumber, instanceId)) {
                 rValue = true;
                 validWaterPos.push_back(Point3(x, y, z));
                 validWaterPosCheck[y + (x << 16)] = z;
@@ -789,13 +791,13 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         y = static_cast<std::int16_t>(currLoc.y);
         z = static_cast<std::int8_t>(currLoc.z);
         // Recalculate the z coordinate to see whether something has changed
-        z2 = worldMULHandler.MapElevation(x, y, worldNumber);
-        const std::int8_t dynz = worldMULHandler.DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+        z2 = uo::mapElevation(x, y, worldNumber);
+        const std::int8_t dynz = uo::dynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
         if (ILLEGAL_Z != dynz) {
             z2 = dynz;
         }
         else {
-            const std::int8_t staticz = worldMULHandler.StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticz = uo::staticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticz) {
                 z2 = staticz;
             }
@@ -811,13 +813,13 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         y = static_cast<std::int16_t>(currLoc.y);
         z = static_cast<std::int8_t>(currLoc.z);
         // Recalculate the z coordinate to see whether something has changed
-        z2 = worldMULHandler.MapElevation(x, y, worldNumber);
-        const std::int8_t dynz = worldMULHandler.DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+        z2 = uo::mapElevation(x, y, worldNumber);
+        const std::int8_t dynz = uo::dynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
         if (ILLEGAL_Z != dynz) {
             z2 = dynz;
         }
         else {
-            const std::int8_t staticz = worldMULHandler.StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticz = uo::staticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticz) {
                 z2 = staticz;
             }
@@ -854,7 +856,7 @@ bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
     for (std::uint8_t a = 0; a < maxSpawnAttempts; ++a) {
         x = RandomNum(x1, x2);
         y = RandomNum(y1, y2);
-        z = worldMULHandler.MapElevation(x, y, worldNumber);
+        z = uo::mapElevation(x, y, worldNumber);
         
         if (defZ != ILLEGAL_Z) {
             // Use the definite Z level defined in the spawn region
@@ -863,14 +865,14 @@ bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         }
         else {
             // No definite Z has been defined, look for valid dynamic Z based on prefZ
-            const std::int8_t dynZ = worldMULHandler.DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+            const std::int8_t dynZ =uo::dynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
             if (ILLEGAL_Z != dynZ) {
                 z = dynZ;
             }
             
             // Even if we got a valid dynamic Z, there might be a better match with statics, based
             // on prefZ
-            const std::int8_t staticZ = worldMULHandler.StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticZ = uo::staticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticZ && staticZ > z) {
                 z = staticZ;
             }
@@ -889,8 +891,8 @@ bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
             }
         }
         
-        if (worldMULHandler.ValidSpawnLocation(x, y, z, worldNumber, instanceId)) {
-            if (onlyOutside == false || !worldMULHandler.InBuilding(x, y, z, worldNumber, instanceId)) {
+        if (uo::validSpawnLocation(x, y, z, worldNumber, instanceId)) {
+            if (onlyOutside == false || !uo::inBuilding(x, y, z, worldNumber, instanceId)) {
                 rValue = true;
                 validLandPos.push_back(Point3(x, y, z));
                 validLandPosCheck[y + (x << 16)] = z;
@@ -906,13 +908,13 @@ bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         y = static_cast<std::int16_t>(currLoc.y);
         z = static_cast<std::int8_t>(currLoc.z);
         // Recalculate the z coordinate to see whether something has changed
-        z2 = worldMULHandler.MapElevation(x, y, worldNumber);
-        const std::int8_t dynz = worldMULHandler.DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+        z2 = uo::mapElevation(x, y, worldNumber);
+        const std::int8_t dynz = uo::dynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
         if (ILLEGAL_Z != dynz) {
             z2 = dynz;
         }
         else {
-            const std::int8_t staticz = worldMULHandler.StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticz = uo::staticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticz) {
                 z2 = staticz;
             }

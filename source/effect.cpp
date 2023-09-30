@@ -1,5 +1,6 @@
 
 #include <algorithm>
+#include <fstream>
 
 #include "cbaseobject.h"
 #include "cchar.h"
@@ -14,7 +15,6 @@
 #include "csocket.h"
 #include "funcdecl.h"
 #include "magic.h"
-#include "mapstuff.h"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
@@ -31,7 +31,6 @@ extern CJSMapping worldJSMapping ;
 extern cEffects worldEffect ;
 extern CNetworkStuff worldNetwork ;
 extern CMapHandler worldMapHandler ;
-
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::DeathAction()
 // o------------------------------------------------------------------------------------------------o

@@ -32,7 +32,6 @@
 #include "funcdecl.h"
 #include "jsencapsulate.h"
 #include "magic.h"
-#include "mapstuff.h"
 #include "movement.h"
 #include "network.h"
 #include "objectfactory.h"
@@ -48,6 +47,8 @@
 #include "uodata/uoflag.hpp"
 #include "uoxjsclasses.h"
 #include "uoxjspropertyspecs.h"
+#include "uodata/uomgr.hpp"
+#include "uodata/uoxuoadapter.hpp"
 #include "other/uoxversion.hpp"
 
 extern CDictionaryContainer worldDictionary ;
@@ -65,7 +66,7 @@ extern CSpeechQueue worldSpeechSystem ;
 extern CJSEngine worldJSEngine ;
 extern CServerDefinitions worldFileLookup ;
 extern CCommands serverCommands;
-extern CMulHandler worldMULHandler ;
+extern uo::UOMgr uoManager;
 extern CNetworkStuff worldNetwork ;
 extern CMapHandler worldMapHandler ;
 
@@ -1940,8 +1941,8 @@ JSBool SE_GetTileIdAtMapCoord([[maybe_unused]] JSContext *cx, [[maybe_unused]] J
     std::uint16_t xLoc = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     std::uint16_t yLoc = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
     std::uint8_t wrldNumber = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2]));
-    auto mMap = worldMULHandler.SeekMap(xLoc, yLoc, wrldNumber);
-    *rval = INT_TO_JSVAL(mMap.tileId);
+    auto mMap = uoManager.terrainTileAt(wrldNumber, xLoc, yLoc) ;
+    *rval = INT_TO_JSVAL(mMap.tileid);
     return JS_TRUE;
 }
 
@@ -1966,9 +1967,9 @@ JSBool SE_StaticInRange([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
     
     for (std::int32_t i = xLoc - radius; i <= (xLoc + radius); ++i) {
         for (std::int32_t j = yLoc - radius; j <= (yLoc + radius); ++j) {
-            auto artwork = worldMULHandler.ArtAt(xLoc, yLoc, wrldNumber);
-            auto iter = std::find_if(artwork.begin(), artwork.end(), [tileId](const Tile_st &tile) {
-                return tile.tileId == tileId;
+            const auto & artwork = uoManager.artTileAt(wrldNumber, xLoc, yLoc);
+            auto iter = std::find_if(artwork.begin(), artwork.end(), [tileId](const uo::UOTile &tile) {
+                return tile.tileid == tileId;
             });
             if (iter != artwork.end()) {
                 tileFound = true;
@@ -2008,10 +2009,8 @@ JSBool SE_StaticAt([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *ob
         tileMatch = true;
     }
     bool tileFound = false;
-    
-    auto artwork = worldMULHandler.ArtAt(xLoc, yLoc, wrldNumber);
-    auto iter = std::find_if(artwork.begin(), artwork.end(),
-                             [tileId](const Tile_st &tile) { return tile.tileId == tileId; });
+    const auto & artwork = uoManager.artTileAt(wrldNumber, xLoc, yLoc);
+    auto iter = std::find_if(artwork.begin(), artwork.end(), [tileId](const uo::UOTile &tile) { return tile.tileid == tileId; });
     tileFound = iter != artwork.end();
     *rval = BOOLEAN_TO_JSVAL(tileFound);
     return JS_TRUE;
@@ -2432,24 +2431,22 @@ JSBool SE_SendStaticStats(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         std::int16_t targetX = mySock->GetWord(0x0B); // store our target x y and z locations
         std::int16_t targetY = mySock->GetWord(0x0D);
         std::int8_t targetZ = mySock->GetByte(0x10);
-        if (targetId != 0) // we might have a static rock or mountain
-        {
-            auto artwork = worldMULHandler.ArtAt(targetX, targetY, worldNumber);
+        if (targetId != 0) { // we might have a static rock or mountain
+            const auto & artwork = uoManager.artTileAt(worldNumber, targetX, targetY);
             for (auto &tile : artwork) {
                 if (targetZ == tile.altitude) {
                     CGumpDisplay staticStat(mySock, 300, 300);
                     staticStat.setTitle("Item [Static]");
                     staticStat.AddData("ID", targetId, 5);
                     staticStat.AddData("Height", tile.height());
-                    staticStat.AddData("Name", tile.artInfo->Name());
+                    staticStat.AddData("Name", tile.name());
                     staticStat.Send(4, false, INVALIDSERIAL);
                 }
             }
         }
-        else // or it could be a map only
-        {
+        else { // or it could be a map only
             // manually calculating the ID's if a maptype
-            auto map1 = worldMULHandler.SeekMap(targetX, targetY, worldNumber);
+            auto map1 = uoManager.terrainTileAt(worldNumber, targetX, targetY);
             CGumpDisplay mapStat(mySock, 300, 300);
             mapStat.setTitle("Item [Map]");
             mapStat.AddData("ID", targetId, 5);
@@ -2472,7 +2469,7 @@ JSBool SE_GetTileHeight([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
     }
     
     std::uint16_t tileNum = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
-    *rval = INT_TO_JSVAL(worldMULHandler.TileHeight(tileNum));
+    *rval = INT_TO_JSVAL(uoManager.art(tileNum).climbHeight() );
     return JS_TRUE;
 }
 
@@ -3188,7 +3185,7 @@ JSBool SE_GetMapElevation([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
     std::int16_t x = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
     std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2]));
-    std::int8_t mapElevation = worldMULHandler.MapElevation(x, y, worldNum);
+    std::int8_t mapElevation = uo::mapElevation(x, y, worldNum) ;
     *rval = INT_TO_JSVAL(mapElevation);
     return JS_TRUE;
 }
@@ -3214,14 +3211,14 @@ JSBool SE_IsInBuilding([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     std::uint16_t instanceId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[4]));
     bool checkHeight = (JSVAL_TO_BOOLEAN(argv[5]) == JS_TRUE);
-    bool isInBuilding = worldMULHandler.InBuilding(x, y, z, worldNum, instanceId);
+    bool isInBuilding = uo::inBuilding(x, y, z, worldNum, instanceId);
     if (!isInBuilding) {
         // No static building was detected. How about a multi?
         CMultiObj *multi = FindMulti(x, y, z, worldNum, instanceId);
         if (ValidateObject(multi)) {
             if (checkHeight) {
                 // Check if there's multi-items over the player's head
-                std::int8_t multiZ = worldMULHandler.MultiHeight(multi, x, y, z, 127, checkHeight);
+                std::int8_t multiZ = uo::heightOfMulti(multi, x, y, z, 127, checkHeight);
                 if (multiZ > z) {
                     isInBuilding = true;
                 }
@@ -3253,7 +3250,7 @@ JSBool SE_CheckStaticFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     auto toCheck = static_cast<uo::flag_t>(JSVAL_TO_INT(argv[4]));
     [[maybe_unused]] std::uint16_t ignoreMe = 0;
-    bool hasStaticFlag = worldMULHandler.CheckStaticFlag(x, y, z, worldNum, toCheck, ignoreMe, false);
+    bool hasStaticFlag = uo::checkStaticFlag(x, y, z, worldNum, toCheck, ignoreMe, false);
     *rval = BOOLEAN_TO_JSVAL(hasStaticFlag);
     return JS_TRUE;
 }
@@ -3277,7 +3274,7 @@ JSBool SE_CheckDynamicFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
     std::uint8_t instanceId = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
     auto toCheck = static_cast<uo::flag_t>(JSVAL_TO_INT(argv[5]));
     [[maybe_unused]] std::uint16_t ignoreMe = 0;
-    bool hasDynamicFlag = worldMULHandler.CheckDynamicFlag(x, y, z, worldNum, instanceId, toCheck, ignoreMe);
+    bool hasDynamicFlag = uo::checkDynamicFlag(x, y, z, worldNum, instanceId, toCheck, ignoreMe);
     *rval = BOOLEAN_TO_JSVAL(hasDynamicFlag);
     return JS_TRUE;
 }
@@ -3296,7 +3293,7 @@ JSBool SE_CheckTileFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
     std::uint16_t itemId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     auto flagToCheck = static_cast<uo::flag_t>(JSVAL_TO_INT(argv[1]));
     
-    bool tileHasFlag = worldMULHandler.CheckTileFlag(itemId, flagToCheck);
+    bool tileHasFlag = uoManager.art(itemId).checkFlag(flagToCheck);
     *rval = BOOLEAN_TO_JSVAL(tileHasFlag);
     return JS_TRUE;
 }
@@ -3317,7 +3314,7 @@ JSBool SE_DoesStaticBlock([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
     std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     bool checkWater = (JSVAL_TO_BOOLEAN(argv[4]) == JS_TRUE);
-    bool staticBlocks = worldMULHandler.DoesStaticBlock(x, y, z, worldNum, checkWater);
+    bool staticBlocks = uo::doesStaticBlock(x, y, z, worldNum, checkWater);
     *rval = BOOLEAN_TO_JSVAL(staticBlocks);
     return JS_TRUE;
 }
@@ -3342,7 +3339,7 @@ JSBool SE_DoesDynamicBlock([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
     bool waterWalk = (JSVAL_TO_BOOLEAN(argv[6]) == JS_TRUE);
     bool checkOnlyMultis = (JSVAL_TO_BOOLEAN(argv[7]) == JS_TRUE);
     bool checkOnlyNonMultis = (JSVAL_TO_BOOLEAN(argv[8]) == JS_TRUE);
-    bool dynamicBlocks = worldMULHandler.DoesDynamicBlock(x, y, z, worldNum, instanceId, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis);
+    bool dynamicBlocks = uo::doesDynamicBlock(x, y, z, worldNum, instanceId, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis);
     *rval = BOOLEAN_TO_JSVAL(dynamicBlocks);
     return JS_TRUE;
 }
@@ -3366,7 +3363,7 @@ JSBool SE_DoesMapBlock([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
     bool waterWalk = (JSVAL_TO_BOOLEAN(argv[5]) == JS_TRUE);
     bool checkMultiPlacement = (JSVAL_TO_BOOLEAN(argv[6]) == JS_TRUE);
     bool checkForRoad = (JSVAL_TO_BOOLEAN(argv[7]) == JS_TRUE);
-    bool mapBlocks = worldMULHandler.DoesMapBlock(x, y, z, worldNum, checkWater, waterWalk, checkMultiPlacement, checkForRoad);
+    bool mapBlocks = uo::doesTerrainBlock(x, y, z, worldNum, checkWater, waterWalk, checkMultiPlacement, checkForRoad);
     *rval = BOOLEAN_TO_JSVAL(mapBlocks);
     return JS_TRUE;
 }
@@ -3387,7 +3384,7 @@ JSBool SE_DoesCharacterBlock([[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
     std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     std::uint8_t instanceId = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
-    bool characterBlocks = worldMULHandler.DoesCharacterBlock(x, y, z, worldNum, instanceId);
+    bool characterBlocks = uo::doesCharacterBlock(x, y, z, worldNum, instanceId);
     *rval = BOOLEAN_TO_JSVAL(characterBlocks);
     return JS_TRUE;
 }

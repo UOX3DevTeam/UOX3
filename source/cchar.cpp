@@ -65,7 +65,6 @@
 #include "cspawnregion.h"
 #include "dictionary.h"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "movement.h"
 #include "msgboard.h"
 #include "objectfactory.h"
@@ -78,6 +77,8 @@
 #include "utility/strutil.hpp"
 #include "teffect.h"
 #include "townregion.h"
+#include "uodata/uomgr.hpp"
+#include "uodata/uoxuoadapter.hpp"
 #include "weight.h"
 
 extern CDictionaryContainer worldDictionary ;
@@ -92,7 +93,7 @@ extern cEffects worldEffect ;
 extern CGuildCollection worldGuildSystem ;
 extern CSpeechQueue worldSpeechSystem ;
 extern CJSEngine worldJSEngine ;
-extern CMulHandler worldMULHandler ;
+extern uo::UOMgr uoManager ;
 extern CNetworkStuff worldNetwork ;
 extern CMapHandler worldMapHandler ;
 
@@ -2719,7 +2720,7 @@ bool CChar::Save(std::ostream &outStream) {
     if (!IsFree()) {
         std::int16_t mX = GetX();
         std::int16_t mY = GetY();
-        auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(worldNumber);
+        auto [mapWidth, mapHeight] = uoManager.sizeOfMap(worldNumber) ;
         if (mX >= 0 && (mX < mapWidth || mX >= 7000)) {
             if (mY >= 0 && (mY < mapHeight || mY >= 7000)) {
                 DumpHeader(outStream);
@@ -4108,7 +4109,7 @@ bool CChar::LoadRemnants() {
         const std::int16_t mx = GetX();
         const std::int16_t my = GetY();
         
-        auto [mapWidth, mapHeight] = worldMULHandler.SizeOfMap(worldNumber);
+        auto [mapWidth, mapHeight] = uoManager.sizeOfMap(worldNumber);
         const bool overRight = (mx > mapWidth);
         const bool overBottom = (my > mapHeight);
         

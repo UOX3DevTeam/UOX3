@@ -19,7 +19,6 @@
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "magic.h"
-#include "mapstuff.h"
 #include "objectfactory.h"
 #include "partysystem.h"
 #include "regions.h"
@@ -30,6 +29,8 @@
 #include "utility/strutil.hpp"
 #include "townregion.h"
 #include "uodata/uoflag.hpp"
+#include "uodata/uomgr.hpp"
+#include "uodata/uoxuoadapter.hpp"
 
 extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
@@ -42,7 +43,7 @@ extern cEffects worldEffect ;
 extern CGuildCollection worldGuildSystem ;
 extern CServerDefinitions worldFileLookup ;
 extern CCommands serverCommands;
-extern CMulHandler worldMULHandler ;
+extern uo::UOMgr uoManager ;
 
 using namespace std::string_literals;
 
@@ -285,7 +286,7 @@ void AddScriptNpc(CSocket *s) {
     CChar *mChar = s->CurrcharObj();
     const std::int16_t coreX = s->GetWord(11);
     const std::int16_t coreY = s->GetWord(13);
-    const std::int8_t coreZ = static_cast<std::int8_t>(s->GetByte(16) + worldMULHandler.TileHeight(s->GetWord(17)));
+    const std::int8_t coreZ = static_cast<std::int8_t>(s->GetByte(16) +uoManager.art(s->GetWord(17)).climbHeight());
     worldNPC.CreateNPCxyz(s->XText(), coreX, coreY, coreZ, mChar->WorldNumber(), mChar->GetInstanceId());
 }
 
@@ -319,7 +320,7 @@ void TeleTarget(CSocket *s) {
     else {
         targX = s->GetWord(11);
         targY = s->GetWord(13);
-        targZ = static_cast<std::int8_t>(s->GetByte(16) + worldMULHandler.TileHeight(s->GetWord(17)));
+        targZ = static_cast<std::int8_t>(s->GetByte(16) + uoManager.art(s->GetWord(17)).climbHeight());
     }
     CChar *mChar = s->CurrcharObj();
     
@@ -582,77 +583,74 @@ void InfoTarget(CSocket *s) {
         }
         
         // manually calculating the ID's if it's a maptype
-        auto map1 = worldMULHandler.SeekMap(x, y, worldNumber);
+        auto map1 = uoManager.terrainTileAt(worldNumber, x, y);
         CGumpDisplay mapStat(s, 300, 300);
         mapStat.setTitle("Map Tile");
-        mapStat.AddData("Tilenum", map1.tileId, 5);
-        mapStat.AddData("Flags", map1.terrainInfo->FlagsNum(), 1);
+        mapStat.AddData("Tilenum", map1.tileid, 5);
+        mapStat.AddData("Flags", static_cast<std::uint32_t>(std::get<const uo::TerrainInfo*>(map1.info)->flag.value), 1);
         mapStat.AddData("Name", map1.name());
         mapStat.Send(4, false, INVALIDSERIAL);
     }
     else {
         // Static Tile
-        CTile &tile = worldMULHandler.SeekTile(tileId);
-        
+        const auto &tile = uoManager.art(tileId);
         CGumpDisplay statTile(s, 300, 300);
         statTile.setTitle("Map Tile");
         
         statTile.AddData("Tilenum", tileId, 5);
-        statTile.AddData("Weight", tile.Weight(), 0);
-        statTile.AddData("Layer", tile.Layer(), 1);
-        statTile.AddData("Hue", tile.Hue(), 5);
-        statTile.AddData("Anim", tile.Animation(), 1);
-        statTile.AddData("Quantity", tile.Quantity(), 1);
-        statTile.AddData("Unknown1", tile.Unknown1(), 1);
-        statTile.AddData("Unknown2", tile.Unknown2(), 1);
-        statTile.AddData("Unknown3", tile.Unknown3(), 1);
-        statTile.AddData("Unknown4", tile.Unknown4(), 1);
-        statTile.AddData("Unknown5", tile.Unknown5(), 1);
-        statTile.AddData("Height", tile.Height(), 0);
-        statTile.AddData("Name", tile.Name().c_str());
-        statTile.AddData("Flags:", tile.FlagsNum(), 1);
-        statTile.AddData("--> FloorLevel", tile.CheckFlag(uo::flag_t::FLOORLEVEL));
-        statTile.AddData("--> Holdable", tile.CheckFlag(uo::flag_t::HOLDABLE));
-        statTile.AddData("--> Transparent", tile.CheckFlag(uo::flag_t::UTRANSPARENT));
-        statTile.AddData("--> Translucent", tile.CheckFlag(uo::flag_t::TRANSLUCENT));
-        statTile.AddData("--> Wall", tile.CheckFlag(uo::flag_t::WALL));
-        statTile.AddData("--> Damaging", tile.CheckFlag(uo::flag_t::DAMAGING));
-        statTile.AddData("--> Blocking", tile.CheckFlag(uo::flag_t::BLOCKING));
-        statTile.AddData("--> Wet", tile.CheckFlag(uo::flag_t::WET));
-        statTile.AddData("--> Unknown1", tile.CheckFlag(uo::flag_t::UNKNOWN1));
-        statTile.AddData("--> Surface", tile.CheckFlag(uo::flag_t::SURFACE));
-        statTile.AddData("--> Climbable", tile.CheckFlag(uo::flag_t::CLIMBABLE));
-        statTile.AddData("--> Stackable", tile.CheckFlag(uo::flag_t::STACKABLE));
-        statTile.AddData("--> Window", tile.CheckFlag(uo::flag_t::WINDOW));
-        statTile.AddData("--> NoShoot", tile.CheckFlag(uo::flag_t::NOSHOOT));
-        statTile.AddData("--> DisplayA", tile.CheckFlag(uo::flag_t::DISPLAYA));
-        statTile.AddData("--> DisplayAn", tile.CheckFlag(uo::flag_t::DISPLAYAN));
-        statTile.AddData("--> Description", tile.CheckFlag(uo::flag_t::DESCRIPTION));
-        statTile.AddData("--> Foilage", tile.CheckFlag(uo::flag_t::FOLIAGE));
-        statTile.AddData("--> PartialHue", tile.CheckFlag(uo::flag_t::PARTIALHUE));
-        statTile.AddData("--> Unknown2", tile.CheckFlag(uo::flag_t::UNKNOWN2));
-        statTile.AddData("--> Map", tile.CheckFlag(uo::flag_t::MAP));
-        statTile.AddData("--> Container", tile.CheckFlag(uo::flag_t::CONTAINER));
-        statTile.AddData("--> Wearable", tile.CheckFlag(uo::flag_t::WEARABLE));
-        statTile.AddData("--> Light", tile.CheckFlag(uo::flag_t::LIGHT));
-        statTile.AddData("--> Animated", tile.CheckFlag(uo::flag_t::ANIMATED));
-        statTile.AddData("--> NoDiagonal", tile.CheckFlag(uo::flag_t::NODIAGONAL)); // HOVEROVER in SA clients and later, to determine if
+        statTile.AddData("Weight", tile.weight, 0);
+        statTile.AddData("Layer", tile.quality, 1);
+        statTile.AddData("Hue", tile.hue, 5);
+        statTile.AddData("Anim", tile.animid, 1);
+        statTile.AddData("Quantity", tile.quantity, 1);
+        statTile.AddData("Unknown1", tile.miscData&0xFF, 1);
+        statTile.AddData("Unknown2", (tile.miscData>>8)&0xFF, 1);
+        statTile.AddData("Unknown3", tile.unknown3, 1);
+        statTile.AddData("Unknown4", tile.stackOffset&0xFF, 1);
+        statTile.AddData("Unknown5", (tile.stackOffset >>8)&0xFF, 1);
+        statTile.AddData("Height", tile.height, 0);
+        statTile.AddData("Name", tile.name.c_str());
+        statTile.AddData("Flags:", static_cast<std::uint32_t>(tile.flag.value), 1);
+        statTile.AddData("--> FloorLevel", tile.checkFlag(uo::flag_t::FLOORLEVEL));
+        statTile.AddData("--> Holdable", tile.checkFlag(uo::flag_t::HOLDABLE));
+        statTile.AddData("--> Transparent", tile.checkFlag(uo::flag_t::UTRANSPARENT));
+        statTile.AddData("--> Translucent", tile.checkFlag(uo::flag_t::TRANSLUCENT));
+        statTile.AddData("--> Wall", tile.checkFlag(uo::flag_t::WALL));
+        statTile.AddData("--> Damaging", tile.checkFlag(uo::flag_t::DAMAGING));
+        statTile.AddData("--> Blocking", tile.checkFlag(uo::flag_t::BLOCKING));
+        statTile.AddData("--> Wet", tile.checkFlag(uo::flag_t::WET));
+        statTile.AddData("--> Unknown1", tile.checkFlag(uo::flag_t::UNKNOWN1));
+        statTile.AddData("--> Surface", tile.checkFlag(uo::flag_t::SURFACE));
+        statTile.AddData("--> Climbable", tile.checkFlag(uo::flag_t::CLIMBABLE));
+        statTile.AddData("--> Stackable", tile.checkFlag(uo::flag_t::STACKABLE));
+        statTile.AddData("--> Window", tile.checkFlag(uo::flag_t::WINDOW));
+        statTile.AddData("--> NoShoot", tile.checkFlag(uo::flag_t::NOSHOOT));
+        statTile.AddData("--> DisplayA", tile.checkFlag(uo::flag_t::DISPLAYA));
+        statTile.AddData("--> DisplayAn", tile.checkFlag(uo::flag_t::DISPLAYAN));
+        statTile.AddData("--> Description", tile.checkFlag(uo::flag_t::DESCRIPTION));
+        statTile.AddData("--> Foilage", tile.checkFlag(uo::flag_t::FOLIAGE));
+        statTile.AddData("--> PartialHue", tile.checkFlag(uo::flag_t::PARTIALHUE));
+        statTile.AddData("--> Unknown2", tile.checkFlag(uo::flag_t::UNKNOWN2));
+        statTile.AddData("--> Map", tile.checkFlag(uo::flag_t::MAP));
+        statTile.AddData("--> Container", tile.checkFlag(uo::flag_t::CONTAINER));
+        statTile.AddData("--> Wearable", tile.checkFlag(uo::flag_t::WEARABLE));
+        statTile.AddData("--> Light", tile.checkFlag(uo::flag_t::LIGHT));
+        statTile.AddData("--> Animated", tile.checkFlag(uo::flag_t::ANIMATED));
+        statTile.AddData("--> NoDiagonal", tile.checkFlag(uo::flag_t::NODIAGONAL)); // HOVEROVER in SA clients and later, to determine if
         // tiles can be moved on by flying gargoyle
-        statTile.AddData("--> Unknown3", tile.CheckFlag(uo::flag_t::UNKNOWN3));
-        statTile.AddData("--> Armor", tile.CheckFlag(uo::flag_t::ARMOR));
-        statTile.AddData("--> Roof", tile.CheckFlag(uo::flag_t::ROOF));
-        statTile.AddData("--> Door", tile.CheckFlag(uo::flag_t::DOOR));
-        statTile.AddData("--> StairBack", tile.CheckFlag(uo::flag_t::STAIRBACK));
-        statTile.AddData("--> StairRight", tile.CheckFlag(uo::flag_t::STAIRRIGHT));
-        /*
-        statTile.AddData("--> AlphaBlend", tile.CheckFlag(TF_ALPHABLEND));
-        statTile.AddData("--> UseNewArt", tile.CheckFlag(TF_USENEWART));
-        statTile.AddData("--> ArtUsed", tile.CheckFlag(TF_ARTUSED));
-        statTile.AddData("--> NoShadow", tile.CheckFlag(TF_NOSHADOW));
-        statTile.AddData("--> PixelBleed", tile.CheckFlag(TF_PIXELBLEED));
-        statTile.AddData("--> PlayAnimOnce", tile.CheckFlag(TF_PLAYANIMONCE));
-        statTile.AddData("--> MultiMovable", tile.CheckFlag(TF_MULTIMOVABLE));
-         */
+        statTile.AddData("--> Unknown3", tile.checkFlag(uo::flag_t::UNKNOWN3));
+        statTile.AddData("--> Armor", tile.checkFlag(uo::flag_t::ARMOR));
+        statTile.AddData("--> Roof", tile.checkFlag(uo::flag_t::ROOF));
+        statTile.AddData("--> Door", tile.checkFlag(uo::flag_t::DOOR));
+        statTile.AddData("--> StairBack", tile.checkFlag(uo::flag_t::STAIRBACK));
+        statTile.AddData("--> StairRight", tile.checkFlag(uo::flag_t::STAIRRIGHT));
+        statTile.AddData("--> AlphaBlend", tile.checkFlag(uo::flag_t::ALPHABLEND));
+        statTile.AddData("--> UseNewArt", tile.checkFlag(uo::flag_t::USENEWART));
+        statTile.AddData("--> ArtUsed", tile.checkFlag(uo::flag_t::ARTUSED));
+        statTile.AddData("--> NoShadow", tile.checkFlag(uo::flag_t::NOSHADOW));
+        statTile.AddData("--> PixelBleed", tile.checkFlag(uo::flag_t::PIXELBLEED));
+        statTile.AddData("--> PlayAnimOnce", tile.checkFlag(uo::flag_t::PLAYANIMONCE));
+        statTile.AddData("--> MultiMovable", tile.checkFlag(uo::flag_t::MULTIMOVABLE));
         statTile.Send(4, false, INVALIDSERIAL);
     }
 }
@@ -708,7 +706,7 @@ void Tiling(CSocket *s) {
                 return;
             
             c->SetDecayable(false);
-            c->SetLocation(x, y, s->GetByte(16) + worldMULHandler.TileHeight(s->GetWord(17)));
+            c->SetLocation(x, y, s->GetByte(16) +  uoManager.art(s->GetWord(17)).climbHeight());
         }
     }
     s->AddId1(0);

@@ -23,7 +23,7 @@ namespace util {
             
             auto setOption(sockfd_t descriptor) -> void ;
             auto create(bool blocking)->void ;
-
+            
         public:
             NetSocket();
             ~NetSocket() ;
@@ -39,7 +39,7 @@ namespace util {
             auto valid() const ->bool;
             auto close() const -> void;
             auto clientDescriptor() const -> util::net::sockfd_t     ;
-
+            
             // We allow you to send and read data
             auto send(const char* data, iosize_t size) const -> status_t;
             auto read(char* data, iosize_t size) const->status_t;
@@ -50,7 +50,7 @@ namespace util {
             // Socket items
             auto isBlocking() const -> bool ;
             auto setBlocking(bool state) ->void ;
-
+            
             auto bind(const std::string &ipaddress, const std::string &port,bool blocking) ->void;
             auto listen(const std::string &ipaddress, const std::string &port, bool blocking) ->void ;
             auto connect(const std::string &ipaddress, const std::string &port) ->bool ;
@@ -59,7 +59,7 @@ namespace util {
             
             auto peerInformation() const -> std::pair<std::string,std::string>;
         };
-
+        
     }
 }
 

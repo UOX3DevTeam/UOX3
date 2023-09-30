@@ -7,19 +7,18 @@
 #include "cserverdefinitions.h"
 #include "csocket.h"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "regions.h"
 #include "ssection.h"
 #include "townregion.h"
 #include "utility/strutil.hpp"
 #include "uodata/uoflag.hpp"
+#include "uodata/uomgr.hpp"
 using namespace std::string_literals;
 
 extern cEffects worldEffect ;
 extern CServerDefinitions worldFileLookup ;
-extern CMulHandler worldMULHandler ;
 extern CMapHandler worldMapHandler ;
-
+extern uo::UOMgr uoManager ;
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::PlaySound()
 // o------------------------------------------------------------------------------------------------o
@@ -340,34 +339,34 @@ auto cEffects::PlayTileSound(CChar *mChar, CSocket *mSock) -> void {
     
     bool onHorse = mChar->IsOnHorse();
     bool isRunning = (mChar->GetRunning() > 0);
-    auto artwork = worldMULHandler.ArtAt(mChar->GetX(), mChar->GetY(), mChar->WorldNumber());
-    std::sort(artwork.begin(), artwork.end(), [](const Tile_st &lhs, const Tile_st &rhs) {
-        return (lhs.altitude + lhs.artInfo->Height()) < (rhs.altitude + rhs.artInfo->Height());
+    auto artwork = uoManager.artTileAt(mChar->WorldNumber(), mChar->GetX(), mChar->GetX());
+    std::sort(artwork.begin(), artwork.end(), [](const uo::UOTile &lhs, uo::UOTile &rhs) {
+        return (lhs.altitude + lhs.height()) < (rhs.altitude + rhs.height());
     });
     
     // now find the static that works for us
     // start from the bottom of the vector, as we want the first one that is below us
     auto alt = mChar->GetZ(); // so we dont keep calling it
-    auto iter = std::find_if(artwork.rbegin(), artwork.rend(), [alt](const Tile_st &value) {
-        return alt >= (value.altitude + value.artInfo->Height());
+    auto iter = std::find_if(artwork.rbegin(), artwork.rend(), [alt](const uo::UOTile &value) {
+        return alt >= (value.altitude + value.height());
     });
     
     if (iter != artwork.rend()) {
-        if (iter->artInfo->CheckFlag(uo::flag_t::WET)) {
+        if (iter->checkFlag(uo::flag_t::WET)) {
             tileType = TT_WATER;
         }
-        if (iter->artInfo->CheckFlag(uo::flag_t::SURFACE) || iter->artInfo->CheckFlag(uo::flag_t::CLIMBABLE)) {
-            auto pos = iter->artInfo->Name().find("wood");
+        if (iter->checkFlag(uo::flag_t::SURFACE) || iter->checkFlag(uo::flag_t::CLIMBABLE)) {
+            auto pos = iter->name().find("wood");
             if (pos != std::string::npos) {
                 tileType = TT_WOODEN;
             }
             else {
-                pos = iter->artInfo->Name().find("ston");
+                pos = iter->name().find("ston");
                 if (pos != std::string::npos) {
                     tileType = TT_STONE;
                 }
                 else {
-                    pos = iter->artInfo->Name().find("gras");
+                    pos = iter->name().find("gras");
                     if (pos != std::string::npos) {
                         tileType = TT_GRASS;
                     }

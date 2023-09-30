@@ -12,7 +12,6 @@
 #include "cspawnregion.h"
 #include "type/era.hpp"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "objectfactory.h"
 #include "regions.h"
 #include "scriptc.h"
@@ -22,13 +21,14 @@
 #include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 #include "townregion.h"
+#include "uodata/uoxuoadapter.hpp"
+
 using namespace std::string_literals;
 
 extern WorldItem worldItem ;
 extern CJSMapping worldJSMapping ;
 extern cEffects worldEffect ;
 extern CServerDefinitions worldFileLookup ;
-extern CMulHandler worldMULHandler ;
 
 itemtypes_t FindItemTypeFromTag(const std::string &strToFind);
 
@@ -837,7 +837,7 @@ CItem *WorldItem::CreateItem(CSocket *mSock, CChar *mChar, const std::uint16_t i
         return nullptr;
     
     if (itemId != 0x0000) {
-        if (worldMULHandler.IsValidTile(itemId)) {
+        if (uo::validArtTile(itemId)) {
             iCreated->SetId(itemId);
         }
     }

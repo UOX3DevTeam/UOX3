@@ -9,7 +9,6 @@
 #include "csocket.h"
 
 #include "funcdecl.h"
-#include "mapstuff.h"
 
 #include "ceffects.h"
 #include "classes.h"
@@ -20,14 +19,15 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "uodata/uoflag.hpp"
+#include "uodata/uomgr.hpp"
+#include "uodata/uoxuoadapter.hpp"
 #include "weight.h"
 
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem; 
 extern CWeight worldWeight ;
 extern cEffects worldEffect ;
-extern CMulHandler worldMULHandler ;
-
+extern uo::UOMgr uoManager ;
 #define XP 0
 #define YP 1
 
@@ -108,21 +108,19 @@ auto LeaveBoat(CSocket *s, CItem *p) -> bool {
     std::uint16_t instanceId = mChar->GetInstanceId();
     for (std::int16_t x = x2 - 3; x <= x2 + 4; ++x) {
         for (std::int16_t y = y2 - 3; y <= y2 + 4; ++y) {
-            std::int8_t z = worldMULHandler.Height(x, y, mChar->GetZ(), worldNumber, instanceId);
-            if (worldMULHandler.ValidSpawnLocation(x, y, z, worldNumber, instanceId, true) && !FindMulti(x, y, z, worldNumber, instanceId)) {
+            std::int8_t z = uo::playerElevation(x, y, mChar->GetZ(), worldNumber, instanceId);
+            if (uo::validSpawnLocation(x, y, z, worldNumber, instanceId, true) && !FindMulti(x, y, z, worldNumber, instanceId)) {
                 mChar->SetLocation(x, y, z, worldNumber, instanceId);
                 
                 // Freeze player temporarily after teleporting
-                worldEffect.TempEffect(nullptr, mChar, 1, 1, 1,
-                                    5); // 1 second, divided by 5 for 0.2s duration freeze
+                worldEffect.TempEffect(nullptr, mChar, 1, 1, 1, 5); // 1 second, divided by 5 for 0.2s duration freeze
                 
                 auto myFollowers = mChar->GetFollowerList();
                 for (const auto &follower : myFollowers->collection()) {
                     if (ValidateObject(follower)) {
                         // Only teleport followers with player if they're set to follow player, and
                         // within range
-                        if (!follower->GetMounted() && follower->GetNpcWander() == WT_FOLLOW &&
-                            ObjInRange(mChar, follower, DIST_SAMESCREEN)) {
+                        if (!follower->GetMounted() && follower->GetNpcWander() == WT_FOLLOW && ObjInRange(mChar, follower, DIST_SAMESCREEN)) {
                             follower->SetLocation(x, y, z, worldNumber, instanceId);
                         }
                     }
@@ -157,8 +155,7 @@ void PlankStuff(CSocket *s, CItem *p) {
             for (const auto &follower : myFollowers->collection()) {
                 if (ValidateObject(follower)) {
                     // Only teleport followers with player if they're set to follow and within range
-                    if (!follower->GetMounted() && follower->GetNpcWander() == WT_FOLLOW &&
-                        ObjInRange(mChar, follower, DIST_SAMESCREEN)) {
+                    if (!follower->GetMounted() && follower->GetNpcWander() == WT_FOLLOW && ObjInRange(mChar, follower, DIST_SAMESCREEN)) {
                         follower->SetLocation(mChar);
                     }
                 }
@@ -430,24 +427,23 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
                 auto multiSerial = tempItem->GetMulti();
                 // auto boatSerial = b->GetSerial();
                 if (multiSerial != INVALIDSERIAL && multiSerial != b->GetSerial()) {
-                    CTile &tile = worldMULHandler.SeekTile(tempItem->GetId());
-                    if (tile.CheckFlag(uo::flag_t::BLOCKING))
+                    if (uoManager.art(tempItem->GetId()).checkFlag(uo::flag_t::BLOCKING))
                         return true;
                 }
             }
             
-            std::int8_t sz = worldMULHandler.StaticTop(x, y, boatZ, worldNumber, MAX_Z_STEP);
+           auto sz = uo::staticTop(x, y, boatZ, worldNumber, MAX_Z_STEP);
             
             if (sz == ILLEGAL_Z) { // map tile
-                auto map = worldMULHandler.SeekMap(x, y, worldNumber);
-                if (map.altitude >= cz && !map.CheckFlag(uo::flag_t::WET) && map.name() != "water") // only tiles on/above the water
+                auto map = uoManager.terrainTileAt(worldNumber, x, y);
+                if (map.altitude >= cz && !map.checkFlag(uo::flag_t::WET) && map.name() != "water") // only tiles on/above the water
                     return true;
             }
             else {
-                auto artwork = worldMULHandler.ArtAt(x, y, worldNumber);
+                auto artwork = uoManager.artTileAt(worldNumber, x, y);
                 for (auto &tile : artwork) {
                     std::int8_t zt = tile.altitude + tile.height();
-                    if (!tile.CheckFlag(uo::flag_t::WET) && zt >= cz && zt <= (cz + 20) &&
+                    if (!tile.checkFlag(uo::flag_t::WET) && zt >= cz && zt <= (cz + 20) &&
                         (tile.name() != "water"))
                         return true;
                 }
@@ -498,14 +494,14 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     }
     
     const std::int16_t x = b->GetX(), y = b->GetY();
-    std::int8_t z = worldMULHandler.MapElevation(x, y, worldNumber);
+    std::int8_t z = uo::mapElevation(x, y, worldNumber);
     
-    const std::int8_t dynz = worldMULHandler.DynamicElevation(x, y, z, worldNumber, instanceId, 20);
+    const std::int8_t dynz = uo::dynamicElevation(x, y, z, worldNumber, instanceId, 20);
     if (ILLEGAL_Z != dynz) {
         z = dynz;
     }
     else {
-        const std::int8_t staticz = worldMULHandler.StaticTop(x, y, z, worldNumber, 20);
+        const std::int8_t staticz = uo::staticTop(x, y, z, worldNumber, 20);
         if (ILLEGAL_Z != staticz) {
             z = staticz;
         }

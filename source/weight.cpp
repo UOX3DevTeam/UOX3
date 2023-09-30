@@ -3,10 +3,10 @@
 #include "cchar.h"
 #include "citem.h"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "configuration/serverconfig.hpp"
+#include "uodata/uomgr.hpp"
 
-extern CMulHandler worldMULHandler ;
+extern uo::UOMgr uoManager ;
 
 // o------------------------------------------------------------------------------------------------o
 //|	File		-	weight.cpp
@@ -125,9 +125,8 @@ std::int32_t CWeight::CalcWeight(CItem *pack) {
             contWeight =
             i->GetBaseWeight(); // Find the base container weight, stored when item was created
             if (contWeight == 0) {   // If they have no weight grab the tiledata weight for the item
-                CTile &tile = worldMULHandler.SeekTile(i->GetId());
-                contWeight =
-                static_cast<std::int32_t>(tile.Weight() * 100); // Add the weight of the container
+                const auto &tile = uoManager.art(i->GetId());
+                contWeight = static_cast<std::int32_t>(tile.weight * 100); // Add the weight of the container
             }
             contWeight += CalcWeight(i); // Find and add the weight of the items in the container
             i->SetWeight(contWeight, false); // Also update the weight property of the container
@@ -167,9 +166,8 @@ std::int32_t CWeight::CalcCharWeight(CChar *mChar) {
                 contWeight = i->GetBaseWeight(); // Find the base container weight, stored when item
                 // was created
                 if (contWeight == 0) { // If they have no weight grab the tiledata weight for the item
-                    CTile &tile = worldMULHandler.SeekTile(i->GetId());
-                    contWeight =
-                    static_cast<std::int32_t>(tile.Weight() * 100); // Add the weight of the container
+                    const auto &tile = uoManager.art(i->GetId());
+                    contWeight = static_cast<std::int32_t>(tile.weight * 100); // Add the weight of the container
                 }
                 contWeight += CalcWeight(i); // Find and add the weight of the items in the container
                 i->SetWeight(contWeight, false); // Also update the weight property of the container
@@ -197,8 +195,8 @@ std::int32_t CWeight::CalcCharWeight(CChar *mChar) {
 bool CWeight::CalcAddWeight(CItem *item, std::int32_t &totalWeight) {
     std::int32_t itemWeight = item->GetWeight();
     if (itemWeight == 0) { // If they have no weight find the weight of the tile
-        CTile &tile = worldMULHandler.SeekTile(item->GetId());
-        itemWeight = static_cast<std::int32_t>(tile.Weight() * 100);
+        const auto &tile = uoManager.art(item->GetId());
+        itemWeight = static_cast<std::int32_t>(tile.weight * 100);
     }
     
     if (item->GetAmount() > 1) {
@@ -228,8 +226,8 @@ bool CWeight::CalcAddWeight(CItem *item, std::int32_t &totalWeight) {
 bool CWeight::CalcSubtractWeight(CItem *item, std::int32_t &totalWeight) {
     std::int32_t itemWeight = item->GetWeight();
     if (itemWeight == 0) { // If they have no weight find the weight of the tile
-        CTile &tile = worldMULHandler.SeekTile(item->GetId());
-        itemWeight = static_cast<std::int32_t>(tile.Weight() * 100);
+        const auto &tile = uoManager.art(item->GetId());
+        itemWeight = static_cast<std::int32_t>(tile.weight * 100);
     }
     
     if (item->GetAmount() > 1) {

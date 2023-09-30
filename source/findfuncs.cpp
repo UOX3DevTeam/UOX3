@@ -10,16 +10,15 @@
 
 #include "funcdecl.h"
 
-#include "mapstuff.h"
 #include "network.h"
 #include "regions.h"
 #include "uodata/uoflag.hpp"
+#include "uodata/uomgr.hpp"
 
 extern cRaces worldRace ;
-extern CMulHandler worldMULHandler ;
 extern CNetworkStuff worldNetwork ;
 extern CMapHandler worldMapHandler ;
-
+extern uo::UOMgr uoManager ;
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	FindPlayersInOldVisrange()
 // o------------------------------------------------------------------------------------------------o
@@ -352,16 +351,16 @@ bool InMulti(std::int16_t x, std::int16_t y, std::int8_t z, CMultiObj *m) {
     const std::uint16_t multiId = static_cast<std::uint16_t>(m->GetId() - 0x4000);
     [[maybe_unused]] std::int32_t length = 0;
     
-    if (!worldMULHandler.MultiExists(multiId)) {
+    if (!uoManager.multiExists(multiId)) {
         // the length associated with the multi means one thing
         // the multi it's trying to reference is NOT in the multis.mul file
         // so as a measure... if it's wet, we'll make it a boat
         // if it's dry, we'll make it a house
-        Console::shared() << "inmulti() - Bad length in multi file, avoiding stall. Item Name: " << m->GetName() << " " << m->GetSerial() << myendl;
+        Console::shared() << util::format("inmulti() - Bad multiid: 0x%04x, . Item Name:%s %u ",multiId, m->GetName().c_str(), m->GetSerial()) << myendl;
         length = 0;
         
-        auto map1 = worldMULHandler.SeekMap(m->GetX(), m->GetY(), m->WorldNumber());
-        if (map1.CheckFlag(uo::flag_t::WET)) { // is it water?
+        auto map1 = uoManager.terrainTileAt(m->WorldNumber(), x, y) ;
+        if (map1.checkFlag(uo::flag_t::WET)) { // is it water?
             // NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
             // So either: 1) Let the user fix it in the worldfile once its saved
             // 2) Destroy the CMultiObj, create a new CBoatObj, and set to the same serial
@@ -377,14 +376,14 @@ bool InMulti(std::int16_t x, std::int16_t y, std::int8_t z, CMultiObj *m) {
         const std::int16_t baseY = m->GetY();
         const std::int8_t baseZ = m->GetZ();
         
-        for (auto &multi : worldMULHandler.SeekMulti(multiId).items) {
+        for (const auto &multi : uoManager.multiFor(multiId).tiles ) {
             // Ignore signs and signposts sticking out of buildings
-            if (((multi.tileId >= 0x0b95) && (multi.tileId <= 0x0c0e)) || ((multi.tileId == 0x1f28) || (multi.tileId == 0x1f29)))
+            if (((multi.tileid >= 0x0b95) && (multi.tileid <= 0x0c0e)) || ((multi.tileid == 0x1f28) || (multi.tileid == 0x1f29)))
                 continue;
             
-            if ((baseX + multi.offsetX) == x && (baseY + multi.offsetY) == y) {
+            if ((baseX + multi.xoffset) == x && (baseY + multi.yoffset) == y) {
                 // Find the top Z level of the multi section being examined
-                const std::int8_t multiZ = (baseZ + multi.altitude + worldMULHandler.TileHeight(multi.tileId));
+                const std::int8_t multiZ = (baseZ + multi.zoffset + multi.info->height);
                 if (m->GetObjType() == CBaseObject::OT_BOAT) {
                     // We're on a boat!
                     if (abs(multiZ - z) <= zOff)

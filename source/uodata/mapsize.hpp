@@ -31,7 +31,7 @@ namespace uo {
             return std::to_string(width)+std::string(",")+std::to_string(height);
         }
     };
-
+    
 }
 
 #endif /* mapsize_hpp */

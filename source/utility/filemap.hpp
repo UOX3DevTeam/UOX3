@@ -22,7 +22,7 @@ namespace util {
         //=================================================================================
         /// Constructor for filemap. Makes an empty filemap
         filemap_t():ptr(nullptr),length(0){}
-
+        
         //=================================================================================
         /// Destructor for filemap
         ~filemap_t() ;
@@ -33,7 +33,7 @@ namespace util {
         ///     - filepath: The filepath to the file
         /// - Returns: Nothing
         filemap_t(const std::filesystem::path &filepath);
-
+        
         //=================================================================================
         /// Memory map the specified file, and the variables
         /// ptr and length will be set
@@ -42,7 +42,7 @@ namespace util {
         /// - Returns: The pointer to the memory mapped file
         /// - Throws: If unable to open the file or map the file, throws a runtime error
         [[maybe_unused]] auto map(const std::filesystem::path &filepath) ->void* ;
-
+        
         //=================================================================================
         /// Unmaps a file from memory
         /// - Parameters:

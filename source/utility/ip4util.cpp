@@ -29,16 +29,16 @@ namespace util {
                 }
                 if (entry[i]!="*"){
                     try {
-        #if defined(_WIN32)
-        #pragma warning( push )
-        #pragma warning( disable : 4834 )
-        #endif
+#if defined(_WIN32)
+#pragma warning( push )
+#pragma warning( disable : 4834 )
+#endif
                         // this is just trying to see if this is a number, or not
                         std::stoul(entry[i]);
-        #if defined(_WIN32)
-        #pragma warning( pop )
-        #endif
-
+#if defined(_WIN32)
+#pragma warning( pop )
+#endif
+                        
                     }
                     catch(...) {
                         throw std::runtime_error("Invalid ip entry: "s + value);
@@ -53,7 +53,7 @@ namespace util {
                 entry[i] = std::to_string((value>>((3-i)*8)) & 0xFF);
             }
         }
-
+        
         //=============================================================================
         IP4Entry::IP4Entry(){
             std::fill(entry.begin(), entry.end(), "*"s) ;
@@ -85,7 +85,7 @@ namespace util {
                 case 2:
                     ipvalue |= (std::stoul(values[1])<<16)  ;
                     [[ fallthrough]];
-
+                    
                 case 1:
                     ipvalue |= (std::stoul(values[0])<<24)  ;
                     [[ fallthrough]];
@@ -103,7 +103,7 @@ namespace util {
         auto IP4Entry::ipValue() const -> std::uint32_t {
             return (std::stoi(entry[0])<<24) | (std::stoi(entry[1])<<16) | (std::stoi(entry[2])<<8) | std::stoi(entry[3]);
         }
-
+        
         //=============================================================================
         auto IP4Entry::operator[](std::size_t index) const -> const std::string&{
             return entry[index];
@@ -131,7 +131,7 @@ namespace util {
             }
             return count ;
         }
-
+        
         //=============================================================================
         auto IP4Entry::operator=(ip4_t value) -> IP4Entry& {
             load(value);
@@ -142,7 +142,7 @@ namespace util {
             load(value);
             return *this;
         }
-
+        
         //=============================================================================
         auto IP4Entry::operator==(ip4_t value) const -> bool{
             return this->matchLevel(value)==4 ;
@@ -160,7 +160,7 @@ namespace util {
             }
             return true ;
         }
-
+        
         //=============================================================================
         auto IP4Entry::equal(const IP4Entry &value) const -> bool{
             for (std::size_t i=0;i<4;i++){
@@ -182,7 +182,7 @@ namespace util {
         auto IP4Entry::operator!=(const IP4Entry &value) const -> bool{
             return !this->operator==(value);
         }
-
+        
         //==========================================================================
         // IP4List
         //==========================================================================
@@ -190,7 +190,7 @@ namespace util {
         IP4List::IP4List(const std::filesystem::path &filepath){
             load(filepath);
         }
-
+        
         //=======================================================================
         auto IP4List::load(const std::filesystem::path &filepath) ->void {
             entries.clear();
@@ -224,7 +224,7 @@ namespace util {
         auto IP4List::clear() -> void {
             entries.clear();
         }
-
+        
         //=======================================================================
         auto IP4List::size() const -> std::size_t {
             return entries.size();
@@ -233,7 +233,7 @@ namespace util {
         auto IP4List::empty() const -> bool {
             return entries.empty();
         }
-
+        
         //=======================================================================
         auto IP4List::operator[](std::size_t index) const -> const IP4Entry& {
             return entries[index];
@@ -242,7 +242,7 @@ namespace util {
         auto IP4List::operator[](std::size_t index) -> IP4Entry& {
             return entries[index];
         }
-
+        
         //=======================================================================
         auto IP4List::contains(ip4_t value) const ->bool {
             for (const auto &entry:entries){
@@ -261,7 +261,7 @@ namespace util {
             }
             return false ;
         }
-
+        
         //=======================================================================
         // AllowDeny
         //======================================================================
@@ -282,7 +282,7 @@ namespace util {
             }
             return false ;
         }
-
+        
         //=======================================================================
         // IP4Relay
         //======================================================================
@@ -302,7 +302,7 @@ namespace util {
         auto IP4Relay::setPublicIP(const std::string &publicIP) ->void {
             this->publicIP = IP4Entry::describeIP(publicIP) ;
         }
-
+        
         //=========================================================
         auto IP4Relay::relayFor(ip4_t ipvalue) const -> ip4_t {
             
@@ -314,7 +314,7 @@ namespace util {
             }
             return publicIP ;
         }
-
-
+        
+        
     }
 }

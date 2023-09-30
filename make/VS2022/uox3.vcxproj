@@ -94,17 +94,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\uodata\artmap.cpp" />
-    <ClCompile Include="..\..\source\uodata\hash.cpp" />
-    <ClCompile Include="..\..\source\uodata\mapsize.cpp" />
-    <ClCompile Include="..\..\source\uodata\multicollection.cpp" />
-    <ClCompile Include="..\..\source\uodata\terrainmap.cpp" />
-    <ClCompile Include="..\..\source\uodata\tileinfo.cpp" />
-    <ClCompile Include="..\..\source\uodata\uoflag.cpp" />
-    <ClCompile Include="..\..\source\uodata\uomap.cpp" />
-    <ClCompile Include="..\..\source\uodata\uomgr.cpp" />
-    <ClCompile Include="..\..\source\uodata\uop.cpp" />
-    <ClCompile Include="..\..\source\uodata\uotile.cpp" />
     <ClCompile Include="..\..\source\uox3.cpp" />
     <!-- type group -->
     <ClCompile Include="..\..\source\type\clientversion.cpp" />
@@ -217,11 +206,19 @@
     <ClCompile Include="..\..\source\utility\ip4util.cpp" />
     <ClCompile Include="..\..\source\utility\netsocket.cpp" />
     <ClCompile Include="..\..\source\utility\netutil.cpp" />
-    <!-- UOData group -->
-    <ClCompile Include="..\..\source\mapstuff.cpp" />
-    <ClCompile Include="..\..\source\multimul.cpp" />
-    <ClCompile Include="..\..\source\uopdata.cpp" />
     <!-- uodata -->
+    <ClCompile Include="..\..\source\uodata\artmap.cpp" />
+    <ClCompile Include="..\..\source\uodata\hash.cpp" />
+    <ClCompile Include="..\..\source\uodata\mapsize.cpp" />
+    <ClCompile Include="..\..\source\uodata\multicollection.cpp" />
+    <ClCompile Include="..\..\source\uodata\terrainmap.cpp" />
+    <ClCompile Include="..\..\source\uodata\tileinfo.cpp" />
+    <ClCompile Include="..\..\source\uodata\uoflag.cpp" />
+    <ClCompile Include="..\..\source\uodata\uomap.cpp" />
+    <ClCompile Include="..\..\source\uodata\uomgr.cpp" />
+    <ClCompile Include="..\..\source\uodata\uop.cpp" />
+    <ClCompile Include="..\..\source\uodata\uotile.cpp" />
+    <ClCompile Include="..\..\source\uodata\uoxuoadapter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ostype.h" />
@@ -266,17 +263,6 @@
     <ClInclude Include="..\..\source\funcdecl.h" />
     <ClInclude Include="..\..\source\objectfactory.h" />
     <ClInclude Include="..\..\source\pagevector.h" />
-    <ClInclude Include="..\..\source\uodata\artmap.hpp" />
-    <ClInclude Include="..\..\source\uodata\hash.hpp" />
-    <ClInclude Include="..\..\source\uodata\mapsize.hpp" />
-    <ClInclude Include="..\..\source\uodata\multicollection.hpp" />
-    <ClInclude Include="..\..\source\uodata\terrainmap.hpp" />
-    <ClInclude Include="..\..\source\uodata\tileinfo.hpp" />
-    <ClInclude Include="..\..\source\uodata\uoflag.hpp" />
-    <ClInclude Include="..\..\source\uodata\uomap.hpp" />
-    <ClInclude Include="..\..\source\uodata\uomgr.hpp" />
-    <ClInclude Include="..\..\source\uodata\uop.hpp" />
-    <ClInclude Include="..\..\source\uodata\uotile.hpp" />
     <ClInclude Include="..\..\source\uoxstruct.h" />
     <!-- Subsystem group -->
     <ClInclude Include="..\..\source\books.h" />
@@ -346,12 +332,19 @@
     <ClInclude Include="..\..\source\utility\netutil.hpp" />
     <ClInclude Include="..\..\source\utility\random.hpp" />
     <ClInclude Include="..\..\source\utility\strutil.hpp" />
-    <!-- UOData group -->
-    <ClInclude Include="..\..\source\mapclasses.h" />
-    <ClInclude Include="..\..\source\mapstuff.h" />
-    <ClInclude Include="..\..\source\multimul.hpp" />
-    <ClInclude Include="..\..\source\uopdata.hpp" />
     <!-- uodata -->
+    <ClInclude Include="..\..\source\uodata\artmap.hpp" />
+    <ClInclude Include="..\..\source\uodata\hash.hpp" />
+    <ClInclude Include="..\..\source\uodata\mapsize.hpp" />
+    <ClInclude Include="..\..\source\uodata\multicollection.hpp" />
+    <ClInclude Include="..\..\source\uodata\terrainmap.hpp" />
+    <ClInclude Include="..\..\source\uodata\tileinfo.hpp" />
+    <ClInclude Include="..\..\source\uodata\uoflag.hpp" />
+    <ClInclude Include="..\..\source\uodata\uomap.hpp" />
+    <ClInclude Include="..\..\source\uodata\uomgr.hpp" />
+    <ClInclude Include="..\..\source\uodata\uop.hpp" />
+    <ClInclude Include="..\..\source\uodata\uotile.hpp" />
+    <ClInclude Include="..\..\source\uodata\uoxuoadapter.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\assets\uox3.ico" />

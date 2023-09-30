@@ -71,7 +71,7 @@ namespace util {
              - Returns: String version of the ip
              */
             static auto describeIP(const std::string &ip)  -> ip4_t ;
-
+            
             //===========================================================================
             /**
              Provides the string representation of the entry ip
@@ -213,7 +213,7 @@ namespace util {
              Loads an ip list file on construction. If unable to open file, generates
              an empty list (no error is indicated).
              - Parameters:
-              - filepath: The file to load
+             - filepath: The file to load
              */
             IP4List(const std::filesystem::path &filepath);
             
@@ -222,7 +222,7 @@ namespace util {
              Loads an ip list file. If unable to open file, generates
              an empty list (no error is indicated).
              - Parameters:
-              - filepath: The file to load
+             - filepath: The file to load
              */
             auto load(const std::filesystem::path &filepath) ->void ;
             
@@ -248,7 +248,7 @@ namespace util {
             /**
              Allows access to an individual list entry
              - Parameters:
-              - index: The index into the list
+             - index: The index into the list
              - Returns: Reference to the list entry
              - Throws: If the range of list is exceeded, throws an out of range.
              */
@@ -257,7 +257,7 @@ namespace util {
             /**
              Allows access to an individual list entry
              - Parameters:
-              - index: The index into the list
+             - index: The index into the list
              - Returns: Reference to the list entry
              - Throws: If the range of list is exceeded, throws an out of range.
              */
@@ -267,7 +267,7 @@ namespace util {
             /**
              Compares the value to the list, if a matchlevel 4 is acheived , returns true
              - Parameters:
-              - value: The ip to compare
+             - value: The ip to compare
              - Returns: true if the ip is in the list
              */
             auto contains(ip4_t value) const ->bool ;
@@ -275,13 +275,13 @@ namespace util {
             /**
              Compares the value to the list, if a matchlevel 4 is acheived , returns true
              - Parameters:
-              - value: The ip to compare
+             - value: The ip to compare
              - Returns: true if the ip is in the list
              */
             auto contains(const std::string &value) const ->bool ;
             
         };
-
+        
         //==========================================================================
         // AllowDeny
         //==========================================================================
@@ -311,7 +311,7 @@ namespace util {
         class IP4Relay {
             std::vector<IP4Entry> myips;
             ip4_t publicIP ;
-          
+            
         public:
             //===========================================================================
             /**
@@ -324,7 +324,7 @@ namespace util {
              Constructor, sets public ip to the supplied ip
              Also scans all adaptors for valid ips on the system, to use.
              - Parameters:
-              - ip: The public ip to use
+             - ip: The public ip to use
              */
             IP4Relay(const std::string &ip) ;
             
@@ -332,21 +332,21 @@ namespace util {
             /**
              Sets the public ip to be used in relay
              - Parameters:
-              - publicIP: the public ip
+             - publicIP: the public ip
              */
             auto setPublicIP(const std::string &publicIP) ->void ;
             //===========================================================================
             /**
              Returns the ip to relay to for the given ip
              - Parameters:
-              - ipvalue: ip to consider what to relay to.
+             - ipvalue: ip to consider what to relay to.
              - Returns: The ip of an available adaptor, or the public ip.
              */
             auto relayFor(ip4_t ipvalue) const -> ip4_t ;
             
         };
-
-
+        
+        
     }
 }
 

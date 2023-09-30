@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "tileinfo.hpp"
+#include "uoflag.hpp"
 //======================================================================
 namespace uo {
     struct ArtInfo ;
@@ -26,6 +27,7 @@ namespace uo {
         const ArtInfo *info ;
         MultiTile() ;
         MultiTile(std::uint16_t tileid);
+        auto checkFlag(flag_t flagbit) const ->bool ;
     };
     //======================================================================
     // MultiEntry
@@ -58,6 +60,7 @@ namespace uo {
         
         auto size() const -> size_t ;
         auto entryFor(int multiid) const -> const MultiEntry& ;
+        auto exists(int) const ->bool ;
     };
 }
 

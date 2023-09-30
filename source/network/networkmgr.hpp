@@ -21,7 +21,7 @@ class NetworkMgr {
     util::net::NetSocket serverSocket ;
     util::net::IP4Relay ipRelay ;
     util::net::AllowDeny firewall ;
-
+    
 public:
     NetworkMgr() ;
     ~NetworkMgr() ;

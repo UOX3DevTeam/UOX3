@@ -227,14 +227,6 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/utility/netutil.hpp
    ${PROJECT_SOURCE_DIR}/../../source/utility/random.hpp
    ${PROJECT_SOURCE_DIR}/../../source/utility/strutil.hpp
-# UOData group
-    ${PROJECT_SOURCE_DIR}/../../source/mapclasses.h
-    ${PROJECT_SOURCE_DIR}/../../source/mapstuff.cpp
-    ${PROJECT_SOURCE_DIR}/../../source/mapstuff.h
-    ${PROJECT_SOURCE_DIR}/../../source/multimul.cpp
-    ${PROJECT_SOURCE_DIR}/../../source/multimul.hpp
-    ${PROJECT_SOURCE_DIR}/../../source/uopdata.cpp
-    ${PROJECT_SOURCE_DIR}/../../source/uopdata.hpp
 # uodata
     ${PROJECT_SOURCE_DIR}/../../source/uodata/artmap.cpp
     ${PROJECT_SOURCE_DIR}/../../source/uodata/artmap.hpp
@@ -258,6 +250,8 @@ add_executable(uox3
     ${PROJECT_SOURCE_DIR}/../../source/uodata/uop.hpp
     ${PROJECT_SOURCE_DIR}/../../source/uodata/uotile.cpp
     ${PROJECT_SOURCE_DIR}/../../source/uodata/uotile.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/uoxuoadapter.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/uodata/uoxuoadapter.hpp
 
 )
 
