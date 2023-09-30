@@ -529,47 +529,57 @@ void CSocket::CurrentSpellType(std::uint8_t newValue) { currentSpellType = newVa
 // o------------------------------------------------------------------------------------------------o
 bool CSocket::FlushBuffer(bool doLog) {
     if (outlength > 0) {
-        if (cryptclient) {
-            std::uint32_t len;
-            std::uint8_t xoutbuffer[MAXBUFFER * 2];
-            len = Pack(outbuffer, xoutbuffer, outlength);
-            [[maybe_unused]] auto sendResult = netSocket.send((const char *)xoutbuffer, len);
+        try {
+            
+            if (cryptclient) {
+                std::uint32_t len;
+                std::uint8_t xoutbuffer[MAXBUFFER * 2];
+                len = Pack(outbuffer, xoutbuffer, outlength);
+                [[maybe_unused]] auto sendResult = netSocket.send((const char *)xoutbuffer, len);
 #if defined(UOX_DEBUG_MODE)
-            if (sendResult != len) {
-                std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 747" << std::endl;
-            }
+                if (sendResult != len) {
+                    std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 747" << std::endl;
+                }
 #endif
-        }
-        else {
-            [[maybe_unused]] auto sendResult = netSocket.send((const char *)&outbuffer[0], outlength);
-#if defined(UOX_DEBUG_MODE)
-            if (sendResult != outlength) {
-                std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 757" << std::endl;
-            }
-#endif
-        }
-        if ((ServerConfig::shared().enabled(ServerSwitch::NETWORKLOG) || Logging()) && doLog) {
-            serial_t toPrint;
-            if (!ValidateObject(currCharObj)) {
-                toPrint = INVALIDSERIAL;
             }
             else {
-                toPrint = currCharObj->GetSerial();
+                [[maybe_unused]] auto sendResult = netSocket.send((const char *)&outbuffer[0], outlength);
+#if defined(UOX_DEBUG_MODE)
+                if (sendResult != outlength) {
+                    std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 757" << std::endl;
+                }
+#endif
             }
-            auto logFile = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path(util::ntos(toPrint) + ".snd"s);
-            std::ofstream logDestination;
-            logDestination.open(logFile.string(), std::ios::out | std::ios::app);
-            if (logDestination.is_open()) {
-                logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 16 ? "0" : "") << std::hex << static_cast<std::uint16_t>(outbuffer[0]) << "--> Length: " << std::dec << outlength << TimeStamp() << std::endl;
-                DoPacketLogging(logDestination, outlength, outbuffer);
-                logDestination.close();
+            
+            if ((ServerConfig::shared().enabled(ServerSwitch::NETWORKLOG) || Logging()) && doLog) {
+                serial_t toPrint;
+                if (!ValidateObject(currCharObj)) {
+                    toPrint = INVALIDSERIAL;
+                }
+                else {
+                    toPrint = currCharObj->GetSerial();
+                }
+                auto logFile = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path(util::ntos(toPrint) + ".snd"s);
+                std::ofstream logDestination;
+                logDestination.open(logFile.string(), std::ios::out | std::ios::app);
+                if (logDestination.is_open()) {
+                    logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 16 ? "0" : "") << std::hex << static_cast<std::uint16_t>(outbuffer[0]) << "--> Length: " << std::dec << outlength << TimeStamp() << std::endl;
+                    DoPacketLogging(logDestination, outlength, outbuffer);
+                    logDestination.close();
+                }
+                else {
+                    Console::shared().error(util::format("Failed to open socket log %s", logFile.string().c_str()));
+                }
+                bytesSent += outlength;
             }
-            else {
-                Console::shared().error(util::format("Failed to open socket log %s", logFile.string().c_str()));
-            }
-            bytesSent += outlength;
+            outlength = 0;
         }
-        outlength = 0;
+        catch(...){
+            // We got a socket error, we could see if a peerclose or error, not sure it matters
+            // we should close the socket here on our side
+            return false ;
+        }
+        
         return true;
     }
     else
