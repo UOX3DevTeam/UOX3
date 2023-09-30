@@ -429,7 +429,7 @@ namespace uo {
             auto xadd = i->GetX() ;
             auto yadd = i->GetY() ;
             const auto & multi = uoManager.multiFor(i->GetX()-0x4000) ;
-            return std::make_tuple(multi.minXOffset+xadd,multi.minYOffset+yadd,multi.maxXOffset+xadd,multi.maxYOffset + yadd) ;
+            return std::make_tuple(static_cast<int>(multi.minXOffset+xadd), static_cast<int>(multi.minYOffset+yadd), static_cast<int>(multi.maxXOffset+xadd), static_cast<int>(multi.maxYOffset + yadd)) ;
         }
         return std::make_tuple(0,0,0,0) ;
     }

@@ -390,6 +390,9 @@
     <ClCompile Include="..\..\source\utility\filemap.cpp">
       <Filter>source files\utility</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\uodata\uoxuoadapter.cpp">
+      <Filter>source files\uodata</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Script group -->
@@ -729,6 +732,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\utility\filemap.hpp">
       <Filter>source files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\uoxuoadapter.hpp">
+      <Filter>source files\uodata</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

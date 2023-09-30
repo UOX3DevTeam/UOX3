@@ -3,7 +3,7 @@
 #ifndef tileinfo_hpp
 #define tileinfo_hpp
 
-
+#include <array>
 #include <filesystem>
 #include <iostream>
 #include <istream>

@@ -7157,7 +7157,7 @@ CPEnableMapDiffs::CPEnableMapDiffs() {
 }
 
 void CPEnableMapDiffs::CopyData() {
-    std::uint8_t mapCount = uoManager.size();
+    std::uint8_t mapCount = static_cast<std::uint8_t>(uoManager.size());
     size_t pSize = ((static_cast<size_t>(mapCount) + 1) * 8) + 9;
     
     pStream.ReserveSize(pSize);

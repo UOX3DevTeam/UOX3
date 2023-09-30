@@ -244,7 +244,7 @@ namespace uo {
     //======================================================================
     auto UOMgr::diffCountForMap(int mapnumber) const ->std::pair<int,int> {
         if (mapnumber < this->world.size()){
-            return std::make_pair(this->world.at(mapnumber).sizeArtDiff(),this->world.at(mapnumber).sizeTerrainDiff());
+            return std::make_pair(static_cast<int>(this->world.at(mapnumber).sizeArtDiff()),static_cast<int>(this->world.at(mapnumber).sizeTerrainDiff()));
         }
         return std::make_pair(0,0);
     }

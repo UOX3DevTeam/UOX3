@@ -357,11 +357,11 @@ void CMapWorld::LoadResources(std::uint8_t worldNum) {
 //|	Purpose		-	Fills and clears the mapWorlds vector.
 // o------------------------------------------------------------------------------------------------o
 auto CMapHandler::startup() -> void {
-    std::uint8_t numWorlds = uoManager.size();
+   auto numWorlds = uoManager.size();
     
     mapWorlds.reserve(numWorlds);
-    for (std::uint8_t i = 0; i < numWorlds; ++i) {
-        mapWorlds.push_back(new CMapWorld(i));
+    for (size_t i = 0; i < numWorlds; ++i) {
+        mapWorlds.push_back(new CMapWorld(static_cast<std::uint8_t>(i)));
     }
 }
 CMapHandler::~CMapHandler() {
