@@ -641,7 +641,7 @@ foundNpcId:
         }
     }
     else {
-        Console::shared().warning(util::format("Unable to find valid location to spawn NPC in region %i", this->GetRegionNum()));
+        Console::shared().warning(util::format("Unable to find valid location to spawn NPC in region %i at %i,%i,%i,%i,%i", this->GetRegionNum(),x,y,z,waterCreature,amphiCreature));
     }
     return nullptr;
 }

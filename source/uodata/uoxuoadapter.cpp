@@ -339,7 +339,7 @@ namespace uo {
         auto top = static_cast<int>(ILLEGAL_Z);
         for (const auto &tile:uoManager.artTileAt(worldNumber, x, y)){
             auto tempTop = tile.altitude + static_cast<int>(tile.climbHeight()) ;
-            if (( tempTop <= x +maxZ) && (tempTop>top)) {
+            if (( tempTop <= z +maxZ) && (tempTop>top)) {
                 top = tempTop ;
             }
         }
