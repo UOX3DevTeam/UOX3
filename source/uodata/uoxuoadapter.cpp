@@ -152,7 +152,7 @@ namespace uo {
                 }
             }
             else {
-                if (elevation >= z && tile.altitude <=z && (tile.checkFlag(flag_t::BLOCKING) ||!tile.checkFlag(flag_t::WET) )){
+                if (elevation >= z && tile.altitude <=z && (tile.checkFlag(flag_t::BLOCKING) && !tile.checkFlag(flag_t::WET) )){
                     rvalue = true ;
                     break;
                 }
