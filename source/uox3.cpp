@@ -37,7 +37,6 @@
 #include <filesystem>
 #include <numeric>
 #include <optional>
-#include <random>
 #include <set>
 #include <stdexcept>
 #include <string>
@@ -89,6 +88,7 @@
 #include "ostype.h"
 #include "pagevector.h"
 #include "partysystem.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "skills.h"
 #include "speech.h"
@@ -131,14 +131,13 @@ extern CMapHandler worldMapHandler ;
 //=====================================
 extern uo::UOMgr uoManager ;
 using namespace std::string_literals;
+using Random = effolkronium::random_static ;
 // o------------------------------------------------------------------------------------------------o
 //  Global variables
 // o------------------------------------------------------------------------------------------------o
 std::thread cons;
 std::thread netw;
 std::chrono::time_point<std::chrono::system_clock> current;
-std::mt19937 generator;
-std::random_device rd; // Will be used to obtain a seed for the random number engine
 
 // o------------------------------------------------------------------------------------------------o
 //  These should be atomic, for another day
@@ -489,7 +488,6 @@ auto startInitialize() -> void {
     Console::shared() << "Loading GoPlaces               ";
     loadPlaces();
     Console::shared().printDone();
-    generator = std::mt19937(rd()); // Standard mersenne_twister_engine seeded with rd()
     
     auto packetSection = worldJSMapping.GetSection(CJSMappingSection::SCPT_PACKET);
     for (const auto &[id, ourScript] : packetSection->collection()) {
@@ -1291,7 +1289,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                                 mChar.SetTimer(tCHAR_POISONTEXT, BuildTimeValue(6));
                                 mChar.TextMessage(nullptr, 1240, EMOTE, 1, mCharName.c_str()); // * %s looks a bit nauseous *
                             }
-                            std::int16_t poisonDmgPercent =RandomNum(3, 6); // 3% to 6% of current health per tick
+                            std::int16_t poisonDmgPercent = Random::get(3, 6); // 3% to 6% of current health per tick
                             std::int16_t poisonDmg =static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
                             [[maybe_unused]] bool retVal =mChar.Damage(std::max(static_cast<std::int16_t>(3), poisonDmg),Weather::POISON); // Minimum 3 damage per tick
                             break;
@@ -1303,7 +1301,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                                 mChar.SetTimer(tCHAR_POISONTEXT, BuildTimeValue(10));
                                 mChar.TextMessage(nullptr, 1241, EMOTE, 1,mCharName.c_str()); // * %s looks disoriented and nauseous! *
                             }
-                            std::int16_t poisonDmgPercent = RandomNum(4, 8); // 4% to 8% of current health per tick
+                            std::int16_t poisonDmgPercent = Random::get(4, 8); // 4% to 8% of current health per tick
                             std::int16_t poisonDmg = static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
                             [[maybe_unused]] bool retVal =  mChar.Damage(std::max(static_cast<std::int16_t>(5), poisonDmg), Weather::POISON); // Minimum 5 damage per tick
                             break;
@@ -1315,7 +1313,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                                 mChar.SetTimer(tCHAR_POISONTEXT, BuildTimeValue(10));
                                 mChar.TextMessage( nullptr, 1242, EMOTE, 1,  mCharName.c_str()); // * %s is in severe pain! *
                             }
-                            std::int16_t poisonDmgPercent =  RandomNum(8, 12); // 8% to 12% of current health per tick
+                            std::int16_t poisonDmgPercent =  Random::get(8, 12); // 8% to 12% of current health per tick
                             std::int16_t poisonDmg = static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
                             [[maybe_unused]] bool retVal = mChar.Damage(std::max(static_cast<std::int16_t>(8), poisonDmg), Weather::POISON); // Minimum 8 damage per tick
                             break;
@@ -1328,7 +1326,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                                 mChar.TextMessage( nullptr, 1243, EMOTE, 1, mCharName.c_str()); // * %s looks extremely weak and is
                                 // wrecked in pain! *
                             }
-                            std::int16_t poisonDmgPercent = RandomNum(12, 25); // 12% to 25% of current health per tick
+                            std::int16_t poisonDmgPercent = Random::get(12, 25); // 12% to 25% of current health per tick
                             std::int16_t poisonDmg = static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
                             [[maybe_unused]] bool retVal = mChar.Damage(std::max(static_cast<std::int16_t>(14), poisonDmg), Weather::POISON); // Minimum 14 damage per tick
                             break;
@@ -1341,7 +1339,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                                 mChar.TextMessage( nullptr, 1243, EMOTE, 1,  mCharName.c_str()); // * %s looks extremely weak and is
                                 // wrecked in pain! *
                             }
-                            std::int16_t poisonDmgPercent = RandomNum(25, 50); // 25% to 50% of current health per tick
+                            std::int16_t poisonDmgPercent = Random::get(25, 50); // 25% to 50% of current health per tick
                             std::int16_t poisonDmg = static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
                             [[maybe_unused]] bool retVal = mChar.Damage(std::max(static_cast<std::int16_t>(17), poisonDmg),  Weather::POISON); // Minimum 14 damage per tick
                             break;
@@ -1551,7 +1549,7 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
             ServerConfig::shared().shortValues[ShortValue::AMBIENTSOUND] = 10 ; // This should be check in config post check?
         }
         const std::int16_t soundTimer = static_cast<std::int16_t>(ServerConfig::shared().shortValues[ShortValue::AMBIENTSOUND] * 100);
-        if (!mChar.IsDead() && (RandomNum(0, soundTimer - 1)) == (soundTimer / 2)) {
+        if (!mChar.IsDead() && (Random::get(0, soundTimer - 1)) == (soundTimer / 2)) {
             worldEffect.PlayBGSound((*mSock), mChar);
         }
     }
@@ -1784,7 +1782,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
                             if (spawnItem->DoRespawn()) {
                                 continue;
                             }
-                            spawnItem->SetTempTimer(BuildTimeValue(static_cast<float>(RandomNum(spawnItem->GetInterval(0) * 60,spawnItem->GetInterval(1) * 60))));
+                            spawnItem->SetTempTimer(BuildTimeValue(static_cast<float>(Random::get(spawnItem->GetInterval(0) * 60,spawnItem->GetInterval(1) * 60))));
                         }
                         else if (itemCheck->GetObjType() == CBaseObject::OT_ITEM &&
                                  itemCheck->GetType() == IT_PLANK) {
@@ -1821,8 +1819,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
                 }
                 case IT_SOUNDOBJECT:
                     if (itemCheck->GetTempVar(CITV_MOREY) < 25) {
-                        if (RandomNum(1, 100) <=
-                            static_cast<std::int32_t>(itemCheck->GetTempVar(CITV_MOREZ))) {
+                        if (Random::get(1, 100) <= static_cast<std::int32_t>(itemCheck->GetTempVar(CITV_MOREZ))) {
                             for (auto &tSock : FindNearbyPlayers(itemCheck,static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREY)))) {
                                 worldEffect.PlaySound(tSock, static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREX)),false);
                             }
@@ -2707,7 +2704,7 @@ auto AdvanceObj(CChar *applyTo, std::uint16_t advObj, bool multiUse) -> void {
                     skillToSet = COOKING;
                     break;
                 case DFNTAG_DEX:
-                    applyTo->SetDexterity(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                    applyTo->SetDexterity(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     break;
                 case DFNTAG_DETECTINGHIDDEN:
                     skillToSet = DETECTINGHIDDEN;
@@ -2766,7 +2763,7 @@ auto AdvanceObj(CChar *applyTo, std::uint16_t advObj, bool multiUse) -> void {
                     skillToSet = IMBUING;
                     break;
                 case DFNTAG_INTELLIGENCE:
-                    applyTo->SetIntelligence(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                    applyTo->SetIntelligence(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     break;
                 case DFNTAG_ITEMID:
                     skillToSet = ITEMID;
@@ -2863,7 +2860,7 @@ auto AdvanceObj(CChar *applyTo, std::uint16_t advObj, bool multiUse) -> void {
                     skillToSet = REMOVETRAP;
                     break;
                 case DFNTAG_STRENGTH:
-                    applyTo->SetStrength(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                    applyTo->SetStrength(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     break;
                 case DFNTAG_SKILL:
                     applyTo->SetBaseSkill(static_cast<std::uint16_t>(odata), static_cast<std::uint8_t>(ndata));
@@ -2921,7 +2918,7 @@ auto AdvanceObj(CChar *applyTo, std::uint16_t advObj, bool multiUse) -> void {
                     break;
             }
             if (skillToSet > 0) {
-                applyTo->SetBaseSkill(static_cast<std::uint16_t>(RandomNum(ndata, odata)),skillToSet);
+                applyTo->SetBaseSkill(static_cast<std::uint16_t>(Random::get(ndata, odata)),skillToSet);
                 skillToSet = 0; // reset for next time through
             }
         }
@@ -3162,19 +3159,19 @@ auto GetPoisonDuration(std::uint8_t poisonStrength) -> timerval_t {
     auto poisonDuration = timerval_t(0);
     switch (poisonStrength) {
         case 1: // Lesser poison - 9 to 13 pulses, 2 second frequency
-            poisonDuration = RandomNum(9, 13) * 2;
+            poisonDuration = Random::get(9, 13) * 2;
             break;
         case 2: // Normal poison - 10 to 14 pulses, 3 second frequency
-            poisonDuration = RandomNum(10, 14) * 3;
+            poisonDuration = Random::get(10, 14) * 3;
             break;
         case 3: // Greater poison - 11 to 15 pulses, 4 second frequency
-            poisonDuration = RandomNum(11, 15) * 4;
+            poisonDuration = Random::get(11, 15) * 4;
             break;
         case 4: // Deadly poison - 12 to 16 pulses, 5 second frequency
-            poisonDuration = RandomNum(12, 16) * 5;
+            poisonDuration = Random::get(12, 16) * 5;
             break;
         case 5: // Lethal poison - 13 to 17 pulses, 5 second frequency
-            poisonDuration = RandomNum(13, 17) * 5;
+            poisonDuration = Random::get(13, 17) * 5;
             break;
     }
     return poisonDuration;

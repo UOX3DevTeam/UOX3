@@ -46,6 +46,7 @@
 #include "network.h"
 #include "osunique.hpp"
 #include "partysystem.h"
+#include "utility/random.hpp"
 #include "sefunctions.h"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
@@ -77,6 +78,9 @@ extern CServerDefinitions worldFileLookup ;
 extern CCommands serverCommands;
 extern uo::UOMgr uoManager ;
 extern CNetworkStuff worldNetwork ;
+
+using namespace std::string_literals ;
+using Random = effolkronium::random_static;
 
 void BuildAddMenuGump(CSocket *s, std::uint16_t m); // Menus for item creation
 void SpawnGate(CChar *caster, std::int16_t srcX, std::int16_t srcY, std::int8_t srcZ, std::uint8_t srcWorld, std::int16_t trgX, std::int16_t trgY, std::int8_t trgZ, std::uint8_t trgWorld, std::uint16_t trgInstanceId = 0);
@@ -2184,7 +2188,7 @@ JSBool CChar_DoAction(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     
     // Reset idle anim timer so it doesn't interrupt the DoAction anim
-    myChar->SetTimer(tNPC_IDLEANIMTIME, BuildTimeValue(RandomNum(5, 20)));
+    myChar->SetTimer(tNPC_IDLEANIMTIME, BuildTimeValue(Random::get(5, 20)));
     
     // Play the requested animation
     if (myChar->GetBodyType() == BT_GARGOYLE || targSubAction != -1) {

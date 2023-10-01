@@ -17,7 +17,6 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
-#include <random>
 #include <sstream>
 #include <thread>
 #include <type_traits>
@@ -28,7 +27,6 @@
 class CItem;
 class CTownRegion;
 
-extern std::mt19937 generator;
 extern CWorldMain worldMain;
 
 // o------------------------------------------------------------------------------------------------o
@@ -238,6 +236,7 @@ inline bool ValidateObject(const CBaseObject *toValidate) {
     return rValue;
 }
 
+/*
 template <class T> inline T RandomNum(T nLowNum, T nHighNum) {
     auto high = std::max<T>(nLowNum, nHighNum);
     auto low = std::min<T>(nLowNum, nHighNum);
@@ -253,5 +252,5 @@ template <class T> inline T HalfRandomNum(T HighRange) {
     T halfSize = static_cast<T>(HighRange / 2);
     return RandomNum(halfSize, HighRange);
 }
-
+ */
 #endif

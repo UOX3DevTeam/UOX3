@@ -15,12 +15,15 @@
 #include "csocket.h"
 #include "funcdecl.h"
 #include "objectfactory.h"
+#include "utility/random.hpp"
 #include "townregion.h"
 
 extern WorldItem worldItem ;
 extern CJSMapping worldJSMapping ;
 extern cEffects worldEffect ;
 
+using namespace std::string_literals ;
+using Random = effolkronium::random_static ;
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CalcValue()
 // o------------------------------------------------------------------------------------------------o
@@ -252,7 +255,7 @@ bool CPIBuyItem::Handle() {
                                     std::int16_t iMadeMaxHP = static_cast<std::int16_t>(iMade->GetMaxHP());
                                     if (iMadeMaxHP > iMadeHP) {
                                         // Randomize the item's HP from HP to MaxHP
-                                        iMade->SetHP(static_cast<std::int16_t>(RandomNum(iMadeHP, iMadeMaxHP)));
+                                        iMade->SetHP(static_cast<std::int16_t>(Random::get(iMadeHP, iMadeMaxHP)));
                                     }
                                 }
                                 iMade->SetCont(p);
@@ -286,7 +289,7 @@ bool CPIBuyItem::Handle() {
                                         std::int16_t iMadeMaxHP = static_cast<std::int16_t>(iMade->GetMaxHP());
                                         if (iMadeMaxHP > iMadeHP) {
                                             // Randomize the item's HP from HP to MaxHP
-                                            iMade->SetHP(static_cast<std::int16_t>(RandomNum(iMadeHP, iMadeMaxHP)));
+                                            iMade->SetHP(static_cast<std::int16_t>(Random::get(iMadeHP, iMadeMaxHP)));
                                         }
                                         iMade->SetCont(p);
                                         iMade->PlaceInPack();

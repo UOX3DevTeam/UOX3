@@ -23,6 +23,7 @@
 #include "ostype.h"
 #include "osunique.hpp"
 #include "pagevector.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
@@ -32,6 +33,8 @@
 #include "townregion.h"
 #include "wholist.h"
 #include "other/uoxversion.hpp"
+
+using Random = effolkronium::random_static;
 
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem ;
@@ -263,8 +266,8 @@ void HandleTownstoneButton(CSocket *s, serial_t button, serial_t ser, serial_t t
             if (!worldSkill.CheckSkill(mChar, STEALING, 950, 1000)) {// minimum 95.0 stealing
                 targetRegion = CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceId());
                 if (targetRegion != nullptr) {
-                    std::int32_t chanceToSteal = RandomNum(0, targetRegion->GetHealth() / 2);
-                    std::int32_t fudgedStealing = RandomNum(mChar->GetSkill(STEALING),  static_cast<std::uint16_t>(mChar->GetSkill(STEALING) * 2));
+                    std::int32_t chanceToSteal = Random::get(0, targetRegion->GetHealth() / 2);
+                    std::int32_t fudgedStealing = Random::get(mChar->GetSkill(STEALING),  static_cast<std::uint16_t>(mChar->GetSkill(STEALING) * 2));
                     if (fudgedStealing >= chanceToSteal) {
                         // redo stealing code here
                         s->SysMessage(549, targetRegion->GetName()
@@ -313,13 +316,12 @@ void HandleTownstoneButton(CSocket *s, serial_t button, serial_t ser, serial_t t
             }
             break;
         case 62: // attack townstone
-            targetRegion = CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(),
-                                            mChar->GetInstanceId());
-            for (std::uint8_t counter = 0; counter < RandomNum(5, 10); ++counter) {
-                worldEffect.PlayMovingAnimation(mChar, mChar->GetX() + RandomNum(-6, 6), mChar->GetY() + RandomNum(-6, 6), mChar->GetZ(), 0x36E4, 17, 0, (RandomNum(0, 1) == 1));
-                worldEffect.PlayStaticAnimation(mChar->GetX() + RandomNum(-6, 6), mChar->GetY() + RandomNum(-6, 6), mChar->GetZ(), 0x373A + RandomNum(0, 4) * 0x10, 0x09, 0, 0);
+            targetRegion = CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceId());
+            for (std::uint8_t counter = 0; counter < Random::get(5, 10); ++counter) {
+                worldEffect.PlayMovingAnimation(mChar, mChar->GetX() + Random::get(-6, 6), mChar->GetY() + Random::get(-6, 6), mChar->GetZ(), 0x36E4, 17, 0, (Random::get(0, 1) == 1));
+                worldEffect.PlayStaticAnimation(mChar->GetX() + Random::get(-6, 6), mChar->GetY() + Random::get(-6, 6), mChar->GetZ(), 0x373A + Random::get(0, 4) * 0x10, 0x09, 0, 0);
             }
-            targetRegion->DoDamage(RandomNum(0, targetRegion->GetHealth() / 8)); // we reduce the region's health by half
+            targetRegion->DoDamage(Random::get(0, targetRegion->GetHealth() / 8)); // we reduce the region's health by half
             break;
     }
 }

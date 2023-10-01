@@ -4,20 +4,21 @@
 #include <memory>
 
 #include "cchar.h"
+#include "subsystem/console.hpp"
 #include "cserverdefinitions.h"
 #include "funcdecl.h"
+#include "utility/random.hpp"
 #include "scriptc.h"
 #include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
 
 extern CServerDefinitions worldFileLookup ;
 
 using namespace std::string_literals;
-
+using Random = effolkronium::random_static;
 
 
 CJailCell::~CJailCell() {
@@ -303,7 +304,7 @@ auto CJailSystem::ReadData() -> void {
                 jails[cellNumber].AddOccupant(&toPush);
             }
             else {
-                jails[RandomNum(static_cast<size_t>(0), jails.size() - 1)].AddOccupant(&toPush);
+                jails[Random::get(static_cast<size_t>(0), jails.size() - 1)].AddOccupant(&toPush);
             }
         }
     }

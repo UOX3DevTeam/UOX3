@@ -24,6 +24,7 @@
 #include "objectfactory.h"
 #include "osunique.hpp"
 #include "power.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "scriptc.h"
 #include "configuration/serverconfig.hpp"
@@ -52,7 +53,7 @@ extern uo::UOMgr uoManager ;
 extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
-
+using Random = effolkronium::random_static;
 
 #define SPELL_MAX 68 // use define for now; can make autocount later
 
@@ -368,7 +369,7 @@ bool splMagicTrap(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] 
 bool splMagicUntrap(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] std::int8_t curSpell) {
     if (target->IsContType()) {
         if (target->GetTempVar(CITV_MOREZ, 1) == 1) {
-            if (RandomNum(1, 100) <= 50 + (caster->GetSkill(MAGERY) / 10) - target->GetTempVar(CITV_MOREZ, 3)) {
+            if (Random::get(1, 100) <= 50 + (caster->GetSkill(MAGERY) / 10) - target->GetTempVar(CITV_MOREZ, 3)) {
                 target->SetTempVar(CITV_MOREZ, 1, 0);
                 if (worldMagic.spells[14].Effect() != INVALIDID) {
                     worldEffect.PlaySound(caster, worldMagic.spells[14].Effect());
@@ -535,7 +536,7 @@ std::uint8_t CalculateMagicPoisonStrength(CChar *caster, CChar *target, std::uin
         if (skillVal >= 1000) {// GM in both skills
             // 5% chance of Deadly Poison if spellCircle is lower than 5, or always Deadly if
             // spellCircle is 5
-            if (spellCircle == 5 || RandomNum(1, 100) <= 5) {
+            if (spellCircle == 5 || Random::get(1, 100) <= 5) {
                 poisonStrength = 4; // Deadly Poison
             }
             else {
@@ -863,7 +864,7 @@ bool splFireField([[maybe_unused]] CSocket *sock, CChar *caster, std::uint8_t fi
 bool splGreaterHeal(CChar *caster, CChar *target, [[maybe_unused]] CChar *src, std::int8_t curSpell) {
     std::int32_t srcHealth = target->GetHP();
     std::int32_t baseHealing = worldMagic.spells[curSpell].BaseDmg();
-    std::int32_t j = caster->GetSkill(MAGERY) / 30 + HalfRandomNum(baseHealing);
+    std::int32_t j = caster->GetSkill(MAGERY) / 30 + Random::get(baseHealing/2,baseHealing);
     
     target->Heal(j, caster);
     worldMagic.SubtractHealth(caster, std::min(target->GetStrength(), static_cast<std::int16_t>(srcHealth + j)), 29);
@@ -1129,7 +1130,7 @@ bool splIncognito(CSocket *sock, CChar *caster, [[maybe_unused]] std::int8_t cur
     }
     // ------ SEX ------
     caster->SetOrgId(caster->GetId());
-    std::uint8_t randomGender = RandomNum(0, 3);
+    std::uint8_t randomGender = Random::get(0, 3);
     switch (randomGender) {
         case 0:
             caster->SetId(0x0190);
@@ -1162,12 +1163,12 @@ bool splIncognito(CSocket *sock, CChar *caster, [[maybe_unused]] std::int8_t cur
             break; // get a name from elf female list
     }
     
-    std::int32_t color = RandomNum(0x044E, 0x047D);
+    std::int32_t color = Random::get(0x044E, 0x047D);
     CItem *j = caster->GetItemAtLayer(IL_HAIR);
     if (ValidateObject(j)) {
         caster->SetHairColour(j->GetColour());
         caster->SetHairStyle(j->GetId());
-        std::int32_t rNum = RandomNum(0, 9);
+        std::int32_t rNum = Random::get(0, 9);
         switch (rNum) {
             case 0:
             case 1:
@@ -1193,7 +1194,7 @@ bool splIncognito(CSocket *sock, CChar *caster, [[maybe_unused]] std::int8_t cur
         if (randomGender == 0 || randomGender == 2) {
             caster->SetBeardColour(j->GetColour());
             caster->SetBeardStyle(j->GetId());
-            std::int32_t rNum2 = RandomNum(0, 6);
+            std::int32_t rNum2 = Random::get(0, 6);
             switch (rNum2) {
                 case 0:
                 case 1:
@@ -1344,7 +1345,7 @@ bool splDispel(CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[mayb
             }
             
             std::uint16_t dispelChance = std::max(static_cast<std::uint16_t>(950), (static_cast<std::uint16_t>(std::max(0.0, static_cast<double>(std::ceil(static_cast<double>(500 - (targetResist - casterMagery)) / 1.5))))));
-            if (dispelChance > RandomNum(0, 1000)) {
+            if (dispelChance > Random::get(0, 1000)) {
                 // Dispel succeeded!
                 if (worldMagic.spells[41].Effect() != INVALIDID) {
                     worldEffect.PlaySound(target, worldMagic.spells[41].Effect());
@@ -1837,7 +1838,7 @@ void MassDispelStub(CChar *caster, CChar *target, [[maybe_unused]] std::int8_t c
             }
             
             std::uint16_t dispelChance = static_cast<std::uint16_t>(std::max(static_cast<std::uint16_t>(950), static_cast<std::uint16_t>(std::ceil((500 - (targetResist - casterMagery)) / 1.5))));
-            if (dispelChance > RandomNum(0, 1000)) {
+            if (dispelChance > Random::get(0, 1000)) {
                 // Dispel succeeded!
                 if (worldMagic.spells[41].Effect() != INVALIDID) {
                     worldEffect.PlaySound(target, worldMagic.spells[41].Effect());
@@ -2068,7 +2069,7 @@ void EarthquakeStub(CChar *caster, CChar *target, std::int8_t curSpell, [[maybe_
             return;
     }
     
-    target->SetStamina(target->GetStamina() - (RandomNum(0, 9) + 5));
+    target->SetStamina(target->GetStamina() - (Random::get(0, 9) + 5));
     
     if (target->GetStamina() == -1) {
         target->SetStamina(0);
@@ -2081,7 +2082,7 @@ void EarthquakeStub(CChar *caster, CChar *target, std::int8_t curSpell, [[maybe_
                 // manually with new animation packet
             }
             else { // BT_HUMAN and BT_ELF
-                if (RandomNum(0, 1)) {
+                if (Random::get(0, 1)) {
                     worldEffect.PlayCharacterAnimation(target, ACT_DIE_BACKWARD, 0, 6); // Death anim variation 1 - 0x15, forward
                 }
                 else {
@@ -3013,7 +3014,7 @@ bool CMagic::CheckResist(CChar *attacker, CChar *defender, std::int32_t circle) 
             resistChance = defaultChance;
         }
         
-        if (RandomNum(1, 100) < resistChance / 10) {
+        if (Random::get(1, 100) < resistChance / 10) {
             s = defender->GetSocket();
             if (s != nullptr) {
                 s->SysMessage(699); // You feel yourself resisting magical energy!
@@ -3055,7 +3056,7 @@ bool CMagic::CheckResist(std::int16_t resistDifficulty, CChar *defender, std::in
         resistChance = defaultChance;
     }
     
-    if (RandomNum(1, 100) < resistChance / 10) {
+    if (Random::get(1, 100) < resistChance / 10) {
         s = defender->GetSocket();
         if (s != nullptr) {
             s->SysMessage(699); // You feel yourself resisting magical energy!
@@ -3077,33 +3078,35 @@ bool CMagic::CheckResist(std::int16_t resistDifficulty, CChar *defender, std::in
 // o------------------------------------------------------------------------------------------------o
 std::int16_t CalcSpellDamageMod(CChar *caster, CChar *target, std::int16_t spellDamage, bool spellResisted) {
     // Randomize in upper-half of damage range for some variety
-    spellDamage = HalfRandomNum(spellDamage);
+    auto damage = static_cast<double>(spellDamage);
+    
+    damage = Random::get(damage/2.0,damage);
     
     // If spell was resisted, halve damage
     if (spellResisted) {
-        spellDamage = static_cast<std::int16_t>(std::round(spellDamage / 2));
+        damage = static_cast<std::int16_t>(std::round(damage / 2));
     }
     
     // Add damage bonus/penalty based on attacker's EVALINT vs defender's MAGICRESISTANCE
     std::uint16_t casterEval = caster->GetSkill(EVALUATINGINTEL) / 10;
     std::uint16_t targetResist = target->GetSkill(MAGICRESISTANCE) / 10;
     if (targetResist > casterEval) {
-        spellDamage *= (static_cast<std::int16_t>(((casterEval - targetResist) / 200.0f)) + 1);
+        damage *= (static_cast<double>(((casterEval - targetResist) / 200.0)) + 1.0);
     }
     else {
-        spellDamage *= (static_cast<std::int16_t>((casterEval - targetResist) / 500.0f) + 1);
+        damage *= (static_cast<double>((casterEval - targetResist) / 500.0) + 1.0);
     }
     
     // Randomize some more to get broader min/max damage values
-    std::int32_t i = RandomNum(0, 4);
+    std::int32_t i = Random::get(0, 4);
     if (i <= 2) {
-        spellDamage = std::round(RandomNum(static_cast<std::int16_t>(HalfRandomNum(spellDamage) / 2), spellDamage));
+        spellDamage = std::round(Random::get(Random::get(damage/2.0,damage)/2.0,damage)) ;
     }
     else if (i == 3) {
-        spellDamage = std::round(HalfRandomNum(spellDamage));
+        spellDamage = std::round(Random::get(damage/2.0,damage));
     }
     else {// keep current spellDamage
-        spellDamage = std::round(spellDamage);
+        spellDamage = std::round(damage);
     }
     
     return spellDamage;
@@ -3277,7 +3280,7 @@ bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, std::uint16_t id
     else if (id >= 0x3946 && id <= 0x3964) { // energy field
         caster = CalcCharObjFromSer(fieldItem->GetTempVar(CITV_MOREY)); // store caster in morey
         if (ValidateObject(caster)) {
-            if (RandomNum(0, 2) == 1) {
+            if (Random::get(0, 2) == 1) {
                 if (!CheckResist(nullptr, mChar, 4)) {
                     MagicDamage(mChar, fieldItem->GetTempVar(CITV_MOREX) / 50, caster, Weather::LIGHTNING);
                 }

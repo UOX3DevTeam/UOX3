@@ -15,10 +15,12 @@
 #include "funcdecl.h"
 
 #include "power.h"
-
+#include "utility/random.hpp"
 #include "ssection.h"
 #include "utility/strutil.hpp"
 #include "worldmain.h"
+
+using Random = effolkronium::random_static ;
 
 extern WorldItem worldItem ;
 extern cRaces worldRace ;
@@ -1239,22 +1241,22 @@ colour_t CRace::RandomSkin() const {
     if (!IsSkinRestricted())
         return 0;
     
-    size_t sNum = RandomNum(static_cast<size_t>(0), skinColours.size() - 1);
-    return static_cast<colour_t>(RandomNum(skinColours[sNum].cMin, skinColours[sNum].cMax));
+    size_t sNum = Random::get(static_cast<size_t>(0), skinColours.size() - 1);
+    return static_cast<colour_t>(Random::get(skinColours[sNum].cMin, skinColours[sNum].cMax));
 }
 colour_t CRace::RandomHair() const {
     if (!IsHairRestricted())
         return 0;
     
-    size_t sNum = RandomNum(static_cast<size_t>(0), hairColours.size() - 1);
-    return static_cast<colour_t>(RandomNum(hairColours[sNum].cMin, hairColours[sNum].cMax));
+    size_t sNum = Random::get(static_cast<size_t>(0), hairColours.size() - 1);
+    return static_cast<colour_t>(Random::get(hairColours[sNum].cMin, hairColours[sNum].cMax));
 }
 colour_t CRace::RandomBeard() const {
     if (!IsBeardRestricted())
         return 0;
     
-    size_t sNum = RandomNum(static_cast<size_t>(0), beardColours.size() - 1);
-    return static_cast<colour_t>(RandomNum(beardColours[sNum].cMin, beardColours[sNum].cMax));
+    size_t sNum = Random::get(static_cast<size_t>(0), beardColours.size() - 1);
+    return static_cast<colour_t>(Random::get(beardColours[sNum].cMin, beardColours[sNum].cMax));
 }
 
 // o------------------------------------------------------------------------------------------------o

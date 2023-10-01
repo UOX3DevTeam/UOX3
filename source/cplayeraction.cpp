@@ -21,6 +21,7 @@
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "magic.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
@@ -50,6 +51,7 @@ extern uo::UOMgr uoManager ;
 extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
+using Random = effolkronium::random_static ;
 
 void SendTradeStatus(CItem *cont1, CItem *cont2);
 CItem *StartTrade(CSocket *mSock, CChar *i);
@@ -874,7 +876,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
     if (targNPC->IsTamed() && (isGM || targNPC->GetOwnerObj() == mChar || worldNPC.CheckPetFriend(mChar, targNPC))) { // do food stuff
         if (targNPC->WillHunger() && IsOnFoodList(targNPC->GetFood(), i->GetId())) {
             if (targNPC->GetHunger() < 6) {
-                worldEffect.PlaySound(mSock, static_cast<std::uint16_t>(0x003A + RandomNum(0, 2)), true);
+                worldEffect.PlaySound(mSock, static_cast<std::uint16_t>(0x003A + Random::get(0, 2)), true);
                 if (worldMain.creatures[targNPC->GetId()].IsAnimal()) {
                     worldEffect.PlayCharacterAnimation(targNPC, ACT_ANIMAL_EAT, 0, 5);
                 }
@@ -2576,12 +2578,12 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
             iUsed->SetTempVar(CITV_MOREX, iUsed->GetTempVar(CITV_MOREX) - 1);
             mSock->SysMessage(397, iUsed->GetTempVar(CITV_MOREX));
             std::uint8_t j;
-            for (j = 0; j < static_cast<std::uint8_t>(RandomNum(0, 3) + 2); ++j) {
-                std::int16_t wx = (mChar->GetX() + RandomNum(0, 5) - 5);
-                std::int16_t wy = (mChar->GetY() - RandomNum(0, 7));
-                worldEffect.PlayMovingAnimation(mChar, wx, wy, mChar->GetZ() + 10, 0x36E4, 17, 0, (RandomNum(0, 1) == 1));
+            for (j = 0; j < static_cast<std::uint8_t>(Random::get(0, 3) + 2); ++j) {
+                std::int16_t wx = (mChar->GetX() + Random::get(0, 5) - 5);
+                std::int16_t wy = (mChar->GetY() - Random::get(0, 7));
+                worldEffect.PlayMovingAnimation(mChar, wx, wy, mChar->GetZ() + 10, 0x36E4, 17, 0, (Random::get(0, 1) == 1));
                 std::uint16_t animId;
-                switch (RandomNum(0, 4)) {
+                switch (Random::get(0, 4)) {
                     default:
                     case 0:
                         animId = 0x373A;
@@ -2599,7 +2601,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
                         animId = 0x377A;
                         break;
                 }
-                worldEffect.PlayStaticAnimation(wx, wy, mChar->GetZ() + 10, animId, RandomNum(0x04, 0x09), 30, 0);
+                worldEffect.PlayStaticAnimation(wx, wy, mChar->GetZ() + 10, animId, Random::get(0x04, 0x09), 30, 0);
             }
             return true;
         case IT_RENAMEDEED: // Rename Deed

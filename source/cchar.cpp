@@ -69,6 +69,7 @@
 #include "msgboard.h"
 #include "objectfactory.h"
 #include "power.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
@@ -80,6 +81,7 @@
 #include "uodata/uomgr.hpp"
 #include "uodata/uoxuoadapter.hpp"
 #include "weight.h"
+using Random = effolkronium::random_static ;
 
 extern CDictionaryContainer worldDictionary ;
 extern CHandleCombat worldCombat ;
@@ -584,7 +586,7 @@ void CChar::DoHunger(CSocket *mSock) {
                     DecHunger();
                 }
                 else if (GetLoyalty() == 0 &&
-                         static_cast<std::uint8_t>(RandomNum(0, 100)) <= GetTamedHungerWildChance()) {
+                         static_cast<std::uint8_t>(Random::get(0, 100)) <= GetTamedHungerWildChance()) {
                     // Make pet go wild from hunger, but only if loyalty is zero
                     CChar *owner = GetOwnerObj();
                     if (ValidateObject(owner)) {
@@ -734,7 +736,7 @@ void CChar::DoThirst(CSocket *mSock) {
                     if (GetThirst() > 0) {
                         DecThirst();
                     }
-                    else if (static_cast<std::uint8_t>(RandomNum(1, 100)) <= GetTamedThirstWildChance()) {
+                    else if (static_cast<std::uint8_t>(Random::get(1, 100)) <= GetTamedThirstWildChance()) {
                         SetOwner(nullptr);
                         SetThirst(6);
                     }
@@ -7291,7 +7293,7 @@ bool CChar::Damage(std::int16_t damageValue, Weather::type_t damageType, CChar *
     if (damageValue >= std::max(static_cast<std::int16_t>(1), static_cast<std::int16_t>(floor(GetMaxHP() * 0.01)))){ // Only display blood effects if damage done is higher
         // than 1, or 1% of max health - whichever is higher
         std::uint8_t bloodEffectChance = ServerConfig::shared().ushortValues[UShortValue::BLOODEFFECTCHANCE];
-        bool spawnBlood = (bloodEffectChance >= static_cast<std::uint8_t>(RandomNum(0, 99)));
+        bool spawnBlood = (bloodEffectChance >= static_cast<std::uint8_t>(Random::get(0, 99)));
         if (spawnBlood) {
             auto bloodType = BLOOD_BLEED;
             if (damageValue >= static_cast<std::int16_t>(floor(GetMaxHP() * 0.2))) {
@@ -7315,7 +7317,7 @@ bool CChar::Damage(std::int16_t damageValue, Weather::type_t damageType, CChar *
     // Handle peace state
     if (!GetCanAttack()) {
         const std::uint8_t currentBreakChance = GetBrkPeaceChance();
-        if (static_cast<std::uint8_t>(RandomNum(1, 100)) <= currentBreakChance) {
+        if (static_cast<std::uint8_t>(Random::get(1, 100)) <= currentBreakChance) {
             SetCanAttack(true);
             if (mSock != nullptr) {
                 mSock->SysMessage(1779); // You are no longer affected by peace!

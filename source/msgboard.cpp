@@ -40,6 +40,7 @@
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "osunique.hpp"
+#include "utility/random.hpp"
 #include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
@@ -52,6 +53,7 @@ extern cEffects worldEffect ;
 extern CServerDefinitions worldFileLookup ;
 
 using namespace std::string_literals;
+using Random = effolkronium::random_static ;
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	GetMsgBoardFile()
 //|	Date		-	8/6/2005
@@ -842,7 +844,7 @@ auto MsgBoardPostQuest(CChar *mNPC, const QuestTypes questType) -> bool {
                 return false;
             }
             
-            Escort->moveTo(RandomNum(static_cast<size_t>(0), totalEntries - 1));
+            Escort->moveTo(Random::get(static_cast<size_t>(0), totalEntries - 1));
             sect = "ESCORT "s + Escort->GrabData();
             EscortData = worldFileLookup.FindEntry(sect, msgboard_def);
             if (EscortData == nullptr) {
@@ -947,7 +949,7 @@ void MsgBoardQuestEscortCreate(CChar *mNPC) {
     }
     
     // Choose an escort region at random based on non-empty collection of candidates
-    mNPC->SetQuestDestRegion(regionCandidates[RandomNum(static_cast<size_t>(0), (regionCandidates.size() - 1))]);
+    mNPC->SetQuestDestRegion(regionCandidates[Random::get(static_cast<size_t>(0), (regionCandidates.size() - 1))]);
     
     // Set quest type to escort
     mNPC->SetQuestType(QT_ESCORTQUEST);

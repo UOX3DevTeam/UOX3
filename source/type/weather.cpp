@@ -513,20 +513,20 @@ auto WorldWeather::doPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8
             s->Send(&rain);
             break;
         case 2:
-            worldEffect.PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            worldEffect.PlaySound(mChar, 0x14 + Random::get(0, 1));
             s->Send(&snow);
             break;
         case 3:
             s->Send(&rain);
-            worldEffect.PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            worldEffect.PlaySound(mChar, 0x14 + Random::get(0, 1));
             s->Send(&snow);
             break;
         case 4:
-            worldEffect.PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            worldEffect.PlaySound(mChar, 0x14 + Random::get(0, 1));
             s->Send(&strmbrw);
             break;
         case 5:
-            worldEffect.PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            worldEffect.PlaySound(mChar, 0x14 + Random::get(0, 1));
             s->Send(&storm);
             break;
         default:
@@ -586,7 +586,7 @@ auto WorldWeather::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t
             resistElement = Weather::NONE;
             
             if (worldRace.Affect(mChar.GetRace(), Weather::LIGHTNING)) {
-                if (static_cast<std::uint8_t>(RandomNum(1, 100)) <=  worldRace.Secs(mChar.GetRace(), Weather::LIGHTNING)) {
+                if (static_cast<std::uint8_t>(Random::get(1, 100)) <=  worldRace.Secs(mChar.GetRace(), Weather::LIGHTNING)) {
                     damage = static_cast<std::int32_t>(worldRace.Damage(mChar.GetRace(), Weather::LIGHTNING));
                     worldEffect.Bolteffect(&mChar);
                     damageMessage = 1777;

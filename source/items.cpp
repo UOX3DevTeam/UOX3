@@ -13,6 +13,7 @@
 #include "type/era.hpp"
 #include "funcdecl.h"
 #include "objectfactory.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "scriptc.h"
 #include "configuration/serverconfig.hpp"
@@ -24,6 +25,7 @@
 #include "uodata/uoxuoadapter.hpp"
 
 using namespace std::string_literals;
+using Random = effolkronium::random_static;
 
 extern WorldItem worldItem ;
 extern CJSMapping worldJSMapping ;
@@ -107,7 +109,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_AMOUNT:
                 if (ndata > 0) {
                     if (odata && odata > ndata) {
-                        std::uint16_t rndAmount = static_cast<std::uint16_t>(RandomNum(ndata, odata));
+                        std::uint16_t rndAmount = static_cast<std::uint16_t>(Random::get(ndata, odata));
                         applyTo->SetAmount(rndAmount);
                     }
                     else {
@@ -180,7 +182,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_DEF:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::PHYSICAL);
+                        applyTo->SetResist(static_cast<std::uint16_t>(Random::get(ndata, odata)), Weather::PHYSICAL);
                     }
                     else {
                         applyTo->SetResist(ndata, Weather::PHYSICAL);
@@ -192,7 +194,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_DEFBONUS:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(applyTo->GetResist(Weather::PHYSICAL) + static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::PHYSICAL);
+                        applyTo->SetResist(applyTo->GetResist(Weather::PHYSICAL) + static_cast<std::uint16_t>(Random::get(ndata, odata)), Weather::PHYSICAL);
                     }
                     else {
                         applyTo->SetResist(applyTo->GetResist(Weather::PHYSICAL) + static_cast<std::uint16_t>(ndata), Weather::PHYSICAL);
@@ -205,7 +207,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_DEX:
                 if (ndata > 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetDexterity(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                        applyTo->SetDexterity(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     }
                     else {
                         applyTo->SetDexterity(ndata);
@@ -258,7 +260,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     scriptEntry = cdata;
                 }
                 else {
-                    std::uint32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssecs.size() - 1));
+                    std::uint32_t rndEntry = Random::get(0, static_cast<std::int32_t>(ssecs.size() - 1));
                     scriptEntry = util::trim(util::strip(ssecs[rndEntry], "//"));
                 }
                 
@@ -358,7 +360,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                         scriptEntry = cdata;
                     }
                     else {
-                        std::uint32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssecs.size() - 1));
+                        std::uint32_t rndEntry = Random::get(0, static_cast<std::int32_t>(ssecs.size() - 1));
                         scriptEntry = util::trim(util::strip(ssecs[rndEntry], "//"));
                     }
                     
@@ -378,7 +380,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_HP:
                 if (ndata > 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetHP(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                        applyTo->SetHP(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     }
                     else {
                         applyTo->SetHP(ndata);
@@ -399,7 +401,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     applyTo->SetId(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
                 }
                 else {
-                    std::int32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssecs.size() - 1));
+                    std::int32_t rndEntry = Random::get(0, static_cast<std::int32_t>(ssecs.size() - 1));
                     applyTo->SetId(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[rndEntry], "//")), nullptr, 0)));
                 }
                 break;
@@ -552,7 +554,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_RESISTFIRE:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::HEAT);
+                        applyTo->SetResist(static_cast<std::uint16_t>(Random::get(ndata, odata)), Weather::HEAT);
                     }
                     else {
                         applyTo->SetResist(ndata, Weather::HEAT);
@@ -565,7 +567,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_RESISTCOLD:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::COLD);
+                        applyTo->SetResist(static_cast<std::uint16_t>(Random::get(ndata, odata)), Weather::COLD);
                     }
                     else {
                         applyTo->SetResist(ndata, Weather::COLD);
@@ -578,7 +580,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_RESISTLIGHTNING:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::LIGHTNING);
+                        applyTo->SetResist(static_cast<std::uint16_t>(Random::get(ndata, odata)), Weather::LIGHTNING);
                     }
                     else {
                         applyTo->SetResist(ndata, Weather::LIGHTNING);
@@ -591,7 +593,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_RESISTPOISON:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::POISON);
+                        applyTo->SetResist(static_cast<std::uint16_t>(Random::get(ndata, odata)), Weather::POISON);
                     }
                     else {
                         applyTo->SetResist(ndata, Weather::POISON);
@@ -765,7 +767,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                             auto second = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(tsects[1], "//")), nullptr, 0));
                             
                             // Tag contained a minimum and maximum value for amount! Let's randomize!
-                            iAmount = static_cast<std::uint16_t>(RandomNum(first, second));
+                            iAmount = static_cast<std::uint16_t>(Random::get(first, second));
                         }
                         else {
                             iAmount = static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
@@ -946,11 +948,11 @@ CItem *WorldItem::CreateRandomItem(CSocket *mSock, const std::string &itemList) 
         return nullptr;
     
     if (iCreated->GetBuyValue() != 0) {
-        iCreated->SetBuyValue(RandomNum(static_cast<std::uint32_t>(1), iCreated->GetBuyValue()));
+        iCreated->SetBuyValue(Random::get(static_cast<std::uint32_t>(1), iCreated->GetBuyValue()));
         iCreated->SetSellValue(static_cast<std::uint32_t>(iCreated->GetBuyValue() / 2));
     }
     if (iCreated->GetHP() != 0) {
-        iCreated->SetHP(static_cast<std::int16_t>(RandomNum(static_cast<std::int16_t>(1), iCreated->GetHP())));
+        iCreated->SetHP(static_cast<std::int16_t>(Random::get(static_cast<std::int16_t>(1), iCreated->GetHP())));
     }
     
     return PlaceItem(mSock, mChar, iCreated, true);
@@ -1012,7 +1014,7 @@ auto WorldItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, con
             }
             
             // Choose a random number between 0 and the total sum of all weights
-            int rndChoice = RandomNum(0, sum_of_weight - 1);
+            int rndChoice = Random::get(0, sum_of_weight - 1);
             int itemWeight = 0;
             
             // Prepare a vector to hold multiple entries, if more than one qualifies based on
@@ -1049,7 +1051,7 @@ auto WorldItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, con
             // Did we find more than one entry that matched our random weight criteria?
             if (matchingEntries.size() > 0) {
                 // Choose a random one of these!
-                itemEntryToSpawn = matchingEntries[static_cast<int>(RandomNum(static_cast<size_t>(0), matchingEntries.size() - 1))];
+                itemEntryToSpawn = matchingEntries[static_cast<int>(Random::get(static_cast<size_t>(0), matchingEntries.size() - 1))];
             }
             matchingEntries.clear();
             
@@ -1061,7 +1063,7 @@ auto WorldItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, con
             }
             else {
                 // Otherwise choose a random entry
-                csecs = oldstrutil::sections(util::trim(util::strip(ItemList->moveTo(RandomNum(static_cast<size_t>(0), itemListSize - 1)), "//")), ",");
+                csecs = oldstrutil::sections(util::trim(util::strip(ItemList->moveTo(Random::get(static_cast<size_t>(0), itemListSize - 1)), "//")), ",");
             }
             auto csecs2 = oldstrutil::sections(util::trim(csecs[0]), "|");
             k = csecs2.size() > 1 ? csecs2[1] : csecs2[0];
@@ -1078,7 +1080,7 @@ auto WorldItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, con
                     auto second = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(tsects[1], "//")), nullptr, 0));
                     
                     // Tag contained a minimum and maximum value for amount! Let's randomize!
-                    amountToSpawn = static_cast<std::uint16_t>(RandomNum(first, second));
+                    amountToSpawn = static_cast<std::uint16_t>(Random::get(first, second));
                 }
                 else {
                     amountToSpawn = static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
@@ -1208,7 +1210,7 @@ CItem *WorldItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const 
         // If maxUses is higher than usesLeft for a new item, randomize the amount of usesLeft the
         // item should have!
         if (iCreated->GetMaxUses() > iCreated->GetUsesLeft()) {
-            iCreated->SetUsesLeft(static_cast<std::uint16_t>(RandomNum(iCreated->GetUsesLeft(), iCreated->GetMaxUses())));
+            iCreated->SetUsesLeft(static_cast<std::uint16_t>(Random::get(iCreated->GetUsesLeft(), iCreated->GetMaxUses())));
         }
         else if (!iCreated->GetMaxUses() && iCreated->GetUsesLeft()) {
             // Also, if maxUses has not been defined, but usesLeft HAS, set maxUses to equal
@@ -1814,7 +1816,7 @@ void WorldItem::StoreItemRandomValue(CItem *i, CTownRegion *tReg) {
     const std::int32_t max = tReg->GetGoodRnd2(static_cast<std::uint8_t>(i->GetGood()));
     
     if (max != 0 || min != 0) {
-        i->SetRndValueRate(RandomNum(min, max));
+        i->SetRndValueRate(Random::get(min, max));
     }
 }
 

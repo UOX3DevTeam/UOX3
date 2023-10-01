@@ -59,6 +59,7 @@
 #include "objectfactory.h"
 #include "osunique.hpp"
 #include "power.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "speech.h"
@@ -68,6 +69,8 @@
 #include "townregion.h"
 #include "uodata/uomgr.hpp"
 #include "weight.h"
+
+using Random = effolkronium::random_static;
 
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem ;
@@ -2482,38 +2485,38 @@ auto CItem::PlaceInPack() -> void {
     PackTypes packType = worldItem.GetPackType(static_cast<CItem *>(itemCont));
     switch (packType) {
         case PT_PACK:
-            SetX((RandomNum(44, 142)));
-            SetY((RandomNum(65, 127)));
+            SetX(Random::get(44, 142));
+            SetY(Random::get(65, 127));
             break;
         case PT_BAG:
-            SetX((RandomNum(29, 93)));
-            SetY((RandomNum(34, 96)));
+            SetX(Random::get(29, 93));
+            SetY(Random::get(34, 96));
             break;
         case PT_SQBASKET:
-            SetX((RandomNum(19, 138)));
-            SetY((RandomNum(47, 91)));
+            SetX(Random::get(19, 138));
+            SetY(Random::get(47, 91));
             break;
         case PT_RBASKET:
-            SetX((RandomNum(40, 95)));
-            SetY((RandomNum(30, 91)));
+            SetX(Random::get(40, 95));
+            SetY(Random::get(30, 91));
             break;
         case PT_SEBASKET:
-            SetX((RandomNum(10, 112)));
-            SetY((RandomNum(10, 73)));
+            SetX(Random::get(10, 112));
+            SetY(Random::get(10, 73));
             break;
         case PT_BOOKCASE:
-            SetX((RandomNum(13, 36)));
-            SetY((RandomNum(76, 96)));
+            SetX(Random::get(13, 36));
+            SetY(Random::get(76, 96));
             break;
         case PT_FARMOIRE:
         case PT_WARMOIRE:
-            SetX((RandomNum(24, 56)));
-            SetY((RandomNum(18, 120)));
+            SetX(Random::get(24, 56));
+            SetY(Random::get(18, 120));
             break;
         case PT_DRAWER:
         case PT_DRESSER:
-            SetX((RandomNum(16, 110)));
-            SetY((RandomNum(10, 62)));
+            SetX(Random::get(16, 110));
+            SetY(Random::get(10, 62));
             break;
         case PT_SECHEST1:
         case PT_SECHEST2:
@@ -2523,27 +2526,27 @@ auto CItem::PlaceInPack() -> void {
         case PT_SEARMOIRE1:
         case PT_SEARMOIRE2:
         case PT_SEARMOIRE3:
-            SetX((RandomNum(10, 115)));
-            SetY((RandomNum(10, 73)));
+            SetX((Random::get(10, 115)));
+            SetY((Random::get(10, 73)));
             break;
         case PT_MBOX:
         case PT_WBOX:
-            SetY((RandomNum(51, 92)));
-            SetX((RandomNum(16, 140)));
+            SetY((Random::get(51, 92)));
+            SetX((Random::get(16, 140)));
             break;
         case PT_BARREL:
-            SetY((RandomNum(36, 116)));
-            SetX((RandomNum(33, 98)));
+            SetY((Random::get(36, 116)));
+            SetX((Random::get(33, 98)));
             break;
         case PT_CRATE:
-            SetY((RandomNum(10, 68)));
-            SetX((RandomNum(20, 126)));
+            SetY((Random::get(10, 68)));
+            SetX((Random::get(20, 126)));
             break;
         case PT_WCHEST:
         case PT_SCHEST:
         case PT_GCHEST:
-            SetY((RandomNum(105, 139)));
-            SetX((RandomNum(18, 118)));
+            SetY((Random::get(105, 139)));
+            SetX((Random::get(18, 118)));
             break;
         case PT_COFFIN:
         case PT_SHOPPACK:
@@ -2551,8 +2554,8 @@ auto CItem::PlaceInPack() -> void {
         case PT_BANK:
         case PT_UNKNOWN:
         default:
-            SetX(static_cast<std::int16_t>(25 + RandomNum(0, 79)));
-            SetY(static_cast<std::int16_t>(25 + RandomNum(0, 79)));
+            SetX(static_cast<std::int16_t>(25 + Random::get(0, 79)));
+            SetY(static_cast<std::int16_t>(25 + Random::get(0, 79)));
             break;
     }
     SetZ(9);
@@ -2996,7 +2999,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
                                         
                                         // Tag contained a minimum and maximum value for amount!
                                         // Let's randomize!
-                                        amountToSpawn = static_cast<std::uint16_t>(RandomNum(first, second));
+                                        amountToSpawn = static_cast<std::uint16_t>(Random::get(first, second));
                                     }
                                     else {
                                         amountToSpawn = static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
@@ -3030,7 +3033,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
                                         
                                         // Tag contained a minimum and maximum value for amount!
                                         // Let's randomize!
-                                        amountToSpawn = static_cast<std::uint16_t>(RandomNum(first, second));
+                                        amountToSpawn = static_cast<std::uint16_t>(Random::get(first, second));
                                     }
                                     else {
                                         amountToSpawn = static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));

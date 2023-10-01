@@ -7,6 +7,7 @@
 #include "cserverdefinitions.h"
 #include "csocket.h"
 #include "funcdecl.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "ssection.h"
 #include "townregion.h"
@@ -14,6 +15,7 @@
 #include "uodata/uoflag.hpp"
 #include "uodata/uomgr.hpp"
 using namespace std::string_literals;
+using Random = effolkronium::random_static ;
 
 extern cEffects worldEffect ;
 extern CServerDefinitions worldFileLookup ;
@@ -153,11 +155,11 @@ void cEffects::GoldSound(CSocket *s, std::uint32_t goldTotal, bool allHear) {
 // o------------------------------------------------------------------------------------------------o
 void cEffects::PlayDeathSound(CChar *i) {
     if (i->GetOrgId() == 0x0191 || i->GetOrgId() == 0x025E || i->GetOrgId() == 0x029B || i->GetOrgId() == 0x00B8 || i->GetOrgId() == 0x00BA ||  i->GetId() == 0x02EF) { // Female Death (human/elf/gargoyle/savage)
-        std::uint16_t deathSound = 0x0150 + RandomNum(0, 3);
+        std::uint16_t deathSound = 0x0150 + Random::get(0, 3);
         PlaySound(i, deathSound);
     }
     else if (i->GetOrgId() == 0x0190 || i->GetOrgId() == 0x025D || i->GetOrgId() == 0x029A || i->GetOrgId() == 0x00B7 || i->GetOrgId() == 0x00B9 || i->GetOrgId() == 0x02EE) { // Male Death (human/elf/gargoyle/savage)
-        std::uint16_t deathSound = 0x015A + RandomNum(0, 3);
+        std::uint16_t deathSound = 0x015A + Random::get(0, 3);
         PlaySound(i, deathSound);
     }
     else {
@@ -206,14 +208,14 @@ void cEffects::PlayBGSound(CSocket &mSock, CChar &mChar) {
     
     std::uint16_t basesound = 0;
     if (!inRange.empty()) {
-        CChar *soundSrc = inRange[RandomNum(static_cast<size_t>(0), inRange.size() - 1)];
+        CChar *soundSrc = inRange[Random::get(static_cast<size_t>(0), inRange.size() - 1)];
         std::uint16_t xx = soundSrc->GetId();
         if (worldMain.creatures.find(xx) == worldMain.creatures.end())
             return;
         
         // Play creature sounds, but add a small chance that they won't, to give players a break
         // every now and then
-        std::uint8_t soundChance = static_cast<std::uint8_t>(RandomNum(static_cast<size_t>(0), inRange.size() + 9));
+        std::uint8_t soundChance = static_cast<std::uint8_t>(Random::get(static_cast<size_t>(0), inRange.size() + 9));
         if (soundChance > 5) {
             basesound = worldMain.creatures[xx].GetSound(SND_IDLE);
             if (basesound != 0x00) {
@@ -224,8 +226,8 @@ void cEffects::PlayBGSound(CSocket &mSock, CChar &mChar) {
         }
     }
     else { // play random mystic-sounds also if no creature is in range
-        if (RandomNum(0, 3332) == 33) {
-            switch (RandomNum(0, 6)) {
+        if (Random::get(0, 3332) == 33) {
+            switch (Random::get(0, 6)) {
                 case 0:
                     basesound = 595;
                     break; // gnome sound
@@ -312,7 +314,7 @@ auto cEffects::DoSocketMusic(CSocket *s) -> void {
                 }
             }
             if (i != 0) {
-                i = RandomNum(0, i - 1);
+                i = Random::get(0, i - 1);
                 PlayMusic(s, musicArray[i]);
             }
         }

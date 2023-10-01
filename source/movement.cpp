@@ -56,6 +56,7 @@
 #include "csocket.h"
 #include "funcdecl.h"
 #include "msgboard.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "stringutility.hpp"
@@ -79,6 +80,7 @@ extern CNetworkStuff worldNetwork ;
 extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
+using Random = effolkronium::random_static ;
 
 CMovement *Movement;
 
@@ -1142,11 +1144,11 @@ void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, item
             break;
         case IT_DAMAGEOBJECT: // damage objects
             if (!mChar->IsInvulnerable()) {
-                [[maybe_unused]] bool retVal = mChar->Damage(itemCheck->GetTempVar(CITV_MOREX) + RandomNum(itemCheck->GetTempVar(CITV_MOREY), itemCheck->GetTempVar(CITV_MOREZ)), Weather::PHYSICAL, nullptr);
+                [[maybe_unused]] bool retVal = mChar->Damage(itemCheck->GetTempVar(CITV_MOREX) + Random::get(itemCheck->GetTempVar(CITV_MOREY), itemCheck->GetTempVar(CITV_MOREZ)), Weather::PHYSICAL, nullptr);
             }
             break;
         case IT_SOUNDOBJECT: // sound objects
-            if (static_cast<std::uint32_t>(RandomNum(1, 100)) <= itemCheck->GetTempVar(CITV_MOREZ)) {
+            if (static_cast<std::uint32_t>(Random::get(1, 100)) <= itemCheck->GetTempVar(CITV_MOREZ)) {
                 worldEffect.PlaySound(itemCheck, static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREX)));
             }
             break;
@@ -1716,7 +1718,7 @@ void CMovement::PathFind(CChar *c, std::int16_t gx, std::int16_t gy, bool willRu
     
     for (std::uint8_t pn = 0; pn < pathLen; ++pn) {
         bool bFound = false;
-        std::int32_t pf_neg = ((RandomNum(0, 1)) ? 1 : -1);
+        std::int32_t pf_neg = ((Random::get(0, 1)) ? 1 : -1);
         std::uint8_t newDir = Direction(newx, newy, gx, gy);
         
         bool canMoveInDir = false;
@@ -1731,7 +1733,7 @@ void CMovement::PathFind(CChar *c, std::int16_t gx, std::int16_t gy, bool willRu
                 if ((pn < P_PF_MRV) && CheckForCharacterAtXYZ(c, newx, newy, newz)) {
                     // Character is blocking the way. Let's try to find a way around by
                     // randomizing the direction a bit!
-                    std::int8_t rndDir = pf_dir + RandomNum(-2, 2);
+                    std::int8_t rndDir = pf_dir + Random::get(-2, 2);
                     if (rndDir < 0) {
                         rndDir = 7 + (rndDir + 1);
                     }
@@ -1819,7 +1821,7 @@ bool CMovement::HandleNPCWander(CChar &mChar) {
                     oldTargX = mChar.GetOldTargLocX();
                     oldTargY = mChar.GetOldTargLocY();
                     
-                    if (!mChar.StillGotDirs() || ((oldTargX != kChar->GetX() || oldTargY != kChar->GetY()) && RandomNum(0, 10) >= 6)) {
+                    if (!mChar.StillGotDirs() || ((oldTargX != kChar->GetX() || oldTargY != kChar->GetY()) && Random::get(0, 10) >= 6)) {
                         if (ServerConfig::shared().enabled(ServerSwitch::ADVANCEDPATHFINDING)) {
                             if (!AdvancedPathfinding(&mChar, kChar->GetX(), kChar->GetY(), canRun)) {
                                 // If NPC is unable to follow owner, teleport to owner
@@ -1857,12 +1859,12 @@ bool CMovement::HandleNPCWander(CChar &mChar) {
         case WT_FREE:   // Wander freely, avoiding obstacles.
         case WT_BOX:    // Wander freely, within a defined box
         case WT_CIRCLE: // Wander freely, within a defined circle
-            j = RandomNum(1, 5);
+            j = Random::get(1, 5);
             if (j == 1) {
                 break;
             }
             else if (j == 2) {
-                j = RandomNum(0, 7);
+                j = Random::get(0, 7);
             }
             else // Move in the same direction the majority of the time
             {
@@ -1930,7 +1932,7 @@ bool CMovement::HandleNPCWander(CChar &mChar) {
                         
                         // Don't re-calculate pathfinding on every step. Use what we have, with a random
                         // chance to recalculate
-                        if (!mChar.StillGotDirs() || RandomNum(0, 10) >= 6) {
+                        if (!mChar.StillGotDirs() || Random::get(0, 10) >= 6) {
                             if (ServerConfig::shared().enabled(ServerSwitch::ADVANCEDPATHFINDING)) {
                                 if (AdvancedPathfinding(&mChar, myx, myy, canRun)) {
                                     // As long as pathfinding succeeds, avoid random wandering
@@ -1953,12 +1955,12 @@ bool CMovement::HandleNPCWander(CChar &mChar) {
                         // Target is still within min flee distance x2, keep wandering in same area
                         // Keep the same wandermode for now
                         targInRange = true;
-                        j = RandomNum(1, 5);
+                        j = Random::get(1, 5);
                         if (j == 1) {
                             break;
                         }
                         else if (j == 2) {
-                            j = RandomNum(0, 8);
+                            j = Random::get(0, 8);
                         }
                         else // Move in the same direction the majority of the time
                         {
@@ -2147,15 +2149,15 @@ void CMovement::NpcMovement(CChar &mChar) {
                     }
                     
                     if (!mChar.StillGotDirs() ||
-                        ((oldTargX != targX || oldTargY != targY) && RandomNum(0, 10) >= 6)) {
+                        ((oldTargX != targX || oldTargY != targY) && Random::get(0, 10) >= 6)) {
                         if (!AdvancedPathfinding(&mChar, l->GetX(), l->GetY(), canRun)) {
                             mChar.SetPathFail(mChar.GetPathFail() + 1);
                             
                             if (mChar.GetSpAttack() > 0 && mChar.GetMana() > 0) {
                                 // What if we try another location that's nearby the target, but not
                                 // exactly the target?
-                                std::int16_t rndNum1 = RandomNum(-2, 2);
-                                std::int16_t rndNum2 = RandomNum(-2, 2);
+                                std::int16_t rndNum1 = Random::get(-2, 2);
+                                std::int16_t rndNum2 = Random::get(-2, 2);
                                 std::int16_t rndTargX = l->GetX() + rndNum1;
                                 std::int16_t rndTargY = l->GetY() + rndNum2;
                                 
@@ -2290,7 +2292,7 @@ void CMovement::NpcMovement(CChar &mChar) {
             mChar.GetNpcWander() != WT_FROZEN) {
             if (mChar.GetTimer(tNPC_IDLEANIMTIME) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                 mChar.SetTimer(tNPC_MOVETIME, BuildTimeValue(3));
-                mChar.SetTimer(tNPC_IDLEANIMTIME, BuildTimeValue(RandomNum(5, 20)));
+                mChar.SetTimer(tNPC_IDLEANIMTIME, BuildTimeValue(Random::get(5, 20)));
                 
                 if (mChar.GetBodyType() == BT_GARGOYLE || ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET)) {
                     // When using new animation packet, client generally handles which animations
@@ -2314,7 +2316,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                         case 0x97: // Dolphin
                         {
                             // Randomize between two non-standard idle anims, using old animation packet
-                            auto rndVal = static_cast<std::uint16_t>(RandomNum(3, 4));
+                            auto rndVal = static_cast<std::uint16_t>(Random::get(3, 4));
                             worldEffect.PlayCharacterAnimation(&mChar, rndVal, 0, (rndVal == 3 ? 14 : 19));
                             break;
                         }
@@ -2324,13 +2326,13 @@ void CMovement::NpcMovement(CChar &mChar) {
                         default:
                             // Randomize between two idles, let client handle which specific anim
                             // to play for each specific creature
-                            worldEffect.PlayNewCharacterAnimation(&mChar, N_ACT_IDLE, 0, RandomNum(0, 1));
+                            worldEffect.PlayNewCharacterAnimation(&mChar, N_ACT_IDLE, 0, Random::get(0, 1));
                             break;
                     }
                 }
                 else {
                     if (worldMain.creatures[mChar.GetId()].IsHuman()) {
-                        worldEffect.PlayCharacterAnimation(&mChar, RandomNum(static_cast<std::uint16_t>(ACT_IDLE_LOOK), static_cast<std::uint16_t>(ACT_IDLE_YAWN)), 0, 5);
+                        worldEffect.PlayCharacterAnimation(&mChar, Random::get(static_cast<std::uint16_t>(ACT_IDLE_LOOK), static_cast<std::uint16_t>(ACT_IDLE_YAWN)), 0, 5);
                     }
                     else {
                         // With old animation packet, more control is needed of which animation to
@@ -2354,7 +2356,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                             case 0x97: // Dolphin
                             {
                                 // Randomize between two non-standard idle anims
-                                auto rndVal = static_cast<std::uint16_t>(RandomNum(3, 4));
+                                auto rndVal = static_cast<std::uint16_t>(Random::get(3, 4));
                                 worldEffect.PlayCharacterAnimation(&mChar, rndVal, 0, (rndVal == 3 ? 14 : 19));
                                 break;
                             }
@@ -2366,12 +2368,12 @@ void CMovement::NpcMovement(CChar &mChar) {
                                     !worldMain.creatures[mChar.GetId()].CanFly()) {
                                     // Animal, excluding birds, which have animation setups like
                                     // monsters
-                                    auto rndVal = static_cast<std::uint16_t>(RandomNum(9, 10));
+                                    auto rndVal = static_cast<std::uint16_t>(Random::get(9, 10));
                                     worldEffect.PlayCharacterAnimation(&mChar, rndVal, 0, (rndVal == 9 ? 5 : 3));
                                 }
                                 else {
                                     // Monster
-                                    auto rndVal = static_cast<std::uint16_t>(RandomNum(17, 18));
+                                    auto rndVal = static_cast<std::uint16_t>(Random::get(17, 18));
                                     worldEffect.PlayCharacterAnimation(&mChar, rndVal, 0, 5);
                                 }
                                 break;
@@ -3111,7 +3113,7 @@ auto CMovement::IgnoreAndEvadeTarget(CChar *mChar) -> void {
             std::int16_t distanceX = mTargX - mCharX; // Adjusted for the inverted x-axis
             std::int16_t distanceY = mTargY - mCharY; // Adjusted for the inverted y-axis
             
-            std::int16_t moveDist = RandomNum(2, 5);
+            std::int16_t moveDist = Random::get(2, 5);
             
             double magnitude = sqrt(distanceX * distanceX + distanceY * distanceY);
             [[maybe_unused]] int moveDir = Direction(mCharX, mCharY, mTargX, mTargY);
@@ -3127,7 +3129,7 @@ auto CMovement::IgnoreAndEvadeTarget(CChar *mChar) -> void {
                 else {
                     evadeTargX = mCharX + static_cast<std::int16_t>(std::round(moveDist * (abs(distanceX) / magnitude)));
                 }
-                evadeTargY += RandomNum(-1, 1); // Add a small variation along the Y-axis
+                evadeTargY += Random::get(-1, 1); // Add a small variation along the Y-axis
             }
             else {
                 // Move primarily along the Y-axis
@@ -3137,7 +3139,7 @@ auto CMovement::IgnoreAndEvadeTarget(CChar *mChar) -> void {
                 else {
                     evadeTargY = mCharY + static_cast<std::int16_t>(std::round(moveDist * (distanceY / magnitude)));
                 }
-                evadeTargX += RandomNum(-1, 1); // Add a small variation along the X-axis
+                evadeTargX += Random::get(-1, 1); // Add a small variation along the X-axis
             }
             
             // Round the coordinates to the nearest whole integers

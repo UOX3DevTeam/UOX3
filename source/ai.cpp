@@ -30,7 +30,7 @@
 #include "dictionary.h"
 
 #include "funcdecl.h"
-
+#include "utility/random.hpp"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "stringutility.hpp"
@@ -44,6 +44,7 @@ extern cEffects worldEffect ;
 extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
+using Random = effolkronium::random_static ;
 
 #undef DBGFILE
 #define DBGFILE "ai.cpp"
@@ -160,7 +161,7 @@ void HandleFighterAI(CChar &mChar) {
         
         auto regChars = MapArea->GetCharList();
         // Chance to reverse list of chars
-        if (RandomNum(0, 1)) {
+        if (Random::get(0, 1)) {
             regChars->Reverse();
         }
         for (const auto &tempChar : regChars->collection()) {
@@ -191,7 +192,7 @@ void HandleFighterAI(CChar &mChar) {
                 if (!invalidTarget) {
                     RaceRelate raceComp = worldRace.Compare(tempChar, &mChar);
                     if (!tempChar->IsDead() && (tempChar->IsCriminal() || tempChar->IsMurderer() || raceComp <= RACE_ENEMY)) {
-                        if (RandomNum(1, 100) < 85) { // 85% chance to attack current target, 15% chance to pick another
+                        if (Random::get(1, 100) < 85) { // 85% chance to attack current target, 15% chance to pick another
                             worldCombat.AttackTarget(&mChar, tempChar);
                             return;
                         }
@@ -236,7 +237,7 @@ void HandleHealerAI(CChar &mChar) {
                     
                     NpcResurrectTarget(realChar);
                     worldEffect.PlayStaticAnimation(realChar, 0x376A, 0x09, 0x06);
-                    mChar.TextMessage(nullptr, (316 + RandomNum(0, 4)), TALK, false);
+                    mChar.TextMessage(nullptr, (316 + Random::get(0, 4)), TALK, false);
                 }
             }
         }
@@ -290,7 +291,7 @@ void HandleEvilHealerAI(CChar &mChar) {
                     NpcResurrectTarget(realChar);
                     worldEffect.PlayStaticAnimation(realChar, 0x3709, 0x09, 0x19); // Flamestrike
                     // effect
-                    mChar.TextMessage(nullptr, (323 + RandomNum(0, 4)), TALK, false);
+                    mChar.TextMessage(nullptr, (323 + Random::get(0, 4)), TALK, false);
                 }
                 else {
                     mChar.TextMessage(nullptr, 329, TALK, true); // I despise all things good. I shall not give thee another chance!
@@ -320,7 +321,7 @@ auto HandleEvilAI(CChar &mChar) -> void {
         auto regChars = MapArea->GetCharList();
         
         // Chance to reverse list of chars
-        if (RandomNum(0, 1)) {
+        if (Random::get(0, 1)) {
             regChars->Reverse();
         }
         for (const auto &tempChar : regChars->collection()) {
@@ -355,15 +356,15 @@ auto HandleEvilAI(CChar &mChar) -> void {
                         if (!ServerConfig::shared().enabled(ServerSwitch::MONSTERSVSANIMALS)) {
                             continue;
                         }
-                        else if ( ServerConfig::shared().ushortValues[UShortValue::ANIMALATTACKCHANCE]  < RandomNum(1, 1000)) {
+                        else if ( ServerConfig::shared().ushortValues[UShortValue::ANIMALATTACKCHANCE]  < Random::get(1, 1000)) {
                             continue;
                         }
                     }
-                    if (!(mChar.GetRace() != 0 && mChar.GetRace() == tempChar->GetRace() && RandomNum(1, 100) > 1)) { // 1% chance of turning on own race
+                    if (!(mChar.GetRace() != 0 && mChar.GetRace() == tempChar->GetRace() && Random::get(1, 100) > 1)) { // 1% chance of turning on own race
                         RaceRelate raceComp = worldRace.Compare(tempChar, &mChar);
                         if (raceComp < RACE_ALLY) { // Allies
                             if (!((tempChar->GetNpcAiType() == AI_EVIL || tempChar->GetNpcAiType() == AI_EVIL_CASTER) && raceComp > RACE_ENEMY)) {
-                                if (RandomNum(1, 100) < 85) { // 85% chance to attack current
+                                if (Random::get(1, 100) < 85) { // 85% chance to attack current
                                     // target, 15% chance to pick another
                                     worldCombat.AttackTarget(&mChar, tempChar);
                                     return;
@@ -397,7 +398,7 @@ auto HandleChaoticAI(CChar &mChar) -> void {
         auto regChars = MapArea->GetCharList();
         
         // Chance to reverse list of chars
-        if (RandomNum(0, 1)) {
+        if (Random::get(0, 1)) {
             regChars->Reverse();
         }
         for (const auto &tempChar : regChars->collection()) {
@@ -424,7 +425,7 @@ auto HandleChaoticAI(CChar &mChar) -> void {
                     }
                 }
                 if (!invalidTarget) {
-                    if (RandomNum(1, 100) < 85) { // 85% chance to attack current target, 15% chance to pick another
+                    if (Random::get(1, 100) < 85) { // 85% chance to attack current target, 15% chance to pick another
                         worldCombat.AttackTarget(&mChar, tempChar);
                         return;
                     }
@@ -484,7 +485,7 @@ auto HandleAnimalAI(CChar &mChar) -> void {
                 
                 auto raceComp = worldRace.Compare(tempChar, &mChar);
                 if (raceComp <= RACE_ENEMY || (worldMain.creatures[tempChar->GetId()].IsAnimal() && tempChar->GetNpcAiType() == AI_NONE) || (hunger <= 1 && (tempChar->GetNpcAiType() == AI_ANIMAL || worldMain.creatures[tempChar->GetId()].IsHuman()))) {
-                    if (RandomNum(1, 100) > 95) { // 5% chance (per AI cycle to attack tempChar)
+                    if (Random::get(1, 100) > 95) { // 5% chance (per AI cycle to attack tempChar)
                         worldCombat.AttackTarget(&mChar, tempChar);
                         return;
                     }

@@ -37,6 +37,7 @@
 #include "objectfactory.h"
 #include "ostype.h"
 #include "partysystem.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
@@ -71,6 +72,7 @@ extern CNetworkStuff worldNetwork ;
 extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
+using Random = effolkronium::random_static ;
 
 void loadTeleportLocations();
 void loadSpawnRegions();
@@ -443,7 +445,7 @@ JSBool SE_RandomNumber(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
     }
     JSEncapsulate loVal(cx, &(argv[0]));
     JSEncapsulate hiVal(cx, &(argv[1]));
-    *rval = INT_TO_JSVAL(RandomNum(loVal.toInt(), hiVal.toInt()));
+    *rval = INT_TO_JSVAL(Random::get(loVal.toInt(), hiVal.toInt()));
     return JS_TRUE;
 }
 
@@ -1011,7 +1013,7 @@ JSBool SE_GetRandomSOSArea(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
     }
     
     // Choose a random SOS area from the generated list of such areas
-    auto rndSosLoc = validSOSLocs[RandomNum(static_cast<size_t>(0), validSOSLocs.size() - 1)];
+    auto rndSosLoc = validSOSLocs[Random::get(static_cast<size_t>(0), validSOSLocs.size() - 1)];
     
     // Convert properties of chosen SOS area to jsvals, so we can pass them to a JSObject
     jsval jsX1 = INT_TO_JSVAL(rndSosLoc.x1);

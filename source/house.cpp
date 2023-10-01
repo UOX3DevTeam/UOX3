@@ -11,6 +11,7 @@
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "objectfactory.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "ssection.h"
 #include "stringutility.hpp"
@@ -24,6 +25,7 @@ extern CServerDefinitions worldFileLookup ;
 extern uo::UOMgr uoManager;
 
 using namespace std::string_literals;
+using Random = effolkronium::random_static;
 
 bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype);
 
@@ -173,7 +175,7 @@ auto CreateHouseItems(CChar *mChar, std::vector<std::string> houseItems, CItem *
                                     bool northWallFound = (uo::checkDynamicFlag( hItem->GetX(), hItem->GetY() - 1, hItem->GetZ(), worldNum, hInstanceId, uo::flag_t::WALL, ignoreMe));
                                     if (northWallFound) {
                                         // Randomize between the two directions
-                                        if (RandomNum(0, 1)) {
+                                        if (Random::get(0, 1)) {
                                             hItem->SetId(hItem->GetTempVar(CITV_MOREZ));
                                         }
                                     }

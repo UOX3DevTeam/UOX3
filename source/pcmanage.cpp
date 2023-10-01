@@ -20,6 +20,7 @@
 #include "objectfactory.h"
 #include "ostype.h"
 #include "partysystem.h"
+#include "utility/random.hpp"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "ssection.h"
@@ -42,6 +43,7 @@ extern CServerDefinitions worldFileLookup ;
 extern CNetworkStuff worldNetwork ;
 
 using namespace std::string_literals;
+using Random = effolkronium::random_static ;
 
 template <class T> T Capped(const T value, const T minimum, const T maximum) {
     return std::max(std::min(value, maximum), minimum);
@@ -767,7 +769,7 @@ bool CPICreateCharacter::Handle() {
             // Use random start location if enabled in uox.ini
             if (ServerConfig::shared().enabled(ServerSwitch::RANDOMSTART)) {
                 if (serverCount > 0) {
-                    size_t rndStartingLocation = RandomNum(static_cast<size_t>(0), serverCount - 1);
+                    size_t rndStartingLocation = Random::get(static_cast<size_t>(0), serverCount - 1);
                     
                     if (useYoungLocations) {
                         toGo = ServerConfig::shared().youngLocation[rndStartingLocation];
@@ -1430,7 +1432,7 @@ CItem *CreateCorpseItem(CChar &mChar, CChar *killer, std::uint8_t fallDirection)
     
     std::uint8_t canCarve = 0;
     if (mChar.GetId(1) == 0x00 && (mChar.GetId(2) == 0x0C || (mChar.GetId(2) >= 0x3B &&  mChar.GetId(2) <= 0x3D))) { // If it's a dragon, 50/50 chance you can carve it
-        canCarve = static_cast<std::uint8_t>(RandomNum(0, 1));
+        canCarve = static_cast<std::uint8_t>(Random::get(0, 1));
     }
     
     iCorpse->SetDecayable(true);
@@ -1517,8 +1519,8 @@ auto MoveItemsToCorpse(CChar &mChar, CItem *iCorpse) -> void {
                     // Loop through the items we want to move - and move them!
                     std::for_each(moveItems.begin(), moveItems.end(), [iCorpse](CItem *item) {
                         item->SetCont(iCorpse);
-                        item->SetX(static_cast<std::int16_t>(20 + (RandomNum(0, 49))));
-                        item->SetY(static_cast<std::int16_t>(85 + (RandomNum(0, 75))));
+                        item->SetX(static_cast<std::int16_t>(20 + (Random::get(0, 49))));
+                        item->SetY(static_cast<std::int16_t>(85 + (Random::get(0, 75))));
                         item->SetZ(9);
                     });
                     
@@ -1538,8 +1540,8 @@ auto MoveItemsToCorpse(CChar &mChar, CItem *iCorpse) -> void {
                 else {
                     // Otherwise, move them to corpse
                     j->SetCont(iCorpse);
-                    j->SetX(static_cast<std::int16_t>(20 + (RandomNum(0, 49))));
-                    j->SetY(static_cast<std::int16_t>(85 + (RandomNum(0, 74))));
+                    j->SetX(static_cast<std::int16_t>(20 + (Random::get(0, 49))));
+                    j->SetY(static_cast<std::int16_t>(85 + (Random::get(0, 74))));
                     j->SetZ(9);
                 }
                 break;
@@ -1573,7 +1575,7 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
         mChar->SetId(mChar->GetOrgId());
     }
     
-    std::uint8_t fallDirection = static_cast<std::uint8_t>(RandomNum(1, 100) % 2);
+    std::uint8_t fallDirection = static_cast<std::uint8_t>(Random::get(1, 100) % 2);
     mChar->SetDead(true);
     
     worldEffect.PlayDeathSound(mChar);

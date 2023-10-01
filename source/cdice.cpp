@@ -2,10 +2,10 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <random>
 
 #include "funcdecl.h"
-
+#include "utility/random.hpp"
+using Random = effolkronium::random_static ;
 cDice::cDice() : dice(1), sides(1), addition(0) {}
 
 cDice::cDice(const std::string &dieString) { convStringToDice(dieString); }
@@ -22,7 +22,7 @@ void cDice::SetAddition(std::int32_t newAddition) { addition = newAddition; }
 std::int32_t cDice::RollDice() {
     std::int32_t sum = 0;
     for (std::int32_t rolls = 0; rolls < dice; ++rolls) {
-        sum += RandomNum(1, sides);
+        sum += Random::get(1, sides);
     }
     sum += addition;
     return sum;

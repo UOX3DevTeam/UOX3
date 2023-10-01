@@ -30,6 +30,7 @@
 #include "magic.h"
 #include "movement.h"
 #include "partysystem.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "scriptc.h"
 #include "configuration/serverconfig.hpp"
@@ -55,6 +56,9 @@ extern CJSMapping worldJSMapping ;
 extern CGuildCollection worldGuildSystem ;
 extern CJSEngine worldJSEngine ;
 extern uo::UOMgr uoManager ;
+
+using namespace std::string_literals ;
+using Random = effolkronium::random_static ;
 
 void MakeShop(CChar *c);
 void ScriptError(JSContext *cx, const char *txt, ...);
@@ -780,7 +784,7 @@ JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
                 *vp = INT_TO_JSVAL(gPriv->GetMovable());
                 break;
             case CIP_ATT:
-                *vp = INT_TO_JSVAL(RandomNum(gPriv->GetLoDamage(), gPriv->GetHiDamage()));
+                *vp = INT_TO_JSVAL(Random::get(gPriv->GetLoDamage(), gPriv->GetHiDamage()));
                 break;
             case CIP_LAYER:
                 *vp = INT_TO_JSVAL(gPriv->GetLayer());

@@ -15,6 +15,7 @@
 #include "csocket.h"
 #include "funcdecl.h"
 #include "magic.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
@@ -31,6 +32,10 @@ extern CJSMapping worldJSMapping ;
 extern cEffects worldEffect ;
 extern CNetworkStuff worldNetwork ;
 extern CMapHandler worldMapHandler ;
+
+using namespace std::string_literals ;
+using Random = effolkronium::random_static ;
+
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::DeathAction()
 // o------------------------------------------------------------------------------------------------o
@@ -66,15 +71,15 @@ CItem *cEffects::SpawnBloodEffect(std::uint8_t worldNum, std::uint16_t instanceI
             bloodDecayTimer = static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::BLOODDECAYCORPSE]);
             
             // Randomize between large blood effects
-            bloodEffectId = bloodIds[RandomNum(static_cast<std::uint16_t>(3), static_cast<std::uint16_t>(6))];
+            bloodEffectId = bloodIds[Random::get(static_cast<std::uint16_t>(3), static_cast<std::uint16_t>(6))];
             break;
         case BLOOD_BLEED:
             // Randomize between small blood effects
-            bloodEffectId = bloodIds[RandomNum(static_cast<std::uint16_t>(0), static_cast<std::uint16_t>(3))];
+            bloodEffectId = bloodIds[Random::get(static_cast<std::uint16_t>(0), static_cast<std::uint16_t>(3))];
             break;
         case BLOOD_CRITICAL:
             // Randomize between medium to large blood effects
-            bloodEffectId = bloodIds[RandomNum(static_cast<std::uint16_t>(2), static_cast<std::uint16_t>(5))];
+            bloodEffectId = bloodIds[Random::get(static_cast<std::uint16_t>(2), static_cast<std::uint16_t>(5))];
             
             // More blood, so increase the time it takes to decay
             bloodDecayTimer *= 1.5;
@@ -408,11 +413,11 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, std::uint32_t damage = 0, [[maybe
     
     std::uint32_t len = nItem->GetTempVar(CITV_MOREX) / 250; // 4 square max damage at 100 alchemy
     if (damage == 0) {
-        damage = RandomNum(nItem->GetTempVar(CITV_MOREZ) * 5, nItem->GetTempVar(CITV_MOREZ) * 10);
+        damage = Random::get(nItem->GetTempVar(CITV_MOREZ) * 5, nItem->GetTempVar(CITV_MOREZ) * 10);
     }
     
     if (damage < 5) {
-        damage = RandomNum(5, 10); // 5 points minimum damage
+        damage = Random::get(5, 10); // 5 points minimum damage
     }
     if (len < 2) {
         len = 2; // 2 square min damage range
@@ -457,7 +462,7 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, std::uint32_t damage = 0, [[maybe
                     
                     if (dx <= 2 && dy <= 2 && dz <= 2 && !chain) { // only trigger if in a 2*2*2 cube
                         if (!(dx == 0 && dy == 0 && dz == 0)) {
-                            if (RandomNum(0, 1) == 1) {
+                            if (Random::get(0, 1) == 1) {
                                 chain = true;
                             }
                             worldEffect.TempEffect(c, tempItem, 17, 0, 1, 0);

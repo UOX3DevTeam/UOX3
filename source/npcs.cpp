@@ -19,6 +19,7 @@
 #include "msgboard.h"
 
 #include "objectfactory.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
@@ -40,6 +41,7 @@ extern uo::UOMgr uoManager ;
 
 
 using namespace std::string_literals;
+using Random = effolkronium::random_static ;
 
 GenericList<CChar *> alwaysAwakeNPCs;
 
@@ -62,7 +64,7 @@ auto CCharStuff::AddRandomLoot(CItem *s, const std::string &lootlist, bool shoul
     if (lootList) {
         auto i = lootList->NumEntries();
         if (i > 0) {
-            i = RandomNum(static_cast<size_t>(0), i - 1);
+            i = Random::get(static_cast<size_t>(0), i - 1);
             std::string tag = lootList->moveTo(i);
             std::string tagData = lootList->GrabData();
             auto csecs = oldstrutil::sections(util::trim(util::strip(tagData, "//")), ",");
@@ -175,7 +177,7 @@ auto CCharStuff::ChooseNpcToCreate(const std::vector<std::pair<std::string, std:
         sum_of_weight += sectionWeight;
     }
     
-    int rndChoice = RandomNum(0, sum_of_weight - 1);
+    int rndChoice = Random::get(0, sum_of_weight - 1);
     [[maybe_unused]] int npcWeight = 0;
     
     std::vector<int> matchingEntries;
@@ -202,7 +204,7 @@ auto CCharStuff::ChooseNpcToCreate(const std::vector<std::pair<std::string, std:
     }
     
     // Did we find one or more entry that matched our random weight criteria?
-    int npcEntryToSpawn = (matchingEntries.size() > 0 ? matchingEntries[static_cast<int>( RandomNum(static_cast<size_t>(0), matchingEntries.size() - 1))] : -1);
+    int npcEntryToSpawn = (matchingEntries.size() > 0 ? matchingEntries[static_cast<int>( Random::get(static_cast<size_t>(0), matchingEntries.size() - 1))] : -1);
     matchingEntries.clear();
     
     std::string chosenNpcSection = "";
@@ -212,7 +214,7 @@ auto CCharStuff::ChooseNpcToCreate(const std::vector<std::pair<std::string, std:
     }
     else {
         // else, use a random entry from the list
-        chosenNpcSection = npcListVector[RandomNum(static_cast<size_t>(0), npcListSize - 1)].first;
+        chosenNpcSection = npcListVector[Random::get(static_cast<size_t>(0), npcListSize - 1)].first;
     }
     
     return chosenNpcSection;
@@ -557,8 +559,8 @@ void CCharStuff::FindSpotForNPC(CChar *cCreated, const std::int16_t originX, con
             break;
         }
         
-        xos = originX + RandomNum(static_cast<std::int16_t>(-xAway), xAway);
-        yos = originY + RandomNum(static_cast<std::int16_t>(-yAway), yAway);
+        xos = originX + Random::get(static_cast<std::int16_t>(-xAway), xAway);
+        yos = originY + Random::get(static_cast<std::int16_t>(-yAway), yAway);
         
         if (xos >= 1 && yos >= 1) {
             targZ = uo::playerElevation(xos, yos, z, worldNumber, instanceId);
@@ -690,7 +692,7 @@ void SetRandomName(CChar *s, const std::string &namelist) {
     else {
         size_t i = RandomName->NumEntries();
         if (i > 0) {
-            i = RandomNum(static_cast<size_t>(0), i - 1);
+            i = Random::get(static_cast<size_t>(0), i - 1);
             tempName = RandomName->moveTo(static_cast<std::int16_t>(i));
         }
     }
@@ -712,7 +714,7 @@ std::uint16_t AddRandomColor(const std::string &colorlist) {
     }
     size_t i = RandomColours->NumEntries();
     if (i > 0) {
-        i = RandomNum(static_cast<size_t>(0), i - 1);
+        i = Random::get(static_cast<size_t>(0), i - 1);
         std::string tag = RandomColours->moveTo(static_cast<std::int16_t>(i));
         return static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(tag, "//")), nullptr, 0));
     }
@@ -901,7 +903,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_DEX:
                 if (ndata > 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetDexterity(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                        applyTo->SetDexterity(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     }
                     else {
                         applyTo->SetDexterity(ndata);
@@ -918,7 +920,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_DEF:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::PHYSICAL);
+                        applyTo->SetResist(static_cast<std::uint16_t>(Random::get(ndata, odata)), Weather::PHYSICAL);
                     }
                     else {
                         applyTo->SetResist(static_cast<std::uint16_t>(ndata), Weather::PHYSICAL);
@@ -931,7 +933,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_DEFBONUS:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(applyTo->GetResist(Weather::PHYSICAL) + static_cast<std::uint16_t>(RandomNum(ndata, odata)),  Weather::PHYSICAL);
+                        applyTo->SetResist(applyTo->GetResist(Weather::PHYSICAL) + static_cast<std::uint16_t>(Random::get(ndata, odata)),  Weather::PHYSICAL);
                     }
                     else {
                         applyTo->SetResist(applyTo->GetResist(Weather::PHYSICAL) + static_cast<std::uint16_t>(ndata), Weather::PHYSICAL);
@@ -969,7 +971,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                         applyTo->SetDir(NORTH);
                     }
                     else if (cupper == "RND") {
-                        std::uint8_t rndDir = RandomNum(0, 7);
+                        std::uint8_t rndDir = Random::get(0, 7);
                         switch (rndDir) {
                             case 0:
                                 applyTo->SetDir(NORTHEAST);
@@ -1123,7 +1125,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                     scriptEntry = cdata;
                 }
                 else {
-                    std::int32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssects.size() - 1));
+                    std::int32_t rndEntry = Random::get(0, static_cast<std::int32_t>(ssects.size() - 1));
                     scriptEntry = util::trim(util::strip(ssects[rndEntry], "//"));
                 }
                 
@@ -1230,7 +1232,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                         scriptEntry = cdata;
                     }
                     else {
-                        std::int32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssects.size() - 1));
+                        std::int32_t rndEntry = Random::get(0, static_cast<std::int32_t>(ssects.size() - 1));
                         scriptEntry = util::trim(util::strip(ssects[rndEntry], "//"));
                     }
                     
@@ -1258,7 +1260,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                             bool shouldSave = applyTo->ShouldSave();
                             if (odata && odata > ndata) {
                                 retitem =
-                                worldItem.CreateScriptItem(nullptr, applyTo, "0x0EED", static_cast<std::uint16_t>(RandomNum(ndata, odata)), CBaseObject::OT_ITEM, true, 0xFFFF, shouldSave);
+                                worldItem.CreateScriptItem(nullptr, applyTo, "0x0EED", static_cast<std::uint16_t>(Random::get(ndata, odata)), CBaseObject::OT_ITEM, true, 0xFFFF, shouldSave);
                             }
                             else {
                                 retitem = worldItem.CreateScriptItem(nullptr, applyTo, "0x0EED", ndata, CBaseObject::OT_ITEM, true, 0xFFFF, shouldSave);
@@ -1299,7 +1301,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_HP:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetHP(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                        applyTo->SetHP(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     }
                     else {
                         applyTo->SetHP(ndata);
@@ -1312,7 +1314,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_HPMAX:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetFixedMaxHP(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                        applyTo->SetFixedMaxHP(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     }
                     else {
                         applyTo->SetFixedMaxHP(ndata);
@@ -1335,7 +1337,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                     applyTo->SetOrgId(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssects[0], "//")), nullptr, 0)));
                 }
                 else {
-                    std::int32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssects.size() - 1));
+                    std::int32_t rndEntry = Random::get(0, static_cast<std::int32_t>(ssects.size() - 1));
                     applyTo->SetId(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssects[rndEntry], "//")), nullptr, 0)));
                     applyTo->SetOrgId(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssects[rndEntry], "//")), nullptr, 0)));
                 }
@@ -1349,7 +1351,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_INTELLIGENCE:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetIntelligence(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                        applyTo->SetIntelligence(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     }
                     else {
                         applyTo->SetIntelligence(ndata);
@@ -1388,7 +1390,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                                     
                                     // Tag contained a minimum and maximum value for amount! Let's
                                     // randomize!
-                                    iAmount = static_cast<std::uint16_t>(RandomNum(first, second));
+                                    iAmount = static_cast<std::uint16_t>(Random::get(first, second));
                                 }
                                 else {
                                     iAmount = static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
@@ -1441,7 +1443,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_MANA:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetMana(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                        applyTo->SetMana(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     }
                     else {
                         applyTo->SetMana(ndata);
@@ -1454,7 +1456,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_MANAMAX:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetFixedMaxMana(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                        applyTo->SetFixedMaxMana(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     }
                     else {
                         applyTo->SetFixedMaxMana(ndata);
@@ -1545,7 +1547,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_RESISTFIRE:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::HEAT);
+                        applyTo->SetResist(static_cast<std::uint16_t>(Random::get(ndata, odata)), Weather::HEAT);
                     }
                     else {
                         applyTo->SetResist(ndata, Weather::HEAT);
@@ -1558,7 +1560,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_RESISTCOLD:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::COLD);
+                        applyTo->SetResist(static_cast<std::uint16_t>(Random::get(ndata, odata)), Weather::COLD);
                     }
                     else {
                         applyTo->SetResist(ndata, Weather::COLD);
@@ -1571,7 +1573,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_RESISTLIGHTNING:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::LIGHTNING);
+                        applyTo->SetResist(static_cast<std::uint16_t>(Random::get(ndata, odata)), Weather::LIGHTNING);
                     }
                     else {
                         applyTo->SetResist(ndata, Weather::LIGHTNING);
@@ -1584,7 +1586,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_RESISTPOISON:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::POISON);
+                        applyTo->SetResist(static_cast<std::uint16_t>(Random::get(ndata, odata)), Weather::POISON);
                     }
                     else {
                         applyTo->SetResist(ndata, Weather::POISON);
@@ -1735,7 +1737,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_STRENGTH:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetStrength(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                        applyTo->SetStrength(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     }
                     else {
                         applyTo->SetStrength(ndata);
@@ -1752,7 +1754,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_STAMINA:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetStamina(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                        applyTo->SetStamina(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     }
                     else {
                         applyTo->SetStamina(ndata);
@@ -1765,7 +1767,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_STAMINAMAX:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetFixedMaxStam(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                        applyTo->SetFixedMaxStam(static_cast<std::int16_t>(Random::get(ndata, odata)));
                     }
                     else {
                         applyTo->SetFixedMaxStam(ndata);
@@ -1929,7 +1931,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                 break;
         }
         if (skillToSet != 0xFF) {
-            applyTo->SetBaseSkill(static_cast<std::uint16_t>(RandomNum(ndata, odata)), skillToSet);
+            applyTo->SetBaseSkill(static_cast<std::uint16_t>(Random::get(ndata, odata)), skillToSet);
             skillToSet = 0xFF;
         }
     }
@@ -1951,7 +1953,7 @@ bool CCharStuff::CanControlPet(CChar *mChar, CChar *Npc, bool isRestricted, bool
             if (chanceToControl == 1000)
                 return true;
             
-            if (chanceToControl >= RandomNum(0, 1000)) {
+            if (chanceToControl >= Random::get(0, 1000)) {
                 // Succeeded in controlling pet
                 if (!ignoreLoyaltyChanges) {
                     Npc->SetLoyalty(std::min(100, Npc->GetLoyalty() + loyaltyGainOnSuccess));

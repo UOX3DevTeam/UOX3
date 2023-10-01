@@ -33,6 +33,7 @@
 
 #include "partysystem.h"
 #include "power.h"
+#include "utility/random.hpp"
 #include "configuration/serverconfig.hpp"
 #include "speech.h"
 #include "utility/strutil.hpp"
@@ -49,6 +50,7 @@ extern CGuildCollection worldGuildSystem ;
 extern CCommands serverCommands;
 extern uo::UOMgr uoManager;
 using namespace std::string_literals;
+using Random = effolkronium::random_static ;
 // Unknown bytes
 // 5->8
 // 18->27
@@ -270,7 +272,7 @@ void CPacketSpeech::GhostIt([[maybe_unused]] std::uint8_t method) {
     // eg 0 == ghost, 1 == racial, 2 == magical, etc etc
     for (std::uint16_t j = 44; j < pStream.GetSize() - 1; ++j) {
         if (pStream.GetByte(j) != 32) {
-            pStream.WriteByte(j, (RandomNum(0, 1) == 0 ? 'O' : 'o'));
+            pStream.WriteByte(j, (Random::get(0, 1) == 0 ? 'O' : 'o'));
         }
     }
 }
@@ -5169,7 +5171,7 @@ void CPUnicodeSpeech::GhostIt([[maybe_unused]] std::uint8_t method) {
     // eg 0 == ghost, 1 == racial, 2 == magical, etc etc
     for (std::uint16_t j = 49; j < pStream.GetSize() - 1; j += 2) {
         if (pStream.GetByte(j) != 32) {
-            pStream.WriteByte(j, (RandomNum(0, 1) == 0 ? 'O' : 'o'));
+            pStream.WriteByte(j, (Random::get(0, 1) == 0 ? 'O' : 'o'));
         }
     }
 }

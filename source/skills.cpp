@@ -20,6 +20,7 @@
 #include "funcdecl.h"
 #include "magic.h"
 #include "movement.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "scriptc.h"
 #include "configuration/serverconfig.hpp"
@@ -42,6 +43,7 @@ extern CServerDefinitions worldFileLookup ;
 extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals;
+using Random = effolkronium::random_static ;
 
 bool CheckItemRange(CChar *mChar, CItem *i);
 
@@ -86,14 +88,14 @@ std::int32_t CSkills::CalcRankAvg(CChar *player, CreateEntry_st &skillMake) {
         }
         
         // If generated number is under skill range value...
-        randnum = static_cast<float>(RandomNum(0, 999));
+        randnum = static_cast<float>(Random::get(0, 999));
         if (randnum <= sk_range) {
             rank = skillMake.maxRank; // ...assume perfectly crafted item!
         }
         else {
             // ...otherwise, generate a random number modified by skill range and difficulty level
             // of rank system from uox.ini
-            randnum1 = static_cast<float>(RandomNum(0, 999)) - ((randnum - sk_range) / (11 - ServerConfig::shared().ushortValues[UShortValue::SKILLLEVEL] ));
+            randnum1 = static_cast<float>(Random::get(0, 999)) - ((randnum - sk_range) / (11 - ServerConfig::shared().ushortValues[UShortValue::SKILLLEVEL] ));
             
             // Modify random number based on base chance of success at crafting
             randnum1 *= chanceSkillSuccess;
@@ -583,7 +585,7 @@ bool CSkills::CheckSkill(CChar *s, std::uint8_t sk, std::int16_t lowSkill, std::
         else {
             // Generate a random number between 0 and highSkill (if less than 1000) or 1000 (if
             // higher than 1000)
-            std::int16_t rnd = RandomNum(0, std::min(1000, (highSkill + 100)));
+            std::int16_t rnd = Random::get(0, std::min(1000, (highSkill + 100)));
             
             // Compare to chanceOfSkillSuccess to see if player succeeds!
             skillCheck = (static_cast<std::int16_t>(chanceSkillSuccess) >= rnd);
@@ -715,7 +717,7 @@ void CSkills::HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdva
         }
     }
     
-    if (RandomNum(static_cast<std::uint16_t>(0), skillCap) <= static_cast<std::uint16_t>(totalSkill)) {
+    if (Random::get(static_cast<std::uint16_t>(0), skillCap) <= static_cast<std::uint16_t>(totalSkill)) {
         if (toDec != 0xFF) {
             // Check for existence of onSkillLoss event for player
             for (auto scriptTrig : scriptTriggers) {
@@ -1074,7 +1076,7 @@ void CSkills::Persecute(CSocket *s) {
     static_cast<std::int32_t>((c->GetSkill(SPIRITSPEAK) / 100) + (c->GetIntelligence() / 20)) + 3;
     
     if (s->GetTimer(tPC_SKILLDELAY) <= worldMain.GetUICurrentTime() || c->IsGM()) {
-        if ((RandomNum(0, 19) + c->GetIntelligence()) > 45) // not always
+        if ((Random::get(0, 19) + c->GetIntelligence()) > 45) // not always
         {
             CSocket *tSock = targChar->GetSocket();
             targChar->SetMana(targChar->GetMana() - decrease); // decrease mana
@@ -1550,7 +1552,7 @@ bool CSkills::AdvanceSkill(CChar *s, std::uint8_t sk, bool skillUsed) {
         skillGain = (worldMain.skill[sk].advancement[skillAdvance].failure);
     }
     
-    if (skillGain > RandomNum(1, 100)) {
+    if (skillGain > Random::get(1, 100)) {
         advSkill = true;
         if (s->GetSkillLock(sk) == SKILL_INCREASE) {
             HandleSkillChange(s, sk, skillAdvance, skillUsed);
@@ -1655,9 +1657,9 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
             
             // if stat of char < racial statCap and chance for statgain > random number from 0 to
             // 100
-            if (ActualStat[nCount] < pRace->Skill(statCount) && chanceStatGain > RandomNum(static_cast<std::uint16_t>(0), maxChance)) {
+            if (ActualStat[nCount] < pRace->Skill(statCount) && chanceStatGain > Random::get(static_cast<std::uint16_t>(0), maxChance)) {
                 // Check if we have to decrease a stat
-                if ((ttlStats + 1) >= RandomNum(serverStatCap - 10, serverStatCap)) {
+                if ((ttlStats + 1) >= Random::get(serverStatCap - 10, serverStatCap)) {
                     for (std::int32_t i = 0; i < 3; i++) {
                         if (StatLocks[i] == SKILL_DECREASE) {
                             // Decrease the highest stat, that is allowed to decrease
@@ -2118,7 +2120,7 @@ void CSkills::MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std
         resEntry = (*resCounter);
         toDelete = resEntry.amountNeeded;
         if (!canMake) {
-            toDelete = RandomNum(0, std::max(1, toDelete / 2));
+            toDelete = Random::get(0, std::max(1, toDelete / 2));
         }
         targColour = resEntry.colour;
         targMoreVal = resEntry.moreVal;

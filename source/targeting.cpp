@@ -21,6 +21,7 @@
 #include "magic.h"
 #include "objectfactory.h"
 #include "partysystem.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
@@ -46,6 +47,7 @@ extern CCommands serverCommands;
 extern uo::UOMgr uoManager ;
 
 using namespace std::string_literals;
+using Random = effolkronium::random_static ;
 
 void OpenPlank(CItem *p);
 bool CheckItemRange(CChar *mChar, CItem *i);
@@ -700,7 +702,7 @@ void Tiling(CSocket *s) {
     CItem *c = nullptr;
     for (std::int16_t x = x1; x <= x2; ++x) {
         for (std::int16_t y = y1; y <= y2; ++y) {
-            rndId = addId + RandomNum(static_cast<std::uint16_t>(0), static_cast<std::uint16_t>(rndVal));
+            rndId = addId + Random::get(static_cast<std::uint16_t>(0), static_cast<std::uint16_t>(rndVal));
             c = worldItem.CreateItem(nullptr, s->CurrcharObj(), rndId, 1, 0, CBaseObject::OT_ITEM);
             if (!ValidateObject(c))
                 return;
@@ -1910,7 +1912,7 @@ void VialTarget(CSocket *mSock) {
                 mSock->SysMessage(747); // That individual is not anywhere near you.
                 return;
             }
-            if (targChar->Damage(RandomNum(0, 5) + 2, Weather::PHYSICAL)) {
+            if (targChar->Damage(Random::get(0, 5) + 2, Weather::PHYSICAL)) {
                 worldSkill.MakeNecroReg(mSock, nVialId, 0x0E24);
             }
         }

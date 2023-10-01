@@ -11,12 +11,15 @@
 
 #include "dictionary.h"
 #include "funcdecl.h"
+#include "utility/random.hpp"
 #include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "uodata/uomgr.hpp"
 #include "uodata/uoxuoadapter.hpp"
+
+using Random = effolkronium::random_static;
 
 extern CDictionaryContainer worldDictionary ;
 extern WorldItem worldItem ;
@@ -533,7 +536,7 @@ void CSpawnRegion::DoRegionSpawn(std::uint32_t &itemsSpawned, std::uint32_t &npc
         const std::uint8_t spawnChars = (shouldSpawnChars ? 0 : 50);
         const std::uint8_t spawnItems = (shouldSpawnItems ? 100 : 49);
         for (std::uint16_t i = 0; i < call && (shouldSpawnItems || shouldSpawnChars); ++i) {
-            if (RandomNum(static_cast<std::uint16_t>(spawnChars), static_cast<std::uint16_t>(spawnItems)) > 49) {
+            if (Random::get(static_cast<std::uint16_t>(spawnChars), static_cast<std::uint16_t>(spawnItems)) > 49) {
                 if (shouldSpawnItems) {
                     spawnItem = RegionSpawnItem();
                     if (ValidateObject(spawnItem)) {
@@ -556,7 +559,7 @@ void CSpawnRegion::DoRegionSpawn(std::uint32_t &itemsSpawned, std::uint32_t &npc
         }
     }
     
-    SetNextTime(BuildTimeValue(static_cast<float>(RandomNum(static_cast<std::uint16_t>(GetMinTime() * 60), static_cast<std::uint16_t>(GetMaxTime() * 60)))));
+    SetNextTime(BuildTimeValue(static_cast<float>(Random::get(static_cast<std::uint16_t>(GetMinTime() * 60), static_cast<std::uint16_t>(GetMaxTime() * 60)))));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -661,7 +664,7 @@ auto CSpawnRegion::RegionSpawnItem() -> CItem * {
             objType = CBaseObject::OT_SPAWNER;
         }
         
-        ISpawn = worldItem.CreateBaseScriptItem(nullptr, sItems[RandomNum(static_cast<size_t>(0), sItems.size() - 1)], worldNumber, 1, instanceId, objType, 0xFFFF, false);
+        ISpawn = worldItem.CreateBaseScriptItem(nullptr, sItems[Random::get(static_cast<size_t>(0), sItems.size() - 1)], worldNumber, 1, instanceId, objType, 0xFFFF, false);
         if (ISpawn != nullptr) {
             ISpawn->SetLocation(x, y, z);
             ISpawn->SetSpawn(static_cast<std::uint32_t>(regionNum));
@@ -700,8 +703,8 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
     }
     
     for (std::uint8_t a = 0; a < maxSpawnAttempts; ++a) {
-        x = RandomNum(x1, x2);
-        y = RandomNum(y1, y2);
+        x = Random::get(x1, x2);
+        y = Random::get(y1, y2);
         z =  uo::mapElevation(x, y, worldNumber);
         
         if (defZ != ILLEGAL_Z) {
@@ -786,7 +789,7 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
     
     // If we haven't found a valid location pick a random location from the stored ones
     if (!rValue && !waterCreature && !validLandPos.empty() && landPosSize > 0) {
-        currLoc = validLandPos[RandomNum(static_cast<size_t>(0), (landPosSize - 1))];
+        currLoc = validLandPos[Random::get(static_cast<size_t>(0), (landPosSize - 1))];
         x = static_cast<std::int16_t>(currLoc.x);
         y = static_cast<std::int16_t>(currLoc.y);
         z = static_cast<std::int8_t>(currLoc.z);
@@ -808,7 +811,7 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         }
     }
     else if (!rValue && (waterCreature || amphiCreature) && !validWaterPos.empty() && waterPosSize > 0) {
-        currLoc = validWaterPos[RandomNum(static_cast<size_t>(0), (waterPosSize - 1))];
+        currLoc = validWaterPos[Random::get(static_cast<size_t>(0), (waterPosSize - 1))];
         x = static_cast<std::int16_t>(currLoc.x);
         y = static_cast<std::int16_t>(currLoc.y);
         z = static_cast<std::int8_t>(currLoc.z);
@@ -854,8 +857,8 @@ bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
     }
     
     for (std::uint8_t a = 0; a < maxSpawnAttempts; ++a) {
-        x = RandomNum(x1, x2);
-        y = RandomNum(y1, y2);
+        x = Random::get(x1, x2);
+        y = Random::get(y1, y2);
         z = uo::mapElevation(x, y, worldNumber);
         
         if (defZ != ILLEGAL_Z) {
@@ -903,7 +906,7 @@ bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
     
     // If we haven't found a valid location pick a random location from the stored ones
     if (!rValue && !validLandPos.empty() && landPosSize > 0) {
-        currLoc = validLandPos[RandomNum(static_cast<size_t>(0), (landPosSize - 1))];
+        currLoc = validLandPos[Random::get(static_cast<size_t>(0), (landPosSize - 1))];
         x = static_cast<std::int16_t>(currLoc.x);
         y = static_cast<std::int16_t>(currLoc.y);
         z = static_cast<std::int8_t>(currLoc.z);

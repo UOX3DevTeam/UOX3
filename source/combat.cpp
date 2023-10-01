@@ -19,7 +19,7 @@
 #include "funcdecl.h"
 #include "magic.h"
 #include "movement.h"
-
+#include "utility/random.hpp"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
@@ -28,6 +28,9 @@
 #undef DBGFILE
 #define DBGFILE "combat.cpp"
 #define DEBUG_COMBAT 0
+
+using Random = effolkronium::random_static;
+using namespace std::string_literals ;
 
 extern WorldItem worldItem ;
 extern CCharStuff worldNPC ;
@@ -185,7 +188,7 @@ bool CHandleCombat::StartAttack(CChar *cAttack, CChar *cTarget) {
     }
     else {
         std::uint16_t toPlay = worldMain.creatures[cAttack->GetId()].GetSound(SND_STARTATTACK);
-        if (toPlay != 0x00 && RandomNum(1, 3)) {// 33% chance to play the sound
+        if (toPlay != 0x00 && Random::get(1, 3)) {// 33% chance to play the sound
             worldEffect.PlaySound(cAttack, toPlay);
         }
         
@@ -290,7 +293,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
                                 
                                 NpcResurrectTarget(ourChar);
                                 worldEffect.PlayStaticAnimation(ourChar, 0x376A, 0x09, 0x06);
-                                i->TextMessage(nullptr, (316 + RandomNum(0, 4)), TALK, false); // Random resurrection speak from NPC healer
+                                i->TextMessage(nullptr, (316 + Random::get(0, 4)), TALK, false); // Random resurrection speak from NPC healer
                             }
                         }
                     }
@@ -323,7 +326,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
                                 
                                 NpcResurrectTarget(ourChar);
                                 worldEffect.PlayStaticAnimation(ourChar, 0x3709, 0x09, 0x19); // Flamestrike effect
-                                i->TextMessage(nullptr, (323 + RandomNum(0, 4)), TALK, false); // Random resurrection speak from evil NPC healer
+                                i->TextMessage(nullptr, (323 + Random::get(0, 4)), TALK, false); // Random resurrection speak from evil NPC healer
                             }
                         }
                     }
@@ -995,11 +998,11 @@ std::int16_t CHandleCombat::CalcAttackPower(CChar *p, bool doDamage) {
                 getDamage += weapon->GetLoDamage();
             }
             else {
-                getDamage += RandomNum(weapon->GetLoDamage(), weapon->GetHiDamage());
+                getDamage += Random::get(weapon->GetLoDamage(), weapon->GetHiDamage());
             }
             
             // Chance to apply damage to (player's) weapon based on ini setting
-            if (doDamage && !p->IsNpc() && (ServerConfig::shared().ushortValues[UShortValue::WEAPONDAMAGECHANCE] >= RandomNum(1, 100))) {
+            if (doDamage && !p->IsNpc() && (ServerConfig::shared().ushortValues[UShortValue::WEAPONDAMAGECHANCE] >= Random::get(1, 100))) {
                 std::int8_t weaponDamage = 0;
                 std::uint8_t weaponDamageMin = 0;
                 std::uint8_t weaponDamageMax = 0;
@@ -1008,7 +1011,7 @@ std::int16_t CHandleCombat::CalcAttackPower(CChar *p, bool doDamage) {
                 weaponDamageMin = ServerConfig::shared().ushortValues[UShortValue::MINWEAPONDAMAGE];
                 weaponDamageMax = ServerConfig::shared().ushortValues[UShortValue::MAXWEAPONDAMAGE];
                 
-                weaponDamage -= static_cast<std::uint8_t>(RandomNum(static_cast<std::uint16_t>(weaponDamageMin),  static_cast<std::uint16_t>(weaponDamageMax)));
+                weaponDamage -= static_cast<std::uint8_t>(Random::get(static_cast<std::uint16_t>(weaponDamageMin),  static_cast<std::uint16_t>(weaponDamageMax)));
                 weapon->IncHP(weaponDamage);
                 
                 // If weapon hp has reached 0, destroy it
@@ -1029,16 +1032,16 @@ std::int16_t CHandleCombat::CalcAttackPower(CChar *p, bool doDamage) {
             getDamage = p->GetLoDamage();
         }
         else if (p->GetHiDamage() > 2) {
-            getDamage = RandomNum(p->GetLoDamage(), p->GetHiDamage());
+            getDamage = Random::get(p->GetLoDamage(), p->GetHiDamage());
         }
     }
     else {
         std::uint16_t getWrestSkill = (p->GetSkill(WRESTLING) / 65);
         if (getWrestSkill > 0) {
-            getDamage = HalfRandomNum(getWrestSkill);
+             getDamage = Random::get(static_cast<std::uint16_t>(getWrestSkill/2),getWrestSkill);
         }
         else {
-            getDamage = RandomNum(1, 2);
+            getDamage = Random::get(1, 2);
         }
     }
     if (getDamage < 1) {
@@ -1304,7 +1307,7 @@ std::uint16_t CHandleCombat::CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doD
         }
         
         // Deal damage to armor on hit, if enabled
-        if (total > 0 && doDamage && ValidateObject(defendItem) && !mChar->IsNpc() && (ServerConfig::shared().ushortValues[UShortValue::ARMORDAMAGECHANCE] >= RandomNum(1, 100))) {
+        if (total > 0 && doDamage && ValidateObject(defendItem) && !mChar->IsNpc() && (ServerConfig::shared().ushortValues[UShortValue::ARMORDAMAGECHANCE] >= Random::get(1, 100))) {
             std::int8_t armorDamage =
             0; // Based on OSI standards, each successful hit does 0 to 2 damage to armor hit
             std::uint8_t armorDamageMin = 0;
@@ -1313,7 +1316,7 @@ std::uint16_t CHandleCombat::CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doD
             armorDamageMin = ServerConfig::shared().ushortValues[UShortValue::MINARMORDAMAGE];
             armorDamageMax = ServerConfig::shared().ushortValues[UShortValue::MINARMORDAMAGE];
             
-            armorDamage -= static_cast<std::uint8_t>(RandomNum(static_cast<std::uint16_t>(armorDamageMin), static_cast<std::uint16_t>(armorDamageMax)));
+            armorDamage -= static_cast<std::uint8_t>(Random::get(static_cast<std::uint16_t>(armorDamageMin), static_cast<std::uint16_t>(armorDamageMax)));
             defendItem->IncHP(armorDamage);
             
             if (defendItem->GetHP() <= 0) {
@@ -1390,15 +1393,15 @@ void CHandleCombat::CombatAnimsNew(CChar *i) {
             case DEF_SWORDS:
             case SLASH_SWORDS:
             case ONEHND_LG_SWORDS:
-                subAnimToPlay = (RandomNum(0, 2) > 1 ? (RandomNum(0, 3) > 2 ? S_ACT_1H_PIERCE : S_ACT_1H_BASH) : S_ACT_1H_SLASH); // 0x05, 0x03 and 0x04
+                subAnimToPlay = (Random::get(0, 2) > 1 ? (Random::get(0, 3) > 2 ? S_ACT_1H_PIERCE : S_ACT_1H_BASH) : S_ACT_1H_SLASH); // 0x05, 0x03 and 0x04
                 break;
             case ONEHND_AXES:
             case DEF_MACES:
-                subAnimToPlay = (RandomNum(0, 3) > 2 ? S_ACT_1H_SLASH : S_ACT_1H_BASH);
+                subAnimToPlay = (Random::get(0, 3) > 2 ? S_ACT_1H_SLASH : S_ACT_1H_BASH);
                 break; // 0x04 and 0x03
             case DUAL_FENCING_STAB:
             case DEF_FENCING:
-                subAnimToPlay = (RandomNum(0, 3) > 2 ? S_ACT_1H_SLASH : S_ACT_1H_PIERCE);
+                subAnimToPlay = (Random::get(0, 3) > 2 ? S_ACT_1H_SLASH : S_ACT_1H_PIERCE);
                 break; // 0x04 and 0x05
             case TWOHND_FENCING:
                 subAnimToPlay = S_ACT_2H_PIERCE;
@@ -1407,11 +1410,11 @@ void CHandleCombat::CombatAnimsNew(CChar *i) {
             case DUAL_SWORD:
             case DUAL_FENCING_SLASH:
             case BARDICHE:
-                subAnimToPlay = (RandomNum(0, 2) > 1 ? (RandomNum(0, 3) > 2 ? S_ACT_2H_PIERCE : S_ACT_2H_BASH) : S_ACT_2H_SLASH); // 0x08, 0x06 and 0x07
+                subAnimToPlay = (Random::get(0, 2) > 1 ? (Random::get(0, 3) > 2 ? S_ACT_2H_PIERCE : S_ACT_2H_BASH) : S_ACT_2H_SLASH); // 0x08, 0x06 and 0x07
                 break;
             case TWOHND_AXES:
             case LG_MACES:
-                subAnimToPlay = (RandomNum(0, 3) > 2 ? S_ACT_2H_BASH : S_ACT_2H_SLASH);
+                subAnimToPlay = (Random::get(0, 3) > 2 ? S_ACT_2H_BASH : S_ACT_2H_SLASH);
                 break; // 0x06 and 0x07
             case WRESTLING:
             default:
@@ -1499,16 +1502,16 @@ void CHandleCombat::CombatOnFoot(CChar *i) {
         case DUAL_SWORD:
         case DUAL_FENCING_SLASH:
         case ONEHND_AXES:
-            animToPlay = (RandomNum(0, 2) < 1 ? ACT_ATT_1H_SLASH : ACT_ATT_1H_PIERCE);
+            animToPlay = (Random::get(0, 2) < 1 ? ACT_ATT_1H_SLASH : ACT_ATT_1H_PIERCE);
             break; // 0x09 and 0x0A
         case DEF_MACES:
-            animToPlay = (RandomNum(0, 2) < 2 ? ACT_ATT_1H_SLASH : ACT_ATT_1H_BASH);
+            animToPlay = (Random::get(0, 2) < 2 ? ACT_ATT_1H_SLASH : ACT_ATT_1H_BASH);
             break; // 0x09 and 0x0B
         case LG_MACES:
         case TWOHND_LG_SWORDS:
         case BARDICHE:
         case TWOHND_AXES:
-            animToPlay = (RandomNum(0, 1) ? ACT_ATT_2H_BASH : ACT_ATT_2H_SLASH);
+            animToPlay = (Random::get(0, 1) ? ACT_ATT_2H_BASH : ACT_ATT_2H_SLASH);
             break; // 0x0C and 0x0D
         case DUAL_FENCING_STAB:
         case DEF_FENCING:
@@ -1519,7 +1522,7 @@ void CHandleCombat::CombatOnFoot(CChar *i) {
             break; // 0x0E
         case WRESTLING:
         default:
-            switch (RandomNum(0, 2)) {
+            switch (Random::get(0, 2)) {
                 case 0:
                     animToPlay = ACT_ATT_1H_BASH;
                     break; // 0x0B
@@ -1572,10 +1575,10 @@ void CHandleCombat::PlaySwingAnimations(CChar *mChar) {
             // Randomize between the available attack animations (as defined in creatures.dfn)
             auto rndAnimNum = -1;
             if (attackAnim1 > 0 && attackAnim2 > 0 && attackAnim3 > 0) {
-                rndAnimNum = RandomNum(0, 2);
+                rndAnimNum = Random::get(0, 2);
             }
             else if (attackAnim1 > 0 && attackAnim2 > 0) {
-                rndAnimNum = RandomNum(0, 1);
+                rndAnimNum = Random::get(0, 1);
             }
             else if (attackAnim1 > 0) {
                 rndAnimNum = 0;
@@ -1609,7 +1612,7 @@ void CHandleCombat::PlaySwingAnimations(CChar *mChar) {
         worldEffect.PlayCharacterAnimation(mChar, attackAnim, 0, attackAnimLength);
         
         // Play attack sound effect
-        if (RandomNum(0, 4)) {// 20% chance of playing SFX when attacking
+        if (Random::get(0, 4)) {// 20% chance of playing SFX when attacking
             std::uint16_t toPlay = worldMain.creatures[charId].GetSound(SND_ATTACK);
             if (toPlay != 0x00) {
                 worldEffect.PlaySound(mChar, toPlay);
@@ -1641,13 +1644,13 @@ void CHandleCombat::PlayMissedSoundEffect(CChar *p) {
     switch (GetWeaponType(weapon)) {
         case BOWS:
         case XBOWS:
-            worldEffect.PlaySound(p, RandomNum(0x04c8, 0x04c9));
+            worldEffect.PlaySound(p, Random::get(0x04c8, 0x04c9));
             break;
         case BLOWGUNS:
             worldEffect.PlaySound(p, 0x052F);
             break;
         default:
-            switch (RandomNum(0, 2)) {
+            switch (Random::get(0, 2)) {
                 case 0:
                     worldEffect.PlaySound(p, 0x0238);
                     break;
@@ -1675,37 +1678,36 @@ void CHandleCombat::PlayHitSoundEffect(CChar *p, CItem *weapon) {
         case TWOHND_AXES:
         case DEF_MACES:
         case LG_MACES:
-            worldEffect.PlaySound(p, RandomNum(0x0232, 0x0233)); // Whoosh Weapons
+            worldEffect.PlaySound(p, Random::get(0x0232, 0x0233)); // Whoosh Weapons
             break;
         case DEF_SWORDS:
         case DEF_FENCING:
         case TWOHND_FENCING:
         case DUAL_FENCING_STAB:
-            worldEffect.PlaySound(p, RandomNum(0x023B, 0x023C)); // Stabbing Weapons
+            worldEffect.PlaySound(p, Random::get(0x023B, 0x023C)); // Stabbing Weapons
             break;
         case BARDICHE:
-            worldEffect.PlaySound(p, RandomNum(0x0236, 0x0237)); // Bardiche
+            worldEffect.PlaySound(p, Random::get(0x0236, 0x0237)); // Bardiche
             break;
         case SLASH_SWORDS:
         case DUAL_SWORD:
         case DUAL_FENCING_SLASH:
         case ONEHND_LG_SWORDS:
-            worldEffect.PlaySound(p, RandomNum(0x023B, 0x023C)); // Slashing Weapons
+            worldEffect.PlaySound(p, Random::get(0x023B, 0x023C)); // Slashing Weapons
             break;
         case TWOHND_LG_SWORDS:
-            worldEffect.PlaySound(p, RandomNum(0x0236, 0x0237)); // Large Swords
+            worldEffect.PlaySound(p, Random::get(0x0236, 0x0237)); // Large Swords
             break;
         case BOWS:
         case XBOWS:
             worldEffect.PlaySound(p, 0x0234); // Bows
             break;
         case BLOWGUNS:
-            worldEffect.PlaySound(p, RandomNum(0x0223, 0x0224)); // Darts
+            worldEffect.PlaySound(p, Random::get(0x0223, 0x0224)); // Darts
             break;
         case WRESTLING:
         default:
-            switch (RandomNum(0, 3)) // Wrestling
-            {
+            switch (Random::get(0, 3)) { // Wrestling
                 case 0:
                     worldEffect.PlaySound(p, 0x0135);
                     break;
@@ -1812,7 +1814,7 @@ void CHandleCombat::DoHitMessage(CChar *mChar, CChar *ourTarg, std::int8_t hitLo
         if (damage < 5)
             return;
         
-        std::uint8_t randHit = RandomNum(0, 2);
+        std::uint8_t randHit = Random::get(0, 2);
         switch (hitLoc) {
             case 1: // Body
                 switch (randHit) {
@@ -1923,7 +1925,7 @@ void CHandleCombat::DoHitMessage(CChar *mChar, CChar *ourTarg, std::int8_t hitLo
 //|	Purpose		-	calculates where on the body the person was hit and returns that
 // o------------------------------------------------------------------------------------------------o
 std::int8_t CHandleCombat::CalculateHitLoc() {
-    std::int8_t hitLoc = RandomNum(0, 99); // Determine area of Body Hit
+    std::int8_t hitLoc = Random::get(0, 99); // Determine area of Body Hit
     for (std::uint8_t t = BODYPERCENT; t < TOTALTARGETSPOTS; ++t) {
         hitLoc -= LOCPERCENTAGES[t];
         if (hitLoc < 0) {
@@ -2086,7 +2088,7 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(Weather::type_t damageType, CChar
             // Lumberjacking Damage Bonus
             if (ServerConfig::shared().ruleSets[Expansion::LUMBERJACK].value >= Era::TD) // Third Dawn expansion and later
             {
-                if (ServerConfig::shared().ruleSets[Expansion::LUMBERJACK].value >= Era::HS && RandomNum(1, 100) <= 10) {
+                if (ServerConfig::shared().ruleSets[Expansion::LUMBERJACK].value >= Era::HS && Random::get(1, 100) <= 10) {
                     // High Seas expansion and later
                     // Publish 69 added a 10% chance for a lumberjacking damage bonus of 100% from base
                     // weapon damage https://www.uoguide.com/Publish_69
@@ -2199,7 +2201,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                     // shield absorbs 8 damage Source
                     // https://forums.uosecondage.com/viewtopic.php?t=13478
                     float parryChance = static_cast<float>((defendParry / 2) / 10);
-                    if (RandomNum(1, 100) < parryChance) {
+                    if (Random::get(1, 100) < parryChance) {
                         parrySuccess = true;
                     }
                 }
@@ -2211,7 +2213,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                     // but the less damage is absorbed upon blocking parryChance = parrySkill - (shield
                     // AR * 2)
                     float parryChance = (defendParry / 10) - (shield->GetResist(Weather::PHYSICAL) * 2); // or is it 1.33?
-                    if (RandomNum(1, 100) < parryChance) {
+                    if (Random::get(1, 100) < parryChance) {
                         parrySuccess = true;
                     }
                 }
@@ -2232,7 +2234,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                     (ourTarg->GetDexterity() > 80 ? 0 : (80 - ourTarg->GetDexterity()) / 100);
                     parryChance *= (1 - dexModifier);
                     
-                    if (RandomNum(1, 100) < parryChance) {
+                    if (Random::get(1, 100) < parryChance) {
                         parrySuccess = true;
                     }
                 }
@@ -2249,7 +2251,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                     
                     auto loShieldDamage = ServerConfig::shared().ushortValues[UShortValue::MINPARRYDAMAGE];
                     auto hiShieldDamage = ServerConfig::shared().ushortValues[UShortValue::MAXPARRYDAMAGE];
-                    std::int16_t shieldDamage = -(RandomNum(static_cast<std::int16_t>(loShieldDamage),  static_cast<std::int16_t>(hiShieldDamage)));
+                    std::int16_t shieldDamage = -(Random::get(static_cast<std::int16_t>(loShieldDamage),  static_cast<std::int16_t>(hiShieldDamage)));
                     
                     if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYHITMSG)) {
                         if (targSock != nullptr) {
@@ -2272,10 +2274,11 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                         }
                         
                         // Calculate defense given by armor
-                        getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, Weather::PHYSICAL));
+                        getDef = CalcDef(ourTarg, hitLoc, doArmorDamage, Weather::PHYSICAL);
+                        getDef = Random::get(static_cast<std::uint16_t>(getDef/2),getDef);
                         
                         // Apply damage to shield from parrying action?
-                        if (ServerConfig::shared().ushortValues[UShortValue::PARRYDAMAGECHANCE] >= RandomNum(1, 100)) {// 20% chance by default
+                        if (ServerConfig::shared().ushortValues[UShortValue::PARRYDAMAGECHANCE] >= Random::get(1, 100)) {// 20% chance by default
                             shield->IncHP(shieldDamage);
                         }
                     }
@@ -2291,10 +2294,11 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                         }
                         
                         // Calculate defense given by armor
-                        getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, Weather::PHYSICAL));
+                        getDef = CalcDef(ourTarg, hitLoc, doArmorDamage, Weather::PHYSICAL);
+                        getDef = Random::get(static_cast<std::uint16_t>(getDef/2),getDef) ;
                         
                         // Apply damage to shield from parrying action?
-                        if (ServerConfig::shared().ushortValues[UShortValue::PARRYDAMAGECHANCE] >= RandomNum(1, 100)) { // 20% chance by default
+                        if (ServerConfig::shared().ushortValues[UShortValue::PARRYDAMAGECHANCE] >= Random::get(1, 100)) { // 20% chance by default
                             shield->IncHP(shieldDamage);
                         }
                     }
@@ -2309,10 +2313,10 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                             // take a point of damage is 75%
                             bool damageShield = false;
                             if (getFightSkill == MACEFIGHTING) {
-                                damageShield = (RandomNum(1, 4) < 4); // 75% chance
+                                damageShield = (Random::get(1, 4) < 4); // 75% chance
                             }
                             else {
-                                damageShield = (RandomNum(1, 5) == 1); // 20% chance
+                                damageShield = (Random::get(1, 5) == 1); // 20% chance
                             }
                             
                             if (damageShield) {
@@ -2328,7 +2332,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                      ));
                      
                      // Apply damage to shield from parrying action?
-                     if( worldMain.ServerData()->CombatParryDamageChance() >= RandomNum( 1,
+                     if( worldMain.ServerData()->CombatParryDamageChance() >= Random::get( 1,
                      100 )) // 20% chance by default
                      {
                      shield->IncHP( shieldDamage );
@@ -2384,7 +2388,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                     parryChance *= (1 - dexModifier);
                     
                     // Check if parrying succeedes
-                    if (RandomNum(0, 1000) < parryChance) {
+                    if (Random::get(0, 1000) < parryChance) {
                         // Successfully parried! Block attack completely
                         getDef = 0;
                         damage = 0;
@@ -2402,10 +2406,10 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                             // damage
                             bool damageWeapon = false;
                             if (getFightSkill == MACEFIGHTING) {
-                                damageWeapon = (RandomNum(1, 4) < 4); // 75% chance
+                                damageWeapon = (Random::get(1, 4) < 4); // 75% chance
                             }
                             else {
-                                damageWeapon = (RandomNum(1, 20) == 1); // 5% chance
+                                damageWeapon = (Random::get(1, 20) == 1); // 5% chance
                             }
                             
                             // Apply damage to weapon from parrying action?
@@ -2415,7 +2419,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                         }
                         else {
                             // Apply damage to weapon from parrying action?
-                            if (!RandomNum(0, 5)) // 16.6% chance of weapon damage when parrying
+                            if (!Random::get(0, 5)) // 16.6% chance of weapon damage when parrying
                             {
                                 mWeapon->IncHP(-1);
                             }
@@ -2439,9 +2443,9 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                     if (defendWrestling >= 1000) {
                         // ~12.5% chance for a NPC creature with GM Wrestling to parry an attack
                         // TODO Turn the wrestling parry chance into a ini setting
-                        parryChance = HalfRandomNum(defendWrestling) / 8;
+                        parryChance = Random::get(static_cast<std::uint16_t>(defendWrestling/2),defendWrestling) / 8;
                         
-                        if (RandomNum(0, 1000) < parryChance) {
+                        if (Random::get(0, 1000) < parryChance) {
                             damage = 0;
                             getDef = 0;
                             
@@ -2454,7 +2458,8 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
             
             // No shield, no weapon parry, no wrestling parry - armor needs to take the brunt of damage!
             if (damage > 0 && getDef == 0) {
-                getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, Weather::PHYSICAL));
+                getDef = CalcDef(ourTarg, hitLoc, doArmorDamage, Weather::PHYSICAL);
+                getDef = Random::get(static_cast<std::uint16_t>(getDef/2),getDef);
             }
             break;
         }
@@ -2463,7 +2468,8 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
             damage = static_cast<std::int16_t>(std::round((static_cast<float>(baseDamage) - (static_cast<float>(baseDamage) * damageModifier))));
             break;
         default: //	Elemental damage
-            getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, damageType));
+            getDef = CalcDef(ourTarg, hitLoc, doArmorDamage, damageType);
+            getDef = Random::get(static_cast<std::uint16_t>(getDef/2),getDef);
             break;
     }
     
@@ -2513,7 +2519,7 @@ std::int16_t CHandleCombat::CalcDamage(CChar *mChar, CChar *ourTarg, std::uint8_
     damage = ApplyDefenseModifiers(Weather::PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, damage, true);
     
     if (damage <= 0) {
-        damage = RandomNum(0, 4);
+        damage = Random::get(0, 4);
     }
     
     // Half remaining damage by 2 if LBR (Pub15) or earlier
@@ -2697,11 +2703,11 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                 break;
         }
         
-        skillPassed = (RandomNum(1, 100) <= hitChance);
+        skillPassed = (Random::get(1, 100) <= hitChance);
         
         if (!skillPassed) {
             // It's a miss!
-            if (getFightSkill == ARCHERY && mWeapon->GetAmmoId() != 0 && !RandomNum(0, 2)) {
+            if (getFightSkill == ARCHERY && mWeapon->GetAmmoId() != 0 && !Random::get(0, 2)) {
                 std::uint16_t ammoId = mWeapon->GetAmmoId();
                 std::uint16_t ammoHue = mWeapon->GetAmmoHue();
                 worldItem.CreateItem(nullptr, ourTarg, ammoId, 1, ammoHue, CBaseObject::OT_ITEM, false);
@@ -2720,12 +2726,12 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                 case 0x025E: // elf/human/garg female
                 case 0x0191:
                 case 0x029B:
-                    worldEffect.PlaySound(ourTarg, RandomNum(0x014B, 0x014F));
+                    worldEffect.PlaySound(ourTarg, Random::get(0x014B, 0x014F));
                     break;
                 case 0x025D: // elf/human/garg male
                 case 0x0190:
                 case 0x029A:
-                    worldEffect.PlaySound(ourTarg, RandomNum(0x0155, 0x0158));
+                    worldEffect.PlaySound(ourTarg, Random::get(0x0155, 0x0158));
                     break;
                 default: {
                     std::uint16_t toPlay = worldMain.creatures[ourTarg->GetId()].GetSound(SND_DEFEND);
@@ -2738,7 +2744,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
             
             std::uint8_t poisonStrength = mChar.GetPoisonStrength();
             if (poisonStrength && ourTarg->GetPoisoned() < poisonStrength) {
-                if (((getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP) && !RandomNum(0, 2)) ||  mChar.IsNpc()) {
+                if (((getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP) && !Random::get(0, 2)) ||  mChar.IsNpc()) {
                     auto doPoison = true;
                     if (!mChar.IsNpc() && ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) && !ourTarg->IsNpc() && ourTarg->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                         doPoison = false;
@@ -2952,7 +2958,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
             offensiveWeight =
             static_cast<std::uint16_t>(std::round((npcAttack->GetHP() * 100) / npcAttack->GetMaxHP()));
             
-            std::uint16_t rndNum = RandomNum(1, 100);
+            std::uint16_t rndNum = Random::get(1, 100);
             
             // Cut weighting towards offensive spells in half if NPC is poisoned; we want him to
             // cast cures!
@@ -2968,9 +2974,9 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
             bool monsterAreaCastAnim = false;
             if (offensiveWeight > rndNum) {
                 // Cast offensive spells
-                switch ((RandomNum(static_cast<std::int16_t>(0), spattacks) + 1)) {
+                switch ((Random::get(static_cast<std::int16_t>(0), spattacks) + 1)) {
                     case 1: // Spell Circle 1 - Offensive Spells
-                        switch (RandomNum(1, 4)) {
+                        switch (Random::get(1, 4)) {
                             case 1:
                                 CastSpell(npcAttack, cDefend, 1);
                                 break; // Clumsy
@@ -2995,7 +3001,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
                         CastSpell(npcAttack, cDefend, 30); // Lightning
                         break;
                     case 5:
-                        switch (RandomNum(1, 2)) {
+                        switch (Random::get(1, 2)) {
                             case 1:
                                 if (npcAttack->GetIntelligence() > cDefend->GetIntelligence()) {
                                     CastSpell(npcAttack, cDefend, 37); // Mind Blast
@@ -3017,13 +3023,13 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
                     case 6:
                         if (cDefend->IsNpc()) {
                             if (cDefend->GetTimer(tNPC_SUMMONTIME) > 0 && cDefend->IsDispellable() && cDefend->GetNpcAiType() != AI_GUARD) {
-                                if (npcAttack->GetSkill(MAGERY) > RandomNum(1, 1000)) {
+                                if (npcAttack->GetSkill(MAGERY) > Random::get(1, 1000)) {
                                     CastSpell(npcAttack, cDefend, 41);
                                     break;
                                 }
                             }
                         }
-                        switch (RandomNum(1, 2)) {
+                        switch (Random::get(1, 2)) {
                             case 1:
                                 CastSpell(npcAttack, cDefend, 42);
                                 break; // Energy Bolt
@@ -3033,7 +3039,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
                         }
                         break;
                     case 7:
-                        switch (RandomNum(1, 3)) {
+                        switch (Random::get(1, 3)) {
                             case 1:
                                 CastSpell(npcAttack, cDefend, 49);
                                 monsterAreaCastAnim = true;
@@ -3069,10 +3075,10 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
                 // If situation not too bad yet, let's go for some buffs/debuffs
                 if (offensiveWeight > rndNum / 1.5) {
                     // Cast buffs/debuffs
-                    switch ((RandomNum(static_cast<std::int16_t>(0), spattacks) + 1)) {
+                    switch ((Random::get(static_cast<std::int16_t>(0), spattacks) + 1)) {
                         case 1:
                         case 2:
-                            switch (RandomNum(1, 4)) {
+                            switch (Random::get(1, 4)) {
                                 case 1:
                                     CastSpell(npcAttack, cDefend, 1);
                                     break; // Clumsy
@@ -3098,7 +3104,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
                             [[fallthrough]]; // Fallthrough if target is poisoned already and if NPC can
                             // cast spells from next circle
                         case 4:
-                            switch (RandomNum(1, 2)) {
+                            switch (Random::get(1, 2)) {
                                 case 1:
                                     CastSpell(npcAttack, cDefend, 27);
                                     break; // Curse
@@ -3127,7 +3133,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
                 }
                 else {
                     // Critical health levels! Let's focus on heals and cures
-                    switch ((RandomNum(static_cast<std::int16_t>(0), spattacks) + 1)) {
+                    switch ((Random::get(static_cast<std::int16_t>(0), spattacks) + 1)) {
                         case 1:
                             if ((spattacks + 1 >= 2) &&!CastSpell(npcAttack, cDefend, 11)) {// Cast cure if we're poisoned, else move on to Heal
                                 CastSpell(npcAttack, cDefend, 4); // Heal (personal...switch target temporarily to self and
@@ -3337,7 +3343,7 @@ void CHandleCombat::InvalidateAttacker(CChar *mChar) {
 void CHandleCombat::Kill(CChar *mChar, CChar *ourTarg) {
     if (ValidateObject(mChar)) {
         if (mChar->GetNpcAiType() == AI_GUARD && ourTarg->IsNpc()) {
-            worldEffect.PlayCharacterAnimation(ourTarg, (RandomNum(0, 1) ? ACT_DIE_BACKWARD : ACT_DIE_FORWARD), 0, 6); // 0x15 or 0x16, either is 6 frames long
+            worldEffect.PlayCharacterAnimation(ourTarg, (Random::get(0, 1) ? ACT_DIE_BACKWARD : ACT_DIE_FORWARD), 0, 6); // 0x15 or 0x16, either is 6 frames long
             worldEffect.PlayDeathSound(ourTarg);
             
             ourTarg->Delete(); // NPC was killed by a Guard, don't leave a corpse behind
@@ -3398,7 +3404,7 @@ void CHandleCombat::CombatLoop(CSocket *mSock, CChar &mChar) {
                     }
                     
                     validTarg = true;
-                    if (mChar.IsNpc() && mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 && !RandomNum(0, 2)) {
+                    if (mChar.IsNpc() && mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 && !Random::get(0, 2)) {
                         HandleNPCSpellAttack(&mChar, ourTarg, GetDist(&mChar, ourTarg));
                     }
                     else if ((mChar.IsNpc() && mChar.IsAtWar()) || (!mChar.IsNpc() && !mChar.IsPassive())) { // Don't trigger for players who are marked as

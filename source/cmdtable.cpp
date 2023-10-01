@@ -31,6 +31,7 @@
 #include "msgboard.h"
 #include "objectfactory.h"
 #include "pagevector.h"
+#include "utility/random.hpp"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "speech.h"
@@ -59,6 +60,7 @@ extern CNetworkStuff worldNetwork ;
 extern CMapHandler worldMapHandler ;
 
 using namespace std::string_literals ;
+using Random = effolkronium::random_static ;
 
 void endMessage(std::int32_t x);
 void HandleGumpCommand(CSocket *s, std::string cmd, std::string data);
@@ -392,7 +394,7 @@ void Command_Tile(CSocket *s) {
         
         for (std::int16_t x = x1; x <= x2; ++x) {
             for (std::int16_t y = y1; y <= y2; ++y) {
-                rndId = targId + RandomNum(static_cast<std::uint16_t>(0), static_cast<std::uint16_t>(rndVal));
+                rndId = targId + Random::get(static_cast<std::uint16_t>(0), static_cast<std::uint16_t>(rndVal));
                 CItem *a = worldItem.CreateItem(nullptr, s->CurrcharObj(), rndId, 1, 0, CBaseObject::OT_ITEM);
                 if (ValidateObject(a)) { // crash prevention
                     a->SetLocation(x, y, z);
@@ -674,7 +676,7 @@ bool RespawnFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_u
             if (i->GetObjType() == CBaseObject::OT_SPAWNER) {
                 CSpawnItem *spawnItem = static_cast<CSpawnItem *>(i);
                 if (!spawnItem->DoRespawn()) {
-                    spawnItem->SetTempTimer(BuildTimeValue(static_cast<float>(RandomNum( spawnItem->GetInterval(0) * 60, spawnItem->GetInterval(1) * 60))));
+                    spawnItem->SetTempTimer(BuildTimeValue(static_cast<float>(Random::get( spawnItem->GetInterval(0) * 60, spawnItem->GetInterval(1) * 60))));
                 }
             }
             else {
