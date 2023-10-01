@@ -3084,7 +3084,7 @@ std::int16_t CalcSpellDamageMod(CChar *caster, CChar *target, std::int16_t spell
     
     // If spell was resisted, halve damage
     if (spellResisted) {
-        damage = static_cast<std::int16_t>(std::round(damage / 2));
+        damage = damage / 2.0 ;
     }
     
     // Add damage bonus/penalty based on attacker's EVALINT vs defender's MAGICRESISTANCE
