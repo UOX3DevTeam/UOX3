@@ -1,6 +1,9 @@
 
 
-
+09/30/2023 - UOData
+    Replaced UO data access with new approach. Separated UO data from the embedded code
+    Addressed an issue in the Network writing to a closed socket (Catch exception. Ideally this would be closed at that time, but for now, just ignore it, and handle on the next read).
+    Replaced SPAWNFACET from the "ini" file to the new file in the "save" directory. It is still read if present in the ini file, but no saved in the ini (so will maintain backward compatablity). Ideally the ini file shouldn't be a place for "persistence", the "save" directory and files are for that.
 09/1-20/2023 - It begins (based of "Official" UOX3 RC6)
     Lowercased all files
     removed global headers, included what was needed
