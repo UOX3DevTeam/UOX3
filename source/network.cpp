@@ -401,16 +401,6 @@ void CNetworkStuff::SockClose() {
     std::for_each(connClients.begin(), connClients.end(), [](CSocket *sock) { sock->CloseSocket(); });
 }
 
-#if !defined(_WIN32)
-#ifdef FD_SETSIZE
-#if FD_SETSIZE < 256
-#undef FD_SETSIZE
-#define FD_SETSIZE 256
-#endif
-#else
-#define FD_SETSIZE 256
-#endif
-#endif
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CNetworkStuff::CheckConn()

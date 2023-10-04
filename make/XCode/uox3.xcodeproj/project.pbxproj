@@ -14,6 +14,7 @@
 		5611F3362AAF837A009438EA /* startlocconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3342AAF837A009438EA /* startlocconfig.cpp */; };
 		5611F33B2AAF9FFA009438EA /* serverswitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3392AAF9FFA009438EA /* serverswitch.cpp */; };
 		5611F3402AB1492D009438EA /* serverstring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F33E2AB1492D009438EA /* serverstring.cpp */; };
+		5674A3182ACD847300F1E2B2 /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5674A3172ACD847300F1E2B2 /* buffer.cpp */; };
 		5681F7CC2AC21DAF002BE65C /* hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5681F7CB2AC21DAF002BE65C /* hash.cpp */; };
 		5681F7CF2AC21E32002BE65C /* uoflag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5681F7CE2AC21E32002BE65C /* uoflag.cpp */; };
 		5681F7D22AC21E8E002BE65C /* tileinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5681F7D12AC21E8E002BE65C /* tileinfo.cpp */; };
@@ -169,6 +170,8 @@
 		5611F33A2AAF9FFA009438EA /* serverswitch.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = serverswitch.hpp; sourceTree = "<group>"; };
 		5611F33E2AB1492D009438EA /* serverstring.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = serverstring.cpp; sourceTree = "<group>"; };
 		5611F33F2AB1492D009438EA /* serverstring.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = serverstring.hpp; sourceTree = "<group>"; };
+		5674A3162ACD847300F1E2B2 /* buffer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = buffer.hpp; sourceTree = "<group>"; };
+		5674A3172ACD847300F1E2B2 /* buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = buffer.cpp; sourceTree = "<group>"; };
 		5681F7C22AC1EA38002BE65C /* changelog.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
 		5681F7CA2AC21DAF002BE65C /* hash.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = hash.hpp; sourceTree = "<group>"; };
 		5681F7CB2AC21DAF002BE65C /* hash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hash.cpp; sourceTree = "<group>"; };
@@ -1270,10 +1273,18 @@
 		5605D6722AC09E5A004BA321 /* network */ = {
 			isa = PBXGroup;
 			children = (
+				5674A3092ACB066500F1E2B2 /* packet */,
 				5605D6782AC0A918004BA321 /* networkmgr.cpp */,
 				5605D6792AC0A918004BA321 /* networkmgr.hpp */,
 			);
 			path = network;
+			sourceTree = "<group>";
+		};
+		5674A3092ACB066500F1E2B2 /* packet */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = packet;
 			sourceTree = "<group>";
 		};
 		5681F7C72AC21D70002BE65C /* uodata */ = {
@@ -3138,6 +3149,8 @@
 		56D6EEC22A9F76DD005355FA /* utility */ = {
 			isa = PBXGroup;
 			children = (
+				5674A3172ACD847300F1E2B2 /* buffer.cpp */,
+				5674A3162ACD847300F1E2B2 /* buffer.hpp */,
 				5681F7DA2AC3256A002BE65C /* filemap.cpp */,
 				5681F7D92AC32569002BE65C /* filemap.hpp */,
 				568517A42ABDA7DB0052C574 /* ip4util.cpp */,
@@ -3255,8 +3268,8 @@
 				64A900DD293E3DD4009B54DA /* objectfactory.cpp */,
 				64A900DE293E3DD4009B54DA /* objectfactory.h */,
 				64A900E1293E3DD4009B54DA /* pagevector.h */,
-				64A90112293E3DD4009B54DA /* uoxstruct.h */,
 				64A900E8293E3DD4009B54DA /* queue.cpp */,
+				64A90112293E3DD4009B54DA /* uoxstruct.h */,
 			);
 			name = "Base Objects";
 			sourceTree = "<group>";
@@ -3264,8 +3277,6 @@
 		64E2F791293FCE4800546A08 /* Subsystem */ = {
 			isa = PBXGroup;
 			children = (
-				64A900FD293E3DD4009B54DA /* townregion.cpp */,
-				64A900FE293E3DD4009B54DA /* townregion.h */,
 				64A90078293E3DD4009B54DA /* books.cpp */,
 				64A90079293E3DD4009B54DA /* books.h */,
 				64A90085293E3DD4009B54DA /* ceffects.h */,
@@ -3302,6 +3313,8 @@
 				64A900F4293E3DD4009B54DA /* speech.h */,
 				64A900F9293E3DD4009B54DA /* targeting.cpp */,
 				64A900FA293E3DD4009B54DA /* teffect.h */,
+				64A900FD293E3DD4009B54DA /* townregion.cpp */,
+				64A900FE293E3DD4009B54DA /* townregion.h */,
 				64A900FF293E3DD4009B54DA /* trade.cpp */,
 				64A90113293E3DD4009B54DA /* vendor.cpp */,
 				64A90114293E3DD4009B54DA /* weight.cpp */,
@@ -3584,6 +3597,7 @@
 				64A90167293E3DD4009B54DA /* weight.cpp in Sources */,
 				64A90133293E3DD4009B54DA /* cscript.cpp in Sources */,
 				64A90146293E3DD4009B54DA /* jsencapsulate.cpp in Sources */,
+				5674A3182ACD847300F1E2B2 /* buffer.cpp in Sources */,
 				64A9013F293E3DD4009B54DA /* fileio.cpp in Sources */,
 				64A90141293E3DD4009B54DA /* gumps.cpp in Sources */,
 				64A90142293E3DD4009B54DA /* house.cpp in Sources */,

@@ -215,6 +215,8 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/eventtimer.cpp
    ${PROJECT_SOURCE_DIR}/../../source/eventtimer.hpp
 # utility
+   ${PROJECT_SOURCE_DIR}/../../source/utility/buffer.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/utility/buffer.hpp
    ${PROJECT_SOURCE_DIR}/../../source/utility/filemap.cpp
    ${PROJECT_SOURCE_DIR}/../../source/utility/filemap.hpp
    ${PROJECT_SOURCE_DIR}/../../source/utility/ip4util.cpp
