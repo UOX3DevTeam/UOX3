@@ -26,7 +26,7 @@ namespace util {
     
     //======================================================================
     auto Buffer::checkSize(std::int64_t offset, int length) const ->bool {
-        if (offset + length <= data.size()){
+        if (offset + length <= static_cast<std::int64_t>(data.size())){
             return true ;
         }
         return false ;
@@ -64,7 +64,7 @@ namespace util {
     //======================================================================
     auto Buffer::resize(std::int64_t value)->void {
         data.resize(value,0) ;
-        if (offset < data.size()){
+        if (offset < static_cast<std::int64_t>(data.size())){
             offset = std::max(static_cast<std::int64_t>(0),static_cast<std::int64_t>(data.size())-1);
         }
     }
@@ -79,13 +79,13 @@ namespace util {
     }
     //======================================================================
     auto Buffer::setOffset(std::int64_t offset) ->void {
-        if (offset >= data.size() && !extend){
+        if (offset >= static_cast<std::int64_t>(data.size()) && !extend) {
             throw BufferOffsetError(offset, data.size());
         }
         if (offset == std::numeric_limits<std::int64_t>::max()){
             throw BufferOffsetError(offset, data.size());
         }
-        if (offset>= data.size()){
+        if (offset>= static_cast<std::int64_t>(data.size())){
             // we need to extend this
             data.resize(offset+1, 0);
         }

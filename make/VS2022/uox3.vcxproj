@@ -161,7 +161,6 @@
     <ClCompile Include="..\..\source\targeting.cpp" />
     <ClCompile Include="..\..\source\townregion.cpp" />
     <ClCompile Include="..\..\source\trade.cpp" />
-    <ClCompile Include="..\..\source\utility\filemap.cpp" />
     <ClCompile Include="..\..\source\vendor.cpp" />
     <ClCompile Include="..\..\source\weight.cpp" />
     <ClCompile Include="..\..\source\wholist.cpp" />
@@ -288,7 +287,6 @@
     <ClInclude Include="..\..\source\teffect.h" />
     <ClInclude Include="..\..\source\townregion.h" />
     <ClInclude Include="..\..\source\useful.h" />
-    <ClInclude Include="..\..\source\utility\filemap.hpp" />
     <ClInclude Include="..\..\source\weight.h" />
     <ClInclude Include="..\..\source\wholist.h" />
     <ClInclude Include="..\..\source\worldmain.h" />

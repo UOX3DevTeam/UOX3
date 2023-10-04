@@ -2,7 +2,7 @@
 
 #ifndef buffer_hpp
 #define buffer_hpp
-
+#include <algorithm>
 #include <cstdint>
 #include <iostream>
 #include <string>
