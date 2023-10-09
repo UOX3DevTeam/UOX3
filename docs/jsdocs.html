@@ -7259,15 +7259,15 @@ if( GetRaceSkillAdjustment( myRace.id, 32 ) > 10 )
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>MakeItem( socket, player, itemNum, hueNum);</em></p>
+									<p><em>MakeItem( socket, player, itemNum[, hueNum = 0]);</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Player makes the item itemNum. itemNum points to a create.dfn (SECTION ITEM itemNum) entry. Socket can be -1</p>
+									<p>Player makes the item itemNum. itemNum points to a create.dfn (SECTION ITEM itemNum) entry. The hueNum is optional</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">MakeItem( socket, player, 1, 0x45);</code></pre>
+									<pre><code class="language-javascript">MakeItem( socket, player, 1[, 0x45]);</code></pre>
 								</div>
 							</div>
 						</div>
