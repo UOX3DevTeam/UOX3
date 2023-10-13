@@ -30,6 +30,7 @@ SCRIPT=3511// Colossal Blow
 [golem]
 {
 get=craftedgolem
+BACKPACK
 PACKITEM=0x1bf2,11 25
 LOOT=arcane_gems
 LOOT=randomgems,2

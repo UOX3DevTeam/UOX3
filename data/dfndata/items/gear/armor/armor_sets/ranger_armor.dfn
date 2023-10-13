@@ -115,3 +115,15 @@ id=0x13e2
 {
 get=0x13db-ranger 0x13e2-ranger
 }
+
+// Bag with full ranger armor set
+[rangerarmorset]
+{
+get=0x0e76
+color=0x59c
+packitem=rangersleeves
+packitem=rangergloves
+packitem=rangergorget
+packitem=rangerleggings
+packitem=rangertunic
+}

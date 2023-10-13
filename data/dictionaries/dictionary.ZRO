@@ -2550,6 +2550,10 @@
 2790=Time played (Char): %s
 2791=Time played (Acct): %s
 2792=*looks exhausted*
+2793=Value: %i
+2794=for %i gold
+2795=You scrounge some gems from the wreckage.
+2796=* Your body convulses from electric shock *
 // [2800-2999] House script
 2800=House Owner:
 2801=CO-OWNERS
@@ -2785,7 +2789,7 @@
 3162=a poison elemental
 3163=a snow elemental
 3164=an energy vortex
-3165=an evil wisp
+3165=a shadow wisp
 3166=a gold elemental
 3167=a brown bear
 3168=a shadow fiend
@@ -3243,6 +3247,11 @@
 5145=an orc chopper
 5146=the controller
 5147=the Hair Stylist
+5148=a dark wisp
+5149=the Executioner
+5150=a speckled scorpion
+5151=a chaos dragoon
+5152=a chaos dragoon elite
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.
@@ -3971,6 +3980,8 @@
 8942=Select location to teleport to:
 8943=Select target location for the [%s]:
 8944=That doesn't seem to be a valid NPC-id from the DFNs.
+8945=Select target for movable status %i:
+8946=Select target to set as non-decayable:
 // [9000-9500] Misc
 9000=You cannot use this ability while frozen.
 9001=This character is not allowed to fly!

@@ -280,7 +280,7 @@ function DisplayGump( pSocket, pUser, runeBook )
 		  	runeBookGump.AddHTMLGump( 41, 52, 130, 40, 1, 1, "<BASEFONT color=#0xfd size=5>" + splitData[0] + "</BASEFONT>" );
 		  	runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[0] );
 
-		  	runeBookGump.AddHTMLGump( 35, 90, 125, 25, 1, 1, "<CENTER><BASEFONT size=3>" + yLatDeg + "o " + yLatMin + "'" + ( ySouth ? "S" : "N" ) + " " + xLongDeg + "o " + xLongMin + "'" + ( xEast ? "E" : "W" ) + "</BASEFONT></CENTER>" );
+		  	runeBookGump.AddHTMLGump( 35, 90, 125, 25, 1, 1, "<CENTER><BASEFONT size=3>" + yLatDeg + "o " + yLatMin + "'" + ( ySouth ? "N" : "S" ) + " " + xLongDeg + "o " + xLongMin + "'" + ( xEast ? "W" : "E" ) + "</BASEFONT></CENTER>" );
 		  	if( showCoords )
 		  	{
 		  		runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[2] + ", " + splitData[3].toString() );

@@ -42,7 +42,6 @@ target_sources(jscript
         ../../jsinterp.c
         ../../jsinvoke.c
         ../../jsiter.c
-        ../../jskwgen.c
         ../../jslock.c
         ../../jslog2.c
         ../../jslong.c

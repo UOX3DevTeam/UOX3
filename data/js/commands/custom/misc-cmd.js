@@ -1401,3 +1401,5 @@ function onCallback38( pSock, ourObj )
 		}
 	}
 }
+
+function _restorecontext_() {}

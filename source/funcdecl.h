@@ -221,7 +221,6 @@ inline UI32 GetMinutesSinceEpoch()
 //o------------------------------------------------------------------------------------------------o
 // Misc Functions
 //o------------------------------------------------------------------------------------------------o
-R32			RoundNumber( R32 toRound);
 bool		IsNumber( const std::string& str );
 bool		FileExists( const std::string& filepath );
 void		DismountCreature( CChar *s );

@@ -1242,6 +1242,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 		case 1: // Paralyse Spell
 		{
 			dest->SetFrozen( true );
+			dest->Dirty( UT_UPDATE );
 			R32 effectDuration = 0;
 			if( source == nullptr )
 			{

@@ -187,6 +187,9 @@ function onSnoopAttempt( pSnooped, targPack, pSnooping )
 	if( !ValidateObject( pSnooped ) || !ValidateObject( pSnooping ) || !ValidateObject( targPack ))
 		return true;
 
+	if( pSnooping.isGM ) // Override for GMs
+		return true;
+
 	var socket = pSnooping.socket;
 	var worldNum = pSnooping.worldnumber;
 	if(( regionSnoopOverride.indexOf( pSnooping.region.id ) == -1 && facetSnoopRestrict.indexOf( pSnooping.worldnumber ) != -1 ) && !pSnooped.npc )
@@ -465,8 +468,8 @@ function FacetRuleBardProvoke( sourceChar, targetChar )
 
 function onDamage( targetChar, sourceChar, damageValue, damageType )
 {
-	// Allow all damage with a non-tame/non-hirling NPC as the source
-	if( ValidateObject( sourceChar ) && sourceChar.npc && !ValidateObject( targetChar.owner ))
+	// Allow all damage without a source character, or with a non-tame/non-hirling NPC as the source
+	if( !ValidateObject( sourceChar ) || ( ValidateObject( sourceChar ) && sourceChar.npc && !ValidateObject( targetChar.owner )))
 		return true;
 
 	if( regionSpellOverride.indexOf( targetChar.region.id ) == -1 && facetSpellRestrict.indexOf( targetChar.worldnumber ) != -1 )

@@ -1691,6 +1691,7 @@ auto CheckPC( CSocket *mSock, CChar& mChar ) -> void
 				Magic->CastSpell( mSock, &mChar );
 				mChar.SetTimer( tCHAR_SPELLTIME, 0 );
 				mChar.SetFrozen( false );
+				mChar.Dirty( UT_UPDATE );
 			}
 		}
 		else if( mChar.GetNextAct() <= 0 )
@@ -3187,24 +3188,6 @@ auto GetClock() -> UI32
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	RoundNumber()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	rounds a number up or down depending on it's value
-//o------------------------------------------------------------------------------------------------o
-auto RoundNumber( R32 toRound)->R32
-{
-#if defined( _MSC_VER )
-#pragma todo( "This function should be replaced by standard functions available in cmath library, like std::round()" )
-#endif
-	R32 flVal = floor( toRound );
-	if( flVal < floor( toRound + 0.5 ))
-	{
-		return ceil( toRound );
-	}
-	return flVal;
-}
-
-//o------------------------------------------------------------------------------------------------o
 //|	Function	-	IsNumber()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if string is a number, false if not
@@ -3259,7 +3242,7 @@ auto DoLight( CSocket *s, UI08 level ) -> void
 			}
 			else
 			{
-				toShow = static_cast<LIGHTLEVEL>( RoundNumber( i - Races->VisLevel( mChar->GetRace() )));
+				toShow = static_cast<LIGHTLEVEL>( std::round( i - Races->VisLevel( mChar->GetRace() )));
 			}
 			toSend.Level( toShow );
 		}
@@ -3278,7 +3261,7 @@ auto DoLight( CSocket *s, UI08 level ) -> void
 			}
 			else
 			{
-				toShow = static_cast<LIGHTLEVEL>( RoundNumber( dunLevel - Races->VisLevel( mChar->GetRace() )));
+				toShow = static_cast<LIGHTLEVEL>( std::round( dunLevel - Races->VisLevel( mChar->GetRace() )));
 			}
 			toSend.Level( toShow );
 		}
@@ -3346,7 +3329,7 @@ auto DoLight( CChar *mChar, UI08 level ) -> void
 			}
 			else
 			{
-				toShow = static_cast<LIGHTLEVEL>( RoundNumber( i - Races->VisLevel( mChar->GetRace() )));
+				toShow = static_cast<LIGHTLEVEL>( std::round( i - Races->VisLevel( mChar->GetRace() )));
 			}
 		}
 	}
@@ -3360,7 +3343,7 @@ auto DoLight( CChar *mChar, UI08 level ) -> void
 			}
 			else
 			{
-				toShow = static_cast<LIGHTLEVEL>( RoundNumber( dunLevel - Races->VisLevel( mChar->GetRace() )));
+				toShow = static_cast<LIGHTLEVEL>( std::round( dunLevel - Races->VisLevel( mChar->GetRace() )));
 			}
 		}
 	}

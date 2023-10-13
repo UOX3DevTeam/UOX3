@@ -60,3 +60,5 @@ function GetHintMessage( iUsed, useHtml )
 	}
 	return hintText;
 }
+
+function _restorecontext_() {}

@@ -123,8 +123,8 @@ function onUseChecked( pUser, iUsed )
 			return false;
 		}
 
-		var mapCoords = TriggerEvent( 2503, "GetMapCoordinates", iUsed.morex, iUsed.morey, iUsed.morez );
-		var mapCoordsString = mapCoords[3] + "o " + mapCoords[4] + "'" + ( mapCoords[5] ? "S" : "N" ) + " " + mapCoords[0] + "o " + mapCoords[1] + "'" + ( mapCoords[2] ? "E" : "W" );
+		var mapCoords = TriggerEvent( 2503, "GetMapCoordinates", pUser.x, pUser.y, pUser.worldnumber );
+		var mapCoordsString = mapCoords[3] + "o " + mapCoords[4] + "'" + ( mapCoords[5] ? "N" : "S" ) + " " + mapCoords[0] + "o " + mapCoords[1] + "'" + ( mapCoords[2] ? "W" : "E" );
 		var finalString = GetDictionaryEntry( 274, socket.language ); // You are at %s
 		finalString = ( finalString.replace( /%s/gi, mapCoordsString ));
 		socket.SysMessage( finalString );

@@ -2,7 +2,7 @@
 // Triggered for characters logging in with admin account (account 0) until a
 // choice has been made in these gumps, regarding starting with a blank world or loading default UOX3 world templates
 //
-// Last updated: 15th of January, 2022
+// Last updated: 10th of October, 2023
 
 // Backgrounds
 const gumpMainBackground = 5054;
@@ -23,8 +23,8 @@ const exitButtonOff = 4017;
 const exitButtonOn = 4018;
 
 const facetFelucca = 1;
-const facetTrammel = 0;
-const facetIlshenar = 0;
+const facetTrammel = 1;
+const facetIlshenar = 1;
 const facetMalas = 0;
 const facetTokuno = 0;
 const facetTermur = 0;
@@ -114,31 +114,31 @@ function DisplayAdminWelcomeGump( socket, pChar )
 	////////// PAGE 3 //////////
 	if( facetTrammel )
 	{
-		adminWelcome = AddPageDetails( socket, adminWelcome, 3, 8 );
+		adminWelcome = AddPageDetails( socket, adminWelcome, 3, 20 );
 	}
 
 	////////// PAGE 4 //////////
 	if( facetIlshenar )
 	{
-		adminWelcome = AddPageDetails( socket, adminWelcome, 4, 16 );
+		adminWelcome = AddPageDetails( socket, adminWelcome, 4, 40 );
 	}
 
 	////////// PAGE 5 //////////
 	if( facetMalas )
 	{
-		adminWelcome = AddPageDetails( socket, adminWelcome, 5, 24 );
+		adminWelcome = AddPageDetails( socket, adminWelcome, 5, 60 );
 	}
 
 	////////// PAGE 6 //////////
 	if( facetTokuno )
 	{
-		adminWelcome = AddPageDetails( socket, adminWelcome, 6, 32 );
+		adminWelcome = AddPageDetails( socket, adminWelcome, 6, 80 );
 	}
 
 	////////// PAGE 7 //////////
 	if( facetTermur )
 	{
-		adminWelcome = AddPageDetails( socket, adminWelcome, 7, 40 );
+		adminWelcome = AddPageDetails( socket, adminWelcome, 7, 100 );
 	}
 
 	////////// PAGE 20 - Blank Slate //////////
@@ -182,151 +182,253 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	adminWelcome.AddPage( pageNum );
 
 	// Add background, and checkered overlay
-	adminWelcome.AddBackground( 0, 0, 530, gumpMainBackgroundHeight + 130, gumpMainBackground );
+	//adminWelcome.AddBackground( 0, 0, 530, gumpMainBackgroundHeight + 130, gumpMainBackground );
+	adminWelcome.AddBackground( 0, 0, 800, gumpMainBackgroundHeight + 130, gumpMainBackground );
 
 	if( enableTransparentGump )
 	{
-		adminWelcome.AddCheckerTrans( 0, 5, 530, gumpMainBackgroundHeight + 120 );
+		//adminWelcome.AddCheckerTrans( 0, 5, 530, gumpMainBackgroundHeight + 120 );
+		adminWelcome.AddCheckerTrans( 0, 5, 800, gumpMainBackgroundHeight + 120 );
 	}
 
-	adminWelcome.AddButton( 460, 5, exitButtonOff, exitButtonOn, 1, 0, 0 ); 	// Exit Button
+	//adminWelcome.AddButton( 460, 5, exitButtonOff, exitButtonOn, 1, 0, 0 ); 	// Exit Button
+	adminWelcome.AddButton( 720, 5, exitButtonOff, exitButtonOn, 1, 0, 0 ); 	// Exit Button
 
 	// Add a header at top of page
 	adminWelcome.AddHTMLGump( 0, 5, 500, 60, 0, 0, "<CENTER><h1><BASEFONT color=#5ADC40>Default UOX3 World - Options</BASEFONT></h1></CENTER>" );
 
 	// Add section with facet buttons
-	adminWelcome.AddBackground( 275, 30, 115, 275, gumpSecondaryBackground );
-	adminWelcome.AddHTMLGump( 280, 40, 100, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Facets</BASEFONT></BIG></CENTER>" );
+	adminWelcome.AddBackground( 225, 30, 115, 275, gumpSecondaryBackground );
+	adminWelcome.AddHTMLGump( 230, 40, 100, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Facets</BASEFONT></BIG></CENTER>" );
 
 	// If Felucca facet is enabled
 	if( facetFelucca )
 	{
-		adminWelcome.AddButton( 280, 60, ( pageNum == 2 ? 10820 : 10800 ), ( pageNum == 2 ? 10800 : 10820 ), 0, 2, 0 );
+		adminWelcome.AddButton( 230, 60, ( pageNum == 2 ? 10820 : 10800 ), ( pageNum == 2 ? 10800 : 10820 ), 0, 2, 0 );
 	}
 	else
 	{
-		adminWelcome.AddGump( 280, 60, 10840 );
+		adminWelcome.AddGump( 230, 60, 10840 );
 	}
 
 	// If Trammel facet is enabled
 	if( facetTrammel )
 	{
-		adminWelcome.AddButton( 280, 100, ( pageNum == 3 ? 10820 : 10800 ), ( pageNum == 3 ? 10800 : 10820 ), 0, 3, 0 );
+		adminWelcome.AddButton( 230, 100, ( pageNum == 3 ? 10820 : 10800 ), ( pageNum == 3 ? 10800 : 10820 ), 0, 3, 0 );
 	}
 	else
 	{
-		adminWelcome.AddGump( 280, 100, 10840 );
+		adminWelcome.AddGump( 230, 100, 10840 );
 	}
 
 	// If Ilshenar facet is enabled
 	if( facetIlshenar )
 	{
-		adminWelcome.AddButton( 280, 140, ( pageNum == 4 ? 10820 : 10800 ), ( pageNum == 4 ? 10800 : 10820 ), 0, 4, 0 );
+		adminWelcome.AddButton( 230, 140, ( pageNum == 4 ? 10820 : 10800 ), ( pageNum == 4 ? 10800 : 10820 ), 0, 4, 0 );
 	}
 	else
 	{
-		adminWelcome.AddGump( 280, 140, 10840 );
+		adminWelcome.AddGump( 230, 140, 10840 );
 	}
 
 	// If Malas facet is enabled
 	if( facetMalas )
 	{
-		adminWelcome.AddButton( 280, 180, ( pageNum == 5 ? 10820 : 10800 ), ( pageNum == 5 ? 10800 : 10820 ), 0, 5, 0 );
+		adminWelcome.AddButton( 230, 180, ( pageNum == 5 ? 10820 : 10800 ), ( pageNum == 5 ? 10800 : 10820 ), 0, 5, 0 );
 	}
 	else
 	{
-		adminWelcome.AddGump( 280, 180, 10840 );
+		adminWelcome.AddGump( 230, 180, 10840 );
 	}
 
 	// If Tokuno facet is enabled
 	if( facetTokuno )
 	{
-		adminWelcome.AddButton( 280, 220, ( pageNum == 6 ? 10820 : 10800 ), ( pageNum == 6 ? 10800 : 10820 ), 0, 6, 0 );
+		adminWelcome.AddButton( 230, 220, ( pageNum == 6 ? 10820 : 10800 ), ( pageNum == 6 ? 10800 : 10820 ), 0, 6, 0 );
 	}
 	else
 	{
-		adminWelcome.AddGump( 280, 220, 10840 );
+		adminWelcome.AddGump( 230, 220, 10840 );
 	}
 
 	// If Termur facet is enabled
 	if( facetTermur )
 	{
-		adminWelcome.AddButton( 280, 260, ( pageNum == 7 ? 10820 : 10800 ), ( pageNum == 7 ? 10800 : 10820 ), 0, 7, 0 );
+		adminWelcome.AddButton( 230, 260, ( pageNum == 7 ? 10820 : 10800 ), ( pageNum == 7 ? 10800 : 10820 ), 0, 7, 0 );
 	}
 	else
 	{
-		adminWelcome.AddGump( 280, 260, 10840 );
+		adminWelcome.AddGump( 230, 260, 10840 );
 	}
 
-	adminWelcome.AddHTMLGump( 310, 65, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 2 ? "EEEEEE" : "BEBEBE") + ">FELUCCA</BASEFONT>" );
-	adminWelcome.AddHTMLGump( 310, 105, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 3 ? "EEEEEE" : "BEBEBE") + ">TRAMMEL</BASEFONT>" );
-	adminWelcome.AddHTMLGump( 310, 145, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 4 ? "EEEEEE" : "BEBEBE") + ">ILSHENAR</BASEFONT>" );
-	adminWelcome.AddHTMLGump( 310, 185, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 5 ? "EEEEEE" : "BEBEBE") + ">MALAS</BASEFONT>" );
-	adminWelcome.AddHTMLGump( 310, 225, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 6 ? "EEEEEE" : "BEBEBE") + ">TOKUNO</BASEFONT>" );
-	adminWelcome.AddHTMLGump( 310, 265, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 7 ? "EEEEEE" : "BEBEBE") + ">TER MUR</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 260, 65, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 2 ? "EEEEEE" : "BEBEBE") + ">FELUCCA</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 260, 105, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 3 ? "EEEEEE" : "BEBEBE") + ">TRAMMEL</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 260, 145, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 4 ? "EEEEEE" : "BEBEBE") + ">ILSHENAR</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 260, 185, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 5 ? "EEEEEE" : "BEBEBE") + ">MALAS</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 260, 225, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 6 ? "EEEEEE" : "BEBEBE") + ">TOKUNO</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 260, 265, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 7 ? "EEEEEE" : "BEBEBE") + ">TER MUR</BASEFONT>" );
 
 	// Add section with object category checkboxes
-	adminWelcome.AddBackground( 400, 30, 115, 275, gumpSecondaryBackground );
-	adminWelcome.AddHTMLGump( 410, 40, 100, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Types</BASEFONT></BIG></CENTER>" );
-	if( pageNum == 2 || pageNum == 4 )
+	adminWelcome.AddBackground( 350, 30, 115, 275, gumpSecondaryBackground );
+	adminWelcome.AddHTMLGump( 360, 40, 100, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Types</BASEFONT></BIG></CENTER>" );
+	if( pageNum == 2 || pageNum == 3 || pageNum == 4 )
 	{
 		// Only add checkboxes for pages that actually have decorations
-		adminWelcome.AddCheckbox( 410, 60, 9722, 2153, 1, checkboxStartID );
-		adminWelcome.AddCheckbox( 410, 90, 9722, 2153, 1, checkboxStartID + 1 );
-		adminWelcome.AddCheckbox( 410, 120, 9722, 2153, 1, checkboxStartID + 2 );
-		adminWelcome.AddCheckbox( 410, 150, 9722, 2153, 1, checkboxStartID + 3 );
-		adminWelcome.AddCheckbox( 410, 180, 9722, 2153, 1, checkboxStartID + 4 );
-		adminWelcome.AddCheckbox( 410, 210, 9722, 2153, 1, checkboxStartID + 5 );
-		adminWelcome.AddCheckbox( 410, 240, 9722, 2153, 1, checkboxStartID + 6 );
-		adminWelcome.AddCheckbox( 410, 270, 9722, 2153, 1, checkboxStartID + 7 );
+		adminWelcome.AddCheckbox( 360, 60, 9722, 2153, 1, checkboxStartID );
+		adminWelcome.AddCheckbox( 360, 90, 9722, 2153, 1, checkboxStartID + 1 );
+		adminWelcome.AddCheckbox( 360, 120, 9722, 2153, 1, checkboxStartID + 2 );
+		adminWelcome.AddCheckbox( 360, 150, 9722, 2153, 1, checkboxStartID + 3 );
+		adminWelcome.AddCheckbox( 360, 180, 9722, 2153, 1, checkboxStartID + 4 );
+		adminWelcome.AddCheckbox( 360, 210, 9722, 2153, 1, checkboxStartID + 5 );
+		adminWelcome.AddCheckbox( 360, 240, 9722, 2153, 1, checkboxStartID + 6 );
+		adminWelcome.AddCheckbox( 360, 270, 9722, 2153, 1, checkboxStartID + 7 );
 	}
-	adminWelcome.AddHTMLGump( 445, 65, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Doors</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 395, 65, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Doors</BASEFONT>" );
 	if( enableTooltips )
 	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Doors!<br> Almost every building has one - or more!" );
 	}
-	adminWelcome.AddHTMLGump( 445, 95, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Signs</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 395, 95, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Signs</BASEFONT>" );
 	if( enableTooltips )
 	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Shops signs, roadsigns, etc." );
 	}
-	adminWelcome.AddHTMLGump( 445, 125, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Lights</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 395, 125, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Lights</BASEFONT>" );
 	if( enableTooltips )
 	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Lights!<br> lampposts, candles, wall-mounted torches, etc." );
 	}
-	adminWelcome.AddHTMLGump( 445, 155, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Moongates</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 395, 155, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Moongates</BASEFONT>" );
 	if( enableTooltips )
 	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Moongates at fixed locations around the world" );
 	}
-	adminWelcome.AddHTMLGump( 445, 185, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Containers</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 395, 185, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Containers</BASEFONT>" );
 	if( enableTooltips )
 	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Containers! Bookcases, drawers, crates, etc." );
 	}
-	adminWelcome.AddHTMLGump( 445, 215, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Teleporters</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 395, 215, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Teleporters</BASEFONT>" );
 	if( enableTooltips )
 	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Teleporters that teleport players<br> from one location to another" );
 	}
-	adminWelcome.AddHTMLGump( 445, 245, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Misc</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 395, 245, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Misc</BASEFONT>" );
 	if( enableTooltips )
 	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Misc items like plants,<br> and smaller decorations in houses, etc" );
 	}
-	adminWelcome.AddHTMLGump( 445, 275, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Spawns</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 395, 275, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Spawns</BASEFONT>" );
 	if( enableTooltips )
 	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Spawn Regions with NPCs" );
 	}
 
-	adminWelcome.AddGump( 483, 0, 10410 );
-	adminWelcome.AddGump( 483, 200, 10412 );
+	// Add section with facet-specific additions
+	adminWelcome.AddBackground( 475, 30, 310, 380, gumpSecondaryBackground );
+	switch( pageNum )
+	{
+		case 2: // Felucca
+			adminWelcome.AddHTMLGump( 480, 40, 250, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Felucca Decoration Addons</BASEFONT></BIG></CENTER>" );
+
+			// Magincia, client v6.0.3.1 or older
+			adminWelcome.AddCheckbox( 480, 60, 9722, 2153, 0, checkboxStartID + 10 );
+			adminWelcome.AddHTMLGump( 515, 65, 250, 20, 0, 0, "<BASEFONT color=#EEEEEE>Magincia</BASEFONT>" );
+			adminWelcome.AddHTMLGump( 515, 85, 250, 40, true, false, "Original city of Magincia, prior to destruction (pre-v6.0.3.1)" );
+			if( enableTooltips )
+			{
+				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for original city of Magincia, prior to its destruction.<br>Only exists in client versions earlier than 6.0.3.1!" );
+			}
+
+			// Sea Market
+			adminWelcome.AddCheckbox( 480, 130, 9722, 2153, 0, checkboxStartID + 11 );
+			adminWelcome.AddHTMLGump( 515, 135, 250, 20, 0, 0, "<BASEFONT color=#EEEEEE>Sea Market</BASEFONT>" );
+			adminWelcome.AddHTMLGump( 515, 155, 250, 40, true, false, "Floating wharf/village at sea, added in High Seas (v7.0.9.0 and later)" );
+			if( enableTooltips )
+			{
+				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for floating wharf/village in the middle of the sea, only accessible by boat.<br> Added in client v7.0.9.0!" );
+			}
+			break;
+		case 3: // Trammel
+			adminWelcome.AddHTMLGump( 480, 40, 250, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Trammel Decoration Addons</BASEFONT></BIG></CENTER>" );
+
+			// Castle Blackthorn in Britain
+			adminWelcome.AddCheckbox( 480, 60, 9722, 2153, 0, checkboxStartID + 10 );
+			adminWelcome.AddHTMLGump( 515, 65, 200, 20, 0, 0, "<BASEFONT color=#EEEEEE>Castle Blackthorn - New</BASEFONT>" );
+			adminWelcome.AddHTMLGump( 515, 85, 250, 40, true, false, "New revamped castle in Britain (v7.0.37 and later)" );
+			if( enableTooltips )
+			{
+				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for royal residence of Lord Blackthorn.<br> Revamped and rebuilt version of castle; original was destroyed in 2012." );
+			}
+
+			// Castle Blackthorn in Britain
+			adminWelcome.AddCheckbox( 480, 130, 9722, 2153, 0, checkboxStartID + 11 );
+			adminWelcome.AddHTMLGump( 515, 135, 250, 20, 0, 0, "<BASEFONT color=#EEEEEE>Castle Blackthorn - Original</BASEFONT>" );
+			adminWelcome.AddHTMLGump( 515, 155, 250, 40, true, false, "Original castle in Britain (pre-v7.0.37?)." );
+			if( enableTooltips )
+			{
+				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for royal residence of Lord Blackthorn.<br> Original castle destroyed and rebuilt in 2012" );
+			}
+
+			// Magincia, client v6.0.3.1 or older
+			adminWelcome.AddCheckbox( 480, 200, 9722, 2153, 0, checkboxStartID + 12 );
+			adminWelcome.AddHTMLGump( 515, 205, 250, 20, 0, 0, "<BASEFONT color=#EEEEEE>Magincia</BASEFONT>" );
+			adminWelcome.AddHTMLGump( 515, 225, 250, 40, true, false, "Original city of Magincia, prior to destruction (pre-v6.0.3.1)" );
+			if( enableTooltips )
+			{
+				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for original city of Magincia, prior to its destruction.<br>Only exists in client versions earlier than 6.0.3.1!" );
+			}
+
+			// Sea Market
+			adminWelcome.AddCheckbox( 480, 270, 9722, 2153, 0, checkboxStartID + 13 );
+			adminWelcome.AddHTMLGump( 515, 275, 250, 20, 0, 0, "<BASEFONT color=#EEEEEE>New Haven</BASEFONT>" );
+			adminWelcome.AddHTMLGump( 515, 295, 250, 40, true, false, "Young Player city, replaces Ocllo on Trammel (v6.0.0 and later)" );
+			if( enableTooltips )
+			{
+				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for New Haven, that exists in place of Ocllo on Trammel facet.<br>Replaced the earlier Ocllo-replacement Haven!" );
+			}
+
+			// New Haven
+			adminWelcome.AddCheckbox( 480, 340, 9722, 2153, 0, checkboxStartID + 14 );
+			adminWelcome.AddHTMLGump( 515, 345, 250, 20, 0, 0, "<BASEFONT color=#EEEEEE>Sea Market</BASEFONT>" );
+			adminWelcome.AddHTMLGump( 515, 365, 250, 40, true, false, "Floating wharf/village at sea, added in High Seas (v7.0.9.0 and later)" );
+			if( enableTooltips )
+			{
+				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for floating wharf/village in the middle of the sea, only accessible by boat.<br> Added in client v7.0.9.0!" );
+			}
+			break;
+
+		case 4: // Ilshenar
+			adminWelcome.AddHTMLGump( 480, 40, 250, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Ilshenar Decoration Addons</BASEFONT></BIG></CENTER>" );
+
+			// Gargoyle City
+			adminWelcome.AddCheckbox( 480, 60, 9722, 2153, 0, checkboxStartID + 10 );
+			adminWelcome.AddHTMLGump( 515, 65, 200, 20, 0, 0, "<BASEFONT color=#EEEEEE>Gargoyle City</BASEFONT>" );
+			adminWelcome.AddHTMLGump( 515, 85, 250, 40, true, false, "Ver Lor Reg - the city of Gargoyles, prior to destruction (pre-v7.0.30)" );
+			if( enableTooltips )
+			{
+				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for Ver Lor Reg, the city of Gargoyles, prior to its destruction during The Awakening story arc in 2012" );
+			}
+
+			// Castle Blackthorn (Ilshenar) - Golems and Jukas
+			adminWelcome.AddCheckbox( 480, 130, 9722, 2153, 0, checkboxStartID + 11 );
+			adminWelcome.AddHTMLGump( 515, 135, 250, 20, 0, 0, "<BASEFONT color=#EEEEEE>Castle Blackthorn (Ilshenar)</BASEFONT>" );
+			adminWelcome.AddHTMLGump( 515, 155, 250, 40, true, false, "Castle Blackthorn in Ilshenar, prior to destruction (pre-v7.0.30)." );
+			if( enableTooltips )
+			{
+				adminWelcome.AddToolTip( tooltipClilocID, socket, "Decorations for Blackthorn's castle in Ilshenar, filled with golems and jukas, prior to its destruction during The Awakening story arc in 2012." );
+			}
+			break;
+		default:
+			break;
+	}
+
+	adminWelcome.AddGump( 753, 0, 10410 );
+	adminWelcome.AddGump( 753, 200, 10412 );
 
 	// Add some helpful text
 	//adminWelcome.AddHTMLGump( 15, 30, 250, 275, true, false, "Select which parts of the default UOX3 world and Spawns to load for each facet. By default everything is enabled for supported facets" );
-	adminWelcome.AddHTMLGump( 15, 30, 250, 275, true, false, "<p>Select which parts of the <basefont color=#3D9A2B>default UOX3 world</basefont> and Spawns to load for each facet. Facets <basefont color=#AD3C3C>in red</basefont><basefont color=black> have no decorations available yet.<br><br>This process might take a minute.<br><br>Return to this menu at any time via the <basefont color=#2D61D6>'welcome <basefont color=BLACK>command!</p>" );
+	adminWelcome.AddHTMLGump( 15, 30, 200, 275, true, false, "<p>Select which parts of the <basefont color=#3D9A2B>default UOX3 world</basefont> and Spawns to load for each facet. Facets <basefont color=#AD3C3C>in red</basefont><basefont color=black> have no decorations available yet.<br><br>This process might take a minute.<br><br>Return to this menu at any time via the <basefont color=#2D61D6>'welcome <basefont color=BLACK>command!</p>" );
 	//adminWelcome.AddHTMLGump( 15, 30, 250, 275, true, false, "Select which parts of the<br>default UOX3 world and spawns<br>to load for each facet." );
 
 	// Add buttons to cancel/get things going
@@ -335,7 +437,7 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Go back!" );
 	}
-	adminWelcome.AddButton( 420, 305, defaultWorldButtonOff, defaultWorldButtonOn, 1, 0, 2 ); 	// Okay Button
+	adminWelcome.AddButton( 400, 305, defaultWorldButtonOff, defaultWorldButtonOn, 1, 0, 2 ); 	// Okay Button
 	if( enableTooltips )
 	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Load default UOX3 world" );
@@ -367,10 +469,10 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 			break;
 	}
 
-	adminWelcome.AddBackground( 15, gumpMainBackgroundHeight + 20, 150, 20, gumpSecondaryBackground );
+	adminWelcome.AddBackground( 15, gumpMainBackgroundHeight + 20, 140, 20, gumpSecondaryBackground );
 	adminWelcome.AddHTMLGump( 30, gumpMainBackgroundHeight + 20, 150, 20, false, false, "<p><basefont color=#ffffff>Facet Info:</basefont></p>" );
 
-	adminWelcome.AddHTMLGump( 15, gumpMainBackgroundHeight + 40, 500, 80, true, false, facetText );
+	adminWelcome.AddHTMLGump( 15, gumpMainBackgroundHeight + 40, 450, 80, true, true, facetText );
 
 	return adminWelcome;
 }
@@ -494,27 +596,27 @@ function onTimer( timerObj, timerID )
 			for( var i = 0; i < numCheckedBoxes; i++ )
 			{
 				buttonID = tempGumpData.getButton( i );
-				if( buttonID >= 0 && buttonID <= 7 )
+				if( buttonID >= 0 && buttonID <= 19 )
 				{
 					facetName = "felucca";
 				}
-				else if( buttonID >= 8 && buttonID <= 15 )
+				else if( buttonID >= 20 && buttonID <= 39 )
 				{
 					facetName = "trammel";
 				}
-				else if( buttonID >= 16 && buttonID <= 23 )
+				else if( buttonID >= 40 && buttonID <= 59 )
 				{
 					facetName = "ilshenar";
 				}
-				else if( buttonID >= 24 && buttonID <= 31 )
+				else if( buttonID >= 60 && buttonID <= 79 )
 				{
 					facetName = "malas";
 				}
-				else if( buttonID >= 32 && buttonID <= 39 )
+				else if( buttonID >= 80 && buttonID <= 99 )
 				{
 					facetName = "tokuno";
 				}
-				else if( buttonID >= 40 && buttonID <= 47 )
+				else if( buttonID >= 100 && buttonID <= 119 )
 				{
 					facetName = "termur";
 				}
@@ -522,84 +624,112 @@ function onTimer( timerObj, timerID )
 				switch( buttonID )
 				{
 					case 0: // Doors
-					case 8:
-					case 16:
-					case 24:
-					case 32:
+					case 20:
 					case 40:
-						pSocket.currentChar.ExecuteCommand( "decorate load doors " + facetName + " silent multiple" );
+					case 60:
+					case 80:
+					case 100:
+						pSocket.currentChar.ExecuteCommand( "decorate load doors " + facetName + "|silent multiple" );
 						break;
 					case 1: // Signs
-					case 9:
-					case 17:
-					case 25:
-					case 33:
+					case 21:
 					case 41:
-						pSocket.currentChar.ExecuteCommand( "decorate load signs " + facetName + " silent multiple" );
+					case 61:
+					case 81:
+					case 101:
+						pSocket.currentChar.ExecuteCommand( "decorate load signs " + facetName + "|silent multiple" );
 						break;
 					case 2: // Lights
-					case 10:
-					case 18:
-					case 26:
-					case 34:
+					case 22:
 					case 42:
-						pSocket.currentChar.ExecuteCommand( "decorate load lights " + facetName + " silent multiple" );
+					case 62:
+					case 82:
+					case 102:
+						pSocket.currentChar.ExecuteCommand( "decorate load lights " + facetName + "|silent multiple" );
 						break;
 					case 3: // Containers
-					case 11:
-					case 19:
-					case 27:
-					case 35:
+					case 23:
 					case 43:
-						pSocket.currentChar.ExecuteCommand( "decorate load containers " + facetName + " silent multiple" );
+					case 63:
+					case 83:
+					case 103:
+						pSocket.currentChar.ExecuteCommand( "decorate load containers " + facetName + "|silent multiple" );
 						break;
 					case 4: // Moongates
-					case 12:
-					case 20:
-					case 28:
-					case 36:
+					case 24:
 					case 44:
-						pSocket.currentChar.ExecuteCommand( "decorate load moongates " + facetName + " silent multiple" );
+					case 64:
+					case 84:
+					case 104:
+						pSocket.currentChar.ExecuteCommand( "decorate load moongates " + facetName + "|silent multiple" );
 						break;
 					case 5: // Teleporters
-					case 13:
-					case 21:
-					case 29:
-					case 37:
+					case 25:
 					case 45:
-						pSocket.currentChar.ExecuteCommand( "decorate load teleporters " + facetName + " silent multiple" );
+					case 65:
+					case 85:
+					case 105:
+						pSocket.currentChar.ExecuteCommand( "decorate load teleporters " + facetName + "|silent multiple" );
 						break;
 					case 6: // Misc
-					case 14:
-					case 22:
-					case 30:
-					case 38:
+					case 26:
 					case 46:
-						pSocket.currentChar.ExecuteCommand( "decorate load misc " + facetName + " silent multiple" );
+					case 66:
+					case 86:
+					case 106:
+						pSocket.currentChar.ExecuteCommand( "decorate load misc " + facetName + "|silent multiple" );
 						break;
+					// Spawns
 					case 7: // Spawns, Felucca
 						pSocket.currentChar.ExecuteCommand( "enablespawns 0" );
 						doSpawnRegionRespawn = true;
 						break;
-					case 15: // Spawns, Trammel
+					case 27: // Spawns, Trammel
 						pSocket.currentChar.ExecuteCommand( "enablespawns 1" );
 						doSpawnRegionRespawn = true;
 						break;
-					case 23: // Spawns, Ilshenar
+					case 47: // Spawns, Ilshenar
 						pSocket.currentChar.ExecuteCommand( "enablespawns 2" );
 						doSpawnRegionRespawn = true;
 						break;
-					case 31: // Spawns, Malas
+					case 67: // Spawns, Malas
 						pSocket.currentChar.ExecuteCommand( "enablespawns 3" );
 						doSpawnRegionRespawn = true;
 						break;
-					case 39: // Spawns, Tokuno
+					case 87: // Spawns, Tokuno
 						pSocket.currentChar.ExecuteCommand( "enablespawns 4" );
 						doSpawnRegionRespawn = true;
 						break;
-					case 47: // Spawns, Ter Mur
+					case 107: // Spawns, Ter Mur
 						pSocket.currentChar.ExecuteCommand( "enablespawns 5" );
 						doSpawnRegionRespawn = true;
+						break;
+					// Felucca Addons
+					case 10: // Original Magincia
+						pSocket.currentChar.ExecuteCommand( "decorate load felucca_magincia_original|silent multiple" );
+						break;
+					case 11: // Sea Market
+						pSocket.currentChar.ExecuteCommand( "decorate load felucca_seamarket|silent multiple" );
+						break;
+					// Trammel Addons
+					case 30: // Revamped Castle Blackthorn
+						pSocket.currentChar.ExecuteCommand( "decorate load trammel_blackthorncastle|silent multiple" );
+						break;
+					case 31: // Original Magincia
+						pSocket.currentChar.ExecuteCommand( "decorate load trammel_magincia_original|silent multiple" );
+						break;
+					case 32: // New Haven
+						pSocket.currentChar.ExecuteCommand( "decorate load trammel_newhaven|silent multiple" );
+						break;
+					case 33: // Sea Market
+						pSocket.currentChar.ExecuteCommand( "decorate load trammel_seamarket|silent multiple" );
+						break;
+					// Ilshenar Addons
+					case 50: // Ver Lor Reg - Gargoyle City
+						pSocket.currentChar.ExecuteCommand( "decorate load ilshenar_gargoyle_city|silent multiple" );
+						break;
+					case 51: // Castle Blackthorn (Ilshenar) - Golems and Jukas
+						pSocket.currentChar.ExecuteCommand( "decorate load ilshenar_blackthorncastle|silent multiple" );
 						break;
 					default:
 						break;

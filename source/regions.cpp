@@ -362,42 +362,42 @@ void CMapWorld::SaveResources( UI08 worldNum )
 //o------------------------------------------------------------------------------------------------o
 void CMapWorld::LoadResources( UI08 worldNum )
 {
-    mapResources = std::vector<MapResource_st>( mapResources.size(), 
+	mapResources = std::vector<MapResource_st>( mapResources.size(), 
 		MapResource_st( cwmWorldState->ServerData()->ResOre(), cwmWorldState->ServerData()->ResLogs(), 
 			cwmWorldState->ServerData()->ResFish(), BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResOreTime() )), 
 			BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResLogTime() )), BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResFishTime() ))));
-    
-    auto resourceFile = std::filesystem::path( cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + oldstrutil::number( worldNum ) + "].bin"s );
 
-    // The data is grouped as three shorts (for each resource), so we read in that format
-    auto buffer = std::vector<SI16>( 3, 0 );
-    auto input = std::ifstream( resourceFile.string(), std::ios::binary );
+	auto resourceFile = std::filesystem::path( cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + oldstrutil::number( worldNum ) + "].bin"s );
 
-    // We want to get the iteratro for the first mapResources ;
-    auto iter = mapResources.begin();
-    if( input.is_open() )
+	// The data is grouped as three shorts (for each resource), so we read in that format
+	auto buffer = std::vector<SI16>( 3, 0 );
+	auto input = std::ifstream( resourceFile.string(), std::ios::binary );
+
+	// We want to get the iteratro for the first mapResources ;
+	auto iter = mapResources.begin();
+	if( input.is_open() )
 	{
-        while( input.good() && !input.eof() && iter != mapResources.end() )
+		while( input.good() && !input.eof() && iter != mapResources.end() )
 		{
-            input.read( reinterpret_cast<char*>( buffer.data() ), buffer.size() * 2 );
-            if( input.gcount() != buffer.size() * 2 )
+			input.read( reinterpret_cast<char*>( buffer.data() ), buffer.size() * 2 );
+			if( input.gcount() != buffer.size() * 2 )
 			{
-                // We had issues reading the full amount, break out of this
-                break;
-            }
+				// We had issues reading the full amount, break out of this
+				break;
+			}
 
-            // For whatever reason the resources are stored in big endidan, which on int/arm machines , we need little endian, so reverse them
-            std::for_each( buffer.begin(), buffer.end(), []( SI16 &value ) {
-                std::reverse( reinterpret_cast<char*>( &value ), reinterpret_cast<char*>( &value ) + 2 );
-            });
+			// For whatever reason the resources are stored in big endidan, which on int/arm machines , we need little endian, so reverse them
+			std::for_each( buffer.begin(), buffer.end(), []( SI16 &value ) {
+				std::reverse( reinterpret_cast<char*>( &value ), reinterpret_cast<char*>( &value ) + 2 );
+			});
 
-            // Now set the values
-            ( *iter ).oreAmt = buffer[0];
-            ( *iter ).logAmt = buffer[1];
-            ( *iter ).fishAmt = buffer[2];
-             iter++;
-        }
-    }
+			// Now set the values
+			( *iter ).oreAmt = buffer[0];
+			( *iter ).logAmt = buffer[1];
+			( *iter ).fishAmt = buffer[2];
+			iter++;
+		}
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o

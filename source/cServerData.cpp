@@ -711,7 +711,7 @@ auto CServerData::ResetDefaults() -> void
 	CombatBloodEffectChance( 75 );
 	GlobalAttackSpeed( 1.0 );
 	NPCSpellCastSpeed( 1.0 );
-	FishingStaminaLoss( 2.0 );
+	FishingStaminaLoss( 2 );
 	CombatArmorClassDamageBonus( false );
 	AlchemyDamageBonusEnabled( false );
 	AlchemyDamageBonusModifier( 5 );

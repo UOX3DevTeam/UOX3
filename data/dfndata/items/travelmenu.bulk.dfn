@@ -1,7 +1,7 @@
-// Towns
+// Towns Felucca
 [ITEMMENU 6005]
 {
-Britain
+Britain Felucca
 0x0C0B=Bank (West)
 GOPLACE=27
 0x0C0B=Bank (East)
@@ -32,7 +32,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6006]
 {
-Buccaneer's Den
+Buccaneer's Den Felucca
 0x0C0B=Bank
 GOPLACE=33
 0x0BD1=Bathhouse
@@ -49,7 +49,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6007]
 {
-Cove
+Cove Felucca
 0x0C0B=Bank
 GOPLACE=44
 0x0BD1=Cemetery
@@ -66,7 +66,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6008]
 {
-Jhelom
+Jhelom Felucca
 0x0C0B=Bank
 GOPLACE=56
 0x0BD1=Cemetery
@@ -87,7 +87,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6009]
 {
-Magincia
+Magincia Felucca
 0x0C0B=Bank
 GOPLACE=63
 0x0BD1=Docks
@@ -102,7 +102,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6010]
 {
-Minoc
+Minoc Felucca
 0x0C0B=Bank
 GOPLACE=75
 0x0BD1=Bridge
@@ -121,7 +121,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6011]
 {
-Moonglow
+Moonglow Felucca
 0x0C0B=Bank
 GOPLACE=85
 0x0BD1=Cemetery
@@ -140,7 +140,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6012]
 {
-Nujelm
+Nujelm Felucca
 0x0C0B=Bank
 GOPLACE=97
 0x0BD1=Cemetery
@@ -163,7 +163,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6013]
 {
-Ocllo
+Ocllo Felucca
 0x0C0B=Bank
 GOPLACE=103
 0x0BD1=Docks
@@ -178,7 +178,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6014]
 {
-Serpents Hold
+Serpents Hold Felucca
 0x0C0B=Bank
 GOPLACE=114
 0x0BD1=North
@@ -195,7 +195,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6015]
 {
-Skara Brae
+Skara Brae Felucca
 0x0C0B=Bank
 GOPLACE=126
 0x0BD1=East
@@ -216,7 +216,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6016]
 {
-Trinsic
+Trinsic Felucca
 0x0C0B=Bank (West)
 GOPLACE=137
 0x0C0B=Bank (East)
@@ -241,7 +241,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6017]
 {
-Vesper
+Vesper Felucca
 0x0C0B=Bank
 GOPLACE=146
 0x0BD1=Center
@@ -262,7 +262,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6018]
 {
-Wind
+Wind Felucca
 0x0BD1=Caves
 GOPLACE=151
 0x0BD1=East
@@ -281,7 +281,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6019]
 {
-Yew
+Yew Felucca
 0x0C0B=Bank
 GOPLACE=166
 0x0BD1=Cemetery
@@ -302,7 +302,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6020]
 {
-Papua
+Papua Felucca
 0x0C0B=Bank
 GOPLACE=307
 0x0BD1=Mage Shop
@@ -313,7 +313,7 @@ ITEMMENU=6001
 
 [ITEMMENU 6021]
 {
-Delucia
+Delucia Felucca
 0x0C0B=Bank
 GOPLACE=308
 0x0BD1=Center
@@ -322,11 +322,11 @@ GOPLACE=305
 ITEMMENU=6001
 }
 
-// Dungeons
+// Dungeons Felucca
 
 [ITEMMENU 6022]
 {
-Covetous
+Covetous Felucca
 0x0BD1=Covetous Outside
 GOPLACE=200
 0x0BD1=Covetous Level 1
@@ -345,7 +345,7 @@ ITEMMENU=6002
 
 [ITEMMENU 6023]
 {
-Deciet
+Deciet Felucca
 0x0BD1=Deceit Outside
 GOPLACE=210
 0x0BD1=Deceit Level 1
@@ -362,7 +362,7 @@ ITEMMENU=6002
 
 [ITEMMENU 6024]
 {
-Despise
+Despise Felucca
 0x0BD1=Despise Outside
 GOPLACE=220
 0x0BD1=Despise Entryway
@@ -379,7 +379,7 @@ ITEMMENU=6002
 
 [ITEMMENU 6025]
 {
-Destard
+Destard Felucca
 0x0BD1=Destard Outside
 GOPLACE=230
 0x0BD1=Destard Level 1
@@ -394,7 +394,7 @@ ITEMMENU=6002
 
 [ITEMMENU 6026]
 {
-Hythloth
+Hythloth Felucca
 0x0BD1=Hythloth Outside
 GOPLACE=240
 0x0BD1=Hythloth Level 1
@@ -411,7 +411,7 @@ ITEMMENU=6002
 
 [ITEMMENU 6027]
 {
-Shame
+Shame Felucca
 0x0BD1=Shame Outside
 GOPLACE=250
 0x0BD1=Shame Level 1
@@ -428,7 +428,7 @@ ITEMMENU=6002
 
 [ITEMMENU 6028]
 {
-Wrong
+Wrong Felucca
 0x0BD1=Wrong Outside
 GOPLACE=260
 0x0BD1=Wrong Level 1
@@ -443,7 +443,7 @@ ITEMMENU=6002
 
 [ITEMMENU 6029]
 {
-Jail Cells
+Jail Cells Felucca
 0x0BD1=Jail Cell 1
 GOPLACE=1
 0x0BD1=Jail Cell 2
@@ -470,7 +470,7 @@ ITEMMENU=6004
 
 [ITEMMENU 6030]
 {
-Fire Dungeon
+Fire Dungeon Felucca
 0x0BD1=T2A Entrance
 GOPLACE=275
 0x0BD1=Britannia Entrance
@@ -485,7 +485,7 @@ ITEMMENU=6002
 
 [ITEMMENU 6031]
 {
-Ice Dungeon
+Ice Dungeon Felucca
 0x0BD1=T2A Entrance
 GOPLACE=265
 0x0BD1=Britannia Entrance
@@ -498,6 +498,508 @@ GOPLACE=268
 GOPLACE=269
 <=Previous Menu
 ITEMMENU=6002
+}
+
+// Towns Trammel
+[ITEMMENU 6105]
+{
+Britain Trammel
+0x0C0B=Bank (West)
+GOPLACE=27,1
+0x0C0B=Bank (East)
+GOPLACE=28,1
+0x0BD1=Blackthorn Castle
+GOPLACE=16,1
+0x0BD1=Blackthorn Castle Entrance
+GOPLACE=22,1
+0x0BD1=British Castle Entrance
+GOPLACE=21,1
+0x0BD1=British Throne
+GOPLACE=15,1
+0x0BD1=Center
+GOPLACE=20,1
+0x0BD1=Farmlands
+GOPLACE=25,1
+0x0BD1=Graveyard
+GOPLACE=26,1
+0x0BD1=Park
+GOPLACE=24,1
+0x0BD1=Sewers - T2A
+GOPLACE=303,1
+0x0BD1=Suburbs
+GOPLACE=23,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6106]
+{
+Buccaneer's Den Trammel
+0x0C0B=Bank
+GOPLACE=33,1
+0x0BD1=Bathhouse
+GOPLACE=31,1
+0x0BD1=Docks
+GOPLACE=30,1
+0x0BD1=Hidden Caves
+GOPLACE=33,1
+0x0BD1=Pirates Plunder Tavern
+GOPLACE=32,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6107]
+{
+Cove Trammel
+0x0C0B=Bank
+GOPLACE=44,1
+0x0BD1=Cemetery
+GOPLACE=43,1
+0x0BD1=Gates
+GOPLACE=40,1
+0x0BD1=Guard Post
+GOPLACE=41,1
+0x0BD1=Orc Fort
+GOPLACE=42,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6108]
+{
+Jhelom Trammel
+0x0C0B=Bank
+GOPLACE=56,1
+0x0BD1=Cemetery
+GOPLACE=53,1
+0x0BD1=East Docks
+GOPLACE=52,1
+0x0BD1=Fighting Pit
+GOPLACE=51,1
+0x0BD1=Main Island
+GOPLACE=50,1
+0x0BD1=Medium Island
+GOPLACE=54,1
+0x0BD1=Small Island
+GOPLACE=55,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6109]
+{
+Magincia Trammel
+0x0C0B=Bank
+GOPLACE=63,1
+0x0BD1=Docks
+GOPLACE=60,1
+0x0BD1=Park
+GOPLACE=62,1
+0x0BD1=Parliament
+GOPLACE=61,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6110]
+{
+Minoc Trammel
+0x0C0B=Bank
+GOPLACE=75,1
+0x0BD1=Bridge
+GOPLACE=73,1
+0x0BD1=Gypsy Camp
+GOPLACE=72,1
+0x0BD1=Mining Camp
+GOPLACE=74,1
+0x0BD1=North
+GOPLACE=70,1
+0x0BD1=South
+GOPLACE=71,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6111]
+{
+Moonglow Trammel
+0x0C0B=Bank
+GOPLACE=85,1
+0x0BD1=Cemetery
+GOPLACE=84,1
+0x0BD1=Center
+GOPLACE=80,1
+0x0BD1=Docks
+GOPLACE=81,1
+0x0BD1=Telescope
+GOPLACE=82,1
+0x0BD1=Zoo
+GOPLACE=83,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6112]
+{
+Nujelm Trammel
+0x0C0B=Bank
+GOPLACE=97,1
+0x0BD1=Cemetery
+GOPLACE=96,1
+0x0BD1=Chess Board
+GOPLACE=95,1
+0x0BD1=Docks
+GOPLACE=90,1
+0x0BD1=East
+GOPLACE=93,1
+0x0BD1=North
+GOPLACE=92,1
+0x0BD1=Palace
+GOPLACE=91,1
+0x0BD1=West
+GOPLACE=94,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6113]
+{
+Ocllo Trammel
+0x0C0B=Bank
+GOPLACE=103,1
+0x0BD1=Docks
+GOPLACE=100,1
+0x0BD1=Farmlands
+GOPLACE=102,1
+0x0BD1=North
+GOPLACE=101,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6114]
+{
+Serpents Hold Trammel
+0x0C0B=Bank
+GOPLACE=114,1
+0x0BD1=North
+GOPLACE=110,1
+0x0BD1=South
+GOPLACE=112,1
+0x0BD1=South Guardpost
+GOPLACE=113,1
+0x0BD1=West Docks
+GOPLACE=111,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6115]
+{
+Skara Brae Trammel
+0x0C0B=Bank
+GOPLACE=126,1
+0x0BD1=East
+GOPLACE=125,1
+0x0BD1=East Docks
+GOPLACE=122,1
+0x0BD1=North
+GOPLACE=124,1
+0x0BD1=South
+GOPLACE=123,1
+0x0BD1=West
+GOPLACE=121,1
+0x0BD1=West Docks
+GOPLACE=120,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6116]
+{
+Trinsic Trammel
+0x0C0B=Bank (West)
+GOPLACE=137,1
+0x0C0B=Bank (East)
+GOPLACE=138,1
+0x0BD1=Center
+GOPLACE=130,1
+0x0BD1=East Docks
+GOPLACE=135,1
+0x0BD1=Island Park
+GOPLACE=136,1
+0x0BD1=North
+GOPLACE=133,1
+0x0BD1=South
+GOPLACE=134,1
+0x0BD1=South Gate
+GOPLACE=132,1
+0x0BD1=West Gate
+GOPLACE=131,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6117]
+{
+Vesper Trammel
+0x0C0B=Bank
+GOPLACE=146,1
+0x0BD1=Center
+GOPLACE=140,1
+0x0BD1=Docks
+GOPLACE=141,1
+0x0BD1=East
+GOPLACE=143,1
+0x0BD1=Grave Yard
+GOPLACE=144,1
+0x0BD1=North
+GOPLACE=142,1
+0x0BD1=West
+GOPLACE=145,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6118]
+{
+Wind Trammel
+0x0BD1=Caves
+GOPLACE=151,1
+0x0BD1=East
+GOPLACE=153,1
+0x0BD1=Outside Entrance
+GOPLACE=150,1
+0x0BD1=Park
+GOPLACE=155,1
+0x0BD1=South
+GOPLACE=152,1
+0x0BD1=West
+GOPLACE=154,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6119]
+{
+Yew Trammel
+0x0C0B=Bank
+GOPLACE=166,1
+0x0BD1=Cemetery
+GOPLACE=164,1
+0x0BD1=Center
+GOPLACE=160,1
+0x0BD1=Courts & Prisons
+GOPLACE=162,1
+0x0BD1=Empath Abbey
+GOPLACE=161,1
+0x0BD1=Hidden Cave
+GOPLACE=163,1
+0x0BD1=Orc Fort
+GOPLACE=165,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6120]
+{
+Papua Trammel
+0x0C0B=Bank
+GOPLACE=307,1
+0x0BD1=Mage Shop
+GOPLACE=304,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+[ITEMMENU 6121]
+{
+Delucia Trammel
+0x0C0B=Bank
+GOPLACE=308,1
+0x0BD1=Center
+GOPLACE=305,1
+<=Previous Menu
+ITEMMENU=6101
+}
+
+// Dungeons Trammel
+
+[ITEMMENU 6122]
+{
+Covetous Trammel
+0x0BD1=Covetous Outside
+GOPLACE=200,1
+0x0BD1=Covetous Level 1
+GOPLACE=201,1
+0x0BD1=Covetous Level 2
+GOPLACE=202,1
+0x0BD1=Covetous Level 3
+GOPLACE=203,1
+0x0BD1=Covetous Lake
+GOPLACE=204,1
+0x0BD1=Covetous Torture
+GOPLACE=205,1
+<=Previous Menu
+ITEMMENU=6102
+}
+
+[ITEMMENU 6123]
+{
+Deciet Trammel
+0x0BD1=Deceit Outside
+GOPLACE=210,1
+0x0BD1=Deceit Level 1
+GOPLACE=211,1
+0x0BD1=Deceit Level 2
+GOPLACE=212,1
+0x0BD1=Deceit Level 3
+GOPLACE=213,1
+0x0BD1=Deceit Level 4
+GOPLACE=214,1
+<=Previous Menu
+ITEMMENU=6102
+}
+
+[ITEMMENU 6124]
+{
+Despise Trammel
+0x0BD1=Despise Outside
+GOPLACE=220,1
+0x0BD1=Despise Entryway
+GOPLACE=221,1
+0x0BD1=Despise Level 1 Up
+GOPLACE=222,1
+0x0BD1=Despise Level 2 Down
+GOPLACE=223,1
+0x0BD1=Despise Level 3
+GOPLACE=224,1
+<=Previous Menu
+ITEMMENU=6102
+}
+
+[ITEMMENU 6125]
+{
+Destard Trammel
+0x0BD1=Destard Outside
+GOPLACE=230,1
+0x0BD1=Destard Level 1
+GOPLACE=231,1
+0x0BD1=Destard Level 2
+GOPLACE=232,1
+0x0BD1=Destard Level 3
+GOPLACE=233,1
+<=Previous Menu
+ITEMMENU=6102
+}
+
+[ITEMMENU 6126]
+{
+Hythloth Trammel
+0x0BD1=Hythloth Outside
+GOPLACE=240,1
+0x0BD1=Hythloth Level 1
+GOPLACE=241,1
+0x0BD1=Hythloth Level 2
+GOPLACE=242,1
+0x0BD1=Hythloth Level 3
+GOPLACE=243,1
+0x0BD1=Hythloth Level 4
+GOPLACE=244,1
+<=Previous Menu
+ITEMMENU=6102
+}
+
+[ITEMMENU 6127]
+{
+Shame Trammel
+0x0BD1=Shame Outside
+GOPLACE=250,1
+0x0BD1=Shame Level 1
+GOPLACE=251,1
+0x0BD1=Shame Level 2
+GOPLACE=252,1
+0x0BD1=Shame Level 3
+GOPLACE=253,1
+0x0BD1=Shame Level 4
+GOPLACE=254,1
+<=Previous Menu
+ITEMMENU=6102
+}
+
+[ITEMMENU 6128]
+{
+Wrong Trammel
+0x0BD1=Wrong Outside
+GOPLACE=260,1
+0x0BD1=Wrong Level 1
+GOPLACE=261,1
+0x0BD1=Wrong Level 2
+GOPLACE=262,1
+0x0BD1=Wrong Level 3
+GOPLACE=263,1
+<=Previous Menu
+ITEMMENU=6102
+}
+
+[ITEMMENU 6129]
+{
+Jail Cells Trammel
+0x0BD1=Jail Cell 1
+GOPLACE=1,1
+0x0BD1=Jail Cell 2
+GOPLACE=2,1
+0x0BD1=Jail Cell 3
+GOPLACE=3,1
+0x0BD1=Jail Cell 4
+GOPLACE=4,1
+0x0BD1=Jail Cell 5
+GOPLACE=5,1
+0x0BD1=Jail Cell 6
+GOPLACE=6,1
+0x0BD1=Jail Cell 7
+GOPLACE=7,1
+0x0BD1=Jail Cell 8
+GOPLACE=8,1
+0x0BD1=Jail Cell 9
+GOPLACE=9,1
+0x0BD1=Jail Cell 10
+GOPLACE=10,1
+<=Previous Menu
+ITEMMENU=6104
+}
+
+[ITEMMENU 6130]
+{
+Fire Dungeon Trammel
+0x0BD1=T2A Entrance
+GOPLACE=275,1
+0x0BD1=Britannia Entrance
+GOPLACE=276,1
+0x0BD1=Level 1
+GOPLACE=277,1
+0x0BD1=Level 2
+GOPLACE=278,1
+<=Previous Menu
+ITEMMENU=6102
+}
+
+[ITEMMENU 6131]
+{
+Ice Dungeon Trammel
+0x0BD1=T2A Entrance
+GOPLACE=265,1
+0x0BD1=Britannia Entrance
+GOPLACE=266,1
+0x0BD1=Level 1
+GOPLACE=267,1
+0x0BD1=Ratman Fort
+GOPLACE=268,1
+0x0BD1=Ice Demon lair
+GOPLACE=269,1
+<=Previous Menu
+ITEMMENU=6102
 }
 
 [ITEMMENU 6200]

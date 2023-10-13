@@ -1292,28 +1292,31 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				if( data.empty() )
 					return;
 
+				SI08 targetWorld = -1;
+				auto secs = oldstrutil::sections( data, "," );
+				if( secs.size() > 1 )
+				{
+					// See if a target world override was specified in travel menu (allows using same location entries in locations.dfn for Fel/Trammel, for instance)
+					targetWorld = oldstrutil::value<SI08>( oldstrutil::trim( oldstrutil::removeTrailing( secs[1], "//" )));
+				}
+
 				UI16 placeNum = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
 
-					if( toGoTo.worldNum == 0 && mChar->WorldNumber() <= 1 )
-					{
-						// Stay in same world if already in world 0 or 1
-						mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, mChar->WorldNumber(), mChar->GetInstanceId() );
+					auto oldWorld = mChar->WorldNumber();
+					targetWorld = targetWorld != -1 ? targetWorld : static_cast<SI08>( toGoTo.worldNum );
+					mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, static_cast<UI08>( targetWorld ), mChar->GetInstanceId() );
 
-						// Additional update required for regular UO client
-						mChar->Update();
-					}
-					else if( toGoTo.worldNum != mChar->WorldNumber() )
+					if( static_cast<UI08>( targetWorld ) != oldWorld )
 					{
 						// Change map!
-						mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, toGoTo.worldNum, mChar->GetInstanceId() );
-						SendMapChange( toGoTo.worldNum, s );
-
-						// Additional update required for regular UO client
-						mChar->Update();
+						SendMapChange( targetWorld, s );
 					}
+
+					// Additional update required for regular UO client
+					mChar->Update();
 				}
 			}
 			else if( cmd == "GUIINFORMATION" )

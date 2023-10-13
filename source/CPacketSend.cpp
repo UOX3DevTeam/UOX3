@@ -6802,10 +6802,10 @@ void CPSendGumpMenu::addText( const std::string& msg )
 		temp = temp.substr( 0, 512 );
 	}
 #if defined( UOX_DEBUG_MODE )
-	Console << msg << myendl;
+	Console << temp << myendl;
 #endif
 
-	text.push_back( msg );
+	text.push_back( temp );
 }
 
 void CPSendGumpMenu::Finalize( void )
