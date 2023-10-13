@@ -1,4 +1,4 @@
-11/10/2023 - Xuri (0.99.6-RC6x)
+14/10/2023 - Xuri (0.99.6-RC6x)
 	Added dummy context restore function to additional scripts
 	Updated 'go command to support specifying location to teleport to by name, mapped to locations from locations.dfn (Thanks Dragon Slayer!)
 	Updated Smart Turn script for furniture (js/server/misc/furniture_smartturn.js) with more optimized code (Humility)
