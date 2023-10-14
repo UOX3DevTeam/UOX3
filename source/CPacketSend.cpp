@@ -483,7 +483,7 @@ void CPExtMove::SetFlags( CChar &toCopy )
 		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__FROZEN, toCopy.IsFrozen() );
-		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E ) || toCopy.GetId() == 0x029B );
+		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E || toCopy.GetId() == 0x029B || toCopy.GetId() == 0xb8 || toCopy.GetId() == 0xba ));
 		flag.set( BIT__FLYING, ( toCopy.IsFlying() ));
 		flag.set( BIT__GOLDEN, ( toCopy.IsInvulnerable() ));
 	}
@@ -1190,7 +1190,7 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 		//const UI08 BIT__IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__FROZEN, toCopy.IsFrozen() );
-		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E ));
+		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E || toCopy.GetId() == 0x029B || toCopy.GetId() == 0xb8 || toCopy.GetId() == 0xba ));
 		flag.set( BIT__FLYING, toCopy.IsFlying() );
 		flag.set( BIT__GOLDEN, toCopy.IsInvulnerable() );
 	}
