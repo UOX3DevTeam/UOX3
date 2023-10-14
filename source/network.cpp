@@ -347,17 +347,7 @@ void CNetworkStuff::Disconnect( UOXSOCKET s )
 		connClients[s]->FlushBuffer();
 		connClients[s]->ClearTimers();
 		connClients[s]->CloseSocket();
-		if(( currConnIter != connClients.begin() ) && currConnIter >= ( connClients.begin() + s ))
-		{
-			--currConnIter;
-		}
-		for( size_t q = 0; q < connIteratorBackup.size(); ++q )
-		{
-			if( connIteratorBackup[q] != connClients.begin() && connIteratorBackup[q] >= ( connClients.begin() + s ))
-			{
-				--connIteratorBackup[q];
-			}
-		}
+
 		delete connClients[s];
 		connClients.erase( connClients.begin() + s );
 	}
@@ -389,7 +379,8 @@ void CNetworkStuff::LogOut( CSocket *s )
 
 	KillTrades( p );
 
-	if( p->GetCommandLevel() >= CL_CNS || p->GetAccount().wAccountIndex == 0 )
+	if( p->GetCommandLevel() >= CL_CNS || p->GetAccount().wAccountIndex == 0 
+		|| ( cwmWorldState->ServerData()->YoungPlayerSystem() && p->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_UOR ))
 	{
 		valid = true;
 	}
@@ -444,6 +435,18 @@ void CNetworkStuff::LogOut( CSocket *s )
 			i->SetLocation( p->GetX(), p->GetY(), p->GetZ() );
 		}
 	}
+
+	// Iterate through list of containers opened by player
+	auto contsOpened = s->GetContsOpenedList();
+	for( const auto &iCont : contsOpened->collection() )
+	{
+		if( ValidateObject( iCont ))
+		{
+			// Remove player from container's own list of players who have previously opened it
+			iCont->GetContOpenedByList()->Remove( s );
+		}
+	}
+	s->GetContsOpenedList()->Clear(); // Then clear the socket's list of opened containers
 
 	CAccountBlock_st& actbAccount = s->GetAccount();
 	if( valid && !p->IsCriminal() && !p->HasStolen() && !p->IsAtWar() && !p->IsAggressor( false ))
@@ -1118,14 +1121,16 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 								tempBuffer[4] = buffer[5];
 								tempBuffer[5] = buffer[6];
 								tempBuffer[6] = buffer[7];
-								size_t plNameLen = player->GetNameRequest( mSock->CurrcharObj() ).size();
-								strncopy(( char * )&tempBuffer[7], 30, player->GetNameRequest( mSock->CurrcharObj() ).c_str(), 30 );
+								auto playerName = player->GetNameRequest( mSock->CurrcharObj(), NRS_JOURNAL );
+								size_t plNameLen = playerName.size();
+								strncopy(( char * )&tempBuffer[7], 30, playerName.c_str(), 30 );
 								size_t mj = 8 + plNameLen;
-								size_t plTitleLen = player->GetNameRequest( mSock->CurrcharObj() ).size() + 1;
+								auto playerTitle = player->GetTitle();
+								size_t plTitleLen = playerTitle.size() + 1;
 								for( size_t k = 0; k < plTitleLen; ++k )
 								{
 									tempBuffer[mj++] = 0;
-									tempBuffer[mj++] = player->GetNameRequest( mSock->CurrcharObj() ).data()[k];
+									tempBuffer[mj++] = playerTitle.data()[k];
 								}
 								mj += 2;
 								ourMessage = "Test of Char Profile";
@@ -1202,28 +1207,29 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 //o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::CheckLoginMessage( void )
 {
-	fd_set all;
-	fd_set errsock;
+	//fd_set all; // This is already defined globally?
+	//fd_set errsock; // This is already defined globally?
 	size_t i;
 
-	cwmWorldState->uoxTimeout.tv_sec = 0;
-	cwmWorldState->uoxTimeout.tv_usec = 1;
+	//cwmWorldState->uoxTimeout.tv_sec = 0;
+	//cwmWorldState->uoxTimeout.tv_usec = 1; // This causes Windows to wait 1 extra milliseconds per loop, while Linux waits 1 microseconds, causing performance difference
 
 	FD_ZERO( &all );
 	FD_ZERO( &errsock );
 
 	SI32 nfds = 0;
-	for( i = 0; i < loggedInClients.size(); ++i )
+	for( auto &tSock : loggedInClients )
 	{
-		size_t clientSock = loggedInClients[i]->CliSocket();
+		auto clientSock = static_cast<UOXSOCKET>( tSock->CliSocket() );
 		FD_SET( clientSock, &all );
 		FD_SET( clientSock, &errsock );
 		if( static_cast<int>( clientSock ) + 1 > nfds )
 		{
-			nfds = static_cast<int>( clientSock ) + 1;
+			nfds = clientSock + 1;
 		}
 	}
-	SI32 s = select( static_cast<UOXSOCKET>( nfds ), &all, nullptr, &errsock, &cwmWorldState->uoxTimeout );
+
+	SI32 s = select( nfds, &all, nullptr, &errsock, &cwmWorldState->uoxTimeout );
 	if( s > 0 )
 	{
 		size_t oldnow = loggedInClients.size();
@@ -1292,13 +1298,6 @@ void CNetworkStuff::LoginDisconnect( UOXSOCKET s )
 		}
 	}
 
-	for( size_t q = 0; q < loggIteratorBackup.size(); ++q )
-	{
-		if( loggIteratorBackup[q] != loggedInClients.begin() && loggIteratorBackup[q] >= ( loggedInClients.begin() + s ))
-		{
-			--loggIteratorBackup[q];
-		}
-	}
 	delete loggedInClients[s];
 	loggedInClients.erase( loggedInClients.begin() + s );
 }
@@ -1518,54 +1517,6 @@ UOXSOCKET CNetworkStuff::FindNetworkPtr( CSocket *toFind )
 	return 0xFFFFFFFF;
 }
 
-CSocket *CNetworkStuff::FirstSocket( void )
-{
-	CSocket *retSock = nullptr;
-	currConnIter = connClients.begin();
-	if( !FinishedSockets() )
-	{
-		retSock = ( *currConnIter );
-	}
-	return retSock;
-}
-CSocket *CNetworkStuff::NextSocket( void )
-{
-	CSocket *retSock = nullptr;
-	if( !FinishedSockets() )
-	{
-		++currConnIter;
-		if( !FinishedSockets() )
-		{
-			retSock = ( *currConnIter );
-		}
-	}
-	return retSock;
-}
-bool CNetworkStuff::FinishedSockets( void )
-{
-	return ( currConnIter == connClients.end() );
-}
-
-CSocket *CNetworkStuff::PrevSocket( void )
-{
-	if( currConnIter == connClients.begin() )
-		return nullptr;
-
-	--currConnIter;
-	return ( *currConnIter );
-}
-CSocket *CNetworkStuff::LastSocket( void )
-{
-	currConnIter = connClients.end();
-	if( currConnIter != connClients.begin() )
-	{
-		--currConnIter;
-		return ( *currConnIter );
-	}
-	else
-		return nullptr;
-}
-
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CNetworkStuff::LoadFirewallEntries()
 //o------------------------------------------------------------------------------------------------o
@@ -1658,50 +1609,3 @@ size_t CNetworkStuff::PeakConnectionCount( void ) const
 	return peakConnectionCount;
 }
 
-//	nonlock methods, but this whole approach is questionable
-void CNetworkStuff::pushConn()
-{
-	connIteratorBackup.push_back( currConnIter );
-}
-void CNetworkStuff::popConn( void )
-{
-	currConnIter = connIteratorBackup.back();
-	connIteratorBackup.pop_back();
-}
-void CNetworkStuff::pushLogg( void )
-{
-	loggIteratorBackup.push_back( currLoggIter );
-}
-void CNetworkStuff::popLogg( void )
-{
-	currLoggIter = loggIteratorBackup.back();
-	loggIteratorBackup.pop_back();
-}
-
-void CNetworkStuff::PushConn( void )
-{
-	// This is horrible, to lock the mutex, and release elsewhere,
-	// Dont do this boys and girls, refactor your code!
-	// Leaving this here for now, as we transistion to c++17 thread. But later..
-	internallock.lock();
-	connIteratorBackup.push_back( currConnIter );
-}
-
-void CNetworkStuff::PopConn( void )
-{
-	currConnIter = connIteratorBackup.back();
-	connIteratorBackup.pop_back();
-	internallock.unlock();
-}
-
-void CNetworkStuff::PushLogg( void )
-{
-	internallock.lock();
-	loggIteratorBackup.push_back( currLoggIter );
-}
-void CNetworkStuff::PopLogg( void )
-{
-	currLoggIter = loggIteratorBackup.back();
-	loggIteratorBackup.pop_back();
-	internallock.unlock();
-}

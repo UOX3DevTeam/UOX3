@@ -588,7 +588,7 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 			}
 			for( i = 1; i < distX; ++i )
 			{
-				collisions[collisioncount] = Vector3D_st( startX + ( sgn_x * i ), startY + ( sgn_y * static_cast<R32>( RoundNumber( i / steps ))), static_cast<SI08>( startZ + ( dz * static_cast<R32>( i ) * sgn_z )));
+				collisions[collisioncount] = Vector3D_st( startX + ( sgn_x * i ), startY + ( sgn_y * static_cast<R32>( std::round( i / steps ))), static_cast<SI08>( startZ + ( dz * static_cast<R32>( i ) * sgn_z )));
 				++collisioncount;
 			}
 		}
@@ -601,7 +601,7 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 			}
 			for( i = 1; i < distY; ++i )
 			{
-				collisions[collisioncount] = Vector3D_st( startX + ( sgn_x * static_cast<R32>( RoundNumber( i / steps ))), startY + (sgn_y * i ), static_cast<SI08>( startZ + (dz * static_cast<R32>( i ) * sgn_z )));
+				collisions[collisioncount] = Vector3D_st( startX + ( sgn_x * static_cast<R32>( std::round( i / steps ))), startY + (sgn_y * i ), static_cast<SI08>( startZ + (dz * static_cast<R32>( i ) * sgn_z )));
 				++collisioncount;
 			}
 		}

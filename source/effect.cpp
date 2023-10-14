@@ -1242,6 +1242,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 		case 1: // Paralyse Spell
 		{
 			dest->SetFrozen( true );
+			dest->Dirty( UT_UPDATE );
 			R32 effectDuration = 0;
 			if( source == nullptr )
 			{
@@ -1797,7 +1798,7 @@ void cEffects::SaveEffects( void )
 	Console.Print( oldstrutil::format("Effects saved in %.02fsec\n", ( static_cast<R32>( e_t-s_t )) / 1000.0f ));
 }
 
-void ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data );
+void ReadWorldTagData( std::istream &inStream, std::string &tag, std::string &data );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::LoadEffects()
 //|	Date		-	16 March, 2002
@@ -1954,7 +1955,7 @@ void cEffects::LoadEffects( void )
 //|	Purpose		-	Output the effect data to the effect destination. Returns true/false
 //|					indicating the success of the write operation
 //o------------------------------------------------------------------------------------------------o
-bool CTEffect::Save( std::ofstream &effectDestination ) const
+bool CTEffect::Save( std::ostream &effectDestination ) const
 {
 	CBaseObject *getPtr = nullptr;
 	const char newLine = '\n';

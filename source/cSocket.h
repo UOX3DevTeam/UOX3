@@ -112,6 +112,8 @@ private:
 	PickupLocations	pSpot;
 	SERIAL			pFrom;
 
+	GenericList<CItem *> contsOpened;
+
 	SI16			pX;
 	SI16			pY;
 	SI08			pZ;
@@ -348,6 +350,8 @@ public:
 	void			OpenPack( CItem *i, bool isPlayerVendor = false );
 	void			OpenBank( CChar *i );
 	void			OpenURL( const std::string& txt );
+
+	auto			GetContsOpenedList() -> GenericList<CItem *> *;
 
 	bool			ReceivedVersion( void ) const;
 	void			ReceivedVersion( bool value );

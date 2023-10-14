@@ -776,12 +776,12 @@ function HandleGetChar( socket, ourChar, uKey )
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISSLOT7BLOCKED> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
-	case "UNUSED9":
+	case "ISYOUNG":
 		if( !ourChar.npc )
 		{
 			var myAccount = ourChar.account;
-			socket.SysMessage( "unused9: " + myAccount.unused9 );
-			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET UNUSED9> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			socket.SysMessage( "isYoung: " + myAccount.isYoung );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISYOUNG> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
 	case "UNUSED10":

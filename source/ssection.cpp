@@ -215,6 +215,7 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_STRING,			//	DFNTAG_SPAWNOBJ,
 	DFN_STRING,			//	DFNTAG_SPAWNOBJLIST,
 	DFN_NUMERIC,		//	DFNTAG_SPD,
+	DFN_STRING,			//	DFNTAG_SPELLS,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_SPELLWEAVING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_SPIRITSPEAK,
 	DFN_NUMERIC,		//	DFNTAG_SPLIT,
@@ -474,6 +475,7 @@ const std::map<std::string, DFNTAGS> strToDFNTag
 	{"SPAWNOBJLIST"s,		DFNTAG_SPAWNOBJLIST},
 	{"SPD"s,				DFNTAG_SPD},
 	{"SPEED"s,				DFNTAG_SPD},
+	{"SPELLS"s,				DFNTAG_SPELLS},
 	{"SPELLWEAVING"s,		DFNTAG_SPELLWEAVING},
 	{"SPIRITSPEAK"s,		DFNTAG_SPIRITSPEAK},
 	{"SPLIT"s,				DFNTAG_SPLIT},
@@ -551,7 +553,7 @@ npcList( false ), itemList( false ), npcListData( "" ), itemListData( "" )
 //|	Purpose		-	Default constructor, initializing all variables
 //|						and grabbing a section from the file passed in
 //o------------------------------------------------------------------------------------------------o
-CScriptSection::CScriptSection( std::ifstream& input, DEFINITIONCATEGORIES d ) :
+CScriptSection::CScriptSection( std::istream& input, DEFINITIONCATEGORIES d ) :
 dfnCat( d ), npcList( false ), itemList( false ), npcListData( "" ), itemListData( "" )
 {
 	data.resize( 0 );
@@ -866,7 +868,7 @@ UI32 itemIndexHolder = 0;
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates section data from the input stream passed in
 //o------------------------------------------------------------------------------------------------o
-auto CScriptSection::CreateSection( std::ifstream& input ) -> void
+auto CScriptSection::CreateSection( std::istream& input ) -> void
 {
 	char line[2048];
 	std::string sLine;

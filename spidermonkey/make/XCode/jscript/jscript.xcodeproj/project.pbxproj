@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		56BA2FAD2A95B9BB0064EB36 /* jscpucfg.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FEF7293E37DF009B54DA /* jscpucfg.c */; };
+		56BA2FAE2A95B9D30064EB36 /* jscpucfg in CopyFiles */ = {isa = PBXBuildFile; fileRef = 56BA2FA62A95B9980064EB36 /* jscpucfg */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		64A90004293E37E0009B54DA /* jsinvoke.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FEE2293E37DF009B54DA /* jsinvoke.c */; };
+		64A90005293E37E0009B54DA /* js.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FEE3293E37DF009B54DA /* js.c */; };
 		64A90006293E37E0009B54DA /* jsapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FEE4293E37DF009B54DA /* jsapi.c */; };
 		64A90007293E37E0009B54DA /* jsapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FEE5293E37DF009B54DA /* jsapi.h */; };
 		64A90008293E37E0009B54DA /* jsarena.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FEE6293E37DF009B54DA /* jsarena.c */; };
@@ -15,7 +19,6 @@
 		64A9000B293E37E0009B54DA /* jsarray.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FEE9293E37DF009B54DA /* jsarray.h */; };
 		64A9000C293E37E0009B54DA /* jsatom.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FEEA293E37DF009B54DA /* jsatom.c */; };
 		64A9000D293E37E0009B54DA /* jsatom.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FEEB293E37DF009B54DA /* jsatom.h */; };
-		64A9000E293E37E0009B54DA /* jsautocfg.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FEEC293E37DF009B54DA /* jsautocfg.h */; };
 		64A9000F293E37E0009B54DA /* jsautokw.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FEED293E37DF009B54DA /* jsautokw.h */; };
 		64A90010293E37E0009B54DA /* jsbit.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FEEE293E37DF009B54DA /* jsbit.h */; };
 		64A90011293E37E0009B54DA /* jsbool.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FEEF293E37DF009B54DA /* jsbool.c */; };
@@ -96,8 +99,41 @@
 		64A9005E293E37E0009B54DA /* prmjtime.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FFA1293E37E0009B54DA /* prmjtime.h */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		56BA2F9F2A95B9710064EB36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 64A9FF98293E37E0009B54DA /* jscript.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 64A9FE47293E37BC009B54DA;
+			remoteInfo = jscript;
+		};
+		56BA2FB12A95BBD40064EB36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 64A9FE3F293E37BC009B54DA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 56BA2FA52A95B9980064EB36;
+			remoteInfo = jscpucfg;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		56BA2FA42A95B9980064EB36 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = $PROJECT_DIR;
+			dstSubfolderSpec = 0;
+			files = (
+				56BA2FAE2A95B9D30064EB36 /* jscpucfg in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		56BA2FA62A95B9980064EB36 /* jscpucfg */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jscpucfg; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A9FE47293E37BC009B54DA /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		64A9FEE2293E37DF009B54DA /* jsinvoke.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsinvoke.c; sourceTree = "<group>"; };
+		64A9FEE3293E37DF009B54DA /* js.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = js.c; sourceTree = "<group>"; };
 		64A9FEE4293E37DF009B54DA /* jsapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsapi.c; sourceTree = "<group>"; };
 		64A9FEE5293E37DF009B54DA /* jsapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsapi.h; sourceTree = "<group>"; };
 		64A9FEE6293E37DF009B54DA /* jsarena.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsarena.c; sourceTree = "<group>"; };
@@ -191,7 +227,7 @@
 		64A9FF4E293E37E0009B54DA /* 810ca97f-d2c7-45a8-83d7-dfca7422c546.vsidx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "810ca97f-d2c7-45a8-83d7-dfca7422c546.vsidx"; sourceTree = "<group>"; };
 		64A9FF4F293E37E0009B54DA /* 9988bf72-3586-4cab-a638-78a1f71359bd.vsidx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "9988bf72-3586-4cab-a638-78a1f71359bd.vsidx"; sourceTree = "<group>"; };
 		64A9FF51293E37E0009B54DA /* read.lock */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = read.lock; sourceTree = "<group>"; };
-		64A9FF53293E37E0009B54DA /* .suo */ = {isa = PBXFileReference; lastKnownFileType = file; path = .suo; sourceTree = "<group>"; };
+		64A9FF53293E37E0009B54DA /* .suo */ = {isa = PBXFileReference; lastKnownFileType = text; path = .suo; sourceTree = "<group>"; };
 		64A9FF54293E37E0009B54DA /* Browse.VC.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = Browse.VC.db; sourceTree = "<group>"; };
 		64A9FF56293E37E0009B54DA /* a828e7f6e283d07.ipch */ = {isa = PBXFileReference; lastKnownFileType = file; path = a828e7f6e283d07.ipch; sourceTree = "<group>"; };
 		64A9FF59293E37E0009B54DA /* FDLIBM.ipch */ = {isa = PBXFileReference; lastKnownFileType = file; path = FDLIBM.ipch; sourceTree = "<group>"; };
@@ -204,7 +240,7 @@
 		64A9FF65293E37E0009B54DA /* 965a6886-fdd2-491e-9aae-4a8ea266abe2.vsidx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "965a6886-fdd2-491e-9aae-4a8ea266abe2.vsidx"; sourceTree = "<group>"; };
 		64A9FF66293E37E0009B54DA /* d4cebbe1-9705-4ee4-b57f-0b666b8b52d1.vsidx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "d4cebbe1-9705-4ee4-b57f-0b666b8b52d1.vsidx"; sourceTree = "<group>"; };
 		64A9FF68293E37E0009B54DA /* read.lock */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = read.lock; sourceTree = "<group>"; };
-		64A9FF6A293E37E0009B54DA /* .suo */ = {isa = PBXFileReference; lastKnownFileType = file; path = .suo; sourceTree = "<group>"; };
+		64A9FF6A293E37E0009B54DA /* .suo */ = {isa = PBXFileReference; lastKnownFileType = text; path = .suo; sourceTree = "<group>"; };
 		64A9FF6B293E37E0009B54DA /* Browse.VC.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = Browse.VC.db; sourceTree = "<group>"; };
 		64A9FF6D293E37E0009B54DA /* 5bbeeae1e78ce2.ipch */ = {isa = PBXFileReference; lastKnownFileType = file; path = 5bbeeae1e78ce2.ipch; sourceTree = "<group>"; };
 		64A9FF70293E37E0009B54DA /* JSCRIPT.ipch */ = {isa = PBXFileReference; lastKnownFileType = file; path = JSCRIPT.ipch; sourceTree = "<group>"; };
@@ -219,7 +255,7 @@
 		64A9FF7E293E37E0009B54DA /* 8698234e-b801-4c8f-b5b5-7f6d052a522c.vsidx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "8698234e-b801-4c8f-b5b5-7f6d052a522c.vsidx"; sourceTree = "<group>"; };
 		64A9FF7F293E37E0009B54DA /* b4dbece6-e0e4-4342-85a4-1d9fe8493c98.vsidx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "b4dbece6-e0e4-4342-85a4-1d9fe8493c98.vsidx"; sourceTree = "<group>"; };
 		64A9FF81293E37E0009B54DA /* read.lock */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = read.lock; sourceTree = "<group>"; };
-		64A9FF83293E37E0009B54DA /* .suo */ = {isa = PBXFileReference; lastKnownFileType = file; path = .suo; sourceTree = "<group>"; };
+		64A9FF83293E37E0009B54DA /* .suo */ = {isa = PBXFileReference; lastKnownFileType = text; path = .suo; sourceTree = "<group>"; };
 		64A9FF84293E37E0009B54DA /* Browse.VC.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = Browse.VC.db; sourceTree = "<group>"; };
 		64A9FF88293E37E0009B54DA /* JSKWGEN.ipch */ = {isa = PBXFileReference; lastKnownFileType = file; path = JSKWGEN.ipch; sourceTree = "<group>"; };
 		64A9FF89293E37E0009B54DA /* Solution.VC.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = Solution.VC.db; sourceTree = "<group>"; };
@@ -237,6 +273,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		56BA2FA32A95B9980064EB36 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64A9FE45293E37BC009B54DA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -247,10 +290,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		56BA2FA72A95B9990064EB36 /* jscpucfg */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = jscpucfg;
+			sourceTree = "<group>";
+		};
 		64A9FE3E293E37BC009B54DA = {
 			isa = PBXGroup;
 			children = (
 				64A9FE4E293E37DF009B54DA /* spidermonkey */,
+				56BA2FA72A95B9990064EB36 /* jscpucfg */,
 				64A9FE48293E37BC009B54DA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -259,6 +310,7 @@
 			isa = PBXGroup;
 			children = (
 				64A9FE47293E37BC009B54DA /* libjscript.a */,
+				56BA2FA62A95B9980064EB36 /* jscpucfg */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -266,6 +318,7 @@
 		64A9FE4E293E37DF009B54DA /* spidermonkey */ = {
 			isa = PBXGroup;
 			children = (
+				64A9FEE3293E37DF009B54DA /* js.c */,
 				64A9FEE4293E37DF009B54DA /* jsapi.c */,
 				64A9FEE6293E37DF009B54DA /* jsarena.c */,
 				64A9FEE8293E37DF009B54DA /* jsarray.c */,
@@ -284,6 +337,7 @@
 				64A9FF0A293E37DF009B54DA /* jsgc.c */,
 				64A9FF0C293E37DF009B54DA /* jshash.c */,
 				64A9FF0F293E37DF009B54DA /* jsinterp.c */,
+				64A9FEE2293E37DF009B54DA /* jsinvoke.c */,
 				64A9FF11293E37DF009B54DA /* jsiter.c */,
 				64A9FF14293E37DF009B54DA /* jskwgen.c */,
 				64A9FF18293E37DF009B54DA /* jslock.c */,
@@ -735,6 +789,9 @@
 		};
 		64A9FF99293E37E0009B54DA /* Products */ = {
 			isa = PBXGroup;
+			children = (
+				56BA2FA02A95B9710064EB36 /* libjscript.a */,
+			);
 			name = Products;
 			sourceTree = "<group>";
 		};
@@ -803,17 +860,34 @@
 				64A90049293E37E0009B54DA /* jspubtd.h in Headers */,
 				64A90051293E37E0009B54DA /* jsscript.h in Headers */,
 				64A90052293E37E0009B54DA /* jsstddef.h in Headers */,
-				64A9000E293E37E0009B54DA /* jsautocfg.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		56BA2FA52A95B9980064EB36 /* jscpucfg */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 56BA2FAA2A95B9990064EB36 /* Build configuration list for PBXNativeTarget "jscpucfg" */;
+			buildPhases = (
+				56BA2FA22A95B9980064EB36 /* Sources */,
+				56BA2FA32A95B9980064EB36 /* Frameworks */,
+				56BA2FA42A95B9980064EB36 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = jscpucfg;
+			productName = jscpucfg;
+			productReference = 56BA2FA62A95B9980064EB36 /* jscpucfg */;
+			productType = "com.apple.product-type.tool";
+		};
 		64A9FE46293E37BC009B54DA /* jscript */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 64A9FE4B293E37BC009B54DA /* Build configuration list for PBXNativeTarget "jscript" */;
 			buildPhases = (
+				56BA2FB02A95BB140064EB36 /* Run Script */,
 				64A9FE43293E37BC009B54DA /* Headers */,
 				64A9FE44293E37BC009B54DA /* Sources */,
 				64A9FE45293E37BC009B54DA /* Frameworks */,
@@ -821,6 +895,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				56BA2FB22A95BBD40064EB36 /* PBXTargetDependency */,
 			);
 			name = jscript;
 			productName = jscript;
@@ -834,8 +909,11 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1410;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					56BA2FA52A95B9980064EB36 = {
+						CreatedOnToolsVersion = 14.3;
+					};
 					64A9FE46293E37BC009B54DA = {
 						CreatedOnToolsVersion = 14.1;
 					};
@@ -861,11 +939,52 @@
 			projectRoot = "";
 			targets = (
 				64A9FE46293E37BC009B54DA /* jscript */,
+				56BA2FA52A95B9980064EB36 /* jscpucfg */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		56BA2FA02A95B9710064EB36 /* libjscript.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libjscript.a;
+			remoteRef = 56BA2F9F2A95B9710064EB36 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		56BA2FB02A95BB140064EB36 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(PROJECT_DIR)/../../../jsautocfg.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./jscpucfg > ../../../jsautocfg.h\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		56BA2FA22A95B9980064EB36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				56BA2FAD2A95B9BB0064EB36 /* jscpucfg.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64A9FE44293E37BC009B54DA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -893,6 +1012,8 @@
 				64A90040293E37E0009B54DA /* jsopcode.c in Sources */,
 				64A9005D293E37E0009B54DA /* prmjtime.c in Sources */,
 				64A9001E293E37E0009B54DA /* jsdhash.c in Sources */,
+				64A90004293E37E0009B54DA /* jsinvoke.c in Sources */,
+				64A90005293E37E0009B54DA /* js.c in Sources */,
 				64A90006293E37E0009B54DA /* jsapi.c in Sources */,
 				64A9003E293E37E0009B54DA /* jsobj.c in Sources */,
 				64A90011293E37E0009B54DA /* jsbool.c in Sources */,
@@ -913,7 +1034,49 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		56BA2FB22A95BBD40064EB36 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 56BA2FA52A95B9980064EB36 /* jscpucfg */;
+			targetProxy = 56BA2FB12A95BBD40064EB36 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		56BA2FAB2A95B9990064EB36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_COMMA = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = CF264WE69M;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = (
+					"-Wno-format-security",
+					"-Wno-deprecated-declarations",
+				);
+			};
+			name = Debug;
+		};
+		56BA2FAC2A95B9990064EB36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_COMMA = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = CF264WE69M;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = (
+					"-Wno-format-security",
+					"-Wno-deprecated-declarations",
+				);
+			};
+			name = Release;
+		};
 		64A9FE49293E37BC009B54DA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -947,6 +1110,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1005,6 +1169,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1035,6 +1200,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = NO;
 				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = CF264WE69M;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = c11;
@@ -1064,6 +1230,9 @@
 					"-Wno-non-literal-null-conversion",
 					"-Wno-tautological-constant-out-of-range-compare",
 					"-Wno-pointer-to-int-cast",
+					"-Wno-format-security",
+					"-Wno-tautological-constant-compare",
+					"-Wno-deprecated-declarations",
 				);
 			};
 			name = Debug;
@@ -1080,6 +1249,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = NO;
 				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = CF264WE69M;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = c11;
@@ -1109,6 +1279,9 @@
 					"-Wno-non-literal-null-conversion",
 					"-Wno-tautological-constant-out-of-range-compare",
 					"-Wno-pointer-to-int-cast",
+					"-Wno-format-security",
+					"-Wno-tautological-constant-compare",
+					"-Wno-deprecated-declarations",
 				);
 			};
 			name = Release;
@@ -1116,6 +1289,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		56BA2FAA2A95B9990064EB36 /* Build configuration list for PBXNativeTarget "jscpucfg" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56BA2FAB2A95B9990064EB36 /* Debug */,
+				56BA2FAC2A95B9990064EB36 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		64A9FE42293E37BC009B54DA /* Build configuration list for PBXProject "jscript" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

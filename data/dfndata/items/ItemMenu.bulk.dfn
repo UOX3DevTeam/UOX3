@@ -11915,8 +11915,12 @@ ITEMMENU=7
 [ITEMMENU 113]
 {
 misc_magic.dfn
-0x0efa=a spellbook
+0x0efa=a spellbook (empty)
 ADDITEM=0x0efa
+0x0efa=a spellbook (1 to 4)
+ADDITEM=spellbook1to4
+0x0efa=a spellbook (full)
+ADDITEM=spellbook1to8
 0x1f17=a recall rune (blank)
 ADDITEM=0x1f17
 0x22c5=a runebook

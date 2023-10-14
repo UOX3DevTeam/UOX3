@@ -1,0 +1,510 @@
+[NPCLIST ilshenar_ancient_citadel_1]
+{
+20|spectre
+20|wraith
+20|shade
+10|skeletalmage
+10|bonemagi
+5|skeletalknight
+5|boneknight
+}
+
+[NPCLIST ilshenar_ancient_citadel_2]
+{
+10|ghoul
+5|zombie
+}
+
+[NPCLIST ilshenar_savage_camp_npclist_1]
+{
+20|savagewarrior
+10|savagerider
+}
+
+[NPCLIST ilshenar_savage_camp_npclist_2]
+{
+20|savagewarrior
+10|savageridgeback
+}
+
+[NPCLIST ilshenar_savage_camp_npclist_3]
+{
+50|bird
+40|hind
+30|hart
+20|blackbear
+10|direwolf
+}
+
+[NPCLIST ilshenar_savage_village_npclist_1]
+{
+20|savagewarrior
+10|savagerider
+}
+
+[NPCLIST ilshenar_savage_village_npclist_2]
+{
+20|savagewarrior
+10|savageshaman
+}
+
+[NPCLIST ilshenar_savage_village_npclist_3]
+{
+20|savagewarrior
+10|savageshaman
+5|savagerider
+}
+
+[NPCLIST ilshenar_npclist_1]
+{
+40|mongbat
+30|scorpion
+20|giantspider
+5|airele
+5|earthele
+}
+
+[NPCLIST ilshenar_npclist_2]
+{
+60|mummy
+40|wyvern
+}
+
+[NPCLIST ilshenar_npclist_3]
+{
+30|desertostard
+20|stoneharpy
+20|gargoyle
+15|wyvern
+10|efreet
+5|lichlord
+}
+
+[NPCLIST ilshenar_npclist_4]
+{
+30|desertostard
+25|stoneharpy
+20|gargoyle
+15|wyvern
+10|efreet
+}
+
+[NPCLIST ilshenar_npclist_5]
+{
+80|scorpion
+20|earthele
+}
+
+[NPCLIST ilshenar_npclist_6]
+{
+18|spectre
+18|wraith
+18|skeleton
+18|ghoul
+18|zombie
+10|shade
+}
+
+[NPCLIST ilshenar_npclist_7]
+{
+50|frosttroll
+20|snowele
+20|iceele
+10|drake
+}
+
+[NPCLIST ilshenar_npclist_8]
+{
+50|frostspider
+20|frosttroll
+15|iceserpent
+15|iceele
+}
+
+[NPCLIST ilshenar_npclist_9]
+{
+25|spectre
+25|skeleton
+25|zombie
+15|shade
+10|efreet
+}
+
+[NPCLIST ilshenar_npclist_10]
+{
+30|orc
+25|orccaptain
+20|orcmage
+20|ettin
+5|troll
+}
+
+[NPCLIST ilshenar_npclist_11]
+{
+80|harpy
+20|drake
+}
+
+[NPCLIST ilshenar_npclist_12]
+{
+80|imp
+20|daemon
+}
+
+[NPCLIST ilshenar_npclist_13]
+{
+15|mongbat
+15|sewerrat
+15|giantrat
+12|bogling
+12|alligator
+10|corpser
+10|lizardman
+6|poisonele
+5|plaguebeast
+}
+
+[NPCLIST ilshenar_npclist_14]
+{
+15|mongbat
+15|sewerrat
+15|giantrat
+12|bogling
+12|alligator
+10|corpser
+10|lizardman
+10|bogthing
+6|poisonele
+5|plaguebeast
+}
+
+[NPCLIST ilshenar_npclist_16]
+{
+15|mongbat
+15|sewerrat
+15|giantrat
+12|bogling
+12|alligator
+10|corpser
+10|lizardman
+5|plaguebeast
+}
+
+[NPCLIST ilshenar_npclist_17]
+{
+golem
+golemcontroller
+}
+
+[NPCLIST ilshenar_npclist_18]
+{
+jukawarrior
+jukamage
+}
+
+[NPCLIST ilshenar_npclist_19]
+{
+40|jukamage
+40|jukawarrior
+20|juggernaut
+}
+
+[NPCLIST ilshenar_npclist_20]
+{
+50|jukawarrior
+30|jukalord
+20|betrayer
+}
+
+[NPCLIST ilshenar_npclist_21]
+{
+50|jukamage
+30|jukalord
+20|betrayer
+}
+
+[NPCLIST ilshenar_npclist_22]
+{
+40|golem
+30|golemcontroller
+20|juggernaut
+10|betrayer
+}
+
+[NPCLIST ilshenar_npclist_23]
+{
+60|gargoyle
+40|golemcontroller
+}
+
+[NPCLIST ilshenar_npclist_24]
+{
+25|skeleton
+25|wraith
+25|zombie
+15|skeletalknight
+10|wyvern
+}
+
+[NPCLIST ilshenar_npclist_25]
+{
+25|skeleton
+25|skeletalknight
+25|stonegargoyle
+15|dreadspider
+10|poisonele
+10|wyvern
+}
+
+[NPCLIST ilshenar_npclist_26]
+{
+25|skeleton
+25|skeletalmage
+25|stonegargoyle
+15|dreadspider
+10|wyvern
+10|eldergazer
+}
+
+[NPCLIST ilshenar_npclist_27]
+{
+66|gazer
+33|eldergazer
+}
+
+[NPCLIST ilshenar_npclist_28]
+{
+skeleton
+shade
+spectre
+wraith
+ghoul
+zombie
+}
+
+[NPCLIST ilshenar_npclist_29]
+{
+boneknight
+bonemagi
+skeletalknight
+skeletalmage
+lich
+lichlord
+}
+
+[NPCLIST ilshenar_npclist_30]
+{
+60|ettin
+30|cyclops
+10|titan
+}
+
+[NPCLIST ilshenar_npclist_31]
+{
+80|brigand
+20|evilmage
+}
+
+[NPCLIST ilshenar_npclist_32]
+{
+50|giantspider
+30|dreadspider
+20|wyvern
+}
+
+[NPCLIST ilshenar_npclist_33]
+{
+30|mongbat
+25|scorpion
+20|ridgeback
+15|earthele
+10|efreet
+}
+
+[NPCLIST ilshenar_npclist_34]
+{
+70|imp
+30|golemcontroller
+}
+
+[NPCLIST ilshenar_npclist_35]
+{
+35|zombie
+20|ghoul
+15|spectre
+15|shade
+15|wraith
+10|lich
+}
+
+[NPCLIST ilshenar_npclist_36]
+{
+60|chaosdaemon
+30|doppleganger
+10|moloch
+}
+
+[NPCLIST ilshenar_npclist_37]
+{
+60|doppleganger
+30|quagmire
+10|arcanedaemon
+}
+
+[NPCLIST ilshenar_npclist_38]
+{
+70|chaosdaemon
+30|moloch
+}
+
+[NPCLIST ilshenar_npclist_39]
+{
+30|bird
+10|snake
+10|boar
+10|forestostard
+10|gorilla
+10|panther
+20|giantserpent
+}
+
+[NPCLIST ilshenar_npclist_40]
+{
+60|ratman
+30|ratmanarcher
+10|ratmanmage
+}
+
+[NPCLIST ilshenar_npclist_41]
+{
+70|horse
+30|pixie
+}
+
+[NPCLIST ilshenar_npclist_42]
+{
+55|skeleton
+25|zombie
+20|ghoul
+}
+
+[NPCLIST ilshenar_npclist_43]
+{
+skeleton
+boneaxeman
+}
+
+[NPCLIST ilshenar_npclist_44]
+{
+25|skeleton
+25|boneaxeman
+20|imp
+15|boneknight
+15|skeletalknight
+}
+
+[NPCLIST ilshenar_npclist_45]
+{
+70|harpy
+30|stoneharpy
+}
+
+[NPCLIST ilshenar_npclist_46]
+{
+60|giantspider
+30|reaper
+10|dreadspider
+}
+
+[NPCLIST ilshenar_npclist_47]
+{
+70|ratman
+30|ratmanarcher
+}
+
+[NPCLIST ilshenar_npclist_48]
+{
+70|ratman
+30|ratmanmage
+}
+
+[NPCLIST ilshenar_npclist_49]
+{
+40|slime
+30|giantspider
+20|npclist=ilshenar_npclist_40
+10|hellhound
+}
+
+[NPCLIST ilshenar_npclist_50]
+{
+13|skeleton
+12|boneaxeman
+20|zombie
+15|ghoul
+10|spectre
+10|shade
+10|wraith
+5|skeletalknight
+5|skeletalmage
+5|boneknight
+5|bonemage
+}
+
+[NPCLIST ilshenar_npclist_51]
+{
+40|alligator
+30|gianttoad
+15|corpser
+10|swamptentacle
+5|reaper
+}
+
+[NPCLIST ilshenar_npclist_52]
+{
+60|lavalizard
+30|wyvern
+10|ancientwyrm
+}
+
+[NPCLIST ilshenar_npclist_53]
+{
+70|imp
+15|fireele
+15|airele
+}
+
+[NPCLIST ilshenar_npclist_54]
+{
+fireele
+airele
+}
+
+[NPCLIST ilshenar_npclist_55]
+{
+60|mongbat
+30|imp
+10|wisp
+}
+
+[NPCLIST ilshenar_npclist_56]
+{
+60|imp
+40|gazer
+}
+
+[NPCLIST ilshenar_npclist_57]
+{
+60|mongbat
+30|imp
+10|reaper
+}
+
+[NPCLIST ilshenar_npclist_58]
+{
+30|mongbat
+30|headlessone
+40|imp
+}
+
+EOF

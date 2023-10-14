@@ -57,19 +57,31 @@ function onCallback1( socket, ourObj )
 		var splitString = socket.xText.split( " " );
 		if( splitString[0] )
 		{
-			key = splitString[0].toUpperCase();
+			areaCmdKey = splitString[0].toUpperCase();
 			if( splitString[1] )
 			{
-				value = parseInt( splitString[1] );
+				if( !isNaN( splitString[1] ) && splitString[1].match( /^\d+$/ ))
+				{
+					areaCmdValue = parseInt( splitString[1] ); // int
+				}
+				else
+				{
+					areaCmdValue = splitString[1]; // string
+
+					if( splitString.length > 2 )
+					{
+						areaCmdValue = splitString.slice( 1 ).join( " " );
+					}
+				}
 			}
 			else
 			{
-				value = 0;
+				areaCmdValue = 0;
 			}
 			var iCount = IterateOver( "ITEM" );
 			var tempMsg = GetDictionaryEntry( 9103, socket.language ); // %i items affected by %s %d
-			tempMsg = ( tempMsg.replace( /%s/gi, key ));
-			tempMsg = ( tempMsg.replace( /%d/gi, value ));
+			tempMsg = ( tempMsg.replace( /%s/gi, areaCmdKey ));
+			tempMsg = ( tempMsg.replace( /%d/gi, areaCmdValue ));
 			socket.SysMessage( tempMsg.replace( /%i/gi, iCount ));
 		}
 
@@ -79,8 +91,8 @@ function onCallback1( socket, ourObj )
 		y1 = 0;
 		x2 = 0;
 		y2 = 0;
-		key = "";
-		value = 0;
+		areaCmdKey = "";
+		areaCmdValue = 0;
 	}
 }
 
@@ -90,24 +102,25 @@ function onIterate( toCheck )
 	{
 		if( toCheck.x >= x1 && toCheck.x <= x2 && toCheck.y >= y1 && toCheck.y <= y2 )
 		{
-			switch( key )
+			switch( areaCmdKey )
 			{
-			case "DYE":			toCheck.colour = value;			break;
+			case "DYE":			toCheck.colour = areaCmdValue;			break;
 			case "WIPE":		toCheck.Delete();				break;
-			case "INCX":		toCheck.x = toCheck.x + value;	break;
-			case "INCY":		toCheck.y = toCheck.y + value;	break;
-			case "INCZ":		toCheck.z = toCheck.z + value;	break;
-			case "SETX":		toCheck.x = value;				break;
-			case "SETY":		toCheck.y = value;				break;
-			case "SETZ":		toCheck.z = value;				break;
-			case "SETTYPE":		toCheck.type = value;			break;
-			case "SETEVENT":	toCheck.event = value;			break;
-//			case "NEWBIE":		toCheck.newbie = value;			break;
-			case "SETSCPTRIG":	toCheck.scripttrigger = value;	break;
-			case "ADDSCPTRIG": 	toCheck.AddScriptTrigger( value ); break;
-			case "REMOVESCPTRIG":	toCheck.RemoveScriptTrigger( value );	break;
-			case "MOVABLE":		toCheck.movable = value;		break;
-			case "DECAYABLE":   toCheck.decayable = value; 		break;
+			case "INCX":		toCheck.x = toCheck.x + areaCmdValue;	break;
+			case "INCY":		toCheck.y = toCheck.y + areaCmdValue;	break;
+			case "INCZ":		toCheck.z = toCheck.z + areaCmdValue;	break;
+			case "NAME": 		toCheck.name = areaCmdValue;			break;
+			case "SETX":		toCheck.x = areaCmdValue;				break;
+			case "SETY":		toCheck.y = areaCmdValue;				break;
+			case "SETZ":		toCheck.z = areaCmdValue;				break;
+			case "SETTYPE":		toCheck.type = areaCmdValue;			break;
+			case "SETEVENT":	toCheck.event = areaCmdValue;			break;
+//			case "NEWBIE":		toCheck.newbie = areaCmdValue;			break;
+			case "SETSCPTRIG":	toCheck.scripttrigger = areaCmdValue;	break;
+			case "ADDSCPTRIG": 	toCheck.AddScriptTrigger( areaCmdValue ); break;
+			case "REMOVESCPTRIG":	toCheck.RemoveScriptTrigger( areaCmdValue );	break;
+			case "MOVABLE":		toCheck.movable = areaCmdValue;		break;
+			case "DECAYABLE":   toCheck.decayable = areaCmdValue; 		break;
 			default:						return false;
 			}
 			return true;

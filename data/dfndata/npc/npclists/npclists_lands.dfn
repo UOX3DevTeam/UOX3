@@ -180,7 +180,7 @@ harpy
 npclist=brigand
 npclist=allratmen
 zombie
-specter
+spectre
 npclist=weakorc
 giantspider
 }
@@ -226,7 +226,7 @@ npclist=weakorc
 npclist=allettin
 npclist=alltroll
 npclist=alllizardmen
-specter
+spectre
 harpy
 giantspider
 skeleton
@@ -621,7 +621,7 @@ npclist=weakorc
 npclist=alllizardmen
 npclist=alltroll
 npclist=allratmen
-specter
+spectre
 orcmage
 m_brigand
 f_brigand

@@ -23,6 +23,21 @@ GET=m_beggar f_beggar
 //GET=m_cashual f_cashual
 //}
 
+[chaosdragoon]
+{
+GET=m_chaosdragoon f_chaosdragoon
+}
+
+[chaosdragoonelite]
+{
+GET=m_chaosdragoonelite f_chaosdragoonelite
+}
+
+[executioner]
+{
+GET=m_executioner f_executioner
+}
+
 [fighter]
 {
 GET=m_fighter f_fighter
@@ -37,6 +52,11 @@ GET=m_gambler f_gambler
 //{Note: Not Implanted Yet
 //GET=m_glassblower f_glassblower
 //}
+
+[golemcontroller]
+{
+GET=m_golemcontroller f_golemcontroller
+}
 
 [guard]
 {
@@ -98,9 +118,9 @@ GET=m_noble f_noble
 GET=m_paladin f_paladin
 }
 
-[prirate]
+[pirate]
 {
-GET=m_prirate f_prirate
+GET=m_pirate f_pirate
 }
 
 //[priest]

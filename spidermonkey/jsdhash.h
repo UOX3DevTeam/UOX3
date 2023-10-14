@@ -86,11 +86,12 @@ typedef struct JSDHashTableOps  JSDHashTableOps;
  * Table entry header structure.
  *
  * In order to allow in-line allocation of key and value, we do not declare
- * either here.  Instead, the API uses const void *key as a formal parameter,
- * and asks each entry for its key when necessary via a getKey callback, used
- * when growing or shrinking the table.  Other callback types are defined
- * below and grouped into the JSDHashTableOps structure, for single static
- * initialization per hash table sub-type.
+ * either here.  Instead, the API uses const void *key as a formal parameter.
+ * The key need not be stored in the entry; it may be part of the value, but
+ * need not be stored at all.
+ *
+ * Callback types are defined below and grouped into the JSDHashTableOps
+ * structure, for single static initialization per hash table sub-type.
  *
  * Each hash table sub-type should nest the JSDHashEntryHdr structure at the
  * front of its particular entry type.  The keyHash member contains the result
@@ -243,16 +244,6 @@ typedef void
 (* JS_DLL_CALLBACK JSDHashFreeTable) (JSDHashTable *table, void *ptr);
 
 /*
- * When a table grows or shrinks, each entry is queried for its key using this
- * callback.  NB: in that event, entry is not in table any longer; it's in the
- * old entryStore vector, which is due to be freed once all entries have been
- * moved via moveEntry callbacks.
- */
-typedef const void *
-(* JS_DLL_CALLBACK JSDHashGetKey)    (JSDHashTable *table,
-                                      JSDHashEntryHdr *entry);
-
-/*
  * Compute the hash code for a given key to be looked up, added, or removed
  * from table.  A hash code may have any JSDHashNumber value.
  */
@@ -339,7 +330,6 @@ struct JSDHashTableOps {
     /* Mandatory hooks.  All implementations must provide these. */
     JSDHashAllocTable   allocTable;
     JSDHashFreeTable    freeTable;
-    JSDHashGetKey       getKey;
     JSDHashHashKey      hashKey;
     JSDHashMatchEntry   matchEntry;
     JSDHashMoveEntry    moveEntry;
@@ -367,9 +357,6 @@ struct JSDHashEntryStub {
     JSDHashEntryHdr hdr;
     const void      *key;
 };
-
-extern JS_PUBLIC_API(const void *)
-JS_DHashGetKeyStub(JSDHashTable *table, JSDHashEntryHdr *entry);
 
 extern JS_PUBLIC_API(JSDHashNumber)
 JS_DHashVoidPtrKeyStub(JSDHashTable *table, const void *key);
@@ -454,6 +441,30 @@ JS_DHashTableSetAlphaBounds(JSDHashTable *table,
 #define JS_DHASH_MIN_ALPHA(table, k)                                          \
     ((float)((table)->entrySize / sizeof(void *) - 1)                         \
      / ((table)->entrySize / sizeof(void *) + (k)))
+
+/*
+ * Default max/min alpha, and macros to compute the value for the |capacity|
+ * parameter to JS_NewDHashTable and JS_DHashTableInit, given default or any
+ * max alpha, such that adding entryCount entries right after initializing the
+ * table will not require a reallocation (so JS_DHASH_ADD can't fail for those
+ * JS_DHashTableOperate calls).
+ *
+ * NB: JS_DHASH_CAP is a helper macro meant for use only in JS_DHASH_CAPACITY.
+ * Don't use it directly!
+ */
+#define JS_DHASH_DEFAULT_MAX_ALPHA 0.75
+#define JS_DHASH_DEFAULT_MIN_ALPHA 0.25
+
+#define JS_DHASH_CAP(entryCount, maxAlpha)                                    \
+    ((uint32)((double)(entryCount) / (maxAlpha)))
+
+#define JS_DHASH_CAPACITY(entryCount, maxAlpha)                               \
+    (JS_DHASH_CAP(entryCount, maxAlpha) +                                     \
+     (((JS_DHASH_CAP(entryCount, maxAlpha) * (uint8)(0x100 * (maxAlpha)))     \
+       >> 8) < (entryCount)))
+
+#define JS_DHASH_DEFAULT_CAPACITY(entryCount)                                 \
+    JS_DHASH_CAPACITY(entryCount, JS_DHASH_DEFAULT_MAX_ALPHA)
 
 /*
  * Finalize table's data, free its entry storage using table->ops->freeTable,

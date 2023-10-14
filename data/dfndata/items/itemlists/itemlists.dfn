@@ -970,6 +970,22 @@ practice_gnarled_staff
 25|0x0df1
 }
 
+// Chaos Dragoon Weapons - Kryss, Broadsword, Katana
+[ITEMLIST 205]
+{
+10|kryss
+10|broadsword
+10|katana
+}
+
+// Gypsy Headgear
+[ITEMLIST 210]
+{
+jesterhat
+bandana
+skullcap
+}
+
 // Dungeon Treasures Level 1 - 4
 // Special Itemlist for Container Spawn Objects!
 [ITEMLIST dungeontreasureloot1]
@@ -1434,4 +1450,16 @@ itemlist=150
 [listobject200]
 {
 itemlist=200
+}
+
+// Chaos Dragoon Weapons - Kryss, Broadsword, Katana
+[listobject205]
+{
+itemlist=205
+}
+
+// Gypsy Headgear
+[gypsyheadgear]
+{
+itemlist=210
 }

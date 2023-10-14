@@ -66,3 +66,5 @@ function DisplayWarningText( iObject, trgChar, checkHistory )
 		}
 	}
 }
+
+function _restorecontext_() {}

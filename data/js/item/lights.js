@@ -1,5 +1,5 @@
 const dblClck = true; // If true enables lampposts to be double clicked on and off.
-const lightEnabled = true; // This enables and disables lamp post to change from on and off with light settings.
+const dynamicLampPosts = true; // This enables and disables lamp post to change from on and off with light settings.
 const brightLvl = 10; // This Setting is for how bright or dark it has to be for lamps to turn on and off. the Higher the number the Darker the Lower the Number the lighter.
 const unequipEnabled = false; // This setting allows the touch and candle to be turned off automatic if unequiped.
 
@@ -430,7 +430,7 @@ function onUseChecked( pUser, iUsed )
 
 function onLightChange( iLight, lightLevel )
 {
-	if( ValidateObject( iLight ) && iLight.isItem && lightEnabled == true )
+	if( ValidateObject( iLight ) && iLight.isItem && dynamicLampPosts == true )
 	{
 		switch( iLight.id )
 		{
@@ -451,8 +451,8 @@ function onLightChange( iLight, lightLevel )
 						}
 					}
 					iLight.id--;
-					break;
 				}
+				break;
 			case 0x0B20: //simple lamp post id lit
 			case 0x0B22: //glass lamp post id lit
 			case 0x0B24: //fancy lamp post id lit
@@ -461,7 +461,6 @@ function onLightChange( iLight, lightLevel )
 					iLight.morex = iLight.dir;
 					iLight.dir = 99;
 					iLight.id++;
-					break;
 				}
 				break;
 		}

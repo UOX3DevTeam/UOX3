@@ -74,6 +74,7 @@ ORIGIN=t2a
 [enslavedgargoyle]
 {
 NAME=#//an enslaved gargoyle
+NAMELIST=12
 TITLE=5066//the enslaved gargoyle
 ID=0x02f1
 DIRECTION=RND
@@ -96,6 +97,7 @@ RACE=3
 TOPROV=708
 TOPEACE=708 5
 RUNS
+NPCAI=2
 FLAG=NEUTRAL
 ORIGIN=td
 }
@@ -141,6 +143,7 @@ SCRIPT=3507
 [gargoyledestroyer]
 {
 NAME=#//a gargoyle destroyer
+NAMELIST=12
 TITLE=5099//the gargoyle destroyer
 ID=0x02f3
 DIRECTION=RND
@@ -180,6 +183,7 @@ SCRIPT=3300
 [gargoyleenforcer]
 {
 NAME=#//a gargoyle enforcer
+NAMELIST=12
 TITLE=5100//the gargoyle enforcer
 ID=0x02f2
 DIRECTION=RND

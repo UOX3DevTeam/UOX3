@@ -167,8 +167,8 @@ CJSRuntime::CJSRuntime( UI32 engineSize )
 	// debug builds, larger values can even degrade performance drastically
 	jsContext = JS_NewContext( jsRuntime, 8192 );
 
-	// Specify JS 1.7 as version to unlock const variables, let, etc
-	JS_SetVersion( jsContext, JSVERSION_1_7 );
+	// Specify JS 1.8 as version to unlock const variables, let, etc
+	JS_SetVersion( jsContext, JSVERSION_1_8 );
 
 	if( jsContext == nullptr )
 	{
@@ -181,7 +181,6 @@ CJSRuntime::CJSRuntime( UI32 engineSize )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 	}
 	JS_LockGCThing( jsContext, jsGlobal );
-	//JS_AddRoot( jsContext, &jsGlobal );
 	JS_InitStandardClasses( jsContext, jsGlobal );
 
 	objectList.resize( IUE_COUNT );
@@ -193,27 +192,18 @@ CJSRuntime::~CJSRuntime( void )
 	Cleanup();
 
 	JS_UnlockGCThing( jsContext, spellsObj );
-	//JS_RemoveRoot( jsContext, &spellsObj );
 	JS_UnlockGCThing( jsContext, skillsObj );
-	//JS_RemoveRoot( jsContext, &skillsObj );
 	JS_UnlockGCThing( jsContext, accountsObj );
-	//JS_RemoveRoot( jsContext, &accountsObj );
 	JS_UnlockGCThing( jsContext, consoleObj );
-	//JS_RemoveRoot( jsContext, &consoleObj );
 	JS_UnlockGCThing( jsContext, createEntriesObj );
-	//JS_RemoveRoot( jsContext, &createEntriesObj );
 	JS_UnlockGCThing( jsContext, timerObj );
-	//JS_RemoveRoot( jsContext, &timersObj );
 	JS_UnlockGCThing( jsContext, scriptObj );
-	//JS_RemoveRoot( jsContext, &scriptObj )
 
 	for( size_t i = JSP_ITEM; i < JSP_COUNT; ++i )
 	{
 		JS_UnlockGCThing( jsContext, protoList[i] );
-		//JS_RemoveRoot( jsContext, &protoList[i] );
 	}
 	JS_UnlockGCThing( jsContext, jsGlobal );
-	//JS_RemoveRoot( jsContext, &jsGlobal );
 	JS_DestroyContext( jsContext );
 	JS_DestroyRuntime( jsRuntime );
 }
@@ -227,8 +217,6 @@ void CJSRuntime::Cleanup( void )
 		for( JSOBJECTMAP_ITERATOR lIter = ourList.begin(); lIter != ourList.end(); ++lIter )
 		{
 			JS_UnlockGCThing( jsContext, ( *lIter ).second );
-			//JS_RemoveRoot( jsContext, &( *lIter ).second );
-
 			JS_SetPrivate( jsContext, ( *lIter ).second, nullptr );
 		}
 		ourList.clear();
@@ -283,22 +271,15 @@ void CJSRuntime::InitializePrototypes()
 	timerObj				=	JS_DefineObject( cx, obj, "Timer", &UOXTimer_class, protoList[JSP_TIMER], 0 );
 	scriptObj				=	JS_DefineObject( cx, obj, "SCRIPT", &uox_class, protoList[JSP_SCRIPT], 0 );
 	JS_LockGCThing( cx, spellsObj );
-	//JS_AddRoot( cx, &spellsObj );
 	JS_LockGCThing( cx, skillsObj );
-	//JS_AddRoot( cx, &skillsObj );
 	JS_LockGCThing( cx, accountsObj );
-	//JS_AddRoot( cx, &accountsObj );
 	JS_LockGCThing( cx, consoleObj );
-	//JS_AddRoot( cx, &consoleObj );
 	JS_LockGCThing( cx, createEntriesObj );
-	//JS_AddRoot( cx, &createEntriesObj );
 	JS_LockGCThing( cx, timerObj );
-	//JS_AddRoot( cx, &timersObj );
 
 	for( size_t i = JSP_ITEM; i < JSP_COUNT; ++i )
 	{
 		JS_LockGCThing( cx, protoList[i] );
-		//JS_AddRoot( cx, &protoList[i] );
 	}
 }
 

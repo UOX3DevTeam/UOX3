@@ -1,5 +1,241 @@
+14/10/2023 - Xuri (0.99.6)
+	Updated version number :)
+	Fixed an issue where the "female" flag was not set correctly in CPExtMove() and CPDrawGamePlayer() packets for characters with female Gargoyle (or Savage) body IDs
+
+14/10/2023 - Xuri (0.99.6-RC6x)
+	Added dummy context restore function to additional scripts
+	Updated 'go command to support specifying location to teleport to by name, mapped to locations from locations.dfn (Thanks Dragon Slayer!)
+	Updated Smart Turn script for furniture (js/server/misc/furniture_smartturn.js) with more optimized code (Humility)
+	Fixed latitude/longitude output of GetMapCoordinates helper function (js/server/data/map_coordinates.js), and updated scripts that relied on it
+	Fixed an issue where trying to craft fletching tools would produce hatchets instead (js/skill/craft/fletching.js)
+	Updated js/item/bankcheck.js to display value of checks using onTooltip JS Event, or onNameRequest JS Event if tooltips are disabled
+	Fixed a couple of DFN formatting issues (thanks, punt)
+	Fixed an issue where blank deeds (and bank checks) would be pileable if dropped on the same container (dfndata/items/tools/inscription.dfn)
+	Added dedicated [bankcheck] DFN item (dfndata/items/misc/money.dfn)
+	Updated Banker AI script (js/npc/ai/banker.js) to use dedicated [bankcheck] item instead of blank deeds as base for bank checks, and to have banker NPCs pause and turn towards player when talked to
+	Fixed an issue with script for Healing/Veterinary (js/skill/healing.js) which incorrectly used Anatomy as supplementary skill for Veterinary instead of Animal Lore, and which checked dex of wrong character when calculating healing slips
+	Added two missing tile flags to tileflag enum that threw order of such flags added with HS expansion out of order (thanks, punt)
+	Fixed an issue with travel-commands in GM menu which handled travelling between facets incorrectly
+	Added region spawners for dungeons, towns and overworld in Ilshenar facet
+	Enabled Trammel and Ilshenar facet decorations/spawns by default in admin welcome script (js/server/misc/admin_welcome.js)
+	Reworked portions of admin welcome gump to display optional "addon" decorations per facet, which might be client/era-specific (js/server/misc/admin_welcome.js)
+	Added new NPCs to dfndata/npc/femalehuman.dfn: f_executioner, f_chaosdragoon, f_chaosdragoonelite, f_gypsybanker
+	Added new NPCs to dfndata/npc/femalevendors.dfn: f_gypsymaiden, f_gypsyanimaltrainer, f_gypsyfortuneteller, f_vagabond, f_ironworker
+	Added new NPCs to dfndata/npc/malehuman.dfn: m_executioner, m_chaosdragoon, m_chaosdragoonelite, m_gypsybanker
+	Added new NPCs to dfndata/npc/malevendors.dfn: m_gypsyanimaltrainer, m_vagabond, m_ironworker
+	Added new NPC to dfndata/npc/miscmonsters.dfn: darkwisp
+	Added new NPC to dfndata/npc/undead.dfn: ancientlich
+	Added new Item DFNs for "camps" that when spawned will create a camp with specific decorations ([ilsh_orc_camp], [ilsh_healer_camp], [ilsh_mage_camp], [ilsh_banker_camp])
+	Added scripts for camps (js/item/camps/ilsh_banker_camp.js, js/item/camps/ilsh_healer_camp.js, js/item/camps/ilsh_mage_camp.js, js/item/camps/ilsh_orc_camp.js)
+	Added new colorlist to dfndata/colors/colors.dfn: [RANDOMCOLOR 33] (Bright Primary Colors)
+	Fixed an issue with gargish cloth chest DFN which prevented LBR version from working properly (dfndata/items/gear/armor/gargish_armor/gargish_cloth.dfn)
+	Added a bunch of new NPCLISTS in various npclist DFN files to support regional spawns in Ilshenar
+	Added missing BACKPACK tag to [golem] NPC DFN (dfndata/npc/clockwork.dfn)
+	Fixed misspelled section header for Fire Elemental NPC - from firele to fireele (dfndata/npc/elementals.dfn)
+	Murderous brigand NPCs are no longer willing to teach players skills (dfndata/npc/femalehuman.dfn, dfndata/npc/malehuman.dfn)
+	Corrected coordinates of Rock Dungeon region (dfndata/regions/regions.dfn)
+	Added regions for Sea Market (Felucca/Trammel), Blackthorn Dungeon (Felucca/Trammel) and Lakeshire (Ilshenar) (dfndata/regions/regions.dfn)
+	Fixed an issue with 'radditem and 'raddspawner GM commands which would not correctly set the Z of the added item/spawner to match target location (js/commands/custom/repeatingcmds.js)
+	Added two new repeating commands (js/commands/custom/repeatingcmds.js):
+		'rmovable #	// Repeats bringing up targeting cursor to set movable property on multiple objects
+		'rnodecay	// Repeats bringing up targeting cursor to set decayable property to false on multiple objects
+	Added new areacommand (js/commands/targeting/areacommand.js):
+		'areacommand name [string]	// Sets name of all objects within targeted area to [string]
+	Updated 'decorate command script to better handle flags passed in via admin welcome script for things like facet addons (js/commands/decorate.js)
+	Updated fire breath script (js/npc/special/fire_breath.js) to get fire breath info per NPC based on their sectionID rather than their base body ID
+	Updated facet ruleset script (js/server/misc/facetRuleset.js) with an override for GMs trying to snoop players even in places where snooping is disallowed
+	Updated facet ruleset script (js/server/misc/facetRuleset.js) to allow damage that's not coming from a player/NPC source even in Trammel/Ilshenar
+	Added teleport locations for entering/leaving Blackthorn Dungeon in Felucca/Trammel (js/teleport.scp)
+	Updated 'remove and 'rremove commands to release any targeted objects from potential multis they are locked in to properly update lockdown count (js/commands/targeting/remove.js, js/commands/custom/repeatingcmds.js)
+	Updated felucca/ilshenar world templates with decorations (js/jsdata/worldtemplates/felucca_*/ilshenar_*)
+	Added world templates with decorations for Trammel (js/jsdata/worldtemplates/trammel_*)
+	Added DFN entry for Power Generators, and spawn entries for these in Ilshenar (dfndata/item/puzzles/puzzles.dfn, dfndata/spawn/ilshenar/spawn_ilshenar_world_general.dfn)
+	Added script for Power Generators, which initializes random puzzles on creation and rewards player with diamonds/arcane gems/shadow iron ore when solved, or lightning when failing to solve (js/item/power_generator.js)
+	Added support for overriding newbie-state of items added to players via dfndata/newbie/newbie.dfn. Supported syntax:
+		PACKITEM=sectionID[, amount[, newbieFlag]] 	// To use newbieFlag with PACKITEM, amount must also be specified. Flag can be 0/1
+		EQUIPITEM=sectionID[, itemHue[, newbieFlag]	// To use newbieFlag with EQUIPITEM, itemHue must also be specified. Flag can be 0/1
+	Casting the Earthquake spell will no longer affect the caster, or cause them to become criminal when cast out of town with no impacted targets
+	Fixed a bug where caster would remain frozen after finishing casting targetless spells like Earthquake
+	Fixed a bug where caster would remain frozen if spellcast was cancelled half-ways through by picking up or equipping an item
+	Fixed a bug where caster would remain frozen if spellcast was interrupted by losing concentration from taking melee damage in combat
+	Fixed a bug where a paralyzed player would remain frozen even if taking magic or poison damage, which releases them from paralyzis
+	Fixed a bug where target of Paralyze spell would not visually be shown as frozen in target's client
+	Fixed a bug where a caster frozen while casting a spell could become unfrozen mid-cast because of incoming magic damage
+	Address overflow issue in MultiMul.cpp (punt)
+	Address various cast issues (punt)
+	Corrected jscript project, to not include two files that where for stand alone programs (and resulted in main being added twice in the library (and once was incorrect all ready). (punt)
+	Replaced RoundNumber with std::round (punt)
+	The original physical appearance of characters targeted by 'make admin/gm/cns is now kept track of, and restored upon being targeted by 'make player
+	Fixed an issue where the .HasSpell JS Method was off by 1 when looking for specific spells in player's spellbook, due to 0-based array indexing in code vs 1-based indexing for Spells in DFNs
+
+28/08/2023 - punt
+	Replaced all routine calls with a specific type of stream ifstream/ofstream to the generic istream/ostream for flexibility
+	Modernized region resource loading/saving code
+
+24/08/2023 - punt
+	Fixed a memory leak with regions.cpp, related to worldsaves
+
+14/08/2023 - Maarc/ldilley
+	Upgraded from SpiderMonkey 1.7 to 1.8.0-RC1, which adds support for Array.reduce() and reduceRight(), expression closures, and generator expressions
+
+07/07/2023 - Xuri
+	Fixed an issue which could cause lamp posts to turn into tall candelabras when light levels change
+
+05/07/2023 - Xuri
+	Fixed an issue with script context restoration while getting Char JS Properties that would also modify the return value for that property
+
+04/07/2023 - Xuri
+	Applied fix to keep script context intact when getting certain Char JS Properties (like name); as before, requires dummy function to be present in script
+	Fixed an issue with 'tweak command not working properly alongside presence of onNameRequest JS events in other scripts on character (js/commands/targeting/tweak.js)
+	Fixed issue where character's stats (str, dex, int) could return value lower than 1 due to temporary debuffs, causing issues in status gump
+
+02/07/2023 - Xuri
+	Cleaned up a couple of warnings highlighted by static code analysis
+	Fixed an issue with NPC evasion pathfinding where the direction wasn't always set correctly
+	Fixed an issue with onNameRequest JS Event where the size of param jsval (2) didn't match actual number of parameters provided (3)
+	Removed setting uoxTimeout.tv_usec to 1 in CNetworkStuff::CheckLoginMessage() to address slower core loop iterations on Windows, due to differences in timer resolutions supported by WinSock2 function select() on different platforms - tv_usec 1 is treated as 1 microsecond on Linux/macOS, but as 1 millisecond on Windows
+
+01/07/2023 - Xuri (0.99.6-RC6)
+	Removed arbitrary and hidden restrictions on refreshing list of online players shown with 'wholist command
+	Fixed an issue where player ghosts that get teleported would not see themselves get updated to new location
+	Fixed a server crash from clients disconnecting while running server in debug mode
+	Improved how container updates are sent to players; now only sends to clients that have actually opened the container, and who are still within range
+	Added more information about UO data files being loaded during server startup
+	Enhanced the GM 'add menu to allow clicking directly on images of items/npcs to add them, and adjusted size of menus to accommodate this
+	Fixed an issue with fleeing NPCs that could cause them to attempt to flee across time and space, regardless of distance to target/attacker in combat
+	Added NPC AI that runs away from players if they get too close (even outside combat). Applied to hind, rabbits, squirrels, ferrets and various birds by default:
+		AI_ANIMAL_SCARED (aitype 12)
+	Fixed issues with NPCs fleeing forever, or getting stuck in flee/don't flee loop, by introducing max fleeing distance (50 tiles) and cooldown (30 sec) on fleeing
+	Updated onNameRequest JS Event to include third parameter with origin of name request, so script responses can be tailored appropriately:
+		onNameRequest( myObj, requestedBy, requestSource )
+			Potential values for requestSource:
+				0 - Speech/System Messages
+				1 - Guild Menus
+				2 - Stat Window (self)
+				3 - Stat Window (other)
+				4 - Tooltip
+				5 - Paperdoll Journal
+				6 - Paperdoll
+				7 - Single Click / All-Names
+				8 - System
+				9 - Secure Trade Window
+	Added Adaptive Performance System (APS) that dynamically adjust how often NPC AI/movement is checked based on overall shard performance. If performance drops below defined threshold, UOX3 gradually slows down checks for NPC AI/movement to prioritize player movement/speech/command responsiveness. If performance climbs back up above threshold, slowdowns are gradually removed. The following UOX.INI options have been added under [system] category to support this system:
+		APSPERFTHRESHOLD=50 	// Performance threshold (measured in simulation cycles/sec) below which the APS kicks in
+		APSINTERVAL=100 		// How often (in milliseconds) the APS checks performance and makes adjustments (if needed) to balance out shard performance
+		APSDELAYSTEP=50 		// How much the delay timer is modified by (in milliseconds) each time APS makes adjustments
+		APSDELAYMAXCAP=2000 	// Max amount of of delay APS can introduce for NPC AI/movement handling when attempting to restore shard performance
+	Added new JS script with packet hook for packet 0xA4 as sent by CUOWeb client, which includes information about CUOWeb user and potentially secret key required for connecting to shard
+	Added new UOX.INI setting where a secret shard key can be defined, which can be used as a way to restrict which clients can connect to the shard:
+		SECRETSHARDKEY=None // None by default
+	Added new JS Methods for Region objects:
+		.GetOrePref( oreType )	// Get ore preference data for ore type found in town region. Returned as an array containing the following data:
+			orePrefData -> [
+				oreName,	// name of ore
+				color,		// color of ore
+				minskill,	// min skill to mine ore
+				ingotName,	// name of ingot created from ore
+				makemenu,	// makemenu entry for crafting something from ingot
+				oreChance,	// default global chance of finding this ore type
+				scriptID 	// script attached to mined ore
+			],
+			orePrefChance 	// Chance of finding this ore type in given town region
+		.GetOreChance() 	// Get base chance of finding any ore in town region
+	Moved Mining skill plus gravedigging feature from hard code to scripts (js/skill/mining.js) to make it easier to maintain and/or customize, and removed hard coded variants
+	Gravedigging now relies on the ore resource system behind the scenes to restrict how often graves in a given area can be dug up
+	Fixed some incorrect references to .worldNumber Character property in misc scripts (should be .worldnumber)
+	Made some "hard-scripted" system messages in misc scripts use dictionary system instead
+	Added spawn region for banker NPCs in Serpent's Hold (dfndata/spawn/felucca/spawn_town_serpents_hold.dfn, dfndata/spawn/trammel/spawn_town_serpents_hold.dfn)
+	Fixed region definition of Ocllo to actually cover the entire town (dfndata/regions/regions.dfn)
+	Added numerous additional locations accessible with 'goplace # command, for key locations in Ilshenar, Malas, Tokuno Islands and Ter Mur (dfndata/location/location.dfn)
+	Revised travel-menu portion of GM menu (shortcut: 'travel) to include more travel options based on new locations (dfndata/items/travelmenu.dfn and travelmenu.bulk.dfn)
+	Fixed an issue where NPCs could attempt to attack targets in other worlds/instances
+	Added new JS Event that triggers for characters who are about to deal damage in combat. Complimentary to onDamage, which triggers for chars receiving damage:
+		onDamageDeal( dmgDealer, dmgReceiver, damageValue, damageType )
+	Added new JS Event that can trigger in global script upon creation of new player chars. Note that this will trigger in place of onCreateDFN event for player characters:
+		onCreatePlayer( pChar )
+	Added new JS Event that triggers for characters selecting a target with a spell. Complimentary to onSpellTarget, which triggers for targets selected with a spell:
+		onSpellTargetSelect( caster, target, spellNum )
+	Updated onCombatStart and onCombatEnd JS Events to also trigger for the other party in combat
+	Updated onPickup JS Event to include a third parameter - the potential container item was picked up from. Event now also triggers event in scripts attached to said containers:
+		onPickup( iPickedUp, pChar, iCont )
+	Added tracking of total playtime per individual character, and per account across all characters, and exposed these properties to JS engine:
+		.totalPlayTime		// Account property, total playtime across all chars
+		.playTime 			// Character property, total playtime on given character only
+	Added new player-accessible command ('playtime) to spit out the playtime of current character/account as a whole (js/commands/playtime.js)
+	Implemented first version of Young Player System:
+		Replaced the UNUSED9 account flag with YOUNG, to be used by Young/New Player System
+		Added new JS Account property that gets/sets whether player account is considered Young:
+			.isYoung
+		Added new Char timers:
+			TIMER_YOUNGHEAL		// Restricts how often Young players are healed by NPC healers
+			TIMER_YOUNGMESSAGE	// Restricts how often Young players are warned about dangerous looking monsters in overworld
+		Updated GM commands 'get and 'set to get/set .isYoung property of player's account (js/commands/targeting/get.js and set.js)
+		Added new UOX.INI setting to enable/disable Young Player System (enabled by default):
+			YOUNGPLAYERSYSTEM=1
+		If Young Player System is enabled, all newly created player accounts are automatically marked with Young flag
+		Added new script to handle various restrictions and functions related to Young characters (js/player/young_player.js):
+			Young characters will have [Young] displayed over their head
+			Young characters will have their Young status checked and verified on every login + every stat/skill gain, to revoke the Young status if any of the following is true:
+				Account has a total playtime of more than 40 hours
+				Any character has more than 350 total (base) skill points
+				Any character has more than 70 skill points in a single skill
+				Any character has more than 150 total stat points
+				Any character has more than 80 stat points in a single stat
+			Young characters can renounce their Young status manually by saying the words "I renounce my young player status"
+			Young characters get an additional item upon creation:
+				a new player ticket, which can be combined with any other players new player ticket for both players to get a reward:
+					a sextant (shows Young players directions to nearest moongate/bank regardless of where they are, as long as outdoors)
+					a hair restyling deed
+					a ranger armor set (if coreShardEra is T2A or lower)
+					a spellbook with 1st to 4th circle spells (if CoreShardEra is UOR or higher)
+					a fireworks wand
+					a spyglass
+					a dye tub and dyes
+			Young characters cannot target other player characters with hostile spells or skills
+			Young characters cannot be the target of other player characters' hostile spells or skills
+			Young characters can only cast beneficial spells upon themselves or other Young characters
+			Young characters can only be the target of beneficial spells from other Young players
+			Young players (and their pets/followers) cannot attack or harm any other players (or their pets/followers), nor themselves be attacked or harmed by any other players (or their pets/followers), whether from combat, spells, skills or items
+			Young players don't lose any of their items on death, and are teleported to the nearest healer upon death with all their items intact
+			Young players receive a warning upon entering dungeons that monsters there will be hostile
+		Updated global script (js/server/global.js) to:
+			Check/Verify Young status of players upon login
+			Attach young player script on login/creation for players on Young accounts
+			Give specific items to Young players upon creation
+		Added new script (js/item/corpse.js) that is assigned to all freshly created corpses. This script handles restrictions related to Young players interactions with corpses, and the interactions of other players with corpses of Young players
+		Updated JS Method .Carve() to return true/false depending on whether carving a corpse was successful
+		Updated Healer AI in code to heal nearby injured Young players
+		Updated Evil AI and Evil Caster AI in code to avoid selecting Young players as targets in combat outside of dungeons
+		Added a new section to UOX.INI - [young start locations] - that can be used to define starting locations for Young players. If only one such location is provided, all players start there. Otherwise, it matches the same starting location setup as the regular one - with one entry per town in Britannia.
+		Restricted transferring and/or friending of pets (code) and hirelings (hirelings.js) between Young and non-Young players
+		Restricted Young players from recalling or gating to Felucca facet
+		Young players can instantly logout from anywhere, at any time
+	Added new Item DFN tag - SPELLS - which specifies which spells a spellbook starts with, using the following syntax: SPELLS=0x00000000,0x00000000,0x00000000
+		The existence of a spell from within each circle have specific values (0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80), and a combined value of 0xff if all spells in said  circle are present.
+		The first comma-separated value in the SPELLS tag represents spell values for circles 1 to 4, while the second comma-separated value represents the spell values for circles 5 to 8. The third comma-separated value is currently unused.
+		The last two digits (0x000000##) of the first value in the SPELLS tag represent the combined value of spells from the first circle, the 5th and 6th digits (0x0000##00) spells from second circle, the 3rd and 4th from third circle (0x00##0000), and the 1st and 2nd from fourth circle (0x##000000). Repeat for the second value in the tag, with fifth (last two digits) to eight (first two digits) circle spells.
+		Examples:
+			spellbook with only 1st circle spells: SPELLS=0x000000ff,0x0,0x0
+			spellbook with only 2nd circle spells: SPELLS=0x0000ff00,0x0,0x0
+			spellbook with 1st - 2nd circle spells: SPELLS=0x0000ffff,0x0,0x0
+			spellbook with only 2nd and 5th circle spells: SPELLS=0x0000ff00,0x000000ff,0x0
+			spellbook with only 4th and 8th circle spells: SPELLS=0xff000000,0xff000000,0x0
+			spellbook with all spells, from all eight circles: SPELLS=0xffffffff,0xffffffff,0x0
+	Added Item DFN entries for spellbook pre-filled with circles 1 to 4, and for spellbook pre-filled with all spells, and added these to GM 'add menu (dfndata/items/magic/misc_magic.dfn)
+	Fixed an incorrect character reference in Spyglass script (js/item/spyglass.js)
+	Added Item DFN entry for a fireworks wand with 50 charges (dfndata/items/gear/magic_items.dfn)
+	Added script for new player ticket (js/item/consumables/new_player_ticket.js)
+
+27/06/2023 - Xuri
+	Updated guildmaster script to properly check and set timestamp for when a player joins an NPC guild (js/npc/ai/guildmaster.js)
+	Updated GM command 'get to show values of .npcGuildJoined player property
+	Updated GM command 'set to also accept true/false to set boolean flags, not just 1/0 (js/commands/targeting/set.js)
+
 20/06/2023 - Xuri (0.99.6-RC5)
 	Added script for NPC guildmasters (js/npc/ai/guildmaster.js). Only one NPC guild has been setup in the script so far (more can be easily added) - the Thieves Guild - which if joined grants players the ability to steal from other players and to buy disguise kits
+	Added two new UOX.INI settings for NPC Guilds, which will give players discounts when buying or premium prices when selling items from/to NPCs that are members of the same NPC guilds as the player:
+		ENABLENPCGUILDDISCOUNTS=1
+		ENABLENPCGUILDPREMIUMS=1
 	Added two new NPCs, which there will now spawn one of in a random location in each city in Britannia (felucca facet):
 		m_thief_guildmaster (dfndata/npc/male_human.dfn)
 		f_thief_guildmaster (dfndata/npc/female_Human.dfn)
@@ -53,6 +289,19 @@
 	Added tracking system for "aggressors" in combat. A player attacking someone (regardless of flag status) will be marked as aggressor to that someone for 2 minutes
 	Added tracking system for "permagrey" flags - these are stored on a per-target basis, so a player can be flagged visibly as permagrey to multiple other players. Persists until player dies.
 	Player combat targets and war mode are now cleared on logout
+	Added new Character JS Methods:
+		.AddAggressorFlag()				// Adds aggressor flag for character towards target character
+		.RemoveAggressorFlag()			// Removes character's aggressor flag towards target character
+		.CheckAggressorFlag()			// Check if character has an aggressor flag towards target character
+		.UpdateAggressorFlagTimestamp() // Updates the expiry timestamp of character's aggressor flag towards target character
+		.IsAggressor()					// Returns true/false depending on whether character has any active aggressor flags
+		.ClearAggressorFlags()			// Clears all the character's aggressor flags towards other characters
+		.AddPermaGreyFlag()				// Adds permagrey flag for character towards target character
+		.RemovePermaGreyFlag()			// Removes character's permagrey flag towards target character
+		.CheckPermaGreyFlag()			// Check if character has an active permagrey flag towards target character
+		.UpdatePermaGreyFlagTimestamp()	// Updates the expiry timestamp of character's permagrey flag towards target character
+		.IsPermaGrey()					// Returns true/false depending on whether character has any active permagrey flags
+		.ClearPermaGreyFlags()			// Clears all the character's aggressor flags towards other characters
 	Players will now be unable to hide if within visual distance and in line of sight of their attacker or current target in combat
 	Server leave-announcement now only happens after the logout timer has expired, instead of the exact moment the player presses the logout button
 	Fixed an issue that could cause swimming NPCs to swim on land
@@ -402,8 +651,8 @@
 	When buying items from NPC shopkeepers where the total cost is higher than the buy threshold set in uox.ini, UOX3 will now check the player's bankbox for gold first, then their backpack second, instead of just failing outright if bank didn't have the required amount
 	Minor cleanup of some UO era-specific code for better maintainability
 	Adjusted default light-settings in UOX.INI:
-		DUNGEONLIGHTLEVEL changed from 3 to 15
-		WORLDDARKLEVEL changed from 5 to 12
+		DUNGEONLEVEL changed from 3 to 15
+		DARKLEVEL changed from 5 to 12
 
 12/11/2022 - Dragon Slayer
 	Added hair-only and beard-only variants of hair dyes
@@ -1121,7 +1370,7 @@
 	Added Ice and Fire dungeon locations (dfndata/location/location.dfn) and added these to the GM travel menu (dfndata/item/travelmenu.dfn/travelmenu.bulk.dfn)
 	Fixed body ID for ancient wyrm NPCs, which also fixes their name (dfndata/npc/dragons.dfn)
 	Added more pre-defined books to dfndata/misc/books.dfn (and dfndata/items/misc/books.dfn):
-		Quest of the Virtues  Volume 1 	// [quest_of_the_virtues_vol1]
+		Quest of the Virtues – Volume 1 	// [quest_of_the_virtues_vol1]
 		Fropoz's Journal 					// [fropoz_journal]
 		Translated Gargoyle Journal 		// [translated_gargoyle_journal]
 		Kabur's Journal 					// [kaburs_journal]

@@ -373,7 +373,7 @@ function onCallback0( mSock, ourTarg )
 		{
 			if( DoesEventExist( 2507, "onSpellTarget" ))
 			{
-				if( TriggerEvent( 2507, "onSpellTarget", ourTarg, 0, mChar, mChar.spellCast ) != false )
+				if( TriggerEvent( 2507, "onSpellTarget", ourTarg, mChar, mChar.spellCast ) != false )
 				{
 					return;
 				}
@@ -652,7 +652,7 @@ function DispatchSpell( spellNum, mSpell, sourceChar, ourTarg, caster )
 	if( spellNum == 3 )	// Feeblemind
 	{
 		// Target Resist Check
-		var spellResisted = CheckTargetResist( caster, ourTarg, mSpell.circle );
+		var spellResisted = TriggerEvent( 6000, "CheckResist", caster, ourTarg, mSpell.circle );
 
 		//caster.TextMessage( "Casting feeblemind" );
 		DoTempEffect( 0, sourceChar, ourTarg, 4, Math.round( mMagery / 100 ), 0, 0 );

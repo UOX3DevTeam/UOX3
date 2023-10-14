@@ -103,6 +103,35 @@ function onCallback0( socket, ourObj )
 							packOwner.beardColour = 0;
 						}
 					}
+
+					// If item being removed was locked down in a multi, release item from multi to update lockdown count properly
+					var iMulti = ourObj.multi;
+					if( ValidateObject( iMulti ))
+					{
+						if( iMulti.IsSecureContainer( ourObj ))
+						{
+							// Targeted item is a secure container
+							iMulti.UnsecureContainer( ourObj );
+						}
+						else
+						{
+							// Release the targeted item before deleting it
+							iMulti.ReleaseItem( ourObj );
+						}
+
+						if( ourObj.type == 1 )
+						{
+							// Loop through any items in container and release them
+							var tempItem;
+							for( tempItem = ourObj.FirstItem(); !ourObj.FinishedItems(); tempItem = ourObj.NextItem() )
+							{
+								if( !ValidateObject( tempItem ))
+									continue;
+
+								iMulti.ReleaseItem( tempItem );
+							}
+						}
+					}
 					ourObj.Delete();
 				}
 			}

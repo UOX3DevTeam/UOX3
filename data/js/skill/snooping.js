@@ -13,6 +13,9 @@ function FetchServerSettings()
 	// This increases the minimum difficulty for the snooping skillcheck chance:
 	// minDifficulty *= 1 + ( awarenessValue / 10 )
 	snoopAwareness = GetServerSetting( "SnoopAwareness" );
+
+	// If enabled, young players cannot snoop backpacks of other players, nor can they themselves be "snooped"
+	youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
 }
 
 // Called from global script via onSnoopAttempt() JS event
@@ -229,6 +232,20 @@ function GeneralSnoopingChecks( pUser, snoopTarget, pSock, targSock, targCont )
 			targSock.SysMessage( tempMsg.replace( /%s/gi, pUser.name ));
 		}*/
 		return false;
+	}
+
+	if( youngPlayerSystem )
+	{
+		if( pUser.account.isYoung && !snoopTarget.npc )
+		{
+			pSock.SysMessage( GetDictionaryEntry( 18729, pSock.language )); // Young players cannot perform hostile actions against other players.
+			return false;
+		}
+		else if( snoopTarget.account.isYoung )
+		{
+			pSock.SysMessage( GetDictionaryEntry( 18730, pSock.language )); // Young players cannot be targets of hostile actions.
+			return false;
+		}
 	}
 
 	if( pUser.region.isSafeZone || snoopTarget.region.isSafeZone )

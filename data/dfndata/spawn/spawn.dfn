@@ -89,7 +89,7 @@
 // spawn_felucca_dungeon_sanctuary.dfn		[4500-4549]  // Note: Not Spawned Is Not Pre AOS
 // spawn_felucca_dungeon_palace_of_paroxysmus.dfn [4550-4599] // Note: Not Spawned Is Not Pre AOS
 //=====================================================
-// Felucca Over World Spawns
+// Felucca Overworld Spawns
 //=====================================================
 // spawn_felucca_world_graveyards.dfn		[5500-5510]
 // spawn_felucca_world_forts.dfn		 	[5511-5520]
@@ -163,7 +163,7 @@
 // spawn_trammel_dungeon_sanctuary.dfn		[14500-14549]  // Note: Not Spawned Is Not Pre AOS
 // spawn_trammel_dungeon_palace_of_paroxysmus.dfn [14550-14599] // Note: Not Spawned Is Not Pre AOS
 //=======================================================
-// Trammel Over World Spawns
+// Trammel Overworld Spawns
 //=======================================================
 // spawn_trammel_world_graveyards.dfn		[15500-15510]
 // spawn_trammel_world_forts.dfn		 	[15511-15520]
@@ -175,6 +175,39 @@
 // spawn_trammel_world_lostlands.dfn		[16201-16400]
 // spawn_trammel_world_lostlands_water.dfn	[16401-16500]  // Note: Not Spawned
 //=======================================================
-// Ilishenar Treasure Spawns
+// Ilshenar Treasure Spawns
 //=======================================================
-// spawn_ilishenar_treasure_wyrms_lair.dfn	[17000-17099]
+// spawn_ilshenar_treasure_wyrms_lair.dfn	[17000-17024]
+// spawn_ilshenar_treasure_wisp.dfn 		[17025-17049]
+// spawn_ilshenar_treasure_wisp.dfn 		[17050-17099]
+//=====================================================
+// Ilshenar Dungeon Spawns
+//=====================================================
+// spawn_ilshenar_dungeon_ancient_lair.dfn 	[17300-17349]
+// spawn_ilshenar_dungeon_ankh.dfn 			[17350-17399]
+// spawn_ilshenar_dungeon_blood.dfn 		[17400-17449]
+// spawn_ilshenar_dungeon_cyclops.dfn 		[17450-17499]
+// spawn_ilshenar_dungeon_exodus.dfn 		[17500-17549]
+// spawn_ilshenar_dungeon_ratman_mine.dfn 	[17550-17599]
+// spawn_ilshenar_dungeon_rock.dfn 			[17600-17649]
+// spawn_ilshenar_dungeon_sorcerers.dfn 	[17650-17699]
+// spawn_ilshenar_dungeon_spectre.dfn 		[17700-17749]
+// spawn_ilshenar_dungeon_wisp.dfn 			[17750-17799]
+//================================================
+// Ilshenar Town Spawns
+//================================================
+// spawn_ilshenar_town_desert_outposts.dfn 	[17900-17949]
+// spawn_ilshenar_town_lakeshire.dfn 		[17950-17999]
+// spawn_ilshenar_town_mistas.dfn 			[18000-18049]
+// spawn_ilshenar_town_montor.dfn 			[18050-18099]
+//=====================================================
+// Ilshenar Overworld Spawns
+//=====================================================
+// spawn_ilshenar_world_ancient_citadel.dfn [18200-18249]
+// spawn_ilshenar_world_general.dfn 		[18250-18599]
+// spawn_ilshenar_world_gypsy_caravans.dfn 	[18600-18649]
+// spawn_ilshenar_world_healers.dfn 		[18650-18699]
+// spawn_ilshenar_world_misc.dfn 			[18700-18749]
+// spawn_ilshenar_world_reg_volom.dfn 		[18750-18774]
+// spawn_ilshenar_world_savage_village.dfn  [18775-18799]
+// spawn_ilshenar_world_spider_cave.dfn 	[18800-18849]

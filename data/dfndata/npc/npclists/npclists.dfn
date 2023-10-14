@@ -303,7 +303,6 @@ gazer
 lich
 mummy
 lichlord
-boneaxeman
 boneknight
 bonemage
 skeletalmage
@@ -316,6 +315,7 @@ zombie
 spectre
 headless
 skeleton
+boneaxeman
 ghoul
 wraith
 }
@@ -324,6 +324,13 @@ wraith
 {
 npclist=weakundeadlist
 npclist=strongundeadlist
+}
+
+[NPCLIST allghostslist]
+{
+wraith
+spectre
+shade
 }
 
 [NPCLIST alllizardlist]

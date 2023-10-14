@@ -418,6 +418,10 @@ function ReleasePet( petObj, petNum, stableMaster, pUser, sayReleaseMsg )
 // Stable targeted pet
 function onCallback0( pSock, ourObj )
 {
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
 	var pUser = pSock.currentChar;
 	var stableMaster;
 	if( pUser )

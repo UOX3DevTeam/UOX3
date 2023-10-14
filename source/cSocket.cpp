@@ -35,7 +35,7 @@ const bool LOGDEFAULT = false;
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps packet stream to log file
 //o------------------------------------------------------------------------------------------------o
-void DumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
+void DumpStream( std::ostream &outStream, const char *strToDump, UI08 num )
 {
 	outStream << "  ";
 	for( UI08 parseBuff = 0; parseBuff < num; ++parseBuff )
@@ -57,7 +57,7 @@ void DumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log packet stream in large buffer
 //o------------------------------------------------------------------------------------------------o
-void DoPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector<UI08>& myBuffer )
+void DoPacketLogging( std::ostream &outStream, size_t buffLen, std::vector<UI08>& myBuffer )
 {
 	outStream << std::hex;
 	char qbuffer[8];
@@ -89,7 +89,7 @@ void DoPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector<UI08
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log packet stream in regular buffer
 //o------------------------------------------------------------------------------------------------o
-void DoPacketLogging( std::ofstream &outStream, size_t buffLen, const UI08 *myBuffer )
+void DoPacketLogging( std::ostream &outStream, size_t buffLen, const UI08 *myBuffer )
 {
 	outStream << std::hex;
 	char qbuffer[8];
@@ -744,7 +744,7 @@ bool CSocket::FlushBuffer( bool doLog )
 #if defined( UOX_DEBUG_MODE )
 			if( sendResult != len )
 			{
-				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 739" << std::endl;
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 747" << std::endl;
 			}
 #endif
 		}
@@ -754,7 +754,7 @@ bool CSocket::FlushBuffer( bool doLog )
 #if defined( UOX_DEBUG_MODE )
 			if( sendResult != outlength )
 			{
-				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 744" << std::endl;
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 757" << std::endl;
 			}
 #endif
 		}
@@ -808,7 +808,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 #if defined( UOX_DEBUG_MODE )
 			if( sendResult != len )
 			{
-				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 789" << std::endl;
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 811" << std::endl;
 			}
 #endif
 		}
@@ -818,7 +818,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 #if defined( UOX_DEBUG_MODE )
 			if( sendResult != outlength )
 			{
-				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 796" << std::endl;
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 821" << std::endl;
 			}
 #endif
 		}
@@ -1550,7 +1550,7 @@ void CSocket::Send( CPUOXBuffer *toSend )
 #if defined( UOX_DEBUG_MODE )
 		if( sendResult != len )
 		{
-			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1492" << std::endl;
+			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1553" << std::endl;
 		}
 #endif
 	}
@@ -1561,7 +1561,7 @@ void CSocket::Send( CPUOXBuffer *toSend )
 #if defined( UOX_DEBUG_MODE )
 		if( sendResult != len )
 		{
-			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1501" << std::endl;
+			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1564" << std::endl;
 		}
 #endif
 	}
@@ -2147,7 +2147,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	UI08 a2 = i->GetSerial( 2 );
 	UI08 a3 = i->GetSerial( 3 );
 	UI08 a4 = i->GetSerial( 4 );
-	std::string charName = GetNpcDictName( i, this );
+	std::string charName = GetNpcDictName( i, this, NRS_SINGLECLICK );
 	CChar *mChar = CurrcharObj();
 	if( mChar->GetSingClickSer() || showSer )
 	{
@@ -2777,6 +2777,11 @@ void CSocket::OpenPack( CItem *i, bool isPlayerVendor )
 	Send( &contSend );
 	CPItemsInContainer itemsIn( this, i, 0x0, isPlayerVendor );
 	Send( &itemsIn );
+
+	// Add player's socket to list of players who have opened container,
+	// and also add container to player's list of opened containers
+	i->GetContOpenedByList()->Add( this );
+	this->GetContsOpenedList()->Add( i );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2817,6 +2822,11 @@ void CSocket::OpenBank( CChar *i )
 	CPWornItem toWear = ( *bankBox );
 	Send( &toWear );
 	OpenPack( bankBox );
+}
+
+auto CSocket::GetContsOpenedList() -> GenericList<CItem *> *
+{
+	return &contsOpened;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2953,7 +2963,7 @@ UI32 CPUOXBuffer::PackedLength( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log sent packets to log file
 //o------------------------------------------------------------------------------------------------o
-void CPUOXBuffer::Log( std::ofstream &outStream, bool fullHeader )
+void CPUOXBuffer::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -2975,7 +2985,7 @@ CPInputBuffer::CPInputBuffer( CSocket *input )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log received packets to log file
 //o------------------------------------------------------------------------------------------------o
-void CPInputBuffer::Log( std::ofstream &outStream, bool fullHeader )
+void CPInputBuffer::Log( std::ostream &outStream, bool fullHeader )
 {
 	UI08 *buffer	= tSock->Buffer();
 	const UI32 len	= tSock->InLength();

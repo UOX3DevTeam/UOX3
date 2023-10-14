@@ -1453,7 +1453,7 @@ auto CItem::IsShieldType() const -> bool
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save item details to worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CItem::Save( std::ofstream &outStream )
+bool CItem::Save( std::ostream &outStream )
 {
 	if( IsFree() )
 		return false;
@@ -1693,7 +1693,7 @@ auto CItem::SetWeatherDamage( WeatherType effectNum, bool value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dump item header to worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CItem::DumpHeader( std::ofstream &outStream ) const
+bool CItem::DumpHeader( std::ostream &outStream ) const
 {
 	outStream << "[ITEM]" << '\n';
 	return true;
@@ -1704,7 +1704,7 @@ bool CItem::DumpHeader( std::ofstream &outStream ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dump item tags and values to worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CItem::DumpBody( std::ofstream &outStream ) const
+bool CItem::DumpBody( std::ostream &outStream ) const
 {
 	CBaseObject::DumpBody( outStream );
 	const char newLine = '\n';
@@ -2556,7 +2556,7 @@ auto CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 		unicodeMessage.Colour( 0x000B );
 		unicodeMessage.Type( SYSTEM );
 		unicodeMessage.Language( "ENG" );
-		unicodeMessage.Name( GetNameRequest( mChar ));
+		unicodeMessage.Name( GetNameRequest( mChar, NRS_SPEECH ));
 		unicodeMessage.ID( GetId() );
 		unicodeMessage.Serial( GetSerial() );
 
@@ -2683,8 +2683,8 @@ void CItem::SendToSocket( CSocket *mSock, [[maybe_unused]] bool drawGamePlayer )
 			auto iVisible = GetVisible();
 			auto ownerObj = GetOwnerObj();
 			if(( iVisible != VT_VISIBLE && iVisible != VT_TEMPHIDDEN )
-				|| iVisible == VT_TEMPHIDDEN &&
-				( !ValidateObject( ownerObj ) || ( ValidateObject( ownerObj ) && ownerObj->GetSerial() != mChar->GetSerial() )))
+				|| ( iVisible == VT_TEMPHIDDEN &&
+				( !ValidateObject( ownerObj ) || ( ValidateObject( ownerObj ) && ownerObj->GetSerial() != mChar->GetSerial() ))))
 			{
 				return;
 			}
@@ -2853,11 +2853,51 @@ void CItem::RemoveFromSight( CSocket *mSock )
 		}
 		else
 		{
-			for( auto &nSock : Network->connClients )
+			// Iterate through list of players who have opened the container the item was in
+			auto itemCont = static_cast<CItem *>( iCont );
+			auto contOpenedByList = itemCont->GetContOpenedByList();
+			for( const auto &oSock : contOpenedByList->collection() )
 			{
-				if( nSock->LoginComplete() )
+				// For any of those players who are still within range, send remove item packet
+				// We don't know if they still have eyes on the inside of the container, but we
+				// can still minimize sending the packet to those who
+				//  A) opened the container at some point, and are still on the container's list of players who opened it
+				//  B) are within range of the container
+				// have to rely on range to cover it instead
+				if( oSock != nullptr && oSock->LoginComplete() )
 				{
-					nSock->Send( &toRemove );
+					auto oChar = oSock->CurrcharObj();
+					if( ValidateObject( oChar ))
+					{
+						// Get character's visual range
+						auto visRange = static_cast<UI16>( oSock->Range() + Races->VisRange( oChar->GetRace() ));
+
+						// Find the root container (if any) of the container
+						auto rootCont = FindRootContainer( itemCont );
+						if( !ValidateObject( rootCont ))
+						{
+							rootCont = itemCont;
+						}
+
+						// Find the owner of the root container (if for instance it's a container inside player's backpack - or their backpack)
+						CChar *rootContOwner = FindItemOwner( rootCont );
+
+						CBaseObject *objToCheck = nullptr;
+						if( ValidateObject( rootContOwner ))
+						{
+							objToCheck = static_cast<CBaseObject *>( rootContOwner );
+						}
+						else
+						{
+							objToCheck = static_cast<CBaseObject *>( rootCont );
+						}
+
+						// If owner of root container exists, use that in range check
+						if( ObjInRangeSquare( objToCheck, oChar, visRange ))
+						{
+							oSock->Send( &toRemove );
+						}
+					}
 				}
 			}
 		}
@@ -3183,6 +3223,11 @@ auto CItem::GetContainsList() -> GenericList<CItem *> *
 	return &Contains;
 }
 
+auto CItem::GetContOpenedByList() -> GenericList<CSocket *> *
+{
+	return &contOpenedBy;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Class		-	CSpawnItem::CSpawnItem()
 //|	Date		-	29th June, 2004
@@ -3268,7 +3313,7 @@ auto CSpawnItem::IsSectionAList( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps Header to Worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CSpawnItem::DumpHeader( std::ofstream &outStream ) const
+bool CSpawnItem::DumpHeader( std::ostream &outStream ) const
 {
 	outStream << "[SPAWNITEM]" << '\n';
 	return true;
@@ -3280,7 +3325,7 @@ bool CSpawnItem::DumpHeader( std::ofstream &outStream ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps Spawn Item to Worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CSpawnItem::DumpBody( std::ofstream &outStream ) const
+bool CSpawnItem::DumpBody( std::ostream &outStream ) const
 {
 	CItem::DumpBody( outStream );
 	outStream << "Interval=" << static_cast<UI16>( GetInterval( 0 )) << "," << static_cast<UI16>( GetInterval( 1 )) << '\n';

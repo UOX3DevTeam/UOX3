@@ -332,7 +332,7 @@ function CheckJoinGuildRequirements( pSock, pChar, npcGuildMaster )
 function ThievesGuildJoinReq( pChar, npcGuildMaster )
 {
 	var pSock = pChar.socket;
-	if( pChar.isYoung ) // TODO: Implement young status for player accounts/characters
+	if( pChar.account.isYoung )
 	{
 		npcGuildMaster.TextMessage( GetDictionaryEntry( 17612, pSock.language ), false, 0x3b2, 0, pChar.serial ); // You cannot be a member of the Thieves' Guild while you are Young.
 	}

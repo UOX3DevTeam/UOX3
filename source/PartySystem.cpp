@@ -79,7 +79,7 @@ bool Party::AddMember( CChar *i )
 							CPUpdateStat toSendStam2(( *partyMember ), 2, true );
 							newSock->Send( &toSendStam2 );
 
-							s->SysMessage( 9076, i->GetNameRequest( partyMember ).c_str() ); // %s joined the party.
+							s->SysMessage( 9076, i->GetNameRequest( partyMember, NRS_SPEECH ).c_str() ); // %s joined the party.
 						}
 					}
 				}

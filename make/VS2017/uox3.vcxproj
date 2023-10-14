@@ -372,7 +372,7 @@
       <AdditionalDependencies>ws2_32.lib;jscript.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\spidermonkey\make\VS2017\x64\Release;..\..\zlib\make\VS2017\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\spidermonkey\make\VS2017\jscript\x64\Debug;..\..\zlib\make\VS2017\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -474,7 +474,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cBaseobject.cpp">
+    <ClCompile Include="..\..\source\cBaseObject.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -1419,7 +1419,7 @@
     <ClInclude Include="..\..\source\EventTimer.hpp" />
     <ClInclude Include="..\..\source\funcdecl.h" />
     <ClInclude Include="..\..\source\GenericList.h" />
-    <ClInclude Include="..\..\source\gump.h" />
+    <ClInclude Include="..\..\source\CGump.h" />
     <ClInclude Include="..\..\source\IP4Address.hpp" />
     <ClInclude Include="..\..\source\jail.h" />
     <ClInclude Include="..\..\source\JSEncapsulate.h" />
@@ -1436,7 +1436,6 @@
     <ClInclude Include="..\..\source\power.h" />
     <ClInclude Include="..\..\source\Prerequisites.h" />
     <ClInclude Include="..\..\source\regions.h" />
-    <ClInclude Include="..\..\source\resource.h" />
     <ClInclude Include="..\..\source\scriptc.h" />
     <ClInclude Include="..\..\source\SEFunctions.h" />
     <ClInclude Include="..\..\source\skills.h" />

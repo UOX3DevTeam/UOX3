@@ -159,12 +159,12 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 			}
 			else if( iDropped.name2 != "#" && potionCount > 0 && potionKeg.name2 == "#" )
 			{
-				socket.SysMessage( "Unidentified potions can only be placed in unidentified potion kegs" ); // Unidentified potions can only be placed in unidentified potion kegs
+				socket.SysMessage( GetDictionaryEntry( 2785, socket.language )); // Unidentified potions can only be placed in unidentified potion kegs" ); // Unidentified potions can only be placed in unidentified potion kegs
 				return 0;
 			}
 			else if( iDropped.name2 == "#" && potionCount > 0 && potionKeg.name2 != "#" )
 			{
-				socket.SysMessage( "Identified potions can only be placed in identified potion kegs" ); // Identified potions can only be placed in identified potion kegs
+				socket.SysMessage( GetDictionaryEntry( 2786, socket.language )); // Identified potions can only be placed in identified potion kegs
 				return 0;
 			}
 			else

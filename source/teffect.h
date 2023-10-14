@@ -42,7 +42,7 @@ public:
 	void	ObjPtr( CBaseObject *value )	{	objptr = value;			}
 	void	AssocScript( UI16 value )		{	assocScript = value;	}
 
-	bool	Save( std::ofstream &effectDestination ) const; // saves the current effect
+	bool	Save( std::ostream &effectDestination ) const; // saves the current effect
 };
 
 #endif

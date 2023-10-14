@@ -30,6 +30,8 @@ enum cC_TID
 	tCHAR_FIREFIELDTICK,
 	tCHAR_POISONFIELDTICK,
 	tCHAR_PARAFIELDTICK,
+	tCHAR_YOUNGHEAL,
+	tCHAR_YOUNGMESSAGE,
 	// NPC Timers
 	tNPC_MOVETIME,
 	tNPC_SPATIMER,
@@ -37,6 +39,8 @@ enum cC_TID
 	tNPC_EVADETIME,
 	tNPC_LOYALTYTIME,
 	tNPC_IDLEANIMTIME,
+	tNPC_PATHFINDDELAY,
+	tNPC_FLEECOOLDOWN,
 	// PC Timers
 	tPC_LOGOUT,
 	tCHAR_COUNT
@@ -70,7 +74,7 @@ private:
 	struct NPCValues_st
 	{
 		NPCValues_st();
-		void				DumpBody( std::ofstream& outStream );
+		void				DumpBody( std::ostream& outStream );
 
 		SI08				wanderMode; // NPC Wander Mode
 		SI08				oldWanderMode; // Used for fleeing npcs
@@ -84,6 +88,7 @@ private:
 		SI16				taming;
 		SI16				fleeAt;     // HP Level to flee at
 		SI16				reAttackAt; // HP Level to re-Attack at
+		UI08				fleeDistance;	// Maximum distance in tiles the NPC can flee in one go
 		UI08				splitNum;
 		UI08				splitChance;
 		UI08				trainingPlayerIn;
@@ -129,7 +134,7 @@ private:
 	struct PlayerValues_st
 	{
 		PlayerValues_st();
-		void		DumpBody( std::ofstream& outStream );
+		void		DumpBody( std::ostream& outStream );
 
 		SERIAL		callNum;        // Callnum GM or Counsellor is on
 		SERIAL		playerCallNum;  // Players call number in GM or Counsellor requestQueue
@@ -160,11 +165,12 @@ private:
 		std::string	lastOn; //Last time a character was on
 		UI32		lastOnSecs; //Last time a character was on in seconds.
 
-		SERIAL	townVote;
+		SERIAL		townVote;
 		SI08		townPriv;  //0=non resident (Other privledges added as more functionality added)
 		UI08		controlSlotsUsed; // The total number of control slots currently taken up by followers/pets
 		UI32		createdOn;	// Timestamp for when player character was created
 		UI32		npcGuildJoined;	// Timestamp for when player character joined NPC guild (0=never joined)
+		UI32		playTime;	// Character's full playtime
 
 		UI08		atrophy[INTELLECT+1];
 		SkillLock	lockState[INTELLECT+1];	// state of the skill locks
@@ -211,7 +217,6 @@ protected:
   	UI16    	advObj;			// Has used advance gate?
   	SERIAL  	guildFealty;	// Serial of player you are loyal to (default=yourself) (DasRaetsel)
   	SI16    	guildNumber;	// Number of guild player is in (0=no guild)     (DasRaetsel)
-	UI16		npcGuild;		// ID of NPC guild character is in (0=no NPC guild)
 
   	UI08    	flag;			// 1=red 2=grey 4=Blue 8=green 10=Orange // should it not be 0x10??? sounds like we're trying to do
   	SI08    	spellCast;
@@ -232,7 +237,8 @@ protected:
 
 	UI08		PoisonStrength;
 	BodyType	bodyType;
-	UI32		lastMoveTime; 			// Timestamp for when character moved last
+	UI32		lastMoveTime;		// Timestamp for when character moved last
+	UI16		npcGuild;		// ID of NPC guild character is in (0=no NPC guild)
 
 	SKILLVAL	baseskill[ALLSKILLS]; 	// Base skills without stat modifiers
 	SKILLVAL	skill[INTELLECT+1]; 	// List of skills (with stat modifiers)
@@ -251,8 +257,8 @@ protected:
 	DAMAGETRACK		damageDealt;
 	DAMAGETRACK		damageHealed;
 
-	virtual bool	DumpHeader( std::ofstream &outStream ) const override;
-	virtual bool	DumpBody( std::ofstream &outStream ) const override;
+	virtual bool	DumpHeader( std::ostream &outStream ) const override;
+	virtual bool	DumpBody( std::ostream &outStream ) const override;
 	virtual bool	HandleLine( std::string &UTag, std::string &data ) override;
 	virtual bool	LoadRemnants( void ) override;
 
@@ -373,7 +379,7 @@ public:
 	bool		GetCanAttack( void ) const;
 	bool		IsAtWar( void ) const;
 	bool		IsPassive( void ) const;
-	auto		HasStolen() -> const bool;
+	auto		HasStolen() -> bool;
 	auto		HasStolen( bool newValue ) -> void;
 	bool		IsOnHorse( void ) const;
 	bool		GetTownTitle( void ) const;
@@ -564,7 +570,7 @@ public:
 
 	void			BreakConcentration( CSocket *sock = nullptr );
 
-	virtual bool	Save( std::ofstream &outStream ) override;
+	virtual bool	Save( std::ostream &outStream ) override;
 	virtual void	PostLoadProcessing( void ) override;
 
 	SI16			ActualStrength( void ) const;
@@ -748,9 +754,11 @@ public:
 
 	SI16		GetFleeAt( void ) const;
 	SI16		GetReattackAt( void ) const;
+	UI08		GetFleeDistance( void ) const;
 
 	void		SetFleeAt( SI16 newValue );
 	void		SetReattackAt( SI16 newValue );
+	void		SetFleeDistance( UI08 newValue );
 
 	UI08		PopDirection( void );
 	void		PushDirection( UI08 newDir, bool pushFront = false );
@@ -809,6 +817,9 @@ public:
 	std::string GetLastOn( void ) const;
 	void		SetLastOnSecs( UI32 newValue );
 	UI32		GetLastOnSecs( void ) const;
+
+	auto		GetPlayTime() const -> UI32;
+	auto		SetPlayTime( UI32 newValue ) -> void;
 
 	void		SetCreatedOn( UI32 newValue );
 	UI32		GetCreatedOn( void ) const;

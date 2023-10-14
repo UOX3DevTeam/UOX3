@@ -95,8 +95,6 @@ protected:
 	SI16				karma;
 	SI16				kills;
 	UI16				subRegion;
-	//std::string			origin; // Stores expansion item originates from
-	UI08				origin; // Stores expansion item originates from
 
 	void			RemoveFromMulti( bool fireTrigger = true );
 	void			AddToMulti( bool fireTrigger = true );
@@ -108,6 +106,8 @@ protected:
 	SERIAL			tempContainerSerial;
 
 	bool			nameRequestActive;
+	//std::string	origin;	// Stores expansion item originates from
+	UI08			origin;	// Stores expansion item originates from
 
 	void			CopyData( CBaseObject *target );
 
@@ -194,18 +194,18 @@ public:
 	void					SetSpawn( SERIAL newSpawn );
 	virtual void			SetOwner( CChar *newOwner );
 
-	virtual bool			Save( std::ofstream &outStream ) = 0;
-	virtual bool			DumpHeader( std::ofstream &outStream ) const = 0;
-	virtual bool			DumpBody( std::ofstream &outStream ) const;
-	bool					DumpFooter( std::ofstream &outStream ) const;
-	bool					Load( std::ifstream &inStream );
+	virtual bool			Save( std::ostream &outStream ) = 0;
+	virtual bool			DumpHeader( std::ostream &outStream ) const = 0;
+	virtual bool			DumpBody( std::ostream &outStream ) const;
+	bool					DumpFooter( std::ostream &outStream ) const;
+	bool					Load( std::istream &inStream );
 
 	virtual bool			HandleLine( std::string &UTag, std::string &data );
 
 	RACEID					GetRace( void ) const;
 	void					SetRace( RACEID newValue );
 
-	std::string				GetNameRequest( CChar *nameRequester );
+	std::string				GetNameRequest( CChar *nameRequester, UI08 requestSource );
 	std::string				GetName( void ) const;
 	void					SetName( std::string newName );
 
