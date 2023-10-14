@@ -3,7 +3,10 @@
 // Gargish Cloth Arms - E/W
 [0x0404]
 {
-get=base_gargish_cloth_arms
+getlbr=0x0404_lbr
+getaos=0x0404_aos
+gettol=0x0404_tol
+sectionid=0x0404
 }
 
 // Gargish Cloth Arms - N/S
@@ -22,7 +25,10 @@ get=0x0404 0x4060
 // Female Gargish Cloth Arms - E/W
 [0x0403]
 {
-get=base_female_gargish_cloth_arms
+getlbr=0x0403_lbr
+getaos=0x0403_aos
+gettol=0x0403_tol
+sectionid=0x0403
 }
 
 / Female Gargish Cloth Arms - N/S
@@ -40,10 +46,13 @@ get=0x0403 0x405f
 
 // -----------= CHEST =----------- //
 
-// Gargish Cloth Chest
+// Gargish Cloth Chest - E/W
 [0x0406]
 {
-get=base_gargish_cloth_chest
+getlbr=0x0406_lbr
+getaos=0x0406_aos
+gettol=0x0406_tol
+sectionid=0x0406
 }
 
 // Gargish Cloth Chest - N/S
@@ -62,7 +71,10 @@ get=0x0405 0x4062
 // Female Gargish Cloth Chest - E/W
 [0x0405]
 {
-get=base_female_gargish_cloth_chest
+getlbr=0x0405_lbr
+getaos=0x0405_aos
+gettol=0x0405_tol
+sectionid=0x0405
 }
 
 // Female Gargish Cloth Chest - N/S
@@ -83,7 +95,10 @@ get=0x0405 0x4061
 // Gargish Cloth Leggings - E/W
 [0x040a]
 {
-get=base_gargish_cloth_leggings
+getlbr=0x040a_lbr
+getaos=0x040a_aos
+gettol=0x040a_tol
+sectionid=0x040a
 }
 
 // Gargish Cloth Leggings - N/S
@@ -102,7 +117,10 @@ get=0x040a 0x4066
 // Female Gargish Cloth Leggings - E/W
 [0x0409]
 {
-get=base_female_gargish_cloth_leggings
+getlbr=0x0409_lbr
+getaos=0x0409_aos
+gettol=0x0409_tol
+sectionid=0x0409
 }
 
 // Female Gargish Cloth Leggings - N/S
@@ -121,7 +139,10 @@ get=0x0409 0x4065
 // Gargish Cloth Kilt - E/W
 [0x0408]
 {
-get=base_gargish_cloth_kilt
+getlbr=0x0408_lbr
+getaos=0x0408_aos
+gettol=0x0408_tol
+sectionid=0x0408
 }
 
 // Gargish Cloth Kilt - N/S
@@ -140,7 +161,10 @@ get=0x0408 0x4064
 // Gargish Cloth Kilt (Female) - E/W
 [0x0407]
 {
-get=base_female_gargish_cloth_kilt
+getlbr=0x0407_lbr
+getaos=0x0407_aos
+gettol=0x0407_tol
+sectionid=0x0407
 }
 
 // Gargish Cloth Kilt (Female) - N/S
@@ -161,7 +185,10 @@ get=0x0407 0x4063
 // Gargish Cloth Wing Armor - N/S
 [0x45a4]
 {
-get=base_gargish_cloth_wing_armor
+getlbr=0x45a4_lbr
+getaos=0x45a4_aos
+gettol=0x45a4_tol
+sectionid=0x45a4
 }
 
 // Gargish Cloth Wing Armor - E/W

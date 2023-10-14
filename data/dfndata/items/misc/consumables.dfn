@@ -1,0 +1,244 @@
+[tribalpaint]
+{
+get=base_item
+id=0x09ec
+name=savage kin paint
+color=0x0835
+pileable=1
+weight=200
+origin=td
+script=5037//tribal_paint.js
+sectionid=tribalpaint
+}
+
+[savagekinpaint]
+{
+get=tribalpaint
+}
+
+[haironlydye]
+{
+get=base_item
+name=a hair-only dye
+id=0x0eff
+weight=100
+value=30000 15000
+restock=10
+script=5040//hairbearddye.js
+morex=0
+}
+
+[beardonlydye]
+{
+get=base_item
+name=a beard-only dye
+id=0x0eff
+weight=100
+value=30000 15000
+restock=10
+script=5040//hairbearddye.js
+morex=1
+}
+
+[hairdye]
+{
+get=base_item
+name=a hair dye
+id=0x0eff
+weight=100
+value=50 25
+restock=10
+script=5040//hairbearddye.js
+morex=2
+}
+
+[specialhaironlydye]
+{
+get=base_item
+name=a special hair-only dye
+id=0x0eff
+weight=100
+value=30000 15000
+restock=10
+script=5040//hairbearddye.js
+morex=0
+morey=1
+}
+
+[specialbeardonlydye]
+{
+get=base_item
+name=a special beard-only dye
+id=0x0eff
+weight=100
+value=30000 15000
+restock=10
+script=5040//hairbearddye.js
+morex=1
+morey=1
+}
+
+[specialhairdye]
+{
+get=base_item
+name=a special hair dye
+id=0x0eff
+weight=100
+value=50 25
+restock=10
+script=5040//hairbearddye.js
+morex=2
+morey=1
+}
+
+// Special Monster Loot
+// Obtained from monsters with stealing skill from Publish 57 and onwards
+// Mana Draught
+// Insurable. When drunk, the player instantly recovers between 25 to 40 mana points. 10 min cooldown.
+[manadraught]
+{
+get=base_item
+name=mana draught
+id=0x0ffb
+color=0x048a
+weight=100
+decay=1
+restock=10
+morex=25
+morey=40
+morez=10
+custominttag=consumableID 1
+script=5044
+origin=ml
+}
+
+// Seed of Life
+// Stackable/Uninsurable. When eaten, instantly heals between 25 to 40 HP, even through poison and mortal wounds. 10 min cooldown.
+[seedoflife]
+{
+get=base_item
+name=seed of life
+id=0x1727
+color=0x0491
+weight=100
+decay=1
+restock=10
+pileable=1
+morex=25
+morey=40
+morez=10
+custominttag=consumableID 2
+script=5044
+origin=ml
+}
+
+// Base Balm/Lotion item
+// Don't add directly!
+[base_balmlotion]
+{
+get=base_item
+weight=100
+decay=1
+script=5044
+origin=ml
+}
+
+// Balm of Protection
+// Insurable. On use, reduces by 50% to 100 % the damage sustained from acid (grizzle), and AoE cold (prism icy water, ice elementals), fire (blazing gargoyles). The resistance chance is rolled for each tick. This balm does not protect against spells or weapons elemental damages. Cannot be combined with any other Balms or Lotion. Duration: 30 mins.
+[balmofprotection]
+{
+get=base_balmlotion
+name=balm of protection
+id=0x1c18
+color=0x0499
+morex=50
+morey=100
+morez=30
+custominttag=consumableID 3
+}
+
+// Balm of Strength
+// Insurable. On use, the player benefits of a 10 Strength increase for 30 min. Can't be combined with any other Balms or Lotion.
+[balmofstrength]
+{
+get=base_balmlotion
+name=balm of strength
+id=0x0efb
+morex=10
+morez=30
+custominttag=consumableID 4
+}
+
+// Balm of Swiftness
+// Insurable. On use the player benefits from a 10 Dex increase for 30 min. Can't be combined with any other Balm or Lotion.
+[balmofswiftness]
+{
+get=base_balmlotion
+name=balm of swiftness
+id=0x1848
+morex=10
+morez=30
+custominttag=consumableID 5
+}
+
+// Balm of Wisdom
+// Insurable. On use the player benefits from a 10 Int increase for 30 min. Can't be combined with any other Balms or Lotion.
+[balmofwisdom]
+{
+get=base_balmlotion
+name=balm of wisdom
+id=0x1847
+morex=10
+morez=30
+custominttag=consumableID 6
+}
+
+// Life Shield Lotion
+// Insurable. On use, reduces by 50% to 100 % the Life Drain damage from Succubus and Tentacles the Harrower. The resistance chance is rolled for each tick. Cannot be combined with any other Balms or Lotions. Duration 30 mins.
+[lifeshieldlotion]
+{
+get=base_balmlotion
+name=life shield lotion
+id=0x0efc
+morex=50
+morey=100
+morez=30
+custominttag=consumableID 7
+}
+
+// Stone Skin Lotion
+// Insurable. On use, increases player Physical Resists by 30 but reduces his Fire and Cold Resists by 5. Cannot be combined with any other Balms or Lotions. Duration 30 mins.
+[stoneskinlotion]
+{
+get=base_balmlotion
+name=stone skin lotion
+id=0x0efd
+morex=30
+morey=5
+morez=30
+custominttag=consumableID 8
+}
+
+// Gem of Salvation
+// Blessed. Upon death, the carrier will have the option to invoke its power to self-resurrect, destroying the gem in the process. Unlike Sacrifice, the player's belongings will remain on his corpse and he will be resurrected with the same minimum health as he would if rezzing at a shrine. 6 hours cooldown.
+[gemofsalvation]
+{
+get=base_item
+name=gem of salvation
+id=0x1f13
+color=0x011e
+newbie=1
+morez=6
+custominttag=consumableID 9
+script=5045
+}
+
+// New Player Ticket
+[newplayerticket]
+{
+get=base_item
+name=new player ticket
+id=0x14f0
+newbie=1
+script=5047//new player ticket
+}

@@ -4,7 +4,8 @@
 
 function onUseChecked( pUser, iUsed )
 {
-	var bankBox = pUser.FindItemLayer(29);
+	var pSock = pUser.socket;
+	var bankBox = pUser.FindItemLayer( 29 );
 	if( ValidateObject( bankBox ) && iUsed.container && iUsed.container.serial == bankBox.serial )
 	{
 		var checkSize = iUsed.GetTag( "CheckSize" );
@@ -49,10 +50,41 @@ function onUseChecked( pUser, iUsed )
 			var newGoldPile = CreateDFNItem( pUser.socket, pUser, "0x0EED", checkSize, "ITEM", false );
 			newGoldPile.container = bankBox;
 		}
-		pUser.TextMessage( GetDictionaryEntry( 2703, pUser.socket ) + " " + checkSize, false, 0x096a ); // Gold was deposited in your account:
+		pUser.TextMessage( GetDictionaryEntry( 2703, pSock.language ) + " " + checkSize, false, 0x096a ); // Gold was deposited in your account:
 		iUsed.Delete();
 	}
 	else
-		pUser.SysMessage( GetDictionaryEntry( 2702, pUser.socket )); // That must be in your bank box to use it.
+	{
+		pSock.SysMessage( GetDictionaryEntry( 2702, pSock.language )); // That must be in your bank box to use it.
+	}
 	return false;
 }
+
+// Display value of bank check
+function onTooltip( bankCheck )
+{
+	var tooltipText = "";
+	var checkSize = bankCheck.GetTag( "CheckSize" );
+	// 2793=Value: %i
+	tooltipText = GetDictionaryEntry( 2793 ).replace( /%i/gi, checkSize ); // Value: %i
+	bankCheck.SetTempTag( "clilocTooltip", 1042971 ); // ~1_NOTHING~
+	return tooltipText;
+}
+
+// Show value as part of name if tooltips are disabled
+const aosTooltipsEnabledClient = GetClientFeature( 4 );
+const aosTooltipsEnabledServer = GetServerFeature( 5 );
+function onNameRequest( bankCheck, pUser )
+{
+	// Default name
+	var nameString = bankCheck.name;
+
+	if( !aosTooltipsEnabledClient && !aosTooltipsEnabledServer )
+	{
+		nameString = bankCheck.name + " " + GetDictionaryEntry( 2794, pUser.socket.language ).replace( /%i/gi, bankCheck.GetTag( "CheckSize" )); // for %i gold
+	}
+
+	return nameString;
+}
+
+function _restorecontext_() {}

@@ -37,6 +37,13 @@ function DealAreaDamage( srcObj, trgChar )
 				return false;
 		}
 
+		if( parseInt( trgChar.GetTag( "activeBalmLotion" )) == 5 )
+		{
+			// Target character has an active Life Shield Lotion effect
+			// Reduce effect of hp drain by 50-100%
+			hpDrain -= RandomNumber( Math.round( hpDrain / 2 ), hpDrain );
+		}
+
 		// Play effects
 		DoMovingEffect( trgChar, trgChar, drainFX, 0, drainFXLength, false, drainFXHue, 0 );
 		trgChar.SoundEffect( drainSFX, true );
@@ -57,3 +64,5 @@ function DealAreaDamage( srcObj, trgChar )
 
 	return false;
 }
+
+function _restorecontext_() {}

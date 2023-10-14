@@ -16,6 +16,10 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 		if( pSock == null )
 			return false;
 
+		// Set timer for when NPC can move again
+		pTalkingTo.SetTimer( Timer.MOVETIME, 5000 );
+		pTalkingTo.TurnToward( pTalking );
+
 		if( pTalking.criminal || pTalking.murderer )
 		{
 			pTalkingTo.TextMessage( GetDictionaryEntry( 7000, pSock.language ), true, 0x03b2 ); // Thou art a criminal and cannot access thy bank box.
@@ -23,6 +27,12 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 		}
 
 		var bankBox = pTalking.FindItemLayer( 29 );
+		if( !ValidateObject( bankBox ))
+		{
+			// No bank box found for player talking - let's create one for them!
+			CreateNewBankBox( pTalking );
+		}
+
 		var trigWordHandled = false;
 		for( var trigWord = pSock.FirstTriggerWord(); !pSock.FinishedTriggerWords(); trigWord = pSock.NextTriggerWord() )
 		{
@@ -63,6 +73,12 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 					return false;
 				}
 
+				if( bankBox.weight > bankBox.weightMax )
+				{
+					pSock.SysMessage( GetDictionaryEntry( 9183, pSock.language )); // Your bank box is overloaded and cannot hold any more weight.
+					return false;
+				}
+
 				if( !splitString[1])
 				{
 					pTalking.tempObj = pTalkingTo;
@@ -75,25 +91,22 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 					var goldInPack = pTalking.ResourceCount( 0x0EED, 0 );
 					if( !isNaN( depositAmt ) && depositAmt > 0)
 					{
-						if( bankBox )
+						if( goldInPack < depositAmt )
 						{
-							if( goldInPack < depositAmt )
+							pTalkingTo.TextMessage( GetDictionaryEntry( 7002, pSock.language ), true, 0x03b2 ); // Ah, art thou trying to fool me? Thou hast not so much gold!
+						}
+						else
+						{
+							var bankContents = CountBankContents( pTalking, bankBox );
+							if( parseInt( bankContents[0] ) < maxBankItemAmt )
 							{
-								pTalkingTo.TextMessage( GetDictionaryEntry( 7002, pSock.language ), true, 0x03b2 ); // Ah, art thou trying to fool me? Thou hast not so much gold!
+								pTalking.UseResource( depositAmt, 0x0EED, 0 );
+								DivideDepositedGold( pTalking, bankBox, depositAmt );
+								pTalkingTo.TextMessage( GetDictionaryEntry( 7003, pSock.language ), true, 0x03b2 ); // Thou hast deposited gold to thy account.
 							}
 							else
 							{
-								var bankContents = countBankContents( pTalking, bankBox );
-								if( parseInt( bankContents[0] ) < maxBankItemAmt )
-								{
-									pTalking.UseResource( depositAmt, 0x0EED, 0 );
-									divideDepositedGold( pTalking, bankBox, depositAmt );
-									pTalkingTo.TextMessage( GetDictionaryEntry( 7003, pSock.language ), true, 0x03b2 ); // Thou hast deposited gold to thy account.
-								}
-								else
-								{
-									pSock.SysMessage( GetDictionaryEntry( 1935, pSock.language )); // That container cannot hold any more items!
-								}
+								pSock.SysMessage( GetDictionaryEntry( 1935, pSock.language )); // That container cannot hold any more items!
 							}
 						}
 					}
@@ -116,7 +129,7 @@ function WithdrawFromBank( pSock, pTalking, pTalkingTo, bankBox, strSaid )
 	var playerPack = pTalking.pack;
 	if( playerPack.totalItemCount >= playerPack.maxItems )
 	{
-		pSock.SysMessage( 1819 ); // Your backpack cannot hold any more items!
+		pSock.SysMessage( GetDictionaryEntry( 1819, pSock.language )); // Your backpack cannot hold any more items!
 		return;
 	}
 
@@ -129,7 +142,7 @@ function WithdrawFromBank( pSock, pTalking, pTalkingTo, bankBox, strSaid )
 			pTalking.TextMessage( withdrawAmt );
 			if( bankBox )
 			{
-				var goldInBank = countGoldInBank( pTalking, bankBox );
+				var goldInBank = CountGoldInBank( pTalking, bankBox );
 				if( withdrawAmt > goldInBank )
 				{
 					pTalkingTo.TextMessage( GetDictionaryEntry( 7002, pSock.language ), true, 0x03b2 ); // Ah, art thou trying to fool me? Thou hast not so much gold!
@@ -138,7 +151,7 @@ function WithdrawFromBank( pSock, pTalking, pTalkingTo, bankBox, strSaid )
 				{
 					if( withdrawAmt > 65535 )
 					{
-						divideWithdrawnGold( pTalking, bankBox, withdrawAmt );
+						DivideWithdrawnGold( pTalking, bankBox, withdrawAmt );
 					}
 					else
 					{
@@ -160,7 +173,7 @@ function CheckBalance( pSock, pTalking, pTalkingTo, bankBox )
 {
 	if( bankBox )
 	{
-		var goldInBank = countGoldInBank( pTalking, bankBox );
+		var goldInBank = CountGoldInBank( pTalking, bankBox );
 		pTalkingTo.TextMessage( GetDictionaryEntry( 7007, pSock.language ) + " " + goldInBank, true, 0x03b2 ); // Thy current bank balance is:
 	}
 }
@@ -176,7 +189,7 @@ function OpenBank( pSock, pTalking, pTalkingTo, bankBox )
 	{
 		// This should rarely be necessary, all players should have had a bank-box added
 		// upon character creation.
-		bankBox = createNewBankBox( pTalking );
+		bankBox = CreateNewBankBox( pTalking );
 		if( !ValidateObject( bankBox ))
 		{
 			return;
@@ -184,7 +197,7 @@ function OpenBank( pSock, pTalking, pTalkingTo, bankBox )
 	}
 
 	pTalking.OpenBank( pSock );
-	var bankContents = countBankContents( pTalking, bankBox );
+	var bankContents = CountBankContents( pTalking, bankBox );
 	if( bankContents )
 	{
 		var itemAmount = parseInt( bankContents[0], 10 );
@@ -193,7 +206,7 @@ function OpenBank( pSock, pTalking, pTalkingTo, bankBox )
 
 		var bankMsg = GetDictionaryEntry( 7008, pSock.language ); // Bank container has %i items, %u stones
 		bankMsg = bankMsg.replace(/%i/gi, itemAmount);
-		pTalking.TextMessage( bankMsg.replace(/%u/gi, stones ), false, 0x096a );
+		pTalking.TextMessage( bankMsg.replace( /%u/gi, stones ), false, 0x096a );
 	}
 }
 
@@ -211,23 +224,19 @@ function CreateCheck( pSock, pTalking, pTalkingTo, bankBox, strSaid )
 		var checkSize = parseInt( splitString[1], 10 );
 		if( bankBox )
 		{
-			var goldInBank = countGoldInBank( pTalking, bankBox );
+			var goldInBank = CountGoldInBank( pTalking, bankBox );
 			if( checkSize > goldInBank )
 			{
 				pTalkingTo.TextMessage( GetDictionaryEntry( 7002, pSock.language ), true, 0x03b2 ); // Ah, art thou trying to fool me? Thou hast not so much gold!
 			}
 			else
 			{
-				var newCheck = CreateDFNItem( pSock, pTalking, "0x14F0", 1, "ITEM", false ); //Add check
+				var newCheck = CreateDFNItem( pSock, pTalking, "bankcheck", 1, "ITEM", false ); //Add check
 				if( newCheck )
 				{
 					bankBox.UseResource( checkSize, 0x0EED, 0 );
 					newCheck.SetTag( "CheckSize", checkSize );
-					newCheck.name = "A bank check";
-					newCheck.colour = 0x34;
 					newCheck.AddScriptTrigger( bankCheckTrigger );
-					newCheck.isNewbie = true;
-					newCheck.weight = 100;
 					newCheck.container = bankBox;
 
 					var checkMsg = GetDictionaryEntry( 7009, pSock.language ); // Into your bank box I have placed a check in the amount of %i
@@ -243,7 +252,7 @@ function CreateCheck( pSock, pTalking, pTalkingTo, bankBox, strSaid )
 }
 
 // Creates a new bank box for players that, for some reason, do not already have one
-function createNewBankBox( pTalking )
+function CreateNewBankBox( pTalking )
 {
 	// Create a new bankbox for the player
 	var newBankBox = CreateDFNItem( pTalking.socket, pTalking, "0x09ab", 1, "ITEM", false );
@@ -251,7 +260,8 @@ function createNewBankBox( pTalking )
 	newBankBox.layer = 29;
 	newBankBox.owner = pTalking;
 	newBankBox.container = pTalking;
-	newBankBox.maxItems = parseInt(GetServerSetting( "MAXPLAYERBANKITEMS" ));
+	newBankBox.maxItems = parseInt( GetServerSetting( "MAXPLAYERBANKITEMS" ));
+	newBankBox.weightMax = parseInt( GetServerSetting( "MAXPLAYERBANKWEIGHT" ));
 	newBankBox.type = 1;
 	newBankBox.morex = 1;
 	if( newBankBox )
@@ -265,7 +275,7 @@ function createNewBankBox( pTalking )
 }
 
 // Counts the amount of items in the bank box and registers their total weight
-function countBankContents( pTalking, bankBox )
+function CountBankContents( pTalking, bankBox )
 {
 	var mItem;
 	var bankContents = new Array();
@@ -276,7 +286,12 @@ function countBankContents( pTalking, bankBox )
 		if( mItem != null )
 		{
 			bankContents[0] = bankContents[0] + 1;
-			bankContents[1] = bankContents[1] + ( mItem.weight / 100 );
+			var mItemWeight = mItem.weight;
+			if( mItem.amount > 1 )
+			{
+				mItemWeight *= mItem.amount;
+			}
+			bankContents[1] = bankContents[1] + ( mItemWeight / 100 );
 		}
 	}
 	return bankContents;
@@ -284,7 +299,7 @@ function countBankContents( pTalking, bankBox )
 
 // Count the gold in player's bankbox!
 // If ResourceCount JS Method worked with items, this could be removed
-function countGoldInBank( pTalking, bankBox )
+function CountGoldInBank( pTalking, bankBox )
 {
 	var mItem;
 	var goldInBank = 0;
@@ -314,7 +329,7 @@ function onCallback0( pSock, ourObj )
 		{
 			if( bankBox && ourObj.container && (( ourObj.container == pTalking ) || ( ourObj.container == pTalking.pack )))
 			{
-				var bankContents = countBankContents( pTalking, bankBox );
+				var bankContents = CountBankContents( pTalking, bankBox );
 				if( parseInt( bankContents[0] ) < maxBankItemAmt )
 				{
 					ourObj.container = bankBox;
@@ -338,7 +353,7 @@ function onCallback0( pSock, ourObj )
 }
 
 // Divide gold to be withdrawn into several piles of max 65535 each
-function divideWithdrawnGold( pTalking, bankBox, withdrawAmt )
+function DivideWithdrawnGold( pTalking, bankBox, withdrawAmt )
 {
 	var numOfGoldPiles = ( withdrawAmt / 65535 );
 	var i = 0; var newGoldPile;
@@ -359,7 +374,7 @@ function divideWithdrawnGold( pTalking, bankBox, withdrawAmt )
 }
 
 // Divide gold to be deposited into several piles of max 65535 each
-function divideDepositedGold( pTalking, bankBox, depositAmt )
+function DivideDepositedGold( pTalking, bankBox, depositAmt )
 {
 	var numOfGoldPiles = ( depositAmt / 65535 );
 	var i = 0; var newGoldPile;
@@ -380,3 +395,5 @@ function divideDepositedGold( pTalking, bankBox, depositAmt )
 		}
 	}
 }
+
+function _restorecontext_() {}

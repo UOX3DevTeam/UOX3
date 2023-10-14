@@ -45,12 +45,12 @@ const myPage = [
 	[10683, 10684, 10685, 10686]
 ];
 
-function pageX( socket, pUser, pageNum )
+function PageX( socket, pUser, pageNum )
 {
 	// Pages 1 - 10
 	var myGump = new Gump;
 	pUser.SetTempTag( "page", pageNum );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
 	for( var i = 0; i < myPage[pageNum - 1].length; i++ )
 	{
 		var index = i % 10;
@@ -112,7 +112,7 @@ function onCallback2( pSock, ourObj )
 			return;
 		}
 
-		var itemDurabilityLossEnabled = GetServerSetting( "ItemDurabilityLoss" );
+		var itemDurabilityLossEnabled = GetServerSetting( "ItemRepairDurabilityLoss" );
 		var repairID = ourObj.id;
 		var ownerObj = GetPackOwner( ourObj, 0 );
 		if( ownerObj && mChar.serial == ownerObj.serial )
@@ -255,7 +255,7 @@ function onTimer( pUser, timerID )
 		case 8: // Page 8
 		case 9: // Page 9
 		case 10: // Page 10
-			pageX( socket, pUser, timerID );
+			PageX( socket, pUser, timerID );
 			break;
 	}
 }
@@ -335,7 +335,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 9: // Page 9
 		case 10: // Page 10
 			pSock.CloseGump( gumpID, 0 );
-			TriggerEvent( scriptID, "pageX", pSock, pUser, pButton );
+			TriggerEvent( scriptID, "PageX", pSock, pUser, pButton );
 			break;
 		case 51:
 			RepairTarget( pSock );

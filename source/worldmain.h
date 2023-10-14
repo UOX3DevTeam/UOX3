@@ -1,19 +1,19 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	worldmain.h
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Interface for the CWorldMain class.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 
 #if !defined(__WORLDMAIN_H__)
 #define __WORLDMAIN_H__
 
+#include "cServerData.h"
 #include "GenericList.h"
 #if PLATFORM == WINDOWS
 #include <winsock2.h>
 #undef min
 #undef max
 #endif
-
 enum CWM_TID
 {
 	tWORLD_NEXTFIELDEFFECT = 0,
@@ -42,7 +42,6 @@ private:
 	SI32 globalSent;
 public:
 	CServerProfile();
-	~CServerProfile();
 
 	UI32	NetworkTime( void ) const;
 	UI32	TimerTime( void ) const;
@@ -85,11 +84,11 @@ class CWorldMain
 {
 private:
 	// Custom Titles
-	struct title_st
+	struct Title_st
 	{
 		std::string fame;
 		std::string skill;
-		title_st() : fame( "" ), skill( "" )
+		Title_st() : fame( "" ), skill( "" )
 		{
 		}
 	};
@@ -99,54 +98,61 @@ private:
 
 	// Console & Program Level Vars
 	bool		error;
-	bool		keeprun;
+	bool		keepRun;
 	bool		secure; // Secure mode
-	bool		Loaded;
+	bool		hasLoaded;
 
 	// Time Functions
-	UI32		uotickcount;
-	UI32		starttime, endtime, lclock;
+	UI32		uoTickCount;
+	UI32		startTime, endTime, lClock;
 	bool		overflow;
 	UI32		uiCurrentTime;
 
 	// Worldsave
-	UI32		oldtime, newtime;
-	bool		autosaved;
+	UI32		oldTime, newTime;
+	bool		autoSaved;
 	SaveStatus	worldSaveProgress;
 
 	// IP Update
 	UI32		oldIPtime, newIPtime;
-	bool		ipupdated;
+	bool		ipUpdated;
 
 	// Misc
-	size_t		playersOnline;					// Players online
+	size_t		playersOnline; // Players online
 	bool		reloadingScripts;
 	bool		classesInitialized;
 
 public:
-	struct skill_st
+	struct Skill_st
 	{
-		UI16 strength			= 0;
-		UI16 dexterity			= 0;
-		UI16 intelligence		= 0;
-		SI32 skillDelay			= -1;
-		std::string madeword	= "made";
-		std::vector< advance_st > advancement;
-		UI16 jsScript			= 0xFFFF;
-		std::string name		= "";
-		skill_st()
+		UI16 strength;
+		UI16 dexterity;
+		UI16 intelligence;
+		SI32 skillDelay;
+		std::string madeWord;
+		std::vector<Advance_st> advancement;
+		UI16 jsScript;
+		std::string name;
+		Skill_st()
 		{
 			ResetDefaults();
 		}
-		void ResetDefaults( void )
+		auto ResetDefaults() -> void
 		{
 			advancement.resize( 0 );
+			strength = 0;
+			dexterity = 0;
+			intelligence = 0;
+			skillDelay = -1;
+			madeWord = "made";
+			jsScript = 0xFFFF;
+			name = "";
 		}
 	};
 
 	// Timers
-	void		SetTimer( CWM_TID timerID, TIMERVAL newVal );
-	TIMERVAL	GetTimer( CWM_TID timerID ) const;
+	void		SetTimer( CWM_TID timerId, TIMERVAL newVal );
+	TIMERVAL	GetTimer( CWM_TID timerId ) const;
 
 	// Console & Program Level Vars
 	void		SetError( bool newVal );
@@ -202,40 +208,40 @@ public:
 	void		CheckAutoTimers( void );
 
 	// Structs
-	std::map< UI16, CCreatures >		creatures;
-	timeval								uoxtimeout;
-	skill_st							skill[INTELLECT+1];				// Skill data
-	title_st							title[ALLSKILLS+1];			// For custom titles reads titles.dfn
-	std::vector< TitlePair_st >			prowessTitles;
-	std::vector< TitlePair_st >			murdererTags;
-	std::vector< CTeleLocationEntry >	teleLocs;
-	std::vector< LogoutLocationEntry >	logoutLocs;
-	std::vector< SOSLocationEntry >		sosLocs;
-	std::vector< UI08 >					escortRegions;
-	std::map< UI16, GoPlaces_st >		goPlaces;
-	SPAWNMAP							spawnRegions;
-	TOWNMAP								townRegions;
-	GenericList< CTEffect * >			tempEffects;
+	std::map<UI16, CCreatures>			creatures;
+	timeval								uoxTimeout;
+	Skill_st							skill[INTELLECT+1];				// Skill data
+	Title_st							title[ALLSKILLS+1];			// For custom titles reads titles.dfn
+	std::vector<TitlePair_st>			prowessTitles;
+	std::vector<TitlePair_st>			murdererTags;
+	std::vector<CTeleLocationEntry>		teleLocs;
+	std::vector<LogoutLocationEntry_st>	logoutLocs;
+	std::vector<SOSLocationEntry_st>	sosLocs;
+	std::vector<UI16>					escortRegions;
+	std::map<UI16, GoPlaces_st>			goPlaces;
+	std::unordered_map<UI16, CSpawnRegion *>	spawnRegions;
+	std::map<UI16, CTownRegion *>				townRegions;
+	GenericList<CTEffect *>				tempEffects;
 
-	QUEUEMAP							refreshQueue;
-	QUEUEMAP							deletionQueue;
+	std::map<CBaseObject *, UI32>	 	refreshQueue;
+	std::map<CBaseObject *, UI32> 		deletionQueue;
 
-	void		CheckTimers( void );
-	void		doWorldLight( void );
-	void		SaveNewWorld( bool x );
-
+	void CheckTimers( void );
+	void DoWorldLight( void );
+	void SaveNewWorld( bool x );
+	auto Startup() -> void;
 	CWorldMain();
-	~CWorldMain();
-	CServerData *	ServerData( void );
-	CServerProfile * ServerProfile( void );
+	auto ServerData() ->CServerData *;
+	auto SetServerData(CServerData &server_data) -> void;
+	auto ServerProfile()->CServerProfile *;
 private:
 	void			RegionSave( void );
 	void			SaveStatistics( void );
 
-	CServerData *	sData;
-	CServerProfile * sProfile;
+	CServerData  *sData;
+	CServerProfile sProfile;
 };
 
-extern CWorldMain								*cwmWorldState;
+extern CWorldMain	 *cwmWorldState;
 
 #endif

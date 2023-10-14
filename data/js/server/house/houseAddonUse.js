@@ -54,6 +54,9 @@ function onUseChecked( pUser, iUsed )
 			pSocket.tempObj = iUsed;
 			pUser.CustomTarget( 1, "What do you want to weave on this loom?" );
 			break;
+		default:
+			// Hint about using axe to return addon to deed-form
+			iUsed.TextMessage( GetDictionaryEntry( 9185, pSocket.language ), false, 0x3b2, 0, pUser.serial ); // You can use an axe to dismantle house addons and get their deeds back.
 	}
 
 	return false;
@@ -64,7 +67,7 @@ function onCallback0( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
 	var spinningWheel = pSocket.tempObj;
-	var StrangeByte   = pSocket.GetWord( 1 );
+	var StrangeByte = pSocket.GetWord( 1 );
 
 	// Make sure target is a valid item
 	if( !ValidateObject( myTarget ) || !myTarget.isItem )
@@ -110,7 +113,7 @@ function onCallback1( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
 	var loom = pSocket.tempObj;
-	var StrangeByte   = pSocket.GetWord( 1 );
+	var StrangeByte = pSocket.GetWord( 1 );
 
 	// Make sure target is a valid item
 	if( !ValidateObject( myTarget ) || !myTarget.isItem )

@@ -1,6 +1,5 @@
 // Global Script
 // Supported Events trigger for every character/item, use with care
-
 function onLogin( socket, pChar )
 {
 	// Display Admin Welcome Gump for characters on admin account, until a choice has been made
@@ -14,6 +13,50 @@ function onLogin( socket, pChar )
 			TriggerEvent( 1, "DisplayAdminWelcomeGump", socket, pChar );
 			return;
 		}
+	}
+
+	// Store login timestamp (in minutes) in temp tag
+	var loginTime = Math.round( GetCurrentClock() / 1000 / 60 );
+	pChar.SetTempTag( "loginTime", loginTime );
+
+	// Attach OnFacetChange to characters logging into the shard
+	if( !pChar.HasScriptTrigger( 2508 ))
+    {
+        pChar.AddScriptTrigger( 2508 );
+    }
+
+    if( pChar.account.isYoung )
+    {
+  		// Attach "Young" player script, if the account is young and does not have script
+		if( !pChar.HasScriptTrigger( 8001 ))
+		{
+			pChar.AddScriptTrigger( 8001 );
+		}
+
+    	// Check if "Young" player still meets requirement for being considered young
+    	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
+    }
+}
+
+function onLogout( pSock, pChar )
+{
+	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - pChar.GetTempTag( "loginTime" );
+	pChar.playTime += minSinceLogin;
+	pChar.account.totalPlayTime += minSinceLogin;
+}
+
+function onCreatePlayer( pChar )
+{
+	// If player character is created on a Young account, give them Young-specific items
+	if( pChar.account.isYoung )
+	{
+		// Attach "Young" player script, if the account is young and does not have script
+		if( !pChar.HasScriptTrigger( 8001 ))
+		{
+			pChar.AddScriptTrigger( 8001 );
+		}
+
+		TriggerEvent( 8001, "GiveYoungPlayerItems", pChar.socket, pChar );
 	}
 }
 
@@ -111,4 +154,26 @@ function onDecay( iDecaying )
 		return false;
 	}
 	return true;
+}
+
+// Override the hard-coded help menu and display a JS based one
+function onHelpButton( pChar )
+{
+	TriggerEvent( 2, "DisplayHelpMenu", pChar );
+	return false;
+}
+
+// Override hard-coded snooping request and go with scripted one
+function onSnoopAttempt( snoopTarget, targCont, pUser )
+{
+	return TriggerEvent( 4055, "SnoopAttempt", snoopTarget, targCont, pUser );
+}
+
+// Look for Gem of Salvation in player's backpack to give them chance to resurrect
+function onDeath( pDead, iCorpse )
+{
+	if( !ValidateObject( pDead ) || pDead.npc || !pDead.online )
+		return false;
+
+	return TriggerEvent( 5045, "onDeath", pDead, iCorpse );
 }

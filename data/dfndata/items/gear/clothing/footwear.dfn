@@ -21,6 +21,7 @@ str=10
 dyeable=1
 decay=1
 good=19
+sectionid=0x170b
 }
 
 // Boots
@@ -49,6 +50,7 @@ hp=10
 dyeable=1
 decay=1
 good=19
+sectionid=0x170d
 }
 
 // Sandals
@@ -77,6 +79,7 @@ hp=20
 dyeable=1
 decay=1
 good=19
+sectionid=0x170f
 }
 
 // Shoes
@@ -106,6 +109,7 @@ str=20
 dyeable=1
 decay=1
 good=19
+sectionid=0x1711
 }
 
 // Thigh Boots

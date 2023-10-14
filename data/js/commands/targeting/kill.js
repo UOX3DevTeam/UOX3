@@ -1,7 +1,10 @@
+// These commands handle killing of characters, or their hairs/beards, or resurrecting dead chars
+
 function CommandRegistration()
 {
 	RegisterCommand( "kill", 2, true );
 	RegisterCommand( "resurrect", 2, true );
+	RegisterCommand( "res", 2, true );
 	RegisterCommand( "shavehair", 2, true );
 	RegisterCommand( "shavebeard", 2, true );
 }
@@ -14,7 +17,9 @@ function command_KILL( socket, cmdString )
 		socket.CustomTarget( 0, GetDictionaryEntry( 8089, socket.language ) + " " + cmdString ); // Select target to kill:
 	}
 	else
+	{
 		socket.SysMessage( GetDictionaryEntry( 8090, socket.language )); // This command takes at least 1 argument.
+	}
 }
 
 // Alias of 'kill hair
@@ -34,8 +39,8 @@ function onCallback0( socket, ourObj )
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		var splitString = socket.xText.split( " " );
-		var uKey 	= splitString[0].toUpperCase();
-		var layer 	= 0;
+		var uKey = splitString[0].toUpperCase();
+		var layer = 0;
 		switch( uKey )
 		{
 		case "HAIR":	layer = 0x0B;			break;
@@ -43,7 +48,9 @@ function onCallback0( socket, ourObj )
 		case "PACK":	layer = 0x15;			break;
 		case "LAYER":
 				if( splitString[1] )
+				{
 					layer = parseInt( splitString[1] );
+				}
 				break;
 		case "CHAR":
 				if( !ourObj.dead )
@@ -53,7 +60,9 @@ function onCallback0( socket, ourObj )
 					ourObj.Kill();
 				}
 				else
+				{
 					socket.SysMessage( GetDictionaryEntry( 8091, socket.language )); // That character is already dead!
+				}
 				break;
 		default:
 				socket.SysMessage( GetDictionaryEntry( 8092, socket.language )); // Invalid argument passed for KILL command
@@ -63,19 +72,42 @@ function onCallback0( socket, ourObj )
 		{
 			var ourLayer = ourObj.FindItemLayer( layer );
 			if( ourLayer )
+			{
 				ourLayer.Delete();
+			}
+
+			// Reset the hair/beard style and colour properties if those were removed
+			if( layer == 0x0b  ) // hair
+			{
+				ourObj.hairStyle = 0;
+				ourObj.hairColour = 0;
+			}
+			else if( layer == 0x10 ) // beard
+			{
+				ourObj.beardStyle = 0;
+				ourObj.beardColour = 0;
+			}
 		}
 	}
 }
 
 function command_RESURRECT( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 194, socket.language );
+	var targMsg = GetDictionaryEntry( 194, socket.language ); // Select character to resurrect.
 	socket.CustomTarget( 1, targMsg );
+}
+
+function command_RES( socket, cmdString )
+{
+	command_RESURRECT( socket, cmdString );
 }
 
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
+	{
 		ourObj.Resurrect();
+	}
 }
+
+function _restorecontext_() {}

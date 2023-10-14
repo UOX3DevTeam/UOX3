@@ -66,6 +66,23 @@
 // PLAYANIMONCE=	// Flag 5, bit 6 (0x20)
 // MULTIMOVABLE=	// Flag 5, bit 7 (0x40)
 
+// Lacks NoShoot flag
+[TILE 0x02A0]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x03E0]
+{
+CANNOTSHOOTTHRU=1
+}
+
+[TILE 0x03E1]
+{
+CANNOTSHOOTTHRU=1
+}
+
+// Missing climbable flag
 [TILE 0x08A5]
 {
 HEIGHT=22
@@ -294,6 +311,12 @@ STANDABLE=0
 [TILE 0x1559]
 {
 LIQUIDWET=1
+}
+
+// Height of this watertile is 1 in tiledata
+[TILE 0x34d2]
+{
+HEIGHT=0
 }
 
 // Standable items that probably shouldn't be standable

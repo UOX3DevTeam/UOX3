@@ -1,3 +1,5 @@
+// These commands are used to remove/delete objects
+
 function CommandRegistration()
 {
 	RegisterCommand( "remove", 2, true );
@@ -13,7 +15,7 @@ function command_REMOVE( socket, cmdString )
 	{
 		socket.tempint = parseInt( cmdString );
 		var tempMsg = GetDictionaryEntry( 8095, socket.language ); // Select container to remove item (%s) from:
-		socket.CustomTarget( 0, tempMsg.replace(/%s/gi, cmdString ) );
+		socket.CustomTarget( 0, tempMsg.replace( /%s/gi, cmdString ) );
 	}
 	else
 	{
@@ -30,7 +32,7 @@ function command_DELETE( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( !socket.GetWord( 1 ) )
+	if( !socket.GetWord( 1 ))
 	{
 		if( ourObj )
 		{
@@ -39,6 +41,14 @@ function onCallback0( socket, ourObj )
 				if( ourObj.npc )
 				{
 					socket.SysMessage( GetDictionaryEntry( 1015, socket.language )); // Removing character.
+					if( ValidateObject( ourObj.owner ))
+					{
+						// Remove pet as a follower of the player
+						ourObj.owner.RemoveFollower( ourObj );
+
+						// Reduce controlSlotsUsed for owner
+						ourObj.owner.controlSlotsUsed -= ourObj.controlSlots;
+					}
 					ourObj.Delete();
 				}
 			}
@@ -77,12 +87,59 @@ function onCallback0( socket, ourObj )
 						var objMulti = ourObj.multi;
 						objMulti.Delete();
 					}
+
+					// Reset hair/beard style/colour if item being removed is hair or beard on a character
+					var packOwner = GetPackOwner( ourObj, 0 );
+					if( packOwner != null && packOwner.isChar )
+					{
+						if( ourObj.layer == 0x0b ) // Hair
+						{
+							packOwner.hairStyle = 0;
+							packOwner.hairColour = 0;
+						}
+						else if( ourObj.layer == 0x10 ) // Beard
+						{
+							packOwner.beardStyle = 0;
+							packOwner.beardColour = 0;
+						}
+					}
+
+					// If item being removed was locked down in a multi, release item from multi to update lockdown count properly
+					var iMulti = ourObj.multi;
+					if( ValidateObject( iMulti ))
+					{
+						if( iMulti.IsSecureContainer( ourObj ))
+						{
+							// Targeted item is a secure container
+							iMulti.UnsecureContainer( ourObj );
+						}
+						else
+						{
+							// Release the targeted item before deleting it
+							iMulti.ReleaseItem( ourObj );
+						}
+
+						if( ourObj.type == 1 )
+						{
+							// Loop through any items in container and release them
+							var tempItem;
+							for( tempItem = ourObj.FirstItem(); !ourObj.FinishedItems(); tempItem = ourObj.NextItem() )
+							{
+								if( !ValidateObject( tempItem ))
+									continue;
+
+								iMulti.ReleaseItem( tempItem );
+							}
+						}
+					}
 					ourObj.Delete();
 				}
 			}
 		}
 		else
+		{
 			socket.SysMessage( GetDictionaryEntry( 2353, socket.language )); // Invalid target
+		}
 	}
 }
 
@@ -118,7 +175,7 @@ function command_REMOVEMULTI( socket, cmdString )
 
 function onCallback2( socket, ourObj )
 {
-	if( !ValidateObject( ourObj ) && socket.GetWord( 1 ) )
+	if( !ValidateObject( ourObj ) && socket.GetWord( 1 ))
 	{
 		// Find multi at target location
 		var targX = socket.GetWord( 11 );
@@ -165,3 +222,5 @@ function onCallback2( socket, ourObj )
 		}
 	}
 }
+
+function _restorecontext_() {}

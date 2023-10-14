@@ -1,0 +1,249 @@
+// Weapon Stats matching up with Age of Shadows expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// War Axe - ToL stats
+[0x13af_tol]
+{
+get=base_war_axe
+weight=800
+value=29 14
+damage=12 16
+hp=31 80
+spd=46
+str=35
+}
+
+// Smith's Hammer - ToL stats
+[0x13e3_tol]
+{
+get=base_smiths_hammer
+weight=800
+value=21 10
+damage=13 17
+hp=31 70
+spd=42
+str=40
+}
+
+// Club - ToL stats
+[0x13b3_tol]
+{
+get=base_club
+weight=900
+value=16 8
+damage=10 14
+hp=31 40
+spd=50
+str=40
+}
+
+// Sledge Hammer - ToL stats
+[0x0fb4_tol]
+{
+get=base_sledge_hammer
+weight=1000
+value=32 16
+damage=13 17
+hp=31 70
+spd=42
+str=40
+}
+
+// Mace - ToL stats
+[0x0f5c_tol]
+{
+get=base_mace
+weight=1400
+value=31 14
+damage=11 15
+hp=31 70
+spd=50
+str=45
+}
+
+// War Mace - ToL stats
+[0x1406_tol]
+{
+get=base_war_mace
+weight=1700
+value=31 15
+damage=15 19
+hp=31 110
+spd=36
+str=80
+}
+
+// War Hammer - ToL stats
+[0x1438_tol]
+{
+get=base_war_hammer
+weight=1000
+value=25 12
+damage=17 20
+hp=31 110
+spd=36
+str=95
+}
+
+// Maul - ToL stats
+[0x143a_tol]
+{
+get=base_maul
+weight=1000
+value=21 10
+damage=14 18
+hp=31 70
+spd=39
+str=45
+}
+
+// Hammer Pick - ToL stats
+[0x143c_tol]
+{
+get=base_hammer_pick
+weight=900
+value=26 13
+damage=13 17
+hp=31 70
+spd=42
+str=45
+}
+
+
+//------------------------------------------------------------------------------------------------//
+
+// AGE OF SHADOWS
+// Scepter - ToL stats
+[0x26bc_tol]
+{
+get=base_scepter
+weight=800
+value=39 19
+damage=14 18
+hp=31 110
+spd=39
+str=40
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// SAMURAI EMPIRE
+// Tessen - ToL stats
+[0x27a3_tol]
+{
+get=base_tessen
+weight=600
+value=83 41
+damage=10 13
+hp=55 60
+spd=68
+str=35
+}
+
+// Tetsubo - ToL stats
+[0x27a6_tol]
+{
+get=base_tetsubo
+weight=800
+value=43 21
+damage=12 15
+hp=60 65
+spd=55
+str=35
+}
+
+// Nunchaku - ToL stats
+[0x27ae_tol]
+{
+get=base_nunchaku
+weight=500
+value=35 17
+damage=12 15
+hp=40 55
+spd=55
+str=15
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+// Diamond Mace - ToL stats
+[0x2d24_tol]
+{
+get=base_diamond_mace
+damage=13 17
+hp=30 60
+spd=42
+str=35
+value=32 16
+weight=1000
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Gargish Maul - ToL stats
+[0x48c2_tol]
+{
+get=base_gargish_maul
+damage=14 18
+hp=31 70
+spd=39
+str=45
+value=13 6
+weight=1000
+}
+
+// Disc Mace - ToL stats
+[0x0903_tol]
+{
+get=base_disc_mace
+damage=11 15
+hp=31 110
+spd=50
+str=45
+value=62 31
+weight=1400
+}
+
+// Gargish War Hammer - ToL stats
+[0x48c0_tol]
+{
+get=base_gargish_war_hammer
+damage=17 20
+hp=31 110
+spd=36
+str=95
+value=16 8
+weight=1000
+}
+
+// Gargish Tessen - ToL stats
+[0x48cc_tol]
+{
+get=base_gargish_tessen
+damage=10 13
+hp=55 60
+spd=68
+str=35
+value=23 11
+weight=600
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// TIME OF LEGENDS
+// Barbed Whip - ToL stats
+[0xa289_tol]
+{
+get=base_barbed_whip
+damage=13 17
+hp=36 48
+spd=15
+str=20
+value=32 16
+weight=500
+}

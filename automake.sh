@@ -1,28 +1,66 @@
-#!/usr/bin/env bash
-echo "Building spidermonkey"
-cd spidermonkey
-make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc
+#!/bin/sh
 
+# Support optional arguments:
+#   -b debug
+#   -o clean
+buildtype="Release"
+buildoption="Normal"
+while getopts ":b:o:" flag
+do
+  case "${flag}" in
+    b)
+      if [ ${OPTARG} = "debug" ] || [ ${OPTARG} = "Debug" ]
+      then
+        buildtype="Debug"
+      fi;;
+    o)
+      if [ ${OPTARG} = "clean" ] || [ ${OPTARG} = "Clean" ]
+      then
+        buildoption="Clean"
+      fi;;
+  esac
+done
+
+# if -o clean was provided, do a clean build
+if [ $buildoption = "Clean" ]
+then
+  echo "Preparing for clean build..."
+  rm -R make/cmake/build/
+fi
+
+echo "Creating Build directory"
+cd make/cmake
+mkdir -p build
+cd build
+
+echo "Creating Make Files"
 if [ "$(uname)" = "Darwin" ]
 then
-        # Mac OS X
-        ar rcs libjs32.a Darwin_DBG.OBJ/*.o
-        cp Darwin_DBG.OBJ/jsautocfg.h ./
-elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]
-then
-        # Linux
-        ar -r libjs32.a Linux_All_DBG.OBJ/*.o
-        cp Linux_All_DBG.OBJ/jsautocfg.h ./
+  # Mac OS X
+  cmake .. -DCMAKE_BUILD_TYPE=$buildtype -G"Unix Makefiles"
+else 
+	cmake .. -DCMAKE_BUILD_TYPE=$buildtype
 fi
-cd ../zlib
-echo "Bulding zlib"
-make distclean
-./configure 
-make 
 
-cd ../source
-echo "Building UOX3"
-make
-cp uox3 ..
-cd ..
-echo "Done! You should now find the compiled uox3 binary in the root UOX3 project directory. Copy this binary to a separate directory dedicated to running your UOX3 shard, along with the contents of the UOX3/data directory, to avoid potential git conflicts and accidental overwriting of data when pulling UOX3 updates in the future."
+echo "Building UOX3 ($buildtype)..."
+cmake --build . --config $buildtype
+
+ev=$?
+if [ $ev -ne 0 ]; then
+  echo "Unable to build UOX3 ($buildtype)! Exiting..."
+  cd ../../..
+  exit $ev
+else
+  if [ -f ./uox3 ]; then
+    cp uox3 ../../..
+    echo "Done! You should now find the compiled uox3 binary in the root UOX3 project directory. Copy this binary"
+    echo "to a separate directory dedicated to running your UOX3 shard, along with the contents of the UOX3/data directory,"
+    echo "to avoid potential git conflicts and accidental overwriting of data when pulling UOX3 updates in the future."    
+    cd ../../..
+    rm -R make/cmake/build/
+    exit $ev
+  else
+    echo "uox3 program not found! Please review the build status."
+    cd ../../..
+  fi
+fi

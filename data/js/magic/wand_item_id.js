@@ -131,3 +131,5 @@ function onUseChecked( pUser, iUsed )
     pUser.CastSpell( 65 );
     return false;
 }
+
+function _restorecontext_() {}

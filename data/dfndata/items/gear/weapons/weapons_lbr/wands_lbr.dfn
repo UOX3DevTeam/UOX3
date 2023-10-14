@@ -1,0 +1,17 @@
+// Weapon Stats matching up with Lord Blackthorn's Revenge (Publish 15)
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Wand - LBR stats (default)
+[0x0df2_lbr]
+{
+get=base_wand
+weight=200
+value=30 15
+damage=2 6
+hp=31 70
+spd=35
+str=1
+}

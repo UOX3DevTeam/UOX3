@@ -1,62 +1,64 @@
 #ifndef __Races__
 #define __Races__
 #include <unordered_set>
-
+#include <array>
 class CRace
 {
 private:
-	struct ColourPair
+	struct ColourPair_st
 	{
 		COLOUR cMin;
 		COLOUR cMax;
-		ColourPair( COLOUR a, COLOUR b ) : cMin( a ), cMax( b )
+		ColourPair_st( COLOUR a, COLOUR b ) : cMin( a ), cMax( b )
 		{
 		}
-		ColourPair() : cMin( 0 ), cMax( 0 )
+		ColourPair_st() : cMin( 0 ), cMax( 0 )
 		{
 		}
 	};
 
-	typedef std::vector< ColourPair >	COLOURLIST;
-	typedef std::vector< RaceRelate >	RACEIDLIST;
-	typedef std::unordered_set< UI16 > ALLOWEQUIPLIST;
-	typedef std::unordered_set< UI16 > BANEQUIPLIST;
+	typedef std::vector<ColourPair_st>	COLOURLIST;
+	typedef std::vector<RaceRelate>		RACEIDLIST;
+	typedef std::unordered_set<UI16>	ALLOWEQUIPLIST;
+	typedef std::unordered_set<UI16>	BANEQUIPLIST;
 
 	SI16				HPMod;
 	SI16				ManaMod;
 	SI16				StamMod;
 private:
-
-	SKILLVAL			iSkills[SKILLS];
+	std::array<SKILLVAL, SKILLS> iSkills;
+	//SKILLVAL			iSkills[SKILLS];
 	std::string			raceName;
+
+	std::bitset<8>		bools;
+	RANGE				visDistance;
+	LIGHTLEVEL			nightVision;
+	ARMORCLASS			armourRestrict;
+	LIGHTLEVEL			lightLevel;
+	GENDER				restrictGender;
+	SKILLVAL			languageMin;
+	R32					poisonResistance;	// % of poison to cancel
+	R32					magicResistance;	// % of magic to cancel
 
 	COLOURLIST			beardColours;
 	COLOURLIST			hairColours;
 	COLOURLIST			skinColours;
 	COLOUR				bloodColour;
 
-	std::bitset< 8 >	bools;
-
-	GENDER				restrictGender;
 	RACEIDLIST			racialEnemies;
 
-	LIGHTLEVEL			lightLevel;
 	COLDLEVEL			coldLevel;
 	HEATLEVEL			heatLevel;
-	LIGHTLEVEL			nightVision;
-	ARMORCLASS			armourRestrict;
 
 	ALLOWEQUIPLIST		allowedEquipment;
 	BANEQUIPLIST		bannedEquipment;
 
-	std::bitset< WEATHNUM >	weatherAffected;
-	SECONDS					weathSecs[WEATHNUM];
-	SI08					weathDamage[WEATHNUM];
+	std::bitset<WEATHNUM>	weatherAffected;
+	std::array<SECONDS, WEATHNUM> weathSecs;
+	//SECONDS					weathSecs[WEATHNUM];
+	std::array<SI08, WEATHNUM> weathDamage;
+	//SI08					weathDamage[WEATHNUM];
 
-	SKILLVAL		languageMin;
-	RANGE			visDistance;
-	R32				poisonResistance;	// % of poison to cancel
-	R32				magicResistance;	// % of magic to cancel
 	bool			doesHunger;
 	bool			doesThirst;
 	UI16			hungerRate;
@@ -78,7 +80,7 @@ public:
 	bool			AffectedBy( WeatherType iNum ) const;
 	void			AffectedBy( bool value, WeatherType iNum );
 	bool			NoHair( void ) const;
-	bool			CanEquipItem( UI16 itemID ) const;
+	bool			CanEquipItem( UI16 itemId ) const;
 
 	GENDER			GenderRestriction( void ) const;
 	LIGHTLEVEL		LightLevel( void ) const;
@@ -155,18 +157,18 @@ public:
 	bool			IsValidBeard( COLOUR val ) const;
 
 	void			Load( size_t sectNum, SI32 modCount );
-	CRace&			operator =( CRace& trgRace );
+	CRace&			operator = ( CRace& trgRace );
 };
 
 class cRaces
 {
 private:
-	struct combatModifiers
+	struct CombatModifiers_st
 	{
 		UI08 value;
 	};
-	typedef std::vector< CRace * >			RACELIST;
-	typedef std::vector< combatModifiers >	MODIFIERLIST;
+	typedef std::vector<CRace *>			RACELIST;
+	typedef std::vector<CombatModifiers_st>	MODIFIERLIST;
 	// data
 	RACELIST		races;
 	MODIFIERLIST	combat;
@@ -180,21 +182,21 @@ private:
 	void			RacialInfo( RACEID race, RACEID toSet, RaceRelate value );
 
 	bool			InvalidRace( RACEID x ) const;
-
+	bool initialized;
 public:
 	// Functions
 	~cRaces();
-	cRaces( void );
-	void			load( void );					// loads races
+	cRaces();
+	void			Load( void );					// loads races
 	RaceRelate		Compare( CChar *player1, CChar *player2 ) const;
 	RaceRelate		CompareByRace( RACEID race1, RACEID race2 ) const;	// compares chars
-	void			gate( CChar *s, RACEID x, bool always = false ); // Race Gate
-	bool			beardInRange( COLOUR color, RACEID x ) const;
-	bool			skinInRange( COLOUR color, RACEID x ) const;
-	bool			hairInRange( COLOUR color, RACEID x ) const;
-	bool			beardRestricted( RACEID x ) const;
-	bool			hairRestricted( RACEID x ) const;
-	bool			skinRestricted( RACEID x ) const;
+	void			ApplyRace( CChar *s, RACEID x, bool always = false ); // Race Gate
+	bool			BeardInRange( COLOUR color, RACEID x ) const;
+	bool			SkinInRange( COLOUR color, RACEID x ) const;
+	bool			HairInRange( COLOUR color, RACEID x ) const;
+	bool			BeardRestricted( RACEID x ) const;
+	bool			HairRestricted( RACEID x ) const;
+	bool			SkinRestricted( RACEID x ) const;
 
 	CRace *			Race( RACEID x );
 
@@ -256,8 +258,8 @@ public:
 	void			VisRange( RACEID x, RANGE range );
 	void			IsPlayerRace( RACEID x, bool value );
 
-	void			debugPrint( RACEID race );
-	void			debugPrintAll( void );
+	void			DebugPrint( RACEID race );
+	void			DebugPrintAll( void );
 
 	size_t			Count( void ) const;
 };

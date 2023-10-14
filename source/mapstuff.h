@@ -3,172 +3,207 @@
 
 #include "mapclasses.h"
 #include <climits>
+#include "uox3.h"
 #include "MultiMul.hpp"
 
-const UI08 MAX_Z_STEP	= 9;
-const UI08 MAX_Z_FALL	= 20;
-
-/*
-enum UOMapType
+constexpr auto MAX_Z_STEP = std::uint8_t( 9 );
+constexpr auto MAX_Z_FALL = std::uint8_t( 20 );
+//===============================================================================================
+// TileInfo 
+//===============================================================================================
+class TileInfo
 {
-	UOMT_BRITANNIA	= 0,
-	UOMT_UNKNOWN1	= 1,
-	UOMT_ILSHENAR	= 2,
-	UOMT_MALAS		= 3,
-	UOMT_COUNT		= 4,
-	UOMT_UNKNOWN	= 0xFF
-};
-*/
-
-struct StaticsIndex_st
-{
-	UI32 offset;
-	UI32 length;
-	UI32 unknown;
-	StaticsIndex_st() : offset( 0 ), length( 0 ), unknown( 0 )
-	{
-	}
-};
-
-struct MapData_st
-{
-	std::string		mapFile;
-	std::string		mapFileUOPWrap;
-	std::string		staticsFile;
-	std::string		staidxFile;
-	std::string		mapDiffFile;
-	std::string		mapDiffListFile;
-	std::string		staticsDiffFile;
-	std::string		staticsDiffListFile;
-	std::string		staticsDiffIndexFile;
-	UI16			xBlock;
-	UI16			yBlock;
-	UOXFile	*		mapObj;
-	UOXFile *		staticsObj;
-	UOXFile *		staidxObj;
-	UOXFile *		mapDiffObj;
-	UOXFile *		staticsDiffObj;
-
-	std::map< UI32, UI32 > mapDiffList;
-	std::map< UI32, StaticsIndex_st > staticsDiffIndex;
-
-	MapData_st() : mapFile( "" ), mapFileUOPWrap( "" ), staticsFile( "" ), staidxFile( "" ), mapDiffFile( "" ), mapDiffListFile( "" ), staticsDiffFile( "" ),
-	staticsDiffListFile( "" ), staticsDiffIndexFile( "" ), xBlock( 0 ), yBlock( 0 ), mapObj( nullptr ), staticsObj( nullptr ),
-	staidxObj( nullptr ), mapDiffObj( nullptr ), staticsDiffObj( nullptr )
-	{
-		mapDiffList.clear();
-		staticsDiffIndex.clear();
-	}
-	~MapData_st();
-};
-
-// full comments on this class are available in mapstuff.cpp
-class CStaticIterator
-{
-private:
-	Static_st	staticArray;
-	SI16		baseX, baseY;
-	UI32		pos;
-	UI08		remainX, remainY;
-	UI32		index, length;
-	bool		exactCoords;
-	UI08		worldNumber;
-	bool		useDiffs;
+	constexpr static auto hsSize = 3188736;
+	std::vector<CLand> terrainData;
+	std::vector<CTile> artData;
+	auto ProcessTerrain( std::istream &input ) -> void;
+	auto ProcessArt( std::istream &input ) -> void;
+	bool isHsFormat;
 public:
-	CStaticIterator( SI16 x, SI16 y, UI08 world, bool exact = true );
-	~CStaticIterator()
-	{
-	};
+	TileInfo( const std::string &filename = "" );
+	auto LoadTiles( const std::string &filename ) -> bool;
+	auto TerrainInfo( std::uint16_t tileId ) const -> const CLand&;
+	auto TerrainInfo( std::uint16_t tileId ) -> CLand&;
+	auto ArtInfo( std::uint16_t tileId ) -> CTile&;
+	auto ArtInfo( std::uint16_t tileId ) const -> const CTile&;
 
-	Static_st *	First( void );
-	Static_st *	Next( void );
-	SI32		GetPos() const		{ return pos; }
-	UI32		GetLength() const	{ return length; }
+	auto SizeTerrain() const -> size_t;
+	auto SizeArt() const -> size_t;
+
+	auto CollectionTerrain() const -> const std::vector<CLand>&;
+	auto CollectionTerrain() -> std::vector<CLand>&;
+	auto CollectionArt() const -> const std::vector<CTile>&;
+	auto CollectionArt() -> std::vector<CTile>&;
+	auto TotalMemory() const -> size_t;
 };
 
+//==================================================================================================
+// Blocks and maps would normally be in separate files, but since we dont want to impact windows
+// project files, we will use the existing files to include them
+class TerrainBlock
+{
+	std::array<std::array<Tile_st, 8>, 8> _tiles;
+	
+public:
+	TerrainBlock( std::uint8_t *data = nullptr, const TileInfo *info = nullptr );
+	auto LoadBlock( std::uint8_t *data, const TileInfo *info = nullptr ) -> void;
+	auto TerrainTileAt( int x, int y ) -> Tile_st&;
+	auto TerrainTileAt( int x, int y ) const -> const Tile_st&;
+};
+
+//=========================================================
+class ArtBlock
+{
+	std::array<std::array<std::vector<Tile_st>, 8>, 8> _tiles;
+	
+public:
+	ArtBlock( int length = 0, std::uint8_t *data = nullptr, const TileInfo *info = nullptr );
+	auto LoadArtBlock( int length, std::uint8_t *data, const TileInfo *info = nullptr ) -> void;
+	auto LoadArtBlock( int length, std::istream &input, const TileInfo *info = nullptr ) -> void;
+	auto ArtTileAt( int x, int y ) -> std::vector<Tile_st>&;
+	auto ArtTileAt( int x, int y ) const -> const std::vector<Tile_st>&;
+	auto Clear() -> void;
+};
+//=========================================================
+class UltimaMap : public UopFile
+{
+	std::vector<TerrainBlock> _terrain;
+	std::vector<ArtBlock> _art;
+	
+	const TileInfo *tileInfo;
+	static constexpr int _totalMaps = 6;
+	static constexpr std::array<std::pair<int, int>, _totalMaps> _mapSizes {{
+		{7168, 4096}, {7168, 4096}, {2304, 1600},
+		{2560, 2048}, {1448, 1448}, {1280, 4096}
+	}};
+	int _mapNum;
+	int _width;
+	int _height;
+	bool isUop;
+	int _diffCount;
+	int _diffTerrain;
+	auto virtual ProcessEntry( std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data ) -> bool final;
+	auto CalcBlock (int x, int y ) const -> int;
+	auto CalcXYOffset( int block ) const -> std::pair<int, int>;
+	auto LoadTerrainBlock( int blockNum, std::uint8_t *data ) -> void;
+public:
+	UltimaMap();
+	UltimaMap( int mapNum, int width = 0, int height = 0, const TileInfo *info = nullptr );
+	auto Width() const -> int;
+	auto Height() const -> int;
+	auto DiffArt() const -> int;
+	auto DiffTerrain() const -> int;
+	auto SetSize( int width, int height ) -> void;
+	auto Size() const -> std::pair<int, int>;
+	auto LoadUOPTerrainFile( const std::string &fileName) -> bool;
+	auto LoadMulTerrainFile( const std::string &fileName) -> bool;
+	auto LoadArt( const std::string &mulFile, const std::string &idxFile ) -> bool;
+	auto ApplyDiff( const std::string &difflPath, const std::string &diffiPath, const std::string &diffPath ) -> int;
+	auto ApplyTerrainDiff( const std::string &difflPath, const std::string &diffPath ) -> int;
+	
+	auto BlockAndIndexFor( int x, int y ) const -> std::tuple<int, int, int>;
+	auto Uop() const -> bool { return isUop; }
+	
+	auto TerrainAt( int x, int y ) const -> const Tile_st&;
+	auto TerrainAt( int x, int y ) -> Tile_st&;
+	auto ArtAt( int x, int y ) const -> const std::vector<Tile_st>&;
+	auto ArtAt( int x, int y ) -> std::vector<Tile_st>&;
+};
+
+//====================================================================================================
+struct MapDfnData_st
+{
+	int width;
+	int height;
+	std::filesystem::path mapFile;
+	std::filesystem::path mapUop;
+	std::filesystem::path staMul;
+	std::filesystem::path staIdx;
+	std::filesystem::path mapDiff;
+	std::filesystem::path mapDiffl;
+	std::filesystem::path staDiff;
+	std::filesystem::path staDiffi;
+	std::filesystem::path staDiffl;
+	MapDfnData_st() : width( 0 ), height( 0 ) {}
+};
+
+//==========================================================================================
+// until we can replace
+//==========================================================================================
 class CMulHandler
 {
 private:
-
-	MultiMul _multidata ;
-
-	typedef std::vector< MapData_st >					MAPLIST;
-	typedef std::vector< MapData_st >::iterator			MAPLIST_ITERATOR;
-
-	//Variables
-	// all the world's map and static Items.
-	// multiItem, tileSet, and verdata(patches really)
-	CLand    *			landTile;			// the 512*32 pieces of land tile
-	CTile    *			staticTile;			// the 512*32 pieces of static tile set
-	size_t				tileDataSize;
-
-	MAPLIST				MapList;
-
-	// Functions
-	CItem *			DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkOnlyMultis, bool checkOnlyNonMultis );
-
-	// caching functions
-	void			LoadMapsDFN( void );
-	void			LoadMultis( const std::string& basePath );
-	void			LoadDFNOverrides( void );
-	void			LoadMapAndStatics( MapData_st& mMap, const std::string& basePath, UI08 &totalMaps );
-	void			LoadTileData( const std::string& basePath );
+	// uo eq5q
+	TileInfo tileInfo;
+	MultiCollection multiData;
+	std::unordered_map<int, UltimaMap> uoWorlds;
+	
+	auto LoadMapsDFN( const std::string &uoDir ) -> std::map<int, MapDfnData_st>;
+	auto LoadDFNOverrides() -> void;
+	auto LoadTileData( const std::string &uoDir ) -> void;
+	auto LoadMultis( const std::string &uoDir ) -> void;
+	auto LoadMapAndStatics( const std::map<int, MapDfnData_st> &info ) -> void;
 
 public:
-	CMulHandler();
-	~CMulHandler();
+	CMulHandler() = default;
+	auto Load() -> void;
+	auto ArtAt( std::int16_t x, std::int16_t y, std::uint8_t world ) -> std::vector<Tile_st>&;
+	auto ArtAt( std::int16_t x, std::int16_t y, std::uint8_t world ) const -> const std::vector<Tile_st>&;
+	auto SizeOfMap( std::uint8_t worldNumber ) const -> std::pair<int, int>;
+	auto DiffCountForMap( std::uint8_t worldNumber ) const -> std::pair<int, int>;
 
-	void			Load( void );
-
-	SI08			MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ, bool checkHeight = false );
-	UI16			MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz, bool checkVisible = true );
-
-	bool			DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater = false );
-	bool			DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater, bool waterWalk, bool checkOnlyMultis, bool checkOnlyNonMultis );
-	bool			DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk, bool checkMultiPlacement, bool checkForRoad );
-	bool			CheckStaticFlag( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, TileFlags toCheck, bool checkSpawnSurface = false );
-	bool			CheckDynamicFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, TileFlags toCheck );
-	bool			CheckTileFlag( UI16 itemID, TileFlags flagToCheck );
-
+	auto MultiHeight( CItem *i, std::int16_t x, std::int16_t y, std::int8_t oldZ, std::int8_t maxZ, bool checkHeight = false ) -> std::int8_t;
+	auto MultiTile( CItem *i, std::int16_t x, std::int16_t y, std::int8_t oldZ, bool checkVisible = true ) -> std::uint16_t;
+	
+	auto DoesStaticBlock( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, bool checkWater = false ) -> bool;
+	auto DoesDynamicBlock( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkWater, bool waterWalk, bool checkOnlyMultis, bool checkOnlyNonMultis ) -> bool;
+	auto DoesCharacterBlock( UI16 x, UI16 y, SI08 z, UI08 worldNumber, UI16 instanceId ) -> bool;
+	auto DynTile( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkOnlyMultis, bool checkOnlyNonMultis ) -> CItem *;
+	auto DoesMapBlock( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, bool checkWater, bool waterWalk, bool checkMultiPlacement, bool checkForRoad ) -> bool;
+	auto CheckStaticFlag( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, TileFlags toCheck, UI16 &foundTileId, bool checkSpawnSurface = false ) -> bool;
+	auto CheckDynamicFlag( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, TileFlags toCheck, UI16 &foundTileId ) -> bool;
+	auto CheckTileFlag( std::uint16_t itemId, TileFlags flagToCheck) -> bool;
+	
 	// height functions
-	SI08			StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ );
-	SI08			DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ, UI16 instanceID );
-	SI08			MapElevation( SI16 x, SI16 y, UI08 worldNumber );
-	SI08			TileHeight( UI16 tilenum );
-	SI08			Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID );
-	bool			inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID );
-	bool IsIgnored(UI16 landnum) {
-		if (landnum == 2 || landnum == 0x1DB || ( landnum >= 0x1AE && landnum <= 0x1B5 ))
+	auto StaticTop( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::int8_t maxZ ) -> std::int8_t;
+	auto DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, std::int8_t maxZ ) -> std::int8_t;
+	auto MapElevation( std::int16_t x, std::int16_t y, std::uint8_t worldNumber ) -> std::int8_t;
+	auto TileHeight( std::uint16_t tileNum ) -> std::int8_t;
+	auto Height( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId ) -> std::int8_t;
+	auto InBuilding( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId ) -> bool;
+	auto IsIgnored( std::uint16_t landNum ) -> bool
+	{
+		if( landNum == 2 || landNum == 0x1DB || ( landNum >= 0x1AE && landNum <= 0x1B5 ))
+		{
 			return true;
+		}
 		else
+		{
 			return false;
+		}
 	}
-
 	// look at tile functions
-	void			MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 );
-	bool			multiExists(UI16 multinum);
-
-	const multi_structure&	SeekMulti( UI16 multinum ) const;
-	bool			IsValidTile( UI16 tileNum );
-	CTile &			SeekTile( UI16 tileNum );
-	CLand &			SeekLand( UI16 landNum );
-	map_st			SeekMap( SI16 x, SI16 y, UI08 worldNumber );
+	auto MultiArea( CMultiObj *i, std::int16_t &x1, std::int16_t &y1, std::int16_t &x2, std::int16_t &y2 ) -> void;
+	auto MultiExists( std::uint16_t multiNum ) const -> bool;
+	
+	auto SeekMulti( std::uint16_t multiNum ) const  -> const CollectionItem_st &;
+	auto IsValidTile( std::uint16_t tileNum ) const -> bool;
+	auto SeekTile( std::uint16_t tileNum ) ->CTile&;
+	auto SeekTile( std::uint16_t tileNum ) const -> const CTile&;
+	auto SeekLand( std::uint16_t landNum ) -> CLand&;
+	auto SeekLand( std::uint16_t landNum ) const -> const CLand&;
+	auto SeekMap( std::int16_t x, std::int16_t y, std::uint8_t worldNumber ) -> Tile_st&;
+	auto SeekMap( std::int16_t x, std::int16_t y, std::uint8_t worldNumber ) const -> const Tile_st&;
 
 	// misc functions
-	bool			ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater = true );
-	UI08			ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkWater, 
-						bool checkOnlyOtherMultis, bool checkOnlyNonMultis, bool checkForRoads );
-	bool			MapExists( UI08 worldNumber );
-	bool			InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );
-
-	MapData_st&		GetMapData( UI08 mapNum );
-	UI08			MapCount( void ) const;
-
-	size_t			GetTileMem( void ) const;
-	size_t			GetMultisMem( void ) const;
+	auto ValidSpawnLocation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkWater = true ) -> bool;
+	auto ValidMultiLocation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, bool checkWater,
+							 bool checkOnlyOtherMultis, bool checkOnlyNonMultis, bool checkForRoads ) -> std::uint8_t;
+	auto MapExists( std::uint8_t worldNumber ) const -> bool;
+	auto InsideValidWorld( std::int16_t x, std::int16_t y, std::uint8_t worldNumber = 0xFF ) const -> bool;
+	auto MapCount() const -> std::uint8_t;
 };
 
 extern CMulHandler *Map;
-
 #endif
 

@@ -1,15 +1,15 @@
 #ifndef __TownRegion__
 #define __TownRegion__
 
-struct	miningData;
+struct	MiningData_st;
 
-struct orePref
+struct OrePref_st
 {
-	miningData *oreIndex;
+	MiningData_st *oreIndex;
 	UI16		percentChance;
 };
 
-struct regLocs
+struct RegLocs_st
 {
 	SI16 x1 = 0;
 	SI16 y1 = 0;
@@ -23,7 +23,7 @@ const std::string WorldTypeNames[WRLD_COUNT] = { "Spring", "Summer", "Autumn", "
 class CTownRegion
 {
 private:
-	struct townPers
+	struct TownPers_st
 	{
 		SERIAL		townMember;
 		SERIAL		targVote;
@@ -43,42 +43,42 @@ private:
 	};
 
 	UI16				regionNum;
+	UI16				numGuards;
 	UI16				parentRegion; // reference to parent region
 	std::string			name;
 	UI16				musicList;
 	UI08				worldNumber;
-	UI16				instanceID;
-	std::bitset< 12 >	priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
+	UI16				instanceId;
+	std::bitset<12>		priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
 	// 0x10 raining, 0x20, snowing,		 0x40 magic damage reduced to 0
 	// 0x80 Dungeon region
 	std::string					guardowner;
-	std::vector< std::string >	guards;
-	std::vector< orePref >		orePreferences;
-	std::vector< townPers >		townMember;
-	std::vector< UI16 >			alliedTowns;		// allied towns are ones taken over, or ones allied to.  Share resources
-	std::vector< regLocs >		locations;
-	std::map< SI32, GoodData_st > goodList;
+	std::vector<std::string>	guards;
+	std::vector<OrePref_st>		orePreferences;
+	std::vector<TownPers_st>	townMember;
+	std::vector<UI16>			alliedTowns;	// allied towns are ones taken over, or ones allied to.  Share resources
+	std::vector<RegLocs_st>		locations;
+	std::map<SI32, GoodData_st> goodList;
 	std::string			guardList;
-	UI16				numGuards;
-	SERIAL				mayorSerial;			// serial of the mayor, calculated on startup always
-	RACEID				race;					// town's race property, guards will be racially based
-	weathID				weather;				// weather system the region belongs to
-	SI32				goldReserved;			// amount of gold belonging to the town's treasury
+	SERIAL				mayorSerial;					// serial of the mayor, calculated on startup always
+	RACEID				race;									// town's race property, guards will be racially based
+	WEATHID				weather;							// weather system the region belongs to
+	SI32				goldReserved;						// amount of gold belonging to the town's treasury
 
-	SI32				timeSinceGuardsPaid;	// time since the guards were last paid
+	WorldType		visualAppearance;				// seasonal choice, basically.  Each of the 4 seasons, or "dead"
+	SI32				timeSinceGuardsPaid;		// time since the guards were last paid
 	SI32				timeSinceTaxedMembers;	// time since we last taxed our own members
-	SI32				timeToElectionClose;	// time since the last election was completed
-	SI32				timeToNextPoll;			// time since the polling booth was opened
+	SI32				timeToElectionClose;		// time since the last election was completed
+	SI32				timeToNextPoll;					// time since the polling booth was opened
 	SI16				guardsPurchased;
-	SI32				resourceCollected;		// how much we have gotten from taxes
-	UI16				taxedResource;			// item # of the taxed resource
-	UI16				taxedAmount;			// how much to tax
-	WorldType			visualAppearance;		// seasonal choice, basically.  Each of the 4 seasons, or "dead"
+	SI32				resourceCollected;			// how much we have gotten from taxes
+	UI16				taxedResource;					// item # of the taxed resource
+	UI16				taxedAmount;						// how much to tax
 
-	SI16				health;					// health of the town
-	UI08				chanceFindBigOre;		// chance of finding big ore
+	SI16				health;									// health of the town
+	UI08				chanceFindBigOre;				// chance of finding big ore
 
-	UI16				jsScript;
+	[[maybe_unused]] UI16				jsScript;
 	std::vector<UI16>	scriptTriggers;
 
 	void				SendEnemyGump( CSocket *sock );
@@ -102,8 +102,8 @@ public:
 	bool				ViewBudget( CSocket *sock );
 	bool				PeriodicCheck( void );
 	bool				Load( Script *ss );		// entry is the region #, fp is the file to load from
-	bool				Save( std::ofstream &outStream );		// entry is the region #, fp is the file to save in
-	bool				InitFromScript( ScriptSection *toScan );
+	bool				Save( std::ostream &outStream );		// entry is the region #, fp is the file to save in
+	bool				InitFromScript( CScriptSection *toScan );
 	bool				AddAsTownMember( CChar& toAdd );	// toAdd is the character to add
 	bool				RemoveTownMember( CChar& toAdd );	// toAdd is the character to remove
 	bool				IsGuarded( void ) const;
@@ -144,7 +144,7 @@ public:
 	void				ViewTaxes( CSocket *s );
 	void				DoDamage( SI16 reduction );
 	void				TaxedAmount( UI16 amount );
-	void				SetResourceID( UI16 resID );
+	void				SetResourceId( UI16 resId );
 	void				SetHealth( SI16 newValue );
 	void				SetChanceBigOre( UI08 newValue );
 	void				SetAppearance( WorldType worldType );
@@ -163,24 +163,24 @@ public:
 	void				SetMusicList( UI16 newValue );
 	std::string			GetName( void ) const;
 	size_t				GetNumOrePreferences( void ) const;
-	const orePref *		GetOrePreference( size_t targValue ) const;
+	const OrePref_st *	GetOrePreference( size_t targValue ) const;
 	SI32				GetOreChance( void ) const;
 	std::string			GetOwner( void ) const;
 	size_t				GetPopulation( void ) const;
 	RACEID				GetRace( void ) const;
 	CChar *				GetRandomGuard( void );			// returns a random guard from guard list
 	UI32				GetReserves( void ) const;
-	UI16				GetResourceID( void ) const;
+	UI16				GetResourceId( void ) const;
 	UI32				GetTaxes( void ) const;
-	weathID				GetWeather( void ) const;
-	void				SetWeather( weathID newValue );
+	WEATHID				GetWeather( void ) const;
+	void				SetWeather( WEATHID newValue );
 	UI16				NumGuards( void ) const;
 	void				SetNumGuards( UI16 newValue );
 	UI16				TaxedAmount( void ) const;
 	UI08				WorldNumber( void ) const;
 	void				WorldNumber( UI08 newValue );
-	UI16				GetInstanceID( void ) const;
-	void				SetInstanceID( UI16 newValue );
+	UI16				GetInstanceId( void ) const;
+	void				SetInstanceId( UI16 newValue );
 
 	std::vector<UI16>	GetScriptTriggers( void );
 	void				AddScriptTrigger( UI16 newValue );
@@ -191,10 +191,10 @@ public:
 	void				SetRegionNum( UI16 newVal );
 
 	size_t				GetNumLocations( void ) const;
-	const regLocs *		GetLocation( size_t locNum ) const;
+	const RegLocs_st *	GetLocation( size_t locNum ) const;
 
 	std::string			GetTownMemberSerials( void ) const;
-	std::vector< townPers >		GetTownMembers( void ) const;
+	std::vector<TownPers_st>	GetTownMembers( void ) const;
 };
 
 #endif

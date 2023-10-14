@@ -1,0 +1,343 @@
+// Weapon Stats matching up with Lord Blackthorn's Revenge (Publish 15)
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Cutlass - LBR stats (default)
+[0x1440_lbr]
+{
+get=base_cutlass
+weight=800
+value=32 27
+damage=6 28
+hp=31 70
+spd=45
+str=10
+}
+
+// Katana - LBR stats (default)
+[0x13fe_lbr]
+{
+get=base_katana
+weight=600
+value=42 21
+damage=5 26
+hp=31 90
+spd=58
+str=10
+}
+
+// Broadsword - LBR stats (default)
+[0x0f5e_lbr]
+{
+get=base_broadsword
+weight=600
+value=44 22
+damage=5 29
+hp=31 100
+spd=45
+str=25
+}
+
+// Longsword - LBR stats (default)
+[0x0f60_lbr]
+{
+get=base_longsword
+weight=700
+value=60 30
+damage=5 33
+hp=31 90
+spd=35
+str=25
+}
+
+// Long Sword (thin) - LBR stats (default)
+[0x13b7_lbr]
+{
+get=base_long_sword
+weight=100
+value=33 33
+damage=5 33
+hp=31 90
+spd=35
+str=25
+}
+
+// Scimitar - LBR stats (default)
+[0x13b5_lbr]
+{
+get=base_scimitar
+weight=500
+value=43 21
+damage=4 30
+hp=31 90
+spd=43
+str=10
+}
+
+// Viking Sword - LBR stats (default)
+[0x13b9_lbr]
+{
+get=base_viking_sword
+weight=600
+value=66 33
+damage=6 34
+hp=31 90
+spd=30
+str=40
+}
+
+// Age of Shadows
+
+// Bone Harvester - LBR stats (default)
+[0x26bb_lbr]
+{
+get=base_bone_harvester
+weight=300
+value=44 21
+damage=4 29
+hp=31 70
+spd=39
+str=20
+}
+
+// Crescent Blade - LBR stats (default)
+[0x26c1_lbr]
+{
+get=base_crescent_blade
+weight=100
+value=49 25
+damage=4 27
+hp=51 85
+spd=43
+str=45
+}
+
+// Paladin Sword - LBR stats (default)
+[0x26ce_lbr]
+{
+get=base_paladin_sword
+weight=600
+value=45 23
+damage=6 44
+hp=36 50
+spd=22
+str=70
+}
+
+// Samurai Empire
+
+// No-Dachi - LBR stats (default)
+[0x27a2_lbr]
+{
+get=base_no-dachi
+weight=1000
+value=91 50
+damage=5 35
+hp=31 95
+spd=31
+str=35
+}
+
+// Wakizashi - LBR stats (default)
+[0x27a4_lbr]
+{
+get=base_wakizashi
+weight=500
+value=48 24
+damage=3 25
+hp=45 50
+spd=47
+str=15
+}
+
+// Bokuto - LBR stats (default)
+[0x27a8_lbr]
+{
+get=base_bokuto
+weight=700
+value=26 13
+damage=3 22
+hp=25 50
+spd=59
+str=15
+}
+
+// Daisho - LBR stats
+[0x27a9_lbr]
+{
+get=base_daisho
+weight=800
+value=74 41
+damage=4 29
+hp=45 70
+spd=39
+str=35
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+
+// Elven Machete - LBR stats (default)
+[0x2d29_lbr]
+{
+get=base_elven_machete
+damage=4 27
+hp=30 60
+spd=43
+str=15
+value=24 12
+weight=600
+}
+
+// Radiant Scimitar - LBR stats (default)
+[0x2d29_lbr]
+{
+get=base_radiant_scimitar
+damage=4 25
+hp=30 60
+spd=47
+str=15
+value=24 12
+weight=900
+}
+
+// Rune Blade - LBR stats (default)
+[0x2d26_lbr]
+{
+get=base_rune_blade
+damage=4 31
+hp=30 65
+spd=36
+str=25
+value=49 25
+weight=700
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Dread Sword - LBR stats (default)
+[0x090b_lbr]
+{
+get=base_dread_sword
+damage=5 32
+hp=31 110
+spd=34
+str=25
+value=24 12
+weight=700
+}
+
+// Gargish Bone Harvester - LBR stats (default)
+[0x48c6_lbr]
+{
+get=base_gargish_bone_harvester
+damage=4 29
+hp=31 70
+spd=39
+str=20
+value=44 21
+weight=300
+}
+
+// Glass Sword - LBR stats (default)
+[0x090c_lbr]
+{
+get=base_glass_sword
+damage=4 27
+hp=31 90
+spd=43
+str=15
+value=35 18
+weight=600
+}
+
+// Gargish Cleaver - LBR stats (default)
+[0x48ae_lbr]
+{
+get=base_gargish_cleaver
+damage=2 13
+hp=31 50
+spd=40
+str=10
+value=24 12
+weight=100
+}
+
+// Gargish Katana - LBR stats (default)
+[0x48ba_lbr]
+{
+get=base_gargish_katana
+damage=5 26
+hp=31 90
+spd=58
+str=10
+value=42 21
+weight=600
+}
+
+// Gargish Butcher Knife - LBR stats (default)
+[0x48b6_lbr]
+{
+get=base_gargish_butcher_knife
+damage=2 14
+hp=31 40
+spd=40
+str=5
+value=21 10
+weight=100
+}
+
+// Stone War Sword - LBR stats (default)
+[0x0900_lbr]
+{
+get=base_stone_war_sword
+damage=5 34
+hp=31 100
+spd=31
+str=30
+value=24 12
+weight=600
+}
+
+// Gargish Talwar - LBR stats (default)
+[0x0908_lbr]
+{
+get=base_gargish_talwar
+damage=5 35
+hp=31 85
+spd=31
+str=35
+value=70 38
+weight=1600
+}
+
+// Gargish Daisho - LBR stats (default)
+[0x48d0_lbr]
+{
+get=base_gargish_daisho
+damage=4 29
+hp=45 70
+spd=39
+str=35
+value=74 41
+weight=800
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// TIME OF LEGENDS
+// Bladed Whip - LBR stats (default)
+[0xa28b_lbr]
+{
+get=base_bladed_whip
+damage=4 31
+hp=36 50
+spd=36
+str=15
+value=24 12
+weight=500
+}

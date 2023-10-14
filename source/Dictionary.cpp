@@ -9,219 +9,401 @@
 #include "ssection.h"
 #include "StringUtility.hpp"
 
-CDictionaryContainer *Dictionary;
+#include <memory>
+#include <filesystem>
+#include <fstream>
 
-const SI32 dictCANTOPEN			= -1;
+using namespace std::string_literals;
+
+CDictionaryContainer *Dictionary;
+static auto invalid_dictionary_string = std::string();
+
+//const SI32 dictCANTOPEN			= -1;
 //const SI32 dictDUPESECTION		= -2;
-//const SI32 dictDUPEOPENBRACE	= -3;
+//const SI32 dictDUPEOPENBRACE		= -3;
 //const SI32 dictNOOPENBRACE		= -4;
 
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
-CDictionary::CDictionary() : IsValid( false )
+//o------------------------------------------------------------------------------------------------o
+//|	CDictionary::CDictionary()
+//o------------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+CDictionary::CDictionary( const std::string& filepath, const std::string& language )
 {
-	Language			= "ZRO";
-	PathToDictionary	= "./dictionary.ZRO";
+	SetLocationLanguage( filepath, language );
 }
 
-CDictionary::~CDictionary()
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CDictionary::SetLocationLanguage()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Set which language to use for dictionary 
+//o------------------------------------------------------------------------------------------------o
+auto CDictionary::SetLocationLanguage( const std::string &filepath, const std::string &language ) -> void
 {
-}
-
-CDictionary::CDictionary( const std::string& filepath, const std::string& language ) : CDictionary()
-{
-
 	if( language.empty() )
-		Language = "ZRO";
+	{
+		dictLanguage = "ZRO";
+	}
 	else
-		Language = language;
+	{
+		dictLanguage = language;
+	}
+	auto path = std::filesystem::path( filepath );
+	if( filepath.empty() || !std::filesystem::exists( path ))
+	{
+		pathToDictionary = "./dictionary/dictionary.ZRO";
+	}
+	else
+	{
+		pathToDictionary = filepath;
+	}
 
-	//	Load the path
-	if( filepath.empty() )
-		PathToDictionary = "dictionary.ZRO";
-	else
-		PathToDictionary = filepath;
+}
+//==================================================================================================
+auto CDictionary::operator[]( int message_number ) -> std::string &
+{
+	return GetEntry( message_number );
+}
+//==================================================================================================
+auto CDictionary::operator[]( int message_number ) const -> const std::string &
+{
+	return GetEntry( message_number );
 }
 
-//const UI16 DICT_MAX_TEXTBUFFERSIZE = 1024;
-
-SI32 CDictionary::LoadDictionary( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CDictionary::GetEntry()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Retrieve a specified entry from dictionary 
+//o------------------------------------------------------------------------------------------------o
+auto CDictionary::GetEntry( int message_number ) const -> const std::string&
 {
-	SI32 count	= 0;
-	IsValid		= false;
-	if( FileExists( PathToDictionary ) )
+	try
 	{
-		Script *dictData = new Script( PathToDictionary, NUM_DEFS, false );
-		if( dictData != nullptr )
-		{
-			ScriptSection *dictSect = nullptr;
-			std::string tag, data;
-			for( dictSect = dictData->FirstEntry(); dictSect != nullptr; dictSect = dictData->NextEntry() )
-			{
-				if( dictSect != nullptr )
-				{
-					// verify it is a dictionary entry
-					if( dictData->EntryName().substr( 0, 10 ) != "DICTIONARY" )
-					{
-						continue;
-					}
-					for( tag = dictSect->First(); !dictSect->AtEnd(); tag = dictSect->Next() )
-					{
-						data					= dictSect->GrabData();
-						if( data != "" )
-						{
-							Text2[static_cast<UI32>(std::stoul(tag, nullptr, 0))] = strutil::trim( strutil::removeTrailing( data, "//" ));
-							++count;
-						}
-						else
-						{
-							Console.warning( strutil::format( "Entry with tag %s in %s dictionary has no value!", tag.c_str(), Language.c_str() ));
-						}
-					}
-				}
-			}
-			delete dictData;
-			dictData = nullptr;
-		}
-		IsValid = true;
-		Console.print( " " );
-		Console.MoveTo( 15 );
-		Console << "Dictionary." << Language;
+		return msgdata.at( message_number );
+	}
+	catch(...)
+	{
+		Console.Warning( "Dictionary reference "s + std::to_string( message_number ) + " not found in "s + pathToDictionary );
+		return invalid_dictionary_string;
+	}
+}
+//==================================================================================================
+auto CDictionary::GetEntry( int message_number ) -> std::string&
+{
+	try
+	{
+		return msgdata.at( message_number );
+	}
+	catch(...)
+	{
+		Console.Warning( "Dictionary reference "s + std::to_string( message_number ) +" not found in "s + pathToDictionary );
+		return invalid_dictionary_string;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CDictionary::ShowList()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Dump entire dictionary for selected language to console
+//o------------------------------------------------------------------------------------------------o
+auto CDictionary::ShowList() -> void
+{
+	Console << "Dictionary Entries for language: " << dictLanguage << " file: "<< pathToDictionary << myendl;
+	for( auto &[entrynum, text] : msgdata )
+	{
+		Console << entrynum << " : "s << text << myendl;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CDictionary::LoadDictionary()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Load dictionary file for selected language
+//o------------------------------------------------------------------------------------------------o
+auto CDictionary::LoadDictionary( const std::string filepath, const std::string &language ) -> SI32
+{
+	if( !filepath.empty() )
+	{
+		pathToDictionary = filepath;
+	}
+	if( !language.empty() )
+	{
+		dictLanguage = language;
+	}
+	msgdata.clear();
+
+	auto status = ParseFile(pathToDictionary);
+	Console.Print( " " );
+	Console.MoveTo( 15 );
+	Console << "Dictionary." << dictLanguage;
+	if( status )
+	{
 		Console.PrintSpecial( CGREEN, "done" );
 	}
 	else
 	{
-		count = dictCANTOPEN;
+		Console.PrintSpecial(CRED, "failed");
 	}
 
-	return count;
+	return static_cast<SI32>( msgdata.size() );
 }
 
-void CDictionary::ShowList( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CDictionary::ParseFile()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Parse dictionary file for selected language, and load entries into memory
+//o------------------------------------------------------------------------------------------------o
+auto CDictionary::ParseFile( const std::string &dictionaryfile ) -> bool
 {
-	Console << "[Testing]" << myendl;
-	std::map< UI32, std::string >::const_iterator toFind = Text2.begin();
-	while( toFind != Text2.end() )
+	auto rValue = false;
+	auto input = std::ifstream( dictionaryfile );
+	enum search_t {header, startsection, endsection};
+	auto state = search_t::header;
+	if( input.is_open() )
 	{
-		Console << (SI32)(toFind->first) << ") " << toFind->second << myendl;
-		++toFind;
+		char input_buffer[4096];
+		while( input.good() && !input.eof() )
+		{
+			input.getline( input_buffer, 4095 );
+			if( input.gcount() > 0 )
+			{
+				input_buffer[input.gcount()] = 0;
+				auto line = std::string( input_buffer );
+				line = oldstrutil::removeTrailing( line, "//" );
+				line = oldstrutil::trim( line );
+				if( !line.empty() )
+				{
+					switch( static_cast<int>( state ))
+					{
+						case static_cast<int>( search_t::header ):
+						{
+							if(( line[0] == '[' ) && ( *( line.rbegin() ) == ']' ))
+							{
+								// it is a section header!
+								line = oldstrutil::upper( oldstrutil::simplify( line.substr( 1, line.size() - 2 )));
+								auto [key, value] = oldstrutil::split( line, " " );
+								if(( key == "DICTIONARY" ) && ( value == "CLIENTMSG" ))
+								{
+									// This is a good section start!
+									state = search_t::startsection;
+								}
+							}
+							break;
+						}
+
+						case static_cast<int>( search_t::startsection ):
+						{
+							if( line == "{" )
+							{
+								state = search_t::endsection;
+								rValue = true;
+							}
+						}
+						[[fallthrough]];
+						case static_cast<int>( search_t::endsection ):
+						{
+							if( line != "}" )
+							{
+								auto [key, value] = oldstrutil::split( line, "=" );
+								try
+								{
+									auto number = std::stoi( key, nullptr, 0 );
+									msgdata.insert_or_assign( number, value );
+								}
+								catch(...)
+								{
+									// just skip this, no idea what it is
+								}
+							}
+							else
+							{
+								// We dont process more then one section, maybe some day.
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
+	return rValue;
 }
 
-std::string CDictionary::operator[]( SI32 Num )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CDictionary::GetValid()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Validate that dictionary for selected language is not empty
+//o------------------------------------------------------------------------------------------------o
+auto CDictionary::GetValid() const -> bool
 {
-	return GetEntry( Num );
+	return !msgdata.empty();
 }
 
-void CDictionary::SetValid( const bool newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CDictionary::NumberOfEntries()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Return total number of entires in selected dictionary
+//o------------------------------------------------------------------------------------------------o
+auto CDictionary::NumberOfEntries() const -> size_t
 {
-	IsValid = newVal;
+	return msgdata.size();
+}
+//o------------------------------------------------------------------------------------------------o
+//|	CDictionaryContainer::CDictionaryContainer()
+//o------------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+CDictionaryContainer::CDictionaryContainer()
+{
+	defaultLang = ZERO;
 }
 
-bool CDictionary::GetValid( void ) const
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CDictionaryContainer::LoadDictionaries()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loop through all supported dictionary languages and load each dictionary 
+//o------------------------------------------------------------------------------------------------o
+auto CDictionaryContainer::LoadDictionaries( const std::string &filepath ) -> SI32
 {
-	return IsValid;
-}
-
-size_t CDictionary::NumberOfEntries( void ) const
-{
-	return Text2.size();
-}
-
-std::string CDictionary::GetEntry( const SI32 Num )
-{
-	std::string rvalue;
-	if( IsValid )
+	SI32 rValue = 0;
+	for( auto i = static_cast<int>( DL_DEFAULT ); i < static_cast<int>( DL_COUNT ); i++ )
 	{
-		std::map< UI32, std::string >::const_iterator toFind = Text2.find( Num );
-		if( toFind != Text2.end() )
-			rvalue = toFind->second;
-		else
-			Console.warning( strutil::format("Dictionary Reference %i not found in \"%s\"", Num, PathToDictionary.c_str() ));
+		auto basepath = filepath;
+		auto buildName = std::string();
+		if( !filepath.empty() )
+		{
+			buildName = basepath + "dictionary."s + DistinctLanguageNames[i];
+		}
+		dictList[i].LoadDictionary( buildName, DistinctLanguageNames[i] );
 	}
-	return rvalue;
-}
-
-CDictionaryContainer::CDictionaryContainer() : defaultLang( ZERO )
-{
-	std::string buildName;
-	for( UI16 i = (UI16)DL_DEFAULT; i < (UI16)DL_COUNT; ++i )
+	if( !dictList[LanguageCodesLang[ZERO]].GetValid() )
 	{
-		buildName = cwmWorldState->ServerData()->Directory( CSDDP_DICTIONARIES ) + "dictionary." + DistinctLanguageNames[i];
-		dictList[i] = new CDictionary( buildName, DistinctLanguageNames[i] );
-	}
-}
-
-CDictionaryContainer::CDictionaryContainer( const std::string& filepath ) : defaultLang( ZERO )
-{
-	std::string buildName;
-	for( UI16 i = (UI16)DL_DEFAULT; i < (UI16)DL_COUNT; ++i )
-	{
-		buildName = filepath + "dictionary." + DistinctLanguageNames[i];
-		dictList[i] = new CDictionary( buildName, DistinctLanguageNames[i] );
-	}
-}
-
-CDictionaryContainer::~CDictionaryContainer()
-{
-	for( UI16 i = (UI16)DL_DEFAULT; i < (UI16)DL_COUNT; ++i )
-		delete dictList[i];
-}
-
-SI32 CDictionaryContainer::LoadDictionary( void )
-{
-	SI32 rvalue = 0;
-	for( UI16 i = (UI16)DL_DEFAULT; i < (UI16)DL_COUNT; ++i )
-	{
-		dictList[i]->LoadDictionary();
-	}
-	if( !dictList[LanguageCodesLang[ZERO]]->GetValid() )
-	{
-		Console.error( "Dictionary.ZRO is bad or nonexistant" );
+		Console.Error( "Dictionary.ZRO is bad or nonexistant" );
 		Shutdown( FATAL_UOX3_BAD_DEF_DICT );
-		rvalue = -1;
+		rValue = -1;
 	}
-	return rvalue;
+	return rValue;
 }
 
-std::string CDictionaryContainer::operator[]( const SI32 Num )
+//==================================================================================================
+auto CDictionaryContainer::operator[]( int message_number ) const -> const std::string &
 {
-	return GetEntry( Num );
+	return GetEntry( message_number );
+}
+//==================================================================================================
+auto CDictionaryContainer::operator[]( int message_number ) -> std::string &
+{
+	return GetEntry( message_number );
 }
 
-std::string CDictionaryContainer::GetEntry( const SI32 Num, const UnicodeTypes toDisp )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CDictionaryContainer::GetEntry()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Retrieve a specified entry from a dictionary based on language code
+//o------------------------------------------------------------------------------------------------o
+auto CDictionaryContainer::GetEntry( const SI32 message_number, const UnicodeTypes toDisp ) -> std::string &
 {
-	std::string RetVal;
 	if( cwmWorldState->ServerData()->ServerLanguage() != DL_DEFAULT ) // defaultServerLang != DL_DEFAULT )
 	{
 		// If a default server language has been specified in uox.ini, force the use of that language
-		RetVal = dictList[cwmWorldState->ServerData()->ServerLanguage()]->GetEntry( Num );
-		if( RetVal.empty() ) // If the entry wasn't found, try the ZERO before we flat out return null
-			RetVal = dictList[LanguageCodesLang[defaultLang]]->GetEntry( Num );
+		if( dictList[cwmWorldState->ServerData()->ServerLanguage()].GetValid() )
+		{
+			return dictList[cwmWorldState->ServerData()->ServerLanguage()][message_number];
+		}
+		else
+		{
+			return dictList[LanguageCodesLang[defaultLang]][message_number];
 
-		return RetVal;
+		}
 	}
 
-	auto typetouse = toDisp ;
-	if ((static_cast<SI32>(toDisp) < 0) || (static_cast<SI32>(toDisp)>= UnicodeTypes::TOTAL_LANGUAGES)){
-		typetouse = ZERO ;
+	auto typetouse = toDisp;
+	if(( static_cast<SI32>( toDisp ) < 0 ) || ( static_cast<SI32>( toDisp ) >= UnicodeTypes::TOTAL_LANGUAGES ))
+	{
+		typetouse = ZERO;
 	}
-	const DistinctLanguage mLanguage = LanguageCodesLang[typetouse];
+	try
+	{
+		auto mLanguage = LanguageCodesLang[typetouse];
+		if( dictList[mLanguage].GetValid() )
+		{
+			return dictList[mLanguage][message_number];
+		}
+		else
+		{
+			// The langague wasn't valid, so.....
+			if( dictList[LanguageCodesLang[defaultLang]].GetValid() )
+			{
+				return dictList[LanguageCodesLang[defaultLang]].GetEntry( message_number );
+			}
+			else
+			{
+				return invalid_dictionary_string;
+			}
+		}
+	}
+	catch(...)
+	{
+		return invalid_dictionary_string;
 
-	if( mLanguage < DL_COUNT )
-		RetVal = dictList[mLanguage]->GetEntry( Num );
-	if( RetVal.empty() && typetouse != defaultLang )//if we are using a diff language, and the entry wasn't found, try the ZERO before we flat out return null
-		RetVal = dictList[LanguageCodesLang[defaultLang]]->GetEntry( Num );
-
-	return RetVal;
+	}
+}
+//==================================================================================================
+auto CDictionaryContainer::GetEntry( const SI32 message_number, const UnicodeTypes toDisp ) const -> const std::string &
+{
+	if( cwmWorldState->ServerData()->ServerLanguage() != DL_DEFAULT ) // defaultServerLang != DL_DEFAULT )
+	{
+		// If a default server language has been specified in uox.ini, force the use of that language
+		if( dictList[cwmWorldState->ServerData()->ServerLanguage()].GetValid() )
+		{
+			return dictList[cwmWorldState->ServerData()->ServerLanguage()][message_number];
+		}
+		else
+		{
+			return dictList[LanguageCodesLang[defaultLang]][message_number];
+		}
+	}
+	
+	auto typetouse = toDisp;
+	if(( static_cast<SI32>( toDisp ) < 0 ) || ( static_cast<SI32>( toDisp ) >= UnicodeTypes::TOTAL_LANGUAGES ))
+	{
+		typetouse = ZERO;
+	}
+	try
+	{
+		auto mLanguage = LanguageCodesLang[typetouse];
+		if( dictList[mLanguage].GetValid() )
+		{
+			return dictList[mLanguage][message_number];
+		}
+		else
+		{
+			// The langague wasn't valid, so.....
+			if( dictList[LanguageCodesLang[defaultLang]].GetValid() )
+			{
+				return dictList[LanguageCodesLang[defaultLang]].GetEntry( message_number );
+			}
+			else
+			{
+				return invalid_dictionary_string;
+			}
+		}
+	}
+	catch(...)
+	{
+		return invalid_dictionary_string;
+	}
 }
 
-void CDictionaryContainer::SetDefaultLang( const UnicodeTypes newType )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CDictionaryContainer::SetDefaultLang()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Retrieve a specified entry from a dictionary based on language code
+//o------------------------------------------------------------------------------------------------o
+auto CDictionaryContainer::SetDefaultLang( UnicodeTypes newType ) -> void
 {
-	if( dictList[LanguageCodesLang[newType]]->GetValid() )
+	if( dictList[LanguageCodesLang[newType]].GetValid() )
+	{
 		defaultLang = newType;
+	}
 }
 

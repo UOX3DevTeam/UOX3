@@ -13,7 +13,10 @@ good=27
 // Wand
 [0x0df2]
 {
-get=base_wand
+getlbr=0x0df2_lbr
+getaos=0x0df2_aos
+gettol=0x0df2_tol
+sectionid=0x0df2
 }
 
 // Wand

@@ -1,9 +1,16 @@
-BASE		:= ..
-SPIDER		:= $(BASE)/spidermonkey
-ZLIB		:= $(BASE)/zlib
+BASE      := ..
+SPIDER    := $(BASE)/spidermonkey
+ZLIB      := $(BASE)/zlib
+PLATFORM  := $(shell uname)
 
-CXX			:= g++
-CXXFLAGS	:= -std=c++17 -O2 -pthread -Wno-shift-negative-value
+ifeq ($(PLATFORM),FreeBSD)
+CXX     	:= clang++
+else
+CXX     	:= g++
+GCCVER8		:= $(shell expr `gcc -dumpversion | cut -f1 -d.` \<= 8)
+endif
+
+CXXFLAGS	:= -std=c++17 -O2 -pthread -Wno-shift-negative-value -Wall -Wextra -Wno-attributes
 LDFLAGS		:= -L$(SPIDER)  -ljs32 -L$(ZLIB) -lz
 TARGET		:= uox3
 INCLUDE		:=  -I$(SPIDER) -I. -I$(ZLIB)
@@ -15,6 +22,10 @@ POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@
 BUILD    	:= ./build
 SRC      	:= $(wildcard *.cpp)
 OBJECTS  	:= $(SRC:%.cpp=$(BUILD)/%.o)
+
+ifeq "$(GCCVER8)" "1"
+	LDFLAGS += -lstdc++fs
+endif
 
 #COMPILE 	:= $(CXX) $(DEPFLAGS) $(CXXFLAGS) $(INCLUDE) -c
 

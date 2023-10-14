@@ -8,16 +8,20 @@ function onDamage( damaged, attacker, damageValue, damageType )
 	if( !damaged.skillsused.healing && !damaged.skillsused.veterinary )
 	{
 		// Player shouldn't have this script attached if they're not actively healing. Remove!
+		damaged.SetTempTag( "slipCount", null );
 		damaged.RemoveScriptTrigger( healSlipScriptID );
 	}
 
 	// Only have player "slip up" at healing for high damage numbers
-	if( ( damageValue >= slipOnNPCDamage && attacker.npc && !attacker.isHuman ) ||
+	if( !ValidateObject( attacker ) ||
+		( damageValue >= slipOnNPCDamage && attacker.npc && !attacker.isHuman ) ||
 		( damageValue >= slipOnPlayerDamage && !attacker.npc ))
 	{
 		damaged.SetTempTag( "slipCount", damaged.GetTempTag( "slipCount" ) + 1 );
 		if( damaged.socket )
+		{
 			damaged.socket.SysMessage( GetDictionaryEntry( 9088, damaged.socket.language )); // Your fingers slip!
+		}
 	}
 	return true;
 }

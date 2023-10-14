@@ -24,6 +24,7 @@ value=15 7
 layer=0x11
 def=1
 hp=50
+sectionid=0x1541
 }
 
 // Body Sash
@@ -49,6 +50,7 @@ value=43 21
 layer=0x14
 def=5
 hp=50
+sectionid=0x1515
 }
 
 // Cloak
@@ -73,6 +75,7 @@ weight=200
 value=25 12
 layer=0x11
 hp=50
+sectionid=0x1f7b
 }
 
 // Doublet
@@ -98,6 +101,7 @@ value=25 12
 layer=0x11
 def=6
 hp=50
+sectionid=0x1eff
 }
 
 // Fancy Dress
@@ -123,6 +127,7 @@ value=55 27
 layer=0x5
 def=4
 hp=50
+sectionid=0x1efd
 }
 
 // Fancy Shirt
@@ -148,6 +153,7 @@ value=25 13
 layer=0x11
 def=4
 hp=50
+sectionid=0x153d
 }
 
 // Full Apron
@@ -172,6 +178,7 @@ weight=200
 value=26 13
 layer=0x0c
 hp=50
+sectionid=0x153b
 }
 
 // Half Apron
@@ -197,6 +204,7 @@ value=51 25
 layer=0x11
 def=7
 hp=50
+sectionid=0x1f9f
 }
 
 // Jester Suit
@@ -222,6 +230,7 @@ value=31 15
 layer=0x17
 def=3
 hp=50
+sectionid=0x1537
 }
 
 // Kilt
@@ -247,6 +256,7 @@ value=34 17
 layer=0x4
 def=4
 hp=50
+sectionid=0x1539
 }
 
 // Long Pants
@@ -258,7 +268,7 @@ id=0x153A
 
 [longpants]
 {
-0x1539 0x153a
+get=0x1539 0x153a
 }
 
 // Plain Dress
@@ -272,6 +282,7 @@ value=56 28
 layer=0x11
 def=4
 hp=50
+sectionid=0x1f01
 }
 
 // Plain Dress
@@ -297,6 +308,7 @@ value=68 34
 layer=0x16
 def=7
 hp=50
+sectionid=0x1f03
 }
 
 // Robe
@@ -304,6 +316,7 @@ hp=50
 {
 get=0x1f03
 id=0x1f04
+sectionid=0x1f04
 }
 
 [robe]
@@ -336,6 +349,7 @@ value=37 18
 layer=0x5
 def=3
 hp=50
+sectionid=0x1517
 }
 
 // Shirt
@@ -361,6 +375,7 @@ value=24 12
 layer=0x4
 def=3
 hp=50
+sectionid=0x152e
 }
 
 // Short Pants
@@ -386,6 +401,7 @@ value=33 16
 layer=0x17
 def=4
 hp=50
+sectionid=0x1531
 }
 
 // Skirt
@@ -410,6 +426,7 @@ weight=500
 value=33 16
 layer=0x11
 hp=50
+sectionid=0x1fa1
 }
 
 // Tunic
@@ -434,6 +451,7 @@ weight=100
 value=50 25
 layer=0x11
 hp=100
+sectionid=0x1535
 }
 
 // Gold Belt
@@ -457,6 +475,7 @@ id=0x1ffd
 weight=100
 value=44 22
 layer=0x11
+sectionid=0x1ffd
 }
 
 // Surcoat

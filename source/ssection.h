@@ -1,9 +1,9 @@
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	 ssection.h
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Script Section class implementation
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 #ifndef __SSECTION_H__
 #define __SSECTION_H__
 
@@ -15,13 +15,13 @@
 //						Format: ADDMENUITEM=Group/SubGroupID,ImageID,PositionWeight,Type,Flags
 //						Where:
 //							Group				: Actual group owner that this item will be listed under on the addmenu gump
-//							TileID				: (-2) None, (-1) Use block ItemID for image (=>0) New tileid to display
+//							TileId				: (-2) None, (-1) Use block ItemID for image (=>0) New tileid to display
 //							PositionWeight		:	Basic measure in which is used to base the items location in the addmenu page.
 //													Basically a value of 0 - 8/10 which ever max amount of entries we get on an addgump page
 //													(0) having the highest priority, etc. To kind of help sorting Otherwise items will be listed
 //													as they are read in from the DFN's at parsing time.
 //							Flags				:	(0) not visible on the addmenu  (1) Visible on the addmenu
-//							ObjectID			: This is the ID number that is added via the addmenu. ADDITEM=ObjectID escentially
+//							ObjectId			: This is the ID number that is added via the addmenu. ADDITEM=ObjectID escentially
 //
 enum DFNTAGS
 {
@@ -37,6 +37,7 @@ enum DFNTAGS
 	DFNTAG_ARCHERY,
 	DFNTAG_ARMSLORE,
 	DFNTAG_ATT,
+	DFNTAG_AWAKE,
 	DFNTAG_BACKPACK,
 	DFNTAG_BASERANGE,
 	DFNTAG_BEGGING,
@@ -62,6 +63,7 @@ enum DFNTAGS
 	DFNTAG_DAMAGEABLE,
 	DFNTAG_DECAY,
 	DFNTAG_DEF,
+	DFNTAG_DEFBONUS,
 	DFNTAG_DETECTINGHIDDEN,
 	DFNTAG_DEX,
 	DFNTAG_DEXADD,
@@ -73,6 +75,7 @@ enum DFNTAGS
 	DFNTAG_DYEBEARD,
 	DFNTAG_DYEHAIR,
 	DFNTAG_ELEMENTRESIST,
+	DFNTAG_ERBONUS,
 	DFNTAG_EMOTECOLOUR,
 	DFNTAG_ENTICEMENT,
 	DFNTAG_EQUIPITEM,
@@ -94,6 +97,17 @@ enum DFNTAGS
 	DFNTAG_FZ1,
 	DFNTAG_FOOD,
 	DFNTAG_GET,
+	DFNTAG_GETUO,
+	DFNTAG_GETT2A,
+	DFNTAG_GETUOR,
+	DFNTAG_GETTD,
+	DFNTAG_GETLBR,
+	DFNTAG_GETAOS,
+	DFNTAG_GETSE,
+	DFNTAG_GETML,
+	DFNTAG_GETSA,
+	DFNTAG_GETHS,
+	DFNTAG_GETTOL,
 	DFNTAG_GLOW,
 	DFNTAG_GLOWBC,
 	DFNTAG_GLOWTYPE,
@@ -142,6 +156,8 @@ enum DFNTAGS
 	DFNTAG_MINING,
 	DFNTAG_MOVABLE,
 	DFNTAG_MORE,
+	DFNTAG_MORE0,
+	DFNTAG_MORE1,
 	DFNTAG_MORE2,
 	DFNTAG_MOREX,
 	DFNTAG_MOREY,
@@ -157,9 +173,11 @@ enum DFNTAGS
 	DFNTAG_NOHIRELING,
 	DFNTAG_NOTRAIN,
 	DFNTAG_NPCAI,
+	DFNTAG_NPCGUILD,
 	DFNTAG_NPCLIST,
 	DFNTAG_NPCWANDER,
 	DFNTAG_OFFSPELL,
+	DFNTAG_ORIGIN,
 	DFNTAG_PACKITEM,
 	DFNTAG_PARRYING,
 	DFNTAG_PEACEMAKING,
@@ -187,6 +205,7 @@ enum DFNTAGS
 	DFNTAG_RUNS,
 	DFNTAG_SAYCOLOUR,
 	DFNTAG_SCRIPT,
+	DFNTAG_SECTIONID,
 	DFNTAG_SELLITEM,
 	DFNTAG_SHOPITEM,
 	DFNTAG_SHOPKEEPER,
@@ -203,6 +222,7 @@ enum DFNTAGS
 	DFNTAG_SPAWNOBJ,
 	DFNTAG_SPAWNOBJLIST,
 	DFNTAG_SPD,
+	DFNTAG_SPELLS,
 	DFNTAG_SPELLWEAVING,
 	DFNTAG_SPIRITSPEAK,
 	DFNTAG_SPLIT,
@@ -211,6 +231,7 @@ enum DFNTAGS
 	DFNTAG_STAMINAMAX,
 	DFNTAG_STRENGTH,
 	DFNTAG_STRADD,
+	DFNTAG_STEALABLE,
 	DFNTAG_STEALING,
 	DFNTAG_STEALTH,
 	DFNTAG_SWORDSMANSHIP,
@@ -247,48 +268,48 @@ typedef struct __ADDMENUITEM__
 {
 	UI32	itemIndex;
 	std::string itemName;
-	UI32	groupID;
-	UI32	tileID;
+	UI32	groupId;
+	UI32	tileId;
 	UI32	weightPosition;
 	UI32	objectFlags;
-	std::string	objectID;
-	__ADDMENUITEM__() : itemIndex( 0 ), itemName( "" ), groupID( 0 ), tileID( 0 ),
-	weightPosition( 0 ), objectFlags( 0 ), objectID( "" )
+	std::string	objectId;
+	__ADDMENUITEM__() : itemIndex( 0 ), itemName( "" ), groupId( 0 ), tileId( 0 ),
+	weightPosition( 0 ), objectFlags( 0 ), objectId( "" )
 	{
 	}
 } ADDMENUITEM, *LPADDMENUITEM;
 
-extern std::multimap< UI32, ADDMENUITEM >						g_mmapAddMenuMap;
-typedef std::multimap< UI32, ADDMENUITEM >::iterator			ADDMENUMAP_ITERATOR;
-typedef std::multimap< UI32, ADDMENUITEM >::const_iterator		ADDMENUMAP_CITERATOR;
+extern std::multimap<UI32, ADDMENUITEM>						g_mmapAddMenuMap;
+typedef std::multimap<UI32, ADDMENUITEM>::iterator			ADDMENUMAP_ITERATOR;
+typedef std::multimap<UI32, ADDMENUITEM>::const_iterator	ADDMENUMAP_CITERATOR;
 
-class ScriptSection
+class CScriptSection
 {
 	friend class Script;
 private:
-	struct sectData
+	struct SectData_st
 	{
 		std::string tag;
 		std::string data;
-		sectData() : tag( "" ), data( "" )
+		SectData_st() : tag( "" ), data( "" )
 		{
 		}
 	};
-	struct sectDataV2
+	struct SectDataV2_st
 	{
 		DFNTAGS tag;
 		std::string	cdata;
 		SI32	ndata;
 		SI32	odata;
-		sectDataV2() : tag( DFNTAG_COUNTOFTAGS ), cdata( "" ), ndata( -1 ), odata( -1 )
+		SectDataV2_st() : tag( DFNTAG_COUNTOFTAGS ), cdata( "" ), ndata( -1 ), odata( -1 )
 		{
 		}
 	};
 
-	std::vector< sectData * >				data;
-	std::vector< sectDataV2 * >				dataV2;
-	std::vector< sectData * >::iterator		currentPos;
-	std::vector< sectDataV2 * >::iterator	currentPos2;
+	std::vector<SectData_st *>				data;
+	std::vector<SectDataV2_st *>			dataV2;
+	std::vector<SectData_st *>::iterator	currentPos;
+	std::vector<SectDataV2_st *>::iterator	currentPos2;
 	DEFINITIONCATEGORIES	dfnCat;
 
 	bool					npcList;
@@ -298,30 +319,35 @@ private:
 	std::string				itemListData;
 
 public:
-	ScriptSection( void );
-	ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d );
-	~ScriptSection();
-	const std::string		First( void );
-	DFNTAGS					FirstTag( void );
-	const std::string		Next( void );
-	DFNTAGS					NextTag( void );
-	const std::string		Prev( void );
-	DFNTAGS					PrevTag( void );
-	bool					AtEnd( void );
-	bool					AtEndTags( void );
-	const std::string		GrabData( void );
-	const std::string		GrabData( SI32& ndata, SI32& odata );
-	bool					FlushData( void );
-	size_t					NumEntries( void ) const;
-	const std::string		MoveTo( size_t position );
-	bool					CloseFile( void );
-	void					Remove( size_t position );
-	void					Append( std::string tag, std::string data );
-	bool					ItemListExist( void ) const;
-	bool					NpcListExist( void ) const;
-	const std::string		ItemListData( void ) const;
-	const std::string		NpcListData( void ) const;
-	void					createSection( std::fstream& inputbuf );
+	auto collection() const -> const std::vector<SectData_st *>&;
+	auto collection()  -> std::vector<SectData_st *>&;
+	auto collection2() const -> const std::vector<SectDataV2_st *>&;
+	auto collection2()  -> std::vector<SectDataV2_st *>&;
+
+	CScriptSection();
+	CScriptSection( std::istream& input, DEFINITIONCATEGORIES d );
+	~CScriptSection();
+	auto First() -> std::string;
+	auto Next() -> std::string;
+	auto Prev() -> std::string;
+	auto AtEnd() -> bool;
+	auto FirstTag() -> DFNTAGS;
+	auto NextTag() -> DFNTAGS;
+	auto PrevTag() -> DFNTAGS;
+	auto AtEndTags() -> bool;
+	auto GrabData() -> std::string;
+	auto GrabData( SI32& ndata, SI32& odata ) -> std::string;
+	auto FlushData() -> bool;
+	auto NumEntries() const -> size_t;
+	auto MoveTo( size_t position ) -> std::string;
+	auto CloseFile() -> bool;
+	auto Remove( size_t position ) -> void;
+	auto Append( std::string tag, std::string data ) -> void;
+	auto ItemListExist() const -> bool;
+	auto NpcListExist() const -> bool;
+	auto ItemListData() const -> std::string;
+	auto NpcListData() const -> std::string;
+	auto CreateSection( std::istream& inputbuf ) -> void;
 };
 
 #endif

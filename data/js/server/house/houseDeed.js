@@ -2,14 +2,14 @@
 // additional houses. The actual house-placement part is handled in code.
 
 // Check if tracking of house ownership is done on a per-account (instead of per-char) basis (from uox.ini)
-const trackHousesPerAccount = GetServerSetting( "TRACKHOUSESPERACCOUNT" ); //TrackHousesPerAccount();
+const trackHousesPerAccount = GetServerSetting( "TrackHousesPerAccount" );
 
 // Check if players can own and co-own houses at the same time (from uox.ini)
-const canOwnAndCoOwnHouses = GetServerSetting( "CANOWNANDCOOWNHOUSES" ); //CanOwnAndCoOwnHouses();
+const canOwnAndCoOwnHouses = GetServerSetting( "CanOwnAndCoOwnHouses" );
 
 // Fetch max amount of houses someone can own/co-own (from uox.ini)
-const maxHousesOwnable = GetServerSetting( "MAXHOUSESOWNABLE" ); //MaxHousesOwnable();
-const maxHousesCoOwnable = GetServerSetting( "MAXHOUSESCOOWNABLE" ); //MaxHousesCoOwnable();
+const maxHousesOwnable = GetServerSetting( "MaxHousesOwnable" );
+const maxHousesCoOwnable = GetServerSetting( "MaxHousesCoOwnable" );
 
 function onUseChecked( pUser, iUsed )
 {
@@ -23,13 +23,27 @@ function onUseChecked( pUser, iUsed )
 	var housesCoOwned = pUser.housesCoOwned;
 	if( housesOwned >= maxHousesOwnable )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 1827, pSocket.language ), pUser.housesOwned, maxHousesOwnable, ( trackHousesPerAccount ? "account" : "character" )); // You already own %i houses, you may not place another (Max %i per %s)!
-		return false;
+		if( pUser.isGM )
+		{
+			pSocket.SysMessage( "[GM OVERRIDE] " + GetDictionaryEntry( 1827, pSocket.language ), pUser.housesOwned, maxHousesOwnable, ( trackHousesPerAccount ? "account" : "character" )); // You already own %i houses, you may not place another (Max %i per %s)!
+		}
+		else
+		{
+			pSocket.SysMessage( GetDictionaryEntry( 1827, pSocket.language ), pUser.housesOwned, maxHousesOwnable, ( trackHousesPerAccount ? "account" : "character" )); // You already own %i houses, you may not place another (Max %i per %s)!
+			return false;
+		}
 	}
 	if( !canOwnAndCoOwnHouses && housesCoOwned > 0 )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 1828, pSocket.language ), housesCoOwned ); // You are already a co-owner of %i houses, and you cannot own and co-own
-		return false;
+		if( pUser.isGM )
+		{
+			pSocket.SysMessage( "[GM OVERRIDE] " + GetDictionaryEntry( 1828, pSocket.language ), housesCoOwned ); // You are already a co-owner of %i houses, and you cannot own and co-own
+		}
+		else
+		{
+			pSocket.SysMessage( GetDictionaryEntry( 1828, pSocket.language ), housesCoOwned ); // You are already a co-owner of %i houses, and you cannot own and co-own
+			return false;
+		}
 	}
 
 	// All good, return true and proceed with house placement in code

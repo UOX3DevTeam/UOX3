@@ -26,26 +26,26 @@ const std::string GTypeNames[GT_COUNT] = { "Standard", "Order", "Chaos", "Unknow
 const std::string GRelationNames[GR_COUNT] = { "Neutral", "War", "Ally", "Unknown", "Same" };
 const SI16 BasePage = 8000;
 
-typedef std::map< GUILDID, GUILDRELATION >	GUILDREL;
-typedef std::map< GUILDID, GUILDRELATION >::iterator GUILDREL_ITERATOR;
-typedef std::map< GUILDID, GUILDRELATION >::iterator GUILDREL_ITERATOR;
+typedef std::map<GUILDID, GUILDRELATION>	GUILDREL;
+typedef std::map<GUILDID, GUILDRELATION>::iterator GUILDREL_ITERATOR;
+typedef std::map<GUILDID, GUILDRELATION>::iterator GUILDREL_ITERATOR;
 
 class CGuild
 {
 private:
 	std::string		name;
-	char			abbreviation[4];
+	std::string		abbreviation;
 	GuildType		gType;
 	std::string		charter;
 	std::string		webpage;
 	SERIAL			stone;
 	SERIAL			master;
-	SERLIST			recruits;
-	SERLIST			members;
+	std::vector<SERIAL>	recruits;
+	std::vector<SERIAL>	members;
 	GUILDREL		relationList;
 
-	SERLIST_ITERATOR	recruitPtr;
-	SERLIST_ITERATOR	memberPtr;
+	std::vector<SERIAL>::iterator	recruitPtr;
+	std::vector<SERIAL>::iterator	memberPtr;
 
 	GUILDREL_ITERATOR	warPtr;
 	GUILDREL_ITERATOR	allyPtr;
@@ -61,24 +61,24 @@ public:
 
 	CGuild();
 	~CGuild();
-	const std::string	Name( void ) const;
-	const char *		Abbreviation( void ) const;
-	GuildType			Type( void ) const;
-	const std::string	Charter( void ) const;
-	const std::string	Webpage( void ) const;
-	SERIAL		Stone( void ) const;
-	SERIAL		Master( void ) const;
-	SERIAL		FirstRecruit( void );
-	SERIAL		NextRecruit( void );
-	bool		FinishedRecruits( void );
+	const std::string	Name() const;
+	auto Abbreviation() const -> const std::string&;
+	GuildType Type() const;
+	const std::string	Charter() const;
+	const std::string	Webpage() const;
+	SERIAL		Stone() const;
+	SERIAL		Master() const;
+	SERIAL		FirstRecruit();
+	SERIAL		NextRecruit();
+	bool		FinishedRecruits();
 	SERIAL		RecruitNumber( size_t rNum ) const;
-	SERIAL		FirstMember( void );
-	SERIAL		NextMember( void );
-	bool		FinishedMember( void );
+	SERIAL		FirstMember();
+	SERIAL		NextMember();
+	bool		FinishedMember();
 	SERIAL		MemberNumber( size_t rNum ) const;
 
 	void		Name( std::string txt );
-	void		Abbreviation( const char *txt );
+	auto		Abbreviation( const std::string &value) -> void;
 	void		Type( GuildType nType );
 	void		Charter( const std::string &txt );
 	void		Webpage( const std::string &txt );
@@ -97,26 +97,27 @@ public:
 	void		RecruitToMember( CChar &newMember );
 	void		RecruitToMember( SERIAL newMember );
 
-	size_t		NumMembers( void ) const;
-	size_t		NumRecruits( void ) const;
+	size_t		NumMembers() const;
+	size_t		NumRecruits() const;
 
 	GUILDRELATION	RelatedToGuild( GUILDID otherGuild ) const;
 	bool		IsAtWar( GUILDID otherGuild ) const;
 	bool		IsNeutral( GUILDID otherGuild ) const;
 	bool		IsAlly( GUILDID otherGuild ) const;
+	bool		IsAtPeace() const;
 
 	void		SetGuildFaction( GuildType newFaction );
 	void		SetGuildRelation( GUILDID otherGuild, GUILDRELATION toSet );
-	void		Save( std::ofstream &toSave, GUILDID gNum );
-	void		Load( ScriptSection *toRead );
+	void		Save( std::ostream &toSave, GUILDID gNum );
+	void		Load( CScriptSection *toRead );
 
-	GUILDREL *	GuildRelationList( void );	// NOTE: This is aimed ONLY at menu stuff
+	GUILDREL *	GuildRelationList();	// NOTE: This is aimed ONLY at menu stuff
 
-	void		CalcMaster( void );
+	void		CalcMaster();
 
 	void		TellMembers( SI32 dictEntry, ... );
 
-	const std::string TypeName( void );
+	const std::string TypeName();
 
 	bool		IsRecruit( SERIAL toCheck ) const;
 	bool		IsMember( SERIAL toCheck ) const;
@@ -131,18 +132,18 @@ private:
 	GUILDLIST		gList;
 
 	void			ToggleAbbreviation( CSocket *s );
-	void			TransportGuildStone( CSocket *s, GUILDID guildID );
+	void			TransportGuildStone( CSocket *s, GUILDID guildId );
 	void			Erase( GUILDID toErase );
 	GUILDID			MaximumGuild( void );
 public:
 	void			Resign( CSocket *s );
-	CGuildCollection();
+	CGuildCollection() = default;
 	size_t			NumGuilds( void ) const;
 	GUILDID			NewGuild( void );
 	CGuild *		Guild( GUILDID num ) const;
 	CGuild *		operator[]( GUILDID num );
-	void			Save( void );
-	void			Load( void );
+	void			Save();
+	void			Load();
 	GUILDRELATION	Compare( GUILDID srcGuild, GUILDID trgGuild ) const;
 	GUILDRELATION	Compare( CChar *src, CChar *trg ) const;
 	void			Menu( CSocket *s, SI16 menu, GUILDID trgGuild = -1, SERIAL plID = INVALIDSERIAL );

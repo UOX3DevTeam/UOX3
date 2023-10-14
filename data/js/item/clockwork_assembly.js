@@ -1,5 +1,7 @@
 // Tool used by Tinkerers to craft Iron Golems
 const maxControlSlots = GetServerSetting( "MaxControlSlots" );
+
+// maxFollowers only comes into play if maxControlSlots is set to 0 in UOX.INI
 const maxFollowers = GetServerSetting( "MaxFollowers" );
 const golemControlSlots = 4;
 
@@ -25,40 +27,45 @@ function onUseChecked( pUser, iUsed )
 
 	if( pUser.skills.tinkering < 60 )
 	{
-		socket.SysMessage( GetDictionaryEntry( X, socket.language )); // You must be a Journeyman or higher Tinker to construct a golem
+		socket.SysMessage( GetDictionaryEntry( 2772, socket.language )); // You must be a Journeyman or higher Tinker to construct a golem.
 		return false;
 	}
 
-	// Check to see if player actually has space for ANY more pets
-	if( maxControlSlots > 0 && pUser.controlSlotsUsed >= maxControlSlots )
+	// Check to see if player actually has space for ANY more pets/followers
+	if( maxControlSlots > 0 )
 	{
-		pSock.SysMessage( GetDictionaryEntry( X, pSock.language )); // You have too many followers to control that creature.
-		return;
+		if( pUser.controlSlotsUsed + golemControlSlots > maxControlSlots )
+		{
+			pSock.SysMessage( GetDictionaryEntry( 2390, pSock.language )); // That would exceed your maximum number of pet control slots.
+			return;
+		}
 	}
-
-	if( maxControlSlots > 0 && ( pUser.controlSlotsUsed + golemControlSlots > maxControlSlots ))
+	else if( pUser.followerCount >= maxFollowers )
 	{
-		pSock.SysMessage( GetDictionaryEntry( 2390, pSock.language )); // That would exceed your maximum number of pet control slots.
-		return;
-	}
-
-	if( pUser.petCount >= maxFollowers )
-	{
+		// Only checked if maxControlSlots is set to 0
 		var tempMsg = GetDictionaryEntry( 2346, pSock.language ); // You can maximum have %i pets/followers active at the same time.
-		pSock.SysMessage( tempMsg.replace(/%i/gi, maxFollowers ));
+		pSock.SysMessage( tempMsg.replace( /%i/gi, maxFollowers ));
 		return;
 	}
 
 	// Check if player has enough resources to construct the golem
 	// 1 power crystal, 50 iron ingots, 50 bronze ingots and 5 gears
 	if( pUser.ResourceCount( 0x1f1c ) < 1 )
+	{
 		socket.SysMessage(); // You need a power crystal to construct a golem.
+	}
 	else if( pUser.ResourceCount( 0x1bf2 ) < 50 )
+	{
 		socket.SysMessage(); // You need more iron ingots to construct a golem.
+	}
 	else if( pUser.ResourceCount( 0x1bf2, 0x06d6 ) < 50 )
+	{
 		socket.SysMessage(); // You need more bronze ingots to construct a golem.
+	}
 	else if( pUser.ResourceCount( ) < 5 )
+	{
 		socket.SysMessage(); // You need more gears to construct a golem.
+	}
 	else
 	{
 		// Construct the golem!
@@ -73,6 +80,9 @@ function onUseChecked( pUser, iUsed )
 
  			// Start following the player
  			golemNPC.Follow( pUser );
+
+ 			// Add golem as an active follower of the player
+ 			pUser.AddFollower( golemNPC );
 
  			// Play a sound effect
  			golemNPC.SoundEffect( 0x241, true );
@@ -92,15 +102,25 @@ function ApplyGolemPower( golemNPC, pUser )
 	var powerScale;
 	var tinkerSkill = pUser.skills.tinkering;
 	if( tinkerSkill >= 1000 )
+	{
 		powerScale = 1.0;
+	}
 	else if( tinkerSkill >= 900 )
+	{
 		powerScale = 0.9;
+	}
 	else if( tinkerSkill >= 800 )
+	{
 		powerScale = 0.8;
+	}
 	else if( tinkerSkill >= 700 )
+	{
 		powerScale = 0.7;
+	}
 	else
+	{
 		powerScale = 0.6;
+	}
 
 	// Scale golem NPC's attributes and skills
 	golemNPC.strength *= powerScale;

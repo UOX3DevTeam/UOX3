@@ -1,0 +1,79 @@
+[brownbeartrophydeed]
+{
+name=a brown bear trophy deed
+id=0x14F0
+morex=200
+value=1500 750
+restock=15
+origin=td
+}
+
+[polarbeartrophydeed]
+{
+name=a polar bear trophy deed
+id=0x14F0
+morex=201
+value=1500 750
+restock=15
+origin=td
+}
+
+[stagtrophydeed]
+{
+name=a stag trophy deed
+id=0x14F0
+morex=202
+value=1500 750
+restock=15
+origin=td
+}
+
+[largefishtrophydeed]
+{
+name=a large fish trophy deed
+id=0x14F0
+morex=203
+value=1500 750
+restock=15
+origin=td
+}
+
+[orctrophydeed]
+{
+name=an orc trophy deed
+id=0x14F0
+morex=204
+value=1500 750
+restock=15
+origin=td
+}
+
+[gorillatrophydeed]
+{
+name=a gorilla trophy deed
+id=0x14F0
+morex=205
+value=1500 750
+restock=15
+origin=td
+}
+
+[trolltrophydeed]
+{
+name=a troll trophy deed
+id=0x14F0
+morex=206
+value=1500 750
+restock=15
+origin=td
+}
+
+[bigfishdeed]
+{
+name=a big fish trophy deed
+id=0x14F0
+morex=207
+value=1500 750
+restock=15
+origin=td
+}

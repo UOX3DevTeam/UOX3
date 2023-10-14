@@ -2,7 +2,10 @@
 // Woodland Arms - N/S
 [0x2b6c]
 {
-get=base_woodland_arms
+getlbr=0x2b6c_lbr
+getaos=0x2b6c_aos
+gettol=0x2b6c_tol
+sectionid=0x2b6c
 }
 
 // Woodland Arms - E/W
@@ -22,7 +25,10 @@ get=0x2b6c 0x3163
 // Woodland Chest - E/W
 [0x2b67]
 {
-get=base_woodland_chest
+getlbr=0x2b67_lbr
+getaos=0x2b67_aos
+gettol=0x2b67_tol
+sectionid=0x2b67
 }
 
 // Woodland Chest - N/S
@@ -42,7 +48,10 @@ get=0x2b67 0x315e
 // Woodland Armor (Female) - E/W
 [0x2b6d]
 {
-get=base_woodland_armor
+getlbr=0x2b6d_lbr
+getaos=0x2b6d_aos
+gettol=0x2b6d_tol
+sectionid=0x2b6d
 }
 
 // Woodland Armor (Female) - N/S
@@ -53,7 +62,7 @@ id=0x3164
 }
 
 // Woodland Armor (Female) - Alias
-[woodlandchest]
+[woodlandarmor]
 {
 get=0x2b6d 0x3164
 }
@@ -62,7 +71,10 @@ get=0x2b6d 0x3164
 // Woodland Gauntlet - E/W
 [0x2b6a]
 {
-get=base_woodland_gauntlets
+getlbr=0x2b6a_lbr
+getaos=0x2b6a_aos
+gettol=0x2b6a_tol
+sectionid=0x2b6a
 }
 
 // Woodland Gauntlet - N/S
@@ -82,7 +94,10 @@ get=0x2b6a 0x3161
 // Woodland Leggings - E/W
 [0x2b6b]
 {
-get=base_woodland_leggings
+getlbr=0x2b6b_lbr
+getaos=0x2b6b_aos
+gettol=0x2b6b_tol
+sectionid=0x2b6b
 }
 
 // Woodland Leggings - N/S
@@ -103,7 +118,10 @@ get=0x2b6b 0x3162
 // Woodland Gorget - E/W
 [0x2b69]
 {
-get=base_woodland_gorget
+getlbr=0x2b69_lbr
+getaos=0x2b69_aos
+gettol=0x2b69_tol
+sectionid=0x2b69
 }
 
 // Woodland Gorget - N/S
@@ -124,7 +142,10 @@ get=0x2b69 0x3160
 // Raven Helm - N/S
 [0x2b71]
 {
-get=base_raven_helm
+getlbr=0x2b71_lbr
+getaos=0x2b71_aos
+gettol=0x2b71_tol
+sectionid=0x2b71
 }
 
 // Raven Helm - E/W
@@ -144,7 +165,10 @@ get=0x2b71 0x3168
 // Vulture Helm - N/S
 [0x2b72]
 {
-get=base_vulture_helm
+getlbr=0x2b72_lbr
+getaos=0x2b72_aos
+gettol=0x2b72_tol
+sectionid=0x2b72
 }
 
 // Vulture Helm - E/W
@@ -164,7 +188,10 @@ get=0x2b72 0x3169
 // Winged Helm - N/S
 [0x2b73]
 {
-get=base_winged_helm
+getlbr=0x2b73_lbr
+getaos=0x2b73_aos
+gettol=0x2b73_tol
+sectionid=0x2b73
 }
 
 // Winged Helm - E/W

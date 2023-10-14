@@ -1,15 +1,15 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	UOXJSPropertyFuncts.cpp
 //|	Date		-	12/14/2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	1.0		14th December, 2001 Initial implementation
 //|							Includes property getters for CItem and CChar, and property
 //|							setters for CChar
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 #ifndef __UOXJSPropertyFuncs__
 #define __UOXJSPropertyFuncs__
 
-typedef JSBool (JSPropertyFunc)( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
+typedef JSBool ( JSPropertyFunc )( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 
 JSPropertyFunc CSpellsProps_getProperty;
 JSPropertyFunc CSpellProps_getProperty;
@@ -65,6 +65,8 @@ JSPropertyFunc CConsoleProps_setProperty;
 
 JSPropertyFunc CScriptSectionProps_getProperty;
 JSPropertyFunc CScriptSectionProps_setProperty;
+
+JSPropertyFunc CScriptProps_getProperty;
 
 JSPropertyFunc CResourceProps_getProperty;
 JSPropertyFunc CResourceProps_setProperty;

@@ -62,14 +62,11 @@ extern JSClass js_BooleanClass;
 extern JSObject *
 js_InitBooleanClass(JSContext *cx, JSObject *obj);
 
-extern JSObject *
-js_BooleanToObject(JSContext *cx, JSBool b);
-
 extern JSString *
 js_BooleanToString(JSContext *cx, JSBool b);
 
 extern JSBool
-js_ValueToBoolean(JSContext *cx, jsval v, JSBool *bp);
+js_ValueToBoolean(jsval v);
 
 JS_END_EXTERN_C
 

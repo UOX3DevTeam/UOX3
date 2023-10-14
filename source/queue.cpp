@@ -1,280 +1,288 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| File		-	Queue.cpp
 //| Date		-	March 15th, 2000
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Implementation (vector based) of the GM and counselor queue class
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 
 #include "uox3.h"
 #include "PageVector.h"
-#include "gump.h"
+#include "CGump.h"
 
 PageVector *GMQueue;
 PageVector *CounselorQueue;
 
-inline bool operator==( const HelpRequest& x, const HelpRequest& y )
+inline bool operator==( const CHelpRequest& x, const CHelpRequest& y )
 {
 	return ( x.Priority() == y.Priority() );
 }
 
-inline bool operator<( const HelpRequest& x, const HelpRequest& y )
+inline bool operator<( const CHelpRequest& x, const CHelpRequest& y )
 {
 	return ( x.Priority() < y.Priority() );
 }
 
-inline bool operator>( const HelpRequest& x, const HelpRequest& y )
+inline bool operator>( const CHelpRequest& x, const CHelpRequest& y )
 {
 	return ( x.Priority() > y.Priority() );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool AtEnd( void ) const
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::AtEnd()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks whether position has reached end of queue
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool PageVector::AtEnd( void ) const
 {
-	return ( currentPos == Queue.end() );
+	return ( currentPos == requestQueue.end() );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	PageVector()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::PageVector()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Constructor for PageVector class - initializes an empty queue
-//o-----------------------------------------------------------------------------------------------o
-PageVector::PageVector() : maxID( 0 )
+//o------------------------------------------------------------------------------------------------o
+PageVector::PageVector() : maxId( 0 )
 {
 	title = "";
-	Queue.resize( 0 );
-	currentPos = Queue.end();
+	requestQueue.resize( 0 );
+	currentPos = requestQueue.end();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	~PageVector()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::~PageVector()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deconstructor for PageVector class - kills entire queue
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 PageVector::~PageVector()
 {
 	KillQueue();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SERIAL Add( HelpRequest *toAdd )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::Add()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds help request from player to page queue
-//o-----------------------------------------------------------------------------------------------o
-SERIAL PageVector::Add( HelpRequest *toAdd )
+//o------------------------------------------------------------------------------------------------o
+SERIAL PageVector::Add( CHelpRequest *toAdd )
 {
-	HelpRequest *adding = new HelpRequest;
+	CHelpRequest *adding = new CHelpRequest;
 #if defined( UOX_DEBUG_MODE )
 	if( adding == nullptr )
 		return INVALIDSERIAL;
 #endif
-#pragma note( "Bad idea to use memcpy to copy one class object to another (especially if the class contains an std::string)?" )
-	memcpy( adding, toAdd, sizeof( HelpRequest ) );
-	//*adding = *toAdd; // Maybe we should do this instead?
-	Queue.push_back( adding );
-	adding->RequestID( ++maxID );
-	std::sort( Queue.begin(), Queue.end() );
-	return adding->RequestID();
+	// Note: Bad idea to use memcpy to copy one class object to another (especially if the class contains an std::string)?"
+	//memcpy( adding, toAdd, sizeof( CHelpRequest ));
+	*adding = *toAdd; // Maybe we should do this instead?
+	requestQueue.push_back( adding );
+	adding->RequestId( ++maxId );
+	std::sort( requestQueue.begin(), requestQueue.end() );
+	return adding->RequestId();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool Remove( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::Remove()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes help request from player from queue
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool PageVector::Remove( void )
 {
 	if( AtEnd() )
 		return false;
-	delete (*currentPos);
-	Queue.erase( currentPos );
+
+	delete ( *currentPos );
+	requestQueue.erase( currentPos );
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	HelpRequest *First( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::First()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets first help request in queue, if any exists
-//o-----------------------------------------------------------------------------------------------o
-HelpRequest *PageVector::First( void )
+//o------------------------------------------------------------------------------------------------o
+CHelpRequest *PageVector::First( void )
 {
-	currentPos = Queue.begin();
+	currentPos = requestQueue.begin();
 	if( AtEnd() )
 		return nullptr;	// empty queue!
-	return (*currentPos);
+
+	return ( *currentPos );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	HelpRequest *Next( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::Next()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets next help request in queue, if any exists
-//o-----------------------------------------------------------------------------------------------o
-HelpRequest *PageVector::Next( void )
+//o------------------------------------------------------------------------------------------------o
+CHelpRequest *PageVector::Next( void )
 {
 	++currentPos;
 	if( AtEnd() )
 		return nullptr;	// at end, return nullptr!
-	return (*currentPos);
+
+	return ( *currentPos );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	size_t NumEntries( void ) const
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::NumEntries()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of help requests in queue
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 size_t PageVector::NumEntries( void ) const
 {
-	return Queue.size();
+	return requestQueue.size();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void KillQueue( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::KillQueue()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears all help requests from queue
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void PageVector::KillQueue( void )
 {
-	for( size_t counter = 0; counter < Queue.size(); ++counter )
+	for( size_t counter = 0; counter < requestQueue.size(); ++counter )
 	{
-		delete Queue[counter];
+		delete requestQueue[counter];
 	}
-	Queue.clear();
+	requestQueue.clear();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SendAsGump( CSocket *toSendTo )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::SendAsGump()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a list of help requests in queue to client and displays it in a Gump
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void PageVector::SendAsGump( CSocket *toSendTo )
 {
-	GumpDisplay GQueue( toSendTo, 320, 340 );
+	CGumpDisplay GQueue( toSendTo, 320, 340 );
 	GQueue.SetTitle( title );
 
-	std::vector< HelpRequest * >::iterator qIter;
-	for( qIter = Queue.begin(); qIter != Queue.end(); ++qIter )
+	std::vector<CHelpRequest *>::iterator qIter;
+	for( qIter = requestQueue.begin(); qIter != requestQueue.end(); ++qIter )
 	{
-		if( (*qIter) == nullptr )
+		if(( *qIter ) == nullptr )
 			continue;
-		if( !(*qIter)->IsHandled() )
+
+		if( !( *qIter )->IsHandled() )
 		{
-			CChar *mChar = calcCharObjFromSer( (*qIter)->WhoPaging() );
-			if( ValidateObject( mChar ) )
-				GQueue.AddData( mChar->GetName(), static_cast<UI32>((*qIter)->TimeOfPage()) );
+			CChar *mChar = CalcCharObjFromSer(( *qIter )->WhoPaging() );
+			if( ValidateObject( mChar ))
+			{
+				GQueue.AddData( mChar->GetName(), static_cast<UI32>(( *qIter )->TimeOfPage() ));
+			}
 		}
 	}
 	GQueue.Send( 4, false, INVALIDSERIAL );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SetTitle( const std::string &newTitle )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::SetTitle()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets title displayed for help request queue in client
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void PageVector::SetTitle( const std::string &newTitle )
 {
 	title = newTitle;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	PageVector( const std::string &newTitle )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::PageVector()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Initializer for PageVector class
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 PageVector::PageVector( const std::string &newTitle )
 {
 	SetTitle( newTitle );
-	Queue.resize( 0 );
-	currentPos = Queue.end();
+	requestQueue.resize( 0 );
+	currentPos = requestQueue.end();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool GotoPos( SI32 pos )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::GotoPos()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets queue position to specified value
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool PageVector::GotoPos( SI32 pos )
 {
-	if( pos < 0 || static_cast<UI32>(pos) >= Queue.size() )
+	if( pos < 0 || static_cast<UI32>( pos ) >= requestQueue.size() )
 		return false;
-	currentPos = (Queue.begin() + pos);
+
+	currentPos = ( requestQueue.begin() + pos );
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI32 CurrentPos( void ) const
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::CurrentPos()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets current queue position
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI32 PageVector::CurrentPos( void ) const
 {
-	return static_cast<SI32>((currentPos - Queue.begin()));
+	return static_cast<SI32>(( currentPos - requestQueue.begin() ));
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SERIAL GetCallNum( void ) const
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::GetCallNum()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets call number/help request ID for current position in queue
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SERIAL PageVector::GetCallNum( void ) const
 {
 	if( AtEnd() )
 		return INVALIDSERIAL;
-	return (*currentPos)->RequestID();
+
+	return ( *currentPos )->RequestId();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI32 FindCallNum( SERIAL callNum )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::FindCallNum()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets position of page with specified call number/help request ID
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI32 PageVector::FindCallNum( SERIAL callNum )
 {
-	for( size_t counter = 0; counter < Queue.size(); ++counter )
+	for( size_t counter = 0; counter < requestQueue.size(); ++counter )
 	{
-		if( Queue[counter]->RequestID() == callNum )
-			return static_cast<SI32>(counter);
+		if( requestQueue[counter]->RequestId() == callNum )
+			return static_cast<SI32>( counter );
 	}
 	return -1;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	HelpRequest *Current( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::Current()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets current position in queue
-//o-----------------------------------------------------------------------------------------------o
-HelpRequest *PageVector::Current( void )
+//o------------------------------------------------------------------------------------------------o
+CHelpRequest *PageVector::Current( void )
 {
 	if( !AtEnd() )
-		return (*currentPos);
+		return ( *currentPos );
 	else
 		return nullptr;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool AnswerNextCall( CSocket *mSock, CChar *mChar )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PageVector::AnswerNextCall()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Marks next help request in queue as handled and sends it to GM/Counselor
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool PageVector::AnswerNextCall( CSocket *mSock, CChar *mChar )
 {
 	bool retVal		= false;
 	CChar *isPaging = nullptr;
-	for( HelpRequest *tempPage = First(); !AtEnd(); tempPage = Next() )
+	for( CHelpRequest *tempPage = First(); !AtEnd(); tempPage = Next() )
 	{
 		if( !tempPage->IsHandled() )
 		{
-			isPaging = calcCharObjFromSer( tempPage->WhoPaging() );
-			if( ValidateObject( isPaging ) )
+			isPaging = CalcCharObjFromSer( tempPage->WhoPaging() );
+			if( ValidateObject( isPaging ))
 			{
-				GumpDisplay QNext( mSock, 300, 200 );
+				CGumpDisplay QNext( mSock, 300, 200 );
 				QNext.AddData( "Pager: ", isPaging->GetName() );
 				QNext.AddData( "Problem: ", tempPage->Reason() );
 				QNext.AddData( "Serial number ", tempPage->WhoPaging(), 3 );
-				QNext.AddData( "Paged at: ", static_cast<UI32>(tempPage->TimeOfPage()) );
+				QNext.AddData( "Paged at: ", static_cast<UI32>( tempPage->TimeOfPage() ));
 				QNext.Send( 4, false, INVALIDSERIAL );
 				tempPage->IsHandled( true );
 				if( mChar->WorldNumber() != isPaging->WorldNumber() )
@@ -283,8 +291,10 @@ bool PageVector::AnswerNextCall( CSocket *mSock, CChar *mChar )
 					SendMapChange( mChar->WorldNumber(), mSock );
 				}
 				else
+				{
 					mChar->SetLocation( isPaging );
-				mChar->SetCallNum( static_cast<SI16>(tempPage->RequestID() ));
+				}
+				mChar->SetCallNum( static_cast<SI16>( tempPage->RequestId() ));
 				retVal = true;
 				break;
 			}
@@ -293,125 +303,119 @@ bool PageVector::AnswerNextCall( CSocket *mSock, CChar *mChar )
 	return retVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	~HelpRequest()
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHelpRequest::~CHelpRequest()
 //|	Date		-	10 September 2001
-//o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Deconstructor for HelpRequest class - cleans up anything allocated
-//o-----------------------------------------------------------------------------------------------o
-HelpRequest::~HelpRequest()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Deconstructor for CHelpRequest class - cleans up anything allocated
+//o------------------------------------------------------------------------------------------------o
+CHelpRequest::~CHelpRequest()
 {
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SERIAL WhoPaging( void ) const
-//|					void WhoPaging( SERIAL pPaging )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHelpRequest::WhoPaging()
+//|					CHelpRequest::WhoPaging()
 //|	Date		-	10 September 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the player who paged
-//o-----------------------------------------------------------------------------------------------o
-SERIAL HelpRequest::WhoPaging( void ) const
+//o------------------------------------------------------------------------------------------------o
+SERIAL CHelpRequest::WhoPaging( void ) const
 {
 	return playerPaging;
 }
-void HelpRequest::WhoPaging( SERIAL pPaging )
+void CHelpRequest::WhoPaging( SERIAL pPaging )
 {
 	playerPaging = pPaging;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SERIAL WhoHandling( void ) const
-//|					void WhoHandling( SERIAL pHandling )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHelpRequest::WhoHandling()
 //|	Date		-	10 September 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the player who is handling the request
-//o-----------------------------------------------------------------------------------------------o
-SERIAL HelpRequest::WhoHandling( void ) const
+//o------------------------------------------------------------------------------------------------o
+SERIAL CHelpRequest::WhoHandling( void ) const
 {
 	return playerHandling;
 }
-void HelpRequest::WhoHandling( SERIAL pHandling )
+void CHelpRequest::WhoHandling( SERIAL pHandling )
 {
 	playerHandling = pHandling;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 Priority( void ) const
-//|					void Priority( SI08 pPriority )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHelpRequest::Priority()
 //|	Date		-	10 September 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the priority of the request
-//o-----------------------------------------------------------------------------------------------o
-SI08 HelpRequest::Priority( void ) const
+//o------------------------------------------------------------------------------------------------o
+SI08 CHelpRequest::Priority( void ) const
 {
 	return priority;
 }
-void HelpRequest::Priority( SI08 pPriority )
+void CHelpRequest::Priority( SI08 pPriority )
 {
 	priority = pPriority;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool IsHandled( void ) const
-//|					void IsHandled( bool pHandled )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHelpRequest::IsHandled()
 //|	Date		-	10 September 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets true if the request is being handled
-//o-----------------------------------------------------------------------------------------------o
-bool HelpRequest::IsHandled( void ) const
+//o------------------------------------------------------------------------------------------------o
+bool CHelpRequest::IsHandled( void ) const
 {
 	return handled;
 }
-void HelpRequest::IsHandled( bool pHandled )
+void CHelpRequest::IsHandled( bool pHandled )
 {
 	handled = pHandled;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	time_t TimeOfPage( void ) const
-//|					void TimeOfPage( time_t pTime )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHelpRequest::TimeOfPage()
 //|	Date		-	10 September 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the number of seconds since Jan 1, 1970 that the
 //|					page was recorded
-//o-----------------------------------------------------------------------------------------------o
-time_t HelpRequest::TimeOfPage( void ) const
+//o------------------------------------------------------------------------------------------------o
+time_t CHelpRequest::TimeOfPage( void ) const
 {
 	return timeOfPage;
 }
-void HelpRequest::TimeOfPage( time_t pTime )
+void CHelpRequest::TimeOfPage( time_t pTime )
 {
 	timeOfPage = pTime;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	std::string Reason( void )
-//|					void Reason( const std::string &pReason )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHelpRequest::Reason()
 //|	Date		-	10 September 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the reason that the request was made
-//o-----------------------------------------------------------------------------------------------o
-std::string HelpRequest::Reason( void ) const
+//o------------------------------------------------------------------------------------------------o
+std::string CHelpRequest::Reason( void ) const
 {
 	return reason;
 }
-void HelpRequest::Reason( const std::string &pReason )
+void CHelpRequest::Reason( const std::string &pReason )
 {
 	reason = pReason;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SERIAL RequestID( void ) const
-//|					void RequestID( SERIAL hrid )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHelpRequest::RequestId()
 //|	Date		-	10 September 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the ID # of the request
-//o-----------------------------------------------------------------------------------------------o
-SERIAL HelpRequest::RequestID( void ) const
+//o------------------------------------------------------------------------------------------------o
+SERIAL CHelpRequest::RequestId( void ) const
 {
-	return helpReqID;
+	return helpReqId;
 }
-void HelpRequest::RequestID( SERIAL hrid )
+void CHelpRequest::RequestId( SERIAL hrid )
 {
-	helpReqID = hrid;
+	helpReqId = hrid;
 }

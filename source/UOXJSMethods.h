@@ -1,6 +1,6 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	UOXJSMethods.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Version History
 //|					1.0		Dark-Storm	20th December, 2001 Initial implementation
 //|							Methods for the javascript objects
@@ -10,12 +10,12 @@
 //|								- Char
 //|								- Item
 //|								- Socket
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 #ifndef __UOXJSMethods__
 #define __UOXJSMethods__
 
 
-typedef JSBool (JSMethodFunc)( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+typedef JSBool ( JSMethodFunc )( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 // Object Constructors
 JSMethodFunc Gump;
@@ -68,9 +68,9 @@ JSMethodFunc CGump_Send;
 
 // GumpData Methods
 JSMethodFunc CGumpData_Free;
-JSMethodFunc CGumpData_getID;
-JSMethodFunc CGumpData_getEdit;
-JSMethodFunc CGumpData_getButton;
+JSMethodFunc CGumpData_GetId;
+JSMethodFunc CGumpData_GetEdit;
+JSMethodFunc CGumpData_GetButton;
 
 // Character Methods
 JSMethodFunc CChar_DoAction;
@@ -102,6 +102,7 @@ JSMethodFunc CChar_BoltEffect;
 JSMethodFunc CChar_Gate;
 JSMethodFunc CChar_Recall;
 JSMethodFunc CChar_Mark;
+JSMethodFunc CChar_SetRandomName;
 JSMethodFunc CChar_SetSkillByName;
 JSMethodFunc CChar_Kill;
 JSMethodFunc CChar_Resurrect;
@@ -112,11 +113,24 @@ JSMethodFunc CChar_SpellMoveEffect;
 JSMethodFunc CChar_SpellStaticEffect;
 JSMethodFunc CChar_BreakConcentration;
 JSMethodFunc CChar_FindItemType;
+JSMethodFunc CChar_FindItemSection;
 JSMethodFunc CChar_InitWanderArea;
 JSMethodFunc CChar_ReactOnDamage;
 JSMethodFunc CChar_Damage;
 JSMethodFunc CChar_InitiateCombat;
 JSMethodFunc CChar_InvalidateAttacker;
+JSMethodFunc CChar_AddAggressorFlag;
+JSMethodFunc CChar_RemoveAggressorFlag;
+JSMethodFunc CChar_CheckAggressorFlag;
+JSMethodFunc CChar_UpdateAggressorFlagTimestamp;
+JSMethodFunc CChar_IsAggressor;
+JSMethodFunc CChar_ClearAggressorFlags;
+JSMethodFunc CChar_AddPermaGreyFlag;
+JSMethodFunc CChar_RemovePermaGreyFlag;
+JSMethodFunc CChar_CheckPermaGreyFlag;
+JSMethodFunc CChar_UpdatePermaGreyFlagTimestamp;
+JSMethodFunc CChar_IsPermaGrey;
+JSMethodFunc CChar_ClearPermaGreyFlags;
 JSMethodFunc CChar_Heal;
 JSMethodFunc CChar_Defense;
 JSMethodFunc CChar_AddFriend;
@@ -124,6 +138,9 @@ JSMethodFunc CChar_RemoveFriend;
 JSMethodFunc CChar_GetFriendList;
 JSMethodFunc CChar_ClearFriendList;
 JSMethodFunc CChar_GetPetList;
+JSMethodFunc CChar_GetFollowerList;
+JSMethodFunc CChar_AddFollower;
+JSMethodFunc CChar_RemoveFollower;
 JSMethodFunc CChar_HasBeenOwner;
 JSMethodFunc CChar_CalculateControlChance;
 
@@ -153,9 +170,14 @@ JSMethodFunc CBase_SetTag;
 JSMethodFunc CBase_GetTempTag;
 JSMethodFunc CBase_SetTempTag;
 JSMethodFunc CBase_GetNumTags;
+JSMethodFunc CBase_GetTagMap;
+JSMethodFunc CBase_GetTempTagMap;
 JSMethodFunc CBase_InRange;
 JSMethodFunc CBase_StartTimer;
 JSMethodFunc CBase_KillTimers;
+JSMethodFunc CBase_GetJSTimer;
+JSMethodFunc CBase_SetJSTimer;
+JSMethodFunc CBase_KillJSTimer;
 JSMethodFunc CBase_ApplySection;
 JSMethodFunc CBase_FirstItem;
 JSMethodFunc CBase_NextItem;
@@ -168,6 +190,7 @@ JSMethodFunc CBase_IsBoat;
 JSMethodFunc CBase_CanSee;
 JSMethodFunc CBase_UseResource;
 JSMethodFunc CBase_AddScriptTrigger;
+JSMethodFunc CBase_HasScriptTrigger;
 JSMethodFunc CBase_RemoveScriptTrigger;
 JSMethodFunc CBase_Refresh;
 
@@ -219,6 +242,7 @@ JSMethodFunc CSocket_SetWord;
 JSMethodFunc CSocket_SetDWord;
 JSMethodFunc CSocket_SetString;
 JSMethodFunc CSocket_ReadBytes;
+JSMethodFunc CSocket_OpenContainer;
 JSMethodFunc CSocket_OpenGump;
 JSMethodFunc CSocket_CloseGump;
 JSMethodFunc CSocket_WhoList;
@@ -226,9 +250,11 @@ JSMethodFunc CSocket_Music;
 JSMethodFunc CSocket_SendAddMenu;
 JSMethodFunc CSocket_Send;
 JSMethodFunc CSocket_DisplayDamage;
+JSMethodFunc CSocket_Page;
 
 // Guild Methods
 JSMethodFunc CGuild_AcceptRecruit;
+JSMethodFunc CGuild_IsAtPeace;
 
 // Misc
 JSMethodFunc CMisc_SoundEffect;
@@ -296,9 +322,10 @@ JSMethodFunc CSocket_FinishedTriggerWords;
 
 JSMethodFunc CRegion_AddScriptTrigger;
 JSMethodFunc CRegion_RemoveScriptTrigger;
+JSMethodFunc CRegion_GetOrePref;
+JSMethodFunc CRegion_GetOreChance;
 
-
-static JSFunctionSpec CGump_Methods[] =
+inline JSFunctionSpec CGump_Methods[] =
 {
 	{ "Free",						CGump_Free,							0, 0, 0 },
 	{ "AddBackground",				CGump_AddBackground,				5, 0, 0 },
@@ -336,9 +363,12 @@ static JSFunctionSpec CGump_Methods[] =
 	{ nullptr,						nullptr,							0, 0, 0 }
 };
 
-static JSFunctionSpec CChar_Methods[] =
+inline JSFunctionSpec CChar_Methods[] =
 {
 	{ "KillTimers",			CBase_KillTimers,		1, 0, 0 },
+	{ "GetJSTimer",			CBase_GetJSTimer,		2, 0, 0 },
+	{ "SetJSTimer",			CBase_SetJSTimer,		3, 0, 0 },
+	{ "KillJSTimer",		CBase_KillJSTimer,		2, 0, 0 },
 	{ "TextMessage",		CBase_TextMessage,		1, 0, 0 },
 	{ "YellMessage",		CChar_YellMessage,		1, 0, 0 },
 	{ "WhisperMessage",		CChar_WhisperMessage,	1, 0, 0 },
@@ -346,8 +376,8 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "Delete",				CBase_Delete,			0, 0, 0 },
 	{ "DoAction",			CChar_DoAction,			1, 0, 0 },
 	{ "StaticEffect",		CBase_StaticEffect,		3, 0, 0 },
-	{ "Teleport",			CBase_Teleport,			3, 0, 0 },
-	{ "SetLocation",		CBase_Teleport,			3, 0, 0 },
+	{ "Teleport",			CBase_Teleport,			5, 0, 0 },
+	{ "SetLocation",		CBase_Teleport,			5, 0, 0 },
 	{ "SoundEffect",		CMisc_SoundEffect,		2, 0, 0 },
 	{ "SellTo",				CMisc_SellTo,			1, 0, 0 },
 	{ "BuyFrom",			CMisc_BuyFrom,			1, 0, 0 },
@@ -358,6 +388,8 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "GetTempTag",			CBase_GetTempTag,		1, 0, 0 },
 	{ "SetTempTag",			CBase_SetTempTag,		2, 0, 0 },
 	{ "GetNumTags",			CBase_GetNumTags,		0, 0, 0 },
+	{ "GetTagMap",			CBase_GetTagMap,		0, 0, 0 },
+	{ "GetTempTagMap",		CBase_GetTempTagMap,	0, 0, 0 },
 	{ "OpenBank",			CChar_OpenBank,			1, 0, 0 },
 	{ "DirectionTo",		CChar_DirectionTo,		1, 0, 0 },
 	{ "TurnToward",			CChar_TurnToward,		1, 0, 0 },
@@ -398,6 +430,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "Gate",				CChar_Gate,				1, 0, 0 },
 	{ "Recall",				CChar_Recall,			1, 0, 0 },
 	{ "Mark",				CChar_Mark,				1, 0, 0 },
+	{ "SetRandomName",		CChar_SetRandomName,	1, 0, 0 },
 	{ "SetSkillByName",		CChar_SetSkillByName,	2, 0, 0 },
 	{ "Kill",				CChar_Kill,				0, 0, 0 },
 	{ "Resurrect",			CChar_Resurrect,		0, 0, 0 },
@@ -410,36 +443,55 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "SpellStaticEffect",	CChar_SpellStaticEffect,1, 0, 0 },
 	{ "BreakConcentration",	CChar_BreakConcentration,0, 0, 0 },
 	{ "FindItemType",		CChar_FindItemType,		1, 0, 0 },
+	{ "FindItemSection",	CChar_FindItemSection,	1, 0, 0 },
 	{ "InitWanderArea",		CChar_InitWanderArea,	0, 0, 0 },
 	{ "CanSee",				CBase_CanSee,			1, 0, 0 },
 	{ "ReactOnDamage",		CChar_ReactOnDamage,	1, 0, 0 },
 	{ "Damage",				CChar_Damage,			1, 0, 0 },
 	{ "InitiateCombat",		CChar_InitiateCombat,	1, 0, 0 },
-	{ "InvalidateAttacker",	CChar_InvalidateAttacker,	0, 0, 0 },
+	{ "InvalidateAttacker",		CChar_InvalidateAttacker,				0, 0, 0 },
+	{ "AddAggressorFlag",		CChar_AddAggressorFlag,					1, 0, 0 },
+	{ "RemoveAggressorFlag",	CChar_RemoveAggressorFlag,				1, 0, 0 },
+	{ "CheckAggressorFlag",		CChar_CheckAggressorFlag,					1, 0, 0 },
+	{ "UpdateAggressorFlagTimestamp",	CChar_UpdateAggressorFlagTimestamp,	1, 0, 0 },
+	{ "IsAggressor",			CChar_IsAggressor,						1, 0, 0 },
+	{ "ClearAggressorFlags",	CChar_ClearAggressorFlags,				0, 0, 0 },
+	{ "AddPermaGreyFlag",		CChar_AddPermaGreyFlag,					1, 0, 0 },
+	{ "RemovePermaGreyFlag",	CChar_RemovePermaGreyFlag,				1, 0, 0 },
+	{ "CheckPermaGreyFlag",		CChar_CheckPermaGreyFlag,					1, 0, 0 },
+	{ "UpdatePermaGreyFlagTimestamp",	CChar_UpdatePermaGreyFlagTimestamp,	1, 0, 0 },
+	{ "IsPermaGrey",			CChar_IsPermaGrey,						1, 0, 0 },
+	{ "ClearPermaGreyFlags",	CChar_ClearPermaGreyFlags,				0, 0, 0 },
 	{ "Heal",				CChar_Heal,				1, 0, 0 },
 	{ "Resist",				CBase_Resist,			1, 0, 0 },
 	{ "Defense",			CChar_Defense,			3, 0, 0 },
 	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0, 0 },
+	{ "HasScriptTrigger",	CBase_HasScriptTrigger,		1, 0, 0 },
 	{ "RemoveScriptTrigger",CBase_RemoveScriptTrigger,	1, 0, 0 },
 	{ "AddFriend",			CChar_AddFriend,			1, 0, 0 },
 	{ "RemoveFriend",		CChar_RemoveFriend,			1, 0, 0 },
 	{ "GetFriendList",		CChar_GetFriendList,		0, 0, 0 },
 	{ "ClearFriendList",	CChar_ClearFriendList,		0, 0, 0 },
 	{ "GetPetList",			CChar_GetPetList,			0, 0, 0 },
+	{ "GetFollowerList",	CChar_GetFollowerList,		0, 0, 0 },
+	{ "AddFollower",		CChar_AddFollower,			1, 0, 0 },
+	{ "RemoveFollower",		CChar_RemoveFollower,		1, 0, 0 },
 	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0, 0 },
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0, 0 },
-	
 	{ nullptr,				nullptr,				0, 0, 0 }
 };
 
-static JSFunctionSpec CItem_Methods[] =
+inline JSFunctionSpec CItem_Methods[] =
 {
 	{ "KillTimers",			CBase_KillTimers,			1, 0, 0 },
+	{ "GetJSTimer",			CBase_GetJSTimer,			2, 0, 0 },
+	{ "SetJSTimer",			CBase_SetJSTimer,			3, 0, 0 },
+	{ "KillJSTimer",		CBase_KillJSTimer,			2, 0, 0 },
 	{ "Delete",				CBase_Delete,				0, 0, 0 },
 	{ "TextMessage",		CBase_TextMessage,			1, 0, 0 },
-	{ "Teleport",			CBase_Teleport,				3, 0, 0 },
+	{ "Teleport",			CBase_Teleport,				5, 0, 0 },
 	{ "StaticEffect",		CBase_StaticEffect,			4, 0, 0 },
-	{ "SetLocation",		CBase_Teleport,				3, 0, 0 },
+	{ "SetLocation",		CBase_Teleport,				5, 0, 0 },
 	{ "SoundEffect",		CMisc_SoundEffect,			2, 0, 0 },
 	{ "HasSpell",			CMisc_HasSpell,				1, 0, 0 },
 	{ "RemoveSpell",		CMisc_RemoveSpell,			1, 0, 0 },
@@ -448,6 +500,8 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "GetTempTag",			CBase_GetTempTag,			1, 0, 0 },
 	{ "SetTempTag",			CBase_SetTempTag,			2, 0, 0 },
 	{ "GetNumTags",			CBase_GetNumTags,			0, 0, 0 },
+	{ "GetTagMap",			CBase_GetTagMap,			0, 0, 0 },
+	{ "GetTempTagMap",		CBase_GetTempTagMap,		0, 0, 0 },
 	{ "InRange",			CBase_InRange,				2, 0, 0 },
 	{ "StartTimer",			CBase_StartTimer,			2, 0, 0 },
 	{ "OpenPlank",			CItem_OpenPlank,			0, 0, 0 },
@@ -494,6 +548,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "Resist",				CBase_Resist,				1, 0, 0 },
 	{ "UseResource",		CBase_UseResource,			3, 0, 0 },
 	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0, 0 },
+	{ "HasScriptTrigger",	CBase_HasScriptTrigger,		1, 0, 0 },
 	{ "RemoveScriptTrigger",CBase_RemoveScriptTrigger,	1, 0, 0 },
 	{ "GetMultiCorner",		CMulti_GetMultiCorner,		1, 0, 0 },
 	{ "SecureContainer",	CMulti_SecureContainer,		1, 0, 0 },
@@ -509,19 +564,21 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "FirstChar",			CMulti_FirstChar,			1, 0, 0 },
 	{ "NextChar",			CMulti_NextChar,			1, 0, 0 },
 	{ "FinishedChars",		CMulti_FinishedChars,		1, 0, 0 },
-	
+
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
 	{ nullptr,				nullptr,					0, 0, 0 }
 };
 
-static JSFunctionSpec CRegion_Methods[] =
+inline JSFunctionSpec CRegion_Methods[] =
 {
 	{ "AddScriptTrigger",		CRegion_AddScriptTrigger,		1, 0, 0 },
 	{ "RemoveScriptTrigger",	CRegion_RemoveScriptTrigger,	1, 0, 0 },
+	{ "GetOrePref",				CRegion_GetOrePref,				1, 0, 0 },
+	{ "GetOreChance",			CRegion_GetOreChance,			0, 0, 0 },
 	{ nullptr,					nullptr,						0, 0, 0 }
 };
 
-static JSFunctionSpec CSocket_Methods[] =
+inline JSFunctionSpec CSocket_Methods[] =
 {
 	{ "SysMessage",			CMisc_SysMessage,	10, 0, 0 },
 	{ "Disconnect",			CSocket_Disconnect,	0, 0, 0 },
@@ -540,6 +597,7 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "SetDWord",			CSocket_SetDWord,	2, 0, 0 },
 	{ "SetString",			CSocket_SetString,	2, 0, 0 },
 	{ "ReadBytes",			CSocket_ReadBytes,	1, 0, 0 },
+	{ "OpenContainer",		CSocket_OpenContainer,	1, 0, 0 },
 	{ "OpenGump",			CSocket_OpenGump,	1, 0, 0 },
 	{ "CloseGump",			CSocket_CloseGump,	2, 0, 0 },
 	{ "OpenURL",			CSocket_OpenURL,    1, 0, 0 },
@@ -550,6 +608,7 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "GetTimer",			CMisc_GetTimer,		1, 0, 0 },
 	{ "SetTimer",			CMisc_SetTimer,		2, 0, 0 },
 	{ "SendAddMenu",		CSocket_SendAddMenu,1, 0, 0 },
+	{ "Page",				CSocket_Page,		1, 0, 0 },
 	{ "MakeMenu",			CMisc_MakeMenu,		2, 0, 0 },
 	{ "Send",				CSocket_Send,		1, 0, 0 },
 	{ "CanSee",				CBase_CanSee,		1, 0, 0 },
@@ -560,13 +619,14 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ nullptr,				nullptr,			0, 0, 0 }
 };
 
-static JSFunctionSpec CGuild_Methods[] =
+inline JSFunctionSpec CGuild_Methods[] =
 {
-	{ "AcceptRecruit",		CGuild_AcceptRecruit,	1, 0, 0 },
+	{ "AcceptRecruit",		CGuild_AcceptRecruit,		1, 0, 0 },
+	{ "IsAtPeace",			CGuild_IsAtPeace,			0, 0, 0 },
 	{ nullptr,				nullptr,					0, 0, 0 }
 };
 
-static JSFunctionSpec CRace_Methods[] =
+inline JSFunctionSpec CRace_Methods[] =
 {
 	{ "CanWearArmour",		CRace_CanWearArmour,		1, 0, 0 },
 	{ "IsValidHairColour",	CRace_IsValidHairColour,	1, 0, 0 },
@@ -575,16 +635,16 @@ static JSFunctionSpec CRace_Methods[] =
 	{ nullptr,				nullptr,					0, 0, 0 }
 };
 
-static JSFunctionSpec CGumpData_Methods[] =
+inline JSFunctionSpec CGumpData_Methods[] =
 {
 	{ "Free",		CGumpData_Free,			0, 0, 0 },
-	{ "getButton",	CGumpData_getButton,	1, 0, 0 },
-	{ "getID",		CGumpData_getID,		1, 0, 0 },
-	{ "getEdit",	CGumpData_getEdit,		1, 0, 0 },
+	{ "getButton",	CGumpData_GetButton,	1, 0, 0 },
+	{ "getID",		CGumpData_GetId,		1, 0, 0 },
+	{ "getEdit",	CGumpData_GetEdit,		1, 0, 0 },
 	{ nullptr,		nullptr,				0, 0, 0 }
 };
 
-static JSFunctionSpec CFile_Methods[] =
+inline JSFunctionSpec CFile_Methods[] =
 {
 	{ "Free",		CFile_Free,				0, 0, 0 },
 	{ "Open",		CFile_Open,				2, 0, 0 },
@@ -598,14 +658,14 @@ static JSFunctionSpec CFile_Methods[] =
 	{ nullptr,		nullptr,				0, 0, 0 }
 };
 
-static JSFunctionSpec CAccount_Methods[] =
+inline JSFunctionSpec CAccount_Methods[] =
 {
 	{ "AddAccount",		CAccount_AddAccount,		4, 0, 0 },
 	{ "DelAccount",		CAccount_DelAccount,		1, 0, 0 },
 	{ nullptr,		nullptr,				0, 0, 0 }
 };
 
-static JSFunctionSpec CConsole_Methods[] =
+inline JSFunctionSpec CConsole_Methods[] =
 {
 	{ "Print",				CConsole_Print,				1, 0, 0 },
 	{ "Log",				CConsole_Log,				1, 0, 0 },
@@ -630,7 +690,7 @@ static JSFunctionSpec CConsole_Methods[] =
 	{ nullptr,				nullptr,								0, 0, 0 }
 };
 
-static JSFunctionSpec CPacket_Methods[] =
+inline JSFunctionSpec CPacket_Methods[] =
 {
 	{ "Free",			CPacket_Free,				0, 0, 0 },
 	{ "WriteByte",		CPacket_WriteByte,			2, 0, 0 },
@@ -641,7 +701,7 @@ static JSFunctionSpec CPacket_Methods[] =
 	{ nullptr,			nullptr,						0, 0, 0 }
 };
 
-static JSFunctionSpec CParty_Methods[] =
+inline JSFunctionSpec CParty_Methods[] =
 {
 	{ "GetMember",		CParty_GetMember,			1, 0, 0 },
 	{ "Add",			CParty_Add,					1, 0, 0 },
@@ -650,4 +710,3 @@ static JSFunctionSpec CParty_Methods[] =
 };
 
 #endif
-

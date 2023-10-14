@@ -4,42 +4,54 @@ doorTypes = new Array (
 	0x084C, 0x0866, 0x190E, 0x190f, 0x1FED
 );
 
+// Fetch settings that determine who (if anyone) have keyless access to locked doors in the house
+const keylessOwnerAccess 	= GetServerSetting( "KeylessOwnerAccess" );
+const keylessCoOwnerAccess	= GetServerSetting( "KeylessCoOwnerAccess" );
+const keylessFriendAccess 	= GetServerSetting( "KeylessFriendAccess" );
+const keylessGuestAccess 	= GetServerSetting( "KeylessGuestAccess" );
+
+// Fetch setting for whether all characters on a player's account co-own houses together
+const coOwnHousesOnSameAccount = GetServerSetting( "CoOwnHousesOnSameAccount" );
+
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	if( socket )
 	{
-		if( !pUser.InRange( iUsed, 3 ) )
+		if( !pUser.InRange( iUsed, 3 ))
 		{
-			socket.SysMessage( GetDictionaryEntry( 1183, socket.language ) );
+			socket.SysMessage( GetDictionaryEntry( 1183, socket.language )); // You cannot reach the handle from here.
+			return false;
+		}
+	}
+
+	if( iUsed.type == 13 ) // Locked
+	{
+		if( !FindKey( pUser, iUsed ))
+		{
+			if( socket )
+			{
+				socket.SysMessage( GetDictionaryEntry( 406, socket.language )); // This door is currently locked.
+			}
 			return false;
 		}
 	}
 
 	if( iUsed.isDoorOpen )
 	{
-		if( !CloseDoor( iUsed ) )
+		if( !CloseDoor( iUsed ))
 		{
 			if( socket )
-				socket.SysMessage( GetDictionaryEntry( 1661, socket.language ) );
+			{
+				socket.SysMessage( GetDictionaryEntry( 1661, socket.language )); // There is something blocking this door.
+			}
 		}
 		return false;
-	}
-
-	if( iUsed.type == 13 ) // Locked
-	{
-		if( !FindKey( pUser, iUsed ) )
-		{
-			if( socket )
-				socket.SysMessage( GetDictionaryEntry( 406, socket.language ) );
-			return false;
-		}
 	}
 
 	var isDoor = false;
 	var canOpen = false;
 	var doorID = iUsed.id;
-
 
 	if( doorID < 0x241F )
 	{
@@ -49,11 +61,15 @@ function onUseChecked( pUser, iUsed )
 			if( doorID == doorType )
 			{
 				if( doorID != 0x190E && doorID != 0x190f )
+				{
 					canOpen = OpenDoor( iUsed, 1, -1, 1 );
+				}
 				else
 				{
 					if( doorID == 0x190e )
+					{
 						canOpen = OpenDoor( iUsed, 1, 0, 0 );
+					}
 					else
 					{
 						canOpen = OpenDoor( iUsed, -1, 0, 0 );
@@ -62,31 +78,31 @@ function onUseChecked( pUser, iUsed )
 				isDoor = true;
 				break;
 			}
-			else if( doorID == doorType+2 || doorID == doorType+8 )
+			else if( doorID == doorType + 2 || doorID == doorType + 8 )
 			{
 				canOpen = OpenDoor( iUsed, 1, 1, 1 );
 				isDoor = true;
 				break;
 			}
-			else if( doorID == doorType+4 )
+			else if( doorID == doorType + 4 )
 			{
 				canOpen = OpenDoor( iUsed, 1, -1, 0 );
 				isDoor = true;
 				break;
 			}
-			else if( doorID == doorType+6 || doorID == doorType+10 )
+			else if( doorID == doorType + 6 || doorID == doorType + 10 )
 			{
 				canOpen = OpenDoor( iUsed, 1, 1, -1 );
 				isDoor = true;
 				break;
 			}
-			else if( doorID == doorType+12 )
+			else if( doorID == doorType + 12 )
 			{
 				canOpen = OpenDoor( iUsed, 1, 0, 0 );
 				isDoor = true;
 				break;
 			}
-			else if( doorID == doorType+14 )
+			else if( doorID == doorType + 14 )
 			{
 				canOpen = OpenDoor( iUsed, 1, 0, -1 );
 				isDoor = true;
@@ -163,12 +179,16 @@ function onUseChecked( pUser, iUsed )
 		if( !canOpen )
 		{
 			if( socket )
-				socket.SysMessage( GetDictionaryEntry( 1661, socket.language ) );
+			{
+				socket.SysMessage( GetDictionaryEntry( 1661, socket.language )); // There is something blocking this door.
+			}
 		}
 		else if( iUsed.type == 13 )
 		{
 			if( socket )
-				pUser.TextMessage( GetDictionaryEntry( 405, socket.language ), false, 0x047e );
+			{
+				pUser.TextMessage( GetDictionaryEntry( 405, socket.language ), false, 0x047e ); // Using your key, you quickly unlock and open the door.  You hastily relock it.
+			}
 		}
 	}
 
@@ -179,11 +199,11 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( pUser.socket.clickY == -1 )
 		{
-			var LinkedDoor = CalcItemFromSer( iUsed.GetTag( "linkSer1"), iUsed.GetTag( "linkSer2"), iUsed.GetTag( "linkSer3"),  iUsed.GetTag( "linkSer4"));
-			if( LinkedDoor )
+			var linkedDoor = CalcItemFromSer( iUsed.GetTag( "linkSer1"), iUsed.GetTag( "linkSer2"), iUsed.GetTag( "linkSer3"),  iUsed.GetTag( "linkSer4"));
+			if( linkedDoor )
 			{
 				pUser.socket.clickY = 1;
-				onUseChecked( pUser, LinkedDoor );
+				onUseChecked( pUser, linkedDoor );
 			}
 		}
 		else if( pUser.socket.clickY == 1 )
@@ -198,25 +218,31 @@ function onUseChecked( pUser, iUsed )
 function OpenDoor( iUsed, idChange, xChange, yChange )
 {
 	var doorType = GetDoorType( iUsed );
-	SetDoorValues( iUsed, idChange, xChange, yChange, DoorOpenSound( doorType ), DoorCloseSound( doorType ) );
+	SetDoorValues( iUsed, idChange, xChange, yChange, DoorOpenSound( doorType ), DoorCloseSound( doorType ));
 
-	if( IsDoorBlocked( iUsed, false ) )
+	if( IsDoorBlocked( iUsed, false ))
 	{
 		SetDoorValues( iUsed, 0, 0, 0, 0, 0 );
 		return false;
 	}
 	else
+	{
 		UseDoor( iUsed, false );
+	}
 
 	return true;
 }
 
 function CloseDoor( iUsed )
 {
-	if( IsDoorBlocked( iUsed, true ) )
+	if( IsDoorBlocked( iUsed, true ))
+	{
 		return false;
+	}
 	else
+	{
 		UseDoor( iUsed, true );
+	}
 
 	return true;
 }
@@ -238,8 +264,10 @@ function UseDoor( iUsed, isOpen )
 		iUsed.x		= iUsed.x  + iUsed.GetTag( "DOOR_X" );
 		iUsed.y		= iUsed.y  + iUsed.GetTag( "DOOR_Y" );
 		iUsed.isDoorOpen = true;
-		if( iUsed.GetTag( "DOOR_OPEN" ) )
+		if( iUsed.GetTag( "DOOR_OPEN" ))
+		{
 			iUsed.SoundEffect( iUsed.GetTag( "DOOR_OPEN" ), true );
+		}
 		iUsed.StartTimer( 10000, 0, true );
 	}
 	else
@@ -248,8 +276,10 @@ function UseDoor( iUsed, isOpen )
 		iUsed.x		= iUsed.x  - iUsed.GetTag( "DOOR_X" );
 		iUsed.y		= iUsed.y  - iUsed.GetTag( "DOOR_Y" );
 		iUsed.isDoorOpen = false;
-		if( iUsed.GetTag( "DOOR_CLOSE" ) )
+		if( iUsed.GetTag( "DOOR_CLOSE" ))
+		{
 			iUsed.SoundEffect( iUsed.GetTag( "DOOR_CLOSE" ), true );
+		}
 
 		iUsed.KillTimers();
 
@@ -262,10 +292,14 @@ function onTimer( iUsed, timerID )
 	if( !iUsed.isDoorOpen )
 		return;
 
-	if( IsDoorBlocked( iUsed, true ) )
+	if( IsDoorBlocked( iUsed, true ))
+	{
 		iUsed.StartTimer( 10000, 0, true );
+	}
 	else
+	{
 		UseDoor( iUsed, true );
+	}
 }
 
 function IsDoorBlocked( iUsed, isOpen )
@@ -273,30 +307,35 @@ function IsDoorBlocked( iUsed, isOpen )
 	var blockCount = 0;
 
 	if( !isOpen )
+	{
 		blockCount = AreaCharacterFunction( "FindOpenBlockers", iUsed, 2 );
+	}
 	else
+	{
 		blockCount = AreaCharacterFunction( "FindCloseBlockers", iUsed, 2 );
+	}
 
 	if( blockCount > 0 )
 		return true;
+
 	return false;
 }
 
 function FindOpenBlockers( iUsed, tmpChar )
 {
-	return FindBlockers( tmpChar, iUsed.x+iUsed.GetTag( "DOOR_X" ) ,iUsed.x+iUsed.GetTag( "DOOR_Y" ) );
+	return FindBlockers( tmpChar, iUsed.x+iUsed.GetTag( "DOOR_X" ) ,iUsed.x+iUsed.GetTag( "DOOR_Y" ));
 }
 
 function FindCloseBlockers( iUsed, tmpChar )
 {
-	return FindBlockers( tmpChar, iUsed.x-iUsed.GetTag( "DOOR_X" ) ,iUsed.y-iUsed.GetTag( "DOOR_Y" ) );
+	return FindBlockers( tmpChar, iUsed.x-iUsed.GetTag( "DOOR_X" ) ,iUsed.y-iUsed.GetTag( "DOOR_Y" ));
 }
 
 function FindBlockers( tmpChar, newX, newY )
 {
 	if( tmpChar.x == newX && tmpChar.y == newY )
 	{
-		if( !tmpChar.dead && ( tmpChar.npc || tmpChar.online ) )
+		if( !tmpChar.dead && ( tmpChar.npc || tmpChar.online ))
 		{
 			return true;
 		}
@@ -309,10 +348,10 @@ function DoorOpenSound( doorType )
 	var retVal = 0x0000;
 	switch( doorType )
 	{
-	case 1:	retVal = 0x00EA;	break;	// Open wooden / ratan
-	case 2:	retVal = 0x00EB;	break;	// Open gate
-	case 3:	retVal = 0x00EC;	break;	// Open metal
-	case 4:	retVal = 0x00ED;	break;	// Open secret
+		case 1:	retVal = 0x00EA;	break;	// Open wooden / ratan
+		case 2:	retVal = 0x00EB;	break;	// Open gate
+		case 3:	retVal = 0x00EC;	break;	// Open metal
+		case 4:	retVal = 0x00ED;	break;	// Open secret
 	}
 	return retVal;
 }
@@ -322,10 +361,10 @@ function DoorCloseSound( doorType )
 	var retVal = 0x0000;
 	switch( doorType )
 	{
-	case 1:	retVal = 0x00F1;	break;	// Close wooden / ratan
-	case 2:	retVal = 0x00F2;	break;	// Close gate
-	case 3:	retVal = 0x00F3;	break;	// Close metal
-	case 4:	retVal = 0x00F4;	break;	// Close secret
+		case 1:	retVal = 0x00F1;	break;	// Close wooden / ratan
+		case 2:	retVal = 0x00F2;	break;	// Close gate
+		case 3:	retVal = 0x00F3;	break;	// Close metal
+		case 4:	retVal = 0x00F4;	break;	// Close secret
 	}
 	return retVal;
 }
@@ -346,7 +385,7 @@ function GetDoorType( iUsed )
 	}
 	else if( ( doorID >= 0x0839 && doorID <= 0x0848 ) || 	// gate
 		 ( doorID >= 0x084C && doorID <= 0x085B ) ||
-		 ( doorID >= 0x0866 && doorID <= 0x0875 ) )
+		 ( doorID >= 0x0866 && doorID <= 0x0875 ))
 	{
 			retVal = 2;
 	}
@@ -366,11 +405,33 @@ function GetDoorType( iUsed )
 function FindKey( pUser, iUsed )
 {
 	var foundKey = false;
-	if( iUsed.more > 0 )
+
+	// Handle key-less interactions with house doors
+	var iMulti = iUsed.multi;
+	if( ValidateObject( iMulti ))
 	{
-		var pPack = pUser.pack;
-		if( pPack != null )
-			foundKey = FindKeyInPack( pUser, pPack, iUsed );
+		if( keylessOwnerAccess && ValidateObject( iMulti.owner ) && ( iMulti.owner == pUser || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum )))
+		{
+			// House owner requires no key
+			foundKey = true;
+		}
+		else if(( keylessCoOwnerAccess && iMulti.IsOnOwnerList( pUser ))
+			|| ( keylessFriendAccess && iMulti.IsOnFriendList( pUser ))
+			|| ( keylessGuestAccess && iMulti.IsOnGuestList( pUser )))
+		{
+			foundKey = true;
+		}
+		else
+		{
+			if( iUsed.more > 0 )
+			{
+				var pPack = pUser.pack;
+				if( pPack != null )
+				{
+					foundKey = FindKeyInPack( pUser, pPack, iUsed );
+				}
+			}
+		}
 	}
 
 	return foundKey;
@@ -382,22 +443,32 @@ function FindKeyInPack( pUser, pPack, iUsed )
 	{
 		if( toCheck.isContType )
 		{
-			if( FindKeyInPack( pUser, toCheck, iUsed ) )
+			if( FindKeyInPack( pUser, toCheck, iUsed ))
+			{
 				return true;
+			}
 		}
-		else if( toCheck.more == iUsed.more )
+		else if(( iUsed.IsMulti() && toCheck.more == iUsed.serial ) || ( toCheck.more == iUsed.more ))
+		{
 			return true;
+		}
 		else if( toCheck.id >= 0x1769 && toCheck.id <= 0x176b )
-		{ //If it's a keyring, check to see if any of the keys there match the lock on the door
+		{
+			//If it's a keyring, check to see if any of the keys there match the lock on the door
 			var keyAmount = toCheck.GetTag( "keys" );
+			var iMore = ( iUsed.IsMulti() ? iUsed.serial : iUsed.more );
 			var i = 1;
 			for( i = 1; i < keyAmount + 1; i++ )
 			{
-				var KeyItemMore = toCheck.GetTag( "key"+i+"more" );
-				if( KeyItemMore == iUsed.more || KeyItemMore == 255 )
+				var keyItemMore = toCheck.GetTag( "key" + i + "more" );
+				if( keyItemMore == iMore || keyItemMore == 255 )
+				{
 					return true;
+				}
 			}
 		}
 	}
 	return false;
 }
+
+function _restorecontext_() {}

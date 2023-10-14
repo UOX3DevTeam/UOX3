@@ -1,0 +1,367 @@
+// -- MINING TOOLS --
+// Sturdy Pickaxe
+// More uses than normal pickaxe
+[sturdy_pickaxe]
+{
+get=pickaxe
+name=sturdy pickaxe
+id=0x0e86
+color=0x973
+maxuses=200
+usesleft=150
+origin=uor
+}
+
+// Sturdy Shovel
+// More uses than normal shovel
+[sturdy_shovel]
+{
+get=shovel
+name=sturdy shovel
+id=0x0f3a
+color=0x973
+maxuses=200
+usesleft=150
+origin=uor
+}
+
+// Gargoyle's Pickaxe (AoS)
+// Can summon elemental corresponding to material mined
+[gargoyles_pickaxe]
+{
+get=pickaxe
+name=gargoyle's pickaxe
+id=0x0e86
+color=0x973
+maxuses=100
+usesleft=100
+origin=aos
+//script=[gargoylepickaxescript]
+}
+
+// Prospector's Tool (AoS)
+// Raises level of minerals found in a "vein" by 1
+[prospectors_tool]
+{
+get=sledgehammer
+name=prospector's tool
+id=0xfb4
+maxuses=50
+usesleft=50
+origin=aos
+//script=[prospectorstoolscript]
+}
+
+// MINING BOOSTERS
+// Leather Gloves of Mining +1
+// Increases mining by 1.0 skillpoint while equipped
+[mining_gloves_1]
+{
+get=leathergloves
+name=leather gloves of mining
+id=0x13ce
+custominttag=skillBonusID 45
+custominttag=skillBonusVal 10
+origin=uor
+script=5043//skill_boosting_equipment.js
+}
+
+// Studded Leather Gloves of Mining +3
+// Increases mining by 3.0 skillpoint while equipped
+[mining_gloves_3]
+{
+get=studdedleathergloves
+name=studded leather gloves of mining
+id=0x13ce
+custominttag=skillBonusID 45
+custominttag=skillBonusVal 30
+origin=uor
+script=5043//skill_boosting_equipment.js
+}
+
+// Ringmail Gloves of Mining +5
+// Increases mining by 5.0 skillpoint while equipped
+[mining_gloves_5]
+{
+get=ringmailgloves
+name=ringmail gloves of mining +5
+id=0x13f2
+custominttag=skillBonusID 45
+custominttag=skillBonusVal 50
+origin=uor
+script=5043//skill_boosting_equipment.js
+}
+
+// -- SMITHING TOOLS --
+[base_runic_hammer]
+{
+get=smithshammer
+id=0x13e3
+origin=uor
+custominttag=runicHammer 1
+}
+
+// Dull Copper Runic Hammer - Adds durable/accurate properties to crafted weapon
+[dull_copper_runic_hammer]
+{
+get=base_runic_hammer
+name=dull copper runic smithy hammer
+color=0x0973
+maxuses=50
+usesleft=50
+}
+
+// Shadow Iron Runic Hammer - Adds durable/ruin properties to crafted weapon
+[shadow_iron_runic_hammer]
+{
+get=base_runic_hammer
+name=shadow iron runic smithy hammer
+color=0x0966
+maxuses=45
+usesleft=45
+}
+
+// Copper Runic Hammer - Adds fortified/surpassingly accurate/ruin properties to crafted weapon
+[copper_runic_hammer]
+{
+get=base_runic_hammer
+name=copper runic smithy hammer
+color=0x07dd
+maxuses=40
+usesleft=40
+}
+
+// Bronze Runic Hammer - Adds fortified/surpassingly accurate/might properties to crafted weapon
+[bronze_runic_hammer]
+{
+get=base_runic_hammer
+name=bronze runic smithy hammer
+color=0x06d6
+maxuses=35
+usesleft=35
+}
+
+// Gold Runic Hammer - Adds indestructible/eminently accurate/force properties to crafted weapon
+[gold_runic_hammer]
+{
+get=base_runic_hammer
+name=gold runic smithy hammer
+color=0x08a5
+maxuses=30
+usesleft=30
+}
+
+// Agapite Runic Hammer - Adds indestructible/eminently accurate/power properties to crafted weapon
+[agapite_runic_hammer]
+{
+get=base_runic_hammer
+name=agapite runic smithy hammer
+color=0x0979
+maxuses=25
+usesleft=25
+}
+
+// Verite Runic Hammer - Adds indestructible/exceedingly accurate/power properties to crafted weapon
+[verite_runic_hammer]
+{
+get=base_runic_hammer
+name=verite runic smithy hammer
+color=0x089f
+maxuses=20
+usesleft=20
+}
+
+// Valorite Runic Hammer - Adds indestructible/supremely accurate/vanquishing properties to crafted weapon
+[valorite_runic_hammer]
+{
+get=base_runic_hammer
+name=valorite runic smithy hammer
+color=0x08ab
+maxuses=15
+usesleft=15
+}
+
+// Colored Anvils - Placed by colored anvil deeds (items\deeds\houseaddon_deeds.dfn)
+[dull_copper_colored_anvil]
+{
+get=anvil
+id=0x0faf
+color=0x0973
+origin=uor
+}
+
+[shadow_iron_colored_anvil]
+{
+get=anvil
+id=0x0faf
+color=0x0966
+origin=uor
+}
+
+[copper_colored_anvil]
+{
+get=anvil
+id=0x0faf
+color=0x096e
+origin=uor
+}
+
+[bronze_colored_anvil]
+{
+get=anvil
+id=0x0faf
+color=0x06d6
+origin=uor
+}
+
+[gold_colored_anvil]
+{
+get=anvil
+id=0x0faf
+color=0x08a5
+origin=uor
+}
+
+[agapite_colored_anvil]
+{
+get=anvil
+id=0x0faf
+color=0x0979
+origin=uor
+}
+
+[verite_colored_anvil]
+{
+get=anvil
+id=0x0faf
+color=0x089f
+origin=uor
+}
+
+[valorite_colored_anvil]
+{
+get=anvil
+id=0x0faf
+color=0x08ab
+origin=uor
+}
+
+// Powder of Temperament (AoS)
+[powder_of_temperament]
+{
+get=base_item
+name=powder of temperament
+id=0x1006
+color=0x973
+weight=100
+maxuses=10
+usesleft=10
+//script=#//powder_of_temperament.js
+}
+
+// -- SMITHING BOOSTERS --
+// Ancient Smithy Hammer +10
+[ancient_smithy_hammer_10]
+{
+get=smithshammer
+name=ancient smithy hammer +10
+id=0x13e4
+color=0x482
+custominttag=skillBonusID 7
+custominttag=skillBonusVal 100
+script=5043//skill_boosting_equipment.js
+origin=aos
+}
+
+// Ancient Smithy Hammer +15
+[ancient_smithy_hammer_15]
+{
+get=smithshammer
+name=ancient smithy hammer +15
+id=0x13e4
+color=0x482
+custominttag=skillBonusID 7
+custominttag=skillBonusVal 150
+script=5043//skill_boosting_equipment.js
+origin=aos
+}
+
+// Ancient Smithy Hammer +30
+[ancient_smithy_hammer_30]
+{
+get=smithshammer
+name=ancient smithy hammer +30
+id=0x13e4
+color=0x482
+custominttag=skillBonusID 7
+custominttag=skillBonusVal 300
+script=5043//skill_boosting_equipment.js
+origin=aos
+}
+
+// Ancient Smithy Hammer +60
+[ancient_smithy_hammer_60]
+{
+get=smithshammer
+name=ancient smithy hammer +60
+id=0x13e4
+color=0x482
+custominttag=skillBonusID 7
+custominttag=skillBonusVal 600
+script=5043//skill_boosting_equipment.js
+origin=aos
+}
+
+// POWER SCROLLS
+[base_power_scroll]
+{
+get=base_item
+id=0x14f0
+color=0x481
+weight=100
+origin=aos
+}
+
+// Blacksmith Power Scroll +5 (AoS)
+// Increases Blacksmithing skill-cap by 5.0, to 105.0
+[power_scroll_blacksmith_5]
+{
+get=base_power_scroll
+name=wonderous scoll of blacksmithing
+morex=7
+morey=50
+//script=#//power_scroll.js
+}
+
+// Blacksmith Power Scroll +10 (AoS)
+// Increases Blacksmithing skill-cap by 10.0, to 110.0
+[power_scroll_blacksmith_10]
+{
+get=base_power_scroll
+name=exalted scroll of blacksmithing
+morex=7
+morey=100
+//script=#//power_scroll.js
+}
+
+// Blacksmith Power Scroll +15 (AoS)
+// Increases Blacksmithing skill-cap by 15.0, to 115.0
+[power_scroll_blacksmith_15]
+{
+get=base_power_scroll
+name=mythical scroll of blacksmithing
+morex=7
+morey=150
+//script=#//power_scroll.js
+}
+
+// Blacksmith Power Scroll +20 (AoS)
+// Increases Blacksmithing skill-cap by 20.0, to 120.0
+[power_scroll_blacksmith_20]
+{
+get=base_power_scroll
+name=legendary scroll of blacksmithing
+morex=7
+morey=200
+//script=#//power_scroll.js
+}

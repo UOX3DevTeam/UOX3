@@ -7,21 +7,22 @@ function onCollide( pSock, pChar, iObject )
 		return false;
 
 	// Check if character has the required skillpoints in Magery to enter
-	if( pChar.skills.magery < 715 )
+	if( pChar.skills.magery < 715 && !pChar.isGM && !pChar.isCounselor )
 	{
 		pSock.SysMessage( GetDictionaryEntry( 9107, pSock.language )); // You are not worthy of entrance to the city of Wind!
 		return false;
 	}
 
 	// Teleport player's pets to Wind
-	var petList = pChar.GetPetList();
-	for( var i = 0; i < petList.length; i++ )
+	var followerList = pChar.GetFollowerList();
+	for( var i = 0; i < followerList.length; i++ )
 	{
-		var tempPet = petList[i];
-		if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 12 ))
+		var tempFollower = followerList[i];
+		// Only teleport player's pets if they're set to follow and within range
+		if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( pChar, 24 ))
 		{
-			tempPet.Teleport( 5166, 244, 15 );
-			tempPet.Follow( pChar );
+			tempFollower.Teleport( 5166, 244, 15 );
+			tempFollower.Follow( pChar );
 		}
 	}
 

@@ -2,7 +2,10 @@
 // Bone Arms - E/W
 [0x144e]
 {
-get=base_bone_arms
+getlbr=0x144e_lbr
+getaos=0x144e_aos
+gettol=0x144e_tol
+sectionid=0x144e
 }
 
 // Bone Arms - N/S
@@ -22,7 +25,10 @@ get=0x144e 0x1453
 // Bone Armor - E/W
 [0x144f]
 {
-get=base_bone_armor
+getlbr=0x144f_lbr
+getaos=0x144f_aos
+gettol=0x144f_tol
+sectionid=0x144f
 }
 
 // Bone Armor - N/S
@@ -42,7 +48,10 @@ get=0x144f 0x1454
 // Bone Gauntlets - E/W
 [0x1450]
 {
-get=base_bone_gloves
+getlbr=0x1450_lbr
+getaos=0x1450_aos
+gettol=0x1450_tol
+sectionid=0x1450
 }
 
 // Bone Gauntlets - N/S
@@ -62,7 +71,10 @@ get=0x1450 0x1455
 // Bone Helm - E/W
 [0x1451]
 {
-get=base_bone_helmet
+getlbr=0x1451_lbr
+getaos=0x1451_aos
+gettol=0x1451_tol
+sectionid=0x1451
 }
 
 // Bone Helm - N/S
@@ -82,7 +94,10 @@ get=0x1451 0x1456
 // Bone Leggings - E/W
 [0x1452]
 {
-get=base_bone_leggings
+getlbr=0x1452_lbr
+getaos=0x1452_aos
+gettol=0x1452_tol
+sectionid=0x1452
 }
 
 // Bone Leggings - N/S
@@ -102,7 +117,10 @@ get=0x1452 0x1457
 // Orc Helm
 [0x1f0b]
 {
-get=base_orc_helm
+getlbr=0x1f0b_lbr
+getaos=0x1f0b_aos
+gettol=0x1f0b_tol
+sectionid=0x1f0b
 }
 
 // Orc Helm - Alias

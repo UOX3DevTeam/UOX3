@@ -29,7 +29,9 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 		if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
 			if( socket != null )
+			{
 				socket.SysMessage( GetDictionaryEntry( 774, pLanguage )); // That is locked down and you cannot use it.
+			}
 			return;
 		}
 
@@ -66,7 +68,7 @@ function onUseChecked( pUser, iUsed )
 		var pLanguage = socket.language;
 		if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 774, pLanguage )); // That is locked down and you cannot use it.
+			socket.SysMessage( GetDictionaryEntry( 774, pLanguage )); // That is locked down and you cannot use it.
 			return;
 		}
 
@@ -87,7 +89,9 @@ function onUseChecked( pUser, iUsed )
 			socket.SetTimer( Timer.SOCK_SKILLDELAY, 5000 ); // Reset the skill timer
 		}
 		else
+		{
 			socket.SysMessage( GetDictionaryEntry( 473, pLanguage )); // You must wait a few moments before using another skill.
+		}
 	}
 	return false;
 }
@@ -156,13 +160,19 @@ function onCallback1( socket, ourObj )
 				{
 					// Consume some bandages
 					if( bItem.amount > 1 )
+					{
 						bItem.amount = bItem.amount - 1;
+					}
 					else
+					{
 						bItem.Delete();
+					}
 
 					// Flag healer as criminal if target is murderer/criminal
 					if( ourObj.murderer || ourObj.criminal )
+					{
 						mChar.criminal = true;
+					}
 
 					// Resurrecting takes between 8 - 10 seconds depending on dexterity
 					var healTimer = 10000 - (( mChar.dexterity / 50 ) * 1000 );
@@ -170,7 +180,9 @@ function onCallback1( socket, ourObj )
 					mChar.StartTimer( healTimer, 0, true );
 				}
 				else
+				{
 					socket.SysMessage( GetDictionaryEntry( 1493, socket.language )); // You are not skilled enough to resurrect.
+				}
 			}
 			else if( ourObj.poison > 0 )	// Cure Poison
 			{
@@ -178,13 +190,19 @@ function onCallback1( socket, ourObj )
 				{
 					// Consume some bandages
 					if( bItem.amount > 1 )
+					{
 						bItem.amount = bItem.amount - 1;
+					}
 					else
+					{
 						bItem.Delete();
+					}
 
 					// Flag healer as criminal if target is murderer/criminal
 					if( ourObj.murderer || ourObj.criminal )
+					{
 						mChar.criminal = true;
+					}
 
 					var healTimer;
 					if( mChar.serial == ourObj.serial )
@@ -216,19 +234,25 @@ function onCallback1( socket, ourObj )
 			{
 				// Consume some bandages
 				if( bItem.amount > 1 )
+				{
 					bItem.amount = bItem.amount - 1;
+				}
 				else
+				{
 					bItem.Delete();
+				}
 
 				// Flag healer as criminal if target is murderer/criminal
 				if( ourObj.murderer || ourObj.criminal )
+				{
 					mChar.criminal = true;
+				}
 
 				// Inform the target
 				if( ourObj != mChar && ourObj.socket )
 				{
 					var tempMsg = GetDictionaryEntry( 6016, ourObj.socket.language ); // %s is attempting to heal you.
-					ourObj.SysMessage( tempMsg.replace(/%s/gi, mChar.name ));
+					ourObj.SysMessage( tempMsg.replace( /%s/gi, mChar.name ));
 				}
 
 				var healTimer;
@@ -245,12 +269,13 @@ function onCallback1( socket, ourObj )
 
 				mChar.AddScriptTrigger( 4014 ); // Add healing_slip.js script
 				SetSkillInUse( socket, mChar, ourObj, skillNum, healTimer, true );
-				mChar.CheckSkill( 1, 0, 1000 );
 				mChar.StartTimer( healTimer, 2, true );
 			}
 		}
 		else
+		{
 			socket.SysMessage( GetDictionaryEntry( 1498, socket.language )); // You are not close enough to apply the bandages.
+		}
 	}
 }
 
@@ -272,7 +297,9 @@ function SetSkillInUse( socket, mChar, ourObj, skillNum, healingTime, setVal )
 	if( setVal )
 	{
 		if( socket )
+		{
 			socket.SysMessage( GetDictionaryEntry( 6017, socket.language )); // You begin to apply the bandages.
+		}
 		mChar.SetTempTag( "SK_HEALINGTYPE", skillNum );
 	}
 	else
@@ -282,16 +309,22 @@ function SetSkillInUse( socket, mChar, ourObj, skillNum, healingTime, setVal )
 	}
 
 	if( skillNum == 17 )		// Healing
+	{
 		mChar.skillsused.healing = setVal;
+	}
 	else if( skillNum == 39 )	// Veterinary
+	{
 		mChar.skillsused.veterinary = setVal;
+	}
 
 	if( ValidateObject( ourObj ))
 	{
 		ourObj.SetTempTag( "SK_BEINGHEALED", setVal );
 		ourObj.SetTempTag( "SK_HEALINGTIME", healingTime );
 		if( setVal )
+		{
 			mChar.SetTempTag( "SK_HEALINGTARG", ourObj.serial );
+		}
 	}
 }
 
@@ -305,12 +338,18 @@ function onTimer( mChar, timerID )
 		if( mChar.dead )
 		{
 			socket.SysMessage( GetDictionaryEntry( 9083, socket.language )); // You were unable to finish your work before you died.
+			return;
+		}
+
+		if( !ValidateObject( ourObj ))
+		{
+			return;
 		}
 		else if( ourObj.dead && timerID != 0 )
 		{
 			socket.SysMessage( GetDictionaryEntry( 9086, socket.language )); // You cannot heal that which is not alive.
 		}
-		else if( ValidateObject( ourObj ) && mChar.InRange( ourObj, 2 ) && mChar.CanSee( ourObj ))
+		else if( mChar.InRange( ourObj, 2 ) && mChar.CanSee( ourObj ))
 		{
 			switch ( timerID )
 			{
@@ -343,7 +382,7 @@ function onTimer( mChar, timerID )
 					}
 					break;
 				case 1:	// Cure Poison
-					if( mChar.CheckSkill( skillNum, 600, 1000 ) && mChar.CheckSkill( 1, 600, 1000 ))
+					if( mChar.CheckSkill( skillNum, 600, 1000 ) && (( skillNum == 17 && mChar.CheckSkill( 1, 600, 1000 )) || ( skillNum == 39 && mChar.CheckSkill( 2, 600, 1000 ))))
 					{
 						ourObj.SetPoisoned( 0, 0 );
 						ourObj.StaticEffect( 0x373A, 0, 15 );
@@ -351,10 +390,14 @@ function onTimer( mChar, timerID )
 						socket.SysMessage( GetDictionaryEntry( 1274, socket.language )); // You have cured the poison.
 						var objSock = ourObj.socket;
 						if( objSock )
+						{
 							objSock.SysMessage( GetDictionaryEntry( 1273, objSock.language )); // You have been cured of poison.
+						}
 					}
 					else
+					{
 						socket.SysMessage( GetDictionaryEntry( 1494, socket.language )); // You fail to counter the poison.
+					}
 					break;
 				case 2:	// Heal
 					var healthLoss = ( ourObj.maxhp - ourObj.health );
@@ -366,14 +409,29 @@ function onTimer( mChar, timerID )
 					{
 						// Increase karma when healing innocent/neutral characters
 						if( ourObj != mChar && ( ourObj.innocent || ourObj.neutral ))
+						{
 							mChar.karma++;
+						}
 
 						// Are we healing using the Healing skill, or using the Veterinary skill?
 						var healSkill;
-						if( skillNum == 17 )
+						var secondarySkill;
+						if( skillNum == 17 ) // Healing
+						{
 							healSkill = mChar.skills.healing;
-						else if( skillNum == 39 )
+							secondarySkill = mChar.skills.anatomy;
+
+							// Perform generic Anatomy skill check to allow skill increase
+							mChar.CheckSkill( 1, 0, 1000 );
+						}
+						else if( skillNum == 39 ) // Veterinary
+						{
 							healSkill = mChar.skills.veterinary;
+							secondarySkill = mChar.skills.animallore;
+
+							// Perform generic Animal Lore skill check to allow skill increase
+							mChar.CheckSkill( 2, 0, 1000 );
+						}
 
 						// Retrieve amount of times character's hands slipped during healing
 						mChar.RemoveScriptTrigger( 4014 ); // Remove healing_slip.js script
@@ -386,16 +444,16 @@ function onTimer( mChar, timerID )
 						}
 						else
 						{
-							// Minimum amount healed = Anatomy/5 + Healing/5 + 3  Maximum amount healed = Anatomy/5 + Healing/2 + 10
-							var minValue = Math.round(( mChar.skills.anatomy / 50 ) + ( healSkill / 50 ) + 3 );
-							var maxValue = Math.round(( mChar.skills.anatomy / 50 ) + ( healSkill / 20 ) + 10 );
+							// Minimum amount healed = Anatomy(or Animal Lore)/5 + Healing/5 + 3  Maximum amount healed = Anatomy(or Animal Lore)/5 + Healing/2 + 10
+							var minValue = Math.round(( secondarySkill / 50 ) + ( healSkill / 50 ) + 3 );
+							var maxValue = Math.round(( secondarySkill / 50 ) + ( healSkill / 20 ) + 10 );
 							var healAmt = RandomNumber( minValue, maxValue );
 
 							// Reduce the amount healed with each slip caused by damage taken while healing
 							for( var i = 0; i < slipCount; i++ )
 							{
 								// Reduce health by a percentage (35%) modified by healer's Healing skills and Dexterity for each slip up
-								healAmt -= Math.round( healAmt * ( 0.35 - (( Math.round( healSkill / 10 ) + ourObj.dexterity ) / 750 )));
+								healAmt -= Math.round( healAmt * ( 0.35 - (( Math.round( healSkill / 10 ) + mChar.dexterity ) / 750 )));
 
 								// Example: Healing reduction per slip, based a 35% percentage reduction, adjusted by 100.0 Healing and 100 Dexterity
 								// 80 > 74 > 68 > 63 > 58
@@ -426,7 +484,9 @@ function onTimer( mChar, timerID )
 			}
 		}
 		else
+		{
 			socket.SysMessage( GetDictionaryEntry( 6018, socket.language )); // You are no longer close enough to heal your target.
+		}
 	}
 	SetSkillInUse( socket, mChar, ourObj, skillNum, 0, false );
 }

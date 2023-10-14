@@ -1,67 +1,70 @@
 #ifndef __MOVEMENT_H__
 #define __MOVEMENT_H__
 
+#include "mapclasses.h"
 
 // Maximum Return Value: Number of steps to return (Replaces PATHNUM)
 // NOTE: P_PF_MRV CANNOT EXCEED THE VALUE OF PATHNUM FOR THE TIME BEING
-#define P_PF_MRV		2
+constexpr auto P_PF_MRV = 22;
 // Minimum Flee Distance: MFD
-#define P_PF_MFD		15
+constexpr auto P_PF_MFD	= 15;
+// Maximum Flee Distance: MAXFD
+constexpr auto P_PF_MAXFD = 50;
 
-struct pfNode
+struct PfNode_st
 {
 	UI16	hCost;
 	UI08	gCost;
 	size_t	parent;
 	SI08	z;
-	pfNode() : hCost( 0 ), gCost( 0 ), parent( 0 ), z( 0 )
+	PfNode_st() : hCost( 0 ), gCost( 0 ), parent( 0 ), z( 0 )
 	{
 	}
-	pfNode( UI16 nHC, UI08 nGC, UI32 nPS, SI08 nZ ) : hCost( nHC ), gCost( nGC ), parent( nPS ), z( nZ )
+	PfNode_st( UI16 nHC, UI08 nGC, UI32 nPS, SI08 nZ ) : hCost( nHC ), gCost( nGC ), parent( nPS ), z( nZ )
 	{
 	}
 };
 
-struct nodeFCost
+struct NodeFCost_st
 {
 	UI32 xySer;
 	UI16 fCost;
-	nodeFCost() : xySer( 0 ), fCost( 0 )
+	NodeFCost_st() : xySer( 0 ), fCost( 0 )
 	{
 	}
-	nodeFCost( UI16 nFC, UI32 nS ) : xySer( nS ), fCost( nFC )
+	NodeFCost_st( UI16 nFC, UI32 nS ) : xySer( nS ), fCost( nFC )
 	{
 	}
 };
 
-class cMovement
+class CMovement
 {
 	// Function declarations
 public:
 	bool	AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun = false, UI16 maxSteps = 0 );
+	auto	IgnoreAndEvadeTarget( CChar *mChar ) -> void;
 	void	Walking( CSocket *mSock, CChar *s, UI08 dir, SI16 sequence );
 	void	CombatWalk( CChar *i );
 	void	NpcMovement( CChar& mChar );
 	void	PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun = false, UI08 pathLen = P_PF_MRV );
 	UI08	Direction( CChar *c, SI16 x, SI16 y );
 	bool	CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz );
+	SI08	CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz, bool justask, bool waterWalk = false );
 private:
-	bool	PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI16 curY, SI08 curZ, UI32 parentSer, std::map< UI32, pfNode >& openList, std::map< UI32, UI32 >& closedList, std::deque< nodeFCost >& fCostList );
-	SI08	calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz, bool justask, bool waterWalk = false );
-	bool	calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir );
+	bool	PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI16 curY, SI08 curZ, UI32 parentSer, std::map<UI32, PfNode_st>& openList, std::map<UI32, UI32>& closedList, std::deque<NodeFCost_st>& fCostList );
+	bool	CalcMove( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir );
 
 	bool	HandleNPCWander( CChar& mChar );
-	bool	isValidDirection( UI08 dir );
-	bool	isFrozen( CChar *c, CSocket *mSock, SI16 sequence );
-	bool	isOverloaded( CChar *c, CSocket *mSock, SI16 sequence );
+	bool	IsValidDirection( UI08 dir );
+	bool	IsFrozen( CChar *c, CSocket *mSock, SI16 sequence );
+	bool	IsOverloaded( CChar *c, CSocket *mSock, SI16 sequence );
 
-	bool	IsOk( CTileUni *xyblock, UI16 &xycount, UI08 world, SI08 ourZ, SI08 ourTop, SI16 x, SI16 y, UI16 instanceID, bool ignoreDoor, bool waterWalk );
+	bool	IsOk( std::vector<Tile_st> &xyblock, UI16 &xycount, UI08 world, SI08 ourZ, SI08 ourTop, SI16 x, SI16 y, UI16 instanceId, bool ignoreDoor, bool waterWalk );
 	void	GetAverageZ( UI08 nm, SI16 x, SI16 y, SI08& z, SI08& avg, SI08& top );
-	void	GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& zlow, SI08& ztop, UI16 instanceID, bool waterWalk );
+	void	GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& zlow, SI08& ztop, UI16 instanceId, bool waterWalk );
 
-	void	GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber );
-	void	GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber );
-	void	GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceID );
+	void	GetBlockingStatics( SI16 x, SI16 y, std::vector<Tile_st> &xyblock, UI16 &xycount, UI08 worldNumber );
+	void	GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceId );
 
 	UI08	Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy );
 
@@ -82,10 +85,10 @@ private:
 	void	HandleItemCollision( CChar *c, CSocket *mSock, SI16 oldx, SI16 oldy );
 	bool	IsGMBody( CChar *c );
 
-	void	deny( CSocket *mSock, CChar *s, SI16 sequence );
+	void	DenyMovement( CSocket *mSock, CChar *s, SI16 sequence );
 };
 
-extern cMovement *Movement;
+extern CMovement *Movement;
 
 #endif
 

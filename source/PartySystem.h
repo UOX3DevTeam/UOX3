@@ -2,14 +2,96 @@
 #define __PARTYFACTORY_H__
 
 #include "Prerequisites.h"
+/* Include all the standard header *after* all the configuration
+ settings have been made.
+ */
+#include "UOXStdHeaders.h"
 
+
+// Pre-declare classes
+// Allows use of pointers in header files without including individual .h
+// so decreases dependencies between files
+class CBaseTile;
+class cAccountClass;
+class CBaseObject;
+class CBooks;
+class CBoatObj;
+class CChar;
+class CCharStuff;
+class CCommands;
+class CConsole;
+class cDice;
+class CDictionary;
+class CDictionaryContainer;
+class CDirectoryListing;
+class CEndL;
+class cEffects;
+class CEnvoke;
+class CGuild;
+class CGuildCollection;
+class CGump;
+class cHTMLTemplate;
+class cHTMLTemplates;
+class cItem;
+class CItem;
+class CJSMapping;
+class CJSMappingSection;
+class CLand;
+class CMagic;
+class CMagicMove;
+class CMagicStat;
+class CMapHandler;
+class CMapRegion;
+class CMulHandler;
+class CMovement;
+class CMultiObj;
+class CNetworkStuff;
+class CPUOXBuffer;
+class CPInputBuffer;
+class cRaces;
+class CRace;
+class cScript;
+class CServerData;
+class CServerDefinitions;
+class CServerProfile;
+class cSkillClass;
+class CSkills;
+class CSocket;
+class CSpawnItem;
+class CSpawnRegion;
+class CSpeechEntry;
+class CSpeechQueue;
+class CTEffect;
+class CThreadQueue;
+class CTile;
+struct Tile_st;
+class CTownRegion;
+class CVersionClass;
+class CWeather;
+class cWeatherAb;
+class CWeight;
+class CWhoList;
+class CWorldMain;
+class CGumpDisplay;
+class CHelpRequest;
+class CJailCell;
+class CJailSystem;
+class ObjectFactory;
+class Script;
+class CScriptSection;
+class CSpellInfo;
+
+/** In order to avoid finger-aches :)
+ */
+#include "enums.h"
+#include "typedefs.h"
 #include "GenericList.h"
 #include "cChar.h"
-class PartyEntry
+class CPartyEntry
 {
 protected:
 	CChar *				member;
-	std::bitset< 8 >	settings;
+	std::bitset<8>		settings;
 public:
 	CChar *				Member( void ) const;
 	bool				IsLeader( void ) const;
@@ -19,14 +101,14 @@ public:
 	void				IsLeader( bool value );
 	void				IsLootable( bool value );
 
-	PartyEntry();
-	PartyEntry( CChar *m, bool isLeader = false, bool isLootable = false );
+	CPartyEntry();
+	CPartyEntry( CChar *m, bool isLeader = false, bool isLootable = false );
 };
 
 class Party
 {
 protected:
-	std::vector< PartyEntry * >	members;
+	std::vector<CPartyEntry *>	members;
 	CChar *						leader;
 	bool						isNPC;
 public:
@@ -85,7 +167,7 @@ public:
 	 This returns the list of party entries as it is stored internally.  We
 	 should try and minimise the amount this gets used, if we can
 	 */
-	std::vector< PartyEntry * > *	MemberList( void )		{ return &members; }
+	std::vector<CPartyEntry *> *	MemberList( void )		{ return &members; }
 	/** Returns the party entry associated with a character
 	 @remarks
 	 This returns the party entry associated with a character, if they exist
@@ -96,7 +178,7 @@ public:
 	 so that we can index quickly into the members[]
 	 to find the character again.  Used internally.
 	 */
-	PartyEntry *				Find( CChar *find, SI32 *location = nullptr );
+	CPartyEntry *				Find( CChar *find, SI32 *location = nullptr );
 	/** Returns whether a member is in the party or not
 	 @remarks
 	 This returns true if the character exists in the party
@@ -140,16 +222,16 @@ class PartyFactory
 {
 	friend class Party;
 protected:
-	GenericList< Party * >		parties;
-	std::map< SERIAL, Party * >	partyQuickLook;
+	GenericList<Party *>		parties;
+	std::map<SERIAL, Party *>	partyQuickLook;
 
 	void			AddLookup( Party *toQuickLook, CChar *toSave );
 	void			RemoveLookup( CChar *toRemove );
 	PartyFactory();
 	// To be a singleton, we make the constructor
 	// private, and delete the copy/move constructors
-	PartyFactory(const PartyFactory&) = delete ;
-	PartyFactory& operator=(const PartyFactory&) = delete ;
+	PartyFactory( const PartyFactory& ) = delete;
+	PartyFactory& operator = ( const PartyFactory& ) = delete;
 public:
 	~PartyFactory();
 	Party *			Create( CChar *leader );
@@ -161,7 +243,7 @@ public:
 	bool			Load( void );
 	bool			Save( void );
 
-	static PartyFactory& getSingleton( void );
+	static PartyFactory& GetSingleton( void );
 };
 
 #endif

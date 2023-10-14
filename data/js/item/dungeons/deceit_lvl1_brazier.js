@@ -17,5 +17,4 @@ function onUseChecked( pUser, iUsed )
 	// Spawn a reward lich lord!
 	var useNpcList = true;
 	var lichLord = SpawnNPC( "randomallmonster", iUsed.x, iUsed.y, iUsed.z, iUsed.worldnumber, iUsed.instanceID, useNpcList );
-
 }

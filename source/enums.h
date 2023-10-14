@@ -12,8 +12,6 @@ enum DistinctLanguage
 	DL_ITALIAN,
 	DL_CZECH,
 	DL_POLISH,
-	DL_RUSSIAN,
-    DL_JAPANESE,
     DL_COUNT
 };
 
@@ -199,6 +197,21 @@ enum FontType
 	FNT_ELEVEN,		// Unicode only
 	FNT_TWELVE,		// Unicode only
     FNT_UNKNOWN
+};
+
+enum NameRequestSources
+{
+	NRS_SPEECH = 0,
+	NRS_GUILD,
+	NRS_STATWINDOW_SELF,
+	NRS_STATWINDOW_OTHER,
+	NRS_TOOLTIP,
+	NRS_JOURNAL,
+	NRS_PAPERDOLL,
+	NRS_SINGLECLICK,
+	NRS_SYSTEM,
+	NRS_SECURETRADE,
+	NRS_SCRIPT
 };
 
 enum CharacterDeletionResult
@@ -440,6 +453,9 @@ enum AITypes
     AI_DUMMY		= 7,
     AI_BANKER		= 8, // handled in JS, but needed to identify NPC for context menus
 	AI_STABLEMASTER = 9, // handled in JS, but needed to identify NPC for context menus
+	AI_CASTER		= 10,
+	AI_EVIL_CASTER  = 11,
+	AI_ANIMAL_SCARED = 12,
     AI_PLAYERVENDOR	= 17,
     AI_PET_GUARD	= 32,
     AI_CHAOTIC		= 88,
@@ -456,6 +472,7 @@ enum distLocs
 	DIST_CMDRANGE	= 12,
     DIST_SAMESCREEN = 24, // 24 is max in clients (enhanced/classic) v7.0.55.27 and beyond, and in ClassicUO
 	DIST_BUILDRANGE = 31,
+	DIST_COMBATRESETRANGE = 35,
     DIST_OUTOFRANGE	= 0xFFFF
 };
 
@@ -609,7 +626,7 @@ enum ItemLayers
     IL_SECURETRADE			= 0x1F
 };
 
-enum TargetIDs
+enum TargetIds
 {
     TARGET_ADDSCRIPTNPC = 0,
     TARGET_TELE,
@@ -710,6 +727,7 @@ enum WanderTypes
     WT_FROZEN,
     WT_FLEE,
     WT_PATHFIND,
+	WT_SCARED,
     WT_COUNT
 };
 
@@ -757,6 +775,23 @@ enum BodyType
 	BT_GARGOYLE,
 	BT_OTHER,
 	BT_COUNT
+};
+
+enum ExpansionRuleset
+{
+	ER_CORE,
+	ER_UO,
+	ER_T2A,
+	ER_UOR,
+	ER_TD,
+	ER_LBR,
+	ER_AOS,
+	ER_SE,
+	ER_ML,
+	ER_SA,
+	ER_HS,
+	ER_TOL,
+	ER_COUNT
 };
 
 enum Actions // Pre-v7.0.0.0

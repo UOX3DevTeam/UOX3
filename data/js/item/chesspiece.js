@@ -14,15 +14,23 @@ function onDropItemOnItem( iDropped, pDropper, gameBoard )
 	// Keep track of whose turn it is
 	var turnCount = iDropped.container.GetTag( "turnCount" );
 	if( turnCount % 2 == 0 )
+	{
 		whiteMove = false;
+	}
 	else
+	{
 		whiteMove = true;
+	}
 
 	// Prevent opponent from making a move out of turn
 	if( whiteMove && iDropped.GetTag( "team" ) != 1 )
+	{
 		return 0;
+	}
 	else if( !whiteMove && iDropped.GetTag( "team" ) != 2 )
+	{
 		return 0;
+	}
 
 	// Fetch location where piece was dropped inside board
 	var x       = pDropper.socket.GetWord( 5 );
@@ -83,7 +91,9 @@ function onDropItemOnItem( iDropped, pDropper, gameBoard )
 		{
 			// If source location was off the board, disable path checks
 			if( iDropped.x < 25 || iDropped.x > 235 )
+			{
 				disablePathChecks = true;
+			}
 
 			// X coordinates
 			if( x > 25 && x <= 55 )
@@ -164,33 +174,47 @@ function onDropItemOnItem( iDropped, pDropper, gameBoard )
 
 						// Disallow moving two spaces unless in starting square
 						if( deltaX >= 50 && !( iDropped.x > 55 && iDropped.x <= 80 ) && !( iDropped.x > 180 && iDropped.x <= 205 ))
+						{
 							disallowMove = true;
+						}
 
 						if( deltaX >= 50 )
+						{
 							checkEnPassant = true;
+						}
 
 						// Disallow move if colliding with our own piece
 						var canCapture = CheckForExistingPieces( iDropped, true, false );
 						if( canCapture == 0 )
+						{
 							disallowMove = true;
+						}
 
 						// Disallow moving horizontally and capturing a piece at same time
 						if( deltaX > 0 && deltaY == 0 && canCapture == 1 )
+						{
 							disallowMove = true;
+						}
 
 						// Disallow moving pawn vertically without also moving it diagonally
 						if( deltaY > deltaX || deltaX > 25 && deltaY > 3 )
+						{
 							disallowMove = true;
+						}
 
 						// Disallow moving pawn vertically without also moving it diagonally
 						if( deltaY == deltaX && ( canCapture == -1 || canCapture == 0 )
 							&& ( !iDropped.GetTag( "canCaptureEnPassant" ) || turnCount != iDropped.GetTag( "enPassantTurnCount" ) + 1 ))
+						{
 							disallowMove = true;
+						}
 
 						// Disallow moving pawn backwards
-						var team = parseInt(iDropped.GetTag( "team" ));
+						var team = parseInt( iDropped.GetTag( "team" ));
 						if(( team == 1 && iDropped.morex > iDropped.x ) || ( team == 2 && iDropped.morex < iDropped.x ))
+						{
 							disallowMove = true;
+						}
 
 						if( disallowMove )
 						{
@@ -281,15 +305,21 @@ function onDropItemOnItem( iDropped, pDropper, gameBoard )
 		{
 			retVal = CheckPath( iDropped, 0 );
 			if( retVal == 0 )
+			{
 				return 0;
+			}
 		}
 
 		// Check for existing pieces in target square
 		retVal = 0;
 		if( !disableChecks && !disablePathChecks )
+		{
 			retVal = CheckForExistingPieces( iDropped, false, true );
+		}
 		else
+		{
 			retVal = CheckForExistingPieces( iDropped, false, false );
+		}
 		if( retVal == 0 )
 			return 0;
 
@@ -319,14 +349,18 @@ function onDropItemOnItem( iDropped, pDropper, gameBoard )
 
 	// If either king or any of the Rooks have moved, tagged them as such
 	if( iDropped.id == 0x3586 || iDropped.id == 0x358d || iDropped.id == 0x3587 || iDropped.id == 0x358e )
+	{
 		iDropped.SetTag( "hasMoved", true );
+	}
 
 	// Start timer to snap piece to target square
 	iDropped.StartTimer( 100, 1, true );
 
 	// If move was an actual move on central board, let board announce the move
 	if( iDropped.morex > 25 && iDropped.morex <= 235 && iDropped.x > 25 && iDropped.x <= 235 )
+	{
 		SpeakNotation( pDropper, iDropped, gameBoard, morexOffset, moreyOffset, oldPosY, retVal );
+	}
 }
 
 function CheckCastleMove( iDropped )
@@ -390,9 +424,13 @@ function CheckCastleMove( iDropped )
 		if( rookPathResult == -1 )
 		{
 			if( iDropped.y > mItem.y )
+			{
 				mItem.y -= 75;
+			}
 			else
+			{
 				mitem.y += 50;
+			}
 
 			mItem.morey = 0;
 			mItem.SetTag( "hasMoved", true );
@@ -402,6 +440,7 @@ function CheckCastleMove( iDropped )
 
 	if( !castlingAllowed )
 		return 0;
+
 	iDropped.SetTag( "hasMoved", true );
 	return 1;
 }
@@ -516,7 +555,7 @@ function CheckForExistingPieces( iDropped, simulateCapture, allowCapture )
 	{
 		if( ValidateObject( mItem ))
 		{
-			if( Math.abs(mItem.x - iDropped.morex) < 11 && Math.abs(mItem.y - iDropped.morey) < 11 )
+			if( Math.abs( mItem.x - iDropped.morex ) < 11 && Math.abs( mItem.y - iDropped.morey ) < 11 )
 			{
 				var iTeam = parseInt( iDropped.GetTag( "team" ));
 				var mTeam = parseInt( mItem.GetTag( "team" ));
@@ -563,7 +602,7 @@ function CheckForExistingPieces( iDropped, simulateCapture, allowCapture )
 function ConvertPawn( iDropped )
 {
 	var finalPosX = iDropped.x;
-	var team = parseInt(iDropped.GetTag( "team" ));
+	var team = parseInt( iDropped.GetTag( "team" ));
 
 	if( team == 1 )
 	{
@@ -618,7 +657,7 @@ function CheckForEnPassant( iDropped, gameBoard, turnCount )
 			iDropped.SetTag( "enPassantEnabled", true );
 
 			// Mark nearby pawn as allowed to capture
-			mItem.SetTag( "canCaptureEnPassant", (iDropped.serial).toString() );
+			mItem.SetTag( "canCaptureEnPassant", ( iDropped.serial ).toString() );
 			mItem.SetTag( "enPassantTurnCount", turnCount );
 			return 1;
 		}
@@ -673,8 +712,10 @@ function onTimer( timerObj, timerID )
 	// Make piece movable again
 	timerObj.movable = 1;
 
-	if( timerObj.id == 0x3589 || timerObj.id == 0x3590)
+	if( timerObj.id == 0x3589 || timerObj.id == 0x3590 )
+	{
 		ConvertPawn( timerObj );
+	}
 }
 
 function SpeakNotation( pDropper, iDropped, gameBoard, morexOffset, moreyOffset, oldPosY, capturePiece )
@@ -769,9 +810,13 @@ function SpeakNotation( pDropper, iDropped, gameBoard, morexOffset, moreyOffset,
 
 	var team = iDropped.GetTag( "team" );
 	if( team == 1 )
+	{
 		notationColor = 0x07d7;
+	}
 	else
+	{
 		notationColor = 0x060f;
+	}
 
 	if( gameBoard.container == null )
 		gameBoard.TextMessage( notationPieceName + ( capturePiece == 1 ? "x" : "" ) + notationPosY + notationPosX, true, notationColor );
@@ -789,10 +834,12 @@ function ConfirmSurrender( pDropper, iDropped, gameBoard )
 	}
 
 	if( ValidateObject( iDropped ))
+	{
 		iDropped.Delete();
+	}
 
 	var tempMsg = GetDictionaryEntry( 2721 ) // %s Surrenders! Resetting game board.
-	gameBoard.TextMessage( tempMsg.replace(/%s/gi, team ) );
+	gameBoard.TextMessage( tempMsg.replace( /%s/gi, team ));
 	TriggerEvent( 5024, "onUseChecked", pDropper, gameBoard );
 }
 

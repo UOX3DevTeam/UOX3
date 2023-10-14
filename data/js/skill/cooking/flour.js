@@ -34,7 +34,9 @@ function onUseChecked ( pUser, iUsed )
 		}
 	}
 	else
+	{
 		srcSock.SysMessage( GetDictionaryEntry( 6022, srcSock.language )); // This has to be in your backpack before you can use it.
+	}
 	return false;
 }
 
@@ -42,13 +44,13 @@ function onCallback0( tSock, myTarget )
 {
 	var pUser = tSock.currentChar;
 	var iUsed = tSock.tempObj;
-	var StrangeByte   = tSock.GetWord( 1 );
-	var targX	= tSock.GetWord( 11 );
-	var targY	= tSock.GetWord( 13 );
-	var targZ	= tSock.GetSByte( 16 );
+	var strangeByte = tSock.GetWord( 1 );
+	var targX = tSock.GetWord( 11 );
+	var targY = tSock.GetWord( 13 );
+	var targZ = tSock.GetSByte( 16 );
 
-	var tileID = tSock.GetWord(17);
-	if( tileID == 0 || ( StrangeByte == 0 && myTarget.isChar ))
+	var tileID = tSock.GetWord( 17 );
+	if( tileID == 0 || ( strangeByte == 0 && myTarget.isChar ))
 	{
 		//Target is a MapTile, or a Character
 		tSock.SysMessage( GetDictionaryEntry( 6075, tSock.language )); // That is not a pitcher of water
@@ -56,7 +58,7 @@ function onCallback0( tSock, myTarget )
 	}
 
 	// Target is a Dynamic Item
-	if( StrangeByte == 0 )
+	if( strangeByte == 0 )
 	{
 		// If target self, close the flour bag
 		if( myTarget == iUsed )
@@ -64,11 +66,43 @@ function onCallback0( tSock, myTarget )
 			myTarget.id--;
 			return;
 		}
-		if( myTarget.id != 0x0FF8 && myTarget.id != 0x0FF9 && myTarget.id != 0x1f9d && myTarget.id != 0x1f9e ) // is the item of the right type?
+
+		// Is player targeting tribal berry in attempt to create tribal paint?
+		if( myTarget.sectionID == "tribalberry" && ( iUsed.id == 0x1046 || iUsed.id == 0x103a ))
 		{
-			tSock.SysMessage( GetDictionaryEntry( 6075, tSock.language )); // That is not a pitcher of water
+			if( pUser.skills.cooking >= 800 )
+			{
+				// Delete the sack of flour, and reduce amount of berries in pile by 1`
+				iUsed.Delete();
+				if( myTarget.amount > 1 )
+				{
+					myTarget.amount--;
+				}
+				else
+				{
+					myTarget.Delete();
+				}
+
+				// Great! Let's make some tribal paint
+				var tribalPaint = CreateDFNItem( tSock, pUser, "tribalpaint", 1, "ITEM", true );
+				tSock.SysMessage( GetDictionaryEntry( 6275, tSock.language )); // You combine the berry and the flour into the tribal paint worn by the savages.
+			}
+			else
+			{
+				// Not enough skill
+				tSock.SysMessage( GetDictionaryEntry( 6276, tSock.language )); // You don't have the cooking skill to create the body paint.
+			}
 			return;
 		}
+		else
+		{
+			if( myTarget.id != 0x0FF8 && myTarget.id != 0x0FF9 && myTarget.id != 0x1f9d && myTarget.id != 0x1f9e ) // is the item of the right type?
+			{
+				tSock.SysMessage( GetDictionaryEntry( 6075, tSock.language )); // That is not a pitcher of water
+				return;
+			}
+		}
+
 		// Check if its in range
 		if( iUsed.container != null )
 		{
@@ -99,11 +133,23 @@ function onCallback0( tSock, myTarget )
 			iUsed.Refresh();
 		}
 		else
+		{
 			iUsed.Delete();
+		}
 
 		pUser.SoundEffect( 0x0134, true );
 
 		// Reduce uses left in water source
+		if( myTarget.amount > 1 )
+		{
+			myTarget.amount--;
+		}
+		else
+		{
+			myTarget.Delete();
+		}
+		return;
+
 		if( myTarget.usesLeft > 0 )
 		{
 			myTarget.usesLeft--;
@@ -112,9 +158,13 @@ function onCallback0( tSock, myTarget )
 		else
 		{
 			if( myTarget.id == 0x0FF8 || myTarget.id == 0x1f9e )
+			{
 				myTarget.id = 0x0FF7;
-			if( myTarget.id == 0x0ff9 || myTarget.id == 0x1f9d )
+			}
+			else if( myTarget.id == 0x0ff9 || myTarget.id == 0x1f9d )
+			{
 				myTarget.id = 0x0FF6;
+			}
 			myTarget.SetTag( "ContentsType", 1 );
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.usesLeft = 0;
@@ -126,5 +176,7 @@ function onCallback0( tSock, myTarget )
 		tSock.SysMessage( GetDictionaryEntry( 6078, tSock.language )); // You make some dough.
 	}
 	else // Target is a static item
+	{
 		tSock.SysMessage( GetDictionaryEntry( 6079, tSock.language )); // You cannot use that for making dough.
+	}
 }

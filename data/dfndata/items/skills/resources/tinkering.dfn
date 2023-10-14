@@ -190,17 +190,6 @@ decay=1
 good=50
 }
 
-[0x1940]
-{
-get=base_item
-name=potion keg
-id=0x1940
-weight=2000
-restock=20
-decay=1
-good=50
-}
-
 [0x1851]
 {
 get=base_item
@@ -234,6 +223,11 @@ restock=20
 decay=1
 good=50
 script=5033
+}
+
+[sextant]
+{
+get=0x1057
 }
 
 [0x1059]

@@ -957,7 +957,6 @@ practice_gnarled_staff
 // Random polearm - Halberd, Bardiche
 [ITEMLIST 150]
 {
-200|itemlist=134,10
 50|blank
 25|0x143e
 25|0x0f4d
@@ -969,6 +968,22 @@ practice_gnarled_staff
 100|0x143e
 50|0x0f62
 25|0x0df1
+}
+
+// Chaos Dragoon Weapons - Kryss, Broadsword, Katana
+[ITEMLIST 205]
+{
+10|kryss
+10|broadsword
+10|katana
+}
+
+// Gypsy Headgear
+[ITEMLIST 210]
+{
+jesterhat
+bandana
+skullcap
 }
 
 // Dungeon Treasures Level 1 - 4
@@ -1435,4 +1450,16 @@ itemlist=150
 [listobject200]
 {
 itemlist=200
+}
+
+// Chaos Dragoon Weapons - Kryss, Broadsword, Katana
+[listobject205]
+{
+itemlist=205
+}
+
+// Gypsy Headgear
+[gypsyheadgear]
+{
+itemlist=210
 }

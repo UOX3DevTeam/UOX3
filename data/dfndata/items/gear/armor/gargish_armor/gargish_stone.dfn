@@ -3,7 +3,10 @@
 // Gargish Stone Arms - E/W
 [0x0284]
 {
-get=base_gargish_stone_arms
+getlbr=0x0284_lbr
+getaos=0x0284_aos
+gettol=0x0284_tol
+sectionid=0x0284
 }
 
 // Gargish Stone Arms - N/S
@@ -22,7 +25,10 @@ get=0x0284 0x4058
 // Female Gargish Stone Arms - E/W
 [0x0283]
 {
-get=base_female_gargish_stone_arms
+getlbr=0x0283_lbr
+getaos=0x0283_aos
+gettol=0x0283_tol
+sectionid=0x0283
 }
 
 // Female Gargish Stone Arms - N/S
@@ -43,7 +49,10 @@ get=0x0283 0x4057
 // Gargish Stone Chest - E/W
 [0x0286]
 {
-get=base_gargish_stone_chest
+getlbr=0x0286_lbr
+getaos=0x0286_aos
+gettol=0x0286_tol
+sectionid=0x0286
 }
 
 // Gargish Stone Chest - N/S
@@ -62,7 +71,10 @@ get=0x0286 0x405a
 // Female Gargish Stone Chest - E/W
 [0x0285]
 {
-get=base_female_gargish_stone_chest
+getlbr=0x0285_lbr
+getaos=0x0285_aos
+gettol=0x0285_tol
+sectionid=0x0285
 }
 
 // Female Gargish Stone Chest - N/S
@@ -83,7 +95,10 @@ get=0x0285 0x4059
 // Gargish Stone Leggings - E/W
 [0x028a]
 {
-get=base_gargish_stone_leggings
+getlbr=0x028a_lbr
+getaos=0x028a_aos
+gettol=0x028a_tol
+sectionid=0x028a
 }
 
 // Gargish Stone Leggings - N/S
@@ -102,7 +117,10 @@ get=0x028a 0x405e
 // Female Gargish Stone Leggings - E/W
 [0x0289]
 {
-get=base_female_gargish_stone_leggings
+getlbr=0x0289_lbr
+getaos=0x0289_aos
+gettol=0x0289_tol
+sectionid=0x0289
 }
 
 // Female Gargish Stone Leggings - N/S
@@ -121,7 +139,10 @@ get=0x0289 0x405d
 // Gargish Stone Kilt - E/W
 [0x0288]
 {
-get=base_gargish_stone_kilt
+getlbr=0x0288_lbr
+getaos=0x0288_aos
+gettol=0x0288_tol
+sectionid=0x0288
 }
 
 // Gargish Stone Kilt - N/S
@@ -140,7 +161,10 @@ get=0x0288 0x405c
 // Female Gargish Stone Kilt - E/W
 [0x0287]
 {
-get=base_female_gargish_stone_kilt
+getlbr=0x0287_lbr
+getaos=0x0287_aos
+gettol=0x0287_tol
+sectionid=0x0287
 }
 
 // Female Gargish Stone Kilt - N/S

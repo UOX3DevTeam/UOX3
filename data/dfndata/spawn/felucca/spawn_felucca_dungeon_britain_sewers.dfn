@@ -1,0 +1,19 @@
+// spawn_felucca_dungeon_britain_sewers.dfn
+// [3950-3999]
+
+[REGIONSPAWN 3950]
+{
+NAME=Sewers
+NPCLIST=BritainSewers
+MAXNPCS=50
+X1=6029
+Y1=1427
+X2=6125
+Y2=1507
+WORLD=0
+MINTIME=10
+MAXTIME=20
+CALL=5
+}
+
+EOF

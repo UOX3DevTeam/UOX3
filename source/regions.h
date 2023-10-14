@@ -1,12 +1,12 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	regions.h
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Region class  Added 3/6/1999 To lookup items by region
 //|						This should help for now. BTW- my first attempt at C++
 //|						So forgive any newbie mistakes :)
 //|					Side note, I wanted regions to be more generic, but
 //|						now that I have to do this, time doesn't allow for it yet.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 
 #ifndef __Region_h
 #define __Region_h
@@ -16,8 +16,8 @@
 const SI16 MapColSize = 32;
 const SI16 MapRowSize = 128;
 
-const SI16 UpperX = static_cast<SI16>(7168 / MapColSize);
-const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
+const SI16 UpperX = static_cast<SI16>( 7168 / MapColSize );
+const SI16 UpperY = static_cast<SI16>( 4096 / MapRowSize );
 
 struct MapResource_st
 {
@@ -28,7 +28,8 @@ struct MapResource_st
 	SI16	fishAmt;
 	UI32	fishTime;
 
-	MapResource_st() : oreAmt( 0 ), oreTime( 0 ), logAmt( 0 ), logTime( 0 ), fishAmt( 0 ), fishTime( 0 )
+	MapResource_st( SI16 defOre = 0, SI16 defLog = 0, SI16 defFish = 0, UI32 defOreTime = 0, UI32 defLogTIme = 0, UI32 defFishTIme = 0 ) : 
+		oreAmt( defOre ), oreTime( defOreTime ), logAmt( defLog ), logTime( defLogTIme ), fishAmt( defFish ), fishTime( defFishTIme )
 	{
 	}
 };
@@ -36,17 +37,17 @@ struct MapResource_st
 class CMapRegion
 {
 private:
-	GenericList< CItem * >	itemData;
-	GenericList< CChar * >	charData;
-	RegionSerialList< SERIAL > regionSerialData;
+	GenericList<CItem *>	itemData;
+	GenericList<CChar *>	charData;
+	RegionSerialList 		regionSerialData;
 	bool hasRegionChanged = false;
 
 public:
-	GenericList< CItem * > *	GetItemList( void );
-	GenericList< CChar * > *	GetCharList( void );
-	RegionSerialList< SERIAL > *	GetRegionSerialList( void );
-	bool						HasRegionChanged( void );
-	void						HasRegionChanged( bool newVal );
+	GenericList<CItem *> *	GetItemList( void );
+	GenericList<CChar *> *	GetCharList( void );
+	RegionSerialList*		GetRegionSerialList();
+	bool					HasRegionChanged( void );
+	void					HasRegionChanged( bool newVal );
 
 	CMapRegion()
 	{
@@ -55,25 +56,25 @@ public:
 	{
 	};
 
-	void					SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination );
+	void					SaveToDisk( std::ostream& writeDestination );
 };
 
 class CMapWorld
 {
 private:
-	SI16								upperArrayX;
-	SI16								upperArrayY;
-	UI16								resourceX;
-	UI16								resourceY;
-	std::vector< CMapRegion >			mapRegions;
-	std::vector< MapResource_st >		mapResources;
+	SI16							upperArrayX;
+	SI16							upperArrayY;
+	UI16							resourceX;
+	UI16							resourceY;
+	std::vector<CMapRegion>			mapRegions;
+	std::vector<MapResource_st>		mapResources;
 public:
 	CMapWorld( void );
 	CMapWorld( UI08 worldNum );
 	~CMapWorld( void );
 
 	CMapRegion *	GetMapRegion( SI16 xOffset, SI16 yOffset );
-	std::vector< CMapRegion > *		GetMapRegions();
+	std::vector<CMapRegion> *		GetMapRegions();
 
 	MapResource_st&	GetResource( SI16 x, SI16 y );
 
@@ -84,16 +85,17 @@ public:
 class CMapHandler
 {
 private:
-	typedef std::vector< CMapWorld * >				WORLDLIST;
-	typedef std::vector< CMapWorld * >::iterator	WORLDLIST_ITERATOR;
+	typedef std::vector<CMapWorld *>			WORLDLIST;
+	typedef std::vector<CMapWorld *>::iterator	WORLDLIST_ITERATOR;
 
 	WORLDLIST		mapWorlds;
 	CMapRegion		overFlow;
 
-	void		LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize );
+	void		LoadFromDisk( std::istream& readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize );
 public:
-	CMapHandler();
+	CMapHandler() = default;
 	~CMapHandler();
+	auto Startup() -> void;
 
 	void		Save( void );
 	void		Load( void );
@@ -113,8 +115,8 @@ public:
 	SI16		GetGridX( SI16 x );
 	SI16		GetGridY( SI16 y );
 
-	REGIONLIST	PopulateList( SI16 x, SI16 y, UI08 worldNumber );
-	REGIONLIST	PopulateList( CBaseObject *mObj );
+	auto	PopulateList( SI16 x, SI16 y, UI08 worldNumber ) -> std::vector<CMapRegion *>;
+	auto	PopulateList( CBaseObject *mObj ) -> std::vector<CMapRegion *>;
 
 	CMapWorld *	GetMapWorld( UI08 worldNum );
 

@@ -1,90 +1,111 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	calcfuncs.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Various functions to calculate objects from serials
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "townregion.h"
 #include "network.h"
 #include "ObjectFactory.h"
 
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CChar *calcCharObjFromSer( SERIAL targSerial )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CalcCharObjFromSer()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the character object based on the calling serial
-//o-----------------------------------------------------------------------------------------------o
-CChar *calcCharObjFromSer( SERIAL targSerial )
+//o------------------------------------------------------------------------------------------------o
+CChar *CalcCharObjFromSer( SERIAL targSerial )
 {
-	CBaseObject *findItem = ObjectFactory::getSingleton().FindObject( targSerial );
+	CBaseObject *findItem = ObjectFactory::GetSingleton().FindObject( targSerial );
 	CChar *toRet = nullptr;
 	if( findItem != nullptr )
 	{
-		if( findItem->CanBeObjType( OT_CHAR ) )
-			toRet = static_cast<CChar *>(findItem);
+		if( findItem->CanBeObjType( OT_CHAR ))
+		{
+			toRet = static_cast<CChar *>( findItem );
+		}
 	}
 	return toRet;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CItem *calcItemObjFromSer( SERIAL targSerial )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CalcItemObjFromSer()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the item object based on the calling serial
-//o-----------------------------------------------------------------------------------------------o
-CItem *calcItemObjFromSer( SERIAL targSerial )
+//o------------------------------------------------------------------------------------------------o
+CItem *CalcItemObjFromSer( SERIAL targSerial )
 {
-	CBaseObject *findItem = ObjectFactory::getSingleton().FindObject( targSerial );
+	CBaseObject *findItem = ObjectFactory::GetSingleton().FindObject( targSerial );
 	CItem *toRet = nullptr;
 	if( findItem != nullptr )
 	{
-		if( findItem->CanBeObjType( OT_ITEM ) )
-			toRet = static_cast<CItem *>(findItem);
+		if( findItem->CanBeObjType( OT_ITEM ))
+		{
+			toRet = static_cast<CItem *>( findItem );
+		}
 	}
 	return toRet;
 }
 
-CMultiObj *calcMultiFromSer( SERIAL targSerial )
+CMultiObj *CalcMultiFromSer( SERIAL targSerial )
 {
-	CBaseObject *findMulti = ObjectFactory::getSingleton().FindObject( targSerial );
+	CBaseObject *findMulti = ObjectFactory::GetSingleton().FindObject( targSerial );
 	CMultiObj *toRet = nullptr;
 	if( findMulti != nullptr )
 	{
-		if( findMulti->CanBeObjType( OT_MULTI ) )
-			toRet = static_cast<CMultiObj *>(findMulti);
+		if( findMulti->CanBeObjType( OT_MULTI ))
+		{
+			toRet = static_cast<CMultiObj *>( findMulti );
+		}
 	}
 	return toRet;
 }
 
 //o--------------------------------------------------------------------------
-//|	Function	-	CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
+//|	Function	-	CalcRegionFromXY()
 //o--------------------------------------------------------------------------
-//|	Purpose		-	Find what region x and y are in
+//|	Purpose		-	Find what region x and y are in. This should be done for all items on world load, and when any of the
+//|					item's location and/or container properties change
 //o--------------------------------------------------------------------------
-CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, CChar *mChar )
+CTownRegion *CalcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId, CBaseObject *mObj )
 {
 	// Reset sub region of character
-	if( ValidateObject( mChar ))
-		mChar->SetSubRegion( 0 );
-
-	const regLocs *getLoc	= nullptr;
-	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-	while( tIter != tEnd )
+	if( ValidateObject( mObj ))
 	{
-		CTownRegion *myReg = tIter->second;
-		if( myReg != nullptr && myReg->WorldNumber() == worldNumber && myReg->GetInstanceID() == instanceID )
+		mObj->SetSubRegion( 0 );
+
+		// Check if object is an item, and if it's in a container
+		if( mObj->GetObjType() == OT_ITEM && static_cast<CItem *>( mObj )->GetContSerial() != INVALIDSERIAL )
+		{
+			// Item is in a container, so find the root container (whether character or item) and use its coordinates to calculate region
+			CBaseObject *rootContainer = FindItemOwner( static_cast<CItem *>( mObj ));
+			if( ValidateObject( rootContainer ))
+			{
+				x = rootContainer->GetX();
+				y = rootContainer->GetY();
+				worldNumber = rootContainer->WorldNumber();
+				instanceId = rootContainer->GetInstanceId();
+			}
+		}
+	}
+
+	const RegLocs_st *getLoc = nullptr;
+	for( auto &[townId, myReg] : cwmWorldState->townRegions )
+	{
+		if( myReg != nullptr && myReg->WorldNumber() == worldNumber && myReg->GetInstanceId() == instanceId )
 		{
 			for( size_t j = 0; j < myReg->GetNumLocations(); ++j )
 			{
 				getLoc = myReg->GetLocation( j );
 				if( getLoc != nullptr )
 				{
+					// Calculate the region/subregion of the object
 					if( getLoc->x1 <= x && getLoc->y1 <= y && getLoc->x2 >= x && getLoc->y2 >= y )
 					{
-						// If character is in a subregion, store a reference to it
-						if( myReg->IsSubRegion() && ValidateObject( mChar ))
+						// If object is in a subregion, store a reference to it
+						if( myReg->IsSubRegion() && ValidateObject( mObj ))
 						{
-							mChar->SetSubRegion( myReg->GetRegionNum() );
+							mObj->SetSubRegion( myReg->GetRegionNum() );
 							continue;
 						}
 						return myReg;
@@ -92,8 +113,9 @@ CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID
 				}
 			}
 		}
-		++tIter;
+
 	}
 	return cwmWorldState->townRegions[0xFF];
 }
+
 

@@ -38,7 +38,7 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 function SendUOGServerPollInfo( pSocket )
 {
 	var shardName = GetServerSetting( "SERVERNAME" );
-	var uptime = Math.floor(GetCurrentClock() / 1000);
+	var uptime = Math.floor( GetCurrentClock() / 1000 ) - Math.floor( GetStartTime() / 1000 );
 	var totalOnline = GetPlayerCount();
 	var totalItems = 0;
 	var totalChars = 0;
@@ -51,5 +51,5 @@ function SendUOGServerPollInfo( pSocket )
 	pSocket.Send( toSend );
 	toSend.Free();
 	Console.Print( "Done!\n" );
-	Console.Log( "Response sent to UOGateway Server Poll Packet: U" + shardInfo );
+	Console.Log( "Response sent to UOGateway Server Poll Packet: " + shardInfo );
 }

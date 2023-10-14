@@ -1,7 +1,8 @@
 // Hits all nearby characters when they attack with their axe
+
 function onAttack( pAttacker, pDefender )
 {
-	pAttacker.SetTempTag( "pDefenderSerial", (pDefender.serial).toString() );
+	pAttacker.SetTempTag( "pDefenderSerial", ( pDefender.serial ).toString() );
 	AreaCharacterFunction( "HitNearbyTargets", pAttacker, 1 );
 }
 
@@ -27,3 +28,5 @@ function HitNearbyTargets( pAttacker, targChar )
 		targChar.Damage( damage, 1, pAttacker, false );
 	}
 }
+
+function _restorecontext_() {}

@@ -14,6 +14,11 @@ const repairDelay = 200;			// Timer for the gump to reappear after repairing an 
 const craftGumpID = 4027;
 const itemDetailsScriptID = 4026;
 
+ // If enabled, players can craft coloured variants of weapons, though unless the craftItems array
+ // is updated with specific create entries for the coloured weapon variants, they'll just be
+ // regular weapons with ore colour applied
+const allowColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
+
 //////////////////////////////////////////////////////////////////////////////////////////
 //  The section below is the tables for each page.
 //  All you have to do is add the armor or weapon to your dictionary 
@@ -202,15 +207,20 @@ const craftItems = [
 	]
 ];
 
-function pageX( socket, pUser, pageNum )
+function PageX( socket, pUser, pageNum )
 {
 	// Pages 1 - 7
 	var myGump = new Gump;
 	pUser.SetTempTag( "page", pageNum );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
+	var resourceHue = pUser.GetTempTag( "resourceHue" );
 
 	for( var i = 0; i < myPage[pageNum - 1].length; i++ )
 	{
+		// Don't show weapon entries if player has coloured ingots selected
+		if( !allowColouredWeapons && resourceHue > 0 && pageNum > 3 )
+			continue;
+
 		var index = i % 10;
 		if( index == 0 )
 		{
@@ -238,12 +248,12 @@ function pageX( socket, pUser, pageNum )
 	myGump.Free();
 }
 
-function page8( socket, pUser )
+function Page8( socket, pUser )
 {
 	//Ingot Choices
 	var myGump = new Gump;
 	pUser.SetTempTag( "page", 8 );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
 	var iron 		= pUser.ResourceCount( 0x1BF2 );
 	var bronze 		= pUser.ResourceCount( 0x1BF2, 0x06d6 );
 	var copper 		= pUser.ResourceCount( 0x1BF2, 0x07dd );
@@ -272,7 +282,7 @@ function page8( socket, pUser )
 		{
 			if( i > 0 )
 			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, (i / 10) + 1, 0 );
+				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
 				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" );// NEXT PAGE
 			}
 
@@ -292,7 +302,7 @@ function page8( socket, pUser )
 	myGump.Free();
 }
 
-function findNearbyAnvils( pUser, trgItem, pSock )
+function FindNearbyAnvils( pUser, trgItem, pSock )
 {
 	if( !ValidateObject( trgItem ) || !trgItem.isItem )
 		return false;
@@ -300,7 +310,7 @@ function findNearbyAnvils( pUser, trgItem, pSock )
 	return ( trgItem.id == 0x0faf || trgItem.id == 0x0fb0 || trgItem.id == 0x2dd5 || trgItem.id == 0x2dd6 );
 }
 
-function findNearbyForges( pUser, trgItem, pSock )
+function FindNearbyForges( pUser, trgItem, pSock )
 {
 	if( !ValidateObject( trgItem ) || !trgItem.isItem )
 		return false;
@@ -327,8 +337,8 @@ function onCallback1( pSock, ourObj )
 		return;
 	}
 
-	var nearbyAnvil = AreaItemFunction( "findNearbyAnvils", mChar, 3, pSock );
-	var nearbyForge = AreaItemFunction( "findNearbyForges", mChar, 3, pSock );
+	var nearbyAnvil = AreaItemFunction( "FindNearbyAnvils", mChar, 3, pSock );
+	var nearbyForge = AreaItemFunction( "FindNearbyForges", mChar, 3, pSock );
 	if( nearbyForge == 0 || nearbyAnvil == 0)
 	{
 		// No forge nearby
@@ -341,14 +351,18 @@ function onCallback1( pSock, ourObj )
 	var entryMadeFrom = ourObj.entryMadeFrom;
 	var createEntry;
 	if( entryMadeFrom != null && entryMadeFrom != 0 )
+	{
 		createEntry = CreateEntries[entryMadeFrom];
+	}
 	if( createEntry != null && createEntry.id != ourObj.id )
+	{
 		createEntry = null;
+	}
 
 	var resourceName = "iron ingot";
 	var resourceAmount = 0;
 	var maxResourceAmount = 1;
-	var resourceColor = ourObj.colour;
+	var resourceHue = ourObj.colour;
 
 	if( creatorSerial == -1 || entryMadeFrom == 0 || createEntry == null )
 	{
@@ -383,7 +397,7 @@ function onCallback1( pSock, ourObj )
 			for( var j = 0; j <= resourceIDs.length; j++ )
 			{
 				// If both resource needed matches up, and resource color matches up, go for it
-				if( resourceIDs[j] == 0x1bf2 && colorNeeded == resourceColor )
+				if( resourceIDs[j] == 0x1bf2 && colorNeeded == resourceHue )
 				{
 					maxResourceAmount = amountNeeded;
 					break;
@@ -426,10 +440,10 @@ function onCallback1( pSock, ourObj )
 	if( ourObj.isDyeable )
 	{
 		// Dyeable items should return regular iron ingots
-		resourceColor = 0;
+		resourceHue = 0;
 	}
 
-	switch( resourceColor )
+	switch( resourceHue )
 	{
 		case 0: // Iron Ingot
 		default:
@@ -466,7 +480,7 @@ function onCallback1( pSock, ourObj )
 	// Run a generic skill check to give player a chance to increase their mining skill
 	mChar.CheckSkill( 45, 0, 1000 );
 
-	var newResource = CreateDFNItem( pSock, mChar, "0x1bf2", resourceAmount, "ITEM", true, resourceColor );
+	var newResource = CreateDFNItem( pSock, mChar, "0x1bf2", resourceAmount, "ITEM", true, resourceHue );
 	newResource.name = resourceName;
 
 	mChar.SetTempTag( "ingotsFromSmelting", resourceAmount );
@@ -489,7 +503,7 @@ function onCallback2( pSock, ourObj )
 		return;
 
 	var bItem = pSock.tempObj;
-	var anvil = AreaItemFunction( "findNearbyAnvils", mChar, 3, pSock );
+	var anvil = AreaItemFunction( "FindNearbyAnvils", mChar, 3, pSock );
 	var gumpID = blacksmithID + 0xffff;
 	pSock.tempObj = null;
 
@@ -517,7 +531,7 @@ function onCallback2( pSock, ourObj )
 			return;
 		}
 
-		var itemDurabilityLossEnabled = GetServerSetting( "ItemDurabilityLoss" );
+		var itemDurabilityLossEnabled = GetServerSetting( "ItemRepairDurabilityLoss" );
 		var repairID = ourObj.id;
 		var ownerObj = GetPackOwner( ourObj, 0 );
 		if( ownerObj && mChar.serial == ownerObj.serial )
@@ -657,10 +671,10 @@ function onTimer( pUser, timerID )
 		case 5: // Page 5
 		case 6: // Page 6
 		case 7: // Page 7
-			pageX( socket, pUser, timerID );
+			PageX( socket, pUser, timerID );
 			break;
 		case 8: // Page 8
-			page8( socket, pUser );
+			Page8( socket, pUser );
 			break;
 		default:
 			break;
@@ -708,7 +722,9 @@ function onGumpPress( pSock, pButton, gumpData )
 	var makeID = 0;
 	var itemDetailsID = 0;
 	var oreID = pUser.GetTempTag( "ORE" );
+	var resourceHue = pUser.GetTempTag( "resourceHue" );
 	var newOreID = -1;
+	var newResourceHue = -1;
 	var timerID = 0;
 
 	// Check for nearby anvil
@@ -717,7 +733,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	// If button pressed is one of the crafting buttons (or "make last"), check that anvil was found
 	if(( pButton >= 100 && pButton <= 704 ) || pButton == 5000 )
 	{
-		anvil = AreaItemFunction( "findNearbyAnvils", pUser, 2, pSock );
+		anvil = AreaItemFunction( "FindNearbyAnvils", pUser, 2, pSock );
 		if( anvil > 0 )
 		{
 			if( pButton == 5000 )
@@ -753,14 +769,14 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 6: // Page 6
 		case 7: // Page 7
 			pSock.CloseGump( gumpID, 0 );
-			pageX( pSock, pUser, pButton );
+			PageX( pSock, pUser, pButton );
 			break;
 		case 49: // Repair Item
 			RepairTarget( pSock );
 			break;
 		case 50: // Select Materials
 			pSock.CloseGump( gumpID, 0 );
-			page8( pSock, pUser );
+			Page8( pSock, pUser );
 			break;
 		case 52: // Smelt Item
 			SmeltTarget( pSock );
@@ -873,6 +889,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		// Select Ore Type
 		case 1000: // Iron
 			newOreID = (( newOreID == -1 ) ? 0 : newOreID );
+			newResourceHue = 0; // Update manually if color changes in skills.dfn!
 		case 1001: // Dull Copper
 			if( pButton == 1001 && pUser.skills[7] < 650 )
 			{
@@ -881,6 +898,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				pUser.SetTempTag( "prevActionResult", "FAILED" );
 				break;
 			}
+			newResourceHue = (( newResourceHue == - 1 ) ? 0x0973 : newResourceHue ); // Update manually if color changes in skills.dfn!
 			newOreID = (( newOreID == -1 ) ? 1 : newOreID );
 		case 1002: // Shadow Iron
 			if( pButton == 1002 && pUser.skills[7] < 700 )
@@ -890,6 +908,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				pUser.SetTempTag( "prevActionResult", "FAILED" );
 				break;
 			}
+			newResourceHue = (( newResourceHue == - 1 ) ? 0x0966 : newResourceHue ); // Update manually if color changes in skills.dfn!
 			newOreID = (( newOreID == -1 ) ? 2 : newOreID );
 		case 1003: // Copper
 			if( pButton == 1003 && pUser.skills[7] < 750 )
@@ -899,6 +918,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				pUser.SetTempTag( "prevActionResult", "FAILED" );
 				break;
 			}
+			newResourceHue = (( newResourceHue == - 1 ) ? 0x07dd : newResourceHue ); // Update manually if color changes in skills.dfn!
 			newOreID = (( newOreID == -1 ) ? 3 : newOreID );
 		case 1004: // Bronze
 			if( pButton == 1004 && pUser.skills[7] < 800 )
@@ -908,6 +928,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				pUser.SetTempTag( "prevActionResult", "FAILED" );
 				break;
 			}
+			newResourceHue = (( newResourceHue == - 1 ) ? 0x06d6 : newResourceHue ); // Update manually if color changes in skills.dfn!
 			newOreID = (( newOreID == -1 ) ? 4 : newOreID );
 		case 1005: // Gold
 			if( pButton == 1005 && pUser.skills[7] < 850 )
@@ -917,6 +938,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				pUser.SetTempTag( "prevActionResult", "FAILED" );
 				break;
 			}
+			newResourceHue = (( newResourceHue == - 1 ) ? 0x08a5 : newResourceHue ); // Update manually if color changes in skills.dfn!
 			newOreID = (( newOreID == -1 ) ? 5 : newOreID );
 		case 1006: // Agapite
 			if( pButton == 1006 && pUser.skills[7] < 900 )
@@ -926,6 +948,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				pUser.SetTempTag( "prevActionResult", "FAILED" );
 				break;
 			}
+			newResourceHue = (( newResourceHue == - 1 ) ? 0x0979 : newResourceHue );; // Update manually if color changes in skills.dfn!
 			newOreID = (( newOreID == -1 ) ? 6 : newOreID );
 		case 1007: // Verite
 			if( pButton == 1007 && pUser.skills[7] < 950 )
@@ -935,6 +958,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				pUser.SetTempTag( "prevActionResult", "FAILED" );
 				break;
 			}
+			newResourceHue = (( newResourceHue == - 1 ) ? 0x089f : newResourceHue );; // Update manually if color changes in skills.dfn!
 			newOreID = (( newOreID == -1 ) ? 7 : newOreID );
 		case 1008: // Valorite
 			if( pButton == 1008 && pUser.skills[7] < 990 )
@@ -944,6 +968,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				pUser.SetTempTag( "prevActionResult", "FAILED" );
 				break;
 			}
+			newResourceHue = (( newResourceHue == - 1 ) ? 0x08ab : newResourceHue );; // Update manually if color changes in skills.dfn!
 			newOreID = (( newOreID == -1 ) ? 8 : newOreID );
 
 			// Run common code for this group of buttons
@@ -951,7 +976,8 @@ function onGumpPress( pSock, pButton, gumpData )
 			pUser.SetTempTag( "MAKELAST", null );
 			pUser.SetTempTag( "prevActionResult", null );
 			pUser.SetTempTag( "ORE", newOreID );
-			page8( pSock, pUser );
+			pUser.SetTempTag( "resourceHue", newResourceHue );
+			Page8( pSock, pUser );
 			break;
 		// Show Item Details
 		case 2100: // Ringmail Gloves
@@ -1066,11 +1092,37 @@ function onGumpPress( pSock, pButton, gumpData )
 	{
 		if( anvil > 0 )
 		{
-			MakeItem( pSock, pUser, makeID );
-			if( GetServerSetting( "ToolUseLimit" ))
+			// crafting_complete.js for applying special bonuses for exceptional equipment/from runic hammers
+			pUser.AddScriptTrigger( 4033 );
+			MakeItem( pSock, pUser, makeID, resourceHue );
+			var toolUseLimit = GetServerSetting( "ToolUseLimit" );
+			var toolUseBreak = GetServerSetting( "ToolUseBreak" );
+
+			// Check if player had runic hammer equipped while crafting
+			var runicHammer = pUser.FindItemLayer( 0x01 ); // Right Hand
+			if( ValidateObject( runicHammer ) && runicHammer.GetTag( "runicHammer" ) && runicHammer.usesLeft > 0 )
+			{
+				// Store some temp tags on player to get info on runic hammer used in crafting_complete.js
+				pUser.SetTempTag( "usedRunicHammer", true );
+				pUser.SetTempTag( "runicHammerType", runicHammer.color );
+
+				// Wear and tear for equipped runic hammer, even if another tool was used to craft
+				if( toolUseLimit && runicHammer != bItem )
+				{
+					runicHammer.usesLeft -= 1;
+					if( runicHammer.usesLeft == 0 && toolUseBreak )
+					{
+						runicHammer.Delete();
+						pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
+						// Play sound effect of tool breaking
+					}
+				}
+			}
+
+			if( toolUseLimit )
 			{
 				bItem.usesLeft -= 1;
-				if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
+				if( bItem.usesLeft == 0 && toolUseBreak )
 				{
 					bItem.Delete();
 					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
@@ -1086,3 +1138,5 @@ function onGumpPress( pSock, pButton, gumpData )
 		TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
 	}
 }
+
+function _restorecontext_() {}

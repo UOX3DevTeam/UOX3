@@ -31,9 +31,13 @@ function onCallback0( pSock, ourObj )
 	if( ValidateObject( ourObj ) && ourObj.isChar )
 	{
 		if( !ourObj.npc )
+		{
 			pSock.SysMessage( GetDictionaryEntry( 1442, pSock.language )); // You cannot provoke other players.
+		}
 		else if( ourObj.aitype == 17 || ourObj.aitype == 4 || !ourObj.vulnerable )
+		{
 			pSock.SysMessage( GetDictionaryEntry( 830, pSock.language )); // You cannot provoke such a person!
+		}
 		else
 		{
 			var ourObjRegion = ourObj.region;
@@ -70,7 +74,9 @@ function onCallback0( pSock, ourObj )
 					PlayInstrument( pSock, myInstrument, true );
 				}
 				else
+				{
 					pSock.SysMessage( GetDictionaryEntry( 1438, pSock.language )); // You do not have an instrument to play on!
+				}
 			}
 		}
 	}
@@ -81,7 +87,9 @@ function onCallback1( pSock, toAttack )
 	if( ValidateObject( toAttack ))
 	{
 		if( toAttack.aitype == 17 || toAttack.aitype == 4 || !toAttack.vulnerable )
+		{
 			pSock.SysMessage( GetDictionaryEntry( 1730, pSock.language )); // You cannot provoke such a person!
+		}
 		else
 		{
 			var pUser = pSock.currentChar;
@@ -123,6 +131,31 @@ function onCallback1( pSock, toAttack )
 			}
 			else
 			{
+				// If provoker is a Young player, and target is a player, or a player's pet - disallow
+				if( GetServerSetting( "YoungPlayerStatus" ))
+				{
+					if( pUser.account.isYoung && ( !toAttack.npc || ( ValidateObject( toAttack.owner ) && !toAttack.owner.npc )))
+					{
+						pSock.SysMessage( GetDictionaryEntry( 18736, pSock.language )); // Because of your young status in Britannia you cannot provoke the beast onto another player yet.
+						return;
+					}
+					if(( !toAttack.npc && toAttack.account.isYoung ) || ( toAttack.npc && ValidateObject( toAttack.owner ) && !toAttack.owner.npc && toAttack.owner.account.isYoung ))
+					{
+						// Disallow provoking creatures onto Young players, or their pets
+						pSock.SysMessage( GetDictionaryEntry( 18737, pSock.language )); // You cannot provoke the beast onto this player.
+						return;
+					}
+				}
+
+				// Check for Facet Ruleset
+				if( DoesEventExist( 2507, "FacetRuleBardProvoke" ))
+				{
+					if( !TriggerEvent( 2507, "FacetRuleBardProvoke", pUser, toAttack ))
+					{
+						return;
+					}
+				}
+
 				var myInstrument = GetInstrument( pUser );
 				if( ValidateObject( myInstrument ))
 				{
@@ -143,6 +176,7 @@ function onCallback1( pSock, toAttack )
 							pSock.SysMessage( GetDictionaryEntry( 1451, pSock.language )); // Your music fails to incite enough anger.
 							willAttack = pUser;
 						}
+						initiateAttack = true;
 					}
 					else
 					{
@@ -161,7 +195,7 @@ function onCallback1( pSock, toAttack )
 				// Provoke action succeeded - or failed spectacularly. Make combat happen!
 				BeginAttack( pAttacker, willAttack, true );
 				BeginAttack( willAttack, pAttacker, false );
-				pAttacker.EmoteMessage( "You see "+pAttacker.name+" attacking "+willAttack.name+"!" );
+				pAttacker.EmoteMessage( "You see " + pAttacker.name + " attacking " + willAttack.name + "!" );
 			}
 		}
 	}
@@ -202,35 +236,55 @@ function PlayInstrument( pSock, myInstrument, wellPlayed )
 	{
 		case 0x0E9C:	// Drum
 			if( wellPlayed )
+			{
 				soundID = 0x0038;
+			}
 			else
+			{
 				soundID = 0x0039;
+			}
 			break;
 		case 0x0E9D:	// Tambourine
 		case 0x0E9E:
 			if( wellPlayed )
+			{
 				soundID = 0x0052;
+			}
 			else
+			{
 				soundID = 0x0053;
+			}
 			break;
 		case 0x0EB1:	// Standing Harp
 			if( wellPlayed )
+			{
 				soundID = 0x0043;
+			}
 			else
+			{
 				soundID = 0x0044;
+			}
 			break;
 		case 0x0EB2:	// Harp
 			if( wellPlayed )
+			{
 				soundID = 0x0045;
+			}
 			else
+			{
 				soundID = 0x0046;
+			}
 			break;
 		case 0x0EB3:	// Lute
 		case 0x0EB4:
 			if( wellPlayed )
+			{
 				soundID = 0x004C;
+			}
 			else
+			{
 				soundID = 0x004D;
+			}
 			break;
 		default:
 			return;
@@ -240,7 +294,10 @@ function PlayInstrument( pSock, myInstrument, wellPlayed )
 
 function BeginAttack( charOne, charTwo, attackFirst )
 {
-	charOne.attackFirst = attackFirst;
+	if( attackFirst && !charTwo.CheckAggressorFlag( charOne ))
+	{
+		charOne.AddAggressorFlag( charTwo );
+	}
 	charOne.attacker = charTwo;
 	charOne.target = charTwo;
 

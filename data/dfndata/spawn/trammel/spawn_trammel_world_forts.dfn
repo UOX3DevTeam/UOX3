@@ -1,0 +1,49 @@
+// spawn_trammel_world_forts.dfn
+// [15511-15520]
+
+[REGIONSPAWN 15511]
+{
+NAME=Location 8 Medium orc fort
+NPCLIST=location_8_medium
+MAXNPCS=20
+X1=623
+Y1=1478
+X2=645
+Y2=1495
+WORLD=1
+MINTIME=19
+MAXTIME=20
+CALL=5
+}
+
+[REGIONSPAWN 15512]
+{
+NAME=location 12 Medium brigand fort
+NPCLIST=brigand
+MAXNPCS=30
+X1=836
+Y1=1672
+X2=870
+Y2=1702
+WORLD=1
+MINTIME=19
+MAXTIME=20
+CALL=5
+}
+
+[REGIONSPAWN 15512]
+{
+NAME=Location 45 heavy orc fort
+NPCLIST=location_45_heavy
+MAXNPCS=25
+X1=2142
+Y1=1328
+X2=2222
+Y2=1422
+WORLD=1
+MINTIME=4
+MAXTIME=5
+CALL=3
+}
+
+EOF

@@ -1,24 +1,18 @@
 #ifndef __UOXMAP_CLASSES_H__
 #define __UOXMAP_CLASSES_H__
 
-#include "power.h"
 #include <cstdint>
 #include <sstream>
+#include <array>
+#include <bitset>
+#include <algorithm>
+
+#include "power.h"
 #include "MultiMul.hpp"
+#include "osunique.hpp"
 
-struct Static_st
-{
-	UI16 itemid;
-	UI08 xoff;
-	UI08 yoff;
-	SI08 zoff;
-};
 
-struct map_st
-{
-	UI16 id;
-	SI08 z;
-};
+//o------------------------------------------------------------------------------------------------o
 
 enum TileFlags
 {
@@ -57,175 +51,262 @@ enum TileFlags
 	TF_STAIRRIGHT,			// "ClimbableBit2"
 
 	// Following flags were added in HS expansion? Purpose unknown
-	TF_ALPHABLEND,
-	TF_USENEWART,
-	TF_ARTUSED,
-	TF_NOSHADOW,
-	TF_PIXELBLEED,
-	TF_PLAYANIMONCE,
-	TF_MULTIMOVABLE,
+	TF_ALPHABLEND,			// Blend Alphas, tile blending
+	TF_USENEWART,			// Uses new art style?
+	TF_ARTUSED,				// Is art being used?
+	TF_BIT36,				// Unknown/Unused
+	TF_NOSHADOW,			// Disallow shadow on this tile, lightsource? lava?
+	TF_PIXELBLEED,			// Let pixels bleed in to other tiles? Is this Disabling Texture Clamp?
+	TF_PLAYANIMONCE,		// Play tile animation once.
+	TF_BIT40,				// Unknown/Unused
+	TF_MULTIMOVABLE,		// Movable multi? Cool ships and vehicles etc?
 	TF_COUNT
 };
 
+//o------------------------------------------------------------------------------------------------o
+// Pre declare tileinfo so we can make it a friend of CBaseTile, CTile, and CLand
+class TileInfo;
+
+
+//o------------------------------------------------------------------------------------------------o
+// Frankly, these chould/should have been structures, There really isn't a reason to make the
+// data private, and then expose everything with accessors.  Just adds a lot of verbage,
+// that can clutter when maintaining.  Oh well, we stay compatable for now.
 class CBaseTile
 {
+	friend TileInfo;
 protected:
-	std::bitset< TF_COUNT >	flags;
+	std::bitset<64> flags; // We are going to use a 64 bit value here, so specify 64 bit.
+					// This one day may be changed to a vector of bools, but for now
+	std::string name;
+	
 public:
 	CBaseTile()
 	{
 		flags.reset();
 	}
-	virtual ~CBaseTile()
-	{
-	}
-	UI08 Flag( UI08 part ) const
-	{
-		UI32 mFlags = static_cast<std::uint32_t>(flags.to_ulong());
-		UI08 retVal = 0;
-		switch( part )
-		{
-			case 0:	retVal = static_cast<UI08>(mFlags>>24);	break;
-			case 1:	retVal = static_cast<UI08>(mFlags>>16);	break;
-			case 2: retVal = static_cast<UI08>(mFlags>>8);	break;
-			case 3: retVal = static_cast<UI08>(mFlags%256);	break;
-		}
-		return retVal;
-	}
-	UI32 FlagsNum( void ) const					{	return static_cast<std::uint32_t>(flags.to_ulong());	}
-	std::bitset< TF_COUNT > Flags( void ) const	{	return flags;				}
-	void Flags( std::bitset< TF_COUNT > newVal ){	flags = newVal;				}
-
+	virtual ~CBaseTile() = default;
+	// This doesnt seem to be used, but I wonder about DFN overloads?
+	//
+	/*
+	 auto Flag( UI08 part ) const  -> std::uint8_t
+	 {
+	 	auto mFlags = static_cast<std::uint32_t>( flags.to_ulong() );
+	 	auto retVal = std::uint8_t( 0 );
+	 	switch( part )
+	 	{
+	 		case 0: retVal = static_cast<std::uint8_t>( mFlags >> 24 );	break;
+	 		case 1: retVal = static_cast<std::uint8_t>( mFlags >> 16 );	break;
+	 		case 2: retVal = static_cast<std::uint8_t>( mFlags >> 8 );	break;
+	 		case 3: retVal = static_cast<std::uint8_t>( mFlags % 256 );	break;
+	 	}
+	 	return retVal;
+	 }
+	 */
+	auto Name() const -> const std::string& { return name; }
+	auto Name( const std::string &value ) -> void { name = value; }
+	
+	auto FlagsNum() const -> std::uint32_t {	return static_cast<std::uint32_t>( flags.to_ulong() ); }
+	auto Flags() const -> std::bitset<64> { return flags; }
+	void Flags( std::bitset<64> newVal ) { flags = newVal; }
+	
 	bool CheckFlag( TileFlags toCheck ) const
 	{
 		if( toCheck >= TF_COUNT )
+		{
 			return false;
+		}
 		return flags.test( toCheck );
 	}
 	void SetFlag( TileFlags toSet, bool newVal )
 	{
 		if( toSet >= TF_COUNT )
+		{
 			return;
+		}
 		flags.set( toSet, newVal );
 	}
 };
-
+//o------------------------------------------------------------------------------------------------o
 class CTile : public CBaseTile
 {
 private:
-	UI32 unknown0;
-	UI08 weight;
-	SI08 layer;
-	UI16 unknown1;
-	UI08 unknown2;
-	UI08 quantity;
-	UI16 animation;
-	UI08 unknown3;
-	UI08 hue;
-	UI08 unknown4;
-	UI08 unknown5;
-	SI08 height;
-	SI08 name[21];
-
+	friend TileInfo;
+	std::uint8_t weight;
+	std::int8_t layer;
+	std::uint16_t unknown1;
+	std::uint8_t unknown2;
+	std::uint8_t quantity;
+	std::uint16_t animation;
+	std::uint8_t unknown3;
+	std::uint8_t hue;
+	std::uint8_t unknown4;
+	std::uint8_t unknown5;
+	std::int8_t height;
 public:
-	CTile() : unknown0( 0 ), weight( 0 ), layer( 0 ), unknown1( 0 ), unknown2( 0 ), quantity( 0 ), animation( 0 ), unknown3( 0 ), hue( 0 ), unknown4( 0 ), unknown5( 0 ), height( 0 )
+	CTile() :CBaseTile(), weight( 0 ), layer( 0 ), unknown1( 0 ), unknown2( 0 ), quantity( 0 ), animation( 0 ), unknown3( 0 ), hue( 0 ), unknown4( 0 ), unknown5( 0 ), height( 0 )
 	{
-		name[0] = 0;
 	}
-	CTile( UOXFile *toRead, bool useHS  )
+	~CTile() = default;
+	auto Unknown1() const -> std::uint16_t { return unknown1; }
+	auto Unknown2() const -> std::uint8_t { return unknown2; }
+	auto Unknown3() const -> std::uint8_t { return unknown3; }
+	auto Unknown4() const -> std::uint8_t { return unknown4; }
+	auto Unknown5() const -> std::uint8_t { return unknown5; }
+	auto Hue() const -> std::uint8_t { return hue; }
+	auto Quantity() const -> std::uint8_t { return quantity; }
+	auto Animation() const -> std::uint16_t { return animation; }
+	auto Weight() const -> std::uint8_t { return weight; }
+	auto Layer() const -> std::int8_t { return layer; }
+	auto Height() const -> std::int8_t { return height; }
+	auto ClimbHeight( bool trueHeight = false ) const -> std::int8_t
 	{
-		Read( toRead,useHS );
+		if( CheckFlag( TF_CLIMBABLE ) && !trueHeight )
+		{
+			return height / 2;
+		}
+		return height;
 	}
-	void Read( UOXFile *toRead, bool useHS);
-	UI32 Unknown0( void ) const		{	return unknown0;		}
-	UI16 Unknown1( void ) const		{	return unknown1;		}
-	UI08 Unknown2( void ) const		{	return unknown2;		}
-	UI08 Unknown3( void ) const		{	return unknown3;		}
-	UI08 Unknown4( void ) const		{	return unknown4;		}
-	UI08 Unknown5( void ) const		{	return unknown5;		}
-	UI08 Hue( void ) const			{	return hue;				}
-	UI08 Quantity( void ) const		{	return quantity;		}
-	UI16 Animation( void ) const	{	return animation;		}
-	UI08 Weight( void ) const		{	return weight;			}
-	SI08 Layer( void ) const		{	return layer;			}
-	SI08 Height( void ) const		{	return height;			}
-	char *Name( void ) const		{	return (char *)name;	}
-
-	void Unknown0( UI32 newVal )	{	unknown0 = newVal;		}
-	void Unknown1( UI16 newVal )	{	unknown1 = newVal;		}
-	void Unknown2( UI08 newVal )	{	unknown2 = newVal;		}
-	void Unknown3( UI08 newVal )	{	unknown3 = newVal;		}
-	void Unknown4( UI08 newVal )	{	unknown4 = newVal;		}
-	void Unknown5( UI08 newVal )	{	unknown5 = newVal;		}
-	void Animation( UI16 newVal )	{	animation = newVal;		}
-	void Weight( UI08 newVal )		{	weight = newVal;		}
-	void Layer( SI08 newVal )		{	layer = newVal;			}
-	void Height( SI08 newVal )		{	height = newVal;		}
-	void Hue( UI08 newVal )			{	hue = newVal;			}
-	void Quantity( UI08 newVal )	{	quantity = newVal;		}
-	void Name( const char *newVal )
-	{
-		strncpy( (char *)name, newVal, 20 );
-	}
-
+	void Unknown1( std::uint16_t newVal ) { unknown1 = newVal; }
+	void Unknown2( std::uint8_t newVal ) { unknown2 = newVal; }
+	void Unknown3( std::uint8_t newVal ) { unknown3 = newVal; }
+	void Unknown4( std::uint8_t newVal ) { unknown4 = newVal; }
+	void Unknown5( std::uint8_t newVal ) { unknown5 = newVal; }
+	void Animation( std::uint16_t newVal ) { animation = newVal; }
+	void Weight( std::uint8_t newVal ) { weight = newVal; }
+	void Layer( std::int8_t newVal ) { layer = newVal; }
+	void Height( std::int8_t newVal ) { height = newVal; }
+	void Hue( std::uint8_t newVal ) { hue = newVal; }
+	void Quantity( std::uint8_t newVal ) { quantity = newVal; }
 };
-
+//o------------------------------------------------------------------------------------------------o
 class CLand : public CBaseTile
 {
+	friend TileInfo;
 private:
-	UI32 unknown1;
-	UI16 textureID;
-	SI08 name[21];
+	std::uint16_t textureId;
+	// List of road tiles, or road-related tiles, on which houses cannot be placed
+	constexpr static
+	std::array<std::uint16_t, 18> roadIds
+	{
+		0x0009, 0x0015, // furrows
+		0x0071, 0x0078, // dirt
+		0x00E8, 0x00EB, // dirt
+		0x0150, 0x015C, // furrows
+		0x0442, 0x0479, // sand stone
+		0x0501, 0x0510, // sand stone
+		0x07AE, 0x07B1, // dirt
+		0x3FF4, 0x3FF4, // dirt
+		0x3FF8, 0x3FFB  // dirt
+	};
+	
 public:
-	CLand() : unknown1( 0 ), textureID( 0 )
+	CLand() :CBaseTile(), textureId( 0 )
 	{
-		name[0] = 0;
 	}
-	CLand( UOXFile *toRead, bool useHS )
+	~CLand() = default;
+	auto TextureId() const -> std::uint16_t { return textureId; }
+	auto TextureId( std::uint16_t newVal ) -> void { textureId = newVal; }
+	auto IsRoadId() const -> bool
 	{
-		Read( toRead, useHS);
-	}
-
-	void Read( UOXFile *toRead, bool useHS );
-
-	UI32 Unknown1( void ) const		{	return unknown1;		}
-	UI16 TextureID( void ) const	{	return textureID;		}
-	char *Name( void ) const		{	return (char *)name;	}
-
-	void Unknown1( UI32 newVal )	{	unknown1 = newVal;		}
-	void TextureID( UI16 newVal )	{	textureID = newVal;		}
-	void Name( char *newVal )
-	{
-		strncpy( (char *)name, newVal, 20 );
+		auto rValue = false;
+		for( size_t j = 0; j < roadIds.size(); j += 2 )
+		{
+			if( textureId >= roadIds[j] && textureId <= roadIds[j + 1] )
+			{
+				rValue = true;
+				break;
+			}
+		}
+		return rValue;
 	}
 };
 
-class CTileUni : public CBaseTile
+
+enum TileType_t { terrain, art, dyn };
+
+// A structure that holds tile information. Type, id, information, altitude (if in a map), hue (if a static tile)
+
+struct Tile_st
 {
-private:
-	SI08 baseZ;
-	UI08 mType;		// 0 = Terrain, 1 = Item
-	UI16 mID;
-	SI08 top;
-	SI08 height;
-
-public:
-	CTileUni() : baseZ( 0 ), mType( 0 ), mID( 0 ), top( 0 ), height( 0 )
+	TileType_t type;
+	std::uint16_t tileId;	// for instance, this should be a tileid_t , that would make sense!
+	std::int8_t altitude;
+	std::uint16_t staticHue;
+	union
 	{
+		const CTile *artInfo;
+		const CLand *terrainInfo;
+	};
+	constexpr static std::array<std::uint16_t, 11> terrainVoids
+	{
+		430, 431, 432,
+		433, 434, 475,
+		580, 610, 611,
+		612, 613
+	};
+	auto CheckFlag( TileFlags toCheck ) const -> bool
+	{
+		if( type != TileType_t::terrain )
+		{
+			return artInfo->CheckFlag( toCheck );
+		}
+		return terrainInfo->CheckFlag( toCheck );
 	}
-
-	SI08 BaseZ( void ) const	{	return baseZ;	}
-	SI08 Top( void ) const		{	return top;		}
-	UI08 Type( void ) const		{	return mType;	}
-	SI08 Height( void )  const    {   return height; }
-	UI16 GetID( void )  const    {   return mID; }
-
-	void BaseZ( SI08 nVal )		{	baseZ	= nVal;	}
-	void Type( UI08 nVal )		{	mType	= nVal;	}
-	void Top( SI08 nVal )		{	top		= nVal;	}
-	void Height(SI08 nval)      {   height  = nval; }
-	void SetID(UI16 nval)      {   mID  = nval; }
+	Tile_st( TileType_t type = TileType_t::terrain ) :type( type ), tileId( 0 ), altitude( 0 ), staticHue( 0 ), artInfo( nullptr ) {}
+	auto isVoid() const -> bool
+	{
+		auto rValue = false;
+		if( type == TileType_t::terrain )
+		{
+			auto iter = std::find_if( terrainVoids.begin(), terrainVoids.end(), [this]( const std::uint16_t &value )
+			{
+				return tileId == value;
+			});
+			rValue = iter != terrainVoids.end();
+		}
+		return rValue;
+	}
+	auto IsMountain() const -> bool
+	{
+		auto rValue = false;
+		if( type != TileType_t::terrain )
+		{
+			rValue = (( tileId >= 431 ) && ( tileId <= 432 )) || (( tileId >= 467 ) && ( tileId <= 474 )) ||
+			(( tileId >= 543 ) && ( tileId <= 560 )) || (( tileId >= 1754 ) && ( tileId <= 1757 )) ||
+			(( tileId >= 1787 ) && ( tileId <= 1789 )) || (( tileId >= 1821 ) && ( tileId <= 1824 )) ||
+			(( tileId >= 1851 ) && ( tileId <= 1854 )) || (( tileId >= 1881 ) && ( tileId <= 1884 ));
+		}
+		return rValue;
+	}
+	auto top() -> std::int16_t
+	{
+		auto value = static_cast<int16_t>( altitude );
+		if( type != TileType_t::terrain )
+		{
+			auto temp = artInfo->Height();
+			temp = ( temp & 0x8 ? ( temp & 0xF ) >> 1 : temp & 0xF );
+			
+			value += temp;
+		}
+		return value;
+	}
+	auto height() -> std::uint8_t
+	{
+		if( type != TileType_t::terrain )
+		{
+			return artInfo->Height();
+		}
+		return 0;
+	}
+	auto name() const -> std::string
+	{
+		if( type != TileType_t::terrain )
+		{
+			return artInfo->Name();
+		}
+		return terrainInfo->Name();
+	}
 };
-
 #endif
 

@@ -5,26 +5,27 @@
 class CMultiObj : public CItem
 {
 protected:
-	std::string			deed;
+	std::string				deed;
 
-	std::map< CChar *, UI08 >	housePrivList;
+	std::map<CChar *, UI08>	housePrivList;
 
-	ITEMLIST			lockedList;
-	UI16				maxLockdowns;
+	std::vector<CItem *>	lockedList;
+	UI16					maxLockdowns;
 
-	ITEMLIST			secureContainerList;
-	UI16				maxSecureContainers;
-
-	ITEMLIST			trashContainerList;
-	UI16				maxTrashContainers;
-
-	CHARLIST			vendorList;
-	UI16				maxVendors;
+	std::vector<CItem *>	secureContainerList;
+	UI16					maxSecureContainers;
 
 	UI16				maxFriends;
 	UI16				maxGuests;
 	UI16				maxOwners;
 	UI16				maxBans;
+
+	UI16				maxVendors;
+
+	std::vector<CItem *>	trashContainerList;
+	UI16					maxTrashContainers;
+
+	std::vector<CChar *>	vendorList;
 
 	SI16				banX;
 	SI16				banY;
@@ -37,12 +38,12 @@ protected:
 
 	virtual bool		LoadRemnants( void ) override;
 
-	GenericList< CItem * >	itemInMulti;
-	GenericList< CChar * >	charInMulti;
-	GenericList< CChar * >	ownersOfMulti;
-	GenericList< CChar * >	friendsOfMulti;
-	GenericList< CChar * >	bannedFromMulti;
-	GenericList< CChar * >	guestsOfMulti;
+	GenericList<CItem *>	itemInMulti;
+	GenericList<CChar *>	charInMulti;
+	GenericList<CChar *>	ownersOfMulti;
+	GenericList<CChar *>	friendsOfMulti;
+	GenericList<CChar *>	bannedFromMulti;
+	GenericList<CChar *>	guestsOfMulti;
 
 public:
 	CMultiObj();
@@ -132,9 +133,9 @@ public:
 	std::string			GetTradeTimestamp( void ) const;
 	void				SetTradeTimestamp( time_t newTime );
 
-	virtual bool		Save( std::ofstream &outStream ) override;
-	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
-	virtual bool		DumpBody( std::ofstream &outStream ) const override;
+	virtual bool		Save( std::ostream &outStream ) override;
+	virtual bool		DumpHeader( std::ostream &outStream ) const override;
+	virtual bool		DumpBody( std::ostream &outStream ) const override;
 	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 
 	virtual void		SetOwner( CChar *newOwner ) override;
@@ -146,12 +147,12 @@ public:
 
 	virtual bool		CanBeObjType( ObjectType toCompare ) const override;
 
-	GenericList< CChar * > *	GetOwnersOfMultiList( bool clearList = false );
-	GenericList< CChar * > *	GetFriendsOfMultiList( bool clearList = false );
-	GenericList< CChar * > *	GetGuestsOfMultiList( bool clearList = false );
-	GenericList< CChar * > *	GetBannedFromMultiList( bool clearList = false );
-	GenericList< CChar * > *	GetCharsInMultiList( void );
-	GenericList< CItem * > *	GetItemsInMultiList( void );
+	GenericList<CChar *> *	GetOwnersOfMultiList( bool clearList = false );
+	GenericList<CChar *> *	GetFriendsOfMultiList( bool clearList = false );
+	GenericList<CChar *> *	GetGuestsOfMultiList( bool clearList = false );
+	GenericList<CChar *> *	GetBannedFromMultiList( bool clearList = false );
+	GenericList<CChar *> *	GetCharsInMultiList( void );
+	GenericList<CItem *> *	GetItemsInMultiList( void );
 
 };
 
@@ -166,8 +167,8 @@ protected:
 	TIMERVAL			nextMoveTime;
 
 private:
-	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
-	virtual bool		DumpBody( std::ofstream &outStream ) const override;
+	virtual bool		DumpHeader( std::ostream &outStream ) const override;
+	virtual bool		DumpBody( std::ostream &outStream ) const override;
 
 	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 

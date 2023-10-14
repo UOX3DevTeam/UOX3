@@ -4,7 +4,7 @@
 class CWeather
 {
 private:
-	struct WeathPart
+	struct WeathPart_st
 	{
 		SI08 Chance;
 		SI08 Intensity;
@@ -13,8 +13,8 @@ private:
 		bool Active;
 	};
 
-	weathID		ID;
-	WeathPart	weather[WEATHNUM];
+	[[maybe_unused]] WEATHID	ID;
+	WeathPart_st	weather[WEATHNUM];
 	R32			assortVals[3][3];
 	R32			snowThreshold;
 	R32			light[3];
@@ -130,17 +130,17 @@ public:
 class cWeatherAb
 {
 private:
-	std::vector< CWeather > weather;
-	SI08	IntensityHigh( weathID toCheck, UI08 weathType );
-	void	IntensityHigh( weathID toCheck, UI08 weathType, SI08 value );
-	SI08	IntensityLow( weathID toCheck, UI08 weathType );
-	void	IntensityLow( weathID toCheck, UI08 weathType, SI08 value );
-	SI08	Intensity( weathID toCheck, UI08 weathType );
-	void	Intensity( weathID toCheck, UI08 weathType, SI08 value );
-	SI08	Chance( weathID toCheck, UI08 weathType );
-	void	Chance( weathID toCheck, UI08 weathType, SI08 value );
-	R32		Value( weathID toCheck, UI08 valType, UI08 valOff );
-	void	Value( weathID toCheck, UI08 valType, UI08 valOff, R32 value );
+	std::vector<CWeather> weather;
+	SI08	IntensityHigh( WEATHID toCheck, UI08 weathType );
+	void	IntensityHigh( WEATHID toCheck, UI08 weathType, SI08 value );
+	SI08	IntensityLow( WEATHID toCheck, UI08 weathType );
+	void	IntensityLow( WEATHID toCheck, UI08 weathType, SI08 value );
+	SI08	Intensity( WEATHID toCheck, UI08 weathType );
+	void	Intensity( WEATHID toCheck, UI08 weathType, SI08 value );
+	SI08	Chance( WEATHID toCheck, UI08 weathType );
+	void	Chance( WEATHID toCheck, UI08 weathType, SI08 value );
+	R32		Value( WEATHID toCheck, UI08 valType, UI08 valOff );
+	void	Value( WEATHID toCheck, UI08 valType, UI08 valOff, R32 value );
 
 public:
 	cWeatherAb();
@@ -150,90 +150,91 @@ public:
 	bool	NewHour( void );
 	size_t	Count( void ) const;
 
-	SI08	SnowIntensityHigh( weathID toCheck );
-	SI08	SnowIntensityLow( weathID toCheck );
-	SI08	SnowIntensity( weathID toCheck );
-	SI08	RainIntensityHigh( weathID toCheck );
-	SI08	RainIntensityLow( weathID toCheck );
-	SI08	RainIntensity( weathID toCheck );
-	SI08	HeatIntensityHigh( weathID toCheck );
-	SI08	ColdIntensityHigh( weathID toCheck );
-	SI08	StormIntensityHigh( weathID toCheck );
-	SI08	StormIntensityLow( weathID toCheck );
-	SI08	StormIntensity( weathID toCheck );
-	R32		MaxTemp( weathID toCheck );
-	R32		MinTemp( weathID toCheck );
-	R32		Temp( weathID toCheck );
-	R32		RainTempDrop( weathID toCheck );
-	R32		StormTempDrop( weathID toCheck );
-	R32		MaxWindSpeed( weathID toCheck );
-	R32		MinWindSpeed( weathID toCheck );
-	R32		WindSpeed( weathID toCheck );
-	SI08	RainChance( weathID toCheck );
-	SI08	SnowChance( weathID toCheck );
-	SI08	HeatChance( weathID toCheck );
-	SI08	ColdChance( weathID toCheck );
-	SI08	StormChance( weathID toCheck );
-	R32		LightMin( weathID toCheck );
-	R32		LightMax( weathID toCheck );
-	R32		CurrentLight( weathID toCheck );
-	bool	RainActive( weathID toCheck );
-	bool	SnowActive( weathID toCheck );
-	bool	StormBrewing( weathID toCheck );
-	bool	StormActive( weathID toCheck );
-	bool	HeatActive( weathID toCheck );
-	bool	ColdActive( weathID toCheck );
+	SI08	SnowIntensityHigh( WEATHID toCheck );
+	SI08	SnowIntensityLow( WEATHID toCheck );
+	SI08	SnowIntensity( WEATHID toCheck );
+	SI08	RainIntensityHigh( WEATHID toCheck );
+	SI08	RainIntensityLow( WEATHID toCheck );
+	SI08	RainIntensity( WEATHID toCheck );
+	SI08	HeatIntensityHigh( WEATHID toCheck );
+	SI08	ColdIntensityHigh( WEATHID toCheck );
+	SI08	StormIntensityHigh( WEATHID toCheck );
+	SI08	StormIntensityLow( WEATHID toCheck );
+	SI08	StormIntensity( WEATHID toCheck );
+	R32		MaxTemp( WEATHID toCheck );
+	R32		MinTemp( WEATHID toCheck );
+	R32		Temp( WEATHID toCheck );
+	R32		RainTempDrop( WEATHID toCheck );
+	R32		StormTempDrop( WEATHID toCheck );
+	R32		MaxWindSpeed( WEATHID toCheck );
+	R32		MinWindSpeed( WEATHID toCheck );
+	R32		WindSpeed( WEATHID toCheck );
+	SI08	RainChance( WEATHID toCheck );
+	SI08	SnowChance( WEATHID toCheck );
+	SI08	HeatChance( WEATHID toCheck );
+	SI08	ColdChance( WEATHID toCheck );
+	SI08	StormChance( WEATHID toCheck );
+	R32		LightMin( WEATHID toCheck );
+	R32		LightMax( WEATHID toCheck );
+	R32		CurrentLight( WEATHID toCheck );
+	bool	RainActive( WEATHID toCheck );
+	bool	SnowActive( WEATHID toCheck );
+	bool	StormBrewing( WEATHID toCheck );
+	bool	StormActive( WEATHID toCheck );
+	bool	HeatActive( WEATHID toCheck );
+	bool	ColdActive( WEATHID toCheck );
 
-	R32		SnowThreshold( weathID toCheck );
+	R32		SnowThreshold( WEATHID toCheck );
 
-	void	WindSpeed( weathID toCheck, R32 value );
-	void	MaxWindSpeed( weathID toCheck, R32 value );
-	void	MinWindSpeed( weathID toCheck, R32 value );
-	void	MaxTemp( weathID toCheck, R32 value );
-	void	MinTemp( weathID toCheck, R32 value );
-	void	Temp( weathID toCheck, R32 value );
-	void	RainTempDrop( weathID toCheck, R32 value );
-	void	StormTempDrop( weathID toCheck, R32 value );
-	void	SnowIntensityHigh( weathID toCheck, SI08 value );
-	void	SnowIntensityLow( weathID toCheck, SI08 value );
-	void	SnowIntensity( weathID toCheck, SI08 value );
-	void	RainIntensityHigh( weathID toCheck, SI08 value );
-	void	RainIntensityLow( weathID toCheck, SI08 value );
-	void	RainIntensity( weathID toCheck, SI08 value );
-	void	HeatIntensityHigh( weathID toCheck, SI08 value );
-	void	ColdIntensityHigh( weathID toCheck, SI08 value );
-	void	StormIntensityHigh( weathID toCheck, SI08 value );
-	void	StormIntensityLow( weathID toCheck, SI08 value );
-	void	StormIntensity( weathID toCheck, SI08 value );
-	void	RainChance( weathID toCheck, SI08 value );
-	void	SnowChance( weathID toCheck, SI08 value );
-	void	HeatChance( weathID toCheck, SI08 value );
-	void	ColdChance( weathID toCheck, SI08 value );
-	void	StormChance( weathID toCheck, SI08 value );
-	void	SnowThreshold( weathID toCheck, R32 value );
-	void	LightMin( weathID toCheck, R32 newValue );
-	void	LightMax( weathID toCheck, R32 newValue );
-	void	CurrentLight( weathID toCheck, R32 newValue );
+	void	WindSpeed( WEATHID toCheck, R32 value );
+	void	MaxWindSpeed( WEATHID toCheck, R32 value );
+	void	MinWindSpeed( WEATHID toCheck, R32 value );
+	void	MaxTemp( WEATHID toCheck, R32 value );
+	void	MinTemp( WEATHID toCheck, R32 value );
+	void	Temp( WEATHID toCheck, R32 value );
+	void	RainTempDrop( WEATHID toCheck, R32 value );
+	void	StormTempDrop( WEATHID toCheck, R32 value );
+	void	SnowIntensityHigh( WEATHID toCheck, SI08 value );
+	void	SnowIntensityLow( WEATHID toCheck, SI08 value );
+	void	SnowIntensity( WEATHID toCheck, SI08 value );
+	void	RainIntensityHigh( WEATHID toCheck, SI08 value );
+	void	RainIntensityLow( WEATHID toCheck, SI08 value );
+	void	RainIntensity( WEATHID toCheck, SI08 value );
+	void	HeatIntensityHigh( WEATHID toCheck, SI08 value );
+	void	ColdIntensityHigh( WEATHID toCheck, SI08 value );
+	void	StormIntensityHigh( WEATHID toCheck, SI08 value );
+	void	StormIntensityLow( WEATHID toCheck, SI08 value );
+	void	StormIntensity( WEATHID toCheck, SI08 value );
+	void	RainChance( WEATHID toCheck, SI08 value );
+	void	SnowChance( WEATHID toCheck, SI08 value );
+	void	HeatChance( WEATHID toCheck, SI08 value );
+	void	ColdChance( WEATHID toCheck, SI08 value );
+	void	StormChance( WEATHID toCheck, SI08 value );
+	void	SnowThreshold( WEATHID toCheck, R32 value );
+	void	LightMin( WEATHID toCheck, R32 newValue );
+	void	LightMax( WEATHID toCheck, R32 newValue );
+	void	CurrentLight( WEATHID toCheck, R32 newValue );
 
-	R32		EffectiveMaxTemp( weathID toCheck );
-	R32		EffectiveMinTemp( weathID toCheck );
-	void	EffectiveMaxTemp( weathID toCheck, R32 value );
-	void	EffectiveMinTemp( weathID toCheck, R32 value );
-	void	RainActive( weathID toCheck, bool value );
-	void	SnowActive( weathID toCheck, bool value );
-	void	StormBrewing( weathID toCheck, bool value );
-	void	StormActive( weathID toCheck, bool value );
-	void	HeatActive( weathID toCheck, bool value );
-	void	ColdActive( weathID toCheck, bool value );
+	R32		EffectiveMaxTemp( WEATHID toCheck );
+	R32		EffectiveMinTemp( WEATHID toCheck );
+	void	EffectiveMaxTemp( WEATHID toCheck, R32 value );
+	void	EffectiveMinTemp( WEATHID toCheck, R32 value );
+	void	RainActive( WEATHID toCheck, bool value );
+	void	SnowActive( WEATHID toCheck, bool value );
+	void	StormBrewing( WEATHID toCheck, bool value );
+	void	StormActive( WEATHID toCheck, bool value );
+	void	HeatActive( WEATHID toCheck, bool value );
+	void	ColdActive( WEATHID toCheck, bool value );
 	bool	DoStuff( void );
 	bool	DoPlayerStuff( CSocket *mSock, CChar *p );
-	void	DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp, weathID currval );
+	void	DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp, WEATHID currval );
 	bool	doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType element );
-	bool	doLightEffect( CSocket *mSock, CChar& mChar );
+	bool	DoLightEffect( CSocket *mSock, CChar& mChar );
 	bool	DoNPCStuff( CChar *p );
-	void	SendJSWeather( CChar *mChar, WeatherType weathType, SI08 currentTemp );
+	bool	DoItemStuff( CItem *p );
+	void	SendJSWeather( CBaseObject *mObj, WeatherType weathType, SI08 currentTemp );
 
-	CWeather *Weather( weathID toCheck );
+	CWeather *Weather( WEATHID toCheck );
 };
 
 extern cWeatherAb *Weather;

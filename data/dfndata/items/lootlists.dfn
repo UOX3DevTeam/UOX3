@@ -787,7 +787,7 @@
 }
 
 // Lich Lord - Magic wand or staff
-[LOOTLIST lichLoot]
+[LOOTLIST lichlordLoot]
 {
 50|blank
 50|random_magic_wand_5
@@ -903,4 +903,40 @@
 900|blank
 75|clockwork_assembly
 25|power_crystal
+}
+
+// Savage loot
+[LOOTLIST savageLoot]
+{
+500|savagemask
+400|blank
+100|orcishkinmask
+}
+
+// Savage Warrior (Female) loot
+[LOOTLIST savageWarriorFemaleLoot]
+{
+900|blank
+100|tribalberry
+}
+
+// Savage Warrior (Male) loot
+[LOOTLIST savageWarriorMaleLoot]
+{
+900|blank
+100|0x26AC
+}
+
+// Savage Shaman loot
+[LOOTLIST savageShamanLoot]
+{
+900|blank
+100|tribalberry
+}
+
+// Savage Rider loot
+[LOOTLIST savageRiderLoot]
+{
+900|blank
+100|0x26AC
 }

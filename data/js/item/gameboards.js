@@ -2,7 +2,7 @@
 function onUseChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;
-	if ( pUser.visible == 1 || pUser.visible == 2 )
+	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
 	}
@@ -46,7 +46,7 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 
 function CreateBackgammonPieces( iUsed )
 {
-
+	// TODO
 }
 
 function CreateCheckersPieces( pUser, pSocket, iUsed )
@@ -79,11 +79,17 @@ function CreateBlackCheckersPieces( pUser, pSocket, iUsed )
 		var blackDisc = CreateDFNItem( pSocket, pUser, "0x358b", 1, "ITEM", false );
 		blackDisc.container = iUsed;
 		if( i < 4 )
+		{
 			xOffset = 45;
+		}
 		else if( i < 8 )
+		{
 			xOffset = 70;
+		}
 		else
+		{
 			xOffset = 95;
+		}
 
 		if( i == 0 || i == 8 )
 		{
@@ -99,6 +105,7 @@ function CreateBlackCheckersPieces( pUser, pSocket, iUsed )
 		blackDisc.x = xOffset;
 		blackDisc.y = yOffset + ( j * 50 );
 		blackDisc.SetTag( "team", 1 );
+		blackDisc.newbie = true;
 		j++
 	}
 }
@@ -112,11 +119,17 @@ function CreateWhiteCheckersPieces( pUser, pSocket, iUsed )
 		var whiteDisc = CreateDFNItem( pSocket, pUser, "0x3584", 1, "ITEM", false );
 		whiteDisc.container = iUsed;
 		if( i < 4 )
+		{
 			xOffset = 170;
+		}
 		else if( i < 8 )
+		{
 			xOffset = 195;
+		}
 		else
+		{
 			xOffset = 220;
+		}
 
 		if( i == 0 || i == 8 )
 		{
@@ -132,6 +145,7 @@ function CreateWhiteCheckersPieces( pUser, pSocket, iUsed )
 		whiteDisc.x = xOffset;
 		whiteDisc.y = yOffset + ( j * 50 );
 		whiteDisc.SetTag( "team", 2 );
+		whiteDisc.newbie = true;
 		j++
 	}
 }
@@ -165,6 +179,7 @@ function CreateBlackChessPieces( pUser, pSocket, iUsed )
 		blackPawn.x = 68;
 		blackPawn.y = ( 25 * i ) + 15;
 		blackPawn.SetTag( "team", 2 );
+		blackPawn.newbie = true;
 	}
 
 	// Create Rooks
@@ -178,6 +193,7 @@ function CreateBlackChessPieces( pUser, pSocket, iUsed )
 	blackRook.x = 42;
 	blackRook.y = 180;
 	blackRook.SetTag( "team", 2 );
+	blackRook.newbie = true;
 
 	// Create Knights
 	var blackKnight = CreateDFNItem( pSocket, pUser, "0x358f", 1, "ITEM", false );
@@ -190,6 +206,7 @@ function CreateBlackChessPieces( pUser, pSocket, iUsed )
 	blackKnight.x = 42;
 	blackKnight.y = 157;
 	blackKnight.SetTag( "team", 2 );
+	blackKnight.newbie = true;
 
 	// Create Bishops
 	var blackBishop = CreateDFNItem( pSocket, pUser, "0x358c", 1, "ITEM", false );
@@ -202,6 +219,7 @@ function CreateBlackChessPieces( pUser, pSocket, iUsed )
 	blackBishop.x = 43;
 	blackBishop.y = 132;
 	blackBishop.SetTag( "team", 2 );
+	blackBishop.newbie = true;
 
 	// Create Queen
 	var blackQueen = CreateDFNItem( pSocket, pUser, "0x3591", 1, "ITEM", false );
@@ -209,6 +227,7 @@ function CreateBlackChessPieces( pUser, pSocket, iUsed )
 	blackQueen.x = 42;
 	blackQueen.y = 105;
 	blackQueen.SetTag( "team", 2 );
+	blackQueen.newbie = true;
 
 	// Create King
 	var blackKing = CreateDFNItem( pSocket, pUser, "0x358e", 1, "ITEM", false );
@@ -216,6 +235,7 @@ function CreateBlackChessPieces( pUser, pSocket, iUsed )
 	blackKing.x = 42;
 	blackKing.y = 80;
 	blackKing.SetTag( "team", 2 );
+	blackKing.newbie = true;
 }
 
 function CreateWhiteChessPieces( pUser, pSocket, iUsed )
@@ -229,6 +249,7 @@ function CreateWhiteChessPieces( pUser, pSocket, iUsed )
 		whitePawn.x = 193;
 		whitePawn.y = ( 25 * i ) + 15;
 		whitePawn.SetTag( "team", 1 );
+		whitePawn.newbie = true;
 	}
 
 	// Create Rooks
@@ -242,6 +263,7 @@ function CreateWhiteChessPieces( pUser, pSocket, iUsed )
 	whiteRook.x = 217;
 	whiteRook.y = 180;
 	whiteRook.SetTag( "team", 1 );
+	whiteRook.newbie = true;
 
 	// Create Knights
 	var whiteKnight = CreateDFNItem( pSocket, pUser, "0x3588", 1, "ITEM", false );
@@ -254,6 +276,7 @@ function CreateWhiteChessPieces( pUser, pSocket, iUsed )
 	whiteKnight.x = 217;
 	whiteKnight.y = 157;
 	whiteKnight.SetTag( "team", 1 );
+	whiteKnight.newbie = true;
 
 	// Create Bishops
 	var whiteBishop = CreateDFNItem( pSocket, pUser, "0x3585", 1, "ITEM", false );
@@ -266,6 +289,7 @@ function CreateWhiteChessPieces( pUser, pSocket, iUsed )
 	whiteBishop.x = 218;
 	whiteBishop.y = 132;
 	whiteBishop.SetTag( "team", 1 );
+	whiteBishop.newbie = true;
 
 	// Create Queen
 	var whiteQueen = CreateDFNItem( pSocket, pUser, "0x358a", 1, "ITEM", false );
@@ -273,6 +297,7 @@ function CreateWhiteChessPieces( pUser, pSocket, iUsed )
 	whiteQueen.x = 217;
 	whiteQueen.y = 105;
 	whiteQueen.SetTag( "team", 1 );
+	whiteQueen.newbie = true;
 
 	// Create King
 	var whiteKing = CreateDFNItem( pSocket, pUser, "0x3587", 1, "ITEM", false );
@@ -280,5 +305,6 @@ function CreateWhiteChessPieces( pUser, pSocket, iUsed )
 	whiteKing.x = 217;
 	whiteKing.y = 80;
 	whiteKing.SetTag( "team", 1 );
+	whiteKing.newbie = true;
 }
 

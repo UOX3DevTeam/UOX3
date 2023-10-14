@@ -40,25 +40,39 @@ function onUseChecked( pUser, iUsed )
 	}
 
 	// Numberify the value for target world defined on moonstone
-	var targetWorld = parseInt( iUsed.GetTag( "TargetWorld" ) );
+	var targetWorld = parseInt( iUsed.GetTag( "TargetWorld" ));
 	
 	// Check for generic failure reasons, generate failure messages
 	var itemContainer = iUsed.container;
 	var failureMsg = "";
 	if( itemContainer == null ) //|| itemContainer.serial != pUser.pack.serial )
+	{
 		failureMsg = "This must be in your backpack before it can be used.";
+	}
 	else if( pUser.region.isGuarded )
+	{
 		failureMsg = "You cannot bury the stone in a guarded area.";
+	}
 	else if( pUser.isonhorse )
+	{
 		failureMsg = "You cannot bury a stone while you sit on a mount.";
+	}
 	else if( pUser.criminal )
+	{
 		failureMsg = "The magic of the stone cannot be envoked by the lawless.";
+	}
 	else if( pUser.murderer )
+	{
 		failureMsg = "The magic of the stone cannot be envoked by someone with blood on their hands.";
+	}
 	else if( targetWorld == 0 && pUser.worldnumber != 1 )
+	{
 		failureMsg = "You must be in Trammel to use this.";
+	}
 	else if( targetWorld == 1 && pUser.worldnumber != 0 )
+	{
 		failureMsg = "You must be in Felucca to use this.";
+	}
 
 	// Change color of moonstone depending on moon phase
 	// Which moon? Need JS function/method to read moon phases! How?
@@ -150,6 +164,7 @@ function onTimer( iUsed, timerID )
 		// If the player has picked up the item since it was settled in the ground, don't do anything
 		if( iUsed.morex == 0 )
 			return;
+
 		var pUser = iUsed.tempObj;
 		// Change moonstone gfx to moongate gfx, and enable decayable status
 		iUsed.id = 0x0f6c;
@@ -197,15 +212,16 @@ function onCollide( trgSock, srcChar, trgItem )
 		var tempVal = trgItem.GetTag( "TargetWorld" );
 		var worldVal = parseInt( tempVal );
 
-		// Teleport character's pets to target world and location
-		var petList = srcChar.GetPetList();
-		for( var i = 0; i < petList.length; i++ )
+		// Teleport character's followers to target world and location
+		var followerList = srcChar.GetFollowerList();
+		for( var i = 0; i < followerList.length; i++ )
 		{
-			var tempPet = petList[i];
-			if( ValidateObject( tempPet ) && tempPet.InRange( srcChar, 12 ))
+			var tempFollower = followerList[i];
+			// Only teleport pets if set to follow and within range
+			if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( pChar, 24 ))
 			{
-				tempPet.Teleport( trgItem.x , trgItem.y, trgItem.z, worldVal );
-				tempPet.Follow( srcChar );
+				tempFollower.Teleport( trgItem.x , trgItem.y, trgItem.z, worldVal );
+				tempFollower.Follow( srcChar );
 			}
 		}
 
@@ -217,9 +233,13 @@ function onCollide( trgSock, srcChar, trgItem )
 function onPickup( iPickedUp, pGrabber )
 {
 	if( iPickedUp.id == 0x0f6c )
+	{
 		return 0; //Bounce the item!
+	}
 	else if( iPickedUp.morex == 1 && iPickedUp.owner == pGrabber )
+	{
 		iPickedUp.morex = 0; //Reset the moonstone so it doesn't turn into a moongate
+	}
 	else if( iPickedUp.owner && pGrabber != iPickedUp.owner )
 	{
 		pGrabber.SysMessage( "I don't think so! Only the owner may pick this up." );
@@ -233,10 +253,12 @@ function CanUseGate( srcSock, pUser )
 	{
 		// Disallow moongate travel for players flagged as criminals
 		if( srcSock )
+		{
 			srcSock.SysMessage( GetDictionaryEntry( 9112, srcSock.language )); // Thou'rt a criminal and cannot escape so easily.
+		}
 		return false;
 	}
-	else if( pUser.atWar && pUser.attackFirst)
+	else if( pUser.IsAggressor() )
 	{
 		// Disallow moongate travel for players flagged as aggressors
 		var pTarget = pUser.target;
@@ -245,7 +267,9 @@ function CanUseGate( srcSock, pUser )
 			if( !pTarget.npc && !pTarget.dead && pTarget.online && !pTarget.criminal && !pTarget.murderer )
 			{
 				if( srcSock )
+				{
 					srcSock.SysMessage( GetDictionaryEntry( 9113, srcSock.language )); // Wouldst thou flee during the heat of battle??
+				}
 				return false;
 			}
 		}
@@ -258,7 +282,9 @@ function CanUseGate( srcSock, pUser )
 			if( pUser.isCasting )
 			{
 				if( srcSock )
+				{
 					srcSock.SysMessage( GetDictionaryEntry( 9114, srcSock.language )); // You are too busy to do that at the moment.
+				}
 				return false;
 			}
 		}

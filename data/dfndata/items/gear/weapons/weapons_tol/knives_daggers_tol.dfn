@@ -1,0 +1,95 @@
+// Weapon Stats matching up with Time of Legends expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Cleaver - ToL stats
+[0x0ec2_tol]
+{
+get=base_cleaver
+weight=200
+value=15 7
+damage=10 14
+hp=31 50
+spd=55
+str=10
+}
+
+// Skinning Knife - ToL stats
+[0x0ec4_tol]
+{
+get=base_skinning_knife
+weight=100
+value=14 7
+damage=10 13
+hp=31 40
+spd=61
+str=5
+}
+
+// Dagger - ToL stats
+[0x0f51_tol]
+{
+get=base_dagger
+weight=100
+value=21 10
+damage=10 12
+hp=31 40
+spd=68
+str=10
+}
+
+// Butcher Knife - ToL stats
+[0x13f6_tol]
+{
+get=base_butcher_knife
+weight=100
+value=14 7
+damage=10 13
+hp=31 40
+spd=61
+str=5
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+// Leafblade - ToL stats
+[0x2d22_tol]
+{
+get=base_leafblade
+damage=11 15
+hp=30 60
+spd=50
+str=20
+value=32 16
+weight=800
+}
+
+// Assassin Spike - ToL stats
+[0x2d21_tol]
+{
+get=base_assassin_spike
+damage=10 12
+hp=30 60
+spd=68
+str=15
+value=32 16
+weight=400
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Gargish Dagger - ToL stats
+[0x0902_tol]
+{
+get=base_gargish_dagger
+damage=10 12
+hp=31 40
+spd=68
+str=10
+value=20 10
+weight=100
+}

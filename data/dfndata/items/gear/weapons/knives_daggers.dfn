@@ -1,22 +1,26 @@
 // KNIVES AND DAGGERS
 
-// Cleaver - E/W
-[0x0ec2]
+// ORIGINAL UO
+// Cleaver - Base item
+[base_cleaver]
 {
 get=base_item
 name=cleaver
 id=0x0ec2
-weight=100
-value=24 12
-damage=2 13
-layer=1
-hp=31 50
-spd=40
-str=10
-restock=10
 decay=1
 good=25
+layer=1
 movable=1
+restock=10
+}
+
+// Cleaver - E/W
+[0x0ec2]
+{
+getlbr=0x0ec2_lbr
+getaos=0x0ec2_aos
+gettol=0x0ec2_tol
+sectionid=0x0ec2
 }
 
 // Cleaver - N/S
@@ -32,23 +36,26 @@ id=0x0ec3
 get=0x0ec2 0x0ec3
 }
 
-// Skinning Knife - N/S
-[0x0ec4]
+// Skinning Knife - Base item
+[base_skinning_knife]
 {
 get=base_item
 name=skinning knife
 id=0x0ec4
-weight=100
-value=26 13
-damage=1 10
-layer=1
-hp=31 40
-spd=40
-str=5
-restock=10
 decay=1
 good=25
+layer=1
 movable=1
+restock=10
+}
+
+// Skinning Knife - N/S
+[0x0ec4]
+{
+getlbr=0x0ec4_lbr
+getaos=0x0ec4_aos
+gettol=0x0ec4_tol
+sectionid=0x0ec4
 }
 
 // Skinning Knife - E/W
@@ -64,23 +71,26 @@ id=0x0ec5
 get=0x0ec4 0x0ec5
 }
 
-// Dagger - N/S
-[0x0f51]
+// Dagger - Base item
+[base_dagger]
 {
 get=base_item
 name=dagger
 id=0x0f51
-weight=100
-value=33 21
-damage=3 15
-layer=1
-hp=31 50
-spd=55
-str=1
-restock=10
 decay=1
 good=25
+layer=1
 movable=1
+restock=10
+}
+
+// Dagger - N/S
+[0x0f51]
+{
+getlbr=0x0f51_lbr
+getaos=0x0f51_aos
+gettol=0x0f51_tol
+sectionid=0x0f51
 }
 
 // Dagger - E/W
@@ -96,23 +106,26 @@ id=0x0f52
 get=0x0f51 0x0f52
 }
 
-// Butcher Knife - N/S
-[0x13f6]
+// Butcher Knife - Base item
+[base_butcher_knife]
 {
 get=base_item
 name=butcher knife
 id=0x13f6
-weight=100
-value=21 10
-damage=2 14
-layer=1
-hp=31 40
-spd=40
-str=5
-restock=10
 decay=1
 good=25
+layer=1
 movable=1
+restock=10
+}
+
+// Butcher Knife - N/S
+[0x13f6]
+{
+getlbr=0x13f6_lbr
+getaos=0x13f6_aos
+gettol=0x13f6_tol
+sectionid=0x13f6
 }
 
 // Butcher Knife - E/W
@@ -128,24 +141,30 @@ id=0x13f7
 get=0x13f6 0x13f7
 }
 
-// MONDAIN'S LEGACY - Stats balanced for Pub15
-// Leafblade - N/S
-[0x2d22]
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+// Leafblade - Base weapon
+[base_leafblade]
 {
 get=base_item
 name=leafblade
 id=0x2d22
-weight=600
-value=27 14
-damage=4 27
-layer=1
-hp=30 65
-spd=40
-str=5
-restock=10
 decay=1
 good=25
+layer=1
 movable=1
+origin=ml
+restock=10
+}
+
+// Leafblade - N/S
+[0x2d22]
+{
+getlbr=0x2d22_lbr
+getaos=0x2d22_aos
+gettol=0x2d22_tol
+sectionid=0x2d22
 }
 
 // Leafblade - E/W
@@ -161,23 +180,27 @@ id=0x2d2e
 get=0x2d22 0x2d2e
 }
 
-// Assassin Spike - N/S
-[0x2d21]
+// Assassin Spike - Base weapon
+[base_assassin_spike]
 {
 get=base_item
 name=assassin spike
 id=0x2d21
-weight=300
-value=27 14
-damage=3 15
-layer=1
-hp=30 65
-spd=55
-str=5
-restock=10
 decay=1
 good=25
+layer=1
 movable=1
+origin=ml
+restock=10
+}
+
+// Assassin Spike - N/S
+[0x2d21]
+{
+getlbr=0x2d21_lbr
+getaos=0x2d21_aos
+gettol=0x2d21_tol
+sectionid=0x2d21
 }
 
 // Assassin Spike - E/W
@@ -193,24 +216,30 @@ id=0x2d2d
 get=0x2d21 0x2d2d
 }
 
-// STYGIAN ABYSS - Stats balanced for Pub15
-// Gargish Dagger - N/S
-[0x0902]
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Gargish Dagger - Base weapon
+[base_gargish_dagger]
 {
 get=base_item
 name=gargish dagger
 id=0x0902
-weight=100
-value=33 21
-damage=3 15
-layer=1
-hp=31 50
-spd=55
-str=1
-restock=10
 decay=1
 good=22
+layer=1
 movable=1
+origin=sa
+restock=10
+}
+
+// Gargish Dagger - N/S
+[0x0902]
+{
+getlbr=0x0902_lbr
+getaos=0x0902_aos
+gettol=0x0902_tol
+sectionid=0x0902
 }
 
 // Gargish Dagger - E/W
