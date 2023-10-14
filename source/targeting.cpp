@@ -1870,6 +1870,22 @@ void MakeStatusTarget( CSocket *sock )
 
 	DismountCreature( targetChar );
 
+	auto bodyType = targetChar->GetBodyType();
+	if( bodyType == BT_HUMAN || bodyType == BT_ELF || bodyType == BT_GARGOYLE )
+	{
+		// Safekeep character's original body, skin color, hair/beard/horns
+		TAGMAPOBJECT customTag;
+
+		// BodyID,Color
+		std::string customTagName = "playerBody";
+		std::string customTagStringValue = oldstrutil::format( "%d,%d", targetChar->GetId(), targetChar->GetSkin() );
+ 		customTag.m_Destroy		= false;
+		customTag.m_StringValue	= customTagStringValue;
+		customTag.m_IntValue	= 0;
+		customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
+		targetChar->SetTag( customTagName, customTag );
+	}
+
 	if( targLevel->targBody != 0 )
 	{
 		targetChar->SetId( targLevel->targBody );
@@ -1928,9 +1944,34 @@ void MakeStatusTarget( CSocket *sock )
 				switch( z->GetLayer() )
 				{
 					case IL_HAIR:
+						if( targLevel->stripOff.test( BIT_STRIPHAIR ))
+						{
+							// HairID,Color
+							TAGMAPOBJECT customTag;
+							std::string customTagName = "playerHair";
+							std::string customTagStringValue = oldstrutil::format( "%d,%d", z->GetId(), z->GetColour() );
+							customTag.m_Destroy		= false;
+							customTag.m_StringValue	= customTagStringValue;
+							customTag.m_IntValue	= 0;
+							customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
+							targetChar->SetTag( customTagName, customTag );
+
+							z->Delete();
+						}
+						break;
 					case IL_FACIALHAIR:
 						if( targLevel->stripOff.test( BIT_STRIPHAIR ))
 						{
+							// facialHairId,Color
+							TAGMAPOBJECT customTag;
+							std::string customTagName = "playerBeard";
+							std::string customTagStringValue = oldstrutil::format( "%d,%d", z->GetId(), z->GetColour() );
+							customTag.m_Destroy		= false;
+							customTag.m_StringValue	= customTagStringValue;
+							customTag.m_IntValue	= 0;
+							customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
+							targetChar->SetTag( customTagName, customTag );
+
 							z->Delete();
 						}
 						break;
@@ -1970,6 +2011,73 @@ void MakeStatusTarget( CSocket *sock )
 			}
 		}
 	}
+
+	// Restore player to their original self, if they now have a "human" body again
+	auto newBodyId = targetChar->GetId();
+	if( newBodyId == 0x0190 )
+	{
+		// Restore player's original body and skin color
+		TAGMAPOBJECT playerBodySkin = targetChar->GetTag( "playerBody" );
+		if( playerBodySkin.m_StringValue != "" )
+		{
+			auto csecs = oldstrutil::sections( playerBodySkin.m_StringValue, "," );
+			if( csecs.size() > 1 )
+			{
+				UI16 restoredBody = oldstrutil::value<UI16>( csecs[0] );
+				UI16 restoredSkin = oldstrutil::value<UI16>( csecs[1] );
+
+				targetChar->SetId( restoredBody );
+				targetChar->SetOrgId( restoredBody );
+				targetChar->SetSkin( restoredSkin );
+				targetChar->SetOrgSkin( restoredSkin );
+			}
+		}
+
+		// Restore player's original hair
+		TAGMAPOBJECT playerHair = targetChar->GetTag( "playerHair" );
+		if( playerHair.m_StringValue != "" )
+		{
+			auto csecs = oldstrutil::sections( playerHair.m_StringValue, "," );
+			if( csecs.size() > 1 )
+			{
+				UI16 restoredHairId = oldstrutil::value<UI16>( csecs[0] );
+				UI16 restoredHairColor = oldstrutil::value<UI16>( csecs[1] );
+
+				auto restoredHair = Items->CreateItem( sock, targetChar, restoredHairId, 1, restoredHairColor, OT_ITEM );
+				if( restoredHair != nullptr )
+				{
+					restoredHair->SetDecayable( false );
+					restoredHair->SetLayer( IL_HAIR );
+					restoredHair->SetCont( targetChar );
+					targetChar->SetHairStyle( restoredHairId );
+					targetChar->SetHairColour( restoredHairColor );
+				}
+			}
+		}
+
+		// Restore player's original beard
+		TAGMAPOBJECT playerBeard = targetChar->GetTag( "playerBeard" );
+		if( playerBeard.m_StringValue != "" )
+		{
+			auto csecs = oldstrutil::sections( playerBeard.m_StringValue, "," );
+			if( csecs.size() > 1 )
+			{
+				UI16 restoredBeardId = oldstrutil::value<UI16>( csecs[0] );
+				UI16 restoredBeardColor = oldstrutil::value<UI16>( csecs[1] );
+
+				auto restoredBeard = Items->CreateItem( sock, targetChar, restoredBeardId, 1, restoredBeardColor, OT_ITEM );
+				if( restoredBeard != nullptr )
+				{
+					restoredBeard->SetDecayable( false );
+					restoredBeard->SetLayer( IL_FACIALHAIR );
+					restoredBeard->SetCont( targetChar );
+					targetChar->SetBeardStyle( restoredBeardId );
+					targetChar->SetBeardColour( restoredBeardColor );
+				}
+			}
+		}
+	}
+
 	targetChar->Teleport();
 }
 

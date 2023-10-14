@@ -2550,6 +2550,10 @@
 2790=Tempo jogado (Char): %s
 2791=Tempo jogado (Acct): %s
 2792=*parece exausto*
+2793=Valor: %i
+2794=para %i ouro
+2795=Vocês procuram algumas pedras preciosas nos destroços.
+2796=* Your body convulses from electric shock *
 // [2800-2999] House script
 2800=Possuidor da casa:
 2801=CO-PROPRIETÁRIOS
@@ -2785,7 +2789,7 @@
 3162=um elemento de veneno
 3163=um elemento de neve
 3164=um vórtice energético
-3165=um malvado wisp
+3165=uma sombra bruxuleante
 3166=um elemento de ouro
 3167=um urso castanho
 3168=um demónio-sombra
@@ -3243,6 +3247,17 @@
 5145=um cortador orc
 5146=o controlador
 5147=o Cabeleireiro
+5148=uma mecha escura
+5149=o Carrasco
+5150=um escorpião salpicado
+5151=um dragão do caos
+5152=um dragão do caos de elite
+5153=a Donzela Cigana
+5154=o Cigano Treinador de Animais
+5155=o Cigano Banqueiro
+5156=A Cigana Adivinhadora
+5157=O Vagabundo
+5158=O Trabalhador de Ferro
 // [6000-6499] Misc Skill Msgs
 6000=Que a pessoa parece %s e %t.
 6001=Não se pode fazer nada de útil com isso.
@@ -3971,6 +3986,8 @@
 8942=Seleccionar localização para teletransportar para:
 8943=Seleccionar localização do alvo para o item [%s]:
 8944=Não parece ser um NPC-id válido das DFNs.
+8945=Selecionar o alvo para o estado móvel %i:
+8946=Selecionar alvo a definir como não deteriorável:
 // [9000-9500] Misc
 9000=Não se pode usar esta capacidade enquanto estiver congelado.
 9001=Não é permitido voar com este carácter!

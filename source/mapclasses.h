@@ -51,13 +51,15 @@ enum TileFlags
 	TF_STAIRRIGHT,			// "ClimbableBit2"
 
 	// Following flags were added in HS expansion? Purpose unknown
-	TF_ALPHABLEND,
-	TF_USENEWART,
-	TF_ARTUSED,
-	TF_NOSHADOW,
-	TF_PIXELBLEED,
-	TF_PLAYANIMONCE,
-	TF_MULTIMOVABLE,
+	TF_ALPHABLEND,			// Blend Alphas, tile blending
+	TF_USENEWART,			// Uses new art style?
+	TF_ARTUSED,				// Is art being used?
+	TF_BIT36,				// Unknown/Unused
+	TF_NOSHADOW,			// Disallow shadow on this tile, lightsource? lava?
+	TF_PIXELBLEED,			// Let pixels bleed in to other tiles? Is this Disabling Texture Clamp?
+	TF_PLAYANIMONCE,		// Play tile animation once.
+	TF_BIT40,				// Unknown/Unused
+	TF_MULTIMOVABLE,		// Movable multi? Cool ships and vehicles etc?
 	TF_COUNT
 };
 

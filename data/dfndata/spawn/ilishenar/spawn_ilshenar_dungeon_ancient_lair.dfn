@@ -1,0 +1,111 @@
+// 17300 to 17349
+[REGIONSPAWN 17300]
+{
+NAME=Ancient Lair 1_1
+NPC=ancientwyrm
+MAXNPCS=1
+X1=31
+Y1=673
+X2=84
+Y2=720
+WORLD=2
+MINTIME=10
+MAXTIME=20
+CALL=1
+}
+
+// lavalizard > fireele
+[REGIONSPAWN 17301]
+{
+NAME=Ancient Lair 1_2
+NPCLIST=ancientlair_npclist_1
+MAXNPCS=3
+X1=100
+Y1=708
+X2=123
+Y2=727
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// lavalizard > fireele
+[REGIONSPAWN 17302]
+{
+NAME=Ancient Lair 1_3
+NPCLIST=ancientlair_npclist_1
+MAXNPCS=1
+X1=31
+Y1=673
+X2=63
+Y2=699
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// lavalizard > fireele
+[REGIONSPAWN 17303]
+{
+NAME=Ancient Lair 1_4
+NPCLIST=ancientlair_npclist_1
+MAXNPCS=1
+X1=48
+Y1=708
+X2=64
+Y2=727
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// lavalizard > fireele
+[REGIONSPAWN 17304]
+{
+NAME=Ancient Lair 1_5
+NPCLIST=ancientlair_npclist_1
+MAXNPCS=4
+X1=67
+Y1=703
+X2=96
+Y2=730
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// lavalizard > fireele
+[REGIONSPAWN 17305]
+{
+NAME=Ancient Lair 1_6
+NPCLIST=ancientlair_npclist_1
+MAXNPCS=1
+X1=69
+Y1=682
+X2=88
+Y2=697
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// lavalizard > fireele
+[REGIONSPAWN 17306]
+{
+NAME=Ancient Lair 1_7
+NPCLIST=ancientlair_npclist_1
+MAXNPCS=3
+X1=73
+Y1=683
+X2=83
+Y2=693
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}

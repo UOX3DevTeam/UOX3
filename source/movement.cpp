@@ -3059,6 +3059,11 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 //o------------------------------------------------------------------------------------------------o
 bool CMovement::CalcMove( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir)
 {
+	if( x < 0 || x > 7144 || y < 0 || y > 4096 )
+	{
+		Console.Warning( oldstrutil::format( "NPC (%s) from Spawn Region %i trying to walk in invalid area of map at %i %i %i!", c->GetName().c_str(), c->GetSpawn(), x, y, z ));
+		return false;
+	}
 	// NPCs that walk on land
 	if( !cwmWorldState->creatures[c->GetId()].IsWater() )
 	{

@@ -2237,10 +2237,10 @@ MARK=1
 GATE=1
 RECALL=1
 DUNGEON=1
-X1=2082
+X1=2085
 Y1=5
-X2=2149
-Y2=325
+X2=2245
+Y2=320
 WORLD=2
 }
 
@@ -2263,7 +2263,7 @@ WORLD=2
 
 [REGION 100]
 {
-NAME=Sorcer Dungeon
+NAME=Sorcerers Dungeon
 GUARDED=0
 MUSICLIST=23
 MAGICDAMAGE=1
@@ -2767,6 +2767,7 @@ X2=1463
 Y2=847
 }
 
+// Dagger Isle/Ice Island (Felucca)
 [REGION 129]
 {
 GUARDED=0
@@ -2899,6 +2900,7 @@ Y2=878
 WORLD=1
 }
 
+// Dagger Isle/Ice Island (Trammel)
 [REGION 137]
 {
 GUARDED=0
@@ -3020,6 +3022,84 @@ Y1=3925
 X2=2496
 Y2=3936
 WORLD=1
+}
+
+// Sea Market (Felucca)
+[REGION 144]
+{
+DISABLED=1
+NAME=Sea Market
+GUARDED=1
+RECALL=1
+X1=4497
+Y1=2265
+X2=4606
+Y2=2440
+}
+
+// Sea Market (Trammel)
+[REGION 145]
+{
+DISABLED=1
+NAME=Sea Market
+GUARDED=1
+RECALL=1
+X1=4497
+Y1=2265
+X2=4606
+Y2=2440
+WORLD=1
+}
+
+// Blackthorn Dungeon (Felucca)
+[REGION 146]
+{
+NAME=Blackthorn Dungeon
+GUARDED=0
+MUSICLIST=23
+MAGICDAMAGE=1
+MARK=0
+GATE=0
+RECALL=0
+DUNGEON=1
+X1=6151
+Y1=2301
+X2=6564
+Y2=2840
+WORLD=0
+}
+
+// Blackthorn Dungeon (Trammel)
+[REGION 147]
+{
+NAME=Blackthorn Dungeon
+GUARDED=0
+MUSICLIST=23
+MAGICDAMAGE=1
+MARK=0
+GATE=0
+RECALL=0
+DUNGEON=1
+X1=6151
+Y1=2301
+X2=6564
+Y2=2840
+WORLD=1
+}
+
+// Lakeshire (Ilshenar)
+[REGION 160]
+{
+NAME=Lakeshire
+GUARDED=0
+MAGICDAMAGE=1
+MARK=1
+RECALL=1
+X1=1170
+Y1=1087
+X2=1242
+Y2=1204
+WORLD=2
 }
 
 // Eodon (Felucca path)

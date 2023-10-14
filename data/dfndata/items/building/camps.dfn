@@ -1,0 +1,43 @@
+[ilsh_healer_camp]
+{
+get=base_item
+name=healer camp
+id=0x13ab
+morex=0x1f4
+movable=2
+visible=2
+script=5500
+}
+
+[ilsh_orc_camp]
+{
+get=base_item
+name=orc camp
+id=0x13ab
+morex=0x1f6d
+movable=2
+visible=2
+script=5501
+}
+
+[ilsh_banker_camp]
+{
+get=base_item
+name=banker camp
+id=0x13ab
+morex=0x1f6
+movable=2
+visible=2
+script=5502
+}
+
+[ilsh_mage_camp]
+{
+get=base_item
+name=mage camp
+id=0x13ab
+morex=0x1f5
+movable=2
+visible=2
+script=5503
+}

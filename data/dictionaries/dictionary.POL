@@ -2550,6 +2550,10 @@
 2790=Czas gry (Char): %s
 2791=Czas gry (konto): %s
 2792=*wygląda na wyczerpanego*
+2793=Wartość: %i
+2794=Za %i złota
+2795=Zgarniasz trochę klejnotów z wraku.
+2796=* Twoje ciało drży od porażenia prądem *.
 // [2800-2999] Skrypt domu
 2800=Właściciel domu:
 2801=WŁAŚCICIELE
@@ -2785,7 +2789,7 @@
 3162=pierwiastek trucizny
 3163=pierwiastek śniegu
 3164=wir energetyczny
-3165=czarodziej zła
+3165=smuga cienia
 3166=elemental złota
 3167=niedźwiedź brunatny
 3168=czarodziej cienia
@@ -3243,6 +3247,17 @@
 5145=orkowy tasak
 5146=kontroler
 5147=Stylista Fryzur
+5148=mroczna smuga
+5149=egzekutor
+5150=plamisty skorpion
+5151=dragoń chaosu
+5152= elitarny smok chaosu
+5153=cygańska dziewica
+5154=cygański treser zwierząt
+5155=cygański bankier
+5156=cygański wróżbita
+5157=Włóczęga
+5158=Żelazny robotnik
 // [6000-6499] Różne umiejętności Msgs
 6000=Ta osoba wygląda na %s i %t.
 6001=Nie możesz zrobić z tego nic użytecznego.
@@ -3971,6 +3986,8 @@
 8942=Wybierz lokalizację, do której chcesz się teleportować:
 8943=Wybierz lokalizację docelową dla [%s]:
 8944=To nie wydaje się być prawidłowym NPC-id z DFNs.
+8945=Wybierz cel dla ruchomego statusu %i:
+8946=Wybierz cel do ustawienia jako nierozkładalny:
 // [9000-9500] Różne
 9000=Nie możesz użyć tej umiejętności będąc zamrożonym.
 9001=Ta postać nie może latać!

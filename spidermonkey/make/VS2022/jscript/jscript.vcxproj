@@ -180,7 +180,6 @@
     <ClCompile Include="..\..\..\jsatom.c" />
     <ClCompile Include="..\..\..\jsbool.c" />
     <ClCompile Include="..\..\..\jscntxt.c" />
-    <ClCompile Include="..\..\..\jscpucfg.c" />
     <ClCompile Include="..\..\..\jsdate.c" />
     <ClCompile Include="..\..\..\jsdbgapi.c" />
     <ClCompile Include="..\..\..\jsdhash.c" />
@@ -194,7 +193,6 @@
     <ClCompile Include="..\..\..\jsinterp.c" />
     <ClCompile Include="..\..\..\jsinvoke.c" />
     <ClCompile Include="..\..\..\jsiter.c" />
-    <ClCompile Include="..\..\..\jskwgen.c" />
     <ClCompile Include="..\..\..\jslock.c" />
     <ClCompile Include="..\..\..\jslog2.c" />
     <ClCompile Include="..\..\..\jslong.c" />

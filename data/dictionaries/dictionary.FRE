@@ -2714,6 +2714,10 @@
 2790=Temps joué (Char) : %s
 2791=Temps joué (Acct) : %s
 2792=*paraît épuisé*
+2793=Valeur : %i
+2794=pour %i d'or
+2795=Vous récupérez quelques pierres précieuses dans les décombres.
+2796=* Votre corps convulse sous l'effet du choc électrique *
 // [2800-2999] House script
 2800=Propriétaire de la maison :
 2801=CO-PARENTS
@@ -2949,7 +2953,7 @@
 3162=un élémentaire de poison
 3163=un élémentaire de neige
 3164=un tourbillon d'énergie
-3165=un feu follet maléfique
+3165=un spectre d'ombre
 3166=un élémentaire or
 3167=un ours brun
 3168=un démon de l'ombre
@@ -3407,6 +3411,17 @@
 5145=un hachoir orc
 5146=le contrôleur
 5147=le Coiffeur
+5148=un feu follet sombre
+5149=le Bourreau
+5150=un scorpion tacheté
+5151=un dragon du chaos
+5152=un dragon du chaos élite
+5153=la jeune fille gitane
+5154=le dresseur d'animaux gitan
+5155=le banquier gitan
+5156=la diseuse de bonne aventure gitane
+5157=le Vagabond
+5158=Le travailleur du fer
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.
@@ -4135,6 +4150,8 @@
 8942=Sélectionner l'emplacement où se téléporter :
 8943=Sélectionnez l'emplacement cible pour le [%s] :
 8944=Cela ne semble pas être un identifiant de PNJ valide dans les DFNs.
+8945=Sélectionner la cible pour le statut mobile %i :
+8946=Sélectionner la cible à définir comme non destructible :
 // [9000-9500] Misc
 9000=Vous ne pouvez pas utiliser cette capacité lorsque vous êtes gelé.
 9001=Ce personnage n'est pas autorisé à voler !

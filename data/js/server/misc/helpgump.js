@@ -869,3 +869,5 @@ const safeChaosShrineLocations = [
 		[674, 4013, -43] // No Chaos shrines, so just teleport player to a remote area on the map
 	]
 ];
+
+function _restorecontext_() {}

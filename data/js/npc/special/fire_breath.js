@@ -104,58 +104,67 @@ function GetFireBreathInfo( mNPC )
 	var fireBreathFXColor = 0;
 	var fireBreathSFX = 0;
 	// Get details of dragon breath based on the NPC in question
-	switch( mNPC.id )
+	switch( mNPC.sectionID )
 	{
-		case 0x0096: // Sea Serpent, 11 to 17 dmg at max health
-		case 0x0091: // Deep Sea Serpent, 21 to 32 dmg at max health
+		case "seaserpent": // Sea Serpent, 11 to 17 dmg at max health
+		case "deepseaserpent": // Deep Sea Serpent, 21 to 32 dmg at max health
 			fireBreathActionID = 0x5;
 			fireBreathFrameCount = 15;
 			fireBreathSFX = 0x16a;
 			break;
-		case 0x00c9: // Hell Cat, 5 to 8 dmg at max health
-		case 0x00be: // Fire Steed, 6 to 9 dmg at max health
-		case 0x0061: // Hell Hounds, 8 to 11 dmg at max health
-		case 0x00CE: // Lava Lizard, 8 to 11 dmg at max health
-		case 0x007f: // Predator Hell Cat, 9 to 14 dmg at max health
-		case 0x031a: // Swamp Dragon, 15 to 22 dmg at max health
-		case 0x031f: // Armored Swamp Dragon, 15 to 22 dmg at max health
-		case 0x0082: // Fire Gargoyle, 20 to 30 dmg at max health
-		case 0x0074: // Nightmare, 26 to 39 dmg at max health
-		case 0x00b1: // Nightmare, 26 to 39 dmg at max health
-		case 0x00b2: // Nightmare, 26 to 39 dmg at max health
-		case 0x00b3: // Nightmare, 26 to 39 dmg at max health
-		case 0x0072: // Dark Steed, 26 to 39 dmg at max health
-		case 0x0075: // Silver Steed, 26 to 39 dmg at max health
-		case 0x0114: // Reptalon, 51 to 77 dmg at max health
+		case "hellcat": // Hell Cat, 5 to 8 dmg at max health
+		case "firesteed": // Fire Steed, 6 to 9 dmg at max health
+		case "hellhound": // Hell Hound, 8 to 11 dmg at max health
+		case "lavalizard": // Lava Lizard, 8 to 11 dmg at max health
+		case "largehellcat": // Predator Hell Cat, 9 to 14 dmg at max health
+		case "swampdragon": // Swamp Dragon, 15 to 22 dmg at max health
+		case "armoredswampdragon": // Armored Swamp Dragon, 15 to 22 dmg at max health
+		case "firegargoyle": // Fire Gargoyle, 20 to 30 dmg at max health
+		case "nightmare": // Nightmare, 26 to 39 dmg at max health
+		case "darknightmare": // Nightmare, 26 to 39 dmg at max health
+		case "manenightmare": // Nightmare, 26 to 39 dmg at max health
+		case "purenightmare": // Nightmare, 26 to 39 dmg at max health
+		case "darksteed": // Dark Steed, 26 to 39 dmg at max health
+		case "silversteed": // Silver Steed, 26 to 39 dmg at max health
+		case "reptalon": // Reptalon, 51 to 77 dmg at max health
 			fireBreathActionID = 0x5;
 			fireBreathFrameCount = 5;
 			fireBreathFrameDelay = 2;
 			fireBreathSFX = 0x357;
 			break;
-		case 0x0067: // Serpentine Dragon, 22 to 32 dmg at max health
-		case 0x004d: // Kraken, 39 to 59 dmg at max health
+		case "serpentinedragon": // Serpentine Dragon, 22 to 32 dmg at max health
+		case "kraken": // Kraken, 39 to 59 dmg at max health
 			fireBreathActionID = 0x5;
 			fireBreathFrameCount = 4;
 			fireBreathFrameDelay = 3;
 			fireBreathSFX = 0x16a;
 			break;
-		case 0x003c: // Drake (Gray), 22 to 32 dmg at max health
-		case 0x003d: // Drake (Red), 22 to 32 dmg at max health
-		case 0x003b: // Dragon (Red), 41 to 62 dmg at max health
-		case 0x000c: // Dragon (Gray), 41 to 62 dmg at max health
-		case 0x006a: // Shadow Wyrm, 50 to 75 dmg at max health
-		case 0x0069: // Ancient Wyrm, 60 to 90 dmg at max health
+		case "graydrake": // Drake (Gray), 22 to 32 dmg at max health
+		case "reddrake": // Drake (Red), 22 to 32 dmg at max health
+		case "reddragon": // Dragon (Red), 41 to 62 dmg at max health
+		case "graydragon": // Dragon (Gray), 41 to 62 dmg at max health
+		case "shadowwyrm": // Shadow Wyrm, 50 to 75 dmg at max health
+		case "ancientwyrm": // Ancient Wyrm, 60 to 90 dmg at max health
 			fireBreathActionID = 0x0c;
 			fireBreathFrameCount = 15;
 			fireBreathSFX = 0x16a;
 			break;
-		case 0x0068: // Skeletal Dragon, 52 to 77 dmg at max health
+		case "skeletaldragon": // Skeletal Dragon, 52 to 77 dmg at max health
 			fireBreathFX = 0x36D4;
 			fireBreathFXColor = 0x047f;
 			fireBreathSFX = 0x16a;
 			fireBreathActionID = 0x5;
 			fireBreathFrameCount = 4;
 			fireBreathFrameDelay = 3;
+			break;
+		case "chaosdragoon": // mounted on armored swamp dragon
+		case "chaosdragoonelite": // mounted on armored swamp dragon
+		case "m_chaosdragoon": // mounted on armored swamp dragon
+		case "m_chaosdragoonelite": // mounted on armored swamp dragon
+		case "f_chaosdragoon": // mounted on armored swamp dragon
+		case "f_chaosdragoonelite": // mounted on armored swamp dragon
+			fireBreathSFX = 0x357;
+			fireBreathActionID = 0x1B;
 			break;
 	}
 

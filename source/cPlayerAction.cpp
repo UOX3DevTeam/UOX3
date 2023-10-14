@@ -220,6 +220,7 @@ bool CPIGetItem::Handle( void )
 		if( ourChar->IsFrozen() )
 		{
 			ourChar->SetFrozen( false );
+			ourChar->Dirty( UT_UPDATE );
 		}
 	}
 
@@ -803,6 +804,7 @@ bool CPIEquipItem::Handle( void )
 		if( ourChar->IsFrozen() )
 		{
 			ourChar->SetFrozen( false );
+			ourChar->Dirty( UT_UPDATE );
 		}
 	}
 

@@ -148,6 +148,7 @@
 3215=npc/ai/summon/blade_spirit.js
 3216=npc/ai/summon/energy_vortex.js
 3217=npc/ai/guildmaster.js
+3218=npc/ai/monster/chaos_dragoon.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -253,6 +254,7 @@
 5033=item/sextant.js
 5034=item/iron_maiden.js
 5035=item/gate_opener.js
+5036=item/power_generator.js
 5037=item/tribal_paint.js
 5038=item/tribal_spear.js
 5039=item/taxidermykit.js
@@ -263,6 +265,16 @@
 5044=item/consumables/special_loot_consumables.js
 5045=item/consumables/gem_of_salvation.js
 5046=item/corpse.js
+5047=item/consumables/new_player_ticket.js
+5048=item/teleport_item.js
+
+//-------------------------------------------
+// Camps [5500-5599]
+//-------------------------------------------
+5500=item/camps/ilsh_healer_camp.js
+5501=item/camps/ilsh_orc_camp.js
+5502=item/camps/ilsh_banker_camp.js
+5503=item/camps/ilsh_mage_camp.js
 
 //-------------------------------------------
 // Magic Related Scripts [6000-6500]

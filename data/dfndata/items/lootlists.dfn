@@ -787,7 +787,7 @@
 }
 
 // Lich Lord - Magic wand or staff
-[LOOTLIST lichLoot]
+[LOOTLIST lichlordLoot]
 {
 50|blank
 50|random_magic_wand_5

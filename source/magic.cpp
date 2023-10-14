@@ -1386,13 +1386,13 @@ bool splMindBlast( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	//Damage should not exceed 60% of target maxHp
 	if( spellDamage > ( target->GetMaxHP() * 0.6 ))
 	{
-		spellDamage = static_cast<SI16>( RoundNumber( target->GetMaxHP() * 0.6 ));
+		spellDamage = static_cast<SI16>( std::round( target->GetMaxHP() * 0.6 ));
 	}
 
 	//Damage should not exceed basedamage from DFN + 20%
-	if( spellDamage > baseDamage * 1.20 )
+	if( spellDamage > static_cast<SI16>( static_cast<R64>( baseDamage ) * 1.20 ))
 	{
-		spellDamage = baseDamage * 1.20;
+		spellDamage = static_cast<SI16>( static_cast<R64>( baseDamage ) * 1.20 );
 	}
 
 	Effects->TempEffect( src, target, 32, spellDamage, 0, 0 );
@@ -2267,8 +2267,8 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, [[maybe_unused
 		return;
 	}
 
-	if( target->IsNpc() && target == caster )
-		return; // Don't let NPC hit themselves with damaging spell
+	if( target == caster )
+		return; // Don't let caster hit themselves with damaging spell
 
 	if( target->IsNpc() && caster->IsNpc() )
 	{
@@ -2294,6 +2294,12 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, [[maybe_unused
 			default:
 				break;
 		}
+	}
+
+	// Turn caster criminal if applicable
+	if( WillResultInCriminal( caster, target ) && !caster->IsGM() && !caster->IsCounselor() )
+	{
+		MakeCriminal( caster );
 	}
 
 	SI32 distx	= abs( target->GetX() - caster->GetX() );
@@ -2365,7 +2371,6 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, [[maybe_unused
 //o------------------------------------------------------------------------------------------------o
 bool splEarthquake( CSocket *sock, CChar *caster, SI08 curSpell )
 {
-	MakeCriminal( caster );
 	if( sock != nullptr )
 	{
 		sock->SetWord( 11, caster->GetX() );
@@ -3469,7 +3474,7 @@ SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 spellDamage, bool sp
 	// If spell was resisted, halve damage
 	if( spellResisted )
 	{
-		spellDamage = static_cast<SI16>( RoundNumber( spellDamage / 2 ));
+		spellDamage = static_cast<SI16>( std::round( spellDamage / 2 ));
 	}
 
 	// Add damage bonus/penalty based on attacker's EVALINT vs defender's MAGICRESISTANCE
@@ -3477,26 +3482,26 @@ SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 spellDamage, bool sp
 	UI16 targetResist = target->GetSkill( MAGICRESISTANCE ) / 10;
 	if( targetResist > casterEval )
 	{
-		spellDamage *= ((( casterEval - targetResist ) / 200.0f ) + 1 );
+		spellDamage *= ( static_cast<SI16>((( casterEval - targetResist ) / 200.0f )) + 1 );
 	}
 	else
 	{
-		spellDamage *= ((( casterEval - targetResist ) / 500.0f ) + 1 );
+		spellDamage *= ( static_cast<SI16>((( casterEval - targetResist ) / 500.0f )) + 1 );
 	}
 
 	// Randomize some more to get broader min/max damage values
 	SI32 i = RandomNum( 0, 4 );
 	if( i <= 2 )
 	{
-		spellDamage = RoundNumber( RandomNum( static_cast<SI16>( HalfRandomNum( spellDamage ) / 2 ), spellDamage ));
+		spellDamage = std::round( RandomNum( static_cast<SI16>( HalfRandomNum( spellDamage ) / 2 ), spellDamage ));
 	}
 	else if( i == 3 )
 	{
-		spellDamage = RoundNumber( HalfRandomNum( spellDamage ));
+		spellDamage = std::round( HalfRandomNum( spellDamage ));
 	}
 	else //keep current spellDamage
 	{
-		spellDamage = RoundNumber( spellDamage );
+		spellDamage = std::round( spellDamage );
 	}
 
 	return spellDamage;
@@ -3517,9 +3522,10 @@ void CMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType el
 
 	CSocket *mSock = p->GetSocket();
 
-	if( p->IsFrozen() && p->GetDexterity() > 0 )
+	if( p->IsFrozen() && p->GetDexterity() > 0 && !p->IsCasting() )
 	{
 		p->SetFrozen( false );
+		p->Dirty( UT_UPDATE );
 		if( mSock != nullptr )
 		{
 			mSock->SysMessage( 700 ); // You are no longer frozen.
@@ -3552,6 +3558,7 @@ void CMagic::PoisonDamage( CChar *p, SI32 poison )
 	if( p->IsFrozen() )
 	{
 		p->SetFrozen( false );
+		p->Dirty( UT_UPDATE );
 		CSocket *s = p->GetSocket();
 		if( s != nullptr )
 		{
