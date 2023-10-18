@@ -553,7 +553,7 @@ npcList( false ), itemList( false ), npcListData( "" ), itemListData( "" )
 //|	Purpose		-	Default constructor, initializing all variables
 //|						and grabbing a section from the file passed in
 //o------------------------------------------------------------------------------------------------o
-CScriptSection::CScriptSection( std::ifstream& input, DEFINITIONCATEGORIES d ) :
+CScriptSection::CScriptSection( std::istream& input, DEFINITIONCATEGORIES d ) :
 dfnCat( d ), npcList( false ), itemList( false ), npcListData( "" ), itemListData( "" )
 {
 	data.resize( 0 );
@@ -868,7 +868,7 @@ UI32 itemIndexHolder = 0;
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates section data from the input stream passed in
 //o------------------------------------------------------------------------------------------------o
-auto CScriptSection::CreateSection( std::ifstream& input ) -> void
+auto CScriptSection::CreateSection( std::istream& input ) -> void
 {
 	char line[2048];
 	std::string sLine;

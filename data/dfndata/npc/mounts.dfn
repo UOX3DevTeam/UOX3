@@ -600,6 +600,7 @@ ORIGIN=aos
 GET=horse
 NAME=#//a swamp dragon
 ID=0x031a
+SKIN=0x851
 LOOT=randomgems,5
 FAME=2000
 KARMA=-2000

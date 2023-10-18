@@ -108,7 +108,7 @@ public:
 
 	void		SetGuildFaction( GuildType newFaction );
 	void		SetGuildRelation( GUILDID otherGuild, GUILDRELATION toSet );
-	void		Save( std::ofstream &toSave, GUILDID gNum );
+	void		Save( std::ostream &toSave, GUILDID gNum );
 	void		Load( CScriptSection *toRead );
 
 	GUILDREL *	GuildRelationList();	// NOTE: This is aimed ONLY at menu stuff

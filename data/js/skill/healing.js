@@ -382,7 +382,7 @@ function onTimer( mChar, timerID )
 					}
 					break;
 				case 1:	// Cure Poison
-					if( mChar.CheckSkill( skillNum, 600, 1000 ) && mChar.CheckSkill( 1, 600, 1000 ))
+					if( mChar.CheckSkill( skillNum, 600, 1000 ) && (( skillNum == 17 && mChar.CheckSkill( 1, 600, 1000 )) || ( skillNum == 39 && mChar.CheckSkill( 2, 600, 1000 ))))
 					{
 						ourObj.SetPoisoned( 0, 0 );
 						ourObj.StaticEffect( 0x373A, 0, 15 );
@@ -407,9 +407,6 @@ function onTimer( mChar, timerID )
 					}
 					else if( mChar.CheckSkill( skillNum, 0, healthLoss * 10 )) // Requires higher and higher amount of health lost in order for healer to gain skill
 					{
-						// Perform generic Anatomy skill check to allow skill increase
-						mChar.CheckSkill( 1, 0, 1000 );
-
 						// Increase karma when healing innocent/neutral characters
 						if( ourObj != mChar && ( ourObj.innocent || ourObj.neutral ))
 						{
@@ -418,13 +415,22 @@ function onTimer( mChar, timerID )
 
 						// Are we healing using the Healing skill, or using the Veterinary skill?
 						var healSkill;
-						if( skillNum == 17 )
+						var secondarySkill;
+						if( skillNum == 17 ) // Healing
 						{
 							healSkill = mChar.skills.healing;
+							secondarySkill = mChar.skills.anatomy;
+
+							// Perform generic Anatomy skill check to allow skill increase
+							mChar.CheckSkill( 1, 0, 1000 );
 						}
-						else if( skillNum == 39 )
+						else if( skillNum == 39 ) // Veterinary
 						{
 							healSkill = mChar.skills.veterinary;
+							secondarySkill = mChar.skills.animallore;
+
+							// Perform generic Animal Lore skill check to allow skill increase
+							mChar.CheckSkill( 2, 0, 1000 );
 						}
 
 						// Retrieve amount of times character's hands slipped during healing
@@ -438,16 +444,16 @@ function onTimer( mChar, timerID )
 						}
 						else
 						{
-							// Minimum amount healed = Anatomy/5 + Healing/5 + 3  Maximum amount healed = Anatomy/5 + Healing/2 + 10
-							var minValue = Math.round(( mChar.skills.anatomy / 50 ) + ( healSkill / 50 ) + 3 );
-							var maxValue = Math.round(( mChar.skills.anatomy / 50 ) + ( healSkill / 20 ) + 10 );
+							// Minimum amount healed = Anatomy(or Animal Lore)/5 + Healing/5 + 3  Maximum amount healed = Anatomy(or Animal Lore)/5 + Healing/2 + 10
+							var minValue = Math.round(( secondarySkill / 50 ) + ( healSkill / 50 ) + 3 );
+							var maxValue = Math.round(( secondarySkill / 50 ) + ( healSkill / 20 ) + 10 );
 							var healAmt = RandomNumber( minValue, maxValue );
 
 							// Reduce the amount healed with each slip caused by damage taken while healing
 							for( var i = 0; i < slipCount; i++ )
 							{
 								// Reduce health by a percentage (35%) modified by healer's Healing skills and Dexterity for each slip up
-								healAmt -= Math.round( healAmt * ( 0.35 - (( Math.round( healSkill / 10 ) + ourObj.dexterity ) / 750 )));
+								healAmt -= Math.round( healAmt * ( 0.35 - (( Math.round( healSkill / 10 ) + mChar.dexterity ) / 750 )));
 
 								// Example: Healing reduction per slip, based a 35% percentage reduction, adjusted by 100.0 Healing and 100 Dexterity
 								// 80 > 74 > 68 > 63 > 58

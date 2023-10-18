@@ -511,95 +511,125 @@ auto AddNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 		auto tag = sec->tag;
 		auto data = sec->data;
 		data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-		if( !data.empty() )
+		if( data.empty() )
+			continue;
+			
+		std::string nItemSection;
+		UI16 itemHue = 0;
+		UI16 nAmount = 1;
+		SI08 nNewbie = -1;
+		auto UTag = oldstrutil::upper( tag );
+		if( UTag == "PACKITEM" )
 		{
-			auto UTag = oldstrutil::upper( tag );
-			if( UTag == "PACKITEM" )
+			auto csecs = oldstrutil::sections( data, "," );
+			if( csecs.size() >= 1 )
 			{
-				auto csecs = oldstrutil::sections( data, "," );
-				if( csecs.size() > 1 )
+				// Fetch item section
+				nItemSection = oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ) );
+
+				if( csecs.size() >= 2 )
 				{
-					UI16 nAmount = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
-					n = Items->CreateScriptItem( socket, c, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nAmount, OT_ITEM, true );
-				}
-				else
-				{
-					n = Items->CreateScriptItem( socket, c, data.c_str(), 1, OT_ITEM, true );
+					// Fetch amount override
+					nAmount = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+
+					if( csecs.size() == 3 )
+					{
+						// Fetch newbie flag override
+						nNewbie = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+					}
 				}
 			}
-			else if( UTag == "EQUIPITEM" )
+			else
 			{
-				UI16 itemHue = 0;
-				std::string itemSection;
-				auto csecs = oldstrutil::sections( data, "," );
-				if( csecs.size() > 1 )
+				// No data found!
+				Console.Error( "No valid data found for PACKITEM tag in newbie.dfn!" );
+				continue;
+			}
+		}
+		else if( UTag == "EQUIPITEM" )
+		{
+			auto csecs = oldstrutil::sections( data, "," );
+			if( csecs.size() >= 1 )
+			{
+				// Fetch item section
+				nItemSection = oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ));
+
+				if( csecs.size() >= 2 )
 				{
-					itemSection = oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ));
+					// Fetch item hue
 					itemHue = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+
+					if( csecs.size() >= 3 )
+					{
+						// Fetch newbie flag override
+						nNewbie = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" ) ), nullptr, 0 ) );
+					}
+				}
+			}
+			else
+			{
+				// No data found!
+				Console.Error( "No valid data found for EQUIPITEM tag in newbie.dfn!" );
+				continue;
+			}
+		}
+		n = Items->CreateScriptItem( socket, c, nItemSection.c_str(), nAmount, OT_ITEM, true, itemHue );
+		if( n != nullptr && n->GetLayer() != IL_NONE )
+		{
+			bool conflictItem = true;
+			CItem *j = c->GetItemAtLayer( n->GetLayer() );
+			if( !ValidateObject( j ))
+			{
+				if( n->GetLayer() == IL_RIGHTHAND )
+				{
+					j = c->GetItemAtLayer( IL_LEFTHAND );
+				}
+				else if( n->GetLayer() == IL_LEFTHAND )
+				{
+					j = c->GetItemAtLayer( IL_RIGHTHAND );
+				}
+
+				// GetDir-check is to allow for torches and lanterns,
+				// which use left-hand layer but are not 2-handers or shields
+				if( ValidateObject( j ) && !n->IsShieldType() && ( n->GetDir() == 0 ))
+				{
+					if( j->IsShieldType() || j->GetDir() != 0 )
+					{
+						conflictItem = false;
+					}
 				}
 				else
 				{
-					itemSection = data;
-				}
-
-				n = Items->CreateScriptItem( socket, c, itemSection.c_str(), 1, OT_ITEM, true, itemHue );
-				if( n != nullptr && n->GetLayer() != IL_NONE )
-				{
-					bool conflictItem = true;
-					CItem *j = c->GetItemAtLayer( n->GetLayer() );
-					if( !ValidateObject( j ))
-					{
-						if( n->GetLayer() == IL_RIGHTHAND )
-						{
-							j = c->GetItemAtLayer( IL_LEFTHAND );
-						}
-						else if( n->GetLayer() == IL_LEFTHAND )
-						{
-							j = c->GetItemAtLayer( IL_RIGHTHAND );
-						}
-
-						// GetDir-check is to allow for torches and lanterns,
-						// which use left-hand layer but are not 2-handers or shields
-						if( ValidateObject( j ) && !n->IsShieldType() && ( n->GetDir() == 0 ))
-						{
-							if( j->IsShieldType() || j->GetDir() != 0 )
-							{
-								conflictItem = false;
-							}
-						}
-						else
-						{
-							conflictItem = false;
-						}
-					}
-					if( conflictItem )
-					{
-						n->SetCont( c->GetPackItem() );
-					}
-					else
-					{
-						n->SetCont( c );
-					}
-
-					//Apply the choosen colour
-					if(( n->GetLayer() == IL_PANTS || n->GetLayer() == IL_OUTERLEGGINGS ) && pantsColour != 0 )
-					{
-						n->SetColour( pantsColour );
-						n->SetDye( true );
-					}
-
-					if(( n->GetLayer() == IL_INNERSHIRT || n->GetLayer() == IL_ROBE ) && shirtColour != 0 )
-					{
-						n->SetColour( shirtColour );
-						n->SetDye( true );
-					}
+					conflictItem = false;
 				}
 			}
-			if( n != nullptr && !n->IsPileable() )
+			if( conflictItem )
 			{
-				// Set item as newbiefied/blessed by default - as long as it's not pileable!
-				n->SetNewbie( true );
+				n->SetCont( c->GetPackItem() );
 			}
+			else
+			{
+				n->SetCont( c );
+			}
+
+			//Apply the choosen colour
+			if(( n->GetLayer() == IL_PANTS || n->GetLayer() == IL_OUTERLEGGINGS ) && pantsColour != 0 )
+			{
+				n->SetColour( pantsColour );
+				n->SetDye( true );
+			}
+
+			if(( n->GetLayer() == IL_INNERSHIRT || n->GetLayer() == IL_ROBE ) && shirtColour != 0 )
+			{
+				n->SetColour( shirtColour );
+				n->SetDye( true );
+			}
+		}
+
+		if( n != nullptr && !n->IsPileable() && nNewbie != -1 )
+		{
+			// Use newbie override flag to determine newbie status of item
+			n->SetNewbie( nNewbie );
 		}
 	}
 }

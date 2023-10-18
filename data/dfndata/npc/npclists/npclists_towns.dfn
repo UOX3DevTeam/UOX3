@@ -472,4 +472,53 @@ m_thief_guildmaster
 f_thief_guildmaster
 }
 
+[NPCLIST lakeshire_npclist_1]
+{
+40|meerwarrior
+40|meermage
+20|meercaptain
+10|meereternal
+}
+
+[NPCLIST lakeshire_npclist_2]
+{
+40|timberwolf
+10|direwolf
+}
+
+[NPCLIST mistas_npclist_1]
+{
+50|jukalord
+30|chaosdragon
+20|jukawarrior
+20|jukamage
+20|chaosdragonelite
+5|golem
+5|golemcontroller
+}
+
+[NPCLIST montor_npclist_1]
+{
+40|lavaserpent
+30|lavalizard
+30|hellhound
+20|succubus
+15|fireele
+15|efreet
+7|phoenix
+5|daemon
+}
+
+[NPCLIST montor_npclist_2]
+{
+30|earthele
+10|drake
+}
+
+[NPCLIST montor_npclist_3]
+{
+30|stoneharpy
+10|stonegargoyle
+}
+
 EOF

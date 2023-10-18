@@ -2298,7 +2298,7 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 		damage = std::min( damage, static_cast<R32>( baseDamage * 4 ));
 	}
 
-	return static_cast<SI16>( RoundNumber( damage ));
+	return static_cast<SI16>( std::round( damage ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2636,7 +2636,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 		}
 		case POISON:		//	POISON Damage
 			damageModifier = ( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType ) / 100 );
-			damage = static_cast<SI16>( RoundNumber(( static_cast<R32>( baseDamage ) - ( static_cast<R32>( baseDamage ) * damageModifier ))));
+			damage = static_cast<SI16>( std::round(( static_cast<R32>( baseDamage ) - ( static_cast<R32>( baseDamage ) * damageModifier ))));
 			break;
 		default:			//	Elemental damage
 			getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType ));
@@ -2648,7 +2648,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 		damage -= static_cast<R32>(( static_cast<R32>( getDef ) * static_cast<R32>( attSkill )) / 750 );
 	}
 
-	return static_cast<SI16>( RoundNumber( damage ));
+	return static_cast<SI16>( std::round( damage ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2848,7 +2848,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			case ER_TD: // TD - Third Dawn
 			case ER_LBR: // LBR - Lord Blackthorn's Revenge (Publish 15)
 				// FORMULA: ( Attacker's skill + 50 / ((defender's skill + 50 )* 2 )) * 100
-				hitChance = ((( static_cast<R32>( attackSkill ) + 500.0 ) / (( static_cast<R32>( defendSkill ) + 500.0 ) * 2.0 )) * 100.0 );
+				hitChance = static_cast<R32>((( static_cast<R64>( attackSkill ) + 500.0 ) / (( static_cast<R64>( defendSkill ) + 500.0 ) * 2.0 )) * 100.0 );
 				if( hitChance < 0 )
 				{
 					hitChance = 0;
@@ -3001,6 +3001,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					{
 						ourTarg->StopSpell();
 						ourTarg->SetFrozen( false );
+						ourTarg->Dirty( UT_UPDATE );
 						targSock->SysMessage( 306 ); // Your concentration has been broken.
 					}
 				}

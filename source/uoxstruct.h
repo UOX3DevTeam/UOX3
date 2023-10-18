@@ -278,7 +278,7 @@ inline R32 Point3_st::MagSquared( void ) const
 
 inline void Point3_st::Normalize( void )
 {
-	R32 foo = 1 / Mag3D();
+	R32 foo = static_cast<R32>( 1 / Mag3D() );
 	x *= foo;
 	y *= foo;
 	z *= foo;

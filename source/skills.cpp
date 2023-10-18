@@ -507,7 +507,7 @@ UI16 CSkills::CalculatePetControlChance( CChar *mChar, CChar *Npc )
 	// Finally, apply a 15% penalty to chance for friends of the pet trying to control
 	if( Npcs->CheckPetFriend( mChar, Npc ))
 	{
-		totalChance -= ( totalChance * 0.15 );
+		totalChance -= static_cast<SI16>( totalChance * 0.15 );
 	}
 
 	// Clamp lower chance to 20% and upper chance to 99%

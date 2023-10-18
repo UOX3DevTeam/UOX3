@@ -2550,6 +2550,10 @@
 2790=Gespielte Zeit (Char): %s
 2791=Gespielte Zeit (Acct): %s
 2792=*sieht erschöpft aus*
+2793=Wert: %i
+2794=für %i Gold
+2795=Du schnappst dir ein paar Edelsteine aus den Trümmern.
+2796=* Dein Körper verkrampft sich durch den Stromschlag *
 // [2800-2999] House script
 2800=Hauseigentümer:
 2801=HAUSBESITZER
@@ -2785,7 +2789,7 @@
 3162=ein Gift-Elementar
 3163=ein Schnee-Elementar
 3164=ein Energiewirbel
-3165=ein böses Irrlicht
+3165=ein Schattengespenst
 3166=ein Gold-Elementar
 3167=ein Braunbär
 3168=ein Schattenteufel
@@ -3243,6 +3247,17 @@
 5145=ein Ork-Häcksler
 5146=der Kontrolleur
 5147=die Friseurin
+5148=ein Irrlicht
+5149=der Scharfrichter
+5150=ein gesprenkelter Skorpion
+5151=ein Chaos-Dragoner
+5152=Elite der Chaosdrachen
+5153=das Zigeunermädchen
+5154=der Zigeuner-Tiertrainer
+5155=der Zigeuner-Bankier
+5156=die Zigeuner-Wahrsagerin
+5157=der Vagabund
+5158=der Eisenarbeiter
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.
@@ -3971,6 +3986,8 @@
 8942=Zielort für Teleport auswählen:
 8943=Zielort für den [%s] auswählen:
 8944=Das scheint keine gültige NPC-ID aus den DFNs zu sein.
+8945=Ziel für beweglichen Status auswählen %i:
+8946=Ziel wählen, das als nicht verfallbar eingestuft werden soll:
 // [9000-9500] Misc
 9000=Diese Fähigkeit kann nicht verwendet werden, wenn sie eingefroren ist.
 9001=Diesem Charakter ist es nicht erlaubt, zu fliegen!

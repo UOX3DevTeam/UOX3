@@ -477,7 +477,7 @@ auto MultiCollection::ProcessData( bool isHS, int index, std::vector<std::uint8_
 		else
 		{
 			auto flag = std::uint32_t( 0 );
-			std::copy( data.data() + ( entry * size ) + 4, data.data() + ( entry * size ) + 8 + 4, reinterpret_cast<std::uint8_t*>( &flag ));
+			std::copy( data.data() + ( entry * size ) + 4, data.data() + ( entry * size ) + 4 + 4, reinterpret_cast<std::uint8_t*>( &flag ));
 			item.flag = static_cast<std::uint16_t>( flag );
 		}
 		if( first )

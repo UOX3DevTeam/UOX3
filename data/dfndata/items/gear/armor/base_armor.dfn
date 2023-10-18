@@ -1,6 +1,6 @@
 // Ringmail
 
-Ringmail Gloves - Base item with shared DFN tags
+// Ringmail Gloves - Base item with shared DFN tags
 [base_ring_gloves]
 {
 get=base_item

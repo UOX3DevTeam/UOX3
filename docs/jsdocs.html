@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 28. June, 2023</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6-RC6</small></p>
+	<p style="margin:0"><small>Last Updated: 14. October, 2023</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -55,6 +55,12 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>October 14th, 2023</h4>
+						<ul>
+							<li>Added details for new JS Function: DoesCharacterBlock</li>
+							<li>Added details for new JS Methods: GetOrePref, AddAggressorFlag, RemoveAggressorFlag, CheckAggressorFlag, UpdateAggressorFlagTimestamp, IsAggressor, ClearAggressorFlags, AddPermaGreyFlag, RemovePermaGreyFlag, CheckPermaGreyFlag, UpdatePermaGreyFlagTimestamp, IsPermaGrey, ClearPermaGreyFlags</li>
+							<li>Added details for new JS Properties: totalPlayTime, playTime</li>
+						</ul>
 						<h4>July 1st, 2023</h4>
 						<ul>
 							<li>Updated details for JS Event: onNameRequest</li>
@@ -4729,7 +4735,7 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>The custom script run for each Character found can return true or false to allow AreaCharacterFunction to return a value indicating how many characters were found (if all return true) or how many were altered in some way (if function only returns true when altering a character)</p>
+									<p>The custom script run for each Character found can return true or false to allow AreaCharacterFunction to return a value indicating how many characters were found (if all return true) or how many were altered in some way (if function only returns true when altering a character). socket parameter can be null.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -4787,6 +4793,25 @@ function myAreaFunc( srcChar, trgChar, pSock )
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">var targetChar = CalcTargetedChar( socket );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_char_DoesCharacterBlock"/>
+							<label for="spoiler_function_char_DoesCharacterBlock">DoesCharacterBlock <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool DoesCharacterBlock( x, y, z, worldNum, instanceID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns true if any character exists at given coordinate, within z +/- 4</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var isBlocked = DoesCharacterBlock( targX, targY, targZ, pUser.worldnumber, pUser.instanceID );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -7259,15 +7284,15 @@ if( GetRaceSkillAdjustment( myRace.id, 32 ) > 10 )
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>MakeItem( socket, player, itemNum );</em></p>
+									<p><em>MakeItem( socket, player, itemNum[, hueNum]);</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Player makes the item itemNum. itemNum points to a create.dfn (SECTION ITEM itemNum) entry. Socket can be -1</p>
+									<p>Player makes the item itemNum. itemNum points to a create.dfn (SECTION ITEM itemNum) entry. The hueNum is optional</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">MakeItem( socket, player, 1 );</code></pre>
+									<pre><code class="language-javascript">MakeItem( socket, player, 1, 0x45 );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -8409,6 +8434,25 @@ myChar.UpdateStats( 2 );</code></pre>
 					<div class="text-component">
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_AddAggressorFlag"/>
+							<label for="spoiler_method_char_AddAggressorFlag">AddAggressorFlag <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void AddAggressorFlag( otherChar )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Adds aggressor flag for character towards target character</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">pUser.AddAggressorFlag( otherChar );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_char_AddFriend"/>
 							<label for="spoiler_method_char_AddFriend">AddFriend <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -8423,6 +8467,25 @@ myChar.UpdateStats( 2 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">myPet.AddFriend( pChar );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_AddPermaGreyFlag"/>
+							<label for="spoiler_method_char_AddPermaGreyFlag">AddPermaGreyFlag <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void AddPermaGreyFlag( otherChar )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Adds permagrey flag for character towards target character</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">pUser.AddPermaGreyFlag( otherChar );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -8574,6 +8637,50 @@ myNPC.CastSpell( 30, true );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_CheckAggressorFlag"/>
+							<label for="spoiler_method_char_CheckAggressorFlag">CheckAggressorFlag <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void CheckAggressorFlag( otherChar )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Check if character has an aggressor flag towards target character</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">if( pUser.CheckAggressorFlag( otherChar ))
+{
+	// ... do something
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_CheckPermaGreyFlag"/>
+							<label for="spoiler_method_char_CheckPermaGreyFlag">CheckPermaGreyFlag <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void CheckPermaGreyFlag( otherChar )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Check if character has an active permagrey flag towards target character</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">if( pUser.CheckPermaGreyFlag( otherChar ))
+{
+	// ... do something
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_char_checkSkill"/>
 							<label for="spoiler_method_char_checkSkill">CheckSkill <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -8597,6 +8704,44 @@ if( myChar.CheckSkill( 1, 200, 1000 ))
 {
 	...
 }</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_ClearAggressorFlags"/>
+							<label for="spoiler_method_char_ClearAggressorFlags">ClearAggressorFlags <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void ClearAggressorFlags()</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Clears all the character's aggressor flags towards other characters</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">pUser.ClearAggressorFlags();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_ClearPermaGreyFlags"/>
+							<label for="spoiler_method_char_ClearPermaGreyFlags">ClearPermaGreyFlags <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void ClearPermaGreyFlags()</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Clears all the character's aggressor flags towards other characters</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">pUser.ClearPermaGreyFlags();</code></pre>
 								</div>
 							</div>
 						</div>
@@ -9088,7 +9233,9 @@ Timer.SUMMONTIME	// Time until a summoned NPC will vanish
 Timer.EVADETIME		// Time until an NPC will exit evade state
 Timer.LOYALTYTIME 	// Time until next time pet loyalty drops
 Timer.IDLEANIMTIME 	// Time until next time character plays idle animation
-Timer.LOGOUT 		// Time it takes for a player char to vanish after logout</code></pre></p>
+Timer.LOGOUT 		// Time it takes for a player char to vanish after logout
+Timer.YOUNGHEAL 	// Time until next time Young player can be healed by NPC healer
+Timer.YOUNGMESSAGE 	// Time until next time Young player is warned about dangerous looking monsters in overworld</code></pre></p>
 										<p>See also: GetTimer()/SetTimer() Socket Methods.</p>
 								</div>
 								<div class="settingsDiv">
@@ -9204,6 +9351,54 @@ myChar.Heal( 15, healerChar );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">myNPC.InitWanderArea();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_IsAggressor"/>
+							<label for="spoiler_method_char_IsAggressor">IsAggressor <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void IsAggressor()</em></p>
+									<p><em>void IsAggressor( [bool]checkForPlayerOnly)</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns true/false depending on whether character has any active aggressor flags</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>If checkForPlayerOnly flag is true, any aggressor flags towards NPCs are ignored</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var isAggressor = pUser.IsAggressor();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_IsPermaGrey"/>
+							<label for="spoiler_method_char_IsPermaGrey">IsPermaGrey <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void IsPermaGrey( otherChar )</em></p>
+									<p><em>void IsPermaGrey( [bool]checkForPlayerOnly)</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns true/false depending on whether character has any active permagrey flags</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>If checkForPlayerOnly flag is true, any permagrey flags towards NPCs are ignored</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var isPermaGrey = pUser.IsPermaGrey();</code></pre>
 								</div>
 							</div>
 						</div>
@@ -9460,6 +9655,25 @@ myChar.PopUpTarget( 1, "Where do you wish to teleport to?" );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_RemoveAggressorFlag"/>
+							<label for="spoiler_method_char_RemoveAggressorFlag">RemoveAggressorFlag <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void RemoveAggressorFlag( otherChar )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Removes character's aggressor flag towards target character</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">pUser.RemoveAggressorFlag( otherChar );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_char_RemoveFriend"/>
 							<label for="spoiler_method_char_RemoveFriend">RemoveFriend <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -9474,6 +9688,25 @@ myChar.PopUpTarget( 1, "Where do you wish to teleport to?" );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">myPet.RemoveFriend( pChar );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_RemovePermaGreyFlag"/>
+							<label for="spoiler_method_char_RemovePermaGreyFlag">RemovePermaGreyFlag <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void RemovePermaGreyFlag( otherChar )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Removes character's permagrey flag towards target character</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">pUser.RemovePermaGreyFlag( otherChar );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -9852,6 +10085,44 @@ myChar.SysMessage( 0x42, "This message has a different color!" );</code></pre>
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">myNPC.TurnToward( myObject );
 myNPC.TurnToward( myObject.x, myObject.y );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_UpdateAggressorFlagTimestamp"/>
+							<label for="spoiler_method_char_UpdateAggressorFlagTimestamp">UpdateAggressorFlagTimestamp <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void UpdateAggressorFlagTimestamp( otherChar )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Updates the expiry timestamp of character's aggressor flag towards target character</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">pUser.UpdateAggressorFlagTimestamp( otherChar );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_UpdatePermaGreyFlagTimestamp"/>
+							<label for="spoiler_method_char_UpdatePermaGreyFlagTimestamp">UpdatePermaGreyFlagTimestamp <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void UpdatePermaGreyFlagTimestamp( otherChar )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Updates the expiry timestamp of character's permagrey flag towards target character</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">pUser.UpdatePermaGreyFlagTimestamp( otherChar );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -12938,6 +13209,43 @@ myRegion.AddScriptTrigger( 16003 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_region_GetOrePref"/>
+							<label for="spoiler_method_region_GetOrePref">GetOrePref <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>array GetOrePref( oreType );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Gets ore preference data for ore type from town region..</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Returned as array containing the following data:</p>
+									<ul>
+										<li>orePrefData
+											<ul>
+												<li>oreName // name of ore</li>
+												<li>color // color of ore</li>
+												<li>minskill // min skill to mine ore</li>
+												<li>ingotName // name of ingot created from ore</li>
+												<li>makemenu // makemenu entry for crafting something from ingot</li>
+												<li>oreChance // default global chance of finding this ore type</li>
+												<li>scriptID // script attached to mined ore, if any</li>
+											</ul>
+										</li>
+										<li>orePrefChance // chance of finding this ore type in given town region</li>
+									</ul>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">See MakeOre() function of js/skill/mining.js for an example of how this is used in practice.</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_region_RemoveScriptTrigger"/>
 							<label for="spoiler_method_region_RemoveScriptTrigger">RemoveScriptTrigger <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -13791,8 +14099,8 @@ myObject.propertyName = newValue;
 							Get/Set whether Account is suspended</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.unused9</span> <strong>(bool, <em>true/false</em>)</strong><br>
-							Get/Set the unused9 flag. Currently unused</p>
+							<p><span class="hl">.isYoung</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Get/Set whether player account is considered Young</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.unused10</span> <strong>(bool, <em>true/false</em>)</strong><br>
@@ -13821,6 +14129,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.lastIP</span> <strong>(int)</strong><br>
 							Get last IP that was used to login with Account (Read-Only)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.totalPlayTime</span> <strong>(int, 0 - 4294967295)</strong><br>
+							Get total combined playtime across all characters on account (Read-Only)</p>
 						</div>
 
 						<h3>Object Types</h3>
@@ -13957,6 +14269,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.isCounselor</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether player has Counselor privileges</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.isDisguised</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Get/Set character is disguised</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.isDispellable</span> <strong>(bool, <em>true/false</em>)</strong><br>
@@ -14372,7 +14688,11 @@ myObject.propertyName = newValue;
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.petCount</span> <strong>(int, <em>0 - 65535</em>)</strong><br>
-							Get/Set number of pets owned by character (Read-Only)</p>
+							Get number of pets owned by character (Read-Only)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.playTime</span> <strong>(int, <em>0 - 4294967295</em>)</strong><br>
+							Get total playtime on given character (Read-Only)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.poison</span> <strong>(int, <em>0 - 5</em>)</strong><br>
@@ -14597,6 +14917,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.origin</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
 							Get/Set origin (expansion, era) of character</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.origName</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
+							Get/Set character's original name before being changed by disguise kit</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.sectionID</span> <strong>(text, <em>max 127 characters</em>)</strong><br>

@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 1. July, 2023</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6-RC6</small></p>
+	<p style="margin:0"><small>Last Updated: 14. October, 2023</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6</small></p>
 </div>
 
 <div id="filterMainDocs" contenteditable="true" placeholder="(Search...)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px; margin-top: 5px;"></div>
@@ -60,6 +60,19 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>October 13th, 2023</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on additional settings: SHOWITEMRESISTSTATS, SHOWWEAPONDAMAGETYPES</li>
+							<li>Added <a href="#adaptivePerformanceSystem">Adaptive Performance System</a> feature info with details on how the APS dynamically tries to keep shard performance going</li>
+							<li>Added <a href="#bulkOrderDeeds">Bulk Order Deeds</a> feature info with details on how Bulk Order Deeds work</li>
+							<li>Added <a href="#npcGuilds">NPC Guilds</a> feature info with details on how NPC Guilds work</li>
+							<li>Added <a href="#pvpRuleSet">PvP Ruleset</a> feature info with details on how PvP Rulesets can be customized per facet</li>
+							<li>Added <a href="#youngPlayerSystem">Young Player System</a> feature info with details on how the system for giving new players some additional benefits/protections is setup</li>
+						</ul>
+						<h4>July 1st, 2023</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on additional settings: SECRETSHARDKEY, APSPERFTHRESHOLD, APSINTERVAL, APSDELAYSTEP, APSDELAYMAXCAP, ENABLENPCGUILDDISCOUNTS, ENABLENPCGUILDPREMIUMS, YOUNGPLAYERSYSTEM, [young start locations], SAFECOOWNERLOGOUT, SAFEFRIENDLOGOUT, SAFEGUESTLOGOUT, KEYLESSOWNERACCESS, KEYLESSCOOWNERACCESS, KEYLESSFRIENDACCESS, KEYLESSGUESTACCESS, OFFERBODSFROMITEMSALES, OFFERBODSFROMCONTEXTMENU, BODSFROMCRAFTEDITEMSONLY, BODGOLDREWARDMULTIPLIER, BODFAMEREWARDMULTIPLIER</li>
+						</ul>
 						<h4>December 11th, 2022</h4>
 						<ul>
 							<li>Updated instructions on <a href="#compilingUOX3">Compiling UOX3</a></li>
@@ -80,7 +93,7 @@
 						<ul>
 							<li>Updated <a href="#raceSystem">Race System</a> feature info with details on armor class restrictions</li>
 							<li>Updated <a href="#dfnTagSystem">DFN Tag Overview</a> with full list of tags supported by the Create/crafting system</li>
-						</ul>						
+						</ul>
 						<h4>December 6th, 2021</h4>
 						<ul>
 							<li>Updated <a href="#regionSystem">Regions</a> feature info with details on regions, and how they interconnect with other systems in UOX3</li>
@@ -202,7 +215,7 @@
 					<h3>Got Questions?</h3>
 					<p>If you're curious, but have some questions, try your luck by reading the <a href="#uox3FAQ">Frequently Asked Questions</a> section, or join the <a href="#uox3Support">UOX3 Community</a> on Discord for a quick chat!</p>
 					<h3>UOX3 History and Changelog</h3>
-					<p>To see what's new in the latest stable release of UOX3, or to do an in-depth dive into the history of the UOX3 project itself, check out the <a href="#history">History and Credits</a> section of this document.</p>
+					<p>To see what's new in the latest release build of UOX3, or to do an in-depth dive into the history of the UOX3 project itself, check out the <a href="#history">History and Credits</a> section of this document.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -325,6 +338,7 @@ packitem=0x0f8d,30
 							<li><strong>Guildstones</strong> - Guild system that relies on classic guildstones that can be placed in player's houses.</li>
 							<li><strong>Player Vendors</strong> - Set up a trade empire across Britannia with a little help from player vendors!</li>
 							<li><strong>Young Player System</strong> - Start newbie players off easy and provide them with protection from both monsters and potentially negative player-to-player interactions!</li>
+							<li><strong>Per-facet PvP Rulesets</strong> - Customize how to handle PvP rulesets - for any facet!</li>
 						</ul>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -339,7 +353,7 @@ packitem=0x0f8d,30
 				</div> <!-- cd-faq__content -->
 			</li>
 
-						<li class="cd-faq__item">
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#uox3FAQ" id="uox3FAQ"><span>Frequently Asked Questions</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
@@ -535,8 +549,14 @@ packitem=0x0f8d,30
 					<h3>OS / Platform</h3>
 					<p>UOX3 comes with cross-platform support for running on a variety of <strong>Windows</strong> (~Win7 to Win10), <strong>Linux</strong> and <strong>macOS</strong> versions, in both 32bit and 64bit.</p>
 					<h3>Hardware</h3>
-					<p>Default install size for UOX3 alone clocks in at under 8MB, with an additional 400-500 MB being required for data files from Ultima Online. Total size will grow based on amount of content added to shard. Minimum 1+ GB free storage space recommended.</p>
-					<p>Default memory usage for an empty shard ranges from 35-50 MB, but will grow based on amount of content added to shard and number of players connected at any given time. Minimum 1+ GB RAM recommended.</p>
+					<p>Default install size for UOX3 alone clocks in at under 8MB of disk space, with an additional 400-500 MB being required for data files from Ultima Online. Total size will grow based on amount of content added to shard. Minimum 1+ GB free disk space recommended.</p>
+					<p>Default memory usage for an empty shard ranges starts off using around ~3.8GB of RAM, but can grow based on the amount of content added to the shard and the number of players connected at any given time. Minimum 6GB+ RAM recommended.</p>
+					<input type="checkbox" id="spoiler_memoryusage"/>
+					<label for="spoiler_memoryusage">About memory requirements <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>Historically UOX3 used to require less than 50MB of RAM to run an empty shard, which would maybe climb into the low-mid hundreds as shard content grows. The trade-off for such low memory consumption? Slower shard performance.</p>
+						<p>Current UOX3 versions, in comparison, can take nearly 4GB of RAM to run, but loads in all statics data, tiledata and multidata required for faster lookup speeds, which has benefits to the performance of NPC movement, spawn-systems, line-of-sight checks and more!</p>
+					</div>
 					<h3>Ultima Online Client</h3>
 					<p>It is highly recommended to use the same data files for your UOX3 shard as found in the Ultima Online client you will be connecting to UOX3 with, to minimize the chance of issues related to mismatching files.</p>
 					<p>UOX3 currently supports client versions ranging from <strong>4.0.0p</strong> to at least <strong>7.0.98.x</strong>, and requires the following minimum set of UO data files to run:
@@ -565,10 +585,10 @@ packitem=0x0f8d,30
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<p>To get started with UOX3, you have a couple of options:</p>
-					<h3>1) Stable All-in-One</h3>
-					<p>The first, and most straight-forward option is to download the latest stable <strong>All-in-One UOX3 package</strong> for your platform (Windows/Linux/macOS) from the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">Downloads page at UOX3.org</a>. It contains all the files you need to get a bare-bones version of UOX3 up and running; a clean slate for you to build on.</p>
+					<h3>1) Release Build</h3>
+					<p>The first, and most straight-forward option is to download the latest release build of the <strong>All-in-One UOX3 package</strong> for your platform (Windows/Linux/macOS) from the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">Downloads page at UOX3.org</a>. It contains all the files you need to get a bare-bones version of UOX3 up and running; a clean slate for you to build on.</p>
 					<h3>2) Development Build</h3>
-					<p>If it has been some time since the stable All-in-One package was updated, it might be a better approach to try out the <strong>"Development Build"</strong> sometimes posted on the <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=825" target="_blank" title="UOX3 Community Foums - Experimental Builds">forums at UOX3.org</a>. These versions contain all the latest changes and additions that have been made to UOX3 since the previous stable release, but could also potentially contain additional bugs and errors due to the "cutting edge" nature. However, depending on time since last release, development build might be only build available!</p>
+					<p>If it has been some time since the last release build was updated, it might be a better approach to try out the <strong>development build</strong> sometimes posted on the <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=825" target="_blank" title="UOX3 Community Foums - Experimental Builds">forums at UOX3.org</a>. These versions contain all the latest changes and additions that have been made to UOX3 since the previous stable release build, but could also potentially contain additional bugs and errors due to the "cutting edge" nature. However, depending on time since last release, the development build might be only build available!</p>
 					<div class="note"><p style="color: black; font-style: italic">Note: For <strong>either</strong> of the two above options, unzip the downloaded file to a folder of your choice, preferably something easy to find and access, like C:\UOX3 for Windows, or your home directory for Linux/macOS.</p></div>
 					<h3>3) Compile Source Yourself</h3>
 					<p>The third option, for more advanced users, would be to <strong>download the UOX3 source-code directly from GitHub and compile it yourself</strong>. If you're interested in the inner workings of UOX3 and/or potentially want to contribute code-wise, or just like to live life on the cutting edge and want to stay up-to-date with the most recent changes at any given point of time, this might be the option for you. See <a href="#compilingUOX3">Additional UOX3 Info > Compiling UOX3 Source</a> for further instructions!</p>
@@ -1649,6 +1669,10 @@ packitem=0x0f8d,30
 							If enabled, shows player's guild info in tooltip. Defaults to 1</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">SHOWITEMRESISTSTATS</span><strong>=0</strong><br>
+							If enabled, shows item resistance stats in item tooltip. Defaults to 0</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">SHOWNPCTITLESINTOOLTIPS</span><strong>=1</strong><br>
 							If enabled, shows NPC titles in tooltip. Defaults to 1</p>
 						</div>
@@ -1667,6 +1691,10 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">SHOWRACEINPAPERDOLL</span><strong>=1</strong><br>
 							If enabled, shows a character's race in the paperdoll. Defaults to 1</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SHOWWEAPONDAMAGETYPES</span><strong>=1</strong><br>
+							If enabled, shows weapon damage types in item tooltip. Defaults to 1</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">GLOBALITEMDECAY</span><strong>=1</strong><br>
@@ -4857,7 +4885,7 @@ packitem=0x0f8d,30
 					</div>
 
 					<h4>Step 2: Clone the UOX3 Git Repository</h4>
-					<em>Next up, clone the UOX3 git repository, which also includes the latest verified compatible version of SpiderMonkey (v1.7.0) and a minimal set of files required to compile zlib-1.2.11.</em>
+					<em>Next up, clone the UOX3 git repository, which also includes the latest verified compatible version of SpiderMonkey (v1.8.0-RC1) and a minimal set of files required to compile zlib-1.2.11.</em>
 					<input type="checkbox" id="spoiler_clone_with_github_desktop">
 					<label for="spoiler_clone_with_github_desktop">Using <strong>GitHub Desktop (Windows/macOS) </strong> <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -4896,12 +4924,8 @@ packitem=0x0f8d,30
 						<p>If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does) in a Terminal. This also works on Windows/macOS as an alternative to compile with IDEs:</p>
 						<ul>
 							<li>Navigate to root of cloned UOX3 git repository</li>
-							<li><span class="hl">cd make/cmake</span></li>
-							<li><span class="hl">mkdir build</span></li>
-							<li><span class="hl">cd build</span></li>
-							<li><span class="hl">cmake .. -DCMAKE_BUILD_TYPE=Release</span> (Windows/Linux/FreeBSD)</li>
-							<li><span class="hl">cmake .. -DCMAKE_BUILD_TYPE=Release -G"Unix Makefiles"</span> (macOS)</li>
-							<li><span class="hl">cmake --build . --config Release</span></li>
+							<li><span class="hl">cmake make/cmake -B ./build -DCMAKE_BUILD_TYPE=Release</span></li>
+							<li><span class="hl">cmake --build ./build --config Release</span></li>
 						</ul>
 						<p>Replace "Release" with "Debug" in the above instructions to create a debug-build; delete <strong>make/cmake/build</strong> directory to do clean builds.</p>
 					</div>
@@ -4998,7 +5022,7 @@ packitem=0x0f8d,30
 					<p>Any contributions that involve making changes to UOX3 can either be posted in the <a href="https://www.uox3.org/forums/viewforum.php?f=20" target="_blank" title="UOX3 Community Forums - Submissions - Fixes & Improvements">Submissions - Fixes & Improvements</a> section of the UOX3.org forums, or can be submitted as a Pull Request on <a href="https://www.github.com/UOX3DevTeam/UOX3" target="_blank" title="UOX3 @ GitHub">UOX3's GitHub page</a>, for those familiar with that workflow. Do note that any such contributions will be reviewed for quality and fit with the project before being accepted and merged into the core UOX3 project.</p>
 					<p>If it so happens, that your code or script contribution is not approved for inclusion in the core UOX3 project, you can still post it as custom additions/tweaks in other parts of the UOX3.org forums, for other users to download! Alternatively, if your changes are extensive enough, you can do what many others have done before you and branch off the main UOX3 project to create something entirely new and exciting!</p>
 					<h3>A Note about Coding Styles and Practices</h3>
-					<p>Before venturing on a grand coding adventure, pause for a moment and take a peek at the <a href="#" title="UOX3 Style Guide for Code" target="_blank">UOX3 Style Guide for Code</a> (WIP). Sticking closely to the guidelines in that document increases the chance that one's code submissions can be included/merged into the main UOX3 codebase, and also helps ensure that all (new, if not all old) code follows a consistent style. This makes it easier to read and understand the codebase.</p>
+					<p>Before venturing on a grand coding adventure, pause for a moment and take a peek at the <a href="styleguide.html" title="UOX3 Style Guide for Code" target="_blank">UOX3 Style Guide for Code</a>. Sticking closely to the guidelines in that document increases the chance that one's code submissions can be included/merged into the main UOX3 codebase, and also helps ensure that all (new, if not all old) code follows a consistent style. This makes it easier to read and understand the codebase.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -5006,6 +5030,29 @@ packitem=0x0f8d,30
 
 		<ul id="featureDocs" class="cd-faq__group">
 			<li class="cd-faq__title title-maindoc"><h1>Feature Documentation</h1></li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#adaptivePerformanceSystem" id="adaptivePerformanceSystem"><span>Adaptive Performance System</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+						<p>The <span class="hl">Adaptive Performance System (APS)</span> dynamically adjusts how often NPC AI/movement is checked based on overall shard performance.</p>
+						<p>If performance <span class="hl">drops</span> below a defined threshold, UOX3 <span class="hl">gradually deprioritizes these checks</span> in favor of player movement/speech/command responsiveness. Once performance <span class="hl">climbs back up</span> above the threshold, the balance <span class="hl">gradually shifts back</span>.</p>
+						<p>The overall intention of the feature is to ensure both players and GMs are <strong>not prevented from executing their actions</strong> despite potentially heavy load on the shard.</p>
+						<input type="checkbox" id="spoiler_advanced_perf">
+						<label for="spoiler_advanced_perf">APS uox.ini options <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<ul>
+								<li><span class="hl">APSPERFTHRESHOLD=50</span> // Performance threshold (measured in simulation cycles/sec) below which the APS kicks in</li>
+								<li><span class="hl">APSINTERVAL=100</span> // How often (in milliseconds) the APS checks performance and makes adjustments (if needed) to balance out shard performance</li>
+								<li><span class="hl">APSDELAYSTEP=50</span> // How much the delay timer is modified by (in milliseconds) each time APS makes adjustments</li>
+								<li><span class="hl">APSDELAYMAXCAP=2000</span> // Max amount of of delay APS can introduce for NPC AI/movement handling when attempting to restore shard performance</li>
+							</ul>
+						</div>
+						<p></p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#advancedTradeSystem" id="advancedTradeSystem"><span>Advanced Trade System</span></a>
 				<div class="cd-faq__content">
@@ -5100,7 +5147,6 @@ packitem=0x0f8d,30
 				</div> <!-- cd-faq__content -->
 			</li>
 
-
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#advancementGates" id="advancementGates"><span>Advancement Gates</span></a>
 				<div class="cd-faq__content">
@@ -5169,7 +5215,69 @@ packitem=0x0f8d,30
 				</div> <!-- cd-faq__content -->
 			</li>
 
-						<li class="cd-faq__item">
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#bulkOrderDeeds" id="bulkOrderDeeds"><span>Bulk Order Deeds</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+						<h4>About Bulk Order Deeds</h4>
+						<p>This system allows players to <span class="hl">earn gold, fame and special items</span> by completing <span class="hl">Bulk Order Deeds (BOD)</span> that are randomly <span class="hl">offered to players who sell goods</span> to relevant shopkeepers. BODs are basically <span class="hl">requests by shopkeepers</span> for the player to craft a specific amount of items of a particular type and/or quality, such as 10 longswords, or 7 chainmail tunics, etc.</p>
+						<p>Currently, this is <span class="hl">only implemented for the Blacksmithing skill</span>, and BODs are only offered by and can be completed for the following NPCs, with the type of NPC determining the type of items being requested in the BOD: <strong>blacksmiths, armorsmiths and weaponsmiths</strong>.</p>
+						<h4>How it Works</h4>
+						<p>When a BOD is offered, the player sees a gump with information about what kind of item is required to complete the BOD, and how many. At this point, the player can choose to decline or accept the offer.</p>
+						<p>If the player accepts the offer, they receive a BOD item, which can be double-clicked to see the requirements again. The player can also drag and drop items they have crafted onto the BOD item, which will be absorbed by the BOD if they meet the requirements.</p>
+						<p>Once the BOD has been filled with all the required items, the player can hand it into a NPC of the same type, and they'll receive some rewards in return.</p>
+						<h4>BOD Rewards</h4>
+						<p>Upon completion of a BOD, the player is rewarded with Gold, Fame and a special item. The amount of Gold/Fame, and how special the item they receive is, <span class="hl">depends on the difficulty</span> of filling the BOD.</p>
+						<input type="checkbox" id="spoiler_bod_items">
+						<label for="spoiler_bod_items">Special BOD Rewards <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>If CoreShardEra setting in uox.ini is <span class="hl">LBR or lower</span>, these items are available:</p>
+							<ul>
+								<li>Sturdy Pickaxe/Sturdy Shovel</li>
+								<li>Leather Gloves of Mining +1</li>
+								<li>Studded Leather Gloves of Mining +3</li>
+								<li>Ringmail Gloves of Mining +5</li>
+								<li>Dull Copper Runic Hammer</li>
+								<li>Shadow Iron Runic Hammer</li>
+								<li>Colored Anvil</li>
+								<li>Copper Runic Hammer</li>
+								<li>Bronze Runic Hammer</li>
+								<li>+10 Ancient Smithy Hammer</li>
+								<li>+15 Ancient Smithy Hammer</li>
+								<li>Gold Runic Hammer</li>
+								<li>+30 Ancient Smithy Hammer</li>
+								<li>Agapite Runic Hammer</li>
+								<li>+60 Ancient Smithy Hammer</li>
+								<li>Verite Runic Hammer</li>
+								<li>Valorite Runic Hammer</li>
+							</ul>
+							<p>If CoreShardEra setting is <span class="hl">AoS or higher</span>, a few additional items are available:</p>
+							<ul>
+								<li>Gargoyle's Pickaxe/Prospector's Tool</li>
+								<li>Powder of Temperament</li>
+								<li>Blacksmith Scroll of Power +15</li>
+								<li>Blacksmith Scroll of Power +20</li>
+							</ul>
+						</div>
+						<h4>Setup Details</h4>
+						<p>Relevant scripts:</p>
+						<ul>
+							<li><span class="hl">js/npc/vendor_bdo_dispenser.js</span> // Attached to NPCs that offer BODs</li>
+							<li><span class="hl">js/item/smallbod.js</span> // Attached to actual BOD deed item</li>
+						</ul>
+						<p>The feature comes with some uox.ini settings for easy customization:</p>
+						<ul>
+							<li><span class="hl">OFFERBODSFROMITEMSALES=1</span> // If enabled, shopkeepers might offer BODs when players sell items to them</li>
+							<li><span class="hl">OFFERBODSFROMCONTEXTMENU=0</span> // If enabled, shopkeepers might offer BODs via context menu option. Disabled by default, feature from > AoS.</li>
+							<li><span class="hl">BODSFROMCRAFTEDITEMSONLY=0</span> // If enabled, only selling of crafted items will trigger BOD offers, instead of selling any random items</li>
+							<li><span class="hl">BODGOLDREWARDMULTIPLIER=1</span> // Reward multiplier for Gold given for completing a BODs - defaults to 1.0</li>
+							<li><span class="hl">BODFAMEREWARDMULTIPLIER=1</span> // Reward multiplier for Fame given for completing a BOD - defaults to 1.0</li>
+						</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#characterPrivs" id="characterPrivs"><span>Character Priv Flags</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
@@ -5525,9 +5633,9 @@ packitem=0x0f8d,30
 						<p><span class="hl">8</span> - <strong>AI_BANKER</strong><br>
 						Bankers give players access to their bank boxes when saying the word "bank" nearby. Tip: This can also be used on players to ALWAYS give them access to their bankbox ;)</p>
 						<p><span class="hl">10</span> - <strong>AI_CASTER</strong><br>
-						Same as AI_FIGHTER, but will try to stay at casting range.</p>
+						Same as AI_FIGHTER (5), but will try to stay at casting range</p>
 						<p><span class="hl">11</span> - <strong>AI_EVIL_CASTER</strong><br>
-						Same as AI_EVIL, but will try to stay at casting range.</p>
+						Same as AI_EVIL (2), but will try to stay at casting range</p>
 						<p><span class="hl">12</span> - <strong>AI_ANIMAL_SCARED</strong><br>
 						Runs away from players if they get too close, even outside of combat.</p>
 						<p><span class="hl">17</span> - <strong>AI_PLAYERVENDOR</strong><br>
@@ -5577,6 +5685,60 @@ packitem=0x0f8d,30
 							</ul></p>
 						<h3>Escort Quest Rewards</h3>
 						<p>The rewards for completing an escort quest are based partly on a given quest NPC's fame, and partly on the amount of gold they're carrying. This setup provides some flexibility for how shard admins want to handle the NPC escorts and associated rewards. For instance, one could setup a Nobleman with high fame (but little gold), a merchant with low fame (but a lot of gold), or an adventurer (with random amount of fame and random amount of gold). The formulate used to calculate the final reward given to the player looks like this: <span class="hl">rewardAmount = (( totalFame / 100 ) * 50 ) + ( totalGold * 0.25 )</span></p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#npcGuilds" id="npcGuilds"><span>NPC Guilds</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					  <h3>NPC Guilds</h3>
+						<p>These are <span class="hl">special NPC Guilds</span> players can join for benefits like <strong>discounts from certain vendors, access to extra services like being able to purchase disguise kits, etc.</strong></p>
+						<p>A player can join thesee guilds by <span class="hl">talking</span> - and <span class="hl">paying a joining fee</span> - to any of the NPC Guildmasters belonging to a given guild. These guildmasters have attached the script that controls all aspects of NPC guilds: <span class="hl">js/npc/ai/guildmaster.js</span></p>
+						<p>By default, only one guild - the <span class="hl">Thieves Guild</span> - has been setup with any special functionality, but the script should be extendible to easily support the setup of additional guilds.</p>
+						<p>Available speech triggers for NPC Guildmasters:</p>
+						<ul>
+							<li><strong>join|member</strong> - If player is not already a member, NPC responds with cost of joining the guild</li>
+							<li><strong>resign|quit</strong> - Player leaves the guild (though min. time in a guild before leaving is 1 week)</li>
+							<li><strong>guild|guilds</strong> - NPC responds with details about the guild they belong to</li>
+							<li><strong>disguise</strong> - special trigger for Thieves Guild that allows player to buy disguise kits</li>
+						</ul>
+						<input type="checkbox" id="spoiler_npcguild_options">
+						<label for="spoiler_npcguild_options">Some options are configurable near top of the script: <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<ul>
+								<li><strong>const ageRequirement = 7;</strong> // min character age in days to join NPC guilds</li>
+								<li><strong>const joinGuildCost = 500;</strong> // cost in gold to join any NPC guild</li>
+								<li><strong>const disguiseKitCost = 700;</strong> // cost to purchase disguise kit from Thieves Guild Guildmaster</li>
+								<li><strong>const disguiseKitEnabled = true;</strong> // Whether purchase of disguise kits is enabled or disabled</li>
+							</ul>
+						</div>
+						<h4>The Thieves Guild</h4>
+						<p>In <span class="hl">order to steal from other players</span>, a player must first <span class="hl">join the Thieves Guild</span>. To do so, the player can walk up to a Thieves Guild Guildmaster and say the word "join", and if they meet the requirements to join, pay the joining fee by dropping the requested amount of gold onto the NPC.</p>
+						<input type="checkbox" id="spoiler_thievesguild_req">
+						<label for="spoiler_thievesguild_req">Requirements for joining the Thieves Guild: <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<ul>
+								<li><span class="hl">Character needs to be at least 7 days old to join (general requirement for _all_ NPC guilds)</span></li>
+								<li><span class="hl">Young players cannot join</span></li>
+								<li><span class="hl">Murderers cannot join</span></li>
+								<li><span class="hl">Stealing skill must be 60.0 or above</span></li>
+							</ul>
+						</div>
+						<h4>Adding New NPC Guilds</h4>
+						<p>To add a new NPC Guild, first add it to the npcGuilds const near the top of the script. It already contains a bunch of NPC guilds that could potentially be used, but to add a new one, just give it a unique guildID, dictionaryEntry and throw it ino the list.</p>
+						<p>Example: <strong>500: [20000, -1, []], // My Custom NPC Guild</strong></p>
+						<p>Next, add the guild's unique ID to the enabledGuilds const found just below the list of NPC Guilds in the script, like so: <strong>const enabledGuilds = [3, 500];</strong></p>
+						<p>Then, add any guild-specific requirements to join in the CheckJoinGuildRequirements() function, and any special services to HandleThievesGuildServices() function, following the examples set by the Thieves Guild (aka The Society of Thieves)</p>
+						<p>Finally, create an NPC Guildmaster and assign them to your custom NPC guild either...</p>
+						<ul>
+							<li>...with a DFN tag: NPCGUILD=500</li>
+							<li>...using a JS property in a custom script - .npcGuild = 500</li>
+							<li>...through the 'set command: 'set npcguild 500</li>
+						</ul>
+						<h4>NPC Guild Relationships</h4>
+						<p>The NPC Guildmaster script also supports options for setting up specific NPC guilds as enemies, or to give guilds a parent/child relationship with other guilds. This has no specific functionality currently, but those relationships could be used to make the interactions with various NPC guilds more dynamic and engaging.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -5726,6 +5888,39 @@ packitem=0x0f8d,30
 					NPCs in wanderMode 5 are cool as cucumbers, so cool, in fact, that they remain frozen in place on the same spot, unable to move. Come hell or high water, they will remain steadfast and stick to their spot no matter what.</p>
 					<h3>Altering WanderMode through JavaScript</h3>
 					<p>In addition to DFNs and code, an NPC's wanderMode can also be adjusted in JavaScripts used with UOX3's JS Engine, either via JS Methods for characters like <span class="hl">Wander( x1, y1, x2 (radius), y2 )</span> and <span class="hl">Wander ( x1, y1, radius )</span>, or the <span class="hl">wandertype</span> JS property for characters. See the <a href="jsdocs.html" target="_blank" title="UOX3 JS Engine Documentation">UOX3 JSE Docs</a> for more details on syntax and some examples!</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#pvpRuleSet" id="pvpRuleSet"><span>PvP Ruleset</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+				  	<p>The <span class="hl">PvP Ruleset</span> scripts are attached to all players who login to a UOX3 shard, and contain rules for how interactions between players are handled - both hostile and beneficial - in specific facets (Felucca/Trammel/etc). Those rules <span class="hl">can be defined per-facet</span>, though by default it's setup similar to the original PvP rules in UO during the LBR era, i.e. Felucca being more open, Trammel/Ilshenar/etc being more restricted. This is <span class="hl">mainly controlled by two scripts</span>:</p>
+				  	<ul>
+				  		<li><span class="hl">js/server/misc/facetChange.js</span> - Attaches/Removes facetRuleset.js script to players depending on which facets they go to</li>
+				  		<li><span class="hl">js/server/misc/facetRuleset.js</span> - Defines which rules apply to which facet, customizable near the top of the script</li>
+				  	</ul>
+				  	<p>The ruleset script itself checks a variety of interactions between players, like... <strong>initiating combat, being the target of a spell (hostile or friendly), stealing/being stolen from, snooping/being snooped, corpse-looting, player-collision, bard skills like provocation, etc.</strong></p>
+				  	<p>Some other scripts also make calls into the ruleset script to check whether a player is allowed to do a particular action.</p>
+				  	<p>Rules <span class="hl">configurable per facet</span> near top of facetRules script:</p>
+				  	<ul>
+				  		<li><strong>facetCorpseCarveRestrict</strong> - Restricts carving of player corpses</li>
+				  		<li><strong>facetMurdererRestrict</strong> - Restricts entrance of Murderers into facet (if restricted, they'll be teleported to Chaos shrine in Fel)</li>
+				  		<li><strong>facetCombatRestrict</strong> - Restricts combat between players (and their pets)</li>
+				  		<li><strong>facetSpellRestrict</strong> - Restricts casting spells on other players (or their pets)</li>
+				  		<li><strong>facetPotionRestrict</strong> - Restricts players (and their pets) taking damage from explosion potions</li>
+				  		<li><strong>facetStealRestrict</strong> - Restricts stealing from other players</li>
+				  		<li><strong>facetSnoopRestrict</strong> - Restricts snooping packs of other players</li>
+				  		<li><strong>facetLootingRestrict</strong> - Restricts looting corpses of other players</li>
+				  		<li><strong>facetBlockMovementRestrict</strong> - restricts blocking the movement of other player characters</li>
+				  		<li><strong>facetBladeSpiritTargetRestrict</strong> - Restricts summoned Blade Spirits from selecting other players (or their pets) as targets</li>
+				  		<li><strong>facetEnergyVortexTargetRestrict</strong> - Restricts summoned Energy Vortexes from selecting other players (or their pets) as targets</li>
+				  		<li><strong>facetBardProvokeRestrict</strong> - Restricts bards from provoking NPCs onto other players (or their pets)</li>
+				  	</ul>
+				  	<p>Example: <strong>const facetCorpseCarveRestrict = [1, 2, 3, 4, 5];</strong> restricts carving of player corpses in facets 1 through 5, but allows it (by exclusion) in facet 0!</p>
+				  	<p>The script also contains options to <span class="hl">override each of these rules for specific regions</span> within each facet. So a facet could in general restrict stealing from other players, but a specific region within that facet could still allow it.</p>
+				  	<p>Example: <strong>const regionStealOverride = [52];</strong> would override the stealing restrictions for a hypothetical region 52 within whatever facet it's in.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -5884,7 +6079,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 							id=0x13ec<br>
 							... // some tags snipped out<br>
 							<span class="hl">ac=4</span><br>
-							}</p>							
+							}</p>
 							<p><strong><em>// ... and chainmail armor with armor class of 8 (ac=8):</em></strong><br>
 							[chain_leggings]<br>
 							{ left facing<br>
@@ -5907,7 +6102,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 							<label for="spoiler_race_acbonusdamage">Bonus Tip - AC Based Bonus Damage <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p>Did you know that if you enable a setting in UOX.INI called <strong>ARMORCLASSDAMAGEBONUS</strong>, any weapons with an AC of 1 <span class="hl">will deal double damage</span> if attempting to hit someone wearing armor with an AC of 1? Similarly, a weapon with AC 8 will deal double damage against armor with AC 8!</p>
-							</div>							
+							</div>
 						</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -6341,6 +6536,62 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<li>The player whom a person is currently voting for is displayed on the townstone.</li>
 						</ul>
 					<p>More details being added soon!</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#youngPlayerSystem" id="youngPlayerSystem"><span>Young Player System</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>The <span class="hl">Young Player System</span> (enabled/disabled through <strong>uox.ini setting YOUNGPLAYERSYSTEM</strong>) offers some protections (and restrictions) for characters on newly created player accounts. These accounts are flagged as <span class="hl">Young</span>, and any characters created on such accounts will have <span class="hl">[Young]</span> displayed over their head. The young player system is primarily handled in <span class="hl">js/player/young_player.js</span>, but checks for young players can be found in many different other scripts where necessary. The script includes some configurable options:</p>
+					<ul>
+						<li><strong>const youngMaxTotalSkills = 3500;</strong> // Max skill points in total, per character</li>
+						<li><strong>const youngMaxTotalStats = 150;</strong> // Max 150 stat points in total, per character</li>
+						<li><strong>const youngMaxSkill = 700;</strong> // Max skill points in a single skill, per character</li>
+						<li><strong>const youngMaxStat = 80;</strong> // Max stat points in a single stat, per character</li>
+						<li><strong>const youngMaxAcctAge = 40;</strong> // 40 hours</li>
+					</ul>
+					<h4>Young Player Status Check</h4>
+					<p>A player's Young status is checked and verified <span class="hl">on every login + every stat/skill gain</span>, and will be revoked if any of the following becomes true:</p>
+					<ul>
+						<li>Account has a <span class="hl">total playtime</span> of <strong>more than 40 hours</strong></li>
+						<li>Any character has <strong>more than 350 total</strong> (base) <span class="hl">skill points</span></li>
+						<li>Any character has <strong>more than 70 skill points</strong> in a <span class="hl">single skill</span></li>
+						<li>Any character has <strong>more than 150 total</strong> <span class="hl">stat points</span></li>
+						<li>Any character has <strong>more than 80 stat points</strong> in a <span class="hl">single stat</span></li>
+					</ul>
+					<p>Additionally, Young players can <span class="hl">manually revoke their Young status</span> by saying the words "<em>I renounce my young player status</em>" with any character</p>
+					<h4>Young Player Freebie Item</h4>
+					<p>Every character on a Young account get an additional item upon first login; a <span class="hl">New Player Ticket</span> which can be <strong>combined with any other players' New Player Ticket</strong> for both players to get a <span class="hl">reward of their choice</span>:</p>
+					<ul>
+						<li>a sextant (shows Young players directions to nearest moongate/bank regardless of where they are, as long as outdoors)</li>
+						<li>a hair restyling deed</li>
+						<li>a ranger armor set (if CoreShardEra is T2A or lower)</li>
+						<li>a spellbook with 1st to 4th Circle spells (if CoreShardEra is UOR or higher)</li>
+						<li>a fireworks wand with 50 charges</li>
+						<li>a spyglass</li>
+						<li>a dye tub and dyes</li>
+					</ul>
+					<h4>Young Player Protections/Restrictions</h4>
+					<p>Young characters get the benefit of some <span class="hl">additional protections (or restrictions)</span> that normal characters don't:</p>
+					<ul>
+						<li>Young characters cannot target other player characters with hostile spells or skills</li>
+						<li>Young characters cannot be the target of other player characters' hostile spells or skills</li>
+						<li>Young characters can only cast beneficial spells upon themselves or other Young players</li>
+						<li>Young characters can only be the target of beneficial spells from other Young players</li>
+						<li>Young characters (and their pets/followers) cannot attack or harm any other player (or their pets/followers), nor can they themselves be attacked or harmed by any other players (or their pets/followers), whether in combat, from spells, skills or items.</li>
+						<li>Young players don't lose any of their items on death, and are teleported to the nearest healer upon death with all items intact</li>
+						<li>Young characters will not be attacked by monsters outside of dungeons - unless the player attacks first!</li>
+						<li>Young players receive a warning upon entering dungeons that monsters there will be hostile</li>
+						<li>Young players are automatically healed by Healer NPCs if injured (with a cooldown)</li>
+						<li>Young players can only transfer or receive pets/hirelings to/from other Young players</li>
+						<li>Young players can only add other Young players as friends of their pets</li>
+						<li>Young players can instantly and safely logout from anywhere, at any time</li>
+						<li>Young players are restricted from recalling or gating to the Felucca facet, if they start in Trammel (dependent on starting locations for young players as defined in uox.ini)</li>
+					</ul>
+					<h4>Young Player Starting Locations</h4>
+					<p>A section of uox.ini - <span class="hl">[young start locations]</span> - can be used to define starting locations for Young players. If only one location is provided, all new players start there. Otherwise, it should match up with the regular starting location setup, with one entry per town in Britannia (as displayed in client during character creation)</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -7131,8 +7382,8 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Set NPC's title</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">topeace</span>=<strong>[skillpoints]</strong><br>
-							Set minimum skill to succesfully use peacemaking against this NPC</p>
+							<p><span class="hl">topeace</span>=<strong>[skillpoints percentage]</strong><br>
+							Set minimum skill to succesfully use peacemaking against this NPC. The second (percentage) value determines the increase in chance for the NPC to break free from the peacemake effect each time they take damage; a value of 5 would increase the chance of them breaking free of the effects by 5% each time they take damage.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">toprov</span>=<strong>[skillpoints]</strong><br>
@@ -8167,7 +8418,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 				<a class="cd-faq__trigger" href="#jsIntro" id="jsIntro"><span>Introduction to JS Engine in UOX3</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>UOX3's scripting engine is based on an embedded C++ implementation of JavaScript called <strong>SpiderMonkey</strong> (<a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">v1.7.0</a>). It allows UOX3 to load, read and interpret JavaScript files containing JS events, methods, functions, objects and properties written specifically for UOX3 in order to expose the inner workings of the server to prospective shard admins and script writers.</p>
+					<p>UOX3's scripting engine is based on an embedded C++ implementation of JavaScript called <strong>SpiderMonkey</strong> (<a href="https://udn.realityripple.com/docs/Mozilla/Projects/SpiderMonkey/Releases/1.8" target="_blank" title="SpiderMonkey 1.8.0-RC1 Change Log">v1.8.0</a>). It allows UOX3 to load, read and interpret JavaScript files containing JS events, methods, functions, objects and properties written specifically for UOX3 in order to expose the inner workings of the server to prospective shard admins and script writers.</p>
 					<p>UOX3's JavaScripts can be reloaded dynamically without restarting the server, making it very easy to iterate on new features or modify existing ones.</p>
 					<p>Example of a simple JavaScript in UOX3, used with the Dice and Cup object to allow players to roll a dice and have the number displayed for others to see:<br>
 <pre><code class="language-javascript">// The onUseChecked event triggers when the player double-clicks an item
@@ -8264,7 +8515,7 @@ function commandTitle()
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<p>The <a href="jsdocs.html">UOX3 JSE Documentation</a> covers all the UOX3-specific events, triggers, methods, functions and properties available to script writers. You can also find some tutorials and/or tips for achieving specific things with UOX3's scripting engine in this document!</p>
-					<p>UOX3 contains an embedded scripting engine based on <a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">SpiderMonkey v1.7.0</a>, which offers an equivalent JavaScript feature set to <a href="https://developer.mozilla.org/en-US/docs/Archive/Web/JavaScript/New_in_JavaScript/1.7" target="_blank" title="developer.mozilla.com - New in JavaScript 1.7">JavaScript 1.7</a> or <a href="https://www.w3schools.com/js/js_es5.asp" target="_blank" title="w3schools.com - ECMAScript 5">ECMAScript 5</a>, though certain features (especially browser-specific ones) might not be fully supported.</p>
+					<p>UOX3 contains an embedded scripting engine based on <a href="https://udn.realityripple.com/docs/Mozilla/Projects/SpiderMonkey/Releases/1.8" target="_blank" title="SpiderMonkey 1.8.0-RC1 Change Log">SpiderMonkey v1.8.0-RC1</a>, which offers an equivalent JavaScript feature set to <a href="https://web.archive.org/web/20120612114822/https://developer.mozilla.org/en/New_in_JavaScript_1.8" target="_blank" title="developer.mozilla.com - New in JavaScript 1.8">JavaScript 1.8</a>, though certain features (especially browser-specific ones) might not be fully supported.</p>
 					<p>For additional help with or discussion around any of these, don't hesitate to make use of the <a href="https://www.uox3.org/forums/" target="_blank" title="UOX3 Community Forums">UOX3.org forums</a> or the <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 Discord chat</a>!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -11010,6 +11261,16 @@ function commandTitle()
 								<p><strong>Contributors:</strong> Xuri, punt</p>
 								<p><strong>Fun Facts:</strong> Pathfinding improvements! Special NPC AIs!</p>
 							</div>
+
+							<h4>October, 2023</h4>
+							<input type="checkbox" id="spoiler_history_UOX3_099_6"/>
+							<label for="spoiler_history_UOX3_099_6">UOX3 v0.99.6 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 14 October, 2023</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri, Dragon Slayer, punt, ldilley, Maarc, with additional thanks to Azzerhoden Razeri, Hughesbuddy and Humility</p>
+								<p><strong>Fun Facts:</strong> Adaptive Performance System! Bulk Order Deeds! Young Player System! Stealing revamp! PvP Ruleset! Minor SpiderMonkey Upgrade to 1.8.0-RC1! Admins/GMs no longer dispellable!</p>
+							</div>
 						</div>
 					</div>
 				  </div>
@@ -11338,7 +11599,7 @@ function commandTitle()
 						<input type="checkbox" id="spoiler_history_halloffame_active"/>
 						<label for="spoiler_history_halloffame_active"><h3>Active Contributors</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Contributors active within last year (as of December 2022):</p>
+							<p>Contributors active within last year (as of November 2023):</p>
 							<p><span class="hl">Xuri, punt, Dragon Slayer, Azzerhoden Razeri, ldilley</span><br></p>
 						</div>
 					</div>

@@ -3314,7 +3314,8 @@ static bool CMisc_HasSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 			return true;
 		}
 
-		if( Magic->HasSpell( myItem, spellId ))
+		// Code checks for spell based on index starting at 0, while spells have spellIDs starting from 1
+		if( Magic->HasSpell( myItem, spellId - 1 ))
 		{
 			*rval = BOOLEAN_TO_JSVAL( JS_TRUE );
 		}

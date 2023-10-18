@@ -2550,6 +2550,10 @@
 2790=Tempo giocato (Char): %s
 2791=Tempo di gioco (Acct): %s
 2792=*sembra esausto*
+2793=Valore: %i
+2794=per %i oro
+2795=Raccolgi alcune gemme dai rottami.
+2796=* Il tuo corpo è in preda alle convulsioni a causa delle scosse elettriche.
 // [2800-2999] House Scripts
 2800=Proprietario della casa:
 2801=COOPERATORI
@@ -2785,7 +2789,7 @@
 3162=un elementale del veleno
 3163=un elementale della neve
 3164=un vortice di energia
-3165=un ciuffo malvagio
+3165=un filo d'ombra
 3166=un elemento d'oro
 3167=un orso bruno
 3168=un demone dell'ombra
@@ -3243,6 +3247,17 @@
 5145=un mannaia orco
 5146=il controllore
 5147=il Parrucchiere
+5148=uno spiritello oscuro
+5149=il Boia
+5150=uno scorpione maculato
+5151=un dragone del caos
+5152=un dragone del caos élite
+5153=la Fanciulla Zingara
+5154=l'addestratore di animali zingaro
+5155=il Banchiere Zingaro
+5156=il Cartomante Zingaro
+5157=il Vagabondo
+5158=il Lavoratore del Ferro
 // [6000-6499] Misc Skill Msgs
 6000=Quella persona sembra %s e %t.
 6001=Non puoi ricavarne nulla di utile.
@@ -3971,6 +3986,8 @@
 8942=Seleziona il luogo in cui teletrasportarsi:
 8943=Selezionare la posizione di destinazione per il [%s]:
 8944=Questo non sembra essere un NPC-id valido dai DFN.
+8945=Seleziona il bersaglio per lo stato mobile %i:
+8946=Seleziona il bersaglio da impostare come non decadibile:
 // [9000-9500] Misc
 9000=Non puoi usare questa abilità mentre sei congelato.
 9001=Questo personaggio non può volare!

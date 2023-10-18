@@ -2550,6 +2550,10 @@
 2790=Tiempo jugado (Char): %s
 2791=Tiempo jugado (Acct): %s
 2792=*parece agotado*
+2793=Valor: %i
+2794=por %i oro
+2795=Buscas algunas gemas entre los escombros.
+2796=* Tu cuerpo convulsiona por la descarga eléctrica *
 // [2800-2999] Escritura de la casa
 2800=Propietario de la casa:
 2801=CO-OWNERS
@@ -2785,7 +2789,7 @@
 3162=un elemento venenoso
 3163=un elemental de la nieve
 3164=un vórtice de energía
-3165=un mechón maligno
+3165=un mechón de sombra
 3166=un elemento de oro
 3167=un oso pardo
 3168=un demonio de las sombras
@@ -3243,6 +3247,17 @@
 5145=un cortador de orcos
 5146=el controlador
 5147=el Peluquero
+5148=un wisp oscuro
+5149=el Verdugo
+5150=un escorpión moteado
+5151=dragón del caos
+5152=dragón del caos de élite
+5153=la doncella gitana
+5154=el entrenador de animales gitano
+5155=el gitano banquero
+5156=gitano adivino
+5157=Vagabundo
+5158=trabajador del hierro
 // [6000-6499] Misc Skill Msgs
 6000=Esa persona parece %s y %t.
 6001=No se puede hacer nada útil con eso.
@@ -3971,6 +3986,8 @@
 8942=Seleccione la ubicación a la que se va a teletransportar:
 8943=Seleccione la ubicación de destino para el [%s]:
 8944=Ese no parece ser un NPC-id válido de los DFN.
+8945=Seleccionar objetivo para estado móvil %i:
+8946=Seleccionar objetivo para establecer como no destruible:
 // [9000-9500] Varios
 9000=No puedes usar esta habilidad mientras estás congelado.
 9001=¡Este personaje no puede volar!

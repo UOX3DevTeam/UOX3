@@ -184,7 +184,7 @@ wraith
 
 [NPCLIST DeceitLvlFour]
 {
-fireelemental
+fireele
 lich
 lichlord
 shade
@@ -627,7 +627,7 @@ daemon
 efreet
 evilmage
 evilmagelord
-fireelemental
+fireele
 hellhound
 //largehellcat
 lavalizards
@@ -720,6 +720,330 @@ cluborc
 orcbomber
 orcbrute
 orclord
+}
+
+[NPCLIST cyclops_ghosts]
+{
+2|npclist=allghostslist
+1|lich
+}
+
+[NPCLIST cyclops_giants]
+{
+titan
+cyclops
+}
+
+[NPCLIST wisp_undead_1]
+{
+51|shade
+33|bonemagi
+16|boneknight
+}
+
+[NPCLIST wisp_undead_2]
+{
+51|boneknight
+33|bonemagi
+16|shade
+}
+
+[NPCLIST wisp_evilmages]
+{
+50|evilmage
+25|evilmagelord
+}
+
+[NPCLIST sorc_ele_1]
+{
+acidele
+fireele
+bloodele
+}
+
+[NPCLIST sorc_npclist_1]
+{
+shade
+mongbat
+}
+
+[NPCLIST sorc_npclist_2]
+{
+40|gargoyle
+25|stonegargoyle
+20|shade
+15|lich
+}
+
+[NPCLIST sorc_npclist_3]
+{
+headless
+mongbat
+}
+
+[NPCLIST sorc_npclist_4]
+{
+40|headless
+40|mongbat
+20|earthele
+}
+
+[NPCLIST sorc_npclist_5]
+{
+60|gazer
+30|gazerlarva
+10|eldergazer
+}
+
+[NPCLIST sorc_npclist_6]
+{
+66|daemon
+33|balron
+}
+
+[NPCLIST sorc_npclist_7]
+{
+20|shade
+20|zombie
+20|gargoyle
+15|evilmage
+15|dreadspider
+10|wyvern
+}
+
+[NPCLIST sorc_npclist_8]
+{
+70|hellhound
+30|bloodele
+}
+
+[NPCLIST sorc_npclist_9]
+{
+poisonele
+bloodele
+}
+
+[NPCLIST sorc_npclist_10]
+{
+80|shade
+20|lich
+}
+
+[NPCLIST sorc_npclist_11]
+{
+40|bonemagi
+40|skeletalmage
+20|mummy
+}
+
+[NPCLIST sorc_npclist_12]
+{
+80|mummy
+20|lichlord
+}
+
+[NPCLIST sorc_npclist_13]
+{
+boneknight
+skeletalknight
+}
+
+[NPCLIST sorc_npclist_14]
+{
+25|boneknight
+25|skeletalknight
+17|bonemagi
+17|skeletalmagi
+11|mummy
+5|lichlord
+}
+
+[NPCLIST sorc_npclist_15]
+{
+30|lich
+10|bloodele
+10|poisonele
+5|lichlord
+}
+
+[NPCLIST rock_npclist_1]
+{
+skeleton
+wraith
+zombie
+}
+
+[NPCLIST rock_npclist_2]
+{
+evilmage
+executioner
+}
+
+[NPCLIST rock_npclist_3]
+{
+80|evilmage
+20|evilmagelord
+}
+
+[NPCLIST rock_npclist_4]
+{
+poisonele
+lichlord
+}
+
+[NPCLIST rock_npclist_5]
+{
+50|lich
+25|poisonele
+25|lichlord
+}
+
+[NPCLIST rock_npclist_6]
+{
+hellhound
+lichlord
+}
+
+[NPCLIST exodus_npclist_1]
+{
+20|enslavedgargoyle
+10|golemcontroller
+}
+
+[NPCLIST exodus_npclist_2]
+{
+20|exodusoverseer
+10|golemcontroller
+}
+
+[NPCLIST exodus_npclist_3]
+{
+20|golem
+10|golemcontroller
+}
+
+[NPCLIST exodus_npclist_4]
+{
+20|exodusminion
+10|exodusoverseer
+}
+
+[NPCLIST exodus_npclist_5]
+{
+gargoyleenforcer
+gargoyledestroyer
+}
+
+[NPCLIST exodus_npclist_6]
+{
+30|exodusminion
+20|golem
+10|golemcontroller
+}
+
+[NPCLIST exodus_npclist_7]
+{
+20|exodusminion
+10|golem
+}
+
+[NPCLIST exodus_npclist_8]
+{
+20|exodusminion
+10|exodusoverseer
+5|golemcontroller
+}
+
+[NPCLIST blood_npclist_1]
+{
+40|imp
+10|bloodele
+}
+
+[NPCLIST blood_npclist_2]
+{
+succubus
+hellcat
+}
+
+[NPCLIST ancientlair_npclist_1]
+{
+20|lavalizard
+10|fireele
+}
+
+[NPCLIST ankh_npclist_1]
+{
+30|ratman
+20|ratmanarcher
+10|ratmanmage
+}
+
+[NPCLIST ankh_npclist_2]
+{
+30|imp
+10|hellhound
+}
+
+[NPCLIST ankh_npclist_3]
+{
+30|rottingcorpse
+10|lichlord
+}
+
+[NPCLIST ankh_npclist_4]
+{
+30|skeleton
+20|skeletonmage
+10|skeletalknight
+}
+
+[NPCLIST kirin_npclist_1]
+{
+30|mongbat
+10|earthele
+}
+
+[NPCLIST ratmanmine_npclist_1]
+{
+30|bronzeele
+10|goldele
+}
+
+[NPCLIST ratmanmine_npclist_2]
+{
+30|ratman
+20|ratmanmange
+10|earthele
+}
+
+[NPCLIST ratmanmine_npclist_3]
+{
+30|boneknight
+20|skeletalknight
+10|lavalizard
+}
+
+[NPCLIST spectre_npclist_1]
+{
+shade
+spectre
+wraith
+ghoul
+}
+
+[NPCLIST meercata_npclist_1]
+{
+40|meerwarrior
+40|meermage
+20|meercaptain
+10|meereternal
+}
+
+[NPCLIST spidercave_npclist_1]
+{
+20|terawarrior
+10|teramatriarch
 }
 
 EOF

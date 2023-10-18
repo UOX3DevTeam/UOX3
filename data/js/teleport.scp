@@ -15,6 +15,32 @@
 [TELEPORT ENTRIES]
 {
 // Felucca/Trammel o-----------------------------------------------------o
+// Blackthorn Dungeon (Felucca)
+ENTRY=1517,     1417,   All,    6438,   2678,   20,		0,0 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1517,     1418,   All,    6438,   2679,   20,		0,0 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1517,     1419,   All,    6438,   2680,   20,		0,0 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1517,     1420,   All,    6438,   2681,   20,		0,0 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=6439,     2677,   All,    1518,   1417,   16,		0,0 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2678,   All,    1518,   1418,   16,		0,0 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2679,   All,    1518,   1418,   16,		0,0 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2680,   All,    1518,   1419,   16,		0,0 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2681,   All,    1518,   1419,   16,		0,0 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2682,   All,    1518,   1420,   16,		0,0 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+
+// Blackthorn Dungeon (Trammel)
+ENTRY=1478,     1471,   All,    6438,   2677,   20,		1,1 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1478,     1472,   All,    6438,   2678,   20,		1,1 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1478,     1473,   All,    6438,   2679,   20,		1,1 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1478,     1474,   All,    6438,   2680,   20,		1,1 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1478,     1475,   All,    6438,   2681,   20,		1,1 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=1478,     1476,   All,    6438,   2682,   20,		1,1 // [Castle_Blackthorn_to_Blackthorn_Dungeon]
+ENTRY=6439,     2677,   All,    1479,   1471,   0,		1,1 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2678,   All,    1479,   1472,   0,		1,1 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2679,   All,    1479,   1473,   0,		1,1 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2680,   All,    1479,   1474,   0,		1,1 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2681,   All,    1479,   1475,   0,		1,1 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+ENTRY=6439,     2682,   All,    1479,   1476,   0,		1,1 // [Blackthorn_Dungeon_to_Castle_Blackthorn]
+
 // Felucca/Trammel - Blighted Grove
 ENTRY=587,      1638,   All,    6481,   868,    10          //  [Blighted_Grove_ent]
 ENTRY=588,      1638,   All,    6481,   868,    10          //  [Blighted_Grove_ent]

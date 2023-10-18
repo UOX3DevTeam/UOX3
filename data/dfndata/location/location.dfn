@@ -257,7 +257,7 @@ Y=2069
 Z=-20
 }
 
-[LOCATION 33]
+[LOCATION 34]
 {
 // Buccaneer's Den - Bank
 X=2732
@@ -291,7 +291,7 @@ Z=0
 
 [LOCATION 43]
 {
-// Cove - Cemetary
+// Cove - Cemetery
 X=2443
 Y=1123
 Z=5
@@ -331,7 +331,7 @@ Z=0
 
 [LOCATION 53]
 {
-// Jhelom - Cemetary
+// Jhelom - Cemetery
 X=1296
 Y=3719
 Z=0
@@ -475,7 +475,7 @@ Z=8
 
 [LOCATION 84]
 {
-// Moonglow - Cemetary
+// Moonglow - Cemetery
 X=4546
 Y=1338
 Z=8
@@ -539,7 +539,7 @@ Z=5
 
 [LOCATION 96]
 {
-// Nujel'm - Cemetary
+// Nujel'm - Cemetery
 X=3536
 Y=1156
 Z=20

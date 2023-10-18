@@ -23,6 +23,8 @@ function CommandRegistration()
 	RegisterCommand( "raddnpc", 2, true ); //Use 'RADDNPC <id from DFNs> - Adds specified NPC at multiple targeted locations
 	RegisterCommand( "raddspawner", 2, true ); //Use 'RADDSPAWNER <id from DFNs> - Adds specified Spawner at multiple targeted locations
 	RegisterCommand( "rincid", 2, true ); // Use 'RINCID <value> - repeatedly increase/decrease ID of target by <value>
+	RegisterCommand( "rmovable", 2, true ); // Use 'RMOVABLE <value> - repeatedly set movable status of target item to <value>
+	RegisterCommand( "rnodecay", 2, true ); // Use 'RNODECAY - repeatedly set decayable status of target item to false
 }
 
 //Repeated Command: INCX <value>
@@ -51,7 +53,7 @@ function onCallback0( pSock, myTarget )
 		var incXValue = Number( incXValue );
 		if( !pSock.GetWord( 1 ))
 		{
-				myTarget.x += incXValue;
+			myTarget.x += incXValue;
 		}
 
 		var tempMsg = GetDictionaryEntry( 8929, pSock.language ); // Select target to reposition by %i X:
@@ -89,7 +91,7 @@ function onCallback1( pSock, myTarget )
 		var incYValue = Number( incYValue );
 		if( !pSock.GetWord( 1 ))
 		{
-				myTarget.y += incYValue;
+			myTarget.y += incYValue;
 		}
 
 		var tempMsg = GetDictionaryEntry( 8930, pSock.language ); // Select target to reposition by %i Y:
@@ -126,7 +128,7 @@ function onCallback2( pSock, myTarget )
 		var incZValue = Number( incZValue );
 		if( !pSock.GetWord( 1 ))
 		{
-				myTarget.z += incZValue;
+			myTarget.z += incZValue;
 		}
 
 		var tempMsg = GetDictionaryEntry( 8931, pSock.language ); // Select target to reposition by %i Z:
@@ -371,6 +373,58 @@ function onCallback7( pSock, myTarget )
 					myTarget.owner.controlSlotsUsed -= myTarget.controlSlots;
 				}
 
+				if( myTarget.type == 1 && myTarget.id == 0x0e43 && ValidateObject( myTarget.multi ) && myTarget.more == myTarget.multi.serial )
+				{
+					// Chest of a tent multi. Destroy the multi too!
+					var objMulti = myTarget.multi;
+					objMulti.Delete();
+				}
+
+				// Reset hair/beard style/colour if item being removed is hair or beard on a character
+				var packOwner = GetPackOwner( myTarget, 0 );
+				if( packOwner != null && packOwner.isChar )
+				{
+					if( myTarget.layer == 0x0b ) // Hair
+					{
+						packOwner.hairStyle = 0;
+						packOwner.hairColour = 0;
+					}
+					else if( myTarget.layer == 0x10 ) // Beard
+					{
+						packOwner.beardStyle = 0;
+						packOwner.beardColour = 0;
+					}
+				}				
+
+				// If item being removed was locked down in a multi, release item from multi to update lockdown count properly
+				var iMulti = myTarget.multi;
+				if( ValidateObject( iMulti ))
+				{
+					if( iMulti.IsSecureContainer( myTarget ))
+					{
+						// Targeted item is a secure container
+						iMulti.UnsecureContainer( myTarget );
+					}
+					else
+					{
+						// Release the targeted item before deleting it
+						iMulti.ReleaseItem( myTarget );
+					}
+
+					if( myTarget.type == 1 )
+					{
+						// Loop through any items in container and release them
+						var tempItem;
+						for( tempItem = myTarget.FirstItem(); !myTarget.FinishedItems(); tempItem = myTarget.NextItem() )
+						{
+							if( !ValidateObject( tempItem ))
+								continue;
+
+							iMulti.ReleaseItem( tempItem );
+						}
+					}
+				}
+
 				myTarget.Delete();
 			}
 			else
@@ -411,7 +465,14 @@ function onCallback8( pSock, myTarget )
 		{
 			var targX = pSock.GetWord( 11 );
 			var targY = pSock.GetWord( 13 );
-			var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ));
+			var targZ = pSock.GetSByte( 16 );
+
+			// If connected with a client lower than v7.0.9, manually add height of targeted tile
+			if( pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9 )
+			{
+				targZ += GetTileHeight( pSock.GetWord( 17 ));
+			}
+
 			var tempItem = CreateDFNItem( pSock, pUser, TempItemID, 1, "ITEM", false );
 			if( tempItem )
 			{
@@ -566,7 +627,14 @@ function onCallback11( pSock, myTarget )
 		{
 			var targX = pSock.GetWord( 11 );
 			var targY = pSock.GetWord( 13 );
-			var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ));
+			var targZ = pSock.GetSByte( 16 );
+
+			// If connected with a client lower than v7.0.9, manually add height of targeted tile
+			if( pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9 )
+			{
+				targZ += GetTileHeight( pSock.GetWord( 17 ));
+			}
+
 			var tempItem = CreateDFNItem( pSock, pUser, TempItemID, 1, "SPAWNER", false );
 			if( tempItem )
 			{
@@ -651,6 +719,69 @@ function onCallback12( pSock, myTarget )
 
 		var tempMsg = GetDictionaryEntry( 9101, pSock.language ); // Select target to modify ID by %i:
 		pSock.CustomTarget( 12, tempMsg.replace( /%i/gi, rincIDVal ));
+	}
+	else
+	{
+		pSock.SysMessage( GetDictionaryEntry( 8932, pSock.language )); // Repeating command ended.
+	}
+}
+
+// Repeated Command: RMOVABLE <value>
+function command_RMOVABLE( pSock, execString )
+{
+	if( !isNaN( execString ))
+	{
+		pSock.xText = execString;
+
+		var tempMsg = GetDictionaryEntry( 8945, pSock.language ); // Select target for movable status %i:
+		pSock.CustomTarget( 13, tempMsg.replace( /%i/gi, execString ));
+	}
+	else
+	{
+		pSock.SysMessage( ReqNum );
+	}
+}
+function onCallback13( pSock, myTarget )
+{
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
+	{
+		var movableVal = pSock.xText;
+		var movableVal = Number( movableVal );
+		if( !pSock.GetWord( 1 ))
+		{
+			myTarget.movable = movableVal;
+		}
+
+		var tempMsg = GetDictionaryEntry( 8945, pSock.language ); // Select target for movable status %i:
+		pSock.CustomTarget( 13, tempMsg.replace( /%i/gi, movableVal ));
+	}
+	else
+	{
+		pSock.SysMessage( GetDictionaryEntry( 8932, pSock.language )); // Repeating command ended.
+	}
+}
+
+// Repeated Command: RNODECAY <value>
+function command_RNODECAY( pSock, execString )
+{
+	pSock.CustomTarget( 14, GetDictionaryEntry( 8946, pSock.language )); // Select target to set as non-decayable:
+}
+function onCallback14( pSock, myTarget )
+{
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
+	{
+		if( !pSock.GetWord( 1 ))
+		{
+			myTarget.decayable = false;
+		}
+
+		pSock.CustomTarget( 14, GetDictionaryEntry( 8946, pSock.language )); // Select target to set as non-decayable:
 	}
 	else
 	{

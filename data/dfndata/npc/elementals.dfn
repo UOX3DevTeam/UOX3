@@ -62,7 +62,7 @@ RACE=17
 FLAG=NEUTRAL
 }
 
-[firele]
+[fireele]
 {
 NAME=#//a fire elemental
 ID=0x000f

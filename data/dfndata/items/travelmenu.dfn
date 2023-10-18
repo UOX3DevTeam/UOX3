@@ -7,15 +7,17 @@ ITEMMENU=6100
 ITEMMENU=7100
 <=Shrines
 ITEMMENU=8100
-<=GM Locations
+<=GM Locations (Fel)
 ITEMMENU=6004
+<=GM Locations (Tram)
+ITEMMENU=6104
 <=Previous Menu
 ITEMMENU=0
 }
 
 [ITEMMENU 6001]
 {
-Towns (Fel/Trammel)
+Towns (Felucca)
 <=Britain
 ITEMMENU=6005
 <=Buccaneer's Den
@@ -56,7 +58,7 @@ ITEMMENU=6000
 
 [ITEMMENU 6002]
 {
-Dungeons
+Dungeons (Felucca)
 <=Covetous
 ITEMMENU=6022
 <=Deceit
@@ -87,7 +89,7 @@ ITEMMENU=6000
 
 [ITEMMENU 6003]
 {
-Go To Shrines
+Shrines (Felucca)
 <=Chaos Shrine
 GOPLACE=170
 <=Compassion Shrine
@@ -112,7 +114,7 @@ ITEMMENU=6000
 
 [ITEMMENU 6004]
 {
-GM Locations
+GM Locations (Felucca)
 <=Error Spawn Location
 GOPLACE=14
 <=Green Acres
@@ -123,11 +125,123 @@ ITEMMENU=6029
 ITEMMENU=6000
 }
 
+[ITEMMENU 6101]
+{
+Towns (Trammel)
+<=Britain
+ITEMMENU=6105
+<=Buccaneer's Den
+ITEMMENU=6106
+<=Cove
+ITEMMENU=6107
+<=Jhelom
+ITEMMENU=6108
+<=Magincia
+ITEMMENU=6109
+<=Minoc
+ITEMMENU=6110
+<=Moonglow
+ITEMMENU=6111
+<=Nujelm
+ITEMMENU=6112
+<=Ocllo
+ITEMMENU=6113
+<=Serpents Hold
+ITEMMENU=6114
+<=Skara Brae
+ITEMMENU=6115
+<=Trinsic
+ITEMMENU=6116
+<=Vesper
+ITEMMENU=6117
+<=Wind
+ITEMMENU=6118
+<=Yew
+ITEMMENU=6119
+<=Papua - T2A
+ITEMMENU=6120
+<=Delucia - T2A
+ITEMMENU=6121
+<=Previous Menu
+ITEMMENU=6000
+}
+
+[ITEMMENU 6102]
+{
+Dungeons (Trammel)
+<=Covetous
+ITEMMENU=6122
+<=Deceit
+ITEMMENU=6123
+<=Despise
+ITEMMENU=6124
+<=Destard
+ITEMMENU=6125
+<=Fire
+ITEMMENU=6130
+<=Hythloth
+ITEMMENU=6126
+<=Ice
+ITEMMENU=6131
+<=Shame
+ITEMMENU=6127
+<=Wrong
+ITEMMENU=6128
+<=Hythloth Firepit
+GOPLACE=300,1
+<=Yew/Britain Brigand Camp
+GOPLACE=301,1
+<=Yew Fort of the Damned
+GOPLACE=302,1
+<=Previous Menu
+ITEMMENU=6000
+}
+
+[ITEMMENU 6103]
+{
+Shrines (Trammel)
+<=Chaos Shrine
+GOPLACE=170,1
+<=Compassion Shrine
+GOPLACE=171,1
+<=Honesty Shrine
+GOPLACE=172,1
+<=Honor Shrine
+GOPLACE=173,1
+<=Humility Shrine
+GOPLACE=174,1
+<=Justice Shrine
+GOPLACE=175,1
+<=Sacrifice Shrine
+GOPLACE=176,1
+<=Spirituality Shrine
+GOPLACE=177,1
+<=Valor Shrine
+GOPLACE=178,1
+<=Previous Menu
+ITEMMENU=6000
+}
+
+[ITEMMENU 6104]
+{
+GM Locations (Trammel)
+<=Error Spawn Location
+GOPLACE=14,1
+<=Green Acres
+GOPLACE=13,1
+<=Jail Cells
+ITEMMENU=6129
+<=Previous Menu
+ITEMMENU=6000
+}
+
 [ITEMMENU 6100]
 {
 Towns
-<=Felucca/Trammel
+<=Felucca
 ITEMMENU=6001
+<=Trammel
+ITEMMENU=6101
 <=Ilshenar
 ITEMMENU=6200
 <=Malas
@@ -143,8 +257,10 @@ ITEMMENU=6000
 [ITEMMENU 7100]
 {
 Dungeons
-<=Felucca/Trammel
+<=Felucca
 ITEMMENU=6002
+<=Trammel
+ITEMMENU=6102
 <=Ilshenar
 ITEMMENU=7200
 <=Malas
@@ -160,8 +276,10 @@ ITEMMENU=6000
 [ITEMMENU 8100]
 {
 Shrines
-<=Felucca/Trammel
+<=Felucca
 ITEMMENU=6003
+<=Trammel
+ITEMMENU=6103
 <=Ilshenar
 ITEMMENU=8200
 <=Malas

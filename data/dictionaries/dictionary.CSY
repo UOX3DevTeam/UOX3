@@ -2550,6 +2550,10 @@
 2790=Čas hraní (Char): %s
 2791=Čas hraní (Acct): %s
 2792=*vypadá vyčerpaně*
+2793=Hodnota: %i
+2794=pro %i zlato
+2795=Z trosek vylovíš nějaké drahokamy.
+2796=* Tvé tělo se zmítá v křečích z elektrického šoku *
 // [2800-2999] House script
 2800=Vlastník domu:
 2801=VLASTNÍCI DOMU
@@ -2785,7 +2789,7 @@
 3162=jedovatý elementál
 3163=sněžný elementál
 3164=energetický vír
-3165=zlá čarodějka
+3165=stínová bludička
 3166=zlatý elementál
 3167=hnědý medvěd
 3168=stínový ďábel
@@ -3243,6 +3247,17 @@
 5145=orkský sekáček
 5146=ovladač
 5147=kadeřník
+5148=temná bludička
+5149=Kat
+5150=skvrnitý škorpion
+5151=drak chaosu
+5152=elitní dragon chaosu
+5153=cikánská dívka
+5154=cikánský cvičitel zvířat
+5155=cikánský bankéř
+5156=cikánský věštec
+5157=tulák
+5158=železný dělník
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.
@@ -3971,6 +3986,8 @@
 8942=Vyberte místo, kam se chcete teleportovat:
 8943=Vyberte cílové místo pro [%s]:
 8944=Nezdá se, že by to bylo platné NPC-id z DFN.
+8945=Zvolte cíl pro pohyblivý status %i:
+8946=Vyberte cíl, který má být nastaven jako nerozložitelný:
 // [9000-9500] Misc
 9000=Tuto schopnost nemůžete použít, když jste zmrzlí.
 9001=Tato postava nesmí létat!

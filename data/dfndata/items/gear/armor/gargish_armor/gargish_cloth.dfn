@@ -46,10 +46,10 @@ get=0x0403 0x405f
 
 // -----------= CHEST =----------- //
 
-// Gargish Cloth Chest
+// Gargish Cloth Chest - E/W
 [0x0406]
 {
-getlbr=0x0406_lbr - E/W
+getlbr=0x0406_lbr
 getaos=0x0406_aos
 gettol=0x0406_tol
 sectionid=0x0406

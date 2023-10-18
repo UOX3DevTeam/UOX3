@@ -130,7 +130,7 @@ function DisplaySOSGump( socket, pUser, iUsed, sosMsgID )
 	var mapCoords = TriggerEvent( 2503, "GetMapCoordinates", iUsed.morex, iUsed.morey, iUsed.morez );
 
 	// var sosCoords = (iUsed.morex).toString() + ", " + (iUsed.morey).toString();
-	var sosCoords = mapCoords[3] + "o " + mapCoords[4] + "'" + ( mapCoords[5] ? "S" : "N" ) + " " + mapCoords[0] + "o " + mapCoords[1] + "'" + ( mapCoords[2] ? "E" : "W" );
+	var sosCoords = mapCoords[3] + "o " + mapCoords[4] + "'" + ( mapCoords[5] ? "N" : "S" ) + " " + mapCoords[0] + "o " + mapCoords[1] + "'" + ( mapCoords[2] ? "W" : "E" );
 	var sosMsg = GetDictionaryEntry( sosMsgID, socket.language );
 	sosMsg = ( sosMsg.replace( /%s/gi, sosCoords ));
 

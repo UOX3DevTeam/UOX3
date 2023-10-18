@@ -35,7 +35,7 @@ const bool LOGDEFAULT = false;
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps packet stream to log file
 //o------------------------------------------------------------------------------------------------o
-void DumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
+void DumpStream( std::ostream &outStream, const char *strToDump, UI08 num )
 {
 	outStream << "  ";
 	for( UI08 parseBuff = 0; parseBuff < num; ++parseBuff )
@@ -57,7 +57,7 @@ void DumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log packet stream in large buffer
 //o------------------------------------------------------------------------------------------------o
-void DoPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector<UI08>& myBuffer )
+void DoPacketLogging( std::ostream &outStream, size_t buffLen, std::vector<UI08>& myBuffer )
 {
 	outStream << std::hex;
 	char qbuffer[8];
@@ -89,7 +89,7 @@ void DoPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector<UI08
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log packet stream in regular buffer
 //o------------------------------------------------------------------------------------------------o
-void DoPacketLogging( std::ofstream &outStream, size_t buffLen, const UI08 *myBuffer )
+void DoPacketLogging( std::ostream &outStream, size_t buffLen, const UI08 *myBuffer )
 {
 	outStream << std::hex;
 	char qbuffer[8];
@@ -2963,7 +2963,7 @@ UI32 CPUOXBuffer::PackedLength( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log sent packets to log file
 //o------------------------------------------------------------------------------------------------o
-void CPUOXBuffer::Log( std::ofstream &outStream, bool fullHeader )
+void CPUOXBuffer::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -2985,7 +2985,7 @@ CPInputBuffer::CPInputBuffer( CSocket *input )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log received packets to log file
 //o------------------------------------------------------------------------------------------------o
-void CPInputBuffer::Log( std::ofstream &outStream, bool fullHeader )
+void CPInputBuffer::Log( std::ostream &outStream, bool fullHeader )
 {
 	UI08 *buffer	= tSock->Buffer();
 	const UI32 len	= tSock->InLength();

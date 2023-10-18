@@ -83,6 +83,16 @@ GET=m_fisher f_fisher
 GET=m_furtrader f_furtrader
 }
 
+[gypsyanimaltrainer]
+{
+GET=m_gypsyanimaltrainer f_gypsyanimaltrainer
+}
+
+[gypsybanker]
+{
+GET=m_gypsybanker f_gypsybanker
+}
+
 [hairstylist]
 {
 GET=m_hairstylist f_hairstylist
@@ -101,6 +111,11 @@ GET=m_herbalist f_herbalist
 [innkeeper]
 {
 GET=m_innkeeper f_innkeeper
+}
+
+[ironworker]
+{
+GET=m_ironworker f_ironworker
 }
 
 [jeweler]
@@ -151,6 +166,11 @@ GET=m_tavernkeeper f_tavernkeeper
 [tinker]
 {
 GET=m_tinker f_tinker
+}
+
+[vagabond]
+{
+GET=m_vagabond f_vagabond
 }
 
 //[vet]

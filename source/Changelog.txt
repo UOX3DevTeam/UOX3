@@ -1,3 +1,83 @@
+14/10/2023 - Xuri (0.99.6)
+	Updated version number :)
+	Fixed an issue where the "female" flag was not set correctly in CPExtMove() and CPDrawGamePlayer() packets for characters with female Gargoyle (or Savage) body IDs
+
+14/10/2023 - Xuri (0.99.6-RC6x)
+	Added dummy context restore function to additional scripts
+	Updated 'go command to support specifying location to teleport to by name, mapped to locations from locations.dfn (Thanks Dragon Slayer!)
+	Updated Smart Turn script for furniture (js/server/misc/furniture_smartturn.js) with more optimized code (Humility)
+	Fixed latitude/longitude output of GetMapCoordinates helper function (js/server/data/map_coordinates.js), and updated scripts that relied on it
+	Fixed an issue where trying to craft fletching tools would produce hatchets instead (js/skill/craft/fletching.js)
+	Updated js/item/bankcheck.js to display value of checks using onTooltip JS Event, or onNameRequest JS Event if tooltips are disabled
+	Fixed a couple of DFN formatting issues (thanks, punt)
+	Fixed an issue where blank deeds (and bank checks) would be pileable if dropped on the same container (dfndata/items/tools/inscription.dfn)
+	Added dedicated [bankcheck] DFN item (dfndata/items/misc/money.dfn)
+	Updated Banker AI script (js/npc/ai/banker.js) to use dedicated [bankcheck] item instead of blank deeds as base for bank checks, and to have banker NPCs pause and turn towards player when talked to
+	Fixed an issue with script for Healing/Veterinary (js/skill/healing.js) which incorrectly used Anatomy as supplementary skill for Veterinary instead of Animal Lore, and which checked dex of wrong character when calculating healing slips
+	Added two missing tile flags to tileflag enum that threw order of such flags added with HS expansion out of order (thanks, punt)
+	Fixed an issue with travel-commands in GM menu which handled travelling between facets incorrectly
+	Added region spawners for dungeons, towns and overworld in Ilshenar facet
+	Enabled Trammel and Ilshenar facet decorations/spawns by default in admin welcome script (js/server/misc/admin_welcome.js)
+	Reworked portions of admin welcome gump to display optional "addon" decorations per facet, which might be client/era-specific (js/server/misc/admin_welcome.js)
+	Added new NPCs to dfndata/npc/femalehuman.dfn: f_executioner, f_chaosdragoon, f_chaosdragoonelite, f_gypsybanker
+	Added new NPCs to dfndata/npc/femalevendors.dfn: f_gypsymaiden, f_gypsyanimaltrainer, f_gypsyfortuneteller, f_vagabond, f_ironworker
+	Added new NPCs to dfndata/npc/malehuman.dfn: m_executioner, m_chaosdragoon, m_chaosdragoonelite, m_gypsybanker
+	Added new NPCs to dfndata/npc/malevendors.dfn: m_gypsyanimaltrainer, m_vagabond, m_ironworker
+	Added new NPC to dfndata/npc/miscmonsters.dfn: darkwisp
+	Added new NPC to dfndata/npc/undead.dfn: ancientlich
+	Added new Item DFNs for "camps" that when spawned will create a camp with specific decorations ([ilsh_orc_camp], [ilsh_healer_camp], [ilsh_mage_camp], [ilsh_banker_camp])
+	Added scripts for camps (js/item/camps/ilsh_banker_camp.js, js/item/camps/ilsh_healer_camp.js, js/item/camps/ilsh_mage_camp.js, js/item/camps/ilsh_orc_camp.js)
+	Added new colorlist to dfndata/colors/colors.dfn: [RANDOMCOLOR 33] (Bright Primary Colors)
+	Fixed an issue with gargish cloth chest DFN which prevented LBR version from working properly (dfndata/items/gear/armor/gargish_armor/gargish_cloth.dfn)
+	Added a bunch of new NPCLISTS in various npclist DFN files to support regional spawns in Ilshenar
+	Added missing BACKPACK tag to [golem] NPC DFN (dfndata/npc/clockwork.dfn)
+	Fixed misspelled section header for Fire Elemental NPC - from firele to fireele (dfndata/npc/elementals.dfn)
+	Murderous brigand NPCs are no longer willing to teach players skills (dfndata/npc/femalehuman.dfn, dfndata/npc/malehuman.dfn)
+	Corrected coordinates of Rock Dungeon region (dfndata/regions/regions.dfn)
+	Added regions for Sea Market (Felucca/Trammel), Blackthorn Dungeon (Felucca/Trammel) and Lakeshire (Ilshenar) (dfndata/regions/regions.dfn)
+	Fixed an issue with 'radditem and 'raddspawner GM commands which would not correctly set the Z of the added item/spawner to match target location (js/commands/custom/repeatingcmds.js)
+	Added two new repeating commands (js/commands/custom/repeatingcmds.js):
+		'rmovable #	// Repeats bringing up targeting cursor to set movable property on multiple objects
+		'rnodecay	// Repeats bringing up targeting cursor to set decayable property to false on multiple objects
+	Added new areacommand (js/commands/targeting/areacommand.js):
+		'areacommand name [string]	// Sets name of all objects within targeted area to [string]
+	Updated 'decorate command script to better handle flags passed in via admin welcome script for things like facet addons (js/commands/decorate.js)
+	Updated fire breath script (js/npc/special/fire_breath.js) to get fire breath info per NPC based on their sectionID rather than their base body ID
+	Updated facet ruleset script (js/server/misc/facetRuleset.js) with an override for GMs trying to snoop players even in places where snooping is disallowed
+	Updated facet ruleset script (js/server/misc/facetRuleset.js) to allow damage that's not coming from a player/NPC source even in Trammel/Ilshenar
+	Added teleport locations for entering/leaving Blackthorn Dungeon in Felucca/Trammel (js/teleport.scp)
+	Updated 'remove and 'rremove commands to release any targeted objects from potential multis they are locked in to properly update lockdown count (js/commands/targeting/remove.js, js/commands/custom/repeatingcmds.js)
+	Updated felucca/ilshenar world templates with decorations (js/jsdata/worldtemplates/felucca_*/ilshenar_*)
+	Added world templates with decorations for Trammel (js/jsdata/worldtemplates/trammel_*)
+	Added DFN entry for Power Generators, and spawn entries for these in Ilshenar (dfndata/item/puzzles/puzzles.dfn, dfndata/spawn/ilshenar/spawn_ilshenar_world_general.dfn)
+	Added script for Power Generators, which initializes random puzzles on creation and rewards player with diamonds/arcane gems/shadow iron ore when solved, or lightning when failing to solve (js/item/power_generator.js)
+	Added support for overriding newbie-state of items added to players via dfndata/newbie/newbie.dfn. Supported syntax:
+		PACKITEM=sectionID[, amount[, newbieFlag]] 	// To use newbieFlag with PACKITEM, amount must also be specified. Flag can be 0/1
+		EQUIPITEM=sectionID[, itemHue[, newbieFlag]	// To use newbieFlag with EQUIPITEM, itemHue must also be specified. Flag can be 0/1
+	Casting the Earthquake spell will no longer affect the caster, or cause them to become criminal when cast out of town with no impacted targets
+	Fixed a bug where caster would remain frozen after finishing casting targetless spells like Earthquake
+	Fixed a bug where caster would remain frozen if spellcast was cancelled half-ways through by picking up or equipping an item
+	Fixed a bug where caster would remain frozen if spellcast was interrupted by losing concentration from taking melee damage in combat
+	Fixed a bug where a paralyzed player would remain frozen even if taking magic or poison damage, which releases them from paralyzis
+	Fixed a bug where target of Paralyze spell would not visually be shown as frozen in target's client
+	Fixed a bug where a caster frozen while casting a spell could become unfrozen mid-cast because of incoming magic damage
+	Address overflow issue in MultiMul.cpp (punt)
+	Address various cast issues (punt)
+	Corrected jscript project, to not include two files that where for stand alone programs (and resulted in main being added twice in the library (and once was incorrect all ready). (punt)
+	Replaced RoundNumber with std::round (punt)
+	The original physical appearance of characters targeted by 'make admin/gm/cns is now kept track of, and restored upon being targeted by 'make player
+	Fixed an issue where the .HasSpell JS Method was off by 1 when looking for specific spells in player's spellbook, due to 0-based array indexing in code vs 1-based indexing for Spells in DFNs
+
+28/08/2023 - punt
+	Replaced all routine calls with a specific type of stream ifstream/ofstream to the generic istream/ostream for flexibility
+	Modernized region resource loading/saving code
+
+24/08/2023 - punt
+	Fixed a memory leak with regions.cpp, related to worldsaves
+
+14/08/2023 - Maarc/ldilley
+	Upgraded from SpiderMonkey 1.7 to 1.8.0-RC1, which adds support for Array.reduce() and reduceRight(), expression closures, and generator expressions
+
 07/07/2023 - Xuri
 	Fixed an issue which could cause lamp posts to turn into tall candelabras when light levels change
 
@@ -48,7 +128,7 @@
 	Added new UOX.INI setting where a secret shard key can be defined, which can be used as a way to restrict which clients can connect to the shard:
 		SECRETSHARDKEY=None // None by default
 	Added new JS Methods for Region objects:
-		.GetOrePrefs( oreType )	// Get ore preference data for ore type found in town region. Returned as an array containing the following data:
+		.GetOrePref( oreType )	// Get ore preference data for ore type found in town region. Returned as an array containing the following data:
 			orePrefData -> [
 				oreName,	// name of ore
 				color,		// color of ore
@@ -209,6 +289,19 @@
 	Added tracking system for "aggressors" in combat. A player attacking someone (regardless of flag status) will be marked as aggressor to that someone for 2 minutes
 	Added tracking system for "permagrey" flags - these are stored on a per-target basis, so a player can be flagged visibly as permagrey to multiple other players. Persists until player dies.
 	Player combat targets and war mode are now cleared on logout
+	Added new Character JS Methods:
+		.AddAggressorFlag()				// Adds aggressor flag for character towards target character
+		.RemoveAggressorFlag()			// Removes character's aggressor flag towards target character
+		.CheckAggressorFlag()			// Check if character has an aggressor flag towards target character
+		.UpdateAggressorFlagTimestamp() // Updates the expiry timestamp of character's aggressor flag towards target character
+		.IsAggressor()					// Returns true/false depending on whether character has any active aggressor flags
+		.ClearAggressorFlags()			// Clears all the character's aggressor flags towards other characters
+		.AddPermaGreyFlag()				// Adds permagrey flag for character towards target character
+		.RemovePermaGreyFlag()			// Removes character's permagrey flag towards target character
+		.CheckPermaGreyFlag()			// Check if character has an active permagrey flag towards target character
+		.UpdatePermaGreyFlagTimestamp()	// Updates the expiry timestamp of character's permagrey flag towards target character
+		.IsPermaGrey()					// Returns true/false depending on whether character has any active permagrey flags
+		.ClearPermaGreyFlags()			// Clears all the character's aggressor flags towards other characters
 	Players will now be unable to hide if within visual distance and in line of sight of their attacker or current target in combat
 	Server leave-announcement now only happens after the logout timer has expired, instead of the exact moment the player presses the logout button
 	Fixed an issue that could cause swimming NPCs to swim on land

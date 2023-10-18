@@ -1505,7 +1505,7 @@ auto TileInfo::CollectionArt() -> std::vector<CTile>&
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Process terrain data read from tiledata file
 //o------------------------------------------------------------------------------------------------o
-auto TileInfo::ProcessTerrain( std::ifstream &input ) -> void
+auto TileInfo::ProcessTerrain( std::istream &input ) -> void
 {
 	terrainData.reserve( 0x4000 );
 	std::uint32_t value32 = 0;
@@ -1567,7 +1567,7 @@ auto TileInfo::ProcessTerrain( std::ifstream &input ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Process art/statics data read from tiledata file
 //o------------------------------------------------------------------------------------------------o
-auto TileInfo::ProcessArt( std::ifstream &input ) -> void
+auto TileInfo::ProcessArt( std::istream &input ) -> void
 {
 	artData.reserve( 0xFFFF );
 	std::uint32_t value32 = 0;
@@ -2070,7 +2070,7 @@ auto UltimaMap::ProcessEntry( [[maybe_unused]] std::size_t entry, std::size_t in
 		auto ptr = data.data() + ( i * 196 );
 		if( block < _terrain.size() )
 		{
-			LoadTerrainBlock( block, ptr );
+			LoadTerrainBlock( static_cast<int>( block ), ptr );
 		}
 		++block;
 	}

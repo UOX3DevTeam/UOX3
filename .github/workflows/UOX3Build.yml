@@ -10,9 +10,11 @@ on:
       - '**.dfn'
       - '**.scp'
       - '**.txt'
+      - '**.md'
       - '**.html'
       - '**.sln'
       - '**.vcxproj'
+      - '**.xcodeproj'
 
   pull_request:
     paths-ignore:
@@ -20,9 +22,11 @@ on:
       - '**.dfn'
       - '**.scp'
       - '**.txt'
+      - '**.md'
       - '**.html'
       - '**.sln'
       - '**.vcxproj'
+      - '**.xcodeproj'
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
