@@ -1,0 +1,26 @@
+[jackolantern]
+{
+get=base_item
+name=jack o lantern
+id=0x0C6B
+weight=300
+decay=1
+origin=aos
+script=5600
+custominttag=jackolantern 1
+speed=3
+lodamage=1
+hidamage=5
+}
+
+[pumpkinhalloween]
+{
+get=base_item
+name=pumpkin
+id=0x0C6A
+weight=300
+decay=1
+origin=aos
+script=5600
+custominttag=pumpkin 1
+}
