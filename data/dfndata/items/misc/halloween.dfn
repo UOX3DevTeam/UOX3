@@ -1,4 +1,10 @@
-[jackolantern]
+// https://community.stratics.com/threads/halloween-trick-or-treat-anthology.378754/
+
+//loot for grim npc
+//Normal loot: 200 to 220 gold, a combination of 1 to 3 pieces of weapons, armor, jewelry, 1 gem, candle, 1 candy, 1 to 3 fertile dirt,
+//Special loot: 1 carvable pumpkins. (does not spawn every time)
+
+[2006jackolantern]
 {
 get=base_item
 name=jack o lantern
@@ -13,7 +19,7 @@ lodamage=1
 hidamage=5
 }
 
-[pumpkinhalloween]
+[2006pumpkinhalloween]
 {
 get=base_item
 name=pumpkin
@@ -23,4 +29,210 @@ decay=1
 origin=aos
 script=5600
 custominttag=pumpkin 1
+}
+
+[RedLicorice]
+{
+get=base_food
+name=Red Licorice
+id=0x0F8A
+colour=0x39
+pileable=1
+origin=aos
+script=5601
+}
+
+[CaramelApple]
+{
+get=base_food
+name=Caramel Apple
+id=0x09D0
+colour=0x449
+pileable=1
+origin=aos
+}
+
+[RockCandy]
+{
+get=base_food
+name=Rock Candy
+id=0x105D
+colour=0x65
+pileable=1
+origin=aos
+script=5601
+}
+
+[CandiedApple]
+{
+get=base_food
+name=Candied Apple
+id=0x09D0
+colour=0x1194
+pileable=1
+origin=aos
+script=5601
+}
+
+[brightlycoloredrockcandy]
+{
+get=base_food
+name=Rock Candy
+id=0x105D
+colourlist=34
+pileable=1
+origin=aos
+script=5601
+}
+
+[BlackLicorice]
+{
+get=base_food
+name=Black Licorice
+id=0x0F8A
+colour=0x1175
+pileable=1
+origin=aos
+script=5601
+}
+
+
+[MrPlainsCookies]
+{
+get=base_food
+name=Mr Plain's Cookies
+id=0x160C
+colour=0xF4
+pileable=1
+origin=aos
+}
+
+[pumpkinpizza]
+{
+get=base_food
+name=Pumpkin Pizza
+id=0x1040
+colour=0xF3
+pileable=1
+origin=aos
+}
+
+[CreepyCake]
+{
+get=base_food
+name=Creepy Cake
+id=0x9e9
+colour=0x3E4
+pileable=1
+decay=1
+origin=aos
+}
+
+[HarvestWine]
+{
+get=base_drink
+name=Harvest Wine
+id=0x09c7
+colour=0xe0
+weight=100
+origin=aos
+}
+
+[MurkyMilk]
+{
+get=base_drink
+name=Murky Milk
+id=0x09ad
+weight=200
+colour=0x3e5
+origin=aos
+}
+
+// Missing 2008
+//a giant pumpkin muffin
+///candy corn
+//pixie stick
+
+[2008SmallWebleft]
+{
+get=base_item
+name=small web
+id=0x10d6
+weight=100
+colour=0x455
+decay=1
+origin=aos
+}
+
+[2008SmallWebright]
+{
+get=2008SmallWebleft
+id=0x10d7
+colour=0x4E9
+}
+
+[lollipop1]
+{
+get=base_food
+name=lollipop
+id=0x468D
+pileable=1
+decay=1
+origin=aos
+script=5601
+}
+
+[lollipop2]
+{
+get=lollipop1
+id=0x468E
+}
+
+[lollipop3]
+{
+get=lollipop1
+id=0x468F
+}
+
+[wrappedcandy]
+{
+get=base_food
+name=wrapped candy
+id=0x469e
+pileable=1
+decay=1
+origin=aos
+script=5601
+}
+
+[jellybeans]
+{
+get=base_food
+name=jellybeans
+id=0x468C
+pileable=1
+decay=1
+origin=aos
+script=5601
+}
+
+[taffy]
+{
+get=base_food
+name=taffy
+id=0x469D
+pileable=1
+decay=1
+origin=aos
+script=5601
+}
+
+[nougatswirl]
+{
+get=base_food
+name=nougat swirl
+id=0x4690
+pileable=1
+decay=1
+origin=aos
 }
