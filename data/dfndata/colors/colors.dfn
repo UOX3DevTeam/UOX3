@@ -1639,3 +1639,11 @@
 0x55
 0x48
 }
+
+// Small Web Halloween Colo
+[RANDOMCOLOR 35]
+{
+0x0
+0x455
+0x4E9
+}

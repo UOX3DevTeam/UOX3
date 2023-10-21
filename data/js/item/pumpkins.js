@@ -3,7 +3,7 @@ const randomizePumpkinCountdown = false; // If true, add/remove +1/-1 seconds to
 
 function onCreateDFN( objMade, objType ) 
 {
-	var randomnamelist = [
+	var randomnamelist2006 = [
 		"Adida", "Adolescence", "Ando", "Argain", "Arrenai", "Baron Mind", "Cadillac",
 		"CatHat", "Cerulean", "Co", "Coelacanth", "Comforl", "Coolio", "Cyrus",
 		"Czarzane", "Dark Hanako", "Darkscribe", "Draconi", "Draconis Rex", "DragonHead",
@@ -23,18 +23,18 @@ function onCreateDFN( objMade, objType )
 	if( objType == 0 )
 	{
 		var randomID = Math.floor( Math.random() * 3 );
-		var randomName = Math.floor( Math.random() * randomnamelist.length );
+		var randomName = Math.floor(Math.random() * randomnamelist2006.length );
 
 		var pumpkinname = getRandomPumpkinName( objMade );
 
-		objMade.name = randomnamelist[randomName] + pumpkinname;
+		objMade.name = randomnamelist2006[randomName] + pumpkinname;
 		objMade.id = idList[randomID];
 
 		if( objMade.id == 0x0C6A || objMade.id == 0x0C6B )
 		{
 			objMade.weight = Math.floor(Math.random() * ( 2500 - 1200 + 1 ) + 1200);
 		} 
-		else
+		else if( objMade.id == 0x0C6C )
 		{
 			objMade.weight = objMade.id == 0x0C6C ? 300 : 600;
 		}
@@ -297,9 +297,12 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 			return true;
 			break;
 		case 1: //ground
-			var nSpawned = SpawnNPC( "killerpumpkin", iPickedUp.x, iPickedUp.y, iPickedUp.z, iPickedUp.worldnumber, iPickedUp.instanceID );
-			nSpawned.id = idList[randomID];
-			iPickedUp.Delete();
+			if( iPickedUp.GetTag( "jackolantern" ) == 1 || iPickedUp.GetTag( "pumpkin" ) == 1 )
+			{
+				var nSpawned = SpawnNPC("killerpumpkin", iPickedUp.x, iPickedUp.y, iPickedUp.z, iPickedUp.worldnumber, iPickedUp.instanceID);
+				nSpawned.id = idList[randomID];
+				iPickedUp.Delete();
+			}
 			return true;
 			break;
 		case 2: //ownpack

@@ -345,6 +345,8 @@
 0xA77D=500 //unlit medusa left
 0xA781=500 //unlit deamon right
 0xA785=500 //unlit deamon left
+0x4694=500 //unlit Menacing
+0x4698=500 //unlit Leering
 // Pumpkin lights on
 0xA397=500 //lit Octopus
 0xA39B=500 //lit tall tree
@@ -384,6 +386,8 @@
 0xA77E=500 //lit medusa left
 0xA782=500 //lit deamon right
 0xA786=500 //lit deamon left
+0x4691=500 //lit Menacing
+0x4695=500 //lit Leering
 // light sources end
 // -----------------
 // -----------------------------------
