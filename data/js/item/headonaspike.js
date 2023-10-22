@@ -17,7 +17,7 @@ function onUseChecked( pUser, iUsed )
 		case "BleaksHeadOnASpike": head = 30522; break;
 		case "OnifrksHeadOnASpike": head = 30522; break;
 		case "MesannasHeadOnASpike": head = 30522; break;
-		default: "MrsTroubleMakersHeadOnASpike": head = 30522; break;
+		default: head = 30522;
 	}
 
 	headspike.AddGump(100, 100, head);
