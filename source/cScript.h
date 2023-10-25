@@ -136,9 +136,9 @@ class cScript
 {
 private:
 
-	JSScript *			targScript;
+	JS::RootedScript *			targScript;
 	JSContext *			targContext;
-	JSObject *			targObject;
+	JS::RootedObject *			targObject;
 
 	bool				isFiring;
 	UI08				runTime;
