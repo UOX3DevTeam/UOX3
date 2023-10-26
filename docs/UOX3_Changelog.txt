@@ -16,6 +16,7 @@ Contributors: Dragon Slayer
 	Updated SCP jse_objectassociations.scp with pumpkin ids.
 	Fixed an issue in runebook.js missing function _restorecontext_ {} (js runebook)
 	Fixed an issue in potion.js miss spelled server setting YoungPlayerStatus to YoungPlayerSystem (js potion)
+	Updated	Warning log for movement.cpp to include World Number and also changed it to read out like this NPC/Player (cpp movement.cpp)
 
 -================================-
 -= 14/10/2023 - UOX3 0.99.6 =-
