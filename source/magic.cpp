@@ -1231,7 +1231,7 @@ bool splDispelField( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpel
 	}
 	return true;
 }
-void SetRandomName( CChar *s, const std::string& namelist );
+void SetRandomName( CBaseObject *s, const std::string& namelist );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	splIncognito()
 //o------------------------------------------------------------------------------------------------o
