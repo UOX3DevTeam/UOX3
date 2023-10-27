@@ -14,6 +14,7 @@
 	Move SetRandomName from Char to Base (strattond/Maarc)
 	Add NAMELIST tag support for items (strattond/Maarc)
 	Update JS function to allow SetRandomName for an item (strattond/Maarc)
+	Updated DFN Addmenus with new Halloween items Under Misc/Holidays. (dfn itemmenu and itemmenu.bulk)
 
 14/10/2023 - Xuri (0.99.6)
 	Updated version number :)

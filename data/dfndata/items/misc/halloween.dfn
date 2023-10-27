@@ -244,6 +244,8 @@ id=0x42BD
 weight=100
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [SkullsOnPike]
@@ -254,6 +256,8 @@ id=0x42B5
 weight=100
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [menacingjackolantern]
@@ -264,6 +268,8 @@ weight=100
 decay=1
 origin=aos
 script=5602
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [Leeringjackolantern]
@@ -274,6 +280,8 @@ weight=100
 decay=1
 origin=aos
 script=5602
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [blackcat]
@@ -284,6 +292,8 @@ id=0x4688
 weight=100
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [blackcateast]
@@ -300,6 +310,8 @@ id=0x469B
 weight=100
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [pumpkinscarecroweast]
@@ -316,6 +328,8 @@ id=0x4699
 weight=100
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [ruinedtapestryeast]
@@ -331,6 +345,8 @@ id=0x3F26
 weight=500
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [ExcellentIronMaiden]
@@ -340,6 +356,8 @@ id=0x3f15
 weight=500
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [HalloweenGuillotine]
@@ -349,6 +367,8 @@ id=0x3F27
 weight=500
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [PaintedEvilClownMask]
@@ -358,8 +378,10 @@ id=0x4a90
 weight=500
 decay=1
 origin=aos
-custominttag=paintedmask 1
 script=5603
+VALUE=5000 2500
+RESTOCK=10
+custominttag=paintedmask 1
 }
 
 [PaintedDaemonMask]
@@ -371,6 +393,8 @@ decay=1
 origin=aos
 custominttag=paintedmask 2
 script=5603
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [PaintedPlagueMask]
@@ -382,6 +406,8 @@ decay=1
 origin=aos
 custominttag=paintedmask 3
 script=5603
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [PaintedEvilJesterMask]
@@ -393,6 +419,8 @@ decay=1
 origin=aos
 custominttag=paintedmask 4
 script=5603
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [PaintedPorcelainMask]
@@ -404,6 +432,8 @@ decay=1
 origin=aos
 custominttag=paintedmask 5
 script=5603
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [PumpkinCarvingKit]
@@ -415,11 +445,13 @@ weight=500
 decay=1
 origin=aos
 script=5604
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [PumpkinCarvingKitEast]
 {
-get=base_item
+get=PumpkinCarvingKit
 id=0x992E
 }
 
@@ -431,6 +463,8 @@ id=0x992F
 weight=1600
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [tallwitch]
@@ -447,7 +481,7 @@ origin=aos
 {
 get=base_item
 name=unlit tall uo
-id=0x9934
+id=0x9935
 weight=1600
 decay=1
 origin=aos
@@ -467,7 +501,7 @@ origin=aos
 {
 get=base_item
 name=unlit tall spider
-id=0x9939
+id=0x993D
 weight=1600
 decay=1
 origin=aos
@@ -477,7 +511,7 @@ origin=aos
 {
 get=base_item
 name=unlit tall bat
-id=0x9939
+id=0x9941
 weight=1600
 decay=1
 origin=aos
@@ -487,7 +521,7 @@ origin=aos
 {
 get=base_item
 name=unlit tall skull
-id=0x9939
+id=0x9945
 weight=1600
 decay=1
 origin=aos
@@ -531,6 +565,8 @@ id=0x9930
 weight=1600
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [CarvableGord]
@@ -541,6 +577,8 @@ id=0x9D22
 weight=1800
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [gordtallwitch]
@@ -571,6 +609,8 @@ id=0x9A1E
 weight=100
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [CrystalSkull]
@@ -581,6 +621,8 @@ id=0x9A1A
 weight=100
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [JadeSkull]
@@ -591,6 +633,8 @@ id=0x9A1C
 weight=100
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [TrayofPumpkinSpiceCider]
@@ -601,6 +645,8 @@ id=0x9D30
 weight=100
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [TrayOfCandyApples]
@@ -611,6 +657,8 @@ id=0x9D32
 weight=100
 decay=1
 origin=aos
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [MrsTroubleMakersHeadOnASpike]
@@ -622,6 +670,8 @@ weight=100
 decay=1
 origin=aos
 script=5605
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [BrutrinsHeadOnASpike]
@@ -633,6 +683,8 @@ weight=100
 decay=1
 origin=aos
 script=5605
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [StethunsHeadOnASpike]
@@ -644,6 +696,8 @@ weight=100
 decay=1
 origin=aos
 script=5605
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [RakbansHeadOnASpike]
@@ -655,6 +709,8 @@ weight=100
 decay=1
 origin=aos
 script=5605
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [ThatbloksHeadOnASpike]
@@ -666,6 +722,8 @@ weight=100
 decay=1
 origin=aos
 script=5605
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [GryphonsHeadOnASpike]
@@ -677,6 +735,8 @@ weight=100
 decay=1
 origin=aos
 script=5605
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [KyronixsHeadOnASpike]
@@ -688,6 +748,8 @@ weight=100
 decay=1
 origin=aos
 script=5605
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [MisksHeadOnASpike]
@@ -699,6 +761,8 @@ weight=100
 decay=1
 origin=aos
 script=5605
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [BleaksHeadOnASpike]
@@ -710,6 +774,8 @@ weight=100
 decay=1
 origin=aos
 script=5605
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [OnifrksHeadOnASpike]
@@ -721,6 +787,8 @@ weight=100
 decay=1
 origin=aos
 script=5605
+VALUE=5000 2500
+RESTOCK=10
 }
 
 [MesannasHeadOnASpike]
@@ -732,4 +800,6 @@ weight=100
 decay=1
 origin=aos
 script=5605
+VALUE=5000 2500
+RESTOCK=10
 }
