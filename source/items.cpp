@@ -18,6 +18,7 @@ using namespace std::string_literals;
 cItem *Items = nullptr;
 
 ItemTypes FindItemTypeFromTag( const std::string& strToFind );
+void SetRandomName( CBaseObject *s, const std::string& namelist );
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const std::string &cdata )
@@ -453,6 +454,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				break;
 			case DFNTAG_NAME:			applyTo->SetName( cdata );								break;
 			case DFNTAG_NAME2:			applyTo->SetName2( cdata );								break;
+			case DFNTAG_NAMELIST:			SetRandomName(applyTo, cdata);		break;
 			case DFNTAG_NEWBIE:			applyTo->SetNewbie( true );								break;
 			case DFNTAG_OFFSPELL:		applyTo->SetOffSpell( static_cast<SI08>( ndata ));		break;
 			case DFNTAG_ORIGIN:			applyTo->SetOrigin( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->EraStringToEnum( cdata )));		break;
