@@ -55,6 +55,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>October 27th, 2023</h4>
+						<ul>
+							<li>Updated details for JS Function: SetRandomName</li>
+						</ul>
 						<h4>October 14th, 2023</h4>
 						<ul>
 							<li>Added details for new JS Function: DoesCharacterBlock</li>
@@ -9898,15 +9902,15 @@ myChar.SetPoisoned( 2, 10000 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Applies a random name from a specified namelist to character.</p>
+									<p>Applies a random name from a specified namelist to character/item.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>Trivia: Int values were originally used for namelist IDs in dfndata/npc/namelists.dfn, and those still persist, but they are actually strings, and any string can be used as a namelist ID. Doesn't have to be a number!</p>
+									<p>Trivia: Int values were originally used for namelist IDs in dfndata/npc/namelists.dfn or dfndata/items/namelists.dfn, and those still persist, but they are actually strings, and any string can be used as a namelist ID. Doesn't have to be a number!</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myChar.SetRandomName( "19" ); // Apply random name from Savage Warriors namelist</code></pre>
+									<pre><code class="language-javascript">myChar/myItem.SetRandomName( "19" ); // Apply random name from Savage Warriors namelist or can get random name from items namelist depending on how its used.</code></pre>
 								</div>
 							</div>
 						</div>
