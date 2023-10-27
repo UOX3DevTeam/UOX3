@@ -3,31 +3,16 @@ const randomizePumpkinCountdown = false; // If true, add/remove +1/-1 seconds to
 
 function onCreateDFN( objMade, objType ) 
 {
-	var randomnamelist2006 = [
-		"Adida", "Adolescence", "Ando", "Argain", "Arrenai", "Baron Mind", "Cadillac",
-		"CatHat", "Cerulean", "Co", "Coelacanth", "Comforl", "Coolio", "Cyrus",
-		"Czarzane", "Dark Hanako", "Darkscribe", "Draconi", "Draconis Rex", "DragonHead",
-		"Drake", "Elendrik", "Ender", "Fenris", "Fylwyn", "Glamdring", "Goto",
-		"GrumpyMartyr", "Gustus", "Hannel", "Hazel", "HoppyGirl", "Inoia", "JIB",
-		"Jyrra", "Kalag", "LagMan", "Leto", "Leurocian", "Licatia", "Marby", "Masara",
-		"Mesanna", "Mostly Harmless", "MrsTroubleMaker", "MrTact", "Mythfire", "Nina", "Nyssa",
-		"Petrucchio", "Prume", "PurpleTurtle", "RabidFuzzle", "Reico", "Rend", "Runna",
-		"Sameerah", "Serado", "Sienna", "Silvani", "Skunky", "Snark", "Sorif", "Sowl",
-		"Spada", "Stormwind", "Supreem", "TheGrimmOmen", "Theowulf", "Towein", "Tulkas",
-		"Uril", "Vou", "Wasia", "Wilki", "Willow", "Wolf", "Wraith", "Xena", "Yamada",
-		"Ya-Ssan", "Yeti", "Zilo", "Zoer"
-	];
-
 	var idList = [0x0C6B, 0x0C6A, 0x0C6C];
 
 	if( objType == 0 )
 	{
 		var randomID = Math.floor( Math.random() * 3 );
-		var randomName = Math.floor(Math.random() * randomnamelist2006.length );
 
 		var pumpkinname = getRandomPumpkinName( objMade );
-
-		objMade.name = randomnamelist2006[randomName] + pumpkinname;
+		objMade.SetRandomName( 2009 );
+		var newName = objMade.name;
+		objMade.name = newName + pumpkinname;
 		objMade.id = idList[randomID];
 
 		if( objMade.id == 0x0C6A || objMade.id == 0x0C6B )
