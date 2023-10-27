@@ -11,6 +11,9 @@
 	Fixed an issue in runebook.js missing function _restorecontext_ {} (js runebook)
 	Fixed an issue in potion.js miss spelled server setting YoungPlayerStatus to YoungPlayerSystem (js potion)
 	Updated	Warning log for movement.cpp to include World Number and also changed it to read out like this NPC/Player (cpp movement.cpp)
+	Move SetRandomName from Char to Base (strattond/Maarc)
+	Add NAMELIST tag support for items (strattond/Maarc)
+	Update JS function to allow SetRandomName for an item (strattond/Maarc)
 
 14/10/2023 - Xuri (0.99.6)
 	Updated version number :)
