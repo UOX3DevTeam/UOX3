@@ -803,3 +803,58 @@ script=5605
 VALUE=5000 2500
 RESTOCK=10
 }
+
+[TwilightLantern]
+{
+get=0x0a25
+name=Twilight Lantern
+origin=aos
+colourlist=36
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[HalloweenGhoulStatue]
+{
+get=base_item
+name=Halloween Ghoul Statue
+id=0x2109
+weight=100
+decay=1
+colourlist=36
+origin=aos
+script=5605
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[base_halloween_spawner]
+{
+get=base_item
+id=0x1F14
+weight=50000
+interval=5 10
+visible=1
+decay=0
+movable=2
+}
+
+[halloweenmonsterpawn]
+{
+get=base_halloween_spawner
+name=Halloween Monsters
+id=0x1F14
+type=62
+spawnobjlist=halloweengraveyard
+amount=2
+}
+
+[halloweenpumpkinpawn]
+{
+get=base_halloween_spawner
+name=Halloween Pumpkin spawner
+id=0x1F14
+type=61
+spawnobjlist=halloweenpumpkingpatch
+amount=1
+}

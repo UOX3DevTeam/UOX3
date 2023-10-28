@@ -10,9 +10,8 @@ function onCreateDFN( objMade, objType )
 		var randomID = Math.floor( Math.random() * 3 );
 
 		var pumpkinname = getRandomPumpkinName( objMade );
-		objMade.SetRandomName( 2009 );
-		var newName = objMade.name;
-		objMade.name = newName + pumpkinname;
+
+		objMade.name = pumpkinname;
 		objMade.id = idList[randomID];
 
 		if( objMade.id == 0x0C6A || objMade.id == 0x0C6B )
@@ -32,11 +31,11 @@ function getRandomPumpkinName( objMade )
 
 	if( objMade.GetTag( "jackolantern" ) == 1 )
 	{
-		pumpkinname = " Jack O' Lantern";
+		pumpkinname = "Jack O' Lantern";
 	} 
 	else if( objMade.GetTag( "pumpkin" ) == 1 )
 	{
-		pumpkinname = " pumpkin";
+		pumpkinname = "pumpkin";
 	}
 
 	return pumpkinname;
@@ -284,9 +283,21 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 		case 1: //ground
 			if( iPickedUp.GetTag( "jackolantern" ) == 1 || iPickedUp.GetTag( "pumpkin" ) == 1 )
 			{
-				var nSpawned = SpawnNPC("killerpumpkin", iPickedUp.x, iPickedUp.y, iPickedUp.z, iPickedUp.worldnumber, iPickedUp.instanceID);
-				nSpawned.id = idList[randomID];
-				iPickedUp.Delete();
+				// Define a probability value (between 0 and 1) for the chance of spawning.
+				var spawnProbability = 0.5; // This represents a 50% chance.
+
+				// Generate a random number between 0 and 1.
+				var randomChance = Math.random();
+
+				// Check if the randomChance is less than or equal to the spawnProbability.
+				if( randomChance <= spawnProbability )
+				{
+					var nSpawned = SpawnNPC( "killerpumpkin", iPickedUp.x, iPickedUp.y, iPickedUp.z, iPickedUp.worldnumber, iPickedUp.instanceID );
+					nSpawned.id = idList[randomID];
+					iPickedUp.Delete();
+				}
+				else
+					iPickedUp.name = pGrabber.name + " Pumpkin";
 			}
 			return true;
 			break;

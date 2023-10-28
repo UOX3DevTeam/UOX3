@@ -1647,3 +1647,11 @@
 0x455
 0x4E9
 }
+
+// TwilightLantern and Ghoul Statue Colors
+[RANDOMCOLOR 36]
+{
+0x0
+0x0947
+0x0142
+}

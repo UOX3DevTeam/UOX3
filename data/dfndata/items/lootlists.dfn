@@ -940,3 +940,26 @@
 900|blank
 100|0x26AC
 }
+
+// Halloween Loot
+[LOOTLIST HalloweenLoot]
+{
+500|TwilightLantern
+400|blank
+100|HalloweenGhoulStatue
+}
+
+// Grimm Pumpkin Looot
+[LOOTLIST GrimPumpkinLoot]
+{
+500|PumpkinCarvingKit
+500|PumpkinCarvingKitEast
+500|CarvablePumpkin
+500|tallrottenpumpkin
+500|CarvableGord
+100|PaintedPorcelainMask
+100|PaintedEvilJesterMask
+100|PaintedPlagueMask
+100|PaintedDaemonMask
+100|PaintedEvilClownMask
+}

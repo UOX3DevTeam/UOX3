@@ -1,0 +1,61 @@
+[killerpumpkin]
+{
+NAME=Grimm
+ID=0x4de
+DIRECTION=RND
+STR=200 350
+DEX=121 125
+INT=200 250
+KARMA=-5000
+FAME=5000
+MAGICRESISTANCE=200 300
+TACTICS=200 300
+WRESTLING=200 300
+DAMAGE=10 15
+DEF=20
+NPCWANDER=4
+FX2=20
+NPCAI=2
+TOPROV=221
+TOPEACE=221 5
+CARVE=2
+LOOT=GrimPumpkinLoot
+RUNS
+RACE=10
+FLAG=EVIL
+ORIGIN=aos
+}
+
+[halloweenzombie]
+{
+GET=zombie
+LOOT=HalloweenLoot
+FLAG=EVIL
+}
+
+[halloweenwraith]
+{
+GET=wraith
+LOOT=HalloweenLoot
+FLAG=EVIL
+}
+
+[halloweenshade]
+{
+GET=halloweenwraith
+ID=0x001a
+COLOR=0x6677
+}
+
+[halloweenskeleton]
+{
+GET=skeleton
+LOOT=HalloweenLoot
+FLAG=EVIL
+}
+
+[halloweenboneaxeman]
+{
+get=halloweenskeleton
+NAME=5123//a bone axeman
+}
