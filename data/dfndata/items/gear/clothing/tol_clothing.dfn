@@ -10,4 +10,5 @@ maxitems=10000
 layer=0x12
 script=5049
 custominttag=healingBonus 15
+origin=tol
 }
