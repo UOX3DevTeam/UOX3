@@ -9,5 +9,5 @@ weightmax=40000
 maxitems=10000
 layer=0x12
 script=5049
-custominttag=healingbonus 15
+custominttag=healingBonus 15
 }
