@@ -459,8 +459,6 @@ function onTimer( mChar, timerID )
 							var maxValue = Math.round(( secondarySkill / 50 ) + ( healSkill / 20 ) + 10 );
 							var healAmt = RandomNumber( minValue, maxValue );
 
-							healAmt += healAmt * ( healBonus / 100 );
-
 							// Reduce the amount healed with each slip caused by damage taken while healing
 							for( var i = 0; i < slipCount; i++ )
 							{
@@ -482,7 +480,7 @@ function onTimer( mChar, timerID )
 							}
 							else
 							{
-								ourObj.Heal( healAmt, mChar );
+								ourObj.Heal(healAmt * (healBonus / 100), mChar );
 								socket.SysMessage( GetDictionaryEntry( 1271, socket.language )); // You apply the bandages and the patient looks a bit healthier.
 							}
 						}
