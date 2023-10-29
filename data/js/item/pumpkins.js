@@ -290,14 +290,17 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 				var randomChance = Math.random();
 
 				// Check if the randomChance is less than or equal to the spawnProbability.
-				if( randomChance <= spawnProbability )
+				if( randomChance <= spawnProbability && iPickedUp.GetTag( "Named" ) == 0 )
 				{
 					var nSpawned = SpawnNPC( "killerpumpkin", iPickedUp.x, iPickedUp.y, iPickedUp.z, iPickedUp.worldnumber, iPickedUp.instanceID );
 					nSpawned.id = idList[randomID];
 					iPickedUp.Delete();
 				}
-				else
+				else if( iPickedUp.GetTag( "Named" ) == 0 )
+				{
 					iPickedUp.name = pGrabber.name + " Pumpkin";
+					iPickedUp.SetTag("Named", 1);
+				}
 			}
 			return true;
 			break;

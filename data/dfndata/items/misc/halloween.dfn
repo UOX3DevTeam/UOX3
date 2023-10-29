@@ -837,6 +837,7 @@ interval=5 10
 visible=1
 decay=0
 movable=2
+event=halloween
 }
 
 [halloweenmonsterpawn]
@@ -855,6 +856,6 @@ get=base_halloween_spawner
 name=Halloween Pumpkin spawner
 id=0x1F14
 type=61
-spawnobjlist=halloweenpumpkingpatch
+spawnobjlist=151
 amount=1
 }

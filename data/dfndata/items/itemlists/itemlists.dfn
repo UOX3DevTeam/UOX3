@@ -979,10 +979,10 @@ practice_gnarled_staff
 }
 
 // halloween pumpking patch
-[ITEMLIST 206]
+[ITEMLIST 151]
 {
 40|2006jackolantern
-100|2006pumpkinhalloween4
+100|2006pumpkinhalloween
 25|menacingjackolantern
 25|Leeringjackolantern
 }
@@ -1468,9 +1468,9 @@ itemlist=205
 }
 
 // halloween pumpking patch
-[halloweenpumpkingpatch]
+[listobject151]
 {
-itemlist=206
+itemlist=151
 }
 
 // Gypsy Headgear
