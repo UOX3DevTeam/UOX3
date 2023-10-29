@@ -504,6 +504,8 @@ ITEMMENU=124
 ITEMMENU=122
 <=Consumables
 ITEMMENU=250
+<=Holidays
+ITEMMENU=251
 <=Previous Menu
 ITEMMENU=1
 }

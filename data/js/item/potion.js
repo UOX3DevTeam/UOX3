@@ -427,7 +427,7 @@ function ApplyExplosionDamage( timerObj, targetChar )
 			return;
 
 		// Don't damage Young players
-		if( GetServerSetting( "YoungPlayerStatus" ))
+		if( GetServerSetting( "YoungPlayerSystem" ))
 		{
 			// Don't damage a Young player, or a Young player's pets
 			if(( !targetChar.npc && targetChar.account.isYoung )

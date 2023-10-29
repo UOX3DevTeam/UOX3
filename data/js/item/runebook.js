@@ -1185,3 +1185,5 @@ function GetMapCoordinates( xCoord, yCoord, worldNum )
 
 	return resultArray;
 }
+
+function _restorecontext_() {}
