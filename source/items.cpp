@@ -1402,6 +1402,7 @@ PackTypes cItem::GetPackType( CItem *i )
 		case 0x0E75:	// backpack
 		case 0x0E79:	// pouch
 		case 0x09B0:	// pouch
+		case 0xA1F6:	// First Aid Belt
 			packType = PT_PACK;
 			break;
 		case 0x0E76:	// leather bag

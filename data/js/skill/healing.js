@@ -407,6 +407,16 @@ function onTimer( mChar, timerID )
 					}
 					else if( mChar.CheckSkill( skillNum, 0, healthLoss * 10 )) // Requires higher and higher amount of health lost in order for healer to gain skill
 					{
+						var mItem;
+						var healBonus;
+						for( mItem = mChar.FirstItem(); !mChar.FinishedItems(); mItem = mChar.NextItem() ) 
+						{
+							if( !ValidateObject( mItem ))
+								continue;
+
+							healBonus += parseInt( mItem.GetTag( "healingBonus" ) );
+						}
+
 						// Increase karma when healing innocent/neutral characters
 						if( ourObj != mChar && ( ourObj.innocent || ourObj.neutral ))
 						{
@@ -448,6 +458,8 @@ function onTimer( mChar, timerID )
 							var minValue = Math.round(( secondarySkill / 50 ) + ( healSkill / 50 ) + 3 );
 							var maxValue = Math.round(( secondarySkill / 50 ) + ( healSkill / 20 ) + 10 );
 							var healAmt = RandomNumber( minValue, maxValue );
+
+							healAmt += healAmt * ( healBonus / 100 );
 
 							// Reduce the amount healed with each slip caused by damage taken while healing
 							for( var i = 0; i < slipCount; i++ )

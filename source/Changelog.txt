@@ -1,3 +1,9 @@
+29/10/2023 - Dragon Slayer, Xuri (0.99.6a)
+	Added DFN entries for first aid belt. (dfn item/gear/clothing/ej_clothing)
+	Added First Aid Belt ID to backpack type. (cpp items)
+	Added bandage healing bonus to healing. (js  healing)
+	Added JS script bandagehealingbonus (js items/equip_effect/bandagehealingbonus)
+	
 28/10/2023 - Dragon Slayer (0.99.6a)
 	Added DFN entries for hallow pumpkins, jack o lanterns and halloween decorations. (dfn item/misc/halloween)
 	Added DFN entrie for killerpumpkin in daemons.dfn. (dfn daemons)
