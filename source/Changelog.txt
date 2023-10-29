@@ -1,4 +1,4 @@
-29/10/2023 - Dragon Slayer, Xuri (0.99.6a)
+29/10/2023 - Dragon Slayer, Xuri
 	Added DFN entries for first aid belt. (dfn item/gear/clothing/ej_clothing)
 	Added First Aid Belt ID to backpack type. (cpp items)
 	Added bandage healing bonus to healing. (js  healing)
