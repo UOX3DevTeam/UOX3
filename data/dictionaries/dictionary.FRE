@@ -5305,5 +5305,7 @@
 18769=Les teintures et le bac à teinture ont été placés dans votre sac à dos.
 18770=Voici la moitié d'un ticket de prix ! Double-cliquez sur ce ticket et ciblez n'importe quel autre ticket marqué NEW PLAYER et obtenez un prix ! Ce ticket ne fonctionnera que pour TOI, alors ne le donne pas !
 18771=Une armure de ranger complète.
+// [18800-19000] Propriétés de l’AOS
+18800=%i% Bonus de soins de bandage
 }
 EOF
