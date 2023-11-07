@@ -20,9 +20,9 @@ function DealAreaDamage( srcObj, trgChar )
 		var drainSFX = 0;
 		var drainFXLength = 0;
 
-		switch( trgChar.id )
+		switch( trgChar.sectionID )
 		{
-			case 0x0095: // Succubus
+			case "succubus": // Succubus
 				hpDrain = RandomNumber( 5, 10 );
 
 				// Double drain from male characters

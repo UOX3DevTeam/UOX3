@@ -1,0 +1,861 @@
+// https://community.stratics.com/threads/halloween-trick-or-treat-anthology.378754/
+
+//loot for grim npc
+//Normal loot: 200 to 220 gold, a combination of 1 to 3 pieces of weapons, armor, jewelry, 1 gem, candle, 1 candy, 1 to 3 fertile dirt,
+//Special loot: 1 carvable pumpkins. (does not spawn every time)
+
+[2006jackolantern]
+{
+get=base_item
+name=jack o lantern
+id=0x0C6B
+weight=300
+decay=1
+origin=aos
+script=5600
+custominttag=jackolantern 1
+speed=3
+lodamage=1
+hidamage=5
+}
+
+[2006pumpkinhalloween]
+{
+get=base_item
+name=pumpkin
+id=0x0C6A
+weight=300
+decay=1
+origin=aos
+script=5600
+custominttag=pumpkin 1
+}
+
+[RedLicorice]
+{
+get=base_food
+name=Red Licorice
+id=0x0F8A
+colour=0x39
+pileable=1
+origin=aos
+script=5601
+}
+
+[CaramelApple]
+{
+get=base_food
+name=Caramel Apple
+id=0x09D0
+colour=0x449
+pileable=1
+origin=aos
+}
+
+[RockCandy]
+{
+get=base_food
+name=Rock Candy
+id=0x105D
+colour=0x65
+pileable=1
+origin=aos
+script=5601
+}
+
+[CandiedApple]
+{
+get=base_food
+name=Candied Apple
+id=0x09D0
+colour=0x1194
+pileable=1
+origin=aos
+script=5601
+}
+
+[brightlycoloredrockcandy]
+{
+get=base_food
+name=Rock Candy
+id=0x105D
+colourlist=34
+pileable=1
+origin=aos
+script=5601
+}
+
+[BlackLicorice]
+{
+get=base_food
+name=Black Licorice
+id=0x0F8A
+colour=0x1175
+pileable=1
+origin=aos
+script=5601
+}
+
+
+[MrPlainsCookies]
+{
+get=base_food
+name=Mr Plain's Cookies
+id=0x160C
+colour=0xF4
+pileable=1
+origin=aos
+}
+
+[pumpkinpizza]
+{
+get=base_food
+name=Pumpkin Pizza
+id=0x1040
+colour=0xF3
+pileable=1
+origin=aos
+}
+
+[CreepyCake]
+{
+get=base_food
+name=Creepy Cake
+id=0x9e9
+colour=0x3E4
+pileable=1
+decay=1
+origin=aos
+}
+
+[HarvestWine]
+{
+get=base_drink
+name=Harvest Wine
+id=0x09c7
+colour=0xe0
+weight=100
+origin=aos
+}
+
+[MurkyMilk]
+{
+get=base_drink
+name=Murky Milk
+id=0x09ad
+weight=200
+colour=0x3e5
+origin=aos
+}
+
+// Missing 2008
+//a giant pumpkin muffin
+///candy corn
+//pixie stick
+
+[2008SmallWebleft]
+{
+get=base_item
+name=small web
+id=0x10d6
+weight=100
+colourlist=35
+decay=1
+origin=aos
+}
+
+[2008SmallWebright]
+{
+get=2008SmallWebleft
+id=0x10d7
+}
+
+[lollipop1]
+{
+get=base_food
+name=lollipop
+id=0x468D
+pileable=1
+decay=1
+origin=aos
+script=5601
+}
+
+[lollipop2]
+{
+get=lollipop1
+id=0x468E
+}
+
+[lollipop3]
+{
+get=lollipop1
+id=0x468F
+}
+
+[wrappedcandy]
+{
+get=base_food
+name=wrapped candy
+id=0x469e
+pileable=1
+decay=1
+origin=aos
+script=5601
+}
+
+[jellybeans]
+{
+get=base_food
+name=jellybeans
+id=0x468C
+pileable=1
+decay=1
+origin=aos
+script=5601
+}
+
+[taffy]
+{
+get=base_food
+name=taffy
+id=0x469D
+pileable=1
+decay=1
+origin=aos
+script=5601
+}
+
+[nougatswirl]
+{
+get=base_food
+name=nougat swirl
+id=0x4690
+pileable=1
+decay=1
+origin=aos
+}
+
+[GrimWarning]
+{
+get=base_item
+name=Grim Warning
+id=0x42BD
+weight=100
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[SkullsOnPike]
+{
+get=base_item
+name=Skulls On Pike
+id=0x42B5
+weight=100
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[menacingjackolantern]
+{
+get=base_item
+id=0x4694
+weight=100
+decay=1
+origin=aos
+script=5602
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[Leeringjackolantern]
+{
+get=base_item
+id=0x4698
+weight=100
+decay=1
+origin=aos
+script=5602
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[blackcat]
+{
+get=base_item
+name=black cat statue
+id=0x4688
+weight=100
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[blackcateast]
+{
+get=blackcat
+id=0x4689
+}
+
+[pumpkinscarecrow]
+{
+get=base_item
+name=pumpkin scarecrow
+id=0x469B
+weight=100
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[pumpkinscarecroweast]
+{
+get=pumpkinscarecrow
+id=0x469C
+}
+
+[RuinedTapestry]
+{
+get=base_item
+name=Ruined Tapestry
+id=0x4699
+weight=100
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[ruinedtapestryeast]
+{
+get=RuinedTapestry
+id=0x469A
+}
+
+[ChairInAGhostCostume]
+{
+get=base_item
+id=0x3F26
+weight=500
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[ExcellentIronMaiden]
+{
+get=base_item
+id=0x3f15
+weight=500
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[HalloweenGuillotine]
+{
+get=base_item
+id=0x3F27
+weight=500
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[PaintedEvilClownMask]
+{
+get=base_item
+id=0x4a90
+weight=500
+decay=1
+origin=aos
+script=5603
+VALUE=5000 2500
+RESTOCK=10
+custominttag=paintedmask 1
+}
+
+[PaintedDaemonMask]
+{
+get=base_item
+id=0x4a92
+weight=500
+decay=1
+origin=aos
+custominttag=paintedmask 2
+script=5603
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[PaintedPlagueMask]
+{
+get=base_item
+id=0x4A8E
+weight=500
+decay=1
+origin=aos
+custominttag=paintedmask 3
+script=5603
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[PaintedEvilJesterMask]
+{
+get=base_item
+id=0x4BA5
+weight=500
+decay=1
+origin=aos
+custominttag=paintedmask 4
+script=5603
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[PaintedPorcelainMask]
+{
+get=base_item
+id=0x4BA7
+weight=500
+decay=1
+origin=aos
+custominttag=paintedmask 5
+script=5603
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[PumpkinCarvingKit]
+{
+get=base_item
+name=Jack O' Lantern Carving Kit
+id=0x992D
+weight=500
+decay=1
+origin=aos
+script=5604
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[PumpkinCarvingKitEast]
+{
+get=PumpkinCarvingKit
+id=0x992E
+}
+
+[CarvablePumpkin]
+{
+get=base_item
+name=Carvable Pumpkin
+id=0x992F
+weight=1600
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[tallwitch]
+{
+get=base_item
+name=unlit tall witch
+id=0x9934
+weight=1600
+decay=1
+origin=aos
+}
+
+[talluo]
+{
+get=base_item
+name=unlit tall uo
+id=0x9935
+weight=1600
+decay=1
+origin=aos
+}
+
+[tallankh]
+{
+get=base_item
+name=unlit tall ankh
+id=0x9939
+weight=1600
+decay=1
+origin=aos
+}
+
+[tallspider]
+{
+get=base_item
+name=unlit tall spider
+id=0x993D
+weight=1600
+decay=1
+origin=aos
+}
+
+[tallbat]
+{
+get=base_item
+name=unlit tall bat
+id=0x9941
+weight=1600
+decay=1
+origin=aos
+}
+
+[tallskull]
+{
+get=base_item
+name=unlit tall skull
+id=0x9945
+weight=1600
+decay=1
+origin=aos
+}
+
+[talldemon]
+{
+get=base_item
+name=unlit tall demon
+id=0x9949
+weight=1600
+decay=1
+origin=aos
+}
+
+[tallspirit]
+{
+get=base_item
+name=unlit tall spirit
+id=0x994D
+weight=1600
+decay=1
+origin=aos
+}
+
+[tallscalele]
+{
+get=base_item
+name=unlit tall scalele
+id=0x9951
+weight=1600
+decay=1
+origin=aos
+}
+
+[tallrottenpumpkin]
+{
+get=base_item
+name=rotten pumpkin
+id=0x9930
+weight=1600
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[CarvableGord]
+{
+get=base_item
+name=Carvable Gord
+id=0x9D22
+weight=1800
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[gordtallwitch]
+{
+get=base_item
+name=unlit gord tall witch
+id=0x9D23
+weight=1800
+decay=1
+origin=aos
+}
+
+[gordtallzombie]
+{
+get=base_item
+name=unlit gord tall zombie
+id=0x9D27
+weight=1800
+decay=1
+origin=aos
+}
+
+[ObsidianSkull]
+{
+get=base_item
+name=Obsidian Skull
+id=0x9A1E
+weight=100
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[CrystalSkull]
+{
+get=base_item
+name=Crystal Skull
+id=0x9A1A
+weight=100
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[JadeSkull]
+{
+get=base_item
+name=Jade Skull
+id=0x9A1C
+weight=100
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[TrayofPumpkinSpiceCider]
+{
+get=base_item
+name=Tray of Pumpkin Spice Cider
+id=0x9D30
+weight=100
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[TrayOfCandyApples]
+{
+get=base_item
+name=Tray of Candy Apples
+id=0x9D32
+weight=100
+decay=1
+origin=aos
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[MrsTroubleMakersHeadOnASpike]
+{
+get=base_item
+name=MrsTroubleMaker’s Head On A Spike
+id=0x9955
+weight=100
+decay=1
+origin=aos
+script=5605
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[BrutrinsHeadOnASpike]
+{
+get=base_item
+name=Brutrin’s Head On A Spike
+id=0x9956
+weight=100
+decay=1
+origin=aos
+script=5605
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[StethunsHeadOnASpike]
+{
+get=base_item
+name=Stethun’s Head On A Spike
+id=0x9957
+weight=100
+decay=1
+origin=aos
+script=5605
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[RakbansHeadOnASpike]
+{
+get=base_item
+name=Rakban’s Head On A Spike
+id=0x9958
+weight=100
+decay=1
+origin=aos
+script=5605
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[ThatbloksHeadOnASpike]
+{
+get=base_item
+name=Thatblok’s Head On A Spike
+id=0x9959
+weight=100
+decay=1
+origin=aos
+script=5605
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[GryphonsHeadOnASpike]
+{
+get=base_item
+name=Gryphon’s Head On A Spike
+id=0x995A
+weight=100
+decay=1
+origin=aos
+script=5605
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[KyronixsHeadOnASpike]
+{
+get=base_item
+name=Kyronix’s Head On A Spike
+id=0x995B
+weight=100
+decay=1
+origin=aos
+script=5605
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[MisksHeadOnASpike]
+{
+get=base_item
+name=Misk’s Head On A Spike
+id=0x995C
+weight=100
+decay=1
+origin=aos
+script=5605
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[BleaksHeadOnASpike]
+{
+get=base_item
+name=Bleak’s Head On A Spike
+id=0x995D
+weight=100
+decay=1
+origin=aos
+script=5605
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[OnifrksHeadOnASpike]
+{
+get=base_item
+name=Onifrk’s Head On A Spike
+id=0x995E
+weight=100
+decay=1
+origin=aos
+script=5605
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[MesannasHeadOnASpike]
+{
+get=base_item
+name=Mesanna’s Head On A Spike
+id=0x995F
+weight=100
+decay=1
+origin=aos
+script=5605
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[TwilightLantern]
+{
+get=0x0a25
+name=Twilight Lantern
+origin=aos
+colourlist=36
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[HalloweenGhoulStatue]
+{
+get=base_item
+name=Halloween Ghoul Statue
+id=0x2109
+weight=100
+decay=1
+colourlist=36
+origin=aos
+script=5605
+VALUE=5000 2500
+RESTOCK=10
+}
+
+[base_halloween_spawner]
+{
+get=base_item
+id=0x1F14
+weight=50000
+interval=5 10
+visible=1
+decay=0
+movable=2
+event=halloween
+}
+
+[halloweenmonsterpawn]
+{
+get=base_halloween_spawner
+name=Halloween Monsters
+id=0x1F14
+type=62
+spawnobjlist=halloweengraveyard
+amount=2
+}
+
+[halloweenpumpkinpawn]
+{
+get=base_halloween_spawner
+name=Halloween Pumpkin spawner
+id=0x1F14
+type=61
+spawnobjlist=151
+amount=1
+}

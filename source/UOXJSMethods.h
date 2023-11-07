@@ -100,7 +100,6 @@ JSNative CChar_BoltEffect;
 JSNative CChar_Gate;
 JSNative CChar_Recall;
 JSNative CChar_Mark;
-JSNative CChar_SetRandomName;
 JSNative CChar_SetSkillByName;
 JSNative CChar_Kill;
 JSNative CChar_Resurrect;
@@ -141,6 +140,7 @@ JSNative CChar_AddFollower;
 JSNative CChar_RemoveFollower;
 JSNative CChar_HasBeenOwner;
 JSNative CChar_CalculateControlChance;
+
 
 // Item Methods
 JSNative CItem_OpenPlank;
@@ -191,6 +191,7 @@ JSNative CBase_AddScriptTrigger;
 JSNative CBase_HasScriptTrigger;
 JSNative CBase_RemoveScriptTrigger;
 JSNative CBase_Refresh;
+JSNative CBase_SetRandomName;
 
 // Multi Methods
 JSNative CMulti_GetMultiCorner;
@@ -428,7 +429,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	JS_FN( "Gate",				CChar_Gate,				1, 0),
 	JS_FN( "Recall",				CChar_Recall,			1, 0),
 	JS_FN( "Mark",				CChar_Mark,				1, 0),
-	JS_FN( "SetRandomName",		CChar_SetRandomName,	1, 0),
+	JS_FN( "SetRandomName",		CBase_SetRandomName,	1, 0),
 	JS_FN( "SetSkillByName",		CChar_SetSkillByName,	2, 0),
 	JS_FN( "Kill",				CChar_Kill,				0, 0),
 	JS_FN( "Resurrect",			CChar_Resurrect,		0, 0),
@@ -562,8 +563,8 @@ inline JSFunctionSpec CItem_Methods[] =
 	JS_FN( "FirstChar",			CMulti_FirstChar,			1, 0),
 	JS_FN( "NextChar",			CMulti_NextChar,			1, 0),
 	JS_FN( "FinishedChars",		CMulti_FinishedChars,		1, 0),
+	JS_FN( "SetRandomName",		CBase_SetRandomName,	1, 0),
 
-	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0),
 	JS_FS_END
 };
 

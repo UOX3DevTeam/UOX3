@@ -1,3 +1,22 @@
+28/10/2023 - Dragon Slayer (0.99.6a)
+	Added DFN entries for hallow pumpkins, jack o lanterns and halloween decorations. (dfn item/misc/halloween)
+	Added DFN entrie for killerpumpkin in daemons.dfn. (dfn daemons)
+	Added JS script for pumpkins. (js items/pumpkins)
+	Added JS script for candy. (js items/candy)
+	Added JS script for jack o lanterns. (js items/jackolanterns)
+	Added JS script for head on spike. (js items/headonspike)
+	Added JS script for pumpkin carving kit. (js items/pumpkincarvingkit)
+	Updated JS script for lights.js with halloween pumpkins. (js lights)
+	Updated SCP jse_objectassociations.scp with pumpkin ids.
+	Fixed an issue in runebook.js missing function _restorecontext_ {}. (js runebook)
+	Fixed an issue in potion.js miss spelled server setting YoungPlayerStatus to YoungPlayerSystem. (js potion)
+	Updated	Warning log for movement.cpp to include World Number and also changed it to read out like this NPC/Player. (cpp movement.cpp)
+	Move SetRandomName from Char to Base. (strattond/Maarc)
+	Add NAMELIST tag support for items. (strattond/Maarc)
+	Update JS function to allow SetRandomName for an item. (strattond/Maarc)
+	Updated DFN Addmenus with new Halloween items Under Misc/Holidays. (dfn itemmenu and itemmenu.bulk)
+	Added Halloween Event Decoration file. (jsdata event_halloween)
+
 14/10/2023 - Xuri (0.99.6)
 	Updated version number :)
 	Fixed an issue where the "female" flag was not set correctly in CPExtMove() and CPDrawGamePlayer() packets for characters with female Gargoyle (or Savage) body IDs

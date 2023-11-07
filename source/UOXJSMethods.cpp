@@ -8607,14 +8607,14 @@ static bool CChar_Mark( JSContext* cx, unsigned argc, JS::Value* vp )
 	return true;
 }
 
-void SetRandomName( CChar *s, const std::string& namelist );
+void SetRandomName( CBaseObject *s, const std::string& namelist );
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CChar_SetRandomName()
+//|	Function	-	CBase_SetRandomName()
 //|	Prototype	-	bool SetRandomName( "namelist" )
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Applies a random name from specified namelist to character
+//|	Purpose		-	Applies a random name from specified namelist to character or item
 //o------------------------------------------------------------------------------------------------o
-static bool CChar_SetRandomName( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_SetRandomName( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -8626,12 +8626,12 @@ static bool CChar_SetRandomName( JSContext* cx, unsigned argc, JS::Value* vp )
   JS::RootedObject obj(cx);
   if (!args.computeThis(cx, &obj))
       return false;
-	CChar *mChar			= JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
+	CBaseObject *mObj			= JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	std::string namelist	= convertToString( cx, args.get( 0 ).toString() );
 
 	if( !namelist.empty() )
 	{
-		SetRandomName( mChar, namelist );
+		SetRandomName( mObj, namelist );
 		args.rval().setBoolean( true );
 		return true;
 	}
