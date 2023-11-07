@@ -1,12 +1,12 @@
-function onEquip(pEquipper, iEquipped) 
+function onEquip( pEquipper, iEquipped ) 
 {
-	pEquipper.AddScriptTrigger(19030);
+	pEquipper.AddScriptTrigger( 5050 );
 }
 
 // Remove script trigger on unequip
-function onUnequip(pUnequipper, iUnequipped) 
+function onUnequip( pUnequipper, iUnequipped ) 
 {
-	pUnequipper.RemoveScriptTrigger(19030);
+	pUnequipper.RemoveScriptTrigger( 5050 );
 }
 
 function onAttack( pAttacker, pDefender )
@@ -21,15 +21,15 @@ function onAttack( pAttacker, pDefender )
 	{
 		if( weaponType == "TWOHND_FENCING" && pDefender.frozen == false ) 
 		{
-			fencing( pAttacker, pDefender );
+			ParalyzingBlow( pAttacker, pDefender );
 		}
 		else if( weaponType == "LG_MACES" ) 
 		{
-			macefighting( pAttacker, pDefender );
+			CrushingBlow( pAttacker, pDefender );
 		}
 		else if( weaponType == "TWOHND_LG_SWORDS" && weaponType == "DEF_SWORDS" && pDefender.GetTempTag( "concussion" ) == 0 )
 		{
-			swordmanship( pAttacker, pDefender );
+			ConcussionBlow( pAttacker, pDefender );
 		}
 	}
 }
@@ -42,7 +42,7 @@ A paralyzed victim may not break this paralysis by any means and may not be para
 The base chance to inflict this special damage is your Anatomy skill level divided by 4.
 */
 
-function Fencing( pAttacker, pDefender )
+function ParalyzingBlow( pAttacker, pDefender )
 {
 	var seconds = 0;
 	if( pDefender.npc )
@@ -70,7 +70,7 @@ there will be a small chance to perform a Crushing Blow, which is a hit for doub
 The base chance to inflict this special damage is your Anatomy skill level divided by 4. The only weapon that can be used for this special attack is the War Hammer
 */
 
-function MaceFighting( pAttacker, pDefender )
+function CrushingBlow( pAttacker, pDefender )
 {
 	var staminaLoss = Math.floor( Math.random() * ( 5 - 3 + 1 )) + 3;
 	pDefender.TextMessage( "You receive a crushing blow!" );
@@ -87,7 +87,7 @@ once a target is the victim of a concussion blow, they cannot be hit in that man
 The base chance to deliver this special blow is your Anatomy skill level divided by 4.
 */
 
-function Swordsmanship( pAttacker, pDefender )
+function ConcussionBlow( pAttacker, pDefender )
 {
 	pDefender.TextMessage( "You receive a concussion blow!" );
 	pDefender.tempint = ( pDefender.tempint - 2 );
