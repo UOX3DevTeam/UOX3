@@ -21,165 +21,165 @@
 
 // Character related functions (9)
 
-JSNative SE_SpawnNPC;			// Create NPC								*
+bool SE_SpawnNPC(JSContext* cx, unsigned argc, JS::Value* vp);			// Create NPC								*
 
 // Effect related functions (3)
 
-JSNative SE_DoMovingEffect;		// Does moving effect						***
-JSNative SE_DoTempEffect;		// Does a temp effect						***
-JSNative SE_DoStaticEffect;		// Does a static effect at location			***
+bool SE_DoMovingEffect(JSContext* cx, unsigned argc, JS::Value* vp);		// Does moving effect						***
+bool SE_DoTempEffect(JSContext* cx, unsigned argc, JS::Value* vp);		// Does a temp effect						***
+bool SE_DoStaticEffect(JSContext* cx, unsigned argc, JS::Value* vp);		// Does a static effect at location			***
 
 // Item related functions (2)
 
-JSNative SE_CreateBlankItem;		// Create an item							***
-JSNative SE_CreateDFNItem;		// Create an item							***
-JSNative SE_CreateHouse;			// Create a house from houses.dfn			***
-JSNative SE_CreateBaseMulti;		// Create a raw multi based on multi ID		***
+bool SE_CreateBlankItem(JSContext* cx, unsigned argc, JS::Value* vp);		// Create an item							***
+bool SE_CreateDFNItem(JSContext* cx, unsigned argc, JS::Value* vp);		// Create an item							***
+bool SE_CreateHouse(JSContext* cx, unsigned argc, JS::Value* vp);			// Create a house from houses.dfn			***
+bool SE_CreateBaseMulti(JSContext* cx, unsigned argc, JS::Value* vp);		// Create a raw multi based on multi ID		***
 
 // Speech related functions (7)
-JSNative SE_BroadcastMessage;	//											***
+bool SE_BroadcastMessage(JSContext* cx, unsigned argc, JS::Value* vp);	//											***
 
 // Random functions(5)
-JSNative SE_RandomNumber;		// Calculates a random number				***
-JSNative SE_CalcCharFromSer;		//											***
-JSNative SE_CalcItemFromSer;		//											***
-JSNative SE_CalcMultiFromSer;	//											***
+bool SE_RandomNumber(JSContext* cx, unsigned argc, JS::Value* vp);		// Calculates a random number				***
+bool SE_CalcCharFromSer(JSContext* cx, unsigned argc, JS::Value* vp);		//											***
+bool SE_CalcItemFromSer(JSContext* cx, unsigned argc, JS::Value* vp);		//											***
+bool SE_CalcMultiFromSer(JSContext* cx, unsigned argc, JS::Value* vp);	//											***
 
-JSNative SE_MakeItem;			//											***
+bool SE_MakeItem(JSContext* cx, unsigned argc, JS::Value* vp);			//											***
 
-JSNative SE_CommandLevelReq;		//											*
-JSNative SE_CommandExists;		//											*
-JSNative SE_FirstCommand;		//											*
-JSNative SE_NextCommand;			//											*
-JSNative SE_FinishedCommandList;	//											*
+bool SE_CommandLevelReq(JSContext* cx, unsigned argc, JS::Value* vp);		//											*
+bool SE_CommandExists(JSContext* cx, unsigned argc, JS::Value* vp);		//											*
+bool SE_FirstCommand(JSContext* cx, unsigned argc, JS::Value* vp);		//											*
+bool SE_NextCommand(JSContext* cx, unsigned argc, JS::Value* vp);			//											*
+bool SE_FinishedCommandList(JSContext* cx, unsigned argc, JS::Value* vp);	//											*
 
-JSNative SE_RegisterCommand;		//											***
-JSNative SE_EnableCommand;		//											***
-JSNative SE_DisableCommand;		//											***
+bool SE_RegisterCommand(JSContext* cx, unsigned argc, JS::Value* vp);		//											***
+bool SE_EnableCommand(JSContext* cx, unsigned argc, JS::Value* vp);		//											***
+bool SE_DisableCommand(JSContext* cx, unsigned argc, JS::Value* vp);		//											***
 
-JSNative SE_RegisterKey;			//											***
-JSNative SE_EnableKey;			//											***
-JSNative SE_DisableKey;			//											***
+bool SE_RegisterKey(JSContext* cx, unsigned argc, JS::Value* vp);			//											***
+bool SE_EnableKey(JSContext* cx, unsigned argc, JS::Value* vp);			//											***
+bool SE_DisableKey(JSContext* cx, unsigned argc, JS::Value* vp);			//											***
 
-JSNative SE_RegisterConsoleFunc;	//											***
-JSNative SE_EnableConsoleFunc;	//											***
-JSNative SE_DisableConsoleFunc;	//											***
+bool SE_RegisterConsoleFunc(JSContext* cx, unsigned argc, JS::Value* vp);	//											***
+bool SE_EnableConsoleFunc(JSContext* cx, unsigned argc, JS::Value* vp);	//											***
+bool SE_DisableConsoleFunc(JSContext* cx, unsigned argc, JS::Value* vp);	//											***
 
-JSNative SE_RegisterSpell;		//											***
-JSNative SE_EnableSpell;			//											***
-JSNative SE_DisableSpell;		//											***
+bool SE_RegisterSpell(JSContext* cx, unsigned argc, JS::Value* vp);		//											***
+bool SE_EnableSpell(JSContext* cx, unsigned argc, JS::Value* vp);			//											***
+bool SE_DisableSpell(JSContext* cx, unsigned argc, JS::Value* vp);		//											***
 
-JSNative SE_RegisterSkill;
-JSNative SE_RegisterPacket;
+bool SE_RegisterSkill(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_RegisterPacket(JSContext* cx, unsigned argc, JS::Value* vp);
 
-JSNative SE_GetHour;					//										***
-JSNative SE_GetMinute;				//										***
-JSNative SE_GetDay;					//										***
-JSNative SE_SecondsPerUOMinute;		//										***
+bool SE_GetHour(JSContext* cx, unsigned argc, JS::Value* vp);					//										***
+bool SE_GetMinute(JSContext* cx, unsigned argc, JS::Value* vp);				//										***
+bool SE_GetDay(JSContext* cx, unsigned argc, JS::Value* vp);					//										***
+bool SE_SecondsPerUOMinute(JSContext* cx, unsigned argc, JS::Value* vp);		//										***
 
-JSNative SE_GetCurrentClock;			//										***
-JSNative SE_GetStartTime;			//										***
-JSNative SE_GetMurderThreshold;		//										***
-JSNative SE_RollDice;				//										***
-JSNative SE_RaceCompareByRace;		//										***
-JSNative SE_GetRandomSOSArea;		//										***
+bool SE_GetCurrentClock(JSContext* cx, unsigned argc, JS::Value* vp);			//										***
+bool SE_GetStartTime(JSContext* cx, unsigned argc, JS::Value* vp);			//										***
+bool SE_GetMurderThreshold(JSContext* cx, unsigned argc, JS::Value* vp);		//										***
+bool SE_RollDice(JSContext* cx, unsigned argc, JS::Value* vp);				//										***
+bool SE_RaceCompareByRace(JSContext* cx, unsigned argc, JS::Value* vp);		//										***
+bool SE_GetRandomSOSArea(JSContext* cx, unsigned argc, JS::Value* vp);		//										***
 
-JSNative SE_FindMulti;				//										***
-JSNative SE_GetItem;					//										***
-JSNative SE_FindItem;				//										***
+bool SE_FindMulti(JSContext* cx, unsigned argc, JS::Value* vp);				//										***
+bool SE_GetItem(JSContext* cx, unsigned argc, JS::Value* vp);					//										***
+bool SE_FindItem(JSContext* cx, unsigned argc, JS::Value* vp);				//										***
 
-JSNative SE_CompareGuildByGuild;		//										**
+bool SE_CompareGuildByGuild(JSContext* cx, unsigned argc, JS::Value* vp);		//										**
 
-JSNative SE_PossessTown;				//										***
+bool SE_PossessTown(JSContext* cx, unsigned argc, JS::Value* vp);				//										***
 
-JSNative SE_IsRaceWeakToWeather;		//										***
-JSNative SE_GetRaceSkillAdjustment;	//										***
+bool SE_IsRaceWeakToWeather(JSContext* cx, unsigned argc, JS::Value* vp);		//										***
+bool SE_GetRaceSkillAdjustment(JSContext* cx, unsigned argc, JS::Value* vp);	//										***
 
-JSNative SE_UseItem;					//										***
-JSNative SE_TriggerTrap;				//										***
+bool SE_UseItem(JSContext* cx, unsigned argc, JS::Value* vp);					//										***
+bool SE_TriggerTrap(JSContext* cx, unsigned argc, JS::Value* vp);				//										***
 
-JSNative SE_TriggerEvent;			//										*
-JSNative SE_DoesEventExist;			//										*
+bool SE_TriggerEvent(JSContext* cx, unsigned argc, JS::Value* vp);			//										*
+bool SE_DoesEventExist(JSContext* cx, unsigned argc, JS::Value* vp);			//										*
 
-JSNative SE_GetPackOwner;			//										***
-JSNative SE_FindRootContainer;		//										***
-JSNative SE_CalcTargetedItem;		//										***
-JSNative SE_CalcTargetedChar;		//										***
-JSNative SE_GetTileIdAtMapCoord;		//										***
+bool SE_GetPackOwner(JSContext* cx, unsigned argc, JS::Value* vp);			//										***
+bool SE_FindRootContainer(JSContext* cx, unsigned argc, JS::Value* vp);		//										***
+bool SE_CalcTargetedItem(JSContext* cx, unsigned argc, JS::Value* vp);		//										***
+bool SE_CalcTargetedChar(JSContext* cx, unsigned argc, JS::Value* vp);		//										***
+bool SE_GetTileIdAtMapCoord(JSContext* cx, unsigned argc, JS::Value* vp);		//										***
 
-JSNative SE_StringToNum;				// Marked for Deletion
-JSNative SE_NumToString;				// Marked for Deletion
-JSNative SE_NumToHexString;			// Marked for Deletion
-JSNative SE_EraStringToNum;
+bool SE_StringToNum(JSContext* cx, unsigned argc, JS::Value* vp);				// Marked for Deletion
+bool SE_NumToString(JSContext* cx, unsigned argc, JS::Value* vp);				// Marked for Deletion
+bool SE_NumToHexString(JSContext* cx, unsigned argc, JS::Value* vp);			// Marked for Deletion
+bool SE_EraStringToNum(JSContext* cx, unsigned argc, JS::Value* vp);
 
-JSNative SE_GetRaceCount;
-JSNative SE_AreaCharacterFunction;
-JSNative SE_AreaItemFunction;
-JSNative SE_Reload;
+bool SE_GetRaceCount(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_AreaCharacterFunction(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_AreaItemFunction(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_Reload(JSContext* cx, unsigned argc, JS::Value* vp);
 
-JSNative SE_GetDictionaryEntry;
-JSNative SE_Yell;
-JSNative SE_SendStaticStats;
-JSNative SE_GetTileHeight;
-JSNative SE_IterateOver;
-JSNative SE_IterateOverSpawnRegions;
-JSNative SE_WorldBrightLevel;
-JSNative SE_WorldDarkLevel;
-JSNative SE_WorldDungeonLevel;
-JSNative SE_GetSpawnRegionFacetStatus;
-JSNative SE_SetSpawnRegionFacetStatus;
-JSNative SE_GetSocketFromIndex;
-JSNative SE_ResourceArea;
-JSNative SE_ResourceAmount;
-JSNative SE_ResourceTime;
-JSNative SE_ResourceRegion;
-JSNative SE_Moon;
+bool SE_GetDictionaryEntry(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_Yell(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_SendStaticStats(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_GetTileHeight(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_IterateOver(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_IterateOverSpawnRegions(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_WorldBrightLevel(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_WorldDarkLevel(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_WorldDungeonLevel(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_GetSpawnRegionFacetStatus(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_SetSpawnRegionFacetStatus(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_GetSocketFromIndex(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_ResourceArea(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_ResourceAmount(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_ResourceTime(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_ResourceRegion(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_Moon(JSContext* cx, unsigned argc, JS::Value* vp);
 
-JSNative SE_GetTownRegion;
-JSNative SE_GetSpawnRegion;
-JSNative SE_GetSpawnRegionCount;
+bool SE_GetTownRegion(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_GetSpawnRegion(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_GetSpawnRegionCount(JSContext* cx, unsigned argc, JS::Value* vp);
 
-JSNative SE_ReloadJSFile;
-JSNative SE_StaticInRange;
-JSNative SE_StaticAt;
-JSNative SE_GetMapElevation;
-JSNative SE_IsInBuilding;
-JSNative SE_CheckStaticFlag;
-JSNative SE_CheckDynamicFlag;
-JSNative SE_CheckTileFlag;
-JSNative SE_DoesStaticBlock;
-JSNative SE_DoesDynamicBlock;
-JSNative SE_DoesMapBlock;
-JSNative SE_DoesCharacterBlock;
-JSNative SE_DistanceBetween;
+bool SE_ReloadJSFile(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_StaticInRange(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_StaticAt(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_GetMapElevation(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_IsInBuilding(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_CheckStaticFlag(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_CheckDynamicFlag(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_CheckTileFlag(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_DoesStaticBlock(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_DoesDynamicBlock(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_DoesMapBlock(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_DoesCharacterBlock(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_DistanceBetween(JSContext* cx, unsigned argc, JS::Value* vp);
 
-JSNative SE_ValidateObject;
-JSNative SE_ApplyDamageBonuses;
-JSNative SE_ApplyDefenseModifiers;
-JSNative SE_WillResultInCriminal;
+bool SE_ValidateObject(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_ApplyDamageBonuses(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_ApplyDefenseModifiers(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_WillResultInCriminal(JSContext* cx, unsigned argc, JS::Value* vp);
 
-JSNative SE_CreateParty;
+bool SE_CreateParty(JSContext* cx, unsigned argc, JS::Value* vp);
 
 // Server settings
-JSNative SE_GetClientFeature;
-JSNative SE_GetServerFeature;
-JSNative SE_GetServerSetting;
+bool SE_GetClientFeature(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_GetServerFeature(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_GetServerSetting(JSContext* cx, unsigned argc, JS::Value* vp);
 
-JSNative SE_DeleteFile;
+bool SE_DeleteFile(JSContext* cx, unsigned argc, JS::Value* vp);
 
 // Account 
-JSNative SE_GetAccountCount;			//										***
-JSNative SE_GetPlayerCount;			//										***
-JSNative SE_GetItemCount;			//										***
-JSNative SE_GetMultiCount;			//										***
-JSNative SE_GetCharacterCount;		//										***
-JSNative SE_GetServerVersionString;	//										***
+bool SE_GetAccountCount(JSContext* cx, unsigned argc, JS::Value* vp);			//										***
+bool SE_GetPlayerCount(JSContext* cx, unsigned argc, JS::Value* vp);			//										***
+bool SE_GetItemCount(JSContext* cx, unsigned argc, JS::Value* vp);			//										***
+bool SE_GetMultiCount(JSContext* cx, unsigned argc, JS::Value* vp);			//										***
+bool SE_GetCharacterCount(JSContext* cx, unsigned argc, JS::Value* vp);		//										***
+bool SE_GetServerVersionString(JSContext* cx, unsigned argc, JS::Value* vp);	//										***
 
 // Server constants
-JSNative SE_BASEITEMSERIAL;			//										***
-JSNative SE_INVALIDSERIAL;			//										***
-JSNative SE_INVALIDID;				//										***
-JSNative SE_INVALIDCOLOUR;			//										***
+bool SE_BASEITEMSERIAL(JSContext* cx, unsigned argc, JS::Value* vp);			//										***
+bool SE_INVALIDSERIAL(JSContext* cx, unsigned argc, JS::Value* vp);			//										***
+bool SE_INVALIDID(JSContext* cx, unsigned argc, JS::Value* vp);				//										***
+bool SE_INVALIDCOLOUR(JSContext* cx, unsigned argc, JS::Value* vp);			//										***
 
 
 #endif

@@ -1778,27 +1778,22 @@ bool SE_UseItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	CChar *mChar = nullptr;
 	CSocket *mySocket = nullptr;
 
-	JSEncapsulate myClass( cx, &( argv[0] ));
-	if( myClass.ClassName() == "UOXChar" )
+	auto myClass = args.get(0);
+	std::string className = JS::GetClass(myClass.toObjectOrNull())->name;
+	if( className == "UOXChar" )
 	{
-		if( myClass.isType( JSOT_OBJECT ))
+		mChar = JS::GetMaybePtrFromReservedSlot<CChar>(myClass.toObjectOrNull(), 0);
+		if( !ValidateObject( mChar ))
 		{
-			mChar = static_cast<CChar *>( myClass.toObject() );
-			if( !ValidateObject( mChar ))
-			{
-				mChar = nullptr;
-			}
+			mChar = nullptr;
 		}
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( className == "UOXSocket" )
 	{
-		if( myClass.isType( JSOT_OBJECT ))
+		mySocket = JS::GetMaybePtrFromReservedSlot<CSocket>(myClass.toObjectOrNull(), 0);
+		if( mySocket != nullptr )
 		{
-			mySocket = static_cast<CSocket *>( myClass.toObject() );
-			if( mySocket != nullptr )
-			{
-				mChar = mySocket->CurrcharObj();
-			}
+			mChar = mySocket->CurrcharObj();
 		}
 	}
 
@@ -1984,7 +1979,12 @@ bool SE_TriggerEvent( JSContext* cx, unsigned argc, JS::Value* vp )
 	//auto origContext = cx;
 	//auto origObject = obj;
 
-	bool retVal = toExecute->CallParticularEvent( eventToFire.c_str(), &argv[2], argc - 2, rval );
+	JS::RootedValue rval(cx);
+	JS::RootedVector<JS::Value> supplied(cx);
+	for (int i = 2; i < argc; ++i) {
+		supplied.append(args.get(i));
+	}
+	bool retVal = toExecute->CallParticularEvent( eventToFire.c_str(), supplied, argc - 2, &rval );
 
 	//JS_SetGlobalObject( origContext, origObject );
   return( retVal );
@@ -3224,11 +3224,12 @@ bool SE_ValidateObject( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	JSEncapsulate myClass( cx, &( argv[0] ));
+	JS::HandleValue myClass = args.get( 0 );
+	std::string className = JS::GetClass(myClass.toObjectOrNull())->name;
 
-	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" )
+	if( className == "UOXChar" || className == "UOXItem" )
 	{
-		CBaseObject *myObj = static_cast<CBaseObject *>( myClass.toObject() );
+		CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( myClass.toObjectOrNull(), 0 );
 		args.rval().setBoolean( ValidateObject( myObj ));
 	}
 	else
@@ -3257,26 +3258,27 @@ bool SE_ApplyDamageBonuses( JSContext* cx, unsigned argc, JS::Value* vp )
 	CChar *attacker	= nullptr, *defender = nullptr;
 	SI16 damage = 0;
 
-	JSEncapsulate damageType( cx, &( argv[0] ));
-	JSEncapsulate getFightSkill( cx, &( argv[3] ));
-	JSEncapsulate hitLoc( cx, &( argv[4] ));
-	JSEncapsulate baseDamage( cx, &(argv [5] ));
+	JS::HandleValue damageType = args.get( 0 );
+	JS::HandleValue getFightSkill = args.get( 3 );
+	JS::HandleValue hitLoc = args.get( 4 );
+	JS::HandleValue baseDamage = args.get( 5 );
 
-	JSEncapsulate attackerClass( cx, &( argv[1] ));
-	if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
+	JS::HandleValue attackerClass = args.get( 1 );
+	std::string className = JS::GetClass(attackerClass.toObjectOrNull())->name;
+	if( className != "UOXChar" )	// It must be a character!
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
 		return false;
 	}
 
-	if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ))
+	if( attackerClass.isNullOrUndefined() )
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
 		return true;
 	}
 	else
 	{
-		attacker = static_cast<CChar *>( attackerClass.toObject() );
+		attacker = JS::GetMaybePtrFromReservedSlot<CChar>( attackerClass.toObjectOrNull(), 0 );
 		if( !ValidateObject( attacker )  )
 		{
 			ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
@@ -3284,21 +3286,22 @@ bool SE_ApplyDamageBonuses( JSContext* cx, unsigned argc, JS::Value* vp )
 		}
 	}
 
-	JSEncapsulate defenderClass( cx, &( argv[2] ));
-	if( defenderClass.ClassName() != "UOXChar" ) // It must be a character!
+	JS::HandleValue defenderClass = args.get( 2 );
+	className = JS::GetClass(defenderClass.toObjectOrNull())->name;
+	if( className != "UOXChar" ) // It must be a character!
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
 		return false;
 	}
 
-	if( defenderClass.isType( JSOT_VOID ) || defenderClass.isType( JSOT_NULL ))
+	if( defenderClass.isNullOrUndefined() )
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
 		return true;
 	}
 	else
 	{
-		defender = static_cast<CChar *>( defenderClass.toObject() );
+		defender = JS::GetMaybePtrFromReservedSlot<CChar>( defenderClass.toObjectOrNull(), 0 );
 		if( !ValidateObject( defender ))
 		{
 			ScriptError( cx, "ApplyDamageBonuses: Passed an invalid Character" );
@@ -3306,8 +3309,8 @@ bool SE_ApplyDamageBonuses( JSContext* cx, unsigned argc, JS::Value* vp )
 		}
 	}
 
-	damage = Combat->ApplyDamageBonuses( static_cast<WeatherType>( damageType.toInt() ), attacker, 
-				defender, static_cast<UI08>( getFightSkill.toInt() ), static_cast<UI08>( hitLoc.toInt() ), static_cast<SI16>( baseDamage.toInt() ));
+	damage = Combat->ApplyDamageBonuses( static_cast<WeatherType>( damageType.toInt32() ), attacker, 
+				defender, static_cast<UI08>( getFightSkill.toInt32() ), static_cast<UI08>( hitLoc.toInt32() ), static_cast<SI16>( baseDamage.toInt32() ));
 
 	args.rval().setInt32( damage );
 	return true;
@@ -3331,22 +3334,23 @@ bool SE_ApplyDefenseModifiers( JSContext* cx, unsigned argc, JS::Value* vp )
 	CChar *attacker	= nullptr, *defender = nullptr;
 	SI16 damage = 0;
 
-	JSEncapsulate damageType( cx, &( argv[0] ));
-	JSEncapsulate getFightSkill( cx, &( argv[3] ));
-	JSEncapsulate hitLoc( cx, &( argv[4] ));
-	JSEncapsulate baseDamage( cx, &( argv[5] ));
-	JSEncapsulate doArmorDamage(cx, &( argv[6] ));
+	JS::HandleValue damageType = args.get( 0 );
+	JS::HandleValue getFightSkill = args.get( 3 );
+	JS::HandleValue hitLoc = args.get( 4 );
+	JS::HandleValue baseDamage = args.get( 5 );
+	JS::HandleValue doArmorDamage = args.get( 6 );
 
-	JSEncapsulate attackerClass( cx, &( argv[1] ));
-	if( attackerClass.ClassName() == "UOXChar" )
+	JS::HandleValue attackerClass = args.get( 1 );
+	std::string className = JS::GetClass(attackerClass.toObjectOrNull())->name;
+	if( className == "UOXChar" )
 	{
-		if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ))
+		if( attackerClass.isNullOrUndefined() )
 		{
 			attacker = nullptr;
 		}
 		else
 		{
-			attacker = static_cast<CChar *>( attackerClass.toObject() );
+			attacker = JS::GetMaybePtrFromReservedSlot<CChar>( attackerClass.toObjectOrNull(), 0 );
 			if( !ValidateObject( attacker ))
 			{
 				attacker = nullptr;
@@ -3354,21 +3358,22 @@ bool SE_ApplyDefenseModifiers( JSContext* cx, unsigned argc, JS::Value* vp )
 		}
 	}
 
-	JSEncapsulate defenderClass( cx, &( argv[2] ));
-	if( defenderClass.ClassName() != "UOXChar" )	// It must be a character!
+	JS::HandleValue defenderClass = args.get( 2 );
+	className = JS::GetClass(defenderClass.toObjectOrNull())->name;
+	if( className != "UOXChar" )	// It must be a character!
 	{
 		ScriptError( cx, "ApplyDefenseModifiers: Passed an invalid Character" );
 		return false;
 	}
 
-	if( defenderClass.isType( JSOT_VOID ) || defenderClass.isType( JSOT_NULL ))
+	if( defenderClass.isNullOrUndefined() )
 	{
 		ScriptError( cx, "ApplyDefenseModifiers: Passed an invalid Character" );
 		return true;
 	}
 	else
 	{
-		defender = static_cast<CChar *>( defenderClass.toObject() );
+		defender = JS::GetMaybePtrFromReservedSlot<CChar>( defenderClass.toObjectOrNull(), 0 );
 		if( !ValidateObject( defender ))
 		{
 			ScriptError( cx, "ApplyDefenseModifiers: Passed an invalid Character" );
@@ -3376,9 +3381,9 @@ bool SE_ApplyDefenseModifiers( JSContext* cx, unsigned argc, JS::Value* vp )
 		}
 	}
 
-	damage = Combat->ApplyDefenseModifiers( static_cast<WeatherType>( damageType.toInt() ), attacker,
-			defender, static_cast<UI08>( getFightSkill.toInt() ), static_cast<UI08>( hitLoc.toInt() ),
-			static_cast<SI16>( baseDamage.toInt() ), doArmorDamage.toBool() );
+	damage = Combat->ApplyDefenseModifiers( static_cast<WeatherType>( damageType.toInt32() ), attacker,
+			defender, static_cast<UI08>( getFightSkill.toInt32() ), static_cast<UI08>( hitLoc.toInt32() ),
+			static_cast<SI16>( baseDamage.toInt32() ), doArmorDamage.toBoolean() );
 
 	args.rval().setInt32( damage );
 	return true;
@@ -3440,20 +3445,21 @@ bool SE_CreateParty( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	JSEncapsulate myClass( cx, &( argv[0] ));
+	JS::HandleValue myClass = args.get( 0 );
 
-	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXSocket" )
+	std::string className = JS::GetClass(myClass.toObjectOrNull())->name;
+	if( className == "UOXChar" || className == "UOXSocket" )
 	{	// it's a character or socket, fantastic
 		CChar *leader		= nullptr;
 		CSocket *leaderSock	= nullptr;
-		if( myClass.ClassName() == "UOXChar" )
+		if( className == "UOXChar" )
 		{
-			leader		= static_cast<CChar *>( myClass.toObject() );
+			leader		= JS::GetMaybePtrFromReservedSlot<CChar>( myClass.toObjectOrNull(), 0 );
 			leaderSock	= leader->GetSocket();
 		}
 		else
 		{
-			leaderSock	= static_cast<CSocket *>( myClass.toObject() );
+			leaderSock	= JS::GetMaybePtrFromReservedSlot<CSocket>( myClass.toObjectOrNull(), 0 );
 			leader		= leaderSock->CurrcharObj();
 		}
 
