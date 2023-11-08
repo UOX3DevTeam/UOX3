@@ -270,4 +270,8 @@ inline std::string convertToString(JSContext *cx, JSString *string) {
     return chars.get();
 }
 
+inline JSString *convertFromString(JSContext* cx, const std::string& value) {
+  return JS_NewStringCopyZ(cx, value.c_str());
+}
+
 #endif

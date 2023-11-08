@@ -548,7 +548,7 @@ SI08 cScript::OnSpeech(const char* speech, CChar* personTalking, CBaseObject* ta
   JSString* strSpeech = nullptr;
   std::string lwrSpeech = speech;
 
-  strSpeech = JS_NewStringCopyZ(targContext, oldstrutil::lower(lwrSpeech).c_str());
+  strSpeech = convertFromString(targContext, oldstrutil::lower(lwrSpeech));
 
   JSObject* ptObj = JSEngine->AcquireObject(IUE_CHAR, personTalking, runTime);
   JSObject* ttObj = nullptr;
@@ -562,7 +562,7 @@ SI08 cScript::OnSpeech(const char* speech, CChar* personTalking, CBaseObject* ta
   }
 
   JS::RootedValueArray<3> params(targContext);
-  params[0] = STRING_TO_JSVAL(strSpeech);
+  params[0].setString(strSpeech);
   params[1].setObjectOrNull(ptObj);
   params[2].setObjectOrNull(ttObj);
   bool retVal = JS_CallFunctionName(targContext, *targObject, "onSpeech", params, &rval);
@@ -875,7 +875,7 @@ std::string cScript::OnTooltip(CBaseObject* myObj, CSocket* pSocket)
 
   // If rval is negative, it's possible some other function/method called from within Ontooltip() encountered
   // an error. Abort attempt to turn it into a string - it might crash the server!
-  if (rval < 0)
+  if (rval.isNumber() && rval.toInt32() < 0)
   {
     Console.Error("Handled exception in cScript.cpp OnTooltip() - invalid return value/error encountered!");
     return "";
@@ -883,8 +883,7 @@ std::string cScript::OnTooltip(CBaseObject* myObj, CSocket* pSocket)
 
   try
   {
-    JSString* str = JS_ValueToString(targContext, rval);
-    std::string returnString = JS_GetStringBytes(str);
+    std::string returnString = convertToString(targContext, rval.toString());
 
     return returnString;
   }
@@ -949,14 +948,13 @@ std::string cScript::OnNameRequest(CBaseObject* myObj, CChar* nameRequester, UI0
 
     // If rval is negative, it's possible some other function/method called from within onNameRequest() encountered
     // an error. Abort attempt to turn it into a string - it might crash the server!
-    if (rval < 0)
+    if (rval.isNumber() && rval.toInt32() < 0)
     {
       Console.Error("Handled exception in cScript.cpp OnNameRequest() - invalid return value/error encountered!");
       return "";
     }
 
-    JSString* str = JS_ValueToString(targContext, rval);
-    std::string returnString = JS_GetStringBytes(str);
+    std::string returnString = convertToString(targContext, rval.toString());
 
     // If no string was returned from the event, make sure we return an empty string instead of "undefined", "false" or "true"
     if (returnString == "undefined" || returnString == "false" || returnString == "true")
@@ -2780,11 +2778,13 @@ void cScript::HandleGumpPress(CPIGumpMenuSelect* packet)
   UI16 nText = static_cast<UI16>(packet->TextCount());
 
   SEGumpData_st* segdGumpData = new SEGumpData_st;
-  JSObject* jsoObject = JS_NewObject(targContext, &UOXGumpData_class, nullptr, nullptr);
-  JS_DefineFunctions(targContext, jsoObject, CGumpData_Methods);
-  JS_DefineProperties(targContext, jsoObject, CGumpDataProperties);
+  JSObject* jsoObject = JS_NewObject(targContext, &UOXGumpData_class );
+  JS::RootedObject rootObject(targContext, jsoObject);
+  JS_DefineFunctions(targContext, rootObject, CGumpData_Methods);
+  JS_DefineProperties(targContext, rootObject, CGumpDataProperties);
   JS::SetReservedSlot(jsoObject, 0, JS::PrivateValue(segdGumpData));
-  JS_LockGCThing(targContext, jsoObject);
+  // Todo Lock GC thing
+  //JS_LockGCThing(targContext, jsoObject);
 
   UI16 i;
   // Loop through Buttons
@@ -2799,13 +2799,14 @@ void cScript::HandleGumpPress(CPIGumpMenuSelect* packet)
     segdGumpData->nIDs.push_back(packet->GetTextId(i));
     segdGumpData->sEdits.push_back(packet->GetTextString(i));
   }
-  jsval jsvParams[3], jsvRVal;
+  JS::RootedValueArray<3> jsvParams(targContext);
+  JS::RootedValue jsvRVal(targContext);
 
   JSObject* myObj = JSEngine->AcquireObject(IUE_SOCK, pressing, runTime);
-  jsvparams[0].setObjectOrNull(myObj);
-  jsvparams[1].setInt32(button);
-  jsvparams[2].setObjectOrNull(jsoObject);
-  [[maybe_unused]] bool retVal = JS_CallFunctionName(targContext, *targObject, "onGumpPress", 3, jsvParams, &jsvRVal);
+  jsvParams[0].setObjectOrNull(myObj);
+  jsvParams[1].setInt32(button);
+  jsvParams[2].setObjectOrNull(jsoObject);
+  JS_CallFunctionName(targContext, *targObject, "onGumpPress", jsvParams, &jsvRVal);
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2824,11 +2825,10 @@ void cScript::HandleGumpInput(CPIGumpInput* pressing)
   JS::RootedValue rval(targContext);
   JS::RootedValueArray<3> params(targContext);
   JSObject* myObj = JSEngine->AcquireObject(IUE_SOCK, pressing->GetSocket(), runTime);
-  JSString* gumpReply = nullptr;
-  gumpReply = JS_NewStringCopyZ(targContext, pressing->Reply().c_str());
+  JSString* gumpReply = convertFromString(targContext, pressing->Reply() );
   params[0].setObjectOrNull(myObj);
   params[1].setInt32(pressing->Index());
-  params[2] = STRING_TO_JSVAL(gumpReply);
+  params[2].setString(gumpReply);
   [[maybe_unused]] bool retVal = JS_CallFunctionName(targContext, *targObject, "onGumpInput", params, &rval);
 }
 
@@ -3033,7 +3033,7 @@ SI08 cScript::OnSpellTarget(CBaseObject* target, CChar* caster, UI08 spellNum)
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calls a particular script event, passing parameters
 //o------------------------------------------------------------------------------------------------o
-bool cScript::CallParticularEvent(const char* eventToCall, jsval* params, SI32 numParams, jsval* eventRetVal)
+bool cScript::CallParticularEvent(const char* eventToCall, const JS::HandleValueArray &params, SI32 numParams, JS::MutableHandleValue eventRetVal)
 {
   if (eventToCall == nullptr)
     return false;
@@ -3173,12 +3173,12 @@ SI08 cScript::OnTalk(CChar* myChar, const char* mySpeech)
   JSString* strSpeech = nullptr;
   std::string lwrSpeech = mySpeech;
 
-  strSpeech = JS_NewStringCopyZ(targContext, oldstrutil::lower(lwrSpeech).c_str());
+  strSpeech = convertFromString(targContext, oldstrutil::lower(lwrSpeech));
 
   JSObject* charObj = JSEngine->AcquireObject(IUE_CHAR, myChar, runTime);
 
   params[0].setObjectOrNull(charObj);
-  params[1] = STRING_TO_JSVAL(strSpeech);
+  params[1].setString(strSpeech);
 
   bool retVal = JS_CallFunctionName(targContext, *targObject, "onTalk", params, &rval);
 
@@ -3212,7 +3212,7 @@ bool cScript::OnSpeechInput(CChar* myChar, CItem* myItem, const char* mySpeech)
 
   char* lwrSpeech = new char[strlen(mySpeech) + 1];
   strcopy(lwrSpeech, strlen(mySpeech) + 1, mySpeech);
-  strSpeech = JS_NewStringCopyZ(targContext, lwrSpeech);
+  strSpeech = convertFromString(targContext, lwrSpeech);
   delete[] lwrSpeech;
 
   JSObject* charObj = JSEngine->AcquireObject(IUE_CHAR, myChar, runTime);
@@ -3220,7 +3220,7 @@ bool cScript::OnSpeechInput(CChar* myChar, CItem* myItem, const char* mySpeech)
 
   if (!ValidateObject(myItem))
   {
-    params[1] = JSVAL_NULL;
+    params[1].setNull();
   }
   else
   {
@@ -3228,7 +3228,7 @@ bool cScript::OnSpeechInput(CChar* myChar, CItem* myItem, const char* mySpeech)
     params[1].setObjectOrNull(itemObj);
   }
 
-  params[2] = STRING_TO_JSVAL(strSpeech);
+  params[2].setString(strSpeech);
   params[3].setInt32(myChar->GetSpeechId());
 
   bool retVal = JS_CallFunctionName(targContext, *targObject, "onSpeechInput", params, &rval);
@@ -3239,7 +3239,7 @@ bool cScript::OnSpeechInput(CChar* myChar, CItem* myItem, const char* mySpeech)
     return true;
   }
 
-  return (rval == JSVAL_TRUE);
+  return (rval.toBoolean());
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3390,7 +3390,7 @@ bool cScript::AreaObjFunc(const char* funcName, CBaseObject* srcObject, CBaseObj
   }
   else
   {
-    params[2] = JSVAL_NULL;
+    params[2].setNull();
   }
   // ExistAndVerify() normally sets our Global Object, but not on custom named functions.
   //TODO JS_SetGlobalObject(targContext, targObject);
@@ -3427,9 +3427,9 @@ SI08 cScript::OnCommand(CSocket* mSock, std::string command)
   JS::RootedValueArray<2> params(targContext);
   JSObject* myObj = JSEngine->AcquireObject(IUE_SOCK, mSock, runTime);
   JSString* strCmd = nullptr;
-  strCmd = JS_NewStringCopyZ(targContext, oldstrutil::lower(command).c_str());
+  strCmd = convertFromString(targContext, oldstrutil::lower(command));
   params[0].setObjectOrNull(myObj);
-  params[1] = STRING_TO_JSVAL(strCmd);
+  params[1].setString(strCmd);
   bool retVal = JS_CallFunctionName(targContext, *targObject, "onCommand", params, &rval);
   if (!retVal)
   {
@@ -3503,10 +3503,10 @@ bool cScript::executeCommand(CSocket* s, std::string funcName, std::string execu
 {
   JS::RootedValue rval(targContext);
   JS::RootedValueArray<2> params(targContext);
-  JSString* execString = JS_NewStringCopyZ(targContext, executedString.c_str());
+  JSString* execString = convertFromString(targContext, executedString);
   JSObject* myObj = JSEngine->AcquireObject(IUE_SOCK, s, runTime);
   params[0].setObjectOrNull(myObj);
-  params[1] = STRING_TO_JSVAL(execString);
+  params[1].setString(execString);
   // ExistAndVerify() normally sets our Global Object, but not on custom named functions.
   // TODO JS_SetGlobalObject(targContext, targObject);
   bool retVal = JS_CallFunctionName(targContext, *targObject, funcName.c_str(), params, &rval);
@@ -3918,7 +3918,7 @@ SI16 cScript::OnCombatDamageCalc(CChar* attacker, CChar* defender, UI08 getFight
 
   SI16 funcRetVal = -1;
 
-  JS::RootedValue rval(targContext);
+  JS::RootedValue damage(targContext);
   JS::RootedValueArray<4> params(targContext);
   JSObject* attackerObj = JSEngine->AcquireObject(IUE_CHAR, attacker, runTime);
   JSObject* defenderObj = JSEngine->AcquireObject(IUE_CHAR, defender, runTime);
@@ -3928,17 +3928,16 @@ SI16 cScript::OnCombatDamageCalc(CChar* attacker, CChar* defender, UI08 getFight
   params[2].setInt32(getFightSkill);
   params[3].setInt32(hitLoc);
 
-  bool retVal = JS_CallFunctionName(targContext, *targObject, "onCombatDamageCalc", params, &rval);
+  bool retVal = JS_CallFunctionName(targContext, *targObject, "onCombatDamageCalc", params, &damage);
   if (!retVal)
   {
     SetEventExists(seOnCombatDamageCalc, false);
     return RV_NOFUNC;
   }
-  JSEncapsulate damage(targContext, &rval);
 
-  if (damage.isType(JSOT_INT) || damage.isType(JSOT_DOUBLE))	// They returned some sort of value
+  if (damage.isNumber())	// They returned some sort of value
   {
-    return static_cast<SI16>(damage.toInt());
+    return static_cast<SI16>(damage.toInt32());
   }
   else
   {
@@ -3975,7 +3974,7 @@ SI08 cScript::OnDamage(CChar* damaged, CChar* attacker, SI16 damageValue, Weathe
   }
   else
   {
-    params[1] = JSVAL_NULL;
+    params[1].setNull();
   }
 
   params[2].setInt32(damageValue);

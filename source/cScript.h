@@ -170,6 +170,7 @@ public:
 	~cScript();
 
 	JSObject *	Object( void ) const;	// returns object pointer
+	JSContext* getContext(void) { return targContext; }
 
 
 	//|	Modification	-	08162003 - Added these event to handle any script initialization and clean up as the server starts, and is shut down
@@ -264,7 +265,7 @@ public:
 	SI08		OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet );
 
 	bool		AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
-	bool		CallParticularEvent( const char *eventToCall, JS::Value *params, SI32 numParams, JS::Value *eventRetVal );
+	bool		CallParticularEvent(const char* eventToCall, const JS::HandleValueArray& params, SI32 numParams, JS::MutableHandleValue eventRetVal);
 
 	bool		ScriptRegistration( std::string scriptType );
 

@@ -90,118 +90,102 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-  
     <ClCompile Include="..\..\source\uox3.cpp" />
- <!-- Script group -->   
-   <ClCompile Include="..\..\source\cServerData.cpp" />
-   <ClCompile Include="..\..\source\cServerDefinitions.cpp" />
-   <ClCompile Include="..\..\source\Dictionary.cpp" />
-   <ClCompile Include="..\..\source\scriptc.cpp" />
-   <ClCompile Include="..\..\source\ssection.cpp" />
-    
- <!-- Base Object group -->   
-   <ClCompile Include="..\..\source\boats.cpp" />
-   <ClCompile Include="..\..\source\cBaseObject.cpp" />
-   <ClCompile Include="..\..\source\cChar.cpp" />
-   <ClCompile Include="..\..\source\cConsole.cpp" />
-   <ClCompile Include="..\..\source\cGuild.cpp" />
-   <ClCompile Include="..\..\source\cItem.cpp" />
-   <ClCompile Include="..\..\source\cMultiObj.cpp" />
-   <ClCompile Include="..\..\source\cSocket.cpp" />
-   <ClCompile Include="..\..\source\cSpawnRegion.cpp" />
-   <ClCompile Include="..\..\source\cThreadQueue.cpp" />
-   <ClCompile Include="..\..\source\ObjectFactory.cpp" />
-   
-   
-<!-- Subsystem group -->    
-   <ClCompile Include="..\..\source\books.cpp" />
-   <ClCompile Include="..\..\source\cAccountClass.cpp" />
-   <ClCompile Include="..\..\source\CGump.cpp" />
-   <ClCompile Include="..\..\source\cHTMLSystem.cpp" />
-   <ClCompile Include="..\..\source\combat.cpp" />
-   <ClCompile Include="..\..\source\commands.cpp" />
-   <ClCompile Include="..\..\source\cRaces.cpp" />
-   <ClCompile Include="..\..\source\cWeather.cpp" />
-   <ClCompile Include="..\..\source\gumps.cpp" />
-   <ClCompile Include="..\..\source\house.cpp" />
-   <ClCompile Include="..\..\source\items.cpp" />
-   <ClCompile Include="..\..\source\jail.cpp" />
-   <ClCompile Include="..\..\source\lineofsight.cpp" />
-   <ClCompile Include="..\..\source\magic.cpp" />
-   <ClCompile Include="..\..\source\movement.cpp" />
-   <ClCompile Include="..\..\source\msgboard.cpp" />
-   <ClCompile Include="..\..\source\PartySystem.cpp" />
-   <ClCompile Include="..\..\source\quantityfuncs.cpp" />
-   <ClCompile Include="..\..\source\queue.cpp" />
-   <ClCompile Include="..\..\source\regions.cpp" />
-   <ClCompile Include="..\..\source\skills.cpp" />
-   <ClCompile Include="..\..\source\sound.cpp" />
-   <ClCompile Include="..\..\source\speech.cpp" />
-   <ClCompile Include="..\..\source\targeting.cpp" />
-   <ClCompile Include="..\..\source\townregion.cpp" />
-   <ClCompile Include="..\..\source\trade.cpp" />
-   <ClCompile Include="..\..\source\vendor.cpp" />
-   <ClCompile Include="..\..\source\weight.cpp" />
-   <ClCompile Include="..\..\source\wholist.cpp" />
-   <ClCompile Include="..\..\source\worldmain.cpp" />
-
-
-<!-- Other group -->    
-   <ClCompile Include="..\..\source\ai.cpp" />
-   <ClCompile Include="..\..\source\archive.cpp" />
-   <ClCompile Include="..\..\source\calcfuncs.cpp" />
-   <ClCompile Include="..\..\source\cDice.cpp" />
-   <ClCompile Include="..\..\source\cPlayerAction.cpp" />
-   <ClCompile Include="..\..\source\cmdtable.cpp" />
-   <ClCompile Include="..\..\source\CResponse.cpp" />
-   <ClCompile Include="..\..\source\cVersionClass.cpp" />
-   <ClCompile Include="..\..\source\dist.cpp" />
-   <ClCompile Include="..\..\source\effect.cpp" />
-   <ClCompile Include="..\..\source\fileio.cpp" />
-   <ClCompile Include="..\..\source\findfuncs.cpp" />
-   <ClCompile Include="..\..\source\npcs.cpp" />
-   <ClCompile Include="..\..\source\osunique.cpp" />
-   <ClCompile Include="..\..\source\pcmanage.cpp" />
-
-
-<!-- JS Engine group -->    
-   <ClCompile Include="..\..\source\CJSEngine.cpp" />
-   <ClCompile Include="..\..\source\CJSMapping.cpp" />
-   <ClCompile Include="..\..\source\cScript.cpp" />
-   <ClCompile Include="..\..\source\JSEncapsulate.cpp" />
-   <ClCompile Include="..\..\source\SEFunctions.cpp" />
-   <ClCompile Include="..\..\source\UOXJSMethods.cpp" />
-   <ClCompile Include="..\..\source\UOXJSPropertyFuncs.cpp" />
-
-<!-- Network group -->    
-   <ClCompile Include="..\..\source\CPacketReceive.cpp" />
-   <ClCompile Include="..\..\source\CPacketSend.cpp" />
-   <ClCompile Include="..\..\source\network.cpp" />
-   <ClCompile Include="..\..\source\IP4Address.cpp" />
-
-<!-- Utility group -->    
-   <ClCompile Include="..\..\source\StringUtility.cpp" />
-   <ClCompile Include="..\..\source\TimeUtility.cpp" />
-   <ClCompile Include="..\..\source\EventTimer.cpp" />
-
-<!-- UOData group -->    
-   <ClCompile Include="..\..\source\mapstuff.cpp" />
-   <ClCompile Include="..\..\source\MultiMul.cpp" />
-   <ClCompile Include="..\..\source\UOPData.cpp" />
-
+    <!-- Script group -->
+    <ClCompile Include="..\..\source\cServerData.cpp" />
+    <ClCompile Include="..\..\source\cServerDefinitions.cpp" />
+    <ClCompile Include="..\..\source\Dictionary.cpp" />
+    <ClCompile Include="..\..\source\scriptc.cpp" />
+    <ClCompile Include="..\..\source\ssection.cpp" />
+    <!-- Base Object group -->
+    <ClCompile Include="..\..\source\boats.cpp" />
+    <ClCompile Include="..\..\source\cBaseObject.cpp" />
+    <ClCompile Include="..\..\source\cChar.cpp" />
+    <ClCompile Include="..\..\source\cConsole.cpp" />
+    <ClCompile Include="..\..\source\cGuild.cpp" />
+    <ClCompile Include="..\..\source\cItem.cpp" />
+    <ClCompile Include="..\..\source\cMultiObj.cpp" />
+    <ClCompile Include="..\..\source\cSocket.cpp" />
+    <ClCompile Include="..\..\source\cSpawnRegion.cpp" />
+    <ClCompile Include="..\..\source\cThreadQueue.cpp" />
+    <ClCompile Include="..\..\source\ObjectFactory.cpp" />
+    <!-- Subsystem group -->
+    <ClCompile Include="..\..\source\books.cpp" />
+    <ClCompile Include="..\..\source\cAccountClass.cpp" />
+    <ClCompile Include="..\..\source\CGump.cpp" />
+    <ClCompile Include="..\..\source\cHTMLSystem.cpp" />
+    <ClCompile Include="..\..\source\combat.cpp" />
+    <ClCompile Include="..\..\source\commands.cpp" />
+    <ClCompile Include="..\..\source\cRaces.cpp" />
+    <ClCompile Include="..\..\source\cWeather.cpp" />
+    <ClCompile Include="..\..\source\gumps.cpp" />
+    <ClCompile Include="..\..\source\house.cpp" />
+    <ClCompile Include="..\..\source\items.cpp" />
+    <ClCompile Include="..\..\source\jail.cpp" />
+    <ClCompile Include="..\..\source\lineofsight.cpp" />
+    <ClCompile Include="..\..\source\magic.cpp" />
+    <ClCompile Include="..\..\source\movement.cpp" />
+    <ClCompile Include="..\..\source\msgboard.cpp" />
+    <ClCompile Include="..\..\source\PartySystem.cpp" />
+    <ClCompile Include="..\..\source\quantityfuncs.cpp" />
+    <ClCompile Include="..\..\source\queue.cpp" />
+    <ClCompile Include="..\..\source\regions.cpp" />
+    <ClCompile Include="..\..\source\skills.cpp" />
+    <ClCompile Include="..\..\source\sound.cpp" />
+    <ClCompile Include="..\..\source\speech.cpp" />
+    <ClCompile Include="..\..\source\targeting.cpp" />
+    <ClCompile Include="..\..\source\townregion.cpp" />
+    <ClCompile Include="..\..\source\trade.cpp" />
+    <ClCompile Include="..\..\source\vendor.cpp" />
+    <ClCompile Include="..\..\source\weight.cpp" />
+    <ClCompile Include="..\..\source\wholist.cpp" />
+    <ClCompile Include="..\..\source\worldmain.cpp" />
+    <!-- Other group -->
+    <ClCompile Include="..\..\source\ai.cpp" />
+    <ClCompile Include="..\..\source\archive.cpp" />
+    <ClCompile Include="..\..\source\calcfuncs.cpp" />
+    <ClCompile Include="..\..\source\cDice.cpp" />
+    <ClCompile Include="..\..\source\cPlayerAction.cpp" />
+    <ClCompile Include="..\..\source\cmdtable.cpp" />
+    <ClCompile Include="..\..\source\CResponse.cpp" />
+    <ClCompile Include="..\..\source\cVersionClass.cpp" />
+    <ClCompile Include="..\..\source\dist.cpp" />
+    <ClCompile Include="..\..\source\effect.cpp" />
+    <ClCompile Include="..\..\source\fileio.cpp" />
+    <ClCompile Include="..\..\source\findfuncs.cpp" />
+    <ClCompile Include="..\..\source\npcs.cpp" />
+    <ClCompile Include="..\..\source\osunique.cpp" />
+    <ClCompile Include="..\..\source\pcmanage.cpp" />
+    <!-- JS Engine group -->
+    <ClCompile Include="..\..\source\CJSEngine.cpp" />
+    <ClCompile Include="..\..\source\CJSMapping.cpp" />
+    <ClCompile Include="..\..\source\cScript.cpp" />
+    <ClCompile Include="..\..\source\SEFunctions.cpp" />
+    <ClCompile Include="..\..\source\UOXJSMethods.cpp" />
+    <ClCompile Include="..\..\source\UOXJSPropertyFuncs.cpp" />
+    <!-- Network group -->
+    <ClCompile Include="..\..\source\CPacketReceive.cpp" />
+    <ClCompile Include="..\..\source\CPacketSend.cpp" />
+    <ClCompile Include="..\..\source\network.cpp" />
+    <ClCompile Include="..\..\source\IP4Address.cpp" />
+    <!-- Utility group -->
+    <ClCompile Include="..\..\source\StringUtility.cpp" />
+    <ClCompile Include="..\..\source\TimeUtility.cpp" />
+    <ClCompile Include="..\..\source\EventTimer.cpp" />
+    <!-- UOData group -->
+    <ClCompile Include="..\..\source\mapstuff.cpp" />
+    <ClCompile Include="..\..\source\MultiMul.cpp" />
+    <ClCompile Include="..\..\source\UOPData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\uox3.h" />
-  
-  
-  <!-- Script group -->    
+    <!-- Script group -->
     <ClInclude Include="..\..\source\cServerData.h" />
     <ClInclude Include="..\..\source\cServerDefinitions.h" />
     <ClInclude Include="..\..\source\Dictionary.h" />
     <ClInclude Include="..\..\source\scriptc.h" />
     <ClInclude Include="..\..\source\ssection.h" />
-
-  <!-- Base Object group -->    
+    <!-- Base Object group -->
     <ClInclude Include="..\..\source\cBaseobject.h" />
     <ClInclude Include="..\..\source\cChar.h" />
     <ClInclude Include="..\..\source\cConsole.h" />
@@ -215,7 +199,7 @@
     <ClInclude Include="..\..\source\ObjectFactory.h" />
     <ClInclude Include="..\..\source\PageVector.h" />
     <ClInclude Include="..\..\source\uoxstruct.h" />
-  <!-- Subsystem group -->    
+    <!-- Subsystem group -->
     <ClInclude Include="..\..\source\books.h" />
     <ClInclude Include="..\..\source\cAccountClass.h" />
     <ClInclude Include="..\..\source\cEffects.h" />
@@ -239,8 +223,7 @@
     <ClInclude Include="..\..\source\weight.h" />
     <ClInclude Include="..\..\source\wholist.h" />
     <ClInclude Include="..\..\source\worldmain.h" />
-
-  <!-- Other group -->    
+    <!-- Other group -->
     <ClInclude Include="..\..\source\cdice.h" />
     <ClInclude Include="..\..\source\classes.h" />
     <ClInclude Include="..\..\source\cmdtable.h" />
@@ -255,36 +238,30 @@
     <ClInclude Include="..\..\source\Prerequisites.h" />
     <ClInclude Include="..\..\source\typedefs.h" />
     <ClInclude Include="..\..\source\UOXStdHeaders.h" />
-
-  <!-- JS Engine group -->    
+    <!-- JS Engine group -->
     <ClInclude Include="..\..\source\CJSEngine.h" />
     <ClInclude Include="..\..\source\CJSMapping.h" />
     <ClInclude Include="..\..\source\cScript.h" />
-    <ClInclude Include="..\..\source\JSEncapsulate.h" />
     <ClInclude Include="..\..\source\SEFunctions.h" />
     <ClInclude Include="..\..\source\UOXJSClasses.h" />
     <ClInclude Include="..\..\source\UOXJSMethods.h" />
     <ClInclude Include="..\..\source\UOXJSPropertyEnums.h" />
     <ClInclude Include="..\..\source\UOXJSPropertyFuncs.h" />
     <ClInclude Include="..\..\source\UOXJSPropertySpecs.h" />
-
-<!-- Network group -->    
+    <!-- Network group -->
     <ClInclude Include="..\..\source\CPacketReceive.h" />
     <ClInclude Include="..\..\source\CPacketSend.h" />
     <ClInclude Include="..\..\source\network.h" />
     <ClInclude Include="..\..\source\IP4Address.hpp" />
-
-<!-- Utility group -->    
+    <!-- Utility group -->
     <ClInclude Include="..\..\source\StringUtility.hpp" />
     <ClInclude Include="..\..\source\TimeUtility.hpp" />
     <ClInclude Include="..\..\source\EventTimer.hpp" />
-    
-<!-- UOData group -->    
+    <!-- UOData group -->
     <ClInclude Include="..\..\source\mapclasses.h" />
     <ClInclude Include="..\..\source\mapstuff.h" />
     <ClInclude Include="..\..\source\MultiMul.hpp" />
     <ClInclude Include="..\..\source\UOPData.hpp" />
-
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\assets\uox3.ico" />
