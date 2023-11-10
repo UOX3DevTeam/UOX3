@@ -21,10 +21,10 @@ function onEquip( pEquipper, iEquipped )
 	switch( skillBonusID )
 	{
 		case 7: // Blacksmithing
-			pEquipper.baseskills.blacksmithing += skillBonusVal;
+			pEquipper.skills.blacksmithing += skillBonusVal;
 			break;
 		case 45: // Mining
-			pEquipper.baseskills.mining += skillBonusVal;
+			pEquipper.skills.mining += skillBonusVal;
 			break;
 		default:
 			break;
@@ -39,10 +39,10 @@ function onUnequip( pUnquipper, iUnequipped )
 	switch( skillBonusID )
 	{
 		case 7: // Blacksmithing
-			pUnquipper.baseskills.blacksmithing -= skillBonusVal;
+			pUnquipper.skills.blacksmithing -= skillBonusVal;
 			break;
 		case 45: // Mining
-			pUnquipper.baseskills.mining -= skillBonusVal;
+			pUnquipper.skills.mining -= skillBonusVal;
 			break;
 		default:
 			break;
