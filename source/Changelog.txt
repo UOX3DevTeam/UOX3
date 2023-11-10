@@ -1,3 +1,6 @@
+10/11/2023 - Dragon Slayer
+	Added Stocking IDs to items.cpp (cpp items)
+
 28/10/2023 - Dragon Slayer (0.99.6a)
 	Added DFN entries for hallow pumpkins, jack o lanterns and halloween decorations. (dfn item/misc/halloween)
 	Added DFN entrie for killerpumpkin in daemons.dfn. (dfn daemons)

@@ -1518,6 +1518,12 @@ PackTypes cItem::GetPackType( CItem *i )
 				packType = PT_PACK2;
 			}
 			break;
+		case 0x2bd9:
+		case 0x2BDA:
+		case 0x2BDB:
+		case 0x2BDC:
+			packType = PT_STOCKING;
+			break;
 		case 0x232A:	// giftbox
 		case 0x232B:	// giftbox
 			packType = PT_GIFTBOX1;
