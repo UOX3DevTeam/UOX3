@@ -690,7 +690,7 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 	// Is the player casting recall holding any objects?
 	var itemRHand = pUser.FindItemLayer( 0x01 );
 	var itemLHand = pUser.FindItemLayer( 0x02 );
-	if( ValidateObject( itemLHand ) || ( ValidateObject( itemRHand ) && itemRHand.type != 9 ))	// Spellbook
+	if( ValidateObject( itemLHand ) && itemLHand.type != 119 || ( ValidateObject( itemRHand ) && itemRHand.type != 9 || itemRHand.type != 119 ))	// Spellbook //spell channeling
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 708, pSocket.language )); // You cannot cast with a weapon equipped.
 		return;
