@@ -591,7 +591,7 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 		}
 
 		// Check if enough time has passed since last time player handed in a BOD
-		var bodRewardCD = pDropper.GetJSTimer( 2, 3214 ); // Fetch timer for BOD reward cooldown
+		var bodRewardCD = pUser.GetJSTimer( 2, 3214 ); // Fetch timer for BOD reward cooldown
 		if( bodRewardCD != 0 )
 		{
 			npcDroppedOn.TextMessage( GetDictionaryEntry( 17273, socket.language ), false, 0x3b2, 0, pDropper.serial ); // You'll have to wait a few seconds while I inspect the last order.
@@ -609,7 +609,7 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 		if( DispenseBODRewards( pDropper, npcDroppedOn, iDropped ))
 		{
 			// On delivery of a completed BOD, kill cooldown timer to get another BOD offer
-			var bodOfferCD = pDropper.GetJSTimer( 1, 3214 ); // Fetch timer for BOD offer cooldown
+			var bodOfferCD = pUser.GetJSTimer( 1, 3214 ); // Fetch timer for BOD offer cooldown
 			if( bodRewardCD != 0 )
 			{
 				pDropper.KillJSTimer( 1, 3214 );
@@ -657,8 +657,7 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 	var playerPack = pDropper.pack;
 	var giveGoldAsCheck = false;
 	var placeCheckInBank = false;
-
-	if( goldToGive >= 5000 || ( playerPack.weight + goldWeight > playerPack.maxWeight ))
+	if( goldToTive >= 5000 || ( playerPack.weight + goldWeight > playerPack.maxWeight ))
 	{
 		if( playerPack.weight + 100 > playerPack.maxWeight )
 		{
