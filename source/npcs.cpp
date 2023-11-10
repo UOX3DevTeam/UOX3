@@ -740,13 +740,14 @@ auto CCharStuff::LoadShopList( const std::string& list, CChar *c ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets a character with a random name from NPC namelists in namelists.dfn
 //o------------------------------------------------------------------------------------------------o
-void SetRandomName( CChar *s, const std::string& namelist )
+void SetRandomName( CBaseObject *s, const std::string& namelist )
 {
 	std::string sect	= std::string( "RANDOMNAME " ) + namelist;
 	sect				= oldstrutil::trim( oldstrutil::removeTrailing( sect, "//" ));
 	std::string tempName;
+	auto cat		= s->CanBeObjType(OT_CHAR) ? npc_def : items_def;
 
-	CScriptSection *RandomName = FileLookup->FindEntry( sect, npc_def );
+	CScriptSection *RandomName = FileLookup->FindEntry( sect, cat );
 	if( RandomName == nullptr )
 	{
 		tempName = std::string( "Error Namelist " ) + namelist + std::string( " Not Found" );

@@ -821,3 +821,12 @@ cat
 hind
 graywolf
 }
+
+[NPCLIST halloweengraveyard]
+{
+halloweenzombie
+halloweenwraith
+halloweenshade
+halloweenskeleton
+halloweenboneaxeman
+}
