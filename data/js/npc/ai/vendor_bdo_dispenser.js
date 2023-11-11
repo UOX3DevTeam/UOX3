@@ -550,7 +550,7 @@ function SetBODAcceptanceCooldown( pUser, bodType )
 		bodTimer = 3600000; // 1000 * 60 * 60 = 1 hour if under or equal to 50.0 skill
 	}
 
-	pUser.SetJSTimer( bodTimer, bodType, 3214 );
+	pUser.SetJSTimer( bodType, bodTimer, 3214 );
 }
 
 function SelectBodEntry( bodType, bodSubtype, considerPlayerSkill, pSkill )
