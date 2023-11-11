@@ -67,7 +67,7 @@ function ItemInHandCheck( mChar, mSock, spellType )
 		{
 			var itemRHand = mChar.FindItemLayer( 0x01 );
 			var itemLHand = mChar.FindItemLayer( 0x02 );
-			if(( itemLHand && itemLHand.type != 119 ) || ( itemRHand && itemRHand.type != 9 || itemRHand.type != 119 ))	// Spellbook
+			if(( itemLHand && itemLHand.type != 119 ) || ( itemRHand && ( itemRHand.type != 9 || itemRHand.type != 119 )))	// Spellbook
 			{
 				if( mSock )
 				{
