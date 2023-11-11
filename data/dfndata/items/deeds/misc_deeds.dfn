@@ -39,11 +39,22 @@ id=0x14ef
 id=0x2258
 }
 
-[smallbod]
+[smallbod_blacksmith]
 {
 get=base_item
 name=a bulk order deed
-colour=0x44E//Blacksmith: 0x44E; Tailoring: 0x483
+colour=0x44E
+weight=100
+script=5042
+getlbr=smallbod_lbr
+getaos=smallbod_aos
+}
+
+[smallbod_tailor]
+{
+get=base_item
+name=a bulk order deed
+colour=0x483
 weight=100
 script=5042
 getlbr=smallbod_lbr
