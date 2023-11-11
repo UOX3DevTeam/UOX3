@@ -169,37 +169,37 @@ const TailorRewardTiersToItems = [
 	{
 		items: [
 			{ itemName: "sewing_kit", props: [['maxUses', 250], ['usesLeft', 250]] },
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] }
+			{ itemName: 'cloth', props: [['amount', 100], ['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] }
 		],
 		selectType: 'random'
 	},
 	{
 		items: [
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] }
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] }
 		],
 		selectType: 'random'
 	},
 	{
 		items: [
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] }
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] }
 		],
 		selectType: 'random'
 	},
 	{
 		items: [
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
 			{ itemName: 'sandals', props: [['colour', 123]] },
 			{ itemName: 'sandals', props: [['colour', 123]] },
 			{ itemName: 'sandals', props: [['colour', 123]] },
@@ -214,10 +214,10 @@ const TailorRewardTiersToItems = [
 	},
 	{
 		items: [
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] },
-			{ itemName: 'cloth', props: [['colour', 123]] }
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] }
 		],
 		selectType: 'random'
 	},
