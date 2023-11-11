@@ -1,6 +1,6 @@
 const BODTypesToSkillNames = {
-	1: 'blacksmithing',
-	2: 'tailoring'
+	1: "blacksmithing",
+	2: "tailoring"
 };
 
 // Can also be triggered by creating BOD from admin menu or add command: 'add item smallbod

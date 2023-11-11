@@ -123,8 +123,8 @@ const BODTypeToDFNSectionID = {
 }
 
 const BODTypesToSkillNames = {
-	1: 'blacksmithing',
-	2: 'tailoring'
+	1: "blacksmithing",
+	2: "tailoring"
 };
 
 // A higher index in this list means the reward is less likely to be given.
@@ -136,12 +136,12 @@ const BODTypesToSkillNames = {
 const BlacksmithRewardTiersToItems = [
 	{
 		items: [
-			{ itemName: "sturdy_pickaxe", props: [['maxUses', 200], ['usesLeft', 200]] },
-			{ itemName: "sturdy_shovel", props: [['maxUses', 200], ['usesLeft', 200]] },
-			{ itemName: "sturdy_pickaxe", props: [['maxUses', 150], ['usesLeft', 150]] },
-			{ itemName: "sturdy_shovel", props: [['maxUses', 150], ['usesLeft', 150]] },
+			{ itemName: "sturdy_pickaxe", props: [["maxUses", 200], ["usesLeft", 200]] },
+			{ itemName: "sturdy_shovel", props: [["maxUses", 200], ["usesLeft", 200]] },
+			{ itemName: "sturdy_pickaxe", props: [["maxUses", 150], ["usesLeft", 150]] },
+			{ itemName: "sturdy_shovel", props: [["maxUses", 150], ["usesLeft", 150]] },
 		],
-		selectType: 'random',
+		selectType: "random",
 	},
 	{ items: [{ itemName: "mining_gloves_1" }] },
 	{ items: [{ itemName: "mining_gloves_3" }] },
@@ -159,7 +159,7 @@ const BlacksmithRewardTiersToItems = [
 			{ itemName: "v_anvil_deed" },
 			{ itemName: "v_anvil_deed" }
 		],
-		selectType: 'weighted'
+		selectType: "weighted"
 	},
 	{ items: [{ itemName: "copper_runic_hammer" }] },
 	{ items: [{ itemName: "bronze_runic_hammer" }] },
@@ -177,58 +177,58 @@ const BlacksmithRewardTiersToItems = [
 const TailorRewardTiersToItems = [
 	{
 		items: [
-			{ itemName: "sewing_kit", props: [['maxUses', 250], ['usesLeft', 250]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x483]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x48C]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x488]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x48A]] }
+			{ itemName: "sewing_kit", props: [["maxUses", 250], ["usesLeft", 250]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x483]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x48C]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x488]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x48A]] }
 		],
-		selectType: 'random'
+		selectType: "random"
 	},
 	{
 		items: [
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x495]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x48B]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x486]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x485]] }
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x495]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x48B]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x486]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x485]] }
 		],
-		selectType: 'random'
+		selectType: "random"
 	},
 	{
 		items: [
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x48D]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x490]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x48E]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x491]] }
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x48D]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x490]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x48E]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x491]] }
 		],
-		selectType: 'random'
+		selectType: "random"
 	},
 	{
 		items: [
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x48F]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x494]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x484]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x497]] },
-			{ itemName: 'sandals', props: [['colour', 0x489]] },
-			{ itemName: 'sandals', props: [['colour', 0x47F]] },
-			{ itemName: 'sandals', props: [['colour', 0x482]] },
-			{ itemName: 'sandals', props: [['colour', 0x47E]] },
-			{ itemName: 'sandals', props: [['colour', 0x48F]] },
-			{ itemName: 'sandals', props: [['colour', 0x494]] },
-			{ itemName: 'sandals', props: [['colour', 0x484]] },
-			{ itemName: 'sandals', props: [['colour', 0x497]] }
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x48F]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x494]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x484]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x497]] },
+			{ itemName: "sandals", props: [["colour", 0x489]] },
+			{ itemName: "sandals", props: [["colour", 0x47F]] },
+			{ itemName: "sandals", props: [["colour", 0x482]] },
+			{ itemName: "sandals", props: [["colour", 0x47E]] },
+			{ itemName: "sandals", props: [["colour", 0x48F]] },
+			{ itemName: "sandals", props: [["colour", 0x494]] },
+			{ itemName: "sandals", props: [["colour", 0x484]] },
+			{ itemName: "sandals", props: [["colour", 0x497]] }
 
 		],
-		selectType: 'random'
+		selectType: "random"
 	},
 	{
 		items: [
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x489]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x47F]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x482]] },
-			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 0x47E]] }
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x489]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x47F]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x482]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x47E]] }
 		],
-		selectType: 'random'
+		selectType: "random"
 	},
 	// { items: [{ itemName: "spined_runic_sewing_kit" }] },
 	// { items: [{ itemName: "clothing_bless_deed" }] },
@@ -244,7 +244,7 @@ const BODTypesToRewards = {
 function onSoldToVendor( pSock, npcVendor, iSold )
 {
 	var pUser = pSock.currentChar;
-	if( offerBodsFromItemSales && CheckBodTimers( pUser, npcVendor.GetTag( 'bodType' ) ))
+	if( offerBodsFromItemSales && CheckBodTimers( pUser, npcVendor.GetTag( "bodType" ) ))
 	{
 		if( !onlyOfferBodsFromCraftedItems || iSold.madeWith != -1 ) // what is madeWith property for non-crafted items?
 		{
@@ -741,10 +741,10 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 	let rewardItemIndex = 0;
 	if (rewardTier.items.length > 1) {
 		switch ( rewardTier.selectType ) {
-			case 'random':
+			case "random":
 				rewardItemIndex = RandomNumber(0, rewardTier.items.length - 1);
 				break;
-			case 'weighted':
+			case "weighted":
 				rewardItemIndex = WeightedRandom(0, rewardTier.items.length - 1, weightVal);
 				break;
 			default:
