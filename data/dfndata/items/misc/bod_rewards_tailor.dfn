@@ -1,0 +1,9 @@
+// Clothing Bless Deed
+// Blesses a single item of clothing
+[clothing_bless_deed]
+{
+get=base_item
+id=0x14F0
+name=a clothing bless deed
+script=5050
+}

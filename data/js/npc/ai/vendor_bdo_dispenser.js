@@ -232,7 +232,7 @@ const TailorRewardTiersToItems = [
 	},
 	// The following items are not yet implemented.
 	// { items: [{ itemName: "spined_runic_sewing_kit" }] },
-	// { items: [{ itemName: "clothing_bless_deed" }] },
+	{ items: [{ itemName: "clothing_bless_deed" }] },
 	// { items: [{ itemName: "horned_runic_sewing_kit" }] },
 	// { items: [{ itemName: "barbed_runic_sewing_kit" }] }
 ];

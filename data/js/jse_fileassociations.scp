@@ -268,6 +268,7 @@
 5047=item/consumables/new_player_ticket.js
 5048=item/teleport_item.js
 5049=item/equip_effects/bandagehealingbonus.js
+5050=item/clothing_bless_deed.js
 
 //-------------------------------------------
 // Camps [5500-5599]
