@@ -72,37 +72,50 @@ const armorCreateEntries = [
 ];
 
 const clothCreateEntries = [
-	[130],
-	[131],
-	[132],
-	[133],
-	[134],
-	[135],
-	[136],
-	[137],
-	[138],
-	[139],
-	[140],
-	[141],
-	[142],
-	[143],
-	[144],
-	[145],
-	[146],
-	[147],
-	[148],
-	[149],
-	[150],
-	[151],
-	[152],
-	[153],
-	[154],
-	[155],
-	[156],
-	[157],
-	[158],
-	[160]
+	[130], // Skullcap
+	[131], // Bandana
+	[132], // Floppy Hat
+	[133], // Wide Brim Hat
+	[134], // Cap
+	[135], // Tall Straw Hat
+	[136], // Straw Hat
+	[137], // Wizard's Hat
+	[138], // Bonnet
+	[139], // Feathered Hat
+	[140], // Tricorne Hat
+	[141], // Jester Hat
+	[142], // Doublet
+	[143], // Shirt
+	[144], // Fancy Shirt
+	[145], // Tunic
+	[146], // Surcoat
+	[147], // Plain Dress
+	[148], // Fancy Dress
+	[149], // Cloak
+	[150], // Robe
+	[151], // Jester Suit
+	[152], // Long Pants
+	[153], // Kilt
+	[154], // Skirt
+	[155], // Body Sash
+	[156], // Half Apron
+	[157], // Full Apron
+	[158], // Oil Cloth
+	[160]  // Shoes
 ];
+
+// Outer properties correspond to bodType tag.
+// Inner properties correspond to bodSubtype tag.
+const BODTypesToCreateEntries = {
+	1: { // Blacksmithing
+		1: weaponCreateEntries,
+		2: armorCreateEntries,
+		3: weaponCreateEntries.concat(armorCreateEntries),
+	},
+	2: { // Tailoring
+		1: clothCreateEntries
+	}
+};
 
 const BODTypeToDFNSectionID = {
 	1: "smallbod_blacksmith",
@@ -114,17 +127,12 @@ const BODTypesToSkillNames = {
 	2: 'tailoring'
 };
 
-const BODTypesToCreateEntries = {
-	1: {
-		1: weaponCreateEntries,
-		2: armorCreateEntries,
-		3: weaponCreateEntries.concat(armorCreateEntries),
-	},
-	2: {
-		1: clothCreateEntries
-	}
-};
-
+// A higher index in this list means the reward is less likely to be given.
+// Each tier may have an `items` property listing the items that may be given when it is rolled
+// and a `selectType` property that may either be "random" or "weighted" determining how an
+// item is chosen, if there is more than one. Objects in the `items` list MUST have an
+// `itemName` property and may optionally have a `props` property specifying modifications
+// to be made to the item's props.
 const BlacksmithRewardTiersToItems = [
 	{
 		items: [
@@ -165,6 +173,7 @@ const BlacksmithRewardTiersToItems = [
 	{ items: [{ itemName: "valorite_runic_hammer" }] }
 ];
 
+// See comment above BlacksmithRewardTiersToItems for explanation of object properties.
 const TailorRewardTiersToItems = [
 	{
 		items: [
@@ -310,14 +319,14 @@ function onSpeech( myString, pUser, myNPC )
 
 function SmallBODAcceptGump( pUser, myNPC )
 {
-	const socket 	    = pUser.socket;
-	const bodType 	    = myNPC.GetTag( "bodType" );
-	const bodSubtype    = myNPC.GetTag( "bodSubtype" );
-	const pSkill        = pUser.skills[BODTypesToSkillNames[bodType]];
-	const bodEntry 	    = SelectBodEntry( bodType, bodSubtype, true, pSkill );
-	const itemName	    = bodEntry.name; // name of the create entry
-	const graphicID	    = bodEntry.id; // graphical ID of item to craft
-	const materialColor = bodEntry.resources[0][1]; // colour of primary resource required to craft item
+	var socket 	      = pUser.socket;
+	var bodType 	  = myNPC.GetTag( "bodType" );
+	const bodSubtype  = myNPC.GetTag( "bodSubtype" );
+	const pSkill      = pUser.skills[BODTypesToSkillNames[bodType]]; // The player's level of the BOD's relevant skill.
+	var bodEntry 	  = SelectBodEntry( bodType, bodSubtype, true, pSkill );
+	var itemName	  = bodEntry.name; // name of the create entry
+	var graphicID	  = bodEntry.id; // graphical ID of item to craft
+	var materialColor = bodEntry.resources[0][1]; // colour of primary resource required to craft item
 
 	// Store bodEntry as custom object property on pUser
 	pUser.bodEntry = bodEntry;
@@ -478,7 +487,7 @@ function onGumpPress( socket, pButton, gumpData )
 	var amountMax = bodEntry.tempAmountMax;
 	var reqExceptional = bodEntry.tempReqExceptional;
 	var bodType = bodEntry.tempBodType;
-	var bodSubtype = bodEntry.tempBodSubtype;
+	const bodSubtype = bodEntry.tempBodSubtype;
 	var graphicID = bodEntry.id;
 	var itemName = bodEntry.name;
 	var materialColor = bodEntry.resources[0][1];
@@ -584,7 +593,7 @@ function SelectBodEntry( bodType, bodSubtype, considerPlayerSkill, pSkill )
 		}
 		else
 		{
-			// All weapon create entries are valid if player's skill is above or equal to 70.0
+			// All create entries are valid if player's skill is above or equal to 70.0
 			validItems.push( item[materialIndex] );
 		}
 	}
@@ -594,41 +603,22 @@ function SelectBodEntry( bodType, bodSubtype, considerPlayerSkill, pSkill )
 	return CreateEntries[validItems[rndCreateIndex]];
 }
 
-function onTimer( pUser, timerID )
-{
-	// When Timer Expires set these flags on player false so he can get another BOD
-	switch ( timerID )
-	{
-		case 1: // BOD cooldown timer elapsed
-		{
-			//pUser.SetTag( "bodOfferCD", null );
-			break;
-		}
-		case 2: // BOD Hand-in Cooldown timer elapsed
-		{
-			//pUser.SetTag( "bodHandinCooldown", null );
-			break;
-		}
-	}
-}
-
 function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 {
 	var socket = pDropper.socket;
 	if( socket == null )
 		return false;
 
-	var amountMax 	= iDropped.GetTag( "amountMax" ); 	// amount you have to make of the item
-	var amountCur 	= iDropped.GetTag( "amountCur" ); 	// amount you have combined
-	var iBodType 	= iDropped.GetTag( "bodType" ); 	// BOD type of the BOD itself
-	var iBodSubtype = iDropped.GetTag( "bodSubtype" );
-	var pBodType 	= npcDroppedOn.GetTag( "bodType" ); // BOD type of the NPC BOD is dropped on, if any
-	var pBodSubtype = npcDroppedOn.GetTag( "bodSubtype" );
+	var amountMax 	  = iDropped.GetTag( "amountMax" ); 	 // amount you have to make of the item
+	var amountCur 	  = iDropped.GetTag( "amountCur" ); 	 // amount you have combined
+	var iBodType 	  = iDropped.GetTag( "bodType" ); 	     // BOD type of the BOD itself
+	const iBodSubtype = iDropped.GetTag( "bodSubtype" );     // BOD subtype of the BOD itself
+	var pBodType 	  = npcDroppedOn.GetTag( "bodType" );    // BOD type of the NPC BOD is dropped on, if any
+	const pBodSubtype = npcDroppedOn.GetTag( "bodSubtype" ); // BOD subtype of the NPC BOD is dropped on, if any
 
 	if( iDropped.sectionID.split("_")[0] == "smallbod" && pBodType > 0 )
 	{
-		// Check if NPC accepts the type of BOD being dropped on them
-		// Weaponsmith only accepts weapon BODs, armorsmith only accepts armor BODs, blacksmith accepts either
+		// Check if NPC accepts the type and subtype of BOD being dropped on them
 		if(iBodType != pBodType || iBodSubtype != pBodSubtype)
 		{
 			// That order is for some other shopkeeper.
@@ -660,7 +650,7 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 
 		if( DispenseBODRewards( pDropper, npcDroppedOn, iDropped ))
 		{
-			// Make the player wait 5 seconds before turning in another BOD.
+			// Make the player wait 10 seconds before turning in another BOD.
 			pDropper.SetJSTimer( iBodType * 10, 10000, 3214);
 			// On delivery of a completed BOD, kill cooldown timer to get another BOD offer
 			var bodOfferCD = pDropper.GetJSTimer( iBodType, 3214 ); // Fetch timer for BOD offer cooldown
