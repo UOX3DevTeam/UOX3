@@ -1,5 +1,5 @@
 10/11/2023 - Dragon Slayer
-	Added Stocking IDs to items.cpp (cpp items)
+	Added IDs for stocking items to cItem::GetPackType() in items.cpp, so they can be used as containers
 
 28/10/2023 - Dragon Slayer (0.99.6a)
 	Added DFN entries for hallow pumpkins, jack o lanterns and halloween decorations. (dfn item/misc/halloween)
