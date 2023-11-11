@@ -244,7 +244,7 @@ const BODTypesToRewards = {
 function onSoldToVendor( pSock, npcVendor, iSold )
 {
 	var pUser = pSock.currentChar;
-	if( offerBodsFromItemSales && CheckBodTimers( pUser, npcVendor.GetTag( "bodType" ) ))
+	if( offerBodsFromItemSales && CheckBodTimers( pUser, npcVendor.GetTag( "bodType" ) ) )
 	{
 		if( !onlyOfferBodsFromCraftedItems || iSold.madeWith != -1 ) // what is madeWith property for non-crafted items?
 		{
@@ -319,7 +319,7 @@ function onSpeech( myString, pUser, myNPC )
 
 function SmallBODAcceptGump( pUser, myNPC )
 {
-	var socket 	      = pUser.socket;
+	var socket        = pUser.socket;
 	var bodType 	  = myNPC.GetTag( "bodType" );
 	const bodSubtype  = myNPC.GetTag( "bodSubtype" );
 	const pSkill      = pUser.skills[BODTypesToSkillNames[bodType]]; // The player's level of the BOD's relevant skill.
@@ -737,7 +737,7 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 
 	const rewardTier = rewards[WeightedRandom( minReward, maxReward, weightVal )];
 	let rewardItemIndex = 0;
-	if (rewardTier.items.length > 1) {
+	if ( rewardTier.items.length > 1 ) {
 		switch ( rewardTier.selectType ) {
 			case "random":
 				rewardItemIndex = RandomNumber(0, rewardTier.items.length - 1);
@@ -751,7 +751,7 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 	}
 	const rewardItem = rewardTier.items[rewardItemIndex];
 	const rewardDFNItem = CreateDFNItem( socket, pDropper, rewardItem.itemName, 1, "ITEM", false );
-	if (rewardItem.props && rewardDFNItem)
+	if ( rewardItem.props && rewardDFNItem )
 	{
 		for( let i = 0; i < rewardItem.props.length; i++ )
 		{
@@ -903,7 +903,7 @@ function MinMaxRewardModifiers( iDropped, bodType, numTiers )
 	// Apply bonus/penalty if special material required by BOD (replace with bonus/penalty based on specific color rarities?)
 	if( bodType == 1 )
 	{
-		var materialColor = iDropped.GetTag("materialColor");
+		var materialColor = iDropped.GetTag( "materialColor" );
 		switch (materialColor) {
 			case 0: // Iron
 				maxModPercent -= 0.25;
@@ -937,5 +937,5 @@ function MinMaxRewardModifiers( iDropped, bodType, numTiers )
 		}
 	}
 
-	return [Math.floor(minModPercent * numTiers), Math.floor(maxModPercent * numTiers)];
+	return [Math.floor( minModPercent * numTiers ), Math.floor( maxModPercent * numTiers )];
 }
