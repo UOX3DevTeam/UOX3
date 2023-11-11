@@ -3,14 +3,22 @@ const BODTypesToSkillNames = {
 	2: "tailoring"
 };
 
+const BODSubtypeMinMax = {
+	1: [1, 3],
+	2: [1, 1]
+}
+
 // Can also be triggered by creating BOD from admin menu or add command: 'add item smallbod
 function onCreateDFN( objMade, objType )
 {
 	if( !ValidateObject( objMade ))
 		return;
 
-	var bodType     = objMade.GetTag( "bodType" );
-	var bodEntry 	= TriggerEvent( 3214, "SelectBodEntry", bodType, 1, false, 0 );
+	var bodType = objMade.GetTag( "bodType" );
+	const bodSubtypeMinMax = BODSubtypeMinMax[bodType];
+	const bodSubtype = RandomNumber(bodSubtypeMinMax[0], bodSubtypeMinMax[1]);
+
+	var bodEntry 	= TriggerEvent( 3214, "SelectBodEntry", bodType, bodSubtype, false, 0 );
 	var itemName	= bodEntry.name; // name of the create entry
 	var graphicID	= bodEntry.id; // graphical id of item to craft
 	var sectionID 	= bodEntry.addItem; // section ID of item to craft
