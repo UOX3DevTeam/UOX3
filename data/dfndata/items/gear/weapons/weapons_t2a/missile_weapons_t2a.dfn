@@ -1,0 +1,9 @@
+
+// Fukiya - T2A stats (default)
+[0x27aa_t2a]
+{
+get=base_fukiya
+damage=2 12
+value=58 41
+weight=400
+}
