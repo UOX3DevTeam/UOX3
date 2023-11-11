@@ -240,9 +240,9 @@ function onCallback0( socket, myTarget )
 
 	// Abort if player cancels target cursor or clicks empty space.
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
-	if( cancelCheck == 255 || !myTarget)
+	if( cancelCheck == 255 || !myTarget )
 	{
-		SmallBODGump(pUser, smallBOD);
+		SmallBODGump( pUser, smallBOD );
 		return;
 	}
 
