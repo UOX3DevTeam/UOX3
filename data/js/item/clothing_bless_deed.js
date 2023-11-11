@@ -26,8 +26,6 @@ function onCallback0( socket, targetObj )
     if( cancelCheck == 255 || !targetObj )
         return;
 
-    Console.Error("Target Good: " + targetObj.good);
-
     // The following check assumes every does their diligence in adding a `good` property to clothing items.
     if ( !targetObj.isItem || !targetObj.good || targetObj.good < 18 || targetObj.good > 20 )
     {
