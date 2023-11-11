@@ -612,14 +612,12 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 	var amountMax 	  = iDropped.GetTag( "amountMax" ); 	 // amount you have to make of the item
 	var amountCur 	  = iDropped.GetTag( "amountCur" ); 	 // amount you have combined
 	var iBodType 	  = iDropped.GetTag( "bodType" ); 	     // BOD type of the BOD itself
-	const iBodSubtype = iDropped.GetTag( "bodSubtype" );     // BOD subtype of the BOD itself
 	var pBodType 	  = npcDroppedOn.GetTag( "bodType" );    // BOD type of the NPC BOD is dropped on, if any
-	const pBodSubtype = npcDroppedOn.GetTag( "bodSubtype" ); // BOD subtype of the NPC BOD is dropped on, if any
 
 	if( iDropped.sectionID.split("_")[0] == "smallbod" && pBodType > 0 )
 	{
-		// Check if NPC accepts the type and subtype of BOD being dropped on them
-		if(iBodType != pBodType || iBodSubtype != pBodSubtype)
+		// Check if NPC accepts the type of BOD being dropped on them
+		if( iBodType != pBodType )
 		{
 			// That order is for some other shopkeeper.
 			npcDroppedOn.TextMessage( GetDictionaryEntry( 17272, socket.language ), false, 0x3b2, 0, pDropper.serial ); // That order is for some other shopkeeper.
