@@ -287,11 +287,11 @@ function onSpeech( myString, pUser, myNPC )
 
 	// See if a vendor serial was stored via hard-coded context menu, to exclude other NPCs reaction to speech trigger
 	var targetShopkeeper = CalcCharFromSer( parseInt( pUser.GetTempTag( "bodShopkeeperSerial" )));
-	pUser.SetTempTag( "bodShopkeeperSerial", null );
-	if( ValidateObject( targetShopkeeper ) && targetShopkeeper != myNPC )
+	if( !ValidateObject( targetShopkeeper ) || targetShopkeeper != myNPC )
 	{
 		return false;
 	}
+	pUser.SetTempTag( "bodShopkeeperSerial", null );
 
 	// Check the trigger words to see if the Bulk Order Info trigger word was sent
 	for( var trigWord = socket.FirstTriggerWord(); !socket.FinishedTriggerWords(); trigWord = socket.NextTriggerWord() )
