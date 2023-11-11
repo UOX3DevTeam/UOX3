@@ -6,7 +6,7 @@ const BODTypesToSkillNames = {
 const BODSubtypeMinMax = {
 	1: [1, 3],
 	2: [1, 1]
-}
+};
 
 // Can also be triggered by creating BOD from admin menu or add command: 'add item smallbod
 function onCreateDFN( objMade, objType )

@@ -120,7 +120,7 @@ const BODTypesToCreateEntries = {
 const BODTypeToDFNSectionID = {
 	1: "smallbod_blacksmith",
 	2: "smallbod_tailor"
-}
+};
 
 const BODTypesToSkillNames = {
 	1: "blacksmithing",
