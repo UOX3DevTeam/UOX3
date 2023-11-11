@@ -169,37 +169,37 @@ const TailorRewardTiersToItems = [
 	{
 		items: [
 			{ itemName: "sewing_kit", props: [['maxUses', 250], ['usesLeft', 250]] },
-			{ itemName: 'cloth', props: [['amount', 100], ['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] }
+			{ itemName: "folded_cloth", props: [['amount', 100], ['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] }
 		],
 		selectType: 'random'
 	},
 	{
 		items: [
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] }
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] }
 		],
 		selectType: 'random'
 	},
 	{
 		items: [
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] }
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] }
 		],
 		selectType: 'random'
 	},
 	{
 		items: [
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
 			{ itemName: 'sandals', props: [['colour', 123]] },
 			{ itemName: 'sandals', props: [['colour', 123]] },
 			{ itemName: 'sandals', props: [['colour', 123]] },
@@ -214,18 +214,17 @@ const TailorRewardTiersToItems = [
 	},
 	{
 		items: [
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] },
-			{ itemName: 'cloth', props: [['amount', 100],['colour', 123]] }
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] },
+			{ itemName: "folded_cloth", props: [['amount', 100],['colour', 123]] }
 		],
 		selectType: 'random'
 	},
-	{ items: [{ itemName: "spined_runic_sewing_kit" }] },
-	{ items: [{ itemName: "clothing_bless_deed" }] },
-	{ items: [{ itemName: "horned_runic_sewing_kit" }] },
-	{ items: [{ itemName: "barbed_runic_sewing_kit" }] },
-
+	// { items: [{ itemName: "spined_runic_sewing_kit" }] },
+	// { items: [{ itemName: "clothing_bless_deed" }] },
+	// { items: [{ itemName: "horned_runic_sewing_kit" }] },
+	// { items: [{ itemName: "barbed_runic_sewing_kit" }] }
 ];
 
 const BODTypesToRewards = {
@@ -740,12 +739,13 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 	var avgBodItemQuality = Math.round( iDropped.GetTag( "qualityValue" ) / iDropped.GetTag( "amountCur" ));
 	var weightVal = ( 4 - (( avgBodItemQuality / 10 ) * 3.0 ));
 
-	// Get modifiers to min / max rewards based on properties of the BOD itself
-	var minMaxMod = MinMaxRewardModifiers( iDropped );
-
 	const rewards = BODTypesToRewards[iDropped.GetTag( "bodType" )];
+
+	// Get modifiers to min / max rewards based on properties of the BOD itself
+	var minMaxMod = MinMaxRewardModifiers( iDropped, iDropped.GetTag( "bodType" ), rewards.length);
+
 	const minReward = minMaxMod[0];
-	const maxReward = rewards.length + minMaxMod[1];
+	const maxReward = rewards.length - 1 + minMaxMod[1];
 
 	const rewardTier = rewards[WeightedRandom( minReward, maxReward, weightVal )];
 	let rewardItemIndex = 0;
@@ -753,10 +753,10 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 		let rewardItemIndex;
 		switch ( rewardTier.selectType ) {
 			case 'random':
-				rewardItemIndex = RandomNumber(0, rewardTier.items.length);
+				rewardItemIndex = RandomNumber(0, rewardTier.items.length - 1);
 				break;
 			case 'weighted':
-				rewardItemIndex = WeightedRandom(0, rewardTier.items.length, weightVal);
+				rewardItemIndex = WeightedRandom(0, rewardTier.items.length - 1, weightVal);
 				break;
 			default:
 				break;
@@ -883,32 +883,22 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 	return true;
 }
 
-function MinMaxRewardModifiers( iDropped )
+function MinMaxRewardModifiers( iDropped, bodType, numTiers )
 {
-	var minMod = 0;
-	var maxMod = 0;
-
-	// Apply bonus to min if it's large BOD, penalty to max if small BOD
-	if( iDropped.GetTag( "largeBOD" ))
-	{
-		minMod += 2;
-	}
-	else
-	{
-		maxMod -= 2;
-	}
+	let minModPercent = 0;
+	let maxModPercent = 0;
 
 	// Apply bonus to min or penalty to max reward based on amount of items in BOD
 	var amountMax = iDropped.GetTag( "amountMax" );
 	switch( amountMax )
 	{
 		case 10:
-			maxMod -= 2;
+			maxModPercent -= 0.125;
 			break;
 		case 15: // No change
 			break;
 		case 20:
-			minMod++;
+			minModPercent += 0.0625;
 			break;
 	}
 
@@ -916,47 +906,49 @@ function MinMaxRewardModifiers( iDropped )
 	var reqExceptional = iDropped.GetTag( "reqExceptional" );
 	if( reqExceptional )
 	{
-		minMod++;
+		minModPercent += 0.0625;
 	}
 	else
 	{
-		maxMod -= 2;
+		maxModPercent -= 0.125;
 	}
 
 	// Apply bonus/penalty if special material required by BOD (replace with bonus/penalty based on specific color rarities?)
-	var materialColor = iDropped.GetTag( "materialColor" );
-	switch( materialColor )
+	if( bodType == 1 )
 	{
-		case 0: // Iron
-			maxMod -= 4;
-			break;
-		case 0x973: // Dull Copper
-			maxMod -= 3;
-			break;
-		case 0x966: // Shadow Iron
-			maxMod -= 2;
-			break;
-		case 0x96E: // Copper
-			maxMod -= 1;
-			break;
-		case 0x6D6: // Bronze
-			// No change
-			break;
-		case 0x8A5: // Gold
-			minMod += 1;
-			break;
-		case 0x979: // Agapite
-			minMod += 2;
-			break;
-		case 0x89F: // Verite
-			minMod += 3;
-			break;
-		case 0x8AB: // Valorite
-			minMod += 4;
-			break;
-		default: // Iron
-			break;
+		var materialColor = iDropped.GetTag("materialColor");
+		switch (materialColor) {
+			case 0: // Iron
+				maxModPercent -= 0.25;
+				break;
+			case 0x973: // Dull Copper
+				maxModPercent -= 0.1875;
+				break;
+			case 0x966: // Shadow Iron
+				maxModPercent -= 0.125;
+				break;
+			case 0x96E: // Copper
+				maxModPercent -= 0.0625;
+				break;
+			case 0x6D6: // Bronze
+						// No change
+				break;
+			case 0x8A5: // Gold
+				minModPercent += 0.0625;
+				break;
+			case 0x979: // Agapite
+				minModPercent += 0.125;
+				break;
+			case 0x89F: // Verite
+				minModPercent += 0.1875;
+				break;
+			case 0x8AB: // Valorite
+				minModPercent += 0.25;
+				break;
+			default:
+				break;
+		}
 	}
 
-	return [minMod, maxMod];
+	return [Math.floor(minModPercent * numTiers), Math.floor(maxModPercent * numTiers)];
 }
