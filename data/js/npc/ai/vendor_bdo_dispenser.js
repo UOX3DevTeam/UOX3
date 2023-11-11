@@ -559,7 +559,7 @@ function SetBODAcceptanceCooldown( pUser, bodType )
 		bodTimer = 3600000; // 1000 * 60 * 60 = 1 hour if under or equal to 50.0 skill
 	}
 
-	pUser.SetJSTimer( bodType, bodTimer, 3214 );
+	pUser.StartTimer( bodTimer, bodType, true );
 }
 
 function SelectBodEntry( bodType, bodSubtype, considerPlayerSkill, pSkill )
@@ -649,7 +649,7 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 		if( DispenseBODRewards( pDropper, npcDroppedOn, iDropped ))
 		{
 			// Make the player wait 10 seconds before turning in another BOD.
-			pDropper.SetJSTimer( iBodType * 10, 10000, 3214);
+			pDropper.StartTimer( 10000, iBodType * 10, true );
 			// On delivery of a completed BOD, kill cooldown timer to get another BOD offer
 			var bodOfferCD = pDropper.GetJSTimer( iBodType, 3214 ); // Fetch timer for BOD offer cooldown
 			if( bodOfferCD != 0 )
