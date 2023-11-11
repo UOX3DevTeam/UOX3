@@ -2,24 +2,25 @@
     Implemented tailoring BODs.
         Blacksmiths, armorers, weaponsmiths, and ironworkers have had their bodType custom tag value changed to 1. (malevendors.dfn, femalevendors.dfn)
         Tailors are now associated to the vendor_bdo_dispenser.js script and have a bodType customTag with a value of 2. (malevendors.dfn, femalevendors.dfn)
-        A new custom tag, bodSubtype, with different values depending on the vendor DFN (malevendors.dfn, femalevendors.dfn):
+        A new custom tag, bodSubtype, has been added with different values depending on the vendor DFN (malevendors.dfn, femalevendors.dfn):
             Weaponsmith - 1
             Armorer - 2
             Blacksmith - 3
-            Ironworkers - 3
+            Ironworker - 3
+            Tailor - 1
         The item DFN smallbod has been renamed to smallbod_blacksmith and it has a new bodType custom tag with a value of 1. (misc_deeds.dfn)
         Added a new item DFN, smallbod_tailor, having a bodType custom tag with a value of 2. (misc_deeds.dfn)
         The smallbod script has been updated to handle creation and initialization of either type of BOD. (smallbod.js)
         The vendor BOD script has been updated to handle interactions for either type of BOD. (vendor_bdo_dispenser.js)
-        Fixed an issue making it impossible for BODs to require exceptional items. (vendor_bdo_dispenser.js)
-        Fixed an issue where the BOD reward dispensing cooldown timer was not actually being set. (vendor bdo_dispenser.js)
-        Fixed an issue where the vendor BOD script's onSpeech callback would trigger to completion for all BOD dispensing NPCs within the player's radius. (vendor_bdo_dispenser.js)
-        Removed AOS era BOD reward items, as the item DFNs do not yet exist. (vendor_bdo_dispenser.js)
-        Removed maximum reward penalty for small BODs, as large BODs do not yet exist. (vendor_bdo_dispenser.js)
+    Fixed an issue making it impossible for BODs to require exceptional items. (vendor_bdo_dispenser.js)
+    Fixed an issue where the BOD reward dispensing cooldown timer was not actually being set. (vendor bdo_dispenser.js)
+    Fixed an issue where the vendor BOD script's onSpeech callback would trigger to completion for all BOD dispensing NPCs within the player's radius. (vendor_bdo_dispenser.js)
+    Removed AOS era BOD reward items, as the item DFNs do not yet exist. (vendor_bdo_dispenser.js)
+    Removed maximum reward penalty for small BODs, as large BODs do not yet exist. (vendor_bdo_dispenser.js)
 
 10/11/2023 - Danny S.
     Fixed an issue in the vendor BOD script that prevented vendors from accepting BODs. (vendor_bdo_dispenser.js)
-    Fixed an issue in the vender BOD script that caused an error to be thrown when attempting to dispense a sturdy shovel reward. (vendor_bdo_dispenser.js)
+    Fixed an issue in the vendor BOD script that caused an error to be thrown when attempting to dispense a sturdy shovel reward. (vendor_bdo_dispenser.js)
     Changed skill boosting equipment script to modify effective skills instead of base skills. (skill_boosting_equipment.js)
     Fixed an issue in the BOD item GUMP that prevented adding multiple items in a row. (smallbod.js)
     Changed the BOD item GUMP to no longer close in between clicking "Combine..." and targeting an item. (smallbod.js)
