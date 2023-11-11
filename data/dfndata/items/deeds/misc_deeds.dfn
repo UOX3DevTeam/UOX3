@@ -48,6 +48,7 @@ weight=100
 script=5042
 getlbr=smallbod_lbr
 getaos=smallbod_aos
+CUSTOMINTTAG=bodType 1
 }
 
 [smallbod_tailor]
@@ -59,4 +60,5 @@ weight=100
 script=5042
 getlbr=smallbod_lbr
 getaos=smallbod_aos
+CUSTOMINTTAG=bodType 2
 }

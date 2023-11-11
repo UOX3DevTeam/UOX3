@@ -104,35 +104,24 @@ const clothCreateEntries = [
 	[160]
 ];
 
-const BODTypes = {
-	Blacksmithing: 1,
-	Tailoring: 2
-};
-
-const BODSubtypes = {
-	[BODTypes.Blacksmithing]: {
-		Weapon: 1,
-		Armor: 2,
-		WeaponOrArmor: 3
-	},
-	[BODTypes.Tailoring]: {
-		Cloth: 1
-	}
+const BODTypeToDFNSectionID = {
+	1: "smallbod_blacksmith",
+	2: "smallbod_tailor"
 }
 
 const BODTypesToSkillNames = {
-	[BODTypes.Blacksmithing]: 'blacksmithing',
-	[BODTypes.Tailoring]: 'tailoring'
+	1: 'blacksmithing',
+	2: 'tailoring'
 };
 
 const BODTypesToCreateEntries = {
-	[BODTypes.Blacksmithing]: {
-		[BODSubtypes[BODTypes.Blacksmithing].Weapon]: weaponCreateEntries,
-		[BODSubtypes[BODTypes.Blacksmithing].Armor]: armorCreateEntries,
-		[BODSubtypes[BODTypes.Blacksmithing].WeaponOrArmor]: weaponCreateEntries.concat(armorCreateEntries),
+	1: {
+		1: weaponCreateEntries,
+		2: armorCreateEntries,
+		3: weaponCreateEntries.concat(armorCreateEntries),
 	},
-	[BODTypes.Tailoring]: {
-		[BODSubtypes[BODTypes.Tailoring].Cloth]: clothCreateEntries
+	2: {
+		1: clothCreateEntries
 	}
 };
 
@@ -144,7 +133,7 @@ const BlacksmithRewardTiersToItems = [
 			{ itemName: "sturdy_pickaxe", props: [['maxUses', 150], ['usesLeft', 150]] },
 			{ itemName: "sturdy_shovel", props: [['maxUses', 150], ['usesLeft', 150]] },
 		],
-		selectionFunction: RandomNumber,
+		selectType: 'random',
 	},
 	{ items: [{ itemName: "mining_gloves_1" }] },
 	{ items: [{ itemName: "mining_gloves_3" }] },
@@ -162,7 +151,7 @@ const BlacksmithRewardTiersToItems = [
 			{ itemName: "v_anvil_deed" },
 			{ itemName: "v_anvil_deed" }
 		],
-		selectionFunction: WeightedRandom
+		selectType: 'weighted'
 	},
 	{ items: [{ itemName: "copper_runic_hammer" }] },
 	{ items: [{ itemName: "bronze_runic_hammer" }] },
@@ -185,7 +174,7 @@ const TailorRewardTiersToItems = [
 			{ itemName: 'cloth', props: [['colour', 123]] },
 			{ itemName: 'cloth', props: [['colour', 123]] }
 		],
-		selectionFunction: RandomNumber
+		selectType: 'random'
 	},
 	{
 		items: [
@@ -194,7 +183,7 @@ const TailorRewardTiersToItems = [
 			{ itemName: 'cloth', props: [['colour', 123]] },
 			{ itemName: 'cloth', props: [['colour', 123]] }
 		],
-		selectionFunction: RandomNumber
+		selectType: 'random'
 	},
 	{
 		items: [
@@ -203,7 +192,7 @@ const TailorRewardTiersToItems = [
 			{ itemName: 'cloth', props: [['colour', 123]] },
 			{ itemName: 'cloth', props: [['colour', 123]] }
 		],
-		selectionFunction: RandomNumber
+		selectType: 'random'
 	},
 	{
 		items: [
@@ -221,7 +210,7 @@ const TailorRewardTiersToItems = [
 			{ itemName: 'sandals', props: [['colour', 123]] }
 
 		],
-		selectionFunction: RandomNumber
+		selectType: 'random'
 	},
 	{
 		items: [
@@ -230,7 +219,7 @@ const TailorRewardTiersToItems = [
 			{ itemName: 'cloth', props: [['colour', 123]] },
 			{ itemName: 'cloth', props: [['colour', 123]] }
 		],
-		selectionFunction: RandomNumber
+		selectType: 'random'
 	},
 	{ items: [{ itemName: "spined_runic_sewing_kit" }] },
 	{ items: [{ itemName: "clothing_bless_deed" }] },
@@ -240,14 +229,14 @@ const TailorRewardTiersToItems = [
 ];
 
 const BODTypesToRewards = {
-	[BODTypes.Blacksmithing]: BlacksmithRewardTiersToItems,
-	[BODTypes.Tailoring]: TailorRewardTiersToItems
+	1: BlacksmithRewardTiersToItems,
+	2: TailorRewardTiersToItems
 };
 
 function onSoldToVendor( pSock, npcVendor, iSold )
 {
 	var pUser = pSock.currentChar;
-	if( offerBodsFromItemSales && CheckBodTimers( pUser, npcVendor.getTag( 'bodType' ) ))
+	if( offerBodsFromItemSales && CheckBodTimers( pUser, npcVendor.GetTag( 'bodType' ) ))
 	{
 		if( !onlyOfferBodsFromCraftedItems || iSold.madeWith != -1 ) // what is madeWith property for non-crafted items?
 		{
@@ -303,7 +292,7 @@ function onSpeech( myString, pUser, myNPC )
 		{
 			case 0x5000: // Bulk Order Info - TW_BODINFO, custom UOX3 triggerword triggered via context menu
 			{
-				if( CheckBodTimers( pUser, myNPC.getTag( "bodType" ) ))
+				if( CheckBodTimers( pUser, myNPC.GetTag( "bodType" ) ))
 				{
 					if( EraStringToNum( GetServerSetting( "CoreShardEra" )) <= EraStringToNum( "lbr" ))
 					{
@@ -514,7 +503,7 @@ function onGumpPress( socket, pButton, gumpData )
 			}
 			else
 			{
-				var smallBOD = CreateDFNItem( pUser.socket, pUser, "smallbod", 1, "ITEM", true );
+				var smallBOD = CreateDFNItem( pUser.socket, pUser, BODTypeToDFNSectionID[bodType], 1, "ITEM", true );
 				if( ValidateObject( smallBOD ))
 				{
 					// Store the BOD properties as permanent tags on the BOD deed
@@ -524,7 +513,6 @@ function onGumpPress( socket, pButton, gumpData )
 					smallBOD.SetTag( "reqExceptional", reqExceptional );
 					smallBOD.SetTag( "materialColor", materialColor );
 					smallBOD.SetTag( "bodSectionID", bodSectionID );
-					smallBOD.SetTag( "bodType", bodType );
 					smallBOD.SetTag( "bodSubtype", bodSubtype );
 					smallBOD.SetTag( "init", true );
 
@@ -754,19 +742,28 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 
 	// Get modifiers to min / max rewards based on properties of the BOD itself
 	var minMaxMod = MinMaxRewardModifiers( iDropped );
-	var bodRewardItem = null;
 
-	const rewards = BODTypesToRewards[iDropped.getTag( "bodType" )];
+	const rewards = BODTypesToRewards[iDropped.GetTag( "bodType" )];
 	const minReward = minMaxMod[0];
 	const maxReward = rewards.length + minMaxMod[1];
 
 	const rewardTier = rewards[WeightedRandom( minReward, maxReward, weightVal )];
 	let rewardItemIndex = 0;
 	if (rewardTier.items.length > 1) {
-		rewardItemIndex = rewardTier.selectionFunction(0, rewardTier.items.length, weightVal);
+		let rewardItemIndex;
+		switch ( rewardTier.selectType ) {
+			case 'random':
+				rewardItemIndex = RandomNumber(0, rewardTier.items.length);
+				break;
+			case 'weighted':
+				rewardItemIndex = WeightedRandom(0, rewardTier.items.length, weightVal);
+				break;
+			default:
+				break;
+		}
 	}
 	const rewardItem = rewardTier.items[rewardItemIndex];
-	const rewardDFNItem = CreateDFNItem( socket, pDropper, rewardItemIndex, 1, "ITEM", false );
+	const rewardDFNItem = CreateDFNItem( socket, pDropper, rewardItem.itemName, 1, "ITEM", false );
 	if (rewardItem.props && rewardDFNItem)
 	{
 		for( let i = 0; i < rewardItem.props.length; i++ )
@@ -780,7 +777,7 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 	}
 
 	var errorFound = false;
-	if( !ValidateObject( bodRewardItem ))
+	if( !ValidateObject( rewardDFNItem ))
 	{
 		socket.SysMessage( "An error occurred while attempting to dispense rewards for BOD. Please contact a GM/Admin for assistance!" );
 		Console.Error( "Error occured when attempting to create BOD item reward for player with serial " + pDropper.serial + "!" );

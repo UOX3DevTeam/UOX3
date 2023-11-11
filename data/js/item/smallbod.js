@@ -1,10 +1,16 @@
+const BODTypesToSkillNames = {
+	1: 'blacksmithing',
+	2: 'tailoring'
+};
+
 // Can also be triggered by creating BOD from admin menu or add command: 'add item smallbod
 function onCreateDFN( objMade, objType )
 {
 	if( !ValidateObject( objMade ))
 		return;
 
-	var bodEntry 	= TriggerEvent( 3214, "SelectBodEntry", null, false, 3 ); // 1 - weapon BODs, 2 - armor BODs, 3 - Either
+	var bodType     = objMade.GetTag( "bodType" );
+	var bodEntry 	= TriggerEvent( 3214, "SelectBodEntry", bodType, 1, false, 0 );
 	var itemName	= bodEntry.name; // name of the create entry
 	var graphicID	= bodEntry.id; // graphical id of item to craft
 	var sectionID 	= bodEntry.addItem; // section ID of item to craft
@@ -17,6 +23,7 @@ function onCreateDFN( objMade, objType )
 		objMade.SetTag( "graphicID", graphicID );
 		objMade.SetTag( "sectionID", sectionID );
 		objMade.SetTag( "materialColor", materialColor );
+		objMade.SetTag( "bodSubtype", 1 );
 		objMade.Refresh();
 	}
 }
@@ -46,10 +53,12 @@ function onUseChecked( pUser, smallBOD )
 			var init = smallBOD.GetTag( "init" ) // just to make sure we dont set the bod over
 			if( init == false ) // Keep from resetting the amount needed.
 			{
+				const pSkill = pUser.skills[BODTypesToSkillNames[smallBOD.GetTag( "bodType" )]];
+
 				var amountMax = 0;
-				if( pUser.skills.blacksmithing >= 701 )
+				if( pSkill >= 701 )
 				{
-					if((( pUser.skills.blacksmithing + 800 ) / 2 ) > RandomNumber( 0, 1000 ))
+					if((( pSkill + 800 ) / 2 ) > RandomNumber( 0, 1000 ))
 					{
 						smallBOD.SetTag( "reqExceptional", true );
 					}
@@ -57,7 +66,7 @@ function onUseChecked( pUser, smallBOD )
 					var values = [ 10, 15, 20, 20 ];
 					amountMax = values[Math.floor( Math.random() * values.length )];
 				}
-				else if( pUser.skills.blacksmithing >= 501 )
+				else if( pSkill >= 501 )
 				{					
 					var values = [ 10, 15, 15, 20 ];
 					amountMax = values[Math.floor( Math.random() * values.length )];
