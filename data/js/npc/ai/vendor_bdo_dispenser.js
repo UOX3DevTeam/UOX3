@@ -694,17 +694,17 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 		minReward = 0 + minMaxMod[0];
 		maxReward = 16 + minMaxMod[1];
 
-		switch( WeightedRandom( minReward, maxReward, weightVal ))
+		switch( WeightedRandom( minReward, maxReward, weightVal ) )
 		{
 			case 0: // Sturdy Pickaxe / Sturdy Shovel (equal chance)
-				switch( RandomNumber( 0, 1 ))
+				switch( RandomNumber( 0, 1 ) )
 				{
 					case 0: // Sturdy Pickaxe
 						bodRewardItem = CreateBODReward( 0, socket, pDropper, 0 );
 						break;
 					case 1: // Sturdy Shovel
-						break;
 						bodRewardItem = CreateBODReward( 1, socket, pDropper, 0 );
+						break;
 					default:
 						break;
 				}
