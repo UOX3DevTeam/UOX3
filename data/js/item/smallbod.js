@@ -43,9 +43,6 @@ function onUseChecked( pUser, smallBOD )
 		}
 		else 
 		{
-			// Store iUsed as a custom property on pUser
-			pUser.bodItem = smallBOD;
-
 			var init = smallBOD.GetTag( "init" ) // just to make sure we dont set the bod over
 			if( init == false ) // Keep from resetting the amount needed.
 			{
@@ -90,6 +87,8 @@ function SmallBODGump( pUser, smallBOD )
 	var materialColor	= smallBOD.GetTag( "materialColor" ); // color of primary resource required to craft item
 	var socket = pUser.socket;
 	var bodGump = new Gump;
+
+	pUser.bodItem = smallBOD; // Store BOD on the user for access in callbacks.
 
 	bodGump.AddPage( 0 );
 
@@ -201,6 +200,7 @@ function onGumpPress( socket, pButton, gumpData )
 			delete pUser.bodItem; // Remove bodItem as a temporary property on pUser
 			break;
 		case 1:
+			SmallBODGump(pUser, smallBOD);
 			CombineItemWithBod( pUser, smallBOD );
 			break;
 	}
@@ -238,10 +238,13 @@ function onCallback0( socket, myTarget )
 	var bodItemID 		= smallBOD.GetTag( "graphicID" );
 	delete pUser.bodItem; // Remove bodItem as a temporary property on pUser
 
-	// Abort if player cancels target cursor
+	// Abort if player cancels target cursor or clicks empty space.
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
-	if( cancelCheck == 255 )
+	if( cancelCheck == 255 || !myTarget)
+	{
+		SmallBODGump(pUser, smallBOD);
 		return;
+	}
 
 	if( !socket.GetWord( 1 ) && myTarget.isItem && ( myTarget.sectionID == bodSectionID ) || ( myTarget.id == bodItemID && myTarget.name == bodItemName ))
 	{
@@ -352,11 +355,11 @@ function onCallback0( socket, myTarget )
 
 				myTarget.Delete();
 				pUser.TextMessage( GetDictionaryEntry( 17263, socket.language ), false, 0x3b2, 0, pUser.serial ); // The item has been combined with the deed.
-				if( amountCur < amountMax )
+				if( amountCur + 1 < amountMax )
 				{
 					pUser.CustomTarget( 0 );
-					SmallBODGump( pUser, smallBOD );
 				}
+				SmallBODGump( pUser, smallBOD );
 			}
 		}
 	}
