@@ -333,7 +333,7 @@ function SmallBODAcceptGump( pUser, myNPC )
 		{
 			if((( pSkill + 800 ) / 2 ) > RandomNumber( 0, 1000 ))
 			{
-				reqExceptional = false;
+				reqExceptional = true;
 			}
 
 			let values = [ 10, 15, 20, 20 ];
