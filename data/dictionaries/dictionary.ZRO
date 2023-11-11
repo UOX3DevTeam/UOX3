@@ -5143,5 +5143,7 @@
 18769=The dyes and dye tub have been placed in your backpack.
 18770=This is half a prize ticket! Double-click this ticket and target any other ticket marked NEW PLAYER and get a prize! This ticket will only work for YOU, so don’t give it away!
 18771=A full set of ranger armor.
+// [18800-19000] AOS properties
+18800=%i% Bandage Healing Bonus
 }
 EOF

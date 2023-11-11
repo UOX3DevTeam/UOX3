@@ -17,6 +17,7 @@ restock=10
 // War Axe - E/W
 [0x13af]
 {
+gett2a=0x13af_t2a
 getlbr=0x13af_lbr
 getaos=0x13af_aos
 gettol=0x13af_tol
@@ -55,6 +56,7 @@ script=2200// uses left tooltip
 // Smith's Hammer - E/W
 [0x13e3]
 {
+gett2a=0x13e3_t2a
 getlbr=0x13e3_lbr
 getaos=0x13e3_aos
 gettol=0x13e3_tol
@@ -90,6 +92,7 @@ restock=10
 // Club - E/W
 [0x13b3]
 {
+gett2a=0x13b3_t2a
 getlbr=0x13b3_lbr
 getaos=0x13b3_aos
 gettol=0x13b3_tol
@@ -125,6 +128,7 @@ restock=10
 // Sledge Hammer - E/W
 [0x0fb4]
 {
+gett2a=0x0fb4_t2a
 getlbr=0x0fb4_lbr
 getaos=0x0fb4_aos
 gettol=0x0fb4_tol
@@ -160,6 +164,7 @@ restock=10
 // Mace - N/S
 [0x0f5c]
 {
+gett2a=0x0f5c_t2a
 getlbr=0x0f5c_lbr
 getaos=0x0f5c_aos
 gettol=0x0f5c_tol
@@ -195,6 +200,7 @@ restock=10
 // War Mace - E/W
 [0x1406]
 {
+gett2a=0x1406_t2a
 getlbr=0x1406_lbr
 getaos=0x1406_aos
 gettol=0x1406_tol
@@ -230,6 +236,7 @@ restock=10
 // War Hammer - E/W
 [0x1438]
 {
+gett2a=0x1438_t2a
 getlbr=0x1438_lbr
 getaos=0x1438_aos
 gettol=0x1438_tol
@@ -265,6 +272,7 @@ restock=10
 // Maul - E/W
 [0x143a]
 {
+gett2a=0x143a_t2a
 getlbr=0x143a_lbr
 getaos=0x143a_aos
 gettol=0x143a_tol
@@ -300,6 +308,7 @@ restock=10
 // Hammer Pick - E/W
 [0x143c]
 {
+gett2a=0x143c_t2a
 getlbr=0x143c_lbr
 getaos=0x143c_aos
 gettol=0x143c_tol
@@ -339,6 +348,7 @@ restock=10
 // Scepter - E/W
 [0x26bc]
 {
+gett2a=0x26bc_t2a
 getlbr=0x26bc_lbr
 getaos=0x26bc_aos
 gettol=0x26bc_tol
@@ -378,6 +388,7 @@ restock=10
 // Tessen - E/W
 [0x27a3]
 {
+gett2a=0x27a3_t2a
 getlbr=0x27a3_lbr
 getaos=0x27a3_aos
 gettol=0x27a3_tol
@@ -414,6 +425,7 @@ restock=10
 // Tetsubo - E/W
 [0x27a6]
 {
+gett2a=0x27a6_t2a
 getlbr=0x27a6_lbr
 getaos=0x27a6_aos
 gettol=0x27a6_tol
@@ -450,6 +462,7 @@ restock=10
 // Nunchaku - E/W
 [0x27ae]
 {
+gett2a=0x27ae_t2a
 getlbr=0x27ae_lbr
 getaos=0x27ae_aos
 gettol=0x27ae_tol
@@ -489,6 +502,7 @@ restock=10
 // Diamond Mace - E/W
 [0x2d24]
 {
+gett2a=0x2d24_t2a
 getlbr=0x2d24_lbr
 getaos=0x2d24_aos
 gettol=0x2d24_tol
@@ -528,6 +542,7 @@ restock=10
 // Gargish Maul - N/S
 [0x48c2]
 {
+gett2a=0x48c2_t2a
 getlbr=0x48c2_lbr
 getaos=0x48c2_aos
 gettol=0x48c2_tol
@@ -564,6 +579,7 @@ restock=10
 // Disc Mace - N/S
 [0x0903]
 {
+gett2a=0x0903_t2a
 getlbr=0x0903_lbr
 getaos=0x0903_aos
 gettol=0x0903_tol
@@ -600,6 +616,7 @@ restock=10
 // Gargish War Hammer - N/S
 [0x48c0]
 {
+gett2a=0x48c0_t2a
 getlbr=0x48c0_lbr
 getaos=0x48c0_aos
 gettol=0x48c0_tol
@@ -636,6 +653,7 @@ restock=10
 // Gargish Tessen - N/S
 [0x48cc]
 {
+gett2a=0x48cc_t2a
 getlbr=0x48cc_lbr
 getaos=0x48cc_aos
 gettol=0x48cc_tol
@@ -675,6 +693,7 @@ restock=10
 // Barbed Whip - N/S
 [0xa289]
 {
+gett2a=0xa289_t2a
 getlbr=0xa289_lbr
 getaos=0xa289_aos
 gettol=0xa289_tol

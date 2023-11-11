@@ -1,6 +1,7 @@
 // Studded Sleeves - E/W
 [0x13d4-ranger]
 {
+gett2a=0x13d4_t2a
 getlbr=0x13d4_lbr
 getaos=0x13d4_aos
 gettol=0x13d4_tol
@@ -26,6 +27,7 @@ get=0x13d4-ranger 0x13dc-ranger
 // Studded Gloves - E/W
 [0x13d5-ranger]
 {
+gett2a=0x13d5_t2a
 getlbr=0x13d5_lbr
 getaos=0x13d5_aos
 gettol=0x13d5_tol
@@ -51,6 +53,7 @@ get=0x13d5-ranger 0x13dd-ranger
 // Studded Gorget
 [0x13d6-ranger]
 {
+gett2a=0x13d6_t2a
 getlbr=0x13d6_lbr
 getaos=0x13d6_aos
 gettol=0x13d6_tol
@@ -69,6 +72,7 @@ get=0x13d6-ranger
 // Studded Leggings - E/W
 [0x13da-ranger]
 {
+gett2a=0x13da_t2a
 getlbr=0x13da_lbr
 getaos=0x13da_aos
 gettol=0x13da_tol
@@ -94,6 +98,7 @@ get=0x13da-ranger 0x13e1-ranger
 // Studded Tunic - E/W
 [0x13db-ranger]
 {
+gett2a=0x13db_t2a
 getlbr=0x13db_lbr
 getaos=0x13db_aos
 gettol=0x13db_tol
