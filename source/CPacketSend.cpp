@@ -7465,6 +7465,11 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		tempEntry.ourText = oldstrutil::number( cItem.GetTempVar( CITV_MOREZ ));
 		FinalizeData( tempEntry, totalStringLen );
 	}
+	if( cItem.GetType() == IT_SPELLCHANNELING )
+	{
+		tempEntry.stringNum = 1060482; // spell channeling
+		FinalizeData( tempEntry, totalStringLen );
+	}
 
 	bool hideMagicItemStats = cwmWorldState->ServerData()->HideStatsForUnknownMagicItems();
 	if( !cwmWorldState->ServerData()->BasicTooltipsOnly() && ( !hideMagicItemStats || ( hideMagicItemStats && ( !cItem.GetName2().empty() && cItem.GetName2() == "#"))))
