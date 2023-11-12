@@ -1,3 +1,8 @@
+// Enable and Disable the weapon Special Moves
+const paralyzingBlow = true;
+const crushingBlow = true;
+const concussionBlow = true;
+
 function onEquip( pEquipper, iEquipped ) 
 {
 	pEquipper.AddScriptTrigger( 5050 );
@@ -19,15 +24,15 @@ function onAttack( pAttacker, pDefender )
 
 	if(( EraStringToNum( coreShardEra ) >= EraStringToNum("uor") && EraStringToNum( coreShardEra ) <= EraStringToNum( "lbr" )) && scaledSkillValue >= randomDouble )
 	{
-		if( weaponType == "TWOHND_FENCING" && pDefender.frozen == false ) 
+		if( paralyzingBlow && weaponType == "TWOHND_FENCING" && pDefender.frozen == false ) 
 		{
 			ParalyzingBlow( pAttacker, pDefender );
 		}
-		else if( weaponType == "LG_MACES" ) 
+		else if( crushingBlow && weaponType == "LG_MACES" ) 
 		{
 			CrushingBlow( pAttacker, pDefender );
 		}
-		else if( weaponType == "TWOHND_LG_SWORDS" && weaponType == "DEF_SWORDS" && pDefender.GetTempTag( "concussion" ) == 0 )
+		else if( concussionBlow && ( weaponType == "TWOHND_LG_SWORDS" && weaponType == "DEF_SWORDS" ) && pDefender.GetTempTag( "concussion" ) == 0 )
 		{
 			ConcussionBlow( pAttacker, pDefender );
 		}
@@ -51,13 +56,14 @@ function ParalyzingBlow( pAttacker, pDefender )
 	}
 	else
 	{
-		pDefender.TextMessage( "You receive a paralyzing blow!" );
+		pDefender.TextMessage( "You receive a paralyzing blow!", false, 0x3b2, 0, pDefender.serial );
 		seconds = 3000;
 	}
 	pDefender.StartTimer( seconds, 1, true );
 	pDefender.frozen = true;
 
-	pAttacker.TextMessage( "You deliver a paralyzing blow!" );
+	// void TextMessage( message, allHear, txtHue, speechTarget, speechTargetSerial );
+	pAttacker.TextMessage( "You deliver a paralyzing blow!", false, 0x3b2, 0, pAttacker.serial);
 	pAttacker.SoundEffect( 0x11C, true );
 }
 
@@ -73,10 +79,10 @@ The base chance to inflict this special damage is your Anatomy skill level divid
 function CrushingBlow( pAttacker, pDefender )
 {
 	var staminaLoss = Math.floor( Math.random() * ( 5 - 3 + 1 )) + 3;
-	pDefender.TextMessage( "You receive a crushing blow!" );
+	pDefender.TextMessage( "You receive a crushing blow!", false, 0x3b2, 0, pDefender.serial );
 	pDefender.stamina -= staminaLoss;
 
-	pAttacker.TextMessage( "You deliver a crushing blow!" );
+	pAttacker.TextMessage( "You deliver a crushing blow!", false, 0x3b2, 0, pAttacker.serial );
 	pAttacker.SoundEffect( 0x11C, true );
 }
 
@@ -89,12 +95,12 @@ The base chance to deliver this special blow is your Anatomy skill level divided
 
 function ConcussionBlow( pAttacker, pDefender )
 {
-	pDefender.TextMessage( "You receive a concussion blow!" );
+	pDefender.TextMessage( "You receive a concussion blow!", false, 0x3b2, 0, pDefender.serial );
 	pDefender.tempint = ( pDefender.tempint - 2 );
 	pDefender.StartTimer( 30000, 2, true );
 	pDefender.SetTempTag( "concussion", 1 );
 
-	pAttacker.TextMessage( "You deliver a concussion blow!" );
+	pAttacker.TextMessage( "You deliver a concussion blow!", false, 0x3b2, 0, pAttacker.serial );
 	pAttacker.SoundEffect( 0x11C, true );
 }
 
