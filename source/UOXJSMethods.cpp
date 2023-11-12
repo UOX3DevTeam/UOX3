@@ -260,10 +260,6 @@ bool CPacket_WriteShort( JSContext* cx, unsigned argc, JS::Value* vp )
       return false;
 
 	CPUOXBuffer *myPacket = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>( obj, 0 );
-  auto args = JS::CallArgsFromVp(argc, vp);
-  JS::RootedObject obj(cx);
-  if (!args.computeThis(cx, &obj))
-      return false;
 
 	if( myPacket == nullptr )
 	{
@@ -1900,7 +1896,7 @@ static bool CGump_Send( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "You have to pass a valid Socket or Character" );
 	}
 
-	JSEncapsulate myClass( cx, &( argv[0] ));
+	JS::HandleValue myClass = args.get( 0 );
 
 	SEGump_st *myGump = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 
@@ -1959,10 +1955,9 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
   JS::RootedObject obj(cx);
   if (!args.computeThis(cx, &obj))
       return false;
-	JSEncapsulate myClass( cx, obj );
-	CBaseObject *myObj		= static_cast<CBaseObject*>( myClass.toObject() );
+	CBaseObject *myObj		= JS::GetMaybePtrFromReservedSlot<CBaseObject>( obj, 0 );
 
-  std::string trgMessage = convertToString( args.get(0).toString() );
+  std::string trgMessage = convertToString( cx, args.get(0).toString() );
 	if( trgMessage.empty() )
 	{
 		ScriptError( cx, "You have to supply a message-text" );
@@ -2009,7 +2004,7 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
 	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
-	if( myClass.ClassName() == "UOXItem" )
+	if( myObj->CanBeObjType( ObjectType::OT_ITEM ) )
 	{
 		CItem *myItem = static_cast<CItem *>( myObj );
 		if( !ValidateObject( myItem ))
@@ -2031,7 +2026,7 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 		}
 		MethodSpeech( *myItem, trgMessage.c_str(), speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode );
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( myObj->CanBeObjType( ObjectType::OT_CHAR ) )
 	{
 		CChar *myChar = static_cast<CChar *>( myObj );
 		if( !ValidateObject( myChar ))
@@ -2040,7 +2035,7 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		if( argc >= 2 && argc <= 3 && JSVAL_TO_BOOLEAN( argv[1] ) != JS_TRUE )
+		if( argc >= 2 && argc <= 3 && !args.get( 1 ).toBoolean() )
 		{
 			speechTarget = SPTRG_INDIVIDUAL;
 			if( speechTargetSerial == INVALIDSERIAL )
@@ -2064,7 +2059,7 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 			{
 				txtHue = 0x0026;
 			}
-			MethodSpeech( *myChar, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode );
+			MethodSpeech( *myChar, trgMessage.c_str(), speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode);
 		}
 		else
 		{
@@ -2072,7 +2067,7 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 			{
 				txtHue = myChar->GetSayColour();
 			}
-			MethodSpeech( *myChar, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode );
+			MethodSpeech( *myChar, trgMessage.c_str(), speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode);
 		}
 	}
 
@@ -2080,8 +2075,8 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .TextMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -2503,7 +2498,7 @@ static bool CChar_DoAction( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	if( argc > 4 )
 	{
-		playBackwards = JSVAL_TO_BOOLEAN( argv[4] );
+		playBackwards = args.get( 4 ).toBoolean();
 	}
 
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
@@ -2583,7 +2578,7 @@ static bool CChar_EmoteMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 		speechTargetSerial = static_cast<SERIAL>( args.get( 4 ).toInt32());
 	}
 
-	if( argc >= 2 && argc <= 3 && JSVAL_TO_BOOLEAN( argv[1] ) != JS_TRUE )
+	if( argc >= 2 && argc <= 3 && !args.get( 1 ).toBoolean() )
 	{
 		speechTarget = SPTRG_INDIVIDUAL;
 	}
@@ -2737,8 +2732,8 @@ static bool CSocket_Disconnect( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Socket JS Method .Disconnect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -2788,7 +2783,7 @@ static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 		case 1:
 			if( args.get( 0 ).isObject())
 			{	// we can work with this, it should be either a character or item, hopefully
-				JSEncapsulate jsToGoTo( cx, &( argv[0] ));
+				JS::HandleValue jsToGoTo = args.get( 0 );
 				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
 				{
 					CBaseObject *toGoTo = static_cast<CBaseObject *>( jsToGoTo.toObject() );
@@ -2951,8 +2946,8 @@ static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .Teleport(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -3177,8 +3172,8 @@ static bool CMisc_SellTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Char/Socket JS Method .SellTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -3265,8 +3260,8 @@ static bool CMisc_BuyFrom( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Char/Socket JS Method .BuyFrom(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -3310,18 +3305,18 @@ static bool CMisc_HasSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 
 		if( !ValidateObject( myItem ))
 		{
-			*rval = BOOLEAN_TO_JSVAL( JS_FALSE );
+			args.rval().setBoolean( false  );
 			return true;
 		}
 
 		// Code checks for spell based on index starting at 0, while spells have spellIDs starting from 1
 		if( Magic->HasSpell( myItem, spellId - 1 ))
 		{
-			*rval = BOOLEAN_TO_JSVAL( JS_TRUE );
+			args.rval().setBoolean( true  );
 		}
 		else
 		{
-			*rval = BOOLEAN_TO_JSVAL( JS_FALSE );
+			args.rval().setBoolean( false  );
 		}
 	}
 	else if( myClass.ClassName() == "UOXItem" )
@@ -3335,11 +3330,11 @@ static bool CMisc_HasSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 
 		if( Magic->HasSpell( myItem, spellId ))
 		{
-			*rval = BOOLEAN_TO_JSVAL( JS_TRUE );
+			args.rval().setBoolean( true  );
 		}
 		else
 		{
-			*rval = BOOLEAN_TO_JSVAL( JS_FALSE );
+			args.rval().setBoolean( false  );
 		}
 	}
 
@@ -3403,8 +3398,8 @@ static bool CMisc_RemoveSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .RemoveSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -3488,7 +3483,7 @@ static bool CBase_SetTag( JSContext* cx, unsigned argc, JS::Value* vp )
 	TAGMAPOBJECT localObject;
 	if( argc == 2 )
 	{
-		JSEncapsulate encaps( cx, &( argv[1] ));
+		JS::HandleValue encaps = args.get( 1 );
 		if( encaps.isType( JSOT_STRING ))
 		{			// String value handling
 			const std::string stringVal = encaps.toString();
@@ -3638,7 +3633,7 @@ static bool CBase_SetTempTag( JSContext* cx, unsigned argc, JS::Value* vp )
 	TAGMAPOBJECT localObject;
 	if( argc == 2 )
 	{
-		JSEncapsulate encaps( cx, &( argv[1] ));
+		JS::HandleValue encaps = args.get( 1 );
 		if( encaps.isType( JSOT_STRING ))
 		{			// String value handling
 			const std::string stringVal = encaps.toString();
@@ -3966,8 +3961,8 @@ static bool CChar_OpenBank( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .OpenBank(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -4015,8 +4010,8 @@ static bool CSocket_OpenContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 		if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 		{
 			// ... by calling a dummy function in original script!
-			JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-			if( retVal == JS_FALSE )
+			bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+			if( !retVal )
 			{
 				// Dummy function not found, let shard admin know!
 				Console.Warning( oldstrutil::format( "Script context lost after using Socket JS Method .OpenContainer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -4067,8 +4062,8 @@ static bool CChar_OpenLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 			if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 			{
 				// ... by calling a dummy function in original script!
-				JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-				if( retVal == JS_FALSE )
+				bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+				if( !retVal )
 				{
 					// Dummy function not found, let shard admin know!
 					Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .OpenLayer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -4163,8 +4158,8 @@ static bool CChar_TurnToward( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .TurnToward(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -4330,7 +4325,7 @@ static bool CGuild_IsAtPeace( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myGuild->IsAtPeace() );
+	args.rval().setBoolean( myGuild->IsAtPeace()  );
 
 	return true;
 }
@@ -4671,12 +4666,12 @@ static bool CBase_InRange( JSContext* cx, unsigned argc, JS::Value* vp )
 		CItem *myItem = static_cast<CItem *>( them );
 		if( myItem->GetCont() != nullptr )
 		{
-			*rval = BOOLEAN_TO_JSVAL( FindItemOwner( myItem ) == me );
+			args.rval().setBoolean( FindItemOwner( myItem ) == me  );
 			return true;
 		}
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( ObjInRange( me, them, distance ));
+	args.rval().setBoolean( ObjInRange( me, them, distance ) );
 	return true;
 }
 
@@ -4789,9 +4784,9 @@ static bool CChar_CheckSkill( JSContext* cx, unsigned argc, JS::Value* vp )
 	bool isCraftSkill = false;
 	if( argc == 4 )
 	{
-		isCraftSkill = JSVAL_TO_BOOLEAN( argv[3] );
+		isCraftSkill = args.get( 3 ).toBoolean();
 	}
-	*rval = BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill ));
+	args.rval().setBoolean( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill ) );
 	return true;
 }
 
@@ -5059,7 +5054,7 @@ static bool CChar_CastSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 		else
 		{
 			bool spellSuccess = Magic->SelectSpell( sock, spellCast );
-			*rval = BOOLEAN_TO_JSVAL( spellSuccess );
+			args.rval().setBoolean( spellSuccess  );
 		}
 	}
 	return true;
@@ -5238,7 +5233,7 @@ static bool CChar_SetPoisoned( JSContext* cx, unsigned argc, JS::Value* vp )
 	{
 		SI32 wearOff = static_cast<SI32>( args.get( 1 ).toInt32());
 
-		if( argc == 2 || ( argc == 3 && JSVAL_TO_BOOLEAN( argv[2] )))
+		if( argc == 2 || ( argc == 3 && args.get( 2 ).toBoolean()))
 		{
 			if( myChar->GetPoisoned() > newVal )
 			{
@@ -5348,14 +5343,14 @@ static bool CItem_SetCont( JSContext* cx, unsigned argc, JS::Value* vp )
 	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	// return true if the change was successful, false otherwise
-	*rval = BOOLEAN_TO_JSVAL( myItem->SetCont( trgObj ));
+	args.rval().setBoolean( myItem->SetCont( trgObj ) );
 
 	// Active script-context might have been lost, so restore it...
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .SetCont(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -5393,7 +5388,7 @@ static bool CItem_IsMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myItem->CanBeObjType( OT_MULTI ));
+	args.rval().setBoolean( myItem->CanBeObjType( OT_MULTI ) );
 	return true;
 }
 
@@ -5425,7 +5420,7 @@ static bool CBase_IsBoat( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myObject->CanBeObjType( OT_BOAT ));
+	args.rval().setBoolean( myObject->CanBeObjType( OT_BOAT ) );
 	return true;
 }
 
@@ -5464,7 +5459,7 @@ static bool CMulti_IsInMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL(( toFind->GetMultiObj() == myItem ));
+	args.rval().setBoolean( ( toFind->GetMultiObj() == myItem ) );
 	return true;
 }
 
@@ -5503,7 +5498,7 @@ static bool CMulti_IsOnBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnBanList( toFind ));
+	args.rval().setBoolean( myItem->IsOnBanList( toFind ) );
 	return true;
 }
 
@@ -5542,7 +5537,7 @@ static bool CMulti_IsOnFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnFriendList( toFind ));
+	args.rval().setBoolean( myItem->IsOnFriendList( toFind ) );
 	return true;
 }
 
@@ -5581,7 +5576,7 @@ static bool CMulti_IsOnGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnGuestList( toFind ));
+	args.rval().setBoolean( myItem->IsOnGuestList( toFind ) );
 	return true;
 }
 
@@ -5620,7 +5615,7 @@ static bool CMulti_IsOnOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnOwnerList( toFind ));
+	args.rval().setBoolean( myItem->IsOnOwnerList( toFind ) );
 	return true;
 }
 
@@ -5659,7 +5654,7 @@ static bool CMulti_IsOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myItem->IsOwner( toFind ));
+	args.rval().setBoolean( myItem->IsOwner( toFind ) );
 	return true;
 }
 
@@ -6165,8 +6160,8 @@ static bool CItem_PlaceInPack( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .PlaceInPack(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -6709,8 +6704,8 @@ static bool CChar_YellMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .YellMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -6775,8 +6770,8 @@ static bool CChar_WhisperMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .WhisperMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -6895,7 +6890,7 @@ static bool CRace_CanWearArmour( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	ARMORCLASS srcClass = myRace->ArmourClassRestriction();
 	ARMORCLASS trgClass = toFind->GetArmourClass();
-	*rval = BOOLEAN_TO_JSVAL(( trgClass == 0 ) || (( srcClass & trgClass ) != 0 ));	// they have a matching class
+	args.rval().setBoolean( ( trgClass == 0 ) || (( srcClass & trgClass ) != 0 ) );	// they have a matching class
 	return true;
 }
 
@@ -6925,7 +6920,7 @@ static bool CRace_IsValidHairColour( JSContext* cx, unsigned argc, JS::Value* vp
 	}
 
 	COLOUR cVal = static_cast<COLOUR>( args.get( 0 ).toInt32());
-	*rval = BOOLEAN_TO_JSVAL(( myRace->IsValidHair( cVal )));
+	args.rval().setBoolean( ( myRace->IsValidHair( cVal )) );
 	return true;
 }
 
@@ -6955,7 +6950,7 @@ static bool CRace_IsValidSkinColour( JSContext* cx, unsigned argc, JS::Value* vp
 	}
 
 	COLOUR cVal = static_cast<COLOUR>( args.get( 0 ).toInt32());
-	*rval = BOOLEAN_TO_JSVAL(( myRace->IsValidSkin( cVal )));
+	args.rval().setBoolean( ( myRace->IsValidSkin( cVal )) );
 	return true;
 }
 
@@ -6985,7 +6980,7 @@ static bool CRace_IsValidBeardColour( JSContext* cx, unsigned argc, JS::Value* v
 	}
 
 	COLOUR cVal = static_cast<COLOUR>( args.get( 0 ).toInt32());
-	*rval = BOOLEAN_TO_JSVAL(( myRace->IsValidBeard( cVal )));
+	args.rval().setBoolean( ( myRace->IsValidBeard( cVal )) );
 	return true;
 }
 
@@ -7081,8 +7076,8 @@ static bool CChar_AddSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 		if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 		{
 			// ... by calling a dummy function in original script!
-			JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-			if( retVal == JS_FALSE )
+			bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+			if( !retVal )
 			{
 				// Dummy function not found, let shard admin know!
 				Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .AddSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -7183,8 +7178,8 @@ static bool CBase_Refresh( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .Refresh(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -7257,7 +7252,7 @@ static bool CItem_IsOnFoodList( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	std::string foodList = convertToString( cx, args.get( 0 ).toString() );
 
-	*rval = BOOLEAN_TO_JSVAL( IsOnFoodList( foodList, myItem->GetId() ));
+	args.rval().setBoolean( IsOnFoodList( foodList, myItem->GetId() ) );
 	return true;
 }
 
@@ -7665,7 +7660,7 @@ static bool CFile_EOF( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( !mFile || !mFile->mWrap )
 		return false;
 
-	*rval = BOOLEAN_TO_JSVAL(( feof( mFile->mWrap ) != 0 ));
+	args.rval().setBoolean( ( feof( mFile->mWrap ) != 0 ) );
 
 	return true;
 }
@@ -7877,15 +7872,15 @@ static bool CBase_FinishedItems( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	if( myObj->GetObjType() == OT_CHAR )
 	{
-		*rval = BOOLEAN_TO_JSVAL(( static_cast<CChar *>( myObj ))->FinishedItems() );
+		args.rval().setBoolean( ( static_cast<CChar *>( myObj ))->FinishedItems()  );
 	}
 	else if( myObj->GetObjType() == OT_ITEM )
 	{
-		*rval = BOOLEAN_TO_JSVAL(( static_cast<CItem *>( myObj ))->GetContainsList()->Finished() );
+		args.rval().setBoolean( ( static_cast<CItem *>( myObj ))->GetContainsList()->Finished()  );
 	}
 	else if( myObj->GetObjType() == OT_MULTI )
 	{
-		*rval = BOOLEAN_TO_JSVAL(( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Finished() );
+		args.rval().setBoolean( ( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Finished()  );
 	}
 	return true;
 }
@@ -7924,7 +7919,7 @@ static bool CChar_WalkTo( JSContext* cx, unsigned argc, JS::Value* vp )
 		case 2:
 			if( args.get( 0 ).isObject())
 			{	// we can work with this, it should be either a character or item, hopefully
-				JSEncapsulate jsToGoTo( cx, &( argv[0] ));
+				JS::HandleValue jsToGoTo = args.get( 0 );
 				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
 				{
 					CBaseObject *toGoTo = static_cast<CBaseObject *>( jsToGoTo.toObject() );
@@ -7996,8 +7991,8 @@ static bool CChar_WalkTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .WalkTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -8040,7 +8035,7 @@ static bool CChar_RunTo( JSContext* cx, unsigned argc, JS::Value* vp )
 		case 2:
 			if( args.get( 0 ).isObject())
 			{	// we can work with this, it should be either a character or item, hopefully
-				JSEncapsulate jsToGoTo( cx, &( argv[0] ));
+				JS::HandleValue jsToGoTo = args.get( 0 );
 				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
 				{
 					CBaseObject *toGoTo = static_cast<CBaseObject *>( jsToGoTo.toObject() );
@@ -8114,8 +8109,8 @@ static bool CChar_RunTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .RunTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -8142,7 +8137,7 @@ static bool CMisc_GetTimer( JSContext* cx, unsigned argc, JS::Value* vp )
   JS::RootedObject obj(cx);
   if (!args.computeThis(cx, &obj))
       return false;
-	JSEncapsulate encaps( cx, &( argv[0] ));
+	JS::HandleValue encaps = args.get( 0 );
 	JSEncapsulate myClass( cx, obj );
 	if( myClass.ClassName() == "UOXChar" )
 	{
@@ -8187,8 +8182,8 @@ static bool CMisc_SetTimer( JSContext* cx, unsigned argc, JS::Value* vp )
   JS::RootedObject obj(cx);
   if (!args.computeThis(cx, &obj))
       return false;
-	JSEncapsulate encaps( cx, &( argv[0] ));
-	JSEncapsulate encaps2( cx, &( argv[1] ));
+	JS::HandleValue encaps = args.get( 0 );
+	JS::HandleValue encaps2 = args.get( 1 );
 	JSEncapsulate myClass( cx, obj );
 
 	R32 timerVal = encaps2.toFloat();
@@ -8319,8 +8314,8 @@ static bool CItem_Glow( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .Glow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -8387,8 +8382,8 @@ static bool CItem_UnGlow( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .UnGlow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -8544,8 +8539,8 @@ static bool CChar_Recall( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Recall(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -8736,8 +8731,8 @@ static bool CChar_Kill( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Kill(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -8781,8 +8776,8 @@ static bool CChar_Resurrect( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Resurrect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -9025,7 +9020,7 @@ static bool CConsole_Print( JSContext* cx, unsigned argc, JS::Value* vp )
   JS::RootedObject obj(cx);
   if (!args.computeThis(cx, &obj))
       return false;
-	JSEncapsulate arg0( cx, &( argv[0] ));
+	JS::HandleValue arg0 = args.get( 0 );
 	Console.Print( arg0.toString() );
 	return true;
 }
@@ -9048,7 +9043,7 @@ static bool CConsole_Log( JSContext* cx, unsigned argc, JS::Value* vp )
   JS::RootedObject obj(cx);
   if (!args.computeThis(cx, &obj))
       return false;
-	JSEncapsulate arg0( cx, &( argv[0] ));
+	JS::HandleValue arg0 = args.get( 0 );
 	JSEncapsulate arg1;
 	if( argc == 1 )
 	{
@@ -9075,7 +9070,7 @@ static bool CConsole_Error( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Error: Invalid number of arguments (takes 1)" );
 		return false;
 	}
-	JSEncapsulate arg0( cx, &( argv[0] ));
+	JS::HandleValue arg0 = args.get( 0 );
 	Console.Error( arg0.toString() );
 	return true;
 }
@@ -9097,7 +9092,7 @@ static bool CConsole_Warning( JSContext* cx, unsigned argc, JS::Value* vp )
   JS::RootedObject obj(cx);
   if (!args.computeThis(cx, &obj))
       return false;
-	JSEncapsulate arg0( cx, &( argv[0] ));
+	JS::HandleValue arg0 = args.get( 0 );
 	Console.Warning( arg0.toString() );
 	return true;
 }
@@ -9242,7 +9237,7 @@ static bool CConsole_PrintDone( JSContext* cx, unsigned argc, JS::Value* vp )
 	bool normalDone = true;
 	if( argc != 0 )
 	{
-		JSEncapsulate encaps( cx, &( argv[0] ));
+		JS::HandleValue encaps = args.get( 0 );
 		normalDone = encaps.toBool();
 	}
 	if( normalDone )
@@ -9277,7 +9272,7 @@ static bool CConsole_PrintFailed( JSContext* cx, unsigned argc, JS::Value* vp )
 	bool normalFailed = true;
 	if( argc != 0 )
 	{
-		JSEncapsulate encaps( cx, &( argv[0] ));
+		JS::HandleValue encaps = args.get( 0 );
 		normalFailed = encaps.toBool();
 	}
 	if( normalFailed )
@@ -9342,7 +9337,7 @@ static bool CConsole_PrintBasedOnVal( JSContext* cx, unsigned argc, JS::Value* v
   JS::RootedObject obj(cx);
   if (!args.computeThis(cx, &obj))
       return false;
-	JSEncapsulate arg0( cx, &( argv[0] ));
+	JS::HandleValue arg0 = args.get( 0 );
 	Console.PrintBasedOnVal( arg0.toBool() );
 	return true;
 }
@@ -9365,8 +9360,8 @@ static bool CConsole_MoveTo( JSContext* cx, unsigned argc, JS::Value* vp )
   JS::RootedObject obj(cx);
   if (!args.computeThis(cx, &obj))
       return false;
-	JSEncapsulate arg0( cx, &( argv[0] ));
-	JSEncapsulate arg1( cx, &( argv[1] ));
+	JS::HandleValue arg0 = args.get( 0 );
+	JS::HandleValue arg1 = args.get( 1 );
 	Console.MoveTo( arg0.toInt(), arg1.toInt() );
 	return true;
 }
@@ -9396,8 +9391,8 @@ static bool CConsole_PrintSpecial( JSContext* cx, unsigned argc, JS::Value* vp )
   JS::RootedObject obj(cx);
   if (!args.computeThis(cx, &obj))
       return false;
-	JSEncapsulate arg0( cx, &( argv[0] ));
-	JSEncapsulate arg1( cx, &( argv[1] ));
+	JS::HandleValue arg0 = args.get( 0 );
+	JS::HandleValue arg1 = args.get( 1 );
 	Console.PrintSpecial( arg0.toInt(), arg1.toString().c_str() );
 	return true;
 }
@@ -9445,7 +9440,7 @@ static bool CConsole_Reload( JSContext* cx, unsigned argc, JS::Value* vp )
   JS::RootedObject obj(cx);
   if (!args.computeThis(cx, &obj))
       return false;
-	JSEncapsulate arg0( cx, &( argv[0] ));
+	JS::HandleValue arg0 = args.get( 0 );
 	SI32 mArg = arg0.toInt();
 	if( mArg < 0 || mArg > 8 )
 	{
@@ -9701,14 +9696,14 @@ static bool CItem_Carve( JSContext* cx, unsigned argc, JS::Value* vp )
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
 	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
-	*rval = BOOLEAN_TO_JSVAL( NewCarveTarget( mSock, toCarve ));
+	args.rval().setBoolean( NewCarveTarget( mSock, toCarve ) );
 
 	// Active script-context might have been lost, so restore it...
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .Carve(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -9939,7 +9934,7 @@ static bool CMulti_IsSecureContainer( JSContext* cx, unsigned argc, JS::Value* v
 	}
 
 	bool isSecureContainer = multiObject->IsSecureContainer( itemToCheck );
-	*rval = BOOLEAN_TO_JSVAL( isSecureContainer );
+	args.rval().setBoolean( isSecureContainer  );
 	return true;
 }
 
@@ -10355,23 +10350,23 @@ static bool CMulti_FinishedChars( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( listType == "visitor" ) // All chars inside the multi
 	{
-		*rval = BOOLEAN_TO_JSVAL( myObj->GetCharsInMultiList()->Finished() );
+		args.rval().setBoolean( myObj->GetCharsInMultiList()->Finished()  );
 	}
 	else if( listType == "owner" ) // Owners
 	{
-		*rval = BOOLEAN_TO_JSVAL( myObj->GetOwnersOfMultiList()->Finished() );
+		args.rval().setBoolean( myObj->GetOwnersOfMultiList()->Finished()  );
 	}
 	else if( listType == "friend" ) // Friends
 	{
-		*rval = BOOLEAN_TO_JSVAL( myObj->GetFriendsOfMultiList()->Finished() );
+		args.rval().setBoolean( myObj->GetFriendsOfMultiList()->Finished()  );
 	}
 	else if( listType == "guest" ) // Guests
 	{
-		*rval = BOOLEAN_TO_JSVAL( myObj->GetGuestsOfMultiList()->Finished() );
+		args.rval().setBoolean( myObj->GetGuestsOfMultiList()->Finished()  );
 	}
 	else if( listType == "banned" ) // Banned
 	{
-		*rval = BOOLEAN_TO_JSVAL( myObj->GetBannedFromMultiList()->Finished() );
+		args.rval().setBoolean( myObj->GetBannedFromMultiList()->Finished()  );
 	}
 	else
 	{
@@ -10441,7 +10436,7 @@ static bool CBase_CanSee( JSContext* cx, unsigned argc, JS::Value* vp )
 	SI08 zTop = 0;
 	if( argc == 1 )	// we've been passed an item, character, or socket
 	{
-		JSEncapsulate myClass( cx, &( argv[0] ));
+		JS::HandleValue myClass = args.get( 0 );
 
 		if( myClass.ClassName() == "UOXSocket" )
 		{
@@ -10513,11 +10508,11 @@ static bool CBase_CanSee( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( ValidateObject( mChar ))
 	{
-		*rval = BOOLEAN_TO_JSVAL( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, zTop ));
+		args.rval().setBoolean( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, zTop ) );
 	}
 	else
 	{
-		*rval = BOOLEAN_TO_JSVAL( false );
+		args.rval().setBoolean( false  );
 	}
 
 	return true;
@@ -10542,7 +10537,7 @@ static bool CSocket_DisplayDamage( JSContext* cx, unsigned argc, JS::Value* vp )
   if (!args.computeThis(cx, &obj))
       return false;
 	CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
-	JSEncapsulate myClass( cx, &( argv[0] ));
+	JS::HandleValue myClass = args.get( 0 );
 
 	if( myClass.ClassName() != "UOXChar" )	// It must be a character!
 	{
@@ -10557,7 +10552,7 @@ static bool CSocket_DisplayDamage( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	JSEncapsulate damage( cx, &( argv[1] ));
+	JS::HandleValue damage = args.get( 1 );
 
 	CPDisplayDamage dispDamage(( *mChar ), static_cast<UI16>( damage.toInt() ));
 	mSock->Send( &dispDamage );
@@ -10591,11 +10586,11 @@ static bool CChar_ReactOnDamage( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "(CChar_ReactOnDamage): Operating on an invalid Character" );
 		return true;
 	}
-	JSEncapsulate damage( cx, &( argv[0] ));
+	JS::HandleValue damage = args.get( 0 );
 
 	if( argc >= 2 )
 	{
-		JSEncapsulate attackerClass( cx, &( argv[1] ));
+		JS::HandleValue attackerClass = args.get( 1 );
 		if( attackerClass.ClassName() != "UOXChar" ) // It must be a character!
 		{
 			ScriptError( cx, "CChar_ReactOnDamage: Passed an invalid Character" );
@@ -10649,7 +10644,7 @@ static bool CChar_Damage( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "(CChar_Damage): Operating on an invalid Character" );
 		return true;
 	}
-	JSEncapsulate damage( cx, &( argv[0] ));
+	JS::HandleValue damage = args.get( 0 );
 
 	WeatherType element = PHYSICAL;
 	if( argc >= 2 )
@@ -10659,7 +10654,7 @@ static bool CChar_Damage( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc >= 3 )
 	{
-		JSEncapsulate attackerClass( cx, &( argv[2] ));
+		JS::HandleValue attackerClass = args.get( 2 );
 		if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
 		{
 			ScriptError( cx, "CChar_Damage: Passed an invalid Character" );
@@ -10696,8 +10691,8 @@ static bool CChar_Damage( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Damage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -10743,14 +10738,14 @@ static bool CChar_InitiateCombat( JSContext* cx, unsigned argc, JS::Value* vp )
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
 	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
-	*rval = BOOLEAN_TO_JSVAL( Combat->StartAttack( mChar, ourTarget ));
+	args.rval().setBoolean( Combat->StartAttack( mChar, ourTarget ) );
 
 	// Active script-context might have been lost, so restore it...
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .InitiateCombat(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -10795,8 +10790,8 @@ static bool CChar_InvalidateAttacker( JSContext* cx, unsigned argc, JS::Value* v
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .InvalidateAttacker(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -10910,7 +10905,7 @@ static bool CChar_CheckAggressorFlag( JSContext* cx, unsigned argc, JS::Value* v
 		return true;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->CheckAggressorFlag( ourTarget->GetSerial() ));
+	args.rval().setBoolean( mChar->CheckAggressorFlag( ourTarget->GetSerial() ) );
 	return true;
 }
 
@@ -11007,7 +11002,7 @@ static bool CChar_IsAggressor( JSContext* cx, unsigned argc, JS::Value* vp )
       return false;
 	bool checkForPlayerOnly	= ( args.get( 0 ).toBoolean() );
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->IsAggressor( checkForPlayerOnly ));
+	args.rval().setBoolean( mChar->IsAggressor( checkForPlayerOnly ) );
 	return true;
 }
 
@@ -11115,7 +11110,7 @@ static bool CChar_CheckPermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* v
 		return true;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->CheckPermaGreyFlag( ourTarget->GetSerial() ));
+	args.rval().setBoolean( mChar->CheckPermaGreyFlag( ourTarget->GetSerial() ) );
 	return true;
 }
 
@@ -11212,7 +11207,7 @@ static bool CChar_IsPermaGrey( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	bool checkForPlayerOnly	= ( args.get( 0 ).toBoolean() );
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->IsPermaGrey( checkForPlayerOnly ));
+	args.rval().setBoolean( mChar->IsPermaGrey( checkForPlayerOnly ) );
 	return true;
 }
 
@@ -11242,11 +11237,11 @@ static bool CChar_Heal( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "(CChar_Heal): Operating on an invalid Character" );
 		return true;
 	}
-	JSEncapsulate Heal( cx, &( argv[0] ));
+	JS::HandleValue Heal = args.get( 0 );
 
 	if( argc == 2 )
 	{
-		JSEncapsulate healerClass( cx, &( argv[1] ));
+		JS::HandleValue healerClass = args.get( 1 );
 		if( healerClass.ClassName() != "UOXChar" )	// It must be a character!
 		{
 			ScriptError( cx, "CChar_Heal: Passed an invalid Character" );
@@ -11278,8 +11273,8 @@ static bool CChar_Heal( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
+		if( !retVal )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Heal(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
@@ -11342,7 +11337,7 @@ static bool CBase_Resist( JSContext* cx, unsigned argc, JS::Value* vp )
 		}
 	}
 
-	JSEncapsulate resistType( cx, &( argv[0] ));
+	JS::HandleValue resistType = args.get( 0 );
 
 	if( argc == 1 )
 	{
@@ -11356,13 +11351,13 @@ static bool CBase_Resist( JSContext* cx, unsigned argc, JS::Value* vp )
 		}
 		else
 		{
-			*rval = JS_FALSE;
+			args.rval().setBoolean( false );
 		}
 	}
 	if( argc == 2 )
 	{
-		*rval = JS_TRUE;
-		JSEncapsulate value( cx, &( argv[1] ));
+		args.rval().setBoolean( true );
+		JS::HandleValue value = args.get( 1 );
 		if( ValidateObject( mChar ))
 		{
 			mChar->SetResist( static_cast<UI16>( value.toInt() ), static_cast<WeatherType>( resistType.toInt() ));
@@ -11373,7 +11368,7 @@ static bool CBase_Resist( JSContext* cx, unsigned argc, JS::Value* vp )
 		}
 		else
 		{
-			*rval = JS_FALSE;
+			args.rval().setBoolean( false );
 		}
 	}
 	return true;
@@ -11426,9 +11421,9 @@ static bool CChar_Defense( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	JSEncapsulate hitLoc( cx, &( argv[0] ));
-	JSEncapsulate resistType( cx, &( argv[1] ));
-	JSEncapsulate doArmorDamage( cx, &( argv[2] ));
+	JS::HandleValue hitLoc = args.get( 0 );
+	JS::HandleValue resistType = args.get( 1 );
+	JS::HandleValue doArmorDamage = args.get( 2 );
 
 	args.rval().setInt32( Combat->CalcDef( mChar, static_cast<UI08>( hitLoc.toInt() ), doArmorDamage.toBool(), static_cast<WeatherType>( resistType.toInt() )));
 	return true;
@@ -11726,7 +11721,7 @@ static bool CBase_HasScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp 
 	UI16 scriptId = static_cast<UI16>( args.get( 0 ).toInt32());
 	if( scriptId > 0 && myObj->HasScriptTrigger( scriptId ))
 	{
-		*rval = BOOLEAN_TO_JSVAL( true );
+		args.rval().setBoolean( true  );
 	}
 
 	return true;
@@ -11987,7 +11982,7 @@ static bool CChar_AddFriend( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->AddFriend( newFriend ));
+	args.rval().setBoolean( mChar->AddFriend( newFriend ) );
 	return true;
 }
 
@@ -12035,7 +12030,7 @@ static bool CChar_RemoveFriend( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->RemoveFriend( friendToRemove ));
+	args.rval().setBoolean( mChar->RemoveFriend( friendToRemove ) );
 	return true;
 }
 
@@ -12143,7 +12138,7 @@ static bool CChar_ClearFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 	// Clear friend list
 	mChar->ClearFriendList();
 
-	*rval = BOOLEAN_TO_JSVAL( true );
+	args.rval().setBoolean( true  );
 	return true;
 }
 
@@ -12254,7 +12249,7 @@ static bool CChar_HasBeenOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	
-	JSEncapsulate toCheck( cx, &( argv[0] ));
+	JS::HandleValue toCheck = args.get( 0 );
 	CChar *pChar = static_cast<CChar *>( toCheck.toObject() );
 	if( !ValidateObject( pChar ))
 	{
@@ -12264,7 +12259,7 @@ static bool CChar_HasBeenOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	bool hasBeenOwner = mChar->IsOnPetOwnerList( pChar );
 
-	*rval = BOOLEAN_TO_JSVAL( hasBeenOwner );
+	args.rval().setBoolean( hasBeenOwner  );
 	return true;
 }
 
@@ -12305,7 +12300,7 @@ static bool CChar_CalculateControlChance( JSContext* cx, unsigned argc, JS::Valu
 		return false;
 	}
 
-	JSEncapsulate toCheck( cx, &( argv[0] ));
+	JS::HandleValue toCheck = args.get( 0 );
 	CChar *pChar = static_cast<CChar *>( toCheck.toObject() );
 	if( !ValidateObject( pChar ))
 	{
@@ -12363,7 +12358,7 @@ static bool CChar_AddFollower( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->AddFollower( newFollower ));
+	args.rval().setBoolean( mChar->AddFollower( newFollower ) );
 	return true;
 }
 
@@ -12411,7 +12406,7 @@ static bool CChar_RemoveFollower( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->RemoveFollower( followerToRemove ));
+	args.rval().setBoolean( mChar->RemoveFollower( followerToRemove ) );
 	return true;
 }
 
@@ -12514,14 +12509,14 @@ static bool CParty_Remove( JSContext* cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		JSEncapsulate toRemove( cx, &( argv[0] ));
+		JS::HandleValue toRemove = args.get( 0 );
 		CChar *charToRemove = static_cast<CChar *>( toRemove.toObject() );
 		if( !ValidateObject( charToRemove ))
 		{
 			ScriptError( cx, "Remove: Invalid character to remove" );
 			return false;
 		}
-		*rval = BOOLEAN_TO_JSVAL( ourParty->RemoveMember( charToRemove ));
+		args.rval().setBoolean( ourParty->RemoveMember( charToRemove ) );
 	}
 
 	return true;
@@ -12548,7 +12543,7 @@ static bool CParty_Add( JSContext* cx, unsigned argc, JS::Value* vp )
 	JSEncapsulate myClass( cx, obj );
 
 	// let's setup our default return value here
-	*rval = BOOLEAN_TO_JSVAL( false );
+	args.rval().setBoolean( false  );
 
 	if( myClass.ClassName() == "UOXParty" )
 	{
@@ -12559,7 +12554,7 @@ static bool CParty_Add( JSContext* cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		JSEncapsulate toAdd( cx, &( argv[0] ));
+		JS::HandleValue toAdd = args.get( 0 );
 		CChar *charToAdd = static_cast<CChar *>( toAdd.toObject() );
 		if( !ValidateObject( charToAdd ))
 		{
@@ -12570,11 +12565,11 @@ static bool CParty_Add( JSContext* cx, unsigned argc, JS::Value* vp )
 		{
 			if( ourParty->IsNPC() )
 			{
-				*rval = BOOLEAN_TO_JSVAL( ourParty->AddMember( charToAdd ));
+				args.rval().setBoolean( ourParty->AddMember( charToAdd ) );
 			}
 			else
 			{
-				*rval = BOOLEAN_TO_JSVAL( false );
+				args.rval().setBoolean( false  );
 				ScriptError( cx, "Add: Adding NPC to a PC party attempted" );
 			}
 		}
@@ -12582,7 +12577,7 @@ static bool CParty_Add( JSContext* cx, unsigned argc, JS::Value* vp )
 		{
 			if( ourParty->IsNPC() )
 			{
-				*rval = BOOLEAN_TO_JSVAL( false );
+				args.rval().setBoolean( false  );
 				ScriptError( cx, "Add: Adding PC to a NPC party attempted" );
 			}
 			else
@@ -12603,17 +12598,17 @@ static bool CParty_Add( JSContext* cx, unsigned argc, JS::Value* vp )
 						toSend.Leader( leader );
 						targSock->Send( &toSend );
 						targSock->SysMessage( 9002 ); // You have been invited to join a party, type /accept or /decline to deal with the invitation
-						*rval = BOOLEAN_TO_JSVAL( true );
+						args.rval().setBoolean( true  );
 					}
 					else
 					{
-						*rval = BOOLEAN_TO_JSVAL( false );
+						args.rval().setBoolean( false  );
 						ScriptError( cx, "Add: PC selected is not online" );
 					}
 				}
 				else
 				{
-					*rval = BOOLEAN_TO_JSVAL( false );
+					args.rval().setBoolean( false  );
 					ScriptError( cx, "Add: PC selected is not online" );
 				}
 			}
@@ -12650,7 +12645,7 @@ static bool CParty_GetMember( JSContext* cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		JSEncapsulate toGetMember( cx, &( argv[0] ));
+		JS::HandleValue toGetMember = args.get( 0 );
 		size_t memberOffset = toGetMember.toInt();
 		if( memberOffset >= ourParty->MemberList()->size() )
 		{
@@ -12757,7 +12752,7 @@ static bool CSocket_FinishedTriggerWords( JSContext* cx, unsigned argc, JS::Valu
 		return false;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mySock->FinishedTrigWords() );
+	args.rval().setBoolean( mySock->FinishedTrigWords()  );
 	return true;
 }
 

@@ -1124,12 +1124,12 @@ bool SE_GetRandomSOSArea( JSContext* cx, unsigned argc, JS::Value* vp )
 	auto rndSosLoc = validSOSLocs[RandomNum( static_cast<size_t>( 0 ), validSOSLocs.size() - 1 )];
 
 	// Convert properties of chosen SOS area to JS::Values, so we can pass them to a JSObject
-	JS::RootedValue jsX1( cx, rndSosLoc.x1 );
-	JS::RootedValue jsY1( cx, rndSosLoc.y1 );
-	JS::RootedValue jsX2( cx, rndSosLoc.x2 );
-	JS::RootedValue jsY2( cx, rndSosLoc.y2 );
-	JS::RootedValue jsWorldNum( cx, rndSosLoc.worldNum );
-	JS::RootedValue jsInstanceId( cx, rndSosLoc.instanceId );
+	JS::RootedValue jsX1(cx); jsX1.get().setInt32( rndSosLoc.x1 );
+	JS::RootedValue jsY1( cx); jsY1.get().setInt32(rndSosLoc.y1 );
+	JS::RootedValue jsX2( cx); jsX2.get().setInt32(rndSosLoc.x2 );
+	JS::RootedValue jsY2( cx); jsY2.get().setInt32(rndSosLoc.y2 );
+	JS::RootedValue jsWorldNum( cx); jsWorldNum.get().setInt32(rndSosLoc.worldNum );
+	JS::RootedValue jsInstanceId( cx); jsInstanceId.get().setInt32(rndSosLoc.instanceId );
 
 	// Construct a JS Object with the properties of the chosen SOS area
 	JS::RootedObject rndSosLocObj( cx, JS::NewArrayObject( cx, 6 ) );
