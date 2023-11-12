@@ -576,6 +576,43 @@ get=base_snowglobe
 NAMELIST=2001
 }
 
+[krampusminionboots]
+{
+get=0x170b
+NAME=krampus minion boots
+ID=0xA28D
+}
+
+[krampusminionearrings]
+{
+get=base_jewelry
+name=krampus minion earrings 
+id=0xA295
+layer=0x12
+def=1
+hp=30 50
+elementresist=2 2 2 3
+}
+
+[krampusminionhat]
+{
+get=base_hat
+name=krampus minion hat
+id=0xA28F
+weight=300
+value=14 6
+hp=20 30
+elementresist=5 9 5 5
+}
+
+[krampusminiontalons]
+{
+get=0x170b
+NAME=krampus minion talons
+ID=0xA294
+COLOUR=1153
+}
+
 [treeneedles]
 {
 id=0xCD7

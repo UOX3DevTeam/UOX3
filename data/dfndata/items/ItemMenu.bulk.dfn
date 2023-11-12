@@ -14229,6 +14229,16 @@ ADDITEM=holiday_timepiece
 ADDITEM=wrist_watch
 0x913=Snowpile
 ADDITEM=snowpile
+0x170b=krampus minion boots
+ADDITEM=krampusminionboots
+0xA295=krampus minion earrings
+ADDITEM=krampusminionearrings
+0xA295=krampus minion earrings
+ADDITEM=krampusminionearrings
+0xA28F=krampus minion hat
+ADDITEM=krampusminionhat
+0x170b=krampus minion talons
+ADDITEM=krampusminiontalons
 <=Previous Menu
 ITEMMENU=251
 }
