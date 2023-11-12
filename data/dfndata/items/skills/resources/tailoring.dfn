@@ -365,6 +365,10 @@ dyeable=1
 decay=1
 good=49
 }
+[folded_cloth]
+{
+get=0x1763
+}
 
 [0x1764]
 {

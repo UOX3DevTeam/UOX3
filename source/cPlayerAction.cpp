@@ -2853,6 +2853,8 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				}
 			}
 			return true;
+		case IT_SPELLCHANNELING: //  Spell Channeling
+			return true;
 		case IT_MAP: // Map
 		{
 			CPMapMessage m1;
@@ -3389,6 +3391,7 @@ void InitTagToItemType( void )
 	tagToItemType["CLOCK"]					= IT_CLOCK;
 	tagToItemType["SEXTANT"]				= IT_SEXTANT;
 	tagToItemType["HAIRDYE"]				= IT_HAIRDYE;
+	tagToItemType["SPELLCHANNELING"]		= IT_SPELLCHANNELING;
 }
 
 ItemTypes FindItemTypeFromTag( const std::string &strToFind )

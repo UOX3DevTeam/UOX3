@@ -407,6 +407,16 @@ function onTimer( mChar, timerID )
 					}
 					else if( mChar.CheckSkill( skillNum, 0, healthLoss * 10 )) // Requires higher and higher amount of health lost in order for healer to gain skill
 					{
+						var mItem;
+						var healBonus;
+						for( mItem = mChar.FirstItem(); !mChar.FinishedItems(); mItem = mChar.NextItem() ) 
+						{
+							if( !ValidateObject( mItem ))
+								continue;
+
+							healBonus += parseInt( mItem.GetTag( "healingBonus" ) );
+						}
+
 						// Increase karma when healing innocent/neutral characters
 						if( ourObj != mChar && ( ourObj.innocent || ourObj.neutral ))
 						{
@@ -470,7 +480,7 @@ function onTimer( mChar, timerID )
 							}
 							else
 							{
-								ourObj.Heal( healAmt, mChar );
+								ourObj.Heal(healAmt * (healBonus / 100), mChar );
 								socket.SysMessage( GetDictionaryEntry( 1271, socket.language )); // You apply the bandages and the patient looks a bit healthier.
 							}
 						}
