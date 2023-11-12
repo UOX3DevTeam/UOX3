@@ -45,9 +45,9 @@ function onLogout( pSock, pChar )
 	pChar.account.totalPlayTime += minSinceLogin;
 
 	//Used to remove the candy timer in items/candy.js
-	pChar.KillJSTimer(0, 5601);
-	pChar.SetTempTag("toothach", 0);
-	pChar.SetTempTag("Acidity", 0);
+	pChar.KillJSTimer( 0, 5601 );
+	pChar.SetTempTag( "toothach", null );
+	pChar.SetTempTag( "Acidity", null );
 }
 
 function onCreatePlayer( pChar )

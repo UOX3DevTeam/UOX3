@@ -5,7 +5,7 @@ NAME=a winter reaper
 SKIN=2498
 }
 
-[Krampus]
+[krampus]
 {
 NAME=Krampus
 ID=0x05CC
@@ -53,7 +53,7 @@ FLAG=EVIL
 RUNS
 }
 
-[Minion]
+[krampus_minion]
 {
 NAME=Minion
 ID=0x05CD
