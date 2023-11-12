@@ -96,7 +96,7 @@ The base chance to deliver this special blow is your Anatomy skill level divided
 function ConcussionBlow( pAttacker, pDefender )
 {
 	pDefender.TextMessage( "You receive a concussion blow!", false, 0x3b2, 0, pDefender.serial );
-	pDefender.tempint = ( pDefender.tempint - 2 );
+	pDefender.tempint = ( pDefender.tempint/2 );
 	pDefender.StartTimer( 30000, 2, true );
 	pDefender.SetTempTag( "concussion", 1 );
 
