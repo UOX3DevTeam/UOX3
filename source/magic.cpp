@@ -4114,7 +4114,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 		{
 			CItem *itemRHand = mChar->GetItemAtLayer( IL_RIGHTHAND );
 			CItem *itemLHand = mChar->GetItemAtLayer( IL_LEFTHAND );
-			if( itemLHand != nullptr || ( itemRHand != nullptr && itemRHand->GetType() != IT_SPELLBOOK ))
+			if(( itemLHand != nullptr && itemLHand->GetType() != IT_SPELLCHANNELING ) || ( itemRHand != nullptr && itemRHand->GetType() != IT_SPELLBOOK && itemRHand->GetType() != IT_SPELLCHANNELING ))
 			{
 				mSock->SysMessage( 708 ); // You cannot cast with a weapon equipped.
 				mChar->StopSpell();
