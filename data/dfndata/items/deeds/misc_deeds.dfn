@@ -29,12 +29,52 @@ ID=0x14F0
 script=5028
 }
 
+[smallbod_t2a]
+{
+id=0x14ef
+}
+
+[smallbod_uor]
+{
+id=0x14ef
+}
+
+[smallbod_td]
+{
+id=0x14ef
+}
+
 [smallbod_lbr]
 {
 id=0x14ef
 }
 
 [smallbod_aos]
+{
+id=0x2258
+}
+
+[smallbod_se]
+{
+id=0x2258
+}
+
+[smallbod_ml]
+{
+id=0x2258
+}
+
+[smallbod_sa]
+{
+id=0x2258
+}
+
+[smallbod_hs]
+{
+id=0x2258
+}
+
+[smallbod_tol]
 {
 id=0x2258
 }
@@ -46,8 +86,16 @@ name=a bulk order deed
 colour=0x44E
 weight=100
 script=5042
+gett2a=smallbod_t2a
+getuor=smallbod_uor
+gettd=smallbod_td
 getlbr=smallbod_lbr
 getaos=smallbod_aos
+getse=smallbod_se
+getml=smallbod_ml
+getsa=smallbod_sa
+geths=smallbod_hs
+gettol=smallbod_tol
 CUSTOMINTTAG=bodType 1
 }
 
@@ -58,7 +106,15 @@ name=a bulk order deed
 colour=0x483
 weight=100
 script=5042
+gett2a=smallbod_t2a
+getuor=smallbod_uor
+gettd=smallbod_td
 getlbr=smallbod_lbr
 getaos=smallbod_aos
+getse=smallbod_se
+getml=smallbod_ml
+getsa=smallbod_sa
+geths=smallbod_hs
+gettol=smallbod_tol
 CUSTOMINTTAG=bodType 2
 }
