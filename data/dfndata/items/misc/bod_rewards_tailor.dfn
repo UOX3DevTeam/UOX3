@@ -7,3 +7,40 @@ id=0x14F0
 name=a clothing bless deed
 script=5050
 }
+
+// -- TAILOR TOOLS --
+[base_runic_sewing_kit]
+{
+get=sewing_kit
+origin=uor
+}
+
+// Spined Runic Sewing Kit - Adds Durable/Defense properties to crafted clothing/armor (not implemented).
+[spined_runic_sewing_kit]
+{
+get=base_runic_sewing_kit
+name=spined runic sewing kit
+maxuses=45
+usesleft=45
+colour=0x283
+}
+
+// Horned Runic Sewing Kit - Adds Substantial/Guarding properties to crafted clothing/armor (not implemented).
+[horned_runic_sewing_kit]
+{
+get=base_runic_sewing_kit
+name=horned runic sewing kit
+maxuses=30
+usesleft=30
+colour=0x227
+}
+
+// Barbed RUnic Sewing Kit - Adds Massive/Hardening properties to crafted clothing/armor (not implemented).
+[barbed_runic_sewing_kit]
+{
+get=base_runic_sewing_kit
+name=barbed runic sewing kit
+maxuses=15
+usesleft=15
+colour=0x1C1
+}
