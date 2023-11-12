@@ -156,8 +156,8 @@ const BlacksmithRewardTiersToItems = [
 			{ itemName: "b_anvil_deed" },
 			{ itemName: "g_anvil_deed" },
 			{ itemName: "a_anvil_deed" },
-			{ itemName: "v_anvil_deed" },
-			{ itemName: "v_anvil_deed" }
+			{ itemName: "ve_anvil_deed" },
+			{ itemName: "va_anvil_deed" }
 		],
 		selectType: "weighted"
 	},

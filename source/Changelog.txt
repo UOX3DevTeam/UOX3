@@ -1,7 +1,7 @@
 11/11/2023 - Danny S.
     Implemented tailoring BODs.
         Blacksmiths, armorers, weaponsmiths, and ironworkers have had their bodType custom tag value changed to 1. (malevendors.dfn, femalevendors.dfn)
-        Tailors are now associated to the vendor_bdo_dispenser.js script and have a bodType customTag with a value of 2. (malevendors.dfn, femalevendors.dfn)
+        Tailors are now associated to the vendor_bdo_dispenser.js script and have a bodType custom tag with a value of 2. (malevendors.dfn, femalevendors.dfn)
         A new custom tag, bodSubtype, has been added with different values depending on the vendor DFN (malevendors.dfn, femalevendors.dfn):
             Weaponsmith - 1
             Armorer - 2
