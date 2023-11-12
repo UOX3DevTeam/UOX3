@@ -52,6 +52,10 @@ decay=1
 good=19
 sectionid=0x170d
 }
+[sandals]
+{
+get=0x170d
+}
 
 // Sandals
 [0x170e]

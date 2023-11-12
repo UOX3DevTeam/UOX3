@@ -1,10 +1,24 @@
+const BODTypesToSkillNames = {
+	1: "blacksmithing",
+	2: "tailoring"
+};
+
+const BODSubtypeMinMax = {
+	1: [1, 3],
+	2: [1, 1]
+};
+
 // Can also be triggered by creating BOD from admin menu or add command: 'add item smallbod
 function onCreateDFN( objMade, objType )
 {
 	if( !ValidateObject( objMade ))
 		return;
 
-	var bodEntry 	= TriggerEvent( 3214, "SelectBodEntry", null, false, 3 ); // 1 - weapon BODs, 2 - armor BODs, 3 - Either
+	var bodType = objMade.GetTag( "bodType" );
+	const bodSubtypeMinMax = BODSubtypeMinMax[bodType];
+	const bodSubtype = RandomNumber(bodSubtypeMinMax[0], bodSubtypeMinMax[1]);
+
+	var bodEntry 	= TriggerEvent( 3214, "SelectBodEntry", bodType, bodSubtype, false, 0 );
 	var itemName	= bodEntry.name; // name of the create entry
 	var graphicID	= bodEntry.id; // graphical id of item to craft
 	var sectionID 	= bodEntry.addItem; // section ID of item to craft
@@ -17,6 +31,7 @@ function onCreateDFN( objMade, objType )
 		objMade.SetTag( "graphicID", graphicID );
 		objMade.SetTag( "sectionID", sectionID );
 		objMade.SetTag( "materialColor", materialColor );
+		objMade.SetTag( "bodSubtype", 1 );
 		objMade.Refresh();
 	}
 }
@@ -43,16 +58,15 @@ function onUseChecked( pUser, smallBOD )
 		}
 		else 
 		{
-			// Store iUsed as a custom property on pUser
-			pUser.bodItem = smallBOD;
-
 			var init = smallBOD.GetTag( "init" ) // just to make sure we dont set the bod over
 			if( init == false ) // Keep from resetting the amount needed.
 			{
+				const pSkill = pUser.skills[BODTypesToSkillNames[smallBOD.GetTag( "bodType" )]];
+
 				var amountMax = 0;
-				if( pUser.skills.blacksmithing >= 701 )
+				if( pSkill >= 701 )
 				{
-					if((( pUser.skills.blacksmithing + 800 ) / 2 ) > RandomNumber( 0, 1000 ))
+					if((( pSkill + 800 ) / 2 ) > RandomNumber( 0, 1000 ))
 					{
 						smallBOD.SetTag( "reqExceptional", true );
 					}
@@ -60,7 +74,7 @@ function onUseChecked( pUser, smallBOD )
 					var values = [ 10, 15, 20, 20 ];
 					amountMax = values[Math.floor( Math.random() * values.length )];
 				}
-				else if( pUser.skills.blacksmithing >= 501 )
+				else if( pSkill >= 501 )
 				{					
 					var values = [ 10, 15, 15, 20 ];
 					amountMax = values[Math.floor( Math.random() * values.length )];
@@ -90,6 +104,8 @@ function SmallBODGump( pUser, smallBOD )
 	var materialColor	= smallBOD.GetTag( "materialColor" ); // color of primary resource required to craft item
 	var socket = pUser.socket;
 	var bodGump = new Gump;
+
+	pUser.bodItem = smallBOD; // Store BOD on the user for access in callbacks.
 
 	bodGump.AddPage( 0 );
 
@@ -201,6 +217,7 @@ function onGumpPress( socket, pButton, gumpData )
 			delete pUser.bodItem; // Remove bodItem as a temporary property on pUser
 			break;
 		case 1:
+			SmallBODGump(pUser, smallBOD);
 			CombineItemWithBod( pUser, smallBOD );
 			break;
 	}
@@ -238,10 +255,13 @@ function onCallback0( socket, myTarget )
 	var bodItemID 		= smallBOD.GetTag( "graphicID" );
 	delete pUser.bodItem; // Remove bodItem as a temporary property on pUser
 
-	// Abort if player cancels target cursor
+	// Abort if player cancels target cursor or clicks empty space.
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
-	if( cancelCheck == 255 )
+	if( cancelCheck == 255 || !myTarget )
+	{
+		SmallBODGump( pUser, smallBOD );
 		return;
+	}
 
 	if( !socket.GetWord( 1 ) && myTarget.isItem && ( myTarget.sectionID == bodSectionID ) || ( myTarget.id == bodItemID && myTarget.name == bodItemName ))
 	{
@@ -352,11 +372,11 @@ function onCallback0( socket, myTarget )
 
 				myTarget.Delete();
 				pUser.TextMessage( GetDictionaryEntry( 17263, socket.language ), false, 0x3b2, 0, pUser.serial ); // The item has been combined with the deed.
-				if( amountCur < amountMax )
+				if( amountCur + 1 < amountMax )
 				{
 					pUser.CustomTarget( 0 );
-					SmallBODGump( pUser, smallBOD );
 				}
+				SmallBODGump( pUser, smallBOD );
 			}
 		}
 	}

@@ -71,10 +71,181 @@ const armorCreateEntries = [
 	[49, 523, 623, 723, 823, 923, 1223, 1023, 1123]		// Plate Helm
 ];
 
+const clothCreateEntries = [
+	[130], // Skullcap
+	[131], // Bandana
+	[132], // Floppy Hat
+	[133], // Wide Brim Hat
+	[134], // Cap
+	[135], // Tall Straw Hat
+	[136], // Straw Hat
+	[137], // Wizard's Hat
+	[138], // Bonnet
+	[139], // Feathered Hat
+	[140], // Tricorne Hat
+	[141], // Jester Hat
+	[142], // Doublet
+	[143], // Shirt
+	[144], // Fancy Shirt
+	[145], // Tunic
+	[146], // Surcoat
+	[147], // Plain Dress
+	[148], // Fancy Dress
+	[149], // Cloak
+	[150], // Robe
+	[151], // Jester Suit
+	[152], // Long Pants
+	[153], // Kilt
+	[154], // Skirt
+	[155], // Body Sash
+	[156], // Half Apron
+	[157], // Full Apron
+	[158], // Oil Cloth
+	[160]  // Shoes
+];
+
+// Outer properties correspond to bodType tag.
+// Inner properties correspond to bodSubtype tag.
+const BODTypesToCreateEntries = {
+	1: { // Blacksmithing
+		1: weaponCreateEntries,
+		2: armorCreateEntries,
+		3: weaponCreateEntries.concat(armorCreateEntries),
+	},
+	2: { // Tailoring
+		1: clothCreateEntries
+	}
+};
+
+const BODTypeToDFNSectionID = {
+	1: "smallbod_blacksmith",
+	2: "smallbod_tailor"
+};
+
+const BODTypesToSkillNames = {
+	1: "blacksmithing",
+	2: "tailoring"
+};
+
+// A higher index in this list means the reward is less likely to be given.
+// Each tier may have an `items` property listing the items that may be given when it is rolled
+// and a `selectType` property that may either be "random" or "weighted" determining how an
+// item is chosen, if there is more than one. Objects in the `items` list MUST have an
+// `itemName` property and may optionally have a `props` property specifying modifications
+// to be made to the item's props.
+const BlacksmithRewardTiersToItems = [
+	{
+		items: [
+			{ itemName: "sturdy_pickaxe", props: [["maxUses", 200], ["usesLeft", 200]] },
+			{ itemName: "sturdy_shovel", props: [["maxUses", 200], ["usesLeft", 200]] },
+			{ itemName: "sturdy_pickaxe", props: [["maxUses", 150], ["usesLeft", 150]] },
+			{ itemName: "sturdy_shovel", props: [["maxUses", 150], ["usesLeft", 150]] },
+		],
+		selectType: "random",
+	},
+	{ items: [{ itemName: "mining_gloves_1" }] },
+	{ items: [{ itemName: "mining_gloves_3" }] },
+	{ items: [{ itemName: "mining_gloves_5" }] },
+	{ items: [{ itemName: "dull_copper_runic_hammer" }] },
+	{ items: [{ itemName: "shadow_iron_runic_hammer" }] },
+	{
+		items: [
+			{ itemName: "dc_anvil_deed" },
+			{ itemName: "si_anvil_deed" },
+			{ itemName: "c_anvil_deed" },
+			{ itemName: "b_anvil_deed" },
+			{ itemName: "g_anvil_deed" },
+			{ itemName: "a_anvil_deed" },
+			{ itemName: "ve_anvil_deed" },
+			{ itemName: "va_anvil_deed" }
+		],
+		selectType: "weighted"
+	},
+	{ items: [{ itemName: "copper_runic_hammer" }] },
+	{ items: [{ itemName: "bronze_runic_hammer" }] },
+	{ items: [{ itemName: "ancient_smithy_hammer_10" }] },
+	{ items: [{ itemName: "ancient_smithy_hammer_15" }] },
+	{ items: [{ itemName: "gold_runic_hammer" }] },
+	{ items: [{ itemName: "ancient_smithy_hammer_30" }] },
+	{ items: [{ itemName: "agapite_runic_hammer" }] },
+	{ items: [{ itemName: "ancient_smithy_hammer_60" }] },
+	{ items: [{ itemName: "verite_runic_hammer" }] },
+	{ items: [{ itemName: "valorite_runic_hammer" }] }
+];
+
+// See comment above BlacksmithRewardTiersToItems for explanation of object properties.
+const TailorRewardTiersToItems = [
+	{
+		items: [
+			{ itemName: "sewing_kit", props: [["maxUses", 250], ["usesLeft", 250]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x483]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x48C]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x488]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x48A]] }
+		],
+		selectType: "random"
+	},
+	{
+		items: [
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x495]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x48B]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x486]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x485]] }
+		],
+		selectType: "random"
+	},
+	{
+		items: [
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x48D]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x490]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x48E]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x491]] }
+		],
+		selectType: "random"
+	},
+	{
+		items: [
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x48F]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x494]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x484]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x497]] },
+			{ itemName: "sandals", props: [["colour", 0x489]] },
+			{ itemName: "sandals", props: [["colour", 0x47F]] },
+			{ itemName: "sandals", props: [["colour", 0x482]] },
+			{ itemName: "sandals", props: [["colour", 0x47E]] },
+			{ itemName: "sandals", props: [["colour", 0x48F]] },
+			{ itemName: "sandals", props: [["colour", 0x494]] },
+			{ itemName: "sandals", props: [["colour", 0x484]] },
+			{ itemName: "sandals", props: [["colour", 0x497]] }
+
+		],
+		selectType: "random"
+	},
+	{
+		items: [
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x489]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x47F]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x482]] },
+			{ itemName: "folded_cloth", props: [["amount", 100], ["colour", 0x47E]] }
+		],
+		selectType: "random"
+	},
+	// The following items are not yet implemented.
+	// { items: [{ itemName: "spined_runic_sewing_kit" }] },
+	// { items: [{ itemName: "clothing_bless_deed" }] },
+	// { items: [{ itemName: "horned_runic_sewing_kit" }] },
+	// { items: [{ itemName: "barbed_runic_sewing_kit" }] }
+];
+
+const BODTypesToRewards = {
+	1: BlacksmithRewardTiersToItems,
+	2: TailorRewardTiersToItems
+};
+
 function onSoldToVendor( pSock, npcVendor, iSold )
 {
 	var pUser = pSock.currentChar;
-	if( offerBodsFromItemSales && CheckBodTimers( pUser ))
+	if( offerBodsFromItemSales && CheckBodTimers( pUser, npcVendor.GetTag( "bodType" ) ) )
 	{
 		if( !onlyOfferBodsFromCraftedItems || iSold.madeWith != -1 ) // what is madeWith property for non-crafted items?
 		{
@@ -90,9 +261,9 @@ function onSoldToVendor( pSock, npcVendor, iSold )
 	return false;
 }
 
-function CheckBodTimers( pUser )
+function CheckBodTimers( pUser, bodType )
 {
-	var bodOfferCD = pUser.GetJSTimer( 1, 3214 ); // Fetch timer for BOD offer cooldown
+	var bodOfferCD = pUser.GetJSTimer( bodType, 3214 ); // Fetch timer for BOD offer cooldown
 	if( bodOfferCD != 0 )
 	{
 		// BOD cooldown still in effect - let's check the timer
@@ -117,11 +288,11 @@ function onSpeech( myString, pUser, myNPC )
 
 	// See if a vendor serial was stored via hard-coded context menu, to exclude other NPCs reaction to speech trigger
 	var targetShopkeeper = CalcCharFromSer( parseInt( pUser.GetTempTag( "bodShopkeeperSerial" )));
-	pUser.SetTempTag( "bodShopkeeperSerial", null );
-	if( ValidateObject( targetShopkeeper ) && targetShopkeeper != myNPC )
+	if( !ValidateObject( targetShopkeeper ) || targetShopkeeper != myNPC )
 	{
 		return false;
 	}
+	pUser.SetTempTag( "bodShopkeeperSerial", null );
 
 	// Check the trigger words to see if the Bulk Order Info trigger word was sent
 	for( var trigWord = socket.FirstTriggerWord(); !socket.FinishedTriggerWords(); trigWord = socket.NextTriggerWord() )
@@ -130,7 +301,7 @@ function onSpeech( myString, pUser, myNPC )
 		{
 			case 0x5000: // Bulk Order Info - TW_BODINFO, custom UOX3 triggerword triggered via context menu
 			{
-				if( CheckBodTimers( pUser ))
+				if( CheckBodTimers( pUser, myNPC.GetTag( "bodType" ) ))
 				{
 					if( EraStringToNum( GetServerSetting( "CoreShardEra" )) <= EraStringToNum( "lbr" ))
 					{
@@ -149,14 +320,14 @@ function onSpeech( myString, pUser, myNPC )
 
 function SmallBODAcceptGump( pUser, myNPC )
 {
-	var socket 		= pUser.socket;
-	var bodType 	= myNPC.GetTag( "bodType" );
-	var bodEntry 	= SelectBodEntry( pUser, true, bodType );
-	var itemName	= bodEntry.name; // name of the create entry
-	var graphicID	= bodEntry.id; // graphical ID of item to craft
-	var sectionID 	= bodEntry.addItem; // section ID of item to craft
+	var socket        = pUser.socket;
+	var bodType 	  = myNPC.GetTag( "bodType" );
+	const bodSubtype  = myNPC.GetTag( "bodSubtype" );
+	const pSkill      = pUser.skills[BODTypesToSkillNames[bodType]]; // The player's level of the BOD's relevant skill.
+	var bodEntry 	  = SelectBodEntry( bodType, bodSubtype, true, pSkill );
+	var itemName	  = bodEntry.name; // name of the create entry
+	var graphicID	  = bodEntry.id; // graphical ID of item to craft
 	var materialColor = bodEntry.resources[0][1]; // colour of primary resource required to craft item
-	var weaponType  = TriggerEvent( 2500, "GetWeaponType", null, bodEntry.id );
 
 	// Store bodEntry as custom object property on pUser
 	pUser.bodEntry = bodEntry;
@@ -168,17 +339,17 @@ function SmallBODAcceptGump( pUser, myNPC )
 	var init = bodEntry.tempInit;
 	if( init != 1 ) // Keep from resetting the amount needed.
 	{
-		if( pUser.skills.blacksmithing >= 700 )
+		if( pSkill >= 700 )
 		{
-			if((( pUser.skills.blacksmithing + 800 ) / 2 ) > RandomNumber( 0, 1000 ))
+			if((( pSkill + 800 ) / 2 ) > RandomNumber( 0, 1000 ))
 			{
-				reqExceptional = false;
+				reqExceptional = true;
 			}
 
 			let values = [ 10, 15, 20, 20 ];
 			amountMax = values[Math.floor( Math.random() * values.length )];
 		}
-		else if( pUser.skills.blacksmithing >= 500 )
+		else if( pSkill >= 500 )
 		{
 			let values = [ 10, 15, 15, 20 ];
 			amountMax = values[Math.floor( Math.random() * values.length )];
@@ -191,12 +362,16 @@ function SmallBODAcceptGump( pUser, myNPC )
 
 		pUser.bodEntry.tempReqExceptional = reqExceptional;
 		pUser.bodEntry.tempAmountMax = amountMax;
+		pUser.bodEntry.tempBodType = bodType;
+		pUser.bodEntry.tempBodSubtype = bodSubtype;
 		pUser.bodEntry.tempInit = true;
 	}
 	else
 	{
 		amountMax = pUser.bodEntry.tempAmountMax;
 		reqExceptional = pUser.bodEntry.tempReqExceptional;
+		pUser.bodEntry.tempBodType = bodType;
+		pUser.bodEntry.tempBodSubtype = bodSubtype;
 	}
 
 	var bodGump = new Gump;
@@ -313,6 +488,7 @@ function onGumpPress( socket, pButton, gumpData )
 	var amountMax = bodEntry.tempAmountMax;
 	var reqExceptional = bodEntry.tempReqExceptional;
 	var bodType = bodEntry.tempBodType;
+	const bodSubtype = bodEntry.tempBodSubtype;
 	var graphicID = bodEntry.id;
 	var itemName = bodEntry.name;
 	var materialColor = bodEntry.resources[0][1];
@@ -336,7 +512,7 @@ function onGumpPress( socket, pButton, gumpData )
 			}
 			else
 			{
-				var smallBOD = CreateDFNItem( pUser.socket, pUser, "smallbod", 1, "ITEM", true );
+				var smallBOD = CreateDFNItem( pUser.socket, pUser, BODTypeToDFNSectionID[bodType], 1, "ITEM", true );
 				if( ValidateObject( smallBOD ))
 				{
 					// Store the BOD properties as permanent tags on the BOD deed
@@ -346,7 +522,7 @@ function onGumpPress( socket, pButton, gumpData )
 					smallBOD.SetTag( "reqExceptional", reqExceptional );
 					smallBOD.SetTag( "materialColor", materialColor );
 					smallBOD.SetTag( "bodSectionID", bodSectionID );
-					smallBOD.SetTag( "bodType", bodType );
+					smallBOD.SetTag( "bodSubtype", bodSubtype );
 					smallBOD.SetTag( "init", true );
 
 					pUser.TextMessage( GetDictionaryEntry( 17274, socket.language ), false, 0x3b2, 0, pUser.serial ); // The bulk order deed has been placed in your backpack.
@@ -362,18 +538,20 @@ function onGumpPress( socket, pButton, gumpData )
 
 	// Regardless of whether player accepts or declines the BOD, apply cooldown until next time
 	// they can get an offer for another BOD
-	SetBODAcceptanceCooldown( pUser );
+	SetBODAcceptanceCooldown( pUser, bodType );
 }
 
-function SetBODAcceptanceCooldown( pUser )
+function SetBODAcceptanceCooldown( pUser, bodType )
 {
+	const pSkill = pUser.skills[BODTypesToSkillNames[bodType]];
+
 	// Set BOD cooldown timer for next time player can accept a BOD
 	var bodTimer = 0;
-	if( pUser.skills.blacksmithing >= 700 )
+	if( pSkill >= 700 )
 	{
 		bodTimer = 21600000; // 1000 * 60 * 60 * 6 = 6 hours if over or equal to 70.0 skill
 	}
-	else if( pUser.skills.blacksmithing >= 501 )
+	else if( pSkill >= 501 )
 	{
 		bodTimer = 7200000; // 1000 * 60 * 60 * 2 = 2 hours if over 50.1 and under 70.0 skill
 	}
@@ -382,184 +560,48 @@ function SetBODAcceptanceCooldown( pUser )
 		bodTimer = 3600000; // 1000 * 60 * 60 = 1 hour if under or equal to 50.0 skill
 	}
 
-	pUser.StartTimer( bodTimer, 1, true );
+	pUser.StartTimer( bodTimer, bodType, true );
 }
 
-function SelectBodEntry( pUser, considerPlayerSkill, bodType )
+function SelectBodEntry( bodType, bodSubtype, considerPlayerSkill, pSkill )
 {
-	var pSkill = considerPlayerSkill ? pUser.skills.blacksmithing : 0;
+	const bodItemEntries = BODTypesToCreateEntries[bodType][bodSubtype];
+	const maxMaterialIndex = bodItemEntries[0].length - 1; // Assumes all entries can be made from the same resources.
 
-	// First, determine if the BOD should contain requests for weapons, or armors
-	// bodType is generally supplied by a tag on the NPC shopkeeper
-	// weaponsmith = bodyType 1, armorsmith = bodType 2, blacksmith = bodType 3
-	// These are also used to determine which NPCs accept completed BODs
-	var rndItemType = -1;
-	switch( bodType )
+	let materialIndex = 0;
+	if( canCraftColouredWeapons )
 	{
-		case 1: // Weapon BODs only
-			rnditemType = 1;
-			break;
-		case 2: // Armor BODs only
-			rndItemType = 2;
-			break;
-		case 3: // Either weapon or armor BODs
-			rndItemType = RandomNumber( 1, 2 );
-			break;
-		// Add additional BOD types here if/when implemented
-		default:
-			break;
+		materialIndex = RandomNumber( 0, maxMaterialIndex );
+		if( considerPlayerSkill && pSkill >= ( 1000 - ( 50 * ( maxMaterialIndex - materialIndex ) ) ) )
+		{
+			materialIndex = 0;
+		}
 	}
 
-	if( rndItemType == 1 ) // 1 - Weapon
+	// Find all valid create entries for player's current skill level
+	const validItems = [];
+	for( let i = 0; i < bodItemEntries.length; i++ )
 	{
-		var materialIndex = 0;
-		if( canCraftColouredWeapons )
+		const item = bodItemEntries[i];
+		if( considerPlayerSkill && pSkill < 700 )
 		{
-			materialIndex = RandomNumber( 0, 8 );
-			if( considerPlayerSkill )
+			// Only select items which player can gain skill from if skill is below 70.0
+			const createEntry = CreateEntries[item[materialIndex]];
+			if( createEntry.avgMinSkill <= pSkill && pSkill <= createEntry.avgMaxSkill )
 			{
-				switch( materialIndex )
-				{
-					case 0: // Iron
-						break;
-					case 1: // Dull Copper
-						materialIndex = ( pUser.skills.blacksmithing >= 650 ? materialIndex : 0 );
-						break;
-					case 2: // Shadow Iron
-						materialIndex = ( pUser.skills.blacksmithing >= 700 ? materialIndex : 0 );
-						break;
-					case 3: // Copper
-						materialIndex = ( pUser.skills.blacksmithing >= 750 ? materialIndex : 0 );
-						break;
-					case 4: // Bronze
-						materialIndex = ( pUser.skills.blacksmithing >= 800 ? materialIndex : 0 );
-						break;
-					case 5: // Gold
-						materialIndex = ( pUser.skills.blacksmithing >= 850 ? materialIndex : 0 );
-						break;
-					case 6: // Agapite
-						materialIndex = ( pUser.skills.blacksmithing >= 900 ? materialIndex : 0 );
-						break;
-					case 7: // Verite
-						materialIndex = ( pUser.skills.blacksmithing >= 950 ? materialIndex : 0 );
-						break;
-					case 8: // Valorite
-						materialIndex = ( pUser.skills.blacksmithing >= 1000 ? materialIndex : 0 );
-						break;
-					default:
-						break;
-				}
+				validItems.push( item[materialIndex] );
 			}
 		}
-
-		// Find all valid create entries for player's current skill level
-		var validWeapons = [];
-		for( var i = 0; i < weaponCreateEntries.length; i++ )
+		else
 		{
-			var item = weaponCreateEntries[i];
-			if( considerPlayerSkill && pSkill < 700 )
-			{
-				// Only select items which player can gain skill from if skill is below 70.0
-				var createEntry = CreateEntries[item[materialIndex]];
-				if( createEntry.avgMinSkill <= pSkill && pSkill <= createEntry.avgMaxSkill )
-				{
-					validWeapons.push( item[materialIndex] );
-				}
-			}
-			else
-			{
-				// All weapon create entries are valid if player's skill is above or equal to 70.0
-				validWeapons.push( item[materialIndex] );
-			}
-		}
-
-		// Select a random create entry from array of valid entries
-		var rndCreateIndex = Math.floor( Math.random() * validWeapons.length );
-		return CreateEntries[validWeapons[rndCreateIndex]];
-	}
-	else // 0 - Armor
-	{
-		// First, select material type
-		var materialIndex = RandomNumber( 0, 8 );
-		if( considerPlayerSkill )
-		{
-			switch( materialIndex )
-			{
-				case 0: // Iron
-					break;
-				case 1: // Dull Copper
-					materialIndex = ( pUser.skills.blacksmithing >= 650 ? materialIndex : 0 );
-					break;
-				case 2: // Shadow Iron
-					materialIndex = ( pUser.skills.blacksmithing >= 700 ? materialIndex : 0 );
-					break;
-				case 3: // Copper
-					materialIndex = ( pUser.skills.blacksmithing >= 750 ? materialIndex : 0 );
-					break;
-				case 4: // Bronze
-					materialIndex = ( pUser.skills.blacksmithing >= 800 ? materialIndex : 0 );
-					break;
-				case 5: // Gold
-					materialIndex = ( pUser.skills.blacksmithing >= 850 ? materialIndex : 0 );
-					break;
-				case 6: // Agapite
-					materialIndex = ( pUser.skills.blacksmithing >= 900 ? materialIndex : 0 );
-					break;
-				case 7: // Verite
-					materialIndex = ( pUser.skills.blacksmithing >= 950 ? materialIndex : 0 );
-					break;
-				case 8: // Valorite
-					materialIndex = ( pUser.skills.blacksmithing >= 1000 ? materialIndex : 0 );
-					break;
-				default:
-					break;
-			}
-		}
-
-		// Find all valid armor create entries for player's current skill level, and of chosen material color
-		// If player's skill is below 70.0, make sure they get a BOD with items they can gain skill from crafting
-		var validArmors = [];
-		for( var j = 0; j < armorCreateEntries.length; j++ )
-		{
-			var item = armorCreateEntries[j];
-			if( considerPlayerSkill && pSkill < 700 )
-			{
-				// Only select items which player can gain skill from if skill is below 70.0
-				var createEntry = CreateEntries[item[materialIndex]];
-				if( createEntry.avgMinSkill <= pSkill && pSkill <= createEntry.avgMaxSkill )
-				{
-					validArmors.push( item[materialIndex] );
-				}
-			}
-			else
-			{
-				// Select from all armors
-				validArmors.push( item[materialIndex] );
-			}
-		}
-
-		// Select a random create entry from array of valid entries
-		var rndCreateIndex = Math.floor( Math.random() * validArmors.length );
-		return CreateEntries[validArmors[rndCreateIndex]];
-	}
-}
-
-function onTimer( pUser, timerID )
-{
-	// When Timer Expires set these flags on player false so he can get another BOD
-	switch ( timerID )
-	{
-		case 1: // BOD cooldown timer elapsed
-		{
-			//pUser.SetTag( "bodOfferCD", null );
-			break;
-		}
-		case 2: // BOD Hand-in Cooldown timer elapsed
-		{
-			//pUser.SetTag( "bodHandinCooldown", null );
-			break;
+			// All create entries are valid if player's skill is above or equal to 70.0
+			validItems.push( item[materialIndex] );
 		}
 	}
+
+	// Select a random create entry from array of valid entries
+	const rndCreateIndex = Math.floor( Math.random() * validItems.length );
+	return CreateEntries[validItems[rndCreateIndex]];
 }
 
 function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
@@ -568,16 +610,15 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 	if( socket == null )
 		return false;
 
-	var amountMax 	= iDropped.GetTag( "amountMax" ); 	// amount you have to make of the item
-	var amountCur 	= iDropped.GetTag( "amountCur" ); 	// amount you have combined
-	var iBodType 	= iDropped.GetTag( "bodType" ); 	// BOD type of the BOD itself
-	var pBodType 	= npcDroppedOn.GetTag( "bodType" ); // BOD type of the NPC BOD is dropped on, if any
+	var amountMax 	  = iDropped.GetTag( "amountMax" ); 	 // amount you have to make of the item
+	var amountCur 	  = iDropped.GetTag( "amountCur" ); 	 // amount you have combined
+	var iBodType 	  = iDropped.GetTag( "bodType" ); 	     // BOD type of the BOD itself
+	var pBodType 	  = npcDroppedOn.GetTag( "bodType" );    // BOD type of the NPC BOD is dropped on, if any
 
-	if( iDropped.sectionID == "smallbod" && pBodType > 0 )
+	if( iDropped.sectionID.split("_")[0] == "smallbod" && pBodType > 0 )
 	{
 		// Check if NPC accepts the type of BOD being dropped on them
-		// Weaponsmith only accepts weapon BODs, armorsmith only accepts armor BODs, blacksmith accepts either
-		if(( iBodType == 1 || iBodType == 2 ) && ( pBodType != iBodType && pBodType != 3 ))
+		if( iBodType != pBodType )
 		{
 			// That order is for some other shopkeeper.
 			npcDroppedOn.TextMessage( GetDictionaryEntry( 17272, socket.language ), false, 0x3b2, 0, pDropper.serial ); // That order is for some other shopkeeper.
@@ -591,7 +632,7 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 		}
 
 		// Check if enough time has passed since last time player handed in a BOD
-		var bodRewardCD = pDropper.GetJSTimer( 2, 3214 ); // Fetch timer for BOD reward cooldown
+		var bodRewardCD = pDropper.GetJSTimer( iBodType * 10, 3214 ); // Fetch timer for BOD reward cooldown
 		if( bodRewardCD != 0 )
 		{
 			npcDroppedOn.TextMessage( GetDictionaryEntry( 17273, socket.language ), false, 0x3b2, 0, pDropper.serial ); // You'll have to wait a few seconds while I inspect the last order.
@@ -608,11 +649,13 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 
 		if( DispenseBODRewards( pDropper, npcDroppedOn, iDropped ))
 		{
+			// Make the player wait 10 seconds before turning in another BOD.
+			pDropper.StartTimer( 10000, iBodType * 10, true );
 			// On delivery of a completed BOD, kill cooldown timer to get another BOD offer
-			var bodOfferCD = pDropper.GetJSTimer( 1, 3214 ); // Fetch timer for BOD offer cooldown
-			if( bodRewardCD != 0 )
+			var bodOfferCD = pDropper.GetJSTimer( iBodType, 3214 ); // Fetch timer for BOD offer cooldown
+			if( bodOfferCD != 0 )
 			{
-				pDropper.KillJSTimer( 1, 3214 );
+				pDropper.KillJSTimer( iBodType, 3214 );
 			}
 
 			iDropped.Delete();
@@ -685,187 +728,44 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 	var avgBodItemQuality = Math.round( iDropped.GetTag( "qualityValue" ) / iDropped.GetTag( "amountCur" ));
 	var weightVal = ( 4 - (( avgBodItemQuality / 10 ) * 3.0 ));
 
-	// Get modifiers to min / max rewards based on properties of the BOD itself
-	var minMaxMod = MinMaxRewardModifiers( iDropped );
-	var bodRewardItem = null;
-	if( EraStringToNum( GetServerSetting( "CoreShardEra" )) <= EraStringToNum( "lbr" ))
-	{
-		// Apply reward modifiers
-		minReward = 0 + minMaxMod[0];
-		maxReward = 16 + minMaxMod[1];
+	const rewards = BODTypesToRewards[iDropped.GetTag( "bodType" )];
 
-		switch( WeightedRandom( minReward, maxReward, weightVal ) )
-		{
-			case 0: // Sturdy Pickaxe / Sturdy Shovel (equal chance)
-				switch( RandomNumber( 0, 1 ) )
-				{
-					case 0: // Sturdy Pickaxe
-						bodRewardItem = CreateBODReward( 0, socket, pDropper, 0 );
-						break;
-					case 1: // Sturdy Shovel
-						bodRewardItem = CreateBODReward( 1, socket, pDropper, 0 );
-						break;
-					default:
-						break;
-				}
+	// Get modifiers to min / max rewards based on properties of the BOD itself
+	var minMaxMod = MinMaxRewardModifiers( iDropped, iDropped.GetTag( "bodType" ), rewards.length);
+
+	const minReward = minMaxMod[0];
+	const maxReward = rewards.length - 1 + minMaxMod[1];
+
+	const rewardTier = rewards[WeightedRandom( minReward, maxReward, weightVal )];
+	let rewardItemIndex = 0;
+	if ( rewardTier.items.length > 1 ) {
+		switch ( rewardTier.selectType ) {
+			case "random":
+				rewardItemIndex = RandomNumber(0, rewardTier.items.length - 1);
 				break;
-			case 1: // Leather Gloves of Mining +1
-				bodRewardItem = CreateBODReward( 2, socket, pDropper, 0 );
-				break;
-			case 2: // Studded Leather Gloves of Mining +3
-				bodRewardItem = CreateBODReward( 3, socket, pDropper, 0 );
-				break;
-			case 3: // Ringmail Gloves of mining +5
-				bodRewardItem = CreateBODReward( 4, socket, pDropper, 0 );
-				break;
-			case 4: // Dull Copper Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x973 );
-				break;
-			case 5: // Shadow Iron Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x966 );
-				break;
-			case 6: // Colored Anvil
-				bodRewardItem = CreateBODReward( 6, socket, pDropper, WeightedRandom( 0, 7, weightVal ));
-				break;
-			case 7: // Copper Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x96E );
-				break;
-			case 8: // Bronze Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x6D6 );
-				break;
-			case 9: // +10 Ancient Smithy Hammer
-				bodRewardItem = CreateBODReward( 7, socket, pDropper, 100 );
-				break;
-			case 10: // +15 Ancient Smithy Hammer
-				bodRewardItem = CreateBODReward( 7, socket, pDropper, 150 );
-				break;
-			case 11: // Gold Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x8A5 );
-				break;
-			case 12: // +30 Ancient Smithy Hammer
-				bodRewardItem = CreateBODReward( 7, socket, pDropper, 300 );
-				break;
-			case 13: // Agapite Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x979 );
-				break;
-			case 14: // +60 Ancient Smithy Hammer
-				bodRewardItem = CreateBODReward( 7, socket, pDropper, 600 );
-				break;
-			case 15: // Verite Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x89F );
-				break;
-			case 16: // Valorite Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x8AB );
+			case "weighted":
+				rewardItemIndex = WeightedRandom(0, rewardTier.items.length - 1, weightVal);
 				break;
 			default:
 				break;
 		}
 	}
-	else
+	const rewardItem = rewardTier.items[rewardItemIndex];
+	const rewardDFNItem = CreateDFNItem( socket, pDropper, rewardItem.itemName, 1, "ITEM", false );
+	if ( rewardItem.props && rewardDFNItem )
 	{
-		// Apply reward modifiers
-		minReward = 0 + minMaxMod[0];
-		maxReward = 22 + minMaxMod[1];
-
-		// AoS and beyond has 4 additional item rewards (equal chance for two of them)
-		switch( WeightedRandom( minReward, maxReward, weightVal ))
+		for( let i = 0; i < rewardItem.props.length; i++ )
 		{
-			case 0: // Sturdy Pickaxe / Sturdy Shovel (equal chance)
-				switch( RandomNumber( 0, 1 ))
-				{
-					case 0: // Sturdy Pickaxe
-						bodRewardItem = CreateBODReward( 0, socket, pDropper, 0 );
-						break;
-					case 1: // Sturdy Shovel
-						break;
-						bodRewardItem = CreateBODReward( 1, socket, pDropper, 0 );
-					default:
-						break;
-				}
-				break;
-			case 1: // Leather Gloves of Mining +1
-				bodRewardItem = CreateBODReward( 2, socket, pDropper, 0 );
-				break;
-			case 2: // Gargoyle's Pickaxe / Prospector's Tool (equal chance)
-				switch( RandomNumber( 0, 1 ))
-				{
-					case 0: // Gargoyle's Pickaxe
-						bodRewardItem = CreateBODReward( 8, socket, pDropper, 0 );
-						break;
-					case 1: // Prospector's Tool
-						bodRewardItem = CreateBODReward( 9, socket, pDropper, 0 );
-						break;
-					default:
-						break;
-				}
-				break;
-			case 3: // Studded Leather Gloves of Mining +3
-				bodRewardItem = CreateBODReward( 3, socket, pDropper, 0 );
-				break;
-			case 4: // Powder of Temperament
-				bodRewardItem = CreateBODReward( 10, socket, pDropper, 0 );
-				break;
-			case 5: // Ringmail Gloves of mining +5
-				bodRewardItem = CreateBODReward( 4, socket, pDropper, 0 );
-				break;
-			case 6: // Dull Copper Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x973 );
-				break;
-			case 7: // Shadow Iron Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x966 );
-				break;
-			case 8: // Blacksmith Scroll of Power + 5
-				bodRewardItem = CreateBODReward( 11, socket, pDropper, 50 );
-				break;
-			case 9: // Copper Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x96E );
-				break;
-			case 10: // Colored Anvil
-				bodRewardItem = CreateBODReward( 6, socket, pDropper, WeightedRandom( 0, 7, weightVal ));
-				break;
-			case 11: // Blacksmith Scroll of Power + 10
-				bodRewardItem = CreateBODReward( 11, socket, pDropper, 100 );
-				break;
-			case 12: // Bronze Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x6D6 );
-				break;
-			case 13: // +10 Ancient Smithy Hammer
-				bodRewardItem = CreateBODReward( 7, socket, pDropper, 100 );
-				break;
-			case 14: // Blacksmith Scroll of Power + 15
-				bodRewardItem = CreateBODReward( 11, socket, pDropper, 150 );
-				break;
-			case 15: // +15 Ancient Smithy Hammer
-				bodRewardItem = CreateBODReward( 7, socket, pDropper, 150 );
-				break;
-			case 16: // Blacksmith Scroll of Power + 20
-				bodRewardItem = CreateBODReward( 11, socket, pDropper, 200 );
-				break;
-			case 17: // Gold Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x8A5 );
-				break;
-			case 18: // +30 Ancient Smithy Hammer
-				bodRewardItem = CreateBODReward( 7, socket, pDropper, 300 );
-				break;
-			case 19: // Agapite Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x979 );
-				break;
-			case 20: // +60 Ancient Smithy Hammer
-				bodRewardItem = CreateBODReward( 7, socket, pDropper, 600 );
-				break;
-			case 21: // Verite Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x89F );
-				break;
-			case 22: // Valorite Runic Hammer
-				bodRewardItem = CreateBODReward( 5, socket, pDropper, 0x8AB );
-				break;
-			default:
-				break;
+			const propModifier = rewardItem.props[i];
+			const propToModify = propModifier[0];
+			const propValue = propModifier[1];
+
+			rewardDFNItem[propToModify] = propValue;
 		}
 	}
 
 	var errorFound = false;
-	if( !ValidateObject( bodRewardItem ))
+	if( !ValidateObject( rewardDFNItem ))
 	{
 		socket.SysMessage( "An error occurred while attempting to dispense rewards for BOD. Please contact a GM/Admin for assistance!" );
 		Console.Error( "Error occured when attempting to create BOD item reward for player with serial " + pDropper.serial + "!" );
@@ -875,9 +775,9 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 	if( !errorFound )
 	{
 		// Can player's pack hold weight of the special reward item AND the gold/check?
-		if( playerPack.weight + bodRewardItem.weight + goldWeight > playerPack.maxWeight ) // special item + gold
+		if( playerPack.weight + rewardDFNItem.weight + goldWeight > playerPack.maxWeight ) // special item + gold
 		{
-			if( playerPack.weight + bodRewardItem.weight + 100 > playerPack.maxWeight ) // special item + check
+			if( playerPack.weight + rewardDFNItem.weight + 100 > playerPack.maxWeight ) // special item + check
 			{
 				socket.SysMessage( GetDictionaryEntry( 1385, socket.language )); // That pack cannot hold any more weight
 				errorFound = true;
@@ -895,11 +795,11 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 	{
 		// All good! Hand out the rewards:
 		// SPECIAL ITEM
-		bodRewardItem.container = pDropper.pack;
-		bodRewardItem.PlaceInPack();
+		rewardDFNItem.container = pDropper.pack;
+		rewardDFNItem.PlaceInPack();
 
 		// Log creation of gold in server logs
-		Console.Log( "[BOD Reward] Special item reward (" + bodRewardItem.name + " - " + bodRewardItem.serial + ") given to player (" + pDropper.name + " - " + pDropper.serial + ")." );
+		Console.Log( "[BOD Reward] Special item reward (" + rewardDFNItem.name + " - " + rewardDFNItem.serial + ") given to player (" + pDropper.name + " - " + pDropper.serial + ")." );
 
 		// FAME
 		// Ensure player's fame doesn't exceed the default cap of 10k
@@ -961,9 +861,9 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 		}
 
 		// Cleanup potential item reward
-		if( ValidateObject( bodRewardItem ))
+		if( ValidateObject( rewardDFNItem ))
 		{
-			bodRewardItem.Delete();
+			rewardDFNItem.Delete();
 		}
 		return false;
 	}
@@ -971,215 +871,22 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 	return true;
 }
 
-function CreateBODReward( rewardNum, socket, pDropper, extraInfo )
+function MinMaxRewardModifiers( iDropped, bodType, numTiers )
 {
-	if( !ValidateObject( pDropper ) || socket == null )
-		return null;
-
-	var rewardItem = null;
-	switch( rewardNum )
-	{
-		case 0: // Sturdy Pickaxe
-			// Allows you to mine either 150 or 200 ore before breaking. Number of uses is determined randomly at the time the reward is given.
-			rewardItem = CreateDFNItem( socket, pDropper, "sturdy_pickaxe", 1, "ITEM", false );
-			if( ValidateObject( rewardItem ))
-			{
-				rewardItem.maxUses = RandomNumber( 0, 1 ) ? 150 : 200;
-				rewardItem.usesLeft = rewardItem.maxUses;
-			}
-			break;
-		case 1: // Sturdy Shovel
-			// Allows you to mine at least 180 ore with one shovel before it breaks.
-			rewardItem = CreateDFNItem( socket, pDropper, "sturdy_shovel", 1, "ITEM", false );
-			if( ValidateObject( rewardItem ))
-			{
-				rewardItem.maxUses = WeightedRandom( 0, 1, 3, true ) ? 150 : 200;
-				rewardItem.usesLeft = rewardItem.maxUses;
-			}
-			break;
-		case 2: // Leather Gloves of Mining +1
-			// Increases mining skill by 1 point. Dyeable using a leather dyetub.
-			rewardItem = CreateDFNItem( socket, pDropper, "mining_gloves_1", 1, "ITEM", false );
-			rewardItem.SetTag( "skillBonusID", 45 ); // Mining
-			rewardItem.SetTag( "skillBonusVal", 10 ); // +1.0
-			break;
-		case 3: // Studded Leather Gloves of Mining +3
-			// Increases mining skill by 3 points. Dyeable using a leather dyetub.
-			rewardItem = CreateDFNItem( socket, pDropper, "mining_gloves_3", 1, "ITEM", false );
-			rewardItem.SetTag( "skillBonusID", 45 ); // Mining
-			rewardItem.SetTag( "skillBonusVal", 30 ); // +3.0
-			break;
-		case 4: // Ringmail Gloves of mining +5
-			// Increases mining skill by 5 points.
-			rewardItem = CreateDFNItem( socket, pDropper, "mining_gloves_5", 1, "ITEM", false );
-			rewardItem.SetTag( "skillBonusID", 45 ); // Mining
-			rewardItem.SetTag( "skillBonusVal", 50 ); // +5.0
-			break;
-		case 5: // Runic Smithing Hammer
-			// Allows you to make weapons of the same color as the hammer. Comes in all different
-			// ore colors. Weapons have magic modifiers based on the type of hammer used/
-			switch( extraInfo )
-			{
-				case 0x973: // Dull Copper - Durable/Accurate
-					rewardItem = CreateDFNItem( socket, pDropper, "dull_copper_runic_hammer", 1, "ITEM", false );
-					break;
-				case 0x966: // Shadow Iron - Durable/Ruin
-					rewardItem = CreateDFNItem( socket, pDropper, "shadow_iron_runic_hammer", 1, "ITEM", false );
-					break;
-				case 0x96E: // Copper - Fortified/Ruin/Surpassingly Accurate
-					rewardItem = CreateDFNItem( socket, pDropper, "copper_runic_hammer", 1, "ITEM", false );
-					break;
-				case 0x6D6: // Bronze - Fortified/Might/Surpassingly Accurate
-					rewardItem = CreateDFNItem( socket, pDropper, "bronze_runic_hammer", 1, "ITEM", false );
-					break;
-				case 0x8A5: // Gold - Indestructible/Force/Emminently Accurate
-					rewardItem = CreateDFNItem( socket, pDropper, "gold_runic_hammer", 1, "ITEM", false );
-					break;
-				case 0x979: // Agapite - Indestructible/Power/Emminently Accurate
-					rewardItem = CreateDFNItem( socket, pDropper, "agapite_runic_hammer", 1, "ITEM", false );
-					break;
-				case 0x89F: // Verite - Indestructible/Power/Exceedingly Accurate
-					rewardItem = CreateDFNItem( socket, pDropper, "verite_runic_hammer", 1, "ITEM", false );
-					break;
-				case 0x8AB: // Valorite - Indestructible/Vanquishing/Supremely Accurate
-					rewardItem = CreateDFNItem( socket, pDropper, "valorite_runic_hammer", 1, "ITEM", false );
-					break;
-				default:
-					break;
-			}
-			break;
-		case 6: // Colored Anvil
-			// Other than looking cool, no special abilities.
-			switch( extraInfo )
-			{
-				case 0: // Dull Copper Anvil Deed
-					rewardItem = CreateDFNItem( socket, pDropper, "dc_anvil_deed", 1, "ITEM", false );
-					break;
-				case 1: // Shadow Iron Anvil Deed
-					rewardItem = CreateDFNItem( socket, pDropper, "si_anvil_deed", 1, "ITEM", false );
-					break;
-				case 2: // Copper Anvil Deed
-					rewardItem = CreateDFNItem( socket, pDropper, "c_anvil_deed", 1, "ITEM", false );
-					break;
-				case 3: // Bronze Anvil Deed
-					rewardItem = CreateDFNItem( socket, pDropper, "b_anvil_deed", 1, "ITEM", false );
-					break;
-				case 4: // Gold Anvil Deed
-					rewardItem = CreateDFNItem( socket, pDropper, "g_anvil_deed", 1, "ITEM", false );
-					break;
-				case 5: // Agapite Anvil Deed
-					rewardItem = CreateDFNItem( socket, pDropper, "a_anvil_deed", 1, "ITEM", false );
-					break;
-				case 6: // Verite Anvil Deed
-					rewardItem = CreateDFNItem( socket, pDropper, "v_anvil_deed", 1, "ITEM", false );
-					break;
-				case 7: // Valorite Anvil Deed
-					rewardItem = CreateDFNItem( socket, pDropper, "v_anvil_deed", 1, "ITEM", false );
-					break;
-				default:
-					break;
-			}
-			break;
-		case 7: // Ancient Smithing Hammer
-			// Increase blacksmithing skill by 10, 15, 30 or 60 points when equipped
-			switch( extraInfo )
-			{
-				case 100: // +10
-					rewardItem = CreateDFNItem( socket, pDropper, "ancient_smithy_hammer_10", 1, "ITEM", false );
-					break;
-				case 150: // +15
-					rewardItem = CreateDFNItem( socket, pDropper, "ancient_smithy_hammer_15", 1, "ITEM", false );
-					break;
-				case 300: // +30
-					rewardItem = CreateDFNItem( socket, pDropper, "ancient_smithy_hammer_30", 1, "ITEM", false );
-					break;
-				case 600: // +60
-					rewardItem = CreateDFNItem( socket, pDropper, "ancient_smithy_hammer_60", 1, "ITEM", false );
-					break;
-				default:
-					break;
-			}
-			break;
-		case 8: // Gargoyle's Pickaxe
-			// 100 uses, can summon elemental corresponding to the material being mined
-			rewardItem = CreateDFNItem( socket, pDropper, "gargoyles_pickaxe", 1, "ITEM", false );
-			if( ValidateObject( rewardItem ))
-			{
-				rewardItem.maxUses = 100;
-				rewardItem.usesLeft = 100;
-			}
-			break;
-		case 9: // Prospector's Tool
-			// 50 uses, used to raise one level of a mineral vein
-			rewardItem = CreateDFNItem( socket, pDropper, "prospectors_tool", 1, "ITEM", false );
-			if( ValidateObject( rewardItem ))
-			{
-				rewardItem.maxUses = 50;
-				rewardItem.usesLeft = 50;
-			}
-			break;
-		case 10: // Powder of Temperament
-			// 10 uses, increases durability of metallic armor
-			rewardItem = CreateDFNItem( socket, pDropper, "powder_of_temperament", 1, "ITEM", false );
-			if( ValidateObject( rewardItem ))
-			{
-				rewardItem.maxUses = 10;
-				rewardItem.usesLeft = 10;
-			}
-			break;
-		case 11: // Blacksmith Scrolls of Power
-			// Power scroll to increase blacksmithing skill by +5, +10, +15 or +20
-			switch( extraInfo )
-			{
-				case 50: // Blacksmithing +5
-					rewardItem = CreateDFNItem( socket, pDropper, "power_scroll_smith_5", 1, "ITEM", false );
-					break;
-				case 100: // Blacksmithing +10
-					rewardItem = CreateDFNItem( socket, pDropper, "power_scroll_smith_10", 1, "ITEM", false );
-					break;
-				case 150: // Blacksmithing +15
-					rewardItem = CreateDFNItem( socket, pDropper, "power_scroll_smith_15", 1, "ITEM", false );
-					break;
-				case 200: // Blacksmithing +20
-					rewardItem = CreateDFNItem( socket, pDropper, "power_scroll_smith_20", 1, "ITEM", false );
-					break;
-				default:
-					break;
-			}
-			break;
-		default:
-			break;
-	}
-
-	return rewardItem;
-}
-
-function MinMaxRewardModifiers( iDropped )
-{
-	var minMod = 0;
-	var maxMod = 0;
-
-	// Apply bonus to min if it's large BOD, penalty to max if small BOD
-	if( iDropped.GetTag( "largeBOD" ))
-	{
-		minMod += 2;
-	}
-	else
-	{
-		maxMod -= 2;
-	}
+	let minModPercent = 0;
+	let maxModPercent = 0;
 
 	// Apply bonus to min or penalty to max reward based on amount of items in BOD
 	var amountMax = iDropped.GetTag( "amountMax" );
 	switch( amountMax )
 	{
 		case 10:
-			maxMod -= 2;
+			maxModPercent -= 0.125;
 			break;
 		case 15: // No change
 			break;
 		case 20:
-			minMod++;
+			minModPercent += 0.0625;
 			break;
 	}
 
@@ -1187,47 +894,49 @@ function MinMaxRewardModifiers( iDropped )
 	var reqExceptional = iDropped.GetTag( "reqExceptional" );
 	if( reqExceptional )
 	{
-		minMod++;
+		minModPercent += 0.0625;
 	}
 	else
 	{
-		maxMod -= 2;
+		maxModPercent -= 0.125;
 	}
 
 	// Apply bonus/penalty if special material required by BOD (replace with bonus/penalty based on specific color rarities?)
-	var materialColor = iDropped.GetTag( "materialColor" );
-	switch( materialColor )
+	if( bodType == 1 )
 	{
-		case 0: // Iron
-			maxMod -= 4;
-			break;
-		case 0x973: // Dull Copper
-			maxMod -= 3;
-			break;
-		case 0x966: // Shadow Iron
-			maxMod -= 2;
-			break;
-		case 0x96E: // Copper
-			maxMod -= 1;
-			break;
-		case 0x6D6: // Bronze
-			// No change
-			break;
-		case 0x8A5: // Gold
-			minMod += 1;
-			break;
-		case 0x979: // Agapite
-			minMod += 2;
-			break;
-		case 0x89F: // Verite
-			minMod += 3;
-			break;
-		case 0x8AB: // Valorite
-			minMod += 4;
-			break;
-		default: // Iron
-			break;
+		var materialColor = iDropped.GetTag( "materialColor" );
+		switch (materialColor) {
+			case 0: // Iron
+				maxModPercent -= 0.25;
+				break;
+			case 0x973: // Dull Copper
+				maxModPercent -= 0.1875;
+				break;
+			case 0x966: // Shadow Iron
+				maxModPercent -= 0.125;
+				break;
+			case 0x96E: // Copper
+				maxModPercent -= 0.0625;
+				break;
+			case 0x6D6: // Bronze
+						// No change
+				break;
+			case 0x8A5: // Gold
+				minModPercent += 0.0625;
+				break;
+			case 0x979: // Agapite
+				minModPercent += 0.125;
+				break;
+			case 0x89F: // Verite
+				minModPercent += 0.1875;
+				break;
+			case 0x8AB: // Valorite
+				minModPercent += 0.25;
+				break;
+			default:
+				break;
+		}
 	}
 
-	return [minMod, maxMod];
+	return [Math.floor( minModPercent * numTiers ), Math.floor( maxModPercent * numTiers )];
 }
