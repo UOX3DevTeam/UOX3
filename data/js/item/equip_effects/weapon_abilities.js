@@ -56,14 +56,14 @@ function ParalyzingBlow( pAttacker, pDefender )
 	}
 	else
 	{
-		pDefender.TextMessage( "You receive a paralyzing blow!", false, 0x3b2, 0, pDefender.serial );
+		pDefender.TextMessage( GetDictionaryEntry( 17701, pDefender.socket.language ), false, 0x3b2, 0, pDefender.serial );// You receive a paralyzing blow!
 		seconds = 3000;
 	}
 	pDefender.StartTimer( seconds, 1, true );
 	pDefender.frozen = true;
 
 	// void TextMessage( message, allHear, txtHue, speechTarget, speechTargetSerial );
-	pAttacker.TextMessage( "You deliver a paralyzing blow!", false, 0x3b2, 0, pAttacker.serial);
+	pAttacker.TextMessage( GetDictionaryEntry( 17702, pDefender.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a paralyzing blow!
 	pAttacker.SoundEffect( 0x11C, true );
 }
 
@@ -79,10 +79,10 @@ The base chance to inflict this special damage is your Anatomy skill level divid
 function CrushingBlow( pAttacker, pDefender )
 {
 	var staminaLoss = Math.floor( Math.random() * ( 5 - 3 + 1 )) + 3;
-	pDefender.TextMessage( "You receive a crushing blow!", false, 0x3b2, 0, pDefender.serial );
+	pDefender.TextMessage( GetDictionaryEntry( 17703, pDefender.socket.language ), false, 0x3b2, 0, pDefender.serial );// You receive a crushing blow!
 	pDefender.stamina -= staminaLoss;
 
-	pAttacker.TextMessage( "You deliver a crushing blow!", false, 0x3b2, 0, pAttacker.serial );
+	pAttacker.TextMessage( GetDictionaryEntry( 17704, pDefender.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a crushing blow!
 	pAttacker.SoundEffect( 0x11C, true );
 }
 
@@ -95,12 +95,12 @@ The base chance to deliver this special blow is your Anatomy skill level divided
 
 function ConcussionBlow( pAttacker, pDefender )
 {
-	pDefender.TextMessage( "You receive a concussion blow!", false, 0x3b2, 0, pDefender.serial );
+	pDefender.TextMessage( GetDictionaryEntry( 17705, pDefender.socket.language ), false, 0x3b2, 0, pDefender.serial );// You receive a concussion blow!
 	pDefender.tempint = ( pDefender.tempint/2 );
 	pDefender.StartTimer( 30000, 2, true );
 	pDefender.SetTempTag( "concussion", 1 );
 
-	pAttacker.TextMessage( "You deliver a concussion blow!", false, 0x3b2, 0, pAttacker.serial );
+	pAttacker.TextMessage( GetDictionaryEntry( 17706, pDefender.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a concussion blow!
 	pAttacker.SoundEffect( 0x11C, true );
 }
 

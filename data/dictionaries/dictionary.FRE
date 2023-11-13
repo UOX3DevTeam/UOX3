@@ -5179,6 +5179,13 @@
 17619=En tant que membre de la guilde, je peux vous faire bénéficier d'un tarif préférentiel !
 17620=Ce n'est pas assez pour couvrir les frais d'adhésion à la guilde, désolé.
 17621=Depuis que vous avez rejoint la guilde : %i minutes.
+// [17701-17710] Capacités des armes
+17701=Vous recevez un coup paralysant !
+17702=Vous portez un coup paralysant !
+17703=Vous recevez un coup dévastateur !
+17704=Vous portez un coup dévastateur !
+17705=Vous recevez un coup de commotion cérébrale !
+17706=Vous portez un coup de commotion cérébrale !
 // Kit de déguisement
 18000=Vandyke
 18001=Moustache
