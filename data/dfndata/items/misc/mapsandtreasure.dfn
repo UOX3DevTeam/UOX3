@@ -1,0 +1,487 @@
+[smallworldmap]
+{
+get=base_item
+name=small world map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 1
+}
+
+[largeworldmap]
+{
+get=base_item
+name=large world map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 2
+}
+
+[britainmap]
+{
+get=base_item
+name=a britain map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 3
+}
+
+[britaintoskarabrae]
+{
+get=base_item
+name=a britain to skara brae map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 4
+}
+
+[britaintotrinsic]
+{
+get=base_item
+name=a britain to trinsic map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 5
+}
+
+[bucsden]
+{
+get=base_item
+name=a buc den map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 6
+}
+
+[bucsdentomagincia]
+{
+get=base_item
+name=a bucs den to magincia map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 7
+}
+
+[bucsdentoocllo]
+{
+get=base_item
+name=a bucs den to ocllo map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 8
+}
+
+[jhelom]
+{
+get=base_item
+name=a jhelom map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 9
+}
+
+[magincia]
+{
+get=base_item
+name=a magincia map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 10
+}
+
+[maginciatoocllo]
+{
+get=base_item
+name=a magincia to ocllo map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 11
+}
+
+[minoc]
+{
+get=base_item
+name=a minoc map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 12
+}
+
+[minoctoyew]
+{
+get=base_item
+name=a minoc to yew map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 13
+}
+
+[minoctovesper]
+{
+get=base_item
+name=a minoc to vesper map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 14
+}
+
+[moonglow]
+{
+get=base_item
+name=a moonglow map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 15
+}
+
+[moonglowtonujelm]
+{
+get=base_item
+name=a moonglow to nujelm map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 16
+}
+
+[nujelm]
+{
+get=base_item
+name=a nujelm map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 17
+}
+
+[nujelmtomagincia]
+{
+get=base_item
+name=a nujelm to magincia map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 18
+}
+
+[occlo]
+{
+get=base_item
+name=a occlo map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 19
+}
+
+[serpentshold]
+{
+get=base_item
+name=a serpents hold map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 20
+}
+
+[serpentsholdtoocllo]
+{
+get=base_item
+name=a serpents hold to ocllo map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 21
+}
+
+[skarabrae]
+{
+get=base_item
+name=a skara brae map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 22
+}
+
+[trinsic]
+{
+get=base_item
+name=a trinsic map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 23
+}
+
+[trinsictobucsden]
+{
+get=base_item
+name=a trinsic to bucs den map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 24
+}
+
+[trinsictojhelom]
+{
+get=base_item
+name=a trinsic to jhelom map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 25
+}
+
+[vesper]
+{
+get=base_item
+name=a vesper map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 26
+}
+
+[vespertonujelm]
+{
+get=base_item
+name=a vesper to nujelm map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 27
+}
+
+[yew]
+{
+get=base_item
+name=a yew map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 28
+}
+
+[yewtobritain]
+{
+get=base_item
+name=a yew to britain map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 29
+}
+
+[Tokuno]
+{
+get=base_item
+name=a Tokunomap
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 30
+}
+
+[Malas]
+{
+get=base_item
+name=a Malas map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 31
+}
+
+[Ilshenar]
+{
+get=base_item
+name=a Ilshenar map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 32
+}
+
+[TerMur]
+{
+get=base_item
+name=a TerMur map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 33
+}
+
+[craftedcitymap]
+{
+get=base_item
+name=a city map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 50
+}
+
+[treasuremaplevel1]
+{
+get=base_item
+name=a treasure map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 100
+custominttag=Level 1
+}
+
+[treasuremaplevel2]
+{
+get=base_item
+name=a treasure map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 100
+custominttag=Level 2
+}
+
+[treasuremaplevel3]
+{
+get=base_item
+name=a treasure map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 100
+custominttag=Level 3
+}
+
+[treasuremaplevel4]
+{
+get=base_item
+name=a treasure map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 100
+custominttag=Level 4
+}
+
+[treasuremaplevel5]
+{
+get=base_item
+name=a treasure map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 100
+custominttag=Level 5
+}
+
+[treasuremaplevel6]
+{
+get=base_item
+name=a treasure map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 100
+custominttag=Level 6
+}
+
+[dirt]
+{
+get=base_item
+name=dirt
+id=0x913
+}
+
+[dirt2]
+{
+get=base_item
+name=dirt
+id=0x914
+}
+
+[treasurechestlevel1]
+{
+get=base_item
+name=Treasure Chest
+id=0xE40
+weight=3000
+weightmax=400000
+type=63
+movable=1
+maxitems=125
+interval=1 2
+spawnobjlist=dungeontreasureloot1
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 1
+SCRIPT=5401
+}
+
+[treasurechestlevel2]
+{
+get=base_item
+name=Treasure Chest
+id=0xE40
+weight=3000
+weightmax=400000
+type=63
+movable=1
+maxitems=125
+interval=1 2
+spawnobjlist=dungeontreasureloot1
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 2
+SCRIPT=5401
+}
+
+[treasurechestlevel3]
+{
+get=base_item
+name=Treasure Chest
+id=0xE40
+weight=3000
+weightmax=400000
+type=63
+movable=1
+maxitems=125
+interval=1 2
+spawnobjlist=dungeontreasureloot1
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 3
+SCRIPT=5401
+}
+
+[treasurechestlevel4]
+{
+get=base_item
+name=Treasure Chest
+id=0xE40
+weight=3000
+weightmax=400000
+type=63
+movable=1
+maxitems=125
+interval=1 2
+spawnobjlist=dungeontreasureloot1
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 4
+SCRIPT=5401
+}
+
+[treasurechestlevel5]
+{
+get=base_item
+name=Treasure Chest
+id=0xE40
+weight=3000
+weightmax=400000
+type=63
+movable=1
+maxitems=125
+interval=1 2
+spawnobjlist=dungeontreasureloot1
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 5
+SCRIPT=5401
+}
+
+[treasurechestlevel6]
+{
+get=base_item
+name=Treasure Chest
+id=0xE40
+weight=3000
+weightmax=400000
+type=63
+movable=1
+maxitems=125
+interval=1 2
+spawnobjlist=dungeontreasureloot1
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 6
+SCRIPT=5401
+}

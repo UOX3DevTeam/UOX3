@@ -117,6 +117,17 @@ function onCallback1( socket, ourObj )
 		if( !CheckForMiningTool( socket, mChar ))
 			return;
 
+		if( ValidateObject( ourObj ) && ourObj.isItem && (
+			ourObj.sectionID == "treasuremaplevel1" ||
+			ourObj.sectionID == "treasuremaplevel2" ||
+			ourObj.sectionID == "treasuremaplevel3" ||
+			ourObj.sectionID == "treasuremaplevel4" ||
+			ourObj.sectionID == "treasuremaplevel5" )) {
+			socket.tempObj2 = ourObj;
+			TriggerEvent( 5400, "TreasureDigging", mChar );
+			return;
+		}
+
 		var targX = socket.GetWord( 11 );
 		var targY = socket.GetWord( 13 );
 		var targZ = socket.GetSByte( 16 );
