@@ -17,6 +17,8 @@
     Fixed an issue where the vendor BOD script's onSpeech callback would trigger to completion for all BOD dispensing NPCs within the player's radius. (vendor_bdo_dispenser.js)
     Removed AOS era BOD reward items, as the item DFNs do not yet exist. (vendor_bdo_dispenser.js)
     Removed maximum reward penalty for small BODs, as large BODs do not yet exist. (vendor_bdo_dispenser.js)
+    ---
+    Add optional 'm' parameter to 'tele command to allow multiple teleports in a row. (tele.js)
 
 10/11/2023 - Danny S.
     Fixed an issue in the vendor BOD script that prevented vendors from accepting BODs. (vendor_bdo_dispenser.js)

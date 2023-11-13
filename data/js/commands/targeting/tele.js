@@ -78,7 +78,12 @@ function onCallback1( socket, ourObj )
 function command_TELE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 185, socket.language ); // Select teleport target.
-	socket.CustomTarget( 2, targMsg );
+	let callbackId = 2; // Only teleport once.
+	if ( cmdString == "m" )
+	{
+		callbackId = 3; // Teleport until user presses Escape.
+	}
+	socket.CustomTarget( callbackId, targMsg );
 }
 
 // Alias of TELE
@@ -118,6 +123,16 @@ function onCallback2( socket, ourObj )
 			}
 			doTele( mChar, targX, targY, targZ );
 		}
+	}
+}
+
+// Lazy way of implementing multi-teleporting for 'tele m
+function onCallback3( socket, ourObj ) {
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if ( cancelCheck != 255 )
+	{
+		onCallback2( socket, ourObj );
+		socket.CustomTarget( 3 );
 	}
 }
 
