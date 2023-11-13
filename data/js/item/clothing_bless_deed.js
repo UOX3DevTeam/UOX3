@@ -27,6 +27,7 @@ function onCallback0( socket, targetObj )
         return;
 
     // The following check assumes every does their diligence in adding a `good` property to clothing items.
+    // `good` values of 18, 19, and 20 indicate clothes, footwear, and headwear respectively.
     if ( !targetObj.isItem || !targetObj.good || targetObj.good < 18 || targetObj.good > 20 )
     {
         socket.SysMessage( GetDictionaryEntry( 19003, socket.language) ); // You can only bless clothing with this deed!

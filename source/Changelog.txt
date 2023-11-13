@@ -1,3 +1,16 @@
+21/11/2023 - Danny S.
+    Renamed bod_rewards.dfn to bod_rewards_blacksmith.dfn.
+    Added bod_rewards_tailor.dfn with the following items:
+        clothing_bless_deed
+        base_runic_sewing_kit
+        spined_runic_sewing_kit*
+        horned_runic_sewing_kit*
+        barbed_runic_sewing_kit*
+            *Currently function as normal sewing kits
+    Added GOOD DFN tag to item JS Objects. (UOXJSPropertyFuncs.cpp)
+    Added script for handling clothing bless deed usage. (clothing_bless_deed.js)
+    Enabled clothing bless deeds and runic sewing kits as tailoring BOD rewards. (vendor_bdo_dispenser.js)
+
 11/11/2023 - Danny S.
     Implemented tailoring BODs.
         Blacksmiths, armorers, weaponsmiths, and ironworkers have had their bodType custom tag value changed to 1. (malevendors.dfn, femalevendors.dfn)
@@ -17,18 +30,6 @@
     Fixed an issue where the vendor BOD script's onSpeech callback would trigger to completion for all BOD dispensing NPCs within the player's radius. (vendor_bdo_dispenser.js)
     Removed AOS era BOD reward items, as the item DFNs do not yet exist. (vendor_bdo_dispenser.js)
     Removed maximum reward penalty for small BODs, as large BODs do not yet exist. (vendor_bdo_dispenser.js)
-    ---
-    Renamed bod_rewards.dfn to bod_rewards_blacksmith.dfn.
-        Added bod_rewards_tailor.dfn with the following items:
-            clothing_bless_deed
-            base_runic_sewing_kit
-            spined_runic_sewing_kit*
-            horned_runic_sewing_kit*
-            barbed_runic_sewing_kit*
-                *Currently function as normal sewing kits
-        Added GOOD DFN tag to item JS Objects. (UOXJSPropertyFuncs.cpp)
-        Added script for handling clothing bless deed usage. (clothing_bless_deed.js)
-        Enabled clothing bless deeds and runic sewing kits as tailoring BOD rewards. (vendor_bdo_dispenser.js)
 
 10/11/2023 - Danny S.
     Fixed an issue in the vendor BOD script that prevented vendors from accepting BODs. (vendor_bdo_dispenser.js)
