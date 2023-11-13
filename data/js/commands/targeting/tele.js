@@ -97,50 +97,50 @@ function onCallback2( socket, ourObj )
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
 	if( cancelCheck != 255 )
 	{
-		var mChar = socket.currentChar;
-		if( mChar )
-		{
-			var targX;
-			var targY;
-			var targZ;
-			if( !socket.GetWord( 1 ) && ourObj )
-			{
-				targX = ourObj.x;
-				targY = ourObj.y;
-				targZ = ourObj.z;
-			}
-			else
-			{
-				targX = socket.GetWord( 11 );
-				targY = socket.GetWord( 13 );
-				targZ = socket.GetSByte( 16 );
-
-				// If connected with a client lower than v7.0.9, manually add height of targeted tile
-				if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
-				{
-					targZ += GetTileHeight( socket.GetWord( 17 ));
-				}
-			}
-			doTele( mChar, targX, targY, targZ );
-		}
+		doTele( socket, ourObj );
 	}
 }
 
-// Lazy way of implementing multi-teleporting for 'tele m
-function onCallback3( socket, ourObj ) {
+function onCallback3( socket, ourObj )
+{
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
 	if ( cancelCheck != 255 )
 	{
-		onCallback2( socket, ourObj );
+		doTele( socket, ourObj );
 		socket.CustomTarget( 3 );
 	}
 }
 
-function doTele( toTele, targX, targY, targZ )
+function doTele( socket, ourObj )
 {
-	toTele.SoundEffect( 0x01FE, true );
-	toTele.SetLocation( targX, targY, targZ );
-	toTele.StaticEffect( 0x372A, 0x09, 0x06 );
+	var mChar = socket.currentChar;
+	if( mChar )
+	{
+		var targX;
+		var targY;
+		var targZ;
+		if( !socket.GetWord( 1 ) && ourObj )
+		{
+			targX = ourObj.x;
+			targY = ourObj.y;
+			targZ = ourObj.z;
+		}
+		else
+		{
+			targX = socket.GetWord( 11 );
+			targY = socket.GetWord( 13 );
+			targZ = socket.GetSByte( 16 );
+
+			// If connected with a client lower than v7.0.9, manually add height of targeted tile
+			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+			{
+				targZ += GetTileHeight( socket.GetWord( 17 ) );
+			}
+		}
+		toTele.SoundEffect( 0x01FE, true );
+		toTele.SetLocation( targX, targY, targZ );
+		toTele.StaticEffect( 0x372A, 0x09, 0x06 );
+	}
 }
 
 function _restorecontext_() {}
