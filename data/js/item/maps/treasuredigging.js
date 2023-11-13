@@ -20,8 +20,10 @@ function onCallback0( pSock, myTarget )
 	// Getting Tags from Map Item
 	if( pSock.GetWord(1) )
 	{
-		var xtreas = ourObj.GetTag( "xtreas" );
-		var ytreas = ourObj.GetTag( "ytreas" );
+		var myCoords = ourObj.GetTag( "coords" ).split(",");
+		var xtreas = parseInt( myCoords[0] );
+		var ytreas = parseInt( myCoords[1] );
+
 		var level = ourObj.GetTag( "Level" );
 		var radius = 0;
 		var xdif = 0;

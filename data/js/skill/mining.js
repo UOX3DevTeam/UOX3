@@ -117,12 +117,10 @@ function onCallback1( socket, ourObj )
 		if( !CheckForMiningTool( socket, mChar ))
 			return;
 
-		if( ValidateObject( ourObj ) && ourObj.isItem && (
-			ourObj.sectionID == "treasuremaplevel1" ||
-			ourObj.sectionID == "treasuremaplevel2" ||
-			ourObj.sectionID == "treasuremaplevel3" ||
-			ourObj.sectionID == "treasuremaplevel4" ||
-			ourObj.sectionID == "treasuremaplevel5" )) {
+		let treasureMapIDs = [ "treasuremaplevel1", "treasuremaplevel2", "treasuremaplevel3", "treasuremaplevel4", "treasuremaplevel5" ];
+
+		if( ValidateObject( ourObj)  && ourObj.isItem && treasureMapIDs.indexOf( ourObj.sectionID ) != -1 ) 
+		{
 			socket.tempObj2 = ourObj;
 			TriggerEvent( 5400, "TreasureDigging", mChar );
 			return;

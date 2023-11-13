@@ -637,8 +637,7 @@ function TreasureMapCoords( socket, mapItem )
 	mapItem.SetTag( "ytop", ytop );		  										    // saves information for the map to be reopened
 	mapItem.SetTag( "xbottom", xbottom );   										// saves information for the map to be reopened
 	mapItem.SetTag( "ybottom", ybottom ); 										    // saves information for the map to be reopened
-	mapItem.SetTag( "xtreas", x );			    									// Sets the treasure Location for Shovel or Pickaxe.
-	mapItem.SetTag( "ytreas", y );             									    // Sets the treasure Location for Shovel or Pickaxe.
+	mapItem.SetTag( "treas", x + "," + y );											// Sets the treasure Location for Shovel or Pickaxe.
 	mapItem.SetTag( "Decoded", 1 )        										    // Decoded Map Will be set.
 	socket.SoundEffect( 0x249, true );
     // Do something with the coordinates, like print them to the User
@@ -775,7 +774,7 @@ function sendMapCommand( socket, mapItem, command, editable, x, y )
 	toSend.WriteShort( 9, y );                // y location of pin on the map
 	socket.Send( toSend );
 	toSend.Free();
-	pUser.SysMessage( command + "," + editable + "," + x + "," + y );
+	//pUser.SysMessage( command + "," + editable + "," + x + "," + y );
 }
 
 function sendMapDisplay( socket, map )
