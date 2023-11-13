@@ -5155,6 +5155,6 @@
 19001=Select the item of clothing that you want to bless.
 19002=The item has been blessed.
 19003=You can only bless clothing with this deed!
-19004=Items must be equipped or in your backpack to be blessed.
+19004=Items must be equipped or in your backpack to bless them.
 }
 EOF

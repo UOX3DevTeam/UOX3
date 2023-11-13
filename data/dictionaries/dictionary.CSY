@@ -5151,5 +5151,10 @@
 18771=Plná sada rangerské zbroje.
 // [18800-19000] Vlastnosti AOS
 18800=%i% Bonus za hojení obvazů
+// Clothing Bless Deed
+19001=Vyberte oděv, který chcete požehnat.
+19002=Položka byla požehnána.
+19003=Tímto úkonem můžete žehnat pouze oblečení!
+19004=Předměty musí být vybaveny nebo musí být v batohu, abyste je mohli požehnat.
 }
 EOF

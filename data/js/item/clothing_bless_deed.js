@@ -38,7 +38,7 @@ function onCallback0( socket, targetObj )
         const targetObjOwner = GetPackOwner( targetObj, 0 );
         if ( targetObjOwner == null || targetObjOwner.serial != pUser.serial )
         {
-            socket.SysMessage( GetDictionaryEntry( 19004, socket.language ) ); // Items must be equipped or in your backpack to be blessed.
+            socket.SysMessage( GetDictionaryEntry( 19004, socket.language ) ); // Items must be equipped or in your backpack to bless them.
             return;
         }
         targetObj.isNewbie = true;
