@@ -799,3 +799,15 @@ function sendMapEditable( socket, mapItem, editable )
 	sendMapCommand( socket, mapItem, 0x07, editable ? 1 : 0, 0, 0 );
 	//pUser.SysMessage("sendMapEditable" + ", "+ editable); // Debug msg
 }
+
+function onTooltip( map, pSocket ) 
+{
+	var tooltipText = "";
+
+	switch( map.GetTag( "found" )) 
+	{
+		case 1: tooltipText = ( "Completed" ); break;
+	}
+
+	return tooltipText;
+}
