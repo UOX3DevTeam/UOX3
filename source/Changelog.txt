@@ -1,3 +1,6 @@
+13/11/2023 - Dragon Slayer
+      Added treasure hunting system; NPCs can now drop level 1-5 treasure maps which players can decode and dig up for epic loot.
+
 11/11/2023 - Danny S.
     Implemented tailoring BODs.
         Blacksmiths, armorers, weaponsmiths, and ironworkers have had their bodType custom tag value changed to 1. (malevendors.dfn, femalevendors.dfn)
