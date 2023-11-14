@@ -421,19 +421,42 @@ function CraftedMapCoords( socket, mapItem )
 {
 	var pUser = socket.currentChar;
 	var skillValue = ( pUser.baseskills.cartography/10 ).toFixed( 1 );
+
 	// Define the minimum and maximum distances
-	var minDist = 10;
-	var maxDist = 200;
+	if( mapItem.sectionID == "craftedlocalmap" )
+	{
+		var minDist = 32;
+	}
+	else if( mapItem.sectionID == "craftedcitymap" ) 
+	{
+		var minDist = 64;
+	}
+	else 
+	{
+		var minDist = 92;
+	}
+		var maxDist = 200;
 
 	// Linear interpolation for distance based on skill
 	var dist = Math.round( minDist + ( maxDist - minDist ) * ( skillValue / 100 ));
 
-	// Define the minimum and maximum sizes
-	var minSize = 200;
-	var maxSize = 400;
+	if( mapItem.sectionID == "craftedlocalmap" )
+	{
+		var size = 200;
+	}
+	else if( mapItem.sectionID == "craftedcitymap" )
+	{
+		var size = 300;
+	}
+	else
+	{
+		// Define the minimum and maximum sizes
+		var minSize = 300;
+		var maxSize = 400;
 
-	// Linear interpolation for size based on skill
-	var size = Math.round( minSize + ( maxSize - minSize ) * ( skillValue / 100 ));
+		// Linear interpolation for size based on skill
+		var size = Math.round( minSize + ( maxSize - minSize ) * ( skillValue / 100 ));
+	}
 
 	//sendMapDetails( socket, mapItem, size, size, pUser.x - dist, pUser.y - dist, pUser.x + dist, pUser.y + dist );
 	sendMapDetails( socket, mapItem, size, size, ( pUser.x - dist ), ( pUser.y - dist ), ( pUser.x + dist ), ( pUser.y + dist ));

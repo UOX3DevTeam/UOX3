@@ -295,10 +295,28 @@ SCRIPT=1503
 custominttag=Map 33
 }
 
+[craftedlocalmap]
+{
+get=base_item
+name=a local map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 50
+}
+
 [craftedcitymap]
 {
 get=base_item
 name=a city map
+id=0x14EC
+SCRIPT=1503
+custominttag=Map 50
+}
+
+[craftedseachart]
+{
+get=base_item
+name=a sea chart
 id=0x14EC
 SCRIPT=1503
 custominttag=Map 50
