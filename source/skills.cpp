@@ -117,8 +117,8 @@ void CSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 	{
 		c->SetRank( rank );
 
-		const double MIN_MULTIPLIER = 0.5; // Minimum rank 1 multiplier
-		const double PER_RANK_MULTIPLIER = 0.10; // Increase stats for each rank
+		const double MIN_MULTIPLIER = 0.6; // Minimum rank 1 multiplier
+		const double PER_RANK_MULTIPLIER = 0.05; // Increase stats for each rank
 
 		double rankMultiplier = MIN_MULTIPLIER + (rank - 1) * PER_RANK_MULTIPLIER;
 

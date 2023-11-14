@@ -1,8 +1,8 @@
 14/11/2023 - Warden
 	Fixed crafting rank sytem modifiers.
-		Items crafted at Rank 1 will now have their stats multiplied by 50% of the DFN values for the following stats:
+		Items crafted at Rank 1 will now have their stats multiplied by 60% of the DFN values for the following stats:
 			Damage (both Lo and Hi), Resist (Physical), HP (and MaxHP), Buy Value, Max Uses
-		For each rank above 1, the stat multiplier is increased by 10%, meaning a Rank 10 crafted item will have 140% DFN value for the above stats
+		For each rank above 1, the stat multiplier is increased by 5%, meaning a Rank 10 crafted item will have 105% DFN value for the above stats
 
 13/11/2023 - Warden
 	Fixed an issue in which the timer callback for spinning wool, flax, and thread lost context, causing the spinning wheel to spin endlessly.
