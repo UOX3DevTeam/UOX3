@@ -117,38 +117,38 @@ void CSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 	{
 		c->SetRank( rank );
 
+		const double MIN_MULTIPLIER = 0.5; // Minimum rank 1 multiplier
+		const double PER_RANK_MULTIPLIER = 0.10; // Increase stats for each rank
+
+		double rankMultiplier = MIN_MULTIPLIER + (rank - 1) * PER_RANK_MULTIPLIER;
+
 		if( c->GetLoDamage() > 0 )
 		{
-			c->SetLoDamage( static_cast<SI16>(( rank * c->GetLoDamage() ) / 10 ));
+			c->SetLoDamage( static_cast<SI16>(c->GetLoDamage() * rankMultiplier));
 		}
 		if( c->GetHiDamage() > 0 )
 		{
-			c->SetHiDamage( static_cast<SI16>(( rank * c->GetHiDamage() ) / 10 ));
+			c->SetHiDamage( static_cast<SI16>(c->GetHiDamage() * rankMultiplier));
 		}
 		if( c->GetResist( PHYSICAL ) > 0 )
 		{
-			c->SetResist( static_cast<UI16>(( rank * c->GetResist( PHYSICAL )) / 10 ), PHYSICAL );
+			c->SetResist( static_cast<UI16>(c->GetResist( PHYSICAL ) * rankMultiplier), PHYSICAL );
 		}
 		if( c->GetHP() > 0 )
 		{
-			c->SetHP( static_cast<SI16>(( rank * c->GetHP() ) / 10 ));
+			c->SetHP( static_cast<SI16>(c->GetHP() * rankMultiplier));
 		}
 		if( c->GetMaxHP() > 0 )
 		{
-			c->SetMaxHP( static_cast<SI16>(( rank * c->GetMaxHP() ) / 10 ));
+			c->SetMaxHP( static_cast<SI16>(c->GetMaxHP() * rankMultiplier));
 		}
 		if( c->GetBuyValue() > 0 )
 		{
-			c->SetBuyValue( static_cast<UI32>(( rank * c->GetBuyValue() ) / 10 ));
+			c->SetBuyValue( static_cast<UI32>(c->GetBuyValue() * rankMultiplier));
 		}
 		if( c->GetMaxUses() > 0 )
 		{
-			c->SetUsesLeft( static_cast<UI16>(( rank * c->GetMaxUses() ) / 10 ));
-		}
-		if( c->GetId() == 0x22c5 && c->GetMaxHP() > 0 ) // Runebook
-		{
-			// Max charges for runebook stored in maxHP property, defaults to 10, ranges from 5-10 based on rank
-			c->SetMaxHP( static_cast<UI16>( std::max( static_cast<UI16>( 5 ), static_cast<UI16>(( rank * c->GetMaxHP() ) / 10 ))));
+			c->SetUsesLeft( static_cast<UI16>(c->GetMaxUses() * rankMultiplier));
 		}
 
 		// Convert item's rank to a value between 1 and 10, to fit rank system messages
