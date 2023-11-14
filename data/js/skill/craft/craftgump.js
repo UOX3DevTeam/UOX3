@@ -10,6 +10,7 @@ const Bowcraft = 4029;
 const Tailoring = 4030;
 const Tinkering = 4032;
 const Cooking = 4034;
+const Cartography = 4035;
 
  // If enabled, players can craft coloured variants of weapons using Blacksmithing skill, though
  // unless the craftItems array in blacksmithing.js is updated with specific create entries for the
@@ -129,6 +130,10 @@ function CraftingGumpMenu( myGump, socket )
 			grouplist = [11991, 11992, 11993, 11994, 11995, 11996, 11997, 11998, 11999]; // CATEGORIES
 			gumpMenuName = 11990; // Tinkering Menu
 			break;
+		case 8: // Cartography
+			grouplist = [13001]; //CATEGORIES
+			gumpMenuName = 13000;//Cartography Menu
+			break;
 	}
 
 	myGump.AddPage( 0 );
@@ -237,7 +242,7 @@ function CraftingGumpMenu( myGump, socket )
 			break;
 	}
 
-	if( craftingSkillUsed != 2 && craftingSkillUsed != 6 )
+	if( craftingSkillUsed != 2 && craftingSkillUsed != 6 && craftingSkillUsed != 8 )
 	{
 		myGump.AddText( 50, 362, textHue, GetDictionaryEntry( resourcename, socket.language ) + " (" + resource.toString() + ")" );
 
@@ -327,6 +332,9 @@ function onGumpPress( pSock, pButton, gumpData )
 					break;
 				case 7:
 					TriggerEvent( Tinkering, "PageX", pSock, pUser, 1 );
+					break;
+				case 8:
+					TriggerEvent(Cartography, "PageX", pSock, pUser, 1);
 					break;
 				default:
 					break;

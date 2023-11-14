@@ -4770,6 +4770,16 @@
 12007=To nie jest zasób klejnotów!
 12008=Wybierz materiał do użycia:
 12009=Dodałeś zamek i klucz do pojemnika!
+// 13000 - 13500 Umiejętność tworzenia kartografii
+13000=Menu kartografii
+13001=Mapy
+13002=PUSTE PRZEWIJANIE
+13003=MAPA
+13004=Puste zwoje lub mapy
+13100=Mapa lokalna
+13101=Mapa miasta
+13102=Mapa morza
+13103=Mapa świata
 // 15000 Umiejętności
 15000=Alchemia
 15001=Anatomia

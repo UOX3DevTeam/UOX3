@@ -204,6 +204,7 @@
 4032=skill/craft/tinkering.js
 4033=skill/craft/crafting_complete.js
 4034=skill/craft/cooking.js
+4035=skill/craft/cartography.js
 4050=skill/mining.js
 4055=skill/snooping.js
 
