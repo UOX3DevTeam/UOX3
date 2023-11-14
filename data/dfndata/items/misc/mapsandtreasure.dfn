@@ -304,62 +304,61 @@ SCRIPT=1503
 custominttag=Map 50
 }
 
-[treasuremaplevel1]
+[base_treasure_map]
 {
 get=base_item
 name=a treasure map
 id=0x14EC
 SCRIPT=1503
+custominttag=Map 100
+custominttag=Level 0
+}
+
+[treasuremaplvl0]
+{
+get=base_treasure_map
+custominttag=Map 100
+custominttag=Level 0
+}
+
+[treasuremaplvl1]
+{
+get=base_treasure_map
 custominttag=Map 100
 custominttag=Level 1
 }
 
-[treasuremaplevel2]
+[treasuremaplvl2]
 {
-get=base_item
-name=a treasure map
-id=0x14EC
-SCRIPT=1503
+get=base_treasure_map
 custominttag=Map 100
 custominttag=Level 2
 }
 
-[treasuremaplevel3]
+[treasuremaplvl3]
 {
-get=base_item
-name=a treasure map
-id=0x14EC
-SCRIPT=1503
+get=base_treasure_map
 custominttag=Map 100
 custominttag=Level 3
 }
 
-[treasuremaplevel4]
+[treasuremaplvl4]
 {
-get=base_item
-name=a treasure map
-id=0x14EC
-SCRIPT=1503
+get=base_treasure_map
 custominttag=Map 100
 custominttag=Level 4
 }
 
-[treasuremaplevel5]
+[treasuremaplvl5]
 {
-get=base_item
-name=a treasure map
-id=0x14EC
-SCRIPT=1503
+get=base_treasure_map
 custominttag=Map 100
 custominttag=Level 5
 }
 
-[treasuremaplevel6]
+[treasuremaplvl6]
 {
-get=base_item
-name=a treasure map
-id=0x14EC
-SCRIPT=1503
+get=base_treasure_map
 custominttag=Map 100
 custominttag=Level 6
 }
@@ -378,7 +377,7 @@ name=dirt
 id=0x914
 }
 
-[treasurechestlevel1]
+[base_treasure_chest]
 {
 get=base_item
 name=Treasure Chest
@@ -389,99 +388,70 @@ type=63
 movable=1
 maxitems=125
 interval=1 2
-spawnobjlist=dungeontreasureloot1
+SCRIPT=5401
+}
+
+[treasurechestlevel0]
+{
+get=base_treasure_chest
+spawnobjlist=treasurechestloot0
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 0
+}
+
+[treasurechestlevel1]
+{
+get=base_treasure_chest
+spawnobjlist=treasurechestloot1
 morey=0x01 0x01 0x34 0x48
 morez=0x01 0x32 0x0 0x37
 custominttag=Level 1
-SCRIPT=5401
 }
 
 [treasurechestlevel2]
 {
-get=base_item
-name=Treasure Chest
-id=0xE40
-weight=3000
-weightmax=400000
-type=63
-movable=1
-maxitems=125
-interval=1 2
-spawnobjlist=dungeontreasureloot1
+get=base_treasure_chest
+spawnobjlist=treasurechestloot2
 morey=0x01 0x01 0x34 0x48
 morez=0x01 0x32 0x0 0x37
 custominttag=Level 2
-SCRIPT=5401
 }
 
 [treasurechestlevel3]
 {
-get=base_item
-name=Treasure Chest
-id=0xE40
-weight=3000
-weightmax=400000
-type=63
-movable=1
-maxitems=125
-interval=1 2
-spawnobjlist=dungeontreasureloot1
+get=base_treasure_chest
+spawnobjlist=treasurechestloot3
 morey=0x01 0x01 0x34 0x48
 morez=0x01 0x32 0x0 0x37
 custominttag=Level 3
-SCRIPT=5401
 }
 
 [treasurechestlevel4]
 {
-get=base_item
-name=Treasure Chest
-id=0xE40
-weight=3000
-weightmax=400000
-type=63
-movable=1
-maxitems=125
-interval=1 2
-spawnobjlist=dungeontreasureloot1
+get=base_treasure_chest
+spawnobjlist=treasurechestloot4
 morey=0x01 0x01 0x34 0x48
 morez=0x01 0x32 0x0 0x37
 custominttag=Level 4
-SCRIPT=5401
 }
 
 [treasurechestlevel5]
 {
-get=base_item
+get=base_treasure_chest
 name=Treasure Chest
-id=0xE40
-weight=3000
-weightmax=400000
-type=63
-movable=1
-maxitems=125
-interval=1 2
-spawnobjlist=dungeontreasureloot1
+spawnobjlist=treasurechestloot5
 morey=0x01 0x01 0x34 0x48
 morez=0x01 0x32 0x0 0x37
 custominttag=Level 5
-SCRIPT=5401
 }
 
 [treasurechestlevel6]
 {
-get=base_item
+get=base_treasure_chest
 name=Treasure Chest
-id=0xE40
-weight=3000
-weightmax=400000
-type=63
-movable=1
-maxitems=125
-interval=1 2
-spawnobjlist=dungeontreasureloot1
+spawnobjlist=treasurechestloot6
 morey=0x01 0x01 0x34 0x48
 morez=0x01 0x32 0x0 0x37
 custominttag=Level 6
-SCRIPT=5401
 }

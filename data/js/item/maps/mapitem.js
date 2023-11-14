@@ -1,8 +1,34 @@
+/*When a player uses a certain item (referred to as mapItem), it triggers the onUseChecked function.
+This function then sets up various preset maps based on the item used, such as maps for different cities or worlds within the game.
+
+The script defines a set of map presets in an object called MAP_PRESETS. Each preset includes information like width, height,
+and coordinates defining the boundaries of the map.
+
+The mapPresets function is called to handle the specifics of displaying the chosen map. 
+It looks at the type of map specified by the mapItem and selects the appropriate preset from the MAP_PRESETS object.
+It then sends commands to display and detail the map to the player's game interface.
+
+For certain special maps like crafted city maps and treasure maps, additional actions are taken. For example,
+if a player uses a crafted city map, the script calculates the size and boundaries of the map based on the player's skill level.
+If it's a treasure map, the script checks if the map has been decoded and displays the treasure location on the map, indicating where the player should dig for a reward.
+*/
+
 function onUseChecked( pUser, mapItem )
 {
 	var socket = pUser.socket;
-	mapPresets( socket, mapItem );
-	pUser.SetTempTag( "parentMapSerial", ( mapItem.serial ).toString() );
+	if( socket && mapItem && mapItem.isItem )
+	{
+		var itemOwner = GetPackOwner(mapItem, 0);
+		if( itemOwner == null || itemOwner.serial != pUser.serial )
+		{
+			pUser.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
+			return false;
+		}
+
+		var socket = pUser.socket;
+		mapPresets( socket, mapItem );
+		pUser.SetTempTag("parentMapSerial", ( mapItem.serial).toString() );
+	}
 }
 
 // Define the MAP_PRESETS object
@@ -288,35 +314,44 @@ function mapPresets( socket, mapItem )
 		case 50:// Crafted City Map
 			if ( mapItem.GetTag( "Drawn" ) == 1 )
 			{
-				var height = mapItem.GetTag( "height" );
-				var width = mapItem.GetTag( "width" );
-				var xtop = mapItem.GetTag( "xtop" );
-				var ytop = mapItem.GetTag( "ytop" );
-				var xbottom = mapItem.GetTag( "xbottom" );
-				var ybottom = mapItem.GetTag( "ybottom" );
+				var mydimensions = mapItem.GetTag( "dimensions" ).split(",");
+				var height = parseInt( mydimensions[0] );
+				var width = parseInt( mydimensions[1] );
+
+				var mybox = mapItem.GetTag( "boundingbox" ).split(",");
+				var xtop = parseInt( mybox[0] );
+				var ytop = parseInt( mybox[1] );
+				var xbottom = parseInt( mybox[2] );
+				var ybottom = parseInt( mybox[3] );
+
 				sendMapDetails( socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
 				sendMapEditable( socket, mapItem, false );
 				break;
 			}
 			else
 			{
-				CraftedCityMapCoords( socket, mapItem );
+				CraftedMapCoords( socket, mapItem );
 				break;
 			}
 		case 100:// Treasure Map
 			// Call the TreasureMapCoords
-			if (mapItem.GetTag( "Decoded" ) == 1 )
+			if( mapItem.GetTag( "Decoded" ) == 1 )
 			{
-				var height = mapItem.GetTag( "height" );
-				var width = mapItem.GetTag( "width" );
-				var xtop = mapItem.GetTag( "xtop" );
-				var ytop = mapItem.GetTag( "ytop" );
-				var xbottom = mapItem.GetTag( "xbottom" );
-				var ybottom = mapItem.GetTag( "ybottom" );
+				var mydimensions = mapItem.GetTag("dimensions").split(",");
+				var height = parseInt(mydimensions[0]);
+				var width = parseInt(mydimensions[1]);
+
+				var mybox = mapItem.GetTag( "boundingbox" ).split(",");
+				var xtop = parseInt( mybox[0] );
+				var ytop = parseInt( mybox[1] );
+				var xbottom = parseInt( mybox[2] );
+				var ybottom = parseInt( mybox[3] );
+
 				sendMapDetails( socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
 				sendMapEditable( socket, mapItem, false );
 				socket.SoundEffect( 0x249, true );
-				if (mapItem.GetTag("found") == 1) 
+
+				if( mapItem.GetTag("found") == 1 ) 
 				{
 					pUser.SysMessage("This treasure hunt has already been completed.")
 				}
@@ -336,39 +371,39 @@ function mapPresets( socket, mapItem )
 				switch (level)
 				{
 					case 1:
-						if ( skillValue >= 27.0 )
+						if( skillValue >= 27.0 )
 						{
 							decoded = true;
 						}
 						break;
 					case 2:
-						if ( skillValue >= 71.0 )
+						if( skillValue >= 71.0 )
 						{
 							decoded = true;
 						}
 						break;
 					case 3:
-						if ( skillValue >= 81.0 )
+						if( skillValue >= 81.0 )
 						{
 							decoded = true;
 						}
 						break;
 					case 4:
-						if ( skillValue >= 91.0 )
+						if( skillValue >= 91.0 )
 						{
 							decoded = true;
 						}
 						break;
 					case 5:
 					case 6:
-						if ( skillValue >= 100.0 )
+						if( skillValue >= 100.0 )
 						{
 							decoded = true;
 						}
 						break;
 				}
 
-				if (decoded)
+				if( decoded )
 				{
 					pUser.SysMessage( "You decoded the map!" );
 					mapItem.name = "tattered treasure map";
@@ -382,32 +417,28 @@ function mapPresets( socket, mapItem )
 	}
 }
 
-function CraftedCityMapCoords( socket, mapItem )
+function CraftedMapCoords( socket, mapItem )
 {
-	var skillValue = ( pUser.baseskills.cartograph/10 ).toFixed( 1 );
-	var dist = dist = 64 + Math.floor( skillValue * 4 );
-	if (dist < 200)
-	{
-		dist = 200;
-	}
+	var pUser = socket.currentChar;
+	var skillValue = ( pUser.baseskills.cartography/10 ).toFixed( 1 );
+	// Define the minimum and maximum distances
+	var minDist = 10;
+	var maxDist = 200;
 
-	var size = size = 32 + Math.floor( skillValue * 2 );
+	// Linear interpolation for distance based on skill
+	var dist = Math.round( minDist + ( maxDist - minDist ) * ( skillValue / 100 ));
 
-	if ( size < 200 )
-	{
-		size = 200;
-	}
-	else if ( size > 400 )
-	{
-		size = 400;
-	}
-	sendMapDetails( socket, mapItem, size, size, pUser.x - dist, pUser.y - dist, pUser.x + dist, pUser.y + dist );
-	mapItem.SetTag( "height", size );   // saves information for the map to be reopened
-	mapItem.SetTag( "width", size );     // saves information for the map to be reopened
-	mapItem.SetTag( "xtop", pUser.x - dist );       // saves information for the map to be reopened
-	mapItem.SetTag( "ytop", pUser.y - dist );		  // saves information for the map to be reopened
-	mapItem.SetTag( "xbottom", pUser.x + dist ); // saves information for the map to be reopened
-	mapItem.SetTag( "ybottom", pUser.y + dist ); // saves information for the map to be reopened
+	// Define the minimum and maximum sizes
+	var minSize = 200;
+	var maxSize = 400;
+
+	// Linear interpolation for size based on skill
+	var size = Math.round( minSize + ( maxSize - minSize ) * ( skillValue / 100 ));
+
+	//sendMapDetails( socket, mapItem, size, size, pUser.x - dist, pUser.y - dist, pUser.x + dist, pUser.y + dist );
+	sendMapDetails( socket, mapItem, size, size, ( pUser.x - dist ), ( pUser.y - dist ), ( pUser.x + dist ), ( pUser.y + dist ));
+	mapItem.SetTag( "dimensions", size + "," + size );																						// saves information for the map to be reopened
+	mapItem.SetTag( "boundingbox", ( pUser.x - dist ) + "," + ( pUser.y - dist ) + "," + ( pUser.x + dist ) + "," + ( pUser.y + dist ));	// saves information for the map to be reopened
 	mapItem.SetTag( "Drawn", 1 )
 }
 
@@ -628,17 +659,14 @@ function TreasureMapCoords( socket, mapItem )
 	var xbottom = x + 300
 	var ybottom = y + 300
 
-	sendMapDetails( socket, mapItem, height, width, xtop, ytop, xbottom, ybottom ); // Sets the coords for the map player opens.
-	sendAddMapPin( socket, mapItem, 100, 100 );                                     // Pin Never changes Map changes.
-	sendMapEditable( socket, mapItem, false);                                       // Sets the map so you cant edit the pin.
-	mapItem.SetTag( "height", height );											    // saves information for the map to be reopened
-	mapItem.SetTag( "width", width );     										    // saves information for the map to be reopened
-	mapItem.SetTag( "xtop", xtop );       										    // saves information for the map to be reopened
-	mapItem.SetTag( "ytop", ytop );		  										    // saves information for the map to be reopened
-	mapItem.SetTag( "xbottom", xbottom );   										// saves information for the map to be reopened
-	mapItem.SetTag( "ybottom", ybottom ); 										    // saves information for the map to be reopened
-	mapItem.SetTag( "coords", x + "," + y );										// Sets the treasure Location for Shovel or Pickaxe.
-	mapItem.SetTag( "Decoded", 1 )        										    // Decoded Map Will be set.
+	sendMapDetails( socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );		// Sets the coords for the map player opens.
+	sendAddMapPin( socket, mapItem, 100, 100 );											// Pin Never changes Map changes.
+	sendMapEditable( socket, mapItem, false);											// Sets the map so you cant edit the pin.
+
+	mapItem.SetTag( "dimensions", height + "," + width );								// saves information for the map to be reopened
+	mapItem.SetTag( "boundingbox", xtop + "," + ytop + "," + xbottom + "," + ybottom );	// saves information for the map to be reopened
+	mapItem.SetTag( "coords", x + "," + y );											// Sets the treasure Location for Shovel or Pickaxe.
+	mapItem.SetTag( "Decoded", 1 )        												// Decoded Map Will be set.
 	socket.SoundEffect( 0x249, true );
     // Do something with the coordinates, like print them to the User
 	//pUser.SysMessage( "x: " + x + ", y: " + y );
@@ -799,11 +827,11 @@ function sendMapEditable( socket, mapItem, editable )
 	//pUser.SysMessage("sendMapEditable" + ", "+ editable); // Debug msg
 }
 
-function onTooltip( map, pSocket ) 
+function onTooltip( map, pSocket )
 {
 	var tooltipText = "";
 
-	switch( map.GetTag( "found" )) 
+	switch( map.GetTag( "found" ))
 	{
 		case 1: tooltipText = ( "Completed" ); break;
 	}

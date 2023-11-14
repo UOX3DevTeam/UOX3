@@ -20,10 +20,9 @@ function onCallback0( pSock, myTarget )
 	// Getting Tags from Map Item
 	if( pSock.GetWord(1) )
 	{
-		var myCoords = ourObj.GetTag( "coords" ).split(",");
+		var myCoords = ourObj.GetTag("coords").split(",");
 		var xtreas = parseInt( myCoords[0] );
 		var ytreas = parseInt( myCoords[1] );
-
 		var level = ourObj.GetTag( "Level" );
 		var radius = 0;
 		var xdif = 0;
@@ -32,6 +31,12 @@ function onCallback0( pSock, myTarget )
 		if( pUser.x == xtreas && pUser.y == ytreas )
 		{
 			pUser.SysMessage("You stop digging because something is directly on top of the treasure chest");
+			return false;
+		}
+
+		if( ourObj.GetTag("Decoded") == 0 )
+		{
+			pUser.SysMessage( "You did not decode this map and have no clue where to look for the treasure." );
 			return false;
 		}
 
@@ -76,7 +81,7 @@ function onCallback0( pSock, myTarget )
 		else
 			radius = 4;
 
-		var mapElev = GetMapElevation(xtreas.x, ytreas.y, pUser.worldnumber);;
+		//var mapElev = GetMapElevation(xtreas.x, ytreas.y, pUser.worldnumber);;
 
 		// Checking if we had correct point
 		if (xdif <= radius && ydif <= radius)

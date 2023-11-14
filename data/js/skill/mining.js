@@ -117,7 +117,7 @@ function onCallback1( socket, ourObj )
 		if( !CheckForMiningTool( socket, mChar ))
 			return;
 
-		let treasureMapIDs = [ "treasuremaplevel1", "treasuremaplevel2", "treasuremaplevel3", "treasuremaplevel4", "treasuremaplevel5" ];
+		let treasureMapIDs = ["treasuremaplvl0", "treasuremaplvl1", "treasuremaplvl2", "treasuremaplvl3", "treasuremaplvl4", "treasuremaplvl5", "treasuremaplvl6" ];
 
 		if( ValidateObject( ourObj)  && ourObj.isItem && treasureMapIDs.indexOf( ourObj.sectionID ) != -1 ) 
 		{
