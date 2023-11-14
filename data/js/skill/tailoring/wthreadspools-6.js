@@ -89,7 +89,7 @@ function onCallback0( pSocket, myTarget )
 		pUser.UseResource( 1, iUsed.id ); 	// remove cotton
 		pUser.SoundEffect( 0x021b, true );
 		myTarget.id++;
-		myTarget.StartTimer( 2000, 0, true );
+		myTarget.StartTimer( 2000, 0, 132 );
 		var itemMade = CreateDFNItem( pSocket, pUser, "0x0fa0", 6, "ITEM", true );  // makes some spools of thread
 		pSocket.SysMessage( GetDictionaryEntry( 6042, pSocket.language )); // You spin some spools of thread, and put them in your backpack.
 	}
