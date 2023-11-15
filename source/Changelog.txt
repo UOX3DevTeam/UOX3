@@ -1,3 +1,12 @@
+14/11/2023 - Warden
+	Fixed crafting rank sytem modifiers.
+		Items crafted at Rank 1 will now have their stats multiplied by 60% of the DFN values for the following stats:
+			Damage (both Lo and Hi), Resist (Physical), HP (and MaxHP), Buy Value, Max Uses
+		For each rank above 1, the stat multiplier is increased by 5%, meaning a Rank 10 crafted item will have 105% DFN value for the above stats
+
+13/11/2023 - Warden
+	Fixed an issue in which the timer callback for spinning wool, flax, and thread lost context, causing the spinning wheel to spin endlessly.
+
 13/11/2023 - Dragon Slayer
       Added treasure hunting system; NPCs can now drop level 1-5 treasure maps which players can decode and dig up for epic loot.
 
@@ -32,6 +41,12 @@
 
 10/11/2023 - Dragon Slayer
 	Added IDs for stocking items to cItem::GetPackType() in items.cpp, so they can be used as containers
+
+09/11/2023 - Dragon Slayer, Xuri
+	Fixed Smelting items with 0 hp (js blacksmithing)
+	Fixed Unraveling items with 0 hp (js tailoring)
+	Added Tongs, Scissors, Tinkering Tools to material types (js material_types)
+	Updated ApplyRank to set hp,maxhp and maxuses to 1. (cpp skills)
 
 29/10/2023 - Dragon Slayer, Xuri
 	Added DFN entries for first aid belt. (dfn item/gear/clothing/ej_clothing)
