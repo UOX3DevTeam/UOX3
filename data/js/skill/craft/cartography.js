@@ -141,7 +141,17 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 102: // Sea Chart
 			makeID = 2002; timerID = 1; break;
 		case 103: // World map
-			makeID = 2003; timerID = 1; break;
+			mapID = 0;
+			switch( pUser.worldnumber )
+			{
+				case 0: mapID = 2003; break;//fel
+				case 1: mapID = 2003; break;//tram
+				case 2: mapID = 2004; break;//ilsh
+				case 3: mapID = 2005; break;//malas
+				case 4: mapID = 2006; break;//Tokuno
+				case 5: mapID = 2007; break;//TerMur
+			}
+			makeID = mapID; timerID = 1; break;
 		// Show Item Details
 		case 2100: // Local Map
 			itemDetailsID = 2000; break;
@@ -157,6 +167,7 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	if( makeID != 0 )
 	{
+		pUser.AddScriptTrigger(4033); // crafting_complete.js for applying map settings
 		MakeItem( pSock, pUser, makeID );
 		if( GetServerSetting( "ToolUseLimit" ))
 		{
