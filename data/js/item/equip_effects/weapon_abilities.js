@@ -76,14 +76,30 @@ there will be a small chance to perform a Crushing Blow, which is a hit for doub
 The base chance to inflict this special damage is your Anatomy skill level divided by 4. The only weapon that can be used for this special attack is the War Hammer
 */
 
-function CrushingBlow( pAttacker, pDefender )
+function ConcussionBlow( pAttacker, pDefender ) 
 {
-	var staminaLoss = Math.floor( Math.random() * ( 5 - 3 + 1 )) + 3;
-	pDefender.TextMessage( GetDictionaryEntry( 17703, pDefender.socket.language ), false, 0x3b2, 0, pDefender.serial );// You receive a crushing blow!
-	pDefender.stamina -= staminaLoss;
+	if( pDefender.socket )
+	{
+		pDefender.TextMessage(GetDictionaryEntry( 17705, pDefender.socket.language ), false, 0x3b2, 0, pDefender.serial );// You receive a concussion blow!
+	}
 
-	pAttacker.TextMessage( GetDictionaryEntry( 17704, pDefender.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a crushing blow!
-	pAttacker.SoundEffect( 0x11C, true );
+	// Drop pDefender's tempint by half their intelligence!
+	var cbTempIntDiff = Math.round( pDefender.intelligence / 2 );
+	pDefender.tempint -= cbTempIntDiff;
+
+	// Store the amount dropped in a tag, to be retrieved and reversed after timer has ran out
+	pDefender.SetTag( "cbTempIntDiff", cbTempIntDiff );
+
+	// Mark pDefender as concussed
+	pDefender.SetTag( "concussion", 1 );
+
+	pDefender.StartTimer( 30000, 2, true );
+
+	if( pAttacker.socket ) 
+	{
+		pAttacker.TextMessage( GetDictionaryEntry( 17706, pAttacker.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a concussion blow!
+		pAttacker.SoundEffect( 0x11C, true );
+	}
 }
 
 /*
@@ -111,8 +127,12 @@ function onTimer( timerObj, timerID )
 		timerObj.frozen = false;
 	}
 
-	if( timerID == 2 ) 
+	if( timerID == 2 )
 	{
-		pDefender.SetTempTag( "concussion", 0 );
+		timerObj.tempint += parseInt( timerObj.GetTag( "cbTempIntDiff" ));
+		timerObj.SetTag( "cbTempIntDiff", null );
+		timerObj.SetTag( "concussion", null );
 	}
 }
+
+function _restorecontext_() {}
