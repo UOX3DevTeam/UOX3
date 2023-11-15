@@ -130,20 +130,20 @@ void CSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 			c->SetResist( static_cast<UI16>(( rank * c->GetResist( PHYSICAL )) / 10 ), PHYSICAL );
 		}
 		if( c->GetHP() > 0 )
-		{
-			c->SetHP( static_cast<SI16>(( rank * c->GetHP() ) / 10 ));
-		}
-		if( c->GetMaxHP() > 0 )
-		{
-			c->SetMaxHP( static_cast<SI16>(( rank * c->GetMaxHP() ) / 10 ));
-		}
+        {
+            c->SetHP( std::max( static_cast<SI16>( 1 ), static_cast<SI16>(( rank * c->GetHP() ) / 10 )));
+        }
+        if( c->GetMaxHP() > 0 )
+        {
+            c->SetMaxHP( std::max( static_cast<SI16>( 1 ), static_cast<SI16>(( rank * c->GetMaxHP() ) / 10 )));
+        }
 		if( c->GetBuyValue() > 0 )
 		{
 			c->SetBuyValue( static_cast<UI32>(( rank * c->GetBuyValue() ) / 10 ));
 		}
 		if( c->GetMaxUses() > 0 )
 		{
-			c->SetUsesLeft( static_cast<UI16>(( rank * c->GetMaxUses() ) / 10 ));
+			c->SetUsesLeft( std::max( static_cast<SI16>( 1 ), static_cast<SI16>(( rank * c->GetMaxUses() ) / 10 )));
 		}
 		if( c->GetId() == 0x22c5 && c->GetMaxHP() > 0 ) // Runebook
 		{
