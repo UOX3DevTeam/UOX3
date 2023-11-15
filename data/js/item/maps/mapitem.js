@@ -327,10 +327,11 @@ function mapPresets( socket, mapItem )
 				sendMapDetails( socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
 				sendMapEditable( socket, mapItem, false );
 				break;
-			}
+			}			
 			else
 			{
-				CraftedMapCoords( socket, mapItem );
+				pUser.SysMessage("This map is as of no use as it is blank.");
+			//	CraftedMapCoords( socket, mapItem );
 				break;
 			}
 		case 100:// Treasure Map
@@ -462,7 +463,7 @@ function CraftedMapCoords( socket, mapItem )
 	sendMapDetails( socket, mapItem, size, size, ( pUser.x - dist ), ( pUser.y - dist ), ( pUser.x + dist ), ( pUser.y + dist ));
 	mapItem.SetTag( "dimensions", size + "," + size );																						// saves information for the map to be reopened
 	mapItem.SetTag( "boundingbox", ( pUser.x - dist ) + "," + ( pUser.y - dist ) + "," + ( pUser.x + dist ) + "," + ( pUser.y + dist ));	// saves information for the map to be reopened
-	mapItem.SetTag( "Drawn", 1 )
+	mapItem.SetTag( "Drawn", 1 );
 }
 
 function TreasureMapCoords( socket, mapItem )
