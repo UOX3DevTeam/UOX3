@@ -39,6 +39,12 @@
 10/11/2023 - Dragon Slayer
 	Added IDs for stocking items to cItem::GetPackType() in items.cpp, so they can be used as containers
 
+09/11/2023 - Dragon Slayer, Xuri
+	Fixed Smelting items with 0 hp (js blacksmithing)
+	Fixed Unraveling items with 0 hp (js tailoring)
+	Added Tongs, Scissors, Tinkering Tools to material types (js material_types)
+	Updated ApplyRank to set hp,maxhp and maxuses to 1. (cpp skills)
+
 29/10/2023 - Dragon Slayer, Xuri
 	Added DFN entries for first aid belt. (dfn item/gear/clothing/ej_clothing)
 	Added First Aid Belt ID to backpack type. (cpp items)
