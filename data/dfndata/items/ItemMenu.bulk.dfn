@@ -14118,8 +14118,8 @@ ITEMMENU=251
 [ITEMMENU 255]
 {
 christmas.dfn
-0x09C7=bottle of pink Champaine
-ADDITEM=bottleofpinkChampaine
+0x09C7=bottle Of Pink Champaine
+ADDITEM=bottleofpinkchampaine
 0x1044=Spam
 ADDITEM=spam
 0x2be2=Ginger Bread Cookie
@@ -14142,11 +14142,11 @@ ITEMMENU=251
 {
 christmas.dfn
 0x14F0=Holiday Tree Deed
-ADDITEM=HolidayTreeDeed
+ADDITEM=holidaytreedeed
 0x14F0=Deed For A Potted Plant
 ADDITEM=pottedplantdeed
 0x14F0=Wreath Deed
-ADDITEM=WreathDeed
+ADDITEM=wreathdeed
 <=Previous Menu
 ITEMMENU=251
 }
@@ -14210,15 +14210,15 @@ ITEMMENU=251
 {
 christmas.dfn
 0x14F0=Seasons Greeting Card
-ADDITEM=SeasonGreetings
+ADDITEM=seasongreetings
 0x14F0=Maybe Next Year Card
 ADDITEM=maybenextyear
 0x0E76=Happy Holiday Bag
 ADDITEM=happyholidays
-0x0E76=Naughty this year Bag
+0x0E76=Naughty This Year Bag
 ADDITEM=naughtythisyear
-0x13DD=Santas gloves
-ADDITEM=SantaGloves
+0x13DD=Santas Gloves
+ADDITEM=santagloves
 0x19b9=Lump Of Coal
 ADDITEM=coal
 0x099A=pink Champaine Flute

@@ -18,7 +18,7 @@ PACKITEM=wrist_watch
 //Fruitcake
 }
 
-[SeasonGreetings]
+[seasongreetings]
 {
 get=base_item
 name=Seasons Greetings
@@ -28,7 +28,7 @@ COLORLIST=37
 decay=1
 }
 
-[bottleofpinkChampaine]
+[bottleofpinkchampaine]
 {
 get=base_drink
 name=bottle of pink Champaine
@@ -37,7 +37,7 @@ color=04B1
 decay=0
 }
 
-[pinkChampaineFlute]
+[pinkchampaineflute]
 {
 get=base_item
 name=a pink Champaine Flute
@@ -46,7 +46,7 @@ color=04B1
 decay=0
 }
 
-[SantaGloves]
+[santagloves]
 {
 get=base_item
 name=Santa Gloves
@@ -137,7 +137,7 @@ get=0x2bdd
 id=0x2bde
 }
 
-[RedCandyCane]
+[redcandycane]
 {
 get=0x2bdd 0x2bde
 }
@@ -161,7 +161,7 @@ get=0x2bdf
 id=0x2be0
 }
 
-[GreenCandyCane]
+[greencandycane]
 {
 get=0x2bdf 0x2be0
 }
@@ -185,12 +185,12 @@ get=base_item
 id=0x2be2
 }
 
-[GingerBreadCookie]
+[gingerbreadcookie]
 {
 get=0x2be1 0x2be2
 }
 
-[WreathDeed]
+[wreathdeed]
 {
 get=base_item
 name=a holiday wreath deed
@@ -295,7 +295,7 @@ weight=100
 newbie
 }
 
-[RedPoinsettia]
+[redpoinsettia]
 {
 get=0x2330
 }
@@ -312,7 +312,7 @@ weight=100
 newbie
 }
 
-[WhitePoinsettia]
+[whitepoinsettia]
 {
 get=0x2331
 }
@@ -340,7 +340,7 @@ newbie
 colourlist=21
 }
 
-[LightOfTheWinterSolstice]
+[lightofthewintersolstice]
 {
 get=0x236E
 }
@@ -454,7 +454,7 @@ get=0x232A
 id=0x232B
 }
 
-[HolidayGiftbox]
+[holidaygiftbox]
 {
 get=0x232A 0x232B
 }
