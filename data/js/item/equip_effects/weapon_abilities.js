@@ -54,17 +54,20 @@ function ParalyzingBlow( pAttacker, pDefender )
 	{
 		seconds = 6000;
 	}
-	else
+	else if( pDefender.socket )
 	{
 		pDefender.TextMessage( GetDictionaryEntry( 17701, pDefender.socket.language ), false, 0x3b2, 0, pDefender.serial );// You receive a paralyzing blow!
 		seconds = 3000;
 	}
+
 	pDefender.StartTimer( seconds, 1, true );
 	pDefender.frozen = true;
 
-	// void TextMessage( message, allHear, txtHue, speechTarget, speechTargetSerial );
-	pAttacker.TextMessage( GetDictionaryEntry( 17702, pDefender.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a paralyzing blow!
-	pAttacker.SoundEffect( 0x11C, true );
+	if( pAttacker.socket )
+	{
+		pAttacker.TextMessage( GetDictionaryEntry( 17702, pDefender.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a paralyzing blow!
+		pAttacker.SoundEffect( 0x11C, true );
+	}
 }
 
 /*
@@ -76,11 +79,35 @@ there will be a small chance to perform a Crushing Blow, which is a hit for doub
 The base chance to inflict this special damage is your Anatomy skill level divided by 4. The only weapon that can be used for this special attack is the War Hammer
 */
 
-function ConcussionBlow( pAttacker, pDefender ) 
+function CrushingBlow( pAttacker, pDefender ) 
+{
+	var staminaLoss = Math.floor( Math.random() * ( 5 - 3 + 1 )) + 3;
+	if( pDefender.socket )
+	{
+		pDefender.TextMessage(GetDictionaryEntry( 17703, pDefender.socket.language ), false, 0x3b2, 0, pDefender.serial );// You receive a crushing blow!
+	}
+
+	pDefender.stamina -= staminaLoss;
+
+	if( pAttacker.socket ) 
+	{
+		pAttacker.TextMessage( GetDictionaryEntry( 17704, pDefender.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a crushing blow!
+		pAttacker.SoundEffect( 0x11C, true );
+	}
+}
+
+/*
+If a swordsman is using a two-handed weapon, he may sometimes deliver a Concussion Blow,
+during which the victim’s intelligence is halved for 30 seconds. The effects of a concussion blow are not cumulative,
+once a target is the victim of a concussion blow, they cannot be hit in that manner again for 30 seconds. 
+The base chance to deliver this special blow is your Anatomy skill level divided by 4.
+*/
+
+function ConcussionBlow( pAttacker, pDefender )
 {
 	if( pDefender.socket )
 	{
-		pDefender.TextMessage(GetDictionaryEntry( 17705, pDefender.socket.language ), false, 0x3b2, 0, pDefender.serial );// You receive a concussion blow!
+		pDefender.TextMessage( GetDictionaryEntry( 17705, pDefender.socket.language ), false, 0x3b2, 0, pDefender.serial );// You receive a concussion blow!
 	}
 
 	// Drop pDefender's tempint by half their intelligence!
@@ -100,24 +127,6 @@ function ConcussionBlow( pAttacker, pDefender )
 		pAttacker.TextMessage( GetDictionaryEntry( 17706, pAttacker.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a concussion blow!
 		pAttacker.SoundEffect( 0x11C, true );
 	}
-}
-
-/*
-If a swordsman is using a two-handed weapon, he may sometimes deliver a Concussion Blow,
-during which the victim’s intelligence is halved for 30 seconds. The effects of a concussion blow are not cumulative,
-once a target is the victim of a concussion blow, they cannot be hit in that manner again for 30 seconds. 
-The base chance to deliver this special blow is your Anatomy skill level divided by 4.
-*/
-
-function ConcussionBlow( pAttacker, pDefender )
-{
-	pDefender.TextMessage( GetDictionaryEntry( 17705, pDefender.socket.language ), false, 0x3b2, 0, pDefender.serial );// You receive a concussion blow!
-	pDefender.tempint = ( pDefender.tempint/2 );
-	pDefender.StartTimer( 30000, 2, true );
-	pDefender.SetTempTag( "concussion", 1 );
-
-	pAttacker.TextMessage( GetDictionaryEntry( 17706, pDefender.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a concussion blow!
-	pAttacker.SoundEffect( 0x11C, true );
 }
 
 function onTimer( timerObj, timerID )
