@@ -207,7 +207,7 @@ function GetWeaponType( mChar, itemID )
 		case 0x48B2: //gargish axe - SA
 		case 0x48B3: //gargish axe - SA
 			weaponType = "TWOHND_AXES"; break;
-	// Default Maces
+		// Default Maces
 		case 0x0FB4: //sledge hammer
 		case 0x0FB5: //sledge hammer
 		case 0x0F5C: //mace
@@ -232,39 +232,18 @@ function GetWeaponType( mChar, itemID )
 		case 0x257F: //war mace - LBR
 		case 0x2D24: //diamond mace - ML
 		case 0x2D30: //diamond mace - ML
-		case 0x2D25: //wild staff - ML
-		case 0x2D31: //wild staff - ML
 		case 0x0903: //gargish disc mace - SA
 		case 0x406E: //gargish disc mace - SA
 		case 0x48C2: //gargish maul - SA
 		case 0x48C3: //gargish maul - SA
 			weaponType = "DEF_MACES"; break;
-	// Large Maces
-		case 0x13F4: //crook
-		case 0x13F5: //crook
-		case 0x13F8: //gnarled staff
-		case 0x13F9: //gnarled staff
-		case 0x0DF0: //black staff
-		case 0x0DF1: //black staff
-		case 0x0E81: //shepherd's crook
-		case 0x0E82: //shepherd's crook
-		case 0x0E89: //quarter staff
-		case 0x0E8A: //quarter staff
+		// Large Maces
 		case 0x1438: //war hammer
 		case 0x1439: //war hammer
 		case 0x2555: //ettin hammer - LBR
-		case 0x2556: //liche's staff - LBR
 		case 0x2559: //ogre's club - LBR
-		case 0x255A: //ophidian staff - LBR
-		case 0x2561: //terathan staff - LBR
 		case 0x2565: //troll maul - LBR
 		case 0x2566: //frost troll club - LBR
-		case 0x2568: //orc mage staff - LBR
-		case 0x2569: //bone mage staff - LBR
-		case 0x256B: //magic staff - LBR
-		case 0x256C: //magic staff - LBR
-		case 0x256D: //magic staff - LBR
-		case 0x256E: //magic staff - LBR
 		case 0x27A3: //tessen - SE
 		case 0x27EE: //tessen - SE
 		case 0x27A6: //tetsubo - SE
@@ -275,6 +254,29 @@ function GetWeaponType( mChar, itemID )
 		case 0x48C1: //gargish war hammer - SA
 		case 0x48CC: //gargish tessen - SA
 		case 0x48CD: //gargish tessen - SA
+			weaponType = "LG_MACES"; break;
+		// Staffs - treated differently in some cases than other maces
+		case 0x13F4: //crook
+		case 0x13F5: //crook
+		case 0x13F8: //gnarled staff
+		case 0x13F9: //gnarled staff
+		case 0x0DF0: //black staff
+		case 0x0DF1: //black staff
+		case 0x0E81: //shepherd's crook
+		case 0x0E82: //shepherd's crook
+		case 0x0E89: //quarter staff
+		case 0x0E8A: //quarter staff
+		case 0x2556: //liche's staff - LBR
+		case 0x255A: //ophidian staff - LBR
+		case 0x2561: //terathan staff - LBR
+		case 0x2568: //orc mage staff - LBR
+		case 0x2569: //bone mage staff - LBR
+		case 0x256B: //magic staff - LBR
+		case 0x256C: //magic staff - LBR
+		case 0x256D: //magic staff - LBR
+		case 0x256E: //magic staff - LBR
+		case 0x2D25: //wild staff - ML
+		case 0x2D31: //wild staff - ML
 		case 0x0905: //gargish glass staff - SA
 		case 0x4070: //gargish glass staff - SA
 		case 0x0906: //gargish serpentstone staff - SA
@@ -283,7 +285,7 @@ function GetWeaponType( mChar, itemID )
 		case 0xA344: //skull staff east
 		case 0xA347: //gargoyle skull staff south
 		case 0xA348: //gargoyle skull staff east
-			weaponType = "LG_MACES"; break;
+			weaponType = "TWOHND_STAFFS"; break;
 	// Bows
 		case 0x13B1: //bow
 		case 0x13B2: //bow

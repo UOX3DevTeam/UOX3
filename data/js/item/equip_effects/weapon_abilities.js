@@ -32,7 +32,7 @@ function onAttack( pAttacker, pDefender )
 		{
 			CrushingBlow( pAttacker, pDefender );
 		}
-		else if( concussionBlow && ( weaponType == "TWOHND_LG_SWORDS" && weaponType == "DEF_SWORDS" ) && pDefender.GetTempTag( "concussion" ) == 0 )
+		else if( concussionBlow && ( weaponType == "TWOHND_LG_SWORDS" || weaponType == "TWOHND_AXES" || weaponType == "BARDICHE" ) && pDefender.GetTempTag( "concussion" ) == 0 )
 		{
 			ConcussionBlow( pAttacker, pDefender );
 		}
@@ -49,7 +49,7 @@ The base chance to inflict this special damage is your Anatomy skill level divid
 
 function ParalyzingBlow( pAttacker, pDefender )
 {
-	var seconds = 0;
+	var seconds = 3000; // We want this applied to players even if they are "offline" (aka disconnected but not vanished from view yet)
 	if( pDefender.npc )
 	{
 		seconds = 6000;
@@ -57,7 +57,6 @@ function ParalyzingBlow( pAttacker, pDefender )
 	else if( pDefender.socket )
 	{
 		pDefender.TextMessage( GetDictionaryEntry( 17701, pDefender.socket.language ), false, 0x3b2, 0, pDefender.serial );// You receive a paralyzing blow!
-		seconds = 3000;
 	}
 
 	pDefender.StartTimer( seconds, 1, true );
@@ -65,7 +64,7 @@ function ParalyzingBlow( pAttacker, pDefender )
 
 	if( pAttacker.socket )
 	{
-		pAttacker.TextMessage( GetDictionaryEntry( 17702, pDefender.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a paralyzing blow!
+		pAttacker.TextMessage( GetDictionaryEntry( 17702, pAttacker.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a paralyzing blow!
 		pAttacker.SoundEffect( 0x11C, true );
 	}
 }
@@ -91,7 +90,7 @@ function CrushingBlow( pAttacker, pDefender )
 
 	if( pAttacker.socket ) 
 	{
-		pAttacker.TextMessage( GetDictionaryEntry( 17704, pDefender.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a crushing blow!
+		pAttacker.TextMessage( GetDictionaryEntry( 17704, pAttacker.socket.language ), false, 0x3b2, 0, pAttacker.serial );// You deliver a crushing blow!
 		pAttacker.SoundEffect( 0x11C, true );
 	}
 }
