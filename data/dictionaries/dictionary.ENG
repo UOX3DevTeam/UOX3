@@ -5023,6 +5023,13 @@
 17619=As a fellow guild member, I can give you a premium price for this!
 17620=That's not enough to cover the guild membership fee, sorry.
 17621=Time since joining guild: %i minutes.
+// [17701-17710] Weapon Abiltiies
+17701=You receive a paralyzing blow!
+17702=You deliver a paralyzing blow!
+17703=You receive a crushing blow!
+17704=You deliver a crushing blow!
+17705=You receive a concussion blow!
+17706=You deliver a concussion blow!
 // Disguise Kit
 18000=Vandyke
 18001=Mustache
