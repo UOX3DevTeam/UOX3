@@ -1,3 +1,7 @@
+/*
+This file is here for you to have a gump with placing single item addons, example as the wreath you can select the direction and target the area you wish it to be placed.
+*/
+
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -27,13 +31,10 @@ function AddonGump( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	var addongump = new Gump;
-	var itemID = 0;
-	var itemID2 = 0;
 
-	switch( iUsed.GetTag( "addondeed" ))
-	{
-		case 1: itemID = 0x232D; itemID2 = 0x232C;
-	}
+	var addonID = AddonDisplayID( iUsed );
+	var itemID = addonID[0];
+	var itemID2 = addonID[1];
 
 	addongump.AddPage( 0 );
 	addongump.AddBackground( 0, 0, 300, 150, 0xA28 );
@@ -50,7 +51,7 @@ function AddonGump( pUser, iUsed )
 function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;
-	var targMsg = "Where would you like to place this decoration?";
+	var targMsg = GetDictionaryEntry( 5500, socket.language );// Where would you like to place this decoration?
 
 	var iMulti = pUser.multi;
 	if( ValidateObject( iMulti ) && ( iMulti.IsOnOwnerList( pUser ) || ( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
@@ -94,13 +95,9 @@ function onCallback0( socket, myTarget )
 
 		if( iMulti.lockdowns < iMulti.maxLockdowns )
 		{
-			var itemID = 0;
-			var itemID2 = 0;
-
-			switch( iUsed.GetTag( "addondeed" ))
-			{
-				case 1: itemID = 0x232C; itemID2 = 0x232D;
-			}
+			var addonID = AddonDisplayID( iUsed );
+			var itemID = addonID[0];
+			var itemID2 = addonID[1];
 
 			var addonitem = CreateDFNItem( socket, mChar, "0x232D", 1, "ITEM", true );
 			addonitem.Teleport( targX, targY, targZ );
@@ -114,7 +111,7 @@ function onCallback0( socket, myTarget )
 			}
 			else
 			{
-				socket.SysMessage( "The decoration must be placed next to a wall." );
+				socket.SysMessage( GetDictionaryEntry( 5501, socket.language ));// The decoration must be placed next to a wall.
 				addonitem.Delete();
 			}
 			addonitem.SetTag( "addon", 1 );
@@ -129,8 +126,30 @@ function onCallback0( socket, myTarget )
 	}
 	else
 	{
-		socket.SysMessage( "That location is not in your house." ); // That location is not in your house.
+		socket.SysMessage( GetDictionaryEntry( 5502, socket.language )); // That location is not in your house.
 	}
+}
+
+/*
+The purpose of this function to determining itemID and itemID2 values based on the result of calling GetTag("addondeed") on the iUsed object.
+If the result is 1, it sets specific values for itemID and itemID2; otherwise, they remain 0.
+The function then returns an array containing these values. To a Gump and targetting cursor.
+Example of Dedd you make and add addondeed tag to
+
+customint=addondeed 2 < long as you change this number the case below needs to match up.
+in the switch add case 2 and the two ids you want to be displayed on gump for west wall and north wall.
+*/
+function AddonDisplayID( iUsed )
+{
+	var itemID = 0;
+	var itemID2 = 0;
+	switch( iUsed.GetTag( "addondeed" ))
+	{
+		case 1: itemID = 0x232D; itemID2 = 0x232C; break;
+		default: break;
+	}
+
+	return [itemID, itemID2];
 }
 
 function CheckForNearbyDoors( myTarget, itemToCheck, pSocket )

@@ -13,7 +13,7 @@ function onUseChecked(pUser, iUsed)
 	{
 		if( Acidity == 30 ) 
 		{
-			socket.SysMessage( "The extreme pain in your teeth subsides." );
+			socket.SysMessage( GetDictionaryEntry(5503, socket.language ));// The extreme pain in your teeth subsides.
 			return;
 		}
 		else 
@@ -60,7 +60,7 @@ function onUseChecked(pUser, iUsed)
 	else 
 	{
 		iUsed.Delete();
-		socket.SysMessage("You feel as if you could eat as much as you wanted!");
+		socket.SysMessage( GetDictionaryEntry(5504, socket.language ));//You feel as if you could eat as much as you wanted!
 		pUser.SoundEffect(randomSoundNumber, false);
 	}
 }
@@ -89,7 +89,7 @@ function onTimer( pUser, timerID )
 		{
 			if( Acidity == 30 ) 
 			{
-				socket.SysMessage( "The extreme pain in your teeth subsides." );
+				socket.SysMessage( GetDictionaryEntry( 5503, socket.language ));// The extreme pain in your teeth subsides.
 				pUser.StartTimer( 1000, 1, true );
 				return;
 			}

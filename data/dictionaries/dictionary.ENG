@@ -3258,6 +3258,19 @@
 5156=the Gypsy Fortune Teller
 5157=the Vagabond
 5158=the Iron Worker
+// [5500-5600] Holiday Msgs
+5500=Where would you like to place this decoration?
+5501=The decoration must be placed next to a wall.
+5502=That location is not in your house.
+5503=The extreme pain in your teeth subsides.
+5504=You feel as if you could eat as much as you wanted!
+5506=Do you wish to re - deed this decoration ?
+5507=Error Report to GM
+5508=You have just been hit by a snowball!
+5509=You throw the snowball and hit the target!
+5510=You can only throw a snowball at something that can throw one back.
+5511=The snow is not ready to be packed yet.  Keep trying.
+5512=You carefully pack the snow into a ball...
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.
