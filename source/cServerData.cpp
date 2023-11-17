@@ -366,7 +366,8 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"APSDELAYMAXCAP"s, 343},
 	{"YOUNGPLAYERSYSTEM"s, 344},
 	{"YOUNGLOCATION"s, 345},
-	{"SECRETSHARDKEY"s, 346}
+	{"SECRETSHARDKEY"s, 346},
+	{"MOONGATEFACETS"s, 347}
 
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
@@ -939,6 +940,9 @@ auto CServerData::ResetDefaults() -> void
 
 	// Disable spawn regions for all facets by default
 	SetSpawnRegionsFacetStatus( 0 );
+
+	// Disable moongates for all facets by default
+	SetMoongateFacetStatus( 0 );
 
 	// Set no assistant features as disabled by default
 	SetDisabledAssistantFeature( AF_ALL, false );
@@ -4582,6 +4586,29 @@ auto CServerData::SetSpawnRegionsFacetStatus( UI32 nVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GetMoongateFacetStatus()
+//|					CServerData::SetMoongateFacetStatus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets active status of moongates per facet
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GetMoongateFacetStatus( UI32 value ) const -> bool
+{
+	return MoongateFacets.test( value );
+}
+auto CServerData::SetMoongateFacetStatus( UI32 nVal, bool status ) -> void
+{
+	MoongateFacets.set( nVal, status );
+}
+auto CServerData::GetMoongateFacetStatus() const -> UI32
+{
+	return static_cast<UI32>( MoongateFacets.to_ulong() );
+}
+auto CServerData::SetMoongateFacetStatus( UI32 nVal ) -> void
+{
+	MoongateFacets = nVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::GetAssistantNegotiation() 
 //|					CServerData::SetAssistantNegotiation()
 //o------------------------------------------------------------------------------------------------o
@@ -4971,6 +4998,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "CLIENTFEATURES=" << GetClientFeatures() << '\n';
 		ofsOutput << "SERVERFEATURES=" << GetServerFeatures() << '\n';
 		ofsOutput << "SPAWNREGIONSFACETS=" << GetSpawnRegionsFacetStatus() << '\n';
+		ofsOutput << "MOONGATEFACETS=" << GetMoongateFacetStatus() << '\n';
 		ofsOutput << "OVERLOADPACKETS=" << ( ServerOverloadPackets() ? 1 : 0 ) << '\n';
 		ofsOutput << "ADVANCEDPATHFINDING=" << ( AdvancedPathfinding() ? 1 : 0 ) << '\n';
 		ofsOutput << "LOOTINGISCRIME=" << ( LootingIsCrime() ? 1 : 0 ) << '\n';
@@ -6486,6 +6514,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 346:	 // SECRETSHARDKEY
 			SecretShardKey( value );
+			break;
+		case 347:	 // SHOWMOONGATEFACETS
+			SetMoongateFacetStatus( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
 			break;
 		default:
 			rValue = false;

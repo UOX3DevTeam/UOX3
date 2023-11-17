@@ -214,6 +214,7 @@ private:
 	// These should be updated
 	std::bitset<104>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
+	std::bitset<64>		MoongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
 	// ServerSystems
 	std::string sServerName;				// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -458,6 +459,11 @@ public:
 	auto		SetSpawnRegionsFacetStatus( UI32 value, bool status ) -> void;
 	UI32		GetSpawnRegionsFacetStatus() const;
 	auto		SetSpawnRegionsFacetStatus( UI32 value ) -> void;
+
+	auto		GetMoongateFacetStatus( UI32 value ) const -> bool;
+	auto		SetMoongateFacetStatus( UI32 value, bool status ) -> void;
+	UI32		GetMoongateFacetStatus() const;
+	auto		SetMoongateFacetStatus( UI32 value ) -> void;
 
 	auto		SetClassicUOMapTracker( bool value ) -> void;
 	auto		GetClassicUOMapTracker() const -> bool;
