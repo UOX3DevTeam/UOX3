@@ -3258,6 +3258,19 @@
 5156=gitano adivino
 5157=Vagabundo
 5158=trabajador del hierro
+// [5500-5600] Mensajes de vacaciones
+5500=¿Dónde te gustaría colocar esta decoración?
+5501=La decoración debe colocarse junto a una pared.
+5502=Ese lugar no está en tu casa.
+5503=El dolor extremo en tus dientes disminuye.
+5504=¡Sientes que puedes comer todo lo que quieras!
+5506=¿Desea reescribir esta decoración?
+5507=Informe de error al GM
+5508=¡Te acaba de golpear una bola de nieve!
+5509=¡Lanzas la bola de nieve y das en el blanco!
+5510=Sólo puedes lanzar una bola de nieve a algo que pueda devolverla.
+5511=La nieve aún no está lista para ser empacada. Sigue intentándolo.
+5512=Con cuidado, haces una bola con la nieve...
 // [6000-6499] Misc Skill Msgs
 6000=Esa persona parece %s y %t.
 6001=No se puede hacer nada útil con eso.

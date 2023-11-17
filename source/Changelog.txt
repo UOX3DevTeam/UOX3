@@ -1,4 +1,13 @@
 15/11/2023 - Dragon Slayer
+	Added Christmas Items from differant years. (dfn christmas)
+	Added Christmas Npcs from differant years. (dfn christmascreatures)
+	Moved Halloween and christmas js files into a folder called holidays
+	Added Holiday Potted Plant Gump		(js holidaypottedplant)
+	Updated Candy js file with new msgs and toothachs (js candy)
+	Added Addon Deed Gump js It will display a gump with the addon in it to place. (js addondeedgump)
+	Added ReDeed Addon Gump js for redeeding new addons VIA Gump. (js redeedaddon)
+	Added snowpile js Now you can smash your enemys face with snow. (js snowpile)
+	Updated axe.js with new redeed gump. (js axe)
 	Added Paralyzing Blow, Crushing Blow, and Concussion Blow.  (js weapon_abilities)
 
 14/11/2023 - Warden
