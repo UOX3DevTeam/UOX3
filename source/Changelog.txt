@@ -1,3 +1,6 @@
+15/11/2023 - Dragon Slayer
+	Added Paralyzing Blow, Crushing Blow, and Concussion Blow.  (js weapon_abilities)
+
 14/11/2023 - Warden
 	Fixed crafting rank sytem modifiers.
 		Items crafted at Rank 1 will now have their stats multiplied by 60% of the DFN values for the following stats:
