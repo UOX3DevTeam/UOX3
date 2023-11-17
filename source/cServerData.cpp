@@ -941,7 +941,7 @@ auto CServerData::ResetDefaults() -> void
 	// Disable spawn regions for all facets by default
 	SetSpawnRegionsFacetStatus( 0 );
 
-	// Disable moongates for all facets by default
+	// Enable Felucca by defualt
 	SetMoongateFacetStatus( 0 );
 
 	// Set no assistant features as disabled by default

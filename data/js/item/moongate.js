@@ -24,6 +24,7 @@
 //					Criminals, aggressors in PvP combat can no longer use public moongates (Xuri)
 
 // Set to 0 to disable teleport locations for a certain map from appearing in the moongate menu
+const enabledMoongate = GetServerSetting("MoongateFacets");
 var enableFelucca = 1;
 var enableTrammel = 0;
 var enableIlshenar = 0;
@@ -350,7 +351,7 @@ function DisplayTravelGump( srcSock, pUser )
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
 	myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 	//Facet Buttons
-	if( enableFelucca == 1 )
+	if( enabledMoongate >= 0 )
 	{
 		myGump.AddText( 70, 70, 12, "Felucca" );
 		myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 );
@@ -372,22 +373,22 @@ function DisplayTravelGump( srcSock, pUser )
 		myGump.AddText( 170, 210, 0, "Jhelom" );
 		myGump.AddButton( 150, 215, 0x837, 1, 0, 12 );
 	}
-	if( enableTrammel == 1 )
+	if ( enabledMoongate >= 3 )
 	{
 		myGump.AddText( 70, 90, 0, "Trammel" );
 		myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
 	}
-	if( enableIlshenar == 1 )
+	if (eenabledMoongate >= 4 )
 	{
 		myGump.AddText( 70, 110, 0, "Iishenar" );
 		myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
 	}
-	if( enableMalas == 1 )
+	if (enabledMoongate >= 8 )
 	{
 		myGump.AddText( 70, 130, 0, "Malas" );
 		myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );
 	}
-	if( enableTokuno == 1 )
+	if (enabledMoongate >= 16 )
 	{
 		myGump.AddText( 70, 150, 0, "Tokuno Islands" );
 		myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
@@ -401,12 +402,12 @@ function DisplayTravelGump( srcSock, pUser )
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
 	myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 
-	if( enableFelucca == 1 )
+	if (enabledMoongate >= 0 )//Felucca
 	{
 		myGump.AddText( 70, 70, 0, "Felucca" );
 		myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 );
 	}
-	if( enableTrammel == 1 )
+	if (enabledMoongate >= 3 )//Trammel
 	{
 		myGump.AddText( 70, 90, 12, "Trammel" );
 		myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
@@ -427,17 +428,17 @@ function DisplayTravelGump( srcSock, pUser )
 		myGump.AddText( 170, 210, 0, "Jhelom" );
 		myGump.AddButton( 150, 215, 0x837, 1, 0, 20 );
 	}
-	if( enableIlshenar == 1 )
+	if (enabledMoongate >= 4 )
 	{
 		myGump.AddText( 70, 110, 0, "Iishenar" );
 		myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
 	}
-	if( enableMalas == 1 )
+	if (enabledMoongate >= 8 )
 	{
 		myGump.AddText( 70, 130, 0, "Malas" );
 		myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );
 	}
-	if( enableTokuno == 1 )
+	if (enabledMoongate >= 16 )
 	{
 		myGump.AddText( 70, 150, 0, "Tokuno Islands" );
 		myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
@@ -451,17 +452,17 @@ function DisplayTravelGump( srcSock, pUser )
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
 	myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 
-	if( enableFelucca == 1 )
+	if (enabledMoongate >= 0 )
 	{
 		myGump.AddText( 70, 70, 0, "Felucca" );
 		myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 );
 	}
-	if( enableTrammel == 1 )
+	if (enabledMoongate >= 3 )
 	{
 		myGump.AddText( 70, 90, 0, "Trammel" );
 		myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
 	}
-	if( enableIlshenar == 1 )
+	if (enabledMoongate >= 4 )
 	{
 		myGump.AddText( 70, 110, 12, "Iishenar" );
 		myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
@@ -485,12 +486,12 @@ function DisplayTravelGump( srcSock, pUser )
 		myGump.AddText( 170, 230, 0, "Chaos" );
 		myGump.AddButton( 150, 235, 0x837, 1, 0, 29 );
 	}
-	if( enableMalas == 1 )
+	if (enabledMoongate >= 8 )
 	{
 		myGump.AddText( 70, 130, 0, "Malas" );
 		myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );
 	}
-	if( enableTokuno == 1 )
+	if (enabledMoongate >= 16 )
 	{
 		myGump.AddText( 70, 150, 0, "Tokuno Islands" );
 		myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
@@ -504,22 +505,22 @@ function DisplayTravelGump( srcSock, pUser )
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
 	myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 
-	if( enableFelucca == 1 )
+	if (enabledMoongate >= 0 )
 	{
 		myGump.AddText( 70, 70, 0, "Felucca" );
 		myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 );
 	}
-	if( enableTrammel == 1 )
+	if (enabledMoongate >= 3 )
 	{
 		myGump.AddText( 70, 90, 0, "Trammel" );
 		myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
 	}
-	if( enableIlshenar == 1 )
+	if (enabledMoongate >= 4 )
 	{
 		myGump.AddText( 70, 110, 0, "Iishenar" );
 		myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
 	}
-	if( enableMalas == 1 )
+	if (enabledMoongate >= 8 )
 	{
 		myGump.AddText( 70, 130, 12, "Malas" );
 		myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );
@@ -531,7 +532,7 @@ function DisplayTravelGump( srcSock, pUser )
 		myGump.AddText( 170, 110, 0, "Umbra" );
 		myGump.AddButton( 150, 115, 0x837, 1, 0, 32 );
 	}
-	if( enableTokuno == 1 )
+	if (enabledMoongate >= 16 )
 	{
 		myGump.AddText( 70, 150, 0, "Tokuno Islands" );
 		myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
@@ -545,27 +546,27 @@ function DisplayTravelGump( srcSock, pUser )
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
 	myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 
-	if( enableFelucca == 1 )
+	if (enabledMoongate >= 0 )
 	{
 		myGump.AddText( 70, 70, 0, "Felucca" );
 		myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 );
 	}
-	if( enableTrammel == 1 )
+	if (enabledMoongate >= 3 )
 	{
 		myGump.AddText( 70, 90, 0, "Trammel" );
 		myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
 	}
-	if( enableIlshenar == 1 )
+	if (enabledMoongate >= 4 )
 	{
 		myGump.AddText( 70, 110, 0, "Iishenar" );
 		myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
 	}
-	if( enableMalas == 1 )
+	if (enabledMoongate >= 8 )
 	{
 		myGump.AddText( 70, 130, 0, "Malas" );
 		myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );
 	}
-	if( enableTokuno == 1 )
+	if (enabledMoongate >= 16 )
 	{
 		myGump.AddText( 70, 150, 12, "Tokuno Islands" );
 		myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
@@ -578,3 +579,5 @@ function DisplayTravelGump( srcSock, pUser )
 	}
 	myGump.Send( srcSock );
 }
+
+function _restorecontext_() {}
