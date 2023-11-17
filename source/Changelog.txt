@@ -8,6 +8,7 @@
 	Added ReDeed Addon Gump js for redeeding new addons VIA Gump. (js redeedaddon)
 	Added snowpile js Now you can smash your enemys face with snow. (js snowpile)
 	Updated axe.js with new redeed gump. (js axe)
+	Added Paralyzing Blow, Crushing Blow, and Concussion Blow.  (js weapon_abilities)
 
 14/11/2023 - Warden
 	Fixed crafting rank sytem modifiers.
