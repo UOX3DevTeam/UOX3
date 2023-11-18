@@ -13938,6 +13938,14 @@ ITEMMENU=252
 ITEMMENU=253
 <=Halloween Decoration
 ITEMMENU=254
+<=Christmas Food
+ITEMMENU=255
+<=Christmas Addons
+ITEMMENU=256
+<=Christmas Decoration
+ITEMMENU=257
+<=Christmas Misc
+ITEMMENU=258
 <=Previous Menu
 ITEMMENU=9
 }
@@ -14103,6 +14111,134 @@ ADDITEM=BleaksHeadOnASpike
 ADDITEM=OnifrksHeadOnASpike
 0x995F=Mesannas Head On A Spike
 ADDITEM=MesannasHeadOnASpike
+<=Previous Menu
+ITEMMENU=251
+}
+
+[ITEMMENU 255]
+{
+christmas.dfn
+0x09C7=bottle Of Pink Champaine
+ADDITEM=bottleofpinkchampaine
+0x1044=Spam
+ADDITEM=spam
+0x2be2=Ginger Bread Cookie
+ADDITEM=0x2be2
+0x2be1=Ginger Bread Cookie
+ADDITEM=0x2be1
+0x2bdd=Red Candy Cane
+ADDITEM=0x2bdd
+0x2bde=Red Candy Cane
+ADDITEM=0x2bde
+0x2bdf=Green Candy Cane
+ADDITEM=0x2bdf
+0x2be0=Green Candy Cane
+ADDITEM=0x2be0
+<=Previous Menu
+ITEMMENU=251
+}
+
+[ITEMMENU 256]
+{
+christmas.dfn
+0x14F0=Holiday Tree Deed
+ADDITEM=holidaytreedeed
+0x14F0=Deed For A Potted Plant
+ADDITEM=pottedplantdeed
+0x14F0=Wreath Deed
+ADDITEM=wreathdeed
+<=Previous Menu
+ITEMMENU=251
+}
+
+[ITEMMENU 257]
+{
+christmas.dfn
+0x0E2D=T2A Snow Globe
+ADDITEM=snowglobe_t2a
+0x0E2D=LBR Snow Globe
+ADDITEM=snowglobe_lbr
+0x0E2D=AOS Snow Globe
+ADDITEM=snowglobe_aos
+0x0E2D=TOL Snow Globe
+ADDITEM=snowglobe_tol
+0x1C12=Holiday Bell
+ADDITEM=holidaybell
+0x2378=A Decorative Topiary
+ADDITEM=0x2378
+0x2376=A Festive Cactus
+ADDITEM=0x2376
+0x4214=A Decorative Rocking Horse
+ADDITEM=0x4214
+0x46FA=A Red Angel Decoration
+ADDITEM=0x46FA
+0xA12E=Wreath
+ADDITEM=0xA12E
+0xA12F=Wreath
+ADDITEM=0xA12F
+0x2bdb=Red Stocking
+ADDITEM=0x2bdb
+0x2bdc=Red Stocking
+ADDITEM=0x2bdc
+0x2bda=Green Stocking
+ADDITEM=0x2bda
+0x2bd9=Green Stocking
+ADDITEM=0x2bd9
+0x2377=A Snowy Tree
+ADDITEM=0x2377
+0x232A=Holiday Giftbox
+ADDITEM=0x232A
+0x232B=Holiday Giftbox
+ADDITEM=0x232B
+0x2331=Poinsettia
+ADDITEM=0x2331
+0x2330=Poinsettia
+ADDITEM=0x2330
+0x232F=White Snowflake
+ADDITEM=0x232F
+0x232E=Blue Snowflake
+ADDITEM=0x232E
+0x2328=Snowman
+ADDITEM=0x2328
+0x2329=Snowman
+ADDITEM=0x2329
+<=Previous Menu
+ITEMMENU=251
+}
+
+[ITEMMENU 258]
+{
+christmas.dfn
+0x14F0=Seasons Greeting Card
+ADDITEM=seasongreetings
+0x14F0=Maybe Next Year Card
+ADDITEM=maybenextyear
+0x0E76=Happy Holiday Bag
+ADDITEM=happyholidays
+0x0E76=Naughty This Year Bag
+ADDITEM=naughtythisyear
+0x13DD=Santas Gloves
+ADDITEM=santagloves
+0x19b9=Lump Of Coal
+ADDITEM=coal
+0x099A=pink Champaine Flute
+ADDITEM=pinkChampaineFlute
+0x1086=holiday timepiece
+ADDITEM=holiday_timepiece
+0x1086=wrist watch
+ADDITEM=wrist_watch
+0x913=Snowpile
+ADDITEM=snowpile
+0x170b=krampus minion boots
+ADDITEM=krampusminionboots
+0xA295=krampus minion earrings
+ADDITEM=krampusminionearrings
+0xA295=krampus minion earrings
+ADDITEM=krampusminionearrings
+0xA28F=krampus minion hat
+ADDITEM=krampusminionhat
+0x170b=krampus minion talons
+ADDITEM=krampusminiontalons
 <=Previous Menu
 ITEMMENU=251
 }
