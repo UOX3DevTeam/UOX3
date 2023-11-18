@@ -1,3 +1,6 @@
+18/11/2023 - Xuri
+	Enhance the calculation of the average 'z' for movement.
+
 15/11/2023 - Dragon Slayer
 	Added Christmas Items from differant years. (dfn christmas)
 	Added Christmas Npcs from differant years. (dfn christmascreatures)
