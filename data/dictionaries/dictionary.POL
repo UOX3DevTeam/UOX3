@@ -3258,6 +3258,19 @@
 5156=cygański wróżbita
 5157=Włóczęga
 5158=Żelazny robotnik
+// [5500-5600] Wiadomości świąteczne
+5500=Gdzie chcesz umieścić tę dekorację?
+5501=Dekoracja musi być umieszczona obok ściany.
+5502=Ta lokalizacja nie znajduje się w twoim domu.
+5503=Ogromny ból zębów ustępuje.
+5504=Czujesz się tak, jakbyś mógł zjeść tyle, ile chcesz!
+5506=Czy chcesz ponownie wykonać tę dekorację?
+5507=Zgłoś błąd do GM
+5508=Właśnie uderzyła Cię śnieżka!
+5509=Rzucasz śnieżką i trafiasz w cel!
+5510=Możesz rzucać śnieżką tylko w coś, co może ją odrzucić.
+5511=Śnieg nie jest jeszcze gotowy do ułożenia. Próbuj dalej.
+5512=Ostrożnie pakujesz śnieg w kulkę...
 // [6000-6499] Różne umiejętności Msgs
 6000=Ta osoba wygląda na %s i %t.
 6001=Nie możesz zrobić z tego nic użytecznego.
@@ -5023,6 +5036,13 @@
 17619=Jako członek gildii, mogę dać ci za to wyższą cenę!
 17620=To za mało, by pokryć opłatę za członkostwo w gildii, przykro mi.
 17621=Czas od dołączenia do gildii: %i minut.
+// [17701-17710] Zdolności broni
+17701=Otrzymujesz paraliżujący cios!
+17702=Zadajesz paraliżujący cios!
+17703=Otrzymujesz miażdżący cios!
+17704=Zadajesz miażdżący cios!
+17705=Otrzymujesz wstrząs mózgu!
+17706=Zadajesz wstrząs mózgu!
 // Zestaw do kamuflażu
 18000=Vandyke
 18001=Wąsy

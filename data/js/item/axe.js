@@ -216,6 +216,10 @@ function onCallback1( socket, ourObj )
 						addonParent.Delete();
 					}
 				}
+				else if( ourObj.GetTag( "HolidayAddon" )) 
+				{
+					TriggerEvent( 5609, "ReDeedAddon", mChar, ourObj );
+				}
 				else if( tileID >= 0x1BD7 && tileID <= 0x1BE2 )	// Bowcraft
 				{
 					BowCraft( socket, mChar, ourObj, tileID );

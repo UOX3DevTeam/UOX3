@@ -1031,15 +1031,15 @@ auto CMulHandler::DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t 
 //|	Purpose		-	Returns the map elevation at given coordinates, we'll assume since its land
 //|					the height is inherently 0
 //o------------------------------------------------------------------------------------------------o
-auto CMulHandler::MapElevation( std::int16_t x, std::int16_t y, std::uint8_t worldNumber ) -> std::int8_t
+auto CMulHandler::MapElevation( std::int16_t x, std::int16_t y, std::uint8_t worldNumber, bool ignoreVoid ) -> std::int8_t
 {
-	const auto &map = SeekMap( x, y, worldNumber );
-	// make sure nothing can move into black areas
-	if( map.isVoid() )
-	{
-		return ILLEGAL_Z;
-	}
-	return map.altitude;
+    const auto &map = SeekMap( x, y, worldNumber );
+    // make sure nothing can move into black areas
+    if( !ignoreVoid && map.isVoid() )
+    {
+        return ILLEGAL_Z;
+    }
+    return map.altitude;
 }
 
 //o------------------------------------------------------------------------------------------------o

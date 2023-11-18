@@ -3258,6 +3258,19 @@
 5156=die Zigeuner-Wahrsagerin
 5157=der Vagabund
 5158=der Eisenarbeiter
+// [5500-5600] Feiertagsnachrichten
+5500=Wo möchten Sie diese Dekoration platzieren?
+5501=Die Dekoration muss neben einer Wand platziert werden.
+5502=Dieser Standort befindet sich nicht in Ihrem Haus.
+5503=Der extreme Schmerz in Ihren Zähnen lässt nach.
+5504=Sie haben das Gefühl, Sie könnten so viel essen, wie Sie wollten!
+5506=Möchten Sie diese Dekoration erneut übertragen?
+5507=Fehlerbericht an GM
+5508=Du wurdest gerade von einem Schneeball getroffen!
+5509=Du wirfst den Schneeball und triffst das Ziel!
+5510=Man kann einen Schneeball nur auf etwas werfen, das einen zurückwerfen kann.
+5511=Der Schnee kann noch nicht gepackt werden. Weiter versuchen.
+5512=Du packst den Schnee sorgfältig zu einer Kugel...
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.
@@ -5023,6 +5036,13 @@
 17619=Als Gildenmitglied kann ich Ihnen dafür einen Premiumpreis anbieten!
 17620=Das ist nicht genug, um den Mitgliedsbeitrag für die Gilde zu bezahlen, tut mir leid.
 17621=Zeit seit dem Beitritt zur Gilde: %i Minuten.
+// [17701-17710] Waffenfähigkeiten
+17701=Du erhältst einen lähmenden Schlag!
+17702=Du versetztest einen lähmenden Schlag!
+17703=Du erhältst einen vernichtenden Schlag!
+17704=Du hast einen vernichtenden Schlag ausgeführt!
+17705=Sie erhalten eine Gehirnerschütterung!
+17706=Sie versetzen einen Gehirnerschütterungsstoß!
 // Verkleidungsset
 18000=Vandyke
 18001=Schnurrbart

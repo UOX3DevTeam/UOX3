@@ -86,6 +86,7 @@ damage=5 43
 hp=31 100
 spd=26
 str=40
+script=5050//weapon_abilties.js
 }
 
 // Age of Shadows
@@ -100,6 +101,7 @@ damage=5 35
 hp=31 105
 spd=31
 str=40
+script=5050//weapon_abilties.js
 }
 
 // Bladed Staff - LBR stats (default)
@@ -112,6 +114,7 @@ damage=4 31
 hp=21 115
 spd=36
 str=35
+script=5050//weapon_abilties.js
 }
 
 // Double Bladed Staff - LBR stats (default)
