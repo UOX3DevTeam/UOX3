@@ -3258,6 +3258,19 @@
 5156=il Cartomante Zingaro
 5157=il Vagabondo
 5158=il Lavoratore del Ferro
+// [5500-5600] Messaggi festivi
+5500=Dove vorresti posizionare questa decorazione?
+5501=La decorazione deve essere posizionata vicino ad un muro.
+5502=Quella posizione non è a casa tua.
+5503=Il forte dolore ai denti si attenua.
+5504=Ti senti come se potessi mangiare quanto vuoi!
+5506=Vuoi rifare questa decorazione?
+5507=Segnalazione errori al GM
+5508=Sei appena stato colpito da una palla di neve!
+5509=Lanci la palla di neve e colpisci il bersaglio!
+5510=Puoi lanciare una palla di neve solo contro qualcosa che può respingerla.
+5511=La neve non è ancora pronta per essere compattata. Continua a provare.
+5512=Comprimi con cura la neve fino a formare una palla...
 // [6000-6499] Misc Skill Msgs
 6000=Quella persona sembra %s e %t.
 6001=Non puoi ricavarne nulla di utile.
@@ -5033,6 +5046,13 @@
 17619=Come membro della gilda, posso offrirti un prezzo maggiorato per questo!
 17620=Non è abbastanza per coprire la quota di iscrizione alla gilda, mi dispiace.
 17621=Tempo trascorso dall'ingresso in gilda: %i minuti.
+// [17701-17710] Abilità delle armi
+17701=Ricevi un colpo paralizzante!
+17702=Sferri un colpo paralizzante!
+17703=Ricevi un colpo devastante!
+17704=Sferri un colpo devastante!
+17705=Ricevi un colpo stordente!
+17706=Hai sferrato un colpo stordente!
 // Kit di travestimento
 18000=Vandyke
 18001=Baffi

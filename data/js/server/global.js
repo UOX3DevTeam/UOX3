@@ -43,6 +43,11 @@ function onLogout( pSock, pChar )
 	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - pChar.GetTempTag( "loginTime" );
 	pChar.playTime += minSinceLogin;
 	pChar.account.totalPlayTime += minSinceLogin;
+
+	//Used to remove the candy timer in items/candy.js
+	pChar.KillJSTimer( 0, 5601 );
+	pChar.SetTempTag( "toothach", null );
+	pChar.SetTempTag( "Acidity", null );
 }
 
 function onCreatePlayer( pChar )
