@@ -3435,6 +3435,26 @@
 5510=Vous ne pouvez lancer une boule de neige que sur quelque chose qui peut en renvoyer une.
 5511=La neige n'est pas encore prête à être tassée. Continue d'essayer.
 5512=Vous mettez soigneusement la neige en boule...
+// [5700-5750] Carte au trésor et messages de carte
+5700=Il semble vide.
+5701=Cette chasse au trésor est déjà terminée.
+5702=Le trésor est marqué par l'épingle rouge. Prenez une pelle et allez déterrer !
+5703=Vous avez décodé la carte !
+5704=carte au trésor en lambeaux
+5705=Vous ne pouvez pas encore décoder cette carte !
+5706=Vous êtes déjà en train de creuser un trésor.
+5707=Où souhaitez-vous creuser ?
+5708=Vous arrêtez de creuser parce que quelque chose se trouve directement au-dessus du coffre au trésor
+5709=Vous n'avez pas décodé cette carte et vous ne savez pas où chercher le trésor.
+5710=Le trésor de cette carte a déjà été trouvé.
+5711=Vous creusez et creusez, mais vous ne trouvez aucun trésor
+5712=Vous creusez et creusez, mais aucun trésor ne semble être ici
+5713=Le coffre refuse d'être rempli d'autres trésors.
+5714=carte au trésor clairement dessinée
+5715=carte au trésor savamment dessinée
+5716=carte au trésor savamment dessinée
+5717=carte au trésor intelligemment dessinée
+5718=carte au trésor sournoisement dessinée
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.

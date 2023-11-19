@@ -9,6 +9,7 @@
 {
 GET=base_orc
 GOLD=25 50
+LOOT=TreasureMapLvl1Loot
 STR=96 97
 DEX=81 82
 INT=36 37
@@ -60,6 +61,7 @@ TOPEACE=717 5
 {
 GET=base_orcmage
 GOLD=75 125
+LOOT=TreasureMapLvl1Loot
 STR=116 150
 DEX=91 92
 INT=161 185
@@ -88,6 +90,7 @@ TOPEACE=732 5
 {
 GET=base_orclord
 GOLD=50 120
+LOOT=TreasureMapLvl1Loot
 STR=147 215
 DEX=91 92
 INT=61 62
