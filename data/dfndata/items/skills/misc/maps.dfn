@@ -3,7 +3,7 @@
 get=base_item
 name=small world map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 1
 }
 
@@ -12,7 +12,7 @@ custominttag=Map 1
 get=base_item
 name=large world map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 2
 }
 
@@ -21,7 +21,7 @@ custominttag=Map 2
 get=base_item
 name=a britain map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 3
 }
 
@@ -30,7 +30,7 @@ custominttag=Map 3
 get=base_item
 name=a britain to skara brae map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 4
 }
 
@@ -39,7 +39,7 @@ custominttag=Map 4
 get=base_item
 name=a britain to trinsic map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 5
 }
 
@@ -48,7 +48,7 @@ custominttag=Map 5
 get=base_item
 name=a buc den map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 6
 }
 
@@ -57,7 +57,7 @@ custominttag=Map 6
 get=base_item
 name=a bucs den to magincia map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 7
 }
 
@@ -66,7 +66,7 @@ custominttag=Map 7
 get=base_item
 name=a bucs den to ocllo map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 8
 }
 
@@ -75,7 +75,7 @@ custominttag=Map 8
 get=base_item
 name=a jhelom map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 9
 }
 
@@ -84,7 +84,7 @@ custominttag=Map 9
 get=base_item
 name=a magincia map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 10
 }
 
@@ -93,7 +93,7 @@ custominttag=Map 10
 get=base_item
 name=a magincia to ocllo map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 11
 }
 
@@ -102,7 +102,7 @@ custominttag=Map 11
 get=base_item
 name=a minoc map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 12
 }
 
@@ -111,7 +111,7 @@ custominttag=Map 12
 get=base_item
 name=a minoc to yew map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 13
 }
 
@@ -120,7 +120,7 @@ custominttag=Map 13
 get=base_item
 name=a minoc to vesper map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 14
 }
 
@@ -129,7 +129,7 @@ custominttag=Map 14
 get=base_item
 name=a moonglow map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 15
 }
 
@@ -138,7 +138,7 @@ custominttag=Map 15
 get=base_item
 name=a moonglow to nujelm map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 16
 }
 
@@ -147,7 +147,7 @@ custominttag=Map 16
 get=base_item
 name=a nujelm map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 17
 }
 
@@ -156,7 +156,7 @@ custominttag=Map 17
 get=base_item
 name=a nujelm to magincia map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 18
 }
 
@@ -165,7 +165,7 @@ custominttag=Map 18
 get=base_item
 name=a occlo map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 19
 }
 
@@ -174,7 +174,7 @@ custominttag=Map 19
 get=base_item
 name=a serpents hold map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 20
 }
 
@@ -183,7 +183,7 @@ custominttag=Map 20
 get=base_item
 name=a serpents hold to ocllo map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 21
 }
 
@@ -192,7 +192,7 @@ custominttag=Map 21
 get=base_item
 name=a skara brae map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 22
 }
 
@@ -201,7 +201,7 @@ custominttag=Map 22
 get=base_item
 name=a trinsic map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 23
 }
 
@@ -210,7 +210,7 @@ custominttag=Map 23
 get=base_item
 name=a trinsic to bucs den map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 24
 }
 
@@ -219,7 +219,7 @@ custominttag=Map 24
 get=base_item
 name=a trinsic to jhelom map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 25
 }
 
@@ -228,7 +228,7 @@ custominttag=Map 25
 get=base_item
 name=a vesper map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 26
 }
 
@@ -237,7 +237,7 @@ custominttag=Map 26
 get=base_item
 name=a vesper to nujelm map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 27
 }
 
@@ -246,7 +246,7 @@ custominttag=Map 27
 get=base_item
 name=a yew map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 28
 }
 
@@ -255,7 +255,7 @@ custominttag=Map 28
 get=base_item
 name=a yew to britain map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 29
 }
 
@@ -264,7 +264,7 @@ custominttag=Map 29
 get=base_item
 name=a Tokunomap
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 30
 }
 
@@ -273,7 +273,7 @@ custominttag=Map 30
 get=base_item
 name=a Malas map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 31
 }
 
@@ -282,7 +282,7 @@ custominttag=Map 31
 get=base_item
 name=a Ilshenar map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 32
 }
 
@@ -291,7 +291,7 @@ custominttag=Map 32
 get=base_item
 name=a TerMur map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5403
 custominttag=Map 33
 }
 
@@ -320,156 +320,4 @@ name=a sea chart
 id=0x14EC
 SCRIPT=1503
 custominttag=Map 50
-}
-
-[base_treasure_map]
-{
-get=base_item
-name=a treasure map
-id=0x14EC
-SCRIPT=1503
-custominttag=Map 100
-custominttag=Level 0
-}
-
-[treasuremaplvl0]
-{
-get=base_treasure_map
-custominttag=Map 100
-custominttag=Level 0
-}
-
-[treasuremaplvl1]
-{
-get=base_treasure_map
-custominttag=Map 100
-custominttag=Level 1
-}
-
-[treasuremaplvl2]
-{
-get=base_treasure_map
-custominttag=Map 100
-custominttag=Level 2
-}
-
-[treasuremaplvl3]
-{
-get=base_treasure_map
-custominttag=Map 100
-custominttag=Level 3
-}
-
-[treasuremaplvl4]
-{
-get=base_treasure_map
-custominttag=Map 100
-custominttag=Level 4
-}
-
-[treasuremaplvl5]
-{
-get=base_treasure_map
-custominttag=Map 100
-custominttag=Level 5
-}
-
-[treasuremaplvl6]
-{
-get=base_treasure_map
-custominttag=Map 100
-custominttag=Level 6
-}
-
-[dirt]
-{
-get=base_item
-name=dirt
-id=0x913
-}
-
-[dirt2]
-{
-get=base_item
-name=dirt
-id=0x914
-}
-
-[base_treasure_chest]
-{
-get=base_item
-name=Treasure Chest
-id=0xE40
-weight=3000
-weightmax=400000
-type=63
-movable=1
-maxitems=125
-interval=1 2
-SCRIPT=5401
-}
-
-[treasurechestlevel0]
-{
-get=base_treasure_chest
-spawnobjlist=treasurechestloot0
-morey=0x01 0x01 0x34 0x48
-morez=0x01 0x32 0x0 0x37
-custominttag=Level 0
-}
-
-[treasurechestlevel1]
-{
-get=base_treasure_chest
-spawnobjlist=treasurechestloot1
-morey=0x01 0x01 0x34 0x48
-morez=0x01 0x32 0x0 0x37
-custominttag=Level 1
-}
-
-[treasurechestlevel2]
-{
-get=base_treasure_chest
-spawnobjlist=treasurechestloot2
-morey=0x01 0x01 0x34 0x48
-morez=0x01 0x32 0x0 0x37
-custominttag=Level 2
-}
-
-[treasurechestlevel3]
-{
-get=base_treasure_chest
-spawnobjlist=treasurechestloot3
-morey=0x01 0x01 0x34 0x48
-morez=0x01 0x32 0x0 0x37
-custominttag=Level 3
-}
-
-[treasurechestlevel4]
-{
-get=base_treasure_chest
-spawnobjlist=treasurechestloot4
-morey=0x01 0x01 0x34 0x48
-morez=0x01 0x32 0x0 0x37
-custominttag=Level 4
-}
-
-[treasurechestlevel5]
-{
-get=base_treasure_chest
-name=Treasure Chest
-spawnobjlist=treasurechestloot5
-morey=0x01 0x01 0x34 0x48
-morez=0x01 0x32 0x0 0x37
-custominttag=Level 5
-}
-
-[treasurechestlevel6]
-{
-get=base_treasure_chest
-name=Treasure Chest
-spawnobjlist=treasurechestloot6
-morey=0x01 0x01 0x34 0x48
-morez=0x01 0x32 0x0 0x37
-custominttag=Level 6
 }

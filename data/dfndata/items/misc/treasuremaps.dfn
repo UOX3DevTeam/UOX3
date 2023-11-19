@@ -1,0 +1,144 @@
+[base_treasure_map]
+{
+get=base_item
+name=a treasure map
+id=0x14EC
+SCRIPT=5402
+custominttag=Map 100
+custominttag=Level 0
+}
+
+[treasuremaplvl0]
+{
+get=base_treasure_map
+custominttag=Level 0
+}
+
+[treasuremaplvl1]
+{
+get=base_treasure_map
+custominttag=Level 1
+}
+
+[treasuremaplvl2]
+{
+get=base_treasure_map
+custominttag=Level 2
+}
+
+[treasuremaplvl3]
+{
+get=base_treasure_map
+custominttag=Level 3
+}
+
+[treasuremaplvl4]
+{
+get=base_treasure_map
+custominttag=Level 4
+}
+
+[treasuremaplvl5]
+{
+get=base_treasure_map
+custominttag=Level 5
+}
+
+[treasuremaplvl6]
+{
+get=base_treasure_map
+custominttag=Level 6
+}
+
+[dirt]
+{
+get=base_item
+name=dirt
+id=0x913
+}
+
+[dirt2]
+{
+get=base_item
+name=dirt
+id=0x914
+}
+
+[base_treasure_chest]
+{
+get=base_item
+name=Treasure Chest
+id=0xE40
+weight=3000
+weightmax=400000
+type=63
+movable=1
+maxitems=125
+interval=1 2
+SCRIPT=5401
+}
+
+[treasurechestlevel0]
+{
+get=base_treasure_chest
+spawnobjlist=treasurechestloot0
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 0
+}
+
+[treasurechestlevel1]
+{
+get=base_treasure_chest
+spawnobjlist=treasurechestloot1
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 1
+}
+
+[treasurechestlevel2]
+{
+get=base_treasure_chest
+spawnobjlist=treasurechestloot2
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 2
+}
+
+[treasurechestlevel3]
+{
+get=base_treasure_chest
+spawnobjlist=treasurechestloot3
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 3
+}
+
+[treasurechestlevel4]
+{
+get=base_treasure_chest
+spawnobjlist=treasurechestloot4
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 4
+}
+
+[treasurechestlevel5]
+{
+get=base_treasure_chest
+name=Treasure Chest
+spawnobjlist=treasurechestloot5
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 5
+}
+
+[treasurechestlevel6]
+{
+get=base_treasure_chest
+name=Treasure Chest
+spawnobjlist=treasurechestloot6
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+custominttag=Level 6
+}
