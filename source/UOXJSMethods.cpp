@@ -55,6 +55,17 @@ bool BuyShop( CSocket *s, CChar *c );
 void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway );
 void ScriptError( JSContext *cx, const char *txt, ... );
 
+void restoreContext( cScript *origScript, const std::string& area, UI16 origScriptID ) {
+	JSContext* context = origScript->getContext();
+	JS::RootedValue rval(context);
+	JS::RootedValueArray< 0 > nullArgs(context);
+	if (!origScript->CallParticularEvent("_restorecontext_", nullArgs, 0, &rval))
+	{
+		// Dummy function not found, let shard admin know!
+		Console.Warning(oldstrutil::format("Script context lost after using %s. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", area.c_str(), origScriptID));
+	}
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	MethodSpeech()
 //o------------------------------------------------------------------------------------------------o
@@ -1896,13 +1907,13 @@ static bool CGump_Send( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "You have to pass a valid Socket or Character" );
 	}
 
-	JS::HandleValue myClass = args.get( 0 );
-
+	auto myClass = args.get( 0 );
+	std::string className = JS::GetClass(myClass.toObjectOrNull())->name;
 	SEGump_st *myGump = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 
-	if( myClass.ClassName() == "UOXSocket" )
+	if( className == "UOXSocket" )
 	{
-		CSocket *mySock = static_cast<CSocket *>( myClass.toObject() );
+		CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>( myClass.toObjectOrNull(), 0 );
 		if( mySock == nullptr )
 		{
 			ScriptError( cx, "Send: Passed an invalid Socket" );
@@ -1911,9 +1922,9 @@ static bool CGump_Send( JSContext* cx, unsigned argc, JS::Value* vp )
 		UI32 gumpId = ( 0xFFFF + JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx )));
 		SendVecsAsGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
 	}
-	else if( myClass.ClassName() == "UOXChar" )
+	else if( className == "UOXChar" )
 	{
-		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>( myClass.toObjectOrNull(), 0 );
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Send: Passed an invalid Character" );
@@ -2075,12 +2086,7 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .TextMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Char/Item JS Method .TextMessage()", origScriptID);
 	}
 
 	return true;
@@ -2189,7 +2195,7 @@ bool CBase_GetJSTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 			{
 				// Return the timestamp for when the Effect timer expires
 				//args.rval().setInt32( Effect->ExpireTime() );
-				JS_NewNumberValue( cx, Effect->ExpireTime(), rval );
+				args.rval().setInt32( Effect->ExpireTime() );
 			}
 		}
 	}
@@ -2346,12 +2352,7 @@ static bool CBase_Delete( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .Delete(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Char/Item JS Method .Delete()", origScriptID);
 	}
 
 	return true;
@@ -2543,10 +2544,9 @@ static bool CChar_EmoteMessage( JSContext* cx, unsigned argc, JS::Value* vp )
   if (!args.computeThis(cx, &obj))
       return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
-	JSString *targMessage = JS_ValueToString( cx, argv[0] );
-	char *trgMessage = JS_GetStringBytes( targMessage );
+	auto trgMessage = convertToString( cx, args.get( 0 ).toString() );
 
-	if( !ValidateObject( myChar ) || trgMessage == nullptr )
+	if( !ValidateObject( myChar ) || trgMessage.empty() )
 	{
 		ScriptError( cx, "EmoteMessage: Invalid character or speech" );
 		return false;
@@ -2585,7 +2585,7 @@ static bool CChar_EmoteMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
 
-	MethodSpeech( *myChar, trgMessage, EMOTE, txtHue, static_cast<FontType>( myChar->GetFontType() ), speechTarget, speechTargetSerial, useUnicode );
+	MethodSpeech( *myChar, trgMessage.c_str(), EMOTE, txtHue, static_cast<FontType>(myChar->GetFontType()), speechTarget, speechTargetSerial, useUnicode);
 	return true;
 }
 
@@ -2732,12 +2732,7 @@ static bool CSocket_Disconnect( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Socket JS Method .Disconnect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Socket JS Method .Disconnect()", origScriptID);
 	}
 	return true;
 }
@@ -2946,12 +2941,7 @@ static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .Teleport(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Char/Item JS Method .Teleport()", origScriptID);
 	}
 
 	return true;
@@ -3172,12 +3162,7 @@ static bool CMisc_SellTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Socket JS Method .SellTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Char/Socket JS Method .SellTo()", origScriptID);
 	}
 
 	return true;
@@ -3260,12 +3245,7 @@ static bool CMisc_BuyFrom( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Socket JS Method .BuyFrom(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Char/Socket JS Method .BuyFrom()", origScriptID);
 	}
 
 	return true;
@@ -3398,12 +3378,7 @@ static bool CMisc_RemoveSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .RemoveSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Char/Item JS Method .RemoveSpell()", origScriptID);
 	}
 
 	return true;
@@ -3961,12 +3936,7 @@ static bool CChar_OpenBank( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .OpenBank(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Char JS Method .OpenBank()", origScriptID);
 	}
 
 	return true;
@@ -4010,12 +3980,7 @@ static bool CSocket_OpenContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 		if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 		{
 			// ... by calling a dummy function in original script!
-			bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-			if( !retVal )
-			{
-				// Dummy function not found, let shard admin know!
-				Console.Warning( oldstrutil::format( "Script context lost after using Socket JS Method .OpenContainer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-			}
+			restoreContext(origScript, "Socket JS Method .OpenContainer()", origScriptID);
 		}
 	}
 
@@ -4062,12 +4027,7 @@ static bool CChar_OpenLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 			if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 			{
 				// ... by calling a dummy function in original script!
-				bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-				if( !retVal )
-				{
-					// Dummy function not found, let shard admin know!
-					Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .OpenLayer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-				}
+				restoreContext(origScript, "Char JS Method .OpenLayer()", origScriptID);
 			}
 		}
 	}
@@ -4158,12 +4118,7 @@ static bool CChar_TurnToward( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .TurnToward(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Character JS Method .TurnToward()", origScriptID);
 	}
 
 	return true;
@@ -5349,12 +5304,7 @@ static bool CItem_SetCont( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .SetCont(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Item JS Method .SetCont()", origScriptID);
 	}
 
 	return true;
@@ -6160,12 +6110,7 @@ static bool CItem_PlaceInPack( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .PlaceInPack(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Item JS Method .PlaceInPack()", origScriptID);
 	}
 
 	return true;
@@ -6704,12 +6649,7 @@ static bool CChar_YellMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .YellMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Char JS Method .YellMessage()", origScriptID);
 	}
 
 	return true;
@@ -6770,12 +6710,7 @@ static bool CChar_WhisperMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .WhisperMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Char JS Method .WhisperMessage()", origScriptID);
 	}
 
 	return true;
@@ -7076,12 +7011,7 @@ static bool CChar_AddSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 		if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 		{
 			// ... by calling a dummy function in original script!
-			bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-			if( !retVal )
-			{
-				// Dummy function not found, let shard admin know!
-				Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .AddSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-			}
+			restoreContext(origScript, "Char JS Method .AddSpell()", origScriptID);
 		}
 	}
 	return true;
@@ -7178,12 +7108,7 @@ static bool CBase_Refresh( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .Refresh(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Char/Item JS Method .Refresh()", origScriptID);
 	}
 
 	return true;
@@ -7991,12 +7916,7 @@ static bool CChar_WalkTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .WalkTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Char JS Method .WalkTo()", origScriptID);
 	}
 	return true;
 }
@@ -8109,12 +8029,7 @@ static bool CChar_RunTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .RunTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Char JS Method .RunTo()", origScriptID);
 	}
 
 	return true;
@@ -8314,12 +8229,7 @@ static bool CItem_Glow( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .Glow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Item JS Method .Glow()", origScriptID);
 	}
 
 	return true;
@@ -8382,12 +8292,7 @@ static bool CItem_UnGlow( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .UnGlow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Item JS Method .UnGlow()", origScriptID);
 	}
 
 	return true;
@@ -8539,12 +8444,7 @@ static bool CChar_Recall( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Recall(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Character JS Method .Recall()", origScriptID);
 	}
 
 	return true;
@@ -8731,12 +8631,7 @@ static bool CChar_Kill( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Kill(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Character JS Method .Kill()", origScriptID);
 	}
 
 	return true;
@@ -8776,12 +8671,7 @@ static bool CChar_Resurrect( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Resurrect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Character JS Method .Resurrect()", origScriptID);
 	}
 
 	return true;
@@ -9702,12 +9592,7 @@ static bool CItem_Carve( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .Carve(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Item JS Method .Carve()", origScriptID);
 	}
 
 	return true;
@@ -10691,12 +10576,7 @@ static bool CChar_Damage( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Damage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Character JS Method .Damage()", origScriptID);
 	}
 
 	return true;
@@ -10744,12 +10624,7 @@ static bool CChar_InitiateCombat( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .InitiateCombat(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Character JS Method .InitiateCombat()", origScriptID);
 	}
 
 	return true;
@@ -10790,12 +10665,7 @@ static bool CChar_InvalidateAttacker( JSContext* cx, unsigned argc, JS::Value* v
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .InvalidateAttacker(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Character JS Method .InvalidateAttacker()", origScriptID);
 	}
 
 	return true;
@@ -11273,12 +11143,7 @@ static bool CChar_Heal( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
-		if( !retVal )
-		{
-			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Heal(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
-		}
+		restoreContext(origScript, "Character JS Method .Heal()", origScriptID);
 	}
 
 	return true;
