@@ -11,6 +11,8 @@ It then sends commands to display and detail the map to the player's game interf
 For certain special maps like crafted city maps and treasure maps, additional actions are taken. For example,
 if a player uses a crafted city map, the script calculates the size and boundaries of the map based on the player's skill level.
 If it's a treasure map, the script checks if the map has been decoded and displays the treasure location on the map, indicating where the player should dig for a reward.
+
+// TODO: Figure out how to prevent map from being opened multiple times
 */
 
 function onUseChecked( pUser, mapItem )
