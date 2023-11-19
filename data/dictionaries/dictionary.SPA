@@ -3271,6 +3271,26 @@
 5510=Sólo puedes lanzar una bola de nieve a algo que pueda devolverla.
 5511=La nieve aún no está lista para ser empacada. Sigue intentándolo.
 5512=Con cuidado, haces una bola con la nieve...
+// [5700-5750] Mapa del tesoro y mensajes de mapa
+5700=Parece estar en blanco.
+5701=Esta búsqueda del tesoro ya se ha completado.
+5702=El tesoro está marcado con el pin rojo. ¡Coge una pala y ve a desenterrarla!
+5703=¡Has decodificado el mapa!
+5704=mapa del tesoro andrajoso
+5705=¡No puedes decodificar este mapa todavía!
+5706=Ya estás cavando tesoros.
+5707=¿Dónde deseas excavar?
+5708=Dejas de cavar porque hay algo directamente encima del cofre del tesoro
+5709=No decodificaste este mapa y no tienes idea de dónde buscar el tesoro.
+5710=El tesoro de este mapa ya ha sido encontrado.
+5711=Excavas y cavas, pero no encuentras ningún tesoro
+5712=Excavas y cavas, pero parece que no hay ningún tesoro aquí
+5713=El cofre se niega a llenarse con más tesoros.
+5714=mapa del tesoro claramente dibujado
+5715=mapa del tesoro dibujado por expertos
+5716=mapa del tesoro hábilmente dibujado
+5717=mapa del tesoro hábilmente dibujado
+5718=mapa del tesoro tortuosamente dibujado
 // [6000-6499] Misc Skill Msgs
 6000=Esa persona parece %s y %t.
 6001=No se puede hacer nada útil con eso.

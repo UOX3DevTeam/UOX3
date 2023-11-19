@@ -3,88 +3,88 @@
 function TreasureDigging( pUser )
 {
 	var socket = pUser.socket;
-	if( pUser.GetTempTag("digging") == 1 )
+	if( pUser.GetTempTag( "digging" ) == 1 )
 	{
-		pUser.SysMessage( "You are already digging treasure." );
+		socket.SysMessage( GetDictionaryEntry( 5706, socket.language ));// You are already digging treasure.
 		return false;
 	}
 	else
-		socket.CustomTarget( 0 , "Where do you wish to dig?" );
+		socket.CustomTarget(0, GetDictionaryEntry( 5707, socket.language ));//Where do you wish to dig?
 }
 
-function onCallback0( pSock, myTarget )
+function onCallback0( socket, myTarget )
 {
-	var pUser = pSock.currentChar;
-	var ourObj = pSock.tempObj2;
+	var pUser = socket.currentChar;
+	var ourObj = socket.tempObj2;
 
 	// Getting Tags from Map Item
-	if( pSock.GetWord(1) )
+	if( socket.GetWord(1) )
 	{
-		var myCoords = ourObj.GetTag("coords").split(",");
-		var xtreas = parseInt( myCoords[0] );
-		var ytreas = parseInt( myCoords[1] );
-		var level = ourObj.GetTag( "Level" );
+		var myCoords = ourObj.GetTag( "coords" ).split(",");
+		var treasureX = parseInt( myCoords[0] );
+		var treasureY = parseInt( myCoords[1] );
+		var mapLevel = ourObj.GetTag( "Level" );
 		var radius = 0;
-		var xdif = 0;
-		var ydif = 0;
+		var xDifference = 0;
+		var yDifference = 0;
 	
-		if( pUser.x == xtreas && pUser.y == ytreas )
+		if( pUser.x == treasureX && pUser.y == treasureY )
 		{
-			pUser.SysMessage("You stop digging because something is directly on top of the treasure chest");
+			socket.SysMessage( GetDictionaryEntry( 5708, socket.language ));// You stop digging because something is directly on top of the treasure chest
 			return false;
 		}
 
 		if( ourObj.GetTag("Decoded") == 0 )
 		{
-			pUser.SysMessage( "You did not decode this map and have no clue where to look for the treasure." );
+			socket.SysMessage( GetDictionaryEntry( 5709, socket.language ));// You did not decode this map and have no clue where to look for the treasure.
 			return false;
 		}
 
 		if( ourObj.GetTag( "found" ) == 1 )
 		{
-			pUser.SysMessage( "The treasure for this map has already been found." );
+			socket.SysMessage( GetDictionaryEntry( 5710, socket.language ));// The treasure for this map has already been found.
 			return false;
 		}
 
-		if( pUser.x > xtreas && pUser.y > ytreas )
+		if( pUser.x > treasureX && pUser.y > treasureY )
 		{
-			pUser.SysMessage( "You dig and dig, but do not find any treasure" );//Meaning the treasure is not there.
+			socket.SysMessage( GetDictionaryEntry( 5711, socket.language ));// You dig and dig, but do not find any treasure Meaning the treasure is not there.
 			return false;
 		}
 
-		if( pUser.x > xtreas || pUser.y >= ytreas )
+		if( pUser.x > treasureX || pUser.y >= treasureY )
 		{
-			pUser.SysMessage( "You dig and dig, but no treasure seems to be here" );//Meaning you are close to the treasure, but not close enough to dig it up.
+			socket.SysMessage( GetDictionaryEntry( 5712, socket.language ));// You dig and dig, but no treasure seems to be here Meaning you are close to the treasure, but not close enough to dig it up.
 			return false;
 		}
 
 		// Distance from Point of chest
-		if( xtreas >= pUser.x )
-			xdif = xtreas - pUser.x;
+		if( treasureX >= pUser.x )
+			xDifference = treasureX - pUser.x;
 		else
-			xdif = pUser.x - xtreas;
+			xDifference = pUser.x - treasureX;
 
-		if( ytreas >= pUser.y )
-			ydif = ytreas - pUser.y;
+		if( treasureY >= pUser.y )
+			yDifference = treasureY - pUser.y;
 		else
-			ydif = pUser.y - ytreas;
+			yDifference = pUser.y - treasureY;
 
 		// Range where you can start digging up chest.
-		var mining = (pUser.baseskills.mining / 10).toFixed(1);
+		var mining = ( pUser.skills.mining / 10 ).toFixed(1);
 
 		if( mining < 51.0 )
 			radius = 1;
 		else if( mining < 81.0 )
 			radius = 2;
-		else if( mining < 100.0 )
+		else if( mining < 99.0 )
 			radius = 3;
 		else
 			radius = 4;
 
-		//var mapElev = GetMapElevation(xtreas.x, ytreas.y, pUser.worldnumber);;
+		//var mapElev = GetMapElevation(treasureX .x, treasureY .y, pUser.worldnumber);;
 
 		// Checking if we had correct point
-		if (xdif <= radius && ydif <= radius)
+		if( xDifference <= radius && yDifference <= radius )
 		{
 			ourObj.SetTag( "found", 1 );// Marks the chest found so you can not dig more then one.
 			pUser.SetTempTag( "digging", 1 );// keeps you from digging again.
@@ -104,22 +104,22 @@ function onCallback0( pSock, myTarget )
 			}
 
 			// Dirt Effect
-			var dirtMade = CreateDFNItem( pSock, pUser, "dirt", 1, "ITEM", false );
-			dirtMade.Teleport( xtreas, ytreas, pUser.z, pUser.worldnumber );
+			var dirtMade = CreateDFNItem( socket, pUser, "dirt", 1, "ITEM", false );
+			dirtMade.Teleport( treasureX, treasureY, pUser.z, pUser.worldnumber );
 			dirtMade.tempObj = pUser;
-			dirtMade.SetTempTag( "Level", level );
+			dirtMade.SetTempTag( "Level", mapLevel );
 			dirtMade.StartTimer( 1000, 0, true );
-			pSock.SoundEffect( 0x33B, true );
+			socket.SoundEffect( 0x33B, true );
 			pUser.frozen = 1;
 		}
 	}
 }
 
 // Function creates the Treasure Chest and sets it up.
-function TreasureChest( pUser, iUsed, level ) 
+function TreasureChest( pUser, iUsed, mapLevel ) 
 {
 	var chest = "";
-	switch( level )
+	switch( mapLevel )
 	{
 		case 1: chest = "treasurechestlevel1"; break;
 		case 2: chest = "treasurechestlevel2"; break;
@@ -138,6 +138,14 @@ function TreasureChest( pUser, iUsed, level )
 		chestmade.StartTimer( 1000, 3, true );
 	}
 }
+
+const initialSpawn = {
+	2: ["orcmage", "gargoyle", "gazer", "hellhound", "earthele"],
+	3: ["lich", "ogrelord", "dreadspider", "airele", "fireele"],
+	4: ["dreadspider", "lichlord", "daemon", "eldergazer", "ogrelord"],
+	5: ["lichlord", "daemon", " eldergazer", "poisonele", "bloodele"],
+	6: ["LichLord", "daemon", " eldergazer", "poisonele", "bloodele"],
+};
 
 function onTimer( iUsed, timerID )
 {
@@ -214,6 +222,17 @@ function onTimer( iUsed, timerID )
 			iUsed.z += 1;
 			pUser.frozen = 0;
 			pUser.SetTempTag( "digging", null );
+			var mapLevel = iUsed.GetTag( "Level" ); // set the level to a static value using the tag from the chest.
+			if( mapLevel >= 2 )
+			{
+				var spawnList = initialSpawn[mapLevel]; // selects the array of possible NPCs for the given level
+				for( var i = 0; i < 4; i++ )
+				{
+					var randomlySelectedNPC = spawnList[Math.floor( Math.random() * spawnList.length )]; // selects a random NPC from the array
+
+					SpawnNPC( randomlySelectedNPC, iUsed.x, iUsed.y, iUsed.z, iUsed.worldnumber, iUsed.instanceID );
+				}
+			}
 			break;
 	}
 }

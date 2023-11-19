@@ -311,7 +311,7 @@ function mapPresets( socket, mapItem )
 			sendMapDetails( socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
 			sendMapEditable( socket, mapItem, false );
 			break;
-		case 50:// Crafted City Map
+		case 50:// Crafted Map
 			if ( mapItem.GetTag( "Drawn" ) == 1 )
 			{
 				var mydimensions = mapItem.GetTag( "dimensions" ).split(",");
@@ -330,17 +330,15 @@ function mapPresets( socket, mapItem )
 			}			
 			else
 			{
-				pUser.SysMessage("This map is as of no use as it is blank.");
-			//	CraftedMapCoords( socket, mapItem );
+				socket.SysMessage( GetDictionaryEntry( 5700, socket.language ));// It appears to be blank.
 				break;
 			}
 		case 100:// Treasure Map
-			// Call the TreasureMapCoords
 			if( mapItem.GetTag( "Decoded" ) == 1 )
 			{
-				var mydimensions = mapItem.GetTag("dimensions").split(",");
-				var height = parseInt(mydimensions[0]);
-				var width = parseInt(mydimensions[1]);
+				var mydimensions = mapItem.GetTag( "dimensions" ).split(",");
+				var height = parseInt( mydimensions[0] );
+				var width = parseInt( mydimensions[1] );
 
 				var mybox = mapItem.GetTag( "boundingbox" ).split(",");
 				var xtop = parseInt( mybox[0] );
@@ -352,14 +350,14 @@ function mapPresets( socket, mapItem )
 				sendMapEditable( socket, mapItem, false );
 				socket.SoundEffect( 0x249, true );
 
-				if( mapItem.GetTag("found") == 1 ) 
+				if( mapItem.GetTag( "found" ) == 1 ) 
 				{
-					pUser.SysMessage("This treasure hunt has already been completed.")
+					socket.SysMessage( GetDictionaryEntry( 5701, socket.language ));// This treasure hunt has already been completed.
 				}
 				else 
 				{
-					sendAddMapPin(socket, mapItem, 100, 100);
-					pUser.SysMessage("The treasure is marked by the red pin. Grab a shovel and go dig it up!");
+					sendAddMapPin( socket, mapItem, 100, 100 );
+					socket.SysMessage( GetDictionaryEntry( 5702, socket.language ));// The treasure is marked by the red pin. Grab a shovel and go dig it up!
 				}
 				break;
 			}
@@ -368,31 +366,43 @@ function mapPresets( socket, mapItem )
 				var level = mapItem.GetTag( "Level" );
 				var skillValue = ( pUser.baseskills.cartography / 10 ).toFixed( 1 );
 				var decoded = false;
+				var mapName = 0;
 
 				switch (level)
 				{
+					case 0:
+						if (skillValue >= 0.0)
+						{
+							decoded = true;
+							mapName = 5704;// young treasure map
+						}
+						break;
 					case 1:
 						if( skillValue >= 27.0 )
 						{
 							decoded = true;
+							mapName = 5714;// plainly drawn treasure map
 						}
 						break;
 					case 2:
 						if( skillValue >= 71.0 )
 						{
 							decoded = true;
+							mapName = 5715;// expertly drawn treasure map
 						}
 						break;
 					case 3:
 						if( skillValue >= 81.0 )
 						{
 							decoded = true;
+							mapName = 5716;// adeptly drawn treasure map
 						}
 						break;
 					case 4:
 						if( skillValue >= 91.0 )
 						{
 							decoded = true;
+							mapName = 5717;// cleverly drawn treasure map
 						}
 						break;
 					case 5:
@@ -400,19 +410,22 @@ function mapPresets( socket, mapItem )
 						if( skillValue >= 100.0 )
 						{
 							decoded = true;
+							mapName = 5718;// deviously drawn treasure map
 						}
 						break;
+						default:
+							break;
 				}
 
 				if( decoded )
 				{
-					pUser.SysMessage( "You decoded the map!" );
-					mapItem.name = "tattered treasure map";
+					socket.SysMessage( GetDictionaryEntry( 5703, socket.language ));// You decoded the map!
+					mapItem.name = GetDictionaryEntry( mapName, socket.language );
 					TreasureMapCoords( socket, mapItem );
 				}
 				else
 				{
-					pUser.SysMessage( "You cannot decode this map yet!" );
+					socket.SysMessage( GetDictionaryEntry( 5705, socket.language ));// You cannot decode this map yet!
 				}
 			}
 	}
@@ -692,8 +705,6 @@ function TreasureMapCoords( socket, mapItem )
 	mapItem.SetTag( "coords", x + "," + y );											// Sets the treasure Location for Shovel or Pickaxe.
 	mapItem.SetTag( "Decoded", 1 )        												// Decoded Map Will be set.
 	socket.SoundEffect( 0x249, true );
-    // Do something with the coordinates, like print them to the User
-	//pUser.SysMessage( "x: " + x + ", y: " + y );
 }
 
 function sendMapDetails( socket, map, Width, Height, xtop, ytop, xbottom, ybottom )
@@ -738,7 +749,6 @@ function sendMapDetails( socket, map, Width, Height, xtop, ytop, xbottom, ybotto
 			break;
 	}
 	toSend.WriteShort( 19, mapType ); // World facet
-
 	socket.Send( toSend );
 	toSend.Free();
 }
@@ -758,7 +768,7 @@ Action Flag command
 6: Toggle Edit Map (Client)
 7: Reply From Server to Action 6*/
 
-function onPacketReceive( pSocket, packetNum, subCommand )
+function onPacketReceive(pSocket, packetNum, subCmd )
 {
 	var pUser = pSocket.currentChar;
 	var mapItem = CalcItemFromSer( parseInt( pUser.GetTempTag( "parentMapSerial" )));
@@ -811,6 +821,7 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 			Console.Warning( "Unhandled subcommand (" + subCmd + ") in packet 0x56." );
 			break;
 	}
+	return;
 }
 
 function sendMapCommand( socket, mapItem, command, editable, x, y )
@@ -826,21 +837,27 @@ function sendMapCommand( socket, mapItem, command, editable, x, y )
 	toSend.WriteShort( 9, y );                // y location of pin on the map
 	socket.Send( toSend );
 	toSend.Free();
-	//pUser.SysMessage( command + "," + editable + "," + x + "," + y );
 }
 
 function sendMapDisplay( socket, map )
 {
 	var pUser = socket.currentChar;
 	sendMapCommand( socket, map, 0x05, 0, 0, 0 );
-	//pUser.SysMessage("sendMapDisplay"); // Debug msg
 }
 
 function sendAddMapPin( socket, map, x, y)
 {
 	var pUser = socket.currentChar;
-	sendMapCommand( socket, map, 0x01, 1, x, y );
-	//pUser.SysMessage("sendAddMapPin" + ", " + x + ", " + y ); // Debug msg
+	//Remove all Pins
+	sendMapCommand( socket, map, 0x05, 0, 0, 0 );
+	// Add Pins
+	sendMapCommand( socket, map, 0x01, 0, x, y );
+}
+
+function sendInsertPin(socket, map, x, y)
+{
+	var pUser = socket.currentChar;
+	sendMapCommand( socket, map, 0x02, 1, x, y );
 }
 
 function sendMapEditable( socket, mapItem, editable )
@@ -848,7 +865,6 @@ function sendMapEditable( socket, mapItem, editable )
 	var pUser = socket.currentChar;
 	mapItem.SetTag( 'editable', editable );
 	sendMapCommand( socket, mapItem, 0x07, editable ? 1 : 0, 0, 0 );
-	//pUser.SysMessage("sendMapEditable" + ", "+ editable); // Debug msg
 }
 
 function onTooltip( map, pSocket )
