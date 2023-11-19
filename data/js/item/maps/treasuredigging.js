@@ -148,32 +148,36 @@ const initialSpawn = {
 	6: ["LichLord", "daemon", " eldergazer", "poisonele", "bloodele"],
 };
 
+function playDiggingAnimation( pUser, timerObj )
+{
+	timerObj.SoundEffect( 0x33B, true );
+	if( pUser.bodyType === 2 )// Gargoyle
+	{
+		pUser.DoAction( 0x0, 0x3 );
+	}
+	else if( pUser.isonhorse )// Mounted
+	{
+		pUser.DoAction( 0x1A );
+	}
+	else
+		pUser.DoAction( 0x0B );
+}
+
 function onTimer( timerObj, timerID )
 {
 	var pUser = timerObj.tempObj;
 	var level = timerObj.GetTempTag( "Level" );
+	var scriptID = 5400;
 
 	switch( timerID )
 	{
 		case 0:// Dirt Effect 2
 			var dirtMade2 = CreateDFNItem( pUser.socket, pUser, "dirt2", 1, "ITEM", false );
 			dirtMade2.Teleport( timerObj.x, timerObj.y, timerObj.z, timerObj.worldnumber );
-			dirtMade2.StartTimer( 10000, 2, 5400);
-			timerObj.StartTimer( 1000, 1, 5400);
+			dirtMade2.StartTimer( 10000, 2, scriptID);
+			timerObj.StartTimer( 1000, 1, scriptID);
 			TreasureChest( pUser, timerObj, level );
-			timerObj.SoundEffect( 0x33B, true );
-			if( pUser.bodyType == 2) // Gargoyle
-			{
-				pUser.DoAction( 0x0, 0x3 );
-			}
-			else if( pUser.isonhorse ) // Mounted
-			{
-				pUser.DoAction( 0x1A );
-			}
-			else // On foot
-			{
-				pUser.DoAction( 0x0B );
-			}
+			playDiggingAnimation( pUser, timerObj );
 			break;
 		case 1:
 		case 2:
@@ -183,43 +187,19 @@ function onTimer( timerObj, timerID )
 		case 4:
 		case 5:
 		case 6:
-			timerObj.SoundEffect( 0x33B, true );
-			if( pUser.bodyType == 2 ) // Gargoyle
-			{
-				pUser.DoAction( 0x0, 0x3 );
-			}
-			else if( pUser.isonhorse ) // Mounted
-			{
-				pUser.DoAction( 0x1A );
-			}
-			else // On foot
-			{
-				pUser.DoAction( 0x0B );
-			}
+			playDiggingAnimation( pUser, timerObj );
 			timerObj.z += 2;
 			if( timerID < 6 )
 			{
-				timerObj.StartTimer( 1000, timerID + 1, 5400 );
+				timerObj.StartTimer( 1000, timerID + 1, scriptID );
 			}
 			else
 			{
-				timerObj.StartTimer( 1000, 7, 5400 );
+				timerObj.StartTimer( 1000, 7, scriptID );
 			}
 			break;
 		case 7:
-			timerObj.SoundEffect( 0x33B, true );
-			if( pUser.bodyType == 2 ) // Gargoyle
-			{
-				pUser.DoAction( 0x0, 0x3 );
-			}
-			else if( pUser.isonhorse ) // Mounted
-			{
-				pUser.DoAction( 0x1A );
-			}
-			else // On foot
-			{
-				pUser.DoAction( 0x0B );
-			}
+			playDiggingAnimation( pUser, timerObj );
 			timerObj.z += 1;
 			pUser.frozen = 0;
 			pUser.SetTempTag( "digging", null );
