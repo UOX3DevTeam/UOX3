@@ -3,7 +3,8 @@
 get=base_item
 name=a treasure map
 id=0x14EC
-SCRIPT=5402
+script=5402
+decay=1
 custominttag=Map 100
 custominttag=Level 0
 }
@@ -75,7 +76,7 @@ type=63
 movable=1
 maxitems=125
 interval=1 2
-SCRIPT=5401
+script=5401
 }
 
 [treasurechestlevel0]
