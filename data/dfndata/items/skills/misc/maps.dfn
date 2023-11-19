@@ -300,7 +300,7 @@ custominttag=Map 33
 get=base_item
 name=a local map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5404
 custominttag=Map 50
 }
 
@@ -309,7 +309,7 @@ custominttag=Map 50
 get=base_item
 name=a city map
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5404
 custominttag=Map 50
 }
 
@@ -318,6 +318,6 @@ custominttag=Map 50
 get=base_item
 name=a sea chart
 id=0x14EC
-SCRIPT=1503
+SCRIPT=5404
 custominttag=Map 50
 }
