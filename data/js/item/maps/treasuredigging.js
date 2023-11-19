@@ -108,7 +108,7 @@ function onCallback0( socket, myTarget )
 			dirtMade.Teleport( treasureX, treasureY, pUser.z, pUser.worldnumber );
 			dirtMade.tempObj = pUser;
 			dirtMade.SetTempTag( "Level", mapLevel );
-			dirtMade.StartTimer( 1000, 0, true );
+			dirtMade.StartTimer( 1000, 0, 5400 );
 			socket.SoundEffect( 0x33B, true );
 			pUser.frozen = 1;
 		}
@@ -135,7 +135,7 @@ function TreasureChest( pUser, iUsed, mapLevel )
 		chestmade.Teleport( iUsed.x, iUsed.y, iUsed.z - 7, iUsed.worldnumber );
 		chestmade.movable = 2;
 		chestmade.tempObj = pUser;
-		chestmade.StartTimer( 1000, 3, true );
+		chestmade.StartTimer( 1000, 3, 5400 );
 	}
 }
 
@@ -157,8 +157,8 @@ function onTimer( iUsed, timerID )
 		case 0:// Dirt Effect 2
 			var dirtMade2 = CreateDFNItem( pUser.socket, pUser, "dirt2", 1, "ITEM", false );
 			dirtMade2.Teleport( iUsed.x, iUsed.y, iUsed.z, iUsed.worldnumber );
-			dirtMade2.StartTimer( 10000, 2, true);
-			iUsed.StartTimer( 1000, 1, true);
+			dirtMade2.StartTimer( 10000, 2, 5400);
+			iUsed.StartTimer( 1000, 1, 5400);
 			TreasureChest( pUser, iUsed, level );
 			iUsed.SoundEffect( 0x33B, true );
 			if( pUser.bodyType == 2) // Gargoyle
@@ -198,11 +198,11 @@ function onTimer( iUsed, timerID )
 			iUsed.z += 2;
 			if( timerID < 6 )
 			{
-				iUsed.StartTimer( 1000, timerID + 1, true );
+				iUsed.StartTimer( 1000, timerID + 1, 5400 );
 			}
 			else
 			{
-				iUsed.StartTimer( 1000, 7, true );
+				iUsed.StartTimer( 1000, 7, 5400 );
 			}
 			break;
 		case 7:
@@ -236,3 +236,5 @@ function onTimer( iUsed, timerID )
 			break;
 	}
 }
+
+function _restorecontext_() {}
