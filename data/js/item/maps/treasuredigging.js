@@ -121,6 +121,7 @@ function TreasureChest( pUser, iUsed, mapLevel )
 	var chest = "";
 	switch( mapLevel )
 	{
+		case 0: chest = "treasurechestlevel0"; break;
 		case 1: chest = "treasurechestlevel1"; break;
 		case 2: chest = "treasurechestlevel2"; break;
 		case 3: chest = "treasurechestlevel3"; break;
