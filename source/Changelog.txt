@@ -1,3 +1,6 @@
+19/11/2023 - Dragon Slayer
+	Fixed an issue where players qualifying for instant logout would not immediately vanish from view upon logout (Xuri)
+
 18/11/2023 - Xuri
 	Enhance the calculation of the average 'z' for movement.
 

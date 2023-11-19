@@ -455,7 +455,7 @@ void CNetworkStuff::LogOut( CSocket *s )
 		{
 			actbAccount.dwInGame = INVALIDSERIAL;
 		}
-		p->SetTimer( tPC_LOGOUT, 0 );
+		p->SetTimer( tPC_LOGOUT, 1 );
 		s->ClearTimers();
 	}
 	else
