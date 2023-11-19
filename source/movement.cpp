@@ -2651,10 +2651,10 @@ void CMovement::NpcMovement( CChar& mChar )
 //o------------------------------------------------------------------------------------------------o
 void CMovement::GetAverageZ( UI08 nm, SI16 x, SI16 y, SI08& z, SI08& avg, SI08& top )
 {
-	SI08 zTop = Map->MapElevation( x, y, nm );
-	SI08 zLeft = Map->MapElevation( x, y + 1, nm );
-	SI08 zRight = Map->MapElevation( x + 1, y, nm );
-	SI08 zBottom = Map->MapElevation( x + 1, y + 1, nm );
+	SI08 zTop = Map->MapElevation( x, y, nm, true );
+    SI08 zLeft = Map->MapElevation( x, y + 1, nm, true );
+    SI08 zRight = Map->MapElevation( x + 1, y, nm, true );
+    SI08 zBottom = Map->MapElevation( x + 1, y + 1, nm, true );
 
 	z = zTop;
 	if( zLeft < z )

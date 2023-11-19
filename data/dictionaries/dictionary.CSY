@@ -3258,6 +3258,19 @@
 5156=cikánský věštec
 5157=tulák
 5158=železný dělník
+// [5500-5600] Holiday Msgs
+5500=Kam chcete umístit tuto dekoraci?
+5501=Dekorace musí být umístěna vedle zdi.
+5502=Toto umístění není ve vašem domě.
+5503=Extrémní bolest zubů ustupuje.
+5504=Máte pocit, jako byste mohli jíst, kolik chcete!
+5506=Přejete si předělat tuto dekoraci?
+5507=Hlášení o chybě GM
+5508=Právě vás zasáhla sněhová koule!
+5509=Házíte sněhovou kouli a zasáhnete cíl!
+5510=Můžete házet sněhovou kouli pouze na něco, co ji může hodit zpět.
+5511=Sníh ještě není připraven k zabalení. Zkoušej to dál.
+5512=Opatrně balíte sníh do koule...
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.
@@ -5023,6 +5036,13 @@
 17619=Jako kolegovi z cechu vám mohu poskytnout prémiovou cenu za toto!
 17620=To nestačí na pokrytí členského poplatku cechu, omlouvám se.
 17621=Čas od vstupu do cechu: %i minut.
+// [17701-17710] Zbraňové schopnosti
+17701=Dostanete paralyzující ránu!
+17702=Zasadíte paralyzující ránu!
+17703=Dostanete drtivou ránu!
+17704=Zasadíte zdrcující ránu!
+17705=Dostanete otřes mozku!
+17706=Dáváte otřes mozku!
 // Převlékací souprava
 18000=Vandyke
 18001=Vousy

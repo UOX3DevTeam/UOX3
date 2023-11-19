@@ -3422,6 +3422,19 @@
 5156=la diseuse de bonne aventure gitane
 5157=le Vagabond
 5158=Le travailleur du fer
+// [5500-5600] Messages de vacances
+5500=Où souhaitez-vous placer cette décoration ?
+5501=La décoration doit être placée à côté d'un mur.
+5502=Cet emplacement n'est pas dans votre maison.
+5503=La douleur extrême dans vos dents s'atténue.
+5504=Vous avez l'impression de pouvoir manger autant que vous le souhaitez !
+5506=Voulez-vous restituer cette décoration ?
+5507=Rapport d'erreur au GM
+5508=Vous venez d'être frappé par une boule de neige !
+5509=Vous lancez la boule de neige et atteignez la cible !
+5510=Vous ne pouvez lancer une boule de neige que sur quelque chose qui peut en renvoyer une.
+5511=La neige n'est pas encore prête à être tassée. Continue d'essayer.
+5512=Vous mettez soigneusement la neige en boule...
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.
@@ -5179,6 +5192,13 @@
 17619=En tant que membre de la guilde, je peux vous faire bénéficier d'un tarif préférentiel !
 17620=Ce n'est pas assez pour couvrir les frais d'adhésion à la guilde, désolé.
 17621=Depuis que vous avez rejoint la guilde : %i minutes.
+// [17701-17710] Capacités des armes
+17701=Vous recevez un coup paralysant !
+17702=Vous portez un coup paralysant !
+17703=Vous recevez un coup dévastateur !
+17704=Vous portez un coup dévastateur !
+17705=Vous recevez un coup de commotion cérébrale !
+17706=Vous portez un coup de commotion cérébrale !
 // Kit de déguisement
 18000=Vandyke
 18001=Moustache
