@@ -2638,6 +2638,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 						if( oaiw == INVALIDSERIAL )
 						{
 							charCheck->SetTimer( tPC_LOGOUT, 0 );
+							charCheck->RemoveFromSight();
 							charCheck->Update();
 						}
 						else if(( oaiw == charCheck->GetSerial() ) && (( charCheck->GetTimer( tPC_LOGOUT ) <= GetUICurrentTime() ) || GetOverflow() ))
