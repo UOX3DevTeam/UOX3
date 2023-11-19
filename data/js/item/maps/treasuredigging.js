@@ -148,20 +148,20 @@ const initialSpawn = {
 	6: ["LichLord", "daemon", " eldergazer", "poisonele", "bloodele"],
 };
 
-function onTimer( iUsed, timerID )
+function onTimer( timerObj, timerID )
 {
-	var pUser = iUsed.tempObj;
-	var level = iUsed.GetTempTag( "Level" );
+	var pUser = timerObj.tempObj;
+	var level = timerObj.GetTempTag( "Level" );
 
 	switch( timerID )
 	{
 		case 0:// Dirt Effect 2
 			var dirtMade2 = CreateDFNItem( pUser.socket, pUser, "dirt2", 1, "ITEM", false );
-			dirtMade2.Teleport( iUsed.x, iUsed.y, iUsed.z, iUsed.worldnumber );
+			dirtMade2.Teleport( timerObj.x, timerObj.y, timerObj.z, timerObj.worldnumber );
 			dirtMade2.StartTimer( 10000, 2, 5400);
-			iUsed.StartTimer( 1000, 1, 5400);
-			TreasureChest( pUser, iUsed, level );
-			iUsed.SoundEffect( 0x33B, true );
+			timerObj.StartTimer( 1000, 1, 5400);
+			TreasureChest( pUser, timerObj, level );
+			timerObj.SoundEffect( 0x33B, true );
 			if( pUser.bodyType == 2) // Gargoyle
 			{
 				pUser.DoAction( 0x0, 0x3 );
@@ -177,13 +177,13 @@ function onTimer( iUsed, timerID )
 			break;
 		case 1:
 		case 2:
-			iUsed.Delete();
+			timerObj.Delete();
 			break;
 		case 3:
 		case 4:
 		case 5:
 		case 6:
-			iUsed.SoundEffect( 0x33B, true );
+			timerObj.SoundEffect( 0x33B, true );
 			if( pUser.bodyType == 2 ) // Gargoyle
 			{
 				pUser.DoAction( 0x0, 0x3 );
@@ -196,18 +196,18 @@ function onTimer( iUsed, timerID )
 			{
 				pUser.DoAction( 0x0B );
 			}
-			iUsed.z += 2;
+			timerObj.z += 2;
 			if( timerID < 6 )
 			{
-				iUsed.StartTimer( 1000, timerID + 1, 5400 );
+				timerObj.StartTimer( 1000, timerID + 1, 5400 );
 			}
 			else
 			{
-				iUsed.StartTimer( 1000, 7, 5400 );
+				timerObj.StartTimer( 1000, 7, 5400 );
 			}
 			break;
 		case 7:
-			iUsed.SoundEffect( 0x33B, true );
+			timerObj.SoundEffect( 0x33B, true );
 			if( pUser.bodyType == 2 ) // Gargoyle
 			{
 				pUser.DoAction( 0x0, 0x3 );
@@ -220,10 +220,10 @@ function onTimer( iUsed, timerID )
 			{
 				pUser.DoAction( 0x0B );
 			}
-			iUsed.z += 1;
+			timerObj.z += 1;
 			pUser.frozen = 0;
 			pUser.SetTempTag( "digging", null );
-			var mapLevel = iUsed.GetTag( "Level" ); // set the level to a static value using the tag from the chest.
+			var mapLevel = timerObj.GetTag( "Level" ); // set the level to a static value using the tag from the chest.
 			if( mapLevel >= 2 )
 			{
 				var spawnList = initialSpawn[mapLevel]; // selects the array of possible NPCs for the given level
@@ -231,7 +231,7 @@ function onTimer( iUsed, timerID )
 				{
 					var randomlySelectedNPC = spawnList[Math.floor( Math.random() * spawnList.length )]; // selects a random NPC from the array
 
-					SpawnNPC( randomlySelectedNPC, iUsed.x, iUsed.y, iUsed.z, iUsed.worldnumber, iUsed.instanceID );
+					SpawnNPC( randomlySelectedNPC, timerObj.x, timerObj.y, timerObj.z, timerObj.worldnumber, timerObj.instanceID );
 				}
 			}
 			break;
