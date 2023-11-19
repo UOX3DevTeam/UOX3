@@ -440,7 +440,7 @@
 1500=server/network/0xf1_freeshardServerPoll.js
 1501=server/network/0x7f_uogatewayServerPoll.js
 1502=server/network/0xa4_classicUoWebIdentity.js
-1503=item/maps/0x56_mapPacket
+1503=server/network/0x56_mapPacket.js
 }
 
 [CONSOLE_SCRIPTS]
