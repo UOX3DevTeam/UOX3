@@ -269,6 +269,8 @@
 5048=item/teleport_item.js
 5049=item/equip_effects/bandagehealingbonus.js
 5050=item/equip_effects/weapon_abilities.js
+5051=item/sandminingbook.js
+5052=item/stoneminingbook.js
 
 //-------------------------------------------
 // treasure maps and chest [5400-5405]

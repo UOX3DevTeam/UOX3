@@ -294,3 +294,29 @@ id=0x19a9
 weight=10000
 movable=2
 }
+
+[sandminingbook]
+{
+get=base_item
+name=Find Glass-Quality Sand
+id=0xFF4
+weight=200
+movable=1
+pileable=1
+decay=1
+value=10637 5318
+script=5051
+}
+
+[stoneminingbook]
+{
+get=base_item
+name=Mining For Quality Stone
+id=0xFBE
+weight=200
+movable=1
+pileable=1
+decay=1
+value=10637 5318
+script=5052
+}
