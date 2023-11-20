@@ -31,7 +31,7 @@ function onMakeItem( pSock, pCrafter, itemCrafted, craftEntryID )
 	// Apply special effect based on item crafted
 	if( ValidateObject( itemCrafted ))
 	{
-		// Jewelry, furniture, potions maps
+		// Jewelry, furniture, potions, maps
 		switch( craftEntryID )
 		{
 			case 239: // necklace
@@ -108,8 +108,8 @@ function onMakeItem( pSock, pCrafter, itemCrafted, craftEntryID )
 			case 2000: // local map
 			case 2001: // city map
 			case 2002: // sea chart
-				CraftedMapCoords(pSock, itemCrafted);
-				ClearTagsAndScript(pCrafter);
+				CraftedMapCoords( pSock, itemCrafted );
+				ClearTagsAndScript( pCrafter );
 				return;
 			case 0: // Failed to craft item
 			default:
@@ -153,11 +153,10 @@ function onMakeItem( pSock, pCrafter, itemCrafted, craftEntryID )
 	ClearTagsAndScript( pCrafter );
 }
 
-function CraftedMapCoords( socket, mapItem ) 
+function CraftedMapCoords( socket, mapItem )
 {
 	var pUser = socket.currentChar;
 	var skillValue = ( pUser.baseskills.cartography / 10 ).toFixed(1);
-
 	// Define the minimum and maximum distances
 	if( mapItem.sectionID == "craftedlocalmap" ) 
 	{
@@ -167,15 +166,12 @@ function CraftedMapCoords( socket, mapItem )
 	{
 		var minDist = 64;
 	}
-	else 
-	{
+	else {
 		var minDist = 92;
 	}
 	var maxDist = 200;
-
 	// Linear interpolation for distance based on skill
-	var dist = Math.round( minDist + ( maxDist - minDist ) * ( skillValue / 100 ));
-
+	var dist = Math.round(minDist + (maxDist - minDist) * (skillValue / 100));
 	if( mapItem.sectionID == "craftedlocalmap" ) 
 	{
 		var size = 200;
@@ -184,19 +180,17 @@ function CraftedMapCoords( socket, mapItem )
 	{
 		var size = 300;
 	}
-	else 
+	else
 	{
 		// Define the minimum and maximum sizes
 		var minSize = 300;
 		var maxSize = 400;
-
 		// Linear interpolation for size based on skill
 		var size = Math.round( minSize + ( maxSize - minSize ) * ( skillValue / 100 ));
 	}
-
 	mapItem.SetTag( "dimensions", size + "," + size );																						// saves information for the map to be reopened
 	mapItem.SetTag( "boundingbox", ( pUser.x - dist ) + "," + ( pUser.y - dist ) + "," + ( pUser.x + dist ) + "," + ( pUser.y + dist ));	// saves information for the map to be reopened
-	mapItem.SetTag( "Drawn", 1);
+	mapItem.SetTag( "Drawn", 1 );
 	ClearTagsAndScript(pUser);
 }
 
@@ -227,7 +221,7 @@ function ApplyExceptionalArmorBonuses( pCrafter, itemCrafted, coreShardEraValue 
 			// Arms Lore bonus
 			// Publish 44, 2007
 			// When a piece of armor (not including shields) is exceptionally crafted, it will receive a resist
-			// bonus based on the pCrafter’s Arms Lore skill. For every 20 points of Arms Lore, one resist normally
+			// bonus based on the pCrafterâ€™s Arms Lore skill. For every 20 points of Arms Lore, one resist normally
 			// available on that piece of armor will be raised by 1, for a total possible bonus of 5 distributed
 			// randomly. (Ex. At GM Arms Lore, the total resist bonus is +5%. One resist could receive the
 			// full +5% bonus. Alternatively, one resist could receive +2%, and three other resists could
@@ -284,9 +278,9 @@ function ApplyExceptionalWeaponBonuses( pCrafter, itemCrafted, coreShardEraValue
 	else // AoS and beyond
 	{
 		/* Publish 17
-			“Exceptional” weapons gain a 20% bonus to their damage rating (except for Runic weapons, which will only get a 10% bonus).*/
+			â€œExceptionalâ€ weapons gain a 20% bonus to their damage rating (except for Runic weapons, which will only get a 10% bonus).*/
 		/* Publish 19
-			The “exceptional” bonus for player-crafted items (weapons and armor) has been improved to 35%.*/
+			The â€œexceptionalâ€ bonus for player-crafted items (weapons and armor) has been improved to 35%.*/
 		var totalExceptionalDamageBonus = exceptionalDamageBonusAoS;
 		if( coreShardEraValue >= EraStringToNum( "ml" ))
 		{
@@ -331,31 +325,6 @@ function ApplyRunicWeaponBonuses( pCrafter, itemCrafted, coreShardEraValue, runi
 	var weaponType = TriggerEvent( 2500, "GetWeaponType", null, itemCrafted.id );
 	if( weaponType != "WRESTLING" && weaponType != "BOWS" && weaponType != "XBOWS" && weaponType != "THROWN" )
 	{
-		// Define a dictionary to store the values for each runicHammerType
-		var runicHammerValues = {
-			0x0973: { name: "Dull Copper Runic ", maxhp: 10, accBonus: 50, hidamage: 0 },
-			0x0966: { name: "Shadow Iron Runic ", maxhp: 10, accBonus: 0, hidamage: 1 },
-			0x07dd: { name: "Copper Runic ", maxhp: 40, accBonus: 100, hidamage: 1 },
-			0x06d6: { name: "Bronze Runic ", maxhp: 40, accBonus: 100, hidamage: 3 },
-			0x08a5: { name: "Gold Runic ", maxhp: 50, accBonus: 150, hidamage: 5 },
-			0x0979: { name: "Agapite Runic ", maxhp: 50, accBonus: 150, hidamage: 7 },
-			0x089f: { name: "Verite Runic ", maxhp: 50, accBonus: 200, hidamage: 7 },
-			0x08ab: { name: "Valorite Runic ", maxhp: 50, accBonus: 250, hidamage: 9 }
-		};
-
-		// Check if the runicHammerType exists in the dictionary
-		if (runicHammerValues.hasOwnProperty(runicHammerType))
-		{
-			var values = runicHammerValues[runicHammerType];
-
-			// Update itemCrafted with the values from the dictionary
-			itemCrafted.name = values.name + itemCrafted.name;
-			itemCrafted.maxhp += values.maxhp;
-			itemCrafted.hidamage += values.hidamage;
-			itemCrafted.SetTag("accBonus", values.accBonus);
-			itemCrafted.AddScriptTrigger(3301); // magic_weapon_accbonus.js
-		}
-		/*
 		switch( runicHammerType )
 		{
 			case 0x0973: // Dull Copper Runic Hamer
@@ -421,7 +390,7 @@ function ApplyRunicWeaponBonuses( pCrafter, itemCrafted, coreShardEraValue, runi
 				break;
 			default:
 				break;
-		}*/
+		}
 
 		itemCrafted.health = itemCrafted.maxhp;
 	}
