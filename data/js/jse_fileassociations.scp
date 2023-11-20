@@ -272,6 +272,15 @@
 5050=item/equip_effects/weapon_abilities.js
 
 //-------------------------------------------
+// treasure maps and chest [5400-5405]
+//-------------------------------------------
+5400=item/maps/treasuredigging.js
+5401=item/maps/treasuremapchests.js
+5402=item/maps/treasuremaps.js
+5403=item/maps/predefinedmaps.js
+5404=item/maps/craftedmaps.js
+
+//-------------------------------------------
 // Camps [5500-5599]
 //-------------------------------------------
 5500=item/camps/ilsh_healer_camp.js
@@ -432,6 +441,7 @@
 1500=server/network/0xf1_freeshardServerPoll.js
 1501=server/network/0x7f_uogatewayServerPoll.js
 1502=server/network/0xa4_classicUoWebIdentity.js
+1503=server/network/0x56_mapPacket.js
 }
 
 [CONSOLE_SCRIPTS]
