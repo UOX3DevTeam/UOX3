@@ -17,7 +17,7 @@ function onTimer( timerObj, timerID )
 
 	switch( timerID )
 	{
-		case 5000: // Tribal Paint effect
+		case 1: // Tribal Paint effect
 		{
 			RevertTribalPaintEffect( timerObj );
 			break;
@@ -33,7 +33,7 @@ function onTimer( timerObj, timerID )
 function CheckTimers( timerObj )
 {
 	// Check if any long term timers mentioned in onTimer are still active on object
-	if( timerObj.GetJSTimer( 5000, scriptID ) != 0 )
+	if( timerObj.GetJSTimer( 1, scriptID ) != 0 )
 	{
 		return;
 	}

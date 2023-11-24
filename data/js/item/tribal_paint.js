@@ -33,7 +33,7 @@ function onUseChecked( pUser, iUsed )
 
 				// Attach script to player to revert effects of tribal paint in 7 days
 				pUser.AddScriptTrigger( 3 );
-				TriggerEvent( 3, "StartLongTermTimer", pUser, 5000, 1000 * 60 * 60 * 24 * 7 ); // 7 days
+				TriggerEvent( 3, "StartLongTermTimer", pUser, 1, 1000 * 60 * 60 * 24 * 7 ); // 7 days
 
 				// You now bear the markings of the savage tribe.  Your body paint will last about a week or you can remove it with an oil cloth
 				socket.SysMessage( GetDictionaryEntry( 1680, socket.language ));
