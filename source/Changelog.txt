@@ -1,3 +1,6 @@
+23/11/2023 - Dragon Slayer
+	Fixed the call where uox3 was not setting the current time when starting up and was always 0. (Maarc)
+
 19/11/2023 - Dragon Slayer
 	Fixed an issue where players qualifying for instant logout would not immediately vanish from view upon logout (Xuri)
 
