@@ -17,7 +17,10 @@ function onSkill( pUser, objType, skillUsed )
 function onCallback0( pSock, ourObj )
 {
 	var pUser = pSock.currentChar;
-	if( ourObj && ourObj.isItem && pUser )
+	if( !ValidateObject( ourObj ))
+		return;
+
+	if( ourObj.isItem )
 	{
 		var pLanguage = pSock.language;
 		if( !ourObj.InRange( pUser, 7 ))
@@ -29,7 +32,7 @@ function onCallback0( pSock, ourObj )
 			pSock.SysMessage( GetDictionaryEntry( 6007, pLanguage )); // You examine the body..."
 
 			// How old is the corpse?
-			var timeSinceDeath = parseInt( GetCurrentClock() / 1000 ) - parseInt( ourObj.tempTimer / 1000 );
+			var timeSinceDeath = parseInt( GetCurrentClock() / 1000) - parseInt( ourObj.tempTimer );
 			if( timeSinceDeath > 180 )
 			{
 				pSock.SysMessage( GetDictionaryEntry( 6008, pLanguage )); // It stinks quite a lot by now.
@@ -57,7 +60,7 @@ function onCallback0( pSock, ourObj )
 			}
 
 			// Who looted it?
-			var looterCharSer = CalcCharFromSer( ourObj.GetTempTag( "lootedBy" ));
+			var looterChar = CalcCharFromSer( ourObj.GetTempTag( "lootedBy" ));
 			if( ValidateObject( looterChar ))
 			{
 				var tempLootedMsg = GetDictionaryEntry( 9280, pLanguage ); // The corpse was last looted by %s.
