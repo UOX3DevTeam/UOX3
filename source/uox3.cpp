@@ -261,6 +261,7 @@ auto main( SI32 argc, char *argv[] ) ->int
 	std::chrono::time_point<std::chrono::system_clock> nextEvaluationTime = std::chrono::system_clock::now() + evaluationInterval;
 
 	// Core server loop
+	current = std::chrono::system_clock::now();
 	while( cwmWorldState->GetKeepRun() )
 	{
 		std::this_thread::sleep_for( std::chrono::milliseconds( cwmWorldState->GetPlayersOnline() ? 5 : 90 ));
