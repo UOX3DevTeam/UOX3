@@ -1,3 +1,6 @@
+26/11/2023 - Dragon Slayer
+	Fixed a potential server crash issue related to keeping track of which players have opened which containers (Xuri)
+
 19/11/2023 - Dragon Slayer
 	Fixed an issue where players qualifying for instant logout would not immediately vanish from view upon logout (Xuri)
 
