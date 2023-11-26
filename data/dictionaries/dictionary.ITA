@@ -3291,6 +3291,11 @@
 5716=mappa del tesoro disegnata con perizia
 5717=mappa del tesoro disegnata in modo intelligente
 5718=mappa del tesoro disegnata in modo subdolo
+5719=Non puoi muoverti mentre dissotterri un tesoro. Dovrai iniziare a scavare di nuovo.
+5720=Prova a cercare lo scrigno del tesoro più vicino
+5721=Non puoi cercare tesori lì!
+5722=coordinate %s
+5723=Completato
 // [6000-6499] Misc Skill Msgs
 6000=Quella persona sembra %s e %t.
 6001=Non puoi ricavarne nulla di utile.

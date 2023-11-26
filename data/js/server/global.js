@@ -48,6 +48,13 @@ function onLogout( pSock, pChar )
 	pChar.KillJSTimer( 0, 5601 );
 	pChar.SetTempTag( "toothach", null );
 	pChar.SetTempTag( "Acidity", null );
+
+	//Treasure Hunting Kill Event.
+	var dirtItem = CalcItemFromSer( parseInt( pChar.GetTempTag( "dirtMadeSer" )));
+	if( ValidateObject( dirtItem ))
+	{
+		TriggerEvent( 5405, "KillTreasurEvent", dirtItem, pChar );
+	}
 }
 
 function onCreatePlayer( pChar )

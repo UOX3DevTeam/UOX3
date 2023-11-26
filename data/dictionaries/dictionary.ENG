@@ -3291,6 +3291,11 @@
 5716=adeptly drawn treasure map
 5717=cleverly drawn treasure map
 5718=deviously drawn treasure map
+5719=You cannot move around while digging up treasure. You will need to start digging anew.
+5720=Try looking for the treasure chest more to the
+5721=You can't dig for treasure there!
+5722=coordinates %s
+5723=Completed
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.

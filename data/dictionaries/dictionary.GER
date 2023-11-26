@@ -3291,6 +3291,11 @@
 5716=Gekonnt gezeichnete Schatzkarte
 5717=raffiniert gezeichnete Schatzkarte
 5718=Hinterhältig gezeichnete Schatzkarte
+5719=Sie können sich beim Ausgraben von Schätzen nicht bewegen. Sie müssen erneut mit dem Graben beginnen.
+5720=Versuchen Sie, nach der Schatztruhe weiter unten zu suchen
+5721=Da kann man nicht nach Schätzen graben!
+5722=Koordinaten %s
+5723=Abgeschlossen
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.

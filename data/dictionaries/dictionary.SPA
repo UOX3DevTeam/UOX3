@@ -3291,6 +3291,11 @@
 5716=mapa del tesoro hábilmente dibujado
 5717=mapa del tesoro hábilmente dibujado
 5718=mapa del tesoro tortuosamente dibujado
+5719=No puedes moverte mientras desentierras un tesoro. Tendrás que empezar a cavar de nuevo.
+5720=Intenta buscar el cofre del tesoro más al
+5721=¡No puedes buscar tesoros allí!
+5722=coordenadas %s
+5723=Completado
 // [6000-6499] Misc Skill Msgs
 6000=Esa persona parece %s y %t.
 6001=No se puede hacer nada útil con eso.

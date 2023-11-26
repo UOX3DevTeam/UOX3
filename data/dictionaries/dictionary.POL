@@ -3291,6 +3291,11 @@
 5716=ładnie narysowana mapa skarbów
 5717=sprytnie narysowana mapa skarbów
 5718=przemyślnie narysowana mapa skarbówe pakujesz śnieg w kulkę...
+5719=Nie możesz się poruszać podczas kopania skarbu. Będziesz musiał zacząć kopać od nowa.
+5720=Spróbuj poszukać skrzyni skarbów bliżej
+5721=Nie możesz tam szukać skarbów!
+5722=współrzędne %s
+5723=Zakończono
 // [6000-6499] Różne umiejętności Msgs
 6000=Ta osoba wygląda na %s i %t.
 6001=Nie możesz zrobić z tego nic użytecznego.

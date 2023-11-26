@@ -3455,6 +3455,11 @@
 5716=carte au trésor savamment dessinée
 5717=carte au trésor intelligemment dessinée
 5718=carte au trésor sournoisement dessinée
+5719=Vous ne pouvez pas vous déplacer pendant que vous déterrez un trésor. Vous devrez recommencer à creuser.
+5720=Essayez de chercher le coffre au trésor plus au
+5721=Vous ne pouvez pas creuser de trésor là-bas !
+5722=coordonnées %s
+5723=Terminé
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.

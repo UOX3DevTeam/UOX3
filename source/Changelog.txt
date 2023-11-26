@@ -1,3 +1,8 @@
+26/11/2023 - Dragon Slayer
+	Resolved an issue with validation in treasuredigging.js, thanks to the efforts of (Xuri)
+	Welcomed the addition of treasuredirt.js, featuring the exhilarating killtreasureevent functionality.
+	Enhanced the precision of the treasure dig timer, bringing it more in line with the standards of Uo Live Servers.
+
 19/11/2023 - Dragon Slayer
 	Fixed an issue where players qualifying for instant logout would not immediately vanish from view upon logout (Xuri)
 
