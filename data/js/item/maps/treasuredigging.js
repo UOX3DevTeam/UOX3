@@ -194,7 +194,14 @@ function onTimer( timerObj, timerID )
 	{
 		if( pUser.dead )
 		{
-			TriggerEvent( 5405, "KillTreasurEvent", timerObj, pUser );
+			TriggerEvent( 5405, "KillTreasureEvent", timerObj, pUser );
+			return;
+		}
+
+		if( timerID < 10 && ValidateObject( pUser.attacker ) && pUser.InRange( pUser.attacker, 8 ) && pUser.attacker.CanSee( pUser ))
+		{
+			TriggerEvent( 5405, "KillTreasureEvent", timerObj, pUser );
+			return;
 		}
 
 		if( timerID == 5 ) 

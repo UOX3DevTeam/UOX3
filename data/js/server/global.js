@@ -53,7 +53,8 @@ function onLogout( pSock, pChar )
 	var dirtItem = CalcItemFromSer( parseInt( pChar.GetTempTag( "dirtMadeSer" )));
 	if( ValidateObject( dirtItem ))
 	{
-		TriggerEvent( 5405, "KillTreasurEvent", dirtItem, pChar );
+		TriggerEvent( 5405, "KillTreasureEvent", dirtItem, pChar );
+		return;
 	}
 }
 

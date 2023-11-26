@@ -8,12 +8,12 @@ function onMoveDetect( iDirt, pChar, rangeToChar, oldCharX, oldCharY )
 	if( pChar.x != oldCharX || pChar.y != oldCharY )
 	{
 		dirtDiggerChar.SysMessage( GetDictionaryEntry( 5719, socket.language ) ); // You cannot move around while digging up treasure. You will need to start digging anew.
-		KillTreasurEvent( iDirt, dirtDiggerChar );
+		KillTreasureEvent( iDirt, dirtDiggerChar );
 		return;
 	}
 }
 
-function KillTreasurEvent( iDirt, dirtDiggerChar )
+function KillTreasureEvent( iDirt, dirtDiggerChar )
 {
 	var dirtChestItem = CalcItemFromSer( parseInt( iDirt.GetTag( "tChestSer" )));
 	iDirt.KillTimers( 5400 );
