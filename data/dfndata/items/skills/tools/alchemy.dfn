@@ -16,6 +16,11 @@ script=2200// uses left tooltip
 script=4031// craft tool
 }
 
+[mortarandpestle]
+{
+get=0x0e9b
+}
+
 [0x0f0e]
 {
 get=base_item
@@ -30,6 +35,11 @@ decay=1
 good=51
 }
 
+[emptybottle]
+{
+get=0x0f0e
+}
+
 [0x1829]
 {
 get=base_item
@@ -40,6 +50,11 @@ value=8 4
 restock=20
 decay=1
 good=51
+}
+
+[flaskstand]
+{
+get=0x1829
 }
 
 [0x1849]
@@ -54,6 +69,11 @@ decay=1
 good=51
 }
 
+[unlitheatingstand]
+{
+get=0x1849
+}
+
 [0x184a]
 { lit left
 get=base_item
@@ -65,6 +85,11 @@ restock=20
 decay=1
 good=51
 dir=2
+}
+
+[litheatingstand]
+{
+get=0x184a
 }
 
 [0x184d]
@@ -92,7 +117,6 @@ good=51
 dir=2
 }
 
-
 [0x0e24]
 {
 get=base_item
@@ -101,6 +125,11 @@ id=0x0e24
 weight=100
 pileable=1
 good=51
+}
+
+[emptyvial]
+{
+get=0x0e24
 }
 
 [0x0e25]
@@ -288,7 +317,7 @@ good=51
 [0x182a]
 {
 get=base_item
-name=flask
+name=Medium flask
 id=0x182a
 weight=100
 restock=20
@@ -298,7 +327,7 @@ good=51
 [0x182b]
 {
 get=base_item
-name=flask
+name=Medium flask
 id=0x182b
 weight=100
 restock=20
@@ -308,7 +337,7 @@ good=51
 [0x182c]
 {
 get=base_item
-name=flask
+name=Medium flask
 id=0x182c
 weight=100
 restock=20
@@ -318,17 +347,22 @@ good=51
 [0x182d]
 {
 get=base_item
-name=flask
+name=Medium flask
 id=0x182d
 weight=100
 restock=20
 good=51
 }
 
+[mediumflask]
+{
+get=0x182a 0x182b 0x182c 0x182d
+}
+
 [0x182e]
 {
 get=base_item
-name=flask
+name=Small flask
 id=0x182e
 weight=100
 restock=20
@@ -338,7 +372,7 @@ good=51
 [0x182f]
 {
 get=base_item
-name=flask
+name=Small flask
 id=0x182f
 weight=100
 restock=20
@@ -348,7 +382,7 @@ good=51
 [0x1830]
 {
 get=base_item
-name=flask
+name=Small flask
 id=0x1830
 weight=100
 restock=20
@@ -358,17 +392,22 @@ good=51
 [0x1831]
 {
 get=base_item
-name=flask
+name=Small flask
 id=0x1831
 weight=100
 restock=20
 good=51
 }
 
+[smallflask]
+{
+get=0x182e 0x182f 0x1830 0x1831
+}
+
 [0x1832]
 {
 get=base_item
-name=flask
+name=Curved flask
 id=0x1832
 weight=100
 restock=20
@@ -378,7 +417,7 @@ good=51
 [0x1833]
 {
 get=base_item
-name=flask
+name=Curved flask
 id=0x1833
 weight=100
 restock=20
@@ -388,7 +427,7 @@ good=51
 [0x1834]
 {
 get=base_item
-name=flask
+name=Curved flask
 id=0x1834
 weight=100
 restock=20
@@ -398,7 +437,7 @@ good=51
 [0x1835]
 {
 get=base_item
-name=flask
+name=Curved flask
 id=0x1835
 weight=100
 restock=20
@@ -408,7 +447,7 @@ good=51
 [0x1836]
 {
 get=base_item
-name=flask
+name=Curved flask
 id=0x1836
 weight=100
 restock=20
@@ -418,17 +457,22 @@ good=51
 [0x1837]
 {
 get=base_item
-name=flask
+name=Curved flask
 id=0x1837
 weight=100
 restock=20
 good=51
 }
 
+[curvedflask]
+{
+get=0x1832 0x1833 0x1834 0x1835 0x1836 0x1837
+}
+
 [0x1838]
 {
 get=base_item
-name=flask
+name=Large flask
 id=0x1838
 weight=100
 restock=20
@@ -438,7 +482,7 @@ good=51
 [0x1839]
 {
 get=base_item
-name=flask
+name=Large flask
 id=0x1839
 weight=100
 restock=20
@@ -448,17 +492,22 @@ good=51
 [0x183a]
 {
 get=base_item
-name=flask
+name=Large flask
 id=0x183a
 weight=100
 restock=20
 good=51
 }
 
+[largeflask1]
+{
+get=0x1838 0x1839 0x183a
+}
+
 [0x183b]
 {
 get=base_item
-name=flask
+name=large flask
 id=0x183b
 weight=100
 restock=20
@@ -468,7 +517,7 @@ good=51
 [0x183c]
 {
 get=base_item
-name=flask
+name=large flask
 id=0x183c
 weight=100
 restock=20
@@ -478,27 +527,37 @@ good=51
 [0x183d]
 {
 get=base_item
-name=flask
+name=large flask
 id=0x183d
 weight=100
 restock=20
 good=51
 }
 
+[largeflask2]
+{
+get=0x183b 0x183c 0x183d
+}
+
 [0x183e]
 {
 get=base_item
-name=flask
+name=bubbling red flask
 id=0x183e
 weight=100
 restock=20
 good=51
 }
 
+[bubblingredflask]
+{
+get=0x183e
+}
+
 [0x183f]
 {
 get=base_item
-name=flask
+name=bubbling red flask
 id=0x183f
 weight=100
 restock=20
@@ -508,7 +567,7 @@ good=51
 [0x1840]
 {
 get=base_item
-name=flask
+name=bubbling red flask
 id=0x1840
 weight=100
 restock=20
@@ -518,17 +577,22 @@ good=51
 [0x1841]
 {
 get=base_item
-name=flask
+name=bubbling purple flask
 id=0x1841
 weight=100
 restock=20
 good=51
 }
 
+[bubblingpurpleflask]
+{
+get=0x1841
+}
+
 [0x1842]
 {
 get=base_item
-name=flask
+name=bubbling purple flask
 id=0x1842
 weight=100
 restock=20
@@ -538,7 +602,7 @@ good=51
 [0x1843]
 {
 get=base_item
-name=flask
+name=bubbling purple flask
 id=0x1843
 weight=100
 restock=20
@@ -548,17 +612,22 @@ good=51
 [0x1844]
 {
 get=base_item
-name=flask
+name=bubbling blue flask
 id=0x1844
 weight=100
 restock=20
 good=51
 }
 
+[bubblingblueflask]
+{
+get=0x1844
+}
+
 [0x1845]
 {
 get=base_item
-name=flask
+name=bubbling blue flask
 id=0x1845
 weight=100
 restock=20
@@ -568,7 +637,7 @@ good=51
 [0x1846]
 {
 get=base_item
-name=flask
+name=bubbling blue flask
 id=0x1846
 weight=100
 restock=20
@@ -630,6 +699,11 @@ decay=1
 good=51
 }
 
+[emptyvials]
+{
+get=0x185b 0x185c
+}
+
 [0x185d]
 {
 get=base_item
@@ -650,4 +724,68 @@ weight=100
 restock=20
 decay=1
 good=51
+}
+
+[fullvials]
+{
+get=0x185d 0x185e
+}
+
+[0x1810]
+{
+get=base_item
+name=Spinning Hourglass
+id=0x1810
+weight=100
+restock=20
+movable=1
+decay=1
+good=51
+}
+
+[0x1811]
+{
+get=base_item
+name=Spinning Hourglass
+id=0x1810
+weight=100
+restock=20
+movable=1
+decay=1
+good=51
+}
+
+[spinninghourglass]
+{
+get=0x1810 0x1811
+}
+
+[blowpipe]
+{
+get=base_item
+name=blowpipe
+id=0xE8A
+colour=0x3B9
+weight=100
+value=9 4
+restock=20
+decay=1
+good=51
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
+script=4031// craft tool
+}
+
+[glassblowingbook]
+{
+get=base_item
+name=Crafting glass with Glassblowing
+id=0xFF4
+weight=500
+movable=1
+pileable=1
+decay=1
+value=10637 5318
+script=5053
 }

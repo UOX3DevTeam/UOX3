@@ -3420,6 +3420,10 @@
 6278=You have to use your taste identification skill to know more about this potion.
 6279=Skill check success guaranteed due to elevated command level!
 6280=Spellcast delay ignored due to elevated command level!
+6300=You havent learned glassblowing.
+6301=Only a Grandmaster Alchemist can learn from this book.
+6302=You have already learned this information.
+6303=You have learned to make items from glass.  You will need to find miners to mine fine sand for you to make these items.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -4803,6 +4807,23 @@
 12007=That's not a gem resource!
 12008=Select material to use:
 12009=You added a lock and key to the container!
+// 13501 - 14000 Glassblowing Crafting Skill
+13501=Glassblowing Menu
+13502=Miscellaneous
+13503=Glass Weapons
+13504=SAND
+13600=empty bottle
+13601=flask (small)
+13602=flask (medium)
+13603=flask (curved)
+13604=flask (large #1)
+13605=flask (large #2)
+13606=flask (bubbling blue)
+13607=flask (bubbling purple)
+13608=flask (bubbling red)
+13609=empty vials
+13610=full vials
+13611=spinning hourglass
 // 15000 Skills
 15000=Alchemy
 15001=Anatomy

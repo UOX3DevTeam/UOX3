@@ -1,3 +1,8 @@
+ 26/11/2023 - Dragon Slayer
+	Added Glassblowing Crafting System:
+  	- Introducing a new crafting menu for glassblowing, allowing players to create unique glass items.
+  	- New crafting tools, including a glassblowing pipe and glass items.
+
 19/11/2023 - Dragon Slayer
 	Fixed an issue where players qualifying for instant logout would not immediately vanish from view upon logout (Xuri)
 

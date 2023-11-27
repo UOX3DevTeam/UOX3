@@ -3584,6 +3584,10 @@
 6278=Vous devez utiliser votre compétence d'identification des goûts pour en savoir plus sur cette potion.
 6279=Succès de la vérification des compétences garanti grâce à un niveau de commande élevé !
 6280=Délai de lancement de sort ignoré en raison d'un niveau de commande élevé !
+6300=Vous n'avez pas appris le soufflage du verre.
+6301=Seul un grand maître alchimiste peut apprendre de ce livre.
+6302=Vous avez déjà appris cette information.
+6303=Vous avez appris à fabriquer des objets en verre. Vous devrez trouver des mineurs pour extraire du sable fin pour fabriquer ces objets.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?
@@ -4959,6 +4963,23 @@
 12007=Ce n'est pas une ressource en gemmes !
 12008=Sélectionnez le matériau à utiliser :
 12009=Tu as ajouté une serrure et une clé au conteneur !
+// 13501 - 14000 Compétence d'artisanat en soufflage de verre
+13501=Menu Soufflage de Verre
+13502=Divers
+13503=Armes en verre
+13504=SABLE
+13600=bouteille vide
+13601=flacon (petit)
+13602=flacon (moyen)
+13603=flacon (courbé)
+13604=flacon (grand #1)
+13605=flacon (grand #2)
+13606=flacon (bleu bouillonnant)
+13607=flacon (violet bouillonnant)
+13608=flacon (bouillonnant rouge)
+13609=flacons vides
+13610=flacons pleins
+13611=sablier tournant
 // 15000 compétences
 15000=Alchimie
 15001=Anatomie
