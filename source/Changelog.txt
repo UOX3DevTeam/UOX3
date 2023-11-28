@@ -1,3 +1,6 @@
+28/11/2023 - Dragon Slayer
+	Adjusted the Default values for MaxClientBytesIn and MaxClientBytesOut by double.
+
 19/11/2023 - Dragon Slayer
 	Fixed an issue where players qualifying for instant logout would not immediately vanish from view upon logout (Xuri)
 
