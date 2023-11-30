@@ -5,7 +5,7 @@
 get=base_item
 id=0x14F0
 name=a clothing bless deed
-script=5050
+script=5051
 }
 
 // -- TAILOR TOOLS --
