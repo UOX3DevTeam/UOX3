@@ -3258,6 +3258,39 @@
 5156=A Cigana Adivinhadora
 5157=O Vagabundo
 5158=O Trabalhador de Ferro
+// [5500-5600] Mensagens de feriado
+5500=Onde você gostaria de colocar esta decoração?
+5501=A decoração deve ser colocada junto a uma parede.
+5502=Esse local não é na sua casa.
+5503=A dor extrema em seus dentes diminui.
+5504=Você sente como se pudesse comer o quanto quisesse!
+5506=Deseja refazer esta decoração?
+5507=Relatório de erros ao GM
+5508=Você acabou de ser atingido por uma bola de neve!
+5509=Você joga a bola de neve e acerta o alvo!
+5510=Você só pode jogar uma bola de neve em algo que possa atirar de volta.
+5511=A neve ainda não está pronta para ser compactada. Continue tentando.
+5512=Você cuidadosamente empacota a neve em uma bola...
+// [5700-5750] Mapa do Tesouro e Mensagens do Mapa
+5700=Parece estar em branco.
+5701=Esta caça ao tesouro já foi concluída.
+5702=O tesouro está marcado com um alfinete vermelho. Pegue uma pá e vá desenterrar!
+5703=Você decodificou o mapa!
+5704=mapa do tesouro esfarrapado
+5705=Você não pode decodificar este mapa ainda!
+5706=Você já está cavando um tesouro.
+5707=Onde você deseja cavar?
+5708=Você para de cavar porque algo está diretamente em cima do baú do tesouro
+5709=Você não decodificou este mapa e não tem ideia de onde procurar o tesouro.
+5710=O tesouro deste mapa já foi encontrado.
+5711=Você cava e cava, mas não encontra nenhum tesouro
+5712=Você cava e cava, mas nenhum tesouro parece estar aqui
+5713=O baú se recusa a ser preenchido com mais tesouros.
+5714=mapa do tesouro desenhado de maneira simples
+5715=mapa do tesouro habilmente desenhado
+5716=mapa do tesouro habilmente desenhado
+5717=mapa do tesouro habilmente desenhado
+5718=mapa do tesouro desenhado tortuosamente
 // [6000-6499] Misc Skill Msgs
 6000=Que a pessoa parece %s e %t.
 6001=Não se pode fazer nada de útil com isso.
@@ -5023,6 +5056,13 @@
 17619=Como membro da guilda, posso oferecer-lhe um preço premium por isto!
 17620=Isso não é suficiente para cobrir a taxa de inscrição no Grémio, lamento.
 17621=Tempo desde que se juntou ao grémio: %i minutos.
+// [17701-17710] Habilidades com armas
+17701=Você recebe um golpe paralisante!
+17702=Você desfere um golpe paralisante!
+17703=Você recebe um golpe esmagador!
+17704=Você desferiu um golpe esmagador!
+17705=Você recebe uma concussão!
+17706=Você desfere um golpe de concussão!
 // Kit de disfarce
 18000=Vandyke
 18001=Mustache

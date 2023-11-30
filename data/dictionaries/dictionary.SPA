@@ -3258,6 +3258,39 @@
 5156=gitano adivino
 5157=Vagabundo
 5158=trabajador del hierro
+// [5500-5600] Mensajes de vacaciones
+5500=¿Dónde te gustaría colocar esta decoración?
+5501=La decoración debe colocarse junto a una pared.
+5502=Ese lugar no está en tu casa.
+5503=El dolor extremo en tus dientes disminuye.
+5504=¡Sientes que puedes comer todo lo que quieras!
+5506=¿Desea reescribir esta decoración?
+5507=Informe de error al GM
+5508=¡Te acaba de golpear una bola de nieve!
+5509=¡Lanzas la bola de nieve y das en el blanco!
+5510=Sólo puedes lanzar una bola de nieve a algo que pueda devolverla.
+5511=La nieve aún no está lista para ser empacada. Sigue intentándolo.
+5512=Con cuidado, haces una bola con la nieve...
+// [5700-5750] Mapa del tesoro y mensajes de mapa
+5700=Parece estar en blanco.
+5701=Esta búsqueda del tesoro ya se ha completado.
+5702=El tesoro está marcado con el pin rojo. ¡Coge una pala y ve a desenterrarla!
+5703=¡Has decodificado el mapa!
+5704=mapa del tesoro andrajoso
+5705=¡No puedes decodificar este mapa todavía!
+5706=Ya estás cavando tesoros.
+5707=¿Dónde deseas excavar?
+5708=Dejas de cavar porque hay algo directamente encima del cofre del tesoro
+5709=No decodificaste este mapa y no tienes idea de dónde buscar el tesoro.
+5710=El tesoro de este mapa ya ha sido encontrado.
+5711=Excavas y cavas, pero no encuentras ningún tesoro
+5712=Excavas y cavas, pero parece que no hay ningún tesoro aquí
+5713=El cofre se niega a llenarse con más tesoros.
+5714=mapa del tesoro claramente dibujado
+5715=mapa del tesoro dibujado por expertos
+5716=mapa del tesoro hábilmente dibujado
+5717=mapa del tesoro hábilmente dibujado
+5718=mapa del tesoro tortuosamente dibujado
 // [6000-6499] Misc Skill Msgs
 6000=Esa persona parece %s y %t.
 6001=No se puede hacer nada útil con eso.
@@ -5023,6 +5056,13 @@
 17619=¡Como miembro del gremio, puedo ofrecerte un precio especial por esto!
 17620=No es suficiente para cubrir la cuota de miembro del gremio, lo siento.
 17621=Tiempo desde que se unió al gremio: %i minutos.
+// [17701-17710] Habilidades de armas
+17701=¡Recibes un golpe paralizante!
+17702=¡Das un golpe paralizante!
+17703=¡Recibes un golpe aplastante!
+17704=¡Das un golpe aplastante!
+17705=¡Recibes un golpe de conmoción cerebral!
+17706=¡Le has dado un golpe de conmoción cerebral!
 // Kit de Disfraz
 18000=Vandyke
 18001=Bigote

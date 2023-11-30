@@ -3258,6 +3258,39 @@
 5156=die Zigeuner-Wahrsagerin
 5157=der Vagabund
 5158=der Eisenarbeiter
+// [5500-5600] Feiertagsnachrichten
+5500=Wo möchten Sie diese Dekoration platzieren?
+5501=Die Dekoration muss neben einer Wand platziert werden.
+5502=Dieser Standort befindet sich nicht in Ihrem Haus.
+5503=Der extreme Schmerz in Ihren Zähnen lässt nach.
+5504=Sie haben das Gefühl, Sie könnten so viel essen, wie Sie wollten!
+5506=Möchten Sie diese Dekoration erneut übertragen?
+5507=Fehlerbericht an GM
+5508=Du wurdest gerade von einem Schneeball getroffen!
+5509=Du wirfst den Schneeball und triffst das Ziel!
+5510=Man kann einen Schneeball nur auf etwas werfen, das einen zurückwerfen kann.
+5511=Der Schnee kann noch nicht gepackt werden. Weiter versuchen.
+5512=Du packst den Schnee sorgfältig zu einer Kugel...
+// [5700-5750] Schatzkarte und Kartennachrichten
+5700=Es scheint leer zu sein.
+5701=Diese Schatzsuche wurde bereits abgeschlossen.
+5702=Der Schatz ist durch die rote Nadel gekennzeichnet. Schnappen Sie sich eine Schaufel und graben Sie sie aus!
+5703=Du hast die Karte entschlüsselt!
+5704=zerfetzte Schatzkarte
+5705=Sie können diese Karte noch nicht entschlüsseln!
+5706=Sie graben bereits nach Schätzen.
+5707=Wo möchten Sie graben?
+5708=Sie hören auf zu graben, weil etwas direkt auf der Schatzkiste liegt
+5709=Sie haben diese Karte nicht entschlüsselt und wissen nicht, wo Sie nach dem Schatz suchen sollen.
+5710=Der Schatz für diese Karte wurde bereits gefunden.
+5711=Sie graben und graben, finden aber keinen Schatz
+5712=Du gräbst und gräbst, aber es scheint kein Schatz hier zu sein
+5713=Die Truhe lässt sich nicht mit weiteren Schätzen füllen.
+5714=einfach gezeichnete Schatzkarte
+5715=fachmännisch gezeichnete Schatzkarte
+5716=Gekonnt gezeichnete Schatzkarte
+5717=raffiniert gezeichnete Schatzkarte
+5718=Hinterhältig gezeichnete Schatzkarte
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.
@@ -5023,6 +5056,13 @@
 17619=Als Gildenmitglied kann ich Ihnen dafür einen Premiumpreis anbieten!
 17620=Das ist nicht genug, um den Mitgliedsbeitrag für die Gilde zu bezahlen, tut mir leid.
 17621=Zeit seit dem Beitritt zur Gilde: %i Minuten.
+// [17701-17710] Waffenfähigkeiten
+17701=Du erhältst einen lähmenden Schlag!
+17702=Du versetztest einen lähmenden Schlag!
+17703=Du erhältst einen vernichtenden Schlag!
+17704=Du hast einen vernichtenden Schlag ausgeführt!
+17705=Sie erhalten eine Gehirnerschütterung!
+17706=Sie versetzen einen Gehirnerschütterungsstoß!
 // Verkleidungsset
 18000=Vandyke
 18001=Schnurrbart

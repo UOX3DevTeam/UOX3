@@ -578,10 +578,25 @@ function onCallback2( pSock, ourObj )
 		{
 			// Calculate amount of resources returned based on player's mining skill, item's wear and tear,
 			// and amount of resources that went into making the item in the first place
-			var itemHitpointsPercentage = Math.floor(( ourObj.health * 100 ) / ourObj.maxhp );
+			if( ourObj.health >= 1 || ourObj.usesLeft >= 1 )
+			{
+				var healthPercentage = 0;
+				if( ourObj.health >= 1 )
+				{
+					healthPercentage = Math.floor( ( ourObj.health * 100 ) / ourObj.maxhp );
+				}
 
-			// Reduce amount of resources returned based on state of object's wear and tear
-			resourceAmount = Math.floor(( maxResourceAmount * itemHitpointsPercentage ) / 100 );
+				var usesPercentage = 0;
+				if( ourObj.usesLeft >= 1 )
+				{
+					usesPercentage = Math.floor( ( ourObj.usesLeft * 100 ) / ourObj.maxUses );
+				}
+
+				var itemPercentage = usesPercentage > 0 ? Math.min( healthPercentage, usesPercentage ) : healthPercentage;
+
+				// Reduce amount of resources returned based on state of object's wear and tear
+				resourceAmount = Math.floor( ( maxResourceAmount * itemPercentage ) / 100 );
+			}
 
 			// Halve the amount of resources returned
 			resourceAmount = Math.max( Math.floor( resourceAmount / 2 ), 1 );

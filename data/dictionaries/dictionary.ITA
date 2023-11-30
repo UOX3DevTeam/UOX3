@@ -3258,6 +3258,39 @@
 5156=il Cartomante Zingaro
 5157=il Vagabondo
 5158=il Lavoratore del Ferro
+// [5500-5600] Messaggi festivi
+5500=Dove vorresti posizionare questa decorazione?
+5501=La decorazione deve essere posizionata vicino ad un muro.
+5502=Quella posizione non è a casa tua.
+5503=Il forte dolore ai denti si attenua.
+5504=Ti senti come se potessi mangiare quanto vuoi!
+5506=Vuoi rifare questa decorazione?
+5507=Segnalazione errori al GM
+5508=Sei appena stato colpito da una palla di neve!
+5509=Lanci la palla di neve e colpisci il bersaglio!
+5510=Puoi lanciare una palla di neve solo contro qualcosa che può respingerla.
+5511=La neve non è ancora pronta per essere compattata. Continua a provare.
+5512=Comprimi con cura la neve fino a formare una palla...
+// [5700-5750] Mappa del tesoro e messaggi mappa
+5700=Sembra vuoto.
+5701=Questa caccia al tesoro è già stata completata.
+5702=Il tesoro è contrassegnato dalla puntina rossa. Prendi una pala e vai a scavare!
+5703=Hai decodificato la mappa!
+5704=mappa del tesoro sbrindellata
+5705=Non puoi ancora decodificare questa mappa!
+5706=Stai già scavando un tesoro.
+5707=Dove vuoi scavare?
+5708=Smetti di scavare perché c'è qualcosa direttamente sopra lo scrigno del tesoro
+5709=Non hai decodificato questa mappa e non hai idea di dove cercare il tesoro.
+5710=Il tesoro di questa mappa è già stato trovato.
+5711=Scavi e scavi, ma non trovi nessun tesoro
+5712=Scavi e scavi, ma sembra che qui non ci sia nessun tesoro
+5713=Lo scrigno rifiuta di essere riempito con altri tesori.
+5714=mappa del tesoro disegnata in modo semplice
+5715=mappa del tesoro disegnata con perizia
+5716=mappa del tesoro disegnata con perizia
+5717=mappa del tesoro disegnata in modo intelligente
+5718=mappa del tesoro disegnata in modo subdolo
 // [6000-6499] Misc Skill Msgs
 6000=Quella persona sembra %s e %t.
 6001=Non puoi ricavarne nulla di utile.
@@ -5023,6 +5056,13 @@
 17619=Come membro della gilda, posso offrirti un prezzo maggiorato per questo!
 17620=Non è abbastanza per coprire la quota di iscrizione alla gilda, mi dispiace.
 17621=Tempo trascorso dall'ingresso in gilda: %i minuti.
+// [17701-17710] Abilità delle armi
+17701=Ricevi un colpo paralizzante!
+17702=Sferri un colpo paralizzante!
+17703=Ricevi un colpo devastante!
+17704=Sferri un colpo devastante!
+17705=Ricevi un colpo stordente!
+17706=Hai sferrato un colpo stordente!
 // Kit di travestimento
 18000=Vandyke
 18001=Baffi
