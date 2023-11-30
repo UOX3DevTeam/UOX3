@@ -1,3 +1,10 @@
+30/11/2023 - Dragon Slayer
+	Added support for new DFN tag in spawn regions that allows defining one or more exclusion areas per spawn region to prevent spawning of objects within said regions:
+   	 EXCLUDEAREA=x1,y1,x2,y2   // Area within defined boundary will be excluded as valid spawn area (Special, Thanks to Xuri)
+
+28/11/2023 - Dragon Slayer
+	Adjusted the Default values for MaxClientBytesIn and MaxClientBytesOut by double.
+
 26/11/2023 - Dragon Slayer
 	Fixed a potential server crash issue related to keeping track of which players have opened which containers (Xuri)
 
