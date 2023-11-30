@@ -941,8 +941,14 @@ auto CServerData::ResetDefaults() -> void
 	// Disable spawn regions for all facets by default
 	SetSpawnRegionsFacetStatus( 0 );
 
-	// Enable Felucca by defualt
-	SetMoongateFacetStatus( 0 );
+    // Enable Felucca by default
+    SetMoongateFacetStatus( 0, true );
+
+    // Enable Trammel by default
+    SetMoongateFacetStatus( 1, true );
+
+    // Enable Ilshenar by default
+    SetMoongateFacetStatus( 2, true );
 
 	// Set no assistant features as disabled by default
 	SetDisabledAssistantFeature( AF_ALL, false );
