@@ -5192,4 +5192,9 @@
 // [18800-19000] Proprietà AOS
 18800=%i% Bonus di guarigione della benda
 }
+// Clothing Bless Deed
+19001=Selezionare il capo di abbigliamento che si desidera benedire.
+19002=Il capo è stato benedetto.
+19003=Con questa azione si possono benedire solo capi di abbigliamento!
+19004=Gli oggetti devono essere equipaggiati o nello zaino per poterli benedire.
 EOF

@@ -494,6 +494,7 @@ inline JSPropertySpec CItemProps[] =
 	{ "sellvalue",		CIP_SELLVALUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "vendorPrice",	CIP_VENDORPRICE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "restock",		CIP_RESTOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "good",			CIP_GOOD,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "divinelock",		CIP_DIVINELOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "baseWeight",		CIP_BASEWEIGHT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "weight",			CIP_WEIGHT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
