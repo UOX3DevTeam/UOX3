@@ -1,3 +1,6 @@
+30/11/2023 - Dragon Slayer
+	Added code to handle "EXCLUDEAREA" tags, extracting 4 comma-separated coordinates from the tag's data and populating a list of exclusion areas. These areas will be avoided during spawning based on the specified coordinates 	(EXCLUDEAREA=X1,Y1,X2,Y2) (Special, Thanks to Xuri)
+
 19/11/2023 - Dragon Slayer
 	Fixed an issue where players qualifying for instant logout would not immediately vanish from view upon logout (Xuri)
 
