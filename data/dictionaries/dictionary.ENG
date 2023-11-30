@@ -3271,6 +3271,26 @@
 5510=You can only throw a snowball at something that can throw one back.
 5511=The snow is not ready to be packed yet.  Keep trying.
 5512=You carefully pack the snow into a ball...
+// [5700-5750] Treasure Map and Map Msgs
+5700=It appears to be blank.
+5701=This treasure hunt has already been completed.
+5702=The treasure is marked by the red pin. Grab a shovel and go dig it up!
+5703=You decoded the map!
+5704=tattered treasure map
+5705=You cannot decode this map yet!
+5706=You are already digging treasure.
+5707=Where do you wish to dig?
+5708=You stop digging because something is directly on top of the treasure chest
+5709=You did not decode this map and have no clue where to look for the treasure.
+5710=The treasure for this map has already been found.
+5711=You dig and dig, but do not find any treasure
+5712=You dig and dig, but no treasure seems to be here
+5713=The chest refuses to be filled with any more treasure.
+5714=plainly drawn treasure map
+5715=expertly drawn treasure map
+5716=adeptly drawn treasure map
+5717=cleverly drawn treasure map
+5718=deviously drawn treasure map
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.
@@ -5171,5 +5191,10 @@
 18771=A full set of ranger armor.
 // [18800-19000] AOS properties
 18800=%i% Bandage Healing Bonus
+// Clothing Bless Deed
+19001=Select the item of clothing that you want to bless.
+19002=The item has been blessed.
+19003=You can only bless clothing with this deed!
+19004=Items must be equipped or in your backpack to bless them.
 }
 EOF

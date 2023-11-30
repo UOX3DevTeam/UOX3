@@ -3271,6 +3271,26 @@
 5510=Możesz rzucać śnieżką tylko w coś, co może ją odrzucić.
 5511=Śnieg nie jest jeszcze gotowy do ułożenia. Próbuj dalej.
 5512=Ostrożnie pakujesz śnieg w kulkę...
+// [5700-5750] Mapa skarbów i wiadomości mapowe
+5700=Wygląda na puste.
+5701=To poszukiwanie skarbów zostało już zakończone.
+5702=Skarb jest oznaczony czerwoną szpilką. Weź łopatę i kopnij!
+5703=Odszyfrowałeś mapę!
+5704=zniszczona mapa skarbów
+5705=Nie możesz jeszcze rozszyfrować tej mapy!
+5706=Już kopiesz skarb.
+5707=Gdzie chcesz kopać?
+5708=Przestajesz kopać, ponieważ coś znajduje się bezpośrednio na skrzyni skarbów
+5709=Nie rozszyfrowałeś tej mapy i nie masz pojęcia, gdzie szukać skarbu.
+5710=Skarb tej mapy został już znaleziony.
+5711=Kopiesz i kopiesz, ale skarbu nie znajdujesz
+5712=Kopiesz i kopiesz, ale wydaje się, że nie ma tu żadnego skarbu
+5713=Skrzynia nie chce zostać napełniona żadnymi skarbami.
+5714=przejrzyście narysowana mapa skarbów
+5715=fachowo narysowana mapa skarbów
+5716=ładnie narysowana mapa skarbów
+5717=sprytnie narysowana mapa skarbów
+5718=przemyślnie narysowana mapa skarbówe pakujesz śnieg w kulkę...
 // [6000-6499] Różne umiejętności Msgs
 6000=Ta osoba wygląda na %s i %t.
 6001=Nie możesz zrobić z tego nic użytecznego.
@@ -5172,4 +5192,9 @@
 // [18800-19000] Właściwości AOS
 18800=%i% Premia do leczenia bandażem
 }
+// Clothing Bless Deed
+19001=Wybierz element odzieży, który chcesz pobłogosławić.
+19002=Przedmiot został pobłogosławiony.
+19003=Tym czynem można pobłogosławić tylko ubrania!
+19004=Przedmioty muszą być wyposażone lub znajdować się w plecaku, aby można było je pobłogosławić.
 EOF

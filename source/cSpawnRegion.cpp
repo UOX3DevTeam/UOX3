@@ -43,6 +43,7 @@ call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM )
 {
 	sItems.resize( 0 );
 	sNpcs.resize( 0 );
+	exclusionAreas.resize( 0 );
 	name = Dictionary->GetEntry( 1117 );
 	// note: doesn't go here, but i'll see it here.  when an item is spawned, as soon as it's moved it needs to lose it's
 	// spawn setting.  If not, then when people pick up spawned items, they will disappear (on region spawns)
@@ -57,6 +58,7 @@ CSpawnRegion::~CSpawnRegion()
 {
 	sItems.resize( 0 );
 	sNpcs.resize( 0 );
+	exclusionAreas.resize( 0 );
 	// Wipe out all items and npcs
 }
 
@@ -553,6 +555,7 @@ void CSpawnRegion::Load( CScriptSection *toScan )
 	std::string data;
 	std::string UTag;
 
+	SpawnRegionExclusionAreas_st excludeArea;
 	for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 	{
 		if( !tag.empty() )
@@ -661,6 +664,20 @@ void CSpawnRegion::Load( CScriptSection *toScan )
 				{
 					validWaterPos.push_back( Point3_st( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )), static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )), static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ))));
 					validWaterPosCheck[ static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )) + ( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )) << 16 ) ] = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+				}
+			}
+			else if( UTag == "EXCLUDEAREA" )
+			{
+				// For every "EXCLUDEAREA" tag that contains 4 comma-separated coordinates (EXCLUDEAREA=X1,Y1,X2,Y2), push them back into a list of exclusion areas that will be avoided during spawning
+				data = oldstrutil::simplify( data );
+				auto csecs = oldstrutil::sections( data, "," );
+				if( csecs.size() == 4 )
+				{
+					excludeArea.x1 = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+					excludeArea.y1 = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+					excludeArea.x2 = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+					excludeArea.y2 = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 ));
+					exclusionAreas.push_back( excludeArea );
 				}
 			}
 		}
@@ -957,8 +974,23 @@ bool CSpawnRegion::FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCr
 			}
 		}
 
+		// Make sure the chosen spawn location is not in an exclusion area
+        auto illegalLoc = false;
+        if( !rValue )
+        {
+			for (auto& exclusionArea : exclusionAreas)
+            {
+                if( x >= exclusionArea.x1 && x <= exclusionArea.x2 && y >= exclusionArea.y1 && y <= exclusionArea.y2 )
+                {
+                    // Chosen location is in an exclusion area. Disallow!
+                    illegalLoc = true;
+                    break;
+                }
+            }
+        }
+
 		// Since our chosen location has not already been validated, lets validate it with a land-based creature in mind
-		if( !waterCreature && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId ))
+		if( !illegalLoc && !waterCreature && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId ))
 		{
 			if( onlyOutside == false || !Map->InBuilding( x, y, z, worldNumber, instanceId ))
 			{
@@ -973,7 +1005,7 @@ bool CSpawnRegion::FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCr
 		}
 
 		// Otherwise, validate it with a water-based creature in mind instead
-		if(( waterCreature || amphiCreature ) && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId, false ))
+		if( !illegalLoc && ( waterCreature || amphiCreature ) && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId, false ))
 		{
 			if( onlyOutside == false || !Map->InBuilding( x, y, z, worldNumber, instanceId ))
 			{
@@ -1111,7 +1143,22 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 			}
 		}
 
-		if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId ))
+		// Make sure the chosen spawn location is not in an exclusion area
+		auto illegalLoc = false;
+		if( !rValue )
+		{
+			for( auto &exclusionArea : exclusionAreas )
+			{
+				if( x >= exclusionArea.x1 && x <= exclusionArea.x2 && y >= exclusionArea.y1 && y <= exclusionArea.y2 )
+				{
+					// Chosen location is in an exclusion area. Disallow!
+					illegalLoc = true;
+					break;
+				}
+			}
+		}
+
+		if( !illegalLoc && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId ))
 		{
 			if( onlyOutside == false || !Map->InBuilding( x, y, z, worldNumber, instanceId ))
 			{

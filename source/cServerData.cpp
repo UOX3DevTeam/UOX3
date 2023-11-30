@@ -601,8 +601,8 @@ auto CServerData::ResetDefaults() -> void
 	ServerNetRcvTimeout( 3 );
 	ServerNetSndTimeout( 3 );
 	ServerNetRetryCount( 3 );
-	MaxClientBytesIn( 25000 );
-	MaxClientBytesOut( 100000 );
+	MaxClientBytesIn( 50000 );
+	MaxClientBytesOut( 200000 );
 	NetTrafficTimeban( 30 );
 
 	// Adaptive Performance System

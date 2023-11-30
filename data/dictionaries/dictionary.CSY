@@ -3271,6 +3271,26 @@
 5510=Můžete házet sněhovou kouli pouze na něco, co ji může hodit zpět.
 5511=Sníh ještě není připraven k zabalení. Zkoušej to dál.
 5512=Opatrně balíte sníh do koule...
+// [5700-5750] Treasure Map and Map Msgs
+5700=Zdá se, že je prázdné.
+5701=Tato honba za pokladem již byla dokončena.
+5702=Poklad je označen červeným špendlíkem. Popadni lopatu a běž to vykopat!
+5703=Dekódovali jste mapu!
+5704=otrhaná mapa pokladu
+5705=Zatím nemůžete dekódovat tuto mapu!
+5706=Už kopete poklad.
+5707=Kde chcete kopat?
+5708=Přestanete kopat, protože něco je přímo na vrcholu truhly s pokladem
+5709=Nedekódovali jste tuto mapu a nemáte ponětí, kde hledat poklad.
+5710=Poklad pro tuto mapu již byl nalezen.
+5711=Kopete a kopete, ale nenajdete žádný poklad
+5712=Kopete a kopete, ale zdá se, že zde žádný poklad není
+5713=truhla odmítá být naplněna dalším pokladem.
+5714=jasně nakreslená mapa pokladu
+5715=odborně nakreslená mapa pokladu
+5716=skvěle nakreslená mapa pokladu
+5717=chytře nakreslená mapa pokladu
+5718=Šikovně nakreslená mapa pokladu
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.
@@ -5171,5 +5191,10 @@
 18771=Plná sada rangerské zbroje.
 // [18800-19000] Vlastnosti AOS
 18800=%i% Bonus za hojení obvazů
+// Clothing Bless Deed
+19001=Vyberte oděv, který chcete požehnat.
+19002=Položka byla požehnána.
+19003=Tímto úkonem můžete žehnat pouze oblečení!
+19004=Předměty musí být vybaveny nebo musí být v batohu, abyste je mohli požehnat.
 }
 EOF

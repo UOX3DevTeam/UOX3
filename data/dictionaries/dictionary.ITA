@@ -3271,6 +3271,26 @@
 5510=Puoi lanciare una palla di neve solo contro qualcosa che può respingerla.
 5511=La neve non è ancora pronta per essere compattata. Continua a provare.
 5512=Comprimi con cura la neve fino a formare una palla...
+// [5700-5750] Mappa del tesoro e messaggi mappa
+5700=Sembra vuoto.
+5701=Questa caccia al tesoro è già stata completata.
+5702=Il tesoro è contrassegnato dalla puntina rossa. Prendi una pala e vai a scavare!
+5703=Hai decodificato la mappa!
+5704=mappa del tesoro sbrindellata
+5705=Non puoi ancora decodificare questa mappa!
+5706=Stai già scavando un tesoro.
+5707=Dove vuoi scavare?
+5708=Smetti di scavare perché c'è qualcosa direttamente sopra lo scrigno del tesoro
+5709=Non hai decodificato questa mappa e non hai idea di dove cercare il tesoro.
+5710=Il tesoro di questa mappa è già stato trovato.
+5711=Scavi e scavi, ma non trovi nessun tesoro
+5712=Scavi e scavi, ma sembra che qui non ci sia nessun tesoro
+5713=Lo scrigno rifiuta di essere riempito con altri tesori.
+5714=mappa del tesoro disegnata in modo semplice
+5715=mappa del tesoro disegnata con perizia
+5716=mappa del tesoro disegnata con perizia
+5717=mappa del tesoro disegnata in modo intelligente
+5718=mappa del tesoro disegnata in modo subdolo
 // [6000-6499] Misc Skill Msgs
 6000=Quella persona sembra %s e %t.
 6001=Non puoi ricavarne nulla di utile.
@@ -5172,4 +5192,9 @@
 // [18800-19000] Proprietà AOS
 18800=%i% Bonus di guarigione della benda
 }
+// Clothing Bless Deed
+19001=Selezionare il capo di abbigliamento che si desidera benedire.
+19002=Il capo è stato benedetto.
+19003=Con questa azione si possono benedire solo capi di abbigliamento!
+19004=Gli oggetti devono essere equipaggiati o nello zaino per poterli benedire.
 EOF
