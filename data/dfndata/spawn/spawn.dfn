@@ -17,7 +17,7 @@
 // Y1=1				// This is the upper left Y of the box
 // X2=5000			// This is the lower right X of the box
 // Y2=5000                      // This is the lower right Y of the box
-// EXCLUDEAREA=1342,1447,1353,1487    For every "EXCLUDEAREA" tag that contains 4 comma-separated coordinates (EXCLUDEAREA=X1,Y1,X2,Y2)
+// EXCLUDEAREA=x1,y1,x2,y2   // Area within defined boundary will be excluded as valid spawn area
 // PREFZ=18			// This is the maximum Z influence a dynamic or static item can have on spawning.
 // WORLD=#		        // This is the World which to Spawn WORLD=0 (for Brit) WORLD=2 (for Ilsh)
 // MINTIME=0			// This is the minimum time for the item or npc to spawn
