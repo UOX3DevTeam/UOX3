@@ -5191,5 +5191,10 @@
 18771=Ein kompletter Satz Waldläufer-Rüstung.
 // [18800-19000] AOS-Eigenschaften
 18800=%i% Verbandsheilungsbonus
+// Clothing Bless Deed
+19001=Wählen Sie das Kleidungsstück aus, das Sie segnen möchten.
+19002=Das Kleidungsstück wurde gesegnet.
+19003=Du kannst mit dieser Tat nur Kleidung segnen!
+19004=Gegenstände müssen ausgerüstet sein oder sich in deinem Rucksack befinden, um sie zu segnen.
 }
 EOF

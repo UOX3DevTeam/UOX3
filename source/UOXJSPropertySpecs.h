@@ -534,6 +534,7 @@ DECL_GET_SET( CItem, buyvalue )
 DECL_GET_SET( CItem, sellvalue )
 DECL_GET_SET( CItem, vendorPrice )
 DECL_GET_SET( CItem, restock )
+DECL_GET_SET( CItem, good )
 DECL_GET_SET( CItem, divinelock )
 DECL_GET_SET( CItem, baseWeight )
 DECL_GET_SET( CItem, weight )
@@ -1258,6 +1259,7 @@ inline JSPropertySpec CItemProps[] =
   JS_PSGS( "sellvalue",						JSCItem_get_sellvalue,	   JSCItem_set_sellvalue,	     JSPROP_ENUMANDPERM ),
   JS_PSGS( "vendorPrice",						JSCItem_get_vendorPrice,	   JSCItem_set_vendorPrice,	     JSPROP_ENUMANDPERM ),
   JS_PSGS( "restock",						JSCItem_get_restock,	   JSCItem_set_restock,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "good",						JSCItem_get_good,	   JSCItem_set_good,	     JSPROP_ENUMANDPERM ),
   JS_PSGS( "divinelock",						JSCItem_get_divinelock,	   JSCItem_set_divinelock,	     JSPROP_ENUMANDPERM ),
   JS_PSGS( "baseWeight",						JSCItem_get_baseWeight,	   JSCItem_set_baseWeight,	     JSPROP_ENUMANDPERM ),
   JS_PSGS( "weight",						JSCItem_get_weight,	   JSCItem_set_weight,	     JSPROP_ENUMANDPERM ),

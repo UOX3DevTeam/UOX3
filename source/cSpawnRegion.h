@@ -45,6 +45,16 @@ private:
 	std::vector<Point3_st>	validLandPos;
 	std::vector<Point3_st>	validWaterPos;
 
+	// Exclusion areas for Spawn Regions
+	struct SpawnRegionExclusionAreas_st
+	{
+		SI16 x1 = 0;
+		SI16 y1 = 0;
+		SI16 x2 = 0;
+		SI16 y2 = 0;
+	};
+	std::vector<SpawnRegionExclusionAreas_st>    exclusionAreas;
+
 
 public:
 	CSpawnRegion( UI16 spawnregion );

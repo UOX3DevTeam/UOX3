@@ -5347,5 +5347,10 @@
 18771=Une armure de ranger complète.
 // [18800-19000] Propriétés de l’AOS
 18800=%i% Bonus de soins de bandage
+// Clothing Bless Deed
+19001=Sélectionnez le vêtement que vous souhaitez bénir.
+19002=L'article a été béni.
+19003=Vous ne pouvez bénir que des vêtements avec cet acte!
+19004=Les objets doivent être équipés ou dans ton sac à dos pour être bénis.
 }
 EOF

@@ -1,3 +1,26 @@
+30/11/2023 - Dragon Slayer
+	Added support for new DFN tag in spawn regions that allows defining one or more exclusion areas per spawn region to prevent spawning of objects within said regions:
+   	 EXCLUDEAREA=x1,y1,x2,y2   // Area within defined boundary will be excluded as valid spawn area (Special, Thanks to Xuri)
+
+28/11/2023 - Dragon Slayer
+	Adjusted the Default values for MaxClientBytesIn and MaxClientBytesOut by double.
+
+26/11/2023 - Dragon Slayer
+	Fixed a potential server crash issue related to keeping track of which players have opened which containers (Xuri)
+
+21/11/2023 - Danny S.
+    Renamed bod_rewards.dfn to bod_rewards_blacksmith.dfn.
+    Added bod_rewards_tailor.dfn with the following items:
+        clothing_bless_deed
+        base_runic_sewing_kit
+        spined_runic_sewing_kit*
+        horned_runic_sewing_kit*
+        barbed_runic_sewing_kit*
+            *Currently function as normal sewing kits
+    Added GOOD DFN tag to item JS Objects. (UOXJSPropertyFuncs.cpp)
+    Added script for handling clothing bless deed usage. (clothing_bless_deed.js)
+    Enabled clothing bless deeds and runic sewing kits as tailoring BOD rewards. (vendor_bdo_dispenser.js)
+
 19/11/2023 - Dragon Slayer
 	Fixed an issue where players qualifying for instant logout would not immediately vanish from view upon logout (Xuri)
 
