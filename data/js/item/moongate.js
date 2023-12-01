@@ -579,7 +579,7 @@ function DisplayTravelGump( srcSock, pUser )
 	}
 
 	//PAGE 5
-	myGump.AddPage( 5 );  //Page 4 Tokuno Islands
+	myGump.AddPage( 5 );  //Page 5 Tokuno Islands
 	myGump.AddBackground( 20, 20, 260, 245, 0x23f0 );
 	myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
 
@@ -623,7 +623,7 @@ function DisplayTravelGump( srcSock, pUser )
 		myGump.AddButton( 48, 175, 0x4b9, 0, 6, 0 );
 	}
 	//PAGE 6
-	myGump.AddPage( 6 );  //Page 4 TerMur
+	myGump.AddPage( 6 );  //Page 6 TerMur
 	myGump.AddBackground( 20, 20, 260, 245, 0x23f0 );
 	myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
 
