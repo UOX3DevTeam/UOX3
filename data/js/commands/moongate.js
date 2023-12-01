@@ -27,6 +27,7 @@ function command_ENABLEMOONGATES( socket, cmdString )
 			socket.SysMessage( "Moongates have been enabled for facet " + facetListIndex + " (" + cmdString + ")" );
 		}
 	}
+	ReloadJSFile( 5011 );// reloads items/moongate.js
 }
 
 function command_DISABLEMOONGATES( socket, cmdString )
@@ -49,4 +50,5 @@ function command_DISABLEMOONGATES( socket, cmdString )
 			socket.SysMessage( "Moongates have been disabled for facet " + facetListIndex + " (" + cmdString + ")" );
 		}
 	}
+	ReloadJSFile( 5011 );// reloads items/moongate.js
 }

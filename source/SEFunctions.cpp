@@ -2940,8 +2940,8 @@ JSBool SE_GetMoongateFacetStatus( [[maybe_unused]] JSContext *cx, [[maybe_unused
 	}
 	else if( argc == 1 )
 	{
-		UI32 MoongateFacet = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
-		bool MoongateFacetStatus = cwmWorldState->ServerData()->GetMoongateFacetStatus( MoongateFacet );
+		UI32 moongateFacets = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
+		bool MoongateFacetStatus = cwmWorldState->ServerData()->GetMoongateFacetStatus( moongateFacets );
 		if( MoongateFacetStatus )
 		{
 			*rval = INT_TO_JSVAL( 1 );

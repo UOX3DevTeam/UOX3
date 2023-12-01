@@ -4599,19 +4599,19 @@ auto CServerData::SetSpawnRegionsFacetStatus( UI32 nVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::GetMoongateFacetStatus( UI32 value ) const -> bool
 {
-	return MoongateFacets.test( value );
+	return moongateFacets.test( value );
 }
 auto CServerData::SetMoongateFacetStatus( UI32 nVal, bool status ) -> void
 {
-	MoongateFacets.set( nVal, status );
+	moongateFacets.set( nVal, status );
 }
 auto CServerData::GetMoongateFacetStatus() const -> UI32
 {
-	return static_cast<UI32>( MoongateFacets.to_ulong() );
+	return static_cast<UI32>( moongateFacets.to_ulong() );
 }
 auto CServerData::SetMoongateFacetStatus( UI32 nVal ) -> void
 {
-	MoongateFacets = nVal;
+	moongateFacets = nVal;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6521,7 +6521,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 346:	 // SECRETSHARDKEY
 			SecretShardKey( value );
 			break;
-		case 347:	 // SHOWMOONGATEFACETS
+		case 347:	 // MOONGATEFACETS
 			SetMoongateFacetStatus( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
 			break;
 		default:
