@@ -51,18 +51,13 @@ get=base_treasure_map
 custominttag=Level 6
 }
 
-[dirt]
+[treasuredirt]
 {
 get=base_item
 name=dirt
 id=0x913
-}
-
-[dirt2]
-{
-get=base_item
-name=dirt
-id=0x914
+MORE=0x04 0x0 0x0 0x0
+SCRIPT=5405
 }
 
 [base_treasure_chest]

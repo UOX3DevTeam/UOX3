@@ -5162,5 +5162,10 @@
 18771=A full set of ranger armor.
 // [18800-19000] AOS properties
 18800=%i% Bandage Healing Bonus
+// Clothing Bless Deed
+19001=Select the item of clothing that you want to bless.
+19002=The item has been blessed.
+19003=You can only bless clothing with this deed!
+19004=Items must be equipped or in your backpack to bless them.
 }
 EOF

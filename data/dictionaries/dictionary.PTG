@@ -3291,6 +3291,11 @@
 5716=mapa do tesouro habilmente desenhado
 5717=mapa do tesouro habilmente desenhado
 5718=mapa do tesouro desenhado tortuosamente
+5719=Você não pode se mover enquanto desenterra um tesouro. Você precisará começar a cavar novamente.
+5720=Tente procurar o baú do tesouro mais ao
+5721=Você não pode cavar em busca de tesouros lá!
+5722=coordenadas %s
+5723=Concluído
 // [6000-6499] Misc Skill Msgs
 6000=Que a pessoa parece %s e %t.
 6001=Não se pode fazer nada de útil com isso.
@@ -5201,5 +5206,10 @@
 18771=Um conjunto completo de armadura de guarda-florestal.
 // [18800-19000] Propriedades AOS
 18800=%i% Bônus de cura de curativo
+// Clothing Bless Deed
+19001=Seleccione a peça de roupa que pretende abençoar.
+19002=A peça foi abençoada.
+19003=Só podes abençoar roupa com esta ação!
+19004=Os objectos têm de estar equipados ou na mochila para serem abençoados.
 }
 EOF

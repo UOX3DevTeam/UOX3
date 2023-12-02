@@ -3291,6 +3291,11 @@
 5716=mapa del tesoro hábilmente dibujado
 5717=mapa del tesoro hábilmente dibujado
 5718=mapa del tesoro tortuosamente dibujado
+5719=No puedes moverte mientras desentierras un tesoro. Tendrás que empezar a cavar de nuevo.
+5720=Intenta buscar el cofre del tesoro más al
+5721=¡No puedes buscar tesoros allí!
+5722=coordenadas %s
+5723=Completado
 // [6000-6499] Misc Skill Msgs
 6000=Esa persona parece %s y %t.
 6001=No se puede hacer nada útil con eso.
@@ -5201,5 +5206,10 @@
 18771=Un conjunto completo de armadura de guardabosques.
 // [18800-19000] Propiedades AOS
 18800=%i% Bonificación de curación de vendaje
+// Clothing Bless Deed
+19001=Seleccione la prenda que desea bendecir.
+19002=La prenda ha sido bendecida.
+19003=Sólo puedes bendecir ropa con esta acción.
+19004=Los objetos deben estar equipados o en tu mochila para poder bendecirlos.
 }
 EOF

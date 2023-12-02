@@ -3291,6 +3291,11 @@
 5716=skvěle nakreslená mapa pokladu
 5717=chytře nakreslená mapa pokladu
 5718=Šikovně nakreslená mapa pokladu
+5719=Při vykopávání pokladu se nemůžete pohybovat. Budete muset začít kopat znovu.
+5720=Zkuste hledat truhlu s pokladem více
+5721=Tam nemůžete kopat poklad!
+5722=souřadnice %s
+5723=Dokončeno
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.
@@ -5201,5 +5206,10 @@
 18771=Plná sada rangerské zbroje.
 // [18800-19000] Vlastnosti AOS
 18800=%i% Bonus za hojení obvazů
+// Clothing Bless Deed
+19001=Vyberte oděv, který chcete požehnat.
+19002=Položka byla požehnána.
+19003=Tímto úkonem můžete žehnat pouze oblečení!
+19004=Předměty musí být vybaveny nebo musí být v batohu, abyste je mohli požehnat.
 }
 EOF
