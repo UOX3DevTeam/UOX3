@@ -3060,6 +3060,18 @@ void CItem::Cleanup( void )
 				tItem->Delete();
 			}
 		}
+		// Iterate through list of players that previously opened container, and remove self from those players
+		auto contOpenedBy = GetContOpenedByList();
+		for( const auto &pSock : contOpenedBy->collection() )
+		{
+			if( pSock != nullptr )
+			{
+				// Remove player from container's own list of players who have previously opened it
+				pSock->GetContsOpenedList()->Remove( this );
+			}
+		}
+		GetContOpenedByList()->Clear();	// Clear container's list of sockets that opened it previously
+
 		// if we delete an item we should delete it from spawnregions
 		// this will fix several crashes
 		if( IsSpawned() )

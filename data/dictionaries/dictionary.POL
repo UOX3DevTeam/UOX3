@@ -5197,4 +5197,9 @@
 // [18800-19000] Właściwości AOS
 18800=%i% Premia do leczenia bandażem
 }
+// Clothing Bless Deed
+19001=Wybierz element odzieży, który chcesz pobłogosławić.
+19002=Przedmiot został pobłogosławiony.
+19003=Tym czynem można pobłogosławić tylko ubrania!
+19004=Przedmioty muszą być wyposażone lub znajdować się w plecaku, aby można było je pobłogosławić.
 EOF

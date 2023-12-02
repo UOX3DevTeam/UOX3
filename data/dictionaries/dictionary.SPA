@@ -5196,5 +5196,10 @@
 18771=Un conjunto completo de armadura de guardabosques.
 // [18800-19000] Propiedades AOS
 18800=%i% Bonificación de curación de vendaje
+// Clothing Bless Deed
+19001=Seleccione la prenda que desea bendecir.
+19002=La prenda ha sido bendecida.
+19003=Sólo puedes bendecir ropa con esta acción.
+19004=Los objetos deben estar equipados o en tu mochila para poder bendecirlos.
 }
 EOF
