@@ -592,6 +592,13 @@ function onTimer( timerObj, timerID )
 			var facetName = "";
 			var buttonID = -1;
 			var doSpawnRegionRespawn = false;
+			// Disable moongate travel in all facets first, then re-enable later for specific facets admin chooses to decorate
+			SetMoongateFacetStatus( 0, false );
+			SetMoongateFacetStatus( 1, false );
+			SetMoongateFacetStatus( 2, false );
+			SetMoongateFacetStatus( 3, false );
+			SetMoongateFacetStatus( 4, false );
+			SetMoongateFacetStatus( 5, false );
 
 			for( var i = 0; i < numCheckedBoxes; i++ )
 			{
@@ -599,26 +606,32 @@ function onTimer( timerObj, timerID )
 				if( buttonID >= 0 && buttonID <= 19 )
 				{
 					facetName = "felucca";
+					SetMoongateFacetStatus( 0, true );
 				}
 				else if( buttonID >= 20 && buttonID <= 39 )
 				{
 					facetName = "trammel";
+					SetMoongateFacetStatus( 1, true );
 				}
 				else if( buttonID >= 40 && buttonID <= 59 )
 				{
 					facetName = "ilshenar";
+					SetMoongateFacetStatus( 2, true );
 				}
 				else if( buttonID >= 60 && buttonID <= 79 )
 				{
 					facetName = "malas";
+					SetMoongateFacetStatus( 3, true );
 				}
 				else if( buttonID >= 80 && buttonID <= 99 )
 				{
 					facetName = "tokuno";
+					SetMoongateFacetStatus( 4, true );
 				}
 				else if( buttonID >= 100 && buttonID <= 119 )
 				{
 					facetName = "termur";
+					SetMoongateFacetStatus( 5, true );
 				}
 
 				switch( buttonID )
