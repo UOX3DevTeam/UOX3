@@ -27,7 +27,6 @@ function onUseChecked( pUser, mapItem )
 			return false;
 		}
 
-		var socket = pUser.socket;
 		craftedMaps( socket, mapItem );
 		pUser.SetTempTag("parentMapSerial", ( mapItem.serial).toString() );
 	}

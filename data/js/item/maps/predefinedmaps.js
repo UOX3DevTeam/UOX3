@@ -27,7 +27,6 @@ function onUseChecked( pUser, mapItem )
 			return false;
 		}
 
-		var socket = pUser.socket;
 		mapPresets( socket, mapItem );
 		pUser.SetTempTag("parentMapSerial", ( mapItem.serial).toString() );
 	}
@@ -86,9 +85,9 @@ function mapPresets( socket, mapItem )
 		case 2:
 			var map_name = 'largeworld';
 			var preset_values = MAP_PRESETS[map_name];
-			sendMapDisplay( socket, mapItem  );
-			sendMapDetails( socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5]  );
-			sendMapEditable( socket, mapItem, true  );
+			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
 
 			var pins = [];
 			if (mapItem.GetTag("pins")) 

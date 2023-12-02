@@ -58,13 +58,21 @@ function onCallback0( socket, myTarget )
 			yDifference = Math.abs( treasureY - targY );
 
 			// Range where you can start digging up chest.
-			var mining = ( pUser.skills.mining / 10 ).toFixed( 1 );
+			var bonusSkill;
+			if( EraStringToNum( GetServerSetting( "CoreShardEra" )) >= EraStringToNum( "tol" )) // ToL and later
+			{
+				bonusSkill = ( pUser.skills.cartography / 10 ).toFixed( 1 );
+			}
+			else
+			{
+				bonusSkill = ( pUser.skills.mining / 10 ).toFixed( 1 );
+			}
 
-			if( mining < 51.0 )
+			if( bonusSkill < 51.0 )
 				radius = 1;
-			else if( mining < 81.0 )
+			else if( bonusSkill < 81.0 )
 				radius = 2;
-			else if( mining < 99.0 )
+			else if( bonusSkill < 99.0 )
 				radius = 3;
 			else
 				radius = 4;
