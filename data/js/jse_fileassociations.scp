@@ -279,6 +279,7 @@
 5402=item/maps/treasuremaps.js
 5403=item/maps/predefinedmaps.js
 5404=item/maps/craftedmaps.js
+5405=item/maps/treasuredirt.js
 
 //-------------------------------------------
 // Camps [5500-5599]

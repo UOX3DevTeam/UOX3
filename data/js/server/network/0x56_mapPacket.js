@@ -40,7 +40,6 @@ function sendMapDetails( socket, map, Width, Height, xtop, ytop, xbottom, ybotto
 			break;
 	}
 	toSend.WriteShort( 19, mapType ); // World facet
-	pUser.SysMessage(worldNum);
 	socket.Send( toSend );
 	toSend.Free();
 }

@@ -20,7 +20,10 @@
 
 26/11/2023 - Dragon Slayer
 	Fixed a potential server crash issue related to keeping track of which players have opened which containers (Xuri)
-
+	Resolved an issue with validation in treasuredigging.js, thanks to the efforts of (Xuri)
+	Welcomed the addition of treasuredirt.js, featuring the exhilarating killtreasureevent functionality.
+	Enhanced the precision of the treasure dig timer, bringing it more in line with the standards of Uo Live Servers.
+  
 21/11/2023 - Danny S.
     Renamed bod_rewards.dfn to bod_rewards_blacksmith.dfn.
     Added bod_rewards_tailor.dfn with the following items:
