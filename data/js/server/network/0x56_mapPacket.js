@@ -69,6 +69,7 @@ function onPacketReceive(pSocket, packetNum, subcommand )
 	if( cmd != packetNum )
 		return;
 
+	var maxPins = 50;
 	var pins = [];
 	if( mapItem.GetTag( "pins" ))
 	{
@@ -89,6 +90,14 @@ function onPacketReceive(pSocket, packetNum, subcommand )
 			index = pSocket.GetByte( 6 ); // Not sent by client? Always 0
 			var pinx = pSocket.GetSWord( 7 );
 			var piny = pSocket.GetSWord( 9 );
+
+			if( pins.length >= maxPins )
+            {
+                pSocket.SysMessage( "Max number of pins reached!" );
+                SendMapEditable( pSocket, mapItem, false );
+                return;
+            }
+
 			var pin = pinx + "," + piny;
 
 			// Insert the new pin into the 'pins' array at the specified index
