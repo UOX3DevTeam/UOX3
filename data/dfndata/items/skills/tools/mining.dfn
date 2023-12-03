@@ -305,7 +305,7 @@ movable=1
 pileable=1
 decay=1
 value=10637 5318
-script=5051
+script=5052
 }
 
 [stoneminingbook]
@@ -318,5 +318,5 @@ movable=1
 pileable=1
 decay=1
 value=10637 5318
-script=5052
+script=5053
 }
