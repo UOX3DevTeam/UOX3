@@ -520,7 +520,7 @@ function onTimer( mChar, timerID )
 					}
 					else
 					{
-						mChar.TextMessage( "You dig for a while but fail to find any of sufficient quality for glassblowing.", false, 0x3b2, 0, mChar.serial ); // You dig for a while but fail to find any of sufficient quality for glassblowing.
+						mChar.TextMessage( GetDictionaryEntry( 9405, socket.language ), false, 0x3b2, 0, mChar.serial ); // You dig for a while but fail to find any of sufficient quality for glassblowing.
 						if( RandomNumber( 0, 1 ))	// 50% chance to destroy some resources
 						{
 							mResource.oreAmount = mResource.oreAmount - 1;
@@ -657,7 +657,7 @@ function MakeGranite( socket, mChar )
 	iSpawned = CreateDFNItem( socket, mChar, "randomgranite", 1, "ITEM", true );
 	if( ValidateObject( iSpawned ))
 	{
-		socket.SysMessage("You carefully extract some workable stone from the ore vein!"); // You carefully extract some workable stone from the ore vein!
+		socket.SysMessage( GetDictionaryEntry( 9406, socket.language )); // You carefully extract some workable stone from the ore vein!
 	}
 
 	HandleToolUse( socket, mChar );
@@ -683,7 +683,7 @@ function MakeSand(socket, mChar)
 			iSpawned.colour = 0;
 
 		}
-		socket.SysMessage("You carefully dig up sand of sufficient quality for glassblowing."); // You carefully dig up sand of sufficient quality for glassblowing.
+		socket.SysMessage( GetDictionaryEntry( 9407, socket.language )); // You carefully dig up sand of sufficient quality for glassblowing.
 	}
 
 	HandleToolUse( socket, mChar );

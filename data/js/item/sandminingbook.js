@@ -7,17 +7,17 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			socket.SysMessage(GetDictionaryEntry( 1763, pSock.language )); // That item must be in your backpack before it can be used.
+			socket.SysMessage( GetDictionaryEntry( 1763, pSock.language )); // That item must be in your backpack before it can be used.
 			return false;
 		}
 		else if( pUser.skills[45] < 1000 )
 		{
-			socket.SysMessage( "Only a Grandmaster Miner can learn from this book." ); // Only a Grandmaster Miner can learn from this book.
+			socket.SysMessage( GetDictionaryEntry( 9408, pSock.language )); // Only a Grandmaster Miner can learn from this book.
 			return false;
 		}
 		else if( pUser.GetTag( "GatheringSand" ) == 1 )
 		{
-			socket.SysMessage( "You have already learned this information." ); // You have already learned this information.
+			socket.SysMessage( GetDictionaryEntry( 9409, pSock.language )); // You have already learned this information.
 			return false;
 		}
 		else if( iUsed.movable == 2 || iUsed.movable == 3 )
@@ -28,7 +28,7 @@ function onUseChecked( pUser, iUsed )
 		else 
 		{
 			pUser.SetTag( "GatheringSand", 1 );
-			socket.SysMessage( "You have learned how to mine fine sand.  Target sand areas when mining to look for fine sand." ); // You have learned how to mine fine sand.  Target sand areas when mining to look for fine sand.
+			socket.SysMessage( GetDictionaryEntry( 9410, pSock.language )); // You have learned how to mine fine sand.  Target sand areas when mining to look for fine sand.
 			iUsed.Delete();
 		}
 	}
