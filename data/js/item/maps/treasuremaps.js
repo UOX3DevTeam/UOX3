@@ -50,8 +50,8 @@ function TreasureMap( socket, mapItem )
 				var xbottom = parseInt( mybox[2] );
 				var ybottom = parseInt( mybox[3] );
 
-				TriggerEvent( 1503, "sendMapDetails", socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
-				TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+				TriggerEvent( 1503, "SendMapDetails", socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
+				TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 				socket.SoundEffect( 0x249, true );
 
 				if( mapItem.GetTag( "found" ) == 1 ) 
@@ -60,7 +60,7 @@ function TreasureMap( socket, mapItem )
 				}
 				else 
 				{
-					TriggerEvent( 1503, "sendAddMapPin", socket, mapItem, 100, 100 );
+					TriggerEvent( 1503, "SendAddMapPin", socket, mapItem, 100, 100 );
 					socket.SysMessage( GetDictionaryEntry( 5702, socket.language ));// The treasure is marked by the red pin. Grab a shovel and go dig it up!
 				}
 				break;
@@ -352,9 +352,9 @@ function TreasureMapCoords( socket, mapItem )
 	var xbottom = x + 300;
 	var ybottom = y + 300;
 
-	TriggerEvent( 1503, "sendMapDetails", socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
-	TriggerEvent( 1503, "sendAddMapPin", socket, mapItem, 100, 100 );
-	TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+	TriggerEvent( 1503, "SendMapDetails", socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
+	TriggerEvent( 1503, "SendAddMapPin", socket, mapItem, 100, 100 );
+	TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 
 	mapItem.SetTag( "dimensions", height + "," + width );								// saves information for the map to be reopened
 	mapItem.SetTag( "boundingbox", xtop + "," + ytop + "," + xbottom + "," + ybottom );	// saves information for the map to be reopened

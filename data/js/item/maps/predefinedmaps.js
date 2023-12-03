@@ -27,7 +27,7 @@ function onUseChecked( pUser, mapItem )
 			return false;
 		}
 
-		mapPresets( socket, mapItem );
+		MapPresets( socket, mapItem );
 		pUser.SetTempTag("parentMapSerial", ( mapItem.serial).toString() );
 	}
 }
@@ -70,260 +70,265 @@ const MAP_PRESETS = {
 	'TerMur': [400, 400, 260, 2780, 1280, 4090], //# map TerMur world
 };
 
-function mapPresets( socket, mapItem )
+function MapPresets( socket, mapItem )
 {
 	var pUser = socket.currentChar;
-	switch ( mapItem.GetTag( "Map" ))
+	switch( mapItem.GetTag( "Map" ))
 	{
 		case 1:
 			var map_name = 'smallworld';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 2:
 			var map_name = 'largeworld';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
-
-			var pins = [];
-			if (mapItem.GetTag("pins")) 
-			{
-				pins = mapItem.GetTag("pins").split(";" );
-			}
-
-			for (var i = 0; i < pins.length; i++) 
-			{
-				// Split each pin string into an array of two values
-				var pin = pins[i].split("," );
-
-				// Extract the pinx and piny values, converting them to integers
-				var pinx = parseInt(pin[0] );
-				var piny = parseInt(pin[1] );
-
-				// Assuming sendAddMapPin is correctly implemented
-				TriggerEvent( 1503, "sendAddMapPin", socket, mapItem, pinx, piny );
-			}
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 3:
 			var map_name = 'britain';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5], preset_values[6] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5], preset_values[6] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 4:
 			var map_name = 'britaintoskarabrae';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 5:
 			var map_name = 'britaintotrinsic';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 6:
 			var map_name = 'bucsden';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 7:
 			var map_name = 'bucsdentomagincia';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 8:
 			var map_name = 'bucsdentoocllo';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 9:
 			var map_name = 'jhelom';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 10:
 			var map_name = 'magincia';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 11:
 			var map_name = 'maginciatoocllo';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 12:
 			var map_name = 'minoc';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 13:
 			var map_name = 'minoctoyew';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 14:
 			var map_name = 'minoctovesper';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 15:
 			var map_name = 'moonglow';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 16:
 			var map_name = 'moonglowtonujelm';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 17:
 			var map_name = 'nujelm';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 18:
 			var map_name = 'nujelmtomagincia';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 19:
 			var map_name = 'occlo';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 20:
 			var map_name = 'serpentshold';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 21:
 			var map_name = 'serpentsholdtoocllo';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 22:
 			var map_name = 'skarabrae';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 23:
 			var map_name = 'trinsic';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 24:
 			var map_name = 'trinsictobucsden';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 25:
 			var map_name = 'trinsictojhelom';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 26:
 			var map_name = 'vesper';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 27:
 			var map_name = 'vespertonujelm';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 28:
 			var map_name = 'yew';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 29:
 			var map_name = 'yewtobritain';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 30:
 			var map_name = 'Tokuno';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 31:
 			var map_name = 'Malas';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 32:
 			var map_name = 'Ilshenar';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
 		case 33:
 			var map_name = 'TerMur';
 			var preset_values = MAP_PRESETS[map_name];
-			TriggerEvent( 1503, "sendMapDisplay", socket, mapItem );
-			TriggerEvent( 1503, "sendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
-			TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+			TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
+			TriggerEvent( 1503, "SendMapDetails", socket, mapItem, preset_values[0], preset_values[1], preset_values[2], preset_values[3], preset_values[4], preset_values[5] );
+			TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 			break;
+	}
+
+	DisplayPinsOnMap( socket, mapItem );
+}
+
+function DisplayPinsOnMap( socket, mapItem )
+{
+	var pins = [];
+	if (mapItem.GetTag("pins"))
+	{
+		pins = mapItem.GetTag("pins").split(";" );
+	}
+
+	for (var i = 0; i < pins.length; i++)
+	{
+		// Split each pin string into an array of two values
+		var pin = pins[i].split("," );
+
+		// Extract the pinx and piny values, converting them to integers
+		var pinx = parseInt(pin[0] );
+		var piny = parseInt(pin[1] );
+
+		// Assuming sendAddMapPin is correctly implemented
+		TriggerEvent( 1503, "SendAddMapPin", socket, mapItem, pinx, piny );
 	}
 }

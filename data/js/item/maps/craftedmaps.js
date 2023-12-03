@@ -27,12 +27,12 @@ function onUseChecked( pUser, mapItem )
 			return false;
 		}
 
-		craftedMaps( socket, mapItem );
+		CraftedMaps( socket, mapItem );
 		pUser.SetTempTag("parentMapSerial", ( mapItem.serial).toString() );
 	}
 }
 
-function craftedMaps( socket, mapItem )
+function CraftedMaps( socket, mapItem )
 {
 	var pUser = socket.currentChar;
 	switch ( mapItem.GetTag( "Map" ))
@@ -50,8 +50,9 @@ function craftedMaps( socket, mapItem )
 				var xbottom = parseInt( mybox[2] );
 				var ybottom = parseInt( mybox[3] );
 
-				TriggerEvent( 1503, "sendMapDetails", socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
-				TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+				TriggerEvent( 1503, "SendMapDetails", socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
+				TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
+				TriggerEvent( 5403, "DisplayPinsOnMap", socket, mapItem );
 				break;
 			}			
 			else
@@ -103,7 +104,7 @@ function CraftedMapCoords( socket, mapItem )
 		var size = Math.round( minSize + ( maxSize - minSize ) * ( skillValue / 100 ));
 	}
 
-	TriggerEvent( 1503, "sendMapDetails", socket, mapItem, size, size, (pUser.x - dist), (pUser.y - dist), (pUser.x + dist), (pUser.y + dist) );
+	TriggerEvent( 1503, "SendMapDetails", socket, mapItem, size, size, (pUser.x - dist), (pUser.y - dist), (pUser.x + dist), (pUser.y + dist) );
 	mapItem.SetTag( "dimensions", size + "," + size );																						// saves information for the map to be reopened
 	mapItem.SetTag( "boundingbox", ( pUser.x - dist ) + "," + ( pUser.y - dist ) + "," + ( pUser.x + dist ) + "," + ( pUser.y + dist ));	// saves information for the map to be reopened
 	mapItem.SetTag( "Drawn", 1 );
