@@ -4808,6 +4808,16 @@
 12007=Isso não é um recurso precioso!
 12008=Selecionar material a utilizar:
 12009=Adicionou uma fechadura e uma chave ao recipiente!
+// 13000 - 13500 Habilidade de elaboração de cartografia
+13000=Menu Cartografia
+13001=Mapas
+13002=ROLO EM BRANCO
+13003=MAPA
+13004=Pergaminhos ou Mapas em Branco
+13100=Mapa Local
+13101=Mapa da Cidade
+13102=Carta Marítima
+13103=Mapa Mundial
 // 15000 Competências
 15000=Alchemia
 15001=Anatomia

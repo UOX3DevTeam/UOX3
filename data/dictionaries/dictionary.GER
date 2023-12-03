@@ -4808,6 +4808,16 @@
 12007=Das ist keine Edelstein-Ressource!
 12008=Wählen Sie das zu verwendende Material:
 12009=Du hast ein Schloss und einen Schlüssel in den Container gelegt!
+// 13000 - 13500 Kartografie-Handwerksfertigkeit
+13000=Kartografie-Menü
+13001=Karten
+13002=LEERER SCROLL
+13003=KARTE
+13004=Leere Schriftrollen oder Karten
+13100=Lokale Karte
+13101=Stadtplan
+13102=Seekarte
+13103=Weltkarte
 // 15000 Fertigkeiten
 15000=Alchemie
 15001=Anatomie

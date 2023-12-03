@@ -4964,6 +4964,16 @@
 12007=Ce n'est pas une ressource en gemmes !
 12008=Sélectionnez le matériau à utiliser :
 12009=Tu as ajouté une serrure et une clé au conteneur !
+// 13000 - 13500 Compétence d'artisanat en cartographie
+13000=Menu Cartographie
+13001=Cartes
+13002=DÉFILEMENT VIERGE
+13003=MAP
+13004=Parchemins ou cartes vierges
+13100=Carte locale
+13101=Plan de la ville
+13102=Carte maritime
+13103=Carte du monde
 // 15000 compétences
 15000=Alchimie
 15001=Anatomie

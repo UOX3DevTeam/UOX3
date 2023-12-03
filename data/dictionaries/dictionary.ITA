@@ -4808,6 +4808,16 @@
 12007=Questa non è una risorsa di gemme!
 12008=Seleziona il materiale da usare:
 12009=Hai aggiunto un lucchetto e una chiave al contenitore!
+// 13000 - 13500 Abilità di creazione di cartografia
+13000=Menu Cartografia
+13001=Mappe
+13002=SCORRIMENTO VUOTO
+13003=MAPPA
+13004=Pergamene o mappe vuote
+13100=Mappa locale
+13101=Mappa della città
+13102=Carta del mare
+13103=Mappa del mondo
 // 15000 Abilità
 15000=Alchimia
 15001=Anatomia

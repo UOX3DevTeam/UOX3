@@ -4808,6 +4808,16 @@
 12007=¡Eso no es un recurso de gemas!
 12008=Seleccione el material a utilizar:
 12009=¡Ha añadido una cerradura y una llave al contenedor!
+// 13000 - 13500 Habilidad de elaboración de cartografía
+13000=Menú Cartografía
+13001=Mapas
+13002=DESPLAZAMIENTO EN BLANCO
+13003=MAPA
+13004=Pergaminos o mapas en blanco
+13100=Mapa local
+13101=Mapa de la ciudad
+13102=Carta marítima
+13103=Mapa mundial
 // 15000 Habilidades
 15000=Alquimia
 15001=Anatomía
