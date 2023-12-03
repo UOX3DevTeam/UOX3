@@ -51,8 +51,8 @@ function CraftedMaps( socket, mapItem )
 				var ybottom = parseInt( mybox[3] );
 
 				TriggerEvent( 1503, "SendMapDetails", socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
+				TriggerEvent( 1503, "SendMapDisplay", socket, mapItem );
 				TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
-				TriggerEvent( 5403, "DisplayPinsOnMap", socket, mapItem );
 				break;
 			}			
 			else
