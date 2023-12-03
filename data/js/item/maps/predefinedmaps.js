@@ -28,7 +28,6 @@ function onUseChecked( pUser, mapItem )
 		}
 
 		MapPresets( socket, mapItem );
-		pUser.SetTempTag("parentMapSerial", ( mapItem.serial).toString() );
 	}
 }
 

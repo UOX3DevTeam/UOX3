@@ -28,7 +28,6 @@ function onUseChecked( pUser, mapItem )
 		}
 
 		TreasureMap( socket, mapItem );
-		pUser.SetTempTag("parentMapSerial", ( mapItem.serial).toString() );
 	}
 }
 
