@@ -6,6 +6,7 @@ const Fletching = 4029;
 const Tailoring = 4030;
 const Tinkering = 4032;
 const Cooking = 4034;
+const Cartography = 4035;
 
 function onUseChecked( pUser, iUsed )
 {
@@ -17,6 +18,7 @@ function onUseChecked( pUser, iUsed )
 	var gumpID5 = blacksmithID + 0xffff;
 	var gumpID6 = Cooking + 0xffff;
 	var gumpID7 = Tinkering + 0xffff;
+	var gumpID8 = Cartography + 0xffff;
 
 	if( socket && ValidateObject( iUsed ) && iUsed.isItem )
 	{
@@ -227,6 +229,20 @@ function onUseChecked( pUser, iUsed )
 					TriggerEvent( Tinkering, "PageX", socket, pUser, tempPage );
 					break;
 				default: TriggerEvent( Tinkering, "PageX", socket, pUser, 1 );
+					break;
+			}
+		}
+		else if( iUsed.sectionID == "mapmakerspen" )
+		{
+			// Cartography
+			socket.CloseGump( gumpID8, 0 );
+			pUser.SetTempTag( "CRAFT", 8 );
+			switch( tempPage ) 
+			{
+				case 1: // Page 1
+					TriggerEvent( Cartography, "PageX", socket, pUser, tempPage );
+					break;
+				default: TriggerEvent( Cartography, "PageX", socket, pUser, 1 );
 					break;
 			}
 		}

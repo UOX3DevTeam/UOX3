@@ -102,6 +102,8 @@ static JSFunctionSpec my_functions[] =
   JS_FN("WorldDungeonLevel",         SE_WorldDungeonLevel,         0, JSPROP_ENUMERATE),
   JS_FN("GetSpawnRegionFacetStatus", SE_GetSpawnRegionFacetStatus, 1, JSPROP_ENUMERATE),
   JS_FN("SetSpawnRegionFacetStatus", SE_SetSpawnRegionFacetStatus, 2, JSPROP_ENUMERATE),
+  JS_FN("GetMoongateFacetStatus",		 SE_GetMoongateFacetStatus,	   1, JSPROP_ENUMERATE),
+  JS_FN("SetMoongateFacetStatus",		 SE_SetMoongateFacetStatus,	   2, JSPROP_ENUMERATE),
   JS_FN("AreaCharacterFunction",     SE_AreaCharacterFunction,     3, JSPROP_ENUMERATE),
   JS_FN("AreaItemFunction",          SE_AreaItemFunction,          3, JSPROP_ENUMERATE),
   JS_FN("TriggerEvent",              SE_TriggerEvent,              3, JSPROP_ENUMERATE),

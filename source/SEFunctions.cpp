@@ -2992,6 +2992,60 @@ bool SE_SetSpawnRegionFacetStatus( JSContext* cx, unsigned argc, JS::Value* vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_GetMoongateFacetStatus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets enabled state of given moongates
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_GetMoongateFacetStatus( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, oldstrutil::format( "GetShowMoongateFacetStatus: Unknown Count of Arguments: %d", argc ).c_str() );
+		return JS_FALSE;
+	}
+	else if( argc == 1 )
+	{
+		UI32 moongateFacets = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
+		bool MoongateFacetStatus = cwmWorldState->ServerData()->GetMoongateFacetStatus( moongateFacets );
+		if( MoongateFacetStatus )
+		{
+			*rval = INT_TO_JSVAL( 1 );
+		}
+		else
+		{
+			*rval = INT_TO_JSVAL( 0 );
+		}
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_SetMoongateFacetStatus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets enabled state of moongates
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_SetMoongateFacetStatus( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 2 )
+	{
+		ScriptError( cx, oldstrutil::format( "SetMoongateFacetStatus: Unknown Count of Arguments: %d", argc ).c_str() );
+		return JS_FALSE;
+	}
+	else if( argc == 1 )
+	{
+		UI32 MoongateFacetVal = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
+		cwmWorldState->ServerData()->SetMoongateFacetStatus( MoongateFacetVal );
+	}
+	else if( argc == 2 )
+	{
+		UI32 MoongateFacet = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
+		bool MoongateStatus = ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
+		cwmWorldState->ServerData()->SetMoongateFacetStatus( MoongateFacet, MoongateStatus );
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_GetSocketFromIndex()
 //|	Date		-	3rd August, 2004
 //o------------------------------------------------------------------------------------------------o
@@ -5091,6 +5145,9 @@ bool SE_GetServerSetting( JSContext* cx, unsigned argc, JS::Value* vp )
 				args.rval().setString( tString );
 				break;
 			}
+			case 347:	 // MOONGATESFACETS
+				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->GetMoongateFacetStatus() ));
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;

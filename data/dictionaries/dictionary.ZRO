@@ -4764,6 +4764,16 @@
 12007=That's not a gem resource!
 12008=Select material to use:
 12009=You added a lock and key to the container!
+// 13000 - 13500 Cartography Crafting Skill
+13000=Cartography Menu
+13001=Maps
+13002=BLANK SCROLL
+13003=MAP
+13004=Blank Scrolls or Maps
+13100=Local Map
+13101=City Map
+13102=Sea Chart
+13103=World Map
 // 15000 Skills
 15000=Alchemy
 15001=Anatomy

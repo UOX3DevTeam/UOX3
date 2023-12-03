@@ -128,6 +128,8 @@ bool SE_WorldDarkLevel(JSContext* cx, unsigned argc, JS::Value* vp);
 bool SE_WorldDungeonLevel(JSContext* cx, unsigned argc, JS::Value* vp);
 bool SE_GetSpawnRegionFacetStatus(JSContext* cx, unsigned argc, JS::Value* vp);
 bool SE_SetSpawnRegionFacetStatus(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_GetMoongateFacetStatus(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_SetMoongateFacetStatus(JSContext* cx, unsigned argc, JS::Value* vp);
 bool SE_GetSocketFromIndex(JSContext* cx, unsigned argc, JS::Value* vp);
 bool SE_ResourceArea(JSContext* cx, unsigned argc, JS::Value* vp);
 bool SE_ResourceAmount(JSContext* cx, unsigned argc, JS::Value* vp);

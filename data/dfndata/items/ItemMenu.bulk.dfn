@@ -9295,8 +9295,10 @@ ITEMMENU=4
 provisions.dfn
 0x0a58=a bedroll
 ADDITEM=0x0a58
-0x14EB=world map
-ADDITEM=0x14EB
+0x14EC=small world map
+ADDITEM=smallworldmap
+0x14EC=large world map
+ADDITEM=largeworldmap
 0x175d=oil cloth
 ADDITEM=oilcloth
 <=Previous Menu
@@ -12992,8 +12994,8 @@ ITEMMENU=125
 [ITEMMENU 131]
 {
 misc_resources.dfn
-0x14ec=blank map
-ADDITEM=0x14ec
+0x14eb=blank map
+ADDITEM=0x14eb
 0x1876=iron wire
 ADDITEM=0x1876
 0x1877=silver wire
@@ -14241,4 +14243,13 @@ ADDITEM=krampusminionhat
 ADDITEM=krampusminiontalons
 <=Previous Menu
 ITEMMENU=251
+}
+
+[ITEMMENU 259]
+{
+cartography.dfn
+0x0fc0=Mapmakers Pen
+ADDITEM=mapmakerspen
+<=Previous Menu
+ITEMMENU=127
 }
