@@ -62,12 +62,18 @@ Action Flag command
 function onPacketReceive(pSocket, packetNum, subcommand )
 {
 	var pUser = pSocket.currentChar;
-	var mapItem = CalcItemFromSer( parseInt( pUser.GetTempTag( "parentMapSerial" )));
 
 	var cmd = pSocket.GetByte( 0 );
 
 	if( cmd != packetNum )
 		return;
+
+	pSocket.ReadBytes( 11 );
+	var subCmd = pSocket.GetByte( 5 ); // Fetch subCmd
+
+	var mapItem = CalcItemFromSer( pSocket.GetDWord( 1 ));
+    if( !ValidateObject( mapItem )) // not a valid map item?
+        return;
 
 	var maxPins = 50;
 	var pins = [];
@@ -75,9 +81,6 @@ function onPacketReceive(pSocket, packetNum, subcommand )
 	{
 		pins = mapItem.GetTag( "pins" ).split( ";" );
 	}
-
-	pSocket.ReadBytes( 11 );
-	var subCmd = pSocket.GetByte( 5 ); // Fetch subCmd
 
 	// Don't allow editing treasure maps!
 	if( mapItem.HasScriptTrigger( 5402 ))
@@ -183,6 +186,12 @@ function SendInsertPin(socket, map, x, y)
 {
 	var pUser = socket.currentChar;
 	SendMapCommand( socket, map, 0x02, 1, x, y );
+}
+
+function SendChangePin(socket, map, x, y)
+{
+	var pUser = socket.currentChar;
+	SendMapCommand( socket, map, 0x03, 1, x, y );
 }
 
 function SendMapEditable( socket, mapItem, editable )
