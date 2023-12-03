@@ -3291,6 +3291,11 @@
 5716=ładnie narysowana mapa skarbów
 5717=sprytnie narysowana mapa skarbów
 5718=przemyślnie narysowana mapa skarbówe pakujesz śnieg w kulkę...
+5719=Nie możesz się poruszać podczas kopania skarbu. Będziesz musiał zacząć kopać od nowa.
+5720=Spróbuj poszukać skrzyni skarbów bliżej
+5721=Nie możesz tam szukać skarbów!
+5722=współrzędne %s
+5723=Zakończono
 // [6000-6499] Różne umiejętności Msgs
 6000=Ta osoba wygląda na %s i %t.
 6001=Nie możesz zrobić z tego nic użytecznego.
@@ -4803,6 +4808,16 @@
 12007=To nie jest zasób klejnotów!
 12008=Wybierz materiał do użycia:
 12009=Dodałeś zamek i klucz do pojemnika!
+// 13000 - 13500 Umiejętność tworzenia kartografii
+13000=Menu kartografii
+13001=Mapy
+13002=PUSTE PRZEWIJANIE
+13003=MAPA
+13004=Puste zwoje lub mapy
+13100=Mapa lokalna
+13101=Mapa miasta
+13102=Mapa morza
+13103=Mapa świata
 // 15000 Umiejętności
 15000=Alchemia
 15001=Anatomia
@@ -5192,4 +5207,9 @@
 // [18800-19000] Właściwości AOS
 18800=%i% Premia do leczenia bandażem
 }
+// Clothing Bless Deed
+19001=Wybierz element odzieży, który chcesz pobłogosławić.
+19002=Przedmiot został pobłogosławiony.
+19003=Tym czynem można pobłogosławić tylko ubrania!
+19004=Przedmioty muszą być wyposażone lub znajdować się w plecaku, aby można było je pobłogosławić.
 EOF

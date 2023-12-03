@@ -18,9 +18,20 @@ function onCallback0( socket, myTarget )
 	var ourObj = socket.tempObj2;
 
 	// Getting Tags from Map Item
-	if( socket.GetWord(1) )
+	if( socket.GetWord( 1 ))
 	{
-		var myCoords = ourObj.GetTag( "coords" ).split(",");
+		var targX = socket.GetWord( 11 );
+  		var targY = socket.GetWord( 13 );
+  		var targZ = socket.GetSByte( 16 );
+
+		var tagCoords = ourObj.GetTag( "coords" );
+		if( !tagCoords )
+		{
+			// Not a valid treasure map, tell player
+			socket.SysMessage( "Invalid map" );
+			return;
+		}
+		var myCoords = tagCoords.split( "," );
 		var treasureX = parseInt( myCoords[0] );
 		var treasureY = parseInt( myCoords[1] );
 		var mapLevel = ourObj.GetTag( "Level" );
@@ -28,95 +39,114 @@ function onCallback0( socket, myTarget )
 		var xDifference = 0;
 		var yDifference = 0;
 	
-		if( pUser.x == treasureX && pUser.y == treasureY )
-		{
-			socket.SysMessage( GetDictionaryEntry( 5708, socket.language ));// You stop digging because something is directly on top of the treasure chest
-			return false;
-		}
-
-		if( ourObj.GetTag("Decoded") == 0 )
+		if( ourObj.GetTag( "Decoded" ) == 0 )
 		{
 			socket.SysMessage( GetDictionaryEntry( 5709, socket.language ));// You did not decode this map and have no clue where to look for the treasure.
-			return false;
 		}
-
-		if( ourObj.GetTag( "found" ) == 1 )
+		else if( pUser.x == treasureX && pUser.y == treasureY )
+		{
+			socket.SysMessage( GetDictionaryEntry( 5708, socket.language ));// You stop digging because something is directly on top of the treasure chest
+		}
+		else if( ourObj.GetTag( "found" ) == 1 )
 		{
 			socket.SysMessage( GetDictionaryEntry( 5710, socket.language ));// The treasure for this map has already been found.
-			return false;
 		}
-
-		if( pUser.x > treasureX && pUser.y > treasureY )
-		{
-			socket.SysMessage( GetDictionaryEntry( 5711, socket.language ));// You dig and dig, but do not find any treasure Meaning the treasure is not there.
-			return false;
-		}
-
-		if( pUser.x > treasureX || pUser.y >= treasureY )
-		{
-			socket.SysMessage( GetDictionaryEntry( 5712, socket.language ));// You dig and dig, but no treasure seems to be here Meaning you are close to the treasure, but not close enough to dig it up.
-			return false;
-		}
-
-		// Distance from Point of chest
-		if( treasureX >= pUser.x )
-			xDifference = treasureX - pUser.x;
 		else
-			xDifference = pUser.x - treasureX;
-
-		if( treasureY >= pUser.y )
-			yDifference = treasureY - pUser.y;
-		else
-			yDifference = pUser.y - treasureY;
-
-		// Range where you can start digging up chest.
-		var mining = ( pUser.skills.mining / 10 ).toFixed(1);
-
-		if( mining < 51.0 )
-			radius = 1;
-		else if( mining < 81.0 )
-			radius = 2;
-		else if( mining < 99.0 )
-			radius = 3;
-		else
-			radius = 4;
-
-		//var mapElev = GetMapElevation(treasureX .x, treasureY .y, pUser.worldnumber);;
-
-		// Checking if we had correct point
-		if( xDifference <= radius && yDifference <= radius )
 		{
-			ourObj.SetTag( "found", 1 );// Marks the chest found so you can not dig more then one.
-			pUser.SetTempTag( "digging", 1 );// keeps you from digging again.
+			// Distance from Point of chest - we just want the difference, we don't care if it's negative or positive
+			xDifference = Math.abs( treasureX - targX );
+			yDifference = Math.abs( treasureY - targY );
 
-			// Digging Animation
-			if( pUser.bodyType == 2 ) // Gargoyle
+			// Range where you can start digging up chest.
+			var bonusSkill;
+			if( EraStringToNum( GetServerSetting( "CoreShardEra" )) >= EraStringToNum( "tol" )) // ToL and later
 			{
-				pUser.DoAction( 0x0, 0x3 );
+				bonusSkill = ( pUser.skills.cartography / 10 ).toFixed( 1 );
 			}
-			else if( pUser.isonhorse ) // Mounted
+			else
 			{
-				pUser.DoAction( 0x1A );
-			}
-			else // On foot
-			{
-				pUser.DoAction( 0x0B );
+				bonusSkill = ( pUser.skills.mining / 10 ).toFixed( 1 );
 			}
 
-			// Dirt Effect
-			var dirtMade = CreateDFNItem( socket, pUser, "dirt", 1, "ITEM", false );
-			dirtMade.Teleport( treasureX, treasureY, pUser.z, pUser.worldnumber );
-			dirtMade.tempObj = pUser;
-			dirtMade.SetTempTag( "Level", mapLevel );
-			dirtMade.StartTimer( 1000, 0, 5400 );
-			socket.SoundEffect( 0x33B, true );
-			pUser.frozen = 1;
+			if( bonusSkill < 51.0 )
+				radius = 1;
+			else if( bonusSkill < 81.0 )
+				radius = 2;
+			else if( bonusSkill < 99.0 )
+				radius = 3;
+			else
+				radius = 4;
+
+			//var mapElev = GetMapElevation(treasureX .x, treasureY .y, pUser.worldnumber);;
+
+			// Checking if we had correct point
+			if( xDifference <= radius && yDifference <= radius )
+			{
+				pUser.SetTempTag( "tmapFoundSer", ourObj.serial.toString() );// Set the Serial of the Map on user for later.
+				pUser.SetTempTag( "digging", 1 );// keeps you from digging again.
+
+				playDiggingAnimation( pUser );
+
+				// Dirt Effect
+				var dirtMade = CreateDFNItem( socket, pUser, "treasuredirt", 1, "ITEM", false );
+				dirtMade.Teleport( treasureX, treasureY, pUser.z, pUser.worldnumber );
+				dirtMade.tempObj = pUser;
+				dirtMade.SetTempTag( "Level", mapLevel );
+				dirtMade.SetTempTag( "diggerCharSer", pUser.serial );
+				dirtMade.StartTimer( 1000, 0, 5400 );
+				pUser.SetTempTag( "dirtMadeSer", dirtMade.serial.toString() );
+			}
+			else if( mapLevel > 0 && xDifference > radius && yDifference > radius )
+			{
+				socket.SysMessage( GetDictionaryEntry( 5711, socket.language ));// You dig and dig, but do not find any treasure (Meaning the treasure is nowhere near)
+			}
+			else if(( mapLevel > 0 && xDifference > radius && yDifference <= radius ) || ( yDifference > radius && xDifference <= radius ))
+			{
+				socket.SysMessage( GetDictionaryEntry( 5712, socket.language ));// You dig and dig, but no treasure seems to be here (Meaning you are close to the treasure, but not close enough to dig it up)
+			}
+			else
+			{
+				var direction = "";
+				switch( pUser.DirectionTo( treasureX, treasureY ))
+				{
+					case 1:
+						direction = "north";
+						break;
+					case 2:
+						direction = "northeast";
+						break;
+					case 3:
+						direction = "east";
+						break;
+					case 4:
+						direction = "southeast";
+						break;
+					case 5:
+						direction = "south";
+						break;
+					case 6:
+						direction = "southwest";
+						break;
+					case 7:
+						direction = "west";
+						break;
+					default:
+						direction = "northwest";
+						break;
+				}
+				socket.SysMessage( GetDictionaryEntry( 5721, socket.language ) + " " + direction + "." );// Try looking for the treasure chest more to the
+			}
 		}
+	}
+	else
+	{
+		// Tell player they can't dig there
+		socket.SysMessage( GetDictionaryEntry( 5720, socket.language ) );// Try looking for the treasure chest more to the
 	}
 }
 
 // Function creates the Treasure Chest and sets it up.
-function TreasureChest( pUser, iUsed, mapLevel ) 
+function TreasureChest( pUser, iUsed, mapLevel )
 {
 	var chest = "";
 	switch( mapLevel )
@@ -133,10 +163,9 @@ function TreasureChest( pUser, iUsed, mapLevel )
 	if( chest != "" )
 	{
 		var chestmade = CreateDFNItem( pUser.socket, pUser, chest, 1, "SPAWNER", false );
-		chestmade.Teleport( iUsed.x, iUsed.y, iUsed.z - 7, iUsed.worldnumber );
+		chestmade.Teleport( iUsed.x, iUsed.y, iUsed.z - 6, iUsed.worldnumber );
 		chestmade.movable = 2;
-		chestmade.tempObj = pUser;
-		chestmade.StartTimer( 1000, 3, 5400 );
+		return chestmade;
 	}
 }
 
@@ -148,9 +177,9 @@ const initialSpawn = {
 	6: ["LichLord", "daemon", " eldergazer", "poisonele", "bloodele"],
 };
 
-function playDiggingAnimation( pUser, timerObj )
+function playDiggingAnimation( pUser )
 {
-	timerObj.SoundEffect( 0x33B, true );
+	pUser.SoundEffect( 0x33B, true );
 	if( pUser.bodyType === 2 )// Gargoyle
 	{
 		pUser.DoAction( 0x0, 0x3 );
@@ -163,58 +192,74 @@ function playDiggingAnimation( pUser, timerObj )
 		pUser.DoAction( 0x0B );
 }
 
-function onTimer( timerObj, timerID )
+function onTimer( timerObj, timerID ) 
 {
 	var pUser = timerObj.tempObj;
-	var level = timerObj.GetTempTag( "Level" );
+	var level = timerObj.GetTempTag("Level");
 	var scriptID = 5400;
 
-	switch( timerID )
+	if (timerID < 13)
 	{
-		case 0:// Dirt Effect 2
-			var dirtMade2 = CreateDFNItem( pUser.socket, pUser, "dirt2", 1, "ITEM", false );
-			dirtMade2.Teleport( timerObj.x, timerObj.y, timerObj.z, timerObj.worldnumber );
-			dirtMade2.StartTimer( 10000, 2, scriptID);
-			timerObj.StartTimer( 1000, 1, scriptID);
-			TreasureChest( pUser, timerObj, level );
-			playDiggingAnimation( pUser, timerObj );
-			break;
-		case 1:
-		case 2:
-			timerObj.Delete();
-			break;
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-			playDiggingAnimation( pUser, timerObj );
-			timerObj.z += 2;
-			if( timerID < 6 )
-			{
-				timerObj.StartTimer( 1000, timerID + 1, scriptID );
-			}
-			else
-			{
-				timerObj.StartTimer( 1000, 7, scriptID );
-			}
-			break;
-		case 7:
-			playDiggingAnimation( pUser, timerObj );
-			timerObj.z += 1;
-			pUser.frozen = 0;
-			pUser.SetTempTag( "digging", null );
-			var mapLevel = timerObj.GetTag( "Level" ); // set the level to a static value using the tag from the chest.
-			if( mapLevel >= 2 )
-			{
-				var spawnList = initialSpawn[mapLevel]; // selects the array of possible NPCs for the given level
-				for( var i = 0; i < 4; i++ )
-				{
-					var randomlySelectedNPC = spawnList[Math.floor( Math.random() * spawnList.length )]; // selects a random NPC from the array
+		if( pUser.dead )
+		{
+			TriggerEvent( 5405, "KillTreasureEvent", timerObj, pUser );
+			return;
+		}
 
-					SpawnNPC( randomlySelectedNPC, timerObj.x, timerObj.y, timerObj.z, timerObj.worldnumber, timerObj.instanceID );
-				}
+		if( timerID < 10 && ValidateObject( pUser.attacker ) && pUser.InRange( pUser.attacker, 8 ) && pUser.attacker.CanSee( pUser ))
+		{
+			TriggerEvent( 5405, "KillTreasureEvent", timerObj, pUser );
+			return;
+		}
+
+		if( timerID == 5 ) 
+		{
+			timerObj.id = 0x914;
+			var spawnedChest = TreasureChest( pUser, timerObj, level );
+			if( ValidateObject( spawnedChest ))
+			{
+				timerObj.SetTag( "tChestSer", spawnedChest.serial.toString() );
 			}
-			break;
+		}
+
+		if( timerID > 5 ) 
+		{
+			var chestRef = CalcItemFromSer( parseInt( timerObj.GetTag( "tChestSer" )));
+			if( ValidateObject( chestRef ))
+			{
+				chestRef.z++;
+			}
+		}
+
+		if( timerID == 10 ) 
+		{
+			timerObj.id = 0x913;
+		}
+
+		playDiggingAnimation( pUser );
+		timerObj.StartTimer( 1000, timerID + 1, scriptID );
+	}
+	else 
+	{
+		timerObj.RemoveScriptTrigger (5405) ;
+		var tmapItem = CalcItemFromSer( parseInt( pUser.GetTempTag( "tmapFoundSer" )));
+		if (ValidateObject( tmapItem )) 
+		{
+			tmapItem.SetTag( "found", 1 );// Marks the chest found so you can't not dig more then one.
+		}
+
+		pUser.SetTempTag( "digging", null );
+		var mapLevel = timerObj.GetTag( "Level" ); // set the level to a static value using the tag from the chest.
+		if( mapLevel >= 2 )
+		{
+			var spawnList = initialSpawn[mapLevel]; // selects the array of possible NPCs for the given level
+			for( var i = 0; i < 4; i++ ) 
+			{
+				var randomlySelectedNPC = spawnList[Math.floor( Math.random() * spawnList.length )]; // selects a random NPC from the array
+
+				SpawnNPC( randomlySelectedNPC, timerObj.x, timerObj.y, timerObj.z, timerObj.worldnumber, timerObj.instanceID );
+			}
+		}
 	}
 }
 

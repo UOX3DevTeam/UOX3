@@ -1,4 +1,4 @@
-function sendMapDetails( socket, map, Width, Height, xtop, ytop, xbottom, ybottom )
+function SendMapDetails( socket, map, Width, Height, xtop, ytop, xbottom, ybottom )
 {
 	var pUser = socket.currentChar;
 	var toSend = new Packet;
@@ -40,7 +40,6 @@ function sendMapDetails( socket, map, Width, Height, xtop, ytop, xbottom, ybotto
 			break;
 	}
 	toSend.WriteShort( 19, mapType ); // World facet
-	pUser.SysMessage(worldNum);
 	socket.Send( toSend );
 	toSend.Free();
 }
@@ -63,45 +62,60 @@ Action Flag command
 function onPacketReceive(pSocket, packetNum, subcommand )
 {
 	var pUser = pSocket.currentChar;
-	var mapItem = CalcItemFromSer( parseInt( pUser.GetTempTag( "parentMapSerial" )));
 
 	var cmd = pSocket.GetByte( 0 );
 
 	if( cmd != packetNum )
 		return;
 
-	var pins = [];
-	if (mapItem.GetTag("pins")) 
-	{
-		pins = mapItem.GetTag("pins").split(";");
-	}
-
 	pSocket.ReadBytes( 11 );
 	var subCmd = pSocket.GetByte( 5 ); // Fetch subCmd
+
+	var mapItem = CalcItemFromSer( pSocket.GetDWord( 1 ));
+    if( !ValidateObject( mapItem )) // not a valid map item?
+        return;
+
+	var maxPins = 50;
+	var pins = [];
+	if( mapItem.GetTag( "pins" ))
+	{
+		pins = mapItem.GetTag( "pins" ).split( ";" );
+	}
+
+	// Don't allow editing treasure maps!
+	if( mapItem.HasScriptTrigger( 5402 ))
+		return;
 
 	var editable = mapItem.GetTag( 'editable' );
 	switch( subCmd )
 	{
-		case 1://Append to list of pins
+		case 1:// Insert new pin into list of pins
+			index = pSocket.GetByte( 6 ); // Not sent by client? Always 0
 			var pinx = pSocket.GetSWord( 7 );
 			var piny = pSocket.GetSWord( 9 );
-			mapItem.SetTag("pins", pinx + "," + piny);
-			break;
-		case 2://Insert into list of pins
-			var pinx = pSocket.GetSWord(7);
-			var piny = pSocket.GetSWord(9);
-			index = pSocket.GetByte(6);
 
-			var pin = [index, pinx, piny];
+			if( pins.length >= maxPins )
+            {
+                pSocket.SysMessage( "Max number of pins reached!" );
+                SendMapEditable( pSocket, mapItem, false );
+                return;
+            }
+
+			var pin = pinx + "," + piny;
 
 			// Insert the new pin into the 'pins' array at the specified index
-			pins.splice(index, 0, pin.join(","));
+			pins.push(pin);
 
 			// Update the 'pins' tag in mapItem with the modified array
-			mapItem.SetTag("pins", pins.join(","));
+			mapItem.SetTag( "pins", pins.join( ";" ));
 			break;
-		case 3:// Change pin
-			var pinx = pSocket.GetSWord(7);
+		case 2:// [UNUSED - not sent by client] Append to list of pins
+			/*var pinx = pSocket.GetSWord( 7 );
+			var piny = pSocket.GetSWord( 9 );
+			mapItem.SetTag("pins", pinx + "," + piny);*/
+			break;
+		case 3:// [UNUSED - not sent by client] Change pin
+			/*var pinx = pSocket.GetSWord(7);
 			var piny = pSocket.GetSWord(9);
 			index = pSocket.GetByte(6)
 
@@ -110,12 +124,10 @@ function onPacketReceive(pSocket, packetNum, subcommand )
 			{
 				pins[index] = pin.join(",");
 			}
-			mapItem.SetTag("pins", pins.join(","));
-			pUser.SysMessage(pins);
-			pUser.SysMessage( "Sending Sub Command, " + subCmd ); // Debug msg
+			mapItem.SetTag("pins", pins.join(","));*/
 			break;
-		case 4://Remove pin
-			var pinx = pSocket.GetSWord(7);
+		case 4:// [UNUSED - not sent by client] Remove pin
+			/*var pinx = pSocket.GetSWord(7);
 			var piny = pSocket.GetSWord(9);
 			index = pSocket.GetByte(6)
 
@@ -123,15 +135,17 @@ function onPacketReceive(pSocket, packetNum, subcommand )
 			{
 				pins.splice(index, 1);
 			}
-			mapItem.SetTag("pins", pins.join(","));
-			pUser.SysMessage( "Sending Sub Command, " + subCmd ); // Debug msg
+			mapItem.SetTag("pins", pins.join(","));*/
 			break;
-		case 5://Clear Pins
+		case 5:// Clear All Pins
 			mapItem.SetTag("pins", null);
 			break;
-		case 6://Toggle Plotting Course
-			if ( editable == 0 )
-				sendMapEditable( pSocket, mapItem, false );
+		case 6:// Toggle Plotting Course
+			if( !editable )
+			{
+				mapItem.SetTag( 'editable', !editable );
+				SendMapEditable( pSocket, mapItem, !editable );
+			}
 			break;
 		default:
 			Console.Warning( "Unhandled subcommand (" + subCmd + ") in packet 0x56." );
@@ -140,7 +154,7 @@ function onPacketReceive(pSocket, packetNum, subcommand )
 	return;
 }
 
-function sendMapCommand( socket, mapItem, command, editable, x, y )
+function SendMapCommand( socket, mapItem, command, editable, x, y )
 {
 	var pUser = socket.currentChar;
 	var toSend = new Packet;
@@ -155,30 +169,33 @@ function sendMapCommand( socket, mapItem, command, editable, x, y )
 	toSend.Free();
 }
 
-function sendMapDisplay( socket, map )
+function SendMapDisplay( socket, map )
 {
 	var pUser = socket.currentChar;
-	sendMapCommand( socket, map, 0x05, 0, 0, 0 );
+	SendMapCommand( socket, map, 0x05, 0, 0, 0 );
 }
 
-function sendAddMapPin( socket, map, x, y)
+function SendAddMapPin( socket, map, x, y)
 {
 	var pUser = socket.currentChar;
-	//Remove all Pins
-	//sendMapCommand( socket, map, 0x05, 0, 0, 0 );
 	// Add Pins
-	sendMapCommand( socket, map, 0x01, 1, x, y );
+	SendMapCommand( socket, map, 0x01, 1, x, y );
 }
 
-function sendInsertPin(socket, map, x, y)
+function SendInsertPin(socket, map, x, y)
 {
 	var pUser = socket.currentChar;
-	sendMapCommand( socket, map, 0x02, 1, x, y );
+	SendMapCommand( socket, map, 0x02, 1, x, y );
 }
 
-function sendMapEditable( socket, mapItem, editable )
+function SendChangePin(socket, map, x, y)
 {
 	var pUser = socket.currentChar;
-	mapItem.SetTag( 'editable', editable );
-	sendMapCommand( socket, mapItem, 0x07, editable ? 1 : 0, 0, 0 );
+	SendMapCommand( socket, map, 0x03, 1, x, y );
+}
+
+function SendMapEditable( socket, mapItem, editable )
+{
+	var pUser = socket.currentChar;
+	SendMapCommand( socket, mapItem, 0x07, editable ? 1 : 0, 0, 0 );
 }

@@ -3291,6 +3291,11 @@
 5716=adeptly drawn treasure map
 5717=cleverly drawn treasure map
 5718=deviously drawn treasure map
+5719=You cannot move around while digging up treasure. You will need to start digging anew.
+5720=Try looking for the treasure chest more to the
+5721=You can't dig for treasure there!
+5722=coordinates %s
+5723=Completed
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.
@@ -4803,6 +4808,16 @@
 12007=That's not a gem resource!
 12008=Select material to use:
 12009=You added a lock and key to the container!
+// 13000 - 13500 Cartography Crafting Skill
+13000=Cartography Menu
+13001=Maps
+13002=BLANK SCROLL
+13003=MAP
+13004=Blank Scrolls or Maps
+13100=Local Map
+13101=City Map
+13102=Sea Chart
+13103=World Map
 // 15000 Skills
 15000=Alchemy
 15001=Anatomy
@@ -5191,5 +5206,10 @@
 18771=A full set of ranger armor.
 // [18800-19000] AOS properties
 18800=%i% Bandage Healing Bonus
+// Clothing Bless Deed
+19001=Select the item of clothing that you want to bless.
+19002=The item has been blessed.
+19003=You can only bless clothing with this deed!
+19004=Items must be equipped or in your backpack to bless them.
 }
 EOF
