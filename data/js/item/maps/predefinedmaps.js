@@ -105,7 +105,7 @@ function mapPresets( socket, mapItem )
 				var piny = parseInt(pin[1] );
 
 				// Assuming sendAddMapPin is correctly implemented
-				sendAddMapPin(socket, mapItem, pinx, piny );
+				TriggerEvent( 1503, "sendAddMapPin", socket, mapItem, pinx, piny );
 			}
 			break;
 		case 3:
