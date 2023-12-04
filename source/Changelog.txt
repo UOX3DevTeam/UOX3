@@ -1,3 +1,6 @@
+3/12/2023 - Dragon Slayer
+	Fixed Magic Weapons setting damage correctly when they are generated.(js Magic_Items)
+
 30/11/2023 - Dragon Slayer
 	Added support for new DFN tag in spawn regions that allows defining one or more exclusion areas per spawn region to prevent spawning of objects within said regions:
    	 EXCLUDEAREA=x1,y1,x2,y2   // Area within defined boundary will be excluded as valid spawn area (Special, Thanks to Xuri)
