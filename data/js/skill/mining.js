@@ -218,8 +218,7 @@ function onCallback1( socket, ourObj )
 						validTileIDFound = true;
 						SandMining( socket, mChar, targX, targY );
 					}
-
-					if( validMapMountainIDs.indexOf( tileID ) != -1 || validMapCaveFloorIDs.indexOf( tileID ) != -1 ) // Mountains or Cave Floors
+					else if( validMapMountainIDs.indexOf( tileID ) != -1 || validMapCaveFloorIDs.indexOf( tileID ) != -1 ) // Mountains or Cave Floors
 					{
 						validTileIDFound = true;
 						Mining( socket, mChar, targX, targY );
@@ -360,7 +359,7 @@ function SandMining( socket, mChar, targX, targY )
 	RegenerateOre( mResource, socket );
 	if( mResource.oreAmount <= 0 )
 	{
-		mChar.TextMessage("There is no sand here to mine.", false, 0x3b2, 0, mChar.serial); // There is no sand here to mine.
+		mChar.TextMessage( GetDictionaryEntry( 9412, mChar.socket.language ), false, 0x3b2, 0, mChar.serial); // There is no sand here to mine.
 		return;
 	}
 
@@ -443,31 +442,29 @@ function onTimer( mChar, timerID )
 						// Remove some ore from the ore resource
 						mResource.oreAmount = mResource.oreAmount - 1;
 
-						var mItem;
-						var totalChance = 0;
-
-						for( mItem = mChar.FirstItem(); !mChar.FinishedItems(); mItem = mChar.NextItem() )
-						{
-							if( !ValidateObject( mItem ))
-								continue;
-
-							var stoneminingBonus = parseInt( mItem.GetTag( "stoneminingBonus" ));
-
-							// Check if stoneminingBonus is a number
-							if( !isNaN( stoneminingBonus ))
-							{
-								totalChance += stoneminingBonus;
-							}
-						}
-
-						// Always add a 15% chance
-						totalChance += 15;
-
-						var chance = totalChance || 15;
-
-						//Make sure the had read the book.
 						if( mChar.GetTag( "GatheringStone" ) == 1 && chance > Math.random() * 100 ) 
 						{
+							var mItem;
+							var totalChance = 0;
+
+							for( mItem = mChar.FirstItem(); !mChar.FinishedItems(); mItem = mChar.NextItem() ) 
+							{
+								if( !ValidateObject( mItem ))
+									continue;
+
+								var stoneminingBonus = parseInt( mItem.GetTag( "stoneminingBonus" ));
+
+								// Check if stoneminingBonus is a number
+								if( !isNaN( stoneminingBonus ))
+								{
+									totalChance += stoneminingBonus;
+								}
+							}
+
+							// Always add a 15% chance
+							totalChance += 15;
+
+							var chance = totalChance || 15;
 							// Create granite in player's backpack
 							MakeGranite( socket, mChar );
 						}
