@@ -3291,6 +3291,11 @@
 5716=Gekonnt gezeichnete Schatzkarte
 5717=raffiniert gezeichnete Schatzkarte
 5718=Hinterhältig gezeichnete Schatzkarte
+5719=Sie können sich beim Ausgraben von Schätzen nicht bewegen. Sie müssen erneut mit dem Graben beginnen.
+5720=Versuchen Sie, nach der Schatztruhe weiter unten zu suchen
+5721=Da kann man nicht nach Schätzen graben!
+5722=Koordinaten %s
+5723=Abgeschlossen
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.
@@ -4807,6 +4812,16 @@
 12007=Das ist keine Edelstein-Ressource!
 12008=Wählen Sie das zu verwendende Material:
 12009=Du hast ein Schloss und einen Schlüssel in den Container gelegt!
+// 13000 - 13500 Kartografie-Handwerksfertigkeit
+13000=Kartografie-Menü
+13001=Karten
+13002=LEERER SCROLL
+13003=KARTE
+13004=Leere Schriftrollen oder Karten
+13100=Lokale Karte
+13101=Stadtplan
+13102=Seekarte
+13103=Weltkarte
 // 13501 - 14000 Glasbläserei-Handwerksfertigkeit
 13501=Glasbläserei-Menü
 13502=Verschiedenes
@@ -5212,5 +5227,10 @@
 18771=Ein kompletter Satz Waldläufer-Rüstung.
 // [18800-19000] AOS-Eigenschaften
 18800=%i% Verbandsheilungsbonus
+// Clothing Bless Deed
+19001=Wählen Sie das Kleidungsstück aus, das Sie segnen möchten.
+19002=Das Kleidungsstück wurde gesegnet.
+19003=Du kannst mit dieser Tat nur Kleidung segnen!
+19004=Gegenstände müssen ausgerüstet sein oder sich in deinem Rucksack befinden, um sie zu segnen.
 }
 EOF

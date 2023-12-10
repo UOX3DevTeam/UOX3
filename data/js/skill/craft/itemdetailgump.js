@@ -7,7 +7,9 @@ const Tailoring = 4030;
 const Tinkering = 4032;
 const scriptID = 4026; // This script
 const Cooking = 4034;
+const Cartography = 4035;
 const Glassblowing = 4036;
+
 const exceptionalWearablesOnly = true;
 
 function ItemDetailGump( pUser )
@@ -1674,7 +1676,28 @@ function ItemDetailGump( pUser )
 			HARVEST = [11653];
 			mainSkill = parseInt( pUser.skills.cooking );
 			break;
-					//Gloassblowing
+    // Cartography
+		case 2000: // Local Map
+			createEntry = CreateEntries[2000];
+			HARVEST = [13004];
+			mainSkill = parseInt( pUser.skills.cartography );
+			break;
+		case 2001: // City Map
+			createEntry = CreateEntries[2001];
+			HARVEST = [13004];
+			mainSkill = parseInt( pUser.skills.cartography );
+			break;
+		case 2002: // Sea Chart
+			createEntry = CreateEntries[2002];
+			HARVEST = [13004];
+			mainSkill = parseInt( pUser.skills.cartography );
+			break;
+		case 2003: // World Map
+			createEntry = CreateEntries[2003];
+			HARVEST = [13004];
+			mainSkill = parseInt( pUser.skills.cartography );
+			break;
+		// Glassblowing
 		case 3000: // empty bottle
 			createEntry = CreateEntries[3000];
 			HARVEST = [13504];
@@ -1734,7 +1757,7 @@ function ItemDetailGump( pUser )
 			createEntry = CreateEntries[3011];
 			HARVEST = [13504];
 			mainSkill = parseInt(pUser.skills.alchemy);
-			break;
+      break;
 		default:
 			break;
 	}
@@ -2059,6 +2082,18 @@ function onGumpPress( pSock, pButton, gumpData )
 							break;
 					}
 					break;
+        case 8: // Cartography
+					pUser.SetTempTag( "ITEMDETAILS", null );
+					pSock.CloseGump( gumpID, 0 );
+					switch( pUser.GetTempTag( "page" ))
+					{
+						case 1: // Page 1
+							TriggerEvent( Cartography, "PageX", pSock, pUser, pUser.GetTempTag( "page" ));
+							break;
+						default: TriggerEvent( Cartography, "PageX", pSock, pUser, 1 );
+							break;
+					}
+					break;
 				case 9: // Glassblowing
 					pUser.SetTempTag( "ITEMDETAILS", null );
 					pSock.CloseGump( gumpID, 0 );
@@ -2068,9 +2103,9 @@ function onGumpPress( pSock, pButton, gumpData )
 							TriggerEvent( Glassblowing, "PageX", pSock, pUser, pUser.GetTempTag( "page" ));
 							break;
 						default: TriggerEvent( Glassblowing, "PageX", pSock, pUser, 1 );
-							break;
-					}
-					break;
+              break;
+          }
+          break;
 			}
 	}
 }

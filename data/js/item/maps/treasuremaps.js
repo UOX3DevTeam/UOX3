@@ -27,9 +27,7 @@ function onUseChecked( pUser, mapItem )
 			return false;
 		}
 
-		var socket = pUser.socket;
 		TreasureMap( socket, mapItem );
-		pUser.SetTempTag("parentMapSerial", ( mapItem.serial).toString() );
 	}
 }
 
@@ -51,8 +49,8 @@ function TreasureMap( socket, mapItem )
 				var xbottom = parseInt( mybox[2] );
 				var ybottom = parseInt( mybox[3] );
 
-				TriggerEvent( 1503, "sendMapDetails", socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
-				TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+				TriggerEvent( 1503, "SendMapDetails", socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
+				TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 				socket.SoundEffect( 0x249, true );
 
 				if( mapItem.GetTag( "found" ) == 1 ) 
@@ -61,7 +59,7 @@ function TreasureMap( socket, mapItem )
 				}
 				else 
 				{
-					TriggerEvent( 1503, "sendAddMapPin", socket, mapItem, 100, 100 );
+					TriggerEvent( 1503, "SendAddMapPin", socket, mapItem, 100, 100 );
 					socket.SysMessage( GetDictionaryEntry( 5702, socket.language ));// The treasure is marked by the red pin. Grab a shovel and go dig it up!
 				}
 				break;
@@ -346,21 +344,21 @@ function TreasureMapCoords( socket, mapItem )
 
 	// Retrieve the set of coordinates at the random index
 	var [x, y] = TREASURECOORDS[randomIndex];
-	var width = 200
-	var height = 200
-	var xtop = x - 300
-	var ytop = y - 300
-	var xbottom = x + 300
-	var ybottom = y + 300
+	var width = 200;
+	var height = 200;
+	var xtop = x - 300;
+	var ytop = y - 300;
+	var xbottom = x + 300;
+	var ybottom = y + 300;
 
-	TriggerEvent( 1503, "sendMapDetails", socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
-	TriggerEvent( 1503, "sendAddMapPin", socket, mapItem, 100, 100 );
-	TriggerEvent( 1503, "sendMapEditable", socket, mapItem, false );
+	TriggerEvent( 1503, "SendMapDetails", socket, mapItem, height, width, xtop, ytop, xbottom, ybottom );
+	TriggerEvent( 1503, "SendAddMapPin", socket, mapItem, 100, 100 );
+	TriggerEvent( 1503, "SendMapEditable", socket, mapItem, false );
 
 	mapItem.SetTag( "dimensions", height + "," + width );								// saves information for the map to be reopened
 	mapItem.SetTag( "boundingbox", xtop + "," + ytop + "," + xbottom + "," + ybottom );	// saves information for the map to be reopened
 	mapItem.SetTag( "coords", x + "," + y );											// Sets the treasure Location for Shovel or Pickaxe.
-	mapItem.SetTag( "Decoded", 1 )        												// Decoded Map Will be set.
+	mapItem.SetTag( "Decoded", 1 );														// Decoded Map Will be set.
 	socket.SoundEffect( 0x249, true );
 }
 
@@ -368,9 +366,21 @@ function onTooltip( map, pSocket )
 {
 	var tooltipText = "";
 
+	if( map.GetTag( "Decoded" ) == 1 && map.GetTag( "found" ) == 0 )
+	{
+		var mybox = map.GetTag( "coords" ).split(",");
+		var xtop = parseInt(mybox[0]);
+		var ytop = parseInt(mybox[1]);
+		var mapCoords = TriggerEvent( 2503, "GetMapCoordinates", xtop, ytop, map.worldnumber );
+		var mapCoordsString = mapCoords[3] + "o " + mapCoords[4] + "'" + ( mapCoords[5] ? "N" : "S" ) + " " + mapCoords[0] + "o " + mapCoords[1] + "'" + ( mapCoords[2] ? "W" : "E" );
+		var finalString = GetDictionaryEntry( 5722, pSocket.language ); // coordinates %s
+		finalString = ( finalString.replace( /%s/gi, mapCoordsString ));
+		tooltipText = ( finalString );
+	}
+
 	switch( map.GetTag( "found" ))
 	{
-		case 1: tooltipText = ( "Completed" ); break;
+		case 1: tooltipText = ( GetDictionaryEntry( 5723, pSocket.language ) ); break;// Completed
 	}
 
 	return tooltipText;

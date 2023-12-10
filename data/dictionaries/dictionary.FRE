@@ -3455,6 +3455,11 @@
 5716=carte au trésor savamment dessinée
 5717=carte au trésor intelligemment dessinée
 5718=carte au trésor sournoisement dessinée
+5719=Vous ne pouvez pas vous déplacer pendant que vous déterrez un trésor. Vous devrez recommencer à creuser.
+5720=Essayez de chercher le coffre au trésor plus au
+5721=Vous ne pouvez pas creuser de trésor là-bas !
+5722=coordonnées %s
+5723=Terminé
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.
@@ -4963,6 +4968,16 @@
 12007=Ce n'est pas une ressource en gemmes !
 12008=Sélectionnez le matériau à utiliser :
 12009=Tu as ajouté une serrure et une clé au conteneur !
+// 13000 - 13500 Compétence d'artisanat en cartographie
+13000=Menu Cartographie
+13001=Cartes
+13002=DÉFILEMENT VIERGE
+13003=MAP
+13004=Parchemins ou cartes vierges
+13100=Carte locale
+13101=Plan de la ville
+13102=Carte maritime
+13103=Carte du monde
 // 13501 - 14000 Compétence d'artisanat en soufflage de verre
 13501=Menu Soufflage de Verre
 13502=Divers
@@ -5368,5 +5383,10 @@
 18771=Une armure de ranger complète.
 // [18800-19000] Propriétés de l’AOS
 18800=%i% Bonus de soins de bandage
+// Clothing Bless Deed
+19001=Sélectionnez le vêtement que vous souhaitez bénir.
+19002=L'article a été béni.
+19003=Vous ne pouvez bénir que des vêtements avec cet acte!
+19004=Les objets doivent être équipés ou dans ton sac à dos pour être bénis.
 }
 EOF

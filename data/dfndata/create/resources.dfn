@@ -158,3 +158,9 @@ ID=0x09ba
 {
 ID=0x423A
 }
+
+[RESOURCE MAPS]
+{
+ID=0x14eb
+ID=0x0E34
+}

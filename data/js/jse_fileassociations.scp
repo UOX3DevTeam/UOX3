@@ -204,6 +204,7 @@
 4032=skill/craft/tinkering.js
 4033=skill/craft/crafting_complete.js
 4034=skill/craft/cooking.js
+4035=skill/craft/cartography.js
 4050=skill/mining.js
 4055=skill/snooping.js
 
@@ -269,6 +270,7 @@
 5048=item/teleport_item.js
 5049=item/equip_effects/bandagehealingbonus.js
 5050=item/equip_effects/weapon_abilities.js
+5051=item/clothing_bless_deed.js
 5053=item/glassblowingbook.js
 
 //-------------------------------------------
@@ -279,6 +281,7 @@
 5402=item/maps/treasuremaps.js
 5403=item/maps/predefinedmaps.js
 5404=item/maps/craftedmaps.js
+5405=item/maps/treasuredirt.js
 
 //-------------------------------------------
 // Camps [5500-5599]
@@ -398,6 +401,7 @@
 1060=commands/custom/addsign.js
 1061=commands/spawn.js
 1062=commands/playtime.js
+1063=commands/moongate.js
 }
 
 //-------------------------------------------
