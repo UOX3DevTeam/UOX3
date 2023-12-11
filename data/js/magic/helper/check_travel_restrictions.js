@@ -17,13 +17,13 @@ function CheckTravelRestrictions( targPlayer, spellNum, targX, targY, targWorld,
         if( spellNum !== 45 && !targRegion[travelType.type] )
         {
 			pSocket.SysMessage( GetDictionaryEntry( travelType.message, pSocket.language ));
-            return false;
+            return true;
         }
         else if( !targPlayer.region[travelType.type] )
         {
 			pSocket.SysMessage( GetDictionaryEntry( travelType.message, pSocket.language ));
-            return false;
+            return true;
         }
     }
-    return true;
+    return false;
 }
