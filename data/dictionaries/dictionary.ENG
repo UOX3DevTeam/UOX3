@@ -4880,6 +4880,10 @@
 15058=Strength
 15059=Dexterity
 15060=Intelligence
+//15990 Travel Restrictions
+15990=You are not allowed to travel there.
+15991=You cannot teleport from here to the destination.
+15991=You can not mark a rune here.
 // 17000 - Shard Help Menu
 17000=Help Menu
 17001=General Gameplay Questions

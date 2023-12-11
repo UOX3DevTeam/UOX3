@@ -140,6 +140,7 @@ SEngineFunc SE_ResourceRegion;
 SEngineFunc SE_Moon;
 
 SEngineFunc SE_GetTownRegion;
+SEngineFunc SE_GetTownRegionFromXY;
 SEngineFunc SE_GetSpawnRegion;
 SEngineFunc SE_GetSpawnRegionCount;
 

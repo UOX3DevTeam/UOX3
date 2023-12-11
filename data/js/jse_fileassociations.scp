@@ -309,6 +309,9 @@
 //-------------------------------------------
 6000=magic/helper/check_resist.js
 6001=magic/helper/calc_final_spell_damage.js
+6002=magic/helper/check_travel_restrictions.js
+6003=magic/helper/check_teleport.js
+6004=magic/helper/check_reagents.js
 
 //-------------------------------------------
 // Combat Scripts [7000-7499]
