@@ -442,7 +442,7 @@ function onTimer( mChar, timerID )
 						// Remove some ore from the ore resource
 						mResource.oreAmount = mResource.oreAmount - 1;
 
-						if( mChar.GetTag( "GatheringStone" ) == 1 && chance > Math.random() * 100 ) 
+						if( mChar.GetTag( "GatheringStone" ) == 1 ) 
 						{
 							var mItem;
 							var totalChance = 0;
@@ -465,8 +465,12 @@ function onTimer( mChar, timerID )
 							totalChance += 15;
 
 							var chance = totalChance || 15;
-							// Create granite in player's backpack
-							MakeGranite( socket, mChar );
+
+							if( chance > Math.random() * 100 )
+							{
+								// Create granite in player's backpack
+								MakeGranite( socket, mChar );
+							}
 						}
 
 						// Create ore in player's backpack
