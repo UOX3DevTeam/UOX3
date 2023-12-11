@@ -1,6 +1,7 @@
 function CheckTravelRestrictions( targPlayer, spellNum, targX, targY, targWorld, targInstanceID )
 {
     const targRegion = GetTownRegionFromXY( targX, targY, targWorld, targInstanceID );
+	var pSocket = targPlayer.socket;
 
     const travelRules = {
         32: { type: 'canRecall', message: 15990 },    // You are not allowed to travel there. // Recall spell
