@@ -213,15 +213,15 @@ function onCallback1( socket, ourObj )
 				}
 				else if( staticTile == false ) // tileID is from a map tile
 				{
-					if(validMapSandTilesIDs.indexOf(tileID) != -1 && pUser.GetTag( "GatheringSand" ) == 1)
-					{
-						validTileIDFound = true;
-						SandMining( socket, mChar, targX, targY );
-					}
-					else if( validMapMountainIDs.indexOf( tileID ) != -1 || validMapCaveFloorIDs.indexOf( tileID ) != -1 ) // Mountains or Cave Floors
+					if( validMapMountainIDs.indexOf( tileID ) != -1 || validMapCaveFloorIDs.indexOf( tileID ) != -1 ) // Mountains or Cave Floors
 					{
 						validTileIDFound = true;
 						Mining( socket, mChar, targX, targY );
+					}
+					else if( validMapSandTilesIDs.indexOf( tileID ) != -1 && pUser.GetTag( "GatheringSand" ) == 1 )
+					{
+						validTileIDFound = true;
+						SandMining( socket, mChar, targX, targY );
 					}
 				}
 			}

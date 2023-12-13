@@ -7,15 +7,15 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			socket.SysMessage( GetDictionaryEntry( 1763, pSock.language )); // That item must be in your backpack before it can be used.
+			socket.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
 		}
 		else if( pUser.skills[45] < 1000 )
 		{
-			socket.SysMessage( GetDictionaryEntry( 9408, pSock.language )); // Only a Grandmaster Miner can learn from this book.
+			socket.SysMessage( GetDictionaryEntry( 9408, socket.language )); // Only a Grandmaster Miner can learn from this book.
 		}
 		else if( pUser.GetTag( "GatheringStone" ) == 1 )
 		{
-			socket.SysMessage( GetDictionaryEntry( 9409, pSock.language )); // You have already learned this information.
+			socket.SysMessage( GetDictionaryEntry( 9409, socket.language )); // You have already learned this information.
 		}
 		else if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
