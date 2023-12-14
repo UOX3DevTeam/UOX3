@@ -7,7 +7,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			socket.SysMessage(GetDictionaryEntry( 1763, pSock.language )); // That item must be in your backpack before it can be used.
+			socket.SysMessage(GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
 			return false;
 		}
 		else if( pUser.skills[0] < 1000 )
