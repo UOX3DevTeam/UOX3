@@ -218,7 +218,7 @@ function onCallback1( socket, ourObj )
 						validTileIDFound = true;
 						Mining( socket, mChar, targX, targY );
 					}
-					else if( validMapSandTilesIDs.indexOf( tileID ) != -1 && pUser.GetTag( "GatheringSand" ) == 1 )
+					else if( validMapSandTilesIDs.indexOf( tileID ) != -1 && mChar.GetTag( "GatheringSand" ) == 1 )
 					{
 						validTileIDFound = true;
 						SandMining( socket, mChar, targX, targY );
@@ -584,10 +584,10 @@ function MakeOre( socket, mChar )
 			var oreIndex = orePref[0];		// Array with data on specified ore preference
 			var orePrefChance = orePref[1];	// Chance of finding ore type in given town region
 
-			var oreName = oreIndex[0]; 		// name of ore
+			var oreName = oreIndex[0];      // name of ore type internal in mining system
 			var oreColor = oreIndex[1];		// color of ore
 			var minSkill = oreIndex[2];		// minimum skill to mine ore
-			var ingotName = oreIndex[3];	// name of ingot from smelted ore
+			var ingotName = oreIndex[3];    // name of dug up ore, and of ingot from smelted ore
 			var makeMenu = oreIndex[4];		// make-menu entry for crafting something from ingot
 			var oreChance = oreIndex[5];	// default global chance of finding ore type
 			var scriptID = oreIndex[6];		// script ID attached to ore*/
@@ -610,7 +610,7 @@ function MakeOre( socket, mChar )
 				// Randomize the size of ore oreData
 				var oreId = RandomNumber( 0x19B7, 0x19BA );
 
-				var oreName = oreData[0].toLowerCase() + " ore"; // oreData[0] is ore name
+				var oreName = oreData[3].toLowerCase() + " ore"; // oreData[3] is name of actual ore dug up & ingot created from it
 				var oreItem = CreateBlankItem( socket, mChar, amtToMake, oreName, oreId, oreData[1], "ITEM", true ); // oreData[1] is oreColor
 				if( ValidateObject( oreItem ))
 				{
