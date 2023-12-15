@@ -1211,6 +1211,24 @@ itemlist=randomlowlevelweapons,7
 itemlist=randommidlevelweapons,7
 }
 
+[randomgranite]
+{
+itemlist=randomgranite
+}
+
+[ITEMLIST randomgranite]
+{
+irongranite
+dullcoppergranite
+shadowirongranite
+coppergranite
+bronzegranite
+goldgranite
+agapitegranite
+veritegranite
+valoritegranite
+}
+
 //**************************
 //* LISTOBJECTS START HERE *
 //**************************

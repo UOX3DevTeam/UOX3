@@ -4244,6 +4244,14 @@
 9402=[Unidentified]
 9403=uses remaining: %i
 9404= with %d charges
+9405=You dig for a while but fail to find any of sufficient quality for glassblowing.
+9406=You carefully extract some workable stone from the ore vein!
+9407=You carefully dig up sand of sufficient quality for glassblowing.
+9408=Only a Grandmaster Miner can learn from this book.
+9409=You have already learned this information.
+9410=You have learned how to mine fine sand. Target sand areas when mining to look for fine sand.
+9411=You have learned to mine for stones. Target mountains when mining to find stones.
+9412=Aquí no hay arena para extraer.
 // [9900 - 10000] Door and Sign Commands
 9916=Page
 9917=Next
