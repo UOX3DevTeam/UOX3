@@ -72,6 +72,25 @@ const validMapCaveFloorIDs = [
 	0x2FB2, 0x2FB3, 0x2FB4, 0x2FB5,
 ];
 
+const validMapSandTilesIDs = [
+	0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
+	0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29,
+	0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33,
+	0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D,
+	0x3E, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B,
+	0x11E, 0x11F, 0x120, 0x121, 0x122, 0x123, 0x124, 0x125, 0x126, 0x127,
+	0x128, 0x129, 0x12A, 0x12B, 0x12C, 0x12D, 0x192, 0x1A8, 0x1A9, 0x1AA,
+	0x1AB, 0x1B9, 0x1BA, 0x1BB, 0x1BC, 0x1BD, 0x1BE, 0x1BF, 0x1C0, 0x1C1,
+	0x1C2, 0x1C3, 0x1C4, 0x1C5, 0x1C6, 0x1C7, 0x1C8, 0x1C9, 0x1CA, 0x1CB,
+	0x1CC, 0x1CD, 0x281, 0x282, 0x283, 0x284, 0x289, 0x28A, 0x28B, 0x28C,
+	0x28D, 0x28E, 0x28F, 0x290, 0x359, 0x35A, 0x35B, 0x35C, 0x35D, 0x35E,
+	0x35F, 0x35E, 0x349, 0x34A, 0x34B, 0x34C, 0x355, 0x356, 0x357, 0x358,
+	0x359, 0x35A, 0x35B, 0x35C, 0x359, 0x35A, 0x35B, 0x35C,
+	0x5A7, 0x5A8, 0x5A9, 0x5AA, 0x5AB, 0x5AC, 0x5AD, 0x5AE, 0x5AF,
+	0x5B0, 0x5B1, 0x5B2, 0x653, 0x654, 0x655, 0x656, 0x657, 0x658,
+	0x659, 0x65A, 0x657, 0x658, 0x659, 0x65A, 0x667, 0x668, 0x669, 0x66A
+];
+
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -198,6 +217,11 @@ function onCallback1( socket, ourObj )
 					{
 						validTileIDFound = true;
 						Mining( socket, mChar, targX, targY );
+					}
+					else if( validMapSandTilesIDs.indexOf( tileID ) != -1 && mChar.GetTag( "GatheringSand" ) == 1 )
+					{
+						validTileIDFound = true;
+						SandMining( socket, mChar, targX, targY );
 					}
 				}
 			}
@@ -329,6 +353,45 @@ function GraveDigging( socket, mChar, targX, targY )
 	mChar.StartTimer( 1500, 0, true );
 }
 
+function SandMining( socket, mChar, targX, targY ) 
+{
+	var mResource = ResourceRegion( targX, targY, mChar.worldnumber );
+	RegenerateOre( mResource, socket );
+	if( mResource.oreAmount <= 0 )
+	{
+		mChar.TextMessage( GetDictionaryEntry( 9412, mChar.socket.language ), false, 0x3b2, 0, mChar.serial); // There is no sand here to mine.
+		return;
+	}
+
+	if( mChar.visible == 1 || mChar.visible == 2 )
+	{
+		mChar.visible = 0;
+	}
+
+	mChar.TurnToward( targX, targY );
+
+	if( mChar.bodyType == 2 ) // Gargoyle
+	{
+		mChar.DoAction(0x0, 0x3);
+	}
+	else if( mChar.isonhorse ) // Mounted
+	{
+		mChar.DoAction( 0x1A );
+	}
+	else // On foot
+	{
+		mChar.DoAction( 0x0B );
+	}
+
+	var randomNumber = Math.random();
+	var value = ( randomNumber < 0.5 ) ? 0x0125 : 0x0126;
+	mChar.SoundEffect( value, true );
+
+	mChar.skillsused.mining = true;
+	mChar.miningType = 3; // Sand Mining
+	mChar.StartTimer( 1500, 1, true );
+}
+
 function onTimer( mChar, timerID )
 {
 	switch( timerID )
@@ -379,6 +442,37 @@ function onTimer( mChar, timerID )
 						// Remove some ore from the ore resource
 						mResource.oreAmount = mResource.oreAmount - 1;
 
+						if( mChar.GetTag( "GatheringStone" ) == 1 ) 
+						{
+							var mItem;
+							var totalChance = 0;
+
+							for( mItem = mChar.FirstItem(); !mChar.FinishedItems(); mItem = mChar.NextItem() ) 
+							{
+								if( !ValidateObject( mItem ))
+									continue;
+
+								var stoneminingBonus = parseInt( mItem.GetTag( "stoneminingBonus" ));
+
+								// Check if stoneminingBonus is a number
+								if( !isNaN( stoneminingBonus ))
+								{
+									totalChance += stoneminingBonus;
+								}
+							}
+
+							// Always add a 15% chance
+							totalChance += 15;
+
+							var chance = totalChance || 15;
+
+							if( chance > Math.random() * 100 )
+							{
+								// Create granite in player's backpack
+								MakeGranite( socket, mChar );
+							}
+						}
+
 						// Create ore in player's backpack
 						MakeOre( socket, mChar );
 					}
@@ -409,6 +503,26 @@ function onTimer( mChar, timerID )
 					{
 						socket.SysMessage( GetDictionaryEntry( 9186, socket.language )); // You find nothing in the grave.
 						if( RandomNumber( 0, 4 )) // 20% chance to destroy some resources
+						{
+							mResource.oreAmount = mResource.oreAmount - 1;
+						}
+					}
+				}
+				else if( miningType == 3 )
+				{
+					// Sand mining
+					if( mChar.CheckSkill( 45, 0, 1000 ))
+					{
+						// Remove some ore from the ore resource
+						mResource.oreAmount = mResource.oreAmount - 1;
+
+						// Create sand in player's backpack
+						MakeSand( socket, mChar );
+					}
+					else
+					{
+						mChar.TextMessage( GetDictionaryEntry( 9405, socket.language ), false, 0x3b2, 0, mChar.serial ); // You dig for a while but fail to find any of sufficient quality for glassblowing.
+						if( RandomNumber( 0, 1 ))	// 50% chance to destroy some resources
 						{
 							mResource.oreAmount = mResource.oreAmount - 1;
 						}
@@ -470,10 +584,10 @@ function MakeOre( socket, mChar )
 			var oreIndex = orePref[0];		// Array with data on specified ore preference
 			var orePrefChance = orePref[1];	// Chance of finding ore type in given town region
 
-			var oreName = oreIndex[0]; 		// name of ore
+			var oreName = oreIndex[0];      // name of ore type internal in mining system
 			var oreColor = oreIndex[1];		// color of ore
 			var minSkill = oreIndex[2];		// minimum skill to mine ore
-			var ingotName = oreIndex[3];	// name of ingot from smelted ore
+			var ingotName = oreIndex[3];    // name of dug up ore, and of ingot from smelted ore
 			var makeMenu = oreIndex[4];		// make-menu entry for crafting something from ingot
 			var oreChance = oreIndex[5];	// default global chance of finding ore type
 			var scriptID = oreIndex[6];		// script ID attached to ore*/
@@ -496,7 +610,7 @@ function MakeOre( socket, mChar )
 				// Randomize the size of ore oreData
 				var oreId = RandomNumber( 0x19B7, 0x19BA );
 
-				var oreName = oreData[0].toLowerCase() + " ore"; // oreData[0] is ore name
+				var oreName = oreData[3].toLowerCase() + " ore"; // oreData[3] is name of actual ore dug up & ingot created from it
 				var oreItem = CreateBlankItem( socket, mChar, amtToMake, oreName, oreId, oreData[1], "ITEM", true ); // oreData[1] is oreColor
 				if( ValidateObject( oreItem ))
 				{
@@ -533,6 +647,44 @@ function MakeOre( socket, mChar )
 		{
 			socket.SysMessage( GetDictionaryEntry( 1772, socket.language )); // You do not have enough skill to mine that ore!
 		}
+	}
+
+	HandleToolUse( socket, mChar );
+}
+
+function MakeGranite( socket, mChar ) 
+{
+	var iSpawned = null;
+	iSpawned = CreateDFNItem( socket, mChar, "randomgranite", 1, "ITEM", true );
+	if( ValidateObject( iSpawned ))
+	{
+		socket.SysMessage( GetDictionaryEntry( 9406, socket.language )); // You carefully extract some workable stone from the ore vein!
+	}
+
+	HandleToolUse( socket, mChar );
+}
+
+function MakeSand(socket, mChar) 
+{
+	const coreShardEra = GetServerSetting( "CoreShardEra" );
+	var rand = RandomNumber( 0, 1 );
+	var iSpawned = null;
+	iSpawned = CreateDFNItem( socket, mChar, "sand", 1, "ITEM", true );
+
+	if( ValidateObject( iSpawned ))
+	{
+		if( EraStringToNum( coreShardEra ) <= EraStringToNum( "sa" ))
+		{
+			switch( rand )
+			{
+				case 0: iSpawned.id = 0x11EA;
+				case 1: iSpawned.id = 0x11EB;
+			}
+			iSpawned.pileable = 0;
+			iSpawned.colour = 0;
+
+		}
+		socket.SysMessage( GetDictionaryEntry( 9407, socket.language )); // You carefully dig up sand of sufficient quality for glassblowing.
 	}
 
 	HandleToolUse( socket, mChar );
