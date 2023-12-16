@@ -868,7 +868,7 @@ function onTimer( timerObj, timerID )
 	// Handle effect of spell
 	if( spellNum == 32 ) // Recall spell
 	{
-		TriggerEvent( 6003, "CheckTeleport", timerObj, targLocX, targLocY, targLocZ, targWorld, targInstanceID  )
+		TriggerEvent( 6003, "TeleportHelper", timerObj, targLocX, targLocY, targLocZ, targWorld, targInstanceID, false )
 	}
 	else
 	{

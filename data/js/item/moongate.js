@@ -338,7 +338,7 @@ function onGumpPress( srcSock, myButton )
 			return;
 	}
 
-	TriggerEvent( 6003, "CheckTeleport", srcChar, targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3], 0 )
+	TriggerEvent( 6003, "TeleportHelper", srcChar, targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3], 0, false );
 }
 
 function DisplayTravelGump( srcSock, pUser )
