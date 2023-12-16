@@ -97,7 +97,7 @@ const npcGuilds = {
 };
 
 // List of NPC guilds players are able to join:
-const enableddGuilds = [ 3 ];
+const enabledGuilds = [ 3 ];
 
 // Can call from other scripts using
 // var guildRelation = TriggerEvent( 3217, "CheckGuildRelation", npcGuildA, npcGuildB );
