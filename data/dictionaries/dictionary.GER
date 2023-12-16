@@ -3425,6 +3425,10 @@
 6278=Um mehr über diesen Trank zu erfahren, musst du deine Fähigkeit zur Geschmackserkennung einsetzen.
 6279=Erfolgsgarantie für Fertigkeitsprüfung aufgrund erhöhter Befehlsstufe!
 6280=Zauberverzögerung wegen erhöhter Befehlsstufe ignoriert!
+6300=Sie haben das Glasblasen nicht gelernt.
+6301=Nur ein Großmeister-Alchemist kann aus diesem Buch lernen.
+6302=Sie haben diese Informationen bereits erfahren.
+6303=Du hast gelernt, Gegenstände aus Glas herzustellen. Sie müssen Bergleute finden, die feinen Sand abbauen, damit Sie diese Gegenstände herstellen können.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?
@@ -4826,6 +4830,23 @@
 13101=Stadtplan
 13102=Seekarte
 13103=Weltkarte
+// 13501 - 14000 Glasbläserei-Handwerksfertigkeit
+13501=Glasbläserei-Menü
+13502=Verschiedenes
+13503=Glaswaffen
+13504=SAND
+13600=leere Flasche
+13601=Kolben (klein)
+13602=Kolben (mittel)
+13603=Kolben (gebogen)
+13604=Kolben (groß #1)
+13605=Kolben (groß #2)
+13606=Kolben (sprudelndes Blau)
+13607=Kolben (sprudelndes Lila)
+13608=Kolben (brodelndes Rot)
+13609=leere Fläschchen
+13610=volle Fläschchen
+13611=drehende Sanduhr
 // 15000 Fertigkeiten
 15000=Alchemie
 15001=Anatomie

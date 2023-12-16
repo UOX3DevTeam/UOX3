@@ -3425,6 +3425,10 @@
 6278=Tienes que usar tu habilidad de identificación de sabores para saber más sobre esta poción.
 6279=¡Exito de la comprobación de habilidad garantizado debido al elevado nivel de mando!
 6280=¡Retraso de lanzamiento ignorado debido al elevado nivel de mando!
+6300=No has aprendido a soplar vidrio.
+6301=Sólo un Gran Maestro Alquimista puede aprender de este libro.
+6302=Ya has aprendido esta información.
+6303=Has aprendido a fabricar objetos de vidrio. Necesitará encontrar mineros que extraigan arena fina para poder fabricar estos artículos.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
@@ -4826,6 +4830,23 @@
 13101=Mapa de la ciudad
 13102=Carta marítima
 13103=Mapa mundial
+// 13501 - 14000 Habilidad de artesanía de soplado de vidrio
+13501=Menú de soplado de vidrio
+13502=Varios
+13503=Armas de cristal
+13504=ARENA
+13600=botella vacía
+13601=frasco (pequeño)
+13602=matraz (mediano)
+13603=matraz (curvo)
+13604=matraz (grande #1)
+13605=matraz (grande #2)
+13606=frasco (azul burbujeante)
+13607=frasco (morado burbujeante)
+13608=frasco (rojo burbujeante)
+13609=frascos vacíos
+13610=frascos llenos
+13611=reloj de arena giratorio
 // 15000 Habilidades
 15000=Alquimia
 15001=Anatomía

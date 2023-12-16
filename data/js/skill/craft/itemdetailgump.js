@@ -8,6 +8,8 @@ const Tinkering = 4032;
 const scriptID = 4026; // This script
 const Cooking = 4034;
 const Cartography = 4035;
+const Glassblowing = 4036;
+
 const exceptionalWearablesOnly = true;
 
 function ItemDetailGump( pUser )
@@ -1674,6 +1676,7 @@ function ItemDetailGump( pUser )
 			HARVEST = [11653];
 			mainSkill = parseInt( pUser.skills.cooking );
 			break;
+    // Cartography
 		case 2000: // Local Map
 			createEntry = CreateEntries[2000];
 			HARVEST = [13004];
@@ -1694,6 +1697,67 @@ function ItemDetailGump( pUser )
 			HARVEST = [13004];
 			mainSkill = parseInt( pUser.skills.cartography );
 			break;
+		// Glassblowing
+		case 3000: // empty bottle
+			createEntry = CreateEntries[3000];
+			HARVEST = [13504];
+			mainSkill = parseInt(pUser.skills.alchemy);
+			break;
+		case 3001: // flask (small)
+			createEntry = CreateEntries[3001];
+			HARVEST = [13504];
+			mainSkill = parseInt(pUser.skills.alchemy);
+			break;
+		case 3002: // flask (medium)
+			createEntry = CreateEntries[3002];
+			HARVEST = [13504];
+			mainSkill = parseInt(pUser.skills.alchemy);
+			break;
+		case 3003: // flask (curved)
+			createEntry = CreateEntries[3003];
+			HARVEST = [13504];
+			mainSkill = parseInt(pUser.skills.alchemy);
+			break;
+		case 3004: // flask (large #1)
+			createEntry = CreateEntries[3004];
+			HARVEST = [13504];
+			mainSkill = parseInt(pUser.skills.alchemy);
+			break;
+		case 3005: // flask (large #2)
+			createEntry = CreateEntries[3005];
+			HARVEST = [13504];
+			mainSkill = parseInt(pUser.skills.alchemy);
+			break;
+		case 3006: // flask (bubbling blue)
+			createEntry = CreateEntries[3006];
+			HARVEST = [13504];
+			mainSkill = parseInt(pUser.skills.alchemy);
+			break;
+		case 3007: // flask (bubbling purple)
+			createEntry = CreateEntries[3007];
+			HARVEST = [13504];
+			mainSkill = parseInt(pUser.skills.alchemy);
+			break;
+		case 3008: // flask (bubbling red)
+			createEntry = CreateEntries[3008];
+			HARVEST = [13504];
+			mainSkill = parseInt(pUser.skills.alchemy);
+			break;
+		case 3009: // empty vials
+			createEntry = CreateEntries[3009];
+			HARVEST = [13504];
+			mainSkill = parseInt(pUser.skills.alchemy);
+			break;
+		case 3010: // full vials
+			createEntry = CreateEntries[3010];
+			HARVEST = [13504];
+			mainSkill = parseInt(pUser.skills.alchemy);
+			break;
+		case 3011: // spinning hourglass
+			createEntry = CreateEntries[3011];
+			HARVEST = [13504];
+			mainSkill = parseInt(pUser.skills.alchemy);
+      break;
 		default:
 			break;
 	}
@@ -2018,7 +2082,7 @@ function onGumpPress( pSock, pButton, gumpData )
 							break;
 					}
 					break;
-				case 8: // Cartography
+        case 8: // Cartography
 					pUser.SetTempTag( "ITEMDETAILS", null );
 					pSock.CloseGump( gumpID, 0 );
 					switch( pUser.GetTempTag( "page" ))
@@ -2030,6 +2094,18 @@ function onGumpPress( pSock, pButton, gumpData )
 							break;
 					}
 					break;
+				case 9: // Glassblowing
+					pUser.SetTempTag( "ITEMDETAILS", null );
+					pSock.CloseGump( gumpID, 0 );
+					switch( pUser.GetTempTag( "page" ))
+					{
+						case 1: // Page 1
+							TriggerEvent( Glassblowing, "PageX", pSock, pUser, pUser.GetTempTag( "page" ));
+							break;
+						default: TriggerEvent( Glassblowing, "PageX", pSock, pUser, 1 );
+              break;
+          }
+          break;
 			}
 	}
 }

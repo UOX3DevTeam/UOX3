@@ -27,7 +27,12 @@
 
 28/11/2023 - Dragon Slayer
 	Adjusted the Default values for MaxClientBytesIn and MaxClientBytesOut by double.
-
+  
+26/11/2023 - Dragon Slayer
+	Added Glassblowing Crafting System:
+  	- Introducing a new crafting menu for glassblowing, allowing players to create unique glass items.
+  	- New crafting tools, including a glassblowing pipe and glass items.
+    
 26/11/2023 - Dragon Slayer
 	Fixed a potential server crash issue related to keeping track of which players have opened which containers (Xuri)
 	Resolved an issue with validation in treasuredigging.js, thanks to the efforts of (Xuri)
