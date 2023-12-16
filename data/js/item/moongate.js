@@ -338,21 +338,7 @@ function onGumpPress( srcSock, myButton )
 			return;
 	}
 
-	// Teleport player's followers
-	var followerList = srcChar.GetFollowerList();
-	for( var i = 0; i < followerList.length; i++ )
-	{
-		var tempFollower = followerList[i];
-		// Only teleport pet if set to follow and within range
-		if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( srcChar, 24 ))
-		{
-			tempFollower.Teleport( targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3] );
-			tempFollower.Follow( srcChar );
-		}
-	}
-
-	// Teleport player
-	srcChar.Teleport( targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3] );
+	TriggerEvent( 6003, "TeleportHelper", srcChar, targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3], 0, true );
 }
 
 function DisplayTravelGump( srcSock, pUser )

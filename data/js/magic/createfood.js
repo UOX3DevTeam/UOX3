@@ -189,67 +189,6 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	return true;
 }
 
-function CheckReagents( mChar, mSpell )
-{
-	var failedCheck = 0;
-	if( mSpell.ash > 0 && mChar.ResourceCount( 0x0F8C ) < mSpell.ash )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.drake > 0 && mChar.ResourceCount( 0x0F86 ) < mSpell.drake )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.garlic > 0 && mChar.ResourceCount( 0x0F84 ) < mSpell.garlic )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.ginseng > 0 && mChar.ResourceCount( 0x0F85 ) < mSpell.ginseng )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.moss > 0 && mChar.ResourceCount( 0x0F7B ) < mSpell.moss )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.pearl > 0 && mChar.ResourceCount( 0x0F7A ) < mSpell.pearl )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.shade > 0 && mChar.ResourceCount( 0x0F88 ) < mSpell.shade )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.silk > 0 && mChar.ResourceCount( 0x0F8D ) < mSpell.silk )
-	{
-		failedCheck = 1;
-	}
-	if( failedCheck == 1 )
-	{
-		if( mChar.socket != null )
-		{
-			mChar.socket.SysMessage( GetDictionaryEntry( 702, mChar.socket.language )); // You do not have enough reagents to cast that spell.
-		}
-		return false;
-	}
-	else
-	{
-		return true;
-	}
-}
-
-function DeleteReagents( mChar, mSpell )
-{
-	mChar.UseResource( mSpell.pearl, 0x0F7A );
-	mChar.UseResource( mSpell.moss, 0x0F7B );
-	mChar.UseResource( mSpell.garlic, 0x0F84 );
-	mChar.UseResource( mSpell.ginseng, 0x0F85 );
-	mChar.UseResource( mSpell.drake, 0x0F86 );
-	mChar.UseResource( mSpell.shade, 0x0F88 );
-	mChar.UseResource( mSpell.ash, 0x0F8C );
-	mChar.UseResource( mSpell.silk, 0x0F8D );
-}
-
 function onTimer( mChar, timerID )
 {
 	mChar.isCasting = false;
@@ -296,7 +235,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	{
 		//Check for enough reagents
 		// type == 0 -> SpellBook
-		if( spellType == 0 && !CheckReagents( mChar, mSpell ))
+		if( spellType == 0 && !TriggerEvent( 6004, "CheckReagents", pUser, mSpell))
 		{
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
@@ -324,7 +263,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 		// Only remove reagents for normal spells
 		if( spellType == 0 )
 		{
-			DeleteReagents( mChar, mSpell );
+			TriggerEvent( 6004, "DeleteReagents", pUser, mSpell );
 			mChar.SpellFail();
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
@@ -341,7 +280,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	}
 	if( !mChar.npc && spellType == 0 )
 	{
-		DeleteReagents( mChar, mSpell );
+		TriggerEvent( 6004, "DeleteReagents", pUser, mSpell );
 	}
 
 	sourceChar.SoundEffect( mSpell.soundEffect, true );

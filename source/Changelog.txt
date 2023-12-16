@@ -1,3 +1,10 @@
+10/12/2023 - Dragon Slayer
+	Implemented Check_travel_restriction, Check_teleport, and Check_regeants in magic/helpers (js).
+	Added GetTownRegionXY (Thanks Xuri).
+	Enhanced Runebook functionality with triggerevent for the new js files.
+	Updated Moongate.js to incorporate the new check teleport logic.
+	Optimized clumsy.js to utilize the new reagents.js.
+
 3/12/2023 - Dragon Slayer
 	Fixed Magic Weapons setting damage correctly when they are generated.(js Magic_Items)
 
