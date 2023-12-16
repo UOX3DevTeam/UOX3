@@ -3425,6 +3425,10 @@
 6278=Per saperne di più su questa pozione devi usare l'abilità di identificazione dei gusti.
 6279=Il successo del controllo dell'abilità è garantito grazie al livello di comando elevato!
 6280=Tardo di incantesimo ignorato a causa dell'elevato livello di comando!
+6300=Non hai imparato a soffiare il vetro.
+6301=Solo un Grande Maestro Alchimista può imparare da questo libro.
+6302=Hai già appreso questa informazione.
+6303=Hai imparato a creare oggetti in vetro. Dovrai trovare minatori che estraggano sabbia fine per poter realizzare questi oggetti.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
@@ -4826,6 +4830,23 @@
 13101=Mappa della città
 13102=Carta del mare
 13103=Mappa del mondo
+// 13501 - 14000 Abilità nella lavorazione del vetro soffiato
+13501=Menu Soffiatura del vetro
+13502=Varie
+13503=Armi di vetro
+13504=SABBIA
+13600=bottiglia vuota
+13601=fiaschetta (piccola)
+13602=fiasco (medio)
+13603=pallone (curvo)
+13604=fiaschetta (grande #1)
+13605=fiaschetta (grande #2)
+13606=fiasco (blu gorgogliante)
+13607=fiaschetta (viola gorgogliante)
+13608=fiasco (rosso gorgogliante)
+13609=fialette vuote
+13610=flaconi pieni
+13611=clessidra rotante
 // 15000 Abilità
 15000=Alchimia
 15001=Anatomia

@@ -3425,6 +3425,10 @@
 6278=Musisz użyć umiejętności identyfikacji smaku, aby dowiedzieć się więcej o tej miksturze.
 6279=Sukces kontroli umiejętności gwarantowany dzięki podwyższonemu poziomowi dowodzenia!
 6280=Opóźnienie rzutu czaru zignorowane z powodu podwyższonego poziomu dowodzenia!
+6300=Nie nauczyłeś się dmuchania szkła.
+6301=Tylko Wielki Mistrz Alchemik może uczyć się z tej książki.
+6302=Te informacje już znasz.
+6303=Nauczyłeś się robić przedmioty ze szkła. Będziesz musiał znaleźć górników, którzy wydobędą drobny piasek, aby móc wyprodukować te przedmioty.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?
@@ -4826,6 +4830,23 @@
 13101=Mapa miasta
 13102=Mapa morza
 13103=Mapa świata
+// 13501 - 14000 Umiejętność rzemieślnicza dmuchania szkła
+13501=Menu dmuchania szkła
+13502=Różne
+13503=Broń szklana
+13504=PIASEK
+13600=pusta butelka
+13601=kolba (mała)
+13602=kolba (średnia)
+13603=kolba (zakrzywiona)
+13604=kolba (duża nr 1)
+13605=kolba (duża nr 2)
+13606=kolba (bulgocząca na niebiesko)
+13607=kolba (bulgocząca na fioletowo)
+13608=kolba (bulgocząca na czerwono)
+13609=puste fiolki
+13610=pełne fiolki
+13611=wirująca klepsydra
 // 15000 Umiejętności
 15000=Alchemia
 15001=Anatomia

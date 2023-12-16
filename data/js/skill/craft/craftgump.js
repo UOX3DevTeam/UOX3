@@ -11,6 +11,7 @@ const Tailoring = 4030;
 const Tinkering = 4032;
 const Cooking = 4034;
 const Cartography = 4035;
+const Glassblowing = 4036;
 
  // If enabled, players can craft coloured variants of weapons using Blacksmithing skill, though
  // unless the craftItems array in blacksmithing.js is updated with specific create entries for the
@@ -134,6 +135,10 @@ function CraftingGumpMenu( myGump, socket )
 			grouplist = [13001]; //CATEGORIES
 			gumpMenuName = 13000;//Cartography Menu
 			break;
+		case 9: // Glassblowing
+			grouplist = [13502]; //CATEGORIES
+			gumpMenuName = 13501;//Cartography Menu
+      break;
 	}
 
 	myGump.AddPage( 0 );
@@ -247,7 +252,7 @@ function CraftingGumpMenu( myGump, socket )
 		myGump.AddText( 50, 362, textHue, GetDictionaryEntry( resourcename, socket.language ) + " (" + resource.toString() + ")" );
 
 		// No material selection for these crafting skills yet
-		if( craftingSkillUsed != 1 && craftingSkillUsed != 3 && craftingSkillUsed != 4 && craftingSkillUsed != 7 )
+		if( craftingSkillUsed != 1 && craftingSkillUsed != 3 && craftingSkillUsed != 4 && craftingSkillUsed != 7 && craftingSkillUsed != 9)
 		{
 			myGump.AddButton(15, 362, 4005, 4007, 1, 0, 50); // Material Selection Button
 		}
@@ -336,7 +341,10 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 8:
 					TriggerEvent(Cartography, "PageX", pSock, pUser, 1);
 					break;
-				default:
+				case 9:
+					TriggerEvent( Glassblowing, "PageX", pSock, pUser, 1 );
+          break;
+        default:
 					break;
 			}
 		case 2:

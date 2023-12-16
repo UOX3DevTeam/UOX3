@@ -7,6 +7,7 @@ const Tailoring = 4030;
 const Tinkering = 4032;
 const Cooking = 4034;
 const Cartography = 4035;
+const Glassblowing = 4036;
 
 function onUseChecked( pUser, iUsed )
 {
@@ -243,6 +244,25 @@ function onUseChecked( pUser, iUsed )
 					TriggerEvent( Cartography, "PageX", socket, pUser, tempPage );
 					break;
 				default: TriggerEvent( Cartography, "PageX", socket, pUser, 1 );
+					break;
+			}
+		}
+		else if( iUsed.sectionID == "blowpipe" )
+		{
+			if( pUser.GetTag( "GlassBlowing" ) == 0 )
+			{
+				socket.SysMessage( GetDictionaryEntry( 6300, socket.Language ));// You havent learned glassblowing.
+				return;
+			}
+			// Cartography
+			socket.CloseGump( gumpID8, 0 );
+			pUser.SetTempTag( "CRAFT", 9 );
+			switch( tempPage )
+			{
+				case 1: // Page 1
+					TriggerEvent( Glassblowing, "PageX", socket, pUser, tempPage);
+					break;
+				default: TriggerEvent( Glassblowing, "PageX", socket, pUser, 1);
 					break;
 			}
 		}
