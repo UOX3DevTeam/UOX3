@@ -157,8 +157,8 @@ function SummonPet( pUser, iUsed )
 				var i = 0;
 				for( i = 0; i < maxStabledPets; i++ )
 				{
-					var tempPet = pUser.GetTag( "stabledPet" + i );
-					if( tempPet != null && tempPet != "0" )
+					var tempPetSerial = pUser.GetTag( "stabledPet" + i );
+					if( tempPetSerial != null && tempPetSerial != "0" && tempPetSerial == Pet.serial )
 					{
 						ReleasePet( Pet, i, pUser );
 						petFound = true;
