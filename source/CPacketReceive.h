@@ -880,18 +880,18 @@ public:
 class CPIPopupMenuSelect : public CPInputBuffer
 {
 protected:
-	UI16			popupEntry;
-	CChar *			targChar;
+    UI16            popupEntry;
+    CBaseObject *   targObj;
 public:
-	virtual			~CPIPopupMenuSelect()
-	{
-	}
-	CPIPopupMenuSelect();
-	CPIPopupMenuSelect( CSocket *s );
+    virtual            ~CPIPopupMenuSelect()
+    {
+    }
+    CPIPopupMenuSelect();
+    CPIPopupMenuSelect( CSocket *s );
 
-	virtual void	Receive( void ) override;
-	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
+    virtual void    Receive( void ) override;
+    virtual bool    Handle( void ) override;
+    virtual void    Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 

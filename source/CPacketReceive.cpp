@@ -4557,560 +4557,628 @@ void CPIToolTipRequest::Log( std::ostream &outStream, bool fullHeader )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CPIPopupMenuRequest()
+//| Function    -   CPIPopupMenuRequest()
 //o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Handles incoming packet with request to show popup/context menu
+//| Purpose     -   Handles incoming packet with request to show popup/context menu
 //o------------------------------------------------------------------------------------------------o
-//|	Notes		-	Packet: 0xBF (General Information Packet)
-//|					Subcommand: 0x13 (Request Popup Menu)
-//|					Size: Variable
+//| Notes       -   Packet: 0xBF (General Information Packet)
+//|                 Subcommand: 0x13 (Request Popup Menu)
+//|                 Size: Variable
 //|
-//|					Packet Build
-//|						BYTE cmd (0xBF)
-//|						BYTE[2] Length
-//|						BYTE[2] Subcommand (0x13)
-//|						Subcommand details
-//|							BYTE[4] id (character id)
+//|                 Packet Build
+//|                     BYTE cmd (0xBF)
+//|                     BYTE[2] Length
+//|                     BYTE[2] Subcommand (0x13)
+//|                     Subcommand details
+//|                         BYTE[4] id (character id)
 //o------------------------------------------------------------------------------------------------o
 CPIPopupMenuRequest::CPIPopupMenuRequest() : mSer( INVALIDSERIAL )
 {
 }
 CPIPopupMenuRequest::CPIPopupMenuRequest( CSocket *s ) : CPInputBuffer( s ), mSer( INVALIDSERIAL )
 {
-	Receive();
+    Receive();
 }
-
+ 
 void CPIPopupMenuRequest::Receive( void )
 {
-	mSer = tSock->GetDWord( 5 );
+    mSer = tSock->GetDWord( 5 );
 }
 bool CPIPopupMenuRequest::Handle( void )
 {
-	// Only show context menus if enabled in ini
-	if( !cwmWorldState->ServerData()->ServerContextMenus() )
-		return true;
+    // Only show context menus if enabled in ini
+    if( !cwmWorldState->ServerData()->ServerContextMenus() )
+        return true;
+ 
+    CBaseObject *myObj = nullptr;
+ 
+    if( mSer < BASEITEMSERIAL )
+    {
+        myObj = static_cast<CBaseObject*>( CalcCharObjFromSer( mSer ));
+        if( myObj == nullptr )
+            return true;
+    }
+    else
+    {
+        myObj = static_cast<CBaseObject*>( CalcItemObjFromSer( mSer ));
+        if( myObj == nullptr )
+            return true;
+    }
+ 
+    std::vector<UI16> scriptTriggers = myObj->GetScriptTriggers();
+    for( auto scriptTrig : scriptTriggers )
+    {
+        cScript *toExecute = JSMapping->GetScript( scriptTrig );
+        if( toExecute != nullptr )
+        {
+            if( toExecute->OnContextMenuRequest( tSock, myObj ) == 0 )
+            {
+                return true;
+            }
+        }
+    }
+ 
+    // No individual scripts handling onContextMenu returned true - let's check global script!
+    cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
+    if( toExecute != nullptr )
+    {
+        if( toExecute->OnContextMenuRequest( tSock, myObj ) == 0 )
+        {
+            return true;
+        }
+    }
 
-	if( mSer < BASEITEMSERIAL )
-	{
-		CChar *myChar = CalcCharObjFromSer( mSer );
-		if( myChar == nullptr )
-			return true;
-
-		if( !LineOfSight( tSock, tSock->CurrcharObj(), myChar->GetX(), myChar->GetY(), ( myChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
-			return true;
-
-		CPPopupMenu toSend(( *myChar ), ( *tSock ));
-		tSock->Send( &toSend );
-	}
-	return true;
+    if( !LineOfSight( tSock, tSock->CurrcharObj(), myObj->GetX(), myObj->GetY(), ( myObj->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+        return true;
+ 
+    CPPopupMenu toSend(( *myObj ), ( *tSock ));
+    tSock->Send( &toSend );
+    return true;
 }
 void CPIPopupMenuRequest::Log( std::ostream &outStream, bool fullHeader )
 {
-	if( fullHeader )
-	{
-		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Popup Menu Request --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
-	}
-	outStream << "  Raw dump     :" << std::endl;
-	CPInputBuffer::Log( outStream, false );
+    if( fullHeader )
+    {
+        outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Popup Menu Request --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+    }
+    outStream << "  Raw dump     :" << std::endl;
+    CPInputBuffer::Log( outStream, false );
 }
-
+ 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CPIPopupMenuSelect()
+//| Function    -   CPIPopupMenuSelect()
 //o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Handles incoming packet with request select entry from popup/context menu
+//| Purpose     -   Handles incoming packet with request select entry from popup/context menu
 //o------------------------------------------------------------------------------------------------o
-//|	Notes		-	Packet: 0xBF (General Information Packet)
-//|					Subcommand: 0x15 (Popup Entry Select)
-//|					Size: Variable
+//| Notes       -   Packet: 0xBF (General Information Packet)
+//|                 Subcommand: 0x15 (Popup Entry Select)
+//|                 Size: Variable
 //|
-//|					Packet Build
-//|						BYTE cmd (0xBF)
-//|						BYTE[2] Length
-//|						BYTE[2] Subcommand (0x15)
-//|						Subcommand details
-//|							BYTE[4] Character ID
-//|							BYTE[2] Entry Tag for line selected provided in subcommand 0x14
+//|                 Packet Build
+//|                     BYTE cmd (0xBF)
+//|                     BYTE[2] Length
+//|                     BYTE[2] Subcommand (0x15)
+//|                     Subcommand details
+//|                         BYTE[4] Character ID
+//|                         BYTE[2] Entry Tag for line selected provided in subcommand 0x14
 //o------------------------------------------------------------------------------------------------o
-CPIPopupMenuSelect::CPIPopupMenuSelect() : popupEntry( 0 ), targChar( nullptr )
+CPIPopupMenuSelect::CPIPopupMenuSelect() : popupEntry( 0 ), targObj( nullptr )
 {
 }
-CPIPopupMenuSelect::CPIPopupMenuSelect( CSocket *s ) : CPInputBuffer( s ), popupEntry( 0 ), targChar( nullptr )
+CPIPopupMenuSelect::CPIPopupMenuSelect( CSocket *s ) : CPInputBuffer( s ), popupEntry( 0 ), targObj( nullptr )
 {
-	Receive();
+    Receive();
 }
-
+ 
 void CPIPopupMenuSelect::Receive( void )
 {
-	popupEntry	= tSock->GetWord( 9 );
-	targChar	= CalcCharObjFromSer( tSock->GetDWord( 5 ));
+    popupEntry  = tSock->GetWord( 9 );
+ 
+    SERIAL mSer = tSock->GetDWord( 5 );
+    if( mSer < BASEITEMSERIAL )
+    {
+        targObj = static_cast<CBaseObject*>( CalcCharObjFromSer( mSer ));
+    }
+    else
+    {
+        targObj = static_cast<CBaseObject*>( CalcItemObjFromSer( mSer ));
+    }
 }
-
+ 
 bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text, CChar *tChar = nullptr );
 bool CPIPopupMenuSelect::Handle( void )
 {
-	// Only show context menus if enabled in ini
-	if( !cwmWorldState->ServerData()->ServerContextMenus() )
-		return true;
-
-	CChar *mChar			= tSock->CurrcharObj();
-	if( !ValidateObject( targChar ) || !ValidateObject( mChar ))
-		return true;
-
-	switch( popupEntry )
-	{
-		case 0x000A:	// Open Paperdoll
-			if( cwmWorldState->creatures[targChar->GetId()].IsHuman() )
-			{
-				PaperDoll( tSock, targChar );
-			}
-			break;
-		case 0x000B:	// Open Backpack
-			if( mChar->GetCommandLevel() >= CL_CNS || cwmWorldState->creatures[targChar->GetId()].IsHuman() 
-				|| targChar->GetId() == 0x0123 || targChar->GetId() == 0x0124 || targChar->GetId() == 0x0317 )	// Only Humans and Pack Animals have Packs
-			{
-				if( mChar->IsDead() )
-				{
-					tSock->SysMessage( 392 ); // You are dead and cannot do that.
-				}
-				else if( !ObjInRange( mChar, targChar, DIST_NEARBY ))
-				{
-					tSock->SysMessage( 382 ); // You need to get closer.
-				}
-				else
-				{
-					CItem *pack = targChar->GetPackItem();
-					if( ValidateObject( pack ))
-					{
-						if( mChar == targChar || targChar->GetOwnerObj() == mChar || mChar->GetCommandLevel() >= CL_CNS )
-						{
-							if( targChar->GetNpcAiType() == AI_PLAYERVENDOR )
-							{
-								targChar->TextMessage( tSock, 385, TALK, false ); // Take a look at my goods.
-								tSock->OpenPack( pack, true );
-							}
-							else
-							{
-								tSock->OpenPack( pack );
-							}
-						}
-						else if( targChar->GetNpcAiType() == AI_PLAYERVENDOR )
-						{
-							targChar->TextMessage( tSock, 385, TALK, false ); // Take a look at my goods.
-							tSock->OpenPack( pack, true );
-						}
-						else
-						{
-							Skills->Snooping( tSock, targChar, pack );
-						}
-					}
-					else
-					{
-						Console.Warning( oldstrutil::format( "Character 0x%X has no backpack!", targChar->GetSerial() ));
-					}
-				}
-			}
-			break;
-		case 0x000C:	// Buy Window
-			if( targChar->IsShop() )
-			{
-				if( ObjInRange( mChar, targChar, 8 ))
-				{
-					targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
-					BuyShop( tSock, targChar );
-				}
-				else
-				{
-					tSock->SysMessage( 393 ); // That is too far away
-				}
-			}
-			break;
-		case 0x000D:	// Sell Window
-			if( targChar->IsShop() )
-			{
-				if( ObjInRange( mChar, targChar, 8 ))
-				{
-					targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
-					CPSellList toSend;
-					if( toSend.CanSellItems(( *mChar ), ( *targChar )))
-					{
-						tSock->Send( &toSend );
-					}
-					else
-					{
-						targChar->TextMessage( tSock, 1341, TALK, false ); // Thou doth posses nothing of interest to me.
-					}
-				}
-				else
-				{
-					tSock->SysMessage( 393 ); // That is too far away
-				}
-			}
-			break;
-		case 0x000E:	// Open Bankbox
-			if( targChar->GetNpcAiType() == AI_BANKER )
-			{
-				if( ObjInRange( mChar, targChar, 8 ))
-				{
-					tSock->OpenBank( mChar );
-				}
-				else
-				{
-					tSock->SysMessage( 393 ); // That is too far away
-				}
-			}
-			break;
-		case 0x000F:	// Tame
-			if( cwmWorldState->creatures[targChar->GetId()].IsAnimal() )
-			{
-				if( ObjInRange( mChar, targChar, 8 ))
-				{
-					// Set a tag on the player to reference the animal they're about to tame
-					TAGMAPOBJECT targCharSerial;
-					targCharSerial.m_Destroy = false;
-					targCharSerial.m_IntValue = targChar->GetSerial();
-					targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
-					targCharSerial.m_StringValue = "";
-					mChar->SetTag( "tameSerial", targCharSerial );
-
-					Skills->SkillUse( tSock, TAMING );
-				}
-				else
-				{
-					tSock->SysMessage( 393 ); // That is too far away
-				}
-			}
-			break;
-		case 0x0010:	// Command: Kill (Pet)
-		{
-			if( ObjInRange( mChar, targChar, 12 ))
-			{
-				// Set a tag on the player to reference the pet they are commanding
-				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = false;
-				targCharSerial.m_IntValue = targChar->GetSerial();
-				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
-				targCharSerial.m_StringValue = "";
-				mChar->SetTag( "petCommandObj", targCharSerial );
-
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_KILL );
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		}
-		case 0x0011:	// Command: Stop (Pet)
-			if( ObjInRange( mChar, targChar, 12 ))
-			{
-				// Set a tag on the player to reference the pet they are commanding
-				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = false;
-				targCharSerial.m_IntValue = targChar->GetSerial();
-				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
-				targCharSerial.m_StringValue = "";
-				mChar->SetTag( "petCommandObj", targCharSerial );
-
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_STOP );
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		case 0x0012:	// Command: Follow (Pet)
-			if( ObjInRange( mChar, targChar, 12 ))
-			{
-				// Set a tag on the player to reference the pet they are commanding
-				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = false;
-				targCharSerial.m_IntValue = targChar->GetSerial();
-				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
-				targCharSerial.m_StringValue = "";
-				mChar->SetTag( "petCommandObj", targCharSerial );
-
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_FOLLOW );
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		case 0x0013:	// Command: Stay (Pet)
-			if( ObjInRange( mChar, targChar, 12 ))
-			{
-				// Set a tag on the player to reference the pet they are commanding
-				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = false;
-				targCharSerial.m_IntValue = targChar->GetSerial();
-				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
-				targCharSerial.m_StringValue = "";
-				mChar->SetTag( "petCommandObj", targCharSerial );
-
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_STAY );
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		case 0x0014:	// Command: Guard (Pet)
-			if( ObjInRange( mChar, targChar, 12 ))
-			{
-				// Set a tag on the player to reference the pet they are commanding
-				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = false;
-				targCharSerial.m_IntValue = targChar->GetSerial();
-				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
-				targCharSerial.m_StringValue = "";
-				mChar->SetTag( "petCommandObj", targCharSerial );
-
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_GUARD );
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		case 0x0015:	// Add Friend (Pet/Hireling)
-			if( ObjInRange( mChar, targChar, 12 ))
-			{
-				// Set a tag on the player to reference the pet they are commanding
-				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = false;
-				targCharSerial.m_IntValue = targChar->GetSerial();
-				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
-				targCharSerial.m_StringValue = "";
-				mChar->SetTag( "petCommandObj", targCharSerial );
-
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_FRIEND );
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		case 0x0016:	// Transfer (Pet)
-			if( ObjInRange( mChar, targChar, 12 ))
-			{
-				// Set a tag on the player to reference the pet they are commanding
-				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = false;
-				targCharSerial.m_IntValue = targChar->GetSerial();
-				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
-				targCharSerial.m_StringValue = "";
-				mChar->SetTag( "petCommandObj", targCharSerial );
-
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_TRANSFER );
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		case 0x0017:	// Release (Pet)
-			if( ObjInRange( mChar, targChar, 12 ))
-			{
-				// Set a tag on the player to reference the pet they are commanding
-				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = false;
-				targCharSerial.m_IntValue = targChar->GetSerial();
-				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
-				targCharSerial.m_StringValue = "";
-				mChar->SetTag( "petCommandObj", targCharSerial );
-
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_RELEASE );
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		case 0x0018:	// Dismiss (Hireling)
-			if( ObjInRange( mChar, targChar, 12 ))
-			{
-				// Set a tag on the player to reference the pet they are commanding
-				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = false;
-				targCharSerial.m_IntValue = targChar->GetSerial();
-				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
-				targCharSerial.m_StringValue = "";
-				mChar->SetTag( "hirelingObj", targCharSerial );
-
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_DISMISS );
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		case 0x0019:	// Claim All Pets (Stablemaster)
-			if( ObjInRange( mChar, targChar, 8 ))
-			{
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_CLAIM );
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		case 0x001a:	// Stable Pet (Stablemaster)
-			if( ObjInRange( mChar, targChar, 8 ))
-			{
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_STABLE );
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		case 0x001b:	// Ask Destination (NPC Escort)
-			if( ObjInRange( mChar, targChar, 3 ))
-			{
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_QUESTDEST );
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		case 0x001c:	// Accept Escort (NPC Escort)
-			if( ObjInRange( mChar, targChar, 3 ))
-			{
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_QUESTTAKE );
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		case 0x001d:	// Abandon Escort (NPC Escort)
-			if( targChar->IsNpc() && targChar->GetQuestType() == 0xFF && targChar->GetOwnerObj() == mChar )
-			{
-				targChar->SetNpcWander( WT_FREE );		// Wander freely
-				targChar->SetFTarg( nullptr );			// Reset follow target
-				targChar->SetQuestType( 0 );			// Reset quest type
-				targChar->SetQuestDestRegion( 0 );		// Reset quest destination region
-				// Set a timer to automatically delete the NPC
-				targChar->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ));
-				targChar->SetOwner( nullptr );
-				targChar->TextMessage( nullptr, 1797, TALK, false ); // Send out the rant about being abandoned
-			}
-			break;
-		case 0x001e:	// Hire (Hireling)
-			if( targChar->IsNpc() && targChar->CanBeHired() )
-			{
-				if( ObjInRange( mChar, targChar, 3 ))
-				{
-					tSock->ClearTrigWords();
-					tSock->AddTrigWord( TW_HIRE );
-					std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-					WhichResponse( tSock, mChar, targName, targChar );
-				}
-				else
-				{
-					tSock->SysMessage( 393 ); // That is too far away
-				}
-			}
-			break;
-		case 0x001f:	// Remove Friend (Pet/Hireling)
-			if( ObjInRange( mChar, targChar, 12 ))
-			{
-				// Store reference to pet in tempObj
-				tSock->TempObj( targChar );
-
-				tSock->SendTargetCursor( 0, TARGET_REMOVEFRIEND, 0, 1852 ); // Select player to remove as friend:
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		case 0x0100:	// Bulk Order Info
-			if( ObjInRange( mChar, targChar, 8 ))
-			{
-				// Set a tag on the player to reference the NPC they're requesting bulk order from
-				TAGMAPOBJECT targCharSerialTag;
-				targCharSerialTag.m_Destroy = false;
-				targCharSerialTag.m_IntValue = targChar->GetSerial();
-				targCharSerialTag.m_ObjectType = TAGMAP_TYPE_INT;
-				targCharSerialTag.m_StringValue = "";
-				mChar->SetTempTag( "bodShopkeeperSerial", targCharSerialTag );
-
-				tSock->ClearTrigWords();
-				tSock->AddTrigWord( TW_BODINFO ); // Custom UOX3 trigger word
-				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-				WhichResponse( tSock, mChar, targName, targChar );
-			}
-			else
-			{
-				tSock->SysMessage( 393 ); // That is too far away
-			}
-			break;
-		default:
-			Console.Print( oldstrutil::format( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", tSock->GetDWord( 5 ), tSock->GetWord( 9 )));
-			break;
-	}
-
-	// Let's handle skill training
-	if(( popupEntry >= 0x006d && popupEntry <= 0x006f ) || ( popupEntry >= 0x006D && popupEntry <= 0x009c ) 
-		|| popupEntry == 0x154 || ( popupEntry >= 0x017c && popupEntry <= 0x017e ))
-	{
-		tSock->ClearTrigWords();
-		tSock->AddTrigWord( static_cast<TriggerWords>( popupEntry ));
-		std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
-		WhichResponse( tSock, mChar, targName, targChar );
-	}
-
-	return true;
+    // Only show context menus if enabled in ini
+    if( !cwmWorldState->ServerData()->ServerContextMenus() )
+        return true;
+ 
+    CChar *mChar            = tSock->CurrcharObj();
+    if( !ValidateObject( targObj ) || !ValidateObject( mChar ))
+        return true;
+ 
+    std::vector<UI16> scriptTriggers = targObj->GetScriptTriggers();
+    for( auto scriptTrig : scriptTriggers )
+    {
+        cScript *toExecute = JSMapping->GetScript( scriptTrig );
+        if( toExecute != nullptr )
+        {
+            if( toExecute->OnContextMenuSelect( tSock, targObj, popupEntry ) == 0 )
+            {
+                return true;
+            }
+        }
+    }
+ 
+    // No individual scripts handling onContextMenu returned true - let's check global script!
+    cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
+    if( toExecute != nullptr )
+    {
+        if( toExecute->OnContextMenuSelect( tSock, targObj, popupEntry ) == 0 )
+        {
+            return true;
+        }
+    }
+ 
+    if( targObj->CanBeObjType( OT_ITEM ))
+        return true;
+ 
+    CChar *targChar = static_cast<CChar *>( targObj );
+ 
+    switch( popupEntry )
+    {
+        case 0x000A:    // Open Paperdoll
+            if( cwmWorldState->creatures[targObj->GetId()].IsHuman() )
+            {
+                PaperDoll( tSock, targChar );
+            }
+            break;
+        case 0x000B:    // Open Backpack
+            if( mChar->GetCommandLevel() >= CL_CNS || cwmWorldState->creatures[targChar->GetId()].IsHuman() 
+                || targChar->GetId() == 0x0123 || targChar->GetId() == 0x0124 || targChar->GetId() == 0x0317 )  // Only Humans and Pack Animals have Packs
+            {
+                if( mChar->IsDead() )
+                {
+                    tSock->SysMessage( 392 ); // You are dead and cannot do that.
+                }
+                else if( !ObjInRange( mChar, targChar, DIST_NEARBY ))
+                {
+                    tSock->SysMessage( 382 ); // You need to get closer.
+                }
+                else
+                {
+                    CItem *pack = targChar->GetPackItem();
+                    if( ValidateObject( pack ))
+                    {
+                        if( mChar == targChar || targChar->GetOwnerObj() == mChar || mChar->GetCommandLevel() >= CL_CNS )
+                        {
+                            if( targChar->GetNpcAiType() == AI_PLAYERVENDOR )
+                            {
+                                targChar->TextMessage( tSock, 385, TALK, false ); // Take a look at my goods.
+                                tSock->OpenPack( pack, true );
+                            }
+                            else
+                            {
+                                tSock->OpenPack( pack );
+                            }
+                        }
+                        else if( targChar->GetNpcAiType() == AI_PLAYERVENDOR )
+                        {
+                            targChar->TextMessage( tSock, 385, TALK, false ); // Take a look at my goods.
+                            tSock->OpenPack( pack, true );
+                        }
+                        else
+                        {
+                            Skills->Snooping( tSock, targChar, pack );
+                        }
+                    }
+                    else
+                    {
+                        Console.Warning( oldstrutil::format( "Character 0x%X has no backpack!", targChar->GetSerial() ));
+                    }
+                }
+            }
+            break;
+        case 0x000C:    // Buy Window
+            if( targChar->IsShop() )
+            {
+                if( ObjInRange( mChar, targChar, 8 ))
+                {
+                    targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
+                    BuyShop( tSock, targChar );
+                }
+                else
+                {
+                    tSock->SysMessage( 393 ); // That is too far away
+                }
+            }
+            break;
+        case 0x000D:    // Sell Window
+            if( targChar->IsShop() )
+            {
+                if( ObjInRange( mChar, targChar, 8 ))
+                {
+                    targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
+                    CPSellList toSend;
+                    if( toSend.CanSellItems(( *mChar ), ( *targChar )))
+                    {
+                        tSock->Send( &toSend );
+                    }
+                    else
+                    {
+                        targChar->TextMessage( tSock, 1341, TALK, false ); // Thou doth posses nothing of interest to me.
+                    }
+                }
+                else
+                {
+                    tSock->SysMessage( 393 ); // That is too far away
+                }
+            }
+            break;
+        case 0x000E:    // Open Bankbox
+            if( targChar->GetNpcAiType() == AI_BANKER )
+            {
+                if( ObjInRange( mChar, targChar, 8 ))
+                {
+                    tSock->OpenBank( mChar );
+                }
+                else
+                {
+                    tSock->SysMessage( 393 ); // That is too far away
+                }
+            }
+            break;
+        case 0x000F:    // Tame
+            if( cwmWorldState->creatures[targChar->GetId()].IsAnimal() )
+            {
+                if( ObjInRange( mChar, targChar, 8 ))
+                {
+                    // Set a tag on the player to reference the animal they're about to tame
+                    TAGMAPOBJECT targCharSerial;
+                    targCharSerial.m_Destroy = false;
+                    targCharSerial.m_IntValue = targChar->GetSerial();
+                    targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+                    targCharSerial.m_StringValue = "";
+                    mChar->SetTag( "tameSerial", targCharSerial );
+ 
+                    Skills->SkillUse( tSock, TAMING );
+                }
+                else
+                {
+                    tSock->SysMessage( 393 ); // That is too far away
+                }
+            }
+            break;
+        case 0x0010:    // Command: Kill (Pet)
+        {
+            if( ObjInRange( mChar, targChar, 12 ))
+            {
+                // Set a tag on the player to reference the pet they are commanding
+                TAGMAPOBJECT targCharSerial;
+                targCharSerial.m_Destroy = false;
+                targCharSerial.m_IntValue = targChar->GetSerial();
+                targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+                targCharSerial.m_StringValue = "";
+                mChar->SetTag( "petCommandObj", targCharSerial );
+ 
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_KILL );
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        }
+        case 0x0011:    // Command: Stop (Pet)
+            if( ObjInRange( mChar, targChar, 12 ))
+            {
+                // Set a tag on the player to reference the pet they are commanding
+                TAGMAPOBJECT targCharSerial;
+                targCharSerial.m_Destroy = false;
+                targCharSerial.m_IntValue = targChar->GetSerial();
+                targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+                targCharSerial.m_StringValue = "";
+                mChar->SetTag( "petCommandObj", targCharSerial );
+ 
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_STOP );
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        case 0x0012:    // Command: Follow (Pet)
+            if( ObjInRange( mChar, targChar, 12 ))
+            {
+                // Set a tag on the player to reference the pet they are commanding
+                TAGMAPOBJECT targCharSerial;
+                targCharSerial.m_Destroy = false;
+                targCharSerial.m_IntValue = targChar->GetSerial();
+                targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+                targCharSerial.m_StringValue = "";
+                mChar->SetTag( "petCommandObj", targCharSerial );
+ 
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_FOLLOW );
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        case 0x0013:    // Command: Stay (Pet)
+            if( ObjInRange( mChar, targChar, 12 ))
+            {
+                // Set a tag on the player to reference the pet they are commanding
+                TAGMAPOBJECT targCharSerial;
+                targCharSerial.m_Destroy = false;
+                targCharSerial.m_IntValue = targChar->GetSerial();
+                targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+                targCharSerial.m_StringValue = "";
+                mChar->SetTag( "petCommandObj", targCharSerial );
+ 
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_STAY );
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        case 0x0014:    // Command: Guard (Pet)
+            if( ObjInRange( mChar, targChar, 12 ))
+            {
+                // Set a tag on the player to reference the pet they are commanding
+                TAGMAPOBJECT targCharSerial;
+                targCharSerial.m_Destroy = false;
+                targCharSerial.m_IntValue = targChar->GetSerial();
+                targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+                targCharSerial.m_StringValue = "";
+                mChar->SetTag( "petCommandObj", targCharSerial );
+ 
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_GUARD );
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        case 0x0015:    // Add Friend (Pet/Hireling)
+            if( ObjInRange( mChar, targChar, 12 ))
+            {
+                // Set a tag on the player to reference the pet they are commanding
+                TAGMAPOBJECT targCharSerial;
+                targCharSerial.m_Destroy = false;
+                targCharSerial.m_IntValue = targChar->GetSerial();
+                targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+                targCharSerial.m_StringValue = "";
+                mChar->SetTag( "petCommandObj", targCharSerial );
+ 
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_FRIEND );
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        case 0x0016:    // Transfer (Pet)
+            if( ObjInRange( mChar, targChar, 12 ))
+            {
+                // Set a tag on the player to reference the pet they are commanding
+                TAGMAPOBJECT targCharSerial;
+                targCharSerial.m_Destroy = false;
+                targCharSerial.m_IntValue = targChar->GetSerial();
+                targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+                targCharSerial.m_StringValue = "";
+                mChar->SetTag( "petCommandObj", targCharSerial );
+ 
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_TRANSFER );
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        case 0x0017:    // Release (Pet)
+            if( ObjInRange( mChar, targChar, 12 ))
+            {
+                // Set a tag on the player to reference the pet they are commanding
+                TAGMAPOBJECT targCharSerial;
+                targCharSerial.m_Destroy = false;
+                targCharSerial.m_IntValue = targChar->GetSerial();
+                targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+                targCharSerial.m_StringValue = "";
+                mChar->SetTag( "petCommandObj", targCharSerial );
+ 
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_RELEASE );
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        case 0x0018:    // Dismiss (Hireling)
+            if( ObjInRange( mChar, targChar, 12 ))
+            {
+                // Set a tag on the player to reference the pet they are commanding
+                TAGMAPOBJECT targCharSerial;
+                targCharSerial.m_Destroy = false;
+                targCharSerial.m_IntValue = targChar->GetSerial();
+                targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+                targCharSerial.m_StringValue = "";
+                mChar->SetTag( "hirelingObj", targCharSerial );
+ 
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_DISMISS );
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        case 0x0019:    // Claim All Pets (Stablemaster)
+            if( ObjInRange( mChar, targChar, 8 ))
+            {
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_CLAIM );
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        case 0x001a:    // Stable Pet (Stablemaster)
+            if( ObjInRange( mChar, targChar, 8 ))
+            {
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_STABLE );
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        case 0x001b:    // Ask Destination (NPC Escort)
+            if( ObjInRange( mChar, targChar, 3 ))
+            {
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_QUESTDEST );
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        case 0x001c:    // Accept Escort (NPC Escort)
+            if( ObjInRange( mChar, targChar, 3 ))
+            {
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_QUESTTAKE );
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        case 0x001d:    // Abandon Escort (NPC Escort)
+            if( targChar->IsNpc() && targChar->GetQuestType() == 0xFF && targChar->GetOwnerObj() == mChar )
+            {
+                targChar->SetNpcWander( WT_FREE );      // Wander freely
+                targChar->SetFTarg( nullptr );          // Reset follow target
+                targChar->SetQuestType( 0 );            // Reset quest type
+                targChar->SetQuestDestRegion( 0 );      // Reset quest destination region
+                // Set a timer to automatically delete the NPC
+                targChar->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ));
+                targChar->SetOwner( nullptr );
+                targChar->TextMessage( nullptr, 1797, TALK, false ); // Send out the rant about being abandoned
+            }
+            break;
+        case 0x001e:    // Hire (Hireling)
+            if( targChar->IsNpc() && targChar->CanBeHired() )
+            {
+                if( ObjInRange( mChar, targChar, 3 ))
+                {
+                    tSock->ClearTrigWords();
+                    tSock->AddTrigWord( TW_HIRE );
+                    std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                    WhichResponse( tSock, mChar, targName, targChar );
+                }
+                else
+                {
+                    tSock->SysMessage( 393 ); // That is too far away
+                }
+            }
+            break;
+        case 0x001f:    // Remove Friend (Pet/Hireling)
+            if( ObjInRange( mChar, targChar, 12 ))
+            {
+                // Store reference to pet in tempObj
+                tSock->TempObj( targChar );
+ 
+                tSock->SendTargetCursor( 0, TARGET_REMOVEFRIEND, 0, 1852 ); // Select player to remove as friend:
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        case 0x0100:    // Bulk Order Info
+            if( ObjInRange( mChar, targChar, 8 ))
+            {
+                // Set a tag on the player to reference the NPC they're requesting bulk order from
+                TAGMAPOBJECT targCharSerialTag;
+                targCharSerialTag.m_Destroy = false;
+                targCharSerialTag.m_IntValue = targChar->GetSerial();
+                targCharSerialTag.m_ObjectType = TAGMAP_TYPE_INT;
+                targCharSerialTag.m_StringValue = "";
+                mChar->SetTempTag( "bodShopkeeperSerial", targCharSerialTag );
+ 
+                tSock->ClearTrigWords();
+                tSock->AddTrigWord( TW_BODINFO ); // Custom UOX3 trigger word
+                std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+                WhichResponse( tSock, mChar, targName, targChar );
+            }
+            else
+            {
+                tSock->SysMessage( 393 ); // That is too far away
+            }
+            break;
+        default:
+            Console.Print( oldstrutil::format( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", tSock->GetDWord( 5 ), tSock->GetWord( 9 )));
+            break;
+    }
+ 
+    // Let's handle skill training
+    if(( popupEntry >= 0x006d && popupEntry <= 0x006f ) || ( popupEntry >= 0x006D && popupEntry <= 0x009c ) 
+        || popupEntry == 0x154 || ( popupEntry >= 0x017c && popupEntry <= 0x017e ))
+    {
+        tSock->ClearTrigWords();
+        tSock->AddTrigWord( static_cast<TriggerWords>( popupEntry ));
+        std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+        WhichResponse( tSock, mChar, targName, targChar );
+    }
+ 
+    return true;
 }
 void CPIPopupMenuSelect::Log( std::ostream &outStream, bool fullHeader )
 {
-	if( fullHeader )
-	{
-		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Popup Menu Select --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
-	}
-	outStream << "  Raw dump     :" << std::endl;
-	CPInputBuffer::Log( outStream, false );
+    if( fullHeader )
+    {
+        outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Popup Menu Select --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+    }
+    outStream << "  Raw dump     :" << std::endl;
+    CPInputBuffer::Log( outStream, false );
 }
 
 //o------------------------------------------------------------------------------------------------o
