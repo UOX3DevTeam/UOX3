@@ -138,6 +138,7 @@ bool SE_ResourceRegion(JSContext* cx, unsigned argc, JS::Value* vp);
 bool SE_Moon(JSContext* cx, unsigned argc, JS::Value* vp);
 
 bool SE_GetTownRegion(JSContext* cx, unsigned argc, JS::Value* vp);
+bool SE_GetTownRegionFromXY(JSContext* cx, unsigned argc, JS::Value* vp);
 bool SE_GetSpawnRegion(JSContext* cx, unsigned argc, JS::Value* vp);
 bool SE_GetSpawnRegionCount(JSContext* cx, unsigned argc, JS::Value* vp);
 

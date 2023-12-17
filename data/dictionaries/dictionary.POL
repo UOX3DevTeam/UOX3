@@ -3425,6 +3425,10 @@
 6278=Musisz użyć umiejętności identyfikacji smaku, aby dowiedzieć się więcej o tej miksturze.
 6279=Sukces kontroli umiejętności gwarantowany dzięki podwyższonemu poziomowi dowodzenia!
 6280=Opóźnienie rzutu czaru zignorowane z powodu podwyższonego poziomu dowodzenia!
+6300=Nie nauczyłeś się dmuchania szkła.
+6301=Tylko Wielki Mistrz Alchemik może uczyć się z tej książki.
+6302=Te informacje już znasz.
+6303=Nauczyłeś się robić przedmioty ze szkła. Będziesz musiał znaleźć górników, którzy wydobędą drobny piasek, aby móc wyprodukować te przedmioty.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?
@@ -4288,6 +4292,14 @@
 9402=[Niezidentyfikowany]
 9403=pozostały czas użycia: %i
 9404= z %d ładunkami
+9405=Kopiesz przez chwilę, ale nie udaje ci się znaleźć nic odpowiedniej jakości do dmuchania szkła.
+9406=Ostrożnie wydobądź trochę nadającego się do obróbki kamienia z żyły rudy!
+9407=Ostrożnie wykopujesz piasek odpowiedniej jakości do dmuchania szkła.
+9408=Tylko arcymistrz górnictwa może uczyć się z tej książki.
+9409=Te informacje już znasz.
+9410=Nauczyłeś się wydobywać drobny piasek. Podczas wydobywania celuj w obszary piaszczyste w poszukiwaniu drobnego piasku.
+9411=Nauczyłeś się wydobywać kamienie. Podczas wydobywania celuj w góry, aby znaleźć kamienie.
+9412=Nie ma tu piasku do wydobycia.
 // [9900 - 10000] Polecenia dotyczące drzwi i znaków
 9916=Strona
 9917=Następny
@@ -4818,6 +4830,23 @@
 13101=Mapa miasta
 13102=Mapa morza
 13103=Mapa świata
+// 13501 - 14000 Umiejętność rzemieślnicza dmuchania szkła
+13501=Menu dmuchania szkła
+13502=Różne
+13503=Broń szklana
+13504=PIASEK
+13600=pusta butelka
+13601=kolba (mała)
+13602=kolba (średnia)
+13603=kolba (zakrzywiona)
+13604=kolba (duża nr 1)
+13605=kolba (duża nr 2)
+13606=kolba (bulgocząca na niebiesko)
+13607=kolba (bulgocząca na fioletowo)
+13608=kolba (bulgocząca na czerwono)
+13609=puste fiolki
+13610=pełne fiolki
+13611=wirująca klepsydra
 // 15000 Umiejętności
 15000=Alchemia
 15001=Anatomia
@@ -4880,6 +4909,9 @@
 15058=Wytrzymałość
 15059=Zręczność
 15060=Inteligencja
+15990=Nie wolno ci tam podróżować.
+15991=Nie możesz się stąd teleportować do miejsca docelowego.
+15991=Nie możesz tutaj zaznaczyć runy.
 // 17000 - Shard Help Menu
 17000=Menu Pomoc
 17001=Ogólne pytania dotyczące rozgrywki

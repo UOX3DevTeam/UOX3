@@ -57,6 +57,110 @@ function SmartTurn( iTurn )
 	{
 		// our partner is listed! this is an implicit subtraction operation
 		iTurn.id--;
+	}// Special Turn for glass made items
+	else if (iTurn.id == 0x1810 )//spinning hourglass
+	{
+		iTurn.id = 0x1811;
+	}
+	else if (iTurn.id == 0x1811 || iTurn.id == 0x1812 || iTurn.id == 0x1813 || iTurn.id == 0x1814 || iTurn.id == 0x1815 || iTurn.id == 0x1816 || iTurn.id == 0x1817 || iTurn.id == 0x1818 || iTurn.id == 0x1819 || iTurn.id == 0x181A || iTurn.id == 0x181B || iTurn.id == 0x181C)//spinning hourglass animations
+	{
+		iTurn.id = 0x1810;
+	}
+	else if (iTurn.id == 0x185d)// Full Vials
+	{
+		iTurn.id = 0x185e;
+	}
+	else if (iTurn.id == 0x185e)// Full Vials
+	{
+		iTurn.id = 0x185d;
+	}
+	else if (iTurn.id == 0x185b)// Empty Vials
+	{
+		iTurn.id = 0x185c;
+	}
+	else if (iTurn.id == 0x185c)// Full Vials
+	{
+		iTurn.id = 0x185b;
+	}
+	else if (iTurn.id == 0x182a)// Medium Flask
+	{
+		iTurn.id = 0x182b;
+	}
+	else if (iTurn.id == 0x182b)// Medium Flask
+	{
+		iTurn.id = 0x182c;
+	}
+	else if (iTurn.id == 0x182c)// Medium Flask
+	{
+		iTurn.id = 0x182d;
+	}
+	else if (iTurn.id == 0x182d)// Medium Flask
+	{
+		iTurn.id = 0x182a;
+	}
+	else if (iTurn.id == 0x182e)// Small Flask
+	{
+		iTurn.id = 0x182f;
+	}
+	else if (iTurn.id == 0x182f)// Small Flask
+	{
+		iTurn.id = 0x1830;
+	}
+	else if (iTurn.id == 0x1830)// Small Flask
+	{
+		iTurn.id = 0x1831;
+	}
+	else if (iTurn.id == 0x1831)// Small Flask
+	{
+		iTurn.id = 0x182e;
+	}
+	else if (iTurn.id == 0x1832)// Curved Flask
+	{
+		iTurn.id = 0x1833;
+	}
+	else if (iTurn.id == 0x1833)// Curved Flask
+	{
+		iTurn.id = 0x1834;
+	}
+	else if (iTurn.id == 0x1834)// Curved Flask
+	{
+		iTurn.id = 0x1835;
+	}
+	else if (iTurn.id == 0x1835)// Curved Flask
+	{
+		iTurn.id = 0x1836;
+	}
+	else if (iTurn.id == 0x1836)// Curved Flask
+	{
+		iTurn.id = 0x1837;
+	}
+	else if (iTurn.id == 0x1837)// Curved Flask
+	{
+		iTurn.id = 0x1832;
+	}
+	else if (iTurn.id == 0x1838)// Large Flask
+	{
+		iTurn.id = 0x1839;
+	}
+	else if (iTurn.id == 0x1839)// Large Flask
+	{
+		iTurn.id = 0x183a;
+	}
+	else if (iTurn.id == 0x1838)// Large Flask
+	{
+		iTurn.id = 0x183b;
+	}
+	else if (iTurn.id == 0x183b)// Large Flask 2
+	{
+		iTurn.id = 0x183c;
+	}
+	else if (iTurn.id == 0x183c)// Large Flask 2
+	{
+		iTurn.id = 0x183d;
+	}
+	else if (iTurn.id == 0x183d)// Large Flask 2
+	{
+		iTurn.id = 0x183b;
 	}
 }
 

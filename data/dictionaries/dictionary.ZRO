@@ -3252,6 +3252,45 @@
 5150=a speckled scorpion
 5151=a chaos dragoon
 5152=a chaos dragoon elite
+5153=the Gypsy Maiden
+5154=the Gypsy Animal Trainer
+5155=the Gypsy Banker
+5156=the Gypsy Fortune Teller
+5157=the Vagabond
+5158=the Iron Worker
+// [5500-5600] Holiday Msgs
+5500=Where would you like to place this decoration?
+5501=The decoration must be placed next to a wall.
+5502=That location is not in your house.
+5503=The extreme pain in your teeth subsides.
+5504=You feel as if you could eat as much as you wanted!
+5506=Do you wish to re - deed this decoration ?
+5507=Error Report to GM
+5508=You have just been hit by a snowball!
+5509=You throw the snowball and hit the target!
+5510=You can only throw a snowball at something that can throw one back.
+5511=The snow is not ready to be packed yet.  Keep trying.
+5512=You carefully pack the snow into a ball...
+// [5700-5750] Treasure Map and Map Msgs
+5700=It appears to be blank.
+5701=This treasure hunt has already been completed.
+5702=The treasure is marked by the red pin. Grab a shovel and go dig it up!
+5703=You decoded the map!
+5704=tattered treasure map
+5705=You cannot decode this map yet!
+5706=You are already digging treasure.
+5707=Where do you wish to dig?
+5708=You stop digging because something is directly on top of the treasure chest
+5709=You did not decode this map and have no clue where to look for the treasure.
+5710=The treasure for this map has already been found.
+5711=You dig and dig, but do not find any treasure
+5712=You dig and dig, but no treasure seems to be here
+5713=The chest refuses to be filled with any more treasure.
+5714=plainly drawn treasure map
+5715=expertly drawn treasure map
+5716=adeptly drawn treasure map
+5717=cleverly drawn treasure map
+5718=deviously drawn treasure map
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.
@@ -3381,6 +3420,10 @@
 6278=You have to use your taste identification skill to know more about this potion.
 6279=Skill check success guaranteed due to elevated command level!
 6280=Spellcast delay ignored due to elevated command level!
+6300=You havent learned glassblowing.
+6301=Only a Grandmaster Alchemist can learn from this book.
+6302=You have already learned this information.
+6303=You have learned to make items from glass.  You will need to find miners to mine fine sand for you to make these items.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -4244,6 +4287,14 @@
 9402=[Unidentified]
 9403=uses remaining: %i
 9404= with %d charges
+9405=You dig for a while but fail to find any of sufficient quality for glassblowing.
+9406=You carefully extract some workable stone from the ore vein!
+9407=You carefully dig up sand of sufficient quality for glassblowing.
+9408=Only a Grandmaster Miner can learn from this book.
+9409=You have already learned this information.
+9410=You have learned how to mine fine sand. Target sand areas when mining to look for fine sand.
+9411=You have learned to mine for stones. Target mountains when mining to find stones.
+9412=Aquí no hay arena para extraer.
 // [9900 - 10000] Door and Sign Commands
 9916=Page
 9917=Next
@@ -4774,6 +4825,23 @@
 13101=City Map
 13102=Sea Chart
 13103=World Map
+// 13501 - 14000 Glassblowing Crafting Skill
+13501=Glassblowing Menu
+13502=Miscellaneous
+13503=Glass Weapons
+13504=SAND
+13600=empty bottle
+13601=flask (small)
+13602=flask (medium)
+13603=flask (curved)
+13604=flask (large #1)
+13605=flask (large #2)
+13606=flask (bubbling blue)
+13607=flask (bubbling purple)
+13608=flask (bubbling red)
+13609=empty vials
+13610=full vials
+13611=spinning hourglass
 // 15000 Skills
 15000=Alchemy
 15001=Anatomy
@@ -4836,6 +4904,9 @@
 15058=Strength
 15059=Dexterity
 15060=Intelligence
+15990=You are not allowed to travel there.
+15991=You cannot teleport from here to the destination.
+15991=You can not mark a rune here.
 // 17000 - Shard Help Menu
 17000=Help Menu
 17001=General Gameplay Questions

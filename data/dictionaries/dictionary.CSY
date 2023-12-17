@@ -3425,6 +3425,10 @@
 6278=Chceš-li se o tomto lektvaru dozvědět více, musíš použít dovednost rozpoznávání chutí.
 6279=Úspěch kontroly dovednosti zaručen kvůli zvýšené úrovni příkazu!
 6280=Zpoždění seslání kouzla ignorováno kvůli zvýšené úrovni příkazu!
+6300=Nenaučil jste se foukání skla.
+6301=Z této knihy se může učit pouze velmistr alchymista.
+6302=Tyto informace jste se již dozvěděli.
+6303=Naučili jste se vyrábět předměty ze skla. K výrobě těchto předmětů budete muset najít horníky, kteří budou těžit jemný písek.
 // [7000-7499] AI Scripts
 7000=Jsi zločinec a nemáš přístup ke své bankovní schránce.
 7001=Který předmět si přeješ uložit do své bankovní schránky?
@@ -4288,6 +4292,14 @@
 9402=[Neidentifikováno]
 9403=Zbývající použití: %i
 9404= s %d náloží
+9405=Chvíli kopete, ale nenajdete nic v dostatečné kvalitě pro foukání skla.
+9406=Opatrně vytěžíte z rudné žíly nějaký zpracovatelný kámen!
+9407=Opatrně vykopáváte písek dostatečné kvality pro foukání skla.
+9408=Z této knihy se může učit pouze velmistr horník.
+9409=Tyto informace jste se již dozvěděli.
+9410=Naučili jste se těžit jemný písek. Při těžbě se zaměřte na pískové oblasti a hledejte jemný písek.
+9411=Naučil jste se těžit kameny. Zaměřte se na hory při těžbě, abyste našli kameny.
+9412=Není zde žádný písek k těžbě.
 // [9900 - 10000] Příkazy pro dveře a značky
 9916=Strana
 9917=Další
@@ -4818,6 +4830,23 @@
 13101=Mapa města
 13102=Mořská mapa
 13103=Mapa světa
+// 13501 - 14000 Dovednost foukání skla
+13501=Nabídka foukání skla
+13502=Různé
+13503=Skleněné zbraně
+13504 = PÍSEK
+13600=prázdná láhev
+13601 = baňka (malá)
+13602 = baňka (střední)
+13603 = baňka (zakřivená)
+13604 = baňka (velká #1)
+13605 = baňka (velká #2)
+13606 = baňka (bublá modře)
+13607 = baňka (bublající fialová)
+13608 = baňka (bublá červeně)
+13609=prázdné lahvičky
+13610=plné lahvičky
+13611=točící se přesýpací hodiny
 // 15000 Dovednosti
 15000=Alchymie
 15001=Anatomie
@@ -4880,6 +4909,9 @@
 15058=Síla
 15059=Hbitost
 15060=Inteligence
+15990=Nemáte povoleno tam cestovat.
+15991=Nemůžete se odtud teleportovat do cíle.
+15991=Nemůžete zde označit runu.
 // 17000 - Nabídka nápovědy pro střepy
 17000=Nabídka nápovědy
 17001=Obecné otázky ke hře

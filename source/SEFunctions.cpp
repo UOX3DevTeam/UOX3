@@ -3599,6 +3599,38 @@ bool SE_GetTownRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|    Function    -    SE_GetTownRegionFromXY()
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Returns region object associated with a specific location 
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_GetTownRegionFromXY( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 4 )
+	{
+		ScriptError( cx, "GetTownRegion: Invalid number of parameters (4)" );
+		return JS_FALSE;
+	}
+
+	SI16 locX = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+	SI16 locY = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+	UI08 locWorldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI16 locInstanceId = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+
+	auto townReg = CalcRegionFromXY( locX, locY, locWorldNumber, locInstanceId, nullptr );
+	if( townReg != nullptr )
+	{
+		JSObject *myObj = JSEngine->AcquireObject( IUE_REGION, townReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+	{
+		*rval = JSVAL_NULL;
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_GetSpawnRegion()
 //|	Date		-	June 22, 2020
 //o------------------------------------------------------------------------------------------------o

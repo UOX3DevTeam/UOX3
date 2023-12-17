@@ -3425,6 +3425,10 @@
 6278=Per saperne di più su questa pozione devi usare l'abilità di identificazione dei gusti.
 6279=Il successo del controllo dell'abilità è garantito grazie al livello di comando elevato!
 6280=Tardo di incantesimo ignorato a causa dell'elevato livello di comando!
+6300=Non hai imparato a soffiare il vetro.
+6301=Solo un Grande Maestro Alchimista può imparare da questo libro.
+6302=Hai già appreso questa informazione.
+6303=Hai imparato a creare oggetti in vetro. Dovrai trovare minatori che estraggano sabbia fine per poter realizzare questi oggetti.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
@@ -4288,6 +4292,14 @@
 9402=[Non identificato]
 9403=Uso rimanente: %i
 9404= con %d cariche
+9405=Scavi per un po' ma non riesci a trovare nulla di qualità sufficiente per la soffiatura del vetro.
+9406=Estrai con attenzione qualche pietra lavorabile dalla vena mineraria!
+9407=Scavi con attenzione sabbia di qualità sufficiente per la soffiatura del vetro.
+9408=Solo un Gran Maestro Minatore può imparare da questo libro.
+9409=Hai già appreso questa informazione.
+9410=Hai imparato come estrarre la sabbia fine. Punta alle aree sabbiose durante l'estrazione per cercare sabbia fine.
+9411=Hai imparato a estrarre le pietre. Prendi di mira le montagne quando estrai per trovare pietre.
+9412=Qui non c'è sabbia da estrarre.
 // [9900 - 10000] Comandi per porte e insegne
 9916=Pagina
 9917=Prossimo
@@ -4818,6 +4830,23 @@
 13101=Mappa della città
 13102=Carta del mare
 13103=Mappa del mondo
+// 13501 - 14000 Abilità nella lavorazione del vetro soffiato
+13501=Menu Soffiatura del vetro
+13502=Varie
+13503=Armi di vetro
+13504=SABBIA
+13600=bottiglia vuota
+13601=fiaschetta (piccola)
+13602=fiasco (medio)
+13603=pallone (curvo)
+13604=fiaschetta (grande #1)
+13605=fiaschetta (grande #2)
+13606=fiasco (blu gorgogliante)
+13607=fiaschetta (viola gorgogliante)
+13608=fiasco (rosso gorgogliante)
+13609=fialette vuote
+13610=flaconi pieni
+13611=clessidra rotante
 // 15000 Abilità
 15000=Alchimia
 15001=Anatomia
@@ -4880,6 +4909,9 @@
 15058=Forza
 15059=Destrezza
 15060=Intelligenza
+15990=Non ti è consentito viaggiare lì.
+15991=Non puoi teletrasportarti da qui alla destinazione.
+15991=Non puoi contrassegnare una runa qui.
 // 17000 - Shard Help Menu
 17000=Menu Aiuto
 17001=Domande generali sul gioco

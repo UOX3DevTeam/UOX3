@@ -3425,6 +3425,10 @@
 6278=É preciso usar a sua capacidade de identificação gustativa para saber mais sobre esta poção.
 6279=Exame de verificação do sucesso garantido devido ao elevado nível de comando!
 6280=Atraso da poção ignorado devido a um nível de comando elevado!
+6300=Você não aprendeu a soprar vidro.
+6301=Apenas um Grão-Mestre Alquimista pode aprender com este livro.
+6302=Você já aprendeu esta informação.
+6303=Você aprendeu a fazer itens de vidro. Você precisará encontrar mineiros para extrair areia fina para fazer esses itens.
 // [7000-7499] AI Scripts
 7000=Tu és um criminoso e não podes aceder à tua caixa bancária.
 7001=Que artigo deseja depositar na sua caixa bancária?
@@ -4288,6 +4292,14 @@
 9402=[Não identificado]
 9403=utilizações restantes: %i
 9404= com taxas %d
+9405=Você escava por um tempo, mas não consegue encontrar nada de qualidade suficiente para soprar vidro.
+9406=Você extrai cuidadosamente algumas pedras utilizáveis do veio de minério!
+9407=Você escava cuidadosamente areia de qualidade suficiente para soprar vidro.
+9408=Apenas um Grande Mestre Mineiro pode aprender com este livro.
+9409=Você já aprendeu esta informação.
+9410=Você aprendeu como extrair areia fina. Procure áreas de areia durante a mineração para procurar areia fina.
+9411=Você aprendeu a minerar pedras. Mire nas montanhas ao minerar para encontrar pedras.
+9412=Não há areia aqui para minerar.
 // [9900 - 10000] Comandos de Porta e de Sinal
 9916=Página
 9917=Próximo
@@ -4818,6 +4830,23 @@
 13101=Mapa da Cidade
 13102=Carta Marítima
 13103=Mapa Mundial
+// 13501 - 14000 Habilidade de fabricação de sopro de vidro
+13501=Menu Soprar Vidro
+13502=Diversos
+13503=Armas de Vidro
+13504=AREIA
+13600=garrafa vazia
+13601=frasco (pequeno)
+13602=frasco (médio)
+13603=frasco (curvo)
+13604=frasco (grande #1)
+13605=frasco (grande #2)
+13606=frasco (azul borbulhante)
+13607=frasco (roxo borbulhante)
+13608=frasco (vermelho borbulhante)
+13609=frascos vazios
+13610=frascos cheios
+13611=ampulheta girando
 // 15000 Competências
 15000=Alchemia
 15001=Anatomia
@@ -4880,6 +4909,9 @@
 15058=Força
 15059=Dexteridade
 15060=Intelligence
+15990=Você não tem permissão para viajar para lá.
+15991=Você não pode se teletransportar daqui para o destino.
+15991=Você não pode marcar uma runa aqui.
 // 17000 - Shard Help Menu
 17000=Menu Ajuda
 17001=Questões gerais de jogabilidade

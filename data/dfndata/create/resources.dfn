@@ -154,6 +154,11 @@ ID=0x09b9
 ID=0x09ba
 }
 
+[RESOURCE SAND]
+{
+ID=0x423A
+}
+
 [RESOURCE MAPS]
 {
 ID=0x14eb

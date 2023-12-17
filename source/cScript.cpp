@@ -134,9 +134,10 @@ static JSFunctionSpec my_functions[] =
   JS_FN("ResourceRegion",            SE_ResourceRegion,            3, JSPROP_ENUMERATE),
   JS_FN("Moon",                      SE_Moon,                      2, JSPROP_ENUMERATE),
 
-  JS_FN("GetTownRegion",             SE_GetTownRegion,             1, JSPROP_ENUMERATE),
-  JS_FN("GetSpawnRegion",            SE_GetSpawnRegion,            4, JSPROP_ENUMERATE),
-  JS_FN("GetSpawnRegionCount",       SE_GetSpawnRegionCount,       0, JSPROP_ENUMERATE),
+	{ "GetTownRegion",				SE_GetTownRegion,			1, 0, 0 },
+  { "GetSpawnRegionFromXY", SE_GetTownRegionFromXY, 4, 0, 0 },
+	{ "GetSpawnRegion",				SE_GetSpawnRegion,			4, 0, 0 },
+	{ "GetSpawnRegionCount",		SE_GetSpawnRegionCount,		0, 0, 0 },
 
   JS_FN("RegisterCommand",           SE_RegisterCommand,           3, JSPROP_ENUMERATE),
   JS_FN("DisableCommand",            SE_DisableCommand,            1, JSPROP_ENUMERATE),

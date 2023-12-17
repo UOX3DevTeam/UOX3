@@ -3425,6 +3425,10 @@
 6278=Um mehr über diesen Trank zu erfahren, musst du deine Fähigkeit zur Geschmackserkennung einsetzen.
 6279=Erfolgsgarantie für Fertigkeitsprüfung aufgrund erhöhter Befehlsstufe!
 6280=Zauberverzögerung wegen erhöhter Befehlsstufe ignoriert!
+6300=Sie haben das Glasblasen nicht gelernt.
+6301=Nur ein Großmeister-Alchemist kann aus diesem Buch lernen.
+6302=Sie haben diese Informationen bereits erfahren.
+6303=Du hast gelernt, Gegenstände aus Glas herzustellen. Sie müssen Bergleute finden, die feinen Sand abbauen, damit Sie diese Gegenstände herstellen können.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?
@@ -4288,6 +4292,14 @@
 9402=[Unbekannt]
 9403=Verbleibende Verwendungen: %i
 9404= mit %d Gebühren
+9405=Sie stöbern eine Weile, finden aber nichts von ausreichender Qualität zum Glasblasen.
+9406=Du baust vorsichtig etwas bearbeitbares Gestein aus der Erzader!
+9407=Sie graben sorgfältig Sand von ausreichender Qualität zum Glasblasen aus.
+9408=Nur ein Großmeister-Bergmann kann aus diesem Buch lernen.
+9409=Sie haben diese Informationen bereits erfahren.
+9410=Du hast gelernt, wie man feinen Sand abbaut. Zielen Sie beim Abbau auf Sandflächen ab, um nach Feinsand zu suchen.
+9411=Du hast gelernt, Steine abzubauen. Zielen Sie beim Bergbau auf Berge, um Steine zu finden.
+9412=Hier gibt es keinen Sand zum Abbauen.
 // [9900 - 10000] Befehle für Türen und Schilder
 9916=Seite
 9917=Weiter
@@ -4818,6 +4830,23 @@
 13101=Stadtplan
 13102=Seekarte
 13103=Weltkarte
+// 13501 - 14000 Glasbläserei-Handwerksfertigkeit
+13501=Glasbläserei-Menü
+13502=Verschiedenes
+13503=Glaswaffen
+13504=SAND
+13600=leere Flasche
+13601=Kolben (klein)
+13602=Kolben (mittel)
+13603=Kolben (gebogen)
+13604=Kolben (groß #1)
+13605=Kolben (groß #2)
+13606=Kolben (sprudelndes Blau)
+13607=Kolben (sprudelndes Lila)
+13608=Kolben (brodelndes Rot)
+13609=leere Fläschchen
+13610=volle Fläschchen
+13611=drehende Sanduhr
 // 15000 Fertigkeiten
 15000=Alchemie
 15001=Anatomie
@@ -4880,6 +4909,9 @@
 15058=Stärke
 15059=Geschicklichkeit
 15060=Intelligenz
+15990=Sie dürfen nicht dorthin reisen.
+15991=Sie können sich nicht von hier zum Ziel teleportieren.
+15991=Sie können hier keine Rune markieren.
 // 17000 - Shard Help Menu
 17000=Menü "Hilfe
 17001=Allgemeine Fragen zum Gameplay

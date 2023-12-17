@@ -3425,6 +3425,10 @@
 6278=Tienes que usar tu habilidad de identificación de sabores para saber más sobre esta poción.
 6279=¡Exito de la comprobación de habilidad garantizado debido al elevado nivel de mando!
 6280=¡Retraso de lanzamiento ignorado debido al elevado nivel de mando!
+6300=No has aprendido a soplar vidrio.
+6301=Sólo un Gran Maestro Alquimista puede aprender de este libro.
+6302=Ya has aprendido esta información.
+6303=Has aprendido a fabricar objetos de vidrio. Necesitará encontrar mineros que extraigan arena fina para poder fabricar estos artículos.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
@@ -4288,6 +4292,14 @@
 9402=[Sin identificar]
 9403=Cargas restantes: %i
 9404= con %d cargas
+9405=Excavas por un tiempo pero no encuentras nada de calidad suficiente para soplado de vidrio.
+9406=¡Extraes con cuidado alguna piedra trabajable de la veta de mineral!
+9407=Excavas con cuidado arena de calidad suficiente para soplar vidrio.
+9408=Sólo un Gran Maestro Minero puede aprender de este libro.
+9409=Ya has aprendido esta información.
+9410=Has aprendido a extraer arena fina. Apunte a las áreas de arena cuando extraiga para buscar arena fina.
+9411=Has aprendido a extraer piedras. Apunte a las montañas cuando extraiga piedras.
+9412=Aquí no hay arena para extraer.
 // [9900 - 10000] Comandos de puertas y señales
 9916=Página
 9917=Siguiente
@@ -4818,6 +4830,23 @@
 13101=Mapa de la ciudad
 13102=Carta marítima
 13103=Mapa mundial
+// 13501 - 14000 Habilidad de artesanía de soplado de vidrio
+13501=Menú de soplado de vidrio
+13502=Varios
+13503=Armas de cristal
+13504=ARENA
+13600=botella vacía
+13601=frasco (pequeño)
+13602=matraz (mediano)
+13603=matraz (curvo)
+13604=matraz (grande #1)
+13605=matraz (grande #2)
+13606=frasco (azul burbujeante)
+13607=frasco (morado burbujeante)
+13608=frasco (rojo burbujeante)
+13609=frascos vacíos
+13610=frascos llenos
+13611=reloj de arena giratorio
 // 15000 Habilidades
 15000=Alquimia
 15001=Anatomía
@@ -4880,6 +4909,9 @@
 15058=Fuerza
 15059=Destreza
 15060=Inteligencia
+15990=No tienes permitido viajar allí.
+15991=No puedes teletransportarte desde aquí al destino.
+15991=No puedes marcar una runa aquí.
 // 17000 - Shard Help Menu
 17000=Menú de ayuda
 17001=Preguntas generales sobre el juego
