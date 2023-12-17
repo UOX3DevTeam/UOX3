@@ -1,3 +1,6 @@
+16/12/2023 - Dragon Slayer
+	Added Crystal Ball of Pet Summoning. (js ballofpetsummoning)
+
 10/12/2023 - Dragon Slayer
 	Implemented Check_travel_restriction, Check_teleport, and Check_regeants in magic/helpers (js).
 	Added GetTownRegionXY (Thanks Xuri).

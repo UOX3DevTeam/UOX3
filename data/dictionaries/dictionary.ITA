@@ -5238,6 +5238,19 @@
 18771=Un set completo di armatura da ranger.
 // [18800-19000] Proprietà AOS
 18800=%i% Bonus di guarigione della benda
+// [19050-19065] Sfera di evocazione di animali domestici di cristallo
+19050=Prendi di mira il tuo animale domestico che desideri collegare a questa Sfera di cristallo dell'evocazione degli animali domestici.
+19051=Puoi collegare solo i tuoi animali domestici a una Sfera di cristallo di evocazione di animali domestici.
+19052=La Sfera di Cristallo si oscura. È necessario caricarlo prima di poterlo riutilizzare.
+19053=Il tuo animale domestico è ora collegato a questa Sfera di cristallo dell'evocazione degli animali domestici.
+19054=Solo gli animali domestici possono essere collegati a questa Sfera di cristallo dell'evocazione degli animali domestici.
+19055=La Sfera di Cristallo si oscura. È necessario caricarlo prima di poterlo riutilizzare.
+19056=La Sfera di cristallo si riempie di una nebbia gialla. Perché dovresti evocare il tuo animale domestico mentre lo cavalchi?
+19057=La Sfera di cristallo si riempie di una nebbia blu. Il tuo animale domestico non risponde alla convocazione.
+19058=La Sfera di cristallo si riempie di una nebbia grigia. Non sei il proprietario dell'animale che stai tentando di evocare.
+19059=Devi attendere qualche secondo prima di poter evocare il tuo animale domestico.
+19060=La sfera di cristallo si riempie di una nebbia verde. Il tuo animale domestico è stato evocato.
+19061=animale domestico collegato:
 }
 // Clothing Bless Deed
 19001=Selezionare il capo di abbigliamento che si desidera benedire.

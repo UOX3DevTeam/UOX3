@@ -5243,5 +5243,18 @@
 19002=La prenda ha sido bendecida.
 19003=Sólo puedes bendecir ropa con esta acción.
 19004=Los objetos deben estar equipados o en tu mochila para poder bendecirlos.
+// [19050-19065] Bola de invocación de mascotas de cristal
+19050=Apunta a tu mascota que deseas vincular a esta Bola de Cristal de Invocación de Mascotas.
+19051=Sólo puedes vincular tus propias mascotas a una Bola de Cristal de Invocación de Mascotas.
+19052=La Bola de Cristal se oscurece. Debe cargarse antes de poder volver a utilizarlo.
+19053=Tu mascota ahora está vinculada a esta Bola de Cristal de Invocación de Mascotas.
+19054=Sólo se pueden vincular mascotas a esta Bola de Cristal de Invocación de Mascotas.
+19055=La Bola de Cristal se oscurece. Debe cargarse antes de poder volver a utilizarlo.
+19056=La Bola de Cristal se llena de una niebla amarilla. ¿Por qué llamarías a tu mascota mientras lo montas?
+19057=La Bola de Cristal se llena de una niebla azul. Su mascota no responde a la citación.
+19058=La Bola de Cristal se llena de una niebla gris. No eres el dueño de la mascota que intentas invocar.
+19059=Debes esperar unos segundos antes de poder convocar a tu mascota.
+19060=La Bola de Cristal se llena de una niebla verde. Tu mascota ha sido convocada.
+19061=mascota vinculada:
 }
 EOF

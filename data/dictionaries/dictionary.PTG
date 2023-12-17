@@ -5243,5 +5243,18 @@
 19002=A peça foi abençoada.
 19003=Só podes abençoar roupa com esta ação!
 19004=Os objectos têm de estar equipados ou na mochila para serem abençoados.
+// [19050-19065] Bola de Invocação de Animal de Estimação de Cristal
+19050=Escolha o seu animal de estimação que você deseja vincular a esta Bola de Cristal de Invocação de Animais de Estimação.
+19051=Você só pode vincular seus próprios animais de estimação a uma Bola de Cristal de Invocação de Animais de Estimação.
+19052=A Bola de Cristal escurece. Ele deve ser carregado antes de poder ser usado novamente.
+19053=Seu animal de estimação agora está vinculado a esta Bola de Cristal de Invocação de Animal de Estimação.
+19054=Apenas animais de estimação podem ser vinculados a esta Bola de Cristal de Invocação de Animais de Estimação.
+19055=A Bola de Cristal escurece. Ele deve ser carregado antes de poder ser usado novamente.
+19056=A Bola de Cristal se enche com uma névoa amarela. Por que você invocaria seu animal de estimação enquanto o montava?
+19057=A Bola de Cristal se enche de uma névoa azul. Seu animal de estimação não está respondendo à convocação.
+19058=A Bola de Cristal se enche de uma névoa cinza. Você não é o dono do animal de estimação que está tentando invocar.
+19059=Você deve esperar alguns segundos antes de invocar seu animal de estimação.
+19060=A Bola de Cristal se enche de uma névoa verde. Seu animal de estimação foi convocado.
+19061=animal de estimação vinculado:
 }
 EOF

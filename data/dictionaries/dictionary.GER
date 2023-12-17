@@ -5243,5 +5243,18 @@
 19002=Das Kleidungsstück wurde gesegnet.
 19003=Du kannst mit dieser Tat nur Kleidung segnen!
 19004=Gegenstände müssen ausgerüstet sein oder sich in deinem Rucksack befinden, um sie zu segnen.
+// [19050-19065] Kristall-Beschwörungsball für Haustiere
+19050=Zielen Sie auf Ihr Haustier, das Sie mit dieser Kristallkugel der Haustierbeschwörung verknüpfen möchten.
+19051=Du kannst nur deine eigenen Haustiere mit einer Kristallkugel der Haustierbeschwörung verknüpfen.
+19052=Die Kristallkugel verdunkelt sich. Es muss aufgeladen werden, bevor es wieder verwendet werden kann.
+19053=Dein Haustier ist jetzt mit dieser Kristallkugel der Haustierbeschwörung verknüpft.
+19054=Nur Haustiere können mit dieser Kristallkugel der Haustierbeschwörung verknüpft werden.
+19055=Die Kristallkugel verdunkelt sich. Es muss aufgeladen werden, bevor es wieder verwendet werden kann.
+19056=Die Kristallkugel füllt sich mit gelbem Nebel. Warum sollten Sie Ihr Haustier herbeirufen, während Sie darauf reiten?
+19057=Die Kristallkugel füllt sich mit einem blauen Nebel. Ihr Haustier reagiert nicht auf die Aufforderung.
+19058=Die Kristallkugel füllt sich mit einem grauen Nebel. Sie sind nicht der Besitzer des Haustiers, das Sie herbeirufen möchten.
+19059=Du musst ein paar Sekunden warten, bevor du dein Haustier herbeirufen kannst.
+19060=Die Kristallkugel füllt sich mit einem grünen Nebel. Ihr Haustier wurde gerufen.
+19061=verknüpftes Haustier:
 }
 EOF
