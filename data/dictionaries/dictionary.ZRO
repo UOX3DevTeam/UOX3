@@ -5251,5 +5251,8 @@
 19059=You must wait a few seconds before you can summon your pet.
 19060=The Crystal Ball fills with a green mist. Your pet has been summoned.
 19061=linked pet:
+19062=This crystal ball is no longer linked to a pet.
+19063=The new name of the pet is: %s
+19064=That does not seem to be a valid pet.
 }
 EOF

@@ -5256,5 +5256,8 @@
 19059=Você deve esperar alguns segundos antes de invocar seu animal de estimação.
 19060=A Bola de Cristal se enche de uma névoa verde. Seu animal de estimação foi convocado.
 19061=animal de estimação vinculado:
+19062=Esta bola de cristal não está mais vinculada a um animal de estimação.
+19063=O novo nome do animal de estimação é: %s
+19064=Esse não parece ser um animal de estimação válido.
 }
 EOF

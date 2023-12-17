@@ -5256,5 +5256,8 @@
 19059=Musíte počkat několik sekund, než budete moci přivolat svého mazlíčka.
 19060=Křišťálová koule se plní zelenou mlhou. Váš mazlíček byl přivolán.
 19061=připojený mazlíček:
+19062=Tato křišťálová koule již není spojena s domácím mazlíčkem.
+19063=Nové jméno mazlíčka je: %s
+19064=To se nezdá být platným mazlíčkem.
 }
 EOF

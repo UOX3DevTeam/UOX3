@@ -220,4 +220,132 @@ function onTimer( iUsed, timerID )
 	}
 }
 
+function onContextMenuRequest( socket, targObj )
+{
+	var Pet = CalcCharFromSer(parseInt( targObj.GetTag( "petSerial" )));
+	// handle your own packet with context menu here
+	var pUser = socket.currentChar;
+	var offset = 12;
+	if( ValidateObject( Pet ))
+	{
+		var numEntries = 3;
+	}
+	else
+	{
+		var numEntries = 1;
+	}
+
+	// Prepare packet
+	var toSend = new Packet();
+	var packetLen = ( 12 + ( numEntries * 8 ));
+	toSend.ReserveSize( packetLen );
+	toSend.WriteByte( 0, 0xBF );
+	toSend.WriteShort( 1, packetLen );
+	toSend.WriteShort( 3, 0x14); // subCmd
+	toSend.WriteShort( 5, 0x0001); // 0x0001 for 2D client, 0x0002 for KR (maybe this needs to be 0x0002?)
+	toSend.WriteLong( 7, targObj.serial );
+	toSend.WriteByte( 11, numEntries ); // Number of entries
+
+	if( ValidateObject( Pet ))
+	{
+		toSend.WriteShort( offset, 0x000a );    // Unique ID
+		toSend.WriteShort( offset += 2, 6181 ); // summon pet
+		toSend.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+		toSend.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+
+		offset += 2; // for each additional entry
+
+		toSend.WriteShort( offset, 0x000b );    // Unique ID
+		toSend.WriteShort( offset += 2, 6183 ); // update pet name
+		toSend.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+		toSend.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+
+		offset += 2; // for each additional entry
+
+		toSend.WriteShort( offset, 0x000c );    // Unique ID
+		toSend.WriteShort( offset += 2, 6182 ); //unlink
+		toSend.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+		toSend.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+	}
+	else
+	{
+
+		toSend.WriteShort( offset, 0x000a );    // Unique ID
+		toSend.WriteShort( offset += 2, 6180 ); // summon pet
+		toSend.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+		toSend.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+	}
+
+	//Send packet
+	socket.Send( toSend );
+	toSend.Free();
+
+	return false;
+}
+
+function onContextMenuSelect( socket, targObj, popupEntry )
+{
+	var Pet = CalcCharFromSer( parseInt( targObj.GetTag( "petSerial" )));
+	var pUser = socket.currentChar;
+	// Handle checking popupEntry here, to make sure it matches one of the context menu options sent in custom packet in onContextMenuRequest
+	switch( popupEntry ) 
+	{
+		case 10:
+			if( ValidateObject( Pet ))
+			{
+				SummonPet( pUser, targObj );
+			}
+			else
+			{
+				socket.tempObj = targObj;
+				socket.CustomTarget( 0, GetDictionaryEntry( 19050, socket.language ));// Target your pet that you wish to link to this Crystal Ball of Pet Summoning.
+			}
+			break;
+		case 11:
+			pUser.SpeechInput( 1, Pet );
+			targObj.Refresh();
+			break;
+		case 12:
+			socket.SysMessage( GetDictionaryEntry( 19062, socket.language )); // This crystal ball is no longer linked to a pet.
+			targObj.SetTag( "petSerial", null );
+			targObj.SetTag( "linked", null );
+			break;
+	}
+	return false;
+}
+
+function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
+{
+	var pSocket = pUser.socket;
+	if( pSpeech == null || pSpeech == " " )
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 9270, pSocket.language )); // That name is too short, or no name was entered.
+		return;
+	}
+
+	switch( pSpeechID )
+	{
+		case 1: // Rename Pet
+			if( pSpeech.length > 50 )
+			{
+				pSocket.SysMessage( GetDictionaryEntry( 9271, pSocket.language )); // That name is too long. Maximum 50 chars.
+				return;
+			}
+
+			if( ValidateObject( targObj ))
+			{
+				targObj.name = pSpeech;
+				var tempMsg = GetDictionaryEntry( 19063, socket.language ); // The new name of the Pet is: %s
+				pSocket.SysMessage( tempMsg.replace( /%s/gi, targObj.name ));
+			}
+			else
+			{
+				pSocket.SysMessage( GetDictionaryEntry( 19064, socket.language )); // That does not seem to be a valid pet.
+			}
+			break;
+		default:
+			break;
+	}
+}
+
 function _restorecontext_() { }
