@@ -114,8 +114,8 @@ enum ScriptEvent
 	seOnDyeTarget,
 	seOnQuestGump,
 	seOnHelpButton,
-    seOnContextMenuRequest,
-    seOnContextMenuSelect,
+	seOnContextMenuRequest,
+	seOnContextMenuSelect,
 	seOnWarModeToggle,
 	seOnSpecialMove,
 	seOnFacetChange

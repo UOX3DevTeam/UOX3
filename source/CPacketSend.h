@@ -1536,14 +1536,14 @@ public:
 class CPPopupMenu : public CPUOXBuffer
 {
 protected:
-    virtual void    InternalReset( void ) override;
+	virtual void	InternalReset( void ) override;
 public:
-    CPPopupMenu();
-    CPPopupMenu( CBaseObject&, CSocket& );
-    virtual            ~CPPopupMenu()
-    {
-    }
-    virtual void    CopyData( CBaseObject&, CSocket& );
+	CPPopupMenu();
+	CPPopupMenu( CBaseObject&, CSocket& );
+	virtual			~CPPopupMenu()
+	{
+	}
+	virtual void	CopyData( CBaseObject&, CSocket& );
 };
 
 class CPClilocMessage : public CPUOXBuffer

@@ -8702,603 +8702,603 @@ void CPNewBookHeader::Finalize( void )
 //o------------------------------------------------------------------------------------------------o
 CPPopupMenu::CPPopupMenu( void )
 {
-    InternalReset();
+	InternalReset();
 }
- 
+
 CPPopupMenu::CPPopupMenu( CBaseObject& toCopy, CSocket &tSock )
 {
-    InternalReset();
-    CopyData( toCopy, tSock );
+	InternalReset();
+	CopyData( toCopy, tSock );
 }
- 
+
 void CPPopupMenu::InternalReset( void )
 {
-    pStream.ReserveSize( 5 );
-    pStream.WriteByte( 0, 0xBF );
-    pStream.WriteShort( 1, 5 );
-    pStream.WriteShort( 3, 0x14 );
-    pStream.WriteShort( 5, 0x0001 );
+	pStream.ReserveSize( 5 );
+	pStream.WriteByte( 0, 0xBF );
+	pStream.WriteShort( 1, 5 );
+	pStream.WriteShort( 3, 0x14 );
+	pStream.WriteShort( 5, 0x0001 );
 }
- 
+
 void CPPopupMenu::CopyData( CBaseObject& toCopy, CSocket &tSock )
 {
-    UI16 packetLen = ( 12 + ( 4 * 8 ));
-    pStream.ReserveSize( packetLen );
-    pStream.WriteShort( 1, packetLen );
- 
-    pStream.WriteLong( 7, toCopy.GetSerial() );
-    size_t offset = 12;
-    UI08 numEntries = 0;
- 
-    CChar *mChar = nullptr;
-    if( ValidateObject( tSock.CurrcharObj() ))
-    {
-        mChar = tSock.CurrcharObj();
-    }
- 
-    auto toCopyChar = static_cast<CChar *>( &toCopy );
- 
-    // Stop moving for 2 seconds when someone opens a context menu, to give them 
-    // the chance to select something before walking out of range
-    if( toCopy.CanBeObjType( OT_CHAR ) )
-    {
-        if( toCopyChar->GetNpcWander() != WT_PATHFIND && toCopyChar->GetNpcWander() != WT_FOLLOW && toCopyChar->GetNpcWander() != WT_FLEE )
-        {
-            toCopyChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 3 ));
-        }
-    }
-    else
-    {
-        return;
-    }
- 
-    // Open Paperdoll
-    if( cwmWorldState->creatures[toCopy.GetId()].IsHuman() )
-    {
-        numEntries++;
-        pStream.WriteShort( offset, 0x000A );   // Unique ID
-        pStream.WriteShort( offset += 2, 6123 );
-        pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-        pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-    }
-    /*else
-    {
-        // Left this here as an example of how to show a disabled context menu option
-        pStream.WriteShort( offset+=2, 0x0021 ); // Flag, color enabled, entry disabled
-        pStream.WriteShort( offset+=2, 0xFFFF ); // Hue of text
-    }*/
- 
-    // Bulk Order Info - if enabled in ini
-    if( cwmWorldState->ServerData()->OfferBODsFromContextMenu() && toCopyChar->IsShop() )
-    {
-        TAGMAPOBJECT isBodVendor = toCopy.GetTag( "bodType" );
-        if( isBodVendor.m_IntValue > 0 )
-        {
-            if( numEntries > 0 )
-            {
-                offset += 2;
-            }
- 
-            numEntries++;
-            pStream.WriteShort( offset, 0x0100 );   // Unique ID
-            pStream.WriteShort( offset += 2, 6152 ); // Bulk Order Info
-            pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-            pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-        }
-    }
- 
-    // Open Backpack
-    //  || ( toCopy.IsTamed() && ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar && !toCopy.CanBeHired() )))
-    if( toCopyChar->GetQuestType() != QT_ESCORTQUEST && (( toCopy.GetSerial() == tSock.CurrcharObj()->GetSerial() 
-        || toCopy.GetId() == 0x0123 || toCopy.GetId() == 0x0124 || toCopy.GetId() == 0x0317 ) && ValidateObject( toCopyChar->GetPackItem() )))
-    {
-        if( numEntries > 0 )
-        {
-            offset += 2;
-        }
- 
-        numEntries++;
-        pStream.WriteShort( offset, 0x000B );   // Unique ID
-        pStream.WriteShort( offset += 2, 6145 );
-        if( ObjInRange( mChar, &toCopy, 8 ))
-        {
-            pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-            pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-        }
-        else
-        {
-            pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-            pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-        }
-    }
- 
-    // Banker
-    if( toCopyChar->IsNpc() && toCopyChar->GetNpcAiType() == AI_BANKER )
-    {
-        if( numEntries > 0 )
-        {
-            offset += 2;
-        }
- 
-        // Open Bankbox
-        numEntries++;
-        pStream.WriteShort( offset, 0x000E );   // Unique ID
-        pStream.WriteShort( offset += 2, 6105 );
-        if( ObjInRange( mChar, &toCopy, 8 ))
-        {
-            pStream.WriteShort( offset += 2, 0x0020 );  // Flag, entry enabled
-            pStream.WriteShort( offset += 2, 0x03E0 );  // Hue of text
-        }
-        else
-        {
-            pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-            pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-        }
-    }
- 
-    // Stablemaster
-    if( toCopyChar->GetNpcAiType() == AI_STABLEMASTER )
-    {
-        if( numEntries > 0 )
-        {
-            offset += 2;
-        }
- 
-        // Claim All Pets
-        numEntries++;
-        pStream.WriteShort( offset, 0x0019 );   // Unique ID
-        pStream.WriteShort( offset += 2, 6127 );
-        if( ObjInRange( mChar, &toCopy, 8 ))
-        {
-            pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-            pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-        }
-        else
-        {
-            pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-            pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-        }
- 
-        // Stable Pet
-        numEntries++;
-        pStream.WriteShort( offset += 2, 0x001a );  // Unique ID
-        pStream.WriteShort( offset += 2, 6126 );
-        if( ObjInRange( mChar, &toCopy, 8 ))
-        {
-            pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-            pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-        }
-        else
-        {
-            pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-            pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-        }
-    }
- 
-    // Hireling
-    if( toCopyChar->IsNpc() && toCopyChar->CanBeHired() && !ValidateObject( toCopy.GetOwnerObj() ))
-    {
-        if( numEntries > 0 )
-        {
-            offset += 2;
-        }
- 
-        // Hire (Hireling)
-        numEntries++;
-        pStream.WriteShort( offset, 0x001e );   // Unique ID
-        pStream.WriteShort( offset += 2, 6120 );
-        if( ObjInRange( mChar, &toCopy, 3 ))
-        {
-            pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-            pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-        }
-        else
-        {
-            pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-            pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-        }
-    }
- 
-    // NPC Escort
-    if( toCopyChar->IsNpc() && toCopyChar->GetQuestType() == QT_ESCORTQUEST )
-    {
-        if( numEntries > 0 )
-        {
-            offset += 2;
-        }
- 
-        // Ask Destination
-        numEntries++;
-        pStream.WriteShort( offset, 0x001b );   // Unique ID
-        pStream.WriteShort( offset += 2, 6100 );
-        if( ObjInRange( mChar, &toCopy, 3 ))
-        {
-            pStream.WriteShort( offset += 2, 0x0020 );  // Flag, entry enabled
-            pStream.WriteShort( offset += 2, 0x03E0 );  // Hue of text
-        }
-        else
-        {
-            pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-            pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-        }
- 
-        // Accept Escort
-        if( toCopy.GetOwnerObj() == nullptr )
-        {
-            numEntries++;
-            pStream.WriteShort( offset += 2, 0x001c );  // Unique ID
-            pStream.WriteShort( offset += 2, 6101 );
-            if( ObjInRange( mChar, &toCopy, 3 ))
-            {
-                pStream.WriteShort( offset += 2, 0x0020 );  // Flag, entry enabled
-                pStream.WriteShort( offset += 2, 0x03E0 );  // Hue of text
-            }
-            else
-            {
-                pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-                pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-            }
-        }
- 
-        // Abandon Escort
-        if( toCopy.GetOwnerObj() == mChar )
-        {
-            numEntries++;
-            pStream.WriteShort( offset += 2, 0x001d );  // Unique ID
-            pStream.WriteShort( offset += 2, 6102 );
-            pStream.WriteShort( offset += 2, 0x0020 );  // Flag, entry enabled
-            pStream.WriteShort( offset += 2, 0x03E0 );  // Hue of text
-        }
-    }
- 
-    // Shopkeeper
-    if( toCopyChar->IsShop() )
-    {
-        // Shopkeeper - Buy
-        CItem *sellContainer = toCopyChar->GetItemAtLayer( IL_SELLCONTAINER );
-        if( ValidateObject( sellContainer ) && sellContainer->GetContainsList()->Num() > 0 )
-        {
-            if( numEntries > 0 )
-            {
-                offset += 2;
-            }
- 
-            numEntries++;
-            pStream.WriteShort( offset, 0x000C );   // Unique ID
-            pStream.WriteShort( offset += 2, 6103 );
- 
-            if( ObjInRange( mChar, &toCopy, 8 ))
-            {
-                pStream.WriteShort( offset += 2, 0x0020 );  // Flag, entry enabled
-                pStream.WriteShort( offset += 2, 0x03E0 );  // Hue of text
-            }
-            else
-            {
-                pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-                pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-            }
-        }
- 
-        // Shopkeeper - Sell
-        CItem *buyContainer = toCopyChar->GetItemAtLayer( IL_BUYCONTAINER );
-        if( ValidateObject( buyContainer ) && buyContainer->GetContainsList()->Num() > 0 )
-        {
-            if( numEntries > 0 )
-            {
-                offset += 2;
-            }
- 
-            numEntries++;
-            pStream.WriteShort( offset, 0x000D );   // Unique ID
-            pStream.WriteShort( offset += 2, 6104 );
-            if( ObjInRange( mChar, &toCopy, 8 ))
-            {
-                pStream.WriteShort( offset += 2, 0x0020 );  // Flag, entry enabled
-                pStream.WriteShort( offset += 2, 0x03E0 );  // Hue of text
-            }
-            else
-            {
-                pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-                pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-            }
-        }
-    }
- 
-    // Tame
-    if( toCopyChar->IsNpc() && cwmWorldState->creatures[toCopy.GetId()].IsAnimal() && !ValidateObject( toCopy.GetOwnerObj() ))
-    {
-        auto skillToTame = toCopyChar->GetTaming();
-        if( skillToTame > 0 )
-        {
-            if( numEntries > 0 )
-            {
-                offset += 2;
-            }
- 
-            numEntries++;
-            pStream.WriteShort( offset, 0x000F );   // Unique ID
-            pStream.WriteShort( offset += 2, 6130 );
-            if( skillToTame <= mChar->GetSkill( TAMING ) && ObjInRange( mChar, &toCopy, 8 ))
-            {
-                pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-                pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-            }
-            else
-            {
-                pStream.WriteShort( offset+=2, 0x0021 ); // Flag, color enabled, entry disabled
-                pStream.WriteShort( offset+=2, 0xFFFF ); // Hue of text
-            }
-        }
-    }
- 
-    // Pet commands
-    bool playerIsOwner = ( ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar );
-    bool playerIsFriend = Npcs->CheckPetFriend( mChar, toCopyChar );
-    if( toCopyChar->IsNpc() && toCopyChar->GetNpcAiType() != AI_PLAYERVENDOR && toCopyChar->GetQuestType() != QT_ESCORTQUEST && ( toCopyChar->IsTamed() || toCopyChar->CanBeHired() )
-        && ( playerIsOwner || playerIsFriend ))
-    {
-        if( numEntries > 0 )
-        {
-            offset += 2;
-        }
- 
-        // Command: Kill (Pet)
-        numEntries++;
-        pStream.WriteShort( offset, 0x0010 );   // Unique ID
-        pStream.WriteShort( offset += 2, 6111 );
-        if( ObjInRange( mChar, &toCopy, 12 ))
-        {
-            pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-            pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-        }
-        else
-        {
-            pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-            pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-        }
- 
-        // Command: Stop (Pet)
-        numEntries++;
-        pStream.WriteShort( offset += 2, 0x0011 );  // Unique ID
-        pStream.WriteShort( offset += 2, 6112 );
-        if( ObjInRange( mChar, &toCopy, 12 ))
-        {
-            pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-            pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-        }
-        else
-        {
-            pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-            pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-        }
- 
-        // Command: Follow (Pet)
-        numEntries++;
-        pStream.WriteShort( offset += 2, 0x0012 );  // Unique ID
-        pStream.WriteShort( offset += 2, 6108 );
-        if( ObjInRange( mChar, &toCopy, 12 ))
-        {
-            pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-            pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-        }
-        else
-        {
-            pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-            pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-        }
- 
-        // Command: Stay (Pet)
-        numEntries++;
-        pStream.WriteShort( offset += 2, 0x0013 );  // Unique ID
-        pStream.WriteShort( offset += 2, 6114 );
-        if( ObjInRange( mChar, &toCopy, 12 ))
-        {
-            pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-            pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-        }
-        else
-        {
-            pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-            pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-        }
- 
-        // Command: Guard (Pet)
-        numEntries++;
-        pStream.WriteShort( offset += 2, 0x0014 );  // Unique ID
-        pStream.WriteShort( offset += 2, 6107 );
-        if( ObjInRange( mChar, &toCopy, 12 ))
-        {
-            pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-            pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-        }
-        else
-        {
-            pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-            pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-        }
- 
-        // Restrict to owner only
-        if( playerIsOwner )
-        {
-            // Add Friend (Pet)
-            numEntries++;
-            pStream.WriteShort( offset += 2, 0x0015 );  // Unique ID
-            pStream.WriteShort( offset += 2, 6110 );
-            if( ObjInRange( mChar, &toCopy, 12 ))
-            {
-                pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-                pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-            }
-            else
-            {
-                pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-                pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-            }
- 
-            // Remove Friend (Pet)
-            numEntries++;
-            pStream.WriteShort( offset += 2, 0x001f );  // Unique ID
- 
-            pStream.WriteShort( offset += 2, 6099 );
-            if( ObjInRange( mChar, &toCopy, 12 ))
-            {
-                pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-                pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-            }
-            else
-            {
-                pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-                pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-            }
- 
-            // Transfer (Pet)
-            numEntries++;
-            pStream.WriteShort( offset += 2, 0x0016 );  // Unique ID
-            pStream.WriteShort( offset += 2, 6113 );
-            if( ObjInRange( mChar, &toCopy, 12 ))
-            {
-                pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-                pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-            }
-            else
-            {
-                pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-                pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-            }
- 
-            if( toCopyChar->IsTamed() )
-            {
-                // Release (Pet)
-                numEntries++;
-                pStream.WriteShort( offset += 2, 0x0017 );  // Unique ID
-                pStream.WriteShort( offset += 2, 6118 );
-                if( ObjInRange( mChar, &toCopy, 12 ))
-                {
-                    pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-                    pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-                }
-                else
-                {
-                    pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-                    pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-                }
-            }
- 
-            if( toCopyChar->CanBeHired() )
-            {
-                // Dismiss (Hireling)
-                numEntries++;
-                pStream.WriteShort( offset += 2, 0x0018 );  // Unique ID
-                pStream.WriteShort( offset += 2, 6129 );
-                if( ObjInRange( mChar, &toCopy, 12 ))
-                {
-                    pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-                    pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-                }
-                else
-                {
-                    pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
-                    pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
-                }
-            }
-        }
-    }
- 
-    // Skill training - IDs 0x006D to 0x009C
-    if( toCopyChar->IsNpc() && !toCopyChar->IsTamed() && !cwmWorldState->creatures[toCopy.GetId()].IsAnimal() && toCopyChar->CanTrain() && cwmWorldState->creatures[toCopy.GetId()].IsHuman() )
-    {
-        auto idTracker = 0x0071;
-        auto clilocTracker = 6000;
-        auto skillEntries = 0;
-        for( UI08 i = 0; i < ALLSKILLS; ++i )
-        {
-            // Limit it to 10 entries per NPC. Context menus are not scrollable
-            if( skillEntries >= 10 )
-                break;
- 
-            auto trainerSkillPoints = toCopyChar->GetBaseSkill( i );
-            if( trainerSkillPoints > 600 && ( mChar->GetSkill( i ) < trainerSkillPoints / 3 ))
-            {
-                if( numEntries > 0 )
-                {
-                    offset += 2;
-                }
-                numEntries++;
-                skillEntries++;
- 
-                switch( i )
-                {
-                    case ANATOMY:           pStream.WriteShort( offset, 0x0154 ); break;
-                    case PARRYING:          pStream.WriteShort( offset, 0x006d ); break;
-                    case HEALING:           pStream.WriteShort( offset, 0x006e ); break;
-                    case HIDING:            pStream.WriteShort( offset, 0x006f ); break;
-                    case STEALING:          pStream.WriteShort( offset, 0x0070 ); break;
-                    case ALCHEMY:           pStream.WriteShort( offset, 0x0071 ); break;
-                    case ANIMALLORE:        pStream.WriteShort( offset, 0x0072 ); break;
-                    case ITEMID:            pStream.WriteShort( offset, 0x0073 ); break;
-                    case ARMSLORE:          pStream.WriteShort( offset, 0x0074 ); break;
-                    case BEGGING:           pStream.WriteShort( offset, 0x0075 ); break;
-                    case BLACKSMITHING:     pStream.WriteShort( offset, 0x0076 ); break;
-                    case BOWCRAFT:          pStream.WriteShort( offset, 0x0077 ); break;
-                    case PEACEMAKING:       pStream.WriteShort( offset, 0x0078 ); break;
-                    case CAMPING:           pStream.WriteShort( offset, 0x0079 ); break;
-                    case CARPENTRY:         pStream.WriteShort( offset, 0x007a ); break;
-                    case CARTOGRAPHY:       pStream.WriteShort( offset, 0x007b ); break;
-                    case COOKING:           pStream.WriteShort( offset, 0x007c ); break;
-                    case DETECTINGHIDDEN:   pStream.WriteShort( offset, 0x007d ); break;
-                    case ENTICEMENT:        pStream.WriteShort( offset, 0x007e ); break;
-                    case EVALUATINGINTEL:   pStream.WriteShort( offset, 0x007f ); break;
-                    case FISHING:           pStream.WriteShort( offset, 0x0080 ); break;
-                    case PROVOCATION:       pStream.WriteShort( offset, 0x0081 ); break;
-                    case LOCKPICKING:       pStream.WriteShort( offset, 0x0082 ); break;
-                    case MAGERY:            pStream.WriteShort( offset, 0x0083 ); break;
-                    case MAGICRESISTANCE:   pStream.WriteShort( offset, 0x0084 ); break;
-                    case TACTICS:           pStream.WriteShort( offset, 0x0085 ); break;
-                    case SNOOPING:          pStream.WriteShort( offset, 0x0086 ); break;
-                    case REMOVETRAP:        pStream.WriteShort( offset, 0x0087 ); break;
-                    case MUSICIANSHIP:      pStream.WriteShort( offset, 0x0088 ); break;
-                    case POISONING:         pStream.WriteShort( offset, 0x0089 ); break;
-                    case ARCHERY:           pStream.WriteShort( offset, 0x008a ); break;
-                    case SPIRITSPEAK:       pStream.WriteShort( offset, 0x008b ); break;
-                    case TAILORING:         pStream.WriteShort( offset, 0x008c ); break;
-                    case TAMING:            pStream.WriteShort( offset, 0x008d ); break;
-                    case TASTEID:           pStream.WriteShort( offset, 0x008e ); break;
-                    case TINKERING:         pStream.WriteShort( offset, 0x008f ); break;
-                    case VETERINARY:        pStream.WriteShort( offset, 0x0090 ); break;
-                    case FORENSICS:         pStream.WriteShort( offset, 0x0091 ); break;
-                    case HERDING:           pStream.WriteShort( offset, 0x0092 ); break;
-                    case TRACKING:          pStream.WriteShort( offset, 0x0093 ); break;
-                    case STEALTH:           pStream.WriteShort( offset, 0x0094 ); break;
-                    case INSCRIPTION:       pStream.WriteShort( offset, 0x0095 ); break;
-                    case SWORDSMANSHIP:     pStream.WriteShort( offset, 0x0096 ); break;
-                    case MACEFIGHTING:      pStream.WriteShort( offset, 0x0097 ); break;
-                    case FENCING:           pStream.WriteShort( offset, 0x0098 ); break;
-                    case WRESTLING:         pStream.WriteShort( offset, 0x0099 ); break;
-                    case LUMBERJACKING:     pStream.WriteShort( offset, 0x009a ); break;
-                    case MINING:            pStream.WriteShort( offset, 0x009b ); break;
-                    case MEDITATION:        pStream.WriteShort( offset, 0x009c ); break;
-                    case NECROMANCY:        pStream.WriteShort( offset, 0x017c ); break;
-                    case CHIVALRY:          pStream.WriteShort( offset, 0x017d ); break;
-                    case FOCUS:             pStream.WriteShort( offset, 0x017e ); break;
-                    default:
-                        break;
-                }
-                pStream.WriteShort( offset += 2, clilocTracker );
-                pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
-                pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
-            }
-            idTracker++;
-            clilocTracker++;
-        }
-    }
- 
-    // Write number of entries
-    pStream.WriteByte( 11, numEntries );
- 
-    // Update size of packet
-    packetLen = ( 12 + ( numEntries * 8 ));
-    pStream.ReserveSize( packetLen );
-    pStream.WriteShort( 1, packetLen );
+	UI16 packetLen = ( 12 + ( 4 * 8 ));
+	pStream.ReserveSize( packetLen );
+	pStream.WriteShort( 1, packetLen );
+
+	pStream.WriteLong( 7, toCopy.GetSerial() );
+	size_t offset = 12;
+	UI08 numEntries = 0;
+
+	CChar *mChar = nullptr;
+	if( ValidateObject( tSock.CurrcharObj() ))
+	{
+		mChar = tSock.CurrcharObj();
+	}
+
+	auto toCopyChar = static_cast<CChar *>( &toCopy );
+
+	// Stop moving for 2 seconds when someone opens a context menu, to give them 
+	// the chance to select something before walking out of range
+	if( toCopy.CanBeObjType( OT_CHAR ) )
+	{
+		if( toCopyChar->GetNpcWander() != WT_PATHFIND && toCopyChar->GetNpcWander() != WT_FOLLOW && toCopyChar->GetNpcWander() != WT_FLEE )
+		{
+			toCopyChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 3 ));
+		}
+	}
+	else
+	{
+		return;
+	}
+
+	// Open Paperdoll
+	if( cwmWorldState->creatures[toCopy.GetId()].IsHuman() )
+	{
+		numEntries++;
+		pStream.WriteShort( offset, 0x000A );	// Unique ID
+		pStream.WriteShort( offset += 2, 6123 );
+		pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+		pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+	}
+	/*else
+	{
+		// Left this here as an example of how to show a disabled context menu option
+		pStream.WriteShort( offset+=2, 0x0021 ); // Flag, color enabled, entry disabled
+		pStream.WriteShort( offset+=2, 0xFFFF ); // Hue of text
+	}*/
+
+	// Bulk Order Info - if enabled in ini
+	if( cwmWorldState->ServerData()->OfferBODsFromContextMenu() && toCopyChar->IsShop() )
+	{
+		TAGMAPOBJECT isBodVendor = toCopy.GetTag( "bodType" );
+		if( isBodVendor.m_IntValue > 0 )
+		{
+			if( numEntries > 0 )
+			{
+				offset += 2;
+			}
+
+			numEntries++;
+			pStream.WriteShort( offset, 0x0100 );	// Unique ID
+			pStream.WriteShort( offset += 2, 6152 ); // Bulk Order Info
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+	}
+
+	// Open Backpack
+	//	|| ( toCopy.IsTamed() && ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar && !toCopy.CanBeHired() )))
+	if( toCopyChar->GetQuestType() != QT_ESCORTQUEST && (( toCopy.GetSerial() == tSock.CurrcharObj()->GetSerial() 
+		|| toCopy.GetId() == 0x0123 || toCopy.GetId() == 0x0124 || toCopy.GetId() == 0x0317 ) && ValidateObject( toCopyChar->GetPackItem() )))
+	{
+		if( numEntries > 0 )
+		{
+			offset += 2;
+		}
+
+		numEntries++;
+		pStream.WriteShort( offset, 0x000B );	// Unique ID
+		pStream.WriteShort( offset += 2, 6145 );
+		if( ObjInRange( mChar, &toCopy, 8 ))
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+	}
+
+	// Banker
+	if( toCopyChar->IsNpc() && toCopyChar->GetNpcAiType() == AI_BANKER )
+	{
+		if( numEntries > 0 )
+		{
+			offset += 2;
+		}
+
+		// Open Bankbox
+		numEntries++;
+		pStream.WriteShort( offset, 0x000E );	// Unique ID
+		pStream.WriteShort( offset += 2, 6105 );
+		if( ObjInRange( mChar, &toCopy, 8 ))
+		{
+			pStream.WriteShort( offset += 2, 0x0020 );	// Flag, entry enabled
+			pStream.WriteShort( offset += 2, 0x03E0 );	// Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+	}
+
+	// Stablemaster
+	if( toCopyChar->GetNpcAiType() == AI_STABLEMASTER )
+	{
+		if( numEntries > 0 )
+		{
+			offset += 2;
+		}
+
+		// Claim All Pets
+		numEntries++;
+		pStream.WriteShort( offset, 0x0019 );	// Unique ID
+		pStream.WriteShort( offset += 2, 6127 );
+		if( ObjInRange( mChar, &toCopy, 8 ))
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Stable Pet
+		numEntries++;
+		pStream.WriteShort( offset += 2, 0x001a );	// Unique ID
+		pStream.WriteShort( offset += 2, 6126 );
+		if( ObjInRange( mChar, &toCopy, 8 ))
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+	}
+
+	// Hireling
+	if( toCopyChar->IsNpc() && toCopyChar->CanBeHired() && !ValidateObject( toCopy.GetOwnerObj() ))
+	{
+		if( numEntries > 0 )
+		{
+			offset += 2;
+		}
+
+		// Hire (Hireling)
+		numEntries++;
+		pStream.WriteShort( offset, 0x001e );	// Unique ID
+		pStream.WriteShort( offset += 2, 6120 );
+		if( ObjInRange( mChar, &toCopy, 3 ))
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+	}
+
+	// NPC Escort
+	if( toCopyChar->IsNpc() && toCopyChar->GetQuestType() == QT_ESCORTQUEST )
+	{
+		if( numEntries > 0 )
+		{
+			offset += 2;
+		}
+
+		// Ask Destination
+		numEntries++;
+		pStream.WriteShort( offset, 0x001b );	// Unique ID
+		pStream.WriteShort( offset += 2, 6100 );
+		if( ObjInRange( mChar, &toCopy, 3 ))
+		{
+			pStream.WriteShort( offset += 2, 0x0020 );	// Flag, entry enabled
+			pStream.WriteShort( offset += 2, 0x03E0 );	// Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Accept Escort
+		if( toCopy.GetOwnerObj() == nullptr )
+		{
+			numEntries++;
+			pStream.WriteShort( offset += 2, 0x001c );	// Unique ID
+			pStream.WriteShort( offset += 2, 6101 );
+			if( ObjInRange( mChar, &toCopy, 3 ))
+			{
+				pStream.WriteShort( offset += 2, 0x0020 );	// Flag, entry enabled
+				pStream.WriteShort( offset += 2, 0x03E0 );	// Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+			}
+		}
+
+		// Abandon Escort
+		if( toCopy.GetOwnerObj() == mChar )
+		{
+			numEntries++;
+			pStream.WriteShort( offset += 2, 0x001d );	// Unique ID
+			pStream.WriteShort( offset += 2, 6102 );
+			pStream.WriteShort( offset += 2, 0x0020 );	// Flag, entry enabled
+			pStream.WriteShort( offset += 2, 0x03E0 );	// Hue of text
+		}
+	}
+
+	// Shopkeeper
+	if( toCopyChar->IsShop() )
+	{
+		// Shopkeeper - Buy
+		CItem *sellContainer = toCopyChar->GetItemAtLayer( IL_SELLCONTAINER );
+		if( ValidateObject( sellContainer ) && sellContainer->GetContainsList()->Num() > 0 )
+		{
+			if( numEntries > 0 )
+			{
+				offset += 2;
+			}
+
+			numEntries++;
+			pStream.WriteShort( offset, 0x000C );	// Unique ID
+			pStream.WriteShort( offset += 2, 6103 );
+
+			if( ObjInRange( mChar, &toCopy, 8 ))
+			{
+				pStream.WriteShort( offset += 2, 0x0020 );	// Flag, entry enabled
+				pStream.WriteShort( offset += 2, 0x03E0 );	// Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+			}
+		}
+
+		// Shopkeeper - Sell
+		CItem *buyContainer = toCopyChar->GetItemAtLayer( IL_BUYCONTAINER );
+		if( ValidateObject( buyContainer ) && buyContainer->GetContainsList()->Num() > 0 )
+		{
+			if( numEntries > 0 )
+			{
+				offset += 2;
+			}
+
+			numEntries++;
+			pStream.WriteShort( offset, 0x000D );	// Unique ID
+			pStream.WriteShort( offset += 2, 6104 );
+			if( ObjInRange( mChar, &toCopy, 8 ))
+			{
+				pStream.WriteShort( offset += 2, 0x0020 );	// Flag, entry enabled
+				pStream.WriteShort( offset += 2, 0x03E0 );	// Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+			}
+		}
+	}
+
+	// Tame
+	if( toCopyChar->IsNpc() && cwmWorldState->creatures[toCopy.GetId()].IsAnimal() && !ValidateObject( toCopy.GetOwnerObj() ))
+	{
+		auto skillToTame = toCopyChar->GetTaming();
+		if( skillToTame > 0 )
+		{
+			if( numEntries > 0 )
+			{
+				offset += 2;
+			}
+
+			numEntries++;
+			pStream.WriteShort( offset, 0x000F );	// Unique ID
+			pStream.WriteShort( offset += 2, 6130 );
+			if( skillToTame <= mChar->GetSkill( TAMING ) && ObjInRange( mChar, &toCopy, 8 ))
+			{
+				pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+				pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset+=2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset+=2, 0xFFFF ); // Hue of text
+			}
+		}
+	}
+
+	// Pet commands
+	bool playerIsOwner = ( ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar );
+	bool playerIsFriend = Npcs->CheckPetFriend( mChar, toCopyChar );
+	if( toCopyChar->IsNpc() && toCopyChar->GetNpcAiType() != AI_PLAYERVENDOR && toCopyChar->GetQuestType() != QT_ESCORTQUEST && ( toCopyChar->IsTamed() || toCopyChar->CanBeHired() )
+		&& ( playerIsOwner || playerIsFriend ))
+	{
+		if( numEntries > 0 )
+		{
+			offset += 2;
+		}
+
+		// Command: Kill (Pet)
+		numEntries++;
+		pStream.WriteShort( offset, 0x0010 );	// Unique ID
+		pStream.WriteShort( offset += 2, 6111 );
+		if( ObjInRange( mChar, &toCopy, 12 ))
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Command: Stop (Pet)
+		numEntries++;
+		pStream.WriteShort( offset += 2, 0x0011 );	// Unique ID
+		pStream.WriteShort( offset += 2, 6112 );
+		if( ObjInRange( mChar, &toCopy, 12 ))
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Command: Follow (Pet)
+		numEntries++;
+		pStream.WriteShort( offset += 2, 0x0012 );	// Unique ID
+		pStream.WriteShort( offset += 2, 6108 );
+		if( ObjInRange( mChar, &toCopy, 12 ))
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Command: Stay (Pet)
+		numEntries++;
+		pStream.WriteShort( offset += 2, 0x0013 );	// Unique ID
+		pStream.WriteShort( offset += 2, 6114 );
+		if( ObjInRange( mChar, &toCopy, 12 ))
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Command: Guard (Pet)
+		numEntries++;
+		pStream.WriteShort( offset += 2, 0x0014 );	// Unique ID
+		pStream.WriteShort( offset += 2, 6107 );
+		if( ObjInRange( mChar, &toCopy, 12 ))
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Restrict to owner only
+		if( playerIsOwner )
+		{
+			// Add Friend (Pet)
+			numEntries++;
+			pStream.WriteShort( offset += 2, 0x0015 );	// Unique ID
+			pStream.WriteShort( offset += 2, 6110 );
+			if( ObjInRange( mChar, &toCopy, 12 ))
+			{
+				pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+				pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+			}
+
+			// Remove Friend (Pet)
+			numEntries++;
+			pStream.WriteShort( offset += 2, 0x001f );	// Unique ID
+
+			pStream.WriteShort( offset += 2, 6099 );
+			if( ObjInRange( mChar, &toCopy, 12 ))
+			{
+				pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+				pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+			}
+
+			// Transfer (Pet)
+			numEntries++;
+			pStream.WriteShort( offset += 2, 0x0016 );	// Unique ID
+			pStream.WriteShort( offset += 2, 6113 );
+			if( ObjInRange( mChar, &toCopy, 12 ))
+			{
+				pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+				pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+			}
+
+			if( toCopyChar->IsTamed() )
+			{
+				// Release (Pet)
+				numEntries++;
+				pStream.WriteShort( offset += 2, 0x0017 );	// Unique ID
+				pStream.WriteShort( offset += 2, 6118 );
+				if( ObjInRange( mChar, &toCopy, 12 ))
+				{
+					pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+					pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+				}
+				else
+				{
+					pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+					pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+				}
+			}
+
+			if( toCopyChar->CanBeHired() )
+			{
+				// Dismiss (Hireling)
+				numEntries++;
+				pStream.WriteShort( offset += 2, 0x0018 );	// Unique ID
+				pStream.WriteShort( offset += 2, 6129 );
+				if( ObjInRange( mChar, &toCopy, 12 ))
+				{
+					pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+					pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+				}
+				else
+				{
+					pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+					pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+				}
+			}
+		}
+	}
+
+	// Skill training - IDs 0x006D to 0x009C
+	if( toCopyChar->IsNpc() && !toCopyChar->IsTamed() && !cwmWorldState->creatures[toCopy.GetId()].IsAnimal() && toCopyChar->CanTrain() && cwmWorldState->creatures[toCopy.GetId()].IsHuman() )
+	{
+		auto idTracker = 0x0071;
+		auto clilocTracker = 6000;
+		auto skillEntries = 0;
+		for( UI08 i = 0; i < ALLSKILLS; ++i )
+		{
+			// Limit it to 10 entries per NPC. Context menus are not scrollable
+			if( skillEntries >= 10 )
+				break;
+
+			auto trainerSkillPoints = toCopyChar->GetBaseSkill( i );
+			if( trainerSkillPoints > 600 && ( mChar->GetSkill( i ) < trainerSkillPoints / 3 ))
+			{
+				if( numEntries > 0 )
+				{
+					offset += 2;
+				}
+				numEntries++;
+				skillEntries++;
+
+				switch( i )
+				{
+					case ANATOMY:			pStream.WriteShort( offset, 0x0154 ); break;
+					case PARRYING:			pStream.WriteShort( offset, 0x006d ); break;
+					case HEALING:			pStream.WriteShort( offset, 0x006e ); break;
+					case HIDING:			pStream.WriteShort( offset, 0x006f ); break;
+					case STEALING:			pStream.WriteShort( offset, 0x0070 ); break;
+					case ALCHEMY:			pStream.WriteShort( offset, 0x0071 ); break;
+					case ANIMALLORE:		pStream.WriteShort( offset, 0x0072 ); break;
+					case ITEMID:			pStream.WriteShort( offset, 0x0073 ); break;
+					case ARMSLORE:			pStream.WriteShort( offset, 0x0074 ); break;
+					case BEGGING:			pStream.WriteShort( offset, 0x0075 ); break;
+					case BLACKSMITHING:		pStream.WriteShort( offset, 0x0076 ); break;
+					case BOWCRAFT:			pStream.WriteShort( offset, 0x0077 ); break;
+					case PEACEMAKING:		pStream.WriteShort( offset, 0x0078 ); break;
+					case CAMPING:			pStream.WriteShort( offset, 0x0079 ); break;
+					case CARPENTRY:			pStream.WriteShort( offset, 0x007a ); break;
+					case CARTOGRAPHY:		pStream.WriteShort( offset, 0x007b ); break;
+					case COOKING:			pStream.WriteShort( offset, 0x007c ); break;
+					case DETECTINGHIDDEN:	pStream.WriteShort( offset, 0x007d ); break;
+					case ENTICEMENT:		pStream.WriteShort( offset, 0x007e ); break;
+					case EVALUATINGINTEL:	pStream.WriteShort( offset, 0x007f ); break;
+					case FISHING:			pStream.WriteShort( offset, 0x0080 ); break;
+					case PROVOCATION:		pStream.WriteShort( offset, 0x0081 ); break;
+					case LOCKPICKING:		pStream.WriteShort( offset, 0x0082 ); break;
+					case MAGERY:			pStream.WriteShort( offset, 0x0083 ); break;
+					case MAGICRESISTANCE:	pStream.WriteShort( offset, 0x0084 ); break;
+					case TACTICS:			pStream.WriteShort( offset, 0x0085 ); break;
+					case SNOOPING:			pStream.WriteShort( offset, 0x0086 ); break;
+					case REMOVETRAP:		pStream.WriteShort( offset, 0x0087 ); break;
+					case MUSICIANSHIP:		pStream.WriteShort( offset, 0x0088 ); break;
+					case POISONING:			pStream.WriteShort( offset, 0x0089 ); break;
+					case ARCHERY:			pStream.WriteShort( offset, 0x008a ); break;
+					case SPIRITSPEAK:		pStream.WriteShort( offset, 0x008b ); break;
+					case TAILORING:			pStream.WriteShort( offset, 0x008c ); break;
+					case TAMING:			pStream.WriteShort( offset, 0x008d ); break;
+					case TASTEID:			pStream.WriteShort( offset, 0x008e ); break;
+					case TINKERING:			pStream.WriteShort( offset, 0x008f ); break;
+					case VETERINARY:		pStream.WriteShort( offset, 0x0090 ); break;
+					case FORENSICS:			pStream.WriteShort( offset, 0x0091 ); break;
+					case HERDING:			pStream.WriteShort( offset, 0x0092 ); break;
+					case TRACKING:			pStream.WriteShort( offset, 0x0093 ); break;
+					case STEALTH:			pStream.WriteShort( offset, 0x0094 ); break;
+					case INSCRIPTION:		pStream.WriteShort( offset, 0x0095 ); break;
+					case SWORDSMANSHIP:		pStream.WriteShort( offset, 0x0096 ); break;
+					case MACEFIGHTING:		pStream.WriteShort( offset, 0x0097 ); break;
+					case FENCING:			pStream.WriteShort( offset, 0x0098 ); break;
+					case WRESTLING:			pStream.WriteShort( offset, 0x0099 ); break;
+					case LUMBERJACKING:		pStream.WriteShort( offset, 0x009a ); break;
+					case MINING:			pStream.WriteShort( offset, 0x009b ); break;
+					case MEDITATION:		pStream.WriteShort( offset, 0x009c ); break;
+					case NECROMANCY:		pStream.WriteShort( offset, 0x017c ); break;
+					case CHIVALRY:			pStream.WriteShort( offset, 0x017d ); break;
+					case FOCUS:				pStream.WriteShort( offset, 0x017e ); break;
+					default:
+						break;
+				}
+				pStream.WriteShort( offset += 2, clilocTracker );
+				pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+				pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+			}
+			idTracker++;
+			clilocTracker++;
+		}
+	}
+
+	// Write number of entries
+	pStream.WriteByte( 11, numEntries );
+
+	// Update size of packet
+	packetLen = ( 12 + ( numEntries * 8 ));
+	pStream.ReserveSize( packetLen );
+	pStream.WriteShort( 1, packetLen );
 }
 
 //o------------------------------------------------------------------------------------------------o
