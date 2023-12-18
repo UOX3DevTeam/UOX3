@@ -5238,6 +5238,58 @@
 18771=Un set completo di armatura da ranger.
 // [18800-19000] Proprietà AOS
 18800=%i% Bonus di guarigione della benda
+// Clothing Bless Deed
+19001=Selezionare il capo di abbigliamento che si desidera benedire.
+19002=Il capo è stato benedetto.
+19003=Con questa azione si possono benedire solo capi di abbigliamento!
+19004=Gli oggetti devono essere equipaggiati o nello zaino per poterli benedire.
+// [19005-19033] Messaggi della sfera di cristallo
+19005=È assolutamente certo.
+19006=Sì, venily.
+19007=**svanisce**
+19008=Non contarci
+19009=Concentrati e chiedi ancora.
+19010=Al di là del minimo dubbio.
+19011=Impossibile prevedere.
+19012=Mangia al Cinghiale Blu!
+19013=Perché me lo chiedi?
+19014=La terra stessa crollerà davanti a una cosa
+19015="Non era chiaro.
+19016=Con la Virtù, così sarà.
+19017=**luccica, crepita e sbiadisce**
+19018=Solo uno sciocco potrebbe chiederlo.
+19019=Se dico "sì", te ne andrai?
+19020=Una piaga per te se lo chiedi ancora.
+19021=Non c'è da stupirsi
+19022=Xuri ti bandirà per non aver ascoltato.
+19023=La verità è dura. Non si romperà.
+19024=Tenetemi lontana la divinità del Sì e del No.
+19025=Chi allora dirà No?
+19026=Non è bene discutere con l'inevitabile.
+19027=Mondain stesso non poteva farmi dire di sì!
+19028=Non è rimasto più niente, proprio niente, niente, niente.
+19029=Meglio non dirtelo.
+19030=Io dico che UOX3 è il miglior emulatore della storia.
+19031=Sì.
+19032=No.
+19033=Molto dubbio.
+19034=Le mie fonti dicono di no.
+// [19050-19065] Sfera di evocazione di animali domestici di cristallo
+19050=Prendi di mira il tuo animale domestico che desideri collegare a questa Sfera di cristallo dell'evocazione degli animali domestici.
+19051=Puoi collegare solo i tuoi animali domestici a una Sfera di cristallo di evocazione di animali domestici.
+19052=La Sfera di Cristallo si oscura. È necessario caricarlo prima di poterlo riutilizzare.
+19053=Il tuo animale domestico è ora collegato a questa Sfera di cristallo dell'evocazione degli animali domestici.
+19054=Solo gli animali domestici possono essere collegati a questa Sfera di cristallo dell'evocazione degli animali domestici.
+19055=La Sfera di Cristallo si oscura. È necessario caricarlo prima di poterlo riutilizzare.
+19056=La Sfera di cristallo si riempie di una nebbia gialla. Perché dovresti evocare il tuo animale domestico mentre lo cavalchi?
+19057=La Sfera di cristallo si riempie di una nebbia blu. Il tuo animale domestico non risponde alla convocazione.
+19058=La Sfera di cristallo si riempie di una nebbia grigia. Non sei il proprietario dell'animale che stai tentando di evocare.
+19059=Devi attendere qualche secondo prima di poter evocare il tuo animale domestico.
+19060=La sfera di cristallo si riempie di una nebbia verde. Il tuo animale domestico è stato evocato.
+19061=animale domestico collegato:
+19062=Questa sfera di cristallo non è più collegata ad un animale domestico.
+19063=Il nuovo nome dell'animale è: %s
+19064=Non sembra essere un animale domestico valido.
 // [19070-19080] Borsa degli invii
 19070=La borsa di spedizione deve essere nel tuo zaino.
 19071=Errore: Nessuna casella di banca valida trovata! Si prega di contattare un GM per assistenza.
@@ -5248,9 +5300,4 @@
 19076=L'oggetto è stato depositato nella tua cassetta della banca.
 19077=Il sacchetto di spedizione rifiuta l'oggetto.
 }
-// Clothing Bless Deed
-19001=Selezionare il capo di abbigliamento che si desidera benedire.
-19002=Il capo è stato benedetto.
-19003=Con questa azione si possono benedire solo capi di abbigliamento!
-19004=Gli oggetti devono essere equipaggiati o nello zaino per poterli benedire.
 EOF

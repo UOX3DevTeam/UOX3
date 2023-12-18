@@ -975,19 +975,19 @@ bool CSpawnRegion::FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCr
 		}
 
 		// Make sure the chosen spawn location is not in an exclusion area
-        auto illegalLoc = false;
-        if( !rValue )
-        {
-			for (auto& exclusionArea : exclusionAreas)
-            {
-                if( x >= exclusionArea.x1 && x <= exclusionArea.x2 && y >= exclusionArea.y1 && y <= exclusionArea.y2 )
-                {
-                    // Chosen location is in an exclusion area. Disallow!
-                    illegalLoc = true;
-                    break;
-                }
-            }
-        }
+		auto illegalLoc = false;
+		if( !rValue )
+		{
+			for( auto &exclusionArea : exclusionAreas )
+			{
+				if( x >= exclusionArea.x1 && x <= exclusionArea.x2 && y >= exclusionArea.y1 && y <= exclusionArea.y2 )
+				{
+					// Chosen location is in an exclusion area. Disallow!
+					illegalLoc = true;
+					break;
+				}
+			}
+		}
 
 		// Since our chosen location has not already been validated, lets validate it with a land-based creature in mind
 		if( !illegalLoc && !waterCreature && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceId ))

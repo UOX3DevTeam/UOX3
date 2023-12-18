@@ -881,7 +881,7 @@ class CPIPopupMenuSelect : public CPInputBuffer
 {
 protected:
 	UI16			popupEntry;
-	CChar *			targChar;
+	CBaseObject *	targObj;
 public:
 	virtual			~CPIPopupMenuSelect()
 	{
