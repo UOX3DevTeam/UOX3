@@ -5430,5 +5430,21 @@
 19032=Non.
 19033=Très douteux.
 19034=Mes sources disent non.
+// [19050-19065] Boule d'invocation de familier en cristal
+19050=Ciblez votre animal de compagnie que vous souhaitez associer à cette boule de cristal d'invocation de familier.
+19051=Vous ne pouvez lier vos propres familiers qu'à une boule de cristal d'invocation de familiers.
+19052=La boule de cristal s'assombrit. Il doit être rechargé avant de pouvoir être réutilisé.
+19053=Votre familier est désormais lié à cette boule de cristal d'invocation de familier.
+19054=Seuls les familiers peuvent être liés à cette boule de cristal d'invocation de familiers.
+19055=La boule de cristal s'assombrit. Il doit être rechargé avant de pouvoir être réutilisé.
+19056=La Boule de Cristal se remplit d'une brume jaune. Pourquoi invoqueriez-vous votre animal de compagnie en le montant ?
+19057=La Boule de Cristal se remplit d'une brume bleue. Votre animal ne répond pas à la convocation.
+19058=La Boule de Cristal se remplit d'une brume grise. Vous n'êtes pas le propriétaire de l'animal que vous essayez d'invoquer.
+19059=Vous devez attendre quelques secondes avant de pouvoir invoquer votre animal de compagnie.
+19060=La Boule de Cristal se remplit d'une brume verte. Votre animal a été invoqué.
+19061=animal lié :
+19062=Cette boule de cristal n'est plus liée à un animal de compagnie.
+19063=Le nouveau nom de l'animal est : %s
+19064=Cela ne semble pas être un animal de compagnie valide.
 }
 EOF

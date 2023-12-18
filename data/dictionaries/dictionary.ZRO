@@ -5269,5 +5269,21 @@
 19032=Nay.
 19033=Very doubtful.
 19034=Mine sources say nay.
+// [19050-19065] Crystal Pet Summoning Ball
+19050=Target your pet that you wish to link to this Crystal Ball of Pet Summoning.
+19051=You may only link your own pets to a Crystal Ball of Pet Summoning.
+19052=The Crystal Ball darkens. It must be charged before it can be used again.
+19053=Your pet is now linked to this Crystal Ball of Pet Summoning.
+19054=Only pets can be linked to this Crystal Ball of Pet Summoning.
+19055=The Crystal Ball darkens. It must be charged before it can be used again.
+19056=The Crystal Ball fills with a yellow mist. Why would you summon your pet while riding it?
+19057=The Crystal Ball fills with a blue mist. Your pet is not responding to the summons.
+19058=The Crystal Ball fills with a grey mist. You are not the owner of the pet you are attempting to summon.
+19059=You must wait a few seconds before you can summon your pet.
+19060=The Crystal Ball fills with a green mist. Your pet has been summoned.
+19061=linked pet:
+19062=This crystal ball is no longer linked to a pet.
+19063=The new name of the pet is: %s
+19064=That does not seem to be a valid pet.
 }
 EOF

@@ -5274,5 +5274,21 @@
 19032=Nie.
 19033=Bardzo wątpliwe.
 19034=Źródła moje mówią nie.
+// [19050-19065] Kryształowa Kula Przywołania Zwierzaka
+19050=Wybierz na cel swojego zwierzaka, którego chcesz powiązać z Kryształową Kulą Przywoływania Zwierzaków.
+19051=Możesz połączyć tylko swoje własne zwierzaki z Kryształową Kulą Przywoływania Zwierzaków.
+19052=Kryształowa Kula ciemnieje. Przed ponownym użyciem należy go naładować.
+19053=Twój zwierzak jest teraz połączony z Kryształową Kulą Przywoływania Zwierzaków.
+19054=Tylko zwierzęta domowe mogą być powiązane z tą Kryształową Kulą Przywołania Zwierzaków.
+19055=Kryształowa Kula ciemnieje. Przed ponownym użyciem należy go naładować.
+19056=Kryształowa Kula wypełnia się żółtą mgłą. Dlaczego miałbyś przywołać swojego zwierzaka podczas jazdy na nim?
+19057=Kryształowa Kula wypełnia się niebieską mgłą. Twój zwierzak nie reaguje na wezwanie.
+19058=Kryształowa Kula wypełnia się szarą mgłą. Nie jesteś właścicielem zwierzaka, którego próbujesz przywołać.
+19059=Musisz poczekać kilka sekund, zanim będziesz mógł przywołać swojego zwierzaka.
+19060=Kryształowa Kula wypełnia się zieloną mgłą. Twoje zwierzę zostało wezwane.
+19061=połączone zwierzę:
+19062=Ta kryształowa kula nie jest już powiązana ze zwierzakiem.
+19063=Nowa nazwa zwierzaka to: %s
+19064=Wygląda na to, że to nie jest prawidłowe zwierzę.
 }
 EOF

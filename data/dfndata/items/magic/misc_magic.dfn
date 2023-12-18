@@ -137,6 +137,18 @@ sectionid=0x0e2e
 get=0x0e2e
 }
 
+[crystalballofpetsummoning]
+{
+get=base_item
+name=crystal ball of pet summoning
+id=0x0e2e
+dir=1
+weight=1000
+value=2 1
+good=28
+script=5057// ballofpetsummoning.js
+}
+
 [0x2252]
 {
 get=base_item

@@ -5274,5 +5274,21 @@
 19032 = Ne.
 19033=Velmi pochybné.
 19034=Důlní zdroje říkají ne.
+// [19050-19065] Crystal Pet Summoning Ball
+19050=Zacilte na svého mazlíčka, kterého si přejete propojit s touto Křišťálovou koulí Pet Summoning.
+19051=Můžete propojit pouze své vlastní mazlíčky s Křišťálovou koulí Pet Summoning.
+19052=Křišťálová koule ztmavne. Před dalším použitím se musí nabít.
+19053=Váš mazlíček je nyní spojen s touto Křišťálovou koulí Pet Summoning.
+19054=K této Crystal Ball of Pet Summoning lze připojit pouze domácí mazlíčky.
+19055=Křišťálová koule tmavne. Před dalším použitím se musí nabít.
+19056=Křišťálová koule se plní žlutou mlhou. Proč byste přivolávali svého mazlíčka při jízdě na něm?
+19057=Křišťálová koule se plní modrou mlhou. Váš mazlíček nereaguje na přivolání.
+19058=Křišťálová koule se plní šedou mlhou. Nejste vlastníkem zvířete, kterého se pokoušíte přivolat.
+19059=Musíte počkat několik sekund, než budete moci přivolat svého mazlíčka.
+19060=Křišťálová koule se plní zelenou mlhou. Váš mazlíček byl přivolán.
+19061=připojený mazlíček:
+19062=Tato křišťálová koule již není spojena s domácím mazlíčkem.
+19063=Nové jméno mazlíčka je: %s
+19064=To se nezdá být platným mazlíčkem.
 }
 EOF
