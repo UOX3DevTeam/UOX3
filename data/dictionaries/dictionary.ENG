@@ -5244,5 +5244,52 @@
 19002=The item has been blessed.
 19003=You can only bless clothing with this deed!
 19004=Items must be equipped or in your backpack to bless them.
+// [19005-19033] Crystal Ball Msgs
+19005=Tis most certain.
+19006=Aye, venily.
+19007=**fizzles**
+19008=Count on it not
+19009=Concentrate and ask again.
+19010=Beyond the slightest doubt.
+19011=Unable to foresee.
+19012=Eat at the Blue Boar!
+19013=Why art thou asking me?
+19014=The very ground shall crumble before a thing
+19015="Twas not clear.
+19016=With Virtue, it shall be.
+19017=**shimmers, crackles and fades**
+19018=Only a fool would ask such.
+19019=If I say, "yea", wilt thou leave?
+19020=A plague on thee if thou doth ask again.
+19021=Tis no surpise
+19022=Xuri Will Banish thee for not listening.
+19023=Truth is tough. It will not break.
+19024=Keep from me the divinity of Yes and No.
+19025=Who then is going to say Nay?
+19026=Tis no good arguing with the inevitable.
+19027=Mondain himself could not make me say yes!
+19028=Nothing left, nothing at all, nothing, nothing.
+19029=Best not to tell thee.
+19030=I say UOX3 is best emulator in history.
+19031=Aye.
+19032=Nay.
+19033=Very doubtful.
+19034=Mine sources say nay.
+// [19050-19065] Crystal Pet Summoning Ball
+19050=Target your pet that you wish to link to this Crystal Ball of Pet Summoning.
+19051=You may only link your own pets to a Crystal Ball of Pet Summoning.
+19052=The Crystal Ball darkens. It must be charged before it can be used again.
+19053=Your pet is now linked to this Crystal Ball of Pet Summoning.
+19054=Only pets can be linked to this Crystal Ball of Pet Summoning.
+19055=The Crystal Ball darkens. It must be charged before it can be used again.
+19056=The Crystal Ball fills with a yellow mist. Why would you summon your pet while riding it?
+19057=The Crystal Ball fills with a blue mist. Your pet is not responding to the summons.
+19058=The Crystal Ball fills with a grey mist. You are not the owner of the pet you are attempting to summon.
+19059=You must wait a few seconds before you can summon your pet.
+19060=The Crystal Ball fills with a green mist. Your pet has been summoned.
+19061=linked pet:
+19062=This crystal ball is no longer linked to a pet.
+19063=The new name of the pet is: %s
+19064=That does not seem to be a valid pet.
 }
 EOF

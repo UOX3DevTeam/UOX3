@@ -1229,6 +1229,87 @@ SI08 cScript::OnHelpButton(CChar* mChar)
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	cScript::OnContextMenuRequest()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Triggers when player activates context menu on another character
+//|					Return false to prevent additional onContextMenu events from triggering
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( baseObj ) || tSock == nullptr )
+		return RV_NOFUNC;
+ 
+	if( !ExistAndVerify( seOnContextMenuRequest, "onContextMenuRequest" ))
+		return RV_NOFUNC;
+ 
+	jsval rval, params[2];
+	JSObject *mySockObj = JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	JSObject *myObj = nullptr;
+	if( baseObj->GetObjType() == OT_CHAR )
+	{
+		myObj = JSEngine->AcquireObject( IUE_CHAR, baseObj, runTime );
+	}
+	else
+	{
+		myObj = JSEngine->AcquireObject( IUE_ITEM, baseObj, runTime );
+	}
+ 
+	params[0] = OBJECT_TO_JSVAL( mySockObj );
+	params[1] = OBJECT_TO_JSVAL( myObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onContextMenuRequest", 2, params, &rval );
+ 
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnContextMenuRequest, false );
+		return RV_NOFUNC;
+    }
+ 
+	return TryParseJSVal( rval );
+}
+ 
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	cScript::OnContextMenuSelect()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Triggers when player selects an entry from a popup context menu
+//|					Return false to prevent additional onContextMenuSelect events from triggering
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 popupEntry )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( baseObj ) || tSock == nullptr )
+		return RV_NOFUNC;
+ 
+	if( !ExistAndVerify( seOnContextMenuSelect, "onContextMenuSelect" ))
+		return RV_NOFUNC;
+ 
+	jsval rval, params[3];
+	JSObject *mySockObj = JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	JSObject *myObj = nullptr;
+	if( baseObj->GetObjType() == OT_CHAR )
+	{
+		myObj = JSEngine->AcquireObject( IUE_CHAR, baseObj, runTime );
+	}
+	else
+	{
+		myObj = JSEngine->AcquireObject( IUE_ITEM, baseObj, runTime );
+	}
+ 
+	params[0] = OBJECT_TO_JSVAL( mySockObj );
+	params[1] = OBJECT_TO_JSVAL( myObj );
+	params[2] = INT_TO_JSVAL( popupEntry );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onContextMenuSelect", 3, params, &rval );
+ 
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnContextMenuSelect, false );
+		return RV_NOFUNC;
+	}
+ 
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnWarModeToggle()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character who toggle War Mode

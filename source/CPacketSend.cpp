@@ -8705,7 +8705,7 @@ CPPopupMenu::CPPopupMenu( void )
 	InternalReset();
 }
 
-CPPopupMenu::CPPopupMenu( CChar& toCopy, CSocket &tSock )
+CPPopupMenu::CPPopupMenu( CBaseObject& toCopy, CSocket &tSock )
 {
 	InternalReset();
 	CopyData( toCopy, tSock );
@@ -8720,7 +8720,7 @@ void CPPopupMenu::InternalReset( void )
 	pStream.WriteShort( 5, 0x0001 );
 }
 
-void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
+void CPPopupMenu::CopyData( CBaseObject& toCopy, CSocket &tSock )
 {
 	UI16 packetLen = ( 12 + ( 4 * 8 ));
 	pStream.ReserveSize( packetLen );
@@ -8736,11 +8736,20 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 		mChar = tSock.CurrcharObj();
 	}
 
+	auto toCopyChar = static_cast<CChar *>( &toCopy );
+
 	// Stop moving for 2 seconds when someone opens a context menu, to give them 
 	// the chance to select something before walking out of range
-	if( toCopy.GetNpcWander() != WT_PATHFIND && toCopy.GetNpcWander() != WT_FOLLOW && toCopy.GetNpcWander() != WT_FLEE )
+	if( toCopy.CanBeObjType( OT_CHAR ) )
 	{
-		toCopy.SetTimer( tNPC_MOVETIME, BuildTimeValue( 3 ));
+		if( toCopyChar->GetNpcWander() != WT_PATHFIND && toCopyChar->GetNpcWander() != WT_FOLLOW && toCopyChar->GetNpcWander() != WT_FLEE )
+		{
+			toCopyChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 3 ));
+		}
+	}
+	else
+	{
+		return;
 	}
 
 	// Open Paperdoll
@@ -8760,7 +8769,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}*/
 
 	// Bulk Order Info - if enabled in ini
-	if( cwmWorldState->ServerData()->OfferBODsFromContextMenu() && toCopy.IsShop() )
+	if( cwmWorldState->ServerData()->OfferBODsFromContextMenu() && toCopyChar->IsShop() )
 	{
 		TAGMAPOBJECT isBodVendor = toCopy.GetTag( "bodType" );
 		if( isBodVendor.m_IntValue > 0 )
@@ -8780,8 +8789,8 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 
 	// Open Backpack
 	//	|| ( toCopy.IsTamed() && ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar && !toCopy.CanBeHired() )))
-	if( toCopy.GetQuestType() != QT_ESCORTQUEST && (( toCopy.GetSerial() == tSock.CurrcharObj()->GetSerial() 
-		|| toCopy.GetId() == 0x0123 || toCopy.GetId() == 0x0124 || toCopy.GetId() == 0x0317 ) && ValidateObject( toCopy.GetPackItem() )))
+	if( toCopyChar->GetQuestType() != QT_ESCORTQUEST && (( toCopy.GetSerial() == tSock.CurrcharObj()->GetSerial() 
+		|| toCopy.GetId() == 0x0123 || toCopy.GetId() == 0x0124 || toCopy.GetId() == 0x0317 ) && ValidateObject( toCopyChar->GetPackItem() )))
 	{
 		if( numEntries > 0 )
 		{
@@ -8804,7 +8813,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// Banker
-	if( toCopy.IsNpc() && toCopy.GetNpcAiType() == AI_BANKER )
+	if( toCopyChar->IsNpc() && toCopyChar->GetNpcAiType() == AI_BANKER )
 	{
 		if( numEntries > 0 )
 		{
@@ -8828,7 +8837,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// Stablemaster
-	if( toCopy.GetNpcAiType() == AI_STABLEMASTER )
+	if( toCopyChar->GetNpcAiType() == AI_STABLEMASTER )
 	{
 		if( numEntries > 0 )
 		{
@@ -8867,7 +8876,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// Hireling
-	if( toCopy.IsNpc() && toCopy.CanBeHired() && !ValidateObject( toCopy.GetOwnerObj() ))
+	if( toCopyChar->IsNpc() && toCopyChar->CanBeHired() && !ValidateObject( toCopy.GetOwnerObj() ))
 	{
 		if( numEntries > 0 )
 		{
@@ -8891,7 +8900,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// NPC Escort
-	if( toCopy.IsNpc() && toCopy.GetQuestType() == QT_ESCORTQUEST )
+	if( toCopyChar->IsNpc() && toCopyChar->GetQuestType() == QT_ESCORTQUEST )
 	{
 		if( numEntries > 0 )
 		{
@@ -8943,10 +8952,10 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// Shopkeeper
-	if( toCopy.IsShop() )
+	if( toCopyChar->IsShop() )
 	{
 		// Shopkeeper - Buy
-		CItem *sellContainer = toCopy.GetItemAtLayer( IL_SELLCONTAINER );
+		CItem *sellContainer = toCopyChar->GetItemAtLayer( IL_SELLCONTAINER );
 		if( ValidateObject( sellContainer ) && sellContainer->GetContainsList()->Num() > 0 )
 		{
 			if( numEntries > 0 )
@@ -8971,7 +8980,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 		}
 
 		// Shopkeeper - Sell
-		CItem *buyContainer = toCopy.GetItemAtLayer( IL_BUYCONTAINER );
+		CItem *buyContainer = toCopyChar->GetItemAtLayer( IL_BUYCONTAINER );
 		if( ValidateObject( buyContainer ) && buyContainer->GetContainsList()->Num() > 0 )
 		{
 			if( numEntries > 0 )
@@ -8996,9 +9005,9 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// Tame
-	if( toCopy.IsNpc() && cwmWorldState->creatures[toCopy.GetId()].IsAnimal() && !ValidateObject( toCopy.GetOwnerObj() ))
+	if( toCopyChar->IsNpc() && cwmWorldState->creatures[toCopy.GetId()].IsAnimal() && !ValidateObject( toCopy.GetOwnerObj() ))
 	{
-		auto skillToTame = toCopy.GetTaming();
+		auto skillToTame = toCopyChar->GetTaming();
 		if( skillToTame > 0 )
 		{
 			if( numEntries > 0 )
@@ -9024,8 +9033,8 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 
 	// Pet commands
 	bool playerIsOwner = ( ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar );
-	bool playerIsFriend = Npcs->CheckPetFriend( mChar, &toCopy );
-	if( toCopy.IsNpc() && toCopy.GetNpcAiType() != AI_PLAYERVENDOR && toCopy.GetQuestType() != QT_ESCORTQUEST && ( toCopy.IsTamed() || toCopy.CanBeHired() )
+	bool playerIsFriend = Npcs->CheckPetFriend( mChar, toCopyChar );
+	if( toCopyChar->IsNpc() && toCopyChar->GetNpcAiType() != AI_PLAYERVENDOR && toCopyChar->GetQuestType() != QT_ESCORTQUEST && ( toCopyChar->IsTamed() || toCopyChar->CanBeHired() )
 		&& ( playerIsOwner || playerIsFriend ))
 	{
 		if( numEntries > 0 )
@@ -9157,7 +9166,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
 			}
 
-			if( toCopy.IsTamed() )
+			if( toCopyChar->IsTamed() )
 			{
 				// Release (Pet)
 				numEntries++;
@@ -9175,7 +9184,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 				}
 			}
 
-			if( toCopy.CanBeHired() )
+			if( toCopyChar->CanBeHired() )
 			{
 				// Dismiss (Hireling)
 				numEntries++;
@@ -9196,7 +9205,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// Skill training - IDs 0x006D to 0x009C
-	if( toCopy.IsNpc() && !toCopy.IsTamed() && !cwmWorldState->creatures[toCopy.GetId()].IsAnimal() && toCopy.CanTrain() && cwmWorldState->creatures[toCopy.GetId()].IsHuman() )
+	if( toCopyChar->IsNpc() && !toCopyChar->IsTamed() && !cwmWorldState->creatures[toCopy.GetId()].IsAnimal() && toCopyChar->CanTrain() && cwmWorldState->creatures[toCopy.GetId()].IsHuman() )
 	{
 		auto idTracker = 0x0071;
 		auto clilocTracker = 6000;
@@ -9207,7 +9216,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 			if( skillEntries >= 10 )
 				break;
 
-			auto trainerSkillPoints = toCopy.GetBaseSkill( i );
+			auto trainerSkillPoints = toCopyChar->GetBaseSkill( i );
 			if( trainerSkillPoints > 600 && ( mChar->GetSkill( i ) < trainerSkillPoints / 3 ))
 			{
 				if( numEntries > 0 )

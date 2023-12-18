@@ -114,6 +114,8 @@ enum ScriptEvent
 	seOnDyeTarget,
 	seOnQuestGump,
 	seOnHelpButton,
+	seOnContextMenuRequest,
+	seOnContextMenuSelect,
 	seOnWarModeToggle,
 	seOnSpecialMove,
 	seOnFacetChange
@@ -260,6 +262,8 @@ public:
 	SI08		OnScrollingGumpPress( CSocket *tSock, UI16 gumpId, UI16 buttonId );
 	SI08		OnQuestGump( CChar *mChar );
 	SI08		OnHelpButton( CChar *mChar );
+	SI08		OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj );
+	SI08		OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 popupEntry );
 	SI08		OnWarModeToggle( CChar *mChar );
 	SI08		OnSpecialMove( CChar *mChar, UI08 abilityId );
 	SI08		OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet );

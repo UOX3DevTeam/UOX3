@@ -3599,9 +3599,9 @@ bool SE_GetTownRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|    Function    -    SE_GetTownRegionFromXY()
+//|	Function	-	SE_GetTownRegionFromXY()
 //o------------------------------------------------------------------------------------------------o
-//|    Purpose        -    Returns region object associated with a specific location 
+//|	Purpose		-	Returns region object associated with a specific location 
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetTownRegionFromXY( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {

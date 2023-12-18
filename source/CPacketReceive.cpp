@@ -4589,19 +4589,50 @@ bool CPIPopupMenuRequest::Handle( void )
 	// Only show context menus if enabled in ini
 	if( !cwmWorldState->ServerData()->ServerContextMenus() )
 		return true;
-
+		
+	CBaseObject *myObj = nullptr;
+ 
 	if( mSer < BASEITEMSERIAL )
 	{
-		CChar *myChar = CalcCharObjFromSer( mSer );
-		if( myChar == nullptr )
+		myObj = static_cast<CBaseObject*>( CalcCharObjFromSer( mSer ));
+		if( myObj == nullptr )
 			return true;
-
-		if( !LineOfSight( tSock, tSock->CurrcharObj(), myChar->GetX(), myChar->GetY(), ( myChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
-			return true;
-
-		CPPopupMenu toSend(( *myChar ), ( *tSock ));
-		tSock->Send( &toSend );
 	}
+	else
+	{
+		myObj = static_cast<CBaseObject*>( CalcItemObjFromSer( mSer ));
+		if( myObj == nullptr )
+			return true;
+	}
+	
+	std::vector<UI16> scriptTriggers = myObj->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnContextMenuRequest( tSock, myObj ) == 0 )
+			{
+				return true;
+			}
+		}
+	}
+ 
+	// No individual scripts handling onContextMenu returned true - let's check global script!
+	cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
+	if( toExecute != nullptr )
+	{
+		if( toExecute->OnContextMenuRequest( tSock, myObj ) == 0 )
+		{
+			return true;
+		}
+	}
+
+	if( !LineOfSight( tSock, tSock->CurrcharObj(), myObj->GetX(), myObj->GetY(), ( myObj->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+		return true;
+
+	CPPopupMenu toSend(( *myObj ), ( *tSock ));
+	tSock->Send( &toSend );
 	return true;
 }
 void CPIPopupMenuRequest::Log( std::ostream &outStream, bool fullHeader )
@@ -4631,10 +4662,10 @@ void CPIPopupMenuRequest::Log( std::ostream &outStream, bool fullHeader )
 //|							BYTE[4] Character ID
 //|							BYTE[2] Entry Tag for line selected provided in subcommand 0x14
 //o------------------------------------------------------------------------------------------------o
-CPIPopupMenuSelect::CPIPopupMenuSelect() : popupEntry( 0 ), targChar( nullptr )
+CPIPopupMenuSelect::CPIPopupMenuSelect() : popupEntry( 0 ), targObj( nullptr )
 {
 }
-CPIPopupMenuSelect::CPIPopupMenuSelect( CSocket *s ) : CPInputBuffer( s ), popupEntry( 0 ), targChar( nullptr )
+CPIPopupMenuSelect::CPIPopupMenuSelect( CSocket *s ) : CPInputBuffer( s ), popupEntry( 0 ), targObj( nullptr )
 {
 	Receive();
 }
@@ -4642,7 +4673,16 @@ CPIPopupMenuSelect::CPIPopupMenuSelect( CSocket *s ) : CPInputBuffer( s ), popup
 void CPIPopupMenuSelect::Receive( void )
 {
 	popupEntry	= tSock->GetWord( 9 );
-	targChar	= CalcCharObjFromSer( tSock->GetDWord( 5 ));
+ 
+	SERIAL mSer = tSock->GetDWord( 5 );
+	if( mSer < BASEITEMSERIAL )
+	{
+		targObj = static_cast<CBaseObject*>( CalcCharObjFromSer( mSer ));
+	}
+	else
+	{
+		targObj = static_cast<CBaseObject*>( CalcItemObjFromSer( mSer ));
+	}
 }
 
 bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text, CChar *tChar = nullptr );
@@ -4653,8 +4693,36 @@ bool CPIPopupMenuSelect::Handle( void )
 		return true;
 
 	CChar *mChar			= tSock->CurrcharObj();
-	if( !ValidateObject( targChar ) || !ValidateObject( mChar ))
+	if( !ValidateObject( targObj ) || !ValidateObject( mChar ))
 		return true;
+
+	std::vector<UI16> scriptTriggers = targObj->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnContextMenuSelect( tSock, targObj, popupEntry ) == 0 )
+			{
+				return true;
+			}
+		}
+	}
+
+	// No individual scripts handling onContextMenu returned true - let's check global script!
+	cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
+	if( toExecute != nullptr )
+	{
+		if( toExecute->OnContextMenuSelect( tSock, targObj, popupEntry ) == 0 )
+		{
+			return true;
+		}
+	}
+
+	if( targObj->CanBeObjType( OT_ITEM )) // No items with hard coded context menus
+		return true;
+
+	CChar *targChar = static_cast<CChar *>( targObj );
 
 	switch( popupEntry )
 	{
