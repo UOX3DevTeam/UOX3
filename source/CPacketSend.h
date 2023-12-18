@@ -1539,11 +1539,11 @@ protected:
 	virtual void	InternalReset( void ) override;
 public:
 	CPPopupMenu();
-	CPPopupMenu( CChar&, CSocket& );
+	CPPopupMenu( CBaseObject&, CSocket& );
 	virtual			~CPPopupMenu()
 	{
 	}
-	virtual void	CopyData( CChar&, CSocket& );
+	virtual void	CopyData( CBaseObject&, CSocket& );
 };
 
 class CPClilocMessage : public CPUOXBuffer

@@ -1012,6 +1012,122 @@ function onCommand( mySock, cmdString )
 				</div> <!-- cd-faq__content -->
 			</li>
 
+           <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#eventOnContextMenuRequest" id="eventOnContextMenuRequest"><span>onContextMenuRequest</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <div class="settingsDiv">
+                            <p><span class="hl">Prototype</span></p>
+                            <p><em>function onContextMenuRequest( socket, targObj )</em></p>
+                        </div>
+                        <div class="settingsDiv">
+                            <p><span class="hl">Purpose</span></p>
+                            <p>To allow reactions to player attempts at opening context menus for chars/items</p>
+                        </div>
+                        <div class="settingsDiv">
+                            <p><span class="hl">When Triggered</span></p>
+                            <p>When a player attempts to trigger context menu on items or characters, script activates on said item/character</p>
+                            <p>Usable in Global script? <span class="hl">Yes</span></p>
+                        </div>
+                        <div class="settingsDiv">
+                            <p><span class="hl">Return Values</span></p>
+                            <ul>
+                                <li><strong>return false</strong> to override and prevent hard-coded context menus from showing</li>
+                                <li><strong>return true</strong> to let code handle context menu instead</li>
+                            </ul>
+                        </div>
+                        <div class="settingsDiv">
+                            <p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onContextMenuRequest( socket, targObj )
+{
+    // handle your own packet with context menu here
+    var pUser = socket.currentChar;
+    var offset = 12;
+    var numEntries = 1; // Increase with number of Entries
+ 
+    // Prepare packet
+    var toSend = new Packet();
+    var packetLen = ( 12 + ( numEntries * 8 ));
+    toSend.ReserveSize( packetLen );
+    toSend.WriteByte( 0, 0xBF );
+    toSend.WriteShort( 1, packetLen  );
+    toSend.WriteShort( 3, 0x14 ); // subCmd
+    toSend.WriteShort( 5, 0x0001 ); // 0x0001 for 2D client, 0x0002 for KR (maybe this needs to be 0x0002?)
+    toSend.WriteLong( 7, targObj.serial );
+    toSend.WriteByte( 11, numEntries ); // Number of entries
+ 
+    // Context Menu Entry 1 - Open Paperdoll Context menu
+    toSend.WriteShort( offset, 0x000a );    // Unique ID
+    toSend.WriteShort( offset += 2, 6123);
+    toSend.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+    toSend.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+ 
+    offset += 2; // for each additional entry
+ 
+    // Context Menu Entry 2 - Unlink pet
+    toSend.WriteShort( offset, 0x000b );    // Unique ID
+    toSend.WriteShort( offset += 2, 6182 );
+    toSend.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+    toSend.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+ 
+    //Send packet
+    socket.Send( toSend );
+    toSend.Free();
+ 
+    return false;
+}</code></pre></p>
+                        </div>
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+ 
+            <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#eventOnContextMenuSelect" id="eventOnContextMenuSelect"><span>onContextMenuSelect</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <div class="settingsDiv">
+                            <p><span class="hl">Prototype</span></p>
+                            <p><em>function onContextMenuSelect( socket, targObj, popupEntry )</em></p>
+                        </div>
+                        <div class="settingsDiv">
+                            <p><span class="hl">Purpose</span></p>
+                            <p>To allow custom handling of context menu selection for chars/items</p>
+                        </div>
+                        <div class="settingsDiv">
+                            <p><span class="hl">When Triggered</span></p>
+                            <p>When a player selects a popup from a context menu on an item/character, script activates on said item/character</p>
+                            <p>Usable in Global script? <span class="hl">Yes</span></p>
+                        </div>
+                        <div class="settingsDiv">
+                            <p><span class="hl">Return Values</span></p>
+                            <ul>
+                                <li><strong>return false</strong> to override and prevent hard-coded context menu selection handling</li>
+                                <li><strong>return true</strong> to let code handle context menu selection handling</li>
+                            </ul>
+                        </div>
+                        <div class="settingsDiv">
+                            <p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onContextMenuSelect( socket, targObj, popupEntry )
+{
+    switch( popupEntry )
+    {
+        case 0x000A: // Open Paperdoll
+            // Show custom paperdoll?
+            break;
+        case 0x000B: // Unlink Pet
+            // Handle unlinking of pet here
+            break;
+        default:
+            break;
+    }
+ 
+    return false;
+}</code></pre></p>
+                        </div>
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnContRemoveItem" id="eventOnContRemoveItem"><span>onContRemoveItem</span></a>
 				<div class="cd-faq__content">

@@ -1,3 +1,6 @@
+17/12/2023 - Dragon Slayer
+	Added OnContextMenuRequest and OnContextMenuSelect. (Thanks Xuri)
+
 10/12/2023 - Dragon Slayer
 	Implemented Check_travel_restriction, Check_teleport, and Check_regeants in magic/helpers (js).
 	Added GetTownRegionXY (Thanks Xuri).
@@ -30,8 +33,8 @@
   
 26/11/2023 - Dragon Slayer
 	Added Glassblowing Crafting System:
-  	- Introducing a new crafting menu for glassblowing, allowing players to create unique glass items.
-  	- New crafting tools, including a glassblowing pipe and glass items.
+	- Introducing a new crafting menu for glassblowing, allowing players to create unique glass items.
+	- New crafting tools, including a glassblowing pipe and glass items.
     
 26/11/2023 - Dragon Slayer
 	Fixed a potential server crash issue related to keeping track of which players have opened which containers (Xuri)
