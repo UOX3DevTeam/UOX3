@@ -5238,10 +5238,41 @@
 18771=Pełny zestaw zbroi strażnika.
 // [18800-19000] Właściwości AOS
 18800=%i% Premia do leczenia bandażem
-}
 // Clothing Bless Deed
 19001=Wybierz element odzieży, który chcesz pobłogosławić.
 19002=Przedmiot został pobłogosławiony.
 19003=Tym czynem można pobłogosławić tylko ubrania!
 19004=Przedmioty muszą być wyposażone lub znajdować się w plecaku, aby można było je pobłogosławić.
+// [19005-19033] Wiadomości z Kryształowej Kuli
+19005=To pewne.
+19006=Tak, delikatnie.
+19007=**fiska**
+19008=Nie licz na to
+19009=Skoncentruj się i zapytaj ponownie.
+19010=Bez najmniejszych wątpliwości.
+19011=Nie można przewidzieć.
+19012=Jedz u Niebieskiego Dzika!
+19013=Dlaczego mnie pytasz?
+19014=Przed czymś zapadnie się cała ziemia
+19015="Nie było jasne.
+19016=Z cnotą tak będzie.
+19017=**mieni się, trzeszczy i blaknie**
+19018=Tylko głupiec by o to zapytał.
+19019=Jeśli powiem "tak", czy odejdziesz?
+19020=Plaga na ciebie, jeśli poprosisz ponownie.
+19021=Nie jest to niespodzianką
+19022=Xuri wygna cię za to, że nie słuchasz.
+19023=Prawda jest trudna. Nie złamie się.
+19024=Trzymaj ode mnie boskość Tak i Nie.
+19025=Kto wtedy powie „nie”?
+19026=Nie ma sensu kłócić się z tym, co nieuniknione.
+19027=Sam Mondain nie mógł zmusić mnie do powiedzenia „tak”!
+19028=Nic nie zostało, zupełnie nic, nic, nic.
+19029=Lepiej ci nie mówić.
+19030=Mówię, że UOX3 jest najlepszym emulatorem w historii.
+19031=Tak.
+19032=Nie.
+19033=Bardzo wątpliwe.
+19034=Źródła moje mówią nie.
+}
 EOF
