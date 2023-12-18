@@ -5238,6 +5238,58 @@
 18771=Pełny zestaw zbroi strażnika.
 // [18800-19000] Właściwości AOS
 18800=%i% Premia do leczenia bandażem
+// Clothing Bless Deed
+19001=Wybierz element odzieży, który chcesz pobłogosławić.
+19002=Przedmiot został pobłogosławiony.
+19003=Tym czynem można pobłogosławić tylko ubrania!
+19004=Przedmioty muszą być wyposażone lub znajdować się w plecaku, aby można było je pobłogosławić.
+// [19005-19033] Wiadomości z Kryształowej Kuli
+19005=To pewne.
+19006=Tak, delikatnie.
+19007=**fiska**
+19008=Nie licz na to
+19009=Skoncentruj się i zapytaj ponownie.
+19010=Bez najmniejszych wątpliwości.
+19011=Nie można przewidzieć.
+19012=Jedz u Niebieskiego Dzika!
+19013=Dlaczego mnie pytasz?
+19014=Przed czymś zapadnie się cała ziemia
+19015="Nie było jasne.
+19016=Z cnotą tak będzie.
+19017=**mieni się, trzeszczy i blaknie**
+19018=Tylko głupiec by o to zapytał.
+19019=Jeśli powiem "tak", czy odejdziesz?
+19020=Plaga na ciebie, jeśli poprosisz ponownie.
+19021=Nie jest to niespodzianką
+19022=Xuri wygna cię za to, że nie słuchasz.
+19023=Prawda jest trudna. Nie złamie się.
+19024=Trzymaj ode mnie boskość Tak i Nie.
+19025=Kto wtedy powie „nie”?
+19026=Nie ma sensu kłócić się z tym, co nieuniknione.
+19027=Sam Mondain nie mógł zmusić mnie do powiedzenia „tak”!
+19028=Nic nie zostało, zupełnie nic, nic, nic.
+19029=Lepiej ci nie mówić.
+19030=Mówię, że UOX3 jest najlepszym emulatorem w historii.
+19031=Tak.
+19032=Nie.
+19033=Bardzo wątpliwe.
+19034=Źródła moje mówią nie.
+// [19050-19065] Kryształowa Kula Przywołania Zwierzaka
+19050=Wybierz na cel swojego zwierzaka, którego chcesz powiązać z Kryształową Kulą Przywoływania Zwierzaków.
+19051=Możesz połączyć tylko swoje własne zwierzaki z Kryształową Kulą Przywoływania Zwierzaków.
+19052=Kryształowa Kula ciemnieje. Przed ponownym użyciem należy go naładować.
+19053=Twój zwierzak jest teraz połączony z Kryształową Kulą Przywoływania Zwierzaków.
+19054=Tylko zwierzęta domowe mogą być powiązane z tą Kryształową Kulą Przywołania Zwierzaków.
+19055=Kryształowa Kula ciemnieje. Przed ponownym użyciem należy go naładować.
+19056=Kryształowa Kula wypełnia się żółtą mgłą. Dlaczego miałbyś przywołać swojego zwierzaka podczas jazdy na nim?
+19057=Kryształowa Kula wypełnia się niebieską mgłą. Twój zwierzak nie reaguje na wezwanie.
+19058=Kryształowa Kula wypełnia się szarą mgłą. Nie jesteś właścicielem zwierzaka, którego próbujesz przywołać.
+19059=Musisz poczekać kilka sekund, zanim będziesz mógł przywołać swojego zwierzaka.
+19060=Kryształowa Kula wypełnia się zieloną mgłą. Twoje zwierzę zostało wezwane.
+19061=połączone zwierzę:
+19062=Ta kryształowa kula nie jest już powiązana ze zwierzakiem.
+19063=Nowa nazwa zwierzaka to: %s
+19064=Wygląda na to, że to nie jest prawidłowe zwierzę.
 // [19070-19080] Torba wysyłkowa
 19070=Torba wysyłkowa musi znajdować się w twoim plecaku.
 19071=Błąd: Nie znaleziono ważnej skrzynki bankowej! Aby uzyskać pomoc, skontaktuj się z GM.
@@ -5248,9 +5300,4 @@
 19076=Przedmiot został umieszczony w Twojej skrzynce bankowej.
 19077=Torba wysyłkowa odrzuca ten przedmiot.
 }
-// Clothing Bless Deed
-19001=Wybierz element odzieży, który chcesz pobłogosławić.
-19002=Przedmiot został pobłogosławiony.
-19003=Tym czynem można pobłogosławić tylko ubrania!
-19004=Przedmioty muszą być wyposażone lub znajdować się w plecaku, aby można było je pobłogosławić.
 EOF
