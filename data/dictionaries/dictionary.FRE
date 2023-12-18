@@ -5399,5 +5399,14 @@
 19002=L'article a été béni.
 19003=Vous ne pouvez bénir que des vêtements avec cet acte!
 19004=Les objets doivent être équipés ou dans ton sac à dos pour être bénis.
+// [19070-19080] Sac d'envoi
+19070=Le sac d'envoi doit être dans votre sac à dos.
+19071=Erreur : Aucune banque valide trouvée ! Veuillez contacter un directeur général pour obtenir de l'aide.
+19072=Vous ne pouvez envoyer que des objets de votre sac à dos vers votre boîte bancaire.
+19073=Vous ne pouvez pas envoyer un conteneur via le sac d'envoi.
+19074=Votre boîte bancaire est pleine.
+19075=Vous n'avez pas assez de charges pour envoyer autant de poids
+19076=L'objet a été placé dans votre boîte bancaire.
+19077=Le sac d'envoi rejette cet article.
 }
 EOF

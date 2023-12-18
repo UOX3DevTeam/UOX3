@@ -5238,6 +5238,15 @@
 18771=Un set completo di armatura da ranger.
 // [18800-19000] Proprietà AOS
 18800=%i% Bonus di guarigione della benda
+// [19070-19080] Borsa degli invii
+19070=La borsa di spedizione deve essere nel tuo zaino.
+19071=Errore: Nessuna casella di banca valida trovata! Si prega di contattare un GM per assistenza.
+19072=Puoi inviare solo oggetti dal tuo zaino alla tua casella di posta.
+19073=Non è possibile inviare un contenitore tramite la borsa di spedizione.
+19074=La tua casella di posta è piena.
+19075=Non hai abbastanza addebiti per inviare così tanto peso
+19076=L'oggetto è stato depositato nella tua cassetta della banca.
+19077=Il sacchetto di spedizione rifiuta l'oggetto.
 }
 // Clothing Bless Deed
 19001=Selezionare il capo di abbigliamento che si desidera benedire.

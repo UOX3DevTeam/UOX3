@@ -5243,5 +5243,14 @@
 19002=A peça foi abençoada.
 19003=Só podes abençoar roupa com esta ação!
 19004=Os objectos têm de estar equipados ou na mochila para serem abençoados.
+// [19070-19080] Saco de Envio
+19070=A sacola de envio deve estar em sua mochila.
+19071=Erro: Nenhuma caixa bancária válida encontrada! Entre em contato com um GM para obter assistência.
+19072=Você só pode enviar itens de sua mochila para sua caixa bancária.
+19073=Você não pode enviar um container através do saco de envio.
+19074=Sua caixa bancária está cheia.
+19075=Você não tem cobranças suficientes para enviar tanto peso
+19076=O item foi colocado em sua caixa bancária.
+19077=A sacola de envio rejeita esse item.
 }
 EOF

@@ -5243,5 +5243,14 @@
 19002=Položka byla požehnána.
 19003=Tímto úkonem můžete žehnat pouze oblečení!
 19004=Předměty musí být vybaveny nebo musí být v batohu, abyste je mohli požehnat.
+// [19070-19080] Bag of Sending
+19070=Taška pro odeslání musí být ve vašem batohu.
+19071=Chyba: Nebyla nalezena žádná platná bankovní schránka! Požádejte o pomoc GM.
+19072=Položky z batohu můžete posílat pouze do vaší bankovní schránky.
+19073=Nemůžete poslat kontejner přes pytel odesílání.
+19074=Vaše bankovní schránka je plná.
+19075=Nemáte dostatek poplatků k odeslání takové hmotnosti
+19076=Položka byla umístěna do vaší bankovní schránky.
+19077=Sáček s odesláním tuto položku odmítá.
 }
 EOF

@@ -5243,5 +5243,14 @@
 19002=Das Kleidungsstück wurde gesegnet.
 19003=Du kannst mit dieser Tat nur Kleidung segnen!
 19004=Gegenstände müssen ausgerüstet sein oder sich in deinem Rucksack befinden, um sie zu segnen.
+// [19070-19080] Beutel des Sendens
+19070=Die Versandtasche muss in Ihrem Rucksack sein.
+19071=Fehler: Kein gültiges Bankfach gefunden! Bitte wenden Sie sich an einen GM, um Hilfe zu erhalten.
+19072=Sie können nur Gegenstände aus Ihrem Rucksack an Ihr Bankfach senden.
+19073=Sie können einen Container nicht über den Versandbeutel versenden.
+19074=Ihr Bankfach ist voll.
+19075=Sie haben nicht genügend Gebühren, um so viel Gewicht zu senden
+19076=Der Artikel wurde in Ihr Bankfach gelegt.
+19077=Der Versandbeutel lehnt diesen Artikel ab.
 }
 EOF
