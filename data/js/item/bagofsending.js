@@ -3,14 +3,14 @@ function onCreateDFN( objMade, objType )
 	const maxCharges = 30;
 	if( objType == 0 ) 
 	{
-		var Charges = 0;
+		var charges = 0;
 		switch( RandomNumber( 0, 2 ))
 		{
-			case 0: Charges = 3; break;
-			case 1: Charges = 6; break;
-			case 2: Charges = 9; break;
+			case 0: charges = 3; break;
+			case 1: charges = 6; break;
+			case 2: charges = 9; break;
 		}
-		objMade.SetTag( "charges", Charges )
+		objMade.SetTag( "charges", charges )
 		objMade.SetTag( "maxCharges", maxCharges )
 	}
 }
@@ -100,7 +100,7 @@ function onCallback0( socket, myTarget)
 			socket.SysMessage( GetDictionaryEntry( 19074, socket.language )); // Your bank box is full.
 			return false;
 		}
-		else if( bankBox.weight > bankBox.weightMax )
+		else if( bankBox.weight + ( myTarget.weight * myTarget.amount ) > bankBox.weightMax )
 		{
 			socket.SysMessage( GetDictionaryEntry( 9183, socket.language )); // Your bank box is overloaded and cannot hold any more weight.
 			return false;
