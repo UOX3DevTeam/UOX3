@@ -97,6 +97,7 @@
 2200=server/misc/uses_left_tooltip.js
 2201=server/misc/hint_tooltip.js
 2202=server/misc/warning_trigger.js
+2203=server/misc/charges_left_tooltip.js
 
 // Server Data [2500-2749]
 2500=server/data/weapontypes.js

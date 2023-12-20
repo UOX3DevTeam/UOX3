@@ -104,7 +104,8 @@ colorlist=37
 dyeable=0
 decay=1
 good=5
-script=5058
+script=5058// bagofsending.js
+script=2203// charges_left_tooltip.js
 }
 
 [0x0e7a]

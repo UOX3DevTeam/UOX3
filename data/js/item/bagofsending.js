@@ -1,6 +1,7 @@
 function onCreateDFN( objMade, objType )
 {
 	const maxCharges = 30;
+	const reCharges = 0;
 	if( objType == 0 ) 
 	{
 		var charges = 0;
@@ -10,15 +11,16 @@ function onCreateDFN( objMade, objType )
 			case 1: charges = 6; break;
 			case 2: charges = 9; break;
 		}
-		objMade.SetTag( "charges", charges )
-		objMade.SetTag( "maxCharges", maxCharges )
+		objMade.SetTag( "charges", charges + "|" + reCharges + "|" + maxCharges );
 	}
 }
 
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
-	var Charges = iUsed.GetTag( "charges" )
+	var myCharges = iUsed.GetTag( "charges" ).split("|");
+	var charges = parseInt( myCharges[0] );
+
 	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
@@ -39,7 +41,7 @@ function onUseChecked( pUser, iUsed )
 			socket.SysMessage( GetDictionaryEntry( 19070, socket.language )); // The bag of sending must be in your backpack.
 			return false;
 		}
-		else if( Charges == 0 )
+		else if( charges == 0 )
 		{
 			socket.SysMessage( GetDictionaryEntry( 0, socket.language)); // This item is out of charges.
 			return false;
@@ -59,7 +61,11 @@ function onCallback0( socket, myTarget)
 	var pUser = socket.currentChar;
 	var requiredCharges = 1;
 	var iUsed = socket.tempObj;
-	var Charges = parseInt( iUsed.GetTag( "charges" ));
+	var myCharges = iUsed.GetTag( "charges" ).split("|");
+	var charges = parseInt( myCharges[0] );
+	var reCharges = parseInt( myCharges[1] );
+	var maxCharges = parseInt( myCharges[2] );
+
 	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
@@ -71,7 +77,7 @@ function onCallback0( socket, myTarget)
 		pUser.SysMessage( GetDictionaryEntry( 19070, socket.language )); // The bag of sending must be in your backpack
 		return false;
 	}
-	else if( Charges == 0 )
+	else if( charges == 0 )
 	{
 		pUser.SysMessage( GetDictionaryEntry( 0, socket.language )); // This item is out of charges.
 		return false;
@@ -90,7 +96,7 @@ function onCallback0( socket, myTarget)
 			socket.SysMessage( GetDictionaryEntry( 19072, socket.language )); // You may only send items from your backpack to your bank box.
 			return false;
 		}
-		else if( myTarget.type == 1 || myTarget == iUsed )
+		else if( myTarget.type == 1 || myTarget == iUsed || myTarget.sectionID == "bagofsending" )
 		{
 			socket.SysMessage( GetDictionaryEntry( 19073, socket.language )); // You may only send items from your backpack to your bank box.
 			return false;
@@ -100,19 +106,19 @@ function onCallback0( socket, myTarget)
 			socket.SysMessage( GetDictionaryEntry( 19074, socket.language )); // Your bank box is full.
 			return false;
 		}
-		else if( bankBox.weight + ( myTarget.weight * myTarget.amount ) > bankBox.weightMax )
+		else if( bankBox.weight > bankBox.weightMax )
 		{
 			socket.SysMessage( GetDictionaryEntry( 9183, socket.language )); // Your bank box is overloaded and cannot hold any more weight.
 			return false;
 		}
-		else if( requiredCharges > Charges )
+		else if( requiredCharges > charges )
 		{
 			socket.SysMessage( GetDictionaryEntry( 19075, socket.language )); // You don't have enough charges to send that much weight
 			return false;
 		}
 		else
 		{
-			iUsed.SetTag( "charges", Charges - requiredCharges );
+			iUsed.SetTag( "charges", charges - requiredCharges + "|" + reCharges + "|" + maxCharges );
 			socket.SysMessage( GetDictionaryEntry( 19076, socket.language )); // The item was placed in your bank box.
 			myTarget.container = bankBox;
 			iUsed.Refresh();
@@ -123,14 +129,6 @@ function onCallback0( socket, myTarget)
 		socket.SysMessage( GetDictionaryEntry( 19077, socket.language )); // The bag of sending rejects that item.
 		return false;
 	}
-}
-
-function onTooltip( iUsed, socket )
-{
-	var tooltipText = "";
-	var Charges = parseInt( iUsed.GetTag( "charges" ));
-	tooltipText = GetDictionaryEntry( 9252, socket.language ) + " " + Charges;// Charges:
-	return tooltipText;
 }
 
 function onContextMenuRequest( socket, targObj )
@@ -175,3 +173,5 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	}
 	return false;
 }
+
+function _restorecontext_() {}
