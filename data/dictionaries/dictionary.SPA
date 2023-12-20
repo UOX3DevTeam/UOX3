@@ -5290,5 +5290,10 @@
 19062=Esta bola de cristal ya no está vinculada a una mascota.
 19063=El nuevo nombre de la mascota es: %s
 19064=Esa no parece ser una mascota válida.
+// [19081-19090] Polvo de Translocación
+19081=Este objeto no puede absorber más polvo de translocación.
+19082=Este objeto ha sido sobresaturado con polvo de translocación y ya no se puede recargar.
+19083= brilla con energía verde y absorbe el poder mágico del polvo.
+19084=El polvo de translocación no tiene ningún efecto en este elemento.
 }
 EOF

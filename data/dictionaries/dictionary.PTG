@@ -5290,5 +5290,10 @@
 19062=Esta bola de cristal não está mais vinculada a um animal de estimação.
 19063=O novo nome do animal de estimação é: %s
 19064=Esse não parece ser um animal de estimação válido.
+// [19081-19090] Pó de Translocação
+19081=Este item não pode absorver mais pó de translocação.
+19082=Este item foi saturado com pó de translocação e não pode mais ser recarregado.
+19083= brilha com energia verde e absorve o poder mágico do pó.
+19084=Pó de translocação não tem efeito neste item.
 }
 EOF

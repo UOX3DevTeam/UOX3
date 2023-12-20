@@ -5285,5 +5285,10 @@
 19062=This crystal ball is no longer linked to a pet.
 19063=The new name of the pet is: %s
 19064=That does not seem to be a valid pet.
+// [19081-19090] Powder of Translocation
+19081=This item cannot absorb any more powder of translocation.
+19082=This item has been oversaturated with powder of translocation and can no longer be recharged.
+19083= glows with green energy and absorbs magical power from the powder.
+19084=Powder of translocation has no effect on this item.
 }
 EOF

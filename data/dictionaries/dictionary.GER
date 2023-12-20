@@ -5290,5 +5290,10 @@
 19062=Diese Kristallkugel ist nicht mehr mit einem Haustier verknüpft.
 19063=Der neue Name des Haustiers ist: %s
 19064=Das scheint kein gültiges Haustier zu sein.
+// [19081-19090] Pulver der Translokation
+19081=Dieser Gegenstand kann kein Translokationspulver mehr absorbieren.
+19082=Dieser Gegenstand ist mit Translokationspulver übersättigt und kann nicht mehr aufgeladen werden.
+19083= leuchtet vor grüner Energie und absorbiert magische Kraft aus dem Pulver.
+19084=Translokationspulver hat keine Auswirkung auf diesen Gegenstand.
 }
 EOF

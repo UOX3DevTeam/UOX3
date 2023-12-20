@@ -5290,5 +5290,10 @@
 19062=Ta kryształowa kula nie jest już powiązana ze zwierzakiem.
 19063=Nowa nazwa zwierzaka to: %s
 19064=Wygląda na to, że to nie jest prawidłowe zwierzę.
+// [19081-19090] Proszek translokacji
+19081=Ten przedmiot nie może wchłonąć więcej proszku translokacji.
+19082=Ten przedmiot został przesycony proszkiem translokacji i nie można go już ponownie naładować.
+19083= świeci zieloną energią i pochłania magiczną moc z proszku.
+19084=Proszek translokacji nie ma wpływu na ten przedmiot.
 }
 EOF
