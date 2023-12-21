@@ -247,7 +247,7 @@ script=5047//new player ticket
 { 
 get=base_item
 name=Elixir of Metal Conversion
-id=0x99B
+id=0x0E2C
 colour=0x487
 pileable=1
 amount=1
