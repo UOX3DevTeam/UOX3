@@ -5290,5 +5290,9 @@
 19062=Questa sfera di cristallo non è più collegata ad un animale domestico.
 19063=Il nuovo nome dell'animale è: %s
 19064=Non sembra essere un animale domestico valido.
+// [19100-19005] Conversione dell'elisir
+19100=Hai convertito con successo il metallo.
+19101=Puoi convertire solo cinquecento lingotti alla volta.
+19102=L'articolo deve essere nel tuo zaino per essere scambiato.
 }
 EOF

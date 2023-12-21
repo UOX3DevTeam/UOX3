@@ -5290,5 +5290,9 @@
 19062=Tato křišťálová koule již není spojena s domácím mazlíčkem.
 19063=Nové jméno mazlíčka je: %s
 19064=To se nezdá být platným mazlíčkem.
+// [19100-19005] Přeměna elixíru
+19100=Úspěšně jste převedli kov.
+19101=Najednou můžete převést pouze pět set ingotů.
+19102=Pro výměnu musí být položka ve vašem batohu.
 }
 EOF

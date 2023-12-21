@@ -5290,5 +5290,9 @@
 19062=Ta kryształowa kula nie jest już powiązana ze zwierzakiem.
 19063=Nowa nazwa zwierzaka to: %s
 19064=Wygląda na to, że to nie jest prawidłowe zwierzę.
+// [19100-19005] Konwersja eliksiru
+19100=Udało Ci się przekonwertować metal.
+19101=Możesz wymieniać tylko pięćset sztabek na raz.
+19102=Przedmiot musi znajdować się w Twoim plecaku, aby można go było wymienić.
 }
 EOF

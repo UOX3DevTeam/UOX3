@@ -5290,5 +5290,9 @@
 19062=Esta bola de cristal não está mais vinculada a um animal de estimação.
 19063=O novo nome do animal de estimação é: %s
 19064=Esse não parece ser um animal de estimação válido.
+// [19100-19005] Conversão de Elixir
+19100=Você converteu o metal com sucesso.
+19101=Você só pode converter quinhentos lingotes por vez.
+19102=O item deve estar em sua mochila para ser trocado.
 }
 EOF

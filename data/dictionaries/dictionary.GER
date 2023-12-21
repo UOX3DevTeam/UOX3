@@ -5290,5 +5290,9 @@
 19062=Diese Kristallkugel ist nicht mehr mit einem Haustier verknüpft.
 19063=Der neue Name des Haustiers ist: %s
 19064=Das scheint kein gültiges Haustier zu sein.
+// [19100-19005] Elixier-Konvertierung
+19100=Sie haben das Metall erfolgreich umgewandelt.
+19101=Sie können jeweils nur fünfhundert Barren umwandeln.
+19102=Der Artikel muss sich zum Umtausch in Ihrem Rucksack befinden.
 }
 EOF
