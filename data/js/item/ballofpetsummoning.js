@@ -3,24 +3,26 @@ var maxFollowers = GetServerSetting("MaxFollowers");
 function onCreateDFN( objMade, objType )
 {
 	const maxCharges = 30;
+	const reCharges = 0;
 	if( objType == 0 ) 
 	{
-		var Charges = 0;
+		var charges = 0;
 		switch( RandomNumber( 0, 2 ))
 		{
-			case 0: Charges = 3; break;
-			case 1: Charges = 6; break;
-			case 2: Charges = 9; break;
+			case 0: charges = 3; break;
+			case 1: charges = 6; break;
+			case 2: charges = 9; break;
 		}
-		objMade.SetTag( "charges", Charges );
-		objMade.SetTag( "maxCharges", maxCharges );
+		objMade.SetTag( "charges", charges + "|" + reCharges + "|" + maxCharges );
 	}
 }
 
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
-	var Charges = iUsed.GetTag( "charges" );
+
+	var myCharges = iUsed.GetTag( "charges" ).split("|");
+	var charges = parseInt( myCharges[0] );
 
 	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
@@ -42,7 +44,7 @@ function onUseChecked( pUser, iUsed )
 			pUser.SysMessage( GetDictionaryEntry( 18748, socket.language )); // That must be in your pack for you to use it.
 			return false;
 		}
-		else if( Charges == 0 )
+		else if( charges == 0 )
 		{
 			pUser.SysMessage( GetDictionaryEntry( 0, socket.language )); // This item is out of charges.
 			return false;
@@ -68,7 +70,9 @@ function onCallback0( socket, myTarget)
 	var pUser = socket.currentChar;
 	var requiredCharges = 1;
 	var iUsed = socket.tempObj;
-	var Charges = parseInt( iUsed.GetTag( "charges" ));
+
+	var myCharges = iUsed.GetTag( "charges" ).split("|");
+	var charges = parseInt( myCharges[0] );
 
 	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
@@ -81,20 +85,20 @@ function onCallback0( socket, myTarget)
 		pUser.SysMessage( GetDictionaryEntry( 18748, socket.language )); // That must be in your pack for you to use it.
 		return false;
 	}
-	else if( Charges == 0 )
+	else if (charges == 0 )
 	{
 		pUser.SysMessage( GetDictionaryEntry( 0, socket.language )); // This item is out of charges.
 		return false;
 	}
 
-	if( myTarget.tamed )
+	if( ValidateObject( myTarget ) && myTarget.tamed )
 	{
 		if( myTarget.owner != pUser )
 		{
 			pUser.SysMessage( GetDictionaryEntry( 19051, socket.language )); // You may only link your own pets to a Crystal Ball of Pet Summoning.
 			return false;
 		}
-		else if( requiredCharges > Charges )
+		else if( requiredCharges > charges )
 		{
 			pUser.SysMessage( GetDictionaryEntry( 19052, socket.language )); // The Crystal Ball darkens. It must be charged before it can be used again.
 			return false;
@@ -111,6 +115,7 @@ function onCallback0( socket, myTarget)
 		socket.SysMessage( GetDictionaryEntry( 19054, socket.language )); // Only pets can be linked to this Crystal Ball of Pet Summoning.
 		return false;
 	}
+	return false;
 }
 
 function SummonPet( pUser, iUsed )
@@ -118,9 +123,12 @@ function SummonPet( pUser, iUsed )
 	var socket = pUser.socket;
 	var requiredCharges = 1;
 	var Pet = CalcCharFromSer( parseInt( iUsed.GetTag( "petSerial" )));
-	var Charges = parseInt( iUsed.GetTag( "charges" ));
+	var myCharges = iUsed.GetTag( "charges" ).split("|");
+	var charges = parseInt( myCharges[0] );
+	var reCharges = parseInt( myCharges[1] );
+	var maxCharges = parseInt( myCharges[2] );
 
-	if( Charges == 0)
+	if( charges == 0)
 	{
 		pUser.SysMessage( GetDictionaryEntry( 19055, socket.language )); // The Crystal Ball darkens. It must be charged before it can be used again.
 		return false;
@@ -170,7 +178,8 @@ function SummonPet( pUser, iUsed )
 			{
 				Pet.Teleport( pUser );
 			}
-			iUsed.SetTag( "charges", Charges - requiredCharges);
+
+			iUsed.SetTag( "charges", charges - requiredCharges + "|" + reCharges + "|" + maxCharges );
 			iUsed.SetTempTag( "delay", 1 );
 			iUsed.StartTimer( 15000, 0, true );
 			socket.SysMessage( GetDictionaryEntry( 19060, socket.language )); // The Crystal Ball fills with a green mist. Your pet has been summoned.
@@ -197,19 +206,6 @@ function ReleasePet( petObj, petNum, pUser )
 	pUser.controlSlotsUsed = pUser.controlSlotsUsed + petObj.controlSlots;
 	pUser.AddFollower( petObj );
 	petObj.Follow( pUser );
-}
-
-function onTooltip( iUsed, pSocket )
-{
-	var tooltipText = "";
-	var Charges = parseInt( iUsed.GetTag( "charges" ));
-	var Pet = CalcCharFromSer( parseInt( iUsed.GetTag( "petSerial" )));
-	tooltipText = GetDictionaryEntry( 9252, pSocket.language )+ " " + Charges;// Charges:
-	if( ValidateObject( Pet ))
-	{
-		tooltipText += "\n" + GetDictionaryEntry( 19061, pSocket.language ) + " " + Pet.name;
-	}
-	return tooltipText;
 }
 
 function onTimer( iUsed, timerID )
@@ -269,7 +265,6 @@ function onContextMenuRequest( socket, targObj )
 	}
 	else
 	{
-
 		toSend.WriteShort( offset, 0x000a );    // Unique ID
 		toSend.WriteShort( offset += 2, 6180 ); // summon pet
 		toSend.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
