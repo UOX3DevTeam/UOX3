@@ -5290,6 +5290,15 @@
 19062=Tato křišťálová koule již není spojena s domácím mazlíčkem.
 19063=Nové jméno mazlíčka je: %s
 19064=To se nezdá být platným mazlíčkem.
+// [19070-19080] Bag of Sending
+19070=Taška pro odeslání musí být ve vašem batohu.
+19071=Chyba: Nebyla nalezena žádná platná bankovní schránka! Požádejte o pomoc GM.
+19072=Položky z batohu můžete posílat pouze do vaší bankovní schránky.
+19073=Nemůžete poslat kontejner přes pytel odesílání.
+19074=Vaše bankovní schránka je plná.
+19075=Nemáte dostatek poplatků k odeslání takové hmotnosti
+19076=Položka byla umístěna do vaší bankovní schránky.
+19077=Sáček s odesláním tuto položku odmítá.
 // [19081-19090] Powder of Translocation
 19081=Tato položka nemůže absorbovat žádný další prášek translokace.
 19082=Tato položka byla přesycena práškem translokace a již ji nelze dobíjet.

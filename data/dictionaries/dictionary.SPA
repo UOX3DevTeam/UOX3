@@ -5290,6 +5290,15 @@
 19062=Esta bola de cristal ya no está vinculada a una mascota.
 19063=El nuevo nombre de la mascota es: %s
 19064=Esa no parece ser una mascota válida.
+// [19070-19080] Bolsa de Envío
+19070=La bolsa de envío debe estar en tu mochila.
+19071=Error: ¡No se encontró ninguna caja bancaria válida! Comuníquese con un GM para obtener ayuda.
+19072=Sólo puedes enviar artículos de tu mochila a tu caja bancaria.
+19073=No se puede enviar un contenedor a través de la bolsa de envío.
+19074=Tu caja bancaria está llena.
+19075=No tienes suficientes cargos para enviar tanto peso
+19076=El artículo fue colocado en su caja bancaria.
+19077=La bolsa de envío rechaza ese artículo.
 // [19081-19090] Polvo de Translocación
 19081=Este objeto no puede absorber más polvo de translocación.
 19082=Este objeto ha sido sobresaturado con polvo de translocación y ya no se puede recargar.

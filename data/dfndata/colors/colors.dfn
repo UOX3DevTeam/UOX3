@@ -1655,3 +1655,12 @@
 0x03b3
 0x08e
 }
+
+// Bag of Sending
+[RANDOMCOLOR 37]
+{
+0x8A5  // yellow
+0x8AD  // blue
+0x89B  // red
+0x08A0 // green
+}

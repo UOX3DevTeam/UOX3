@@ -5290,6 +5290,15 @@
 19062=Questa sfera di cristallo non è più collegata ad un animale domestico.
 19063=Il nuovo nome dell'animale è: %s
 19064=Non sembra essere un animale domestico valido.
+// [19070-19080] Borsa degli invii
+19070=La borsa di spedizione deve essere nel tuo zaino.
+19071=Errore: Nessuna casella di banca valida trovata! Si prega di contattare un GM per assistenza.
+19072=Puoi inviare solo oggetti dal tuo zaino alla tua casella di posta.
+19073=Non è possibile inviare un contenitore tramite la borsa di spedizione.
+19074=La tua casella di posta è piena.
+19075=Non hai abbastanza addebiti per inviare così tanto peso
+19076=L'oggetto è stato depositato nella tua cassetta della banca.
+19077=Il sacchetto di spedizione rifiuta l'oggetto.
 // [19081-19090] Polvere di traslocazione
 19081=Questo oggetto non può più assorbire polvere di traslocazione.
 19082=Questo oggetto è stato saturo di polvere di traslocazione e non può più essere ricaricato.
