@@ -106,7 +106,7 @@ function onCallback0( socket, myTarget)
 			socket.SysMessage( GetDictionaryEntry( 19074, socket.language )); // Your bank box is full.
 			return false;
 		}
-		else if( bankBox.weight > bankBox.weightMax )
+		else if (bankBox.weight + (myTarget.weight * myTarget.amount) > bankBox.weightMax )
 		{
 			socket.SysMessage( GetDictionaryEntry( 9183, socket.language )); // Your bank box is overloaded and cannot hold any more weight.
 			return false;
