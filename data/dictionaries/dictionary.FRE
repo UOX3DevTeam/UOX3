@@ -5446,6 +5446,20 @@
 19062=Cette boule de cristal n'est plus liée à un animal de compagnie.
 19063=Le nouveau nom de l'animal est : %s
 19064=Cela ne semble pas être un animal de compagnie valide.
+// [19070-19080] Sac d'envoi
+19070=Le sac d'envoi doit être dans votre sac à dos.
+19071=Erreur : Aucune banque valide trouvée ! Veuillez contacter un directeur général pour obtenir de l'aide.
+19072=Vous ne pouvez envoyer que des objets de votre sac à dos vers votre boîte bancaire.
+19073=Vous ne pouvez pas envoyer un conteneur via le sac d'envoi.
+19074=Votre boîte bancaire est pleine.
+19075=Vous n'avez pas assez de charges pour envoyer autant de poids
+19076=L'objet a été placé dans votre boîte bancaire.
+19077=Le sac d'envoi rejette cet article.
+// [19081-19090] Poudre de Translocation
+19081=Cet objet ne peut plus absorber de poudre de translocation.
+19082=Cet objet a été sursaturé en poudre de translocation et ne peut plus être rechargé.
+19083= brille d'énergie verte et absorbe le pouvoir magique de la poudre.
+19084=La poudre de translocation n'a aucun effet sur cet objet.
 // [19100-19005] Conversion d'élixir
 19100=Vous avez réussi à convertir le métal.
 19101=Vous ne pouvez convertir que cinq cents lingots à la fois.

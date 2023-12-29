@@ -147,6 +147,7 @@ weight=1000
 value=2 1
 good=28
 script=5057// ballofpetsummoning.js
+script=2203// charges_left_tooltip.js
 }
 
 [0x2252]
