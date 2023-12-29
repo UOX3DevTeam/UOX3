@@ -5304,5 +5304,9 @@
 19082=Ten przedmiot został przesycony proszkiem translokacji i nie można go już ponownie naładować.
 19083= świeci zieloną energią i pochłania magiczną moc z proszku.
 19084=Proszek translokacji nie ma wpływu na ten przedmiot.
+// [19100-19005] Konwersja eliksiru
+19100=Udało Ci się przekonwertować metal.
+19101=Możesz wymieniać tylko pięćset sztabek na raz.
+19102=Przedmiot musi znajdować się w Twoim plecaku, aby można go było wymienić.
 }
 EOF

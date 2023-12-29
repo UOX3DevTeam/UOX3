@@ -5304,5 +5304,9 @@
 19082=Tato položka byla přesycena práškem translokace a již ji nelze dobíjet.
 19083= září zelenou energií a absorbuje magickou sílu z prášku.
 19084=Translokační prášek nemá na tuto položku žádný vliv.
+// [19100-19005] Přeměna elixíru
+19100=Úspěšně jste převedli kov.
+19101=Najednou můžete převést pouze pět set ingotů.
+19102=Pro výměnu musí být položka ve vašem batohu.
 }
 EOF

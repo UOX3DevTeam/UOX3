@@ -5304,5 +5304,9 @@
 19082=Este objeto ha sido sobresaturado con polvo de translocación y ya no se puede recargar.
 19083= brilla con energía verde y absorbe el poder mágico del polvo.
 19084=El polvo de translocación no tiene ningún efecto en este elemento.
+// [19100-19005] Conversión de elixir
+19100=Has convertido exitosamente el metal.
+19101=Sólo puedes convertir quinientos lingotes a la vez.
+19102=El artículo debe estar en tu mochila para ser intercambiado.
 }
 EOF

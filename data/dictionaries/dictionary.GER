@@ -5304,5 +5304,9 @@
 19082=Dieser Gegenstand ist mit Translokationspulver übersättigt und kann nicht mehr aufgeladen werden.
 19083= leuchtet vor grüner Energie und absorbiert magische Kraft aus dem Pulver.
 19084=Translokationspulver hat keine Auswirkung auf diesen Gegenstand.
+// [19100-19005] Elixier-Konvertierung
+19100=Sie haben das Metall erfolgreich umgewandelt.
+19101=Sie können jeweils nur fünfhundert Barren umwandeln.
+19102=Der Artikel muss sich zum Umtausch in Ihrem Rucksack befinden.
 }
 EOF

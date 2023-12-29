@@ -5304,5 +5304,9 @@
 19082=Este item foi saturado com pó de translocação e não pode mais ser recarregado.
 19083= brilha com energia verde e absorve o poder mágico do pó.
 19084=Pó de translocação não tem efeito neste item.
+// [19100-19005] Conversão de Elixir
+19100=Você converteu o metal com sucesso.
+19101=Você só pode converter quinhentos lingotes por vez.
+19102=O item deve estar em sua mochila para ser trocado.
 }
 EOF

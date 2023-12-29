@@ -5460,5 +5460,9 @@
 19082=Cet objet a été sursaturé en poudre de translocation et ne peut plus être rechargé.
 19083= brille d'énergie verte et absorbe le pouvoir magique de la poudre.
 19084=La poudre de translocation n'a aucun effet sur cet objet.
+// [19100-19005] Conversion d'élixir
+19100=Vous avez réussi à convertir le métal.
+19101=Vous ne pouvez convertir que cinq cents lingots à la fois.
+19102=L'article doit être dans votre sac à dos pour être échangé.
 }
 EOF

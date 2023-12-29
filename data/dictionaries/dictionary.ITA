@@ -5304,5 +5304,9 @@
 19082=Questo oggetto è stato saturo di polvere di traslocazione e non può più essere ricaricato.
 19083= brilla di energia verde e assorbe il potere magico dalla polvere.
 19084=La polvere di traslocazione non ha effetto su questo oggetto.
+// [19100-19005] Conversione dell'elisir
+19100=Hai convertito con successo il metallo.
+19101=Puoi convertire solo cinquecento lingotti alla volta.
+19102=L'articolo deve essere nel tuo zaino per essere scambiato.
 }
 EOF

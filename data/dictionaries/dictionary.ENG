@@ -5305,5 +5305,9 @@
 19082=This item has been oversaturated with powder of translocation and can no longer be recharged.
 19083= glows with green energy and absorbs magical power from the powder.
 19084=Powder of translocation has no effect on this item.
+// [19100-19005] Elixir Conversion
+19100=You've successfully converted the metal.
+19101=You can only convert five hundred ingots at a time.
+19102=The item must be in your backpack to be exchanged.
 }
 EOF
