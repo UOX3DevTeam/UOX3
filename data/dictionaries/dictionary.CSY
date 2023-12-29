@@ -5299,5 +5299,10 @@
 19075=Nemáte dostatek poplatků k odeslání takové hmotnosti
 19076=Položka byla umístěna do vaší bankovní schránky.
 19077=Sáček s odesláním tuto položku odmítá.
+// [19081-19090] Powder of Translocation
+19081=Tato položka nemůže absorbovat žádný další prášek translokace.
+19082=Tato položka byla přesycena práškem translokace a již ji nelze dobíjet.
+19083= září zelenou energií a absorbuje magickou sílu z prášku.
+19084=Translokační prášek nemá na tuto položku žádný vliv.
 }
 EOF

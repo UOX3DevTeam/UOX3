@@ -5455,5 +5455,10 @@
 19075=Vous n'avez pas assez de charges pour envoyer autant de poids
 19076=L'objet a été placé dans votre boîte bancaire.
 19077=Le sac d'envoi rejette cet article.
+// [19081-19090] Poudre de Translocation
+19081=Cet objet ne peut plus absorber de poudre de translocation.
+19082=Cet objet a été sursaturé en poudre de translocation et ne peut plus être rechargé.
+19083= brille d'énergie verte et absorbe le pouvoir magique de la poudre.
+19084=La poudre de translocation n'a aucun effet sur cet objet.
 }
 EOF

@@ -5299,5 +5299,10 @@
 19075=Nie masz wystarczającej liczby ładunków, aby wysłać tak dużą wagę
 19076=Przedmiot został umieszczony w Twojej skrzynce bankowej.
 19077=Torba wysyłkowa odrzuca ten przedmiot.
+// [19081-19090] Proszek translokacji
+19081=Ten przedmiot nie może wchłonąć więcej proszku translokacji.
+19082=Ten przedmiot został przesycony proszkiem translokacji i nie można go już ponownie naładować.
+19083= świeci zieloną energią i pochłania magiczną moc z proszku.
+19084=Proszek translokacji nie ma wpływu na ten przedmiot.
 }
 EOF

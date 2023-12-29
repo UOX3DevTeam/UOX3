@@ -5300,5 +5300,10 @@
 19075=You don't have enough charges to send that much weight
 19076=The item was placed in your bank box.
 19077=The bag of sending rejects that item.
+// [19081-19090] Powder of Translocation
+19081=This item cannot absorb any more powder of translocation.
+19082=This item has been oversaturated with powder of translocation and can no longer be recharged.
+19083= glows with green energy and absorbs magical power from the powder.
+19084=Powder of translocation has no effect on this item.
 }
 EOF

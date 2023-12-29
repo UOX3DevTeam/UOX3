@@ -5299,5 +5299,10 @@
 19075=Sie haben nicht genügend Gebühren, um so viel Gewicht zu senden
 19076=Der Artikel wurde in Ihr Bankfach gelegt.
 19077=Der Versandbeutel lehnt diesen Artikel ab.
+// [19081-19090] Pulver der Translokation
+19081=Dieser Gegenstand kann kein Translokationspulver mehr absorbieren.
+19082=Dieser Gegenstand ist mit Translokationspulver übersättigt und kann nicht mehr aufgeladen werden.
+19083= leuchtet vor grüner Energie und absorbiert magische Kraft aus dem Pulver.
+19084=Translokationspulver hat keine Auswirkung auf diesen Gegenstand.
 }
 EOF

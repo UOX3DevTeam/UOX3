@@ -242,3 +242,25 @@ id=0x14f0
 newbie=1
 script=5047//new player ticket
 }
+
+[powderoftranslocation]
+{
+get=base_item
+name=powder of translocation
+id=0x26B8
+weight=01
+color=0x0835
+pileable=1
+amount=1
+script=5059//powderoftranslocation.js
+}
+
+[zoogifungus]
+{ 
+get=base_item
+name=a zoogi fungus
+id=0x26B7
+pileable=1
+amount=1
+decay=1
+}

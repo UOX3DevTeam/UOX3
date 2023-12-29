@@ -5299,5 +5299,10 @@
 19075=No tienes suficientes cargos para enviar tanto peso
 19076=El artículo fue colocado en su caja bancaria.
 19077=La bolsa de envío rechaza ese artículo.
+// [19081-19090] Polvo de Translocación
+19081=Este objeto no puede absorber más polvo de translocación.
+19082=Este objeto ha sido sobresaturado con polvo de translocación y ya no se puede recargar.
+19083= brilla con energía verde y absorbe el poder mágico del polvo.
+19084=El polvo de translocación no tiene ningún efecto en este elemento.
 }
 EOF

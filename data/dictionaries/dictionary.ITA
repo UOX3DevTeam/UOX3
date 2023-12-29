@@ -5299,5 +5299,10 @@
 19075=Non hai abbastanza addebiti per inviare così tanto peso
 19076=L'oggetto è stato depositato nella tua cassetta della banca.
 19077=Il sacchetto di spedizione rifiuta l'oggetto.
+// [19081-19090] Polvere di traslocazione
+19081=Questo oggetto non può più assorbire polvere di traslocazione.
+19082=Questo oggetto è stato saturo di polvere di traslocazione e non può più essere ricaricato.
+19083= brilla di energia verde e assorbe il potere magico dalla polvere.
+19084=La polvere di traslocazione non ha effetto su questo oggetto.
 }
 EOF

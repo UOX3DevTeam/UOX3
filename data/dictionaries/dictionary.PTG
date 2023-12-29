@@ -5299,5 +5299,10 @@
 19075=Você não tem cobranças suficientes para enviar tanto peso
 19076=O item foi colocado em sua caixa bancária.
 19077=A sacola de envio rejeita esse item.
+// [19081-19090] Pó de Translocação
+19081=Este item não pode absorver mais pó de translocação.
+19082=Este item foi saturado com pó de translocação e não pode mais ser recarregado.
+19083= brilha com energia verde e absorve o poder mágico do pó.
+19084=Pó de translocação não tem efeito neste item.
 }
 EOF
