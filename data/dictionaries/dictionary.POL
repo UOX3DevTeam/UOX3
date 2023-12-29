@@ -5290,5 +5290,14 @@
 19062=Ta kryształowa kula nie jest już powiązana ze zwierzakiem.
 19063=Nowa nazwa zwierzaka to: %s
 19064=Wygląda na to, że to nie jest prawidłowe zwierzę.
+// [19070-19080] Torba wysyłkowa
+19070=Torba wysyłkowa musi znajdować się w twoim plecaku.
+19071=Błąd: Nie znaleziono ważnej skrzynki bankowej! Aby uzyskać pomoc, skontaktuj się z GM.
+19072=Możesz wysyłać przedmioty tylko z plecaka do swojej skrytki bankowej.
+19073=Nie możesz wysłać kontenera przez torebkę nadania.
+19074=Twoja skrytka bankowa jest pełna.
+19075=Nie masz wystarczającej liczby ładunków, aby wysłać tak dużą wagę
+19076=Przedmiot został umieszczony w Twojej skrzynce bankowej.
+19077=Torba wysyłkowa odrzuca ten przedmiot.
 }
 EOF

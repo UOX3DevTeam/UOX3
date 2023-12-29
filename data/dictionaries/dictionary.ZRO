@@ -5285,5 +5285,14 @@
 19062=This crystal ball is no longer linked to a pet.
 19063=The new name of the pet is: %s
 19064=That does not seem to be a valid pet.
+// [19070-19080] Bag of Sending
+19070=The bag of sending must be in your backpack.
+19071=Error: No valid bankbox found! Please contact a GM for assistance.
+19072=You may only send items from your backpack to your bank box.
+19073=You cannot send a container through the bag of sending.
+19074=Your bank box is full.
+19075=You don't have enough charges to send that much weight
+19076=The item was placed in your bank box.
+19077=The bag of sending rejects that item.
 }
 EOF
