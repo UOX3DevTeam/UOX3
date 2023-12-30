@@ -206,6 +206,8 @@
 4033=skill/craft/crafting_complete.js
 4034=skill/craft/cooking.js
 4035=skill/craft/cartography.js
+4038=skill/craft/recipedata.js
+4039=skill/craft/makeitem.js
 4050=skill/mining.js
 4055=skill/snooping.js
 
@@ -281,6 +283,7 @@
 5058=item/bagofsending.js
 5059=item/powderoftranslocation.js
 5060=item/elixirofingots.js
+5061=item/recipescroll.js
 
 //-------------------------------------------
 // treasure maps and chest [5400-5405]

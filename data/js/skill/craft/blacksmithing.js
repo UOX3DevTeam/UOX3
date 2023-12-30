@@ -734,6 +734,7 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	var gumpID = blacksmithID + 0xffff;
 	var makeID = 0;
+	var recipeID = 0;
 	var itemDetailsID = 0;
 	var oreID = pUser.GetTempTag( "ORE" );
 	var resourceHue = pUser.GetTempTag( "resourceHue" );
@@ -819,7 +820,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 110: // Plate Legs
 			makeID = craftItems[oreID][0][10]; timerID = 1; break;
 		case 111: // Plate Chest
-			makeID = craftItems[oreID][0][11]; timerID = 1; break;
+			makeID = craftItems[oreID][0][11]; timerID = 1; recipeID = 18; break;// Example Recipe
 		case 112: // Female Plate Chest
 			makeID = craftItems[oreID][0][12]; timerID = 1; break;
 		// [200-299]
@@ -1102,55 +1103,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 	}
 
-	if( makeID != 0 )
-	{
-		if( anvil > 0 )
-		{
-			// crafting_complete.js for applying special bonuses for exceptional equipment/from runic hammers
-			pUser.AddScriptTrigger( 4033 );
-			MakeItem( pSock, pUser, makeID, resourceHue );
-			var toolUseLimit = GetServerSetting( "ToolUseLimit" );
-			var toolUseBreak = GetServerSetting( "ToolUseBreak" );
-
-			// Check if player had runic hammer equipped while crafting
-			var runicHammer = pUser.FindItemLayer( 0x01 ); // Right Hand
-			if( ValidateObject( runicHammer ) && runicHammer.GetTag( "runicHammer" ) && runicHammer.usesLeft > 0 )
-			{
-				// Store some temp tags on player to get info on runic hammer used in crafting_complete.js
-				pUser.SetTempTag( "usedRunicHammer", true );
-				pUser.SetTempTag( "runicHammerType", runicHammer.color );
-
-				// Wear and tear for equipped runic hammer, even if another tool was used to craft
-				if( toolUseLimit && runicHammer != bItem )
-				{
-					runicHammer.usesLeft -= 1;
-					if( runicHammer.usesLeft == 0 && toolUseBreak )
-					{
-						runicHammer.Delete();
-						pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
-						// Play sound effect of tool breaking
-					}
-				}
-			}
-
-			if( toolUseLimit )
-			{
-				bItem.usesLeft -= 1;
-				if( bItem.usesLeft == 0 && toolUseBreak )
-				{
-					bItem.Delete();
-					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
-					// Play sound effect of tool breaking
-				}
-			}
-		}
-		pUser.StartTimer( gumpDelay, timerID, true );
-	}
-	else if( itemDetailsID != 0 )
-	{
-		pUser.SetTempTag( "ITEMDETAILS", itemDetailsID );
-		TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
-	}
+	TriggerEvent( 4039, "makeitem", pSock, bItem, makeID, resourceHue, recipeID, anvil, gumpDelay, timerID, itemDetailsID, itemDetailsScriptID );
 }
 
 function _restorecontext_() {}
