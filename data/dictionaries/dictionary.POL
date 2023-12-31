@@ -5290,5 +5290,23 @@
 19062=Ta kryształowa kula nie jest już powiązana ze zwierzakiem.
 19063=Nowa nazwa zwierzaka to: %s
 19064=Wygląda na to, że to nie jest prawidłowe zwierzę.
+// [19070-19080] Torba wysyłkowa
+19070=Torba wysyłkowa musi znajdować się w twoim plecaku.
+19071=Błąd: Nie znaleziono ważnej skrzynki bankowej! Aby uzyskać pomoc, skontaktuj się z GM.
+19072=Możesz wysyłać przedmioty tylko z plecaka do swojej skrytki bankowej.
+19073=Nie możesz wysłać kontenera przez torebkę nadania.
+19074=Twoja skrytka bankowa jest pełna.
+19075=Nie masz wystarczającej liczby ładunków, aby wysłać tak dużą wagę
+19076=Przedmiot został umieszczony w Twojej skrzynce bankowej.
+19077=Torba wysyłkowa odrzuca ten przedmiot.
+// [19081-19090] Proszek translokacji
+19081=Ten przedmiot nie może wchłonąć więcej proszku translokacji.
+19082=Ten przedmiot został przesycony proszkiem translokacji i nie można go już ponownie naładować.
+19083= świeci zieloną energią i pochłania magiczną moc z proszku.
+19084=Proszek translokacji nie ma wpływu na ten przedmiot.
+// [19100-19005] Konwersja eliksiru
+19100=Udało Ci się przekonwertować metal.
+19101=Możesz wymieniać tylko pięćset sztabek na raz.
+19102=Przedmiot musi znajdować się w Twoim plecaku, aby można go było wymienić.
 }
 EOF

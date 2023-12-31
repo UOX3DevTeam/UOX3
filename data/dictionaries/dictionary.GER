@@ -5290,5 +5290,23 @@
 19062=Diese Kristallkugel ist nicht mehr mit einem Haustier verknüpft.
 19063=Der neue Name des Haustiers ist: %s
 19064=Das scheint kein gültiges Haustier zu sein.
+// [19070-19080] Beutel des Sendens
+19070=Die Versandtasche muss in Ihrem Rucksack sein.
+19071=Fehler: Kein gültiges Bankfach gefunden! Bitte wenden Sie sich an einen GM, um Hilfe zu erhalten.
+19072=Sie können nur Gegenstände aus Ihrem Rucksack an Ihr Bankfach senden.
+19073=Sie können einen Container nicht über den Versandbeutel versenden.
+19074=Ihr Bankfach ist voll.
+19075=Sie haben nicht genügend Gebühren, um so viel Gewicht zu senden
+19076=Der Artikel wurde in Ihr Bankfach gelegt.
+19077=Der Versandbeutel lehnt diesen Artikel ab.
+// [19081-19090] Pulver der Translokation
+19081=Dieser Gegenstand kann kein Translokationspulver mehr absorbieren.
+19082=Dieser Gegenstand ist mit Translokationspulver übersättigt und kann nicht mehr aufgeladen werden.
+19083= leuchtet vor grüner Energie und absorbiert magische Kraft aus dem Pulver.
+19084=Translokationspulver hat keine Auswirkung auf diesen Gegenstand.
+// [19100-19005] Elixier-Konvertierung
+19100=Sie haben das Metall erfolgreich umgewandelt.
+19101=Sie können jeweils nur fünfhundert Barren umwandeln.
+19102=Der Artikel muss sich zum Umtausch in Ihrem Rucksack befinden.
 }
 EOF
