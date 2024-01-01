@@ -221,21 +221,21 @@ function onCallback0( pSock, ourObj )
 				animalLoreGump.AddHTMLGump( 53, 92, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2156, pSock.language ) + "</basefont>" );				 // Wrestling
 				animalLoreGump.AddHTMLGump( position, 92, 100, 18, false, false, parseInt( ourObj.skills.wrestling / 10 ));
 				animalLoreGump.AddHTMLGump( 53, 110, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2157, pSock.language ) + "</basefont>" );				 // Tactics
-				animalLoreGump.AddHTMLGump( position, 110, 100, 18, false, false, parseInt( ourObj.skills.Tactics / 10 ));
+				animalLoreGump.AddHTMLGump( position, 110, 100, 18, false, false, parseInt( ourObj.skills.tactics / 10 ));
 				animalLoreGump.AddHTMLGump( 53, 128, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2158, pSock.language ) + "</basefont>" );				 // Magic Resistance
-				animalLoreGump.AddHTMLGump( position, 128, 100, 18, false, false, parseInt( ourObj.skills.MagicResistance / 10 ));
+				animalLoreGump.AddHTMLGump( position, 128, 100, 18, false, false, parseInt( ourObj.skills.magicresistance / 10 ));
 				animalLoreGump.AddHTMLGump( 53, 146, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2159, pSock.language ) + "</basefont>" );				 // Anatomy
-				animalLoreGump.AddHTMLGump( position, 146, 100, 18, false, false, parseInt( ourObj.skills.Anatomy / 10 ));
+				animalLoreGump.AddHTMLGump( position, 146, 100, 18, false, false, parseInt( ourObj.skills.anatomy / 10 ));
 				animalLoreGump.AddHTMLGump( 53, 164, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2160, pSock.language ) + "</basefont>" );				 // Healing
-				animalLoreGump.AddHTMLGump( position, 164, 100, 18, false, false, parseInt( ourObj.skills.Healing / 10 ));
+				animalLoreGump.AddHTMLGump( position, 164, 100, 18, false, false, parseInt( ourObj.skills.healing / 10 ));
 				animalLoreGump.AddHTMLGump( 53, 182, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2161, pSock.language ) + "</basefont>" );				 // Poisoning
-				animalLoreGump.AddHTMLGump( position, 182, 100, 18, false, false, parseInt( ourObj.skills.Poisoning / 10 ));
+				animalLoreGump.AddHTMLGump( position, 182, 100, 18, false, false, parseInt( ourObj.skills.poisoning / 10 ));
 				animalLoreGump.AddHTMLGump( 53, 200, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2162, pSock.language ) + "</basefont>" );				 // Detect Hidden
-				animalLoreGump.AddHTMLGump( position, 200, 100, 18, false, false, parseInt( ourObj.skills.DetectHidden / 10 ));
+				animalLoreGump.AddHTMLGump( position, 200, 100, 18, false, false, parseInt( ourObj.skills.detecthidden / 10 ));
 				animalLoreGump.AddHTMLGump( 53, 218, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2163, pSock.language ) + "</basefont>" );				 // Hiding
-				animalLoreGump.AddHTMLGump( position, 218, 100, 18, false, false, parseInt( ourObj.skills.Hiding / 10 ));
+				animalLoreGump.AddHTMLGump( position, 218, 100, 18, false, false, parseInt( ourObj.skills.hiding / 10 ));
 				animalLoreGump.AddHTMLGump( 53, 236, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2164, pSock.language ) + "</basefont>" );				 // Parrying
-				animalLoreGump.AddHTMLGump( position, 236, 100, 18, false, false, parseInt( ourObj.skills.Parrying / 10 ));
+				animalLoreGump.AddHTMLGump( position, 236, 100, 18, false, false, parseInt( ourObj.skills.parrying / 10 ));
 				animalLoreGump.AddButton( 240, 328, 0x15E1, 0x15E5, 0, 6, 0 );
 				animalLoreGump.AddButton( 217, 328, 0x15E3, 0x15E7, 0, 4, 0 );
 
@@ -243,29 +243,29 @@ function onCallback0( pSock, ourObj )
 				animalLoreGump.AddGump( 28, 76, 0x826 );
 				animalLoreGump.AddHTMLGump( 47, 74, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry( 2165, pSock.language ) + "</basefont>" );				 // Lore & Knowledge
 				animalLoreGump.AddHTMLGump( 53, 92, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2166, pSock.language ) + "</basefont>" );				 // Magery
-				animalLoreGump.AddHTMLGump( position, 92, 100, 18, false, false, parseInt( ourObj.skills.Magery / 10 ));
+				animalLoreGump.AddHTMLGump( position, 92, 100, 18, false, false, parseInt( ourObj.skills.magery / 10 ));
 				animalLoreGump.AddHTMLGump( 53, 110, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2167, pSock.language ) + "</basefont>" );				 // Eval Int
 				animalLoreGump.AddHTMLGump( position, 110, 100, 18, false, false, parseInt( ourObj.skills.evaluatingintel / 10 ));
 				animalLoreGump.AddHTMLGump( 53, 128, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2168, pSock.language ) + "</basefont>" );				 // Meditation
-				animalLoreGump.AddHTMLGump( position, 128, 100, 18, false, false, parseInt( ourObj.skills.Meditation / 10 ));
+				animalLoreGump.AddHTMLGump( position, 128, 100, 18, false, false, parseInt( ourObj.skills.meditation / 10 ));
 				if( aosEnabled )
 				{
 					animalLoreGump.AddHTMLGump( 53, 146, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2169, pSock.language ) + "</basefont>" );			 // Necromancy
-					animalLoreGump.AddHTMLGump( position, 146, 100, 18, false, false, parseInt( ourObj.skills.Necromancy / 10 ));
+					animalLoreGump.AddHTMLGump( position, 146, 100, 18, false, false, parseInt( ourObj.skills.necromancy / 10 ));
 				}
 				animalLoreGump.AddHTMLGump( 53, 164, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2170, pSock.language ) + "</basefont>" );				 // Spirit Speak
-				animalLoreGump.AddHTMLGump( position, 164, 100, 18, false, false, parseInt( ourObj.skills.SpiritSpeak / 10 ));
+				animalLoreGump.AddHTMLGump( position, 164, 100, 18, false, false, parseInt( ourObj.skills.spiritspeak / 10 ));
 				if( saEnabled )
 				{
 					animalLoreGump.AddHTMLGump( 53, 182, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2171, pSock.language ) + "</basefont>" );			 // Mysticism
-					animalLoreGump.AddHTMLGump( position, 182, 100, 18, false, false, parseInt( ourObj.skills.Mysticism / 10 ));
+					animalLoreGump.AddHTMLGump( position, 182, 100, 18, false, false, parseInt( ourObj.skills.mysticism / 10 ));
 					animalLoreGump.AddHTMLGump( 53, 200, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2172, pSock.language ) + "</basefont>" );		     // Focus
-					animalLoreGump.AddHTMLGump( position, 200, 100, 18, false, false, parseInt( ourObj.skills.Focus / 10 ));
+					animalLoreGump.AddHTMLGump( position, 200, 100, 18, false, false, parseInt( ourObj.skills.focus / 10 ));
 					animalLoreGump.AddHTMLGump( 53, 218, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2173, pSock.language ) + "</basefont>" );			 // Spellweaving
-					animalLoreGump.AddHTMLGump( position, 218, 100, 18, false, false, parseInt( ourObj.skills.Spellweaving / 10 ));
+					animalLoreGump.AddHTMLGump( position, 218, 100, 18, false, false, parseInt( ourObj.skills.spellweaving / 10 ));
 				}
 				animalLoreGump.AddHTMLGump( 53, 236, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2174, pSock.language ) + "</basefont>" );				 // Discordance
-				animalLoreGump.AddHTMLGump( position, 236, 100, 18, false, false, parseInt( ourObj.skills.Discordance / 10 ));
+				animalLoreGump.AddHTMLGump( position, 236, 100, 18, false, false, parseInt( ourObj.skills.discordance / 10 ));
 				animalLoreGump.AddButton( 240, 328, 0x15E1, 0x15E5, 0, 7, 0 );
 				animalLoreGump.AddButton( 217, 328, 0x15E3, 0x15E7, 0, 5, 0 );
 
@@ -275,14 +275,14 @@ function onCallback0( pSock, ourObj )
 				if( seEnabled )
 			    {
 					animalLoreGump.AddHTMLGump( 53, 92, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2175, pSock.language ) + "</basefont>" );			 // Bushido
-					animalLoreGump.AddHTMLGump( position, 92, 100, 18, false, false, parseInt( ourObj.skills.Bushido / 10 ));
+					animalLoreGump.AddHTMLGump( position, 92, 100, 18, false, false, parseInt( ourObj.skills.bushido / 10 ));
 					animalLoreGump.AddHTMLGump( 53, 110, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2176, pSock.language ) + "</basefont>" );			 // Ninjitsu
-					animalLoreGump.AddHTMLGump( position, 110, 100, 18, false, false, parseInt( ourObj.skills.Ninjitsu / 10 ));
+					animalLoreGump.AddHTMLGump( position, 110, 100, 18, false, false, parseInt( ourObj.skills.ninjitsu / 10 ));
 				}
 				if( aosEnabled )
 				{
 					animalLoreGump.AddHTMLGump( 53, 128, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2177, pSock.language ) + "</basefont>" );			 // Chivalry
-					animalLoreGump.AddHTMLGump( position, 128, 100, 18, false, false, parseInt( ourObj.skills.Chivalry / 10 ));
+					animalLoreGump.AddHTMLGump( position, 128, 100, 18, false, false, parseInt( ourObj.skills.chivalry / 10 ));
 				}
 				animalLoreGump.AddGump( 28, 146, 0x826 );
 				animalLoreGump.AddHTMLGump( 47, 144, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry( 2178, pSock.language ) + "</basefont>" );				 // Preferred Foods
