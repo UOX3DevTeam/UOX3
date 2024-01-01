@@ -69,6 +69,35 @@ function onCallback0( socket, ourObj )
 		ourObj.fame = nVal;
 		okMsg( socket );
 		break;
+	case "DEF":
+	case "RESISTARMOR":
+		ourObj.Resist(1, nVal);
+		okMsg(socket);
+		break;
+	case "RESISTLIGHT":
+		ourObj.Resist(2, nVal);
+		okMsg(socket);
+		break;
+	case "RESISTWATER":
+		ourObj.Resist(3, nVal);
+		okMsg(socket);
+		break;
+	case "RESISTCOLD":
+		ourObj.Resist(4, nVal);
+		okMsg(socket);
+		break;
+	case "RESISTFIRE":
+		ourObj.Resist(5, nVal);
+		okMsg(socket);
+		break;
+	case "RESISTENERGY":
+		ourObj.Resist(6, nVal);
+		okMsg(socket);
+		break;
+	case "RESISTPOIS":
+		ourObj.Resist(7, nVal);
+		okMsg(socket);
+		break;
 	case "HP":
 	case "HEALTH":
 		ourObj.health = nVal;
