@@ -37,6 +37,7 @@
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );
 
+/*
 bool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	size_t spellId = JSVAL_TO_INT( id );
@@ -63,7 +64,7 @@ bool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 	*vp = OBJECT_TO_JSVAL( jsSpell );
 	return true;
 }
-
+*/
 
 bool JSCSpell_get_id(JSContext *cx, unsigned int argc, JS::Value *vp) {
     auto args = JS::CallArgsFromVp(argc, vp);
@@ -90,7 +91,7 @@ bool JSCSpell_get_name(JSContext *cx, unsigned int argc, JS::Value *vp) {
         if (&Magic->spells[i] == priv) {
             auto spellName = Dictionary->GetEntry( magic_table[i].spell_name );
             auto tString = JS_NewStringCopyZ( cx, spellName.c_str() );
-            args.rval().setString(i);
+            args.rval().setString(tString);
             return true;
         }
     }
@@ -135,7 +136,7 @@ IMPL_GETS( CSpell, strToSay,       CSpellInfo, setString, StringToSay().c_str() 
 // clang-format on
 
 
-
+/*
 bool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	size_t skillId = JSVAL_TO_INT( id );
@@ -162,6 +163,7 @@ bool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsv
 	*vp = OBJECT_TO_JSVAL( jsSkill );
 	return true;
 }
+*/
 
 // clang-format off
 IMPL_GETS( CGlobalSkill, name,         CWorldMain::Skill_st, setString, name.c_str() )
@@ -211,6 +213,7 @@ IMPL_GET_NP( CTimer, SOCK_TRACKINGDISPLAY, setInt32, tPC_TRACKINGDISPLAY )
 IMPL_GET_NP( CTimer, SOCK_TRAFFICWARDEN,   setInt32, tPC_TRAFFICWARDEN )
 // clang-format on
 
+/*
 bool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	UI16 createEntryId = static_cast<UI16>( JSVAL_TO_INT( id ));
@@ -230,6 +233,7 @@ bool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 	*vp = OBJECT_TO_JSVAL( jsCreateEntry );
 	return true;
 }
+*/
 
 // clang-format off
 IMPL_GET(  CCreateEntry, id,          CreateEntry_st, setInt32,  targId )
@@ -331,6 +335,155 @@ bool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 	return true;
 }*/
 
+// clang-format off
+IMPL_GETS_OBJ(CItem, sectionID,           CItem, setString, GetSectionId().c_str() )
+IMPL_GETS_OBJ(CItem, name,                CItem, setString, GetName().c_str() )
+IMPL_GETS_OBJ(CItem, title,               CItem, setString, GetTitle().c_str(), )
+IMPL_GET_OBJ( CItem, x,                   CItem, setInt32,  GetX() )
+IMPL_GET_OBJ( CItem, y,                   CItem, setInt32,  GetY() )
+IMPL_GET_OBJ( CItem, z,                   CItem, setInt32,  GetZ() )
+IMPL_GET_OBJ( CItem, oldX,                CItem, setInt32,  GetOldLocation().x )
+IMPL_GET_OBJ( CItem, oldY,                CItem, setInt32,  GetOldLocation().y )
+IMPL_GET_OBJ( CItem, oldZ,                CItem, setInt32,  GetOldLocation().z )
+IMPL_GET_OBJ( CItem, id,                  CItem, setInt32,  GetId() )
+IMPL_GET_OBJ( CItem, colour,              CItem, setInt32,  GetColour() )
+IMPL_GET_OBJ( CItem, color,               CItem, setInt32,  GetColour() )
+// IMPL_GET_OBJ( CItem, owner,               CItem, setInt32, ) // Do manually
+IMPL_GET_OBJ( CItem, visible,             CItem, setInt32,  GetVisible() )
+IMPL_GET_OBJ( CItem, serial,              CItem, setInt32,  GetSerial() )
+IMPL_GET_OBJ( CItem, health,              CItem, setInt32,  GetHP() )
+// IMPL_GET_OBJ( CItem, scripttrigger,       CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, scriptTriggers    ,  CItem, setInt32, ) // Do manually
+IMPL_GET_OBJ( CItem, worldnumber,         CItem, setInt32, WorldNumber() )
+IMPL_GET_OBJ( CItem, instanceID,          CItem, setInt32, GetInstanceId() )
+IMPL_GET_OBJ( CItem, amount,              CItem, setInt32, GetAmount() )
+// IMPL_GET_OBJ( CItem, container,           CItem, setInt32, ) // Do manually
+IMPL_GET_OBJ( CItem, type,                CItem, setInt32, GetType() )
+IMPL_GET_OBJ( CItem, more,                CItem, setInt32, GetTempVar( CITV_MORE ) )
+IMPL_GET_OBJ( CItem, more0,               CItem, setInt32, GetTempVar( CITV_MORE0 ) )
+IMPL_GET_OBJ( CItem, more1,               CItem, setInt32, GetTempVar( CITV_MORE1 ) )
+IMPL_GET_OBJ( CItem, more2,               CItem, setInt32, GetTempVar( CITV_MORE2 ) )
+IMPL_GET_OBJ( CItem, morex,               CItem, setInt32, GetTempVar( CITV_MOREX ) )
+IMPL_GET_OBJ( CItem, morey,               CItem, setInt32, GetTempVar( CITV_MOREY ) )
+IMPL_GET_OBJ( CItem, morez,               CItem, setInt32, GetTempVar( CITV_MOREZ ) )
+IMPL_GET_OBJ( CItem, movable,             CItem, setInt32, GetMovable() )
+// IMPL_GET_OBJ( CItem, att,                 CItem, setInt32, ) // Do manually
+IMPL_GET_OBJ( CItem, layer,               CItem, setInt32, GetLayer() )
+IMPL_GET_OBJ( CItem, itemsinside,         CItem, setInt32, GetContainsList()->Num() )
+// IMPL_GET_OBJ( CItem, totalItemCount    ,  CItem, setInt32, ) // Do manually
+IMPL_GET_OBJ( CItem, decayable,           CItem, setBoolean, IsDecayable() )
+IMPL_GET_OBJ( CItem, decaytime,           CItem, setInt32, GetDecayTime() )
+IMPL_GET_OBJ( CItem, lodamage,            CItem, setInt32, GetLoDamage() )
+IMPL_GET_OBJ( CItem, hidamage,            CItem, setInt32, GetHiDamage() )
+IMPL_GET_OBJ( CItem, ac,                  CItem, setInt32, GetArmourClass() )
+IMPL_GET_OBJ( CItem, def,                 CItem, setInt32, GetResist( PHYSICAL ) )
+IMPL_GET_OBJ( CItem, resistCold,          CItem, setInt32, GetResist( COLD ) )
+IMPL_GET_OBJ( CItem, resistHeat,          CItem, setInt32, GetResist( HEAT ) )
+IMPL_GET_OBJ( CItem, resistLight,         CItem, setInt32, GetResist( LIGHT ) )
+IMPL_GET_OBJ( CItem, resistLightning,     CItem, setInt32, GetResist( LIGHTNING ) )
+IMPL_GET_OBJ( CItem, resistPoison,        CItem, setInt32, GetResist( POISON ) )
+IMPL_GET_OBJ( CItem, resistRain,          CItem, setInt32, GetResist( RAIN ) )
+IMPL_GET_OBJ( CItem, resistSnow,          CItem, setInt32, GetResist( SNOW ) )
+IMPL_GET_OBJ( CItem, damageCold,          CItem, setBoolean, GetWeatherDamage( COLD ) )
+IMPL_GET_OBJ( CItem, damageHeat,          CItem, setBoolean, GetWeatherDamage( HEAT ) )
+IMPL_GET_OBJ( CItem, damageLight,         CItem, setBoolean, GetWeatherDamage( LIGHT ) )
+IMPL_GET_OBJ( CItem, damageLightning,     CItem, setBoolean, GetWeatherDamage( LIGHTNING ) )
+IMPL_GET_OBJ( CItem, damagePoison,        CItem, setBoolean, GetWeatherDamage( POISON ) )
+IMPL_GET_OBJ( CItem, damageRain,          CItem, setBoolean, GetWeatherDamage( RAIN ) )
+IMPL_GET_OBJ( CItem, damageSnow,          CItem, setBoolean, GetWeatherDamage( SNOW ) )
+IMPL_GETS_OBJ(CItem, name2,               CItem, setString, GetName2().c_str() )
+// IMPL_GET_OBJ( CItem, isChar,              CItem, setBoolean, )  // Do manually
+// IMPL_GET_OBJ( CItem, isItem,              CItem, setBoolean, )  // Do manually
+IMPL_GET_OBJ( CItem, isSpawner,           CItem, setBoolean, GetObjType() == OT_SPAWNER )
+// IMPL_GET_OBJ( CItem, race,                CItem, setInt32, ) // Do manually
+IMPL_GET_OBJ( CItem, maxhp,               CItem, setInt32, GetMaxHP() )
+IMPL_GET_OBJ( CItem, maxUses,             CItem, setInt32, GetMaxUses() )
+IMPL_GET_OBJ( CItem, usesLeft,            CItem, setInt32, GetUsesLeft() )
+IMPL_GET_OBJ( CItem, rank,                CItem, setInt32, GetRank() )
+IMPL_GET_OBJ( CItem, creator,             CItem, setInt32, GetCreator() )
+IMPL_GET_OBJ( CItem, poison,              CItem, setInt32, GetPoisoned() )
+IMPL_GET_OBJ( CItem, dir,                 CItem, setInt32, GetDir() )
+IMPL_GET_OBJ( CItem, wipable,             CItem, setInt32, IsWipeable() )
+IMPL_GET_OBJ( CItem, buyvalue,            CItem, setInt32, GetBuyValue() )
+IMPL_GET_OBJ( CItem, sellvalue,           CItem, setInt32, GetSellValue() )
+IMPL_GET_OBJ( CItem, vendorPrice,         CItem, setInt32, GetVendorPrice() )
+IMPL_GET_OBJ( CItem, restock,             CItem, setInt32, GetRestock() )
+IMPL_GET_OBJ( CItem, good,                CItem, setInt32, GetGood() )
+IMPL_GET_OBJ( CItem, divinelock,          CItem, setBoolean, IsDivineLocked() )
+IMPL_GET_OBJ( CItem, baseWeight,          CItem, setInt32, GetWeight() )
+IMPL_GET_OBJ( CItem, weight,              CItem, setInt32, GetWeightMax() )
+IMPL_GET_OBJ( CItem, weightMax,           CItem, setInt32, GetBaseWeight() )
+IMPL_GET_OBJ( CItem, maxItems,            CItem, setInt32, GetMaxItems() )
+IMPL_GET_OBJ( CItem, strength,            CItem, setInt32, GetStrength() )
+IMPL_GET_OBJ( CItem, dexterity,           CItem, setInt32, GetDexterity() )
+IMPL_GET_OBJ( CItem, intelligence,        CItem, setInt32, GetIntelligence() )
+IMPL_GET_OBJ( CItem, corpse,              CItem, setBoolean, IsCorpse() )
+IMPL_GETS_OBJ(CItem, desc,                CItem, setString, GetDesc().c_str() )
+IMPL_GETS_OBJ(CItem, event,               CItem, setString, GetEvent().c_str() )
+IMPL_GET_OBJ( CItem, tempLastTraded,      CItem, setInt32, GetTempLastTraded() / 1000 )
+IMPL_GET_OBJ( CItem, tempTimer,           CItem, setInt32, GetTempTimer() / 1000 )
+IMPL_GET_OBJ( CItem, shouldSave,          CItem, setBoolean, ShouldSave() )
+IMPL_GET_OBJ( CItem, isNewbie,            CItem, setBoolean, IsNewbie() )
+IMPL_GET_OBJ( CItem, isDispellable,       CItem, setBoolean, IsDispellable() )
+IMPL_GET_OBJ( CItem, madeWith,            CItem, setInt32, GetMadeWith() )
+IMPL_GET_OBJ( CItem, entryMadeFrom,       CItem, setInt32, EntryMadeFrom() )
+IMPL_GET_OBJ( CItem, isPileable,          CItem, setBoolean, IsPileable() )
+IMPL_GET_OBJ( CItem, isMarkedByMaker,     CItem, setBoolean, IsMarkedByMaker() )
+IMPL_GET_OBJ( CItem, isDyeable,           CItem, setBoolean, IsDyeable() )
+IMPL_GET_OBJ( CItem, isDamageable,        CItem, setBoolean, IsDamageable() )
+IMPL_GET_OBJ( CItem, isWipeable,          CItem, setBoolean, IsWipeable() )
+IMPL_GET_OBJ( CItem, isGuarded,           CItem, setBoolean, IsGuarded() )
+IMPL_GET_OBJ( CItem, isDoorOpen,          CItem, setBoolean, IsDoorOpen() )
+IMPL_GET_OBJ( CItem, isFieldSpell,        CItem, setBoolean, IsFieldSpell() )
+IMPL_GET_OBJ( CItem, isLockedDown,        CItem, setBoolean, IsLockedDown() )
+IMPL_GET_OBJ( CItem, isShieldType,        CItem, setBoolean, IsShieldType() )
+IMPL_GET_OBJ( CItem, isMetalType,         CItem, setBoolean, IsMetalType() )
+IMPL_GET_OBJ( CItem, isLeatherType,       CItem, setBoolean, IsLeatherType() )
+IMPL_GET_OBJ( CItem, canBeLockedDown,     CItem, setBoolean, CanBeLockedDown() )
+IMPL_GET_OBJ( CItem, isContType,          CItem, setBoolean, IsContType() )
+IMPL_GET_OBJ( CItem, carveSection,        CItem, setInt32,   GetCarve() )
+IMPL_GET_OBJ( CItem, ammoID,              CItem, setInt32,   GetAmmoId() )
+IMPL_GET_OBJ( CItem, ammoHue,             CItem, setInt32,   GetAmmoHue() )
+IMPL_GET_OBJ( CItem, ammoFX,              CItem, setInt32,   GetAmmoFX() )
+IMPL_GET_OBJ( CItem, ammoFXHue,           CItem, setInt32,   GetAmmoFXHue() )
+IMPL_GET_OBJ( CItem, ammoFXRender,        CItem, setInt32,   GetAmmoFXRender() )
+IMPL_GET_OBJ( CItem, speed,               CItem, setInt32,   GetSpeed() )
+// IMPL_GET_OBJ( CItem, multi,               CItem, setInt32,   ) // Do manually
+IMPL_GET_OBJ( CItem, maxRange,            CItem, setInt32,   GetMaxRange() )
+IMPL_GET_OBJ( CItem, baseRange,           CItem, setInt32,   GetBaseRange() )
+// IMPL_GET_OBJ( CItem, region,              CItem, setInt32, ) // Do manually
+IMPL_GET_OBJ( CItem, spawnSerial,         CItem, setInt32,   GetSpawn() )
+//IMPL_GETS_OBJ(CItem, origin,              CItem, setString,  GetOrigin() ) // Do manually
+IMPL_GET_OBJ( CItem, isItemHeld,          CItem, setBoolean, IsHeldOnCursor() )
+IMPL_GET_OBJ( CItem, stealable,           CItem, setInt32,   GetStealable() )
+// IMPL_GET_OBJ( CItem, spawnsection,        CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, sectionalist,        CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, mininterval,         CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, maxinterval,         CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, lockdowns,           CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, maxLockdowns,        CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, trashContainers,     CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, maxTrashContainers,  CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, secureContainers,    CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, maxSecureContainers, CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, friends,             CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, maxFriends,          CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, guests,              CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, maxGuests,           CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, owners,              CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, maxOwners,           CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, bans,                CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, maxBans,             CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, vendors,             CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, maxVendors,          CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, deed,                CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, isPublic,            CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, buildTimestamp,      CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, tradeTimestamp,      CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, banX,                CItem, setInt32, ) // Do manually
+// IMPL_GET_OBJ( CItem, banY,                CItem, setInt32, ) // Do manually
+
+
 bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CItem *gPriv = JS::GetMaybePtrFromReservedSlot<CItem >(obj , 0);
@@ -344,41 +497,6 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 		JSString *tString = nullptr;
 		switch( JSVAL_TO_INT( id ))
 		{
-			case CIP_SECTIONID:
-				tString = JS_NewStringCopyZ( cx, gPriv->GetSectionId().c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
-			case CIP_NAME:
-				tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
-			case CIP_TITLE:
-				tString = JS_NewStringCopyZ( cx, gPriv->GetTitle().c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
-			case CIP_X:			*vp = INT_TO_JSVAL( gPriv->GetX() );			break;
-			case CIP_Y:			*vp = INT_TO_JSVAL( gPriv->GetY() );			break;
-			case CIP_Z:			*vp = INT_TO_JSVAL( gPriv->GetZ() );			break;
-			case CIP_OLDX:		
-			{
-				auto oldLocation = gPriv->GetOldLocation();
-				*vp = INT_TO_JSVAL( oldLocation.x );
-				break;
-			}
-			case CIP_OLDY:		
-			{
-				auto oldLocation = gPriv->GetOldLocation();
-				*vp = INT_TO_JSVAL( oldLocation.y );
-				break;
-			}
-			case CIP_OLDZ:		
-			{
-				auto oldLocation = gPriv->GetOldLocation();
-				*vp = INT_TO_JSVAL( oldLocation.z );
-				break;
-			}
-			case CIP_ID:		*vp = INT_TO_JSVAL( gPriv->GetId() );			break;
-			case CIP_COLOUR:	*vp = INT_TO_JSVAL( gPriv->GetColour() );		break;
 			case CIP_OWNER:
 				CChar *pOwner;
 				pOwner = gPriv->GetOwnerObj();
@@ -394,20 +512,6 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 					*vp = OBJECT_TO_JSVAL( myObj );
 				}
 				break;
-			case CIP_VISIBLE:		*vp = INT_TO_JSVAL( static_cast<UI08>( gPriv->GetVisible() ));	break;
-			case CIP_SERIAL:
-			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetSerial() ))
-				{
-					JS_NewNumberValue( cx, gPriv->GetSerial(), vp );
-				}
-				else
-				{
-					*vp = INT_TO_JSVAL( gPriv->GetSerial() );
-				}
-				break;
-			}
-			case CIP_HEALTH:		*vp = INT_TO_JSVAL( gPriv->GetHP() );				break;
 			case CIP_SCRIPTTRIGGER:
 			{
 				// For backwards compatibility, get last scripttrigger from vector
@@ -438,10 +542,6 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 				*vp = OBJECT_TO_JSVAL( scriptTriggersJS );
 				break;
 			}
-			case CIP_WORLDNUMBER:	*vp = INT_TO_JSVAL( gPriv->WorldNumber() );			break;
-			case CIP_INSTANCEID:	*vp = INT_TO_JSVAL( gPriv->GetInstanceId() );		break;
-			case CIP_AMOUNT:		*vp = INT_TO_JSVAL( gPriv->GetAmount() );			break;
-
 				// We should Accquie an object here and return that, so you can do
 				// item.container.name
 			case CIP_CONTAINER:
@@ -483,124 +583,10 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 					}
 				}
 				break;
-			case CIP_TYPE:			*vp = INT_TO_JSVAL( static_cast<UI16>( gPriv->GetType() ));		break;
-			case CIP_MORE:
-			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE )))
-				{
-					 JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE ), vp );
-				}
-				else
-				{
-					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MORE ));
-				}
-				break;
-			}
-			case CIP_MORE0:
-			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE0 )))
-				{
-					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE0 ), vp );
-				}
-				else
-				{
-					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MORE0 ));
-				}
-				break;
-			}
-			case CIP_MORE1:
-			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE1 )))
-				{
-					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE1 ), vp );
-				}
-				else
-				{
-					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MORE1 ));
-				}
-				break;
-			}
-			case CIP_MORE2:
-			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE2 )))
-				{
-					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE2 ), vp );
-				}
-				else
-				{
-					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MORE2 ));
-				}
-				break;
-			}
-			case CIP_MOREX:
-			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MOREX )))
-				{
-					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MOREX ), vp );
-				}
-				else
-				{
-					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MOREX ));
-				}
-				break;
-			}
-			case CIP_MOREY:
-			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MOREY )))
-				{
-					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MOREY ), vp );
-				}
-				else
-				{
-					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MOREY ));
-				}
-				break;
-			}
-			case CIP_MOREZ:
-			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MOREZ )))
-				{
-					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MOREZ ), vp );
-				}
-				else
-				{
-					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MOREZ ));
-				}
-				break;
-			}
-			case CIP_MOVABLE:		*vp = INT_TO_JSVAL( gPriv->GetMovable() );			break;
 			case CIP_ATT:			*vp = INT_TO_JSVAL( RandomNum( gPriv->GetLoDamage(), gPriv->GetHiDamage() ));	break;
-			case CIP_LAYER:			*vp = INT_TO_JSVAL( gPriv->GetLayer() );			break;
-			case CIP_ITEMSINSIDE:	*vp = INT_TO_JSVAL( gPriv->GetContainsList()->Num() );	break;
 			case CIP_TOTALITEMCOUNT: *vp = INT_TO_JSVAL( GetTotalItemCount( gPriv ));	break;
-			case CIP_DECAYABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsDecayable() );		break;
-			case CIP_DECAYTIME:		JS_NewNumberValue( cx, gPriv->GetDecayTime(), vp );	break;
-			case CIP_LODAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetLoDamage() );			break;
-			case CIP_HIDAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetHiDamage() );			break;
-			case CIP_AC:			*vp = INT_TO_JSVAL( gPriv->GetArmourClass() );		break;
-			case CIP_DEF:			*vp = INT_TO_JSVAL( gPriv->GetResist( PHYSICAL ));	break;
-			case CIP_RESISTCOLD:	*vp = INT_TO_JSVAL( gPriv->GetResist( COLD ));		break;
-			case CIP_RESISTHEAT:	*vp = INT_TO_JSVAL( gPriv->GetResist( HEAT ));		break;
-			case CIP_RESISTLIGHT:	*vp = INT_TO_JSVAL( gPriv->GetResist( LIGHT ));	break;
-			case CIP_RESISTLIGHTNING:	*vp = INT_TO_JSVAL( gPriv->GetResist( LIGHTNING ));break;
-			case CIP_RESISTPOISON:	*vp = INT_TO_JSVAL( gPriv->GetResist( POISON ));	break;
-			case CIP_RESISTRAIN:	*vp = INT_TO_JSVAL( gPriv->GetResist( RAIN ));		break;
-			case CIP_RESISTSNOW:	*vp = INT_TO_JSVAL( gPriv->GetResist( SNOW ));		break;
-			case CIP_DAMAGECOLD:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( COLD ));	break;
-			case CIP_DAMAGEHEAT:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( HEAT ));	break;
-			case CIP_DAMAGELIGHT:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( LIGHT ));	break;
-			case CIP_DAMAGELIGHTNING:	*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( LIGHTNING ));	break;
-			case CIP_DAMAGEPOISON:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( POISON ));	break;
-			case CIP_DAMAGERAIN:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( RAIN ));	break;
-			case CIP_DAMAGESNOW:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( SNOW ));	break;
-			case CIP_SPEED:			*vp = INT_TO_JSVAL( gPriv->GetSpeed() );			break;
-			case CIP_NAME2:
-				tString = JS_NewStringCopyZ( cx, gPriv->GetName2().c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
 			case CIP_ISCHAR:	*vp = JSVAL_FALSE;								break;
 			case CIP_ISITEM:	*vp = JSVAL_TRUE;								break;
-			case CIP_ISSPAWNER:	*vp = BOOLEAN_TO_JSVAL( gPriv->GetObjType() == OT_SPAWNER );	break;
 			case CIP_RACE:
 			{
 				CRace *TempRace = nullptr;
@@ -618,65 +604,6 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 				}
 				break;
 			}
-			case CIP_MAXHP:			*vp = INT_TO_JSVAL( gPriv->GetMaxHP() );		break;
-			case CIP_MAXUSES:		*vp = INT_TO_JSVAL( gPriv->GetMaxUses() );		break;
-			case CIP_USESLEFT:		*vp = INT_TO_JSVAL( gPriv->GetUsesLeft() );		break;
-			case CIP_RANK:			*vp = INT_TO_JSVAL( gPriv->GetRank() );			break;
-			case CIP_CREATOR:		*vp = INT_TO_JSVAL( gPriv->GetCreator() );		break;
-			case CIP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );		break;
-			case CIP_DIR:			*vp = INT_TO_JSVAL( gPriv->GetDir() );			break;
-			case CIP_WIPABLE:		*vp = INT_TO_JSVAL( gPriv->IsWipeable() );		break;
-			case CIP_BUYVALUE:		*vp = INT_TO_JSVAL( gPriv->GetBuyValue() );		break;
-			case CIP_SELLVALUE:		*vp = INT_TO_JSVAL( gPriv->GetSellValue() );	break;
-			case CIP_VENDORPRICE:	*vp = INT_TO_JSVAL( gPriv->GetVendorPrice() );	break;
-			case CIP_RESTOCK:		*vp = INT_TO_JSVAL( gPriv->GetRestock() );		break;
-			case CIP_GOOD:			*vp = INT_TO_JSVAL( gPriv->GetGood() );			break;
-			case CIP_DIVINELOCK:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDivineLocked() ); break;
-			case CIP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );		break;
-			case CIP_WEIGHTMAX:		*vp = INT_TO_JSVAL( gPriv->GetWeightMax() );	break;
-			case CIP_BASEWEIGHT:	*vp = INT_TO_JSVAL( gPriv->GetBaseWeight() );	break;
-			case CIP_MAXITEMS:		*vp = INT_TO_JSVAL( gPriv->GetMaxItems() );		break;
-			case CIP_STRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength() );		break;
-			case CIP_DEXTERITY:		*vp = INT_TO_JSVAL( gPriv->GetDexterity() );	break;
-			case CIP_INTELLIGENCE:	*vp = INT_TO_JSVAL( gPriv->GetIntelligence() );	break;
-			case CIP_CORPSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsCorpse() );	break;
-			case CIP_DESC:
-				tString = JS_NewStringCopyZ( cx, gPriv->GetDesc().c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
-			case CIP_EVENT:
-				tString = JS_NewStringCopyZ( cx, gPriv->GetEvent().c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
-			case CIP_TEMPLASTTRADED:	*vp = INT_TO_JSVAL( gPriv->GetTempLastTraded() / 1000 );		break;
-			case CIP_TEMPTIMER:		*vp = INT_TO_JSVAL( gPriv->GetTempTimer() / 1000 );		break;
-			case CIP_SHOULDSAVE:	*vp = BOOLEAN_TO_JSVAL( gPriv->ShouldSave() );			break;
-			case CIP_ISNEWBIE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsNewbie() );			break;
-			case CIP_ISDISPELLABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDispellable() );		break;
-			case CIP_MADEWITH:		*vp = INT_TO_JSVAL( gPriv->GetMadeWith() );				break;
-			case CIP_ENTRYMADEFROM:	*vp = INT_TO_JSVAL( gPriv->EntryMadeFrom() );			break;
-			case CIP_ISPILEABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPileable() );			break;
-			case CIP_ISMARKEDBYMAKER:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsMarkedByMaker() );	break;
-			case CIP_ISDYEABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsDyeable() );			break;
-			case CIP_ISDAMAGEABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDamageable() );		break;
-			case CIP_ISWIPEABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsWipeable() );			break;
-			case CIP_ISGUARDED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsGuarded() );			break;
-			case CIP_ISDOOROPEN:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDoorOpen() );			break;
-			case CIP_ISFIELDSPELL:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsFieldSpell() );		break;
-			case CIP_ISLOCKEDDOWN:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsLockedDown() );		break;
-			case CIP_ISSHIELDTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsShieldType() );		break;
-			case CIP_ISMETALTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsMetalType() );			break;
-			case CIP_ISLEATHERTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsLeatherType() );		break;
-			case CIP_CANBELOCKEDDOWN:	*vp = BOOLEAN_TO_JSVAL( gPriv->CanBeLockedDown() );	break;
-			case CIP_ISCONTTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsContType() );			break;
-			case CIP_CARVESECTION:	*vp = INT_TO_JSVAL( gPriv->GetCarve() );				break;
-			case CIP_AMMOID:		*vp = INT_TO_JSVAL( gPriv->GetAmmoId() );				break;
-			case CIP_AMMOHUE:		*vp = INT_TO_JSVAL( gPriv->GetAmmoHue() );				break;
-			case CIP_AMMOFX:		*vp = INT_TO_JSVAL( gPriv->GetAmmoFX() );				break;
-			case CIP_AMMOFXHUE:		*vp = INT_TO_JSVAL( gPriv->GetAmmoFXHue() );			break;
-			case CIP_AMMOFXRENDER:	*vp = INT_TO_JSVAL( gPriv->GetAmmoFXRender() );			break;
-			case CIP_MAXRANGE:		*vp = INT_TO_JSVAL( gPriv->GetMaxRange() );				break;
-			case CIP_BASERANGE:		*vp = INT_TO_JSVAL( gPriv->GetBaseRange() );			break;
 			case CIP_REGION:
 			{
 				CTownRegion *myReg = gPriv->GetRegion();
@@ -691,13 +618,10 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 				}
 				break;
 			}
-			case CIP_SPAWNSERIAL:	*vp = INT_TO_JSVAL( gPriv->GetSpawn() );				break;
 			case CIP_ORIGIN:
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( gPriv->GetOrigin() )).c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
-			case CIP_ISITEMHELD:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsHeldOnCursor() );		break;
-			case CIP_STEALABLE:		*vp = INT_TO_JSVAL( gPriv->GetStealable() );				break;
 
 				// The following entries are specifically for CSpawnItem objects
 			case CIP_SPAWNSECTION:

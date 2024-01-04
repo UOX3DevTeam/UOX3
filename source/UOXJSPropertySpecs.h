@@ -46,6 +46,34 @@ bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) { \
   return true; \
 }
 
+#define IMPL_GET_OBJ( main, attr, type, method, accessor ) \
+bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) { \
+  auto args = JS::CallArgsFromVp(argc, vp); \
+  JS::RootedObject thisObj(cx); \
+  if (!args.computeThis(cx, &thisObj)) \
+    return false; \
+  auto priv = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0); \
+	SERIAL TempSerial = INVALIDSERIAL; \
+	if( !ValidateObject( priv )) \
+    return false; \
+  args.rval().method(priv->accessor); \
+  return true; \
+}
+
+#define IMPL_GETS_OBJ(main, attr, type, method, accessor) \
+bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) { \
+  auto args = JS::CallArgsFromVp(argc, vp); \
+  JS::RootedObject thisObj(cx); \
+  if (!args.computeThis(cx, &thisObj)) \
+    return false; \
+  auto priv = JS::GetMaybePtrFromReservedSlot< type >(thisObj, 0); \
+	SERIAL TempSerial = INVALIDSERIAL; \
+	if( !ValidateObject( priv )) \
+    return false; \
+  args.rval().method( JS_NewStringCopyZ( cx, priv->accessor ) ); \
+  return true; \
+}
+
 #define IMPL_SET(main, attr, type, method, accessor)                                                             \
 bool JS##main##_set_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) {                                    \
   auto args = JS::CallArgsFromVp(argc, vp);                                                                      \
