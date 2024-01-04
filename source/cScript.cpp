@@ -1243,8 +1243,9 @@ SI08 cScript::OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj )
 	if( !ExistAndVerify( seOnContextMenuRequest, "onContextMenuRequest" ))
 		return RV_NOFUNC;
  
-	jsval rval, params[2];
-	JSObject *mySockObj = JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+  JS::RootedValue rval(targContext);
+  JS::RootedValueArray<2> params(targContext);
+  JSObject *mySockObj = JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *myObj = nullptr;
 	if( baseObj->GetObjType() == OT_CHAR )
 	{
@@ -1255,11 +1256,11 @@ SI08 cScript::OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj )
 		myObj = JSEngine->AcquireObject( IUE_ITEM, baseObj, runTime );
 	}
  
-	params[0] = OBJECT_TO_JSVAL( mySockObj );
-	params[1] = OBJECT_TO_JSVAL( myObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onContextMenuRequest", 2, params, &rval );
+	params[0].setObjectOrNull( mySockObj );
+	params[1].setObjectOrNull( myObj );
+	bool retVal = JS_CallFunctionName( targContext, *targObject, "onContextMenuRequest", params, &rval );
  
-	if( retVal == JS_FALSE )
+	if( !retVal )
 	{
 		SetEventExists( seOnContextMenuRequest, false );
 		return RV_NOFUNC;
@@ -1283,8 +1284,9 @@ SI08 cScript::OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 po
 	if( !ExistAndVerify( seOnContextMenuSelect, "onContextMenuSelect" ))
 		return RV_NOFUNC;
  
-	jsval rval, params[3];
-	JSObject *mySockObj = JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+  JS::RootedValue rval(targContext);
+  JS::RootedValueArray<3> params(targContext);
+  JSObject *mySockObj = JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *myObj = nullptr;
 	if( baseObj->GetObjType() == OT_CHAR )
 	{
@@ -1295,12 +1297,12 @@ SI08 cScript::OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 po
 		myObj = JSEngine->AcquireObject( IUE_ITEM, baseObj, runTime );
 	}
  
-	params[0] = OBJECT_TO_JSVAL( mySockObj );
-	params[1] = OBJECT_TO_JSVAL( myObj );
-	params[2] = INT_TO_JSVAL( popupEntry );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onContextMenuSelect", 3, params, &rval );
+	params[0].setObjectOrNull( mySockObj );
+	params[1].setObjectOrNull( myObj );
+	params[2].setInt32( popupEntry );
+	bool retVal = JS_CallFunctionName( targContext, *targObject, "onContextMenuSelect", params, &rval );
  
-	if( retVal == JS_FALSE )
+	if( !retVal )
 	{
 		SetEventExists( seOnContextMenuSelect, false );
 		return RV_NOFUNC;
