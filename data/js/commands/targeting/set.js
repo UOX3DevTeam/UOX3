@@ -71,32 +71,32 @@ function onCallback0( socket, ourObj )
 		break;
 	case "DEF":
 	case "RESISTARMOR":
-		ourObj.Resist(1, nVal);
-		okMsg(socket);
+		ourObj.Resist( 1, nVal );
+		okMsg( socket );
 		break;
 	case "RESISTLIGHT":
-		ourObj.Resist(2, nVal);
-		okMsg(socket);
+		ourObj.Resist( 2, nVal );
+		okMsg( socket );
 		break;
 	case "RESISTWATER":
-		ourObj.Resist(3, nVal);
-		okMsg(socket);
+		ourObj.Resist( 3, nVal );
+		okMsg( socket );
 		break;
 	case "RESISTCOLD":
-		ourObj.Resist(4, nVal);
-		okMsg(socket);
+		ourObj.Resist( 4, nVal );
+		okMsg( socket );
 		break;
 	case "RESISTFIRE":
-		ourObj.Resist(5, nVal);
-		okMsg(socket);
+		ourObj.Resist( 5, nVal );
+		okMsg( socket );
 		break;
 	case "RESISTENERGY":
-		ourObj.Resist(6, nVal);
-		okMsg(socket);
+		ourObj.Resist( 6, nVal );
+		okMsg( socket );
 		break;
 	case "RESISTPOISON":
-		ourObj.Resist(7, nVal);
-		okMsg(socket);
+		ourObj.Resist( 7, nVal );
+		okMsg( socket );
 		break;
 	case "HP":
 	case "HEALTH":
