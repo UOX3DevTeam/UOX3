@@ -94,7 +94,7 @@ function onCallback0( socket, ourObj )
 		ourObj.Resist(6, nVal);
 		okMsg(socket);
 		break;
-	case "RESISTPOIS":
+	case "RESISTPOISON":
 		ourObj.Resist(7, nVal);
 		okMsg(socket);
 		break;
