@@ -58,9 +58,10 @@ function onCallback1(socket, ourObj)
 				{
 					socket.SysMessage("You need more dirt to fill a plant bowl!")
 				}
-				else {
+				else 
+				{
 					var bowlofdirt = CreateDFNItem(mChar.socket, mChar, "plantbowlOfdirt", 1, "ITEM", true);
-					bowlofdirt.SetTag("FertialeDirt", 1);
+					bowlofdirt.SetTag("PlantInfo", 0 + "," + 0 + "," + 0 + "," + 1);
 					socket.SysMessage("You fill the bowl with fresh dirt.")
 					iBowl.Delete();
 
@@ -86,7 +87,8 @@ function onCallback1(socket, ourObj)
 			{
 				if (validMapDirtIDs.indexOf(tileID) != -1 ) // Dirt
 				{
-					CreateDFNItem(mChar.socket, mChar, "plantbowlOfdirt", 1, "ITEM", true);
+					var bowlofdirt = CreateDFNItem(mChar.socket, mChar, "plantbowlOfdirt", 1, "ITEM", true);
+					bowlofdirt.SetTag("PlantInfo", 0 + "," + 0 + "," + 0 + "," + 0);
 					socket.SysMessage("You fill the bowl with fresh dirt.")
 					validTileIDFound = true;
 					iBowl.Delete();
