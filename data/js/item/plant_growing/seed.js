@@ -309,13 +309,20 @@ function onCallback0(pSock, myTarget)
 
 					// Loop through the keys of seedToPlantType to find the matching tag
 					for (var tagName in seedToPlantType) {
-						if (seedToPlantType.hasOwnProperty(tagName)) {
-							if (parseInt(iUsed.GetTag(tagName)) === 1) {
-								var plantType = seedToPlantType[tagName];
-								myTarget.SetTag("PlantType", plantType); // Type of plant it is from dfn files
+						if (parseInt(iUsed.GetTag(tagName)) === 1)
+						{
+							var plantType = seedToPlantType[tagName];
+							if (!isNaN(plantType)) 
+							{ // Check if plantType is a valid number
+								myTarget.SetTag("PlantType", plantType);
 								myTarget.SetTag("PlantName", iUsed.name); // Name of plant it is from dfn files
 								myTarget.SetTag("PlantColor", iUsed.colour); // Colour of plant it is from dfn files
 								break; // Exit the loop once a match is found
+							}
+							else 
+							{
+								// Handle the case where the plantType is not a valid number
+								pUser.SysMessage("Invalid plantType:", plantType, "Page and GM");
 							}
 						}
 					}
@@ -323,7 +330,8 @@ function onCallback0(pSock, myTarget)
 
 					myTarget.StartTimer(PlantDelayTimer, 1, 19100);
 					myTarget.SetTag("PlantStage", 1);
-					myTarget.SetTag("RemainingSeeds", 8);
+					myTarget.SetTag("Seeds", 0 + "," + 8 + "," + iUsed.colour);
+					myTarget.SetTag("PlantCross", 0 + "," + plantType);
 
 					if (iUsed.amount > 1)
 						iUsed.amount--;

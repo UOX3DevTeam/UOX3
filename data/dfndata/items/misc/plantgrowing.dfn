@@ -29,7 +29,7 @@ get=base_item
 id=0xDCF
 weight=10
 amount=1
-colourlist=30
+colourlist=10003
 script=19102
 }
 

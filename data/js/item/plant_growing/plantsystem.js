@@ -66,7 +66,10 @@ function PlantBowlGump(pUser, iUsed)
 	PlantGump.AddText(196, 163, 0x835, greaterStrength);
 
 	PlantGump.AddGump(48, 47, 0xD2);
-	PlantGump.AddText(54, 47, 0x835, iUsed.GetTag("PlantStage").toString());
+	if (iUsed.GetTag("PlantStage") >= 1) 
+	{
+		PlantGump.AddText(54, 47, 0x835, iUsed.GetTag("PlantStage").toString());
+	}
 
 	PlantGump.AddGump(232, 47, 0xD2);
 	if (iUsed.GetTag("PlantType")) 
@@ -348,7 +351,7 @@ function GrowthCheck( myPlant, pUser )
 		myPlant.SetTag( "fungus", fungusLevel + 1 );
 	}
 
-	if (waterLevel >= 2 || 0.9 >= Math.random()) 
+	if ( waterLevel > 0 && waterLevel >= 2 || 0.9 >= Math.random())
 	{
 		myPlant.SetTag("water", waterLevel - 1);
 	}
@@ -459,8 +462,33 @@ function onTimer( myPlant, timerID )
 	}
 
 	var stage = myPlant.GetTag("PlantStage");//Starts at stage 1
-	var availableSeeds = myPlant.GetTag("AvailableSeed");
-	var remainingSeeds = myPlant.GetTag("RemainingSeeds");
+	var Seeds = myPlant.GetTag("Seeds")
+	var CrossedPlants = myPlant.GetTag("PlantCross")
+
+	if (!CrossedPlants) 
+	{
+		return false;
+	}
+
+	var Crossed = CrossedPlants.split(",");
+	if (Crossed.length != 2)
+		return false;
+
+	var Pollinated = parseInt(Crossed[0]);
+	var SeedBreed = parseInt(Crossed[1]);
+
+	if (!Seeds)
+	{
+		return false;
+	}
+
+	var Seedlength = Seeds.split(",");
+	if (Seedlength.length != 3)
+		return false;
+
+	var availableSeeds = parseInt(Seedlength[0]);
+	var remainingSeeds = parseInt(Seedlength[1]);
+	var hueSeeds = parseInt(Seedlength[2]);
 
 	if (timerID == 1 )
 	{
@@ -472,15 +500,25 @@ function onTimer( myPlant, timerID )
 		{
 			if (myPlant.GetTag("PlantHealth") != 10 && myPlant.GetTag("PlantHealth") != 11)//wilted or dying
 			{
-				if (myPlant.GetTag("FertialeDirt") && stage <= 5) 
+				if (myPlant.GetTag("FertialeDirt") && stage <= 5)
 				{
 					//double growth to stage 5
 					myPlant.SetTag("PlantStage", stage + 2);
 				}
-				else if (stage < 9)
+				else if (stage < 9) 
 				{
 					// Continue to the next stage if it does not have fertial dirt
 					myPlant.SetTag("PlantStage", stage + 1);
+				}
+				else 
+				{
+					//Produce Seeds 
+					if (remainingSeeds > 0 && Pollinated == 1)
+					{
+						var rseeds = remainingSeeds - 1;
+						var aseeds = availableSeeds + 1;
+						myPlant.SetTag("Seeds", aseeds + "," + rseeds + "," + hueSeeds);
+					}					
 				}
 
 				if (stage >= 2 && stage <= 3)
@@ -493,19 +531,18 @@ function onTimer( myPlant, timerID )
 				}
 			}
 
-			//Produce Seeds
-			if (stage >= 9) 
+			if (stage >= 9)
 			{
-				if (remainingSeeds > 0 )
+				if (Pollinated == 0)
 				{
-					myPlant.SetTag("RemainingSeeds", remainingSeeds - 1);
-					myPlant.SetTag("AvailableSeeds", availableSeeds + 1);
+					myPlant.SetTag("PlantCross", 1 + "," + SeedBreed);
 				}
+
 			}
 
 			ApplyPotions(myPlant)
 			HealthStatus(myPlant);
-			PlantDamage(myPlant);
+			//PlantDamage(myPlant);
 			GrowthCheck(myPlant);
 			myPlant.Refresh();
 		}
@@ -555,7 +592,6 @@ function DrawPlant( PlantGump, iUsed )
 	else
 	{
 		  PlantType( PlantGump, iUsed );
-		  iUsed.Refresh();
 	}
 
 	if( iUsed.GetTag( "PlantStage" ) != 14 && iUsed.GetTag( "PlantType" )) //BowlOfDirt
@@ -1236,8 +1272,8 @@ function ResetPlant(iUsed)
 	iUsed.SetTag("PlantStage", null);
 	iUsed.SetTag("PlantColor", null);
 	iUsed.SetTag("PlantHealth", null);
-	iUsed.SetTag("AvailableSeeds", null);
-	iUsed.SetTag("RemainingSeeds", null);
+	iUsed.SetTag("Seeds", null);
+	iUsed.SetTag("PlantCross", null);
 	iUsed.SetTag("GreaterPoison", null);
 	iUsed.SetTag("GreaterCure", null);
 	iUsed.SetTag("GreaterHeal", null);
@@ -1247,16 +1283,24 @@ function ResetPlant(iUsed)
 function PollinatePlant(pUser, iUsed)
 {
 	pUser.socket.tempObj = iUsed;
+	var socket = pUser.socket;
 	var status = iUsed.GetTag("PlantStage");
-	//Not crossable -> no pollen
-	//You cannot gather pollen from a mutated plant! msg
-	if (status < 9)
+	var CrossedPlants = iUsed.GetTag("PlantCross")
+
+	if (!CrossedPlants)
+	{
+		pSock.SysMessage("You cannot gather pollen from a mutated plant!");
+		return false;
+	}
+	else if (status < 9)
 	{
 		socket.SysMessage("Too early to gather pollen");
+		return false;
 	}
-	else if (iUsed.GetTag("PlantHealth") != 10 && iUsed.GetTag("PlantHealth") != 11)//wilted or dying
+	else if (iUsed.GetTag("PlantHealth") == 10 && iUsed.GetTag("PlantHealth") == 11)//wilted or dying
 	{
 		socket.SysMessage("You cannot gather pollen from an unhealthy plant!");
+		return false;
 	}
 	else
 		pUser.CustomTarget(1, "Target the plant you wish to cross-pollinate to.");
@@ -1267,56 +1311,462 @@ function onCallback1(pSock, myTarget)
 	var iUsed = pSock.tempObj;
 	var pUser = pSock.currentChar;
 	var status = iUsed.GetTag("PlantStage");
-	//Not crossable -> no pollen
-	//You cannot gather pollen from a mutated plant! msg
+	var iCrossedPlants = iUsed.GetTag("PlantCross")
+
+	if (!iCrossedPlants)
+	{
+		pSock.SysMessage("You cannot gather pollen from a mutated plant!");
+		return false;
+	}
 	if (status < 9) 
 	{
-		socket.SysMessage("Too early to gather pollen");
+		pSock.SysMessage("Too early to gather pollen");
+		return false;
 	}
-	else if (iUsed.GetTag("PlantHealth") != 10 && iUsed.GetTag("PlantHealth") != 11)//wilted or dying
+	else if (iUsed.GetTag("PlantHealth") == 10 && iUsed.GetTag("PlantHealth") == 11)//wilted or dying
 	{
-		socket.SysMessage("You cannot gather pollen from an unhealthy plant!");
+		pSock.SysMessage("You cannot gather pollen from an unhealthy plant!");
+		return false;
 	}
 	else if (!myTarget.GetTag("PlantType")) 
 	{
-		socket.SysMessage("You can only pollinate other specially grown plants!");
+		pSock.SysMessage("You can only pollinate other specially grown plants!");
+		return false;
 	}
 	else
 	{
 		var tstatus = myTarget.GetTag("PlantStage");
 		var type = iUsed.GetTag("PlantType");
 		var color = iUsed.GetTag("PlantColor");
+		var tCrossedPlants = myTarget.GetTag("PlantCross")
 
-		//Not crossable -> no pollen
-		//You cannot gather pollen from a mutated plant! msg
-		if (tstatus < 9) {
-			socket.SysMessage("This plant is not in the flowering stage. You cannot pollinate it!");
-		}
-		else if (myTarget.GetTag("PlantHealth") != 10 && myTarget.GetTag("PlantHealth") != 11)//wilted or dying
+		if (!tCrossedPlants)
 		{
-			socket.SysMessage("You cannot pollinate an unhealthy plant!");
+			pSock.SysMessage("You cannot gather pollen from a mutated plant!");
+			return false;
 		}
-		else if (!myTarget.GetTag("PlantType")) 
+
+		var Crossed = tCrossedPlants.split(",");
+		if (Crossed.length != 2)
+			return false;
+
+		var Pollinated = parseInt(Crossed[0]);
+		var SeedBreed = parseInt(Crossed[1]);
+
+		if (tstatus < 9)
 		{
-			socket.SysMessage("You can only pollinate other specially grown plants!");
+			pSock.SysMessage("This plant is not in the flowering stage. You cannot pollinate it!");
+			return false;
 		}
-		//check if is both plants can be crossesed.
-		//You cannot cross-pollinate with a mutated plant!
-		else if (myTarget.GetTag("Pollinated") == 1)
+		else if (myTarget.GetTag("PlantHealth") == 10 && myTarget.GetTag("PlantHealth") == 11)//wilted or dying
 		{
-			socket.SysMessage("This plant has already been pollinated!");
+			pSock.SysMessage("You cannot pollinate an unhealthy plant!");
+			return false;
+		}
+		else if (!myTarget.GetTag("PlantType"))
+		{
+			pSock.SysMessage("You can only pollinate other specially grown plants!");
+			return false;
+		}
+		else if (!iCrossedPlants && !tCrossedPlants) 
+		{
+			pSock.SysMessage("You cannot cross-pollinate with a mutated plant!");
+			return false;
+		}
+		else if (Pollinated == 1) 
+		{
+			pSock.SysMessage("This plant has already been pollinated!");
 		}
 		else if (myTarget == iUsed)
 		{
-			myTarget.SetTag("Pollinated", 1);
-			socket.SysMessage("You pollinate the plant with its own pollen.");
+			CrossPollinateTable(myTarget, iUsed, pSock);
+			SeedColorsSet(myTarget, iUsed);
+			pSock.SysMessage("You pollinate the plant with its own pollen.");
+		}
+		else
+		{
+			CrossPollinateTable(myTarget, iUsed, pSock);
+			SeedColorsSet(myTarget, iUsed);
+			pSock.SysMessage("You successfully cross - pollinate the plant.");
 		}
 	}
 }
 
+function CrossPollinateTable(myTarget, iUsed, pSock)
+{
+	var cross = iUsed.GetTag("PlantType");
+	var cross2 = myTarget.GetTag("PlantType");
+
+	var setcross = 0;
+
+	if (cross == 1 && cross2 == 1)
+		setcross = 1; // CampionFlowerSeed
+
+	if (cross == 2 && cross2 == 2)//Poppies + Poppies
+		setcross = 2;// PoppieSeed
+
+	if (cross == 1 && cross2 == 3)//Campion Flowers + Snowdrops
+		setcross = 2;// PoppieSeed
+
+	if (cross == 3 && cross2 == 3)//Snowdrops + Snowdrops
+		setcross = 3;//SnowdropSeed
+
+	if (cross == 2 && cross2 == 4)//Poppies + Bulrushes
+		setcross = 3;//SnowdropSeed
+
+	if (cross == 1 && cross2 == 5)//Campion Flowers + Lilies
+		setcross = 3;//SnowdropSeed
+
+	if (cross == 4 && cross2 == 4)//Bulrushes + Bulrushes
+		setcross = 4;//BulrusheSeed
+
+	if (cross == 3 && cross2 == 5)//Snowdrops + Lilies
+		setcross = 4;//BulrusheSeed
+
+	if (cross == 2 && cross2 == 6)//Poppies + Pampas Grass
+		setcross = 4;//BulrusheSeed
+
+	if (cross == 1 && cross2 == 7)//Campion Flowers + Rushes
+		setcross = 4;//BulrusheSeed
+
+	if (cross == 5 && cross2 == 5)//Lilies + Lilies
+		setcross = 5;//LilieSeed
+
+	if (cross == 4 && cross2 == 6)//Bulrushes + Pampas Grass
+		setcross = 5;//LilieSeed
+
+	if (cross == 3 && cross2 == 7)//Snowdrops + Rushes
+		setcross = 5;//LilieSeed
+
+	if (cross == 2 && cross2 == 8)//Poppies + Elephant Ear Plant
+		setcross = 5;//LilieSeed
+
+	if (cross == 1 && cross2 == 9)//Campion Flowers + Fern
+		setcross = 5;//LilieSeed
+
+	if (cross == 6 && cross2 == 6)//Pampas Grass + Pampas Grass
+		setcross = 6;//PampasGrassSeed
+
+	if (cross == 5 && cross2 == 7)//Lilies + Rushes
+		setcross = 6;//PampasGrassSeed
+
+	if (cross == 4 && cross2 == 8)//Bulrushes + Elephant Ear Plant
+		setcross = 6;//PampasGrassSeed
+
+	if (cross == 3 && cross2 == 9)//Snowdrops + Fern
+		setcross = 6;//PampasGrassSeed
+
+	if (cross == 2 && cross2 == 10)//Poppies + Ponytail Palm
+		setcross = 6;//PampasGrassSeed
+
+	if (cross == 1 && cross2 == 11)//Campion Flowers + Small Palm
+		setcross = 6;//PampasGrassSeed
+
+	if (cross == 7 && cross2 == 7)//Rushes + Rushes
+		setcross = 7;//RusheSeed
+
+	if (cross == 6 && cross2 == 8)//Pampas Grass + Elephant Ear Plant
+		setcross = 7;//RusheSeed
+
+	if (cross == 5 && cross2 == 9)//Lilies + Fern
+		setcross = 7;//RusheSeed
+
+	if (cross == 4 && cross2 == 10)//Bulrushes + Ponytail Palm
+		setcross = 7;//RusheSeed
+
+	if (cross == 3 && cross2 == 11)//Snowdrops + Small Palm
+		setcross = 7;//RusheSeed
+
+	if (cross == 2 && cross2 == 12)//Poppies + Century Plant
+		setcross = 7;//RusheSeed
+
+	if (cross == 1 && cross2 == 13)//Campion Flowers + Water Plants
+		setcross = 7;//RusheSeed
+
+	if (cross == 8 && cross2 == 8)//Elephant Ear Plant + Elephant Ear Plant
+		setcross = 8;//ElephantEarPlantrSeed
+
+	if (cross == 7 && cross2 == 9)//Rushes + Fern
+		setcross = 8;//ElephantEarPlantrSeed
+
+	if (cross == 6 && cross2 == 10)//Pampas Grass + Ponytail Palm
+		setcross = 8;//ElephantEarPlantrSeed
+
+	if (cross == 5 && cross2 == 11)//Lilies + Small Palm
+		setcross = 8;//ElephantEarPlantrSeed
+
+	if (cross == 4 && cross2 == 12)//Bulrushes + Century Plant
+		setcross = 8;//ElephantEarPlantrSeed
+
+	if (cross == 3 && cross2 == 13)//Snowdrops + Water Plants
+		setcross = 8;//ElephantEarPlantrSeed
+
+	if (cross == 2 && cross2 == 14)//Poppies + Snake Plant
+		setcross = 8;//ElephantEarPlantrSeed
+
+	if (cross == 1 && cross2 == 15)//Campion Flowers + Prickly Pear Cactus
+		setcross = 8;//ElephantEarPlantrSeed
+
+	if (cross == 9 && cross2 == 9)//Fern + Fern
+		setcross = 9;//FernSeed
+
+	if (cross == 8 && cross2 == 10)//Elephant Ear Plant + Ponytail Palm
+		setcross = 9;//FernSeed
+
+	if (cross == 7 && cross2 == 11)//Rushes + Small Palm
+		setcross = 9;//FernSeed
+
+	if (cross == 6 && cross2 == 12)//Pampas Grass + Century Plant
+		setcross = 9;//FernSeed
+
+	if (cross == 5 && cross2 == 13)//Lilies + Water Plants
+		setcross = 9;//FernSeed
+
+	if (cross == 4 && cross2 == 14)//Bulrushes + Snake Plant
+		setcross = 9;//FernSeed
+
+	if (cross == 3 && cross2 == 15)//Snowdrops + Prickly Pear Cactus
+		setcross = 9;//FernSeed
+
+	if (cross == 2 && cross2 == 16)//Poppies + Barrel Cactus
+		setcross = 9;//FernSeed
+
+	if (cross == 1 && cross2 == 17)//Campion Flowers + Tribarrel Cactus
+		setcross = 9;//FernSeed
+
+	if (cross == 10 && cross2 == 10)//Ponytail Palm + Ponytail Palm
+		setcross = 10;//PonytailPalmSeed
+
+	if (cross == 9 && cross2 == 11)//Fern + Small Palm
+		setcross = 10;//PonytailPalmSeed
+
+	if (cross == 8 && cross2 == 12)//Elephant Ear Plant + Century Plant
+		setcross = 10;//PonytailPalmSeed
+
+	if (cross == 7 && cross2 == 13)//Rushes + Water Plants
+		setcross = 10;//PonytailPalmSeed
+
+	if (cross == 6 && cross2 == 14)//Pampas Grass + Snake Plant
+		setcross = 10;//PonytailPalmSeed
+
+	if (cross == 5 && cross2 == 15)//Lilies + Prickly Pear Cactus
+		setcross = 10;//PonytailPalmSeed
+
+	if (cross == 4 && cross2 == 16)//Bulrushes + Barrel Cactus
+		setcross = 10;//PonytailPalmSeed
+
+	if (cross == 3 && cross2 == 17)//Snowdrops + Tribarrel Cactus
+		setcross = 10;//PonytailPalmSeed
+
+	if (cross == 11 && cross2 == 11)//Small Palm + Small Palm
+		setcross = 11;//SmallPalmSeed
+
+	if (cross == 10 && cross2 == 12)//Ponytail Palm + Century Plant
+		setcross = 11;//SmallPalmSeed
+
+	if (cross == 9 && cross2 == 13)//Fern + Water Plants
+		setcross = 11;//SmallPalmSeed
+
+	if (cross == 8 && cross2 == 14)//Elephant Ear Plant + Snake Plant
+		setcross = 11;//SmallPalmSeed
+
+	if (cross == 7 && cross2 == 15)//Rushes + Prickly Pear Cactus
+		setcross = 11;//SmallPalmSeed
+
+	if (cross == 6 && cross2 == 16)//Pampas Grass + Barrel Cactus
+		setcross = 11;//SmallPalmSeed
+
+	if (cross == 5 && cross2 == 17)//Lilies + Tribarrel Cactus
+		setcross = 11;//SmallPalmSeed
+
+	if (cross == 12 && cross2 == 12)//Century Plant + Century Plant
+		setcross = 12;//CenturyPlantSeed
+
+	if (cross == 11 && cross2 == 13)//Small Palm + Water Plants
+		setcross = 12;//CenturyPlantSeed
+
+	if (cross == 10 && cross2 == 14)//Ponytail Palm + Snake Plant
+		setcross = 12;//CenturyPlantSeed
+
+	if (cross == 9 && cross2 == 15)//Fern + Prickly Pear Cactus
+		setcross = 12;//CenturyPlantSeed
+
+	if (cross == 8 && cross2 == 16)//Elephant Ear Plant + Barrel Cactus
+		setcross = 12;//CenturyPlantSeed
+
+	if (cross == 7 && cross2 == 17)//Rushes + Tribarrel Cactus
+		setcross = 12;//CenturyPlantSeed
+
+	if (cross == 13 && cross2 == 13)//Water Plants + Water Plants
+		setcross = 13;//WaterPlantSeed
+
+	if (cross == 12 && cross2 == 14)//Century Plant + Snake Plant
+		setcross = 13;//WaterPlantSeed
+
+	if (cross == 11 && cross2 == 15)//Small Palm + Prickly Pear Cactus
+		setcross = 13;//WaterPlantSeed
+
+	if (cross == 10 && cross2 == 16)//Ponytail Palm + Barrel Cactus
+		setcross = 13;//WaterPlantSeed
+
+	if (cross == 9 && cross2 == 17)//Fern + Tribarrel Cactus
+		setcross = 13;//WaterPlantSeed
+
+	if (cross == 14 && cross2 == 14)//Snake Plant + Snake Plant
+		setcross = 14;//SnakePlantSeed
+
+	if (cross == 13 && cross2 == 15)//Water Plants + Prickly Pear Cactus
+		setcross = 14;//SnakePlantSeed
+
+	if (cross == 12 && cross2 == 16)//Century Plant + Barrel Cactus
+		setcross = 14;//SnakePlantSeed
+
+	if (cross == 11 && cross2 == 17)//Small Palm + Tribarrel Cactus
+		setcross = 14;//SnakePlantSeed
+
+	if (cross == 15 && cross2 == 15)//Prickly Pear Cactus + Prickly Pear Cactus
+		setcross = 15;//PricklyPearCactusSeed
+
+	if (cross == 14 && cross2 == 16)//Snake Plant + Barrel Cactus
+		setcross = 15;//PricklyPearCactusSeed
+
+	if (cross == 13 && cross2 == 17)//Water Plants + Tribarrel Cactus
+		setcross = 15;//PricklyPearCactusSeed
+
+	if (cross == 16 && cross2 == 16)//Barrel Cactus + Barrel Cactus
+		setcross = 16;//BarrelCactusSeed
+
+	if (cross == 15 && cross2 == 17)//Prickly Pear Cactus + Tribarrel Cactus
+		setcross = 16;//BarrelCactusSeed
+
+	if (cross == 17 && cross2 == 17)//Tribarrel Cactus + Tribarrel Cactus
+		setcross = 17;//TribarrelCactusSeed
+
+	//pSock.SysMessage("You Set the Seed " + setcross);
+	myTarget.SetTag("PlantCross", 1 + "," + setcross);
+}
+
+function SeedColorsSet(myTarget, iUsed) {
+	var Seeds = iUsed.GetTag("Seeds");
+	var iplantColor = iUsed.GetTag("PlantColor");
+	var tplantColor = myTarget.GetTag("PlantColor");
+
+	if (!Seeds) {
+		return false;
+	}
+
+	var Seedlength = Seeds.split(",");
+	if (Seedlength.length != 3)
+		return false;
+
+	var availableSeeds = parseInt(Seedlength[0]);
+	var remainingSeeds = parseInt(Seedlength[1]);
+	var hueSeeds = parseInt(Seedlength[2]);
+
+	// Define color combination object
+	var colorMap = {
+		"0_0": 0, // Plain + Plain
+
+		"1645_1645": 33,    // Red + Red = Bright Red
+		"1645_1341": 13,    // Red + Blue = Purple
+		"1645_2213": 1135,  // Red + Yellow = Orange
+		"1645_13": 1645,    // Red + Purple = Red
+		"1645_1435": 1645,  // Red + Green = Red
+		"1645_1135": 1645,  // Red + Orange = Red
+		"1645_0": 0,        // Red + Plain = Plain
+
+		"1341_1341": 5,     // Blue + Blue = Bright Blue
+		"1341_1645": 13,    // Blue + Red = Purple
+		"1341_2213": 1435,  // Blue + Yellow = Green
+		"1341_13": 1341,    // Blue + Purple = Blue
+		"1341_1435": 1341,  // Blue + Green = Blue
+		"1341_1135": 1341,  // Blue + Orange = Blue
+		"1341_0": 0,        // Blue + Plain = Plain
+
+		"2213_2213": 56,    // Yellow + Yellow = Bright Yellow
+		"2213_1645": 1135,  // Yellow + Red = Orange
+		"2213_1341": 1435,  // Yellow + Blue = Green
+		"2213_13": 2213,    // Yellow + Purple = Yellow
+		"2213_1435": 2213,  // Yellow + Green = Yellow
+		"2213_1135": 2213,  // Yellow + Orange = Yellow
+		"2213_0": 0,        // Yellow + Plain = Plain
+
+		"13_1645": 1645,    // Purple + Red = Red
+		"13_1341": 1341,    // Purple + Blue = Blue
+		"13_2213": 2213,    // Purple + Yellow = Yellow
+		"13_13": 16,        // Purple + Purple = Bright Purple
+		"13_1435": 1341,    // Purple + Green = Blue
+		"13_1135": 1645,    // Purple + Orange = Red
+		"13_0": 0,          // Purple + Plain = Plain
+
+		"1435_1645": 1645,  // Green + Red = Red
+		"1435_1341": 1341,  // Green + Blue = Blue
+		"1435_2213": 2213,  // Green + Yellow = Yellow
+		"1435_13": 1341,    // Green + Purple = Blue
+		"1435_1435": 66,    // Green + Green = Bright Green
+		"1435_1135": 2213,  // Green + Orange = Yellow
+		"1435_0": 0,        // Green + Plain = Plain
+
+		"1135_1645": 1645,  // Orange + Red = Red
+		"1135_1341": 1341,  // Orange + Blue = Blue
+		"1135_2213": 2213,  // Orange + Yellow = Yellow
+		"1135_13": 1645,    // Orange + Purple = Red
+		"1135_1435": 2213,  // Orange + Green = Yellow
+		"1135_1135": 43,    // Orange + Orange = Bright Orange
+		"1135_0": 0,        // Orange + Plain = Plain
+
+		"1117_1117": 1117,  // Black + Black
+		"1117_0": 1117,     // Black + plain
+
+		"1153_1153": 1153,  // White + White
+		"1153_0": 1153,     // Black + plain
+
+		"1166_1166": 1166,  // Pink + Pink
+		"1166_0": 1166,     // Pink + plain
+
+		"1158_1158": 1158,  // Magenta + Magenta
+		"1158_0": 1158,     // Magenta + plain
+
+		"1173_1173": 1173,  // Aqua + Aqua
+		"1173_0": 1173,     // Aqua + plain
+
+		"1161_1161": 1173,  // FireRed + FireRed
+		"1161_0": 1173,     // FireRed + plain
+	};
+
+	// Build key for the color combination
+	var key = iplantColor.toString() + "_" + tplantColor.toString();
+
+	// Get hue from the object
+	var sethue = colorMap[key] || 0;
+
+	myTarget.SetTag("Seeds", availableSeeds + "," + remainingSeeds + "," + sethue);
+}
+
+
 function GatherSeeds(pUser, iUsed)
 {
-	var availableSeeds = iUsed.GetTag("AvailableSeeds");
+	var socket = pUser.socket;
+
+	var Seeds = iUsed.GetTag("Seeds")
+
+	if (!Seeds) 
+	{
+		return false;
+	}
+
+	var Seedlength = Seeds.split(",");
+	if (Seedlength.length != 3)
+		return false;
+
+	var availableSeeds = parseInt(Seedlength[0]);
+	var remainingSeeds = parseInt(Seedlength[1]);
+	var hueSeeds = parseInt(Seedlength[2]);
+
+	var CrossedPlants = iUsed.GetTag("PlantCross").split( "," );
+	var Pollinated = parseInt(CrossedPlants[0]);
+	var SeedBreed = parseInt(CrossedPlants[1]);
+
 	if (availableSeeds == 0)
 	{
 		socket.SysMessage("This plant has no seeds to gather!");
@@ -1325,7 +1775,7 @@ function GatherSeeds(pUser, iUsed)
 	{
 		var plantColor = iUsed.GetTag("PlantColor");
 		var seedType = "";
-		switch (iUsed.GetTag("PlantType"))
+		switch (SeedBreed)
 		{
 			case 1:
 				seedType = "CampionFlowerSeed";
@@ -1456,13 +1906,14 @@ function GatherSeeds(pUser, iUsed)
 		}
 		if (seedType != null)
 		{
-			CreateDFNItem(pUser.socket, pUser, seedType, 1, "ITEM", true, plantColor);
+			CreateDFNItem(pUser.socket, pUser, seedType, 1, "ITEM", true, hueSeeds);
 
 			socket.SysMessage("You gather seeds from the plant.")
 
 			if (availableSeeds > 0)
 			{
-				iUsed.SetTag("AvailableSeeds", availableSeeds - 1);
+				var rseeds = availableSeeds - 1;
+				iUsed.SetTag("Seeds", rseeds + "," + remainingSeeds + "," + hueSeeds);
 			}
 		}
 	}
@@ -1649,8 +2100,20 @@ function ReproductionGump(pUser, iUsed)
 
 function AddResourcesState(ReproductionGump, iUsed, x, y)
 {
-	var availableSeeds = iUsed.GetTag("AvailableSeeds");
-	var remainingSeeds = iUsed.GetTag("RemainingSeeds");
+	var Seeds = iUsed.GetTag("Seeds")
+
+	if (!Seeds)
+	{
+		return false;
+	}
+
+	var Seedlength = Seeds.split(",");
+	if (Seedlength.length != 3)
+		return false;
+
+	var availableSeeds = parseInt(Seedlength[0]);
+	var remainingSeeds = parseInt(Seedlength[1]);
+	var hueSeeds = parseInt(Seedlength[2]);
 
 	if (availableSeeds == 0 && remainingSeeds == 0)
 	{
@@ -1665,8 +2128,21 @@ function AddResourcesState(ReproductionGump, iUsed, x, y)
 
 function AddSeedsState(ReproductionGump, iUsed, x, y)
 {
-	var availableSeeds = iUsed.GetTag("AvailableSeeds");
-	var remainingSeeds = iUsed.GetTag("RemainingSeeds");
+	var Seeds = iUsed.GetTag("Seeds")
+
+	if (!Seeds) 
+	{
+		return false;
+	}
+
+	var Seedlength = Seeds.split(",");
+	if (Seedlength.length != 3)
+		return false;
+
+	var availableSeeds = parseInt(Seedlength[0]);
+	var remainingSeeds = parseInt(Seedlength[1]);
+	var hueSeeds = parseInt(Seedlength[2]);
+
 	var plantColor = iUsed.GetTag("PlantColor");
 
 	if (availableSeeds == 0 && remainingSeeds == 0)
@@ -1675,18 +2151,40 @@ function AddSeedsState(ReproductionGump, iUsed, x, y)
 	}
 	else
 	{
-		ReproductionGump.AddText(x, y, plantColor, availableSeeds + "/" + remainingSeeds);
+		ReproductionGump.AddText(x, y, hueSeeds, availableSeeds + "/" + remainingSeeds);
 	}
 }
 
 function AddPollinationState(ReproductionGump, iUsed, x, y)
 {
-	//if not producing pollen 
-	//ReproductionGump.AddText(x, y, 0x35, "-");
-	//if not pollenated
-	//ReproductionGump.AddText(x, y, 0x21, "!");
-	//else
-	//ReproductionGump.AddText(x, y, 0x3F, "+");
+	var status = parseInt(iUsed.GetTag("PlantStage"));
+
+	var tCrossedPlants = iUsed.GetTag("PlantCross")
+
+	if (!tCrossedPlants)
+	{
+		return false;
+	}
+
+	var Crossed = tCrossedPlants.split(",");
+	if (Crossed.length != 2)
+		return false;
+
+	var Pollinated = parseInt(Crossed[0]);
+	var SeedBreed = parseInt(Crossed[1]);
+
+	if (status < 7)
+	{
+		ReproductionGump.AddText(x, y, 0x35, "-");
+	}
+	else if (status >= 7 && Pollinated == 0)
+	{
+		ReproductionGump.AddText(x, y, 0x21, "!");
+	}
+	else
+	{
+		ReproductionGump.AddText(x, y, 0x3F, "+");
+	}
 }
 
 function SetToDecorativeGump(pUser, iUsed)
