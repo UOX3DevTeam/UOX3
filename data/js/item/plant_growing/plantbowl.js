@@ -62,6 +62,7 @@ function onCallback1(socket, ourObj)
 				{
 					var bowlofdirt = CreateDFNItem(mChar.socket, mChar, "plantbowlOfdirt", 1, "ITEM", true);
 					bowlofdirt.SetTag("PlantInfo", 0 + "," + 0 + "," + 0 + "," + 1);
+					bowlofdirt.SetTag("PlantStage", 14);
 					socket.SysMessage("You fill the bowl with fresh dirt.")
 					iBowl.Delete();
 
@@ -89,6 +90,7 @@ function onCallback1(socket, ourObj)
 				{
 					var bowlofdirt = CreateDFNItem(mChar.socket, mChar, "plantbowlOfdirt", 1, "ITEM", true);
 					bowlofdirt.SetTag("PlantInfo", 0 + "," + 0 + "," + 0 + "," + 0);
+					bowlofdirt.SetTag("PlantStage", 14);//dirt
 					socket.SysMessage("You fill the bowl with fresh dirt.")
 					validTileIDFound = true;
 					iBowl.Delete();

@@ -7,6 +7,7 @@ function onUseChecked(pUser, iUsed)
 	var socket = pUser.socket;
 
 	socket.tempObj = iUsed;
+	iUsed.tempObj = socket;
 	socket.CloseGump(gumpID, 0);
 
 	PlantBowlGump(pUser, iUsed);
@@ -20,8 +21,14 @@ function onCreateDFN(objMade, objType)
 
 		if (!plantInfo) 
 		{
-			objMade.SetTag("PlantInfo", 0 + "," + 0 + "," + 0 + "," + 0);
+			if (objMade.GetTag("PlantStage") != 14 || objMade.GetTag("PlantStage") == null) 
+			{
+				objMade.SetTag("PlantInfo", 0 + "," + 0 + "," + 0 + "," + 0);
+				objMade.SetTag("PlantStage", 14);//dirt bowl
+			}
+
 			objMade.SetTag("Potions", 0 + "," + 0 + "," + 0 + "," + 0);
+			objMade.SetTag("Infections", 0 + "," + 0 + "," + 0 + "," + 0);
 			return false;
 		}
 	}
@@ -31,10 +38,28 @@ function PlantBowlGump(pUser, iUsed)
 {
 	var PlantGump = new Gump;
 	var socket = pUser.socket;
-	var greaterPoison = iUsed.GetTag("GreaterPoison");
-	var greaterCure = iUsed.GetTag("GreaterCure");
-	var greaterHeal = iUsed.GetTag("GreaterHeal");
-	var greaterStrength = iUsed.GetTag("GreaterStrength");
+
+	var potionInfo = iUsed.GetTag("Potions")
+	var infection = iUsed.GetTag("Infections");
+	var waterLevel = iUsed.GetTag("water")
+
+	if (!potionInfo || !infection)
+		return false;
+
+	var potionLength = potionInfo.split(",");
+	var infectionLevels = infection.split(",");
+	if (potionLength.length != 4 || infectionLevels.length != 4)
+		return false;
+
+	var greaterPoison = parseInt(potionLength[0]);
+	var greaterCure = parseInt(potionLength[1]);
+	var greaterHeal = parseInt(potionLength[2]);
+	var greaterStrength = parseInt(potionLength[3]);
+
+	var infestationLevel = parseInt(infectionLevels[0], 10);
+	var fungusLevel = parseInt(infectionLevels[1], 10);
+	var poisonLevel = parseInt(infectionLevels[2], 10);
+	var diseaseLevel = parseInt(infectionLevels[3], 10);
 
 	DrawBackground(PlantGump);
 
@@ -45,23 +70,23 @@ function PlantBowlGump(pUser, iUsed)
 
 	PlantGump.AddButton(71, 91, 0xD4, 0xD4, 2, 2, 2); // infestation
 	PlantGump.AddPicture(8, 96, 0x372);
-	AddPlus(PlantGump, iUsed);
+	AddPlus(PlantGump, 95, 92, infestationLevel);
 
 	PlantGump.AddButton(71, 115, 0xD4, 0xD4, 3, 3, 3); // fungus
 	PlantGump.AddPicture(58, 115, 0xD16);
-	AddPlus(PlantGump, iUsed);
+	AddPlus(PlantGump, 95, 116, fungusLevel);
 
 	PlantGump.AddButton(71, 139, 0xD4, 0xD4, 4, 4, 4); // poison
 	PlantGump.AddPicture(59, 143, 0x1AE4);
-	AddPlus(PlantGump, iUsed);
+	AddPlus(PlantGump, 95, 140, poisonLevel);
 
 	PlantGump.AddButton(71, 163, 0xD4, 0xD4, 5, 5, 5); // disease
 	PlantGump.AddPicture(55, 167, 0x1727);
-	AddPlus(PlantGump, iUsed);
+	AddPlus(PlantGump, 95, 164, diseaseLevel);
 
 	PlantGump.AddButton(209, 67, 0xD4, 0xD4, 6, 6, 6); // water
 	PlantGump.AddPicture(193, 67, 0x1F9D);
-	AddWaterLevel(PlantGump, iUsed);
+	AddWaterLevel(PlantGump, 196, 67, waterLevel);
 
 	PlantGump.AddButton(209, 91, 0xD4, 0xD4, 7, 7, 7); // poison potion
 	PlantGump.AddPicture(201, 91, 0xF0A);
@@ -106,33 +131,20 @@ function DrawBackground( PlantGump )
 	return;
 }
 
-function AddPlus(PlantGump, iUsed)
+function AddPlus(PlantGump, x, y, Level)
 {
-	// Define positions and colors for each tag
-	var tagPositions = {
-		"infestation": { "position": 92, "color1": 0x35, "color2": 0x21 },
-		"fungus": { "position": 116, "color1": 0x35, "color2": 0x21 },
-		"poison": { "position": 140, "color1": 0x35, "color2": 0x21 },
-		"disease": { "position": 164, "color1": 0x35, "color2": 0x21 }
-	};
-
-	// Loop through each tag and add "+" accordingly
-	for (var tag in tagPositions) 
-	{
-		var positionInfo = tagPositions[tag];
-		var tagValue = iUsed.GetTag(tag);
-		var color = tagValue == 1 ? positionInfo.color1 : (tagValue == 2 ? positionInfo.color2 : null);
-		if (color !== null) {
-			PlantGump.AddText(95, positionInfo.position, color, "+");
-		}
-	}
+	if (Level == 1)
+		PlantGump.AddText(x, y, 0x35, "+");
+	if (Level == 2)
+		PlantGump.AddText(x, y, 0x21, "+");
+	return;
 }
 
-function AddWaterLevel( PlantGump, iUsed )
+function AddWaterLevel( PlantGump, x, y, Level )
 {
 	var addPlusMinus = "";
 	var addHue = 0;
-	switch( iUsed.GetTag( "water" ))
+	switch (Level)
 	{
 		case 0: // severely under-watered.
 			addHue = 0x21;
@@ -153,7 +165,7 @@ function AddWaterLevel( PlantGump, iUsed )
 	}
 	if ( addPlusMinus != 0 )
 	{
-		PlantGump.AddText( 196, 67, addHue, addPlusMinus );
+		PlantGump.AddText(x, y, addHue, addPlusMinus );
 	}
 	return;
 }
@@ -188,22 +200,22 @@ function HealthStatus(myPlant)
 
 function PlantDamage(iUsed)
 {
-	if (iUsed.health <= 0) 
-	{
-		Die(iUsed);
-		return;
-	}
+	var infection = iUsed.GetTag("Infections");
+
+	if (!infection)
+		return false;
+
+	var infectionLevels = infection.split(",");
+	if (infectionLevels.length != 4)
+		return false;
 
 	var damage = 0;
-	var tags = ["infestation", "fungus", "poison", "disease"];
-	var tag;
-	for (var i = 0, len = tags.length; i < len; i++) 
+
+	for (var i = 0; i < 4; i++) 
 	{
-		tag = tags[i];
-		if (iUsed.GetTag(tag) > 0)
-		{
-			damage += iUsed.GetTag(tag) * RandomNumber(3, 6);
-		}
+		var level = parseInt(infectionLevels[i]);
+		if (level > 0)
+			damage += level * RandomNumber(3, 6);
 	}
 
 	var waterLevel = iUsed.GetTag("water");
@@ -262,22 +274,30 @@ function AddGrowthIndicator(PlantGump, iUsed )
 
 function Die(myPlant)
 {
-	myPlant.KillTimers();
-
 	if (myPlant.GetTag( "PlantStage" ) >= 9 )
 	{
 		myPlant.SetTag("PlantStage", 20);//dead twigs
 		myPlant.id = 0x1B9D;
 		myPlant.colour = 0;
 		myPlant.name = "twigs";
-		myPlant.RemoveScriptTrigger(scriptID);
+		ResetPlant(myPlant);
 	}
 	else
 	{
+		myPlant.id = 0x1602;
+		myPlant.colour = 0;
+		myPlant.name = "a bowl of dirt";
+		myPlant.health = 100;
+		myPlant.SetTag("water", null);
+		myPlant.SetTag("PlantInfo", 0 + "," + 0 + "," + 0 + "," + 0);
+		myPlant.SetTag("Potions", 0 + "," + 0 + "," + 0 + "," + 0);
+		myPlant.SetTag("Infections", 0 + "," + 0 + "," + 0 + "," + 0);
+		myPlant.SetTag("PlantCross", null);
+		myPlant.SetTag("PlantHealth", null);
+		myPlant.SetTag("Seeds", null);
 		myPlant.SetTag("PlantStage", 14);//dirt
+		myPlant.KillTimers();
 	}
-
-	ResetPlant(myPlant);
 
 	return;
 }
@@ -294,206 +314,147 @@ function inValidLocation(myPlant)
 	}
 }
 
-function GrowthCheck( myPlant, pUser )
-{
-	var waterLevel = myPlant.GetTag("water");
-	var infestsationLevel = myPlant.GetTag("infestation");
-	var fungusLevel = myPlant.GetTag("fungus");
-	var poisonLevel = myPlant.GetTag("poison");
-	var diseaseLevel = myPlant.GetTag("disease");
-
-	var greaterPoison = myPlant.GetTag("GreaterPoison");
-	var greaterCure = myPlant.GetTag("GreaterCure");
-	var greaterStrength = myPlant.GetTag("GreaterStrength");
-
-	var plantInfo = myPlant.GetTag("PlantInfo")
-
-	if (!plantInfo) 
-		return false;
+function GrowthCheck(myPlant) {
+	var waterLevel = parseInt(myPlant.GetTag("water"), 10) || 0;
+	var infection = myPlant.GetTag("Infections") || "0,0,0,0";
+	var potionInfo = myPlant.GetTag("Potions") || "0,0,0,0";
+	var plantInfo = myPlant.GetTag("PlantInfo") || "0,0,0,0";
 
 	var infoLength = plantInfo.split(",");
-	if (infoLength.length != 4)
-		return false;
+	var potionLength = potionInfo.split(",");
+	var infectionLength = infection.split(",");
 
-	var plantType = parseInt(infoLength[0]);
-	var PlantName = parseInt(infoLength[1]);
-	var plantColor = parseInt(infoLength[2]);
-	var fertialeDirt = parseInt(infoLength[3]);
-
-	var chanceType = 0;
-	switch (plantType) 
-	{
-		case 1:
-			chanceType = 1;
-			break;
-		case 27:
-			chanceType = 27;
-			break;
-		case 28:
-			chanceType = 28;
-			break;
-		case 30:
-			chanceType = 30;
-			break;
-		default:
-			chanceType = 0;
-			break;
+	if (infoLength.length !== 4 || potionLength.length !== 4 || infectionLength.length !== 4) {
+		return;
 	}
 
-    var chanceColor = 0
-	switch( myPlant.GetTag( "PlantColor" )) 
-	{
-		case 21:
-			chanceColor = 21; // Bright Red
-			break;
-		case 5:
-			chanceColor = 5;  // Bright Blue
-			break;
-		case 38:
-			chanceColor = 38; // Bright Yellow
-			break;
-		case 10:
-			chanceColor = 10; // Bright Purple
-			break;
-		case 42:
-			chanceColor = 42; // Bright Green
-			break;
-		case 43:
-			chanceColor = 43; // Bright Orange
-			break;
-		default:
-			chanceColor = 0;
-			break;
-	}
+	var greaterPoison = parseInt(potionLength[0], 10);
+	var greaterCure = parseInt(potionLength[1], 10);
+	var greaterHeal = parseInt(potionLength[2], 10);
+	var greaterStrength = parseInt(potionLength[3], 10);
+
+	var infestationLevel = parseInt(infectionLength[0], 10);
+	var fungusLevel = parseInt(infectionLength[1], 10);
+	var poisonLevel = parseInt(infectionLength[2], 10);
+	var diseaseLevel = parseInt(infectionLength[3], 10);
+
+	var plantType = parseInt(infoLength[0], 10);
+	var plantColor = parseInt(infoLength[2], 10);
+
 	var infestationChance = 0.30 - greaterStrength * 0.075 + (waterLevel - 2) * 0.10;
 
-	// Flowers have a 10% higher chance to become infected
-	if (chanceType == 1 || chanceType == 27 || chanceType == 30)
-	{
+	if ([1, 27, 28, 30].indexOf(plantType) !== -1) {
 		infestationChance += 0.10;
 	}
 
-	// For plants with a bright color, the chance is another 10% higher
-	if (chanceColor == 21 || chanceColor == 5 || chanceColor == 38 || chanceColor == 10 || chanceColor == 42 || chanceColor == 43) 
-	{
+	if ([21, 5, 38, 10, 42, 43].indexOf(plantColor) !== -1) {
 		infestationChance += 0.10;
 	}
 
-	if( infestationChance >= Math.random())
-	{
-		myPlant.SetTag( "infestation", infestsationLevel + 1 );
+	if (infestationChance >= Math.random() && infestationLevel < 2) {
+		infestationLevel++;
+		myPlant.SetTag("Infections", infestationLevel + "," + fungusLevel + "," + poisonLevel + "," + diseaseLevel);
 	}
 
-	// Check if the plant gets infected with fungus
-	var fungusChance = 0.15 - greaterStrength * 0.075 + (waterLevel - 2) * 0.10
+	var fungusChance = 0.15 - greaterStrength * 0.075 + (waterLevel - 2) * 0.10;
 
-	if (fungusChance >= Math.random()) 
-	{
-		myPlant.SetTag( "fungus", fungusLevel + 1 );
+	if (fungusChance >= Math.random() && fungusLevel < 2) {
+		fungusLevel++;
+		myPlant.SetTag("Infections", infestationLevel + "," + fungusLevel + "," + poisonLevel + "," + diseaseLevel);
 	}
 
-	if ( waterLevel > 0 && waterLevel >= 2 || 0.9 >= Math.random())
-	{
-		myPlant.SetTag("water", waterLevel - 1);
+	if (waterLevel > 0 && (waterLevel >= 2 || 0.9 >= Math.random())) {
+		waterLevel--;
+		myPlant.SetTag("water", waterLevel);
 	}
 
-	//Too many poison and cure potions will cause disease and poison
-	if (greaterPoison > 0)
-	{
-		myPlant.SetTag("GreaterPoison", greaterPoison - 1);
-		myPlant.SetTag("poison", poisonLevel + greaterPoison);
+	if (greaterPoison > 0) {
+		greaterPoison--;
+		myPlant.SetTag("Potions", greaterPoison + "," + greaterCure + "," + greaterHeal + "," + greaterStrength);
+		poisonLevel++;
+		myPlant.SetTag("Infections", infestationLevel + "," + fungusLevel + "," + poisonLevel + "," + diseaseLevel);
 	}
 
-	if (greaterCure > 0) 
-	{
-		myPlant.SetTag("GreaterCure", greaterCure - 1);
-		myPlant.SetTag("disease", diseaseLevel + greaterCure);
+	if (greaterCure > 0) {
+		greaterCure--;
+		myPlant.SetTag("Potions", greaterPoison + "," + greaterCure + "," + greaterHeal + "," + greaterStrength);
+		diseaseLevel++;
+		myPlant.SetTag("Infections", infestationLevel + "," + fungusLevel + "," + poisonLevel + "," + diseaseLevel);
 	}
 
-	if (greaterStrength > 0)
-	{
-		myPlant.SetTag("GreaterStrength", greaterStrength - 1);
+	if (greaterStrength > 0) {
+		greaterStrength--;
+		myPlant.SetTag("Potions", greaterPoison + "," + greaterCure + "," + greaterHeal + "," + greaterStrength);
 	}
-
-	return;
 }
 
-function ApplyPotions(myPlant)
+
+function ApplyPotions(myPlant) 
 {
-	var waterLevel = myPlant.GetTag("water");
-	var infestsationLevel = myPlant.GetTag("infestation");
-	var fungusLevel = myPlant.GetTag("fungus");
-	var poisonLevel = myPlant.GetTag("poison");
-	var diseaseLevel = myPlant.GetTag("disease");
+	var waterLevel = parseInt(myPlant.GetTag("water"), 10) || 0;
+	var potionInfo = myPlant.GetTag("Potions") || "0,0,0,0";
+	var infection = myPlant.GetTag("Infections") || "0,0,0,0";
 
-	var greaterPoison = myPlant.GetTag("GreaterPoison");
-	var greaterCure = myPlant.GetTag("GreaterCure");
-	var greaterHeal = myPlant.GetTag("GreaterHeal");
-	var greaterStrength = myPlant.GetTag("GreaterStrength");
+	var potionLength = potionInfo.split(",");
+	var infectionLength = infection.split(",");
 
-	//Poison potions kill off infestations
-	if (greaterPoison >= infestsationLevel) 
-	{
-		myPlant.SetTag("GreaterPoison", greaterPoison - infestsationLevel);
-		myPlant.SetTag("infestation", 0);
-	}
-	else
-	{
-		myPlant.SetTag("GreaterPoison", 0);
-		myPlant.SetTag("infestation", infestsationLevel - greaterPoison);
-	}
+	if (potionLength.length !== 4 || infectionLength.length !== 4)
+		return false;
 
-	//cure potions kill off fungus
-	if (greaterCure >= fungusLevel)
-	{
-		myPlant.SetTag("GreaterCure", greaterCure - fungusLevel);
-		myPlant.SetTag("fungus", 0);
-	}
-	else 
-	{
-		myPlant.SetTag("GreaterCure", 0);
-		myPlant.SetTag("fungus", fungusLevel - greaterCure);
+	var greaterPoison = parseInt(potionLength[0], 10);
+	var greaterCure = parseInt(potionLength[1], 10);
+	var greaterHeal = parseInt(potionLength[2], 10);
+	var greaterStrength = parseInt(potionLength[3], 10);
+
+	var infestationLevel = parseInt(infectionLength[0], 10);
+	var fungusLevel = parseInt(infectionLength[1], 10);
+	var poisonLevel = parseInt(infectionLength[2], 10);
+	var diseaseLevel = parseInt(infectionLength[3], 10);
+
+	if (greaterPoison >= infestationLevel) {
+		var poison = greaterPoison - infestationLevel;
+		myPlant.SetTag("Potions", [poison, greaterCure, greaterHeal, greaterStrength].join(","));
+		myPlant.SetTag("Infections", "0," + fungusLevel + "," + poisonLevel + "," + diseaseLevel);
+	} else {
+		myPlant.SetTag("Potions", "0," + greaterCure + "," + greaterHeal + "," + greaterStrength);
+		var infestation = infestationLevel - greaterPoison;
+		myPlant.SetTag("Infections", [infestation, fungusLevel, poisonLevel, diseaseLevel].join(","));
 	}
 
-	//heal potions kill off poison
-	if (greaterHeal >= diseaseLevel) 
-	{
-		myPlant.SetTag("GreaterHeal", greaterHeal - poisonLevel);
-		myPlant.SetTag("poison", 0);
-	}
-	else
-	{
-		myPlant.SetTag("GreaterHeal", 0);
-		myPlant.SetTag("poison", poisonLevel - greaterHeal);
+	if (greaterCure >= fungusLevel) {
+		var cure = greaterCure - fungusLevel;
+		myPlant.SetTag("Potions", [greaterPoison, cure, greaterHeal, greaterStrength].join(","));
+		myPlant.SetTag("Infections", infestationLevel + ",0," + poisonLevel + "," + diseaseLevel);
+	} else {
+		myPlant.SetTag("Potions", greaterPoison + ",0," + greaterHeal + "," + greaterStrength);
+		var fungus = fungusLevel - greaterCure;
+		myPlant.SetTag("Infections", infestationLevel + "," + fungus + "," + poisonLevel + "," + diseaseLevel);
 	}
 
-	//heal potions kill off disease
-	if (greaterHeal >= diseaseLevel)
-	{
-		myPlant.SetTag("GreaterHeal", greaterHeal - diseaseLevel);
-		myPlant.SetTag("disease", 0);
-	}
-	else 
-	{
-		myPlant.SetTag("GreaterHeal", 0);
-		myPlant.SetTag("disease", diseaseLevel - greaterHeal);
+	if (greaterHeal >= poisonLevel) {
+		var heal = greaterHeal - poisonLevel;
+		myPlant.SetTag("Potions", [greaterPoison, greaterCure, heal, greaterStrength].join(","));
+		myPlant.SetTag("Infections", infestationLevel + "," + fungusLevel + ",0," + diseaseLevel);
+	} else {
+		myPlant.SetTag("Potions", greaterPoison + "," + greaterCure + ",0," + greaterStrength);
+		var poison = poisonLevel - greaterHeal;
+		myPlant.SetTag("Infections", infestationLevel + "," + fungusLevel + "," + poison + "," + diseaseLevel);
 	}
 
-	if (infestsationLevel == 0 || fungusLevel == 0 || poisonLevel == 0 || diseaseLevel == 0 || waterLevel != 2)
-	{
-		if (greaterHeal > 0) 
-		{
-			myPlant.health = myPlant.health + greaterHeal * 7;
+	if (infestationLevel == 0 || fungusLevel == 0 || poisonLevel == 0 || diseaseLevel == 0 || waterLevel != 2) {
+		if (greaterHeal > 0) {
+			myPlant.health += greaterHeal * 7;
+		} else {
+			myPlant.health += 2;
 		}
-		else
-			myPlant.health = myPlant.health + 2;
 	}
 
-	if (greaterHeal > 0) 
-	{
-		myPlant.SetTag("GreaterHeal", greaterHeal - 1);
+	if (greaterHeal > 0) {
+		greaterHeal--;
+		myPlant.SetTag("Potions", [greaterPoison, greaterCure, greaterHeal, greaterStrength].join(","));
 	}
 }
+
 
 function onTimer( myPlant, timerID )
 {
@@ -503,14 +464,16 @@ function onTimer( myPlant, timerID )
 	var stage = myPlant.GetTag("PlantStage");//Starts at stage 1
 	var Seeds = myPlant.GetTag("Seeds")
 	var CrossedPlants = myPlant.GetTag("PlantCross")
+	var plantInfo = myPlant.GetTag("PlantInfo")
 
-	if (!CrossedPlants || !Seeds)
+	if (!CrossedPlants || !Seeds || !plantInfo)
 		return false;
 
 	var Crossed = CrossedPlants.split(",");
 	var Seedlength = Seeds.split(",");
+	var infoLength = plantInfo.split(",");
 
-	if (Crossed.length != 3 || Seedlength.length != 3)
+	if (Crossed.length != 3 || Seedlength.length != 3 || infoLength.length != 4)
 		return false;
 
 	var Pollinated = parseInt(Crossed[0]);
@@ -519,9 +482,19 @@ function onTimer( myPlant, timerID )
 	var availableSeeds = parseInt(Seedlength[0]);
 	var remainingSeeds = parseInt(Seedlength[1]);
 	var hueSeeds = parseInt(Seedlength[2]);
+	var plantType = parseInt(infoLength[0]);
+	var PlantName = parseInt(infoLength[1]);
+	var plantColor = parseInt(infoLength[2]);
+	var fertialeDirt = parseInt(infoLength[3]);
 
 	if (timerID == 1 )
 	{
+		if (myPlant.health <= 0) 
+		{
+			Die(myPlant);
+			return false;
+		}
+
 		if (!inValidLocation(myPlant)) // Checks make sure the plant is lockdown
 		{
 			return;
@@ -530,7 +503,7 @@ function onTimer( myPlant, timerID )
 		{
 			if (myPlant.GetTag("PlantHealth") != 10 && myPlant.GetTag("PlantHealth") != 11)//wilted or dying
 			{
-				if (myPlant.GetTag("FertialeDirt") && stage <= 5)
+				if (fertialeDirt == 1 && stage <= 5)
 				{
 					//double growth to stage 5
 					myPlant.SetTag("PlantStage", stage + 2);
@@ -572,7 +545,7 @@ function onTimer( myPlant, timerID )
 
 			ApplyPotions(myPlant)
 			HealthStatus(myPlant);
-			//PlantDamage(myPlant);
+			PlantDamage(myPlant);
 			GrowthCheck(myPlant);
 			myPlant.Refresh();
 		}
@@ -621,7 +594,7 @@ function DrawPlant( PlantGump, iUsed )
 	}
 	else
 	{
-		  PlantGump( PlantGump, iUsed );
+		PlantImage( PlantGump, iUsed );
 	}
 
 	if( iUsed.GetTag( "PlantStage" ) != 14 ) //BowlOfDirt
@@ -653,7 +626,7 @@ function DrawPlant( PlantGump, iUsed )
 	return;
 }
 
-function PlantGump( PlantGump, iUsed )
+function PlantImage( PlantGump, iUsed )
 {
 	var plantInfo = iUsed.GetTag("PlantInfo")
 
@@ -1181,7 +1154,6 @@ function PlantBowl( iUsed )
 	iUsed.name = plantName;
 	iUsed.movable = 1;
 	iUsed.colour = plantColor;
-	iUsed.Refresh();
 }
 
 function CodexOFWisdomPacket(socket, topicID)
@@ -1271,8 +1243,10 @@ function onGumpPress(socket, button, PlantGump)
 			onUseChecked(pUser, iUsed);
 			break;
 		case 15:// Okay Empty Bowl
-			iUsed.KillTimers();
-			ResetPlant(iUsed);
+			if(iUsed.GetTag("PlantStage") == 1)
+			{
+				GatherSeeds(pUser, iUsed);
+			}
 			CreateDFNItem(pUser.socket, pUser, "emptyplantbowl", 1, "ITEM", true, 0);
 			iUsed.Delete();
 			break;
@@ -1308,9 +1282,8 @@ function onGumpPress(socket, button, PlantGump)
 			CodexOFWisdomPacket(socket, 70);
 			break;
 		case 26:
-			iUsed.KillTimers();
 			ResetPlant(iUsed);
-			iUsed.RemoveScriptTrigger(scriptID);
+			iUsed.SetTag("PlantStage", 19);//DecorativePlant
 			socket.CloseGump(gumpID, 0);
 			socket.SysMessage("You prune the plant. This plant will no longer produce resources or seeds, but will require no upkeep.");
 			iUsed.Refresh();
@@ -1321,21 +1294,15 @@ function onGumpPress(socket, button, PlantGump)
 
 function ResetPlant(iUsed)
 {
-	iUsed.SetTag("infestation", null);
-	iUsed.SetTag("fungus", null);
-	iUsed.SetTag("poison", null);
-	iUsed.SetTag("disease", null);
 	iUsed.SetTag("water", null);
-	iUsed.SetTag("PlantType", null);
-	iUsed.SetTag("PlantStage", null);
-	iUsed.SetTag("PlantColor", null);
+	iUsed.SetTag("PlantInfo", null);
+	iUsed.SetTag("Potions", null);
+	iUsed.SetTag("Infections", null);
+	iUsed.SetTag("PlantCross", null);
 	iUsed.SetTag("PlantHealth", null);
 	iUsed.SetTag("Seeds", null);
-	iUsed.SetTag("PlantCross", null);
-	iUsed.SetTag("GreaterPoison", null);
-	iUsed.SetTag("GreaterCure", null);
-	iUsed.SetTag("GreaterHeal", null);
-	iUsed.SetTag("GreaterStrength", null);
+	iUsed.RemoveScriptTrigger(scriptID);
+	iUsed.KillTimers();
 }
 
 function PollinatePlant(pUser, iUsed)
@@ -1712,7 +1679,6 @@ function CrossPollinateTable(myTarget, iUsed, pSock)
 	if (cross == 17 && cross2 == 17)//Tribarrel Cactus + Tribarrel Cactus
 		setcross = 17;//TribarrelCactusSeed
 
-	//pSock.SysMessage("You Set the Seed " + setcross);
 	myTarget.SetTag("PlantCross", 1 + "," + setcross + "," + 1);
 }
 
@@ -2057,63 +2023,142 @@ function onCallback0(pSock, myTarget)
 	// Check if the target is an item
 	if (myTarget.isItem)
 	{
+
+		var potionInfo = iUsed.GetTag("Potions")
+
+		if (!potionInfo)
+			return false;
+
+		var potionLength = potionInfo.split(",");
+		if (potionLength.length != 4)
+			return false;
+
+		var greaterPoison = parseInt(potionLength[0]);
+		var greaterCure = parseInt(potionLength[1]);
+		var greaterHeal = parseInt(potionLength[2]);
+		var greaterStrength = parseInt(potionLength[3]);
+
 		// Check if the item is in the user's backpack
 		var itemOwner = GetPackOwner(myTarget, 0);
 		if (itemOwner !== pUser)
 		{
-			pUser.SysMessage(GetDictionaryEntry(1763, pSock.language)); //That item must be in your backpack before it can be used.
+			pSock.SysMessage(GetDictionaryEntry(1763, pSock.language)); //That item must be in your backpack before it can be used.
 			return false;
 		}
 
-		// Define potion types
-		var potionTypes = {
-			"greaterstrengthpotion": { "type": "GreaterStrength", "button": 10 },
-			"0x0F09-b": { "type": "GreaterStrength", "button": 10 },
-			"greaterpoisonpotion": { "type": "GreaterPoison", "button": 7 },
-			"0x0F0A-c": { "type": "GreaterPoison", "button": 7 },
-			"greatercurepotion": { "type": "GreaterCure", "button": 8 },
-			"0x0F07-c": { "type": "GreaterCure", "button": 8 },
-			"greaterhealpotion": { "type": "GreaterHeal", "button": 9 },
-			"0x0F0C-c": { "type": "GreaterHeal", "button": 9 }
-		};
-
-		// Check if the sectionID is a valid potion type
-		var potionInfo = potionTypes[myTarget.sectionID];
-		if (potionInfo) 
+		var poison = greaterPoison + 1;
+		var cure = greaterCure + 1;
+		var heal = greaterHeal + 1;
+		var strength = greaterStrength + 1;
+		if (buttonPushed == 7)// poison button
 		{
-			// Check if the button pushed matches the potion type
-			if (buttonPushed === potionInfo.button)
+			if (myTarget.sectionID == "greaterpoisonpotion" || myTarget.sectionID == "0x0F09-b") 
 			{
-				// Increase potion count if within maximum limit
-				var potionCount = iUsed.GetTag(potionInfo.type);
-				if (potionCount < maxPotionCount)
+
+				if (iUsed.GetTag("PlantStage") == 14)//dirt bowl
 				{
-					iUsed.SetTag(potionInfo.type, potionCount >= 0 ? potionCount + 1 : 1);
-				} 
+					pSock.SysMessage("You should only pour potions on a plant or seed!");
+					return false;
+				}
+				if (greaterPoison < maxPotionCount)
+				{
+					iUsed.SetTag("Potions", poison + "," + greaterCure + "," + greaterHeal + "," + greaterStrength);
+				}
 				else
 				{
 					pUser.SysMessage("The plant is already soaked with this type of potion!");
 					return false;
 				}
-
-				// Call onUseChecked
-				onUseChecked(pUser, iUsed);
-
-				// Decrease target amount or delete if amount is 1
-				if (myTarget.amount > 1)
-					myTarget.amount--;
-				else
-					myTarget.Delete();
 			}
 			else
 			{
 				pUser.SysMessage("You don't have any strong potions of that type in your pack.");
+				return false;
 			}
 		}
-		else 
+		else if (buttonPushed == 8)// cure button
+		{
+			if (myTarget.sectionID == "greatercurepotion" || myTarget.sectionID == "0x0F07-c")
+			{
+				if (iUsed.GetTag("PlantStage") == 14)//dirt bowl
+				{
+					pSock.SysMessage("You should only pour potions on a plant or seed!");
+					return false;
+				}
+				if (greaterCure < maxPotionCount) {
+					iUsed.SetTag("Potions", greaterPoison + "," + cure + "," + greaterHeal + "," + greaterStrength);
+				}
+				else {
+					pUser.SysMessage("The plant is already soaked with this type of potion!");
+					return false;
+				}
+			}
+			else {
+				pUser.SysMessage("You don't have any strong potions of that type in your pack.");
+				return false;
+			}
+		}
+		else if (buttonPushed == 9)// heal button
+		{
+			if (myTarget.sectionID == "greaterhealpotion" || myTarget.sectionID == "0x0F0C-c")
+			{
+				if (iUsed.GetTag("PlantStage") == 14)//dirt bowl
+				{
+					pSock.SysMessage("You should only pour potions on a plant or seed!");
+					return false;
+				}
+
+				if (greaterHeal < maxPotionCount) {
+					iUsed.SetTag("Potions", greaterPoison + "," + greaterCure + "," + heal + "," + greaterStrength);
+				}
+				else {
+					pUser.SysMessage("The plant is already soaked with this type of potion!");
+					return false;
+				}
+			}
+			else
+			{
+				pUser.SysMessage("You don't have any strong potions of that type in your pack.");
+				return false;
+			}
+		}
+		else if (buttonPushed == 10)// strength button
+		{
+			if (myTarget.sectionID == "greaterstrengthpotion" || myTarget.sectionID == "0x0F09-b") 
+			{
+				if (iUsed.GetTag("PlantStage") == 14)//dirt bowl
+				{
+					pSock.SysMessage("You should only pour potions on a plant or seed!");
+					return false;
+				}
+
+				if (greaterStrength < maxPotionCount) {
+					iUsed.SetTag("Potions", greaterPoison + "," + greaterCure + "," + greaterHeal + "," + strength);
+				}
+				else {
+					pUser.SysMessage("The plant is already soaked with this type of potion!");
+					return false;
+				}
+			}
+			else {
+				pUser.SysMessage("You don't have any strong potions of that type in your pack.");
+				return false;
+			}
+		}
+		else
 		{
 			pUser.SysMessage("You don't have any strong potions of that type in your pack.");
+			return false;
 		}
+
+		// Call onUseChecked
+		onUseChecked(pUser, iUsed);
+
+		// Decrease target amount or delete if amount is 1
+		if (myTarget.amount > 1)
+			myTarget.amount--;
+		else
+			myTarget.Delete();
 	}
 	return false;
 }
