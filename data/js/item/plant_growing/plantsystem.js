@@ -60,6 +60,7 @@ function PlantBowlGump( pUser, iUsed )
 	var potionInfo = iUsed.GetTag( "Potions" )
 	var infection = iUsed.GetTag( "Infections" );
 	var waterLevel = iUsed.GetTag( "water" )
+	var plantStage = iUsed.GetTag( "PlantStage" )
 
 	if( !potionInfo || !infection )
 		return false;
@@ -122,9 +123,9 @@ function PlantBowlGump( pUser, iUsed )
 	PlantGump.AddText( 196, 163, 0x835, greaterStrength );
 
 	PlantGump.AddGump( 48, 47, 0xD2 );
-	if( iUsed.GetTag( "PlantStage" ) >= 1 && iUsed.GetTag( "PlantStage") <= 9 )
+	if( plantStage >= 1 && plantStage <= 9 )
 	{
-		PlantGump.AddText( 54, 47, 0x835, iUsed.GetTag( "PlantStage" ).toString() );
+		PlantGump.AddText(54, 47, 0x835, plantStage.toString() );
 	}
 
 	PlantGump.AddGump( 232, 47, 0xD2 );
@@ -230,7 +231,7 @@ function PlantDamage( iUsed )
 
 	for( var i = 0; i < 4; i++ ) 
 	{
-		var level = parseInt(infectionLevels[i] );
+		var level = parseInt( infectionLevels[i] );
 		if( level > 0 )
 			damage += level * RandomNumber( 3, 6 );
 	}
@@ -261,7 +262,7 @@ function AddGrowthIndicator( PlantGump, iUsed )
 
 	var fertialeDirt = parseInt( infoLength[3] );
 
-	if (plantStage >= 1 && plantStage <= 9)
+	if( plantStage >= 1 && plantStage <= 9)
 	{
 		const gi = iUsed.GetTag( "PlantHealth" );
 		
@@ -411,215 +412,220 @@ function GrowthCheck( myPlant )
 	}
 }
 
-function ApplyPotions(myPlant) 
+function ApplyPotions( myPlant )
 {
-	var waterLevel = parseInt(myPlant.GetTag("water"), 10) || 0;
-	var potionInfo = myPlant.GetTag("Potions") || "0,0,0,0";
-	var infection = myPlant.GetTag("Infections") || "0,0,0,0";
+	var waterLevel = parseInt( myPlant.GetTag( "water" ), 10 ) || 0;
+	var potionInfo = myPlant.GetTag( "Potions" ) || "0,0,0,0";
+	var infection = myPlant.GetTag( "Infections" ) || "0,0,0,0";
 
-	var potionLength = potionInfo.split(",");
-	var infectionLength = infection.split(",");
+	var potionLength = potionInfo.split( "," );
+	var infectionLength = infection.split( "," );
 
-	if( potionLength.length !== 4 || infectionLength.length !== 4)
+	if( potionLength.length !== 4 || infectionLength.length !== 4 )
 		return false;
 
-	var greaterPoison = parseInt(potionLength[0], 10);
-	var greaterCure = parseInt(potionLength[1], 10);
-	var greaterHeal = parseInt(potionLength[2], 10);
-	var greaterStrength = parseInt(potionLength[3], 10);
+	var greaterPoison = parseInt( potionLength[0], 10 );
+	var greaterCure = parseInt( potionLength[1], 10 );
+	var greaterHeal = parseInt( potionLength[2], 10 );
+	var greaterStrength = parseInt( potionLength[3], 10 );
 
-	var infestationLevel = parseInt(infectionLength[0], 10);
-	var fungusLevel = parseInt(infectionLength[1], 10);
-	var poisonLevel = parseInt(infectionLength[2], 10);
-	var diseaseLevel = parseInt(infectionLength[3], 10);
+	var infestationLevel = parseInt( infectionLength[0], 10 );
+	var fungusLevel = parseInt( infectionLength[1], 10 );
+	var poisonLevel = parseInt( infectionLength[2], 10 );
+	var diseaseLevel = parseInt( infectionLength[3], 10 );
 
-	if( greaterPoison >= infestationLevel)
+	if( greaterPoison >= infestationLevel )
 	{
 		var poison = greaterPoison - infestationLevel;
-		myPlant.SetTag("Potions", [poison, greaterCure, greaterHeal, greaterStrength].join(","));
-		myPlant.SetTag("Infections", "0," + fungusLevel + "," + poisonLevel + "," + diseaseLevel);
+		myPlant.SetTag( "Potions", poison + "," + greaterCure + "," + greaterHeal + "," + greaterStrength );
+		myPlant.SetTag( "Infections", 0 + fungusLevel + "," + poisonLevel + "," + diseaseLevel );
 	}
 	else
 	{
-		myPlant.SetTag("Potions", "0," + greaterCure + "," + greaterHeal + "," + greaterStrength);
+		myPlant.SetTag( "Potions", 0 + greaterCure + "," + greaterHeal + "," + greaterStrength );
 		var infestation = infestationLevel - greaterPoison;
-		myPlant.SetTag("Infections", [infestation, fungusLevel, poisonLevel, diseaseLevel].join(","));
+		myPlant.SetTag( "Infections", infestation + "," + fungusLevel + "," + poisonLevel + "," + diseaseLevel );
 	}
 
-	if( greaterCure >= fungusLevel) 
+	if( greaterCure >= fungusLevel ) 
 	{
 		var cure = greaterCure - fungusLevel;
-		myPlant.SetTag("Potions", [greaterPoison, cure, greaterHeal, greaterStrength].join(","));
-		myPlant.SetTag("Infections", infestationLevel + ",0," + poisonLevel + "," + diseaseLevel);
+		myPlant.SetTag( "Potions", greaterPoison + "," + cure + "," + greaterHeal + "," + greaterStrength );
+		myPlant.SetTag( "Infections", infestationLevel + 0 + poisonLevel + "," + diseaseLevel );
 	} 
 	else
 	{
-		myPlant.SetTag("Potions", greaterPoison + ",0," + greaterHeal + "," + greaterStrength);
+		myPlant.SetTag( "Potions", greaterPoison + 0 + greaterHeal + "," + greaterStrength );
 		var fungus = fungusLevel - greaterCure;
-		myPlant.SetTag("Infections", infestationLevel + "," + fungus + "," + poisonLevel + "," + diseaseLevel);
+		myPlant.SetTag( "Infections", infestationLevel + "," + fungus + "," + poisonLevel + "," + diseaseLevel );
 	}
 
-	if( greaterHeal >= poisonLevel)
+	if( greaterHeal >= poisonLevel )
 	{
 		var heal = greaterHeal - poisonLevel;
-		myPlant.SetTag("Potions", [greaterPoison, greaterCure, heal, greaterStrength].join(","));
-		myPlant.SetTag("Infections", infestationLevel + "," + fungusLevel + ",0," + diseaseLevel);
-	} 
+		myPlant.SetTag( "Potions", greaterPoison + "," + greaterCure + "," + heal + "," + greaterStrength );
+		myPlant.SetTag( "Infections", infestationLevel + "," + fungusLevel + ",0," + diseaseLevel );
+	}
 	else
 	{
-		myPlant.SetTag("Potions", greaterPoison + "," + greaterCure + ",0," + greaterStrength);
+		myPlant.SetTag( "Potions", greaterPoison + "," + greaterCure + ",0," + greaterStrength );
 		var poison = poisonLevel - greaterHeal;
-		myPlant.SetTag("Infections", infestationLevel + "," + fungusLevel + "," + poison + "," + diseaseLevel);
+		myPlant.SetTag( "Infections", infestationLevel + "," + fungusLevel + "," + poison + "," + diseaseLevel );
 	}
 
-	if( infestationLevel == 0 || fungusLevel == 0 || poisonLevel == 0 || diseaseLevel == 0 || waterLevel != 2) 
+	if( infestationLevel == 0 || fungusLevel == 0 || poisonLevel == 0 || diseaseLevel == 0 || waterLevel != 2 ) 
 	{
-		if( greaterHeal > 0)
+		if( greaterHeal > 0 )
 		{
 			myPlant.health += greaterHeal * 7;
-		} else
+		}
+		else
 		{
 			myPlant.health += 2;
 		}
 	}
 
-	if( greaterHeal > 0) 
+	if( greaterHeal > 0 ) 
 	{
 		greaterHeal--;
-		myPlant.SetTag("Potions", [greaterPoison, greaterCure, greaterHeal, greaterStrength].join(","));
+		myPlant.SetTag( "Potions", greaterPoison + "," + greaterCure + "," + greaterHeal + "," + greaterStrength );
 	}
 }
+
 
 
 function onTimer( myPlant, timerID )
 {
-	if(  !ValidateObject( myPlant ))
+	if( !ValidateObject( myPlant ))
 		return;
 
-	var stage = myPlant.GetTag("PlantStage");//Starts at stage 1
-	var Seeds = myPlant.GetTag("Seeds")
-	var CrossedPlants = myPlant.GetTag("PlantCross")
-	var plantInfo = myPlant.GetTag("PlantInfo")
+	var stage = myPlant.GetTag( "PlantStage" );//Starts at stage 1
+	var Seeds = myPlant.GetTag( "Seeds" )
+	var CrossedPlants = myPlant.GetTag( "PlantCross" )
+	var plantInfo = myPlant.GetTag( "PlantInfo" )
 
-	if( !CrossedPlants || !Seeds || !plantInfo)
+	if( !CrossedPlants || !Seeds || !plantInfo )
 		return false;
 
-	var Crossed = CrossedPlants.split(",");
-	var Seedlength = Seeds.split(",");
-	var infoLength = plantInfo.split(",");
+	var Crossed = CrossedPlants.split( "," );
+	var Seedlength = Seeds.split( "," );
+	var infoLength = plantInfo.split( "," );
 
-	if( Crossed.length != 3 || Seedlength.length != 3 || infoLength.length != 4)
+	if( Crossed.length != 3 || Seedlength.length != 3 || infoLength.length != 4 )
 		return false;
 
-	var Pollinated = parseInt(Crossed[0]);
-	var SeedBreed = parseInt(Crossed[1]);
-	var crossAble = parseInt(Crossed[2]);
-	var availableSeeds = parseInt(Seedlength[0]);
-	var remainingSeeds = parseInt(Seedlength[1]);
-	var hueSeeds = parseInt(Seedlength[2]);
-	var fertialeDirt = parseInt(infoLength[3]);
+	var Pollinated = parseInt( Crossed[0] );
+	var SeedBreed = parseInt( Crossed[1] );
+	var crossAble = parseInt( Crossed[2] );
+	var availableSeeds = parseInt( Seedlength[0] );
+	var remainingSeeds = parseInt( Seedlength[1] );
+	var hueSeeds = parseInt( Seedlength[2] );
+	var fertialeDirt = parseInt( infoLength[3] );
 
 	if( timerID == 1 )
 	{
-		if( myPlant.health <= 0) 
+		if( myPlant.health <= 0 ) 
 		{
-			Die(myPlant);
+			Die( myPlant );
 			return false;
 		}
 
-		if (myPlant.movable != 3)
+		if( myPlant.movable != 3 )
 		{ // Checks make sure the plant is lockdown if its not it loops timer until it no longer fails this check.
-			myPlant.StartTimer(PlantDelayTimer, 1, scriptID);
+			myPlant.StartTimer( PlantDelayTimer, 1, scriptID );
 			return false;
 		}
 		else 
 		{
-			if( myPlant.GetTag("PlantHealth") != 10 && myPlant.GetTag("PlantHealth") != 11)//wilted or dying
+			if( myPlant.GetTag( "PlantHealth" ) != 10 && myPlant.GetTag( "PlantHealth" ) != 11 )//wilted or dying
 			{
-				if( fertialeDirt == 1 && stage <= 5)
+				if( fertialeDirt == 1 && stage <= 5 )
 				{
 					//double growth to stage 5
-					myPlant.SetTag("PlantStage", stage + 2);
+					myPlant.SetTag( "PlantStage", stage + 2 );
 				}
-				else if( stage < 9) 
+				else if( stage < 9 ) 
 				{
 					// Continue to the next stage if it does not have fertial dirt
-					myPlant.SetTag("PlantStage", stage + 1);
+					myPlant.SetTag( "PlantStage", stage + 1 );
 				}
 				else 
 				{
 					//Produce Seeds 
-					if( remainingSeeds > 0 && Pollinated == 1)
+					if( remainingSeeds > 0 && Pollinated == 1 )
 					{
 						var rseeds = remainingSeeds - 1;
 						var aseeds = availableSeeds + 1;
-						myPlant.SetTag("Seeds", aseeds + "," + rseeds + "," + hueSeeds);
+						myPlant.SetTag( "Seeds", aseeds + "," + rseeds + "," + hueSeeds );
 					}					
 				}
 
-				if( stage >= 2 && stage <= 3)
+				if( stage >= 2 && stage <= 3 )
 				{
 					myPlant.id = 0x1600;
 				}
-				else if( stage == 9)
+				else if( stage == 9 )
 				{
-					PlantBowl(myPlant);
+					PlantBowl( myPlant );
 				}
 			}
 
-			if( stage >= 9)
+			if( stage >= 9 )
 			{
-				if( Pollinated == 0)
+				if( Pollinated == 0 )
 				{
-					myPlant.SetTag("PlantCross", 1 + "," + SeedBreed + "," + crossAble);
+					myPlant.SetTag( "PlantCross", 1 + "," + SeedBreed + "," + crossAble );
 				}
 
 			}
 
-			ApplyPotions(myPlant) 
-			HealthStatus(myPlant);
-			PlantDamage(myPlant);
-			GrowthCheck(myPlant);
+			ApplyPotions( myPlant ) 
+			HealthStatus( myPlant );
+			PlantDamage( myPlant );
+			GrowthCheck( myPlant );
 			myPlant.Refresh();
 		}
 	}
-	myPlant.StartTimer(PlantDelayTimer, 1, scriptID);
+	myPlant.StartTimer( PlantDelayTimer, 1, scriptID );
 }
 
 function DrawPlant( PlantGump, iUsed )
 {
-	if( iUsed.GetTag("PlantStage") >= 0 && iUsed.GetTag("PlantStage") < 9 || iUsed.GetTag("PlantStage") == 14)
+	var plantStage = iUsed.GetTag( "PlantStage" );
+	var plantHealth = iUsed.GetTag( "PlantHealth" )
+
+	if( plantStage >= 0 && plantStage < 9 || plantStage == 14 )
 	{
-		PlantGump.AddGump(110, 85, 0x589);
-		if( iUsed.GetTag("PlantStage") <= 14)
+		PlantGump.AddGump( 110, 85, 0x589 );
+		if( plantStage <= 14 )
 		{
-			PlantGump.AddPicture(122, 94, 0x914);
-			PlantGump.AddPicture(135, 94, 0x914);
-			PlantGump.AddPicture(120, 112, 0x914);
-			PlantGump.AddPicture(135, 112, 0x914);
+			PlantGump.AddPicture( 122, 94, 0x914 );
+			PlantGump.AddPicture( 135, 94, 0x914 );
+			PlantGump.AddPicture( 120, 112, 0x914 );
+			PlantGump.AddPicture( 135, 112, 0x914 );
 		}
 
-		if( iUsed.GetTag("PlantStage") >= 2 && iUsed.GetTag("PlantStage") < 3)
+		if( plantStage >= 2 && plantStage < 3 )
 		{
 			PlantGump.AddPicture( 127, 112, 0xC62 );
 		}
-		if( iUsed.GetTag( "PlantStage" ) == 3 || iUsed.GetTag( "PlantStage" ) == 4 )
+		if( plantStage == 3 || plantStage == 4 )
 		{
-			PlantGump.AddPicture(129, 85, 0xC7E);
+			PlantGump.AddPicture( 129, 85, 0xC7E );
 		}
-		if( iUsed.GetTag("PlantStage") >= 4 && iUsed.GetTag("PlantStage") < 9)
+		if( plantStage >= 4 && plantStage < 9 )
 		{
 			PlantGump.AddPicture( 121, 117, 0xC62 );
 			PlantGump.AddPicture( 133, 117, 0xC62 );
 		}
-		if( iUsed.GetTag("PlantStage") >= 5 && iUsed.GetTag("PlantStage") < 9)
+		if( plantStage >= 5 && plantStage < 9 )
 		{
 			PlantGump.AddPicture( 110, 100, 0xC62 );
 			PlantGump.AddPicture( 140, 100, 0xC62 );
 			PlantGump.AddPicture( 110, 130, 0xC62 );
 			PlantGump.AddPicture( 140, 130, 0xC62 );
 		}
-		if( iUsed.GetTag("PlantStage") >= 6 && iUsed.GetTag("PlantStage") < 9)
+		if( plantStage >= 6 && plantStage < 9 )
 		{
 			PlantGump.AddPicture( 105, 115, 0xC62 );
 			PlantGump.AddPicture( 145, 115, 0xC62 );
@@ -632,9 +638,9 @@ function DrawPlant( PlantGump, iUsed )
 		PlantImage( PlantGump, iUsed );
 	}
 
-	if( iUsed.GetTag( "PlantStage" ) != 14 ) //BowlOfDirt
+	if( plantStage != 14 ) //BowlOfDirt
 	{
-		switch( iUsed.GetTag( "PlantHealth" ))
+		switch( plantHealth )
 		{
 			case 10:
 					PlantGump.AddPicture( 92, 167, 0x1B9D );
@@ -663,19 +669,18 @@ function DrawPlant( PlantGump, iUsed )
 
 function PlantImage( PlantGump, iUsed )
 {
-	var plantInfo = iUsed.GetTag("PlantInfo")
+	var plantInfo = iUsed.GetTag( "PlantInfo" )
 
-	if( !plantInfo)
+	if( !plantInfo )
 		return false;
 
-	var infoLength = plantInfo.split(",");
-	if( infoLength.length != 4)
+	var infoLength = plantInfo.split( "," );
+	if( infoLength.length != 4 )
 		return false;
 
-	var plantType = parseInt(infoLength[0]);
-	var PlantName = parseInt(infoLength[1]);
-	var plantColor = parseInt(infoLength[2]);
-	var fertialeDirt = parseInt(infoLength[3]);
+	var plantType = parseInt( infoLength[0] );
+	var plantColor = parseInt( infoLength[2] );
+	var fertialeDirt = parseInt( infoLength[3] );
 
 	var plantArray = {
 		"3203": [0, 0], // 0x0c83
@@ -767,7 +772,7 @@ function PlantImage( PlantGump, iUsed )
 
 	var plantID = 0;
 	var plantNewName = "";
-	switch (plantType)
+	switch( plantType )
 	{
 		case 1:
 			plantID = CampionFlowers;
@@ -938,7 +943,7 @@ function PlantImage( PlantGump, iUsed )
 			plantNewName = "Sugar Canes";
 			break;
 	}
-	if(  plantID == CypressTwisted || plantID == CypressStraight)
+	if( plantID == CypressTwisted || plantID == CypressStraight )
 	{ // The large images for these trees trigger a client crash, so use a smaller, generic tree for gump.
 		PlantGump.AddPictureColor( 130 + plantArray[plantID][0], 96 + plantArray[plantID][1], 0x0CCA, plantColor );
 	}
@@ -946,26 +951,24 @@ function PlantImage( PlantGump, iUsed )
 	{
 		PlantGump.AddPictureColor( 130 + plantArray[plantID][0], 96 + plantArray[plantID][1], plantID, plantColor );
 	}
-	iUsed.SetTag("PlantInfo", plantType + "," + plantNewName + "," + plantColor + "," + fertialeDirt);
+	iUsed.SetTag( "PlantInfo", plantType + "," + plantNewName + "," + plantColor + "," + fertialeDirt );
 	return;
 }
 
 function PlantBowl( iUsed )
 {
-	var plantInfo = iUsed.GetTag("PlantInfo")
+	var plantInfo = iUsed.GetTag( "PlantInfo" )
 
-	if( !plantInfo) {
-		return false;
-	}
-
-	var infoLength = plantInfo.split(",");
-	if( infoLength.length != 4)
+	if( !plantInfo )
 		return false;
 
-	var plantType = parseInt(infoLength[0]);
-	var PlantName = parseInt(infoLength[1]);
-	var plantColor = parseInt(infoLength[2]);
-	var fertialeDirt = parseInt(infoLength[3]);
+	var infoLength = plantInfo.split( "," );
+	if( infoLength.length != 4 )
+		return false;
+
+	var plantType = parseInt( infoLength[0] );
+	var plantColor = parseInt( infoLength[2] );
+	var fertialeDirt = parseInt( infoLength[3] );
 
 	var CampionFlowers = 3203;
 	var Poppies = 3206;
@@ -1012,7 +1015,7 @@ function PlantBowl( iUsed )
 
 	var plantID = 0;
 	var plantNewName = "";
-	switch(plantType)
+	switch( plantType )
 	{
 		case 1:
 			plantID = CampionFlowers;
@@ -1188,11 +1191,11 @@ function PlantBowl( iUsed )
 	iUsed.name = plantNewName;
 	iUsed.movable = 1;
 	iUsed.colour = plantColor;
-	iUsed.SetTag("PlantInfo", plantType + "," + plantNewName + "," + plantColor + "," + fertialeDirt);
+	iUsed.SetTag( "PlantInfo", plantType + "," + plantNewName + "," + plantColor + "," + fertialeDirt );
 	iUsed.Refresh();
 }
 
-function CodexOFWisdomPacket(socket, topicID)
+function CodexOFWisdomPacket( socket, topicID )
 {
 	var helpPacket = new Packet; // Create new packet stream
 	helpPacket.ReserveSize( 11 ); // Reserve packet size of 11, which is optimal for packet 0xBF in this case
@@ -1206,7 +1209,7 @@ function CodexOFWisdomPacket(socket, topicID)
 	helpPacket.Free();
 }
 
-function onGumpPress(socket, button, PlantGump)
+function onGumpPress( socket, button, PlantGump )
 {
 	var pUser = socket.currentChar;
 	var iUsed = socket.tempObj;
@@ -1217,250 +1220,250 @@ function onGumpPress(socket, button, PlantGump)
 			socket.CloseGump( gumpID, 0 );
 			break;// abort and do nothing
 		case 1:// Reproduction menu
-			if( iUsed.GetTag("PlantStage") >= 1)
+			if( iUsed.GetTag( "PlantStage" ) >= 1 )
 			{
-				ReproductionGump(pUser, iUsed);
+				ReproductionGump( pUser, iUsed );
 			}
 			else
 			{
-				pUser.SysMessage("You need to plant a seed in the bowl first");
-				onUseChecked(pUser, iUsed);
+				socket.SysMessage( "You need to plant a seed in the bowl first" );
+				onUseChecked( pUser, iUsed );
 			}
 			break;
 		case 2:// infestation
-			onUseChecked(pUser, iUsed);
-			CodexOFWisdomPacket(socket, 54);
+			onUseChecked( pUser, iUsed );
+			CodexOFWisdomPacket( socket, 54 );
 			break;
 		case 3:// fungus
-			onUseChecked(pUser, iUsed);
-			CodexOFWisdomPacket(socket, 56);
+			onUseChecked( pUser, iUsed );
+			CodexOFWisdomPacket( socket, 56 );
 			break;
 		case 4:// poison
-			onUseChecked(pUser, iUsed);
-			CodexOFWisdomPacket(socket, 58);
+			onUseChecked( pUser, iUsed );
+			CodexOFWisdomPacket( socket, 58 );
 			break;
 		case 5:// disease
-			onUseChecked(pUser, iUsed);
-			CodexOFWisdomPacket(socket, 60);
+			onUseChecked( pUser, iUsed );
+			CodexOFWisdomPacket( socket, 60 );
 			break;
 		case 6:// water
-			onUseChecked(pUser, iUsed);
+			onUseChecked( pUser, iUsed );
 			break;
 		case 7:// poison potion
-			addPotion(pUser, iUsed, 7);
-			onUseChecked(pUser, iUsed);
+			addPotion( pUser, iUsed, 7 );
+			onUseChecked( pUser, iUsed );
 			break;
 		case 8:// Cure potion
-			addPotion(pUser, iUsed, 8);
-			onUseChecked(pUser, iUsed);
+			addPotion( pUser, iUsed, 8 );
+			onUseChecked( pUser, iUsed );
 			break;
 		case 9:// Heal potion
-			addPotion(pUser, iUsed, 9);
-			onUseChecked(pUser, iUsed);
+			addPotion( pUser, iUsed, 9 );
+			onUseChecked( pUser, iUsed );
 			break;
 		case 10:// Strength potion
-			addPotion(pUser, iUsed, 10);
-			onUseChecked(pUser, iUsed);
+			addPotion( pUser, iUsed, 10 );
+			onUseChecked( pUser, iUsed );
 			break;
 		case 11:// Help
-			onUseChecked(pUser, iUsed);
-			CodexOFWisdomPacket(socket, 48);
+			onUseChecked( pUser, iUsed );
+			CodexOFWisdomPacket( socket, 48 );
 			break;
 		case 12:// Empty the bowl
-			socket.CloseGump(gumpID, 0);
-			EmptyBowlGump(pUser, iUsed);
-            //TriggerEvent( 5040, "EmptyBowl", pUser, iUsed );
+			socket.CloseGump( gumpID, 0 );
+			EmptyBowlGump( pUser, iUsed );
 			break;
 		case 13:// Empty Bowl Help
-			EmptyBowlGump(pUser, iUsed);
-			CodexOFWisdomPacket(socket, 71);
+			EmptyBowlGump( pUser, iUsed );
+			CodexOFWisdomPacket( socket, 71 );
 			break;
 		case 14:// Cancel Plant Bowl Gump
-			onUseChecked(pUser, iUsed);
+			onUseChecked( pUser, iUsed );
 			break;
 		case 15:// Okay Empty Bowl
-			if(iUsed.GetTag("PlantStage") == 1)
+			if( iUsed.GetTag( "PlantStage") == 1)
 			{
-				GatherSeeds(pUser, iUsed);
+				GatherSeeds( pUser, iUsed );
 			}
-			CreateDFNItem(pUser.socket, pUser, "emptyplantbowl", 1, "ITEM", true, 0);
-			iUsed.Delete();
+			CreateDFNItem( pUser.socket, pUser, "emptyplantbowl", 1, "ITEM", true, 0 );
+			iUsed.Delete( );
 			break;
 		case 16:// Main Plant Gump
-			onUseChecked(pUser, iUsed);
+			onUseChecked( pUser, iUsed );
 			break;
 		case 17:// Set to decorative
-			SetToDecorativeGump(pUser, iUsed);
+			SetToDecorativeGump( pUser, iUsed );
 			break;
 		case 18:// Pollination
-			CodexOFWisdomPacket(socket, 67);
+			CodexOFWisdomPacket( socket, 67 );
 			break;
 		case 19:// Resources
-			CodexOFWisdomPacket(socket, 69);
+			CodexOFWisdomPacket( socket, 69 );
 			break;
 		case 20:// Seeds
-			CodexOFWisdomPacket(socket, 68);
+			CodexOFWisdomPacket( socket, 68 );
 			break;
 		case 21:// Gather pollen
-			PollinatePlant(pUser, iUsed);
-			onUseChecked(pUser, iUsed);
+			PollinatePlant( pUser, iUsed );
+			onUseChecked( pUser, iUsed );
 			break;
 		case 22:// Gather Resources
-			onUseChecked(pUser, iUsed);
+			onUseChecked( pUser, iUsed );
 			break;
 		case 23:// Gather seeds
-			GatherSeeds(pUser, iUsed);
+			GatherSeeds( pUser, iUsed );
 			break;
 		case 24:// Cancel set decorative
-			ReproductionGump(pUser, iUsed);
+			ReproductionGump( pUser, iUsed );
 			break;
 		case 25:
-			CodexOFWisdomPacket(socket, 70);
+			CodexOFWisdomPacket( socket, 70 );
 			break;
 		case 26:
-			iUsed.SetTag("PlantStage", 19);//DecorativePlant
-			socket.CloseGump(gumpID, 0);
-			socket.SysMessage("You prune the plant. This plant will no longer produce resources or seeds, but will require no upkeep.");
-			ResetPlant(iUsed);
+			iUsed.SetTag( "PlantStage", 19 );//DecorativePlant
+			socket.CloseGump( gumpID, 0 );
+			socket.SysMessage( "You prune the plant. This plant will no longer produce resources or seeds, but will require no upkeep." );
+			ResetPlant( iUsed );
 			iUsed.Refresh();
 			break;
 	default:		break;
 	}
 }
 
-function ResetPlant(iUsed)
+function ResetPlant( iUsed )
 {
-	iUsed.SetTag("water", null);
-	iUsed.SetTag("PlantInfo", null);
-	iUsed.SetTag("Potions", null);
-	iUsed.SetTag("Infections", null);
-	iUsed.SetTag("PlantCross", null);
-	iUsed.SetTag("PlantHealth", null);
-	iUsed.SetTag("Seeds", null);
-	iUsed.RemoveScriptTrigger(scriptID);
+	iUsed.SetTag( "water", null );
+	iUsed.SetTag( "PlantInfo", null );
+	iUsed.SetTag( "Potions", null );
+	iUsed.SetTag( "Infections", null );
+	iUsed.SetTag( "PlantCross", null );
+	iUsed.SetTag( "PlantHealth", null );
+	iUsed.SetTag( "Seeds", null );
+	iUsed.RemoveScriptTrigger( scriptID );
 	iUsed.KillTimers();
 }
 
-function PollinatePlant(pUser, iUsed)
+function PollinatePlant( pUser, iUsed )
 {
 	pUser.socket.tempObj = iUsed;
 	var socket = pUser.socket;
-	var status = iUsed.GetTag("PlantStage");
-	var CrossedPlants = iUsed.GetTag("PlantCross")
+	var status = iUsed.GetTag( "PlantStage" );
+	var CrossedPlants = iUsed.GetTag( "PlantCross" )
+	var plantHealth = iUsed.GetTag("PlantHealth")
 
-	if( !CrossedPlants)
+	if( !CrossedPlants )
 	{
-		pSock.SysMessage("You cannot gather pollen from a mutated plant!");
+		pSock.SysMessage( "You cannot gather pollen from a mutated plant!" );
 		return false;
 	}
-	else if( status < 7)
+	else if( status < 7 )
 	{
-		socket.SysMessage("Too early to gather pollen");
+		socket.SysMessage( "Too early to gather pollen" );
 		return false;
 	}
-	else if( iUsed.GetTag("PlantHealth") == 10 && iUsed.GetTag("PlantHealth") == 11)//wilted or dying
+	else if( plantHealth == 10 && plantHealth == 11 )//wilted or dying
 	{
-		socket.SysMessage("You cannot gather pollen from an unhealthy plant!");
+		socket.SysMessage( "You cannot gather pollen from an unhealthy plant!" );
 		return false;
 	}
 	else
-		pUser.CustomTarget(1, "Target the plant you wish to cross-pollinate to.");
+		pUser.CustomTarget( 1, "Target the plant you wish to cross-pollinate to." );
 }
 
-function onCallback1(pSock, myTarget)
+function onCallback1( pSock, myTarget )
 {
 	var iUsed = pSock.tempObj;
 	var pUser = pSock.currentChar;
-	var status = iUsed.GetTag("PlantStage");
-	var iCrossedPlants = iUsed.GetTag("PlantCross")
+	var status = iUsed.GetTag( "PlantStage" );
+	var iCrossedPlants = iUsed.GetTag( "PlantCross" )
+	var plantHealth = iUsed.GetTag( "PlantHealth" )
 
-	if( !iCrossedPlants)
+	if( !iCrossedPlants )
 	{
-		pSock.SysMessage("You cannot gather pollen from a mutated plant!");
+		pSock.SysMessage( "You cannot gather pollen from a mutated plant!" );
 		return false;
 	}
-	if( status < 7) 
+	if( status < 7 ) 
 	{
-		pSock.SysMessage("Too early to gather pollen");
+		pSock.SysMessage( "Too early to gather pollen" );
 		return false;
 	}
-	else if( iUsed.GetTag("PlantHealth") == 10 && iUsed.GetTag("PlantHealth") == 11)//wilted or dying
+	else if( plantHealth == 10 && plantHealth == 11 )//wilted or dying
 	{
-		pSock.SysMessage("You cannot gather pollen from an unhealthy plant!");
+		pSock.SysMessage( "You cannot gather pollen from an unhealthy plant!" );
 		return false;
 	}
 	else if( status > 7 && status < 9) 
 	{
-		pSock.SysMessage("You can only pollinate other specially grown plants!");
+		pSock.SysMessage( "You can only pollinate other specially grown plants!" );
 		return false;
 	}
 	else
 	{
-		var tstatus = myTarget.GetTag("PlantStage");
-		var tCrossedPlants = myTarget.GetTag("PlantCross")
+		var tstatus = myTarget.GetTag( "PlantStage" );
+		var tCrossedPlants = myTarget.GetTag( "PlantCross" )
+		var tplantHealth = myTarget.GetTag( "PlantHealth" )
 
-		if( !tCrossedPlants)
+		if( !tCrossedPlants )
 		{
-			pSock.SysMessage("You cannot gather pollen from a mutated plant!");
+			pSock.SysMessage( "You cannot gather pollen from a mutated plant!" );
 			return false;
 		}
 
-		var Crossed = tCrossedPlants.split(",");
-		if( Crossed.length != 3)
+		var Crossed = tCrossedPlants.split( "," );
+		if( Crossed.length != 3 )
 			return false;
 
-		var Pollinated = parseInt(Crossed[0]);
-		var SeedBreed = parseInt(Crossed[1]);
-		var crossAble = parseInt(Crossed[2]);
+		var Pollinated = parseInt( Crossed[0] );
+		var SeedBreed = parseInt( Crossed[1] );
+		var crossAble = parseInt( Crossed[2] );
 
-		if( tstatus < 7)
+		if( tstatus < 7 )
 		{
-			pSock.SysMessage("This plant is not in the flowering stage. You cannot pollinate it!");
+			pSock.SysMessage( "This plant is not in the flowering stage. You cannot pollinate it!" );
 			return false;
 		}
-		else if( myTarget.GetTag("PlantHealth") == 10 && myTarget.GetTag("PlantHealth") == 11)//wilted or dying
+		else if( tplantHealth == 10 && tplantHealth == 11 )//wilted or dying
 		{
-			pSock.SysMessage("You cannot pollinate an unhealthy plant!");
+			pSock.SysMessage( "You cannot pollinate an unhealthy plant!" );
 			return false;
 		}
-		else if( tstatus > 7 && tstatus < 9)
+		else if( tstatus > 7 && tstatus < 9 )
 		{
-			pSock.SysMessage("You can only pollinate other specially grown plants!");
+			pSock.SysMessage( "You can only pollinate other specially grown plants!" );
 			return false;
 		}
-		else if( crossAble == 0) 
+		else if( crossAble == 0 ) 
 		{
-			pSock.SysMessage("You cannot cross-pollinate with a mutated plant!");
+			pSock.SysMessage( "You cannot cross-pollinate with a mutated plant!" );
 			return false;
 		}
 		else if( Pollinated == 1) 
 		{
-			pSock.SysMessage("This plant has already been pollinated!");
+			pSock.SysMessage( "This plant has already been pollinated!" );
 		}
-		else if( myTarget == iUsed)
+		else if( myTarget == iUsed )
 		{
-			CrossPollinateTable(myTarget, iUsed, pSock);
-			SeedColorsSet(myTarget, iUsed);
-			pSock.SysMessage("You pollinate the plant with its own pollen.");
+			CrossPollinateTable( myTarget, iUsed, pSock );
+			SeedColorsSet( myTarget, iUsed );
+			pSock.SysMessage( "You pollinate the plant with its own pollen." );
 		}
 		else
 		{
-			CrossPollinateTable(myTarget, iUsed, pSock);
-			SeedColorsSet(myTarget, iUsed);
-			pSock.SysMessage("You successfully cross - pollinate the plant.");
+			CrossPollinateTable( myTarget, iUsed, pSock );
+			SeedColorsSet( myTarget, iUsed );
+			pSock.SysMessage( "You successfully cross - pollinate the plant." );
 		}
 	}
 }
 
-function CrossPollinateTable(myTarget, iUsed, pSock)
+function CrossPollinateTable( myTarget, iUsed, pSock )
 {
-	var iinfo = iUsed.GetTag("PlantInfo")
-	var tinfo = myTarget.GetTag("PlantInfo");
+	var iinfo = iUsed.GetTag( "PlantInfo" )
+	var tinfo = myTarget.GetTag( "PlantInfo" );
 
-	if( !iinfo || !tinfo) 
-	{
+	if( !iinfo || !tinfo )
 		return false;
-	}
 
 	var icrossLength = iinfo.split(",");
 	var tcrossLength = tinfo.split(",");
@@ -1739,7 +1742,6 @@ function SeedColorsSet(myTarget, iUsed)
 
 	var availableSeeds = parseInt(Seedlength[0]);
 	var remainingSeeds = parseInt(Seedlength[1]);
-	var hueSeeds = parseInt(Seedlength[2]);
 
 	// Define color combination object
 	var colorMap = {
@@ -1995,55 +1997,58 @@ function GatherSeeds(pUser, iUsed)
 			}
 		}
 	}
-	onUseChecked(pUser, iUsed);
+	onUseChecked( pUser, iUsed );
 }
 
-function EmptyBowlGump(pUser, iUsed)
+function EmptyBowlGump( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	var gumpID = scriptID + 0xffff;
 	var EmptyBowlGump = new Gump;
 	socket.tempObj = iUsed;
+	var plantStage = iUsed.GetTag( "PlantStage" )
 
-	EmptyBowlGump.AddBackground(50, 50, 200, 150, 0xE10);
+	EmptyBowlGump.AddBackground( 50, 50, 200, 150, 0xE10 );
 
-	EmptyBowlGump.AddPicture(45, 45, 0xCEF);
-	EmptyBowlGump.AddPicture(45, 118, 0xCF0);
+	EmptyBowlGump.AddPicture( 45, 45, 0xCEF );
+	EmptyBowlGump.AddPicture( 45, 118, 0xCF0 );
 
-	EmptyBowlGump.AddPicture(211, 45, 0xCEB);
-	EmptyBowlGump.AddPicture(211, 118, 0xCEC);
+	EmptyBowlGump.AddPicture( 211, 45, 0xCEB );
+	EmptyBowlGump.AddPicture( 211, 118, 0xCEC );
 
-	EmptyBowlGump.AddText(90, 70, 0x44, "Empty the bowl?");
+	EmptyBowlGump.AddText( 90, 70, 0x44, "Empty the bowl?" );
 
-	EmptyBowlGump.AddPicture(90, 100, 0x1602);
-	EmptyBowlGump.AddGump(140, 102, 0x15E1);
-	EmptyBowlGump.AddPicture(160, 100, 0x15FD);
+	EmptyBowlGump.AddPicture( 90, 100, 0x1602 );
+	EmptyBowlGump.AddGump( 140, 102, 0x15E1 );
+	EmptyBowlGump.AddPicture( 160, 100, 0x15FD );
 
-	if( iUsed.GetTag("PlantStage") != 14 && iUsed.GetTag("PlantStage") < 2 ) //BowlOfDirt
-		EmptyBowlGump.AddPicture(156, 130, 0xDCF); // Seed
+	if( plantStage != 14 && plantStage < 2 ) //BowlOfDirt
+		EmptyBowlGump.AddPicture( 156, 130, 0xDCF ); // Seed
 
-	EmptyBowlGump.AddButton(98, 150, 0x47E, 0x480, 14, 14, 14); // Cancel
+	EmptyBowlGump.AddButton( 98, 150, 0x47E, 0x480, 14, 14, 14 ); // Cancel
 
-	EmptyBowlGump.AddButton(138, 151, 0xD2, 0xD2, 13, 13, 13); // Help
-	EmptyBowlGump.AddText(143, 151, 0x835, "?");
+	EmptyBowlGump.AddButton( 138, 151, 0xD2, 0xD2, 13, 13, 13 ); // Help
+	EmptyBowlGump.AddText( 143, 151, 0x835, "?" );
 
-	EmptyBowlGump.AddButton(168, 150, 0x481, 0x483, 15, 15, 15); // Ok
-    EmptyBowlGump.Send(socket);
+	EmptyBowlGump.AddButton( 168, 150, 0x481, 0x483, 15, 15, 15 ); // Ok
+    EmptyBowlGump.Send( socket );
 	EmptyBowlGump.Free();
 }
 
 function addPotion( pUser, iUsed, button )
 {
+	var socket = pUser.socket;
+
 	var itemOwner = GetPackOwner( iUsed, 0 );
 	if( itemOwner == null || itemOwner != pUser )
 	{
-		pUser.SysMessage(GetDictionaryEntry( 1763, pUser.socket.language )); //That item must be in your backpack before it can be used.
+		socket.SysMessage( GetDictionaryEntry( 1763, socket.language )); //That item must be in your backpack before it can be used.
 	}
 	else
 	{
 		pUser.socket.tempObj = iUsed;
 		pUser.SetTempTag( "ButtonPushed", button );// 7 = poison, 8 = cure, 9 = heal, 10 = strength
-		pUser.CustomTarget(0);
+		pUser.CustomTarget( 0 );
 	}
 }
 
@@ -2200,9 +2205,7 @@ function AddResourcesState(ReproductionGump, iUsed, x, y)
 	var Seeds = iUsed.GetTag( "Seeds" )
 
 	if( !Seeds )
-	{
 		return false;
-	}
 
 	var Seedlength = Seeds.split( "," );
 	if( Seedlength.length != 3 )
@@ -2228,9 +2231,7 @@ function AddSeedsState( ReproductionGump, iUsed, x, y )
 	var Seeds = iUsed.GetTag( "Seeds" )
 
 	if( !Seeds ) 
-	{
 		return false;
-	}
 
 	var Seedlength = Seeds.split( "," );
 	if( Seedlength.length != 3 )
@@ -2257,9 +2258,7 @@ function AddPollinationState(ReproductionGump, iUsed, x, y)
 	var tCrossedPlants = iUsed.GetTag("PlantCross")
 
 	if( !tCrossedPlants )
-	{
 		return false;
-	}
 
 	var Crossed = tCrossedPlants.split( "," );
 	if( Crossed.length != 2)
@@ -2316,9 +2315,7 @@ function onTooltip( myPlant )
 	var plantInfo = myPlant.GetTag( "PlantInfo" )
 
 	if( !plantInfo )
-	{
 		return false;
-	}
 
 	var infoLength = plantInfo.split( "," );
 	if( infoLength.length != 4 )
@@ -2330,7 +2327,7 @@ function onTooltip( myPlant )
 	var fertialeDirt = parseInt( infoLength[3] );
 
 	var colorname = "";
-	switch(plantColor)
+	switch( plantColor )
 	{
 		case 0: colorname = "plain"; break;
 		case 1645: colorname = "red"; break;
