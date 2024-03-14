@@ -1,64 +1,70 @@
 function onUseChecked( pUser, iUsed )
 {
-	var itemOwner = GetPackOwner( iUsed, 0 );
-	if( itemOwner == null || itemOwner != pUser )
+	var socket = pUser.socket;
+	if( socket && iUsed && iUsed.isItem ) 
 	{
-		pUser.SysMessage( GetDictionaryEntry( 1763, pUser.socket.language )); //That item must be in your backpack before it can be used.
+		var itemOwner = GetPackOwner( iUsed, 0 );
+		if( itemOwner == null || itemOwner != pUser )
+		{
+			socket.SysMessage( GetDictionaryEntry( 1763, pUser.socket.language )); //That item must be in your backpack before it can be used.
+		}
+		else 
+		{
+			pUser.socket.tempObj = iUsed;
+			pUser.CustomTarget( 0, "Choose a bowl of dirt to plant this seed in." );
+			return false;
+		}
 	}
-	else
-	{
-		pUser.socket.tempObj = iUsed;
-		pUser.CustomTarget(0, "Choose a bowl of dirt to plant this seed in." );
-	}
-	return false;
+	return true;
 }
 
-function onCallback0(pSock, myTarget)
+function onCallback0( pSock, myTarget )
 {
+	const PlantDelayTimer = 5000;//82800000 Every 23 hours plant grows
 	var iUsed = pSock.tempObj;
 	var pUser = pSock.currentChar;
 
 	// That must be in your pack for you to use it.
-	if (!pSock.GetWord(1) && myTarget.isItem)
+	if( !pSock.GetWord( 1 ) && myTarget.isItem )
 	{
-		var plantInfo = myTarget.GetTag("PlantInfo")
+		var plantStage = myTarget.GetTag("PlantStage");
+		var plantInfo = myTarget.GetTag( "PlantInfo" );
+		var waterLevel = myTarget.GetTag("water");
 
-		if (!plantInfo) 
-		{
-			return false;
-		}
-
-		var infoLength = plantInfo.split(",");
-		if (infoLength.length != 4)
+		if( !plantInfo ) 
 			return false;
 
-		var plantType = parseInt(infoLength[0]);
-		var PlantName = parseInt(infoLength[1]);
-		var plantColor = parseInt(infoLength[2]);
-		var fertialeDirt = parseInt(infoLength[3]);
-		var itemOwner = GetPackOwner(myTarget, 0);
+		var infoLength = plantInfo.split( "," );
+		if( infoLength.length != 4 )
+			return false;
 
-		if (itemOwner == null || itemOwner != pUser)
+		var plantType = parseInt( infoLength[0] );
+		var PlantName = parseInt( infoLength[1] );
+		var plantColor = parseInt( infoLength[2] );
+		var fertialeDirt = parseInt( infoLength[3] );
+		var itemOwner = GetPackOwner( myTarget, 0 );
+
+		if( itemOwner == null || itemOwner != pUser )
 		{
-			pUser.SysMessage(GetDictionaryEntry(1763, pSock.language)); //That item must be in your backpack before it can be used.
+			pSock.SysMessage( GetDictionaryEntry( 1763, pSock.language )); //That item must be in your backpack before it can be used.
 		}
 		else
 		{
-			if (ValidateObject(myTarget) && myTarget.id == 0x1602) //checking to make sure its a full bowl of dirt
+			if( ValidateObject( myTarget ) && myTarget.id == 0x1602 || myTarget.sectionID == "plantbowlOfdirt" ) //checking to make sure its a full bowl of dirt
 			{
-				if (myTarget.GetTag("PlantStage") >= 18) // FullGrownPlant
+				if( plantStage >= 18 ) // FullGrownPlant
 				{
 					// You must use a seed on some prepared soil!
 					pSock.SysMessage("You must use a seed on some prepared soil!");
 				}
-				else if (myTarget.GetTag("PlantStage") != 14 && iUsed.GetTag("PlantName")) // BowlOfDirt or PlantName
+				else if( plantStage != 14 && PlantName ) // BowlOfDirt or PlantName
 				{
-					pUser.SysMessage("This bowl of dirt already has a seed " + myTarget.GetTag("PlantName") + " in it!");
+					pSock.SysMessage( "This bowl of dirt already has a seed " + PlantName + " in it!" );
 					// This bowl of dirt already has a seed of %s in it!
 				}
-				else if (myTarget.GetTag("water") < 2) // not enough water
+				else if( waterLevel < 2 ) // not enough water
 				{
-					pSock.SysMessage("The dirt needs to be softened first.");
+					pSock.SysMessage( "The dirt needs to be softened first." );
 				}
 				else
 				{
@@ -107,42 +113,45 @@ function onCallback0(pSock, myTarget)
 						"SugarCanes": { type: 42, crossable: 0 }
 					};
 
-					// You plant the seed in the bowl of dirt.
-					pUser.SysMessage("You plant the seed in the bowl of dirt.");
-
 					// Loop through the keys of seedToPlantType to find the matching tag
-					for (var tagName in seedToPlantType) {
-						if (parseInt(iUsed.GetTag(tagName)) === 1)
+					for( var tagName in seedToPlantType )
+					{
+						if( parseInt( iUsed.GetTag( tagName )) == 1 ) 
 						{
 							var tplantType = seedToPlantType[tagName];
-							if (!isNaN(tplantType.type))
+							if( !isNaN( tplantType.type ))
 							{
-								myTarget.SetTag("PlantInfo", tplantType.type + "," + iUsed.name + "," + iUsed.colour + "," + fertialeDirt);
-								myTarget.SetTag("PlantCross", 0 + "," + tplantType.type + "," + tplantType.crossable);
+								myTarget.SetTag( "PlantInfo", tplantType.type + "," + iUsed.name + "," + iUsed.colour + "," + fertialeDirt );
+								myTarget.SetTag( "PlantCross", 0 + "," + tplantType.type + "," + tplantType.crossable );
 								break;
 							}
 							else 
 							{
 								// Handle the case where the plantType is not a valid number
-								pUser.SysMessage("Invalid plantType:", tplantType.type, "Page and GM");
+								pSock.SysMessage( "Invalid plantType:", tplantType.type, "Page and GM" );
+								break;
 							}
 						}
 					}
-					const PlantDelayTimer = 5000;//82800000 Every 23 hours plant grows
 
-					myTarget.StartTimer(PlantDelayTimer, 1, 19100);
-					myTarget.SetTag("PlantStage", 1);
-					myTarget.SetTag("Seeds", 0 + "," + 8 + "," + iUsed.colour);
+					myTarget.StartTimer( PlantDelayTimer, 1, 19100 );
+					myTarget.SetTag( "PlantStage", 1 );//Seed
+					objMade.SetTag( "Seed", 0 + "," + 8 + "," + iUsed.colour );//Min/max/color
 
-					if (iUsed.amount > 1)
+					// You plant the seed in the bowl of dirt.
+					pSock.SysMessage( "You plant the seed in the bowl of dirt." );
+
+					if( iUsed.amount > 1 )
 						iUsed.amount--;
 					else
 						iUsed.Delete();
 				}
 			}
 			else
-				pUser.SysMessage("You must use a seed on a bowl of dirt!");//You must use a seed on a bowl of dirt!
-			return false;
+			{
+				pUser.SysMessage( "You must use a seed on a bowl of dirt!" );//You must use a seed on a bowl of dirt!
+				return false;
+			}
 		}
 		return false;
 	}
