@@ -2035,7 +2035,7 @@ function EmptyBowlGump( pUser, iUsed )
     EmptyBowlGump.Send( socket );
 	EmptyBowlGump.Free();
 }
-
+/*
 function addWater(pUser, iUsed)
 {
 	var socket = pUser.socket;
@@ -2081,7 +2081,7 @@ function addWater(pUser, iUsed)
 		socket.SysMessage( GetDictionaryEntry( 19128, socket.language ));//You can't use that on a plant!
 	}
 }
-
+*/
 
 function addPotion( pUser, iUsed, button )
 {
