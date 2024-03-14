@@ -57,10 +57,10 @@ function PlantBowlGump( pUser, iUsed )
 	var PlantGump = new Gump;
 	var socket = pUser.socket;
 
-	var potionInfo = iUsed.GetTag( "Potions" )
+	var potionInfo = iUsed.GetTag( "Potions" );
 	var infection = iUsed.GetTag( "Infections" );
-	var waterLevel = iUsed.GetTag( "water" )
-	var plantStage = iUsed.GetTag( "PlantStage" )
+	var waterLevel = iUsed.GetTag( "water" );
+	var plantStage = iUsed.GetTag( "PlantStage" );
 
 	if( !potionInfo || !infection )
 		return false;
@@ -500,9 +500,9 @@ function onTimer( myPlant, timerID )
 		return;
 
 	var stage = myPlant.GetTag( "PlantStage" );//Starts at stage 1
-	var Seeds = myPlant.GetTag( "Seeds" )
-	var CrossedPlants = myPlant.GetTag( "PlantCross" )
-	var plantInfo = myPlant.GetTag( "PlantInfo" )
+	var Seeds = myPlant.GetTag( "Seeds" );
+	var CrossedPlants = myPlant.GetTag( "PlantCross" );
+	var plantInfo = myPlant.GetTag( "PlantInfo" );
 
 	if( !CrossedPlants || !Seeds || !plantInfo )
 		return false;
@@ -1349,8 +1349,8 @@ function PollinatePlant( pUser, iUsed )
 	pUser.socket.tempObj = iUsed;
 	var socket = pUser.socket;
 	var status = iUsed.GetTag( "PlantStage" );
-	var CrossedPlants = iUsed.GetTag( "PlantCross" )
-	var plantHealth = iUsed.GetTag("PlantHealth")
+	var CrossedPlants = iUsed.GetTag( "PlantCross" );
+	var plantHealth = iUsed.GetTag( "PlantHealth" );
 
 	if( !CrossedPlants )
 	{
@@ -1402,8 +1402,8 @@ function onCallback1( pSock, myTarget )
 	else
 	{
 		var tstatus = myTarget.GetTag( "PlantStage" );
-		var tCrossedPlants = myTarget.GetTag( "PlantCross" )
-		var tplantHealth = myTarget.GetTag( "PlantHealth" )
+		var tCrossedPlants = myTarget.GetTag( "PlantCross" );
+		var tplantHealth = myTarget.GetTag( "PlantHealth" );
 
 		if( !tCrossedPlants )
 		{
@@ -2035,7 +2035,7 @@ function EmptyBowlGump( pUser, iUsed )
     EmptyBowlGump.Send( socket );
 	EmptyBowlGump.Free();
 }
-/*
+
 function addWater(pUser, iUsed)
 {
 	var socket = pUser.socket;
@@ -2081,7 +2081,6 @@ function addWater(pUser, iUsed)
 		socket.SysMessage( GetDictionaryEntry( 19128, socket.language ));//You can't use that on a plant!
 	}
 }
-*/
 
 function addPotion( pUser, iUsed, button )
 {
@@ -2294,9 +2293,9 @@ function AddSeedsState( ReproductionGump, iUsed, x, y )
 
 function AddPollinationState(ReproductionGump, iUsed, x, y)
 {
-	var status = parseInt( iUsed.GetTag("PlantStage" ));
+	var status = parseInt( iUsed.GetTag( "PlantStage" ));
 
-	var tCrossedPlants = iUsed.GetTag("PlantCross")
+	var tCrossedPlants = iUsed.GetTag( "PlantCross" );
 
 	if( !tCrossedPlants )
 		return false;
@@ -2351,9 +2350,9 @@ function SetToDecorativeGump( pUser, iUsed )
 function onTooltip( myPlant ) 
 {
 	var tooltipText = "";
-	var status = parseInt( myPlant.GetTag("PlantStage" ));
+	var status = parseInt( myPlant.GetTag( "PlantStage" ));
 	var plantHealth = myPlant.GetTag( "PlantHealth" );
-	var plantInfo = myPlant.GetTag( "PlantInfo" )
+	var plantInfo = myPlant.GetTag( "PlantInfo" );
 
 	if( !plantInfo )
 		return false;
