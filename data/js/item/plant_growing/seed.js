@@ -11,7 +11,7 @@ function onUseChecked( pUser, iUsed )
 		else 
 		{
 			pUser.socket.tempObj = iUsed;
-			pUser.CustomTarget( 0, "Choose a bowl of dirt to plant this seed in." );
+			pUser.CustomTarget( 0, GetDictionaryEntry( 19137, pSock.language ));//Choose a bowl of dirt to plant this seed in.
 			return false;
 		}
 	}
@@ -20,7 +20,7 @@ function onUseChecked( pUser, iUsed )
 
 function onCallback0( pSock, myTarget )
 {
-	const PlantDelayTimer = 5000;//82800000 Every 23 hours plant grows
+	const PlantDelayTimer = 82800000;//82800000 Every 23 hours plant grows
 	var iUsed = pSock.tempObj;
 	var pUser = pSock.currentChar;
 
@@ -55,16 +55,17 @@ function onCallback0( pSock, myTarget )
 				if( plantStage >= 18 ) // FullGrownPlant
 				{
 					// You must use a seed on some prepared soil!
-					pSock.SysMessage("You must use a seed on some prepared soil!");
+					pSock.SysMessage( GetDictionaryEntry( 19138, pSock.language ));//You must use a seed on some prepared soil!
 				}
 				else if( plantStage != 14 && PlantName ) // BowlOfDirt or PlantName
 				{
-					pSock.SysMessage( "This bowl of dirt already has a seed " + PlantName + " in it!" );
+					var tempMsg = GetDictionaryEntry( 19139, socket.language );
+					pSock.SysMessage( tempMsg.replace( /%s/gi, PlantName ));//This bowl of dirt already has a seed %s in it!
 					// This bowl of dirt already has a seed of %s in it!
 				}
 				else if( waterLevel < 2 ) // not enough water
 				{
-					pSock.SysMessage( "The dirt needs to be softened first." );
+					pSock.SysMessage( GetDictionaryEntry( 19140, pSock.language ));//The dirt needs to be softened first.
 				}
 				else
 				{
@@ -137,9 +138,7 @@ function onCallback0( pSock, myTarget )
 					myTarget.StartTimer( PlantDelayTimer, 1, 19100 );
 					myTarget.SetTag( "PlantStage", 1 );//Seed
 					objMade.SetTag( "Seed", 0 + "," + 8 + "," + iUsed.colour );//Min/max/color
-
-					// You plant the seed in the bowl of dirt.
-					pSock.SysMessage( "You plant the seed in the bowl of dirt." );
+					pSock.SysMessage( GetDictionaryEntry( 19141, pSock.language ));//You plant the seed in the bowl of dirt.
 
 					if( iUsed.amount > 1 )
 						iUsed.amount--;
@@ -149,7 +148,7 @@ function onCallback0( pSock, myTarget )
 			}
 			else
 			{
-				pUser.SysMessage( "You must use a seed on a bowl of dirt!" );//You must use a seed on a bowl of dirt!
+				pUser.SysMessage( GetDictionaryEntry( 19142, pSock.language ));//You must use a seed on a bowl of dirt!
 				return false;
 			}
 		}

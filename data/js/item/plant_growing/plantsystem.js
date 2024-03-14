@@ -1,5 +1,5 @@
 const scriptID = 19100;// this is the script id
-const PlantDelayTimer = 5000;//82800000 Every 23 hours plant grows
+const PlantDelayTimer = 82800000;//82800000 Every 23 hours plant grows
 
 function onUseChecked( pUser, iUsed )
 {

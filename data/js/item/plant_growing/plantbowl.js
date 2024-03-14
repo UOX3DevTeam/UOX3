@@ -17,12 +17,12 @@ function onUseChecked( pUser, iBowl )
 		var bowlOwner = GetPackOwner(iBowl, 0);
 		if( bowlOwner == null || bowlOwner != pUser )
 		{
-			pUser.SysMessage( "You must have the object in your backpack to use it." ); //You must have the object in your backpack to use it.
+			socket.SysMessage( GetDictionaryEntry(19132, socket.language )); //You must have the object in your backpack to use it.
 		}
 		else
 		{
 			pUser.socket.tempObj = iBowl;
-			pUser.CustomTarget( 1, "Choose a patch of dirt to scoop up." );//Choose a patch of dirt to scoop up.
+			pUser.CustomTarget( 1, GetDictionaryEntry( 19133, socket.language ));//Choose a patch of dirt to scoop up.
 			return false;
 		}
 	}
@@ -68,14 +68,14 @@ function onCallback1( socket, myTarget )
 				{
 					if( myTarget.amount < 40 ) //amount needed
 					{
-						socket.SysMessage( "You need more dirt to fill a plant bowl!" )
+						socket.SysMessage( GetDictionaryEntry( 19134, socket.language ));//You need more dirt to fill a plant bowl!
 					}
 					else 
 					{
 						var bowlofdirt = CreateDFNItem( mChar.socket, mChar, "plantbowlOfdirt", 1, "ITEM", true );
 						bowlofdirt.SetTag( "PlantInfo", 0 + "," + 0 + "," + 0 + "," + 1 );
 						bowlofdirt.SetTag( "PlantStage", 14 );
-						socket.SysMessage( "You fill the bowl with fresh dirt." )
+						socket.SysMessage( GetDictionaryEntry( 19135, socket.language ));//You fill the bowl with fresh dirt.
 						iBowl.Delete();
 
 						if( myTarget.amount == 40 )
@@ -93,7 +93,7 @@ function onCallback1( socket, myTarget )
 					var bowlofdirt = CreateDFNItem( mChar.socket, mChar, "plantbowlOfdirt", 1, "ITEM", true );
 					bowlofdirt.SetTag( "PlantInfo", 0 + "," + 0 + "," + 0 + "," + 0 );
 					bowlofdirt.SetTag( "PlantStage", 14 );//dirt
-					socket.SysMessage("You fill the bowl with fresh dirt." )
+					socket.SysMessage( GetDictionaryEntry( 19135, socket.language ));//You fill the bowl with fresh dirt.
 					validTileIDFound = true;
 					iBowl.Delete();
 				}
@@ -102,7 +102,7 @@ function onCallback1( socket, myTarget )
 
 		if( !validTileIDFound )
 		{
-			socket.SysMessage( "You'll want to gather fresh dirt in order to raise a healthy plant!" ); // "You'll want to gather fresh dirt in order to raise a healthy plant!"
+			socket.SysMessage( GetDictionaryEntry( 19136, socket.language )); // "You'll want to gather fresh dirt in order to raise a healthy plant!"
 		}
 	}
 }

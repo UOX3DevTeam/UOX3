@@ -5326,5 +5326,16 @@
 19129=You don't have any strong potions of that type in your pack.
 19130=You should only pour potions on a plant or seed!
 19131=The plant is already soaked with this type of potion!
+19132=You must have the object in your backpack to use it.
+19133=Choose a patch of dirt to scoop up.
+19134=You need more dirt to fill a plant bowl!
+19135=You fill the bowl with fresh dirt.
+19136=You'll want to gather fresh dirt in order to raise a healthy plant!
+19137=Choose a bowl of dirt to plant this seed in.
+19138=You must use a seed on some prepared soil!
+19139=This bowl of dirt already has a seed %s in it!
+19140=The dirt needs to be softened first.
+19141=You plant the seed in the bowl of dirt.
+19142=You must use a seed on a bowl of dirt!
 }
 EOF

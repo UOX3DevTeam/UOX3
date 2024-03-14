@@ -5331,5 +5331,16 @@
 19129=Du hast keine starken Tränke dieser Art in deinem Rucksack.
 19130=Du solltest Tränke nur auf eine Pflanze oder einen Samen gießen!
 19131=Die Pflanze ist bereits mit dieser Art von Trank getränkt!
+19132=Sie müssen das Objekt in Ihrem Rucksack haben, um es verwenden zu können.
+19133=Wählen Sie ein Stück Erde zum Aufsammeln.
+19134=Sie benötigen mehr Erde, um eine Pflanzschale zu füllen!
+19135=Sie füllen die Schüssel mit frischer Erde.
+19136=Sie möchten frische Erde sammeln, um eine gesunde Pflanze zu züchten!
+19137=Wählen Sie eine Schüssel mit Erde, in die Sie diesen Samen pflanzen möchten.
+19138=Sie müssen einen Samen auf vorbereitetem Boden verwenden!
+19139=Diese Schüssel voller Erde enthält bereits einen Samen %s!
+19140=Der Schmutz muss zuerst aufgeweicht werden.
+19141=Sie pflanzen den Samen in die Schüssel mit Erde.
+19142=Sie müssen einen Samen auf eine Schüssel voller Erde verwenden!
 }
 EOF
