@@ -1247,6 +1247,7 @@ function onGumpPress( socket, button, PlantGump )
 			CodexOFWisdomPacket( socket, 60 );
 			break;
 		case 6:// water
+			addWater( pUser, iUsed );
 			onUseChecked( pUser, iUsed );
 			break;
 		case 7:// poison potion
@@ -2035,21 +2036,78 @@ function EmptyBowlGump( pUser, iUsed )
 	EmptyBowlGump.Free();
 }
 
+function addWater( pUser, iUsed )
+{
+	var socket = pUser.socket;
+	var waterLevel = iUsed.GetTag( "water" );
+	var pitcherofwater1 = pUser.FindItemSection( "0x1f9e" );
+	var pitcherofwater2 = pUser.FindItemSection( "0x1f9d" );
+	
+	if (waterLevel >= 4) 
+	{
+		socket.SysMessage("You can't add water to this plant.");
+		return;
+	}
+
+	if ( ValidateObject( pitcherofwater1 ))
+	{
+		// Set The Plant Bowl Water tag
+		iUsed.SetTag( "water", waterLevel + 1 );
+
+		// Reduce uses remaining in pitcher
+		if( pitcherofwater1.usesLeft == 1 )
+		{
+			// Pitcher is empty
+			pitcherofwater1.usesLeft = 0;
+			pitcherofwater1.SetTag( "ContentsName", "nothing" );
+			TriggerEvent( 2100, "switchPitcherID", socket, pitcherofwater1 )
+		}
+		else 
+		{
+			// Reduce uses left in pitcher by 1
+			pitcherofwater1.usesLeft--;
+			pitcherofwater1.Refresh();
+		}
+		socket.SysMessage( "You soften the dirt with water." );
+		pUser.SoundEffect( 0x4e, 1 );
+	}
+	else if( ValidateObject( pitcherofwater2 )) 
+	{
+		var waterLevel = iUsed.GetTag("water");
+		// Set The Plant Bowl Water tag
+		iUsed.SetTag("water", waterLevel + 1);
+
+		// Reduce uses remaining in pitcher
+		if( pitcherofwater2.usesLeft == 1 ) 
+		{
+			// Pitcher is empty
+			pitcherofwater2.usesLeft = 0;
+			pitcherofwater2.SetTag( "ContentsName", "nothing" );
+			TriggerEvent( 2100, "switchPitcherID", socket, pitcherofwater2 )
+		}
+		else
+		{
+			// Reduce uses left in pitcher by 1
+			pitcherofwater2.usesLeft--;
+			pitcherofwater2.Refresh();
+		}
+		socket.SysMessage( "You soften the dirt with water." );
+		pUser.SoundEffect(0x4e, 1 );
+	}
+	else
+	{
+		socket.SysMessage( "You can't use that on a plant!" );
+	}
+
+}
+
 function addPotion( pUser, iUsed, button )
 {
 	var socket = pUser.socket;
 
-	var itemOwner = GetPackOwner( iUsed, 0 );
-	if( itemOwner == null || itemOwner != pUser )
-	{
-		socket.SysMessage( GetDictionaryEntry( 1763, socket.language )); //That item must be in your backpack before it can be used.
-	}
-	else
-	{
-		pUser.socket.tempObj = iUsed;
-		pUser.SetTempTag( "ButtonPushed", button );// 7 = poison, 8 = cure, 9 = heal, 10 = strength
-		pUser.CustomTarget( 0 );
-	}
+	pUser.socket.tempObj = iUsed;
+	pUser.SetTempTag( "ButtonPushed", button );// 7 = poison, 8 = cure, 9 = heal, 10 = strength
+	pUser.CustomTarget( 0 );
 }
 
 function onCallback0( pSock, myTarget )
@@ -2063,9 +2121,7 @@ function onCallback0( pSock, myTarget )
 
 	// Check if the target is an item
 	if( !myTarget.isItem ) 
-	{
 		return false;
-	}
 
 	var potionInfo = iUsed.GetTag( "Potions" );
 	if( !potionInfo ) 
@@ -2103,13 +2159,13 @@ function onCallback0( pSock, myTarget )
 
 	if( !potionType ) 
 	{
-		pUser.SysMessage( "You don't have any strong potions of that type in your pack." );
+		pSock.SysMessage( "You don't have any strong potions of that type in your pack." );
 		return false;
 	}
 
 	if( myTarget.sectionID !== potionType[0] && myTarget.sectionID !== potionType[1] )
 	{
-		pUser.SysMessage( "You don't have any strong potions of that type in your pack." );
+		pSock.SysMessage( "You don't have any strong potions of that type in your pack." );
 		return false;
 	}
 
@@ -2123,7 +2179,7 @@ function onCallback0( pSock, myTarget )
 	var potionCount = [greaterPoison, greaterCure, greaterHeal, greaterStrength];
 	if( potionCount[potionIndex] >= maxPotionCount )
 	{
-		pUser.SysMessage( "The plant is already soaked with this type of potion!" );
+		pSock.SysMessage( "The plant is already soaked with this type of potion!" );
 		return false;
 	}
 
@@ -2139,6 +2195,8 @@ function onCallback0( pSock, myTarget )
 		myTarget.amount--;
 	else
 		myTarget.Delete();
+
+	pUser.SoundEffect(0x240, 1);
 
 	return false;
 }
@@ -2384,3 +2442,5 @@ function onTooltip( myPlant )
 
 	return tooltipText;
 }
+
+function _restorecontext_() {}
