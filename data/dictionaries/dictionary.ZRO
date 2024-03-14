@@ -5303,5 +5303,28 @@
 19100=You've successfully converted the metal.
 19101=You can only convert five hundred ingots at a time.
 19102=The item must be in your backpack to be exchanged.
+// [19110-19200] Plant Growing
+19110=You must have the item in your backpack or locked down in order to use it.
+19111=You need to plant a seed in the bowl first
+19112=You prune the plant. This plant will no longer produce resources or seeds, but will require no upkeep.
+19113=You cannot gather pollen from a mutated plant!
+19114=Too early to gather pollen
+19115=You cannot gather pollen from an unhealthy plant!
+19116=Target the plant you wish to cross-pollinate to.
+19117=You can only pollinate other specially grown plants!
+19118=This plant is not in the flowering stage. You cannot pollinate it!
+19119=You cannot pollinate an unhealthy plant!
+19120=You cannot cross-pollinate with a mutated plant!
+19121=This plant has already been pollinated!
+19122=You pollinate the plant with its own pollen.
+19123=You successfully cross - pollinate the plant.
+19124=This plant has no seeds to gather!
+19125=You gather seeds from the plant.
+19126=You can't add water to this plant.
+19127=You soften the dirt with water.
+19128=You can't use that on a plant!
+19129=You don't have any strong potions of that type in your pack.
+19130=You should only pour potions on a plant or seed!
+19131=The plant is already soaked with this type of potion!
 }
 EOF

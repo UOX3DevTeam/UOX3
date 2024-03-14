@@ -13,7 +13,7 @@ function onUseChecked( pUser, iUsed )
 	var itemPack = GetPackOwner( iUsed, 0 );
 	if(( !itemPack || itemPack != pUser ) && iUsed.movable != 3 )
 	{
-		socket.SysMessage( "You must have the item in your backpack or locked down in order to use it." );
+		socket.SysMessage( GetDictionaryEntry( 19110, socket.language ));// You must have the item in your backpack or locked down in order to use it.
 		return false;
 	}
 	else
@@ -1226,7 +1226,7 @@ function onGumpPress( socket, button, PlantGump )
 			}
 			else
 			{
-				socket.SysMessage( "You need to plant a seed in the bowl first" );
+				socket.SysMessage( GetDictionaryEntry( 19111, socket.language ));//You need to plant a seed in the bowl first
 				onUseChecked( pUser, iUsed );
 			}
 			break;
@@ -1323,7 +1323,7 @@ function onGumpPress( socket, button, PlantGump )
 		case 26:
 			iUsed.SetTag( "PlantStage", 19 );//DecorativePlant
 			socket.CloseGump( gumpID, 0 );
-			socket.SysMessage( "You prune the plant. This plant will no longer produce resources or seeds, but will require no upkeep." );
+			socket.SysMessage( GetDictionaryEntry( 19112, socket.language ));//You prune the plant. This plant will no longer produce resources or seeds, but will require no upkeep.
 			ResetPlant( iUsed );
 			iUsed.Refresh();
 			break;
@@ -1354,21 +1354,21 @@ function PollinatePlant( pUser, iUsed )
 
 	if( !CrossedPlants )
 	{
-		pSock.SysMessage( "You cannot gather pollen from a mutated plant!" );
+		pSock.SysMessage( GetDictionaryEntry( 19113, socket.language ));//You cannot gather pollen from a mutated plant!
 		return false;
 	}
 	else if( status < 7 )
 	{
-		socket.SysMessage( "Too early to gather pollen" );
+		socket.SysMessage( GetDictionaryEntry( 19114, socket.language ));//Too early to gather pollen
 		return false;
 	}
 	else if( plantHealth == 10 && plantHealth == 11 )//wilted or dying
 	{
-		socket.SysMessage( "You cannot gather pollen from an unhealthy plant!" );
+		socket.SysMessage( GetDictionaryEntry( 19115, socket.language ));//You cannot gather pollen from an unhealthy plant!
 		return false;
 	}
 	else
-		pUser.CustomTarget( 1, "Target the plant you wish to cross-pollinate to." );
+		pUser.CustomTarget( 1, GetDictionaryEntry( 19116, socket.language ));//Target the plant you wish to cross-pollinate to.
 }
 
 function onCallback1( pSock, myTarget )
@@ -1381,22 +1381,22 @@ function onCallback1( pSock, myTarget )
 
 	if( !iCrossedPlants )
 	{
-		pSock.SysMessage( "You cannot gather pollen from a mutated plant!" );
+		pSock.SysMessage( GetDictionaryEntry( 19113, pSock.language ));//You cannot gather pollen from a mutated plant!
 		return false;
 	}
 	if( status < 7 ) 
 	{
-		pSock.SysMessage( "Too early to gather pollen" );
+		pSock.SysMessage( GetDictionaryEntry( 19114, pSock.language ));
 		return false;
 	}
 	else if( plantHealth == 10 && plantHealth == 11 )//wilted or dying
 	{
-		pSock.SysMessage( "You cannot gather pollen from an unhealthy plant!" );
+		pSock.SysMessage( GetDictionaryEntry( 19115, pSock.language ));//You cannot gather pollen from an unhealthy plant!
 		return false;
 	}
 	else if( status > 7 && status < 9) 
 	{
-		pSock.SysMessage( "You can only pollinate other specially grown plants!" );
+		pSock.SysMessage( GetDictionaryEntry( 19117, pSock.language ));//You can only pollinate other specially grown plants!
 		return false;
 	}
 	else
@@ -1407,7 +1407,7 @@ function onCallback1( pSock, myTarget )
 
 		if( !tCrossedPlants )
 		{
-			pSock.SysMessage( "You cannot gather pollen from a mutated plant!" );
+			pSock.SysMessage( GetDictionaryEntry( 19113, pSock.language ));//You cannot gather pollen from a mutated plant!
 			return false;
 		}
 
@@ -1421,39 +1421,39 @@ function onCallback1( pSock, myTarget )
 
 		if( tstatus < 7 )
 		{
-			pSock.SysMessage( "This plant is not in the flowering stage. You cannot pollinate it!" );
+			pSock.SysMessage( GetDictionaryEntry( 19118, pSock.language ));//This plant is not in the flowering stage. You cannot pollinate it!
 			return false;
 		}
 		else if( tplantHealth == 10 && tplantHealth == 11 )//wilted or dying
 		{
-			pSock.SysMessage( "You cannot pollinate an unhealthy plant!" );
+			pSock.SysMessage( GetDictionaryEntry( 19119, pSock.language ));//You cannot pollinate an unhealthy plant!
 			return false;
 		}
 		else if( tstatus > 7 && tstatus < 9 )
 		{
-			pSock.SysMessage( "You can only pollinate other specially grown plants!" );
+			pSock.SysMessage( GetDictionaryEntry( 19117, pSock.language ));//You can only pollinate other specially grown plants!
 			return false;
 		}
 		else if( crossAble == 0 ) 
 		{
-			pSock.SysMessage( "You cannot cross-pollinate with a mutated plant!" );
+			pSock.SysMessage( GetDictionaryEntry( 19120, pSock.language ));//You cannot cross-pollinate with a mutated plant!
 			return false;
 		}
 		else if( Pollinated == 1) 
 		{
-			pSock.SysMessage( "This plant has already been pollinated!" );
+			pSock.SysMessage( GetDictionaryEntry( 19121, pSock.language ));//This plant has already been pollinated!
 		}
 		else if( myTarget == iUsed )
 		{
 			CrossPollinateTable( myTarget, iUsed, pSock );
 			SeedColorsSet( myTarget, iUsed );
-			pSock.SysMessage( "You pollinate the plant with its own pollen." );
+			pSock.SysMessage( GetDictionaryEntry( 19122, pSock.language ));//You pollinate the plant with its own pollen.
 		}
 		else
 		{
 			CrossPollinateTable( myTarget, iUsed, pSock );
 			SeedColorsSet( myTarget, iUsed );
-			pSock.SysMessage( "You successfully cross - pollinate the plant." );
+			pSock.SysMessage( GetDictionaryEntry( 19123, pSock.language ));//You successfully cross - pollinate the plant.
 		}
 	}
 }
@@ -1851,7 +1851,7 @@ function GatherSeeds(pUser, iUsed)
 
 	if( availableSeeds == 0)
 	{
-		socket.SysMessage("This plant has no seeds to gather!");
+		socket.SysMessage( GetDictionaryEntry( 19124, socket.language ));//This plant has no seeds to gather!
 	}
 	else 
 	{
@@ -1989,7 +1989,7 @@ function GatherSeeds(pUser, iUsed)
 		{
 			CreateDFNItem(pUser.socket, pUser, seedType, 1, "ITEM", true, hueSeeds);
 
-			socket.SysMessage("You gather seeds from the plant.")
+			socket.SysMessage( GetDictionaryEntry( 19125, socket.language ));//You gather seeds from the plant.
 
 			if( availableSeeds > 0)
 			{
@@ -2036,70 +2036,52 @@ function EmptyBowlGump( pUser, iUsed )
 	EmptyBowlGump.Free();
 }
 
-function addWater( pUser, iUsed )
+function addWater(pUser, iUsed)
 {
 	var socket = pUser.socket;
 	var waterLevel = iUsed.GetTag( "water" );
 	var pitcherofwater1 = pUser.FindItemSection( "0x1f9e" );
 	var pitcherofwater2 = pUser.FindItemSection( "0x1f9d" );
-	
-	if (waterLevel >= 4) 
+
+	// Check if water level is max
+	if( waterLevel >= 4 )
 	{
-		socket.SysMessage("You can't add water to this plant.");
+		socket.SysMessage( GetDictionaryEntry( 19126, socket.language ));//You can't add water to this plant.
 		return;
 	}
 
-	if ( ValidateObject( pitcherofwater1 ))
+	// Check if pitcher1 or pitcher2 is valid
+	if( ValidateObject( pitcherofwater1 ) || ValidateObject( pitcherofwater2 ))
 	{
-		// Set The Plant Bowl Water tag
-		iUsed.SetTag( "water", waterLevel + 1 );
-
-		// Reduce uses remaining in pitcher
-		if( pitcherofwater1.usesLeft == 1 )
-		{
-			// Pitcher is empty
-			pitcherofwater1.usesLeft = 0;
-			pitcherofwater1.SetTag( "ContentsName", "nothing" );
-			TriggerEvent( 2100, "switchPitcherID", socket, pitcherofwater1 )
-		}
-		else 
-		{
-			// Reduce uses left in pitcher by 1
-			pitcherofwater1.usesLeft--;
-			pitcherofwater1.Refresh();
-		}
-		socket.SysMessage( "You soften the dirt with water." );
-		pUser.SoundEffect( 0x4e, 1 );
-	}
-	else if( ValidateObject( pitcherofwater2 )) 
-	{
-		var waterLevel = iUsed.GetTag("water");
-		// Set The Plant Bowl Water tag
+		// Increase water level
 		iUsed.SetTag("water", waterLevel + 1);
 
 		// Reduce uses remaining in pitcher
-		if( pitcherofwater2.usesLeft == 1 ) 
+		var pitcher = ValidateObject( pitcherofwater1 ) ? pitcherofwater1 : pitcherofwater2;
+		if( pitcher.usesLeft == 1 )
 		{
 			// Pitcher is empty
-			pitcherofwater2.usesLeft = 0;
-			pitcherofwater2.SetTag( "ContentsName", "nothing" );
-			TriggerEvent( 2100, "switchPitcherID", socket, pitcherofwater2 )
+			pitcher.usesLeft = 0;
+			pitcher.SetTag( "ContentsName", "nothing" );
+			TriggerEvent( 2100, "switchPitcherID", socket, pitcher );
 		}
 		else
 		{
 			// Reduce uses left in pitcher by 1
-			pitcherofwater2.usesLeft--;
-			pitcherofwater2.Refresh();
+			pitcher.usesLeft--;
+			pitcher.Refresh();
 		}
-		socket.SysMessage( "You soften the dirt with water." );
-		pUser.SoundEffect(0x4e, 1 );
+
+		// Inform user
+		socket.SysMessage( GetDictionaryEntry( 19127, socket.language ));//You soften the dirt with water.
+		pUser.SoundEffect( 0x4e, 1 );
 	}
 	else
 	{
-		socket.SysMessage( "You can't use that on a plant!" );
+		socket.SysMessage( GetDictionaryEntry( 19128, socket.language ));//You can't use that on a plant!
 	}
-
 }
+
 
 function addPotion( pUser, iUsed, button )
 {
@@ -2159,19 +2141,19 @@ function onCallback0( pSock, myTarget )
 
 	if( !potionType ) 
 	{
-		pSock.SysMessage( "You don't have any strong potions of that type in your pack." );
+		pSock.SysMessage( GetDictionaryEntry( 19129, pSock.language ));//You don't have any strong potions of that type in your pack.
 		return false;
 	}
 
 	if( myTarget.sectionID !== potionType[0] && myTarget.sectionID !== potionType[1] )
 	{
-		pSock.SysMessage( "You don't have any strong potions of that type in your pack." );
+		pSock.SysMessage( GetDictionaryEntry( 19129, pSock.language ));//You don't have any strong potions of that type in your pack.
 		return false;
 	}
 
 	if( iUsed.GetTag( "PlantStage" ) == 14 )
 	{ //dirt bowl
-		pSock.SysMessage( "You should only pour potions on a plant or seed!" );
+		pSock.SysMessage( GetDictionaryEntry( 19130, pSock.language ));//You should only pour potions on a plant or seed!
 		return false;
 	}
 
@@ -2179,7 +2161,7 @@ function onCallback0( pSock, myTarget )
 	var potionCount = [greaterPoison, greaterCure, greaterHeal, greaterStrength];
 	if( potionCount[potionIndex] >= maxPotionCount )
 	{
-		pSock.SysMessage( "The plant is already soaked with this type of potion!" );
+		pSock.SysMessage( GetDictionaryEntry( 19131, pSock.language ));//The plant is already soaked with this type of potion!
 		return false;
 	}
 
@@ -2207,6 +2189,7 @@ function ReproductionGump( pUser, iUsed )
 	var socket = pUser.socket;
 	var ReproductionGump = new Gump;
 	socket.tempObj = iUsed;
+	var plantStage = iUsed.GetTag("PlantStage")
 
 	ReproductionGump.AddBackground( 50, 50, 200, 150, 0xE10 );
 
@@ -2227,7 +2210,7 @@ function ReproductionGump( pUser, iUsed )
 
 	ReproductionGump.AddText( 108, 67, 0x835, "Reproduction" );
 
-	if( iUsed.GetTag( "PlantStage" ) == 9 )
+	if( plantStage == 9 )
 	{
 		ReproductionGump.AddButton( 212, 67, 0xD4, 0xD4, 17, 17, 17 ); // Set to decorative
 		ReproductionGump.AddPicture( 202, 68, 0xC61 );
