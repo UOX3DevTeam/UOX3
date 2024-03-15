@@ -1,3 +1,7 @@
+18/02/2024 - Dragon Slayer/Xuri
+	Updated set and get commands (set.js, get.js) with additional ways to set/get resistance types on objects using the syntax 'set/set [type] #. Available resistance types:
+		resistarmor, resistlight, resistwater, resistcold, resistfire, resistenergy, resistpoison
+
 20/12/2023 - Dragon Slayer
 	Added Elixiers of Ingot Conversions (js ElixierOfIngots)
 
