@@ -137,6 +137,7 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	var gumpID = scriptID + 0xffff;
 	var makeID = 0;
+	var recipeID = 0;
 	var itemDetailsID = 0;
 	var timerID = 0;
 
@@ -404,38 +405,18 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 	}
 
-	if( makeID != 0 )
+	if( makeID >= 100 && makeID <= 158 )
 	{
-		if( makeID >= 100 && makeID <= 158 )
-		{
-			// These items require cloth resources. Ask player which material to use!
-			pUser.SetTempTag( "makeID", makeID );
-			pUser.SetTempTag( "timerID", timerID );
-			pSock.CustomTarget( 1, GetDictionaryEntry( 444, pSock.language )); // Select material to use.
-			//var undyedRes = pUser.ResourceCount( 0x1767, 0 );
-			//var totalRes = pUser.ResourceCount( 0x1767, -1 );
-		}
-		else
-		{
-			// Items that require leather as resource
-			MakeItem( pSock, pUser, makeID );
-			if( GetServerSetting( "ToolUseLimit" ))
-			{
-				bItem.usesLeft -= 1;
-				if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
-				{
-					bItem.Delete();
-					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
-					// Play sound effect of tool breaking
-				}
-			}			
-			pUser.StartTimer( gumpDelay, timerID, true );
-		}
+		// These items require cloth resources. Ask player which material to use!
+		pUser.SetTempTag( "makeID", makeID );
+		pUser.SetTempTag( "timerID", timerID );
+		pSock.CustomTarget( 1, GetDictionaryEntry( 444, pSock.language )); // Select material to use.
+		//var undyedRes = pUser.ResourceCount( 0x1767, 0 );
+		//var totalRes = pUser.ResourceCount( 0x1767, -1 );
 	}
-	else if( itemDetailsID != 0 )
+	else
 	{
-		pUser.SetTempTag( "ITEMDETAILS", itemDetailsID );
-		TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
+		TriggerEvent( 4039, "makeitem", pSock, bItem, makeID, 0, recipeID, null, gumpDelay, timerID, itemDetailsID, itemDetailsScriptID );
 	}
 }
 
@@ -454,8 +435,8 @@ function onCallback1( pSock, ourObj )
 	var bItem = pSock.tempObj;
 	if( ValidateObject( bItem ))
 	{
-	if( ValidateObject( ourObj ) && ourObj.isItem )
-	{
+		if( ValidateObject( ourObj ) && ourObj.isItem )
+		{
 			// Make sure targeted item is in player's backpack
 			var iPackOwner = GetPackOwner( ourObj, 0 );
 			if( ValidateObject( iPackOwner )) // Is the item in a backpack?
@@ -472,19 +453,8 @@ function onCallback1( pSock, ourObj )
 				return;
 			}
 
-		// Pass in the colour of the desired material to use for crafting
-		MakeItem( pSock, pUser, makeID, ourObj.colour );
-		if( GetServerSetting( "ToolUseLimit" ))
-		{
-			bItem.usesLeft -= 1;
-			if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
-			{
-				bItem.Delete();
-				pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
-				// Play sound effect of tool breaking
-			}
-		}		
-		pUser.StartTimer( gumpDelay, timerID, true );
+			// Pass in the colour of the desired material to use for crafting
+			TriggerEvent( 4039, "makeitem", pSock, bItem, makeID, ourObj.colour, recipeID, null, gumpDelay, timerID, 0, 0 );
 		}
 	}
 }

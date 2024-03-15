@@ -114,6 +114,8 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	var gumpID = scriptID + 0xffff;
 	var makeID = 0;
+	var resourceHue = 0;
+	var recipeID = 0;
 	var itemDetailsID = 0;
 	var timerID = 0;
 
@@ -213,24 +215,5 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 	}
 
-	if( makeID != 0 )
-	{
-		MakeItem( pSock, pUser, makeID );
-		if( GetServerSetting( "ToolUseLimit" ))
-		{
-			bItem.usesLeft -= 1;
-			if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
-			{
-				bItem.Delete();
-				pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
-				// Play sound effect of tool breaking
-			}
-		}		
-		pUser.StartTimer( gumpDelay, timerID, true );
-	}
-	else if( itemDetailsID != 0 )
-	{
-		pUser.SetTempTag( "ITEMDETAILS", itemDetailsID );
-		TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
-	}
+	TriggerEvent( 4039, "makeitem", pSock, bItem, makeID, resourceHue, recipeID, null, gumpDelay, timerID, itemDetailsID, itemDetailsScriptID );
 }
