@@ -481,7 +481,7 @@ bool CChar::SetHunger( SI08 newValue )
 		{
 			cScript *toExecute = JSMapping->GetScript( i );
 			if( toExecute != nullptr )
-				{
+			{
 				// If script returns false/0/nothing, prevent hunger from changing, and prevent
 				// other scripts with event from running
 				if( toExecute->OnHungerChange(( this ), hunger ) == 0 )
