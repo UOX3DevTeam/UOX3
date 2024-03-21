@@ -13,8 +13,10 @@ enum ClientTypes
 	CV_KR3D,
 	CV_SA2D,	// From 6.0.14.2 to 7.0.8.2, Stygian Abyss expansion client. First patcket sent is 0xEF, requires 0xB9 size-change from 3 to 5, new 0xF3 packet replacex 0x1A
 	CV_SA3D,
-	CV_HS2D,	// From 7.0.9.0 to infinity (so far), High Seas expansion client
+	CV_HS2D,	// From 7.0.9.0 to 7.0.45.89, High Seas expansion client
 	CV_HS3D,
+	CV_TOL2D,	// From 7.0.46.0 to infinity, Time of Legends expansion client (Endless Journey "started" at 7.0.61.0, but it's not an expansion)
+	CV_TOL3D,
 	CV_COUNT
 };
 
@@ -25,24 +27,24 @@ enum ClientVersions
 	CVS_400,
 	CVS_407a,
 	CVS_4011c,
-	CVS_500a,
+	CVS_500a,	// map0.mul size increased from 6144x4096 to 7168x4096
 	CVS_502a,
 	CVS_5082,
-	CVS_6000,
-	CVS_6017,
-	CVS_6050,
-	CVS_25302, // UOKR3D 2.53.0.2
+	CVS_6000,	// Felucca/Trammel no longer both use map0.mul, Trammel gets its own: map1.mul
+	CVS_6017,	// Packet updates to support container-grid in KR client, support implemented so it (in theory) will have no effect on lower versions
+	CVS_6050,	// 21 extra bytes of data added prior to initial 0x80 packet, in the form of a new clientversion packet: 0xEF
+	CVS_25302,	// UOKR3D 2.53.0.2
 	CVS_60142,
-	CVS_7000,
+	CVS_7000,	// animation packet 0xE2 replaces 0x6E, packet 0xF3 is sent instead of 0x1A (object information packet)
 	CVS_7090,
-	CVS_70130,
+	CVS_70130,	// Packet 0xA9 updated with extra information and longer City/Building names 
 	CVS_70151,
-	CVS_70160,
-	CVS_70240,
+	CVS_70160,	// Packet 0xF8 (New Character Creation) replaces 0x00 (Character Creation)
+	CVS_70240,	// Map#.mul files are now wrapped in .uop headers. This means incompability with tools, and updated emulators needed to read map correctly.
 	CVS_70300,
 	CVS_70331,
 	CVS_704565,
-	CVS_705527, // Max update range increase from 18 to 24
+	CVS_705527,	// Max update range increase from 18 to 24
 	CVS_70610,
 	CVS_COUNT
 };
@@ -94,6 +96,7 @@ private:
 	std::vector<UI08>	largePackBuffer;
 
 	std::string		xtext;
+	std::string		xtext2;
 	SI16			clickx;
 	SI16			clicky;
 	SI08			clickz;
@@ -108,6 +111,8 @@ private:
 	size_t			postAckCount;
 	PickupLocations	pSpot;
 	SERIAL			pFrom;
+
+	GenericList<CItem *> contsOpened;
 
 	SI16			pX;
 	SI16			pY;
@@ -200,6 +205,7 @@ public:
 	SI16			WalkSequence( void ) const;
 	UI16			AcctNo( void ) const;
 	std::string		XText( void );
+	std::string		XText2( void );
 	bool			CryptClient( void ) const;
 	size_t			CliSocket( void ) const;
 	UI08			CurrentSpellType( void ) const;
@@ -320,6 +326,7 @@ public:
 	void			PostAckCount( size_t newValue );
 	void			PostClear();
 	void			XText( const std::string &newValue );
+	void			XText2( const std::string &newValue );
 
 	void			Send( CPUOXBuffer *toSend );
 
@@ -344,6 +351,8 @@ public:
 	void			OpenBank( CChar *i );
 	void			OpenURL( const std::string& txt );
 
+	auto			GetContsOpenedList() -> GenericList<CItem *> *;
+
 	bool			ReceivedVersion( void ) const;
 	void			ReceivedVersion( bool value );
 
@@ -360,6 +369,7 @@ public:
 	void			SetTimer( cS_TID timerId, TIMERVAL value );
 	void			ClearTimers( void );
 	COLOUR			GetFlagColour( CChar *src, CChar *trg );
+	auto			GetHtmlFlagColour( CChar *src, CChar *trg ) -> std::string;
 
 private:
 

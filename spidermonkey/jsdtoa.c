@@ -48,6 +48,7 @@
 #include "jsutil.h" /* Added by JSIFY */
 #include "jspubtd.h"
 #include "jsnum.h"
+#include "jsbit.h"
 
 #ifdef JS_THREADSAFE
 #include "prlock.h"
@@ -540,6 +541,9 @@ static Bigint *s2b(CONST char *s, int32 nd0, int32 nd, ULong y9)
 /* Return the number (0 through 32) of most significant zero bits in x. */
 static int32 hi0bits(register ULong x)
 {
+#ifdef JS_HAS_BUILTIN_BITSCAN32
+    return( (!x) ? 32 : js_bitscan_clz32(x) );
+#else
     register int32 k = 0;
 
     if (!(x & 0xffff0000)) {
@@ -564,6 +568,7 @@ static int32 hi0bits(register ULong x)
             return 32;
     }
     return k;
+#endif /* JS_HAS_BUILTIN_BITSCAN32 */
 }
 
 
@@ -572,6 +577,15 @@ static int32 hi0bits(register ULong x)
  * least significant bit will be set unless y was originally zero. */
 static int32 lo0bits(ULong *y)
 {
+#ifdef JS_HAS_BUILTIN_BITSCAN32
+    int32 k;
+    ULong x = *y;
+
+   if (x>1)
+      *y = ( x >> (k = js_bitscan_ctz32(x)) );
+   else
+      k = ((x ^ 1) << 5);
+#else
     register int32 k;
     register ULong x = *y;
 
@@ -609,6 +623,7 @@ static int32 lo0bits(ULong *y)
             return 32;
     }
     *y = x;
+#endif /* JS_HAS_BUILTIN_BITSCAN32 */
     return k;
 }
 
@@ -2085,6 +2100,7 @@ js_dtoa(double d, int mode, JSBool biasUp, int ndigits,
     Bigint *b, *b1, *delta, *mlo, *mhi, *S;
     double d2, ds, eps;
     char *s;
+    const char *cs;
 
     if (word0(d) & Sign_bit) {
         /* set sign for everything, including 0's and NaNs */
@@ -2097,13 +2113,13 @@ js_dtoa(double d, int mode, JSBool biasUp, int ndigits,
     if ((word0(d) & Exp_mask) == Exp_mask) {
         /* Infinity or NaN */
         *decpt = 9999;
-        s = !word1(d) && !(word0(d) & Frac_mask) ? "Infinity" : "NaN";
-        if ((s[0] == 'I' && bufsize < 9) || (s[0] == 'N' && bufsize < 4)) {
+        cs = !word1(d) && !(word0(d) & Frac_mask) ? "Infinity" : "NaN";
+        if ((cs[0] == 'I' && bufsize < 9) || (cs[0] == 'N' && bufsize < 4)) {
             JS_ASSERT(JS_FALSE);
 /*          JS_SetError(JS_BUFFER_OVERFLOW_ERROR, 0); */
             return JS_FALSE;
         }
-        strcpy(buf, s);
+        strcpy(buf, cs);
         if (rve) {
             *rve = buf[3] ? buf + 8 : buf + 3;
             JS_ASSERT(**rve == '\0');
@@ -2334,8 +2350,13 @@ js_dtoa(double d, int mode, JSBool biasUp, int ndigits,
                 *s++ = '0' + (char)L;
                 if (d < eps)
                     goto ret1;
-                if (1. - d < eps)
+                if (1. - d < eps) {
+#ifdef DEBUG
+                    /* Clear d to avoid precision warning. */
+                    d = 0;
+#endif
                     goto bump_up;
+                }
                 if (++i >= ilim)
                     break;
                 eps *= 10.;
@@ -2351,8 +2372,13 @@ js_dtoa(double d, int mode, JSBool biasUp, int ndigits,
                 d -= L;
                 *s++ = '0' + (char)L;
                 if (i == ilim) {
-                    if (d > 0.5 + eps)
+                    if (d > 0.5 + eps) {
+#ifdef DEBUG
+                        /* Clear d to avoid precision warning. */
+                        d = 0;
+#endif
                         goto bump_up;
+                    }
                     else if (d < 0.5 - eps) {
                         while(*--s == '0') ;
                         s++;
@@ -2411,6 +2437,15 @@ js_dtoa(double d, int mode, JSBool biasUp, int ndigits,
             }
             d *= 10.;
         }
+#ifdef DEBUG
+        if (d != 0.0) {
+            fprintf(stderr,
+"WARNING: A loss of precision for double floating point is detected.\n"
+"         The result of any operation on doubles can be meaningless.\n"
+"         A possible cause is missing code to restore FPU state, see\n"
+"         bug 360282 for details.\n");
+        }
+#endif
         goto ret1;
     }
 

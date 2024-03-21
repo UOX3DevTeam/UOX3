@@ -159,12 +159,12 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 			}
 			else if( iDropped.name2 != "#" && potionCount > 0 && potionKeg.name2 == "#" )
 			{
-				socket.SysMessage( "Unidentified potions can only be placed in unidentified potion kegs" ); // Unidentified potions can only be placed in unidentified potion kegs
+				socket.SysMessage( GetDictionaryEntry( 2785, socket.language )); // Unidentified potions can only be placed in unidentified potion kegs" ); // Unidentified potions can only be placed in unidentified potion kegs
 				return 0;
 			}
 			else if( iDropped.name2 == "#" && potionCount > 0 && potionKeg.name2 != "#" )
 			{
-				socket.SysMessage( "Identified potions can only be placed in identified potion kegs" ); // Identified potions can only be placed in identified potion kegs
+				socket.SysMessage( GetDictionaryEntry( 2786, socket.language )); // Identified potions can only be placed in identified potion kegs
 				return 0;
 			}
 			else
@@ -186,12 +186,12 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 					if( iDropped.name2 != "#" )
 					{
 						// Set real name of keg to match real name of unidentified potion
-						var shardEra = GetServerSetting( "CoreShardEra" );
-						if( shardEra != "t2a" && shardEra != "uor" && shardEra != "td" && shardEra != "lbr" )
+						if( EraStringToNum( GetServerSetting( "CoreShardEra" )) > EraStringToNum( "lbr" ))
 						{
 							// In eras newer than LBR, true name of keg contents always shows
 							potionKeg.name = "a keg of " + iDropped.name2;
 						}
+
 						potionKeg.name2 = potionKeg.name;
 					}
 					potionKeg.SetTag( "potionSectionID", iDropped.sectionID );
@@ -242,8 +242,7 @@ function onNameRequest( potionKeg, pUser )
 	// Default name
 	var nameString = potionKeg.name;
 
-	var shardEra = GetServerSetting( "CoreShardEra" );
-	if( shardEra == "t2a" || shardEra == "uor" || shardEra == "td" || shardEra == "lbr" )
+	if( EraStringToNum( GetServerSetting( "CoreShardEra" )) < EraStringToNum( "aos" ))
 	{
 		// Prior to Publish 15, players only see true contents of potion kegs if they're the owner, or have
 		// used taste identification on it
@@ -347,8 +346,7 @@ function onTooltip( potionKeg, pSocket )
 	}
 	else
 	{
-		var shardEra = GetServerSetting( "CoreShardEra" );
-		if( shardEra == "t2a" || shardEra == "uor" || shardEra == "td" || shardEra == "lbr" )
+		if( EraStringToNum( GetServerSetting( "CoreShardEra" )) < EraStringToNum( "aos" ))
 		{
 			// Show unidentified tag to players who don't know the contents of the keg
 			if( potionKeg.name2 != "#" && ( !ValidateObject( potionKeg.owner ) || ( ValidateObject( potionKeg.owner ) && potionKeg.owner != pUser )))

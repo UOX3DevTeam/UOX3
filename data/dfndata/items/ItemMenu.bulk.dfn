@@ -9199,6 +9199,8 @@ ADDITEM=townstonedeed
 ADDITEM=guildstonedeed
 0x14F0=Player vendor deed
 ADDITEM=playervendordeed
+0x14F0=Hair Restyle Deed
+ADDITEM=hairrestyledeed
 <=Previous Menu
 ITEMMENU=4
 }
@@ -9293,8 +9295,10 @@ ITEMMENU=4
 provisions.dfn
 0x0a58=a bedroll
 ADDITEM=0x0a58
-0x14EB=world map
-ADDITEM=0x14EB
+0x14EC=small world map
+ADDITEM=smallworldmap
+0x14EC=large world map
+ADDITEM=largeworldmap
 0x175d=oil cloth
 ADDITEM=oilcloth
 <=Previous Menu
@@ -11913,8 +11917,12 @@ ITEMMENU=7
 [ITEMMENU 113]
 {
 misc_magic.dfn
-0x0efa=a spellbook
+0x0efa=a spellbook (empty)
 ADDITEM=0x0efa
+0x0efa=a spellbook (1 to 4)
+ADDITEM=spellbook1to4
+0x0efa=a spellbook (full)
+ADDITEM=spellbook1to8
 0x1f17=a recall rune (blank)
 ADDITEM=0x1f17
 0x22c5=a runebook
@@ -12524,6 +12532,8 @@ ADDITEM=0x0fa3
 ADDITEM=0x0fa4
 0x0fa5=checkers
 ADDITEM=0x0fa5
+0x0fa6_chess=chess board
+ADDITEM=0x0fa6_chess
 0x0fa8=chess pieces
 ADDITEM=0x0fa8
 0x0FAD=backgammon game
@@ -12814,21 +12824,21 @@ ITEMMENU=9
 money.dfn
 0x0eed=gold coin
 ADDITEM=0x0eed
-0x0eed=gold coin
+0x0eed=gold coin (4)
 ADDITEM=0x0eed-4
-0x0eed=gold coin
+0x0eed=gold coin (20)
 ADDITEM=0xeed-20
 0x0ef2=silver coin
 ADDITEM=0x0ef2
-0x0ef2=silver coin
+0x0ef2=silver coin (4)
 ADDITEM=0x0ef2-4
-0x0ef2=silver coin
+0x0ef2=silver coin (20)
 ADDITEM=0x0ef2-20
 0x0eea=copper coin
 ADDITEM=0x0eea
-0x0eeb=copper coin
+0x0eeb=copper coin (4)
 ADDITEM=0x0eea-4
-0x0eec=copper coin
+0x0eec=copper coin (20)
 ADDITEM=0x0eea-20
 <=Previous Menu
 ITEMMENU=9
@@ -12984,8 +12994,8 @@ ITEMMENU=125
 [ITEMMENU 131]
 {
 misc_resources.dfn
-0x14ec=blank map
-ADDITEM=0x14ec
+0x14eb=blank map
+ADDITEM=0x14eb
 0x1876=iron wire
 ADDITEM=0x1876
 0x1877=silver wire
@@ -13919,4 +13929,327 @@ ADDITEM=specialbeardonlydye
 ADDITEM=specialhairdye
 <=Previous Menu
 ITEMMENU=9
+}
+
+[ITEMMENU 251]
+{
+holidays=Menu
+<=Halloween Food
+ITEMMENU=252
+<=Halloween Pumpkins
+ITEMMENU=253
+<=Halloween Decoration
+ITEMMENU=254
+<=Christmas Food
+ITEMMENU=255
+<=Christmas Addons
+ITEMMENU=256
+<=Christmas Decoration
+ITEMMENU=257
+<=Christmas Misc
+ITEMMENU=258
+<=Previous Menu
+ITEMMENU=9
+}
+
+[ITEMMENU 252]
+{
+halloween.dfn
+0x0F8A=Red Licorice
+ADDITEM=RedLicorice
+0x09D0=Caramel Apple
+ADDITEM=CaramelApple
+0x105D=Rock Candy
+ADDITEM=RockCandy
+0x09D0=Candied Apple
+ADDITEM=CandiedApple
+0x105D=brightly colored rock candy
+ADDITEM=brightlycoloredrockcandy
+0x0F8A=Black Licorice
+ADDITEM=BlackLicorice
+0x160C=Mr Plain's Cookies
+ADDITEM=MrPlainsCookies
+0x1040=Pumpkin Pizza
+ADDITEM=pumpkinpizza
+0x9e9=Creepy Cake
+ADDITEM=CreepyCake
+0x09c7=Harvest Wine
+ADDITEM=HarvestWine
+0x09ad=Murky Milk
+ADDITEM=MurkyMilk
+0x468D=lollipop
+ADDITEM=lollipop1
+0x468E=lollipop
+ADDITEM=lollipop2
+0x468F=lollipop
+ADDITEM=lollipop3
+0x469e=wrapped candy
+ADDITEM=wrappedcandy
+0x468C=jellybeans
+ADDITEM=jellybeans
+0x469D=taffy
+ADDITEM=taffy
+0x4690=nougat swirl
+ADDITEM=nougatswirl
+0x9D30=Tray of Pumpkin Spice Cider
+ADDITEM=TrayofPumpkinSpiceCider
+0x9D32=Tray Of Candy Apples
+ADDITEM=TrayOfCandyApples
+<=Previous Menu
+ITEMMENU=251
+}
+
+[ITEMMENU 253]
+{
+halloween.dfn
+0x992D=Jack O' Lantern Carving Kit
+ADDITEM=PumpkinCarvingKit
+0x992E=Jack O' Lantern Carving Kit (East)
+ADDITEM=PumpkinCarvingKitEast
+0x992F=Carvable Pumpkin
+ADDITEM=CarvablePumpkin
+0x9D22=Carvable Gord
+ADDITEM=CarvableGord
+0x9930=Rotten Pumpkin
+ADDITEM=tallrottenpumpkin
+0x0C6B=jack o lantern (2006)
+ADDITEM=2006jackolantern
+0x0C6A=Pumpkin (2006)
+ADDITEM=2006pumpkinhalloween
+0x4694=menacing jack o lantern
+ADDITEM=menacingjackolantern
+0x4698=Leering jack o lantern
+ADDITEM=Leeringjackolantern
+0x9934=Unlit Tall Witch
+ADDITEM=tallwitch
+0x9935=Unlit Tall UO
+ADDITEM=talluo
+0x9939=Unlit Tall Ankh
+ADDITEM=tallankh
+0x993D=Unlit Tall Spider
+ADDITEM=tallspider
+0x9941=Unlit Tall Bat
+ADDITEM=tallbat
+0x9945=Unlit Tall Skull
+ADDITEM=tallskull
+0x9949=Unlit Tall Demon
+ADDITEM=talldemon
+0x994D=Unlit Tall Spirit
+ADDITEM=tallspirit
+0x9951=Unlit Tall Scalele
+ADDITEM=tallscalele
+0x9D23=Unlit Gord Tall witch
+ADDITEM=gordtallwitch
+0x9D27=Unlit Gord Tall Zombie
+ADDITEM=gordtallzombie
+<=Previous Menu
+ITEMMENU=251
+}
+
+[ITEMMENU 254]
+{
+halloween.dfn
+0x10d6=halloween small web left
+ADDITEM=2008SmallWebleft
+0x10d7=halloween small web right
+ADDITEM=2008SmallWebright
+0x42BD=Grim Warning
+ADDITEM=GrimWarning
+0x42B5=Skulls On Pike
+ADDITEM=SkullsOnPike
+0x4688=black cat statue
+ADDITEM=blackcat
+0x4689=black cat statue (East)
+ADDITEM=blackcateast
+0x469B=pumpkin scarecrow
+ADDITEM=pumpkinscarecrow
+0x469C=pumpkin scarecrow (East)
+ADDITEM=pumpkinscarecroweast
+0x4699=Ruined Tapestry
+ADDITEM=RuinedTapestry
+0x469A=Ruined Tapestry (East)
+ADDITEM=ruinedtapestryeast
+0x3F26=Chair in a Chost Costume
+ADDITEM=ChairInAGhostCostume
+0x3f15=Excellent Iron Maiden
+ADDITEM=ExcellentIronMaiden
+0x3F27=Halloween Guillotine
+ADDITEM=HalloweenGuillotine
+0x4a90=Painted Evil Clown Mask
+ADDITEM=PaintedEvilClownMask
+0x4a92=Painted Daemon Mask
+ADDITEM=PaintedDaemonMask
+0x4A8E=Painted Plague Mask
+ADDITEM=PaintedPlagueMask
+0x4BA5=Painted Evil JesterMask
+ADDITEM=PaintedEvilJesterMask
+0x4BA7=Painted Porcelain Mask
+ADDITEM=PaintedPorcelainMask
+0x9A1E=Obsidian Skull
+ADDITEM=ObsidianSkull
+0x9A1A=Crystal Skull
+ADDITEM=CrystalSkull
+0x9A1C=Jade Skull
+ADDITEM=JadeSkull
+0x9955=MrsTroubleMakers Head On A Spike
+ADDITEM=MrsTroubleMakersHeadOnASpike
+0x9956=Brutrins Head On A Spike
+ADDITEM=BrutrinsHeadOnASpike
+0x9957=Stethuns Head On A Spike
+ADDITEM=StethunsHeadOnASpike
+0x9958=Rakbans Head On A Spike
+ADDITEM=RakbansHeadOnASpike
+0x9959=Thatbloks Head On A Spike
+ADDITEM=ThatbloksHeadOnASpike
+0x995A=Gryphon Head On A Spike
+ADDITEM=GryphonsHeadOnASpike
+0x995B=Kyronixs Head On A Spike
+ADDITEM=KyronixsHeadOnASpike
+0x995C=misks Head On A Spike
+ADDITEM=MisksHeadOnASpike
+0x995D=Bleaks Head On A Spike
+ADDITEM=BleaksHeadOnASpike
+0x995E=Onifrks Head On A Spike
+ADDITEM=OnifrksHeadOnASpike
+0x995F=Mesannas Head On A Spike
+ADDITEM=MesannasHeadOnASpike
+<=Previous Menu
+ITEMMENU=251
+}
+
+[ITEMMENU 255]
+{
+christmas.dfn
+0x09C7=bottle Of Pink Champaine
+ADDITEM=bottleofpinkchampaine
+0x1044=Spam
+ADDITEM=spam
+0x2be2=Ginger Bread Cookie
+ADDITEM=0x2be2
+0x2be1=Ginger Bread Cookie
+ADDITEM=0x2be1
+0x2bdd=Red Candy Cane
+ADDITEM=0x2bdd
+0x2bde=Red Candy Cane
+ADDITEM=0x2bde
+0x2bdf=Green Candy Cane
+ADDITEM=0x2bdf
+0x2be0=Green Candy Cane
+ADDITEM=0x2be0
+<=Previous Menu
+ITEMMENU=251
+}
+
+[ITEMMENU 256]
+{
+christmas.dfn
+0x14F0=Holiday Tree Deed
+ADDITEM=holidaytreedeed
+0x14F0=Deed For A Potted Plant
+ADDITEM=pottedplantdeed
+0x14F0=Wreath Deed
+ADDITEM=wreathdeed
+<=Previous Menu
+ITEMMENU=251
+}
+
+[ITEMMENU 257]
+{
+christmas.dfn
+0x0E2D=T2A Snow Globe
+ADDITEM=snowglobe_t2a
+0x0E2D=LBR Snow Globe
+ADDITEM=snowglobe_lbr
+0x0E2D=AOS Snow Globe
+ADDITEM=snowglobe_aos
+0x0E2D=TOL Snow Globe
+ADDITEM=snowglobe_tol
+0x1C12=Holiday Bell
+ADDITEM=holidaybell
+0x2378=A Decorative Topiary
+ADDITEM=0x2378
+0x2376=A Festive Cactus
+ADDITEM=0x2376
+0x4214=A Decorative Rocking Horse
+ADDITEM=0x4214
+0x46FA=A Red Angel Decoration
+ADDITEM=0x46FA
+0xA12E=Wreath
+ADDITEM=0xA12E
+0xA12F=Wreath
+ADDITEM=0xA12F
+0x2bdb=Red Stocking
+ADDITEM=0x2bdb
+0x2bdc=Red Stocking
+ADDITEM=0x2bdc
+0x2bda=Green Stocking
+ADDITEM=0x2bda
+0x2bd9=Green Stocking
+ADDITEM=0x2bd9
+0x2377=A Snowy Tree
+ADDITEM=0x2377
+0x232A=Holiday Giftbox
+ADDITEM=0x232A
+0x232B=Holiday Giftbox
+ADDITEM=0x232B
+0x2331=Poinsettia
+ADDITEM=0x2331
+0x2330=Poinsettia
+ADDITEM=0x2330
+0x232F=White Snowflake
+ADDITEM=0x232F
+0x232E=Blue Snowflake
+ADDITEM=0x232E
+0x2328=Snowman
+ADDITEM=0x2328
+0x2329=Snowman
+ADDITEM=0x2329
+<=Previous Menu
+ITEMMENU=251
+}
+
+[ITEMMENU 258]
+{
+christmas.dfn
+0x14F0=Seasons Greeting Card
+ADDITEM=seasongreetings
+0x14F0=Maybe Next Year Card
+ADDITEM=maybenextyear
+0x0E76=Happy Holiday Bag
+ADDITEM=happyholidays
+0x0E76=Naughty This Year Bag
+ADDITEM=naughtythisyear
+0x13DD=Santas Gloves
+ADDITEM=santagloves
+0x19b9=Lump Of Coal
+ADDITEM=coal
+0x099A=pink Champaine Flute
+ADDITEM=pinkChampaineFlute
+0x1086=holiday timepiece
+ADDITEM=holiday_timepiece
+0x1086=wrist watch
+ADDITEM=wrist_watch
+0x913=Snowpile
+ADDITEM=snowpile
+0x170b=krampus minion boots
+ADDITEM=krampusminionboots
+0xA295=krampus minion earrings
+ADDITEM=krampusminionearrings
+0xA295=krampus minion earrings
+ADDITEM=krampusminionearrings
+0xA28F=krampus minion hat
+ADDITEM=krampusminionhat
+0x170b=krampus minion talons
+ADDITEM=krampusminiontalons
+<=Previous Menu
+ITEMMENU=251
+}
+
+[ITEMMENU 259]
+{
+cartography.dfn
+0x0fc0=Mapmakers Pen
+ADDITEM=mapmakerspen
+<=Previous Menu
+ITEMMENU=127
 }

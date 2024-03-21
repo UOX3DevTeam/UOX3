@@ -10,11 +10,61 @@ restock=15
 decay=1
 good=28
 layer=1
+sectionid=0x0efa
 }
 
 [spellbook]
 {
 get=0x0efa
+}
+
+// Pre-filled spellbooks
+[spellbook1]
+{
+get=0x0efa
+spells=0xff 0x0 0x0
+}
+
+[spellbook1to2]
+{
+get=0x0efa
+spells=0xffff 0x0 0x0
+}
+
+[spellbook1to3]
+{
+get=0x0efa
+spells=0xffffff 0x0 0x0
+}
+
+[spellbook1to4]
+{
+get=0x0efa
+spells=0xffffffff 0x0 0x0
+}
+
+[spellbook1to5]
+{
+get=0x0efa
+spells=0xffffffff 0xff 0x0
+}
+
+[spellbook1to6]
+{
+get=0x0efa
+spells=0xffffffff 0xffff 0x0
+}
+
+[spellbook1to7]
+{
+get=0x0efa
+spells=0xffffffff 0xffffff 0x0
+}
+
+[spellbook1to8]
+{
+get=0x0efa
+spells=0xffffffff 0xffffffff 0x0
 }
 
 // Used recall rune
@@ -29,6 +79,7 @@ type=50
 restock=15
 decay=1
 good=28
+sectionid=0x1f14
 }
 
 [usedrecallrune]
@@ -48,6 +99,7 @@ type=50
 restock=15
 decay=1
 good=28
+sectionid=0x1f17
 }
 
 [recallrune]
@@ -60,10 +112,12 @@ get=0x1f17
 get=base_item
 name=crystal ball
 id=0x0e2d
-weight=100
+dir=1
+weight=1000
 value=2 1
-movable=2
 good=28
+sectionid=0x0e2d
+script=5056// crystalball.js
 }
 
 [crystalball]
@@ -73,18 +127,27 @@ get=0x0e2d
 
 [0x0e2e]
 { sparkling
-get=base_item
-name=crystal ball
+get=0x0e2d
 id=0x0e2e
-weight=100
-value=2 1
-movable=2
-good=28
+sectionid=0x0e2e
 }
 
 [sparklingcrystalball]
 {
 get=0x0e2e
+}
+
+[crystalballofpetsummoning]
+{
+get=base_item
+name=crystal ball of pet summoning
+id=0x0e2e
+dir=1
+weight=1000
+value=2 1
+good=28
+script=5057// ballofpetsummoning.js
+script=2203// charges_left_tooltip.js
 }
 
 [0x2252]
@@ -96,6 +159,8 @@ weight=100
 value=22 11
 decay=1
 good=28
+origin=aos
+sectionid=0x2252
 }
 
 [paladinspellbook]
@@ -112,6 +177,8 @@ weight=100
 value=22 11
 decay=1
 good=28
+origin=aos
+sectionid=0x2253
 }
 
 [necromancerbook]
@@ -128,6 +195,8 @@ weight=100
 value=22 11
 decay=1
 good=28
+origin=sa
+sectionid=0x2d9d
 }
 
 [mysticbook]
@@ -161,5 +230,6 @@ decay=1
 maxhp=10
 good=28
 newbie
+origin=t2a
 script=5029
 }

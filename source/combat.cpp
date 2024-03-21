@@ -53,6 +53,9 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	if( cTarget->GetVisible() > 2 )
 		return false;
 
+	if( cTarget->WorldNumber() != cAttack->WorldNumber() || cTarget->GetInstanceId() != cAttack->GetInstanceId() )
+		return false;
+
 	if( !ObjInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( nullptr, cAttack, cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 		return false;
 
@@ -106,15 +109,49 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 
 	cAttack->SetTarg( cTarget );
 	cAttack->SetAttacker( cTarget );
-	cAttack->SetAttackFirst(( cTarget->GetTarg() != cAttack ));
-	if( !cTarget->IsInvulnerable() && ( !ValidateObject( cTarget->GetTarg() ) || !ObjInRange( cTarget, cTarget->GetTarg(), DIST_INRANGE )))	// Only invuln don't fight back
+
+	// If cTarget is not already an aggressor to cAttack...
+	auto cAttackOwner = cAttack->GetOwnerObj();
+	if( ValidateObject( cAttackOwner ) )
+	{
+		if( !cTarget->CheckAggressorFlag( cAttackOwner->GetSerial() ) )
+		{
+			// Add both owner and pet/hireling/summon as aggressor of cTarget!
+			cAttackOwner->AddAggressorFlag( cTarget->GetSerial() );
+			cAttack->AddAggressorFlag( cTarget->GetSerial() );
+			cAttackOwner->Dirty( UT_UPDATE );
+			cAttack->Dirty( UT_UPDATE );
+		}
+	}
+	else
+	{
+		if( !cTarget->CheckAggressorFlag( cAttack->GetSerial() ))
+		{
+			// ...add cAttack as aggressor of cTarget!
+			cAttack->AddAggressorFlag( cTarget->GetSerial() );
+			cAttack->Dirty( UT_UPDATE );
+		}
+	}
+
+	// If target doesn't already have cAttack as a target, update their target selection
+	//if( !cTarget->IsInvulnerable() && ( !ValidateObject( cTarget->GetTarg() ) || !ObjInRange( cTarget, cTarget->GetTarg(), DIST_INRANGE )))	// Only invuln don't fight back
+	if( !cTarget->IsInvulnerable() && !ValidateObject( cTarget->GetTarg() ))	// Only invuln don't fight back
 	{
 		if( cTarget->GetNpcAiType() != AI_DUMMY )
 		{
 			cTarget->SetTarg( cAttack );
 			cTarget->SetAttacker( cAttack );
-			cTarget->SetAttackFirst( false );
 			returningAttack = true;
+
+			// If target is not already at war/in combat, make sure to disable their passive mode
+			if( !cTarget->IsAtWar() )
+			{
+				if( cTarget->IsNpc() )
+				{
+					cTarget->ToggleCombat();
+				}
+				cTarget->SetPassive( false );
+			}
 		}
 
 		if( cTarget->GetSocket() != nullptr )
@@ -147,7 +184,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	else
 	{
 		UI16 toPlay = cwmWorldState->creatures[cAttack->GetId()].GetSound( SND_STARTATTACK );
-		if( toPlay != 0x00 )
+		if( toPlay != 0x00 && RandomNum( 1, 3 )) // 33% chance to play the sound
 		{
 			Effects->PlaySound( cAttack, toPlay );
 		}
@@ -338,22 +375,46 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			}
 		}
 	}
-	else if( ourChar->GetTarg() != i ) // if player is alive
+	else
 	{
-		std::vector<UI16> scriptTriggers = ourChar->GetScriptTriggers();
-		for( auto scriptTrig : scriptTriggers )
+		if( ourChar->GetTarg() != i ) // if player is alive
 		{
-			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != nullptr )
+			std::vector<UI16> scriptTriggers = ourChar->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				// -1 == script doesn't exist, or returned -1
-				// 0 == script returned false, 0, or nothing - don't execute hard code
-				// 1 == script returned true or 1
-				if( toExecute->OnCombatStart( ourChar, i ) == 0 )
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
 				{
-					return;
+					// -1 == script doesn't exist, or returned -1
+					// 0 == script returned false, 0, or nothing - don't execute hard code
+					// 1 == script returned true or 1
+					if( toExecute->OnCombatStart( ourChar, i ) == 0 )
+					{
+						return;
+					}
 				}
 			}
+		}
+
+		if( i->GetTarg() != ourChar )
+		{
+			// Also trigger same event for other party in combat, if they're not already engaged in combat with this character
+			std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					// -1 == script doesn't exist, or returned -1
+					// 0 == script returned false, 0, or nothing - don't execute hard code
+					// 1 == script returned true or 1
+					if( toExecute->OnCombatStart( ourChar, i ) == 0 )
+					{
+						return;
+					}
+				}
+			}
+
 		}
 
 		if( !ourChar->GetCanAttack() ) // Is our char allowed to attack
@@ -409,7 +470,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			i->TextMessage( nullptr, 1797, TALK, false ); // Woe is me! My escort has betrayed me!
 		}
 
-		// flag them FIRST so that anything attacking them as a result of this is not flagged.
+		// flag player FIRST so that anything attacking them as a result of this is not flagged.
 		if( WillResultInCriminal( ourChar, i )) // REPSYS
 		{
 			MakeCriminal( ourChar );
@@ -427,21 +488,24 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			PetGuardAttack( ourChar, i, i );
 		}
 
-		// Send attacker message to all nearby players
-		for( auto &tSock : FindNearbyPlayers( ourChar ))
+		// Send attacker message to all nearby players, IF player is attacking someone who wasn't already fighting them
+		if( i->GetTarg() != ourChar )
 		{
-			if( tSock )
+			for( auto &tSock : FindNearbyPlayers( ourChar ))
 			{
-				// Valid socket found
-				CChar *witness = tSock->CurrcharObj();
-				if( ValidateObject( witness ))
+				if( tSock && tSock != ourChar->GetSocket() )
 				{
-					// Fetch names of attacker and target
-					std::string attackerName = GetNpcDictName( ourChar, tSock );
-					std::string targetName = GetNpcDictName( i, tSock );
+					// Valid socket found
+					CChar *witness = tSock->CurrcharObj();
+					if( ValidateObject( witness ))
+					{
+						// Fetch names of attacker and target
+						std::string attackerName = GetNpcDictName( ourChar, tSock, NRS_SPEECH );
+						std::string targetName = GetNpcDictName( i, tSock, NRS_SPEECH );
 
-					// Send an emote about attacking target to nearby witness
-					ourChar->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking %s!
+						// Send an emote about attacking target to nearby witness
+						ourChar->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking %s!
+					}
 				}
 			}
 		}
@@ -452,7 +516,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			CSocket *iSock = i->GetSocket();
 			if( iSock != nullptr )
 			{
-				std::string attackerName = GetNpcDictName( ourChar, iSock );
+				std::string attackerName = GetNpcDictName( ourChar, iSock, NRS_SPEECH );
 				i->TextMessage( iSock, 1281, EMOTE, 1, attackerName.c_str() ); // %s is attacking you!
 			}
 		}
@@ -463,10 +527,24 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 
 		if( i->GetNpcAiType() != AI_GUARD && !ValidateObject( i->GetTarg() ))
 		{
+			// Set ourChar as attacker of target, if target has no target? Should this check if it has an Attacker instead?
 			i->SetAttacker( ourChar );
-			i->SetAttackFirst( false );
 		}
-		ourChar->SetAttackFirst( true );
+
+		// Add ourChar as an aggressor to the target, if target is not already an aggressor to ourChar!
+		if( !i->CheckAggressorFlag( ourChar->GetSerial() ))
+		{
+			if( !ourChar->CheckAggressorFlag( i->GetSerial() ))
+			{
+				ourChar->AddAggressorFlag( i->GetSerial() );
+			}
+			else
+			{
+				ourChar->UpdateAggressorFlagTimestamp( i->GetSerial() );
+			}
+			ourChar->Dirty( UT_UPDATE );
+		}
+
 		ourChar->SetAttacker( i );
 		AttackTarget( i, ourChar );
 	}
@@ -502,22 +580,7 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 	if( !StartAttack( cAttack, cTarget )) // Is the char allowed to initiate combat with the target?
 		return;
 
-	// If the target is an innocent, not a racial or guild ally/enemy, then flag attacker as criminal
-	// and, of course, call the guards ;>
-	if( WillResultInCriminal( cAttack, cTarget ))
-	{
-		MakeCriminal( cAttack );
-		bool regionGuarded = ( cTarget->GetRegion()->IsGuarded() );
-		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded )
-		{
-			if( cTarget->IsNpc() && cTarget->GetNpcAiType() != AI_GUARD && cwmWorldState->creatures[cTarget->GetId()].IsHuman() )
-			{
-				cTarget->TextMessage( nullptr, 1282, TALK, true ); // Help! Guards! I've been attacked!
-				CallGuards( cTarget, cAttack );
-			}
-		}
-	}
-	if( cAttack->DidAttackFirst() )
+	if( cAttack->CheckAggressorFlag( cTarget->GetSerial() ))
 	{
 		// Send attacker message to all nearby players
 		for( auto &tSock : FindNearbyPlayers( cAttack ))
@@ -529,8 +592,8 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 				if( ValidateObject( witness ))
 				{
 					// Fetch names of attacker and target
-					std::string attackerName = GetNpcDictName( cAttack, tSock );
-					std::string targetName = GetNpcDictName( cTarget, tSock );
+					std::string attackerName = GetNpcDictName( cAttack, tSock, NRS_SPEECH );
+					std::string targetName = GetNpcDictName( cTarget, tSock, NRS_SPEECH );
 
 					// Send an emote about attacking target to nearby witness
 					cAttack->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking target
@@ -543,7 +606,7 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 			CSocket *iSock = cTarget->GetSocket();
 			if( iSock != nullptr )
 			{
-				std::string attackerName = GetNpcDictName( cAttack, iSock );
+				std::string attackerName = GetNpcDictName( cAttack, iSock, NRS_SPEECH );
 				cTarget->TextMessage( iSock, 1281, EMOTE, 1, attackerName.c_str() ); // %s is attacking you!
 			}
 		}
@@ -1855,7 +1918,7 @@ void CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI1
 
 	if( cwmWorldState->ServerData()->CombatDisplayHitMessage() && targSock != nullptr )
 	{
-		std::string attackerName = GetNpcDictName( mChar, targSock );
+		std::string attackerName = GetNpcDictName( mChar, targSock, NRS_SPEECH );
 
 		// Don't show hit messages for very low amounts of damage
 		if( damage < 5 )
@@ -2235,7 +2298,7 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 		damage = std::min( damage, static_cast<R32>( baseDamage * 4 ));
 	}
 
-	return static_cast<SI16>( RoundNumber( damage ));
+	return static_cast<SI16>( std::round( damage ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2373,7 +2436,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					}
 					else if( serverData->ExpansionShieldParry() < ER_AOS )
 					{
-						// Pre-AoS/Pub15/UOR
+						// Pre-AoS/LBR/UOR
 						// FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage Absorbed = AR of Shield
 						if( getFightSkill == ARCHERY )
 						{
@@ -2421,7 +2484,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					}
 					/*else
 					{
-						// Old Pre-AoS (~Publish 15) block with shield
+						// Old Pre-AoS (LBR, ~Publish 15) block with shield
 						damage -= HalfRandomNum( shield->GetResist( PHYSICAL ));
 						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
 
@@ -2573,7 +2636,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 		}
 		case POISON:		//	POISON Damage
 			damageModifier = ( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType ) / 100 );
-			damage = static_cast<SI16>( RoundNumber(( static_cast<R32>( baseDamage ) - ( static_cast<R32>( baseDamage ) * damageModifier ))));
+			damage = static_cast<SI16>( std::round(( static_cast<R32>( baseDamage ) - ( static_cast<R32>( baseDamage ) * damageModifier ))));
 			break;
 		default:			//	Elemental damage
 			getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType ));
@@ -2585,7 +2648,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 		damage -= static_cast<R32>(( static_cast<R32>( getDef ) * static_cast<R32>( attSkill )) / 750 );
 	}
 
-	return static_cast<SI16>( RoundNumber( damage ));
+	return static_cast<SI16>( std::round( damage ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2635,8 +2698,8 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 		damage = RandomNum( 0, 4 );
 	}
 
-	// Half remaining damage by 2 if PUB15 or earlier
-	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_PUB15 )
+	// Half remaining damage by 2 if LBR (Pub15) or earlier
+	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR )
 	{
 		damage /= 2;
 	}
@@ -2685,7 +2748,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	}
 
 	// Trigger onSwing for scripts attached to attacker's weapon
-	if( mWeapon )
+	if( mWeapon != nullptr )
 	{
 		std::vector<UI16> weaponScriptTriggers = mWeapon->GetScriptTriggers();
 		for( auto scriptTrig : weaponScriptTriggers )
@@ -2701,9 +2764,11 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		}
 	}
 
-	if( !checkDist && getFightSkill == ARCHERY )
+	// Allow longer range in combat based on weapon's maxRange
+	if( !checkDist && mWeapon != nullptr && ValidateObject( mWeapon ) && mWeapon->GetMaxRange() > 1 )
 	{
-		checkDist = LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ( ourTarg->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
+		// Check line of sight and Z differences if weapon's max range is higher than 1 tile
+		checkDist = ( ourDist <= mWeapon->GetMaxRange() && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 && LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ( ourTarg->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ));
 	}
 
 	if( checkDist )
@@ -2719,7 +2784,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 
 		if( mChar.IsNpc() )
 		{
-			if( mChar.GetNpcWander() != WT_FLEE )
+			if( mChar.GetNpcWander() != WT_FLEE && mChar.GetNpcWander() != WT_SCARED )
 			{
 				UI08 charDir = Movement->Direction( &mChar, ourTarg->GetX(), ourTarg->GetY() );
 				if( mChar.GetDir() != charDir && charDir < 8 )
@@ -2751,6 +2816,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			{
 				if( mSock != nullptr )
 				{
+					mChar.SetTimer( tCHAR_TIMEOUT, BuildTimeValue( GetCombatTimeout( &mChar )));
 					mSock->SysMessage( 309 ); // You are out of ammunitions!
 				}
 				return false;
@@ -2780,10 +2846,9 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			case ER_T2A: // T2A - The Second Age
 			case ER_UOR: // UOR - Renaissance
 			case ER_TD: // TD - Third Dawn
-			case ER_LBR: // LBR - Lord Blackthorn's Revenge
-			case ER_PUB15: // PUB15 - Pub15 (Pre-AoS)
+			case ER_LBR: // LBR - Lord Blackthorn's Revenge (Publish 15)
 				// FORMULA: ( Attacker's skill + 50 / ((defender's skill + 50 )* 2 )) * 100
-				hitChance = ((( static_cast<R32>( attackSkill ) + 500.0 ) / (( static_cast<R32>( defendSkill ) + 500.0 ) * 2.0 )) * 100.0 );
+				hitChance = static_cast<R32>((( static_cast<R64>( attackSkill ) + 500.0 ) / (( static_cast<R64>( defendSkill ) + 500.0 ) * 2.0 )) * 100.0 );
 				if( hitChance < 0 )
 				{
 					hitChance = 0;
@@ -2884,18 +2949,39 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			{
 				if((( getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP ) && !RandomNum( 0, 2 )) || mChar.IsNpc() )
 				{
-					// Apply poison on target
-					ourTarg->SetPoisoned( poisonStrength );
-
-					// Set time until next time poison "ticks"
-					ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue( static_cast<R32>( GetPoisonTickTime( poisonStrength ))));
-
-					// Set time until poison wears off completely
-					ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * GetPoisonDuration( poisonStrength ))); //wear off starts after poison takes effect
-
-					if( targSock != nullptr )
+					auto doPoison = true;
+					if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && !ourTarg->IsNpc() && ourTarg->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
 					{
-						targSock->SysMessage( 282 ); // You have been poisoned!
+						doPoison = false;
+						if( targSock != nullptr )
+						{
+							targSock->SysMessage( 18735 ); // You would have been poisoned, were you not new to the land of Britannia. Be careful in the future.
+						}
+					}
+					else if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && !mChar.IsNpc() && mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
+					{
+						doPoison = false;
+						if( mSock != nullptr )
+						{
+							ourTarg->TextMessage( mSock, 18738, TALK, false ); // * The poison seems to have no effect. *
+						}
+					}
+
+					if( doPoison )
+					{
+						// Apply poison on target
+						ourTarg->SetPoisoned( poisonStrength );
+
+						// Set time until next time poison "ticks"
+						ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue( static_cast<R32>( GetPoisonTickTime( poisonStrength ))));
+
+						// Set time until poison wears off completely
+						ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * GetPoisonDuration( poisonStrength ))); //wear off starts after poison takes effect
+
+						if( targSock != nullptr )
+						{
+							targSock->SysMessage( 282 ); // You have been poisoned!
+						}
 					}
 				}
 			}
@@ -2915,6 +3001,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					{
 						ourTarg->StopSpell();
 						ourTarg->SetFrozen( false );
+						ourTarg->Dirty( UT_UPDATE );
 						targSock->SysMessage( 306 ); // Your concentration has been broken.
 					}
 				}
@@ -2961,6 +3048,12 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					toExecute->OnDefense( &mChar, ourTarg );
 				}
 			}
+		}
+
+		// Refresh aggressor flag timestamp, if it exists
+		if( mChar.CheckAggressorFlag( ourTarg->GetSerial() ))
+		{
+			mChar.UpdateAggressorFlagTimestamp( ourTarg->GetSerial() );
 		}
 	}
 
@@ -3106,6 +3199,12 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 			if( npcAttack->GetPoisoned() > 0 )
 			{
 				offensiveWeight /= 2;
+			}
+
+			// Refresh aggressor flag timestamp, if it exists
+			if( npcAttack->CheckAggressorFlag( cDefend->GetSerial() ))
+			{
+				npcAttack->UpdateAggressorFlagTimestamp( cDefend->GetSerial() );
 			}
 
 			bool monsterAreaCastAnim = false;
@@ -3359,7 +3458,7 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 	//Allow faster strikes on fleeing targets
 	if( ValidateObject( ourTarg ))
 	{
-		if( ourTarg->GetNpcWander() == WT_FLEE)
+		if( ourTarg->GetNpcWander() == WT_FLEE || ourTarg->GetNpcWander() == WT_SCARED )
 		{
 			baseValue = 10000;
 		}
@@ -3404,6 +3503,33 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 		}
 	}
 
+	// Do the same for the opposite party in combat
+	if( ValidateObject( ourTarg ))
+	{
+		scriptTriggers.clear();
+		scriptTriggers = ourTarg->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				//Check if ourTarg validates as another character. If not, don't use
+				if( !ValidateObject( ourTarg ))
+				{
+					ourTarg = nullptr;
+				}
+
+				// -1 == event doesn't exist, or returned -1
+				// 0 == script returned false, 0, or nothing - don't execute hard code
+				// 1 == script returned true or 1
+				if( toExecute->OnCombatEnd( ourTarg, mChar ) == 0 )	// if it exists and we don't want hard code, return
+				{
+					return;
+				}
+			}
+		}
+	}
+
 	if( mChar->IsNpc() && mChar->GetNpcAiType() == AI_GUARD )
 	{
 		mChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 20 ));
@@ -3422,25 +3548,37 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 	if( ValidateObject( ourTarg ) && ourTarg->GetTarg() == mChar )
 	{
 		ourTarg->SetTarg( nullptr );
-		ourTarg->SetAttacker( nullptr );
-		ourTarg->SetAttackFirst( false );
-		if( ourTarg->IsAtWar() )
+		if( ourTarg->GetAttacker() == mChar )
 		{
-			ourTarg->ToggleCombat();
+			ourTarg->SetAttacker( nullptr );
+		}
+
+		// Only remove aggressor flags if aggressor timer has expired
+		[[maybe_unused]] bool retVal1 = ourTarg->CheckAggressorFlag( mChar->GetSerial() );
+		[[maybe_unused]] bool retVal2 = mChar->CheckAggressorFlag( ourTarg->GetSerial() );
+
+		if( ourTarg->IsAtWar() && ourTarg->IsNpc() )
+		{
+			ourTarg->ToggleCombat(); // What if character is fighting OTHER characters than mChar as well?
 		}
 	}
 	mChar->SetTarg( nullptr );
 	CChar *attAttacker = mChar->GetAttacker();
 	if( ValidateObject( attAttacker ))
 	{
-		attAttacker->SetAttackFirst( false );
-		attAttacker->SetAttacker( nullptr );
+		if( attAttacker->GetAttacker() == mChar )
+		{
+			attAttacker->SetAttacker( nullptr );
+		}
+
+		// Check and remove aggressor flags if aggressor timer has expired
+		[[maybe_unused]] bool retVal1 = attAttacker->CheckAggressorFlag( mChar->GetSerial() );
+		[[maybe_unused]] bool retVal2 = mChar->CheckAggressorFlag( attAttacker->GetSerial() );
 	}
 	mChar->SetAttacker( nullptr );
-	mChar->SetAttackFirst( false );
 	if( mChar->IsAtWar() && mChar->IsNpc() )
 	{
-		mChar->ToggleCombat();
+		mChar->ToggleCombat(); // What if mChar is in combat with other characters?
 	}
 }
 
@@ -3514,12 +3652,12 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 		bool validTarg = false;
 		if( !mChar.IsDead() && ValidateObject( ourTarg ) && !ourTarg->IsFree() && ( ourTarg->IsNpc() || IsOnline(( *ourTarg ))))
 		{
-			if( !ourTarg->IsInvulnerable() && !ourTarg->IsDead() && ourTarg->GetNpcAiType() != AI_PLAYERVENDOR && ourTarg->GetVisible() == VT_VISIBLE )
+			if( !ourTarg->IsInvulnerable() && !ourTarg->IsDead() && ourTarg->GetNpcAiType() != AI_PLAYERVENDOR && ourTarg->GetVisible() == VT_VISIBLE && !ourTarg->IsEvading() )
 			{
 				if( CharInRange( &mChar, ourTarg ))
 				{
 					CItem *equippedWeapon = GetWeapon( &mChar );
-					if( GetCombatSkill( equippedWeapon ) == ARCHERY || GetCombatSkill( equippedWeapon ) == THROWING )
+					if( ValidateObject( equippedWeapon ) && equippedWeapon->GetMaxRange() > 1 )
 					{
 						if( GetDist( &mChar, ourTarg ) > equippedWeapon->GetMaxRange() )
 						{
@@ -3532,12 +3670,12 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 					{
 						HandleNPCSpellAttack( &mChar, ourTarg, GetDist( &mChar, ourTarg ));
 					}
-					else
+					else if(( mChar.IsNpc() && mChar.IsAtWar() ) || ( !mChar.IsNpc() && !mChar.IsPassive() )) // Don't trigger for players who are marked as passive combatants
 					{
 						combatHandled = HandleCombat( mSock, mChar, ourTarg );
 					}
 
-					if( !ValidateObject( ourTarg->GetTarg() ) || !ObjInRange( ourTarg, ourTarg->GetTarg(), DIST_INRANGE ))		//if the defender is swung at, and they don't have a target already, set this as their target
+					if( mChar.IsAtWar() && mChar.GetNpcWander() != WT_SCARED && ( !ValidateObject( ourTarg->GetTarg() ) || !ObjInRange( ourTarg, ourTarg->GetTarg(), DIST_INRANGE )))		//if the defender is swung at, and they don't have a target already, set this as their target
 					{
 						StartAttack( ourTarg, &mChar );
 					}
@@ -3552,7 +3690,14 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 				}
 				else
 				{
-					InvalidateAttacker( &mChar );
+					if( !ObjInRange( &mChar, ourTarg, DIST_COMBATRESETRANGE ))
+					{
+						InvalidateAttacker( &mChar );
+					}
+					else
+					{
+						validTarg = true;
+					}
 				}
 			}
 		}
@@ -3560,8 +3705,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 		{
 			mChar.SetTarg( nullptr );
 			mChar.SetAttacker( nullptr );
-			mChar.SetAttackFirst( false );
-			if( mChar.IsAtWar() )
+			if( mChar.IsAtWar() && mChar.IsNpc() )
 			{
 				mChar.ToggleCombat();
 			}
@@ -3638,7 +3782,7 @@ auto  CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, 
 	//
 	if( ValidateObject( getGuard ))
 	{
-		getGuard->SetAttackFirst( true );
+		getGuard->AddAggressorFlag( targChar->GetSerial() );
 		getGuard->SetAttacker( targChar );
 		getGuard->SetTarg( targChar );
 		getGuard->SetNpcWander( WT_FREE );
@@ -3688,7 +3832,7 @@ void CHandleCombat::PetGuardAttack( CChar *mChar, CChar *owner, CBaseObject *gua
 	if( !ValidateObject( petGuard ))
 	{
 		// No pet guard was passed into function, so let's look for one ourself
-		petGuard = Npcs->GetGuardingPet( owner, guarded );
+		petGuard = Npcs->GetGuardingFollower( owner, guarded );
 	}
 
 	if( ValidateObject( petGuard ) && ObjInRange( mChar, petGuard, cwmWorldState->ServerData()->CombatMaxRange() ))

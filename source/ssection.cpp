@@ -90,11 +90,11 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_NUMERIC,		//	DFNTAG_FZ1,
 	DFN_UPPERSTRING,	//	DFNTAG_FOOD,
 	DFN_UPPERSTRING,	//	DFNTAG_GET,
+	DFN_UPPERSTRING,	//	DFNTAG_GETUO,
 	DFN_UPPERSTRING,	//	DFNTAG_GETT2A,
 	DFN_UPPERSTRING,	//	DFNTAG_GETUOR,
 	DFN_UPPERSTRING,	//	DFNTAG_GETTD,
 	DFN_UPPERSTRING,	//	DFNTAG_GETLBR,
-	DFN_UPPERSTRING,	//	DFNTAG_GETPUB15,
 	DFN_UPPERSTRING,	//	DFNTAG_GETAOS,
 	DFN_UPPERSTRING,	//	DFNTAG_GETSE,
 	DFN_UPPERSTRING,	//	DFNTAG_GETML,
@@ -149,6 +149,8 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_DOUBLENUMERIC,	//	DFNTAG_MINING,
 	DFN_NUMERIC,		//	DFNTAG_MOVABLE,
 	DFN_STRING,			//	DFNTAG_MORE,
+	DFN_STRING,			//	DFNTAG_MORE0,
+	DFN_STRING,			//	DFNTAG_MORE1,
 	DFN_STRING,			//	DFNTAG_MORE2,
 	DFN_STRING,			//	DFNTAG_MOREX,
 	DFN_STRING,			//	DFNTAG_MOREY,
@@ -164,6 +166,7 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_NODATA,			//	DFNTAG_NOHIRELING,
 	DFN_NODATA,			//	DFNTAG_NOTRAIN,
 	DFN_NUMERIC,		//	DFNTAG_NPCAI,
+	DFN_NUMERIC,		//	DFNTAG_NPCGUILD,
 	DFN_UPPERSTRING,	//	DFNTAG_NPCLIST,
 	DFN_NUMERIC,		//	DFNTAG_NPCWANDER,
 	DFN_NUMERIC,		//	DFNTAG_OFFSPELL,
@@ -212,6 +215,7 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_STRING,			//	DFNTAG_SPAWNOBJ,
 	DFN_STRING,			//	DFNTAG_SPAWNOBJLIST,
 	DFN_NUMERIC,		//	DFNTAG_SPD,
+	DFN_STRING,			//	DFNTAG_SPELLS,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_SPELLWEAVING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_SPIRITSPEAK,
 	DFN_NUMERIC,		//	DFNTAG_SPLIT,
@@ -220,6 +224,7 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_DOUBLENUMERIC,	//	DFNTAG_STAMINAMAX,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_STRENGTH,
 	DFN_NUMERIC,		//	DFNTAG_STRADD,
+	DFN_NUMERIC,		//	DFNTAG_STEALABLE,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_STEALING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_STEALTH,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_SWORDSMANSHIP,
@@ -339,11 +344,11 @@ const std::map<std::string, DFNTAGS> strToDFNTag
 	{"FZ1"s,				DFNTAG_FZ1},
 	{"FOOD"s,				DFNTAG_FOOD},
 	{"GET"s,				DFNTAG_GET},
+	{"GET"s,				DFNTAG_GETUO},
 	{"GETT2A"s,				DFNTAG_GETT2A},
 	{"GETUOR"s,				DFNTAG_GETUOR},
 	{"GETTD"s,				DFNTAG_GETTD},
 	{"GETLBR"s,				DFNTAG_GETLBR},
-	{"GETPUB15"s,			DFNTAG_GETPUB15},
 	{"GETAOS"s,				DFNTAG_GETAOS},
 	{"GETSE"s,				DFNTAG_GETSE},
 	{"GETML"s,				DFNTAG_GETML},
@@ -403,6 +408,8 @@ const std::map<std::string, DFNTAGS> strToDFNTag
 	{"MINING"s,				DFNTAG_MINING},
 	{"MOVABLE"s,			DFNTAG_MOVABLE},
 	{"MORE"s,				DFNTAG_MORE},
+	{"MORE0"s,				DFNTAG_MORE0},
+	{"MORE1"s,				DFNTAG_MORE1},
 	{"MORE2"s,				DFNTAG_MORE2},
 	{"MOREX"s,				DFNTAG_MOREX},
 	{"MOREY"s,				DFNTAG_MOREY},
@@ -418,6 +425,7 @@ const std::map<std::string, DFNTAGS> strToDFNTag
 	{"NOHIRELING"s,			DFNTAG_NOHIRELING},
 	{"NOTRAIN"s,			DFNTAG_NOTRAIN},
 	{"NPCAI"s,				DFNTAG_NPCAI},
+	{"NPCGUILD"s,			DFNTAG_NPCGUILD},
 	{"NPCLIST"s,			DFNTAG_NPCLIST},
 	{"NPCWANDER"s,			DFNTAG_NPCWANDER},
 	{"OFFSPELL"s,			DFNTAG_OFFSPELL},
@@ -467,6 +475,7 @@ const std::map<std::string, DFNTAGS> strToDFNTag
 	{"SPAWNOBJLIST"s,		DFNTAG_SPAWNOBJLIST},
 	{"SPD"s,				DFNTAG_SPD},
 	{"SPEED"s,				DFNTAG_SPD},
+	{"SPELLS"s,				DFNTAG_SPELLS},
 	{"SPELLWEAVING"s,		DFNTAG_SPELLWEAVING},
 	{"SPIRITSPEAK"s,		DFNTAG_SPIRITSPEAK},
 	{"SPLIT"s,				DFNTAG_SPLIT},
@@ -478,6 +487,7 @@ const std::map<std::string, DFNTAGS> strToDFNTag
 	{"STRENGTH"s,			DFNTAG_STRENGTH},
 	{"ST2"s,				DFNTAG_STRADD},
 	{"STRADD"s,				DFNTAG_STRADD},
+	{"STEALABLE"s,			DFNTAG_STEALABLE},
 	{"STEALING"s,			DFNTAG_STEALING},
 	{"STEALTH"s,			DFNTAG_STEALTH},
 	{"SWORDSMANSHIP"s,		DFNTAG_SWORDSMANSHIP},
@@ -543,7 +553,7 @@ npcList( false ), itemList( false ), npcListData( "" ), itemListData( "" )
 //|	Purpose		-	Default constructor, initializing all variables
 //|						and grabbing a section from the file passed in
 //o------------------------------------------------------------------------------------------------o
-CScriptSection::CScriptSection( std::ifstream& input, DEFINITIONCATEGORIES d ) :
+CScriptSection::CScriptSection( std::istream& input, DEFINITIONCATEGORIES d ) :
 dfnCat( d ), npcList( false ), itemList( false ), npcListData( "" ), itemListData( "" )
 {
 	data.resize( 0 );
@@ -858,7 +868,7 @@ UI32 itemIndexHolder = 0;
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates section data from the input stream passed in
 //o------------------------------------------------------------------------------------------------o
-auto CScriptSection::CreateSection( std::ifstream& input ) -> void
+auto CScriptSection::CreateSection( std::istream& input ) -> void
 {
 	char line[2048];
 	std::string sLine;

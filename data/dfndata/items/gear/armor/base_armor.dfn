@@ -1,6 +1,6 @@
 // Ringmail
 
-Ringmail Gloves - Base item with shared DFN tags
+// Ringmail Gloves - Base item with shared DFN tags
 [base_ring_gloves]
 {
 get=base_item
@@ -513,6 +513,7 @@ id=0x2777
 decay=1
 good=12
 layer=0x06
+origin=se
 restock=10
 }
 
@@ -525,6 +526,7 @@ id=0x2778
 decay=1
 good=12
 layer=0x06
+origin=se
 restock=10
 }
 
@@ -537,6 +539,7 @@ id=0x277d
 decay=1
 good=12
 layer=0x0d
+origin=se
 restock=10
 }
 
@@ -549,6 +552,7 @@ id=0x2780
 decay=1
 good=12
 layer=0x13
+origin=se
 restock=10
 }
 
@@ -561,6 +565,7 @@ id=0x2781
 decay=1
 good=12
 layer=0x06
+origin=se
 restock=10
 }
 
@@ -573,6 +578,7 @@ id=0x2784
 decay=1
 good=12
 layer=0x06
+origin=se
 restock=10
 }
 
@@ -585,6 +591,7 @@ id=0x2785
 decay=1
 good=12
 layer=0x06
+origin=se
 restock=10
 }
 
@@ -597,6 +604,7 @@ id=0x2788
 decay=1
 good=12
 layer=0x18
+origin=se
 restock=10
 }
 
@@ -609,6 +617,7 @@ id=0x2789
 decay=1
 good=12
 layer=0x06
+origin=se
 restock=10
 }
 
@@ -621,6 +630,7 @@ id=0x236c
 decay=1
 good=12
 layer=0x06
+origin=se
 restock=10
 }
 
@@ -633,6 +643,7 @@ id=0x278d
 decay=1
 good=12
 layer=0x17
+origin=se
 restock=10
 }
 
@@ -645,6 +656,7 @@ id=0x2774
 decay=1
 good=15
 layer=0x06
+origin=se
 restock=10
 }
 
@@ -657,6 +669,7 @@ id=0x2775
 decay=1
 good=15
 layer=0x06
+origin=se
 restock=10
 }
 
@@ -669,6 +682,7 @@ id=0x2779
 decay=1
 good=12
 layer=0x0a
+origin=se
 restock=10
 }
 
@@ -683,6 +697,7 @@ id=0x278e
 decay=1
 good=13
 layer=0x06
+origin=se
 restock=10
 }
 
@@ -695,6 +710,7 @@ id=0x2790
 decay=1
 good=13
 layer=0x0c
+origin=se
 restock=10
 }
 
@@ -707,6 +723,7 @@ id=0x2791
 decay=1
 good=13
 layer=0x04
+origin=se
 restock=10
 }
 
@@ -719,6 +736,7 @@ id=0x2792
 decay=1
 good=13
 layer=0x07
+origin=se
 restock=10
 }
 
@@ -731,6 +749,7 @@ id=0x2793
 decay=1
 good=13
 layer=0x0d
+origin=se
 restock=10
 }
 
@@ -745,6 +764,7 @@ id=0x2776
 decay=1
 good=13
 layer=0x06
+origin=se
 restock=10
 }
 
@@ -757,6 +777,7 @@ id=0x277a
 decay=1
 good=13
 layer=0x0a
+origin=se
 restock=10
 }
 
@@ -769,6 +790,7 @@ id=0x277b
 decay=1
 good=13
 layer=0x0d
+origin=se
 restock=10
 }
 
@@ -781,6 +803,7 @@ id=0x277e
 decay=1
 good=13
 layer=0x13
+origin=se
 restock=10
 }
 
@@ -793,6 +816,7 @@ id=0x2786
 decay=1
 good=13
 layer=0x18
+origin=se
 restock=10
 }
 
@@ -805,6 +829,7 @@ id=0x278a
 decay=1
 good=13
 layer=0x17
+origin=se
 restock=10
 }
 
@@ -819,6 +844,7 @@ id=0x277c
 decay=1
 good=13
 layer=0x0d
+origin=se
 restock=10
 }
 
@@ -831,6 +857,7 @@ id=0x277f
 decay=1
 good=13
 layer=0x13
+origin=se
 restock=10
 }
 
@@ -843,6 +870,7 @@ id=0x2787
 decay=1
 good=13
 layer=0x18
+origin=se
 restock=10
 }
 
@@ -855,6 +883,7 @@ id=0x278b
 decay=1
 good=13
 layer=0x17
+origin=se
 restock=10
 }
 
@@ -867,6 +896,7 @@ id=0x279d
 decay=1
 good=13
 layer=0x0a
+origin=se
 restock=10
 }
 
@@ -881,6 +911,7 @@ id=0x2fc8
 decay=1
 good=13
 layer=0x13
+origin=ml
 restock=10
 }
 
@@ -893,6 +924,7 @@ id=0x2fc5
 decay=1
 good=13
 layer=0x0d
+origin=ml
 restock=10
 }
 
@@ -905,6 +937,7 @@ id=0x2fcb
 decay=1
 good=13
 layer=0x0d
+origin=ml
 restock=10
 }
 
@@ -917,6 +950,7 @@ id=0x2fc6
 decay=1
 good=13
 layer=0x07
+origin=ml
 restock=10
 }
 
@@ -929,6 +963,7 @@ id=0x2fc7
 decay=1
 good=13
 layer=0x0a
+origin=ml
 restock=10
 }
 
@@ -941,6 +976,7 @@ id=0x2fc9
 decay=1
 good=13
 layer=0x04
+origin=ml
 restock=10
 }
 
@@ -953,6 +989,7 @@ id=0x2fca
 decay=1
 good=13
 layer=0x04
+origin=ml
 restock=10
 }
 
@@ -967,6 +1004,7 @@ id=0x2b77
 decay=1
 good=13
 layer=0x13
+origin=ml
 restock=10
 }
 
@@ -979,6 +1017,7 @@ id=0x2b74
 decay=1
 good=13
 layer=0x0d
+origin=ml
 restock=10
 }
 
@@ -991,6 +1030,7 @@ id=0x2b79
 decay=1
 good=13
 layer=0x0d
+origin=ml
 restock=10
 }
 
@@ -1003,6 +1043,7 @@ id=0x2b75
 decay=1
 good=13
 layer=0x07
+origin=ml
 restock=10
 }
 
@@ -1015,6 +1056,7 @@ id=0x2b78
 decay=1
 good=13
 layer=0x04
+origin=ml
 restock=10
 }
 
@@ -1027,6 +1069,7 @@ id=0x2b76
 decay=1
 good=13
 layer=0x0a
+origin=ml
 restock=10
 }
 
@@ -1039,6 +1082,7 @@ id=0x2657
 decay=1
 good=13
 layer=0x13
+origin=ml
 restock=10
 }
 
@@ -1051,6 +1095,7 @@ id=0x2641
 decay=1
 good=13
 layer=0x0d
+origin=ml
 restock=10
 }
 
@@ -1063,6 +1108,7 @@ id=0x2643
 decay=1
 good=13
 layer=0x07
+origin=ml
 restock=10
 }
 
@@ -1075,6 +1121,7 @@ id=0x2645
 decay=1
 good=15
 layer=0x06
+origin=ml
 restock=10
 }
 
@@ -1087,6 +1134,7 @@ id=0x2647
 decay=1
 good=13
 layer=0x04
+origin=ml
 restock=10
 }
 
@@ -1101,6 +1149,7 @@ id=0x2b6c
 decay=1
 good=13
 layer=0x13
+origin=ml
 restock=10
 }
 
@@ -1113,6 +1162,7 @@ id=0x2b67
 decay=1
 good=13
 layer=0x0d
+origin=ml
 restock=10
 }
 
@@ -1125,6 +1175,7 @@ id=0x2b6d
 decay=1
 good=13
 layer=0x0d
+origin=ml
 restock=10
 }
 
@@ -1137,6 +1188,7 @@ id=0x2b6a
 decay=1
 good=13
 layer=0x07
+origin=ml
 restock=10
 }
 
@@ -1149,6 +1201,7 @@ id=0x2b6b
 decay=1
 good=13
 layer=0x04
+origin=ml
 restock=10
 }
 
@@ -1161,6 +1214,7 @@ id=0x2b69
 decay=1
 good=13
 layer=0x0a
+origin=ml
 restock=10
 }
 
@@ -1177,6 +1231,7 @@ id=0x2b6e
 decay=1
 good=15
 layer=0x06
+origin=ml
 restock=10
 }
 
@@ -1189,6 +1244,7 @@ id=0x2b6f
 decay=1
 good=15
 layer=0x06
+origin=ml
 restock=10
 }
 
@@ -1201,6 +1257,7 @@ id=0x2b70
 decay=1
 good=15
 layer=0x06
+origin=ml
 restock=10
 }
 
@@ -1213,6 +1270,7 @@ id=0x2b71
 decay=1
 good=15
 layer=0x06
+origin=ml
 restock=10
 }
 
@@ -1225,6 +1283,7 @@ id=0x2b72
 decay=1
 good=15
 layer=0x06
+origin=ml
 restock=10
 }
 
@@ -1237,6 +1296,7 @@ id=0x2b73
 decay=1
 good=15
 layer=0x06
+origin=ml
 restock=10
 }
 
@@ -1249,6 +1309,7 @@ id=0x2fb8
 decay=1
 good=15
 layer=0x06
+origin=ml
 restock=10
 }
 
@@ -1265,6 +1326,7 @@ id=0x0404
 decay=1
 good=13
 layer=0x13
+origin=sa
 restock=10
 }
 
@@ -1277,6 +1339,7 @@ id=0x0403
 decay=1
 good=13
 layer=0x13
+origin=sa
 restock=10
 }
 
@@ -1289,6 +1352,7 @@ id=0x0406
 decay=1
 good=13
 layer=0x0d
+origin=sa
 restock=10
 }
 
@@ -1301,6 +1365,7 @@ id=0x0405
 decay=1
 good=13
 layer=0x0d
+origin=sa
 restock=10
 }
 
@@ -1313,6 +1378,7 @@ id=0x040a
 decay=1
 good=13
 layer=0x04
+origin=sa
 restock=10
 }
 
@@ -1325,6 +1391,7 @@ id=0x0409
 decay=1
 good=13
 layer=0x04
+origin=sa
 restock=10
 }
 
@@ -1337,6 +1404,7 @@ id=0x0408
 decay=1
 good=13
 layer=0x04
+origin=sa
 restock=10
 }
 
@@ -1349,6 +1417,7 @@ id=0x0407
 decay=1
 good=13
 layer=0x04
+origin=sa
 restock=10
 }
 
@@ -1361,6 +1430,7 @@ id=0x45a4
 decay=1
 good=13
 layer=0x14
+origin=sa
 }
 
 // SA Gargish Leather Armor
@@ -1374,6 +1444,7 @@ id=0x0302
 decay=1
 good=13
 layer=0x13
+origin=sa
 restock=10
 }
 
@@ -1386,6 +1457,7 @@ id=0x0301
 decay=1
 good=13
 layer=0x13
+origin=sa
 restock=10
 }
 
@@ -1398,6 +1470,7 @@ id=0x0304
 decay=1
 good=13
 layer=0x0d
+origin=sa
 restock=10
 }
 
@@ -1410,6 +1483,7 @@ id=0x0303
 decay=1
 good=13
 layer=0x0d
+origin=sa
 restock=10
 }
 
@@ -1422,6 +1496,7 @@ id=0x0306
 decay=1
 good=13
 layer=0x07
+origin=sa
 restock=10
 }
 
@@ -1434,6 +1509,7 @@ id=0x0305
 decay=1
 good=13
 layer=0x04
+origin=sa
 restock=10
 }
 
@@ -1446,6 +1522,7 @@ id=0x0311
 decay=1
 good=13
 layer=0x07
+origin=sa
 restock=10
 }
 
@@ -1458,6 +1535,7 @@ id=0x0310
 decay=1
 good=13
 layer=0x07
+origin=sa
 restock=10
 }
 
@@ -1470,6 +1548,7 @@ id=0x457e
 decay=1
 good=13
 layer=0x14
+origin=sa
 }
 
 // SA Gargish Plate Armor
@@ -1483,6 +1562,7 @@ id=0x0308
 decay=1
 good=13
 layer=0x13
+origin=sa
 restock=10
 }
 
@@ -1495,6 +1575,7 @@ id=0x0307
 decay=1
 good=13
 layer=0x13
+origin=sa
 restock=10
 }
 
@@ -1507,6 +1588,7 @@ id=0x030a
 decay=1
 good=13
 layer=0x0d
+origin=sa
 restock=10
 }
 
@@ -1519,6 +1601,7 @@ id=0x0309
 decay=1
 good=13
 layer=0x0d
+origin=sa
 restock=10
 }
 
@@ -1531,6 +1614,7 @@ id=0x030e
 decay=1
 good=13
 layer=0x07
+origin=sa
 restock=10
 }
 
@@ -1543,6 +1627,7 @@ id=0x030d
 decay=1
 good=13
 layer=0x07
+origin=sa
 restock=10
 }
 
@@ -1555,6 +1640,7 @@ id=0x030c
 decay=1
 good=13
 layer=0x07
+origin=sa
 restock=10
 }
 
@@ -1567,6 +1653,7 @@ id=0x030b
 decay=1
 good=13
 layer=0x07
+origin=sa
 restock=10
 }
 
@@ -1581,6 +1668,7 @@ id=0x0284
 decay=1
 good=13
 layer=0x13
+origin=sa
 restock=10
 }
 
@@ -1593,6 +1681,7 @@ id=0x0283
 decay=1
 good=13
 layer=0x13
+origin=sa
 restock=10
 }
 
@@ -1605,6 +1694,7 @@ id=0x0286
 decay=1
 good=13
 layer=0x0d
+origin=sa
 restock=10
 }
 
@@ -1617,6 +1707,7 @@ id=0x0285
 decay=1
 good=13
 layer=0x0d
+origin=sa
 restock=10
 }
 
@@ -1629,6 +1720,7 @@ id=0x028a
 decay=1
 good=13
 layer=0x07
+origin=sa
 restock=10
 }
 
@@ -1641,6 +1733,7 @@ id=0x0289
 decay=1
 good=13
 layer=0x07
+origin=sa
 restock=10
 }
 
@@ -1653,6 +1746,7 @@ id=0x0288
 decay=1
 good=13
 layer=0x07
+origin=sa
 restock=10
 }
 
@@ -1665,6 +1759,7 @@ id=0x0287
 decay=1
 good=13
 layer=0x07
+origin=sa
 restock=10
 }
 
@@ -1679,6 +1774,7 @@ id=0x782e
 decay=1
 good=13
 layer=0x13
+origin=tol
 restock=10
 }
 
@@ -1691,6 +1787,7 @@ id=0x782a
 decay=1
 good=13
 layer=0x0d
+origin=tol
 restock=10
 }
 
@@ -1703,6 +1800,7 @@ id=0x782b
 decay=1
 good=13
 layer=0x0d
+origin=tol
 restock=10
 }
 
@@ -1715,6 +1813,7 @@ id=0x782d
 decay=1
 good=15
 layer=0x06
+origin=tol
 restock=10
 }
 
@@ -1727,6 +1826,7 @@ id=0x782c
 decay=1
 good=13
 layer=0x07
+origin=tol
 restock=10
 }
 
@@ -1741,6 +1841,7 @@ id=0x7822
 decay=1
 good=13
 layer=0x0d
+origin=tol
 restock=10
 }
 
@@ -1753,6 +1854,7 @@ id=0x7823
 decay=1
 good=13
 layer=0x0d
+origin=tol
 restock=10
 }
 
@@ -1765,6 +1867,7 @@ id=0x7828
 decay=1
 good=15
 layer=0x06
+origin=tol
 restock=10
 }
 
@@ -1777,6 +1880,7 @@ id=0x7824
 decay=1
 good=13
 layer=0x07
+origin=tol
 restock=10
 }
 
@@ -1789,6 +1893,7 @@ id=0x7825
 decay=1
 good=13
 layer=0x07
+origin=tol
 restock=10
 }
 
@@ -1801,6 +1906,7 @@ id=0x7826
 decay=1
 good=13
 layer=0x07
+origin=tol
 restock=10
 }
 
@@ -1813,6 +1919,7 @@ id=0x7827
 decay=1
 good=13
 layer=0x07
+origin=tol
 restock=10
 }
 
@@ -1825,6 +1932,7 @@ id=0x7829
 decay=1
 good=12
 layer=0x0a
+origin=tol
 restock=10
 }
 
@@ -1949,6 +2057,7 @@ id=0x4228
 decay=1
 good=16
 layer=0x02
+origin=sa
 restock=10
 }
 
@@ -1961,6 +2070,7 @@ id=0x4201
 decay=1
 good=16
 layer=0x02
+origin=sa
 restock=10
 }
 
@@ -1973,6 +2083,7 @@ id=0x422a
 decay=1
 good=16
 layer=0x02
+origin=sa
 restock=10
 }
 
@@ -1985,6 +2096,7 @@ id=0x4204
 decay=1
 good=16
 layer=0x02
+origin=sa
 restock=10
 }
 
@@ -1997,6 +2109,7 @@ id=0x4205
 decay=1
 good=16
 layer=0x02
+origin=sa
 restock=10
 }
 
@@ -2009,6 +2122,7 @@ id=0x4203
 decay=1
 good=16
 layer=0x02
+origin=sa
 restock=10
 }
 
@@ -2021,6 +2135,7 @@ id=0x4202
 decay=1
 good=16
 layer=0x02
+origin=sa
 restock=10
 }
 
@@ -2033,5 +2148,6 @@ id=0x4200
 decay=1
 good=16
 layer=0x02
+origin=sa
 restock=10
 }

@@ -348,7 +348,7 @@ bool CPITalkRequest::Handle( void )
 			}
 			toAdd.Font( FNT_BOLD );
 
-			std::string mCharName = GetNpcDictName( mChar );
+			std::string mCharName = GetNpcDictName( mChar, nullptr, NRS_SPEECH );
 			toAdd.SpeakerName( mCharName );
 		}
 		else
@@ -406,7 +406,7 @@ bool CPITalkRequest::Handle( void )
 				asciiTxtToSend->SpeakerSerial( mChar->GetSerial() );
 				asciiTxtToSend->SpeakerModel( mChar->GetId() );
 
-				std::string mCharName = GetNpcDictName( mChar );
+				std::string mCharName = GetNpcDictName( mChar, nullptr, NRS_SPEECH );
 				asciiTxtToSend->SpeakerName( mCharName );
 				txtToSend = asciiTxtToSend;
 
@@ -470,7 +470,7 @@ bool CPITalkRequest::Handle( void )
 					}
 					else
 					{
-						std::string mCharName = GetNpcDictName( mChar );
+						std::string mCharName = GetNpcDictName( mChar, nullptr, NRS_SPEECH );
 
 						if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE || mChar->GetVisible() == VT_PERMHIDDEN )
 						{

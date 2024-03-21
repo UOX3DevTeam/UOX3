@@ -117,38 +117,38 @@ void CSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 	{
 		c->SetRank( rank );
 
+		const double MIN_MULTIPLIER = 0.6; // Minimum rank 1 multiplier
+		const double PER_RANK_MULTIPLIER = 0.05; // Increase stats for each rank
+
+		double rankMultiplier = MIN_MULTIPLIER + (rank - 1) * PER_RANK_MULTIPLIER;
+
 		if( c->GetLoDamage() > 0 )
 		{
-			c->SetLoDamage( static_cast<SI16>(( rank * c->GetLoDamage() ) / 10 ));
+			c->SetLoDamage( static_cast<SI16>(c->GetLoDamage() * rankMultiplier));
 		}
 		if( c->GetHiDamage() > 0 )
 		{
-			c->SetHiDamage( static_cast<SI16>(( rank * c->GetHiDamage() ) / 10 ));
+			c->SetHiDamage( static_cast<SI16>(c->GetHiDamage() * rankMultiplier));
 		}
 		if( c->GetResist( PHYSICAL ) > 0 )
 		{
-			c->SetResist( static_cast<UI16>(( rank * c->GetResist( PHYSICAL )) / 10 ), PHYSICAL );
+			c->SetResist( static_cast<UI16>(c->GetResist( PHYSICAL ) * rankMultiplier), PHYSICAL );
 		}
 		if( c->GetHP() > 0 )
 		{
-			c->SetHP( static_cast<SI16>(( rank * c->GetHP() ) / 10 ));
+			c->SetHP( static_cast<SI16>(c->GetHP() * rankMultiplier));
 		}
 		if( c->GetMaxHP() > 0 )
 		{
-			c->SetMaxHP( static_cast<SI16>(( rank * c->GetMaxHP() ) / 10 ));
+			c->SetMaxHP( static_cast<SI16>(c->GetMaxHP() * rankMultiplier));
 		}
 		if( c->GetBuyValue() > 0 )
 		{
-			c->SetBuyValue( static_cast<UI32>(( rank * c->GetBuyValue() ) / 10 ));
+			c->SetBuyValue( static_cast<UI32>(c->GetBuyValue() * rankMultiplier));
 		}
 		if( c->GetMaxUses() > 0 )
 		{
-			c->SetUsesLeft( static_cast<UI16>(( rank * c->GetMaxUses() ) / 10 ));
-		}
-		if( c->GetId() == 0x22c5 && c->GetMaxHP() > 0 ) // Runebook
-		{
-			// Max charges for runebook stored in maxHP property, defaults to 10, ranges from 5-10 based on rank
-			c->SetMaxHP( static_cast<UI16>( std::max( static_cast<UI16>( 5 ), static_cast<UI16>(( rank * c->GetMaxHP() ) / 10 ))));
+			c->SetUsesLeft( static_cast<UI16>(c->GetMaxUses() * rankMultiplier));
 		}
 
 		// Convert item's rank to a value between 1 and 10, to fit rank system messages
@@ -197,425 +197,6 @@ void CSkills::RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum )
 	if( orePart->oreAmt > oreCeiling )
 	{
 		orePart->oreAmt = oreCeiling;
-	}
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	MakeOre()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Spawn Ore in players pack when he successfully uses mining skill
-//o------------------------------------------------------------------------------------------------o
-void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
-{
-	if( targRegion == nullptr || !ValidateObject( mChar ))
-		return;
-
-	const UI16 getSkill			= mChar->GetSkill( MINING );
-	const SI32 findOreChance	= RandomNum( static_cast<SI32>( 0 ), targRegion->GetOreChance() );	// find our base ore
-	SI32 sumChance				= 0;
-	bool oreFound				= false;
-	const OrePref_st *toFind		= nullptr;
-	const MiningData_st *found		= nullptr;
-	for( size_t currentOre = 0; currentOre < targRegion->GetNumOrePreferences(); ++currentOre )
-	{
-		toFind = targRegion->GetOrePreference( currentOre );
-		if( toFind == nullptr )
-			continue;
-
-		found = toFind->oreIndex;
-		if( found == nullptr )
-			continue;
-
-		sumChance += toFind->percentChance;
-		if( sumChance > findOreChance )
-		{
-			if( getSkill >= found->minSkill )
-			{
-				UI08 amtToMake = 1;
-				if( targRegion->GetChanceBigOre() >= RandomNum( 1, 100 ))
-				{
-					amtToMake = 5;
-				}
-
-				// Randomize the size of ore found
-				UI16 oreId = RandomNum( 0x19B7, 0x19BA );
-				CItem *oreItem = Items->CreateItem( &mSock, mChar, oreId, amtToMake, found->colour, OT_ITEM, true );
-				if( ValidateObject( oreItem ))
-				{
-					const std::string oreName = found->name + " ore";
-					oreItem->SetName( oreName );
-					oreItem->AddScriptTrigger( found->scriptID );
-					if( oreItem->GetCont() != nullptr )
-					{
-						mSock.SysMessage( 982, oreName.c_str() ); // You place some %s in your pack.
-					}
-				}
-				oreFound = true;
-				break;
-			}
-		}
-	}
-	if( !oreFound )
-	{
-		if( getSkill >= 850 )
-		{
-			Items->CreateRandomItem( &mSock, "digginggems" );
-			mSock.SysMessage( 983 ); // You place a gem in your pack.
-		}
-		else
-		{
-			mSock.SysMessage( 1772 ); // You do not have enough skill to mine that ore!
-		}
-	}
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	MineCheck()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Check where player is attempting to mine versus MINECHECK setting in UOX.INI
-//o------------------------------------------------------------------------------------------------o
-bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 targetZ, UI08 targetId1, UI08 targetId2 )
-{
-	switch( cwmWorldState->ServerData()->MineCheck() )
-	{
-		case 0:
-			return true;
-		case 1:
-			if( targetZ == 0 ) // check to see if we're targetting a dungeon floor
-			{
-				if( targetId1 == 0x05 )
-				{
-					if(( targetId2 >= 0x3B && targetId2 <= 0x4F ) || ( targetId2 >= 0x51 && targetId2 <= 0x53 ) || ( targetId2 == 0x6A ))
-					{
-						return true;
-					}
-				}
-			}
-			if( targetZ >= 0 ) // mountain not likely to be below 0 (but you never know, do you? =)
-			{
-				if( targetId1 != 0 && targetId2 != 0 ) // we might have a static rock or mountain
-				{
-					auto artwork = Map->ArtAt( targetX, targetY, mChar->WorldNumber() );
-					for( auto &tile : artwork )
-					{
-						auto name = tile.name();
-						if( targetZ == tile.altitude && (( name.find( "rock" ) != std::string::npos ) 
-							|| ( name.find( "mountain" ) != std::string::npos ) || ( name.find( "cave" ) != std::string::npos )))
-						{
-							return true;
-						}
-					}
-				}
-				else // or it could be a map only
-				{
-					// manually calculating the ID's if a maptype
-					auto map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
-					
-					if(( map1.name().find( "rock" ) != std::string::npos ) 
-						|| ( map1.name().find( "mountain" ) != std::string::npos ) || ( map1.name().find( "cave" ) != std::string::npos ))
-					{
-						return true;
-					}
-				}
-			}
-			break;
-		case 2:	// need to modify scripts to support this!
-			return true;
-		default:
-			mSock.SysMessage( 800 ); // Unknown mine check option, contact your shard op!
-			return true;
-	}
-	return false;
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSkills::Mine()
-//|	Modified	-	(February 19, 2000)
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Handles player's attempts to use mining skill
-//|	Notes	    -	Skill checking now implemented. You cannot mine colored ore unless you have the
-//|					proper mining skill for each ore type. -Cork
-//|					Rewrote most of it to clear up some of the mess
-//o------------------------------------------------------------------------------------------------o
-void CSkills::Mine( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CSocket& mSock = ( *s );
-	CChar *mChar = s->CurrcharObj();
-
-	// Check if item used to initialize target cursor is still within range
-	CItem *miningTool = static_cast<CItem *>( s->TempObj() );
-	s->TempObj( nullptr );
-	if( ValidateObject( miningTool ))
-	{
-		if( !CheckItemRange( mChar, miningTool ))
-		{
-			s->SysMessage( 400 ); // That is too far away!
-			return;
-		}
-	}
-
-	// Don't allow mining without a valid tool
-	if( !ValidateObject( miningTool ))
-		return;
-
-	if( mSock.GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-
-	if( !ValidateObject( mChar ))
-		return;
-
-	// Check if player targeted an item, and if so, if he's in the same world/instance as said item
-	CItem *targetItem = CalcItemObjFromSer( mSock.GetDWord( 7 ));
-	if( ValidateObject( targetItem ))
-	{
-		if( mChar->WorldNumber() != targetItem->WorldNumber() )
-			return;
-
-		if( mChar->GetInstanceId() != targetItem->GetInstanceId() )
-			return;
-	}
-
-	const SI16 targetX = mSock.GetWord( 11 );
-	const SI16 targetY = mSock.GetWord( 13 );
-	const SI08 targetZ = mSock.GetByte( 16 );
-
-	const SI16 distX = abs( mChar->GetX() - targetX );
-	const SI16 distY = abs( mChar->GetY() - targetY );
-
-	if( distX > 5 || distY > 5 )
-	{
-		mSock.SysMessage( 799 ); // You are too far away to mine that!
-		return;
-	}
-
-	const UI08 targetId1 = mSock.GetByte( 17 );
-	const UI08 targetId2 = mSock.GetByte( 18 );
-
-	if( targetZ < 28 && targetId1 == 0x0E )
-	{
-		switch( targetId2 )
-		{
-			case 0xD3:
-			case 0xDF:
-			case 0xE0:
-			case 0xE1:
-			case 0xE8:
-				GraveDig( s );		// check to see if we targeted a grave, if so, check it
-				break;
-			default:
-				break;
-		}
-	}
-
-	if( !MineCheck( mSock, mChar, targetX, targetY, targetZ, targetId1, targetId2 ))
-	{
-		mSock.SysMessage( 801 ); // You cannot mine there.
-		return;
-	}
-
-	RegenerateOre( targetX, targetY, mChar->WorldNumber() );
-	MapResource_st *orePart = MapRegion->GetResource( targetX, targetY, mChar->WorldNumber() );
-	if( orePart->oreAmt <= 0 )
-	{
-		mSock.SysMessage( 802 ); // There is no metal to mine here.
-		return;
-	}
-
-	// do action and sound
-	if( mChar->GetBodyType() == BT_GARGOYLE 
-		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientType() >= CV_SA2D )))
-	{
-		Effects->PlayNewCharacterAnimation( mChar, N_ACT_ATT, S_ACT_1H_BASH ); // action 0x00, subAction 0x03
-	}
-	else if( mChar->IsOnHorse() ) // Human/Elf, mounted, pre-v7.0.0.0
-	{
-		Effects->PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_1H, 0, 5 ); // 0x1A
-	}
-	else // Human/Elf, on foot, pre-v7.0.0.0
-	{
-		Effects->PlayCharacterAnimation( mChar, ACT_ATT_1H_BASH, 0, 7 ); // 0x0B
-	}
-
-	Effects->PlaySound( &mSock, 0x0125, true );
-
-	// Consume uses on mining tool, if tool use limits are enabled in ini
-	if( cwmWorldState->ServerData()->ToolUseLimit() )
-	{
-		auto usesLeft = miningTool->GetUsesLeft();
-		if( usesLeft > 0 )
-		{
-			usesLeft -= 1;
-			miningTool->SetUsesLeft( usesLeft );
-
-			if( usesLeft == 0 )
-			{
-				mSock.SysMessage( 10202 ); // You have worn out your tool!
-
-				// If no uses left, break tool if tool breakage is enabled in ini
-				if( cwmWorldState->ServerData()->ToolUseBreak() )
-				{
-					miningTool->Delete();
-					// SFX of tool breaking
-				}
-			}
-		}
-	}
-
-	if( CheckSkill( mChar, MINING, 0, 1000 )) // check to see if our skill is good enough
-	{
-		if( orePart->oreAmt > 0 )
-		{
-			--orePart->oreAmt;
-		}
-
-#if defined( UOX_DEBUG_MODE )
-		Console << "DBG: Mine(\"" << mChar->GetName() << "\"[" << mChar->GetSerial()
-		<< "]); --> MINING: " << mChar->GetSkill( MINING ) << "  RaceID: " << mChar->GetRace() << myendl;
-#endif
-
-		CTownRegion *targetReg = CalcRegionFromXY( targetX, targetY, mChar->WorldNumber(), mChar->GetInstanceId() );
-		if( targetReg == nullptr )
-			return;
-
-		MakeOre( mSock, mChar, targetReg );
-	}
-	else
-	{
-		mSock.SysMessage( 803 ); // You sifted through the dirt and rocks, but found nothing usable.
-		if( orePart->oreAmt > 0 && RandomNum( 0, 1 ))
-		{
-			--orePart->oreAmt;
-		}
-	}
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSkills::GraveDig()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Do GraveDigging Stuff (Should probably be replaced with an OSI-like Treasure
-//|					Hunting System based off a Resource System much like Ore and Logs)
-//o------------------------------------------------------------------------------------------------o
-void CSkills::GraveDig( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	SI16	nFame;
-	CItem *	nItemId = nullptr;
-
-	CChar *nCharId = s->CurrcharObj();
-	Karma( nCharId, nullptr, -2000 ); // Karma loss no lower than the -2 pier
-
-	// do action and sound
-	if( nCharId->GetBodyType() == BT_GARGOYLE 
-		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharId->GetSocket() == nullptr || nCharId->GetSocket()->ClientType() >= CV_SA2D )))
-	{
-		Effects->PlayNewCharacterAnimation( nCharId, N_ACT_ATT, S_ACT_1H_BASH ); // Action 0x00, subAction 0x03
-	}
-	else if( nCharId->IsOnHorse() ) // Human/Elf, mounted
-	{
-		Effects->PlayCharacterAnimation( nCharId, ACT_MOUNT_ATT_1H, 0, 5 ); // Action 0x1A
-	}
-	else // Human/Elf, on foot
-	{
-		Effects->PlayCharacterAnimation( nCharId, ACT_ATT_1H_BASH, 0, 7 ); // Action 0x0B
-	}
-
-	Effects->PlaySound( s, 0x0125, true );
-	if( !CheckSkill( nCharId, MINING, 0, 800 ))
-	{
-		s->SysMessage( 805 ); // You sifted through the dirt and found nothing.
-		return;
-	}
-
-	nFame = nCharId->GetFame();
-
-	// do action and sound (again?)
-	if( nCharId->GetBodyType() == BT_GARGOYLE 
-		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharId->GetSocket() == nullptr || nCharId->GetSocket()->ClientType() >= CV_SA2D )))
-	{
-		Effects->PlayNewCharacterAnimation( nCharId, N_ACT_ATT, S_ACT_1H_BASH ); // Action 0x00, subAction 0x03
-	}
-	else if( nCharId->IsOnHorse() ) // Human/Elf, mounted
-	{
-		Effects->PlayCharacterAnimation( nCharId, ACT_MOUNT_ATT_1H, 0, 5 ); // Action 0x1A
-	}
-	else // Human/Elf, on foot
-	{
-		Effects->PlayCharacterAnimation( nCharId, ACT_ATT_1H_BASH, 0, 7 ); // Action 0x0B
-	}
-
-	Effects->PlaySound( s, 0x0125, true );
-	CChar *spawnCreature = nullptr;
-	switch( RandomNum( 0, 12 ))
-	{
-		case 2:
-			spawnCreature = Npcs->CreateRandomNPC( "weakundeadlist" ); // Low level Undead - Random
-			s->SysMessage( 806 ); // You have disturbed the rest of a vile undead creature.
-			break;
-		case 4:
-			nItemId = Items->CreateRandomItem( s, "diggingarmor" ); // Armor and shields - Random
-			if( nItemId == nullptr )
-				break;
-
-			if( nItemId->GetId() >= 7026 && nItemId->GetId() <= 7035 )
-			{
-				s->SysMessage( 807 ); // You unearthed an old shield and placed it in your pack.
-			}
-			else
-			{
-				s->SysMessage( 808 ); // You have found an old piece armour and placed it in your pack.
-			}
-			break;
-		case 5:
-			//Random treasure between gems and gold
-			if( RandomNum( 0, 1 ))
-			{  // randomly create a gem and place in backpack
-				Items->CreateRandomItem( s, "digginggems" );
-				s->SysMessage( 809 ); // You place a gem in your pack.
-			}
-			else
-			{  // Create between 1 and 15 goldpieces and place directly in backpack
-				UI08 nAmount = RandomNum( 1, 15 );
-				Items->CreateScriptItem( s, nCharId, "0x0EED", nAmount, OT_ITEM, true );
-				Effects->GoldSound( s, nAmount );
-				s->SysMessage( 810, nAmount ); // You unearthed %i gold coins.
-			}
-			break;
-		case 6:
-			spawnCreature = Npcs->CreateRandomNPC( "weakundeadlist" ); // Low level Undead - Random
-			s->SysMessage( 806 ); // You have disturbed the rest of a vile undead creature.
-			break;
-		case 8:
-			Items->CreateRandomItem( s, "diggingweapons" );
-			s->SysMessage( 811 ); // You unearthed a old weapon and placed it in your pack.
-			break;
-		case 10:
-		case 12:
-			if( nFame < 1000 )
-			{
-				spawnCreature = Npcs->CreateRandomNPC( "weakundeadlist" ); // Med level Undead - Random
-			}
-			else
-			{
-				spawnCreature = Npcs->CreateRandomNPC( "strongundeadlist" ); // High level Undead - Random
-			}
-			s->SysMessage( 806 ); // You have disturbed the rest of a vile undead creature.
-			break;
-		default:
-			if( RandomNum( 0, 1 ))
-			{
-				Items->CreateRandomItem( s, "diggingbones" );		// Random Bones
-				s->SysMessage( 812 ); // You have unearthed some old bones and placed them in your pack.
-			}
-			else	// found an empty grave
-			{
-				s->SysMessage( 813 ); // This grave seems to be empty.
-			}
-			break;
-	}
-	if( spawnCreature != nullptr )
-	{
-		spawnCreature->SetLocation( nCharId );
 	}
 }
 
@@ -926,7 +507,7 @@ UI16 CSkills::CalculatePetControlChance( CChar *mChar, CChar *Npc )
 	// Finally, apply a 15% penalty to chance for friends of the pet trying to control
 	if( Npcs->CheckPetFriend( mChar, Npc ))
 	{
-		totalChance -= ( totalChance * 0.15 );
+		totalChance -= static_cast<SI16>( totalChance * 0.15 );
 	}
 
 	// Clamp lower chance to 20% and upper chance to 99%
@@ -982,15 +563,15 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 
 	if( !exists )
 	{
+		CSocket *mSock = s->GetSocket();
 		R32 chanceSkillSuccess = 0;
 
 		if(( highSkill - lowSkill ) <= 0 || !ValidateObject( s ) || s->GetSkill( sk ) < lowSkill )
 			return false;
 
-		if( s->IsDead() )
+		if( s->IsDead() && mSock != nullptr )
 		{
-			CSocket *sSock = s->GetSocket();
-			sSock->SysMessage( 1487 ); // You are dead and cannot gain skill.
+			mSock->SysMessage( 1487 ); // You are dead and cannot gain skill.
 			return false;
 		}
 
@@ -1027,6 +608,11 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 		// Same if chance of success is 100% already - no need to proceed!
 		if( s->GetCommandLevel() > 0 || chanceSkillSuccess == 1000 )
 		{
+			if( s->GetCommandLevel() > 0 && mSock != nullptr )
+			{
+				// Inform the counselor/gm to make it obvious why skillcheck always succeeds
+				mSock->SysMessage( 6279 ); // Skill check success guaranteed due to elevated command level!
+			}
 			skillCheck = true;
 		}
 		else
@@ -1038,7 +624,6 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 			skillCheck = ( static_cast<SI16>( chanceSkillSuccess ) >= rnd );
 		}
 
-		CSocket *mSock = s->GetSocket();
 		if( mSock != nullptr )
 		{
 			bool mageryUp = true;
@@ -1320,22 +905,6 @@ void CSkills::SkillUse( CSocket *s, UI08 x )
 		{
 			switch( x )
 			{
-				case STEALING:
-					// Check if stealing is allowed in player's current region
-					if( mChar->GetRegion()->IsSafeZone() )
-					{
-						// Player is in a safe zone where all aggressive actions are forbidden, disallow
-						s->SysMessage( 1799 ); // Hostile actions are not permitted in this safe area.
-					}
-					else if( cwmWorldState->ServerData()->RogueStatus() )
-					{
-						s->SendTargetCursor( 0, TARGET_STEALING, 1, 863 ); // What do you wish to steal?
-					}
-					else
-					{
-						s->SysMessage( 864 ); // Contact your shard operator if you want stealing available.
-					}
-					break;
 				case TRACKING:			TrackingMenu( s, TRACKINGMENUOFFSET );	break;
 				default:				s->SysMessage( 871 );					break; // That skill has not been implemented yet.
 			}
@@ -1368,303 +937,6 @@ void CSkills::SkillUse( CSocket *s, UI08 x )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSkills::RandomSteal()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Called when player targets a PC/NPC with stealing skill
-//|					instead of an item (randomly pics an item in their pack)
-//o------------------------------------------------------------------------------------------------o
-void CSkills::RandomSteal( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	CChar *npc = CalcCharObjFromSer( s->GetDWord( 7 ));
-	if( !ValidateObject( npc ))
-		return;
-
-	// Check if stealing is allowed in target char's region
-	if( npc->GetRegion()->IsSafeZone() )
-	{
-		// Target is in a safe zone where all aggressive actions are forbidden, disallow
-		s->SysMessage( 1799 ); // Hostile actions are not permitted in this safe area.
-		return;
-	}
-
-	CItem *p = npc->GetPackItem();
-	if( !ValidateObject( p ))
-	{
-		s->SysMessage( 875 ); // Bad luck, your victim doesn't have a backpack.
-		return;
-	}
-
-	CItem *item = nullptr;
-	GenericList<CItem *> *tcCont = p->GetContainsList();
-	const size_t numItems = tcCont->Num();
-
-	std::vector<CItem *> contList;
-	contList.reserve( numItems );
-	if( numItems > 0 )
-	{
-		for( item = tcCont->First(); !tcCont->Finished(); item = tcCont->Next() )
-		{
-			if( ValidateObject( item ))
-			{
-				contList.push_back( item );
-			}
-		}
-		item = contList[RandomNum( static_cast<size_t>( 0 ), ( contList.size() - 1 ))];
-	}
-	contList.clear();
-
-	if( !ValidateObject( item ))
-	{
-		s->SysMessage( 876 ); // Muahaha, your victim doesn't have possessions.
-		return;
-	}
-	DoStealing( s, mChar, npc, item );
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSkills::StealingTarget()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Called when player targets an item with stealing skill
-//o------------------------------------------------------------------------------------------------o
-void CSkills::StealingTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-
-	if( s->GetByte( 7 ) < 0x40 )
-	{
-		RandomSteal( s );
-		return;
-	}
-	CItem *item = CalcItemObjFromSer( s->GetDWord( 7 ));
-	if( !ValidateObject( item ))
-		return;
-
-	CChar *npc = FindItemOwner( item );
-	if( !ValidateObject( npc ))
-		return;
-
-	// Check if stealing is allowed in target char's region
-	if( npc->GetRegion()->IsSafeZone() )
-	{
-		// Target is in a safe zone where all aggressive actions are forbidden, disallow
-		s->SysMessage( 1799 ); // Hostile actions are not permitted in this safe area.
-		return;
-	}
-
-	if( item->GetCont() == npc || item->GetCont() == nullptr || item->IsNewbie() )
-	{
-		s->SysMessage( 874 ); // You cannot steal that.
-		return;
-	}
-	DoStealing( s, mChar, npc, item );
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSkills::DoStealing()
-//|	Date		-	2/13/2003
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Do the bulk of stealing stuff rather than having the same
-//|					code twice in RandomSteal() and StealingTarget()
-//o------------------------------------------------------------------------------------------------o
-void CSkills::DoStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
-{
-	VALIDATESOCKET( s );
-	if( npc == mChar )
-	{
-		s->SysMessage( 873 ); // You catch yourself red handed.
-		return;
-	}
-	if( npc->GetNpcAiType() == AI_PLAYERVENDOR )
-	{
-		s->SysMessage( 874 ); // You cannot steal that.
-		return;
-	}
-	CItem *itemCont = static_cast<CItem *>( item->GetCont() );
-	if( itemCont != nullptr && itemCont->GetLayer() >= IL_SELLCONTAINER && itemCont->GetLayer() <= IL_BUYCONTAINER ) // is it in the sell or buy layer of a vendor?
-	{
-		s->SysMessage( 874 ); // You cannot steal that.
-		return;
-	}
-
-	std::vector<UI16> scriptTriggers = item->GetScriptTriggers();
-	for( auto scriptTrig : scriptTriggers )
-	{
-		// Loop through attached scripts
-		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != nullptr )
-		{
-			SI08 retVal = toExecute->OnSteal( mChar, item, npc );
-			if( retVal == 1 ) // Item was not stolen, and we don't want to run hard code
-			{
-				return;
-			}
-			else if( retVal == 2 ) // item was stolen, and we don't want to run hard code
-			{
-				std::vector<UI16> targetScriptTriggers = npc->GetScriptTriggers();
-				for( auto targScriptTrig : targetScriptTriggers )
-				{
-					cScript *targToExecute = JSMapping->GetScript( targScriptTrig );
-					if( targToExecute != nullptr )
-					{
-						if( targToExecute->OnStolenFrom( mChar, npc, item ) == 1 )
-						{
-							break;
-						}
-					}
-				}
-				return;
-			}
-		}
-	}
-
-	std::string npcTargetName = GetNpcDictName( npc );
-	std::string myNpcTargetName = GetNpcDictName( npc, s );
-
-	s->SysMessage( 877, myNpcTargetName.c_str() ); // You reach into %s's pack and try to take something...
-	if( ObjInRange( mChar, npc, DIST_NEXTTILE ))
-	{
-		if( Combat->CalcDef( mChar, 0, false ) > 40 )
-		{
-			s->SysMessage( 1643 ); // Your armour is too heavy to do that
-			return;
-		}
-		SI16 stealCheck = CalcStealDiff( mChar, item );
-		if( stealCheck == -1 )
-		{
-			s->SysMessage( 1551 ); // That is too heavy
-			return;
-		}
-
-		if( mChar->GetCommandLevel() < npc->GetCommandLevel() )
-		{
-			s->SysMessage( 878 ); // You can't steal from gods.
-			return;
-		}
-		if( item->IsNewbie() )
-		{
-			s->SysMessage( 879 ); // That item has no value to you.
-			return;
-		}
-
-		const SI32 getDefOffset	= std::min( stealCheck + ( static_cast<SI32>(( Combat->CalcDef( mChar, 0, false ) - 1 ) / 10 ) * 100 ), 990 );
-		const bool canSteal		= CheckSkill( mChar, STEALING, getDefOffset, 1000);
-		if( canSteal )
-		{
-			CItem *pack = mChar->GetPackItem();
-			item->SetCont( pack );
-			s->SysMessage( 880 ); // You successfully steal that item.
-
-			std::vector<UI16> targetScriptTriggers = npc->GetScriptTriggers();
-			for( auto targScriptTrig : targetScriptTriggers )
-			{
-				cScript *toExecute = JSMapping->GetScript( targScriptTrig );
-				if( toExecute != nullptr )
-				{
-					if( toExecute->OnStolenFrom( mChar, npc, item ) == 1 )
-					{
-						return;
-					}
-				}
-			}
-		}
-		else
-		{
-			s->SysMessage( 881 ); // You failed to steal that item.
-		}
-
-		if(( !canSteal && RandomNum( 1, 5 ) == 5 ) || mChar->GetSkill( STEALING ) < RandomNum( 0, 1001 ))
-		{
-			//Did they get caught? (If they fail 1 in 5 chance, other wise their skill away from 1000 out of 1000 chance)
-			s->SysMessage( 882 ); // You have been caught!
-			if( npc->IsNpc() )
-			{
-				npc->TextMessage( nullptr, 883, TALK, false ); // Guards!! A thief is among us!
-			}
-
-			if( WillResultInCriminal( mChar, npc ))
-			{
-				MakeCriminal( mChar );
-			}
-			std::string temp;
-			std::string temp2;
-
-			if( item->GetName()[0] != '#' )
-			{
-				temp = oldstrutil::format(512, Dictionary->GetEntry( 884 ), mChar->GetNameRequest( npc ).c_str(), item->GetNameRequest( npc ).c_str() ); // // You notice %s trying to steal %s from you!
-				temp2 = Dictionary->GetEntry( 885 ); // You notice %s trying to steal %s from %s!
-			}
-			else
-			{
-				std::string tileName;
-				tileName.reserve( MAX_NAME );
-				GetTileName(( *item ), tileName );
-				temp = oldstrutil::format( 512, Dictionary->GetEntry( 884 ), mChar->GetNameRequest( npc ).c_str(), tileName.c_str() ); // You notice %s trying to steal %s from you!
-				temp2 = Dictionary->GetEntry( 885 ); // You notice %s trying to steal %s from %s!
-			}
-
-			CSocket *npcSock = npc->GetSocket();
-			if( npcSock != nullptr )
-			{
-				npcSock->SysMessage( temp );
-			}
-
-			for( auto &iSock : FindNearbyPlayers( mChar ))
-			{
-				CChar *iChar = iSock->CurrcharObj();
-				if(( iSock != s ) && (( RandomNum( 10, 20 ) == 17 ) || (( RandomNum( 0, 1 ) == 1 ) && ( iChar->GetIntelligence() >= mChar->GetIntelligence() ))))
-				{
-					temp2 = oldstrutil::format( 512, temp2, mChar->GetNameRequest( iChar ).c_str(), item->GetNameRequest( iChar ).c_str(), npcTargetName.c_str() ); // You notice %s trying to steal %s from %s!
-					iSock->SysMessage( temp2 );
-				}
-			}
-		}
-	}
-	else
-	{
-		s->SysMessage( 886 ); // You are too far away to steal that item.
-	}
-}
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CalcStealDiff()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Check if item is able to be stolen based on item type and weight vs stealing
-//|					skill, then return the min skill needed to steal the item.
-//o------------------------------------------------------------------------------------------------o
-SI16 CSkills::CalcStealDiff( CChar *c, CItem *i )
-{
-	if( i->IsLockedDown() )
-		return -1;
-
-	SI16 stealDiff = -1;
-	SI32 calcDiff, itemWeight;
-	switch( i->GetType() )
-	{
-		case IT_SPELLBOOK:		// Spellbook
-		case IT_SPAWNCONT:	// Item spawn container
-		case IT_LOCKEDSPAWNCONT:	// Locked spawn container
-		case IT_UNLOCKABLESPAWNCONT:	// Unlockable item spawn container
-		case IT_TRASHCONT:	// Trash container
-			break;
-		case IT_CONTAINER:		// Backpack
-		default:
-			if( i->GetId() == 0x14F0 ) // Deeds
-				break;
-
-			itemWeight = i->GetWeight();
-			calcDiff = static_cast<SI32>(( c->GetSkill( STEALING ) * 2 ) + 100 );  // GM thieves can steal up to 21 stones, newbie only 1 stone
-			if( calcDiff > itemWeight )
-			{
-				stealDiff = static_cast<SI16>( std::max( std::min(( static_cast<SI32>(( itemWeight + 9 ) / 20 ) * 10 ), 990 ), 0 ));
-			}
-			break;
-	}
-	return stealDiff;
-}
-
-//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSkills::Tracking()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Start tracking selected NPC/PC
@@ -1682,7 +954,7 @@ void CSkills::Tracking( CSocket *s, SI32 selection )
 	s->SetTimer( tPC_TRACKINGDISPLAY, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->TrackingRedisplayTime() )));
 	if( ValidateObject( i->GetTrackingTarget() ))
 	{
-		std::string trackingTargetName = GetNpcDictName( i->GetTrackingTarget() );
+		std::string trackingTargetName = GetNpcDictName( i->GetTrackingTarget(), nullptr, NRS_SPEECH );
 		s->SysMessage( 1644, trackingTargetName.c_str() ); // You are now tracking %s.
 	}
 	Track( i );
@@ -1776,7 +1048,7 @@ void CSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 									case EAST:		dirMessage = 897;	break; // to the East.
 									default:		dirMessage = 898;	break; // right next to you.
 								}
-								auto tempName = GetNpcDictName( tempChar );
+								auto tempName = GetNpcDictName( tempChar, nullptr, NRS_SYSTEM );
 								line = tempName + " "s + Dictionary->GetEntry( dirMessage, mLang );
 								toSend.AddResponse( cwmWorldState->creatures[id].Icon(), 0, line );
 							}
@@ -1909,7 +1181,7 @@ void CSkills::Persecute( CSocket *s )
 				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ServerSkillDelayStatus() )));
 			}
 
-			std::string targCharName = GetNpcDictName( targChar );
+			std::string targCharName = GetNpcDictName( targChar, nullptr, NRS_SPEECH );
 			targChar->TextMessage( nullptr, 974, EMOTE, 1, targCharName.c_str() ); // %s is persecuted by a ghost!
 		}
 		else
@@ -3085,7 +2357,7 @@ void CSkills::MakeItem( CreateEntry_st &toMake, CChar *player, CSocket *sock, UI
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
 			if( toExecute != nullptr )
 			{
-				toExecute->OnMakeItem( sock, player, nullptr, 0 );
+				toExecute->OnMakeItem( sock, player, nullptr, itemEntry );
 			}
 		}
 	}
@@ -3218,11 +2490,12 @@ void CallGuards( CChar *mChar, CChar *targChar );
 //|	Function	-	CSkills::Snooping()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when player snoops another PC/NPC's or a tamed animals pack
+//|					Snooping functionality now handled by skill script: js/skill/snooping.js
 //o------------------------------------------------------------------------------------------------o
 void CSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 {
 	CChar *mChar = s->CurrcharObj();
-	CSocket *tSock = target->GetSocket();
+	[[maybe_unused]] CSocket *tSock = target->GetSocket();
 
 	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
@@ -3231,111 +2504,20 @@ void CSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 		if( toExecute != nullptr )
 		{
 			// If script returns false, prevent hard-code and other scripts with event from running
-			if( toExecute->OnSnoopAttempt( target, mChar ) == 0 )
+			if( toExecute->OnSnoopAttempt( target, pack, mChar ) == 0 )
 			{
 				return;
 			}
 		}
 	}
 
-	if( target->GetCommandLevel() > mChar->GetCommandLevel() )
+	// Check for global script version of event
+	cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
+	if( toExecute != nullptr )
 	{
-		s->SysMessage( 991 ); // You failed to peek into that container.
-		if( tSock != nullptr )
+		if( toExecute->OnSnoopAttempt( target, pack, mChar ) == 0 )
 		{
-			tSock->SysMessage( 992, mChar->GetNameRequest( target ).c_str() ); // %s is snooping you!
-		}
-		return;
-	}
-
-	// Check if snooping is allowed in player's AND target's regions
-	if( mChar->GetRegion()->IsSafeZone() || target->GetRegion()->IsSafeZone() )
-	{
-		// Target is in a safe zone where all aggressive actions are forbidden, disallow
-		s->SysMessage( 1799 ); // Hostile actions are not permitted in this safe area.
-		return;
-	}
-
-	scriptTriggers.clear();
-	scriptTriggers.shrink_to_fit();
-	scriptTriggers = target->GetScriptTriggers();
-
-	if( CheckSkill( mChar, SNOOPING, 0, 1000 ))
-	{
-		s->OpenPack( pack );
-		s->SysMessage( 993 ); // You successfully peek into that container.
-
-		for( auto scriptTrig : scriptTriggers )
-		{
-			cScript *successSnoop = JSMapping->GetScript( scriptTrig );
-			if( successSnoop != nullptr )
-			{
-				// If script returns true/1, prevent other scripts with event from running
-				if( successSnoop->OnSnooped( target, mChar, true ) == 1 )
-				{
-					break;
-				}
-			}
-		}
-	}
-	else
-	{
-		bool doNormal = true;
-
-		for( auto scriptTrig : scriptTriggers )
-		{
-			cScript *failSnoop = JSMapping->GetScript( scriptTrig );
-			if( failSnoop != nullptr )
-			{
-				// If script returns true/1, prevent hard code and other scripts with event from running
-				if( failSnoop->OnSnooped( target, mChar, true ) == 1 )
-				{
-					doNormal = false;
-				}
-			}
-		}
-
-		if( doNormal )
-		{
-			s->SysMessage( 991 ); // You failed to peek into that container.
-			if( target->IsNpc() )
-			{
-				if( cwmWorldState->creatures[target->GetId()].IsHuman() && target->GetNpcAiType() != AI_EVIL && target->GetNpcAiType() != AI_EVIL_CASTER && target->GetNpcAiType() != AI_HEALER_E )
-				{
-					// 994=Art thou attempting to disturb my privacy?
-					// 995=Stop that!
-					// 996=Be aware I am going to call the guards!
-					target->TextMessage( s, 994 + RandomNum( 0, 2 ), TALK, false );
-					if( cwmWorldState->ServerData()->SnoopIsCrime() )
-					{
-						if( RandomNum( 0, 1 ) == 1 && mChar->IsCriminal() )	//	50% chance of calling guards, on second time
-						{
-							CallGuards( target, mChar );
-						}
-					}
-				}
-				else
-				{
-					UI16 toPlay = cwmWorldState->creatures[target->GetId()].GetSound( SND_IDLE );
-					if( toPlay != 0x00 )
-					{
-						Effects->PlaySound( target, toPlay );
-					}
-				}
-			}
-			else if( tSock != nullptr )
-			{
-				tSock->SysMessage( 997, mChar->GetNameRequest( target ).c_str() ); // You notice %s trying to peek into your pack!
-			}
-			if( cwmWorldState->ServerData()->SnoopIsCrime() )
-			{
-				MakeCriminal( mChar );
-			}
-			if( mChar->GetKarma() <= 1000 )
-			{
-				mChar->SetKarma( mChar->GetKarma() - 10 );
-				s->SysMessage( 998 ); // You've lost a small bit of karma.
-			}
+			return;
 		}
 	}
 }

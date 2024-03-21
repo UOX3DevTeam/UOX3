@@ -6,7 +6,7 @@
 // Runebooks can either be crafted via the Inscription skill, or added by GMs using this command:
 // 'add item runebook
 
-var maxCharges = 10;		// Default maximum amount of charges a runebook can hold
+var maxCharges = 16;		// Default maximum amount of charges a runebook can hold
 const showCoords = true; 	// Show regular coordinates in tooltip above latitude/longitude values
 const scriptID = 5029;		// Script ID assigned to this script in jse_fileassociations.scp
 const useDelay = 7000; 		// 7 seconds between each time a runebook can be used
@@ -280,7 +280,7 @@ function DisplayGump( pSocket, pUser, runeBook )
 		  	runeBookGump.AddHTMLGump( 41, 52, 130, 40, 1, 1, "<BASEFONT color=#0xfd size=5>" + splitData[0] + "</BASEFONT>" );
 		  	runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[0] );
 
-		  	runeBookGump.AddHTMLGump( 35, 90, 125, 25, 1, 1, "<CENTER><BASEFONT size=3>" + yLatDeg + "o " + yLatMin + "'" + ( ySouth ? "S" : "N" ) + " " + xLongDeg + "o " + xLongMin + "'" + ( xEast ? "E" : "W" ) + "</BASEFONT></CENTER>" );
+		  	runeBookGump.AddHTMLGump( 35, 90, 125, 25, 1, 1, "<CENTER><BASEFONT size=3>" + yLatDeg + "o " + yLatMin + "'" + ( ySouth ? "N" : "S" ) + " " + xLongDeg + "o " + xLongMin + "'" + ( xEast ? "W" : "E" ) + "</BASEFONT></CENTER>" );
 		  	if( showCoords )
 		  	{
 		  		runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[2] + ", " + splitData[3].toString() );
@@ -431,10 +431,14 @@ function onGumpPress( pSocket, myButton, gumpData )
 			if( runeData != 0 )
 			{
 				var splitData = runeData.split( "," );
-				runeBook.morex = splitData[2];
-				runeBook.morey = splitData[3];
-				runeBook.morez = splitData[4];
-				runeBook.more = splitData[5];
+				runeBook.morex = splitData[2]; // x
+				runeBook.morey = splitData[3]; // y
+				runeBook.morez = splitData[4]; // z
+				runeBook.more = splitData[5]; // worldNumber
+				if( splitData[6] )
+				{
+					runeBook.more0 = splitData[6]; // instanceID
+				}
 				runeBook.SetTag( "defaultRuneLoc", myButton );
 				pSocket.SysMessage( GetDictionaryEntry( 9259, pSocket.language )); // New default location set.
 			}
@@ -540,10 +544,14 @@ function onGumpPress( pSocket, myButton, gumpData )
 			{
 				var splitData = runeData.split( "," );
 				var droppedRune = CreateDFNItem( pSocket, pUser, "0x1f14", 1, "ITEM", true )
-				droppedRune.morex = parseInt( splitData[2] );
-				droppedRune.morey = parseInt( splitData[3] );
-				droppedRune.morez = parseInt( splitData[4] );
-				droppedRune.more = parseInt( splitData[5] );
+				droppedRune.morex = parseInt( splitData[2] ); // x
+				droppedRune.morey = parseInt( splitData[3] ); // y
+				droppedRune.morez = parseInt( splitData[4] ); // z
+				droppedRune.more = parseInt( splitData[5] ); // worldNumber
+				if( splitData[6] )
+				{
+					droppedRune.more0 = parseInt( splitData[6] ); // instanceId
+				}
 				droppedRune.name = splitData[0];
 				if( runeBook.GetTag( "defaultRuneLoc" ) == ( myButton - 100 ))
 				{
@@ -552,6 +560,7 @@ function onGumpPress( pSocket, myButton, gumpData )
 					runeBook.morey = 0;
 					runeBook.morez = 0;
 					runeBook.more = 0;
+					runeBook.more0 = 0;
 				}
 				runeBook.SetTag( "rune" + ( myButton - 100 ) + "Data", null );
 
@@ -635,6 +644,20 @@ function onGumpPress( pSocket, myButton, gumpData )
 
 function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 {
+	var runeBook = pSocket.tempObj2;
+	var runeNum = pSocket.tempInt2;
+	var runeData = runeBook.GetTag( "rune" + runeNum + "Data" );
+	var splitData = runeData.split( "," );
+	var targLocX = parseInt(splitData[2]);
+	var targLocY = parseInt(splitData[3]);
+	var targWorld = parseInt(splitData[5]);
+	var targInstanceID = 0;
+
+	if( splitData[6] )
+	{
+		targInstanceID = parseInt(splitData[6]);
+	}
+
 	// Are we already casting?
 	if( pUser.GetTimer( Timer.SPELLTIME ) != 0 )
 	{
@@ -657,6 +680,12 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 		return;
 	}
 
+	//Checks if they can travell in the region.
+	if( TriggerEvent( 6002, "CheckTravelRestrictions", pUser, spellNum, targLocX, targLocY, targWorld, targInstanceID ))
+	{
+		return;
+	}
+
 	// Is the spell we're trying to cast enabled?
 	var mSpell	= Spells[spellNum];
 	if( !mSpell.enabled )
@@ -666,13 +695,13 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 	}
 
 	// Does player actually have the spell they're trying to cast?
-	if( !pUser.HasSpell( spellNum ))
+	if( checkReagentReq && !pUser.HasSpell( spellNum ))
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 9266, pSocket.language )); // You don't have that spell.
 		return;
 	}
 
-	if( !GetServerSetting( "TravelSpellsWhileAggressor" ) && (( pUser.attackFirst && ValidateObject( pUser.target ) && pUser.target.innocent ) || pUser.criminal ))
+	if( !GetServerSetting( "TravelSpellsWhileAggressor" ) && ( pUser.IsAggressor() || pUser.criminal ))
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 2066, pSocket.language )); // You are not allowed to use Recall or Gate spells while being the aggressor in a fight!
 		return;
@@ -681,14 +710,14 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 	// Is the player casting recall holding any objects?
 	var itemRHand = pUser.FindItemLayer( 0x01 );
 	var itemLHand = pUser.FindItemLayer( 0x02 );
-	if( ValidateObject( itemLHand ) || ( ValidateObject( itemRHand ) && itemRHand.type != 9 ))	// Spellbook
+	if( ValidateObject( itemLHand ) && itemLHand.type != 119 || ( ValidateObject( itemRHand ) && ( itemRHand.type != 9 || itemRHand.type != 119 )))    // Spellbook //spell channeling
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 708, pSocket.language )); // You cannot cast with a weapon equipped.
 		return;
 	}
 
 	// Does player have enough reagents to cast the spell?
-	if( checkReagentReq && !CheckReagents( pUser, mSpell ))
+	if( checkReagentReq && !TriggerEvent( 6004, "CheckReagents", pUser, mSpell))
 		return;
 
 	// Make sure player has enough of the required stats to cast the spell
@@ -755,7 +784,7 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 		pUser.TextMessage( mSpell.mantra );
 		if( checkReagentReq )
 		{
-			DeleteReagents( pUser, mSpell );
+			TriggerEvent( 6004, "DeleteReagents", pUser, mSpell );
 		}
 		pUser.SpellFail();
 		pUser.isCasting = false;
@@ -773,74 +802,13 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 	// Delete reagents if needed
 	if( checkReagentReq )
 	{
-		DeleteReagents( pUser, mSpell );
+		TriggerEvent( 6004, "DeleteReagents", pUser, mSpell );
 	}
 
 	pUser.TextMessage( mSpell.mantra );
 	pUser.isCasting = true;
 
 	pUser.StartTimer( delay, spellNum, true );
-}
-
-function CheckReagents( pUser, mSpell )
-{
-	var failedCheck = 0;
-	if( mSpell.ash > 0 && pUser.ResourceCount( 0x0F8C ) < mSpell.ash )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.drake > 0 && pUser.ResourceCount( 0x0F86 ) < mSpell.drake )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.garlic > 0 && pUser.ResourceCount( 0x0F84 ) < mSpell.garlic )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.ginseng > 0 && pUser.ResourceCount( 0x0F85 ) < mSpell.ginseng )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.moss > 0 && pUser.ResourceCount( 0x0F7B ) < mSpell.moss )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.pearl > 0 && pUser.ResourceCount( 0x0F7A ) < mSpell.pearl )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.shade > 0 && pUser.ResourceCount( 0x0F88 ) < mSpell.shade )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.silk > 0 && pUser.ResourceCount( 0x0F8D ) < mSpell.silk )
-	{
-		failedCheck = 1;
-	}
-	if( failedCheck == 1 )
-	{
-		if( pUser.socket != null )
-		{
-			pUser.socket.SysMessage( GetDictionaryEntry( 702, pUser.socket.language )); // You do not have enough reagents to cast that spell.
-		}
-		return false;
-	}
-	else
-	{
-		return true;
-	}
-}
-
-function DeleteReagents( pUser, mSpell )
-{
-	pUser.UseResource( mSpell.pearl, 0x0F7A );
-	pUser.UseResource( mSpell.moss, 0x0F7B );
-	pUser.UseResource( mSpell.garlic, 0x0F84 );
-	pUser.UseResource( mSpell.ginseng, 0x0F85 );
-	pUser.UseResource( mSpell.drake, 0x0F86 );
-	pUser.UseResource( mSpell.shade, 0x0F88 );
-	pUser.UseResource( mSpell.ash, 0x0F8C );
-	pUser.UseResource( mSpell.silk, 0x0F8D );
 }
 
 function onTimer( timerObj, timerID )
@@ -877,6 +845,11 @@ function onTimer( timerObj, timerID )
 	var targLocY = parseInt(splitData[3]);
 	var targLocZ = parseInt(splitData[4]);
 	var targWorld = parseInt(splitData[5]);
+	var targInstanceID = 0;
+	if( splitData[6] )
+	{
+		targInstanceID = parseInt(splitData[6]);
+	}
 
 	// Do mana/reagent cost
 	var spellNum	= timerObj.spellCast;
@@ -895,25 +868,12 @@ function onTimer( timerObj, timerID )
 	// Handle effect of spell
 	if( spellNum == 32 ) // Recall spell
 	{
-		// Teleport player's pets
-		var petList = timerObj.GetPetList();
-		for( var i = 0; i < petList.length; i++ )
-		{
-			var tempPet = petList[i];
-			if( ValidateObject( tempPet ) && tempPet.InRange( timerObj, 24 ))
-			{
-				tempPet.Teleport( targLocX, targLocY, targLocZ, targWorld );
-				tempPet.Follow( timerObj );
-			}
-		}
-
-		// Teleport player
-		timerObj.Teleport( targLocX, targLocY, targLocZ, targWorld );
+		TriggerEvent( 6003, "TeleportHelper", timerObj, targLocX, targLocY, targLocZ, targWorld, targInstanceID, true )
 	}
 	else
 	{
 		// Gate spell
-		timerObj.Gate( targLocX, targLocY, targLocZ, targWorld );
+		timerObj.Gate( targLocX, targLocY, targLocZ, targWorld, targInstanceID );
 	}
 }
 
@@ -1009,9 +969,10 @@ function onDropItemOnItem( iDropped, pUser, runeBook )
 				var yLoc = iDropped.morey;
 				var zLoc = iDropped.morez;
 				var worldNum = iDropped.more;
+				var instanceID = iDropped.more0;
 				var iName = iDropped.name;
 				var iColor = iDropped.color;
-				runeBook.SetTag( "rune" + i + "Data", iName + "," + iColor + "," + xLoc + "," + yLoc + "," + zLoc + "," + worldNum );
+				runeBook.SetTag( "rune" + i + "Data", iName + "," + iColor + "," + xLoc + "," + yLoc + "," + zLoc + "," + worldNum + "," + instanceID );
 				runeBook.SetTag( "runeCount", runeCount + 1 );
 				iDropped.Delete();
 
@@ -1169,3 +1130,5 @@ function GetMapCoordinates( xCoord, yCoord, worldNum )
 
 	return resultArray;
 }
+
+function _restorecontext_() {}

@@ -21,12 +21,14 @@ hpbonus=50
 // Valorite Ringmail Gloves - N/S
 [0x13eb-va]
 {
-getpub15=0x13eb_pub15
+gett2a=0x13eb_t2a
+getlbr=0x13eb_lbr
 getaos=0x13eb_aos
 gettol=0x13eb_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x13eb-va
 }
 
 // Valorite Ringmail Gloves - E/W
@@ -45,12 +47,14 @@ get=0x13eb-va 0x13f2-va
 // Valorite Ringmail Tunic - N/S
 [0x13ec-va]
 {
-getpub15=0x13ec_pub15
+gett2a=0x13ec_t2a
+getlbr=0x13ec_lbr
 getaos=0x13ec_aos
 gettol=0x13ec_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x13ec-va
 }
 
 // Valorite Ringmail Tunic - E/W
@@ -69,12 +73,14 @@ get=0x13ec-va 0x13ed-va
 // Valorite Ringmail Sleeves - N/S
 [0x13ee-va]
 {
-getpub15=0x13ee_pub15
+gett2a=0x13ee_t2a
+getlbr=0x13ee_lbr
 getaos=0x13ee_aos
 gettol=0x13ee_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x13ee-va
 }
 
 // Valorite Ringmail Sleeves - E/W
@@ -93,12 +99,14 @@ get=0x13ee-va 0x13ef-va
 // Valorite Ringmail Leggings - N/S
 [0x13f0-va]
 {
-getpub15=0x13f0_pub15
+gett2a=0x13f0_t2a
+getlbr=0x13f0_lbr
 getaos=0x13f0_aos
 gettol=0x13f0_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x13f0-va
 }
 
 // Valorite Ringmail Leggings - E/W
@@ -119,12 +127,14 @@ get=0x13f0-va 0x13f1-va
 // Valorite Chainmail Coif - N/S
 [0x13bb-va]
 {
-getpub15=0x13bb_pub15
+gett2a=0x13bb_t2a
+getlbr=0x13bb_lbr
 getaos=0x13bb_aos
 gettol=0x13bb_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x13bb-va
 }
 
 // Valorite Chainmail Coif - E/S
@@ -143,12 +153,14 @@ get=0x13bb 0x13c0
 // Valorite Chainmail Leggings - N/S
 [0x13be-va]
 {
-getpub15=0x13be_pub15
+gett2a=0x13be_t2a
+getlbr=0x13be_lbr
 getaos=0x13be_aos
 gettol=0x13be_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x13be-va
 }
 
 // Valorite Chainmail Leggings - E/W
@@ -167,12 +179,14 @@ get=0x13be-va 0x13c3-va
 // Valorite Chainmail Tunic - N/S
 [0x13bf-va]
 {
-getpub15=0x13bf_pub15
+gett2a=0x13bf_t2a
+getlbr=0x13bf_lbr
 getaos=0x13bf_aos
 gettol=0x13bf_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x13bf-va
 }
 
 // Valorite Chainmail Tunic - E/W
@@ -191,12 +205,14 @@ get=0x13bf-va 0x13c4-va
 // Valorite Female Plate - N/S
 [0x1c04-va]
 {
-getpub15=0x1c04_pub15
+gett2a=0x1c04_t2a
+getlbr=0x1c04_lbr
 getaos=0x1c04_aos
 gettol=0x1c04_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1c04-va
 }
 
 // Valorite Female Plate - E/W
@@ -217,12 +233,14 @@ get=0x1c04-va 0x1c05-va
 // Valorite Platemail Arms - E/W
 [0x1410-va]
 {
-getpub15=0x1410_pub15
+gett2a=0x1410_t2a
+getlbr=0x1410_lbr
 getaos=0x1410_aos
 gettol=0x1410_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1410-va
 }
 
 // Valorite Platemail Arms - N/S
@@ -241,12 +259,14 @@ get=0x1410-va 0x1417-va
 // Valorite Platemail Leggings - N/S
 [0x1411-va]
 {
-getpub15=0x1411_pub15
+gett2a=0x1411_t2a
+getlbr=0x1411_lbr
 getaos=0x1411_aos
 gettol=0x1411_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1411-va
 }
 
 // Valorite Platemail Leggings - E/W
@@ -265,12 +285,14 @@ get=0x1411-va 0x141a-va
 // Valorite Platemail Gorget
 [0x1413-va]
 {
-getpub15=0x1413_pub15
+gett2a=0x1413_t2a
+getlbr=0x1413_lbr
 getaos=0x1413_aos
 gettol=0x1413_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1413-va
 }
 
 // Valorite Platemail Gorget - Alias
@@ -282,12 +304,14 @@ get=0x1413-va
 // Valorite Platemail Gloves - N/S
 [0x1414-va]
 {
-getpub15=0x1414_pub15
+gett2a=0x1414_t2a
+getlbr=0x1414_lbr
 getaos=0x1414_aos
 gettol=0x1414_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1414-va
 }
 
 // Valorite Platemail Gloves - E/W
@@ -306,12 +330,14 @@ get=0x1414-va 0x1418-va
 // Valorite Platemail Chest - N/S
 [0x1415-va]
 {
-getpub15=0x1415_pub15
+gett2a=0x1415_t2a
+getlbr=0x1415_lbr
 getaos=0x1415_aos
 gettol=0x1415_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1415-va
 }
 
 // Valorite Platemail Chest - E/W
@@ -332,12 +358,14 @@ get=0x1415-va 0x1416-va
 // Valorite Heavy Platemail Jingasa - A
 [0x2777-va]
 {
-getpub15=0x2777_pub15
+gett2a=0x2777_t2a
+getlbr=0x2777_lbr
 getaos=0x2777_aos
 gettol=0x2777_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x2777-va
 }
 
 // Valorite Heavy Platemail Jingasa - B
@@ -356,12 +384,14 @@ get=0x2777-va 0x27c2-va
 // Valorite Decorative Platemail Kabuto - A
 [0x2778-va]
 {
-getpub15=0x2778_pub15
+gett2a=0x2778_t2a
+getlbr=0x2778_lbr
 getaos=0x2778_aos
 gettol=0x2778_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x2778-va
 }
 
 // Valorite Decorative Platemail Kabuto - B
@@ -380,12 +410,14 @@ get=0x2778-va 0x27c3-va
 // Valorite Platemail Do - A
 [0x277d-va]
 {
-getpub15=0x277d_pub15
+gett2a=0x277d_t2a
+getlbr=0x277d_lbr
 getaos=0x277d_aos
 gettol=0x277d_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x277d-va
 }
 
 // Valorite Platemail Do - B
@@ -404,12 +436,14 @@ get=0x277d-va 0x27c8-va
 // Valorite Platemail Hiro Sode - A
 [0x2780-va]
 {
-getpub15=0x2780_pub15
+gett2a=0x2780_t2a
+getlbr=0x2780_lbr
 getaos=0x2780_aos
 gettol=0x2780_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x2780-va
 }
 
 // Valorite Platemail Hiro Sode - B
@@ -428,12 +462,14 @@ get=0x2780-va 0x27cb-va
 // Valorite Platemail Jingasa - A
 [0x2781-va]
 {
-getpub15=0x2781_pub15
+gett2a=0x2781_t2a
+getlbr=0x2781_lbr
 getaos=0x2781_aos
 gettol=0x2781_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x2781-va
 }
 
 // Valorite Platemail Jingasa - B
@@ -452,12 +488,14 @@ get=0x2781-va 0x27cc-va
 // Valorite Small Platemail Jingasa - A
 [0x2784-va]
 {
-getpub15=0x2784_pub15
+gett2a=0x2784_t2a
+getlbr=0x2784_lbr
 getaos=0x2784_aos
 gettol=0x2784_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x2784-va
 }
 
 // Valorite Small Platemail Jingasa - B
@@ -476,12 +514,14 @@ get=0x2784-va 0x27cf-va
 // Valorite Platemail Battle Kabuto - A
 [0x2785-va]
 {
-getpub15=0x2785_pub15
+gett2a=0x2785_t2a
+getlbr=0x2785_lbr
 getaos=0x2785_aos
 gettol=0x2785_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x2785-va
 }
 
 // Valorite Platemail Battle Kabuto - B
@@ -500,12 +540,14 @@ get=0x2785-va 0x27d0-va
 // Valorite Platemail Suneate - A
 [0x2788-va]
 {
-getpub15=0x2788_pub15
+gett2a=0x2788_t2a
+getlbr=0x2788_lbr
 getaos=0x2788_aos
 gettol=0x2788_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x2788-va
 }
 
 // Valorite Platemail Suneate - B
@@ -524,12 +566,14 @@ get=0x2788-va 0x27d3-va
 // Valorite Platemail Kabuto - A
 [0x2789-va]
 {
-getpub15=0x2789_pub15
+gett2a=0x2789_t2a
+getlbr=0x2789_lbr
 getaos=0x2789_aos
 gettol=0x2789_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x2789-va
 }
 
 // Valorite Platemail Kabuto - B
@@ -548,12 +592,14 @@ get=0x2789-va 0x27d4-va
 // Valorite Kabuto - A
 [0x236c-va]
 {
-getpub15=0x236c_pub15
+gett2a=0x236c_t2a
+getlbr=0x236c_lbr
 getaos=0x236c_aos
 gettol=0x236c_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x236c-va
 }
 
 // Valorite Kabuto - B
@@ -572,12 +618,14 @@ get=0x236c-va 0x236d-va
 // Valorite Platemail Haidate - A
 [0x278d-va]
 {
-getpub15=0x278d_pub15
+gett2a=0x278d_t2a
+getlbr=0x278d_lbr
 getaos=0x278d_aos
 gettol=0x278d_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x278d-va
 }
 
 // Valorite Platemail Haidate - B
@@ -596,12 +644,14 @@ get=0x278d-va 0x27d8-va
 // Valorite Platemail Hatsuburi - A
 [0x2775-va]
 {
-getpub15=0x2775_pub15
+gett2a=0x2775_t2a
+getlbr=0x2775_lbr
 getaos=0x2775_aos
 gettol=0x2775_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x2775-va
 }
 
 // Valorite Platemail Hatsuburi - B
@@ -620,12 +670,14 @@ get=0x2775-va 0x27c0-va
 // Valorite Chainmail Hatsuburi - A
 [0x2774-va]
 {
-getpub15=0x2774_pub15
+gett2a=0x2774_t2a
+getlbr=0x2774_lbr
 getaos=0x2774_aos
 gettol=0x2774_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x2774-va
 }
 
 // Valorite Chainmail Hatsuburi - B
@@ -644,12 +696,14 @@ get=0x2774-va 0x27bf-va
 // Valorite Platemail Mempo - E/W
 [0x2779-va]
 {
-getpub15=0x2779_pub15
+gett2a=0x2779_t2a
+getlbr=0x2779_lbr
 getaos=0x2779_aos
 gettol=0x2779_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x2779-va
 }
 
 // Valorite Platemail Mempo - N/S
@@ -670,12 +724,14 @@ get=0x2779-va 0x27c4-va
 // Valorite Close Helm - E/W
 [0x1408-va]
 {
-getpub15=0x1408_pub15
+gett2a=0x1408_t2a
+getlbr=0x1408_lbr
 getaos=0x1408_aos
 gettol=0x1408_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1408-va
 }
 
 // Valorite Close Helm - N/S
@@ -694,12 +750,14 @@ get=0x1408-va 0x1409-va
 // Valorite Helmet - E/W
 [0x140a-va]
 {
-getpub15=0x140a_pub15
+gett2a=0x140a_t2a
+getlbr=0x140a_lbr
 getaos=0x140a_aos
 gettol=0x140a_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x140a-va
 }
 
 // Valorite Helmet - N/S
@@ -718,12 +776,14 @@ get=0x140a-va 0x140b-va
 // Valorite Bascinet - E/W
 [0x140c-va]
 {
-getpub15=0x140c_pub15
+gett2a=0x140c_t2a
+getlbr=0x140c_lbr
 getaos=0x140c_aos
 gettol=0x140c_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x140c-va
 }
 
 // Valorite Bascinet - N/S
@@ -742,12 +802,14 @@ get=0x140c-va 0x140d-va
 // Valorite Norse Helm - E/W
 [0x140e-va]
 {
-getpub15=0x140e_pub15
+gett2a=0x140e_t2a
+getlbr=0x140e_lbr
 getaos=0x140e_aos
 gettol=0x140e_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x140e-va
 }
 
 // Valorite Norse Helm - N/S
@@ -766,12 +828,14 @@ get=0x140e-va 0x140f-va
 // Valorite Plate Helm - N/S
 [0x1412-va]
 {
-getpub15=0x1412_pub15
+gett2a=0x1412_t2a
+getlbr=0x1412_lbr
 getaos=0x1412_aos
 gettol=0x1412_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1412-va
 }
 
 // Valorite Plate Helm - E/W
@@ -792,12 +856,14 @@ get=0x1412-va 0x1419-va
 // Valorite Valorite Shield
 [0x1b72-va]
 {
-getpub15=0x1b72_pub15
+gett2a=0x1b72_t2a
+getlbr=0x1b72_lbr
 getaos=0x1b72_aos
 gettol=0x1b72_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1b72-va
 }
 
 // Valorite Valorite Shield - Alias
@@ -809,12 +875,14 @@ get=0x1b72-va
 // Valorite Buckler
 [0x1b73-va]
 {
-getpub15=0x1b73_pub15
+gett2a=0x1b73_t2a
+getlbr=0x1b73_lbr
 getaos=0x1b73_aos
 gettol=0x1b73_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1b73-va
 }
 
 // Valorite Buckler - Alias
@@ -826,34 +894,40 @@ get=0x1b73-va
 // Valorite Kite Shield (Metal) - N/S
 [0x1b74-va]
 {
-getpub15=0x1b74_pub15
+gett2a=0x1b74_t2a
+getlbr=0x1b74_lbr
 getaos=0x1b74_aos
 gettol=0x1b74_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1b74-va
 }
 
 // Valorite Heater Shield - N/S
 [0x1b76-va]
 {
-getpub15=0x1b76_pub15
+gett2a=0x1b76_t2a
+getlbr=0x1b76_lbr
 getaos=0x1b76_aos
 gettol=0x1b76_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1b76-va
 }
 
 // Valorite Kite Shield (Wood) - N/S
 [0x1b78-va]
 {
-getpub15=0x1b78_pub15
+gett2a=0x1b78_t2a
+getlbr=0x1b78_lbr
 getaos=0x1b78_aos
 gettol=0x1b78_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1b78-va
 }
 
 // Valorite Kite Shield (wood) - E/W
@@ -872,12 +946,14 @@ get=0x1b78-va 0x1b79-va
 // AgapiteWooden Shield
 [0x1b7a-va]
 {
-getpub15=0x1b7a_pub15
+gett2a=0x1b7a_t2a
+getlbr=0x1b7a_lbr
 getaos=0x1b7a_aos
 gettol=0x1b7a_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1b7a-va
 }
 
 // Valorite Wooden Shield - Alias
@@ -889,12 +965,14 @@ get=0x1b7a-va
 // Valorite Metal Shield
 [0x1b7b-va]
 {
-getpub15=0x1b7b_pub15
+gett2a=0x1b7b_t2a
+getlbr=0x1b7b_lbr
 getaos=0x1b7b_aos
 gettol=0x1b7b_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1b7b-va
 }
 
 // Valorite Metal Shield - Alias
@@ -906,12 +984,14 @@ get=0x1b7b-va
 // Valorite Chaos Shield
 [0x1bc3-va]
 {
-getpub15=0x1bc3_pub15
+gett2a=0x1bc3_t2a
+getlbr=0x1bc3_lbr
 getaos=0x1bc3_aos
 gettol=0x1bc3_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1bc3-va
 }
 
 // Valorite Chaos Shield - Alias
@@ -923,12 +1003,14 @@ get=0x1bc3-va
 // Valorite Order Shield - N/S
 [0x1bc4-va]
 {
-getpub15=0x1bc4_pub15
+gett2a=0x1bc4_t2a
+getlbr=0x1bc4_lbr
 getaos=0x1bc4_aos
 gettol=0x1bc4_tol
 getaos=valorite_armor_bonus_aos
 gettol=valorite_armor_bonus_tol
 color=0x8ab
+sectionid=0x1bc4-va
 }
 
 // Valorite Order Shield - E/W

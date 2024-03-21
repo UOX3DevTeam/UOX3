@@ -72,7 +72,7 @@ using namespace std::string_literals;
 //|
 //|						Note: Only send once after login. It’s mandatory to send it once.
 //o------------------------------------------------------------------------------------------------o
-void CPCharLocBody::Log( std::ofstream &outStream, bool fullHeader )
+void CPCharLocBody::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -237,7 +237,7 @@ void CPacketSpeech::CopyData( CSpeechEntry &toCopy )
 			ourChar = CalcCharObjFromSer( toCopy.Speaker() );
 			if( ValidateObject( ourChar ))
 			{
-				std::string speakerName = GetNpcDictName( ourChar );
+				std::string speakerName = GetNpcDictName( ourChar, nullptr, NRS_SPEECH );
 				SpeakerName( speakerName );
 				SpeakerModel( ourChar->GetId() );
 			}
@@ -483,7 +483,7 @@ void CPExtMove::SetFlags( CChar &toCopy )
 		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__FROZEN, toCopy.IsFrozen() );
-		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E ) || toCopy.GetId() == 0x029B );
+		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E || toCopy.GetId() == 0x029B || toCopy.GetId() == 0xb8 || toCopy.GetId() == 0xba ));
 		flag.set( BIT__FLYING, ( toCopy.IsFlying() ));
 		flag.set( BIT__GOLDEN, ( toCopy.IsInvulnerable() ));
 	}
@@ -1190,7 +1190,7 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 		//const UI08 BIT__IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
 
 		flag.set( BIT__FROZEN, toCopy.IsFrozen() );
-		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E ));
+		flag.set( BIT__FEMALE, ( toCopy.GetId() == 0x0191 || toCopy.GetId() == 0x025E || toCopy.GetId() == 0x029B || toCopy.GetId() == 0xb8 || toCopy.GetId() == 0xba ));
 		flag.set( BIT__FLYING, toCopy.IsFlying() );
 		flag.set( BIT__GOLDEN, toCopy.IsInvulnerable() );
 	}
@@ -1901,7 +1901,7 @@ void CPDrawContainer::Serial( SERIAL toSet )
 //|							BYTE response text length
 //|							BYTE[response text length] response text
 //o------------------------------------------------------------------------------------------------o
-void CPOpenGump::Log( std::ofstream &outStream, bool fullHeader )
+void CPOpenGump::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -2251,7 +2251,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		Flag( 0 );
 		Serial( toCopy.GetSerial() );
 
-		std::string charName = GetNpcDictName( &toCopy, &target );
+		std::string charName = GetNpcDictName( &toCopy, &target, NRS_STATWINDOW_OTHER );
 		Name( charName );
 		SI16 currentHP = toCopy.GetHP();
 		UI16 maxHP = toCopy.GetMaxHP();
@@ -2276,7 +2276,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 	{
 		// Send player their own full stats
 		Serial( toCopy.GetSerial() );
-		Name( toCopy.GetNameRequest( &toCopy ));
+		Name( toCopy.GetNameRequest( &toCopy, NRS_STATWINDOW_SELF ));
 
 		bool isDead = toCopy.IsDead();
 		if( isDead )
@@ -2306,6 +2306,14 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		else if( toCopy.GetId() == 0x025E || toCopy.GetOrgId() == 0x025E ) // Female elf
 		{
 			Sex( 3 );
+		}
+		else if( toCopy.GetId() == 0x029A || toCopy.GetOrgId() == 0x029A ) // Male Garg
+		{
+			Sex( 4 );
+		}
+		else if( toCopy.GetId() == 0x029B || toCopy.GetOrgId() == 0x029B ) // Female Garg
+		{
+			Sex( 5 );
 		}
 
 		if( isDead )
@@ -2366,8 +2374,8 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			}
 			else
 			{
-				// If pet control slots are disabled, send petCount and maxFollowers value specified in ini instead
-				CurrentPets( static_cast<UI08>( toCopy.GetPetList()->Num() ));
+				// If pet control slots are disabled, send count of followers and maxFollowers value specified in ini instead
+				CurrentPets( static_cast<UI08>( toCopy.GetFollowerList()->Num() ));
 				MaxPets( static_cast<UI08>( cwmWorldState->ServerData()->MaxFollowers() ));
 			}
 		}
@@ -2416,7 +2424,7 @@ CPStatWindow::CPStatWindow( CBaseObject &toCopy, CSocket &target )
 		pStream.ReserveSize( 43 );
 		pStream.WriteByte( 2, 43 );
 		Serial( itemObj->GetSerial() );
-		Name( itemObj->GetNameRequest( target.CurrcharObj() ));
+		Name( itemObj->GetNameRequest( target.CurrcharObj(), NRS_STATWINDOW_OTHER ));
 		SI16 currentHP = itemObj->GetHP();
 		UI16 maxHP = itemObj->GetMaxHP();
 		SI16 percentHP = 0;
@@ -3124,7 +3132,7 @@ CPEnableClientFeatures::CPEnableClientFeatures( CSocket *mSock )
 	}
 }
 
-void CPEnableClientFeatures::Log( std::ofstream &outStream, bool fullHeader )
+void CPEnableClientFeatures::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3263,7 +3271,7 @@ CPNegotiateAssistantFeatures::CPNegotiateAssistantFeatures( [[maybe_unused]] CSo
 	pStream.WriteLong( 8, cwmWorldState->ServerData()->GetDisabledAssistantFeatures() & 0xFFFFFFFF );
 }
 
-void CPNegotiateAssistantFeatures::Log( std::ofstream &outStream, bool fullHeader )
+void CPNegotiateAssistantFeatures::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4334,7 +4342,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 	}
 }
 
-void CPKrriosClientSpecial::Log( std::ofstream &outStream, bool fullHeader )
+void CPKrriosClientSpecial::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4367,7 +4375,7 @@ void CPKrriosClientSpecial::Log( std::ofstream &outStream, bool fullHeader )
 //|								0x04 = Tokuno
 //|								0x05 = TerMur)
 //o------------------------------------------------------------------------------------------------o
-void CPMapChange::Log( std::ofstream &outStream, bool fullHeader )
+void CPMapChange::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4453,7 +4461,7 @@ void CPCloseGump::InternalReset( void )
 	pStream.WriteLong( 5, _gumpId );	// gumpId - which gump to destroy
 	pStream.WriteLong( 9, _buttonId );	// buttonId - response buttonId for packet 0xB1
 }
-void CPCloseGump::Log( std::ofstream &outStream, bool fullHeader )
+void CPCloseGump::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4518,7 +4526,7 @@ CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container, UI08 c
 			VendorSerial( container->GetSerial() );
 		}
 
-		CopyData( mSock, (*container) );
+		CopyData( mSock, ( *container ));
 	}
 }
 
@@ -4632,7 +4640,7 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 	NumberOfItems( itemCount );
 }
 
-void CPItemsInContainer::Log( std::ofstream &outStream, bool fullHeader )
+void CPItemsInContainer::Log( std::ostream &outStream, bool fullHeader )
 {
 	size_t numItems = pStream.GetUShort( 3 );
 	if( fullHeader )
@@ -4799,7 +4807,7 @@ auto CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorId, CPItemsInContain
 	pStream.WriteShort( 1, length );
 }
 
-void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
+void CPOpenBuyWindow::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4878,7 +4886,7 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 //|							0x4000	= new movement packets 0xF0 -> 0xF2
 //|							0x8000	= unlock new felucca areas (faction areas)
 //o------------------------------------------------------------------------------------------------o
-void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
+void CPCharAndStartLoc::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 		outStream << "[SEND]Packet   : CPCharAndStartLoc 0xA9 --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
@@ -5494,6 +5502,25 @@ void CPMapRelated::ID( SERIAL key )
 //|							if (model & 0x8000)
 //|								BYTE[2] hue
 //o------------------------------------------------------------------------------------------------o
+//|					Notes
+//|						Status Options
+//|							0x00: Normal
+//|							0x01: Unknown
+//|							0x02: Can Alter Paperdoll
+//|							0x04: Poisoned
+//|							0x08: Golden Health
+//|							0x10: Unknown
+//|							0x20: Unknown
+//|							0x40: War Mode
+//|						Notoriety
+//|							0x1: Innocent (Blue)
+//|							0x2: Friend (Green)
+//|							0x3: Grey (Grey - Animal)
+//|							0x4: Criminal (Grey)
+//|							0x5: Enemy (Orange)
+//|							0x6: Murderer (Red)
+//|							0x7: Invulnerable (Yellow)
+//o------------------------------------------------------------------------------------------------o
 CPDrawObject::CPDrawObject()
 {
 	InternalReset();
@@ -5749,7 +5776,7 @@ void CPNewObjectInfo::CopyData( CItem& mItem, CChar& mChar )
 
 void CPNewObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
 {
-	bool isInvisible	= ( mItem.GetVisible() != VT_VISIBLE );
+	bool isInvisible	= ( mItem.GetVisible() != VT_VISIBLE || ( mItem.GetVisible() == VT_TEMPHIDDEN && &mChar != mItem.GetOwnerObj() ));
 	bool isMovable		= ( mItem.GetMovable() == 1 || mChar.AllMove() || ( mItem.IsLockedDown() && &mChar == mItem.GetOwnerObj() ));
 
 	if( mItem.IsDamageable() )
@@ -6577,7 +6604,7 @@ void CPAllNames3D::CopyData( CBaseObject& obj )
 	pStream.WriteLong(   3, obj.GetSerial() );
 
 	CChar *objChar = CalcCharObjFromSer( obj.GetSerial() );
-	std::string objName = GetNpcDictName( objChar );
+	std::string objName = GetNpcDictName( objChar, nullptr, NRS_SINGLECLICK );
 	pStream.WriteString( 7, objName, objName.length() );
 }
 CPAllNames3D::CPAllNames3D()
@@ -6775,10 +6802,10 @@ void CPSendGumpMenu::addText( const std::string& msg )
 		temp = temp.substr( 0, 512 );
 	}
 #if defined( UOX_DEBUG_MODE )
-	Console << msg << myendl;
+	Console << temp << myendl;
 #endif
 
-	text.push_back( msg );
+	text.push_back( temp );
 }
 
 void CPSendGumpMenu::Finalize( void )
@@ -6853,7 +6880,7 @@ void CPSendGumpMenu::Finalize( void )
 	pStream.WriteShort( tlOff, static_cast<UI16>( tlines ));
 }
 
-void CPSendGumpMenu::Log( std::ofstream &outStream, bool fullHeader )
+void CPSendGumpMenu::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -7145,7 +7172,7 @@ void CPToolTip::FinalizeData( ToolTipEntry_st tempEntry, size_t &totalStringLen 
 
 void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmount, bool playerVendor )
 {
-	std::string cItemName = cItem.GetNameRequest( tSock->CurrcharObj() );
+	std::string cItemName = cItem.GetNameRequest( tSock->CurrcharObj(), NRS_TOOLTIP );
 	ToolTipEntry_st tempEntry = {};
 	if( cItem.GetType() == IT_HOUSESIGN )
 	{
@@ -7178,10 +7205,40 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			}
 			else
 			{
-				tempEntry.ourText = oldstrutil::format( " \t%s\t ", cItemName.c_str() );
+				if( cItem.IsCorpse() )
+				{
+					std::string iFlagColor;
+					CChar *iOwner = cItem.GetOwnerObj();
+					if( ValidateObject( iOwner ))
+					{
+						// Match up corpse's flag color to that of the owner
+						iFlagColor = tSock->GetHtmlFlagColour( tSock->CurrcharObj(), iOwner );
+					}
+					else
+					{
+						// No corpse owner, corpse from NPC/monster
+						UI08 flag = cItem.GetTempVar( CITV_MOREZ ); // Get flag from morez value on corpse, to help determine color of corpse
+						switch( flag )
+						{
+							case 0x01:	iFlagColor = "#FF0000";	break;	// Murderer, red
+							case 0x02:	// Criminal, gray
+								[[fallthrough]];
+							case 0x08:	iFlagColor = "#808080";	break;	// Neutral, gray
+							default:
+							case 0x04:	iFlagColor = "#00FFFF";	break;	// Innocent, blue
+						}
+					}
+
+					tempEntry.ourText = oldstrutil::format( " \t<color=%s>%s</color>\t ", iFlagColor.c_str(), cItemName.c_str() );
+				}
+				else
+				{
+					tempEntry.ourText = oldstrutil::format( " \t%s\t ", cItemName.c_str() );
+				}
 			}
 		}
 	}
+
 	tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 	FinalizeData( tempEntry, totalStringLen );
 
@@ -7331,7 +7388,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		if( cItem.GetOwnerObj() != nullptr )
 		{
 			tempEntry.stringNum = 1061113; // Owner: ~1_val~
-			tempEntry.ourText = cItem.GetOwnerObj()->GetNameRequest( mChar );
+			tempEntry.ourText = cItem.GetOwnerObj()->GetNameRequest( mChar, NRS_TOOLTIP );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
@@ -7406,6 +7463,11 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	{
 		tempEntry.stringNum = 1060584; // uses remaining: ~1_val~
 		tempEntry.ourText = oldstrutil::number( cItem.GetTempVar( CITV_MOREZ ));
+		FinalizeData( tempEntry, totalStringLen );
+	}
+	if( cItem.GetType() == IT_SPELLCHANNELING )
+	{
+		tempEntry.stringNum = 1060482; // spell channeling
 		FinalizeData( tempEntry, totalStringLen );
 	}
 
@@ -7659,7 +7721,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 	std::string fameTitle = "";
 	if( cwmWorldState->ServerData()->ShowReputationTitleInTooltip() )
 	{
-		if( cwmWorldState->creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() )
+		if( cwmWorldState->creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() && !mChar.IsDisguised() )
 		{
 			GetFameTitle( &mChar, fameTitle );
 			fameTitle = oldstrutil::trim( fameTitle );
@@ -7668,7 +7730,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 
 	// Character Name
 	tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-	std::string mCharName = GetNpcDictName( &mChar, tSock );
+	std::string mCharName = GetNpcDictName( &mChar, tSock, NRS_TOOLTIP );
 	std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
 	tempEntry.ourText = oldstrutil::format( "%s \t%s\t ", fameTitle.c_str(), convertedString.c_str() );
 
@@ -7677,7 +7739,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 	// Show guild title in character tooltip?
 	if( cwmWorldState->ServerData()->ShowGuildInfoInTooltip() )
 	{
-		if( !mChar.IsIncognito() )
+		if( !mChar.IsIncognito() && !mChar.IsDisguised() )
 		{
 			CGuild *myGuild = GuildSys->Guild( mChar.GetGuildNumber() );
 			if( myGuild != nullptr )
@@ -7894,23 +7956,24 @@ auto CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack,
 			{
 				AddContainer( tReg, spItem, opItem, packetLen );
 			}
-			else if(( opItem->GetSectionId() == spItem->GetSectionId() )
+			else if(( opItem->GetSectionId() == spItem->GetSectionId() && opItem->GetSectionId() != "UNKNOWN" )
 				&& ( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ))
 			{
 				// Basing it on GetSectionId() should replace all the other checks below...
 				AddItem( tReg, spItem, opItem, packetLen );
 				++numItems;
 			}
-			/*else if( opItem->GetSectionId() == spItem->GetSectionId() && opItem->GetId() == spItem->GetId() && opItem->GetType() == spItem->GetType() &&
+			else if( opItem->GetSectionId() == "UNKNOWN" && opItem->GetId() == spItem->GetId() && opItem->GetType() == spItem->GetType() &&
 					( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ))
 			{
-				// Special case for deeds and dyes, which all use same ID
+				// If sectionID of an item is Unknown, it's a legacy item. Handle it the legacy way.
+				// Also includes special case for deeds and dyes, which all use same ID
 				if(( opItem->GetId() != 0x14f0 && opItem->GetId() != 0x0eff ) || ( opItem->GetTempVar( CITV_MOREX ) == spItem->GetTempVar( CITV_MOREX )))
 				{
 					AddItem( tReg, spItem, opItem, packetLen );
 					++numItems;
 				}
-			}*/
+			}
 
 			if( numItems >= 60 )
 			{
@@ -8642,7 +8705,7 @@ CPPopupMenu::CPPopupMenu( void )
 	InternalReset();
 }
 
-CPPopupMenu::CPPopupMenu( CChar& toCopy, CSocket &tSock )
+CPPopupMenu::CPPopupMenu( CBaseObject& toCopy, CSocket &tSock )
 {
 	InternalReset();
 	CopyData( toCopy, tSock );
@@ -8657,7 +8720,7 @@ void CPPopupMenu::InternalReset( void )
 	pStream.WriteShort( 5, 0x0001 );
 }
 
-void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
+void CPPopupMenu::CopyData( CBaseObject& toCopy, CSocket &tSock )
 {
 	UI16 packetLen = ( 12 + ( 4 * 8 ));
 	pStream.ReserveSize( packetLen );
@@ -8673,11 +8736,20 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 		mChar = tSock.CurrcharObj();
 	}
 
+	auto toCopyChar = static_cast<CChar *>( &toCopy );
+
 	// Stop moving for 2 seconds when someone opens a context menu, to give them 
 	// the chance to select something before walking out of range
-	if( toCopy.GetNpcWander() != WT_PATHFIND && toCopy.GetNpcWander() != WT_FOLLOW && toCopy.GetNpcWander() != WT_FLEE )
+	if( toCopy.CanBeObjType( OT_CHAR ) )
 	{
-		toCopy.SetTimer( tNPC_MOVETIME, BuildTimeValue( 3 ));
+		if( toCopyChar->GetNpcWander() != WT_PATHFIND && toCopyChar->GetNpcWander() != WT_FOLLOW && toCopyChar->GetNpcWander() != WT_FLEE )
+		{
+			toCopyChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 3 ));
+		}
+	}
+	else
+	{
+		return;
 	}
 
 	// Open Paperdoll
@@ -8696,10 +8768,29 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 		pStream.WriteShort( offset+=2, 0xFFFF ); // Hue of text
 	}*/
 
+	// Bulk Order Info - if enabled in ini
+	if( cwmWorldState->ServerData()->OfferBODsFromContextMenu() && toCopyChar->IsShop() )
+	{
+		TAGMAPOBJECT isBodVendor = toCopy.GetTag( "bodType" );
+		if( isBodVendor.m_IntValue > 0 )
+		{
+			if( numEntries > 0 )
+			{
+				offset += 2;
+			}
+
+			numEntries++;
+			pStream.WriteShort( offset, 0x0100 );	// Unique ID
+			pStream.WriteShort( offset += 2, 6152 ); // Bulk Order Info
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+	}
+
 	// Open Backpack
 	//	|| ( toCopy.IsTamed() && ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar && !toCopy.CanBeHired() )))
-	if( toCopy.GetQuestType() != QT_ESCORTQUEST && (( toCopy.GetSerial() == tSock.CurrcharObj()->GetSerial() 
-		|| toCopy.GetId() == 0x0123 || toCopy.GetId() == 0x0124 || toCopy.GetId() == 0x0317 ) && ValidateObject( toCopy.GetPackItem() )))
+	if( toCopyChar->GetQuestType() != QT_ESCORTQUEST && (( toCopy.GetSerial() == tSock.CurrcharObj()->GetSerial() 
+		|| toCopy.GetId() == 0x0123 || toCopy.GetId() == 0x0124 || toCopy.GetId() == 0x0317 ) && ValidateObject( toCopyChar->GetPackItem() )))
 	{
 		if( numEntries > 0 )
 		{
@@ -8722,7 +8813,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// Banker
-	if( toCopy.IsNpc() && toCopy.GetNpcAiType() == AI_BANKER )
+	if( toCopyChar->IsNpc() && toCopyChar->GetNpcAiType() == AI_BANKER )
 	{
 		if( numEntries > 0 )
 		{
@@ -8746,7 +8837,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// Stablemaster
-	if( toCopy.GetNpcAiType() == AI_STABLEMASTER )
+	if( toCopyChar->GetNpcAiType() == AI_STABLEMASTER )
 	{
 		if( numEntries > 0 )
 		{
@@ -8785,7 +8876,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// Hireling
-	if( toCopy.IsNpc() && toCopy.CanBeHired() && !ValidateObject( toCopy.GetOwnerObj() ))
+	if( toCopyChar->IsNpc() && toCopyChar->CanBeHired() && !ValidateObject( toCopy.GetOwnerObj() ))
 	{
 		if( numEntries > 0 )
 		{
@@ -8809,7 +8900,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// NPC Escort
-	if( toCopy.IsNpc() && toCopy.GetQuestType() == QT_ESCORTQUEST )
+	if( toCopyChar->IsNpc() && toCopyChar->GetQuestType() == QT_ESCORTQUEST )
 	{
 		if( numEntries > 0 )
 		{
@@ -8861,10 +8952,10 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// Shopkeeper
-	if( toCopy.IsShop() )
+	if( toCopyChar->IsShop() )
 	{
 		// Shopkeeper - Buy
-		CItem *sellContainer = toCopy.GetItemAtLayer( IL_SELLCONTAINER );
+		CItem *sellContainer = toCopyChar->GetItemAtLayer( IL_SELLCONTAINER );
 		if( ValidateObject( sellContainer ) && sellContainer->GetContainsList()->Num() > 0 )
 		{
 			if( numEntries > 0 )
@@ -8889,7 +8980,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 		}
 
 		// Shopkeeper - Sell
-		CItem *buyContainer = toCopy.GetItemAtLayer( IL_BUYCONTAINER );
+		CItem *buyContainer = toCopyChar->GetItemAtLayer( IL_BUYCONTAINER );
 		if( ValidateObject( buyContainer ) && buyContainer->GetContainsList()->Num() > 0 )
 		{
 			if( numEntries > 0 )
@@ -8914,9 +9005,9 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// Tame
-	if( toCopy.IsNpc() && cwmWorldState->creatures[toCopy.GetId()].IsAnimal() && !ValidateObject( toCopy.GetOwnerObj() ))
+	if( toCopyChar->IsNpc() && cwmWorldState->creatures[toCopy.GetId()].IsAnimal() && !ValidateObject( toCopy.GetOwnerObj() ))
 	{
-		auto skillToTame = toCopy.GetTaming();
+		auto skillToTame = toCopyChar->GetTaming();
 		if( skillToTame > 0 )
 		{
 			if( numEntries > 0 )
@@ -8942,8 +9033,8 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 
 	// Pet commands
 	bool playerIsOwner = ( ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar );
-	bool playerIsFriend = Npcs->CheckPetFriend( mChar, &toCopy );
-	if( toCopy.IsNpc() && toCopy.GetNpcAiType() != AI_PLAYERVENDOR && toCopy.GetQuestType() != QT_ESCORTQUEST && ( toCopy.IsTamed() || toCopy.CanBeHired() )
+	bool playerIsFriend = Npcs->CheckPetFriend( mChar, toCopyChar );
+	if( toCopyChar->IsNpc() && toCopyChar->GetNpcAiType() != AI_PLAYERVENDOR && toCopyChar->GetQuestType() != QT_ESCORTQUEST && ( toCopyChar->IsTamed() || toCopyChar->CanBeHired() )
 		&& ( playerIsOwner || playerIsFriend ))
 	{
 		if( numEntries > 0 )
@@ -9075,7 +9166,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
 			}
 
-			if( toCopy.IsTamed() )
+			if( toCopyChar->IsTamed() )
 			{
 				// Release (Pet)
 				numEntries++;
@@ -9093,7 +9184,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 				}
 			}
 
-			if( toCopy.CanBeHired() )
+			if( toCopyChar->CanBeHired() )
 			{
 				// Dismiss (Hireling)
 				numEntries++;
@@ -9114,7 +9205,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// Skill training - IDs 0x006D to 0x009C
-	if( toCopy.IsNpc() && !toCopy.IsTamed() && !cwmWorldState->creatures[toCopy.GetId()].IsAnimal() && toCopy.CanTrain() && cwmWorldState->creatures[toCopy.GetId()].IsHuman() )
+	if( toCopyChar->IsNpc() && !toCopyChar->IsTamed() && !cwmWorldState->creatures[toCopy.GetId()].IsAnimal() && toCopyChar->CanTrain() && cwmWorldState->creatures[toCopy.GetId()].IsHuman() )
 	{
 		auto idTracker = 0x0071;
 		auto clilocTracker = 6000;
@@ -9125,7 +9216,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 			if( skillEntries >= 10 )
 				break;
 
-			auto trainerSkillPoints = toCopy.GetBaseSkill( i );
+			auto trainerSkillPoints = toCopyChar->GetBaseSkill( i );
 			if( trainerSkillPoints > 600 && ( mChar->GetSkill( i ) < trainerSkillPoints / 3 ))
 			{
 				if( numEntries > 0 )
@@ -9271,7 +9362,7 @@ void CPClilocMessage::CopyData( CBaseObject& toCopy )
 	if( toCopy.CanBeObjType( OT_CHAR ))
 	{
 		CChar *toCopyChar = CalcCharObjFromSer( toCopy.GetSerial() );
-		toCopyName = GetNpcDictName( toCopyChar );
+		toCopyName = GetNpcDictName( toCopyChar, nullptr, NRS_SPEECH );
 	}
 	Name( toCopyName );
 }
@@ -9376,7 +9467,7 @@ void CPPartyMemberList::AddMember( CChar *member )
 	pStream.WriteShort( 1, static_cast<SI32>( curPos ) + 4 );
 }
 
-void CPPartyMemberList::Log( std::ofstream &outStream, bool fullHeader )
+void CPPartyMemberList::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -9431,7 +9522,7 @@ void CPPartyInvitation::Leader( CChar *leader )
 	pStream.WriteLong( 6, leader->GetSerial() );
 }
 
-void CPPartyInvitation::Log( std::ofstream &outStream, bool fullHeader )
+void CPPartyInvitation::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -9492,7 +9583,7 @@ void CPPartyMemberRemove::AddMember( CChar *member )
 	pStream.WriteShort( 1, static_cast<SI32>( curPos ) + 4 );
 }
 
-void CPPartyMemberRemove::Log( std::ofstream &outStream, bool fullHeader )
+void CPPartyMemberRemove::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -9566,7 +9657,7 @@ void CPPartyTell::InternalReset( void )
 	pStream.WriteByte( 5, 3 );		// subcommand
 }
 
-void CPPartyTell::Log( std::ofstream &outStream, bool fullHeader )
+void CPPartyTell::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{

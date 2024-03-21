@@ -101,6 +101,7 @@ SEngineFunc SE_UseItem;					//										***
 SEngineFunc SE_TriggerTrap;				//										***
 
 SEngineFunc SE_TriggerEvent;			//										*
+SEngineFunc SE_DoesEventExist;			//										*
 
 SEngineFunc SE_GetPackOwner;			//										***
 SEngineFunc SE_FindRootContainer;		//										***
@@ -111,6 +112,7 @@ SEngineFunc SE_GetTileIdAtMapCoord;		//										***
 SEngineFunc SE_StringToNum;				// Marked for Deletion
 SEngineFunc SE_NumToString;				// Marked for Deletion
 SEngineFunc SE_NumToHexString;			// Marked for Deletion
+SEngineFunc SE_EraStringToNum;
 
 SEngineFunc SE_GetRaceCount;
 SEngineFunc SE_AreaCharacterFunction;
@@ -128,6 +130,8 @@ SEngineFunc SE_WorldDarkLevel;
 SEngineFunc SE_WorldDungeonLevel;
 SEngineFunc SE_GetSpawnRegionFacetStatus;
 SEngineFunc SE_SetSpawnRegionFacetStatus;
+SEngineFunc SE_GetMoongateFacetStatus;
+SEngineFunc SE_SetMoongateFacetStatus;
 SEngineFunc SE_GetSocketFromIndex;
 SEngineFunc SE_ResourceArea;
 SEngineFunc SE_ResourceAmount;
@@ -136,6 +140,7 @@ SEngineFunc SE_ResourceRegion;
 SEngineFunc SE_Moon;
 
 SEngineFunc SE_GetTownRegion;
+SEngineFunc SE_GetTownRegionFromXY;
 SEngineFunc SE_GetSpawnRegion;
 SEngineFunc SE_GetSpawnRegionCount;
 
@@ -150,6 +155,7 @@ SEngineFunc SE_CheckTileFlag;
 SEngineFunc SE_DoesStaticBlock;
 SEngineFunc SE_DoesDynamicBlock;
 SEngineFunc SE_DoesMapBlock;
+SEngineFunc SE_DoesCharacterBlock;
 SEngineFunc SE_DistanceBetween;
 
 SEngineFunc SE_ValidateObject;

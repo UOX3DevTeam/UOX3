@@ -91,6 +91,8 @@ const UI08			DEFITEM_BASERANGE		= 0;
 const UI16			DEFITEM_USESLEFT		= 0;
 const UI16			DEFITEM_MAXUSES			= 0;
 const UI16			DEFITEM_REGIONNUM 		= 255;
+const UI16			DEFITEM_TEMPLASTTRADED	= 0;
+const SI08			DEFITEM_STEALABLE	 	= 1;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem()
@@ -104,7 +106,8 @@ restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMP
 spd( DEFITEM_SPEED ), maxHp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
 creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
-maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM )
+maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM ), 
+tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE )
 {
 	spells[0]	= spells[1] = spells[2] = 0;
 	value[0]	= value[1] = value[2] = 0;
@@ -990,6 +993,21 @@ auto CItem::SetMovable( SI08 newValue ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetTempLastTraded()
+//|					CItem::SetTempLastTraded()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets timestamp for when item was last traded using secure trade window (not saved)
+//o------------------------------------------------------------------------------------------------o
+auto CItem::GetTempLastTraded() const -> TIMERVAL
+{
+	return tempLastTraded;
+}
+auto CItem::SetTempLastTraded( TIMERVAL newValue ) -> void
+{
+	tempLastTraded = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetTempTimer()
 //|					CItem::SetTempTimer()
 //o------------------------------------------------------------------------------------------------o
@@ -1371,6 +1389,7 @@ auto CItem::IsFieldSpell() const -> UI08
 		case 0x3967:	return 3;// paralyze
 		case 0x3956:
 		case 0x3946:	return 4;// energy
+		case 0x0080:	return 5;// wall of stone
 		default:		return 0;
 	}
 }
@@ -1407,8 +1426,12 @@ auto CItem::IsLockedDown() const -> bool
 {
 	return ( movable == 3 );
 }
-auto CItem::LockDown() -> void
+auto CItem::LockDown( CMultiObj *multiObj ) -> void
 {
+	if( ValidateObject( multiObj ))
+	{
+		multis = multiObj;
+	}
 	movable = 3;
 	UpdateRegion();
 }
@@ -1420,19 +1443,9 @@ auto CItem::LockDown() -> void
 //o------------------------------------------------------------------------------------------------o
 auto CItem::IsShieldType() const -> bool
 {
-	if( id >= 0x1B72 && id <= 0x1B7B )
-		return true;
-
-	if( id >= 0x1BC3 && id <= 0x1BC7 )
-		return true;
-
-	if( id >= 0x4200 && id <= 0x420B )
-		return true;
-
-	if( id >= 0x4228 && id <= 0x422C )
-		return true;
-
-	return false;
+	return ( id >= 0x1B72 && id <= 0x1B7B ) || ( id >= 0x1BC3 && id <= 0x1BC7 ) ||
+		( id >= 0x4200 && id <= 0x420B ) || ( id >= 0x4228 && id <= 0x422C ) ||
+		( id == 0xA649 || id == 0xA64A ) || ( id == 0xA831 || id == 0xA832 );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1440,7 +1453,7 @@ auto CItem::IsShieldType() const -> bool
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save item details to worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CItem::Save( std::ofstream &outStream )
+bool CItem::Save( std::ostream &outStream )
 {
 	if( IsFree() )
 		return false;
@@ -1605,6 +1618,9 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetMana( GetMana() );
 	target->SetMaxHP( GetMaxHP() );
 	target->SetTempVar( CITV_MORE, GetTempVar( CITV_MORE ));
+	target->SetTempVar( CITV_MORE0, GetTempVar( CITV_MORE0 ));
+	target->SetTempVar( CITV_MORE1, GetTempVar( CITV_MORE1 ));
+	target->SetTempVar( CITV_MORE2, GetTempVar( CITV_MORE2 ));
 	target->SetTempVar( CITV_MOREX, GetTempVar( CITV_MOREX ));
 	target->SetTempVar( CITV_MOREY, GetTempVar( CITV_MOREY ));
 	target->SetTempVar( CITV_MOREZ, GetTempVar( CITV_MOREZ ));
@@ -1644,6 +1660,7 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetMaxRange( GetMaxRange() );
 	target->SetMaxUses( GetMaxUses() );
 	target->SetUsesLeft( GetUsesLeft() );
+	target->SetStealable( GetStealable() );
 
 	// Set damage types on new item
 	for( SI32 i = 0; i < WEATHNUM; ++i )
@@ -1676,7 +1693,7 @@ auto CItem::SetWeatherDamage( WeatherType effectNum, bool value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dump item header to worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CItem::DumpHeader( std::ofstream &outStream ) const
+bool CItem::DumpHeader( std::ostream &outStream ) const
 {
 	outStream << "[ITEM]" << '\n';
 	return true;
@@ -1687,7 +1704,7 @@ bool CItem::DumpHeader( std::ofstream &outStream ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dump item tags and values to worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CItem::DumpBody( std::ofstream &outStream ) const
+bool CItem::DumpBody( std::ostream &outStream ) const
 {
 	CBaseObject::DumpBody( outStream );
 	const char newLine = '\n';
@@ -1697,8 +1714,9 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	outStream << "GridLoc=0x" << static_cast<SI16>( GetGridLocation() ) << newLine;
 	outStream << "Layer=0x" << static_cast<SI16>( GetLayer() ) << newLine;
 	outStream << "Cont=0x" << GetContSerial() << newLine;
-	outStream << "More=0x" << GetTempVar( CITV_MORE ) << newLine;
 	outStream << "Creator=0x" << GetCreator() << newLine;
+	outStream << "More=0x" << GetTempVar( CITV_MORE ) << newLine;
+	outStream << "More012=0x" << GetTempVar( CITV_MORE0 ) << ",0x" << GetTempVar( CITV_MORE1 ) << ",0x" << GetTempVar( CITV_MORE2 ) << newLine;
 	outStream << "MoreXYZ=0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << newLine;
 	outStream << "Glow=0x" << GetGlow() << newLine;
 	outStream << "GlowBC=0x" << GetGlowColour() << newLine;
@@ -1736,6 +1754,8 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 		+ std::to_string( static_cast<SI16>( GetWeatherDamage( HEAT ) ? 1 : 0 )) + "," + std::to_string( static_cast<SI16>( GetWeatherDamage( COLD ) ? 1 : 0 )) + ","
 		+ std::to_string( static_cast<SI16>( GetWeatherDamage( SNOW ) ? 1 : 0 )) + "," + std::to_string( static_cast<SI16>( GetWeatherDamage( LIGHTNING ) ? 1 : 0 )) + newLine;
 	outStream << "EntryMadeFrom=" + std::to_string( EntryMadeFrom() ) + newLine;
+	outStream << "Stealable=" + std::to_string( GetStealable() ) + newLine;
+
 	return true;
 }
 
@@ -1928,8 +1948,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					rValue = true;
 				}
-				else if( UTag == "MURDERER" )
+				else if( UTag == "MORE012" )
 				{
+					SetTempVar( CITV_MOREX, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+					SetTempVar( CITV_MOREY, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+					SetTempVar( CITV_MOREZ, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "MOREXYZ" )
@@ -1982,6 +2005,10 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					{
 						SetTempVar( CITV_MOREZ, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					}
+					rValue = true;
+				}
+				else if( UTag == "MURDERER" )
+				{
 					rValue = true;
 				}
 				else if( UTag == "MOVABLE" )
@@ -2093,6 +2120,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					SetSpell( 0, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
 					SetSpell( 1, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
 					SetSpell( 2, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "STEALABLE" )
+				{
+					SetStealable( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -2360,6 +2392,22 @@ auto CItem::SetDivineLock( bool newValue ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetStealable()
+//|					CItem::SetStealable()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets property that determines under which conditions item can be stolen
+//o------------------------------------------------------------------------------------------------o
+auto CItem::GetStealable() const -> UI08
+{
+	return stealable;
+}
+auto CItem::SetStealable( UI08 newValue ) -> void
+{
+	stealable = newValue;
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::EntryMadeFrom()
 //|	Date		-	13 September, 2001
 //o------------------------------------------------------------------------------------------------o
@@ -2508,7 +2556,7 @@ auto CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 		unicodeMessage.Colour( 0x000B );
 		unicodeMessage.Type( SYSTEM );
 		unicodeMessage.Language( "ENG" );
-		unicodeMessage.Name( GetNameRequest( mChar ));
+		unicodeMessage.Name( GetNameRequest( mChar, NRS_SPEECH ));
 		unicodeMessage.ID( GetId() );
 		unicodeMessage.Serial( GetSerial() );
 
@@ -2631,8 +2679,15 @@ void CItem::SendToSocket( CSocket *mSock, [[maybe_unused]] bool drawGamePlayer )
 	{
 		if( !mChar->IsGM() )
 		{
-			if( GetVisible() != VT_VISIBLE || ( GetVisible() == VT_TEMPHIDDEN && mChar != GetOwnerObj() ))	// Not a GM, and not the Owner
+			// Not the owner, nor a GM
+			auto iVisible = GetVisible();
+			auto ownerObj = GetOwnerObj();
+			if(( iVisible != VT_VISIBLE && iVisible != VT_TEMPHIDDEN )
+				|| ( iVisible == VT_TEMPHIDDEN &&
+				( !ValidateObject( ownerObj ) || ( ValidateObject( ownerObj ) && ownerObj->GetSerial() != mChar->GetSerial() ))))
+			{
 				return;
+			}
 		}
 		if( mSock->ClientType() >= CV_SA2D )
 		{
@@ -2798,11 +2853,51 @@ void CItem::RemoveFromSight( CSocket *mSock )
 		}
 		else
 		{
-			for( auto &nSock : Network->connClients )
+			// Iterate through list of players who have opened the container the item was in
+			auto itemCont = static_cast<CItem *>( iCont );
+			auto contOpenedByList = itemCont->GetContOpenedByList();
+			for( const auto &oSock : contOpenedByList->collection() )
 			{
-				if( nSock->LoginComplete() )
+				// For any of those players who are still within range, send remove item packet
+				// We don't know if they still have eyes on the inside of the container, but we
+				// can still minimize sending the packet to those who
+				//  A) opened the container at some point, and are still on the container's list of players who opened it
+				//  B) are within range of the container
+				// have to rely on range to cover it instead
+				if( oSock != nullptr && oSock->LoginComplete() )
 				{
-					nSock->Send( &toRemove );
+					auto oChar = oSock->CurrcharObj();
+					if( ValidateObject( oChar ))
+					{
+						// Get character's visual range
+						auto visRange = static_cast<UI16>( oSock->Range() + Races->VisRange( oChar->GetRace() ));
+
+						// Find the root container (if any) of the container
+						auto rootCont = FindRootContainer( itemCont );
+						if( !ValidateObject( rootCont ))
+						{
+							rootCont = itemCont;
+						}
+
+						// Find the owner of the root container (if for instance it's a container inside player's backpack - or their backpack)
+						CChar *rootContOwner = FindItemOwner( rootCont );
+
+						CBaseObject *objToCheck = nullptr;
+						if( ValidateObject( rootContOwner ))
+						{
+							objToCheck = static_cast<CBaseObject *>( rootContOwner );
+						}
+						else
+						{
+							objToCheck = static_cast<CBaseObject *>( rootCont );
+						}
+
+						// If owner of root container exists, use that in range check
+						if( ObjInRangeSquare( objToCheck, oChar, visRange ))
+						{
+							oSock->Send( &toRemove );
+						}
+					}
 				}
 			}
 		}
@@ -2945,6 +3040,17 @@ void CItem::Cleanup( void )
 		CBaseObject *iCont = GetCont();
 		RemoveFromSight();
 		RemoveSelfFromCont();
+
+		// If a corpse, with valid player owner, remove from owner's list of corpses
+		if( IsCorpse() )
+		{
+			CChar *iOwner = GetOwnerObj();
+			if( ValidateObject( iOwner ) && !iOwner->IsNpc() )
+			{
+				iOwner->GetOwnedCorpses()->Remove( this );
+			}
+		}
+
 		RemoveSelfFromOwner();
 
 		for( CItem *tItem = Contains.First(); !Contains.Finished(); tItem = Contains.Next() )
@@ -2954,6 +3060,18 @@ void CItem::Cleanup( void )
 				tItem->Delete();
 			}
 		}
+		// Iterate through list of players that previously opened container, and remove self from those players
+		auto contOpenedBy = GetContOpenedByList();
+		for( const auto &pSock : contOpenedBy->collection() )
+		{
+			if( pSock != nullptr )
+			{
+				// Remove player from container's own list of players who have previously opened it
+				pSock->GetContsOpenedList()->Remove( this );
+			}
+		}
+		GetContOpenedByList()->Clear();	// Clear container's list of sockets that opened it previously
+
 		// if we delete an item we should delete it from spawnregions
 		// this will fix several crashes
 		if( IsSpawned() )
@@ -3000,7 +3118,7 @@ void CItem::Cleanup( void )
 			}
 			if( ValidateObject( owner ))
 			{
-				CChar *petGuard = Npcs->GetGuardingPet( owner, this );
+				CChar *petGuard = Npcs->GetGuardingFollower( owner, this );
 				if( ValidateObject( petGuard ))
 				{
 					petGuard->SetGuarding( nullptr );
@@ -3117,6 +3235,11 @@ auto CItem::GetContainsList() -> GenericList<CItem *> *
 	return &Contains;
 }
 
+auto CItem::GetContOpenedByList() -> GenericList<CSocket *> *
+{
+	return &contOpenedBy;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Class		-	CSpawnItem::CSpawnItem()
 //|	Date		-	29th June, 2004
@@ -3202,7 +3325,7 @@ auto CSpawnItem::IsSectionAList( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps Header to Worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CSpawnItem::DumpHeader( std::ofstream &outStream ) const
+bool CSpawnItem::DumpHeader( std::ostream &outStream ) const
 {
 	outStream << "[SPAWNITEM]" << '\n';
 	return true;
@@ -3214,7 +3337,7 @@ bool CSpawnItem::DumpHeader( std::ofstream &outStream ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps Spawn Item to Worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CSpawnItem::DumpBody( std::ofstream &outStream ) const
+bool CSpawnItem::DumpBody( std::ostream &outStream ) const
 {
 	CItem::DumpBody( outStream );
 	outStream << "Interval=" << static_cast<UI16>( GetInterval( 0 )) << "," << static_cast<UI16>( GetInterval( 1 )) << '\n';

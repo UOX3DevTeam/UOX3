@@ -14,6 +14,63 @@ function onLogin( socket, pChar )
 			return;
 		}
 	}
+
+	// Store login timestamp (in minutes) in temp tag
+	var loginTime = Math.round( GetCurrentClock() / 1000 / 60 );
+	pChar.SetTempTag( "loginTime", loginTime );
+
+	// Attach OnFacetChange to characters logging into the shard
+	if( !pChar.HasScriptTrigger( 2508 ))
+    {
+        pChar.AddScriptTrigger( 2508 );
+    }
+
+    if( pChar.account.isYoung )
+    {
+  		// Attach "Young" player script, if the account is young and does not have script
+		if( !pChar.HasScriptTrigger( 8001 ))
+		{
+			pChar.AddScriptTrigger( 8001 );
+		}
+
+    	// Check if "Young" player still meets requirement for being considered young
+    	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
+    }
+}
+
+function onLogout( pSock, pChar )
+{
+	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - pChar.GetTempTag( "loginTime" );
+	pChar.playTime += minSinceLogin;
+	pChar.account.totalPlayTime += minSinceLogin;
+
+	//Used to remove the candy timer in items/candy.js
+	pChar.KillJSTimer( 0, 5601 );
+	pChar.SetTempTag( "toothach", null );
+	pChar.SetTempTag( "Acidity", null );
+
+	//Treasure Hunting Kill Event.
+	var dirtItem = CalcItemFromSer( parseInt( pChar.GetTempTag( "dirtMadeSer" )));
+	if( ValidateObject( dirtItem ))
+	{
+		TriggerEvent( 5405, "KillTreasureEvent", dirtItem, pChar );
+		return;
+	}
+}
+
+function onCreatePlayer( pChar )
+{
+	// If player character is created on a Young account, give them Young-specific items
+	if( pChar.account.isYoung )
+	{
+		// Attach "Young" player script, if the account is young and does not have script
+		if( !pChar.HasScriptTrigger( 8001 ))
+		{
+			pChar.AddScriptTrigger( 8001 );
+		}
+
+		TriggerEvent( 8001, "GiveYoungPlayerItems", pChar.socket, pChar );
+	}
 }
 
 // Generic global-script function to look up data in /shared/jsWorldData/ folder
@@ -117,4 +174,19 @@ function onHelpButton( pChar )
 {
 	TriggerEvent( 2, "DisplayHelpMenu", pChar );
 	return false;
+}
+
+// Override hard-coded snooping request and go with scripted one
+function onSnoopAttempt( snoopTarget, targCont, pUser )
+{
+	return TriggerEvent( 4055, "SnoopAttempt", snoopTarget, targCont, pUser );
+}
+
+// Look for Gem of Salvation in player's backpack to give them chance to resurrect
+function onDeath( pDead, iCorpse )
+{
+	if( !ValidateObject( pDead ) || pDead.npc || !pDead.online )
+		return false;
+
+	return TriggerEvent( 5045, "onDeath", pDead, iCorpse );
 }

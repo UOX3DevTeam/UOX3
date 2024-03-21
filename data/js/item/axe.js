@@ -39,7 +39,7 @@ function onCallback1( socket, ourObj )
 			tileID = socket.GetWord( 17 );
 			if( !tileID )
 			{
-				tileID = GetTileIDAtMapCoord( socket.GetWord( 11 ), socket.GetWord( 13 ), mChar.worldNumber );
+				tileID = GetTileIDAtMapCoord( socket.GetWord( 11 ), socket.GetWord( 13 ), mChar.worldnumber );
 			}
 		}
 		else if( ourObj && ourObj.isItem )
@@ -216,6 +216,10 @@ function onCallback1( socket, ourObj )
 						addonParent.Delete();
 					}
 				}
+				else if( ourObj.GetTag( "HolidayAddon" )) 
+				{
+					TriggerEvent( 5609, "ReDeedAddon", mChar, ourObj );
+				}
 				else if( tileID >= 0x1BD7 && tileID <= 0x1BE2 )	// Bowcraft
 				{
 					BowCraft( socket, mChar, ourObj, tileID );
@@ -326,19 +330,27 @@ function onTimer( mChar, timerID )
 				socket.clickX = 0;
 				socket.clickY = 0;
 
-				if( mChar.CheckSkill( 44, 0, 1000 ))
+				if( mResource.logAmount > 0 )
 				{
-					mResource.logAmount = mResource.logAmount-1;
-					CreateDFNItem( socket, mChar, "0x1BE0", 10, "ITEM", true );
-					socket.SysMessage( GetDictionaryEntry( 1435, socket.language )); // You place some logs in your pack.
+					if( mChar.CheckSkill( 44, 0, 1000 ))
+					{
+						mResource.logAmount = mResource.logAmount-1;
+						CreateDFNItem( socket, mChar, "0x1BE0", 10, "ITEM", true );
+						socket.SysMessage( GetDictionaryEntry( 1435, socket.language )); // You place some logs in your pack.
+					}
+					else
+					{
+						socket.SysMessage( GetDictionaryEntry( 842, socket.language )); // =You chop for a while, but fail to produce any usable wood.
+						if( RandomNumber( 0, 1 ))	// 50% chance to destroy some resources
+						{
+							mResource.logAmount = mResource.logAmount-1;
+						}
+					}
 				}
 				else
 				{
-					socket.SysMessage( GetDictionaryEntry( 842, socket.language )); // =You chop for a while, but fail to produce any usable wood.
-					if( RandomNumber( 0, 1 ))	// 50% chance to destroy some resources
-					{
-						mResource.logAmount = mResource.logAmount-1;
-					}
+					socket.SysMessage( GetDictionaryEntry( 840, socket.language )); // There is no more wood here to chop.
+					return;
 				}
 			}
 			break;
@@ -356,7 +368,12 @@ function onTimer( mChar, timerID )
 			{
 				mChar.visible = 0;
 			}
-			if( mChar.isonhorse )
+
+			if( mChar.id == 0x029A || mChar.id == 0x029B ) // Gargoyle
+			{
+				mChar.DoAction( 0x0, 0x3 );
+			}
+			else if( mChar.isonhorse )
 			{
 				mChar.DoAction( 0x1C );
 			}
@@ -374,7 +391,12 @@ function onTimer( mChar, timerID )
 			{
 				mChar.visible = 0;
 			}
-			if( mChar.isonhorse )
+
+			if( mChar.id == 0x029A || mChar.id == 0x029B ) // Gargoyle
+			{
+				mChar.DoAction( 0x0, 0x3 );
+			}
+			else if( mChar.isonhorse )
 			{
 				mChar.DoAction( 0x1C );
 			}

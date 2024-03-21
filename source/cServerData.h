@@ -126,6 +126,10 @@ enum cSD_TID
 	tSERVER_ESCORTDONE,			// Amount of time until an escort NPC will dissapear when his quest is finished.
 	tSERVER_MURDERDECAY,		// Amount of time before a permanent murder count will decay.
 	tSERVER_CRIMINAL,			// Amount of time a character remains criminal after committing a criminal act.
+	tSERVER_STEALINGFLAG,		// Amount of time a character's stealing flag remains active
+	tSERVER_AGGRESSORFLAG,		// Amount of time a character remains aggressor after committing an aggressive act
+	tSERVER_PERMAGREYFLAG,		// Amount of time a permagrey flag remains active after player has stolen from someone
+	tSERVER_COMBATIGNORE,		// Amount of time an NPC will ignore an unreachable target in combat
 	tSERVER_POTION,				// Delay between using potions
 	tSERVER_PETOFFLINECHECK,	// Delay between checks for the PetOfflineTimeout
 	tSERVER_NPCFLAGUPDATETIMER, // Delay in seconds between each time NPC flags are updated
@@ -208,8 +212,9 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<91>	boolVals;				// Many values stored this way, rather than using bools.
-	std::bitset<64>	spawnRegionsFacets;		// Used to determine which facets to enable spawn regions for, set in UOX>INI
+	std::bitset<104>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
+	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
 	// ServerSystems
 	std::string sServerName;				// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -222,6 +227,10 @@ private:
 	UI16		serverLanguage;				//	Default language used on server
 	UI16		port;						//	Port number that the server listens on, for connections
 	UI16		jsEngineSize;				// gcMaxBytes limit in MB per JS runtime
+	UI16		apsPerfThreshold;			// Performance threshold (simulation cycles) below which APS system kicks in - 0 disables system
+	UI16		apsInterval;				// Interval at which APS checks and optionally makes adjustments based on shard performance
+	UI16		apsDelayStep;				// Step value in milliseconds that APS uses to gradually adjust delay for NPC AI/movement checks
+	UI16		apsDelayMaxCap;				// Max impact in milliseconds APS can have on NPC AI/movement checks
 	UI16		sysMsgColour;				// Default text colour for system messages displayed in bottom left corner of screen
 	SI16		backupRatio;				//	Number of saves before a backup occurs
 	UI32		serverSavesTimer;				//	Number of seconds between world saves
@@ -270,10 +279,12 @@ private:
 	// array
 	std::string serverDirectories[CSDDP_COUNT];
 	
-	std::string actualINI;					// 	The actual uox.ini file loaded, used for saveing
+	std::string actualINI;						// 	The actual uox.ini file loaded, used for saveing
+
+	std::string secretShardKey;					// Secret shard key used to only allow connection from specific custom clients with matching key
 
 	// Expansion
-	// 0 = T2A, 1 = UOR, 2 = TD, 3 = LBR, 4 = Pub15/Pre-AoS, 5 = AoS, 6 = SE, 7 = ML, 8 = SA, 9 = HS, 10 = ToL
+	// 0 = core, 1 = UO, 2 = T2A, 3 = UOR, 4 = TD, 5 = LBR (Pub15), 6 = AoS, 7 = SE, 8 = ML, 9 = SA, 10 = HS, 11 = ToL
 	UI08		coreShardEra;					// Determines core era ruleset for shard (determines which items/npcs are loaded, and which rules are applied in combat)
 	UI08		expansionArmorCalculation;		// Determines which era ruleset to use for calculating armor and defense
 	UI08		expansionStrengthDamageBonus;	// Determines which era ruleset to use for calculating strength damage bonus
@@ -317,6 +328,8 @@ private:
 	R32			globalAttackSpeed;				//  Global attack speed that can be tweaked to quickly increase or decrease overall combat speed. Defaults to 1.0
 	R32			npcSpellcastSpeed;				//  For adjusting the overall speed of (or delay between) NPC spell casts. Defaults to 1.0
 	R32			globalRestockMultiplier;		//	Global multiplier applied to restock properties of items when loaded from DFNs
+	R32			bodGoldRewardMultiplier;		//	Multiplier that adjusts the amount of Gold rewarded by completing Bulk Order Deeds
+	R32			bodFameRewardMultiplier;		//	Multiplier that adjusts the amount of Fame rewarded by completing Bulk Order Deeds
 	R64			checkItems;						//	How often (in seconds) items are checked for decay and other things
 	R64			checkBoats;						//	How often (in seconds) boats are checked for motion and so forth
 	R64			checkNpcAi;						//	How often (in seconds) NPCs can execute an AI routine
@@ -379,6 +392,7 @@ private:
 	UI08		combatParryDamageMax;			//  Maximum amount of hitpoints a shield/weapon can lose when successfully parrying in combat
 	UI08		combatBloodEffectChance;		//  Chance of blood splatter effects spawning during combat
 	UI08		alchemyDamageBonusModifier;		//  Modifier used to calculate bonus damage for explosion potions based on alchemy skill
+	UI08		combatWeaponDamageBonusType;	//  Weapon damage bonus type (0 - apply to hidamage, 1 - split between lo and hi, 2 - apply equally to lo and hi
 	SI08		combatArcheryHitBonus;			//  Bonus to hit chance for Archery skill in combat, applied after regular hit chance calculation
 	SI16		combatMaxRange;					//	RANGE?  Range at which combat can actually occur
 	SI16		combatMaxSpellRange;			//	RANGE?  Range at which spells can be cast
@@ -389,6 +403,7 @@ private:
 
 	// Start & Location Settings
 	std::vector<__STARTLOCATIONDATA__>	startlocations;
+	std::vector<__STARTLOCATIONDATA__>	youngStartlocations;
 	UI16		startPrivs;						//	Starting privileges of characters
 	SI16		startGold;						//	Amount of gold created when a PC is made
 
@@ -445,6 +460,11 @@ public:
 	UI32		GetSpawnRegionsFacetStatus() const;
 	auto		SetSpawnRegionsFacetStatus( UI32 value ) -> void;
 
+	auto		GetMoongateFacetStatus( UI32 value ) const -> bool;
+	auto		SetMoongateFacetStatus( UI32 value, bool status ) -> void;
+	UI32		GetMoongateFacetStatus() const;
+	auto		SetMoongateFacetStatus( UI32 value ) -> void;
+
 	auto		SetClassicUOMapTracker( bool value ) -> void;
 	auto		GetClassicUOMapTracker() const -> bool;
 
@@ -474,7 +494,7 @@ public:
 	auto		SaveIni( const std::string &filename ) -> bool;
 
 	auto		EraEnumToString( ExpansionRuleset eraNum, bool coreEnum = false ) -> std::string;
-	auto		EraStringToEnum( const std::string &eraString ) -> ExpansionRuleset;
+	auto		EraStringToEnum( const std::string &eraString, bool useDefault = true, bool inheritCore = true ) -> ExpansionRuleset;
 
 	auto ResetDefaults() -> void;
 	auto Startup() -> void;
@@ -482,9 +502,11 @@ public:
 
 	CServerData();
 	auto		ServerName( const std::string &setname ) -> void;
+	auto		SecretShardKey( const std::string &newName ) -> void;
 	auto		ServerDomain( const std::string &setdomain ) -> void;
 	auto		ServerIP( const std::string &setip ) -> void;
 	auto		ServerName() const -> const std::string &;
+	auto		SecretShardKey() const -> const std::string &;
 	auto		ServerDomain() const -> const std::string &;
 	auto		ServerIP() const -> const std::string &;
 	auto		ExternalIP() const -> const std::string &;
@@ -602,6 +624,9 @@ public:
 	auto		InternalAccountStatus( bool value ) -> void;
 	auto		InternalAccountStatus() const -> bool;
 
+	auto		YoungPlayerSystem( bool value ) -> void;
+	auto		YoungPlayerSystem() const -> bool;
+
 	auto		ShowOfflinePCs( bool value ) -> void;
 	auto		ShowOfflinePCs() const -> bool;
 
@@ -610,6 +635,9 @@ public:
 
 	auto		SnoopIsCrime( bool value ) -> void;
 	auto		SnoopIsCrime() const -> bool;
+
+	auto		SnoopAwareness( bool value ) -> void;
+	auto		SnoopAwareness() const -> bool;
 
 	auto		PlayerPersecutionStatus( bool value ) -> void;
 	auto		PlayerPersecutionStatus() const -> bool;
@@ -662,6 +690,12 @@ public:
 	auto		GlobalRestockMultiplier( R32 value ) -> void;
 	R32			GlobalRestockMultiplier() const;
 
+	auto		BODGoldRewardMultiplier( R32 value ) -> void;
+	R32			BODGoldRewardMultiplier() const;
+
+	auto		BODFameRewardMultiplier( R32 value ) -> void;
+	R32			BODFameRewardMultiplier() const;
+
 	auto		MsgBoardPostingLevel( UI08 value ) -> void;
 	UI08		MsgBoardPostingLevel() const;
 
@@ -676,6 +710,9 @@ public:
 
 	auto		AlchemyDamageBonusModifier( UI08 value ) -> void;
 	UI08		AlchemyDamageBonusModifier() const;
+
+	auto		WeaponDamageBonusType( UI08 value ) -> void;
+	UI08		WeaponDamageBonusType() const;
 
 	auto		ItemsInterruptCasting( bool value ) -> void;
 	auto		ItemsInterruptCasting() const -> bool;
@@ -752,6 +789,12 @@ public:
 	auto		ShowReputationTitleInTooltip( bool value ) -> void;
 	auto		ShowReputationTitleInTooltip() const -> bool;
 
+	auto		EnableNPCGuildDiscounts( bool value ) -> void;
+	auto		EnableNPCGuildDiscounts() const -> bool;
+
+	auto		EnableNPCGuildPremiums( bool value ) -> void;
+	auto		EnableNPCGuildPremiums() const -> bool;
+
 	auto		CastSpellsWhileMoving( bool value ) -> void;
 	auto		CastSpellsWhileMoving() const -> bool;
 
@@ -793,6 +836,27 @@ public:
 
 	auto		CoOwnHousesOnSameAccount( bool value ) -> void;
 	auto		CoOwnHousesOnSameAccount() const -> bool;
+
+	auto		SafeCoOwnerLogout( bool value ) -> void;
+	auto		SafeCoOwnerLogout() const -> bool;
+
+	auto		SafeFriendLogout( bool value ) -> void;
+	auto		SafeFriendLogout() const -> bool;
+
+	auto		SafeGuestLogout( bool value ) -> void;
+	auto		SafeGuestLogout() const -> bool;
+
+	auto		KeylessOwnerAccess( bool value ) -> void;
+	auto		KeylessOwnerAccess() const -> bool;
+
+	auto		KeylessCoOwnerAccess( bool value ) -> void;
+	auto		KeylessCoOwnerAccess() const -> bool;
+
+	auto		KeylessFriendAccess( bool value ) -> void;
+	auto		KeylessFriendAccess() const -> bool;
+
+	auto		KeylessGuestAccess( bool value ) -> void;
+	auto		KeylessGuestAccess() const -> bool;
 
 	auto		MaxHousesOwnable( UI16 value ) -> void;
 	auto		MaxHousesOwnable() const -> UI16;
@@ -874,6 +938,15 @@ public:
 
 	auto		CraftColouredWeapons( bool value ) -> void;
 	auto		CraftColouredWeapons() const -> bool;
+
+	auto		OfferBODsFromItemSales( bool value ) -> void;
+	auto		OfferBODsFromItemSales() const -> bool;
+
+	auto		OfferBODsFromContextMenu( bool value ) -> void;
+	auto		OfferBODsFromContextMenu() const -> bool;
+
+	auto		BODsFromCraftedItemsOnly( bool value ) -> void;
+	auto		BODsFromCraftedItemsOnly() const -> bool;
 
 	auto		MaxControlSlots( UI08 value ) -> void;
 	UI08		MaxControlSlots() const;
@@ -1096,8 +1169,11 @@ public:
 
 	auto		ServerLocation( std::string toSet ) -> void;
 	auto 		ServerLocation( size_t locNum ) ->__STARTLOCATIONDATA__ *;
-
 	auto		NumServerLocations() const -> size_t;
+
+	auto		YoungServerLocation( std::string toSet ) -> void;
+	auto 		YoungServerLocation( size_t locNum ) ->__STARTLOCATIONDATA__ *;
+	auto		NumYoungServerLocations() const -> size_t;
 
 	auto		ServerSecondsPerUOMinute() const -> UI16;
 	auto		ServerSecondsPerUOMinute( UI16 newVal ) -> void;
@@ -1117,6 +1193,15 @@ public:
 	auto		GetJSEngineSize() const -> UI16;
 	auto		SetJSEngineSize( UI16 newVal ) -> void;
 
+	auto		APSPerfThreshold() const -> UI16;
+	auto		APSPerfThreshold( UI16 newVal ) -> void;
+	auto		APSInterval() const -> UI16;
+	auto		APSInterval( UI16 newVal ) -> void;
+	auto		APSDelayStep() const -> UI16;
+	auto		APSDelayStep( UI16 newVal ) -> void;
+	auto		APSDelayMaxCap() const -> UI16;
+	auto		APSDelayMaxCap( UI16 newVal ) -> void;
+
 	SI16		ServerTimeDay() const;
 	UI08		ServerTimeHours() const;
 	UI08		ServerTimeMinutes() const;
@@ -1131,7 +1216,7 @@ public:
 
 	auto		SaveTime() -> void;
 	auto		LoadTime() -> void;
-	auto		LoadTimeTags( std::ifstream &input ) -> void;
+	auto		LoadTimeTags( std::istream &input ) -> void;
 
 	// These functions return true if it's a new day
 	auto		IncSecond() -> bool;

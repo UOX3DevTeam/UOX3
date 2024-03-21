@@ -8,6 +8,9 @@ enum CITempVars
 	CITV_MOREX,
 	CITV_MOREY,
 	CITV_MOREZ,
+	CITV_MORE0,
+	CITV_MORE1,
+	CITV_MORE2,
 	CITV_COUNT
 };
 
@@ -15,6 +18,7 @@ class CItem : public CBaseObject
 {
 protected:
 	GenericList<CItem *>	Contains;
+	GenericList<CSocket *>	contOpenedBy;
 
 	CBaseObject * 	contObj;
 	UI08			glowEffect;
@@ -44,6 +48,16 @@ protected:
 	UI16			entryMadeFrom;
 	SERIAL			creator;		// Store the serial of the player made this item
 	SI08			gridLoc;
+	SI32			weightMax;		// Maximum weight a container can hold
+	SI32			baseWeight;		// Base weight of item. Applied when item is created for the first time, based on weight. Primarily used to determine base weight of containers
+	UI16			maxItems;		// Maximum amount of items a container can hold
+	UI08			maxRange;		// Max range of ranged weapon
+	UI08			baseRange;		// Base range of thrown weapon
+	UI16			maxUses;		// Max number of uses an item can have
+	UI16			usesLeft;		// Current number of uses left on an item
+	UI16			regionNum;
+	TIMERVAL		tempLastTraded;		// Temporary timestamp for when item was last traded between players via secure trade window (not saved)
+	UI08			stealable;		// 0=Not stealable, 1=Stealable (default, most items), 2=Special Stealable (town rares, etc)
 
 	std::bitset<8>	bools;
 	std::bitset<8>	priv; 			// Bit 0, decay off/on.  Bit 1, newbie item off/on.  Bit 2 Dispellable
@@ -53,20 +67,11 @@ protected:
 	std::string		eventName;		// Name of custom event item belongs to
 
 	UI32			tempVars[CITV_COUNT];
-	SI32			weightMax;		// Maximum weight a container can hold
-	SI32			baseWeight;		// Base weight of item. Applied when item is created for the first time, based on weight. Primarily used to determine base weight of containers
-	UI16			maxItems;		// Maximum amount of items a container can hold
-	UI08			maxRange;		// Max range of ranged weapon
-	UI08			baseRange;		// Base range of thrown weapon
-	UI16			maxUses;		// Max number of uses an item can have
-	UI16			usesLeft;		// Current number of uses left on an item
 	UI08			dir;			// direction an item can have
 
 	UI32			value[3];		// Price a shopkeep buys and sells items for, with price on player vendor as optional third value
 	UI16			ammo[2];		// Ammo ID and Hue
 	UI16			ammoFX[3];		// Ammo-effect ID, Hue and rendermode
-
-	UI16			regionNum;
 
 	std::bitset<WEATHNUM>	weatherBools;	// For elemental weaponry.  So a Heat weapon would be a fire weapon, and does elemental damage to Heat weak races
 
@@ -75,7 +80,7 @@ protected:
 	virtual void	AddSelfToOwner( void ) override;
 
 	auto			CheckItemIntegrity() -> void;
-	virtual bool	DumpHeader( std::ofstream &outStream ) const override;
+	virtual bool	DumpHeader( std::ostream &outStream ) const override;
 	virtual bool	LoadRemnants( void ) override;
 
 	UI32			spells[3];		// For spellbooks (eventually should be a derived class)
@@ -85,6 +90,7 @@ protected:
 public:
 
 	auto	GetContainsList() -> GenericList<CItem *> *;
+	auto	GetContOpenedByList() -> GenericList<CSocket *> *;
 
 	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true ) override;
 	auto			EntryMadeFrom() const -> UI16;
@@ -103,6 +109,9 @@ public:
 
 	auto			GetGridLocation() const -> SI08;
 	auto			SetGridLocation( SI08 newLoc ) -> void;
+
+	auto			GetStealable() const -> UI08;
+	auto			SetStealable( UI08 newValue ) -> void;
 
 	auto			IsDoorOpen() const -> bool;
 	auto			IsPileable() const -> bool;
@@ -190,9 +199,11 @@ public:
 	auto			GetMovable() const -> SI08;
 	auto			SetMovable( SI08 newValue ) -> void;
 
+	auto			GetTempLastTraded() const -> TIMERVAL;
 	auto			GetTempTimer() const -> TIMERVAL;
 	auto			GetDecayTime() const -> TIMERVAL;
 
+	auto			SetTempLastTraded( TIMERVAL newValue ) -> void;
 	auto			SetTempTimer( TIMERVAL newValue ) -> void;
 	auto			SetDecayTime( TIMERVAL newValue ) -> void;
 
@@ -285,7 +296,7 @@ public:
 	auto			IsMetalType() const -> bool;
 	auto			IsLeatherType() const -> bool;
 	auto			CanBeLockedDown() const -> bool;
-	auto			LockDown() -> void;
+	auto			LockDown( CMultiObj *multiObj = nullptr ) -> void;
 	auto			IsContType() const -> bool;
 	auto			UpdateRegion() -> void;
 
@@ -295,8 +306,8 @@ public:
 	auto			SendPackItemToSocket( CSocket *mSock ) -> void;
 	virtual void	RemoveFromSight( CSocket *mSock = nullptr );
 
-	virtual bool	Save( std::ofstream &outStream ) override;
-	virtual bool	DumpBody( std::ofstream &outStream ) const override;
+	virtual bool	Save( std::ostream &outStream ) override;
+	virtual bool	DumpBody( std::ostream &outStream ) const override;
 	virtual bool	HandleLine( std::string &UTag, std::string &data ) override;
 	virtual void	PostLoadProcessing( void ) override;
 	virtual void	Cleanup( void ) override;
@@ -330,8 +341,8 @@ public:
 	auto				IsSectionAList() const -> bool;
 	auto				IsSectionAList( bool newVal ) -> void;
 
-	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
-	virtual bool		DumpBody( std::ofstream &outStream ) const override;
+	virtual bool		DumpHeader( std::ostream &outStream ) const override;
+	virtual bool		DumpBody( std::ostream &outStream ) const override;
 
 	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 

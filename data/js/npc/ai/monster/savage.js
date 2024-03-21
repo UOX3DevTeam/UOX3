@@ -100,8 +100,11 @@ function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 		damage = RandomNumber( 0, 4 );
 	}
 
-	// Half remaining damage by 2 if PUB15 or earlier
-	damage /= 2;
+	// Half remaining damage by 2 if LBR or earlier
+	if( EraStringToNum( GetServerSetting( "CoreShardEra" )) <= EraStringToNum( "lbr" ))
+	{
+		damage /= 2;
+	}
 
 	// If defender is a player, damage is divided by this modifier from uox.ini (modifier defaults to 1)
 	if( !pDefender.npc )
@@ -110,7 +113,6 @@ function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 	}
 
 	// Apply Savage damage bonuses against large tamed animals
-	var sectID = pDefender.sectionID;
 	if( bonusDamageList.indexOf( pDefender.sectionID ))
 	{
 		damage *= 3;

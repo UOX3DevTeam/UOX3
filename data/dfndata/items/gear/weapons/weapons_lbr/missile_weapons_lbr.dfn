@@ -1,0 +1,9 @@
+
+// Fukiya - LBR stats (default)
+[0x27aa_lbr]
+{
+get=base_fukiya
+damage=2 12
+value=58 41
+weight=400
+}

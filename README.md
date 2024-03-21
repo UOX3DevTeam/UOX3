@@ -7,9 +7,9 @@
 
 **Ultima Offline eXperiment 3** - the original open source Ultima Online server emulator, allowing people to run their own, custom UO shards since 1997. Comes with cross-platform 64-bit support for **Windows**, **Linux**, **macOS**, and **FreeBSD**. News, releases, forums, additional documentation and more can be found at https://www.uox3.org
 
-Supported UO Client versions: **~4.0.0p** to at least **~7.0.97.25** (with encryption removed by [ClassicUO](https://www.classicuo.eu), [Razor](https://github.com/msturgill/razor/releases) or similar tools). For additional details on UO client compatibility, check https://www.uox3.org/forums/viewtopic.php?f=1&t=2289
+Supported UO Client versions: **~4.0.0p** to at least **~7.0.98.1** (with encryption removed by [ClassicUO](https://www.classicuo.eu), [Razor](https://github.com/msturgill/razor/releases) or similar tools). For additional details on UO client compatibility, check https://www.uox3.org/forums/viewtopic.php?f=1&t=2289
 
-UOX3 relies on **SpiderMonkey v1.7.0** for its JS-based scripting engine, and on **zlib-1.2.11** for data compression matters, and comes bundled with specific, compatible versions of these.
+UOX3 relies on **SpiderMonkey v1.8.0-RC1** for its JS-based scripting engine, and on **zlib-1.2.11** for data compression matters, and comes bundled with specific, compatible versions of these.
 
 Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick chat!
 
@@ -40,7 +40,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 ---
 
 ## Step 2: Clone the UOX3 Git Repository
-*Next up, clone the UOX3 git repository, which also includes the latest verified compatible version of SpiderMonkey (v1.7.0) and a minimal set of files required to compile zlib-1.2.11.*
+*Next up, clone the UOX3 git repository, which also includes the latest verified compatible version of SpiderMonkey (v1.8.0-RC1) and a minimal set of files required to compile zlib-1.2.11.*
 <details>
   <summary>Using <strong>GitHub Desktop</strong> (Windows/macOS)</summary>
 
@@ -82,14 +82,10 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 
   > If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does) in a Terminal. This also works on Windows/macOS as an alternative to compiling with IDEs:
   > - Navigate to root of cloned UOX3 git repository, and execute these commands:\
-  > `cd make/cmake`\
-  > `mkdir build`\
-  > `cd build`\
-  > `cmake .. -DCMAKE_BUILD_TYPE=Release` (Windows/Linux/FreeBSD)\
-  > `cmake .. -DCMAKE_BUILD_TYPE=Release -G"Unix Makefiles"` (macOS)\
-  > `cmake --build . --config Release`\
+  > `cmake make/cmake -B ./build -DCMAKE_BUILD_TYPE=Release`\
+  > `cmake --build ./build --config Release`
 
-  > Replace "Release" with "Debug" in the above instructions to create a debug-build; delete **make/cmake/build** directory to do clean builds.
+  > Replace "Release" with "Debug" in the above instructions to create a debug-build; delete **build** directory to do clean builds.
 </details>
 
 <details>

@@ -970,6 +970,31 @@ practice_gnarled_staff
 25|0x0df1
 }
 
+// Chaos Dragoon Weapons - Kryss, Broadsword, Katana
+[ITEMLIST 205]
+{
+10|kryss
+10|broadsword
+10|katana
+}
+
+// halloween pumpking patch
+[ITEMLIST 151]
+{
+40|2006jackolantern
+100|2006pumpkinhalloween
+25|menacingjackolantern
+25|Leeringjackolantern
+}
+
+// Gypsy Headgear
+[ITEMLIST 210]
+{
+jesterhat
+bandana
+skullcap
+}
+
 // Dungeon Treasures Level 1 - 4
 // Special Itemlist for Container Spawn Objects!
 [ITEMLIST dungeontreasureloot1]
@@ -1064,6 +1089,144 @@ d_treasure_4
 {
 d_treasure_3
 d_treasure_4
+}
+
+// Treasures Chests Level 0 - 6
+// Special Itemlist for Container Spawn Objects!
+[ITEMLIST treasurechestloot0]
+{
+0x0eed,500
+lootlist=lowlevelscrolls,1
+lootlist=midlevelscrolls,1
+lootlist=highlevelscrolls,1
+lootlist=randomgemsandjewelry,5
+lootlist=magic_items_max_tier_1
+itemlist=lowlevelarmor,2
+itemlist=randomlowlevelweapons,2
+}
+
+[ITEMLIST treasurechestloot1]
+{
+0x0eed,1000
+lootlist=lowlevelscrolls,3
+lootlist=midlevelscrolls,1
+lootlist=highlevelscrolls,1
+lootlist=randomgemsandjewelry,10
+lootlist=magic_items_max_tier_1,2
+lootlist=magic_items_max_tier_2
+lootlist=magic_items_max_tier_3
+lootlist=magic_items_max_tier_4
+itemlist=lowlevelarmor,2
+itemlist=randomlowlevelweapons,2
+itemlist=randommidlevelweapons,2
+}
+
+[ITEMLIST treasurechestloot2]
+{
+0x0eed,2000
+lootlist=lowlevelscrolls,4
+lootlist=midlevelscrolls,4
+lootlist=highlevelscrolls,2
+lootlist=randomgemsandjewelry,20
+lootlist=magic_items_max_tier_1,4
+lootlist=magic_items_max_tier_2,4
+lootlist=magic_items_max_tier_3,2
+lootlist=magic_items_max_tier_4,2
+itemlist=lowlevelarmor,2
+itemlist=midlevelarmor,2
+itemlist=highlevelarmor,2
+itemlist=randomlowlevelweapons,4
+itemlist=randommidlevelweapons,4
+}
+
+[ITEMLIST treasurechestloot3]
+{
+0x0eed,3000
+lootlist=lowlevelscrolls,4
+lootlist=midlevelscrolls,5
+lootlist=highlevelscrolls,5
+lootlist=randomgemsandjewelry,30
+lootlist=magic_items_max_tier_1,4
+lootlist=magic_items_max_tier_2,4
+lootlist=magic_items_max_tier_3,3
+lootlist=magic_items_max_tier_4,3
+itemlist=lowlevelarmor,4
+itemlist=midlevelarmor,4
+itemlist=highlevelarmor,4
+itemlist=randomlowlevelweapons,6
+itemlist=randommidlevelweapons,6
+}
+
+[ITEMLIST treasurechestloot4]
+{
+0x0eed,4000
+lootlist=lowlevelscrolls,4
+lootlist=midlevelscrolls,6
+lootlist=highlevelscrolls,6
+lootlist=randomgemsandjewelry,40
+lootlist=magic_items_max_tier_1,4
+lootlist=magic_items_max_tier_2,4
+lootlist=magic_items_max_tier_3,3
+lootlist=magic_items_max_tier_4,3
+itemlist=lowlevelarmor,5
+itemlist=midlevelarmor,5
+itemlist=highlevelarmor,5
+itemlist=randomlowlevelweapons,6
+itemlist=randommidlevelweapons,6
+}
+
+[ITEMLIST treasurechestloot5]
+{
+0x0eed,5000
+lootlist=lowlevelscrolls,5
+lootlist=midlevelscrolls,7
+lootlist=highlevelscrolls,7
+lootlist=randomgemsandjewelry,50
+lootlist=magic_items_max_tier_1,5
+lootlist=magic_items_max_tier_2,5
+lootlist=magic_items_max_tier_3,5
+lootlist=magic_items_max_tier_4,5
+itemlist=lowlevelarmor,6
+itemlist=midlevelarmor,6
+itemlist=highlevelarmor,6
+itemlist=randomlowlevelweapons,7
+itemlist=randommidlevelweapons,7
+}
+
+[ITEMLIST treasurechestloot6]
+{
+0x0eed,6000
+lootlist=lowlevelscrolls,5
+lootlist=midlevelscrolls,7
+lootlist=highlevelscrolls,7
+lootlist=randomgemsandjewelry,50
+lootlist=magic_items_max_tier_1,5
+lootlist=magic_items_max_tier_2,5
+lootlist=magic_items_max_tier_3,5
+lootlist=magic_items_max_tier_4,5
+itemlist=lowlevelarmor,6
+itemlist=midlevelarmor,6
+itemlist=highlevelarmor,6
+itemlist=randomlowlevelweapons,7
+itemlist=randommidlevelweapons,7
+}
+
+[randomgranite]
+{
+itemlist=randomgranite
+}
+
+[ITEMLIST randomgranite]
+{
+irongranite
+dullcoppergranite
+shadowirongranite
+coppergranite
+bronzegranite
+goldgranite
+agapitegranite
+veritegranite
+valoritegranite
 }
 
 //**************************
@@ -1434,4 +1597,22 @@ itemlist=150
 [listobject200]
 {
 itemlist=200
+}
+
+// Chaos Dragoon Weapons - Kryss, Broadsword, Katana
+[listobject205]
+{
+itemlist=205
+}
+
+// halloween pumpking patch
+[listobject151]
+{
+itemlist=151
+}
+
+// Gypsy Headgear
+[gypsyheadgear]
+{
+itemlist=210
 }

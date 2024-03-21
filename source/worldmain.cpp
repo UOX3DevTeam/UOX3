@@ -483,11 +483,11 @@ void CWorldMain::DoWorldLight( void )
 
 	if( ampm )
 	{
-		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( RoundNumber( worldbrightlevel + ( hourIncrement * currentTime ))));
+		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( std::round( worldbrightlevel + ( hourIncrement * currentTime ))));
 	}
 	else
 	{
-		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( RoundNumber( worlddarklevel - ( hourIncrement * currentTime ))));
+		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( std::round( worlddarklevel - ( hourIncrement * currentTime ))));
 	}
 }
 

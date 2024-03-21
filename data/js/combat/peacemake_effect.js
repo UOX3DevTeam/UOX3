@@ -2,7 +2,11 @@ function onWarModeToggle( pChar )
 {
 	if( pChar.GetTimer( Timer.PEACETIMER ) > GetCurrentClock() )
 	{
-		pChar.SysMessage( "You are currently under the effect of peace and can not attack!" );
+		var pSock = pChar.socket;
+		if( pSock )
+		{
+			pChar.SysMessage( GetDictionaryEntry( 2788, pSock.language )); // You are currently under the effect of peace and can not attack!
+		}
 		return false;
 	}
 

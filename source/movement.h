@@ -8,6 +8,8 @@
 constexpr auto P_PF_MRV = 22;
 // Minimum Flee Distance: MFD
 constexpr auto P_PF_MFD	= 15;
+// Maximum Flee Distance: MAXFD
+constexpr auto P_PF_MAXFD = 50;
 
 struct PfNode_st
 {
@@ -40,6 +42,7 @@ class CMovement
 	// Function declarations
 public:
 	bool	AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun = false, UI16 maxSteps = 0 );
+	auto	IgnoreAndEvadeTarget( CChar *mChar ) -> void;
 	void	Walking( CSocket *mSock, CChar *s, UI08 dir, SI16 sequence );
 	void	CombatWalk( CChar *i );
 	void	NpcMovement( CChar& mChar );

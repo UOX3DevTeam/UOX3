@@ -31,7 +31,7 @@ enum CAccountBlock_Flags
 	AB_FLAGS_CHARACTER5	=	8,
 	AB_FLAGS_CHARACTER6	=	9,
 	AB_FLAGS_CHARACTER7	=	10,
-	AB_FLAGS_UNUSED9	=	11,
+	AB_FLAGS_YOUNG		=	11,
 	AB_FLAGS_UNUSED10	=	12,
 	AB_FLAGS_SEER		=	13,
 	AB_FLAGS_COUNSELOR	=	14,
@@ -68,7 +68,8 @@ private:
 public:
 	CAccountBlock_st( void ) : sUsername( "" ), sPassword( "" ), sPath( "" ), sContact( "" ),
 	wAccountIndex( 0xFFFF ), wTimeBan( 0x0000 ), wFirstLogin( 0x0000 ), dwInGame( INVALIDSERIAL ),
-	dwLastIP( 0x00000000 ), bChanged( false ), dwLastClientVer( 0 ), dwLastClientType( 0 ), dwLastClientVerShort( 0 )
+	dwLastIP( 0x00000000 ), bChanged( false ), dwLastClientVer( 0 ), dwLastClientType( 0 ), dwLastClientVerShort( 0 ),
+	wTotalPlayTime( 0x00000000 )
 	{
 		for( UI08 i = 0; i < 7; ++i )
 		{
@@ -85,6 +86,7 @@ public:
 		wAccountIndex	= 0xFFFF;
 		wTimeBan		= 0x00000000;
 		wFirstLogin		= 0x00000000;
+		wTotalPlayTime	= 0x00000000;
 		dwInGame		= 0xFFFFFFFF;
 		dwLastIP		= 0x00000000;
 		bChanged		= false;
@@ -109,6 +111,7 @@ public:
 	UI32						dwLastClientVer;
 	UI08						dwLastClientType;
 	UI08						dwLastClientVerShort;
+	UI32						wTotalPlayTime;
 	UI32						dwCharacters[7];
 	CChar *						lpCharacters[7];
 } CAccountBlock_st;

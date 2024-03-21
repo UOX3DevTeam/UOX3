@@ -106,7 +106,7 @@ function onCallback1( socket, ourObj )
 	}
 
 	// Fetch coordinates for where player targeted
-	var worldNum = mChar.worldNumber;
+	var worldNum = mChar.worldnumber;
 	var targX = socket.GetWord( 11 );
 	var targY = socket.GetWord( 13 );
 	var targZ = socket.GetSByte( 16 );

@@ -28,7 +28,8 @@ struct MapResource_st
 	SI16	fishAmt;
 	UI32	fishTime;
 
-	MapResource_st() : oreAmt( 0 ), oreTime( 0 ), logAmt( 0 ), logTime( 0 ), fishAmt( 0 ), fishTime( 0 )
+	MapResource_st( SI16 defOre = 0, SI16 defLog = 0, SI16 defFish = 0, UI32 defOreTime = 0, UI32 defLogTIme = 0, UI32 defFishTIme = 0 ) : 
+		oreAmt( defOre ), oreTime( defOreTime ), logAmt( defLog ), logTime( defLogTIme ), fishAmt( defFish ), fishTime( defFishTIme )
 	{
 	}
 };
@@ -55,7 +56,7 @@ public:
 	{
 	};
 
-	void					SaveToDisk( std::ofstream& writeDestination );
+	void					SaveToDisk( std::ostream& writeDestination );
 };
 
 class CMapWorld
@@ -90,7 +91,7 @@ private:
 	WORLDLIST		mapWorlds;
 	CMapRegion		overFlow;
 
-	void		LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize );
+	void		LoadFromDisk( std::istream& readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize );
 public:
 	CMapHandler() = default;
 	~CMapHandler();

@@ -1,4 +1,4 @@
-//AV3.0-UV0.99-BD5-DS1641842780-ED0
+//AV3.0-UV0.99-BD6-RC6-DS1688212789-ED0
 //------------------------------------------------------------------------------
 //accounts.adm[TEXT] : UOX3 uses this file for shared accounts access between servers
 //
@@ -11,6 +11,7 @@
 //         PATH c:/uox3/Accounts/path2userdata/
 //         TIMEBAN 0
 //         FIRSTLOGIN 0
+//         TOTALPLAYTIME 0
 //         LASTIP 127.0.0.1
 //         CONTACT NONE
 //         CHARACTER-1 0xffffffff
@@ -25,7 +26,7 @@
 //   FLAGS: 
 //      Bit:  0x0001) Banned           0x0002) Suspended        0x0004) Public           0x0008) Currently Logged In
 //            0x0010) Char-1 Blocked   0x0020) Char-2 Blocked   0x0040) Char-3 Blocked   0x0080) Char-4 Blocked
-//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Char-7 Blocked   0x0800) Unused
+//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Char-7 Blocked   0x0800) Young
 //            0x1000) Unused           0x2000) Seer             0x4000) Counselor        0x8000) GM Account
 //
 //   TIMEBAN: 
@@ -33,6 +34,9 @@
 //
 //   FIRSTLOGIN: 
 //      This would be timestamp of the account's first login.
+//
+//   TOTALPLAYTIME: 
+//      This would be total playtime on account in minutes across all characters, since first login.
 //
 //   CONTACT: 
 //      Usually this is the email address, but can be used as a comment or ICQ
@@ -48,6 +52,7 @@ FLAGS 0x8000
 PATH ./accounts/admin/
 TIMEBAN 0x0
 FIRSTLOGIN 0x0
+TOTALPLAYTIME 0x0
 LASTIP 127.0.0.1
 CONTACT unknown
 CHARACTER-1 0xffffffff [UNKNOWN]
@@ -67,6 +72,7 @@ FLAGS 0x0
 PATH ./accounts/guest1/
 TIMEBAN 0x0
 FIRSTLOGIN 0x0
+TOTALPLAYTIME 0x0
 LASTIP 0.0.0.0
 CONTACT unknown
 CHARACTER-1 0xffffffff [UNKNOWN]

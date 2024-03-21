@@ -1,0 +1,172 @@
+// 18700 to 18749
+// meerwarrior, meermage > meercaptain > meereternal
+[REGIONSPAWN 18700]
+{
+NAME=Meer Catacombs 1_1
+NPCLIST=meercata_npclist_1
+MAXNPCS=8
+X1=1752
+Y1=43
+X2=1792
+Y2=92
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// meerwarrior, meermage > meercaptain > meereternal
+[REGIONSPAWN 18701]
+{
+NAME=Meer Catacombs 1_2
+NPCLIST=meercata_npclist_1
+MAXNPCS=8
+X1=1783
+Y1=43
+X2=1822
+Y2=92
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// savagewarrior > savagerider
+[REGIONSPAWN 18705]
+{
+NAME=Savage Camp 1_1
+NPCLIST=ilshenar_savage_camp_npclist_1
+MAXNPCS=7
+X1=1031
+Y1=502
+X2=1061
+Y2=532
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 18706]
+{
+NAME=Savage Camp 1_2
+NPC=savageshaman
+MAXNPCS=4
+X1=1039
+Y1=510
+X2=1053
+Y2=524
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// savagewarrior > savageridgeback
+[REGIONSPAWN 18707]
+{
+NAME=Savage Camp 1_3
+NPCLIST=ilshenar_savage_camp_npclist_2
+MAXNPCS=2
+X1=1101
+Y1=512
+X2=1131
+Y2=542
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// bird, hind, greathart, blackbear, direwolf
+[REGIONSPAWN 18708]
+{
+NAME=Savage Camp 1_4
+NPCLIST=ilshenar_savage_camp_npclist_3
+MAXNPCS=8
+X1=1074
+Y1=457
+X2=1130
+Y2=512
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// bird, hind, greathart, blackbear, direwolf
+[REGIONSPAWN 18709]
+{
+NAME=Savage Camp 1_5
+NPCLIST=ilshenar_savage_camp_npclist_3
+MAXNPCS=8
+X1=1074
+Y1=513
+X2=1130
+Y2=562
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 18710]
+{
+NAME=Savage Camp 1_6
+NPC=ridgeback
+MAXNPCS=15
+X1=1063
+Y1=474
+X2=1143
+Y2=554
+WORLD=2
+MINTIME=59
+MAXTIME=60
+CALL=1
+}
+
+[REGIONSPAWN 18711]
+{
+NAME=Savage Camp 1_7
+NPC=ridgeback
+MAXNPCS=10
+X1=1057
+Y1=407
+X2=1107
+Y2=457
+WORLD=2
+MINTIME=59
+MAXTIME=60
+CALL=1
+}
+
+[REGIONSPAWN 18715]
+{
+NAME=Twin Oaks Tavern 1_1
+NPC=innkeeper
+MAXNPCS=1
+X1=1551
+Y1=1054
+X2=1564
+Y2=1054
+DEFZ=7
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 18720]
+{
+NAME=Tribal Berry Spawn 1
+ITEM=tribalberry
+MAXITEMS=7
+X1=1028
+Y1=695
+X2=1058
+Y2=725
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}

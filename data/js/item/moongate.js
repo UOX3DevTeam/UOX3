@@ -24,11 +24,12 @@
 //					Criminals, aggressors in PvP combat can no longer use public moongates (Xuri)
 
 // Set to 0 to disable teleport locations for a certain map from appearing in the moongate menu
-var enableFelucca = 1;
-var enableTrammel = 0;
-var enableIlshenar = 0;
-var enableMalas = 0;
-var enableTokuno = 0;
+var enableFelucca = GetMoongateFacetStatus( 0 );
+var enableTrammel = GetMoongateFacetStatus( 1 );
+var enableIlshenar = GetMoongateFacetStatus( 2 );
+var enableMalas = GetMoongateFacetStatus( 3 );
+var enableTokuno = GetMoongateFacetStatus( 4 );
+var enableTerMur = GetMoongateFacetStatus( 5 );
 
 function onUseChecked( pUser, iUsed ) 
 { 
@@ -38,30 +39,20 @@ function onUseChecked( pUser, iUsed )
 	if( srcSock == null || !CanUseGate( srcSock, pUser ))
 		return false;
 
-	//Are we using the gate allready?
-	//Get the serial of the item we have just used
-	var Serial = new Array;
-	Serial[0] = iUsed.GetSerial( 1 );
-	Serial[1] = iUsed.GetSerial( 2 );
-	Serial[2] = iUsed.GetSerial( 3 );
-	Serial[3] = iUsed.GetSerial( 4 );
+	// Get the serial of the item we have just used
+	var gateSerial = iUsed.serial;
 
-	//Get the stored serial from tag
-	var oldSerial = new Array;
-	var iCheck = pUser.GetTempTag( "ItemUsed" );
-	if( iCheck )
-	{
-		oldSerial = iCheck.split( ',' );
-	}
+	// Get the stored serial from tag
+	var oldGateSerial = parseInt( pUser.GetTempTag( "LastGateUsed" ));
 
-	//Compare the 2, if the same, then we are allready using this gate
-	if( oldSerial.length == 4 && Serial[0] == oldSerial[0] && Serial[1] == oldSerial[1] && Serial[2] == oldSerial[2] && Serial[3] == oldSerial[3] )
+	// Compare the 2, if the same, then we are already using this gate
+	if( gateSerial == oldGateSerial )
 	{
 		return false;
 	}
 	else
 	{
-		pUser.SetTempTag( "ItemUsed", Serial[0] + "," + Serial[1] + "," + Serial[2] + "," + Serial[3] );
+		pUser.SetTempTag( "LastGateUsed", ( gateSerial ).toString() ); // Store serial as string to avoid issues because of size of int
 	}
 
 	// Create and display travel gump
@@ -74,25 +65,14 @@ function onCollide( srcSock, pUser, iUsed )
 	if( srcSock == null || !CanUseGate( srcSock, pUser ))
 		return false;
 
-	var Serial = new Array;
-	Serial[0] = iUsed.GetSerial( 1 );
-	Serial[1] = iUsed.GetSerial( 2 );
-	Serial[2] = iUsed.GetSerial( 3 );
-	Serial[3] = iUsed.GetSerial( 4 );
-	var oldSerial = new Array;
-	var iCheck = pUser.GetTempTag( "ItemUsed" );
-	if( iCheck )
-	{
-		oldSerial = iCheck.split( ',' );
-	}
-	if( oldSerial.length == 4 && Serial[0] == oldSerial[0] && Serial[1] == oldSerial[1] && Serial[2] == oldSerial[2] && Serial[3] == oldSerial[3] )
+	var gateSerial = iUsed.serial;
+	var oldGateSerial = parseInt( pUser.GetTempTag( "LastGateUsed" ));
+	if( gateSerial == oldGateSerial )
 	{
 		return;
 	}
-	else
-	{
-		pUser.SetTempTag( "ItemUsed", Serial[0] + "," + Serial[1] + "," + Serial[2] + "," + Serial[3] );
-	}
+	pUser.SetTempTag( "LastGateUsed", ( gateSerial ).toString() );
+
 	DisplayTravelGump( srcSock, pUser );
 }
 
@@ -108,7 +88,7 @@ function CanUseGate( srcSock, pUser )
 		}
 		return false;
 	}
-	else if( pUser.atWar && pUser.attackFirst )
+	else if( pUser.IsAggressor() )
 	{
 		// Disallow moongate travel for players flagged as aggressors
 		var pTarget = pUser.target;
@@ -148,39 +128,20 @@ function onGumpPress( srcSock, myButton )
 	// Get character from socket
 	var srcChar = srcSock.currentChar;
 
-	// Range check. Its possible to call up the gate and run away
-	// get the items's serial
-	var oldSerial = new Array;
-	var iCheck = srcChar.GetTempTag( "ItemUsed" );
-	if( iCheck )
-	{
-		oldSerial = iCheck.split( ',' );
-
-		// Convert serial into actual numbers not strings
-		oldSerial[0] = parseInt( oldSerial[0] );
-		oldSerial[1] = parseInt( oldSerial[1] );
-		oldSerial[2] = parseInt( oldSerial[2] );
-		oldSerial[3] = parseInt( oldSerial[3] );
-	}
-
-	// Find out what the item is from the serial
-	var iUsed = null;
-	if( oldSerial.length == 4 )
-	{
-		iUsed = CalcItemFromSer( oldSerial[0], oldSerial[1], oldSerial[2], oldSerial[3] );
-	}
-
+	// Retrieve details of gate that was used, so we can do a range check
+	var oldGateSerial = parseInt( srcChar.GetTempTag( "LastGateUsed" ));
+	var iUsed = CalcItemFromSer( oldGateSerial );
 	if( !ValidateObject( iUsed ))
 	{
 		// Clear the tag so we can use gate again?
-		srcChar.SetTempTag( "ItemUsed", null );
+		srcChar.SetTempTag( "LastGateUsed", null );
 		return;
 	}
 
 	var inRange = iUsed.InRange( srcChar, 5 );
 
 	// Clear the tag so we can use gate again?
-	srcChar.SetTempTag( "ItemUsed", null );
+	srcChar.SetTempTag( "LastGateUsed", null );
 
 	// Check var inRange and button (dont say anything if canceled)
 	if( inRange == false && myButton >= 0)
@@ -354,24 +315,30 @@ function onGumpPress( srcSock, myButton )
 			targetLocation = [ 270, 628, 15, 4 ];
 			break;
 		}
+		//Termur
+		case 36:
+		{
+			//Royal City
+			targetLocation = [ 850, 3525, -38, 5 ];
+			break;
+		}
+		case 37:
+		{
+			//Holy City
+			targetLocation = [ 719, 1863, 40, 5 ];
+			break;
+		}
+		case 38:
+		{
+			//Valley of Eodon
+			targetLocation = [ 926, 3989, -36, 5 ];
+			break;
+		}
 		default:
 			return;
 	}
 
-	// Teleport player's pets
-	var petList = srcChar.GetPetList();
-	for( var i = 0; i < petList.length; i++ )
-	{
-		var tempPet = petList[i];
-		if( ValidateObject( tempPet ) && tempPet.InRange( srcChar, 24 ))
-		{
-			tempPet.Teleport( targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3] );
-			tempPet.Follow( srcChar );
-		}
-	}
-
-	// Teleport player
-	srcChar.Teleport( targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3] );
+	TriggerEvent( 6003, "TeleportHelper", srcChar, targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3], 0, true );
 }
 
 function DisplayTravelGump( srcSock, pUser )
@@ -389,7 +356,7 @@ function DisplayTravelGump( srcSock, pUser )
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
 	myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 	//Facet Buttons
-	if( enableFelucca == 1 )
+	if( enableFelucca )
 	{
 		myGump.AddText( 70, 70, 12, "Felucca" );
 		myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 );
@@ -411,25 +378,31 @@ function DisplayTravelGump( srcSock, pUser )
 		myGump.AddText( 170, 210, 0, "Jhelom" );
 		myGump.AddButton( 150, 215, 0x837, 1, 0, 12 );
 	}
-	if( enableTrammel == 1 )
+	if( enableTrammel )
 	{
 		myGump.AddText( 70, 90, 0, "Trammel" );
 		myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
 	}
-	if( enableIlshenar == 1 )
+	if( enableIlshenar )
 	{
 		myGump.AddText( 70, 110, 0, "Iishenar" );
 		myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
 	}
-	if( enableMalas == 1 )
+	if( enableMalas )
 	{
 		myGump.AddText( 70, 130, 0, "Malas" );
 		myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );
 	}
-	if( enableTokuno == 1 )
+	if( enableTokuno )
 	{
 		myGump.AddText( 70, 150, 0, "Tokuno Islands" );
 		myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
+	}
+
+	if( enableTerMur )
+	{
+		myGump.AddText( 70, 170, 0, "TerMur" );
+		myGump.AddButton( 48, 175, 0x4b9, 0, 6, 0 );
 	}
 
 	//PAGE 2
@@ -440,12 +413,12 @@ function DisplayTravelGump( srcSock, pUser )
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
 	myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 
-	if( enableFelucca == 1 )
+	if( enableFelucca )//Felucca
 	{
 		myGump.AddText( 70, 70, 0, "Felucca" );
 		myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 );
 	}
-	if( enableTrammel == 1 )
+	if( enableTrammel )//Trammel
 	{
 		myGump.AddText( 70, 90, 12, "Trammel" );
 		myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
@@ -466,20 +439,25 @@ function DisplayTravelGump( srcSock, pUser )
 		myGump.AddText( 170, 210, 0, "Jhelom" );
 		myGump.AddButton( 150, 215, 0x837, 1, 0, 20 );
 	}
-	if( enableIlshenar == 1 )
+	if( enableIlshenar )
 	{
 		myGump.AddText( 70, 110, 0, "Iishenar" );
 		myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
 	}
-	if( enableMalas == 1 )
+	if( enableMalas )
 	{
 		myGump.AddText( 70, 130, 0, "Malas" );
 		myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );
 	}
-	if( enableTokuno == 1 )
+	if( enableTokuno )
 	{
 		myGump.AddText( 70, 150, 0, "Tokuno Islands" );
 		myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
+	}
+	if( enableTerMur )
+	{
+		myGump.AddText( 70, 170, 0, "TerMur" );
+		myGump.AddButton( 48, 175, 0x4b9, 0, 6, 0 );
 	}
 
 	//PAGE 3
@@ -490,17 +468,17 @@ function DisplayTravelGump( srcSock, pUser )
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
 	myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 
-	if( enableFelucca == 1 )
+	if(enableFelucca )
 	{
 		myGump.AddText( 70, 70, 0, "Felucca" );
 		myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 );
 	}
-	if( enableTrammel == 1 )
+	if( enableTrammel )
 	{
 		myGump.AddText( 70, 90, 0, "Trammel" );
 		myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
 	}
-	if( enableIlshenar == 1 )
+	if( enableIlshenar )
 	{
 		myGump.AddText( 70, 110, 12, "Iishenar" );
 		myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
@@ -524,15 +502,20 @@ function DisplayTravelGump( srcSock, pUser )
 		myGump.AddText( 170, 230, 0, "Chaos" );
 		myGump.AddButton( 150, 235, 0x837, 1, 0, 29 );
 	}
-	if( enableMalas == 1 )
+	if( enableMalas )
 	{
 		myGump.AddText( 70, 130, 0, "Malas" );
 		myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );
 	}
-	if( enableTokuno == 1 )
+	if( enableTokuno )
 	{
 		myGump.AddText( 70, 150, 0, "Tokuno Islands" );
 		myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
+	}
+	if( enableTerMur )
+	{
+		myGump.AddText( 70, 170, 0, "TerMur" );
+		myGump.AddButton( 48, 175, 0x4b9, 0, 6, 0 );
 	}
 
 	//PAGE 4
@@ -543,22 +526,22 @@ function DisplayTravelGump( srcSock, pUser )
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
 	myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 
-	if( enableFelucca == 1 )
+	if( enableFelucca )
 	{
 		myGump.AddText( 70, 70, 0, "Felucca" );
 		myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 );
 	}
-	if( enableTrammel == 1 )
+	if( enableTrammel )
 	{
 		myGump.AddText( 70, 90, 0, "Trammel" );
 		myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
 	}
-	if( enableIlshenar == 1 )
+	if( enableIlshenar )
 	{
 		myGump.AddText( 70, 110, 0, "Iishenar" );
 		myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
 	}
-	if( enableMalas == 1 )
+	if( enableMalas )
 	{
 		myGump.AddText( 70, 130, 12, "Malas" );
 		myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );
@@ -570,41 +553,46 @@ function DisplayTravelGump( srcSock, pUser )
 		myGump.AddText( 170, 110, 0, "Umbra" );
 		myGump.AddButton( 150, 115, 0x837, 1, 0, 32 );
 	}
-	if( enableTokuno == 1 )
+	if( enableTokuno )
 	{
 		myGump.AddText( 70, 150, 0, "Tokuno Islands" );
 		myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
 	}
+	if( enableTerMur )
+	{
+		myGump.AddText( 70, 170, 0, "TerMur" );
+		myGump.AddButton( 48, 175, 0x4b9, 0, 6, 0 );
+	}
 
 	//PAGE 5
-	myGump.AddPage( 5 );  //Page 4 Tokuno Islands
+	myGump.AddPage( 5 );  //Page 5 Tokuno Islands
 	myGump.AddBackground( 20, 20, 260, 245, 0x23f0 );
 	myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
 
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
 	myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 
-	if( enableFelucca == 1 )
+	if( enableFelucca  )
 	{
 		myGump.AddText( 70, 70, 0, "Felucca" );
 		myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 );
 	}
-	if( enableTrammel == 1 )
+	if( enableTrammel )
 	{
 		myGump.AddText( 70, 90, 0, "Trammel" );
 		myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
 	}
-	if( enableIlshenar == 1 )
+	if( enableIlshenar )
 	{
 		myGump.AddText( 70, 110, 0, "Iishenar" );
 		myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
 	}
-	if( enableMalas == 1 )
+	if( enableMalas )
 	{
 		myGump.AddText( 70, 130, 0, "Malas" );
 		myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );
 	}
-	if( enableTokuno == 1 )
+	if( enableTokuno )
 	{
 		myGump.AddText( 70, 150, 12, "Tokuno Islands" );
 		myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
@@ -615,5 +603,65 @@ function DisplayTravelGump( srcSock, pUser )
 		myGump.AddText( 170, 110, 0, "Homare~Jima" );
 		myGump.AddButton( 150, 115, 0x837, 1, 0, 35 );
 	}
+	if( enableTerMur )
+	{
+		myGump.AddText( 70, 170, 0, "TerMur" );
+		myGump.AddButton( 48, 175, 0x4b9, 0, 6, 0 );
+	}
+	//PAGE 6
+	myGump.AddPage( 6 );  //Page 6 TerMur
+	myGump.AddBackground( 20, 20, 260, 245, 0x23f0 );
+	myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
+
+	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
+	myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
+
+	if( enableFelucca  )
+	{
+		myGump.AddText( 70, 70, 0, "Felucca" );
+		myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 );
+	}
+	if( enableTrammel )
+	{
+		myGump.AddText( 70, 90, 0, "Trammel" );
+		myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
+	}
+	if( enableIlshenar )
+	{
+		myGump.AddText( 70, 110, 0, "Iishenar" );
+		myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
+	}
+	if( enableMalas )
+	{
+		myGump.AddText( 70, 130, 0, "Malas" );
+		myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );
+	}
+	if( enableTokuno )
+	{
+		myGump.AddText( 70, 150, 0, "Tokuno Islands" );
+		myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
+	}
+	if( enableTerMur )
+	{
+		myGump.AddText( 70, 170, 12, "TerMur" );
+		myGump.AddButton( 48, 175, 0x4b9, 0, 6, 0 );
+
+		myGump.AddText( 170, 70, 0, "Royal City" );
+		myGump.AddButton( 150, 75, 0x837, 1, 0, 36 );
+
+		const coreShardEra = GetServerSetting( "CoreShardEra" );
+		if( EraStringToNum( coreShardEra ) != EraStringToNum( "tol" ))
+		{
+			myGump.AddText( 170, 90, 0, "Holy City" );
+			myGump.AddButton( 150, 95, 0x837, 1, 0, 37 );
+		}
+		else
+		{
+			myGump.AddText( 170, 110, 0, "Valley Of Eodon" );
+			myGump.AddButton( 150, 115, 0x837, 1, 0, 38 );
+		}
+	}
 	myGump.Send( srcSock );
 }
+
+function _restorecontext_() {}

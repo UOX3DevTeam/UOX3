@@ -53,7 +53,17 @@ function DealAreaDamage( srcObj, trgChar )
 
 		// Apply damage, if applicable
 		if( auraProps.maxDmg > 0 )
-			trgChar.Damage( RandomNumber( auraProps.minDmg, auraProps.maxDmg ), auraProps.dmgType );
+		{
+			var minDmg = auraProps.minDmg;
+			var maxDmg = auraProps.maxDmg;
+			var auraDmg = RandomNumber( minDmg, maxDmg );
+			if(( auraProps.dmgType == 4 || auraProps.dmgType == 5 ) && parseInt( trgChar.GetTag( "activeBalmLotion" )) == 1 )
+			{
+				// Target is protected against 50%-100% of damage from these damage types
+				auraDmg -= RandomNumber( Math.round( auraDmg / 2 ), auraDmg );
+			}
+			trgChar.Damage( auraDmg, auraProps.dmgType );
+		}
 		return true;
 	}
 	return false;
@@ -119,3 +129,5 @@ function GetAuraProperties( trgChar )
 	}
 	return auraProps;
 }
+
+function _restorecontext_() {}

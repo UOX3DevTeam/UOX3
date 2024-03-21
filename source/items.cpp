@@ -18,6 +18,7 @@ using namespace std::string_literals;
 cItem *Items = nullptr;
 
 ItemTypes FindItemTypeFromTag( const std::string& strToFind );
+void SetRandomName( CBaseObject *s, const std::string& namelist );
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const std::string &cdata )
@@ -264,7 +265,6 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_GETUOR:
 			case DFNTAG_GETTD:
 			case DFNTAG_GETLBR:
-			case DFNTAG_GETPUB15:
 			case DFNTAG_GETAOS:
 			case DFNTAG_GETSE:
 			case DFNTAG_GETML:
@@ -281,7 +281,6 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					case ER_UOR:	if( tag == DFNTAG_GETUOR ) { getParent = true; tagName = "GETUOR"; }		break;
 					case ER_TD:		if( tag == DFNTAG_GETTD ) { getParent = true; tagName = "GETTD"; }			break;
 					case ER_LBR:	if( tag == DFNTAG_GETLBR ) { getParent = true; tagName = "GETLBR"; }		break;
-					case ER_PUB15:	if( tag == DFNTAG_GETPUB15 ) { getParent = true; tagName = "GETPUB15"; }	break;
 					case ER_AOS:	if( tag == DFNTAG_GETAOS ) { getParent = true; tagName = "GETAOS"; }		break;
 					case ER_SE:		if( tag == DFNTAG_GETSE ) { getParent = true; tagName = "GETSE"; }			break;
 					case ER_ML:		if( tag == DFNTAG_GETML ) { getParent = true; tagName = "GETML"; }			break;
@@ -375,7 +374,45 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetTempVar( CITV_MORE, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
 				}
 				break;
-			case DFNTAG_MORE2:																	break;
+			case DFNTAG_MORE0:
+				if( ssecs.size() >= 4 )
+				{
+					applyTo->SetTempVar( CITV_MORE0, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
+					applyTo->SetTempVar( CITV_MORE0, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 )));
+					applyTo->SetTempVar( CITV_MORE0, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 )));
+					applyTo->SetTempVar( CITV_MORE0, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 )));
+				}
+				else
+				{
+					applyTo->SetTempVar( CITV_MORE0, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
+				}
+				break;
+			case DFNTAG_MORE1:
+				if( ssecs.size() >= 4 )
+				{
+					applyTo->SetTempVar( CITV_MORE1, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
+					applyTo->SetTempVar( CITV_MORE1, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 )));
+					applyTo->SetTempVar( CITV_MORE1, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 )));
+					applyTo->SetTempVar( CITV_MORE1, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 )));
+				}
+				else
+				{
+					applyTo->SetTempVar( CITV_MORE1, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
+				}
+				break;
+			case DFNTAG_MORE2:
+				if( ssecs.size() >= 4 )
+				{
+					applyTo->SetTempVar( CITV_MORE2, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
+					applyTo->SetTempVar( CITV_MORE2, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 )));
+					applyTo->SetTempVar( CITV_MORE2, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 )));
+					applyTo->SetTempVar( CITV_MORE2, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 )));
+				}
+				else
+				{
+					applyTo->SetTempVar( CITV_MORE2, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
+				}
+				break;
 			case DFNTAG_MOREX:
 				if( ssecs.size() >= 4 )
 				{
@@ -417,9 +454,10 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				break;
 			case DFNTAG_NAME:			applyTo->SetName( cdata );								break;
 			case DFNTAG_NAME2:			applyTo->SetName2( cdata );								break;
+			case DFNTAG_NAMELIST:		SetRandomName( applyTo, cdata );						break;
 			case DFNTAG_NEWBIE:			applyTo->SetNewbie( true );								break;
 			case DFNTAG_OFFSPELL:		applyTo->SetOffSpell( static_cast<SI08>( ndata ));		break;
-			case DFNTAG_ORIGIN:			applyTo->SetOrigin( cdata );							break;
+			case DFNTAG_ORIGIN:			applyTo->SetOrigin( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->EraStringToEnum( cdata )));		break;
 			case DFNTAG_POISONDAMAGE:	applyTo->SetWeatherDamage( POISON, ndata != 0 );		break;
 			case DFNTAG_POISONED:		applyTo->SetPoisoned( static_cast<UI08>( ndata ));		break;
 			case DFNTAG_PILEABLE:		applyTo->SetPileable( ndata != 0 );						break;
@@ -513,8 +551,21 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_SPD:			applyTo->SetSpeed( static_cast<UI08>( ndata ));			break;
 			case DFNTAG_STRENGTH:		applyTo->SetStrength( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_STRADD:			applyTo->SetStrength2( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_STEALABLE:		applyTo->SetStealable( static_cast<UI08>( ndata ));		break;
 			case DFNTAG_SNOW:			applyTo->SetWeatherDamage( SNOW, ndata != 0 );			break;
 			case DFNTAG_SCRIPT:			applyTo->AddScriptTrigger( static_cast<UI16>( ndata ));	break;
+			case DFNTAG_SPELLS:
+				if( ssecs.size() == 3 )
+				{
+					applyTo->SetSpell( 0, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
+					applyTo->SetSpell( 1, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 )));
+					applyTo->SetSpell( 2, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 )));
+				}
+				else
+				{
+					Console.Warning( oldstrutil::format( "Invalid data found in SPELLS tag inside Item script [%s]", sectionId.c_str() ));
+				}
+				break;
 			case DFNTAG_TYPE:
 				ItemTypes iType;
 				iType = FindItemTypeFromTag( cdata );
@@ -708,7 +759,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 itemId, cons
 		instanceId = mChar->GetInstanceId();
 		if( inPack && !ValidateObject( mChar->GetPackItem() ))
 		{
-			std::string charName = GetNpcDictName( mChar );
+			std::string charName = GetNpcDictName( mChar, nullptr, NRS_SYSTEM );
 			Console.Warning( oldstrutil::format( "CreateItem(): Character %s(0x%X) has no pack, item creation aborted.", charName.c_str(), mChar->GetSerial() ));
 			return nullptr;
 		}
@@ -768,7 +819,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 itemId, cons
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
 		{
-			toExecute->OnCreate( iCreated, false );
+			toExecute->OnCreate( iCreated, false, false );
 		}
 	}
 
@@ -787,7 +838,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ))
 	{
-		std::string charName = GetNpcDictName( mChar );
+		std::string charName = GetNpcDictName( mChar, nullptr, NRS_SYSTEM );
 		Console.Warning( oldstrutil::format( "CreateScriptItem(): Character %s(0x%X) has no pack, item creation aborted.", charName.c_str(), mChar->GetSerial() ));
 		return nullptr;
 	}
@@ -940,7 +991,7 @@ auto cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const 
 			}
 
 			// Choose a random number between 0 and the total sum of all weights
-			int rndChoice = RandomNum( 0, sum_of_weight );
+			int rndChoice = RandomNum( 0, sum_of_weight - 1 );
 			int itemWeight = 0;
 
 			// Prepare a vector to hold multiple entries, if more than one qualifies based on weighting
@@ -973,46 +1024,30 @@ auto cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const 
 			}
 
 			// Did we find more than one entry that matched our random weight criteria?
-			if( matchingEntries.size() > 1 )
+			if( matchingEntries.size() > 0 )
 			{
 				// Choose a random one of these!
-				itemEntryToSpawn = static_cast<int>( RandomNum( static_cast<size_t>( 0 ), matchingEntries.size() ));
+				itemEntryToSpawn = matchingEntries[static_cast<int>( RandomNum( static_cast<size_t>( 0 ), matchingEntries.size() - 1 ))];
 			}
 			matchingEntries.clear();
 
-			int amountToSpawn = 1;
 			std::string k = "";
 			std::vector<std::string> csecs;
 			if( itemEntryToSpawn != -1 )
 			{
 				// If an entry has been selected based on weights, use that
 				csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( itemEntryToSpawn ), "//" )), "," );
-				auto csecs2 = oldstrutil::sections( oldstrutil::trim( csecs[0] ), "|" );
-				if( csecs2.size() > 1 )
-				{
-					k = csecs2[1];
-				}
-				else
-				{
-					k = csecs2[0];
-				}
 			}
 			else
 			{
 				// Otherwise choose a random entry
 				csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( RandomNum( static_cast<size_t>( 0 ), itemListSize - 1 )), "//" )), "," );
-				auto csecs2 = oldstrutil::sections( oldstrutil::trim( csecs[0] ), "|" );
-				if( csecs2.size() > 1 )
-				{
-					k = csecs2[1];
-				}
-				else
-				{
-					k = csecs2[0];
-				}
 			}
+			auto csecs2 = oldstrutil::sections( oldstrutil::trim( csecs[0] ), "|" );
+			k = csecs2.size() > 1 ? csecs2[1] : csecs2[0];
 
 			// Also fetch amount to spawn, if specified
+			int amountToSpawn = 1;
 			if( csecs.size() > 1 )
 			{
 				// UI16 iAmount = 0;
@@ -1182,7 +1217,7 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
 			if( toExecute != nullptr )
 			{
-				toExecute->OnCreate( iCreated, true );
+				toExecute->OnCreate( iCreated, true, false );
 			}
 		}
 	}
@@ -1198,7 +1233,7 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 		}
 
 		// Keep reference to DFN sectionId item was created from (if it has not been set already via special DFN tag SECTIONID)
-		if( iCreated->GetSectionId() == "" )
+		if( iCreated->GetSectionId() == "UNKNOWN" )
 		{
 			iCreated->SetSectionId( ourItem );
 		}
@@ -1367,6 +1402,7 @@ PackTypes cItem::GetPackType( CItem *i )
 		case 0x0E75:	// backpack
 		case 0x0E79:	// pouch
 		case 0x09B0:	// pouch
+		case 0xA1F6:	// First Aid Belt
 			packType = PT_PACK;
 			break;
 		case 0x0E76:	// leather bag
@@ -1482,6 +1518,12 @@ PackTypes cItem::GetPackType( CItem *i )
 			{
 				packType = PT_PACK2;
 			}
+			break;
+		case 0x2bd9:
+		case 0x2BDA:
+		case 0x2BDB:
+		case 0x2BDC:
+			packType = PT_STOCKING;
 			break;
 		case 0x232A:	// giftbox
 		case 0x232B:	// giftbox
@@ -1771,6 +1813,7 @@ void cItem::CheckEquipment( CChar *p )
 		if( pSock == nullptr )
 			return;
 
+		std::vector<CItem *> itemsToUnequip;
 		const SI16 StrengthToCompare = p->GetStrength();
 		for( CItem *i = p->FirstItem(); !p->FinishedItems(); i = p->NextItem() )
 		{
@@ -1778,28 +1821,36 @@ void cItem::CheckEquipment( CChar *p )
 			{
 				if( i->GetStrength() > StrengthToCompare )//if strength required > character's strength
 				{
-					std::string itemname;
-					if( i->GetNameRequest( p ) == "#" )
-					{
-						GetTileName(( *i ), itemname );
-					}
-					else
-					{
-						itemname = i->GetNameRequest( p );
-					}
-
-					i->SetCont( nullptr );
-					i->SetLocation( p );
-
-					for( auto &item : FindNearbyPlayers( p ))
-					{
-						p->SendWornItems( item );
-					}
-					pSock->SysMessage( 1604, itemname.c_str() ); // You are not strong enough to keep %s equipped!
-					Effects->ItemSound( pSock, i );
+					itemsToUnequip.push_back( i );
 				}
 			}
 		}
+
+		// Loop through the items we want to move out of corpse
+		std::for_each( itemsToUnequip.begin(), itemsToUnequip.end(), [p, pSock]( CItem *iUnequip )
+		{
+			auto pPack = p->GetPackItem();
+			if( ValidateObject( pPack ) )
+			{
+				// Pack detected, drop to pack
+				iUnequip->SetCont( pPack );
+				iUnequip->PlaceInPack();
+			}
+			else
+			{
+				// No pack detected - drop on ground
+				iUnequip->SetCont( nullptr );
+				iUnequip->SetLocation( p );
+			}
+
+			for( auto &item : FindNearbyPlayers( p ))
+			{
+				p->SendWornItems( item );
+			}
+
+			pSock->SysMessage( 2782 ); // You are not strong enough to keep some of your items equipped!
+			Effects->ItemSound( pSock, iUnequip );
+		});
 	}
 }
 
@@ -1872,7 +1923,7 @@ CItem *cItem::DupeItem( CSocket *s, CItem *i, UI32 amount )
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
 		{
-			toExecute->OnCreate( c, false );
+			toExecute->OnCreate( c, false, false );
 		}
 	}
 

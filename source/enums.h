@@ -199,6 +199,21 @@ enum FontType
     FNT_UNKNOWN
 };
 
+enum NameRequestSources
+{
+	NRS_SPEECH = 0,
+	NRS_GUILD,
+	NRS_STATWINDOW_SELF,
+	NRS_STATWINDOW_OTHER,
+	NRS_TOOLTIP,
+	NRS_JOURNAL,
+	NRS_PAPERDOLL,
+	NRS_SINGLECLICK,
+	NRS_SYSTEM,
+	NRS_SECURETRADE,
+	NRS_SCRIPT
+};
+
 enum CharacterDeletionResult
 {
 	CDR_BADPASSWORD = 0x00,
@@ -440,6 +455,7 @@ enum AITypes
 	AI_STABLEMASTER = 9, // handled in JS, but needed to identify NPC for context menus
 	AI_CASTER		= 10,
 	AI_EVIL_CASTER  = 11,
+	AI_ANIMAL_SCARED = 12,
     AI_PLAYERVENDOR	= 17,
     AI_PET_GUARD	= 32,
     AI_CHAOTIC		= 88,
@@ -456,6 +472,7 @@ enum distLocs
 	DIST_CMDRANGE	= 12,
     DIST_SAMESCREEN = 24, // 24 is max in clients (enhanced/classic) v7.0.55.27 and beyond, and in ClassicUO
 	DIST_BUILDRANGE = 31,
+	DIST_COMBATRESETRANGE = 35,
     DIST_OUTOFRANGE	= 0xFFFF
 };
 
@@ -513,6 +530,7 @@ enum ItemTypes
     IT_ZEROKILLSGATE		= 111,
     IT_PLANK				= 117,
     IT_FIREWORKSWAND		= 118,
+	IT_SPELLCHANNELING		= 119,
     IT_ESCORTNPCSPAWNER		= 125,
     IT_RENAMEDEED			= 186,
     IT_LEATHERREPAIRTOOL	= 190,
@@ -710,6 +728,7 @@ enum WanderTypes
     WT_FROZEN,
     WT_FLEE,
     WT_PATHFIND,
+	WT_SCARED,
     WT_COUNT
 };
 
@@ -762,11 +781,11 @@ enum BodyType
 enum ExpansionRuleset
 {
 	ER_CORE,
+	ER_UO,
 	ER_T2A,
 	ER_UOR,
 	ER_TD,
 	ER_LBR,
-	ER_PUB15,
 	ER_AOS,
 	ER_SE,
 	ER_ML,

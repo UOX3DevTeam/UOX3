@@ -181,7 +181,7 @@ void CheckBanTimer( CAccountBlock_st &actbTemp )
 //|						BYTE[30] password
 //|						BYTE unknown1 (not usually 0x00 - so not nullptr)
 //o------------------------------------------------------------------------------------------------o
-void CPIFirstLogin::Log( std::ofstream &outStream, bool fullHeader )
+void CPIFirstLogin::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -439,7 +439,7 @@ UI08 CPIFirstLogin::Unknown( void )
 //|						BYTE[2] server # chosen
 //|						0x80 Packet
 //o------------------------------------------------------------------------------------------------o
-void CPIServerSelect::Log( std::ofstream &outStream, bool fullHeader )
+void CPIServerSelect::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -507,7 +507,7 @@ bool CPIServerSelect::Handle( void )
 //|						BYTE[30] sid
 //|						BYTE[30] password
 //o------------------------------------------------------------------------------------------------o
-void CPISecondLogin::Log( std::ofstream &outStream, bool fullHeader )
+void CPISecondLogin::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -673,7 +673,7 @@ bool CPISecondLogin::Handle( void )
 //|						Normally older client send a 4 byte seed (local ip).
 //|						Newer clients 2.48.0.3+ (KR) and 6.0.5.0+ (2D) are sending this packet.
 //o------------------------------------------------------------------------------------------------o
-void CPINewClientVersion::Log( std::ofstream &outStream, bool fullHeader )
+void CPINewClientVersion::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -790,9 +790,14 @@ void CPINewClientVersion::Receive( void )
 				{
 					tSock->ClientVerShort( CVS_70331 );
 				}
-				else if( clientRevision < 61 )
+				else if( clientRevision < 46 )
 				{
 					tSock->ClientVerShort( CVS_704565 );
+				}
+				else if( clientRevision < 61 )
+				{
+					tSock->ClientType( CV_TOL2D );
+					tSock->ClientVerShort( CVS_705527 );
 				}
 				else
 				{
@@ -832,7 +837,7 @@ bool CPINewClientVersion::Handle( void )
 //|						Server version: 0xbd 0x0 0x3 (client replies with client version of this packet)
 //|						Clients sends a client version of this packet ONCE at login (without server request.)
 //o------------------------------------------------------------------------------------------------o
-void CPIClientVersion::Log( std::ofstream &outStream, bool fullHeader )
+void CPIClientVersion::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1101,8 +1106,13 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 			{
 				tSock->ClientVerShort( CVS_70331 );
 			}
+			else if( CliVerSub < 46)
+			{
+				tSock->ClientVerShort( CVS_704565 );
+			}
 			else if( CliVerSub < 61 )
 			{
+				tSock->ClientType( CV_TOL2D );
 				tSock->ClientVerShort( CVS_704565 );
 			}
 			else
@@ -1161,7 +1171,7 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 //|						"Greying" has no packet, purely client internal.
 //|						Minimal value:5, maximal: 18
 //o------------------------------------------------------------------------------------------------o
-void CPIUpdateRangeChange::Log( std::ofstream &outStream, bool fullHeader )
+void CPIUpdateRangeChange::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1236,7 +1246,7 @@ bool CPIUpdateRangeChange::Handle( void )
 //|						Client will send this packet without 0x01 Byte when the server sends FLAG & 0x02 in the 0xA9 Packet during logon.
 //|						Server responds with same packet, plus the 0x01 Byte, allowing client to finish logging out.
 //o------------------------------------------------------------------------------------------------o
-void CPILogoutStatus::Log( std::ofstream &outStream, bool fullHeader )
+void CPILogoutStatus::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1463,7 +1473,7 @@ void CPIStatusRequest::Receive( void )
 	playerId	= tSock->GetDWord( 6 );
 }
 
-void CPIStatusRequest::Log( std::ofstream &outStream, bool fullHeader )
+void CPIStatusRequest::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1673,7 +1683,7 @@ void CPIDblClick::Receive( void )
 	objectId = tSock->GetDWord( 1 );
 }
 
-void CPIDblClick::Log( std::ofstream &outStream, bool fullHeader )
+void CPIDblClick::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1712,7 +1722,7 @@ void CPISingleClick::Receive( void )
 	objectId = tSock->GetDWord( 1 );
 }
 
-void CPISingleClick::Log( std::ofstream &outStream, bool fullHeader )
+void CPISingleClick::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1769,7 +1779,7 @@ bool CPIMoveRequest::Handle( void )
 	return true;
 }
 
-void CPIMoveRequest::Log( std::ofstream &outStream, bool fullHeader )
+void CPIMoveRequest::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1924,7 +1934,7 @@ void CPITargetCursor::Receive( void )
 {
 	tSock->Receive( 19, false );
 }
-void CPITargetCursor::Log( std::ofstream &outStream, bool fullHeader )
+void CPITargetCursor::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -2665,16 +2675,29 @@ void CPITalkRequestUnicode::Receive( void )
 		SI32 myj			= 12;
 		size_t numTrigWords	= 0;
 
+		// Let's keep track of trigger words we've already added, so we don't add same one twice
+		std::unordered_set<uint16_t> trigWords;
+
 		// number of distinct trigger words
 		numTrigWords = ( static_cast<size_t>( tSock->GetByte( 12 )) << 4 ) + ( static_cast<size_t>( tSock->GetByte( 13 )) >> 4 );
 
 		size_t byteNum = 13;
 		for( size_t tWord = 0; tWord < numTrigWords; )
 		{
-			tSock->AddTrigWord((( tSock->GetByte( byteNum+tWord ) % 0x10 ) << 8 ) + tSock->GetByte( byteNum+tWord + 1 ));
+			uint16_t word = (( tSock->GetByte( byteNum + tWord ) % 0x10 ) << 8 ) + tSock->GetByte( byteNum + tWord + 1 );
+			if( trigWords.find( word ) == trigWords.end() )
+			{
+				tSock->AddTrigWord( word );
+				trigWords.insert( word );
+			}
 			if( tWord + 2 <= numTrigWords )
 			{
-				tSock->AddTrigWord(( tSock->GetByte( byteNum + tWord + 2 ) << 4 ) + ( tSock->GetByte( byteNum + tWord + 3 ) >> 4 ));
+				word = ( tSock->GetByte( byteNum + tWord + 2 ) << 4 ) + ( tSock->GetByte( byteNum + tWord + 3 ) >> 4 );
+				if( trigWords.find( word ) == trigWords.end() )
+				{
+					tSock->AddTrigWord( word );
+					trigWords.insert( word );
+				}
 			}
 			tWord += 2;
 			byteNum++;
@@ -3000,6 +3023,13 @@ void CPICreateCharacter::Receive( void )
 //o------------------------------------------------------------------------------------------------o
 void CPICreateCharacter::Create3DCharacter( void )
 {
+	if( ValidateObject( tSock->CurrcharObj() ))
+	{
+		Console.Error( oldstrutil::format( "CreateCharacter packet 0x8D detected for socket with pre-existing character (%i) attached. Disconnecting socket as safeguard against corruption!", tSock->CurrcharObj()->GetSerial() ));
+		Network->Disconnect( tSock );
+		return;
+	}
+
 	tSock->Receive( 146, false );
 	Network->Transfer( tSock );
 
@@ -3092,6 +3122,13 @@ void CPICreateCharacter::Create3DCharacter( void )
 //o------------------------------------------------------------------------------------------------o
 void CPICreateCharacter::Create2DCharacter( void )
 {
+	if( ValidateObject( tSock->CurrcharObj() ))
+	{
+		Console.Error( oldstrutil::format( "CreateCharacter packet 0x00 or 0xF8 detected for socket with pre-existing character (%i) attached. Disconnecting socket as safeguard against corruption!", tSock->CurrcharObj()->GetSerial() ));
+		Network->Disconnect( tSock );
+		return;
+	}
+
 	if( tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 16 )
 	{
 		tSock->Receive( 106, true );
@@ -3100,6 +3137,7 @@ void CPICreateCharacter::Create2DCharacter( void )
 	{
 		tSock->Receive( 104, false );
 	}
+
 	Network->Transfer( tSock );
 
 	pattern1		= tSock->GetDWord( 1 );
@@ -3146,7 +3184,7 @@ void CPICreateCharacter::Create2DCharacter( void )
 	memcpy( password, &tSock->Buffer()[40], 30 ); // Does this really have anything to do with passwords?
 }
 
-void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
+void CPICreateCharacter::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D )
 	{
@@ -3284,7 +3322,7 @@ void CPIPlayCharacter::Receive( void )
 	memcpy( unknown, &tSock->Buffer()[35], 33 );
 }
 
-void CPIPlayCharacter::Log( std::ofstream &outStream, bool fullHeader )
+void CPIPlayCharacter::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3367,7 +3405,7 @@ const std::string CPIGumpInput::Reply( void ) const
 	return reply;
 }
 
-void CPIGumpInput::Log( std::ofstream &outStream, bool fullHeader )
+void CPIGumpInput::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3474,7 +3512,7 @@ void CPIDyeWindow::Receive( void )
 	newValue	= tSock->GetWord( 7 );
 }
 
-void CPIDyeWindow::Log( std::ofstream &outStream, bool fullHeader )
+void CPIDyeWindow::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3672,7 +3710,7 @@ bool CPIToolTipRequestAoS::Handle( void )
 {
 	return true;
 }
-void CPIToolTipRequestAoS::Log( std::ofstream &outStream, bool fullHeader )
+void CPIToolTipRequestAoS::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3782,7 +3820,7 @@ bool CPIMetrics::Handle()
 	return true;
 }
 
-void CPIMetrics::Log( std::ofstream &outStream, bool fullHeader )
+void CPIMetrics::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3961,7 +3999,7 @@ bool CPISubcommands::Handle( void )
 	}
 	return retVal;
 }
-void CPISubcommands::Log( std::ofstream &outStream, bool fullHeader )
+void CPISubcommands::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( subPacket != nullptr )
 	{
@@ -4182,7 +4220,7 @@ bool CPIPartyCommand::Handle( void )
 	}
 	return true;
 }
-void CPIPartyCommand::Log( std::ofstream &outStream, bool fullHeader )
+void CPIPartyCommand::Log( std::ostream &outStream, bool fullHeader )
 {
 	UI08 partyCmd = tSock->GetByte( 5 );
 
@@ -4341,7 +4379,7 @@ bool CPITrackingArrow::Handle( void )
 	}
 	return true;
 }
-void CPITrackingArrow::Log( std::ofstream &outStream, bool fullHeader )
+void CPITrackingArrow::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4385,7 +4423,7 @@ bool CPIClientLanguage::Handle( void )
 	tSock->Language( newLang );
 	return true;
 }
-void CPIClientLanguage::Log( std::ofstream &outStream, bool fullHeader )
+void CPIClientLanguage::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4456,7 +4494,7 @@ bool CPIUOTDActions::Handle( void )
 	Effects->PlayCharacterAnimation( ourChar, action, 1 );
 	return true;
 }
-void CPIUOTDActions::Log( std::ofstream &outStream, bool fullHeader )
+void CPIUOTDActions::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4508,7 +4546,7 @@ bool CPIToolTipRequest::Handle( void )
 	}
 	return true;
 }
-void CPIToolTipRequest::Log( std::ofstream &outStream, bool fullHeader )
+void CPIToolTipRequest::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4551,22 +4589,53 @@ bool CPIPopupMenuRequest::Handle( void )
 	// Only show context menus if enabled in ini
 	if( !cwmWorldState->ServerData()->ServerContextMenus() )
 		return true;
-
+		
+	CBaseObject *myObj = nullptr;
+ 
 	if( mSer < BASEITEMSERIAL )
 	{
-		CChar *myChar = CalcCharObjFromSer( mSer );
-		if( myChar == nullptr )
+		myObj = static_cast<CBaseObject*>( CalcCharObjFromSer( mSer ));
+		if( myObj == nullptr )
 			return true;
-
-		if( !LineOfSight( tSock, tSock->CurrcharObj(), myChar->GetX(), myChar->GetY(), ( myChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
-			return true;
-
-		CPPopupMenu toSend(( *myChar ), ( *tSock ));
-		tSock->Send( &toSend );
 	}
+	else
+	{
+		myObj = static_cast<CBaseObject*>( CalcItemObjFromSer( mSer ));
+		if( myObj == nullptr )
+			return true;
+	}
+	
+	std::vector<UI16> scriptTriggers = myObj->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnContextMenuRequest( tSock, myObj ) == 0 )
+			{
+				return true;
+			}
+		}
+	}
+ 
+	// No individual scripts handling onContextMenu returned true - let's check global script!
+	cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
+	if( toExecute != nullptr )
+	{
+		if( toExecute->OnContextMenuRequest( tSock, myObj ) == 0 )
+		{
+			return true;
+		}
+	}
+
+	if( !LineOfSight( tSock, tSock->CurrcharObj(), myObj->GetX(), myObj->GetY(), ( myObj->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+		return true;
+
+	CPPopupMenu toSend(( *myObj ), ( *tSock ));
+	tSock->Send( &toSend );
 	return true;
 }
-void CPIPopupMenuRequest::Log( std::ofstream &outStream, bool fullHeader )
+void CPIPopupMenuRequest::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4593,10 +4662,10 @@ void CPIPopupMenuRequest::Log( std::ofstream &outStream, bool fullHeader )
 //|							BYTE[4] Character ID
 //|							BYTE[2] Entry Tag for line selected provided in subcommand 0x14
 //o------------------------------------------------------------------------------------------------o
-CPIPopupMenuSelect::CPIPopupMenuSelect() : popupEntry( 0 ), targChar( nullptr )
+CPIPopupMenuSelect::CPIPopupMenuSelect() : popupEntry( 0 ), targObj( nullptr )
 {
 }
-CPIPopupMenuSelect::CPIPopupMenuSelect( CSocket *s ) : CPInputBuffer( s ), popupEntry( 0 ), targChar( nullptr )
+CPIPopupMenuSelect::CPIPopupMenuSelect( CSocket *s ) : CPInputBuffer( s ), popupEntry( 0 ), targObj( nullptr )
 {
 	Receive();
 }
@@ -4604,7 +4673,16 @@ CPIPopupMenuSelect::CPIPopupMenuSelect( CSocket *s ) : CPInputBuffer( s ), popup
 void CPIPopupMenuSelect::Receive( void )
 {
 	popupEntry	= tSock->GetWord( 9 );
-	targChar	= CalcCharObjFromSer( tSock->GetDWord( 5 ));
+ 
+	SERIAL mSer = tSock->GetDWord( 5 );
+	if( mSer < BASEITEMSERIAL )
+	{
+		targObj = static_cast<CBaseObject*>( CalcCharObjFromSer( mSer ));
+	}
+	else
+	{
+		targObj = static_cast<CBaseObject*>( CalcItemObjFromSer( mSer ));
+	}
 }
 
 bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text, CChar *tChar = nullptr );
@@ -4615,8 +4693,36 @@ bool CPIPopupMenuSelect::Handle( void )
 		return true;
 
 	CChar *mChar			= tSock->CurrcharObj();
-	if( !ValidateObject( targChar ) || !ValidateObject( mChar ))
+	if( !ValidateObject( targObj ) || !ValidateObject( mChar ))
 		return true;
+
+	std::vector<UI16> scriptTriggers = targObj->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnContextMenuSelect( tSock, targObj, popupEntry ) == 0 )
+			{
+				return true;
+			}
+		}
+	}
+
+	// No individual scripts handling onContextMenu returned true - let's check global script!
+	cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
+	if( toExecute != nullptr )
+	{
+		if( toExecute->OnContextMenuSelect( tSock, targObj, popupEntry ) == 0 )
+		{
+			return true;
+		}
+	}
+
+	if( targObj->CanBeObjType( OT_ITEM )) // No items with hard coded context menus
+		return true;
+
+	CChar *targChar = static_cast<CChar *>( targObj );
 
 	switch( popupEntry )
 	{
@@ -4756,7 +4862,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_KILL );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4778,7 +4884,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_STOP );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4799,7 +4905,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_FOLLOW );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4820,7 +4926,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_STAY );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4841,7 +4947,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_GUARD );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4862,7 +4968,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_FRIEND );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4883,7 +4989,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_TRANSFER );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4904,7 +5010,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_RELEASE );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4925,7 +5031,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_DISMISS );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4938,7 +5044,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_CLAIM );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4951,7 +5057,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_STABLE );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4964,7 +5070,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_QUESTDEST );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4977,7 +5083,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_QUESTTAKE );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -5005,7 +5111,7 @@ bool CPIPopupMenuSelect::Handle( void )
 				{
 					tSock->ClearTrigWords();
 					tSock->AddTrigWord( TW_HIRE );
-					std::string targName = GetNpcDictName( targChar, tSock );
+					std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 					WhichResponse( tSock, mChar, targName, targChar );
 				}
 				else
@@ -5027,6 +5133,27 @@ bool CPIPopupMenuSelect::Handle( void )
 				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
+		case 0x0100:	// Bulk Order Info
+			if( ObjInRange( mChar, targChar, 8 ))
+			{
+				// Set a tag on the player to reference the NPC they're requesting bulk order from
+				TAGMAPOBJECT targCharSerialTag;
+				targCharSerialTag.m_Destroy = false;
+				targCharSerialTag.m_IntValue = targChar->GetSerial();
+				targCharSerialTag.m_ObjectType = TAGMAP_TYPE_INT;
+				targCharSerialTag.m_StringValue = "";
+				mChar->SetTempTag( "bodShopkeeperSerial", targCharSerialTag );
+
+				tSock->ClearTrigWords();
+				tSock->AddTrigWord( TW_BODINFO ); // Custom UOX3 trigger word
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
+				WhichResponse( tSock, mChar, targName, targChar );
+			}
+			else
+			{
+				tSock->SysMessage( 393 ); // That is too far away
+			}
+			break;
 		default:
 			Console.Print( oldstrutil::format( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", tSock->GetDWord( 5 ), tSock->GetWord( 9 )));
 			break;
@@ -5038,13 +5165,13 @@ bool CPIPopupMenuSelect::Handle( void )
 	{
 		tSock->ClearTrigWords();
 		tSock->AddTrigWord( static_cast<TriggerWords>( popupEntry ));
-		std::string targName = GetNpcDictName( targChar, tSock );
+		std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 		WhichResponse( tSock, mChar, targName, targChar );
 	}
 
 	return true;
 }
-void CPIPopupMenuSelect::Log( std::ofstream &outStream, bool fullHeader )
+void CPIPopupMenuSelect::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -5090,7 +5217,7 @@ bool CPIExtendedStats::Handle( void )
 	ourChar->SetSkillLock( static_cast<SkillLock>( value ), statToSet );
 	return true;
 }
-void CPIExtendedStats::Log( std::ofstream &outStream, bool fullHeader )
+void CPIExtendedStats::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -5172,7 +5299,7 @@ bool CPIBandageMacro::Handle(void)
 	return false;
 }
 
-void CPIBandageMacro::Log( std::ofstream &outStream, bool fullHeader )
+void CPIBandageMacro::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -5219,14 +5346,14 @@ bool CPIClosedStatusGump::Handle( void )
 		CChar *statusGumpChar = CalcCharObjFromSer( statusGumpCharSerial );
 		if( ValidateObject( statusGumpChar ))
 		{
-			tSock->StatWindow( statusGumpChar );
+			//tSock->StatWindow( statusGumpChar ); // Send statwindow update on closing the gump? Why? Doesn't seem like it's needed...
 			return true;
 		}
 	}
 	return false;
 }
 
-void CPIClosedStatusGump::Log( std::ofstream &outStream, bool fullHeader )
+void CPIClosedStatusGump::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -5275,7 +5402,7 @@ bool CPIToggleFlying::Handle(void)
 	return true;
 }
 
-void CPIToggleFlying::Log(std::ofstream &outStream, bool fullHeader)
+void CPIToggleFlying::Log(std::ostream &outStream, bool fullHeader)
 {
 	if( fullHeader )
 	{
@@ -5310,7 +5437,7 @@ void CPIToggleFlying::Log(std::ofstream &outStream, bool fullHeader)
 //|									settings are enabled, player will get kicked within 30 seconds
 //|									if this packet is not received by the server.
 //o------------------------------------------------------------------------------------------------o
-void CPIKrriosClientSpecial::Log( std::ofstream &outStream, bool fullHeader )
+void CPIKrriosClientSpecial::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -5495,7 +5622,7 @@ bool CPISpellbookSelect::Handle( void )
 	}
 	return true;
 }
-void CPISpellbookSelect::Log( std::ofstream &outStream, bool fullHeader )
+void CPISpellbookSelect::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -5706,7 +5833,7 @@ bool CPIAOSCommand::Handle( void )
 
 	return false;
 }
-void CPIAOSCommand::Log( std::ofstream &outStream, bool fullHeader )
+void CPIAOSCommand::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{

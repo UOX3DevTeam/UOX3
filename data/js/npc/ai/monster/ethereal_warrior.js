@@ -19,7 +19,7 @@ var resGFXEffect = 0x376A;
 
 function inRange( pCharacter, objInRange )
 {
-	if( objInRange.isItem || ( objInRange.isChar && ( objInRange.npc || ( !objInRange.online || !objInRange.dead ))))
+	if( !ValidateObject( objInRange ) || objInRange.isItem || ( objInRange.isChar && ( objInRange.npc || ( !objInRange.online || !objInRange.dead ))))
 		return;
 
 	// Get the current server clock, and if it exists, the time for when the last search was started
@@ -77,6 +77,9 @@ function Resurrect( deadChar, npcHealer )
 
 function onTimer( srcChar, timerID )
 {
+	if( !ValidateObject( srcChar ))
+		return;
+
 	if( timerID == 1 )
 	{ //Search for nearby wounded characters the specified amount of times
 		var searchCount = srcChar.GetTag( "searchCount" );
@@ -98,6 +101,9 @@ function onTimer( srcChar, timerID )
 //It then checks to make sure they are valid for receiving healing or resurrection.
 function SearchForWounded( srcChar, trgChar, pSock )
 {
+	if( !ValidateObject( trgChar ) || !ValidateObject( srcChar ))
+		return;
+
 	if( trgChar.serial != srcChar.serial )
 	{
 		if( !trgChar.npc && ( trgChar.online && trgChar.dead ))
@@ -110,6 +116,9 @@ function SearchForWounded( srcChar, trgChar, pSock )
 // Handle draining of health, stamina and mana on attack
 function onAttack( pAttacker, pDefender )
 {
+	if( !ValidateObject( pDefender ))
+		return;
+
 	if( RandomNumber( 1, 100 ) <= 25 ) // 25% chance to drain
 	{
 		// Amount to drain from target
@@ -158,3 +167,5 @@ function onAttack( pAttacker, pDefender )
 		}
 	}
 }
+
+function _restorecontext_() {}

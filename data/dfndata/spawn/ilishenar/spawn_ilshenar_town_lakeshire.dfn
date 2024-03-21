@@ -1,0 +1,62 @@
+// 17950 to 17999
+// meerwarrior, meermage > meercaptain > meereternal
+[REGIONSPAWN 17950]
+{
+NAME=Lakeshire 1_1
+NPCLIST=lakeshire_npclist_1
+MAXNPCS=16
+X1=1163
+Y1=1098
+X2=1243
+Y2=1178
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// timberwolf > direwolf
+[REGIONSPAWN 17951]
+{
+NAME=Lakeshire Forest
+NPCLIST=lakeshire_npclist_2
+MAXNPCS=7
+X1=1102
+Y1=1087
+X2=1152
+Y2=1137
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17952]
+{
+NAME=Lakeshire Fruit Trees 1_1
+NPC=snake
+MAXNPCS=5
+X1=1165
+Y1=1173
+X2=1195
+Y2=1203
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 17953]
+{
+NAME=Lakeshire Fruit Trees 1_2
+NPC=giantserpent
+MAXNPCS=1
+X1=1169
+Y1=1177
+X2=1193
+Y2=1201
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}

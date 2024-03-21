@@ -97,11 +97,11 @@ enum DFNTAGS
 	DFNTAG_FZ1,
 	DFNTAG_FOOD,
 	DFNTAG_GET,
+	DFNTAG_GETUO,
 	DFNTAG_GETT2A,
 	DFNTAG_GETUOR,
 	DFNTAG_GETTD,
 	DFNTAG_GETLBR,
-	DFNTAG_GETPUB15,
 	DFNTAG_GETAOS,
 	DFNTAG_GETSE,
 	DFNTAG_GETML,
@@ -156,6 +156,8 @@ enum DFNTAGS
 	DFNTAG_MINING,
 	DFNTAG_MOVABLE,
 	DFNTAG_MORE,
+	DFNTAG_MORE0,
+	DFNTAG_MORE1,
 	DFNTAG_MORE2,
 	DFNTAG_MOREX,
 	DFNTAG_MOREY,
@@ -171,6 +173,7 @@ enum DFNTAGS
 	DFNTAG_NOHIRELING,
 	DFNTAG_NOTRAIN,
 	DFNTAG_NPCAI,
+	DFNTAG_NPCGUILD,
 	DFNTAG_NPCLIST,
 	DFNTAG_NPCWANDER,
 	DFNTAG_OFFSPELL,
@@ -219,6 +222,7 @@ enum DFNTAGS
 	DFNTAG_SPAWNOBJ,
 	DFNTAG_SPAWNOBJLIST,
 	DFNTAG_SPD,
+	DFNTAG_SPELLS,
 	DFNTAG_SPELLWEAVING,
 	DFNTAG_SPIRITSPEAK,
 	DFNTAG_SPLIT,
@@ -227,6 +231,7 @@ enum DFNTAGS
 	DFNTAG_STAMINAMAX,
 	DFNTAG_STRENGTH,
 	DFNTAG_STRADD,
+	DFNTAG_STEALABLE,
 	DFNTAG_STEALING,
 	DFNTAG_STEALTH,
 	DFNTAG_SWORDSMANSHIP,
@@ -320,7 +325,7 @@ public:
 	auto collection2()  -> std::vector<SectDataV2_st *>&;
 
 	CScriptSection();
-	CScriptSection( std::ifstream& input, DEFINITIONCATEGORIES d );
+	CScriptSection( std::istream& input, DEFINITIONCATEGORIES d );
 	~CScriptSection();
 	auto First() -> std::string;
 	auto Next() -> std::string;
@@ -342,7 +347,7 @@ public:
 	auto NpcListExist() const -> bool;
 	auto ItemListData() const -> std::string;
 	auto NpcListData() const -> std::string;
-	auto CreateSection( std::ifstream& inputbuf ) -> void;
+	auto CreateSection( std::istream& inputbuf ) -> void;
 };
 
 #endif

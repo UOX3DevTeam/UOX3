@@ -14,14 +14,15 @@ function onCollide( pSock, pChar, iObject )
 	}
 
 	// Teleport player's pets to Wind
-	var petList = pChar.GetPetList();
-	for( var i = 0; i < petList.length; i++ )
+	var followerList = pChar.GetFollowerList();
+	for( var i = 0; i < followerList.length; i++ )
 	{
-		var tempPet = petList[i];
-		if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 24 ))
+		var tempFollower = followerList[i];
+		// Only teleport player's pets if they're set to follow and within range
+		if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( pChar, 24 ))
 		{
-			tempPet.Teleport( 5166, 244, 15 );
-			tempPet.Follow( pChar );
+			tempFollower.Teleport( 5166, 244, 15 );
+			tempFollower.Follow( pChar );
 		}
 	}
 

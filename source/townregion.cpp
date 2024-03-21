@@ -6,7 +6,7 @@
 #include "skills.h"
 #include "speech.h"
 #include "ssection.h"
-#include "gump.h"
+#include "CGump.h"
 #include "mapstuff.h"
 #include "scriptc.h"
 #include "CPacketSend.h"
@@ -254,7 +254,7 @@ bool CTownRegion::Load( Script *ss )
 //|	Purpose		-	Saves town region data to worldfiles
 //|	Notes		-	entry is the region #, fp is the file to save in
 //o------------------------------------------------------------------------------------------------o
-bool CTownRegion::Save( std::ofstream &outStream )
+bool CTownRegion::Save( std::ostream &outStream )
 {
 	const char newLine = '\n';
 	outStream << "[TOWNREGION " + std::to_string( regionNum ) + "]\n{\n";

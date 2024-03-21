@@ -45,6 +45,16 @@ private:
 	std::vector<Point3_st>	validLandPos;
 	std::vector<Point3_st>	validWaterPos;
 
+	// Exclusion areas for Spawn Regions
+	struct SpawnRegionExclusionAreas_st
+	{
+		SI16 x1 = 0;
+		SI16 y1 = 0;
+		SI16 x2 = 0;
+		SI16 y2 = 0;
+	};
+	std::vector<SpawnRegionExclusionAreas_st>    exclusionAreas;
+
 
 public:
 	CSpawnRegion( UI16 spawnregion );
@@ -112,8 +122,8 @@ public:
 	GenericList<CItem *> *	GetSpawnedItemsList( void );
 	GenericList<CChar *> *	GetSpawnedCharsList( void );
 private:
-	CChar *		RegionSpawnChar( void );
-	CItem *		RegionSpawnItem( void );
+	auto		RegionSpawnChar() -> CChar *;
+	auto		RegionSpawnItem() -> CItem *;
 
 	bool		FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z );
 	bool		FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCreature, bool &amphiCreature );

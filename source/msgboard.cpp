@@ -300,7 +300,7 @@ bool GetMaxSerial( const std::string& fileName, UI08 *nextMsgId, const PostTypes
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes a new post to the .bbf file
 //o------------------------------------------------------------------------------------------------o
-void MsgBoardWritePost( std::ofstream& mFile, const MsgBoardPost_st& msgBoardPost )
+void MsgBoardWritePost( std::ostream& mFile, const MsgBoardPost_st& msgBoardPost )
 {
 	char wBuffer[4];
 
@@ -526,7 +526,7 @@ void MsgBoardPost( CSocket *tSock )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reads in a post from its specified file.
 //o------------------------------------------------------------------------------------------------o
-bool MsgBoardReadPost( std::ifstream& file, MsgBoardPost_st& msgBoardPost, SERIAL msgSerial = INVALIDSERIAL )
+bool MsgBoardReadPost( std::istream& file, MsgBoardPost_st& msgBoardPost, SERIAL msgSerial = INVALIDSERIAL )
 {
 	char buffer[4];
 
@@ -976,25 +976,31 @@ auto MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType ) -> bool
 void MsgBoardQuestEscortCreate( CChar *mNPC )
 {
 	const UI16 npcRegion		= mNPC->GetRegionNum();
-	UI16 destRegion				= npcRegion;
-	const size_t escortSize		= cwmWorldState->escortRegions.size();
 
-	if( !cwmWorldState->escortRegions.empty() && ( escortSize > 1 || cwmWorldState->escortRegions[0] != npcRegion )  )
+	// Loop through all escort regions in the server and pick out all the ones in the same world as NPC
+	std::vector<UI16> regionCandidates;
+	for( const auto escortRegion : cwmWorldState->escortRegions )
 	{
-		for( UI16 i = 0; i < 50 && npcRegion == destRegion; ++i )
+		if( escortRegion != npcRegion )
 		{
-			destRegion = cwmWorldState->escortRegions[RandomNum( static_cast<size_t>( 0 ), ( escortSize - 1 ))];
+			CTownRegion *tempRegion = cwmWorldState->townRegions[escortRegion];
+			if( tempRegion->WorldNumber() == mNPC->WorldNumber() )
+			{
+				regionCandidates.push_back( escortRegion );
+			}
 		}
 	}
 
-	if( destRegion == 0 || destRegion == npcRegion )
+	// Abort out if there are no valid escort region candidates
+	if( regionCandidates.empty() )
 	{
-		Console.Error( oldstrutil::format( "MsgBoardQuestEscortCreate() No valid regions defined for escort quests" ));
+		Console.Error( oldstrutil::format( "MsgBoardQuestEscortCreate() No valid regions defined for escort quests" ) );
 		mNPC->Delete();
 		return;
 	}
 
-	mNPC->SetQuestDestRegion( destRegion );
+	// Choose an escort region at random based on non-empty collection of candidates
+	mNPC->SetQuestDestRegion( regionCandidates[RandomNum( static_cast<size_t>( 0 ), ( regionCandidates.size() - 1 ))] );
 
 	// Set quest type to escort
 	mNPC->SetQuestType( QT_ESCORTQUEST );
@@ -1063,6 +1069,9 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 	// Set a timer to automatically delete the NPC
 	mNPC->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ));
 	mNPC->SetOwner( nullptr );
+
+	// Mark NPC as always awake, to ensure they'll still get checked and removed by server when timer is up
+	mNPC->SetAwake( true );
 }
 
 //o------------------------------------------------------------------------------------------------o

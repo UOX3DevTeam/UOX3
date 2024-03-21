@@ -21,7 +21,12 @@ function onSkill( pUser, objType, skillUsed )
 			pSock.SysMessage( GetDictionaryEntry( 833, pSock.language )); // You are already hidden.
 			pSock.SetTimer( Timer.SOCK_SKILLDELAY, pSkillDelay * 1000 );
 		}
-		else if( pUser.attacker && pUser.InRange( pUser.attacker, 15 ))
+		else if( ValidateObject( pUser.attacker ) && pUser.InRange( pUser.attacker, 15 ) && pUser.attacker.CanSee( pUser ))
+		{
+			pSock.SysMessage( GetDictionaryEntry( 832, pSock.language )); // You cannot hide while fighting.
+			pSock.SetTimer( Timer.SOCK_SKILLDELAY, 0.25 * 1000 ); // Put very small skilldelay for failing to hide because of being in combat
+		}
+		else if( ValidateObject( pUser.target ) && pUser.InRange( pUser.target, 15 ) && pUser.target.CanSee( pUser ))
 		{
 			pSock.SysMessage( GetDictionaryEntry( 832, pSock.language )); // You cannot hide while fighting.
 			pSock.SetTimer( Timer.SOCK_SKILLDELAY, 0.25 * 1000 ); // Put very small skilldelay for failing to hide because of being in combat

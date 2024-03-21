@@ -60,6 +60,9 @@ function onCallback0( socket, ourObj )
 	case "KILLS":
 		socket.SysMessage( ourObj.murdercount );
 		break;
+	case "ISAGGRESSOR":
+		socket.SysMessage( )
+		break;
 	case "HUE":
 	case "SKIN":
 	case "COLOR":
@@ -90,6 +93,9 @@ function onCallback0( socket, ourObj )
 		{
 			socket.SysMessage( "null" );
 		}
+		break;
+	case "ORIGIN":
+		socket.SysMessage( ourObj.origin );
 		break;
 	case "PERMANENTMAGICREFLECT":
 		socket.SysMessage( ourObj.permanentMagicReflect );
@@ -229,6 +235,18 @@ function HandleGetItem( socket, ourItem, uKey )
 		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.more ).toString( 16 ))).slice( -8 )
 		socket.SysMessage( ourItem.more + " ( " + hexVal + ")" );
 		break;
+	case "MORE0":
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.more ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.more0 + " ( " + hexVal + ")" );
+		break;
+	case "MORE1":
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.more ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.more1 + " ( " + hexVal + ")" );
+		break;
+	case "MORE2":
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.more ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.more2 + " ( " + hexVal + ")" );
+		break;
 	case "MOREX":
 		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.morex ).toString( 16 ))).slice( -8 )
 		socket.SysMessage( ourItem.morex + " ( " + hexVal + ")" );
@@ -279,6 +297,28 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "DEF":
 		socket.SysMessage( ourItem.Resist( 1 ));
 		break;
+	case "DEF":
+	case "RESISTARMOR":
+		socket.SysMessage( ourObj.Resist( 1 ));
+		break;
+	case "RESISTLIGHT":
+		socket.SysMessage( ourObj.Resist( 2 ));
+		break;
+	case "RESISTWATER":
+		socket.SysMessage( ourObj.Resist( 3 ));
+		break;
+	case "RESISTCOLD":
+		socket.SysMessage( ourObj.Resist( 4 ));
+		break;
+	case "RESISTFIRE":
+		socket.SysMessage( ourObj.Resist( 5 ));
+		break;
+	case "RESISTENERGY":
+		socket.SysMessage( ourObj.Resist( 6 ));
+		break;
+	case "RESISTPOISON":
+		socket.SysMessage( ourObj.Resist( 7 ));
+		break;
 	case "ARMORCLASS":
 	case "ARMOURCLASS":
 	case "AC":
@@ -324,6 +364,9 @@ function HandleGetItem( socket, ourItem, uKey )
 		break;
 	case "USESLEFT":
 		socket.SysMessage( ourItem.usesLeft );
+		break;
+	case "STEALABLE":
+		socket.SysMessage( ourItem.stealable );
 		break;
 	default:
 		if( ourItem.isSpawner )
@@ -396,8 +439,29 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "CONTROLSLOTSUSED":
 		socket.SysMessage( ourChar.controlSlotsUsed );
 		break;
+	case "CRIMINAL":
+		socket.SysMessage( ourChar.criminal );
+		break;
+	case "INNOCENT":
+		socket.SysMessage( ourChar.innocent );
+		break;
+	case "MURDERER":
+		socket.SysMessage( ourChar.murderer );
+		break;
+	case "PERMAGREY":
+		socket.SysMessage( ourChar.IsPermaGrey() );
+		break;
+	case "HASSTOLEN":
+		socket.SysMessage( ourChar.hasStolen );
+		break;
+	case "AGGRESSOR":
+		socket.SysMessage( ourChar.IsAggressor() );
+		break;
 	case "PETCOUNT":
 		socket.SysMessage( ourChar.petCount );
+		break;
+	case "FOLLOWERCOUNT":
+		socket.SysMessage( ourChar.followerCount );
 		break;
 	case "MAXLOYALTY":
 		socket.SysMessage( ourChar.maxLoyalty );
@@ -441,6 +505,37 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "OLDWANDERTYPE":
 		socket.SysMessage( ourChar.oldWandertype );
 		break;
+	case "NPCGUILD":
+		socket.SysMessage( ourChar.npcGuild );
+		break;
+	case "NPCGUILDJOINED":
+		if( !ourChar.npc )
+		{
+			var npcGuildJoined = ourChar.npcGuildJoined;
+			if( npcGuildJoined > 0 )
+			{
+				// Output raw value of timestamp
+				socket.SysMessage( npcGuildJoined );
+
+				// Calculate date of timestamp, and output as a formatted date
+				var joinedDate = new Date( npcGuildJoined * 60000 );
+				var options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+				var formattedDateTime = joinedDate.toLocaleString( undefined, options );
+				socket.SysMessage( "Character joined guild on " + formattedDateTime );
+
+				// Calculate the duration in days, hours, and minutes, and output
+				var durationInMinutes = Math.floor( Date.now() / ( 60 * 1000 )) - npcGuildJoined;
+				var days = Math.floor(durationInMinutes / (24 * 60));
+				var hours = Math.floor((durationInMinutes % (24 * 60)) / 60);
+				var minutes = durationInMinutes % 60;
+				socket.SysMessage( "(" + days + " days, " + hours + " hours, " + minutes + " minutes ago)" );
+			}
+			else
+			{
+				socket.SysMessage( "Character has not joined an NPC Guild yet." );
+			}
+		}
+		break;
 	case "DIR":
 	case "DIRECTION":
 		socket.SysMessage( ourChar.direction );
@@ -459,6 +554,20 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "COMMANDLEVEL":
 		socket.SysMessage( ourChar.commandlevel );
+		break;
+	case "HAIRSTYLE":
+		socket.SysMessage( ourChar.hairStyle );
+		break;
+	case "HAIRCOLOUR":
+	case "HAIRCOLOR":
+		socket.SysMessage( ourChar.hairColour );
+		break;
+	case "BEARDSTYLE":
+		socket.SysMessage( ourChar.beardStyle );
+		break;
+	case "BEARDCOLOUR":
+	case "BEARDCOLOR":
+		socket.SysMessage( ourChar.beardColour );
 		break;
 	case "Z":
 		socket.SysMessage( ourChar.z );
@@ -689,12 +798,12 @@ function HandleGetChar( socket, ourChar, uKey )
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISSLOT7BLOCKED> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
-	case "UNUSED9":
+	case "ISYOUNG":
 		if( !ourChar.npc )
 		{
 			var myAccount = ourChar.account;
-			socket.SysMessage( "unused9: " + myAccount.unused9 );
-			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET UNUSED9> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			socket.SysMessage( "isYoung: " + myAccount.isYoung );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISYOUNG> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
 	case "UNUSED10":

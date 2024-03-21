@@ -99,9 +99,12 @@ static JSFunctionSpec my_functions[] =
 	{ "WorldDungeonLevel",			SE_WorldDungeonLevel,		0, 0, 0 },
 	{ "GetSpawnRegionFacetStatus",	SE_GetSpawnRegionFacetStatus,	1, 0, 0 },
 	{ "SetSpawnRegionFacetStatus",	SE_SetSpawnRegionFacetStatus,	2, 0, 0 },
+	{ "GetMoongateFacetStatus",		SE_GetMoongateFacetStatus,	1, 0, 0 },
+	{ "SetMoongateFacetStatus",		SE_SetMoongateFacetStatus,	2, 0, 0 },
 	{ "AreaCharacterFunction",		SE_AreaCharacterFunction,	3, 0, 0 },
 	{ "AreaItemFunction",			SE_AreaItemFunction,		3, 0, 0 },
 	{ "TriggerEvent",				SE_TriggerEvent,			3, 0, 0 },
+	{ "DoesEventExist",				SE_DoesEventExist,			2, 0, 0 },
 	{ "Reload",						SE_Reload,					1, 0, 0 },
 	{ "SendStaticStats",			SE_SendStaticStats,			1, 0, 0 },
 	{ "GetTileHeight",				SE_GetTileHeight,			1, 0, 0 },
@@ -116,9 +119,10 @@ static JSFunctionSpec my_functions[] =
 	{ "CheckStaticFlag",			SE_CheckStaticFlag,			5, 0, 0 },
 	{ "CheckDynamicFlag",			SE_CheckDynamicFlag,		6, 0, 0 },
 	{ "CheckTileFlag",				SE_CheckTileFlag,			2, 0, 0 },
-	{ "DoesDynamicBlock",			SE_DoesDynamicBlock,		7, 0, 0 },
-	{ "DoesStaticBlock",			SE_DoesStaticBlock,			7, 0, 0 },
+	{ "DoesDynamicBlock",			SE_DoesDynamicBlock,		9, 0, 0 },
+	{ "DoesStaticBlock",			SE_DoesStaticBlock,			5, 0, 0 },
 	{ "DoesMapBlock",				SE_DoesMapBlock,			8, 0, 0 },
+	{ "DoesCharacterBlock",			SE_DoesCharacterBlock,		5, 0, 0 },
 	{ "DistanceBetween",			SE_DistanceBetween,			4, 0, 0 },
 
 	{ "ResourceArea",				SE_ResourceArea,			2, 0, 0 },
@@ -128,6 +132,7 @@ static JSFunctionSpec my_functions[] =
 	{ "Moon",						SE_Moon,					2, 0, 0 },
 
 	{ "GetTownRegion",				SE_GetTownRegion,			1, 0, 0 },
+	{ "GetTownRegionFromXY",		SE_GetTownRegionFromXY,		4, 0, 0 },
 	{ "GetSpawnRegion",				SE_GetSpawnRegion,			4, 0, 0 },
 	{ "GetSpawnRegionCount",		SE_GetSpawnRegionCount,		0, 0, 0 },
 
@@ -172,6 +177,7 @@ static JSFunctionSpec my_functions[] =
 	{ "GetMultiCount",				SE_GetMultiCount,			0, 0, 0 },
 	{ "GetCharacterCount",			SE_GetCharacterCount,		0, 0, 0 },
 	{ "GetServerVersionString",		SE_GetServerVersionString,	0, 0, 0 },
+	{ "EraStringToNum",				SE_EraStringToNum,			1, 0, 0 },
 
 	{ "BASEITEMSERIAL",				SE_BASEITEMSERIAL,			0, 0, 0 },
 	{ "INVALIDSERIAL",				SE_INVALIDSERIAL,			0, 0, 0 },
@@ -192,7 +198,54 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 		return;
 	}
 	Console.Error( oldstrutil::format( "Filename: %s\n| Line Number: %i", report->filename, report->lineno ));
-	Console.Error( oldstrutil::format( "Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
+	if( report->linebuf != nullptr || report->tokenptr != nullptr )
+	{
+		Console.Error( oldstrutil::format( "Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
+	}
+}
+
+// Global error message variable used to pass error message from MethodError() to the custom JSError callback function
+std::string g_errorMessage;
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ScriptErrorCallback()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Callback for custom JSError
+//| Notes		-	Relies on global variable g_errorMessage to pass in error message from
+//|					MethodError function.
+//o------------------------------------------------------------------------------------------------o
+const JSErrorFormatString* ScriptErrorCallback( [[maybe_unused]] void *userRef, [[maybe_unused]] const char *locale, [[maybe_unused]] const uintN errorNumber )
+{
+	// Return a pointer to a JSErrorFormatString, to the UOX3ErrorReporter function in cScript.cpp
+	static JSErrorFormatString errorFormat;
+	errorFormat.format = g_errorMessage.c_str();
+	errorFormat.argCount = 0;
+	errorFormat.exnType = JSEXN_ERR;
+	return &errorFormat;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ScriptError()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Spit out a custom error message related to JS Methods or their parameters
+//| Notes		-	Piggybacks on the internal error reporting mechanism in SpiderMonkey to get
+//|					the filename and relevant line number from associated script
+//o------------------------------------------------------------------------------------------------o
+void ScriptError( JSContext *cx, const char *txt, ... )
+{
+	// Combine error message with any potential additional arguments provided, store in g_errorMessage
+	va_list argptr;
+	va_start( argptr, txt );
+	g_errorMessage = oldstrutil::format( txt, argptr );
+	va_end( argptr );
+
+	// Define a custom error number. Needed, but not really used for anything
+	const uintN customErrorNumber = 1000;
+
+	// Manually trigger an error using SpiderMonkey's internal error reporting,
+	// which makes use of JSErrorFormatString from ScriptErrorCallback function
+	// to call upon UOX3ErrorReporter function in cScript.cpp
+	JS_ReportErrorNumber( cx, ScriptErrorCallback, nullptr, customErrorNumber, "" );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -348,19 +401,42 @@ bool cScript::OnStop( void )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::DoesEventExist()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Allows scripters to check if a particular JS event (or function) exists in a
+//|					script before attempting to call it via TriggerEvent
+//o------------------------------------------------------------------------------------------------o
+bool cScript::DoesEventExist( char *eventToFind )
+{
+	jsval Func = JSVAL_NULL;
+	JS_GetProperty( targContext, targObject, eventToFind, &Func );
+	if( Func == JSVAL_VOID )
+	{
+		return false;
+	}
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnCreate()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Runs when an object is added/created
 //|	Notes		-	Checks for the presence of onCreateDFN by default, but onCreateTile can also
 //|					be used to intercept creation of items directly from tiles/harditems.dfn
 //o------------------------------------------------------------------------------------------------o
-bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated )
+bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer)
 {
 	if( !ValidateObject( thingCreated ))
 		return false;
 
 	std::string functionName = "onCreateDFN";
-	if( !dfnCreated )
+	if( isPlayer )
+	{
+		functionName = "onCreatePlayer";
+		if( !ExistAndVerify( seOnCreatePlayer, functionName ))
+			return false;
+	}
+	else if( !dfnCreated )
 	{
 		functionName = "onCreateTile";
 		if( !ExistAndVerify( seOnCreateTile, functionName ))
@@ -390,7 +466,11 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated )
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, functionName.c_str(), 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
-		if( !dfnCreated )
+		if( isPlayer )
+		{
+			SetEventExists( seOnCreatePlayer, false );
+		}
+		else if( !dfnCreated )
 		{
 			SetEventExists( seOnCreateTile, false );
 		}
@@ -785,10 +865,26 @@ std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 		SetEventExists( seOnTooltip, false );
 	}
 
-	JSString *str = JS_ValueToString( targContext, rval );
-	std::string returnString = JS_GetStringBytes( str );
+	// If rval is negative, it's possible some other function/method called from within Ontooltip() encountered
+	// an error. Abort attempt to turn it into a string - it might crash the server!
+	if( rval < 0 )
+	{
+		Console.Error( "Handled exception in cScript.cpp OnTooltip() - invalid return value/error encountered!" );
+		return "";
+	}
 
-	return returnString;
+	try
+	{
+		JSString *str = JS_ValueToString( targContext, rval );
+		std::string returnString = JS_GetStringBytes( str );
+
+		return returnString;
+	}
+	catch( ... )
+	{
+		Console.Error( "Handled exception in cScript.cpp OnTooltip()" );
+		return "";
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -796,7 +892,7 @@ std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for objects which client has requested the name for
 //o------------------------------------------------------------------------------------------------o
-std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester )
+std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI08 requestSource )
 {
 	if( !ValidateObject( myObj ))
 		return "";
@@ -811,47 +907,68 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester )
 	// Mark object as having an active name lookup via onNameRequest
 	myObj->NameRequestActive( true );
 
-	jsval rval, params[2];
-
-	// Create JS object reference for myObj, based on whether it's an item or character
-	JSObject *nameRequestObj = nullptr;
-	if( myObj->CanBeObjType( OT_CHAR ))
+	try
 	{
-		nameRequestObj = JSEngine->AcquireObject( IUE_CHAR, myObj, runTime );
+		jsval rval, params[3];
+
+		// Create JS object reference for myObj, based on whether it's an item or character
+		JSObject *nameRequestObj = nullptr;
+		if( myObj->CanBeObjType( OT_CHAR ))
+		{
+			nameRequestObj = JSEngine->AcquireObject( IUE_CHAR, myObj, runTime );
+		}
+		else if( myObj->CanBeObjType( OT_ITEM ))
+		{
+			nameRequestObj = JSEngine->AcquireObject( IUE_ITEM, myObj, runTime );
+		}
+
+		// Create JS object reference for the name requester (which might be nullptr!)
+		JSObject *nameRequesterObj = nullptr;
+		if( nameRequester != nullptr )
+		{
+			nameRequesterObj = JSEngine->AcquireObject( IUE_CHAR, nameRequester, runTime );
+		}
+
+		params[0] = OBJECT_TO_JSVAL( nameRequestObj );
+		params[1] = OBJECT_TO_JSVAL( nameRequesterObj );
+		params[2] = INT_TO_JSVAL( requestSource );
+		JSBool retVal = JS_CallFunctionName( targContext, targObject, "onNameRequest", 3, params, &rval );
+		if( retVal == JS_FALSE )
+		{
+			SetEventExists( seOnNameRequest, false );
+		}
+
+		// If rval is negative, it's possible some other function/method called from within onNameRequest() encountered
+		// an error. Abort attempt to turn it into a string - it might crash the server!
+		if( rval < 0 )
+		{
+			Console.Error( "Handled exception in cScript.cpp OnNameRequest() - invalid return value/error encountered!" );
+			return "";
+		}
+
+		JSString *str = JS_ValueToString( targContext, rval );
+		std::string returnString = JS_GetStringBytes( str );
+
+		// If no string was returned from the event, make sure we return an empty string instead of "undefined", "false" or "true"
+		if( returnString == "undefined" || returnString == "false" || returnString == "true" )
+		{
+			returnString = "";
+		}
+
+		// Clear flag that marks object as having an active name lookup via onNameRequest
+		myObj->NameRequestActive( false );
+
+		return returnString;
 	}
-	else if( myObj->CanBeObjType( OT_ITEM ))
+	catch(...)
 	{
-		nameRequestObj = JSEngine->AcquireObject( IUE_ITEM, myObj, runTime );
+		Console.Error( "Handled exception in cScript.cpp OnNameRequest()" );
+
+		// Clear flag that marks object as having an active name lookup via onNameRequest
+		myObj->NameRequestActive( false );
 	}
 
-	// Create JS object reference for the name requester (which might be nullptr!)
-	JSObject *nameRequesterObj = nullptr;
-	if( nameRequester != nullptr )
-	{
-		nameRequesterObj = JSEngine->AcquireObject( IUE_CHAR, nameRequester, runTime );
-	}
-
-	params[0] = OBJECT_TO_JSVAL( nameRequestObj );
-	params[1] = OBJECT_TO_JSVAL( nameRequesterObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onNameRequest", 2, params, &rval );
-	if( retVal == JS_FALSE )
-	{
-		SetEventExists( seOnNameRequest, false );
-	}
-
-	JSString *str = JS_ValueToString( targContext, rval );
-	std::string returnString = JS_GetStringBytes( str );
-
-	// If no string was returned from the event, make sure we return an empty string instead of "undefined", "false" or "true"
-	if( returnString == "undefined" || returnString == "false" || returnString == "true" )
-	{
-		returnString = "";
-	}
-
-	// Clear flag that marks object as having an active name lookup via onNameRequest
-	myObj->NameRequestActive( false );
-
-	return returnString;
+	return "";
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1094,6 +1211,87 @@ SI08 cScript::OnHelpButton( CChar *mChar )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	cScript::OnContextMenuRequest()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Triggers when player activates context menu on another character
+//|					Return false to prevent additional onContextMenu events from triggering
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( baseObj ) || tSock == nullptr )
+		return RV_NOFUNC;
+ 
+	if( !ExistAndVerify( seOnContextMenuRequest, "onContextMenuRequest" ))
+		return RV_NOFUNC;
+ 
+	jsval rval, params[2];
+	JSObject *mySockObj = JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	JSObject *myObj = nullptr;
+	if( baseObj->GetObjType() == OT_CHAR )
+	{
+		myObj = JSEngine->AcquireObject( IUE_CHAR, baseObj, runTime );
+	}
+	else
+	{
+		myObj = JSEngine->AcquireObject( IUE_ITEM, baseObj, runTime );
+	}
+ 
+	params[0] = OBJECT_TO_JSVAL( mySockObj );
+	params[1] = OBJECT_TO_JSVAL( myObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onContextMenuRequest", 2, params, &rval );
+ 
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnContextMenuRequest, false );
+		return RV_NOFUNC;
+    }
+ 
+	return TryParseJSVal( rval );
+}
+ 
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	cScript::OnContextMenuSelect()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Triggers when player selects an entry from a popup context menu
+//|					Return false to prevent additional onContextMenuSelect events from triggering
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 popupEntry )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( baseObj ) || tSock == nullptr )
+		return RV_NOFUNC;
+ 
+	if( !ExistAndVerify( seOnContextMenuSelect, "onContextMenuSelect" ))
+		return RV_NOFUNC;
+ 
+	jsval rval, params[3];
+	JSObject *mySockObj = JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	JSObject *myObj = nullptr;
+	if( baseObj->GetObjType() == OT_CHAR )
+	{
+		myObj = JSEngine->AcquireObject( IUE_CHAR, baseObj, runTime );
+	}
+	else
+	{
+		myObj = JSEngine->AcquireObject( IUE_ITEM, baseObj, runTime );
+	}
+ 
+	params[0] = OBJECT_TO_JSVAL( mySockObj );
+	params[1] = OBJECT_TO_JSVAL( myObj );
+	params[2] = INT_TO_JSVAL( popupEntry );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onContextMenuSelect", 3, params, &rval );
+ 
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnContextMenuSelect, false );
+		return RV_NOFUNC;
+	}
+ 
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnWarModeToggle()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character who toggle War Mode
@@ -1226,7 +1424,7 @@ SI08 cScript::OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest )
 //|	Changes		-	16/07/2008
 //|						Adjustments made to fix event, which didn't trigger
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnPickup( CItem *item, CChar *pickerUpper )
+SI08 cScript::OnPickup( CItem *item, CChar *pickerUpper, CBaseObject *objCont )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( item ) || !ValidateObject( pickerUpper ))
@@ -1235,13 +1433,26 @@ SI08 cScript::OnPickup( CItem *item, CChar *pickerUpper )
 	if( !ExistAndVerify( seOnPickup, "onPickup" ))
 		return RV_NOFUNC;
 
-	jsval params[2], rval;
+	jsval params[3], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pickerUpper, runTime );
 	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, item, runTime );
+	JSObject *objContObj = nullptr;
+	if( objCont != nullptr )
+	{
+		if( objCont->GetObjType() == OT_CHAR )
+		{
+			objContObj = JSEngine->AcquireObject( IUE_CHAR, objCont, runTime );
+		}
+		else
+		{
+			objContObj = JSEngine->AcquireObject( IUE_ITEM, objCont, runTime );
+		}
+	}
 
 	params[0] = OBJECT_TO_JSVAL( itemObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
-	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onPickup", 2, params, &rval );
+	params[2] = OBJECT_TO_JSVAL( objContObj );
+	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onPickup", 3, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -1376,6 +1587,37 @@ SI08 cScript::OnLeaving( CMultiObj *left, CBaseObject *leaving )
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnLeaving, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnMultiLogout()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for multi when a player logs out inside the multi
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnMultiLogout( CMultiObj *iMulti, CChar *cPlayer )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( iMulti ) || !ValidateObject( cPlayer ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnMultiLogout, "onMultiLogout" ))
+		return RV_NOFUNC;
+
+	jsval params[2], rval;
+	JSObject *myMulti = JSEngine->AcquireObject( IUE_ITEM, iMulti, runTime );
+	JSObject *myPlayer = JSEngine->AcquireObject( IUE_CHAR, cPlayer, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( myMulti );
+	params[1] = OBJECT_TO_JSVAL( myPlayer );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onMultiLogout", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnMultiLogout, false );
 		return RV_NOFUNC;
 	}
 
@@ -2447,10 +2689,10 @@ SI08 cScript::OnSnooped( CChar *snooped, CChar *snooper, bool success )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached if they attempt to snoop someone's backpack
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSnoopAttempt( CChar *snooped, CChar *snooper )
+SI08 cScript::OnSnoopAttempt( CChar *snooped, CItem *pack, CChar *snooper )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( snooped ) || !ValidateObject( snooper ))
+	if( !ValidateObject( snooped ) || !ValidateObject( pack ) || !ValidateObject( snooper ))
 		return RV_NOFUNC;
 
 	if( !ExistAndVerify( seOnSnoopAttempt, "onSnoopAttempt" ))
@@ -2459,11 +2701,13 @@ SI08 cScript::OnSnoopAttempt( CChar *snooped, CChar *snooper )
 	jsval params[3], rval;
 
 	JSObject *thiefObj	= JSEngine->AcquireObject( IUE_CHAR, snooped, runTime );
+	JSObject *packObj	= JSEngine->AcquireObject( IUE_ITEM, pack, runTime );
 	JSObject *victimObj	= JSEngine->AcquireObject( IUE_CHAR, snooper, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( thiefObj );
-	params[1] = OBJECT_TO_JSVAL( victimObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSnoopAttempt", 2, params, &rval );
+	params[1] = OBJECT_TO_JSVAL( packObj );
+	params[2] = OBJECT_TO_JSVAL( victimObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSnoopAttempt", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSnoopAttempt, false );
@@ -2724,9 +2968,47 @@ SI08 cScript::OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFa
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSpellTargetSelect()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for character with event attached who targets someone with a spell
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, UI08 spellNum )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( target ) || !ValidateObject( caster ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnSpellTargetSelect, "onSpellTargetSelect" ))
+		return RV_NOFUNC;
+
+	jsval params[4], rval;
+	JSObject *castObj = JSEngine->AcquireObject( IUE_CHAR, caster, runTime );
+	JSObject *targObj;
+	if( target->CanBeObjType( OT_CHAR ))
+	{
+		targObj = JSEngine->AcquireObject( IUE_CHAR, target, runTime );
+	}
+	else
+	{
+		targObj = JSEngine->AcquireObject( IUE_ITEM, target, runTime );
+	}
+	params[0] = OBJECT_TO_JSVAL( targObj );
+	params[1] = OBJECT_TO_JSVAL( castObj );
+	params[2] = INT_TO_JSVAL( spellNum );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellTargetSelect", 3, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnSpellTargetSelect, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnSpellTarget()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Triggers for character with event attached when targeting something with a spell
+//|	Purpose		-	Triggers for character with event attached who is the target of a spell
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
 {
@@ -2743,17 +3025,15 @@ SI08 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
 	if( target->CanBeObjType( OT_CHAR ))
 	{
 		targObj = JSEngine->AcquireObject( IUE_CHAR, target, runTime );
-		params[1] = INT_TO_JSVAL( 0 );
 	}
 	else
 	{
 		targObj = JSEngine->AcquireObject( IUE_ITEM, target, runTime );
-		params[1] = INT_TO_JSVAL( 1 );
 	}
 	params[0] = OBJECT_TO_JSVAL( targObj );
-	params[2] = OBJECT_TO_JSVAL( castObj );
-	params[3] = INT_TO_JSVAL( spellNum );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellTarget", 4, params, &rval );
+	params[1] = OBJECT_TO_JSVAL( castObj );
+	params[2] = INT_TO_JSVAL( spellNum );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellTarget", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSpellTarget, false );
@@ -3124,7 +3404,14 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 
 	//FIXME === do we need this retvalue?
 	//JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
-	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
+	try
+	{
+		[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
+	}
+	catch( ... )
+	{
+		Console.Error( "Some error!" );
+	}
 
 	return ( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE );
 }
@@ -3708,6 +3995,41 @@ SI08 cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, Weath
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDamageDeal()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers when character with event attached deals damage
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnDamageDeal( CChar *attacker, CChar *damaged, SI16 damageValue, WeatherType damageType )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( damaged ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnDamageDeal, "onDamageDeal" ))
+		return RV_NOFUNC;
+
+	jsval rval, params[4];
+	JSObject *attackerObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
+	params[0] = OBJECT_TO_JSVAL( attackerObj );
+
+	JSObject *damagedObj = JSEngine->AcquireObject( IUE_CHAR, damaged, runTime );
+	params[1] = OBJECT_TO_JSVAL( damagedObj );
+
+
+	params[2] = INT_TO_JSVAL( damageValue );
+	params[3] = INT_TO_JSVAL( damageType );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDamageDeal", 4, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnDamageDeal, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnBuy()
 //|	Date		-	26th November, 2011
 //o------------------------------------------------------------------------------------------------o
@@ -3780,16 +4102,16 @@ SI08 cScript::OnSell( CSocket *tSock, CChar *objVendor )
 //|	Purpose		-	Allows determining what happens when an item is in the process of being bought 
 //|					from an NPC vendor. Returning false/0 from the script will halt the purchase
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
+SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBuying )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == nullptr )
+	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == nullptr || numItemsBuying == 0 )
 		return RV_NOFUNC;
 
 	if( !ExistAndVerify( seOnBuyFromVendor, "onBuyFromVendor" ))
 		return RV_NOFUNC;
 
-	jsval rval, params[3];
+	jsval rval, params[4];
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
 	JSObject *myObj2	= nullptr;
@@ -3801,8 +4123,9 @@ SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *ob
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
+	params[3] = INT_TO_JSVAL( numItemsBuying );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBuyFromVendor", 3, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBuyFromVendor", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3820,16 +4143,16 @@ SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *ob
 //|	Purpose		-	Allows determining what happens when an item is in the process of being sold to
 //|					an NPC vendor. Returning false/0 from script will halt the sale
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
+SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSelling )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == nullptr )
+	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == nullptr || numItemsSelling == 0 )
 		return RV_NOFUNC;
 
 	if( !ExistAndVerify( seOnSellToVendor, "onSellToVendor" ))
 		return RV_NOFUNC;
 
-	jsval rval, params[3];
+	jsval rval, params[4];
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
 	JSObject *myObj2	= nullptr;
@@ -3841,8 +4164,9 @@ SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
+	params[3] = INT_TO_JSVAL( numItemsSelling );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSellToVendor", 3, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSellToVendor", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3860,7 +4184,7 @@ SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 //|	Purpose		-	Allows determining what happens AFTER an item has been
 //|					bought from an NPC vendor
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
+SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBought )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == nullptr )
@@ -3869,7 +4193,7 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 	if( !ExistAndVerify( seOnBoughtFromVendor, "onBoughtFromVendor" ))
 		return RV_NOFUNC;
 
-	jsval rval, params[3];
+	jsval rval, params[4];
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
 	JSObject *myObj2	= nullptr;
@@ -3881,8 +4205,9 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
+	params[3] = INT_TO_JSVAL( numItemsBought );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoughtFromVendor", 3, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoughtFromVendor", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3900,7 +4225,7 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 //|	Purpose		-	Allows determining what happens AFTER an item has been
 //|					sold to an NPC vendor
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
+SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSold )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == nullptr )
@@ -3909,7 +4234,7 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	if( !ExistAndVerify( seOnSoldToVendor, "onSoldToVendor" ))
 		return RV_NOFUNC;
 
-	jsval rval, params[3];
+	jsval rval, params[4];
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
 	JSObject *myObj2	= nullptr;
@@ -3921,8 +4246,9 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
+	params[3] = INT_TO_JSVAL( numItemsSold );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSoldToVendor", 3, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSoldToVendor", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{

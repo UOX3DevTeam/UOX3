@@ -409,10 +409,24 @@ function onCallback1( pSock, ourObj )
 		{
 			// Calculate amount of resources returned based on player's mining skill, item's wear and tear,
 			// and amount of resources that went into making the item in the first place
-			var itemHitpointsPercentage = Math.floor(( ourObj.health * 100 ) / ourObj.maxhp );
+			if ( ourObj.health >= 1 || ourObj.usesLeft >= 1 ) 
+			{
+				var healthPercentage = 0;
+				if( ourObj.health >= 1 )
+				{
+					healthPercentage = Math.floor( ( ourObj.health * 100) / ourObj.maxhp );
+				}
 
-			// Reduce amount of resources returned based on state of object's wear and tear
-			resourceAmount = Math.floor(( maxResourceAmount * itemHitpointsPercentage ) / 100 );
+				var usesPercentage = 0;
+				if( ourObj.usesLeft >= 1 ) 
+				{
+					usesPercentage = Math.floor( ( ourObj.usesLeft * 100 ) / ourObj.maxUses );
+				}
+
+				var itemPercentage = usesPercentage > 0 ? Math.min( healthPercentage, usesPercentage ) : healthPercentage;
+
+				resourceAmount = Math.floor( ( maxResourceAmount * itemPercentage ) / 100 );
+			}
 
 			// Halve the amount of resources returned
 			resourceAmount = Math.max( Math.floor( resourceAmount / 2 ), 1 );
@@ -1092,11 +1106,37 @@ function onGumpPress( pSock, pButton, gumpData )
 	{
 		if( anvil > 0 )
 		{
+			// crafting_complete.js for applying special bonuses for exceptional equipment/from runic hammers
+			pUser.AddScriptTrigger( 4033 );
 			MakeItem( pSock, pUser, makeID, resourceHue );
-			if( GetServerSetting( "ToolUseLimit" ))
+			var toolUseLimit = GetServerSetting( "ToolUseLimit" );
+			var toolUseBreak = GetServerSetting( "ToolUseBreak" );
+
+			// Check if player had runic hammer equipped while crafting
+			var runicHammer = pUser.FindItemLayer( 0x01 ); // Right Hand
+			if( ValidateObject( runicHammer ) && runicHammer.GetTag( "runicHammer" ) && runicHammer.usesLeft > 0 )
+			{
+				// Store some temp tags on player to get info on runic hammer used in crafting_complete.js
+				pUser.SetTempTag( "usedRunicHammer", true );
+				pUser.SetTempTag( "runicHammerType", runicHammer.color );
+
+				// Wear and tear for equipped runic hammer, even if another tool was used to craft
+				if( toolUseLimit && runicHammer != bItem )
+				{
+					runicHammer.usesLeft -= 1;
+					if( runicHammer.usesLeft == 0 && toolUseBreak )
+					{
+						runicHammer.Delete();
+						pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
+						// Play sound effect of tool breaking
+					}
+				}
+			}
+
+			if( toolUseLimit )
 			{
 				bItem.usesLeft -= 1;
-				if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
+				if( bItem.usesLeft == 0 && toolUseBreak )
 				{
 					bItem.Delete();
 					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
@@ -1112,3 +1152,5 @@ function onGumpPress( pSock, pButton, gumpData )
 		TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
 	}
 }
+
+function _restorecontext_() {}

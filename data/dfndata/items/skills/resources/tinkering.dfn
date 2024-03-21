@@ -225,6 +225,11 @@ good=50
 script=5033
 }
 
+[sextant]
+{
+get=0x1057
+}
+
 [0x1059]
 {
 get=base_item

@@ -16,6 +16,7 @@
 #include "cRaces.h"
 #include "cEffects.h"
 #include "regions.h"
+#include "townregion.h"
 #include "combat.h"
 #include "CJSMapping.h"
 #include "cScript.h"
@@ -48,6 +49,13 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 			}
 		}
 
+		// Targets on character's combat ignore list are not valid
+		if( mChar.CheckCombatIgnore( cTarget->GetSerial() ))
+		{
+			return false;
+		}
+
+		// Invulnerable, dead, hidden or evading targets are not valid
 		if( cTarget->IsInvulnerable() || cTarget->IsDead() || cTarget->GetVisible() != VT_VISIBLE || cTarget->IsEvading() )
 		{
 			return false;
@@ -57,6 +65,17 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 		{
 			if( LineOfSight( nullptr, (&mChar), cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 			{
+				// Young players are not valid targets for NPCs outside of dungeons
+				if( cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.IsNpc() && !cTarget->IsNpc() && IsOnline(( *cTarget )) && cTarget->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && !cTarget->GetRegion()->IsDungeon() )
+				{
+					if( cTarget->GetSocket() && ( cTarget->GetTimer( tCHAR_YOUNGMESSAGE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
+					{
+						cTarget->SetTimer( tCHAR_YOUNGMESSAGE, BuildTimeValue( static_cast<R32>( 120 ))); // Only send them the warning message once couple of minutes
+						cTarget->GetSocket()->SysMessage( 18734 ); // A monster looks at you menacingly but does not attack.  You would be under attack now if not for your status as a new citizen of Britannia.
+					}
+					return false;
+				}
+
 				if( IsOnline(( *cTarget )) || cTarget->IsNpc() )
 				{
 					return true;
@@ -92,7 +111,7 @@ bool CheckForValidOwner( CChar& mChar, CChar *cTarget )
 //o------------------------------------------------------------------------------------------------o
 void HandleGuardAI( CChar& mChar )
 {
-	if( mChar.IsAtWar() )
+	if( mChar.IsAtWar() && ValidateObject( mChar.GetTarg() ))
 		return;
 
 	for( auto &MapArea : MapRegion->PopulateList( &mChar ))
@@ -124,7 +143,7 @@ void HandleGuardAI( CChar& mChar )
 //o------------------------------------------------------------------------------------------------o
 void HandleFighterAI( CChar& mChar )
 {
-	if( mChar.IsAtWar() )
+	if( mChar.IsAtWar() && ValidateObject( mChar.GetTarg() ))
 		return;
 
 	// Fetch scriptTriggers attached to mChar
@@ -136,6 +155,11 @@ void HandleFighterAI( CChar& mChar )
 			continue;
 
 		auto regChars = MapArea->GetCharList();
+		// Chance to reverse list of chars
+		if( RandomNum( 0, 1 ))
+		{
+			regChars->Reverse();
+		}
 		for( const auto &tempChar : regChars->collection() )
 		{
 			if( IsValidAttackTarget( mChar, tempChar ))
@@ -230,6 +254,27 @@ void HandleHealerAI( CChar& mChar )
 				}
 			}
 		}
+		else if( realChar->GetHP() < realChar->GetMaxHP() && cwmWorldState->ServerData()->YoungPlayerSystem() && realChar->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
+		{
+			// Heal young players every X minutes
+			if( realChar->GetTimer( tCHAR_YOUNGHEAL ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			{
+				mChar.RemoveFromCombatIgnore( realChar->GetSerial() );
+				realChar->SetTimer( tCHAR_YOUNGHEAL, BuildTimeValue( static_cast<R32>( 300 ))); // Only heal young player max once every 5 minutes
+				mChar.TextMessage( nullptr, 18731, TALK, false ); // You look like you need some healing my child.
+				Effects->PlayStaticAnimation( realChar, 0x376A, 0x09, 0x06 );
+				realChar->SetHP( realChar->GetMaxHP() );
+			}
+			else
+			{
+				// Ignore players on the healer's "combat" ignore list
+				if( mChar.CheckCombatIgnore( realChar->GetSerial() ))
+					continue;
+
+				mChar.AddToCombatIgnore( realChar->GetSerial(), false ); // Use combat ignore to ignore the injured player for a short while to avoid spamming message
+				mChar.TextMessage( nullptr, 18732, TALK, false ); // I can do no more for you at this time.
+			}
+		}
 	}
 }
 
@@ -285,7 +330,7 @@ void HandleEvilHealerAI( CChar& mChar )
 //o------------------------------------------------------------------------------------------------o
 auto HandleEvilAI( CChar& mChar ) -> void
 {
-	if( mChar.IsAtWar() )
+	if( mChar.IsAtWar() && ValidateObject( mChar.GetTarg() ))
 		return;
 
 	// Fetch scriptTriggers attached to mChar
@@ -378,7 +423,7 @@ auto HandleEvilAI( CChar& mChar ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto HandleChaoticAI( CChar& mChar ) -> void
 {
-	if( mChar.IsAtWar() )
+	if( mChar.IsAtWar() && ValidateObject( mChar.GetTarg() ))
 		return;
 
 	// Fetch scriptTriggers attached to mChar
@@ -390,6 +435,12 @@ auto HandleChaoticAI( CChar& mChar ) -> void
 			continue;
 
 		auto regChars = MapArea->GetCharList();
+
+		// Chance to reverse list of chars
+		if( RandomNum( 0, 1 ))
+		{
+			regChars->Reverse();
+		}
 		for( const auto &tempChar : regChars->collection() )
 		{
 			if( IsValidAttackTarget( mChar, tempChar ) && !CheckForValidOwner( mChar, tempChar ))
@@ -440,7 +491,7 @@ auto HandleChaoticAI( CChar& mChar ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto HandleAnimalAI( CChar& mChar ) -> void
 {
-	if( mChar.IsAtWar() )
+	if( mChar.IsAtWar() && ValidateObject( mChar.GetTarg() ))
 		return;
 
 	const SI08 hunger = mChar.GetHunger();
@@ -504,6 +555,81 @@ auto HandleAnimalAI( CChar& mChar ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	HandleAnimalScaredAI()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles AI type for scared animals that try to avoid humans
+//o------------------------------------------------------------------------------------------------o
+auto HandleAnimalScaredAI( CChar& mChar ) -> void
+{
+	// Do nothing if NPC is already running scared and has a valid target
+	if( mChar.GetNpcWander() == WT_SCARED && ValidateObject( mChar.GetTarg() ))
+		return;
+
+	// Fetch scriptTriggers attached to mChar
+	std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+
+	for( auto &MapArea : MapRegion->PopulateList( &mChar ))
+	{
+		if( MapArea == nullptr )
+			continue;
+
+		auto regChars = MapArea->GetCharList();
+		for( const auto &tempChar : regChars->collection() )
+		{
+			if( IsValidAttackTarget( mChar, tempChar ))
+			{
+				// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
+				// This event will override target selection entirely
+				bool invalidTarget = false;
+				for( auto scriptTrig : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute == nullptr )
+						continue;
+
+					SI08 retVal = toExecute->OnAICombatTarget( &mChar, tempChar );
+					if( retVal != -1 )
+					{
+						if( retVal == 0 )
+						{
+							// Invalid target! But look through other scripts with event first
+							invalidTarget = true;
+						}
+						else if( retVal == 1 )
+						{
+							// Valid target! Range check presumably happening in script
+							mChar.SetTarg( tempChar );
+							if( mChar.GetNpcWander() != WT_SCARED && mChar.GetNpcWander() != WT_PATHFIND )
+							{
+								mChar.SetOldNpcWander( mChar.GetNpcWander() );
+							}
+							mChar.SetNpcWander( WT_SCARED );
+							return;
+						}
+					}
+				}
+				if( invalidTarget )
+					continue;
+
+				if( !tempChar->IsNpc() || ( ValidateObject( tempChar->GetOwnerObj() ) && !tempChar->GetOwnerObj()->IsNpc() ))
+				{
+					if( ObjInRange( &mChar, tempChar, DIST_INRANGE ))
+					{
+						mChar.SetTarg( tempChar );
+						if( mChar.GetNpcWander() != WT_SCARED && mChar.GetNpcWander() != WT_PATHFIND )
+						{
+							mChar.SetOldNpcWander( mChar.GetNpcWander() );
+						}
+						mChar.SetNpcWander( WT_SCARED );
+					}
+				}
+			}
+		}
+	}
+}
+
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CheckAI()
 //|	Date		-	12/30/2003
 //o------------------------------------------------------------------------------------------------o
@@ -527,6 +653,7 @@ void CheckAI( CChar& mChar )
 		case AI_CASTER:			[[fallthrough]];						// Caster - same as AI_FIGHTER, but keep their distance
 		case AI_FIGHTER:		HandleFighterAI( mChar );		break;	// Fighter - same as guard, without teleporting & yelling "HALT!"
 		case AI_ANIMAL:			HandleAnimalAI( mChar );		break;	// Hungry animals
+		case AI_ANIMAL_SCARED:	HandleAnimalScaredAI( mChar );	break;	// Scared animals, try to stay away from humans
 		case AI_CHAOTIC:		HandleChaoticAI( mChar );		break;	// Energy Vortex / Blade Spirit
 		case AI_HEALER_E:		HandleEvilHealerAI( mChar );	break;	// Evil Healers
 		case AI_PET_GUARD:												// Pet Guarding AI
@@ -543,7 +670,7 @@ void CheckAI( CChar& mChar )
 			break;
 		default:
 		{
-			std::string mCharName = GetNpcDictName( &mChar );
+			std::string mCharName = GetNpcDictName( &mChar, nullptr, NRS_SYSTEM );
 			Console.Error( oldstrutil::format( " CheckAI() Error npc %s(0x%X) has invalid AI type %i", mCharName.c_str(), mChar.GetSerial(), mChar.GetNpcAiType() ));	//Morrolan
 			return;
 		}

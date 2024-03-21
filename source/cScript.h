@@ -7,8 +7,9 @@ class CPIGumpInput;
 
 enum ScriptEvent
 {
-	seOnCreateDFN = 0,			//	*	Done for PCs on global script
+	seOnCreateDFN = 0,
 	seOnCreateTile,
+	seOnCreatePlayer,		//	*	Done for PCs on global script
 	seOnCommand,
 	seOnDelete,				//	**
 	seOnSpeech,				//	*	Missing item response at the moment
@@ -36,8 +37,9 @@ enum ScriptEvent
 	seOnSwing,
 	seOnDecay,
 	seOnTransfer,
-	seOnLeaving,			//	**
 	seOnEntrance,			//	**
+	seOnLeaving,			//	**
+	seOnMultiLogout,		//	**
 	seOnEquipAttempt,		//	**
 	seOnEquip,				//	**
 	seOnUnequipAttempt,		//	**
@@ -74,6 +76,7 @@ enum ScriptEvent
 	seOnEnterRegion,		//  **
 	seOnLeaveRegion,		//	**
 	seOnSpellTarget,
+	seOnSpellTargetSelect,
 	seOnSpellCast,
 	seOnSpellSuccess,
 	seOnTalk,
@@ -96,6 +99,7 @@ enum ScriptEvent
 	seOnDeathBlow,
 	seOnCombatDamageCalc,
 	seOnDamage,
+	seOnDamageDeal,
 	seOnGumpPress,
 	seOnGumpInput,
 	seOnScrollingGumpPress,
@@ -110,6 +114,8 @@ enum ScriptEvent
 	seOnDyeTarget,
 	seOnQuestGump,
 	seOnHelpButton,
+	seOnContextMenuRequest,
+	seOnContextMenuSelect,
 	seOnWarModeToggle,
 	seOnSpecialMove,
 	seOnFacetChange
@@ -175,7 +181,8 @@ public:
 	bool		OnPacketReceive( CSocket *mSock, UI16 packetNum );
 	bool		OnIterate( CBaseObject *a, UI32 &b );
 	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
-	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated );
+	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
+	bool		DoesEventExist( char *eventToFind );
 	SI08		OnCommand( CSocket *mSock, std::string command );
 	bool		OnDelete( CBaseObject *thingDestroyed );
 	SI08		OnSpeech( const char *speech, CChar *personTalking, CBaseObject *talkingTo );
@@ -191,7 +198,7 @@ public:
 	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );
 	std::string		OnTooltip( CBaseObject *myObj, CSocket *pSocket );
-	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester );
+	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI08 requestSource );
 	bool		OnAttack( CChar *attacker, CChar *defender );
 	bool		OnDefense( CChar *attacker, CChar *defender );
 	SI08		OnSkillGain( CChar *player, SI08 skill, UI32 skillAmtGained );
@@ -202,12 +209,13 @@ public:
 	SI08		OnStatLoss( CChar *player, UI32 stat, UI32 statLossAmount );
 	bool		OnStatChange( CChar *player, UI32 stat, SI32 statChangeAmount );
 	SI08		OnDrop( CItem *item, CChar *dropper );
-	SI08		OnPickup( CItem *item, CChar *pickerUpper );
+	SI08		OnPickup( CItem *item, CChar *pickerUpper, CBaseObject *objCont );
 	bool		OnContRemoveItem( CItem *contItem, CItem *item, CChar *pickerUpper );
 	SI08		OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg );
 	SI08		OnDecay( CItem *decaying );
-	SI08		OnLeaving( CMultiObj *left, CBaseObject *leaving );
 	SI08		OnEntrance( CMultiObj *left, CBaseObject *leaving );
+	SI08		OnLeaving( CMultiObj *left, CBaseObject *leaving );
+	SI08		OnMultiLogout( CMultiObj* iMulti, CChar* cPlayer );
 	SI08		OnEquipAttempt( CChar *equipper, CItem *equipping );
 	SI08		OnEquip( CChar *equipper, CItem *equipping );
 	SI08		OnUnequipAttempt( CChar *equipper, CItem *equipping );
@@ -233,10 +241,11 @@ public:
 	bool		OnThirstChange( CChar* pChanging, SI08 newStatus );
 	SI08		OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen );
 	SI08		OnSnooped( CChar *snooped, CChar *snooper, bool success );
-	SI08		OnSnoopAttempt( CChar *snooped, CChar *snooper );
+	SI08		OnSnoopAttempt( CChar *snooped, CItem *pack, CChar *snooper );
 	bool		OnEnterRegion( CChar *entering, UI16 region );
 	bool		OnLeaveRegion( CChar *entering, UI16 region );
 	SI08		OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum );
+	SI08		OnSpellTargetSelect( CChar *caster, CBaseObject *target, UI08 spellNum );
 	bool		DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum );
 	SI16		OnSpellCast( CChar *tChar, UI08 SpellId );
 	SI16		OnScrollCast( CChar *tChar, UI08 SpellId );
@@ -252,6 +261,8 @@ public:
 	SI08		OnScrollingGumpPress( CSocket *tSock, UI16 gumpId, UI16 buttonId );
 	SI08		OnQuestGump( CChar *mChar );
 	SI08		OnHelpButton( CChar *mChar );
+	SI08		OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj );
+	SI08		OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 popupEntry );
 	SI08		OnWarModeToggle( CChar *mChar );
 	SI08		OnSpecialMove( CChar *mChar, UI08 abilityId );
 	SI08		OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet );
@@ -275,12 +286,13 @@ public:
 
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc );
 	SI08		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType );
+	SI08		OnDamageDeal( CChar *attacker, CChar *damaged, SI16 damageValue, WeatherType damageType );
 	SI08		OnBuy( CSocket *targSock, CChar *objVendor );
-	SI08		OnBuyFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
-	SI08		OnSellToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );
+	SI08		OnBuyFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBuying );
+	SI08		OnSellToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSelling );
 	SI08		OnSell( CSocket *targSock, CChar *objVendor );
-	SI08		OnBoughtFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
-	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );
+	SI08		OnBoughtFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBought );
+	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSold );
 	SI08		OnHouseCommand( CSocket *targSock, CMultiObj *multiObj, UI08 targId );
 	SI08		OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryId );
 

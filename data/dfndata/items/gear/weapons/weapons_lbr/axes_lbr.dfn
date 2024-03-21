@@ -1,0 +1,143 @@
+// Weapon Stats matching up with Lord Blackthorn's Revenge (Publish 15)
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Large Battle Axe - LBR stats (default)
+[0x13fa_lbr]
+{
+get=base_large_battle_axe
+weight=600
+value=43 21
+damage=6 38
+hp=31 110
+spd=30
+str=40
+}
+
+// Two Handed Axe - LBR stats (default)
+[0x1442_lbr]
+{
+get=base_two_handed_axe
+weight=800
+value=42 21
+damage=5 39
+hp=31 70
+spd=30
+str=35
+}
+
+// Hatchet LBR stats (default)
+[0x0f43_lbr]
+{
+get=base_hatchet
+weight=400
+value=30 15
+damage=2 17
+hp=31 80
+spd=40
+str=15
+}
+
+// Executioner's Axe - LBR stats (default)
+[0x0f45_lbr]
+{
+get=base_executioners_axe
+weight=800
+value=38 33
+damage=6 33
+hp=31 90
+spd=37
+str=35
+}
+
+// Battle Axe - LBR stats (default)
+[0x0f47_lbr]
+{
+get=base_battle_axe
+weight=400
+value=38 36
+damage=6 38
+hp=31 80
+spd=30
+str=40
+}
+
+// Axe - LBR stats (default)
+[0x0f49_lbr]
+{
+get=base_axe
+weight=400
+value=48 24
+damage=6 33
+hp=31 100
+spd=37
+str=35
+}
+
+// Double Axe - LBR stats (default)
+[0x0f4b_lbr]
+{
+get=base_double_axe
+weight=800
+value=32 16
+damage=5 35
+hp=31 110
+spd=37
+str=45
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+// Ornate Axe - LBR stats (default)
+[0x2d28_lbr]
+{
+get=base_ornate_axe
+weight=1200
+value=48 24
+damage=5 36
+hp=30 65
+spd=29
+str=40
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Gargish Battle Axe - LBR stats (default)
+[0x48b0_lbr]
+{
+get=base_gargish_battle_axe
+weight=400
+value=38 36
+damage=6 38
+hp=31 80
+spd=30
+str=40
+}
+
+// Dual Short Axes - LBR stats (default)
+[0x08fd_lbr]
+{
+get=base_dual_short_axes
+weight=400
+value=92 50
+damage=4 31
+hp=31 115
+spd=36
+str=30
+}
+
+// Gargish Axe - LBR stats (default)
+[0x48b2_lbr]
+{
+get=base_gargish_axe
+weight=400
+value=48 24
+damage=6 33
+hp=31 100
+spd=37
+str=35
+}

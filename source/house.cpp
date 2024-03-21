@@ -171,11 +171,12 @@ auto CreateHouseItems( CChar *mChar, std::vector<std::string> houseItems, CItem 
 							{
 								// An alternate rotation for item exists, stored in CITV_MOREZ
 								// Let's assume default rotation is North/South oriented, and check for walls to the left of the addon:
-								bool wallFound = ( Map->CheckDynamicFlag( hItem->GetX() - 1, hItem->GetY(), hItem->GetZ(), worldNum, hInstanceId, TF_WALL ));
+								[[maybe_unused]] UI16 ignoreMe = 0;
+								bool wallFound = ( Map->CheckDynamicFlag( hItem->GetX() - 1, hItem->GetY(), hItem->GetZ(), worldNum, hInstanceId, TF_WALL, ignoreMe ));
 								if( wallFound )
 								{
 									// What if it's placed in a corner? Look for north wall too:
-									bool northWallFound = ( Map->CheckDynamicFlag( hItem->GetX(), hItem->GetY() - 1, hItem->GetZ(), worldNum, hInstanceId, TF_WALL ));
+									bool northWallFound = ( Map->CheckDynamicFlag( hItem->GetX(), hItem->GetY() - 1, hItem->GetZ(), worldNum, hInstanceId, TF_WALL, ignoreMe ));
 									if( northWallFound )
 									{
 										// Randomize between the two directions
@@ -333,7 +334,7 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 			for( SI16 l = 0; l <= spaceY - 1; ++l )
 			{
 				curY = y + l;
-				if( ValidateObject( mChar ) && mChar->GetCommandLevel() < CL_GM )
+				if( ValidateObject( mChar ) && !mChar->IsGM() )
 				{
 					CMultiObj *mMulti = FindMulti( curX, curY, z, worldNum, instanceId );
 					if( !ValidateObject( mMulti ) || !mMulti->IsOwner( mChar ))
@@ -397,7 +398,8 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 					}
 
 					// Don't allow placing addon if it collides with a blocking tile at same height
-					bool locationBlocked = ( Map->CheckDynamicFlag( curX, curY, z, worldNum, instanceId, TF_BLOCKING ));
+					[[maybe_unused]] UI16 ignoreMe = 0;
+					bool locationBlocked = ( Map->CheckDynamicFlag( curX, curY, z, worldNum, instanceId, TF_BLOCKING, ignoreMe ));
 					if( locationBlocked )
 					{
 						if( mSock )
@@ -1023,15 +1025,16 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 	{
 		mChar->SetLocation( x + cx, y + cy, z + cz );
 
-		//Teleport pets as well
-		auto myPets = mChar->GetPetList();
-		for( const auto &pet : myPets->collection() )
+		// Teleport followers as well
+		auto myFollowers = mChar->GetFollowerList();
+		for( const auto &follower : myFollowers->collection() )
 		{
-			if( ValidateObject( pet ) && pet->GetNpcAiType() != AI_PLAYERVENDOR )
+			if( ValidateObject( follower ) && follower->GetNpcAiType() != AI_PLAYERVENDOR )
 			{
-				if( !pet->GetMounted() && pet->IsNpc() && ObjInRange( mChar, pet, DIST_SAMESCREEN ))
+				// No need to check if they're following player, just teleport them. Don't let them get stuck under house!
+				if( !follower->GetMounted() && ObjInRange( mChar, follower, DIST_SAMESCREEN ))
 				{
-					pet->SetLocation( mChar );
+					follower->SetLocation( mChar );
 				}
 			}
 		}

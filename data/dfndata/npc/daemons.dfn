@@ -10,6 +10,7 @@ GOLD=800 1200
 LOOT=midlevelscrolls,5
 LOOT=highlevelscrolls,3
 LOOT=reagents,20
+LOOT=TreasureMapLvl5Loot
 STR=1000 1200
 DEX=175 255
 INT=151 250
@@ -54,6 +55,7 @@ PACKITEM=0x13ba
 LOOT=midlevelscrolls,2
 LOOT=highlevelscrolls
 LOOT=randomgems,5
+LOOT=TreasureMapLvl4Loot
 STR=476 505
 DEX=76 95
 INT=301 325
@@ -105,6 +107,7 @@ DIRECTION=RND
 BACKPACK
 GOLD=700 900
 LOOT=midlevelscrolls,4
+LOOT=TreasureMapLvl4Loot
 STR=376 405
 DEX=176 195
 INT=201 225
@@ -129,6 +132,7 @@ TOPEACE=893 5
 RUNS
 RACE=10
 FLAG=NEUTRAL
+ORIGIN=t2a
 }
 
 [imp]
@@ -170,6 +174,7 @@ RUNS
 RACE=10
 FLAG=NEUTRAL
 CONTROLSLOTS=2
+ORIGIN=t2a
 }
 
 [mongbat]
@@ -263,6 +268,7 @@ CARVE=52
 RUNS
 RACE=10
 FLAG=NEUTRAL
+ORIGIN=aos
 }
 
 [moloch]
@@ -294,6 +300,7 @@ CARVE=52
 RUNS
 RACE=10
 FLAG=NEUTRAL
+ORIGIN=aos
 }
 
 [chaosdaemon]
@@ -326,6 +333,7 @@ CARVE=52
 RUNS
 RACE=10
 FLAG=NEUTRAL
+ORIGIN=aos
 }
 
 [shadowfiend]
@@ -352,4 +360,5 @@ CARVE=2
 RUNS
 RACE=10
 FLAG=NEUTRAL
+ORIGIN=uor
 }

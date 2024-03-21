@@ -1,0 +1,79 @@
+// 18200 to 18249
+[REGIONSPAWN 18200]
+{
+NAME=Ancient Citadel 1_1
+NPC=skeleton
+MAXNPCS=6
+X1=1502
+Y1=525
+X2=1534
+Y2=554
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// spectre, wraith, shade > skeletalmage, bonemagi > skeletalknight, boneknight
+[REGIONSPAWN 18201]
+{
+NAME=Ancient Citadel 1_2
+NPCLIST=ilshenar_ancient_citadel_1
+MAXNPCS=12
+X1=1502
+Y1=525
+X2=1534
+Y2=554
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+// ghoul > zombie
+[REGIONSPAWN 18202]
+{
+NAME=Ancient Citadel 1_3
+NPCLIST=ilshenar_ancient_citadel_2
+MAXNPCS=7
+X1=1502
+Y1=525
+X2=1534
+Y2=554
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 18203]
+{
+NAME=Ancient Citadel 1_4
+NPC=lich
+MAXNPCS=2
+X1=1510
+Y1=534
+X2=1523
+Y2=548
+DEFZ=36
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}
+
+[REGIONSPAWN 18204]
+{
+NAME=Ancient Citadel 1_5
+NPC=lichlord
+MAXNPCS=1
+X1=1512
+Y1=536
+X2=1521
+Y2=541
+DEFZ=60
+WORLD=2
+MINTIME=5
+MAXTIME=10
+CALL=1
+}

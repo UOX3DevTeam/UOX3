@@ -3,7 +3,7 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <UniqueIdentifier>{46478ac4-f349-4dc4-9db5-938cb6f14841}</UniqueIdentifier>
-      <Extensions>*.cpp</Extensions>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Source Files\Base Objects">
       <UniqueIdentifier>{cd40ad04-825d-48bb-9a86-ff3ee1b2925e}</UniqueIdentifier>
@@ -22,7 +22,7 @@
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{94278091-bf08-4009-be0a-03cb0d9f0fc2}</UniqueIdentifier>
-      <Extensions>*.h*</Extensions>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
     <Filter Include="Header Files\Script">
       <UniqueIdentifier>{e69fb852-15bb-499d-a73e-13f7b97c87b5}</UniqueIdentifier>
@@ -56,6 +56,7 @@
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{d5c774e7-3238-46bf-bb3a-5e16a36b5b77}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Source Files\Script">
       <UniqueIdentifier>{47123d74-35f3-41ba-b7ee-c4d15af5c6af}</UniqueIdentifier>
@@ -64,6 +65,10 @@
   <ItemGroup>
     <ClCompile Include="..\..\source\uox3.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <!-- Script group -->
+    <ClCompile Include="..\..\source\cServerData.cpp">
+      <Filter>Source Files\Script</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cServerDefinitions.cpp">
       <Filter>Source Files\Script</Filter>
@@ -77,7 +82,11 @@
     <ClCompile Include="..\..\source\ssection.cpp">
       <Filter>Source Files\Script</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cBaseobject.cpp">
+    <!-- Base Objects group -->
+    <ClCompile Include="..\..\source\boats.cpp">
+      <Filter>Source Files\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cBaseObject.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cChar.cpp">
@@ -104,15 +113,10 @@
     <ClCompile Include="..\..\source\cThreadQueue.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\queue.cpp">
+    <ClCompile Include="..\..\source\ObjectFactory.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\townregion.cpp">
-      <Filter>Source Files\Base Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\boats.cpp">
-      <Filter>Source Files\Subsystem</Filter>
-    </ClCompile>
+    <!-- Subsystem group -->
     <ClCompile Include="..\..\source\books.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
@@ -125,9 +129,6 @@
     <ClCompile Include="..\..\source\cHTMLSystem.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cmdtable.cpp">
-      <Filter>Source Files\Subsystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\combat.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
@@ -135,9 +136,6 @@
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cRaces.cpp">
-      <Filter>Source Files\Subsystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\cServerData.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cWeather.cpp">
@@ -161,16 +159,19 @@
     <ClCompile Include="..\..\source\magic.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\mapstuff.cpp">
-      <Filter>Source Files\Subsystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\movement.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\msgboard.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\PartySystem.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\source\quantityfuncs.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\queue.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\regions.cpp">
@@ -188,6 +189,9 @@
     <ClCompile Include="..\..\source\targeting.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\townregion.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\source\trade.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
@@ -203,6 +207,7 @@
     <ClCompile Include="..\..\source\worldmain.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
+    <!-- Other group -->
     <ClCompile Include="..\..\source\ai.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
@@ -213,6 +218,9 @@
       <Filter>Source Files\Other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cDice.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cmdtable.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cPlayerAction.cpp">
@@ -239,9 +247,13 @@
     <ClCompile Include="..\..\source\npcs.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\osunique.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\source\pcmanage.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
+    <!-- JS Engine group -->
     <ClCompile Include="..\..\source\CJSEngine.cpp">
       <Filter>Source Files\JS Engine</Filter>
     </ClCompile>
@@ -263,17 +275,12 @@
     <ClCompile Include="..\..\source\UOXJSPropertyFuncs.cpp">
       <Filter>Source Files\JS Engine</Filter>
     </ClCompile>
+    <!-- Network group -->
     <ClCompile Include="..\..\source\CPacketReceive.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\CPacketSend.cpp">
       <Filter>Source Files\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\UOPData.cpp">
-      <Filter>Source Files\UOData</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\MultiMul.cpp">
-      <Filter>Source Files\UOData</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\network.cpp">
       <Filter>Source Files\Network</Filter>
@@ -281,6 +288,7 @@
     <ClCompile Include="..\..\source\IP4Address.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
+    <!-- Utility group -->
     <ClCompile Include="..\..\source\StringUtility.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
@@ -290,26 +298,38 @@
     <ClCompile Include="..\..\source\EventTimer.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\PartySystem.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+    <!-- UOData group -->
+    <ClCompile Include="..\..\source\mapstuff.cpp">
+      <Filter>Source Files\UOData</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\ObjectFactory.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\source\MultiMul.cpp">
+      <Filter>Source Files\UOData</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\osunique.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\source\UOPData.cpp">
+      <Filter>Source Files\UOData</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\ConfigOS.h">
+    <ClInclude Include="..\..\source\uox3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\Prerequisites.h">
-      <Filter>Header Files</Filter>
+    <!-- Script group -->
+    <ClInclude Include="..\..\source\cServerData.h">
+      <Filter>Header Files\Script</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\UOXStdHeaders.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\source\cServerDefinitions.h">
+      <Filter>Header Files\Script</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\Dictionary.h">
+      <Filter>Header Files\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\scriptc.h">
+      <Filter>Header Files\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ssection.h">
+      <Filter>Header Files\Script</Filter>
+    </ClInclude>
+    <!-- Base Objects group -->
     <ClInclude Include="..\..\source\cBaseObject.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
@@ -328,36 +348,28 @@
     <ClInclude Include="..\..\source\cMultiObj.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\cSocket.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cSpawnRegion.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\cThreadQueue.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\funcdecl.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\PageVector.h">
+    <ClInclude Include="..\..\source\ObjectFactory.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\speech.h">
+    <ClInclude Include="..\..\source\PageVector.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\uoxstruct.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cServerData.h">
-      <Filter>Header Files\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cServerDefinitions.h">
-      <Filter>Header Files\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Dictionary.h">
-      <Filter>Header Files\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\scriptc.h">
-      <Filter>Header Files\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\ssection.h">
-      <Filter>Header Files\Script</Filter>
-    </ClInclude>
+    <!-- Subsystem group -->
     <ClInclude Include="..\..\source\books.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
@@ -365,6 +377,9 @@
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cEffects.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cGump.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cHTMLSystem.h">
@@ -385,16 +400,10 @@
     <ClInclude Include="..\..\source\cWeather.hpp">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\gump.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\jail.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\magic.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\mapstuff.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\movement.h">
@@ -409,8 +418,14 @@
     <ClInclude Include="..\..\source\skills.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\speech.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\teffect.h">
       <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\townregion.h">
+      <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\weight.h">
       <Filter>Header Files\Subsystem</Filter>
@@ -421,6 +436,10 @@
     <ClInclude Include="..\..\source\worldmain.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\PartySystem.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <!-- Other group -->
     <ClInclude Include="..\..\source\cdice.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
@@ -430,13 +449,13 @@
     <ClInclude Include="..\..\source\cmdtable.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ConfigOS.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\CResponse.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cSkillClass.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cSpawnRegion.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cVersionClass.h">
@@ -445,24 +464,25 @@
     <ClInclude Include="..\..\source\enums.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\mapclasses.h">
+    <ClInclude Include="..\..\source\GenericList.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\osunique.hpp">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\power.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\resource.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\townregion.h">
+    <ClInclude Include="..\..\source\Prerequisites.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\typedefs.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\uox3.h">
+    <ClInclude Include="..\..\source\UOXStdHeaders.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
+    <!-- JS Engine group -->
     <ClInclude Include="..\..\source\CJSEngine.h">
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
@@ -493,6 +513,7 @@
     <ClInclude Include="..\..\source\UOXJSPropertySpecs.h">
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
+    <!-- Network group -->
     <ClInclude Include="..\..\source\CPacketReceive.h">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
@@ -502,41 +523,31 @@
     <ClInclude Include="..\..\source\network.h">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\GenericList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\UOPData.hpp">
-      <Filter>Header Files\UOData</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\MultiMul.hpp">
-      <Filter>Header Files\UOData</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\network.h">
-      <Filter>Header Files\Network No. 1</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\IP4Address.hpp">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
+    <!-- Utility group -->
     <ClInclude Include="..\..\source\StringUtility.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\TimeUtility.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cSocket.h">
-      <Filter>Header Files\Base Objects</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\EventTimer.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\PartySystem.h">
-      <Filter>Header Files\Subsystem</Filter>
+    <!-- UOData group -->
+    <ClInclude Include="..\..\source\mapstuff.h">
+      <Filter>Header Files\UOData</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\osunique.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\source\mapclasses.h">
+      <Filter>Header Files\UOData</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\ObjectFactory.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\source\MultiMul.hpp">
+      <Filter>Header Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\UOPData.hpp">
+      <Filter>Header Files\UOData</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

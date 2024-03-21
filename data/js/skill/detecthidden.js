@@ -22,7 +22,7 @@ function onCallback0( pSock, ourObj )
 		// This needs to eventually use MAX_VISRANGE and the Race Range
 		var detectRange   = parseInt(((( 15 - 1 ) / 1000 ) * pUser.skills.detectinghidden ) + 1 );
 		var detectCounter = AreaCharacterFunction( "DetectHiddenLoop", pUser, detectRange, pSock );
-		if( detectCounter != 0 )
+		if( detectCounter == 0 )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 1437, pSock.language )); // You fail to find anyone.
 		}
@@ -82,3 +82,5 @@ function DetectHiddenLoop( srcChar, trgChar, pSock )
 	}
 	return false;
 }
+
+function _restorecontext_() {}

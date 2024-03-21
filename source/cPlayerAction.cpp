@@ -14,7 +14,7 @@
 #include "books.h"
 #include "magic.h"
 #include "townregion.h"
-#include "gump.h"
+#include "CGump.h"
 #include "cGuild.h"
 #include "ssection.h"
 #include "cServerDefinitions.h"
@@ -220,6 +220,7 @@ bool CPIGetItem::Handle( void )
 		if( ourChar->IsFrozen() )
 		{
 			ourChar->SetFrozen( false );
+			ourChar->Dirty( UT_UPDATE );
 		}
 	}
 
@@ -442,14 +443,15 @@ bool CPIGetItem::Handle( void )
 			tSock->SysMessage( 9098 ); // Item immovable to normal players, but can be dragged out of backpack by GM characters.
 		}
 	}
-
+	
+	// Trigger pickup event for item being picked up
 	std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
 		{
-			SI08 retStatus = toExecute->OnPickup( i, ourChar );
+			SI08 retStatus = toExecute->OnPickup( i, ourChar, iCont );
 
 			// -1 == script doesn't exist, or returned -1
 			// 0 == script returned false, 0, or nothing - don't execute hard code
@@ -458,6 +460,52 @@ bool CPIGetItem::Handle( void )
 			{
 				Bounce( tSock, i );
 				return true;
+			}
+		}
+	}
+
+	// Trigger pickup event for character picking up item
+	scriptTriggers.clear();
+	scriptTriggers = ourChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			SI08 retStatus = toExecute->OnPickup( i, ourChar, iCont );
+
+			// -1 == script doesn't exist, or returned -1
+			// 0 == script returned false, 0, or nothing - don't execute hard code
+			// 1 == script returned true or 1
+			if( retStatus == 0 )
+			{
+				Bounce( tSock, i );
+				return true;
+			}
+		}
+	}
+
+	// Trigger pickup event for potential container item is being picked up from
+	if( ValidateObject( iCont ) && iCont != nullptr )
+	{
+		// Trigger pickup event for character picking up item
+		scriptTriggers.clear();
+		scriptTriggers = iCont->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				SI08 retStatus = toExecute->OnPickup( i, ourChar, iCont );
+
+				// -1 == script doesn't exist, or returned -1
+				// 0 == script returned false, 0, or nothing - don't execute hard code
+				// 1 == script returned true or 1
+				if( retStatus == 0 )
+				{
+					Bounce( tSock, i );
+					return true;
+				}
 			}
 		}
 	}
@@ -501,6 +549,17 @@ bool CPIGetItem::Handle( void )
 		}
 	}
 	Effects->PlaySound( tSock, 0x0057, true );
+
+	if( i->IsCorpse() )
+	{
+		// Store temp tag on corpse with serial of player who looted the corpse last
+		TAGMAPOBJECT tagObject;
+		tagObject.m_Destroy = false;
+		tagObject.m_StringValue = oldstrutil::number( ourChar->GetSerial() );
+		tagObject.m_IntValue = 0;
+		tagObject.m_ObjectType = TAGMAP_TYPE_INT;
+		i->SetTempTag( "lootedBy", tagObject );
+	}
 
 	if( iCont == nullptr )
 	{
@@ -745,6 +804,7 @@ bool CPIEquipItem::Handle( void )
 		if( ourChar->IsFrozen() )
 		{
 			ourChar->SetFrozen( false );
+			ourChar->Dirty( UT_UPDATE );
 		}
 	}
 
@@ -932,13 +992,22 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 				if( cwmWorldState->creatures[targNPC->GetId()].IsAnimal() )
 				{
 					Effects->PlayCharacterAnimation( targNPC, ACT_ANIMAL_EAT, 0, 5 );
+				}
 
-					// Restore loyalty to max upon feeding pet
-					if( targNPC->GetLoyalty() < targNPC->GetMaxLoyalty() )
+				// Restore loyalty upon feeding pet
+				if( targNPC->GetLoyalty() < targNPC->GetMaxLoyalty() )
+				{
+					if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_AOS )
 					{
+						// Post-AoS (Pub16), restore loyalty to max upon feeding, regardless of amount
 						targNPC->SetLoyalty( targNPC->GetMaxLoyalty() );
-						mSock->SysMessage( 2416 ); // Your pet looks happier.
 					}
+					else
+					{
+						// Pre-AoS (Pub16), restore loyalty by 10 each time pet is fed, regardless of amount
+						targNPC->SetLoyalty( targNPC->GetLoyalty() + 10 );
+					}
+					mSock->SysMessage( 2416 ); // Your pet looks happier.
 				}
 
 				UI08 poisonStrength = i->GetPoisoned();
@@ -1126,40 +1195,46 @@ bool CheckForValidDropLocation( CSocket *mSock, CChar *nChar, UI16 x, UI16 y, SI
 	bool dropLocationBlocked = false;
 
 	// Don't allow dropping item at a location far below or far above character
-	if( z < nChar->GetZ() - 5 || z > nChar->GetZ() + 16 )
+	if( z < nChar->GetZ() - 7 || z > nChar->GetZ() + 16 ) // 7 to allow to stand on bottom of stairs and drop items on floor/ground below
 	{
 		dropLocationBlocked = true;
 	}
 
 	if( !dropLocationBlocked )
 	{
-		// Check static items for TF_BLOCKING flag, or if map tile blocks dropping item
-		dropLocationBlocked = ( Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_BLOCKING, false )
-			|| Map->DoesMapBlock( x, y, z, nChar->WorldNumber(), true, false, false, false ));
-		if( !dropLocationBlocked )
+		// Check for a valid surface to drop item on first - then check for blocking tiles after
+		// If done the other way, the valid surface will override the blocking tiles!
+
+		// First, check for a static surface to drop item on
+		UI16 foundTileId1 = 0;
+		UI16 foundTileId2 = 0;
+		if( !Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_SURFACE, foundTileId1, false ))
 		{
-			// No? Well, then check static flags for TF_ROOF flag
-			dropLocationBlocked = Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_ROOF, false );
-			if( !dropLocationBlocked )
+			// Nowhere static to put item? Check dynamic tiles for surface!
+			if( !Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_SURFACE, foundTileId1 ))
 			{
-				// Still no? Time to check dynamic items for TF_BLOCKING flag...
-				dropLocationBlocked = ( Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_BLOCKING ));
-				if( !dropLocationBlocked )
-				{
-					// ...and then for TF_ROOF flag
-					dropLocationBlocked = Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_ROOF );
-				}
-				else
-				{
-					// Location blocked! But wait, there might be a valid dynamic surface to place the item on...
-					dropLocationBlocked = !Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_SURFACE );
-				}
+				// No static OR dynamic surface was found to place item? Check if map itself blocks the placement
+				dropLocationBlocked = Map->DoesMapBlock( x, y, z, nChar->WorldNumber(), true, false, false, false );
 			}
 		}
-		else
+
+		if( !dropLocationBlocked )
 		{
-			// Location blocked! But wait, there might be a valid static surface to place the item on...
-			dropLocationBlocked = !Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_SURFACE, false );
+			// Some kind of valid surface was found. But is it blocked by...
+			if( Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_BLOCKING, foundTileId2, false ) || Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_ROOF, foundTileId2, false ))
+			{ // ...static items?
+				if( foundTileId1 != foundTileId2 )
+				{
+					dropLocationBlocked = true;
+				}
+			}
+			else if( Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_BLOCKING, foundTileId2 ) || Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_ROOF, foundTileId2 ))
+			{ // No? What about dynamic items?
+				if( foundTileId1 != foundTileId2 )
+				{
+					dropLocationBlocked = true;
+				}
+			}
 		}
 	}
 
@@ -1250,13 +1325,12 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		}
 
 		// New location either is not blocking, or has a surface we can put the item on, so let's find the exact Z of where to put it
-//		auto nCharZ = nChar->GetZ();
-		auto newZ = Map->StaticTop( x, y, z, nChar->WorldNumber(), 16 );
-		if( newZ == ILLEGAL_Z || newZ < z || newZ > z + 16 )
+		auto newZ = Map->StaticTop( x, y, z, nChar->WorldNumber(), 14 - ( z - nChar->GetZ() ));
+		if( newZ == ILLEGAL_Z || newZ < z || newZ > z + 14 )
 		{
 			// No valid static elevation found, use dynamic elevation instead
-			newZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 16 );
-			if( newZ < z || newZ > z + 16 )
+			newZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14 );
+			if( newZ < z || newZ > z + 14 )
 			{
 				// No valid dynamic elevation found. Use map elevation instead (don't implicitly trust Z from client)
 				newZ = Map->MapElevation( x, y, nChar->WorldNumber() );
@@ -1264,8 +1338,52 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		}
 		else
 		{
-			auto dynZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 16 );
-			newZ = (( dynZ >= z && dynZ <= z + 16 ) ? dynZ : newZ );
+			auto dynZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14 );
+			newZ = (( dynZ >= z && dynZ <= z + 14 ) ? dynZ : newZ );
+		}
+
+		auto iMulti = FindMulti( x, y, newZ, nChar->WorldNumber(), nChar->GetInstanceId() );
+		if( ValidateObject( iMulti ) )
+		{
+			// Check if new Z plus height of dropped item will make it exceed 20 Z limit per floor in houses, and deny placement if so
+			if( newZ > ( nChar->GetZ() + ( 20 - tile.Height() )))
+			{
+				// Item is too tall - can't drop it this high up
+				if( nChar->GetCommandLevel() >= 2 || nChar->IsGM() )
+				{
+					// GM override
+					mSock->SysMessage( 91 ); // Item placement rule overruled by GM privileges - Z too high for normal players!
+				}
+				else
+				{
+					if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					{
+						Weight->SubtractItemWeight( nChar, i );
+					}
+					Bounce( mSock, i );
+					mSock->SysMessage( 683 ); // There seems to be something in the way
+					return;
+				}
+			}
+		}
+		else if( newZ + tile.Height() > z + tile.Height() )
+		{
+			// Item is too tall - can't drop it this high up
+			if( nChar->GetCommandLevel() >= 2 || nChar->IsGM() )
+			{
+				// GM override
+				mSock->SysMessage( 91 ); // Item placement rule overruled by GM privileges - Z too high for normal players!
+			}
+			else
+			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				{
+					Weight->SubtractItemWeight( nChar, i );
+				}
+				Bounce( mSock, i );
+				mSock->SysMessage( 683 ); // There seems to be something in the way
+				return;
+			}
 		}
 
 		i->SetCont( nullptr );
@@ -1274,7 +1392,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		// If item was picked up from a container and dropped on ground, update old location to match new!
 		if( mSock->PickupSpot() != PL_GROUND )
 		{
-			i->SetOldLocation( x, y, z );
+			i->SetOldLocation( x, y, newZ );
 		}
 	}
 	else
@@ -2343,7 +2461,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		}
 		
 		// Then add actual name
-		tempstr += pdoll->GetNameRequest( myChar );
+		tempstr += pdoll->GetNameRequest( myChar, NRS_PAPERDOLL );
 
 		// Append race, if enabled
 		if( cwmWorldState->ServerData()->ShowRaceInPaperdoll() && pdoll->GetRace() != 0 && pdoll->GetRace() != 65535 )
@@ -2360,14 +2478,14 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	}
 	else if( pdoll->IsDead() )
 	{
-		tempstr = pdoll->GetNameRequest( myChar );
+		tempstr = pdoll->GetNameRequest( myChar, NRS_PAPERDOLL );
 	}
 	// Murder tags now scriptable in SECTION MURDERER - Titles.dfn
 	else if( pdoll->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
 	{
 		if( cwmWorldState->murdererTags.empty() )
 		{
-			tempstr = oldstrutil::format( Dictionary->GetEntry( 374, sLang ), pdoll->GetNameRequest( myChar ).c_str(), pdoll->GetTitle().c_str(), skillProwessTitle.c_str() );
+			tempstr = oldstrutil::format( Dictionary->GetEntry( 374, sLang ), pdoll->GetNameRequest( myChar, NRS_PAPERDOLL ).c_str(), pdoll->GetTitle().c_str(), skillProwessTitle.c_str() );
 		}
 		else if( pdoll->GetKills() < cwmWorldState->murdererTags[0].lowBound )	// not a real murderer
 		{
@@ -2388,13 +2506,13 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 			}
 			else
 			{
-				tempstr = cwmWorldState->murdererTags[kCtr].toDisplay + " " + pdoll->GetNameRequest( myChar ) + ", " + pdoll->GetTitle() + skillProwessTitle;
+				tempstr = cwmWorldState->murdererTags[kCtr].toDisplay + " " + pdoll->GetNameRequest( myChar, NRS_PAPERDOLL ) + ", " + pdoll->GetTitle() + skillProwessTitle;
 			}
 		}
 	}
 	else if( pdoll->IsCriminal() )
 	{
-		tempstr = oldstrutil::format( Dictionary->GetEntry( 373, sLang ), pdoll->GetNameRequest( myChar ).c_str(), pdoll->GetTitle().c_str(), skillProwessTitle.c_str() );
+		tempstr = oldstrutil::format( Dictionary->GetEntry( 373, sLang ), pdoll->GetNameRequest( myChar, NRS_PAPERDOLL ).c_str(), pdoll->GetTitle().c_str(), skillProwessTitle.c_str() );
 	}
 	else
 	{
@@ -2402,7 +2520,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	}
 	if( bContinue )
 	{
-		tempstr = fameTitle + pdoll->GetNameRequest( myChar );	//Repuation + Name
+		tempstr = fameTitle + pdoll->GetNameRequest( myChar, NRS_PAPERDOLL );	//Repuation + Name
 
 		// Append race, if enabled
 		if( cwmWorldState->ServerData()->ShowRaceInPaperdoll() && pdoll->GetRace() != 0 && pdoll->GetRace() != 65535 )
@@ -2414,21 +2532,31 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		{
 			if( pdoll->GetTownPriv() == 2 )	// is Mayor
 			{
-				tempstr = oldstrutil::format( Dictionary->GetEntry( 379, sLang ), pdoll->GetNameRequest( myChar ).c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), skillProwessTitle.c_str() );
+				tempstr = oldstrutil::format( Dictionary->GetEntry( 379, sLang ), pdoll->GetNameRequest( myChar, NRS_PAPERDOLL ).c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), skillProwessTitle.c_str() );
 			}
 			else	// is Resident
 			{
-				tempstr = pdoll->GetNameRequest( myChar ) + " of " + cwmWorldState->townRegions[pdoll->GetTown()]->GetName() + ", " + skillProwessTitle;
+				tempstr = pdoll->GetNameRequest( myChar, NRS_PAPERDOLL ) + " of " + cwmWorldState->townRegions[pdoll->GetTown()]->GetName() + ", " + skillProwessTitle;
 			}
 		}
 		else	// No Town Title
 		{
-			if( !pdoll->IsIncognito() && !( pdoll->GetTitle().empty() ))	// Titled & Skill
+			if( !pdoll->IsIncognito() && !pdoll->IsDisguised() && !( pdoll->GetTitle().empty() ))
 			{
-				tempstr += " " + pdoll->GetTitle() + ", " + skillProwessTitle;
+				if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_T2A )
+				{
+					// Title & Skill
+					tempstr += " " + pdoll->GetTitle() + ", " + skillProwessTitle;
+				}
+				else
+				{
+					// Title only
+					tempstr += " " + pdoll->GetTitle();
+				}
 			}
-			else	// Just skilled
+			else if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_T2A )
 			{
+				// Just Skill
 				tempstr += ", " + skillProwessTitle;
 			}
 		}
@@ -2724,6 +2852,8 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					mSock->SysMessage( 403 ); // If you wish to open a spellbook, it must be equipped or in your main backpack.
 				}
 			}
+			return true;
+		case IT_SPELLCHANNELING: //  Spell Channeling
 			return true;
 		case IT_MAP: // Map
 		{
@@ -3261,6 +3391,7 @@ void InitTagToItemType( void )
 	tagToItemType["CLOCK"]					= IT_CLOCK;
 	tagToItemType["SEXTANT"]				= IT_SEXTANT;
 	tagToItemType["HAIRDYE"]				= IT_HAIRDYE;
+	tagToItemType["SPELLCHANNELING"]		= IT_SPELLCHANNELING;
 }
 
 ItemTypes FindItemTypeFromTag( const std::string &strToFind )
@@ -3787,26 +3918,26 @@ bool CPISingleClick::Handle( void )
 #if defined( _MSC_VER )
 #pragma todo( "We need to update this to use GetTileName almost exclusively, for plurality" )
 #endif
-	if( i->GetNameRequest( tSock->CurrcharObj() )[0] != '#' )
+	if( i->GetNameRequest( tSock->CurrcharObj(), NRS_SINGLECLICK )[0] != '#' )
 	{
 		if( i->GetId() == 0x0ED5 ) //guildstone
 		{
-			realname = oldstrutil::format( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetNameRequest( tSock->CurrcharObj() ).c_str() );
+			realname = oldstrutil::format( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetNameRequest( tSock->CurrcharObj(), NRS_SINGLECLICK ).c_str() );
 		}
 		if( !i->IsPileable() || getAmount == 1 )
 		{
 			if( mChar->IsGM() && !i->IsCorpse() && getAmount > 1 )
 			{
-				realname = oldstrutil::format( "%s (%u)", i->GetNameRequest( tSock->CurrcharObj() ).c_str(), getAmount );
+				realname = oldstrutil::format( "%s (%u)", i->GetNameRequest( tSock->CurrcharObj(), NRS_SINGLECLICK ).c_str(), getAmount );
 			}
 			else
 			{
-				realname = i->GetNameRequest( tSock->CurrcharObj() );
+				realname = i->GetNameRequest( tSock->CurrcharObj(), NRS_SINGLECLICK );
 			}
 		}
 		else
 		{
-			realname = oldstrutil::format( "%u %ss", getAmount, i->GetNameRequest( tSock->CurrcharObj() ).c_str() );
+			realname = oldstrutil::format( "%u %ss", getAmount, i->GetNameRequest( tSock->CurrcharObj(), NRS_SINGLECLICK ).c_str() );
 		}
 	}
 	else
@@ -3851,7 +3982,7 @@ bool CPISingleClick::Handle( void )
 		{
 			if( cwmWorldState->ServerData()->RankSystemStatus() && i->GetRank() == 10 )
 			{
-				std::string creatorName = GetNpcDictName( mCreator, tSock );
+				std::string creatorName = GetNpcDictName( mCreator, tSock, NRS_SINGLECLICK );
 				temp2 += oldstrutil::format( " %s", Dictionary->GetEntry( 9140, tSock->Language() ).c_str() ); // of exceptional quality
 
 				if( cwmWorldState->ServerData()->DisplayMakersMark() && i->IsMarkedByMaker() )

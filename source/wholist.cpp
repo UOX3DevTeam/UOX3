@@ -64,7 +64,7 @@ void CWhoList::FlagUpdate( void )
 void CWhoList::SendSocket( CSocket *toSendTo )
 {
 	GMEnter();
-	if( needsUpdating && gmCount <= 1 )	// If we need to update, do it now while we still can
+	if( needsUpdating ) //&& gmCount <= 1 )	// If we need to update, do it now while we still can
 	{
 		Update();
 	}
@@ -192,6 +192,23 @@ void CWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 			}
 			if( !targetChar->IsNpc() && targetChar->WorldNumber() != sourceChar->WorldNumber() )
 			{
+				// Bring player's followers too
+				auto targetFollowers = targetChar->GetFollowerList();
+				for( const auto &targetFollower : targetFollowers->collection() )
+				{
+					if( ValidateObject( targetFollower ))
+					{
+						if( !targetFollower->GetMounted() && targetFollower->GetOwnerObj() == targetChar )
+						{
+							if( targetFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( targetChar, targetFollower, DIST_BUILDRANGE )) // Be more lenient, bring followers within range
+							{
+								targetFollower->SetLocation( sourceChar->GetX(), sourceChar->GetY(), sourceChar->GetZ(), sourceChar->WorldNumber(), sourceChar->GetInstanceId() );
+							}
+						}
+					}
+				}
+
+				// Then bring the player too
 				targetChar->SetLocation( sourceChar );
 				trgSock = targetChar->GetSocket();
 				SendMapChange( sourceChar->WorldNumber(), trgSock );
@@ -382,10 +399,10 @@ void CWhoList::ZeroWho( void )
 //o------------------------------------------------------------------------------------------------o
 void CWhoList::Update( void )
 {
-	if( gmCount > 1 )
+	/*if( gmCount > 1 )
 	{
 		return;
-	}
+	}*/
 
 	Delete();
 	constexpr UI16 maxsize = 512;

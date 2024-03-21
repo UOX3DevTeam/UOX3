@@ -872,3 +872,47 @@ NPC=travesty
 <=Previous Menu
 ITEMMENU=5002
 }
+
+[ITEMMENU 5024]
+{
+Holiday Creatures
+<=Halloween
+ITEMMENU=5025
+<=Christmas
+ITEMMENU=5026
+<=Previous Menu
+ITEMMENU=5002
+}
+
+[ITEMMENU 5025]
+{
+Halloween
+0x4de=Grimm
+NPC=killerpumpkin
+0x0003=Halloween Zombie
+NPC=halloweenzombie
+0x001a=Halloween Wraith
+NPC=halloweenwraith
+0x001a=Halloween Shade
+NPC=halloweenshade
+0x0032=Halloween Skeleton
+NPC=halloweenskeleton
+0x0038=Halloween Bone Axeman
+NPC=halloweenboneaxeman
+<=Previous Menu
+ITEMMENU=5024
+}
+
+[ITEMMENU 5026]
+{
+Christmas
+0x002f=a winter reaper
+NPC=winterreaper
+0x05CC=Krampus
+NPC=krampus
+0x05CD=Minion
+NPC=krampus_minion
+<=Previous Menu
+ITEMMENU=5024
+}
+

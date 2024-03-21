@@ -19,7 +19,7 @@
 #include "PageVector.h"
 #include "speech.h"
 #include "cHTMLSystem.h"
-#include "gump.h"
+#include "CGump.h"
 #include "cEffects.h"
 #include "classes.h"
 #include "regions.h"
@@ -254,7 +254,7 @@ void Command_GetLight( CSocket *s )
 			}
 			else
 			{
-				s->SysMessage( 1632, static_cast<LIGHTLEVEL>(RoundNumber( i - Races->VisLevel( mChar->GetRace() )))); // Current light level is %i
+				s->SysMessage( 1632, static_cast<LIGHTLEVEL>(std::round( i - Races->VisLevel( mChar->GetRace() )))); // Current light level is %i
 			}
 		}
 		else
@@ -563,7 +563,7 @@ void Command_Tell( CSocket *s )
 
 		CChar *mChar		= i->CurrcharObj();
 		CChar *tChar		= s->CurrcharObj();
-		std::string temp	= mChar->GetNameRequest( tChar ) + " tells " + tChar->GetNameRequest( mChar ) + ": " + txt;
+		std::string temp	= mChar->GetNameRequest( tChar, 0 ) + " tells " + tChar->GetNameRequest( mChar, NRS_SPEECH ) + ": " + txt;
 
 		if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 		{
@@ -584,7 +584,7 @@ void Command_Tell( CSocket *s )
 			}
 			unicodeMessage.Type( TALK );
 			unicodeMessage.Language( "ENG" );
-			unicodeMessage.Name( mChar->GetNameRequest( tChar ));
+			unicodeMessage.Name( mChar->GetNameRequest( tChar, NRS_SPEECH ));
 			unicodeMessage.ID( INVALIDID );
 			unicodeMessage.Serial( mChar->GetSerial() );
 			s->Send( &unicodeMessage );

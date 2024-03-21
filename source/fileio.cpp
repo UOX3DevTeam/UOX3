@@ -611,7 +611,7 @@ void LoadCreatures( void )
 	FileLookup->Dispose( creatures_def );
 }
 
-void ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data )
+void ReadWorldTagData( std::istream &inStream, std::string &tag, std::string &data )
 {
 	char temp[4097];
     tag = "o---o";

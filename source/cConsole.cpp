@@ -497,7 +497,7 @@ auto CConsole::Error(const std::string& msg) -> void
 	}
 	catch( const std::exception &e )
 	{
-		std::cerr << "Error print reporting 'error'.  Error was: " << msg << std::endl;
+		std::cerr << "Error print reporting 'error'.  Error was: " << e.what() << std::endl;
 		exit( 1 );
 	}
 }
@@ -999,12 +999,12 @@ auto CConsole::Process(std::int32_t c) -> void
 					Print( oldstrutil::format( "Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str() ));
 #endif
 					jsval eventRetVal;
-					toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal );
+					[[maybe_unused]] JSBool retVal = toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal );
 				}
 				return;
 			}
 		}
-		CSocket *tSock	= nullptr;
+		[[maybe_unused]] CSocket *tSock	= nullptr;
 		//char outputline[128], temp[1024];
 		std::string outputline, temp;
 		SI32 indexcount	= 0;
@@ -1178,7 +1178,7 @@ auto CConsole::Process(std::int32_t c) -> void
 				break;
 			case  'D':
 				// Disconnect account 0 (useful when client crashes)
-				for( tSock = Network->LastSocket(); tSock != nullptr; tSock = Network->PrevSocket() )
+				for( auto &tSock : Network->connClients )
 				{
 					if( tSock->AcctNo() == 0 )
 					{

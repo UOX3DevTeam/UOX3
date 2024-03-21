@@ -94,6 +94,7 @@ TOPEACE=106 5
 CARVE=45
 RACE=5
 FLAG=NEUTRAL
+ORIGIN=t2a
 }
 
 [iceserpent]
@@ -130,6 +131,7 @@ CARVE=16
 RACE=5
 FLAG=NEUTRAL
 CONTROLSLOTS=1
+ORIGIN=t2a
 }
 
 [lavalizard]
@@ -167,6 +169,7 @@ CARVE=72
 RACE=5
 FLAG=NEUTRAL
 CONTROLSLOTS=1
+ORIGIN=t2a
 SCRIPT=3507
 }
 
@@ -199,6 +202,7 @@ TOPEACE=265 5
 CARVE=45
 RACE=5
 FLAG=NEUTRAL
+ORIGIN=t2a
 }
 
 [lavaserpent]
@@ -233,6 +237,7 @@ TOPEACE=755 5
 CARVE=29
 RACE=5
 FLAG=NEUTRAL
+ORIGIN=t2a
 SCRIPT=3503
 }
 
@@ -247,6 +252,7 @@ GOLD=50 150
 LOOT=randompotions,3
 LOOT=randomgems,3
 EQUIPITEM=listobject150
+LOOT=TreasureMapLvl1Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=150 320
@@ -271,6 +277,7 @@ TOPROV=740
 TOPEACE=740 5
 RACE=25
 FLAG=NEUTRAL
+ORIGIN=t2a
 }
 
 [ophenforcer]
@@ -283,6 +290,7 @@ GOLD=50 150
 LOOT=randompotions,4
 LOOT=randomgems,4
 EQUIPITEM=listobject150
+LOOT=TreasureMapLvl1Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=160 340
@@ -307,6 +315,7 @@ TOPROV=736
 TOPEACE=736 5
 RACE=25
 FLAG=NEUTRAL
+ORIGIN=t2a
 }
 
 [ophknight]
@@ -319,6 +328,7 @@ GOLD=200 300
 LOOT=randompotions,5
 LOOT=randomgems,5
 EQUIPITEM=listobject150
+LOOT=TreasureMapLvl3Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=417 595
@@ -344,6 +354,7 @@ TOPROV=862
 TOPEACE=862 5
 RACE=25
 FLAG=NEUTRAL
+ORIGIN=t2a
 SCRIPT=3300
 }
 
@@ -359,6 +370,7 @@ LOOT=randompotions,5
 LOOT=randomgems,5
 LOOT=midlevelscrolls,5
 EQUIPITEM=listobject150
+LOOT=TreasureMapLvl3Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=420 600
@@ -384,6 +396,7 @@ TOPROV=866
 TOPEACE=866 5
 RACE=25
 FLAG=NEUTRAL
+ORIGIN=t2a
 SCRIPT=3300
 }
 
@@ -398,6 +411,7 @@ LOOT=randompotions
 LOOT=randomreagents,5
 LOOT=lowlevelscrolls
 LOOT=midlevelscrolls
+LOOT=TreasureMapLvl2Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=181 205
@@ -424,6 +438,7 @@ TOPROV=805
 TOPEACE=805 5
 RACE=25
 FLAG=NEUTRAL
+ORIGIN=t2a
 }
 
 [ophshaman]
@@ -437,6 +452,7 @@ LOOT=randompotions,2
 LOOT=randomreagents,10
 LOOT=lowlevelscrolls,2
 LOOT=midlevelscrolls,2
+LOOT=TreasureMapLvl2Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=281 305
@@ -463,6 +479,7 @@ TOPROV=807
 TOPEACE=807 5
 RACE=25
 FLAG=NEUTRAL
+ORIGIN=t2a
 }
 
 [ophmatriarch]
@@ -475,6 +492,7 @@ GOLD=200 250
 LOOT=midlevelscrolls,4
 LOOT=randomgems,4
 LOOT=randompotions,4
+LOOT=TreasureMapLvl4Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=416 505
@@ -504,6 +522,7 @@ TOPEACE=971 5
 FLEEAT=-1
 RACE=25
 FLAG=NEUTRAL
+ORIGIN=t2a
 }
 
 [ophjusticar]
@@ -541,6 +560,7 @@ TOPROV=815
 TOPEACE=815 5
 RACE=25
 FLAG=NEUTRAL
+ORIGIN=uor
 }
 
 [ophzealot]
@@ -579,6 +599,7 @@ TOPROV=818
 TOPEACE=818 5
 RACE=25
 FLAG=NEUTRAL
+ORIGIN=uor
 }
 
 [silverserpent]

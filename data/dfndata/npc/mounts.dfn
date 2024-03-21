@@ -68,6 +68,7 @@ GET=horse
 NAME=#//an ethereal horse
 ID=0x0073
 SKIN=0x4001
+ORIGIN=t2a
 }
 
 [llama]
@@ -100,6 +101,7 @@ GET=llama
 NAME=#//an ethereal llama
 ID=0x00aa
 SKIN=0x4001
+ORIGIN=t2a
 }
 
 [frenziedostard]
@@ -129,6 +131,7 @@ FOOD=ostard
 CARVE=11
 RACE=9
 FLAG=NEUTRAL
+ORIGIN=t2a
 }
 
 [forestostard]
@@ -155,6 +158,7 @@ TOPEACE=316 5
 FOOD=horse
 CARVE=11
 RACE=9
+ORIGIN=t2a
 }
 
 [desertostard]
@@ -180,6 +184,7 @@ TOPEACE=323 5
 FOOD=horse
 CARVE=11
 RACE=9
+ORIGIN=t2a
 }
 
 [etherealostard]
@@ -188,6 +193,7 @@ GET=desertostard
 NAME=#//an ethereal ostard
 ID=0x00AB
 SKIN=0x4001
+ORIGIN=t2a
 }
 
 [nightmare]
@@ -224,6 +230,7 @@ CARVE=75
 RACE=9
 FLAG=NEUTRAL
 CONTROLSLOTS=2
+ORIGIN=t2a
 SCRIPT=3507
 }
 
@@ -281,6 +288,7 @@ TOPEACE=862 5
 RACE=9
 CONTROLSLOTS=2
 NPCAI=5
+ORIGIN=td
 SCRIPT=3106
 SCRIPT=3300
 }
@@ -292,9 +300,10 @@ NAME=#//an ethereal unicorn
 ID=0x00c0
 SKIN=0x4001
 CONTROLSLOTS=1
+ORIGIN=aos
 }
 
-[ki-rin]
+[kirin]
 {
 GET=horse
 NAME=#//a ki-rin
@@ -327,6 +336,7 @@ TOPEACE=847 5
 RACE=9
 CONTROLSLOTS=2
 NPCAI=5
+ORIGIN=td
 SCRIPT=3106
 SCRIPT=3300
 }
@@ -351,6 +361,7 @@ DEF=25
 TOPROV=657
 TOPEACE=657 5
 TOTAME=291
+ORIGIN=uor
 }
 
 [warhorse2]
@@ -399,6 +410,7 @@ CARVE=75
 RACE=9
 FLAG=NEUTRAL
 CONTROLSLOTS=2
+ORIGIN=t2a
 SCRIPT=3507
 }
 
@@ -430,6 +442,7 @@ CARVE=75
 RACE=9
 FLAG=NEUTRAL
 CONTROLSLOTS=2
+ORIGIN=t2a
 SCRIPT=3507
 }
 
@@ -458,6 +471,7 @@ CARVE=75
 RACE=9
 FLAG=NEUTRAL
 CONTROLSLOTS=2
+ORIGIN=aos
 }
 
 [giantbeetle]
@@ -482,6 +496,7 @@ FOOD=meat
 NPCAI=2
 FLAG=NEUTRAL
 CONTROLSLOTS=3
+ORIGIN=aos
 }
 
 [etherealgiantbeetle]
@@ -508,6 +523,7 @@ WRESTLING=400 1000
 TOPROV=840
 TOPEACE=840 5
 TOTAME=939
+ORIGIN=se
 }
 
 [firesteed]
@@ -534,6 +550,7 @@ TOPROV=786
 TOPEACE=736 5
 TOTAME=1060
 CONTROLSLOTS=2
+ORIGIN=aos
 SCRIPT=3507
 }
 
@@ -558,6 +575,7 @@ TOPEACE=291 5
 TOTAME=831
 CARVE=40
 CONTROLSLOTS=1
+ORIGIN=td
 }
 
 [savageridgeback]
@@ -574,6 +592,7 @@ GET=ridgeback
 NAME=#//an ethereal ridgeback
 ID=0x00C1
 SKIN=0x4001
+ORIGIN=aos
 }
 
 [swampdragon]
@@ -581,6 +600,7 @@ SKIN=0x4001
 GET=horse
 NAME=#//a swamp dragon
 ID=0x031a
+SKIN=0x851
 LOOT=randomgems,5
 FAME=2000
 KARMA=-2000
@@ -599,6 +619,7 @@ TOTAME=939
 CARVE=47
 FOOD=meat
 CONTROLSLOTS=1
+ORIGIN=lbr
 }
 
 [armoredswampdragon]
@@ -615,6 +636,7 @@ GET=swampdragon
 NAME=#//an ethereal swamp dragon
 ID=0x00C2
 SKIN=0x4001
+ORIGIN=aos
 }
 
 [hiryu]
@@ -640,6 +662,7 @@ TOPEACE=1153 5
 TOTAME=987
 FOOD=meat
 CONTROLSLOTS=4
+ORIGIN=se
 SCRIPT=3300
 }
 
@@ -650,6 +673,7 @@ NAME=5109//an ethereal hiryu
 ID=0x00f3
 SKIN=0x4001
 CONTROLSLOTS=1
+ORIGIN=sa
 }
 
 [reptalon]
@@ -672,6 +696,7 @@ TOPROV=1250
 TOPEACE=1250 5
 TOTAME=1011
 CONTROLSLOTS=4
+ORIGIN=ml
 SCRIPT=3300
 SCRIPT=3507
 }
@@ -707,6 +732,7 @@ DEF=25
 TOPROV=1269
 TOPEACE=1269 5
 TOTAME=1020
+ORIGIN=ml
 SCRIPT=3106
 }
 
@@ -737,6 +763,7 @@ DAMAGE=61 80
 TOPROV=1250
 TOPEACE=1250 5
 TOTAME=1199
+ORIGIN=ml
 }
 
 [etherealkirin]
@@ -746,6 +773,7 @@ NAME=an ethereal ki-rin
 ID=0x00BF
 SKIN=0x4001
 CONTROLSLOTS=1
+ORIGIN=aos
 }
 
 [etherealpolarbear]
@@ -754,6 +782,7 @@ GET=horse
 NAME=an ethereal polar bear
 ID=0x00d5
 SKIN=0x4001
+ORIGIN=ml
 }
 
 [etherealboura]
@@ -762,6 +791,7 @@ GET=horse
 NAME=an ethereal boura
 ID=0x02cb
 SKIN=0x4001
+ORIGIN=hs
 }
 
 [etherealchargerofthefallen]
@@ -770,6 +800,7 @@ GET=horse
 NAME=an ethereal charger of the fallen
 ID=0x011c
 SKIN=0x4001
+ORIGIN=ml
 }
 
 [etherealtiger]
@@ -778,4 +809,5 @@ GET=horse
 NAME=an ethereal tiger
 ID=0x04e7
 SKIN=0x4001
+ORIGIN=hs
 }

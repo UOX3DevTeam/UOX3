@@ -75,6 +75,18 @@ function onCallback0( socket, ourObj )
 			{
 				ourLayer.Delete();
 			}
+
+			// Reset the hair/beard style and colour properties if those were removed
+			if( layer == 0x0b  ) // hair
+			{
+				ourObj.hairStyle = 0;
+				ourObj.hairColour = 0;
+			}
+			else if( layer == 0x10 ) // beard
+			{
+				ourObj.beardStyle = 0;
+				ourObj.beardColour = 0;
+			}
 		}
 	}
 }
@@ -97,3 +109,5 @@ function onCallback1( socket, ourObj )
 		ourObj.Resurrect();
 	}
 }
+
+function _restorecontext_() {}

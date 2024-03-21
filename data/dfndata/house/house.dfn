@@ -700,6 +700,45 @@ MAXTRASHCONTAINERS=1
 SCRIPT=15000
 }
 
+// Christmas tree
+[HOUSE 39]
+{
+NAME=a tree for the holidays
+ID=0x0CD6
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_ITEM=343
+HOUSE_ITEM=344
+HOUSE_ITEM=345
+HOUSE_ITEM=346
+HOUSE_ITEM=347
+HOUSE_ITEM=348
+HOUSE_ITEM=349
+HOUSE_ITEM=350
+HOUSE_ITEM=351
+HOUSE_ITEM=352
+HOUSE_ITEM=353
+HOUSE_ITEM=354
+HOUSE_ITEM=355
+HOUSE_ITEM=356
+HOUSE_ITEM=357
+HOUSE_ITEM=358
+HOUSE_ITEM=359
+HOUSE_ITEM=360
+HOUSE_ITEM=361
+HOUSE_ITEM=362
+HOUSE_ITEM=363
+HOUSE_ITEM=364
+HOUSE_ITEM=365
+HOUSE_ITEM=366
+HOUSE_ITEM=367
+HOUSE_ITEM=368
+HOUSE_ITEM=369
+HOUSE_ITEM=370
+HOUSE_ITEM=371
+}
+
 // House Addon - brown bear rug (east)
 [HOUSE 40]
 {
@@ -1334,6 +1373,110 @@ CHARY=0
 CHARZ=0
 HOUSE_DEED=ballotboxdeedsouth
 HOUSE_ITEM=505
+}
+
+// House Addon - Dull Copper Colored Anvil
+[HOUSE 100]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=dc_anvil_deed
+HOUSE_ITEM=700
+}
+
+// House Addon - Shadow Iron Colored Anvil
+[HOUSE 101]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=si_anvil_deed
+HOUSE_ITEM=701
+}
+
+// House Addon - Copper Colored Anvil
+[HOUSE 102]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=c_anvil_deed
+HOUSE_ITEM=702
+}
+
+// House Addon - Bronze Colored Anvil
+[HOUSE 103]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=b_anvil_deed
+HOUSE_ITEM=703
+}
+
+// House Addon - Gold Colored Anvil
+[HOUSE 104]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=g_anvil_deed
+HOUSE_ITEM=704
+}
+
+// House Addon - Agapite Colored Anvil
+[HOUSE 105]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=a_anvil_deed
+HOUSE_ITEM=705
+}
+
+// House Addon - Verite Colored Anvil
+[HOUSE 106]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=ve_anvil_deed
+HOUSE_ITEM=706
+}
+
+// House Addon - Valorite Colored Anvil
+[HOUSE 107]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=va_anvil_deed
+HOUSE_ITEM=707
 }
 
 //brown bear trophy deed
@@ -2173,6 +2316,230 @@ LOCK
 X=3
 Y=-5
 Z=29
+}
+
+[HOUSE ITEM 344]
+{ christmas tree ornament
+ITEM=treeornament1
+X=0
+Y=1
+Z=12
+}
+
+[HOUSE ITEM 345]
+{ christmas tree ornament
+ITEM=treeornament4
+X=0
+Y=1
+Z=13
+}
+
+[HOUSE ITEM 346]
+{ christmas tree ornament
+ITEM=treeornament3
+X=0
+Y=1
+Z=18
+}
+
+[HOUSE ITEM 347]
+{ christmas tree ornament
+ITEM=treeornament6
+X=0
+Y=1
+Z=19
+}
+
+[HOUSE ITEM 348]
+{ christmas tree ornament
+ITEM=treeornament27
+X=0
+Y=1
+Z=25
+}
+
+[HOUSE ITEM 349]
+{ christmas tree ornament
+ITEM=treeornament24
+X=0
+Y=1
+Z=29
+}
+
+[HOUSE ITEM 350]
+{ christmas tree ornament
+ITEM=treeornament25
+X=0
+Y=1
+Z=37
+}
+
+[HOUSE ITEM 351]
+{ christmas tree ornament
+ITEM=treeornament2
+X=1
+Y=0
+Z=13
+}
+
+[HOUSE ITEM 352]
+{ christmas tree ornament
+ITEM=treeornament21
+X=1
+Y=0
+Z=14
+}
+
+[HOUSE ITEM 353]
+{ christmas tree ornament
+ITEM=treeornament5
+X=1
+Y=0
+Z=16
+}
+
+[HOUSE ITEM 354]
+{ christmas tree ornament
+ITEM=treeornament15
+X=1
+Y=0
+Z=17
+}
+
+[HOUSE ITEM 355]
+{ christmas tree ornament
+ITEM=treeornament16
+X=1
+Y=0
+Z=22
+}
+
+[HOUSE ITEM 356]
+{ christmas tree ornament
+ITEM=treeornament22
+X=0
+Y=1
+Z=7
+}
+
+[HOUSE ITEM 357]
+{ christmas tree ornament
+ITEM=treeornament7
+X=0
+Y=1
+Z=7
+}
+
+[HOUSE ITEM 358]
+{ christmas tree ornament
+ITEM=treeornament17
+X=0
+Y=0
+Z=34
+}
+
+[HOUSE ITEM 359]
+{ christmas tree ornament
+ITEM=treeornament18
+X=0
+Y=0
+Z=33
+}
+
+[HOUSE ITEM 360]
+{ christmas tree ornament
+ITEM=treeornament24
+X=0
+Y=0
+Z=32
+}
+
+[HOUSE ITEM 361]
+{ christmas tree ornament
+ITEM=treeornament13
+X=0
+Y=0
+Z=30
+}
+
+[HOUSE ITEM 362]
+{ christmas tree ornament
+ITEM=treeornament26
+X=0
+Y=0
+Z=28
+}
+
+[HOUSE ITEM 363]
+{ christmas tree ornament
+ITEM=treeornament20
+X=0
+Y=0
+Z=21
+}
+
+[HOUSE ITEM 364]
+{ christmas tree ornament
+ITEM=treeornament10
+X=0
+Y=0
+Z=20
+}
+
+[HOUSE ITEM 365]
+{ christmas tree ornament
+ITEM=treeornament23
+X=0
+Y=0
+Z=20
+}
+
+[HOUSE ITEM 366]
+{ christmas tree ornament
+ITEM=treeornament14
+X=0
+Y=0
+Z=20
+}
+
+[HOUSE ITEM 367]
+{ christmas tree ornament
+ITEM=treeornament8
+X=0
+Y=0
+Z=19
+}
+
+[HOUSE ITEM 368]
+{ christmas tree ornament
+ITEM=treeornament11
+X=0
+Y=0
+Z=15
+}
+
+[HOUSE ITEM 369]
+{ christmas tree ornament
+ITEM=treeornament9
+X=0
+Y=0
+Z=9
+}
+
+[HOUSE ITEM 370]
+{ christmas tree ornament
+ITEM=treeornament12
+X=0
+Y=0
+Z=2
+}
+
+[HOUSE ITEM 371]
+{ christmas tree needles
+ITEM=treeneedles
+X=0
+Y=0
+Z=0
 }
 
 [HOUSE ITEM 386]
@@ -3209,6 +3576,78 @@ Z=0
 [HOUSE ITEM 505]
 {
 ITEM=0x09a8
+X=0
+Y=0
+Z=0
+}
+
+// Dull Copper Colored Anvil 1/1
+[HOUSE ITEM 700]
+{
+ITEM=dull_copper_colored_anvil
+X=0
+Y=0
+Z=0
+}
+
+// Shadow Iron Anvil 1/1
+[HOUSE ITEM 701]
+{
+ITEM=shadow_iron_colored_anvil
+X=0
+Y=0
+Z=0
+}
+
+// Copper Colored Anvil 1/1
+[HOUSE ITEM 702]
+{
+ITEM=copper_colored_anvil
+X=0
+Y=0
+Z=0
+}
+
+// Bronze Colored Anvil 1/1
+[HOUSE ITEM 703]
+{
+ITEM=bronze_colored_anvil
+X=0
+Y=0
+Z=0
+}
+
+// Gold Colored Anvil 1/1
+[HOUSE ITEM 704]
+{
+ITEM=gold_colored_anvil
+X=0
+Y=0
+Z=0
+}
+
+// Agapite Colored Anvil 1/1
+[HOUSE ITEM 705]
+{
+ITEM=agapite_colored_anvil
+X=0
+Y=0
+Z=0
+}
+
+// Verite Colored Anvil 1/1
+[HOUSE ITEM 706]
+{
+ITEM=verite_colored_anvil
+X=0
+Y=0
+Z=0
+}
+
+// Valorite Colored Anvil 1/1
+[HOUSE ITEM 707]
+{
+ITEM=valorite_colored_anvil
 X=0
 Y=0
 Z=0

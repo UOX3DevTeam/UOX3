@@ -1,5 +1,5 @@
 #include "uox3.h"
-#include "gump.h"
+#include "CGump.h"
 #include "cGuild.h"
 #include "townregion.h"
 #include "cServerDefinitions.h"
@@ -381,8 +381,8 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.addCommand( "page 0" );
 
 	// Need more control over this aspect of uox3 from outside some how.. first step to get the variables more flexible. later we will emporer them to a template, or a script or something
-	UI16 xStart = 0, xWidth = 500;
-	UI16 yStart = 0, yWidth = 375;
+	UI16 xStart = 0, xWidth = 680;
+	UI16 yStart = 0, yWidth = 420;
 
 	UI32 bgImage = cwmWorldState->ServerData()->BackgroundPic();
 
@@ -393,7 +393,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	// Grab the first tag/value pair from the gump itemmenu respectivly
 	std::string tag		= ItemMenu->First();
 	std::string data	= ItemMenu->GrabData();
-	toSend.addCommand( oldstrutil::format( "resizepic %u %u %u %u %u", 2, 4, 0xDAC, 495, 40 ));
+	toSend.addCommand( oldstrutil::format( "resizepic %u %u %u %u %u", 2, 4, 0xDAC, 675, 40 ));
 	// Create the text stuff for what appears to be the title of the gump. This appears to change from page to page.
 
 	// Next we create and position the close window button as well set its Down, and Up states.
@@ -410,7 +410,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.addCommand( oldstrutil::format( "text %u %u %u %u", 118, yStart + 13, 39, linenum++ ));
 	toSend.addText( "GM Pages: " );
 	szBuffer = "0";
-	toSend.addCommand( oldstrutil::format( "text %u %u %u %u", 185, yStart + 13, 25, linenum++ ));
+	toSend.addCommand( oldstrutil::format( "text %u %u %u %u", 200, yStart + 13, 25, linenum++ ));
 	toSend.addText( szBuffer );
 	// Current Time/Date
 	toSend.addCommand( oldstrutil::format( "text %u %u %u %u", 230, yStart + 13, 39, linenum++ ));
@@ -439,7 +439,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.addText( szBuffer );
 
 	// add the next gump portion. New server level services, in the form of a gump Configuration, and Accounts tabs to start. These are default tabs
-	toSend.addCommand( oldstrutil::format( "resizepic %u %u %u %u %u", xStart + 10, yStart + 62, 5054, 190, 300 ));
+	toSend.addCommand( oldstrutil::format( "resizepic %u %u %u %u %u", xStart + 10, yStart + 62, 5054, 190, 340 ));
 	UI32 tabNumber = 1;
 
 	// Do the shard tab
@@ -465,8 +465,8 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	UI32 yOffset;
 #define SXOFFSET	210
 #define SYOFFSET	44
-#define YOFFSET	103
-#define XOFFSET	68
+#define YOFFSET		110
+#define XOFFSET		110
 	if( m == 1 )
 	{
 		// Now we make the first page that will escentially display our list of Main GM Groups.
@@ -537,9 +537,9 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				yOffset		= SYOFFSET;
 			}
 			// Drop in the page number text area image
-			toSend.addCommand( oldstrutil::format( "gumppic %u %u %u", xStart + 260, yWidth - 28, 0x98E ));
+			toSend.addCommand( oldstrutil::format( "gumppic %u %u %u", xStart + 300, yWidth - 28, 0x98E ));
 			// Add the page number text to the text area for display
-			toSend.addCommand( oldstrutil::format( "text %u %u %u %u", xStart + 295, yWidth - 27, 39, linenum++ ));
+			toSend.addCommand( oldstrutil::format( "text %u %u %u %u", xStart + 335, yWidth - 27, 39, linenum++ ));
 			szBuffer = oldstrutil::format( "Menu %i - Page %i", m, pagenum - 1 );
 			toSend.addText( szBuffer );
 			// Spin the tagged items loaded in from the dfn files.
@@ -600,9 +600,9 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		yOffset			= SYOFFSET;
 
 		// Drop in the page number text area image
-		toSend.addCommand( oldstrutil::format( "gumppic %u %u %u", xStart + 260, yWidth - 28, 0x98E ));
+		toSend.addCommand( oldstrutil::format( "gumppic %u %u %u", xStart + 300, yWidth - 28, 0x98E ));
 		// Add the page number text to the text area for display
-		toSend.addCommand( oldstrutil::format( "text %u %u %u %u", xStart + 295, yWidth - 27, 39, linenum++ ));
+		toSend.addCommand( oldstrutil::format( "text %u %u %u %u", xStart + 335, yWidth - 27, 39, linenum++ ));
 		szBuffer = oldstrutil::format( "Menu %i - Page %i", m, pagenum - 1 );
 		toSend.addText( szBuffer );
 
@@ -616,6 +616,13 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				toSend.addCommand( oldstrutil::format( "page %i", pagenum++ ));
 				xOffset=SXOFFSET;
 				yOffset=SYOFFSET;
+
+				// Drop in the page number text area image
+				toSend.addCommand( oldstrutil::format( "gumppic %u %u %u", xStart + 300, yWidth - 28, 0x98E ));
+				// Add the page number text to the text area for display
+				toSend.addCommand( oldstrutil::format( "text %u %u %u %u", xStart + 335, yWidth - 27, 39, linenum++ ));
+				szBuffer = oldstrutil::format( "Menu %i - Page %i", m, pagenum - 1 );
+				toSend.addText( szBuffer );
 			}
 			// Drop in the page number text area image
 			if( oldstrutil::upper( tag ) == "INSERTADDMENUITEMS" )
@@ -662,13 +669,13 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 			if( tag.data()[0] != '<' && tag.data()[0] != ' ' )	// it actually has a picture, well bugger me! :>
 			{
 				// Draw a frame for the item to make it stand out a touch more.
-				toSend.addCommand( oldstrutil::format( "resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 ));
-				toSend.addCommand( oldstrutil::format( "checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82 ));
-				toSend.addCommand( oldstrutil::format( "tilepic %u %u %i", xOffset + 5, yOffset + 10, std::stoi( tag, nullptr, 0 )));
-				toSend.addCommand( oldstrutil::format( "croppedtext %u %u %u %u %u %u", xOffset, yOffset + 65, 65, 20, 55, linenum++ ));
+				toSend.addCommand( oldstrutil::format( "checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 110, 110 ));
+				toSend.addCommand( oldstrutil::format( "buttontileart %u %u 0x0a9f 0x0aa1 %u %u %u %u %u %u %u", xOffset, yOffset, 1, 0, buttonnum, std::stoi( tag, nullptr, 0 ), 0, 25, 25 ));
+				toSend.addCommand( oldstrutil::format( "tooltip 1042971 @%s@", data.c_str() ));
+				toSend.addCommand( oldstrutil::format( "croppedtext %u %u %u %u %u %u", xOffset + 15, yOffset + 85, 100, 20, 50, linenum++ ));
 				toSend.addText( data );
 				xOffset += XOFFSET;
-				if( xOffset > 480 )
+				if( xOffset > 640 )
 				{
 					xOffset	=	SXOFFSET;
 					yOffset	+=	YOFFSET;
@@ -1285,28 +1292,31 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				if( data.empty() )
 					return;
 
+				SI08 targetWorld = -1;
+				auto secs = oldstrutil::sections( data, "," );
+				if( secs.size() > 1 )
+				{
+					// See if a target world override was specified in travel menu (allows using same location entries in locations.dfn for Fel/Trammel, for instance)
+					targetWorld = oldstrutil::value<SI08>( oldstrutil::trim( oldstrutil::removeTrailing( secs[1], "//" )));
+				}
+
 				UI16 placeNum = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
 
-					if( toGoTo.worldNum == 0 && mChar->WorldNumber() <= 1 )
-					{
-						// Stay in same world if already in world 0 or 1
-						mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, mChar->WorldNumber(), mChar->GetInstanceId() );
+					auto oldWorld = mChar->WorldNumber();
+					targetWorld = targetWorld != -1 ? targetWorld : static_cast<SI08>( toGoTo.worldNum );
+					mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, static_cast<UI08>( targetWorld ), mChar->GetInstanceId() );
 
-						// Additional update required for regular UO client
-						mChar->Update();
-					}
-					else if( toGoTo.worldNum != mChar->WorldNumber() )
+					if( static_cast<UI08>( targetWorld ) != oldWorld )
 					{
 						// Change map!
-						mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, toGoTo.worldNum, mChar->GetInstanceId() );
-						SendMapChange( toGoTo.worldNum, s );
-
-						// Additional update required for regular UO client
-						mChar->Update();
+						SendMapChange( targetWorld, s );
 					}
+
+					// Additional update required for regular UO client
+					mChar->Update();
 				}
 			}
 			else if( cmd == "GUIINFORMATION" )

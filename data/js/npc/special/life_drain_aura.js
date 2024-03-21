@@ -20,9 +20,9 @@ function DealAreaDamage( srcObj, trgChar )
 		var drainSFX = 0;
 		var drainFXLength = 0;
 
-		switch( trgChar.id )
+		switch( trgChar.sectionID )
 		{
-			case 0x0095: // Succubus
+			case "succubus": // Succubus
 				hpDrain = RandomNumber( 5, 10 );
 
 				// Double drain from male characters
@@ -35,6 +35,13 @@ function DealAreaDamage( srcObj, trgChar )
 				break;
 			default:
 				return false;
+		}
+
+		if( parseInt( trgChar.GetTag( "activeBalmLotion" )) == 5 )
+		{
+			// Target character has an active Life Shield Lotion effect
+			// Reduce effect of hp drain by 50-100%
+			hpDrain -= RandomNumber( Math.round( hpDrain / 2 ), hpDrain );
 		}
 
 		// Play effects
@@ -57,3 +64,5 @@ function DealAreaDamage( srcObj, trgChar )
 
 	return false;
 }
+
+function _restorecontext_() {}

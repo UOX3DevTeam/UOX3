@@ -178,7 +178,7 @@ function onCallback0( pSocket, myTarget )
 			var confirmString = pUser.name + " " + GetDictionaryEntry( 2853, pSocket.language ) + "<BR><B>" + iMulti.name + "</B>"; // wants to transfer ownership of this house to you:
 			ConfirmActionGump( pSocket, myTarget, confirmString, confirmButtonID )
 
-			pSocket.SysMessage( GetDictionaryEntry( 1826, pSocket.language ), myTarget.name ); // House ownership transfer initiated, waiting for response from %s...
+			pSocket.SysMessage( GetDictionaryEntry( 1829, pSocket.language ), myTarget.name ); // House ownership transfer initiated, waiting for response from %s...
 		}
 	}
 }
@@ -2043,3 +2043,5 @@ function onGumpPress( pSocket, pButton, gumpData )
 		}
 	}
 }
+
+function _restorecontext_() {}

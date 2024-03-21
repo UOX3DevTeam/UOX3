@@ -74,7 +74,7 @@ const secPerUODay = ( secPerUOMin * 60 * 24 ); // amount of real life seconds th
 const gracePeriod = 60000; // Grace period in seconds after contract expires before hireling quits
 const maxHireUODays = 3; // Maximum amount of in-game days that a hireling can be hired for
 
-const maxFollowers = GetServerSetting( "MaxFollowers" ); // The maximum amount of followers/pets a character can have at a given time
+const maxFollowers = GetServerSetting( "MaxFollowers" ); // The maximum amount of followers/pets a character can have at a given time (only checked if maxControlSlots is set to 0)
 const maxControlSlots = GetServerSetting( "MaxControlSlots" ); // The max amount of pet control slots a player can have active at a given time
 const maxPetOwners = GetServerSetting( "MaxPetOwners" ); // The max amount of owners a pet/hireling is willing to accept orders from in its lifetime
 
@@ -114,7 +114,7 @@ function onSpeech( pSpeech, pChar, hireling )
 	}
 
 	// If the hire time has expired, reset hireling
-	var hireExpire = hireling.GetTag( "hireExpire" );
+	var hireExpire = parseInt( hireling.GetTag( "hireExpire" ));
 	if( hireExpire < GetCurrentClock() && hireling.GetTag( "hired" ) && !hireling.GetTag( "gracePeriodActive" ))
 	{
 		if( ValidateObject( hirelingOwner ) && hirelingOwner.online )
@@ -163,24 +163,24 @@ function onSpeech( pSpeech, pChar, hireling )
 				if( ValidateObject( hirelingOwner ) && hirelingOwner == pChar )
 				{
 					// All pets come to owner
-					var petList = hireling.owner.GetPetList();
-					for( var i = 0; i < petList.length; i++ )
+					var followerList = hireling.owner.GetFollowerList();
+					for( var i = 0; i < followerList.length; i++ )
 					{
-						var tempPet = petList[i];
-						if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 12 ))
+						var tempFollower = followerList[i];
+						if( ValidateObject( tempFollower ) && tempFollower.InRange( pChar, 12 ))
 						{
-							if( tempPet.isHuman )
+							if( tempFollower.isHuman )
 							{
-								tempPet.TextMessage( GetRandomString( pSock, accepted_messages ));
+								tempFollower.TextMessage( GetRandomString( pSock, accepted_messages ));
 							}
-							tempPet.Follow( pChar );
+							tempFollower.Follow( pChar );
 						}
-						/*else if( ValidateObject( tempPet ))
+						/*else if( ValidateObject( tempFollower ))
 						{
 							// Commented out, since it would allow players to teleport their hirelings across the entire world!
 							// Leave them somewhere nice and cozy.... then teleport them to you to do unexpected ambushes of other
 							// players!
-							tempPet.Teleport( pChar.x, pChar.y, pChar.z, pChar.worldnumber, pChar.instanceID );
+							tempFollower.Teleport( pChar.x, pChar.y, pChar.z, pChar.worldnumber, pChar.instanceID );
 						}*/
 					}
 					return 1;
@@ -274,22 +274,22 @@ function onSpeech( pSpeech, pChar, hireling )
 				if( ValidateObject( hirelingOwner ) && hirelingOwner == pChar )
 				{
 					// All pets guard owner
-					var petList = hireling.owner.GetPetList();
-					for( var i = 0; i < petList.length; i++ )
+					var followerList = hireling.owner.GetFollowerList();
+					for( var i = 0; i < followerList.length; i++ )
 					{
-						var tempPet = petList[i];
-						if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 12 ))
+						var tempFollower = followerList[i];
+						if( ValidateObject( tempFollower ) && tempFollower.InRange( pChar, 12 ))
 						{
-							if( tempPet.isHuman )
+							if( tempFollower.isHuman )
 							{
-								tempPet.TextMessage( GetRandomString( pSock, accepted_messages ));
+								tempFollower.TextMessage( GetRandomString( pSock, accepted_messages ));
 							}
 
-							tempPet.Follow( hirelingOwner );
-							tempPet.guarding = hirelingOwner;
+							tempFollower.Follow( hirelingOwner );
+							tempFollower.guarding = hirelingOwner;
 							hirelingOwner.isGuarded = true;
 							var tempMsg = GetDictionaryEntry( 2374, cliLang ); // %s is now guarding you.
-							pSock.SysMessage( tempMsg.replace( /%s/gi, tempPet.name ));
+							pSock.SysMessage( tempMsg.replace( /%s/gi, tempFollower.name ));
 						}
 					}
 					return 1;
@@ -414,40 +414,40 @@ function onSpeech( pSpeech, pChar, hireling )
 			case 359: // all stop
 				if( ValidateObject( hireling.owner ) && hireling.owner == pChar )
 				{
-					var petList = hireling.owner.GetPetList();
-					for( var i = 0; i < petList.length; i++ )
+					var followerList = hireling.owner.GetFollowerList();
+					for( var i = 0; i < followerList.length; i++ )
 					{
-						var tempPet = petList[i];
-						if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 12 ))
+						var tempFollower = followerList[i];
+						if( ValidateObject( tempFollower ) && tempFollower.InRange( pChar, 12 ))
 						{
 							// Stop patrolling
-							if( tempPet.GetTag( "pathMode" ) == "patrolling" ) // pathfind mode
+							if( tempFollower.GetTag( "pathMode" ) == "patrolling" ) // pathfind mode
 							{
-								tempPet.SetTag( "patrolStop", true );
+								tempFollower.SetTag( "patrolStop", true );
 								pChar.SysMessage( GetDictionaryEntry( 2305, cliLang )); // Your pet stops patrolling.
 							}
 
 							// Stop fighting
-							if( tempPet.atWar )
+							if( tempFollower.atWar )
 							{
-								tempPet.SetTimer( Timer.PEACETIMER, 10000 ); // Prevent tempPet from engaging in combat for 10 seconds
-								tempPet.target = null;
-								tempPet.atWar = false;
-								tempPet.attacker = null;
+								tempFollower.SetTimer( Timer.PEACETIMER, 10000 ); // Prevent tempFollower from engaging in combat for 10 seconds
+								tempFollower.target = null;
+								tempFollower.atWar = false;
+								tempFollower.attacker = null;
 							}
 
 							// Stop guarding
-							var guardedBytempPet = tempPet.guarding;
-							if( ValidateObject( guardedBytempPet ))
+							var guardedBytempFollower = tempFollower.guarding;
+							if( ValidateObject( guardedBytempFollower ))
 							{
-								guardedBytempPet.isGuarded = false;
-								tempPet.guarding = null;
-								guardedBytempPet.Refresh();
+								guardedBytempFollower.isGuarded = false;
+								tempFollower.guarding = null;
+								guardedBytempFollower.Refresh();
 							}
-							tempPet.Follow( pChar );
-							if( tempPet.isHuman )
+							tempFollower.Follow( pChar );
+							if( tempFollower.isHuman )
 							{
-								tempPet.TextMessage( GetRandomString( pSock, accepted_messages ));
+								tempFollower.TextMessage( GetRandomString( pSock, accepted_messages ));
 							}
 						}
 					}
@@ -538,20 +538,22 @@ function onSpeech( pSpeech, pChar, hireling )
 					}
 					hireling.oldwandertype = 0;
 					hireling.wandertype = 0;
+					hireling.Follow( null );
 					return 1;
 				}
 				break;
 			case 368: // all stay
 				if( ValidateObject( hirelingOwner ) && hirelingOwner == pChar )
 				{
-					var petList = hireling.owner.GetPetList();
-					for( var i = 0; i < petList.length; i++ )
+					var followerList = hireling.owner.GetFollowerList();
+					for( var i = 0; i < followerList.length; i++ )
 					{
-						var tempPet = petList[i];
-						if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 12 ))
+						var tempFollower = followerList[i];
+						if( ValidateObject( tempFollower ) && tempFollower.InRange( pChar, 12 ))
 						{
-							tempPet.oldwandertype = 0;
-							tempPet.wandertype = 0;
+							tempFollower.oldwandertype = 0;
+							tempFollower.wandertype = 0;
+							tempFollower.Follow( null );
 						}
 					}
 					return 1;
@@ -651,9 +653,24 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 			return false;
 		}
 
-		if( maxControlSlots > 0 && ( pChar.controlSlotsUsed + hireling.controlSlots > maxControlSlots ))
+		if( maxControlSlots > 0 )
 		{
-			pChar.socket.SysMessage( GetDictionaryEntry( 2390, pChar.socket.language )); // That would exceed your maximum pet control slots.
+			if( pChar.controlSlotsUsed + hireling.controlSlots > maxControlSlots )
+			{
+				pChar.socket.SysMessage( GetDictionaryEntry( 2390, pChar.socket.language )); // That would exceed your maximum pet control slots.
+				return false;
+			}
+		}
+		else if( maxFollowers > 0 && pChar.followerCount >= maxFollowers )
+		{
+			// Check to make sure player can still take on more followers (only checked if maxControlSlots is set to 0)
+			if( hireling.isHuman )
+			{
+				hireling.TextMessage( GetDictionaryEntry( 2345, pChar.socket.language )); // No thanks, you seem to already have enough followers!
+			}
+
+			var tempMsg = GetDictionaryEntry( 2346, pChar.socket.language ); // You can maximum have %i pets/followers active at the same time.
+			pChar.socket.SysMessage( tempMsg.replace( /%i/gi, maxFollowers ));
 			return false;
 		}
 
@@ -668,21 +685,8 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 			return false;
 		}
 
-		// Check to make sure player can still take on more followers
-		if( pChar.petCount >= maxFollowers )
-		{
-			if( hireling.isHuman )
-			{
-				hireling.TextMessage( GetDictionaryEntry( 2345, pChar.socket.language )); // No thanks, you seem to already have enough followers!
-			}
-
-			var tempMsg = GetDictionaryEntry( 2346, pChar.socket.language ); // You can maximum have %i pets/followers active at the same time.
-			pChar.socket.SysMessage( tempMsg.replace( /%i/gi, maxFollowers ));
-			return false;
-		}
-
 		// Check to make sure hireling has space for more weight in backpack
-		if(( hPack.weight + iDropped.weight ) > hPack.maxWeight )
+		if(( hPack.weight + iDropped.weight ) > hPack.weightMax )
 		{
 			if( hireling.isHuman )
 			{
@@ -722,7 +726,7 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 		iDropped.amount -= ( payRequired * daysToHire );
 		hireling.owner = pChar;
 		hireling.SetTag( "hired", true );
-		hireling.SetTag( "hireExpire", hireExpire );
+		hireling.SetTag( "hireExpire", hireExpire.toString() );
 
 		// Update control slots tracking
 		pChar.controlSlotsUsed = pChar.controlSlotsUsed + hireling.controlSlots;
@@ -749,7 +753,7 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 				return false;
 
 			// Check that hireling's pack can hold the weight of the gold
-			if(( hPack.weight + iDropped.weight ) > hPack.maxWeight )
+			if(( hPack.weight + iDropped.weight ) > hPack.weightMax )
 			{
 				if( hireling.isHuman )
 				{
@@ -973,11 +977,11 @@ function FollowTarget( socket, pChar, myTarget, allFollow )
 		{
 			if( allFollow )
 			{
-				var petList = pChar.GetPetList();
-				for( var i = 0; i < petList.length; i++ )
+				var followerList = pChar.GetFollowerList();
+				for( var i = 0; i < followerList.length; i++ )
 				{
-					var tempPet = petList[i];
-					if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 12 ))
+					var tempFollower = followerList[i];
+					if( ValidateObject( tempFollower ) && tempFollower.InRange( pChar, 12 ))
 					{
 						if( !pChar.InRange( myTarget, 12 ))
 						{
@@ -985,17 +989,17 @@ function FollowTarget( socket, pChar, myTarget, allFollow )
 							return;
 						}
 
-						tempPet.Follow( myTarget );
+						tempFollower.Follow( myTarget );
 						if( pChar.socket != null )
 						{
-							if( tempPet.isHuman )
+							if( tempFollower.isHuman )
 							{
-								tempPet.TextMessage( GetRandomString( pChar.socket, accepted_messages ));
+								tempFollower.TextMessage( GetRandomString( pChar.socket, accepted_messages ));
 							}
 						}
 
-						// Start a timer to check if tempPet is too far away from owner
-						tempPet.StartTimer( 10000, 3, true );
+						// Start a timer to check if tempFollower is too far away from owner
+						tempFollower.StartTimer( 10000, 3, true );
 					}
 				}
 				return;
@@ -1120,6 +1124,20 @@ function AddFriend( socket, pChar, myTarget )
 			{
 				socket.SysMessage( GetDictionaryEntry( 2385, socket.language )); // Summoned creatures are loyal only to their summoners.
 				return;
+			}
+
+			if( GetServerSetting( "YoungPlayerSystem" ))
+			{
+				if( !pChar.npc && pChar.account.isYoung && !myTarget.account.isYoung )
+				{
+					socket.SysMessage( GetDictionaryEntry( 18727, socket.language )); // As a young player, you may not friend pets to older players.
+					return;
+				}
+				else if( !pChar.npc && !pChar.account.isYoung && myTarget.account.isYoung )
+				{
+					socket.SysMessage( GetDictionaryEntry( 18728, socket.language )); // As an older player, you may not friend pets to young players.
+					return;
+				}
 			}
 
 			if( hireling.AddFriend( myTarget ))
@@ -1248,13 +1266,26 @@ function AttackTarget( socket, pChar, myTarget, allAttack )
 				return;
 			}
 
+			if( hireling.owner == pChar && pChar.account.isYoung )
+			{
+				socket.SysMessage( GetDictionaryEntry( 18708, socket.language )); // As a Young player, you cannot harm other players, or their followers.
+				return;
+			}
+
+			var targOwner = myTarget.owner;
+			if(( !myTarget.npc && myTarget.account.isYoung ) || ( ValidateObject( targOwner ) && !targOwner.npc && targOwner.account.isYoung ))
+			{
+				socket.SysMessage( GetDictionaryEntry( 18709, socket.language )); // You cannot harm Young players, or their followers.
+				return;
+			}
+
 			if( allAttack )
 			{
-				var petList = pChar.GetPetList();
-				for( var i = 0; i < petList.length; i++ )
+				var followerList = pChar.GetFollowerList();
+				for( var i = 0; i < followerList.length; i++ )
 				{
-					var tempPet = petList[i];
-					if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 12 ))
+					var tempFollower = followerList[i];
+					if( ValidateObject( tempFollower ) && tempFollower.InRange( pChar, 12 ))
 					{
 						if( !pChar.InRange( myTarget, 12 ))
 						{
@@ -1270,11 +1301,11 @@ function AttackTarget( socket, pChar, myTarget, allAttack )
 							}
 						}
 
-						if( tempPet.InitiateCombat( myTarget ))
+						if( tempFollower.InitiateCombat( myTarget ))
 						{
 							if( WillResultInCriminal( pChar, myTarget ))
 							{
-								tempPet.criminal = true;
+								tempFollower.criminal = true;
 							}
 						}
 					}
@@ -1307,11 +1338,13 @@ function PatrolArea( socket, pChar, myTarget )
 		hireling.SetTag( "pathMode", "patrolling" );
 		var targX = socket.GetWord( 11 );
 		var targY = socket.GetWord( 13 );
-		var targZ = socket.GetSByte( 16 );
 		hireling.SetTag( "origPosX", hireling.x );
 		hireling.SetTag( "origPosY", hireling.y );
-		hireling.SetTag( "origPosZ", hireling.z );
-		hireling.WalkTo( targX, targY, targZ );
+
+		// Calculate distance hireling needs to cover, then double it for max pathfinding steps
+		var maxSteps = DistanceBetween( hireling.x, hireling.y, targX, targY ) * 2;
+
+		hireling.WalkTo( targX, targY, maxSteps );
 	}
 }
 
@@ -1326,7 +1359,6 @@ function onPathfindEnd( hireling, pathfindResult )
 			hireling.SetTag( "patrolStop", null );
 			hireling.SetTag( "origPosX", null );
 			hireling.SetTag( "origPosY", null );
-			hireling.SetTag( "origPosZ", null );
 			return;
 		}
 
@@ -1403,11 +1435,13 @@ function onPathfindEnd( hireling, pathfindResult )
 					// Continue patrolling
 					var targX = hireling.GetTag( "origPosX" );
 					var targY = hireling.GetTag( "origPosY" );
-					var targZ = hireling.GetTag( "origPosY" );
 					hireling.SetTag( "origPosX", hireling.x );
 					hireling.SetTag( "origPosY", hireling.y );
-					hireling.SetTag( "origPosZ", hireling.z );
-					hireling.WalkTo( targX, targY, targZ );
+
+					// Calculate distance hireling needs to cover, then double it for max pathfinding steps
+					var maxSteps = DistanceBetween( hireling.x, hireling.y, targX, targY ) * 2;
+
+					hireling.WalkTo( targX, targY, maxSteps );
 				}
 				else if( pathMode == "guarding" )
 				{
@@ -1485,6 +1519,20 @@ function TransferOwnership( socket, pChar, myTarget )
 				return;
 			}
 
+			if( GetServerSetting( "YoungPlayerSystem" ))
+			{
+				if( !pChar.npc && pChar.account.isYoung && !myTarget.account.isYoung )
+				{
+					socket.SysMessage( GetDictionaryEntry( 18725, socket.language )); // As a young player, you may not transfer pets to older players.
+					return;
+				}
+				else if( !pChar.npc && !pChar.account.isYoung && myTarget.account.isYoung )
+				{
+					socket.SysMessage( GetDictionaryEntry( 18726, socket.language )); // As an older player, you may not transfer pets to young players.
+					return;
+				}
+			}
+
 			if( pChar.criminal )
 			{
 				socket.SysMessage( GetDictionaryEntry( 2375, socket.language )); // The pet refuses to be transferred because it will not obey you sufficiently.
@@ -1507,12 +1555,24 @@ function TransferOwnership( socket, pChar, myTarget )
 				return;
 			}
 
-			if( maxControlSlots > 0 && ( myTarget.controlSlotsUsed + hireling.controlSlots > maxControlSlots ))
+			if( maxControlSlots > 0 )
 			{
-				pChar.socket.SysMessage( GetDictionaryEntry( 2391, pChar.socket.language )); // That would exceed the other player's maximum pet control slots.
+				if( myTarget.controlSlotsUsed + hireling.controlSlots > maxControlSlots )
+				{
+					pChar.socket.SysMessage( GetDictionaryEntry( 2391, pChar.socket.language )); // That would exceed the other player's maximum pet control slots.
+					if( myTarget.online && myTarget.socket != null )
+					{
+						myTarget.socket.SysMessage( GetDictionaryEntry( 2390, myTarget.socket.language )); // That would exceed your maximum pet control slots.
+					}
+					return false;
+				}
+			}
+			else if( maxFollowers > 0 && myTarget.followerCount >= maxFollowers )
+			{
+				pChar.socket.SysMessage( GetDictionaryEntry( 2779, pChar.socket.language )); // That would exceed the other player's maximum follower count.
 				if( myTarget.online && myTarget.socket != null )
 				{
-					myTarget.socket.SysMessage( GetDictionaryEntry( 2390, myTarget.socket.language )); // That would exceed your maximum pet control slots.
+					myTarget.socket.SysMessage( GetDictionaryEntry( 2780, pChar.socket.language ), maxFollowers ); // That would exceed your maximum follower count.
 				}
 				return false;
 			}

@@ -214,7 +214,7 @@ function TasteItem( pUser, itemToTaste, showInfo )
 				return;
 		}
 
-		pSock.SysMessage( "The potion tastes familiar to you." ); // The potion tastes familiar to you.
+		pSock.SysMessage( GetDictionaryEntry( 2784, pSock.language )); // The potion tastes familiar to you.
 		pSock.SysMessage( potionIngredients );
 		pSock.SysMessage( itemToTaste.name2 );
 	}
@@ -223,3 +223,5 @@ function TasteItem( pUser, itemToTaste, showInfo )
 		pSock.SysMessage( itemToTaste.name2 );
 	}
 }
+
+function _restorecontext_() {}

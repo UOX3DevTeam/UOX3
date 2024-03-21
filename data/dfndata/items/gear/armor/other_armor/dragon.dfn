@@ -2,9 +2,11 @@
 // Dragon Sleeves - E/W
 [0x2657]
 {
-getpub15=0x2657_pub15
+gett2a=0x2657_t2a
+getlbr=0x2657_lbr
 getaos=0x2657_aos
 gettol=0x2657_tol
+sectionid=0x2657
 }
 
 // Dragon Sleeves - N/S
@@ -24,9 +26,11 @@ get=0x2657 0x2658
 // Dragon Breastplate - E/W
 [0x2641]
 {
-getpub15=0x2641_pub15
+gett2a=0x2641_t2a
+getlbr=0x2641_lbr
 getaos=0x2641_aos
 gettol=0x2641_tol
+sectionid=0x2641
 }
 
 // Dragon Breastplate - N/S
@@ -46,9 +50,11 @@ get=0x2641 0x2642
 // Dragon Gloves - E/W
 [0x2643]
 {
-getpub15=0x2643_pub15
+gett2a=0x2643_t2a
+getlbr=0x2643_lbr
 getaos=0x2643_aos
 gettol=0x2643_tol
+sectionid=0x2643
 }
 
 // Dragon Gloves - N/S
@@ -68,9 +74,11 @@ get=0x2643 0x2644
 // Dragon Helm - N/S
 [0x2645]
 {
-getpub15=0x2645_pub15
+gett2a=0x2645_t2a
+getlbr=0x2645_lbr
 getaos=0x2645_aos
 gettol=0x2645_tol
+sectionid=0x2645
 }
 
 // Dragon Helm - E/W
@@ -90,9 +98,11 @@ get=0x2645 0x2646
 // Dragon Leggings - E/W
 [0x2647]
 {
-getpub15=0x2647_pub15
+gett2a=0x2647_t2a
+getlbr=0x2647_lbr
 getaos=0x2647_aos
 gettol=0x2647_tol
+sectionid=0x2647
 }
 
 // Dragon Leggings - N/S

@@ -1,7 +1,7 @@
 // Magical Items, Pre-AoS style
-// v1.0
+// v1.01
 // by Xuri
-// Last updated August 25thrd, 2021
+// Last updated March 17th, 2023
 
 // // Define the scriptID you've assigned to this script here:
 const magicItemScriptID = 3300;
@@ -13,9 +13,10 @@ const magicWeaponSpellScriptID = 3304;
 const outputMagicItemNamesToFile = false;
 
 // How should we apply the damage-bonuses from Ruin/Might/Force/Power/Vanquishing to weapons?
-// 0 = (Default) apply all bonus damage to weapon's max potential damage output
-// 1 = split the bonus damage between min (~50%) and max (~50%) potential damage output
-const dmgBonusType = 0;
+// 0 = (Default) Apply all bonus damage to weapon's .hidamage property only
+// 1 = Split the bonus damage between weapon's .lodamage (~50%) and .hidamage (~50%) properties
+// 2 = Apply the full bonus damage to weapon's .lodamage and .hidamage properties equally (Default)
+const dmgBonusType = GetServerSetting( "WeaponDamageBonusType" );
 
 // Let's define the various tiers of NPCs based on their amount of Fame
 // Note: Tier 5 is not defined, but any NPCs with fame above the defined value for tier 4 belongs to tier 5
@@ -558,7 +559,7 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 		// Loop through all the properties for our new magic item and copy them over to the placeholder item
 		for( var itemProp in rndWeapon )
 		{
-			if( itemProp != null && itemProp != "serial" && itemProp != "scripttrigger" && itemProp != "scriptTriggers" )
+			if( itemProp != null && itemProp != "serial" && itemProp != "scripttrigger" && itemProp != "scriptTriggers" && itemProp != "att" )
 			{
 				if( typeof( rndWeapon[itemProp] ) != "undefined" && rndWeapon[itemProp] != null )
 				{
@@ -754,14 +755,22 @@ function CalcDamageBonus( rndWeapon )
 	}
 
 	//Let's add that bonus-damage
-	if( dmgBonusType = 0 )
+	if( dmgBonusType == 0 )
 	{
+		// Apply full bonus to .hidamage
 		rndWeapon.hidamage += dmgBonus;
+	}
+	else if( dmgBonusType == 1 )
+	{
+		// Split bonus equally
+		rndWeapon.lodamage += ( dmgBonus / 2 );
+		rndWeapon.hidamage += ( dmgBonus / 2 );
 	}
 	else
 	{
-		rndWeapon.lodamage += ( dmgBonus / 2 );
-		rndWeapon.hidamage += ( dmgBonus / 2 );
+		// Apply full bonus to both
+		rndWeapon.lodamage += dmgBonus;
+		rndWeapon.hidamage += dmgBonus;
 	}
 
 	// Let's add the bonus-name

@@ -54,6 +54,11 @@ function CommandRegistration()
 	RegisterCommand( "killjstimer", 2, true ); // Kill timer with specified timer ID on targeted object
 	RegisterCommand( "addhouse", 2, true ); // Add a multi by its house ID in houses.dfn
 	RegisterCommand( "addmulti", 2, true ); // Add a multi by its raw multi ID
+	RegisterCommand( "useitem", 2, true ); // Use a target item as if it was double-clicked
+	RegisterCommand( "gettagmap", 2, true ); // Spit out a list of all custom tags on object
+	RegisterCommand( "gettemptagmap", 2, true ); // Spit out a list of all custom tags on object
+	RegisterCommand( "listpets", 2, true ); // Spit out a list of all pets owned by target
+	RegisterCommand( "listfollowers", 2, true ); // Spit out a list of all followers of target
 }
 
 function command_RENAME( pSock, execString )
@@ -879,7 +884,7 @@ function command_MOVESPEED( pSock, execString )
 			break;
 		}
 		default:
-			pSock.SysMessage( GetDictionaryEntry( 2927, pSock.language )); // Only values between 0x0 to 0x4 are supported!
+			pSock.SysMessage( GetDictionaryEntry( 8927, pSock.language )); // Only values between 0x0 to 0x4 are supported!
 			break; // Unsupported
 	}
 }
@@ -967,7 +972,7 @@ function onCallback27( pSock, myTarget )
 	var word1 = pUser.GetTempTag( "Word1" );
 	if( !pSock.GetWord( 1 ))
 	{
-		if( Word1 == "null" )
+		if( word1 == "null" )
 		{
 			myTarget.SetTempTag( word0, null );
 		}
@@ -1251,3 +1256,150 @@ function onCallback33( socket, ourObj )
 		}
 	}
 }
+
+function command_USEITEM( pSock, execString )
+{
+	pSock.CustomTarget( 34, GetDictionaryEntry( 97, pSock.language )); // Use which item?
+}
+
+function onCallback34( socket, ourObj )
+{
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	var mChar = socket.currentChar;
+	if( mChar )
+	{
+		if( ValidateObject( ourObj ) && ourObj.isItem )
+		{
+			UseItem( mChar, ourObj );
+		}
+	}
+}
+
+function command_GETTAGMAP( pSock, execString )
+{
+	pSock.CustomTarget( 35, GetDictionaryEntry( 92, pSock.language )); // Get persistent tag map for which object?
+}
+
+function onCallback35( pSock, ourObj )
+{
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	if( ValidateObject( ourObj ))
+	{
+		var tagMap = ourObj.GetTagMap();
+		pSock.SysMessage( GetDictionaryEntry( 93, pSock.language ), tagMap.length ); // Number of persistent tags: %i
+		for( var i = 0; i < tagMap.length; i++ )
+		{
+			var tagName = tagMap[i][0];
+			var tagType;
+			switch( tagMap[i][1] )
+			{
+				case 0:
+					tagType = "Int";
+					break;
+				case 1:
+					tagType = "String";
+					break;
+				case 2:
+					tagType = "Bool";
+					break;
+			}
+			var tagValue = tagMap[i][2].toString();
+			pSock.SysMessage( GetDictionaryEntry( 96, pSock.language), tagName, tagType, tagValue ); // Tag: %s | Type: %i | Value: %u
+		}
+	}
+}
+
+function command_GETTEMPTAGMAP( pSock, execString )
+{
+	pSock.CustomTarget( 36, GetDictionaryEntry( 94, pSock.language )); // Get temporary tag map for which object?
+}
+
+function onCallback36( pSock, ourObj )
+{
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	if( ValidateObject( ourObj ))
+	{
+		var tagMap = ourObj.GetTempTagMap();
+		pSock.SysMessage( GetDictionaryEntry( 95, pSock.language ), tagMap.length ); // Number of temporary tags: %i
+		for( var i = 0; i < tagMap.length; i++ )
+		{
+			var tagName = tagMap[i][0];
+			var tagType;
+			switch( tagMap[i][1] )
+			{
+				case 0:
+					tagType = "Int";
+					break;
+				case 1:
+					tagType = "String";
+					break;
+				case 2:
+					tagType = "Bool";
+					break;
+			}
+			var tagValue = tagMap[i][2].toString();
+			pSock.SysMessage( GetDictionaryEntry( 96, pSock.language), tagName, tagType, tagValue ); // Tag: %s | Type: %i | Value: %u
+		}
+	}
+}
+
+function command_LISTPETS( pSock, execString )
+{
+	pSock.CustomTarget( 37, GetDictionaryEntry( 2775, pSock.language )); // Get list of pets for which character?
+}
+
+function onCallback37( pSock, ourObj )
+{
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	if( ValidateObject( ourObj ))
+	{
+		var petList = ourObj.GetPetList();
+		pSock.SysMessage( GetDictionaryEntry( 2773, pSock.language ), petList.length ); // Number of pets: %i
+		for( var i = 0; i < petList.length; i++ )
+		{
+			if( ValidateObject( petList[i] ))
+			{
+				pSock.SysMessage( GetDictionaryEntry( 2778, pSock.language ), petList[i].name, petList[i].id, petList[i].serial, petList[i].x, petList[i].y, petList[i].z, petList[i].worldnumber, petList[i].instanceID ); // Name: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+			}
+		}
+	}
+}
+
+function command_LISTFOLLOWERS( pSock, execString )
+{
+	pSock.CustomTarget( 38, GetDictionaryEntry( 2776, pSock.language )); // Get list of followers for which character?
+}
+
+function onCallback38( pSock, ourObj )
+{
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	if( ValidateObject( ourObj ))
+	{
+		var followerList = ourObj.GetFollowerList();
+		pSock.SysMessage( GetDictionaryEntry( 2774, pSock.language ), followerList.length ); // Number of followers: %i
+		for( var i = 0; i < followerList.length; i++ )
+		{
+			if( ValidateObject( followerList[i] ))
+			{
+				pSock.SysMessage( GetDictionaryEntry( 2778, pSock.language ), followerList[i].name, followerList[i].id, followerList[i].serial, followerList[i].x, followerList[i].y, followerList[i].z, followerList[i].worldnumber, followerList[i].instanceID ); // Name: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+			}
+		}
+	}
+}
+
+function _restorecontext_() {}

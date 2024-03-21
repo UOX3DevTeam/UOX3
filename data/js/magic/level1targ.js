@@ -67,7 +67,7 @@ function ItemInHandCheck( mChar, mSock, spellType )
 		{
 			var itemRHand = mChar.FindItemLayer( 0x01 );
 			var itemLHand = mChar.FindItemLayer( 0x02 );
-			if( itemLHand || ( itemRHand && itemRHand.type != 9 ))	// Spellbook
+			if(( itemLHand && itemLHand.type != 119 ) || ( itemRHand && ( itemRHand.type != 9 || itemRHand.type != 119 )))	// Spellbook
 			{
 				if( mSock )
 				{
@@ -262,67 +262,6 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	return true;
 }
 
-function CheckReagents( mChar, mSpell )
-{
-	var failedCheck = 0;
-	if( mChar.noNeedReags == false )
-	{
-		if( mSpell.ash > 0 && mChar.ResourceCount( 0x0F8C ) < mSpell.ash )
-		{
-			failedCheck = 1;
-		}
-		if( mSpell.drake > 0 && mChar.ResourceCount( 0x0F86 ) < mSpell.drake )
-		{
-			failedCheck = 1;
-		}
-		if( mSpell.garlic > 0 && mChar.ResourceCount( 0x0F84 ) < mSpell.garlic )
-		{
-			failedCheck = 1;
-		}
-		if( mSpell.ginseng > 0 && mChar.ResourceCount( 0x0F85 ) < mSpell.ginseng )
-		{
-			failedCheck = 1;
-		}
-		if( mSpell.moss > 0 && mChar.ResourceCount( 0x0F7B ) < mSpell.moss )
-		{
-			failedCheck = 1;
-		}
-		if( mSpell.pearl > 0 && mChar.ResourceCount( 0x0F7A ) < mSpell.pearl )
-		{
-			failedCheck = 1;
-		}
-		if( mSpell.shade > 0 && mChar.ResourceCount( 0x0F88 ) < mSpell.shade )
-		{
-			failedCheck = 1;
-		}
-		if( mSpell.silk > 0 && mChar.ResourceCount( 0x0F8D ) < mSpell.silk )
-		{
-			failedCheck = 1;
-		}
-		if( failedCheck == 1 )
-		{
-			if( mChar.socket != null )
-			{
-				mChar.socket.SysMessage( GetDictionaryEntry( 702, mChar.socket.language )); // You do not have enough reagents to cast that spell.
-			}
-			return false;
-		}
-	}
-	return true;
-}
-
-function DeleteReagents( mChar, mSpell )
-{
-	mChar.UseResource( mSpell.pearl, 0x0F7A );
-	mChar.UseResource( mSpell.moss, 0x0F7B );
-	mChar.UseResource( mSpell.garlic, 0x0F84 );
-	mChar.UseResource( mSpell.ginseng, 0x0F85 );
-	mChar.UseResource( mSpell.drake, 0x0F86 );
-	mChar.UseResource( mSpell.shade, 0x0F88 );
-	mChar.UseResource( mSpell.ash, 0x0F8C );
-	mChar.UseResource( mSpell.silk, 0x0F8D );
-}
-
 function onTimer( mChar, timerID )
 {
 	mChar.isCasting = false;
@@ -364,22 +303,30 @@ function onTimer( mChar, timerID )
 function onCallback0( mSock, ourTarg )
 {
 	var mChar = mSock.currentChar;
-	if( ourTarg && ourTarg.isChar )
+	if( !ValidateObject( mChar ))
+		return;
+
+	if( ValidateObject( ourTarg ) && ourTarg.isChar )
 	{
-		if( mChar )
+		if( ourTarg != mChar && mChar.spellCast != -1 )
 		{
-			onSpellSuccess( mSock, mChar, ourTarg, 0 );
+			if( DoesEventExist( 2507, "onSpellTarget" ))
+			{
+				if( TriggerEvent( 2507, "onSpellTarget", ourTarg, mChar, mChar.spellCast ) != false )
+				{
+					return;
+				}
+			}
 		}
+
+		onSpellSuccess( mSock, mChar, ourTarg, 0 );
 	}
 	else
 	{
-		if( mChar )
-		{
-			mChar.SetTimer( Timer.SPELLTIME, 0 );
-			mChar.isCasting = false;
-			mChar.spellCast = -1;
-			mChar.frozen = false;
-		}
+		mChar.SetTimer( Timer.SPELLTIME, 0 );
+		mChar.isCasting = false;
+		mChar.spellCast = -1;
+		mChar.frozen = false;
 	}
 }
 
@@ -419,7 +366,7 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 	{
 		//Check for enough reagents
 		// type == 0 -> SpellBook
-		if( spellType == 0 && !CheckReagents( mChar, mSpell ))
+		if( spellType == 0 && !TriggerEvent( 6004, "CheckReagents", mChar, mSpell))
 		{
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
@@ -446,7 +393,7 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 	{
 		if( spellType == 0 )
 		{
-			DeleteReagents( mChar, mSpell );
+			TriggerEvent( 6004, "DeleteReagents", mChar, mSpell );
 			mChar.SpellFail();
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
@@ -463,7 +410,7 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 	}
 	if( !mChar.npc && spellType == 0 )
 	{
-		DeleteReagents( mChar, mSpell );
+		TriggerEvent( 6004, "DeleteReagents", mChar, mSpell );
 	}
 
 	if( !mChar.InRange( ourTarg, 10 ) )
@@ -644,7 +591,7 @@ function DispatchSpell( spellNum, mSpell, sourceChar, ourTarg, caster )
 	if( spellNum == 3 )	// Feeblemind
 	{
 		// Target Resist Check
-		var spellResisted = CheckTargetResist( caster, ourTarg, mSpell.circle );
+		var spellResisted = TriggerEvent( 6000, "CheckResist", caster, ourTarg, mSpell.circle );
 
 		//caster.TextMessage( "Casting feeblemind" );
 		DoTempEffect( 0, sourceChar, ourTarg, 4, Math.round( mMagery / 100 ), 0, 0 );
@@ -687,3 +634,5 @@ function DispatchSpell( spellNum, mSpell, sourceChar, ourTarg, caster )
 		MagicDamage( ourTarg, baseDamage, caster, caster.socket, 5 );
 	}
 }
+
+function _restorecontext_() {}
