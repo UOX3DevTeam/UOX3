@@ -2,7 +2,7 @@
 function onTooltip(iUsed, pSocket)
 {
 	var tooltipText = "";
-	var myCharges = iUsed.GetTag("charges").split(",");
+	var myCharges = iUsed.GetTag("charges").split("|");
 	var charges = parseInt(myCharges[0]);
 	var reCharges = parseInt(myCharges[1]);
 	var maxCharges = parseInt(myCharges[2]);

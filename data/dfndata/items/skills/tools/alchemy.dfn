@@ -787,5 +787,6 @@ movable=1
 pileable=1
 decay=1
 value=10637 5318
+origin=lbr
 script=5054
 }
