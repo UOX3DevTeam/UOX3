@@ -397,7 +397,7 @@ void CPIFirstLogin::Receive( void )
 	char temp[30];
 	// Grab our username
 	memcpy( temp, &tSock->Buffer()[1], 30 );
-	userId = temp;
+	userId = oldstrutil::trim( temp );
 
 	// Grab our password
 	memcpy( temp, &tSock->Buffer()[31], 30 );
@@ -547,7 +547,7 @@ void CPISecondLogin::Receive( void )
 
 	// Grab our username
 	memcpy( temp, &tSock->Buffer()[5], 30 );
-	sid = temp;
+	sid = oldstrutil::trim( temp );
 
 	// Grab our password
 	memcpy( temp, &tSock->Buffer()[35], 30 );
