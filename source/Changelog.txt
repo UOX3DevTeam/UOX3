@@ -1,3 +1,6 @@
+22/03/2024 - Dragon Slayer/Xuri
+	Leading/trailing whitespace is now trimmed from account names during login.
+
 21/03/2024 - Dragon Slayer/Xuri
 	Fixed an issue with onHunger and onThirst event crashing if the npc was not loaded yet.
 
