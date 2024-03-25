@@ -14,7 +14,7 @@ function onUseChecked( pUser, iBowl )
 	var socket = pUser.socket;
 	if( socket && iBowl && iBowl.isItem )
 	{
-		var bowlOwner = GetPackOwner(iBowl, 0);
+		var bowlOwner = GetPackOwner( iBowl, 0 );
 		if( bowlOwner == null || bowlOwner != pUser )
 		{
 			socket.SysMessage( GetDictionaryEntry(19132, socket.language )); //You must have the object in your backpack to use it.
