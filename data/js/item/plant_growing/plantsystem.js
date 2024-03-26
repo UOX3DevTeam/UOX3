@@ -74,15 +74,15 @@ function PlantBowlGump( pUser, iUsed )
 		return false;
 	}
 
-	var greaterPoison = potionLength[0];
-	var greaterCure = potionLength[1];
-	var greaterHeal = potionLength[2];
-	var greaterStrength = potionLength[3];
+	var greaterPoison = parseInt( potionLength[0] );
+	var greaterCure = parseInt( potionLength[1] );
+	var greaterHeal = parseInt( potionLength[2] );
+	var greaterStrength = parseInt( potionLength[3] );
 
-	var infestationLevel = infectionLevels[0];
-	var fungusLevel = infectionLevels[1];
-	var poisonLevel = infectionLevels[2];
-	var diseaseLevel = infectionLevels[3];
+	var infestationLevel = parseInt( infectionLevels[0] );
+	var fungusLevel = parseInt( infectionLevels[1] );
+	var poisonLevel = parseInt( infectionLevels[2] );
+	var diseaseLevel = parseInt( infectionLevels[3] );
 
 	DrawBackground( PlantGump );
 	DrawPlant( PlantGump, iUsed );
@@ -348,15 +348,15 @@ function GrowthCheck( myPlant )
 		return;
 	}
 
-	var greaterPoison = potionLength[0];
-	var greaterCure = potionLength[1];
-	var greaterHeal = potionLength[2];
-	var greaterStrength = potionLength[3];
+	var greaterPoison = parseInt( potionLength[0] );
+	var greaterCure = parseInt( potionLength[1] );
+	var greaterHeal = parseInt( potionLength[2] );
+	var greaterStrength = parseInt( potionLength[3] );
 
-	var infestationLevel = infectionLevels[0];
-	var fungusLevel = infectionLevels[1];
-	var poisonLevel = infectionLevels[2];
-	var diseaseLevel = infectionLevels[3];
+	var infestationLevel = parseInt( infectionLevels[0] );
+	var fungusLevel = parseInt( infectionLevels[1] );
+	var poisonLevel = parseInt( infectionLevels[2] );
+	var diseaseLevel = parseInt( infectionLevels[3] );
 
 	var plantType = infoLength[0];
 	var plantColor = infoLength[2];
@@ -430,15 +430,15 @@ function ApplyPotions( myPlant )
 		return false;
 	}
 
-	var greaterPoison = potionLength[0];
-	var greaterCure = potionLength[1];
-	var greaterHeal = potionLength[2];
-	var greaterStrength = potionLength[3];
+	var greaterPoison = parseInt( potionLength[0] );
+	var greaterCure = parseInt( potionLength[1] );
+	var greaterHeal = parseInt( potionLength[2] );
+	var greaterStrength = parseInt( potionLength[3] );
 
-	var infestationLevel = infectionLevels[0];
-	var fungusLevel = infectionLevels[1];
-	var poisonLevel = infectionLevels[2];
-	var diseaseLevel = infectionLevels[3];
+	var infestationLevel = parseInt( infectionLevels[0] );
+	var fungusLevel = parseInt( infectionLevels[1] );
+	var poisonLevel = parseInt( infectionLevels[2] );
+	var diseaseLevel = parseInt( infectionLevels[3] );
 
 	var infestation = 0;
 	if( greaterPoison >= infestationLevel )
@@ -520,13 +520,15 @@ function onTimer( myPlant, timerID )
 		return false;
 	}
 
-	var Pollinated = Crossed[0];
-	var SeedBreed = Crossed[1];
-	var crossAble = Crossed[2];
-	var availableSeeds = Seedlength[0];
-	var remainingSeeds = Seedlength[1];
-	var hueSeeds = Seedlength[2];
-	var fertialeDirt = infoLength[3];
+	var Pollinated = parseInt( Crossed[0] );
+	var SeedBreed = parseInt( Crossed[1] );
+	var crossAble = parseInt( Crossed[2] );
+
+	var availableSeeds = parseInt( Seedlength[0] );
+	var remainingSeeds = parseInt( Seedlength[1] );
+	var hueSeeds = parseInt( Seedlength[2] );
+
+	var fertialeDirt = parseInt( infoLength[3] );
 
 	if( timerID == 1 )
 	{
@@ -1431,9 +1433,9 @@ function onCallback1( pSock, myTarget )
 			return false;
 		}
 
-		var Pollinated = Crossed[0];
-		var SeedBreed = Crossed[1];
-		var crossAble = Crossed[2];
+		var Pollinated = parseInt( Crossed[0] );
+		var SeedBreed = parseInt( Crossed[1] );
+		var crossAble = parseInt( Crossed[2] );
 
 		if( tstatus < 7 )
 		{
@@ -1762,11 +1764,11 @@ function SeedColorsSet(myTarget, iUsed)
 		return false;
 	}
 
-	var iplantColor = infoLength[2];
-	var tplantColor = tinfoLength[2];
+	var iplantColor = parseInt( infoLength[2] );
+	var tplantColor = parseInt( tinfoLength[2] );
 
-	var availableSeeds = Seedlength[0];
-	var remainingSeeds = Seedlength[1];
+	var availableSeeds = parseInt( Seedlength[0] );
+	var remainingSeeds = parseInt( Seedlength[1] );
 
 	// Define color combination object
 	var colorMap = {
@@ -1868,13 +1870,13 @@ function GatherSeeds(pUser, iUsed)
 		return false;
 	}
 
-	var availableSeeds = Seedlength[0];
-	var remainingSeeds = Seedlength[1];
-	var hueSeeds = Seedlength[2];
+	var availableSeeds = parseInt( Seedlength[0] );
+	var remainingSeeds = parseInt( Seedlength[1] );
+	var hueSeeds = parseInt( Seedlength[2] );
 
-	var Pollinated = parseInt(Crossed[0]);
-	var SeedBreed = parseInt(Crossed[1]);
-	var crossAble = parseInt(Crossed[2]);
+	var Pollinated = parseInt( Crossed[0] );
+	var SeedBreed = parseInt( Crossed[1] );
+	var crossAble = parseInt( Crossed[2] );
 
 	if( availableSeeds == 0 )
 	{
@@ -2143,10 +2145,10 @@ function onCallback0( pSock, myTarget )
 		return false;
 	}
 
-	var greaterPoison = potionLength[0];
-	var greaterCure = potionLength[1];
-	var greaterHeal = potionLength[2];
-	var greaterStrength = potionLength[3];
+	var greaterPoison = parseInt( potionLength[0] );
+	var greaterCure = parseInt( potionLength[1] );
+	var greaterHeal = parseInt( potionLength[2] );
+	var greaterStrength = parseInt( potionLength[3] );
 
 	// Check if the item is in the user's backpack
 	var itemOwner = GetPackOwner( myTarget, 0 );
@@ -2282,9 +2284,8 @@ function AddResourcesState(ReproductionGump, iUsed, x, y)
 		return false;
 	}
 
-	var availableSeeds = Seedlength[0];
-	var remainingSeeds = Seedlength[1];
-	var hueSeeds = Seedlength[2];
+	var availableSeeds = parseInt( Seedlength[0] );
+	var remainingSeeds = parseInt( Seedlength[1] );
 
 	if( availableSeeds == 0 && remainingSeeds == 0 )
 	{
@@ -2312,9 +2313,9 @@ function AddSeedsState( ReproductionGump, iUsed, x, y )
 		return false;
 	}
 
-	var availableSeeds = Seedlength[0];
-	var remainingSeeds = Seedlength[1];
-	var hueSeeds = Seedlength[2];
+	var availableSeeds = parseInt( Seedlength[0] );
+	var remainingSeeds = parseInt( Seedlength[1] );
+	var hueSeeds = parseInt( Seedlength[2] );
 
 	if( availableSeeds == 0 && remainingSeeds == 0 )
 	{
@@ -2343,7 +2344,7 @@ function AddPollinationState(ReproductionGump, iUsed, x, y)
 		return false;
 	}
 
-	var Pollinated = Crossed[0];
+	var Pollinated = parseInt( Crossed[0] );
 
 	if( status < 7 )
 	{
@@ -2404,10 +2405,10 @@ function onTooltip( myPlant )
 		return false;
 	}
 
-	var plantType = infoLength[0];
-	var PlantName = infoLength[1];
-	var plantColor = infoLength[2];
-	var fertialeDirt = infoLength[3];
+	var plantType = parseInt( infoLength[0] );
+	var PlantName = parseInt( infoLength[1] );
+	var plantColor = parseInt( infoLength[2] );
+	var fertialeDirt = parseInt( infoLength[3] );
 
 	var colorname = "";
 	switch( plantColor )

@@ -42,10 +42,10 @@ function onCallback0( pSock, myTarget )
 			return false;
 		}
 
-		var plantType = infoLength[0];
-		var PlantName = infoLength[1];
-		var plantColor = infoLength[2];
-		var fertialeDirt = infoLength[3];
+		var plantType = parseInt( infoLength[0] );
+		var PlantName = parseInt( infoLength[1] );
+		var plantColor = parseInt( infoLength[2] );
+		var fertialeDirt = parseInt( infoLength[3] );
 		var itemOwner = GetPackOwner( myTarget, 0 );
 
 		if( itemOwner == null || itemOwner != pUser )
