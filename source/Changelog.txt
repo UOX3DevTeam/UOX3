@@ -1,3 +1,9 @@
+22/03/2024 - Dragon Slayer/Xuri
+	Leading/trailing whitespace is now trimmed from account names during login.
+
+21/03/2024 - Dragon Slayer/Xuri
+	Fixed an issue with onHunger and onThirst event crashing if the npc was not loaded yet.
+
 18/02/2024 - Dragon Slayer/Xuri
 	Updated set and get commands (set.js, get.js) with additional ways to set/get resistance types on objects using the syntax 'set/set [type] #. Available resistance types:
 		resistarmor, resistlight, resistwater, resistcold, resistfire, resistenergy, resistpoison
