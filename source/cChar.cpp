@@ -474,17 +474,20 @@ SI08 CChar::GetHunger( void ) const
 }
 bool CChar::SetHunger( SI08 newValue )
 {
-	std::vector<UI16> scriptTriggers = GetScriptTriggers();
-	for( auto i : scriptTriggers )
+	if( IsValidNPC() )
 	{
-		cScript *toExecute = JSMapping->GetScript( i );
-		if( toExecute != nullptr )
+		std::vector<UI16> scriptTriggers = GetScriptTriggers();
+		for( auto i : scriptTriggers )
 		{
-			// If script returns false/0/nothing, prevent hunger from changing, and prevent
-			// other scripts with event from running
-			if( toExecute->OnHungerChange(( this ), hunger ) == 0 )
+			cScript *toExecute = JSMapping->GetScript( i );
+			if( toExecute != nullptr )
 			{
-				return false;
+				// If script returns false/0/nothing, prevent hunger from changing, and prevent
+				// other scripts with event from running
+				if( toExecute->OnHungerChange(( this ), hunger ) == 0 )
+				{
+					return false;
+				}
 			}
 		}
 	}
@@ -649,17 +652,20 @@ SI08 CChar::GetThirst( void ) const
 
 bool CChar::SetThirst( SI08 newValue )
 {
-	std::vector<UI16> scriptTriggers = GetScriptTriggers();
-	for( auto i : scriptTriggers )
+	if( IsValidNPC() )
 	{
-		cScript* toExecute = JSMapping->GetScript( i );
-		if( toExecute != nullptr )
+		std::vector<UI16> scriptTriggers = GetScriptTriggers();
+		for( auto i : scriptTriggers )
 		{
-			// If script returns false/0/nothing, prevent thirst from changing, and prevent
-			// other scripts with event from running
-			if( toExecute->OnThirstChange(( this ), thirst ) == 0 )
+			cScript* toExecute = JSMapping->GetScript( i );
+			if( toExecute != nullptr )
 			{
-				return false;
+				// If script returns false/0/nothing, prevent thirst from changing, and prevent
+				// other scripts with event from running
+				if( toExecute->OnThirstChange(( this ), thirst ) == 0 )
+				{
+					return false;
+				}
 			}
 		}
 	}
