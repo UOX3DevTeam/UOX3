@@ -3317,6 +3317,7 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				break;
 			}
 			case CSOCKP_CURRENTCHAR:
+			{
 				myChar = gPriv->CurrcharObj();
 				if( !ValidateObject( myChar ))
 				{
@@ -3327,7 +3328,8 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 					JSObject *myObj		= JSEngine->AcquireObject( IUE_CHAR, myChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 					*vp = OBJECT_TO_JSVAL( myObj );
 				}
-
+				break;
+			}
 			case CSOCKP_IDLETIMEOUT:
 				break;
 			case CSOCKP_WASIDLEWARNED:		*vp = BOOLEAN_TO_JSVAL( gPriv->WasIdleWarned() );		break;

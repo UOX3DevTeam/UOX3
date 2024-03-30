@@ -1,3 +1,6 @@
+30/03/2024 - Dragon Slayer/Xuri
+	Fixed a bug where crafted items were not selling properly. Now, players can 	successfully sell their crafted gear at vendors.
+
 22/03/2024 - Dragon Slayer/Xuri
 	Leading/trailing whitespace is now trimmed from account names during login.
 
