@@ -1,5 +1,14 @@
 30/03/2024 - Dragon Slayer/Xuri
 	Fixed a bug where crafted items were not selling properly. Now, players can 	successfully sell their crafted gear at vendors.
+	Added origin information (dfn)
+	Included the missing scriptID for glassblowing (jse_association.scp)
+	Fixed the Charges_Left_tooltip tag issue (charges_left_tooltip.js)
+
+	Animal Lore Skill (animallore.js)
+	Fixed skills display on gump when systems are enabled or disabled
+	Corrected names to be in CamelCase
+	Ensured proper display of Foodlist on NPCs
+	Adjusted starting skill check to 1000 (from 1100)
 
 22/03/2024 - Dragon Slayer/Xuri
 	Leading/trailing whitespace is now trimmed from account names during login.
