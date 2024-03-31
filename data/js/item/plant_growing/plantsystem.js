@@ -11,14 +11,16 @@ function onUseChecked( pUser, iUsed )
 	socket.CloseGump( gumpID, 0 );
 
 	var itemPack = GetPackOwner( iUsed, 0 );
-	if(( !itemPack || itemPack != pUser ) && iUsed.movable != 3 )
+	var iMulti = pUser.multi;
+	if (ValidateObject(iMulti) && (iMulti.IsOnOwnerList(pUser)
+		|| (GetServerSetting("COOWNHOUSESONSAMEACCOUNT") && iMulti.owner.accountNum == pUser.accountNum)) || ( itemPack || itemPack == pUser ) && !iUsed.movable != 3 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 19110, socket.language ));// You must have the item in your backpack or locked down in order to use it.
-		return false;
+		PlantBowlGump(pUser, iUsed);
 	}
 	else
 	{
-		PlantBowlGump( pUser, iUsed );
+		socket.SysMessage(GetDictionaryEntry(19110, socket.language));// You must have the item in your backpack or locked down in order to use it.
+		return false;
 	}
 }
 
@@ -2069,8 +2071,8 @@ function addWater(pUser, iUsed)
 {
 	var socket = pUser.socket;
 	var waterLevel = iUsed.GetTag( "water" );
-	var pitcherofwater1 = pUser.FindItemSection( "0x1f9e" );
-	var pitcherofwater2 = pUser.FindItemSection( "0x1f9d" );
+	var pitcherofwater1 = pUser.FindItemSection( "0X1F9E" );
+	var pitcherofwater2 = pUser.FindItemSection( "0X1F9D" );
 
 	// Check if water level is max
 	if( waterLevel >= 4 )
@@ -2130,7 +2132,7 @@ function onCallback0( pSock, myTarget )
 	var maxPotionCount = 4; // Change this value to the desired maximum potion count
 
 	// Check if the target is an item
-	if( !myTarget.isItem ) 
+	if( !myTarget.isItem )
 		return false;
 
 	var potionInfo = iUsed.GetTag( "Potions" );
@@ -2159,10 +2161,10 @@ function onCallback0( pSock, myTarget )
 	}
 
 	var potionTypeIDs = {
-		7: ["greaterpoisonpotion", "0x0F09-b"],
-		8: ["greatercurepotion", "0x0F07-c"],
-		9: ["greaterhealpotion", "0x0F0C-c"],
-		10: ["greaterstrengthpotion", "0x0F09-b"]
+		7: ["greaterpoisonpotion", "0X0F09-B"],
+		8: ["greatercurepotion", "0X0F07-C"],
+		9: ["greaterhealpotion", "0X0F0C-C"],
+		10: ["greaterstrengthpotion", "0X0F09-B"]
 	};
 
 	var potionType = potionTypeIDs[buttonPushed];
@@ -2170,10 +2172,11 @@ function onCallback0( pSock, myTarget )
 	if( !potionType ) 
 	{
 		pSock.SysMessage( GetDictionaryEntry( 19129, pSock.language ));//You don't have any strong potions of that type in your pack.
+		pSock.SysMessage("Borken 1");
 		return false;
 	}
 
-	if( myTarget.sectionID !== potionType[0] && myTarget.sectionID !== potionType[1] )
+	if( myTarget.sectionID != potionType[0] && myTarget.sectionID != potionType[1] )
 	{
 		pSock.SysMessage( GetDictionaryEntry( 19129, pSock.language ));//You don't have any strong potions of that type in your pack.
 		return false;
@@ -2406,7 +2409,7 @@ function onTooltip( myPlant )
 	}
 
 	var plantType = parseInt( infoLength[0] );
-	var PlantName = parseInt( infoLength[1] );
+	var PlantName = infoLength[1];
 	var plantColor = parseInt( infoLength[2] );
 	var fertialeDirt = parseInt( infoLength[3] );
 

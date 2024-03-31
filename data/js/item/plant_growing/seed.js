@@ -11,7 +11,7 @@ function onUseChecked( pUser, iUsed )
 		else 
 		{
 			pUser.socket.tempObj = iUsed;
-			pUser.CustomTarget( 0, GetDictionaryEntry( 19137, pSock.language ));//Choose a bowl of dirt to plant this seed in.
+			pUser.CustomTarget( 0, GetDictionaryEntry(19137, socket.language ));//Choose a bowl of dirt to plant this seed in.
 			return false;
 		}
 	}
@@ -141,7 +141,7 @@ function onCallback0( pSock, myTarget )
 
 					myTarget.StartTimer( PlantDelayTimer, 1, 19100 );
 					myTarget.SetTag( "PlantStage", 1 );//Seed
-					objMade.SetTag( "Seed", 0 + "," + 8 + "," + iUsed.colour );//Min/max/color
+					myTarget.SetTag( "Seed", 0 + "," + 8 + "," + iUsed.colour );//Min/max/color
 					pSock.SysMessage( GetDictionaryEntry( 19141, pSock.language ));//You plant the seed in the bowl of dirt.
 
 					if( iUsed.amount > 1 )
