@@ -12,8 +12,6 @@
 	Added Item refresh So stats update correctly on use. (js ballofpetsummoning)
 	Fixed teleport_helper.js had wrong inrange object. (js teleport_helper)
 
-Fixed teleport_helper.js had wrong inrange object.
-
 30/03/2024 - Dragon Slayer/Xuri
 	Fixed a bug where crafted items were not selling properly. Now, players can 	successfully sell their crafted gear at vendors.
 
