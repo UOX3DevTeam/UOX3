@@ -3,13 +3,10 @@
 		The Runebook now uses GetCurrentClock() instead of a timer, ensuring accurate 	checks for a 7-second delay using the system clock of the server.
 	Teleport Helper Name Correction:
 		The incorrect name in jse_fileassociations for the Teleport Helper has been fixed.
-	Bola Cooldown Update:
-		You’ve modified the Bola functionality to use GetCurrentClock() instead of a timer for handling delays. This change ensures accurate timing behavior.
-		Additionally, you’ve added checks for flying and grounded states related to the Bola.
-	Dictionary Messages:
-		Introduced two new dictionary messages for flying and grounded states. These messages will be available in all supported languages.
-	Bola Definition Tag:
-		The Bola now has a definition tag (dfn) in the relevant files. This allows you to add the Bola item in the game using the command 'add item bola'.
+	Updated Bola to use GetCurrentClock() instead of a timer for delay.
+	Added checks for flying and grounded states related to the Bola.
+	Introduced two new dictionary messages for flying and grounded states in all supported languages.
+	Added a Bola definition tag (dfn) to relevant files for in-game use with the command 'add item bola'
 
 30/03/2024 - Dragon Slayer/Xuri
 	Fixed a bug where crafted items were not selling properly. Now, players can 	successfully sell their crafted gear at vendors.
