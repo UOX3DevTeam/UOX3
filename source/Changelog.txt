@@ -1,12 +1,18 @@
 4/06/2024 - Dragon Slayer
 	Fixed Runebook Cooldown:
-		The Runebook now uses GetCurrentClock() instead of a timer, ensuring accurate 	checks for a 7-second delay using the system clock of the server.
+		The Runebook now uses GetCurrentClock() instead of a timer, ensuring accurate 	checks for a 7-second delay using the system clock of the server. (js runebook)
 	Teleport Helper Name Correction:
-		The incorrect name in jse_fileassociations for the Teleport Helper has been fixed.
-	Updated Bola to use GetCurrentClock() instead of a timer for delay.
-	Added checks for flying and grounded states related to the Bola.
-	Introduced two new dictionary messages for flying and grounded states in all supported languages.
-	Added a Bola definition tag (dfn) to relevant files for in-game use with the command 'add item bola'
+		The incorrect name in jse_fileassociations for the Teleport Helper has been fixed. (scp jse_fileassociations)
+	Updated Bola to use GetCurrentClock() instead of a timer for delay. (js bola.js)
+	Added checks for flying and grounded states related to the Bola. (js bola.js)
+	Introduced two new dictionary messages for flying and grounded states in all supported languages. (dictionary)
+	Added a Bola definition tag (dfn) to relevant files for in-game use with the command 'add item bola' (dfn)
+	Updated Ball of pet Summoning to use GetCurrentClock() instead of a timer for delay. (js ballofpetsummoning)
+	Fixed miss spelled socket onspeechinput function in ball of pet summoning. (js ballofpetsummoning)
+	Added Item refresh So stats update correctly on use. (js ballofpetsummoning)
+	Fixed teleport_helper.js had wrong inrange object. (js teleport_helper)
+
+Fixed teleport_helper.js had wrong inrange object.
 
 30/03/2024 - Dragon Slayer/Xuri
 	Fixed a bug where crafted items were not selling properly. Now, players can 	successfully sell their crafted gear at vendors.
