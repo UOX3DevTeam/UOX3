@@ -1,3 +1,9 @@
+4/06/2024 - Dragon Slayer
+	Fixed Runebook Cooldown:
+		The Runebook now uses GetCurrentClock() instead of a timer, ensuring accurate 	checks for a 7-second delay using the system clock of the server.
+	Teleport Helper Name Correction:
+		The incorrect name in jse_fileassociations for the Teleport Helper has been fixed.
+
 30/03/2024 - Dragon Slayer/Xuri
 	Fixed a bug where crafted items were not selling properly. Now, players can 	successfully sell their crafted gear at vendors.
 
