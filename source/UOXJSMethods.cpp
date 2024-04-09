@@ -2435,7 +2435,7 @@ static bool CChar_Follow( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( argv[0] == JSVAL_NULL )
+	if( args.get(0).isNullOrUndefined() )
 	{
 		// Clear follow target if null was provided instead of a character object to follow
 		myChar->SetFTarg( nullptr );
@@ -2484,7 +2484,7 @@ static bool CChar_DoAction( JSContext* cx, unsigned argc, JS::Value* vp )
 	bool playBackwards = false;
 	if( argc > 1 )
 	{
-		if( argv[1] != JSVAL_NULL )
+		if( !args.get(1).isNullOrUndefined() )
 		{
 			targSubAction = static_cast<SI16>( args.get( 1 ).toInt32());
 		}
@@ -2666,7 +2666,7 @@ static bool CMisc_SysMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	UI08 argCounter = 0;
 	if( argc > 1 && args.get( 0 ).isInt32())
 	{
-		msgColor = static_cast<UI16>( JSVAL_TO_INT( argv[argCounter++] ));
+		msgColor = static_cast<UI16>( args.get( argCounter++ ).toInt32() );
 	}
 
 	JSString *targMessage = JS_ValueToString( cx, argv[argCounter++] );
