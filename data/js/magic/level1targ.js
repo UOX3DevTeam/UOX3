@@ -366,7 +366,7 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 	{
 		//Check for enough reagents
 		// type == 0 -> SpellBook
-		if( spellType == 0 && !TriggerEvent( 6004, "CheckReagents", pUser, mSpell))
+		if( spellType == 0 && !TriggerEvent( 6004, "CheckReagents", mChar, mSpell))
 		{
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
@@ -393,7 +393,7 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 	{
 		if( spellType == 0 )
 		{
-			TriggerEvent( 6004, "DeleteReagents", pUser, mSpell );
+			TriggerEvent( 6004, "DeleteReagents", mChar, mSpell );
 			mChar.SpellFail();
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
@@ -410,7 +410,7 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 	}
 	if( !mChar.npc && spellType == 0 )
 	{
-		TriggerEvent( 6004, "DeleteReagents", pUser, mSpell );
+		TriggerEvent( 6004, "DeleteReagents", mChar, mSpell );
 	}
 
 	if( !mChar.InRange( ourTarg, 10 ) )
