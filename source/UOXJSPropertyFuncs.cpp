@@ -2967,7 +2967,7 @@ IMPL_GET(  CRace, nightVision,      CRace, setInt32,   NightVision() )
 
 
 // clang-format off
-//IMPL_SET( CRace, name, CRace, Name, args.)
+IMPL_SETS( CRace, name,             CRace, toString,  Name )
 IMPL_SET(  CRace, requiresBeard,    CRace, toBoolean, RequiresBeard )
 IMPL_SET(  CRace, requiresNoBeard,  CRace, toBoolean, NoBeard )
 IMPL_SET(  CRace, isPlayerRace,     CRace, toBoolean, IsPlayerRace )
@@ -2979,46 +2979,6 @@ IMPL_SET(  CRace, magicResistance,  CRace, toDouble,  MagicResistance )
 IMPL_SET(  CRace, visibleDistance,  CRace, toInt32,   VisibilityRange )
 IMPL_SET(  CRace, nightVision,      CRace, toInt32,   NightVision )
 // clang-format on
-
-bool CRaceProps_setProperty(JSContext *cx, unsigned int argc, JS::Value *vp) {
-
-  auto args = JS::CallArgsFromVp(argc, vp);
-  JS::RootedObject thisObj(cx);
-  if (!args.computeThis(cx, &thisObj))
-    return false;
-  auto priv = JS::GetMaybePtrFromReservedSlot<CRace>(thisObj, 0);
-
-  // Keep track of original script that's executing
-  auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ) );
-  auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ) );
-
-  JSEncapsulate encaps( cx, vp );
-  if( JSVAL_IS_INT( id ))
-  {
-    switch( JSVAL_TO_INT( id ))
-    {
-      case CRP_NAME:				gPriv->Name( argsencaps.toString() );						break;
-      case CRP_WEAKTOWEATHER:
-        break;
-      case CRP_SKILLADJUSTMENT:
-        break;
-      default:
-        break;
-    }
-  }
-
-  // Active script-context might have been lost, so restore it!
-  if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
-  {
-    bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-    if( !retVal )
-    {
-      Console.Warning( oldstrutil::format( "Script context lost after setting Race property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
-    }
-  }
-
-  return true;
-}
 
 bool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
@@ -3455,6 +3415,39 @@ bool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
   return true;
 }
 
+IMPL_GET( CAccount, id,             CAccountBlock_st, setInt32,  wAccountIndex )
+IMPL_GETS(CAccount, username,       CAccountBlock_st, setString, sUsername.c_str() )
+IMPL_GET( CAccount, flags,          CAccountBlock_st, setInt32,  wFlags.to_ulong() )
+IMPL_GETS(CAccount, comment,        CAccountBlock_st, setString, sContact.c_str() )
+IMPL_GET( CAccount, timeban,        CAccountBlock_st, setInt32, wTimeBan)
+IMPL_GET( CAccount, firstLogin,     CAccountBlock_st, setInt32, wFirstLogin)
+IMPL_GET( CAccount, totalPlayTime,  CAccountBlock_st, setInt32, wTotalPlayTime)
+//IMPL_GET( CAccount, character1,     CAccountBlock_st, setInt32,  wAccountIndex ) // manual implementation
+//IMPL_GET( CAccount, character2,     CAccountBlock_st, setInt32,  wAccountIndex ) // manual implementation
+//IMPL_GET( CAccount, character3,     CAccountBlock_st, setInt32,  wAccountIndex ) // manual implementation
+//IMPL_GET( CAccount, character4,     CAccountBlock_st, setInt32,  wAccountIndex ) // manual implementation
+//IMPL_GET( CAccount, character5,     CAccountBlock_st, setInt32,  wAccountIndex ) // manual implementation
+//IMPL_GET( CAccount, character6,     CAccountBlock_st, setInt32,  wAccountIndex ) // manual implementation
+//IMPL_GET( CAccount, character7,     CAccountBlock_st, setInt32,  wAccountIndex ) // manual implementation
+//IMPL_GET( CAccount, currentChar,    CAccountBlock_st, setInt32,  wAccountIndex ) // manual implementation
+//IMPL_GET( CAccount, lastIP,         CAccountBlock_st, setInt32,  wAccountIndex )
+IMPL_GET( CAccount, isBanned,       CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_BANNED ) )
+IMPL_GET( CAccount, isSuspended,    CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_SUSPENDED ) )
+IMPL_GET( CAccount, isPublic,       CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_PUBLIC ) )
+IMPL_GET( CAccount, isOnline,       CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_ONLINE ) )
+IMPL_GET( CAccount, isSlot1Blocked, CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_CHARACTER1 ) )
+IMPL_GET( CAccount, isSlot2Blocked, CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_CHARACTER2 ) )
+IMPL_GET( CAccount, isSlot3Blocked, CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_CHARACTER3 ) )
+IMPL_GET( CAccount, isSlot4Blocked, CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_CHARACTER4 ) )
+IMPL_GET( CAccount, isSlot5Blocked, CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_CHARACTER5 ) )
+IMPL_GET( CAccount, isSlot6Blocked, CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_CHARACTER6 ) )
+IMPL_GET( CAccount, isSlot7Blocked, CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_CHARACTER7 ) )
+IMPL_GET( CAccount, isYoung,        CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_YOUNG ) )
+IMPL_GET( CAccount, unused10,       CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_UNUSED10 ) )
+IMPL_GET( CAccount, isSeer,         CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_SEER ) )
+IMPL_GET( CAccount, isCounselor,    CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_COUNSELOR ) )
+IMPL_GET( CAccount, isGM,           CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_GM ) )
+
 bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
   CAccountBlock_st *myAccount = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st >(obj , 0);
@@ -3466,22 +3459,6 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
     JSString *tString = nullptr;
     switch( JSVAL_TO_INT( id ))
     {
-      case CACCOUNT_ID:	*vp = INT_TO_JSVAL( myAccount->wAccountIndex );		break;
-      case CACCOUNT_USERNAME:
-        tString = JS_NewStringCopyZ( cx, ( myAccount->sUsername ).c_str() );
-        *vp = STRING_TO_JSVAL( tString );
-        break;
-      case CACCOUNT_PASSWORD: // NO.
-      case CACCOUNT_PATH:		// Nah.
-        break;
-      case CACCOUNT_FLAGS: *vp = INT_TO_JSVAL(( myAccount->wFlags ).to_ulong() );	break;
-      case CACCOUNT_COMMENT:
-        tString = JS_NewStringCopyZ( cx, ( myAccount->sContact ).c_str() );
-        *vp = STRING_TO_JSVAL( tString );
-        break;
-      case CACCOUNT_TIMEBAN: *vp = INT_TO_JSVAL( myAccount->wTimeBan );				break;
-      case CACCOUNT_FIRSTLOGIN: *vp = INT_TO_JSVAL( myAccount->wFirstLogin );			break;
-      case CACCOUNT_TOTALPLAYTIME: *vp = INT_TO_JSVAL( myAccount->wTotalPlayTime );	break;
       case CACCOUNT_CHARACTER1:
       {
         if( myAccount->dwCharacters[0] != INVALIDSERIAL )
@@ -3676,22 +3653,6 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
         *vp = STRING_TO_JSVAL( tString );
         break;
       }
-      case CACCOUNT_BANNED:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_BANNED ));		break;
-      case CACCOUNT_SUSPENDED:		*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_SUSPENDED ));	break;
-      case CACCOUNT_PUBLIC:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_PUBLIC ));		break;
-      case CACCOUNT_ONLINE:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_ONLINE ));		break;
-      case CACCOUNT_CHARSLOT1BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER1 ));	break;
-      case CACCOUNT_CHARSLOT2BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER2 ));	break;
-      case CACCOUNT_CHARSLOT3BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER3 ));	break;
-      case CACCOUNT_CHARSLOT4BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER4 ));	break;
-      case CACCOUNT_CHARSLOT5BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER5 ));	break;
-      case CACCOUNT_CHARSLOT6BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER6 ));	break;
-      case CACCOUNT_CHARSLOT7BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER7 ));	break;
-      case CACCOUNT_YOUNG:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_YOUNG ));		break;
-      case CACCOUNT_UNUSED10:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_UNUSED10 ));	break;
-      case CACCOUNT_SEER:				*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_SEER ));		break;
-      case CACCOUNT_COUNSELOR:		*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_COUNSELOR ));	break;
-      case CACCOUNT_GM:				*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_GM ));			break;
       default:
         break;
     }

@@ -89,6 +89,21 @@ bool JS##main##_set_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) {   
   return true;                                                                                                   \
 }
 
+#define IMPL_SETS(main, attr, type, method, accessor)                                                            \
+bool JS##main##_set_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) {                                    \
+  auto args = JS::CallArgsFromVp(argc, vp);                                                                      \
+  JS::RootedObject thisObj(cx);                                                                                  \
+  if (!args.computeThis(cx, &thisObj))                                                                           \
+      return false;                                                                                              \
+  auto priv = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                                 \
+  auto origScript = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                           \
+  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
+  priv->accessor(convertToString(cx, args.get(0).method()));                                                     \
+  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
+  }                                                                                                              \
+  return true;                                                                                                   \
+}
+
 // This is the restore context we need to fix up
 // bool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
 //    if( !retVal ) \
@@ -742,24 +757,24 @@ DECL_GET_SET( CGumpData, buttons )
 DECL_GET_SET( CGumpData, IDs )
 
 // Account Properties
-DECL_GET_SET( CAccount, id )
-DECL_GET_SET( CAccount, username )
-DECL_GET_SET( CAccount, password )
-DECL_GET_SET( CAccount, flags )
-DECL_GET_SET( CAccount, path )
+DECL_GET( CAccount, id )
+DECL_GET( CAccount, username )
+DECL_SET( CAccount, password )
+DECL_GET( CAccount, flags )
+DECL_SET( CAccount, path )
 DECL_GET_SET( CAccount, comment )
 DECL_GET_SET( CAccount, timeban )
-DECL_GET_SET( CAccount, firstLogin )
+DECL_GET( CAccount, firstLogin )
 DECL_GET_SET( CAccount, totalPlayTime )
-DECL_GET_SET( CAccount, character1 )
-DECL_GET_SET( CAccount, character2 )
-DECL_GET_SET( CAccount, character3 )
-DECL_GET_SET( CAccount, character4 )
-DECL_GET_SET( CAccount, character5 )
-DECL_GET_SET( CAccount, character6 )
-DECL_GET_SET( CAccount, character7 )
-DECL_GET_SET( CAccount, currentChar )
-DECL_GET_SET( CAccount, lastIP )
+DECL_GET( CAccount, character1 )
+DECL_GET( CAccount, character2 )
+DECL_GET( CAccount, character3 )
+DECL_GET( CAccount, character4 )
+DECL_GET( CAccount, character5 )
+DECL_GET( CAccount, character6 )
+DECL_GET( CAccount, character7 )
+DECL_GET( CAccount, currentChar )
+DECL_GET( CAccount, lastIP )
 DECL_GET_SET( CAccount, isBanned )
 DECL_GET_SET( CAccount, isSuspended )
 DECL_GET_SET( CAccount, isPublic )
