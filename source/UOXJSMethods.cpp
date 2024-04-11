@@ -3776,7 +3776,7 @@ static bool CBase_GetTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 		}
 		case TAGMAP_TYPE_BOOL:
 			jsType = INT_TO_JSVAL(TAGMAP_TYPE_BOOL);
-			jsValue = BOOLEAN_TO_JSVAL(tagObj.second.m_IntValue != 0);
+			jsValue = JS::BooleanValue(tagObj.second.m_IntValue != 0);
 			break;
 		default:
 			// Unhandled tag type detected!
@@ -3862,7 +3862,7 @@ static bool CBase_GetTempTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 		}
 		case TAGMAP_TYPE_BOOL:
 			jsType = INT_TO_JSVAL(TAGMAP_TYPE_BOOL);
-			jsValue = BOOLEAN_TO_JSVAL(tagObj.second.m_IntValue != 0);
+			jsValue = JS::BooleanValue(tagObj.second.m_IntValue != 0);
 			break;
 		default:
 			// Unhandled tag type detected!

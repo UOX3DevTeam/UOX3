@@ -840,7 +840,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
       case CIP_ISPUBLIC:
         if( gPriv->GetObjType() == OT_MULTI )
         {
-          *vp = BOOLEAN_TO_JSVAL(( static_cast<CMultiObj *>( gPriv )->GetPublicStatus() ));
+          *vp = JS::BooleanValue(( static_cast<CMultiObj *>( gPriv )->GetPublicStatus() ));
         }
         else
         {
@@ -1571,7 +1571,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       case CCP_FAME:			*vp = INT_TO_JSVAL( gPriv->GetFame() );					break;
       case CCP_KARMA:			*vp = INT_TO_JSVAL( gPriv->GetKarma() );				break;
       case CCP_ATTACK:		*vp = INT_TO_JSVAL( Combat->CalcAttackPower( gPriv, true ));	break;
-      case CCP_CANATTACK:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetCanAttack() );		break;
+      case CCP_CANATTACK:		*vp = JS::BooleanValue( gPriv->GetCanAttack() );		break;
       case CCP_FLEEAT:		*vp = INT_TO_JSVAL( gPriv->GetFleeAt() );				break;
       case CCP_REATTACKAT:	*vp = INT_TO_JSVAL( gPriv->GetReattackAt() );			break;
       case CCP_BRKPEACE:		*vp = INT_TO_JSVAL( gPriv->GetBrkPeaceChance() );		break;
@@ -1619,7 +1619,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         *vp = INT_TO_JSVAL( thirstRate );
         break;
       }
-      case CCP_FROZEN:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsFrozen() );			break;
+      case CCP_FROZEN:		*vp = JS::BooleanValue( gPriv->IsFrozen() );			break;
       case CCP_COMMANDLEVEL:	*vp = INT_TO_JSVAL( gPriv->GetCommandLevel() );			break;
       case CCP_RACE:
       {
@@ -1638,11 +1638,11 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         }
         break;
       }
-      case CCP_HASSTOLEN:		*vp = BOOLEAN_TO_JSVAL( gPriv->HasStolen() );	break;
-      case CCP_CRIMINAL:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsCriminal() );	break;
-      case CCP_MURDERER:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsMurderer() );	break;
-      case CCP_INNOCENT:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsInnocent() );	break;
-      case CCP_NEUTRAL:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsNeutral() );	break;
+      case CCP_HASSTOLEN:		*vp = JS::BooleanValue( gPriv->HasStolen() );	break;
+      case CCP_CRIMINAL:		*vp = JS::BooleanValue( gPriv->IsCriminal() );	break;
+      case CCP_MURDERER:		*vp = JS::BooleanValue( gPriv->IsMurderer() );	break;
+      case CCP_INNOCENT:		*vp = JS::BooleanValue( gPriv->IsInnocent() );	break;
+      case CCP_NEUTRAL:		*vp = JS::BooleanValue( gPriv->IsNeutral() );	break;
       case CCP_MURDERCOUNT:	*vp = INT_TO_JSVAL( gPriv->GetKills() );		break;
       case CCP_GENDER:
         switch( gPriv->GetId() )
@@ -1662,13 +1662,13 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
           default:		*vp = INT_TO_JSVAL( 0xFF );						break;
         }
         break;
-      case CCP_DEAD:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsDead() );		break;
-      case CCP_NPC:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsNpc() );		break;
-      case CCP_AWAKE:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsAwake() );		break;
-      case CCP_ONLINE:		*vp = BOOLEAN_TO_JSVAL( IsOnline(( *gPriv )));	break;
+      case CCP_DEAD:			*vp = JS::BooleanValue( gPriv->IsDead() );		break;
+      case CCP_NPC:			*vp = JS::BooleanValue( gPriv->IsNpc() );		break;
+      case CCP_AWAKE:			*vp = JS::BooleanValue( gPriv->IsAwake() );		break;
+      case CCP_ONLINE:		*vp = JS::BooleanValue( IsOnline(( *gPriv )));	break;
       case CCP_DIRECTION:		*vp = INT_TO_JSVAL( gPriv->GetDir() );			break;
         // 3  objects: regions + towns + guilds
-      case CCP_ISRUNNING:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetRunning() );	break;
+      case CCP_ISRUNNING:		*vp = JS::BooleanValue( gPriv->GetRunning() );	break;
       case CCP_REGION:
       {
         CTownRegion *myReg = gPriv->GetRegion();
@@ -1751,9 +1751,9 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       case CCP_FX2:			*vp = INT_TO_JSVAL( gPriv->GetFx( 1 ));				break;
       case CCP_FY2:			*vp = INT_TO_JSVAL( gPriv->GetFy( 1 ));				break;
       case CCP_FZ:			*vp = INT_TO_JSVAL( gPriv->GetFz() );				break;
-      case CCP_ISONHORSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsOnHorse() );		break;
-      case CCP_ISFLYING:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsFlying() );		break;
-      case CCP_ISGUARDED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsGuarded() );		break;
+      case CCP_ISONHORSE:		*vp = JS::BooleanValue( gPriv->IsOnHorse() );		break;
+      case CCP_ISFLYING:		*vp = JS::BooleanValue( gPriv->IsFlying() );		break;
+      case CCP_ISGUARDED:		*vp = JS::BooleanValue( gPriv->IsGuarded() );		break;
       case CCP_GUARDING:
       {
         CBaseObject *tempObj = gPriv->GetGuarding();
@@ -1782,15 +1782,15 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       case CCP_TSTRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength2() );		break;
       case CCP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );			break;
       case CCP_LIGHTLEVEL:	*vp = INT_TO_JSVAL( gPriv->GetFixedLight() );		break;
-      case CCP_VULNERABLE:	*vp = BOOLEAN_TO_JSVAL( !gPriv->IsInvulnerable() );	break;
-      case CCP_HUNGERSTATUS:	*vp = BOOLEAN_TO_JSVAL( gPriv->WillHunger() );		break;
-      case CCP_THIRSTSTATUS:	*vp = BOOLEAN_TO_JSVAL( gPriv->WillThirst() );		break;
+      case CCP_VULNERABLE:	*vp = JS::BooleanValue( !gPriv->IsInvulnerable() );	break;
+      case CCP_HUNGERSTATUS:	*vp = JS::BooleanValue( gPriv->WillHunger() );		break;
+      case CCP_THIRSTSTATUS:	*vp = JS::BooleanValue( gPriv->WillThirst() );		break;
       case CCP_LODAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetLoDamage() );			break;
       case CCP_HIDAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetHiDamage() );			break;
       case CCP_FLAG:			*vp = INT_TO_JSVAL( gPriv->GetFlag() );				break;
-      case CCP_ATWAR:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsAtWar() );			break;
+      case CCP_ATWAR:			*vp = JS::BooleanValue( gPriv->IsAtWar() );			break;
       case CCP_SPELLCAST:		*vp = INT_TO_JSVAL( gPriv->GetSpellCast() );		break;
-      case CCP_ISCASTING:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsCasting() || gPriv->IsJSCasting() );		break;
+      case CCP_ISCASTING:		*vp = JS::BooleanValue( gPriv->IsCasting() || gPriv->IsJSCasting() );		break;
       case CCP_PRIV:			*vp = INT_TO_JSVAL( gPriv->GetPriv() );				break;
       case CCP_TOWNPRIV:		*vp = INT_TO_JSVAL( gPriv->GetTownPriv() );			break;
       case CCP_GUILDTITLE:
@@ -1834,21 +1834,21 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       case CCP_FOLLOWERCOUNT:		*vp = INT_TO_JSVAL( static_cast<UI08>( gPriv->GetFollowerList()->Num() ));	break;
       case CCP_OWNEDITEMSCOUNT:	*vp = INT_TO_JSVAL( gPriv->GetOwnedItems()->size() );	break;
       case CCP_CELL:			*vp = INT_TO_JSVAL( gPriv->GetCell() );						break;
-      case CCP_ALLMOVE:		*vp = BOOLEAN_TO_JSVAL( gPriv->AllMove() );					break;
-      case CCP_HOUSEICONS:	*vp = BOOLEAN_TO_JSVAL( gPriv->ViewHouseAsIcon() );			break;
+      case CCP_ALLMOVE:		*vp = JS::BooleanValue( gPriv->AllMove() );					break;
+      case CCP_HOUSEICONS:	*vp = JS::BooleanValue( gPriv->ViewHouseAsIcon() );			break;
       case CCP_SPATTACK:		*vp = INT_TO_JSVAL( gPriv->GetSpAttack() );					break;
       case CCP_SPDELAY:		*vp = INT_TO_JSVAL( gPriv->GetSpDelay() );					break;
       case CCP_AITYPE:		*vp = INT_TO_JSVAL( gPriv->GetNpcAiType() );				break;
       case CCP_SPLIT:			*vp = INT_TO_JSVAL( gPriv->GetSplit() );					break;
       case CCP_SPLITCHANCE:	*vp = INT_TO_JSVAL( gPriv->GetSplitChance() );				break;
-      case CCP_TRAINER:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanTrain() );				break;
-      case CCP_HIRELING:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanBeHired() );				break;
+      case CCP_TRAINER:		*vp = JS::BooleanValue( gPriv->CanTrain() );				break;
+      case CCP_HIRELING:		*vp = JS::BooleanValue( gPriv->CanBeHired() );				break;
       case CCP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );					break;
       case CCP_SQUELCH:		*vp = INT_TO_JSVAL( gPriv->GetSquelched() );				break;
-      case CCP_ISJAILED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsJailed() );				break;
-      case CCP_MAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsTempReflected() );			break;
-      case CCP_PERMMAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPermReflected() );		break;
-      case CCP_TAMED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsTamed() );					break;
+      case CCP_ISJAILED:		*vp = JS::BooleanValue( gPriv->IsJailed() );				break;
+      case CCP_MAGICREFLECT:	*vp = JS::BooleanValue( gPriv->IsTempReflected() );			break;
+      case CCP_PERMMAGICREFLECT:	*vp = JS::BooleanValue( gPriv->IsPermReflected() );		break;
+      case CCP_TAMED:			*vp = JS::BooleanValue( gPriv->IsTamed() );					break;
       case CCP_TAMEDHUNGERRATE: *vp = INT_TO_JSVAL( gPriv->GetTamedHungerRate() );		break;
       case CCP_TAMEDTHIRSTRATE: *vp = INT_TO_JSVAL( gPriv->GetTamedThirstRate() );		break;
       case CCP_HUNGERWILDCHANCE: *vp = INT_TO_JSVAL( gPriv->GetTamedHungerWildChance() );	break;
@@ -1857,36 +1857,36 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         tString = JS_NewStringCopyZ( cx, gPriv->GetFood().c_str() );
         *vp = JS::StringValue( tString );
         break;
-      case CCP_MOUNTED:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetMounted() );				break;
-      case CCP_STABLED:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetStabled() );				break;
-      case CCP_USINGPOTION:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsUsingPotion() );			break;
+      case CCP_MOUNTED:		*vp = JS::BooleanValue( gPriv->GetMounted() );				break;
+      case CCP_STABLED:		*vp = JS::BooleanValue( gPriv->GetStabled() );				break;
+      case CCP_USINGPOTION:	*vp = JS::BooleanValue( gPriv->IsUsingPotion() );			break;
       case CCP_STEALTH:		*vp = INT_TO_JSVAL( gPriv->GetStealth() );					break;
       case CCP_SKILLTOTAME:	*vp = INT_TO_JSVAL( gPriv->GetTaming() );					break;
       case CCP_SKILLTOPROV:	*vp = INT_TO_JSVAL( gPriv->GetProvoing() );					break;
       case CCP_SKILLTOPEACE:	*vp = INT_TO_JSVAL( gPriv->GetPeaceing() );					break;
       case CCP_POISONSTRENGTH:	*vp = INT_TO_JSVAL( gPriv->GetPoisonStrength() );		break;
-      case CCP_ISPOLYMORPHED:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPolymorphed() );			break;
-      case CCP_ISINCOGNITO:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsIncognito() );				break;
-      case CCP_ISDISGUISED:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDisguised() );				break;
-      case CCP_CANRUN:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanRun() );					break;
-      case CCP_ISMEDITATING:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsMeditating() );			break;
-      case CCP_ISGM:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsGM() );					break;
-      case CCP_CANBROADCAST:	*vp = BOOLEAN_TO_JSVAL( gPriv->CanBroadcast() );			break;
-      case CCP_SINGCLICKSER:	*vp = BOOLEAN_TO_JSVAL( gPriv->GetSingClickSer() );			break;
-      case CCP_NOSKILLTITLES:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoSkillTitles() );			break;
-      case CCP_ISGMPAGEABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsGMPageable() );			break;
-      case CCP_CANSNOOP:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanSnoop() );				break;
-      case CCP_ISCOUNSELOR:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsCounselor() );				break;
-      case CCP_NONEEDMANA:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoNeedMana() );				break;
-      case CCP_ISDISPELLABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDispellable() );			break;
-      case CCP_NONEEDREAGS:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoNeedReags() );				break;
-      case CCP_ISANIMAL:		*vp	= BOOLEAN_TO_JSVAL( cwmWorldState->creatures[gPriv->GetId()].IsAnimal() ); break;
-      case CCP_ISHUMAN:		*vp	= BOOLEAN_TO_JSVAL( cwmWorldState->creatures[gPriv->GetId()].IsHuman() ); break;
+      case CCP_ISPOLYMORPHED:	*vp = JS::BooleanValue( gPriv->IsPolymorphed() );			break;
+      case CCP_ISINCOGNITO:	*vp = JS::BooleanValue( gPriv->IsIncognito() );				break;
+      case CCP_ISDISGUISED:	*vp = JS::BooleanValue( gPriv->IsDisguised() );				break;
+      case CCP_CANRUN:		*vp = JS::BooleanValue( gPriv->CanRun() );					break;
+      case CCP_ISMEDITATING:	*vp = JS::BooleanValue( gPriv->IsMeditating() );			break;
+      case CCP_ISGM:			*vp = JS::BooleanValue( gPriv->IsGM() );					break;
+      case CCP_CANBROADCAST:	*vp = JS::BooleanValue( gPriv->CanBroadcast() );			break;
+      case CCP_SINGCLICKSER:	*vp = JS::BooleanValue( gPriv->GetSingClickSer() );			break;
+      case CCP_NOSKILLTITLES:	*vp = JS::BooleanValue( gPriv->NoSkillTitles() );			break;
+      case CCP_ISGMPAGEABLE:	*vp = JS::BooleanValue( gPriv->IsGMPageable() );			break;
+      case CCP_CANSNOOP:		*vp = JS::BooleanValue( gPriv->CanSnoop() );				break;
+      case CCP_ISCOUNSELOR:	*vp = JS::BooleanValue( gPriv->IsCounselor() );				break;
+      case CCP_NONEEDMANA:	*vp = JS::BooleanValue( gPriv->NoNeedMana() );				break;
+      case CCP_ISDISPELLABLE:	*vp = JS::BooleanValue( gPriv->IsDispellable() );			break;
+      case CCP_NONEEDREAGS:	*vp = JS::BooleanValue( gPriv->NoNeedReags() );				break;
+      case CCP_ISANIMAL:		*vp	= JS::BooleanValue( cwmWorldState->creatures[gPriv->GetId()].IsAnimal() ); break;
+      case CCP_ISHUMAN:		*vp	= JS::BooleanValue( cwmWorldState->creatures[gPriv->GetId()].IsHuman() ); break;
       case CCP_ORGID:			*vp = INT_TO_JSVAL( gPriv->GetOrgId() );					break;
       case CCP_ORGSKIN:		*vp = INT_TO_JSVAL( gPriv->GetOrgSkin() );					break;
       case CCP_NPCFLAG:		*vp = INT_TO_JSVAL( static_cast<SI32>(gPriv->GetNPCFlag() ));break;
       case CCP_NPCGUILD:		*vp = INT_TO_JSVAL( gPriv->GetNPCGuild() );					break;
-      case CCP_ISSHOP:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsShop() );					break;
+      case CCP_ISSHOP:		*vp = JS::BooleanValue( gPriv->IsShop() );					break;
       case CCP_MAXLOYALTY:	*vp = INT_TO_JSVAL( gPriv->GetMaxLoyalty() );				break;
       case CCP_LOYALTY:		*vp = INT_TO_JSVAL( gPriv->GetLoyalty() );					break;
       case CCP_LOYALTYRATE:
@@ -1901,24 +1901,24 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         *vp = INT_TO_JSVAL( loyaltyRate );
         break;
       }
-      case CCP_SHOULDSAVE:	*vp = BOOLEAN_TO_JSVAL( gPriv->ShouldSave() );			break;
+      case CCP_SHOULDSAVE:	*vp = JS::BooleanValue( gPriv->ShouldSave() );			break;
       case CCP_PARTYLOOTABLE:
       {
         Party *toGet = PartyFactory::GetSingleton().Get( gPriv );
         if( toGet == nullptr )
         {
-          *vp = BOOLEAN_TO_JSVAL( false );
+          *vp = JS::BooleanValue( false );
         }
         else
         {
           CPartyEntry *toScan = toGet->Find( gPriv );
           if( toScan == nullptr )
           {
-            *vp = BOOLEAN_TO_JSVAL( false );
+            *vp = JS::BooleanValue( false );
           }
           else
           {
-            *vp = BOOLEAN_TO_JSVAL( toScan->IsLootable() );
+            *vp = JS::BooleanValue( toScan->IsLootable() );
           }
         }
         break;
@@ -2491,18 +2491,18 @@ bool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
       case CREGP_RACE:				*vp = INT_TO_JSVAL( gPriv->GetRace() );					break;
       case CREGP_TAX:					*vp = INT_TO_JSVAL( gPriv->TaxedAmount() );				break;
       case CREGP_TAXRESOURCE:			*vp = INT_TO_JSVAL( gPriv->GetResourceId() );			break;
-      case CREGP_CANMARK:				*vp = BOOLEAN_TO_JSVAL( gPriv->CanMark() );				break;
-      case CREGP_CANRECALL:			*vp = BOOLEAN_TO_JSVAL( gPriv->CanRecall() );			break;
-      case CREGP_CANGATE:				*vp = BOOLEAN_TO_JSVAL( gPriv->CanGate() );				break;
-      case CREGP_CANTELEPORT:			*vp = BOOLEAN_TO_JSVAL( gPriv->CanTeleport() );			break;
-      case CREGP_CANPLACEHOUSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanPlaceHouse() );		break;
-      case CREGP_ISGUARDED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsGuarded() );			break;
+      case CREGP_CANMARK:				*vp = JS::BooleanValue( gPriv->CanMark() );				break;
+      case CREGP_CANRECALL:			*vp = JS::BooleanValue( gPriv->CanRecall() );			break;
+      case CREGP_CANGATE:				*vp = JS::BooleanValue( gPriv->CanGate() );				break;
+      case CREGP_CANTELEPORT:			*vp = JS::BooleanValue( gPriv->CanTeleport() );			break;
+      case CREGP_CANPLACEHOUSE:		*vp = JS::BooleanValue( gPriv->CanPlaceHouse() );		break;
+      case CREGP_ISGUARDED:			*vp = JS::BooleanValue( gPriv->IsGuarded() );			break;
       case CREGP_WORLDNUMBER:			*vp = INT_TO_JSVAL( gPriv->WorldNumber() );				break;
       case CREGP_INSTANCEID:			*vp = INT_TO_JSVAL( gPriv->GetInstanceId() );			break;
-      case CREGP_CANCASTAGGRESSIVE:	*vp = BOOLEAN_TO_JSVAL( gPriv->CanCastAggressive() );	break;
-      case CREGP_ISSAFEZONE:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsSafeZone() );			break;
+      case CREGP_CANCASTAGGRESSIVE:	*vp = JS::BooleanValue( gPriv->CanCastAggressive() );	break;
+      case CREGP_ISSAFEZONE:			*vp = JS::BooleanValue( gPriv->IsSafeZone() );			break;
       case CREGP_HEALTH:				*vp = INT_TO_JSVAL( gPriv->GetHealth() );				break;
-      case CREGP_ISDUNGEON:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsDungeon() );			break;
+      case CREGP_ISDUNGEON:			*vp = JS::BooleanValue( gPriv->IsDungeon() );			break;
       case CREGP_CHANCEBIGORE:		*vp = INT_TO_JSVAL( gPriv->GetChanceBigOre() );			break;
       case CREGP_NUMOREPREFERENCES:	*vp = INT_TO_JSVAL( gPriv->GetNumOrePreferences() );	break;
       case CREGP_POPULATION:			*vp = INT_TO_JSVAL( gPriv->GetPopulation() );			break;
@@ -2720,8 +2720,8 @@ bool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
       case CSPAWNREGP_MAXNPCS:				*vp = INT_TO_JSVAL( gPriv->GetMaxCharSpawn() );					break;
       case CSPAWNREGP_MINTIME:				*vp = INT_TO_JSVAL( gPriv->GetMinTime() );						break;
       case CSPAWNREGP_MAXTIME:				*vp = INT_TO_JSVAL( gPriv->GetMaxTime() );						break;
-      case CSPAWNREGP_ONLYOUTSIDE:			*vp = BOOLEAN_TO_JSVAL( gPriv->GetOnlyOutside() );				break;
-      case CSPAWNREGP_ISSPAWNER:				*vp = BOOLEAN_TO_JSVAL( gPriv->IsSpawner() );					break;
+      case CSPAWNREGP_ONLYOUTSIDE:			*vp = JS::BooleanValue( gPriv->GetOnlyOutside() );				break;
+      case CSPAWNREGP_ISSPAWNER:				*vp = JS::BooleanValue( gPriv->IsSpawner() );					break;
       case CSPAWNREGP_X1:						*vp = INT_TO_JSVAL( gPriv->GetX1() );							break;
       case CSPAWNREGP_Y1:						*vp = INT_TO_JSVAL( gPriv->GetY1() );							break;
       case CSPAWNREGP_X2:						*vp = INT_TO_JSVAL( gPriv->GetX2() );							break;
@@ -3126,7 +3126,7 @@ bool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
       }
       case CSOCKP_IDLETIMEOUT:
         break;
-      case CSOCKP_WASIDLEWARNED:		*vp = BOOLEAN_TO_JSVAL( gPriv->WasIdleWarned() );		break;
+      case CSOCKP_WASIDLEWARNED:		*vp = JS::BooleanValue( gPriv->WasIdleWarned() );		break;
       case CSOCKP_TEMPINT:			*vp = INT_TO_JSVAL( gPriv->TempInt() );					break;
       case CSOCKP_TEMPINT2:			*vp = INT_TO_JSVAL( gPriv->TempInt2() );				break;
       case CSOCKP_TEMPOBJ:
@@ -3184,17 +3184,17 @@ bool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
       case CSOCKP_CLICKZ:				*vp = INT_TO_JSVAL( gPriv->ClickZ() );					break;
       case CSOCKP_ADDID:
         break;
-      case CSOCKP_NEWCLIENT:			*vp = BOOLEAN_TO_JSVAL( gPriv->NewClient() );			break;
-      case CSOCKP_FIRSTPACKET:		*vp = BOOLEAN_TO_JSVAL( gPriv->FirstPacket() );			break;
-      case CSOCKP_CRYPTCLIENT:		*vp = BOOLEAN_TO_JSVAL( gPriv->CryptClient() );			break;
+      case CSOCKP_NEWCLIENT:			*vp = JS::BooleanValue( gPriv->NewClient() );			break;
+      case CSOCKP_FIRSTPACKET:		*vp = JS::BooleanValue( gPriv->FirstPacket() );			break;
+      case CSOCKP_CRYPTCLIENT:		*vp = JS::BooleanValue( gPriv->CryptClient() );			break;
       case CSOCKP_CLIENTIP:
         break;
       case CSOCKP_WALKSEQUENCE:		*vp = INT_TO_JSVAL( gPriv->WalkSequence() );			break;
       case CSOCKP_CURRENTSPELLTYPE:	*vp = INT_TO_JSVAL( gPriv->CurrentSpellType() );		break;
-      case CSOCKP_LOGGING:			*vp = BOOLEAN_TO_JSVAL( gPriv->Logging() );				break;
+      case CSOCKP_LOGGING:			*vp = JS::BooleanValue( gPriv->Logging() );				break;
       case CSOCKP_BYTESSENT:			*vp = INT_TO_JSVAL( gPriv->BytesSent() );				break;
       case CSOCKP_BYTESRECEIVED:		*vp = INT_TO_JSVAL( gPriv->BytesReceived() );			break;
-      case CSOCKP_TARGETOK:			*vp = BOOLEAN_TO_JSVAL( gPriv->TargetOK() );			break;
+      case CSOCKP_TARGETOK:			*vp = JS::BooleanValue( gPriv->TargetOK() );			break;
       case CSOCKP_CLICKX:				*vp = INT_TO_JSVAL( gPriv->ClickX() );					break;
       case CSOCKP_CLICKY:				*vp = INT_TO_JSVAL( gPriv->ClickY() );					break;
       case CSOCKP_PICKUPX:			*vp = INT_TO_JSVAL( gPriv->PickupX() );					break;
@@ -3271,7 +3271,7 @@ bool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
   }
   else if( myClass.ClassName() == "UOXSkillsUsed" )
   {
-    *vp = BOOLEAN_TO_JSVAL( myChar->SkillUsed( skillId ));
+    *vp = JS::BooleanValue( myChar->SkillUsed( skillId ));
   }
   else if( myClass.ClassName() == "UOXSkillsLock" )
   {
@@ -3914,7 +3914,7 @@ bool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp 
       }
         break;
       case CPARTYP_MEMBERCOUNT:	*vp = INT_TO_JSVAL( gPriv->MemberList()->size() );			break;
-      case CPARTYP_ISNPC:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsNPC() );					break;
+      case CPARTYP_ISNPC:			*vp = JS::BooleanValue( gPriv->IsNPC() );					break;
       default:																				break;
     }
   }
