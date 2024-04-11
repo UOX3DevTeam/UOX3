@@ -3416,16 +3416,15 @@ static bool CBase_GetTag(JSContext* cx, unsigned argc, JS::Value* vp)
 	TAGMAPOBJECT localObject = myObj->GetTag(localString);
 	if (localObject.m_ObjectType == TAGMAP_TYPE_STRING)
 	{
-		JSString* localJSString = JS_NewStringCopyN(cx, (const char*)localObject.m_StringValue.c_str(), localObject.m_StringValue.length());
-		*rval = static_cast<jsval>(STRING_TO_JSVAL(localJSString));
+		args.rval().setString(convertFromString(cx, localObject.m_StringValue));
 	}
 	else if (localObject.m_ObjectType == TAGMAP_TYPE_BOOL)
 	{
-		*rval = static_cast<jsval>(BOOLEAN_TO_JSVAL((localObject.m_IntValue == 1)));
+		args.rval().setBoolean( localObject.m_IntValue == 1 );
 	}
 	else
 	{
-		*rval = static_cast<jsval>(INT_TO_JSVAL(localObject.m_IntValue));
+		args.rval().setInt32( localObject.m_IntValue );
 	}
 	return true;
 }
@@ -3462,9 +3461,9 @@ static bool CBase_SetTag(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (argc == 2)
 	{
 		JS::HandleValue encaps = args.get(1);
-		if (encaps.isType(JSOT_STRING))
+		if (encaps.isString())
 		{			// String value handling
-			const std::string stringVal = encaps.toString();
+			const std::string stringVal = convertToString(cx, encaps.toString());
 			if (stringVal == "")
 			{
 				localObject.m_Destroy = true;
@@ -3480,9 +3479,9 @@ static bool CBase_SetTag(JSContext* cx, unsigned argc, JS::Value* vp)
 				localObject.m_ObjectType = TAGMAP_TYPE_STRING;
 			}
 		}
-		else if (encaps.isType(JSOT_BOOL))
+		else if (encaps.isBoolean())
 		{
-			const bool boolVal = encaps.toBool();
+			const bool boolVal = encaps.toBoolean();
 			if (!boolVal)
 			{
 				localObject.m_Destroy = true;
@@ -3496,9 +3495,9 @@ static bool CBase_SetTag(JSContext* cx, unsigned argc, JS::Value* vp)
 			localObject.m_ObjectType = TAGMAP_TYPE_BOOL;
 			localObject.m_StringValue = "";
 		}
-		else if (encaps.isType(JSOT_INT))
+		else if (encaps.isInt32())
 		{
-			const SI32 intVal = encaps.toInt();
+			const SI32 intVal = encaps.toInt32();
 			if (!intVal)
 			{
 				localObject.m_Destroy = true;
@@ -3512,7 +3511,7 @@ static bool CBase_SetTag(JSContext* cx, unsigned argc, JS::Value* vp)
 			localObject.m_ObjectType = TAGMAP_TYPE_INT;
 			localObject.m_StringValue = "";
 		}
-		else if (encaps.isType(JSOT_NULL))
+		else if (encaps.isNullOrUndefined())
 		{
 			localObject.m_Destroy = true;
 			localObject.m_IntValue = 0;
@@ -3565,16 +3564,15 @@ static bool CBase_GetTempTag(JSContext* cx, unsigned argc, JS::Value* vp)
 	TAGMAPOBJECT localObject = myObj->GetTempTag(localString);
 	if (localObject.m_ObjectType == TAGMAP_TYPE_STRING)
 	{
-		JSString* localJSString = JS_NewStringCopyN(cx, (const char*)localObject.m_StringValue.c_str(), localObject.m_StringValue.length());
-		*rval = static_cast<jsval>(STRING_TO_JSVAL(localJSString));
+		args.rval().setString(convertFromString(cx, localObject.m_StringValue));
 	}
 	else if (localObject.m_ObjectType == TAGMAP_TYPE_BOOL)
 	{
-		*rval = static_cast<jsval>(BOOLEAN_TO_JSVAL((localObject.m_IntValue == 1)));
+		args.rval().setBoolean( (localObject.m_IntValue == 1) );
 	}
 	else
 	{
-		*rval = static_cast<jsval>(INT_TO_JSVAL(localObject.m_IntValue));
+		args.rval().setInt32( localObject.m_IntValue );
 	}
 	return true;
 }
@@ -3614,7 +3612,7 @@ static bool CBase_SetTempTag(JSContext* cx, unsigned argc, JS::Value* vp)
 		JS::HandleValue encaps = args.get(1);
 		if (encaps.isString())
 		{			// String value handling
-			const std::string stringVal = encaps.toString();
+			const std::string stringVal = convertToString( cx, encaps.toString() );
 			if (stringVal == "")
 			{
 				localObject.m_Destroy = true;
@@ -6363,9 +6361,7 @@ static bool CSocket_GetString(JSContext* cx, unsigned argc, JS::Value* vp)
 		strcopy(toReturn, 128, (char*)&(mSock->Buffer())[offset]);
 	}
 
-	JSString* strSpeech = nullptr;
-	strSpeech = JS_NewStringCopyZ(cx, toReturn);
-	*rval = STRING_TO_JSVAL(strSpeech);
+	args.rval().setString( convertFromString( cx, toReturn ) );
 
 	return true;
 }
@@ -7467,7 +7463,7 @@ static bool CFile_Read(JSContext* cx, unsigned argc, JS::Value* vp)
 	// We don't care about return value, so suppress compiler warning
 	size_t bytesRead = fread(data, 1, bytes, mFile->mWrap);
 
-	*rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, data));
+	args.rval().setString( convertFromString( cx, data ) );
 	return true;
 }
 
@@ -7521,7 +7517,7 @@ static bool CFile_ReadUntil(JSContext* cx, unsigned argc, JS::Value* vp)
 	}
 	line[c < 512 ? c : 511] = 0;
 
-	*rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, line));
+	args.rval().setString( convertFromString( cx, line ) );
 	return true;
 }
 
@@ -9628,9 +9624,7 @@ static bool CItem_GetTileName(JSContext* cx, unsigned argc, JS::Value* vp)
 	std::string itemName = "";
 	GetTileName((*mItem), itemName);
 
-	JSString* tString;
-	tString = JS_NewStringCopyZ(cx, itemName.c_str());
-	*rval = STRING_TO_JSVAL(tString);
+	args.rval().setString( convertFromString( cx, itemName ) );
 	return true;
 }
 
@@ -9671,19 +9665,17 @@ static bool CMulti_GetMultiCorner(JSContext* cx, unsigned argc, JS::Value* vp)
 	switch (cornerToFind)
 	{
 	case 0: // NW
-		*rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, (std::to_string(x1) + "," + std::to_string(y1)).c_str()));
+		args.rval().setString( convertFromString(cx, (std::to_string(x1) + "," + std::to_string(y1))));
 		break;
 	case 1: // NE
-		*rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, (std::to_string(x2) + "," + std::to_string(y1)).c_str()));
+		args.rval().setString(convertFromString(cx, (std::to_string(x2) + "," + std::to_string(y1))));
 		break;
 	case 2: // SW
-		*rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, (std::to_string(x1) + "," + std::to_string(y2)).c_str()));
+		args.rval().setString(convertFromString(cx, (std::to_string(x1) + "," + std::to_string(y2))));
 		break;
 	case 3: // SE
-	{
-		*rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, (std::to_string(x2) + "," + std::to_string(y2)).c_str()));
+		args.rval().setString(convertFromString(cx, (std::to_string(x2) + "," + std::to_string(y2))));
 		break;
-	}
 	default:
 		break;
 	}
