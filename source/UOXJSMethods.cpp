@@ -3764,18 +3764,18 @@ static bool CBase_GetTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 		switch (tagObj.second.m_ObjectType)
 		{
 		case TAGMAP_TYPE_INT:
-			jsType = INT_TO_JSVAL(TAGMAP_TYPE_INT);
-			jsValue = INT_TO_JSVAL(tagObj.second.m_IntValue);
+			jsType = JS::Int32Value(TAGMAP_TYPE_INT);
+			jsValue = JS::Int32Value(tagObj.second.m_IntValue);
 			break;
 		case TAGMAP_TYPE_STRING:
 		{
-			jsType = INT_TO_JSVAL(TAGMAP_TYPE_STRING);
+			jsType = JS::Int32Value(TAGMAP_TYPE_STRING);
 			JSString* jsStringVal = JS_NewStringCopyZ(cx, tagObj.second.m_StringValue.c_str());
 			jsValue = JS::StringValue(jsStringVal);
 			break;
 		}
 		case TAGMAP_TYPE_BOOL:
-			jsType = INT_TO_JSVAL(TAGMAP_TYPE_BOOL);
+			jsType = JS::Int32Value(TAGMAP_TYPE_BOOL);
 			jsValue = JS::BooleanValue(tagObj.second.m_IntValue != 0);
 			break;
 		default:
@@ -3850,18 +3850,18 @@ static bool CBase_GetTempTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 		switch (tagObj.second.m_ObjectType)
 		{
 		case TAGMAP_TYPE_INT:
-			jsType = INT_TO_JSVAL(TAGMAP_TYPE_INT);
-			jsValue = INT_TO_JSVAL(tagObj.second.m_IntValue);
+			jsType = JS::Int32Value(TAGMAP_TYPE_INT);
+			jsValue = JS::Int32Value(tagObj.second.m_IntValue);
 			break;
 		case TAGMAP_TYPE_STRING:
 		{
-			jsType = INT_TO_JSVAL(TAGMAP_TYPE_STRING);
+			jsType = JS::Int32Value(TAGMAP_TYPE_STRING);
 			JSString* jsStringVal = JS_NewStringCopyZ(cx, tagObj.second.m_StringValue.c_str());
 			jsValue = JS::StringValue(jsStringVal);
 			break;
 		}
 		case TAGMAP_TYPE_BOOL:
-			jsType = INT_TO_JSVAL(TAGMAP_TYPE_BOOL);
+			jsType = JS::Int32Value(TAGMAP_TYPE_BOOL);
 			jsValue = JS::BooleanValue(tagObj.second.m_IntValue != 0);
 			break;
 		default:
@@ -11757,11 +11757,11 @@ static bool CRegion_GetOrePref(JSContext* cx, unsigned argc, JS::Value* vp)
 	JS_SetElement(cx, jsMiningData, 3, &jsIngotName);
 
 	// Ore colour, min skill, Makemenu entry, oreChance, scriptID
-	auto jsOreColor = INT_TO_JSVAL(orePrefs->oreIndex->colour);
-	auto jsOreMinSkill = INT_TO_JSVAL(orePrefs->oreIndex->minSkill);
-	auto jsOreMakemenu = INT_TO_JSVAL(orePrefs->oreIndex->makemenu);
-	auto jsOreChance = INT_TO_JSVAL(orePrefs->oreIndex->oreChance);
-	auto jsOreScriptID = INT_TO_JSVAL(orePrefs->oreIndex->scriptID);
+	auto jsOreColor = JS::Int32Value(orePrefs->oreIndex->colour);
+	auto jsOreMinSkill = JS::Int32Value(orePrefs->oreIndex->minSkill);
+	auto jsOreMakemenu = JS::Int32Value(orePrefs->oreIndex->makemenu);
+	auto jsOreChance = JS::Int32Value(orePrefs->oreIndex->oreChance);
+	auto jsOreScriptID = JS::Int32Value(orePrefs->oreIndex->scriptID);
 	JS_SetElement(cx, jsMiningData, 1, &jsOreColor);
 	JS_SetElement(cx, jsMiningData, 2, &jsOreMinSkill);
 	JS_SetElement(cx, jsMiningData, 4, &jsOreMakemenu);
@@ -11773,7 +11773,7 @@ static bool CRegion_GetOrePref(JSContext* cx, unsigned argc, JS::Value* vp)
 	JS_SetElement(cx, jsOrePref, 0, &miningDataVal);
 
 	// Add percent chance to orePref array
-	jsval jsOrePrefChance = INT_TO_JSVAL(orePrefs->percentChance);
+	jsval jsOrePrefChance = JS::Int32Value(orePrefs->percentChance);
 	JS_SetElement(cx, jsOrePref, 1, &jsOrePrefChance);
 
 	// Convert orePref array object to jsval and pass it to script
