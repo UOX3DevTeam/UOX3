@@ -3795,7 +3795,7 @@ static bool CBase_GetTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 		i++;
 	}
 
-	*rval = OBJECT_TO_JSVAL(jsTagMap);
+	args.rval().setObjectOrNull( jsTagMap );
 	return true;
 }
 
@@ -3881,7 +3881,7 @@ static bool CBase_GetTempTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 		i++;
 	}
 
-	*rval = OBJECT_TO_JSVAL(jsTagMap);
+	args.rval().setObjectOrNull( jsTagMap );
 	return true;
 }
 
@@ -4576,7 +4576,7 @@ static bool CMisc_PopUpTarget(JSContext* cx, unsigned argc, JS::Value* vp)
 	std::string toSay;
 	if (argc == 2)
 	{
-		toSay = oldstrutil::format(512, "%s", JS_GetStringBytes(JS_ValueToString(cx, argv[1])));
+		toSay = oldstrutil::format(512, "%s", convertToString( cx, args.get( 1 ).toString() ).c_str() );
 	}
 
 	mySock->SendTargetCursor(0, tNum, toSay);
@@ -4672,7 +4672,7 @@ static bool CBase_StartTimer(JSContext* cx, unsigned argc, JS::Value* vp)
 
 	if (argc == 3)
 	{
-		if (JSVAL_IS_BOOLEAN(argv[2]))	// Is it a boolean?  If so, might be calling back into here
+		if (args.get(2).isBoolean() )	// Is it a boolean?  If so, might be calling back into here
 		{
 			if (args.get(2).toBoolean())
 			{
@@ -4779,13 +4779,13 @@ static bool CChar_FindItemLayer(JSContext* cx, unsigned argc, JS::Value* vp)
 
 	if (!ValidateObject(myItem))
 	{
-		*rval = JSVAL_NULL;
+		args.rval().setNull();
 		return true;
 	}
 
 	JSObject* myJSItem = JSEngine->AcquireObject(IUE_ITEM, myItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
 
-	*rval = OBJECT_TO_JSVAL(myJSItem);
+	args.rval().setObjectOrNull(myJSItem);
 
 	return true;
 }
@@ -4820,13 +4820,12 @@ static bool CChar_FindItemType(JSContext* cx, unsigned argc, JS::Value* vp)
 	CItem* myItem = FindItemOfType(myChar, static_cast<ItemTypes>(iType));
 	if (!ValidateObject(myItem))
 	{
-		*rval = JSVAL_NULL;
+		args.rval().setNull();
 		return true;
 	}
 
 	JSObject* myJSItem = JSEngine->AcquireObject(IUE_ITEM, myItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
-
-	*rval = OBJECT_TO_JSVAL(myJSItem);
+	args.rval().setObjectOrNull(myJSItem);
 
 	return true;
 }
@@ -4861,13 +4860,13 @@ static bool CChar_FindItemSection(JSContext* cx, unsigned argc, JS::Value* vp)
 	CItem* myItem = FindItemOfSectionId(myChar, sectionID);
 	if (!ValidateObject(myItem))
 	{
-		*rval = JSVAL_NULL;
+		args.rval().setNull();
 		return true;
 	}
 
 	JSObject* myJSItem = JSEngine->AcquireObject(IUE_ITEM, myItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
 
-	*rval = OBJECT_TO_JSVAL(myJSItem);
+	args.rval().setObjectOrNull(myJSItem);
 
 	return true;
 }
@@ -4928,7 +4927,7 @@ static bool CChar_SpeechInput(JSContext* cx, unsigned argc, JS::Value* vp)
 	{
 		speechId = static_cast<UI08>(args.get(0).toInt32());
 
-		if (argv[1] != JSVAL_NULL)
+		if ( !args.get( 1 ).isNullOrUndefined() )
 		{
 			JSObject* myObj = args.get(1).toObjectOrNull();
 			speechItem = JS::GetMaybePtrFromReservedSlot<CItem>(myObj, 0);
@@ -5001,7 +5000,7 @@ static bool CChar_CastSpell(JSContext* cx, unsigned argc, JS::Value* vp)
 	{
 		CSocket* sock = myChar->GetSocket();
 
-		if ((argc == 2) && (argv[1] == JSVAL_TRUE))
+		if ((argc == 2) && args.get( 1 ).toBoolean() )
 		{
 			// Next...
 			myChar->SetSpellCast(spellCast);
@@ -5051,6 +5050,10 @@ static bool CChar_MagicEffect(JSContext* cx, unsigned argc, JS::Value* vp)
 //o------------------------------------------------------------------------------------------------o
 static bool CChar_GetSerial(JSContext* cx, unsigned argc, JS::Value* vp)
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
+	JS::RootedObject obj(cx);
+	if (!args.computeThis(cx, &obj))
+		return false;
 	CChar* myObj = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	UI08 part = static_cast<UI08>(args.get(0).toInt32());
 
@@ -6275,6 +6278,10 @@ static bool CSocket_GetDWord(JSContext* cx, unsigned argc, JS::Value* vp)
 		ScriptError(cx, "GetDWord: Invalid Number of Arguments %d, needs: 1 (offset)");
 		return false;
 	}
+	auto args = JS::CallArgsFromVp(argc, vp);
+	JS::RootedObject obj(cx);
+	if (!args.computeThis(cx, &obj))
+		return false;
 	CSocket* mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 
 	if (mySock == nullptr)
@@ -6283,7 +6290,7 @@ static bool CSocket_GetDWord(JSContext* cx, unsigned argc, JS::Value* vp)
 		return false;
 	}
 	SI32 offset = args.get(0).toInt32();
-	JS_NewNumberValue(cx, mySock->GetDWord(offset), rval);
+	args.rval().setInt32(static_cast<UI32>(mySock->GetDWord(offset)));
 	return true;
 }
 
@@ -6474,6 +6481,10 @@ static bool CSocket_SetString(JSContext* cx, unsigned argc, JS::Value* vp)
 		return false;
 	}
 
+	auto args = JS::CallArgsFromVp(argc, vp);
+	JS::RootedObject obj(cx);
+	if (!args.computeThis(cx, &obj))
+		return false;
 	CSocket* mSock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if (mSock == nullptr)
 	{
@@ -6512,6 +6523,10 @@ static bool CSocket_ReadBytes(JSContext* cx, unsigned argc, JS::Value* vp)
 		return false;
 	}
 
+	auto args = JS::CallArgsFromVp(argc, vp);
+	JS::RootedObject obj(cx);
+	if (!args.computeThis(cx, &obj))
+		return false;
 	CSocket* mSock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if (mSock == nullptr)
 	{
@@ -6614,10 +6629,9 @@ static bool CChar_YellMessage(JSContext* cx, unsigned argc, JS::Value* vp)
 		return false;
 	CBaseObject* myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
-	JSString* targMessage = JS_ValueToString(cx, argv[0]);
-	char* trgMessage = JS_GetStringBytes(targMessage);
+	std::string trgMessage = convertToString(cx, args.get(0).toString());
 
-	if (trgMessage == nullptr)
+	if (trgMessage.empty() || trgMessage == "")
 	{
 		ScriptError(cx, "YellMessage: You have to supply a messagetext");
 	}
@@ -6637,11 +6651,11 @@ static bool CChar_YellMessage(JSContext* cx, unsigned argc, JS::Value* vp)
 
 	if (myChar->GetNpcAiType() == AI_EVIL || myChar->GetNpcAiType() == AI_EVIL_CASTER)
 	{
-		MethodSpeech(*myChar, trgMessage, YELL, 0x0026, static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL, useUnicode);
+		MethodSpeech(*myChar, trgMessage.c_str(), YELL, 0x0026, static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL, useUnicode);
 	}
 	else
 	{
-		MethodSpeech(*myChar, trgMessage, YELL, myChar->GetSayColour(), static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL, useUnicode);
+		MethodSpeech(*myChar, trgMessage.c_str(), YELL, myChar->GetSayColour(), static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL, useUnicode);
 	}
 
 	// Active script-context might have been lost, so restore it...
@@ -6675,10 +6689,9 @@ static bool CChar_WhisperMessage(JSContext* cx, unsigned argc, JS::Value* vp)
 		return false;
 	CBaseObject* myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
-	JSString* targMessage = JS_ValueToString(cx, argv[0]);
-	char* trgMessage = JS_GetStringBytes(targMessage);
+	std::string trgMessage = convertToString(cx, args.get(0).toString());
 
-	if (trgMessage == nullptr)
+	if (trgMessage.empty() || trgMessage == "")
 	{
 		ScriptError(cx, "WhisperMessage: You have to supply a messagetext");
 	}
@@ -6698,11 +6711,11 @@ static bool CChar_WhisperMessage(JSContext* cx, unsigned argc, JS::Value* vp)
 
 	if (myChar->GetNpcAiType() == AI_EVIL || myChar->GetNpcAiType() == AI_EVIL_CASTER)
 	{
-		MethodSpeech(*myChar, trgMessage, WHISPER, 0x0026, static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL, useUnicode);
+		MethodSpeech(*myChar, trgMessage.c_str(), WHISPER, 0x0026, static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL, useUnicode);
 	}
 	else
 	{
-		MethodSpeech(*myChar, trgMessage, WHISPER, myChar->GetSayColour(), static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL, useUnicode);
+		MethodSpeech(*myChar, trgMessage.c_str(), WHISPER, myChar->GetSayColour(), static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL, useUnicode);
 	}
 
 	// Active script-context might have been lost, so restore it...
@@ -6940,7 +6953,7 @@ static bool CBase_ApplySection(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (!args.computeThis(cx, &obj))
 		return false;
 	std::string className = JS::GetClass(obj.get())->name;
-	CBaseObject* myObj = static_cast<CBaseObject*>(myClass.toObject());
+	CBaseObject* myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	std::string trgSection = convertToString(cx, args.get(0).toString());
 
 	if (trgSection.empty() || trgSection.length() == 0)
@@ -7169,7 +7182,7 @@ static bool CItem_IsOnFoodList(JSContext* cx, unsigned argc, JS::Value* vp)
 		return true;
 	}
 
-	if (!JSVAL_IS_STRING(argv[0]))
+	if (!args.get(0).isString())
 	{
 		ScriptError(cx, "IsOnFoodList: Invalid parameter specifled, string required!");
 		return false;
@@ -7202,7 +7215,7 @@ static bool CAccount_AddAccount(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (!args.computeThis(cx, &obj))
 		return false;
 	// Ok get our object from the global context
-	if (!JSVAL_IS_STRING(argv[0]) || !JSVAL_IS_STRING(argv[1]) || !JSVAL_IS_STRING(argv[2]) || !(args.get(3).isInt32() || JSVAL_IS_STRING(argv[3])))
+	if (!args.get( 0 ).isString() || !args.get( 1 ).isString() || !args.get( 2 ).isString() || !(args.get(3).isInt32() || args.get( 3 ).isString()))
 	{
 		ScriptError(cx, "Account.AddAccount(user,pass,email,flags): Invalid parameter specifled, please check param types.");
 		return false;
@@ -7218,7 +7231,7 @@ static bool CAccount_AddAccount(JSContext* cx, unsigned argc, JS::Value* vp)
 	}
 	else
 	{
-		u16Flags = static_cast<UI16>(std::stoul(JS_GetStringBytes(JS_ValueToString(cx, argv[3])), nullptr, 0));
+		u16Flags = static_cast<UI16>(std::stoul(convertToString(cx, args.get( 3 ).toString())), nullptr, 0);
 	}
 
 	if (lpszUsername.empty() || lpszPassword.empty() || lpszComment.empty() || lpszUsername.length() == 0 || lpszPassword.length() == 0 || lpszComment.length() == 0)
@@ -7359,7 +7372,7 @@ static bool CFile_Open(JSContext* cx, unsigned argc, JS::Value* vp)
 		ScriptError(cx, "Open: Invalid mode must be \"read\", \"write\", or \"append\"!");
 		return false;
 	}
-	if (strstr(fileName, "..") || strstr(fileName, "\\") || strstr(fileName, "/"))
+	if (fileName.find( ".." ) != std::string::npos || fileName.find("\\") != std::string::npos  || fileName.find("/") != std::string::npos )
 	{
 		ScriptError(cx, "Open: file names may not contain \"..\", \"\\\", or \"/\".");
 		return false;
@@ -7368,10 +7381,10 @@ static bool CFile_Open(JSContext* cx, unsigned argc, JS::Value* vp)
 	std::string filePath = cwmWorldState->ServerData()->Directory(CSDDP_SHARED);
 
 	// if folderName argument was supplied, use it, and create the appropriate folder under the /shared/ folder
-	if (folderName != nullptr)
+	if (!folderName.empty() && folderName.length() != 0 )
 	{
 		// However, don't allow special characters in the folder name
-		if (strstr(folderName, "..") || strstr(folderName, "\\") || strstr(folderName, "/"))
+		if (folderName.find("..") != std::string::npos || folderName.find("\\") != std::string::npos || folderName.find("/") != std::string::npos)
 		{
 			ScriptError(cx, "Open: folder names may not contain \"..\", \"\\\", or \"/\".");
 			return false;
@@ -7497,7 +7510,7 @@ static bool CFile_ReadUntil(JSContext* cx, unsigned argc, JS::Value* vp)
 	char line[512];
 	SI32 c;
 
-	if (until[0] == '\\' && strlen(until) > 1)
+	if (until[0] == '\\' && until.length() > 1)
 	{
 		switch (until[1])
 		{
@@ -7706,11 +7719,11 @@ static bool CBase_FirstItem(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (ValidateObject(firstItem))
 	{
 		JSObject* myObj = JSEngine->AcquireObject(IUE_ITEM, firstItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
-		*rval = OBJECT_TO_JSVAL(myObj);
+		args.rval().setObjectOrNull(myObj);
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+		args.rval().setNull();
 	}
 	return true;
 }
@@ -7761,11 +7774,11 @@ static bool CBase_NextItem(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (ValidateObject(nextItem))
 	{
 		JSObject* myObj = JSEngine->AcquireObject(IUE_ITEM, nextItem, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
-		*rval = OBJECT_TO_JSVAL(myObj);
+		args.rval().setObjectOrNull(myObj);
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+		args.rval().setNull();
 	}
 	return true;
 }
@@ -8114,7 +8127,7 @@ static bool CMisc_SetTimer(JSContext* cx, unsigned argc, JS::Value* vp)
 			return false;
 		}
 
-		cMove->SetTimer(static_cast<cC_TID>(encaps.toInt()), static_cast<TIMERVAL>(timerVal));
+		cMove->SetTimer(static_cast<cC_TID>(encaps.toInt32()), static_cast<TIMERVAL>(timerVal));
 	}
 	else if (className == "UOXSocket")
 	{
@@ -8125,7 +8138,7 @@ static bool CMisc_SetTimer(JSContext* cx, unsigned argc, JS::Value* vp)
 			return false;
 		}
 
-		mSock->SetTimer(static_cast<cS_TID>(encaps.toInt()), static_cast<TIMERVAL>(timerVal));
+		mSock->SetTimer(static_cast<cS_TID>(encaps.toInt32()), static_cast<TIMERVAL>(timerVal));
 	}
 
 	return true;
@@ -8726,7 +8739,7 @@ static bool CItem_Dupe(JSContext* cx, unsigned argc, JS::Value* vp)
 		dupeItem = JSEngine->AcquireObject(IUE_ITEM, dupeItemTemp, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
 	}
 
-	*rval = OBJECT_TO_JSVAL(dupeItem);
+	args.rval().setObjectOrNull( dupeItem );
 	return true;
 }
 
@@ -8768,7 +8781,7 @@ static bool CChar_Dupe(JSContext* cx, unsigned argc, JS::Value* vp)
 	JSObject* dupeChar = nullptr;
 	dupeChar = JSEngine->AcquireObject(IUE_CHAR, dupeCharTemp, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
 
-	*rval = OBJECT_TO_JSVAL(dupeChar);
+	args.rval().setObjectOrNull( dupeChar );
 	return true;
 }
 
@@ -10111,11 +10124,11 @@ static bool CMulti_FirstChar(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (ValidateObject(firstChar))
 	{
 		JSObject* myObj = JSEngine->AcquireObject(IUE_CHAR, firstChar, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
-		*rval = OBJECT_TO_JSVAL(myObj);
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+		args.rval().setNull();
 	}
 	return true;
 }
@@ -10184,11 +10197,11 @@ static bool CMulti_NextChar(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (ValidateObject(nextChar))
 	{
 		JSObject* myObj = JSEngine->AcquireObject(IUE_CHAR, nextChar, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
-		*rval = OBJECT_TO_JSVAL(myObj);
+		args.rval().setObjectOrNull( myObj );
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+		args.rval().setNull();
 	}
 	return true;
 }
@@ -11764,7 +11777,7 @@ static bool CRegion_GetOrePref(JSContext* cx, unsigned argc, JS::Value* vp)
 	JS_SetElement(cx, jsOrePref, 1, &jsOrePrefChance);
 
 	// Convert orePref array object to jsval and pass it to script
-	*rval = OBJECT_TO_JSVAL(jsOrePref);
+	args.rval().setObjectOrNull( jsOrePref );
 
 	return true;
 }
@@ -11954,7 +11967,7 @@ static bool CChar_GetFriendList(JSContext* cx, unsigned argc, JS::Value* vp)
 	}
 
 	// Convert ArrayObject to jsval and pass it to script
-	*rval = OBJECT_TO_JSVAL(jsFriendList);
+	args.rval().setObjectOrNull( jsFriendList );
 	return true;
 }
 
@@ -12068,7 +12081,7 @@ static bool CChar_GetPetList(JSContext* cx, unsigned argc, JS::Value* vp)
 	}
 
 	// Convert ArrayObject to jsval and pass it to script
-	*rval = OBJECT_TO_JSVAL(jsPetList);
+	args.rval().setObjectOrNull( jsPetList );
 	return true;
 }
 
@@ -12336,7 +12349,7 @@ static bool CChar_GetFollowerList(JSContext* cx, unsigned argc, JS::Value* vp)
 	}
 
 	// Convert ArrayObject to jsval and pass it to script
-	*rval = OBJECT_TO_JSVAL(jsFollowerList);
+	args.rval().setObjectOrNull( jsFollowerList );
 	return true;
 }
 
@@ -12510,22 +12523,22 @@ static bool CParty_GetMember(JSContext* cx, unsigned argc, JS::Value* vp)
 		if (memberOffset >= ourParty->MemberList()->size())
 		{
 			ScriptError(cx, "GetMember: Invalid character to get, index out of bounds");
-			*rval = JSVAL_NULL;
+			args.rval().setNull();
 			return true;
 		}
 		CChar* mChar = (*(ourParty->MemberList()))[memberOffset]->Member();
 		if (mChar == nullptr)
 		{
-			*rval = JSVAL_NULL;
+			args.rval().setNull();
 		}
 		else
 		{
 			JSObject* myJSChar = JSEngine->AcquireObject(IUE_CHAR, mChar, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
-			*rval = OBJECT_TO_JSVAL(myJSChar);
+			args.rval().setObjectOrNull( myJSChar );
 		}
 	}
 	else
-		*rval = JSVAL_NULL;
+		args.rval().setNull();
 	return true;
 }
 
