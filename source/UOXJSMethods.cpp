@@ -3753,7 +3753,7 @@ static bool CBase_GetTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 
 		// Convert tag name to JSString
 		JSString* tagName = JS_NewStringCopyZ(cx, tagObj.first.c_str());
-		jsval jsTagName = STRING_TO_JSVAL(tagName);
+		jsval jsTagName = JS::StringValue(tagName);
 
 		// Add tag name to JSObject for tag
 		JS_SetElement(cx, jsTag, 0, &jsTagName);
@@ -3771,7 +3771,7 @@ static bool CBase_GetTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 		{
 			jsType = INT_TO_JSVAL(TAGMAP_TYPE_STRING);
 			JSString* jsStringVal = JS_NewStringCopyZ(cx, tagObj.second.m_StringValue.c_str());
-			jsValue = STRING_TO_JSVAL(jsStringVal);
+			jsValue = JS::StringValue(jsStringVal);
 			break;
 		}
 		case TAGMAP_TYPE_BOOL:
@@ -3839,7 +3839,7 @@ static bool CBase_GetTempTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 
 		// Convert tag name to JSString
 		JSString* tagName = JS_NewStringCopyZ(cx, tagObj.first.c_str());
-		jsval jsTagName = STRING_TO_JSVAL(tagName);
+		jsval jsTagName = JS::StringValue(tagName);
 
 		// Add tag name to JSObject for tag
 		JS_SetElement(cx, jsTag, 0, &jsTagName);
@@ -3857,7 +3857,7 @@ static bool CBase_GetTempTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 		{
 			jsType = INT_TO_JSVAL(TAGMAP_TYPE_STRING);
 			JSString* jsStringVal = JS_NewStringCopyZ(cx, tagObj.second.m_StringValue.c_str());
-			jsValue = STRING_TO_JSVAL(jsStringVal);
+			jsValue = JS::StringValue(jsStringVal);
 			break;
 		}
 		case TAGMAP_TYPE_BOOL:
@@ -11747,13 +11747,13 @@ static bool CRegion_GetOrePref(JSContext* cx, unsigned argc, JS::Value* vp)
 	// Start with name of ore
 	JSString* oreName = nullptr;
 	oreName = JS_NewStringCopyZ(cx, orePrefs->oreIndex->oreName.c_str());
-	auto jsOreName = STRING_TO_JSVAL(oreName);
+	auto jsOreName = JS::StringValue(oreName);
 	JS_SetElement(cx, jsMiningData, 0, &jsOreName);
 
 	// Name of ingot
 	JSString* ingotName = nullptr;
 	ingotName = JS_NewStringCopyZ(cx, orePrefs->oreIndex->name.c_str());
-	auto jsIngotName = STRING_TO_JSVAL(ingotName);
+	auto jsIngotName = JS::StringValue(ingotName);
 	JS_SetElement(cx, jsMiningData, 3, &jsIngotName);
 
 	// Ore colour, min skill, Makemenu entry, oreChance, scriptID
