@@ -621,7 +621,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
       }
       case CIP_ORIGIN:
         tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( gPriv->GetOrigin() )).c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
 
         // The following entries are specifically for CSpawnItem objects
@@ -629,7 +629,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         if( gPriv->GetObjType() == OT_SPAWNER )
         {
           tString = JS_NewStringCopyZ( cx, ( static_cast<CSpawnItem *>( gPriv ))->GetSpawnSection().c_str() );
-          *vp = STRING_TO_JSVAL( tString );
+          *vp = JS::StringValue( tString );
         }
         break;
       case CIP_SECTIONALIST:
@@ -830,7 +830,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         if( gPriv->GetObjType() == OT_MULTI )
         {
           tString = JS_NewStringCopyZ( cx, ( static_cast<CMultiObj *>( gPriv ))->GetDeed().c_str() );
-          *vp = STRING_TO_JSVAL( tString );
+          *vp = JS::StringValue( tString );
         }
         else
         {
@@ -851,7 +851,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         if( gPriv->GetObjType() == OT_MULTI )
         {
           tString = JS_NewStringCopyZ( cx, ( static_cast<CMultiObj *>( gPriv ))->GetBuildTimestamp().c_str() );
-          *vp = STRING_TO_JSVAL( tString );
+          *vp = JS::StringValue( tString );
         }
         else
         {
@@ -862,7 +862,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         if( gPriv->GetObjType() == OT_MULTI )
         {
           tString = JS_NewStringCopyZ( cx, ( static_cast<CMultiObj *>( gPriv ))->GetTradeTimestamp().c_str() );
-          *vp = STRING_TO_JSVAL( tString );
+          *vp = JS::StringValue( tString );
         }
         else
         {
@@ -1407,7 +1407,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
           std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
 
           tString = JS_NewStringCopyZ( cx, convertedString.c_str() );
-          *vp = STRING_TO_JSVAL( tString );
+          *vp = JS::StringValue( tString );
           break;
         }
       case CCP_ORIGNAME:
@@ -1418,16 +1418,16 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
 
         tString = JS_NewStringCopyZ( cx, convertedString.c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       }
       case CCP_TITLE:
         tString = JS_NewStringCopyZ( cx, gPriv->GetTitle().c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       case CCP_SECTIONID:
         tString = JS_NewStringCopyZ( cx, gPriv->GetSectionId().c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       case CCP_X:			*vp = INT_TO_JSVAL( gPriv->GetX() );			break;
       case CCP_Y:			*vp = INT_TO_JSVAL( gPriv->GetY() );			break;
@@ -1685,7 +1685,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       }
       case CCP_ORIGIN:
         tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( gPriv->GetOrigin() )).c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       case CCP_TOWN:
       {
@@ -1795,7 +1795,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       case CCP_TOWNPRIV:		*vp = INT_TO_JSVAL( gPriv->GetTownPriv() );			break;
       case CCP_GUILDTITLE:
         tString = JS_NewStringCopyZ( cx, gPriv->GetGuildTitle().c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       case CCP_HAIRSTYLE:		*vp = INT_TO_JSVAL( gPriv->GetHairStyle() );		break;
       case CCP_HAIRCOLOUR:	*vp = INT_TO_JSVAL( gPriv->GetHairColour() );		break;
@@ -1855,7 +1855,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       case CCP_THIRSTWILDCHANCE: *vp = INT_TO_JSVAL( gPriv->GetTamedThirstWildChance() );	break;
       case CCP_FOODLIST:
         tString = JS_NewStringCopyZ( cx, gPriv->GetFood().c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       case CCP_MOUNTED:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetMounted() );				break;
       case CCP_STABLED:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetStabled() );				break;
@@ -2473,7 +2473,7 @@ bool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
     {
       case CREGP_NAME:
         tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       case CREGP_MAYOR:
         CChar *tempMayor;
@@ -2508,7 +2508,7 @@ bool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
       case CREGP_POPULATION:			*vp = INT_TO_JSVAL( gPriv->GetPopulation() );			break;
       case CREGP_MEMBERS:
         tString = JS_NewStringCopyZ( cx, gPriv->GetTownMemberSerials().c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       case CREGP_ID:					*vp = INT_TO_JSVAL( gPriv->GetRegionNum() );			break;
       case CREGP_NUMGUARDS:			*vp = INT_TO_JSVAL( gPriv->NumGuards() );				break;
@@ -2549,7 +2549,7 @@ bool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
       case CREGP_WEATHER:				*vp = INT_TO_JSVAL( gPriv->GetWeather() );				break;
       case CREGP_OWNER:
         tString = JS_NewStringCopyZ( cx, gPriv->GetOwner().c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       default:
         break;
@@ -2669,7 +2669,7 @@ bool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
     {
       case CSPAWNREGP_NAME:
         tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       case CSPAWNREGP_REGIONNUM:				*vp = INT_TO_JSVAL( gPriv->GetRegionNum() );		break;
       case CSPAWNREGP_ITEM:
@@ -2690,7 +2690,7 @@ bool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
           }
         }
         tString = JS_NewStringCopyZ( cx, s.c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
       }
         break;
       case CSPAWNREGP_NPC:
@@ -2711,7 +2711,7 @@ bool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
           }
         }
         tString = JS_NewStringCopyZ( cx, s.c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
       }
         break;
       case CSPAWNREGP_ITEMCOUNT:				*vp = INT_TO_JSVAL( gPriv->GetCurrentItemAmt() );				break;
@@ -2808,7 +2808,7 @@ bool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp 
     {
       case CGP_NAME:
         tString = JS_NewStringCopyZ( cx, gPriv->Name().c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       case CGP_TYPE:			*vp = INT_TO_JSVAL( gPriv->Type() );		break;
       case CGP_MASTER:
@@ -2848,15 +2848,15 @@ bool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp 
         break;
       case CGP_CHARTER:
         tString = JS_NewStringCopyZ( cx, gPriv->Charter().c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       case CGP_ABBREVIATION:
         tString = JS_NewStringCopyZ( cx, gPriv->Abbreviation().c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       case CGP_WEBPAGE:
         tString = JS_NewStringCopyZ( cx, gPriv->Webpage().c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       default:
         break;
@@ -3177,10 +3177,10 @@ bool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
         break;
       case CSOCKP_XTEXT:				
         tString = JS_NewStringCopyZ( cx, gPriv->XText().c_str() );
-        *vp = STRING_TO_JSVAL( tString );	break;
+        *vp = JS::StringValue( tString );	break;
       case CSOCKP_XTEXT2:				
         tString = JS_NewStringCopyZ( cx, gPriv->XText2().c_str() );
-        *vp = STRING_TO_JSVAL( tString );	break;
+        *vp = JS::StringValue( tString );	break;
       case CSOCKP_CLICKZ:				*vp = INT_TO_JSVAL( gPriv->ClickZ() );					break;
       case CSOCKP_ADDID:
         break;
@@ -3650,7 +3650,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
           + "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x0000FF00 ) >> 8 ))
           + "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x000000FF ) % 256 ));
         tString = JS_NewStringCopyZ( cx, ipString.c_str() );
-        *vp = STRING_TO_JSVAL( tString );
+        *vp = JS::StringValue( tString );
         break;
       }
       default:
