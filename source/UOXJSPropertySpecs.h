@@ -759,9 +759,9 @@ DECL_GET_SET( CGumpData, IDs )
 // Account Properties
 DECL_GET( CAccount, id )
 DECL_GET( CAccount, username )
-DECL_SET( CAccount, password )
+DECL_GET_SET( CAccount, password )
 DECL_GET( CAccount, flags )
-DECL_SET( CAccount, path )
+DECL_GET_SET( CAccount, path )
 DECL_GET_SET( CAccount, comment )
 DECL_GET_SET( CAccount, timeban )
 DECL_GET( CAccount, firstLogin )
@@ -1498,42 +1498,42 @@ inline JSPropertySpec CGumpDataProperties[] =
 
 inline JSPropertySpec CAccountProperties[] =
 {
-  JS_PSGS( "id",			JSCAccount_get_id,		   JSCAccount_set_id,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "username",	    JSCAccount_get_username,	   JSCAccount_set_username,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "password",	    JSCAccount_get_password,	   JSCAccount_set_password,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "flags",		    JSCAccount_get_flags,	   JSCAccount_set_flags,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "path",		    JSCAccount_get_path,	   JSCAccount_set_path,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "comment",	    JSCAccount_get_comment,	   JSCAccount_set_comment,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "timeban",	    JSCAccount_get_timeban,	   JSCAccount_set_timeban,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "firstLogin",	JSCAccount_get_firstLogin,	   JSCAccount_set_firstLogin,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "totalPlayTime",	JSCAccount_get_totalPlayTime,	   JSCAccount_set_totalPlayTime,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "character1",	JSCAccount_get_character1,	   JSCAccount_set_character1,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "character2",	JSCAccount_get_character2,	   JSCAccount_set_character2,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "character3",	JSCAccount_get_character3,	   JSCAccount_set_character3,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "character4",	JSCAccount_get_character4,	   JSCAccount_set_character4,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "character5",	JSCAccount_get_character5,	   JSCAccount_set_character5,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "character6",	JSCAccount_get_character6,	   JSCAccount_set_character6,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "character7",	JSCAccount_get_character7,	   JSCAccount_set_character7,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "currentChar",	JSCAccount_get_currentChar,	   JSCAccount_set_currentChar,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "lastIP",		JSCAccount_get_lastIP,	   JSCAccount_set_lastIP,	     JSPROP_ENUMANDPERM ),
+  JS_PSG(  "id",                JSCAccount_get_id,                                                   JSPROP_ENUMANDPERM ),
+  JS_PSG(  "username",          JSCAccount_get_username,                                             JSPROP_ENUMANDPERM ),
+  JS_PSGS( "password",          JSCAccount_get_password,          JSCAccount_set_password,           JSPROP_ENUMANDPERM ),
+  JS_PSG(  "flags",             JSCAccount_get_flags,                                                JSPROP_ENUMANDPERM ),
+  JS_PSGS( "path",              JSCAccount_get_path,              JSCAccount_set_path,               JSPROP_ENUMANDPERM ),
+  JS_PSGS( "comment",           JSCAccount_get_comment,           JSCAccount_set_comment,            JSPROP_ENUMANDPERM ),
+  JS_PSGS( "timeban",           JSCAccount_get_timeban,           JSCAccount_set_timeban,            JSPROP_ENUMANDPERM ),
+  JS_PSG(  "firstLogin",        JSCAccount_get_firstLogin,                                           JSPROP_ENUMANDPERM ),
+  JS_PSGS( "totalPlayTime",     JSCAccount_get_totalPlayTime,     JSCAccount_set_totalPlayTime,      JSPROP_ENUMANDPERM ),
+  JS_PSG(  "character1",        JSCAccount_get_character1,                                           JSPROP_ENUMANDPERM ),
+  JS_PSG(  "character2",        JSCAccount_get_character2,                                           JSPROP_ENUMANDPERM ),
+  JS_PSG(  "character3",        JSCAccount_get_character3,                                           JSPROP_ENUMANDPERM ),
+  JS_PSG(  "character4",        JSCAccount_get_character4,                                           JSPROP_ENUMANDPERM ),
+  JS_PSG(  "character5",        JSCAccount_get_character5,                                           JSPROP_ENUMANDPERM ),
+  JS_PSG(  "character6",        JSCAccount_get_character6,                                           JSPROP_ENUMANDPERM ),
+  JS_PSG(  "character7",        JSCAccount_get_character7,                                           JSPROP_ENUMANDPERM ),
+  JS_PSG(  "currentChar",       JSCAccount_get_currentChar,                                          JSPROP_ENUMANDPERM ),
+  JS_PSG(  "lastIP",            JSCAccount_get_lastIP,                                               JSPROP_ENUMANDPERM ),
 
   // Flags
-  JS_PSGS( "isBanned",			JSCAccount_get_isBanned,	   JSCAccount_set_isBanned,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isSuspended",		JSCAccount_get_isSuspended,	   JSCAccount_set_isSuspended,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isPublic",			JSCAccount_get_isPublic,	   JSCAccount_set_isPublic,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isOnline",			JSCAccount_get_isOnline,	   JSCAccount_set_isOnline,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isSlot1Blocked",	JSCAccount_get_isSlot1Blocked,	   JSCAccount_set_isSlot1Blocked,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isSlot2Blocked",	JSCAccount_get_isSlot2Blocked,	   JSCAccount_set_isSlot2Blocked,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isSlot3Blocked",	JSCAccount_get_isSlot3Blocked,	   JSCAccount_set_isSlot3Blocked,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isSlot4Blocked",	JSCAccount_get_isSlot4Blocked,	   JSCAccount_set_isSlot4Blocked,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isSlot5Blocked",	JSCAccount_get_isSlot5Blocked,	   JSCAccount_set_isSlot5Blocked,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isSlot6Blocked",	JSCAccount_get_isSlot6Blocked,	   JSCAccount_set_isSlot6Blocked,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isSlot7Blocked",	JSCAccount_get_isSlot7Blocked,	   JSCAccount_set_isSlot7Blocked,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isYoung",			JSCAccount_get_isYoung,	   JSCAccount_set_isYoung,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "unused10",			JSCAccount_get_unused10,	   JSCAccount_set_unused10,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isSeer",			JSCAccount_get_isSeer,	   JSCAccount_set_isSeer,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isCounselor",		JSCAccount_get_isCounselor,	   JSCAccount_set_isCounselor,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isGM",				JSCAccount_get_isGM,	   JSCAccount_set_isGM,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isBanned",          JSCAccount_get_isBanned,           JSCAccount_set_isBanned,          JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isSuspended",       JSCAccount_get_isSuspended,        JSCAccount_set_isSuspended,       JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isPublic",          JSCAccount_get_isPublic,           JSCAccount_set_isPublic,          JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isOnline",          JSCAccount_get_isOnline,           JSCAccount_set_isOnline,          JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isSlot1Blocked",    JSCAccount_get_isSlot1Blocked,     JSCAccount_set_isSlot1Blocked,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isSlot2Blocked",    JSCAccount_get_isSlot2Blocked,     JSCAccount_set_isSlot2Blocked,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isSlot3Blocked",    JSCAccount_get_isSlot3Blocked,     JSCAccount_set_isSlot3Blocked,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isSlot4Blocked",    JSCAccount_get_isSlot4Blocked,     JSCAccount_set_isSlot4Blocked,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isSlot5Blocked",    JSCAccount_get_isSlot5Blocked,     JSCAccount_set_isSlot5Blocked,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isSlot6Blocked",    JSCAccount_get_isSlot6Blocked,     JSCAccount_set_isSlot6Blocked,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isSlot7Blocked",    JSCAccount_get_isSlot7Blocked,     JSCAccount_set_isSlot7Blocked,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isYoung",           JSCAccount_get_isYoung,            JSCAccount_set_isYoung,           JSPROP_ENUMANDPERM ),
+  JS_PSGS( "unused10",          JSCAccount_get_unused10,           JSCAccount_set_unused10,          JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isSeer",            JSCAccount_get_isSeer,             JSCAccount_set_isSeer,            JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isCounselor",       JSCAccount_get_isCounselor,        JSCAccount_set_isCounselor,       JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isGM",              JSCAccount_get_isGM,               JSCAccount_set_isGM,              JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
