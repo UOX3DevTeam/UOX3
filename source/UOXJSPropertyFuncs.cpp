@@ -45,7 +45,7 @@ bool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
   if( spellId >= Magic->spells.size() )
   {
     ScriptError( cx, oldstrutil::format( "Spells: Invalid Spell ID (%i) provided", spellId ).c_str() );
-    *vp = JSVAL_NULL;
+    *vp = JS::CurrentGlobalOrNull;
     return false;
   }
 
@@ -53,7 +53,7 @@ bool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
   if( mySpell == nullptr )
   {
     ScriptError( cx, oldstrutil::format( "Spells: Invalid Spell with spellId %i", spellId ).c_str() );
-    *vp = JSVAL_NULL;
+    *vp = JS::CurrentGlobalOrNull;
     return false;
   }
 
@@ -144,7 +144,7 @@ bool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsv
   if( skillId > THROWING )
   {
     ScriptError( cx, oldstrutil::format( "Invalid Skill ID, must be between 0 and 57" ).c_str() );
-    *vp = JSVAL_NULL;
+    *vp = JS::CurrentGlobalOrNull;
     return false;
   }
 
@@ -152,7 +152,7 @@ bool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsv
   if( mySkill == nullptr )
   {
     ScriptError( cx, oldstrutil::format( "Invalid Skill" ).c_str() );
-    *vp = JSVAL_NULL;
+    *vp = JS::CurrentGlobalOrNull;
     return false;
   }
 
@@ -222,7 +222,7 @@ bool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
   if( myCreateEntry == nullptr )
   {
     ScriptError( cx, oldstrutil::format( "Invalid create entry ID (%i)", createEntryId ).c_str() );
-    *vp = JSVAL_NULL;
+    *vp = JS::CurrentGlobalOrNull;
     return false;
   }
 
@@ -504,7 +504,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 
         if( !ValidateObject( pOwner ))
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -551,7 +551,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         if( TempSerial == INVALIDSERIAL )
         {
           // Return a JS_NULL
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -566,7 +566,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
             }
             else
             {
-              *vp = JSVAL_NULL;
+              *vp = JS::CurrentGlobalOrNull;
             }
           }
           else
@@ -579,7 +579,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
             }
             else
             {
-              *vp = JSVAL_NULL;
+              *vp = JS::CurrentGlobalOrNull;
             }
           }
         }
@@ -595,7 +595,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 
         if( TempRace == nullptr )
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -610,7 +610,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         CTownRegion *myReg = gPriv->GetRegion();
         if( myReg == nullptr )
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -656,7 +656,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 
         if( !ValidateObject( multi ))
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -673,7 +673,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_MAXLOCKDOWNS:
@@ -683,7 +683,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_TRASHCONTAINERS:
@@ -693,7 +693,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_MAXTRASHCONTAINERS:
@@ -703,7 +703,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_SECURECONTAINERS:
@@ -713,7 +713,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_MAXSECURECONTAINERS:
@@ -723,7 +723,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_FRIENDS:
@@ -733,7 +733,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_MAXFRIENDS:
@@ -743,7 +743,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_GUESTS:
@@ -753,7 +753,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_MAXGUESTS:
@@ -763,7 +763,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_OWNERS:
@@ -773,7 +773,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_MAXOWNERS:
@@ -783,7 +783,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_BANS:
@@ -793,7 +793,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_MAXBANS:
@@ -803,7 +803,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_VENDORS:
@@ -813,7 +813,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_MAXVENDORS:
@@ -823,7 +823,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_DEED:
@@ -834,7 +834,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_ISPUBLIC:
@@ -844,7 +844,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_BUILDTIMESTAMP:
@@ -855,7 +855,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_TRADETIMESTAMP:
@@ -866,7 +866,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_BANX:
@@ -876,7 +876,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       case CIP_BANY:
@@ -886,7 +886,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       default:
@@ -921,7 +921,7 @@ bool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
       case CIP_ID:			gPriv->SetId( static_cast<UI16>( encaps.toInt() ));			break;
       case CIP_COLOUR:		gPriv->SetColour( static_cast<UI16>( encaps.toInt() ));		break;
       case CIP_OWNER:
-        if( *vp != JSVAL_NULL )
+        if( *vp != JS::CurrentGlobalOrNull )
         {
           CChar *myChar = static_cast<CChar*>( encaps.toObject() );
           if( !ValidateObject( myChar ))
@@ -955,7 +955,7 @@ bool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
       }
       case CIP_SCRIPTTRIGGERS:
       {
-        if( *vp != JSVAL_NULL )
+        if( *vp != JS::CurrentGlobalOrNull )
         {
           UI16 scriptId = static_cast<UI16>( encaps.toInt() );
           cScript *toExecute	= JSMapping->GetScript( scriptId );
@@ -990,7 +990,7 @@ bool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
       }
       case CIP_AMOUNT:	gPriv->SetAmount( static_cast<UI32>( encaps.toInt() )); 	break;
       case CIP_CONTAINER:
-        if( *vp != JSVAL_NULL )
+        if( *vp != JS::CurrentGlobalOrNull )
         {
           CBaseObject *myObj = static_cast<CBaseObject*>( encaps.toObject() );
           if( !ValidateObject( myObj ))
@@ -1388,7 +1388,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         CAccountBlock_st *accountBlock = &gPriv->GetAccount();
         if( accountBlock == nullptr )
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {	// Otherwise Acquire an object
@@ -1461,7 +1461,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 
         if( !ValidateObject( TempObj ))
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -1521,7 +1521,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 
         if( !ValidateObject( tempChar ))
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -1560,7 +1560,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         TempItem = gPriv->GetPackItem();
 
         if( !ValidateObject( TempItem ))
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         else
         {
           // Otherwise Acquire an object
@@ -1628,7 +1628,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 
         if( TempRace == nullptr )
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -1674,7 +1674,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         CTownRegion *myReg = gPriv->GetRegion();
         if( myReg == nullptr )
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -1696,7 +1696,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         // i would say no its not
         if( tempTownId == 0xFF )
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -1714,7 +1714,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         // Character has no guild
         if( tempGuildId == -1 ) // isn't there a constant or something like?
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -1728,7 +1728,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         CSocket *tSock = gPriv->GetSocket();
         if( tSock == nullptr )
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {	// Otherwise Acquire an object
@@ -1759,7 +1759,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         CBaseObject *tempObj = gPriv->GetGuarding();
         if( !ValidateObject( tempObj ))
         {	// Return a JS_NULL
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -1810,7 +1810,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         CChar *tempChar	= gPriv->GetAttacker();
         if( !ValidateObject( tempChar ))
         {	// Return a JS_NULL
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -1929,7 +1929,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         Party *tempParty = PartyFactory::GetSingleton().Get( gPriv );
         if( tempParty == nullptr )
         {	// Return a JS_NULL
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -1945,7 +1945,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 
         if( !ValidateObject( multi ))
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -2011,7 +2011,7 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       case CCP_CONTROLSLOTSUSED:	gPriv->SetControlSlotsUsed( static_cast<UI16>( encaps.toInt() ));		break;
       case CCP_ORNERINESS:	gPriv->SetOrneriness( static_cast<UI16>( encaps.toInt() ));					break;
       case CCP_OWNER:
-        if( *vp != JSVAL_NULL )
+        if( *vp != JS::CurrentGlobalOrNull )
         {
           CChar *myChar = static_cast<CChar*>( encaps.toObject() );
           if( !ValidateObject( myChar ))
@@ -2045,7 +2045,7 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       }
       case CCP_SCRIPTTRIGGERS:
       {
-        if( *vp != JSVAL_NULL )
+        if( *vp != JS::CurrentGlobalOrNull )
         {
           UI16 scriptId = static_cast<UI16>( encaps.toInt() );
           cScript *toExecute	= JSMapping->GetScript( scriptId );
@@ -2091,7 +2091,7 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       }
       case CCP_TARGET:
         //TODO: Check if the user(admin per jscript) can set the target
-        if( *vp != JSVAL_NULL )
+        if( *vp != JS::CurrentGlobalOrNull )
         {
           CChar *myChar = static_cast<CChar *>( encaps.toObject() );
           if( !ValidateObject( myChar ))
@@ -2252,7 +2252,7 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       case CCP_ORIGIN:		gPriv->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( encaps.toString() ));	break;
       case CCP_TOWN:
         cwmWorldState->townRegions[gPriv->GetTown()]->RemoveTownMember( *gPriv );
-        if( *vp != JSVAL_NULL )
+        if( *vp != JS::CurrentGlobalOrNull )
         {
           cwmWorldState->townRegions[encaps.toInt()]->AddAsTownMember( *gPriv );
         }
@@ -2262,7 +2262,7 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         {
           GuildSys->Resign( gPriv->GetSocket() );
 
-          if( *vp != JSVAL_NULL )
+          if( *vp != JS::CurrentGlobalOrNull )
           {
             CGuild *myGuild = static_cast<CGuild*>( encaps.toObject() );
             myGuild->NewRecruit( gPriv->GetSerial() );
@@ -2321,7 +2321,7 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       case CCP_SAYCOLOUR:		gPriv->SetSayColour( static_cast<COLOUR>( encaps.toInt() ));	break;
       case CCP_EMOTECOLOUR:	gPriv->SetEmoteColour( static_cast<COLOUR>( encaps.toInt() ));	break;
       case CCP_ATTACKER:
-        if( *vp != JSVAL_NULL )
+        if( *vp != JS::CurrentGlobalOrNull )
         {
           CChar *myChar = static_cast<CChar *>( encaps.toObject() );
           if( !ValidateObject( myChar ))
@@ -2373,7 +2373,7 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       case CCP_CANRUN:		gPriv->SetRun( encaps.toBool() );				break;
       case CCP_ISGUARDED:		gPriv->SetGuarded( encaps.toBool() );			break;
       case CCP_GUARDING:
-        if( *vp != JSVAL_NULL )
+        if( *vp != JS::CurrentGlobalOrNull )
         {
           CBaseObject *myObj = static_cast<CBaseObject *>( encaps.toObject() );
           if( !ValidateObject( myObj ))
@@ -2494,7 +2494,7 @@ bool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
         tempMayor = gPriv->GetMayor();
 
         if( !ValidateObject( tempMayor ))
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         else
         {
           // Otherwise Acquire an object
@@ -2606,7 +2606,7 @@ bool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
       }
       case CREGP_SCRIPTTRIGGERS:
       {
-        if( *vp != JSVAL_NULL )
+        if( *vp != JS::CurrentGlobalOrNull )
         {
           UI16 scriptId = static_cast<UI16>( encaps.toInt() );
           cScript *toExecute	= JSMapping->GetScript( scriptId );
@@ -2816,7 +2816,7 @@ bool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp 
 
         if( !ValidateObject( gMaster ))
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -2831,7 +2831,7 @@ bool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp 
 
         if( !ValidateObject( gStone ))
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -2881,7 +2881,7 @@ bool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp 
       case CGP_NAME:				gPriv->Name( encaps.toString() );						break;
       case CGP_TYPE:				gPriv->Type( static_cast<GuildType>( encaps.toInt() ));	break;
       case CGP_MASTER:
-        if( *vp != JSVAL_NULL )
+        if( *vp != JS::CurrentGlobalOrNull )
         {
           CChar *myChar = static_cast<CChar*>( encaps.toObject() );
           if( !ValidateObject( myChar ))
@@ -2895,7 +2895,7 @@ bool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp 
         }
         break;
       case CGP_STONE:
-        if( *vp != JSVAL_NULL )
+        if( *vp != JS::CurrentGlobalOrNull )
         {
           CItem *myItem = static_cast<CItem *>( encaps.toObject() );
           if( !ValidateObject( myItem ))
@@ -3011,7 +3011,7 @@ bool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
       case CSOCKP_TEMPINT:			gPriv->TempInt( encaps.toInt() );						break;
       case CSOCKP_TEMPINT2:			gPriv->TempInt2( encaps.toInt() );						break; // Reserved for JS usage
       case CSOCKP_TEMPOBJ:
-        if( *vp == JSVAL_NULL )
+        if( *vp == JS::CurrentGlobalOrNull )
         {
           gPriv->TempObj( nullptr );
         }
@@ -3021,7 +3021,7 @@ bool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
         }
         break;
       case CSOCKP_TEMPOBJ2: // Reserved for JS usage
-        if( *vp == JSVAL_NULL )
+        if( *vp == JS::CurrentGlobalOrNull )
         {
           gPriv->TempObj2( nullptr );
         }
@@ -3100,7 +3100,7 @@ bool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
         CAccountBlock_st *accountBlock = &gPriv->GetAccount();
         if( accountBlock == nullptr )
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {	// Otherwise Acquire an object
@@ -3114,7 +3114,7 @@ bool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
         myChar = gPriv->CurrcharObj();
         if( !ValidateObject( myChar ))
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -3133,7 +3133,7 @@ bool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
         CBaseObject *mObj	= gPriv->TempObj();
         if( !ValidateObject( mObj ))
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -3155,7 +3155,7 @@ bool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
         CBaseObject *mObj	= gPriv->TempObj2();
         if( !ValidateObject( mObj ))
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         else
         {
@@ -3218,7 +3218,7 @@ bool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 
           if( !ValidateObject( myItem ))
           {
-            *vp = JSVAL_NULL;
+            *vp = JS::CurrentGlobalOrNull;
             return true;
           }
 
@@ -3232,7 +3232,7 @@ bool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 
           if( !ValidateObject( myChar ))
           {
-            *vp = JSVAL_NULL;
+            *vp = JS::CurrentGlobalOrNull;
             return true;
           }
 
@@ -3466,7 +3466,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 
           if( !ValidateObject( TempObj ))
           {
-            *vp = JSVAL_NULL;
+            *vp = JS::CurrentGlobalOrNull;
           }
           else
           {
@@ -3477,7 +3477,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       }
@@ -3489,7 +3489,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 
           if( !ValidateObject( TempObj ))
           {
-            *vp = JSVAL_NULL;
+            *vp = JS::CurrentGlobalOrNull;
           }
           else
           {
@@ -3500,7 +3500,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       }
@@ -3512,7 +3512,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 
           if( !ValidateObject( TempObj ))
           {
-            *vp = JSVAL_NULL;
+            *vp = JS::CurrentGlobalOrNull;
           }
           else
           {
@@ -3523,7 +3523,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       }
@@ -3535,7 +3535,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 
           if( !ValidateObject( TempObj ))
           {
-            *vp = JSVAL_NULL;
+            *vp = JS::CurrentGlobalOrNull;
           }
           else
           {
@@ -3546,7 +3546,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       }
@@ -3558,7 +3558,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 
           if( !ValidateObject( TempObj ))
           {
-            *vp = JSVAL_NULL;
+            *vp = JS::CurrentGlobalOrNull;
           }
           else
           {
@@ -3569,7 +3569,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       }
@@ -3581,7 +3581,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 
           if( !ValidateObject( TempObj ))
           {
-            *vp = JSVAL_NULL;
+            *vp = JS::CurrentGlobalOrNull;
           }
           else
           {
@@ -3592,7 +3592,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       }
@@ -3604,7 +3604,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 
           if( !ValidateObject( TempObj ))
           {
-            *vp = JSVAL_NULL;
+            *vp = JS::CurrentGlobalOrNull;
           }
           else
           {
@@ -3615,7 +3615,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       }
@@ -3627,7 +3627,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 
           if( !ValidateObject( TempObj ))
           {
-            *vp = JSVAL_NULL;
+            *vp = JS::CurrentGlobalOrNull;
           }
           else
           {
@@ -3638,7 +3638,7 @@ bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
         }
         else
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
         }
         break;
       }
@@ -3905,7 +3905,7 @@ bool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp 
         CChar *myChar = gPriv->Leader();
         if( !ValidateObject( myChar ))
         {
-          *vp = JSVAL_NULL;
+          *vp = JS::CurrentGlobalOrNull;
           return true;
         }
         JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, myChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
