@@ -2460,6 +2460,24 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
   return true;
 }
 
+
+IMPL_GETS(CRegion, name,              CTownRegion, setString,  GetName().c_str() )
+IMPL_GET( CRegion, race,              CTownRegion, setInt32,   GetRace() )
+IMPL_GET( CRegion, tax,               CTownRegion, setInt32,   TaxedAmount() )
+IMPL_GET( CRegion, taxResource,       CTownRegion, setInt32,   GetResourceId() )
+IMPL_GET( CRegion, canMark,           CTownRegion, setBoolean, CanMark() )
+IMPL_GET( CRegion, canRecall,         CTownRegion, setBoolean, CanRecall() )
+IMPL_GET( CRegion, canGate,           CTownRegion, setBoolean, CanGate() )
+IMPL_GET( CRegion, canTeleport,       CTownRegion, setBoolean, CanTeleport() )
+IMPL_GET( CRegion, canPlaceHouse,     CTownRegion, setBoolean, CanPlaceHouse() )
+IMPL_GET( CRegion, isGuarded,         CTownRegion, setBoolean, IsGuarded() )
+IMPL_GET( CRegion, canCastAggressive, CTownRegion, setBoolean, CanCastAggressive() )
+IMPL_GET( CRegion, isSafeZone,        CTownRegion, setBoolean, IsSafeZone() )
+IMPL_GET( CRegion, health,            CTownRegion, setInt32,   GetHealth() )
+IMPL_GET( CRegion, isDungeon,         CTownRegion, setBoolean, IsDungeon() )
+IMPL_GET( CRegion, worldNumber,       CTownRegion, setInt32,   WorldNumber() )
+IMPL_GET( CRegion, instanceID,        CTownRegion, setInt32,   GetInstanceId() )
+
 bool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
   CTownRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CTownRegion >(obj , 0);
@@ -2471,10 +2489,6 @@ bool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
     JSString *tString = nullptr;
     switch( JSVAL_TO_INT( id ))
     {
-      case CREGP_NAME:
-        tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
-        *vp = JS::StringValue( tString );
-        break;
       case CREGP_MAYOR:
         CChar *tempMayor;
         tempMayor = gPriv->GetMayor();
@@ -2488,21 +2502,6 @@ bool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
           *vp = OBJECT_TO_JSVAL( myChar );
         }
         break;
-      case CREGP_RACE:				*vp = JS::Int32Value( gPriv->GetRace() );					break;
-      case CREGP_TAX:					*vp = JS::Int32Value( gPriv->TaxedAmount() );				break;
-      case CREGP_TAXRESOURCE:			*vp = JS::Int32Value( gPriv->GetResourceId() );			break;
-      case CREGP_CANMARK:				*vp = JS::BooleanValue( gPriv->CanMark() );				break;
-      case CREGP_CANRECALL:			*vp = JS::BooleanValue( gPriv->CanRecall() );			break;
-      case CREGP_CANGATE:				*vp = JS::BooleanValue( gPriv->CanGate() );				break;
-      case CREGP_CANTELEPORT:			*vp = JS::BooleanValue( gPriv->CanTeleport() );			break;
-      case CREGP_CANPLACEHOUSE:		*vp = JS::BooleanValue( gPriv->CanPlaceHouse() );		break;
-      case CREGP_ISGUARDED:			*vp = JS::BooleanValue( gPriv->IsGuarded() );			break;
-      case CREGP_WORLDNUMBER:			*vp = JS::Int32Value( gPriv->WorldNumber() );				break;
-      case CREGP_INSTANCEID:			*vp = JS::Int32Value( gPriv->GetInstanceId() );			break;
-      case CREGP_CANCASTAGGRESSIVE:	*vp = JS::BooleanValue( gPriv->CanCastAggressive() );	break;
-      case CREGP_ISSAFEZONE:			*vp = JS::BooleanValue( gPriv->IsSafeZone() );			break;
-      case CREGP_HEALTH:				*vp = JS::Int32Value( gPriv->GetHealth() );				break;
-      case CREGP_ISDUNGEON:			*vp = JS::BooleanValue( gPriv->IsDungeon() );			break;
       case CREGP_CHANCEBIGORE:		*vp = JS::Int32Value( gPriv->GetChanceBigOre() );			break;
       case CREGP_NUMOREPREFERENCES:	*vp = JS::Int32Value( gPriv->GetNumOrePreferences() );	break;
       case CREGP_POPULATION:			*vp = JS::Int32Value( gPriv->GetPopulation() );			break;
