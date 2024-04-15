@@ -2461,37 +2461,37 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 }
 
 
-IMPL_GETS(CRegion, name,              CTownRegion, setString,  GetName().c_str() )
+IMPL_GETS( CRegion, name,              CTownRegion, setString,  GetName().c_str() )
 // DECL_GET_SET( CRegion, mayor )
-IMPL_GET( CRegion, race,              CTownRegion, setInt32,   GetRace() )
-IMPL_GET( CRegion, tax,               CTownRegion, setInt32,   TaxedAmount() )
-IMPL_GET( CRegion, taxResource,       CTownRegion, setInt32,   GetResourceId() )
-IMPL_GET( CRegion, canMark,           CTownRegion, setBoolean, CanMark() )
-IMPL_GET( CRegion, canRecall,         CTownRegion, setBoolean, CanRecall() )
-IMPL_GET( CRegion, canGate,           CTownRegion, setBoolean, CanGate() )
-IMPL_GET( CRegion, canTeleport,       CTownRegion, setBoolean, CanTeleport() )
-IMPL_GET( CRegion, canPlaceHouse,     CTownRegion, setBoolean, CanPlaceHouse() )
-IMPL_GET( CRegion, isGuarded,         CTownRegion, setBoolean, IsGuarded() )
-IMPL_GET( CRegion, canCastAggressive, CTownRegion, setBoolean, CanCastAggressive() )
-IMPL_GET( CRegion, isSafeZone,        CTownRegion, setBoolean, IsSafeZone() )
-IMPL_GET( CRegion, health,            CTownRegion, setInt32,   GetHealth() )
-IMPL_GET( CRegion, isDungeon,         CTownRegion, setBoolean, IsDungeon() )
-IMPL_GET( CRegion, worldNumber,       CTownRegion, setInt32,   WorldNumber() )
-IMPL_GET( CRegion, instanceID,        CTownRegion, setInt32,   GetInstanceId() )
-IMPL_GET( CRegion, chanceBigOre,      CTownRegion, setInt32,   GetChanceBigOre() )
-IMPL_GET( CRegion, numOrePrefs,       CTownRegion, setInt32,   GetNumOrePreferences() )
-IMPL_GET( CRegion, population,        CTownRegion, setInt32,   GetPopulation() )
-IMPL_GETS(CRegion, members,           CTownRegion, setString,  GetTownMemberSerials().c_str() )
-IMPL_GET( CRegion, id,                CTownRegion, setInt32,   GetRegionNum() )
+IMPL_GET(  CRegion, race,              CTownRegion, setInt32,   GetRace() )
+IMPL_GET(  CRegion, tax,               CTownRegion, setInt32,   TaxedAmount() )
+IMPL_GET(  CRegion, taxResource,       CTownRegion, setInt32,   GetResourceId() )
+IMPL_GET(  CRegion, canMark,           CTownRegion, setBoolean, CanMark() )
+IMPL_GET(  CRegion, canRecall,         CTownRegion, setBoolean, CanRecall() )
+IMPL_GET(  CRegion, canGate,           CTownRegion, setBoolean, CanGate() )
+IMPL_GET(  CRegion, canTeleport,       CTownRegion, setBoolean, CanTeleport() )
+IMPL_GET(  CRegion, canPlaceHouse,     CTownRegion, setBoolean, CanPlaceHouse() )
+IMPL_GET(  CRegion, isGuarded,         CTownRegion, setBoolean, IsGuarded() )
+IMPL_GET(  CRegion, canCastAggressive, CTownRegion, setBoolean, CanCastAggressive() )
+IMPL_GET(  CRegion, isSafeZone,        CTownRegion, setBoolean, IsSafeZone() )
+IMPL_GET(  CRegion, health,            CTownRegion, setInt32,   GetHealth() )
+IMPL_GET(  CRegion, isDungeon,         CTownRegion, setBoolean, IsDungeon() )
+IMPL_GET(  CRegion, worldNumber,       CTownRegion, setInt32,   WorldNumber() )
+IMPL_GET(  CRegion, instanceID,        CTownRegion, setInt32,   GetInstanceId() )
+IMPL_GET(  CRegion, chanceBigOre,      CTownRegion, setInt32,   GetChanceBigOre() )
+IMPL_GET(  CRegion, numOrePrefs,       CTownRegion, setInt32,   GetNumOrePreferences() )
+IMPL_GET(  CRegion, population,        CTownRegion, setInt32,   GetPopulation() )
+IMPL_GETS( CRegion, members,           CTownRegion, setString,  GetTownMemberSerials().c_str() )
+IMPL_GET(  CRegion, id,                CTownRegion, setInt32,   GetRegionNum() )
 // IMPL_GET( CRegion, scriptTrigger,     CTownRegion, setInt32,   )
 // IMPL_GET( CRegion, scriptTriggers,    CTownRegion, setInt32, )
-IMPL_GET( CRegion, numGuards,         CTownRegion, setInt32,   NumGuards() )
-IMPL_GET( CRegion, taxes,             CTownRegion, setInt32,   GetTaxes() )
-IMPL_GET( CRegion, reserves,          CTownRegion, setInt32,   GetReserves() )
-IMPL_GET( CRegion, appearance,        CTownRegion, setInt32,   GetAppearance() )
-IMPL_GET( CRegion, music,             CTownRegion, setInt32,   GetMusicList() )
-IMPL_GET( CRegion, weather,           CTownRegion, setInt32,   GetWeather() )
-IMPL_GETS(CRegion, owner,             CTownRegion, setString,  GetOwner().c_str() )
+IMPL_GET(  CRegion, numGuards,         CTownRegion, setInt32,   NumGuards() )
+IMPL_GET(  CRegion, taxes,             CTownRegion, setInt32,   GetTaxes() )
+IMPL_GET(  CRegion, reserves,          CTownRegion, setInt32,   GetReserves() )
+IMPL_GET(  CRegion, appearance,        CTownRegion, setInt32,   GetAppearance() )
+IMPL_GET(  CRegion, music,             CTownRegion, setInt32,   GetMusicList() )
+IMPL_GET(  CRegion, weather,           CTownRegion, setInt32,   GetWeather() )
+IMPL_GETS( CRegion, owner,             CTownRegion, setString,  GetOwner().c_str() )
 
 //      case CREGP_MAYOR:
 //        CChar *tempMayor;
@@ -2683,6 +2683,7 @@ IMPL_GET(  CSpawnRegion, call,        CSpawnRegion, setInt32,  GetCall() )
 //      }
 //        break;
 
+// clang-format off
 IMPL_SETS( CSpawnRegion, name,        CSpawnRegion, toString,  SetName )
 IMPL_SET(  CSpawnRegion, regionNum,   CSpawnRegion, toInt32,   SetRegionNum )
 IMPL_SETS( CSpawnRegion, itemList,    CSpawnRegion, toString,  SetItemList )
@@ -2704,146 +2705,101 @@ IMPL_SET(  CSpawnRegion, instanceID,  CSpawnRegion, toInt32,   SetInstanceId )
 IMPL_SET(  CSpawnRegion, minTime,     CSpawnRegion, toInt32,   SetMinTime )
 IMPL_SET(  CSpawnRegion, maxTime,     CSpawnRegion, toInt32,   SetMaxTime )
 IMPL_SET(  CSpawnRegion, call,        CSpawnRegion, toInt32,   SetCall )
+// clang-format on
 
-bool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-  CGuild *gPriv = JS::GetMaybePtrFromReservedSlot<CGuild >(obj , 0);
-  if( gPriv == nullptr )
-    return false;
 
-  if( JSVAL_IS_INT( id ))
-  {
-    JSString *tString = nullptr;
-    switch( JSVAL_TO_INT( id ))
-    {
-      case CGP_NAME:
-        tString = JS_NewStringCopyZ( cx, gPriv->Name().c_str() );
-        *vp = JS::StringValue( tString );
-        break;
-      case CGP_TYPE:			*vp = JS::Int32Value( gPriv->Type() );		break;
-      case CGP_MASTER:
-        CChar *gMaster;
-        gMaster = CalcCharObjFromSer( gPriv->Master() );
+// clang-format off
+IMPL_GETS( CGuild, name,         CGuild, setString, Name().c_str() )
+IMPL_GET(  CGuild, type,         CGuild, setInt32,  Type() )
+//IMPL_GET(  CGuild, master,       CGuild, setInt32,  )
+//IMPL_GET(  CGuild, stone,        CGuild, setInt32,  )
+IMPL_GET(  CGuild, numMembers,   CGuild, setInt32,  NumMembers() )
+IMPL_GET(  CGuild, numRecruits,  CGuild, setInt32,  NumRecruits() )
+//IMPL_GET(  CGuild, members,      CGuild, setInt32,  )
+//IMPL_GET(  CGuild, recruits,     CGuild, setInt32,  )
+IMPL_GETS( CGuild, charter,      CGuild, setString, Charter().c_str() )
+IMPL_GETS( CGuild, abbreviation, CGuild, setString, Abbreviation().c_str() )
+IMPL_GETS( CGuild, webPage,      CGuild, setString, Webpage().c_str() )
+// clang-format on
 
-        if( !ValidateObject( gMaster ))
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        else
-        {
-          // Otherwise Acquire an object
-          JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, gMaster, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myChar );
-        }
-        break;
-      case CGP_STONE:
-        CItem *gStone;
-        gStone = CalcItemObjFromSer( gPriv->Stone() );
+//      case CGP_MASTER:
+//        CChar *gMaster;
+//        gMaster = CalcCharObjFromSer( gPriv->Master() );
+//
+//        if( !ValidateObject( gMaster ))
+//        {
+//          *vp = JS::CurrentGlobalOrNull;
+//        }
+//        else
+//        {
+//          // Otherwise Acquire an object
+//          JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, gMaster, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+//          *vp = OBJECT_TO_JSVAL( myChar );
+//        }
+//        break;
+//      case CGP_STONE:
+//        CItem *gStone;
+//        gStone = CalcItemObjFromSer( gPriv->Stone() );
+//
+//        if( !ValidateObject( gStone ))
+//        {
+//          *vp = JS::CurrentGlobalOrNull;
+//        }
+//        else
+//        {
+//          // Otherwise Acquire an object
+//          JSObject *myItem = JSEngine->AcquireObject( IUE_ITEM, gStone, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+//          *vp = OBJECT_TO_JSVAL( myItem );
+//        }
+//        break;
+//      case CGP_MEMBERS:
+//      case CGP_RECRUITS:
+//        break;
 
-        if( !ValidateObject( gStone ))
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        else
-        {
-          // Otherwise Acquire an object
-          JSObject *myItem = JSEngine->AcquireObject( IUE_ITEM, gStone, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myItem );
-        }
-        break;
-      case CGP_NUMMEMBERS:	*vp = JS::Int32Value( gPriv->NumMembers() );	break;
-      case CGP_NUMRECRUITS:	*vp = JS::Int32Value( gPriv->NumRecruits() );	break;
-      case CGP_MEMBERS:
-      case CGP_RECRUITS:
-        break;
-      case CGP_CHARTER:
-        tString = JS_NewStringCopyZ( cx, gPriv->Charter().c_str() );
-        *vp = JS::StringValue( tString );
-        break;
-      case CGP_ABBREVIATION:
-        tString = JS_NewStringCopyZ( cx, gPriv->Abbreviation().c_str() );
-        *vp = JS::StringValue( tString );
-        break;
-      case CGP_WEBPAGE:
-        tString = JS_NewStringCopyZ( cx, gPriv->Webpage().c_str() );
-        *vp = JS::StringValue( tString );
-        break;
-      default:
-        break;
-    }
-  }
-  return true;
-}
-bool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-  CGuild *gPriv = JS::GetMaybePtrFromReservedSlot<CGuild >(obj , 0);
-  if( gPriv == nullptr )
-    return false;
+// clang-format off
+IMPL_SETS( CGuild, name,         CGuild, toString, Name )
+//IMPL_SET(  CGuild, type,         CGuild, toInt32,  Type )
+//IMPL_SET(  CGuild, master,       CGuild, toInt32,  )
+//IMPL_SET(  CGuild, stone,        CGuild, toInt32,  )
+//IMPL_SET(  CGuild, members,      CGuild, toInt32,  )
+//IMPL_SET(  CGuild, recruits,     CGuild, toInt32,  )
+IMPL_SETS( CGuild, charter,      CGuild, toString, Charter )
+IMPL_SETS( CGuild, abbreviation, CGuild, toString, Abbreviation )
+IMPL_SETS( CGuild, webPage,      CGuild, toString, Webpage )
+// clang-format on
 
-  // Keep track of original script that's executing
-  auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
-  auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
-
-  JSEncapsulate encaps( cx, vp );
-  if( JSVAL_IS_INT( id ))
-  {
-    switch( JSVAL_TO_INT( id ))
-    {
-      case CGP_NAME:				gPriv->Name( encaps.toString() );						break;
-      case CGP_TYPE:				gPriv->Type( static_cast<GuildType>( encaps.toInt() ));	break;
-      case CGP_MASTER:
-        if( *vp != JS::CurrentGlobalOrNull )
-        {
-          CChar *myChar = static_cast<CChar*>( encaps.toObject() );
-          if( !ValidateObject( myChar ))
-            break;
-
-          gPriv->Master(( *myChar ));
-        }
-        else
-        {
-          gPriv->Master( INVALIDSERIAL );
-        }
-        break;
-      case CGP_STONE:
-        if( *vp != JS::CurrentGlobalOrNull )
-        {
-          CItem *myItem = static_cast<CItem *>( encaps.toObject() );
-          if( !ValidateObject( myItem ))
-            break;
-
-          gPriv->Stone(( *myItem ));
-        }
-        else
-        {
-          gPriv->Stone( INVALIDSERIAL );
-        }
-        break;
-      case CGP_MEMBERS:
-      case CGP_RECRUITS:
-        break;
-      case CGP_CHARTER:			gPriv->Charter( encaps.toString() );				break;
-      case CGP_ABBREVIATION:		gPriv->Abbreviation( encaps.toString().c_str() );	break;
-      case CGP_WEBPAGE:			gPriv->Webpage( encaps.toString() );				break;
-      default:
-        break;
-    }
-  }
-
-  // Active script-context might have been lost, so restore it...
-  if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
-  {
-    // ... by calling a dummy function in original script!
-    bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-    if( retVal == false )
-    {
-      // Dummy function not found, let shard admin know!
-      Console.Warning( oldstrutil::format( "Script context lost after setting Guild property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
-    }
-  }
-
-  return true;
-}
+//      case CGP_TYPE:				gPriv->Type( static_cast<GuildType>( encaps.toInt() ));	break;
+//      case CGP_MASTER:
+//        if( *vp != JS::CurrentGlobalOrNull )
+//        {
+//          CChar *myChar = static_cast<CChar*>( encaps.toObject() );
+//          if( !ValidateObject( myChar ))
+//            break;
+//
+//          gPriv->Master(( *myChar ));
+//        }
+//        else
+//        {
+//          gPriv->Master( INVALIDSERIAL );
+//        }
+//        break;
+//      case CGP_STONE:
+//        if( *vp != JS::CurrentGlobalOrNull )
+//        {
+//          CItem *myItem = static_cast<CItem *>( encaps.toObject() );
+//          if( !ValidateObject( myItem ))
+//            break;
+//
+//          gPriv->Stone(( *myItem ));
+//        }
+//        else
+//        {
+//          gPriv->Stone( INVALIDSERIAL );
+//        }
+//        break;
+//      case CGP_MEMBERS:
+//      case CGP_RECRUITS:
+//        break;
 
 //IMPL_GET( CRace, id, CRace, setInt32, id )
 bool JSCRace_get_id(JSContext *cx, unsigned int argc, JS::Value *vp) {
