@@ -1,3 +1,6 @@
+15/04/2024 - Dragon Slayer
+	Fixed Dupe command message when targeting something other then a item or npc. (js dupe)
+
 22/03/2024 - Dragon Slayer/Xuri
 	Leading/trailing whitespace is now trimmed from account names during login.
 
