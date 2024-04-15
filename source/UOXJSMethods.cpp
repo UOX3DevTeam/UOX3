@@ -4200,13 +4200,12 @@ static bool CChar_ExecuteCommand(JSContext* cx, unsigned argc, JS::Value* vp)
 	JS::RootedObject obj(cx);
 	if (!args.computeThis(cx, &obj))
 		return false;
-	JSString* targMessage = JS_ValueToString(cx, argv[0]);
 	CChar* myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
-	char* trgMessage = JS_GetStringBytes(targMessage);
+	auto trgMessage = convertToString(cx, args.get(0).toString());
 	CSocket* targSock = myChar->GetSocket();
-	if (targSock == nullptr || trgMessage == nullptr)
+	if (targSock == nullptr || trgMessage.empty() || trgMessage == "")
 	{
-		ScriptError(cx, "ExecuteCommand: Invalid socket or speech (%s)", targMessage);
+		ScriptError(cx, "ExecuteCommand: Invalid socket or speech (%s)", trgMessage.c_str());
 		return false;
 	}
 	Commands->Command(targSock, myChar, trgMessage);
@@ -4356,7 +4355,7 @@ static bool CBase_UseResource(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (!args.computeThis(cx, &obj))
 		return false;
 	std::string className = JS::GetClass(obj.get())->name;
-	CBaseObject* myObj = static_cast<CBaseObject*>(myClass.toObject());
+	CBaseObject* myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
 	if (!ValidateObject(myObj))
 	{
@@ -7856,7 +7855,7 @@ static bool CChar_WalkTo(JSContext* cx, unsigned argc, JS::Value* vp)
 			std::string className = JS::GetClass(jsToGoTo.toObjectOrNull())->name;
 			if (className == "UOXItem" || className == "UOXChar")
 			{
-				CBaseObject* toGoTo = static_cast<CBaseObject*>(jsToGoTo.toObject());
+				CBaseObject* toGoTo = JS::GetMaybePtrFromReservedSlot<CBaseObject>(jsToGoTo.toObjectOrNull(), 0);
 				if (!ValidateObject(toGoTo))
 				{
 					ScriptError(cx, "No object associated with this object");
@@ -7867,7 +7866,7 @@ static bool CChar_WalkTo(JSContext* cx, unsigned argc, JS::Value* vp)
 			}
 			else if (className == "UOXSocket")
 			{
-				CSocket* mySock = static_cast<CSocket*>(jsToGoTo.toObject());
+				CSocket* mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(jsToGoTo.toObjectOrNull(), 0);
 				CChar* mySockChar = mySock->CurrcharObj();
 				gx = mySockChar->GetX();
 				gy = mySockChar->GetY();
@@ -7968,7 +7967,7 @@ static bool CChar_RunTo(JSContext* cx, unsigned argc, JS::Value* vp)
 			std::string className = JS::GetClass(jsToGoTo.toObjectOrNull())->name;
 			if (className == "UOXItem" || className == "UOXChar")
 			{
-				CBaseObject* toGoTo = static_cast<CBaseObject*>(jsToGoTo.toObject());
+				CBaseObject* toGoTo = JS::GetMaybePtrFromReservedSlot<CBaseObject>(jsToGoTo.toObjectOrNull(), 0);
 				if (!ValidateObject(toGoTo))
 				{
 					ScriptError(cx, "No object associated with this object");
@@ -7979,7 +7978,7 @@ static bool CChar_RunTo(JSContext* cx, unsigned argc, JS::Value* vp)
 			}
 			else if (className == "UOXSocket")
 			{
-				CSocket* mySock = static_cast<CSocket*>(jsToGoTo.toObject());
+				CSocket* mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(jsToGoTo.toObjectOrNull(), 0);
 				CChar* mySockChar = mySock->CurrcharObj();
 				gx = mySockChar->GetX();
 				gy = mySockChar->GetY();
@@ -10357,7 +10356,7 @@ static bool CBase_CanSee(JSContext* cx, unsigned argc, JS::Value* vp)
 		}
 		else if (className == "UOXChar" || className == "UOXItem")
 		{
-			CBaseObject* tObj = static_cast<CBaseObject*>(myClass.toObject());
+			CBaseObject* tObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(myClass.toObjectOrNull(), 0);
 			if (!ValidateObject(tObj))
 			{
 				ScriptError(cx, "CanSee: Object to look at is invalid");
@@ -10497,7 +10496,7 @@ static bool CChar_ReactOnDamage(JSContext* cx, unsigned argc, JS::Value* vp)
 		}
 		else
 		{
-			attacker = static_cast<CChar*>(attackerClass.toObject());
+			attacker = JS::GetMaybePtrFromReservedSlot<CChar>(attackerClass.toObjectOrNull(), 0);
 			if (!ValidateObject(attacker))
 			{
 				ScriptError(cx, "(CChar_ReactOnDamage): Passed an invalid Character");
@@ -10562,7 +10561,7 @@ static bool CChar_Damage(JSContext* cx, unsigned argc, JS::Value* vp)
 		}
 		else
 		{
-			attacker = static_cast<CChar*>(attackerClass.toObject());
+			attacker = JS::GetMaybePtrFromReservedSlot<CChar>(attackerClass.toObjectOrNull(), 0);
 			if (!ValidateObject(attacker))
 			{
 				ScriptError(cx, "(CChar_Damage): Passed an invalid Character");
@@ -12126,7 +12125,7 @@ static bool CChar_HasBeenOwner(JSContext* cx, unsigned argc, JS::Value* vp)
 	}
 
 	JS::HandleValue toCheck = args.get(0);
-	CChar* pChar = static_cast<CChar*>(toCheck.toObject());
+	CChar* pChar = JS::GetMaybePtrFromReservedSlot<CChar>(toCheck.toObjectOrNull(), 0);
 	if (!ValidateObject(pChar))
 	{
 		ScriptError(cx, "HasBeenOwner: Invalid Character passed as parameter");
@@ -12177,7 +12176,7 @@ static bool CChar_CalculateControlChance(JSContext* cx, unsigned argc, JS::Value
 	}
 
 	JS::HandleValue toCheck = args.get(0);
-	CChar* pChar = static_cast<CChar*>(toCheck.toObject());
+	CChar* pChar = JS::GetMaybePtrFromReservedSlot<CChar>(toCheck.toObjectOrNull(), 0);
 	if (!ValidateObject(pChar))
 	{
 		ScriptError(cx, "CalculateControlChance: Invalid Character passed as parameter");
@@ -12378,7 +12377,7 @@ static bool CParty_Remove(JSContext* cx, unsigned argc, JS::Value* vp)
 	std::string className = JS::GetClass(obj.get())->name;
 	if (className == "UOXParty")
 	{
-		Party* ourParty = static_cast<Party*>(myClass.toObject());
+		Party* ourParty = JS::GetMaybePtrFromReservedSlot<Party>(obj.get(), 0);
 		if (ourParty == nullptr)
 		{
 			ScriptError(cx, "Remove: Invalid party");
@@ -12386,7 +12385,7 @@ static bool CParty_Remove(JSContext* cx, unsigned argc, JS::Value* vp)
 		}
 
 		JS::HandleValue toRemove = args.get(0);
-		CChar* charToRemove = static_cast<CChar*>(toRemove.toObject());
+		CChar* charToRemove = JS::GetMaybePtrFromReservedSlot<CChar>(toRemove.toObjectOrNull(), 0);
 		if (!ValidateObject(charToRemove))
 		{
 			ScriptError(cx, "Remove: Invalid character to remove");
@@ -12423,7 +12422,7 @@ static bool CParty_Add(JSContext* cx, unsigned argc, JS::Value* vp)
 
 	if (className == "UOXParty")
 	{
-		Party* ourParty = static_cast<Party*>(myClass.toObject());
+		Party* ourParty = JS::GetMaybePtrFromReservedSlot<Party>(obj.get(), 0);
 		if (ourParty == nullptr)
 		{
 			ScriptError(cx, "Add: Invalid party");
@@ -12514,7 +12513,7 @@ static bool CParty_GetMember(JSContext* cx, unsigned argc, JS::Value* vp)
 	std::string className = JS::GetClass(obj.get())->name;
 	if (className == "UOXParty")
 	{
-		Party* ourParty = static_cast<Party*>(myClass.toObject());
+		Party* ourParty = JS::GetMaybePtrFromReservedSlot<Party>(obj.get(), 0);
 		if (ourParty == nullptr)
 		{
 			ScriptError(cx, "GetMember: Invalid party");

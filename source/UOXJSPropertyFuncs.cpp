@@ -3202,30 +3202,12 @@ bool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
   return true;
 }
 
-bool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-  SEGumpData_st *gPriv = JS::GetMaybePtrFromReservedSlot<SEGumpData_st >(obj , 0);
+// clang-format off
+IMPL_GET(  CGumpData, buttons,  SEGumpData_st, setInt32, nIDs.size() )
+IMPL_GET(  CGumpData, IDs,      SEGumpData_st, setInt32, nButtons.size() )
+// clang-format on
 
-  if( gPriv == nullptr )
-    return false;
-
-  if( JSVAL_IS_INT( id ))
-  {
-    switch( JSVAL_TO_INT( id ))
-    {
-      case CGumpData_ID:
-        *vp = JS::Int32Value( gPriv->nIDs.size() );
-        break;
-      case CGumpData_Button:
-        *vp = JS::Int32Value( gPriv->nButtons.size() );
-        break;
-      default:
-        break;
-    }
-  }
-  return true;
-}
-
+// clang-format off
 IMPL_GET( CAccount, id,             CAccountBlock_st, setInt32,  wAccountIndex )
 IMPL_GETS(CAccount, username,       CAccountBlock_st, setString, sUsername.c_str() )
 IMPL_GET( CAccount, flags,          CAccountBlock_st, setInt32,  wFlags.to_ulong() )
@@ -3258,219 +3240,202 @@ IMPL_GET( CAccount, unused10,       CAccountBlock_st, setBoolean,  wFlags.test( 
 IMPL_GET( CAccount, isSeer,         CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_SEER ) )
 IMPL_GET( CAccount, isCounselor,    CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_COUNSELOR ) )
 IMPL_GET( CAccount, isGM,           CAccountBlock_st, setBoolean,  wFlags.test( AB_FLAGS_GM ) )
+// clang-format on
 
-bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-  CAccountBlock_st *myAccount = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st >(obj , 0);
-  if( myAccount == nullptr )
-    return false;
+      //case CACCOUNT_CHARACTER1:
+      //{
+      //  if( myAccount->dwCharacters[0] != INVALIDSERIAL )
+      //  {
+      //    CBaseObject *TempObj = myAccount->lpCharacters[0];
 
-  if( JSVAL_IS_INT( id ))
-  {
-    JSString *tString = nullptr;
-    switch( JSVAL_TO_INT( id ))
-    {
-      case CACCOUNT_CHARACTER1:
-      {
-        if( myAccount->dwCharacters[0] != INVALIDSERIAL )
-        {
-          CBaseObject *TempObj = myAccount->lpCharacters[0];
+      //    if( !ValidateObject( TempObj ))
+      //    {
+      //      *vp = JS::CurrentGlobalOrNull;
+      //    }
+      //    else
+      //    {
+      //      // Otherwise Acquire an object
+      //      JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //      *vp = OBJECT_TO_JSVAL( myChar );
+      //    }
+      //  }
+      //  else
+      //  {
+      //    *vp = JS::CurrentGlobalOrNull;
+      //  }
+      //  break;
+      //}
+      //case CACCOUNT_CHARACTER2:
+      //{
+      //  if( myAccount->dwCharacters[1] != INVALIDSERIAL )
+      //  {
+      //    CBaseObject *TempObj = myAccount->lpCharacters[1];
 
-          if( !ValidateObject( TempObj ))
-          {
-            *vp = JS::CurrentGlobalOrNull;
-          }
-          else
-          {
-            // Otherwise Acquire an object
-            JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-            *vp = OBJECT_TO_JSVAL( myChar );
-          }
-        }
-        else
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        break;
-      }
-      case CACCOUNT_CHARACTER2:
-      {
-        if( myAccount->dwCharacters[1] != INVALIDSERIAL )
-        {
-          CBaseObject *TempObj = myAccount->lpCharacters[1];
+      //    if( !ValidateObject( TempObj ))
+      //    {
+      //      *vp = JS::CurrentGlobalOrNull;
+      //    }
+      //    else
+      //    {
+      //      // Otherwise Acquire an object
+      //      JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //      *vp = OBJECT_TO_JSVAL( myChar );
+      //    }
+      //  }
+      //  else
+      //  {
+      //    *vp = JS::CurrentGlobalOrNull;
+      //  }
+      //  break;
+      //}
+      //case CACCOUNT_CHARACTER3:
+      //{
+      //  if( myAccount->dwCharacters[2] != INVALIDSERIAL )
+      //  {
+      //    CBaseObject *TempObj = myAccount->lpCharacters[2];
 
-          if( !ValidateObject( TempObj ))
-          {
-            *vp = JS::CurrentGlobalOrNull;
-          }
-          else
-          {
-            // Otherwise Acquire an object
-            JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-            *vp = OBJECT_TO_JSVAL( myChar );
-          }
-        }
-        else
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        break;
-      }
-      case CACCOUNT_CHARACTER3:
-      {
-        if( myAccount->dwCharacters[2] != INVALIDSERIAL )
-        {
-          CBaseObject *TempObj = myAccount->lpCharacters[2];
+      //    if( !ValidateObject( TempObj ))
+      //    {
+      //      *vp = JS::CurrentGlobalOrNull;
+      //    }
+      //    else
+      //    {
+      //      // Otherwise Acquire an object
+      //      JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //      *vp = OBJECT_TO_JSVAL( myChar );
+      //    }
+      //  }
+      //  else
+      //  {
+      //    *vp = JS::CurrentGlobalOrNull;
+      //  }
+      //  break;
+      //}
+      //case CACCOUNT_CHARACTER4:
+      //{
+      //  if( myAccount->dwCharacters[3] != INVALIDSERIAL )
+      //  {
+      //    CBaseObject *TempObj = myAccount->lpCharacters[3];
 
-          if( !ValidateObject( TempObj ))
-          {
-            *vp = JS::CurrentGlobalOrNull;
-          }
-          else
-          {
-            // Otherwise Acquire an object
-            JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-            *vp = OBJECT_TO_JSVAL( myChar );
-          }
-        }
-        else
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        break;
-      }
-      case CACCOUNT_CHARACTER4:
-      {
-        if( myAccount->dwCharacters[3] != INVALIDSERIAL )
-        {
-          CBaseObject *TempObj = myAccount->lpCharacters[3];
+      //    if( !ValidateObject( TempObj ))
+      //    {
+      //      *vp = JS::CurrentGlobalOrNull;
+      //    }
+      //    else
+      //    {
+      //      // Otherwise Acquire an object
+      //      JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //      *vp = OBJECT_TO_JSVAL( myChar );
+      //    }
+      //  }
+      //  else
+      //  {
+      //    *vp = JS::CurrentGlobalOrNull;
+      //  }
+      //  break;
+      //}
+      //case CACCOUNT_CHARACTER5:
+      //{
+      //  if( myAccount->dwCharacters[4] != INVALIDSERIAL )
+      //  {
+      //    CBaseObject *TempObj = myAccount->lpCharacters[4];
 
-          if( !ValidateObject( TempObj ))
-          {
-            *vp = JS::CurrentGlobalOrNull;
-          }
-          else
-          {
-            // Otherwise Acquire an object
-            JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-            *vp = OBJECT_TO_JSVAL( myChar );
-          }
-        }
-        else
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        break;
-      }
-      case CACCOUNT_CHARACTER5:
-      {
-        if( myAccount->dwCharacters[4] != INVALIDSERIAL )
-        {
-          CBaseObject *TempObj = myAccount->lpCharacters[4];
+      //    if( !ValidateObject( TempObj ))
+      //    {
+      //      *vp = JS::CurrentGlobalOrNull;
+      //    }
+      //    else
+      //    {
+      //      // Otherwise Acquire an object
+      //      JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //      *vp = OBJECT_TO_JSVAL( myChar );
+      //    }
+      //  }
+      //  else
+      //  {
+      //    *vp = JS::CurrentGlobalOrNull;
+      //  }
+      //  break;
+      //}
+      //case CACCOUNT_CHARACTER6:
+      //{
+      //  if( myAccount->dwCharacters[5] != INVALIDSERIAL )
+      //  {
+      //    CBaseObject *TempObj = myAccount->lpCharacters[5];
 
-          if( !ValidateObject( TempObj ))
-          {
-            *vp = JS::CurrentGlobalOrNull;
-          }
-          else
-          {
-            // Otherwise Acquire an object
-            JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-            *vp = OBJECT_TO_JSVAL( myChar );
-          }
-        }
-        else
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        break;
-      }
-      case CACCOUNT_CHARACTER6:
-      {
-        if( myAccount->dwCharacters[5] != INVALIDSERIAL )
-        {
-          CBaseObject *TempObj = myAccount->lpCharacters[5];
+      //    if( !ValidateObject( TempObj ))
+      //    {
+      //      *vp = JS::CurrentGlobalOrNull;
+      //    }
+      //    else
+      //    {
+      //      // Otherwise Acquire an object
+      //      JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //      *vp = OBJECT_TO_JSVAL( myChar );
+      //    }
+      //  }
+      //  else
+      //  {
+      //    *vp = JS::CurrentGlobalOrNull;
+      //  }
+      //  break;
+      //}
+      //case CACCOUNT_CHARACTER7:
+      //{
+      //  if( myAccount->dwCharacters[6] != INVALIDSERIAL )
+      //  {
+      //    CBaseObject *TempObj = myAccount->lpCharacters[6];
 
-          if( !ValidateObject( TempObj ))
-          {
-            *vp = JS::CurrentGlobalOrNull;
-          }
-          else
-          {
-            // Otherwise Acquire an object
-            JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-            *vp = OBJECT_TO_JSVAL( myChar );
-          }
-        }
-        else
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        break;
-      }
-      case CACCOUNT_CHARACTER7:
-      {
-        if( myAccount->dwCharacters[6] != INVALIDSERIAL )
-        {
-          CBaseObject *TempObj = myAccount->lpCharacters[6];
+      //    if( !ValidateObject( TempObj ))
+      //    {
+      //      *vp = JS::CurrentGlobalOrNull;
+      //    }
+      //    else
+      //    {
+      //      // Otherwise Acquire an object
+      //      JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //      *vp = OBJECT_TO_JSVAL( myChar );
+      //    }
+      //  }
+      //  else
+      //  {
+      //    *vp = JS::CurrentGlobalOrNull;
+      //  }
+      //  break;
+      //}
+      //case CACCOUNT_CURRENTCHAR:
+      //{
+      //  if( myAccount->dwInGame != INVALIDSERIAL )
+      //  {
+      //    CChar *TempObj = CalcCharObjFromSer( myAccount->dwInGame );
 
-          if( !ValidateObject( TempObj ))
-          {
-            *vp = JS::CurrentGlobalOrNull;
-          }
-          else
-          {
-            // Otherwise Acquire an object
-            JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-            *vp = OBJECT_TO_JSVAL( myChar );
-          }
-        }
-        else
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        break;
-      }
-      case CACCOUNT_CURRENTCHAR:
-      {
-        if( myAccount->dwInGame != INVALIDSERIAL )
-        {
-          CChar *TempObj = CalcCharObjFromSer( myAccount->dwInGame );
-
-          if( !ValidateObject( TempObj ))
-          {
-            *vp = JS::CurrentGlobalOrNull;
-          }
-          else
-          {
-            // Otherwise Acquire an object
-            JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-            *vp = OBJECT_TO_JSVAL( myChar );
-          }
-        }
-        else
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        break;
-      }
-      case CACCOUNT_LASTIP:
-      {
-        std::string ipString = oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0xFF000000 ) >> 24 )) 
-          + "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x00FF0000 ) >> 16 ))
-          + "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x0000FF00 ) >> 8 ))
-          + "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x000000FF ) % 256 ));
-        tString = JS_NewStringCopyZ( cx, ipString.c_str() );
-        *vp = JS::StringValue( tString );
-        break;
-      }
-      default:
-        break;
-    }
-  }
-
-  return true;
-}
+      //    if( !ValidateObject( TempObj ))
+      //    {
+      //      *vp = JS::CurrentGlobalOrNull;
+      //    }
+      //    else
+      //    {
+      //      // Otherwise Acquire an object
+      //      JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //      *vp = OBJECT_TO_JSVAL( myChar );
+      //    }
+      //  }
+      //  else
+      //  {
+      //    *vp = JS::CurrentGlobalOrNull;
+      //  }
+      //  break;
+      //}
+      //case CACCOUNT_LASTIP:
+      //{
+      //  std::string ipString = oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0xFF000000 ) >> 24 )) 
+      //    + "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x00FF0000 ) >> 16 ))
+      //    + "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x0000FF00 ) >> 8 ))
+      //    + "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x000000FF ) % 256 ));
+      //  tString = JS_NewStringCopyZ( cx, ipString.c_str() );
+      //  *vp = JS::StringValue( tString );
+      //  break;
+      //}
 
 bool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
