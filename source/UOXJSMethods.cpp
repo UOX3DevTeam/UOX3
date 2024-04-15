@@ -7853,7 +7853,8 @@ static bool CChar_WalkTo(JSContext* cx, unsigned argc, JS::Value* vp)
 		if (args.get(0).isObject())
 		{	// we can work with this, it should be either a character or item, hopefully
 			JS::HandleValue jsToGoTo = args.get(0);
-			if (jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar")
+			std::string className = JS::GetClass(jsToGoTo.toObjectOrNull())->name;
+			if (className == "UOXItem" || className == "UOXChar")
 			{
 				CBaseObject* toGoTo = static_cast<CBaseObject*>(jsToGoTo.toObject());
 				if (!ValidateObject(toGoTo))
@@ -7864,7 +7865,7 @@ static bool CChar_WalkTo(JSContext* cx, unsigned argc, JS::Value* vp)
 				gx = toGoTo->GetX();
 				gy = toGoTo->GetY();
 			}
-			else if (jsToGoTo.ClassName() == "UOXSocket")
+			else if (className == "UOXSocket")
 			{
 				CSocket* mySock = static_cast<CSocket*>(jsToGoTo.toObject());
 				CChar* mySockChar = mySock->CurrcharObj();
@@ -7964,7 +7965,8 @@ static bool CChar_RunTo(JSContext* cx, unsigned argc, JS::Value* vp)
 		if (args.get(0).isObject())
 		{	// we can work with this, it should be either a character or item, hopefully
 			JS::HandleValue jsToGoTo = args.get(0);
-			if (jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar")
+			std::string className = JS::GetClass(jsToGoTo.toObjectOrNull())->name;
+			if (className == "UOXItem" || className == "UOXChar")
 			{
 				CBaseObject* toGoTo = static_cast<CBaseObject*>(jsToGoTo.toObject());
 				if (!ValidateObject(toGoTo))
@@ -7975,7 +7977,7 @@ static bool CChar_RunTo(JSContext* cx, unsigned argc, JS::Value* vp)
 				gx = toGoTo->GetX();
 				gy = toGoTo->GetY();
 			}
-			else if (jsToGoTo.ClassName() == "UOXSocket")
+			else if (className == "UOXSocket")
 			{
 				CSocket* mySock = static_cast<CSocket*>(jsToGoTo.toObject());
 				CChar* mySockChar = mySock->CurrcharObj();
@@ -8071,7 +8073,7 @@ static bool CMisc_GetTimer(JSContext* cx, unsigned argc, JS::Value* vp)
 			return false;
 		}
 
-		JS_NewNumberValue(cx, cMove->GetTimer(static_cast<cC_TID>(encaps.toInt())), rval);
+		args.rval().setNumber( cMove->GetTimer(static_cast<cC_TID>(encaps.toInt32()) ) );
 	}
 	else if (className == "UOXSocket")
 	{
@@ -8082,7 +8084,7 @@ static bool CMisc_GetTimer(JSContext* cx, unsigned argc, JS::Value* vp)
 			return false;
 		}
 
-		JS_NewNumberValue(cx, mSock->GetTimer(static_cast<cS_TID>(encaps.toInt())), rval);
+		args.rval().setNumber( mSock->GetTimer(static_cast<cS_TID>(encaps.toInt32()) ) );
 	}
 
 	return true;
@@ -8919,7 +8921,7 @@ static bool CConsole_Print(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (!args.computeThis(cx, &obj))
 		return false;
 	JS::HandleValue arg0 = args.get(0);
-	Console.Print(arg0.toString());
+	Console.Print(convertToString(cx, args.get(0).toString()));
 	return true;
 }
 
@@ -10428,6 +10430,7 @@ static bool CSocket_DisplayDamage(JSContext* cx, unsigned argc, JS::Value* vp)
 		return false;
 	CSocket* mSock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	JS::HandleValue myClass = args.get(0);
+	std::string className = JS::GetClass(myClass.toObjectOrNull())->name;
 
 	if (className != "UOXChar")	// It must be a character!
 	{
@@ -10481,7 +10484,8 @@ static bool CChar_ReactOnDamage(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (argc >= 2)
 	{
 		JS::HandleValue attackerClass = args.get(1);
-		if (attackerClass.ClassName() != "UOXChar") // It must be a character!
+		std::string className = JS::GetClass(attackerClass.toObjectOrNull())->name;
+		if (className != "UOXChar") // It must be a character!
 		{
 			ScriptError(cx, "CChar_ReactOnDamage: Passed an invalid Character");
 			return false;
@@ -10501,7 +10505,7 @@ static bool CChar_ReactOnDamage(JSContext* cx, unsigned argc, JS::Value* vp)
 			}
 		}
 	}
-	mChar->ReactOnDamage(static_cast<WeatherType>(damage.toInt()), attacker);
+	mChar->ReactOnDamage(static_cast<WeatherType>(damage.toInt32()), attacker);
 	return true;
 }
 
@@ -10545,13 +10549,14 @@ static bool CChar_Damage(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (argc >= 3)
 	{
 		JS::HandleValue attackerClass = args.get(2);
-		if (attackerClass.ClassName() != "UOXChar")	// It must be a character!
+		std::string className = JS::GetClass(attackerClass.toObjectOrNull())->name;
+		if (className != "UOXChar")	// It must be a character!
 		{
 			ScriptError(cx, "CChar_Damage: Passed an invalid Character");
 			return false;
 		}
 
-		if (attackerClass.isType(JSOT_VOID) || attackerClass.isType(JSOT_NULL))
+		if (attackerClass.isNullOrUndefined() )
 		{
 			attacker = nullptr;
 		}
@@ -10575,7 +10580,7 @@ static bool CChar_Damage(JSContext* cx, unsigned argc, JS::Value* vp)
 	auto origScript = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));
 	auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));
 
-	bool retVal = mChar->Damage(damage.toInt(), element, attacker, doRepsys);
+	bool retVal = mChar->Damage(damage.toInt32(), element, attacker, doRepsys);
 
 	// Active script-context might have been lost, so restore it...
 	if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx)))
@@ -10864,6 +10869,10 @@ static bool CChar_IsAggressor(JSContext* cx, unsigned argc, JS::Value* vp)
 		return true;
 	}
 
+	auto args = JS::CallArgsFromVp(argc, vp);
+	JS::RootedObject obj(cx);
+	if (!args.computeThis(cx, &obj))
+		return false;
 	CChar* mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if (!ValidateObject(mChar))
 	{
@@ -10871,10 +10880,6 @@ static bool CChar_IsAggressor(JSContext* cx, unsigned argc, JS::Value* vp)
 		return true;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
-	JS::RootedObject obj(cx);
-	if (!args.computeThis(cx, &obj))
-		return false;
 	bool checkForPlayerOnly = (args.get(0).toBoolean());
 
 	args.rval().setBoolean(mChar->IsAggressor(checkForPlayerOnly));
@@ -11117,19 +11122,20 @@ static bool CChar_Heal(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (argc == 2)
 	{
 		JS::HandleValue healerClass = args.get(1);
-		if (healerClass.ClassName() != "UOXChar")	// It must be a character!
+		std::string className = JS::GetClass(healerClass.toObjectOrNull())->name;
+		if (className != "UOXChar")	// It must be a character!
 		{
 			ScriptError(cx, "CChar_Heal: Passed an invalid Character");
 			return false;
 		}
 
-		if (healerClass.isType(JSOT_VOID) || healerClass.isType(JSOT_NULL))
+		if (healerClass.isNullOrUndefined())
 		{
 			healer = nullptr;
 		}
 		else
 		{
-			healer = static_cast<CChar*>(healerClass.toObject());
+			healer = JS::GetMaybePtrFromReservedSlot<CChar>(healerClass.toObjectOrNull(), 0);
 			if (!ValidateObject(healer))
 			{
 				ScriptError(cx, "(CChar_Heal): Passed an invalid Character");
@@ -11142,7 +11148,7 @@ static bool CChar_Heal(JSContext* cx, unsigned argc, JS::Value* vp)
 	auto origScript = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));
 	auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));
 
-	mChar->Heal(static_cast<SI16>(Heal.toInt()), healer);
+	mChar->Heal(static_cast<SI16>(Heal.toInt32()), healer);
 
 	// Active script-context might have been lost, so restore it...
 	if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx)))
@@ -11213,11 +11219,11 @@ static bool CBase_Resist(JSContext* cx, unsigned argc, JS::Value* vp)
 	{
 		if (ValidateObject(mChar))
 		{
-			args.rval().setInt32(mChar->GetResist(static_cast<WeatherType>(resistType.toInt())));
+			args.rval().setInt32(mChar->GetResist(static_cast<WeatherType>(resistType.toInt32())));
 		}
 		else if (ValidateObject(mItem))
 		{
-			args.rval().setInt32(mItem->GetResist(static_cast<WeatherType>(resistType.toInt())));
+			args.rval().setInt32(mItem->GetResist(static_cast<WeatherType>(resistType.toInt32())));
 		}
 		else
 		{
@@ -11230,11 +11236,11 @@ static bool CBase_Resist(JSContext* cx, unsigned argc, JS::Value* vp)
 		JS::HandleValue value = args.get(1);
 		if (ValidateObject(mChar))
 		{
-			mChar->SetResist(static_cast<UI16>(value.toInt()), static_cast<WeatherType>(resistType.toInt()));
+			mChar->SetResist(static_cast<UI16>(value.toInt32()), static_cast<WeatherType>(resistType.toInt32()));
 		}
 		else if (ValidateObject(mItem))
 		{
-			mItem->SetResist(static_cast<UI16>(value.toInt()), static_cast<WeatherType>(resistType.toInt()));
+			mItem->SetResist(static_cast<UI16>(value.toInt32()), static_cast<WeatherType>(resistType.toInt32()));
 		}
 		else
 		{
@@ -11295,7 +11301,7 @@ static bool CChar_Defense(JSContext* cx, unsigned argc, JS::Value* vp)
 	JS::HandleValue resistType = args.get(1);
 	JS::HandleValue doArmorDamage = args.get(2);
 
-	args.rval().setInt32(Combat->CalcDef(mChar, static_cast<UI08>(hitLoc.toInt()), doArmorDamage.toBool(), static_cast<WeatherType>(resistType.toInt())));
+	args.rval().setInt32(Combat->CalcDef(mChar, static_cast<UI08>(hitLoc.toInt32()), doArmorDamage.toBoolean(), static_cast<WeatherType>(resistType.toInt32())));
 	return true;
 }
 
