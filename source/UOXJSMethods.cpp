@@ -3742,60 +3742,67 @@ static bool CBase_GetTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 	TAGMAP2 tagMap = myObj->GetTagMap();
 
 	// Create main JSObject to store full list of tags
-	JSObject* jsTagMap = JS_NewArrayObject(cx, 0, nullptr);
+	JS::RootedObject jsTagMap(cx, JS_NewArrayObject(cx, 0));
 
 	// Iterate over tag map to fetch details on each tag
 	int i = 0;
 	for (auto& tagObj : tagMap)
 	{
 		// Create JSObject for current tag
-		JSObject* jsTag = JS_NewArrayObject(cx, 0, nullptr);
+		JS::RootedObject jsTag(cx, JS_NewArrayObject(cx, 0));
 
 		// Convert tag name to JSString
 		JSString* tagName = JS_NewStringCopyZ(cx, tagObj.first.c_str());
-		jsval jsTagName = JS::StringValue(tagName);
+		JS::RootedValue jsTagName(cx, JS::StringValue(tagName));
 
 		// Add tag name to JSObject for tag
-		JS_SetElement(cx, jsTag, 0, &jsTagName);
+		if (!JS_SetElement(cx, jsTag, 0, jsTagName)) {
+        // handle error
+		}
 
 		// Fetch type of tag, and value of tag
-		jsval jsType;
-		jsval jsValue;
+		JS::RootedValue jsType(cx);
+		JS::RootedValue jsValue(cx);
 		switch (tagObj.second.m_ObjectType)
 		{
-		case TAGMAP_TYPE_INT:
-			jsType = JS::Int32Value(TAGMAP_TYPE_INT);
-			jsValue = JS::Int32Value(tagObj.second.m_IntValue);
-			break;
-		case TAGMAP_TYPE_STRING:
-		{
-			jsType = JS::Int32Value(TAGMAP_TYPE_STRING);
-			JSString* jsStringVal = JS_NewStringCopyZ(cx, tagObj.second.m_StringValue.c_str());
-			jsValue = JS::StringValue(jsStringVal);
-			break;
-		}
-		case TAGMAP_TYPE_BOOL:
-			jsType = JS::Int32Value(TAGMAP_TYPE_BOOL);
-			jsValue = JS::BooleanValue(tagObj.second.m_IntValue != 0);
-			break;
-		default:
-			// Unhandled tag type detected!
-			jsType = JSVAL_NULL;
-			jsValue = JSVAL_NULL;
-			break;
+			case TAGMAP_TYPE_INT:
+				jsType.setInt32(TAGMAP_TYPE_INT);
+				jsValue.setInt32(tagObj.second.m_IntValue);
+				break;
+			case TAGMAP_TYPE_STRING:
+			{
+				// Convert tag name to JSString
+				std::string tagNameStr = tagObj.first;
+				JSString* tagName = JS_NewStringCopyN(cx, tagNameStr.c_str(), tagNameStr.length());
+				JS::RootedValue jsTagName(cx, JS::StringValue(tagName));
+				break;
+			}
+			case TAGMAP_TYPE_BOOL:
+				jsType.setInt32(TAGMAP_TYPE_BOOL);
+				jsValue.setBoolean(tagObj.second.m_IntValue != 0);
+				break;
+			default:
+				// Unhandled tag type detected!
+				jsType.setNull();
+				jsValue.setNull();
+				break;
 		}
 
 		// Add tag type and value to JSObject for tag
-		JS_SetElement(cx, jsTag, 1, &jsType);
-		JS_SetElement(cx, jsTag, 2, &jsValue);
+		if (!JS_SetElement(cx, jsTag, 1, jsType) || !JS_SetElement(cx, jsTag, 2, jsValue))
+		{
+		    // handle error
+		}
 
 		// Add JSObject for tag to main jsTagMap object
-		jsval subTagObj = OBJECT_TO_JSVAL(jsTag);
-		JS_SetElement(cx, jsTagMap, i, &subTagObj);
+		if (!JS_DefineElement(cx, jsTagMap, i, jsTag, JSPROP_ENUMERATE))
+		{
+			// handle error
+		}
 		i++;
 	}
 
-	args.rval().setObjectOrNull( jsTagMap );
+	args.rval().setObjectOrNull(jsTagMap);
 	return true;
 }
 
@@ -3828,25 +3835,28 @@ static bool CBase_GetTempTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 	TAGMAP2 tagMap = myObj->GetTempTagMap();
 
 	// Create main JSObject to store full list of tags
-	JSObject* jsTagMap = JS_NewArrayObject(cx, 0, nullptr);
+	JS::RootedObject jsTagMap(cx, JS_NewArrayObject(cx, 0));
 
 	// Iterate over tag map to fetch details on each tag
 	int i = 0;
 	for (auto& tagObj : tagMap)
 	{
 		// Create JSObject for current tag
-		JSObject* jsTag = JS_NewArrayObject(cx, 0, nullptr);
+		JS::RootedObject jsTag(cx, JS_NewArrayObject(cx, 0));
 
 		// Convert tag name to JSString
 		JSString* tagName = JS_NewStringCopyZ(cx, tagObj.first.c_str());
-		jsval jsTagName = JS::StringValue(tagName);
+		JS::RootedValue jsTagName(cx, JS::StringValue(tagName));
 
 		// Add tag name to JSObject for tag
-		JS_SetElement(cx, jsTag, 0, &jsTagName);
+		if (!JS_SetElement(cx, jsTag, 0, jsTagName))
+		{
+        // handle error
+		}
 
 		// Fetch type of tag, and value of tag
-		jsval jsType;
-		jsval jsValue;
+		JS::RootedValue jsType(cx);
+		JS::RootedValue jsValue(cx);
 		switch (tagObj.second.m_ObjectType)
 		{
 		case TAGMAP_TYPE_INT:
@@ -3866,8 +3876,8 @@ static bool CBase_GetTempTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 			break;
 		default:
 			// Unhandled tag type detected!
-			jsType = JSVAL_NULL;
-			jsValue = JSVAL_NULL;
+			jsType.setNull();
+			jsValue.setNull();
 			break;
 		}
 
@@ -7293,7 +7303,7 @@ static bool CAccount_DelAccount(JSContext* cx, unsigned argc, JS::Value* vp)
 
 // Basic file wrapping structure for abstracting away file IO for the JS file funcs
 // UOXCFile constructor !
-static bool UOXCFile(JSContext* cx, unsigned argc, JS::Value* vp)
+/*static bool UOXCFile(JSContext* cx, unsigned argc, JS::Value* vp)
 {
 	UOXFileWrapper_st* toAdd = new UOXFileWrapper_st;
 	toAdd->mWrap = nullptr;
@@ -7303,6 +7313,53 @@ static bool UOXCFile(JSContext* cx, unsigned argc, JS::Value* vp)
 	JS::SetReservedSlot(obj, 0, JS::PrivateValue(toAdd));
 	JS_LockGCThing(cx, obj);
 	return true;
+}*/
+
+static bool UOXCFile(JSContext* cx, unsigned argc, JS::Value* vp)
+{
+    // Check the argument count, you might need to use it in your function
+    if (argc != 0)
+	{
+        JS_ReportErrorUTF8(cx, "UOXCFile constructor expects no arguments");
+        return false;
+    }
+
+    // Create a UOXFileWrapper_st instance
+    UOXFileWrapper_st* toAdd = new UOXFileWrapper_st;
+    toAdd->mWrap = nullptr;
+
+    // Get the global object
+    JS::RootedObject global(cx, JS::CurrentGlobalOrNull(cx));
+    if (!global) 
+	{
+        JS_ReportErrorUTF8(cx, "Failed to get global object");
+        delete toAdd; // Clean up allocated memory
+        return false;
+    }
+
+    // Create a new object for this constructor
+    JS::RootedObject obj(cx, JS_NewObject(cx, nullptr));
+    if (!obj)
+	{
+        JS_ReportErrorUTF8(cx, "Failed to create object for UOXCFile constructor");
+        delete toAdd; // Clean up allocated memory
+        return false;
+    }
+
+    // Define functions for this object (if CFile_Methods is defined somewhere)
+    JS_DefineFunctions(cx, obj, CFile_Methods);
+
+    // Set the reserved slot to store the UOXFileWrapper_st instance
+    JS::SetReservedSlot(obj, 0, JS::PrivateValue(toAdd));
+
+	// Make the object persistent to prevent it from being garbage collected
+    JS::PersistentRootedObject persistentObj(cx, obj);
+
+    // Return the created object
+    JS::RootedValue objVal(cx, JS::ObjectValue(*obj));
+    JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+    args.rval().set(objVal);
+    return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
