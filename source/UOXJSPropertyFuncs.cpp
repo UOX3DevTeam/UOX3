@@ -338,7 +338,7 @@ bool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 // clang-format off
 IMPL_GETS_OBJ(CItem, sectionID,           CItem, setString, GetSectionId().c_str() )
 IMPL_GETS_OBJ(CItem, name,                CItem, setString, GetName().c_str() )
-IMPL_GETS_OBJ(CItem, title,               CItem, setString, GetTitle().c_str(), )
+IMPL_GETS_OBJ(CItem, title,               CItem, setString, GetTitle().c_str() )
 IMPL_GET_OBJ( CItem, x,                   CItem, setInt32,  GetX() )
 IMPL_GET_OBJ( CItem, y,                   CItem, setInt32,  GetY() )
 IMPL_GET_OBJ( CItem, z,                   CItem, setInt32,  GetZ() )
@@ -2462,6 +2462,7 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 
 
 IMPL_GETS(CRegion, name,              CTownRegion, setString,  GetName().c_str() )
+// DECL_GET_SET( CRegion, mayor )
 IMPL_GET( CRegion, race,              CTownRegion, setInt32,   GetRace() )
 IMPL_GET( CRegion, tax,               CTownRegion, setInt32,   TaxedAmount() )
 IMPL_GET( CRegion, taxResource,       CTownRegion, setInt32,   GetResourceId() )
@@ -2477,183 +2478,144 @@ IMPL_GET( CRegion, health,            CTownRegion, setInt32,   GetHealth() )
 IMPL_GET( CRegion, isDungeon,         CTownRegion, setBoolean, IsDungeon() )
 IMPL_GET( CRegion, worldNumber,       CTownRegion, setInt32,   WorldNumber() )
 IMPL_GET( CRegion, instanceID,        CTownRegion, setInt32,   GetInstanceId() )
+IMPL_GET( CRegion, chanceBigOre,      CTownRegion, setInt32,   GetChanceBigOre() )
+IMPL_GET( CRegion, numOrePrefs,       CTownRegion, setInt32,   GetNumOrePreferences() )
+IMPL_GET( CRegion, population,        CTownRegion, setInt32,   GetPopulation() )
+IMPL_GETS(CRegion, members,           CTownRegion, setString,  GetTownMemberSerials().c_str() )
+IMPL_GET( CRegion, id,                CTownRegion, setInt32,   GetRegionNum() )
+// IMPL_GET( CRegion, scriptTrigger,     CTownRegion, setInt32,   )
+// IMPL_GET( CRegion, scriptTriggers,    CTownRegion, setInt32, )
+IMPL_GET( CRegion, numGuards,         CTownRegion, setInt32,   NumGuards() )
+IMPL_GET( CRegion, taxes,             CTownRegion, setInt32,   GetTaxes() )
+IMPL_GET( CRegion, reserves,          CTownRegion, setInt32,   GetReserves() )
+IMPL_GET( CRegion, appearance,        CTownRegion, setInt32,   GetAppearance() )
+IMPL_GET( CRegion, music,             CTownRegion, setInt32,   GetMusicList() )
+IMPL_GET( CRegion, weather,           CTownRegion, setInt32,   GetWeather() )
+IMPL_GETS(CRegion, owner,             CTownRegion, setString,  GetOwner().c_str() )
 
-bool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-  CTownRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CTownRegion >(obj , 0);
-  if( gPriv == nullptr )
-    return false;
+//      case CREGP_MAYOR:
+//        CChar *tempMayor;
+//        tempMayor = gPriv->GetMayor();
+//
+//        if( !ValidateObject( tempMayor ))
+//          *vp = JS::CurrentGlobalOrNull;
+//        else
+//        {
+//          // Otherwise Acquire an object
+//          JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, tempMayor, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+//          *vp = OBJECT_TO_JSVAL( myChar );
+//        }
+//        break;
+//      case CREGP_SCRIPTTRIGGER:
+//      {
+//        // For backwards compatibility, get last scripttrigger from vector
+//        // For older worldfiles, this will be the only scripttrigger added to the vector after load
+//        std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
+//        UI16 lastScriptTrigger = 0;
+//        auto numberOfTriggers = scriptTriggers.size();
+//        if( numberOfTriggers > 0 )
+//        {
+//          lastScriptTrigger = scriptTriggers[numberOfTriggers - 1];
+//        }
+//
+//        *vp = JS::Int32Value( lastScriptTrigger );
+//        break;
+//      }
+//      case CREGP_SCRIPTTRIGGERS:
+//      {
+//        jsval scriptId;
+//        JSObject *scriptTriggersJS = JS_NewArrayObject( cx, 0, nullptr );
+//
+//        std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
+//        for( auto i = 0; i < static_cast<int>( scriptTriggers.size() ); i++ )
+//        {
+//          scriptId = JS::Int32Value( scriptTriggers[i] );
+//          JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
+//        }
+//
+//        *vp = OBJECT_TO_JSVAL( scriptTriggersJS );
+//        break;
+//      }
 
-  if( JSVAL_IS_INT( id ))
-  {
-    JSString *tString = nullptr;
-    switch( JSVAL_TO_INT( id ))
-    {
-      case CREGP_MAYOR:
-        CChar *tempMayor;
-        tempMayor = gPriv->GetMayor();
+IMPL_SETS( CRegion, name,              CTownRegion, toString,  SetName )
+IMPL_SET(  CRegion, mayor,             CTownRegion, toInt32,   SetMayorSerial )
+IMPL_SET(  CRegion, race,              CTownRegion, toInt32,   SetRace )
+IMPL_SET(  CRegion, tax,               CTownRegion, toInt32,   TaxedAmount )
+IMPL_SET(  CRegion, taxResource,       CTownRegion, toInt32,   SetResourceId )
+IMPL_SET(  CRegion, canMark,           CTownRegion, toBoolean, CanMark )
+IMPL_SET(  CRegion, canRecall,         CTownRegion, toBoolean, CanRecall )
+IMPL_SET(  CRegion, canGate,           CTownRegion, toBoolean, CanGate )
+IMPL_SET(  CRegion, canTeleport,       CTownRegion, toBoolean, CanTeleport )
+IMPL_SET(  CRegion, canPlaceHouse,     CTownRegion, toBoolean, CanPlaceHouse )
+IMPL_SET(  CRegion, isGuarded,         CTownRegion, toBoolean, IsGuarded )
+IMPL_SET(  CRegion, canCastAggressive, CTownRegion, toBoolean, CanCastAggressive )
+IMPL_SET(  CRegion, isSafeZone,        CTownRegion, toBoolean, IsSafeZone )
+IMPL_SET(  CRegion, health,            CTownRegion, toInt32,   SetHealth )
+IMPL_SET(  CRegion, isDungeon,         CTownRegion, toBoolean, IsDungeon )
+IMPL_SET(  CRegion, worldNumber,       CTownRegion, toInt32,   WorldNumber )
+IMPL_SET(  CRegion, instanceID,        CTownRegion, toInt32,   SetInstanceId )
+IMPL_SET(  CRegion, chanceBigOre,      CTownRegion, toInt32,   SetChanceBigOre )
+IMPL_SET(  CRegion, id,                CTownRegion, toInt32,  SetRegionNum )
+// IMPL_SET( CRegion, scriptTrigger,     CTownRegion, setInt32,   )
+// IMPL_SET( CRegion, scriptTriggers,    CTownRegion, setInt32, )
+IMPL_SET( CRegion, numGuards,         CTownRegion, toInt32,   SetNumGuards )
+IMPL_SET( CRegion, taxes,             CTownRegion, toInt32,   SetTaxesLeft )
+IMPL_SET( CRegion, reserves,          CTownRegion, toInt32,   SetReserves )
+//IMPL_SET( CRegion, appearance,        CTownRegion, toInt32,   SetAppearance )
+IMPL_SET( CRegion, music,             CTownRegion, toInt32,   SetMusicList )
+IMPL_SET( CRegion, weather,           CTownRegion, toInt32,   SetWeather )
 
-        if( !ValidateObject( tempMayor ))
-          *vp = JS::CurrentGlobalOrNull;
-        else
-        {
-          // Otherwise Acquire an object
-          JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, tempMayor, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myChar );
-        }
-        break;
-      case CREGP_CHANCEBIGORE:		*vp = JS::Int32Value( gPriv->GetChanceBigOre() );			break;
-      case CREGP_NUMOREPREFERENCES:	*vp = JS::Int32Value( gPriv->GetNumOrePreferences() );	break;
-      case CREGP_POPULATION:			*vp = JS::Int32Value( gPriv->GetPopulation() );			break;
-      case CREGP_MEMBERS:
-        tString = JS_NewStringCopyZ( cx, gPriv->GetTownMemberSerials().c_str() );
-        *vp = JS::StringValue( tString );
-        break;
-      case CREGP_ID:					*vp = JS::Int32Value( gPriv->GetRegionNum() );			break;
-      case CREGP_NUMGUARDS:			*vp = JS::Int32Value( gPriv->NumGuards() );				break;
-      case CREGP_SCRIPTTRIGGER:
-      {
-        // For backwards compatibility, get last scripttrigger from vector
-        // For older worldfiles, this will be the only scripttrigger added to the vector after load
-        std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-        UI16 lastScriptTrigger = 0;
-        auto numberOfTriggers = scriptTriggers.size();
-        if( numberOfTriggers > 0 )
-        {
-          lastScriptTrigger = scriptTriggers[numberOfTriggers - 1];
-        }
+//      case CREGP_SCRIPTTRIGGER:
+//      {
+//        // For backwards compatibility; clears out other scripts and assigns a specific script
+//        UI16 scriptId = static_cast<UI16>( encaps.toInt() );
+//        cScript *toExecute	= JSMapping->GetScript( scriptId );
+//        if( toExecute == nullptr )
+//        {
+//          ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
+//        }
+//        else
+//        {
+//          gPriv->ClearScriptTriggers();
+//          gPriv->AddScriptTrigger( scriptId );
+//        }
+//        break;
+//      }
+//      case CREGP_SCRIPTTRIGGERS:
+//      {
+//        if( *vp != JS::CurrentGlobalOrNull )
+//        {
+//          UI16 scriptId = static_cast<UI16>( encaps.toInt() );
+//          cScript *toExecute	= JSMapping->GetScript( scriptId );
+//          if( toExecute == nullptr )
+//          {
+//            ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
+//          }
+//          else
+//          {
+//            gPriv->AddScriptTrigger( scriptId );
+//          }
+//        }
+//        else
+//        {
+//          // If null value was provided, clear script triggers on object
+//          gPriv->ClearScriptTriggers();
+//        }
+//        break; 
+//      }
+//      case CREGP_APPEARANCE:			gPriv->SetAppearance( static_cast<WorldType>( encaps.toInt() )); break;
+//  // Active script-context might have been lost, so restore it...
+//  if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
+//  {
+//    // ... by calling a dummy function in original script!
+//    bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+//    if( retVal == false )
+//    {
+//      // Dummy function not found, let shard admin know!
+//      Console.Warning( oldstrutil::format( "Script context lost after setting Region property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+//    }
+//  }
 
-        *vp = JS::Int32Value( lastScriptTrigger );
-        break;
-      }
-      case CREGP_SCRIPTTRIGGERS:
-      {
-        jsval scriptId;
-        JSObject *scriptTriggersJS = JS_NewArrayObject( cx, 0, nullptr );
-
-        std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-        for( auto i = 0; i < static_cast<int>( scriptTriggers.size() ); i++ )
-        {
-          scriptId = JS::Int32Value( scriptTriggers[i] );
-          JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
-        }
-
-        *vp = OBJECT_TO_JSVAL( scriptTriggersJS );
-        break;
-      }
-      case CREGP_TAXES:				*vp = JS::Int32Value( gPriv->GetTaxes() );				break;
-      case CREGP_RESERVES:			*vp = JS::Int32Value( gPriv->GetReserves() );				break;
-      case CREGP_APPEARANCE:			*vp = JS::Int32Value( gPriv->GetAppearance() );			break;
-      case CREGP_MUSIC:				*vp = JS::Int32Value( gPriv->GetMusicList() );			break;
-      case CREGP_WEATHER:				*vp = JS::Int32Value( gPriv->GetWeather() );				break;
-      case CREGP_OWNER:
-        tString = JS_NewStringCopyZ( cx, gPriv->GetOwner().c_str() );
-        *vp = JS::StringValue( tString );
-        break;
-      default:
-        break;
-    }
-  }
-  return true;
-}
-bool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-  CTownRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CTownRegion >(obj , 0);
-  if( gPriv == nullptr )
-    return false;
-
-  // Keep track of original script that's executing
-  auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
-  auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
-
-  JSEncapsulate encaps( cx, vp );
-  if( JSVAL_IS_INT( id ))
-  {
-    switch( JSVAL_TO_INT( id ))
-    {
-      case CREGP_NAME:				gPriv->SetName( encaps.toString() );						break;
-      case CREGP_MAYOR:				gPriv->SetMayorSerial( static_cast<UI32>( encaps.toInt() )); break;
-      case CREGP_RACE:				gPriv->SetRace( static_cast<RACEID>( encaps.toInt() ));		break;
-      case CREGP_TAX:					gPriv->TaxedAmount( static_cast<SI16>( encaps.toInt() ));	break;
-      case CREGP_TAXRESOURCE:			gPriv->SetResourceId( static_cast<UI16>( encaps.toInt() ));	break;
-      case CREGP_CANMARK:				gPriv->CanMark( encaps.toBool() );							break;
-      case CREGP_CANRECALL:			gPriv->CanRecall( encaps.toBool() );						break;
-      case CREGP_CANGATE:				gPriv->CanGate( encaps.toBool() );							break;
-      case CREGP_CANTELEPORT:			gPriv->CanTeleport( encaps.toBool() );						break;
-      case CREGP_CANPLACEHOUSE:		gPriv->CanPlaceHouse( encaps.toBool() );					break;
-      case CREGP_ISGUARDED:			gPriv->IsGuarded( encaps.toBool() );						break;
-      case CREGP_CANCASTAGGRESSIVE:	gPriv->CanCastAggressive( encaps.toBool() );				break;
-      case CREGP_ISSAFEZONE:			gPriv->IsSafeZone( encaps.toBool() );						break;
-      case CREGP_HEALTH:				gPriv->SetHealth( static_cast<SI16>( encaps.toInt() ));		break;
-      case CREGP_ISDUNGEON:			gPriv->IsDungeon( encaps.toBool() );						break;
-      case CREGP_CHANCEBIGORE:		gPriv->SetChanceBigOre( static_cast<UI08>( encaps.toInt() ));	break;
-      case CREGP_NUMGUARDS:			gPriv->SetNumGuards( static_cast<UI16>( encaps.toInt() ));	break;
-      case CREGP_SCRIPTTRIGGER:
-      {
-        // For backwards compatibility; clears out other scripts and assigns a specific script
-        UI16 scriptId = static_cast<UI16>( encaps.toInt() );
-        cScript *toExecute	= JSMapping->GetScript( scriptId );
-        if( toExecute == nullptr )
-        {
-          ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
-        }
-        else
-        {
-          gPriv->ClearScriptTriggers();
-          gPriv->AddScriptTrigger( scriptId );
-        }
-        break;
-      }
-      case CREGP_SCRIPTTRIGGERS:
-      {
-        if( *vp != JS::CurrentGlobalOrNull )
-        {
-          UI16 scriptId = static_cast<UI16>( encaps.toInt() );
-          cScript *toExecute	= JSMapping->GetScript( scriptId );
-          if( toExecute == nullptr )
-          {
-            ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
-          }
-          else
-          {
-            gPriv->AddScriptTrigger( scriptId );
-          }
-        }
-        else
-        {
-          // If null value was provided, clear script triggers on object
-          gPriv->ClearScriptTriggers();
-        }
-        break; 
-      }
-      case CREGP_TAXES:				gPriv->SetTaxesLeft( static_cast<UI32>( encaps.toInt() ));	break;
-      case CREGP_RESERVES:			gPriv->SetReserves( static_cast<UI32>( encaps.toInt() ));	break;
-      case CREGP_APPEARANCE:			gPriv->SetAppearance( static_cast<WorldType>( encaps.toInt() )); break;
-      case CREGP_MUSIC:				gPriv->SetMusicList( static_cast<UI16>( encaps.toInt() ));	break;
-      case CREGP_WEATHER:				gPriv->SetWeather( static_cast<WEATHID>( encaps.toInt() ));	break;
-      case CREGP_WORLDNUMBER:			gPriv->WorldNumber( static_cast<UI08>( encaps.toInt() ));	break;
-      case CREGP_INSTANCEID:			gPriv->SetInstanceId( static_cast<UI16>( encaps.toInt() ));	break;
-      case CREGP_MEMBERS:
-        break;
-      default:
-        break;
-    }
-  }
-
-  // Active script-context might have been lost, so restore it...
-  if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
-  {
-    // ... by calling a dummy function in original script!
-    bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-    if( retVal == false )
-    {
-      // Dummy function not found, let shard admin know!
-      Console.Warning( oldstrutil::format( "Script context lost after setting Region property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
-    }
-  }
-
-  return true;
-}
 bool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
   CSpawnRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CSpawnRegion >(obj , 0);

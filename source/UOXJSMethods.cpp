@@ -6492,10 +6492,6 @@ static bool CSocket_SetString(JSContext* cx, unsigned argc, JS::Value* vp)
 		return false;
 	}
 
-	auto args = JS::CallArgsFromVp(argc, vp);
-	JS::RootedObject obj(cx);
-	if (!args.computeThis(cx, &obj))
-		return false;
 	SI32 offset = args.get(0).toInt32();
 	auto trgMessage = convertToString(cx, args.get(1).toString());
 	if (trgMessage.empty())
@@ -8946,15 +8942,14 @@ static bool CConsole_Log(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (!args.computeThis(cx, &obj))
 		return false;
 	JS::HandleValue arg0 = args.get(0);
-	JSEncapsulate arg1;
 	if (argc == 1)
 	{
-		Console.Log(arg0.toString());
+		Console.Log(convertToString(cx, args.get(0).toString()));
 	}
 	else
 	{
-		arg1.SetContext(cx, &(argv[1]));
-		Console.Log(arg0.toString(), arg1.toString());
+		//arg1.SetContext(cx, &(argv[1]));
+		Console.Log(convertToString(cx, args.get(0).toString()), convertToString(cx, args.get(1).toString()));
 	}
 	return true;
 }
@@ -8972,8 +8967,11 @@ static bool CConsole_Error(JSContext* cx, unsigned argc, JS::Value* vp)
 		ScriptError(cx, "Error: Invalid number of arguments (takes 1)");
 		return false;
 	}
-	JS::HandleValue arg0 = args.get(0);
-	Console.Error(arg0.toString());
+	auto args = JS::CallArgsFromVp(argc, vp);
+	JS::RootedObject obj(cx);
+	if (!args.computeThis(cx, &obj))
+		return false;
+	Console.Error(convertToString(cx, args.get(0).toString()));
 	return true;
 }
 
@@ -8994,8 +8992,7 @@ static bool CConsole_Warning(JSContext* cx, unsigned argc, JS::Value* vp)
 	JS::RootedObject obj(cx);
 	if (!args.computeThis(cx, &obj))
 		return false;
-	JS::HandleValue arg0 = args.get(0);
-	Console.Warning(arg0.toString());
+	Console.Warning(convertToString( cx, args.get(0).toString()));
 	return true;
 }
 
@@ -9140,7 +9137,7 @@ static bool CConsole_PrintDone(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (argc != 0)
 	{
 		JS::HandleValue encaps = args.get(0);
-		normalDone = encaps.toBool();
+		normalDone = encaps.toBoolean();
 	}
 	if (normalDone)
 	{
@@ -9175,7 +9172,7 @@ static bool CConsole_PrintFailed(JSContext* cx, unsigned argc, JS::Value* vp)
 	if (argc != 0)
 	{
 		JS::HandleValue encaps = args.get(0);
-		normalFailed = encaps.toBool();
+		normalFailed = encaps.toBoolean();
 	}
 	if (normalFailed)
 	{
@@ -9239,8 +9236,7 @@ static bool CConsole_PrintBasedOnVal(JSContext* cx, unsigned argc, JS::Value* vp
 	JS::RootedObject obj(cx);
 	if (!args.computeThis(cx, &obj))
 		return false;
-	JS::HandleValue arg0 = args.get(0);
-	Console.PrintBasedOnVal(arg0.toBool());
+	Console.PrintBasedOnVal(args.get(0).toBoolean());
 	return true;
 }
 
@@ -9262,9 +9258,7 @@ static bool CConsole_MoveTo(JSContext* cx, unsigned argc, JS::Value* vp)
 	JS::RootedObject obj(cx);
 	if (!args.computeThis(cx, &obj))
 		return false;
-	JS::HandleValue arg0 = args.get(0);
-	JS::HandleValue arg1 = args.get(1);
-	Console.MoveTo(arg0.toInt(), arg1.toInt());
+	Console.MoveTo(args.get(0).toInt32(), args.get(1).toInt32());
 	return true;
 }
 
@@ -9295,7 +9289,7 @@ static bool CConsole_PrintSpecial(JSContext* cx, unsigned argc, JS::Value* vp)
 		return false;
 	JS::HandleValue arg0 = args.get(0);
 	JS::HandleValue arg1 = args.get(1);
-	Console.PrintSpecial(arg0.toInt(), arg1.toString().c_str());
+	Console.PrintSpecial(arg0.toInt32(), convertToString( cx, arg1.toString() ).c_str());
 	return true;
 }
 
@@ -9342,8 +9336,7 @@ static bool CConsole_Reload(JSContext* cx, unsigned argc, JS::Value* vp)
 	JS::RootedObject obj(cx);
 	if (!args.computeThis(cx, &obj))
 		return false;
-	JS::HandleValue arg0 = args.get(0);
-	SI32 mArg = arg0.toInt();
+	SI32 mArg = args.get(0).toInt32();
 	if (mArg < 0 || mArg > 8)
 	{
 		ScriptError(cx, "Reload: Section to reload must be between 0 and 8");
@@ -9551,6 +9544,10 @@ static bool CItem_LockDown(JSContext* cx, unsigned argc, JS::Value* vp)
 //o------------------------------------------------------------------------------------------------o
 static bool CChar_InitWanderArea(JSContext* cx, unsigned argc, JS::Value* vp)
 {
+	auto args = JS::CallArgsFromVp(argc, vp);
+	JS::RootedObject obj(cx);
+	if (!args.computeThis(cx, &obj))
+		return false;
 	CChar* mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if (!ValidateObject(mChar) || !mChar->IsNpc())
 	{
@@ -10447,7 +10444,7 @@ static bool CSocket_DisplayDamage(JSContext* cx, unsigned argc, JS::Value* vp)
 
 	JS::HandleValue damage = args.get(1);
 
-	CPDisplayDamage dispDamage((*mChar), static_cast<UI16>(damage.toInt()));
+	CPDisplayDamage dispDamage((*mChar), static_cast<UI16>(damage.toInt32()));
 	mSock->Send(&dispDamage);
 
 	return true;
@@ -10490,7 +10487,7 @@ static bool CChar_ReactOnDamage(JSContext* cx, unsigned argc, JS::Value* vp)
 			return false;
 		}
 
-		if (attackerClass.isType(JSOT_VOID) || attackerClass.isType(JSOT_NULL))
+		if (attackerClass.isNullOrUndefined() )
 		{
 			attacker = nullptr;
 		}

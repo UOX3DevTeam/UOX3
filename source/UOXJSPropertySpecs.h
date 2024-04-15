@@ -952,7 +952,7 @@ inline JSPropertySpec CRaceProperties[] =
   JS_PS_END
 };
 
-// @clang-format off
+// clang-format off
 inline JSPropertySpec CRegionProperties[] =
 {
   JS_PSGS( "name",              JSCRegion_get_name,              JSCRegion_set_name,               JSPROP_ENUMANDPERM ),
@@ -985,10 +985,10 @@ inline JSPropertySpec CRegionProperties[] =
   JS_PSGS( "appearance",        JSCRegion_get_appearance,        JSCRegion_set_appearance,         JSPROP_ENUMANDPERM ),
   JS_PSGS( "music",             JSCRegion_get_music,             JSCRegion_set_music,              JSPROP_ENUMANDPERM ),
   JS_PSGS( "weather",           JSCRegion_get_weather,           JSCRegion_set_weather,            JSPROP_ENUMANDPERM ),
-  JS_PSGS( "owner",             JSCRegion_get_owner,             JSCRegion_set_owner,              JSPROP_ENUMANDPERM ),
+  JS_PSG(  "owner",             JSCRegion_get_owner,                                               JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
-// @clang-format on
+// clang-format on
 
 inline JSPropertySpec CSpawnRegionProperties[] =
 {
