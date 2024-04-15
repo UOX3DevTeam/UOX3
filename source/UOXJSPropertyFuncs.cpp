@@ -2831,7 +2831,6 @@ IMPL_GET(  CRace, visibleDistance,  CRace, setInt32,   VisibilityRange() )
 IMPL_GET(  CRace, nightVision,      CRace, setInt32,   NightVision() )
 // clang-format on
 
-
 // clang-format off
 IMPL_SETS( CRace, name,             CRace, toString,  Name )
 IMPL_SET(  CRace, requiresBeard,    CRace, toBoolean, RequiresBeard )
@@ -2846,276 +2845,222 @@ IMPL_SET(  CRace, visibleDistance,  CRace, toInt32,   VisibilityRange )
 IMPL_SET(  CRace, nightVision,      CRace, toInt32,   NightVision )
 // clang-format on
 
-bool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-  CSocket *gPriv = JS::GetMaybePtrFromReservedSlot<CSocket >(obj , 0);
-  if( gPriv == nullptr )
-    return false;
+// clang-format off
+//IMPL_SET(  CSocket, currentChar,      CSocket, toString, )
+IMPL_SET(  CSocket, wasIdleWarned,    CSocket, toBoolean,  WasIdleWarned )
+IMPL_SET(  CSocket, tempInt,          CSocket, toInt32,    TempInt  )
+IMPL_SET(  CSocket, tempInt2,         CSocket, toInt32,    TempInt2 )
+IMPL_SETS( CSocket, xText,            CSocket, toString,   XText )
+IMPL_SETS( CSocket, xText2,           CSocket, toString,   XText2 )
+IMPL_SET(  CSocket, clickZ,           CSocket, toInt32,    ClickZ )
+IMPL_SET(  CSocket, newClient,        CSocket, toBoolean,  NewClient )
+IMPL_SET(  CSocket, firstPacket,      CSocket, toBoolean,  FirstPacket )
+IMPL_SET(  CSocket, cryptClient,      CSocket, toBoolean,  CryptClient )
+IMPL_SET(  CSocket, walkSequence,     CSocket, toInt32,    WalkSequence )
+IMPL_SET(  CSocket, currentSpellType, CSocket, toInt32,    CurrentSpellType )
+IMPL_SET(  CSocket, logging,          CSocket, toBoolean,  Logging )
+IMPL_SET(  CSocket, targetOK,         CSocket, toBoolean,  TargetOK )
+IMPL_SET(  CSocket, clickX,           CSocket, toInt32,    ClickX )
+IMPL_SET(  CSocket, clickY,           CSocket, toInt32,    ClickY )
+IMPL_SET(  CSocket, pickupX,          CSocket, toInt32,    PickupX )
+IMPL_SET(  CSocket, pickupY,          CSocket, toInt32,    PickupY )
+IMPL_SET(  CSocket, pickupZ,          CSocket, toInt32,    PickupZ )
+//IMPL_SET(  CSocket, pickupSpot,       CSocket, toString, )
+//IMPL_SET(  CSocket, language,         CSocket, toString, )
+IMPL_SET(  CSocket, clientMajorVer,   CSocket, toInt32,    ClientVersionMajor )
+IMPL_SET(  CSocket, clientMinorVer,   CSocket, toInt32,    ClientVersionMinor )
+IMPL_SET(  CSocket, clientSubVer,     CSocket, toInt32,    ClientVersionSub )
+IMPL_SET(  CSocket, clientLetterVer,  CSocket, toInt32,    ClientVersionLetter )
+//IMPL_SET(  CSocket, clientType,       CSocket, toInt32, )
+//IMPL_SET(  CSocket, tempObj,          CSocket, toString, ) // Todo
+// IMPL_SET(  CSocket, tempObj2,         CSocket, toString, ) // Todo
+// clang-format on
 
-  // Keep track of original script that's executing
-  auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
-  auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
-  JSEncapsulate encaps( cx, vp );
-  if( JSVAL_IS_INT( id ))
-  {
-    switch( JSVAL_TO_INT( id ))
-    {
-      case CSOCKP_ACCOUNT:
-        break;
-      case CSOCKP_CURRENTCHAR:
-      {
-        CChar *mChar = static_cast<CChar *>( encaps.toObject() );
-        if( ValidateObject( mChar ))
-        {
-          gPriv->CurrcharObj( mChar );
-        }
-      }
-        break;
-      case CSOCKP_IDLETIMEOUT:
-        break;
-      case CSOCKP_WASIDLEWARNED:		gPriv->WasIdleWarned( encaps.toBool() );				break;
-      case CSOCKP_TEMPINT:			gPriv->TempInt( encaps.toInt() );						break;
-      case CSOCKP_TEMPINT2:			gPriv->TempInt2( encaps.toInt() );						break; // Reserved for JS usage
-      case CSOCKP_TEMPOBJ:
-        if( *vp == JS::CurrentGlobalOrNull )
-        {
-          gPriv->TempObj( nullptr );
-        }
-        else
-        {
-          gPriv->TempObj( static_cast<CBaseObject *>( encaps.toObject() ));
-        }
-        break;
-      case CSOCKP_TEMPOBJ2: // Reserved for JS usage
-        if( *vp == JS::CurrentGlobalOrNull )
-        {
-          gPriv->TempObj2( nullptr );
-        }
-        else
-        {
-          gPriv->TempObj2( static_cast<CBaseObject *>( encaps.toObject() ));
-        }
-        break;
-      case CSOCKP_BUFFER:
-        break;
-      case CSOCKP_XTEXT:				gPriv->XText( encaps.toString() );						break;
-      case CSOCKP_XTEXT2:				gPriv->XText2( encaps.toString() );						break;
-      case CSOCKP_CLICKZ:				gPriv->ClickZ( static_cast<SI08>( encaps.toInt() ));	break;
-      case CSOCKP_ADDID:
-        break;
-      case CSOCKP_NEWCLIENT:			gPriv->NewClient( encaps.toBool() );					break;
-      case CSOCKP_FIRSTPACKET:		gPriv->FirstPacket( encaps.toBool() );					break;
-      case CSOCKP_CRYPTCLIENT:		gPriv->CryptClient( encaps.toBool() );					break;
-      case CSOCKP_CLIENTIP:
-        break;
-      case CSOCKP_WALKSEQUENCE:		gPriv->WalkSequence( static_cast<SI16>( encaps.toInt() ));		break;
-      case CSOCKP_CURRENTSPELLTYPE:	gPriv->CurrentSpellType( static_cast<SI08>( encaps.toInt() ));	break;
-      case CSOCKP_LOGGING:			gPriv->Logging( encaps.toBool() );								break;
-      case CSOCKP_BYTESSENT:
-      case CSOCKP_BYTESRECEIVED:
-        break;
-      case CSOCKP_TARGETOK:			gPriv->TargetOK( encaps.toBool() );									break;
-      case CSOCKP_CLICKX:				gPriv->ClickX( static_cast<SI16>( encaps.toInt() ));				break;
-      case CSOCKP_CLICKY:				gPriv->ClickY( static_cast<SI16>( encaps.toInt() ));				break;
-      case CSOCKP_PICKUPX:			gPriv->PickupX( static_cast<SI16>( encaps.toInt() ));				break;
-      case CSOCKP_PICKUPY:			gPriv->PickupY( static_cast<SI16>( encaps.toInt() ));				break;
-      case CSOCKP_PICKUPZ:			gPriv->PickupZ( static_cast<SI08>( encaps.toInt() ));				break;
-      case CSOCKP_PICKUPSPOT:			gPriv->PickupSpot( static_cast<PickupLocations>( encaps.toInt() ));	break;
-      case CSOCKP_PICKUPSERIAL:
-        break;
-      case CSOCKP_LANGUAGE:			gPriv->Language( static_cast<UnicodeTypes>( encaps.toInt() ));		break;
-      case CSOCKP_CLIENTMAJORVER:		gPriv->ClientVersionMajor( static_cast<UI08>( encaps.toInt() ));	break;
-      case CSOCKP_CLIENTMINORVER:		gPriv->ClientVersionMinor( static_cast<UI08>( encaps.toInt() ));	break;
-      case CSOCKP_CLIENTSUBVER:		gPriv->ClientVersionSub( static_cast<UI08>( encaps.toInt() ));		break;
-      case CSOCKP_CLIENTLETTERVER:	gPriv->ClientVersionLetter( static_cast<UI08>( encaps.toInt() ));	break;
-      case CSOCKP_CLIENTTYPE:			gPriv->ClientType( static_cast<ClientTypes>( encaps.toInt() ));		break;
-      default:
-        break;
-    }
-  }
 
-  // Active script-context might have been lost, so restore it...
-  if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
-  {
-    // ... by calling a dummy function in original script!
-    bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-    if( retVal == false )
-    {
-      // Dummy function not found, let shard admin know!
-      Console.Warning( oldstrutil::format( "Script context lost after setting Socket property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
-    }
-  }
+      //case CSOCKP_CURRENTCHAR:
+      //{
+      //  CChar *mChar = static_cast<CChar *>( encaps.toObject() );
+      //  if( ValidateObject( mChar ))
+      //  {
+      //    gPriv->CurrcharObj( mChar );
+      //  }
+      //}
+      //  break;
+      //case CSOCKP_TEMPOBJ:
+      //  if( *vp == JS::CurrentGlobalOrNull )
+      //  {
+      //    gPriv->TempObj( nullptr );
+      //  }
+      //  else
+      //  {
+      //    gPriv->TempObj( static_cast<CBaseObject *>( encaps.toObject() ));
+      //  }
+      //  break;
+      //case CSOCKP_TEMPOBJ2: // Reserved for JS usage
+      //  if( *vp == JS::CurrentGlobalOrNull )
+      //  {
+      //    gPriv->TempObj2( nullptr );
+      //  }
+      //  else
+      //  {
+      //    gPriv->TempObj2( static_cast<CBaseObject *>( encaps.toObject() ));
+      //  }
+      //  break;
+      //case CSOCKP_PICKUPSPOT:			gPriv->PickupSpot( static_cast<PickupLocations>( encaps.toInt() ));	break;
+      //case CSOCKP_LANGUAGE:			    gPriv->Language( static_cast<UnicodeTypes>( encaps.toInt() ));		break;
+      //case CSOCKP_CLIENTTYPE:			gPriv->ClientType( static_cast<ClientTypes>( encaps.toInt() ));		break;
 
-  return true;
-}
+// clang-format off
+//IMPL_GET(  CSocket, account,          CSocket, setInt32, PickupZ )
+//IMPL_GET(  CSocket, currentChar,      CSocket, setInt32, PickupZ )
+IMPL_GET(  CSocket, idleTimeout,      CSocket, setInt32,   IdleTimeout() )
+IMPL_GET(  CSocket, wasIdleWarned,    CSocket, setBoolean, WasIdleWarned() )
+IMPL_GET(  CSocket, tempInt,          CSocket, setInt32,   TempInt() )
+IMPL_GET(  CSocket, tempInt2,         CSocket, setInt32,   TempInt2() )
+//IMPL_GET(  CSocket, buffer,           CSocket, setInt32, PickupZ )
+IMPL_GETS( CSocket, xText,            CSocket, setString,  XText().c_str() )
+IMPL_GETS( CSocket, xText2,           CSocket, setString,  XText2().c_str() )
+IMPL_GET(  CSocket, clickZ,           CSocket, setInt32,   ClickZ() )
+IMPL_GET(  CSocket, addID,            CSocket, setInt32,   AddId() )
+IMPL_GET(  CSocket, newClient,        CSocket, setBoolean, NewClient() )
+IMPL_GET(  CSocket, firstPacket,      CSocket, setBoolean, FirstPacket() )
+IMPL_GET(  CSocket, cryptClient,      CSocket, setBoolean, CryptClient() )
+//IMPL_GET(  CSocket, clientIP,         CSocket, setInt32, PickupZ )
+IMPL_GET(  CSocket, walkSequence,     CSocket, setInt32,   WalkSequence() )
+IMPL_GET(  CSocket, currentSpellType, CSocket, setInt32,   CurrentSpellType() )
+IMPL_GET(  CSocket, logging,          CSocket, setBoolean, Logging() )
+IMPL_GET(  CSocket, bytesSent,        CSocket, setInt32,   BytesSent() )
+IMPL_GET(  CSocket, bytesReceived,    CSocket, setInt32,   BytesReceived() )
+IMPL_GET(  CSocket, targetOK,         CSocket, setBoolean, TargetOK() )
+IMPL_GET(  CSocket, clickX,           CSocket, setInt32,   ClickX() )
+IMPL_GET(  CSocket, clickY,           CSocket, setInt32,   ClickY() )
+IMPL_GET(  CSocket, pickupX,          CSocket, setInt32,   PickupX() )
+IMPL_GET(  CSocket, pickupY,          CSocket, setInt32,   PickupY() )
+IMPL_GET(  CSocket, pickupZ,          CSocket, setInt32,   PickupZ() )
+IMPL_GET(  CSocket, pickupSpot,       CSocket, setInt32,   PickupSpot() )
+IMPL_GET(  CSocket, pickupSerial,     CSocket, setInt32,   PickupSerial() )
+IMPL_GET(  CSocket, language,         CSocket, setInt32,   Language() )
+IMPL_GET(  CSocket, clientMajorVer,   CSocket, setInt32,   ClientVersionMajor() )
+IMPL_GET(  CSocket, clientMinorVer,   CSocket, setInt32,   ClientVersionMinor() )
+IMPL_GET(  CSocket, clientSubVer,     CSocket, setInt32,   ClientVersionSub() )
+IMPL_GET(  CSocket, clientLetterVer,  CSocket, setInt32,   ClientVersionLetter() )
+IMPL_GET(  CSocket, clientType,       CSocket, setInt32,   ClientType() )
+//IMPL_GET(  CSocket, target,           CSocket, setInt32, PickupZ )
+//IMPL_GET(  CSocket, tempObj,          CSocket, setInt32, PickupZ )
+//IMPL_GET(  CSocket, tempObj2,         CSocket, setInt32, PickupZ )
+// clang-format on
 
-bool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-  CSocket *gPriv = JS::GetMaybePtrFromReservedSlot<CSocket >(obj , 0);
-  if( gPriv == nullptr )
-    return false;
+      //case CSOCKP_ACCOUNT:
+      //{
+      //  CAccountBlock_st *accountBlock = &gPriv->GetAccount();
+      //  if( accountBlock == nullptr )
+      //  {
+      //    *vp = JS::CurrentGlobalOrNull;
+      //  }
+      //  else
+      //  {	// Otherwise Acquire an object
+      //    JSObject *accountObj	= JSEngine->AcquireObject( IUE_ACCOUNT, accountBlock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //    *vp = OBJECT_TO_JSVAL( accountObj );
+      //  }
+      //  break;
+      //}
+      //case CSOCKP_CURRENTCHAR:
+      //{
+      //  myChar = gPriv->CurrcharObj();
+      //  if( !ValidateObject( myChar ))
+      //  {
+      //    *vp = JS::CurrentGlobalOrNull;
+      //  }
+      //  else
+      //  {
+      //    JSObject *myObj		= JSEngine->AcquireObject( IUE_CHAR, myChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //    *vp = OBJECT_TO_JSVAL( myObj );
+      //  }
+      //  break;
+      //}
+      //case CSOCKP_IDLETIMEOUT:
+      //  break;
+      //case CSOCKP_TEMPOBJ:
+      //{
+      //  CBaseObject *mObj	= gPriv->TempObj();
+      //  if( !ValidateObject( mObj ))
+      //  {
+      //    *vp = JS::CurrentGlobalOrNull;
+      //  }
+      //  else
+      //  {
+      //    JSObject *myObj = nullptr;
+      //    if( mObj->CanBeObjType( OT_ITEM ))
+      //    {
+      //      myObj = JSEngine->AcquireObject( IUE_ITEM, mObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //    }
+      //    else
+      //    {
+      //      myObj = JSEngine->AcquireObject( IUE_CHAR, mObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //    }
+      //    *vp = OBJECT_TO_JSVAL( myObj );
+      //  }
+      //  break;
+      //}
+      //case CSOCKP_TEMPOBJ2:
+      //{
+      //  CBaseObject *mObj	= gPriv->TempObj2();
+      //  if( !ValidateObject( mObj ))
+      //  {
+      //    *vp = JS::CurrentGlobalOrNull;
+      //  }
+      //  else
+      //  {
+      //    JSObject *myObj = nullptr;
+      //    if( mObj->CanBeObjType( OT_ITEM ))
+      //    {
+      //      myObj = JSEngine->AcquireObject( IUE_ITEM, mObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //    }
+      //    else
+      //    {
+      //      myObj = JSEngine->AcquireObject( IUE_CHAR, mObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //    }
+      //    *vp = OBJECT_TO_JSVAL( myObj );
+      //  }
+      //}
+      //  break;
+      //case CSOCKP_CLIENTIP:
+      //  break;
+      //case CSOCKP_TARGET:
+      //{
+      //  SERIAL mySerial		= gPriv->GetDWord( 7 );
+      //  // Item
+      //  if( mySerial >= BASEITEMSERIAL )
+      //  {
+      //    CItem *myItem = CalcItemObjFromSer( mySerial );
 
-  if( JSVAL_IS_INT( id ))
-  {
-    CChar *myChar;
-    JSString *tString = nullptr;
-    switch( JSVAL_TO_INT( id ))
-    {
-      case CSOCKP_ACCOUNT:
-      {
-        CAccountBlock_st *accountBlock = &gPriv->GetAccount();
-        if( accountBlock == nullptr )
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        else
-        {	// Otherwise Acquire an object
-          JSObject *accountObj	= JSEngine->AcquireObject( IUE_ACCOUNT, accountBlock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( accountObj );
-        }
-        break;
-      }
-      case CSOCKP_CURRENTCHAR:
-      {
-        myChar = gPriv->CurrcharObj();
-        if( !ValidateObject( myChar ))
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        else
-        {
-          JSObject *myObj		= JSEngine->AcquireObject( IUE_CHAR, myChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myObj );
-        }
-        break;
-      }
-      case CSOCKP_IDLETIMEOUT:
-        break;
-      case CSOCKP_WASIDLEWARNED:		*vp = JS::BooleanValue( gPriv->WasIdleWarned() );		break;
-      case CSOCKP_TEMPINT:			*vp = JS::Int32Value( gPriv->TempInt() );					break;
-      case CSOCKP_TEMPINT2:			*vp = JS::Int32Value( gPriv->TempInt2() );				break;
-      case CSOCKP_TEMPOBJ:
-      {
-        CBaseObject *mObj	= gPriv->TempObj();
-        if( !ValidateObject( mObj ))
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        else
-        {
-          JSObject *myObj = nullptr;
-          if( mObj->CanBeObjType( OT_ITEM ))
-          {
-            myObj = JSEngine->AcquireObject( IUE_ITEM, mObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          }
-          else
-          {
-            myObj = JSEngine->AcquireObject( IUE_CHAR, mObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          }
-          *vp = OBJECT_TO_JSVAL( myObj );
-        }
-        break;
-      }
-      case CSOCKP_TEMPOBJ2:
-      {
-        CBaseObject *mObj	= gPriv->TempObj2();
-        if( !ValidateObject( mObj ))
-        {
-          *vp = JS::CurrentGlobalOrNull;
-        }
-        else
-        {
-          JSObject *myObj = nullptr;
-          if( mObj->CanBeObjType( OT_ITEM ))
-          {
-            myObj = JSEngine->AcquireObject( IUE_ITEM, mObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          }
-          else
-          {
-            myObj = JSEngine->AcquireObject( IUE_CHAR, mObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          }
-          *vp = OBJECT_TO_JSVAL( myObj );
-        }
-      }
-        break;
-      case CSOCKP_BUFFER:
-        break;
-      case CSOCKP_XTEXT:				
-        tString = JS_NewStringCopyZ( cx, gPriv->XText().c_str() );
-        *vp = JS::StringValue( tString );	break;
-      case CSOCKP_XTEXT2:				
-        tString = JS_NewStringCopyZ( cx, gPriv->XText2().c_str() );
-        *vp = JS::StringValue( tString );	break;
-      case CSOCKP_CLICKZ:				*vp = JS::Int32Value( gPriv->ClickZ() );					break;
-      case CSOCKP_ADDID:
-        break;
-      case CSOCKP_NEWCLIENT:			*vp = JS::BooleanValue( gPriv->NewClient() );			break;
-      case CSOCKP_FIRSTPACKET:		*vp = JS::BooleanValue( gPriv->FirstPacket() );			break;
-      case CSOCKP_CRYPTCLIENT:		*vp = JS::BooleanValue( gPriv->CryptClient() );			break;
-      case CSOCKP_CLIENTIP:
-        break;
-      case CSOCKP_WALKSEQUENCE:		*vp = JS::Int32Value( gPriv->WalkSequence() );			break;
-      case CSOCKP_CURRENTSPELLTYPE:	*vp = JS::Int32Value( gPriv->CurrentSpellType() );		break;
-      case CSOCKP_LOGGING:			*vp = JS::BooleanValue( gPriv->Logging() );				break;
-      case CSOCKP_BYTESSENT:			*vp = JS::Int32Value( gPriv->BytesSent() );				break;
-      case CSOCKP_BYTESRECEIVED:		*vp = JS::Int32Value( gPriv->BytesReceived() );			break;
-      case CSOCKP_TARGETOK:			*vp = JS::BooleanValue( gPriv->TargetOK() );			break;
-      case CSOCKP_CLICKX:				*vp = JS::Int32Value( gPriv->ClickX() );					break;
-      case CSOCKP_CLICKY:				*vp = JS::Int32Value( gPriv->ClickY() );					break;
-      case CSOCKP_PICKUPX:			*vp = JS::Int32Value( gPriv->PickupX() );					break;
-      case CSOCKP_PICKUPY:			*vp = JS::Int32Value( gPriv->PickupY() );					break;
-      case CSOCKP_PICKUPZ:			*vp = JS::Int32Value( gPriv->PickupZ() );					break;
-      case CSOCKP_PICKUPSPOT:			*vp = JS::Int32Value( gPriv->PickupSpot() );				break;
-      case CSOCKP_PICKUPSERIAL:
-        break;
-      case CSOCKP_LANGUAGE:			*vp = JS::Int32Value( gPriv->Language() );				break;
-      case CSOCKP_CLIENTMAJORVER:		*vp = JS::Int32Value( gPriv->ClientVersionMajor() );		break;
-      case CSOCKP_CLIENTMINORVER:		*vp = JS::Int32Value( gPriv->ClientVersionMinor() );		break;
-      case CSOCKP_CLIENTSUBVER:		*vp = JS::Int32Value( gPriv->ClientVersionSub() );		break;
-      case CSOCKP_CLIENTLETTERVER:	*vp = JS::Int32Value( gPriv->ClientVersionLetter() );		break;
-      case CSOCKP_CLIENTTYPE:			*vp = JS::Int32Value( gPriv->ClientType() );				break;
-      case CSOCKP_TARGET:
-      {
-        SERIAL mySerial		= gPriv->GetDWord( 7 );
-        // Item
-        if( mySerial >= BASEITEMSERIAL )
-        {
-          CItem *myItem = CalcItemObjFromSer( mySerial );
+      //    if( !ValidateObject( myItem ))
+      //    {
+      //      *vp = JS::CurrentGlobalOrNull;
+      //      return true;
+      //    }
 
-          if( !ValidateObject( myItem ))
-          {
-            *vp = JS::CurrentGlobalOrNull;
-            return true;
-          }
+      //    JSObject *myObj = JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //    *vp = OBJECT_TO_JSVAL( myObj );
+      //  }
+      //  // Char
+      //  else
+      //  {
+      //    CChar *myChar = CalcCharObjFromSer( mySerial );
 
-          JSObject *myObj = JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myObj );
-        }
-        // Char
-        else
-        {
-          CChar *myChar = CalcCharObjFromSer( mySerial );
+      //    if( !ValidateObject( myChar ))
+      //    {
+      //      *vp = JS::CurrentGlobalOrNull;
+      //      return true;
+      //    }
 
-          if( !ValidateObject( myChar ))
-          {
-            *vp = JS::CurrentGlobalOrNull;
-            return true;
-          }
+      //    JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, myChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+      //    *vp = OBJECT_TO_JSVAL( myObj );
+      //  }
 
-          JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, myChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myObj );
-        }
-
-        return true;
-      }
-        break;
-      default:
-        break;
-    }
-  }
-  return true;
-}
+      //  return true;
+      //}
 
 bool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
