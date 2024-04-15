@@ -2558,12 +2558,12 @@ IMPL_SET(  CRegion, chanceBigOre,      CTownRegion, toInt32,   SetChanceBigOre )
 IMPL_SET(  CRegion, id,                CTownRegion, toInt32,  SetRegionNum )
 // IMPL_SET( CRegion, scriptTrigger,     CTownRegion, setInt32,   )
 // IMPL_SET( CRegion, scriptTriggers,    CTownRegion, setInt32, )
-IMPL_SET( CRegion, numGuards,         CTownRegion, toInt32,   SetNumGuards )
-IMPL_SET( CRegion, taxes,             CTownRegion, toInt32,   SetTaxesLeft )
-IMPL_SET( CRegion, reserves,          CTownRegion, toInt32,   SetReserves )
+IMPL_SET(  CRegion, numGuards,         CTownRegion, toInt32,   SetNumGuards )
+IMPL_SET(  CRegion, taxes,             CTownRegion, toInt32,   SetTaxesLeft )
+IMPL_SET(  CRegion, reserves,          CTownRegion, toInt32,   SetReserves )
 //IMPL_SET( CRegion, appearance,        CTownRegion, toInt32,   SetAppearance )
-IMPL_SET( CRegion, music,             CTownRegion, toInt32,   SetMusicList )
-IMPL_SET( CRegion, weather,           CTownRegion, toInt32,   SetWeather )
+IMPL_SET(  CRegion, music,             CTownRegion, toInt32,   SetMusicList )
+IMPL_SET(  CRegion, weather,           CTownRegion, toInt32,   SetWeather )
 
 //      case CREGP_SCRIPTTRIGGER:
 //      {
@@ -2616,145 +2616,94 @@ IMPL_SET( CRegion, weather,           CTownRegion, toInt32,   SetWeather )
 //    }
 //  }
 
-bool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-  CSpawnRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CSpawnRegion >(obj , 0);
+IMPL_GETS( CSpawnRegion, name,        CSpawnRegion, setString,  GetName().c_str() )
+IMPL_GET(  CSpawnRegion, regionNum,   CSpawnRegion, setInt32,   GetRegionNum() )
+//IMPL_GET(  CSpawnRegion, itemList,    CSpawnRegion, setInt32,  GetName().c_str() )
+//IMPL_GET(  CSpawnRegion, npcList,     CSpawnRegion, setInt32,  GetName().c_str() )
+//IMPL_GET(  CSpawnRegion, item,        CSpawnRegion, setInt32,  GetName().c_str() )
+//IMPL_GET(  CSpawnRegion, npc,         CSpawnRegion, setInt32,  GetName().c_str() )
+IMPL_GET(  CSpawnRegion, maxItems,    CSpawnRegion, setInt32,   GetMaxItemSpawn() )
+IMPL_GET(  CSpawnRegion, maxNpcs,     CSpawnRegion, setInt32,   GetMaxCharSpawn() )
+IMPL_GET(  CSpawnRegion, itemCount,   CSpawnRegion, setInt32,   GetCurrentItemAmt() )
+IMPL_GET(  CSpawnRegion, npcCount,    CSpawnRegion, setInt32,   GetCurrentCharAmt() )
+IMPL_GET(  CSpawnRegion, onlyOutside, CSpawnRegion, setBoolean, GetOnlyOutside())
+IMPL_GET(  CSpawnRegion, isSpawner,   CSpawnRegion, setBoolean, IsSpawner() )
+IMPL_GET(  CSpawnRegion, defZ,        CSpawnRegion, setInt32,  GetDefZ() )
+IMPL_GET(  CSpawnRegion, prefZ,       CSpawnRegion, setInt32,  GetPrefZ() )
+IMPL_GET(  CSpawnRegion, x1,          CSpawnRegion, setInt32,  GetX1() )
+IMPL_GET(  CSpawnRegion, y1,          CSpawnRegion, setInt32,  GetY1() )
+IMPL_GET(  CSpawnRegion, x2,          CSpawnRegion, setInt32,  GetX2() )
+IMPL_GET(  CSpawnRegion, y2,          CSpawnRegion, setInt32,  GetY2() )
+IMPL_GET(  CSpawnRegion, world,       CSpawnRegion, setInt32,  WorldNumber() )
+IMPL_GET(  CSpawnRegion, instanceID,  CSpawnRegion, setInt32,  GetInstanceId() )
+IMPL_GET(  CSpawnRegion, minTime,     CSpawnRegion, setInt32,  GetMinTime() )
+IMPL_GET(  CSpawnRegion, maxTime,     CSpawnRegion, setInt32,  GetMaxTime() )
+IMPL_GET(  CSpawnRegion, call,        CSpawnRegion, setInt32,  GetCall() )
 
-  if( gPriv == nullptr )
-    return false;
+//      case CSPAWNREGP_ITEM:
+//      case CSPAWNREGP_ITEMLIST:
+//      {
+//        // This could potentially be a list of item ids - let's convert it to a comma-separated string!
+//        auto itemList = gPriv->GetItem();
+//        std::string s;
+//        for( const auto &piece : itemList )
+//        {
+//          if( s.empty() )
+//          {
+//            s += piece;
+//          }
+//          else
+//          {
+//            s += ( "," + piece );
+//          }
+//        }
+//        tString = JS_NewStringCopyZ( cx, s.c_str() );
+//        *vp = JS::StringValue( tString );
+//      }
+//        break;
+//      case CSPAWNREGP_NPC:
+//      case CSPAWNREGP_NPCLIST:
+//      {
+//        // This could potentially be a list of NPC ids - let's convert it to a comma-separated string!
+//        auto  npcList = gPriv->GetNPC();
+//        std::string s;
+//        for( const auto &piece : npcList )
+//        {
+//          if( s.empty() )
+//          {
+//            s += piece;
+//          }
+//          else
+//          {
+//            s += ( "," + piece );
+//          }
+//        }
+//        tString = JS_NewStringCopyZ( cx, s.c_str() );
+//        *vp = JS::StringValue( tString );
+//      }
+//        break;
 
-  if( JSVAL_IS_INT( id ))
-  {
-    JSString *tString = nullptr;
-    switch( JSVAL_TO_INT( id ))
-    {
-      case CSPAWNREGP_NAME:
-        tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
-        *vp = JS::StringValue( tString );
-        break;
-      case CSPAWNREGP_REGIONNUM:				*vp = JS::Int32Value( gPriv->GetRegionNum() );		break;
-      case CSPAWNREGP_ITEM:
-      case CSPAWNREGP_ITEMLIST:
-      {
-        // This could potentially be a list of item ids - let's convert it to a comma-separated string!
-        auto itemList = gPriv->GetItem();
-        std::string s;
-        for( const auto &piece : itemList )
-        {
-          if( s.empty() )
-          {
-            s += piece;
-          }
-          else
-          {
-            s += ( "," + piece );
-          }
-        }
-        tString = JS_NewStringCopyZ( cx, s.c_str() );
-        *vp = JS::StringValue( tString );
-      }
-        break;
-      case CSPAWNREGP_NPC:
-      case CSPAWNREGP_NPCLIST:
-      {
-        // This could potentially be a list of NPC ids - let's convert it to a comma-separated string!
-        auto  npcList = gPriv->GetNPC();
-        std::string s;
-        for( const auto &piece : npcList )
-        {
-          if( s.empty() )
-          {
-            s += piece;
-          }
-          else
-          {
-            s += ( "," + piece );
-          }
-        }
-        tString = JS_NewStringCopyZ( cx, s.c_str() );
-        *vp = JS::StringValue( tString );
-      }
-        break;
-      case CSPAWNREGP_ITEMCOUNT:				*vp = JS::Int32Value( gPriv->GetCurrentItemAmt() );				break;
-      case CSPAWNREGP_NPCCOUNT:				*vp = JS::Int32Value( gPriv->GetCurrentCharAmt() );				break;
-      case CSPAWNREGP_MAXITEMS:				*vp = JS::Int32Value( gPriv->GetMaxItemSpawn() );					break;
-      case CSPAWNREGP_MAXNPCS:				*vp = JS::Int32Value( gPriv->GetMaxCharSpawn() );					break;
-      case CSPAWNREGP_MINTIME:				*vp = JS::Int32Value( gPriv->GetMinTime() );						break;
-      case CSPAWNREGP_MAXTIME:				*vp = JS::Int32Value( gPriv->GetMaxTime() );						break;
-      case CSPAWNREGP_ONLYOUTSIDE:			*vp = JS::BooleanValue( gPriv->GetOnlyOutside() );				break;
-      case CSPAWNREGP_ISSPAWNER:				*vp = JS::BooleanValue( gPriv->IsSpawner() );					break;
-      case CSPAWNREGP_X1:						*vp = JS::Int32Value( gPriv->GetX1() );							break;
-      case CSPAWNREGP_Y1:						*vp = JS::Int32Value( gPriv->GetY1() );							break;
-      case CSPAWNREGP_X2:						*vp = JS::Int32Value( gPriv->GetX2() );							break;
-      case CSPAWNREGP_Y2:						*vp = JS::Int32Value( gPriv->GetY2() );							break;
-      case CSPAWNREGP_DEFZ:					*vp = JS::Int32Value( gPriv->GetDefZ() );							break;
-      case CSPAWNREGP_PREFZ:					*vp = JS::Int32Value( gPriv->GetPrefZ() );						break;
-      case CSPAWNREGP_WORLD:					*vp = JS::Int32Value( gPriv->WorldNumber() );						break;
-      case CSPAWNREGP_INSTANCEID:				*vp = JS::Int32Value( gPriv->GetInstanceId() );					break;
-      case CSPAWNREGP_CALL:					*vp = JS::Int32Value( gPriv->GetCall() );							break;
-      default:
-        break;
-    }
-  }
-
-  return true;
-}
-bool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-  CSpawnRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CSpawnRegion >(obj , 0);
-
-  if( gPriv == nullptr )
-    return false;
-
-  // Keep track of original script that's executing
-  auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
-  auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
-
-  JSEncapsulate encaps( cx, vp );
-  if( JSVAL_IS_INT( id ))
-  {
-    switch( JSVAL_TO_INT( id ))
-    {
-      case CSPAWNREGP_NAME:				gPriv->SetName( encaps.toString() );							break;
-      case CSPAWNREGP_ITEM:				gPriv->SetItem( encaps.toString() );							break;
-      case CSPAWNREGP_ITEMLIST:			gPriv->SetItemList( encaps.toString() );						break;
-      case CSPAWNREGP_NPC:				gPriv->SetNPC( encaps.toString() );								break;
-      case CSPAWNREGP_NPCLIST:			gPriv->SetNPCList( encaps.toString() );							break;
-      case CSPAWNREGP_REGIONNUM:			gPriv->SetRegionNum( static_cast<UI16>( encaps.toInt() ));		break;
-      case CSPAWNREGP_MAXITEMS:			gPriv->SetMaxItemSpawn( encaps.toInt() );						break;
-      case CSPAWNREGP_MAXNPCS:			gPriv->SetMaxCharSpawn( encaps.toInt() );						break;
-      case CSPAWNREGP_MINTIME:			gPriv->SetMinTime( static_cast<UI08>( encaps.toInt() ));		break;
-      case CSPAWNREGP_MAXTIME:			gPriv->SetMaxTime( static_cast<UI08>( encaps.toInt() ));		break;
-      case CSPAWNREGP_ONLYOUTSIDE:		gPriv->SetOnlyOutside( encaps.toBool() );						break;
-      case CSPAWNREGP_ISSPAWNER:			gPriv->IsSpawner( encaps.toBool() );							break;
-      case CSPAWNREGP_X1:					gPriv->SetX1( static_cast<SI16>( encaps.toInt() ));				break;
-      case CSPAWNREGP_Y1:					gPriv->SetY1( static_cast<SI16>( encaps.toInt() ));				break;
-      case CSPAWNREGP_X2:					gPriv->SetX2( static_cast<SI16>( encaps.toInt() ));				break;
-      case CSPAWNREGP_Y2:					gPriv->SetY2( static_cast<SI16>( encaps.toInt() ));				break;
-      case CSPAWNREGP_DEFZ:				gPriv->SetDefZ( static_cast<SI08>( encaps.toInt() ));			break;
-      case CSPAWNREGP_PREFZ:				gPriv->SetPrefZ( static_cast<SI08>( encaps.toInt() ));			break;
-      case CSPAWNREGP_WORLD:				gPriv->WorldNumber( static_cast<UI08>( encaps.toInt() ));		break;
-      case CSPAWNREGP_INSTANCEID:			gPriv->SetInstanceId( static_cast<UI08>( encaps.toInt() ));		break;
-      case CSPAWNREGP_CALL:				gPriv->SetCall( static_cast<UI16>( encaps.toInt() ));			break;
-      default:
-        break;
-    }
-  }
-
-  // Active script-context might have been lost, so restore it...
-  if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
-  {
-    // ... by calling a dummy function in original script!
-    bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-    if( retVal == false )
-    {
-      // Dummy function not found, let shard admin know!
-      Console.Warning( oldstrutil::format( "Script context lost after setting SpawnRegion property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
-    }
-  }
-
-  return true;
-}
+IMPL_SETS( CSpawnRegion, name,        CSpawnRegion, toString,  SetName )
+IMPL_SET(  CSpawnRegion, regionNum,   CSpawnRegion, toInt32,   SetRegionNum )
+IMPL_SETS( CSpawnRegion, itemList,    CSpawnRegion, toString,  SetItemList )
+IMPL_SETS( CSpawnRegion, npcList,     CSpawnRegion, toString,  SetNPCList )
+IMPL_SETS( CSpawnRegion, item,        CSpawnRegion, toString,  SetItem )
+IMPL_SETS( CSpawnRegion, npc,         CSpawnRegion, toString,  SetNPC )
+IMPL_SET(  CSpawnRegion, maxItems,    CSpawnRegion, toInt32,   SetMaxItemSpawn )
+IMPL_SET(  CSpawnRegion, maxNpcs,     CSpawnRegion, toInt32,   SetMaxCharSpawn )
+IMPL_SET(  CSpawnRegion, onlyOutside, CSpawnRegion, toBoolean, SetOnlyOutside )
+IMPL_SET(  CSpawnRegion, isSpawner,   CSpawnRegion, toBoolean, IsSpawner )
+IMPL_SET(  CSpawnRegion, defZ,        CSpawnRegion, toInt32,   SetDefZ )
+IMPL_SET(  CSpawnRegion, prefZ,       CSpawnRegion, toInt32,   SetPrefZ )
+IMPL_SET(  CSpawnRegion, x1,          CSpawnRegion, toInt32,   SetX1 )
+IMPL_SET(  CSpawnRegion, y1,          CSpawnRegion, toInt32,   SetY1 )
+IMPL_SET(  CSpawnRegion, x2,          CSpawnRegion, toInt32,   SetX2 )
+IMPL_SET(  CSpawnRegion, y2,          CSpawnRegion, toInt32,   SetY2 )
+IMPL_SET(  CSpawnRegion, world,       CSpawnRegion, toInt32,   WorldNumber )
+IMPL_SET(  CSpawnRegion, instanceID,  CSpawnRegion, toInt32,   SetInstanceId )
+IMPL_SET(  CSpawnRegion, minTime,     CSpawnRegion, toInt32,   SetMinTime )
+IMPL_SET(  CSpawnRegion, maxTime,     CSpawnRegion, toInt32,   SetMaxTime )
+IMPL_SET(  CSpawnRegion, call,        CSpawnRegion, toInt32,   SetCall )
 
 bool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
