@@ -3789,17 +3789,17 @@ static bool CBase_GetTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 				break;
 		}
 
-		// Add tag type and value to JSObject for tag
-		if (!JS_SetElement(cx, jsTag, 1, jsType) || !JS_SetElement(cx, jsTag, 2, jsValue))
-		{
-		    // handle error
-		}
+        // Add tag type and value to JSObject for tag
+        JS_SetElement(cx, jsTag, 1, jsType);
+        JS_SetElement(cx, jsTag, 2, jsValue);
 
-		// Add JSObject for tag to main jsTagMap object
-		if (!JS_DefineElement(cx, jsTagMap, i, jsTag, JSPROP_ENUMERATE))
-		{
-			// handle error
-		}
+        // Add JSObject for tag to main jsTagMap object
+        JS::RootedValue subTagObj(cx, JS::ObjectOrNullValue(jsTag));
+        if (!JS_SetElement(cx, jsTagMap, i, subTagObj))
+        {
+            ScriptError(cx, "Failed to set tag object");
+            return false;
+        }
 		i++;
 	}
 
@@ -3882,13 +3882,17 @@ static bool CBase_GetTempTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 			break;
 		}
 
-		// Add tag type and value to JSObject for tag
-		JS_SetElement(cx, jsTag, 1, &jsType);
-		JS_SetElement(cx, jsTag, 2, &jsValue);
+        // Add tag type and value to JSObject for tag
+        JS_SetElement(cx, jsTag, 1, jsType);
+        JS_SetElement(cx, jsTag, 2, jsValue);
 
-		// Add JSObject for tag to main jsTagMap object
-		jsval subTagObj = OBJECT_TO_JSVAL(jsTag);
-		JS_SetElement(cx, jsTagMap, i, &subTagObj);
+        // Add JSObject for tag to main jsTagMap object
+        JS::RootedValue subTagObj(cx, JS::ObjectOrNullValue(jsTag));
+        if (!JS_SetElement(cx, jsTagMap, i, subTagObj))
+        {
+            ScriptError(cx, "Failed to set tag object");
+            return false;
+        }
 		i++;
 	}
 
@@ -4248,7 +4252,7 @@ static bool CGuild_AcceptRecruit(JSContext* cx, unsigned argc, JS::Value* vp)
 	// 1 parameter = get the cchar from there
 	if (argc == 0)
 	{
-		JSObject* Parent = JS_GetParent(cx, obj);
+		JS::RootedObject Parent(cx);
 		CChar* myChar = JS::GetMaybePtrFromReservedSlot<CChar>(Parent, 0);
 		myGuild->RecruitToMember(*myChar);
 	}
