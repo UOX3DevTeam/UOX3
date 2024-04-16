@@ -33,6 +33,7 @@
 #include "PartySystem.h"
 
 #include <js/Object.h>
+#include <js/Array.h>
 
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );
@@ -1501,7 +1502,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
       case CCP_SCRIPTTRIGGERS:
       {
         jsval scriptId;
-        JSObject *scriptTriggersJS = JS_NewArrayObject( cx, 0, nullptr );
+        JSObject *scriptTriggersJS = JS::NewArrayObject( cx, 0 );
 
         std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
         for( auto i = 0; i < static_cast<int>( scriptTriggers.size() ); i++ )

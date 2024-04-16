@@ -48,6 +48,7 @@
 #include "PartySystem.h"
 #include "osunique.hpp"
 #include <js/Object.h>
+#include <js/Array.h>
 
 void BuildAddMenuGump(CSocket* s, UI16 m);	// Menus for item creation
 void SpawnGate(CChar* caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld, UI16 trgInstanceId = 0);
@@ -3742,14 +3743,14 @@ static bool CBase_GetTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 	TAGMAP2 tagMap = myObj->GetTagMap();
 
 	// Create main JSObject to store full list of tags
-	JS::RootedObject jsTagMap(cx, JS_NewArrayObject(cx, 0));
+	JS::RootedObject jsTagMap(cx, JS::NewArrayObject(cx, 0));
 
 	// Iterate over tag map to fetch details on each tag
 	int i = 0;
 	for (auto& tagObj : tagMap)
 	{
 		// Create JSObject for current tag
-		JS::RootedObject jsTag(cx, JS_NewArrayObject(cx, 0));
+		JS::RootedObject jsTag(cx, JS::NewArrayObject(cx, 0));
 
 		// Convert tag name to JSString
 		JSString* tagName = JS_NewStringCopyZ(cx, tagObj.first.c_str());
@@ -3835,14 +3836,14 @@ static bool CBase_GetTempTagMap(JSContext* cx, unsigned argc, JS::Value* vp)
 	TAGMAP2 tagMap = myObj->GetTempTagMap();
 
 	// Create main JSObject to store full list of tags
-	JS::RootedObject jsTagMap(cx, JS_NewArrayObject(cx, 0));
+	JS::RootedObject jsTagMap(cx, JS::NewArrayObject(cx, 0));
 
 	// Iterate over tag map to fetch details on each tag
 	int i = 0;
 	for (auto& tagObj : tagMap)
 	{
 		// Create JSObject for current tag
-		JS::RootedObject jsTag(cx, JS_NewArrayObject(cx, 0));
+		JS::RootedObject jsTag(cx, JS::NewArrayObject(cx, 0));
 
 		// Convert tag name to JSString
 		JSString* tagName = JS_NewStringCopyZ(cx, tagObj.first.c_str());
@@ -11799,8 +11800,8 @@ static bool CRegion_GetOrePref(JSContext* cx, unsigned argc, JS::Value* vp)
 	auto orePrefs = myObj->GetOrePreference(oreType);
 
 	// Prepare some temporary helper variables
-	JSObject* jsOrePref = JS_NewArrayObject(cx, 0, nullptr);
-	JSObject* jsMiningData = JS_NewArrayObject(cx, 0, nullptr);
+	JSObject* jsOrePref = JS::NewArrayObject(cx, 0);
+	JSObject* jsMiningData = JS::NewArrayObject(cx, 0);
 
 	// Set up the mining data info
 	// Start with name of ore
@@ -12007,7 +12008,7 @@ static bool CChar_GetFriendList(JSContext* cx, unsigned argc, JS::Value* vp)
 	auto friendList = mChar->GetFriendList();
 
 	// Prepare some temporary helper variables
-	JSObject* jsFriendList = JS_NewArrayObject(cx, 0, nullptr);
+	JSObject* jsFriendList = JS::NewArrayObject(cx, 0);
 	jsval jsTempFriend;
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
@@ -12115,7 +12116,7 @@ static bool CChar_GetPetList(JSContext* cx, unsigned argc, JS::Value* vp)
 	auto petList = mChar->GetPetList();
 
 	// Prepare some temporary helper variables
-	JSObject* jsPetList = JS_NewArrayObject(cx, 0, nullptr);
+	JSObject* jsPetList = JS::NewArrayObject(cx, 0);
 	jsval jsTempPet;
 
 	// Loop through list of pets, and add each one to the JS ArrayObject
@@ -12383,7 +12384,7 @@ static bool CChar_GetFollowerList(JSContext* cx, unsigned argc, JS::Value* vp)
 	auto followerList = mChar->GetFollowerList();
 
 	// Prepare some temporary helper variables
-	JSObject* jsFollowerList = JS_NewArrayObject(cx, 0, nullptr);
+	JSObject* jsFollowerList = JS::NewArrayObject(cx, 0);
 	jsval jsTempFollower;
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
@@ -12578,7 +12579,7 @@ static bool CParty_GetMember(JSContext* cx, unsigned argc, JS::Value* vp)
 		}
 
 		JS::HandleValue toGetMember = args.get(0);
-		size_t memberOffset = toGetMember.toInt();
+		size_t memberOffset = toGetMember.toInt32();
 		if (memberOffset >= ourParty->MemberList()->size())
 		{
 			ScriptError(cx, "GetMember: Invalid character to get, index out of bounds");
