@@ -12012,8 +12012,7 @@ static bool CChar_GetFriendList(JSContext* cx, unsigned argc, JS::Value* vp)
 	auto friendList = mChar->GetFriendList();
 
 	// Prepare some temporary helper variables
-	JSObject* jsFriendList = JS::NewArrayObject(cx, 0);
-	jsval jsTempFriend;
+	JS::RootedObject jsFriendList(cx, JS::NewArrayObject(cx, 0));
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
 	int i = 0;
@@ -12022,11 +12021,12 @@ static bool CChar_GetFriendList(JSContext* cx, unsigned argc, JS::Value* vp)
 		// Create a new JS Object based on character
 		JSObject* myObj = JSEngine->AcquireObject(IUE_CHAR, tempFriend, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
 
-		// Convert JS Object to jsval
-		jsTempFriend = OBJECT_TO_JSVAL(myObj);
+		 // Convert JS Object to jsval
+		JS::RootedValue jsTempFriend(cx);
+		jsTempFriend.setObjectOrNull(myObj);
 
 		// Add jsval to ArrayObject
-		JS_SetElement(cx, jsFriendList, i, &jsTempFriend);
+		JS_SetElement(cx, jsFriendList, i, jsTempFriend);
 		i++;
 	}
 
@@ -12120,8 +12120,7 @@ static bool CChar_GetPetList(JSContext* cx, unsigned argc, JS::Value* vp)
 	auto petList = mChar->GetPetList();
 
 	// Prepare some temporary helper variables
-	JSObject* jsPetList = JS::NewArrayObject(cx, 0);
-	jsval jsTempPet;
+	JS::RootedObject jsPetList(cx, JS::NewArrayObject(cx, 0));
 
 	// Loop through list of pets, and add each one to the JS ArrayObject
 	int i = 0;
@@ -12135,10 +12134,11 @@ static bool CChar_GetPetList(JSContext* cx, unsigned argc, JS::Value* vp)
 				JSObject* myObj = JSEngine->AcquireObject(IUE_CHAR, pet, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
 
 				// Convert JS Object to jsval
-				jsTempPet = OBJECT_TO_JSVAL(myObj);
+				JS::RootedValue jsTempPet(cx);
+				jsTempPet.setObjectOrNull(myObj);
 
 				// Add jsval to ArrayObject
-				JS_SetElement(cx, jsPetList, i, &jsTempPet);
+				JS_SetElement(cx, jsPetList, i, jsTempPet);
 				i++;
 			}
 		}
@@ -12388,8 +12388,7 @@ static bool CChar_GetFollowerList(JSContext* cx, unsigned argc, JS::Value* vp)
 	auto followerList = mChar->GetFollowerList();
 
 	// Prepare some temporary helper variables
-	JSObject* jsFollowerList = JS::NewArrayObject(cx, 0);
-	jsval jsTempFollower;
+	JS::RootedObject jsFollowerList(cx, JS::NewArrayObject(cx, 0));
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
 	int i = 0;
@@ -12403,10 +12402,11 @@ static bool CChar_GetFollowerList(JSContext* cx, unsigned argc, JS::Value* vp)
 				JSObject* myObj = JSEngine->AcquireObject(IUE_CHAR, follower, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
 
 				// Convert JS Object to jsval
-				jsTempFollower = OBJECT_TO_JSVAL(myObj);
+				JS::RootedValue jsTempFollower(cx);
+				jsTempFollower.setObjectOrNull(myObj);
 
 				// Add jsval to ArrayObject
-				JS_SetElement(cx, jsFollowerList, i, &jsTempFollower);
+				JS_SetElement(cx, jsFollowerList, i, jsTempFollower);
 				i++;
 			}
 		}
@@ -12492,7 +12492,9 @@ static bool CParty_Add(JSContext* cx, unsigned argc, JS::Value* vp)
 		}
 
 		JS::HandleValue toAdd = args.get(0);
-		CChar* charToAdd = static_cast<CChar*>(toAdd.toObject());
+		JS::RootedObject toAddObj(cx, &toAdd.toObject());
+		CChar* charToAdd = nullptr;
+
 		if (!ValidateObject(charToAdd))
 		{
 			ScriptError(cx, "Add: Invalid character to add");
