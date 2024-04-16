@@ -35,15 +35,15 @@ bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) {   
   return true;                                                                                             \
 }
 
-#define IMPL_GETS(main, attr, type, method, accessor) \
+#define IMPL_GETS(main, attr, type, method, accessor)                         \
 bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) { \
-  auto args = JS::CallArgsFromVp(argc, vp); \
-  JS::RootedObject thisObj(cx); \
-  if (!args.computeThis(cx, &thisObj)) \
-    return false; \
-  auto priv = JS::GetMaybePtrFromReservedSlot< type >(thisObj, 0); \
-  args.rval().method( JS_NewStringCopyZ( cx, priv->accessor ) ); \
-  return true; \
+  auto args = JS::CallArgsFromVp(argc, vp);                                   \
+  JS::RootedObject thisObj(cx);                                               \
+  if (!args.computeThis(cx, &thisObj))                                        \
+    return false;                                                             \
+  auto priv = JS::GetMaybePtrFromReservedSlot< type >(thisObj, 0);            \
+  args.rval().method( JS_NewStringCopyZ( cx, priv->accessor ) );              \
+  return true;                                                                \
 }
 
 #define IMPL_GET_OBJ( main, attr, type, method, accessor ) \
@@ -53,8 +53,8 @@ bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) { \
   if (!args.computeThis(cx, &thisObj)) \
     return false; \
   auto priv = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0); \
-	SERIAL TempSerial = INVALIDSERIAL; \
-	if( !ValidateObject( priv )) \
+  SERIAL TempSerial = INVALIDSERIAL; \
+  if( !ValidateObject( priv )) \
     return false; \
   args.rval().method(priv->accessor); \
   return true; \
@@ -80,10 +80,25 @@ bool JS##main##_set_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) {   
   JS::RootedObject thisObj(cx);                                                                                  \
   if (!args.computeThis(cx, &thisObj))                                                                           \
       return false;                                                                                              \
-  auto priv = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                                 \
-  auto origScript = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                           \
+  auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
+  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
   auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
   priv->accessor(args.get(0).method());                                                                          \
+  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
+  }                                                                                                              \
+  return true;                                                                                                   \
+}
+
+#define IMPL_SET_DIR(main, attr, type, method, accessor)                                                         \
+bool JS##main##_set_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) {                                    \
+  auto args = JS::CallArgsFromVp(argc, vp);                                                                      \
+  JS::RootedObject thisObj(cx);                                                                                  \
+  if (!args.computeThis(cx, &thisObj))                                                                           \
+      return false;                                                                                              \
+  auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
+  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
+  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
+  priv->accessor    = args.get(0).method();                                                                      \
   if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
   }                                                                                                              \
   return true;                                                                                                   \
@@ -95,8 +110,8 @@ bool JS##main##_set_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) {   
   JS::RootedObject thisObj(cx);                                                                                  \
   if (!args.computeThis(cx, &thisObj))                                                                           \
       return false;                                                                                              \
-  auto priv = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                                 \
-  auto origScript = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                           \
+  auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
+  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
   auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
   priv->accessor(convertToString(cx, args.get(0).method()));                                                     \
   if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \

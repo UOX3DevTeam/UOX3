@@ -3548,57 +3548,30 @@ IMPL_GET( CScriptSection, atEnd,      CScriptSection, setBoolean, AtEnd() )
 IMPL_GET( CScriptSection, atEndTags,  CScriptSection, setBoolean, AtEndTags() )
 // clang-format on
 
-bool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-  MapResource_st *gPriv = JS::GetMaybePtrFromReservedSlot<MapResource_st>(obj , 0);
-  if( gPriv == nullptr )
-    return false;
+// clang-format off
+IMPL_SET_DIR(  CResource, logAmount,  MapResource_st, toInt32, logAmt )
+//IMPL_SET_DIR(  CResource, logTime,    MapResource_st, toInt32, )
+IMPL_SET_DIR(  CResource, oreAmount,  MapResource_st, toInt32, oreAmt )
+//IMPL_SET_DIR(  CResource, oreTime,    MapResource_st, toInt32, )
+IMPL_SET_DIR(  CResource, fishAmount, MapResource_st, toInt32, fishAmt )
+//IMPL_SET_DIR(  CResource, fishTime,   MapResource_st, toInt32, )
+// clang-format on
 
-  // Keep track of original script that's executing
-  auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
-  auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
-
-  JSEncapsulate encaps( cx, vp );
-  if( JSVAL_IS_INT( id ))
-  {
-    switch( JSVAL_TO_INT( id ))
-    {
-      case CRESP_LOGAMT:				gPriv->logAmt	= encaps.toInt();			break;
-      case CRESP_LOGTIME:
-      {
-        gPriv->logTime = static_cast<UI32>( encaps.toInt() * 1000 ); break;
-        break;
-      }
-      case CRESP_OREAMT:				gPriv->oreAmt	= encaps.toInt();			break;
-      case CRESP_ORETIME:				//gPriv->oreTime	= encaps.toInt();			break;
-      {
-        gPriv->oreTime = static_cast<UI32>( encaps.toInt() * 1000 ); break;
-        break;
-      }
-      case CRESP_FISHAMT:				gPriv->fishAmt	= encaps.toInt();			break;
-      case CRESP_FISHTIME:			//gPriv->fishTime	= encaps.toInt();			break;
-      {
-        gPriv->fishTime = static_cast<UI32>( encaps.toInt() * 1000 ); break;
-        break;
-      }
-      default:																	break;
-    }
-  }
-
-  // Active script-context might have been lost, so restore it...
-  if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
-  {
-    // ... by calling a dummy function in original script!
-    bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-    if( retVal == false )
-    {
-      // Dummy function not found, let shard admin know!
-      Console.Warning( oldstrutil::format( "Script context lost after setting Resource property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
-    }
-  }
-
-  return true;
-}
+      //case CRESP_LOGTIME:
+      //{
+      //  gPriv->logTime = static_cast<UI32>( encaps.toInt() * 1000 ); break;
+      //  break;
+      //}
+      //case CRESP_ORETIME:				//gPriv->oreTime	= encaps.toInt();			break;
+      //{
+      //  gPriv->oreTime = static_cast<UI32>( encaps.toInt() * 1000 ); break;
+      //  break;
+      //}
+      //case CRESP_FISHTIME:			//gPriv->fishTime	= encaps.toInt();			break;
+      //{
+      //  gPriv->fishTime = static_cast<UI32>( encaps.toInt() * 1000 ); break;
+      //  break;
+      //}
 
 // clang-format off
 IMPL_GET( CResource, logAmount , MapResource_st, setInt32,         logAmt   )
@@ -3609,64 +3582,37 @@ IMPL_GET( CResource, fishAmount, MapResource_st, setInt32,         fishAmt  )
 IMPL_GET( CResource, fishTime,   MapResource_st, setPrivateUint32, fishTime )
 // clang-format on
 
-bool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-  Party *gPriv = JS::GetMaybePtrFromReservedSlot<Party >(obj , 0);
-  if( gPriv == nullptr )
-    return false;
+// clang-format off
+//IMPL_GET(  CParty, leader,      Party, setInt32, )
+IMPL_GET(  CParty, memberCount, Party, setInt32,   MemberList()->size() )
+IMPL_GET(  CParty, isNPC,       Party, setBoolean, IsNPC() )
 
-  // Keep track of original script that's executing
-  auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
-  auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
+IMPL_SET(  CParty, isNPC,       Party, toBoolean,  IsNPC )
+// clang-format on
 
-  JSEncapsulate encaps( cx, vp );
-  if( JSVAL_IS_INT( id ))
-  {
-    switch( JSVAL_TO_INT( id ))
-    {
-      case CPARTYP_LEADER:
-      {
-        if( encaps.ClassName() == "UOXChar" || encaps.ClassName() == "UOXSocket" )
-        {
-          CChar *newLeader = nullptr;
-          if( encaps.ClassName() == "UOXChar" )
-          {
-            newLeader = static_cast<CChar *>( encaps.toObject() );
-          }
-          else
-          {
-            CSocket *tempSock = static_cast<CSocket *>( encaps.toObject() );
-            if( tempSock != nullptr )
-            {
-              newLeader = tempSock->CurrcharObj();
-            }
-          }
-          if( ValidateObject( newLeader ))
-          {
-            gPriv->Leader( newLeader );
-          }
-        }
-      }
-        break;
-      case CPARTYP_ISNPC:			gPriv->IsNPC( encaps.toBool() );				break;
-      default:																	break;
-    }
-  }
-
-  // Active script-context might have been lost, so restore it...
-  if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
-  {
-    // ... by calling a dummy function in original script!
-    bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-    if( retVal == false )
-    {
-      // Dummy function not found, let shard admin know!
-      Console.Warning( oldstrutil::format( "Script context lost after setting Party property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
-    }
-  }
-
-  return true;
-}
+      //case CPARTYP_LEADER:
+      //{
+      //  if( encaps.ClassName() == "UOXChar" || encaps.ClassName() == "UOXSocket" )
+      //  {
+      //    CChar *newLeader = nullptr;
+      //    if( encaps.ClassName() == "UOXChar" )
+      //    {
+      //      newLeader = static_cast<CChar *>( encaps.toObject() );
+      //    }
+      //    else
+      //    {
+      //      CSocket *tempSock = static_cast<CSocket *>( encaps.toObject() );
+      //      if( tempSock != nullptr )
+      //      {
+      //        newLeader = tempSock->CurrcharObj();
+      //      }
+      //    }
+      //    if( ValidateObject( newLeader ))
+      //    {
+      //      gPriv->Leader( newLeader );
+      //    }
+      //  }
+      //}
 
 bool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
