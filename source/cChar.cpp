@@ -2491,6 +2491,10 @@ void CChar::CopyData( CChar *target )
 
 	// Add any script triggers present on object to the new object
 	target->scriptTriggers = GetScriptTriggers();
+
+    // Don't forget to copy the tags
+    target->tags = GetTagMap();
+    target->tempTags = GetTempTagMap();
 }
 
 //o------------------------------------------------------------------------------------------------o
