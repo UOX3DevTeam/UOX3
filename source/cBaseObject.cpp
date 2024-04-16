@@ -2550,6 +2550,10 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetKills( kills );
 	target->SetWipeable( IsWipeable() );
 	target->SetDamageable( IsDamageable() );
+
+    // Don't forget to copy the tags
+    target->tags = GetTagMap();
+    target->tempTags = GetTempTagMap();
 }
 
 Point3_st CBaseObject::GetOldLocation( void )
