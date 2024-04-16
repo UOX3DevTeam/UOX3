@@ -11804,41 +11804,41 @@ static bool CRegion_GetOrePref(JSContext* cx, unsigned argc, JS::Value* vp)
 	auto orePrefs = myObj->GetOrePreference(oreType);
 
 	// Prepare some temporary helper variables
-	JSObject* jsOrePref = JS::NewArrayObject(cx, 0);
-	JSObject* jsMiningData = JS::NewArrayObject(cx, 0);
+    JS::RootedObject jsOrePref(cx, JS::NewArrayObject(cx, 0));
+    JS::RootedObject jsMiningData(cx, JS::NewArrayObject(cx, 0));
 
 	// Set up the mining data info
 	// Start with name of ore
 	JSString* oreName = nullptr;
 	oreName = JS_NewStringCopyZ(cx, orePrefs->oreIndex->oreName.c_str());
-	auto jsOreName = JS::StringValue(oreName);
-	JS_SetElement(cx, jsMiningData, 0, &jsOreName);
+    JS::RootedValue jsOreName(cx, JS::StringValue(oreName));
+	JS_SetElement(cx, jsMiningData, 0, jsOreName);
 
 	// Name of ingot
 	JSString* ingotName = nullptr;
 	ingotName = JS_NewStringCopyZ(cx, orePrefs->oreIndex->name.c_str());
-	auto jsIngotName = JS::StringValue(ingotName);
-	JS_SetElement(cx, jsMiningData, 3, &jsIngotName);
+    JS::RootedValue jsIngotName(cx, JS::StringValue(ingotName));
+	JS_SetElement(cx, jsMiningData, 3, jsIngotName);
 
 	// Ore colour, min skill, Makemenu entry, oreChance, scriptID
-	auto jsOreColor = JS::Int32Value(orePrefs->oreIndex->colour);
-	auto jsOreMinSkill = JS::Int32Value(orePrefs->oreIndex->minSkill);
-	auto jsOreMakemenu = JS::Int32Value(orePrefs->oreIndex->makemenu);
-	auto jsOreChance = JS::Int32Value(orePrefs->oreIndex->oreChance);
-	auto jsOreScriptID = JS::Int32Value(orePrefs->oreIndex->scriptID);
-	JS_SetElement(cx, jsMiningData, 1, &jsOreColor);
-	JS_SetElement(cx, jsMiningData, 2, &jsOreMinSkill);
-	JS_SetElement(cx, jsMiningData, 4, &jsOreMakemenu);
-	JS_SetElement(cx, jsMiningData, 5, &jsOreChance);
-	JS_SetElement(cx, jsMiningData, 6, &jsOreScriptID);
+    JS::RootedValue jsOreColor(cx, JS::Int32Value(orePrefs->oreIndex->colour));
+    JS::RootedValue jsOreMinSkill(cx, JS::Int32Value(orePrefs->oreIndex->minSkill));
+    JS::RootedValue jsOreMakemenu(cx, JS::Int32Value(orePrefs->oreIndex->makemenu));
+    JS::RootedValue jsOreChance(cx, JS::Int32Value(orePrefs->oreIndex->oreChance));
+    JS::RootedValue jsOreScriptID(cx, JS::Int32Value(orePrefs->oreIndex->scriptID));
+	JS_SetElement(cx, jsMiningData, 1, jsOreColor);
+	JS_SetElement(cx, jsMiningData, 2, jsOreMinSkill);
+	JS_SetElement(cx, jsMiningData, 4, jsOreMakemenu);
+	JS_SetElement(cx, jsMiningData, 5, jsOreChance);
+	JS_SetElement(cx, jsMiningData, 6, jsOreScriptID);
 
 	// Add mining data to the orePref array
-	jsval miningDataVal = OBJECT_TO_JSVAL(jsMiningData);
-	JS_SetElement(cx, jsOrePref, 0, &miningDataVal);
+	JS::RootedValue miningDataVal(cx, JS::ObjectOrNullValue(jsMiningData));
+	JS_SetElement(cx, jsOrePref, 0, miningDataVal);
 
 	// Add percent chance to orePref array
-	jsval jsOrePrefChance = JS::Int32Value(orePrefs->percentChance);
-	JS_SetElement(cx, jsOrePref, 1, &jsOrePrefChance);
+    JS::RootedValue jsOrePrefChance(cx, JS::Int32Value(orePrefs->percentChance));
+    JS_SetElement(cx, jsOrePref, 1, jsOrePrefChance);
 
 	// Convert orePref array object to jsval and pass it to script
 	args.rval().setObjectOrNull( jsOrePref );
