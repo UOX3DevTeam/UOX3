@@ -34,6 +34,11 @@
 
 #include <js/Object.h>
 #include <js/Array.h>
+#include "js/RootingAPI.h" // For JS::RootedValue
+#include "js/Value.h"      // For JS::HandleValue, JS::MutableHandleValue
+#include "js/CharacterEncoding.h" // For JS::UTF8Chars
+#include "js/Utility.h"    // For JS::GetScript, JS::GetOrCreateScriptID
+#include "jsapi.h"
 
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );
@@ -898,7 +903,7 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 }
 */
 
-bool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS::MutableHandleValue vp)
 {
   CItem *gPriv = JS::GetMaybePtrFromReservedSlot<CItem >(obj , 0);
   if( !ValidateObject( gPriv ))
@@ -909,10 +914,11 @@ bool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
   auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
   JSEncapsulate encaps( cx, vp );
-  if( JSVAL_IS_INT( id ))
+
+  if( id.isInt32())
   {
     TIMERVAL newTime;
-    switch( JSVAL_TO_INT( id ))
+    switch( id.toInt32() )
     {
       case CIP_SECTIONID:		gPriv->SetSectionId( encaps.toString() );					break;
       case CIP_NAME:			gPriv->SetName( encaps.toString() );						break;
@@ -922,7 +928,7 @@ bool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
       case CIP_ID:			gPriv->SetId( static_cast<UI16>( encaps.toInt() ));			break;
       case CIP_COLOUR:		gPriv->SetColour( static_cast<UI16>( encaps.toInt() ));		break;
       case CIP_OWNER:
-        if( *vp != JS::CurrentGlobalOrNull )
+        if (!vp.isObject() || vp.toObjectOrNull() != JS::CurrentGlobalOrNull(cx))
         {
           CChar *myChar = static_cast<CChar*>( encaps.toObject() );
           if( !ValidateObject( myChar ))
@@ -956,7 +962,7 @@ bool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
       }
       case CIP_SCRIPTTRIGGERS:
       {
-        if( *vp != JS::CurrentGlobalOrNull )
+         if (!vp.isObject() || vp.toObjectOrNull() != JS::CurrentGlobalOrNull(cx))
         {
           UI16 scriptId = static_cast<UI16>( encaps.toInt() );
           cScript *toExecute	= JSMapping->GetScript( scriptId );
@@ -991,7 +997,7 @@ bool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
       }
       case CIP_AMOUNT:	gPriv->SetAmount( static_cast<UI32>( encaps.toInt() )); 	break;
       case CIP_CONTAINER:
-        if( *vp != JS::CurrentGlobalOrNull )
+        if (!vp.isObject() || vp.toObjectOrNull() != JS::CurrentGlobalOrNull(cx))
         {
           CBaseObject *myObj = static_cast<CBaseObject*>( encaps.toObject() );
           if( !ValidateObject( myObj ))
@@ -1365,7 +1371,7 @@ bool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
   return true;
 }
 
-bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue id, JS::MutableHandleValue vp )
 {
   CChar *gPriv = JS::GetMaybePtrFromReservedSlot<CChar >(obj , 0);
 
@@ -1376,30 +1382,30 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
   auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
   auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
-  if( JSVAL_IS_INT( id ))
+  if( id.isInt32())
   {
     CItem *TempItem			= nullptr;
     JSObject *TempObject	= nullptr;
     JSString *tString = nullptr;
-    switch( JSVAL_TO_INT( id ))
+     switch( id.toInt32() )
     {
-      case CCP_ACCOUNTNUM:	*vp = JS::Int32Value( gPriv->GetAccountNum() );	break;
+      case CCP_ACCOUNTNUM: vp.setInt32( gPriv->GetAccountNum() );	break;
       case CCP_ACCOUNT:
       {
         CAccountBlock_st *accountBlock = &gPriv->GetAccount();
         if( accountBlock == nullptr )
         {
-          *vp = JS::CurrentGlobalOrNull;
+          vp.setObjectOrNull(JS::CurrentGlobalOrNull(cx));
         }
         else
         {	// Otherwise Acquire an object
-          JSObject *accountObj = JSEngine->AcquireObject( IUE_ACCOUNT, accountBlock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( accountObj );
+			JSObject *accountObj = JSEngine->AcquireObject(IUE_ACCOUNT, accountBlock, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+			vp.setObjectOrNull(accountObj);
         }
         break;
       }
-      case CCP_CREATEDON: *vp = JS::Int32Value( gPriv->GetCreatedOn() );		break;
-      case CCP_PLAYTIME: *vp = JS::Int32Value( gPriv->GetPlayTime() );		break;
+      case CCP_CREATEDON: vp.setInt32( gPriv->GetCreatedOn() );		break;
+      case CCP_PLAYTIME: vp.setInt32( gPriv->GetPlayTime() );		break;
       case CCP_NAME:
         {
           CSocket *tSock = nullptr;
@@ -1408,7 +1414,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
           std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
 
           tString = JS_NewStringCopyZ( cx, convertedString.c_str() );
-          *vp = JS::StringValue( tString );
+          vp.set(JS::StringValue(tString));
           break;
         }
       case CCP_ORIGNAME:
@@ -1419,50 +1425,51 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
 
         tString = JS_NewStringCopyZ( cx, convertedString.c_str() );
-        *vp = JS::StringValue( tString );
+        vp.set(JS::StringValue(tString));
         break;
       }
       case CCP_TITLE:
         tString = JS_NewStringCopyZ( cx, gPriv->GetTitle().c_str() );
-        *vp = JS::StringValue( tString );
+        vp.set(JS::StringValue(tString));
         break;
       case CCP_SECTIONID:
         tString = JS_NewStringCopyZ( cx, gPriv->GetSectionId().c_str() );
-        *vp = JS::StringValue( tString );
+        vp.set(JS::StringValue(tString));
+
         break;
-      case CCP_X:			*vp = JS::Int32Value( gPriv->GetX() );			break;
-      case CCP_Y:			*vp = JS::Int32Value( gPriv->GetY() );			break;
-      case CCP_Z:			*vp = JS::Int32Value( gPriv->GetZ() );			break;
+      case CCP_X:			vp.setInt32( gPriv->GetX() );			break;
+      case CCP_Y:			vp.setInt32( gPriv->GetY() );			break;
+      case CCP_Z:			vp.setInt32( gPriv->GetZ() );			break;
       case CCP_OLDX:		
       {
         auto oldLocation = gPriv->GetOldLocation();
-        *vp = JS::Int32Value( oldLocation.x );
+        vp.setInt32( oldLocation.x );
         break;
       }
       case CCP_OLDY:		
       {
         auto oldLocation = gPriv->GetOldLocation();
-        *vp = JS::Int32Value( oldLocation.y );
+        vp.setInt32( oldLocation.y );
         break;
       }
       case CCP_OLDZ:		
       {
         auto oldLocation = gPriv->GetOldLocation();
-        *vp = JS::Int32Value( oldLocation.z );
+        vp.setInt32( oldLocation.z );
         break;
       }
-      case CCP_ID:		*vp = JS::Int32Value( gPriv->GetId() );				break;
-      case CCP_COLOUR:	*vp = JS::Int32Value( gPriv->GetColour() );			break;
-      case CCP_CONTROLSLOTS:	*vp = JS::Int32Value( static_cast<UI08>( gPriv->GetControlSlots() ));			break;
-      case CCP_CONTROLSLOTSUSED:	*vp = JS::Int32Value( static_cast<UI08>( gPriv->GetControlSlotsUsed() ));	break;
-      case CCP_ORNERINESS:	*vp = JS::Int32Value( gPriv->GetOrneriness() );	break;
+      case CCP_ID:		vp.setInt32( gPriv->GetId() );				break;
+      case CCP_COLOUR:	vp.setInt32( gPriv->GetColour() );			break;
+      case CCP_CONTROLSLOTS:	vp.setInt32( static_cast<UI08>( gPriv->GetControlSlots() ));			break;
+      case CCP_CONTROLSLOTSUSED:	vp.setInt32( static_cast<UI08>( gPriv->GetControlSlotsUsed() ));	break;
+      case CCP_ORNERINESS:	vp.setInt32( gPriv->GetOrneriness() );	break;
       case CCP_OWNER:
         CBaseObject *TempObj;
         TempObj = gPriv->GetOwnerObj();
 
         if( !ValidateObject( TempObj ))
         {
-          *vp = JS::CurrentGlobalOrNull;
+          vp.setObjectOrNull(JS::CurrentGlobalOrNull(cx));
         }
         else
         {
@@ -1480,7 +1487,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         }
         else
         {
-          *vp = JS::Int32Value( gPriv->GetSerial() );
+          vp.setInt32( gPriv->GetSerial() );
         }
         break;
       }
@@ -1496,7 +1503,7 @@ bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         {
           lastScriptTrigger = scriptTriggers[numberOfTriggers-1];
         }
-        *vp = JS::Int32Value( lastScriptTrigger );
+        vp.setInt32( lastScriptTrigger );
         break;
       }
       case CCP_SCRIPTTRIGGERS:
