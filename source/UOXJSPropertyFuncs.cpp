@@ -40,6 +40,8 @@
 #include "js/Utility.h"    // For JS::GetScript, JS::GetOrCreateScriptID
 #include "jsapi.h"
 
+#define INT_FITS_IN_JSVAL(i) ((i) >= INT32_MIN && (i) <= INT32_MAX)
+
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );
 
@@ -1371,7 +1373,7 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
   return true;
 }
 
-bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue id, JS::MutableHandleValue vp )
+bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueArray id, JS::MutableHandleValue vp )
 {
   CChar *gPriv = JS::GetMaybePtrFromReservedSlot<CChar >(obj , 0);
 
@@ -1382,12 +1384,12 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
   auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
   auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
-  if( id.isInt32())
+  if( id[0].isInt32())
   {
     CItem *TempItem			= nullptr;
     JSObject *TempObject	= nullptr;
     JSString *tString = nullptr;
-     switch( id.toInt32() )
+    switch( id[0].isInt32() )
     {
       case CCP_ACCOUNTNUM: vp.setInt32( gPriv->GetAccountNum() );	break;
       case CCP_ACCOUNT:
@@ -1475,16 +1477,16 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
         {
           // Otherwise Acquire an object
           JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          vp = JS::ObjectOrNullValue(myChar);
+		  vp.setObjectOrNull(myChar);
         }
         break;
       case CCP_VISIBLE:		vp.setInt32( static_cast<UI08>( gPriv->GetVisible() ));	break;
       case CCP_SERIAL:
       {
-        if( !INT_FITS_IN_JSVAL( gPriv->GetSerial() ))
-        {
-          JS_NewNumberValue( cx, gPriv->GetSerial(), vp );
-        }
+        if (!INT_FITS_IN_JSVAL(gPriv->GetSerial()))
+		{
+			 vp.setNumber(gPriv->GetSerial());
+		}
         else
         {
           vp.setInt32( gPriv->GetSerial() );
@@ -1548,35 +1550,43 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
       case CCP_ACTUALINTELLIGENCE:	vp.setInt32( gPriv->ActualIntelligence() );	break;
       case CCP_ACTUALSTRENGTH:		vp.setInt32( gPriv->ActualStrength() );		break;
       case CCP_BASESKILLS:
-        TempObject = JS_NewObject( cx, &UOXBaseSkills_class, nullptr, obj );
-        JS_DefineProperties( cx, TempObject, CSkillsProps );
-        JS::SetReservedSlot( TempObject, 0, JS::PrivateValue(gPriv) );
-        *vp = OBJECT_TO_JSVAL( TempObject );
-        break;
+		{
+			JS::RootedObject TempObject(cx, JS_NewObject(cx, &UOXBaseSkills_class));
+			JS_DefineProperties( cx, TempObject, CSkillsProps );
+			JS::SetReservedSlot( TempObject, 0, JS::PrivateValue(gPriv) );
+			vp.setObjectOrNull(TempObject);
+			break;
+		}
       case CCP_SKILLS:
-        TempObject = JS_NewObject( cx, &UOXSkills_class, nullptr, obj );
-        JS_DefineProperties( cx, TempObject, CSkillsProps );
-        JS::SetReservedSlot( TempObject, 0, JS::PrivateValue(gPriv) );
-        *vp = OBJECT_TO_JSVAL( TempObject );
-        break;
+		{
+			JS::RootedObject TempObject(cx, JS_NewObject(cx, &UOXSkills_class));
+			JS_DefineProperties( cx, TempObject, CSkillsProps );
+			JS::SetReservedSlot( TempObject, 0, JS::PrivateValue(gPriv) );
+			vp.setObjectOrNull(TempObject);
+			break;
+		}
       case CCP_SKILLUSE:
-        TempObject = JS_NewObject( cx, &UOXSkillsUsed_class, nullptr, obj );
-        JS_DefineProperties( cx, TempObject, CSkillsProps );
-        JS::SetReservedSlot( TempObject, 0, JS::PrivateValue(gPriv) );
-        *vp = OBJECT_TO_JSVAL( TempObject );
-        break;
+		{
+			JS::RootedObject TempObject(cx, JS_NewObject(cx, &UOXSkillsUsed_class));
+			JS_DefineProperties( cx, TempObject, CSkillsProps );
+			JS::SetReservedSlot( TempObject, 0, JS::PrivateValue(gPriv) );
+			vp.setObjectOrNull(TempObject);
+			break;
+		}
       case CCP_MANA:			vp.setInt32( gPriv->GetMana() );			break;
       case CCP_STAMINA:		vp.setInt32( gPriv->GetStamina() );		break;
       case CCP_CHARPACK:
         TempItem = gPriv->GetPackItem();
 
         if( !ValidateObject( TempItem ))
-          *vp = JS::CurrentGlobalOrNull;
+		{
+          vp.setObjectOrNull(JS::CurrentGlobalOrNull(cx));
+		}
         else
         {
           // Otherwise Acquire an object
           JSObject *myItem = JSEngine->AcquireObject( IUE_ITEM, TempItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myItem );
+		  vp.setObjectOrNull(myItem);
         }
         break;
       case CCP_FAME:			vp.setInt32( gPriv->GetFame() );					break;
@@ -1639,13 +1649,13 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
 
         if( TempRace == nullptr )
         {
-          *vp = JS::CurrentGlobalOrNull;
+          vp.setObjectOrNull(JS::CurrentGlobalOrNull(cx));
         }
         else
         {
           // Otherwise Acquire an object
           JSObject *myRace	= JSEngine->AcquireObject( IUE_RACE, TempRace, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myRace );
+		  vp.setObjectOrNull(myRace);
         }
         break;
       }
@@ -1685,18 +1695,18 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
         CTownRegion *myReg = gPriv->GetRegion();
         if( myReg == nullptr )
         {
-          *vp = JS::CurrentGlobalOrNull;
+          vp.setObjectOrNull(JS::CurrentGlobalOrNull(cx));
         }
         else
         {
           JSObject *myTown = JSEngine->AcquireObject( IUE_REGION, myReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myTown );
+		  vp.setObjectOrNull(myTown);
         }
         break;
       }
       case CCP_ORIGIN:
         tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( gPriv->GetOrigin() )).c_str() );
-        *vp = JS::StringValue( tString );
+		vp.set(JS::StringValue(tString));
         break;
       case CCP_TOWN:
       {
@@ -1707,13 +1717,13 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
         // i would say no its not
         if( tempTownId == 0xFF )
         {
-          *vp = JS::CurrentGlobalOrNull;
+          vp.setObjectOrNull(JS::CurrentGlobalOrNull(cx));
         }
         else
         {
           // Should build the town here
           JSObject *myTown = JSEngine->AcquireObject( IUE_REGION, cwmWorldState->townRegions[tempTownId], JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myTown );
+          vp.setObjectOrNull(myTown);
         }
         break;
       }
@@ -1725,12 +1735,12 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
         // Character has no guild
         if( tempGuildId == -1 ) // isn't there a constant or something like?
         {
-          *vp = JS::CurrentGlobalOrNull;
+          vp.setObjectOrNull(JS::CurrentGlobalOrNull(cx));
         }
         else
         {
           JSObject *myGuild = JSEngine->AcquireObject( IUE_GUILD, GuildSys->Guild( tempGuildId ), JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myGuild );
+		  vp.setObjectOrNull(myGuild);
         }
         break;
       }
@@ -1739,12 +1749,12 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
         CSocket *tSock = gPriv->GetSocket();
         if( tSock == nullptr )
         {
-          *vp = JS::CurrentGlobalOrNull;
+          vp.setObjectOrNull(JS::CurrentGlobalOrNull(cx));
         }
         else
         {	// Otherwise Acquire an object
           JSObject *mySock	= JSEngine->AcquireObject( IUE_SOCK, tSock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( mySock );
+          vp.setObjectOrNull(mySock);
         }
         break;
       }
@@ -1770,7 +1780,7 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
         CBaseObject *tempObj = gPriv->GetGuarding();
         if( !ValidateObject( tempObj ))
         {	// Return a JS_NULL
-          *vp = JS::CurrentGlobalOrNull;
+          vp.setObjectOrNull(JS::CurrentGlobalOrNull(cx));
         }
         else
         {
@@ -1784,7 +1794,7 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
           {
             myObj = JSEngine->AcquireObject( IUE_ITEM, tempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
           }
-          *vp = OBJECT_TO_JSVAL( myObj );
+          vp.setObjectOrNull(myObj);
         }
         break;
       }
@@ -1806,7 +1816,7 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
       case CCP_TOWNPRIV:		vp.setInt32( gPriv->GetTownPriv() );			break;
       case CCP_GUILDTITLE:
         tString = JS_NewStringCopyZ( cx, gPriv->GetGuildTitle().c_str() );
-        *vp = JS::StringValue( tString );
+        vp.set(JS::StringValue(tString));
         break;
       case CCP_HAIRSTYLE:		vp.setInt32( gPriv->GetHairStyle() );		break;
       case CCP_HAIRCOLOUR:	vp.setInt32( gPriv->GetHairColour() );		break;
@@ -1821,23 +1831,25 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
         CChar *tempChar	= gPriv->GetAttacker();
         if( !ValidateObject( tempChar ))
         {	// Return a JS_NULL
-          *vp = JS::CurrentGlobalOrNull;
+          vp.setObjectOrNull(JS::CurrentGlobalOrNull(cx));
         }
         else
         {
           // Otherwise Acquire an object
           JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, tempChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myChar );
+		  vp.setObjectOrNull(myChar);
         }
         break;
       }
       case CCP_RACEGATE:		vp.setInt32( gPriv->GetRaceGate() );			break;
       case CCP_SKILLLOCK:
-        TempObject = JS_NewObject( cx, &UOXSkillsLock_class, nullptr, obj );
-        JS_DefineProperties( cx, TempObject, CSkillsProps );
-        JS::SetReservedSlot( TempObject, 0, JS::PrivateValue(gPriv) );
-        *vp	= OBJECT_TO_JSVAL( TempObject );
-        break;
+		{
+			JS::RootedObject TempObject(cx, JS_NewObject(cx, &UOXSkillsLock_class));
+			JS_DefineProperties( cx, TempObject, CSkillsProps );
+			JS::SetReservedSlot( TempObject, 0, JS::PrivateValue(gPriv) );
+			vp.setObjectOrNull(TempObject);
+			break;
+		}
       case CCP_DEATHS:		vp.setInt32( gPriv->GetDeaths() );					break;
       case CCP_OWNERCOUNT:	vp.setInt32( static_cast<UI08>( gPriv->GetOwnerCount() ));		break;
       case CCP_NEXTACT:		vp.setInt32( gPriv->GetNextAct() );					break;
@@ -1866,7 +1878,7 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
       case CCP_THIRSTWILDCHANCE: vp.setInt32( gPriv->GetTamedThirstWildChance() );	break;
       case CCP_FOODLIST:
         tString = JS_NewStringCopyZ( cx, gPriv->GetFood().c_str() );
-        *vp = JS::StringValue( tString );
+       vp.set(JS::StringValue(tString));
         break;
       case CCP_MOUNTED:		vp.setBoolean( gPriv->GetMounted() );				break;
       case CCP_STABLED:		vp.setBoolean( gPriv->GetStabled() );				break;
@@ -1891,8 +1903,8 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
       case CCP_NONEEDMANA:	vp.setBoolean( gPriv->NoNeedMana() );				break;
       case CCP_ISDISPELLABLE:	 vp.setBoolean( gPriv->IsDispellable() );			break;
       case CCP_NONEEDREAGS:	vp.setBoolean( gPriv->NoNeedReags() );				break;
-      case CCP_ISANIMAL:		*vp	= JS::BooleanValue( cwmWorldState->creatures[gPriv->GetId()].IsAnimal() ); break;
-      case CCP_ISHUMAN:		*vp	= JS::BooleanValue( cwmWorldState->creatures[gPriv->GetId()].IsHuman() ); break;
+      case CCP_ISANIMAL:		vp.setBoolean( cwmWorldState->creatures[gPriv->GetId()].IsAnimal() ); break;
+      case CCP_ISHUMAN:		vp.setBoolean( cwmWorldState->creatures[gPriv->GetId()].IsHuman() ); break;
       case CCP_ORGID:			vp.setInt32( gPriv->GetOrgId() );					break;
       case CCP_ORGSKIN:		vp.setInt32( gPriv->GetOrgSkin() );					break;
       case CCP_NPCFLAG:		vp.setInt32( static_cast<SI32>(gPriv->GetNPCFlag() ));break;
@@ -1940,13 +1952,13 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
         Party *tempParty = PartyFactory::GetSingleton().Get( gPriv );
         if( tempParty == nullptr )
         {	// Return a JS_NULL
-          *vp = JS::CurrentGlobalOrNull;
+          vp.setObjectOrNull(JS::CurrentGlobalOrNull(cx));
         }
         else
         {
           // Otherwise Acquire an object
           JSObject *myParty = JSEngine->AcquireObject( IUE_PARTY, tempParty, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myParty );
+		  vp.setObjectOrNull(myParty);
         }
         break;
       }
@@ -1956,13 +1968,13 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
 
         if( !ValidateObject( multi ))
         {
-          *vp = JS::CurrentGlobalOrNull;
+          vp.setObjectOrNull(JS::CurrentGlobalOrNull(cx));
         }
         else
         {
           // Otherwise Acquire an object
           JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, multi, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-          *vp = OBJECT_TO_JSVAL( myObj );
+		   vp.setObjectOrNull(myObj);
         }
         break;
       case CCP_HOUSESOWNED:		vp.setInt32( gPriv->CountHousesOwned( false ));	break;
@@ -1977,9 +1989,9 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValue 
   {
     // ... by calling a dummy function in original script!
     // ... but keep track of the property value we're trying to retrieve, stored in vp!
-    jsval origVp = *vp;
-    bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-    *vp = origVp;
+    JS::RootedValue origVp(cx, vp.get());
+	bool retVal = origScript->CallParticularEvent("_restorecontext_", id, 0, vp);
+	vp.set(origVp);
     if( retVal == false )
     {
       // Dummy function not found, let shard admin know!
