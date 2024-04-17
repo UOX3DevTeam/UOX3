@@ -1373,170 +1373,171 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
   return true;
 }
 
-IMPL_GET_OBJ( CChar, accountNum,          CChar, setInt32,  GetAccountNum() )
-//IMPL_GET_OBJ( CChar, account,             CChar, setInt32,  GetAccount() // Do manually
-IMPL_GET_OBJ( CChar, createdOn,           CChar, setInt32,  GetCreatedOn() )
-IMPL_GET_OBJ( CChar, playTime,            CChar, setInt32,  GetPlayTime() )
-IMPL_GETS_OBJ(CChar, sectionID,           CChar, setString, GetSectionId().c_str() )
-IMPL_GETS_OBJ(CChar, name,                CChar, setString, GetName().c_str() )
-IMPL_GETS_OBJ(CChar, orgName,             CChar, setString, GetOrgName().c_str() )
-IMPL_GETS_OBJ(CChar, title,               CChar, setString, GetTitle().c_str() )
-IMPL_GET_OBJ( CChar, x,                   CChar, setInt32,  GetX() )
-IMPL_GET_OBJ( CChar, y,                   CChar, setInt32,  GetY() )
-IMPL_GET_OBJ( CChar, z,                   CChar, setInt32,  GetZ() )
-IMPL_GET_OBJ( CChar, oldX,                CChar, setInt32,  GetOldLocation().x )
-IMPL_GET_OBJ( CChar, oldY,                CChar, setInt32,  GetOldLocation().y )
-IMPL_GET_OBJ( CChar, oldZ,                CChar, setInt32,  GetOldLocation().z )
-IMPL_GET_OBJ( CChar, id,                  CChar, setInt32,  GetId() )
-IMPL_GET_OBJ( CChar, colour,              CChar, setInt32,  GetColour() )
-IMPL_GET_OBJ( CChar, color,               CChar, setInt32,  GetColour() )
-IMPL_GET_OBJ( CChar, controlSlots,        CChar, setInt32,  GetControlSlots() )
-IMPL_GET_OBJ( CChar, controlSlotsUsed,    CChar, setInt32,  GetControlSlotsUsed() )
-IMPL_GET_OBJ( CChar, orneriness,		  CChar, setInt32,  GetOrneriness() )
-IMPL_GET_OBJ( CChar, visible,		      CChar, setInt32,  GetVisible() )
-IMPL_GET_OBJ( CChar, serial,              CChar, setInt32,  GetSerial() )
-IMPL_GET_OBJ( CChar, health,              CChar, setInt32,  GetHP() )
+IMPL_GET_OBJ( CChar, accountNum,          CChar, setInt32,   GetAccountNum() )
+//IMPL_GET_OBJ( CChar, account,             CChar, setInt32,   GetAccount() // Do manually
+IMPL_GET_OBJ( CChar, createdOn,           CChar, setInt32,   GetCreatedOn() )
+IMPL_GET_OBJ( CChar, playTime,            CChar, setInt32,   GetPlayTime() )
+IMPL_GETS_OBJ(CChar, sectionID,           CChar, setString,  GetSectionId().c_str() )
+IMPL_GETS_OBJ(CChar, name,                CChar, setString,  GetName().c_str() )         // This might need work?
+IMPL_GETS_OBJ(CChar, orgName,             CChar, setString,  GetOrgName().c_str() )
+IMPL_GETS_OBJ(CChar, title,               CChar, setString,  GetTitle().c_str() )
+IMPL_GET_OBJ( CChar, x,                   CChar, setInt32,   GetX() )
+IMPL_GET_OBJ( CChar, y,                   CChar, setInt32,   GetY() )
+IMPL_GET_OBJ( CChar, z,                   CChar, setInt32,   GetZ() )
+IMPL_GET_OBJ( CChar, oldX,                CChar, setInt32,   GetOldLocation().x )
+IMPL_GET_OBJ( CChar, oldY,                CChar, setInt32,   GetOldLocation().y )
+IMPL_GET_OBJ( CChar, oldZ,                CChar, setInt32,   GetOldLocation().z )
+IMPL_GET_OBJ( CChar, id,                  CChar, setInt32,   GetId() )
+IMPL_GET_OBJ( CChar, colour,              CChar, setInt32,   GetColour() )
+IMPL_GET_OBJ( CChar, color,               CChar, setInt32,   GetColour() )
+IMPL_GET_OBJ( CChar, controlSlots,        CChar, setInt32,   GetControlSlots() )
+IMPL_GET_OBJ( CChar, controlSlotsUsed,    CChar, setInt32,   GetControlSlotsUsed() )
+IMPL_GET_OBJ( CChar, orneriness,		  CChar, setInt32,   GetOrneriness() )
+IMPL_GET_OBJ( CChar, visible,		      CChar, setInt32,   GetVisible() )
+IMPL_GET_OBJ( CChar, serial,              CChar, setInt32,   GetSerial() )
+IMPL_GET_OBJ( CChar, health,              CChar, setInt32,   GetHP() )
 // IMPL_GET_OBJ( CChar, scripttrigger,       CChar, setInt32, ) // Do manually
 // IMPL_GET_OBJ( CChar, scriptTriggers,      CChar, setInt32, ) // Do manually
-IMPL_GET_OBJ( CChar, worldnumber,         CChar, setInt32, WorldNumber() )
-IMPL_GET_OBJ( CChar, instanceID,          CChar, setInt32, GetInstanceId() )
-IMPL_GET_OBJ( CChar, strength,            CChar, setInt32, GetStrength() )
-IMPL_GET_OBJ( CChar, dexterity,           CChar, setInt32, GetDexterity() )
-IMPL_GET_OBJ( CChar, intelligence,        CChar, setInt32, GetIntelligence() )
-IMPL_GET_OBJ( CChar, actualstrength,      CChar, setInt32, ActualStrength() )
-IMPL_GET_OBJ( CChar, actualdexterity,     CChar, setInt32, ActualDexterity() )
-IMPL_GET_OBJ( CChar, actualintelligence,  CChar, setInt32, ActualIntelligence() )
-IMPL_GET_OBJ( CChar, mana,				  CChar, setInt32, GetMana() )
-IMPL_GET_OBJ( CChar, stamina,             CChar, setInt32, GetStamina() )
-IMPL_GET_OBJ( CChar, fame,				  CChar, setInt32, GetFame() )
-IMPL_GET_OBJ( CChar, karma,				  CChar, setInt32, GetKarma() )
-// IMPL_GET_OBJ( CChar, attack,			  CChar, setInt32, CalcAttackPower() ) // Do manually
+IMPL_GET_OBJ( CChar, worldnumber,         CChar, setInt32,   WorldNumber() )
+IMPL_GET_OBJ( CChar, instanceID,          CChar, setInt32,   GetInstanceId() )
+IMPL_GET_OBJ( CChar, strength,            CChar, setInt32,   GetStrength() )
+IMPL_GET_OBJ( CChar, dexterity,           CChar, setInt32,   GetDexterity() )
+IMPL_GET_OBJ( CChar, intelligence,        CChar, setInt32,   GetIntelligence() )
+IMPL_GET_OBJ( CChar, actualstrength,      CChar, setInt32,   ActualStrength() )
+IMPL_GET_OBJ( CChar, actualdexterity,     CChar, setInt32,   ActualDexterity() )
+IMPL_GET_OBJ( CChar, actualintelligence,  CChar, setInt32,   ActualIntelligence() )
+IMPL_GET_OBJ( CChar, mana,				  CChar, setInt32,   GetMana() )
+IMPL_GET_OBJ( CChar, stamina,             CChar, setInt32,   GetStamina() )
+IMPL_GET_OBJ( CChar, fame,				  CChar, setInt32,   GetFame() )
+IMPL_GET_OBJ( CChar, karma,				  CChar, setInt32,   GetKarma() )
+// IMPL_GET_OBJ( CChar, attack,			  CChar, setInt32,   CalcAttackPower() ) // Do manually
 IMPL_GET_OBJ( CChar, canAttack,           CChar, setBoolean, GetCanAttack() )
-IMPL_GET_OBJ( CChar, fleeAt,			  CChar, setInt32, GetFleeAt() )
-IMPL_GET_OBJ( CChar, reattackAt,		  CChar, setInt32, GetReattackAt() )
-IMPL_GET_OBJ( CChar, brkPeaceChance,	  CChar, setInt32, GetBrkPeaceChance() )
-IMPL_GET_OBJ( CChar, hunger,			  CChar, setInt32, GetHunger() )
-IMPL_GET_OBJ( CChar, thirst,			  CChar, setInt32, GetThirst() )
-IMPL_GET_OBJ( CChar, frozen,			  CChar, setInt32, IsFrozen() )
-IMPL_GET_OBJ( CChar, commandLevel,	      CChar, setInt32, GetCommandLevel() )
+IMPL_GET_OBJ( CChar, fleeAt,			  CChar, setInt32,   GetFleeAt() )
+IMPL_GET_OBJ( CChar, reattackAt,		  CChar, setInt32,   GetReattackAt() )
+IMPL_GET_OBJ( CChar, brkPeaceChance,	  CChar, setInt32,   GetBrkPeaceChance() )
+IMPL_GET_OBJ( CChar, hunger,			  CChar, setInt32,   GetHunger() )
+IMPL_GET_OBJ( CChar, thirst,			  CChar, setInt32,   GetThirst() )
+IMPL_GET_OBJ( CChar, frozen,			  CChar, setInt32,   IsFrozen() )
+IMPL_GET_OBJ( CChar, commandLevel,	      CChar, setInt32,   GetCommandLevel() )
 IMPL_GET_OBJ( CChar, hasStolen,           CChar, setBoolean, HasStolen() )
 IMPL_GET_OBJ( CChar, criminal,            CChar, setBoolean, IsCriminal() )
 IMPL_GET_OBJ( CChar, murderer,            CChar, setBoolean, IsMurderer() )
 IMPL_GET_OBJ( CChar, innocent,            CChar, setBoolean, IsInnocent() )
 IMPL_GET_OBJ( CChar, neutral,             CChar, setBoolean, IsNeutral() )
-IMPL_GET_OBJ( CChar, murdercount,	      CChar, setInt32, GetKills() )
+IMPL_GET_OBJ( CChar, murdercount,	      CChar, setInt32,   GetKills() )
 
 IMPL_GET_OBJ( CChar, dead,				  CChar, setBoolean, IsDead() )
 IMPL_GET_OBJ( CChar, npc,				  CChar, setBoolean, IsNpc() )
 IMPL_GET_OBJ( CChar, awake,               CChar, setBoolean, IsAwake() )
 // IMPL_GET_OBJ( CChar, online,              CChar, setBoolean, IsOnline() ) // Do manually
-IMPL_GET_OBJ( CChar, direction,           CChar, setInt32, GetDir() )
+IMPL_GET_OBJ( CChar, direction,           CChar, setInt32,   GetDir() )
 IMPL_GET_OBJ( CChar, isrunning,           CChar, setBoolean, GetRunning() )
 
 
-IMPL_GET_OBJ( CChar, spawnserial,         CChar, setInt32, GetSpawn() )
-IMPL_GET_OBJ( CChar, maxhp,				  CChar, setInt32, GetMaxHP() )
-IMPL_GET_OBJ( CChar, maxstamina,          CChar, setInt32, GetMaxStam() )
-IMPL_GET_OBJ( CChar, maxmana,             CChar, setInt32, GetMaxMana() )
-IMPL_GET_OBJ( CChar, oldwandertype,       CChar, setInt32, GetOldNpcWander() )
-IMPL_GET_OBJ( CChar, wandertype,          CChar, setInt32, GetNpcWander() )
-IMPL_GET_OBJ( CChar, fx1,				  CChar, setInt32, GetFx( 0 ))
-IMPL_GET_OBJ( CChar, fy1,				  CChar, setInt32, GetFy( 0 ))
-IMPL_GET_OBJ( CChar, fx2,				  CChar, setInt32, GetFx( 1 ))
-IMPL_GET_OBJ( CChar, fy2,				  CChar, setInt32, GetFy( 1 ))
-IMPL_GET_OBJ( CChar, fz,				  CChar, setInt32, GetFz() )
+IMPL_GET_OBJ( CChar, spawnserial,         CChar, setInt32,   GetSpawn() )
+IMPL_GET_OBJ( CChar, maxhp,				  CChar, setInt32,   GetMaxHP() )
+IMPL_GET_OBJ( CChar, maxstamina,          CChar, setInt32,   GetMaxStam() )
+IMPL_GET_OBJ( CChar, maxmana,             CChar, setInt32,   GetMaxMana() )
+IMPL_GET_OBJ( CChar, oldwandertype,       CChar, setInt32,   GetOldNpcWander() )
+IMPL_GET_OBJ( CChar, wandertype,          CChar, setInt32,   GetNpcWander() )
+IMPL_GET_OBJ( CChar, fx1,                 CChar, setInt32,   GetFx( 0 ))
+IMPL_GET_OBJ( CChar, fy1,                 CChar, setInt32,   GetFy( 0 ))
+IMPL_GET_OBJ( CChar, fx2,                 CChar, setInt32,   GetFx( 1 ))
+IMPL_GET_OBJ( CChar, fy2,                 CChar, setInt32,   GetFy( 1 ))
+IMPL_GET_OBJ( CChar, fz,                  CChar, setInt32,   GetFz() )
 IMPL_GET_OBJ( CChar, isonhorse,           CChar, setBoolean, IsOnHorse() )
 IMPL_GET_OBJ( CChar, isflying,            CChar, setBoolean, IsFlying() )
 IMPL_GET_OBJ( CChar, isguarded,           CChar, setBoolean, IsGuarded() )
 
-IMPL_GET_OBJ( CChar, tdexterity2,         CChar, setInt32, GetDexterity2() )
-IMPL_GET_OBJ( CChar, tintelligence2,      CChar, setInt32, GetIntelligence2() )
-IMPL_GET_OBJ( CChar, tstrength2,          CChar, setInt32, GetStrength2() )
-IMPL_GET_OBJ( CChar, poison,			  CChar, setInt32, GetPoisoned() )
-IMPL_GET_OBJ( CChar, lightlevel,          CChar, setInt32, GetFixedLight() )
+IMPL_GET_OBJ( CChar, tdexterity2,         CChar, setInt32,   GetDexterity2() )
+IMPL_GET_OBJ( CChar, tintelligence2,      CChar, setInt32,   GetIntelligence2() )
+IMPL_GET_OBJ( CChar, tstrength2,          CChar, setInt32,   GetStrength2() )
+IMPL_GET_OBJ( CChar, poison,              CChar, setInt32,   GetPoisoned() )
+IMPL_GET_OBJ( CChar, lightlevel,          CChar, setInt32,   GetFixedLight() )
 IMPL_GET_OBJ( CChar, vulnerable,          CChar, setBoolean, IsInvulnerable() )
 IMPL_GET_OBJ( CChar, hungerstatus,        CChar, setBoolean, WillHunger() )
 IMPL_GET_OBJ( CChar, thirststatus,        CChar, setBoolean, WillThirst() )
-IMPL_GET_OBJ( CChar, lodamage,          CChar, setInt32, GetLoDamage() )
-IMPL_GET_OBJ( CChar, hidamage,          CChar, setInt32, GetHiDamage() )
-IMPL_GET_OBJ( CChar, flag,          CChar, setInt32, GetFlag() )
-IMPL_GET_OBJ( CChar, atwar,          CChar, setBoolean, IsAtWar() )
-IMPL_GET_OBJ( CChar, spellcast,          CChar, setInt32, GetSpellCast() )
-// IMPL_GET_OBJ( CChar, iscasting,          CChar, setBoolean, IsCasting() || IsJSCasting() ) // Do manually
-IMPL_GET_OBJ( CChar, priv,          CChar, setInt32, GetPriv() )
-IMPL_GET_OBJ( CChar, townpriv,          CChar, setInt32, GetTownPriv() )
+IMPL_GET_OBJ( CChar, lodamage,            CChar, setInt32,   GetLoDamage() )
+IMPL_GET_OBJ( CChar, hidamage,            CChar, setInt32,   GetHiDamage() )
+IMPL_GET_OBJ( CChar, flag,                CChar, setInt32,   GetFlag() )
+IMPL_GET_OBJ( CChar, atwar,               CChar, setBoolean, IsAtWar() )
+IMPL_GET_OBJ( CChar, spellcast,           CChar, setInt32,   GetSpellCast() )
+// IMPL_GET_OBJ( CChar, iscasting,           CChar, setBoolean, IsCasting() || IsJSCasting() ) // Do manually
+IMPL_GET_OBJ( CChar, priv,                CChar, setInt32,   GetPriv() )
+IMPL_GET_OBJ( CChar, townpriv,            CChar, setInt32,   GetTownPriv() )
 
-IMPL_GET_OBJ( CChar, hairstyle,          CChar, setInt32, GetHairStyle() )
-IMPL_GET_OBJ( CChar, haircolour,          CChar, setInt32, GetHairColour() )
-IMPL_GET_OBJ( CChar, beardstyle,          CChar, setInt32, GetBeardStyle() )
-IMPL_GET_OBJ( CChar, beardcolour,          CChar, setInt32, GetBeardColour() )
-IMPL_GET_OBJ( CChar, fontype,          CChar, setInt32, GetFontType() )
-IMPL_GET_OBJ( CChar, saycolour,          CChar, setInt32, GetSayColour() )
-IMPL_GET_OBJ( CChar, emotecolour,          CChar, setInt32, GetEmoteColour() )
-IMPL_GET_OBJ( CChar, racegate,          CChar, setInt32, GetRaceGate() )
-IMPL_GET_OBJ( CChar, death,          CChar, setInt32, GetDeaths() )
-IMPL_GET_OBJ( CChar, ownercount,          CChar, setInt32, GetOwnerCount() )
-IMPL_GET_OBJ( CChar, nextact,          CChar, setInt32, GetNextAct() )					
-IMPL_GET_OBJ( CChar, petcount,          CChar, setInt32, GetPetList()->Num() )
-IMPL_GET_OBJ( CChar, followercount,          CChar, setInt32, GetFollowerList()->Num() )	
-IMPL_GET_OBJ( CChar, owneditemscount,          CChar, setInt32, GetOwnedItems()->size() )	
-IMPL_GET_OBJ( CChar, cell,          CChar, setInt32, GetCell() )						
-IMPL_GET_OBJ( CChar, allmove,          CChar, setInt32, AllMove() )					
-IMPL_GET_OBJ( CChar, houseicon,          CChar, setBoolean, ViewHouseAsIcon() )			
-IMPL_GET_OBJ( CChar, spattack,          CChar, setInt32, GetSpAttack() )					
-IMPL_GET_OBJ( CChar, spdelay,          CChar, setInt32, GetSpDelay() )					
-IMPL_GET_OBJ( CChar, aitype,          CChar, setInt32, GetNpcAiType() )				
-IMPL_GET_OBJ( CChar, split,          CChar, setInt32, GetSplit() )					
-IMPL_GET_OBJ( CChar, splitchance,          CChar, setInt32, GetSplitChance() )				
-IMPL_GET_OBJ( CChar, trainer,          CChar, setInt32, CanTrain() )				
-IMPL_GET_OBJ( CChar, hirling,          CChar, setInt32, CanBeHired() )				
-IMPL_GET_OBJ( CChar, weight,          CChar, setInt32, GetWeight() )					
-IMPL_GET_OBJ( CChar, suelched,          CChar, setInt32, GetSquelched() )				
-IMPL_GET_OBJ( CChar, isjailed,          CChar, setBoolean, IsJailed() )				
-IMPL_GET_OBJ( CChar, magicreflect,          CChar, setBoolean, IsTempReflected() )			
-IMPL_GET_OBJ( CChar, permmagicreflect,          CChar, setBoolean, IsPermReflected() )		
-IMPL_GET_OBJ( CChar, tamed,          CChar, setBoolean, IsTamed() )					
-IMPL_GET_OBJ( CChar, tamedhungerrate,          CChar, setInt32, GetTamedHungerRate() )		
-IMPL_GET_OBJ( CChar, tamedthirstrate,          CChar, setInt32, GetTamedThirstRate() )		
-IMPL_GET_OBJ( CChar, hungerwildchance,          CChar, setInt32, GetTamedHungerWildChance() )	
-IMPL_GET_OBJ( CChar, thirstwildchance,          CChar, setInt32, GetTamedThirstWildChance() )	
+IMPL_GET_OBJ( CChar, hairstyle,           CChar, setInt32,   GetHairStyle() )
+IMPL_GET_OBJ( CChar, haircolour,          CChar, setInt32,   GetHairColour() )
+IMPL_GET_OBJ( CChar, beardstyle,          CChar, setInt32,   GetBeardStyle() )
+IMPL_GET_OBJ( CChar, beardcolour,         CChar, setInt32,   GetBeardColour() )
+IMPL_GET_OBJ( CChar, fontype,             CChar, setInt32,   GetFontType() )
+IMPL_GET_OBJ( CChar, saycolour,           CChar, setInt32,   GetSayColour() )
+IMPL_GET_OBJ( CChar, emotecolour,         CChar, setInt32,   GetEmoteColour() )
+IMPL_GET_OBJ( CChar, racegate,            CChar, setInt32,   GetRaceGate() )
+IMPL_GET_OBJ( CChar, death,               CChar, setInt32,   GetDeaths() )
+IMPL_GET_OBJ( CChar, ownercount,          CChar, setInt32,   GetOwnerCount() )
+IMPL_GET_OBJ( CChar, nextact,             CChar, setInt32,   GetNextAct() )					
+IMPL_GET_OBJ( CChar, petcount,            CChar, setInt32,   GetPetList()->Num() )
+IMPL_GET_OBJ( CChar, followercount,       CChar, setInt32,   GetFollowerList()->Num() )	
+IMPL_GET_OBJ( CChar, owneditemscount,     CChar, setInt32,   GetOwnedItems()->size() )	
+IMPL_GET_OBJ( CChar, cell,                CChar, setInt32,   GetCell() )						
+IMPL_GET_OBJ( CChar, allmove,             CChar, setInt32,   AllMove() )					
+IMPL_GET_OBJ( CChar, houseicon,           CChar, setBoolean, ViewHouseAsIcon() )			
+IMPL_GET_OBJ( CChar, spattack,            CChar, setInt32,   GetSpAttack() )					
+IMPL_GET_OBJ( CChar, spdelay,             CChar, setInt32,   GetSpDelay() )					
+IMPL_GET_OBJ( CChar, aitype,              CChar, setInt32,   GetNpcAiType() )				
+IMPL_GET_OBJ( CChar, split,               CChar, setInt32,   GetSplit() )					
+IMPL_GET_OBJ( CChar, splitchance,         CChar, setInt32,   GetSplitChance() )				
+IMPL_GET_OBJ( CChar, trainer,             CChar, setInt32,   CanTrain() )				
+IMPL_GET_OBJ( CChar, hirling,             CChar, setInt32,   CanBeHired() )				
+IMPL_GET_OBJ( CChar, weight,              CChar, setInt32,   GetWeight() )					
+IMPL_GET_OBJ( CChar, suelched,            CChar, setInt32,   GetSquelched() )				
+IMPL_GET_OBJ( CChar, isjailed,            CChar, setBoolean, IsJailed() )				
+IMPL_GET_OBJ( CChar, magicreflect,        CChar, setBoolean, IsTempReflected() )			
+IMPL_GET_OBJ( CChar, permmagicreflect,    CChar, setBoolean, IsPermReflected() )		
+IMPL_GET_OBJ( CChar, tamed,               CChar, setBoolean, IsTamed() )					
+IMPL_GET_OBJ( CChar, tamedhungerrate,     CChar, setInt32,   GetTamedHungerRate() )		
+IMPL_GET_OBJ( CChar, tamedthirstrate,     CChar, setInt32,   GetTamedThirstRate() )		
+IMPL_GET_OBJ( CChar, hungerwildchance,    CChar, setInt32,   GetTamedHungerWildChance() )	
+IMPL_GET_OBJ( CChar, thirstwildchance,    CChar, setInt32,   GetTamedThirstWildChance() )	
 
-IMPL_GET_OBJ( CChar, mounted,          CChar, setBoolean, GetMounted() )				
-IMPL_GET_OBJ( CChar, stabled,          CChar, setBoolean, GetStabled() )				
-IMPL_GET_OBJ( CChar, usingpotion,          CChar, setBoolean, IsUsingPotion() )			
-IMPL_GET_OBJ( CChar, stealth,          CChar, setInt32, GetStealth() )					
-IMPL_GET_OBJ( CChar, skilltotame,          CChar, setInt32, GetTaming() )					
-IMPL_GET_OBJ( CChar, skilltoprov,          CChar, setInt32, GetProvoing() )					
-IMPL_GET_OBJ( CChar, skilltopeace,          CChar, setInt32, GetPeaceing() )					
-IMPL_GET_OBJ( CChar, poisonstrength,          CChar, setInt32, GetPoisonStrength() )		
-IMPL_GET_OBJ( CChar, ispolymorphed,          CChar, setInt32, IsPolymorphed() )			
-IMPL_GET_OBJ( CChar, isincognito,          CChar, setBoolean, IsIncognito() )				
-IMPL_GET_OBJ( CChar, isdisguised,          CChar, setBoolean, IsDisguised() )				
-IMPL_GET_OBJ( CChar, canrun,          CChar, setBoolean, CanRun() )					
-IMPL_GET_OBJ( CChar, ismeditating,          CChar, setBoolean, IsMeditating() )			
-IMPL_GET_OBJ( CChar, isgm,          CChar, setBoolean, IsGM() )					
-IMPL_GET_OBJ( CChar, canbroadcast,          CChar, setBoolean, CanBroadcast() )			
-IMPL_GET_OBJ( CChar, singleclickser,          CChar, setBoolean, GetSingClickSer() )
-// IMPL_GET_OBJ( CChar, noskilltitles,          CChar, setBoolean, oSkillTitles() )			  // Do manually
-IMPL_GET_OBJ( CChar, isgmpageable,          CChar, setBoolean, IsGMPageable() )			
-IMPL_GET_OBJ( CChar, cansnoop,          CChar, setBoolean, CanSnoop() )				
-IMPL_GET_OBJ( CChar, iscounselor,          CChar, setBoolean, IsCounselor() )				
+IMPL_GET_OBJ( CChar, mounted,             CChar, setBoolean, GetMounted() )				
+IMPL_GET_OBJ( CChar, stabled,             CChar, setBoolean, GetStabled() )				
+IMPL_GET_OBJ( CChar, usingpotion,         CChar, setBoolean, IsUsingPotion() )			
+IMPL_GET_OBJ( CChar, stealth,             CChar, setInt32,   GetStealth() )					
+IMPL_GET_OBJ( CChar, skilltotame,         CChar, setInt32,   GetTaming() )					
+IMPL_GET_OBJ( CChar, skilltoprov,         CChar, setInt32,   GetProvoing() )					
+IMPL_GET_OBJ( CChar, skilltopeace,        CChar, setInt32,   GetPeaceing() )					
+IMPL_GET_OBJ( CChar, poisonstrength,      CChar, setInt32,   GetPoisonStrength() )		
+IMPL_GET_OBJ( CChar, ispolymorphed,       CChar, setInt32,   IsPolymorphed() )			
+IMPL_GET_OBJ( CChar, isincognito,         CChar, setBoolean, IsIncognito() )				
+IMPL_GET_OBJ( CChar, isdisguised,         CChar, setBoolean, IsDisguised() )				
+IMPL_GET_OBJ( CChar, canrun,              CChar, setBoolean, CanRun() )					
+IMPL_GET_OBJ( CChar, ismeditating,        CChar, setBoolean, IsMeditating() )			
+IMPL_GET_OBJ( CChar, isgm,                CChar, setBoolean, IsGM() )					
+IMPL_GET_OBJ( CChar, canbroadcast,        CChar, setBoolean, CanBroadcast() )			
+IMPL_GET_OBJ( CChar, singleclickser,      CChar, setBoolean, GetSingClickSer() )
+IMPL_GET_OBJ( CChar, noskilltitles,       CChar, setBoolean, NoSkillTitles() )
+IMPL_GET_OBJ( CChar, isgmpageable,        CChar, setBoolean, IsGMPageable() )			
+IMPL_GET_OBJ( CChar, cansnoop,            CChar, setBoolean, CanSnoop() )				
+IMPL_GET_OBJ( CChar, iscounselor,         CChar, setBoolean, IsCounselor() )				
 IMPL_GET_OBJ( CChar, noneedmana,          CChar, setBoolean, NoNeedMana() )			
-IMPL_GET_OBJ( CChar, isdispellable,          CChar, setBoolean, IsDispellable() )
+IMPL_GET_OBJ( CChar, isdispellable,       CChar, setBoolean, IsDispellable() )
 IMPL_GET_OBJ( CChar, noneedregs,          CChar, setBoolean, NoNeedReags() )
-// IMPL_GET_OBJ( CChar, isanimal,          CChar, setBoolean, creatures[gPriv->GetId()].IsAnimal() ) // Do manually
-// IMPL_GET_OBJ( CChar, ishuman,          CChar, setBoolean, creatures[gPriv->GetId()].IsHuman() ) // Do manually
-IMPL_GET_OBJ( CChar, orgid,          CChar, setInt32, GetOrgId() )
-IMPL_GET_OBJ( CChar, orgskin,          CChar, setInt32, GetOrgSkin() )
-IMPL_GET_OBJ( CChar, npcflag,          CChar, setInt32, GetNPCFlag() )
-IMPL_GET_OBJ( CChar, npcguild,          CChar, setInt32, GetNPCGuild() )
-IMPL_GET_OBJ( CChar, ishop,          CChar, setBoolean, IsShop() )
+// IMPL_GET_OBJ( CChar, isanimal,            CChar, setBoolean, creatures[gPriv->GetId()].IsAnimal() ) // Do manually
+// IMPL_GET_OBJ( CChar, ishuman,             CChar, setBoolean, creatures[gPriv->GetId()].IsHuman() ) // Do manually
+IMPL_GET_OBJ( CChar, orgid,               CChar, setInt32,   GetOrgId() )
+IMPL_GET_OBJ( CChar, orgskin,             CChar, setInt32,   GetOrgSkin() )
+IMPL_GET_OBJ( CChar, npcflag,             CChar, setInt32,   GetNPCFlag() )
+IMPL_GET_OBJ( CChar, npcguild,            CChar, setInt32,   GetNPCGuild() )
+IMPL_GET_OBJ( CChar, ishop,               CChar, setBoolean, IsShop() )
 IMPL_GET_OBJ( CChar, maxloyalty,          CChar, setBoolean, GetMaxLoyalty() )
-IMPL_GET_OBJ( CChar, loyalty,          CChar, setBoolean, GetLoyalty() )
+IMPL_GET_OBJ( CChar, loyalty,             CChar, setBoolean, GetLoyalty() )
 IMPL_GET_OBJ( CChar, shouldsave,          CChar, setBoolean, ShouldSave() )
 IMPL_GET_OBJ( CChar, houseowned,          CChar, setBoolean, CountHousesOwned( false ))
-IMPL_GET_OBJ( CChar, housecoowned,          CChar, setBoolean, CountHousesOwned( true ))
+IMPL_GET_OBJ( CChar, housecoowned,        CChar, setBoolean, CountHousesOwned( true ))
 
+/*
 bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueArray id, JS::MutableHandleValue vp )
 {
   CChar *gPriv = JS::GetMaybePtrFromReservedSlot<CChar >(obj , 0);
@@ -1555,7 +1556,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
     JSString *tString = nullptr;
     switch( id[0].isInt32() )
     {
-      case CCP_ACCOUNTNUM: vp.setInt32( gPriv->GetAccountNum() );	break;
       case CCP_ACCOUNT:
       {
         CAccountBlock_st *accountBlock = &gPriv->GetAccount();
@@ -1570,8 +1570,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
         }
         break;
       }
-      case CCP_CREATEDON: vp.setInt32( gPriv->GetCreatedOn() );		break;
-      case CCP_PLAYTIME: vp.setInt32( gPriv->GetPlayTime() );		break;
       case CCP_NAME:
         {
           CSocket *tSock = nullptr;
@@ -1583,52 +1581,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
           vp.set(JS::StringValue(tString));
           break;
         }
-      case CCP_ORIGNAME:
-      {
-        [[maybe_unused]] CSocket *tSock = nullptr;
-
-        std::string mCharName = gPriv->GetOrgName();
-        std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
-
-        tString = JS_NewStringCopyZ( cx, convertedString.c_str() );
-        vp.set(JS::StringValue(tString));
-        break;
-      }
-      case CCP_TITLE:
-        tString = JS_NewStringCopyZ( cx, gPriv->GetTitle().c_str() );
-        vp.set(JS::StringValue(tString));
-        break;
-      case CCP_SECTIONID:
-        tString = JS_NewStringCopyZ( cx, gPriv->GetSectionId().c_str() );
-        vp.set(JS::StringValue(tString));
-
-        break;
-      case CCP_X:			vp.setInt32( gPriv->GetX() );			break;
-      case CCP_Y:			vp.setInt32( gPriv->GetY() );			break;
-      case CCP_Z:			vp.setInt32( gPriv->GetZ() );			break;
-      case CCP_OLDX:		
-      {
-        auto oldLocation = gPriv->GetOldLocation();
-        vp.setInt32( oldLocation.x );
-        break;
-      }
-      case CCP_OLDY:		
-      {
-        auto oldLocation = gPriv->GetOldLocation();
-        vp.setInt32( oldLocation.y );
-        break;
-      }
-      case CCP_OLDZ:		
-      {
-        auto oldLocation = gPriv->GetOldLocation();
-        vp.setInt32( oldLocation.z );
-        break;
-      }
-      case CCP_ID:		vp.setInt32( gPriv->GetId() );				break;
-      case CCP_COLOUR:	vp.setInt32( gPriv->GetColour() );			break;
-      case CCP_CONTROLSLOTS:	vp.setInt32( static_cast<UI08>( gPriv->GetControlSlots() ));			break;
-      case CCP_CONTROLSLOTSUSED:	vp.setInt32( static_cast<UI08>( gPriv->GetControlSlotsUsed() ));	break;
-      case CCP_ORNERINESS:	vp.setInt32( gPriv->GetOrneriness() );	break;
       case CCP_OWNER:
         CBaseObject *TempObj;
         TempObj = gPriv->GetOwnerObj();
@@ -1644,20 +1596,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
 		  vp.setObjectOrNull(myChar);
         }
         break;
-      case CCP_VISIBLE:		vp.setInt32( static_cast<UI08>( gPriv->GetVisible() ));	break;
-      case CCP_SERIAL:
-      {
-        if (!INT_FITS_IN_JSVAL(gPriv->GetSerial()))
-		{
-			 vp.setNumber(gPriv->GetSerial());
-		}
-        else
-        {
-          vp.setInt32( gPriv->GetSerial() );
-        }
-        break;
-      }
-      case CCP_HEALTH:		vp.setInt32( gPriv->GetHP() );				break;
       case CCP_SCRIPTTRIGGER:
       {
         // For backwards compatibility, get last scripttrigger from vector
@@ -1690,8 +1628,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
             vp.setObject(*scriptTriggersJS);
             break;
         }
-      case CCP_WORLDNUMBER:	vp.setInt32( gPriv->WorldNumber() );			break;
-      case CCP_INSTANCEID:	vp.setInt32( gPriv->GetInstanceId() );		break;
       case CCP_TARGET:
         CChar *tempChar;
         tempChar = gPriv->GetTarg();
@@ -1707,12 +1643,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
           vp.setObjectOrNull( myChar );
         }
         break;
-      case CCP_DEXTERITY:				vp.setInt32( gPriv->GetDexterity() );		break;
-      case CCP_INTELLIGENCE:			vp.setInt32( gPriv->GetIntelligence() );		break;
-      case CCP_STRENGTH:				vp.setInt32( gPriv->GetStrength() );			break;
-      case CCP_ACTUALDEXTERITY:		vp.setInt32( gPriv->ActualDexterity() );		break;
-      case CCP_ACTUALINTELLIGENCE:	vp.setInt32( gPriv->ActualIntelligence() );	break;
-      case CCP_ACTUALSTRENGTH:		vp.setInt32( gPriv->ActualStrength() );		break;
       case CCP_BASESKILLS:
 		{
 			JS::RootedObject TempObject(cx, JS_NewObject(cx, &UOXBaseSkills_class));
@@ -1737,8 +1667,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
 			vp.setObjectOrNull(TempObject);
 			break;
 		}
-      case CCP_MANA:			vp.setInt32( gPriv->GetMana() );			break;
-      case CCP_STAMINA:		vp.setInt32( gPriv->GetStamina() );		break;
       case CCP_CHARPACK:
         TempItem = gPriv->GetPackItem();
 
@@ -1753,14 +1681,7 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
 		  vp.setObjectOrNull(myItem);
         }
         break;
-      case CCP_FAME:			vp.setInt32( gPriv->GetFame() );					break;
-      case CCP_KARMA:			vp.setInt32( gPriv->GetKarma() );				break;
       case CCP_ATTACK:		vp.setInt32( Combat->CalcAttackPower( gPriv, true ));	break;
-      case CCP_CANATTACK:		vp.setBoolean( gPriv->GetCanAttack() );		break;
-      case CCP_FLEEAT:		vp.setInt32( gPriv->GetFleeAt() );				break;
-      case CCP_REATTACKAT:	vp.setInt32( gPriv->GetReattackAt() );			break;
-      case CCP_BRKPEACE:		vp.setInt32( gPriv->GetBrkPeaceChance() );		break;
-      case CCP_HUNGER:		vp.setInt32( gPriv->GetHunger() );				break;
       case CCP_HUNGERRATE:
       {
         CRace *TempRace	= nullptr;
@@ -1782,7 +1703,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
         vp.setInt32( hungerRate );
         break;
       }
-      case CCP_THIRST:		vp.setInt32( gPriv->GetThirst() );				break;
       case CCP_THIRSTRATE:
       {
         CRace *TempRace	= nullptr;
@@ -1804,8 +1724,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
         vp.setInt32( thirstRate );
         break;
       }
-      case CCP_FROZEN:		vp.setBoolean( gPriv->IsFrozen() );			break;
-      case CCP_COMMANDLEVEL:	vp.setInt32( gPriv->GetCommandLevel() );			break;
       case CCP_RACE:
       {
         CRace *TempRace	= nullptr;
@@ -1823,12 +1741,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
         }
         break;
       }
-      case CCP_HASSTOLEN:		vp.setBoolean( gPriv->HasStolen() );	break;
-      case CCP_CRIMINAL:		vp.setBoolean( gPriv->IsCriminal() );	break;
-      case CCP_MURDERER:		vp.setBoolean( gPriv->IsMurderer() );	break;
-      case CCP_INNOCENT:		vp.setBoolean( gPriv->IsInnocent() );	break;
-      case CCP_NEUTRAL:		vp.setBoolean( gPriv->IsNeutral() );	break;
-      case CCP_MURDERCOUNT:	vp.setInt32( gPriv->GetKills() );		break;
       case CCP_GENDER:
         switch( gPriv->GetId() )
         {
@@ -1847,13 +1759,8 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
           default:		vp.setInt32( 0xFF );						break;
         }
         break;
-      case CCP_DEAD:			vp.setBoolean( gPriv->IsDead() );		break;
-      case CCP_NPC:			vp.setBoolean( gPriv->IsNpc() );		break;
-      case CCP_AWAKE:			vp.setBoolean( gPriv->IsAwake() );		break;
       case CCP_ONLINE:		vp.setBoolean( IsOnline(( *gPriv )));	break;
-      case CCP_DIRECTION:		vp.setInt32( gPriv->GetDir() );			break;
         // 3  objects: regions + towns + guilds
-      case CCP_ISRUNNING:		vp.setBoolean( gPriv->GetRunning() );	break;
       case CCP_REGION:
       {
         CTownRegion *myReg = gPriv->GetRegion();
@@ -1925,20 +1832,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
       case CCP_ISCHAR:		vp.setBoolean(true);									break;
       case CCP_ISITEM:		vp.setBoolean(false);								break;
       case CCP_ISSPAWNER:		vp.setBoolean(false);								break;
-      case CCP_SPAWNSERIAL:	vp.setInt32( gPriv->GetSpawn() );			break;
-      case CCP_MAXHP:			vp.setInt32( gPriv->GetMaxHP() );			break;
-      case CCP_MAXSTAMINA:	vp.setInt32( gPriv->GetMaxStam() );			break;
-      case CCP_MAXMANA:		vp.setInt32( gPriv->GetMaxMana() );			break;
-      case CCP_OLDWANDERTYPE:	vp.setInt32( gPriv->GetOldNpcWander() );		break;
-      case CCP_WANDERTYPE:	vp.setInt32( gPriv->GetNpcWander() );		break;
-      case CCP_FX1:			vp.setInt32( gPriv->GetFx( 0 ));				break;
-      case CCP_FY1:			vp.setInt32( gPriv->GetFy( 0 ));				break;
-      case CCP_FX2:			vp.setInt32( gPriv->GetFx( 1 ));				break;
-      case CCP_FY2:			vp.setInt32( gPriv->GetFy( 1 ));				break;
-      case CCP_FZ:			vp.setInt32( gPriv->GetFz() );				break;
-      case CCP_ISONHORSE:		vp.setBoolean( gPriv->IsOnHorse() );		break;
-      case CCP_ISFLYING:		vp.setBoolean( gPriv->IsFlying() );		break;
-      case CCP_ISGUARDED:		vp.setBoolean( gPriv->IsGuarded() );		break;
       case CCP_GUARDING:
       {
         CBaseObject *tempObj = gPriv->GetGuarding();
@@ -1962,33 +1855,11 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
         }
         break;
       }
-      case CCP_TDEXTERITY:	vp.setInt32( gPriv->GetDexterity2() );		break;
-      case CCP_TINTELLIGENCE:	vp.setInt32( gPriv->GetIntelligence2() );	break;
-      case CCP_TSTRENGTH:		vp.setInt32( gPriv->GetStrength2() );		break;
-      case CCP_POISON:		vp.setInt32( gPriv->GetPoisoned() );			break;
-      case CCP_LIGHTLEVEL:	vp.setInt32( gPriv->GetFixedLight() );		break;
-      case CCP_VULNERABLE:	vp.setBoolean( !gPriv->IsInvulnerable() );	break;
-      case CCP_HUNGERSTATUS:	vp.setBoolean( gPriv->WillHunger() );		break;
-      case CCP_THIRSTSTATUS:	vp.setBoolean( gPriv->WillThirst() );		break;
-      case CCP_LODAMAGE:		vp.setInt32( gPriv->GetLoDamage() );			break;
-      case CCP_HIDAMAGE:		vp.setInt32( gPriv->GetHiDamage() );			break;
-      case CCP_FLAG:			vp.setInt32( gPriv->GetFlag() );				break;
-      case CCP_ATWAR:			vp.setBoolean( gPriv->IsAtWar() );			break;
-      case CCP_SPELLCAST:		vp.setInt32( gPriv->GetSpellCast() );		break;
       case CCP_ISCASTING:		vp.setBoolean( gPriv->IsCasting() || gPriv->IsJSCasting() );		break;
-      case CCP_PRIV:			vp.setInt32( gPriv->GetPriv() );				break;
-      case CCP_TOWNPRIV:		vp.setInt32( gPriv->GetTownPriv() );			break;
       case CCP_GUILDTITLE:
         tString = JS_NewStringCopyZ( cx, gPriv->GetGuildTitle().c_str() );
         vp.set(JS::StringValue(tString));
         break;
-      case CCP_HAIRSTYLE:		vp.setInt32( gPriv->GetHairStyle() );		break;
-      case CCP_HAIRCOLOUR:	vp.setInt32( gPriv->GetHairColour() );		break;
-      case CCP_BEARDSTYLE:	vp.setInt32( gPriv->GetBeardStyle() );		break;
-      case CCP_BEARDCOLOUR:	vp.setInt32( gPriv->GetBeardColour() );		break;
-      case CCP_FONTTYPE:		vp.setInt32( gPriv->GetFontType() );			break;
-      case CCP_SAYCOLOUR:		vp.setInt32( gPriv->GetSayColour() );		break;
-      case CCP_EMOTECOLOUR:	vp.setInt32( gPriv->GetEmoteColour() );		break;
       case CCP_ATTACKER:
       {
         // Hm Quite funny, same thing as .owner
@@ -2005,7 +1876,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
         }
         break;
       }
-      case CCP_RACEGATE:		vp.setInt32( gPriv->GetRaceGate() );			break;
       case CCP_SKILLLOCK:
 		{
 			JS::RootedObject TempObject(cx, JS_NewObject(cx, &UOXSkillsLock_class));
@@ -2014,68 +1884,12 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
 			vp.setObjectOrNull(TempObject);
 			break;
 		}
-      case CCP_DEATHS:		vp.setInt32( gPriv->GetDeaths() );					break;
-      case CCP_OWNERCOUNT:	vp.setInt32( static_cast<UI08>( gPriv->GetOwnerCount() ));		break;
-      case CCP_NEXTACT:		vp.setInt32( gPriv->GetNextAct() );					break;
-      case CCP_PETCOUNT:		vp.setInt32( static_cast<UI08>( gPriv->GetPetList()->Num() ));	break;
-      case CCP_FOLLOWERCOUNT:		vp.setInt32( static_cast<UI08>( gPriv->GetFollowerList()->Num() ));	break;
-      case CCP_OWNEDITEMSCOUNT:	vp.setInt32( gPriv->GetOwnedItems()->size() );	break;
-      case CCP_CELL:			vp.setInt32( gPriv->GetCell() );						break;
-      case CCP_ALLMOVE:		vp.setBoolean( gPriv->AllMove() );					break;
-      case CCP_HOUSEICONS:	vp.setBoolean( gPriv->ViewHouseAsIcon() );			break;
-      case CCP_SPATTACK:		vp.setInt32( gPriv->GetSpAttack() );					break;
-      case CCP_SPDELAY:		vp.setInt32( gPriv->GetSpDelay() );					break;
-      case CCP_AITYPE:		vp.setInt32( gPriv->GetNpcAiType() );				break;
-      case CCP_SPLIT:			vp.setInt32( gPriv->GetSplit() );					break;
-      case CCP_SPLITCHANCE:	vp.setInt32( gPriv->GetSplitChance() );				break;
-      case CCP_TRAINER:		vp.setBoolean( gPriv->CanTrain() );				break;
-      case CCP_HIRELING:		vp.setBoolean( gPriv->CanBeHired() );				break;
-      case CCP_WEIGHT:		vp.setInt32( gPriv->GetWeight() );					break;
-      case CCP_SQUELCH:		vp.setInt32( gPriv->GetSquelched() );				break;
-      case CCP_ISJAILED:		vp.setBoolean( gPriv->IsJailed() );				break;
-      case CCP_MAGICREFLECT:	vp.setBoolean( gPriv->IsTempReflected() );			break;
-      case CCP_PERMMAGICREFLECT:	vp.setBoolean( gPriv->IsPermReflected() );		break;
-      case CCP_TAMED:			vp.setBoolean( gPriv->IsTamed() );					break;
-      case CCP_TAMEDHUNGERRATE: vp.setInt32( gPriv->GetTamedHungerRate() );		break;
-      case CCP_TAMEDTHIRSTRATE: vp.setInt32( gPriv->GetTamedThirstRate() );		break;
-      case CCP_HUNGERWILDCHANCE: vp.setInt32( gPriv->GetTamedHungerWildChance() );	break;
-      case CCP_THIRSTWILDCHANCE: vp.setInt32( gPriv->GetTamedThirstWildChance() );	break;
       case CCP_FOODLIST:
         tString = JS_NewStringCopyZ( cx, gPriv->GetFood().c_str() );
        vp.set(JS::StringValue(tString));
         break;
-      case CCP_MOUNTED:		vp.setBoolean( gPriv->GetMounted() );				break;
-      case CCP_STABLED:		vp.setBoolean( gPriv->GetStabled() );				break;
-      case CCP_USINGPOTION:	vp.setBoolean( gPriv->IsUsingPotion() );			break;
-      case CCP_STEALTH:		vp.setInt32( gPriv->GetStealth() );					break;
-      case CCP_SKILLTOTAME:	vp.setInt32( gPriv->GetTaming() );					break;
-      case CCP_SKILLTOPROV:	vp.setInt32( gPriv->GetProvoing() );					break;
-      case CCP_SKILLTOPEACE:	vp.setInt32( gPriv->GetPeaceing() );					break;
-      case CCP_POISONSTRENGTH:	vp.setInt32( gPriv->GetPoisonStrength() );		break;
-      case CCP_ISPOLYMORPHED:	vp.setBoolean( gPriv->IsPolymorphed() );			break;
-      case CCP_ISINCOGNITO:	vp.setBoolean( gPriv->IsIncognito() );				break;
-      case CCP_ISDISGUISED:	vp.setBoolean( gPriv->IsDisguised() );				break;
-      case CCP_CANRUN:		vp.setBoolean( gPriv->CanRun() );					break;
-      case CCP_ISMEDITATING:	vp.setBoolean( gPriv->IsMeditating() );			break;
-      case CCP_ISGM:			vp.setBoolean( gPriv->IsGM() );					break;
-      case CCP_CANBROADCAST:	vp.setBoolean( gPriv->CanBroadcast() );			break;
-      case CCP_SINGCLICKSER:	vp.setBoolean( gPriv->GetSingClickSer() );			break;
-      case CCP_NOSKILLTITLES:	vp.setBoolean( gPriv->NoSkillTitles() );			break;
-      case CCP_ISGMPAGEABLE:	vp.setBoolean( gPriv->IsGMPageable() );			break;
-      case CCP_CANSNOOP:		vp.setBoolean( gPriv->CanSnoop() );				break;
-      case CCP_ISCOUNSELOR:	vp.setBoolean( gPriv->IsCounselor() );				break;
-      case CCP_NONEEDMANA:	vp.setBoolean( gPriv->NoNeedMana() );				break;
-      case CCP_ISDISPELLABLE:	 vp.setBoolean( gPriv->IsDispellable() );			break;
-      case CCP_NONEEDREAGS:	vp.setBoolean( gPriv->NoNeedReags() );				break;
       case CCP_ISANIMAL:		vp.setBoolean( cwmWorldState->creatures[gPriv->GetId()].IsAnimal() ); break;
       case CCP_ISHUMAN:		vp.setBoolean( cwmWorldState->creatures[gPriv->GetId()].IsHuman() ); break;
-      case CCP_ORGID:			vp.setInt32( gPriv->GetOrgId() );					break;
-      case CCP_ORGSKIN:		vp.setInt32( gPriv->GetOrgSkin() );					break;
-      case CCP_NPCFLAG:		vp.setInt32( static_cast<SI32>(gPriv->GetNPCFlag() ));break;
-      case CCP_NPCGUILD:		vp.setInt32( gPriv->GetNPCGuild() );					break;
-      case CCP_ISSHOP:		vp.setBoolean( gPriv->IsShop() );					break;
-      case CCP_MAXLOYALTY:	vp.setInt32( gPriv->GetMaxLoyalty() );				break;
-      case CCP_LOYALTY:		vp.setInt32( gPriv->GetLoyalty() );					break;
       case CCP_LOYALTYRATE:
       {
         // Use global loyalty rate from UOX.INI
@@ -2088,7 +1902,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
         vp.setInt32( loyaltyRate );
         break;
       }
-      case CCP_SHOULDSAVE:	vp.setBoolean( gPriv->ShouldSave() );			break;
       case CCP_PARTYLOOTABLE:
       {
         Party *toGet = PartyFactory::GetSingleton().Get( gPriv );
@@ -2141,8 +1954,6 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
 		   vp.setObjectOrNull(myObj);
         }
         break;
-      case CCP_HOUSESOWNED:		vp.setInt32( gPriv->CountHousesOwned( false ));	break;
-      case CCP_HOUSESCOOWNED:		vp.setInt32( gPriv->CountHousesOwned( true ));	break;
       default:
         break;
     }
@@ -2165,6 +1976,7 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
 
   return true;
 }
+*/
 
 bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
