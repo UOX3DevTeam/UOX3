@@ -1373,6 +1373,19 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
   return true;
 }
 
+IMPL_GETS_OBJ(CChar, sectionID,           CChar, setString, GetSectionId().c_str() )
+IMPL_GETS_OBJ(CChar, name,                CChar, setString, GetName().c_str() )
+IMPL_GETS_OBJ(CChar, title,               CChar, setString, GetTitle().c_str() )
+IMPL_GET_OBJ( CChar, x,                   CChar, setInt32,  GetX() )
+IMPL_GET_OBJ( CChar, y,                   CChar, setInt32,  GetY() )
+IMPL_GET_OBJ( CChar, z,                   CChar, setInt32,  GetZ() )
+IMPL_GET_OBJ( CChar, oldX,                CChar, setInt32,  GetOldLocation().x )
+IMPL_GET_OBJ( CChar, oldY,                CChar, setInt32,  GetOldLocation().y )
+IMPL_GET_OBJ( CChar, oldZ,                CChar, setInt32,  GetOldLocation().z )
+IMPL_GET_OBJ( CChar, id,                  CChar, setInt32,  GetId() )
+IMPL_GET_OBJ( CChar, colour,              CChar, setInt32,  GetColour() )
+IMPL_GET_OBJ( CChar, color,               CChar, setInt32,  GetColour() )
+
 bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueArray id, JS::MutableHandleValue vp )
 {
   CChar *gPriv = JS::GetMaybePtrFromReservedSlot<CChar >(obj , 0);
