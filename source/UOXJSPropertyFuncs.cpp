@@ -2007,8 +2007,8 @@ IMPL_SET( CChar, mana,				  CChar, toInt32,   SetMana )
 IMPL_SET( CChar, stamina,             CChar, toInt32,   SetStamina )
 IMPL_SET( CChar, fame,				  CChar, toInt32,   SetFame )
 IMPL_SET( CChar, karma,				  CChar, toInt32,   SetKarma )
-// IMPL_SET( CChar, attack,			  CChar, toInt32,   CalcAttackPower() ) // Do manually
-IMPL_SETS( CChar, canAttack,           CChar, toString, SetCanAttack )
+// IMPL_SET( CChar, attack,			  CChar, toInt32,   CalcAttackPower ) // Do manually
+IMPL_SET( CChar, canAttack,           CChar, toBoolean, SetCanAttack )
 IMPL_SET( CChar, fleeAt,			  CChar, toInt32,   SetFleeAt )
 IMPL_SET( CChar, reattackAt,		  CChar, toInt32,   SetReattackAt )
 IMPL_SET( CChar, brkPeaceChance,	  CChar, toInt32,   SetBrkPeaceChance )
@@ -2016,13 +2016,109 @@ IMPL_SET( CChar, hunger,			  CChar, toInt32,   SetHunger )
 IMPL_SET( CChar, thirst,			  CChar, toInt32,   SetThirst )
 IMPL_SET( CChar, frozen,			  CChar, toInt32,   SetFrozen )
 IMPL_SET( CChar, commandLevel,	      CChar, toInt32,   SetCommandLevel )
-IMPL_SETS( CChar, hasStolen,           CChar, toString, HasStolen )
-IMPL_SETS( CChar, criminal,            CChar, toString, IsCriminal )
-IMPL_SETS( CChar, murderer,            CChar, toString, IsMurderer )
-IMPL_SETS( CChar, innocent,            CChar, toString, IsInnocent )
-IMPL_SETS( CChar, neutral,             CChar, toString, IsNeutral )
 IMPL_SET( CChar, murdercount,	      CChar, toInt32,   SetKills )
 
+IMPL_SET( CChar, dead,				  CChar, toBoolean, SetDead ) // not sure if this correct one SetDead
+IMPL_SET( CChar, npc,				  CChar, toBoolean, SetNpc )
+IMPL_SET( CChar, awake,               CChar, toBoolean, SetAwake )
+// IMPL_SET( CChar, online,              CChar, toBoolean, IsOnline ) // Do manually
+IMPL_SET( CChar, direction,           CChar, toInt32,   SetDir )
+IMPL_SET( CChar, isrunning,           CChar, toBoolean, SetRunning )
+
+IMPL_SET( CChar, spawnserial,         CChar, toInt32,   SetSpawn )
+IMPL_SET( CChar, maxhp,				  CChar, toInt32,   SetFixedMaxHP )
+IMPL_SET( CChar, maxstamina,          CChar, toInt32,   SetFixedMaxStam )
+IMPL_SET( CChar, maxmana,             CChar, toInt32,   SetFixedMaxMana )
+IMPL_SET( CChar, oldwandertype,       CChar, toInt32,   SetOldNpcWander )
+IMPL_SET( CChar, wandertype,          CChar, toInt32,   SetNpcWander )
+// IMPL_SET( CChar, fx1,                 CChar, toInt32,   SetFx ) // Do manually
+// IMPL_SET( CChar, fy1,                 CChar, toInt32,   SetFy ) // Do manually
+// IMPL_SET( CChar, fx2,                 CChar, toInt32,   SetFx ) // Do manually
+// IMPL_SET( CChar, fy2,                 CChar, toInt32,   SetFy ) // Do manually
+IMPL_SET( CChar, fz,                  CChar, toInt32,   SetFz )
+IMPL_SET( CChar, guarded,             CChar, toBoolean, SetGuarded )
+
+IMPL_SET( CChar, tdexterity2,         CChar, toInt32,   SetDexterity2 )
+IMPL_SET( CChar, tintelligence2,      CChar, toInt32,   SetIntelligence2 )
+IMPL_SET( CChar, tstrength2,          CChar, toInt32,   SetStrength2 )
+IMPL_SET( CChar, poison,              CChar, toInt32,   SetPoisoned )
+IMPL_SET( CChar, lightlevel,          CChar, toInt32,   SetFixedLight )
+IMPL_SET( CChar, vulnerable,          CChar, toBoolean, SetInvulnerable )
+IMPL_SET( CChar, hungerstatus,        CChar, toBoolean, SetHunger )
+IMPL_SET( CChar, thirststatus,        CChar, toBoolean, SetThirst )
+IMPL_SET( CChar, lodamage,            CChar, toInt32,   SetLoDamage )
+IMPL_SET( CChar, hidamage,            CChar, toInt32,   SetHiDamage )
+IMPL_SET( CChar, flag,                CChar, toInt32,   SetFlag )
+// IMPL_SET( CChar, atwar,               CChar, toBoolean, IsAtWar ) // Do manually
+IMPL_SET( CChar, spellcast,           CChar, toInt32,   SetSpellCast )
+// IMPL_SET( CChar, iscasting,           CChar, setBoolean, IsCasting() || IsJSCasting() ) // Do manually
+IMPL_SET( CChar, priv,                CChar, toInt32,   SetPriv )
+IMPL_SET( CChar, townpriv,            CChar, toInt32,   SetTownpriv )
+
+IMPL_SET( CChar, hairstyle,           CChar, toInt32,   SetHairStyle )
+IMPL_SET( CChar, haircolour,          CChar, toInt32,   SetHairColour )
+IMPL_SET( CChar, beardstyle,          CChar, toInt32,   SetBeardStyle )
+IMPL_SET( CChar, beardcolour,         CChar, toInt32,   SetBeardColour )
+IMPL_SET( CChar, fontype,             CChar, toInt32,   SetFontType )
+IMPL_SET( CChar, saycolour,           CChar, toInt32,   SetSayColour )
+IMPL_SET( CChar, emotecolour,         CChar, toInt32,   SetEmoteColour )
+IMPL_SET( CChar, racegate,            CChar, toInt32,   SetRaceGate )
+IMPL_SET( CChar, death,               CChar, toInt32,   SetDeaths )
+IMPL_SET( CChar, nextact,             CChar, toInt32,   SetNextAct )
+IMPL_SET( CChar, cell,                CChar, toInt32,   SetCell )				
+IMPL_SET( CChar, allmove,             CChar, toInt32,   SetAllMove )		
+IMPL_SET( CChar, houseicon,           CChar, toBoolean, SetViewHouseAsIcon )	
+IMPL_SET( CChar, spattack,            CChar, toInt32,   SetSpAttack )					
+IMPL_SET( CChar, spdelay,             CChar, toInt32,   SetSpDelay )					
+IMPL_SET( CChar, aitype,              CChar, toInt32,   SetNPCAiType )
+IMPL_SET( CChar, split,               CChar, toInt32,   SetSplit )
+IMPL_SET( CChar, splitchance,         CChar, toInt32,   SetSplitChance )		
+IMPL_SET( CChar, trainer,             CChar, toInt32,   SetCanTrain )
+IMPL_SET( CChar, weight,              CChar, toInt32,   SetWeight )					
+IMPL_SET( CChar, suelched,            CChar, toInt32,   SetSquelched )					
+IMPL_SET( CChar, magicreflect,        CChar, toBoolean, SetTempReflected )			
+IMPL_SET( CChar, permmagicreflect,    CChar, toBoolean, SetPermReflected )		
+IMPL_SET( CChar, tamed,               CChar, toBoolean, SetTamed )					
+IMPL_SET( CChar, tamedhungerrate,     CChar, toInt32,   SetTamedHungerRate )		
+IMPL_SET( CChar, tamedthirstrate,     CChar, toInt32,   SetTamedThirstRate )		
+IMPL_SET( CChar, hungerwildchance,    CChar, toInt32,   SetTamedHungerWildChance )	
+IMPL_SET( CChar, thirstwildchance,    CChar, toInt32,   SetTamedThirstWildChance )
+
+IMPL_SET( CChar, mounted,             CChar, toBoolean, SetMounted )				
+IMPL_SET( CChar, stabled,             CChar, toBoolean, SetStabled )				
+IMPL_SET( CChar, usingpotion,         CChar, toBoolean, SetUsingPotion )			
+IMPL_SET( CChar, stealth,             CChar, toInt32,   SetStealth )					
+IMPL_SET( CChar, skilltotame,         CChar, toInt32,   SetTaming )					
+IMPL_SET( CChar, skilltoprov,         CChar, toInt32,   SetProvoing )					
+IMPL_SET( CChar, skilltopeace,        CChar, toInt32,   SetPeaceing )					
+IMPL_SET( CChar, poisonstrength,      CChar, toInt32,   SetPoisonStrength )		
+IMPL_SET( CChar, ispolymorphed,       CChar, toInt32,   IsPolymorphed )			
+IMPL_SET( CChar, isincognito,         CChar, toBoolean, IsIncognito )				
+IMPL_SET( CChar, isdisguised,         CChar, toBoolean, IsDisguised )				
+IMPL_SET( CChar, canrun,              CChar, toBoolean, SetRun )					
+IMPL_SET( CChar, ismeditating,        CChar, toBoolean, SetMeditating )			
+IMPL_SET( CChar, isgm,                CChar, toBoolean, SetGM )					
+IMPL_SET( CChar, canbroadcast,        CChar, toBoolean, SetBroadcast )			
+IMPL_SET( CChar, singleclickser,      CChar, toBoolean, SetSingClickSer )
+IMPL_SET( CChar, noskilltitles,       CChar, toBoolean, SetSkillTitles )
+IMPL_SET( CChar, isgmpageable,        CChar, toBoolean, SetGMPageable )			
+IMPL_SET( CChar, cansnoop,            CChar, toBoolean, SetSnoop )				
+IMPL_SET( CChar, iscounselor,         CChar, toBoolean, SetCounselor )				
+IMPL_SET( CChar, noneedmana,          CChar, toBoolean, SetNoNeedMana )			
+IMPL_SET( CChar, isdispellable,       CChar, toBoolean, SetDispellable )
+IMPL_SET( CChar, noneedregs,          CChar, toBoolean, SetNoNeedReags )
+// IMPL_SET( CChar, isanimal,            CChar, toBoolean, creatures[gPriv->SetId].IsAnimal ) // Do manually
+// IMPL_SET( CChar, ishuman,             CChar, toBoolean, creatures[gPriv->SetId].IsHuman ) // Do manually
+IMPL_SET( CChar, orgid,               CChar, toInt32,   SetOrgId )
+IMPL_SET( CChar, orgskin,             CChar, toInt32,   SetOrgSkin )
+// IMPL_SET( CChar, npcflag,             CChar, toInt32,   SetNPCFlag ) // Do manually
+IMPL_SET( CChar, npcguild,            CChar, toInt32,   SetNPCGuild )
+IMPL_SET( CChar, ishop,               CChar, toBoolean, SetShop )
+IMPL_SET( CChar, maxloyalty,          CChar, toBoolean, SetMaxLoyalty )
+IMPL_SET( CChar, loyalty,             CChar, toBoolean, SetLoyalty )
+IMPL_SET( CChar, shouldsave,          CChar, toBoolean, ShouldSave )
+
+/*
 bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
   CChar *gPriv = JS::GetMaybePtrFromReservedSlot<CChar >(obj , 0);
@@ -2503,7 +2599,7 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 
   return true;
 }
-
+*/
 
 IMPL_GETS( CRegion, name,              CTownRegion, setString,  GetName().c_str() )
 // DECL_GET_SET( CRegion, mayor )
