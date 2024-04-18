@@ -2065,8 +2065,8 @@ IMPL_SET( CChar, fontType,            CChar, toInt32,   SetFontType )
 IMPL_SET( CChar, sayColour,           CChar, toInt32,   SetSayColour )
 IMPL_SET( CChar, emoteColour,         CChar, toInt32,   SetEmoteColour )
 IMPL_SET( CChar, raceGate,            CChar, toInt32,   SetRaceGate )
-IMPL_SET( CChar, death,               CChar, toInt32,   SetDeaths )
-IMPL_SET( CChar, nextact,             CChar, toInt32,   SetNextAct )
+IMPL_SET( CChar, deaths,              CChar, toInt32,   SetDeaths )
+IMPL_SET( CChar, nextAct,             CChar, toInt32,   SetNextAct )
 IMPL_SET( CChar, cell,                CChar, toInt32,   SetCell )				
 IMPL_SET( CChar, allmove,             CChar, toInt32,   SetAllMove )		
 IMPL_SET( CChar, houseicon,           CChar, toBoolean, SetViewHouseAsIcon )	
@@ -2077,14 +2077,14 @@ IMPL_SET( CChar, split,               CChar, toInt32,   SetSplit )
 IMPL_SET( CChar, splitchance,         CChar, toInt32,   SetSplitChance )		
 IMPL_SET( CChar, trainer,             CChar, toInt32,   SetCanTrain )
 IMPL_SET( CChar, weight,              CChar, toInt32,   SetWeight )					
-IMPL_SET( CChar, suelched,            CChar, toInt32,   SetSquelched )					
-IMPL_SET( CChar, magicreflect,        CChar, toBoolean, SetTempReflected )			
-IMPL_SET( CChar, permmagicreflect,    CChar, toBoolean, SetPermReflected )		
+IMPL_SET( CChar, squelch,             CChar, toInt32,   SetSquelched )					
+IMPL_SET( CChar, magicReflect,        CChar, toBoolean, SetTempReflected )			
+IMPL_SET( CChar, permMagicReflect,    CChar, toBoolean, SetPermReflected )		
 IMPL_SET( CChar, tamed,               CChar, toBoolean, SetTamed )					
-IMPL_SET( CChar, tamedhungerrate,     CChar, toInt32,   SetTamedHungerRate )		
-IMPL_SET( CChar, tamedthirstrate,     CChar, toInt32,   SetTamedThirstRate )		
-IMPL_SET( CChar, hungerwildchance,    CChar, toInt32,   SetTamedHungerWildChance )	
-IMPL_SET( CChar, thirstwildchance,    CChar, toInt32,   SetTamedThirstWildChance )
+IMPL_SET( CChar, tamedHungerRate,     CChar, toInt32,   SetTamedHungerRate )		
+IMPL_SET( CChar, tamedThirstRate,     CChar, toInt32,   SetTamedThirstRate )		
+IMPL_SET( CChar, hungerWildChance,    CChar, toInt32,   SetTamedHungerWildChance )	
+IMPL_SET( CChar, thirstWildChance,    CChar, toInt32,   SetTamedThirstWildChance )
 
 IMPL_SET( CChar, mounted,             CChar, toBoolean, SetMounted )				
 IMPL_SET( CChar, stabled,             CChar, toBoolean, SetStabled )				
@@ -2093,32 +2093,32 @@ IMPL_SET( CChar, stealth,             CChar, toInt32,   SetStealth )
 IMPL_SET( CChar, skilltotame,         CChar, toInt32,   SetTaming )					
 IMPL_SET( CChar, skilltoprov,         CChar, toInt32,   SetProvoing )					
 IMPL_SET( CChar, skilltopeace,        CChar, toInt32,   SetPeaceing )					
-IMPL_SET( CChar, poisonstrength,      CChar, toInt32,   SetPoisonStrength )		
-IMPL_SET( CChar, ispolymorphed,       CChar, toInt32,   IsPolymorphed )			
-IMPL_SET( CChar, isincognito,         CChar, toBoolean, IsIncognito )				
-IMPL_SET( CChar, isdisguised,         CChar, toBoolean, IsDisguised )				
-IMPL_SET( CChar, canrun,              CChar, toBoolean, SetRun )					
-IMPL_SET( CChar, ismeditating,        CChar, toBoolean, SetMeditating )			
-IMPL_SET( CChar, isgm,                CChar, toBoolean, SetGM )					
-IMPL_SET( CChar, canbroadcast,        CChar, toBoolean, SetBroadcast )			
-IMPL_SET( CChar, singleclickser,      CChar, toBoolean, SetSingClickSer )
-IMPL_SET( CChar, noskilltitles,       CChar, toBoolean, SetSkillTitles )
-IMPL_SET( CChar, isgmpageable,        CChar, toBoolean, SetGMPageable )			
-IMPL_SET( CChar, cansnoop,            CChar, toBoolean, SetSnoop )				
-IMPL_SET( CChar, iscounselor,         CChar, toBoolean, SetCounselor )				
-IMPL_SET( CChar, noneedmana,          CChar, toBoolean, SetNoNeedMana )			
-IMPL_SET( CChar, isdispellable,       CChar, toBoolean, SetDispellable )
-IMPL_SET( CChar, noneedregs,          CChar, toBoolean, SetNoNeedReags )
+IMPL_SET( CChar, poisonStrength,      CChar, toInt32,   SetPoisonStrength )		
+IMPL_SET( CChar, isPolymorphed,       CChar, toBoolean, IsPolymorphed )
+IMPL_SET( CChar, isIncognito,         CChar, toBoolean, IsIncognito )				
+IMPL_SET( CChar, isDisguised,         CChar, toBoolean, IsDisguised )				
+IMPL_SET( CChar, canRun,              CChar, toBoolean, SetRun )					
+IMPL_SET( CChar, isMeditating,        CChar, toBoolean, SetMeditating )			
+IMPL_SET( CChar, isGM,                CChar, toBoolean, SetGM )					
+IMPL_SET( CChar, canBroadcast,        CChar, toBoolean, SetBroadcast )			
+IMPL_SET( CChar, singleClickSer,      CChar, toBoolean, SetSingClickSer )
+IMPL_SET( CChar, noSkillTitles,       CChar, toBoolean, SetSkillTitles )
+IMPL_SET( CChar, isGMPageable,        CChar, toBoolean, SetGMPageable )			
+IMPL_SET( CChar, canSnoop,            CChar, toBoolean, SetSnoop )				
+IMPL_SET( CChar, isCounselor,         CChar, toBoolean, SetCounselor )				
+IMPL_SET( CChar, noNeedMana,          CChar, toBoolean, SetNoNeedMana )			
+IMPL_SET( CChar, isDispellable,       CChar, toBoolean, SetDispellable )
+IMPL_SET( CChar, noNeedReags,         CChar, toBoolean, SetNoNeedReags )
 // IMPL_SET( CChar, isanimal,            CChar, toBoolean, creatures[gPriv->SetId].IsAnimal ) // Do manually
 // IMPL_SET( CChar, ishuman,             CChar, toBoolean, creatures[gPriv->SetId].IsHuman ) // Do manually
-IMPL_SET( CChar, orgid,               CChar, toInt32,   SetOrgId )
-IMPL_SET( CChar, orgskin,             CChar, toInt32,   SetOrgSkin )
+IMPL_SET( CChar, orgID,               CChar, toInt32,   SetOrgId )
+IMPL_SET( CChar, orgSkin,             CChar, toInt32,   SetOrgSkin )
 // IMPL_SET( CChar, npcflag,             CChar, toInt32,   SetNPCFlag ) // Do manually
 IMPL_SET( CChar, npcguild,            CChar, toInt32,   SetNPCGuild )
-IMPL_SET( CChar, ishop,               CChar, toBoolean, SetShop )
-IMPL_SET( CChar, maxloyalty,          CChar, toBoolean, SetMaxLoyalty )
-IMPL_SET( CChar, loyalty,             CChar, toBoolean, SetLoyalty )
-IMPL_SET( CChar, shouldsave,          CChar, toBoolean, ShouldSave )
+//IMPL_SET( CChar, isShop,              CChar, toBoolean, SetShop ) // Do manually
+IMPL_SET( CChar, maxLoyalty,          CChar, toInt32,   SetMaxLoyalty )
+IMPL_SET( CChar, loyalty,             CChar, toInt32,   SetLoyalty )
+IMPL_SET( CChar, shouldSave,          CChar, toBoolean, ShouldSave )
 
 /*
 bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
@@ -2416,43 +2416,11 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
           gPriv->SetAttacker( nullptr );
         }
         break;
-      case CCP_RACEGATE:		gPriv->SetRaceGate( static_cast<RACEID>( encaps.toInt() ));	break;
       case CCP_SKILLLOCK:																	break;
-      case CCP_DEATHS:		gPriv->SetDeaths( static_cast<UI16>( encaps.toInt() ));		break;
-      case CCP_NEXTACT:		gPriv->SetNextAct( static_cast<UI08>( encaps.toInt() ));	break;
-      case CCP_CELL:			gPriv->SetCell( static_cast<SI08>( encaps.toInt() ));		break;
-      case CCP_ALLMOVE:		gPriv->SetAllMove( encaps.toBool() );						break;
-      case CCP_HOUSEICONS:	gPriv->SetViewHouseAsIcon( encaps.toBool() );				break;
-      case CCP_SPATTACK:		gPriv->SetSpAttack( static_cast<SI16>( encaps.toInt() ));	break;
-      case CCP_SPDELAY:		gPriv->SetSpDelay( static_cast<SI08>( encaps.toInt() ));	break;
-      case CCP_AITYPE:		gPriv->SetNPCAiType( static_cast<SI16>( encaps.toInt() ));	break;
-      case CCP_SPLIT:			gPriv->SetSplit( static_cast<UI08>( encaps.toInt() ));		break;
-      case CCP_SPLITCHANCE:	gPriv->SetSplitChance( static_cast<UI08>( encaps.toInt() ));break;
       case CCP_HIRELING:		gPriv->SetCanHire( encaps.toBool() );						break;
-      case CCP_TRAINER:		gPriv->SetCanTrain( encaps.toBool() );						break;
-      case CCP_WEIGHT:		gPriv->SetWeight( static_cast<SI32>( encaps.toInt() ));		break;
-      case CCP_SQUELCH:		gPriv->SetSquelched( static_cast<UI08>( encaps.toInt() ));	break;
-      case CCP_MAGICREFLECT:	gPriv->SetTempReflected( encaps.toBool() );					break;
-      case CCP_PERMMAGICREFLECT:	gPriv->SetPermReflected( encaps.toBool() );				break;
-      case CCP_TAMED:			gPriv->SetTamed( encaps.toBool() );							break;
-      case CCP_TAMEDHUNGERRATE: gPriv->SetTamedHungerRate( static_cast<UI16>( encaps.toInt() )); break;
-      case CCP_TAMEDTHIRSTRATE: gPriv->SetTamedThirstRate( static_cast<UI16>( encaps.toInt() )); break;
-      case CCP_THIRSTWILDCHANCE: gPriv->SetTamedThirstWildChance( static_cast<UI08>( encaps.toInt() )); break;
-      case CCP_HUNGERWILDCHANCE: gPriv->SetTamedHungerWildChance( static_cast<UI08>( encaps.toInt() )); break;
       case CCP_FOODLIST:		gPriv->SetFood( encaps.toString() );			break;
-      case CCP_MOUNTED:		gPriv->SetMounted( encaps.toBool() );			break;
-      case CCP_STABLED:		gPriv->SetStabled( encaps.toBool() );			break;
-      case CCP_USINGPOTION:	gPriv->SetUsingPotion( encaps.toBool() );		break;
-      case CCP_STEALTH:		gPriv->SetStealth( encaps.toInt() );			break;
-      case CCP_SKILLTOTAME:	gPriv->SetTaming( encaps.toInt() );				break;
-      case CCP_SKILLTOPROV:	gPriv->SetProvoing( encaps.toInt() );			break;
-      case CCP_SKILLTOPEACE:	gPriv->SetPeaceing( encaps.toInt() );			break;
       case CCP_POISON:		gPriv->SetPoisoned( static_cast<UI08>( encaps.toInt() ));			break;
       case CCP_POISONSTRENGTH:	gPriv->SetPoisonStrength( static_cast<UI08>( encaps.toInt() ));	break;
-      case CCP_ISPOLYMORPHED:	gPriv->IsPolymorphed( encaps.toBool() );		break;
-      case CCP_ISINCOGNITO:	gPriv->IsIncognito( encaps.toBool() );			break;
-      case CCP_ISDISGUISED:	gPriv->IsDisguised( encaps.toBool() );			break;
-      case CCP_CANRUN:		gPriv->SetRun( encaps.toBool() );				break;
       case CCP_ISGUARDED:		gPriv->SetGuarded( encaps.toBool() );			break;
       case CCP_GUARDING:
         if( *vp != JS::CurrentGlobalOrNull )
@@ -2468,19 +2436,6 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
           gPriv->SetGuarding( nullptr );
         }
         break;
-      case CCP_ISMEDITATING:	gPriv->SetMeditating( encaps.toBool() );			break;
-      case CCP_ISGM:			gPriv->SetGM( encaps.toBool() );					break;
-      case CCP_CANBROADCAST:	gPriv->SetBroadcast( encaps.toBool() );				break;
-      case CCP_SINGCLICKSER:	gPriv->SetSingClickSer( encaps.toBool() );			break;
-      case CCP_NOSKILLTITLES:	gPriv->SetSkillTitles( encaps.toBool() );			break;
-      case CCP_ISGMPAGEABLE:	gPriv->SetGMPageable( encaps.toBool() );			break;
-      case CCP_CANSNOOP:		gPriv->SetSnoop( encaps.toBool() );					break;
-      case CCP_ISCOUNSELOR:	gPriv->SetCounselor( encaps.toBool() );				break;
-      case CCP_NONEEDMANA:	gPriv->SetNoNeedMana( encaps.toBool() );			break;
-      case CCP_ISDISPELLABLE:	gPriv->SetDispellable( encaps.toBool() );			break;
-      case CCP_NONEEDREAGS:	gPriv->SetNoNeedReags( encaps.toBool() );			break;
-      case CCP_ORGID:			gPriv->SetOrgId( static_cast<UI16>( encaps.toInt() ));		break;
-      case CCP_ORGSKIN:		gPriv->SetOrgSkin( static_cast<UI16>( encaps.toInt() ));	break;
       case CCP_NPCFLAG:
         gPriv->SetNPCFlag( static_cast<cNPC_FLAG>( encaps.toInt() ));
         UpdateFlag( gPriv );
@@ -2506,9 +2461,6 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
           gPriv->Update();
         }
         break;
-      case CCP_MAXLOYALTY:	gPriv->SetMaxLoyalty( static_cast<UI16>( encaps.toInt() ));	break;
-      case CCP_LOYALTY:		gPriv->SetLoyalty( static_cast<UI16>( encaps.toInt() ));	break;
-      case CCP_SHOULDSAVE:	gPriv->ShouldSave( encaps.toBool() );			break;
       case CCP_PARTYLOOTABLE:
       {
         Party *toGet = PartyFactory::GetSingleton().Get( gPriv );
