@@ -1121,7 +1121,7 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
           // If null value was provided, clear script triggers on object
           gPriv->ClearScriptTriggers();
         }
-        break; 
+        break;
       }
       case CIP_WORLDNUMBER:
         if( !Map->InsideValidWorld( gPriv->GetX(), gPriv->GetY(), static_cast<UI08>( encaps.toInt() )))
@@ -1277,7 +1277,7 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
         }
         break;
       }
-      case CIP_ATT:			
+      case CIP_ATT:
         gPriv->SetLoDamage( static_cast<SI16>( encaps.toInt() ));
         gPriv->SetHiDamage( static_cast<SI16>( encaps.toInt() ));
         break;
@@ -1403,7 +1403,7 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
       case CIP_ISPUBLIC:
         if( gPriv->GetObjType() == OT_MULTI )
         {
-          ( static_cast<CMultiObj *>( gPriv ))->SetPublicStatus( encaps.toBool() );	
+          ( static_cast<CMultiObj *>( gPriv ))->SetPublicStatus( encaps.toBool() );
         }
         break;
       case CIP_BUILDTIMESTAMP:
@@ -1457,169 +1457,169 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
 }
 */
 
-IMPL_GET_OBJ( CChar, accountNum,          CChar, setInt32,   GetAccountNum() )
+IMPL_GET_OBJ( CCharacter, accountNum,          CChar, setInt32,   GetAccountNum() )
 //IMPL_GET_OBJ( CChar, account,             CChar, setInt32,   GetAccount() // Do manually
-IMPL_GET_OBJ( CChar, createdOn,           CChar, setInt32,   GetCreatedOn() )
-IMPL_GET_OBJ( CChar, playTime,            CChar, setInt32,   GetPlayTime() )
-IMPL_GETS_OBJ(CChar, sectionID,           CChar, setString,  GetSectionId().c_str() )
-IMPL_GETS_OBJ(CChar, name,                CChar, setString,  GetName().c_str() )
-IMPL_GETS_OBJ(CChar, orgName,             CChar, setString,  GetOrgName().c_str() )
-IMPL_GETS_OBJ(CChar, title,               CChar, setString,  GetTitle().c_str() )
-IMPL_GET_OBJ( CChar, x,                   CChar, setInt32,   GetX() )
-IMPL_GET_OBJ( CChar, y,                   CChar, setInt32,   GetY() )
-IMPL_GET_OBJ( CChar, z,                   CChar, setInt32,   GetZ() )
-IMPL_GET_OBJ( CChar, oldX,                CChar, setInt32,   GetOldLocation().x )
-IMPL_GET_OBJ( CChar, oldY,                CChar, setInt32,   GetOldLocation().y )
-IMPL_GET_OBJ( CChar, oldZ,                CChar, setInt32,   GetOldLocation().z )
-IMPL_GET_OBJ( CChar, id,                  CChar, setInt32,   GetId() )
-IMPL_GET_OBJ( CChar, colour,              CChar, setInt32,   GetColour() )
-IMPL_GET_OBJ( CChar, color,               CChar, setInt32,   GetColour() )
-IMPL_GET_OBJ( CChar, controlSlots,        CChar, setInt32,   GetControlSlots() )
-IMPL_GET_OBJ( CChar, controlSlotsUsed,    CChar, setInt32,   GetControlSlotsUsed() )
-IMPL_GET_OBJ( CChar, orneriness,		  CChar, setInt32,   GetOrneriness() )
-IMPL_GET_OBJ( CChar, visible,		      CChar, setInt32,   GetVisible() )
-IMPL_GET_OBJ( CChar, serial,              CChar, setInt32,   GetSerial() )
-IMPL_GET_OBJ( CChar, health,              CChar, setInt32,   GetHP() )
+IMPL_GET_OBJ( CCharacter, createdOn,           CChar, setInt32,   GetCreatedOn() )
+IMPL_GET_OBJ( CCharacter, playTime,            CChar, setInt32,   GetPlayTime() )
+IMPL_GETS_OBJ(CCharacter, sectionID,           CChar, setString,  GetSectionId().c_str() )
+IMPL_GETS_OBJ(CCharacter, name,                CChar, setString,  GetName().c_str() )
+IMPL_GETS_OBJ(CCharacter, origName,            CChar, setString,  GetOrgName().c_str() )
+IMPL_GETS_OBJ(CCharacter, title,               CChar, setString,  GetTitle().c_str() )
+IMPL_GET_OBJ( CCharacter, x,                   CChar, setInt32,   GetX() )
+IMPL_GET_OBJ( CCharacter, y,                   CChar, setInt32,   GetY() )
+IMPL_GET_OBJ( CCharacter, z,                   CChar, setInt32,   GetZ() )
+IMPL_GET_OBJ( CCharacter, oldX,                CChar, setInt32,   GetOldLocation().x )
+IMPL_GET_OBJ( CCharacter, oldY,                CChar, setInt32,   GetOldLocation().y )
+IMPL_GET_OBJ( CCharacter, oldZ,                CChar, setInt32,   GetOldLocation().z )
+IMPL_GET_OBJ( CCharacter, id,                  CChar, setInt32,   GetId() )
+IMPL_GET_OBJ( CCharacter, colour,              CChar, setInt32,   GetColour() )
+IMPL_GET_OBJ( CCharacter, color,               CChar, setInt32,   GetColour() )
+IMPL_GET_OBJ( CCharacter, controlSlots,        CChar, setInt32,   GetControlSlots() )
+IMPL_GET_OBJ( CCharacter, controlSlotsUsed,    CChar, setInt32,   GetControlSlotsUsed() )
+IMPL_GET_OBJ( CCharacter, orneriness,		  CChar, setInt32,   GetOrneriness() )
+IMPL_GET_OBJ( CCharacter, visible,		      CChar, setInt32,   GetVisible() )
+IMPL_GET_OBJ( CCharacter, serial,              CChar, setInt32,   GetSerial() )
+IMPL_GET_OBJ( CCharacter, health,              CChar, setInt32,   GetHP() )
 // IMPL_GET_OBJ( CChar, scripttrigger,       CChar, setInt32, ) // Do manually
 // IMPL_GET_OBJ( CChar, scriptTriggers,      CChar, setInt32, ) // Do manually
-IMPL_GET_OBJ( CChar, worldnumber,         CChar, setInt32,   WorldNumber() )
-IMPL_GET_OBJ( CChar, instanceID,          CChar, setInt32,   GetInstanceId() )
-IMPL_GET_OBJ( CChar, strength,            CChar, setInt32,   GetStrength() )
-IMPL_GET_OBJ( CChar, dexterity,           CChar, setInt32,   GetDexterity() )
-IMPL_GET_OBJ( CChar, intelligence,        CChar, setInt32,   GetIntelligence() )
-IMPL_GET_OBJ( CChar, actualstrength,      CChar, setInt32,   ActualStrength() )
-IMPL_GET_OBJ( CChar, actualdexterity,     CChar, setInt32,   ActualDexterity() )
-IMPL_GET_OBJ( CChar, actualintelligence,  CChar, setInt32,   ActualIntelligence() )
-IMPL_GET_OBJ( CChar, mana,				  CChar, setInt32,   GetMana() )
-IMPL_GET_OBJ( CChar, stamina,             CChar, setInt32,   GetStamina() )
-IMPL_GET_OBJ( CChar, fame,				  CChar, setInt32,   GetFame() )
-IMPL_GET_OBJ( CChar, karma,				  CChar, setInt32,   GetKarma() )
+IMPL_GET_OBJ( CCharacter, worldnumber,         CChar, setInt32,   WorldNumber() )
+IMPL_GET_OBJ( CCharacter, instanceID,          CChar, setInt32,   GetInstanceId() )
+IMPL_GET_OBJ( CCharacter, strength,            CChar, setInt32,   GetStrength() )
+IMPL_GET_OBJ( CCharacter, dexterity,           CChar, setInt32,   GetDexterity() )
+IMPL_GET_OBJ( CCharacter, intelligence,        CChar, setInt32,   GetIntelligence() )
+IMPL_GET_OBJ( CCharacter, actualStrength,      CChar, setInt32,   ActualStrength() )
+IMPL_GET_OBJ( CCharacter, actualDexterity,     CChar, setInt32,   ActualDexterity() )
+IMPL_GET_OBJ( CCharacter, actualIntelligence,  CChar, setInt32,   ActualIntelligence() )
+IMPL_GET_OBJ( CCharacter, mana,				  CChar, setInt32,   GetMana() )
+IMPL_GET_OBJ( CCharacter, stamina,             CChar, setInt32,   GetStamina() )
+IMPL_GET_OBJ( CCharacter, fame,				  CChar, setInt32,   GetFame() )
+IMPL_GET_OBJ( CCharacter, karma,				  CChar, setInt32,   GetKarma() )
 // IMPL_GET_OBJ( CChar, attack,			  CChar, setInt32,   CalcAttackPower() ) // Do manually
-IMPL_GET_OBJ( CChar, canAttack,           CChar, setBoolean, GetCanAttack() )
-IMPL_GET_OBJ( CChar, fleeAt,			  CChar, setInt32,   GetFleeAt() )
-IMPL_GET_OBJ( CChar, reattackAt,		  CChar, setInt32,   GetReattackAt() )
-IMPL_GET_OBJ( CChar, brkPeaceChance,	  CChar, setInt32,   GetBrkPeaceChance() )
-IMPL_GET_OBJ( CChar, hunger,			  CChar, setInt32,   GetHunger() )
-IMPL_GET_OBJ( CChar, thirst,			  CChar, setInt32,   GetThirst() )
-IMPL_GET_OBJ( CChar, frozen,			  CChar, setInt32,   IsFrozen() )
-IMPL_GET_OBJ( CChar, commandLevel,	      CChar, setInt32,   GetCommandLevel() )
-IMPL_GET_OBJ( CChar, hasStolen,           CChar, setBoolean, HasStolen() )
-IMPL_GET_OBJ( CChar, criminal,            CChar, setBoolean, IsCriminal() )
-IMPL_GET_OBJ( CChar, murderer,            CChar, setBoolean, IsMurderer() )
-IMPL_GET_OBJ( CChar, innocent,            CChar, setBoolean, IsInnocent() )
-IMPL_GET_OBJ( CChar, neutral,             CChar, setBoolean, IsNeutral() )
-IMPL_GET_OBJ( CChar, murdercount,	      CChar, setInt32,   GetKills() )
+IMPL_GET_OBJ( CCharacter, canAttack,           CChar, setBoolean, GetCanAttack() )
+IMPL_GET_OBJ( CCharacter, fleeAt,			  CChar, setInt32,   GetFleeAt() )
+IMPL_GET_OBJ( CCharacter, reAttackAt,		  CChar, setInt32,   GetReattackAt() )
+IMPL_GET_OBJ( CCharacter, brkPeaceChance,	  CChar, setInt32,   GetBrkPeaceChance() )
+IMPL_GET_OBJ( CCharacter, hunger,			  CChar, setInt32,   GetHunger() )
+IMPL_GET_OBJ( CCharacter, thirst,			  CChar, setInt32,   GetThirst() )
+IMPL_GET_OBJ( CCharacter, frozen,			  CChar, setInt32,   IsFrozen() )
+IMPL_GET_OBJ( CCharacter, commandLevel,	      CChar, setInt32,   GetCommandLevel() )
+IMPL_GET_OBJ( CCharacter, hasStolen,           CChar, setBoolean, HasStolen() )
+IMPL_GET_OBJ( CCharacter, criminal,            CChar, setBoolean, IsCriminal() )
+IMPL_GET_OBJ( CCharacter, murderer,            CChar, setBoolean, IsMurderer() )
+IMPL_GET_OBJ( CCharacter, innocent,            CChar, setBoolean, IsInnocent() )
+IMPL_GET_OBJ( CCharacter, neutral,             CChar, setBoolean, IsNeutral() )
+IMPL_GET_OBJ( CCharacter, murdercount,	      CChar, setInt32,   GetKills() )
 
-IMPL_GET_OBJ( CChar, dead,				  CChar, setBoolean, IsDead() )
-IMPL_GET_OBJ( CChar, npc,				  CChar, setBoolean, IsNpc() )
-IMPL_GET_OBJ( CChar, awake,               CChar, setBoolean, IsAwake() )
+IMPL_GET_OBJ( CCharacter, dead,				  CChar, setBoolean, IsDead() )
+IMPL_GET_OBJ( CCharacter, npc,				  CChar, setBoolean, IsNpc() )
+IMPL_GET_OBJ( CCharacter, isAwake,             CChar, setBoolean, IsAwake() )
 // IMPL_GET_OBJ( CChar, online,              CChar, setBoolean, IsOnline() ) // Do manually
-IMPL_GET_OBJ( CChar, direction,           CChar, setInt32,   GetDir() )
-IMPL_GET_OBJ( CChar, isrunning,           CChar, setBoolean, GetRunning() )
+IMPL_GET_OBJ( CCharacter, direction,           CChar, setInt32,   GetDir() )
+IMPL_GET_OBJ( CCharacter, isRunning,           CChar, setBoolean, GetRunning() )
 
 
-IMPL_GET_OBJ( CChar, spawnserial,         CChar, setInt32,   GetSpawn() )
-IMPL_GET_OBJ( CChar, maxhp,				  CChar, setInt32,   GetMaxHP() )
-IMPL_GET_OBJ( CChar, maxstamina,          CChar, setInt32,   GetMaxStam() )
-IMPL_GET_OBJ( CChar, maxmana,             CChar, setInt32,   GetMaxMana() )
-IMPL_GET_OBJ( CChar, oldwandertype,       CChar, setInt32,   GetOldNpcWander() )
-IMPL_GET_OBJ( CChar, wandertype,          CChar, setInt32,   GetNpcWander() )
-IMPL_GET_OBJ( CChar, fx1,                 CChar, setInt32,   GetFx( 0 ))
-IMPL_GET_OBJ( CChar, fy1,                 CChar, setInt32,   GetFy( 0 ))
-IMPL_GET_OBJ( CChar, fx2,                 CChar, setInt32,   GetFx( 1 ))
-IMPL_GET_OBJ( CChar, fy2,                 CChar, setInt32,   GetFy( 1 ))
-IMPL_GET_OBJ( CChar, fz,                  CChar, setInt32,   GetFz() )
-IMPL_GET_OBJ( CChar, isonhorse,           CChar, setBoolean, IsOnHorse() )
-IMPL_GET_OBJ( CChar, isflying,            CChar, setBoolean, IsFlying() )
-IMPL_GET_OBJ( CChar, isguarded,           CChar, setBoolean, IsGuarded() )
+IMPL_GET_OBJ( CCharacter, spawnSerial,         CChar, setInt32,   GetSpawn() )
+IMPL_GET_OBJ( CCharacter, maxhp,				  CChar, setInt32,   GetMaxHP() )
+IMPL_GET_OBJ( CCharacter, maxstamina,          CChar, setInt32,   GetMaxStam() )
+IMPL_GET_OBJ( CCharacter, maxmana,             CChar, setInt32,   GetMaxMana() )
+IMPL_GET_OBJ( CCharacter, oldWandertype,       CChar, setInt32,   GetOldNpcWander() )
+IMPL_GET_OBJ( CCharacter, wandertype,          CChar, setInt32,   GetNpcWander() )
+IMPL_GET_OBJ( CCharacter, fx1,                 CChar, setInt32,   GetFx( 0 ))
+IMPL_GET_OBJ( CCharacter, fy1,                 CChar, setInt32,   GetFy( 0 ))
+IMPL_GET_OBJ( CCharacter, fx2,                 CChar, setInt32,   GetFx( 1 ))
+IMPL_GET_OBJ( CCharacter, fy2,                 CChar, setInt32,   GetFy( 1 ))
+IMPL_GET_OBJ( CCharacter, fz,                  CChar, setInt32,   GetFz() )
+IMPL_GET_OBJ( CCharacter, isonhorse,           CChar, setBoolean, IsOnHorse() )
+IMPL_GET_OBJ( CCharacter, isFlying,            CChar, setBoolean, IsFlying() )
+IMPL_GET_OBJ( CCharacter, isGuarded,           CChar, setBoolean, IsGuarded() )
 
-IMPL_GET_OBJ( CChar, tdexterity2,         CChar, setInt32,   GetDexterity2() )
-IMPL_GET_OBJ( CChar, tintelligence2,      CChar, setInt32,   GetIntelligence2() )
-IMPL_GET_OBJ( CChar, tstrength2,          CChar, setInt32,   GetStrength2() )
-IMPL_GET_OBJ( CChar, poison,              CChar, setInt32,   GetPoisoned() )
-IMPL_GET_OBJ( CChar, lightlevel,          CChar, setInt32,   GetFixedLight() )
-IMPL_GET_OBJ( CChar, vulnerable,          CChar, setBoolean, IsInvulnerable() )
-IMPL_GET_OBJ( CChar, hungerstatus,        CChar, setBoolean, WillHunger() )
-IMPL_GET_OBJ( CChar, thirststatus,        CChar, setBoolean, WillThirst() )
-IMPL_GET_OBJ( CChar, lodamage,            CChar, setInt32,   GetLoDamage() )
-IMPL_GET_OBJ( CChar, hidamage,            CChar, setInt32,   GetHiDamage() )
-IMPL_GET_OBJ( CChar, flag,                CChar, setInt32,   GetFlag() )
-IMPL_GET_OBJ( CChar, atwar,               CChar, setBoolean, IsAtWar() )
-IMPL_GET_OBJ( CChar, spellcast,           CChar, setInt32,   GetSpellCast() )
-// IMPL_GET_OBJ( CChar, iscasting,           CChar, setBoolean, IsCasting() || IsJSCasting() ) // Do manually
-IMPL_GET_OBJ( CChar, priv,                CChar, setInt32,   GetPriv() )
-IMPL_GET_OBJ( CChar, townpriv,            CChar, setInt32,   GetTownPriv() )
+IMPL_GET_OBJ( CCharacter, tempdex,             CChar, setInt32,   GetDexterity2() )
+IMPL_GET_OBJ( CCharacter, tempint,             CChar, setInt32,   GetIntelligence2() )
+IMPL_GET_OBJ( CCharacter, tempstr,             CChar, setInt32,   GetStrength2() )
+IMPL_GET_OBJ( CCharacter, poison,              CChar, setInt32,   GetPoisoned() )
+IMPL_GET_OBJ( CCharacter, lightlevel,          CChar, setInt32,   GetFixedLight() )
+IMPL_GET_OBJ( CCharacter, vulnerable,          CChar, setBoolean, IsInvulnerable() )
+IMPL_GET_OBJ( CCharacter, willhunger,          CChar, setBoolean, WillHunger() )
+IMPL_GET_OBJ( CCharacter, willthurst,          CChar, setBoolean, WillThirst() )
+IMPL_GET_OBJ( CCharacter, lodamage,            CChar, setInt32,   GetLoDamage() )
+IMPL_GET_OBJ( CCharacter, hidamage,            CChar, setInt32,   GetHiDamage() )
+IMPL_GET_OBJ( CCharacter, flag,                CChar, setInt32,   GetFlag() )
+IMPL_GET_OBJ( CCharacter, atWar,               CChar, setBoolean, IsAtWar() )
+IMPL_GET_OBJ( CCharacter, spellCast,           CChar, setInt32,   GetSpellCast() )
+// IMPL_GET_OBJ( CChar, isCasting,           CChar, setBoolean, IsCasting() || IsJSCasting() ) // Do manually
+IMPL_GET_OBJ( CCharacter, priv,                CChar, setInt32,   GetPriv() )
+IMPL_GET_OBJ( CCharacter, townPriv,            CChar, setInt32,   GetTownPriv() )
 
-IMPL_GET_OBJ( CChar, hairstyle,           CChar, setInt32,   GetHairStyle() )
-IMPL_GET_OBJ( CChar, haircolour,          CChar, setInt32,   GetHairColour() )
-IMPL_GET_OBJ( CChar, beardstyle,          CChar, setInt32,   GetBeardStyle() )
-IMPL_GET_OBJ( CChar, beardcolour,         CChar, setInt32,   GetBeardColour() )
-IMPL_GET_OBJ( CChar, fontype,             CChar, setInt32,   GetFontType() )
-IMPL_GET_OBJ( CChar, saycolour,           CChar, setInt32,   GetSayColour() )
-IMPL_GET_OBJ( CChar, emotecolour,         CChar, setInt32,   GetEmoteColour() )
-IMPL_GET_OBJ( CChar, racegate,            CChar, setInt32,   GetRaceGate() )
-IMPL_GET_OBJ( CChar, death,               CChar, setInt32,   GetDeaths() )
-IMPL_GET_OBJ( CChar, ownercount,          CChar, setInt32,   GetOwnerCount() )
-IMPL_GET_OBJ( CChar, nextact,             CChar, setInt32,   GetNextAct() )					
-IMPL_GET_OBJ( CChar, petcount,            CChar, setInt32,   GetPetList()->Num() )
-IMPL_GET_OBJ( CChar, followercount,       CChar, setInt32,   GetFollowerList()->Num() )	
-IMPL_GET_OBJ( CChar, owneditemscount,     CChar, setInt32,   GetOwnedItems()->size() )	
-IMPL_GET_OBJ( CChar, cell,                CChar, setInt32,   GetCell() )						
-IMPL_GET_OBJ( CChar, allmove,             CChar, setInt32,   AllMove() )					
-IMPL_GET_OBJ( CChar, houseicon,           CChar, setBoolean, ViewHouseAsIcon() )			
-IMPL_GET_OBJ( CChar, spattack,            CChar, setInt32,   GetSpAttack() )					
-IMPL_GET_OBJ( CChar, spdelay,             CChar, setInt32,   GetSpDelay() )					
-IMPL_GET_OBJ( CChar, aitype,              CChar, setInt32,   GetNpcAiType() )				
-IMPL_GET_OBJ( CChar, split,               CChar, setInt32,   GetSplit() )					
-IMPL_GET_OBJ( CChar, splitchance,         CChar, setInt32,   GetSplitChance() )				
-IMPL_GET_OBJ( CChar, trainer,             CChar, setInt32,   CanTrain() )				
-IMPL_GET_OBJ( CChar, hirling,             CChar, setInt32,   CanBeHired() )				
-IMPL_GET_OBJ( CChar, weight,              CChar, setInt32,   GetWeight() )					
-IMPL_GET_OBJ( CChar, suelched,            CChar, setInt32,   GetSquelched() )				
-IMPL_GET_OBJ( CChar, isjailed,            CChar, setBoolean, IsJailed() )				
-IMPL_GET_OBJ( CChar, magicreflect,        CChar, setBoolean, IsTempReflected() )			
-IMPL_GET_OBJ( CChar, permmagicreflect,    CChar, setBoolean, IsPermReflected() )		
-IMPL_GET_OBJ( CChar, tamed,               CChar, setBoolean, IsTamed() )					
-IMPL_GET_OBJ( CChar, tamedhungerrate,     CChar, setInt32,   GetTamedHungerRate() )		
-IMPL_GET_OBJ( CChar, tamedthirstrate,     CChar, setInt32,   GetTamedThirstRate() )		
-IMPL_GET_OBJ( CChar, hungerwildchance,    CChar, setInt32,   GetTamedHungerWildChance() )	
-IMPL_GET_OBJ( CChar, thirstwildchance,    CChar, setInt32,   GetTamedThirstWildChance() )	
+IMPL_GET_OBJ( CCharacter, hairStyle,           CChar, setInt32,   GetHairStyle() )
+IMPL_GET_OBJ( CCharacter, hairColour,          CChar, setInt32,   GetHairColour() )
+IMPL_GET_OBJ( CCharacter, beardStyle,          CChar, setInt32,   GetBeardStyle() )
+IMPL_GET_OBJ( CCharacter, beardColour,         CChar, setInt32,   GetBeardColour() )
+IMPL_GET_OBJ( CCharacter, fontType,            CChar, setInt32,   GetFontType() )
+IMPL_GET_OBJ( CCharacter, sayColour,           CChar, setInt32,   GetSayColour() )
+IMPL_GET_OBJ( CCharacter, emoteColour,         CChar, setInt32,   GetEmoteColour() )
+IMPL_GET_OBJ( CCharacter, raceGate,            CChar, setInt32,   GetRaceGate() )
+IMPL_GET_OBJ( CCharacter, deaths,              CChar, setInt32,   GetDeaths() )
+IMPL_GET_OBJ( CCharacter, ownerCount,          CChar, setInt32,   GetOwnerCount() )
+IMPL_GET_OBJ( CCharacter, nextAct,             CChar, setInt32,   GetNextAct() )
+IMPL_GET_OBJ( CCharacter, petCount,            CChar, setInt32,   GetPetList()->Num() )
+IMPL_GET_OBJ( CCharacter, followerCount,       CChar, setInt32,   GetFollowerList()->Num() )
+IMPL_GET_OBJ( CCharacter, ownedItemsCount,     CChar, setInt32,   GetOwnedItems()->size() )
+IMPL_GET_OBJ( CCharacter, cell,                CChar, setInt32,   GetCell() )
+IMPL_GET_OBJ( CCharacter, allmove,             CChar, setInt32,   AllMove() )
+IMPL_GET_OBJ( CCharacter, houseicon,           CChar, setBoolean, ViewHouseAsIcon() )
+IMPL_GET_OBJ( CCharacter, spattack,            CChar, setInt32,   GetSpAttack() )
+IMPL_GET_OBJ( CCharacter, spdelay,             CChar, setInt32,   GetSpDelay() )
+IMPL_GET_OBJ( CCharacter, aitype,              CChar, setInt32,   GetNpcAiType() )
+IMPL_GET_OBJ( CCharacter, split,               CChar, setInt32,   GetSplit() )
+IMPL_GET_OBJ( CCharacter, splitchance,         CChar, setInt32,   GetSplitChance() )
+IMPL_GET_OBJ( CCharacter, trainer,             CChar, setInt32,   CanTrain() )
+IMPL_GET_OBJ( CCharacter, hirling,             CChar, setInt32,   CanBeHired() )
+IMPL_GET_OBJ( CCharacter, weight,              CChar, setInt32,   GetWeight() )
+IMPL_GET_OBJ( CCharacter, squelch,             CChar, setInt32,   GetSquelched() )
+IMPL_GET_OBJ( CCharacter, isJailed,            CChar, setBoolean, IsJailed() )
+IMPL_GET_OBJ( CCharacter, magicReflect,        CChar, setBoolean, IsTempReflected() )
+IMPL_GET_OBJ( CCharacter, permMagicReflect,    CChar, setBoolean, IsPermReflected() )
+IMPL_GET_OBJ( CCharacter, tamed,               CChar, setBoolean, IsTamed() )
+IMPL_GET_OBJ( CCharacter, tamedHungerRate,     CChar, setInt32,   GetTamedHungerRate() )
+IMPL_GET_OBJ( CCharacter, tamedThirstRate,     CChar, setInt32,   GetTamedThirstRate() )
+IMPL_GET_OBJ( CCharacter, hungerWildChance,    CChar, setInt32,   GetTamedHungerWildChance() )
+IMPL_GET_OBJ( CCharacter, thirstWildChance,    CChar, setInt32,   GetTamedThirstWildChance() )
 
-IMPL_GET_OBJ( CChar, mounted,             CChar, setBoolean, GetMounted() )				
-IMPL_GET_OBJ( CChar, stabled,             CChar, setBoolean, GetStabled() )				
-IMPL_GET_OBJ( CChar, usingpotion,         CChar, setBoolean, IsUsingPotion() )			
-IMPL_GET_OBJ( CChar, stealth,             CChar, setInt32,   GetStealth() )					
-IMPL_GET_OBJ( CChar, skilltotame,         CChar, setInt32,   GetTaming() )					
-IMPL_GET_OBJ( CChar, skilltoprov,         CChar, setInt32,   GetProvoing() )					
-IMPL_GET_OBJ( CChar, skilltopeace,        CChar, setInt32,   GetPeaceing() )					
-IMPL_GET_OBJ( CChar, poisonstrength,      CChar, setInt32,   GetPoisonStrength() )		
-IMPL_GET_OBJ( CChar, ispolymorphed,       CChar, setInt32,   IsPolymorphed() )			
-IMPL_GET_OBJ( CChar, isincognito,         CChar, setBoolean, IsIncognito() )				
-IMPL_GET_OBJ( CChar, isdisguised,         CChar, setBoolean, IsDisguised() )				
-IMPL_GET_OBJ( CChar, canrun,              CChar, setBoolean, CanRun() )					
-IMPL_GET_OBJ( CChar, ismeditating,        CChar, setBoolean, IsMeditating() )			
-IMPL_GET_OBJ( CChar, isgm,                CChar, setBoolean, IsGM() )					
-IMPL_GET_OBJ( CChar, canbroadcast,        CChar, setBoolean, CanBroadcast() )			
-IMPL_GET_OBJ( CChar, singleclickser,      CChar, setBoolean, GetSingClickSer() )
-IMPL_GET_OBJ( CChar, noskilltitles,       CChar, setBoolean, NoSkillTitles() )
-IMPL_GET_OBJ( CChar, isgmpageable,        CChar, setBoolean, IsGMPageable() )			
-IMPL_GET_OBJ( CChar, cansnoop,            CChar, setBoolean, CanSnoop() )				
-IMPL_GET_OBJ( CChar, iscounselor,         CChar, setBoolean, IsCounselor() )				
-IMPL_GET_OBJ( CChar, noneedmana,          CChar, setBoolean, NoNeedMana() )			
-IMPL_GET_OBJ( CChar, isdispellable,       CChar, setBoolean, IsDispellable() )
-IMPL_GET_OBJ( CChar, noneedregs,          CChar, setBoolean, NoNeedReags() )
-// IMPL_GET_OBJ( CChar, isanimal,            CChar, setBoolean, creatures[gPriv->GetId()].IsAnimal() ) // Do manually
-// IMPL_GET_OBJ( CChar, ishuman,             CChar, setBoolean, creatures[gPriv->GetId()].IsHuman() ) // Do manually
-IMPL_GET_OBJ( CChar, orgid,               CChar, setInt32,   GetOrgId() )
-IMPL_GET_OBJ( CChar, orgskin,             CChar, setInt32,   GetOrgSkin() )
-IMPL_GET_OBJ( CChar, npcflag,             CChar, setInt32,   GetNPCFlag() )
-IMPL_GET_OBJ( CChar, npcguild,            CChar, setInt32,   GetNPCGuild() )
-IMPL_GET_OBJ( CChar, ishop,               CChar, setBoolean, IsShop() )
-IMPL_GET_OBJ( CChar, maxloyalty,          CChar, setBoolean, GetMaxLoyalty() )
-IMPL_GET_OBJ( CChar, loyalty,             CChar, setBoolean, GetLoyalty() )
-IMPL_GET_OBJ( CChar, shouldsave,          CChar, setBoolean, ShouldSave() )
-IMPL_GET_OBJ( CChar, houseowned,          CChar, setBoolean, CountHousesOwned( false ))
-IMPL_GET_OBJ( CChar, housecoowned,        CChar, setBoolean, CountHousesOwned( true ))
+IMPL_GET_OBJ( CCharacter, mounted,             CChar, setBoolean, GetMounted() )
+IMPL_GET_OBJ( CCharacter, stabled,             CChar, setBoolean, GetStabled() )
+IMPL_GET_OBJ( CCharacter, isUsingPotion,       CChar, setBoolean, IsUsingPotion() )
+IMPL_GET_OBJ( CCharacter, stealth,             CChar, setInt32,   GetStealth() )
+IMPL_GET_OBJ( CCharacter, skillToTame,         CChar, setInt32,   GetTaming() )
+IMPL_GET_OBJ( CCharacter, skillToProv,         CChar, setInt32,   GetProvoing() )
+IMPL_GET_OBJ( CCharacter, skillToPeace,        CChar, setInt32,   GetPeaceing() )
+IMPL_GET_OBJ( CCharacter, poisonStrength,      CChar, setInt32,   GetPoisonStrength() )
+IMPL_GET_OBJ( CCharacter, isPolymorphed,       CChar, setInt32,   IsPolymorphed() )
+IMPL_GET_OBJ( CCharacter, isIncognito,         CChar, setBoolean, IsIncognito() )
+IMPL_GET_OBJ( CCharacter, isDisguised,         CChar, setBoolean, IsDisguised() )
+IMPL_GET_OBJ( CCharacter, canRun,              CChar, setBoolean, CanRun() )
+IMPL_GET_OBJ( CCharacter, isMeditating,        CChar, setBoolean, IsMeditating() )
+IMPL_GET_OBJ( CCharacter, isGM,                CChar, setBoolean, IsGM() )
+IMPL_GET_OBJ( CCharacter, canBroadcast,        CChar, setBoolean, CanBroadcast() )
+IMPL_GET_OBJ( CCharacter, singleClickSer,      CChar, setBoolean, GetSingClickSer() )
+IMPL_GET_OBJ( CCharacter, noKkillTitles,       CChar, setBoolean, NoSkillTitles() )
+IMPL_GET_OBJ( CCharacter, isGMPageable,        CChar, setBoolean, IsGMPageable() )
+IMPL_GET_OBJ( CCharacter, canSnoop,            CChar, setBoolean, CanSnoop() )
+IMPL_GET_OBJ( CCharacter, isCounselor,         CChar, setBoolean, IsCounselor() )
+IMPL_GET_OBJ( CCharacter, noNeedMana,          CChar, setBoolean, NoNeedMana() )
+IMPL_GET_OBJ( CCharacter, isDispellable,       CChar, setBoolean, IsDispellable() )
+IMPL_GET_OBJ( CCharacter, noNeedReags,         CChar, setBoolean, NoNeedReags() )
+// IMPL_GET_OBJ( CCharacter, isAnimal,            CChar, setBoolean, creatures[gPriv->GetId()].IsAnimal() ) // Do manually
+// IMPL_GET_OBJ( CCharacter, isHuman,             CChar, setBoolean, creatures[gPriv->GetId()].IsHuman() ) // Do manually
+IMPL_GET_OBJ( CCharacter, orgID,               CChar, setInt32,   GetOrgId() )
+IMPL_GET_OBJ( CCharacter, orgSkin,             CChar, setInt32,   GetOrgSkin() )
+IMPL_GET_OBJ( CCharacter, npcflag,             CChar, setInt32,   GetNPCFlag() )
+IMPL_GET_OBJ( CCharacter, npcguild,            CChar, setInt32,   GetNPCGuild() )
+IMPL_GET_OBJ( CCharacter, isShop,               CChar, setBoolean, IsShop() )
+IMPL_GET_OBJ( CCharacter, maxLoyalty,          CChar, setBoolean, GetMaxLoyalty() )
+IMPL_GET_OBJ( CCharacter, loyalty,             CChar, setBoolean, GetLoyalty() )
+IMPL_GET_OBJ( CCharacter, shouldSave,          CChar, setBoolean, ShouldSave() )
+IMPL_GET_OBJ( CCharacter, houseOwned,          CChar, setBoolean, CountHousesOwned( false ))
+IMPL_GET_OBJ( CCharacter, houseCoOwned,        CChar, setBoolean, CountHousesOwned( true ))
 
 /*
 bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueArray id, JS::MutableHandleValue vp )
@@ -2062,147 +2062,147 @@ bool CCharacterProps_getProperty( JSContext* cx, JSObject* obj, JS::HandleValueA
 }
 */
 
-IMPL_SET( CChar, accountNum,          CChar, toInt32,   SetAccountNum )
-IMPL_SET( CChar, createdOn,           CChar, toInt32,   SetCreatedOn )
-IMPL_SET( CChar, playTime,            CChar, toInt32,   SetPlayTime )
-IMPL_SETS(CChar, sectionID,           CChar, toString,  SetSectionId )
-IMPL_SETS(CChar, name,                CChar, toString,  SetName )
-IMPL_SETS(CChar, orgName,             CChar, toString,  SetOrgName )
-IMPL_SETS(CChar, title,               CChar, toString,  SetTitle )
-IMPL_SET( CChar, x,                   CChar, toInt32,   SetX ) // confirm behaviour
-IMPL_SET( CChar, y,                   CChar, toInt32,   SetY ) // confirm behaviour
-IMPL_SET( CChar, z,                   CChar, toInt32,   SetZ )
-IMPL_SET( CChar, id,                  CChar, toInt32,   SetId )
-IMPL_SET( CChar, colour,              CChar, toInt32,   SetColour )
-IMPL_SET( CChar, color,               CChar, toInt32,   SetColour )
-IMPL_SET( CChar, controlSlots,        CChar, toInt32,   SetControlSlots )
-IMPL_SET( CChar, controlSlotsUsed,    CChar, toInt32,   SetControlSlotsUsed )
-IMPL_SET( CChar, orneriness,		  CChar, toInt32,   SetOrneriness )
-IMPL_SET( CChar, serial,              CChar, toInt32,   SetSerial )
-IMPL_SET( CChar, health,              CChar, toInt32,   SetHP )
-// IMPL_SET( CChar, scripttrigger,       CChar, toInt32, ) // Do manually
-// IMPL_SET( CChar, scriptTriggers,      CChar, toInt32, ) // Do manually
-//IMPL_SET( CChar, worldnumber,         CChar, toInt32,   WorldNumber ) // do manually, lots of validation
-//IMPL_SET( CChar, instanceID,          CChar, toInt32,   SetInstanceId ) // do manually, lots of validation
-IMPL_SET( CChar, strength,            CChar, toInt32,   SetStrength )
-IMPL_SET( CChar, dexterity,           CChar, toInt32,   SetDexterity )
-IMPL_SET( CChar, intelligence,        CChar, toInt32,   SetIntelligence )
-IMPL_SET( CChar, mana,				  CChar, toInt32,   SetMana )
-IMPL_SET( CChar, stamina,             CChar, toInt32,   SetStamina )
-IMPL_SET( CChar, fame,				  CChar, toInt32,   SetFame )
-IMPL_SET( CChar, karma,				  CChar, toInt32,   SetKarma )
-IMPL_SET( CChar, hunger,			  CChar, toInt32,   SetHunger )
-IMPL_SET( CChar, thirst,			  CChar, toInt32,   SetThirst )
-// IMPL_SET( CChar, attack,			  CChar, toInt32,   CalcAttackPower ) // Do manually
-IMPL_SET( CChar, canAttack,           CChar, toBoolean, SetCanAttack )
-IMPL_SET( CChar, fleeAt,			  CChar, toInt32,   SetFleeAt )
-IMPL_SET( CChar, reattackAt,		  CChar, toInt32,   SetReattackAt )
-IMPL_SET( CChar, brkPeaceChance,	  CChar, toInt32,   SetBrkPeaceChance )
-IMPL_SET( CChar, peace,               CChar, toInt32,   SetPeace )
-IMPL_SET( CChar, frozen,			  CChar, toInt32,   SetFrozen )
-IMPL_SET( CChar, commandLevel,	      CChar, toInt32,   SetCommandLevel )
-IMPL_SET( CChar, maxhp,				  CChar, toInt32,   SetFixedMaxHP )
-IMPL_SET( CChar, maxstamina,          CChar, toInt32,   SetFixedMaxStam )
-IMPL_SET( CChar, maxmana,             CChar, toInt32,   SetFixedMaxMana )
-IMPL_SET( CChar, murdercount,	      CChar, toInt32,   SetKills )
+IMPL_SET( CCharacter, accountNum,          CChar, toInt32,   SetAccountNum )
+IMPL_SET( CCharacter, createdOn,           CChar, toInt32,   SetCreatedOn )
+IMPL_SET( CCharacter, playTime,            CChar, toInt32,   SetPlayTime )
+IMPL_SETS(CCharacter, sectionID,           CChar, toString,  SetSectionId )
+IMPL_SETS(CCharacter, name,                CChar, toString,  SetName )
+IMPL_SETS(CCharacter, orgName,             CChar, toString,  SetOrgName )
+IMPL_SETS(CCharacter, title,               CChar, toString,  SetTitle )
+IMPL_SET( CCharacter, x,                   CChar, toInt32,   SetX ) // confirm behaviour
+IMPL_SET( CCharacter, y,                   CChar, toInt32,   SetY ) // confirm behaviour
+IMPL_SET( CCharacter, z,                   CChar, toInt32,   SetZ )
+IMPL_SET( CCharacter, id,                  CChar, toInt32,   SetId )
+IMPL_SET( CCharacter, colour,              CChar, toInt32,   SetColour )
+IMPL_SET( CCharacter, color,               CChar, toInt32,   SetColour )
+IMPL_SET( CCharacter, controlSlots,        CChar, toInt32,   SetControlSlots )
+IMPL_SET( CCharacter, controlSlotsUsed,    CChar, toInt32,   SetControlSlotsUsed )
+IMPL_SET( CCharacter, orneriness,		  CChar, toInt32,   SetOrneriness )
+IMPL_SET( CCharacter, serial,              CChar, toInt32,   SetSerial )
+IMPL_SET( CCharacter, health,              CChar, toInt32,   SetHP )
+// IMPL_SET( CCharacter, scripttrigger,       CChar, toInt32, ) // Do manually
+// IMPL_SET( CCharacter, scriptTriggers,      CChar, toInt32, ) // Do manually
+//IMPL_SET( CCharacter, worldnumber,         CChar, toInt32,   WorldNumber ) // do manually, lots of validation
+//IMPL_SET( CCharacter, instanceID,          CChar, toInt32,   SetInstanceId ) // do manually, lots of validation
+IMPL_SET( CCharacter, strength,            CChar, toInt32,   SetStrength )
+IMPL_SET( CCharacter, dexterity,           CChar, toInt32,   SetDexterity )
+IMPL_SET( CCharacter, intelligence,        CChar, toInt32,   SetIntelligence )
+IMPL_SET( CCharacter, mana,				  CChar, toInt32,   SetMana )
+IMPL_SET( CCharacter, stamina,             CChar, toInt32,   SetStamina )
+IMPL_SET( CCharacter, fame,				  CChar, toInt32,   SetFame )
+IMPL_SET( CCharacter, karma,				  CChar, toInt32,   SetKarma )
+IMPL_SET( CCharacter, hunger,			  CChar, toInt32,   SetHunger )
+IMPL_SET( CCharacter, thirst,			  CChar, toInt32,   SetThirst )
+// IMPL_SET( CCharacter, attack,			  CChar, toInt32,   CalcAttackPower ) // Do manually
+IMPL_SET( CCharacter, canAttack,           CChar, toBoolean, SetCanAttack )
+IMPL_SET( CCharacter, fleeAt,			  CChar, toInt32,   SetFleeAt )
+IMPL_SET( CCharacter, reattackAt,		  CChar, toInt32,   SetReattackAt )
+IMPL_SET( CCharacter, brkPeaceChance,	  CChar, toInt32,   SetBrkPeaceChance )
+IMPL_SET( CCharacter, peace,               CChar, toInt32,   SetPeace )
+IMPL_SET( CCharacter, frozen,			  CChar, toInt32,   SetFrozen )
+IMPL_SET( CCharacter, commandlevel,	      CChar, toInt32,   SetCommandLevel )
+IMPL_SET( CCharacter, maxhp,				  CChar, toInt32,   SetFixedMaxHP )
+IMPL_SET( CCharacter, maxstamina,          CChar, toInt32,   SetFixedMaxStam )
+IMPL_SET( CCharacter, maxmana,             CChar, toInt32,   SetFixedMaxMana )
+IMPL_SET( CCharacter, murdercount,	      CChar, toInt32,   SetKills )
 
-IMPL_SET( CChar, dead,				  CChar, toBoolean, SetDead ) // not sure if this correct one SetDead
-IMPL_SET( CChar, npc,				  CChar, toBoolean, SetNpc )
-IMPL_SET( CChar, awake,               CChar, toBoolean, SetAwake )
-// IMPL_SET( CChar, online,              CChar, toBoolean, IsOnline ) // Do manually
-IMPL_SET( CChar, direction,           CChar, toInt32,   SetDir )
-IMPL_SET( CChar, region,              CChar, toInt32,   SetRegion )
-IMPL_SET( CChar, isrunning,           CChar, toBoolean, SetRunning )
+IMPL_SET( CCharacter, dead,				  CChar, toBoolean, SetDead ) // not sure if this correct one SetDead
+IMPL_SET( CCharacter, npc,				  CChar, toBoolean, SetNpc )
+IMPL_SET( CCharacter, awake,               CChar, toBoolean, SetAwake )
+// IMPL_SET( CCharacter, online,              CChar, toBoolean, IsOnline ) // Do manually
+IMPL_SET( CCharacter, direction,           CChar, toInt32,   SetDir )
+IMPL_SET( CCharacter, region,              CChar, toInt32,   SetRegion )
+IMPL_SET( CCharacter, isrunning,           CChar, toBoolean, SetRunning )
 
-IMPL_SET( CChar, spawnserial,         CChar, toInt32,   SetSpawn )
-IMPL_SET( CChar, oldwandertype,       CChar, toInt32,   SetOldNpcWander )
-IMPL_SET( CChar, wandertype,          CChar, toInt32,   SetNpcWander )
-// IMPL_SET( CChar, fx1,                 CChar, toInt32,   SetFx ) // Do manually
-// IMPL_SET( CChar, fy1,                 CChar, toInt32,   SetFy ) // Do manually
-// IMPL_SET( CChar, fx2,                 CChar, toInt32,   SetFx ) // Do manually
-// IMPL_SET( CChar, fy2,                 CChar, toInt32,   SetFy ) // Do manually
-IMPL_SET( CChar, fz,                  CChar, toInt32,   SetFz )
-IMPL_SET( CChar, guarded,             CChar, toBoolean, SetGuarded )
+IMPL_SET( CCharacter, spawnserial,         CChar, toInt32,   SetSpawn )
+IMPL_SET( CCharacter, oldwandertype,       CChar, toInt32,   SetOldNpcWander )
+IMPL_SET( CCharacter, wandertype,          CChar, toInt32,   SetNpcWander )
+// IMPL_SET( CCharacter, fx1,                 CChar, toInt32,   SetFx ) // Do manually
+// IMPL_SET( CCharacter, fy1,                 CChar, toInt32,   SetFy ) // Do manually
+// IMPL_SET( CCharacter, fx2,                 CChar, toInt32,   SetFx ) // Do manually
+// IMPL_SET( CCharacter, fy2,                 CChar, toInt32,   SetFy ) // Do manually
+IMPL_SET( CCharacter, fz,                  CChar, toInt32,   SetFz )
+IMPL_SET( CCharacter, guarded,             CChar, toBoolean, SetGuarded )
 
-IMPL_SET( CChar, tdexterity2,         CChar, toInt32,   SetDexterity2 )
-IMPL_SET( CChar, tintelligence2,      CChar, toInt32,   SetIntelligence2 )
-IMPL_SET( CChar, tstrength2,          CChar, toInt32,   SetStrength2 )
-IMPL_SET( CChar, poison,              CChar, toInt32,   SetPoisoned )
-//IMPL_SET( CChar, lightlevel,          CChar, toInt32,   SetFixedLight ) // Do manually
-//IMPL_SET( CChar, vulnerable,          CChar, toBoolean, SetInvulnerable ) // Do manually
-IMPL_SET( CChar, hungerstatus,        CChar, toBoolean, SetHunger )
-IMPL_SET( CChar, thirststatus,        CChar, toBoolean, SetThirst )
-IMPL_SET( CChar, lodamage,            CChar, toInt32,   SetLoDamage )
-IMPL_SET( CChar, hidamage,            CChar, toInt32,   SetHiDamage )
-IMPL_SET( CChar, flag,                CChar, toInt32,   SetFlag )
-// IMPL_SET( CChar, atwar,               CChar, toBoolean, IsAtWar ) // Do manually
-IMPL_SET( CChar, spellCast,           CChar, toInt32,   SetSpellCast )
-// IMPL_SET( CChar, iscasting,           CChar, setBoolean, IsCasting() || IsJSCasting() ) // Do manually
-IMPL_SET( CChar, priv,                CChar, toInt32,   SetPriv )
-IMPL_SET( CChar, townPriv,            CChar, toInt32,   SetTownpriv )
-IMPL_SETS(CChar, guildTitle,          CChar, toString,  SetGuildTitle )
-IMPL_SET( CChar, hairStyle,           CChar, toInt32,   SetHairStyle )
-IMPL_SET( CChar, hairColour,          CChar, toInt32,   SetHairColour )
-IMPL_SET( CChar, beardStyle,          CChar, toInt32,   SetBeardStyle )
-IMPL_SET( CChar, beardColour,         CChar, toInt32,   SetBeardColour )
-IMPL_SET( CChar, fontType,            CChar, toInt32,   SetFontType )
-IMPL_SET( CChar, sayColour,           CChar, toInt32,   SetSayColour )
-IMPL_SET( CChar, emoteColour,         CChar, toInt32,   SetEmoteColour )
-IMPL_SET( CChar, raceGate,            CChar, toInt32,   SetRaceGate )
-IMPL_SET( CChar, deaths,              CChar, toInt32,   SetDeaths )
-IMPL_SET( CChar, nextAct,             CChar, toInt32,   SetNextAct )
-IMPL_SET( CChar, cell,                CChar, toInt32,   SetCell )				
-IMPL_SET( CChar, allmove,             CChar, toInt32,   SetAllMove )		
-IMPL_SET( CChar, houseicon,           CChar, toBoolean, SetViewHouseAsIcon )	
-IMPL_SET( CChar, spattack,            CChar, toInt32,   SetSpAttack )					
-IMPL_SET( CChar, spdelay,             CChar, toInt32,   SetSpDelay )					
-IMPL_SET( CChar, aitype,              CChar, toInt32,   SetNPCAiType )
-IMPL_SET( CChar, split,               CChar, toInt32,   SetSplit )
-IMPL_SET( CChar, splitchance,         CChar, toInt32,   SetSplitChance )		
-IMPL_SET( CChar, trainer,             CChar, toInt32,   SetCanTrain )
-IMPL_SET( CChar, weight,              CChar, toInt32,   SetWeight )					
-IMPL_SET( CChar, squelch,             CChar, toInt32,   SetSquelched )					
-IMPL_SET( CChar, magicReflect,        CChar, toBoolean, SetTempReflected )			
-IMPL_SET( CChar, permMagicReflect,    CChar, toBoolean, SetPermReflected )		
-IMPL_SET( CChar, tamed,               CChar, toBoolean, SetTamed )					
-IMPL_SET( CChar, tamedHungerRate,     CChar, toInt32,   SetTamedHungerRate )		
-IMPL_SET( CChar, tamedThirstRate,     CChar, toInt32,   SetTamedThirstRate )		
-IMPL_SET( CChar, hungerWildChance,    CChar, toInt32,   SetTamedHungerWildChance )	
-IMPL_SET( CChar, thirstWildChance,    CChar, toInt32,   SetTamedThirstWildChance )
+IMPL_SET( CCharacter, tdexterity2,         CChar, toInt32,   SetDexterity2 )
+IMPL_SET( CCharacter, tintelligence2,      CChar, toInt32,   SetIntelligence2 )
+IMPL_SET( CCharacter, tstrength2,          CChar, toInt32,   SetStrength2 )
+IMPL_SET( CCharacter, poison,              CChar, toInt32,   SetPoisoned )
+//IMPL_SET( CCharacter, lightlevel,          CChar, toInt32,   SetFixedLight ) // Do manually
+//IMPL_SET( CCharacter, vulnerable,          CChar, toBoolean, SetInvulnerable ) // Do manually
+IMPL_SET( CCharacter, hungerstatus,        CChar, toBoolean, SetHunger )
+IMPL_SET( CCharacter, thirststatus,        CChar, toBoolean, SetThirst )
+IMPL_SET( CCharacter, lodamage,            CChar, toInt32,   SetLoDamage )
+IMPL_SET( CCharacter, hidamage,            CChar, toInt32,   SetHiDamage )
+IMPL_SET( CCharacter, flag,                CChar, toInt32,   SetFlag )
+// IMPL_SET( CCharacter, atwar,               CChar, toBoolean, IsAtWar ) // Do manually
+IMPL_SET( CCharacter, spellCast,           CChar, toInt32,   SetSpellCast )
+// IMPL_SET( CCharacter, iscasting,           CChar, setBoolean, IsCasting() || IsJSCasting() ) // Do manually
+IMPL_SET( CCharacter, priv,                CChar, toInt32,   SetPriv )
+IMPL_SET( CCharacter, townPriv,            CChar, toInt32,   SetTownpriv )
+IMPL_SETS(CCharacter, guildTitle,          CChar, toString,  SetGuildTitle )
+IMPL_SET( CCharacter, hairStyle,           CChar, toInt32,   SetHairStyle )
+IMPL_SET( CCharacter, hairColour,          CChar, toInt32,   SetHairColour )
+IMPL_SET( CCharacter, beardStyle,          CChar, toInt32,   SetBeardStyle )
+IMPL_SET( CCharacter, beardColour,         CChar, toInt32,   SetBeardColour )
+IMPL_SET( CCharacter, fontType,            CChar, toInt32,   SetFontType )
+IMPL_SET( CCharacter, sayColour,           CChar, toInt32,   SetSayColour )
+IMPL_SET( CCharacter, emoteColour,         CChar, toInt32,   SetEmoteColour )
+IMPL_SET( CCharacter, raceGate,            CChar, toInt32,   SetRaceGate )
+IMPL_SET( CCharacter, deaths,              CChar, toInt32,   SetDeaths )
+IMPL_SET( CCharacter, nextAct,             CChar, toInt32,   SetNextAct )
+IMPL_SET( CCharacter, cell,                CChar, toInt32,   SetCell )
+IMPL_SET( CCharacter, allmove,             CChar, toInt32,   SetAllMove )
+IMPL_SET( CCharacter, houseicon,           CChar, toBoolean, SetViewHouseAsIcon )
+IMPL_SET( CCharacter, spattack,            CChar, toInt32,   SetSpAttack )
+IMPL_SET( CCharacter, spdelay,             CChar, toInt32,   SetSpDelay )
+IMPL_SET( CCharacter, aitype,              CChar, toInt32,   SetNPCAiType )
+IMPL_SET( CCharacter, split,               CChar, toInt32,   SetSplit )
+IMPL_SET( CCharacter, splitchance,         CChar, toInt32,   SetSplitChance )
+IMPL_SET( CCharacter, trainer,             CChar, toInt32,   SetCanTrain )
+IMPL_SET( CCharacter, weight,              CChar, toInt32,   SetWeight )
+IMPL_SET( CCharacter, squelch,             CChar, toInt32,   SetSquelched )
+IMPL_SET( CCharacter, magicReflect,        CChar, toBoolean, SetTempReflected )
+IMPL_SET( CCharacter, permMagicReflect,    CChar, toBoolean, SetPermReflected )
+IMPL_SET( CCharacter, tamed,               CChar, toBoolean, SetTamed )
+IMPL_SET( CCharacter, tamedHungerRate,     CChar, toInt32,   SetTamedHungerRate )
+IMPL_SET( CCharacter, tamedThirstRate,     CChar, toInt32,   SetTamedThirstRate )
+IMPL_SET( CCharacter, hungerWildChance,    CChar, toInt32,   SetTamedHungerWildChance )
+IMPL_SET( CCharacter, thirstWildChance,    CChar, toInt32,   SetTamedThirstWildChance )
 
-IMPL_SET( CChar, mounted,             CChar, toBoolean, SetMounted )				
-IMPL_SET( CChar, stabled,             CChar, toBoolean, SetStabled )				
-IMPL_SET( CChar, usingpotion,         CChar, toBoolean, SetUsingPotion )			
-IMPL_SET( CChar, stealth,             CChar, toInt32,   SetStealth )					
-IMPL_SET( CChar, skilltotame,         CChar, toInt32,   SetTaming )					
-IMPL_SET( CChar, skilltoprov,         CChar, toInt32,   SetProvoing )					
-IMPL_SET( CChar, skilltopeace,        CChar, toInt32,   SetPeaceing )					
-IMPL_SET( CChar, poisonStrength,      CChar, toInt32,   SetPoisonStrength )		
-IMPL_SET( CChar, isPolymorphed,       CChar, toBoolean, IsPolymorphed )
-IMPL_SET( CChar, isIncognito,         CChar, toBoolean, IsIncognito )				
-IMPL_SET( CChar, isDisguised,         CChar, toBoolean, IsDisguised )				
-IMPL_SET( CChar, canRun,              CChar, toBoolean, SetRun )					
-IMPL_SET( CChar, isMeditating,        CChar, toBoolean, SetMeditating )			
-IMPL_SET( CChar, isGM,                CChar, toBoolean, SetGM )					
-IMPL_SET( CChar, canBroadcast,        CChar, toBoolean, SetBroadcast )			
-IMPL_SET( CChar, singleClickSer,      CChar, toBoolean, SetSingClickSer )
-IMPL_SET( CChar, noSkillTitles,       CChar, toBoolean, SetSkillTitles )
-IMPL_SET( CChar, isGMPageable,        CChar, toBoolean, SetGMPageable )			
-IMPL_SET( CChar, canSnoop,            CChar, toBoolean, SetSnoop )				
-IMPL_SET( CChar, isCounselor,         CChar, toBoolean, SetCounselor )				
-IMPL_SET( CChar, noNeedMana,          CChar, toBoolean, SetNoNeedMana )			
-IMPL_SET( CChar, isDispellable,       CChar, toBoolean, SetDispellable )
-IMPL_SET( CChar, noNeedReags,         CChar, toBoolean, SetNoNeedReags )
-// IMPL_SET( CChar, isanimal,            CChar, toBoolean, creatures[gPriv->SetId].IsAnimal ) // Do manually
-// IMPL_SET( CChar, ishuman,             CChar, toBoolean, creatures[gPriv->SetId].IsHuman ) // Do manually
-IMPL_SET( CChar, orgID,               CChar, toInt32,   SetOrgId )
-IMPL_SET( CChar, orgSkin,             CChar, toInt32,   SetOrgSkin )
-// IMPL_SET( CChar, npcflag,             CChar, toInt32,   SetNPCFlag ) // Do manually
-IMPL_SET( CChar, npcguild,            CChar, toInt32,   SetNPCGuild )
-//IMPL_SET( CChar, isShop,              CChar, toBoolean, SetShop ) // Do manually
-IMPL_SET( CChar, maxLoyalty,          CChar, toInt32,   SetMaxLoyalty )
-IMPL_SET( CChar, loyalty,             CChar, toInt32,   SetLoyalty )
-IMPL_SET( CChar, shouldSave,          CChar, toBoolean, ShouldSave )
+IMPL_SET( CCharacter, mounted,             CChar, toBoolean, SetMounted )
+IMPL_SET( CCharacter, stabled,             CChar, toBoolean, SetStabled )
+IMPL_SET( CCharacter, usingpotion,         CChar, toBoolean, SetUsingPotion )
+IMPL_SET( CCharacter, stealth,             CChar, toInt32,   SetStealth )
+IMPL_SET( CCharacter, skilltotame,         CChar, toInt32,   SetTaming )
+IMPL_SET( CCharacter, skilltoprov,         CChar, toInt32,   SetProvoing )
+IMPL_SET( CCharacter, skilltopeace,        CChar, toInt32,   SetPeaceing )
+IMPL_SET( CCharacter, poisonStrength,      CChar, toInt32,   SetPoisonStrength )
+IMPL_SET( CCharacter, isPolymorphed,       CChar, toBoolean, IsPolymorphed )
+IMPL_SET( CCharacter, isIncognito,         CChar, toBoolean, IsIncognito )
+IMPL_SET( CCharacter, isDisguised,         CChar, toBoolean, IsDisguised )
+IMPL_SET( CCharacter, canRun,              CChar, toBoolean, SetRun )
+IMPL_SET( CCharacter, isMeditating,        CChar, toBoolean, SetMeditating )
+IMPL_SET( CCharacter, isGM,                CChar, toBoolean, SetGM )
+IMPL_SET( CCharacter, canBroadcast,        CChar, toBoolean, SetBroadcast )
+IMPL_SET( CCharacter, singleClickSer,      CChar, toBoolean, SetSingClickSer )
+IMPL_SET( CCharacter, noSkillTitles,       CChar, toBoolean, SetSkillTitles )
+IMPL_SET( CCharacter, isGMPageable,        CChar, toBoolean, SetGMPageable )
+IMPL_SET( CCharacter, canSnoop,            CChar, toBoolean, SetSnoop )
+IMPL_SET( CCharacter, isCounselor,         CChar, toBoolean, SetCounselor )
+IMPL_SET( CCharacter, noNeedMana,          CChar, toBoolean, SetNoNeedMana )
+IMPL_SET( CCharacter, isDispellable,       CChar, toBoolean, SetDispellable )
+IMPL_SET( CCharacter, noNeedReags,         CChar, toBoolean, SetNoNeedReags )
+// IMPL_SET( CCharacter, isanimal,            CChar, toBoolean, creatures[gPriv->SetId].IsAnimal ) // Do manually
+// IMPL_SET( CCharacter, ishuman,             CChar, toBoolean, creatures[gPriv->SetId].IsHuman ) // Do manually
+IMPL_SET( CCharacter, orgID,               CChar, toInt32,   SetOrgId )
+IMPL_SET( CCharacter, orgSkin,             CChar, toInt32,   SetOrgSkin )
+// IMPL_SET( CCharacter, npcFlag,             CChar, toInt32,   SetNPCFlag ) // Do manually
+IMPL_SET( CCharacter, npcguild,            CChar, toInt32,   SetNPCGuild )
+//IMPL_SET( CCharacter, isShop,              CChar, toBoolean, SetShop ) // Do manually
+IMPL_SET( CCharacter, maxLoyalty,          CChar, toInt32,   SetMaxLoyalty )
+IMPL_SET( CCharacter, loyalty,             CChar, toInt32,   SetLoyalty )
+IMPL_SET( CCharacter, shouldSave,          CChar, toBoolean, ShouldSave )
 
 /*
 bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
@@ -2272,7 +2272,7 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
           // If null value was provided, clear script triggers on object
           gPriv->ClearScriptTriggers();
         }
-        break; 
+        break;
       }
       case CCP_WORLDNUMBER:
         if( !Map->InsideValidWorld( gPriv->GetX(), gPriv->GetY(), static_cast<UI08>( encaps.toInt() )))
@@ -2719,7 +2719,7 @@ IMPL_SET(  CRegion, weather,           CTownRegion, toInt32,   SetWeather )
 //          // If null value was provided, clear script triggers on object
 //          gPriv->ClearScriptTriggers();
 //        }
-//        break; 
+//        break;
 //      }
 //      case CREGP_APPEARANCE:			gPriv->SetAppearance( static_cast<WorldType>( encaps.toInt() )); break;
 //  // Active script-context might have been lost, so restore it...
@@ -3548,7 +3548,7 @@ IMPL_GET( CAccount, isGM,           CAccountBlock_st, setBoolean,  wFlags.test( 
       //}
       //case CACCOUNT_LASTIP:
       //{
-      //  std::string ipString = oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0xFF000000 ) >> 24 )) 
+      //  std::string ipString = oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0xFF000000 ) >> 24 ))
       //    + "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x00FF0000 ) >> 16 ))
       //    + "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x0000FF00 ) >> 8 ))
       //    + "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x000000FF ) % 256 ));
@@ -3775,7 +3775,7 @@ bool CScriptProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] 
   {
     switch( JSVAL_TO_INT( id ))
     {
-      case CSCRIPT_SCRIPTID:		
+      case CSCRIPT_SCRIPTID:
         *vp = JS::Int32Value( JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx )) );
         break;
       default:
@@ -3876,7 +3876,7 @@ bool CParty_equality( JSContext *cx, JS::HandleObject obj, JS::HandleValue v, bo
 {
   JS::RootedValue srcVal(cx, JS::ObjectValue(*obj));
   JS::RootedValue trgVal(cx, v);
-  
+
   if(trgVal.isObject())
   {
     JS::RootedObject trgObj(cx, &trgVal.toObject());
