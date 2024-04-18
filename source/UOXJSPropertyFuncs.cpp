@@ -905,6 +905,154 @@ bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 }
 */
 
+// clang-format off
+IMPL_SETS(CItem, sectionID,           CItem, toString, SetSectionId )
+IMPL_SETS(CItem, name,                CItem, toString, SetName )
+IMPL_SETS(CItem, title,               CItem, toString, SetTitle )
+IMPL_SET( CItem, x,                   CItem, toInt32,  SetX ) // Check
+IMPL_SET( CItem, y,                   CItem, toInt32,  SetY ) // Check
+IMPL_SET( CItem, z,                   CItem, toInt32,  SetZ ) // Check
+//IMPL_SET( CItem, oldX,                CItem, toInt32,  SetOldLocation().x )
+//IMPL_SET( CItem, oldY,                CItem, toInt32,  SetOldLocation().y )
+//IMPL_SET( CItem, oldZ,                CItem, toInt32,  SetOldLocation().z )
+IMPL_SET( CItem, id,                  CItem, toInt32,  SetId )
+IMPL_SET( CItem, colour,              CItem, toInt32,  SetColour )
+IMPL_SET( CItem, color,               CItem, toInt32,  SetColour )
+// IMPL_SET( CItem, owner,               CItem, toInt32, ) // Do manually
+//IMPL_SET( CItem, visible,             CItem, toInt32,  SetVisible )
+IMPL_SET( CItem, serial,              CItem, toInt32,  SetSerial )
+IMPL_SET( CItem, health,              CItem, toInt32,  SetHP )
+// IMPL_SET( CItem, scripttrigger,       CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, scriptTriggers    ,  CItem, toInt32, ) // Do manually
+//IMPL_SET( CItem, worldnumber,         CItem, toInt32, WorldNumber ) // Do manually
+//IMPL_SET( CItem, instanceID,          CItem, toInt32, SetInstanceId ) // Do manually
+IMPL_SET( CItem, amount,              CItem, toInt32, SetAmount )
+// IMPL_SET( CItem, container,           CItem, toInt32, ) // Do manually
+//IMPL_SET( CItem, type,                CItem, toInt32, SetType )
+//IMPL_SET( CItem, more,                CItem, toInt32, SetTempVar( CITV_MORE ) )
+//IMPL_SET( CItem, more0,               CItem, toInt32, SetTempVar( CITV_MORE0 ) )
+//IMPL_SET( CItem, more1,               CItem, toInt32, SetTempVar( CITV_MORE1 ) )
+//IMPL_SET( CItem, more2,               CItem, toInt32, SetTempVar( CITV_MORE2 ) )
+//IMPL_SET( CItem, morex,               CItem, toInt32, SetTempVar( CITV_MOREX ) )
+//IMPL_SET( CItem, morey,               CItem, toInt32, SetTempVar( CITV_MOREY ) )
+//IMPL_SET( CItem, morez,               CItem, toInt32, SetTempVar( CITV_MOREZ ) )
+IMPL_SET( CItem, movable,             CItem, toInt32, SetMovable )
+// IMPL_SET( CItem, att,                 CItem, toInt32, ) // Do manually
+//IMPL_SET( CItem, layer,               CItem, toInt32, SetLayer )
+// IMPL_SET( CItem, totalItemCount    ,  CItem, toInt32, ) // Do manually
+IMPL_SET( CItem, decayable,           CItem, toBoolean, SetDecayable )
+//IMPL_SET( CItem, decaytime,           CItem, toInt32, SetDecayTime )
+IMPL_SET( CItem, lodamage,            CItem, toInt32, SetLoDamage )
+IMPL_SET( CItem, hidamage,            CItem, toInt32, SetHiDamage )
+IMPL_SET( CItem, ac,                  CItem, toInt32, SetArmourClass )
+//IMPL_SET( CItem, def,                 CItem, toInt32, SetResist( PHYSICAL ) )
+//IMPL_SET( CItem, resistCold,          CItem, toInt32, SetResist( COLD ) )
+//IMPL_SET( CItem, resistHeat,          CItem, toInt32, SetResist( HEAT ) )
+//IMPL_SET( CItem, resistLight,         CItem, toInt32, SetResist( LIGHT ) )
+//IMPL_SET( CItem, resistLightning,     CItem, toInt32, SetResist( LIGHTNING ) )
+//IMPL_SET( CItem, resistPoison,        CItem, toInt32, SetResist( POISON ) )
+//IMPL_SET( CItem, resistRain,          CItem, toInt32, SetResist( RAIN ) )
+//IMPL_SET( CItem, resistSnow,          CItem, toInt32, SetResist( SNOW ) )
+//IMPL_SET( CItem, damageCold,          CItem, toBoolean, SetWeatherDamage( COLD ) )
+//IMPL_SET( CItem, damageHeat,          CItem, toBoolean, SetWeatherDamage( HEAT ) )
+//IMPL_SET( CItem, damageLight,         CItem, toBoolean, SetWeatherDamage( LIGHT ) )
+//IMPL_SET( CItem, damageLightning,     CItem, toBoolean, SetWeatherDamage( LIGHTNING ) )
+//IMPL_SET( CItem, damagePoison,        CItem, toBoolean, SetWeatherDamage( POISON ) )
+//IMPL_SET( CItem, damageRain,          CItem, toBoolean, SetWeatherDamage( RAIN ) )
+//IMPL_SET( CItem, damageSnow,          CItem, toBoolean, SetWeatherDamage( SNOW ) )
+IMPL_SET( CItem, speed,               CItem, toInt32,   SetSpeed )
+IMPL_SETS(CItem, name2,               CItem, toString, SetName2 )
+// IMPL_SET( CItem, isChar,              CItem, toBoolean, )  // Do manually
+// IMPL_SET( CItem, isItem,              CItem, toBoolean, )  // Do manually
+//IMPL_SET( CItem, isSpawner,           CItem, toBoolean, GetObjType() == OT_SPAWNER )
+IMPL_SET( CItem, race,                CItem, toInt32, SetRace )
+IMPL_SET( CItem, maxhp,               CItem, toInt32, SetMaxHP )
+IMPL_SET( CItem, maxUses,             CItem, toInt32, SetMaxUses )
+IMPL_SET( CItem, usesLeft,            CItem, toInt32, SetUsesLeft )
+IMPL_SET( CItem, rank,                CItem, toInt32, SetRank )
+IMPL_SET( CItem, creator,             CItem, toInt32, SetCreator )
+IMPL_SET( CItem, poison,              CItem, toInt32, SetPoisoned )
+IMPL_SET( CItem, dir,                 CItem, toInt32, SetDir )
+IMPL_SET( CItem, wipable,             CItem, toInt32, SetWipeable )
+IMPL_SET( CItem, buyvalue,            CItem, toInt32, SetBuyValue )
+IMPL_SET( CItem, sellvalue,           CItem, toInt32, SetSellValue )
+IMPL_SET( CItem, vendorPrice,         CItem, toInt32, SetVendorPrice )
+IMPL_SET( CItem, restock,             CItem, toInt32, SetRestock )
+IMPL_SET( CItem, good,                CItem, toInt32, SetGood )
+IMPL_SET( CItem, divinelock,          CItem, toBoolean, SetDivineLock )
+IMPL_SET( CItem, baseWeight,          CItem, toInt32, SetBaseWeight )
+IMPL_SET( CItem, weight,              CItem, toInt32, SetWeight )
+IMPL_SET( CItem, weightMax,           CItem, toInt32, SetWeightMax )
+IMPL_SET( CItem, maxItems,            CItem, toInt32, SetMaxItems )
+IMPL_SET( CItem, strength,            CItem, toInt32, SetStrength )
+IMPL_SET( CItem, dexterity,           CItem, toInt32, SetDexterity )
+IMPL_SET( CItem, intelligence,        CItem, toInt32, SetIntelligence )
+IMPL_SET( CItem, corpse,              CItem, toBoolean, SetCorpse )
+IMPL_SETS(CItem, desc,                CItem, toString, SetDesc )
+IMPL_SETS(CItem, event,               CItem, toString, SetEvent )
+//IMPL_SET( CItem, tempLastTraded,      CItem, toInt32, GetTempLastTraded() / 1000 )
+//IMPL_SET( CItem, tempTimer,           CItem, toInt32, GetTempTimer() / 1000 )
+IMPL_SET( CItem, shouldSave,          CItem, toBoolean, ShouldSave )
+IMPL_SET( CItem, isNewbie,            CItem, toBoolean, SetNewbie )
+IMPL_SET( CItem, isDispellable,       CItem, toBoolean, SetDispellable )
+IMPL_SET( CItem, madeWith,            CItem, toInt32, SetMadeWith )
+IMPL_SET( CItem, entryMadeFrom,       CItem, toInt32, EntryMadeFrom )
+IMPL_SET( CItem, isPileable,          CItem, toBoolean, SetPileable )
+IMPL_SET( CItem, isMarkedByMaker,     CItem, toBoolean, SetMakersMark )
+IMPL_SET( CItem, isDyeable,           CItem, toBoolean, SetDye )
+IMPL_SET( CItem, isDamageable,        CItem, toBoolean, SetDamageable )
+IMPL_SET( CItem, isWipeable,          CItem, toBoolean, SetWipeable )
+IMPL_SET( CItem, isGuarded,           CItem, toBoolean, SetGuarded )
+IMPL_SET( CItem, isDoorOpen,          CItem, toBoolean, SetDoorOpen )
+//IMPL_SET( CItem, isFieldSpell,        CItem, toBoolean, SetFieldSpell )
+//IMPL_SET( CItem, isLockedDown,        CItem, toBoolean, SetLockedDown )
+//IMPL_SET( CItem, isShieldType,        CItem, toBoolean, SetShieldType )
+//IMPL_SET( CItem, isMetalType,         CItem, toBoolean, SetMetalType )
+//IMPL_SET( CItem, isLeatherType,       CItem, toBoolean, SetLeatherType )
+//IMPL_SET( CItem, canBeLockedDown,     CItem, toBoolean, SetCanBeLockedDown )
+//IMPL_SET( CItem, isContType,          CItem, toBoolean, IsContType )
+IMPL_SET( CItem, carveSection,        CItem, toInt32,   SetCarve )
+IMPL_SET( CItem, ammoID,              CItem, toInt32,   SetAmmoId )
+IMPL_SET( CItem, ammoHue,             CItem, toInt32,   SetAmmoHue )
+IMPL_SET( CItem, ammoFX,              CItem, toInt32,   SetAmmoFX )
+IMPL_SET( CItem, ammoFXHue,           CItem, toInt32,   SetAmmoFXHue )
+IMPL_SET( CItem, ammoFXRender,        CItem, toInt32,   SetAmmoFXRender )
+// IMPL_SET( CItem, multi,               CItem, toInt32,   ) // Do manually
+IMPL_SET( CItem, maxRange,            CItem, toInt32,   SetMaxRange )
+IMPL_SET( CItem, baseRange,           CItem, toInt32,   SetBaseRange )
+IMPL_SET( CItem, region,              CItem, toInt32,   SetRegion )
+IMPL_SET( CItem, spawnSerial,         CItem, toInt32,   SetSpawn )
+//IMPL_SETS(CItem, origin,              CItem, toString,  SetOrigin ) // Do manually
+IMPL_SET( CItem, isItemHeld,          CItem, toBoolean, SetHeldOnCursor )
+IMPL_SET( CItem, stealable,           CItem, toInt32,   SetStealable )
+// IMPL_SET( CItem, spawnsection,        CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, sectionalist,        CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, mininterval,         CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, maxinterval,         CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, lockdowns,           CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, maxLockdowns,        CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, trashContainers,     CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, maxTrashContainers,  CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, secureContainers,    CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, maxSecureContainers, CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, friends,             CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, maxFriends,          CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, guests,              CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, maxGuests,           CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, owners,              CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, maxOwners,           CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, bans,                CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, maxBans,             CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, vendors,             CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, maxVendors,          CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, deed,                CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, isPublic,            CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, buildTimestamp,      CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, tradeTimestamp,      CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, banX,                CItem, toInt32, ) // Do manually
+// IMPL_SET( CItem, banY,                CItem, toInt32, ) // Do manually
+// clang-format on
+/*
 bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS::MutableHandleValue vp)
 {
   CItem *gPriv = JS::GetMaybePtrFromReservedSlot<CItem >(obj , 0);
@@ -922,13 +1070,6 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
     TIMERVAL newTime;
     switch( id.toInt32() )
     {
-      case CIP_SECTIONID:		gPriv->SetSectionId( encaps.toString() );					break;
-      case CIP_NAME:			gPriv->SetName( encaps.toString() );						break;
-      case CIP_X:				gPriv->SetLocation( static_cast<SI16>( encaps.toInt() ), gPriv->GetY(), gPriv->GetZ() );	break;
-      case CIP_Y:				gPriv->SetLocation( gPriv->GetX(), static_cast<SI16>( encaps.toInt() ), gPriv->GetZ() );	break;
-      case CIP_Z:				gPriv->SetZ( static_cast<SI08>( encaps.toInt() ));			break;
-      case CIP_ID:			gPriv->SetId( static_cast<UI16>( encaps.toInt() ));			break;
-      case CIP_COLOUR:		gPriv->SetColour( static_cast<UI16>( encaps.toInt() ));		break;
       case CIP_OWNER:
         if (!vp.isObject() || vp.toObjectOrNull() != JS::CurrentGlobalOrNull(cx))
         {
@@ -944,8 +1085,6 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
         }
         break;
       case CIP_VISIBLE:		gPriv->SetVisible( static_cast<VisibleTypes>( encaps.toInt() ));	break;
-      case CIP_SERIAL:																	break;
-      case CIP_HEALTH:		gPriv->SetHP( static_cast<SI16>( encaps.toInt() ));			break;
       case CIP_SCRIPTTRIGGER:
       {
         // For backwards compatibility; clears out other scripts and assigns a specific script
@@ -997,7 +1136,6 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
         gPriv->SetLocation( gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), gPriv->WorldNumber(), static_cast<UI16>( encaps.toInt() ));
         break;
       }
-      case CIP_AMOUNT:	gPriv->SetAmount( static_cast<UI32>( encaps.toInt() )); 	break;
       case CIP_CONTAINER:
         if (!vp.isObject() || vp.toObjectOrNull() != JS::CurrentGlobalOrNull(cx))
         {
@@ -1139,14 +1277,12 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
         }
         break;
       }
-      case CIP_MOVABLE:		gPriv->SetMovable( static_cast<SI08>( encaps.toInt() ));	break;
       case CIP_ATT:			
         gPriv->SetLoDamage( static_cast<SI16>( encaps.toInt() ));
         gPriv->SetHiDamage( static_cast<SI16>( encaps.toInt() ));
         break;
       case CIP_LAYER:			gPriv->SetLayer( static_cast<ItemLayers>( encaps.toInt() ));	break;
       case CIP_ITEMSINSIDE:																break;
-      case CIP_DECAYABLE:		gPriv->SetDecayable( encaps.toBool() );				 		break;
       case CIP_DECAYTIME:
         newTime = encaps.toInt();
         if( newTime != 0 )
@@ -1155,9 +1291,6 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
         }
         gPriv->SetDecayTime( newTime );
         break;
-      case CIP_LODAMAGE:		gPriv->SetLoDamage( static_cast<SI16>( encaps.toInt() ));			break;
-      case CIP_HIDAMAGE:		gPriv->SetHiDamage( static_cast<SI16>( encaps.toInt() ));			break;
-      case CIP_AC:			gPriv->SetArmourClass( static_cast<UI08>( encaps.toInt() ));		break;
       case CIP_DEF:			gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), PHYSICAL );	break;
       case CIP_RESISTCOLD:	gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), COLD );		break;
       case CIP_RESISTHEAT:	gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), HEAT );		break;
@@ -1173,33 +1306,6 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
       case CIP_DAMAGEPOISON:	gPriv->SetWeatherDamage( POISON, encaps.toBool() );			break;
       case CIP_DAMAGERAIN:	gPriv->SetWeatherDamage( RAIN, encaps.toBool() );			break;
       case CIP_DAMAGESNOW:	gPriv->SetWeatherDamage( SNOW, encaps.toBool() );			break;
-      case CIP_SPEED:			gPriv->SetSpeed( static_cast<UI08>( encaps.toInt() ));		break;
-      case CIP_NAME2:			gPriv->SetName2( encaps.toString() );						break;
-      case CIP_RACE:			gPriv->SetRace( static_cast<RACEID>( encaps.toInt() ));		break;
-      case CIP_MAXHP:			gPriv->SetMaxHP( static_cast<SI16>( encaps.toInt() ));		break;
-      case CIP_MAXUSES:		gPriv->SetMaxUses( static_cast<UI16>( encaps.toInt() ));	break;
-      case CIP_USESLEFT:		gPriv->SetUsesLeft( static_cast<UI16>( encaps.toInt() ));	break;
-      case CIP_RANK:			gPriv->SetRank( static_cast<SI08>( encaps.toInt() ));		break;
-      case CIP_CREATOR:		gPriv->SetCreator( static_cast<SERIAL>( encaps.toInt() ));	break;
-      case CIP_POISON:		gPriv->SetPoisoned( static_cast<UI08>( encaps.toInt() ));	break;
-      case CIP_DIR:			gPriv->SetDir( static_cast<SI16>( encaps.toInt() ));		break;
-      case CIP_WIPABLE:		gPriv->SetWipeable( encaps.toBool() );						break;
-      case CIP_BUYVALUE:		gPriv->SetBuyValue( static_cast<UI32>( encaps.toInt() ));	break;
-      case CIP_SELLVALUE:		gPriv->SetSellValue( static_cast<UI32>( encaps.toInt() ));	break;
-      case CIP_VENDORPRICE:	gPriv->SetVendorPrice( static_cast<UI32>( encaps.toInt() ));break;
-      case CIP_RESTOCK:		gPriv->SetRestock( static_cast<UI16>( encaps.toInt() ));	break;
-      case CIP_GOOD:			gPriv->SetGood( static_cast<UI16>( encaps.toInt() ));		break;
-      case CIP_DIVINELOCK:	gPriv->SetDivineLock( encaps.toBool() );					break;
-      case CIP_WEIGHT:		gPriv->SetWeight( static_cast<SI32>( encaps.toInt() ));		break;
-      case CIP_WEIGHTMAX:		gPriv->SetWeightMax( static_cast<SI32>( encaps.toInt() ));	break;
-      case CIP_BASEWEIGHT:	gPriv->SetBaseWeight( static_cast<SI32>( encaps.toInt() ));	break;
-      case CIP_MAXITEMS:		gPriv->SetMaxItems( static_cast<UI16>( encaps.toInt() ));	break;
-      case CIP_STRENGTH:		gPriv->SetStrength( static_cast<SI16>( encaps.toInt() ));	break;
-      case CIP_DEXTERITY:		gPriv->SetDexterity( static_cast<SI16>( encaps.toInt() ));	break;
-      case CIP_INTELLIGENCE:	gPriv->SetIntelligence( static_cast<SI16>( encaps.toInt() ));	break;
-      case CIP_CORPSE:		gPriv->SetCorpse( encaps.toBool() );						break;
-      case CIP_DESC:			gPriv->SetDesc( encaps.toString() );						break;
-      case CIP_EVENT:			gPriv->SetEvent( encaps.toString() );						break;
       case CIP_TEMPLASTTRADED:
         newTime = encaps.toInt();
         if( newTime != 0 )
@@ -1212,30 +1318,7 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
           newTime = BuildTimeValue( newTime );
         gPriv->SetTempTimer( newTime );
         break;
-      case CIP_SHOULDSAVE:	gPriv->ShouldSave( encaps.toBool() );						break;
-      case CIP_ISNEWBIE:		gPriv->SetNewbie( encaps.toBool() );						break;
-      case CIP_ISDISPELLABLE:	gPriv->SetDispellable( encaps.toBool() );					break;
-      case CIP_MADEWITH:		gPriv->SetMadeWith( static_cast<SI08>( encaps.toInt() ));	break;
-      case CIP_ENTRYMADEFROM:	gPriv->EntryMadeFrom( static_cast<UI16>( encaps.toInt() ));	break;
-      case CIP_ISPILEABLE:	gPriv->SetPileable( encaps.toBool() );						break;
-      case CIP_ISMARKEDBYMAKER:	gPriv->SetMakersMark( encaps.toBool() );				break;
-      case CIP_ISDYEABLE:		gPriv->SetDye( encaps.toBool() );							break;
-      case CIP_ISDAMAGEABLE:	gPriv->SetDamageable( encaps.toBool() );					break;
-      case CIP_ISWIPEABLE:	gPriv->SetWipeable( encaps.toBool() );						break;
-      case CIP_ISGUARDED:		gPriv->SetGuarded( encaps.toBool() );						break;
-      case CIP_ISDOOROPEN:	gPriv->SetDoorOpen( encaps.toBool() );						break;
-      case CIP_CARVESECTION:	gPriv->SetCarve( encaps.toInt() );							break;
-      case CIP_AMMOID:		gPriv->SetAmmoId( static_cast<UI16>( encaps.toInt() ));		break;
-      case CIP_AMMOHUE:		gPriv->SetAmmoHue( static_cast<UI16>( encaps.toInt() ));	break;
-      case CIP_AMMOFX:		gPriv->SetAmmoFX( static_cast<UI16>( encaps.toInt() ));		break;
-      case CIP_AMMOFXHUE:		gPriv->SetAmmoFXHue( static_cast<UI16>( encaps.toInt() ));	break;
-      case CIP_AMMOFXRENDER:	gPriv->SetAmmoFXRender( static_cast<UI16>( encaps.toInt() ));	break;
-      case CIP_MAXRANGE:		gPriv->SetMaxRange( static_cast<UI08>( encaps.toInt() ));	break;
-      case CIP_BASERANGE:		gPriv->SetBaseRange( static_cast<UI08>( encaps.toInt() ));	break;
-      case CIP_REGION:		gPriv->SetRegion( static_cast<UI16>( encaps.toInt() ));		break;
       case CIP_ORIGIN:		gPriv->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( encaps.toString() ));						break;
-      case CIP_ISITEMHELD:	gPriv->SetHeldOnCursor( encaps.toBool() );					break;
-      case CIP_STEALABLE:		gPriv->SetStealable( static_cast<UI08>( encaps.toInt() ));	break;
 
         // The following entries are specifically for CSpawnItem objects
       case CIP_SPAWNSECTION:
@@ -1372,6 +1455,7 @@ bool CItemProps_setProperty(JSContext* cx, JSObject* obj, JS::HandleValue id, JS
 
   return true;
 }
+*/
 
 IMPL_GET_OBJ( CChar, accountNum,          CChar, setInt32,   GetAccountNum() )
 //IMPL_GET_OBJ( CChar, account,             CChar, setInt32,   GetAccount() // Do manually
