@@ -1985,8 +1985,8 @@ IMPL_SETS(CChar, sectionID,           CChar, toString,  SetSectionId )
 IMPL_SETS(CChar, name,                CChar, toString,  SetName )
 IMPL_SETS(CChar, orgName,             CChar, toString,  SetOrgName )
 IMPL_SETS(CChar, title,               CChar, toString,  SetTitle )
-IMPL_SET( CChar, x,                   CChar, toInt32,   SetX )
-IMPL_SET( CChar, y,                   CChar, toInt32,   SetY )
+IMPL_SET( CChar, x,                   CChar, toInt32,   SetX ) // confirm behaviour
+IMPL_SET( CChar, y,                   CChar, toInt32,   SetY ) // confirm behaviour
 IMPL_SET( CChar, z,                   CChar, toInt32,   SetZ )
 IMPL_SET( CChar, id,                  CChar, toInt32,   SetId )
 IMPL_SET( CChar, colour,              CChar, toInt32,   SetColour )
@@ -1998,8 +1998,8 @@ IMPL_SET( CChar, serial,              CChar, toInt32,   SetSerial )
 IMPL_SET( CChar, health,              CChar, toInt32,   SetHP )
 // IMPL_SET( CChar, scripttrigger,       CChar, toInt32, ) // Do manually
 // IMPL_SET( CChar, scriptTriggers,      CChar, toInt32, ) // Do manually
-IMPL_SET( CChar, worldnumber,         CChar, toInt32,   WorldNumber )
-IMPL_SET( CChar, instanceID,          CChar, toInt32,   SetInstanceId )
+//IMPL_SET( CChar, worldnumber,         CChar, toInt32,   WorldNumber ) // do manually, lots of validation
+//IMPL_SET( CChar, instanceID,          CChar, toInt32,   SetInstanceId ) // do manually, lots of validation
 IMPL_SET( CChar, strength,            CChar, toInt32,   SetStrength )
 IMPL_SET( CChar, dexterity,           CChar, toInt32,   SetDexterity )
 IMPL_SET( CChar, intelligence,        CChar, toInt32,   SetIntelligence )
@@ -2007,15 +2007,19 @@ IMPL_SET( CChar, mana,				  CChar, toInt32,   SetMana )
 IMPL_SET( CChar, stamina,             CChar, toInt32,   SetStamina )
 IMPL_SET( CChar, fame,				  CChar, toInt32,   SetFame )
 IMPL_SET( CChar, karma,				  CChar, toInt32,   SetKarma )
+IMPL_SET( CChar, hunger,			  CChar, toInt32,   SetHunger )
+IMPL_SET( CChar, thirst,			  CChar, toInt32,   SetThirst )
 // IMPL_SET( CChar, attack,			  CChar, toInt32,   CalcAttackPower ) // Do manually
 IMPL_SET( CChar, canAttack,           CChar, toBoolean, SetCanAttack )
 IMPL_SET( CChar, fleeAt,			  CChar, toInt32,   SetFleeAt )
 IMPL_SET( CChar, reattackAt,		  CChar, toInt32,   SetReattackAt )
 IMPL_SET( CChar, brkPeaceChance,	  CChar, toInt32,   SetBrkPeaceChance )
-IMPL_SET( CChar, hunger,			  CChar, toInt32,   SetHunger )
-IMPL_SET( CChar, thirst,			  CChar, toInt32,   SetThirst )
+IMPL_SET( CChar, peace,               CChar, toInt32,   SetPeace )
 IMPL_SET( CChar, frozen,			  CChar, toInt32,   SetFrozen )
 IMPL_SET( CChar, commandLevel,	      CChar, toInt32,   SetCommandLevel )
+IMPL_SET( CChar, maxhp,				  CChar, toInt32,   SetFixedMaxHP )
+IMPL_SET( CChar, maxstamina,          CChar, toInt32,   SetFixedMaxStam )
+IMPL_SET( CChar, maxmana,             CChar, toInt32,   SetFixedMaxMana )
 IMPL_SET( CChar, murdercount,	      CChar, toInt32,   SetKills )
 
 IMPL_SET( CChar, dead,				  CChar, toBoolean, SetDead ) // not sure if this correct one SetDead
@@ -2023,12 +2027,10 @@ IMPL_SET( CChar, npc,				  CChar, toBoolean, SetNpc )
 IMPL_SET( CChar, awake,               CChar, toBoolean, SetAwake )
 // IMPL_SET( CChar, online,              CChar, toBoolean, IsOnline ) // Do manually
 IMPL_SET( CChar, direction,           CChar, toInt32,   SetDir )
+IMPL_SET( CChar, region,              CChar, toInt32,   SetRegion )
 IMPL_SET( CChar, isrunning,           CChar, toBoolean, SetRunning )
 
 IMPL_SET( CChar, spawnserial,         CChar, toInt32,   SetSpawn )
-IMPL_SET( CChar, maxhp,				  CChar, toInt32,   SetFixedMaxHP )
-IMPL_SET( CChar, maxstamina,          CChar, toInt32,   SetFixedMaxStam )
-IMPL_SET( CChar, maxmana,             CChar, toInt32,   SetFixedMaxMana )
 IMPL_SET( CChar, oldwandertype,       CChar, toInt32,   SetOldNpcWander )
 IMPL_SET( CChar, wandertype,          CChar, toInt32,   SetNpcWander )
 // IMPL_SET( CChar, fx1,                 CChar, toInt32,   SetFx ) // Do manually
@@ -2042,27 +2044,27 @@ IMPL_SET( CChar, tdexterity2,         CChar, toInt32,   SetDexterity2 )
 IMPL_SET( CChar, tintelligence2,      CChar, toInt32,   SetIntelligence2 )
 IMPL_SET( CChar, tstrength2,          CChar, toInt32,   SetStrength2 )
 IMPL_SET( CChar, poison,              CChar, toInt32,   SetPoisoned )
-IMPL_SET( CChar, lightlevel,          CChar, toInt32,   SetFixedLight )
-IMPL_SET( CChar, vulnerable,          CChar, toBoolean, SetInvulnerable )
+//IMPL_SET( CChar, lightlevel,          CChar, toInt32,   SetFixedLight ) // Do manually
+//IMPL_SET( CChar, vulnerable,          CChar, toBoolean, SetInvulnerable ) // Do manually
 IMPL_SET( CChar, hungerstatus,        CChar, toBoolean, SetHunger )
 IMPL_SET( CChar, thirststatus,        CChar, toBoolean, SetThirst )
 IMPL_SET( CChar, lodamage,            CChar, toInt32,   SetLoDamage )
 IMPL_SET( CChar, hidamage,            CChar, toInt32,   SetHiDamage )
 IMPL_SET( CChar, flag,                CChar, toInt32,   SetFlag )
 // IMPL_SET( CChar, atwar,               CChar, toBoolean, IsAtWar ) // Do manually
-IMPL_SET( CChar, spellcast,           CChar, toInt32,   SetSpellCast )
+IMPL_SET( CChar, spellCast,           CChar, toInt32,   SetSpellCast )
 // IMPL_SET( CChar, iscasting,           CChar, setBoolean, IsCasting() || IsJSCasting() ) // Do manually
 IMPL_SET( CChar, priv,                CChar, toInt32,   SetPriv )
-IMPL_SET( CChar, townpriv,            CChar, toInt32,   SetTownpriv )
-
-IMPL_SET( CChar, hairstyle,           CChar, toInt32,   SetHairStyle )
-IMPL_SET( CChar, haircolour,          CChar, toInt32,   SetHairColour )
-IMPL_SET( CChar, beardstyle,          CChar, toInt32,   SetBeardStyle )
-IMPL_SET( CChar, beardcolour,         CChar, toInt32,   SetBeardColour )
-IMPL_SET( CChar, fontype,             CChar, toInt32,   SetFontType )
-IMPL_SET( CChar, saycolour,           CChar, toInt32,   SetSayColour )
-IMPL_SET( CChar, emotecolour,         CChar, toInt32,   SetEmoteColour )
-IMPL_SET( CChar, racegate,            CChar, toInt32,   SetRaceGate )
+IMPL_SET( CChar, townPriv,            CChar, toInt32,   SetTownpriv )
+IMPL_SETS(CChar, guildTitle,          CChar, toString,  SetGuildTitle )
+IMPL_SET( CChar, hairStyle,           CChar, toInt32,   SetHairStyle )
+IMPL_SET( CChar, hairColour,          CChar, toInt32,   SetHairColour )
+IMPL_SET( CChar, beardStyle,          CChar, toInt32,   SetBeardStyle )
+IMPL_SET( CChar, beardColour,         CChar, toInt32,   SetBeardColour )
+IMPL_SET( CChar, fontType,            CChar, toInt32,   SetFontType )
+IMPL_SET( CChar, sayColour,           CChar, toInt32,   SetSayColour )
+IMPL_SET( CChar, emoteColour,         CChar, toInt32,   SetEmoteColour )
+IMPL_SET( CChar, raceGate,            CChar, toInt32,   SetRaceGate )
 IMPL_SET( CChar, death,               CChar, toInt32,   SetDeaths )
 IMPL_SET( CChar, nextact,             CChar, toInt32,   SetNextAct )
 IMPL_SET( CChar, cell,                CChar, toInt32,   SetCell )				
@@ -2135,21 +2137,6 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
   {
     switch( JSVAL_TO_INT( id ))
     {
-      case CCP_ACCOUNTNUM:	gPriv->SetAccountNum( static_cast<UI16>( encaps.toInt() ));					break;
-      case CCP_CREATEDON:		break;
-      case CCP_PLAYTIME:		gPriv->SetPlayTime( static_cast<UI32>( encaps.toInt() ));					break;
-      case CCP_SECTIONID:		gPriv->SetSectionId( encaps.toString() );									break;
-      case CCP_NAME:			gPriv->SetName( encaps.toString() );										break;
-      case CCP_ORIGNAME:		gPriv->SetOrgName( encaps.toString() );										break;
-      case CCP_TITLE:			gPriv->SetTitle( encaps.toString() );										break;
-      case CCP_X:				gPriv->SetLocation( static_cast<SI16>( encaps.toInt() ), gPriv->GetY(), gPriv->GetZ() );	break;
-      case CCP_Y:				gPriv->SetLocation( gPriv->GetX(), static_cast<SI16>( encaps.toInt() ), gPriv->GetZ() );	break;
-      case CCP_Z:				gPriv->SetZ( static_cast<SI08>( encaps.toInt() ));							break;
-      case CCP_ID:			gPriv->SetId( static_cast<UI16>( encaps.toInt() ));							break;
-      case CCP_COLOUR:		gPriv->SetColour( static_cast<UI16>( encaps.toInt() ));						break;
-      case CCP_CONTROLSLOTS:	gPriv->SetControlSlots( static_cast<UI16>( encaps.toInt() ));				break;
-      case CCP_CONTROLSLOTSUSED:	gPriv->SetControlSlotsUsed( static_cast<UI16>( encaps.toInt() ));		break;
-      case CCP_ORNERINESS:	gPriv->SetOrneriness( static_cast<UI16>( encaps.toInt() ));					break;
       case CCP_OWNER:
         if( *vp != JS::CurrentGlobalOrNull )
         {
@@ -2165,8 +2152,6 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         }
         break;
       case CCP_VISIBLE:		gPriv->SetVisible( static_cast<VisibleTypes>( encaps.toInt() ));	break;
-      case CCP_SERIAL:											break;
-      case CCP_HEALTH:		gPriv->SetHP( encaps.toInt() );		break;
       case CCP_SCRIPTTRIGGER:
       {
         // For backwards compatibility; clears out other scripts and assigns a specific script
@@ -2244,28 +2229,10 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
           gPriv->SetTarg( nullptr );
         }
         break;
-      case CCP_DEXTERITY:		gPriv->SetDexterity( encaps.toInt() );				break;
-      case CCP_INTELLIGENCE:	gPriv->SetIntelligence( encaps.toInt() );			break;
-      case CCP_STRENGTH:		gPriv->SetStrength( encaps.toInt() );				break;
       case CCP_SKILLS:															break;
-      case CCP_MANA:			gPriv->SetMana( encaps.toInt() );					break;
-      case CCP_STAMINA:		gPriv->SetStamina( encaps.toInt() );				break;
       case CCP_CHARPACK:															break;
-      case CCP_FAME:			gPriv->SetFame( static_cast<SI16>( encaps.toInt() ));	break;
-      case CCP_KARMA:			gPriv->SetKarma( static_cast<SI16>( encaps.toInt() ));	break;
-      case CCP_HUNGER:		gPriv->SetHunger( static_cast<SI08>( encaps.toInt() ));	break;
-      case CCP_THIRST:		gPriv->SetThirst( static_cast<SI08>( encaps.toInt() ));	break;
-      case CCP_CANATTACK:		gPriv->SetCanAttack( encaps.toBool() );					break;
-      case CCP_FLEEAT:		gPriv->SetFleeAt( static_cast<SI16>( encaps.toInt() ));	break;
-      case CCP_REATTACKAT:	gPriv->SetReattackAt( static_cast<SI16>( encaps.toInt() ));			break;
-      case CCP_BRKPEACE:		gPriv->SetBrkPeaceChance( encaps.toInt() );				break;
       case CCP_SETPEACE:		gPriv->SetPeace( encaps.toInt() );						break;
-      case CCP_FROZEN:		gPriv->SetFrozen( encaps.toBool() );					break;
-      case CCP_COMMANDLEVEL:	gPriv->SetCommandLevel( static_cast<UI08>( encaps.toInt() ));		break;
       case CCP_RACE:			Races->ApplyRace( gPriv, static_cast<RACEID>( encaps.toInt() ), true );	break;
-      case CCP_MAXHP:			gPriv->SetFixedMaxHP( static_cast<SI16>( encaps.toInt() ));			break;
-      case CCP_MAXMANA:		gPriv->SetFixedMaxMana( static_cast<SI16>( encaps.toInt() ));		break;
-      case CCP_MAXSTAMINA:	gPriv->SetFixedMaxStam( static_cast<SI16>( encaps.toInt() ));		break;
       case CCP_HASSTOLEN:
       {
         if( encaps.toBool() )
@@ -2385,10 +2352,6 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
             break;
         }
         break;
-      case CCP_NPC:			gPriv->SetNpc( encaps.toBool() );						break;
-      case CCP_AWAKE:			gPriv->SetAwake( encaps.toBool() );						break;
-      case CCP_DIRECTION:		gPriv->SetDir( static_cast<UI08>( encaps.toInt() ));	break;
-      case CCP_REGION:		gPriv->SetRegion( static_cast<UI16>( encaps.toInt() ));	break;
       case CCP_ORIGIN:		gPriv->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( encaps.toString() ));	break;
       case CCP_TOWN:
         cwmWorldState->townRegions[gPriv->GetTown()]->RemoveTownMember( *gPriv );
@@ -2409,16 +2372,10 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
           }
         }
         break;
-      case CCP_OLDWANDERTYPE: gPriv->SetOldNpcWander( static_cast<SI08>( encaps.toInt() )); 		break;
-      case CCP_WANDERTYPE: 	gPriv->SetNpcWander( static_cast<SI08>( encaps.toInt() ), true );	break;
       case CCP_FX1:			gPriv->SetFx( static_cast<SI16>( encaps.toInt() ), 0 );	break;
       case CCP_FY1:			gPriv->SetFy( static_cast<SI16>( encaps.toInt() ), 0 );	break;
       case CCP_FX2:			gPriv->SetFx( static_cast<SI16>( encaps.toInt() ), 1 );	break;
       case CCP_FY2:			gPriv->SetFy( static_cast<SI16>( encaps.toInt() ), 1 );	break;
-      case CCP_FZ:			gPriv->SetFz( static_cast<SI08>( encaps.toInt() ));		break;
-      case CCP_TDEXTERITY:	gPriv->SetDexterity2( encaps.toInt() );					break;
-      case CCP_TINTELLIGENCE:	gPriv->SetIntelligence2( encaps.toInt() );				break;
-      case CCP_TSTRENGTH:		gPriv->SetStrength2( encaps.toInt() );					break;
       case CCP_LIGHTLEVEL:
         gPriv->SetFixedLight( static_cast<UI08>( encaps.toInt() ));
         if( gPriv->GetSocket() != nullptr )
@@ -2434,15 +2391,10 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         }
         break;
       case CCP_VULNERABLE:	gPriv->SetInvulnerable( !encaps.toBool() );		break;
-      case CCP_HUNGERSTATUS:	gPriv->SetHungerStatus( encaps.toBool() );		break;
-      case CCP_THIRSTSTATUS:	gPriv->SetThirstStatus( encaps.toBool() );		break;
-      case CCP_LODAMAGE:		gPriv->SetLoDamage( static_cast<SI16>( encaps.toInt() ));		break;
-      case CCP_HIDAMAGE:		gPriv->SetHiDamage( static_cast<SI16>( encaps.toInt() ));		break;
       case CCP_ATWAR:
         gPriv->SetWar( encaps.toBool() );
         Movement->CombatWalk( gPriv );
         break;
-      case CCP_SPELLCAST:		gPriv->SetSpellCast( static_cast<SI08>( encaps.toInt() ));		break;
       case CCP_ISCASTING:
       {
         bool isCasting = encaps.toBool();
@@ -2450,16 +2402,6 @@ bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
         gPriv->SetJSCasting( isCasting );
       }
         break;
-      case CCP_PRIV:			gPriv->SetPriv( static_cast<UI16>( encaps.toInt() ));			break;
-      case CCP_TOWNPRIV:		gPriv->SetTownpriv( static_cast<SI08>( encaps.toInt() ));		break;
-      case CCP_GUILDTITLE:	gPriv->SetGuildTitle( encaps.toString() );						break;
-      case CCP_HAIRSTYLE:		gPriv->SetHairStyle( static_cast<UI16>( encaps.toInt() ) );		break;
-      case CCP_HAIRCOLOUR:	gPriv->SetHairColour( static_cast<UI16>( encaps.toInt() ) );	break;
-      case CCP_BEARDSTYLE:	gPriv->SetBeardStyle( static_cast<UI16>( encaps.toInt() ) );	break;
-      case CCP_BEARDCOLOUR:	gPriv->SetBeardColour( static_cast<UI16>( encaps.toInt() ) );	break;
-      case CCP_FONTTYPE:		gPriv->SetFontType( static_cast<SI08>( encaps.toInt() ));		break;
-      case CCP_SAYCOLOUR:		gPriv->SetSayColour( static_cast<COLOUR>( encaps.toInt() ));	break;
-      case CCP_EMOTECOLOUR:	gPriv->SetEmoteColour( static_cast<COLOUR>( encaps.toInt() ));	break;
       case CCP_ATTACKER:
         if( *vp != JS::CurrentGlobalOrNull )
         {
