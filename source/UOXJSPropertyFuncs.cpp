@@ -3837,7 +3837,7 @@ bool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, bool *bp )
   }
   return true;
 }
-bool CParty_equality( JSContext *cx, JSObject *obj, jsval v, bool *bp )
+/*bool CParty_equality( JSContext *cx, JSObject *obj, jsval v, bool *bp )
 {
   JSEncapsulate srcObj( cx, obj );
   Party *srcParty = static_cast<Party *>( srcObj.toObject() );
@@ -3859,5 +3859,34 @@ bool CParty_equality( JSContext *cx, JSObject *obj, jsval v, bool *bp )
     *bp = ( srcParty == nullptr && trgObj.isType( JSOT_NULL )) ? true : false;
   }
   return true;
-}
+}*/
 
+bool CParty_equality( JSContext *cx, JS::HandleObject obj, JS::HandleValue v, bool *bp )
+{
+  JS::RootedValue srcVal(cx, JS::ObjectValue(*obj));
+  JS::RootedValue trgVal(cx, v);
+  
+  if(trgVal.isObject())
+  {
+    JS::RootedObject trgObj(cx, &trgVal.toObject());
+    const JSClass* srcClass = JS::GetClass(&srcVal.toObject());
+    const JSClass* trgClass = JS::GetClass(trgObj);
+
+    if(srcClass != trgClass)
+    {
+      *bp = false;
+    }
+    else
+    {
+      Party *srcParty = JS::GetMaybePtrFromReservedSlot<Party >(obj , 0);
+      Party *trgParty = JS::GetMaybePtrFromReservedSlot<Party >(obj , 0);
+      *bp = (srcParty == trgParty) ? true : false;
+    }
+  }
+  else
+  {
+     Party *srcParty = JS::GetMaybePtrFromReservedSlot<Party >(obj , 0);
+    *bp = (srcParty == nullptr && trgVal.isNull()) ? true : false;
+  }
+  return true;
+}
