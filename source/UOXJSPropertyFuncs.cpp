@@ -3180,6 +3180,7 @@ IMPL_GET(  CSocket, clientType,       CSocket, setInt32,   ClientType() )
       //  return true;
       //}
 
+/*
 bool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
   JSEncapsulate myClass( cx, obj );
@@ -3319,6 +3320,7 @@ bool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 
   return true;
 }
+*/
 
 // clang-format off
 IMPL_GET(  CGumpData, buttons,  SEGumpData_st, setInt32, nIDs.size() )
@@ -3555,6 +3557,29 @@ IMPL_GET( CAccount, isGM,           CAccountBlock_st, setBoolean,  wFlags.test( 
       //  break;
       //}
 
+// clang-format off
+//IMPL_SETS(CAccount, password,       CAccountBlock_st, toString, password ) // Do manually
+IMPL_SETS_DIR(CAccount, comment,        CAccountBlock_st, toString, sContact )
+//IMPL_SET_DIR( CAccount, timeban,        CAccountBlock_st, toInt32,  wTimeBan )
+IMPL_SET_DIR( CAccount, totalPlayTime,  CAccountBlock_st, toInt32,  wTotalPlayTime  )
+//IMPL_SET( CAccount, isBanned,       CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_BANNED ) )
+//IMPL_SET( CAccount, isSuspended,    CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_SUSPENDED ) )
+//IMPL_SET( CAccount, isPublic,       CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_PUBLIC ) )
+//IMPL_SET( CAccount, isOnline,       CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_ONLINE ) )
+//IMPL_SET( CAccount, isSlot1Blocked, CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_CHARACTER1 ) )
+//IMPL_SET( CAccount, isSlot2Blocked, CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_CHARACTER2 ) )
+//IMPL_SET( CAccount, isSlot3Blocked, CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_CHARACTER3 ) )
+//IMPL_SET( CAccount, isSlot4Blocked, CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_CHARACTER4 ) )
+//IMPL_SET( CAccount, isSlot5Blocked, CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_CHARACTER5 ) )
+//IMPL_SET( CAccount, isSlot6Blocked, CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_CHARACTER6 ) )
+//IMPL_SET( CAccount, isSlot7Blocked, CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_CHARACTER7 ) )
+//IMPL_SET( CAccount, isYoung,        CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_YOUNG ) )
+//IMPL_SET( CAccount, unused10,       CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_UNUSED10 ) )
+//IMPL_SET( CAccount, isSeer,         CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_SEER ) )
+//IMPL_SET( CAccount, isCounselor,    CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_COUNSELOR ) )
+//IMPL_SET( CAccount, isGM,           CAccountBlock_st, toBoolean,  wFlags.test( AB_FLAGS_GM ) )
+// clang-format on
+/*
 bool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
   CAccountBlock_st *myAccount = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st >(obj , 0);
@@ -3571,22 +3596,6 @@ bool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
   {
     switch( JSVAL_TO_INT( id ))
     {
-      case CACCOUNT_ID: 
-      case CACCOUNT_USERNAME:
-      case CACCOUNT_FLAGS:
-      case CACCOUNT_PATH:
-      case CACCOUNT_CHARACTER1:
-      case CACCOUNT_CHARACTER2:
-      case CACCOUNT_CHARACTER3:
-      case CACCOUNT_CHARACTER4:
-      case CACCOUNT_CHARACTER5:
-      case CACCOUNT_CHARACTER6:
-      case CACCOUNT_CHARACTER7:
-      case CACCOUNT_CURRENTCHAR:
-      case CACCOUNT_LASTIP:
-      case CACCOUNT_FIRSTLOGIN:
-        break;
-      case CACCOUNT_TOTALPLAYTIME:		myAccount->wTotalPlayTime = static_cast<UI32>( encaps.toInt() );	break;
       case CACCOUNT_PASSWORD:
       {
         std::string newPass = encaps.toString();
@@ -3600,9 +3609,6 @@ bool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
         }
         break;
       }
-      case CACCOUNT_COMMENT: 
-        myAccount->sContact = encaps.toString();
-        break;
       case CACCOUNT_TIMEBAN:
       {
         UI32 timeBan = static_cast<UI32>( encaps.toInt() );
@@ -3651,6 +3657,7 @@ bool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 
   return true;
 }
+*/
 
 // clang-format off
 IMPL_GET_NP( CConsole, mode,    setInt32, Console.CurrentMode() )
@@ -3730,7 +3737,7 @@ IMPL_SET(  CParty, isNPC,       Party, toBoolean,  IsNPC )
       //    }
       //  }
       //}
-
+/*
 bool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
   Party *gPriv = JS::GetMaybePtrFromReservedSlot<Party >(obj , 0);
@@ -3760,7 +3767,8 @@ bool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp 
   }
   return true;
 }
-
+*/
+/*
 bool CScriptProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
 {
   if( JSVAL_IS_INT( id ))
@@ -3776,7 +3784,8 @@ bool CScriptProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] 
   }
   return true;
 }
-
+*/
+/*
 bool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, bool *bp )
 {
   JSEncapsulate srcObj( cx, obj );
@@ -3837,6 +3846,7 @@ bool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, bool *bp )
   }
   return true;
 }
+*/
 /*bool CParty_equality( JSContext *cx, JSObject *obj, jsval v, bool *bp )
 {
   JSEncapsulate srcObj( cx, obj );
@@ -3861,6 +3871,7 @@ bool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, bool *bp )
   return true;
 }*/
 
+/*
 bool CParty_equality( JSContext *cx, JS::HandleObject obj, JS::HandleValue v, bool *bp )
 {
   JS::RootedValue srcVal(cx, JS::ObjectValue(*obj));
@@ -3890,3 +3901,4 @@ bool CParty_equality( JSContext *cx, JS::HandleObject obj, JS::HandleValue v, bo
   }
   return true;
 }
+*/

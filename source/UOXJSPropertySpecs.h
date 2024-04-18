@@ -119,6 +119,21 @@ bool JS##main##_set_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) {   
   return true;                                                                                                   \
 }
 
+#define IMPL_SETS_DIR(main, attr, type, method, accessor)                                                            \
+bool JS##main##_set_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) {                                    \
+  auto args = JS::CallArgsFromVp(argc, vp);                                                                      \
+  JS::RootedObject thisObj(cx);                                                                                  \
+  if (!args.computeThis(cx, &thisObj))                                                                           \
+      return false;                                                                                              \
+  auto priv         = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                         \
+  auto origScript   = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                         \
+  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
+  priv->accessor    = convertToString(cx, args.get(0).method());                                                 \
+  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
+  }                                                                                                              \
+  return true;                                                                                                   \
+}
+
 // This is the restore context we need to fix up
 // bool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
 //    if( !retVal ) \
