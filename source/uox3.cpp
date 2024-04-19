@@ -1301,7 +1301,14 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 					{
 						if(( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 )) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= maxStam )
 						{
-							mChar.IncStamina( 1 );
+							double FocusBonus = 0;
+							if(cwmWorldState->ServerData()->ExpansionCoreShardEra() == ER_AOS)
+							{
+								Skills->CheckSkill(( &mChar ), FOCUS, 0, 1000 ); // Check FOCUS for skill gain AOS
+								FocusBonus = ( 0.1 * mChar.GetSkill( FOCUS ) / 10);	// Bonus for focus
+							}
+
+							mChar.IncStamina( 1 + FocusBonus );
 							
 							if( mChar.GetStamina() >= maxStam )
 							{
@@ -1328,8 +1335,16 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 				{
 					if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000 ) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= maxMana )
 					{
+						double FocusBonus = 0;
+						if(cwmWorldState->ServerData()->ExpansionCoreShardEra() == ER_AOS)
+						{
+								Skills->CheckSkill(( &mChar ), FOCUS, 0, 1000 ); // Check FOCUS for skill gain AOS
+								double focus = mChar.GetSkill( FOCUS );	// Bonus for focus
+								double focusBonus = focus / 200;
+						}
+
 						Skills->CheckSkill(( &mChar ), MEDITATION, 0, 1000 );	// Check Meditation for skill gain ala OSI
-						mChar.IncMana( 1 );	// Gain a mana point
+						mChar.IncMana( 1 + FocusBonus );	// Gain a mana point
 						if( mChar.GetMana() == maxMana )
 						{
 							if( mChar.IsMeditating() )
