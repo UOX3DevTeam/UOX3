@@ -906,8 +906,8 @@ inline JSPropertySpec CCreateEntryProperties[] =
   UX_PSG( CCreateEntry, maxRank,      JSPROP_ENUMANDPERM ),
   UX_PSG( CCreateEntry, minRank,      JSPROP_ENUMANDPERM ),
   UX_PSG( CCreateEntry, name,         JSPROP_ENUMANDPERM ),
-  UX_PSG( CCreateEntry, resources,    JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSG( CCreateEntry, skills,       JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSG( CCreateEntry, resources,    JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSG( CCreateEntry, skills,       JSPROP_ENUMANDPERM ), // Error: G
   UX_PSG( CCreateEntry, sound,        JSPROP_ENUMANDPERM ),
   UX_PSG( CCreateEntry, spell,        JSPROP_ENUMANDPERM ),
   JS_PS_END
@@ -960,7 +960,7 @@ inline JSPropertySpec CRaceProperties[] =
 {
   UX_PSGS( CRace, armourClass,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CRace, genderRestrict,   JSPROP_ENUMANDPERM ),
-  UX_PSGS( CRace, id,               JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CRace, id,               JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CRace, isPlayerRace,     JSPROP_ENUMANDPERM ),
   UX_PSGS( CRace, languageSkillMin, JSPROP_ENUMANDPERM ),
   UX_PSGS( CRace, magicResistance,  JSPROP_ENUMANDPERM ),
@@ -969,9 +969,9 @@ inline JSPropertySpec CRaceProperties[] =
   UX_PSGS( CRace, poisonResistance, JSPROP_ENUMANDPERM ),
   UX_PSGS( CRace, requiresBeard,    JSPROP_ENUMANDPERM ),
   UX_PSGS( CRace, requiresNoBeard,  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CRace, skillAdjustment,  JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CRace, skillAdjustment,  JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CRace, visibleDistance,  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CRace, weakToWeather,    JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CRace, weakToWeather,    JSPROP_ENUMANDPERM ), // Error: GS
   JS_PS_END
 };
 
@@ -982,7 +982,7 @@ inline JSPropertySpec CRegionProperties[] =
   UX_PSG(  CRegion, numOrePrefs,        JSPROP_ENUMPERMRO  ),
   UX_PSG(  CRegion, owner,              JSPROP_ENUMANDPERM ),
   UX_PSG(  CRegion, population,         JSPROP_ENUMPERMRO  ),
-  UX_PSGS( CRegion, appearance,         JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CRegion, appearance,         JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CRegion, canCastAggressive,  JSPROP_ENUMANDPERM ),
   UX_PSGS( CRegion, canGate,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CRegion, canMark,            JSPROP_ENUMANDPERM ),
@@ -996,14 +996,14 @@ inline JSPropertySpec CRegionProperties[] =
   UX_PSGS( CRegion, isDungeon,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CRegion, isGuarded,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CRegion, isSafeZone,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CRegion, mayor,              JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CRegion, mayor,              JSPROP_ENUMANDPERM ), // Error: G
   UX_PSGS( CRegion, music,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CRegion, name,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CRegion, numGuards,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CRegion, race,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CRegion, reserves,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CRegion, scriptTrigger,      JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CRegion, scriptTriggers,     JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CRegion, scriptTrigger,      JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CRegion, scriptTriggers,     JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CRegion, tax,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CRegion, taxes,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CRegion, taxResource,        JSPROP_ENUMANDPERM ),
@@ -1019,17 +1019,17 @@ inline JSPropertySpec CSpawnRegionProperties[] =
   UX_PSGS( CSpawnRegion, defZ,        JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, instanceID,  JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, isSpawner,   JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSpawnRegion, item,        JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSGS( CSpawnRegion, itemCount,   JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CSpawnRegion, itemList,    JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CSpawnRegion, item,        JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CSpawnRegion, itemCount,   JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CSpawnRegion, itemList,    JSPROP_ENUMANDPERM ), // Error: G
   UX_PSGS( CSpawnRegion, maxItems,    JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, maxNpcs,     JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, maxTime,     JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, minTime,     JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, name,        JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSpawnRegion, npc,         JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSGS( CSpawnRegion, npcCount,    JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CSpawnRegion, npcList,     JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CSpawnRegion, npc,         JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CSpawnRegion, npcCount,    JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CSpawnRegion, npcList,     JSPROP_ENUMANDPERM ), // Error: G
   UX_PSGS( CSpawnRegion, onlyOutside, JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, prefZ,       JSPROP_ENUMANDPERM ),
   UX_PSGS( CSpawnRegion, regionNum,   JSPROP_ENUMANDPERM ),
@@ -1043,208 +1043,208 @@ inline JSPropertySpec CSpawnRegionProperties[] =
 
 inline JSPropertySpec CGuildProperties[] =
 {
-  UX_PSG(  CGuild, members,      JSPROP_ENUMERATE   ), // Error: G
+//  UX_PSG(  CGuild, members,      JSPROP_ENUMERATE   ), // Error: G
   UX_PSG(  CGuild, numMembers,   JSPROP_ENUMPERMRO  ),
   UX_PSG(  CGuild, numRecruits,  JSPROP_ENUMPERMRO  ),
-  UX_PSG(  CGuild, recruits,     JSPROP_ENUMERATE   ), // Error: G
+//  UX_PSG(  CGuild, recruits,     JSPROP_ENUMERATE   ), // Error: G
   UX_PSGS( CGuild, abbreviation, JSPROP_ENUMANDPERM ),
   UX_PSGS( CGuild, charter,      JSPROP_ENUMANDPERM ),
-  UX_PSGS( CGuild, master,       JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CGuild, master,       JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CGuild, name,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CGuild, stone,        JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CGuild, type,         JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CGuild, stone,        JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CGuild, type,         JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CGuild, webPage,      JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
 inline JSPropertySpec CCharacterProps[] =
 {
-  UX_PSG(  CCharacter, attack,              JSPROP_ENUMPERMRO ), // Error: G
-  UX_PSG(  CCharacter, dead,                JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, flag,                JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, followerCount,       JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, hungerRate,          JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, isAnimal,            JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, isChar,              JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, isHuman,             JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, isItem,              JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, isJailed,            JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, isSpawner,           JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, murderer,            JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, online,              JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, ownedItemsCount,     JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, party,               JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, petCount,            JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, spawnSerial,         JSPROP_ENUMPERMRO ),
-  UX_PSG(  CCharacter, thirstRate,          JSPROP_ENUMPERMRO ),
-  UX_PSGS( CCharacter, account,             JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSGS( CCharacter, accountNum,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, actualDexterity,     JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, actualIntelligence,  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, actualStrength,      JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, aitype,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, allmove,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, attacker,            JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSGS( CCharacter, atWar,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, baseskills,          JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSGS( CCharacter, beardColor,          JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSGS( CCharacter, beardColour,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, beardStyle,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, brkPeaceChance,      JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, canAttack,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, canBroadcast,        JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, canRun,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, canSnoop,            JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, cell,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, color,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, colour,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, commandlevel,        JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSGS( CCharacter, controlSlots,        JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, controlSlotsUsed,    JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, createdOn,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, criminal,            JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, deaths,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, dexterity,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, direction,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, emoteColour,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, fame,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, fleeAt,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, fontType,            JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, foodList,            JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSGS( CCharacter, frozen,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, fx1,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, fx2,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, fy1,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, fy2,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, fz,                  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, gender,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, guarding,            JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, guild,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, guildTitle,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, hairColor,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, hairColour,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, hairStyle,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, hasStolen,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, health,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, hidamage,            JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, hireling,            JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, houseicons,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, housesCoOwned,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, housesOwned,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, hue,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, hunger,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, hungerWildChance,    JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, id,                  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, innocent,            JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, instanceID,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, intelligence,        JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isAwake,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isCasting,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isCounselor,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isDisguised,         JSPROP_ENUMANDPERM ),
+//  UX_PSG(  CCharacter, attack,                JSPROP_ENUMPERMRO  ), // Error: G
+  UX_PSG(  CCharacter, dead,                  JSPROP_ENUMPERMRO  ),
+  UX_PSG(  CCharacter, flag,                  JSPROP_ENUMPERMRO  ),
+  UX_PSG(  CCharacter, followerCount,         JSPROP_ENUMPERMRO  ),
+//  UX_PSG(  CCharacter, hungerRate,            JSPROP_ENUMPERMRO  ), // Error: G
+//  UX_PSG(  CCharacter, isAnimal,              JSPROP_ENUMPERMRO  ), // Error: G
+//  UX_PSG(  CCharacter, isChar,                JSPROP_ENUMPERMRO  ), // Error: G
+//  UX_PSG(  CCharacter, isHuman,               JSPROP_ENUMPERMRO  ), // Error: G
+//  UX_PSG(  CCharacter, isItem,                JSPROP_ENUMPERMRO  ), // Error: G
+  UX_PSG(  CCharacter, isJailed,              JSPROP_ENUMPERMRO  ),
+//  UX_PSG(  CCharacter, isSpawner,             JSPROP_ENUMPERMRO  ), // Error: G
+  UX_PSG(  CCharacter, murderer,              JSPROP_ENUMPERMRO  ),
+//  UX_PSG(  CCharacter, online,                JSPROP_ENUMPERMRO  ), // Error: G
+  UX_PSG(  CCharacter, ownedItemsCount,       JSPROP_ENUMPERMRO  ),
+//  UX_PSG(  CCharacter, party,                 JSPROP_ENUMPERMRO  ), // Error: G
+  UX_PSG(  CCharacter, petCount,              JSPROP_ENUMPERMRO  ),
+  UX_PSG(  CCharacter, spawnSerial,           JSPROP_ENUMPERMRO  ),
+//  UX_PSG(  CCharacter, thirstRate,            JSPROP_ENUMPERMRO  ), // Error: G
+//  UX_PSGS( CCharacter, account,               JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CCharacter, accountNum,            JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, actualDexterity,       JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, actualIntelligence,    JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, actualStrength,        JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, aitype,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, allmove,               JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, attacker,              JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CCharacter, atWar,                 JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, baseskills,            JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CCharacter, beardColor,            JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CCharacter, beardColour,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, beardStyle,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, brkPeaceChance,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, canAttack,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, canBroadcast,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, canRun,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, canSnoop,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, cell,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, color,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, colour,                JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, commandlevel,          JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CCharacter, controlSlots,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, controlSlotsUsed,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, createdOn,             JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, criminal,              JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, deaths,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, dexterity,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, direction,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, emoteColour,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, fame,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, fleeAt,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, fontType,              JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, foodList,              JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CCharacter, frozen,                JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, fx1,                   JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, fx2,                   JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, fy1,                   JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, fy2,                   JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, fz,                    JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, gender,                JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CCharacter, guarding,              JSPROP_ENUMANDPERM ) // Error: GS
+//  UX_PSGS( CCharacter, guild,                 JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, guildTitle,            JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CCharacter, hairColor,             JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, hairColour,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hairStyle,             JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, hasStolen,             JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, health,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hidamage,              JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, hireling,              JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, houseicons,            JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CCharacter, housesCoOwned,         JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CCharacter, housesOwned,           JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CCharacter, hue,                   JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CCharacter, hunger,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, hungerWildChance,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, id,                    JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, innocent,              JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, instanceID,            JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, intelligence,          JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, isAwake,               JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, isCasting,             JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, isCounselor,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isDisguised,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, isDispellable,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isFlying,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isGM,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isGMPageable,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isGuarded,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isIncognito,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isMeditating,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isonhorse,             JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, isFlying,              JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, isGM,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isGMPageable,          JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, isGuarded,             JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, isIncognito,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, isMeditating,          JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, isonhorse,             JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CCharacter, isPolymorphed,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isRunning,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isShop,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, isUsingPotion,         JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, isRunning,             JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, isShop,                JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, isUsingPotion,         JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CCharacter, karma,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, lightlevel,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, lodamage,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, loyalty,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, loyaltyRate,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, magicReflect,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, mana,                 JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, lightlevel,            JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, lodamage,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, loyalty,               JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, loyaltyRate,           JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CCharacter, magicReflect,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, mana,                  JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, maxhp,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, maxLoyalty,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, maxmana,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, maxstamina,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, mounted,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, multi,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, murdercount,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, name,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, neutral,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, nextAct,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, noNeedMana,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, noNeedReags,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, noSkillTitles,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, npc,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, npCCharacter,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, npcFlag,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, oldWandertype,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, oldX,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, oldY,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, oldZ,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, maxLoyalty,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, maxmana,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, maxstamina,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, mounted,               JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, multi,                 JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, murdercount,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, name,                  JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, neutral,               JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, nextAct,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, noNeedMana,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, noNeedReags,           JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, noSkillTitles,         JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CCharacter, npc,                   JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, npCCharacter,          JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CCharacter, npcFlag,               JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, oldWandertype,         JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, oldX,                  JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, oldY,                  JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, oldZ,                  JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CCharacter, orgID,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, orgSkin,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, origin,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, origName,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, orneriness,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, owner,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, ownerCount,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, pack,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, partyLootable,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, permanentMagicReflect,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, playTime,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, poison,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, poisonStrength,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, priv,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, race,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, raceGate,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, reAttackAt,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, region,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, orgSkin,               JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, origin,                JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CCharacter, origName,              JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, orneriness,            JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, owner,                 JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, ownerCount,            JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, pack,                  JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CCharacter, partyLootable,         JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CCharacter, permanentMagicReflect, JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, playTime,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, poison,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, poisonStrength,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, priv,                  JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, race,                  JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, raceGate,              JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, reAttackAt,            JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, region,                JSPROP_ENUMANDPERM ), // Error: G
   UX_PSGS( CCharacter, sayColour,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, scripttrigger,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, scriptTriggers,         JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, scripttrigger,         JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, scriptTriggers,        JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CCharacter, sectionID,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, serial,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, setPeace,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, shouldSave,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, singClickSer,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, skillLock,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, skills,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, skillsused,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, skillToPeace,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, skillToProv,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, skillToTame,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, skin,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, socket,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, spattack,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, spdelay,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, serial,                JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, setPeace,              JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CCharacter, shouldSave,            JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, singClickSer,          JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CCharacter, skillLock,             JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, skills,                JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, skillsused,            JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, skillToPeace,          JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, skillToProv,           JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, skillToTame,           JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, skin,                  JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CCharacter, socket,                JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CCharacter, spattack,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, spdelay,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, spellCast,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, split,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, splitchance,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, squelch,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, stabled,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, stamina,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, stealth,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, strength,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, splitchance,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, squelch,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, stabled,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, stamina,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, stealth,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, strength,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, tamed,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, tamedHungerRate,     JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, tamedThirstRate,     JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, target,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, tempdex,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, tempint,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, tempstr,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, thirst,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, thirstWildChance,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, tamedHungerRate,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, tamedThirstRate,       JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, target,                JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, tempdex,               JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, tempint,               JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, tempstr,               JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, thirst,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, thirstWildChance,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, title,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, town,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, townPriv,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, trainer,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, visible,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, vulnerable,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, wandertype,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, weight,                 JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, willhunger,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, willthirst,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CCharacter, worldnumber,         JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, town,                  JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, townPriv,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, trainer,               JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, visible,               JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, vulnerable,            JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CCharacter, wandertype,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CCharacter, weight,                JSPROP_ENUMANDPERM ),
+//  UX_PSGS( CCharacter, willhunger,            JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CCharacter, willthirst,            JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CCharacter, worldnumber,           JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CCharacter, x,                     JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, y,                     JSPROP_ENUMANDPERM ),
   UX_PSGS( CCharacter, z,                     JSPROP_ENUMANDPERM ),
@@ -1260,27 +1260,27 @@ inline JSPropertySpec CItemProps[] =
   UX_PSGS( CItem, ammoHue,             JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, ammoID,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, amount,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, att,                 JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, att,                 JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CItem, baseRange,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, baseWeight,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, buyvalue,            JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, canBeLockedDown,     JSPROP_ENUMPERMRO  ), // Error: S
+//  UX_PSGS( CItem, canBeLockedDown,     JSPROP_ENUMPERMRO  ), // Error: S
   UX_PSGS( CItem, carveSection,        JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, color,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, colour,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, container,           JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, container,           JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CItem, corpse,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, creator,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, damageCold,          JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, damageHeat,          JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, damageLight,         JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, damageLightning,     JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, damagePoison,        JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, damageRain,          JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, damageSnow,          JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, damageCold,          JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, damageHeat,          JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, damageLight,         JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, damageLightning,     JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, damagePoison,        JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, damageRain,          JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, damageSnow,          JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CItem, decayable,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, decaytime,           JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, def,                 JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, decaytime,           JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, def,                 JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CItem, desc,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, dexterity,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, dir,                 JSPROP_ENUMANDPERM ),
@@ -1290,134 +1290,134 @@ inline JSPropertySpec CItemProps[] =
   UX_PSGS( CItem, good,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, health,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, hidamage,            JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, hue,                 JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, hue,                 JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CItem, id,                  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, instanceID,          JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, instanceID,          JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CItem, intelligence,        JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isChar,              JSPROP_ENUMPERMRO  ), // Error: GS
-  UX_PSGS( CItem, isContType,          JSPROP_ENUMPERMRO  ), // Error: S
+//  UX_PSGS( CItem, isChar,              JSPROP_ENUMPERMRO  ), // Error: GS
+//  UX_PSGS( CItem, isContType,          JSPROP_ENUMPERMRO  ), // Error: S
   UX_PSGS( CItem, isDamageable,        JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, isDispellable,       JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, isDoorOpen,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, isDyeable,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isFieldSpell,        JSPROP_ENUMPERMRO  ), // Error: S
+//  UX_PSGS( CItem, isFieldSpell,        JSPROP_ENUMPERMRO  ), // Error: S
   UX_PSGS( CItem, isGuarded,           JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isItem,              JSPROP_ENUMPERMRO  ), // Error: GS
+//  UX_PSGS( CItem, isItem,              JSPROP_ENUMPERMRO  ), // Error: GS
   UX_PSGS( CItem, isItemHeld,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isLeatherType,       JSPROP_ENUMPERMRO  ), // Error: S
-  UX_PSGS( CItem, isLockedDown,        JSPROP_ENUMPERMRO  ), // Error: S
+//  UX_PSGS( CItem, isLeatherType,       JSPROP_ENUMPERMRO  ), // Error: S
+//  UX_PSGS( CItem, isLockedDown,        JSPROP_ENUMPERMRO  ), // Error: S
   UX_PSGS( CItem, isMarkedByMaker,     JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isMetalType,         JSPROP_ENUMPERMRO  ), // Error: S
+//  UX_PSGS( CItem, isMetalType,         JSPROP_ENUMPERMRO  ), // Error: S
   UX_PSGS( CItem, isNewbie,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, isPileable,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isShieldType,        JSPROP_ENUMPERMRO  ),
-  UX_PSGS( CItem, isSpawner,           JSPROP_ENUMPERMRO  ),
+//  UX_PSGS( CItem, isShieldType,        JSPROP_ENUMPERMRO  ), // Error: S
+//  UX_PSGS( CItem, isSpawner,           JSPROP_ENUMPERMRO  ), // Error: G
   UX_PSGS( CItem, isWipeable,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, itemsinside,         JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, layer,               JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, itemsinside,         JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, layer,               JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CItem, lodamage,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, madeWith,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, maxhp,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, maxItems,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, maxRange,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, maxUses,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, more,                JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, more0,               JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, more1,               JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, more2,               JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, morex,               JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, morey,               JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, morez,               JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, more,                JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, more0,               JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, more1,               JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, more2,               JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, morex,               JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, morey,               JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, morez,               JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CItem, movable,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, multi,               JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, multi,               JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CItem, name,                JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, name2,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, oldX,                JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, oldY,                JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, oldZ,                JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, origin,              JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, owner,               JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, oldX,                JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, oldY,                JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, oldZ,                JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, origin,              JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, owner,               JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CItem, poison,              JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, race,                JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSGS( CItem, race,                JSPROP_ENUMANDPERM ), // Error: G
   UX_PSGS( CItem, rank,                JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, region,              JSPROP_ENUMPERMRO  ), // Error: G
-  UX_PSGS( CItem, resistCold,          JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, resistHeat,          JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, resistLight,         JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, resistLightning,     JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, resistPoison,        JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, resistRain,          JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, resistSnow,          JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, region,              JSPROP_ENUMPERMRO  ), // Error: G
+//  UX_PSGS( CItem, resistCold,          JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, resistHeat,          JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, resistLight,         JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, resistLightning,     JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, resistPoison,        JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, resistRain,          JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, resistSnow,          JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CItem, restock,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, scripttrigger,       JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, scriptTriggers,      JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, scripttrigger,       JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, scriptTriggers,      JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CItem, sectionID,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, sellvalue,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, serial,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, shouldSave,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, skin,                JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, skin,                JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CItem, spawnSerial,         JSPROP_ENUMPERMRO  ),
   UX_PSGS( CItem, speed,               JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, stealable,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, strength,            JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, tempLastTraded,      JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CItem, tempTimer,           JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, tempLastTraded,      JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, tempTimer,           JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CItem, title,               JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, totalItemCount,      JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, type,                JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, totalItemCount,      JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, type,                JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CItem, usesLeft,            JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, vendorPrice,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, visible,             JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, visible,             JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CItem, weight,              JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, weightMax,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, wipable,             JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, worldnumber,         JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CItem, worldnumber,         JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CItem, x,                   JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, y,                   JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, z,                   JSPROP_ENUMANDPERM ),
 
   // The Following vars are specific to CSpawnItem objects
-  UX_PSGS( CItem, maxinterval,         JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, mininterval,         JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, sectionalist,        JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, spawnsection,        JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, maxinterval,         JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, mininterval,         JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, sectionalist,        JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, spawnsection,        JSPROP_ENUMANDPERM ), // Error: GS
 
   // The Following vars are specific to cMultiObj objects
-  UX_PSGS( CItem, bans,                JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, banX,                JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, banY,                JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, buildTimestamp,      JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, deed,                JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, friends,             JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, guests,              JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, isPublic,            JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, lockdowns,           JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, maxBans,             JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, maxFriends,          JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, maxGuests,           JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, maxLockdowns,        JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, maxOwners,           JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, maxSecureContainers, JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, maxTrashContainers,  JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, maxVendors,          JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, owners,              JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, secureContainers,    JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, tradeTimestamp,      JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, trashContainers,     JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CItem, vendors,             JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, bans,                JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, banX,                JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, banY,                JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, buildTimestamp,      JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, deed,                JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, friends,             JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, guests,              JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, isPublic,            JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, lockdowns,           JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, maxBans,             JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, maxFriends,          JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, maxGuests,           JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, maxLockdowns,        JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, maxOwners,           JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, maxSecureContainers, JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, maxTrashContainers,  JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, maxVendors,          JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, owners,              JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, secureContainers,    JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, tradeTimestamp,      JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, trashContainers,     JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CItem, vendors,             JSPROP_ENUMANDPERM ), // Error: GS
   JS_PS_END
 };
 
 inline JSPropertySpec CSocketProps[] =
 {
   UX_PSG(  CSocket, addID,            JSPROP_ENUMPERMIDX ),
-  UX_PSG(  CSocket, buffer,           JSPROP_ENUMPERMIDX ), // Error: G
-  UX_PSG(  CSocket, clientIP,         JSPROP_ENUMPERMIDX ), // Error: G
+//  UX_PSG(  CSocket, buffer,           JSPROP_ENUMPERMIDX ), // Error: G
+//  UX_PSG(  CSocket, clientIP,         JSPROP_ENUMPERMIDX ), // Error: G
   UX_PSG(  CSocket, xText,            JSPROP_ENUMPERMIDX ),
   UX_PSG(  CSocket, xText2,           JSPROP_ENUMPERMIDX ),
-  UX_PSGS( CSocket, account,          JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CSocket, bytesReceived,    JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CSocket, bytesSent,        JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CSocket, account,          JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CSocket, bytesReceived,    JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CSocket, bytesSent,        JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CSocket, clickX,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CSocket, clickY,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CSocket, clickZ,           JSPROP_ENUMANDPERM ),
@@ -1425,26 +1425,26 @@ inline JSPropertySpec CSocketProps[] =
   UX_PSGS( CSocket, clientMajorVer,   JSPROP_ENUMANDPERM ),
   UX_PSGS( CSocket, clientMinorVer,   JSPROP_ENUMANDPERM ),
   UX_PSGS( CSocket, clientSubVer,     JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, clientType,       JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CSocket, clientType,       JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CSocket, cryptClient,      JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, currentChar,      JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CSocket, currentChar,      JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CSocket, currentSpellType, JSPROP_ENUMANDPERM ),
   UX_PSGS( CSocket, firstPacket,      JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, idleTimeout,      JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CSocket, language,         JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CSocket, idleTimeout,      JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CSocket, language,         JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CSocket, logging,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CSocket, newClient,        JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, pickupSerial,     JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CSocket, pickupSpot,       JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CSocket, pickupSerial,     JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CSocket, pickupSpot,       JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CSocket, pickupX,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CSocket, pickupY,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CSocket, pickupZ,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, target,           JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CSocket, target,           JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CSocket, targetOK,         JSPROP_ENUMANDPERM ),
   UX_PSGS( CSocket, tempInt,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CSocket, tempInt2,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, tempObj,          JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CSocket, tempObj2,         JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CSocket, tempObj,          JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CSocket, tempObj2,         JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CSocket, walkSequence,     JSPROP_ENUMANDPERM ),
   UX_PSGS( CSocket, wasIdleWarned,    JSPROP_ENUMANDPERM ),
   JS_PS_END
@@ -1516,49 +1516,49 @@ inline JSPropertySpec CSkillsProps[] =
 
 inline JSPropertySpec CGumpDataProperties[] =
 {
-  UX_PSGS( CGumpData, buttons,   JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CGumpData, IDs,       JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CGumpData, buttons,   JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CGumpData, IDs,       JSPROP_ENUMANDPERM ), // Error: S
   JS_PS_END
 };
 
 inline JSPropertySpec CAccountProperties[] =
 {
-  UX_PSG(  CAccount, character1,       JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSG(  CAccount, character2,       JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSG(  CAccount, character3,       JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSG(  CAccount, character4,       JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSG(  CAccount, character5,       JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSG(  CAccount, character6,       JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSG(  CAccount, character7,       JSPROP_ENUMANDPERM ), // Error: G
-  UX_PSG(  CAccount, currentChar,      JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSG(  CAccount, character1,       JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSG(  CAccount, character2,       JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSG(  CAccount, character3,       JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSG(  CAccount, character4,       JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSG(  CAccount, character5,       JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSG(  CAccount, character6,       JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSG(  CAccount, character7,       JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSG(  CAccount, currentChar,      JSPROP_ENUMANDPERM ), // Error: G
   UX_PSG(  CAccount, firstLogin,       JSPROP_ENUMANDPERM ),
   UX_PSG(  CAccount, flags,            JSPROP_ENUMANDPERM ),
   UX_PSG(  CAccount, id,               JSPROP_ENUMANDPERM ),
-  UX_PSG(  CAccount, lastIP,           JSPROP_ENUMANDPERM ), // Error: G
+//  UX_PSG(  CAccount, lastIP,           JSPROP_ENUMANDPERM ), // Error: G
   UX_PSG(  CAccount, username,         JSPROP_ENUMANDPERM ),
   UX_PSGS( CAccount, comment,          JSPROP_ENUMANDPERM ),
-  UX_PSGS( CAccount, password,         JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CAccount, path,             JSPROP_ENUMANDPERM ), // Error: GS
-  UX_PSGS( CAccount, timeban,          JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, password,         JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CAccount, path,             JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CAccount, timeban,          JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CAccount, totalPlayTime,    JSPROP_ENUMANDPERM ),
 
   // Flags
-  UX_PSGS( CAccount, isBanned,         JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isCounselor,      JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isGM,             JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isOnline,         JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isPublic,         JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isSeer,           JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isSlot1Blocked,   JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isSlot2Blocked,   JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isSlot3Blocked,   JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isSlot4Blocked,   JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isSlot5Blocked,   JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isSlot6Blocked,   JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isSlot7Blocked,   JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isSuspended,      JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, isYoung,          JSPROP_ENUMANDPERM ), // Error: S
-  UX_PSGS( CAccount, unused10,         JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isBanned,         JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isCounselor,      JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isGM,             JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isOnline,         JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isPublic,         JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isSeer,           JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isSlot1Blocked,   JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isSlot2Blocked,   JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isSlot3Blocked,   JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isSlot4Blocked,   JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isSlot5Blocked,   JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isSlot6Blocked,   JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isSlot7Blocked,   JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isSuspended,      JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, isYoung,          JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CAccount, unused10,         JSPROP_ENUMANDPERM ), // Error: S
   JS_PS_END
 };
 
@@ -1581,11 +1581,11 @@ inline JSPropertySpec CScriptSectionProperties[] =
 inline JSPropertySpec CResourceProperties[] =
 {
   UX_PSGS( CResource, fishAmount, JSPROP_ENUMANDPERM ),
-  UX_PSGS( CResource, fishTime,   JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CResource, fishTime,   JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CResource, logAmount,  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CResource, logTime,    JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CResource, logTime,    JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CResource, oreAmount,  JSPROP_ENUMANDPERM ),
-  UX_PSGS( CResource, oreTime,    JSPROP_ENUMANDPERM ), // Error: S
+//  UX_PSGS( CResource, oreTime,    JSPROP_ENUMANDPERM ), // Error: S
   JS_PS_END
 };
 // clang-format on
@@ -1594,13 +1594,13 @@ inline JSPropertySpec CPartyProperties[] =
 {
   UX_PSG(  CParty, memberCount, JSPROP_ENUMPERMRO ),
   UX_PSGS( CParty, isNPC,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CParty, leader,      JSPROP_ENUMANDPERM ), // Error: GS
+// UX_PSGS( CParty, leader,      JSPROP_ENUMANDPERM ), // Error: GS
   JS_PS_END
 };
 
 inline JSPropertySpec CScriptProperties[] =
 {
-  UX_PSGS( CScript, script_id,       JSPROP_ENUMANDPERM ), // Error: GS
+//  UX_PSGS( CScript, script_id,       JSPROP_ENUMANDPERM ), // Error: GS
   JS_PS_END
 };
 
