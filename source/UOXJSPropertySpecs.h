@@ -906,8 +906,8 @@ inline JSPropertySpec CCreateEntryProperties[] =
   UX_PSG( CCreateEntry, maxRank,      JSPROP_ENUMANDPERM ),
   UX_PSG( CCreateEntry, minRank,      JSPROP_ENUMANDPERM ),
   UX_PSG( CCreateEntry, name,         JSPROP_ENUMANDPERM ),
-  UX_PSG( CCreateEntry, resources,    JSPROP_ENUMANDPERM ),
-  UX_PSG( CCreateEntry, skills,       JSPROP_ENUMANDPERM ),
+  UX_PSG( CCreateEntry, resources,    JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSG( CCreateEntry, skills,       JSPROP_ENUMANDPERM ), // Error: G
   UX_PSG( CCreateEntry, sound,        JSPROP_ENUMANDPERM ),
   UX_PSG( CCreateEntry, spell,        JSPROP_ENUMANDPERM ),
   JS_PS_END
@@ -918,40 +918,40 @@ inline JSPropertySpec CCreateEntryProperties[] =
 inline JSPropertySpec CTimerProperties[] =
 {
   // Character Timers
-  UX_PSG( CTimer, ANTISPAM,                       JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, CRIMFLAG,                       JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, EVADETIME,                   JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, FIREFIELDTICK,               JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, FLYINGTOGGLE,                   JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, HUNGER,                       JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, IDLEANIMTIME,        JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, INVIS,                       JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, LOGOUT,            JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, LOYALTYTIME,                   JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, MOVETIME,                       JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, MURDERRATE,                   JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, PARAFIELDTICK,               JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, PEACETIMER,                   JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, POISONFIELDTICK,               JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, POISONTEXT,                   JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, POISONTIME,                   JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, POISONWEAROFF,               JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, SPATIMER,                       JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, SPELLRECOVERYTIME,        JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, SPELLTIME,                   JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, SUMMONTIME,                   JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, THIRST,                       JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, TIMEOUT,                       JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, ANTISPAM,             JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, CRIMFLAG,             JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, EVADETIME,            JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, FIREFIELDTICK,        JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, FLYINGTOGGLE,         JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, HUNGER,               JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, IDLEANIMTIME,         JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, INVIS,                JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, LOGOUT,               JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, LOYALTYTIME,          JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, MOVETIME,             JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, MURDERRATE,           JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, PARAFIELDTICK,        JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, PEACETIMER,           JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, POISONFIELDTICK,      JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, POISONTEXT,           JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, POISONTIME,           JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, POISONWEAROFF,        JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SPATIMER,             JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SPELLRECOVERYTIME,    JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SPELLTIME,            JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SUMMONTIME,           JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, THIRST,               JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, TIMEOUT,              JSPROP_ENUMPERMRO ),
 
   // Socket Timers
-  UX_PSG( CTimer, SOCK_FISHING,            JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_FISHING,         JSPROP_ENUMPERMRO ),
   UX_PSG( CTimer, SOCK_MUTETIME,        JSPROP_ENUMPERMRO ),
   UX_PSG( CTimer, SOCK_OBJDELAY,        JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, SOCK_SKILLDELAY,        JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, SOCK_SPIRITSPEAK,        JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_SKILLDELAY,      JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_SPIRITSPEAK,     JSPROP_ENUMPERMRO ),
   UX_PSG( CTimer, SOCK_TRACKING,        JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, SOCK_TRACKINGDISPLAY,    JSPROP_ENUMPERMRO ),
-  UX_PSG( CTimer, SOCK_TRAFFICWARDEN,    JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_TRACKINGDISPLAY, JSPROP_ENUMPERMRO ),
+  UX_PSG( CTimer, SOCK_TRAFFICWARDEN,   JSPROP_ENUMPERMRO ),
   JS_PS_END
 };
 
@@ -1043,16 +1043,16 @@ inline JSPropertySpec CSpawnRegionProperties[] =
 
 inline JSPropertySpec CGuildProperties[] =
 {
-  UX_PSG(  CGuild, members,      JSPROP_ENUMERATE   ),//JSPROP_ENUMPERMIDX
+  UX_PSG(  CGuild, members,      JSPROP_ENUMERATE   ), // Error: G
   UX_PSG(  CGuild, numMembers,   JSPROP_ENUMPERMRO  ),
   UX_PSG(  CGuild, numRecruits,  JSPROP_ENUMPERMRO  ),
-  UX_PSG(  CGuild, recruits,     JSPROP_ENUMERATE   ),//JSPROP_ENUMPERMIDX
+  UX_PSG(  CGuild, recruits,     JSPROP_ENUMERATE   ), // Error: G
   UX_PSGS( CGuild, abbreviation, JSPROP_ENUMANDPERM ),
   UX_PSGS( CGuild, charter,      JSPROP_ENUMANDPERM ),
-  UX_PSGS( CGuild, master,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CGuild, master,       JSPROP_ENUMANDPERM ), // Error: GS
   UX_PSGS( CGuild, name,         JSPROP_ENUMANDPERM ),
-  UX_PSGS( CGuild, stone,        JSPROP_ENUMANDPERM ),
-  UX_PSGS( CGuild, type,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CGuild, stone,        JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CGuild, type,         JSPROP_ENUMANDPERM ), // Error: S
   UX_PSGS( CGuild, webPage,      JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
@@ -1253,271 +1253,271 @@ inline JSPropertySpec CCharacterProps[] =
 
 inline JSPropertySpec CItemProps[] =
 {
-  UX_PSGS( CItem, ac,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, ammoFX,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, ammoFXHue,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, ammoFXRender,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, ammoHue,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, ammoID,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, amount,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, att,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, baseRange,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, baseWeight,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, buyvalue,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, canBeLockedDown,       JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, carveSection,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, color,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, colour,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, container,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, corpse,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, creator,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, damageCold,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, damageHeat,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, damageLight,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, damageLightning,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, damagePoison,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, damageRain,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, damageSnow,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, decayable,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, decaytime,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, def,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, desc,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, dexterity,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, dir,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, divinelock,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, ac,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, ammoFX,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, ammoFXHue,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, ammoFXRender,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, ammoHue,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, ammoID,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, amount,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, att,                 JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, baseRange,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, baseWeight,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, buyvalue,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, canBeLockedDown,     JSPROP_ENUMPERMRO  ), // Error: S
+  UX_PSGS( CItem, carveSection,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, color,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, colour,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, container,           JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, corpse,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, creator,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, damageCold,          JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, damageHeat,          JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, damageLight,         JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, damageLightning,     JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, damagePoison,        JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, damageRain,          JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, damageSnow,          JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, decayable,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, decaytime,           JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, def,                 JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, desc,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, dexterity,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, dir,                 JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, divinelock,          JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, entryMadeFrom,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, event,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, good,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, health,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, hidamage,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, hue,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, id,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, instanceID,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, intelligence,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isChar,       JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isContType,       JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isDamageable,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, event,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, good,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, health,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, hidamage,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, hue,                 JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, id,                  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, instanceID,          JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, intelligence,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isChar,              JSPROP_ENUMPERMRO  ), // Error: GS
+  UX_PSGS( CItem, isContType,          JSPROP_ENUMPERMRO  ), // Error: S
+  UX_PSGS( CItem, isDamageable,        JSPROP_ENUMANDPERM ),
   UX_PSGS( CItem, isDispellable,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isDoorOpen,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isDyeable,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isFieldSpell,       JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isGuarded,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isItem,       JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isItemHeld,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isLeatherType,       JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isLockedDown,       JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isMarkedByMaker,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isMetalType,       JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isNewbie,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isPileable,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isShieldType,       JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isSpawner,       JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, isWipeable,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, itemsinside,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, layer,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, lodamage,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, madeWith,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, maxhp,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, maxItems,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, maxRange,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, maxUses,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, more,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, more0,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, more1,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, more2,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, morex,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, morey,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, morez,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, movable,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, multi,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, name,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, name2,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, oldX,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, oldY,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, oldZ,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, origin,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, owner,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, poison,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, race,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, rank,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, region,       JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, resistCold,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, resistHeat,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, resistLight,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, resistLightning,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, resistPoison,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, resistRain,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, resistSnow,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, restock,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, scripttrigger,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, scriptTriggers,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, sectionID,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, sellvalue,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, serial,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, shouldSave,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, skin,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, spawnSerial,       JSPROP_ENUMPERMRO ),
-  UX_PSGS( CItem, speed,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, stealable,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, strength,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, tempLastTraded,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, tempTimer,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, title,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, totalItemCount,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, type,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, usesLeft,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, vendorPrice,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, visible,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, weight,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, weightMax,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, wipable,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, worldnumber,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, x,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, y,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, z,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isDoorOpen,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isDyeable,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isFieldSpell,        JSPROP_ENUMPERMRO  ), // Error: S
+  UX_PSGS( CItem, isGuarded,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isItem,              JSPROP_ENUMPERMRO  ), // Error: GS
+  UX_PSGS( CItem, isItemHeld,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isLeatherType,       JSPROP_ENUMPERMRO  ), // Error: S
+  UX_PSGS( CItem, isLockedDown,        JSPROP_ENUMPERMRO  ), // Error: S
+  UX_PSGS( CItem, isMarkedByMaker,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isMetalType,         JSPROP_ENUMPERMRO  ), // Error: S
+  UX_PSGS( CItem, isNewbie,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isPileable,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, isShieldType,        JSPROP_ENUMPERMRO  ),
+  UX_PSGS( CItem, isSpawner,           JSPROP_ENUMPERMRO  ),
+  UX_PSGS( CItem, isWipeable,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, itemsinside,         JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, layer,               JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, lodamage,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, madeWith,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxhp,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxItems,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxRange,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxUses,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, more,                JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, more0,               JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, more1,               JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, more2,               JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, morex,               JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, morey,               JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, morez,               JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, movable,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, multi,               JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, name,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, name2,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, oldX,                JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, oldY,                JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, oldZ,                JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, origin,              JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, owner,               JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, poison,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, race,                JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CItem, rank,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, region,              JSPROP_ENUMPERMRO  ), // Error: G
+  UX_PSGS( CItem, resistCold,          JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, resistHeat,          JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, resistLight,         JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, resistLightning,     JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, resistPoison,        JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, resistRain,          JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, resistSnow,          JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CItem, restock,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, scripttrigger,       JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CItem, scriptTriggers,      JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CItem, sectionID,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, sellvalue,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, serial,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, shouldSave,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, skin,                JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CItem, spawnSerial,         JSPROP_ENUMPERMRO  ),
+  UX_PSGS( CItem, speed,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, stealable,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, strength,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, tempLastTraded,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, tempTimer,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, title,               JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, totalItemCount,      JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CItem, type,                JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, usesLeft,            JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, vendorPrice,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, visible,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, weight,              JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, weightMax,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, wipable,             JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, worldnumber,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, x,                   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, y,                   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, z,                   JSPROP_ENUMANDPERM ),
 
   // The Following vars are specific to CSpawnItem objects
-  UX_PSGS( CItem, maxinterval,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, mininterval,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, sectionalist,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, spawnsection,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, maxinterval,         JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, mininterval,         JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, sectionalist,        JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CItem, spawnsection,        JSPROP_ENUMANDPERM ), // Error: G
 
   // The Following vars are specific to cMultiObj objects
-  UX_PSGS( CItem, bans,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, banX,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, banY,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, buildTimestamp,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, deed,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, friends,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, guests,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, isPublic,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, lockdowns,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, maxBans,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, maxFriends,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, maxGuests,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, maxLockdowns,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, maxOwners,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, maxSecureContainers,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, maxTrashContainers,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, maxVendors,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, owners,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, secureContainers,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, tradeTimestamp,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, trashContainers,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CItem, vendors,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CItem, bans,                JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, banX,                JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, banY,                JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, buildTimestamp,      JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, deed,                JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, friends,             JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, guests,              JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, isPublic,            JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, lockdowns,           JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, maxBans,             JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, maxFriends,          JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, maxGuests,           JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, maxLockdowns,        JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, maxOwners,           JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, maxSecureContainers, JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, maxTrashContainers,  JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, maxVendors,          JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, owners,              JSPROP_ENUMANDPERM ), // Error: GS
+  UX_PSGS( CItem, secureContainers,    JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CItem, tradeTimestamp,      JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CItem, trashContainers,     JSPROP_ENUMANDPERM ), // Error: G
+  UX_PSGS( CItem, vendors,             JSPROP_ENUMANDPERM ), // Error: G
   JS_PS_END
 };
 
 inline JSPropertySpec CSocketProps[] =
 {
-  UX_PSG(  CSocket, addID,     JSPROP_ENUMPERMIDX ),
-  UX_PSG(  CSocket, buffer,       JSPROP_ENUMPERMIDX ),
-  UX_PSG(  CSocket, clientIP,        JSPROP_ENUMPERMIDX ),
-  UX_PSG(  CSocket, xText,     JSPROP_ENUMPERMIDX ),
-  UX_PSG(  CSocket, xText2,      JSPROP_ENUMPERMIDX ),
-  UX_PSGS( CSocket, account,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, bytesReceived,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, bytesSent,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, clickX,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, clickY,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, clickZ,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, clientLetterVer,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, clientMajorVer,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, clientMinorVer,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, clientSubVer,       JSPROP_ENUMANDPERM ),
+  UX_PSG(  CSocket, addID,            JSPROP_ENUMPERMIDX ),
+  UX_PSG(  CSocket, buffer,           JSPROP_ENUMPERMIDX ),
+  UX_PSG(  CSocket, clientIP,         JSPROP_ENUMPERMIDX ),
+  UX_PSG(  CSocket, xText,            JSPROP_ENUMPERMIDX ),
+  UX_PSG(  CSocket, xText2,           JSPROP_ENUMPERMIDX ),
+  UX_PSGS( CSocket, account,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, bytesReceived,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, bytesSent,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clickX,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clickY,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clickZ,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clientLetterVer,  JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clientMajorVer,   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clientMinorVer,   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, clientSubVer,     JSPROP_ENUMANDPERM ),
   UX_PSGS( CSocket, clientType,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, cryptClient,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, currentChar,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, currentSpellType,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, firstPacket,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, idleTimeout,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, language,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, logging,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, newClient,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, pickupSerial,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, cryptClient,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, currentChar,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, currentSpellType, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, firstPacket,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, idleTimeout,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, language,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, logging,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, newClient,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, pickupSerial,     JSPROP_ENUMANDPERM ),
   UX_PSGS( CSocket, pickupSpot,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, pickupX,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, pickupY,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, pickupZ,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, target,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, targetOK,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, tempInt,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, tempInt2,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, tempObj,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, tempObj2,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, walkSequence,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSocket, wasIdleWarned,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, pickupX,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, pickupY,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, pickupZ,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, target,           JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, targetOK,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, tempInt,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, tempInt2,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, tempObj,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, tempObj2,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, walkSequence,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSocket, wasIdleWarned,    JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
 inline JSPropertySpec CSkillsProps[] =
 {
-  UX_PSGS( CSkills, alchemy,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, alchemy,         JSPROP_ENUMANDPERM ),
   UX_PSGS( CSkills, allskills,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, anatomy,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, animallore,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, archery,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, armslore,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, begging,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, blacksmithing,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, bowcraft,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, bushido,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, camping,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, anatomy,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, animallore,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, archery,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, armslore,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, begging,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, blacksmithing,   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, bowcraft,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, bushido,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, camping,         JSPROP_ENUMANDPERM ),
   UX_PSGS( CSkills, carpentry,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, cartography,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, chivalry,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, cooking,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, detectinghidden,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, enticement,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, evaluatingintel,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, fencing,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, fishing,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, focus,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, cartography,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, chivalry,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, cooking,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, detectinghidden, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, enticement,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, evaluatingintel, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, fencing,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, fishing,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, focus,           JSPROP_ENUMANDPERM ),
   UX_PSGS( CSkills, forensics,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, healing,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, herding,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, hiding,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, imbuing,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, inscription,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, itemid,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, lockpicking,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, lumberjacking,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, macefighting,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, magery,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, magicresistance,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, meditation,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, mining,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, musicianship,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, healing,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, herding,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, hiding,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, imbuing,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, inscription,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, itemid,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, lockpicking,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, lumberjacking,   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, macefighting,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, magery,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, magicresistance, JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, meditation,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, mining,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, musicianship,    JSPROP_ENUMANDPERM ),
   UX_PSGS( CSkills, mysticism,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, necromancy,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, ninjitsu,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, parrying,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, peacemaking,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, necromancy,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, ninjitsu,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, parrying,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, peacemaking,     JSPROP_ENUMANDPERM ),
   UX_PSGS( CSkills, poisoning,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, provocation,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, removetrap,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, snooping,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, spellweaving,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, spiritspeak,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, stealing,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, stealth,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, swordsmanship,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, tactics,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, provocation,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, removetrap,      JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, snooping,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, spellweaving,    JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, spiritspeak,     JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, stealing,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, stealth,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, swordsmanship,   JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, tactics,         JSPROP_ENUMANDPERM ),
   UX_PSGS( CSkills, tailoring,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, taming,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, tasteid,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, throwing,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, taming,          JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, tasteid,         JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, throwing,        JSPROP_ENUMANDPERM ),
   UX_PSGS( CSkills, tinkering,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, tracking,       JSPROP_ENUMANDPERM ),
-  UX_PSGS( CSkills, veterinary,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, tracking,        JSPROP_ENUMANDPERM ),
+  UX_PSGS( CSkills, veterinary,      JSPROP_ENUMANDPERM ),
   UX_PSGS( CSkills, wrestling,       JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
 inline JSPropertySpec CGumpDataProperties[] =
 {
-  UX_PSGS( CGumpData, buttons,   JSPROP_ENUMANDPERM ),
-  UX_PSGS( CGumpData, IDs,       JSPROP_ENUMANDPERM ),
+  UX_PSGS( CGumpData, buttons,   JSPROP_ENUMANDPERM ), // Error: S
+  UX_PSGS( CGumpData, IDs,       JSPROP_ENUMANDPERM ), // Error: S
   JS_PS_END
 };
 
