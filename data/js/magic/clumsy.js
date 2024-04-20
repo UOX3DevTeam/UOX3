@@ -414,15 +414,16 @@ function isSpellCastingAllowed( item )
 // Function to handle items
 function handleItem( itemLHand, itemRHand, mChar )
 {
+	const UnEquipEnabled = GetServerSetting("AutoUnequippedCasting");
 	var lHandBlocks = false; // Default to false
 	var rHandBlocks = false; // Default to false
-	if( itemLHand != null && !isSpellCastingAllowed( itemLHand ))
+	if( UnEquipEnabled && itemLHand != null && !isSpellCastingAllowed( itemLHand ))
 	{ // Allow casting if item is spell channeling or type 9 spell book
 		itemLHand.container = mChar.pack;
 		lHandBlocks = true; // Set to true if item is blocking
 	}
 
-	if( itemRHand != null && !isSpellCastingAllowed( itemRHand ))
+	if( UnEquipEnabled && itemRHand != null && !isSpellCastingAllowed( itemRHand ))
 	{ // Allow casting if item is spell channeling or type 9 spell book
 		itemRHand.container = mChar.pack;
 		rHandBlocks = true; // Set to true if item is blocking
