@@ -367,7 +367,8 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"YOUNGPLAYERSYSTEM"s, 344},
 	{"YOUNGLOCATION"s, 345},
 	{"SECRETSHARDKEY"s, 346},
-	{"MOONGATEFACETS"s, 347}
+	{"MOONGATEFACETS"s, 347},
+	{"AUTOUNEQUIPPEDCASTING"s, 348}
 
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
@@ -478,6 +479,7 @@ constexpr auto BIT_ENABLENPCGUILDDISCOUNTS			= UI32( 100 );
 constexpr auto BIT_ENABLENPCGUILDPREMIUMS			= UI32( 101 );
 constexpr auto BIT_SNOOPAWARENESS					= UI32( 102 );
 constexpr auto BIT_YOUNGPLAYERSYSTEM				= UI32( 103 );
+constexpr auto BIT_AUTOUNEQUIPPEDCASTING			= UI32( 104 );
 
 
 // New uox3.ini format lookup
@@ -803,6 +805,7 @@ auto CServerData::ResetDefaults() -> void
 	TravelSpellsBetweenWorlds( false );
 	TravelSpellsWhileAggressor( false );
 	CastSpellsWhileMoving( false );
+	AutoUnequippedCasting( false );
 	MaxControlSlots( 0 ); // Default to 0, which is equal to off
 	MaxFollowers( 5 );
 	MaxPetOwners( 10 );
@@ -3869,6 +3872,20 @@ auto CServerData::TravelSpellsWhileAggressor( bool newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    -   CServerData::AutoUnequippedCasting()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether spells will auto unequipe the hands that is not a spellbook or spellchanneling type.
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::AutoUnequippedCasting() const -> bool
+{
+	return boolVals.test( BIT_AUTOUNEQUIPPEDCASTING );
+}
+auto CServerData::AutoUnequippedCasting( bool newVal ) -> void
+{
+	boolVals.set( BIT_AUTOUNEQUIPPEDCASTING, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function    -   CServerData::MaxControlSlots()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the max amount of control slots a player has available (0 for disable)
@@ -5173,6 +5190,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "TRAVELSPELLSWHILEAGGRESSOR=" << ( TravelSpellsWhileAggressor() ? 1 : 0 ) << '\n';
 		ofsOutput << "HIDESTATSFORUNKNOWNMAGICITEMS=" << HideStatsForUnknownMagicItems() << '\n';
 		ofsOutput << "CASTSPELLSWHILEMOVING=" << ( CastSpellsWhileMoving() ? 1 : 0 ) << '\n';
+		ofsOutput << "AUTOUNEQUIPPEDCASTING=" << ( AutoUnequippedCasting() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
@@ -6523,6 +6541,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 347:	 // MOONGATEFACETS
 			SetMoongateFacetStatus( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 348:    // AUTOUNEQUIPPEDCASTING
+			AutoUnequippedCasting(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
 			break;
 		default:
 			rValue = false;

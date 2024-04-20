@@ -5080,6 +5080,9 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 347:	 // MOONGATESFACETS
 				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->GetMoongateFacetStatus() ));
 				break;
+			case 348:	 // AUTOUNEQUIPPEDCASTING
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AutoUnequippedCasting() );
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;
