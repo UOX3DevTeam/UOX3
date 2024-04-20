@@ -1,4 +1,4 @@
-	20/04/2024 - Dragon Slayer/Xuri
+20/04/2024 - Dragon Slayer/Xuri
 	Introduced a new INI setting, AutoUnequippedCasting, enhancing customization and control for users.
 
 22/03/2024 - Dragon Slayer/Xuri
