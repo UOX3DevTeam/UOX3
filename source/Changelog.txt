@@ -1,3 +1,6 @@
+20/04/2024 - Dragon Slayer/Xuri
+	Fixed misspeling in shopkeepers ai (js shopkeeper)
+
 22/03/2024 - Dragon Slayer/Xuri
 	Leading/trailing whitespace is now trimmed from account names during login.
 
