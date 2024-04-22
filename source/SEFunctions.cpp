@@ -34,6 +34,7 @@
 #include "PartySystem.h"
 #include "cSpawnRegion.h"
 #include "CPacketSend.h"
+#include <jsapi.h>
 #include <js/Object.h>
 #include <js/Array.h>
 

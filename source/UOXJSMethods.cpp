@@ -47,6 +47,7 @@
 #include "combat.h"
 #include "PartySystem.h"
 #include "osunique.hpp"
+#include <jsapi.h>
 #include <js/Object.h>
 #include <js/Array.h>
 

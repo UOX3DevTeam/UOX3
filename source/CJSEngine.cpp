@@ -17,6 +17,7 @@
 #include "UOXJSMethods.h"
 #include "UOXJSPropertySpecs.h"
 #include <algorithm>
+#include <jsapi.h>
 #include <js/Initialization.h>
 #include <js/Object.h>
 

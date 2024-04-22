@@ -32,6 +32,7 @@
 
 #include "PartySystem.h"
 
+#include <jsapi.h>
 #include <js/Object.h>
 #include <js/Array.h>
 #include "js/RootingAPI.h" // For JS::RootedValue

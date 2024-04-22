@@ -11,6 +11,7 @@
 #include "cSpawnRegion.h"
 #include "StringUtility.hpp"
 #include "osunique.hpp"
+#include <jsapi.h>
 #include <js/Object.h>
 #include <js\CompilationAndEvaluation.h>
 
