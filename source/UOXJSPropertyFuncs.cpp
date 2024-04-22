@@ -34,12 +34,6 @@
 
 #include <jsapi.h>
 #include <js/Object.h>
-#include <js/Array.h>
-#include "js/RootingAPI.h" // For JS::RootedValue
-#include "js/Value.h"      // For JS::HandleValue, JS::MutableHandleValue
-#include "js/CharacterEncoding.h" // For JS::UTF8Chars
-#include "js/Utility.h"    // For JS::GetScript, JS::GetOrCreateScriptID
-#include "jsapi.h"
 
 #define INT_FITS_IN_JSVAL(i) ((i) >= INT32_MIN && (i) <= INT32_MAX)
 
