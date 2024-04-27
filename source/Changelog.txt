@@ -1,3 +1,6 @@
+18/04/2024 - Dragon Slayer
+	Added Focus Skill to Stam Regain and Mana Regan.
+
 15/04/2024 - Dragon Slayer
 	Fixed Dupe command message when targeting something other then a item or npc. (js dupe)
 
