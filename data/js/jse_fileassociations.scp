@@ -207,6 +207,7 @@
 4033=skill/craft/crafting_complete.js
 4034=skill/craft/cooking.js
 4035=skill/craft/cartography.js
+4036=skill/craft/glassblowing.js
 4050=skill/mining.js
 4055=skill/snooping.js
 
@@ -321,7 +322,7 @@
 6000=magic/helper/check_resist.js
 6001=magic/helper/calc_final_spell_damage.js
 6002=magic/helper/check_travel_restrictions.js
-6003=magic/helper/check_teleport.js
+6003=magic/helper/teleport_helper.js
 6004=magic/helper/check_reagents.js
 
 //-------------------------------------------

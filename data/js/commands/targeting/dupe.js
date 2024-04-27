@@ -21,6 +21,8 @@ function command_DUPE( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
+	var targMsg = GetDictionaryEntry( 38, socket.language );
+
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
 	if( cancelCheck == 255 )
 		return;
@@ -39,7 +41,7 @@ function onCallback0( socket, ourObj )
 					if( ValidateObject( newSpawner ))
 					{
 						newSpawner.spawnsection = ourObj.spawnsection;
-						if( ourObj.sectionalist )
+						if( ourObj.sectionalist ) 
 						{
 							newSpawner.sectionalist = true;
 						}
@@ -60,7 +62,7 @@ function onCallback0( socket, ourObj )
 					}
 					else
 					{
-						socket.SysMessage( GetDictionaryEntry( 8077, socket.language )); // Failed to dupe item.
+						socket.SysMessage(GetDictionaryEntry( 8077, socket.language )); // Failed to dupe item.
 						return;
 					}
 				}
@@ -69,9 +71,19 @@ function onCallback0( socket, ourObj )
 					ourObj.Dupe( socket );
 				}
 			}
+			var tempMsg = GetDictionaryEntry( 8078, socket.language ); // %i duped items have been placed in your backpack.
+			socket.SysMessage( tempMsg.replace( /%i/gi, numToDupe.toString() ));
+			socket.tempint = 0;
+		}
+		else
+		{
+			socket.SysMessage( GetDictionaryEntry( 8215, socket.language )); // Invalid target. Please select a valid item or NPC
+			socket.CustomTarget( 0, targMsg );
 		}
 	}
-	var tempMsg = GetDictionaryEntry( 8078, socket.language ); // %i duped items have been placed in your backpack.
-	socket.SysMessage( tempMsg.replace( /%i/gi, numToDupe.toString() ));
-	socket.tempint = 0;
+	else 
+	{
+		socket.SysMessage( GetDictionaryEntry( 8215, socket.language )); // Invalid target. Please select a valid item or NPC
+		socket.CustomTarget( 0, targMsg );
+	}
 }

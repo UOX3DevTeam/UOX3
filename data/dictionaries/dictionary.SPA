@@ -2554,6 +2554,8 @@
 2794=por %i oro
 2795=Buscas algunas gemas entre los escombros.
 2796=* Tu cuerpo convulsiona por la descarga eléctrica *
+2797=¡No puedes usar esto mientras vuelas!
+2798=Has sido castigado.
 // [2800-2999] Escritura de la casa
 2800=Propietario de la casa:
 2801=CO-OWNERS
@@ -3681,6 +3683,7 @@
 8212=Sintaxis de comando válida para repetir la adición de objetos: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 8213=Identificación de la sección de DFNs de la que procede el objeto
 8214=¿Se puede robar el objeto? 0 = no robable, 1 = robable, 2 = robable raro
+8215=Alvo inválido. Selecione um item ou NPC válido
 // [8300-8499] Menú de ajustes - Descripciones de las propiedades de los personajes
 8300=Número de cuenta asociado al jugador. Controlado por el servidor (sólo lectura)
 8301=Tipo de IA del PNJ

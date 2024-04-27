@@ -2554,6 +2554,8 @@
 2794=for %i gold
 2795=You scrounge some gems from the wreckage.
 2796=* Your body convulses from electric shock *
+2797=You can't use this while flying!
+2798=You have been grounded.
 // [2800-2999] House script
 2800=House Owner:
 2801=CO-OWNERS
@@ -3676,6 +3678,7 @@
 8212=Valid command syntax for repeating adding objects: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 8213=Section ID from DFNs object originated from
 8214=Is item stealable? 0 = not stealable, 1 = stealable, 2 = stealable rare
+8215=Invalid target. Please select a valid item or NPC
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Account number associated with player. Controlled by server (Read-Only)
 8301=NPC AI Type

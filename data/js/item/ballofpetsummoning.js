@@ -115,6 +115,7 @@ function onCallback0( socket, myTarget)
 		socket.SysMessage( GetDictionaryEntry( 19054, socket.language )); // Only pets can be linked to this Crystal Ball of Pet Summoning.
 		return false;
 	}
+	iUsed.Refresh();
 	return false;
 }
 
@@ -127,6 +128,10 @@ function SummonPet( pUser, iUsed )
 	var charges = parseInt( myCharges[0] );
 	var reCharges = parseInt( myCharges[1] );
 	var maxCharges = parseInt( myCharges[2] );
+
+	var iTime = GetCurrentClock();
+	var NextUse = iUsed.GetTempTag( "delay" );
+	var Delay = 15000;
 
 	if( charges == 0)
 	{
@@ -148,7 +153,7 @@ function SummonPet( pUser, iUsed )
 		socket.SysMessage( GetDictionaryEntry( 19058, socket.language )); // The Crystal Ball fills with a grey mist. You are not the owner of the pet you are attempting to summon.
 		return false;
 	}
-	else if( iUsed.GetTempTag( "delay" ) == 1)
+	else if( ( iTime - NextUse ) < Delay ) 
 	{
 		socket.SysMessage( GetDictionaryEntry( 19059, socket.language )); // You must wait a few seconds before you can summon your pet.
 		return false;
@@ -180,8 +185,7 @@ function SummonPet( pUser, iUsed )
 			}
 
 			iUsed.SetTag( "charges", charges - requiredCharges + "|" + reCharges + "|" + maxCharges );
-			iUsed.SetTempTag( "delay", 1 );
-			iUsed.StartTimer( 15000, 0, true );
+			iUsed.SetTempTag( "delay", iTime.toString() );
 			socket.SysMessage( GetDictionaryEntry( 19060, socket.language )); // The Crystal Ball fills with a green mist. Your pet has been summoned.
 		}
 	}
@@ -206,14 +210,6 @@ function ReleasePet( petObj, petNum, pUser )
 	pUser.controlSlotsUsed = pUser.controlSlotsUsed + petObj.controlSlots;
 	pUser.AddFollower( petObj );
 	petObj.Follow( pUser );
-}
-
-function onTimer( iUsed, timerID )
-{
-	if( timerID == 0 )
-	{
-		iUsed.SetTempTag( "delay", null );
-	}
 }
 
 function onContextMenuRequest( socket, targObj )
@@ -304,6 +300,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 			socket.SysMessage( GetDictionaryEntry( 19062, socket.language )); // This crystal ball is no longer linked to a pet.
 			targObj.SetTag( "petSerial", null );
 			targObj.SetTag( "linked", null );
+			targObj.Refresh();
 			break;
 	}
 	return false;
@@ -312,6 +309,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 {
 	var pSocket = pUser.socket;
+	var iUsed = pSocket.tempObj;
 	if( pSpeech == null || pSpeech == " " )
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 9270, pSocket.language )); // That name is too short, or no name was entered.
@@ -330,8 +328,9 @@ function onSpeechInput( pUser, targObj, pSpeech, pSpeechID )
 			if( ValidateObject( targObj ))
 			{
 				targObj.name = pSpeech;
-				var tempMsg = GetDictionaryEntry( 19063, socket.language ); // The new name of the Pet is: %s
+				var tempMsg = GetDictionaryEntry( 19063, pSocket.language ); // The new name of the Pet is: %s
 				pSocket.SysMessage( tempMsg.replace( /%s/gi, targObj.name ));
+				iUsed.Refresh();
 			}
 			else
 			{
