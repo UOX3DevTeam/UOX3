@@ -9,7 +9,7 @@ function TeleportHelper( mChar, targX, targY, targZ, targWorld, targInstanceID, 
 		{
 			var tempFollower = followerList[i];
 			// Only teleport player's pets if they are set to follow
-			if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( timerObj, 24 ))
+			if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( mChar, 24 ))
 			{
 				tempFollower.Teleport( targX, targY, targZ, targWorld, targInstanceID );
 				tempFollower.Follow( mChar );
