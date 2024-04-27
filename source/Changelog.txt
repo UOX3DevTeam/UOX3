@@ -1,5 +1,6 @@
 27/04/2024 - Dragon Slayer/Xuri
-	Fixed an issue where non-corpse containers - including treasure chests in 	dungeons - would decay and leave all their contents on the ground.
+	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.
+
 20/04/2024 - Dragon Slayer/Xuri
 	Fixed misspeling in shopkeepers ai (js shopkeeper)
 	Added shopkeeper AI script to basevendor definition to support bonuses/penalties for guild members
