@@ -3,31 +3,33 @@ function SkillRegistration()
 	RegisterSkill( 2, true );	// Animal Lore
 }
 
+const coreShardEra = EraStringToNum(GetServerSetting("CoreShardEra"));
+
 // If disabled, a custom UOX3-specific, old school "stone"-themed gump shows instead of the scroll-based style for Animal Lore results
 const osiGumpEnabled = 1;
 
 // If enabled, a creature's HP/Mana/Stamina regen rate will show, along with Necromancy skill, and damage types (Fire vs Cold, etc)
-const aosEnabled = 0;
+const aosEnabled = false;
 
 // If enabled, a creature's skill in Bushido and Ninjitsu will show
-const seEnabled = 0;
+const seEnabled = false;
 
 // If enabled, a creature's skill in Mysticism, Focus and Spellweaving will show
-const saEnabled = 0;
+const saEnabled = false;
 
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
 	if( pSock )
 	{
-		if( aosEnabled )
+		if( aosEnabled || coreShardEra >= EraStringToNum( "aos" ))
 		{
-			// What animal should I look at ?
+			//What animal should I look at ?
 			pSock.CustomTarget( 0, GetDictionaryEntry( 2130, pSock.language ));
 		}
 		else
 	    {
-		    // What animal do you wish to get information about?
+		    //What animal do you wish to get information about?
 		    pSock.CustomTarget( 0, GetDictionaryEntry( 867, pSock.language ));
 		}
 	}
@@ -45,7 +47,7 @@ function onCallback0( pSock, ourObj )
 			return;
 		}
 
-		if( !ourObj.npc || !ourObj.isAnimal )
+		if( !ourObj.npc || ourObj.skillToTame > 1500 )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 2134, pSock.language )); // That's not an animal!
 			return;
@@ -58,7 +60,7 @@ function onCallback0( pSock, ourObj )
 		}
 
 		// Apply AoS rules, if applicable
-		if( aosEnabled )
+		if( aosEnabled || coreShardEra >= EraStringToNum( "aos" ))
 		{
 			if( pUser.skills.animallore < 1000 && !ourObj.tamed )
 			{
@@ -75,7 +77,7 @@ function onCallback0( pSock, ourObj )
 		}
 
 		// All good, let's perform the skill check
-		if(( aosEnabled && pUser.CheckSkill( 2, 0, 1100 )) || ( !aosEnabled && pUser.CheckSkill( 2, 0, 1000 )))
+		if( pUser.CheckSkill( 2, 0, 1000 ))
 		{
 			position = 20;
 			if( osiGumpEnabled )
@@ -135,7 +137,6 @@ function onCallback0( pSock, ourObj )
 					else if( petLoyalty >= 90 && petLoyalty <= 95 )
 					{
 						aloyalty = GetDictionaryEntry( 2259, pSock.language );  // Extremely Happy
-
 					}
 					else if( petLoyalty >= 96 && petLoyalty <= 99 )
 					{
@@ -150,7 +151,7 @@ function onCallback0( pSock, ourObj )
 				animalLoreGump.AddHTMLGump( 47, 220, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry(2143, pSock.language ) + "</basefont>" );			// Loyalty Rating
 				animalLoreGump.AddHTMLGump( 53, 236, 160, 18, false, false, aloyalty );
 
-				if( aosEnabled )
+				if( aosEnabled || coreShardEra >= EraStringToNum( "aos" ))
 				{
 					animalLoreGump.AddButton( 240, 328, 0x15E1, 0x15E5, 0, 2, 0 );
 					animalLoreGump.AddPage( 2 );
@@ -184,14 +185,10 @@ function onCallback0( pSock, ourObj )
 				animalLoreGump.AddHTMLGump( 53, 164, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2152, pSock.language ) + "</basefont>" );			 // Energy
 				animalLoreGump.AddHTMLGump( position, 164, 75, 18, false, false, "<basefont color=#BF80FF>" + ourObj.Resist( 6 ).toString() + "</BASEFONT>" );
 				animalLoreGump.AddButton( 240, 328, 0x15E1, 0x15E5, 0, 4, 0 );
-				if( aosEnabled )
-				{
+				if( aosEnabled || coreShardEra >= EraStringToNum( "aos" ))
 					animalLoreGump.AddButton( 217, 328, 0x15E3, 0x15E7, 0, 2, 0 );
-				}
 				else
-				{
 					animalLoreGump.AddButton( 217, 328, 0x15E3, 0x15E7, 0, 1, 0 );
-				}
 
 				animalLoreGump.AddPage( 4 );
 				animalLoreGump.AddGump( 28, 76, 0x826 );
@@ -199,7 +196,7 @@ function onCallback0( pSock, ourObj )
 				animalLoreGump.AddHTMLGump( 53, 92, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2154, pSock.language ) + "</basefont>" );			     // Base Damage
 				var damageavg = ( ourObj.lodamage + ourObj.hidamage ) / 2;
 				animalLoreGump.AddHTMLGump( position, 92, 75, 18, false, false, damageavg );
-				if( aosEnabled )
+				if( aosEnabled || coreShardEra >= EraStringToNum( "aos" ))
 			    {
 					animalLoreGump.AddHTMLGump( 53, 110, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2148, pSock.language ) + "</basefont>" );				 // Physical
 					animalLoreGump.AddHTMLGump( position, 110, 75, 18, false, false, "N/A" ); // Not implemented yet
@@ -217,101 +214,138 @@ function onCallback0( pSock, ourObj )
 
 				animalLoreGump.AddPage( 5 );
 				animalLoreGump.AddGump( 28, 76, 0x826 );
+				var location = 92;
 				animalLoreGump.AddHTMLGump( 47, 74, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry( 2155, pSock.language ) + "</basefont>" );				 // Combat Ratings
-				animalLoreGump.AddHTMLGump( 53, 92, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2156, pSock.language ) + "</basefont>" );				 // Wrestling
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2156, pSock.language ) + "</basefont>" );				 // Wrestling
 				animalLoreGump.AddHTMLGump( position, 92, 100, 18, false, false, parseInt( ourObj.skills.wrestling / 10 ));
-				animalLoreGump.AddHTMLGump( 53, 110, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2157, pSock.language ) + "</basefont>" );				 // Tactics
-				animalLoreGump.AddHTMLGump( position, 110, 100, 18, false, false, parseInt( ourObj.skills.Tactics / 10 ));
-				animalLoreGump.AddHTMLGump( 53, 128, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2158, pSock.language ) + "</basefont>" );				 // Magic Resistance
-				animalLoreGump.AddHTMLGump( position, 128, 100, 18, false, false, parseInt( ourObj.skills.MagicResistance / 10 ));
-				animalLoreGump.AddHTMLGump( 53, 146, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2159, pSock.language ) + "</basefont>" );				 // Anatomy
-				animalLoreGump.AddHTMLGump( position, 146, 100, 18, false, false, parseInt( ourObj.skills.Anatomy / 10 ));
-				animalLoreGump.AddHTMLGump( 53, 164, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2160, pSock.language ) + "</basefont>" );				 // Healing
-				animalLoreGump.AddHTMLGump( position, 164, 100, 18, false, false, parseInt( ourObj.skills.Healing / 10 ));
-				animalLoreGump.AddHTMLGump( 53, 182, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2161, pSock.language ) + "</basefont>" );				 // Poisoning
-				animalLoreGump.AddHTMLGump( position, 182, 100, 18, false, false, parseInt( ourObj.skills.Poisoning / 10 ));
-				animalLoreGump.AddHTMLGump( 53, 200, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2162, pSock.language ) + "</basefont>" );				 // Detect Hidden
-				animalLoreGump.AddHTMLGump( position, 200, 100, 18, false, false, parseInt( ourObj.skills.DetectHidden / 10 ));
-				animalLoreGump.AddHTMLGump( 53, 218, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2163, pSock.language ) + "</basefont>" );				 // Hiding
-				animalLoreGump.AddHTMLGump( position, 218, 100, 18, false, false, parseInt( ourObj.skills.Hiding / 10 ));
-				animalLoreGump.AddHTMLGump( 53, 236, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2164, pSock.language ) + "</basefont>" );				 // Parrying
-				animalLoreGump.AddHTMLGump( position, 236, 100, 18, false, false, parseInt( ourObj.skills.Parrying / 10 ));
+				location += 18;
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2157, pSock.language ) + "</basefont>" );				 // Tactics
+				animalLoreGump.AddHTMLGump( position, 110, 100, 18, false, false, parseInt( ourObj.skills.tactics / 10 ));
+				location += 18;
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2158, pSock.language ) + "</basefont>" );				 // Magic Resistance
+				animalLoreGump.AddHTMLGump( position, 128, 100, 18, false, false, parseInt( ourObj.skills.magicresistance / 10 ));
+				location += 18;
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2159, pSock.language ) + "</basefont>" );				 // Anatomy
+				animalLoreGump.AddHTMLGump( position, 146, 100, 18, false, false, parseInt( ourObj.skills.anatomy / 10 ));
+				location += 18;
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2160, pSock.language ) + "</basefont>" );				 // Healing
+				animalLoreGump.AddHTMLGump( position, 164, 100, 18, false, false, parseInt( ourObj.skills.healing / 10 ));
+				location += 18;
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2161, pSock.language ) + "</basefont>" );				 // Poisoning
+				animalLoreGump.AddHTMLGump( position, 182, 100, 18, false, false, parseInt( ourObj.skills.poisoning / 10 ));
+				location += 18;
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2162, pSock.language ) + "</basefont>" );				 // Detect Hidden
+				animalLoreGump.AddHTMLGump( position, 200, 100, 18, false, false, parseInt( ourObj.skills.detecthidden / 10 ));
+				location += 18;
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2163, pSock.language ) + "</basefont>" );				 // Hiding
+				animalLoreGump.AddHTMLGump( position, 218, 100, 18, false, false, parseInt( ourObj.skills.hiding / 10 ));
+				location += 18;
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2164, pSock.language ) + "</basefont>" );				 // Parrying
+				animalLoreGump.AddHTMLGump( position, 236, 100, 18, false, false, parseInt( ourObj.skills.parrying / 10 ));
 				animalLoreGump.AddButton( 240, 328, 0x15E1, 0x15E5, 0, 6, 0 );
 				animalLoreGump.AddButton( 217, 328, 0x15E3, 0x15E7, 0, 4, 0 );
 
 				animalLoreGump.AddPage( 6 );
 				animalLoreGump.AddGump( 28, 76, 0x826 );
+				var location = 92;
 				animalLoreGump.AddHTMLGump( 47, 74, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry( 2165, pSock.language ) + "</basefont>" );				 // Lore & Knowledge
-				animalLoreGump.AddHTMLGump( 53, 92, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2166, pSock.language ) + "</basefont>" );				 // Magery
-				animalLoreGump.AddHTMLGump( position, 92, 100, 18, false, false, parseInt( ourObj.skills.Magery / 10 ));
-				animalLoreGump.AddHTMLGump( 53, 110, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2167, pSock.language ) + "</basefont>" );				 // Eval Int
-				animalLoreGump.AddHTMLGump( position, 110, 100, 18, false, false, parseInt( ourObj.skills.evaluatingintel / 10 ));
-				animalLoreGump.AddHTMLGump( 53, 128, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2168, pSock.language ) + "</basefont>" );				 // Meditation
-				animalLoreGump.AddHTMLGump( position, 128, 100, 18, false, false, parseInt( ourObj.skills.Meditation / 10 ));
-				if( aosEnabled )
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2166, pSock.language ) + "</basefont>" );				 // Magery
+				animalLoreGump.AddHTMLGump( position, location, 100, 18, false, false, parseInt( ourObj.skills.magery / 10 ));
+				location += 18;
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2167, pSock.language ) + "</basefont>" );				 // Eval Int
+				animalLoreGump.AddHTMLGump( position, location, 100, 18, false, false, parseInt( ourObj.skills.evaluatingintel / 10 ));
+				location += 18;
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2168, pSock.language ) + "</basefont>" );				 // Meditation
+				animalLoreGump.AddHTMLGump( position, location, 100, 18, false, false, parseInt( ourObj.skills.Meditation / 10 ));
+				location += 18;
+				if( aosEnabled || coreShardEra >= EraStringToNum( "aos" ))
 				{
-					animalLoreGump.AddHTMLGump( 53, 146, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2169, pSock.language ) + "</basefont>" );			 // Necromancy
-					animalLoreGump.AddHTMLGump( position, 146, 100, 18, false, false, parseInt( ourObj.skills.Necromancy / 10 ));
+					animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2169, pSock.language ) + "</basefont>" );			 // Necromancy
+					animalLoreGump.AddHTMLGump( position, location, 100, 18, false, false, parseInt( ourObj.skills.necromancy / 10 ));
+					location += 18;
 				}
-				animalLoreGump.AddHTMLGump( 53, 164, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2170, pSock.language ) + "</basefont>" );				 // Spirit Speak
-				animalLoreGump.AddHTMLGump( position, 164, 100, 18, false, false, parseInt( ourObj.skills.SpiritSpeak / 10 ));
-				if( saEnabled )
+
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2170, pSock.language ) + "</basefont>" );				 // Spirit Speak
+				animalLoreGump.AddHTMLGump( position, location, 100, 18, false, false, parseInt( ourObj.skills.spiritSpeak / 10 ));
+				location += 18;
+				if( saEnabled || coreShardEra >= EraStringToNum( "sa" ))
 				{
-					animalLoreGump.AddHTMLGump( 53, 182, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2171, pSock.language ) + "</basefont>" );			 // Mysticism
-					animalLoreGump.AddHTMLGump( position, 182, 100, 18, false, false, parseInt( ourObj.skills.Mysticism / 10 ));
-					animalLoreGump.AddHTMLGump( 53, 200, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2172, pSock.language ) + "</basefont>" );		     // Focus
-					animalLoreGump.AddHTMLGump( position, 200, 100, 18, false, false, parseInt( ourObj.skills.Focus / 10 ));
-					animalLoreGump.AddHTMLGump( 53, 218, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2173, pSock.language ) + "</basefont>" );			 // Spellweaving
-					animalLoreGump.AddHTMLGump( position, 218, 100, 18, false, false, parseInt( ourObj.skills.Spellweaving / 10 ));
+					animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2171, pSock.language ) + "</basefont>" );			 // Mysticism
+					animalLoreGump.AddHTMLGump( position, location, 100, 18, false, false, parseInt( ourObj.skills.mysticism / 10 ));
+					location += 18;
+					animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2172, pSock.language ) + "</basefont>" );		     // Focus
+					animalLoreGump.AddHTMLGump( position, location, 100, 18, false, false, parseInt( ourObj.skills.focus / 10 ));
+					location += 18;
+					animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2173, pSock.language ) + "</basefont>" );			 // Spellweaving
+					animalLoreGump.AddHTMLGump( position, location, 100, 18, false, false, parseInt( ourObj.skills.spellweaving / 10 ));
+					location += 18;
 				}
-				animalLoreGump.AddHTMLGump( 53, 236, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2174, pSock.language ) + "</basefont>" );				 // Discordance
-				animalLoreGump.AddHTMLGump( position, 236, 100, 18, false, false, parseInt( ourObj.skills.Discordance / 10 ));
+				animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2174, pSock.language ) + "</basefont>" );				 // Discordance
+				animalLoreGump.AddHTMLGump( position, location, 100, 18, false, false, parseInt( ourObj.skills.discordance / 10 ));
 				animalLoreGump.AddButton( 240, 328, 0x15E1, 0x15E5, 0, 7, 0 );
 				animalLoreGump.AddButton( 217, 328, 0x15E3, 0x15E7, 0, 5, 0 );
 
 				animalLoreGump.AddPage( 7 );
-				animalLoreGump.AddGump( 28, 76, 0x826 );
-				animalLoreGump.AddHTMLGump( 47, 74, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry(2165, pSock.language) + "</basefont>" );					 // Lore & Knowledge
-				if( seEnabled )
-			    {
-					animalLoreGump.AddHTMLGump( 53, 92, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2175, pSock.language ) + "</basefont>" );			 // Bushido
-					animalLoreGump.AddHTMLGump( position, 92, 100, 18, false, false, parseInt( ourObj.skills.Bushido / 10 ));
-					animalLoreGump.AddHTMLGump( 53, 110, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2176, pSock.language ) + "</basefont>" );			 // Ninjitsu
-					animalLoreGump.AddHTMLGump( position, 110, 100, 18, false, false, parseInt( ourObj.skills.Ninjitsu / 10 ));
-				}
-				if( aosEnabled )
+				var glocation = 76;
+				var wlocation = 74;
+				var flocation = 94;//164
+				if( (seEnabled || coreShardEra >= EraStringToNum( "se" )) || ( aosEnabled || coreShardEra >= EraStringToNum( "aos" )))
 				{
-					animalLoreGump.AddHTMLGump( 53, 128, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2177, pSock.language ) + "</basefont>" );			 // Chivalry
-					animalLoreGump.AddHTMLGump( position, 128, 100, 18, false, false, parseInt( ourObj.skills.Chivalry / 10 ));
+					animalLoreGump.AddGump(28, glocation, 0x826);
+					animalLoreGump.AddHTMLGump(47, wlocation, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry(2165, pSock.language) + "</basefont>");					 // Lore & Knowledge
+					glocation += 70;
+					wlocation += 70;
+					flocation += 70;
 				}
-				animalLoreGump.AddGump( 28, 146, 0x826 );
-				animalLoreGump.AddHTMLGump( 47, 144, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry( 2178, pSock.language ) + "</basefont>" );				 // Preferred Foods
 
-				var afoodlist = "<basefont color=#0000B8>" + GetDictionaryEntry( 2200, pSock.language ) + "</basefont>";// None
+				var location = 92;
+				if( seEnabled || coreShardEra >= EraStringToNum( "se" ))
+			    {
+					animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2175, pSock.language ) + "</basefont>" );			 // Bushido
+					animalLoreGump.AddHTMLGump( position, location, 100, 18, false, false, parseInt( ourObj.skills.bushido / 10 ));
+					location += 18;
+					animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2176, pSock.language ) + "</basefont>" );			 // Ninjitsu
+					animalLoreGump.AddHTMLGump( position, location, 100, 18, false, false, parseInt( ourObj.skills.ninjitsu / 10 ));
+					location += 18;
+				}
+
+				if( aosEnabled || coreShardEra >= EraStringToNum( "aos" ))
+				{
+					animalLoreGump.AddHTMLGump( 53, location, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2177, pSock.language ) + "</basefont>" );			 // Chivalry
+					animalLoreGump.AddHTMLGump( position, location, 100, 18, false, false, parseInt( ourObj.skills.chivalry / 10 ));
+				}
+
+				animalLoreGump.AddGump( 28, glocation, 0x826 );
+				animalLoreGump.AddHTMLGump( 47, wlocation, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry( 2178, pSock.language ) + "</basefont>" );				 // Preferred Foods
+
+				var validFruitsAndVegetables = [ "fruit", "vegetables", "horse", "boar", "cow", "goat", "gorilla", "deer", "bird", "rabbit", "sheep", "ostard", "parrot", "bear", "rat" ];
+				var validGrainsandHay = [ "crops", "hay", "horse", "ostard", "sheep", "rat", "bird", "deer", "gorilla", "cow", "goat", "boar" ];
+				var validFish = [ "fish", "bear", "rat", "toad" ];
+				var validMeat = [ "meat", "toad", "ostard", "rat" ];
+				var validEggs = [ "eggs"];
 
 				var ourFoodList = ourObj.foodList.toLowerCase();
-				if(( ourFoodList == "fruit" ) || ( ourFoodList == "vegetable" ))
-				{
-					afoodlist = "<basefont color=#279053>" + GetDictionaryEntry( 2179, pSock.language ) + "</basefont>"; // Fruits and Vegetables
-				}
-				else if (( ourFoodList == "crops" ) || ( ourFoodList == "hay" ))
-				{
-					afoodlist = "<basefont color=#CFF507>" + GetDictionaryEntry( 2180, pSock.language ) + "</basefont>"; // Grains and Hay
-				}
-				else if (( ourFoodList == "fish" ))
-				{
-					afoodlist = "<basefont color=#F57607>" + GetDictionaryEntry( 2181, pSock.language ) + "</basefont>"; // Fish
-				}
-				else if (( ourFoodList == "meat" ))
-				{
-					afoodlist = "<basefont color=#F50707>" + GetDictionaryEntry( 2182, pSock.language ) + "</basefont>"; // Meat
-				}
-				else if (( ourFoodList == "eggs" ))
-				{
-					afoodlist = "<basefont color=#5070700>" + GetDictionaryEntry( 2183, pSock.language ) + "</basefont>"; // Eggs
-				}
+				var afoodlist = "";
 
-				animalLoreGump.AddHTMLGump( 53, 164, 160, 18, false, false, afoodlist );
+				if( validFruitsAndVegetables.indexOf( ourFoodList ) !== -1 )
+					afoodlist += "<basefont color=#279053>" + GetDictionaryEntry( 2179, pSock.language ) + "</basefont>"; // Fruits and Vegetables
+
+				if( validGrainsandHay.indexOf( ourFoodList ) !== -1 )
+					afoodlist += ( afoodlist ? ", " : "") + "<basefont color=#CFF507>" + GetDictionaryEntry( 2180, pSock.language ) + "</basefont>"; // Grains and Hay
+
+				if( validFish.indexOf(ourFoodList) !== -1 )
+					afoodlist += ( afoodlist ? ", " : "") + "<basefont color=#F57607>" + GetDictionaryEntry( 2181, pSock.language ) + "</basefont>"; // Fish
+
+				if( validMeat.indexOf(ourFoodList) !== -1 )
+					afoodlist += ( afoodlist ? ", " : "") + "<basefont color=#F50707>" + GetDictionaryEntry( 2182, pSock.language ) + "</basefont>"; // Meat
+
+				if( validEggs.indexOf(ourFoodList) !== -1 )
+					afoodlist += ( afoodlist ? ", " : "" ) + "<basefont color=#507070>" + GetDictionaryEntry( 2183, pSock.language ) + "</basefont>"; // Eggs
+
+				if( !ourFoodList )
+					afoodlist = "<basefont color=#0000B8>" + GetDictionaryEntry( 2200, pSock.language ) + "</basefont>"; // None
+
+				animalLoreGump.AddHTMLGump( 53, flocation, 160, 80, false, false, afoodlist );
 
 				animalLoreGump.AddGump( 28, 182, 0x826 );
 				animalLoreGump.AddHTMLGump( 53, 182, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry(2165, pSock.language) + "</basefont>" );				 // Lore & Knowledge
@@ -320,7 +354,7 @@ function onCallback0( pSock, ourObj )
 				animalLoreGump.AddHTMLGump( position, 200, 100, 18, false, false, ourObj.controlSlots.toString() );
 
 			    animalLoreGump.AddHTMLGump( 53, 218, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2203, pSock.language ) + "</basefont>" );				 // Control Chance
-				animalLoreGump.AddHTMLGump( position, 218, 100, 18, false, false, ( ourObj.CalculateControlChance( pUser ) / 10 ).toString() + "%" );
+				animalLoreGump.AddHTMLGump( position, 218, 100, 18, false, false, (ourObj.CalculateControlChance( pUser ) / 10 ).toString() + "%" );
 
 				animalLoreGump.AddHTMLGump( 53, 236, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2201, pSock.language ) + "</basefont>" );				 // Owner Count
 				animalLoreGump.AddHTMLGump( position, 236, 100, 18, false, false, ourObj.ownerCount.toString() );
@@ -349,37 +383,37 @@ function onCallback0( pSock, ourObj )
 			}
 			else
 			{
-				var uoxanimalLoreGump = new Gump;
+				var uoxAnimalLoreGump = new Gump;
 				var uoxPosition = 20;
-				uoxanimalLoreGump.AddBackground( 0, 0, 300, 300, 2600 );
-				uoxanimalLoreGump.AddButton( 260, 15, 4017, 1, 0, 1 );
-				uoxanimalLoreGump.AddText( 120, 15, 0, ourObj.name );
-				uoxanimalLoreGump.AddPage( 1 );
-				uoxPosition = AddStringEntry( uoxanimalLoreGump, GetDictionaryEntry( 2135, pSock.language ), uoxPosition );
-				uoxPosition = AddDualEntry( uoxanimalLoreGump, GetDictionaryEntry( 2136, pSock.language ), ourObj.health, ourObj.maxhp, uoxPosition );// Hits
-				uoxPosition = AddDualEntry( uoxanimalLoreGump, GetDictionaryEntry( 2137, pSock.language ), ourObj.stamina, ourObj.maxstamina, uoxPosition );// Stamina
-				uoxPosition = AddDualEntry( uoxanimalLoreGump, GetDictionaryEntry( 2138, pSock.language ), ourObj.mana, ourObj.maxmana, uoxPosition );// Mana
-				uoxPosition = AddEntry( uoxanimalLoreGump, GetDictionaryEntry( 2139, pSock.language ), ourObj.strength, uoxPosition );// Strength
-				uoxPosition = AddEntry( uoxanimalLoreGump, GetDictionaryEntry( 2140, pSock.language ), ourObj.dexterity, uoxPosition );// Dexterity
-				uoxPosition = AddEntry( uoxanimalLoreGump, GetDictionaryEntry( 2141, pSock.language ), ourObj.intelligence, uoxPosition );// Intelligence
-				uoxPosition = AddStringEntry( uoxanimalLoreGump, GetDictionaryEntry( 2184, pSock.language ), uoxPosition ); // Miscellaneous
-				uoxPosition = AddEntry( uoxanimalLoreGump, GetDictionaryEntry( 2185, pSock.language ), ourObj.Resist( 1 ), uoxPosition );// Armor Rating:
-				uoxanimalLoreGump.AddPageButton( 260, 260, 4005, 2 );
-				uoxanimalLoreGump.AddPage( 2 );
+				uoxAnimalLoreGump.AddBackground( 0, 0, 300, 300, 2600 );
+				uoxAnimalLoreGump.AddButton( 260, 15, 4017, 1, 0, 1 );
+				uoxAnimalLoreGump.AddText( 120, 15, 0, ourObj.name );
+				uoxAnimalLoreGump.AddPage( 1 );
+				uoxPosition = addStringEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2135, pSock.language ), uoxPosition );
+				uoxPosition = addDualEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2136, pSock.language ), ourObj.health, ourObj.maxhp, uoxPosition );//Hits
+				uoxPosition = addDualEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2137, pSock.language ), ourObj.stamina, ourObj.maxstamina, uoxPosition );//Stamina
+				uoxPosition = addDualEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2138, pSock.language ), ourObj.mana, ourObj.maxmana, uoxPosition );//Mana
+				uoxPosition = addEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2139, pSock.language ), ourObj.strength, uoxPosition );//Strength
+				uoxPosition = addEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2140, pSock.language ), ourObj.dexterity, uoxPosition );//Dexterity
+				uoxPosition = addEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2141, pSock.language ), ourObj.intelligence, uoxPosition );//Intelligence
+				uoxPosition = addStringEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2184, pSock.language ), uoxPosition ); // Miscellaneous
+				uoxPosition = addEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2185, pSock.language ), ourObj.Resist( 1 ), uoxPosition );//Armor Rating:
+				uoxAnimalLoreGump.AddPageButton( 260, 260, 4005, 2 );
+				uoxAnimalLoreGump.AddPage( 2 );
 				uoxPosition = 20;
-				uoxPosition = AddStringEntry( uoxanimalLoreGump, GetDictionaryEntry( 2155, pSock.language ), uoxPosition );// Combat Ratings
-				uoxPosition = AddEntry( uoxanimalLoreGump, GetDictionaryEntry( 2156, pSock.language ), parseInt( ourObj.skills.wrestling / 10 ), uoxPosition );// Wrestling
-				uoxPosition = AddEntry( uoxanimalLoreGump, GetDictionaryEntry( 2157, pSock.language ), parseInt( ourObj.skills.tactics / 10 ), uoxPosition );// tactics
-				uoxPosition = AddEntry( uoxanimalLoreGump, GetDictionaryEntry( 2158, pSock.language ), parseInt( ourObj.skills.magicresistance / 10 ), uoxPosition );// magicresistance
-				uoxPosition = AddEntry( uoxanimalLoreGump, GetDictionaryEntry( 2159, pSock.language ), parseInt( ourObj.skills.anatomy / 10 ), uoxPosition );// anatomy
-				uoxPosition = AddEntry( uoxanimalLoreGump, GetDictionaryEntry( 2161, pSock.language ), parseInt( ourObj.skills.poisoning / 10 ), uoxPosition );// poisoning
-				uoxPosition = AddStringEntry( uoxanimalLoreGump, GetDictionaryEntry( 2165, pSock.language ), uoxPosition );// Lore & Knowledge
-				uoxPosition = AddEntry( uoxanimalLoreGump, GetDictionaryEntry( 2166, pSock.language ), parseInt( ourObj.skills.magery / 10 ), uoxPosition );// magery
-				uoxPosition = AddEntry( uoxanimalLoreGump, GetDictionaryEntry( 2167, pSock.language ), parseInt( ourObj.skills.evaluatingintel / 10 ), uoxPosition );// evaluatingintel
-				uoxPosition = AddEntry( uoxanimalLoreGump, GetDictionaryEntry( 2168, pSock.language ), parseInt( ourObj.skills.meditation / 10 ), uoxPosition );// meditation
-				uoxanimalLoreGump.AddPageButton( 10, 260, 4014, 1 );
-				uoxanimalLoreGump.Send( pSock );
-				uoxanimalLoreGump.Free();
+				uoxPosition = addStringEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2155, pSock.language ), uoxPosition );//Combat Ratings
+				uoxPosition = addEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2156, pSock.language ), parseInt( ourObj.skills.wrestling / 10 ), uoxPosition );//Wrestling
+				uoxPosition = addEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2157, pSock.language ), parseInt( ourObj.skills.tactics / 10 ), uoxPosition );//tactics
+				uoxPosition = addEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2158, pSock.language ), parseInt( ourObj.skills.magicresistance / 10 ), uoxPosition );//magicresistance
+				uoxPosition = addEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2159, pSock.language ), parseInt( ourObj.skills.anatomy / 10 ), uoxPosition );//anatomy
+				uoxPosition = addEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2161, pSock.language ), parseInt( ourObj.skills.poisoning / 10 ), uoxPosition );//poisoning
+				uoxPosition = addStringEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2165, pSock.language ), uoxPosition );//Lore & Knowledge
+				uoxPosition = addEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2166, pSock.language ), parseInt( ourObj.skills.magery / 10 ), uoxPosition );//magery
+				uoxPosition = addEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2167, pSock.language ), parseInt( ourObj.skills.evaluatingintel / 10 ), uoxPosition );//evaluatingintel
+				uoxPosition = addEntry( uoxAnimalLoreGump, GetDictionaryEntry( 2168, pSock.language ), parseInt( ourObj.skills.meditation / 10 ), UOXposition );//meditation
+				uoxAnimalLoreGump.AddPageButton( 10, 260, 4014, 1 );
+				uoxAnimalLoreGump.Send( pSock );
+				uoxAnimalLoreGump.Free();
 			}
 		}
 		else
@@ -393,7 +427,7 @@ function onCallback0( pSock, ourObj )
 	}
 }
 
-function onGumpPress( socket, button, uoxanimalLoreGump )
+function onGumpPress( socket, button, uoxAnimalLoreGump )
 {
 	switch( button )
 	{
@@ -402,26 +436,26 @@ function onGumpPress( socket, button, uoxanimalLoreGump )
 	}
 }
 
-function AddEntry( uoxanimalLoreGump, stringToAdd, dataToAdd, uoxPosition )
+function addEntry( uoxAnimalLoreGump, stringToAdd, dataToAdd, uoxPosition )
 {
-	uoxanimalLoreGump.AddText( 50, uoxPosition, 0, stringToAdd );
-	uoxanimalLoreGump.AddText( 225, uoxPosition, 0, dataToAdd.toString() );
+	uoxAnimalLoreGump.AddText( 50, uoxPosition, 0, stringToAdd );
+	uoxAnimalLoreGump.AddText( 225, uoxPosition, 0, dataToAdd.toString() );
+	uoxPosition += 20;
+	return UOXposition;
+}
+
+function addDualEntry( uoxAnimalLoreGump, stringToAdd, dataToAdd, moreDataToAdd, uoxPosition )
+{
+	uoxAnimalLoreGump.AddText( 50, uoxPosition, 0, stringToAdd );
+	uoxAnimalLoreGump.AddText( 225, uoxPosition, 0, dataToAdd.toString() + "/" + moreDataToAdd.toString() );
 	uoxPosition += 20;
 	return uoxPosition;
 }
 
-function AddDualEntry( uoxanimalLoreGump, stringToAdd, dataToAdd, moreDataToAdd, uoxPosition )
-{
-	uoxanimalLoreGump.AddText( 50, uoxPosition, 0, stringToAdd );
-	uoxanimalLoreGump.AddText( 225, uoxPosition, 0, dataToAdd.toString() + "/" + moreDataToAdd.toString() );
-	uoxPosition += 20;
-	return uoxPosition;
-}
-
-function AddStringEntry( uoxanimalLoreGump, stringToAdd, uoxPosition )
+function addStringEntry( uoxAnimalLoreGump, stringToAdd, uoxPosition )
 {
 	uoxPosition += 20;
-	uoxanimalLoreGump.AddText( 40, uoxPosition, 0, stringToAdd );
+	uoxAnimalLoreGump.AddText( 40, uoxPosition, 0, stringToAdd );
 	uoxPosition += 20;
 	return uoxPosition;
 }
