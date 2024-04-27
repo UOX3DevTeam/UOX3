@@ -71,7 +71,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"BACKUPDIRECTORY"s, 44},
 	{"MSGBOARDDIRECTORY"s, 45},
 	{"SHAREDDIRECTORY"s, 46},
-	{"PLAYERLOOTDECAYSWITHCORPSE"s, 47},
+	{"LOOTDECAYSWITHPLAYERCORPSE"s, 47},
 	{"GUARDSACTIVE"s, 49},
 	{"DEATHANIMATION"s, 27},
 	{"AMBIENTSOUNDS"s, 50},
@@ -369,7 +369,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SECRETSHARDKEY"s, 346},
 	{"MOONGATEFACETS"s, 347},
 	{"AUTOUNEQUIPPEDCASTING"s, 348},
-	{"NPCLOOTDECAYSWITHCORPSE"s, 349}
+	{"LOOTDECAYSWITHNPCCORPSE"s, 349}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -381,7 +381,7 @@ constexpr auto BIT_ANNOUNCEJOINPART		= UI32( 1 );
 constexpr auto BIT_SERVERBACKUP			= UI32( 2 );
 constexpr auto BIT_SHOOTONANIMALBACK	= UI32( 3 );
 constexpr auto BIT_NPCTRAINING			= UI32( 4 );
-constexpr auto BIT_PLAYERLOOTDECAYSONCORPSE	= UI32( 5 );
+constexpr auto BIT_LOOTDECAYSONPLAYERCORPSE	= UI32( 5 );
 constexpr auto BIT_GUARDSENABLED		= UI32( 6 );
 constexpr auto BIT_PLAYDEATHANIMATION	= UI32( 7 );
 constexpr auto BIT_AMBIENTFOOTSTEPS		= UI32( 8 );
@@ -480,7 +480,7 @@ constexpr auto BIT_ENABLENPCGUILDPREMIUMS			= UI32( 101 );
 constexpr auto BIT_SNOOPAWARENESS					= UI32( 102 );
 constexpr auto BIT_YOUNGPLAYERSYSTEM				= UI32( 103 );
 constexpr auto BIT_AUTOUNEQUIPPEDCASTING			= UI32( 104 );
-constexpr auto BIT_NPCLOOTDECAYSONCORPSE			= UI32( 105 );
+constexpr auto BIT_LOOTDECAYSONNPCCORPSE			= UI32( 105 );
 
 
 // New uox3.ini format lookup
@@ -1977,11 +1977,11 @@ auto CServerData::DumpPaths() -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::PlayerCorpseLootDecay() const -> bool
 {
-	return boolVals.test( BIT_PLAYERLOOTDECAYSONCORPSE );
+	return boolVals.test( BIT_LOOTDECAYSONPLAYERCORPSE );
 }
 auto CServerData::PlayerCorpseLootDecay( bool newVal ) -> void
 {
-	boolVals.set( BIT_PLAYERLOOTDECAYSONCORPSE, newVal );
+	boolVals.set( BIT_LOOTDECAYSONPLAYERCORPSE, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1991,11 +1991,11 @@ auto CServerData::PlayerCorpseLootDecay( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::NpcCorpseLootDecay() const -> bool
 {
-	return boolVals.test( BIT_NPCLOOTDECAYSONCORPSE );
+	return boolVals.test( BIT_LOOTDECAYSONNPCCORPSE );
 }
 auto CServerData::NpcCorpseLootDecay( bool newVal ) -> void
 {
-	boolVals.set( BIT_NPCLOOTDECAYSONCORPSE, newVal );
+	boolVals.set( BIT_LOOTDECAYSONNPCCORPSE, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5011,8 +5011,8 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
-		ofsOutput << "PLAYERLOOTDECAYSWITHCORPSE=" << ( PlayerCorpseLootDecay() ? 1 : 0 ) << '\n';
-		ofsOutput << "NPCLOOTDECAYSWITHCORPSE=" << ( NpcCorpseLootDecay() ? 1 : 0 ) << '\n';
+		ofsOutput << "LOOTDECAYSWITHPLAYERCORPSE=" << ( PlayerCorpseLootDecay() ? 1 : 0 ) << '\n';
+		ofsOutput << "LOOTDECAYSWITHNPCCORPSE=" << ( NpcCorpseLootDecay() ? 1 : 0 ) << '\n';
 		ofsOutput << "GUARDSACTIVE=" << ( GuardsStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "DEATHANIMATION=" << ( DeathAnimationStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "AMBIENTSOUNDS=" << WorldAmbientSounds() << '\n';
@@ -5673,7 +5673,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			Directory( CSDDP_SHARED, value );
 			break;
 		}
-		case 47:	 // PLAYERLOOTDECAYSWITHCORPSE
+		case 47:	 // LOOTDECAYSWITHPLAYERCORPSE
 			PlayerCorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
 		case 49:	 // GUARDSACTIVE
@@ -6562,7 +6562,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 348:    // AUTOUNEQUIPPEDCASTING
 			AutoUnequippedCasting(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
 			break;
-		case 349:	 // NPCLOOTDECAYSWITHCORPSE
+		case 349:	 // LOOTDECAYSWITHNPCCORPSE
 			NpcCorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
 		default:
