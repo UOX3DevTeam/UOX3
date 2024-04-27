@@ -1,3 +1,6 @@
+20/04/2024 - Dragon Slayer/Xuri
+	Introduced a new INI setting, AutoUnequippedCasting, enhancing customization and control for users.
+
 18/04/2024 - Dragon Slayer
 	Added Focus Skill to Stam Regain and Mana Regan.
 
