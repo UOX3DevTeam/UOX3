@@ -1,4 +1,4 @@
-4/06/2024 - Dragon Slayer
+06/04/2024 - Dragon Slayer
 	Fixed Runebook Cooldown:
 		The Runebook now uses GetCurrentClock() instead of a timer, ensuring accurate 	checks for a 7-second delay using the system clock of the server. (js runebook)
 	Teleport Helper Name Correction:
