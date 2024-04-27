@@ -1,3 +1,6 @@
+15/04/2024 - Dragon Slayer
+	Fixed Dupe command message when targeting something other then a item or npc. (js dupe)
+
 06/04/2024 - Dragon Slayer
 	Fixed Runebook Cooldown:
 		The Runebook now uses GetCurrentClock() instead of a timer, ensuring accurate 	checks for a 7-second delay using the system clock of the server. (js runebook)

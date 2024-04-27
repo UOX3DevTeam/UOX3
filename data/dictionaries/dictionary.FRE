@@ -3847,6 +3847,7 @@
 8212=Syntaxe de commande valide pour l'ajout répété d'objets : 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection].
 8213=Identification de la section dans les DFNs d'où provient l'objet.
 8214=L'objet est-il volable ? 0 = non volable, 1 = volable, 2 = volable rare
+8215=Cible invalide. Veuillez sélectionner un objet ou un PNJ valide
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numéro de compte associé au joueur. Contrôlé par le serveur (en lecture seule).
 8301=Type d'IA du PNJ
