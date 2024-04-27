@@ -212,7 +212,7 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<105>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<106>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
@@ -606,8 +606,10 @@ public:
 	std::string Directory( CSDDirectoryPaths dp );
 
 
-	auto		CorpseLootDecay( bool value ) -> void;
-	auto		CorpseLootDecay() const -> bool;
+	auto		PlayerCorpseLootDecay( bool value ) -> void;
+	auto		PlayerCorpseLootDecay() const -> bool;
+	auto		NpcCorpseLootDecay( bool value ) -> void;
+	auto		NpcCorpseLootDecay() const -> bool;
 
 	auto		GuardStatus( bool value ) -> void;
 	auto		GuardsStatus() const -> bool;

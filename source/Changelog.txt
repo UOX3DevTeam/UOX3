@@ -1,3 +1,9 @@
+27/04/2024 - Dragon Slayer/Xuri
+	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.
+	Converted LOOTDECAYSWITHCORPSE ini setting to two new settings, one for player corpses, one for NPC corpses:
+		LOOTDECAYSWITHPLAYERCORPSE=1/0  // If 1, items on Player corpses decay along with the corpse, if 0 they drop to the ground
+		LOOTDECAYSWITHNPCCORPSE=1/0  // If 1, items on NPC corpses decay along with the corpse, if 0 they drop to the ground
+
 20/04/2024 - Dragon Slayer/Xuri
 	Fixed misspeling in shopkeepers ai (js shopkeeper)
 	Added shopkeeper AI script to basevendor definition to support bonuses/penalties for guild members

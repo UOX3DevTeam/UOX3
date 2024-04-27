@@ -1342,7 +1342,8 @@ auto DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsIn
 
 	if( toDecay.IsContType() )
 	{
-		if( !isCorpse || ValidateObject(toDecay.GetOwnerObj() ) || !cwmWorldState->ServerData()->CorpseLootDecay() )
+		if( isCorpse && (( ValidateObject( toDecay.GetOwnerObj() ) && !cwmWorldState->ServerData()->PlayerCorpseLootDecay() )  // Player corpse
+			|| ( !ValidateObject( toDecay.GetOwnerObj() ) && !cwmWorldState->ServerData()->NpcCorpseLootDecay() ))) // NPC corpse
 		{
 			std::vector<CItem *> corpseItems;
 			auto iCont = toDecay.GetContainsList();
