@@ -2554,6 +2554,8 @@
 2794=for %i gold
 2795=You scrounge some gems from the wreckage.
 2796=* Your body convulses from electric shock *
+2797=You can't use this while flying!
+2798=You have been grounded.
 // [2800-2999] House script
 2800=House Owner:
 2801=CO-OWNERS
