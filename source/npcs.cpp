@@ -964,6 +964,38 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 					applyTo->SetControlSlots( static_cast<UI16>( ndata ));
 				}
 				break;
+			case DFNTAG_COPPER:
+				if( !isGate )
+				{
+					if( !ValidateObject( mypack ))
+					{
+						mypack = applyTo->GetPackItem();
+					}
+					if( ValidateObject( mypack ))
+					{
+						if( ndata >= 0 )
+						{
+							bool shouldSave = applyTo->ShouldSave();
+							if( odata && odata > ndata )
+							{
+								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EEA", static_cast<UI16>( RandomNum( ndata, odata )), OT_ITEM, true, 0xFFFF, shouldSave );
+							}
+							else
+							{
+								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EEA", ndata, OT_ITEM, true, 0xFFFF, shouldSave );
+							}
+						}
+						else
+						{
+							Console.Warning( oldstrutil::format( "Invalid data found in COPPER tag inside NPC script [%s]", sectionId.c_str() ));
+						}
+					}
+					else
+					{
+						Console.Warning( oldstrutil::format( "Bad NPC Script ([%s]) with problem no backpack for copper", sectionId.c_str() ));
+					}
+				}
+				break;
 			case DFNTAG_DEX:
 				if( ndata > 0 )
 				{
@@ -1699,6 +1731,38 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				break;
 			case DFNTAG_SECTIONID:			applyTo->SetSectionId( cdata );							break;
 			case DFNTAG_SKIN:				applyTo->SetSkin( static_cast<UI16>( ndata ));		break;
+			case DFNTAG_SILVER:
+				if( !isGate )
+				{
+					if( !ValidateObject( mypack ))
+					{
+						mypack = applyTo->GetPackItem();
+					}
+					if( ValidateObject( mypack ))
+					{
+						if( ndata >= 0 )
+						{
+							bool shouldSave = applyTo->ShouldSave();
+							if( odata && odata > ndata )
+							{
+								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EF0", static_cast<UI16>( RandomNum( ndata, odata )), OT_ITEM, true, 0xFFFF, shouldSave );
+							}
+							else
+							{
+								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EF0", ndata, OT_ITEM, true, 0xFFFF, shouldSave );
+							}
+						}
+						else
+						{
+							Console.Warning( oldstrutil::format( "Invalid data found in SILVER tag inside NPC script [%s]", sectionId.c_str() ));
+						}
+					}
+					else
+					{
+						Console.Warning( oldstrutil::format( "Bad NPC Script ([%s]) with problem no backpack for silver", sectionId.c_str() ));
+					}
+				}
+				break;
 			case DFNTAG_SHOPKEEPER:
 				if( !isGate )
 				{
