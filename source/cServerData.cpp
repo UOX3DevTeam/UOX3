@@ -71,7 +71,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"BACKUPDIRECTORY"s, 44},
 	{"MSGBOARDDIRECTORY"s, 45},
 	{"SHAREDDIRECTORY"s, 46},
-	{"LOOTDECAYSWITHCORPSE"s, 47},
+	{"PLAYERLOOTDECAYSWITHCORPSE"s, 47},
 	{"GUARDSACTIVE"s, 49},
 	{"DEATHANIMATION"s, 27},
 	{"AMBIENTSOUNDS"s, 50},
@@ -368,8 +368,8 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"YOUNGLOCATION"s, 345},
 	{"SECRETSHARDKEY"s, 346},
 	{"MOONGATEFACETS"s, 347},
-	{"AUTOUNEQUIPPEDCASTING"s, 348}
-
+	{"AUTOUNEQUIPPEDCASTING"s, 348},
+	{"NPCLOOTDECAYSWITHCORPSE"s, 349}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -381,7 +381,7 @@ constexpr auto BIT_ANNOUNCEJOINPART		= UI32( 1 );
 constexpr auto BIT_SERVERBACKUP			= UI32( 2 );
 constexpr auto BIT_SHOOTONANIMALBACK	= UI32( 3 );
 constexpr auto BIT_NPCTRAINING			= UI32( 4 );
-constexpr auto BIT_LOOTDECAYSONCORPSE	= UI32( 5 );
+constexpr auto BIT_PLAYERLOOTDECAYSONCORPSE	= UI32( 5 );
 constexpr auto BIT_GUARDSENABLED		= UI32( 6 );
 constexpr auto BIT_PLAYDEATHANIMATION	= UI32( 7 );
 constexpr auto BIT_AMBIENTFOOTSTEPS		= UI32( 8 );
@@ -480,6 +480,7 @@ constexpr auto BIT_ENABLENPCGUILDPREMIUMS			= UI32( 101 );
 constexpr auto BIT_SNOOPAWARENESS					= UI32( 102 );
 constexpr auto BIT_YOUNGPLAYERSYSTEM				= UI32( 103 );
 constexpr auto BIT_AUTOUNEQUIPPEDCASTING			= UI32( 104 );
+constexpr auto BIT_NPCLOOTDECAYSONCORPSE			= UI32( 105 );
 
 
 // New uox3.ini format lookup
@@ -634,7 +635,8 @@ auto CServerData::ResetDefaults() -> void
 	ServerSkillCap( 1000 );
 	ServerStatCap( 225 );
 	StatsAffectSkillChecks( false );
-	CorpseLootDecay( true );
+	PlayerCorpseLootDecay( true );
+	NpcCorpseLootDecay( true );
 	ServerSavesTimer( 600 );
 
 	// Enable login-support only for latest available client by default
@@ -1969,17 +1971,31 @@ auto CServerData::DumpPaths() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CorpseLootDecay()
+//|	Function	-	CServerData::PlayerCorpseLootDecay()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether loot decays along with corpses or is left on ground
+//|	Purpose		-	Gets/Sets whether loot decays along with player corpses or is left on ground
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CorpseLootDecay() const -> bool
+auto CServerData::PlayerCorpseLootDecay() const -> bool
 {
-	return boolVals.test( BIT_LOOTDECAYSONCORPSE );
+	return boolVals.test( BIT_PLAYERLOOTDECAYSONCORPSE );
 }
-auto CServerData::CorpseLootDecay( bool newVal ) -> void
+auto CServerData::PlayerCorpseLootDecay( bool newVal ) -> void
 {
-	boolVals.set( BIT_LOOTDECAYSONCORPSE, newVal );
+	boolVals.set( BIT_PLAYERLOOTDECAYSONCORPSE, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::NpcCorpseLootDecay()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether loot decays along with  npc corpses or is left on ground
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::NpcCorpseLootDecay() const -> bool
+{
+	return boolVals.test( BIT_NPCLOOTDECAYSONCORPSE );
+}
+auto CServerData::NpcCorpseLootDecay( bool newVal ) -> void
+{
+	boolVals.set( BIT_NPCLOOTDECAYSONCORPSE, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4995,7 +5011,8 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
-		ofsOutput << "LOOTDECAYSWITHCORPSE=" << ( CorpseLootDecay() ? 1 : 0 ) << '\n';
+		ofsOutput << "PLAYERLOOTDECAYSWITHCORPSE=" << ( PlayerCorpseLootDecay() ? 1 : 0 ) << '\n';
+		ofsOutput << "NPCLOOTDECAYSWITHCORPSE=" << ( NpcCorpseLootDecay() ? 1 : 0 ) << '\n';
 		ofsOutput << "GUARDSACTIVE=" << ( GuardsStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "DEATHANIMATION=" << ( DeathAnimationStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "AMBIENTSOUNDS=" << WorldAmbientSounds() << '\n';
@@ -5656,8 +5673,8 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			Directory( CSDDP_SHARED, value );
 			break;
 		}
-		case 47:	 // LOOTDECAYSWITHCORPSE
-			CorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+		case 47:	 // PLAYERLOOTDECAYSWITHCORPSE
+			PlayerCorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
 		case 49:	 // GUARDSACTIVE
 			GuardStatus( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
@@ -6544,6 +6561,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 348:    // AUTOUNEQUIPPEDCASTING
 			AutoUnequippedCasting(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 349:	 // NPCLOOTDECAYSWITHCORPSE
+			NpcCorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
 		default:
 			rValue = false;
