@@ -1,6 +1,10 @@
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
+	var iTime = GetCurrentClock();
+	var NextUse = iUsed.GetTempTag( "bolaDelayed" );
+	var Delay = 10000;
+
 	if ( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
@@ -25,23 +29,24 @@ function onUseChecked( pUser, iUsed )
 			pUser.SysMessage( GetDictionaryEntry( 2713, socket.language )); // You cannot use this while riding a mount.
 			return false;
 		}
-		if( pUser.GetTag( "bola" ) == null || pUser.GetTag( "bola" ) == 0)
+		else if( pUser.isflying ) 
 		{
-			socket.tempObj = iUsed;
-			pUser.SetTag( "bola", 1 );
-
-			//the addition of the false-flag in the EmoteMessage below tells the server to only
-			//send the message to this character
-			pUser.EmoteMessage( GetDictionaryEntry( 2714, socket.language ), false ); // * You begin to swing the bola...*
-			pUser.StartTimer( 3000, 0, true );
+			pUser.SysMessage( GetDictionaryEntry( 2797, socket.language )); // You can't use this while flying!
+			return false;
 		}
-		else if( pUser.GetTag( "bola" ) == 1 )
+		else if(( iTime - NextUse ) < Delay )
 		{
 			pUser.SysMessage( GetDictionaryEntry( 2715, socket.language )); // You have to wait a few moments before you can use another bola!
+			return false;
 		}
 		else
 		{
-			return true;
+			socket.tempObj = iUsed;
+			pUser.EmoteMessage( GetDictionaryEntry( 2714, socket.language )); // * You begin to swing the bola...*
+			var tempMsg = GetDictionaryEntry( 2720, socket.language ); // %s begins to menacingly swing a bola...
+			pUser.EmoteMessage( tempMsg.replace( /%s/gi, pUser.name ));
+			iUsed.SetTempTag( "bolaDelayed", iTime.toString() );
+			pUser.StartTimer( 3000, 0, true );
 		}
 	}
 	return false;
@@ -59,7 +64,7 @@ function onCallback0( socket, myTarget)
 	if( !socket.GetWord( 1 ) && myTarget.isChar )
 	{
 		// Don't allow throwing bolas at Young players, or Young players throwing bolas at other players
-		if( GetServerSetting( "YoungPlayerStatus" ))
+		if( GetServerSetting( "YoungPlayerSystem" ))
 		{
 			if(( !myTarget.npc && myTarget.account.isYoung )
 				|| ( myTarget.npc && ValidateObject( myTarget.owner ) && !myTarget.owner.npc && myTarget.owner.account.isYoung ))
@@ -80,7 +85,18 @@ function onCallback0( socket, myTarget)
 
 		if( pUser.InRange( myTarget, 8 ))
 		{
-			if( myTarget.isonhorse )
+			if( myTarget.isflying )
+			{
+				myTarget.isflying = false;
+				pUser.DoAction( 0x9 );
+				DoMovingEffect( pUser, myTarget, 0x26AC, 0x10, 0x00, false );
+				if( myTarget.socket != null ) 
+				{
+					myTarget.socket.SysMessage( GetDictionaryEntry( 2798, myTarget.socket.language )); // You have been grounded
+				}
+				iUsed.Delete();
+			}
+			else if( myTarget.isonhorse )
 			{
 				myTarget.Dismount();
 				pUser.DoAction( 0x9 );
@@ -117,14 +133,6 @@ function onTimer( pUser, timerID )
 
 	if( timerID == 0 )
 	{
-		var tempMsg = GetDictionaryEntry( 2720, socket.language ); // %s begins to menacingly swing a bola...
-		pUser.EmoteMessage( tempMsg.replace( /%s/gi, pUser.name ));
-		pUser.StartTimer( 1000, 1, true );
-	}
-
-	if( timerID == 1 )
-	{
-		pUser.SetTag( "bola", null );
-		socket.CustomTarget( 0 );
+		socket.CustomTarget(0);
 	}
 }

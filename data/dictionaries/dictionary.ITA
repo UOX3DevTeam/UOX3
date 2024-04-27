@@ -2554,6 +2554,8 @@
 2794=per %i oro
 2795=Raccolgi alcune gemme dai rottami.
 2796=* Il tuo corpo è in preda alle convulsioni a causa delle scosse elettriche.
+2797=Non puoi usarlo mentre voli!
+2798=Sei stato messo a terra.
 // [2800-2999] House Scripts
 2800=Proprietario della casa:
 2801=COOPERATORI
@@ -3681,6 +3683,7 @@
 8212=Sintassi comando non valida per ripetere l'aggiunta di oggetti: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 8213=Identità della sezione da cui proviene l'oggetto DFN
 8214=L'oggetto è rubabile? 0 = non rubabile, 1 = rubabile, 2 = rubabile raramente
+8215=Destinazione non valida. Seleziona un oggetto o NPC valido
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numero di account associato al giocatore. Controllato dal server (Solo lettura)
 8301=Tipo di IA del PNG
