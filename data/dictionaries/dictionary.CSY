@@ -3683,6 +3683,7 @@
 8212=Neplatná syntaxe příkazu pro opakované přidávání objektů: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 8213=ID sekce z DFNs objekt pochází z
 8214=Dá se předmět ukrást? 0 = nelze ukrást, 1 = lze ukrást, 2 = lze ukrást vzácně
+8215=Neplatný cíl. Vyberte platnou položku nebo NPC
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Číslo účtu přidružené k hráči. Řízeno serverem (pouze pro čtení)
 8301=Typ umělé inteligence NPC

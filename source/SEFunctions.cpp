@@ -4245,7 +4245,7 @@ bool SE_GetServerSetting(JSContext* cx, unsigned argc, JS::Value* vp)
       args.rval().setString(tString);
       break;
     }
-    case 47:	 // LOOTDECAYSWITHCORPSE
+    case 47:	 // LOOTDECAYSWITHPLAYERCORPSE
       args.rval().setBoolean(cwmWorldState->ServerData()->CorpseLootDecay());
       break;
     case 49:	 // GUARDSACTIVE
@@ -5183,6 +5183,12 @@ bool SE_GetServerSetting(JSContext* cx, unsigned argc, JS::Value* vp)
     }
     case 347:	 // MOONGATESFACETS
       args.rval().setInt32(cwmWorldState->ServerData()->GetMoongateFacetStatus());
+      break;
+    case 348:	 // AUTOUNEQUIPPEDCASTING
+      args.rval().setBoolean(cwmWorldState->ServerData()->AutoUnequippedCasting());
+      break;
+    case 349:	 // LOOTDECAYSWITHPLAYERCORPSE
+      args.rval().setBoolean(cwmWorldState->ServerData()->NpcCorpseLootDecay());
       break;
     default:
       ScriptError(cx, "GetServerSetting: Invalid server setting name provided");

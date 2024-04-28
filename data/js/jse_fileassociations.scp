@@ -150,6 +150,7 @@
 3216=npc/ai/summon/energy_vortex.js
 3217=npc/ai/guildmaster.js
 3218=npc/ai/monster/chaos_dragoon.js
+3219=npc/ai/shopkeeper.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -206,6 +207,7 @@
 4033=skill/craft/crafting_complete.js
 4034=skill/craft/cooking.js
 4035=skill/craft/cartography.js
+4036=skill/craft/glassblowing.js
 4050=skill/mining.js
 4055=skill/snooping.js
 
