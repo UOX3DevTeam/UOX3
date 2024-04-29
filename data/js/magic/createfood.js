@@ -6,11 +6,11 @@ function SpellRegistration()
 function onSpellCast( mSock, mChar, directCast, spellNum )
 {
 	// Are we recovering from another spell that was just cast
-	if( mChar.GetTimer( Timer.SPELLRECOVERYTIME ) != 0 )
+	if( mChar.GetTimer( Timer.SPELLRECOVERYTIME  ) != 0 )
 	{
-		if( mChar.GetTimer( Timer.SPELLRECOVERYTIME ) > GetCurrentClock() )
+		if( mChar.GetTimer( Timer.SPELLRECOVERYTIME  ) > GetCurrentClock() )
 		{
-			if( mSock )
+			if( mSock != null )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language )); // You must wait a little while before casting
 			}
@@ -23,7 +23,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	{
 		if( mChar.isCasting )
 		{
-			if( mSock )
+			if( mSock != null )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 762, mSock.language )); // You are already casting a spell.
 			}
@@ -31,7 +31,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		}
 		else if( mChar.GetTimer( Timer.SPELLTIME ) > GetCurrentClock() )
 		{
-			if( mSock )
+			if( mSock != null )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language )); // You must wait a little while before casting
 			}
@@ -53,7 +53,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	// Disallow spellcasting if character is in jail
 	if( mChar.isJailed && mChar.commandlevel < 2 )
 	{
-		if( mSock )
+		if( mSock != null )
 		{
 			mSock.SysMessage( GetDictionaryEntry( 704, mSock.language )); // You are in jail and cannot cast spells!
 		}
@@ -66,7 +66,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	// Is the spell actually enabled?
 	if( !mSpell.enabled )
 	{
-		if( mSock )
+		if( mSock != null )
 		{
 			mSock.SysMessage( GetDictionaryEntry( 707, mSock.language )); // That spell is currently not enabled.
 		}
@@ -120,7 +120,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	}
 
 	// Break character's concentration (affects Meditation skill)
-	if( mSock )
+	if( mSock != null )
 	{
 		mChar.BreakConcentration( mSock );
 	}
@@ -133,7 +133,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		{
 			if( mSpell.mana > mChar.mana )
 			{
-				if( mSock )
+				if( mSock != null )
 				{
 					mSock.SysMessage( GetDictionaryEntry( 696, mSock.language )); // You have insufficient mana to cast that spell.
 				}
@@ -144,7 +144,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			}
 			if( mSpell.stamina > mChar.stamina )
 			{
-				if( mSock )
+				if( mSock != null )
 				{
 					mSock.SysMessage( GetDictionaryEntry( 697, mSock.language )); // You have insufficient stamina to cast that spell.
 				}
@@ -155,7 +155,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			}
 			if( mSpell.health >= mChar.health )
 			{
-				if( mSock )
+				if( mSock != null )
 				{
 					mSock.SysMessage( GetDictionaryEntry( 698, mSock.language )); // You have insufficient health to cast that spell.
 				}
@@ -177,6 +177,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		if( !GetServerSetting( "CastSpellsWhileMoving" ))
 		{
 			mChar.frozen = true;
+			mChar.Refresh();
 		}
 	}
 	else
@@ -209,6 +210,8 @@ function onTimer( mChar, timerID )
 {
 	mChar.isCasting = false;
 	mChar.frozen 	= false;
+	mChar.Refresh();
+
 	var ourTarg = mChar;
 
 	if( mChar.npc )
@@ -218,7 +221,7 @@ function onTimer( mChar, timerID )
 	else
 	{
 		var mSock = mChar.socket;
-		if( mSock )
+		if( mSock != null )
 		{
 			mChar.SetTimer( Timer.SPELLRECOVERYTIME, Spells[mChar.spellCast].recoveryDelay );
 			onSpellSuccess( mSock, mChar, ourTarg );
@@ -310,7 +313,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	);
 	var rndNum = RandomNumber( 0, foodItems.length - 1 );
 
-	if( mSock )
+	if( mSock != null )
 	{
 		CreateDFNItem( mSock, mChar, foodItems[rndNum], 1, "ITEM", true );
 	}

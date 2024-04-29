@@ -105,7 +105,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	{
 		if( mChar.GetTimer( Timer.SPELLRECOVERYTIME ) > GetCurrentClock() )
 		{
-			if( mSock )
+			if( mSock != null )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language )); // You must wait a little while before casting
 			}
@@ -135,7 +135,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	var ourRegion = mChar.region;
 	if(( spellNum == 45 && ourRegion.canMark ) || ( spellNum == 52 && !ourRegion.canGate() ) || ( spellNum == 32 && !ourRegion.canRecall() ))
 	{
-		if( mSock )
+		if( mSock != null )
 		{
 			mSock.SysMessage( GetDictionaryEntry( 705, mSock.language )); // This is not allowed here.
 		}
@@ -149,7 +149,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	{
 		if( ourRegion.isSafeZone )
 		{
-			if( mSock )
+			if( mSock != null )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language )); // Hostile actions are not permitted in this safe area.
 			}
@@ -161,7 +161,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 		if( !ourRegion.canCastAggressive )
 		{
-			if( mSock )
+			if( mSock != null )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 706, mSock.language )); // This is not allowed in town.
 			}
@@ -183,7 +183,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		mChar.visible = 0;
 	}
 
-	if( mSock )
+	if( mSock != null )
 	{
 		mChar.BreakConcentration( mSock );
 	}
@@ -195,7 +195,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		{
 			if( mSpell.mana > mChar.mana )
 			{
-				if( mSock )
+				if( mSock != null )
 				{
 					mSock.SysMessage( GetDictionaryEntry( 696, mSock.language )); // You have insufficient mana to cast that spell.
 				}
@@ -206,7 +206,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			}
 			if( mSpell.stamina > mChar.stamina )
 			{
-				if( mSock )
+				if( mSock != null )
 				{
 					mSock.SysMessage( GetDictionaryEntry( 697, mSock.language )); // You have insufficient stamina to cast that spell.
 				}
@@ -217,7 +217,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			}
 			if( mSpell.health >= mChar.health )
 			{
-				if( mSock )
+				if( mSock != null )
 				{
 					mSock.SysMessage( GetDictionaryEntry( 698, mSock.language )); // You have insufficient health to cast that spell.
 				}
@@ -293,7 +293,7 @@ function onTimer( mChar, timerID )
 	else
 	{
 		var mSock = mChar.socket;
-		if( mSock )
+		if( mSock != null )
 		{
 			var cursorType = 0;
 			var spellNum = mChar.spellCast;
@@ -430,7 +430,7 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 
 	if( !mChar.InRange( ourTarg, 10 ) )
 	{
-		if( mSock )
+		if( mSock != null )
 		{
 			mSock.SysMessage( GetDictionaryEntry( 712, mSock.language )); // You can't cast on someone that far away!
 		}
@@ -445,7 +445,7 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 	{
 		if( targRegion.isSafeZone )
 		{
-			if( mSock )
+			if( mSock != null )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language )); // Hostile actions are not permitted in this safe area.
 			}
@@ -453,7 +453,7 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 		}
 		if( !targRegion.canCastAggressive )
 		{
-			if( mSock )
+			if( mSock != null )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 709, mSock.language )); // You can't cast in town!
 			}
@@ -461,7 +461,7 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 		}
 		if( !ourTarg.vulnerable || ourTarg.aiType == 17 )
 		{
-			if( mSock )
+			if( mSock != null )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 713, mSock.language )); // They are invulnerable merchants!
 			}
