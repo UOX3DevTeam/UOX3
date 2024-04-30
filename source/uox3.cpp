@@ -1261,18 +1261,24 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 					{
 						if( mChar.GetHP() <= maxHP && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000 )) <= cwmWorldState->GetUICurrentTime() )
 						{
-							if( mChar.GetSkill( HEALING ) < 500 )
+							int healingSkill = mChar.GetSkill( HEALING );
+							int hpIncrement;
+							if( healingSkill < 500 )
 							{
-								mChar.IncHP( 1 );
+							    hpIncrement = 1;
 							}
-							else if( mChar.GetSkill( HEALING ) < 800 )
+							else if( healingSkill < 800 )
 							{
-								mChar.IncHP( 2 );
+							   hpIncrement = 2;
 							}
 							else
 							{
-								mChar.IncHP( 3 );
+							    hpIncrement = 3;
 							}
+
+							SI16 totalRegenBonus = std::min( mChar.GetRegenHits(), (SI16)18 );
+								
+							mChar.IncHP( hpIncrement + totalRegenBonus ); // Increment character's HP with the total regeneration bonus
 							if( mChar.GetHP() >= maxHP )
 							{
 								mChar.SetHP( maxHP );
@@ -1308,7 +1314,9 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 								focusBonus = ( 0.1 * mChar.GetSkill( FOCUS ) / 10);	// Bonus for focus
 							}
 
-							mChar.IncStamina( 1 + focusBonus );
+							SI16 totalRegenBonus = std::min( mChar.GetRegenStam(), (SI16)24 );
+
+							mChar.IncStamina( 1 + focusBonus + totalRegenBonus );
 							
 							if( mChar.GetStamina() >= maxStam )
 							{
@@ -1335,16 +1343,50 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 				{
 					if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000 ) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= maxMana )
 					{
-						double focusBonus = 0;
-						if(cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_AOS)
+						double FocusBonus = 0;
+						if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_AOS )
 						{
-								Skills->CheckSkill(( &mChar ), FOCUS, 0, 1000 ); // Check FOCUS for skill gain AOS
-								double focus = mChar.GetSkill( FOCUS );	// Bonus for focus
-								double focusBonus = focus / 200;
+							Skills->CheckSkill(( &mChar ), FOCUS, 0, 1000 ); // Check FOCUS for skill gain AOS
+							double focus = mChar.GetSkill( FOCUS );	// Bonus for focus
+							double focusBonus = focus / 200;
+
+							// Bonus from Meditation
+							double MeditationBonus = ( mChar.GetSkill( MEDITATION ) * 0.3 + mChar.GetIntelligence() / 400 ) * ( cwmWorldState->ServerData()->ArmorAffectManaRegen() && ( mChar.IsMeditating() || !cwmWorldState->ServerData()->ArmorAffectManaRegen() ) ? ( mChar.IsMeditating() ? 1.1 : 1.0 ) : 0.0 );
+
+							// Variables to accumulate mana over the timer interval
+							double totalManaRegenerated = 0.0;
+
+							// Calculation of base mana regeneration per second
+							double manaRegPerSecond = 0.2 + FocusBonus + MeditationBonus;
+
+							// If meditating, apply additional bonuses
+							if (mChar.IsMeditating())
+							{
+								double itemBonus = sqrt( mChar.GetRegenMana() ) - 1;
+								itemBonus = std::min( itemBonus, 5.5 ); // Cap item bonus at 5.5
+							    double additionalBonus = ( ( mChar.GetSkill( MEDITATION ) / 2 + mChar.GetSkill( FOCUS ) / 4 ) * 1 / 90 * 0.65 + 2.35 );
+							    manaRegPerSecond += ( itemBonus + 0.1 * sqrt( mChar.GetRegenMana() )) * additionalBonus;
+							}
+
+							// Calculate the total mana regeneration from equipment
+							double totalManaRegenFromEquipment = std::min( sqrt( mChar.GetRegenMana()), 30.0 ); // Cap total mana regeneration from equipment at 30
+
+							double timerIntervalInSeconds = static_cast<double>( cwmWorldState->ServerData()->SystemTimer(tSERVER_MANAREGEN) ) / 1000.0;
+
+							//auto timerInterval = cwmWorldState->ServerData()->SystemTimer(tSERVER_MANAREGEN);
+							totalManaRegenerated += manaRegPerSecond * timerIntervalInSeconds + totalManaRegenFromEquipment;
+
+							// Increment mana by the total regenerated over the timer interval
+							mChar.IncMana( 1 + totalManaRegenerated ); // No need to divide by timerIntervalInSeconds
+
+						}
+						else
+						{
+							SI16 totalRegenBonus = std::min( mChar.GetRegenMana(), (SI16)30 );
+							mChar.IncMana( 1 + FocusBonus + totalRegenBonus );	// Gain a mana point
 						}
 
-						Skills->CheckSkill(( &mChar ), MEDITATION, 0, 1000 );	// Check Meditation for skill gain ala OSI
-						mChar.IncMana( 1 + focusBonus );	// Gain a mana point
+						Skills->CheckSkill(( &mChar ), MEDITATION, 0, 1000 ); // Check Meditation for skill gain ala OSI
 						if( mChar.GetMana() == maxMana )
 						{
 							if( mChar.IsMeditating() )

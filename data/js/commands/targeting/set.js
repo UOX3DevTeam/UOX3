@@ -98,6 +98,18 @@ function onCallback0( socket, ourObj )
 		ourObj.Resist( 7, nVal );
 		okMsg( socket );
 		break;
+	case "REGENHITS":
+		ourItem.regenHits = nVal;
+		okMsg( socket );
+		break;
+	case "REGENSTAM":
+		ourItem.regenStam = nVal;
+		okMsg( socket );
+		break;
+	case "REGENMANA":
+		ourItem.regenMana = nVal;
+		okMsg( socket );
+		break;
 	case "HP":
 	case "HEALTH":
 		ourObj.health = nVal;

@@ -1006,6 +1006,69 @@ void CBaseObject::SetIntelligence( SI16 newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetRegenHits()
+//|					CBaseObject::SetRegenHits()
+//|	Date		-	29 April, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Regen Hit Points of the object
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetRegenHits( void ) const
+{
+	return regenHits;
+}
+void CBaseObject::SetRegenHits( SI16 newValue )
+{
+	regenHits = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetRegenStam()
+//|					CBaseObject::SetRegenHits()
+//|	Date		-	29 April, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Regen Stam Points of the object
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetRegenStam( void ) const
+{
+	return regenStam;
+}
+void CBaseObject::SetRegenStam( SI16 newValue )
+{
+	regenStam = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetRegenMana()
+//|					CBaseObject::SetRegenMana()
+//|	Date		-	29 April, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Regen Mana Points of the object
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetRegenMana( void ) const
+{
+	return regenMana;
+}
+void CBaseObject::SetRegenMana( SI16 newValue )
+{
+	regenMana = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetHP()
 //|					CBaseObject::SetHP()
 //|	Date		-	28 July, 2000
@@ -1660,6 +1723,37 @@ void CBaseObject::IncIntelligence( SI16 toInc )
 {
 	SetIntelligence( intelligence + toInc );
 }
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncRegenHits()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Regen Hit Points value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncRegenHits( SI16 toInc )
+{
+	SetRegenHits( regenHits + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncRegenStam()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Regen Stam Points value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncRegenStam( SI16 toInc )
+{
+	SetRegenStam( regenStam + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncRegenMana()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Regen Mana Points value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncRegenMana( SI16 toInc )
+{
+	SetRegenMana( regenMana + toInc );
+}
+
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::DumpFooter()
@@ -2525,6 +2619,9 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetStrength( GetStrength() );
 	target->SetDexterity( GetDexterity() );
 	target->SetIntelligence( GetIntelligence() );
+	target->SetRegenHits( GetRegenHits() );
+	target->SetRegenStam( GetRegenStam() );
+	target->SetRegenMana( GetRegenMana() );
 	target->SetHP( GetHP() );
 	target->SetDir( GetDir() );
 	target->SetVisible( GetVisible() );
