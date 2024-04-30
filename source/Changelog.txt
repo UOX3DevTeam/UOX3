@@ -1,3 +1,7 @@
+30/04/2024 - Dragon Slayer/Xuri/Maarc
+	Added Regenation Hit Points, Regenation Stam Points, Regenation Mana Points.
+	Added AOS formal for mana regeneration. Only Active in AOS and up.
+
 27/04/2024 - Dragon Slayer/Xuri
 	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.
 	Converted LOOTDECAYSWITHCORPSE ini setting to two new settings, one for player corpses, one for NPC corpses:
