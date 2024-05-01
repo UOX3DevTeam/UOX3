@@ -1,5 +1,6 @@
 30/04/2024 - Dragon Slayer/Xuri/Maarc
-	Added Regenation Hit Points, Regenation Stam Points, Regenation Mana Points.
+	Added in three new AOS property DFN tags for npc and items
+	Added REGENHITS, REGENSTAM, REGENMANA
 	Added AOS formal for mana regeneration. Only Active in AOS and up.
 
 27/04/2024 - Dragon Slayer/Xuri
