@@ -1,6 +1,6 @@
 30/04/2024 - Dragon Slayer/Xuri/Maarc
-	Added AOS Lower Requirement property.
-	-Lower Requirements - Lowers the strength requirements to wear an object.
+	Added Support for new AOS property tag.
+	-LOWERSTATREQ - Lowers the strength requirements to wear an object.
 
 27/04/2024 - Dragon Slayer/Xuri
 	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.
