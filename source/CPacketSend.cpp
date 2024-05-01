@@ -7657,10 +7657,19 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-			if( cItem.GetStrength() > 1 )
+			const SI16 strReq = (cItem.GetStrength() * (100 - cItem.GetLowerStatReq())) / 100;
+
+			if( strReq > 0 )
 			{
 				tempEntry.stringNum = 1061170; // strength requirement ~1_val~
 				tempEntry.ourText = oldstrutil::number( cItem.GetStrength() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetLowerStatReq() > 0 )
+			{
+				tempEntry.stringNum = 1060435; // lower requirements ~1_val~%
+				tempEntry.ourText = oldstrutil::number( cItem.GetLowerStatReq() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 		}

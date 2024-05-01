@@ -319,6 +319,9 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "RESISTPOISON":
 		socket.SysMessage( ourObj.Resist( 7 ));
 		break;
+	case "LOWERSTATREQ":
+		socket.SysMessage( ourObj.lowerStatReq );
+		break;
 	case "ARMORCLASS":
 	case "ARMOURCLASS":
 	case "AC":

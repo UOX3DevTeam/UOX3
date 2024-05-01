@@ -1037,6 +1037,27 @@ void CBaseObject::IncHP( SI16 amtToChange )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetLowerStatReq()
+//|					CBaseObject::GetLowerStatReq()
+//|	Date		-	30 April, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Stat Requirements of the object
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetLowerStatReq( void ) const
+{
+	return lowerStatReq;
+}
+void CBaseObject::SetLowerStatReq( SI16 newValue )
+{
+	lowerStatReq = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetDir()
 //|					CBaseObject::SetDir()
 //|	Date		-	28 July, 2000

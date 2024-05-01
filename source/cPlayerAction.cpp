@@ -698,7 +698,8 @@ bool CPIEquipItem::Handle( void )
 	if( k == ourChar )
 	{
 		bool canWear = false;
-		if( i->GetStrength() > k->GetStrength() )
+		const SI16 scaledStrength = ( i->GetStrength() * ( 100 - i->GetLowerStatReq() )) / 100;
+		if( scaledStrength > k->GetStrength() )
 		{
 			tSock->SysMessage( 1188 ); // You are not strong enough to use that. (NOTE: Should these messages use color 0x096a to stand out and replicate hard coded client message?)
 		}

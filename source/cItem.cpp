@@ -1660,6 +1660,7 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetMaxRange( GetMaxRange() );
 	target->SetMaxUses( GetMaxUses() );
 	target->SetUsesLeft( GetUsesLeft() );
+	target->SetLowerStatReq( GetLowerStatReq() );
 	target->SetStealable( GetStealable() );
 
 	// Set damage types on new item
@@ -1739,6 +1740,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
 	outStream << "Movable=" + std::to_string( GetMovable() ) + newLine;
 	outStream << "Priv=" + std::to_string( GetPriv() ) + newLine;
+	outStream << "LowerStatReq=" + std::to_string( GetLowerStatReq() ) + newLine;
 	outStream << "Value=" + std::to_string( GetBuyValue() ) + "," + std::to_string( GetSellValue() ) + "," + std::to_string( GetVendorPrice() ) + newLine;
 	outStream << "Restock=" + std::to_string( GetRestock() ) + newLine;
 	outStream << "AC=" + std::to_string( GetArmourClass() ) + newLine;
@@ -1920,6 +1922,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "LIGHTNING" )
 				{
 					SetWeatherDamage( LIGHTNING, static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 );
+					rValue = true;
+				}
+				if( UTag == "LOWERSTATREQ" )
+				{
+					SetLowerStatReq( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;

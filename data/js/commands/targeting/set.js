@@ -98,6 +98,10 @@ function onCallback0( socket, ourObj )
 		ourObj.Resist( 7, nVal );
 		okMsg( socket );
 		break;
+	case "LOWERSTATREQ":
+		ourItem.lowerStatReq = nVal;
+		okMsg( socket );
+		break;
 	case "HP":
 	case "HEALTH":
 		ourObj.health = nVal;

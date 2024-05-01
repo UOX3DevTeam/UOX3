@@ -477,6 +477,7 @@ inline JSPropertySpec CItemProps[] =
 	{ "damagePoison",	CIP_DAMAGEPOISON,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "damageRain",		CIP_DAMAGERAIN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "damageSnow",		CIP_DAMAGESNOW,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "lowerStateReq",	CIP_LOWERSTATREQ,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "name2",			CIP_NAME2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isChar",			CIP_ISCHAR,			JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "isItem",			CIP_ISITEM,			JSPROP_ENUMPERMRO, nullptr, nullptr },
