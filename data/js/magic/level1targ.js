@@ -238,6 +238,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		if( !GetServerSetting( "CastSpellsWhileMoving" ))
 		{
 			mChar.frozen = true;
+			mChar.Refresh();
 		}
 	}
 	else
@@ -281,6 +282,7 @@ function onTimer( mChar, timerID )
 {
 	mChar.isCasting = false;
 	mChar.frozen 	= false;
+	mChar.Refresh();
 
 	if( mChar.npc )
 	{
@@ -342,6 +344,7 @@ function onCallback0( mSock, ourTarg )
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
 		mChar.frozen = false;
+		mChar.Refresh();
 	}
 }
 
@@ -573,6 +576,7 @@ function MagicDamage( p, amount, attacker, mSock, element )
 	if( p.frozen && p.dexterity > 0 )
 	{
 		p.frozen = false;
+		p.Refresh();
 		if( mSock != null )
 		{
 			mSock.SysMessage( GetDictionaryEntry( 700, mSock.language )); // You are no longer frozen.
