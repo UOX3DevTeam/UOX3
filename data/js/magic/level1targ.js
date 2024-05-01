@@ -71,9 +71,9 @@ function ItemInHandCheck( mChar, mSock, spellType )
 			var rHandBlocks = false;
 
 			// Evaluate blocking for left and right hand items
-			if( isSpellCastingAllowed( itemRHand ) || isSpellCastingAllowed( itemLHand ))
+			if( !isSpellCastingAllowed( itemRHand ) || !isSpellCastingAllowed( itemLHand ))
 			{
-				var result = handleItem( itemLHand, itemRHand, mChar );
+				var result = AutoUnequipAttempt( itemLHand, itemRHand, mChar );
 				lHandBlocks = result.lHandBlocks;
 				rHandBlocks = result.rHandBlocks;
 			}
@@ -94,7 +94,6 @@ function ItemInHandCheck( mChar, mSock, spellType )
 				return false;
 			}
 		}
-		return true;
 	}
 }
 
@@ -661,21 +660,33 @@ function isSpellCastingAllowed( item )
 }
 
 // Function to handle items
-function handleItem( itemLHand, itemRHand, mChar )
+function AutoUnequipAttempt( itemLHand, itemRHand, mChar )
 {
-	const UnEquipEnabled = GetServerSetting( "AutoUnequippedCasting" );
+	const autoUnequip = GetServerSetting( "AutoUnequippedCasting" );
 	var lHandBlocks = false; // Default to false
 	var rHandBlocks = false; // Default to false
-	if( UnEquipEnabled && itemLHand != null && !isSpellCastingAllowed( itemLHand ))
-	{ // Allow casting if item is spell channeling or type 9 spell book
-		itemLHand.container = mChar.pack;
-		lHandBlocks = true; // Set to true if item is blocking
+	if( itemLHand != null )
+	{
+		if( autoUnequip && mChar.pack.totalItemCount < mChar.pack.maxItems )
+		{
+			itemLHand.container = mChar.pack;
+		}
+		else 
+		{
+			lHandBlocks = true; // Set to true if item is blocking
+		}
 	}
 
-	if( UnEquipEnabled && itemRHand != null && !isSpellCastingAllowed( itemRHand ))
-	{ // Allow casting if item is spell channeling or type 9 spell book
-		itemRHand.container = mChar.pack;
-		rHandBlocks = true; // Set to true if item is blocking
+	if( itemRHand != null )
+	{
+		if( autoUnequip && mChar.pack.totalItemCount < mChar.pack.maxItems )
+		{
+			itemRHand.container = mChar.pack;
+		}
+		else
+		{
+			rHandBlocks = true; // Set to true if item is blocking
+		}
 	}
 	return { lHandBlocks: lHandBlocks, rHandBlocks: rHandBlocks };
 }

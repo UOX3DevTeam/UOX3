@@ -87,9 +87,9 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			var rHandBlocks = false;
 
 			// Evaluate blocking for left and right hand items
-			if( isSpellCastingAllowed( itemRHand ) || isSpellCastingAllowed( itemLHand ))
+			if( !isSpellCastingAllowed( itemRHand ) || !isSpellCastingAllowed( itemLHand ))
 			{
-				var result = handleItem( itemLHand, itemRHand, mChar );
+				var result = AutoUnequipAttempt( itemLHand, itemRHand, mChar );
 				lHandBlocks = result.lHandBlocks;
 				rHandBlocks = result.rHandBlocks;
 			}
@@ -110,7 +110,6 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 				return true;
 			}
 		}
-		return false;
 	}
 
 	// Turn character visible
@@ -128,6 +127,16 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	// If player commandlevel is below GM-level, check for reagents
 	if( mChar.commandlevel < 2  )
 	{
+		//Check for enough reagents
+		// type == 0 -> SpellBook
+		if( spellType == 0 && !TriggerEvent( 6004, "CheckReagents", mChar, mSpell ))
+		{
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
+			mChar.isCasting = false;
+			mChar.spellCast = -1;
+			return true;
+		}
+
 		// type == 2 - Wands
 		if( spellType != 2 )
 		{
@@ -307,7 +316,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	ourTarg.SpellStaticEffect( mSpell );
 
 	// List of foods to randomize between when casting the spell
-	foodItems = new Array (
+	var foodItems = new Array (
 		"0x09d0", "0x09b7", "0x09f2", "0x097b", "0x0d1a", "0x09c9", "0x09eb", "0x09d2",
 		"0x09c0", "0x097c"
 	);
@@ -330,21 +339,33 @@ function isSpellCastingAllowed( item )
 }
 
 // Function to handle items
-function handleItem( itemLHand, itemRHand, mChar )
+function AutoUnequipAttempt( itemLHand, itemRHand, mChar )
 {
-	const UnEquipEnabled = GetServerSetting( "AutoUnequippedCasting" );
+	const autoUnequip = GetServerSetting( "AutoUnequippedCasting" );
 	var lHandBlocks = false; // Default to false
 	var rHandBlocks = false; // Default to false
-	if(UnEquipEnabled && itemLHand != null && !isSpellCastingAllowed( itemLHand ))
-	{ // Allow casting if item is spell channeling or type 9 spell book
-		itemLHand.container = mChar.pack;
-		lHandBlocks = true; // Set to true if item is blocking
+	if( itemLHand != null )
+	{
+		if( autoUnequip && mChar.pack.totalItemCount < mChar.pack.maxItems )
+		{
+			itemLHand.container = mChar.pack;
+		}
+		else
+		{
+			lHandBlocks = true; // Set to true if item is blocking
+		}
 	}
 
-	if( UnEquipEnabled && itemRHand != null && !isSpellCastingAllowed( itemRHand ))
-	{ // Allow casting if item is spell channeling or type 9 spell book
-		itemRHand.container = mChar.pack;
-		rHandBlocks = true; // Set to true if item is blocking
+	if( itemRHand != null )
+	{
+		if( autoUnequip && mChar.pack.totalItemCount < mChar.pack.maxItems )
+		{
+			itemRHand.container = mChar.pack;
+		}
+		else
+		{
+			rHandBlocks = true; // Set to true if item is blocking
+		}
 	}
 	return { lHandBlocks: lHandBlocks, rHandBlocks: rHandBlocks };
 }
