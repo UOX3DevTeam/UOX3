@@ -344,7 +344,7 @@ function AutoUnequipAttempt( itemLHand, itemRHand, mChar )
 	const autoUnequip = GetServerSetting( "AutoUnequippedCasting" );
 	var lHandBlocks = false; // Default to false
 	var rHandBlocks = false; // Default to false
-	if( itemLHand != null )
+	if( itemLHand != null && !isSpellCastingAllowed( itemLHand ))
 	{
 		if( autoUnequip && mChar.pack.totalItemCount < mChar.pack.maxItems )
 		{
@@ -356,7 +356,7 @@ function AutoUnequipAttempt( itemLHand, itemRHand, mChar )
 		}
 	}
 
-	if( itemRHand != null )
+	if( itemRHand != null && !isSpellCastingAllowed( itemRHand ))
 	{
 		if( autoUnequip && mChar.pack.totalItemCount < mChar.pack.maxItems )
 		{
