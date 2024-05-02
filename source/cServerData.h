@@ -303,6 +303,9 @@ private:
 	SI16		htmlStatusEnabled;				//	If > 0 then it's enabled - only used at PC char creation - use elsewhere? (was # of seconds between updates)
 	SI16		sellMaxItems;					//	Maximum number of items that can be sold to a vendor
 	SI16		fishingstaminaloss;				//	The amount of stamina lost with each use of fishing skill
+	SI16		regenhitscap;					//	The Cap for regen hits propertie
+	SI16		regenstamcap;					//	The Cap for regen stam propertie
+	SI16		regenmanacap;					//	The Cap for regen mana propertie
 	UI08		maxControlSlots;				//	The default max amount of pet/follower control slots for each player
 	UI08		maxSafeTeleports;				//	The default max amount of free teleports to safety players get via the help menu per day
 	UI08		maxPetOwners;					//	The default max amount of different owners a pet may have in its lifetime
@@ -733,6 +736,15 @@ public:
 
 	auto		FishingStaminaLoss( SI16 value ) -> void;
 	SI16		FishingStaminaLoss() const;
+
+	auto		RegenHitsCap( SI16 value ) -> void;
+	SI16		RegenHitsCap() const;
+
+	auto		RegenStamCap( SI16 value ) -> void;
+	SI16		RegenStamCap() const;
+
+	auto		RegenManaCap( SI16 value ) -> void;
+	SI16		RegenManaCap() const;
 
 	auto		CombatAttackStamina( SI16 value ) -> void;
 	SI16		CombatAttackStamina() const;

@@ -1276,7 +1276,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							    hpIncrement = 3;
 							}
 
-							SI16 totalRegenBonus = std::min( mChar.GetRegenHits(), (SI16)18 );
+							SI16 totalRegenBonus = std::min( mChar.GetRegenHits(), cwmWorldState->ServerData()->RegenHitsCap() );
 								
 							mChar.IncHP( hpIncrement + totalRegenBonus ); // Increment character's HP with the total regeneration bonus
 							if( mChar.GetHP() >= maxHP )
@@ -1314,7 +1314,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 								focusBonus = ( 0.1 * mChar.GetSkill( FOCUS ) / 10);	// Bonus for focus
 							}
 
-							SI16 totalRegenBonus = std::min( mChar.GetRegenStam(), (SI16)24 );
+							SI16 totalRegenBonus = std::min( mChar.GetRegenStam(), cwmWorldState->ServerData()->RegenStamCap() );
 
 							mChar.IncStamina( 1 + focusBonus + totalRegenBonus );
 							
@@ -1382,7 +1382,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 						}
 						else
 						{
-							SI16 totalRegenBonus = std::min( mChar.GetRegenMana(), (SI16)30 );
+							SI16 totalRegenBonus = std::min( mChar.GetRegenMana(), cwmWorldState->ServerData()->RegenManaCap() );
 							mChar.IncMana( 1 + FocusBonus + totalRegenBonus );	// Gain a mana point
 						}
 

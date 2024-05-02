@@ -369,7 +369,10 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SECRETSHARDKEY"s, 346},
 	{"MOONGATEFACETS"s, 347},
 	{"AUTOUNEQUIPPEDCASTING"s, 348},
-	{"LOOTDECAYSWITHNPCCORPSE"s, 349}
+	{"LOOTDECAYSWITHNPCCORPSE"s, 349},
+	{"REGENHITSCAP"s, 350},
+	{"REGENSTAMSCAP"s, 351},
+	{"REGENMANASCAP"s, 352}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -717,6 +720,9 @@ auto CServerData::ResetDefaults() -> void
 	GlobalAttackSpeed( 1.0 );
 	NPCSpellCastSpeed( 1.0 );
 	FishingStaminaLoss( 2 );
+	RegenHitsCap( 18 );
+	RegenHitsCap( 24 );
+	RegenManaCap( 30 );
 	CombatArmorClassDamageBonus( false );
 	AlchemyDamageBonusEnabled( false );
 	AlchemyDamageBonusModifier( 5 );
@@ -2620,6 +2626,48 @@ auto CServerData::FishingStaminaLoss() const -> SI16
 auto CServerData::FishingStaminaLoss( SI16 value ) -> void
 {
 	fishingstaminaloss = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::RegenHitsCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the cap for regen hits propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::RegenHitsCap() const -> SI16
+{
+	return regenhitscap;
+}
+auto CServerData::RegenHitsCap( SI16 value ) -> void
+{
+	regenhitscap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::RegenStamCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for regen stam propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::RegenStamCap() const -> SI16
+{
+	return regenstamcap;
+}
+auto CServerData::RegenStamCap( SI16 value ) -> void
+{
+	regenstamcap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::RegenManaCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for regen mana propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::RegenManaCap() const -> SI16
+{
+	return regenmanacap;
+}
+auto CServerData::RegenManaCap( SI16 value ) -> void
+{
+	regenmanacap = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5196,6 +5244,9 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SHOWITEMRESISTSTATS=" << ( ShowItemResistStats() ? 1 : 0 ) << '\n';
 		ofsOutput << "SHOWWEAPONDAMAGETYPES=" << ( ShowWeaponDamageTypes() ? 1 : 0 ) << '\n';
 		ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<UI16>( WeaponDamageBonusType() ) << '\n';
+		ofsOutput << "REGENHITSCAP=" << RegenHitsCap() << '\n';
+		ofsOutput << "REGENSTAMCAP=" << RegenStamCap() << '\n';
+		ofsOutput << "REGENMANACAP=" << RegenManaCap() << '\n';
 
 		ofsOutput << "}" << '\n';
 
@@ -6564,6 +6615,15 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 349:	 // LOOTDECAYSWITHNPCCORPSE
 			NpcCorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 350:	// REGENHITSCAP
+			RegenHitsCap( std::stof( value ));
+			break;
+		case 351:	// REGENSTAMSCAP
+			RegenHitsCap( std::stof( value ));
+			break;
+		case 352:	// REGENMANASCAP
+			RegenHitsCap( std::stof( value ));
 			break;
 		default:
 			rValue = false;

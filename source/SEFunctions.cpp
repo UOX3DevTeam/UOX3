@@ -5086,6 +5086,15 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 349:	 // LOOTDECAYSWITHPLAYERCORPSE
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->NpcCorpseLootDecay() );
 				break;
+			case 350:	// REGENHITSCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->RegenHitsCap() ));
+				break;
+			case 351:	// REGENSTAMCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->RegenStamCap() ));
+				break;
+			case 352:	// REGENMANACAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->RegenManaCap() ));
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;
