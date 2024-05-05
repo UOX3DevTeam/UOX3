@@ -185,12 +185,12 @@ function onGumpPress( socket, pButton, gumpData )
 				case 1:
 					if( iUsed.sectionalist == true ) 
 					{
-						pUser.SysMessage( "You have disabled the spawn list. You can now add single NPCs." );
+						pUser.SysMessage( "You have disabled the spawn list. You can now add single DFN." );
 						iUsed.sectionalist = false;
 					}
 					else
 					{
-						pUser.SysMessage( "You have enabled the spawn list. It will now only accept NPC lists." );
+						pUser.SysMessage( "You have enabled the spawn list. It will now only accept DFN lists." );
 						iUsed.sectionalist = true;
 					}
 					break;
