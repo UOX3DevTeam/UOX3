@@ -1,3 +1,6 @@
+5/05/2024 - Dragon Slayer
+	Added Spawner Gump and attached to the base_spawner, just another option for making editing spawners without using commands. (js spawnergump)
+
 27/04/2024 - Dragon Slayer/Xuri
 	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.
 	Converted LOOTDECAYSWITHCORPSE ini setting to two new settings, one for player corpses, one for NPC corpses:
