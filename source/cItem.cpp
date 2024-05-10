@@ -1924,7 +1924,7 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					SetWeatherDamage( LIGHTNING, static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 );
 					rValue = true;
 				}
-				if( UTag == "LOWERSTATREQ" )
+				else if( UTag == "LOWERSTATREQ" )
 				{
 					SetLowerStatReq( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
