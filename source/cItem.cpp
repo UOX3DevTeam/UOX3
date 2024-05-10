@@ -1638,6 +1638,7 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetRndValueRate( GetRndValueRate() );
 	target->SetSpawn( GetSpawn() );
 	target->SetSpeed( GetSpeed() );
+	target->SetArtifactRarity( GetArtifactRarity() );
 	target->SetSpell( 0, GetSpell( 0 ));
 	target->SetSpell( 1, GetSpell( 1 ));
 	target->SetSpell( 2, GetSpell( 2 ));
@@ -1737,6 +1738,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "MaxItems=" + std::to_string( GetMaxItems() ) + newLine;
 	outStream << "MaxHP=" + std::to_string( GetMaxHP() ) + newLine;
 	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
+	outStream << "ArtifactRarity=" + std::to_string( GetArtifactRarity() ) + newLine;
 	outStream << "Movable=" + std::to_string( GetMovable() ) + newLine;
 	outStream << "Priv=" + std::to_string( GetPriv() ) + newLine;
 	outStream << "Value=" + std::to_string( GetBuyValue() ) + "," + std::to_string( GetSellValue() ) + "," + std::to_string( GetVendorPrice() ) + newLine;
@@ -1773,7 +1775,12 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 		switch(( UTag.data()[0] ))
 		{
 			case 'A':
-				if( UTag == "AMMO" )
+				if( UTag == "ARTIFACTRARITY" )
+				{
+					SetArtifactRarity( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "AMMO" )
 				{
 					if( csecs.size() == 2 )
 					{

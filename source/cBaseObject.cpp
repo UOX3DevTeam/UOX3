@@ -1037,6 +1037,27 @@ void CBaseObject::IncHP( SI16 amtToChange )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetArtifactRarity()
+//|					CBaseObject::SetArtifactRarity()
+//|	Date		-	9 May, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Artifacts Rarity of the object
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetArtifactRarity( void ) const
+{
+	return artifactRarity;
+}
+void CBaseObject::SetArtifactRarity( SI16 newValue )
+{
+	artifactRarity = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetDir()
 //|					CBaseObject::SetDir()
 //|	Date		-	28 July, 2000

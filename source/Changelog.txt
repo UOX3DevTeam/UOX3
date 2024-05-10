@@ -1,3 +1,8 @@
+09/05/2024 - Dragon Slayer
+	Added ArtifactRarity AOS Property for items
+	-ARTIFACTRARITY=#
+	-Artifact Rarity is an item property that is visible on some artifacts and meant to give players an idea of how rare the item is. Items with rarity 1 are supposed to be common while rarity 12 are extremely scarce.
+
 27/04/2024 - Dragon Slayer/Xuri
 	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.
 	Converted LOOTDECAYSWITHCORPSE ini setting to two new settings, one for player corpses, one for NPC corpses:
