@@ -1684,6 +1684,9 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				}
 				break;
 			case DFNTAG_REMOVETRAP:			skillToSet = REMOVETRAP;				break;
+			case DFNTAG_REGENHITS:		applyTo->SetRegenHits( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_REGENSTAM:		applyTo->SetRegenStam( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_REGENMANA:		applyTo->SetRegenMana( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_RACE:				applyTo->SetRace( static_cast<UI16>( ndata ));		break;
 			case DFNTAG_RUNS:
 				if( !isGate )

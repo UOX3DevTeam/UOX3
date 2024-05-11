@@ -469,9 +469,9 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetRank( 10 );
 				}
 				break;
-			case DFNTAG_REGENHITS:		applyTo->SetRegenHits( static_cast<UI08>( ndata ));		break;
-			case DFNTAG_REGENSTAM:		applyTo->SetRegenStam( static_cast<UI08>( ndata ));		break;
-			case DFNTAG_REGENMANA:		applyTo->SetRegenMana( static_cast<UI08>( ndata ));		break;
+			case DFNTAG_REGENHITS:		applyTo->SetRegenHits( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_REGENSTAM:		applyTo->SetRegenStam( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_REGENMANA:		applyTo->SetRegenMana( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_RACE:			applyTo->SetRace( static_cast<UI16>( ndata ));			break;
 			case DFNTAG_RESISTFIRE:
 				if( ndata >= 0 )
