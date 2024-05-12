@@ -81,7 +81,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 		auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 		switch( tag )
 		{
-			case DFNTAG_ARTIFACTRARITY:	applyTo->SetArtifactRarity( static_cast<UI08>( ndata ));	break;
+			case DFNTAG_ARTIFACTRARITY:	applyTo->SetArtifactRarity( static_cast<SI16>( ndata ));	break;
 			case DFNTAG_AMMO:
 				applyTo->SetAmmoId( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
 				if( ssecs.size() > 1 )

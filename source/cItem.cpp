@@ -1777,7 +1777,7 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 			case 'A':
 				if( UTag == "ARTIFACTRARITY" )
 				{
-					SetArtifactRarity( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					SetArtifactRarity( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "AMMO" )
