@@ -118,6 +118,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				break;
 			case DFNTAG_DAMAGE:
+			case DFNTAG_DURABILITYHPBONUS:	applyTo->SetDurabilityHpBonus( static_cast<SI16>( ndata ));	break;
 			case DFNTAG_ATT:
 				if( ndata >= 0 )
 				{
@@ -1193,10 +1194,21 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 			Console.Error( "Trying to apply an item section failed" );
 		}
 
+		// If the durabilityhpbonus tag is on the item, it will add to its Durability (aka Health).
+		auto durabilityHpBonus = iCreated->GetDurabilityHpBonus();
+		if( durabilityHpBonus > 0 )
+		{
+			iCreated->SetHP( iCreated->GetHP() + durabilityHpBonus );
+		}
+
 		// If maxHP has not been defined for a new item, set it to the same value as HP
 		if( !iCreated->GetMaxHP() && iCreated->GetHP() )
 		{
 			iCreated->SetMaxHP( iCreated->GetHP() );
+		}
+		else
+		{// If you add a maxhp tag and have durabilityHpBonus, it will increase the Durability (aka Health).
+			iCreated->SetMaxHP( iCreated->GetMaxHP() + durabilityHpBonus );
 		}
 
 		// If maxUses is higher than usesLeft for a new item, randomize the amount of usesLeft the item should have!

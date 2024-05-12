@@ -1006,6 +1006,27 @@ void CBaseObject::SetIntelligence( SI16 newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetDurabilityHpBonus()
+//|					CBaseObject::SetDurabilityHpBonus()
+//|	Date		-	5 May, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Bonus hp on the object
+//o------------------------------------------------------------------------------------------------o
+
+SI16 CBaseObject::GetDurabilityHpBonus( void ) const
+{
+	return durabilityHpBonus;
+}
+void CBaseObject::SetDurabilityHpBonus( SI16 newValue )
+{
+	durabilityHpBonus = newValue;
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetHP()
 //|					CBaseObject::SetHP()
 //|	Date		-	28 July, 2000
