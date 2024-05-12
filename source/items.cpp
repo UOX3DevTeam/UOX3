@@ -356,7 +356,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_LAYER:			applyTo->SetLayer( static_cast<ItemLayers>( ndata ));	break;
 			case DFNTAG_LIGHT:			applyTo->SetWeatherDamage( LIGHT, ndata != 0 );			break;
 			case DFNTAG_LIGHTNING:		applyTo->SetWeatherDamage( LIGHTNING, ndata != 0 );		break;
-			case DFNTAG_LOWERSTATREQ:	applyTo->SetLowerStatReq( static_cast<UI08>( ndata ));	break;
+			case DFNTAG_LOWERSTATREQ:	applyTo->SetLowerStatReq( static_cast<SI16>( ndata ));	break;
 			case DFNTAG_MAXHP:			applyTo->SetMaxHP( static_cast<UI16>( ndata ));			break;
 			case DFNTAG_MAXITEMS:		applyTo->SetMaxItems( static_cast<UI16>( ndata ));		break;
 			case DFNTAG_MAXRANGE:		applyTo->SetMaxRange( static_cast<UI08>( ndata ));		break;
