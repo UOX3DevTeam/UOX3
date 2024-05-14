@@ -1632,6 +1632,69 @@ void CBaseObject::SetIntelligence2( SI16 nVal )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetBonusHits()
+//|					CBaseObject::SetBonusHits()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the health max var associated with the object. For chars, it's the
+//|					bonuses (via armour and such)
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetBonusHits( void ) const
+{
+	return bonusHits;
+}
+void CBaseObject::SetBonusHits( SI16 nVal )
+{
+	bonusHits = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetBonusStam()
+//|					CBaseObject::SetBonusStam()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the stamina max var associated with the object. For chars, it's the
+//|					bonuses (via armour and such)
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetBonusStam( void ) const
+{
+	return bonusStam;
+}
+void CBaseObject::SetBonusStam( SI16 nVal )
+{
+	bonusStam = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetBonusMana()
+//|					CBaseObject::SetBonusMana()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Mana max var associated with the object. For chars, it's the
+//|					bonuses (via armour and such)
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetBonusMana( void ) const
+{
+	return bonusMana;
+}
+void CBaseObject::SetBonusMana( SI16 nVal )
+{
+	bonusMana = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::IncStrength()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Increments the object's strength value

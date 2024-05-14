@@ -79,6 +79,9 @@ protected:
 	SI16				st2;
 	SI16				dx2;
 	SI16				in2;
+	SI16				bonusHits;
+	SI16				bonusStam;
+	SI16				bonusMana;
 	mutable SI32		FilePosition;
 	SERIAL				tempMulti;
 	std::string			name;
@@ -255,6 +258,15 @@ public:
 	void					IncStrength( SI16 toInc = 1 );
 	void					IncDexterity( SI16 toInc = 1 );
 	void					IncIntelligence( SI16 toInc = 1 );
+
+	SI16					GetBonusHits( void ) const;
+	virtual void			SetBonusHits( SI16 nVal );
+
+	SI16					GetBonusStam( void ) const;
+	virtual void			SetBonusStam( SI16 nVal );
+
+	SI16					GetBonusMana( void ) const;
+	virtual void			SetBonusMana( SI16 nVal );
 
 	virtual void			PostLoadProcessing( void );
 	virtual bool			LoadRemnants( void ) = 0;

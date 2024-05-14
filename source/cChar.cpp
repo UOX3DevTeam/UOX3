@@ -2920,6 +2920,10 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
+			SetFixedMaxHP( GetMaxHP() + itemLayers[tLayer]->GetBonusHits());
+			SetFixedMaxStam( GetMaxStam() + itemLayers[tLayer]->GetBonusStam());
+			SetFixedMaxMana( GetMaxMana() + itemLayers[tLayer]->GetBonusMana());
+
 			if( toWear->IsPostLoaded() )
 			{
 				if( itemLayers[tLayer]->GetPoisoned() )
@@ -2979,6 +2983,11 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncStrength2( -itemLayers[Layer]->GetStrength2() );
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
+
+		SetFixedMaxHP( GetMaxHP() -itemLayers[Layer]->GetBonusHits());
+		SetFixedMaxStam( GetMaxStam() -itemLayers[Layer]->GetBonusStam());
+		SetFixedMaxMana( GetMaxMana() -itemLayers[Layer]->GetBonusMana());
+
 		if( itemLayers[Layer]->GetPoisoned() )
 		{
 			if( itemLayers[Layer]->GetPoisoned() > GetPoisoned() )

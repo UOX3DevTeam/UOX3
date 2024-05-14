@@ -1654,6 +1654,9 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetWeightMax( GetWeightMax() );
 	target->SetBaseWeight( GetBaseWeight() );
 	target->SetMaxItems( GetMaxItems() );
+	target->SetBonusHits( GetBonusHits() );
+	target->SetBonusStam( GetBonusStam() );
+	target->SetBonusMana( GetBonusMana() );
 	//target->SetWipeable( IsWipeable() );
 	target->SetPriv( GetPriv() );
 	target->SetBaseRange( GetBaseRange() );
@@ -1737,6 +1740,9 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "MaxItems=" + std::to_string( GetMaxItems() ) + newLine;
 	outStream << "MaxHP=" + std::to_string( GetMaxHP() ) + newLine;
 	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
+	outStream << "BonusHits=" + std::to_string( GetBonusHits() ) + newLine;
+	outStream << "BonusStam=" + std::to_string( GetBonusStam() ) + newLine;
+	outStream << "BonusMana=" + std::to_string( GetBonusMana() ) + newLine;
 	outStream << "Movable=" + std::to_string( GetMovable() ) + newLine;
 	outStream << "Priv=" + std::to_string( GetPriv() ) + newLine;
 	outStream << "Value=" + std::to_string( GetBuyValue() ) + "," + std::to_string( GetSellValue() ) + "," + std::to_string( GetVendorPrice() ) + newLine;
@@ -1818,6 +1824,21 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				if( UTag == "BOOLS" )
 				{
 					bools = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
+					rValue = true;
+				}
+				else if( UTag == "BONUSHITS" )
+				{
+					SetBonusHits( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "BONUSSTAM" )
+				{
+					SetBonusStam( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "BONUSMANA" )
+				{
+					SetBonusMana( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
