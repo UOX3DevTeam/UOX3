@@ -1,3 +1,6 @@
+13/05/2024 - Dragon Slayer
+	Added New Shield Type 107 so shield ID's no longer have to be in hard code for shields to work properly
+
 27/04/2024 - Dragon Slayer/Xuri
 	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.
 	Converted LOOTDECAYSWITHCORPSE ini setting to two new settings, one for player corpses, one for NPC corpses:
