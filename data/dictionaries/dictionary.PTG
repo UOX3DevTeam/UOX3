@@ -2554,6 +2554,8 @@
 2794=para %i ouro
 2795=Vocês procuram algumas pedras preciosas nos destroços.
 2796=* Your body convulses from electric shock *
+2797=Você não pode usar isto enquanto voa!
+2798=Você foi castigado.
 // [2800-2999] House script
 2800=Possuidor da casa:
 2801=CO-PROPRIETÁRIOS
@@ -3681,6 +3683,7 @@
 8212=Sintaxe de comando válida para repetir a adição de objectos: 'radd [hexID/decimalID], 'radditem [itemSecção], 'raddnpc [npcSecção]
 8213=Secção ID do objecto do DFN originado de
 8214=O artigo pode ser roubado? 0 = não pode ser roubado, 1 = pode ser roubado, 2 = pode ser roubado raramente
+8215=Alvo inválido. Selecione um item ou NPC válido
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Número de conta associado ao jogador. Controlado por servidor (Read-Only)
 8301=NPC Tipo de IA

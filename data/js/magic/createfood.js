@@ -83,18 +83,34 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		{
 			var itemRHand = mChar.FindItemLayer( 0x01 );
 			var itemLHand = mChar.FindItemLayer( 0x02 );
-			if(( itemLHand && itemLHand.type != 119 ) || ( itemRHand && ( itemRHand.type != 9 || itemRHand.type != 119 )))	// Spellbook
+			var lHandBlocks = false;
+			var rHandBlocks = false;
+
+			// Evaluate blocking for left and right hand items
+			if( isSpellCastingAllowed( itemRHand ) || isSpellCastingAllowed( itemLHand ))
 			{
-				if( mSock )
+				var result = handleItem( itemLHand, itemRHand, mChar );
+				lHandBlocks = result.lHandBlocks;
+				rHandBlocks = result.rHandBlocks;
+			}
+
+			if( lHandBlocks || rHandBlocks )
+			{
+				if( mSock != null )
 				{
-					mSock.SysMessage( GetDictionaryEntry( 708, mSock.language )); // You cannot cast with a weapon equipped.
+					mSock.SysMessage(GetDictionaryEntry( 708, mSock.language )); // You cannot cast with a weapon equipped.
 				}
-				mChar.SetTimer( Timer.SPELLTIME, 0 );
-				mChar.isCasting = false;
-				mChar.spellCast = -1;
+
+				if( !mChar.isCasting )
+				{
+					mChar.SetTimer( Timer.SPELLTIME, 0 );
+					mChar.isCasting = false;
+					mChar.spellCast = -1;
+				}
 				return true;
 			}
 		}
+		return false;
 	}
 
 	// Turn character visible
@@ -302,6 +318,32 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	{
 		CreateDFNItem( NULL, mChar, foodItems[rndNum], 1, "ITEM", true );
 	}
+}
+
+// Function to check if an equipped item allows casting
+function isSpellCastingAllowed( item )
+{
+	return item != null && ( item.type == 9 || item.type == 119 ); // Assuming type 9 is spellbook, and type 119 is spell channeling item
+}
+
+// Function to handle items
+function handleItem( itemLHand, itemRHand, mChar )
+{
+	const UnEquipEnabled = GetServerSetting( "AutoUnequippedCasting" );
+	var lHandBlocks = false; // Default to false
+	var rHandBlocks = false; // Default to false
+	if(UnEquipEnabled && itemLHand != null && !isSpellCastingAllowed( itemLHand ))
+	{ // Allow casting if item is spell channeling or type 9 spell book
+		itemLHand.container = mChar.pack;
+		lHandBlocks = true; // Set to true if item is blocking
+	}
+
+	if( UnEquipEnabled && itemRHand != null && !isSpellCastingAllowed( itemRHand ))
+	{ // Allow casting if item is spell channeling or type 9 spell book
+		itemRHand.container = mChar.pack;
+		rHandBlocks = true; // Set to true if item is blocking
+	}
+	return { lHandBlocks: lHandBlocks, rHandBlocks: rHandBlocks };
 }
 
 function _restorecontext_() {}

@@ -4141,8 +4141,8 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				*rval = STRING_TO_JSVAL( tString );
 				break;
 			}
-			case 47:	 // LOOTDECAYSWITHCORPSE
-				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CorpseLootDecay() );
+			case 47:	 // LOOTDECAYSWITHPLAYERCORPSE
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PlayerCorpseLootDecay() );
 				break;
 			case 49:	 // GUARDSACTIVE
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GuardsStatus() );
@@ -5079,6 +5079,12 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			}
 			case 347:	 // MOONGATESFACETS
 				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->GetMoongateFacetStatus() ));
+				break;
+			case 348:	 // AUTOUNEQUIPPEDCASTING
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AutoUnequippedCasting() );
+				break;
+			case 349:	 // LOOTDECAYSWITHPLAYERCORPSE
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->NpcCorpseLootDecay() );
 				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );

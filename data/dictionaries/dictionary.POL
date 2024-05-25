@@ -2554,6 +2554,8 @@
 2794=Za %i złota
 2795=Zgarniasz trochę klejnotów z wraku.
 2796=* Twoje ciało drży od porażenia prądem *.
+2797=Nie możesz tego używać podczas lotu!
+2798=Zostałeś uziemiony.
 // [2800-2999] Skrypt domu
 2800=Właściciel domu:
 2801=WŁAŚCICIELE
@@ -3681,6 +3683,7 @@
 8212=Nieprawidłowa składnia polecenia powtarzającego dodawanie obiektów: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 8213=Identyfikator sekcji z DFN, z którego pochodzi obiekt
 8214=Czy przedmiot można ukraść? 0 = nie można ukraść, 1 = można ukraść, 2 = można ukraść rzadko
+8215=Nieprawidłowy cel. Wybierz prawidłowy przedmiot lub NPC
 // [8300-8499] Menu ustawień - opisy właściwości znaków
 8300=Numer konta powiązanego z graczem. Kontrolowany przez serwer (tylko do odczytu)
 8301=Typ SI NPC

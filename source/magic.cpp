@@ -4108,20 +4108,50 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 	}
 
 	// The following loop checks to see if any item is currently equipped (if not a GM)
-	if( !mChar->IsGM() )
-	{
-		if( type != 2 )
-		{
-			CItem *itemRHand = mChar->GetItemAtLayer( IL_RIGHTHAND );
-			CItem *itemLHand = mChar->GetItemAtLayer( IL_LEFTHAND );
-			if(( itemLHand != nullptr && itemLHand->GetType() != IT_SPELLCHANNELING ) || ( itemRHand != nullptr && itemRHand->GetType() != IT_SPELLBOOK && itemRHand->GetType() != IT_SPELLCHANNELING ))
-			{
-				mSock->SysMessage( 708 ); // You cannot cast with a weapon equipped.
-				mChar->StopSpell();
-				return false;
-			}
-		}
-	}
+	if( !mChar->IsGM() && type != 2 )
+    {
+       bool autoUnequipEnabled = cwmWorldState->ServerData()->AutoUnequippedCasting();
+
+        CItem *itemRHand = mChar->GetItemAtLayer( IL_RIGHTHAND );
+        CItem *itemLHand = mChar->GetItemAtLayer( IL_LEFTHAND );
+        auto mCharPack = mChar->GetPackItem();
+
+        // Function to check and possibly unequip an item if it blocks spell casting
+        auto handleItem = [&]( CItem* item, auto itemCheck, bool& blockFlag )
+        {
+            if( item && itemCheck( item ))
+            {
+                // If auto-unequip is enabled, make sure pack can hold another item before unequipping
+                if( autoUnequipEnabled && ValidateObject( mCharPack ) && mCharPack->GetContainsList()->Num() < mCharPack->GetMaxItems() )
+                {
+                    item->SetCont( mCharPack );
+                    blockFlag = false;
+                }
+                else
+                {
+                    blockFlag = true;
+                }
+            }
+            else
+            {
+                blockFlag = false;
+            }
+        };
+
+        bool lHandBlocks = true;
+        bool rHandBlocks = true;
+
+        // Evaluate blocking for left and right hand items
+        handleItem( itemLHand, []( CItem* item ) { return item->GetType() != IT_SPELLCHANNELING; }, lHandBlocks );
+        handleItem( itemRHand, []( CItem* item ) { return item->GetType() != IT_SPELLBOOK && item->GetType() != IT_SPELLCHANNELING; }, rHandBlocks );
+
+        if( lHandBlocks || rHandBlocks )
+        {
+            mSock->SysMessage( 708 ); // You cannot cast with a weapon equipped.
+            mChar->StopSpell();
+            return false;
+        }
+    }
 
 	if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE )
 	{

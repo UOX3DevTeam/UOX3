@@ -24,7 +24,11 @@ function onUseChecked( pUser, runeBook )
 	// get users socket
 	var pSocket = pUser.socket;
 
-	if( runeBook.GetTag( "useDelayed" ))
+	var iTime = GetCurrentClock();
+	var NextUse = runeBook.GetTag( "useDelayed" );
+	var Delay = 7000;
+
+	if( ( iTime - NextUse ) < Delay )
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 9250, pSocket.language )); // This book needs time to recharge.
 		return false;
@@ -500,8 +504,8 @@ function onGumpPress( pSocket, myButton, gumpData )
 				pSocket.tempInt2 = ( myButton - 30 );
 				runeBook.SetTag( "inUse", null );
 				runeBook.SetTag( "userSerial", null );
-				runeBook.SetTag( "useDelayed", true );
-				runeBook.StartTimer( useDelay, 100, true );
+				var iTime = GetCurrentClock();
+				runeBook.SetTag( "useDelayed", iTime.toString() );
 				CastSpell( pSocket, pUser, 32, false );
 			}
 			else
@@ -598,8 +602,8 @@ function onGumpPress( pSocket, myButton, gumpData )
 				pSocket.tempInt2 = ( myButton - 120 );
 				runeBook.SetTag( "inUse", null );
 				runeBook.SetTag( "userSerial", null );
-				runeBook.SetTag( "useDelayed", true );
-				runeBook.StartTimer( useDelay, 100, true );
+				var iTime = GetCurrentClock();
+				runeBook.SetTag( "useDelayed", iTime.toString() );
 				CastSpell( pSocket, pUser, 32, true );
 			}
 			else
@@ -630,8 +634,8 @@ function onGumpPress( pSocket, myButton, gumpData )
 				pSocket.tempInt2 = ( myButton - 140 );
 				runeBook.SetTag( "inUse", null );
 				runeBook.SetTag( "userSerial", null );
-				runeBook.SetTag( "useDelayed", true );
-				runeBook.StartTimer( useDelay, 100, true );
+				var iTime = GetCurrentClock();
+				runeBook.SetTag( "useDelayed", iTime.toString() );
 				CastSpell( pSocket, pUser, 52, true );
 			}
 			else
@@ -813,13 +817,6 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 
 function onTimer( timerObj, timerID )
 {
-	if( timerID == 100 )
-	{
-		if( ValidateObject( timerObj ) && timerObj.isItem )
-		{
-			timerObj.SetTag( "useDelayed", null );
-		}
-	}
 	var pSocket = timerObj.socket;
 	if( !pSocket )
 		return;
