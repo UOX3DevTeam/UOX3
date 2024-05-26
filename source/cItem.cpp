@@ -1740,9 +1740,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "MaxItems=" + std::to_string( GetMaxItems() ) + newLine;
 	outStream << "MaxHP=" + std::to_string( GetMaxHP() ) + newLine;
 	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
-	outStream << "BonusHits=" + std::to_string( GetBonusHits() ) + newLine;
-	outStream << "BonusStam=" + std::to_string( GetBonusStam() ) + newLine;
-	outStream << "BonusMana=" + std::to_string( GetBonusMana() ) + newLine;
+	outStream << "BonusStats=" + std::to_string( GetBonusHits() ) + "," + std::to_string( GetBonusStam() ) + "," + std::to_string( GetBonusMana() ) + newLine;
 	outStream << "Movable=" + std::to_string( GetMovable() ) + newLine;
 	outStream << "Priv=" + std::to_string( GetPriv() ) + newLine;
 	outStream << "Value=" + std::to_string( GetBuyValue() ) + "," + std::to_string( GetSellValue() ) + "," + std::to_string( GetVendorPrice() ) + newLine;
@@ -1826,20 +1824,12 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					bools = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
 					rValue = true;
 				}
-				else if( UTag == "BONUSHITS" )
+				else if( UTag == "BONUSSTATS" )
 				{
-					SetBonusHits( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					rValue = true;
-				}
-				else if( UTag == "BONUSSTAM" )
-				{
-					SetBonusStam( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					rValue = true;
-				}
-				else if( UTag == "BONUSMANA" )
-				{
-					SetBonusMana( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					rValue = true;
+				    SetBonusHits( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+				    SetBonusStam( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+				    SetBonusMana( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+				    rValue = true;
 				}
 				break;
 			case 'C':
