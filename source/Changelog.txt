@@ -1,9 +1,9 @@
 30/04/2024 - Dragon Slayer/Xuri/Maarc
 	Added in three new AOS property DFN tags for npc and items
 	Added REGENHITS, REGENSTAM, REGENMANA
-	--REGENHITS=# // amount of hit points a character regains (continously) within 10 seconds
-	--REGENSTAM=# // amount of stam points a character regains (continously) within 10 seconds
-	--REGENMANA=# // amount of mana points a character regains (continously) within 10 seconds
+	--REGENHITS=# // amount of hit points a character regains (continously) over time defined in regen timer settings
+	--REGENSTAM=# // amount of stam points a character regains (continously) over time defined in regen timer settings
+	--REGENMANA=# // amount of mana points a character regains (continously) over time defined in regen timer settings
 	Added AOS formula for mana regeneration. Only Active in AOS and up.
 	Added INI Settings REGENHITSCAP, REGENSTAMCAP, REGENMANACAP
 	--REGENHITSCAP=#  // Max cap for Hit Point Regeneration stat per character
