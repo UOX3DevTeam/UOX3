@@ -2635,11 +2635,11 @@ auto CServerData::FishingStaminaLoss( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::RegenHitsCap() const -> SI16
 {
-	return regenhitscap;
+	return regenHitsCap;
 }
 auto CServerData::RegenHitsCap( SI16 value ) -> void
 {
-	regenhitscap = value;
+	regenHitsCap = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2649,11 +2649,11 @@ auto CServerData::RegenHitsCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::RegenStamCap() const -> SI16
 {
-	return regenstamcap;
+	return regenStamCap;
 }
 auto CServerData::RegenStamCap( SI16 value ) -> void
 {
-	regenstamcap = value;
+	regenStamCap = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2663,11 +2663,11 @@ auto CServerData::RegenStamCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::RegenManaCap() const -> SI16
 {
-	return regenmanacap;
+	return regenManaCap;
 }
 auto CServerData::RegenManaCap( SI16 value ) -> void
 {
-	regenmanacap = value;
+	regenManaCap = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
