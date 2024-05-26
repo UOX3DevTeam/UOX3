@@ -1715,9 +1715,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "Layer=0x" << static_cast<SI16>( GetLayer() ) << newLine;
 	outStream << "Cont=0x" << GetContSerial() << newLine;
 	outStream << "Creator=0x" << GetCreator() << newLine;
-	outStream << "RegenHits=" + std::to_string( GetRegenHits() ) + newLine;
-	outStream << "RegenStam=" + std::to_string( GetRegenStam() ) + newLine;
-	outStream << "RegenMana=" + std::to_string( GetRegenMana() ) + newLine;
+	outStream << "RegenStats=" + std::to_string( GetRegenHits() ) + "," + std::to_string( GetRegenStam() ) + "," + std::to_string( GetRegenMana() ) + newLine;
 	outStream << "More=0x" << GetTempVar( CITV_MORE ) << newLine;
 	outStream << "More012=0x" << GetTempVar( CITV_MORE0 ) << ",0x" << GetTempVar( CITV_MORE1 ) << ",0x" << GetTempVar( CITV_MORE2 ) << newLine;
 	outStream << "MoreXYZ=0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << newLine;
@@ -2101,20 +2099,12 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					rValue = true;
 				}
-				else if( UTag == "REGENHITS" )
+				else if( UTag == "REGENSTATS" )
 				{
-					SetRegenHits( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					rValue = true;
-				}
-				else if( UTag == "REGENSTAM" )
-				{
-					SetRegenStam( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					rValue = true;
-				}
-				else if( UTag == "REGENMANA" )
-				{
-					SetRegenMana( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					rValue = true;
+				    SetRegenHits( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+				    SetRegenStam( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+				    SetRegenMana( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+				    rValue = true;
 				}
 				else if( UTag == "REPUTATION" )
 				{
