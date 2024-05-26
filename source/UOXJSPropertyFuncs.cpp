@@ -1309,9 +1309,9 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_HIDAMAGE:		gPriv->SetHiDamage( static_cast<SI16>( encaps.toInt() ));			break;
 			case CIP_AC:			gPriv->SetArmourClass( static_cast<UI08>( encaps.toInt() ));		break;
 			case CIP_DEF:			gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), PHYSICAL );	break;
-			case CIP_REGENHITS:		gPriv->SetRegenHits( static_cast<UI08>( encaps.toInt() ));	break;
-			case CIP_REGENSTAM:		gPriv->SetRegenStam( static_cast<UI08>( encaps.toInt() ));	break;
-			case CIP_REGENMANA:		gPriv->SetRegenMana( static_cast<UI08>( encaps.toInt() ));	break;
+			case CIP_REGENHITS:		gPriv->SetRegenHits( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_REGENSTAM:		gPriv->SetRegenStam( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_REGENMANA:		gPriv->SetRegenMana( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_RESISTCOLD:	gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), COLD );		break;
 			case CIP_RESISTHEAT:	gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), HEAT );		break;
 			case CIP_RESISTLIGHT:	gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), LIGHT );		break;
@@ -2414,9 +2414,9 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_AWAKE:			gPriv->SetAwake( encaps.toBool() );						break;
 			case CCP_DIRECTION:		gPriv->SetDir( static_cast<UI08>( encaps.toInt() ));	break;
 			case CCP_REGION:		gPriv->SetRegion( static_cast<UI16>( encaps.toInt() ));	break;
-			case CCP_REGENHITS:		gPriv->SetRegenHits( static_cast<UI08>( encaps.toInt() ));	break;
-			case CCP_REGENSTAM:		gPriv->SetRegenStam( static_cast<UI08>( encaps.toInt() ));	break;
-			case CCP_REGENMANA:		gPriv->SetRegenMana( static_cast<UI08>( encaps.toInt() ));	break;
+			case CCP_REGENHITS:		gPriv->SetRegenHits( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_REGENSTAM:		gPriv->SetRegenStam( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_REGENMANA:		gPriv->SetRegenMana( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_ORIGIN:		gPriv->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( encaps.toString() ));	break;
 			case CCP_TOWN:
 				cwmWorldState->townRegions[gPriv->GetTown()]->RemoveTownMember( *gPriv );
