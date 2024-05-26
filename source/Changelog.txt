@@ -1,3 +1,8 @@
+25/05/2024 - Dragon Slayer
+	Added special_moves.js There is 12 special aos moves you can find on uoguide.com
+	Added blockequip.js This script is used to block reqeuiping weapons.
+	Thanks to Xuri for making unequipattemp work for chars and not just items
+
 27/04/2024 - Dragon Slayer/Xuri
 	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.
 	Converted LOOTDECAYSWITHCORPSE ini setting to two new settings, one for player corpses, one for NPC corpses:

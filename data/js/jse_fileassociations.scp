@@ -329,6 +329,8 @@
 // Combat Scripts [7000-7499]
 //-------------------------------------------
 7000=combat/peacemake_effect.js
+7001=combat/special_moves.js
+7002=combat/blockequip.js
 
 //-------------------------------------------
 // Misc Player Scripts [8000-8499]

@@ -36,6 +36,12 @@ function onLogin( socket, pChar )
     	// Check if "Young" player still meets requirement for being considered young
     	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
     }
+
+	//Attach the special moves Book
+	if( !pChar.npc && !pChar.HasScriptTrigger( 7001 ))
+	{
+		pChar.AddScriptTrigger( 7001 );
+	}
 }
 
 function onLogout( pSock, pChar )
@@ -70,6 +76,12 @@ function onCreatePlayer( pChar )
 		}
 
 		TriggerEvent( 8001, "GiveYoungPlayerItems", pChar.socket, pChar );
+	}
+
+	//Attach the special moves Book
+	if( !pChar.npc && !pChar.HasScriptTrigger( 7001 ))
+	{
+		pChar.AddScriptTrigger( 7001 );
 	}
 }
 

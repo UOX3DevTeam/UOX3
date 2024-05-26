@@ -2883,6 +2883,7 @@ CItem *CChar::GetItemAtLayer( ItemLayers Layer )
 //|	Purpose		-	Wears the item toWear and adjusts the stats if any are
 //|					required to change.  Returns true if successfully equipped
 //o------------------------------------------------------------------------------------------------o
+void Bounce( CSocket *bouncer, CItem *bouncing, UI08 mode = 5 );
 bool CChar::WearItem( CItem *toWear )
 {
 	// Run event prior to equipping item, allowing script to prevent equip
@@ -2898,6 +2899,27 @@ bool CChar::WearItem( CItem *toWear )
 				return false;
 			}
 		}
+	}
+
+	scriptTriggers.clear();
+    scriptTriggers.shrink_to_fit();
+    scriptTriggers = this->GetScriptTriggers();
+    for( auto i : scriptTriggers )
+    {
+        cScript *tScript = JSMapping->GetScript( i );
+        if( tScript != nullptr )
+        {
+            // If script returns false, prevent item from being equipped
+            if( tScript->OnEquipAttempt( this, toWear ) == 0 )
+            {
+                CSocket *mSock = this->GetSocket();
+                if( mSock != nullptr )
+                {
+                    Bounce( mSock, toWear );
+                }
+                return false;
+            }
+        }
 	}
 
 	bool rValue = true;
@@ -2971,6 +2993,22 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 				}
 			}
 		}
+
+		scriptTriggers.clear();
+        scriptTriggers.shrink_to_fit();
+        scriptTriggers = this->GetScriptTriggers();
+        for( auto i : scriptTriggers )
+        {
+            cScript *tScript = JSMapping->GetScript( i );
+            if( tScript != nullptr )
+            {
+                // If script returns false, prevent item from being equipped
+                if( tScript->OnUnequipAttempt( this, itemLayers[Layer] ) == 0 )
+                {
+                    return false;
+                }
+            }
+        }
 
 		if( Layer == IL_PACKITEM )	// It's our pack!
 		{
