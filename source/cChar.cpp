@@ -2920,9 +2920,9 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
-			SetFixedMaxHP( GetMaxHP() + itemLayers[tLayer]->GetBonusHits());
-			SetFixedMaxStam( GetMaxStam() + itemLayers[tLayer]->GetBonusStam());
-			SetFixedMaxMana( GetMaxMana() + itemLayers[tLayer]->GetBonusMana());
+			IncBonusHits( itemLayers[tLayer]->GetBonusHits() );
+			IncBonusStam( itemLayers[tLayer]->GetBonusStam() );
+			IncBonusMana( itemLayers[tLayer]->GetBonusMana() );
 
 			if( toWear->IsPostLoaded() )
 			{
@@ -2984,9 +2984,9 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
 
-		SetFixedMaxHP( GetMaxHP() -itemLayers[Layer]->GetBonusHits());
-		SetFixedMaxStam( GetMaxStam() -itemLayers[Layer]->GetBonusStam());
-		SetFixedMaxMana( GetMaxMana() -itemLayers[Layer]->GetBonusMana());
+		IncBonusHits( -itemLayers[Layer]->GetBonusHits() );
+		IncBonusStam( -itemLayers[Layer]->GetBonusStam() );
+		IncBonusMana( -itemLayers[Layer]->GetBonusMana() );
 
 		if( itemLayers[Layer]->GetPoisoned() )
 		{
@@ -3796,7 +3796,7 @@ UI16 CChar::GetMaxHP( void )
 		oldRace			= GetRace();
 
 	}
-	return maxHP;
+	return maxHP + GetBonusHits();
 }
 void CChar::SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace )
 {
@@ -3839,7 +3839,7 @@ void CChar::SetFixedMaxHP( SI16 newmaxhp )
 SI16 CChar::GetMaxMana( void )
 {
 	if(( maxMana_oldint != GetIntelligence() || oldRace != GetRace() ) && !GetMaxManaFixed() )
-		//if int/race changed since last calculation, recalculate maxHp
+		//if int/race changed since last calculation, recalculate maxMana
 	{
 		CRace *pRace = Races->Race( GetRace() );
 
@@ -3856,7 +3856,7 @@ SI16 CChar::GetMaxMana( void )
 		oldRace			= GetRace();
 
 	}
-	return maxMana;
+	return maxMana + GetBonusMana();
 }
 void CChar::SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace )
 {
@@ -3898,7 +3898,7 @@ void CChar::SetFixedMaxMana( SI16 newmaxmana )
 //o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetMaxStam( void )
 {
-	// If dex/race changed since last calculation, recalculate maxHp
+	// If dex/race changed since last calculation, recalculate maxStam
 	if(( maxStam_olddex != GetDexterity() || oldRace != GetRace() ) && !GetMaxStamFixed() )
 	{
 		CRace *pRace = Races->Race( GetRace() );
@@ -3916,7 +3916,7 @@ SI16 CChar::GetMaxStam( void )
 		oldRace			= GetRace();
 
 	}
-	return maxStam;
+	return maxStam + GetBonusStam();
 }
 void CChar::SetMaxStam( SI16 newmaxstam, UI16 newolddex, RACEID newoldrace )
 {
@@ -5600,6 +5600,75 @@ void CChar::SetIntelligence2( SI16 nVal )
 	CBaseObject::SetIntelligence2( nVal );
 	Dirty( UT_MANA );
 	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetBonusHits()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets bonus Hits stat for character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetBonusHits( SI16 nVal )
+{
+	CBaseObject::SetBonusHits( nVal );
+	Dirty( UT_HITPOINTS );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetBonusStam()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets bonus Stam stat for character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetBonusStam( SI16 nVal )
+{
+	CBaseObject::SetBonusStam( nVal );
+	Dirty( UT_STAMINA );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetBonusMana()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets bonus Mana stat for character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetBonusMana( SI16 nVal )
+{
+	CBaseObject::SetBonusMana( nVal );
+	Dirty( UT_MANA );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::IncBonusHits()
+//| Date		-	26 May 2024
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Increments GetBonusHits (modifications) by toAdd
+//o------------------------------------------------------------------------------------------------o
+void CChar::IncBonusHits( SI16 toAdd )
+{
+	SetBonusHits( static_cast<SI16>( GetBonusHits() + toAdd ));
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::IncBonusStam()
+//| Date		-	26 May 2024
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Increments GetBonusStam (modifications) by toAdd
+//o------------------------------------------------------------------------------------------------o
+void CChar::IncBonusStam( SI16 toAdd )
+{
+	SetBonusStam( static_cast<SI16>( GetBonusStam() + toAdd ));
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::IncBonusMana()
+//| Date		-	26 May 2024
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Increments GetBonusMana (modifications) by toAdd
+//o------------------------------------------------------------------------------------------------o
+void CChar::IncBonusMana( SI16 toAdd )
+{
+	SetBonusMana( static_cast<SI16>( GetBonusMana() + toAdd ));
 }
 
 //o------------------------------------------------------------------------------------------------o
