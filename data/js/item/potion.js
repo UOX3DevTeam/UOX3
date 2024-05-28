@@ -161,7 +161,7 @@ function onUseChecked( pUser, iUsed )
 			case 4:		// Heal Potion
 				if( pUser.health < pUser.maxhp )
 				{
-					if( pUser.poison > 0 )
+					if( pUser.poison > 0 || pUser.GetTempTag( "blockHeal" ) == true )
 					{
 						pUser.SysMessage( GetDictionaryEntry( 9058, socket.language )); // You can not heal yourself in your current state.
 						return;

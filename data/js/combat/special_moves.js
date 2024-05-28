@@ -8,10 +8,8 @@ function onSpecialMove(pUser, abilityID)
     return true;
 
 	//The rest of the AOS Abilites before any other expansions
-	//Mortal Strike
 	//Infectious Strike
 	//Double Strike
-	//Bleed Attack
 	//Whirlwind Attack
 }
 
@@ -46,26 +44,26 @@ function RequiredSkill( pUser, abilityID )
 		"0x0e85": { primary: 0, secondary: 5, reqSkill: 40 },
 		"0x0e86": { primary: 0, secondary: 5, reqSkill: 40 },	// pickaxe  // DoubleStrike, Disarm
 
-		"0x0E87": { primary: 0, secondary: 6, reqSkill: 42 },
-		"0x0E88": { primary: 0, secondary: 6, reqSkill: 42 },	// Pitchforks  // BleedAttack, Dismount
+		"0x0E87": { primary: 2, secondary: 6, reqSkill: 42 },
+		"0x0E88": { primary: 2, secondary: 6, reqSkill: 42 },	// Pitchforks  // BleedAttack, Dismount
 
 		"0x0E89": { primary: 0, secondary: 3, reqSkill: 41 },
 		"0x0E8A": { primary: 0, secondary: 3, reqSkill: 41 },	// Quarter Staves  // DoubleStrike, ConcussionBlow
 
-		"0x0EC2": { primary: 0, secondary: 0, reqSkill: 40 },
-		"0x0EC3": { primary: 0, secondary: 0, reqSkill: 40 },	// Cleavers  // BleedAttack, InfectiousStrike
+		"0x0EC2": { primary: 2, secondary: 0, reqSkill: 40 },
+		"0x0EC3": { primary: 2, secondary: 0, reqSkill: 40 },	// Cleavers  // BleedAttack, InfectiousStrike
 
-		"0x0EC4": { primary: 12, secondary: 0, reqSkill: 40 },
-		"0x0EC5": { primary: 12, secondary: 0, reqSkill: 40 },	// Skinning Knives  // ShadowStrike, BleedAttack
+		"0x0EC4": { primary: 12, secondary: 2, reqSkill: 40 },
+		"0x0EC5": { primary: 12, secondary: 2, reqSkill: 40 },	// Skinning Knives  // ShadowStrike, BleedAttack
 
 		"0x0F43": { primary: 1, secondary: 5, reqSkill: 40 },
 		"0x0F44": { primary: 1, secondary: 5, reqSkill: 40 },	// hatchets  // ArmorIgnore, Disarm
 
-		"0x0F45": { primary: 0, secondary: 0, reqSkill: 40 },
-		"0x0F46": { primary: 0, secondary: 0, reqSkill: 40 },	// Executioner Axes  // BleedAttack, MortalStrike
+		"0x0F45": { primary: 2, secondary: 9, reqSkill: 40 },
+		"0x0F46": { primary: 2, secondary: 9, reqSkill: 40 },	// Executioner Axes  // BleedAttack, MortalStrike
 
-		"0x0F47": { primary: 0, secondary: 3, reqSkill: 40 },
-		"0x0F48": { primary: 0, secondary: 3, reqSkill: 40 },	// Battle Axes  // BleedAttack, ConcussionBlow
+		"0x0F47": { primary: 2, secondary: 3, reqSkill: 40 },
+		"0x0F48": { primary: 2, secondary: 3, reqSkill: 40 },	// Battle Axes  // BleedAttack, ConcussionBlow
 
 		"0x0F49": { primary: 4, secondary: 6, reqSkill: 40 },
 		"0x0F4A": { primary: 4, secondary: 6, reqSkill: 40 },	// Axes  // CrushingBlow, Dismount
@@ -76,8 +74,8 @@ function RequiredSkill( pUser, abilityID )
 		"0x0F4D": { primary: 11, secondary: 6, reqSkill: 40 },
 		"0x0F4E": { primary: 11, secondary: 6, reqSkill: 40 },	// Bardiches  // ParalyzingBlow, Dismount
 
-		"0x0F4F": { primary: 3, secondary: 0, reqSkill: 31 },
-		"0x0F50": { primary: 3, secondary: 0, reqSkill: 31 },	// Crossbows  // ConcussionBlow, MortalStrike
+		"0x0F4F": { primary: 3, secondary: 9, reqSkill: 31 },
+		"0x0F50": { primary: 3, secondary: 9, reqSkill: 31 },	// Crossbows  // ConcussionBlow, MortalStrike
 
 		"0x0F51": { primary: 0, secondary: 12, reqSkill: 40 },
 		"0x0F52": { primary: 0, secondary: 12, reqSkill: 40 },	// Daggers  // InfectiousStrike, ShadowStrike
@@ -99,11 +97,11 @@ function RequiredSkill( pUser, abilityID )
 		"0x0FB4": { primary: 4, secondary: 12, reqSkill: 41 },
 		"0x0FB5": { primary: 4, secondary: 12, reqSkill: 41 },	// Sledge hammers // CrushingBlow, ShadowStrike
 
-		"0x13AF": { primary: 1, secondary: 0, reqSkill: 40 },
-		"0x13B0": { primary: 1, secondary: 0, reqSkill: 40 },	// War Axes // ArmorIgnore, BleedAttack
+		"0x13AF": { primary: 1, secondary: 2, reqSkill: 40 },
+		"0x13B0": { primary: 1, secondary: 2, reqSkill: 40 },	// War Axes // ArmorIgnore, BleedAttack
 
-		"0x13B1": { primary: 11, secondary: 0, reqSkill: 31 },
-		"0x13B2": { primary: 11, secondary: 0, reqSkill: 31 },	// Bows // ParalyzingBlow, MortalStrike
+		"0x13B1": { primary: 11, secondary: 9, reqSkill: 31 },
+		"0x13B2": { primary: 11, secondary: 9, reqSkill: 31 },	// Bows // ParalyzingBlow, MortalStrike
 
 		"0x13B3": { primary: 12, secondary: 6, reqSkill: 41 },
 		"0x13B4": { primary: 12, secondary: 6, reqSkill: 41 },	// Clubs // ShadowStrike, Dismount
@@ -126,8 +124,8 @@ function RequiredSkill( pUser, abilityID )
 		"0x13F8": { primary: 3, secondary: 0, reqSkill: 41 },
 		"0x13F9": { primary: 3, secondary: 0, reqSkill: 41 },	// Gnarled Staves // ConcussionBlow,ForceOfNature
 
-		"0x13FA": { primary: 0, secondary: 0, reqSkill: 40 },
-		"0x13FB": { primary: 0, secondary: 0, reqSkill: 40 },	// Large Battle Axes // WhirlwindAttack,BleedAttack
+		"0x13FA": { primary: 0, secondary: 2, reqSkill: 40 },
+		"0x13FB": { primary: 0, secondary: 2, reqSkill: 40 },	// Large Battle Axes // WhirlwindAttack,BleedAttack
 
 		"0x13FE": { primary: 0, secondary: 1, reqSkill: 40 },
 		"0x13FF": { primary: 0, secondary: 1, reqSkill: 40 },	// Katana // DoubleStrike,ArmorIgnore
@@ -135,14 +133,14 @@ function RequiredSkill( pUser, abilityID )
 		"0x1400": { primary: 1, secondary: 0, reqSkill: 42 },
 		"0x1401": { primary: 1, secondary: 0, reqSkill: 42 },	// Kryss // ArmorIgnore,InfectiousStrike
 
-		"0x1402": { primary: 12, secondary: 0, reqSkill: 42 },
-		"0x1403": { primary: 12, secondary: 0, reqSkill: 42 },	// Short Spears // ShadowStrike,MortalStrike
+		"0x1402": { primary: 12, secondary: 9, reqSkill: 42 },
+		"0x1403": { primary: 12, secondary: 9, reqSkill: 42 },	// Short Spears // ShadowStrike,MortalStrike
 
-		"0x1404": { primary: 0, secondary: 5, reqSkill: 42 },
-		"0x1405": { primary: 0, secondary: 5, reqSkill: 42 },	// War Forks // BleedAttack,Disarm
+		"0x1404": { primary: 2, secondary: 5, reqSkill: 42 },
+		"0x1405": { primary: 2, secondary: 5, reqSkill: 42 },	// War Forks // BleedAttack,Disarm
 
-		"0x1406": { primary: 4, secondary: 0, reqSkill: 41 },
-		"0x1407": { primary: 4, secondary: 0, reqSkill: 41 },	// War Maces // CrushingBlow,MortalStrike
+		"0x1406": { primary: 4, secondary: 9, reqSkill: 41 },
+		"0x1407": { primary: 4, secondary: 9, reqSkill: 41 },	// War Maces // CrushingBlow,MortalStrike
 
 		"0x1438": { primary: 0, secondary: 4, reqSkill: 41 },
 		"0x1439": { primary: 0, secondary: 4, reqSkill: 41 },	// War Hammers // WhirlwindAttack,CrushingBlow
@@ -150,14 +148,14 @@ function RequiredSkill( pUser, abilityID )
 		"0x143A": { primary: 0, secondary: 3, reqSkill: 41 },
 		"0x143B": { primary: 0, secondary: 3, reqSkill: 41 },	// Mauls // DoubleStrike,ConcussionBlow
 
-		"0x143C": { primary: 1, secondary: 0, reqSkill: 41 },
-		"0x143D": { primary: 1, secondary: 0, reqSkill: 41 },	// Hammer Picks // ArmorIgnore,MortalStrike
+		"0x143C": { primary: 1, secondary: 9, reqSkill: 41 },
+		"0x143D": { primary: 1, secondary: 9, reqSkill: 41 },	// Hammer Picks // ArmorIgnore,MortalStrike
 
 		"0x143E": { primary: 0, secondary: 3, reqSkill: 40 },
 		"0x143F": { primary: 0, secondary: 3, reqSkill: 40 },	// Halberds // WhirlwindAttack,ConcussionBlow
 
-		"0x1440": { primary: 0, secondary: 12, reqSkill: 40 },
-		"0x1441": { primary: 0, secondary: 12, reqSkill: 40 },	// Cutlasses // BleedAttack,ShadowStrike
+		"0x1440": { primary: 2, secondary: 12, reqSkill: 40 },
+		"0x1441": { primary: 2, secondary: 12, reqSkill: 40 },	// Cutlasses // BleedAttack,ShadowStrike
 
 		"0x1442": { primary: 0, secondary: 12, reqSkill: 40 },
 		"0x1443": { primary: 0, secondary: 12, reqSkill: 40 }	// Two Handed Axes // DoubleStrike,ShadowStrike
@@ -534,6 +532,63 @@ function onAttack( pAttacker, pDefender )
 		pAttacker.SoundEffect(0x213, true);
 		pDefender.StaticEffect(0x377A, 0x09, 0x32);
 	}
+	else if (abilityID == 9) // Mortal Strike
+	{// turn healthbar yellow on defender need spacket sent for this.
+		var requiredMana = 30;
+
+		//checking mana
+		if (!CheckMana(pAttacker, abilityID, requiredMana))
+			return true;
+
+		// Clear out any current ability the player is doing when he switches abilities
+		if (abilityID != 9)
+			DeactivateSpecialMove(pAttacker, abilityID);
+
+		pAttacker.SysMessage("You deliver a mortal wound!");
+		pDefender.SysMessage("You have been mortally wounded!");
+
+		pAttacker.SoundEffect(0x1E1, true);
+		pDefender.StaticEffect(0x37B9, 0x09, 0x32);
+
+		pDefender.SetTempTag("blockHeal", true);
+
+		var seconds = 6000; // We want this applied to players even if they are "offline" (aka disconnected but not vanished from view yet)
+		if (pDefender.npc)
+		{
+			seconds = 12000;
+		}
+		pDefender.StartTimer(seconds, 9200, true);
+
+		if( pDefender.socket )
+			TriggerEvent( 50104, "AddBuff", pDefender, 1027, 1075810, 1075811, 6, " " );
+
+		ClearSpecialMove(pAttacker, abilityID);// Clear the Ability after success
+	}
+
+	else if (abilityID == 2) // bleedattack
+	{
+		var requiredMana = 30;
+
+		//checking mana
+		if (!CheckMana(pAttacker, abilityID, requiredMana))
+			return true;
+
+		// Clear out any current ability the player is doing when he switches abilities
+		if (abilityID != 2)
+			DeactivateSpecialMove(pAttacker, abilityID);
+
+		pAttacker.SysMessage("Your target is bleeding!");
+		pDefender.SysMessage("You are bleeding!");
+
+		pDefender.TextMessage("You are bleeding profusely", false, 0x21);
+		pDefender.TextMessage(pDefender.name + " is bleeding profusely", true, 0x21, 1);
+
+		pDefender.StartTimer(10, 9300, true);
+		pDefender.SetTempTag("doBleed", true);
+
+		pAttacker.SoundEffect(0x133, true);
+		pDefender.StaticEffect(0x377A, 0x09, 0x32);
+	}
 }
 
 function ClearSpecialMove(pUser, abilityID)
@@ -572,12 +627,16 @@ function onTimer( timerObj, timerID )
 {
 	var socket = timerObj.socket;
 	var abilityID = timerObj.GetTempTag("abilityID");
+	var damage = 31;
+
 	if (timerObj == null || timerObj.dead)
 	{
 		timerObj.frozen = false;
 		timerObj.SetTempTag("IsImmune", null);
 		timerObj.RemoveScriptTrigger(7002);
 		timerObj.SetTempTag("BlockEquip", null);
+		timerObj.SetTempTag("blockHeal", null);
+		timerObj.SetTempTag("doBleed", null);
 		ClearSpecialMove(timerObj, abilityID);
 		return;
 	}
@@ -594,5 +653,20 @@ function onTimer( timerObj, timerID )
 		timerObj.RemoveScriptTrigger(7002);
 		timerObj.SetTempTag("BlockEquip", null);
 		socket.SysMessage("Your confusion has passed, you may now arm a weapon!");
+	}
+	else if (timerID == 9200)
+	{
+		timerObj.SetTempTag("blockHeal", null);
+		socket.SysMessage("You are no longer mortally wounded.");
+	}
+	else if (timerID == 9300) 
+	{
+		timerObj.SetTempTag("doBleed", null);
+		socket.SysMessage("The bleeding wounds have healed, you are no longer bleeding!");
+	}
+	if (timerObj.GetTempTag("doBleed") == true)
+	{
+		damage -= 3;
+		timerObj.hp -= damage;
 	}
 }
