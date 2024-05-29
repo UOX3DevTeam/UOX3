@@ -339,13 +339,13 @@ function onGumpPress( pSock, buttonID, gumpData )
 			// Start Disguise timer
 			pUser.KillJSTimer( 1, 5023 );
 
-			TriggerEvent(50104, "RemoveBuff", pUser, 1033);// Remove Current Disguise Buff
+			TriggerEvent( 2204, "RemoveBuff", pUser, 1033 );// Remove Current Disguise Buff
 
 			pUser.StartTimer( disguiseDuration, 1, 5023 );
 
 			pSock.SysMessage( GetDictionaryEntry( 18037, pSock.language )); // Disguises wear off after 2 hours. : You're looking good.
 
-			TriggerEvent(50104, "AddBuff", pUser, 1033, 1075821, 1075820, 7200, ""); // Add Disguise Buff
+			TriggerEvent( 2204, "AddBuff", pUser, 1033, 1075821, 1075820, 7200, "" ); // Add Disguise Buff
 
 			// Resend Disguise Kit Gump
 			ShowDisguiseKitMenu( pSock, pUser );
