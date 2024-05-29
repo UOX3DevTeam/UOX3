@@ -406,7 +406,6 @@ function onAttack( pAttacker, pDefender )
 	{
 		var requiredMana = 30;
 
-
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 11)
 			DeactivateSpecialMove(pAttacker.socket, abilityID);
@@ -437,8 +436,8 @@ function onAttack( pAttacker, pDefender )
 		}
 
 		pDefender.SetTempTag("IsImmune", true);
-		pDefender.StartTimer(seconds + 8000, 9000, true);
-		pDefender.StartTimer(seconds, 8000, true);
+		pDefender.StartTimer(seconds + 8000, 9000, 7001);
+		pDefender.StartTimer(seconds, 8000, 7001);
 		pDefender.frozen = true;
 
 		if (pAttacker.socket)
@@ -491,7 +490,7 @@ function onAttack( pAttacker, pDefender )
 
 		pDefender.AddScriptTrigger(7002);//block equip for 5 seconds script added
 		pDefender.SetTempTag("BlockEquip", true);
-		pDefender.StartTimer(5000, 9100, true);
+		pDefender.StartTimer(5000, 9100, 7001);
 
 		TriggerEvent(50104, "AddBuff", pDefender, 0x3ea, 1075637, 0, 5, " ");
 
@@ -583,11 +582,17 @@ function onAttack( pAttacker, pDefender )
 		pDefender.TextMessage("You are bleeding profusely", false, 0x21);
 		pDefender.TextMessage(pDefender.name + " is bleeding profusely", true, 0x21, 1);
 
-		pDefender.StartTimer(10, 9300, true);
+		pDefender.StartTimer(10000, 9300, 7001);
+		pDefender.StartTimer(2000, 9400, 7001);
 		pDefender.SetTempTag("doBleed", true);
+
+		if (pDefender.socket)
+			TriggerEvent(50104, "AddBuff", pDefender, 1039, 1075829, 1075830, 10, " 1, 10 ,2");
 
 		pAttacker.SoundEffect(0x133, true);
 		pDefender.StaticEffect(0x377A, 0x09, 0x32);
+
+		ClearSpecialMove(pAttacker, abilityID);// Clear the Ability after success
 	}
 	else if (abilityID == 8) // Infectious Strike
 	{
@@ -698,6 +703,7 @@ function onTimer( timerObj, timerID )
 		timerObj.RemoveScriptTrigger(7002);
 		timerObj.SetTempTag("BlockEquip", null);
 		timerObj.SetTempTag("blockHeal", null);
+		timerObj.KillJSTimer(9400, 7001);
 		timerObj.SetTempTag("doBleed", null);
 		ClearSpecialMove(timerObj, abilityID);
 		return;
@@ -724,12 +730,14 @@ function onTimer( timerObj, timerID )
 	else if (timerID == 9300) 
 	{
 		timerObj.SetTempTag("doBleed", null);
+		timerObj.KillJSTimer(9400, 7001);
 		socket.SysMessage("The bleeding wounds have healed, you are no longer bleeding!");
 	}
-	if (timerObj.GetTempTag("doBleed") == true)
+	else if (timerID == 9400)
 	{
-		damage -= 3;
-		timerObj.hp -= damage;
-		timerObj.StaticEffect(0x122A, 0, 15); // blood effect 
+		var damage = RandomNumber(1, 10);
+		timerObj.health -= damage;
+		//timerObj.StaticEffect(0x122A, 0, 15); // blood effect got to figure how to add it to ground.
+		timerObj.StartTimer(2000, 9400, 7001);//restart timer every 2 seconds until it shuts off
 	}
 }
