@@ -8,7 +8,6 @@ function onSpecialMove(pUser, abilityID)
     return true;
 
 	//The rest of the AOS Abilites before any other expansions
-	//Infectious Strike
 	//Double Strike
 	//Whirlwind Attack
 }
@@ -50,8 +49,8 @@ function RequiredSkill( pUser, abilityID )
 		"0x0E89": { primary: 0, secondary: 3, reqSkill: 41 },
 		"0x0E8A": { primary: 0, secondary: 3, reqSkill: 41 },	// Quarter Staves  // DoubleStrike, ConcussionBlow
 
-		"0x0EC2": { primary: 2, secondary: 0, reqSkill: 40 },
-		"0x0EC3": { primary: 2, secondary: 0, reqSkill: 40 },	// Cleavers  // BleedAttack, InfectiousStrike
+		"0x0EC2": { primary: 2, secondary: 8, reqSkill: 40 },
+		"0x0EC3": { primary: 2, secondary: 8, reqSkill: 40 },	// Cleavers  // BleedAttack, InfectiousStrike
 
 		"0x0EC4": { primary: 12, secondary: 2, reqSkill: 40 },
 		"0x0EC5": { primary: 12, secondary: 2, reqSkill: 40 },	// Skinning Knives  // ShadowStrike, BleedAttack
@@ -77,8 +76,8 @@ function RequiredSkill( pUser, abilityID )
 		"0x0F4F": { primary: 3, secondary: 9, reqSkill: 31 },
 		"0x0F50": { primary: 3, secondary: 9, reqSkill: 31 },	// Crossbows  // ConcussionBlow, MortalStrike
 
-		"0x0F51": { primary: 0, secondary: 12, reqSkill: 40 },
-		"0x0F52": { primary: 0, secondary: 12, reqSkill: 40 },	// Daggers  // InfectiousStrike, ShadowStrike
+		"0x0F51": { primary: 8, secondary: 12, reqSkill: 40 },
+		"0x0F52": { primary: 8, secondary: 12, reqSkill: 40 },	// Daggers  // InfectiousStrike, ShadowStrike
 
 		"0x0F5C": { primary: 3, secondary: 5, reqSkill: 41 },
 		"0x0F5D": { primary: 3, secondary: 5, reqSkill: 41 },	// Maces  // ConcussionBlow, Disarm
@@ -118,8 +117,8 @@ function RequiredSkill( pUser, abilityID )
 		"0x13E3": { primary: 4, secondary: 12, reqSkill: 41 },
 		"0x13E4": { primary: 4, secondary: 12, reqSkill: 41 },	// Smith's Hammers // CrushingBlow, ShadowStrike
 
-		"0x13F6": { primary: 0, secondary: 5, reqSkill: 40 },
-		"0x13F7": { primary: 0, secondary: 5, reqSkill: 40 },	// Butcher Knives // InfectiousStrike,Disarm
+		"0x13F6": { primary: 8, secondary: 5, reqSkill: 40 },
+		"0x13F7": { primary: 8, secondary: 5, reqSkill: 40 },	// Butcher Knives // InfectiousStrike,Disarm
 
 		"0x13F8": { primary: 3, secondary: 0, reqSkill: 41 },
 		"0x13F9": { primary: 3, secondary: 0, reqSkill: 41 },	// Gnarled Staves // ConcussionBlow,ForceOfNature
@@ -130,8 +129,8 @@ function RequiredSkill( pUser, abilityID )
 		"0x13FE": { primary: 0, secondary: 1, reqSkill: 40 },
 		"0x13FF": { primary: 0, secondary: 1, reqSkill: 40 },	// Katana // DoubleStrike,ArmorIgnore
 
-		"0x1400": { primary: 1, secondary: 0, reqSkill: 42 },
-		"0x1401": { primary: 1, secondary: 0, reqSkill: 42 },	// Kryss // ArmorIgnore,InfectiousStrike
+		"0x1400": { primary: 1, secondary: 8, reqSkill: 42 },
+		"0x1401": { primary: 1, secondary: 8, reqSkill: 42 },	// Kryss // ArmorIgnore,InfectiousStrike
 
 		"0x1402": { primary: 12, secondary: 9, reqSkill: 42 },
 		"0x1403": { primary: 12, secondary: 9, reqSkill: 42 },	// Short Spears // ShadowStrike,MortalStrike
@@ -369,6 +368,10 @@ function onAttack( pAttacker, pDefender )
 	{
 		var requiredMana = 16;
 
+		// Clear out any current ability the player is doing when he switches abilities
+		if (abilityID != 6)
+			DeactivateSpecialMove(pAttacker.socket, abilityID);
+
 		//checking mana
 		if (!CheckMana(pAttacker, abilityID, requiredMana))
 			return true;
@@ -380,10 +383,6 @@ function onAttack( pAttacker, pDefender )
 			DeactivateSpecialMove(pAttacker.socket, abilityID);
 			return true;
 		}
-
-		// Clear out any current ability the player is doing when he switches abilities
-		if (abilityID != 6)
-			DeactivateSpecialMove(pAttacker.socket, abilityID);
 
 		// Only Can work on players or npcs that is mounted
 		if (!pDefender.isonhorse)
@@ -407,13 +406,14 @@ function onAttack( pAttacker, pDefender )
 	{
 		var requiredMana = 30;
 
-		//checking mana
-		if (!CheckMana(pAttacker, abilityID, requiredMana))
-			return true;
 
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 11)
 			DeactivateSpecialMove(pAttacker.socket, abilityID);
+
+		//checking mana
+		if (!CheckMana(pAttacker, abilityID, requiredMana))
+			return true;
 
 		pAttacker.SoundEffect(0x204, true);
 		pDefender.StaticEffect(0x376A, 0x09, 0x32);
@@ -465,13 +465,13 @@ function onAttack( pAttacker, pDefender )
 			return false;
 		}
 
-		//checking mana
-		if (!CheckMana(pAttacker, abilityID, requiredMana))
-			return true;
-
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 5)
 			DeactivateSpecialMove(pAttacker, abilityID);
+
+		//checking mana
+		if (!CheckMana(pAttacker, abilityID, requiredMana))
+			return true;
 
 		pAttacker.SoundEffect(0x3B9, true);
 		pDefender.StaticEffect(0x37BE, 0x09, 0x32);
@@ -501,13 +501,13 @@ function onAttack( pAttacker, pDefender )
 	{
 		var requiredMana = 20;
 
-		//checking mana
-		if (!CheckMana(pAttacker, abilityID, requiredMana))
-			return true;
-
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 4)
 			DeactivateSpecialMove(pAttacker, abilityID);
+
+		//checking mana
+		if (!CheckMana(pAttacker, abilityID, requiredMana))
+			return true;
 
 		pAttacker.SysMessage("You have delivered a crushing blow!");
 		pDefender.SysMessage("You take extra damage from the crushing attack!");
@@ -518,13 +518,13 @@ function onAttack( pAttacker, pDefender )
 	{
 		var requiredMana = 20;
 
-		//checking mana
-		if (!CheckMana(pAttacker, abilityID, requiredMana))
-			return true;
-
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 3)
 			DeactivateSpecialMove(pAttacker, abilityID);
+
+		//checking mana
+		if (!CheckMana(pAttacker, abilityID, requiredMana))
+			return true;
 
 		pAttacker.SysMessage("You have delivered a concussion!");
 		pDefender.SysMessage("You feel disoriented!");
@@ -536,13 +536,13 @@ function onAttack( pAttacker, pDefender )
 	{// turn healthbar yellow on defender need spacket sent for this.
 		var requiredMana = 30;
 
-		//checking mana
-		if (!CheckMana(pAttacker, abilityID, requiredMana))
-			return true;
-
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 9)
 			DeactivateSpecialMove(pAttacker, abilityID);
+
+		//checking mana
+		if (!CheckMana(pAttacker, abilityID, requiredMana))
+			return true;
 
 		pAttacker.SysMessage("You deliver a mortal wound!");
 		pDefender.SysMessage("You have been mortally wounded!");
@@ -569,13 +569,13 @@ function onAttack( pAttacker, pDefender )
 	{
 		var requiredMana = 30;
 
-		//checking mana
-		if (!CheckMana(pAttacker, abilityID, requiredMana))
-			return true;
-
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 2)
 			DeactivateSpecialMove(pAttacker, abilityID);
+
+		//checking mana
+		if (!CheckMana(pAttacker, abilityID, requiredMana))
+			return true;
 
 		pAttacker.SysMessage("Your target is bleeding!");
 		pDefender.SysMessage("You are bleeding!");
@@ -588,6 +588,68 @@ function onAttack( pAttacker, pDefender )
 
 		pAttacker.SoundEffect(0x133, true);
 		pDefender.StaticEffect(0x377A, 0x09, 0x32);
+	}
+	else if (abilityID == 8) // Infectious Strike
+	{
+		var requiredMana = 20;
+		var itemRHand = pAttacker.FindItemLayer(0x01);
+		var itemLHand = pAttacker.FindItemLayer(0x02);
+
+		// Clear out any current ability the player is doing when he switches abilities
+		if (abilityID != 8)
+			DeactivateSpecialMove(pAttacker, abilityID);
+
+		//checking mana
+		if (!CheckMana(pAttacker, abilityID, requiredMana))
+			return true;
+
+		if (itemLHand != null && itemLHand.poison <= 0 || itemRHand != null && itemRHand.poison <= 0)
+		{
+			pDefender.SysMessage("Your weapon must have a dose of poison to perform an infectious strike!");
+			return;
+		}
+
+		var level = 0;
+		var chance = Math.random();
+		if (pAttacker.skills[30] >= 0 && pAttacker.skills[30] <= 199)
+		{
+			level = 1;
+		}
+		else if (pAttacker.skills[30] >= 200 && pAttacker.skills[30] <= 399)
+		{
+			level = 2;
+		}
+		else if (pAttacker.skills[30] >= 400 && pAttacker.skills[30] <= 599)
+		{
+			level = 3;
+		}
+		else if (pAttacker.skills[30] >= 600 && pAttacker.skills[30] <= 1000)
+		{
+			level = 4;
+		}
+
+		// Adjust the poison level based on chance
+		if (chance < 0.2)
+		{
+			level--; // Decrease the level by 1
+			if (level < 0)
+			{
+				level = 1; // Ensure the level doesn't go below 0 and is always set to least 1
+			}
+		} 
+		else if (chance > 0.8) 
+		{
+			level++; // Increase the level by 1
+			pAttacker.SysMessage("Your precise strike has increased the level of the poison by 1");
+			pDefender.SysMessage("The poison seems extra effective!");
+		}
+
+		pAttacker.TextMessage("You have poisoned your target : " + pDefender.name);
+		pDefender.TextMessage(pAttacker.name +" : poisoned you!");
+		pDefender.poison = level;
+
+		pAttacker.SoundEffect(0xDD, true);
+		pDefender.StaticEffect(0x3728, 0x09, 0x32);
 	}
 }
 
@@ -668,5 +730,6 @@ function onTimer( timerObj, timerID )
 	{
 		damage -= 3;
 		timerObj.hp -= damage;
+		timerObj.StaticEffect(0x122A, 0, 15); // blood effect 
 	}
 }
