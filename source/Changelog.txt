@@ -1,5 +1,5 @@
 29/05/2024 - Dragon Slayer
-	House add-on deeds are now returned when an add-on is present in the house.
+	House add-on deeds are now returned when an add-on is present in the house on demolish.
 
 1/05/2024 - Dragon Slayer/Xuri
 	Fixed AutoUnequipAttempt function in clumsy.js, createfood.js level1target.js, will no longer fail on casting and return to hardcode.
