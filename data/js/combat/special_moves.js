@@ -376,8 +376,7 @@ function onAbility(pAttacker, pDefender, abilityID)
 		pDefender.TextMessage("You are bleeding profusely", false, 0x21);
 		pDefender.TextMessage(pDefender.name + " is bleeding profusely", true, 0x21, 1);
 
-		pDefender.StartTimer(10000, 9300, 7001);
-		pDefender.StartTimer(2000, 9400, 7001);
+		pDefender.StartTimer(2000, 9300, 7001); // Start 2 second timer for blood and damage last total 10 seconds
 		pDefender.SetTempTag("doBleed", true);
 
 		if (pDefender.socket)
@@ -729,17 +728,18 @@ function onTimer( timerObj, timerID )
 		timerObj.SetTempTag("blockHeal", null);
 		socket.SysMessage("You are no longer mortally wounded.");
 	}
-	else if (timerID == 9300) 
+
+	if (timerID >= 9300 && timerID < 9310)
+	{
+		var damage = RandomNumber(1, 10);
+		//timerObj.StaticEffect(0x122A, 0, 15); // blood effect got to figure how to add it to ground.
+		timerObj.health -= damage;
+		timerObj.StartTimer(2000, 9300 + 1, 7001);//restart timer every 2 seconds until it shuts off
+	}
+	else if (timerID == 9310) 
 	{
 		timerObj.SetTempTag("doBleed", null);
 		timerObj.KillJSTimer(9400, 7001);
 		socket.SysMessage("The bleeding wounds have healed, you are no longer bleeding!");
-	}
-	else if (timerID == 9400)
-	{
-		var damage = RandomNumber(1, 10);
-		timerObj.health -= damage;
-		//timerObj.StaticEffect(0x122A, 0, 15); // blood effect got to figure how to add it to ground.
-		timerObj.StartTimer(2000, 9400, 7001);//restart timer every 2 seconds until it shuts off
 	}
 }
