@@ -279,6 +279,7 @@ public:
 	SI08		OnSkillGump( CChar *mChar );
 	SI08		OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem );
 	SI08		OnAICombatTarget( CChar *attacker, CChar *target );
+	bool		onCombatHit( CChar *attacker, CChar *defender );
 	SI08		OnCombatStart( CChar *attacker, CChar *defender );
 	SI08		OnCombatEnd( CChar *attacker, CChar *defender );
 

@@ -2994,6 +2994,15 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				// Show hit messages, if enabled
 				DoHitMessage( &mChar, ourTarg, hitLoc, ourDamage );
 
+				for( auto scriptTrig : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute != nullptr )
+					{
+						toExecute->onCombatHit( &mChar, ourTarg );
+					}
+				}
+
 				// Interrupt Spellcasting
 				if( !ourTarg->IsNpc() && targSock != nullptr )
 				{

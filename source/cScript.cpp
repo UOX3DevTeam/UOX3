@@ -3803,6 +3803,35 @@ SI08 cScript::OnAICombatTarget( CChar *attacker, CChar *target )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::onCombatHit()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for character with event attached when someone has taken damage
+//|					Will also trigger the onDefense event for the character being hit
+//o------------------------------------------------------------------------------------------------o
+bool cScript::onCombatHit( CChar *attacker, CChar *defender )
+{
+	if( !ValidateObject( attacker ) || !ValidateObject( defender ))
+		return false;
+
+	if( !ExistAndVerify( seOnCombatHit, "onCombatHit" ))
+		return false;
+
+	jsval rval, params[2];
+	JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
+	JSObject *defObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( attObj );
+	params[1] = OBJECT_TO_JSVAL( defObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCombatHit", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnCombatHit, false );
+	}
+
+	return ( retVal == JS_TRUE );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnCombatStart()
 //|	Date		-	23rd January, 2006
 //o------------------------------------------------------------------------------------------------o
