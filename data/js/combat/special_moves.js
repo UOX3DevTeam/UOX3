@@ -8,7 +8,8 @@ function onSpecialMove( pUser, abilityID )
 	if( !CheckMana( pUser, abilityID ))
 		return true;
 
-	pUser.SetTempTag( "abilityID", abilityID );
+	if( abilityID >= 1 )
+		pUser.SetTempTag( "abilityID", abilityID );
     return true;
 
 	//The rest of the AOS Abilites before any other expansions
@@ -21,7 +22,7 @@ function checkSkillRequirement( pUser, requiredSkillLevel, requiredSkill, skillM
 	if( pUser.skills[requiredSkill] < requiredSkillLevel )
 	{
 		pUser.SysMessage( "You need " + skillMessage + " weapon skill to perform that attack" );
-		DeactivateSpecialMove( pUser, abilityID );
+		TriggerEvent(2205, "DeactivateSpecialMove", pUser, abilityID);
 		return false;
 	}
 	return true;
@@ -218,9 +219,10 @@ function RequiredSkill( pUser, abilityID )
 	return true;
 }
 
-function CheckMana( pUser, abilityID )
+function getAbilityManaTable()
 {
-	var abilitieMana = {
+	return {
+		0: { manaAmount: 0 },
 		1: { manaAmount: 14 },
 		2: { manaAmount: 30 },
 		3: { manaAmount: 20 },
@@ -234,37 +236,65 @@ function CheckMana( pUser, abilityID )
 		11: { manaAmount: 30 },
 		12: { manaAmount: 20 }
 	};
+}
 
+function CheckMana( pUser, abilityID )
+{
+	var abilitieMana = getAbilityManaTable();
 	var NextUse = pUser.GetTempTag( "doubleMana" );
 	var iTime = GetCurrentClock();
+	var Delay = 3000; // If ability is performed within 3 seconds of the last ability, it will then cost double mana
 	var requiredMana = abilitieMana[abilityID].manaAmount;
 
-	if( pUser.mana <= requiredMana )
-    {
-		pUser.SysMessage( "You need " + requiredMana + " mana to perform that attack" );
-        DeactivateSpecialMove( pUser, abilityID );
-        return false;
-    }
-    else
+	if( NextUse == null )
 	{
-		pUser.SetTempTag( "doubleMana", iTime.toString() );
-		var Delay = 3000;// If abilitie is performed with 3 seconds of last abilitie it will then cost double mana
-		if(( iTime - NextUse ) < Delay )
-		{
-			pUser.mana -= requiredMana * 2;
-			return true;
-		}
-		else
-		{
-			pUser.mana -= requiredMana;
-			return true;
-		}
+		NextUse = 0;
 	}
+
+	var isDoubleMana = ( iTime - NextUse ) < Delay;
+	if( isDoubleMana )
+	{
+		requiredMana *= 2;
+	}
+
+	if( pUser.mana < requiredMana )
+	{
+		pUser.SysMessage( "You need " + requiredMana + " mana to perform that attack" );
+		TriggerEvent(2205, "DeactivateSpecialMove", pUser, abilityID);
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+function DeductMana( pUser, abilityID )
+{
+	var abilitieMana = getAbilityManaTable();
+	var NextUse = pUser.GetTempTag( "doubleMana" );
+	var iTime = GetCurrentClock();
+	var Delay = 3000; // If ability is performed within 3 seconds of the last ability, it will then cost double mana
+	var requiredMana = abilitieMana[abilityID].manaAmount;
+
+	if( NextUse == null )
+	{
+		NextUse = 0;
+	}
+
+	var isDoubleMana = ( iTime - NextUse ) < Delay;
+	if( isDoubleMana )
+	{
+		requiredMana *= 2;
+	}
+
+	pUser.mana -= requiredMana;
+	pUser.SetTempTag( "doubleMana", iTime.toString() );
 }
 
 function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 {
-	var abilityID = pAttacker.GetTempTag("abilityID");
+	var abilityID = pAttacker.GetTempTag( "abilityID" );
     var baseDamage = pAttacker.attack;
 
     if( baseDamage == -1 )  // No damage if weapon breaks
@@ -333,24 +363,33 @@ function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
     return damage;
 }
 
-function onAttack( pAttacker, pDefender )
+function onCombatHit( pAttacker, pDefender )
 {
-	var abilityID = pAttacker.GetTempTag("abilityID");
+	var abilityID = pAttacker.GetTempTag( "abilityID" );
 
-	onAbility(pAttacker, pDefender, abilityID);
+	onAbility( pAttacker, pDefender, abilityID );
 }
 
-function onAbility(pAttacker, pDefender, abilityID)
+function onAttack( pAttacker, pDefender )
+{
+	var abilityID = pAttacker.GetTempTag( "abilityID" );
+
+	onAbility( pAttacker, pDefender, abilityID );
+}
+
+function onAbility( pAttacker, pDefender, abilityID )
 {
 	if (abilityID == 1) // armnor ignore
 	{
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 1)
-			DeactivateSpecialMove(pAttacker.socket, abilityID);
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 
 		//checking mana
-		if (!CheckMana(pAttacker, abilityID))
-			return true;
+		if (CheckMana(pAttacker, abilityID))
+		{
+			DeductMana(pAttacker, abilityID);
+		}
 
 		pAttacker.TextMessage("Your attack penetrates their armor!");
 		pDefender.TextMessage("The blow penetrated your armor!");
@@ -358,17 +397,19 @@ function onAbility(pAttacker, pDefender, abilityID)
 		pDefender.SoundEffect(0x0056, true);
 		pDefender.StaticEffect(0x3728, 0x09, 0x06);
 
-		ClearSpecialMove(pAttacker, abilityID);// Clear the Ability after success
+		TriggerEvent(2205, "ClearSpecialMove", pAttacker, abilityID);// Clear the Ability after success
 	}
 	else if (abilityID == 2) // bleedattack
 	{
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 2)
-			DeactivateSpecialMove(pAttacker, abilityID);
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 
 		//checking mana
-		if (!CheckMana(pAttacker, abilityID))
-			return true;
+		if (CheckMana(pAttacker, abilityID))
+		{
+			DeductMana(pAttacker, abilityID);
+		}
 
 		pAttacker.SysMessage("Your target is bleeding!");
 		pDefender.SysMessage("You are bleeding!");
@@ -376,8 +417,8 @@ function onAbility(pAttacker, pDefender, abilityID)
 		pDefender.TextMessage("You are bleeding profusely", false, 0x21);
 		pDefender.TextMessage(pDefender.name + " is bleeding profusely", true, 0x21, 1);
 
-		pDefender.StartTimer(2000, 9300, 7001); // Start 2 second timer for blood and damage last total 10 seconds
-		pDefender.SetTempTag("doBleed", true);
+		pDefender.StartTimer( 2000, 9300, 7001 ); // Start 2 second timer for blood and damage last total 10 seconds
+		pDefender.SetTempTag( "doBleed", true );
 
 		if (pDefender.socket)
 			TriggerEvent(50104, "AddBuff", pDefender, 1039, 1075829, 1075830, 10, " 1, 10 ,2");
@@ -385,18 +426,20 @@ function onAbility(pAttacker, pDefender, abilityID)
 		pAttacker.SoundEffect(0x133, true);
 		pDefender.StaticEffect(0x377A, 0x09, 0x32);
 
-		ClearSpecialMove(pAttacker, abilityID);// Clear the Ability after success
+		TriggerEvent(2205, "ClearSpecialMove", pAttacker, abilityID);// Clear the Ability after success
 	}
 	else if (abilityID == 3) // ConcussionBlow
 	{
 
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 3)
-			DeactivateSpecialMove(pAttacker, abilityID);
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 
 		//checking mana
-		if (!CheckMana(pAttacker, abilityID))
-			return true;
+		if (CheckMana(pAttacker, abilityID))
+		{
+			DeductMana(pAttacker, abilityID);
+		}
 
 		pAttacker.SysMessage("You have delivered a concussion!");
 		pDefender.SysMessage("You feel disoriented!");
@@ -404,23 +447,26 @@ function onAbility(pAttacker, pDefender, abilityID)
 		pAttacker.SoundEffect(0x213, true);
 		pDefender.StaticEffect(0x377A, 0x09, 0x32);
 
-		ClearSpecialMove(pAttacker, abilityID);// Clear the Ability after success
+		TriggerEvent(2205, "ClearSpecialMove", pAttacker, abilityID);// Clear the Ability after success
 	}
 	else if (abilityID == 4) // crushingblow
 	{
 
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 4)
-			DeactivateSpecialMove(pAttacker, abilityID);
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 
 		//checking mana
-		if (!CheckMana(pAttacker, abilityID))
-			return true;
+		if (CheckMana(pAttacker, abilityID))
+		{
+			DeductMana(pAttacker, abilityID);
+		}
 
 		pAttacker.SysMessage("You have delivered a crushing blow!");
 		pDefender.SysMessage("You take extra damage from the crushing attack!");
 
 		pAttacker.SoundEffect(0x1E1, true);
+		TriggerEvent(2205, "ClearSpecialMove", pAttacker, abilityID);// Clear the Ability after success
 	}
 	else if (abilityID == 5) // Disarm
 	{
@@ -429,23 +475,25 @@ function onAbility(pAttacker, pDefender, abilityID)
 
 		if (pDefender.pack == null || itemLHand != null && itemLHand.movable >= 2 || itemRHand != null && itemRHand.movable >= 2) {
 			pAttacker.SysMessage("You cannot disarm your opponent.");
-			DeactivateSpecialMove(pAttacker.socket, abilityID);
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 			return false;
 		}
 
 		if (itemLHand != null && itemLHand.type == 9 || itemRHand != null && itemRHand.type == 9) {
 			pAttacker.SysMessage("Your target is already unarmed!");
-			DeactivateSpecialMove(pAttacker.socket, abilityID);
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 			return false;
 		}
 
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 5)
-			DeactivateSpecialMove(pAttacker, abilityID);
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 
 		//checking mana
-		if (!CheckMana(pAttacker, abilityID))
-			return true;
+		if (CheckMana(pAttacker, abilityID))
+		{
+			DeductMana(pAttacker, abilityID);
+		}
 
 		pAttacker.SoundEffect(0x3B9, true);
 		pDefender.StaticEffect(0x37BE, 0x09, 0x32);
@@ -467,29 +515,34 @@ function onAbility(pAttacker, pDefender, abilityID)
 
 		TriggerEvent(50104, "AddBuff", pDefender, 0x3ea, 1075637, 0, 5, " ");
 
-		ClearSpecialMove(pAttacker, abilityID);// Clear the Ability after success
+		TriggerEvent(2205, "ClearSpecialMove", pAttacker, abilityID);// Clear the Ability after success
 	}
 	else if (abilityID == 6) // Dismount
 	{
-		// Clear out any current ability the player is doing when he switches abilities
-		if (abilityID != 6)
-			DeactivateSpecialMove(pAttacker.socket, abilityID);
-
-		//checking mana
-		if (!CheckMana(pAttacker, abilityID))
-			return true;
-
 		// Check to see if player is mount or flying.
-		if (pAttacker.isonhorse) {
+		if (pAttacker.isonhorse)
+		{
 			pAttacker.TextMessage("You cannot perform that attack while mounted or flying!");
-			DeactivateSpecialMove(pAttacker.socket, abilityID);
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 			return true;
 		}
 
 		// Only Can work on players or npcs that is mounted
-		if (!pDefender.isonhorse) {
+		if (!pDefender.isonhorse)
+		{
 			pAttacker.TextMessage("This attack only works on mounted or flying targets");
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 			return true;
+		}
+
+		// Clear out any current ability the player is doing when he switches abilities
+		if (abilityID != 6)
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
+
+		//checking mana
+		if (CheckMana(pAttacker, abilityID)) 
+		{
+			DeductMana(pAttacker, abilityID);
 		}
 
 		//Lesser Hiryu have an 80% chance of missing this attack needs added
@@ -501,49 +554,60 @@ function onAbility(pAttacker, pDefender, abilityID)
 		pDefender.Dismount();
 		pDefender.TextMessage("You have been knocked off of your mount by " + pAttacker.name + "!");
 		pAttacker.SetTempTag("Dismount", false);
-		ClearSpecialMove(pAttacker, abilityID);// Clear the Ability after success
+		TriggerEvent(2205, "ClearSpecialMove", pAttacker, abilityID);// Clear the Ability after success
 	}
 	else if (abilityID == 8) // Infectious Strike
 	{
 		var itemRHand = pAttacker.FindItemLayer(0x01);
 		var itemLHand = pAttacker.FindItemLayer(0x02);
 
+		if (itemLHand != null && itemLHand.poison <= 0 || itemRHand != null && itemRHand.poison <= 0)
+		{
+			pDefender.SysMessage("Your weapon must have a dose of poison to perform an infectious strike!");
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
+			return;
+		}
+
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 8)
-			DeactivateSpecialMove(pAttacker, abilityID);
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 
 		//checking mana
-		if (!CheckMana(pAttacker, abilityID))
-			return true;
-
-		if (itemLHand != null && itemLHand.poison <= 0 || itemRHand != null && itemRHand.poison <= 0) {
-			pDefender.SysMessage("Your weapon must have a dose of poison to perform an infectious strike!");
-			return;
+		if (CheckMana(pAttacker, abilityID))
+		{
+			DeductMana(pAttacker, abilityID);
 		}
 
 		var level = 0;
 		var chance = Math.random();
-		if (pAttacker.skills[30] >= 0 && pAttacker.skills[30] <= 199) {
+		if (pAttacker.skills[30] >= 0 && pAttacker.skills[30] <= 199)
+		{
 			level = 1;
 		}
-		else if (pAttacker.skills[30] >= 200 && pAttacker.skills[30] <= 399) {
+		else if (pAttacker.skills[30] >= 200 && pAttacker.skills[30] <= 399)
+		{
 			level = 2;
 		}
-		else if (pAttacker.skills[30] >= 400 && pAttacker.skills[30] <= 599) {
+		else if (pAttacker.skills[30] >= 400 && pAttacker.skills[30] <= 599)
+		{
 			level = 3;
 		}
-		else if (pAttacker.skills[30] >= 600 && pAttacker.skills[30] <= 1000) {
+		else if (pAttacker.skills[30] >= 600 && pAttacker.skills[30] <= 1000)
+		{
 			level = 4;
 		}
 
 		// Adjust the poison level based on chance
-		if (chance < 0.2) {
+		if (chance < 0.2)
+		{
 			level--; // Decrease the level by 1
-			if (level < 0) {
+			if (level < 0)
+			{
 				level = 1; // Ensure the level doesn't go below 0 and is always set to least 1
 			}
 		}
-		else if (chance > 0.8) {
+		else if (chance > 0.8)
+		{
 			level++; // Increase the level by 1
 			pAttacker.SysMessage("Your precise strike has increased the level of the poison by 1");
 			pDefender.SysMessage("The poison seems extra effective!");
@@ -555,18 +619,20 @@ function onAbility(pAttacker, pDefender, abilityID)
 
 		pAttacker.SoundEffect(0xDD, true);
 		pDefender.StaticEffect(0x3728, 0x09, 0x32);
-		ClearSpecialMove(pAttacker, abilityID);// Clear the Ability after success
+		TriggerEvent(2205, "ClearSpecialMove", pAttacker, abilityID);// Clear the Ability after success
 	}
 	else if (abilityID == 9) // Mortal Strike
 	{// turn healthbar yellow on defender need spacket sent for this.
 
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 9)
-			DeactivateSpecialMove(pAttacker, abilityID);
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 
 		//checking mana
-		if (!CheckMana(pAttacker, abilityID))
-			return true;
+		if (CheckMana(pAttacker, abilityID))
+		{
+			DeductMana(pAttacker, abilityID);
+		}
 
 		pAttacker.SysMessage("You deliver a mortal wound!");
 		pDefender.SysMessage("You have been mortally wounded!");
@@ -585,33 +651,38 @@ function onAbility(pAttacker, pDefender, abilityID)
 		if (pDefender.socket)
 			TriggerEvent(50104, "AddBuff", pDefender, 1027, 1075810, 1075811, 6, " ");
 
-		ClearSpecialMove(pAttacker, abilityID);// Clear the Ability after success
+		TriggerEvent(2205, "ClearSpecialMove", pAttacker, abilityID);// Clear the Ability after success
 	}
 	else if (abilityID == 11) // ParalyzingBlow
 	{
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 11)
-			DeactivateSpecialMove(pAttacker.socket, abilityID);
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 
 		//checking mana
-		if (!CheckMana(pAttacker, abilityID))
-			return true;
+		if (CheckMana(pAttacker, abilityID))
+		{
+			DeductMana(pAttacker, abilityID);
+		}
 
 		pAttacker.SoundEffect(0x204, true);
 		pDefender.StaticEffect(0x376A, 0x09, 0x32);
 		var IsImmune = pDefender.GetTempTag("IsImmune")
 
-		if (IsImmune != null && IsImmune == true) {
+		if (IsImmune != null && IsImmune == true)
+		{
 			pAttacker.TextMessage("Your target resists paralysis.");
 			pDefender.TextMessage("You resist paralysis.");
 			return true;
 		}
 
 		var seconds = 3000; // We want this applied to players even if they are "offline" (aka disconnected but not vanished from view yet)
-		if (pDefender.npc) {
+		if (pDefender.npc)
+		{
 			seconds = 6000;
 		}
-		else if (pDefender.socket) {
+		else if (pDefender.socket) 
+		{
 			pDefender.TextMessage("The attack has temporarily paralyzed you!", false, 0x3b2, 0, pDefender.serial);// The attack has temporarily paralyzed you!
 		}
 
@@ -620,27 +691,30 @@ function onAbility(pAttacker, pDefender, abilityID)
 		pDefender.StartTimer(seconds, 8000, 7001);
 		pDefender.frozen = true;
 
-		if (pAttacker.socket) {
+		if (pAttacker.socket)
+		{
 			pAttacker.TextMessage(GetDictionaryEntry(17702, pAttacker.socket.language), false, 0x3b2, 0, pAttacker.serial);// You deliver a paralyzing blow!
 		}
-		ClearSpecialMove(pAttacker, abilityID);// Clear the Ability after success
+		TriggerEvent(2205, "ClearSpecialMove", pAttacker, abilityID);// Clear the Ability after success
 	}
 	else if (abilityID == 12) // shadowstrike
 	{
 		if (pAttacker.skills[47] < 800) // Stealth
 		{
 			pAttacker.TextMessage("You lack the required stealth to perform that attack");
-			DeactivateSpecialMove(pAttacker.socket, abilityID);
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 			return true;
 		}
 
 		// Clear out any current ability the player is doing when he switches abilities
 		if (abilityID != 12)
-			DeactivateSpecialMove(pAttacker.socket, abilityID);
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
 
 		//checking mana
-		if (!CheckMana(pAttacker, abilityID))
-			return true;
+		if (CheckMana(pAttacker, abilityID))
+		{
+			DeductMana(pAttacker, abilityID);
+		}
 
 		pAttacker.TextMessage("You strike and hide in the shadows!");
 		pDefender.TextMessage("You are dazed by the attack and your attacker vanishes!");
@@ -654,41 +728,8 @@ function onAbility(pAttacker, pDefender, abilityID)
 		pDefender.atWar = false;
 		pAttacker.visible = 1;
 
-		ClearSpecialMove(pAttacker, abilityID);// Clear the Ability after success
+		TriggerEvent(2205, "ClearSpecialMove", pAttacker, abilityID);
 	}
-}
-
-function ClearSpecialMove(pUser, abilityID)
-{
-	var socket = pUser.socket;
-	pUser.SetTempTag("abilityID", null);
-	pUser.SetTempTag("doubleMana", null);
-
-	var toSend = new Packet;
-	toSend.ReserveSize(7)
-	toSend.WriteByte(0, 0xbf); // Packet
-	toSend.WriteShort(1, 0x07); // Length
-	toSend.WriteShort(3, 0x21); // SubCmd
-	toSend.WriteByte(5, abilityID); // Ability ID
-	toSend.WriteByte(6, 0); // On/off
-	socket.Send(toSend);
-	toSend.Free();
-}
-
-function DeactivateSpecialMove(pUser, abilityID )
-{
-	var socket = pUser.socket;
-    var toSend = new Packet;
-	pUser.SetTempTag("abilityID", null);
-
-    toSend.ReserveSize( 7 )
-    toSend.WriteByte( 0, 0xbf ); // Packet
-    toSend.WriteShort( 1, 0x07 ); // Length
-    toSend.WriteShort( 3, 0x21 ); // SubCmd
-    toSend.WriteByte( 5, abilityID ); // Ability ID
-    toSend.WriteByte( 6, 0 ); // On/off
-	socket.Send( toSend );
-    toSend.Free();
 }
 
 function onTimer( timerObj, timerID )
@@ -706,7 +747,7 @@ function onTimer( timerObj, timerID )
 		timerObj.SetTempTag("blockHeal", null);
 		timerObj.KillJSTimer(9400, 7001);
 		timerObj.SetTempTag("doBleed", null);
-		ClearSpecialMove(timerObj, abilityID);
+		TriggerEvent(2205, "ClearSpecialMove", timerObj, abilityID);
 		return;
 	}
 	else if (timerID == 8000)
