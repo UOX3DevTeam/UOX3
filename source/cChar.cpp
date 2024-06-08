@@ -2920,9 +2920,9 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
-			IncRegenHits( itemLayers[tLayer]->GetRegenHits() );
-			IncRegenStam( itemLayers[tLayer]->GetRegenStam() );
-			IncRegenMana( itemLayers[tLayer]->GetRegenMana() );
+			IncHealthRegen( itemLayers[tLayer]->GetHealthRegen() );
+			IncStaminaRegen( itemLayers[tLayer]->GetStaminaRegen() );
+			IncManaRegen( itemLayers[tLayer]->GetManaRegen() );
 
 			if( toWear->IsPostLoaded() )
 			{
@@ -2984,9 +2984,9 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
 
-		IncRegenHits( -itemLayers[Layer]->GetRegenHits() );
-		IncRegenStam( -itemLayers[Layer]->GetRegenStam() );
-		IncRegenMana( -itemLayers[Layer]->GetRegenMana() );
+		IncHealthRegen( -itemLayers[Layer]->GetHealthRegen() );
+		IncStaminaRegen( -itemLayers[Layer]->GetStaminaRegen() );
+		IncManaRegen( -itemLayers[Layer]->GetManaRegen() );
 
 		if( itemLayers[Layer]->GetPoisoned() )
 		{
@@ -4732,17 +4732,17 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "REGENHITS" )
 				{
-					SetRegenHits( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					SetHealthRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "REGENSTAM" )
 				{
-					SetRegenStam( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					SetStaminaRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "REGENMANA" )
 				{
-					SetRegenMana( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					SetManaRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "RUNNINGSPEED" )

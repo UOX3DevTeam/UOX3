@@ -1006,19 +1006,19 @@ void CBaseObject::SetIntelligence( SI16 newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CBaseObject::GetRegenHits()
-//|					CBaseObject::SetRegenHits()
+//|	Function	-	CBaseObject::GetHealthRegen()
+//|					CBaseObject::SetHealthRegen()
 //|	Date		-	29 April, 2024
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the Regen Hit Points of the object
+//|	Purpose		-	Gets/Sets the Health Regen of the object
 //o------------------------------------------------------------------------------------------------o
-SI16 CBaseObject::GetRegenHits( void ) const
+SI16 CBaseObject::GetHealthRegen( void ) const
 {
-	return regenHits;
+	return healthRegen;
 }
-void CBaseObject::SetRegenHits( SI16 newValue )
+void CBaseObject::SetHealthRegen( SI16 newValue )
 {
-	regenHits = newValue;
+	healthRegen = newValue;
 
 	if( CanBeObjType( OT_ITEM ))
 	{
@@ -1027,19 +1027,19 @@ void CBaseObject::SetRegenHits( SI16 newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CBaseObject::GetRegenStam()
-//|					CBaseObject::SetRegenHits()
+//|	Function	-	CBaseObject::GetStaminaRegen()
+//|					CBaseObject::SetStaminaRegen()
 //|	Date		-	29 April, 2024
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the Regen Stam Points of the object
+//|	Purpose		-	Gets/Sets the Stamina Regen of the object
 //o------------------------------------------------------------------------------------------------o
-SI16 CBaseObject::GetRegenStam( void ) const
+SI16 CBaseObject::GetStaminaRegen( void ) const
 {
-	return regenStam;
+	return staminaRegen;
 }
-void CBaseObject::SetRegenStam( SI16 newValue )
+void CBaseObject::SetStaminaRegen( SI16 newValue )
 {
-	regenStam = newValue;
+	staminaRegen = newValue;
 
 	if( CanBeObjType( OT_ITEM ))
 	{
@@ -1048,19 +1048,19 @@ void CBaseObject::SetRegenStam( SI16 newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CBaseObject::GetRegenMana()
-//|					CBaseObject::SetRegenMana()
+//|	Function	-	CBaseObject::GetManaRegen()
+//|					CBaseObject::SetManaRegen()
 //|	Date		-	29 April, 2024
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the Regen Mana Points of the object
+//|	Purpose		-	Gets/Sets the Mana Regen of the object
 //o------------------------------------------------------------------------------------------------o
-SI16 CBaseObject::GetRegenMana( void ) const
+SI16 CBaseObject::GetManaRegen( void ) const
 {
-	return regenMana;
+	return manaRegen;
 }
-void CBaseObject::SetRegenMana( SI16 newValue )
+void CBaseObject::SetManaRegen( SI16 newValue )
 {
-	regenMana = newValue;
+	manaRegen = newValue;
 
 	if( CanBeObjType( OT_ITEM ))
 	{
@@ -1725,33 +1725,33 @@ void CBaseObject::IncIntelligence( SI16 toInc )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CBaseObject::IncRegenHits()
+//|	Function	-	CBaseObject::IncHealthRegen()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Increments the object's Regen Hit Points value
+//|	Purpose		-	Increments the object's Health Regen value
 //o------------------------------------------------------------------------------------------------o
-void CBaseObject::IncRegenHits( SI16 toInc )
+void CBaseObject::IncHealthRegen( SI16 toInc )
 {
-	SetRegenHits( regenHits + toInc );
+	SetHealthRegen( healthRegen + toInc );
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CBaseObject::IncRegenStam()
+//|	Function	-	CBaseObject::IncStaminaRegen()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Increments the object's Regen Stam Points value
+//|	Purpose		-	Increments the object's Stamina Regen value
 //o------------------------------------------------------------------------------------------------o
-void CBaseObject::IncRegenStam( SI16 toInc )
+void CBaseObject::IncStaminaRegen( SI16 toInc )
 {
-	SetRegenStam( regenStam + toInc );
+	SetStaminaRegen( staminaRegen + toInc );
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CBaseObject::IncRegenMana()
+//|	Function	-	CBaseObject::IncManaRegen()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Increments the object's Regen Mana Points value
+//|	Purpose		-	Increments the object's Mana Regen value
 //o------------------------------------------------------------------------------------------------o
-void CBaseObject::IncRegenMana( SI16 toInc )
+void CBaseObject::IncManaRegen( SI16 toInc )
 {
-	SetRegenMana( regenMana + toInc );
+	SetManaRegen( manaRegen + toInc );
 }
 
 
@@ -2619,9 +2619,9 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetStrength( GetStrength() );
 	target->SetDexterity( GetDexterity() );
 	target->SetIntelligence( GetIntelligence() );
-	target->SetRegenHits( GetRegenHits() );
-	target->SetRegenStam( GetRegenStam() );
-	target->SetRegenMana( GetRegenMana() );
+	target->SetHealthRegen( GetHealthRegen() );
+	target->SetStaminaRegen( GetStaminaRegen() );
+	target->SetManaRegen( GetManaRegen() );
 	target->SetHP( GetHP() );
 	target->SetDir( GetDir() );
 	target->SetVisible( GetVisible() );

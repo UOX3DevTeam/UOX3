@@ -4,16 +4,16 @@
 	Fixed many places missing proper null checks and refresh checks in magic js scripts.
 
 30/04/2024 - Dragon Slayer/Xuri/Maarc
-	Added in three new AOS property DFN tags for npc and items
-	Added REGENHITS, REGENSTAM, REGENMANA
-	--REGENHITS=# // amount of hit points a character regains (continously) over time defined in regen timer settings
-	--REGENSTAM=# // amount of stam points a character regains (continously) over time defined in regen timer settings
-	--REGENMANA=# // amount of mana points a character regains (continously) over time defined in regen timer settings
-	Added AOS formula for mana regeneration. Only Active in AOS and up.
-	Added INI Settings REGENHITSCAP, REGENSTAMCAP, REGENMANACAP
-	--REGENHITSCAP=#  // Max cap for Hit Point Regeneration stat per character
-	--REGENSTAMCAP=#  // Max cap for Stam Point Regeneration stat per character
-	--REGENMANACAP=#  // Max cap for Mana Point Regeneration stat per character
+	Added three new DFN tags for NPCs and Items:
+		HEALTHREGEN=# 	// amount of health a character regains (continously) over time defined in regen timer settings
+		STAMINAREGEN=# 	// amount of stamina a character regains (continously) over time defined in regen timer settings
+		MANAREGEN=# 	// amount of mana a character regains (continously) over time defined in regen timer settings
+	These are also available as JS Engine object properties: .healthRegen, .staminaRegen and .manaRegen
+	Added AOS-specific formula for mana regeneration
+	Added INI Settings:
+		HEALTHREGENCAP=#  	// Max cap for Health Regeneration stat per character
+		STAMINAREGENCAP=# 	// Max cap for Stamina Regeneration stat per character
+		MANAREGENCAP=#		// Max cap for Mana Regeneration stat per character
 
 27/04/2024 - Dragon Slayer/Xuri
 	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.

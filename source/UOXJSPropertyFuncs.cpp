@@ -661,9 +661,9 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_HIDAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetHiDamage() );			break;
 			case CIP_AC:			*vp = INT_TO_JSVAL( gPriv->GetArmourClass() );		break;
 			case CIP_DEF:			*vp = INT_TO_JSVAL( gPriv->GetResist( PHYSICAL ));	break;
-			case CIP_REGENHITS:			*vp = INT_TO_JSVAL( gPriv->GetRegenHits() );			break;
-			case CIP_REGENSTAM:			*vp = INT_TO_JSVAL( gPriv->GetRegenStam() );			break;
-			case CIP_REGENMANA:			*vp = INT_TO_JSVAL( gPriv->GetRegenMana() );			break;
+			case CIP_HEALTHREGEN:	*vp = INT_TO_JSVAL( gPriv->GetHealthRegen() );			break;
+			case CIP_STAMINAREGEN:	*vp = INT_TO_JSVAL( gPriv->GetStaminaRegen() );			break;
+			case CIP_MANAREGEN:		*vp = INT_TO_JSVAL( gPriv->GetManaRegen() );			break;
 			case CIP_RESISTCOLD:	*vp = INT_TO_JSVAL( gPriv->GetResist( COLD ));		break;
 			case CIP_RESISTHEAT:	*vp = INT_TO_JSVAL( gPriv->GetResist( HEAT ));		break;
 			case CIP_RESISTLIGHT:	*vp = INT_TO_JSVAL( gPriv->GetResist( LIGHT ));	break;
@@ -1309,9 +1309,9 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_HIDAMAGE:		gPriv->SetHiDamage( static_cast<SI16>( encaps.toInt() ));			break;
 			case CIP_AC:			gPriv->SetArmourClass( static_cast<UI08>( encaps.toInt() ));		break;
 			case CIP_DEF:			gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), PHYSICAL );	break;
-			case CIP_REGENHITS:		gPriv->SetRegenHits( static_cast<SI16>( encaps.toInt() ));	break;
-			case CIP_REGENSTAM:		gPriv->SetRegenStam( static_cast<SI16>( encaps.toInt() ));	break;
-			case CIP_REGENMANA:		gPriv->SetRegenMana( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_HEALTHREGEN:	gPriv->SetHealthRegen( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_STAMINAREGEN:	gPriv->SetStaminaRegen( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_MANAREGEN:		gPriv->SetManaRegen( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_RESISTCOLD:	gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), COLD );		break;
 			case CIP_RESISTHEAT:	gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), HEAT );		break;
 			case CIP_RESISTLIGHT:	gPriv->SetResist( static_cast<UI16>( encaps.toInt() ), LIGHT );		break;
@@ -1845,9 +1845,9 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				}
 				break;
 			}
-			case CCP_REGENHITS:			*vp = INT_TO_JSVAL( gPriv->GetRegenHits() );			break;
-			case CCP_REGENSTAM:			*vp = INT_TO_JSVAL( gPriv->GetRegenStam() );			break;
-			case CCP_REGENMANA:			*vp = INT_TO_JSVAL( gPriv->GetRegenMana() );			break;
+			case CCP_HEALTHREGEN:		*vp = INT_TO_JSVAL( gPriv->GetHealthRegen() );			break;
+			case CCP_STAMINAREGEN:		*vp = INT_TO_JSVAL( gPriv->GetStaminaRegen() );			break;
+			case CCP_MANAREGEN:			*vp = INT_TO_JSVAL( gPriv->GetManaRegen() );			break;
 			case CCP_ORIGIN:
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( gPriv->GetOrigin() )).c_str() );
 				*vp = STRING_TO_JSVAL( tString );
@@ -2414,9 +2414,9 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_AWAKE:			gPriv->SetAwake( encaps.toBool() );						break;
 			case CCP_DIRECTION:		gPriv->SetDir( static_cast<UI08>( encaps.toInt() ));	break;
 			case CCP_REGION:		gPriv->SetRegion( static_cast<UI16>( encaps.toInt() ));	break;
-			case CCP_REGENHITS:		gPriv->SetRegenHits( static_cast<SI16>( encaps.toInt() ));	break;
-			case CCP_REGENSTAM:		gPriv->SetRegenStam( static_cast<SI16>( encaps.toInt() ));	break;
-			case CCP_REGENMANA:		gPriv->SetRegenMana( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_HEALTHREGEN:	gPriv->SetHealthRegen( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_STAMINAREGEN:	gPriv->SetStaminaRegen( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_MANAREGEN:		gPriv->SetManaRegen( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_ORIGIN:		gPriv->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( encaps.toString() ));	break;
 			case CCP_TOWN:
 				cwmWorldState->townRegions[gPriv->GetTown()]->RemoveTownMember( *gPriv );
