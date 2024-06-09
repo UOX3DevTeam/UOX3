@@ -1,3 +1,6 @@
+6/06/2024 - Dragon Slayer
+	Fixed Accepting bods, When the expansion is to to lbr or later.
+
 1/05/2024 - Dragon Slayer/Xuri
 	Fixed AutoUnequipAttempt function in clumsy.js, createfood.js level1target.js, will no longer fail on casting and return to hardcode.
 	Fixed createfood to check for reagents on cast.
