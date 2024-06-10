@@ -1,6 +1,6 @@
 function onEquipAttempt( pEquipper, iEquipped )
 {
-	var blockEquip = pEquipper.GetTempTag( "BlockEquip" );
+	var blockEquip = pEquipper.GetTempTag( "blockEquip" );
 	if( blockEquip == true )
 	{
 		iEquipped.SetTempTag( "charSer", pEquipper.serial.toString() );
