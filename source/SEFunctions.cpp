@@ -4246,7 +4246,7 @@ bool SE_GetServerSetting(JSContext* cx, unsigned argc, JS::Value* vp)
       break;
     }
     case 47:	 // LOOTDECAYSWITHPLAYERCORPSE
-      args.rval().setBoolean(cwmWorldState->ServerData()->CorpseLootDecay());
+      args.rval().setBoolean(cwmWorldState->ServerData()->PlayerCorpseLootDecay());
       break;
     case 49:	 // GUARDSACTIVE
       args.rval().setBoolean(cwmWorldState->ServerData()->GuardsStatus());
