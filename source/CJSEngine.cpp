@@ -172,6 +172,7 @@ CJSRuntime::CJSRuntime( UI32 engineSize )
 	{
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 	}
+	JSAutoRealm realmAuto(jsContext, jsGlobal);
 	JS::InitRealmStandardClasses( jsContext );
 
 	objectList.resize( IUE_COUNT );
