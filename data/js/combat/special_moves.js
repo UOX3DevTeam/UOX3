@@ -1,5 +1,16 @@
 function onSpecialMove( pUser, abilityID )
 {
+	// Define the array of restricted ability IDs
+	var restrictedAbilities = [7, 10, 13, 14, 15, 16, 17,18,19,20,21,22,23,24,25,29];
+
+	// Check if the abilityID is in the array of restricted abilities
+	if( restrictedAbilities.indexOf( abilityID ) != -1 )
+	{
+		pUser.SysMessage( "This ability is not yet available." );
+		TriggerEvent( 2205, "DeactivateSpecialMove", pUser, abilityID );
+		return false;
+	}
+
 	// Check Skills
 	if( !checkRequiredSkill( pUser, abilityID ))
 		return true;
@@ -10,11 +21,8 @@ function onSpecialMove( pUser, abilityID )
 
 	if( abilityID >= 1 )
 		pUser.SetTempTag( "abilityID", abilityID );
-    return true;
 
-	//The rest of the AOS Abilites before any other expansions
-	//Double Strike
-	//Whirlwind Attack
+    return true;
 }
 
 function checkSkillRequirement( pUser, requiredSkillLevel, requiredSkill, skillMessage, abilityID ) 
@@ -36,8 +44,8 @@ function checkRequiredSkill( pUser, abilityID )
 {
 	// Define weapon types and their skill requirements and if primary or secondary ability
 	var weaponTypes = {
-		"0x0df0": { primary: 0, secondary: 11, reqSkill: 41 },
-		"0x0df1": { primary: 0, secondary: 11, reqSkill: 41 },	// Black Staves  // WhirlwindAttack, ParalyzingBlow
+		"0x0df0": { primary: 13, secondary: 11, reqSkill: 41 },
+		"0x0df1": { primary: 13, secondary: 11, reqSkill: 41 },	// Black Staves  // WhirlwindAttack, ParalyzingBlow
 
 		"0x0df2": { primary: 6, secondary: 5, reqSkill: 41 },
 		"0x0df3": { primary: 6, secondary: 5, reqSkill: 41 },
@@ -47,14 +55,14 @@ function checkRequiredSkill( pUser, abilityID )
 		"0x0e81": { primary: 4, secondary: 5, reqSkill: 41 },  
 		"0x0e82": { primary: 4, secondary: 5, reqSkill: 41 },	// Shepherd's Crooks  // CrushingBlow, Disarm
 
-		"0x0e85": { primary: 0, secondary: 5, reqSkill: 40 },
-		"0x0e86": { primary: 0, secondary: 5, reqSkill: 40 },	// pickaxe  // DoubleStrike, Disarm
+		"0x0e85": { primary: 7, secondary: 5, reqSkill: 40 },
+		"0x0e86": { primary: 7, secondary: 5, reqSkill: 40 },	// pickaxe  // DoubleStrike, Disarm
 
 		"0x0e87": { primary: 2, secondary: 6, reqSkill: 42 },
 		"0x0e88": { primary: 2, secondary: 6, reqSkill: 42 },	// Pitchforks  // BleedAttack, Dismount
 
-		"0x0e89": { primary: 0, secondary: 3, reqSkill: 41 },
-		"0x0e8a": { primary: 0, secondary: 3, reqSkill: 41 },	// Quarter Staves  // DoubleStrike, ConcussionBlow
+		"0x0e89": { primary: 7, secondary: 3, reqSkill: 41 },
+		"0x0e8a": { primary: 7, secondary: 3, reqSkill: 41 },	// Quarter Staves  // DoubleStrike, ConcussionBlow
 
 		"0x0ec2": { primary: 2, secondary: 8, reqSkill: 40 },
 		"0x0ec3": { primary: 2, secondary: 8, reqSkill: 40 },	// Cleavers  // BleedAttack, InfectiousStrike
@@ -74,8 +82,8 @@ function checkRequiredSkill( pUser, abilityID )
 		"0x0f49": { primary: 4, secondary: 6, reqSkill: 40 },
 		"0x0f4a": { primary: 4, secondary: 6, reqSkill: 40 },	// Axes  // CrushingBlow, Dismount
 
-		"0x0f4b": { primary: 0, secondary: 0, reqSkill: 40 },
-		"0x0f4c": { primary: 0, secondary: 0, reqSkill: 40 },	// Double Axe  // DoubleStrike, WhirlwindAttack
+		"0x0f4b": { primary: 7, secondary: 13, reqSkill: 40 },
+		"0x0f4c": { primary: 7, secondary: 13, reqSkill: 40 },	// Double Axe  // DoubleStrike, WhirlwindAttack
 
 		"0x0f4e": { primary: 11, secondary: 6, reqSkill: 40 },
 		"0x0f4e": { primary: 11, secondary: 6, reqSkill: 40 },	// Bardiches  // ParalyzingBlow, Dismount
@@ -112,14 +120,14 @@ function checkRequiredSkill( pUser, abilityID )
 		"0x13b3": { primary: 12, secondary: 6, reqSkill: 41 },
 		"0x13b4": { primary: 12, secondary: 6, reqSkill: 41 },	// Clubs // ShadowStrike, Dismount
 
-		"0x13b5": { primary: 0, secondary: 11, reqSkill: 40 },
-		"0x13b6": { primary: 0, secondary: 1, reqSkill: 40 },	// Scimitars // DoubleStrike, ParalyzingBlow
+		"0x13b5": { primary: 7, secondary: 11, reqSkill: 40 },
+		"0x13b6": { primary: 7, secondary: 11, reqSkill: 40 },	// Scimitars // DoubleStrike, ParalyzingBlow
 
 		"0x13b9": { primary: 11, secondary: 4, reqSkill: 40 },
 		"0x13ba": { primary: 11, secondary: 4, reqSkill: 40 },	// Viking Swords // ParalyzingBlow, CrushingBlow
 
-		"0x13fc": { primary: 0, secondary: 6, reqSkill: 31 },
-		"0x13fd": { primary: 0, secondary: 6, reqSkill: 31 },	// Heavy Crossbows // MovingShot, Dismount
+		"0x13fc": { primary: 10, secondary: 6, reqSkill: 31 },
+		"0x13fd": { primary: 10, secondary: 6, reqSkill: 31 },	// Heavy Crossbows // MovingShot, Dismount
 
 		"0x13e3": { primary: 4, secondary: 12, reqSkill: 41 },
 		"0x13e4": { primary: 4, secondary: 12, reqSkill: 41 },	// Smith's Hammers // CrushingBlow, ShadowStrike
@@ -130,11 +138,11 @@ function checkRequiredSkill( pUser, abilityID )
 		"0x13f8": { primary: 3, secondary: 0, reqSkill: 41 },
 		"0x13f9": { primary: 3, secondary: 0, reqSkill: 41 },	// Gnarled Staves // ConcussionBlow,ForceOfNature
 
-		"0x13fa": { primary: 0, secondary: 2, reqSkill: 40 },
-		"0x13fb": { primary: 0, secondary: 2, reqSkill: 40 },	// Large Battle Axes // WhirlwindAttack,BleedAttack
+		"0x13fa": { primary: 13, secondary: 2, reqSkill: 40 },
+		"0x13fb": { primary: 13, secondary: 2, reqSkill: 40 },	// Large Battle Axes // WhirlwindAttack,BleedAttack
 
-		"0x13fe": { primary: 0, secondary: 1, reqSkill: 40 },
-		"0x13ff": { primary: 0, secondary: 1, reqSkill: 40 },	// Katana // DoubleStrike,ArmorIgnore
+		"0x13fe": { primary: 7, secondary: 1, reqSkill: 40 },
+		"0x13ff": { primary: 7, secondary: 1, reqSkill: 40 },	// Katana // DoubleStrike,ArmorIgnore
 
 		"0x1400": { primary: 1, secondary: 8, reqSkill: 42 },
 		"0x1401": { primary: 1, secondary: 8, reqSkill: 42 },	// Kryss // ArmorIgnore,InfectiousStrike
@@ -148,23 +156,23 @@ function checkRequiredSkill( pUser, abilityID )
 		"0x1406": { primary: 4, secondary: 9, reqSkill: 41 },
 		"0x1407": { primary: 4, secondary: 9, reqSkill: 41 },	// War Maces // CrushingBlow,MortalStrike
 
-		"0x1438": { primary: 0, secondary: 4, reqSkill: 41 },
-		"0x1439": { primary: 0, secondary: 4, reqSkill: 41 },	// War Hammers // WhirlwindAttack,CrushingBlow
+		"0x1438": { primary: 13, secondary: 4, reqSkill: 41 },
+		"0x1439": { primary: 13, secondary: 4, reqSkill: 41 },	// War Hammers // WhirlwindAttack,CrushingBlow
 
-		"0x143a": { primary: 0, secondary: 3, reqSkill: 41 },
-		"0x143b": { primary: 0, secondary: 3, reqSkill: 41 },	// Mauls // DoubleStrike,ConcussionBlow
+		"0x143a": { primary: 7, secondary: 3, reqSkill: 41 },
+		"0x143b": { primary: 7, secondary: 3, reqSkill: 41 },	// Mauls // DoubleStrike,ConcussionBlow
 
 		"0x143c": { primary: 1, secondary: 9, reqSkill: 41 },
 		"0x143d": { primary: 1, secondary: 9, reqSkill: 41 },	// Hammer Picks // ArmorIgnore,MortalStrike
 
-		"0x143e": { primary: 0, secondary: 3, reqSkill: 40 },
-		"0x143f": { primary: 0, secondary: 3, reqSkill: 40 },	// Halberds // WhirlwindAttack,ConcussionBlow
+		"0x143e": { primary: 13, secondary: 3, reqSkill: 40 },
+		"0x143f": { primary: 13, secondary: 3, reqSkill: 40 },	// Halberds // WhirlwindAttack,ConcussionBlow
 
 		"0x1440": { primary: 2, secondary: 12, reqSkill: 40 },
 		"0x1441": { primary: 2, secondary: 12, reqSkill: 40 },	// Cutlasses // BleedAttack,ShadowStrike
 
-		"0x1442": { primary: 0, secondary: 12, reqSkill: 40 },
-		"0x1443": { primary: 0, secondary: 12, reqSkill: 40 }	// Two Handed Axes // DoubleStrike,ShadowStrike
+		"0x1442": { primary: 7, secondary: 12, reqSkill: 40 },
+		"0x1443": { primary: 7, secondary: 12, reqSkill: 40 }	// Two Handed Axes // DoubleStrike,ShadowStrike
 	};
 
 	// Get items in user's hands
@@ -236,7 +244,9 @@ function getAbilityManaTable()
 		9: { manaAmount: 30 },
 		10: { manaAmount: 30 },
 		11: { manaAmount: 30 },
-		12: { manaAmount: 20 }
+		12: { manaAmount: 20 },
+		13: { manaAmount: 20 },
+		14: { manaAmount: 100 }
 	};
 }
 
@@ -565,6 +575,20 @@ function onAbility( pAttacker, pDefender, abilityID )
 
 		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
+	else if( abilityID == 7 ) // Double Strike
+	{
+		// Clear out any current ability the player is doing when he switches abilities
+		if( abilityID != 7 )
+			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+
+		//checking mana
+		if( CheckMana( pAttacker, abilityID ))
+		{
+			DeductMana( pAttacker, abilityID );
+		}
+
+		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+	}
 	else if( abilityID == 8 ) // Infectious Strike
 	{
 		var itemRHand = pAttacker.FindItemLayer(0x01);
@@ -663,6 +687,20 @@ function onAbility( pAttacker, pDefender, abilityID )
 
 		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
+	else if( abilityID == 10 ) //  Moving Shot
+	{
+		// Clear out any current ability the player is doing when he switches abilities
+		if( abilityID != 10 )
+			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+
+		//checking mana
+		if( CheckMana( pAttacker, abilityID ))
+		{
+			DeductMana( pAttacker, abilityID );
+		}
+
+		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+	}
 	else if( abilityID == 11 ) // ParalyzingBlow
 	{
 		// Clear out any current ability the player is doing when he switches abilities
@@ -739,6 +777,20 @@ function onAbility( pAttacker, pDefender, abilityID )
 		pAttacker.visible = 1;
 
 		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );
+	}
+	else if( abilityID == 13 ) //  Whirlwind Attack
+	{
+		// Clear out any current ability the player is doing when he switches abilities
+		if( abilityID != 13 )
+			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
+
+		//checking mana
+		if( CheckMana(pAttacker, abilityID ))
+		{
+			DeductMana( pAttacker, abilityID );
+		}
+
+		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
 }
 
