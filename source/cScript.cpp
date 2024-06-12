@@ -298,8 +298,9 @@ cScript::cScript(std::string targFile, UI08 rT) : isFiring(false), runTime(rT)
   if (targContext == nullptr)
     return;
 
-  JS::RealmOptions options;
-  JSObject* globObject = JS_NewGlobalObject(targContext, &uox_class, nullptr, JS::FireOnNewGlobalHook, options);
+  auto targGlobal = JSEngine->GetObjectA(runTime);
+  JSAutoRealm realm(targContext, targGlobal );
+  JSObject *globObject = JS_NewObject( targContext, &uox_class );
   if (globObject == nullptr)
     return;
 
@@ -308,7 +309,7 @@ cScript::cScript(std::string targFile, UI08 rT) : isFiring(false), runTime(rT)
   // TODO Fix error reporter
   // JS_SetErrorReporter( targContext, UOX3ErrorReporter );
 
-  JS::InitRealmStandardClasses(targContext);
+  // https://github.com/mozilla-spidermonkey/spidermonkey-embedding-examples/blob/esr115/docs/Migration%20Guide.md#use-utf8-aware-compilation-and-evaluation
   JS_DefineFunctions(targContext, *targObject, my_functions);
   JS::CompileOptions compOpt(targContext);
   FILE* fFile = fopen(targFile.c_str(), "r");

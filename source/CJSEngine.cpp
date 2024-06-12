@@ -45,7 +45,7 @@ auto CJSEngine::Startup() -> void
   }
 
 	runtimeList.push_back( new CJSRuntime( engineMaxBytes ));	// Default Runtime
-	runtimeList.push_back( new CJSRuntime( engineMaxBytes ));	// Console Runtime
+	//runtimeList.push_back( new CJSRuntime( engineMaxBytes ));	// Console Runtime
 
 	Console << "JavaScript engine startup complete." << myendl;
 	Console.PrintSectionBegin();
