@@ -408,7 +408,8 @@ function onAbility( pAttacker, pDefender, abilityID )
 		}
 
 		pSockAttacker.SysMessage( GetDictionaryEntry( 19203, pSockAttacker.language ));// Your attack penetrates their armor!
-		pSockDefender.SysMessage( GetDictionaryEntry( 19204, pSockDefender.language ));// The blow penetrated your armor!
+		if( pSockDefender != null )
+			pSockDefender.SysMessage( GetDictionaryEntry( 19204, pSockDefender.language ));// The blow penetrated your armor!
 
 		pDefender.SoundEffect( 0x0056, true );
 		pDefender.StaticEffect( 0x3728, 0x09, 0x06 );
@@ -428,10 +429,13 @@ function onAbility( pAttacker, pDefender, abilityID )
 		}
 
 		pSockAttacker.SysMessage( GetDictionaryEntry( 19205, pSockAttacker.language ));// Your target is bleeding!
-		pSockDefender.SysMessage( GetDictionaryEntry( 19206, pSockDefender.language ));// You are bleeding!
+		if( pSockDefender != null )
+		{
+			pSockDefender.SysMessage(GetDictionaryEntry(19206, pSockDefender.language));// You are bleeding!
 
-		pSockDefender.TextMessage( GetDictionaryEntry( 19207, pSockDefender.language), false, 0x21 );// You are bleeding profusely
-		pSockDefender.TextMessage( pDefender.name, GetDictionaryEntry( 19208, pSockDefender.language), true, 0x21, 1 );// %i is bleeding profusely
+			pSockDefender.TextMessage(GetDictionaryEntry(19207, pSockDefender.language), false, 0x21);// You are bleeding profusely
+			pSockDefender.TextMessage(pDefender.name, GetDictionaryEntry(19208, pSockDefender.language), true, 0x21, 1);// %i is bleeding profusely
+		}
 
 		pDefender.StartTimer( 2000, 9300, 7001 ); // Start 2 second timer for blood and damage last total 10 seconds
 		pDefender.SetTempTag( "doBleed", true );
@@ -457,7 +461,9 @@ function onAbility( pAttacker, pDefender, abilityID )
 		}
 
 		pSockAttacker.SysMessage( GetDictionaryEntry( 19209, pSockAttacker.language ));// You have delivered a concussion!
-		pSockDefender.SysMessage( GetDictionaryEntry( 19210, pSockDefender.language ));// You feel disoriented!
+
+		if( pSockDefender != null )
+			pSockDefender.SysMessage( GetDictionaryEntry( 19210, pSockDefender.language ));// You feel disoriented!
 
 		pAttacker.SoundEffect( 0x213, true );
 		pDefender.StaticEffect( 0x377A, 0x09, 0x32 );
@@ -478,7 +484,8 @@ function onAbility( pAttacker, pDefender, abilityID )
 		}
 
 		pSockAttacker.SysMessage( GetDictionaryEntry( 19211, pSockAttacker.language ));// You have delivered a crushing blow!
-		pSockDefender.SysMessage( GetDictionaryEntry( 19212, pSockDefender.language ));// You take extra damage from the crushing attack!
+		if( pSockDefender != null )
+			pSockDefender.SysMessage( GetDictionaryEntry( 19212, pSockDefender.language ));// You take extra damage from the crushing attack!
 
 		pAttacker.SoundEffect( 0x1E1, true );
 		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
@@ -516,7 +523,8 @@ function onAbility( pAttacker, pDefender, abilityID )
 		pDefender.StaticEffect( 0x37BE, 0x09, 0x32 );
 
 		pSockAttacker.SysMessage( GetDictionaryEntry( 19215, pSockAttacker.language ));// You disarm their weapon!
-		pSockDefender.SysMessage( GetDictionaryEntry( 19216, pSockDefender.language ));// Your weapon has been disarmed!
+		if( pSockDefender != null )
+			pSockDefender.SysMessage( GetDictionaryEntry( 19216, pSockDefender.language ));// Your weapon has been disarmed!
 
 		if( itemLHand != null ) 
 		{
@@ -571,7 +579,9 @@ function onAbility( pAttacker, pDefender, abilityID )
 		pDefender.StaticEffect( 0x3728, 0x09, 0x06 );
 		pSockAttacker.SysMessage( GetDictionaryEntry( 19219, pSockAttacker.language ));// The force of your attack has dislodged them from their mount!
 		pDefender.Dismount();
-		pSockDefender.SysMessage( GetDictionaryEntry( 19220, pSockDefender.language ), pAttacker.name );// You have been knocked off of your mount by %i !
+
+		if( pSockDefender != null )
+			pSockDefender.SysMessage( GetDictionaryEntry( 19220, pSockDefender.language ), pAttacker.name );// You have been knocked off of your mount by %i !
 
 		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
@@ -643,11 +653,14 @@ function onAbility( pAttacker, pDefender, abilityID )
 		{
 			level++; // Increase the level by 1
 			pSockAttacker.SysMessage( GetDictionaryEntry( 19222, pSockAttacker.language ));// Your precise strike has increased the level of the poison by 1
-			pSockDefender.SysMessage( GetDictionaryEntry( 19223, pSockDefender.language ));// The poison seems extra effective!
+			if( pSockDefender != null )
+				pSockDefender.SysMessage( GetDictionaryEntry( 19223, pSockDefender.language ));// The poison seems extra effective!
 		}
 
 		pSockAttacker.SysMessage( GetDictionaryEntry( 19224, pSockAttacker.language), pDefender.name);// You have poisoned your target : 
-		pSockDefender.SysMessage( pAttacker.name, GetDictionaryEntry( 19225, pSockDefender.language ));// %i : poisoned you!
+		if( pSockDefender != null )
+			pSockDefender.SysMessage( pAttacker.name, GetDictionaryEntry( 19225, pSockDefender.language ));// %i : poisoned you!
+
 		pDefender.poison = level;
 
 		pAttacker.SoundEffect( 0xDD, true );
@@ -668,7 +681,9 @@ function onAbility( pAttacker, pDefender, abilityID )
 		}
 
 		pSockAttacker.SysMessage( GetDictionaryEntry( 19226, pSockAttacker.language ));// You deliver a mortal wound!
-		pSockDefender.SysMessage( GetDictionaryEntry( 19227, pSockDefender.language ));// You have been mortally wounded!
+
+		if( pSockDefender != null )
+			pSockDefender.SysMessage( GetDictionaryEntry( 19227, pSockDefender.language ));// You have been mortally wounded!
 
 		pAttacker.SoundEffect( 0x1E1, true );
 		pDefender.StaticEffect( 0x37B9, 0x09, 0x32 );
@@ -720,7 +735,8 @@ function onAbility( pAttacker, pDefender, abilityID )
 		if( isImmune != null && isImmune == true )
 		{
 			pSockAttacker.SysMessage( GetDictionaryEntry( 19228, pSockAttacker.language ));// Your target resists paralysis.
-			pSockDefender.SysMessage( GetDictionaryEntry( 19229, pSockDefender.language ));// You resist paralysis.
+			if( pSockDefender != null )
+				pSockDefender.SysMessage( GetDictionaryEntry( 19229, pSockDefender.language ));// You resist paralysis.
 			return true;
 		}
 
@@ -765,7 +781,8 @@ function onAbility( pAttacker, pDefender, abilityID )
 		}
 
 		pSockAttacker.SysMessage( GetDictionaryEntry( 19232, pSockAttacker.language ));// You strike and hide in the shadows!
-		pSockDefender.SysMessage( GetDictionaryEntry( 19233, pSockDefender.language ));// You are dazed by the attack and your attacker vanishes!
+		if( pSockDefender != null )
+			pSockDefender.SysMessage( GetDictionaryEntry( 19233, pSockDefender.language ));// You are dazed by the attack and your attacker vanishes!
 
 		pAttacker.StaticEffect( 0x376A, 0x09, 0x06 );
 
@@ -824,7 +841,8 @@ function onTimer( timerObj, timerID )
 	{
 		timerObj.RemoveScriptTrigger( 7002 );
 		timerObj.SetTempTag( "blockEquip", null );
-		socket.SysMessage( GetDictionaryEntry( 19234, socket.language ));// Your confusion has passed, you may now arm a weapon!
+		if( socket != null )
+			socket.SysMessage( GetDictionaryEntry( 19234, socket.language ));// Your confusion has passed, you may now arm a weapon!
 	}
 	else if( timerID == 9200 )
 	{
@@ -843,6 +861,7 @@ function onTimer( timerObj, timerID )
 	{
 		timerObj.SetTempTag( "doBleed", null );
 		timerObj.KillJSTimer( 9400, 7001 );
-		socket.SysMessage( GetDictionaryEntry( 19236, socket.language ));// The bleeding wounds have healed, you are no longer bleeding!
+		if( socket != null )
+			socket.SysMessage( GetDictionaryEntry( 19236, socket.language ));// The bleeding wounds have healed, you are no longer bleeding!
 	}
 }
