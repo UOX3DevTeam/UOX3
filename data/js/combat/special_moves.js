@@ -230,23 +230,38 @@ function checkRequiredSkill( pUser, abilityID )
 }
 
 function getAbilityManaTable()
-{
+{// Mana is Based off 2003 AOS and 2005 ML
 	return {
-		0: { manaAmount: 0 },
-		1: { manaAmount: 14 },
-		2: { manaAmount: 30 },
-		3: { manaAmount: 20 },
-		4: { manaAmount: 20 },
-		5: { manaAmount: 20 },
-		6: { manaAmount: 16 },
-		7: { manaAmount: 20 },
-		8: { manaAmount: 20 },
-		9: { manaAmount: 30 },
-		10: { manaAmount: 30 },
-		11: { manaAmount: 30 },
-		12: { manaAmount: 20 },
-		13: { manaAmount: 20 },
-		14: { manaAmount: 100 }
+		0: { manaAmount: 0 },		// Cancel Ability Attempt
+		1: { manaAmount: 30 },		// Armor Ignore // Start AOS abiltiies
+		2: { manaAmount: 30 },		// Bleed Attack
+		3: { manaAmount: 30 },		// Concusion Blow
+		4: { manaAmount: 30 },		// Crushing Blow
+		5: { manaAmount: 20 },		// Disarm
+		6: { manaAmount: 20 },		// Dismount
+		7: { manaAmount: 30 },		// Double Strike
+		8: { manaAmount: 20 },		// Infecting
+		9: { manaAmount: 30 },		// Mortal Strike
+		10: { manaAmount: 20 },		// Moving Shot
+		11: { manaAmount: 35 },		// Paralyzing Blow
+		12: { manaAmount: 25 },		// Shadow Strike
+		13: { manaAmount: 25 },		// Whirlwind Attack // End AOS abilities
+		14: { manaAmount: 30 },		// Riding Swipe // Start SE abiltiies
+		15: { manaAmount: 30 },		// Frenzied Whirlwind
+		16: { manaAmount: 30 },		// Block
+		17: { manaAmount: 30 },		// Defense Mastery
+		18: { manaAmount: 30 },		// Nerve Strike
+		19: { manaAmount: 30 },		// Talon Strike
+		20: { manaAmount: 30 },		// Feint
+		21: { manaAmount: 30 },		// Dual Wield
+		22: { manaAmount: 30 },		// Double shot
+		23: { manaAmount: 30 },		// Armor Peirce // End SE abilities
+		24: { manaAmount: 25 },		// Bladeweave // Start ML abilities
+		25: { manaAmount: 15 },		// Force Arrow
+		26: { manaAmount: 15 },		// Lightning Arrow
+		27: { manaAmount: 25 },		// Psychic Attack
+		28: { manaAmount: 35 },		// Serpent Arrow
+		29: { manaAmount: 35 }		// Force of Nature // End ML abilities
 	};
 }
 
