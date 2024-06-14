@@ -1,3 +1,9 @@
+14/06/2024 - Dragon Slayer
+	Added two new DFN tags for Items:
+		HITCHANCE=# 		// Increases the player's chance to hit a target with wrestling, melee and ranged weapons.
+		DEFENSECHANCE=# 	// Increases the wearer's chance that his opponents' swings (or arrows/bolts) will miss.
+	These are also available as JS Engine object properties: .hitChance, .defenseChance
+
 1/05/2024 - Dragon Slayer/Xuri
 	Fixed AutoUnequipAttempt function in clumsy.js, createfood.js level1target.js, will no longer fail on casting and return to hardcode.
 	Fixed createfood to check for reagents on cast.
