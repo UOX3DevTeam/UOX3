@@ -1037,6 +1037,48 @@ void CBaseObject::IncHP( SI16 amtToChange )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetHitChance()
+//|					CBaseObject::SetHitChance()
+//|	Date		-	14 June, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Defense Chance of the Item Equiped
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetHitChance( void ) const
+{
+	return hitChance;
+}
+void CBaseObject::SetHitChance( SI16 newValue )
+{
+	hitChance = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetDefenseChance()
+//|					CBaseObject::SetDefenseChance()
+//|	Date		-	14 June, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Defense Chance of the Item Equiped
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetDefenseChance( void ) const
+{
+	return defenseChance;
+}
+void CBaseObject::SetDefenseChance( SI16 newValue )
+{
+	defenseChance = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetDir()
 //|					CBaseObject::SetDir()
 //|	Date		-	28 July, 2000
@@ -1659,6 +1701,26 @@ void CBaseObject::IncDexterity( SI16 toInc )
 void CBaseObject::IncIntelligence( SI16 toInc )
 {
 	SetIntelligence( intelligence + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncHitChance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Hit Chance value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncHitChance( SI16 toInc )
+{
+	SetHitChance( hitChance + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncDefenseChance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Hit Chance value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncDefenseChance( SI16 toInc )
+{
+	SetDefenseChance( defenseChance + toInc );
 }
 
 //o------------------------------------------------------------------------------------------------o

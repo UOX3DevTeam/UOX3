@@ -7657,6 +7657,20 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
+			if( cItem.GetHitChance() > 0 )
+			{
+				tempEntry.stringNum = 1060415; // hit chance increase ~1_val~%
+				tempEntry.ourText = oldstrutil::number( cItem.GetHitChance() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetDefenseChance() > 0 )
+			{
+				tempEntry.stringNum = 1060408; // defense chance increase ~1_val~%
+				tempEntry.ourText = oldstrutil::number( cItem.GetDefenseChance() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
 			if( cItem.GetStrength() > 1 )
 			{
 				tempEntry.stringNum = 1061170; // strength requirement ~1_val~

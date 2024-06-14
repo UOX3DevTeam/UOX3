@@ -2920,6 +2920,9 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
+			IncHitChance( itemLayers[tLayer]->GetHitChance() );
+			IncDefenseChance( itemLayers[tLayer]->GetDefenseChance() );
+
 			if( toWear->IsPostLoaded() )
 			{
 				if( itemLayers[tLayer]->GetPoisoned() )
@@ -2979,6 +2982,10 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncStrength2( -itemLayers[Layer]->GetStrength2() );
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
+
+		IncHitChance( -itemLayers[Layer]->GetHitChance() );
+		IncDefenseChance( -itemLayers[Layer]->GetDefenseChance() );
+
 		if( itemLayers[Layer]->GetPoisoned() )
 		{
 			if( itemLayers[Layer]->GetPoisoned() > GetPoisoned() )

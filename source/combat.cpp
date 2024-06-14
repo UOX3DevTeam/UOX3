@@ -2883,9 +2883,9 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					maxAttHitChanceBonus = 50;
 				}
 				
-				// Fetch bonuses to hitChance/defenseChance from AoS item properties, when implemented
-				//attHitChanceBonus = GetAttackerHitChanceBonus();
-				//defDefenseChanceBonus = GetDefenderDefenseChanceBonus();
+				// Fetch bonuses to hitChance/defenseChance from AoS item properties
+				attHitChanceBonus = mChar.GetHitChance();
+				defDefenseChanceBonus = mChar.GetDefenseChance();
 
 				R32 attackerHitChance = ( static_cast<R32>( attackSkill / 10 ) + 20 ) * ( 100 + std::min( attHitChanceBonus, static_cast<R32>( maxAttHitChanceBonus )));
 				R32 defenderDefenseChance = ( static_cast<R32>( defendSkill / 10 ) + 20 ) * ( 100 + std::min( defDefenseChanceBonus, static_cast<R32>( 45 )));

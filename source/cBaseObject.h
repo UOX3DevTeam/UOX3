@@ -69,6 +69,8 @@ protected:
 	SI16				dexterity;
 	SI16				intelligence;
 	SI16				hitpoints;
+	SI16				hitChance;
+	SI16				defenseChance;
 	VisibleTypes		visible;
 	SI16				hiDamage;
 	SI16				loDamage;
@@ -223,6 +225,12 @@ public:
 	virtual void			SetHP( SI16 newValue );
 	void					IncHP( SI16 amtToChange );
 
+	virtual SI16			GetHitChance( void ) const;
+	virtual void			SetHitChance( SI16 newValue );
+
+	virtual SI16			GetDefenseChance( void ) const;
+	virtual void			SetDefenseChance( SI16 newValue );
+
 	void					SetDir( UI08 newDir, bool sendUpdate = true );
 	UI08					GetDir( void ) const;
 
@@ -255,6 +263,9 @@ public:
 	void					IncStrength( SI16 toInc = 1 );
 	void					IncDexterity( SI16 toInc = 1 );
 	void					IncIntelligence( SI16 toInc = 1 );
+
+	void					IncHitChance( SI16 toInc = 1 );
+	void					IncDefenseChance( SI16 toInc = 1 );
 
 	virtual void			PostLoadProcessing( void );
 	virtual bool			LoadRemnants( void ) = 0;

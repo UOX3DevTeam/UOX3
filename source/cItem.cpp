@@ -1638,6 +1638,8 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetRndValueRate( GetRndValueRate() );
 	target->SetSpawn( GetSpawn() );
 	target->SetSpeed( GetSpeed() );
+	target->SetHitChance( GetHitChance() );
+	target->SetDefenseChance( GetDefenseChance() );
 	target->SetSpell( 0, GetSpell( 0 ));
 	target->SetSpell( 1, GetSpell( 1 ));
 	target->SetSpell( 2, GetSpell( 2 ));
@@ -1736,6 +1738,8 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "BaseWeight=" + std::to_string( GetBaseWeight() ) + newLine;
 	outStream << "MaxItems=" + std::to_string( GetMaxItems() ) + newLine;
 	outStream << "MaxHP=" + std::to_string( GetMaxHP() ) + newLine;
+	outStream << "HitChance=" + std::to_string( GetHitChance() ) + newLine;
+	outStream << "DefenseChance=" + std::to_string( GetDefenseChance() ) + newLine;
 	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
 	outStream << "Movable=" + std::to_string( GetMovable() ) + newLine;
 	outStream << "Priv=" + std::to_string( GetPriv() ) + newLine;
@@ -1859,6 +1863,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					SetDye( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 );
 					rValue = true;
 				}
+				else if( UTag == "DEFENSECHANCE" )
+				{
+					SetDefenseChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
 				break;
 			case 'E':
 				if( UTag == "ENTRYMADEFROM" )
@@ -1903,6 +1912,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				if( UTag == "HEAT" )
 				{
 					SetWeatherDamage( HEAT, static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 );
+					rValue = true;
+				}
+				else if( UTag == "HITCHANCE" )
+				{
+					SetHitChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
