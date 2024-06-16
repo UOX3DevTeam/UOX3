@@ -1039,7 +1039,6 @@ void CBaseObject::IncHP( SI16 amtToChange )
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetHitChance()
 //|					CBaseObject::SetHitChance()
-//|	Date		-	14 June, 2024
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Defense Chance of the Item Equiped
 //o------------------------------------------------------------------------------------------------o
@@ -1060,7 +1059,6 @@ void CBaseObject::SetHitChance( SI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetDefenseChance()
 //|					CBaseObject::SetDefenseChance()
-//|	Date		-	14 June, 2024
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Defense Chance of the Item Equiped
 //o------------------------------------------------------------------------------------------------o
