@@ -1,9 +1,12 @@
 16/06/2024 - Dragon Slayer/Xuri
 	Added new DFN tags for Items:
-		SWINGSPEEDINCREASE=# 		// increases the rate at which a character uses his or her melee weapon. The rapidity of a character's attack is affected by the base speed of the weapon used, the amount of Stamina possessed, and the amount of SSI his or her items impart. Barehanded combatants swing at the fastest Weapon Base Speed possible.
-	These are also available as JS Engine object properties: .swingSpeedIncrease
+		SPEEDINCREASE=# 		// item property that increases base weapon swing speed by the specified percentage
+	These are also available as JS Engine object properties: .speedIncrease
 	Added INI Settings:
 		SWINGSPEEDINCREASECAP=#  	// Max cap for for swing speed increase a char can have.
+	Combat code updated with era-specific weapon swing speed calculations for different eras (LBR or earlier/AoS/ML onwards).
+        Note that speeds are still defined with flat values in DFNs regardless of era, but for ML and beyond speed
+ 	will be displayed as swing delay in seconds in item tooltip.
 
 1/05/2024 - Dragon Slayer/Xuri
 	Fixed AutoUnequipAttempt function in clumsy.js, createfood.js level1target.js, will no longer fail on casting and return to hardcode.
