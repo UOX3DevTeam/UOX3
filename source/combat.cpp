@@ -3429,8 +3429,10 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 		getDelay = static_cast<R32>( static_cast<R32>( std::min( statOffset, static_cast<SI16>( 100 ))) + 100 );
 	}
 
+	SI32 speedBonus	= 0;
 	SI32 getOffset	= 0;
-	SI32 baseValue	= 15000;
+	SI32 baseValue = (cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR) ? 15000 :
+					((cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_AOS) ? 80000 : 40000);
 
 	CChar *ourTarg = mChar->GetTarg();
 
@@ -3455,18 +3457,41 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 		}
 	}
 
+	speedBonus = mChar->GetSwingSpeedIncrease();
+	
+	// Swing Speed Increase Cap per AOS
+	if ( speedBonus > cwmWorldState->ServerData()->SwingSpeedIncreaseCap() )
+	{
+		speedBonus = cwmWorldState->ServerData()->SwingSpeedIncreaseCap();
+	}
+
 	//Allow faster strikes on fleeing targets
 	if( ValidateObject( ourTarg ))
 	{
 		if( ourTarg->GetNpcWander() == WT_FLEE || ourTarg->GetNpcWander() == WT_SCARED )
 		{
-			baseValue = 10000;
+			baseValue = cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR ? 10000 : 53333;
 		}
 	}
 
 	R32 globalAttackSpeed = cwmWorldState->ServerData()->GlobalAttackSpeed(); //Defaults to 1.0
 
-	getDelay = ( baseValue / ( getDelay * getOffset )) / globalAttackSpeed;
+	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR )
+	{
+		// Weapon swing delay in LBR and earlier
+		getDelay = baseValue / ( getDelay * getOffset * ( 1 + speedBonus / static_cast<float>( 10 ) )) / globalAttackSpeed;
+	}
+	else if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_AOS )
+	{
+		// Weapon swing delay in AOS or later
+		getDelay = ( baseValue / ( getDelay * getOffset * ( 1 + speedBonus / static_cast<float>( 10 ) )) / 4 - 0.5 ) / globalAttackSpeed;
+	}
+	else
+	{
+		// Weapon swing delay in ML or later
+		getDelay = ( baseValue / ( getDelay * getOffset * ( 1 + speedBonus / static_cast<float>( 10 ) )) * 0.5 ) / globalAttackSpeed;
+	}
+
 	return getDelay;
 }
 

@@ -369,7 +369,8 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SECRETSHARDKEY"s, 346},
 	{"MOONGATEFACETS"s, 347},
 	{"AUTOUNEQUIPPEDCASTING"s, 348},
-	{"LOOTDECAYSWITHNPCCORPSE"s, 349}
+	{"LOOTDECAYSWITHNPCCORPSE"s, 349},
+	{"SWINGSPEEDINCREASECAP"s, 353}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -5196,7 +5197,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SHOWITEMRESISTSTATS=" << ( ShowItemResistStats() ? 1 : 0 ) << '\n';
 		ofsOutput << "SHOWWEAPONDAMAGETYPES=" << ( ShowWeaponDamageTypes() ? 1 : 0 ) << '\n';
 		ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<UI16>( WeaponDamageBonusType() ) << '\n';
-
+		ofsOutput << "WEAPONSWINGSPEEDINCREASECAP=" << SwingSpeedIncreaseCap() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
@@ -5393,6 +5394,20 @@ auto CServerData::TrackingRedisplayTime() const -> UI16
 auto CServerData::TrackingRedisplayTime( UI16 value ) -> void
 {
 	trackingMsgRedisplayTimer = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SwingSpeedIncreaseCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for swing speed cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SwingSpeedIncreaseCap() const -> SI16
+{
+	return swingSpeedIncreaseCap;
+}
+auto CServerData::SwingSpeedIncreaseCap( SI16 value ) -> void
+{
+	swingSpeedIncreaseCap = value;
 }
 
 
@@ -6564,6 +6579,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 349:	 // LOOTDECAYSWITHNPCCORPSE
 			NpcCorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 353:	// SWINGSPEEDINCREASE
+			SwingSpeedIncreaseCap( std::stof( value ));
 			break;
 		default:
 			rValue = false;

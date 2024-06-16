@@ -1569,6 +1569,27 @@ Point3_st CBaseObject::GetLocation( void ) const
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetSwingSpeedIncrease()
+//|					CBaseObject::SetSwingSpeedIncrease()
+//|	Date		-	14 June, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the swing speed increase of the Item Equiped
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetSwingSpeedIncrease( void ) const
+{
+	return swingSpeedIncrease;
+}
+void CBaseObject::SetSwingSpeedIncrease( SI16 newValue )
+{
+	swingSpeedIncrease = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetStrength2()
 //|					CBaseObject::SetStrength2()
 //o------------------------------------------------------------------------------------------------o
@@ -1659,6 +1680,16 @@ void CBaseObject::IncDexterity( SI16 toInc )
 void CBaseObject::IncIntelligence( SI16 toInc )
 {
 	SetIntelligence( intelligence + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncSwingSpeedIncrease()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's swing speed value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncSwingSpeedIncrease( SI16 toInc )
+{
+	SetSwingSpeedIncrease( swingSpeedIncrease + toInc );
 }
 
 //o------------------------------------------------------------------------------------------------o

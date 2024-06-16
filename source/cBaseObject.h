@@ -75,6 +75,7 @@ protected:
 	SI32				weight;
 	SI16				mana;
 	SI16				stamina;
+	SI16				swingSpeedIncrease;
 	UI16				scriptTrig;
 	SI16				st2;
 	SI16				dx2;
@@ -222,6 +223,11 @@ public:
 	virtual void			SetIntelligence( SI16 newValue );
 	virtual void			SetHP( SI16 newValue );
 	void					IncHP( SI16 amtToChange );
+
+	virtual SI16			GetSwingSpeedIncrease( void ) const;
+	virtual void			SetSwingSpeedIncrease( SI16 newValue );
+
+	void					IncSwingSpeedIncrease( SI16 toInc = 1 );
 
 	void					SetDir( UI08 newDir, bool sendUpdate = true );
 	UI08					GetDir( void ) const;

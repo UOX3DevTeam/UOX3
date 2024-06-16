@@ -7544,7 +7544,15 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			if( cItem.GetSpeed() > 0 )
 			{
 				tempEntry.stringNum = 1061167; // weapon speed ~1_val~
-				tempEntry.ourText = oldstrutil::number( cItem.GetSpeed() );
+				if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_ML )
+				{
+					R64 wpnSpeedInSeconds = std::round(( 40000.0 / ( 200 * cItem.GetSpeed() ) * 0.5 ) * 10 ) / 10;
+					tempEntry.ourText = oldstrutil::format( "%.1fs", wpnSpeedInSeconds );
+				}
+				else
+				{
+					tempEntry.ourText = oldstrutil::number( cItem.GetSpeed() );
+				}
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
@@ -7654,6 +7662,13 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			{
 				tempEntry.stringNum = 1060432; // intelligence bonus ~1_val~
 				tempEntry.ourText = oldstrutil::number( cItem.GetIntelligence2() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetSwingSpeedIncrease() > 0 )
+			{
+				tempEntry.stringNum = 1060486; // swing speed increase ~1_val~%
+				tempEntry.ourText = oldstrutil::number( cItem.GetSwingSpeedIncrease() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
