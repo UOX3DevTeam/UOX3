@@ -1,8 +1,8 @@
 13/05/2024 - Dragon Slayer
 	Added three More AOS Props
-	-BONUSHITS=#
-	-BONUSMANA=#
-	-BONUSSTAM=#
+	-HEALTHBONUS=#
+	-MANABONUS=#
+	-STAMINABONUS=#
 	Add this properties to any weapon/armor/jewlery will give the player more hp/mana/stam why its equiped. depending on number you add with it
 
 27/04/2024 - Dragon Slayer/Xuri
