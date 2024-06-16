@@ -3431,8 +3431,8 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 
 	SI32 speedBonus	= 0;
 	SI32 getOffset	= 0;
-	SI32 baseValue = (cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR) ? 15000 :
-					((cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_AOS) ? 80000 : 40000);
+	SI32 baseValue = ( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR ) ? 15000 :
+					(( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML ) ? 80000 : 40000 );
 
 	CChar *ourTarg = mChar->GetTarg();
 
@@ -3470,7 +3470,8 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 	{
 		if( ourTarg->GetNpcWander() == WT_FLEE || ourTarg->GetNpcWander() == WT_SCARED )
 		{
-			baseValue = cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR ? 10000 : 53333;
+			baseValue = ( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR ) ? 10000 : 
+						(( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML ) ? 53333 : 26680 );
 		}
 	}
 
@@ -3481,9 +3482,9 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 		// Weapon swing delay in LBR and earlier
 		getDelay = baseValue / ( getDelay * getOffset * ( 1 + speedBonus / static_cast<float>( 10 ) )) / globalAttackSpeed;
 	}
-	else if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_AOS )
+	else if( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML )
 	{
-		// Weapon swing delay in AOS or later
+		// Weapon swing delay in SE and earlier
 		getDelay = ( baseValue / ( getDelay * getOffset * ( 1 + speedBonus / static_cast<float>( 10 ) )) / 4 - 0.5 ) / globalAttackSpeed;
 	}
 	else

@@ -1572,7 +1572,7 @@ Point3_st CBaseObject::GetLocation( void ) const
 //|	Function	-	CBaseObject::GetSwingSpeedIncrease()
 //|					CBaseObject::SetSwingSpeedIncrease()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the weapon swing speed increase in percentage for item
+//|	Purpose		-	Gets/Sets the item's Swing Speed Increase  property (in percentage), which adjusts the base swing speed of the equipped weapon
 //o------------------------------------------------------------------------------------------------o
 SI16 CBaseObject::GetSwingSpeedIncrease( void ) const
 {
