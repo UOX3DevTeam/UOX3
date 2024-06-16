@@ -94,6 +94,7 @@ const SI16			DEFBASE_KILLS		= 0;
 const UI16			DEFBASE_RESIST 		= 0;
 const bool			DEFBASE_NAMEREQUESTACTIVE = 0;
 const ExpansionRuleset	DEFBASE_ORIGIN	= ER_UO;
+const SI16			DEFBASE_DURABLITITYHPBONUS = 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
@@ -110,7 +111,8 @@ loDamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ),
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ),
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
-fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN )
+fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN ),
+durabilityHpBonus( DEFBASE_DURABLITITYHPBONUS )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
