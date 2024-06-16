@@ -1743,7 +1743,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "Restock=" + std::to_string( GetRestock() ) + newLine;
 	outStream << "AC=" + std::to_string( GetArmourClass() ) + newLine;
 	outStream << "Rank=" + std::to_string( GetRank() ) + newLine;
-	outStream << "SwingSpeedIncrease=" + std::to_string( GetSwingSpeedIncrease() ) + newLine;
+	outStream << "SpeedIncrease=" + std::to_string( GetSwingSpeedIncrease() ) + newLine;
 	outStream << "Sk_Made=" + std::to_string( GetMadeWith() ) + newLine;
 	outStream << "Bools=" + std::to_string(( bools.to_ulong() )) + newLine;
 	outStream << "Good=" + std::to_string( GetGood() ) + newLine;
