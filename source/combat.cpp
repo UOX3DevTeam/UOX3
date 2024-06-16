@@ -3429,7 +3429,6 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 		getDelay = static_cast<R32>( static_cast<R32>( std::min( statOffset, static_cast<SI16>( 100 ))) + 100 );
 	}
 
-	SI32 speedBonus	= 0;
 	SI32 getOffset	= 0;
 	SI32 baseValue = ( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR ) ? 15000 :
 					(( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML ) ? 80000 : 40000 );
@@ -3457,7 +3456,7 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 		}
 	}
 
-	speedBonus = mChar->GetSwingSpeedIncrease();
+	SI32 speedBonus = mChar->GetSwingSpeedIncrease();
 	
 	// Swing Speed Increase Cap per AOS
 	if ( speedBonus > cwmWorldState->ServerData()->SwingSpeedIncreaseCap() )
