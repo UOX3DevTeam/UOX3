@@ -1571,7 +1571,6 @@ Point3_st CBaseObject::GetLocation( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetSwingSpeedIncrease()
 //|					CBaseObject::SetSwingSpeedIncrease()
-//|	Date		-	14 June, 2024
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the swing speed increase of the Item Equiped
 //o------------------------------------------------------------------------------------------------o
