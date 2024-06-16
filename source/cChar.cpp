@@ -2920,9 +2920,9 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
-			IncBonusHits( itemLayers[tLayer]->GetBonusHits() );
-			IncBonusStam( itemLayers[tLayer]->GetBonusStam() );
-			IncBonusMana( itemLayers[tLayer]->GetBonusMana() );
+			IncHealthBonus( itemLayers[tLayer]->GetHealthBonus() );
+			IncStaminaBonus( itemLayers[tLayer]->GetStaminaBonus() );
+			IncManaBonus( itemLayers[tLayer]->GetManaBonus() );
 
 			if( toWear->IsPostLoaded() )
 			{
@@ -2984,9 +2984,9 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
 
-		IncBonusHits( -itemLayers[Layer]->GetBonusHits() );
-		IncBonusStam( -itemLayers[Layer]->GetBonusStam() );
-		IncBonusMana( -itemLayers[Layer]->GetBonusMana() );
+		IncHealthBonus( -itemLayers[Layer]->GetHealthBonus() );
+		IncStaminaBonus( -itemLayers[Layer]->GetStaminaBonus() );
+		IncManaBonus( -itemLayers[Layer]->GetManaBonus() );
 
 		if( itemLayers[Layer]->GetPoisoned() )
 		{
@@ -3796,7 +3796,7 @@ UI16 CChar::GetMaxHP( void )
 		oldRace			= GetRace();
 
 	}
-	return maxHP + GetBonusHits();
+	return maxHP + GetHealthBonus();
 }
 void CChar::SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace )
 {
@@ -3856,7 +3856,7 @@ SI16 CChar::GetMaxMana( void )
 		oldRace			= GetRace();
 
 	}
-	return maxMana + GetBonusMana();
+	return maxMana + GetManaBonus();
 }
 void CChar::SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace )
 {
@@ -3916,7 +3916,7 @@ SI16 CChar::GetMaxStam( void )
 		oldRace			= GetRace();
 
 	}
-	return maxStam + GetBonusStam();
+	return maxStam + GetStaminaBonus();
 }
 void CChar::SetMaxStam( SI16 newmaxstam, UI16 newolddex, RACEID newoldrace )
 {
@@ -5603,72 +5603,71 @@ void CChar::SetIntelligence2( SI16 nVal )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CChar::SetBonusHits()
+//| Function	-	CChar::SetHealthBonus()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets bonus Hits stat for character
 //o------------------------------------------------------------------------------------------------o
-void CChar::SetBonusHits( SI16 nVal )
+void CChar::SetHealthBonus( SI16 nVal )
 {
-	CBaseObject::SetBonusHits( nVal );
+	CBaseObject::SetHealthBonus( nVal );
 	Dirty( UT_HITPOINTS );
 	UpdateRegion();
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CChar::SetBonusStam()
+//| Function	-	CChar::SetStaminaBonus()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets bonus Stam stat for character
 //o------------------------------------------------------------------------------------------------o
-void CChar::SetBonusStam( SI16 nVal )
+void CChar::SetStaminaBonus( SI16 nVal )
 {
-	CBaseObject::SetBonusStam( nVal );
+	CBaseObject::SetStaminaBonus( nVal );
 	Dirty( UT_STAMINA );
 	UpdateRegion();
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CChar::SetBonusMana()
+//| Function	-	CChar::SetManaBonus()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets bonus Mana stat for character
 //o------------------------------------------------------------------------------------------------o
-void CChar::SetBonusMana( SI16 nVal )
+void CChar::SetManaBonus( SI16 nVal )
 {
-	CBaseObject::SetBonusMana( nVal );
+	CBaseObject::SetManaBonus( nVal );
 	Dirty( UT_MANA );
 	UpdateRegion();
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CChar::IncBonusHits()
-//| Date		-	26 May 2024
+//| Function	-	CChar::IncHealthBonus()
 //o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Increments GetBonusHits (modifications) by toAdd
+//| Purpose		-	Increments GetHealthBonus (modifications) by toAdd
 //o------------------------------------------------------------------------------------------------o
-void CChar::IncBonusHits( SI16 toAdd )
+void CChar::IncHealthBonus( SI16 toAdd )
 {
-	SetBonusHits( static_cast<SI16>( GetBonusHits() + toAdd ));
+	SetHealthBonus( static_cast<SI16>( GetHealthBonus() + toAdd ));
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CChar::IncBonusStam()
+//| Function	-	CChar::IncStaminaBonus()
 //| Date		-	26 May 2024
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Increments GetBonusStam (modifications) by toAdd
 //o------------------------------------------------------------------------------------------------o
-void CChar::IncBonusStam( SI16 toAdd )
+void CChar::IncStaminaBonus( SI16 toAdd )
 {
-	SetBonusStam( static_cast<SI16>( GetBonusStam() + toAdd ));
+	SetStaminaBonus( static_cast<SI16>( GetStaminaBonus() + toAdd ));
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CChar::IncBonusMana()
+//| Function	-	CChar::IncManaBonus()
 //| Date		-	26 May 2024
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Increments GetBonusMana (modifications) by toAdd
 //o------------------------------------------------------------------------------------------------o
-void CChar::IncBonusMana( SI16 toAdd )
+void CChar::IncManaBonus( SI16 toAdd )
 {
-	SetBonusMana( static_cast<SI16>( GetBonusMana() + toAdd ));
+	SetManaBonus( static_cast<SI16>( GetManaBonus() + toAdd ));
 }
 
 //o------------------------------------------------------------------------------------------------o

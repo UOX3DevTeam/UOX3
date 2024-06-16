@@ -7657,24 +7657,24 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-			if( cItem.GetBonusHits() > 0 )
+			if( cItem.GetHealthBonus() > 0 )
 			{
 				tempEntry.stringNum = 1060431; // hit point increase ~1_val~
-				tempEntry.ourText = oldstrutil::number( cItem.GetBonusHits() );
+				tempEntry.ourText = oldstrutil::number( cItem.GetHealthBonus() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-			if( cItem.GetBonusStam() > 0 )
+			if( cItem.GetStaminaBonus() > 0 )
 			{
 				tempEntry.stringNum = 1060484; // stamina increase ~1_val~
-				tempEntry.ourText = oldstrutil::number( cItem.GetBonusStam() );
+				tempEntry.ourText = oldstrutil::number( cItem.GetStaminaBonus() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-			if( cItem.GetBonusMana() > 0 )
+			if( cItem.GetManaBonus() > 0 )
 			{
 				tempEntry.stringNum = 1060439; // mana increase ~1_val~
-				tempEntry.ourText = oldstrutil::number( cItem.GetBonusMana() );
+				tempEntry.ourText = oldstrutil::number( cItem.GetManaBonus() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 

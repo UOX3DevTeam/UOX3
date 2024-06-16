@@ -1654,9 +1654,9 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetWeightMax( GetWeightMax() );
 	target->SetBaseWeight( GetBaseWeight() );
 	target->SetMaxItems( GetMaxItems() );
-	target->SetBonusHits( GetBonusHits() );
-	target->SetBonusStam( GetBonusStam() );
-	target->SetBonusMana( GetBonusMana() );
+	target->SetHealthBonus( GetHealthBonus() );
+	target->SetStaminaBonus( GetStaminaBonus() );
+	target->SetManaBonus( GetManaBonus() );
 	//target->SetWipeable( IsWipeable() );
 	target->SetPriv( GetPriv() );
 	target->SetBaseRange( GetBaseRange() );
@@ -1740,7 +1740,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "MaxItems=" + std::to_string( GetMaxItems() ) + newLine;
 	outStream << "MaxHP=" + std::to_string( GetMaxHP() ) + newLine;
 	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
-	outStream << "BonusStats=" + std::to_string( GetBonusHits() ) + "," + std::to_string( GetBonusStam() ) + "," + std::to_string( GetBonusMana() ) + newLine;
+	outStream << "BonusStats=" + std::to_string( GetHealthBonus() ) + "," + std::to_string( GetStaminaBonus() ) + "," + std::to_string( GetManaBonus() ) + newLine;
 	outStream << "Movable=" + std::to_string( GetMovable() ) + newLine;
 	outStream << "Priv=" + std::to_string( GetPriv() ) + newLine;
 	outStream << "Value=" + std::to_string( GetBuyValue() ) + "," + std::to_string( GetSellValue() ) + "," + std::to_string( GetVendorPrice() ) + newLine;
@@ -1826,9 +1826,9 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "BONUSSTATS" )
 				{
-				    SetBonusHits( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
-				    SetBonusStam( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
-				    SetBonusMana( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+				    SetHealthBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+				    SetStaminaBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+				    SetManaBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
 				    rValue = true;
 				}
 				break;

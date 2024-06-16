@@ -676,9 +676,9 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_DAMAGERAIN:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( RAIN ));	break;
 			case CIP_DAMAGESNOW:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( SNOW ));	break;
 			case CIP_SPEED:			*vp = INT_TO_JSVAL( gPriv->GetSpeed() );			break;
-			case CIP_BONUSHITS:		*vp = INT_TO_JSVAL( gPriv->GetBonusHits() );			break;
-			case CIP_BONUSSTAM:		*vp = INT_TO_JSVAL( gPriv->GetBonusStam() );			break;
-			case CIP_BONUSMANA:		*vp = INT_TO_JSVAL( gPriv->GetBonusMana() );			break;
+			case CIP_HEALTHBONUS:		*vp = INT_TO_JSVAL( gPriv->GetHealthBonus() );			break;
+			case CIP_STAMINABONUS:		*vp = INT_TO_JSVAL( gPriv->GetStaminaBonus() );			break;
+			case CIP_MANABONUS:		*vp = INT_TO_JSVAL( gPriv->GetManaBonus() );			break;
 			case CIP_NAME2:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetName2().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
@@ -1324,9 +1324,9 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_DAMAGERAIN:	gPriv->SetWeatherDamage( RAIN, encaps.toBool() );			break;
 			case CIP_DAMAGESNOW:	gPriv->SetWeatherDamage( SNOW, encaps.toBool() );			break;
 			case CIP_SPEED:			gPriv->SetSpeed( static_cast<UI08>( encaps.toInt() ));		break;
-			case CIP_BONUSHITS:		gPriv->SetBonusHits( static_cast<SI16>( encaps.toInt() ));	break;
-			case CIP_BONUSSTAM:		gPriv->SetBonusStam( static_cast<SI16>( encaps.toInt() ));	break;
-			case CIP_BONUSMANA:		gPriv->SetBonusMana( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_HEALTHBONUS:		gPriv->SetHealthBonus( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_STAMINABONUS:		gPriv->SetStaminaBonus( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_MANABONUS:		gPriv->SetManaBonus( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_NAME2:			gPriv->SetName2( encaps.toString() );						break;
 			case CIP_RACE:			gPriv->SetRace( static_cast<RACEID>( encaps.toInt() ));		break;
 			case CIP_MAXHP:			gPriv->SetMaxHP( static_cast<SI16>( encaps.toInt() ));		break;

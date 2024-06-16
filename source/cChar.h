@@ -629,13 +629,13 @@ public:
 	virtual void	SetDexterity2( SI16 newValue ) override;
 	virtual void	SetIntelligence2( SI16 newValue ) override;
 
-	virtual void	SetBonusHits( SI16 newValue ) override;
-	virtual void	SetBonusStam( SI16 newValue ) override;
-	virtual void	SetBonusMana( SI16 newValue ) override;
+	virtual void	SetHealthBonus( SI16 newValue ) override;
+	virtual void	SetStaminaBonus( SI16 newValue ) override;
+	virtual void	SetManaBonus( SI16 newValue ) override;
 
-	void			IncBonusHits( SI16 toAdd = 1 );
-	void			IncBonusStam( SI16 toAdd = 1 );
-	void			IncBonusMana( SI16 toAdd = 1 );
+	void			IncHealthBonus( SI16 toAdd = 1 );
+	void			IncStaminaBonus( SI16 toAdd = 1 );
+	void			IncManaBonus( SI16 toAdd = 1 );
 
 	void			IncStamina( SI16 toInc );
 	void			IncMana( SI16 toInc );

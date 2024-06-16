@@ -94,9 +94,9 @@ const SI16			DEFBASE_KILLS		= 0;
 const UI16			DEFBASE_RESIST 		= 0;
 const bool			DEFBASE_NAMEREQUESTACTIVE = 0;
 const ExpansionRuleset	DEFBASE_ORIGIN	= ER_UO;
-const SI16			DEFBASE_BONUSHEALTH = 0;
-const SI16			DEFBASE_BONUSSTAMINA = 0;
-const SI16			DEFBASE_BONUSMANA = 0;
+const SI16			DEFBASE_HEALTHBONUS = 0;
+const SI16			DEFBASE_STAMINABONOS = 0;
+const SI16			DEFBASE_MANABONUS = 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
@@ -114,7 +114,7 @@ mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ),
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN ),
-bonusHits( DEFBASE_BONUSHEALTH ),bonusStam( DEFBASE_BONUSSTAMINA ), bonusMana( DEFBASE_BONUSMANA )
+healthBonus( DEFBASE_HEALTHBONUS ),staminaBonus( DEFBASE_STAMINABONOS ), manaBonus( DEFBASE_MANABONUS )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
@@ -1636,19 +1636,19 @@ void CBaseObject::SetIntelligence2( SI16 nVal )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CBaseObject::GetBonusHits()
-//|					CBaseObject::SetBonusHits()
+//|	Function	-	CBaseObject::GetHealthBonus()
+//|					CBaseObject::SetHealthBonus()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the health max var associated with the object. For chars, it's the
 //|					bonuses (via armour and such)
 //o------------------------------------------------------------------------------------------------o
-SI16 CBaseObject::GetBonusHits( void ) const
+SI16 CBaseObject::GetHealthBonus( void ) const
 {
-	return bonusHits;
+	return healthBonus;
 }
-void CBaseObject::SetBonusHits( SI16 nVal )
+void CBaseObject::SetHealthBonus( SI16 nVal )
 {
-	bonusHits = nVal;
+	healthBonus = nVal;
 
 	if( CanBeObjType( OT_ITEM ))
 	{
@@ -1657,19 +1657,19 @@ void CBaseObject::SetBonusHits( SI16 nVal )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CBaseObject::GetBonusStam()
-//|					CBaseObject::SetBonusStam()
+//|	Function	-	CBaseObject::GetStaminaBonus()
+//|					CBaseObject::SetStaminaBonus()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the stamina max var associated with the object. For chars, it's the
 //|					bonuses (via armour and such)
 //o------------------------------------------------------------------------------------------------o
-SI16 CBaseObject::GetBonusStam( void ) const
+SI16 CBaseObject::GetStaminaBonus( void ) const
 {
-	return bonusStam;
+	return staminaBonus;
 }
-void CBaseObject::SetBonusStam( SI16 nVal )
+void CBaseObject::SetStaminaBonus( SI16 nVal )
 {
-	bonusStam = nVal;
+	staminaBonus = nVal;
 
 	if( CanBeObjType( OT_ITEM ))
 	{
@@ -1678,19 +1678,19 @@ void CBaseObject::SetBonusStam( SI16 nVal )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CBaseObject::GetBonusMana()
-//|					CBaseObject::SetBonusMana()
+//|	Function	-	CBaseObject::GetManaBonus()
+//|					CBaseObject::SetManaBonus()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Mana max var associated with the object. For chars, it's the
 //|					bonuses (via armour and such)
 //o------------------------------------------------------------------------------------------------o
-SI16 CBaseObject::GetBonusMana( void ) const
+SI16 CBaseObject::GetManaBonus( void ) const
 {
-	return bonusMana;
+	return manaBonus;
 }
-void CBaseObject::SetBonusMana( SI16 nVal )
+void CBaseObject::SetManaBonus( SI16 nVal )
 {
-	bonusMana = nVal;
+	manaBonus = nVal;
 
 	if( CanBeObjType( OT_ITEM ))
 	{
