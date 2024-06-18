@@ -1,3 +1,12 @@
+18/06/2024 - Dragon Slayer
+	Added three new DFN tags for Items:
+		HEALTHLEECH=# 	// It gives an attacker the ability to leech health from his opponent every time he successfully delivers a hit adds it to himself.
+		STAMINALEECH=# 	// It gives an attacker the ability to leech Stamina from his opponent every time he successfully delivers a hit adds it to himself.
+		MANALEECH=# 	// It gives an attacker the ability to leech Mana from his opponent every time he successfully delivers a hit adds it to himself.
+	These are also available as JS Engine object properties: .healthLeech, .staminaLeech and .manaLeech
+	Added leechstats.js file that controls the combat for the properties. (script 7003)
+	To add this script to a weapon only. add in SCRIPT=7003, HEALTHLEECH=# or STAMINALEECH=# or MANALEECH=# it can also be all three on the weapon.
+
 1/05/2024 - Dragon Slayer/Xuri
 	Fixed AutoUnequipAttempt function in clumsy.js, createfood.js level1target.js, will no longer fail on casting and return to hardcode.
 	Fixed createfood to check for reagents on cast.
