@@ -1644,6 +1644,9 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetStamina( GetStamina() );
 	target->SetStrength( GetStrength() );
 	target->SetStrength2( GetStrength2() );
+	target->SetHealthLeech( GetHealthLeech() );
+	target->SetStaminaLeech( GetStaminaLeech() );
+	target->SetManaLeech( GetManaLeech() );
 	target->SetTitle( GetTitle() );
 	target->SetType( GetType() );
 	target->SetBuyValue( GetBuyValue() );
@@ -1739,6 +1742,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
 	outStream << "Movable=" + std::to_string( GetMovable() ) + newLine;
 	outStream << "Priv=" + std::to_string( GetPriv() ) + newLine;
+	outStream << "LeechStats=" + std::to_string( GetHealthLeech() ) + "," + std::to_string( GetStaminaLeech() ) + "," + std::to_string( GetManaLeech() ) + newLine;
 	outStream << "Value=" + std::to_string( GetBuyValue() ) + "," + std::to_string( GetSellValue() ) + "," + std::to_string( GetVendorPrice() ) + newLine;
 	outStream << "Restock=" + std::to_string( GetRestock() ) + newLine;
 	outStream << "AC=" + std::to_string( GetArmourClass() ) + newLine;
@@ -1921,6 +1925,13 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					SetWeatherDamage( LIGHTNING, static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 );
 					rValue = true;
+				}
+				else if( UTag == "LEECHSTATS" )
+				{
+					SetHealthLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+				    SetStaminaLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+				    SetManaLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+				    rValue = true;
 				}
 				break;
 			case 'M':
