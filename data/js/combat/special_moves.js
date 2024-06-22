@@ -385,8 +385,8 @@ function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
         damage = RandomNumber( 0, 4 );
 
     // If defender is a player, damage is divided by this modifier from uox.ini
-    if( !pDefender.npc )
-        damage /= GetServerSetting( "NPCDAMAGERATE" );
+	if( pAttacker.npc && !pDefender.npc )
+		damage /= GetServerSetting( "NPCDAMAGERATE" );
 
     return damage;
 }
