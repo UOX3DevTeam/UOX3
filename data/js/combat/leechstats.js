@@ -31,27 +31,23 @@ function onDamageDeal( attacker, damaged, damageValue, damageType )
 function ApplyLeech( attacker, damaged, damageValue, weapon, leechType, multiplier )
 {	
 	// Get the leech amount for the specified leech type from the weapon
-	var leechAmount = weapon[ leechType ];
-	if( leechAmount > 0 ) 
-	{   // Calculate the minimum and maximum leech values
-		var minLeech = Math.round( damageValue * ( leechAmount / 100 ) * ( multiplier/100 ));
-		var maxLeech = Math.round( ( ( weapon.speed / 100 ) * 2500 ) / ( 100 + weapon.speedIncrease ));
-		var leechAmt = RandomNumber( minLeech, maxLeech );
+	var leechPercentVal = weapon[ leechType ];
+	if( leechPercentVal > 0 ) 
+	{   
+		// Calculate the percent of health restored to the attacker
+		var leechAmt = Math.round( damageValue * ( leechPercentVal / 100 ) * ( multiplier/100 ));
 
 		// Apply the leech effect based on the leech type
 		switch( leechType ) 
 		{
 			case 'healthLeech':
 				attacker.Heal( leechAmt );
-				damaged.health -= leechAmt;
 				break;
 			case 'staminaLeech':
 				attacker.stamina += leechAmt;
-				damaged.stamina -= leechAmt;
 				break;
 			case 'manaLeech':
 				attacker.mana += leechAmt;
-				damaged.mana -= leechAmt;
 				break;
 		}
 
