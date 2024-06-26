@@ -157,6 +157,8 @@ private:
 
 	void		Cleanup( void );
 
+	std::string  readSource(const std::string& sourceFile);
+
 public:
 	void		CollectGarbage( void );
 

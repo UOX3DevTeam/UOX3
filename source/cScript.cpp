@@ -13,7 +13,8 @@
 #include "osunique.hpp"
 #include <jsapi.h>
 #include <js/Object.h>
-#include <js\CompilationAndEvaluation.h>
+#include <js/CompilationAndEvaluation.h>
+#include <js/SourceText.h>
 
 //o------------------------------------------------------------------------------------------------o
 //|	File		-	cScript.cpp
@@ -286,6 +287,27 @@ SI32 TryParseJSVal(JS::Value toParse)
   }
 }
 
+std::string cScript::readSource(const std::string& targFile) {
+
+  std::ifstream InputFile1( targFile.c_str() );
+
+  if( !InputFile1.is_open() )
+  {
+    Console.Error( oldstrutil::format("Couldn't open Javascript File %s", targFile.c_str() ) );
+    return "";
+  }
+
+  std::string content = "";
+  while( !InputFile1.eof() && !InputFile1.fail() )
+  {
+    std::string Line;
+    std::getline( InputFile1, Line );
+    content += Line + "\n";
+  }
+  InputFile1.close();
+  return content;
+}
+
 cScript::cScript(std::string targFile, UI08 rT) : isFiring(false), runTime(rT)
 {
   for (SI32 i = 0; i < 3; ++i)
@@ -312,20 +334,45 @@ cScript::cScript(std::string targFile, UI08 rT) : isFiring(false), runTime(rT)
   // https://github.com/mozilla-spidermonkey/spidermonkey-embedding-examples/blob/esr115/docs/Migration%20Guide.md#use-utf8-aware-compilation-and-evaluation
   JS_DefineFunctions(targContext, *targObject, my_functions);
   JS::CompileOptions compOpt(targContext);
-  FILE* fFile = fopen(targFile.c_str(), "r");
-  JSScript* compiledScript = JS::CompileUtf8File(targContext, compOpt, fFile);
-  fclose(fFile);
-  if (compiledScript == nullptr)
+  compOpt.setFileAndLine(targFile.c_str(), 0);
+  JS::RootedScript script(targContext);
+  std::string sourceCode = readSource(targFile);
+
+  JS::SourceText<mozilla::Utf8Unit> source;
+  if (!source.init( targContext, sourceCode.c_str(), sourceCode.length(), JS::SourceOwnership::Borrowed )) {
+    Console << "script failure: compiling" << myendl;
+    return;
+  }
+  script = JS::Compile(targContext, compOpt, source);
+  if (script == nullptr)
   {
     throw std::runtime_error("Compilation failed");
   }
   JS::RootedValue val(targContext);
   JS::MutableHandleValue rval(&val);
-  targScript = new JS::RootedScript(targContext, compiledScript);
+  targScript = new JS::RootedScript(targContext, script);
   bool ok = JS_ExecuteScript(targContext, *targScript, rval);
   if (!ok)
   {
-    Console << "script result: " << convertToString(targContext, rval.toString());
+    std::string value = "<unknown>";
+    if (rval.isString()) {
+      value = convertToString(targContext, rval.toString());
+    }
+    else if (rval.isNullOrUndefined()) {
+      value = "null/undefined";
+    }
+    Console << "script result: ";
+    Console.TurnRed();
+    Console << value;
+    Console.TurnNormal();
+    Console << " (" << targFile << ")" << myendl;
+  }
+  else {
+    Console << "script result: ";
+    Console.TurnGreen();
+    Console << "OK";
+    Console.TurnNormal();
+    Console << " (" << targFile << ")" << myendl;
   }
 }
 
@@ -3565,12 +3612,14 @@ bool cScript::ExistAndVerify(ScriptEvent eventNum, std::string functionName)
 bool cScript::ScriptRegistration(std::string scriptType)
 {
   scriptType += "Registration";
+  JSAutoRealm realm(targContext, targScript->get());
   JS::RootedValue rval(targContext);
   JS::RootedValueArray<1> params(targContext);
   // ExistAndVerify() normally sets our Global Object, but not on custom named functions.
   // TODO JS_SetGlobalObject(targContext, targObject);
 
   JS::RootedValue Func(targContext);
+  // Can't use GetProperty to find a function?
   JS_GetProperty(targContext, *targObject, scriptType.c_str(), &Func);
   if (Func.isNullOrUndefined())
   {
