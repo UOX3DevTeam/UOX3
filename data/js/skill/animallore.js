@@ -158,11 +158,11 @@ function onCallback0( pSock, ourObj )
 					animalLoreGump.AddGump( 28, 76, 0x826 );
 					animalLoreGump.AddHTMLGump( 47, 74, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry( 2135, pSock.language ) + "</basefont>" );			 // Attributes
 					animalLoreGump.AddHTMLGump( 53, 92, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2144, pSock.language ) + "</basefont>" );		     // Hit Point Regeneration
-					animalLoreGump.AddHTMLGump( position, 92, 75, 18, false, false, "N/A" ); // Not implemented yet
+					animalLoreGump.AddHTMLGump( position, 92, 75, 18, false, false, ourObj.healthRegen.toString() );
 					animalLoreGump.AddHTMLGump( 53, 110, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2145, pSock.language ) + "</basefont>" );			 // Stamina Regeneration
-					animalLoreGump.AddHTMLGump( position, 110, 75, 18, false, false, "N/A" ); // Not implemented yet
+					animalLoreGump.AddHTMLGump( position, 110, 75, 18, false, false, ourObj.staminaRegen.toString() );
 					animalLoreGump.AddHTMLGump( 53, 128, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2146, pSock.language ) + "</basefont>" );			 // Mana Regeneration
-					animalLoreGump.AddHTMLGump( position, 128, 75, 18, false, false, "N/A" ); // Not implemented yet
+					animalLoreGump.AddHTMLGump( position, 128, 75, 18, false, false, ourObj.manaRegen.toString() );
 					animalLoreGump.AddButton( 240, 328, 0x15E1, 0x15E5, 0, 3, 0 );
 					animalLoreGump.AddButton( 217, 328, 0x15E3, 0x15E7, 0, 1, 0 );
 				}
