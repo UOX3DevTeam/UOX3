@@ -1715,7 +1715,6 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "Layer=0x" << static_cast<SI16>( GetLayer() ) << newLine;
 	outStream << "Cont=0x" << GetContSerial() << newLine;
 	outStream << "Creator=0x" << GetCreator() << newLine;
-	outStream << "RegenStats=" + std::to_string( GetHealthRegen() ) + "," + std::to_string( GetStaminaRegen() ) + "," + std::to_string( GetManaRegen() ) + newLine;
 	outStream << "More=0x" << GetTempVar( CITV_MORE ) << newLine;
 	outStream << "More012=0x" << GetTempVar( CITV_MORE0 ) << ",0x" << GetTempVar( CITV_MORE1 ) << ",0x" << GetTempVar( CITV_MORE2 ) << newLine;
 	outStream << "MoreXYZ=0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << newLine;
@@ -2094,17 +2093,6 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 						SetMaxRange( val / 2 );
 					}
 					rValue = true;
-				}
-				else if( UTag == "REPUTATION" )
-				{
-					rValue = true;
-				}
-				else if( UTag == "REGENSTATS" )
-				{
-				    SetHealthRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
-				    SetStaminaRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
-				    SetManaRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
-				    rValue = true;
 				}
 				else if( UTag == "REPUTATION" )
 				{
