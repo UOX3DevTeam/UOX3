@@ -192,20 +192,20 @@ static JSFunctionSpec my_functions[] =
 };
 // clang-format on
 
-void UOX3ErrorReporter(JSContext* cx, const char* message, JSErrorReport* report)
+void ScriptUOX3ErrorReporter(JSContext* cx, JSErrorReport* report)
 {
   UI16 scriptNum = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));
   // If we're loading the world then do NOT print out anything!
-  Console.Error(oldstrutil::format("JS script failure: Script Number (%u) Message (%s)", scriptNum, message));
+  Console.Error(oldstrutil::format("JS script failure: Script Number (%u) Message (%s)", scriptNum, report->message().c_str() ));
   if (report == nullptr || report->filename == nullptr)
   {
-    Console.Error("No detailed data");
-    return;
+  	Console.Error("No detailed data");
+  	return;
   }
   Console.Error(oldstrutil::format("Filename: %s\n| Line Number: %i", report->filename, report->lineno));
   if (report->linebuf() != nullptr)
   {
-    Console.Error(oldstrutil::format("Erroneous Line: %s", report->linebuf()));
+  	Console.Error(oldstrutil::format("Erroneous Line: %s", report->linebuf()));
   }
 }
 
@@ -354,6 +354,23 @@ cScript::cScript(std::string targFile, UI08 rT) : isFiring(false), runTime(rT)
   bool ok = JS_ExecuteScript(targContext, *targScript, rval);
   if (!ok)
   {
+    // https://github.com/mtatton/elinks/blob/7148c15150a9efff410c837c5f552ceaf25ccd5a/src/ecmascript/spidermonkey.c#L368
+    if (JS_IsExceptionPending(targContext))
+    {
+      JS::RootedValue exception(targContext);
+      if (JS_GetPendingException(targContext, &exception) && exception.isObject()) {
+        JS::AutoSaveExceptionState savedExc(targContext);
+        JS::Rooted<JSObject*> exceptionObject(targContext, &exception.toObject());
+        JSErrorReport* report = JS_ErrorFromException(targContext, exceptionObject);
+        if (report) {
+          if (report->lineno > 0) {
+            /* Somehow the reporter alway reports first error
+             * Undefined and with line 0. Let's filter this. */
+            ScriptUOX3ErrorReporter(targContext, report);
+          }
+        }
+      }
+    }
     std::string value = "<unknown>";
     if (rval.isString()) {
       value = convertToString(targContext, rval.toString());
@@ -367,13 +384,13 @@ cScript::cScript(std::string targFile, UI08 rT) : isFiring(false), runTime(rT)
     Console.TurnNormal();
     Console << " (" << targFile << ")" << myendl;
   }
-  else {
-    Console << "script result: ";
-    Console.TurnGreen();
-    Console << "OK";
-    Console.TurnNormal();
-    Console << " (" << targFile << ")" << myendl;
-  }
+  //else {
+  //  Console << "script result: ";
+  //  Console.TurnGreen();
+  //  Console << "OK";
+  //  Console.TurnNormal();
+  //  Console << " (" << targFile << ")" << myendl;
+  //}
 }
 
 void cScript::Cleanup(void)
@@ -3588,6 +3605,7 @@ bool cScript::ExistAndVerify(ScriptEvent eventNum, std::string functionName)
   if (NeedsChecking(eventNum))
   {
     SetNeedsChecking(eventNum, false);
+    JSAutoRealm ar(targContext, *targObject);
     JS::RootedValue Func(targContext);
     JS_GetProperty(targContext, *targObject, functionName.c_str(), &Func);
     if (Func.isNullOrUndefined())

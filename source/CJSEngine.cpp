@@ -20,8 +20,22 @@
 #include <jsapi.h>
 #include <js/Initialization.h>
 #include <js/Object.h>
+#include <js/Warnings.h>
 
 CJSEngine *JSEngine = nullptr;
+
+void UOX3ErrorReporter(JSContext* cx, JSErrorReport* report)
+{
+	if (report->isWarning())
+	{
+		Console.Warning(oldstrutil::format("JS script failure: Message (%s)", report->message().c_str()));
+	}
+	else
+	{
+		Console.Error(oldstrutil::format("JS script failure: Message (%s)", report->message().c_str()));
+	}
+}
+
 
 //==================================================================================================
 auto CJSEngine::Startup() -> void
@@ -178,6 +192,8 @@ CJSRuntime::CJSRuntime( UI32 engineSize )
 	objectList.resize( IUE_COUNT );
 
 	InitializePrototypes();
+
+	JS::SetWarningReporter( jsContext, UOX3ErrorReporter );
 }
 CJSRuntime::~CJSRuntime( void )
 {
