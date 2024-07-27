@@ -669,7 +669,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 			if( tag.data()[0] != '<' && tag.data()[0] != ' ' )	// it actually has a picture, well bugger me! :>
 			{
 				// Draw a frame for the item to make it stand out a touch more.
-				if( s->ClientVerShort() <= CVS_6000 )
+				if( s->ClientVerShort() <= CVS_70160 )
                 {
                     // Fallback for older clients that don't support buttontileart
                     toSend.addCommand( oldstrutil::format("resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 ));
