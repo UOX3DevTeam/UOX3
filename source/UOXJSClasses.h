@@ -266,8 +266,20 @@ inline JSClass UOXParty_class =
 //	CParty_equality,
 
 inline std::string convertToString(JSContext *cx, JSString *string) {
-    auto chars = JS_EncodeStringToASCII(cx, string);
-    return chars.get();
+  // For some reason, no matter what I do here, I'm crashing ... do I need to have it rooted?
+    //auto chars = JS_EncodeStringToASCII(cx, string);
+    //JS::Rooted< JSString* > str(cx, string);
+    //JS::UniqueChars message_ascii(JS_EncodeStringToASCII(cx, str));
+    //std::string rVal = message_ascii.get();
+    //return rVal;
+  JS::Rooted<JSString*> rootedStr(cx, string);
+  JS::UniqueChars asciiChars = JS_EncodeStringToASCII(cx, rootedStr);
+  if (!asciiChars) {
+    // Handle encoding error
+    return "";
+  }
+  std::string asciiString(asciiChars.get());
+  return asciiString;
 }
 
 inline JSString *convertFromString(JSContext* cx, const std::string& value) {

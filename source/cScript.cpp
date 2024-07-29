@@ -209,6 +209,236 @@ void ScriptUOX3ErrorReporter(JSContext* cx, JSErrorReport* report)
   }
 }
 
+static std::array< std::string, seOnFacetChange + 1 > ScriptEventNames = {
+  "onCreateDFN",
+  "onCreateTile",
+  "onCreatePlayer",		//	*	Done for PCs on global script
+  "onCommand",
+  "onDelete",				//	**
+  "onSpeech",				//	*	Missing item response at the moment
+  "onRange",				//	*	Missing character in range
+  "onCollide",			//	**	Items only
+  "onMoveDetect",			//	***
+  "onSteal",				//	**
+  "onDispel",				//	**
+  "onSkill",
+  "onStat",
+  "onTooltip",
+  "onNameRequest",
+  "onAttack",
+  "onDefense",
+  "onSkillGain",			//	**
+  "onSkillLoss",			//	**
+  "onSkillChange",		//	**
+  "onStatGained",			//	**
+  "onStatGain",			//	**
+  "onStatLoss",			//	**
+  "onStatChange",			//	**
+  "onDrop",
+  "onPickup",
+  "onContRemoveItem",
+  "onSwing",
+  "onDecay",
+  "onTransfer",
+  "onEntrance",			//	**
+  "onLeaving",			//	**
+  "onMultiLogout",		//	**
+  "onEquipAttempt",		//	**
+  "onEquip",				//	**
+  "onUnequipAttempt",		//	**
+  "onUnequip",			//	**
+  "onUseChecked",			//	**  the event that replaces hardcoded use-stuff
+  "onUseUnChecked",
+  "outOfRange",			//	*	Missing character out of range
+  "onLogin",				//	**
+  "onLogout",
+  "onClick",
+  "onFall",
+  "onSell",
+  "onSellToVendor",
+  "onBuy",
+  "onBuyFromVendor",
+  "onSoldToVendor",
+  "onBoughtFromVendor",
+  "onAISliver",			//	**
+  "onSystemSlice",
+  "onUnknownTrigger",
+  "onLightChange",
+  "onWeatherChange",
+  "onTempChange",
+  "onTimer",				//	**
+  "onDeath",				//	**
+  "onResurrect",			//	**
+  "onFlagChange",			//	**
+  "onLoyaltyChange",		//	**
+  "onHungerChange",		//	**
+  "onThirstChange",		//  **
+  "onStolenFrom",			//	**
+  "onSnooped",			//	**
+  "onSnoopAttempt",		//	**
+  "onEnterRegion",		//  **
+  "onLeaveRegion",		//	**
+  "onSpellTarget",
+  "onSpellTargetSelect",
+  "onSpellCast",
+  "onSpellSuccess",
+  "onTalk",
+  "onScrollCast",
+  "onSpeechInput",
+  "onSpellGain",
+  "onSpellLoss",
+  "onSkillCheck",
+  "onDropItemOnNpc",
+  "onStart",
+  "onStop",
+  "onIterate",
+  "onIterateSpawnRegions",
+  "onPacketReceive",
+  "onCharDoubleClick",	//	**  the event that replaces hardcoded character doubleclick-stuff
+  "onSkillGump",			//	**	allows overriding client's request to open default skill gump
+  "onCombatStart",		//	**	allows overriding what happens when combat is initiated
+  "onAICombatTarget",		//	**	allows overriding target selection taking place for regular AI behaviours
+  "onCombatEnd",			//	**	allows overriding what happens when combat ends
+  "onDeathBlow",
+  "onCombatDamageCalc",
+  "onDamage",
+  "onDamageDeal",
+  "onGumpPress",
+  "onGumpInput",
+  "onScrollingGumpPress",
+  "onDropItemOnItem",
+  "onVirtueGumpPress",
+  "onUseBandageMacro",	//	**	allows overriding what happens when client uses bandage macros
+  "onHouseCommand",		//	**	allows overriding what happens when player speaks house commands
+  "onMakeItem",
+  "onPathfindEnd",
+  "onEnterEvadeState",
+  "onCarveCorpse",
+  "onDyeTarget",
+  "onQuestGump",
+  "onHelpButton",
+  "onContextMenuRequest",
+  "onContextMenuSelect",
+  "onWarModeToggle",
+  "onSpecialMove",
+  "onFacetChange"
+};
+
+static std::map< std::string, ScriptEvent > ScriptEventLookup = {
+  { "onCreateDFN", seOnCreateDFN },
+  { "onCreateTile", seOnCreateTile },
+  { "onCreatePlayer", seOnCreatePlayer },
+  { "onCommand", seOnCommand },
+  { "onDelete", seOnDelete },
+  { "onSpeech", seOnSpeech },
+  { "inRange", seInRange },
+  { "onCollide", seOnCollide },
+  { "onMoveDetect", seOnMoveDetect },
+  { "onSteal", seOnSteal },
+  { "onDispel", seOnDispel },
+  { "onSkill", seOnSkill },
+  { "onStat", seOnStat },
+  { "onTooltip", seOnTooltip },
+  { "onNameRequest", seOnNameRequest },
+  { "onAttack", seOnAttack },
+  { "onDefense", seOnDefense },
+  { "onSkillGain", seOnSkillGain },
+  { "onSkillLoss", seOnSkillLoss },
+  { "onSkillChange", seOnSkillChange },
+  { "onStatGained", seOnStatGained },
+  { "onStatGain", seOnStatGain },
+  { "onStatLoss", seOnStatLoss },
+  { "onStatChange", seOnStatChange },
+  { "onDrop", seOnDrop },
+  { "onPickup", seOnPickup },
+  { "onContRemoveItem", seOnContRemoveItem },
+  { "onSwing", seOnSwing },
+  { "onDecay", seOnDecay },
+  { "onTransfer", seOnTransfer },
+  { "onEntrance", seOnEntrance },
+  { "onLeaving", seOnLeaving },
+  { "onMultiLogout", seOnMultiLogout },
+  { "onEquipAttempt", seOnEquipAttempt },
+  { "onEquip", seOnEquip },
+  { "onUnequipAttempt", seOnUnequipAttempt },
+  { "onUnequip", seOnUnequip },
+  { "onUseChecked", seOnUseChecked },
+  { "onUseUnChecked", seOnUseUnChecked },
+  { "outOfRange", seOutOfRange },
+  { "onLogin", seOnLogin },
+  { "onLogout", seOnLogout },
+  { "onClick", seOnClick },
+  { "onFall", seOnFall },
+  { "onSell", seOnSell },
+  { "onSellToVendor", seOnSellToVendor },
+  { "onBuy", seOnBuy },
+  { "onBuyFromVendor", seOnBuyFromVendor },
+  { "onSoldToVendor", seOnSoldToVendor },
+  { "onBoughtFromVendor", seOnBoughtFromVendor },
+  { "onAISliver", seOnAISliver },
+  { "onSystemSlice", seOnSystemSlice },
+  { "onUnknownTrigger", seOnUnknownTrigger },
+  { "onLightChange", seOnLightChange },
+  { "onWeatherChange", seOnWeatherChange },
+  { "onTempChange", seOnTempChange },
+  { "onTimer", seOnTimer },
+  { "onDeath", seOnDeath },
+  { "onResurrect", seOnResurrect },
+  { "onFlagChange", seOnFlagChange },
+  { "onLoyaltyChange", seOnLoyaltyChange },
+  { "onHungerChange", seOnHungerChange },
+  { "onThirstChange", seOnThirstChange },
+  { "onStolenFrom", seOnStolenFrom },
+  { "onSnooped", seOnSnooped },
+  { "onSnoopAttempt", seOnSnoopAttempt },
+  { "onEnterRegion", seOnEnterRegion },
+  { "onLeaveRegion", seOnLeaveRegion },
+  { "onSpellTarget", seOnSpellTarget },
+  { "onSpellTargetSelect", seOnSpellTargetSelect },
+  { "onSpellCast", seOnSpellCast },
+  { "onSpellSuccess", seOnSpellSuccess },
+  { "onTalk", seOnTalk },
+  { "onScrollCast", seOnScrollCast },
+  { "onSpeechInput", seOnSpeechInput },
+  { "onSpellGain", seOnSpellGain },
+  { "onSpellLoss", seOnSpellLoss },
+  { "onSkillCheck", seOnSkillCheck },
+  { "onDropItemOnNpc", seOnDropItemOnNpc },
+  { "onStart", seOnStart },
+  { "onStop", seOnStop },
+  { "onIterate", seOnIterate },
+  { "onIterateSpawnRegions", seOnIterateSpawnRegions },
+  { "onPacketReceive", seOnPacketReceive },
+  { "onCharDoubleClick", seOnCharDoubleClick },
+  { "onSkillGump", seOnSkillGump },
+  { "onCombatStart", seOnCombatStart },
+  { "onAICombatTarget", seOnAICombatTarget },
+  { "onCombatEnd", seOnCombatEnd },
+  { "onDeathBlow", seOnDeathBlow },
+  { "onCombatDamageCalc", seOnCombatDamageCalc },
+  { "onDamage", seOnDamage },
+  { "onDamageDeal", seOnDamageDeal },
+  { "onGumpPress", seOnGumpPress },
+  { "onGumpInput", seOnGumpInput },
+  { "onScrollingGumpPress", seOnScrollingGumpPress },
+  { "onDropItemOnItem", seOnDropItemOnItem },
+  { "onVirtueGumpPress", seOnVirtueGumpPress },
+  { "onUseBandageMacro", seOnUseBandageMacro },
+  { "onHouseCommand", seOnHouseCommand },
+  { "onMakeItem", seOnMakeItem },
+  { "onPathfindEnd", seOnPathfindEnd },
+  { "onEnterEvadeState", seOnEnterEvadeState },
+  { "onCarveCorpse", seOnCarveCorpse },
+  { "onDyeTarget", seOnDyeTarget },
+  { "onQuestGump", seOnQuestGump },
+  { "onHelpButton", seOnHelpButton },
+  { "onContextMenuRequest", seOnContextMenuRequest },
+  { "onContextMenuSelect", seOnContextMenuSelect },
+  { "onWarModeToggle", seOnWarModeToggle },
+  { "onSpecialMove", seOnSpecialMove },
+  { "onFacetChange", seOnFacetChange }
+};
+
 // Global error message variable used to pass error message from MethodError() to the custom JSError callback function
 std::string g_errorMessage;
 
@@ -308,6 +538,18 @@ std::string cScript::readSource(const std::string& targFile) {
   return content;
 }
 
+std::string testString( JSContext *targContext ) {
+  JSString* change = JS_NewStringCopyZ(targContext, "Hello");
+  JS::Rooted<JSString*> rootedStr(targContext, change);
+  JS::UniqueChars utf8Chars = JS_EncodeStringToASCII(targContext, rootedStr);
+  if (!utf8Chars) {
+    // Handle encoding error
+    return "";
+  }
+  std::string utf8String(utf8Chars.get());
+  return utf8String;
+}
+
 cScript::cScript(std::string targFile, UI08 rT) : isFiring(false), runTime(rT)
 {
   for (SI32 i = 0; i < 3; ++i)
@@ -384,13 +626,45 @@ cScript::cScript(std::string targFile, UI08 rT) : isFiring(false), runTime(rT)
     Console.TurnNormal();
     Console << " (" << targFile << ")" << myendl;
   }
-  //else {
-  //  Console << "script result: ";
-  //  Console.TurnGreen();
-  //  Console << "OK";
-  //  Console.TurnNormal();
-  //  Console << " (" << targFile << ")" << myendl;
-  //}
+  else {
+    Console << "script result: ";
+    Console.TurnGreen();
+    Console << "OK";
+    Console.TurnNormal();
+    Console << " (" << targFile << ")" << myendl;
+    // Test for the functions present ...
+    JS::Rooted<JSFunction*> func(targContext);
+    JS::Rooted<JS::IdVector> ids(targContext, JS::IdVector(targContext));
+    
+    testString( targContext );
+    if (!JS_Enumerate(targContext, *targObject, &ids))
+    {
+      Console.Error("Unable to enumerate script for objects");
+      return;
+    }
+    JSAutoRealm ar(targContext, *targObject);
+    for (size_t i = 0; i < ids.length(); i++)
+    {
+      JS::Rooted<JS::Value> val(targContext);
+      if (!JS_GetPropertyById(targContext, *targObject, ids[i], &val))
+      {
+        continue;
+      }
+      if (val.isObject() && JS_ObjectIsFunction(&val.toObject()))
+      {
+        func = JS_ValueToFunction(targContext, val);
+        JSString* funcName = JS_GetFunctionId(func);
+        if (funcName) {
+          std::string funcToLookup = convertToString(targContext, funcName);
+          Console << "Looking for function '" << funcToLookup << "'" << myendl;
+          auto lkp = ScriptEventLookup.find(funcToLookup);
+          if (lkp != ScriptEventLookup.cend()) {
+            SetEventExists(lkp->second, true);
+          }
+        }
+      }
+    }
+  }
 }
 
 void cScript::Cleanup(void)
