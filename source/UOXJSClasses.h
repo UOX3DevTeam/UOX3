@@ -265,7 +265,7 @@ inline JSClass UOXParty_class =
 //		CPartyProps_setProperty,
 //	CParty_equality,
 
-inline std::string convertToString(JSContext *cx, JSString *string) {
+/*inline std::string convertToString(JSContext *cx, JSString *string) {
   // For some reason, no matter what I do here, I'm crashing ... do I need to have it rooted?
     //auto chars = JS_EncodeStringToASCII(cx, string);
     //JS::Rooted< JSString* > str(cx, string);
@@ -280,10 +280,35 @@ inline std::string convertToString(JSContext *cx, JSString *string) {
   }
   std::string asciiString(asciiChars.get());
   return asciiString;
+}*/
+
+inline std::string convertToString(JSContext *cx, JSString *string)
+ {
+  // Ensure the JSString is rooted to prevent it from being garbage collected
+  JS::Rooted<JSString*> rootedStr(cx, string);
+  
+  // Encode the JSString to ASCII
+  JS::UniqueChars asciiChars = JS_EncodeStringToASCII(cx, rootedStr);
+  if (!asciiChars) {
+    // Handle encoding error
+    return "";
+  }
+  
+  // Convert the encoded C string to std::string
+  return std::string(asciiChars.get());
 }
 
-inline JSString *convertFromString(JSContext* cx, const std::string& value) {
+/*inline JSString *convertFromString(JSContext* cx, const std::string& value) {
   return JS_NewStringCopyZ(cx, value.c_str());
+}*/
+inline JSString* convertFromString(JSContext* cx, const std::string& value) {
+  JSString* jsStr = JS_NewStringCopyZ(cx, value.c_str());
+  if (!jsStr) {
+    // Handle error (e.g., out of memory)
+    // This could involve throwing an exception, logging an error, etc.
+    return nullptr;
+  }
+  return jsStr;
 }
 
 #endif
