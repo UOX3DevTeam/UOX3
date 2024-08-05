@@ -4679,7 +4679,6 @@
 11619=bread loaf
 11620=pan of cookies
 11621=cake
-11622=muffins
 11622=baked quiche
 11623=baked meat pie
 11624=sausage pizza
@@ -4715,6 +4714,7 @@
 11654=You must be near a heat source to cook food.
 11655=You must be near a mill to create flour.
 11656=You must be near an oven to bake food.
+11657=muffins
 // 11801 - 12000 Tinkering Crafting Skill
 // Page 1 - Wooden Items
 11801=Axle

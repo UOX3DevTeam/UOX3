@@ -4835,7 +4835,6 @@
 11619=miche de pain
 11620=panier de biscuits
 11621=gâteau
-11622=muffins
 11622=quiche au four
 11623=tarte à la viande cuite au four
 11624=pizza à la saucisse
@@ -4871,6 +4870,7 @@
 11654=Il faut être près d'une source de chaleur pour cuire les aliments.
 11655=Il faut être près d'un moulin pour créer de la farine.
 11656=Il faut être près d'un four pour cuire des aliments.
+11657=muffins
 // 11801 - 12000 Compétence en artisanat de bricolage
 // Page 1 - Objets en bois
 11801=Axe
