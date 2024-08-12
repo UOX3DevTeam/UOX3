@@ -675,8 +675,8 @@ inline JSPropertySpec CSkillsProps[] =
 	{ "bushido",			BUSHIDO,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "ninjitsu",			NINJITSU,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "spellweaving",		SPELLWEAVING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "imbuing",			IMBUING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "mysticism",			MYSTICISM,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "imbuing",			IMBUING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "throwing",			THROWING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "allskills",			ALLSKILLS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ nullptr,				static_cast<SI08>(0),			static_cast<UI08>(0), nullptr, nullptr }
