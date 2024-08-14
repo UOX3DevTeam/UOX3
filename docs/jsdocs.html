@@ -431,7 +431,7 @@ function onAISliver( aiChar )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onAttack( pAttacker, pDefender )</em></p>
+							<p><em>function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -443,14 +443,20 @@ function onAISliver( aiChar )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>After pAttacker's script has been triggered, pDefender's onDefense event also triggers. Note that these events run <em>in addition</em> to hard-coded combat (and/or other combat events), after everything else is done, and do not replace these.</p>
+							<p>After pAttacker's script has been triggered, pDefender's onDefense event also triggers. Note that these events run <em>in addition</em> to hard-coded combat (and/or other combat events), after everything else is done, and do not replace these. hitStatus will be false if attack missed.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onAttack( pAttacker, pDefender )
+<pre><code class="language-javascript">function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
-	pAttacker.TextMessage( "Who lives in that castle?" );
-	pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    if( hitStatus )
+    {
+	    pAttacker.TextMessage( "Hah! I hit my target for " + damageDealt + "damage" );
+    }
+    else
+    {
+	    pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    }
 }</code></pre></p>
 						</div>
 					</div>
@@ -1549,7 +1555,7 @@ function onTimer( timerObj, timerID )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onDefense( pAttacker, pDefender )</em></p>
+							<p><em>function onDefense( pAttacker, pDefender, hitStatus, hitLoc, damageReceived  )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -1561,14 +1567,20 @@ function onTimer( timerObj, timerID )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>The event runs at the end of each hard-coded combat "round"</p>
+                            <p>The event runs at the end of each hard-coded combat "round". hitStatus will be false if attack missed.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onDefense( pAttacker, pDefender )
+<pre><code class="language-javascript">function onDefense( pAttacker, pDefender, hitStatus, hitLoc, damageReceived  )
 {
-	pAttacker.TextMessage( "Who lives in that castle?" );
-	pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    if( hitStatus )
+    {
+	    pAttacker.TextMessage( "Hah! I hit my target for " + damageReceived + "damage" );
+    }
+    else
+    {
+	    pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    }
 }</code></pre></p>
 						</div>
 					</div>
