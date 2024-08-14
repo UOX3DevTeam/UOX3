@@ -199,8 +199,8 @@ public:
 	bool		OnStat( void );
 	std::string		OnTooltip( CBaseObject *myObj, CSocket *pSocket );
 	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI08 requestSource );
-	bool		OnAttack( CChar *attacker, CChar *defender );
-	bool		OnDefense( CChar *attacker, CChar *defender );
+    bool        OnAttack( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageDealt );
+    bool        OnDefense( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageReceived );
 	SI08		OnSkillGain( CChar *player, SI08 skill, UI32 skillAmtGained );
 	SI08		OnSkillLoss( CChar *player, SI08 skill, UI32 skillAmtLost );
 	bool		OnSkillChange( CChar *player, SI08 skill, SI32 skillAmtChanged );

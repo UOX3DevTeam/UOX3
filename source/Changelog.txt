@@ -1,3 +1,5 @@
+13/08/2024 - Dragon Slayer/Xuri
+	The onAttack/onDefend JS Events have been updated with three new parameters 	(hitStatus, hitLocation, damage) and will now also trigger when attacks miss.
 12/08/2024 - Dragon Slayer
 	Flipped Imbuing and Mysticism Skill around.
 1/05/2024 - Dragon Slayer/Xuri
