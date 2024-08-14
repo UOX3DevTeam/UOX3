@@ -1,6 +1,9 @@
 function onUseUnChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
+	var cloakItem = pUser.FindItemLayer( 0x14 );
+	// Check for ammo type in the quiver
+	var ammoType = cloakItem.GetTag( "AmmoType" );
 	var lastUsedBy = iUsed.GetTag( "lastUsedBy" );
 	var lastUsed = iUsed.GetTag( "lastUsed" );
 	var timeNow = GetCurrentClock();
@@ -140,7 +143,19 @@ function onUseUnChecked( pUser, iUsed )
 				case "BOWS":
 					var combatAnim = 18;
 					var arrowCount = pUser.ResourceCount( 0x0F3F, 0 );
-					if( arrowCount == 0 )
+					var totalAmmoCount = 0;
+					for( var mItem = cloakItem.FirstItem(); !cloakItem.FinishedItems(); mItem = cloakItem.NextItem() )
+					{
+						if( ammoType == "Arrow" && mItem.id == 0x0f3f )
+						{
+							totalAmmoCount += mItem.amount;
+							if( mItem.amount > 0 )
+								mItem.amount -= 1;
+							else
+								mItem.Delete();
+						}
+					}
+					if( arrowCount == 0 && totalAmmoCount == 0)
 					{
 						pUser.SysMessage( GetDictionaryEntry( 1770, pSock.language )); // You do not have any arrows with which to practice.
 						return false;
@@ -156,7 +171,19 @@ function onUseUnChecked( pUser, iUsed )
 				case "XBOWS":
 					var combatAnim = 19;
 					var boltCount = pUser.ResourceCount( 0x1BFB, 0 );
-					if( boltCount == 0 )
+					var totalAmmoCount = 0;
+					for( var mItem = cloakItem.FirstItem(); !cloakItem.FinishedItems(); mItem = cloakItem.NextItem() )
+					{
+						if( ammoType == "Bolt" && mItem.id == 0x1bfb )
+						{
+							totalAmmoCount += mItem.amount;
+							if( mItem.amount > 0 )
+								mItem.amount -= 1;
+							else
+								mItem.Delete();
+						}
+					}
+					if( boltCount == 0 && totalAmmoCount == 0)
 					{
 						pUser.SysMessage( GetDictionaryEntry( 1771, pSock.language )); // You do not have any bolts with which to practice.
 						return false;
@@ -168,10 +195,11 @@ function onUseUnChecked( pUser, iUsed )
 						var stuckBolts = iUsed.GetTag( "stuckBolts" ) + 1;
 						iUsed.SetTag( "stuckBolts", stuckBolts );
 					}
+					break;
 			}
 			pUser.DoAction( combatAnim );
 			ammoType = parseInt( ammoType );
-			DoMovingEffect( pUser, iUsed, ammoType, 0x06, 0x00, false );
+			DoMovingEffect( pUser.x, pUser.y, pUser.z + 10, iUsed.x, iUsed.y, iUsed.z + 10, ammoType, 0x06, 0x00, false );
 			var points = 0;
 			if( !pUser.CheckSkill( 31, 0, 250 ))
 			{
@@ -338,6 +366,11 @@ function onUseUnChecked( pUser, iUsed )
 			iUsed.SetTag( "lastUsedBy", ( pUser.serial & 0x00FFFFFF ) );
 			var lastUsed = GetCurrentClock();
 			iUsed.SetTag( "lastUsed", lastUsed );
+			if( totalAmmoCount != 0 )
+			{
+				cloakItem.SetTag( "AmmoCount", totalAmmoCount - 1 );
+				cloakItem.Refresh();
+			}
 
 			// Report overall score
 			var tempMsg = GetDictionaryEntry( 2464, pSock.language ) // Score: %i after %u shots.
