@@ -283,6 +283,8 @@
 5058=item/bagofsending.js
 5059=item/powderoftranslocation.js
 5060=item/elixirofingots.js
+5061=item/quivers.js
+5062=item/equip_effects/updatequivercount.js
 
 //-------------------------------------------
 // treasure maps and chest [5400-5405]

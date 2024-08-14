@@ -241,3 +241,36 @@ UI32 DeleteBankItem( CChar *p, UI32 amt, UI16 itemId, UI16 colour, UI32 moreVal 
 	return amt;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|    Function    -    DeleteQuiverItemAmount()
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Remove a certain amount of an item of specified color from quiver equipped on a character
+//|                    If it fails to remove the full amount from quiver, try from regular backpack as well
+//o------------------------------------------------------------------------------------------------o
+UI32 DeleteQuiverItemAmount( CChar *s, UI32 amount, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck, bool moreCheck, std::string sectionId  )
+{
+    if( !ValidateObject( s ))
+        return 0;
+
+    UI32 amountDeleted = 0;
+
+    // First try to remove from quiver, if it exists in cloak slot
+    CItem *quiverPack = s->GetItemAtLayer( IL_CLOAK );
+    if( ValidateObject( quiverPack ) && quiverPack->GetType() == IT_CONTAINER )
+    {
+        amountDeleted = DeleteSubItemAmount( quiverPack, amount, realId, realColour, realMoreVal, colorCheck, moreCheck, sectionId );
+    }
+
+    // Then fallback to regular backpack if full amount has not been removed from quiver/quiver didn't exist
+    if( amountDeleted < amount )
+    {
+        CItem *p = s->GetPackItem();
+        if( !ValidateObject( p ))
+            return amountDeleted;
+
+        amountDeleted += DeleteSubItemAmount( p, amount - amountDeleted, realId, realColour, realMoreVal, colorCheck, moreCheck, sectionId );
+    }
+
+    return amountDeleted;
+}
+

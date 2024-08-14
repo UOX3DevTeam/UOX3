@@ -489,3 +489,31 @@ id=0x1ffe
 {
 get=0x1ffd 0x1ffe
 }
+
+[0x2FB7]
+{
+get=base_item
+name=a quiver
+id=0x2FB7
+type=1
+weight=200
+weightmax=50000
+maxitems=500
+value=400 200
+value=2 1
+layer=0x14
+script=5061
+custominttag=WeightReduction 50
+}
+
+[0x3171]
+{
+get=0x2FB7
+name=a quiver
+id=0x3171
+}
+
+[quiver]
+{
+get=0x3171 0x2FB7
+}

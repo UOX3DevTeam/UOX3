@@ -1546,6 +1546,8 @@ PackTypes cItem::GetPackType( CItem *i )
 			break;
 		case 0x24DB:	// SE basket
 		case 0x24DC:	// SE basket
+		case 0x2FB7:    // ML quiver
+		case 0x3171:	// ML quiver
 			packType = PT_SEBASKET;
 			break;
 		case 0x280B:	// SE chest
