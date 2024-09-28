@@ -40,6 +40,7 @@ enum ScriptEvent
 	seOnEntrance,			//	**
 	seOnLeaving,			//	**
 	seOnMultiLogout,		//	**
+	seOnBoatTurn,           //  **
 	seOnEquipAttempt,		//	**
 	seOnEquip,				//	**
 	seOnUnequipAttempt,		//	**
@@ -216,6 +217,7 @@ public:
 	SI08		OnEntrance( CMultiObj *left, CBaseObject *leaving );
 	SI08		OnLeaving( CMultiObj *left, CBaseObject *leaving );
 	SI08		OnMultiLogout( CMultiObj* iMulti, CChar* cPlayer );
+	SI08        OnBoatTurn( CBoatObj* iMulti, UI08 oldDir, UI08 newDir );
 	SI08		OnEquipAttempt( CChar *equipper, CItem *equipping );
 	SI08		OnEquip( CChar *equipper, CItem *equipping );
 	SI08		OnUnequipAttempt( CChar *equipper, CItem *equipping );
