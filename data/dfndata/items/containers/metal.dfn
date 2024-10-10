@@ -134,3 +134,12 @@ maxitems=125
 {
 get=0x0e40 0x0e41
 }
+
+[puzzlechest]
+{
+get=base_item
+name=metal chest
+id=0x0e41
+movable=2
+script=5061
+}
