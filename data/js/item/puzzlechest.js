@@ -353,7 +353,7 @@ function AddPedestal( myGump, x, y, cylinder, switchID, initialState )
 	}
 
 	// Use AddRadio to allow selection of one cylinder at a time
-	myGump.AddRadio( x + 7, y + 65, 0x867, initialState ? 1 : 0, switchID );
+	myGump.AddRadio( x + 7, y + 65, 0x868, initialState ? 1 : 0, switchID );
 }
 
 function ShowStatusGump( pUser, correctCylinders, correctColors )
