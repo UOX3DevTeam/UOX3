@@ -1,0 +1,191 @@
+// Elven Bed (East) Deed
+[elvenbedeastdeed]
+{
+name=Elven Bed (East)
+id=0x14F0
+morex=300
+}
+
+// Elven Bed (South) Deed
+[elvenbedsouthdeed]
+{
+name=Elven Bed (South)
+id=0x14F0
+morex=301
+}
+
+// Alchemist Table (East) Deed
+[alchemisttabledeedeast]
+{
+name=Alchemist Table (East)
+id=0x14F0
+morex=300
+}
+
+// Alchemist Table (South) Deed
+[alchemisttablesouthdeed]
+{
+name=Alchemist Table (South)
+id=0x14F0
+morex=301
+}
+
+// Elven Loveseat (East) Deed
+[elvenloveseateastdeed]
+{
+name=Elven Loveseat (East)
+id=0x14F0
+morex=304
+}
+
+// Elven Loveseat (South) Deed
+[elvenloveseatsouthdeed]
+{
+name=Elven Loveseat (South)
+id=0x14F0
+morex=305
+}
+
+// Elven Wash Basin (East) Deed
+[elvenwashbasineastdeed]
+{
+name=Elven Wash Basin (East)
+id=0x14F0
+morex=306
+}
+
+// Elven Wash Basin (South) Deed
+[elvenwashbasinsouthdeed]
+{
+name=Elven Wash Basin (South)
+id=0x14F0
+morex=307
+}
+
+// Fancy Couch (East) Deed
+[fancycoucheastdeed]
+{
+name=Fancy Couch (East)
+id=0x14F0
+morex=308
+}
+
+// Fancy Couch (North) Deed
+[fancycouchnorthdeed]
+{
+name=Fancy Couch (North)
+id=0x14F0
+morex=309
+}
+
+// Fancy Couch (South) Deed
+[fancycouchsouthdeed]
+{
+name=Fancy Couch (South)
+id=0x14F0
+morex=310
+}
+
+// Fancy Couch (West) Deed
+[fancycouchwestdeed]
+{
+name=Fancy Couch (West)
+id=0x14F0
+morex=311
+}
+
+// Hardwood Table (East) Deed
+[hardwoodtableeastdeed]
+{
+name=Hardwood Table (East)
+id=0x14F0
+morex=312
+}
+
+// Hardwood Table (South) Deed
+[hardwoodtablesouthdeed]
+{
+name=Hardwood Table (South)
+id=0x14F0
+morex=313
+}
+
+// Fancy Loveseat (East) Deed
+[fancyloveseateastdeed]
+{
+name=Fancy Loveseat (East)
+id=0x14F0
+morex=314
+}
+
+// Fancy Loveseat (North) Deed
+[fancyloveseatnorthdeed]
+{
+name=Fancy Loveseat (North)
+id=0x14F0
+morex=315
+}
+
+// Fancy Loveseat (South) Deed
+[fancyloveseatsouthdeed]
+{
+name=Fancy Loveseat (South)
+id=0x14F0
+morex=316
+}
+
+// Fancy Loveseat (West) Deed
+[fancyloveseatwestdeed]
+{
+name=Fancy Loveseat (West)
+id=0x14F0
+morex=317
+}
+
+// Ornate Table (East) Deed
+[ornatetableeastdeed]
+{
+name=Ornate Table (East)
+id=0x14F0
+morex=318
+}
+
+// Ornate Table (South) Deed
+[ornatetablesouthdeed]
+{
+name=Ornate Table (South)
+id=0x14F0
+morex=319
+}
+
+// Plush Loveseat (East) Deed
+[plushloveseateastdeed]
+{
+name=Plush Loveseat (East)
+id=0x14F0
+morex=320
+}
+
+// Plush Loveseat (South) Deed
+[plushloveseatsouthdeed]
+{
+name=Plush Loveseat (South)
+id=0x14F0
+morex=321
+}
+
+// Tall Elven Bed (East) Deed
+[tallelvenbedeastdeed]
+{
+name=Tall Elven Bed (East)
+id=0x14F0
+morex=322
+}
+
+// Tall Elven Bed (South) Deed
+[tallelvenbedsouthdeed]
+{
+name=Tall Elven Bed (South)
+id=0x14F0
+morex=323
+}
