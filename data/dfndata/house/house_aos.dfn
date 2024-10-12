@@ -1,0 +1,290 @@
+// House Addon - Mini House: Stone and Plaster
+[HOUSE 500]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=stoneandplastermini
+HOUSE_ITEM=1500
+}
+
+// House Addon - Mini House: Field Stone
+[HOUSE 501]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=fieldstonemini
+HOUSE_ITEM=1501
+}
+
+// House Addon - Mini House: Small Brick
+[HOUSE 502]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=smallbrickmini
+HOUSE_ITEM=1502
+}
+
+// House Addon - Mini House: Wooden
+[HOUSE 503]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=woodenmini
+HOUSE_ITEM=1503
+}
+
+// House Addon - Mini House: Wood and Plaster
+[HOUSE 504]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=woodandplastermini
+HOUSE_ITEM=1504
+}
+
+// House Addon - Mini House: Thatched-Roof Cottage
+[HOUSE 505]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=thatchedroofcottage
+HOUSE_ITEM=1505
+}
+
+// House Addon - Mini House: Brick
+[HOUSE 506]
+{
+ID=0x14F0
+SPACEX=4
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=brickmini
+HOUSE_ITEM=1506
+HOUSE_ITEM=1507
+HOUSE_ITEM=1508
+HOUSE_ITEM=1509
+}
+
+// House Addon - Mini House: Two-Story Wood and Plaster
+[HOUSE 507]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=twostorywoodandplastermini
+HOUSE_ITEM=1510
+HOUSE_ITEM=1511
+HOUSE_ITEM=1512
+HOUSE_ITEM=1513
+}
+
+// House Addon - Mini House: Malas Mountain Pass
+[HOUSE 508]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=malasmountainpassmini
+HOUSE_ITEM=1514
+HOUSE_ITEM=1515
+HOUSE_ITEM=1516
+HOUSE_ITEM=1517
+}
+
+// House Addon - Mini House: Church at Night
+[HOUSE 509]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=churchatnightmini
+HOUSE_ITEM=1518
+}
+
+[HOUSE ITEM 1500]
+{ mini house part 1 (Stone and Plaster)
+ITEM=0x22C4
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1501]
+{ mini house part 1 (Field Stone)
+ITEM=0x22DE
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1502]
+{ mini house part 1 (Small Brick)
+ITEM=0x22DF
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1503]
+{ mini house part 1 (Wooden)
+ITEM=0x22C9
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1504]
+{ mini house part 1 (Wood and Plaster)
+ITEM=0x22E0
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1505]
+{ mini house part 1 (Thatched-Roof Cottage)
+ITEM=0x22E1
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1506]
+{ mini house part 1 (Brick)
+ITEM=0x22CD
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1507]
+{ mini house part 2 (Brick)
+ITEM=0x22CB
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1508]
+{ mini house part 3 (Brick)
+ITEM=0x22CC
+X=2
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1509]
+{ mini house part 4 (Brick)
+ITEM=0x22CA
+X=3
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1510]
+{ mini house part 1 (Two-Story Wood and Plaster)
+ITEM=0x2301
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1511]
+{ mini house part 2 (Two-Story Wood and Plaster)
+ITEM=0x2302
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1512]
+{ mini house part 3 (Two-Story Wood and Plaster)
+ITEM=0x2304
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1513]
+{ mini house part 4 (Two-Story Wood and Plaster)
+ITEM=0x2303
+X=1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1514]
+{ mini house part 1 (Malas Mountain Pass)
+ITEM=0x2316
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1515]
+{ mini house part 2 (Malas Mountain Pass)
+ITEM=0x2315
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 1516]
+{ mini house part 3 (Malas Mountain Pass)
+ITEM=0x2314
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1517]
+{ mini house part 4 (Malas Mountain Pass)
+ITEM=0x2313
+X=1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 1518]
+{ mini house part 1 (Church at Night)
+ITEM=0x2318
+X=0
+Y=0
+Z=0
+}
