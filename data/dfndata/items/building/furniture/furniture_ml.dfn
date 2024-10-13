@@ -6,6 +6,7 @@ name=Elven Bed (East) Part 1
 id=0x304D
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x304C]
@@ -15,6 +16,7 @@ name=Elven Bed (East) Part 2
 id=0x304C
 weight=1000
 movable=1
+origin=ml
 }
 
 // Elven Bed (South)
@@ -25,6 +27,7 @@ name=Elven Bed (South) Part 1
 id=0x3050
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3051]
@@ -34,6 +37,7 @@ name=Elven Bed (South) Part 2
 id=0x3051
 weight=1000
 movable=1
+origin=ml
 }
 
 // Alchemist Table (East)
@@ -44,6 +48,7 @@ name=Alchemist Table (East) Part 1
 id=0x3077
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3078]
@@ -53,6 +58,7 @@ name=Alchemist Table (East) Part 2
 id=0x3078
 weight=1000
 movable=1
+origin=ml
 }
 
 // Alchemist Table (South)
@@ -63,6 +69,7 @@ name=Alchemist Table (South) Part 1
 id=0x3079
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x307A]
@@ -72,6 +79,7 @@ name=Alchemist Table (South) Part 2
 id=0x307A
 weight=1000
 movable=1
+origin=ml
 }
 
 // Elven Loveseat (East)
@@ -82,6 +90,7 @@ name=Elven Loveseat (East) Part 1
 id=0x3089
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3088]
@@ -91,6 +100,7 @@ name=Elven Loveseat (East) Part 2
 id=0x3088
 weight=1000
 movable=1
+origin=ml
 }
 
 // Elven Loveseat (South)
@@ -101,6 +111,7 @@ name=Elven Loveseat (South) Part 1
 id=0x308A
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x308B]
@@ -110,6 +121,7 @@ name=Elven Loveseat (South) Part 2
 id=0x308B
 weight=1000
 movable=1
+origin=ml
 }
 
 // Elven Wash Basin (East)
@@ -120,6 +132,7 @@ name=Elven Wash Basin (East) Part 1
 id=0x30DF
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x30E0]
@@ -129,6 +142,7 @@ name=Elven Wash Basin (East) Part 2
 id=0x30E0
 weight=1000
 movable=1
+origin=ml
 }
 
 // Elven Wash Basin (South)
@@ -139,6 +153,7 @@ name=Elven Wash Basin (South) Part 1
 id=0x30E1
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x30E2]
@@ -148,6 +163,7 @@ name=Elven Wash Basin (South) Part 2
 id=0x30E2
 weight=1000
 movable=1
+origin=ml
 }
 
 // Fancy Couch (East)
@@ -158,6 +174,7 @@ name=Fancy Couch (East) Part 1
 id=0x4C8C
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x4C8A]
@@ -167,6 +184,7 @@ name=Fancy Couch (East) Part 2
 id=0x4C8A
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x4C8B]
@@ -176,6 +194,7 @@ name=Fancy Couch (East) Part 3
 id=0x4C8B
 weight=1000
 movable=1
+origin=ml
 }
 
 // Fancy Couch (North)
@@ -186,6 +205,7 @@ name=Fancy Couch (North) Part 1
 id=0x9C62
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x9C61]
@@ -195,6 +215,7 @@ name=Fancy Couch (North) Part 2
 id=0x9C61
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x9C60]
@@ -204,6 +225,7 @@ name=Fancy Couch (North) Part 3
 id=0x9C60
 weight=1000
 movable=1
+origin=ml
 }
 
 // Fancy Couch (South)
@@ -214,6 +236,7 @@ name=Fancy Couch (South) Part 1
 id=0x4C8D
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x4C8E]
@@ -223,6 +246,7 @@ name=Fancy Couch (South) Part 2
 id=0x4C8E
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x4C8F]
@@ -232,6 +256,7 @@ name=Fancy Couch (South) Part 3
 id=0x4C8F
 weight=1000
 movable=1
+origin=ml
 }
 
 // Fancy Couch (West)
@@ -242,6 +267,7 @@ name=Fancy Couch (West) Part 1
 id=0x9C5F
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x9C5E]
@@ -251,6 +277,7 @@ name=Fancy Couch (West) Part 2
 id=0x9C5E
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x9C5D]
@@ -260,6 +287,7 @@ name=Fancy Couch (West) Part 3
 id=0x9C5D
 weight=1000
 movable=1
+origin=ml
 }
 
 // Hardwood Table (East)
@@ -270,6 +298,7 @@ name=Hardwood Table (East) Part 1
 id=0x3094
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3093]
@@ -279,6 +308,7 @@ name=Hardwood Table (East) Part 2
 id=0x3093
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3092]
@@ -288,6 +318,7 @@ name=Hardwood Table (East) Part 3
 id=0x3092
 weight=1000
 movable=1
+origin=ml
 }
 
 // Hardwood Table (South)
@@ -298,6 +329,7 @@ name=Hardwood Table (South) Part 1
 id=0x3095
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3096]
@@ -307,6 +339,7 @@ name=Hardwood Table (South) Part 2
 id=0x3096
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3097]
@@ -316,6 +349,7 @@ name=Hardwood Table (South) Part 3
 id=0x3097
 weight=1000
 movable=1
+origin=ml
 }
 
 // Ornate Table (East)
@@ -326,6 +360,7 @@ name=Ornate Table (East) Part 1
 id=0x308F
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3090]
@@ -335,6 +370,7 @@ name=Ornate Table (East) Part 2
 id=0x3090
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3091]
@@ -344,6 +380,7 @@ name=Ornate Table (East) Part 3
 id=0x3091
 weight=1000
 movable=1
+origin=ml
 }
 
 // Ornate Table (South)
@@ -354,6 +391,7 @@ name=Ornate Table (South) Part 1
 id=0x308E
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x308D]
@@ -363,6 +401,7 @@ name=Ornate Table (South) Part 2
 id=0x308D
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x308C]
@@ -372,6 +411,7 @@ name=Ornate Table (South) Part 3
 id=0x308C
 weight=1000
 movable=1
+origin=ml
 }
 
 // Plush Loveseat (East)
@@ -382,6 +422,7 @@ name=Plush Loveseat (East) Part 1
 id=0x4C84
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x4C85]
@@ -391,6 +432,7 @@ name=Plush Loveseat (East) Part 2
 id=0x4C85
 weight=1000
 movable=1
+origin=ml
 }
 
 // Plush Loveseat (South)
@@ -401,6 +443,7 @@ name=Plush Loveseat (South) Part 1
 id=0x4C83
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x4C82]
@@ -410,6 +453,7 @@ name=Plush Loveseat (South) Part 2
 id=0x4C82
 weight=1000
 movable=1
+origin=ml
 }
 
 // Tall Elven Bed (East)
@@ -420,6 +464,7 @@ name=Tall Elven Bed (East) Part 1
 id=0x3054
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3053]
@@ -429,6 +474,7 @@ name=Tall Elven Bed (East) Part 2
 id=0x3053
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3055]
@@ -438,6 +484,7 @@ name=Tall Elven Bed (East) Part 3
 id=0x3055
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3052]
@@ -447,6 +494,7 @@ name=Tall Elven Bed (East) Part 4
 id=0x3052
 weight=1000
 movable=1
+origin=ml
 }
 
 // Tall Elven Bed (South)
@@ -457,6 +505,7 @@ name=Tall Elven Bed (South) Part 1
 id=0x3058
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3057]
@@ -466,6 +515,7 @@ name=Tall Elven Bed (South) Part 2
 id=0x3057
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3059]
@@ -475,6 +525,7 @@ name=Tall Elven Bed (South) Part 3
 id=0x3059
 weight=1000
 movable=1
+origin=ml
 }
 
 [0x3056]
@@ -484,4 +535,5 @@ name=Tall Elven Bed (South) Part 4
 id=0x3056
 weight=1000
 movable=1
+origin=ml
 }
