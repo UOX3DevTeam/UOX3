@@ -5773,6 +5773,21 @@ void CChar::LastMoveTime( UI32 newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetLastCombatTime()
+//|					CChar::SetLastCombatTime()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets timestamp for when player last combat
+//o------------------------------------------------------------------------------------------------o
+UI32 CChar::GetLastCombatTime() const
+{
+	return lastCombatTime;
+}
+void CChar::SetLastCombatTime( UI32 newValue )
+{
+	lastCombatTime = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetLastOn()
 //|					CChar::SetLastOn()
 //o------------------------------------------------------------------------------------------------o

@@ -6390,6 +6390,33 @@ var myParty = CreateParty( pUser );</code></pre>
 							</div>
 						</div>
 
+<div class="spoilerWrapper">
+    <input type="checkbox" id="spoiler_function_misc_CheckTimeSinceLastCombat" />
+    <label for="spoiler_function_misc_CheckTimeSinceLastCombat">CheckTimeSinceLastCombat <i class="fas fa-angle-down"></i></label>
+    <div class="spoiler">
+        <div class="settingsDiv">
+            <p><span class="hl">Prototype</span></p>
+            <p><em>CheckTimeSinceLastCombat( pUser, 120 );</em></p>
+        </div>
+        <div class="settingsDiv">
+            <p><span class="hl">Purpose</span></p>
+            <p>Checks if a character has engaged in combat within a specified time frame (in seconds).</p>
+        </div>
+        <div class="settingsDiv">
+            <p><span class="hl">Example of usage</span></p>
+            <pre><code class="language-javascript">// Check if the player has been in combat within the last 120 seconds (2 minutes)
+if( CheckTimeSinceLastCombat( pUser, 120 ))
+{
+  pUser.SysMessage( "You must wait two minutes after engaging in combat before you can use this item." );
+}
+else
+{
+    pUser.SysMessage( "You are free to use the item." );
+}</code></pre>
+        </div>
+    </div>
+</div>
+
 						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_function_misc_DistanceBetween"/>
 							<label for="spoiler_function_misc_DistanceBetween">DistanceBetween <i class="fas fa-angle-down"></i></label>

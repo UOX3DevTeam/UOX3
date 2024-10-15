@@ -238,6 +238,7 @@ protected:
 	UI08		PoisonStrength;
 	BodyType	bodyType;
 	UI32		lastMoveTime;		// Timestamp for when character moved last
+	UI32		lastCombatTime;   // Timestamp for when character combat last
 	UI16		npcGuild;		// ID of NPC guild character is in (0=no NPC guild)
 
 	SKILLVAL	baseskill[ALLSKILLS]; 	// Base skills without stat modifiers
@@ -829,6 +830,9 @@ public:
 
 	UI32		LastMoveTime( void ) const;
 	void		LastMoveTime( UI32 newValue );
+
+	UI32		GetLastCombatTime() const;
+	void		SetLastCombatTime(UI32 newValue);
 
 
 	CChar *		GetTrackingTarget( void ) const;
