@@ -1,3 +1,6 @@
+14/10/2024 - Dragon Slayer
+    Added the CheckInstaLog function to check if a specific location is within an instant logout zone (SEFunctions.cpp). (thanks, Xuri)
+
 1/05/2024 - Dragon Slayer/Xuri
 	Fixed AutoUnequipAttempt function in clumsy.js, createfood.js level1target.js, will no longer fail on casting and return to hardcode.
 	Fixed createfood to check for reagents on cast.

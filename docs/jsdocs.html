@@ -6339,80 +6339,113 @@ var staticFound = StaticInRange( pUser.x, pUser.y, pUser.worldnumber, 3, 0x04a9 
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#functionsMisc" id="functionsMisc"><span>Miscellaneous Functions</span></a>
 				<div class="cd-faq__content">
-					<div class="text-component">
+                    <div class="text-component">
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_CodeConstants"/>
-							<label for="spoiler_function_misc_CodeConstants">Code Constants <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>int BASEITEMSERIAL();</em></p>
-									<p><em>int INVALIDSERIAL();</em></p>
-									<p><em>int INVALIDID();</em></p>
-									<p><em>int INVALIDCOLOUR();</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p><strong>BASEITEMSERIAL()</strong> - Gets the constant that defines the base value used as starting point for item serials. If an object serial is lower than this, it probably belongs to a character. If it's higher, it belongs to an item.<br>
-									<strong>INVALIDSERIAL()</strong> - Gets the constant defining an invalid serial. If an object serial matches this, it's invalid!<br>
-									<strong>INVALIDID()</strong> - Gets the constant defining an invalid ID. If an object's ID matches this, it's probably not a valid ID!<br>
-									<strong>INVALIDCOLOUR()</strong> - Gets the constant defining an invalid colour. If an object's colour is equal or higher than this, it's probably not a valid colour!</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">var baseItemSerial = BASEITEMSERIAL();
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_CodeConstants" />
+                            <label for="spoiler_function_misc_CodeConstants">Code Constants <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>int BASEITEMSERIAL();</em></p>
+                                    <p><em>int INVALIDSERIAL();</em></p>
+                                    <p><em>int INVALIDID();</em></p>
+                                    <p><em>int INVALIDCOLOUR();</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>
+                                        <strong>BASEITEMSERIAL()</strong> - Gets the constant that defines the base value used as starting point for item serials. If an object serial is lower than this, it probably belongs to a character. If it's higher, it belongs to an item.<br>
+                                        <strong>INVALIDSERIAL()</strong> - Gets the constant defining an invalid serial. If an object serial matches this, it's invalid!<br>
+                                        <strong>INVALIDID()</strong> - Gets the constant defining an invalid ID. If an object's ID matches this, it's probably not a valid ID!<br>
+                                        <strong>INVALIDCOLOUR()</strong> - Gets the constant defining an invalid colour. If an object's colour is equal or higher than this, it's probably not a valid colour!
+                                    </p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">var baseItemSerial = BASEITEMSERIAL();
 var invalidSerial = INVALIDSERIAL();
 var invalidID = INVALIDID();
 var invalidColour = INVALIDCOLOUR();
 									</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_CreateParty"/>
-							<label for="spoiler_function_misc_CreateParty">CreateParty <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>PARTY CreateParty( partyleader );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Create a new party/group with the specified character as leader</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Create a new party (myParty) with pUser as the leader
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_CreateParty" />
+                            <label for="spoiler_function_misc_CreateParty">CreateParty <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>PARTY CreateParty( partyleader );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Create a new party/group with the specified character as leader</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Create a new party (myParty) with pUser as the leader
 var myParty = CreateParty( pUser );</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_DistanceBetween"/>
-							<label for="spoiler_function_misc_DistanceBetween">DistanceBetween <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>int DistanceBetween( x1, y1, x2, y2 );</em></p>
-									<p><em>int DistanceBetween( x1, y1, z1, x2, y2, z2 );</em></p>
-									<p><em>int DistanceBetween( objA, objB );</em></p>
-									<p><em>int DistanceBetween( objA, objB, checkZ );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Get the distance between two sets of coordinates or objects on either 2D or 3D plane</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>Parameters: x1, y1, z1, x2, y2, z2 = coordinates<br>
-									checkZ = true if distance between two objects should take into account Z axis</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Get distance between two sets of x, y coordinates
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_CheckInstaLog" />
+                            <label for="spoiler_function_misc_CheckInstaLog">CheckInstaLog <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>JSBool CheckInstaLog( x, y, world, instanceID );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Checks if a specific location ( x, y, world, instanceID ) is within an instant logout zone.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Check if the player is in an instant logout zone
+var isInstaLog = CheckInstaLog(targX, targY, worldNumber, instanceID);
+
+if( isInstaLog )
+{
+    // Handle instant logout
+}
+else
+{
+    // Handle other logout scenarios
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_DistanceBetween" />
+                            <label for="spoiler_function_misc_DistanceBetween">DistanceBetween <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>int DistanceBetween( x1, y1, x2, y2 );</em></p>
+                                    <p><em>int DistanceBetween( x1, y1, z1, x2, y2, z2 );</em></p>
+                                    <p><em>int DistanceBetween( objA, objB );</em></p>
+                                    <p><em>int DistanceBetween( objA, objB, checkZ );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Get the distance between two sets of coordinates or objects on either 2D or 3D plane</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Notes</span></p>
+                                    <p>
+                                        Parameters: x1, y1, z1, x2, y2, z2 = coordinates<br>
+                                        checkZ = true if distance between two objects should take into account Z axis
+                                    </p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Get distance between two sets of x, y coordinates
 var distance1 = DistanceBetween( pUser.x, pUser.y, iUsed.x, iUsed.y );
 
 // Get distance between two sets of x, y, z coordinates
@@ -6423,157 +6456,159 @@ var distance2 = DistanceBetween( pUser, iUsed );
 
 // Get distance between pUser and iUsed using 3D coordinates
 var distance2 = DistanceBetween( pUser, iUsed, true );</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_DoesEventExist"/>
-							<label for="spoiler_function_misc_DoesEventExist">DoesEventExist <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>bool DoesEventExist( scriptID, eventToCheck );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Check for existence of a named JS event/function in another script</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>Parameters: scriptID = ID of the script to check<br>
-									eventToCheck = name of event/function to look for</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Check if a custom function exists in a specific script (0), and trigger it with TriggerEvent() if it does:
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_DoesEventExist" />
+                            <label for="spoiler_function_misc_DoesEventExist">DoesEventExist <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>bool DoesEventExist( scriptID, eventToCheck );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Check for existence of a named JS event/function in another script</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Notes</span></p>
+                                    <p>
+                                        Parameters: scriptID = ID of the script to check<br>
+                                        eventToCheck = name of event/function to look for
+                                    </p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Check if a custom function exists in a specific script (0), and trigger it with TriggerEvent() if it does:
 if( DoesEventExist( 0, "MyCustomFunction" ))
 {
 	TriggerEvent( 0, "MyCustomFunction", [additional parameters] );
 }</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetAccountCount"/>
-							<label for="spoiler_function_misc_GetAccountCount">GetAccountCount <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>int GetAccountCount();</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Gets the total amount of accounts on the server</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">var totalAccounts = GetAccountCount();</code></pre>
-								</div>
-							</div>
-						</div>
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_GetAccountCount" />
+                            <label for="spoiler_function_misc_GetAccountCount">GetAccountCount <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>int GetAccountCount();</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Gets the total amount of accounts on the server</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">var totalAccounts = GetAccountCount();</code></pre>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetClientFeature"/>
-							<label for="spoiler_function_misc_GetClientFeature">GetClientFeature <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>bool GetClientFeature( ClientFeaturesBitNum );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Check if a specific client features is enabled. For a list of features that can be checked this way, see [settings]->clientFeatures List in the <a href="https://www.uox3.org/docs/index.html#uoxINISettings">UOX.INI Settings section of the UOX3 Documentation</a>.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// AoS bit from list of client features
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_GetClientFeature" />
+                            <label for="spoiler_function_misc_GetClientFeature">GetClientFeature <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>bool GetClientFeature( ClientFeaturesBitNum );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Check if a specific client features is enabled. For a list of features that can be checked this way, see [settings]->clientFeatures List in the <a href="https://www.uox3.org/docs/index.html#uoxINISettings">UOX.INI Settings section of the UOX3 Documentation</a>.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// AoS bit from list of client features
 var aosFeaturesEnabled = GetClientFeature( 0x10 );</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetDictionaryEntry"/>
-							<label for="spoiler_function_misc_GetDictionaryEntry">GetDictionaryEntry <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>string GetDictionaryEntry( entryNum [, language ] );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Pulls entry from the dictionary file based on language (or server default, if no language parameter is ).</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">var textString = GetDictionaryEntry( 1, socket.language );</code></pre>
-								</div>
-							</div>
-						</div>
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_GetDictionaryEntry" />
+                            <label for="spoiler_function_misc_GetDictionaryEntry">GetDictionaryEntry <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>string GetDictionaryEntry( entryNum [, language ] );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Pulls entry from the dictionary file based on language (or server default, if no language parameter is ).</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">var textString = GetDictionaryEntry( 1, socket.language );</code></pre>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetMurderThreshold"/>
-							<label for="spoiler_function_misc_GetMurderThreshold">GetMurderThreshold <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>int GetMurderThreshold();</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Returns the number of kills needed to be branded as a murderer and turn red.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>See also: Character <strong>.murderCount</strong> and <strong>.murderer</strong> properties</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">if( GetMurderThreshold() > pTalking.murderCount )
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_GetMurderThreshold" />
+                            <label for="spoiler_function_misc_GetMurderThreshold">GetMurderThreshold <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>int GetMurderThreshold();</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Returns the number of kills needed to be branded as a murderer and turn red.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Notes</span></p>
+                                    <p>See also: Character <strong>.murderCount</strong> and <strong>.murderer</strong> properties</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">if( GetMurderThreshold() > pTalking.murderCount )
 {
 	TextMessage( pTalkingTo, "Surely sir, you must be a murderer.  I bid you adieu" );
 	EmoteMessage( pTalkingTo, "*scampers off*" );
 }</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetPlayerCount"/>
-							<label for="spoiler_function_misc_GetPlayerCount">GetPlayerCount <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>int GetPlayerCount();</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Gets the total amount of players online on the server</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">var totalOnlinePlayers = GetPlayerCount();</code></pre>
-								</div>
-							</div>
-						</div>
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_GetPlayerCount" />
+                            <label for="spoiler_function_misc_GetPlayerCount">GetPlayerCount <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>int GetPlayerCount();</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Gets the total amount of players online on the server</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">var totalOnlinePlayers = GetPlayerCount();</code></pre>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetRandomSOSArea"/>
-							<label for="spoiler_function_misc_GetRandomSOSArea">GetRandomSOSArea <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>SOSObject GetRandomSOSArea( worldNum, instanceID );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Gets a random SOS area from list of such areas loaded from [SOSAREAS] section of regions.dfn</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Fetch reference to a random SOS area
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_GetRandomSOSArea" />
+                            <label for="spoiler_function_misc_GetRandomSOSArea">GetRandomSOSArea <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>SOSObject GetRandomSOSArea( worldNum, instanceID );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Gets a random SOS area from list of such areas loaded from [SOSAREAS] section of regions.dfn</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Fetch reference to a random SOS area
 var sosArea = GetRandomSOSArea( pUser.worldNum, pUser.instanceID );
 
 // Pick a random location within the selected sosArea
@@ -6587,112 +6622,112 @@ sosMsg.morez = worldNum;
 sosMsg.more = sosMsg.instanceID;
 
 // See UOX3/js/item/waterstainedsos.js for full example, including validation for whether the chosen location is suitable, and not blocked by dynamic items, static items or map tiles</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetServerFeature"/>
-							<label for="spoiler_function_misc_GetServerFeature">GetServerFeature <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>bool GetServerFeature( ServerFeaturesBitNum );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Check if a specific server features is enabled. For a list of features that can be checked this way, see [settings]->serverFeatures List in the <a href="https://www.uox3.org/docs/index.html#uoxINISettings">UOX.INI Settings section of the UOX3 Documentation</a>.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// ContextMenus bit from list of server features
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_GetServerFeature" />
+                            <label for="spoiler_function_misc_GetServerFeature">GetServerFeature <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>bool GetServerFeature( ServerFeaturesBitNum );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Check if a specific server features is enabled. For a list of features that can be checked this way, see [settings]->serverFeatures List in the <a href="https://www.uox3.org/docs/index.html#uoxINISettings">UOX.INI Settings section of the UOX3 Documentation</a>.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// ContextMenus bit from list of server features
 var contextMenusEnabled = GetServerFeature( 0x08 );</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetServerSetting"/>
-							<label for="spoiler_function_misc_GetServerSetting">GetServerSetting <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>string GetServerSetting( serverSettingString );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Fetches the value of a specified server setting and returns it as a string. Wrap in parseInt() if expected value returned is an int.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Returns 1 if GUARDSACTIVE is set to 1 in UOX.INI, or 0 if set to 0.
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_GetServerSetting" />
+                            <label for="spoiler_function_misc_GetServerSetting">GetServerSetting <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>string GetServerSetting( serverSettingString );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Fetches the value of a specified server setting and returns it as a string. Wrap in parseInt() if expected value returned is an int.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Returns 1 if GUARDSACTIVE is set to 1 in UOX.INI, or 0 if set to 0.
 var guardsActive = GetServerSetting( "GUARDSACTIVE" );</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_GetSocketFromIndex"/>
-							<label for="spoiler_function_misc_GetSocketFromIndex">GetSocketFromIndex <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>SOCKET GetSocketFromIndex( socketIndex );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Create a socket-object based on the specified socketIndex</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Fetch whichever socket is connected to the server as socket/connection 0
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_GetSocketFromIndex" />
+                            <label for="spoiler_function_misc_GetSocketFromIndex">GetSocketFromIndex <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>SOCKET GetSocketFromIndex( socketIndex );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Create a socket-object based on the specified socketIndex</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Fetch whichever socket is connected to the server as socket/connection 0
 var socket = GetSocketFromIndex( 0 );</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_IsInBuilding"/>
-							<label for="spoiler_function_misc_IsInBuilding">IsInBuilding <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>bool IsInBuilding( x, y, z, world, instance, checkHeight );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Returns true if specified location is inside a static building (underneath static items), or if player is inside a multi.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>If checkHeight argument is true, player is only deemed inside a multi if there are multi-items above the player's head. If player is in a courtyard/on a rooftop, they will be deemed to be NOT in the building. checkHeight is not used for the static part of the function, only for multis.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">var isCharInBuilding = IsInBuilding( myChar.x, myChar.y, myChar.z, myChar.worldnumber, myChar.instanceID, true );</code></pre>
-								</div>
-							</div>
-						</div>
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_IsInBuilding" />
+                            <label for="spoiler_function_misc_IsInBuilding">IsInBuilding <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>bool IsInBuilding( x, y, z, world, instance, checkHeight );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Returns true if specified location is inside a static building (underneath static items), or if player is inside a multi.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Notes</span></p>
+                                    <p>If checkHeight argument is true, player is only deemed inside a multi if there are multi-items above the player's head. If player is in a courtyard/on a rooftop, they will be deemed to be NOT in the building. checkHeight is not used for the static part of the function, only for multis.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">var isCharInBuilding = IsInBuilding( myChar.x, myChar.y, myChar.z, myChar.worldnumber, myChar.instanceID, true );</code></pre>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_IterateOver"/>
-							<label for="spoiler_function_misc_IterateOver">IterateOver <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>int IterateOver( objectType );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Iterates over all objects of specified type in the world.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>For every object it comes across, the iterator will call a function <strong>onIterate( object )</strong> in the same script. Supported object types: "BASEOBJ", "CHARACTER", "ITEM", "SPAWNER", "MULTI", "BOAT"</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">var itemCount = IterateOver( "ITEM" );
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_IterateOver" />
+                            <label for="spoiler_function_misc_IterateOver">IterateOver <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>int IterateOver( objectType );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Iterates over all objects of specified type in the world.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Notes</span></p>
+                                    <p>For every object it comes across, the iterator will call a function <strong>onIterate( object )</strong> in the same script. Supported object types: "BASEOBJ", "CHARACTER", "ITEM", "SPAWNER", "MULTI", "BOAT"</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">var itemCount = IterateOver( "ITEM" );
 Console.log( itemCount + " items found!" );
 ...
 function onIterate( myObject )
@@ -6701,111 +6736,113 @@ function onIterate( myObject )
 	// ... optionally do something here
 	return true;
 }</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_Moon"/>
-							<label for="spoiler_function_misc_Moon">Moon <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>int Moon( moonNum );</em></p>
-									<p><em>void Moon( moonNum, newVal );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Get and set the server moon values for the two moons Felucca (0) and Trammel (1)</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">var feluccaMoonphase = Moon( 0 );
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_Moon" />
+                            <label for="spoiler_function_misc_Moon">Moon <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>int Moon( moonNum );</em></p>
+                                    <p><em>void Moon( moonNum, newVal );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Get and set the server moon values for the two moons Felucca (0) and Trammel (1)</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">var feluccaMoonphase = Moon( 0 );
 var TrammelMoonphase = Moon( 1 );
 Moon( 0, 7 ); //Set the moon Felucca to moonphase 7
 Moon( 1, 3 ); //Set the moon Trammel to moonphase 3</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_RandomNumber"/>
-							<label for="spoiler_function_misc_RandomNumber">RandomNumber <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>int RandomNumber( loNum, hiNum );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Returns a random number between loNum (inclusive) and hiNum (inclusive)</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">var iNum = RandomNumber( 0, 10 );</code></pre>
-								</div>
-							</div>
-						</div>
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_RandomNumber" />
+                            <label for="spoiler_function_misc_RandomNumber">RandomNumber <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>int RandomNumber( loNum, hiNum );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Returns a random number between loNum (inclusive) and hiNum (inclusive)</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">var iNum = RandomNumber( 0, 10 );</code></pre>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_Reload"/>
-							<label for="spoiler_function_misc_Reload">Reload <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>void Reload( subSystemID );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Dynamically reloads one (or all) of UOX3's subsystems without having to restart UOX3</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>Supported subSystemIDs:
-										<ul>
-											<li>0 - Regions/TeleportLocations</li>
-											<li>1 - Spawn Regions</li>
-											<li>2 - Spells</li>
-											<li>3 - Commands</li>
-											<li>4 - DFNs/Skills</li>
-											<li>5 - JScripts</li>
-											<li>6 - HTML Templates</li>
-											<li>7 - INI</li>
-											<li>8 - Everything</li>
-											<li>9 - Accounts</li>
-											<li>10 - Dictionaries</li>
-										</ul></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Reload all DFNs (and Skill system)
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_Reload" />
+                            <label for="spoiler_function_misc_Reload">Reload <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>void Reload( subSystemID );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Dynamically reloads one (or all) of UOX3's subsystems without having to restart UOX3</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Notes</span></p>
+                                    <p>
+                                        Supported subSystemIDs:
+                                        <ul>
+                                            <li>0 - Regions/TeleportLocations</li>
+                                            <li>1 - Spawn Regions</li>
+                                            <li>2 - Spells</li>
+                                            <li>3 - Commands</li>
+                                            <li>4 - DFNs/Skills</li>
+                                            <li>5 - JScripts</li>
+                                            <li>6 - HTML Templates</li>
+                                            <li>7 - INI</li>
+                                            <li>8 - Everything</li>
+                                            <li>9 - Accounts</li>
+                                            <li>10 - Dictionaries</li>
+                                        </ul>
+                                    </p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Reload all DFNs (and Skill system)
 Reload( 4 );
 
 // Reload INI file
 Reload( 7 );</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_ReloadJSFile"/>
-							<label for="spoiler_function_misc_ReloadJSFile">ReloadJSFile <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>void ReloadJSFile( scriptID );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Dynamically reloads script with specified scriptID from jse_fileassociations.scp without having to restart UOX3</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>Cannot be used to validate sockets</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Example of how this is used by 'reloadjsfile command
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_ReloadJSFile" />
+                            <label for="spoiler_function_misc_ReloadJSFile">ReloadJSFile <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>void ReloadJSFile( scriptID );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Dynamically reloads script with specified scriptID from jse_fileassociations.scp without having to restart UOX3</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Notes</span></p>
+                                    <p>Cannot be used to validate sockets</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Example of how this is used by 'reloadjsfile command
 function CommandRegistration()
 {
 	RegisterCommand( "reloadjsfile", 3, true ); //Reload JavaScript file
@@ -6818,70 +6855,70 @@ function command_RELOADJSFILE( socket, cmdString )
 	ReloadJSFile( scriptID );
 }
 </code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_RollDice"/>
-							<label for="spoiler_function_misc_RollDice">RollDice <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>int RollDice( numDie, faces, addition );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Rolls a faces sided die numDie times and adds addition. The example is for a DnD style dice like: 2d3+1</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Roll a DnD style dice of type 2d3+1 (2 dice with 3 faces, add 1 to result)
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_RollDice" />
+                            <label for="spoiler_function_misc_RollDice">RollDice <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>int RollDice( numDie, faces, addition );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Rolls a faces sided die numDie times and adds addition. The example is for a DnD style dice like: 2d3+1</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Roll a DnD style dice of type 2d3+1 (2 dice with 3 faces, add 1 to result)
 var mDie = RollDice( 2, 3, 1 );</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_TriggerEvent"/>
-							<label for="spoiler_function_misc_TriggerEvent">TriggerEvent <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>bool/int/string/object TriggerEvent( scriptID, "functionName", argument1, argument2 );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Calls script with specified scriptID, runs function in said script that matches "functionName", with the defined function arguments. The called upon script can return a value in the form of a boolean, int, string or an object</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Calls script with ID 8000 and runs function "onUseChecked" with function parameters pUser and iUsed
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_TriggerEvent" />
+                            <label for="spoiler_function_misc_TriggerEvent">TriggerEvent <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>bool/int/string/object TriggerEvent( scriptID, "functionName", argument1, argument2 );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Calls script with specified scriptID, runs function in said script that matches "functionName", with the defined function arguments. The called upon script can return a value in the form of a boolean, int, string or an object</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Calls script with ID 8000 and runs function "onUseChecked" with function parameters pUser and iUsed
 var returnVal = TriggerEvent( 8000, "onUseChecked", pUser, iUsed );
 </code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_TriggerTrap"/>
-							<label for="spoiler_function_misc_TriggerTrap">TriggerTrap <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>TriggerTrap( pChar/pSock, iTrap );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>pChar/pSock triggers trap on iTrap object (if any trap is present on object)</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>Trap will only trigger if both first two parts of MOREZ value is set on object; first part needs to be set to 1 to indicate object is trapped, second part needs to specify damage amount to apply.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Setup trap on iTrap object
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_TriggerTrap" />
+                            <label for="spoiler_function_misc_TriggerTrap">TriggerTrap <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>TriggerTrap( pChar/pSock, iTrap );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>pChar/pSock triggers trap on iTrap object (if any trap is present on object)</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Notes</span></p>
+                                    <p>Trap will only trigger if both first two parts of MOREZ value is set on object; first part needs to be set to 1 to indicate object is trapped, second part needs to specify damage amount to apply.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Setup trap on iTrap object
 // First part of value (01) indicates object is trapped
 // Second part of value (32) defines damage dealt (32 = 0x32 = 50 damage)
 // Third (00) and Fourth (00) parts, unused here, normally indicate the min/max skill required to disarm trap
@@ -6890,148 +6927,148 @@ iTrap.morez = 0x01320000;
 // Trigger the trap
 TriggerTrap( pChar, iTrap );
 </code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_UseItem"/>
-							<label for="spoiler_function_misc_UseItem">UseItem <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>void UseItem( pSock/mChar, iToUse );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>To allow characters (and NPCs in particular) to trigger item-use functionality of items</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>Either a socket or a character can be passed in as a parameter of the UseItem function. If a socket is passed in, UOX3 will derive the character using the item from said socket.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// If an item has type 12, make NPC use the door to open it
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_UseItem" />
+                            <label for="spoiler_function_misc_UseItem">UseItem <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>void UseItem( pSock/mChar, iToUse );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>To allow characters (and NPCs in particular) to trigger item-use functionality of items</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Notes</span></p>
+                                    <p>Either a socket or a character can be passed in as a parameter of the UseItem function. If a socket is passed in, UOX3 will derive the character using the item from said socket.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// If an item has type 12, make NPC use the door to open it
 if( myItem.type == 12 )
 {
 	mChar.TextMessage( "A door! What's on the other side?" );
 	UseItem( mChar, iToUse );
 }
 </code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_ValidateObject"/>
-							<label for="spoiler_function_misc_ValidateObject">ValidateObject <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>bool ValidateObject( object );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Returns true if argument is a valid object (Item, Character, Multi, Boat, Spawner)</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>Cannot be used to validate sockets</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">if( !ValidateObject( iUsed ))
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_ValidateObject" />
+                            <label for="spoiler_function_misc_ValidateObject">ValidateObject <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>bool ValidateObject( object );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Returns true if argument is a valid object (Item, Character, Multi, Boat, Spawner)</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Notes</span></p>
+                                    <p>Cannot be used to validate sockets</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">if( !ValidateObject( iUsed ))
 	return;</code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_WorldBrightLevel"/>
-							<label for="spoiler_function_misc_WorldBrightLevel">WorldBrightLevel <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>[int] WorldBrightLevel( [lightlevel] );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Get/Set the "maximum brightness" light-level for daytime across the entire world</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>If no parameter is provided, function will return current "maximum brightness" light-level for daytime instead.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Set maximum world brightness level to 1
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_WorldBrightLevel" />
+                            <label for="spoiler_function_misc_WorldBrightLevel">WorldBrightLevel <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>[int] WorldBrightLevel( [lightlevel] );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Get/Set the "maximum brightness" light-level for daytime across the entire world</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Notes</span></p>
+                                    <p>If no parameter is provided, function will return current "maximum brightness" light-level for daytime instead.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Set maximum world brightness level to 1
 WorldBrightLevel( 1 );
 
 // Get current maximum world brightness level
 var lightLevel = WorldBrightLevel();
 </code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_WorldDarkLevel"/>
-							<label for="spoiler_function_misc_WorldDarkLevel">WorldDarkLevel <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>[int] WorldDarkLevel( [lightlevel] );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Get/Set the "minimum brightness" light-level for night-time across the entire world</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>If no parameter is provided, function will return current "minimum brightness" light-level for night-time instead.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Set minimum world brightness level to 15
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_WorldDarkLevel" />
+                            <label for="spoiler_function_misc_WorldDarkLevel">WorldDarkLevel <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>[int] WorldDarkLevel( [lightlevel] );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Get/Set the "minimum brightness" light-level for night-time across the entire world</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Notes</span></p>
+                                    <p>If no parameter is provided, function will return current "minimum brightness" light-level for night-time instead.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Set minimum world brightness level to 15
 WorldDarkLevel( 15 );
 
 // Get current maximum world brightness level
 var lightLevel = WorldDarkLevel();
 </code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_function_misc_WorldDungeonLevel"/>
-							<label for="spoiler_function_misc_WorldDungeonLevel">WorldDungeonLevel <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>[int] WorldDungeonLevel( [lightlevel] );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Get/Set the fixed light-level for any regions marked as dungeons</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>If no parameter is provided, function will return current fixed light-level for dungeons instead.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Set fixed dungeon light level to 12
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_misc_WorldDungeonLevel" />
+                            <label for="spoiler_function_misc_WorldDungeonLevel">WorldDungeonLevel <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>[int] WorldDungeonLevel( [lightlevel] );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Get/Set the fixed light-level for any regions marked as dungeons</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Notes</span></p>
+                                    <p>If no parameter is provided, function will return current fixed light-level for dungeons instead.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Set fixed dungeon light level to 12
 WorldDungeonLevel( 12 );
 
 // Get current fixed light level of dungeons
 var lightLevel = WorldDungeonLevel();
 </code></pre>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
 
-					</div>
+                    </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 

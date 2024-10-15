@@ -55,6 +55,7 @@ static JSFunctionSpec my_functions[] =
 	{ "CalcCharFromSer",			SE_CalcCharFromSer,			1, 0, 0 },
 	{ "CalcItemFromSer",			SE_CalcItemFromSer,			1, 0, 0 },
 	{ "CalcMultiFromSer",			SE_CalcMultiFromSer,		1, 0, 0 },
+	{ "CheckInstaLog",				SE_CheckInstaLog,			4, 0, 0 },
 	{ "GetHour",					SE_GetHour,					0, 0, 0 },
 	{ "GetMinute",					SE_GetMinute,				0, 0, 0 },
 	{ "GetDay",						SE_GetDay,					0, 0, 0 },
