@@ -7969,6 +7969,35 @@ JSBool CBase_SetRandomName( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	return JS_TRUE;
 }
 
+UI16 AddRandomColor( const std::string& colorlist );
+//o------------------------------------------------------------------------------------------------o
+//|    Function    -    CBase_SetRandomColor()
+//|    Prototype    -    bool SetRandomColor( "colorlist" )
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Applies a random color from specified colorlist to character or item
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_SetRandomColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "SetRandomColor: Invalid number of arguments (takes 1, colorlist string)" );
+		return JS_FALSE;
+	}
+
+	CBaseObject *mObj			= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
+	std::string colorlist		= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+
+	if( !colorlist.empty() )
+	{
+		mObj->SetColour( AddRandomColor( colorlist ));
+		*rval = JSVAL_TRUE;
+		return JS_TRUE;
+	}
+
+	*rval = JSVAL_FALSE;
+	return JS_TRUE;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_SetSkillByName()
 //|	Prototype	-	bool SetSkillByName( "skillName", value )
