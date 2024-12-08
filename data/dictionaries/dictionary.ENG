@@ -3298,6 +3298,17 @@
 5721=You can't dig for treasure there!
 5722=coordinates %s
 5723=Completed
+// [5751-5760]  Karma Locking and Shrine
+5751=Karma is locked.  A mantra spoken at a shrine will unlock it again.
+5752=Your karma has been locked. Your karma can no longer be raised.
+5753=Your karma has been unlocked. Your karma can be raised again.
+5754=Lock Karma
+5755=Unlock Karma
+5756=Resurect
+5757=Tithe Gold
+5758=You have decided to tithe no gold to the shrine.
+5759=You do not have enough gold to tithe that amount!
+5760=You tithe gold to the shrine as a sign of devotion.
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.

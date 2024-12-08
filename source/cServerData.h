@@ -212,7 +212,7 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<106>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<107>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
@@ -628,6 +628,9 @@ public:
 
 	auto		YoungPlayerSystem( bool value ) -> void;
 	auto		YoungPlayerSystem() const -> bool;
+
+	auto		KarmaLocking( bool value ) -> void;
+	auto		KarmaLocking() const -> bool;
 
 	auto		ShowOfflinePCs( bool value ) -> void;
 	auto		ShowOfflinePCs() const -> bool;

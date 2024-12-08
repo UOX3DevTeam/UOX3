@@ -2309,6 +2309,7 @@ void Karma( CChar *nCharId, CChar *nKilledId, const SI16 nKarma )
 	SI16 nChange	= 0;
 	bool nEffect	= false;
 	SI16 nCurKarma	= nCharId->GetKarma();
+
 	if( nCurKarma > 10000 )
 	{
 		nCharId->SetKarma( 10000 );
@@ -2320,18 +2321,37 @@ void Karma( CChar *nCharId, CChar *nKilledId, const SI16 nKarma )
 		nCurKarma = -10000;
 	}
 
+	// Block positive karma gain if karma is locked and the player is not young
+	if( nCharId->GetKarmaLock() && nKarma > 0  && cwmWorldState->ServerData()->KarmaLocking() && ( !cwmWorldState->ServerData()->YoungPlayerSystem() || !nCharId->GetAccount().wFlags.test( AB_FLAGS_YOUNG )))
+	{
+		return;
+	}
+
 	if( nCurKarma < nKarma && nKarma > 0 )
 	{
 		nChange = (( nKarma - nCurKarma ) / 75 );
 		nCharId->SetKarma( static_cast<SI16>( nCurKarma + nChange ));
 		nEffect = true;
 	}
+
 	if( nCurKarma > nKarma && ( !ValidateObject( nKilledId ) || nKilledId->GetKarma() > 0 ))
 	{
 		nChange = (( nCurKarma - nKarma ) / 50 );
 		nCharId->SetKarma( static_cast<SI16>( nCurKarma - nChange ));
 		nEffect = false;
 	}
+
+	// If karma goes negative, lock it (do not lock young if the young system is active)
+	if( nCharId->GetKarma() < 0 && !nCharId->GetKarmaLock() && cwmWorldState->ServerData()->KarmaLocking() && ( !cwmWorldState->ServerData()->YoungPlayerSystem() || !nCharId->GetAccount().wFlags.test( AB_FLAGS_YOUNG )))
+    {
+		nCharId->SetKarmaLock(true);
+		CSocket *mSock = nCharId->GetSocket();
+		if( mSock )
+		{
+			mSock->SysMessage( 5751 ); // Karma is locked.  A mantra spoken at a shrine will unlock it again.
+		}
+	}
+
 	if( nChange == 0 )	// NPCs CAN gain/lose karma
 	{
 		return;

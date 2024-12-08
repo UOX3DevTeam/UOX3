@@ -115,6 +115,7 @@ const UI32 BIT_WILLTHIRST		=	31;
 const UI32 BIT_HIRELING			=	32;
 const UI32 BIT_ISPASSIVE		=	33;
 const UI32 BIT_HASSTOLEN		=	34;
+const UI32 BIT_KARMALOCK		=	35;
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
@@ -320,6 +321,8 @@ npcGuild( DEFCHAR_NPCGUILD )
 	bools.set( BIT_MAXSTAMFIXED, false );
 	//SetCanAttack( true );
 	bools.set( BIT_CANATTACK, true );
+	//SetKarmaLock( false );
+	bools.set( BIT_KARMALOCK, false );
 	//SetBrkPeaceChanceGain( 0 );
 	brkPeaceChanceGain = 0;
 	//SetBrkPeaceChance( 0 );
@@ -1077,6 +1080,23 @@ void CChar::SetCanAttack( bool newValue )
 {
 	bools.set( BIT_CANATTACK, newValue );
 	SetBrkPeaceChance( 0 );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetKarmaLock()
+//|					CChar::SetKarmaLock()
+//|	Date		-	8. Dec, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the char karma is locked
+//o------------------------------------------------------------------------------------------------o
+bool CChar::GetKarmaLock( void ) const
+{
+	return bools.test( BIT_KARMALOCK );
+}
+void CChar::SetKarmaLock( bool newValue )
+{
+	bools.set( BIT_KARMALOCK, newValue );
 	UpdateRegion();
 }
 
@@ -3134,6 +3154,7 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 	//-------------------------------------------------------------------------------------------
 	outStream << "CanRun=" + std::to_string((( CanRun() && IsNpc() ) ? 1 : 0 )) + newLine;
 	outStream << "CanAttack=" + std::to_string(( GetCanAttack() ? 1 : 0 )) + newLine;
+	outStream << "KarmaLock=" + std::to_string(( GetKarmaLock() ? 1 : 0 )) + newLine;
 	outStream << "AllMove=" + std::to_string(( AllMove() ? 1 : 0 )) + newLine;
 	outStream << "IsNpc=" + std::to_string(( IsNpc() ? 1 : 0 )) + newLine;
 	outStream << "IsShop=" + std::to_string(( IsShop() ? 1 : 0 )) + newLine;
@@ -4501,6 +4522,13 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "ISWARRING" )
 				{
 					SetWar(( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 ));
+					rValue = true;
+				}
+				break;
+			case 'K':
+				if( UTag == "KARMALOCK" )
+				{
+					SetKarmaLock( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 );
 					rValue = true;
 				}
 				break;

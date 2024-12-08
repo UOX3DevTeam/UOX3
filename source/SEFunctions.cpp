@@ -5086,6 +5086,9 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 349:	 // LOOTDECAYSWITHPLAYERCORPSE
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->NpcCorpseLootDecay() );
 				break;
+			case 354:	 // KARMALOCKING
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KarmaLocking() );
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;

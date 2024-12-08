@@ -369,7 +369,8 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SECRETSHARDKEY"s, 346},
 	{"MOONGATEFACETS"s, 347},
 	{"AUTOUNEQUIPPEDCASTING"s, 348},
-	{"LOOTDECAYSWITHNPCCORPSE"s, 349}
+	{"LOOTDECAYSWITHNPCCORPSE"s, 349},
+	{"KARMALOCKING"s, 354}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -481,6 +482,7 @@ constexpr auto BIT_SNOOPAWARENESS					= UI32( 102 );
 constexpr auto BIT_YOUNGPLAYERSYSTEM				= UI32( 103 );
 constexpr auto BIT_AUTOUNEQUIPPEDCASTING			= UI32( 104 );
 constexpr auto BIT_LOOTDECAYSONNPCCORPSE			= UI32( 105 );
+constexpr auto BIT_KARMALOCKING						= UI32( 106 );
 
 
 // New uox3.ini format lookup
@@ -623,6 +625,7 @@ auto CServerData::ResetDefaults() -> void
 
 	InternalAccountStatus( true );
 	YoungPlayerSystem( true );
+	KarmaLocking( true );
 	CombatMaxRange( 10 );
 	CombatMaxSpellRange( 10 );
 
@@ -2087,6 +2090,20 @@ auto CServerData::YoungPlayerSystem() const -> bool
 auto CServerData::YoungPlayerSystem( bool newVal ) -> void
 {
 	boolVals.set( BIT_YOUNGPLAYERSYSTEM, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::KarmaLocking()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the KarmaLocking system is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::KarmaLocking() const -> bool
+{
+	return boolVals.test( BIT_KARMALOCKING );
+}
+auto CServerData::KarmaLocking( bool newVal ) -> void
+{
+	boolVals.set( BIT_KARMALOCKING, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5072,6 +5089,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "ENABLENPCGUILDDISCOUNTS=" << ( EnableNPCGuildDiscounts() ? 1 : 0 ) << '\n';
 		ofsOutput << "ENABLENPCGUILDPREMIUMS=" << ( EnableNPCGuildPremiums() ? 1 : 0 ) << '\n';
 		ofsOutput << "YOUNGPLAYERSYSTEM=" << ( YoungPlayerSystem() ? 1 : 0 ) << '\n';
+		ofsOutput << "KARMALOCKING=" << ( KarmaLocking() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
@@ -6564,6 +6582,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 349:	 // LOOTDECAYSWITHNPCCORPSE
 			NpcCorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 354:	 // KARMALOCKING
+			KarmaLocking( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
 		default:
 			rValue = false;
