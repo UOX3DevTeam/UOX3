@@ -1,18 +1,29 @@
-function onUseChecked( pUser, iUsed )
+function onUseChecked(pUser, iUsed)
 {
-	var trgSock = pUser.socket;
-	var pPoison = pUser.poison;
-	if( pUser.dead && pUser.InRange( iUsed, 2 )) 
+	var userSocket = pUser.socket;
+
+	if( !pUser.InRange( iUsed, 2 ))
 	{
-		pUser.Resurrect();
-		pUser.StaticEffect( 0x376A, 10, 16 );
-		pUser.SoundEffect( 0x214, true );
+		return false;
 	}
-	else if( pPoison > 0 && !pUser.atWar && pUser.InRange( iUsed, 2 ))
+
+	// Resurrection logic for non-murderers and murderers at Chaos Shrine
+	if( pUser.dead )
+	{
+		if( !pUser.murderer || ( pUser.murderer && iUsed.name == "Chaos Shrine" ))
+		{
+			pUser.Resurrect();
+			pUser.StaticEffect( 0x376A, 10, 16 );
+			pUser.SoundEffect( 0x214, true );
+			userSocket.SysMessage( GetDictionaryEntry( 390, userSocket.language )); // You have been resurrected.
+		}
+	}
+	// Poison curing logic for non-murderers
+	else if( !pUser.murderer && pUser.poison > 0 && !pUser.atWar ) 
 	{
 		pUser.StaticEffect( 0x373A, 0, 15 );
 		pUser.SetPoisoned( 0, 0 );
-		trgSock.SysMessage( GetDictionaryEntry(1346, socket.language )); //The poison was cured!
+		userSocket.SysMessage(GetDictionaryEntry( 1346, userSocket.language )); // The poison was cured!
 	}
 
 	// Prevent hard-code from running
@@ -63,12 +74,12 @@ function onContextMenuRequest( socket, shrine )
 		offset = WriteMenuEntry( toSend, offset, 0x000a, pUser.karmaLocked ? 6197 : 6196, 0x0020, 0x03E0 ); // Lock/Unlock Karma
 	}
 
-	if( pUser.dead )
+	if( pUser.dead && !pUser.murderer || ( pUser.murderer && iUsed.name == "Chaos Shrine" ))
 	{
 		offset = WriteMenuEntry( toSend, offset, 0x000b, 6195, 0x0020, 0x03E0 ); // Resurrect
 	}
 
-	if( coreShardEra >= EraStringToNum("aos") && titheEnabled )
+	if( coreShardEra >= EraStringToNum( "aos" ) && titheEnabled && !pUser.murderer )
 	{
 		offset = WriteMenuEntry(toSend, offset, 0x000c, 6198, 0x0020, 0x03E0); // Tithe Gold
 	}
