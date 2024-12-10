@@ -1,3 +1,24 @@
+function onUseChecked( pUser, iUsed )
+{
+	var trgSock = pUser.socket;
+	var pPoison = pUser.poison;
+	if( pUser.dead && pUser.InRange( iUsed, 2 )) 
+	{
+		pUser.Resurrect();
+		pUser.StaticEffect( 0x376A, 10, 16 );
+		pUser.SoundEffect( 0x214, true );
+	}
+	else if( pPoison > 0 && !pUser.atWar && pUser.InRange( iUsed, 2 ))
+	{
+		pUser.StaticEffect( 0x373A, 0, 15 );
+		pUser.SetPoisoned( 0, 0 );
+		trgSock.SysMessage( GetDictionaryEntry(1346, socket.language )); //The poison was cured!
+	}
+
+	// Prevent hard-code from running
+	return false;
+}
+
 function onContextMenuRequest( socket, shrine )
 {
 	var coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
@@ -76,6 +97,11 @@ function onContextMenuSelect( socket, shrine, popupEntry )
 	switch( popupEntry )
 	{
 		case 10://Karma Locking
+			if( !pUser.InRange( shrine, 2 )) 
+			{
+				socket.SysMessage( "That is too far away." );
+			}
+
 			if( pUser.karmaLocked == true ) 
 			{
 				pUser.karmaLocked = false;
