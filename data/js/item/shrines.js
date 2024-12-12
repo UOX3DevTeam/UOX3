@@ -1,21 +1,19 @@
-function onUseChecked(pUser, iUsed)
+function onUseUnChecked(pUser, iUsed)
 {
 	var userSocket = pUser.socket;
 
 	if( !pUser.InRange( iUsed, 2 ))
 	{
+		socket.SysMessage( GetDictionaryEntry( 400, socket.language )); // That is too far away.
 		return false;
 	}
 
 	// Resurrection logic for non-murderers and murderers at Chaos Shrine
 	if( pUser.dead )
 	{
-		if( !pUser.murderer || ( pUser.murderer && iUsed.name == "Chaos Shrine" ))
+		if( !pUser.murderer || ( pUser.murderer && iUsed.morex == 1 ))
 		{
-			pUser.Resurrect();
-			pUser.StaticEffect( 0x376A, 10, 16 );
-			pUser.SoundEffect( 0x214, true );
-			userSocket.SysMessage( GetDictionaryEntry( 390, userSocket.language )); // You have been resurrected.
+			ResurrectGump( pUser, iUsed );
 		}
 	}
 	// Poison curing logic for non-murderers
@@ -74,7 +72,7 @@ function onContextMenuRequest( socket, shrine )
 		offset = WriteMenuEntry( toSend, offset, 0x000a, pUser.karmaLocked ? 6197 : 6196, 0x0020, 0x03E0 ); // Lock/Unlock Karma
 	}
 
-	if( pUser.dead && !pUser.murderer || ( pUser.murderer && iUsed.name == "Chaos Shrine" ))
+	if( pUser.dead && !pUser.murderer || ( pUser.murderer && iUsed.morex == 1 ))
 	{
 		offset = WriteMenuEntry( toSend, offset, 0x000b, 6195, 0x0020, 0x03E0 ); // Resurrect
 	}
@@ -110,7 +108,8 @@ function onContextMenuSelect( socket, shrine, popupEntry )
 		case 10://Karma Locking
 			if( !pUser.InRange( shrine, 2 )) 
 			{
-				socket.SysMessage( "That is too far away." );
+				socket.SysMessage( GetDictionaryEntry( 400, socket.language )); // That is too far away.
+				return;
 			}
 
 			if( pUser.karmaLocked == true ) 
@@ -132,19 +131,61 @@ function onContextMenuSelect( socket, shrine, popupEntry )
 
 			if( !pUser.InRange( shrine, 2 ))
 			{
-				socket.SysMessage( "That is too far away." );
+				socket.SysMessage( GetDictionaryEntry( 400, socket.language )); // That is too far away.
+				return;
 			}
 			else
 			{
-				pUser.Resurrect();
-				pUser.StaticEffect( 0x376A, 10, 16 );
-				pUser.SoundEffect( 0x214, true );
+				ResurrectGump( pUser, shrine );
 			}
 			break;
 		case 12://Tithe Gold
 			break;
 	}
 	return false;
+}
+
+function ResurrectGump( pUser, iUsed )
+{
+	var message = 0;
+	if( iUsed.morex == 1 )
+		message = 5761; // It is possible for you to be resurrected here at this Shrine. Do you wish to try?<br>CONTINUE - You chose to try to come back to life now.<br>CANCEL - You prefer to remain a ghost for now.
+	else
+		message = 5762; // It is possible for you to be resurrected here at this shrine of the Virtues. Do you wish to try?<br>CONTINUE - You chose to try to come back to life now.<br>CANCEL - You prefer to remain a ghost for now.
+
+	var ResurrectGump = new Gump;
+	var pSocket = pUser.socket;
+	ResurrectGump.AddBackground( 0, 0, 400, 350, 2600 );
+
+	ResurrectGump.AddHTMLGump( 0, 20, 400, 35, false, false, GetDictionaryEntry( 5763, pSocket.language ));// Ressurrect
+
+	ResurrectGump.AddHTMLGump( 50, 55, 300, 140, true, true, GetDictionaryEntry( message, pSocket.language ));
+
+	ResurrectGump.AddButton( 200, 227, 4005, 4007, 1, 0, 0 );
+	ResurrectGump.AddHTMLGump( 235, 230, 110, 35, false, false, GetDictionaryEntry( 18762, pSocket.language )); // CANCEL
+
+	ResurrectGump.AddButton( 65, 227, 4005, 4007, 1, 0, 1 );
+	ResurrectGump.AddHTMLGump( 100, 230, 110, 35, false, false, GetDictionaryEntry( 2708, pSocket.language )); // CONTINUE
+
+	ResurrectGump.Send(pSocket );
+	ResurrectGump.Free();
+}
+
+function onGumpPress( pSock, pButton, gumpData )
+{
+	var pUser = pSock.currentChar;
+	switch( pButton )
+	{
+		case 0:
+			// abort and do nothing
+			break;
+		case 1:
+			pUser.Resurrect();
+			pUser.StaticEffect( 0x376A, 10, 16 );
+			pUser.SoundEffect( 0x214, true );
+			pSock.SysMessage( GetDictionaryEntry( 390, pSock.language )); // You have been resurrected.
+			break;
+	}
 }
 
 function _restorecontext_() {}
