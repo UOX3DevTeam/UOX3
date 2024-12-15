@@ -335,6 +335,7 @@
 //-------------------------------------------
 8000=player/death/return_stolen_items.js
 8001=player/young_player.js
+8002=player/death/resurrectpenalty.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js
