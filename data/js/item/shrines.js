@@ -137,6 +137,7 @@ function onContextMenuSelect( socket, shrine, popupEntry )
 			else
 			{
 				ResurrectGump( pUser, shrine );
+				pUser.frozen = true;
 			}
 			break;
 		case 12://Tithe Gold
@@ -178,12 +179,16 @@ function onGumpPress( pSock, pButton, gumpData )
 	{
 		case 0:
 			// abort and do nothing
+			pUser.frozen = false;
 			break;
 		case 1:
 			pUser.Resurrect();
+			TriggerEvent( 8002, "ResurrectFamePenalty", pUser );
+			TriggerEvent( 8002, "ResurrectMurderPenalty", pUser );
 			pUser.StaticEffect( 0x376A, 10, 16 );
 			pUser.SoundEffect( 0x214, true );
 			pSock.SysMessage( GetDictionaryEntry( 390, pSock.language )); // You have been resurrected.
+			pUser.frozen = false;
 			break;
 	}
 }
