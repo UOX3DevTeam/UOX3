@@ -317,6 +317,17 @@
 5609=item/holidays/redeedaddon.js
 
 //-------------------------------------------
+// Quest System [5800-5850]
+//-------------------------------------------
+5800=server/quest/questcore.js
+5801=server/quest/quests.js
+5802=server/quest/questgump.js
+5803=server/quest/questtrackinggump.js
+5805=server/quest/objectives/onpickup.js
+5806=server/quest/objectives/ondeathblow.js
+
+
+//-------------------------------------------
 // Magic Related Scripts [6000-6500]
 //-------------------------------------------
 6000=magic/helper/check_resist.js
