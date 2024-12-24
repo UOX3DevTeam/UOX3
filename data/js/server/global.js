@@ -15,6 +15,9 @@ function onLogin( socket, pChar )
 		}
 	}
 
+	//Starts Tracking Gump On login
+	TriggerEvent(5803, "QuestTrackingGump", pChar);
+
 	// Store login timestamp (in minutes) in temp tag
 	var loginTime = Math.round( GetCurrentClock() / 1000 / 60 );
 	pChar.SetTempTag( "loginTime", loginTime );
@@ -49,6 +52,9 @@ function onLogout( pSock, pChar )
 	pChar.SetTempTag( "toothach", null );
 	pChar.SetTempTag( "Acidity", null );
 
+	// Used to remove the tracking gump timer
+	pChar.KillJSTimer(1, 5803);
+
 	//Treasure Hunting Kill Event.
 	var dirtItem = CalcItemFromSer( parseInt( pChar.GetTempTag( "dirtMadeSer" )));
 	if( ValidateObject( dirtItem ))
@@ -70,6 +76,18 @@ function onCreatePlayer( pChar )
 		}
 
 		TriggerEvent( 8001, "GiveYoungPlayerItems", pChar.socket, pChar );
+	}
+}
+
+function onQuestGump( pUser ) 
+{
+	if( ValidateObject( pUser ) && !pUser.dead )
+	{
+		TriggerEvent(5802, "QuestGump", pUser );
+	}
+	else
+	{
+		pUser.SysMessage( "Something is wrong, pUser is not valid or is dead." );
 	}
 }
 
