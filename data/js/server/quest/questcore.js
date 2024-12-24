@@ -160,74 +160,6 @@ function loadQuestProgress( player, questID )
 	return progress;
 }
 
-function onUseChecked( pUser, iUsed ) 
-{
-	startQuest( pUser, "3" );
-	//pUser.AddScriptTrigger( 50508 );
-	return false;
-}
-
-function startQuest( pUser, questID )
-{
-	var completedQuests = TriggerEvent( 50502, "ReadQuestLog", pUser ); // Read completed quests log
-	var playerSerial = pUser.serial.toString(  );
-	var questProgressArray = ReadQuestProgress( pUser );
-	var chainQuests = TriggerEvent( 50505, "getQuests" );
-
-	// Check if the quest already exists in progress
-	for( var i = 0; i < questProgressArray.length; i++ )
-	{
-		if( questProgressArray[i].questID === questID )
-		{
-			pUser.SysMessage( "You are already on this quest." );
-			return;
-		}
-	}
-
-	// Check if the player has already completed this quest
-	for( var i = 0; i < completedQuests.length; i++ )
-	{
-		var questData = completedQuests[i].split( "," );
-		if( questData[0] === playerSerial && questData[1] === questID )
-		{
-			pUser.SysMessage( "You have already completed this quest!" );
-			return;
-		}
-	}
-
-	// Find the corresponding quest
-	var quest = null;
-	for( var i = 0; i < chainQuests.length; i++ )
-	{
-		if( chainQuests[i].id === questID )
-		{
-			quest = chainQuests[i];
-			break;
-		}
-	}
-
-	if( !quest )
-	{
-		pUser.SysMessage( "Quest not found." );
-		return;
-	}
-
-	// Initialize the quest progress
-	var progress = [];
-	for( var i = 0; i < quest.steps[0].objectives.length; i++ )
-	{
-		progress.push( 0 );
-	}
-
-	// Add the quest to the progress array
-	questProgressArray.push( {questID: questID,step: 0,progress: progress,completed: false} );
-
-	// Save the updated progress to the file
-	WriteQuestProgress( pUser, questProgressArray );
-
-	pUser.SysMessage( "Quest started: " + quest.name );
-}
-
 // Check if a step is complete
 function isStepComplete( step )
 {
@@ -411,7 +343,7 @@ function WriteQuestProgress( player, questProgressArray )
 		{
 			var progressEntry = questProgressArray[i];
 			// Format: <serial>|<questID>|<step>|<progress>|<completed>
-			var serializedProgress = progressEntry.serial + "|" + progressEntry.questID + "|" + progressEntry.step + "|" + progressEntry.progress.join( "," ) + "|" + ( progressEntry.completed ? "1" : "0" );
+			var serializedProgress = player.serial + "|" + progressEntry.questID + "|" + progressEntry.step + "|" + progressEntry.progress.join( "," ) + "|" + ( progressEntry.completed ? "1" : "0" );
 				mFile.Write( serializedProgress + "\n" );
 		}
 		mFile.Close(  );
@@ -423,19 +355,20 @@ function WriteQuestProgress( player, questProgressArray )
 
 function ReadQuestProgress( player )
 {
-	var mFile = new UOXCFile(  );
+	var mFile = new UOXCFile();
 	var userAccount = player.account;
 	var fileName = "QuestProgress_" + userAccount.id + ".jsdata";
 
 	var questProgressArray = [];
+	var playerSerial = player.serial.toString(); // Get the current character's serial
 
 	mFile.Open( fileName, "r", "Quests" );
-	if( mFile && mFile.Length(  ) >= 0 )
+	if( mFile && mFile.Length() >= 0 )
 	{
-		while ( !mFile.EOF(  ) )
+		while( !mFile.EOF() )
 		{
 			var line = mFile.ReadUntil( "\n" );
-			if( line.length <= 1 || line == "" )
+			if( line.length <= 1 || line === "" )
 			{
 				continue;
 			}
@@ -444,14 +377,16 @@ function ReadQuestProgress( player )
 			var parts = line.split( "|" );
 			if( parts.length >= 5 )
 			{
-				questProgressArray.push( {serial: parts[0],questID: parts[1],step: parseInt( parts[2], 10 ),progress: parts[3].split( "," ).map( function( value ) { return parseFloat( value ) || 0;} ), completed: parts[4] === "1",} );
+				// Only include quests for the current character's serial
+				if( parts[0] === playerSerial )
+				{
+					questProgressArray.push( {serial: parts[0],questID: parts[1],step: parseInt(parts[2], 10),progress: parts[3].split(",").map(function(value) {return parseFloat(value) || 0;}),completed: parts[4] === "1",} );
+				}
 			}
 		}
-		mFile.Close(  );
-		mFile.Free(  );
+		mFile.Close();
+		mFile.Free();
 	}
 
 	return questProgressArray;
 }
-
-
