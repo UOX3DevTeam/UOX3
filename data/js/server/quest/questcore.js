@@ -118,7 +118,7 @@ function loadQuestProgress( player, questID )
 	}
 
 	// Fetch the chain quest details
-	var chainQuests = TriggerEvent( 50505, "getQuests" );
+	var chainQuests = TriggerEvent( 5801, "getQuests" );
 	var quest = null;
 
 	for( var j = 0; j < chainQuests.length; j++ )

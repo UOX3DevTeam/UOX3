@@ -4,8 +4,8 @@ function onDeathBlow( victim, player )
 	if( !ValidateObject( player ) || !ValidateObject( victim ) )
 		return true;
 
-	var activeQuests = TriggerEvent( 50502, "loadAllQuests", player );
-	var chainQuests = TriggerEvent( 50505, "getQuests", player );
+	var activeQuests = TriggerEvent( 5800, "loadAllQuests", player );
+	var chainQuests = TriggerEvent( 5801, "getQuests", player );
 
 	for( var i = 0; i < activeQuests.length; i++ ) 
 	{
@@ -42,12 +42,12 @@ function onDeathBlow( victim, player )
 
 				// Save progress
 				progress.progress[k] = obj.progress;
-				TriggerEvent( 50502,"saveQuestProgress",player,progress.questID,progress.step,progress.progress,progress.completed );
+				TriggerEvent( 5800,"saveQuestProgress",player,progress.questID,progress.step,progress.progress,progress.completed );
 
 				// Check if the objective is complete
-				if( obj.progress >= obj.count && TriggerEvent( 50502, "isStepComplete", step ) )
+				if (obj.progress >= obj.count && TriggerEvent( 5800, "isStepComplete", step ) )
 				{
-					TriggerEvent( 50502, "advanceToNextStep", player, quest );
+					TriggerEvent( 5800, "advanceToNextStep", player, quest );
 				}
 
 				return true;
@@ -55,7 +55,7 @@ function onDeathBlow( victim, player )
 		}
 	}
 
-	player.SysMessage( "This kill is not part of any active quest." );
+	//player.SysMessage( "This kill is not part of any active quest." ); debug msg
 	return true;
 }
 

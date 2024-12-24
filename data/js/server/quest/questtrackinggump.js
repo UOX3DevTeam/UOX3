@@ -9,9 +9,9 @@ function QuestTrackingGump( pUser )
 	pUser.StartTimer( 1500, 1, true );
 
 	// Load tracked quests and other necessary data
-	var trackedQuests = TriggerEvent( 50503, "ReadTrackedQuests", pUser );
-	var activeQuests = TriggerEvent( 50502, "loadAllQuests", pUser );
-	var chainQuests = TriggerEvent( 50505, "getQuests" );
+	var trackedQuests = TriggerEvent( 5803, "ReadTrackedQuests", pUser );
+	var activeQuests = TriggerEvent( 5800, "loadAllQuests", pUser );
+	var chainQuests = TriggerEvent( 5801, "getQuests" );
 
 	var gump = new Gump();
 	gump.NoClose();

@@ -11,8 +11,8 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 		return true;
 	}
 
-	var activeQuests = TriggerEvent( 50502, "loadAllQuests", pGrabber );
-	var chainQuests = TriggerEvent( 50505, "getQuests", pGrabber );
+	var activeQuests = TriggerEvent( 5800, "loadAllQuests", pGrabber );
+	var chainQuests = TriggerEvent( 5801, "getQuests", pGrabber );
 
 	for( var i = 0; i < activeQuests.length; i++ )
 	{
@@ -55,11 +55,11 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 						pGrabber.SysMessage( "Collected " + obj.progress + "/" + obj.count + " " + obj.target + " from the correct location." );
 
 						//progress.progress[i] = obj.progress;
-						TriggerEvent( 50502, "saveQuestProgress", pGrabber, progress.questID, progress.step, progress.progress, progress.completed );
+						TriggerEvent( 5800, "saveQuestProgress", pGrabber, progress.questID, progress.step, progress.progress, progress.completed );
 
-						if( TriggerEvent( 50502, "isStepComplete", step ))
+						if( TriggerEvent( 5800, "isStepComplete", step ))
 						{
-							TriggerEvent( 50502, "advanceToNextStep", pGrabber, quest );
+							TriggerEvent( 5800, "advanceToNextStep", pGrabber, quest );
 						}
 						return true;
 					}
@@ -77,11 +77,11 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 					pGrabber.SysMessage( "Collected " + obj.progress + "/" + obj.count + " " + obj.target + "." );
 
 					progress.progress[k] = obj.progress;
-					TriggerEvent( 50502, "saveQuestProgress", pGrabber, progress.questID, progress.step, progress.progress, progress.completed );
+					TriggerEvent( 5800, "saveQuestProgress", pGrabber, progress.questID, progress.step, progress.progress, progress.completed );
 
-					if( TriggerEvent(50502, "isStepComplete", step ))
+					if( TriggerEvent( 5800, "isStepComplete", step ))
 					{
-						TriggerEvent( 50502, "advanceToNextStep", pGrabber, quest );
+						TriggerEvent( 5800, "advanceToNextStep", pGrabber, quest );
 					}
 					return true;
 				}
@@ -89,6 +89,6 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 		}
 	}
 
-	pGrabber.SysMessage( "This item is not part of any active quest." );
+	//pGrabber.SysMessage( "This item is not part of any active quest." );debug msg
 	return true;
 }

@@ -96,7 +96,7 @@ function onCharDoubleClick( pUser, questNpc )
 	}
 
 	// Fetch the quest from the chainQuests
-	var chainQuests = TriggerEvent( 50505, "getQuests" );
+	var chainQuests = TriggerEvent( 5801, "getQuests" );
 	var quest = null;
 
 	for( var i = 0; i < chainQuests.length; i++ )
@@ -183,7 +183,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 				}
 
 				// Fetch the quest from the chainQuests
-				var chainQuests = TriggerEvent( 50505, "getQuests" );
+				var chainQuests = TriggerEvent( 5801, "getQuests" );
 				var quest = null;
 
 				for( var i = 0; i < chainQuests.length; i++ )
@@ -222,10 +222,10 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 
 function startQuest( pUser, questID ) 
 {
-	var completedQuests = TriggerEvent( 50502, "ReadQuestLog", pUser ); // Read completed quests log
+	var completedQuests = TriggerEvent( 5800, "ReadQuestLog", pUser ); // Read completed quests log
 	var playerSerial = pUser.serial.toString(  );
-	var questProgressArray = TriggerEvent( 50502, "ReadQuestProgress", pUser );
-	var chainQuests = TriggerEvent( 50505, "getQuests" );
+	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", pUser );
+	var chainQuests = TriggerEvent( 5801, "getQuests" );
 
 	// Check if the quest already exists in progress
 	for( var i = 0; i < questProgressArray.length; i++ )
@@ -276,7 +276,7 @@ function startQuest( pUser, questID )
 	questProgressArray.push( { questID: questID, step: 0, progress: progress, completed: false } );
 
 	// Save the updated progress to the file
-	TriggerEvent( 50502, "WriteQuestProgress", pUser, questProgressArray );
+	TriggerEvent( 5800, "WriteQuestProgress", pUser, questProgressArray );
 
 	pUser.SysMessage( "Quest started: " + quest.name );
 }

@@ -1,8 +1,8 @@
 function QuestGump( pUser )
 {
 	var socket = pUser.socket;
-	var activeQuests = TriggerEvent( 50502, "loadAllQuests", pUser ); // Load all active quests
-	var chainQuests = TriggerEvent( 50505, "getQuests" ); // Fetch chain quests dynamically
+	var activeQuests = TriggerEvent( 5800, "loadAllQuests", pUser ); // Load all active quests
+	var chainQuests = TriggerEvent( 5801, "getQuests" ); // Fetch chain quests dynamically
 
 	var questsPerPage = 10; // Number of quests per page
 	var totalPages = Math.ceil( activeQuests.length / questsPerPage );
@@ -181,9 +181,9 @@ function QuestGump( pUser )
 function CompletedQuestsGump( pUser )
 {
 	var socket = pUser.socket;
-	var completedQuests = TriggerEvent( 50502, "ReadQuestLog", pUser ); // Read completed quests
-	var chainQuests = TriggerEvent( 50505, "getQuests" ); // Fetch chain quest data
-	var trackedQuests = TriggerEvent( 50503, "ReadTrackedQuests", pUser ); // Read tracked quests
+	var completedQuests = TriggerEvent( 5800, "ReadQuestLog", pUser ); // Read completed quests
+	var chainQuests = TriggerEvent( 5801, "getQuests" ); // Fetch chain quest data
+	var trackedQuests = TriggerEvent( 5803, "ReadTrackedQuests", pUser ); // Read tracked quests
 
 	var questsPerPage = 10; // Number of quests per page
 	var totalPages = Math.ceil( completedQuests.length / questsPerPage );
@@ -295,7 +295,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	{
 		// Track/Untrack quests for buttons 101 to 110
 		var questIndex = pButton - 101;
-		var activeQuests = TriggerEvent( 50502, "loadAllQuests", pUser );
+		var activeQuests = TriggerEvent( 5800, "loadAllQuests", pUser );
 		var trackedQuests = ReadTrackedQuests( pUser );
 
 		if( questIndex < activeQuests.length )
@@ -318,7 +318,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			{
 				// Untrack the quest
 				UpdateTrackedQuestStatus( pUser, questID, 0 ); // Set status to 0 ( untracked )
-				TriggerEvent( 50504, "QuestTrackingGump", pUser );
+				TriggerEvent( 5803, "QuestTrackingGump", pUser );
 				QuestGump( pUser );
 				pUser.SysMessage( "Stopped tracking quest: " + questID );
 			}
@@ -337,7 +337,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				if( trackedCount < maxQuesttracked )
 				{
 					UpdateTrackedQuestStatus( pUser, questID, 1 ); // Set status to 1 ( tracked )
-					TriggerEvent( 50504, "QuestTrackingGump", pUser );
+					TriggerEvent( 5803, "QuestTrackingGump", pUser );
 					QuestGump( pUser );
 					pUser.SysMessage( "Started tracking quest: " + questID );
 				}
@@ -348,7 +348,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			}
 
 			// Update the quest tracking gump
-			TriggerEvent( 50504, "QuestTrackingGump", pUser );
+			TriggerEvent( 5803, "QuestTrackingGump", pUser );
 			QuestGump( pUser );
 		}
 	}
