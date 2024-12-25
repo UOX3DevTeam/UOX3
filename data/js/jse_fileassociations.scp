@@ -326,6 +326,7 @@
 5804=server/quest/questconversationgump.js
 5805=server/quest/objectives/onpickup.js
 5806=server/quest/objectives/ondeathblow.js
+5807=server/quest/objectives/questgathering.js
 
 
 //-------------------------------------------

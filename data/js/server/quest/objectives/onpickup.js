@@ -1,8 +1,9 @@
-// Handle item pickups for quests
 function onPickup( iPickedUp, pGrabber, containerObj )
 {
-	if( !ValidateObject(pGrabber ) || !ValidateObject(iPickedUp ))
+	if( !ValidateObject( pGrabber ) || !ValidateObject( iPickedUp ))
+	{
 		return true;
+	}
 
 	// Check if the item has already been marked as "picked up"
 	if( iPickedUp.GetTag( "questPickedUp" ))
@@ -13,6 +14,9 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 
 	var activeQuests = TriggerEvent( 5800, "loadAllQuests", pGrabber );
 	var chainQuests = TriggerEvent( 5801, "getQuests", pGrabber );
+
+	var itemID = iPickedUp.sectionID;
+	var amountPickedUp = iPickedUp.amount || 1; // Default to 1 if no amount property is set
 
 	for( var i = 0; i < activeQuests.length; i++ )
 	{
@@ -30,61 +34,53 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 		}
 
 		if( !quest || progress.completed )
-			continue;
+		{
+			continue; // Skip if quest not found or already completed
+		}
 
 		var step = quest.steps[progress.step];
-
 		for( var k = 0; k < step.objectives.length; k++ )
 		{
 			var obj = step.objectives[k];
 
-			if( obj.type === "collect" && obj.target === iPickedUp.sectionID )
+			if( obj.type === "collect" && obj.target === itemID )
 			{
-				// Increment progress
-				obj.progress = ( progress.progress[k] || 0 ) + 1;
-
-				// Check if a location is required
+				// Check for location-based requirement
 				if( obj.location )
 				{
-					if( iPickedUp.x === obj.location.x && iPickedUp.y === obj.location.y )
+					if( iPickedUp.x !== obj.location.x || iPickedUp.y !== obj.location.y )
 					{
-						// Mark the item as picked up for the quest
-						iPickedUp.SetTag( "questPickedUp", true );
-
-						// Increment progress forlocation-based pickup
-						pGrabber.SysMessage( "Collected " + obj.progress + "/" + obj.count + " " + obj.target + " from the correct location." );
-
-						//progress.progress[i] = obj.progress;
-						TriggerEvent( 5800, "saveQuestProgress", pGrabber, progress.questID, progress.step, progress.progress, progress.completed );
-
-						if( TriggerEvent( 5800, "isStepComplete", step ))
-						{
-							TriggerEvent( 5800, "advanceToNextStep", pGrabber, quest );
-						}
-						return true;
-					}
-					else
-					{
-						pGrabber.SysMessage( "This item must be picked up from the correct location at (" + obj.location.x + ", " + obj.location.y + ")." );
+						pGrabber.SysMessage( "This item must be picked up from the correct location at ( " + obj.location.x + ", " + obj.location.y + " )." );
 						return true;
 					}
 				}
-				else
+
+				// Ensure progress does not exceed the required amount
+				var currentProgress = progress.progress[k] || 0;
+				var remainingNeeded = obj.count - currentProgress;
+				var increment = Math.min( amountPickedUp, remainingNeeded );
+
+				progress.progress[k] = currentProgress + increment;
+
+				// Mark the item as picked up for the quest if fully used
+				if( increment > 0 )
 				{
-					// Mark the item as picked up for the quest
 					iPickedUp.SetTag( "questPickedUp", true );
-
-					pGrabber.SysMessage( "Collected " + obj.progress + "/" + obj.count + " " + obj.target + "." );
-
-					progress.progress[k] = obj.progress;
-					TriggerEvent( 5800, "saveQuestProgress", pGrabber, progress.questID, progress.step, progress.progress, progress.completed );
-
-					if( TriggerEvent( 5800, "isStepComplete", step ))
-					{
-						TriggerEvent( 5800, "advanceToNextStep", pGrabber, quest );
-					}
-					return true;
 				}
+
+				// Notify the player
+				pGrabber.SysMessage( "Collected " + progress.progress[k] + "/" + obj.count + " " + ( obj.displayName || "Unknown Item" ) + "." );
+
+				// Save the updated progress
+				TriggerEvent( 5800, "saveQuestProgress", pGrabber, progress.questID, progress.step, progress.progress, progress.completed );
+
+				// Check if all objectives for the step are complete
+				if( TriggerEvent( 5800, "isStepComplete", step, progress.progress )) 
+				{
+					TriggerEvent( 5800, "advanceToNextStep", pGrabber, quest );
+				}
+
+				return true;
 			}
 		}
 	}

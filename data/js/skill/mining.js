@@ -615,12 +615,14 @@ function MakeOre( socket, mChar )
 				if( ValidateObject( oreItem ))
 				{
 					oreItem.name = oreName;
+					oreItem.sectionID = "ore";
 					if( oreData[6] != 0 )
 					{
 						oreItem.AddScriptTrigger( oreData[6] ); // oreData[6] is scriptID
 					}
 					if( oreItem.container != null )
 					{
+						TriggerEvent( 5807, "QuestGathering", oreItem, mChar ); // for quest gathering
 						var dictmsg = GetDictionaryEntry( 982, socket.language ); // You place some %s in your pack
 						//socket.SysMessage( dictmsg.replace( /%s/gi, oreName ));
 						mChar.TextMessage( dictmsg.replace( /%s/gi, oreName ), false, 0x3b2, 0, mChar.serial ); // You place some %s in your pack

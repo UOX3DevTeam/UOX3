@@ -161,7 +161,7 @@ function loadQuestProgress( player, questID )
 }
 
 // Check if a step is complete
-function isStepComplete( step )
+/*function isStepComplete( step )
 {
 	for( var i = 0; i < step.objectives.length; i++ )
 	{
@@ -188,7 +188,42 @@ function isStepComplete( step )
 		}
 	}
 	return true; // All objectives complete
+}*/
+
+function isStepComplete(step, progressData)
+{
+	for (var i = 0; i < step.objectives.length; i++)
+	{
+		var obj = step.objectives[i];
+
+		// Handle multi-target objectives
+		if (obj.targets && typeof obj.targets === "object" && obj.targets.length !== undefined)
+		{
+			for (var t = 0; t < obj.targets.length; t++) {
+				var targetProgress = (progressData[i] && progressData[i][t]) || 0;
+				if (targetProgress < obj.targets[t].count)
+				{
+					return false; // Not complete if any target is incomplete
+				}
+			}
+		}
+		else if (obj.type === "location" && !obj.reached)
+		{
+			return false; // Location not reached
+		}
+		else
+		{
+			var currentProgress = progressData[i] || 0;
+			if (currentProgress < obj.count)
+			{
+				return false; // General objective not complete
+			}
+		}
+	}
+
+	return true; // All objectives complete
 }
+
 
 function advanceToNextStep( player, quest )
 {
@@ -216,7 +251,7 @@ function advanceToNextStep( player, quest )
 
 		// Grant rewards need rewroked commited out for now
 		var lastStep = quest.steps[quest.steps.length - 1];
-		//grantRewards( player, lastStep.rewards );
+		grantRewards( player, lastStep.rewards );
 	}
 	else
 	{
@@ -234,19 +269,41 @@ function advanceToNextStep( player, quest )
 // Grant rewards to the player
 function grantRewards( player, rewards )
 {
-	if( rewards.gold )
+	// Handle gold rewards
+	if( rewards.gold && rewards.gold > 0 )
 	{
-		player.gold += rewards.gold;
+		CreateDFNItem( player.socket, player, "0x0eed", rewards.gold, "ITEM", true );
 		player.SysMessage( "You received " + rewards.gold + " gold!" );
 	}
 
-	if( rewards.items ) 
+	// Handle item rewards
+	if( rewards.items )
 	{
-		for( var i = 0; i < rewards.items.length; i++ ) 
+		for (var i = 0; i < rewards.items.length; i++)
 		{
-			var item = CreateDFNItem(rewards.items[i], player.x, player.y, player.z, player.worldnumber );
-			player.AddItem( item );
-			player.SysMessage( "You received a " + item.name + "!" );
+			var rewardItem = rewards.items[i];
+			var amount = rewardItem.amount || 1; // Default to 1 if amount is not specified
+			var color = rewardItem.color || 0; // Default to 0 (no color)
+
+			// Create the item(s)
+			var item = CreateDFNItem(
+				player.socket,
+				player,
+				rewardItem.id,
+				amount,
+				"ITEM",
+				true, // Spawn in player's pack
+				color // Pass the color to CreateDFNItem
+			);
+
+			if( item )
+			{
+				player.SysMessage( "You received " + amount + " " + (item.name || rewardItem.id) + "!" );
+			}
+			else
+			{
+				player.SysMessage( "Failed to create reward item: " + rewardItem.id );
+			}
 		}
 	}
 }
