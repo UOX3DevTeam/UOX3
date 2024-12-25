@@ -4,7 +4,7 @@ function QuestConversationGump( pUser, targObj, quest )
 
 	// Create a new gump
 	var gump = new Gump();
-	gump.AddPage( 0 );
+	gump.AddPage(0);
 	gump.AddBackground( 30, 120, 296, 447, 1579 ); // Background
 	gump.AddGump( 70, 130, 1577 ); // Decorative gump
 	gump.AddGump( 90, 320, 96 ); // Decorative gump
@@ -56,23 +56,41 @@ function QuestConversationGump( pUser, targObj, quest )
 		}
 		else
 		{
-			gump.AddHTMLGump( 50, yOffset, 264, 100, false, true, "<H1><basefont color=#000000>Quest: " + quest.name + "</H1></basefont><br>" + "<H2><basefont color=#000000>Description</H2>: " + step.description + "</basefont>" );
-		}
+			if( TriggerEvent( 5800, "couGumpSupport" ))
+			{
+				gump.AddHTMLGump( 50, yOffset, 264, 100, false, true, "<H1><basefont color=#000000>Quest: " + quest.name + "</H1></basefont><br>" + "<H2><basefont color=#000000>Description</H2>: " + step.description + "</basefont>" );
+			}
+			else
+			{
+				gump.AddHTMLGump( 50, yOffset, 264, 100, true, true, "<basefont color=#100000>Quest: " + quest.name + "<br>" + "<basefont color=#100000>Description: " + step.description + "</basefont>" );
+			}
+			}
 	}
 	else if( isIncomplete && step.Uncomplete )
 	{
-		// Use the "Uncomplete" message if the quest is not completed
-		gump.AddHTMLGump( 50, yOffset, 264, 100, false, true, "<H1><basefont color=#000000>Quest: " + quest.name + "</H1></basefont><br>" + "<H2><basefont color=#000000>Uncomplete Message</H2>: " + step.Uncomplete + "</basefont>" );
+		if( TriggerEvent( 5800, "couGumpSupport" ))
+		{
+			gump.AddHTMLGump( 50, yOffset, 264, 100, false, true, "<H1><basefont color=#000000>Quest: " + quest.name + "</H1></basefont><br>" + "<H2><basefont color=#000000>Uncomplete Message</H2>: " + step.Uncomplete + "</basefont>" );
+		}
+		else
+		{
+			gump.AddHTMLGump( 50, yOffset, 264, 100, true, true, "<H1><basefont color=#100000>Quest: " + quest.name + "</H1></basefont><br>" + "<H2><basefont color=#100000>Uncomplete Message</H2>: " + step.Uncomplete + "</basefont>" );
+		}
 	} 
 	else if( step.cliloc && step.cliloc > 0 )
 	{
-		// Use cliloc for quest description
 		gump.AddXMFHTMLGump( 50, yOffset, 264, 100, step.cliloc, true, true ); // Display using cliloc
 	}
 	else
 	{
-		// Use description for quest details
-		gump.AddHTMLGump( 50, yOffset, 264, 100, false, true, "<H1><basefont color=#000000>Quest: " + quest.name + "</H1></basefont><br>" + "<H2><basefont color=#000000>Description</H2>: " + step.description + "</basefont>" );
+		if( TriggerEvent( 5800, "couGumpSupport" ))
+		{
+			gump.AddHTMLGump( 50, yOffset, 264, 100, false, true, "<H1><basefont color=#000000>Quest: " + quest.name + "</H1></basefont><br>" + "<H2><basefont color=#100000>Description</H2>: " + step.description + "</basefont>" );
+		}
+		else
+		{
+			gump.AddHTMLGump( 50, yOffset, 264, 100, true, true, "<basefont color=#100000>Quest: " + quest.name + "<br>" + "<basefont color=#100000>Description: " + step.description + "</basefont>" );
+		}
 	}
 
 	// Display objectives with actual progress
@@ -105,13 +123,34 @@ function QuestConversationGump( pUser, targObj, quest )
 
 	// Display rewards
 	var rewards = step.rewards || {};
-	var rewardText = "Gold: " + ( rewards.gold || 0 ) + "<br>";
-	if( rewards.items && rewards.items.length > 0 )
+	var rewardText = "";
+
+	if (rewards.gold)
 	{
-		rewardText += "Items: " + rewards.items.join( ", " ) + "<br>";
+		rewardText = "Gold: " + (rewards.gold || 0) + "<br>";
 	}
 
-	gump.AddHTMLGump( 50, yOffset + 220, 250, 200, false, false, "<H2>Rewards</H2><br>" + rewardText );
+	if (rewards.items && rewards.items.length > 0)
+	{
+		rewardText += "Items:<br>";
+		for (var i = 0; i < rewards.items.length; i++)
+		{
+			var item = rewards.items[i];
+			rewardText += "- " + (item.name || "Unknown Item") + " x" + (item.amount || 1) + "<br>";
+		}
+	}
+
+	if (rewards.fame)
+	{
+		rewardText += "Fame: " + rewards.fame + "<br>";
+	}
+
+	if (rewards.karma)
+	{
+		rewardText += "Karma: " + rewards.karma + "<br>";
+	}
+
+	gump.AddHTMLGump( 50, yOffset + 180, 250, 90, true, true, "<H2>Rewards</H2><br>" + rewardText );
 
 	// Send the gump
 	gump.Send( socket );
@@ -161,6 +200,9 @@ function onCharDoubleClick( pUser, questNpc )
 	var completedQuests = TriggerEvent( 5800, "ReadQuestLog", pUser );
 	var playerSerial = pUser.serial.toString();
 	var questID = questNpc.GetTag( "QuestID" ).toString();
+	var gumpID = 5804 + 0xffff;
+	var socket = pUser.socket;
+
 	if( !questNpc.InRange( pUser, 2 ))
 		return;
 
@@ -210,6 +252,7 @@ function onCharDoubleClick( pUser, questNpc )
 
 	questNpc.TurnToward( pUser );
 	// Show the quest conversation gump
+	socket.CloseGump(gumpID, 0);
 	QuestConversationGump( pUser, questNpc, quest );
 	return false;
 
@@ -283,6 +326,7 @@ function getQuestDetails( pUser, targObj )
 function onContextMenuSelect( socket, targObj, popupEntry )
 {
 	var pUser = socket.currentChar;
+	var gumpID = 5804 + 0xffff;
 
 	// Validate the targeted object and player
 	if( !ValidateObject( pUser ) || !ValidateObject( targObj ))
@@ -323,6 +367,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 				pUser.SetTempTag( "questNpcSerial", targObj.serial.toString() );
 
 				// Show the quest conversation gump
+				socket.CloseGump(gumpID, 0);
 				QuestConversationGump( pUser, targObj, quest );
 			}
 			break;

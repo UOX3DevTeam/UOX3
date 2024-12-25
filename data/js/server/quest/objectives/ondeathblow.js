@@ -1,7 +1,7 @@
 // Handle NPC kills for quests
 function onDeathBlow( victim, player )
 {
-	if( !ValidateObject( player ) || !ValidateObject( victim ) )
+	if( !ValidateObject( player ) || !ValidateObject( victim ))
 		return true;
 
 	var activeQuests = TriggerEvent( 5800, "loadAllQuests", player );
@@ -45,7 +45,7 @@ function onDeathBlow( victim, player )
 				TriggerEvent( 5800,"saveQuestProgress",player,progress.questID,progress.step,progress.progress,progress.completed );
 
 				// Check if the objective is complete
-				if (obj.progress >= obj.count && TriggerEvent( 5800, "isStepComplete", step ) )
+				if (obj.progress >= obj.count && TriggerEvent( 5800, "isStepComplete", step ))
 				{
 					TriggerEvent( 5800, "advanceToNextStep", player, quest );
 				}

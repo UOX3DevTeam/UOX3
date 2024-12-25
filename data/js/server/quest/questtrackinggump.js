@@ -6,10 +6,8 @@ function QuestTrackingGump( pUser )
 		return;
 	}
 
-	pUser.StartTimer( 1500, 1, true );
-
 	// Load tracked quests and other necessary data
-	var trackedQuests = TriggerEvent( 5803, "ReadTrackedQuests", pUser );
+	var trackedQuests = TriggerEvent( 5802, "ReadTrackedQuests", pUser );
 	var activeQuests = TriggerEvent( 5800, "loadAllQuests", pUser );
 	var chainQuests = TriggerEvent( 5801, "getQuests" );
 
@@ -18,8 +16,17 @@ function QuestTrackingGump( pUser )
 	gump.AddPage( 0 );
 	gump.AddBackground( 30, 120, 250, 425, 1579 );
 	gump.AddGump( 50, 100, 1588 );
-	gump.AddHTMLGump( 65, 102, 200, 50, false, false, "<H4><basefont color=#59ff00>Tracked Quests</basefont></H4>" );
-	gump.AddCheckerTrans( 30, 120, 250, 425 );
+	if( TriggerEvent( 5800, "couGumpSupport" )) 
+	{
+		pUser.StartTimer( 1500, 1, 5803 );
+		gump.AddHTMLGump( 65, 102, 200, 50, false, false, "<H4><basefont color=#59ff00>Tracked Quests</basefont></H4>" );
+		gump.AddCheckerTrans( 30, 120, 250, 425 );
+	}
+	else
+	{
+		pUser.StartTimer( 2000, 1, 5803 );
+		gump.AddHTMLGump( 65, 102, 200, 50, false, false, "<H4>Tracked Quests</H4>" );
+	}
 
 	var yOffset = 150;
 
@@ -66,7 +73,7 @@ function QuestTrackingGump( pUser )
 			// Handle kill objectives
 			if( obj.type === "kill" && obj.targets && obj.targets.length )
 			{
-				objectives += "<basefont color=#ff8b00>Kill Targets:</basefont><br>";
+				objectives += "Kill Targets:<br>";
 				for( var t = 0; t < obj.targets.length; t++ )
 				{
 					var target = obj.targets[t];
@@ -82,9 +89,17 @@ function QuestTrackingGump( pUser )
 		}
 
 		// Add quest details to the gump
-		gump.AddHTMLGump( 50, yOffset, 250, 120, false, false,
-			"<H2><basefont color=#ff8b00>" + quest.name + "</basefont></H2><br>" +
-			"<basefont color=#2eff00>" + objectives + "</basefont>" );
+		if( TriggerEvent( 5800, "couGumpSupport" ))
+		{
+			// Add quest details to the gump
+			gump.AddHTMLGump( 50, yOffset, 250, 120, false, false,
+				"<H2><basefont color=#ff8b00>" + quest.name + "</basefont></H2><br>" +
+				"<basefont color=#2eff00>" + objectives + "</basefont>" );
+		}
+		else 
+		{
+			gump.AddHTMLGump( 50, yOffset, 250, 120, false, false, quest.name + "<br>" + objectives );
+		}
 
 		yOffset += 150; // Adjust for next quest
 	}
@@ -98,10 +113,10 @@ function QuestTrackingGump( pUser )
 function onGumpPress(  pSock, pButton, gumpData  ) 
 {
 	var pUser = pSock.currentChar;
-	// Kill any timers associated with the plant ( presumably for growth or other processes )
+	// Kill any timers associated with the tracked quests
 	if(  pButton == 1  ) 
 	{
-		pUser.KillJSTimer( 1, 50504 );
+		pUser.KillJSTimer( 1, 5803 );
 	}
 }
 
@@ -112,12 +127,14 @@ function onTimer(  pUser, timerID  )
 	{
 		if( ValidateObject( pUser )  && socket != null  )
 		{
+			var gumpID = 5803 + 0xffff;
+			socket.CloseGump( gumpID, 0 );
 			QuestTrackingGump(  pUser  );
 			return;
 		}
 		else
 		{
-			pUser.KillJSTimer( 1, 50504 );
+			pUser.KillJSTimer( 1, 5803 );
 			return;
 		}
 	}

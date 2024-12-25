@@ -11,7 +11,8 @@ function getQuests()
 					refuse: "Not feeling strong enough today? Its alright, I didn't need a bucket of rocks anyway.",
 					Uncomplete: "Hmmm… we need some more Ore. Try finding a mountain or cave, and give it a whack.",
 					objectives: [{ type: "gather", target: "ore", count: 5, progress: 0, displayName: "Iron Ore" }],
-					rewards: { gold: 0, items: [{ id: "pickaxe", amount: 2 }]
+					rewards: {
+						gold: 0, fame: 0, karma: 0, items: [{ id: "pickaxe", name: "Pickaxe", amount: 2 }]
 					}
 				}
 			]
@@ -39,9 +40,11 @@ function getQuests()
 					],
 					rewards: {
 						gold: 0,
+						fame: 0,
+						karma: 0,
 						items: [
-							{ id: "0x1bf2", amount: 10, color: 0x084c }, // Blue ingots
-							{ id: "0x13e3", amount: 1 } // Blacksmith's hammer
+							{ id: "0x1bf2", name: "Blue Ingots", amount: 10, color: 0x084c }, // Blue ingots
+							{ id: "0x13e3", name: "Blacksmith's hammer", amount: 1 } // Blacksmith's hammer
 						]
 					}
 				}

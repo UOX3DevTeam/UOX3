@@ -61,7 +61,7 @@ function QuestGathering( objMade, creator )
 					if( progress.progress[o] >= obj.count )
 					{
 						// Check if all objectives in the step are complete
-						if (TriggerEvent( 5800, "isStepComplete", step, progress.progress ) )
+						if( TriggerEvent( 5800, "isStepComplete", step, progress.progress ) )
 						{
 							// Advance to the next step or mark quest as completed
 							TriggerEvent( 5800, "advanceToNextStep", creator, quest );

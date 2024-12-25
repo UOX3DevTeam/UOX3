@@ -79,7 +79,8 @@ function QuestGump( pUser )
 			}
 		}
 
-		if( !quest ) continue;
+		if( !quest ) 
+			continue;
 
 		// Build the objectives string with progress for each target
 		var objectives = "";
@@ -99,7 +100,15 @@ function QuestGump( pUser )
 			// Handle multiple kill targets
 			else if( obj.type === "kill" && obj.targets && obj.targets.length )
 			{
-				objectives += "<basefont color=#ff8b00>Kill Targets:</basefont><br>";
+				if( TriggerEvent( 50502, "couGumpSupport" )) 
+				{
+					objectives += "<basefont color=#ff8b00>Kill Targets:</basefont><br>";
+				}
+				else
+				{
+					objectives += "Kill Targets: <br>";
+				}
+
 				for( var t = 0; t < obj.targets.length; t++ )
 				{
 					var target = obj.targets[t];
@@ -122,11 +131,25 @@ function QuestGump( pUser )
 			// Additional details for specific objective types
 			if( obj.type === "Delivery" )
 			{
-				objectives += "<basefont color=#ff8b00>Target NPC: </basefont>" + ( obj.npcName || "Unknown NPC" ) + "<br>";
+				if( TriggerEvent( 5800, "couGumpSupport" ))
+				{
+					objectives += "<basefont color=#ff8b00>Target NPC: </basefont>" + ( obj.npcName || "Unknown NPC" ) + "<br>";
+				}
+				else
+				{
+					objectives += "Target NPC: " + ( obj.npcName || "Unknown NPC" ) + "<br>";
+				}
 			}
 			else if( obj.type === "Drop" )
 			{
-				objectives += "<basefont color=#ff8b00>Target Item: </basefont>" + ( obj.itemName || "Unknown Item" ) + "<br>";
+				if( TriggerEvent( 5800, "couGumpSupport" ))
+				{
+					objectives += "<basefont color=#ff8b00>Target Item: </basefont>" + (obj.itemName || "Unknown Item") + "<br>";
+				}
+				else
+				{
+					objectives += "Target Item: " + ( obj.itemName || "Unknown Item" ) + "<br>";
+				}
 			}
 		}
 
@@ -162,11 +185,50 @@ function QuestGump( pUser )
 			gump.AddText( 70, buttonY + 5, 500, questName ); // Quest name
 		}
 
+		// Display rewards
+		var rewards = quest.steps[progress.step].rewards || {};
+		var rewardText = "";
+
+		if( rewards.gold )
+		{
+			rewardText = "Gold: " + ( rewards.gold || 0 ) + "<br>";
+		}
+
+		if( rewards.items && rewards.items.length > 0 ) 
+		{
+			rewardText += "Items:<br>";
+			for (var i = 0; i < rewards.items.length; i++)
+			{
+				var item = rewards.items[i];
+				rewardText += "- " + ( item.name || "Unknown Item" ) + " x" + ( item.amount || 1 ) + "<br>";
+			}
+		}
+
+		if( rewards.fame )
+		{
+			rewardText += "Fame: " + rewards.fame + "<br>";
+		}
+
+		if( rewards.karma )
+		{
+			rewardText += "Karma: " + rewards.karma + "<br>";
+		}
+
 		// Add the quest details
 		gump.AddBackground( 350, 120, 306, 309, 1579 ); // Details background
-		gump.AddHTMLGump( 370, 130, 264, 92, false, true, "<H1><basefont color=#000000>Description:</H1><br>" + quest.steps[progress.step].description + "</basefont>" );
-		gump.AddHTMLGump( 370, 230, 266, 81, false, false, "<H1><basefont color=#000000>Objective:</basefont></H1><br>" + objectives );
-		gump.AddHTMLGump( 370, 320, 266, 81, false, false, "<H1>Rewards:</H1><br>Gold: " + ( quest.steps[progress.step].rewards.gold || 0 ) + "<br>Items: " + ( quest.steps[progress.step].rewards.items || [] ).join( ", " ));
+		if( TriggerEvent( 5800, "couGumpSupport" ))
+		{
+			gump.AddHTMLGump( 370, 130, 264, 92, false, true, "<H1><basefont color=#000000>Description:</H1><br>" + quest.steps[progress.step].description + "</basefont>" );
+			gump.AddHTMLGump( 370, 230, 266, 81, false, false, "<H1><basefont color=#000000>Objective:</basefont></H1><br>" + objectives );
+		}
+		else 
+		{
+
+			gump.AddHTMLGump( 370, 130, 264, 92, true, true, "Description:<br>" + quest.steps[progress.step].description );
+			gump.AddHTMLGump( 370, 230, 266, 81, false, false, "Objective:<br>" + objectives );
+		}
+
+		gump.AddHTMLGump( 370, 320, 266, 150, false, false, "<H1>Rewards:</H1><br>" + rewardText );
 
 		// Add a "Back" button to return to the main quest list
 		var originalPage = Math.floor( i / questsPerPage ) + 1;
@@ -183,7 +245,7 @@ function CompletedQuestsGump( pUser )
 	var socket = pUser.socket;
 	var completedQuests = TriggerEvent( 5800, "ReadQuestLog", pUser ); // Read completed quests
 	var chainQuests = TriggerEvent( 5801, "getQuests" ); // Fetch chain quest data
-	var trackedQuests = TriggerEvent( 5803, "ReadTrackedQuests", pUser ); // Read tracked quests
+	var trackedQuests = TriggerEvent( 5802, "ReadTrackedQuests", pUser ); // Read tracked quests
 
 	var questsPerPage = 10; // Number of quests per page
 	var totalPages = Math.ceil( completedQuests.length / questsPerPage );
@@ -267,9 +329,49 @@ function CompletedQuestsGump( pUser )
 		gump.AddPage( totalPages + i + 1 );
 
 		gump.AddBackground( 350, 120, 306, 309, 1579 ); // Details background
-		gump.AddHTMLGump( 370, 130, 264, 92, false, true, "<H1><basefont color=#000000>Description:</H1><br>" + quest.steps[quest.steps.length - 1].description + "</basefont>" );
-		gump.AddHTMLGump( 370, 230, 266, 81, false, false, "<H1><basefont color=#000000>Status:</basefont></H1><br>Completed<br>" );
-		gump.AddHTMLGump( 370, 320, 266, 81, false, false, "<H1>Rewards:</H1><br>Gold: " + ( quest.steps[quest.steps.length - 1].rewards.gold || 0 ) + "<br>Items: " + ( quest.steps[quest.steps.length - 1].rewards.items || [] ).join( ", " ));
+		if( TriggerEvent( 5800, "couGumpSupport" ))
+		{
+			gump.AddHTMLGump( 370, 130, 264, 92, false, true, "<H1><basefont color=#000000>Description:</H1><br>" + quest.steps[quest.steps.length - 1].description + "</basefont>" );
+			gump.AddHTMLGump( 370, 230, 266, 81, false, false, "<H1><basefont color=#000000>Status:</basefont></H1><br>Completed<br>" );
+		}
+		else
+		{
+			gump.AddHTMLGump( 370, 130, 264, 92, true, true, "Description:<br>" + quest.steps[quest.steps.length - 1].description );
+			gump.AddHTMLGump( 370, 230, 266, 81, false, false, "Status:<br>Completed<br>" );
+		}
+		//gump.AddHTMLGump( 370, 320, 266, 81, false, false, "<H1>Rewards:</H1><br>Gold: " + ( quest.steps[quest.steps.length - 1].rewards.gold || 0 ) + "<br>Items: " + ( quest.steps[quest.steps.length - 1].rewards.items || [] ).join( ", " ));
+		
+		// Display rewards for the last step of the quest
+		var rewards = quest.steps[quest.steps.length - 1].rewards || {};
+		var rewardText = "";
+
+		if( rewards.gold )
+		{
+			rewardText = "Gold: " + ( rewards.gold || 0 ) + "<br>";
+		}
+
+		if( rewards.items && rewards.items.length > 0 )
+		{
+			rewardText += "Items:<br>";
+			for( var i = 0; i < rewards.items.length; i++ )
+			{
+				var item = rewards.items[i];
+				rewardText += "- " + ( item.name || "Unknown Item" ) + " x" + ( item.amount || 1 ) + "<br>";
+			}
+		}
+
+		if( rewards.fame )
+		{
+			rewardText += "Fame: " + rewards.fame + "<br>";
+		}
+
+		if( rewards.karma )
+		{
+			rewardText += "Karma: " + rewards.karma + "<br>";
+		}
+
+		gump.AddHTMLGump( 370, 320, 266, 81, true, true, "<H1>Rewards:</H1><br>" + rewardText );
+
 
 		// Add a "Back" button to return to the main quest list
 		var originalPage = Math.floor( i / questsPerPage ) + 1;
@@ -285,6 +387,7 @@ function onGumpPress( pSock, pButton, gumpData )
 {
 	var maxQuesttracked = 10;
 	var pUser = pSock.currentChar;
+	var gumpID = 5802 + 0xffff;
 
 	if( pButton === 1 )
 	{
@@ -319,6 +422,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				// Untrack the quest
 				UpdateTrackedQuestStatus( pUser, questID, 0 ); // Set status to 0 ( untracked )
 				TriggerEvent( 5803, "QuestTrackingGump", pUser );
+				pSock.CloseGump(gumpID, 0);
 				QuestGump( pUser );
 				pUser.SysMessage( "Stopped tracking quest: " + questID );
 			}
@@ -338,6 +442,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				{
 					UpdateTrackedQuestStatus( pUser, questID, 1 ); // Set status to 1 ( tracked )
 					TriggerEvent( 5803, "QuestTrackingGump", pUser );
+					pSock.CloseGump(gumpID, 0);
 					QuestGump( pUser );
 					pUser.SysMessage( "Started tracking quest: " + questID );
 				}
@@ -349,15 +454,18 @@ function onGumpPress( pSock, pButton, gumpData )
 
 			// Update the quest tracking gump
 			TriggerEvent( 5803, "QuestTrackingGump", pUser );
+			pSock.CloseGump(gumpID, 0);
 			QuestGump( pUser );
 		}
 	}
 	else if( pButton === 20 )
 	{
+		pSock.CloseGump(gumpID, 0);
 		QuestGump( pUser );
 	}
 	else if( pButton === 21 )
 	{
+		pSock.CloseGump(gumpID, 0);
 		CompletedQuestsGump( pUser );
 	}
 }

@@ -85,6 +85,6 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 		}
 	}
 
-	//pGrabber.SysMessage( "This item is not part of any active quest." );debug msg
+	//pGrabber.SysMessage( "This item is not part of any active quest." ); debug msg
 	return true;
 }

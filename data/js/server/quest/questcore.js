@@ -10,6 +10,13 @@ function isArray(  obj  )
 	return Object.prototype.toString.call(  obj  ) === "[object Array]";
 }
 
+// Options
+function couGumpSupport( option ) 
+{
+	option = true;
+	return option;
+}
+
 function loadAllQuests(  pUser  )
 {
 	return ReadQuestProgress(  pUser  );
@@ -270,10 +277,28 @@ function advanceToNextStep( player, quest )
 function grantRewards( player, rewards )
 {
 	// Handle gold rewards
-	if( rewards.gold && rewards.gold > 0 )
+	if( rewards.gold )
 	{
 		CreateDFNItem( player.socket, player, "0x0eed", rewards.gold, "ITEM", true );
 		player.SysMessage( "You received " + rewards.gold + " gold!" );
+	}
+
+	// Handle fame rewards
+	if (rewards.fame )
+	{
+		player.fame = ( player.fame || 0 ) + rewards.fame;
+		player.SysMessage( "You gained " + rewards.fame + " fame!" );
+	}
+
+	// Handle karma rewards
+	if( rewards.karma )
+	{
+		player.karma = ( player.karma || 0 ) + rewards.karma;
+		var karmaMessage =
+			rewards.karma > 0
+				? "You gained " + rewards.karma + " karma!"
+				: "You lost " + Math.abs( rewards.karma ) + " karma!";
+		player.SysMessage( karmaMessage );
 	}
 
 	// Handle item rewards
@@ -447,3 +472,69 @@ function ReadQuestProgress( player )
 
 	return questProgressArray;
 }
+
+function WriteQuestOptions(options)
+{
+	// Create a new file object
+	var mFile = new UOXCFile();
+	var fileName = "questOptions0.jsdata";
+
+	mFile.Open(fileName, "w", "Quests"); // Open file for writing
+	if (mFile != null) {
+		// Write each option to a new line in the format `key=value`
+		for (var key in options)
+		{
+			if (options.hasOwnProperty(key))
+			{
+				mFile.Write(key + "=" + (options[key] ? "true" : "false") + "\n");
+			}
+		}
+
+		// Close and free the file
+		mFile.Close();
+		mFile.Free();
+		return true;
+	}
+
+	return false; // Return false if the file couldn't be opened
+}
+
+function ReadQuestOptions()
+{
+	// Create a new file object
+	var mFile = new UOXCFile();
+	var fileName = "questOptions0.jsdata";
+
+	// Create an object to store the options with default values
+	var options = {
+		CouGumpSupport: false,
+		Transparent: false
+	};
+
+	mFile.Open(fileName, "r", "Quests"); // Open file for reading
+	if (mFile && mFile.Length() >= 0)
+	{
+		// Read until we reach the end of the file
+		while (!mFile.EOF())
+		{
+			// Read a line of text from the file
+			var line = manualTrim(mFile.ReadUntil("\n"));
+			if (line && line.includes("="))
+			{
+				var parts = line.split("=");
+				var key = manualTrim(parts[0]);
+				var value = manualTrim(parts[1]);
+
+				// Convert the value to a boolean if applicable
+				options[key] = value === "true";
+			}
+		}
+
+		// Close and free the file
+		mFile.Close();
+		mFile.Free();
+	}
+
+	return options; // Return the loaded options
+}
+
