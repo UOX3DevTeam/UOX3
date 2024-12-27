@@ -5522,182 +5522,88 @@ packitem=0x0f8d,30
             </li>
 
             <li class="cd-faq__item">
-                <a class="cd-faq__trigger" href="#getQuestsFunction" id="getQuestsFunction"><span>getQuests Function</span></a>
+                <a class="cd-faq__trigger" href="#UOX3QuestSystem" id="UOX3QuestSystem"><span>Quest System</span></a>
                 <div class="cd-faq__content">
                     <div class="text-component">
-                        <p>The <strong>`getQuests` function</strong> retrieves all available quests in the system. These quests are defined with detailed metadata, objectives, and rewards for a fully customizable quest system.</p>
+                        <p>The <strong>UOX3 Quest System</strong> introduces a flexible and immersive framework for building quests in your shard. This system offers robust integration with NPCs, items, and world interactions to create dynamic and engaging player experiences.</p>
 
-                        <h4>Structure of a Quest</h4>
-                        <pre>
-{
-  id: "2",
-  name: "Battered Bucklers",
-  steps: [
-    {
-      cliloc: 0, // If set to 0, description will be used instead
-      description: "Gather materials to forge bucklers.",
-      refuse: "Not interested in some good smithing?",
-      Uncomplete: "You still need to gather more materials.",
-      objectives: [
-        {
-          type: "collect",
-          target: "0x1b73",
-          count: 10,
-          progress: 0,
-          displayName: "Buckler"
-        }
-      ],
-      rewards: {
-        gold: 200,
-        items: [
-          { id: "ironingots", amount: 10, color: 0x0000 },
-          { id: "smithhammer", amount: 1 }
-        ],
-        karma: 50,
-        fame: 30
-      }
-    }
-  ]
-}
-      </pre>
-
-                        <h4>Key Fields</h4>
+                        <h4>Core Features</h4>
                         <ul>
-                            <li><strong>id:</strong> Unique identifier for the quest. Example: "2".</li>
-                            <li><strong>name:</strong> Name of the quest. Example: "Battered Bucklers".</li>
-                            <li><strong>steps:</strong> Array of steps for the quest, each containing objectives, rewards, and messages.</li>
-                            <li><strong>cliloc:</strong> Cliloc ID used for localized descriptions. Set to 0 to use the `description` field.</li>
-                            <li><strong>description:</strong> Text description for the quest if no `cliloc` is provided.</li>
-                            <li><strong>refuse:</strong> Message shown if the player refuses the quest.</li>
-                            <li><strong>Uncomplete:</strong> Message shown if the quest remains incomplete when revisiting the NPC.</li>
-                            <li><strong>objectives:</strong> Tasks the player must complete to finish the step.</li>
-                            <li><strong>rewards:</strong> Rewards for completing the quest step, including gold, items, karma, and fame.</li>
+                            <li><strong>Dynamic Objectives:</strong> Create a variety of quest objectives, including collecting items, killing creatures, visiting locations, and more.</li>
+                            <li><strong>Interactive NPCs:</strong> NPCs are fully integrated into the quest system with custom scripting and tagging support.</li>
+                            <li><strong>Customizable Rewards:</strong> Reward players with gold, items (with amounts and colors), fame, karma, and other options.</li>
+                            <li><strong>Quest Item Management:</strong> Items can be toggled as quest items, restricting usage and enabling specific interactions.</li>
+                            <li><strong>Advanced Tracking:</strong> Track quest progress dynamically with clear player-facing updates.</li>
                         </ul>
 
                         <h4>Supported Objective Types</h4>
+                        <p>The system supports the following objective types, allowing for a wide variety of quest designs:</p>
                         <ul>
-                            <li><strong>collect:</strong> Collect specified items.</li>
-                            <li><strong>gather:</strong> Gather specific resources.</li>
-                            <li><strong>kill:</strong> Kill designated NPCs or creatures.</li>
-                            <li><strong>location:</strong> Reach a specific location.</li>
-                            <li><strong>herd:</strong> Herd animals to a target area.</li>
+                            <li><strong>collect:</strong> Collect specific items with progress tracking.</li>
+                            <li><strong>gather:</strong> Gather resources from the environment.</li>
+                            <li><strong>kill:</strong> Eliminate designated NPCs or creatures.</li>
+                            <li><strong>location:</strong> Reach or visit specific locations.</li>
+                            <li><strong>herd:</strong> Guide animals to a target area.</li>
                             <li><strong>tamed:</strong> Tame specific creatures.</li>
-                            <li><strong>skill:</strong> Achieve a target skill level.</li>
-                            <li><strong>enterRegion:</strong> Enter a specific region.</li>
-                            <li><strong>dropItemOnNpc:</strong> Drop an item on a specified NPC.</li>
-                            <li><strong>dropItemOnItem:</strong> Drop an item on another item.</li>
+                            <li><strong>skill:</strong> Achieve specific skill levels or actions.</li>
+                            <li><strong>enterRegion:</strong> Enter predefined world regions.</li>
+                            <li><strong>dropItemOnNpc:</strong> Drop a specific item on an NPC.</li>
+                            <li><strong>dropItemOnItem:</strong> Drop one item onto another.</li>
                         </ul>
 
-                        <h4>Integrations</h4>
-                        <p><strong>Quest Conversation Gump:</strong> Displays quest data during NPC interactions. Example:</p>
+                        <h4>NPC Integration</h4>
+                        <p>NPCs can be customized to act as quest givers or validators using custom tags and scripts. Here's an example NPC setup:</p>
                         <pre>
-QuestConversationGump(pUser, targObj, quest);
-      </pre>
+                            [Mugg]
+                            {
+                            GET=basehuman
+                            NAME=Mugg
+                            TITLE=the Miner
+                            ID=0x0190
+                            PRIV=4
+                            SCRIPT=50509 // Script for Quest Conversations
+                            CUSTOMINTTAG=QuestID 1 // Match with the quest's ID in the system
+                            EQUIPITEM=pickaxe
+                            // Additional customization options...
+                            }
+                        </pre>
 
-                        <p><strong>Granting Rewards:</strong> Processes rewards defined in the quest steps using the `grantRewards` function. Example:</p>
-                        <pre>
-grantRewards(player, step.rewards);
-      </pre>
-
-                        <h4>Troubleshooting</h4>
+                        <h4>Rewards System</h4>
+                        <p>Quest rewards are defined in the quest structure and can include:</p>
                         <ul>
-                            <li><strong>Quest Not Found:</strong> Verify the quest ID exists in the `getQuests` data.</li>
-                            <li><strong>Rewards Not Granted:</strong> Ensure `grantRewards` is called with a valid rewards object.</li>
-                            <li><strong>Incomplete Objectives:</strong> Use the `isStepComplete` function to validate step completion.</li>
+                            <li><strong>Gold:</strong> Awarded directly to the player's character.</li>
+                            <li><strong>Items:</strong> Fully customizable items with names, amounts, and colors.</li>
+                            <li><strong>Fame & Karma:</strong> Optional rewards for enhancing player reputation.</li>
+                        </ul>
+                        <p>Example of defining rewards:</p>
+                        <pre>
+                            rewards: {
+                                gold: 200,
+                                items: [
+                                { id: "ironingots", name: "Iron Ingots", amount: 10, color: 0x0000 },
+                                { id: "smithhammer", name: "Smith's Hammer", amount: 1 }
+                                ],
+                                karma: 50,
+                                fame: 30
+                             }
+                        </pre>
+
+                        <h4>Interactive Gumps</h4>
+                        <p>The quest system integrates with gumps for player interaction, providing detailed information about quests and their progress:</p>
+                        <ul>
+                            <li><strong>Quest Conversation Gump:</strong> Provides detailed descriptions, objectives, and options to start or cancel quests.</li>
+                            <li><strong>Quest Tracking Gump:</strong> Allows players to monitor progress on tracked quests.</li>
+                        </ul>
+
+                        <h4>Troubleshooting and Customization</h4>
+                        <ul>
+                            <li><strong>Quest Not Found:</strong> Ensure the NPC's `QuestID` matches the quest in the system.</li>
+                            <li><strong>Rewards Not Granted:</strong> Verify the rewards object includes valid IDs, names, and amounts.</li>
+                            <li><strong>Progress Issues:</strong> Use logging to debug quest objectives and progress triggers.</li>
                         </ul>
                     </div>
                 </div>
             </li>
-
-            <li class="cd-faq__item">
-                <a class="cd-faq__trigger" href="#questNpcSetup" id="questNpcSetup"><span>Setting Up a Quest NPC</span></a>
-                <div class="cd-faq__content">
-                    <div class="text-component">
-                        <p>To set up a Quest NPC in UOX3, you need to define the NPC's attributes in the DFN file and link the NPC to a quest using specific tags. Below is a step-by-step guide and an example of a quest NPC setup.</p>
-
-                        <h4>Example of a Quest NPC</h4>
-                        <pre>
-[Mugg]
-{
-  GET=basehuman
-  NAME=Mugg
-  TITLE=the Miner
-  ID=0x0190
-  PRIV=4
-  SKIN=0x840A
-  EQUIPITEM=0x2047 // afro
-  EQUIPITEM=pickaxe
-  EQUIPITEM=boots
-  COLOR=0x901
-  EQUIPITEM=shortpants
-  COLOR=0x3B2
-  EQUIPITEM=shirt
-  COLOR=0x22B
-  EQUIPITEM=skullcap
-  COLOR=0x177
-  EQUIPITEM=halfapron
-  COLOR=0x5F1
-  EQUIPITEM=0x1414 // plategloves
-  STR=100 100
-  DEX=100 100
-  INT=25 25
-  SCRIPT=50509 // The QuestConversation script
-  CUSTOMINTTAG=QuestID 1 // Quest ID to match the getQuests function
-}
-      </pre>
-
-                        <h4>Important Tags for Quest NPCs</h4>
-                        <ul>
-                            <li><strong>SCRIPT:</strong> Links the NPC to the `QuestConversation` script to trigger quest interactions.</li>
-                            <li><strong>CUSTOMINTTAG=QuestID:</strong> Assigns a unique quest ID to the NPC, matching the ID defined in the `getQuests` function.</li>
-                        </ul>
-
-                        <h4>Steps to Create Your Own Quest NPC</h4>
-                        <ol>
-                            <li>
-                                Define a new NPC in your DFN file.
-                                <ul>
-                                    <li>Use the `GET` field to inherit attributes from a base NPC type.</li>
-                                    <li>Customize the NPC's appearance, attributes, and equipment using UOX3's standard NPC fields.</li>
-                                </ul>
-                            </li>
-                            <li>
-                                Add the <code>SCRIPT</code> tag to link the NPC to the quest system.
-                                <ul>
-                                    <li>The script ID should correspond to the `QuestConversation` script or your custom quest-handling script.</li>
-                                </ul>
-                            </li>
-                            <li>
-                                Add the <code>CUSTOMINTTAG=QuestID</code> tag to assign a unique quest ID to the NPC.
-                                <ul>
-                                    <li>This ID must match the `id` field of a quest defined in the `getQuests` function.</li>
-                                </ul>
-                            </li>
-                            <li>
-                                Place the NPC in the game world using your preferred method, such as a spawner or GM commands.
-                            </li>
-                        </ol>
-
-                        <h4>Customizing the Quest</h4>
-                        <p>Once the NPC is linked to a quest, you can manage the quest's behavior, objectives, and rewards using the `getQuests` system. Ensure the `QuestID` matches the `id` of the quest you want the NPC to offer.</p>
-
-                        <h4>Testing Your Quest NPC</h4>
-                        <ol>
-                            <li>Interact with the NPC in-game to ensure the quest gump or dialogue appears correctly.</li>
-                            <li>Test quest objectives to ensure progress is tracked accurately.</li>
-                            <li>Verify rewards are granted upon completion.</li>
-                        </ol>
-
-                        <h4>Troubleshooting</h4>
-                        <ul>
-                            <li><strong>Quest Gump Not Appearing:</strong> Verify the `SCRIPT` and `QuestID` tags are correctly set.</li>
-                            <li><strong>Wrong Quest Linked:</strong> Ensure the `QuestID` matches the correct quest in the `getQuests` system.</li>
-                            <li><strong>NPC Not Spawning:</strong> Check your DFN file for errors and confirm the NPC is placed in the world.</li>
-                        </ul>
-                    </div>
-                </div>
-            </li>
-
 
 
             <li class="cd-faq__item">
