@@ -1694,34 +1694,62 @@ function onDispel( objDispelled, objType )
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDrop( iDropped, pDropper )
-{
-	var pSock = pDropper.socket;
+ {
+    var pSock = pDropper.socket;
 
-	//Lets fetch the serial of the target-location
-	var temp1 = pSock.GetByte( 10 );
-	var temp2 = pSock.GetByte( 11 );
-	var temp3 = pSock.GetByte( 12 );
-	var temp4 = pSock.GetByte( 13 );
+    //var packGridIndex = -1;
+    var targSer1 = 0;
+    var targSer2 = 0;
+    var targSer3 = 0;
+    var targSer4 = 0;
 
-	//Check the value of Byte 10 to determine if the target is ground, character or container
-	if( temp1 == 0 ) //Target is a character
-	{
-		var targetChar = CalcCharFromSer( temp1, temp2, temp3, temp4 )
-		pDropper.TextMessage( "I've dropped this item on a character named "+targetChar.name+", let's bounce it back." );
-		return false;
-	}
-	if( temp1 == 0xFF ) //Target is ground or another item
-	{
-		pDropper.TextMessage( "I've dropped this item on the ground or on another item." );
-		return true;
-	}
-	if( temp1 <= 0x40 ) //Target is a container
-	{
-		var targetItem = CalcItemFromItem( temp1, temp2, temp3, temp4 );
-		pDropper.TextMessage( "I've dropped this item in/on a container with ID "+targetItem.id+"." );
-		return true;
-	}
-}</code></pre></p>
+    if(pSock.clientMajorVer > 6 || ( pSock.clientMajorVer == 6 && pSock.clientSubVer >= 1 && pSock.clientLetterVer >= 7))
+    {
+        // Client version 6.0.1.7+ has an additional byte before serial of target container
+        // Will contain a value for backpack grid index item was dropped in when using clients that support grid containers
+        // Will contain a value of -1 in regular 2D UO client and 0 in ClassicUO
+        //packGridIndex = pSock.GetByte( 10 );
+
+        targSer1 = pSock.GetByte( 11 ); // 0 = dropped on character, 0xFF = ground/item
+        targSer2 = pSock.GetByte( 12 );
+        targSer3 = pSock.GetByte( 13 );
+        targSer4 = pSock.GetByte( 14 );
+    }
+    else
+    {
+        // Client versions below 6.0.1.7 has no extra byte
+        targSer1 = pSock.GetByte( 10 ); // 0 = dropped on character, 0xFF = ground/item
+        targSer2 = pSock.GetByte( 11 );
+        targSer3 = pSock.GetByte( 12 );
+        targSer4 = pSock.GetByte( 13 );
+    }
+
+    if( targSer1 == 0 ) // Target is a character
+    {
+        var targetChar = CalcCharFromSer( targSer1, targSer2, targSer3, targSer4 )
+        if( ValidateObject( targetChar ))
+        {
+            pDropper.TextMessage( "I've dropped this item on a character, deny if not my own character!!" );
+            if( targetChar.serial != pDropper.serial )
+            {
+                pDropper.TextMessage( "DENIED!" );
+                return false;
+            }
+        }
+    }
+    else if( targSer1 == 0xFF ) // Target is ground or another non-container item
+    {
+        pDropper.TextMessage( "I've dropped this item on the ground or on another item, let's approve!" );
+        }
+            // Default to allow dropping, let code handle it!
+            return true;
+        }
+    }
+
+    // Default to allow dropping, let code handle it!
+    return true;
+}
+</code></pre></p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1768,6 +1796,23 @@ function onDispel( objDispelled, objType )
 		cDropper.TextMessage( "Generic error message!" );
 		return false;
 	}
+}
+
+function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
+{
+    if( !ValidateObject( iDroppedOn ))
+        return false;
+
+    pDropper.TextMessage( "I've dropped this item in/on a container, deny if it's not my main pack!" );
+    var iPack = pDropper.pack;
+    if( !ValidateObject( iPack ) || iPack.serial != iDroppedOn.serial )
+    {
+        pDropper.TextMessage( "DENIED!" );
+        return false;
+    }
+
+    // Default to allow dropping, let code handle it!
+    return true;
 }</code></pre></p>
 						</div>
 					</div>
@@ -5763,8 +5808,8 @@ var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>ITEM FindRootContainer( iObj );</em></p>
-									<p><em>ITEM FindRootContainer( iObjSerial );</em></p>
+									<p><em>ITEM FindRootContainer( iObj, argType );</em></p>
+									<p><em>ITEM FindRootContainer( iObjSerial, argType  );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -5783,7 +5828,7 @@ var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">function onUseChecked( pUser, iUsed )
 {
-	var rootContainer = FindRootContainer( iUsed );
+	var rootContainer = FindRootContainer( iUsed, 0 );
 	if( ValidateObject( rootContainer ))
 		pUser.TextMessage( "The item is in a container! The root container's name is " + rootContainer.name );
 	else
