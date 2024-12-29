@@ -2028,9 +2028,9 @@ JSBool SE_GetPackOwner( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_FindRootContainer( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 2 )
+	if( argc != 1 )
 	{
-		ScriptError( cx, "FindRootContainer: Invalid number of arguments (takes 2)" );
+		ScriptError( cx, "FindRootContainer: Invalid number of arguments (takes 1 - item or serial)" );
 		return JS_FALSE;
 	}
 
