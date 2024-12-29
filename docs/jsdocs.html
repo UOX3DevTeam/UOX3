@@ -5808,8 +5808,8 @@ var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>ITEM FindRootContainer( iObj, argType );</em></p>
-									<p><em>ITEM FindRootContainer( iObjSerial, argType  );</em></p>
+									<p><em>ITEM FindRootContainer( iObj );</em></p>
+									<p><em>ITEM FindRootContainer( iObjSerial  );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -5828,7 +5828,7 @@ var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">function onUseChecked( pUser, iUsed )
 {
-	var rootContainer = FindRootContainer( iUsed, 0 );
+	var rootContainer = FindRootContainer( iUsed );
 	if( ValidateObject( rootContainer ))
 		pUser.TextMessage( "The item is in a container! The root container's name is " + rootContainer.name );
 	else
