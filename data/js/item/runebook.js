@@ -35,7 +35,7 @@ function onUseChecked( pUser, runeBook )
 	}
 
 	// Get root container for Runebook
-	var iRootContainer = FindRootContainer( runeBook, 0 );
+	var iRootContainer = FindRootContainer( runeBook );
 	if( !ValidateObject( iRootContainer ))
 	{
 		// No root container. Runebook is on the ground/floor!
@@ -384,7 +384,7 @@ function onGumpPress( pSocket, myButton, gumpData )
 	var pUser = pSocket.currentChar;
 	if( !pUser.InRange( runeBook, 3 ))
 	{
-		var iRootContainer = FindRootContainer( runeBook, 0 );
+		var iRootContainer = FindRootContainer( runeBook );
 		if( ValidateObject( iRootContainer ))
 		{
 			if( !pUser.InRange( iRootContainer, 3 ))
@@ -876,7 +876,7 @@ function onTimer( timerObj, timerID )
 
 function CheckAccessRights( pSocket, pUser, runeBook )
 {
-	var iRootContainer = FindRootContainer( runeBook, 0 );
+	var iRootContainer = FindRootContainer( runeBook );
 	if( ValidateObject( iRootContainer ))
 	{
 		if( ValidateObject( iRootContainer.owner ) && iRootContainer.owner != pUser )
