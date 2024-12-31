@@ -83,7 +83,7 @@ function onQuestGump( pUser )
 {
 	if( ValidateObject( pUser ) && !pUser.dead )
 	{
-		TriggerEvent(5802, "QuestGump", pUser );
+		TriggerEvent( 5803, "QuestMenu", pUser );
 	}
 	else
 	{
