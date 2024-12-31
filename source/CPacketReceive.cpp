@@ -5154,6 +5154,44 @@ bool CPIPopupMenuSelect::Handle( void )
 				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
+		case 0x010A:	// Quest Toggle
+			if( mChar->GetCommandLevel() >= CL_CNS || cwmWorldState->creatures[targChar->GetId()].IsHuman())	// Only Humans
+			{
+				if( mChar->IsDead() )
+				{
+					tSock->SysMessage( 392 ); // You are dead and cannot do that.
+				}
+				else if( !ObjInRange( mChar, targChar, DIST_NEARBY ))
+				{
+					tSock->SysMessage( 382 ); // You need to get closer.
+				}
+				else
+				{
+					CItem *iUsed = mChar->GetPackItem();
+					bool scriptExecuted = false;
+
+					for( auto scriptTrig : scriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							// Check if onQuestToggle event is present in script
+							SI08 retVal = toExecute->onQuestToggle( mChar, iUsed );
+							if( retVal == 1 )
+							{
+								// Event exists, and returned 1 - proceed with other scripts/hard code
+								scriptExecuted = true;
+							}
+							else if( retVal == 0 )
+							{
+								// Script returned 0 - don't continue, usage is handled in script!
+								return true;
+							}
+						}
+					}
+				}
+			}
+			break;
 		default:
 			Console.Print( oldstrutil::format( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", tSock->GetDWord( 5 ), tSock->GetWord( 9 )));
 			break;

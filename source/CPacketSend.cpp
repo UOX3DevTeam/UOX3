@@ -8812,6 +8812,29 @@ void CPPopupMenu::CopyData( CBaseObject& toCopy, CSocket &tSock )
 		}
 	}
 
+	if( toCopyChar->GetQuestType() != QT_ESCORTQUEST && (( toCopy.GetSerial() == tSock.CurrcharObj()->GetSerial() 
+		|| toCopy.GetId() == 0x0123 || toCopy.GetId() == 0x0124 || toCopy.GetId() == 0x0317 ) && ValidateObject( toCopyChar->GetPackItem() )))
+	{
+		if( numEntries > 0 )
+		{
+			offset += 2;
+		}
+
+		numEntries++;
+		pStream.WriteShort( offset, 0x010A );	// Unique ID
+		pStream.WriteShort( offset += 2, 6169 );// Quest Toggle
+		if( ObjInRange( mChar, &toCopy, 8 ))
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+	}
+
 	// Banker
 	if( toCopyChar->IsNpc() && toCopyChar->GetNpcAiType() == AI_BANKER )
 	{
