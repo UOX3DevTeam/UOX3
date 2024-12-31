@@ -1,7 +1,26 @@
 function QuestList(questID)
 {
 	var questList = {
+		//New Player Quests
 		"1": {
+			title: "More Ore Please",
+			description: "Have a pickaxe? My supplier is late and I need some iron ore so I can complete a bulk order for another " +
+						 "merchant. If you can get me some soon I'll pay you double what it's worth on the market. Just find a cave " +
+						 "or mountainside and try to use your pickaxe there, maybe you'll strike a good vein! 5 large pieces should do it.",
+			uncomplete: "Hmmm… we need some more Ore. Try finding a mountain or cave, and give it a whack.",
+			complete: "I see you found a good vien! Great!  This will help get this order out on time. Good work!",
+			refuse: "Not feeling strong enough today? Its alright, I didn't need a bucket of rocks anyway.",
+			type: "collect",
+			questTurnIn: 1, // 0 = auto-complete
+			targetItems: [
+				{ itemID: "ore", amount: 5, name: "Iron Ore" }
+			],
+			rewards: [
+				{ type: "item", itemID: "craftsmanssatchel", amount: 1, name: "Craftsman's Satchel" },
+			]
+		},
+		//Custom Example Quests
+		"1000": {
 			title: "Collect Fruits",
 			description: "Collect 2 apples, 3 oranges, and 1 banana.",
 			uncomplete: "You have not collected all the fruits yet.",
@@ -21,7 +40,7 @@ function QuestList(questID)
 				{ type: "fame", amount: 30, name: "Fame Points" }
 			]
 		},
-		"2": {
+		"1001": {
 			title: "Hunt Dangerous Creatures",
 			description: "Kill 1 dog and 1 cat.",
 			type: "kill",
@@ -35,7 +54,7 @@ function QuestList(questID)
 				{ type: "fame", amount: 30 }
 			]
 		},
-		"3": {
+		"1002": {
 			title: "Collect Fruits",
 			type: "collect",
 			targetItems: [
@@ -48,7 +67,7 @@ function QuestList(questID)
 				{ type: "fame", amount: 30 }   // Add 30 fame
 			]
 		},
-		"4": {
+		"1003": {
 			title: "Gather Fruits and Hunt Animals",
 			type: "multi", // New type for combined objectives
 			targetItems: [
@@ -64,7 +83,7 @@ function QuestList(questID)
 				{ type: "fame", amount: 30 }   // Add 30 fame
 			]
 		},
-		"5": {
+		"1004": {
 			title: "Timed Fruit Collection",
 			type: "timecollect",
 			targetItems: [
@@ -76,7 +95,7 @@ function QuestList(questID)
 				{ type: "karma", amount: 10 }
 			]
 		},
-		"6": {
+		"1005": {
 			title: "Timed Hunt Animals",
 			type: "timekills",
 			targetKills: [
@@ -88,25 +107,25 @@ function QuestList(questID)
 				{ type: "karma", amount: 10 }
 			]
 		},
-		"7": {
+		"1006": {
 			title: "Gather Apples",
 			description: "Collect 10 apples from the orchard.",
 			type: "collect",
 			questTurnIn: 1, // 0 = auto-complete
 			targetItems: [{ itemID: "0x13e3", amount: 1, name: "Apple" }],
 			rewards: [{ type: "gold", amount: 500 }],
-			nextQuestID: "8" // Chain to the next quest
+			nextQuestID: "1007" // Chain to the next quest
 		},
-		"8": {
+		"1007": {
 			title: "Defeat the Bandits",
 			description: "Defeat 5 bandits in the nearby forest.",
 			type: "kill",
 			questTurnIn: 1, // 0 = auto-complete
 			targetKills: [{ npcID: "cat", amount: 1 }],
 			rewards: [{ type: "gold", amount: 1000 }],
-			nextQuestID: "9" // Chain to the next quest
+			nextQuestID: "1008" // Chain to the next quest
 		},
-		"9": {
+		"1008": {
 			title: "Deliver Supplies to the Guard",
 			description: "Bring the supplies to the guard at the eastern gate.",
 			type: "delivery",
@@ -118,7 +137,7 @@ function QuestList(questID)
 			],
 			nextQuestID: null
 		},
-		"10": {
+		"1011": {
 			"title": "Deliver the Package to Nail",
 			"type": "delivery",
 			"description": "Deliver the package to Nail, the receiver, located at his usual spot.",

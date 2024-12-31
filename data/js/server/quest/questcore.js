@@ -125,8 +125,11 @@ function CheckQuest( player, questID )
 		}
 	}
 
-	// All checks passed, the quest can proceed
-	player.SysMessage( "You are eligible for this quest." );
+	if( DebugMessages ) 
+	{
+		// All checks passed, the quest can proceed
+		player.SysMessage( "You are eligible for this quest." );
+	}
 	return true;
 }
 
@@ -355,6 +358,7 @@ function completeQuest( player, questID )
 
 				// Ensure the quest is completed
 				player.SysMessage( "Congratulations! You have completed the quest: " + quest.title );
+				DoStaticEffect(player.x, player.y, player.z, 0x376A, 0x40, 0x16, false);
 				if( quest.rewards )
 				{
 					for( var j = 0; j < quest.rewards.length; j++ )
@@ -371,7 +375,7 @@ function completeQuest( player, questID )
 						{
 							// Reward item
 							CreateDFNItem( player.socket, player, reward.itemID, reward.amount, "ITEM", true );
-							player.SysMessage( "You received " + reward.amount + " of item " + reward.itemID + "!" );
+							player.SysMessage( "You received " + reward.amount + " of item " + reward.name + "!" );
 						}
 						else if( reward.type === "karma" )
 						{
@@ -476,10 +480,10 @@ function onCreatureKilled( creature, player )
 	}
 }
 
-function onItemCollected( player, item, isToggledOff )
+function onItemCollected(player, item, isToggledOff)
 {
-	// Manually set the default value if isToggledOff is undefined
-	if( typeof isToggledOff === "undefined" )
+	// Default the isToggledOff value
+	if( typeof isToggledOff === "undefined" ) 
 	{
 		isToggledOff = false;
 	}
@@ -488,7 +492,6 @@ function onItemCollected( player, item, isToggledOff )
 
 	if( DebugMessages )
 	{
-		// Debug: Log the collected item's sectionID
 		player.SysMessage( "Item sectionID: " + item.sectionID );
 	}
 
@@ -497,40 +500,39 @@ function onItemCollected( player, item, isToggledOff )
 		var questEntry = questProgressArray[i];
 		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
 
-		if( quest && ( quest.type === "collect" || quest.type === "timecollect" || quest.type === "multi" ) && !questEntry.completed ) {
+		if( quest && ( quest.type === "collect" || quest.type === "timecollect" || quest.type === "multi" ) && !questEntry.completed )
+		{
 			for( var j = 0; j < quest.targetItems.length; j++ )
 			{
 				var target = quest.targetItems[j];
 
 				if( DebugMessages )
 				{
-					// Debug: Check each target item
 					player.SysMessage( "Checking target itemID: " + target.itemID );
 				}
 
 				if( String( target.itemID ) === String( item.sectionID ))
 				{
 					var currentCount = questEntry.collectedItems[item.sectionID] || 0;
+					var remaining = target.amount - currentCount;
 
 					if( isToggledOff )
 					{
 						// Decrease the count when untoggled, ensuring it doesn't go below 0
-						if( currentCount > 0 )
+						if( currentCount > 0 ) 
 						{
-							if( DebugMessages )
-							{
-								player.SysMessage( "Decreasing count for item: " + item.sectionID );
-							}
+							var amountToRemove = Math.min( item.amount, currentCount );
+							updateQuestProgress( player, questEntry.questID, item.sectionID, -amountToRemove, "collect" );
 
 							var questItemColor = item.GetTag( "saveColor" );
 							item.color = questItemColor;
 							item.isNewbie = false;
 							item.isDyeable = true;
 							item.SetTag( "QuestItem", null );
-							item.RemoveScriptTrigger( 5806 );// Quest Item script trigger
-							updateQuestProgress( player, questEntry.questID, item.sectionID, -1, "collect" );
-							player.SysMessage( "You removed Quest Item status from the item." );
-						} 
+							item.RemoveScriptTrigger( 5806 ); // Quest Item script trigger
+
+							player.SysMessage( "You removed " + amountToRemove + " Quest Item(s)." );
+						}
 						else
 						{
 							player.SysMessage( "Cannot decrease further. Current count is 0." );
@@ -538,24 +540,22 @@ function onItemCollected( player, item, isToggledOff )
 					}
 					else
 					{
-						// Increase the count when toggled on, ensuring it doesn't exceed the target amount
-						if( currentCount < target.amount )
+						// Increase the count when toggled on
+						if( remaining > 0 )
 						{
-							if( DebugMessages )
-							{
-								player.SysMessage( "Collecting item: " + item.sectionID );
-							}
+							var amountToAdd = Math.min( item.amount, remaining );
+							updateQuestProgress( player, questEntry.questID, item.sectionID, amountToAdd, "collect" );
 
 							item.SetTag( "saveColor", item.color );
 							item.color = 0x04ea; // orange hue
 							item.isDyeable = false;
 							item.isNewbie = true;
 							item.SetTag( "QuestItem", true );
-							item.AddScriptTrigger( 5806 );// Quest Item script trigger
-							updateQuestProgress( player, questEntry.questID, item.sectionID, 1, "collect" );
-							player.SysMessage( "You set the item to Quest Item status." );
-						} 
-						else 
+							item.AddScriptTrigger( 5806 ); // Quest Item script trigger
+
+							player.SysMessage( "You set " + amountToAdd + " item(s) to Quest Item status." );
+						}
+						else
 						{
 							player.SysMessage( "Cannot collect more. Target amount reached: " + target.amount );
 						}
@@ -568,6 +568,7 @@ function onItemCollected( player, item, isToggledOff )
 
 	player.SysMessage( "Item does not match any quest requirements." );
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////

@@ -9,8 +9,8 @@
 [Mugg]
 {
 GET=basehuman
-NAME=Mugg
-TITLE=the Miner
+NAME=Mugg the Miner
+TITLE=Quest Giver
 ID=0x0190
 PRIV=4
 SKIN=0x840A
@@ -31,5 +31,34 @@ STR=100 100
 DEX=100 100
 INT=25 25
 SCRIPT=5802
-CUSTOMINTTAG=QuestID 1
+CUSTOMINTTAG=QuestID 1//More ore Please
+}
+
+[nail]
+{//example quest npc
+GET=basehuman
+NAME=Nail
+TITLE=the reciever
+ID=0x0190
+PRIV=4
+SKIN=0x840A
+EQUIPITEM=0x2047//afro
+EQUIPITEM=pickaxe
+EQUIPITEM=boots
+COLOR=0x901
+EQUIPITEM=shortpants
+COLOR=0x3B2
+EQUIPITEM=shirt
+COLOR=0x22B
+EQUIPITEM=skullcap
+COLOR=0x177
+EQUIPITEM=halfapron
+COLOR=0x5F1
+EQUIPITEM=0x1414//plategloves
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802//conversation gump
+CUSTOMINTTAG=QuestID 1//collect fruit quest
+CUSTOMINTTAG=DeliveryQuestID 10//waiting for package
 }

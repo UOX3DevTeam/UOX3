@@ -1,0 +1,8 @@
+[craftsmanssatchel]
+{
+get=0x0e76
+name=Craftsman's Satchel
+colorlist=300
+packitem=pickaxe
+packitem=pickaxe
+}

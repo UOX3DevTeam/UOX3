@@ -122,6 +122,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				if( turnInSuccess )
 				{
 					TriggerEvent( 5800, "completeQuest", pUser, playerQuestID ); // Complete the quest
+					pUser.SoundEffect(0x5B5, true);
 				}
 				else
 				{
@@ -342,10 +343,10 @@ function GetQuestObjectives( quest, questProgress )
 			objectives += "- Location: X=" + loc.x + ", Y=" + loc.y + ", Z=" + loc.z + "<br>";
 		}
 	}
-	else
-	{
-		objectives += "No specific objectives.";
-	}
+	//else
+	//{
+	//	objectives += "No specific objectives.";
+	//}
 
 	//if( objectives === "" )
 	//{
@@ -429,20 +430,20 @@ function processQuestTurnIn( player, questID )
 	// If the quest is not a kill quest, check for item turn-in
 	if( quest.type === "collect" || quest.type === "timecollect" || quest.type === "multi" )
 	{
-		if( !quest.targetItems || quest.targetItems.length === 0 )
+		if (!quest.targetItems || quest.targetItems.length === 0)
 		{
 			player.SysMessage( "This quest does not require item turn-in." );
 			return false;
 		}
 
 		// Fetch quest items from the player's backpack
-		var questItems = findQuestItems( player, questID );
+		var questItems = findQuestItems(player, questID);
 		var requiredItems = []; // Clone target items manually
 
 		for( var i = 0; i < quest.targetItems.length; i++ )
 		{
 			var targetItem = quest.targetItems[i];
-			requiredItems.push( { itemID: targetItem.itemID, amount: targetItem.amount } );
+			requiredItems.push({ itemID: targetItem.itemID, amount: targetItem.amount });
 		}
 
 		// Validate collected items against required objectives
@@ -451,17 +452,21 @@ function processQuestTurnIn( player, questID )
 			var item = questItems[i];
 			for( var j = 0; j < requiredItems.length; j++ )
 			{
-				if( String( item.sectionID ) === String( requiredItems[j].itemID ))
+				if( String( item.sectionID) === String( requiredItems[j].itemID ))
 				{
-					if( item.amount >= requiredItems[j].amount )
+					var toDeduct = Math.min( item.amount, requiredItems[j].amount );
+					requiredItems[j].amount -= toDeduct; // Deduct the required amount
+					item.amount -= toDeduct; // Deduct from the item's stack
+
+					if( item.amount === 0 )
 					{
-						requiredItems[j].amount = 0; // Mark as fully collected
+						item.Delete(); // Remove the item if the stack is empty
 					}
-					else
+
+					if( requiredItems[j].amount === 0 )
 					{
-						requiredItems[j].amount -= item.amount; // Deduct partially collected amount
+						break; // Move to the next required item
 					}
-					break; // Move to the next quest item
 				}
 			}
 		}
@@ -471,22 +476,8 @@ function processQuestTurnIn( player, questID )
 		{
 			if( requiredItems[k].amount > 0 )
 			{
-				player.SysMessage( "You are still missing some items for this quest." );
+				player.SysMessage("You are still missing some items for this quest.");
 				return false;
-			}
-		}
-
-		// Remove quest items from the player's backpack
-		for( var m = 0; m < questItems.length; m++ )
-		{
-			var questItem = questItems[m];
-			if( questItem.amount > 1 )
-			{
-				questItem.amount--; // Reduce item stack
-			}
-			else
-			{
-				questItem.Delete(); // Remove single items
 			}
 		}
 
