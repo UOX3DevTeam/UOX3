@@ -321,12 +321,11 @@
 //-------------------------------------------
 5800=server/quest/questcore.js
 5801=server/quest/quests.js
-5802=server/quest/questgump.js
-5803=server/quest/questtrackinggump.js
-5804=server/quest/questconversationgump.js
-5805=server/quest/objectives/onpickup.js
-5806=server/quest/objectives/ondeathblow.js
-5807=server/quest/objectives/questgathering.js
+5802=server/quest/questconversationgump.js
+5803=server/quest/questmenu.js
+5805=server/quest/onquesttoggle.js
+5806=server/quest/questitem.js
+5810=server/quest/ondeathblow.js
 
 
 //-------------------------------------------

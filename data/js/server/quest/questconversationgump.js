@@ -1,261 +1,831 @@
-function QuestConversationGump( pUser, targObj, quest )
+const DebugMessages = false; // Enable debug messages
+
+function QuestConversationGump(pUser, npcTarget, questID)
 {
 	var socket = pUser.socket;
 
-	// Create a new gump
-	var gump = new Gump();
-	gump.AddPage(0);
-	gump.AddBackground( 30, 120, 296, 447, 1579 ); // Background
-	gump.AddGump( 70, 130, 1577 ); // Decorative gump
-	gump.AddGump( 90, 320, 96 ); // Decorative gump
-	gump.AddGump( 90, 430, 96 ); // Decorative gump
-	gump.AddButton( 60, 500, 2450, 2452, 1, 0, 1 ); // Start quest button
-	gump.AddButton( 220, 500, 2453, 2455, 1, 0, 2 ); // Cancel button
+	// Fetch quest details using the provided quest ID
+	var quest = TriggerEvent(5801, "QuestList", questID);
 
-	var yOffset = 210;
-
-	// Retrieve progress for the player
-	var progress = null;
-	var activeQuests = TriggerEvent( 5800, "loadAllQuests", pUser );
-	for( var i = 0; i < activeQuests.length; i++ )
+	if (!quest) 
 	{
-		if( activeQuests[i].questID === quest.id )
+		pUser.SysMessage("This quest does not exist.");
+		return;
+	}
+
+	// Fetch player's progress for the current quest
+	var questProgressArray = TriggerEvent(5800, "ReadQuestProgress", pUser);
+	var currentQuestProgress = null;
+
+	for (var i = 0; i < questProgressArray.length; i++) 
+	{
+		if (questProgressArray[i].questID === questID)
 		{
-			progress = activeQuests[i];
+			currentQuestProgress = questProgressArray[i];
 			break;
 		}
 	}
 
-	// Determine the step index and progress
-	var stepIndex = progress ? progress.step : 0;
-	var stepProgress = progress ? progress.progress : [];
-	var step = quest.steps[stepIndex];
-
-	// Check if the quest is incomplete or not started
-	var isIncomplete = false;
-	if( progress )
+	// Determine the description to display
+	var description = quest.description; // Default description
+	if (currentQuestProgress)
 	{
-		for( var o = 0; o < step.objectives.length; o++ )
+		if (currentQuestProgress.completed)
 		{
-			var obj = step.objectives[o];
-			var currentProgress = stepProgress[o] || 0;
-			if( currentProgress < obj.count )
+			description = quest.complete || "You have completed this quest!";
+		}
+		else
+		{
+			description = quest.uncomplete || "You have not completed this quest yet.";
+		}
+	}
+
+	// Handle chain quests: If this is a chain quest and there is a nextQuestID
+	if (quest.nextQuestID && currentQuestProgress && currentQuestProgress.completed) 
+	{
+		var nextQuest = TriggerEvent(5801, "QuestList", quest.nextQuestID);
+		if (nextQuest)
+		{
+			description += "<br><br><b>Next Quest Available:</b> " + nextQuest.title + "<br>" + nextQuest.description;
+		}
+	}
+
+	// Create the gump
+	var gump = new Gump();
+	gump.AddPage(0);
+	gump.AddBackground(30, 120, 296, 520, 1579); // Background
+	gump.AddGump(70, 130, 1577); // Decorative gump
+
+	// Quest title
+	var title = "<center>" + quest.title + "</center>";
+	gump.AddHTMLGump(75, 205, 200, 30, true, false, title); // Title
+
+	// Description
+	gump.AddHTMLGump(50, 230, 264, 100, true, true, description); // Description
+
+	// Get objectives with progress and add to the gump
+	if (!currentQuestProgress || !currentQuestProgress.completed)
+	{
+		var objectives = GetQuestObjectives(quest, currentQuestProgress);
+		gump.AddHTMLGump(50, 350, 264, 100, true, true, objectives); // Objectives
+	}
+
+	// Get rewards and add to the gump
+	var rewards = GetQuestRewards(quest);
+	gump.AddHTMLGump(50, 470, 264, 100, true, true, rewards); // Rewards
+
+	// Add buttons based on quest status
+	if (!currentQuestProgress)
+	{
+		gump.AddButton(60, 600, 0x2EE0, 0x2EE2, 1, 0, 1); // Start quest button
+		gump.AddButton(220, 600, 0x2EF2, 0x2EF4, 1, 0, 2); // refuse button
+	}
+	else if (currentQuestProgress.completed)
+	{
+		gump.AddButton(60, 600, 0x2EE0, 0x2EE2, 1, 0, 3); // Turn in quest button
+	}
+	else 
+	{
+		gump.AddButton(50, 600, 0x2EF5, 0x2EF7, 1, 0, 4); // resign quest button
+	}
+
+	// Send the gump to the player
+	gump.Send(socket);
+	gump.Free();
+}
+
+function onGumpPress(pSock, pButton, gumpData)
+{
+	var pUser = pSock.currentChar;
+	var questNpc = CalcCharFromSer(parseInt(pUser.GetTag("questNpcSerial")));
+	var initialQuestID = parseInt(questNpc.GetTag("QuestID"), 10);
+	var playerQuestID = resolvePlayerQuestID(pUser, initialQuestID);
+	var quest = TriggerEvent(5801, "QuestList", playerQuestID);
+
+	switch (pButton) 
+	{
+		case 0: // Close gump
+			break;
+
+		case 1: // Accept quest
+			TriggerEvent(5800, "startQuest", pUser, playerQuestID);
+			pUser.SoundEffect(0x5B4, true);
+			break;
+
+		case 2: // Refuse quest
+			questNpc.TextMessage(quest.refuse);
+			break;
+		case 3: // Turn in quest
+			if (playerQuestID)
 			{
-				isIncomplete = true;
+				var turnInSuccess = processQuestTurnIn(pUser, playerQuestID); // Handle item turn-in
+				if (turnInSuccess)
+				{
+					TriggerEvent(5800, "completeQuest", pUser, playerQuestID); // Complete the quest
+				}
+				else
+				{
+					pUser.SysMessage("You need to have all required quest items to turn in this quest.");
+				}
+			}
+			break;
+		case 4: // Resign Quest
+			resignQuest(pUser, playerQuestID);
+			manageQuestItems(pUser, playerQuestID, false);
+			pUser.SoundEffect(0x5B3, true);
+			break;
+			default:break
+	}
+}
+
+function resignQuest(player, questID)
+{
+	var questProgressArray = TriggerEvent(5800, "ReadQuestProgress", player);
+	var newQuestProgressArray = [];
+	var questFound = false;
+
+	var quest = TriggerEvent(5801, "QuestList", questID);
+
+	for (var i = 0; i < questProgressArray.length; i++)
+	{
+		var questEntry = questProgressArray[i];
+
+		// Skip the quest that needs to be resigned, effectively removing it
+		if (questEntry.questID === questID)
+		{
+			questFound = true;
+			player.SysMessage("You have resigned from the quest: " + quest.title);
+		}
+		else
+		{
+			newQuestProgressArray.push(questEntry);
+		}
+	}
+
+	if (!questFound)
+	{
+		player.SysMessage("You are not currently on this quest.");
+		return false;
+	}
+
+	// Write back the updated quest progress, excluding the resigned quest
+	TriggerEvent(5800, "WriteQuestProgress", player, newQuestProgressArray);
+
+	player.SysMessage("The quest has been completely removed from your progress.");
+	return true;
+}
+
+function manageQuestItems(player, questID, mark)
+{
+	var pack = player.pack; // Get the player's backpack
+
+	if (!ValidateObject(pack))
+	{
+		player.SysMessage("You do not have a backpack.");
+		return;
+	}
+
+	var currentItem;
+	var quest = TriggerEvent(5801, "QuestList", questID); // Fetch quest details
+
+	if (!quest || (!quest.targetItems && !quest.deliveryItem)) 
+	{
+		player.SysMessage("This quest does not have item requirements.");
+		return;
+	}
+
+	// Iterate through all items in the player's backpack
+	for (currentItem = pack.FirstItem(); !pack.FinishedItems(); currentItem = pack.NextItem()) {
+		if (!ValidateObject(currentItem))
+		{
+			continue;
+		}
+
+		// Handle target items for collection quests
+		if (quest.targetItems)
+		{
+			for (var i = 0; i < quest.targetItems.length; i++)
+			{
+				var targetItem = quest.targetItems[i];
+
+				// Check if the item matches the quest requirement
+				if (String(currentItem.sectionID) === String(targetItem.itemID))
+				{
+					if (mark)
+					{
+						// Mark item as a quest item
+						if (!currentItem.GetTag("QuestItem"))
+						{
+							currentItem.SetTag("saveColor", currentItem.color);
+							currentItem.color = 0x04ea; // Orange hue
+							currentItem.isNewbie = true;
+							currentItem.isDyeable = false;
+							currentItem.SetTag("QuestItem", true);
+							currentItem.AddScriptTrigger(5806); // Quest Item script trigger
+							player.SysMessage("Marked item as a quest item: " + targetItem.name);
+						}
+					}
+					else
+					{
+						// Unmark item as a quest item
+						if (currentItem.GetTag("QuestItem"))
+						{
+							var questItemColor = currentItem.GetTag("saveColor");
+							currentItem.color = questItemColor;
+							currentItem.isNewbie = false;
+							currentItem.isDyeable = true;
+							currentItem.SetTag("QuestItem", null);
+							currentItem.RemoveScriptTrigger(5806); // Quest Item script trigger
+							player.SysMessage("Unmarked item as a quest item: " + targetItem.name);
+						}
+					}
+				}
+			}
+		}
+
+		// Handle delivery items
+		if (quest.type === "delivery" && quest.deliveryItem)
+		{
+			if (String(currentItem.sectionID) === String(quest.deliveryItem.itemID))
+			{
+				if (mark)
+				{
+					// Mark delivery item as a quest item
+					if (!currentItem.GetTag("QuestItem"))
+					{
+						currentItem.SetTag("saveColor", currentItem.color);
+						currentItem.color = 0x04ea; // Orange hue
+						currentItem.isNewbie = true;
+						currentItem.isDyeable = false;
+						currentItem.SetTag("QuestItem", true);
+						currentItem.AddScriptTrigger(5806); // Quest Item script trigger
+						player.SysMessage("Marked delivery item as a quest item: " + quest.deliveryItem.name);
+					}
+				}
+				else
+				{
+					// If resigning, delete the delivery item
+					currentItem.Delete();
+					player.SysMessage("Deleted delivery item: " + quest.deliveryItem.name);
+				}
+			}
+		}
+	}
+}
+
+function GetQuestObjectives(quest, questProgress) 
+{
+	var objectives = "";
+
+	// Items to collect
+	if (quest.targetItems && quest.targetItems.length > 0) 
+	{
+		objectives += "<b>Items to Collect:</b><br>";
+		for (var i = 0; i < quest.targetItems.length; i++) 
+		{
+			var targetItem = quest.targetItems[i];
+			var itemName = targetItem.name || "Unknown Item"; // Use `name` if available, fallback to "Unknown Item"
+			var collected = (questProgress && questProgress.collectedItems[targetItem.itemID]) || 0;
+
+			objectives += "- " + itemName + ": " + collected + "/" + targetItem.amount + "<br>";
+		}
+	}
+
+	// Creatures to kill
+	if (quest.targetKills && quest.targetKills.length > 0)
+	{
+		objectives += "<b>Creatures to Kill:</b><br>";
+		for (var j = 0; j < quest.targetKills.length; j++)
+		{
+			var targetKill = quest.targetKills[j];
+			var killed = (questProgress && questProgress.harvestKills[targetKill.npcID]) || 0;
+
+			objectives += "- " + targetKill.npcID + ": " + killed + "/" + targetKill.amount + "<br>";
+		}
+	}
+
+	// Time limit
+	if (quest.timeLimit)
+	{
+		var minutes = Math.floor(quest.timeLimit / 60); // Convert seconds to minutes
+		var seconds = quest.timeLimit % 60; // Get remaining seconds
+		objectives += "<b>Time Limit:</b><br>";
+		objectives += "- " + minutes + " minute(s) and " + seconds + " second(s)<br>";
+	}
+
+	if(quest.type === "delivery") 
+	{
+		objectives += "<b>Delivery Quest:</b><br>";
+
+		// Check for delivery item details
+		if (quest.deliveryItem)
+		{
+			var itemName = quest.deliveryItem.name || "Unknown Item";
+			objectives += "- Item: " + itemName + " (" + quest.deliveryItem.amount + ")<br>";
+		}
+
+		// Check for targetDelivery details
+		if (quest.targetDelivery && quest.targetDelivery.name)
+		{
+			objectives += "- NPC: " + quest.targetDelivery.name + "<br>";
+		}
+		else if (quest.targetDelivery && quest.targetDelivery.sectionID) 
+		{
+			objectives += "- NPC: " + quest.targetDelivery.sectionID + "<br>"; // Fallback to sectionID if name is missing
+		}
+
+		// Include location if provided
+		if (quest.targetDelivery.location)
+		{
+			var loc = quest.targetDelivery.location;
+			objectives += "- Location: X=" + loc.x + ", Y=" + loc.y + ", Z=" + loc.z + "<br>";
+		}
+	}
+	else
+	{
+		objectives += "No specific objectives.";
+	}
+
+	if (objectives === "")
+	{
+		objectives = "No specific objectives.";
+	}
+
+	return objectives;
+}
+
+function GetQuestRewards(quest)
+{
+	// List rewards
+	var rewards = "";
+
+	if (quest.rewards && quest.rewards.length > 0)
+	{
+		rewards += "<b>Rewards:</b><br>";
+		for (var k = 0; k < quest.rewards.length; k++)
+		{
+			var reward = quest.rewards[k];
+			var rewardName = reward.name || "Unknown Reward"; // Use `name` if available, fallback to "Unknown Reward"
+			rewards += "- " + reward.amount + " " + rewardName + "<br>";
+		}
+	}
+	else
+	{
+		rewards = "No rewards specified.";
+	}
+
+	return rewards;
+}
+
+function processQuestTurnIn(player, questID)
+{
+	// Fetch the quest details
+	var quest = TriggerEvent(5801, "QuestList", questID);
+	if (!quest)
+	{
+		player.SysMessage("This quest does not exist.");
+		return false;
+	}
+
+	// Check if the quest is a "kill" type and validate completion
+	if (quest.type === "kill" || quest.type === "timekills" || quest.type === "multi")
+	{
+		var questProgressArray = TriggerEvent(5800, "ReadQuestProgress", player);
+		var questProgress = null;
+
+		// Find the quest progress entry
+		for (var i = 0; i < questProgressArray.length; i++)
+		{
+			if (questProgressArray[i].questID === questID)
+			{
+				questProgress = questProgressArray[i];
+				break;
+			}
+		}
+
+		if (!questProgress || !questProgress.harvestKills)
+		{
+			player.SysMessage("You have not completed the kill objectives for this quest.");
+			return false;
+		}
+
+		// Validate kill objectives
+		for (var i = 0; i < quest.targetKills.length; i++)
+		{
+			var targetKill = quest.targetKills[i];
+			if ((questProgress.harvestKills[targetKill.npcID] || 0) < targetKill.amount)
+			{
+				player.SysMessage("You have not killed enough " + targetKill.npcID + "s.");
+				return false;
+			}
+		}
+
+		// If kill objectives are complete
+		player.SysMessage("You have completed the kill objectives for this quest.");
+		return true;
+	}
+
+	// If the quest is not a kill quest, check for item turn-in
+	if (quest.type === "collect" || quest.type === "timecollect" || quest.type === "multi")
+	{
+		if (!quest.targetItems || quest.targetItems.length === 0)
+		{
+			player.SysMessage("This quest does not require item turn-in.");
+			return false;
+		}
+
+		// Fetch quest items from the player's backpack
+		var questItems = findQuestItems(player, questID);
+		var requiredItems = []; // Clone target items manually
+
+		for (var i = 0; i < quest.targetItems.length; i++)
+		{
+			var targetItem = quest.targetItems[i];
+			requiredItems.push({
+				itemID: targetItem.itemID,
+				amount: targetItem.amount
+			});
+		}
+
+		// Validate collected items against required objectives
+		for (var i = 0; i < questItems.length; i++)
+		{
+			var item = questItems[i];
+			for (var j = 0; j < requiredItems.length; j++)
+			{
+				if (String(item.sectionID) === String(requiredItems[j].itemID))
+				{
+					if (item.amount >= requiredItems[j].amount)
+					{
+						requiredItems[j].amount = 0; // Mark as fully collected
+					}
+					else
+					{
+						requiredItems[j].amount -= item.amount; // Deduct partially collected amount
+					}
+					break; // Move to the next quest item
+				}
+			}
+		}
+
+		// Check if all required items are collected
+		for (var k = 0; k < requiredItems.length; k++)
+		{
+			if (requiredItems[k].amount > 0)
+			{
+				player.SysMessage("You are still missing some items for this quest.");
+				return false;
+			}
+		}
+
+		// Remove quest items from the player's backpack
+		for (var m = 0; m < questItems.length; m++)
+		{
+			var questItem = questItems[m];
+			if (questItem.amount > 1) {
+				questItem.amount--; // Reduce item stack
+			}
+			else
+			{
+				questItem.Delete(); // Remove single items
+			}
+		}
+
+		player.SysMessage("All quest items have been turned in successfully.");
+		return true;
+	}
+
+	// Handle delivery quests
+	if (quest.type === "delivery")
+	{
+		// Validate NPC
+		if (quest.targetDelivery.npcID !== questNpc.serial)
+		{
+			player.SysMessage("This is not the correct NPC for delivery.");
+			return false;
+		}
+
+		// Find the delivery item in the backpack
+		var deliveryItems = findQuestItems(player, questID);
+		var foundItem = false;
+
+		for (var i = 0; i < deliveryItems.length; i++)
+		{
+			var item = deliveryItems[i];
+			if (String(item.sectionID) === String(quest.deliveryItem.itemID) && item.amount >= quest.deliveryItem.amount)
+			{
+				foundItem = true;
+
+				// Remove the item from the player's backpack
+				if (item.amount > quest.deliveryItem.amount) 
+				{
+					item.amount -= quest.deliveryItem.amount;
+				}
+				else 
+				{
+					item.Delete();
+				}
+				break;
+			}
+		}
+
+		if (!foundItem)
+		{
+			player.SysMessage("You don't have the required item to deliver.");
+			return false;
+		}
+
+		player.SysMessage("You have delivered the required item!");
+		return true;
+	}
+
+	// If quest type doesn't match known types
+	player.SysMessage("This quest type is not supported for turn-in.");
+	return false;
+}
+
+function findQuestItems(player, questID)
+{
+	var questItems = [];
+	var pack = player.pack; // Get the player's backpack
+
+	if (!ValidateObject(pack))
+	{
+		player.SysMessage("You do not have a backpack.");
+		return questItems; // Return an empty array if no backpack is found
+	}
+
+	var quest = TriggerEvent(5801, "QuestList", questID);
+	if (!quest || (!quest.targetItems && !quest.deliveryItem))
+	{
+		player.SysMessage("No target items or delivery items found for this quest.");
+		return questItems;
+	}
+
+	// Build the list of required item IDs
+	var requiredItemIDs = [];
+	if (quest.targetItems) 
+	{
+		for (var i = 0; i < quest.targetItems.length; i++)
+		{
+			requiredItemIDs.push(String(quest.targetItems[i].itemID));
+		}
+	}
+
+	// Add delivery item ID if it's a delivery quest
+	if (quest.type === "delivery" && quest.deliveryItem)
+	{
+		requiredItemIDs.push(String(quest.deliveryItem.itemID));
+	}
+
+	var currentItem;
+
+	// Iterate through all items in the player's backpack
+	for (currentItem = pack.FirstItem(); !pack.FinishedItems(); currentItem = pack.NextItem())
+	{
+		if (!ValidateObject(currentItem))
+		{
+			continue;
+		}
+
+		// Check if the item matches the quest and has the "QuestItem" tag
+		if (currentItem.GetTag("QuestItem") && requiredItemIDs.indexOf(String(currentItem.sectionID)) !== -1) 
+		{
+			questItems.push(currentItem);
+		}
+	}
+
+	return questItems;
+}
+
+function onCharDoubleClick(pUser, questNpc) 
+{
+	QuestNpcInterAction(pUser, questNpc);
+	return false;
+}
+
+function QuestNpcInterAction(pUser, questNpc)
+{
+	var gumpID = 5822 + 0xffff;
+	var socket = pUser.socket;
+	pUser.SetTag("questNpcSerial", questNpc.serial);
+
+	// Validate the targeted object and player
+	if (!ValidateObject(pUser) || !ValidateObject(questNpc))
+	{
+		socket.SysMessage("Invalid target or player.");
+		return false;
+	}
+
+	// Check if the player is within range
+	if (!questNpc.InRange(pUser, 2))
+	{
+		pUser.SysMessage("You are too far away.");
+		return false;
+	}
+
+	// Check if the NPC is a delivery recipient
+	var deliveryQuestID = parseInt(questNpc.GetTag("DeliveryQuestID"), 10);
+	if (deliveryQuestID)
+	{
+		// Handle delivery quest
+		if (processDeliveryQuest(pUser, questNpc, deliveryQuestID)) 
+		{
+			return; // Delivery quest handled successfully
+		}
+	}
+
+	// Fetch the initial quest ID from the NPC's tag
+	var initialQuestID = parseInt(questNpc.GetTag("QuestID"), 10);
+	if (!initialQuestID) 
+	{
+		pUser.SysMessage("This NPC has no quest assigned.");
+		return false;
+	}
+
+	// Resolve the player's current quest ID in the chain
+	var playerQuestID = resolvePlayerQuestID(pUser, initialQuestID);
+
+	if (!playerQuestID)
+	{
+		questNpc.TurnToward(pUser);
+		questNpc.TextMessage("You have completed all quests in this chain!");
+		return false;
+	}
+
+	// Check if the quest is already completed
+	var archivedQuests = TriggerEvent(5800, "ReadArchivedQuests", pUser);
+
+	if (DebugMessages) 
+	{
+		pUser.SysMessage("Archived quests loaded: " + archivedQuests.length);
+	}
+
+	for (var i = 0; i < archivedQuests.length; i++)
+	{
+		var archivedQuestID = parseInt(archivedQuests[i], 10); // Ensure it's treated as an integer
+		if (DebugMessages)
+		{
+			pUser.SysMessage("Checking archived quest: " + archivedQuestID);
+		}
+		if (archivedQuestID === playerQuestID) // Compare consistently
+		{
+			targObj.TurnToward(pUser);
+			targObj.TextMessage("I'm sorry, I have nothing for you at this time.");
+			return false;
+		}
+	}
+
+	// Fetch player's progress for the current quest
+	var questProgressArray = TriggerEvent(5800, "ReadQuestProgress", pUser);
+	var currentQuestProgress = null;
+
+	for (var i = 0; i < questProgressArray.length; i++) 
+	{
+		if (questProgressArray[i].questID === playerQuestID) 
+		{
+			currentQuestProgress = questProgressArray[i];
+			break;
+		}
+	}
+
+	// Show the quest conversation gump
+	questNpc.TurnToward(pUser);
+	socket.CloseGump(gumpID, 0);
+	QuestConversationGump(pUser, questNpc, playerQuestID);
+	return;
+}
+
+function processDeliveryQuest(player, questNpc, deliveryQuestID)
+{
+	// Fetch the quest details
+	var quest = TriggerEvent(5801, "QuestList", deliveryQuestID);
+	if (!quest || quest.type !== "delivery")
+	{
+		questNpc.TextMessage("This is not a delivery quest.");
+		return false;
+	}
+
+	// Ensure the NPC matches the quest's recipient
+	if (questNpc.sectionID !== quest.targetDelivery.sectionID)
+	{
+		questNpc.TextMessage("I am not the intended recipient of this delivery.");
+		return false;
+	}
+
+	// Check if the player has the required item
+	var requiredItem = quest.deliveryItem;
+	var questItems = findQuestItems(player, deliveryQuestID);
+	var itemDelivered = false;
+
+	for (var i = 0; i < questItems.length; i++)
+	{
+		if (String(questItems[i].sectionID) === String(requiredItem.itemID))
+		{
+			// Check if enough items are delivered
+			if (questItems[i].amount >= requiredItem.amount)
+			{
+				itemDelivered = true;
 				break;
 			}
 		}
 	}
 
-	if( !progress )
+	if (!itemDelivered)
 	{
-		// Quest not started yet, show description or cliloc
-		if( step.cliloc && step.cliloc > 0 )
+		player.SysMessage("You do not have the required item to deliver.");
+		return false;
+	}
+
+	// Remove the item from the player's inventory
+	for (var j = 0; j < questItems.length; j++)
+	{
+		if (String(questItems[j].sectionID) === String(requiredItem.itemID)) 
 		{
-			gump.AddXMFHTMLGump(50, yOffset, 264, 100, step.cliloc, true, true); // Display using cliloc
-		}
-		else
-		{
-			if( TriggerEvent( 5800, "couGumpSupport" ))
+			if (questItems[j].amount > requiredItem.amount)
 			{
-				gump.AddHTMLGump( 50, yOffset, 264, 100, false, true, "<H1><basefont color=#000000>Quest: " + quest.name + "</H1></basefont><br>" + "<H2><basefont color=#000000>Description</H2>: " + step.description + "</basefont>" );
+				questItems[j].amount -= requiredItem.amount;
 			}
 			else
 			{
-				gump.AddHTMLGump( 50, yOffset, 264, 100, true, true, "<basefont color=#100000>Quest: " + quest.name + "<br>" + "<basefont color=#100000>Description: " + step.description + "</basefont>" );
+				questItems[j].Delete();
 			}
-			}
-	}
-	else if( isIncomplete && step.Uncomplete )
-	{
-		if( TriggerEvent( 5800, "couGumpSupport" ))
-		{
-			gump.AddHTMLGump( 50, yOffset, 264, 100, false, true, "<H1><basefont color=#000000>Quest: " + quest.name + "</H1></basefont><br>" + "<H2><basefont color=#000000>Uncomplete Message</H2>: " + step.Uncomplete + "</basefont>" );
-		}
-		else
-		{
-			gump.AddHTMLGump( 50, yOffset, 264, 100, true, true, "<H1><basefont color=#100000>Quest: " + quest.name + "</H1></basefont><br>" + "<H2><basefont color=#100000>Uncomplete Message</H2>: " + step.Uncomplete + "</basefont>" );
-		}
-	} 
-	else if( step.cliloc && step.cliloc > 0 )
-	{
-		gump.AddXMFHTMLGump( 50, yOffset, 264, 100, step.cliloc, true, true ); // Display using cliloc
-	}
-	else
-	{
-		if( TriggerEvent( 5800, "couGumpSupport" ))
-		{
-			gump.AddHTMLGump( 50, yOffset, 264, 100, false, true, "<H1><basefont color=#000000>Quest: " + quest.name + "</H1></basefont><br>" + "<H2><basefont color=#100000>Description</H2>: " + step.description + "</basefont>" );
-		}
-		else
-		{
-			gump.AddHTMLGump( 50, yOffset, 264, 100, true, true, "<basefont color=#100000>Quest: " + quest.name + "<br>" + "<basefont color=#100000>Description: " + step.description + "</basefont>" );
+			break;
 		}
 	}
 
-	// Display objectives with actual progress
-	var objectives = "";
-	for (var o = 0; o < step.objectives.length; o++)
+	// Update the player's quest progress and notify
+	var questProgressArray = TriggerEvent(5800, "ReadQuestProgress", player);
+	for (var i = 0; i < questProgressArray.length; i++)
 	{
-		var obj = step.objectives[o];
-		var currentProgress = stepProgress[o] || 0; // Get current progress
-
-		if( obj.type === "collect" )
+		if (questProgressArray[i].questID === deliveryQuestID)
 		{
-			objectives += "Collect: " + currentProgress + " / " + obj.count + " " + (obj.displayName || "Unknown Item") + "<br>";
-		}
-		else if( obj.type === "kill" && obj.targets && obj.targets.length )
-		{
-			for (var t = 0; t < obj.targets.length; t++)
-			{
-				var target = obj.targets[t];
-				var targetProgress = ( currentProgress[t] || 0 ); // Multi-target progress
-				objectives += "Kill: " + ( target.name || "Unknown Target" ) + " " + targetProgress + " / " + target.count + "<br>";
-			}
-		}
-		else
-		{
-			objectives += obj.type + ": " + currentProgress + " / " + obj.count + "<br>";
+			questProgressArray[i].completed = true;
+			break;
 		}
 	}
 
-	gump.AddHTMLGump( 50, yOffset + 120, 264, 200, false, false, "<H2>Objective: </H2><br>" + objectives );
+	TriggerEvent(5800, "WriteQuestProgress", player, questProgressArray);
 
-	// Display rewards
-	var rewards = step.rewards || {};
-	var rewardText = "";
+	// Notify the player and complete the quest
+	player.SysMessage("You have delivered the required item!");
+	TriggerEvent(5800, "completeQuest", player, deliveryQuestID);
+	return true;
+}
 
-	if (rewards.gold)
+function resolvePlayerQuestID(player, initialQuestID)
+{
+	var archivedQuests = TriggerEvent(5800, "ReadArchivedQuests", player);
+	if (!archivedQuests || !isArray(archivedQuests))
 	{
-		rewardText = "Gold: " + (rewards.gold || 0) + "<br>";
+		//player.SysMessage("Archived Quests: Invalid data format.");
+		return initialQuestID;
 	}
 
-	if (rewards.items && rewards.items.length > 0)
+	var currentQuestID = parseInt(initialQuestID, 10);
+
+	for (var questID = currentQuestID; questID;)
 	{
-		rewardText += "Items:<br>";
-		for (var i = 0; i < rewards.items.length; i++)
+		var quest = TriggerEvent(5801, "QuestList", questID);
+		if (!quest) 
 		{
-			var item = rewards.items[i];
-			rewardText += "- " + (item.name || "Unknown Item") + " x" + (item.amount || 1) + "<br>";
+			break; // No further quests in the chain
 		}
+
+		//player.SysMessage("Checking QuestID: " + questID);
+
+		if (!isQuestArchived(archivedQuests, questID))
+		{
+			//player.SysMessage("Resolved QuestID: " + questID);
+			return questID; // Return the first uncompleted quest
+		}
+
+		questID = parseInt(quest.nextQuestID, 10);
 	}
 
-	if (rewards.fame)
-	{
-		rewardText += "Fame: " + rewards.fame + "<br>";
-	}
-
-	if (rewards.karma)
-	{
-		rewardText += "Karma: " + rewards.karma + "<br>";
-	}
-
-	gump.AddHTMLGump( 50, yOffset + 180, 250, 90, true, true, "<H2>Rewards</H2><br>" + rewardText );
-
-	// Send the gump
-	gump.Send( socket );
-	gump.Free();
+	return null; // All quests completed
 }
 
 
-function onGumpPress( pSock, pButton, gumpData )
+
+// Helper function to check if a value exists in an array
+function isQuestArchived(array, value)
 {
-	var pUser = pSock.currentChar;
-	var questNpc = CalcCharFromSer( parseInt( pUser.GetTempTag( "questNpcSerial" )));
-	var questID = questNpc.GetTag( "QuestID" ).toString();
-	switch ( pButton ) 
+	value = parseInt(value, 10); // Ensure value is a number
+	for (var i = 0; i < array.length; i++) 
 	{
-		case 0:
-			break;
-		case 1:
-			startQuest( pUser, questID );
-			break;// quest the player gets if he hits okay
-		case 2:
-			var questDetails = getQuestDetails( pUser, questNpc );
-			if( questDetails.error )
-			{
-				pUser.SysMessage( questDetails.error );
-				return false;
-			}
-
-			var quest = questDetails.quest;
-
-			// Handle quest refusal (assuming step[0].refuse exists)
-			var step = quest.steps[0];
-			if( step && step.refuse )
-			{
-				questNpc.TextMessage( step.refuse );
-			} 
-			else
-			{
-				questNpc.TextMessage( "You have refused the quest." );
-			}
-			break;
-	}
-}
-
-function onCharDoubleClick( pUser, questNpc )
-{
-	pUser.SetTempTag( "questNpcSerial", ( questNpc.serial ).toString());
-	var completedQuests = TriggerEvent( 5800, "ReadQuestLog", pUser );
-	var playerSerial = pUser.serial.toString();
-	var questID = questNpc.GetTag( "QuestID" ).toString();
-	var gumpID = 5804 + 0xffff;
-	var socket = pUser.socket;
-
-	if( !questNpc.InRange( pUser, 2 ))
-		return;
-
-	// Validate the targeted object and player
-	if( !ValidateObject( pUser ) || !ValidateObject( questNpc ))
-	{
-		pUser.SysMessage( "Invalid target or player." );
-		return false;
-	}
-
-	// Check if the NPC has a quest to offer
-	if( !questID ) 
-	{
-		pUser.SysMessage( questNpc.name + " has no quests to offer." );
-		return false;
-	}
-
-	// Check if the player has already completed this quest
-	for( var i = 0; i < completedQuests.length; i++ )
-	{
-		var questData = completedQuests[i].split( "," );
-		if( questData[0] === playerSerial && questData[1] === questID )
+		if (parseInt(array[i], 10) === value)
 		{
-			questNpc.TextMessage( "You have already completed this quest!" );
-			return false;
+			return true;
 		}
 	}
-
-	// Fetch the quest from the chainQuests
-	var chainQuests = TriggerEvent( 5801, "getQuests" );
-	var quest = null;
-
-	for( var i = 0; i < chainQuests.length; i++ )
-	{
-		if( chainQuests[i].id === questID )
-		{
-			quest = chainQuests[i];
-			break;
-		}
-	}
-
-	if( !quest ) 
-	{
-		pUser.SysMessage( "The quest could not be found." );
-		return false;
-	}
-
-	questNpc.TurnToward( pUser );
-	// Show the quest conversation gump
-	socket.CloseGump(gumpID, 0);
-	QuestConversationGump( pUser, questNpc, quest );
 	return false;
+}
 
+// Helper function to check if a value is an array
+function isArray(value) 
+{
+	return Object.prototype.toString.call(value) === "[object Array]";
 }
 
 function onContextMenuRequest( socket, targObj )
@@ -295,38 +865,9 @@ function onContextMenuRequest( socket, targObj )
 	return false;
 }
 
-function getQuestDetails( pUser, targObj )
-{
-	var questID = targObj.GetTag( "QuestID" );
-	if( !questID )
-	{
-		return { error: "This NPC has no quests to offer." };
-	}
-
-	var chainQuests = TriggerEvent( 5801, "getQuests" );
-	var quest = null;
-
-	for( var i = 0; i < chainQuests.length; i++ ) 
-	{
-		if( chainQuests[i].id === questID )
-		{
-			quest = chainQuests[i];
-			break;
-		}
-	}
-
-	if( !quest )
-	{
-		return { error: "The quest could not be found." };
-	}
-
-	return { questID: questID, quest: quest };
-}
-
 function onContextMenuSelect( socket, targObj, popupEntry )
 {
 	var pUser = socket.currentChar;
-	var gumpID = 5804 + 0xffff;
 
 	// Validate the targeted object and player
 	if( !ValidateObject( pUser ) || !ValidateObject( targObj ))
@@ -339,75 +880,31 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	{
 		case 0x000A: // Quest Conversation
 			{
-				var questDetails = getQuestDetails( pUser, targObj );
-				if( questDetails.error )
+				// Validate the targeted object and player
+				if (!ValidateObject(pUser) || !ValidateObject(targObj))
 				{
-					pUser.SysMessage( questDetails.error );
+					socket.SysMessage("Invalid target or player.");
 					return false;
 				}
 
-				var quest = questDetails.quest;
-				var questID = questDetails.questID;
-
-				// Check if the player has already completed this quest
-				var completedQuests = TriggerEvent( 5800, "ReadQuestLog", pUser );
-				var playerSerial = pUser.serial.toString();
-
-				for( var i = 0; i < completedQuests.length; i++ )
+				// Check if the player is within range
+				if (!targObj.InRange(pUser, 2))
 				{
-					var questData = completedQuests[i].split( "," );
-					if( questData[0] === playerSerial && questData[1] === questID )
-					{
-						targObj.TextMessage( "You have already completed this quest!" );
-						return false;
-					}
+					pUser.SysMessage("You are too far away.");
+					return false;
 				}
 
-				// Store NPC serial temporarily for quest tracking
-				pUser.SetTempTag( "questNpcSerial", targObj.serial.toString() );
-
-				// Show the quest conversation gump
-				socket.CloseGump(gumpID, 0);
-				QuestConversationGump( pUser, targObj, quest );
+				QuestNpcInterAction(pUser, targObj);
 			}
 			break;
 
 		case 0x000B: // Cancel Quest (Optional)
 			{
-				var questDetails = getQuestDetails( pUser, targObj );
-				if( questDetails.error )
-				{
-					pUser.SysMessage( questDetails.error );
-					return false;
-				}
-
-				var quest = questDetails.quest;
-				var questID = questDetails.questID;
-
-				// Check if the player has already completed this quest
-				var completedQuests = TriggerEvent( 5800, "ReadQuestLog", pUser );
-				var playerSerial = pUser.serial.toString();
-
-				for( var i = 0; i < completedQuests.length; i++ )
-				{
-					var questData = completedQuests[i].split( "," );
-					if( questData[0] === playerSerial && questData[1] === questID )
-					{
-						targObj.TextMessage( "You have already completed this quest!" );
-						return false;
-					}
-				}
-
-				// Handle quest refusal (assuming step[0].refuse exists)
-				var step = quest.steps[0];
-				if( step && step.refuse )
-				{
-					targObj.TextMessage( step.refuse );
-				}
-				else
-				{
-					targObj.TextMessage( "You have refused the quest." );
-				}
+				var initialQuestID = parseInt(targObj.GetTag("QuestID"), 10);
+				var playerQuestID = resolvePlayerQuestID(pUser, initialQuestID);
+				var quest = TriggerEvent(5801, "QuestList", playerQuestID);
+				targObj.TextMessage(quest.refuse);
+				pUser.SoundEffect( 0x5B4, true );
 			}
 			break;
 
@@ -416,65 +913,4 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	}
 
 	return false; // Prevent default context menu handling for handled entries
-}
-
-function startQuest( pUser, questID ) 
-{
-	var completedQuests = TriggerEvent( 5800, "ReadQuestLog", pUser );
-	var playerSerial = pUser.serial.toString();
-	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", pUser );
-	var chainQuests = TriggerEvent( 5801, "getQuests" );
-
-	// Check if the quest already exists in progress
-	for( var i = 0; i < questProgressArray.length; i++ )
-	{
-		if( questProgressArray[i].questID === questID )
-		{
-			pUser.SysMessage( "You are already on this quest." );
-			return;
-		}
-	}
-
-	// Check if the player has already completed this quest
-	for( var i = 0; i < completedQuests.length; i++ )
-	{
-		var questData = completedQuests[i].split( "," );
-		if( questData[0] === playerSerial && questData[1] === questID )
-		{
-			pUser.SysMessage( "You have already completed this quest!" );
-			return;
-		}
-	}
-
-	// Find the corresponding quest
-	var quest = null;
-	for( var i = 0; i < chainQuests.length; i++ )
-	{
-		if( chainQuests[i].id === questID )
-		{
-			quest = chainQuests[i];
-			break;
-		}
-	}
-
-	if( !quest )
-	{
-		pUser.SysMessage( "Quest not found." );
-		return;
-	}
-
-	// Initialize the quest progress
-	var progress = [];
-	for( var i = 0; i < quest.steps[0].objectives.length; i++ )
-	{
-		progress.push( 0 );
-	}
-
-	// Add the quest to the progress array
-	questProgressArray.push( { questID: questID, step: 0, progress: progress, completed: false } );
-
-	// Save the updated progress to the file
-	TriggerEvent( 5800, "WriteQuestProgress", pUser, questProgressArray );
-
-	pUser.SysMessage( "Quest started: " + quest.name );
 }
