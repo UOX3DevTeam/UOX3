@@ -29,7 +29,7 @@ function SnoopAttempt( snoopTarget, targCont, pUser )
 	if( pSock == null )
 		return false;
 
-	var rootCont = FindRootContainer( targCont, 0 );
+	var rootCont = FindRootContainer( targCont );
 	if( !ValidateObject( rootCont ) || rootCont == pUser.pack )
 		return false;
 
