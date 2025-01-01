@@ -53,6 +53,7 @@ function QuestConversationGump( pUser, npcTarget, questID )
 	// Create the gump
 	var gump = new Gump();
 	gump.AddPage( 0 );
+	gump.NoClose();
 	gump.AddBackground( 30, 120, 296, 520, 1579 ); // Background
 	gump.AddGump( 70, 130, 1577 ); // Decorative gump
 
@@ -106,7 +107,6 @@ function onGumpPress( pSock, pButton, gumpData )
 	{
 		case 0: // Close gump
 			break;
-
 		case 1: // Accept quest
 			TriggerEvent( 5800, "startQuest", pUser, playerQuestID );
 			pUser.SoundEffect( 0x5B4, true );

@@ -1,8 +1,43 @@
-[craftsmanssatchel]
+[minerssatchel]
 {
 get=0x0e76
 name=Craftsman's Satchel
 colorlist=300
 packitem=pickaxe
 packitem=pickaxe
+sectionid=minerssatchel
+}
+
+[oldring]
+{
+get=0x108a
+name=an old ring
+sectionid=oldring
+}
+
+[oldnecklace]
+{
+get=0x1088
+name=an old necklace
+sectionid=oldnecklace
+}
+
+[chefssatchel]
+{
+get=0x0e75
+name=Craftsman's Satchel
+colorlist=300
+packitem=0x1039//sackofflour
+packitem=0x097f//skillet
+sectionid=chefssatchel
+}
+
+[lumberjackssatchel]
+{
+get=0x0e75
+name=Craftsman's Satchel
+colorlist=300
+packitem=0x0eed,15
+packitem=hatchet
+sectionid=lumberjackssatchel
 }

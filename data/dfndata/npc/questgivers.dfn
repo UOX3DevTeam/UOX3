@@ -6,7 +6,7 @@
 //-=                                                        =-
 //-==========================================================-
 
-[Mugg]
+[mugg]
 {
 GET=basehuman
 NAME=Mugg the Miner
@@ -32,6 +32,77 @@ DEX=100 100
 INT=25 25
 SCRIPT=5802
 CUSTOMINTTAG=QuestID 1//More ore Please
+}
+
+[clairesse]
+{
+GET=basehuman
+NAME=Clairesse the Servant
+TITLE=Quest Giver
+ID=0x0191
+PRIV=4
+SKIN=0x840B
+EQUIPITEM=0x203D//pony tail
+COLOR=0x458
+EQUIPITEM=plaindress
+COLOR=0x3C9
+EQUIPITEM=shoes
+COLOR=0x740
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 2//Stitch In Time
+}
+
+[asandos]
+{
+GET=basehuman
+NAME=Asandos the Chef
+TITLE=Quest Giver
+ID=0x0190
+PRIV=4
+SKIN=0x83FF
+EQUIPITEM=0x2044//mohawk
+COLOR=0x1
+EQUIPITEM=boots
+COLOR=0x901
+EQUIPITEM=shortpants
+EQUIPITEM=shirt
+EQUIPITEM=cap
+EQUIPITEM=halfapron
+COLOR=0x28
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 3//Bakers Dozen
+}
+
+[hargrove]
+{
+GET=basehuman
+NAME=Hargrove the Lumberjack
+TITLE=Quest Giver
+ID=0x0190
+PRIV=4
+SKIN=0x83FF
+EQUIPITEM=0x203C//long hair
+EQUIPITEM=boots
+COLOR=0x901
+EQUIPITEM=shirt
+COLOR=0x288
+EQUIPITEM=bandana
+COLOR=0x20
+EQUIPITEM=battleaxe
+EQUIPITEM=studdedleggings
+EQUIPITEM=0x1414//plategloves
+COLOR=0x21E
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 4//Chop Chop On The Double
 }
 
 [nail]
