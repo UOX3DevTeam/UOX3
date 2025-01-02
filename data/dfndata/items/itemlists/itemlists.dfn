@@ -1229,6 +1229,21 @@ veritegranite
 valoritegranite
 }
 
+//Quest Item Lists
+[ranomdtinkerssatchel]
+{
+itemlist=tinkerssatchel
+}
+
+[ITEMLIST tinkerssatchel]
+{
+0x105D,3//Springs
+0x105B,3//Axle
+0x1055,3//Hinge
+0x1010//iron Key
+0x0f9e//Scissors
+}
+
 //**************************
 //* LISTOBJECTS START HERE *
 //**************************

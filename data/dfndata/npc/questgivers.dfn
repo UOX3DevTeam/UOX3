@@ -105,6 +105,59 @@ SCRIPT=5802
 CUSTOMINTTAG=QuestID 4//Chop Chop On The Double
 }
 
+[gervis]
+{
+GET=basehuman
+NAME=Gervis the Blacksmith Trainer
+TITLE=Quest Giver
+ID=0x0190
+PRIV=4
+SKIN=0x83F5
+EQUIPITEM=0x203B//Short Hair
+COLOR=0x5EC
+EQUIPITEM=boots
+COLOR=0x3B2
+EQUIPITEM=shortpants
+COLOR=0x1BB
+EQUIPITEM=shirt
+COLOR=0x71F
+EQUIPITEM=fullapron
+COLOR=0x3B2
+EQUIPITEM=0x13E3//smith hammer
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 5//Battered Bucklers
+}
+
+[nibbet]
+{
+GET=basehuman
+NAME=Nibbet the Tinker
+TITLE=Quest Giver
+ID=0x0190
+PRIV=4
+SKIN=0x840C
+EQUIPITEM=0x2044//Mohawk
+COLOR=0x1
+EQUIPITEM=boots
+COLOR=0x591
+EQUIPITEM=shortpants
+COLOR=0xF8
+EQUIPITEM=shirt
+COLOR=0x2D
+EQUIPITEM=fullapron
+COLOR=0x288
+EQUIPITEM=0x1414//plategloves
+COLOR=0x21E
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 6//A clockwork puzzle
+}
+
 [nail]
 {//example quest npc
 GET=basehuman

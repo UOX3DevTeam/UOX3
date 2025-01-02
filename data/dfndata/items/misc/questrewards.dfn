@@ -41,3 +41,23 @@ packitem=0x0eed,15
 packitem=hatchet
 sectionid=lumberjackssatchel
 }
+
+[smithssatchel]
+{
+get=0x0e75
+name=Craftsman's Satchel
+colorlist=300
+packitem=0x1bef,10//ironingot
+packitem=0x13E3//smithhammer
+sectionid=smithssatchel
+}
+
+[tinkerssatchel]
+{
+get=0x0e75
+name=Craftsman's Satchel
+colorlist=300
+packitem=0x1EBC
+packitem=ranomdtinkerssatchel
+sectionid=tinkerssatchel
+}

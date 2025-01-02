@@ -77,6 +77,43 @@ function QuestList(questID)
 				{ type: "item", itemID: "lumberjackssatchel", amount: 1, name: "Craftsman's Satchel" }
 			]
 		},
+		"5": {
+			title: "Battered Bucklers",
+			description: "Hey there! Yeah... you! Ya' any good with a hammer? Tell ya what, if yer thinking about tryin' some metal work, " +
+						 "and have a bit of skill, I can show ya how to bend it into shape.Just get some of those ingots there, and grab a " +
+						 "hammer and use it over here at this forge.I need a few more bucklers hammered out to fill this here order with..." +
+						 "hmmm about ten more.that'll give some taste of how to work the metal.",
+			uncomplete: "Come On! Whats that... a bucket? We need ten bucklers... not spitoons.",
+			complete: "Thanks for the help. Here's something for ya to remember me by.",
+			refuse: "Not enough muscle on yer bones to use it? hmph, probably afraid of the sparks markin' up yer loverly skin... to" +
+					 "good for some honest labor...ha!...off with ya!",
+			type: "collect",
+			questTurnIn: 1, // 0 = auto-complete
+			targetItems: [
+				{ itemID: "Buckler", amount: 10, name: "Buckler" }
+			],
+			rewards: [
+				{ type: "item", itemID: "smithssatchel", amount: 1, name: "Craftsman's Satchel" }
+			]
+		},
+		"6": {
+			title: "A clockwork puzzle",
+			description: "'Tis a riddle, you see! What kind of clock is only right twice per day? A broken one! laughs heartily " +
+						 "Ah, yes *wipes eye*, that's one of my favorites! Ah... to business. Could you fashion me some clock parts? " +
+						 "I wish my own clocks to be right all the day long! You'll need some tinker's tools and some iron ingots, I " +
+						 "think, but from there it should be just a matter of working the metal.",
+			uncomplete: "You're not quite done yet.  Get back to work!",
+			complete: "Wonderful! Tick tock, tick tock, soon all shall be well with grandfather's clock!",
+			refuse: "Or perhaps you'd rather not.",
+			type: "collect",
+			questTurnIn: 1, // 0 = auto-complete
+			targetItems: [
+				{ itemID: "0x104F", amount: 5, name: "Clock Parts" }
+			],
+			rewards: [
+				{ type: "item", itemID: "tinkerssatchel", amount: 1, name: "Craftsman's Satchel" }
+			]
+		},
 		//Custom Example Quests
 		"1000": {
 			title: "Collect Fruits",
