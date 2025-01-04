@@ -2999,7 +2999,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					cScript *toExecute = JSMapping->GetScript( scriptTrig );
 					if( toExecute != nullptr )
 					{
-						toExecute->onCombatHit( &mChar, ourTarg );
+						toExecute->OnCombatHit( &mChar, ourTarg );
 					}
 				}
 
