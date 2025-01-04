@@ -89,3 +89,14 @@ script=5063//jacobspickaxe.js
 script=5043//skill_boosting_equipment.js
 sectionid=jacobspickaxe
 }
+
+[claspofconcentration]
+{
+get=silverbracelet
+name=Clasp of Concentration
+newbie
+staminaregen=2
+manaregen=1
+elementresist=5 5 0 0
+sectionid=claspofconcentration
+}

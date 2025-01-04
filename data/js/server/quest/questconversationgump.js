@@ -9,7 +9,7 @@ function QuestConversationGump( pUser, npcTarget, questID )
 
 	if( !quest ) 
 	{
-		pUser.SysMessage( "This quest does not exist." );
+		socket.SysMessage( "This quest does not exist." );
 		return;
 	}
 
@@ -88,6 +88,7 @@ function QuestConversationGump( pUser, npcTarget, questID )
 	else 
 	{
 		gump.AddButton( 50, 600, 0x2EF5, 0x2EF7, 1, 0, 4 ); // resign quest button
+		gump.AddButton( 220, 600, 0x2EEC, 0x2EEE, 1, 0, 0 ); // close button
 	}
 
 	// Send the gump to the player
@@ -118,6 +119,13 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 3: // Turn in quest
 			if( playerQuestID )
 			{
+				var playerPack = pUser.pack;
+				if( playerPack.totalItemCount >= playerPack.maxItems )
+				{
+					pSock.SysMessage( GetDictionaryEntry( 1819, pSock.language )); // Your backpack cannot hold any more items!
+					return;
+				}
+
 				var turnInSuccess = processQuestTurnIn( pUser, playerQuestID ); // Handle item turn-in
 				if( turnInSuccess )
 				{
@@ -126,7 +134,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				}
 				else
 				{
-					pUser.SysMessage( "You need to have all required quest items to turn in this quest." );
+					pSock.SysMessage( "You need to have all required quest items to turn in this quest." );
 				}
 			}
 			break;
@@ -141,6 +149,7 @@ function onGumpPress( pSock, pButton, gumpData )
 
 function resignQuest( player, questID )
 {
+	var socket = pUser.socket;
 	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", player );
 	var newQuestProgressArray = [];
 	var questFound = false;
@@ -161,10 +170,10 @@ function resignQuest( player, questID )
 			{
 				player.SetTag( "AcceleratedSkillGain", null ); // Remove the tag
 				player.RemoveScriptTrigger( 5811 ); // Remove the quest skill gain script trigger
-				player.SysMessage( "You have stopped accelerated training for " + GetSkillName( quest.targetSkill ) + "." );
+				socket.SysMessage( "You have stopped accelerated training for " + GetSkillName( quest.targetSkill ) + "." );
 			}
 
-			player.SysMessage( "You have resigned from the quest: " + quest.title );
+			socket.SysMessage( "You have resigned from the quest: " + quest.title );
 		} 
 		else
 		{
@@ -174,20 +183,21 @@ function resignQuest( player, questID )
 
 	if( !questFound )
 	{
-		player.SysMessage( "You are not currently on this quest." );
+		socket.SysMessage( "You are not currently on this quest." );
 		return false;
 	}
 
 	// Write back the updated quest progress, excluding the resigned quest
 	TriggerEvent( 5800, "WriteQuestProgress", player, newQuestProgressArray );
 
-	player.SysMessage( "The quest has been completely removed from your progress." );
+	socket.SysMessage( "The quest has been completely removed from your progress." );
 	return true;
 }
 
 
 function manageQuestItems( player, questID, mark )
 {
+	var socket = pUser.socket;
 	var pack = player.pack; // Get the player's backpack
 
 	if( !ValidateObject( pack ))
@@ -201,7 +211,7 @@ function manageQuestItems( player, questID, mark )
 
 	if( !quest || ( !quest.targetItems && !quest.deliveryItem )) 
 	{
-		player.SysMessage( "This quest does not have item requirements." );
+		socket.SysMessage( "This quest does not have item requirements." );
 		return;
 	}
 
@@ -234,7 +244,7 @@ function manageQuestItems( player, questID, mark )
 							currentItem.isDyeable = false;
 							currentItem.SetTag( "QuestItem", true );
 							currentItem.AddScriptTrigger( 5806 ); // Quest Item script trigger
-							player.SysMessage( "Marked item as a quest item: " + targetItem.name );
+							socket.SysMessage( "Marked item as a quest item: " + targetItem.name );
 						}
 					}
 					else
@@ -248,7 +258,7 @@ function manageQuestItems( player, questID, mark )
 							currentItem.isDyeable = true;
 							currentItem.SetTag( "QuestItem", null );
 							currentItem.RemoveScriptTrigger( 5806 ); // Quest Item script trigger
-							player.SysMessage( "Unmarked item as a quest item: " + targetItem.name );
+							socket.SysMessage( "Unmarked item as a quest item: " + targetItem.name );
 						}
 					}
 				}
@@ -271,14 +281,14 @@ function manageQuestItems( player, questID, mark )
 						currentItem.isDyeable = false;
 						currentItem.SetTag( "QuestItem", true );
 						currentItem.AddScriptTrigger( 5806 ); // Quest Item script trigger
-						player.SysMessage( "Marked delivery item as a quest item: " + quest.deliveryItem.name );
+						socket.SysMessage( "Marked delivery item as a quest item: " + quest.deliveryItem.name );
 					}
 				}
 				else
 				{
 					// If resigning, delete the delivery item
 					currentItem.Delete(  );
-					player.SysMessage( "Deleted delivery item: " + quest.deliveryItem.name );
+					socket.SysMessage( "Deleted delivery item: " + quest.deliveryItem.name );
 				}
 			}
 		}
@@ -378,10 +388,10 @@ function GetSkillName( skillID )
 {
 	var skillNames = [
 		"alchemy", "anatomy", "animallore", "itemid", "armslore", "parrying", "begging",
-		"blacksmithy", "bowcraft", "peacemaking", "camping", "carpentry", "cartography",
-		"cooking", "detectinghidden", "enticing", "evaluatingintelligence", "healing",
+		"blacksmith", "bowcraft", "peacemaking", "camping", "carpentry", "cartography",
+		"cooking", "detectinghidden", "enticement", "evaluatingintelligence", "healing",
 		"fishing", "forensics", "herding", "hiding", "provocation", "inscription",
-		"lockpicking", "magery", "magicresistance", "tactics", "musicianship", "poisoning",
+		"lockpicking", "magery", "magicresistance", "tactics", "snooping", "musicianship", "poisoning",
 		"archery", "spiritSpeak", "stealing", "tailoring", "animaltaming", "tasteID",
 		"tinkering", "tracking", "veterinary", "swordsmanship", "macefighting",
 		"fencing", "wrestling", "lumberjacking", "mining", "meditation", "stealth",

@@ -16,7 +16,9 @@ function QuestList(questID)
 				"Don't keep me waiting for those materials!"
 			],
 			type: "collect",
+			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
+			bankgold: 0,
 			targetItems: [
 				{ itemID: "ore", amount: 5, name: "Iron Ore" }
 			],
@@ -36,7 +38,9 @@ function QuestList(questID)
 					  "even catch Uzeraan's eye at the, er, *blushes* I mean, I can't wait to wear it to the next town dance!",
 			refuse: "Won't you reconsider? It'd mean the world to me, it would!",
 			type: "collect",
+			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
+			bankgold: 0,
 			targetItems: [
 				{ itemID: "0x1eff", amount: 1, name: "Fancy Dress" }
 			],
@@ -57,7 +61,9 @@ function QuestList(questID)
 			complete: "Thank you! I haven't been this excited about food in months!",
 			refuse: "Argh, I absolutely must have more of these 'cookies!' Come back if you change your mind.",
 			type: "collect",
+			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
+			bankgold: 0,
 			targetItems: [
 				{ itemID: "0x103F", amount: 5, name: "Cookie Mix" }
 			],
@@ -74,7 +80,9 @@ function QuestList(questID)
 			complete: "Ahhh! The smell of fresh cut lumber. And look at you, all strong and proud, as if you had done an honest days work!",
 			refuse: "Or perhaps you'd rather not.",
 			type: "collect",
+			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
+			bankgold: 0,
 			targetItems: [
 				{ itemID: "0x1BE0", amount: 60, name: "Log" }
 			],
@@ -93,7 +101,9 @@ function QuestList(questID)
 			refuse: "Not enough muscle on yer bones to use it? hmph, probably afraid of the sparks markin' up yer loverly skin... to" +
 					 "good for some honest labor...ha!...off with ya!",
 			type: "collect",
+			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
+			bankgold: 0,
 			targetItems: [
 				{ itemID: "Buckler", amount: 10, name: "Buckler" }
 			],
@@ -111,7 +121,9 @@ function QuestList(questID)
 			complete: "Wonderful! Tick tock, tick tock, soon all shall be well with grandfather's clock!",
 			refuse: "Or perhaps you'd rather not.",
 			type: "collect",
+			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
+			bankgold: 0,
 			targetItems: [
 				{ itemID: "0x104F", amount: 5, name: "Clock Parts" }
 			],
@@ -150,7 +162,9 @@ function QuestList(questID)
 				"You there! I can use some help mining these rocks!"
 			],
 			type: "skillgain",
+			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
+			bankgold: 0,
 			targetRegion: 194, // Example region ID for sparring grounds
 			regionName: "Haven Mountains",
 			targetSkill: 45, // Skill ID 45
@@ -159,6 +173,45 @@ function QuestList(questID)
 			maxPoint: 5,	//max skill point 0.5
 			rewards: [
 				{ type: "item", itemID: "jacobspickaxe", amount: 1, name: "Jacob's Pickaxe" }
+			]
+		},
+		"8": {
+			title: "The Inner Warrior",
+			description: "Head East out of town to Old Haven. Expend stamina and mana until you have raised your Focus skill to 50. Well, hello there. " +
+						 "Don't you like quite the adventureer! You want to learn more about Focus, do you? I can teach you something about that, but " +
+						 "first you should know that not everyone can be a disciplined enough to excel at it. Focus is the ability to achive inner balance " +
+						 "in both body and spirit, so that you recover from physical and mental exertion faster than you other wise would.If you want to " +
+						 "practice Focus, the best place to do that is east of here, in Old Haven, where you'll find an undead infestation, Exert yourself " +
+						 "physically by engaging in combat and moving quickly.For testing your mental balance, expend mana in whatever way you find most " +
+						 "suitable to your abilites.Casting spells and using abilites work well for consuming your mana.Go.Train hard, and you will find " +
+						 "that your concentration will imporve naturally.When you've improved your ability to focus yourself at an Apprentice level, come " +
+						 "back to me and i shall give you something worthy of your new ability.",
+			uncomplete: "Hell again. I see you've returned, but it seems that your Focus skill hasn't improved as much as it could have. Just head east, " +
+						"to Old Haven, and exert yourself physically and mentally as much as possible. To do this physically engage in combat and move as " +
+						"quickly as you can.For exerting yourself mentally, expend mana in whatever way you find most suitable to your abilites.Casting " +
+						"spells and using abilites work well for consuming your mana.",
+			complete: "Look Who it is! I knew you could do it if you just had the discipline to apply yourself. It feels good to recover from battle " +
+					  "so quickly, doesn't it? Just wait until you become a Grandmaster, It's amazing!	Please take this gift, as you've more than earned " +
+					  "it with your hard work.It will help you recover even faster during battle, and provides a bit of protection aswell.You have so " +
+					  "much more potential, so don't stop trying to improve your Focus now! Safe travels!",
+			refuse: "I'm disappointed. You have alot of inner potential, and it would pain me greatly to see you waste that. Oh well. If you change your mind ill be right here.",
+			oncomplete: "You have achieved the rank of Apprentice Miner. Return to Jacob Waltz in at his camp in the hills above New Haven as soon as you can to claim your reward.",
+			trainingarea: "You feel much more attuned to yourself. Your ability to improve Focus skill is enhanced in this area.",
+			npcPhrases: [
+				"Know yourself, and you will become a true warrior."
+			],
+			type: "skillgain",
+			DoneOnce: 1, // Indicates this quest can only be completed once
+			questTurnIn: 1, // 0 = auto-complete
+			bankgold: 0, // 0 gold drops in pack if 1 gold goes to bank.
+			targetRegion: 195, // Example region ID for sparring grounds
+			regionName: "Old Haven Training",
+			targetSkill: 50, // Skill ID 50
+			maxSkillPoints: 500, // 50.0 in-game skill points
+			minPoint: 2,   //min skill point 0.2
+			maxPoint: 5,	//max skill point 0.5
+			rewards: [
+				{ type: "item", itemID: "claspofconcentration", amount: 1, name: "Clasp of Concentration" }
 			]
 		},
 		//Custom Example Quests

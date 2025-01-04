@@ -1,6 +1,7 @@
 const DebugMessages = false;
 function startQuest( player, questID )
 {
+	var socket = player.socket;
 	var questProgressArray = ReadQuestProgress( player );
 
 	if( !CheckQuest( player, questID ))
@@ -33,7 +34,7 @@ function startQuest( player, questID )
 	}
 
 	// Add the delivery item to the player's backpack if it's a delivery quest
-	if( quest.type === "delivery" && quest.deliveryItem )
+	if( quest.type == "delivery" && quest.deliveryItem )
 	{
 			var package = CreateDFNItem( player.socket, player, quest.deliveryItem.itemID, quest.deliveryItem.amount, "ITEM", true )
 			if( ValidateObject( package )) 
@@ -53,7 +54,7 @@ function startQuest( player, questID )
 			} 
 			else
 			{
-				player.SysMessage( "Failed to create the delivery item." );
+				socket.SysMessage( "Failed to create the delivery item." );
 			}
 	}
 
@@ -64,7 +65,7 @@ function startQuest( player, questID )
 	}
 	else
 	{	
-		player.SysMessage( "You are already under the effect of an accelerated skillgain scroll." )
+		socket.SysMessage( "You are already under the effect of an accelerated skillgain scroll." )
 	}
 
 	// Add new quest to progress
@@ -87,69 +88,64 @@ function startQuest( player, questID )
 
 	WriteQuestProgress( player, questProgressArray );
 
-	if( DebugMessages )
-	{
-		player.SysMessage( "You have started the quest: " + quest.title );
-	}
-
-	player.SysMessage( "You have accepted the Quest." );
+	socket.SysMessage( "You have accepted the Quest." );
 
 	// Start the timer if the quest is timed
 	if( quest.timeLimit )
 	{
-		player.StartTimer( quest.timeLimit * 1000, questID, true ); // Timer in milliseconds
+		player.StartTimer( quest.timeLimit * 1000, questID, 5800 ); // Timer in milliseconds
 		var minutes = Math.floor( quest.timeLimit / 60 ); // Convert total seconds to minutes
 		var seconds = quest.timeLimit % 60; // Get remaining seconds
-		player.SysMessage( "You have " + minutes + " minute( s ) and " + seconds + " second( s ) to complete this quest." );
+		socket.SysMessage( "You have " + minutes + " minute( s ) and " + seconds + " second( s ) to complete this quest." );
 	}
 }
 
 function CheckQuest( player, questID )
 {
+	var socket = player.socket;
 	// Fetch quest details using the QuestList trigger
 	var quest = TriggerEvent( 5801, "QuestList", questID );
 	if( !quest )
 	{
-		player.SysMessage( "Quest not found." );
+		socket.SysMessage( "Quest not found." );
 		return false; // Indicate that the quest cannot proceed
 	}
 
 	// Read the player's active and archived quest data
 	var questProgressArray = ReadQuestProgress( player );
-	var archivedQuests = ReadArchivedQuests( player );
 
 	// Check if the quest is already in progress
 	for( var i = 0; i < questProgressArray.length; i++ )
 	{
-		if( questProgressArray[i].questID === questID )
+		if( questProgressArray[i].questID == questID )
 		{
-			player.SysMessage( "You are already working on this quest." );
+			socket.SysMessage( "You are already working on this quest." );
 			return false; // Indicate that the quest cannot proceed
 		}
 	}
 
-	// Check if the quest has already been completed
-	for( var i = 0; i < archivedQuests.length; i++ ) 
+	// Check if the quest is marked as DoneOnce and already completed
+	if( quest.DoneOnce == 1 ) 
 	{
-		if( archivedQuests[i].questID === questID )
+		var archivedQuests = ReadArchivedQuests( player );
+		for( var i = 0; i < archivedQuests.length; i++ )
 		{
-			player.SysMessage( "You have already completed this quest." );
-			return false; // Indicate that the quest cannot proceed
+			if( archivedQuests[i].questID == questID ) 
+			{
+				socket.SysMessage( "This quest can only be completed once, and you have already completed it." );
+				return false; // Indicate that the quest cannot proceed
+			}
 		}
 	}
 
-	if( DebugMessages ) 
-	{
-		// All checks passed, the quest can proceed
-		player.SysMessage( "You are eligible for this quest." );
-	}
 	return true;
 }
 
 function onTimer( timerObj, timerID )
 {
 	var player = timerObj; // Assuming timerObj is the player object
-	var questProgressArray = LoadQuestProgress( player );
+	var socket = player.socket;
+	var questProgressArray = ReadQuestProgress( player );
 
 	for( var i = 0; i < questProgressArray.length; i++ )
 	{
@@ -160,14 +156,21 @@ function onTimer( timerObj, timerID )
 
 			TriggerEvent( 5802, "manageQuestItems", player, questEntry.questID, false );
 
+			if( quest.type === "skillgain" ) 
+			{
+				player.SetTag( "AcceleratedSkillGain", null ); // Remove the tag
+				player.RemoveScriptTrigger( 5811 ); // Remove the quest skill gain script trigger
+				socket.SysMessage( "You have stopped accelerated training for " + GetSkillName( quest.targetSkill ) + "." );
+			}
+
 			// Time has expired
-			player.SysMessage( "You have failed the timed quest: " + quest.title );
+			socket.SysMessage( "You have failed the timed quest: " + quest.title );
 
 			// Log the failed quest
 			LogFailedQuest( player, questEntry );
 
 			questProgressArray.splice( i, 1 ); // Remove the failed quest
-			SaveQuestProgress( player, questProgressArray );
+			WriteQuestProgress( player, questProgressArray );
 			return;
 		}
 	}
@@ -175,6 +178,7 @@ function onTimer( timerObj, timerID )
 
 function updateQuestProgress( player, questID, identifier, progressValue, type )
 {
+	var socket = player.socket;
 	var questProgressArray = ReadQuestProgress( player );
 	var questUpdated = false;
 
@@ -195,11 +199,6 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 					{
 						var target = quest.targetItems[j];
 
-						if( DebugMessages )
-						{
-							player.SysMessage( "Checking target itemID: " + target.itemID );
-						}
-
 						if( String( target.itemID ) === String( identifier ))
 						{
 							questEntry.collectedItems[identifier] = ( questEntry.collectedItems[identifier] || 0 ) + progressValue;
@@ -208,11 +207,6 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 							if( questEntry.collectedItems[identifier] > target.amount )
 							{
 								questEntry.collectedItems[identifier] = target.amount;
-							}
-
-							if( DebugMessages )
-							{
-								player.SysMessage( "Collected " + questEntry.collectedItems[identifier] + "/" + target.amount + " " + identifier );
 							}
 						}
 
@@ -234,11 +228,6 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 					{
 						var target = quest.targetKills[k];
 
-						if( DebugMessages )
-						{
-							player.SysMessage( "Checking target npcID: " + target.npcID );
-						}
-
 						if( String( target.npcID ) === String( identifier ))
 						{
 							questEntry.harvestKills[identifier] = ( questEntry.harvestKills[identifier] || 0 ) + progressValue;
@@ -247,11 +236,6 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 							if( questEntry.harvestKills[identifier] > target.amount )
 							{
 								questEntry.harvestKills[identifier] = target.amount;
-							}
-
-							if( DebugMessages )
-							{
-								player.SysMessage( "Killed " + questEntry.harvestKills[identifier] + "/" + target.amount + " " + identifier );
 							}
 						}
 
@@ -302,16 +286,16 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 					if( hasItem )
 					{
 						questEntry.completed = true;
-						player.SysMessage( "You have successfully delivered the item!" );
+						socket.SysMessage( "You have successfully delivered the item!" );
 					}
 					else
 					{
-						player.SysMessage( "You don't have the required item to deliver." );
+						socket.SysMessage( "You don't have the required item to deliver." );
 					}
 				}
 				else
 				{
-					player.SysMessage( "This is not the correct NPC to deliver the item." );
+					socket.SysMessage( "This is not the correct NPC to deliver the item." );
 				}
 			}
 
@@ -332,7 +316,7 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 				else
 				{
 					// Notify player of ongoing progress
-					player.SysMessage( "Skill progress: " + ( questEntry.skillProgress / 10 ).toFixed(1) + "/" + ( quest.maxSkillPoints / 10 ).toFixed(1) );
+					socket.SysMessage( "Skill progress: " + ( questEntry.skillProgress / 10 ).toFixed(1) + "/" + ( quest.maxSkillPoints / 10 ).toFixed(1) );
 					allObjectivesCompleted = false;
 				}
 			}
@@ -347,11 +331,11 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 					questEntry.completed = true;
 					if( quest.type === "skillgain" && quest.oncomplete )
 					{
-						player.SysMessage( quest.oncomplete );
+						socket.SysMessage( quest.oncomplete );
 					}
 					else 
 					{
-						player.SysMessage( "You've completed the quest! Don't forget to collect your reward." );
+						socket.SysMessage( "You've completed the quest! Don't forget to collect your reward." );
 					}
 					WriteQuestProgress( player, questProgressArray );
 				}
@@ -360,11 +344,11 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 					questEntry.completed = true;
 					if (quest.type === "skillgain" && quest.oncomplete )
 					{
-						player.SysMessage( quest.oncomplete );
+						socket.SysMessage( quest.oncomplete );
 					}
 					else
 					{
-						player.SysMessage( "You've completed the quest! Don't forget to collect your reward." );
+						socket.SysMessage( "You've completed the quest! Don't forget to collect your reward." );
 					}
 					WriteQuestProgress( player, questProgressArray );
 					completeQuest( player, questID );
@@ -384,7 +368,7 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 	}
 	else
 	{
-		player.SysMessage( "No progress updated for the quest." );
+		socket.SysMessage( "No progress updated for the quest." );
 	}
 
 	return questProgressArray; // Return updated progress
@@ -393,6 +377,7 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 
 function completeQuest( player, questID )
 {
+	var socket = player.socket;
 	var questProgressArray = ReadQuestProgress( player );
 	var newQuestProgressArray = [];
 
@@ -408,7 +393,7 @@ function completeQuest( player, questID )
 				var quest = TriggerEvent( 5801, "QuestList", questID );
 
 				// Ensure the quest is completed
-				player.SysMessage( "Congratulations! You have completed the quest: " + quest.title );
+				socket.SysMessage( "Congratulations! You have completed the quest: " + quest.title );
 				DoStaticEffect( player.x, player.y, player.z, 0x376A, 0x40, 0x16, false );
 
 				if( quest.rewards )
@@ -416,34 +401,56 @@ function completeQuest( player, questID )
 					for( var j = 0; j < quest.rewards.length; j++ )
 					{
 						var reward = quest.rewards[j];
+						var bankBox = player.FindItemLayer(29);
 
 						if( reward.type === "gold" )
 						{
-							// Reward gold
-							CreateDFNItem( player.socket, player, "0x0eed", reward.amount, "ITEM", true ); // 0x0eed is gold
-							player.SysMessage( "You received " + reward.amount + " gold!" );
+							if( quest.bankgold == 1 )
+							{
+								var pack = true
+								if( !ValidateObject( bankBox ))
+								{
+									socket.SysMessage(GetDictionaryEntry( 19071, socket.language ));// Error: No valid bankbox found! Please contact a GM for assistance.
+									pack = false;
+								}
+								else if( bankBox.totalItemCount >= bankBox.maxItems )
+								{
+									socket.SysMessage(GetDictionaryEntry( 19074, socket.language )); // Your bank box is full.
+									pack = false;
+								}
+
+								var gold = CreateDFNItem( player.socket, player, "0x0eed", reward.amount, "ITEM", pack ); // 0x0eed is gold
+								if( pack == false )
+									gold.container = bankBox;
+							}
+							else
+							{
+								// Reward gold
+								CreateDFNItem( player.socket, player, "0x0eed", reward.amount, "ITEM", true ); // 0x0eed is gold
+							}
+							socket.SysMessage( "You receive a reward: " + reward.amount + " gold!" );
 						}
 						else if( reward.type === "item" )
 						{
 							// Reward item
 							CreateDFNItem( player.socket, player, reward.itemID, reward.amount, "ITEM", true );
-							player.SysMessage( "You received " + reward.amount + " of item " + reward.name + "!" );
+							socket.SysMessage( "You receive a reward: " + reward.amount + " of item " + reward.name + "!" );
 						}
 						else if( reward.type === "karma" )
 						{
 							// Reward karma
 							player.karma += reward.amount; // Assuming `karma` is a property of the player
-							player.SysMessage( "You gained " + reward.amount + " karma!" );
+							socket.SysMessage( "You gained " + reward.amount + " karma!" );
 						}
 						else if( reward.type === "fame" )
 						{
 							// Reward fame
 							player.fame += reward.amount; // Assuming `fame` is a property of the player
-							player.SysMessage( "You gained " + reward.amount + " fame!" );
+							socket.SysMessage( "You gained " + reward.amount + " fame!" );
 						}
 						else
 						{
-							player.SysMessage( "Unknown reward type: " + reward.type );
+							socket.SysMessage( "Unknown reward type: " + reward.type );
 						}
 					}
 				}
@@ -459,7 +466,7 @@ function completeQuest( player, questID )
 			}
 			else
 			{
-				player.SysMessage( "You haven't completed the quest yet." );
+				socket.SysMessage( "You haven't completed the quest yet." );
 				return;
 			}
 		}
@@ -481,7 +488,7 @@ function completeQuest( player, questID )
 			var nextQuest = TriggerEvent( 5801, "QuestList", quest.nextQuestID );
 			if( nextQuest )
 			{
-				player.SysMessage( "A new quest has been unlocked: " + nextQuest.title );
+				socket.SysMessage( "A new quest has been unlocked: " + nextQuest.title );
 				startQuest( player, parseInt( quest.nextQuestID ));
 			}
 		}
@@ -491,12 +498,6 @@ function completeQuest( player, questID )
 function onCreatureKilled( creature, player )
 {
 	var questProgressArray = ReadQuestProgress( player );
-
-	if( DebugMessages ) 
-	{
-		// Debug: Log the collected item's sectionID
-		player.SysMessage( "npc sectionID: " + creature.sectionID );
-	}
 
 	for( var i = 0; i < questProgressArray.length; i++ ) 
 	{
@@ -509,19 +510,8 @@ function onCreatureKilled( creature, player )
 			{
 				var target = quest.targetKills[j];
 
-				if( DebugMessages )
-				{
-					// Debug: Check each target item
-					player.SysMessage( "Checking target npcID: " + target.npcID );
-				}
-
 				if( target.npcID == creature.sectionID ) 
 				{
-					if( DebugMessages )
-					{
-						player.SysMessage( "killing npc: " + creature.sectionID );
-					}
-
 					updateQuestProgress( player, questEntry.questID, creature.sectionID, 1, "kill" );
 					return true; // Exit after updating progress
 				}
@@ -534,6 +524,7 @@ function onCreatureKilled( creature, player )
 
 function onItemCollected(player, item, isToggledOff)
 {
+	var socket = player.socket;
 	// Default the isToggledOff value
 	if( typeof isToggledOff === "undefined" ) 
 	{
@@ -544,7 +535,7 @@ function onItemCollected(player, item, isToggledOff)
 
 	if( DebugMessages )
 	{
-		player.SysMessage( "Item sectionID: " + item.sectionID );
+		socket.SysMessage( "Item sectionID: " + item.sectionID );
 	}
 
 	for( var i = 0; i < questProgressArray.length; i++ )
@@ -583,11 +574,11 @@ function onItemCollected(player, item, isToggledOff)
 							item.SetTag( "QuestItem", null );
 							item.RemoveScriptTrigger( 5806 ); // Quest Item script trigger
 
-							player.SysMessage( "You removed " + amountToRemove + " Quest Item(s)." );
+							socket.SysMessage( "You removed " + amountToRemove + " Quest Item(s)." );
 						}
 						else
 						{
-							player.SysMessage( "Cannot decrease further. Current count is 0." );
+							socket.SysMessage( "Cannot decrease further. Current count is 0." );
 						}
 					}
 					else
@@ -605,11 +596,11 @@ function onItemCollected(player, item, isToggledOff)
 							item.SetTag( "QuestItem", true );
 							item.AddScriptTrigger( 5806 ); // Quest Item script trigger
 
-							player.SysMessage( "You set " + amountToAdd + " item(s) to Quest Item status." );
+							socket.SysMessage( "You set " + amountToAdd + " item(s) to Quest Item status." );
 						}
 						else
 						{
-							player.SysMessage( "Cannot collect more. Target amount reached: " + target.amount );
+							socket.SysMessage( "Cannot collect more. Target amount reached: " + target.amount );
 						}
 					}
 					return; // Exit after updating progress
@@ -618,7 +609,7 @@ function onItemCollected(player, item, isToggledOff)
 		}
 	}
 
-	player.SysMessage( "Item does not match any quest requirements." );
+	socket.SysMessage( "Item does not match any quest requirements." );
 }
 
 function AccelerateSkillGain( pPlayer, skill, skillGainAmount )
@@ -660,10 +651,10 @@ function AccelerateSkillGain( pPlayer, skill, skillGainAmount )
 function GetSkillName(skillID) {
 	var skillNames = [
 		"alchemy", "anatomy", "animallore", "itemid", "armslore", "parrying", "begging",
-		"blacksmithy", "bowcraft", "peacemaking", "camping", "carpentry", "cartography",
-		"cooking", "detectinghidden", "enticing", "evaluatingintelligence", "healing",
+		"blacksmith", "bowcraft", "peacemaking", "camping", "carpentry", "cartography",
+		"cooking", "detectinghidden", "enticement", "evaluatingintelligence", "healing",
 		"fishing", "forensics", "herding", "hiding", "provocation", "inscription",
-		"lockpicking", "magery", "magicresistance", "tactics", "musicianship", "poisoning",
+		"lockpicking", "magery", "magicresistance", "tactics", "snooping", "musicianship", "poisoning",
 		"archery", "spiritSpeak", "stealing", "tailoring", "animaltaming", "tasteID",
 		"tinkering", "tracking", "veterinary", "swordsmanship", "macefighting",
 		"fencing", "wrestling", "lumberjacking", "mining", "meditation", "stealth",
@@ -679,19 +670,6 @@ function GetSkillName(skillID) {
 //							Save/Read Functions									//
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-
-//Not used this are wrappers just incase there is some sort logging need
-// Save progress to file
-function SaveQuestProgress( player, questProgressArray )
-{
-	return WriteQuestProgress( player, questProgressArray );
-}
-
-// Load progress from file
-function LoadQuestProgress( player )
-{
-	return ReadQuestProgress( player );
-}
 
 function LogFailedQuest( player, failedQuest )
 {

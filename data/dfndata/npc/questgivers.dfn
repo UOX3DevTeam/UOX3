@@ -193,6 +193,36 @@ SCRIPT=5802
 CUSTOMINTTAG=QuestID 7//The Delucian’s Lost Mine
 }
 
+[sarsmea]
+{
+GET=basehuman
+NAME=Sarsmea Smythe the Focus Instructor
+TITLE=Quest Giver
+ID=0x0191
+PRIV=4
+SKIN=0x83F5
+EQUIPITEM=0x203B//Short Hair
+COLOR=0x5EC
+EQUIPITEM=leatherleggings
+EQUIPITEM=ThighBoots
+EQUIPITEM=leatherarmor
+EQUIPITEM=studdedgloves
+EQUIPITEM=leatherninjabelt
+EQUIPITEM=studdedgorget
+EQUIPITEM=platemailjingasa
+STR=100 100
+DEX=100 100
+INT=25 25
+ANATOMY=1200 1200
+PARRYING=1200 1200
+HEALING=1200 1200
+TACTICS=1200 1200
+SWORDSMANSHIP=1200 1200
+FOCUS=1200 1200
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 8//The Inner Warrior
+}
+
 [nail]
 {//example quest npc
 GET=basehuman
