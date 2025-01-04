@@ -2991,6 +2991,9 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 			}
 		}
 
+		scriptTriggers.clear();
+		scriptTriggers.shrink_to_fit();
+		scriptTriggers = itemLayers[Layer]->GetScriptTriggers();
 		for( auto i : scriptTriggers )
 		{
 			cScript *tScript = JSMapping->GetScript( i );
