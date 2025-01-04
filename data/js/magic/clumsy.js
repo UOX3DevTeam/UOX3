@@ -110,15 +110,30 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		{
 			var itemRHand = mChar.FindItemLayer( 0x01 );
 			var itemLHand = mChar.FindItemLayer( 0x02 );
-			if(( itemLHand && itemLHand.type != 119 ) || ( itemRHand && ( itemRHand.type != 9 || itemRHand.type != 119 )))	// Spellbook
+			var lHandBlocks = false;
+			var rHandBlocks = false;
+
+			// Evaluate blocking for left and right hand items
+			if( !isSpellCastingAllowed( itemRHand ) || !isSpellCastingAllowed( itemLHand ))
+			{
+				var result = AutoUnequipAttempt( itemLHand, itemRHand, mChar );
+				lHandBlocks = result.lHandBlocks;
+				rHandBlocks = result.rHandBlocks;
+			}
+
+			if( lHandBlocks || rHandBlocks )
 			{
 				if( mSock != null )
 				{
 					mSock.SysMessage( GetDictionaryEntry( 708, mSock.language )); // You cannot cast with a weapon equipped.
 				}
-				mChar.SetTimer( Timer.SPELLTIME, 0 );
-				mChar.isCasting = false;
-				mChar.spellCast = -1;
+
+				if( !mChar.isCasting )
+				{
+					mChar.SetTimer( Timer.SPELLTIME, 0 );
+					mChar.isCasting = false;
+					mChar.spellCast = -1;
+				}
 				return true;
 			}
 		}
@@ -212,6 +227,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		if( !GetServerSetting( "CastSpellsWhileMOving" ))
 		{
 			mChar.frozen = true;
+			mChar.Refresh();
 		}
 	}
 	else
@@ -241,7 +257,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	mChar.TextMessage( tempString );
 	mChar.isCasting = true;
 
-	mChar.StartTimer( delay, spellNum, true );
+	mChar.StartTimer( delay * 1000, spellNum, true );
 
 	return true;
 }
@@ -250,6 +266,7 @@ function onTimer( mChar, timerID )
 {
 	mChar.isCasting = false;
 	mChar.frozen 	= false;
+	mChar.Refresh();
 
 	if( mChar.npc )
 	{
@@ -387,6 +404,44 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	ourTarg.SpellStaticEffect( mSpell );
 
 	DoTempEffect( 0, sourceChar, ourTarg, 3, Math.round( mChar.skills.magery / 100 ), 0, 0 );
+}
+
+// Function to check if an equipped item allows casting
+function isSpellCastingAllowed( item ) 
+{
+	return item != null && ( item.type == 9 || item.type == 119 ); // Assuming type 9 is spellbook, and type 119 is spell channeling item
+}
+
+// Function to handle items
+function AutoUnequipAttempt( itemLHand, itemRHand, mChar )
+{
+	const autoUnequip = GetServerSetting( "AutoUnequippedCasting" );
+	var lHandBlocks = false; // Default to false
+	var rHandBlocks = false; // Default to false
+	if( itemLHand != null && !isSpellCastingAllowed( itemLHand )) 
+	{
+		if( autoUnequip && mChar.pack.totalItemCount < mChar.pack.maxItems ) 
+		{
+			itemLHand.container = mChar.pack;
+		}
+		else 
+		{
+			lHandBlocks = true; // Set to true if item is blocking
+		}
+	}
+
+	if( itemRHand != null && !isSpellCastingAllowed( itemRHand ))
+	{
+		if( autoUnequip && mChar.pack.totalItemCount < mChar.pack.maxItems )
+		{
+			itemRHand.container = mChar.pack;
+		}
+		else
+		{
+			rHandBlocks = true; // Set to true if item is blocking
+		}
+	}
+	return { lHandBlocks: lHandBlocks, rHandBlocks: rHandBlocks };
 }
 
 function _restorecontext_() {}

@@ -6,11 +6,11 @@ function SpellRegistration()
 function onSpellCast( mSock, mChar, directCast, spellNum )
 {
 	// Are we recovering from another spell that was just cast
-	if( mChar.GetTimer( Timer.SPELLRECOVERYTIME ) != 0 )
+	if( mChar.GetTimer( Timer.SPELLRECOVERYTIME  ) != 0 )
 	{
-		if( mChar.GetTimer( Timer.SPELLRECOVERYTIME ) > GetCurrentClock() )
+		if( mChar.GetTimer( Timer.SPELLRECOVERYTIME  ) > GetCurrentClock() )
 		{
-			if( mSock )
+			if( mSock != null )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language )); // You must wait a little while before casting
 			}
@@ -23,7 +23,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	{
 		if( mChar.isCasting )
 		{
-			if( mSock )
+			if( mSock != null )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 762, mSock.language )); // You are already casting a spell.
 			}
@@ -31,7 +31,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		}
 		else if( mChar.GetTimer( Timer.SPELLTIME ) > GetCurrentClock() )
 		{
-			if( mSock )
+			if( mSock != null )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language )); // You must wait a little while before casting
 			}
@@ -53,7 +53,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	// Disallow spellcasting if character is in jail
 	if( mChar.isJailed && mChar.commandlevel < 2 )
 	{
-		if( mSock )
+		if( mSock != null )
 		{
 			mSock.SysMessage( GetDictionaryEntry( 704, mSock.language )); // You are in jail and cannot cast spells!
 		}
@@ -66,7 +66,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	// Is the spell actually enabled?
 	if( !mSpell.enabled )
 	{
-		if( mSock )
+		if( mSock != null )
 		{
 			mSock.SysMessage( GetDictionaryEntry( 707, mSock.language )); // That spell is currently not enabled.
 		}
@@ -83,15 +83,30 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		{
 			var itemRHand = mChar.FindItemLayer( 0x01 );
 			var itemLHand = mChar.FindItemLayer( 0x02 );
-			if(( itemLHand && itemLHand.type != 119 ) || ( itemRHand && ( itemRHand.type != 9 || itemRHand.type != 119 )))	// Spellbook
+			var lHandBlocks = false;
+			var rHandBlocks = false;
+
+			// Evaluate blocking for left and right hand items
+			if( !isSpellCastingAllowed( itemRHand ) || !isSpellCastingAllowed( itemLHand ))
 			{
-				if( mSock )
+				var result = AutoUnequipAttempt( itemLHand, itemRHand, mChar );
+				lHandBlocks = result.lHandBlocks;
+				rHandBlocks = result.rHandBlocks;
+			}
+
+			if( lHandBlocks || rHandBlocks )
+			{
+				if( mSock != null )
 				{
-					mSock.SysMessage( GetDictionaryEntry( 708, mSock.language )); // You cannot cast with a weapon equipped.
+					mSock.SysMessage(GetDictionaryEntry( 708, mSock.language )); // You cannot cast with a weapon equipped.
 				}
-				mChar.SetTimer( Timer.SPELLTIME, 0 );
-				mChar.isCasting = false;
-				mChar.spellCast = -1;
+
+				if( !mChar.isCasting )
+				{
+					mChar.SetTimer( Timer.SPELLTIME, 0 );
+					mChar.isCasting = false;
+					mChar.spellCast = -1;
+				}
 				return true;
 			}
 		}
@@ -104,7 +119,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	}
 
 	// Break character's concentration (affects Meditation skill)
-	if( mSock )
+	if( mSock != null )
 	{
 		mChar.BreakConcentration( mSock );
 	}
@@ -112,12 +127,22 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	// If player commandlevel is below GM-level, check for reagents
 	if( mChar.commandlevel < 2  )
 	{
+		//Check for enough reagents
+		// type == 0 -> SpellBook
+		if( spellType == 0 && !TriggerEvent( 6004, "CheckReagents", mChar, mSpell ))
+		{
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
+			mChar.isCasting = false;
+			mChar.spellCast = -1;
+			return true;
+		}
+
 		// type == 2 - Wands
 		if( spellType != 2 )
 		{
 			if( mSpell.mana > mChar.mana )
 			{
-				if( mSock )
+				if( mSock != null )
 				{
 					mSock.SysMessage( GetDictionaryEntry( 696, mSock.language )); // You have insufficient mana to cast that spell.
 				}
@@ -128,7 +153,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			}
 			if( mSpell.stamina > mChar.stamina )
 			{
-				if( mSock )
+				if( mSock != null )
 				{
 					mSock.SysMessage( GetDictionaryEntry( 697, mSock.language )); // You have insufficient stamina to cast that spell.
 				}
@@ -139,7 +164,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			}
 			if( mSpell.health >= mChar.health )
 			{
-				if( mSock )
+				if( mSock != null )
 				{
 					mSock.SysMessage( GetDictionaryEntry( 698, mSock.language )); // You have insufficient health to cast that spell.
 				}
@@ -161,6 +186,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		if( !GetServerSetting( "CastSpellsWhileMoving" ))
 		{
 			mChar.frozen = true;
+			mChar.Refresh();
 		}
 	}
 	else
@@ -193,6 +219,8 @@ function onTimer( mChar, timerID )
 {
 	mChar.isCasting = false;
 	mChar.frozen 	= false;
+	mChar.Refresh();
+
 	var ourTarg = mChar;
 
 	if( mChar.npc )
@@ -202,7 +230,7 @@ function onTimer( mChar, timerID )
 	else
 	{
 		var mSock = mChar.socket;
-		if( mSock )
+		if( mSock != null )
 		{
 			mChar.SetTimer( Timer.SPELLRECOVERYTIME, Spells[mChar.spellCast].recoveryDelay );
 			onSpellSuccess( mSock, mChar, ourTarg );
@@ -288,13 +316,13 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	ourTarg.SpellStaticEffect( mSpell );
 
 	// List of foods to randomize between when casting the spell
-	foodItems = new Array (
+	var foodItems = new Array (
 		"0x09d0", "0x09b7", "0x09f2", "0x097b", "0x0d1a", "0x09c9", "0x09eb", "0x09d2",
 		"0x09c0", "0x097c"
 	);
 	var rndNum = RandomNumber( 0, foodItems.length - 1 );
 
-	if( mSock )
+	if( mSock != null )
 	{
 		CreateDFNItem( mSock, mChar, foodItems[rndNum], 1, "ITEM", true );
 	}
@@ -302,6 +330,44 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	{
 		CreateDFNItem( NULL, mChar, foodItems[rndNum], 1, "ITEM", true );
 	}
+}
+
+// Function to check if an equipped item allows casting
+function isSpellCastingAllowed( item )
+{
+	return item != null && ( item.type == 9 || item.type == 119 ); // Assuming type 9 is spellbook, and type 119 is spell channeling item
+}
+
+// Function to handle items
+function AutoUnequipAttempt( itemLHand, itemRHand, mChar )
+{
+	const autoUnequip = GetServerSetting( "AutoUnequippedCasting" );
+	var lHandBlocks = false; // Default to false
+	var rHandBlocks = false; // Default to false
+	if( itemLHand != null && !isSpellCastingAllowed( itemLHand ))
+	{
+		if( autoUnequip && mChar.pack.totalItemCount < mChar.pack.maxItems )
+		{
+			itemLHand.container = mChar.pack;
+		}
+		else
+		{
+			lHandBlocks = true; // Set to true if item is blocking
+		}
+	}
+
+	if( itemRHand != null && !isSpellCastingAllowed( itemRHand ))
+	{
+		if( autoUnequip && mChar.pack.totalItemCount < mChar.pack.maxItems )
+		{
+			itemRHand.container = mChar.pack;
+		}
+		else
+		{
+			rHandBlocks = true; // Set to true if item is blocking
+		}
+	}
+	return { lHandBlocks: lHandBlocks, rHandBlocks: rHandBlocks };
 }
 
 function _restorecontext_() {}

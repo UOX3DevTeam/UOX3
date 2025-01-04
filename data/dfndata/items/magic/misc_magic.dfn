@@ -117,6 +117,7 @@ weight=1000
 value=2 1
 good=28
 sectionid=0x0e2d
+origin=uo
 script=5056// crystalball.js
 }
 
@@ -146,6 +147,7 @@ dir=1
 weight=1000
 value=2 1
 good=28
+origin=lbr
 script=5057// ballofpetsummoning.js
 script=2203// charges_left_tooltip.js
 }
