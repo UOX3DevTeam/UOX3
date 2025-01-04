@@ -7,6 +7,7 @@
 #ifndef StringUtility_hpp
 #define StringUtility_hpp
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <sstream>

@@ -1,0 +1,150 @@
+[0x2684]
+{
+get=base_clothing
+name=hooded shroud of shadows
+id=0x2684
+colour=0x455
+newbie
+weight=300
+value=68 34
+layer=0x16
+def=7
+hp=50
+orgin=aos
+}
+
+[0x2683]
+{
+get=0x2684
+id=0x2683
+}
+
+[hoodedshroudofshadows]
+{
+get=0x2684 0x2683
+}
+
+[0x2310]
+{
+get=base_clothing
+name=formal shirt
+id=0x2310
+weight=100
+value=55 27
+layer=0x5
+str=1
+hp=50
+orgin=aos
+}
+
+[0x230F]
+{
+get=0x2310
+id=0x230F
+}
+
+[formalshirt]
+{
+get=0x2310 0x230F
+}
+
+[0x2307]
+{
+get=base_clothing
+name=fur boots
+id=0x2307
+weight=300
+value=45 22
+layer=0x03
+def=6
+hp=30
+str=10
+dyeable=1
+decay=1
+good=19
+restock=10
+orgin=aos
+}
+
+[0x2308]
+{
+get=0x2307
+id=0x2308
+}
+
+[furboots]
+{
+get=0x2307 0x2308
+}
+
+[0x230A]
+{
+get=base_clothing
+name=fur cap
+id=0x230A
+weight=500
+value=43 21
+layer=0x14
+def=5
+hp=50
+orgin=aos
+}
+
+[0x2309]
+{
+get=0x230A
+id=0x2309
+}
+
+[furcap]
+{
+get=0x230A 0x2309
+}
+
+[0x230C]
+{
+get=base_clothing
+name=fur sarong
+id=0x230C
+weight=200
+value=31 15
+layer=0x17
+def=3
+hp=50
+orgin=aos
+}
+
+[0x230B]
+{
+get=0x230C
+id=0x230B
+}
+
+[fursarong]
+{
+get=0x230C 0x230B
+}
+
+[0x230E]
+{
+get=base_clothing
+name=gilded dress
+id=0x230E
+weight=200
+value=56 28
+layer=0x11
+def=4
+hp=50
+orgin=aos
+}
+
+[0x230D]
+{
+get=0x230E
+id=0x230D
+}
+
+[gildeddress]
+{
+get=0x230E 0x230D
+}
