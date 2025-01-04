@@ -147,7 +147,7 @@ function resignQuest( player, questID )
 
 	var quest = TriggerEvent( 5801, "QuestList", questID );
 
-	for( var i = 0; i < questProgressArray.length; i++ )
+	for( var i = 0; i < questProgressArray.length; i++ ) 
 	{
 		var questEntry = questProgressArray[i];
 
@@ -155,8 +155,17 @@ function resignQuest( player, questID )
 		if( questEntry.questID === questID )
 		{
 			questFound = true;
+
+			// Handle skill training quest resignation
+			if( quest.type === "skillgain" )
+			{
+				player.SetTag( "AcceleratedSkillGain", null ); // Remove the tag
+				player.RemoveScriptTrigger( 5811 ); // Remove the quest skill gain script trigger
+				player.SysMessage( "You have stopped accelerated training for " + GetSkillName( quest.targetSkill ) + "." );
+			}
+
 			player.SysMessage( "You have resigned from the quest: " + quest.title );
-		}
+		} 
 		else
 		{
 			newQuestProgressArray.push( questEntry );
@@ -175,6 +184,7 @@ function resignQuest( player, questID )
 	player.SysMessage( "The quest has been completely removed from your progress." );
 	return true;
 }
+
 
 function manageQuestItems( player, questID, mark )
 {
@@ -343,17 +353,42 @@ function GetQuestObjectives( quest, questProgress )
 			objectives += "- Location: X=" + loc.x + ", Y=" + loc.y + ", Z=" + loc.z + "<br>";
 		}
 	}
-	//else
-	//{
-	//	objectives += "No specific objectives.";
-	//}
 
-	//if( objectives === "" )
-	//{
-	//	objectives = "No specific objectives.";
-	//}
+	// Skill objectives
+	if( quest.type === "skillgain" && quest.targetSkill !== undefined && quest.maxSkillPoints !== undefined )
+	{
+		objectives += "<b>Skill Training:</b><br>";
+		var skillName = GetSkillName( quest.targetSkill ) || "Unknown Skill"; // Use a helper to get the skill name
+		var currentProgress = ( questProgress && questProgress.skillProgress ) || 0; // Default to 0 if not started
+		var maxProgress = quest.maxSkillPoints / 10; // Convert max skill points to in-game scale
+		var regionName = quest.regionName || "Unknown Region"; // Use `regionName` if available
+
+		objectives += "- Train " + skillName + " in " + regionName + ": " + (currentProgress / 10).toFixed(1) + "/" + maxProgress.toFixed(1) + "<br>";
+	}
+
+	if( objectives === "" )
+	{
+		objectives = "No specific objectives.";
+	}
 
 	return objectives;
+}
+
+function GetSkillName( skillID )
+{
+	var skillNames = [
+		"alchemy", "anatomy", "animallore", "itemid", "armslore", "parrying", "begging",
+		"blacksmithy", "bowcraft", "peacemaking", "camping", "carpentry", "cartography",
+		"cooking", "detectinghidden", "enticing", "evaluatingintelligence", "healing",
+		"fishing", "forensics", "herding", "hiding", "provocation", "inscription",
+		"lockpicking", "magery", "magicresistance", "tactics", "musicianship", "poisoning",
+		"archery", "spiritSpeak", "stealing", "tailoring", "animaltaming", "tasteID",
+		"tinkering", "tracking", "veterinary", "swordsmanship", "macefighting",
+		"fencing", "wrestling", "lumberjacking", "mining", "meditation", "stealth",
+		"removetrap", "necromancy", "focus", "chivalry", "bushido", "ninjitsu", "spellweaving"
+	];
+
+	return skillNames[skillID] || "unknown skill";
 }
 
 function GetQuestRewards( quest )
@@ -389,22 +424,37 @@ function processQuestTurnIn( player, questID )
 		return false;
 	}
 
+	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", player );
+	var questProgress = null;
+
+	// Find the quest progress entry
+	for( var i = 0; i < questProgressArray.length; i++ )
+	{
+		if( questProgressArray[i].questID === questID )
+		{
+			questProgress = questProgressArray[i];
+			break;
+		}
+	}
+
+	// Handle skill gain quests
+	if( quest.type === "skillgain" ) 
+	{
+		if( questProgress.skillProgress >= quest.maxSkillPoints )
+		{
+			player.SysMessage( "You have completed the skill training for this quest!" );
+			return true;
+		} 
+		else
+		{
+			player.SysMessage( "You still need to improve your skill. Current progress: " + ( questProgress.skillProgress / 10 ).toFixed( 1 ) + "/" + ( quest.maxSkillPoints / 10 ).toFixed( 1 ) );
+			return false;
+		}
+	}
+
 	// Check if the quest is a "kill" type and validate completion
 	if( quest.type === "kill" || quest.type === "timekills" || quest.type === "multi" )
 	{
-		var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", player );
-		var questProgress = null;
-
-		// Find the quest progress entry
-		for( var i = 0; i < questProgressArray.length; i++ )
-		{
-			if( questProgressArray[i].questID === questID )
-			{
-				questProgress = questProgressArray[i];
-				break;
-			}
-		}
-
 		if( !questProgress || !questProgress.harvestKills )
 		{
 			player.SysMessage( "You have not completed the kill objectives for this quest." );

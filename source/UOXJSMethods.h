@@ -80,6 +80,7 @@ JSMethodFunc CChar_DirectionTo;
 JSMethodFunc CChar_TurnToward;
 JSMethodFunc CChar_ResourceCount;
 JSMethodFunc CChar_CheckSkill;
+JSMethodFunc CChar_AddSkill;
 JSMethodFunc CChar_FindItemLayer;
 JSMethodFunc CChar_SpeechInput;
 JSMethodFunc CChar_CastSpell;
@@ -401,6 +402,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "FindItemLayer",		CChar_FindItemLayer,	1, 0, 0 },
 	{ "StartTimer",			CBase_StartTimer,		2, 0, 0 },
 	{ "CheckSkill",			CChar_CheckSkill,		4, 0, 0 },
+	{ "AddSkill",			CChar_AddSkill,			3, 0, 0 },
 	{ "SpeechInput",		CChar_SpeechInput,		1, 0, 0 },
 	{ "CastSpell",			CChar_CastSpell,		2, 0, 0 },
 	{ "SysMessage",			CMisc_SysMessage,		10, 0, 0 },

@@ -30,7 +30,8 @@ EQUIPITEM=0x1414//plategloves
 STR=100 100
 DEX=100 100
 INT=25 25
-SCRIPT=5802
+SCRIPT=5802//questconversation.js
+SCRIPT=3001//speech_monster.js
 CUSTOMINTTAG=QuestID 1//More ore Please
 }
 
@@ -156,6 +157,33 @@ DEX=100 100
 INT=25 25
 SCRIPT=5802
 CUSTOMINTTAG=QuestID 6//A clockwork puzzle
+}
+
+[jacob]
+{
+GET=basehuman
+NAME=Jacob Waltzt the Miner Instructor
+TITLE=Quest Giver
+ID=0x0190
+PRIV=4
+SKIN=0x83F5
+EQUIPITEM=0x203B//Short Hair
+COLOR=0x5EC
+EQUIPITEM=widebrimhat
+COLOR=0x966
+EQUIPITEM=boots
+EQUIPITEM=shortpants
+COLOR=0x370
+EQUIPITEM=shirt
+COLOR=0x966
+EQUIPITEM=halfapron
+COLOR=0x1BB
+EQUIPITEM=pickaxe
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 7//The Delucian’s Lost Mine
 }
 
 [nail]

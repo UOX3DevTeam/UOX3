@@ -283,6 +283,7 @@
 5058=item/bagofsending.js
 5059=item/powderoftranslocation.js
 5060=item/elixirofingots.js
+5063=item/jacobspickaxe.js
 
 //-------------------------------------------
 // treasure maps and chest [5400-5405]
@@ -326,7 +327,8 @@
 5805=server/quest/onquesttoggle.js
 5806=server/quest/questitem.js
 5810=server/quest/ondeathblow.js
-
+5811=server/quest/onskillgain.js
+5812=server/quest/onenterregion.js
 
 //-------------------------------------------
 // Magic Related Scripts [6000-6500]

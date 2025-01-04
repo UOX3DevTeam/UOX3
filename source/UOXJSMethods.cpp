@@ -4425,6 +4425,50 @@ JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|    Function    -    CChar_AddSkill()
+//|    Prototype    -    void AddSkill( skillID, skillAmt, triggerEvent )
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Add skill points to a character without triggering skillchange events
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_AddSkill(JSContext* cx, JSObject* obj, uintN argc, jsval* argv, [[maybe_unused]] jsval* rval)
+{
+	if (argc != 3)
+	{
+		ScriptError(cx, "AddSkill: Invalid number of arguments (takes 3)");
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass(cx, obj);
+	CChar* myChar = static_cast<CChar*>(myClass.toObject());
+
+	if (myChar == nullptr)
+	{
+		ScriptError(cx, "Invalid Object assigned (AddSkill)");
+		return JS_FALSE;
+	}
+
+	if (!JSVAL_IS_INT(argv[0]) || !JSVAL_IS_INT(argv[1]))
+	{
+		ScriptError(cx, "Invalid parameters! Only integers between 0-65535 are accepted for the first two parameters of .AddSkill Method.");
+		return JS_FALSE;
+	}
+
+	if (!JSVAL_IS_BOOLEAN(argv[2]))
+	{
+		ScriptError(cx, "Invalid parameters! Only boolean is accepted for the third parameter of .AddSkill Method.");
+		return JS_FALSE;
+	}
+
+	UI16 skillID = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
+	SKILLVAL skillAmt = static_cast<SKILLVAL>(JSVAL_TO_INT(argv[1]));
+	bool triggerEvent = (JSVAL_TO_BOOLEAN(argv[2]) == JS_TRUE);
+
+	Skills->AdvanceSkill(myChar, skillID, false, skillAmt, triggerEvent);
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_FindItemLayer()
 //|	Prototype	-	Item FindItemLayer( layer )
 //o------------------------------------------------------------------------------------------------o

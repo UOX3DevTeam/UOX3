@@ -61,3 +61,31 @@ packitem=0x1EBC
 packitem=ranomdtinkerssatchel
 sectionid=tinkerssatchel
 }
+
+[jacobspickaxe]
+{
+get=base_item
+name=jacob's pickaxe
+id=0x0e85
+newbie
+weight=1100
+value=34 17
+layer=2
+lodamage=1
+hidamage=15
+hp=35 45
+spd=35
+str=25
+restock=10
+decay=1
+good=57
+maxuses=20
+usesleft=20
+custominttag=skillBonusID 45
+custominttag=skillBonusVal 100
+script=2200// uses left tooltip
+script=4050// mining.js
+script=5063//jacobspickaxe.js
+script=5043//skill_boosting_equipment.js
+sectionid=jacobspickaxe
+}

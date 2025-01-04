@@ -138,11 +138,10 @@ private:
 
 	SI08 FindSkillPoint( UI08 sk, SI32 value );
 	void AnvilTarget( CSocket *s, CItem& item, MiningData_st *oreType );
-	void HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool success );
+	void HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool success, SKILLVAL skAmt = 0, bool triggerEvent = true );
 
 	bool LoadMiningData( void );
 	void LoadCreateMenus( void );
-	bool AdvanceSkill( CChar *s, UI08 sk, bool skillused );
 
 public:
 	CSkills();
@@ -177,6 +176,7 @@ public:
 	void SkillUse( CSocket *s, UI08 x );
 	void UpdateSkillLevel( CChar *c, UI08 s) const;
 	void AdvanceStats( CChar *s, UI08 sk, bool skillsuccess );
+	bool AdvanceSkill(CChar* s, UI08 sk, bool skillused, SKILLVAL skAmt = 0, bool triggerEvent = true);
 
 	size_t		GetNumberOfOres( void );
 	MiningData_st *GetOre( size_t number );

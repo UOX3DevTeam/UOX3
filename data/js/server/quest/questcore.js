@@ -57,20 +57,33 @@ function startQuest( player, questID )
 			}
 	}
 
+	if( quest && quest.type == "skillgain" && player.GetTag( "AcceleratedSkillGain" ) == false )
+	{
+		player.SetTag( "AcceleratedSkillGain", quest.targetSkill );
+		player.AddScriptTrigger(5811);// Quest skill gain script trigger
+	}
+	else
+	{	
+		player.SysMessage( "You are already under the effect of an accelerated skillgain scroll." )
+	}
+
 	// Add new quest to progress
-	questProgressArray.push( {
+	questProgressArray.push({
 		serial: player.serial,
 		questID: questID,
-		questProgress: 0, // This can be removed or adjusted if unused
-		harvestKills: harvestKills, // Properly include the initialized kills object
-		collectedItems: collectedItems, // Track progress for each item
-		startTime: quest.timeLimit ? Date.now(  ) : 0, // Set startTime only for timed quests
-		timeLimit: quest.timeLimit ? quest.timeLimit * 1000 : 0, // Set timeLimit only for timed quests
+		questProgress: 0, // General progress
+		harvestKills: harvestKills, // Kill objectives
+		collectedItems: collectedItems, // Item objectives
+		skillProgress: 0, // Initialize skill progress
+		targetSkill: quest.targetSkill || -1, // Target skill for "skillgain"
+		targetRegion: quest.targetRegion || 0, // Target region for "skillgain"
+		maxSkillPoints: quest.maxSkillPoints || 50.0, // Max skill points for "skillgain"
+		startTime: quest.timeLimit ? Date.now() : 0, // Timed quests
+		timeLimit: quest.timeLimit ? quest.timeLimit * 1000 : 0,
 		completed: false,
 		questTurnIn: false,
-		nextQuestID: quest.nextQuestID || null // Include the next quest in the chain if applicable
-
-	} );
+		nextQuestID: quest.nextQuestID || null
+	});
 
 	WriteQuestProgress( player, questProgressArray );
 
@@ -286,7 +299,7 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 						}
 					}
 
-					if( hasItem ) 
+					if( hasItem )
 					{
 						questEntry.completed = true;
 						player.SysMessage( "You have successfully delivered the item!" );
@@ -302,19 +315,57 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 				}
 			}
 
+			// Check skill gain objectives
+			if( quest.type === "skillgain" && quest.targetSkill === identifier )
+			{
+				// Update skill progress, initializing if undefined
+				questEntry.skillProgress = ( questEntry.skillProgress || 0 ) + progressValue;
+
+				// Cap the skill progress to max skill points
+				if( questEntry.skillProgress >= quest.maxSkillPoints ) 
+				{
+					// Complete the skill gain objective
+					player.SetTag( "AcceleratedSkillGain", null ); // Remove the tag
+					player.RemoveScriptTrigger( 5811 ); // Remove quest skill gain script trigger
+					questEntry.completed = true; // Mark the quest as completed
+				}
+				else
+				{
+					// Notify player of ongoing progress
+					player.SysMessage( "Skill progress: " + ( questEntry.skillProgress / 10 ).toFixed(1) + "/" + ( quest.maxSkillPoints / 10 ).toFixed(1) );
+					allObjectivesCompleted = false;
+				}
+			}
+
+
+
 			// Mark quest as completed if all objectives are met
 			if( allObjectivesCompleted )
 			{
 				if( quest.questTurnIn == 1 )
 				{
 					questEntry.completed = true;
-					player.SysMessage( "You've completed the quest! Don't forget to collect your reward." );
+					if( quest.type === "skillgain" && quest.oncomplete )
+					{
+						player.SysMessage( quest.oncomplete );
+					}
+					else 
+					{
+						player.SysMessage( "You've completed the quest! Don't forget to collect your reward." );
+					}
 					WriteQuestProgress( player, questProgressArray );
 				}
 				else
 				{
 					questEntry.completed = true;
-					player.SysMessage( "You've completed the quest! Don't forget to collect your reward." );
+					if (quest.type === "skillgain" && quest.oncomplete )
+					{
+						player.SysMessage( quest.oncomplete );
+					}
+					else
+					{
+						player.SysMessage( "You've completed the quest! Don't forget to collect your reward." );
+					}
 					WriteQuestProgress( player, questProgressArray );
 					completeQuest( player, questID );
 				}
@@ -358,7 +409,8 @@ function completeQuest( player, questID )
 
 				// Ensure the quest is completed
 				player.SysMessage( "Congratulations! You have completed the quest: " + quest.title );
-				DoStaticEffect(player.x, player.y, player.z, 0x376A, 0x40, 0x16, false);
+				DoStaticEffect( player.x, player.y, player.z, 0x376A, 0x40, 0x16, false );
+
 				if( quest.rewards )
 				{
 					for( var j = 0; j < quest.rewards.length; j++ )
@@ -569,6 +621,58 @@ function onItemCollected(player, item, isToggledOff)
 	player.SysMessage( "Item does not match any quest requirements." );
 }
 
+function AccelerateSkillGain( pPlayer, skill, skillGainAmount )
+{
+	var activeQuests = ReadQuestProgress( pPlayer );
+
+	for( var i = 0; i < activeQuests.length; i++ ) 
+	{
+		var questEntry = activeQuests[i];
+		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
+
+		if( quest && quest.type === "skillgain" && !questEntry.completed ) 
+		{
+			if( pPlayer.region.id === quest.targetRegion && skill === quest.targetSkill ) 
+			{
+				var currentSkillPoints = pPlayer.baseskills[skill];
+				var acceleratedGain = RandomNumber( quest.minPoint, quest.MaxPoint );
+
+				if(( currentSkillPoints + acceleratedGain ) >= quest.maxSkillPoints )
+				{
+					updateQuestProgress( pPlayer, questEntry.questID, skill, quest.maxSkillPoints - currentSkillPoints, "skillgain" );
+				}
+				else
+				{
+					// Apply accelerated skill gain and update progress
+					pPlayer.AddSkill( skill, acceleratedGain, false );
+					updateQuestProgress( pPlayer, questEntry.questID, skill, acceleratedGain, "skillgain" );
+				}
+
+				return true;
+			}
+		}
+	}
+
+	return true;
+}
+
+//Helper Function for skillnames
+function GetSkillName(skillID) {
+	var skillNames = [
+		"alchemy", "anatomy", "animallore", "itemid", "armslore", "parrying", "begging",
+		"blacksmithy", "bowcraft", "peacemaking", "camping", "carpentry", "cartography",
+		"cooking", "detectinghidden", "enticing", "evaluatingintelligence", "healing",
+		"fishing", "forensics", "herding", "hiding", "provocation", "inscription",
+		"lockpicking", "magery", "magicresistance", "tactics", "musicianship", "poisoning",
+		"archery", "spiritSpeak", "stealing", "tailoring", "animaltaming", "tasteID",
+		"tinkering", "tracking", "veterinary", "swordsmanship", "macefighting",
+		"fencing", "wrestling", "lumberjacking", "mining", "meditation", "stealth",
+		"removetrap", "necromancy", "focus", "chivalry", "bushido", "ninjitsu", "spellweaving"
+	];
+
+	return skillNames[skillID] || "unknown skill";
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -757,6 +861,24 @@ function ArchiveCompletedQuest( player, completedQuest )
 			}
 		}
 
+		// Add skill progress
+		var skillProgressStr = "";
+		if( quest && quest.type === "skillgain" )
+		{
+			skillProgressStr = "SkillProgress=" + ( completedQuest.skillProgress || 0 ) + "\n" +
+				"MaxSkillPoints=" + ( quest.maxSkillPoints || 0 ) + "\n" +
+				"TargetSkill=" + ( quest.targetSkill || "null" ) + "\n";
+		}
+
+		// Add delivery progress
+		var deliveryProgressStr = "";
+		if( quest && quest.type === "delivery" )
+		{
+			deliveryProgressStr = "DeliveryProgress=" + (completedQuest.deliveryProgress || 0 ) + "\n" +
+				"DeliveryItem=" + ( completedQuest.deliveryItem || "null" ) + "\n" +
+				"TargetDeliveryNPC=" + ( completedQuest.targetDeliveryNPC || "null" ) + "\n";
+		}
+
 		// Write the serialized data to the archive file
 		var archiveEntry =
 			"Serial=" + ( completedQuest.serial || "undefined" ) + "\n" +
@@ -765,6 +887,8 @@ function ArchiveCompletedQuest( player, completedQuest )
 			"QuestProgress=" + ( completedQuest.questProgress || 0 ) + "\n" +
 			"CollectedItems=" + collectedItemsStr + "\n" +
 			"HarvestKills=" + harvestKillsStr + "\n" +
+			skillProgressStr + // Add skill progress
+			deliveryProgressStr + // Add delivery progress
 			"StartTime=" + ( completedQuest.startTime || 0 ) + "\n" + // Save startTime
 			"TimeLimit=" + ( completedQuest.timeLimit || 0 ) + "\n" + // Save timeLimit
 			"Completed=1\n" +
@@ -926,11 +1050,15 @@ function WriteQuestProgress( player, questProgressArray )
 				"QuestProgress=" + ( progressEntry.questProgress || 0 ) + "\n" +
 				"HarvestKills=" + killsStr + "\n" +
 				"CollectedItems=" + collectedItemsStr + "\n" +
-				"StartTime=" + ( progressEntry.startTime || 0 ) + "\n" + // Save startTime
-				"TimeLimit=" + ( progressEntry.timeLimit || 0 ) + "\n" + // Save timeLimit
+				"SkillProgress=" + ( progressEntry.skillProgress || 0 ) + "\n" + // Skill progress
+				"TargetSkill=" + ( progressEntry.targetSkill || -1 ) + "\n" +   // Target skill ID
+				"TargetRegion=" + ( progressEntry.targetRegion || 0 ) + "\n" + // Target region ID
+				"MaxSkillPoints=" + ( progressEntry.maxSkillPoints || 50.0 ) + "\n" + // Max skill points
+				"StartTime=" + ( progressEntry.startTime || 0 ) + "\n" + // Start time
+				"TimeLimit=" + ( progressEntry.timeLimit || 0 ) + "\n" + // Time limit
 				"Completed=" + ( progressEntry.completed ? "1" : "0" ) + "\n" +
 				"QuestTurnIn=" + ( progressEntry.questTurnIn ? "1" : "0" ) + "\n" +
-				"NextQuestID=" + ( progressEntry.nextQuestID || "undefined" ) + "\n\n"; // Save nextQuestID
+				"NextQuestID=" + ( progressEntry.nextQuestID || "undefined" ) + "\n\n";
 			mFile.Write( formattedEntry );
 		}
 		mFile.Close();
@@ -1017,22 +1145,18 @@ function ReadQuestProgress( player )
 // Helper function to finalize and normalize quest entry
 function finalizeQuestEntry( entry, player )
 {
-	// Convert QuestID to questID and ensure it is a number
 	entry.questID = parseInt( entry.questid || "0", 10 );
-
-	// Convert Completed and QuestTurnIn to booleans
 	entry.completed = entry.completed === "1";
 	entry.questTurnIn = entry.questturnin === "1";
+	entry.startTime = parseInt( entry.starttime || "0", 10 );
+	entry.timeLimit = parseInt( entry.timelimit || "0", 10 );
+	entry.skillProgress = parseFloat( entry.skillprogress || "0.0" );
+	entry.targetSkill = parseInt( entry.targetskill || "-1", 10 );
+	entry.targetRegion = parseInt( entry.targetregion || "0", 10 );
+	entry.maxSkillPoints = parseFloat( entry.maxskillpoints || "50.0" );
 
-	// Convert StartTime and TimeLimit to numbers
-	entry.startTime = parseInt( entry.starttime || "0", 10 ); // Default to 0 if missing
-	entry.timeLimit = parseInt( entry.timelimit || "0", 10 ); // Default to 0 if missing
-
-	// Process collectedItems
-	processCollectedItems( entry, player );
-
-	// Process kills
-	processKills( entry, player );
+	processCollectedItems(entry, player);
+	processKills(entry, player);
 }
 
 // Helper function to process collectedItems
