@@ -6,6 +6,11 @@
 	Add this properties to any weapon/armor/jewlery will give the player more hp/mana/stam why its equiped. depending on number you add with it
 	These are also available as JS Engine object properties: .healthBonus, .staminaBonus, .manaBonus
 
+1/05/2024 - Dragon Slayer/Xuri
+	Fixed AutoUnequipAttempt function in clumsy.js, createfood.js level1target.js, will no longer fail on casting and return to hardcode.
+	Fixed createfood to check for reagents on cast.
+	Fixed many places missing proper null checks and refresh checks in magic js scripts.
+
 27/04/2024 - Dragon Slayer/Xuri
 	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.
 	Converted LOOTDECAYSWITHCORPSE ini setting to two new settings, one for player corpses, one for NPC corpses:
