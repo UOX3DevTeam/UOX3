@@ -149,7 +149,7 @@ function onGumpPress( pSock, pButton, gumpData )
 
 function resignQuest( player, questID )
 {
-	var socket = pUser.socket;
+	var socket = player.socket;
 	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", player );
 	var newQuestProgressArray = [];
 	var questFound = false;
@@ -197,7 +197,7 @@ function resignQuest( player, questID )
 
 function manageQuestItems( player, questID, mark )
 {
-	var socket = pUser.socket;
+	var socket = player.socket;
 	var pack = player.pack; // Get the player's backpack
 
 	if( !ValidateObject( pack ))

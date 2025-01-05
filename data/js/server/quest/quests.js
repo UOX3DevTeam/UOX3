@@ -16,6 +16,7 @@ function QuestList(questID)
 				"Don't keep me waiting for those materials!"
 			],
 			type: "collect",
+			category: "Side Quests", // New field for quest categorization
 			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
@@ -38,6 +39,7 @@ function QuestList(questID)
 					  "even catch Uzeraan's eye at the, er, *blushes* I mean, I can't wait to wear it to the next town dance!",
 			refuse: "Won't you reconsider? It'd mean the world to me, it would!",
 			type: "collect",
+			category: "Side Quests", // New field for quest categorization
 			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
@@ -61,6 +63,7 @@ function QuestList(questID)
 			complete: "Thank you! I haven't been this excited about food in months!",
 			refuse: "Argh, I absolutely must have more of these 'cookies!' Come back if you change your mind.",
 			type: "collect",
+			category: "Side Quests", // New field for quest categorization
 			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
@@ -80,6 +83,7 @@ function QuestList(questID)
 			complete: "Ahhh! The smell of fresh cut lumber. And look at you, all strong and proud, as if you had done an honest days work!",
 			refuse: "Or perhaps you'd rather not.",
 			type: "collect",
+			category: "Side Quests", // New field for quest categorization
 			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
@@ -101,6 +105,7 @@ function QuestList(questID)
 			refuse: "Not enough muscle on yer bones to use it? hmph, probably afraid of the sparks markin' up yer loverly skin... to" +
 					 "good for some honest labor...ha!...off with ya!",
 			type: "collect",
+			category: "Side Quests", // New field for quest categorization
 			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
@@ -121,6 +126,7 @@ function QuestList(questID)
 			complete: "Wonderful! Tick tock, tick tock, soon all shall be well with grandfather's clock!",
 			refuse: "Or perhaps you'd rather not.",
 			type: "collect",
+			category: "Side Quests", // New field for quest categorization
 			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
@@ -162,6 +168,7 @@ function QuestList(questID)
 				"You there! I can use some help mining these rocks!"
 			],
 			type: "skillgain",
+			category: "Side Quests", // New field for quest categorization
 			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
@@ -201,6 +208,7 @@ function QuestList(questID)
 				"Know yourself, and you will become a true warrior."
 			],
 			type: "skillgain",
+			category: "Side Quests", // New field for quest categorization
 			DoneOnce: 1, // Indicates this quest can only be completed once
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0, // 0 gold drops in pack if 1 gold goes to bank.

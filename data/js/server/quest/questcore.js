@@ -671,6 +671,110 @@ function GetSkillName(skillID) {
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
+function ReadPlayerSettings( player )
+{
+	var mFile = new UOXCFile();
+	var userAccount = player.account;
+	var fileName = "PlayerSettings_" + userAccount.id + ".jsdata";
+
+	var settings = {};
+
+	mFile.Open( fileName, "r", "Settings" );
+	if( mFile && mFile.Length() > 0 )
+	{
+		while( !mFile.EOF() )
+		{
+			var line = manualTrim( mFile.ReadUntil( "\n" )); // Use manualTrim instead of trim
+			if( line == "" )
+				continue; // Skip empty lines
+
+			var parts = line.split("=");
+			if( parts.length == 2 )
+			{
+				var key = manualTrim( parts[0] ); // Use manualTrim on the key
+				var value = manualTrim( parts[1] ); // Use manualTrim on the value
+
+				// Check if the value is a quoted string
+				if( value.charAt( 0 ) == '"' && value.charAt( value.length - 1 ) === '"' )
+				{
+					// Remove quotes and unescape internal quotes
+					settings[key] = value.substring( 1, value.length - 1 ).replace( /\\"/g, '"' );
+				} 
+				else if( value == "1" || value == "0" )
+				{
+					// Convert "1"/"0" to boolean true/false
+					settings[key] = value == "1";
+				}
+				else if( !isNaN( value ))
+				{
+					// Convert numeric strings to numbers
+					settings[key] = parseFloat( value );
+				}
+				else
+				{
+					// Keep as string for other cases
+					settings[key] = value;
+				}
+			}
+		}
+		mFile.Close();
+		mFile.Free();
+	}
+	else
+	{
+		if( mFile )
+		{
+			mFile.Free();
+		}
+	}
+
+	return settings; // Return parsed settings
+}
+
+
+function SavePlayerSettings( player, settings ) 
+{
+	var mFile = new UOXCFile();
+	var userAccount = player.account;
+	var fileName = "PlayerSettings_" + userAccount.id + ".jsdata";
+
+	mFile.Open( fileName, "w", "Settings" );
+	if( mFile )
+	{
+		for( var key in settings )
+		{
+			if( settings.hasOwnProperty( key ))
+			{
+				var value = settings[key];
+
+				// Serialize based on data type
+				if( typeof value === "string" ) 
+				{
+					mFile.Write( key + "=" + '"' + value.replace( /"/g, '\\"' ) + '"' + "\n" ); // Escape quotes for strings
+				} 
+				else if( typeof value === "boolean" )
+				{
+					mFile.Write( key + "=" + ( value ? "1" : "0" ) + "\n" ); // Boolean as 1/0
+				} 
+				else if( !isNaN(value ))
+				{
+					mFile.Write( key + "=" + value + "\n" ); // Numbers directly
+				}
+				else
+				{
+					// Fallback for unsupported data types
+					mFile.Write( key + "=" + ( value || "undefined" ) + "\n" );
+				}
+			}
+		}
+		mFile.Close();
+		mFile.Free();
+		return true; // Save succeeded
+	}
+
+	return false; // Failed to save settings
+}
+
 function LogFailedQuest( player, failedQuest )
 {
 	var mFile = new UOXCFile();
