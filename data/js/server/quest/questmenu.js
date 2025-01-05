@@ -7,11 +7,11 @@ function QuestMenu( pUser )
 
 	// Load player settings for the preferred category
 	var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};
-	var currentCategory = playerSettings["QuestLogCategory"] || "All";
+	var currentCategory = playerSettings["QuestLogCategory"] || "All Quests";
 	var useTransparentBackground = playerSettings["UseTransparentBackground"] || false;
 
 	// Define categories
-	var categories = ["All", "Main Story Quest", "Side Quests", "Event Quests"];
+	var categories = ["All Quests", "Main Story Quest", "Side Quests", "Event Quests", "PvP Quests", "World Quests", "City Quests"];
 	var filteredQuests = [];
 	for( var i = 0; i < activeQuests.length; i++ )
 	{
@@ -24,7 +24,7 @@ function QuestMenu( pUser )
 			var questCategory = manualTrim( quest.category || "" ).toLowerCase();
 			var playerCategory = manualTrim( currentCategory || "" ).toLowerCase();
 
-			if( playerCategory === "all" || questCategory === playerCategory )
+			if( playerCategory == "all quests" || questCategory === playerCategory )
 			{
 				filteredQuests.push( questEntry );
 			}
@@ -37,22 +37,22 @@ function QuestMenu( pUser )
 	var gump = new Gump();
 	gump.AddPage( 0 );
 	gump.AddBackground( 30, 120, 296, 447, 1579 ); // Main background
+	var titleHue = 500;
 	// Background and transparency toggle
 	if( useTransparentBackground )
 	{
 		gump.AddCheckerTrans( 30, 120, 296, 447 ); // Transparent background
+		var titleHue = 1160;
 	}
 	gump.AddGump( 70, 130, 1577 );
-	gump.AddText( 135, 200, 500, "Quest Journal" );
+	gump.AddText( 135, 200, titleHue, "Quest Journal" );
 	gump.AddButton(50, 100, 1588, 1589, 1, 0, 20 ); // Active Quests Button
 	gump.AddText( 65, 102, 500, "Active Quests" );
 	gump.AddButton(180, 100, 1588, 1589, 1, 0, 21 ); // Completed Quests Button
 	gump.AddText( 193, 102, 0, "Completed Quests" );
-	gump.AddPageButton (40, 550, 1588, 1589, totalPages + filteredQuests.length + 1 ); // Options Menu Button
-	gump.AddText( 65, 555, 0, "Options Menu" );
 
 	// Adjust the quest list start position below the category buttons
-	var questListStartY = 110 + categories.length * 30;
+	var questListStartY = 110 + categories.length * 16;
 	//var questListStartY = 110 + categories.length * 30;
 
 	// Add pagination for filtered quests
@@ -89,6 +89,9 @@ function QuestMenu( pUser )
 			gump.AddButton( 200, 450, 1144, 1145, page + 2, 0, 0 ); // Next Page Button
 			gump.AddText( 230, 455, 0, "Next" );
 		}
+
+		gump.AddPageButton( 40, 550, 1588, 1589, totalPages + filteredQuests.length + 1 ); // Options Menu Button
+		gump.AddText( 65, 555, 0, "Options Menu" );
 	}
 
 	// Add quest details pages
@@ -104,11 +107,22 @@ function QuestMenu( pUser )
 
 		// Add the quest details background
 		gump.AddBackground( 350, 120, 306, 350, 1579 ); // Details background
-		gump.AddText(420, 130, 500, quest.title);
+		if( useTransparentBackground )
+		{
+			gump.AddCheckerTrans( 350, 120, 306, 350 ); // Transparent background
+		}
+		gump.AddHTMLGump( 47, 220, 266, 300, true, false,
+			"Welcome to the Quest Details page!<br><br>" +
+			"Here you can view all the information about the selected quest:<br>" +
+			"- <b>Description:</b> A detailed summary of what the quest is about.<br>" +
+			"- <b>Objectives:</b> A list of tasks or goals you need to complete to finish the quest. These may include collecting items, defeating enemies, or reaching a specific skill level.<br>" +
+			"- <b>Rewards:</b> Displays the rewards you will receive upon completing the quest, such as gold, items, or experience.<br><br>" );
+
+		gump.AddText( 440, 130, titleHue, quest.title );
 
 		// Add quest description
 		var description = quest.description || "No description available.";
-		gump.AddHTMLGump(370, 160, 266, 92, true, true, description); // Description
+		gump.AddHTMLGump( 370, 160, 266, 92, true, true, description ); // Description
 
 		// Add objectives
 		var objectives = TriggerEvent( 5802, "GetQuestObjectives", quest, questEntry ) || "No objectives available.";
@@ -120,28 +134,48 @@ function QuestMenu( pUser )
 
 		// Add a back button to return to the main quest list
 		var originalPage = Math.floor( i / questsPerPage ) + 1;
-		gump.AddPageButton( 50, 500, 1144, 1145, originalPage ); // Back Button
+		gump.AddPageButton( 225, 530, 247, 249, originalPage ); // Back Button
 	}
 
 	// Add Options Menu Page
 	gump.AddPage( totalPages + filteredQuests.length + 1 );
-	gump.AddBackground(350, 120, 306, 350, 1579 ); // Options Menu Background
-	gump.AddText( 420, 130, 500, "Options Menu" );
-	gump.AddText( 370, 160, 0, "Customize your quest log:" );
-
+	gump.AddBackground( 350, 120, 306, 350, 1579 ); // Options Menu Background
+	gump.AddPageButton( 40, 550, 1588, 1589, totalPages + filteredQuests.length + 1 ); // Options Menu Button
+	gump.AddText( 65, 555, 500, "Options Menu" );
+	var wordHue = 0;
+	if( useTransparentBackground )
+	{
+		gump.AddCheckerTrans( 350, 120, 306, 350 ); // Transparent background
+		wordHue = 1152;
+	}
+	gump.AddHTMLGump( 47, 230, 266, 300, true, false,
+		"Welcome to the Quest Journal Options!<br><br>" +
+		"Here you can customize how your quests are displayed and how your journal looks:<br>" +
+		"- <b>Quest Categories:</b> Filter your active quests by type, such as Main Story, Side Quests, or Event Quests.<br>" +
+		"- <b>Background Transparency:</b> Toggle the background of your journal between solid and transparent for better readability.<br><br>" +
+		"Make your selections by clicking the buttons beside." );
+	gump.AddText(420, 130, titleHue, "Options Menu" );
+	gump.AddBackground(365, 150, 280, 22, 9350);
+	gump.AddText( 370, 150, 0, "Misc Options" );
+	// Transparency toggle
+	var transparencyToggleText = useTransparentBackground ? "Disable Transparency" : "Enable Transparency";
+	//gump.AddButton( 370, 280, 1141, 1143, 1, 0, 2001 ); // Toggle transparency
+	gump.AddCheckbox(370, 180, 210, 0, 2001); //CheckBox
+	gump.AddText(400, 180, wordHue, transparencyToggleText);
+	gump.AddBackground(365, 205, 280, 22, 9350);
+	gump.AddText(370, 205, 0, "Sort by Quest Category");
 	// Add category selection buttons
 	for( var i = 0; i < categories.length; i++ ) 
 	{
-		var categoryStartY = 180; // Adjusted start position for categories
+		var categoryStartY = 230; // Adjusted start position for categories
 		var yPosition = categoryStartY + i * 25; // Spacing between categories
 		var isSelected = categories[i] == currentCategory;
-		gump.AddButton( 370, yPosition, isSelected ? 1141 : 1143, isSelected ? 1141 : 1143, 1, 0, i + 1000 ); // Category buttons
-		gump.AddText( 410, yPosition + 5, isSelected ? 500 : 0, categories[i] );
+		gump.AddCheckbox( 370, yPosition, 210, 0, i + 1000 ); //CheckBox
+		//gump.AddButton( 370, yPosition, isSelected ? 1141 : 1143, isSelected ? 1141 : 1143, 1, 0, i + 1000 ); // Category buttons
+		gump.AddText( 400, yPosition, isSelected ? 500 : wordHue, categories[i] );
 	}
-	// Transparency toggle
-	var transparencyToggleText = useTransparentBackground ? "Disable Transparency" : "Enable Transparency";
-	gump.AddButton( 370, 280, 1141, 1143, 1, 0, 2001 ); // Toggle transparency
-	gump.AddText( 410, 285, 0, transparencyToggleText );
+	gump.AddButton( 380, 420, 238, 240, 1, 0, 2000 );//apple button
+	gump.AddButton( 550, 420, 247, 249, 1, 0, 1 );//okay button
 
 	// Add a fallback for when no quests are found
 	if( filteredQuests.length === 0 )
@@ -165,7 +199,9 @@ function CompletedQuestsMenu( pUser )
 	var socket = pUser.socket;
 
 	// Read completed quests
+	var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};
 	var completedQuests = TriggerEvent( 5800, "ReadArchivedQuests", pUser );
+	var useTransparentBackground = playerSettings["UseTransparentBackground"] || false;
 
 	// Ensure unique entries
 	var uniqueQuests = [];
@@ -182,8 +218,15 @@ function CompletedQuestsMenu( pUser )
 
 	var gump = new Gump();
 	gump.AddBackground( 30, 120, 296, 447, 1579 ); // Main background
+	var titleHue = 500;
+	// Background and transparency toggle
+	if( useTransparentBackground )
+	{
+		gump.AddCheckerTrans( 30, 120, 296, 447 ); // Transparent background
+		var titleHue = 1160;
+	}
 	gump.AddGump( 70, 130, 1577 );
-	gump.AddText( 120, 200, 500, "Completed Quests" );
+	gump.AddText( 120, 200, titleHue, "Completed Quests" );
 	gump.AddButton( 50, 100, 1588, 1589, 1, 0, 20 ); // Active Quests Button
 	gump.AddText( 65, 102, 0, "Active Quests" );
 	gump.AddButton( 180, 100, 1588, 1589, 1, 0, 21 ); // Completed Quests Button
@@ -269,7 +312,12 @@ function onGumpPress( pSock, pButton, gumpData )
 	var gumpID = 5823 + 0xffff;
 
 	// Handle button presses for navigating between active and completed quests
-	if( pButton === 20 )
+	if( pButton === 1 ) 
+	{
+		pSock.CloseGump(gumpID, 0);
+		QuestMenu(pUser);
+	}
+	else if( pButton === 20 )
 	{
 		pSock.CloseGump( gumpID, 0 );
 		QuestMenu( pUser );
@@ -279,43 +327,47 @@ function onGumpPress( pSock, pButton, gumpData )
 		pSock.CloseGump( gumpID, 0 );
 		CompletedQuestsMenu( pUser );
 	}
-	// Handle category selection
-	else if ( pButton >= 1000 && pButton <= 1003 )
-	{ // Assuming 1000-1003 are category buttons
-		var categories = ["All", "Main Story Quest", "Side Quests", "Event Quests"];
-		var selectedCategory = categories[pButton - 1000]; // Map button ID to category
+	if( pButton == 2000 ) 
+	{
+		var OtherButton = gumpData.getButton( 0 );
+		// Handle category selection
+		if ( OtherButton >= 1000 && OtherButton <= 1006 ) 
+		{ // Assuming 1000-1003 are category buttons
+			var categories = ["All Quests", "Main Story Quest", "Side Quests", "Event Quests", "PvP Quests", "World Quests", "City Quests"];
+			var selectedCategory = categories[OtherButton - 1000]; // Map button ID to category
 
-		// Load existing settings
-		var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};
+			// Load existing settings
+			var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};
 
-		// Update the "QuestLogCategory" setting
-		playerSettings["QuestLogCategory"] = selectedCategory;
+			// Update the "QuestLogCategory" setting
+			playerSettings["QuestLogCategory"] = selectedCategory;
 
-		// Save the updated settings object
-		TriggerEvent( 5800, "SavePlayerSettings", pUser, playerSettings );
+			// Save the updated settings object
+			TriggerEvent( 5800, "SavePlayerSettings", pUser, playerSettings );
 
-		pSock.SysMessage( "Quest log category set to: " + selectedCategory );
+			pSock.SysMessage( "Quest log category set to: " + selectedCategory );
 
-		// Refresh the quest menu with the new category
-		pSock.CloseGump( gumpID, 0 );
-		QuestMenu( pUser );
-	}
-	else if( pButton === 2001 ) 
-	{ // Transparency toggle button
-		// Load existing settings
-		var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};
+			// Refresh the quest menu with the new category
+			pSock.CloseGump( gumpID, 0 );
+			QuestMenu( pUser );
+		}
+		else if( OtherButton === 2001 ) 
+		{ // Transparency toggle button
+			// Load existing settings
+			var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};
 
-		// Toggle the transparency setting
-		var useTransparentBackground = playerSettings["UseTransparentBackground"] || false;
-		playerSettings["UseTransparentBackground"] = !useTransparentBackground;
+			// Toggle the transparency setting
+			var useTransparentBackground = playerSettings["UseTransparentBackground"] || false;
+			playerSettings["UseTransparentBackground"] = !useTransparentBackground;
 
-		// Save the updated settings
-		TriggerEvent( 5800, "SavePlayerSettings", pUser, playerSettings );
+			// Save the updated settings
+			TriggerEvent( 5800, "SavePlayerSettings", pUser, playerSettings );
 
-		pSock.SysMessage( "Transparency " + ( playerSettings["UseTransparentBackground"] ? "enabled" : "disabled" ) + "." );
+			pSock.SysMessage( "Transparency " + (playerSettings["UseTransparentBackground"] ? "enabled" : "disabled" ) + "." );
 
-		// Refresh the options menu
-		pSock.CloseGump( gumpID, 0 );
-		QuestMenu( pUser );
+			// Refresh the options menu
+			pSock.CloseGump( gumpID, 0 );
+			QuestMenu( pUser );
+		}
 	}
 }
