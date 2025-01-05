@@ -11,7 +11,7 @@ function QuestMenu( pUser )
 	var useTransparentBackground = playerSettings["UseTransparentBackground"] || false;
 
 	// Define categories
-	var categories = ["All Quests", "Main Story Quest", "Side Quests", "Event Quests", "PvP Quests", "World Quests", "City Quests"];
+	var categories = ["All Quests", "Main Story Quest", "Side Quests", "Event Quests", "Daily Quests", "World Quests", "City Quests"];
 	var filteredQuests = [];
 	for( var i = 0; i < activeQuests.length; i++ )
 	{
@@ -333,7 +333,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		// Handle category selection
 		if ( OtherButton >= 1000 && OtherButton <= 1006 ) 
 		{ // Assuming 1000-1003 are category buttons
-			var categories = ["All Quests", "Main Story Quest", "Side Quests", "Event Quests", "PvP Quests", "World Quests", "City Quests"];
+			var categories = ["All Quests", "Main Story Quest", "Side Quests", "Event Quests", "Daily Quests", "World Quests", "City Quests"];
 			var selectedCategory = categories[OtherButton - 1000]; // Map button ID to category
 
 			// Load existing settings

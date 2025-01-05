@@ -113,6 +113,7 @@ function CheckQuest( player, questID )
 
 	// Read the player's active and archived quest data
 	var questProgressArray = ReadQuestProgress( player );
+	var archivedQuests = ReadArchivedQuests( player );
 
 	// Check if the quest is already in progress
 	for( var i = 0; i < questProgressArray.length; i++ )
@@ -124,16 +125,36 @@ function CheckQuest( player, questID )
 		}
 	}
 
-	// Check if the quest is marked as DoneOnce and already completed
-	if( quest.DoneOnce == 1 ) 
+	// Check if the quest is marked as oneTimeQuest and already completed
+	if( quest.oneTimeQuest == 1 ) 
 	{
-		var archivedQuests = ReadArchivedQuests( player );
 		for( var i = 0; i < archivedQuests.length; i++ )
 		{
 			if( archivedQuests[i].questID == questID ) 
 			{
 				socket.SysMessage( "This quest can only be completed once, and you have already completed it." );
 				return false; // Indicate that the quest cannot proceed
+			}
+		}
+	}
+
+	// Check if the quest is a daily quest and ensure it has reset
+	if( quest.dailyQuest == 1 )
+	{
+		for( var i = 0; i < archivedQuests.length; i++ )
+		{
+			if( archivedQuests[i].questID == questID )
+			{
+				var lastCompleted = archivedQuests[i].lastCompleted || 0;
+				var resetTime = quest.resetDailyTime || 24; // Default reset time is 24 hours
+				var currentTime = Date.now();
+
+				if(( currentTime - lastCompleted ) < resetTime * 3600 * 1000)
+				{
+					var hoursLeft = Math.ceil(( resetTime * 3600 * 1000 - ( currentTime - lastCompleted )) / ( 3600 * 1000 ));
+					socket.SysMessage( "This is a daily quest, and you must wait " + hoursLeft + " more hour(s) to attempt it again." );
+					return false; // Indicate that the quest cannot proceed
+				}
 			}
 		}
 	}
@@ -966,6 +987,7 @@ function ArchiveCompletedQuest( player, completedQuest )
 			"Serial=" + ( completedQuest.serial || "undefined" ) + "\n" +
 			"QuestID=" + ( completedQuest.questID || "undefined" ) + "\n" +
 			"NextQuestID=" + nextQuestID + "\n" + // Save the next quest in the chain
+			"LastCompleted=" + Date.now() + "\n" + // Record completion time
 			"QuestProgress=" + ( completedQuest.questProgress || 0 ) + "\n" +
 			"CollectedItems=" + collectedItemsStr + "\n" +
 			"HarvestKills=" + harvestKillsStr + "\n" +
