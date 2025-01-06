@@ -17,6 +17,13 @@ function onEnterRegion( pEntering, regionEntered )
 	for (var i = 0; i < activeQuests.length; i++)
 	{
 		var questEntry = activeQuests[i];
+
+		// Ensure the quest entry matches the player's serial
+		if (questEntry.serial != pEntering.serial)
+		{
+			continue; // Skip quests not associated with the current player
+		}
+
 		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
 
 		if( quest.type == "skillgain" )

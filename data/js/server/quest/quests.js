@@ -1132,17 +1132,18 @@ function QuestList(questID)
 			description: "Mine 50 ore in the designated area.",
 			type: "collect",
 			category: "Daily Quests",
+			questTurnIn: 1, // 0 = auto-complete
 			dailyQuest: 1,
 			resetDailyTime: 24, // Reset after 24 hours
-			targetItems: [{ itemID: "0x1BF2", amount: 50, name: "Iron Ore"}], // Ore ID
+			targetItems: [{ itemID: "ore", amount: 50, name: "Iron Ore"}], // Ore ID
 			rewards: [
-				{ type: "gold", amount: 2000 },
-				{ type: "item", itemID: "0x1F4C", amount: 1, name: "some weirdness" }
+				{ type: "gold", amount: 2000, name: "Gold"},
+				{ type: "item", itemID: "0x1F4C", amount: 1, name: "Recall Scroll" }
 			]
 		}
 	};
 	// Return the full quest list if no questID is provided
-	if (!questID)
+	if( !questID )
 	{
 		return questList;
 	}

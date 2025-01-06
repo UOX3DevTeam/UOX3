@@ -1,6 +1,7 @@
 function QuestMenu( pUser )
 {
 	var socket = pUser.socket;
+	var playerSerial = pUser.serial;
 
 	// Load active and archived quests
 	var activeQuests = TriggerEvent( 5800, "ReadQuestProgress", pUser ) || [];
@@ -16,6 +17,11 @@ function QuestMenu( pUser )
 	for( var i = 0; i < activeQuests.length; i++ )
 	{
 		var questEntry = activeQuests[i];
+
+		// Check if this quest belongs to the current player
+		if (questEntry.serial != playerSerial)
+			continue;
+
 		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
 
 		if( quest )

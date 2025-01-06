@@ -3,6 +3,7 @@ const DebugMessages = false;// Enable debug messages
 function QuestConversationGump( pUser, npcTarget, questID )
 {
 	var socket = pUser.socket;
+	var playerSerial = pUser.serial; // Use player serial to filter quests
 
 	// Fetch quest details using the provided quest ID
 	var quest = TriggerEvent( 5801, "QuestList", questID );
@@ -13,15 +14,16 @@ function QuestConversationGump( pUser, npcTarget, questID )
 		return;
 	}
 
-	// Fetch player's progress for the current quest
+	// Fetch player's progress for the current quest and filter by player serial
 	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", pUser );
 	var currentQuestProgress = null;
 
 	for( var i = 0; i < questProgressArray.length; i++ ) 
 	{
-		if( questProgressArray[i].questID === questID )
+		var questEntry = questProgressArray[i];
+		if( questEntry.questID == questID && questEntry.serial == playerSerial) 
 		{
-			currentQuestProgress = questProgressArray[i];
+			currentQuestProgress = questEntry;
 			break;
 		}
 	}
@@ -109,7 +111,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 0: // Close gump
 			break;
 		case 1: // Accept quest
-			TriggerEvent( 5800, "startQuest", pUser, playerQuestID );
+			TriggerEvent( 5800, "StartQuest", pUser, playerQuestID );
 			pUser.SoundEffect( 0x5B4, true );
 			break;
 
@@ -129,7 +131,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				var turnInSuccess = processQuestTurnIn( pUser, playerQuestID ); // Handle item turn-in
 				if( turnInSuccess )
 				{
-					TriggerEvent( 5800, "completeQuest", pUser, playerQuestID ); // Complete the quest
+					TriggerEvent( 5800, "CompleteQuest", pUser, playerQuestID ); // Complete the quest
 					pUser.SoundEffect(0x5B5, true);
 				}
 				else
@@ -139,7 +141,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			}
 			break;
 		case 4: // Resign Quest
-			resignQuest( pUser, playerQuestID );
+			ResignQuest( pUser, playerQuestID );
 			manageQuestItems( pUser, playerQuestID, false );
 			pUser.SoundEffect( 0x5B3, true );
 			break;
@@ -147,7 +149,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	}
 }
 
-function resignQuest( player, questID )
+function ResignQuest( player, questID )
 {
 	var socket = player.socket;
 	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", player );
@@ -161,12 +163,12 @@ function resignQuest( player, questID )
 		var questEntry = questProgressArray[i];
 
 		// Skip the quest that needs to be resigned, effectively removing it
-		if( questEntry.questID === questID )
+		if (questEntry.questID == questID && questEntry.serial == player.serial)
 		{
 			questFound = true;
 
 			// Handle skill training quest resignation
-			if( quest.type === "skillgain" )
+			if( quest.type == "skillgain" )
 			{
 				player.SetTag( "AcceleratedSkillGain", null ); // Remove the tag
 				player.RemoveScriptTrigger( 5811 ); // Remove the quest skill gain script trigger
@@ -193,7 +195,6 @@ function resignQuest( player, questID )
 	socket.SysMessage( "The quest has been completely removed from your progress." );
 	return true;
 }
-
 
 function manageQuestItems( player, questID, mark )
 {
@@ -373,7 +374,28 @@ function GetQuestObjectives( quest, questProgress )
 		var maxProgress = quest.maxSkillPoints / 10; // Convert max skill points to in-game scale
 		var regionName = quest.regionName || "Unknown Region"; // Use `regionName` if available
 
-		objectives += "- Train " + skillName + " in " + regionName + ": " + (currentProgress / 10).toFixed(1) + "/" + maxProgress.toFixed(1) + "<br>";
+		objectives += "- Train " + skillName + " in " + regionName + ": " + ( currentProgress / 10 ).toFixed( 1 ) + "/" + maxProgress.toFixed( 1 ) + "<br>";
+	}
+
+	// Daily Quest
+	if( quest.dailyQuest == 1 )
+	{
+		objectives += "<b>Daily Quest:</b><br>";
+		var lastAccepted = questProgress && questProgress.lastAccepted ? questProgress.lastAccepted : Date.now();
+		var resetTime = quest.resetDailyTime || 24; // Reset interval in hours
+		var currentTime = Date.now();
+
+		var timeSinceAccepted = ( currentTime - lastAccepted ) / ( 3600 * 1000 ); // Time in hours
+		var hoursLeft = Math.max(0, Math.ceil(resetTime - timeSinceAccepted ));
+
+		if( hoursLeft > 0 )
+		{
+			objectives += "- Hours until reset: " + hoursLeft + " hour(s)<br>";
+		}
+		else
+		{
+			objectives += "- Quest is ready to reset!<br>";
+		}
 	}
 
 	if( objectives === "" )
@@ -678,11 +700,19 @@ function QuestNpcInterAction( pUser, questNpc )
 	var deliveryQuestID = parseInt( questNpc.GetTag( "DeliveryQuestID" ), 10 );
 	if( deliveryQuestID )
 	{
-		// Handle delivery quest
-		if( processDeliveryQuest( pUser, questNpc, deliveryQuestID )) 
-		{
-			return; // Delivery quest handled successfully
+		if( TriggerEvent( 5800, "CheckQuest", pUser, deliveryQuestID ))
+		{ // Validate quest eligibility
+			processDeliveryQuest(pUser, questNpc, deliveryQuestID);
 		}
+		else
+		{
+			return false;
+		}
+		// Handle delivery quest
+		//if( processDeliveryQuest( pUser, questNpc, deliveryQuestID )) 
+		//{
+		///	return; // Delivery quest handled successfully
+		//}
 	}
 
 	// Fetch the initial quest ID from the NPC's tag
@@ -699,7 +729,7 @@ function QuestNpcInterAction( pUser, questNpc )
 	if( !playerQuestID )
 	{
 		questNpc.TurnToward( pUser );
-		questNpc.TextMessage( "You have completed all quests in this chain!" );
+		questNpc.TextMessage( "You have completed all quests" );
 		return false;
 	}
 
@@ -819,13 +849,14 @@ function processDeliveryQuest( player, questNpc, deliveryQuestID )
 
 	// Notify the player and complete the quest
 	player.SysMessage( "You have delivered the required item!" );
-	TriggerEvent( 5800, "completeQuest", player, deliveryQuestID );
+	TriggerEvent( 5800, "CompleteQuest", player, deliveryQuestID );
 	return true;
 }
 
 function resolvePlayerQuestID( player, initialQuestID )
 {
 	var archivedQuests = TriggerEvent( 5800, "ReadArchivedQuests", player );
+
 	if( !archivedQuests || !isArray( archivedQuests ))
 	{
 		//player.SysMessage( "Archived Quests: Invalid data format." );
@@ -842,11 +873,27 @@ function resolvePlayerQuestID( player, initialQuestID )
 			break; // No further quests in the chain
 		}
 
-		//player.SysMessage( "Checking QuestID: " + questID );
+		// Skip daily quests that haven't reset
+		if (quest.dailyQuest == 1) 
+		{
+			for (var i = 0; i < archivedQuests.length; i++) 
+			{
+				if (archivedQuests[i].questID == questID)
+				{
+					var lastCompleted = archivedQuests[i].lastCompleted || 0;
+					var resetTime = quest.resetDailyTime || 24; // Default reset time is 24 hours
+					if ((Date.now() - lastCompleted) < resetTime * 3600 * 1000)
+					{
+						questID = parseInt(quest.nextQuestID, 10); // Move to the next quest
+						continue;
+					}
+				}
+			}
+		}
+
 
 		if( !isQuestArchived( archivedQuests, questID ))
 		{
-			//player.SysMessage( "Resolved QuestID: " + questID );
 			return questID; // Return the first uncompleted quest
 		}
 
@@ -855,8 +902,6 @@ function resolvePlayerQuestID( player, initialQuestID )
 
 	return null; // All quests completed
 }
-
-
 
 // Helper function to check if a value exists in an array
 function isQuestArchived( array, value )

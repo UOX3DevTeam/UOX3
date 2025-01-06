@@ -1,5 +1,5 @@
 const DebugMessages = false;
-function startQuest( player, questID )
+function StartQuest( player, questID )
 {
 	var socket = player.socket;
 	var questProgressArray = ReadQuestProgress( player );
@@ -58,14 +58,19 @@ function startQuest( player, questID )
 			}
 	}
 
-	if( quest && quest.type == "skillgain" && player.GetTag( "AcceleratedSkillGain" ) == false )
+	var initialSkillLevel = 0;
+	if( quest.type == "skillgain" )
 	{
-		player.SetTag( "AcceleratedSkillGain", quest.targetSkill );
-		player.AddScriptTrigger(5811);// Quest skill gain script trigger
-	}
-	else
-	{	
-		socket.SysMessage( "You are already under the effect of an accelerated skillgain scroll." )
+		if( !player.GetTag( "AcceleratedSkillGain" ))
+		{
+			initialSkillLevel = player.baseskills[quest.targetSkill]; // Get current skill level
+			player.SetTag( "AcceleratedSkillGain", quest.targetSkill );
+			player.AddScriptTrigger(5811); // Quest skill gain script trigger
+		}
+		else
+		{
+			socket.SysMessage( "You are already under the effect of an accelerated skillgain scroll." );
+		}
 	}
 
 	// Add new quest to progress
@@ -75,12 +80,13 @@ function startQuest( player, questID )
 		questProgress: 0, // General progress
 		harvestKills: harvestKills, // Kill objectives
 		collectedItems: collectedItems, // Item objectives
-		skillProgress: 0, // Initialize skill progress
+		skillProgress: initialSkillLevel, // Initialize skill progress
 		targetSkill: quest.targetSkill || -1, // Target skill for "skillgain"
 		targetRegion: quest.targetRegion || 0, // Target region for "skillgain"
 		maxSkillPoints: quest.maxSkillPoints || 50.0, // Max skill points for "skillgain"
 		startTime: quest.timeLimit ? Date.now() : 0, // Timed quests
 		timeLimit: quest.timeLimit ? quest.timeLimit * 1000 : 0,
+		lastAccepted: Date.now(), // Record the time the quest was accepted
 		completed: false,
 		questTurnIn: false,
 		nextQuestID: quest.nextQuestID || null
@@ -103,6 +109,7 @@ function startQuest( player, questID )
 function CheckQuest( player, questID )
 {
 	var socket = player.socket;
+	var playerSerial = player.serial; // Use player serial to identify the quest owner
 	// Fetch quest details using the QuestList trigger
 	var quest = TriggerEvent( 5801, "QuestList", questID );
 	if( !quest )
@@ -116,12 +123,13 @@ function CheckQuest( player, questID )
 	var archivedQuests = ReadArchivedQuests( player );
 
 	// Check if the quest is already in progress
-	for( var i = 0; i < questProgressArray.length; i++ )
+	// Ensure no duplicate quests for the same player
+	for (var i = 0; i < questProgressArray.length; i++) 
 	{
-		if( questProgressArray[i].questID == questID )
+		if (questProgressArray[i].questID == questID && questProgressArray[i].serial == playerSerial) 
 		{
-			socket.SysMessage( "You are already working on this quest." );
-			return false; // Indicate that the quest cannot proceed
+			socket.SysMessage("You are already working on this quest.");
+			return;
 		}
 	}
 
@@ -197,7 +205,7 @@ function onTimer( timerObj, timerID )
 	}
 }
 
-function updateQuestProgress( player, questID, identifier, progressValue, type )
+function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 {
 	var socket = player.socket;
 	var questProgressArray = ReadQuestProgress( player );
@@ -206,7 +214,14 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 	for( var i = 0; i < questProgressArray.length; i++ )
 	{
 		var questEntry = questProgressArray[i];
-		if( questEntry.questID === questID ) 
+
+		// Ensure the quest belongs to the current player
+		if (questEntry.serial != player.serial || questEntry.questID != questID) 
+		{
+			continue;
+		}
+
+		if( questEntry.questID == questID ) 
 		{
 			var quest = TriggerEvent( 5801, "QuestList", questID ); // Fetch quest data
 			var allObjectivesCompleted = true;
@@ -241,7 +256,7 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 			}
 
 			// Check kill objectives
-			if( quest.type === "kill" || quest.type === "timekills" || quest.type === "multi" )
+			if( quest.type == "kill" || quest.type == "timekills" || quest.type == "multi" )
 			{
 				if( quest.targetKills )
 				{
@@ -269,7 +284,7 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 				}
 			}
 
-			if( quest.type === "delivery" )
+			if( quest.type == "delivery" )
 			{
 				// Check if the player delivered the item to the correct NPC
 				if( identifier === quest.targetDelivery.npcID ) 
@@ -321,7 +336,7 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 			}
 
 			// Check skill gain objectives
-			if( quest.type === "skillgain" && quest.targetSkill === identifier )
+			if( quest.type == "skillgain" && quest.targetSkill == identifier )
 			{
 				// Update skill progress, initializing if undefined
 				questEntry.skillProgress = ( questEntry.skillProgress || 0 ) + progressValue;
@@ -341,8 +356,6 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 					allObjectivesCompleted = false;
 				}
 			}
-
-
 
 			// Mark quest as completed if all objectives are met
 			if( allObjectivesCompleted )
@@ -372,12 +385,11 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 						socket.SysMessage( "You've completed the quest! Don't forget to collect your reward." );
 					}
 					WriteQuestProgress( player, questProgressArray );
-					completeQuest( player, questID );
+					CompleteQuest( player, questID );
 				}
 				return;
 			}
 
-			// Ensure progress is saved after each update
 			questUpdated = true;
 			break;
 		}
@@ -392,126 +404,133 @@ function updateQuestProgress( player, questID, identifier, progressValue, type )
 		socket.SysMessage( "No progress updated for the quest." );
 	}
 
-	return questProgressArray; // Return updated progress
+	return questProgressArray;
 }
 
-
-function completeQuest( player, questID )
+function CompleteQuest( player, questID )
 {
 	var socket = player.socket;
 	var questProgressArray = ReadQuestProgress( player );
 	var newQuestProgressArray = [];
+	var questCompleted = false;
 
 	for( var i = 0; i < questProgressArray.length; i++ )
 	{
 		var questEntry = questProgressArray[i];
-		if( questEntry.questID === questID )
+
+		// Ensure the quest is tied to the current player and matches the questID
+		if( questEntry.serial !== player.serial || questEntry.questID !== questID )
 		{
-			// Ensure the quest is completed
-			if( questEntry.completed )
-			{
-				// Handle rewards
-				var quest = TriggerEvent( 5801, "QuestList", questID );
+			newQuestProgressArray.push( questEntry );
+			continue;
+		}
 
-				// Ensure the quest is completed
-				socket.SysMessage( "Congratulations! You have completed the quest: " + quest.title );
-				DoStaticEffect( player.x, player.y, player.z, 0x376A, 0x40, 0x16, false );
+		// Ensure the quest is completed
+		if( !questEntry.completed )
+		{
+			socket.SysMessage( "You haven't completed the quest yet." );
+			return;
+		}
 
-				if( quest.rewards )
-				{
-					for( var j = 0; j < quest.rewards.length; j++ )
-					{
-						var reward = quest.rewards[j];
-						var bankBox = player.FindItemLayer(29);
+		var quest = TriggerEvent( 5801, "QuestList", questID );
+		if( !quest )
+		{
+			socket.SysMessage( "Quest data could not be retrieved." );
+			return;
+		}
 
-						if( reward.type === "gold" )
-						{
-							if( quest.bankgold == 1 )
-							{
-								var pack = true
-								if( !ValidateObject( bankBox ))
-								{
-									socket.SysMessage(GetDictionaryEntry( 19071, socket.language ));// Error: No valid bankbox found! Please contact a GM for assistance.
-									pack = false;
-								}
-								else if( bankBox.totalItemCount >= bankBox.maxItems )
-								{
-									socket.SysMessage(GetDictionaryEntry( 19074, socket.language )); // Your bank box is full.
-									pack = false;
-								}
+		// Notify the player and play a visual effect
+		socket.SysMessage( "Congratulations! You have completed the quest: " + quest.title );
+		DoStaticEffect( player.x, player.y, player.z, 0x376A, 0x40, 0x16, false );
 
-								var gold = CreateDFNItem( player.socket, player, "0x0eed", reward.amount, "ITEM", pack ); // 0x0eed is gold
-								if( pack == false )
-									gold.container = bankBox;
-							}
-							else
-							{
-								// Reward gold
-								CreateDFNItem( player.socket, player, "0x0eed", reward.amount, "ITEM", true ); // 0x0eed is gold
-							}
-							socket.SysMessage( "You receive a reward: " + reward.amount + " gold!" );
-						}
-						else if( reward.type === "item" )
-						{
-							// Reward item
-							CreateDFNItem( player.socket, player, reward.itemID, reward.amount, "ITEM", true );
-							socket.SysMessage( "You receive a reward: " + reward.amount + " of item " + reward.name + "!" );
-						}
-						else if( reward.type === "karma" )
-						{
-							// Reward karma
-							player.karma += reward.amount; // Assuming `karma` is a property of the player
-							socket.SysMessage( "You gained " + reward.amount + " karma!" );
-						}
-						else if( reward.type === "fame" )
-						{
-							// Reward fame
-							player.fame += reward.amount; // Assuming `fame` is a property of the player
-							socket.SysMessage( "You gained " + reward.amount + " fame!" );
-						}
-						else
-						{
-							socket.SysMessage( "Unknown reward type: " + reward.type );
-						}
-					}
-				}
+		// Handle rewards
+		if( quest.rewards )
+		{
+			QuestRewards( player, quest, socket );
+		}
 
-				// Archive the completed quest
-				ArchiveCompletedQuest( player, questEntry );
+		// Archive the completed quest
+		ArchiveCompletedQuest( player, questEntry );
 
-				// Cancel the quest timer for the correct questID
-				player.KillJSTimer( questID, 5820 );
+		// Cancel any active quest timer for this questID
+		player.KillJSTimer( questID, 5820 );
 
-				// Mark that the quest was completed and turned in
-				questCompleted = true;
-			}
-			else
-			{
-				socket.SysMessage( "You haven't completed the quest yet." );
-				return;
-			}
+		// Mark the quest as completed
+		questCompleted = true;
+	}
+
+	// Save updated progress, excluding the completed quest
+	WriteQuestProgress( player, newQuestProgressArray );
+
+	// Handle chained quests
+	if( questCompleted )
+	{
+		StartNextQuestInChain( player, questID, socket );
+	}
+}
+
+function QuestRewards( player, quest, socket )
+{
+	var bankBox = player.FindItemLayer( 29 );
+
+	quest.rewards.forEach(function(reward)
+	{
+		switch (reward.type)
+		{
+			case "gold":
+				GoldReward( player, reward, bankBox, socket );
+				break;
+			case "item":
+				CreateDFNItem( player.socket, player, reward.itemID, reward.amount, "ITEM", true );
+				socket.SysMessage( "You receive a reward: " + reward.amount + " of item " + reward.name + "!" );
+				break;
+			case "karma":
+				player.karma += reward.amount;
+				socket.SysMessage( "You gained " + reward.amount + " karma!" );
+				break;
+			case "fame":
+				player.fame += reward.amount;
+				socket.SysMessage( "You gained " + reward.amount + " fame!" );
+				break;
+			default:
+				socket.SysMessage( "Unknown reward type: " + reward.type );
+		}
+	});
+}
+
+function GoldReward( player, reward, bankBox, socket )
+{
+	if( reward.bankgold == 1 )
+	{
+		if( ValidateObject( bankBox ) && bankBox.totalItemCount < bankBox.maxItems )
+		{
+			var gold = CreateDFNItem( player.socket, player, "0x0eed", reward.amount, "ITEM", false );
+			gold.container = bankBox
+			socket.SysMessage( "Gold has been deposited into your bank." );
 		}
 		else
 		{
-			newQuestProgressArray.push( questEntry ); // Add incomplete quests to the new array
+			socket.SysMessage( "Bank is full. Gold added to your backpack." );
+			CreateDFNItem( player.socket, player, "0x0eed", reward.amount, "ITEM", true );
 		}
 	}
-
-	// Save updated progress ( excluding the completed quest if archived )
-	WriteQuestProgress( player, newQuestProgressArray );
-
-	// Start the next quest in the chain, if available, after turn-in
-	if( questCompleted )
+	else
 	{
-		var quest = TriggerEvent( 5801, "QuestList", questID );
-		if( quest && quest.nextQuestID )
+		CreateDFNItem( player.socket, player, "0x0eed", reward.amount, "ITEM", true );
+	}
+	socket.SysMessage( "You receive a reward: " + reward.amount + " gold!" );
+}
+
+function StartNextQuestInChain( player, questID, socket )
+{
+	var quest = TriggerEvent( 5801, "QuestList", questID );
+	if( quest && quest.nextQuestID )
+	{
+		var nextQuest = TriggerEvent( 5801, "QuestList", quest.nextQuestID );
+		if( nextQuest )
 		{
-			var nextQuest = TriggerEvent( 5801, "QuestList", quest.nextQuestID );
-			if( nextQuest )
-			{
-				socket.SysMessage( "A new quest has been unlocked: " + nextQuest.title );
-				startQuest( player, parseInt( quest.nextQuestID ));
-			}
+			socket.SysMessage( "A new quest has been unlocked: " + nextQuest.title );
+			startQuest( player, parseInt( quest.nextQuestID ));
 		}
 	}
 }
@@ -523,9 +542,16 @@ function onCreatureKilled( creature, player )
 	for( var i = 0; i < questProgressArray.length; i++ ) 
 	{
 		var questEntry = questProgressArray[i];
+
+		// Ensure the quest belongs to the current player
+		if( questEntry.serial != player.serial )
+		{
+			continue;
+		}
+
 		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
 
-		if( quest && ( quest.type === "kill" || quest.type === "timekills" || quest.type === "multi" ) && !questEntry.completed )
+		if( quest && ( quest.type == "kill" || quest.type == "timekills" || quest.type == "multi" ) && !questEntry.completed )
 		{
 			for( var j = 0; j < quest.targetKills.length; j++ )
 			{
@@ -533,8 +559,8 @@ function onCreatureKilled( creature, player )
 
 				if( target.npcID == creature.sectionID ) 
 				{
-					updateQuestProgress( player, questEntry.questID, creature.sectionID, 1, "kill" );
-					return true; // Exit after updating progress
+					UpdateQuestProgress( player, questEntry.questID, creature.sectionID, 1, "kill" );
+					return true;
 				}
 			}
 
@@ -543,11 +569,11 @@ function onCreatureKilled( creature, player )
 	}
 }
 
-function onItemCollected(player, item, isToggledOff)
+function onItemCollected( player, item, isToggledOff )
 {
 	var socket = player.socket;
 	// Default the isToggledOff value
-	if( typeof isToggledOff === "undefined" ) 
+	if( typeof isToggledOff == "undefined" ) 
 	{
 		isToggledOff = false;
 	}
@@ -562,9 +588,16 @@ function onItemCollected(player, item, isToggledOff)
 	for( var i = 0; i < questProgressArray.length; i++ )
 	{
 		var questEntry = questProgressArray[i];
+
+		// Ensure the quest belongs to the current player
+		if( questEntry.serial != player.serial )
+		{
+			continue;
+		}
+
 		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
 
-		if( quest && ( quest.type === "collect" || quest.type === "timecollect" || quest.type === "multi" ) && !questEntry.completed )
+		if( quest && ( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" ) && !questEntry.completed )
 		{
 			for( var j = 0; j < quest.targetItems.length; j++ )
 			{
@@ -586,7 +619,7 @@ function onItemCollected(player, item, isToggledOff)
 						if( currentCount > 0 ) 
 						{
 							var amountToRemove = Math.min( item.amount, currentCount );
-							updateQuestProgress( player, questEntry.questID, item.sectionID, -amountToRemove, "collect" );
+							UpdateQuestProgress( player, questEntry.questID, item.sectionID, -amountToRemove, "collect" );
 
 							var questItemColor = item.GetTag( "saveColor" );
 							item.color = questItemColor;
@@ -608,7 +641,7 @@ function onItemCollected(player, item, isToggledOff)
 						if( remaining > 0 )
 						{
 							var amountToAdd = Math.min( item.amount, remaining );
-							updateQuestProgress( player, questEntry.questID, item.sectionID, amountToAdd, "collect" );
+							UpdateQuestProgress( player, questEntry.questID, item.sectionID, amountToAdd, "collect" );
 
 							item.SetTag( "saveColor", item.color );
 							item.color = 0x04ea; // orange hue
@@ -640,24 +673,31 @@ function AccelerateSkillGain( pPlayer, skill, skillGainAmount )
 	for( var i = 0; i < activeQuests.length; i++ ) 
 	{
 		var questEntry = activeQuests[i];
+
+		// Ensure the quest entry matches the player's serial
+		if( questEntry.serial != pPlayer.serial )
+		{
+			continue;
+		}
+
 		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
 
-		if( quest && quest.type === "skillgain" && !questEntry.completed ) 
+		if( quest && quest.type == "skillgain" && !questEntry.completed ) 
 		{
-			if( pPlayer.region.id === quest.targetRegion && skill === quest.targetSkill ) 
+			if( pPlayer.region.id == quest.targetRegion && skill == quest.targetSkill ) 
 			{
 				var currentSkillPoints = pPlayer.baseskills[skill];
 				var acceleratedGain = RandomNumber( quest.minPoint, quest.MaxPoint );
 
 				if(( currentSkillPoints + acceleratedGain ) >= quest.maxSkillPoints )
 				{
-					updateQuestProgress( pPlayer, questEntry.questID, skill, quest.maxSkillPoints - currentSkillPoints, "skillgain" );
+					UpdateQuestProgress( pPlayer, questEntry.questID, skill, quest.maxSkillPoints - currentSkillPoints, "skillgain" );
 				}
 				else
 				{
 					// Apply accelerated skill gain and update progress
 					pPlayer.AddSkill( skill, acceleratedGain, false );
-					updateQuestProgress( pPlayer, questEntry.questID, skill, acceleratedGain, "skillgain" );
+					UpdateQuestProgress( pPlayer, questEntry.questID, skill, acceleratedGain, "skillgain" );
 				}
 
 				return true;
@@ -1072,7 +1112,6 @@ function ReadArchivedQuests( player )
 	return archivedQuests; // Return array of quest IDs
 }
 
-
 function WriteQuestProgress( player, questProgressArray )
 {
 	var mFile = new UOXCFile();
@@ -1160,6 +1199,7 @@ function WriteQuestProgress( player, questProgressArray )
 				"MaxSkillPoints=" + ( progressEntry.maxSkillPoints || 50.0 ) + "\n" + // Max skill points
 				"StartTime=" + ( progressEntry.startTime || 0 ) + "\n" + // Start time
 				"TimeLimit=" + ( progressEntry.timeLimit || 0 ) + "\n" + // Time limit
+				"LastAccepted=" + ( progressEntry.lastAccepted || 0 ) + "\n" + // Save the lastAccepted timestamp
 				"Completed=" + ( progressEntry.completed ? "1" : "0" ) + "\n" +
 				"QuestTurnIn=" + ( progressEntry.questTurnIn ? "1" : "0" ) + "\n" +
 				"NextQuestID=" + ( progressEntry.nextQuestID || "undefined" ) + "\n\n";
@@ -1258,6 +1298,7 @@ function finalizeQuestEntry( entry, player )
 	entry.targetSkill = parseInt( entry.targetskill || "-1", 10 );
 	entry.targetRegion = parseInt( entry.targetregion || "0", 10 );
 	entry.maxSkillPoints = parseFloat( entry.maxskillpoints || "50.0" );
+	entry.lastAccepted = parseInt( entry.lastaccepted || "0", 10 ); // Add lastAccepted timestamp
 
 	processCollectedItems(entry, player);
 	processKills(entry, player);
