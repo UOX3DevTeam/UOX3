@@ -15,9 +15,6 @@ function onLogin( socket, pChar )
 		}
 	}
 
-	//Starts Tracking Gump On login
-	TriggerEvent(5803, "QuestTrackingGump", pChar);
-
 	// Store login timestamp (in minutes) in temp tag
 	var loginTime = Math.round( GetCurrentClock() / 1000 / 60 );
 	pChar.SetTempTag( "loginTime", loginTime );
@@ -27,6 +24,12 @@ function onLogin( socket, pChar )
     {
         pChar.AddScriptTrigger( 2508 );
     }
+
+	// Attach OnQuest Toggle
+	if(!pChar.HasScriptTrigger( 5805 ))
+	{
+		pChar.AddScriptTrigger( 5805 );
+	}
 
     if( pChar.account.isYoung )
     {
