@@ -3065,7 +3065,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows beneficial spells to be cast on self during combat
 //o------------------------------------------------------------------------------------------------o
-inline void QuickSwitch( CChar *mChar, CChar *ourTarg, SI08 spellNum )
+inline void QuickSwitch( CChar *mChar, CChar *ourTarg, SI32 spellNum )
 {
 	if( !ValidateObject( mChar ) || !ValidateObject( ourTarg ) || mChar == ourTarg )
 		return;
@@ -3082,7 +3082,7 @@ inline void QuickSwitch( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spellcasting during combat
 //o------------------------------------------------------------------------------------------------o
-bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum )
+bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI32 spellNum )
 {
 	if( !ValidateObject( mChar ) || !ValidateObject( ourTarg ) || mChar == ourTarg )
 		return false;

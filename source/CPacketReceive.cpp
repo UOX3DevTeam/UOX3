@@ -5572,55 +5572,83 @@ void CPISpellbookSelect::Receive( void )
 }
 bool CPISpellbookSelect::Handle( void )
 {
-	CChar *ourChar	= tSock->CurrcharObj();
-	CItem *sBook	= FindItemOfType( ourChar, IT_SPELLBOOK );
-	CItem *p		= ourChar->GetPackItem();
-	UI08 *buffer	= tSock->Buffer();
-	if( ValidateObject( sBook ))
-	{
-		bool validLoc	= false;
-		if( sBook->GetCont() == ourChar )
-		{
-			validLoc = true;
-		}
-		else if( ValidateObject( p ) && sBook->GetCont() == p )
-		{
-			validLoc = true;
-		}
+    CChar *ourChar = tSock->CurrcharObj();
+    CItem *sBook = FindItemOfType( ourChar, IT_SPELLBOOK );
+    CItem *pBook = FindItemOfType( ourChar, IT_PALADINBOOK );
+    CItem *packItem = ourChar->GetPackItem();
+    UI08 *buffer = tSock->Buffer();
 
-		if( validLoc )
-		{
-			SI32 book = ( buffer[7] << 8 ) + ( buffer[8] );
-			if( Magic->CheckBook((( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, sBook ))
-			{
-				if( ourChar->IsFrozen() )
-				{
-					if( ourChar->IsCasting() )
-					{
-						tSock->SysMessage( 762 ); // You are already casting a spell.
-					}
-					else
-					{
-						tSock->SysMessage( 763 ); // You cannot cast spells while frozen.
-					}
-				}
-				else
-				{
-					tSock->CurrentSpellType( 0 );
-					Magic->SelectSpell( tSock, book );
-				}
-			}
-			else
-			{
-				tSock->SysMessage( 764 ); // You do not have that spell.
-			}
-		}
-		else
-		{
-			tSock->SysMessage( 765 ); // =To cast spells, your spellbook must be in your hands or in the first layer of your pack.
-		}
-	}
-	return true;
+    if( !ValidateObject( sBook ) && !ValidateObject( pBook ))
+    {
+        tSock->SysMessage( 765 ); // "To cast spells, your spellbook must be in your hands or in the first layer of your pack."
+        return true;
+    }
+
+    // Validate location
+    bool validLoc = ( ValidateObject(sBook) && 
+                     ( sBook->GetCont() == ourChar || ( ValidateObject(packItem) && sBook->GetCont() == packItem ))) ||
+                    ( ValidateObject(pBook ) && 
+                     ( pBook->GetCont() == ourChar || ( ValidateObject(packItem) && pBook->GetCont() == packItem )));
+
+    if( !validLoc )
+    {
+        tSock->SysMessage( 765 ); // "Your spellbook must be equipped or in your pack."
+        return true;
+    }
+
+    // Determine the spellbook type and offset
+    int offset = 0;
+    CItem *activeBook = nullptr;
+
+    // Use Buffer[8] to determine the spell number
+    int spellNumber = buffer[8];
+
+    if( ValidateObject( pBook ) && spellNumber >= 201 ) // Paladin spells
+    {
+        activeBook = pBook;
+        offset = 200; // Paladin spells offset starts from 201
+    }
+    else if( ValidateObject( sBook ) && spellNumber < 201 ) // Regular spells
+    {
+        activeBook = sBook;
+        offset = 0; // Regular spells offset starts from 1
+    }
+
+    if( !ValidateObject( activeBook ))
+    {
+        tSock->SysMessage(764); // "You do not have that spell."
+        return true;
+    }
+
+    // Calculate the actual spell number
+    SI32 book = spellNumber - offset;
+
+    // Validate the spell in the book
+    if( Magic->CheckBook((( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, activeBook ))
+    {
+        if( ourChar->IsFrozen() )
+        {
+            if( ourChar->IsCasting() )
+            {
+                tSock->SysMessage( 762 ); // "You are already casting a spell."
+            }
+            else
+            {
+                tSock->SysMessage( 763 ); // "You cannot cast spells while frozen."
+            }
+        }
+        else
+        {
+            tSock->CurrentSpellType(0);
+            Magic->SelectSpell( tSock, book + offset ); // Ensure the correct spell is cast
+        }
+    }
+    else
+    {
+        tSock->SysMessage( 764 ); // "You do not have that spell."
+    }
+
+    return true;
 }
 void CPISpellbookSelect::Log( std::ostream &outStream, bool fullHeader )
 {

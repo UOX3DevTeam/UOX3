@@ -147,6 +147,7 @@ private:
 		COLOUR		hairColour;
 		COLOUR		beardColour;
 		CItem *		speechItem;
+		UI32		tithing;
 		UI08		speechMode;
 		UI08		speechId;
 		cScript *	speechCallback;
@@ -219,7 +220,7 @@ protected:
   	SI16    	guildNumber;	// Number of guild player is in (0=no guild)     (DasRaetsel)
 
   	UI08    	flag;			// 1=red 2=grey 4=Blue 8=green 10=Orange // should it not be 0x10??? sounds like we're trying to do
-  	SI08    	spellCast;
+  	SI32    	spellCast;
   	UI08    	nextAct;		// time to next spell action..
   	SI08    	stealth;		// stealth ( steps already done, -1=not using )
   	UI08    	running;		// Stamina Loose while running
@@ -484,8 +485,8 @@ public:
 	void		SetAdvObj( UI16 newValue );
 	void		SetRaceGate( RACEID newValue );
 
-	SI08		GetSpellCast( void ) const;
-	void		SetSpellCast( SI08 newValue );
+	SI32		GetSpellCast( void ) const;
+	void		SetSpellCast( SI32 newValue );
 
 	UI16		GetPriv( void ) const;
 	SI08		GetTownPriv( void ) const;
@@ -839,6 +840,9 @@ public:
 
 	UI08		GetSquelched( void ) const;
 	void		SetSquelched( UI08 newValue );
+
+	UI32		GetTithing( void ) const;
+	void		SetTithing( UI32 newValue );
 
 	CItem *		GetSpeechItem( void ) const;
 	UI08		GetSpeechMode( void ) const;

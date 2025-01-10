@@ -2388,7 +2388,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			Luck( 0 );
 			DamageMin( Combat->CalcLowDamage( &toCopy ));
 			DamageMax( Combat->CalcHighDamage( &toCopy ));
-			TithingPoints( 0 );
+			TithingPoints( toCopy.GetTithing() );
 		}
 	}
 }
@@ -6936,37 +6936,84 @@ void CPSendGumpMenu::Log( std::ostream &outStream, bool fullHeader )
 //|								second bit of first byte = spell #2
 //|								first bit of second byte = spell #8, etc
 //o------------------------------------------------------------------------------------------------o
-void CPNewSpellBook::InternalReset( void )
+void CPNewSpellBook::InternalReset( CItem &obj )
 {
-	pStream.ReserveSize( 23 );
-	pStream.WriteByte( 0, 0xBF ); //Main packet
-	pStream.WriteShort( 1, 23 );
-	pStream.WriteShort( 3, 0x1B ); //Subcommand
-	pStream.WriteShort( 5, 0x01 );
-	pStream.WriteByte( 11, 0x0E ); // Graphic part I?
-	pStream.WriteByte( 12, 0xFA ); // Graphic part II?
-	pStream.WriteShort( 13, 1 );// Offset
+    // Reset the base buffer
+    CPUOXBuffer::InternalReset();
+
+    int offset = ( obj.GetType() == IT_PALADINBOOK ) ? 201 : 1;
+
+    pStream.ReserveSize( 23 );
+    pStream.WriteByte( 0, 0xBF ); // Main packet
+    pStream.WriteShort( 1, 23 );
+    pStream.WriteShort( 3, 0x1B ); // Subcommand
+    pStream.WriteShort( 5, 0x01 );
+    pStream.WriteByte( 11, 0x0E ); // Graphic part I
+    pStream.WriteByte( 12, 0xFA ); // Graphic part II
+    pStream.WriteShort( 13, offset ); // Offset
 }
-void CPNewSpellBook::CopyData( CItem& obj )
+
+void CPNewSpellBook::CopyData( CItem &obj )
 {
-	pStream.WriteLong( 7, obj.GetSerial() );
-	for( UI08 i = 0; i < 64; ++i )
-	{
-		SI32 y = ( i % 8 );
-		SI32 x = 15 + static_cast<SI32>( i / 8 );
-		if( Magic->HasSpell( &obj, i ))
-		{
-			pStream.WriteByte( x, ( pStream.GetByte( x ) | static_cast<UI08>( power( 2, y ))));
-		}
-	}
+    // Determine the spell range and offset based on book type
+    int startSpell = ( obj.GetType() == IT_PALADINBOOK ) ? 201 : 1;
+    int endSpell = ( obj.GetType() == IT_PALADINBOOK ) ? 210 : 64;
+    int spellCount = endSpell - startSpell + 1;
+
+    //Console.Print(oldstrutil::format("DEBUG: CopyData called. Book type: %d, StartSpell: %d, EndSpell: %d, SpellCount: %d.", obj.GetType(), startSpell, endSpell, spellCount));
+
+    // Calculate the total size dynamically based on spell count
+    int spellBytes = ( spellCount + 7 ) / 8; // Each byte holds 8 spells
+    int packetSize = 15 + spellBytes;
+
+    //Console.Print(oldstrutil::format("DEBUG: Packet size calculated: %d, SpellBytes: %d.", packetSize, spellBytes));
+
+    // Reserve space and write header
+    pStream.ReserveSize( packetSize );
+    pStream.WriteByte( 0, 0xBF );          // Packet ID
+    pStream.WriteShort( 1, packetSize );   // Packet size
+    pStream.WriteShort( 3, 0x1B );         // Subcommand
+    pStream.WriteShort( 5, 0x01 );         // Unknown, always 1
+    pStream.WriteLong( 7, obj.GetSerial() ); // Spellbook serial
+    pStream.WriteShort( 11, obj.GetId() );  // Graphic ID
+    pStream.WriteShort( 13, startSpell );   // Scroll offset (start spell ID)
+
+   // Console.Print(oldstrutil::format("DEBUG: Packet header written. Serial: %d, Graphic ID: %d.", obj.GetSerial(), obj.GetId()));
+
+    // Initialize spell content bytes to 0
+    for( int i = 0; i < spellBytes; ++i )
+    {
+        pStream.WriteByte( 15 + i, 0x00 );
+    }
+    //Console.Print("DEBUG: Initialized spell content bytes to 0.");
+
+    // Populate the spell content bitfield
+    for( int spellNum = startSpell; spellNum <= endSpell; ++spellNum )
+    {        
+        int spellIndex = spellNum - startSpell; // Adjust to 0-based index
+        int byteIndex = 15 + ( spellIndex / 8 );  // Byte position in the stream
+        int bitIndex = spellIndex % 8;         // Bit position within the byte
+
+       // Console.Print(oldstrutil::format("DEBUG: Checking spell number: %d.", spellNum));
+
+        if( Magic->HasSpell( &obj, spellNum ))
+        {
+            // Set the corresponding bit in the spell content
+            pStream.WriteByte( byteIndex, pStream.GetByte( byteIndex ) | ( 1 << bitIndex ));
+           // Console.Print(oldstrutil::format("DEBUG: Spell %d is available. ByteIndex: %d, BitIndex: %d.",spellNum, byteIndex, bitIndex));
+        }
+        else
+        {
+            Console.Print(oldstrutil::format( "DEBUG: Spell %d is NOT available.", spellNum ));
+        }
+    }
+
+   // Console.Print("DEBUG: CopyData completed.");
 }
-CPNewSpellBook::CPNewSpellBook()
-{
-	InternalReset();
-}
+
 CPNewSpellBook::CPNewSpellBook( CItem& obj )
 {
-	InternalReset();
+	InternalReset( obj );
 	CopyData( obj );
 }
 

@@ -1515,91 +1515,105 @@ bool ValidateLockdownAccess( CChar *mChar, CSocket *mSock, CItem *itemToCheck, b
 //o------------------------------------------------------------------------------------------------o
 void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDropped )
 {
-	if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
-	{
-		Weight->SubtractItemWeight( &mChar, &iDropped );
-	}
-	if( iDropped.GetId( 1 ) != 0x1F || iDropped.GetId( 2 ) < 0x2D || iDropped.GetId( 2 ) > 0x72 )
-	{
-		Bounce( &mSock, &iDropped );
-		mSock.SysMessage( 1202 ); // You can only place spell scrolls in a spellbook!
-		return;
-	}
-	CChar *sbOwner = FindItemOwner( &spellBook );
-	if( ValidateObject( sbOwner ) && sbOwner != &mChar && !mChar.CanSnoop() )
-	{
-		Bounce( &mSock, &iDropped );
-		mSock.SysMessage( 1203 ); // You cannot place spells in other peoples spellbooks.
-		return;
-	}
-	std::string name;
-	name.reserve( MAX_NAME );
-	if( iDropped.GetName()[0] == '#' )
-	{
-		GetTileName( iDropped, name );
-	}
-	else
-	{
-		name = iDropped.GetName();
-	}
+    // Check if the item is coming from a valid location
+    if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+    {
+        Weight->SubtractItemWeight( &mChar, &iDropped );
+    }
 
-	if( spellBook.GetTempVar( CITV_MORE, 1 ) == 1 )	// using more1 to "lock" a spellbook for RP purposes
+	// Determine the type of spellbook
+    bool isPaladinBook = ( spellBook.GetType() == IT_PALADINBOOK );
+    bool isRegularBook = ( spellBook.GetType() == IT_SPELLBOOK );
+
+    // Validate the dropped scroll's ID range
+    bool isPaladinScroll = ( iDropped.GetId() >= 0x2270 && iDropped.GetId() <= 0x227C ); // Paladin scrolls
+    bool isRegularScroll = ( iDropped.GetId() >= 0x1F2D && iDropped.GetId() <= 0x1F6C ); // Regular scrolls
+
+    // Check if the dropped item is a valid spell scroll and is dropped on correct book.
+	if(( isPaladinBook && !isPaladinScroll ) || ( isRegularBook && !isRegularScroll ))
 	{
-		mSock.SysMessage( 1204 ); // There are no empty pages left in your book.
 		Bounce( &mSock, &iDropped );
+		mSock.SysMessage( 1202 ); // "You can only place spell scrolls in a spellbook!"
 		return;
 	}
 
-	if( name == Dictionary->GetEntry( 1605 )) // All-Spell Scroll
-	{
-		if( spellBook.GetSpell( 0 ) == INVALIDSERIAL && spellBook.GetSpell( 1 ) == INVALIDSERIAL && spellBook.GetSpell( 2 ) == INVALIDSERIAL )
-		{
-			mSock.SysMessage( 1205 ); // You already have a full book!
-			Bounce( &mSock, &iDropped );
-			return;
-		}
-		spellBook.SetSpell( 0, INVALIDSERIAL );
-		spellBook.SetSpell( 1, INVALIDSERIAL );
-		spellBook.SetSpell( 2, INVALIDSERIAL );
-	}
-	else
-	{
-		SI32 targSpellNum = 0;
-		UI16 scrollId = iDropped.GetId();
-		if( scrollId == 0x1F2D )
-		{
-			targSpellNum = 6;
-		}
-		else if( scrollId > 0x1F2D && scrollId < 0x1F34 )
-		{
-			targSpellNum = ( scrollId - 0x1F2E );
-		}
-		else if( scrollId >= 0x1F34 && scrollId < 0x1F6D )
-		{
-			targSpellNum = ( scrollId - 0x1F2D );
-		}
 
-		if( Magic->HasSpell( &spellBook, targSpellNum ))
-		{
-			mSock.SysMessage( 1206 ); // You already have that spell.
-			Bounce( &mSock, &iDropped );
-			return;
-		}
-		else
-		{
-			Magic->AddSpell( &spellBook, targSpellNum );
-		}
-	}
-	Effects->PlaySound( &mSock, 0x0042, false );
-	if( iDropped.GetAmount() > 1 )
-	{
-		iDropped.IncAmount( -1 );
-		Bounce( &mSock, &iDropped );
-	}
-	else
-	{
-		iDropped.Delete();
-	}
+    // Check ownership of the spellbook
+    CChar* sbOwner = FindItemOwner( &spellBook );
+    if( ValidateObject( sbOwner ) && sbOwner != &mChar && !mChar.CanSnoop() )
+    {
+        Bounce( &mSock, &iDropped );
+        mSock.SysMessage( 1203 ); // "You cannot place spells in other people's spellbooks."
+        return;
+    }
+
+    // Check if the spellbook is locked for RP purposes
+    if( spellBook.GetTempVar( CITV_MORE, 1 ) == 1 )
+    {
+        mSock.SysMessage( 1204 ); // "There are no empty pages left in your book."
+        Bounce( &mSock, &iDropped );
+        return;
+    }
+
+    // Handle All-Spell Scrolls
+    if( iDropped.GetName() == Dictionary->GetEntry( 1605 )) // "All-Spell Scroll"
+    {
+        if( spellBook.GetSpell( 0 ) == INVALIDSERIAL && 
+            spellBook.GetSpell( 1 ) == INVALIDSERIAL && 
+            spellBook.GetSpell( 2 ) == INVALIDSERIAL )
+        {
+            mSock.SysMessage( 1205 ); // "You already have a full book!"
+            Bounce( &mSock, &iDropped );
+            return;
+        }
+
+        // Mark all spells as added
+        spellBook.SetSpell( 0, INVALIDSERIAL );
+        spellBook.SetSpell( 1, INVALIDSERIAL );
+        spellBook.SetSpell( 2, INVALIDSERIAL );
+    }
+    else
+    {
+        // Determine the spell number from the scroll ID
+        SI32 targSpellNum = 0;
+        UI16 scrollId = iDropped.GetId();
+
+        // Regular spells (Magery)
+        if( scrollId >= 0x1F2D && scrollId <= 0x1F6C )
+        {
+            targSpellNum = scrollId - 0x1F2C; // Adjust to spell number range
+        }
+        // Paladin spells
+        else if( scrollId >= 0x2270 && scrollId <= 0x227C )
+        {
+            targSpellNum = scrollId - 0x226F + 200; // Adjust to Paladin spell number range (201–210)
+        }
+
+        // Check if the spell already exists in the book
+        if( Magic->HasSpell( &spellBook, targSpellNum ))
+        {
+            mSock.SysMessage( 1206 ); // "You already have that spell."
+            Bounce( &mSock, &iDropped );
+            return;
+        }
+
+        // Add the spell to the book
+        Magic->AddSpell( &spellBook, targSpellNum );
+    }
+
+    // Play the sound effect
+    Effects->PlaySound( &mSock, 0x0042, false );
+
+    // Handle scroll quantity
+    if( iDropped.GetAmount() > 1 )
+    {
+        iDropped.IncAmount( -1 );
+        Bounce( &mSock, &iDropped );
+    }
+    else
+    {
+        iDropped.Delete();
+    }
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1976,7 +1990,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 		mSock->SysMessage( 1201 ); // As you let go of the item it disappears.
 		return;
 	}
-	else if( nCont->GetType() == IT_SPELLBOOK )	// Spell Book
+	else if( nCont->GetType() == IT_SPELLBOOK || nCont->GetType() == IT_PALADINBOOK )	// Spell Book
 	{
 		DropOnSpellBook(( *mSock ), ( *mChar ), ( *nCont ), ( *nItem ));
 		return;
@@ -2839,6 +2853,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 		case IT_LOCKEDSPAWNCONT: // locked spawn container
 			mSock->SysMessage( 1428 ); // This item is locked.
 			return true;
+		case IT_PALADINBOOK:
 		case IT_SPELLBOOK:	// Spellbook
 			i = mChar->GetPackItem();
 			if( ValidateObject( i ))
@@ -3335,6 +3350,7 @@ void InitTagToItemType( void )
 	tagToItemType["KEY"]					= IT_KEY;
 	tagToItemType["LOCKEDCONTAINER"]		= IT_LOCKEDCONTAINER;
 	tagToItemType["SPELLBOOK"]				= IT_SPELLBOOK;
+	tagToItemType["PALADINBOOK"]			= IT_PALADINBOOK;
 	tagToItemType["MAP"]					= IT_MAP;
 	tagToItemType["BOOK"]					= IT_BOOK;
 	tagToItemType["DOOR"]					= IT_DOOR;

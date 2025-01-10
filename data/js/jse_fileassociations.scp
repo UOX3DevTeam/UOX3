@@ -427,6 +427,7 @@
 601=magic/level1targ.js
 602=magic/createfood.js
 700=magic/wand_item_id.js
+702=magic/PaladinSpells.js
 }
 
 [SKILLUSE_SCRIPTS]

@@ -51,6 +51,7 @@ inline JSPropertySpec CSpellProperties[] =
 	{ "soundEffect",		CSP_SOUNDEFFECT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "enabled",			CSP_ENABLED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "baseDmg",			CSP_BASEDMG,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "tithing",			CSP_TITHING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 
@@ -267,6 +268,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "karma",			CCP_KARMA,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "attack",			CCP_ATTACK,			JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "canAttack",		CCP_CANATTACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "tithing",		CCP_TITHING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "fleeAt",			CCP_FLEEAT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "reAttackAt",		CCP_REATTACKAT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "brkPeaceChance",	CCP_BRKPEACE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
