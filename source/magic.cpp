@@ -2763,50 +2763,15 @@ bool CMagic::HasSpell( CItem *book, SI32 spellNum )
 //o------------------------------------------------------------------------------------------------o
 void CMagic::AddSpell( CItem *book, SI32 spellNum )
 {
-	std::vector<UI16> scriptTriggers = book->GetScriptTriggers();
-	for( auto scriptTrig : scriptTriggers )
-	{
-		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != nullptr )
-		{
-			// If script returns false/0, prevent addition of spell to spellbook
-			if( toExecute->OnSpellGain( book, spellNum ) == 0 )
-			{
-				return;
-			}
-		}
-	}
-
-	if( !ValidateObject( book ))
-		return;
-
-	UI32 wordNum = spellNum / 32;
-	if( wordNum < 3 )
-	{
-		UI32 bitNum = ( spellNum % 32 );
-		UI32 flagToSet = power( 2, bitNum );
-		UI32 targAmount;
-		targAmount = ( book->GetSpell( static_cast<UI08>( wordNum )) | flagToSet );
-		book->SetSpell( static_cast<UI08>( wordNum ), targAmount );
-	}
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CMagic::RemoveSpell()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Removes specific spell from given spellbook
-//o------------------------------------------------------------------------------------------------o
-void CMagic::AddSpell( CItem *book, SI32 spellNum )
-{
     // Check for script triggers
     std::vector<UI16> scriptTriggers = book->GetScriptTriggers();
     for( auto scriptTrig : scriptTriggers )
     {
-        cScript *toExecute = JSMapping->GetScript( scriptTrig );
-        if ( toExecute != nullptr )
+        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        if( toExecute != nullptr )
         {
             // If script returns false/0, prevent addition of spell to spellbook
-            if (toExecute->OnSpellGain(book, spellNum) == 0)
+            if( toExecute->OnSpellGain( book, spellNum ) == 0 )
             {
                 return;
             }
@@ -2834,6 +2799,43 @@ void CMagic::AddSpell( CItem *book, SI32 spellNum )
         UI32 targAmount = book->GetSpell( static_cast<UI08>( wordNum )) | flagToSet;
         book->SetSpell( static_cast<UI08>( wordNum ), targAmount );
     }
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CMagic::RemoveSpell()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes specific spell from given spellbook
+//o------------------------------------------------------------------------------------------------o
+void CMagic::RemoveSpell( CItem *book, SI32 spellNum )
+{
+	std::vector<UI16> scriptTriggers = book->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			// If script returns false/0, prevent removal of spell from spellbook
+			if( toExecute->OnSpellLoss( book, spellNum ) == 0 )
+			{
+				return;
+			}
+		}
+	}
+
+	if( !ValidateObject( book ))
+		return;
+
+	UI32 wordNum = spellNum / 32;
+	if( wordNum < 3 )
+	{
+		UI32 bitNum		= ( spellNum % 32 );
+		UI32 flagToSet	= power( 2, bitNum );
+		UI32 flagMask	= 0xFFFFFFFF;
+		UI32 targAmount;
+		flagMask ^= flagToSet;
+		targAmount = ( book->GetSpell( static_cast<UI08>( wordNum )) & flagMask );
+		book->SetSpell( static_cast<UI08>( wordNum ), targAmount );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
