@@ -10,7 +10,7 @@ function onUseChecked( pUser, iUsed )
 	var allHearSound = true;
 
 	// Get root container for iUsed
-	var iRootContainer = FindRootContainer( iUsed, 0 );
+	var iRootContainer = FindRootContainer( iUsed );
 	if( !ValidateObject( iRootContainer ))
 	{
 		// No root container. iUsed is on the ground/floor!
