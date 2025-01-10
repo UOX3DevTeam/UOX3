@@ -2,6 +2,8 @@ function SpellRegistration()
 {
 	RegisterSpell(201, true);
 	RegisterSpell(202, true);
+	RegisterSpell(203, true);
+	RegisterSpell(204, true);
 }
 
 function SpellTimerCheck(mChar, mSock)
@@ -569,8 +571,15 @@ function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster)
 		{
 			ourTarg = caster;
 		}
-		
-		if (ourTarg.dead) 
+		if (caster.InRange(ourTarg, 2) && caster.CanSee(ourTarg) && Math.abs(caster.z - ourTarg.z) < 4) 
+		{
+			if (caster.socket != null)
+			{
+				caster.socket.SysMessage("You are too far away to perform that action!");
+			}
+			return;
+		}	
+		else if (ourTarg.dead) 
 		{
 			if (caster.socket != null) 
 			{
@@ -578,7 +587,7 @@ function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster)
 			}
 			return;
 		}
-		else if (ourTarg.health >= ourTarg.health)
+		else if (ourTarg.health >= ourTarg.maxhp)
 		{
 			if (caster.socket != null)
 			{
@@ -606,11 +615,6 @@ function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster)
 		var healingAmount = CalculateHealing(caster);
 		ourTarg.health += healingAmount;
 
-		if (ourTarg.murderer)
-		{
-			caster.criminal = true;
-		}
-
 		if (ourTarg.socket != null)
 		{
 			ourTarg.socket.SysMessage("You have had " + healingAmount + " hit points of damage healed.");
@@ -620,6 +624,83 @@ function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster)
 		ourTarg.StaticEffect(0x376A, 1, 62);
 		ourTarg.StaticEffect(0x3779, 1, 46);
 	}
+	else if (spellNum == 203) // Consecrate Weapon
+	{
+		if (caster.socket != null)
+		{
+			caster.socket.SysMessage("Not Created Yet, Check back later");
+		}
+		return
+	}
+	else if (spellNum == 204) // Dispel Evil
+	{
+		caster.SoundEffect(0xF5, true);
+		caster.SoundEffect(0x299, true);
+		caster.StaticEffect(0x37C4, 1, 25);
+
+		var radius = 4;
+		AreaCharacterFunction("dispelEvilAreaEffect", caster, radius, null);
+
+		return
+	}
+
+	if (ourObj.murderer || ourObj.criminal)
+	{
+		caster.criminal = true;
+	}
+}
+
+function dispelEvilAreaEffect(srcChar, targetChar, socket)
+{
+	var dispelSkill = ComputePowerValue(srcChar, 2);
+
+	var chivalrySkill = srcChar.baseskills[51]; // Caster's Chivalry skill
+	var dispelDifficulty = 10; // Target's Dispel Difficulty
+	var dispelFocus = 20; // Target's Dispel Focus
+
+	// Ensure Dispel Focus is valid to avoid division by zero
+	if (dispelFocus <= 0)
+	{
+		dispelFocus = 1; // Default to 1 if not properly defined
+	}
+
+	// Calculate the base dispel chance
+	var dispelChance = (50.0 + (100 * (chivalrySkill - dispelDifficulty)) / (dispelFocus * 2)) / 100;
+
+	// Adjust chance based on the computed dispel skill
+	dispelChance *= dispelSkill / 100.0;
+
+	if (dispelChance > RandomNumber(0, 1) && targetChar.isDispellable)
+	{
+		targetChar.SoundEffect(0x201, true);
+		targetChar.StaticEffect(0x3728, 8, 20);
+		targetChar.Delete();
+		return true;
+	}
+
+	if (targetChar.npc)
+	{// beging flee
+		targetChar.wandertype = 6;
+	}
+
+	// Additional effects for transformed necromancers
+	if (targetChar.socket && targetChar.skills.necromancy > 0)
+	{
+		// Calculate Stamina and Mana damage
+		var karmaFactor = (srcChar.karma + 10000) / 20000;
+		var staminaDamage = Math.round(10 * karmaFactor);
+		var manaDamage = Math.round(15 * karmaFactor);
+
+		targetChar.stamina -= staminaDamage;
+		targetChar.mana -= manaDamage;
+
+		// Notify the target
+		targetChar.TextMessage("You feel a draining force! Stamina: -" + staminaDamage + ", Mana: -" + manaDamage);
+
+		return true;
+	}
+
+	return false;
 }
 
 function CalculateHealing(mChar) 
