@@ -121,7 +121,7 @@ private:
 	SI16		loskill;
 	SI16		sclo;
 	SI16		schi;
-	SI16		tithing;
+	SI32		tithing;
 	UI16		jsScript;
 	SI16		baseDmg;
 public:
@@ -158,7 +158,7 @@ public:
 	{
 		return mana;
 	}
-	SI16 Tithing( void ) const
+	SI32 Tithing( void ) const
 	{
 		return tithing;
 	}
@@ -315,7 +315,7 @@ public:
 	{
 		flags = newVal;
 	}
-	void Tithing( SI16 newVal )
+	void Tithing( SI32 newVal )
 	{
 		tithing	= newVal;
 	}
