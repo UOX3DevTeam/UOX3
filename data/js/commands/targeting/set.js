@@ -595,6 +595,10 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		ourChar.spdelay = nVal;
 		okMsg( socket );
 		break;
+	case "TITHING":
+		ourChar.tithing = nVal;
+		okMsg( socket );
+		break;
 	case "TITLE":
 		ourChar.title = socket.xText.substring( 6 );
 		okMsg( socket );
