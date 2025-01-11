@@ -2729,17 +2729,19 @@ bool CMagic::HasSpell( CItem *book, SI32 spellNum )
         return false;
 
     // Validate spell range for the book type
-    if(( book->GetType() == IT_SPELLBOOK && (spellNum < 1 || spellNum > 64 )) ||
-        ( book->GetType() == IT_PALADINBOOK && (spellNum < 201 || spellNum > 210 )))
+    if ((book->GetType() == IT_SPELLBOOK && (spellNum < 1 || spellNum > 64)) ||
+        (book->GetType() == IT_PALADINBOOK && (spellNum < 201 || spellNum > 210)) ||
+        (book->GetType() == IT_NECROBOOK && (spellNum < 101 || spellNum > 117)))
     {
+        Console.Error(oldstrutil::format("ERROR: HasSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType()));
         return false;
     }
 
-    // Adjust spell number for Paladin book
-    if( book->GetType() == IT_PALADINBOOK )
-    {
+	// Adjust spell number for different book types
+    if (book->GetType() == IT_PALADINBOOK)
         spellNum -= 200;
-    }
+    else if (book->GetType() == IT_NECROBOOK)
+        spellNum -= 100;
 
     // Determine which word and bit to check
     UI32 wordNum = ( spellNum - 1 ) / 32;  // Adjust for 0-based indexing
@@ -2850,12 +2852,16 @@ void CMagic::SpellBook( CSocket *mSock )
     CItem *spellBook = CalcItemObjFromSer( serial );
 
     // Ensure we have the correct book
-    if( !ValidateObject(spellBook ))
+	if( !ValidateObject( spellBook ))
     {
         spellBook = FindItemOfType( mChar, IT_SPELLBOOK );
         if( !ValidateObject( spellBook ))
         {
             spellBook = FindItemOfType( mChar, IT_PALADINBOOK );
+        }
+        if( !ValidateObject(spellBook ))
+        {
+            spellBook = FindItemOfType( mChar, IT_NECROBOOK ); // Check for Necromancer book
         }
     }
 
@@ -2873,9 +2879,10 @@ void CMagic::SpellBook( CSocket *mSock )
     }
 
     // Determine the type of spellbook
-    bool isPaladinBook = ( spellBook->GetType() == IT_PALADINBOOK );
-    int startSpell = isPaladinBook ? 201 : 1;
-    int endSpell = isPaladinBook ? 210 : 64;
+    bool isPaladinBook = (spellBook->GetType() == IT_PALADINBOOK);
+    bool isNecroBook = (spellBook->GetType() == IT_NECROBOOK);
+    int startSpell = isPaladinBook ? 201 : (isNecroBook ? 101 : 1);
+    int endSpell = isPaladinBook ? 210 : (isNecroBook ? 117 : 64);
 
     // Initialize spellsList
     UI08 spellsList[70] = {0}; // Covers maximum spells for fallback logic
@@ -2886,10 +2893,6 @@ void CMagic::SpellBook( CSocket *mSock )
 		if( HasSpell( spellBook, spellID ))
 	    {
 			spellsList[spellID - startSpell] = 1;
-		}
-		else
-		{
-			Console.Error(oldstrutil::format( "SpellBook: Spell %d is NOT available in the book.", spellID ));
 		}
 	}
 
@@ -3217,26 +3220,16 @@ bool CMagic::CheckBook( int circle, int spellOffset, CItem* book )
         return false;
     }
 
-    // Determine the type of spellbook and calculate the appropriate base spell number
-    int baseSpellNum = ( book->GetType() == IT_PALADINBOOK ) ? 201 : 1;
+	// Determine the type of spellbook and calculate the appropriate spell number range
+    int baseSpellNum = 1; // Default to regular spellbook
+    if( book->GetType() == IT_PALADINBOOK )
+        baseSpellNum = 201;
+    else if( book->GetType() == IT_NECROBOOK )
+        baseSpellNum = 101;
+
     int spellNum = (( circle - 1 ) * 8 ) + spellOffset + baseSpellNum;
 
-    // Debugging information
-    //Console.Print(oldstrutil::format( "DEBUG: CheckBook: Circle=%d, SpellOffset=%d, BaseSpellNum=%d, Calculated SpellNum=%d, BookType=%d",circle, spellOffset, baseSpellNum, spellNum, book->GetType()));
-
-    // Ensure the spellNum is within the valid range for the book type
-	int startRange = ( book->GetType() == IT_SPELLBOOK ) ? 1 : 201;
-	int endRange = ( book->GetType() == IT_SPELLBOOK ) ? 65 : 211;
-
-	if( spellNum < startRange || spellNum > endRange )
-	{
-		Console.Error(oldstrutil::format( "ERROR: CheckBook: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
-		return false;
-	}
-
-    // Debugging HasSpell result
     bool result = HasSpell( book, spellNum );
-   // Console.Print(oldstrutil::format("DEBUG: CheckBook: HasSpell returned %s for SpellNum=%d", result ? "true" : "false", spellNum));
     return result;
 }
 
@@ -5159,6 +5152,10 @@ void CMagic::LoadScript( void )
 								{
 									spells[i].BaseDmg( static_cast<SI16>( std::stoi( data, nullptr, 0 )));
 								}
+								else if( UTag == "BATWING" )
+								{
+									mRegs->batwing =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
+								}
 								break;
 							case 'C':
 								if( UTag == "CIRCLE" )
@@ -5174,6 +5171,10 @@ void CMagic::LoadScript( void )
 								else if( UTag == "DELAY" )
 								{
 									spells[i].Delay( static_cast<R32>( std::stof( data )));
+								}
+								else if( UTag == "DAEMONBLOOD" )
+								{
+									mRegs->daemonblood =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 								}
 								else if( UTag == "DRAKE" )
 								{
@@ -5210,6 +5211,10 @@ void CMagic::LoadScript( void )
 								else if( UTag == "GINSENG" )
 								{
 									mRegs->ginseng = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
+								}
+								else if( UTag == "GRAVEDUST" )
+								{
+									mRegs->gravedust =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 								}
 								break;
 							case 'H':
@@ -5254,11 +5259,22 @@ void CMagic::LoadScript( void )
 									}
 								}
 								break;
+							case 'N':
+								if( UTag == "NOXCRYSTAL" )
+								{
+									mRegs->noxcrystal =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
+								}
+								break;
 							case 'P':
 								if( UTag == "PEARL" )
 								{
 									mRegs->pearl = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 								}
+								else if( UTag == "PIGIRON" )
+								{
+									mRegs->pigiron = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
+								}
+								break;
 								break;
 							case 'R':
 								if( UTag == "RECOVERYDELAY" )

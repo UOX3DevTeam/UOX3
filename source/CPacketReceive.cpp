@@ -5575,6 +5575,7 @@ bool CPISpellbookSelect::Handle( void )
     CChar *ourChar = tSock->CurrcharObj();
     CItem *sBook = FindItemOfType( ourChar, IT_SPELLBOOK );
     CItem *pBook = FindItemOfType( ourChar, IT_PALADINBOOK );
+	CItem *nBook = FindItemOfType(ourChar, IT_NECROBOOK);
     CItem *packItem = ourChar->GetPackItem();
     UI08 *buffer = tSock->Buffer();
 
@@ -5585,10 +5586,13 @@ bool CPISpellbookSelect::Handle( void )
     }
 
     // Validate location
-    bool validLoc = ( ValidateObject(sBook) && 
-                     ( sBook->GetCont() == ourChar || ( ValidateObject(packItem) && sBook->GetCont() == packItem ))) ||
-                    ( ValidateObject(pBook ) && 
-                     ( pBook->GetCont() == ourChar || ( ValidateObject(packItem) && pBook->GetCont() == packItem )));
+	bool validLoc = 
+	    ( ValidateObject( sBook ) && 
+	     (sBook->GetCont() == ourChar || ( ValidateObject(packItem ) && sBook->GetCont() == packItem ))) ||
+	    ( ValidateObject( pBook ) && 
+	     (pBook->GetCont() == ourChar || ( ValidateObject(packItem ) && pBook->GetCont() == packItem ))) ||
+	    ( ValidateObject( nBook ) && 
+	     ( nBook->GetCont() == ourChar || ( ValidateObject(packItem ) && nBook->GetCont() == packItem )));
 
     if( !validLoc )
     {
@@ -5596,29 +5600,34 @@ bool CPISpellbookSelect::Handle( void )
         return true;
     }
 
-    // Determine the spellbook type and offset
-    int offset = 0;
-    CItem *activeBook = nullptr;
+	// Determine the spellbook type and offset
+	int offset = 0;
+	CItem *activeBook = nullptr;
 
-    // Use Buffer[8] to determine the spell number
-    int spellNumber = buffer[8];
+	// Use Buffer[8] to determine the spell number
+	int spellNumber = buffer[8];
 
-    if( ValidateObject( pBook ) && spellNumber >= 201 ) // Paladin spells
-    {
-        activeBook = pBook;
-        offset = 200; // Paladin spells offset starts from 201
-    }
-    else if( ValidateObject( sBook ) && spellNumber < 201 ) // Regular spells
-    {
-        activeBook = sBook;
-        offset = 0; // Regular spells offset starts from 1
-    }
+	if( ValidateObject( pBook ) && spellNumber >= 201 && spellNumber <= 210 ) // Paladin spells
+	{
+	    activeBook = pBook;
+	    offset = 200; // Paladin spells offset starts from 201
+	}
+	else if( ValidateObject( nBook ) && spellNumber >= 101 && spellNumber <= 117 ) // Necromancer spells
+	{
+	    activeBook = nBook;
+	    offset = 100; // Necromancer spells offset starts from 101
+	}
+	else if( ValidateObject( sBook ) && spellNumber < 201 ) // Regular spells
+	{
+	    activeBook = sBook;
+	    offset = 0; // Regular spells offset starts from 1
+	}
 
-    if( !ValidateObject( activeBook ))
-    {
-        tSock->SysMessage(764); // "You do not have that spell."
-        return true;
-    }
+	if( !ValidateObject( activeBook ))
+	{
+	    tSock->SysMessage(764); // "You do not have that spell."
+	    return true;
+	}
 
     // Calculate the actual spell number
     SI32 book = spellNumber - offset;

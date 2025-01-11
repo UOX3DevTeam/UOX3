@@ -161,10 +161,10 @@ weight=100
 value=22 11
 decay=1
 good=28
-origin=aos
-sectionid=0x2252
 spells=0x3ff 0x0 0x0
 type=100
+origin=aos
+sectionid=0x2252
 }
 
 [paladinspellbook]
@@ -181,6 +181,8 @@ weight=100
 value=22 11
 decay=1
 good=28
+spells=0x1FFFF 0x0 0x0
+type=99
 origin=aos
 sectionid=0x2253
 }

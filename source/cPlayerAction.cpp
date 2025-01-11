@@ -1523,14 +1523,16 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 
 	// Determine the type of spellbook
     bool isPaladinBook = ( spellBook.GetType() == IT_PALADINBOOK );
+    bool isNecroBook = ( spellBook.GetType() == IT_NECROBOOK );
     bool isRegularBook = ( spellBook.GetType() == IT_SPELLBOOK );
 
     // Validate the dropped scroll's ID range
-    bool isPaladinScroll = ( iDropped.GetId() >= 0x2270 && iDropped.GetId() <= 0x227C ); // Paladin scrolls
+    bool isPaladinScroll = ( iDropped.GetId() >= 0x2271 && iDropped.GetId() <= 0x227C ); // Paladin scrolls
+    bool isnNecroScroll = (iDropped.GetId() >= 0x2260 && iDropped.GetId() <= 0x2270); // Necro scrolls
     bool isRegularScroll = ( iDropped.GetId() >= 0x1F2D && iDropped.GetId() <= 0x1F6C ); // Regular scrolls
 
     // Check if the dropped item is a valid spell scroll and is dropped on correct book.
-	if(( isPaladinBook && !isPaladinScroll ) || ( isRegularBook && !isRegularScroll ))
+	if(( isNecroBook && !isnNecroScroll ) || ( isPaladinBook && !isPaladinScroll ) || ( isRegularBook && !isRegularScroll ))
 	{
 		Bounce( &mSock, &iDropped );
 		mSock.SysMessage( 1202 ); // "You can only place spell scrolls in a spellbook!"
@@ -1583,10 +1585,13 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
         {
             targSpellNum = scrollId - 0x1F2C; // Adjust to spell number range
         }
-        // Paladin spells
-        else if( scrollId >= 0x2270 && scrollId <= 0x227C )
+		else if( scrollId >= 0x2260 && scrollId <= 0x2270 ) 
+		{
+		    targSpellNum = scrollId - 0x225F + 100; // Adjust to Necromancer spell number range (101–117)
+		} 
+        else if( scrollId >= 0x2271 && scrollId <= 0x227C )
         {
-            targSpellNum = scrollId - 0x226F + 200; // Adjust to Paladin spell number range (201–210)
+            targSpellNum = scrollId - 0x2270 + 200; // Adjust to Paladin spell number range (201–210)
         }
 
         // Check if the spell already exists in the book
@@ -1990,7 +1995,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 		mSock->SysMessage( 1201 ); // As you let go of the item it disappears.
 		return;
 	}
-	else if( nCont->GetType() == IT_SPELLBOOK || nCont->GetType() == IT_PALADINBOOK )	// Spell Book
+	else if( nCont->GetType() == IT_SPELLBOOK || nCont->GetType() == IT_PALADINBOOK || nCont->GetType() == IT_NECROBOOK )	// Spell Book
 	{
 		DropOnSpellBook(( *mSock ), ( *mChar ), ( *nCont ), ( *nItem ));
 		return;
@@ -3351,6 +3356,7 @@ void InitTagToItemType( void )
 	tagToItemType["LOCKEDCONTAINER"]		= IT_LOCKEDCONTAINER;
 	tagToItemType["SPELLBOOK"]				= IT_SPELLBOOK;
 	tagToItemType["PALADINBOOK"]			= IT_PALADINBOOK;
+	tagToItemType["NECROBOOK"]				= IT_NECROBOOK;
 	tagToItemType["MAP"]					= IT_MAP;
 	tagToItemType["BOOK"]					= IT_BOOK;
 	tagToItemType["DOOR"]					= IT_DOOR;

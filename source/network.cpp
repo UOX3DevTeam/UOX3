@@ -1010,10 +1010,15 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 							// Try to find both regular and Paladin spellbooks
 							CItem *sBook = FindItemOfType( ourChar, IT_SPELLBOOK );
 							CItem *pBook = FindItemOfType( ourChar, IT_PALADINBOOK );
+							CItem *nBook = FindItemOfType( ourChar, IT_NECROBOOK );
 							CItem *activeBook = nullptr;
 
 							// Match the spell number with the correct book type
-							if( book >= 201 && book <= 210 && ValidateObject( pBook ))
+							if( book >= 101 && book <= 117 && ValidateObject( nBook ))
+							{
+								activeBook = nBook; // Necro book
+							}
+							else if( book >= 201 && book <= 210 && ValidateObject( pBook ))
 							{
 								activeBook = pBook; // Paladin book
 							}
@@ -1022,7 +1027,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 								activeBook = sBook; // Regular spellbook
 							}
 
-							if( !ValidateObject( activeBook )) // No valid book found
+							if( !ValidateObject( activeBook ))
 							{
 								mSock->SysMessage( 765 ); // "To cast spells, your spellbook must be in your hands or in the first layer of your pack."
 								break;

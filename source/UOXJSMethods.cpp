@@ -3034,9 +3034,10 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
         // Find spellbooks
         CItem *spellBook = FindItemOfType( myChar, IT_SPELLBOOK );
         CItem *paladinBook = FindItemOfType( myChar, IT_PALADINBOOK );
+		CItem *necroBook = FindItemOfType( myChar, IT_NECROBOOK );
 
         // If neither book is present, return false
-        if( !ValidateObject( spellBook ) && !ValidateObject( paladinBook ))
+        if( !ValidateObject( spellBook ) && !ValidateObject( paladinBook ) && !ValidateObject( necroBook ))
         {
             *rval = BOOLEAN_TO_JSVAL(JS_FALSE);
             return JS_TRUE;
@@ -3046,7 +3047,12 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
         CItem *activeBook = nullptr;
         int offset = 0;
 
-        if( spellId >= 201 && spellId <= 210 && ValidateObject( paladinBook ))
+		if( spellId >= 101 && spellId <= 117 && ValidateObject( necroBook ))
+        {
+            activeBook = necroBook;
+            offset = 100; // Necro spell offset
+        }
+        else if( spellId >= 201 && spellId <= 210 && ValidateObject( paladinBook ))
         {
             activeBook = paladinBook;
             offset = 200; // Paladin spell offset
