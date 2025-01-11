@@ -33,6 +33,14 @@ function CheckReagents( mChar, mSpell )
 	{
 		failedCheck = 1;
 	}
+	if( mSpell.gravedust > 0 && mChar.ResourceCount( 0xF8F ) < mSpell.gravedust )
+	{
+		failedCheck = 1;
+	}
+	if( mSpell.daemonblood > 0 && mChar.ResourceCount( 0xF7D ) < mSpell.daemonblood )
+	{
+		failedCheck = 1;
+	}
 	if( failedCheck == 1 )
 	{
 		if( mChar.socket != null )
@@ -41,10 +49,10 @@ function CheckReagents( mChar, mSpell )
 		}
 		return false;
 	}
-	else
-	{
+	//else
+	//{
 		return true;
-	}
+	//}
 }
 
 function DeleteReagents( mChar, mSpell )
@@ -57,4 +65,6 @@ function DeleteReagents( mChar, mSpell )
 	mChar.UseResource( mSpell.shade, 0x0F88 );
 	mChar.UseResource( mSpell.ash, 0x0F8C );
 	mChar.UseResource( mSpell.silk, 0x0F8D );
+	mChar.UseResource( mSpell.gravedust, 0xF8F );
+	mChar.UseResource( mSpell.daemonblood, 0xF7D );
 }

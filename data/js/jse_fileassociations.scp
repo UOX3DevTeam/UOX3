@@ -151,6 +151,7 @@
 3217=npc/ai/guildmaster.js
 3218=npc/ai/monster/chaos_dragoon.js
 3219=npc/ai/shopkeeper.js
+3222=npc/ai/summon/animated.js
 
 // Magic Items
 3300=item/magic_items.js

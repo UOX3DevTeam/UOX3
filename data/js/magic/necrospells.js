@@ -282,19 +282,8 @@ function onCallback0(mSock, ourTarg)
 	if (!ValidateObject(mChar))
 		return;
 
-	if (ValidateObject(ourTarg) && ourTarg.isChar)
+	if (ValidateObject(ourTarg))
 	{
-		if (ourTarg != mChar && mChar.spellCast != -1)
-		{
-			if (DoesEventExist(2507, "onSpellTarget"))
-			{
-				if (TriggerEvent(2507, "onSpellTarget", ourTarg, mChar, mChar.spellCast) != false)
-				{
-					return;
-				}
-			}
-		}
-
 		onSpellSuccess(mSock, mChar, ourTarg, 0);
 	}
 	else
@@ -348,7 +337,6 @@ function onTimer(mChar, timerID)
 
 function onSpellSuccess(mSock, mChar, ourTarg, spellID)
 {
-
 	if (mChar.isCasting)
 		return;
 
@@ -469,31 +457,6 @@ function onSpellSuccess(mSock, mChar, ourTarg, spellID)
 			}
 			return;
 		}
-
-		if (mSpell.reflectable)
-		{
-			if (ourTarg.magicReflect)
-			{
-				ourTarg.magicReflect = false;
-				ourTarg.StaticEffect(0x373A, 0, 15);
-				sourceChar = ourTarg;
-				ourTarg = mChar;
-			}
-		}
-	}
-
-	if (spellNum != 5)
-	{
-		if (sourceChar.npc)
-		{
-			ourTarg.SoundEffect(mSpell.soundEffect, true);
-		}
-		else
-		{
-			sourceChar.SoundEffect(mSpell.soundEffect, true);
-		}
-		sourceChar.SpellMoveEffect(ourTarg, mSpell);
-		ourTarg.SpellStaticEffect(mSpell);
 	}
 
 	// This is where the code actually executes ... all of this setup for a single line of code!
@@ -502,7 +465,7 @@ function onSpellSuccess(mSock, mChar, ourTarg, spellID)
 
 function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster) 
 {
-	if (spellNum == 101)// animate dead
+	if (spellNum == 101 )// animate dead
 	{
 		if (caster.socket.GetWord(1) || !ValidateObject(ourTarg))
 		{
@@ -510,7 +473,7 @@ function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster)
 			return;
 		}
 
-		if (ourTarg.isHuman)
+		if (ourTarg.isHuman || ourTarg.GetTag("animated"))
 		{
 			caster.socket.SysMessage("There's not enough life force there to animate."); // There's not enough life force there to animate.
 			return;
@@ -589,10 +552,16 @@ function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster)
 				break;
 
 			default:
-				caster.socket.SysMessage("broken");
+				caster.socket.SysMessage("error please report to gm");
 				break;
 		}
-		caster.socket.SysMessage("test 1" + animateDead);
+
+		if (animateDead == 0)
+		{
+			caster.socket.SysMessage("error please report to gm");
+			return;
+		}
+
 		// Calculate Value based on caster's skills
 		var necroSkill = caster.skills.necromancy; // Assuming skills are accessed this way
 		var spiritSpeakSkill = caster.skills.spiritspeak;
@@ -621,23 +590,36 @@ function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster)
 				}
 				break;
 			default:
-				socket.SysMessage(GetDictionaryEntry(2868, socket.language)); // Error message
+				caster.socket.SysMessage("error please report to gm");
 				return;
 		}
 
-		// Spawn the selected NPC
-		if (npcName) 
+		if (npcName == "")
 		{
-			var nSpawned = SpawnNPC(npcName, ourTarg.x, ourTarg.y, ourTarg.z, ourTarg.worldnumber);
-			if (nSpawned != null)
-			{
-				pUser.SysMessage("You have successfully animated a " + npcName + "!");
-				ourTarg.Delete();
-			}
-			else
-			{
-				pUser.SysMessage("Failed to animate the dead. Something went wrong.");
-			}
+			caster.socket.SysMessage("error please report to gm");
+			return;
+		}
+
+		// Spawn the selected NPC
+		var nSpawned = SpawnNPC(npcName, ourTarg.x, ourTarg.y, ourTarg.z, ourTarg.worldnumber);
+		if (nSpawned != null)
+		{
+			nSpawned.owner = caster;
+			nSpawned.Follow(caster);
+			nSpawned.SetTag("ownerSerial", caster.serial);
+			nSpawned.SetTag("animated", true);
+			nSpawned.AddScriptTrigger(3222);//animated script
+			nSpawned.fame = 0;
+			nSpawned.karma = -1500;
+			nSpawned.StartTimer(86400000, 1, 3222);
+			caster.SysMessage("You have successfully animated a " + npcName + "!");
+			ourTarg.colour = 1109;
+			ourTarg.SetTag("animated", true);
+			//ourTarg.Delete();
+		}
+		else
+		{
+			caster.SysMessage("Failed to animate the dead. Something went wrong.");
 		}
 	}
 }
