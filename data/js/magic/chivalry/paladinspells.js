@@ -531,4 +531,52 @@ function AutoUnequipAttempt(itemLHand, itemRHand, mChar)
 	return { lHandBlocks: lHandBlocks, rHandBlocks: rHandBlocks };
 }
 
+// Function to handle spell casting logic
+function SpellCasting(mChar, mSpell, spellType)
+{
+	var castingFocus = 40;
+	var difficulty = 50; // Use 50% as the default difficulty for all spells
+
+	// Set skill requirements based on spell type
+	var lowSkill = (spellType == 1) ? mSpell.scrollLow : mSpell.lowSkill;
+	var highSkill = (spellType == 1) ? mSpell.scrollHigh : mSpell.highSkill;
+
+	// Perform skill check
+	if (!mChar.CheckSkill(51, lowSkill, highSkill))
+	{
+		// Skill check failed
+		mChar.SysMessage("You failed to cast the spell.");
+		TriggerEvent(6004, "DeleteReagents", mChar, mSpell);
+		mChar.SpellFail();
+		mChar.SetTimer(Timer.SPELLTIME, 0);
+		mChar.isCasting = false;
+		mChar.spellCast = -1;
+		return false;
+	}
+
+	// Calculate Chance to Cast
+	var chanceToCast = ((mChar.baseskills[51] - (difficulty - (castingFocus / 2))) / castingFocus) * 100;
+	if (chanceToCast < 0)
+	{
+		chanceToCast = 0;
+	} 
+	else if (chanceToCast > 100)
+	{
+		chanceToCast = 100;
+	}
+
+	// Perform casting check
+	if (mChar.commandlevel < 2 && RandomNumber(0, 100) > chanceToCast)
+	{
+		// Handle spell failure
+		TriggerEvent(6004, "DeleteReagents", mChar, mSpell);
+		mChar.SpellFail();
+		mChar.SetTimer(Timer.SPELLTIME, 0);
+		mChar.isCasting = false;
+		mChar.spellCast = -1;
+		return false;
+	}
+	return true;
+}
+
 function _restorecontext_() {}

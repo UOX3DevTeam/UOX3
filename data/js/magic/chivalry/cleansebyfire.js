@@ -106,24 +106,7 @@ function onSpellSuccess(mSock, mChar, ourTarg, spellID)
 		}
 	}
 
-	// Set skill requirements based on spell type
-	var lowSkill = (spellType == 1) ? mSpell.scrollLow : mSpell.lowSkill;
-	var highSkill = (spellType == 1) ? mSpell.scrollHigh : mSpell.highSkill;
-
-	// Perform skill check
-	if (mChar.commandlevel < 2 && !mChar.CheckSkill(51, lowSkill, highSkill))
-	{
-		if (spellType == 0)
-		{
-			// Handle spell failure
-			TriggerEvent(6004, "DeleteReagents", mChar, mSpell);
-			mChar.SpellFail();
-			mChar.SetTimer(Timer.SPELLTIME, 0);
-			mChar.isCasting = false;
-			mChar.spellCast = -1;
-			return;
-		}
-	}
+	TriggerEvent(800, "SpellCasting", mChar, mSpell, spellType)
 
 	if (mChar.npc || spellType != 2)
 	{
