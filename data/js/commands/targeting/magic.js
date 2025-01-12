@@ -99,7 +99,7 @@ function onCallback2( socket, ourObj )
 			return;
 		}
 
-		if( !ValidateObject( ourObj.container ) || FindRootContainer( ourObj, 0 ) != mChar.pack )
+		if( !ValidateObject( ourObj.container ) || FindRootContainer( ourObj ) != mChar.pack )
 		{
 			socket.SysMessage( GetDictionaryEntry( 1763 )); // That item must be in your backpack before it can be used.
 			return;
