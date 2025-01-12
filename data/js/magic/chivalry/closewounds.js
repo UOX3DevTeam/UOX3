@@ -146,7 +146,7 @@ function onSpellSuccess(mSock, mChar, ourTarg, spellID)
 	}
 	else if (ourTarg.health >= ourTarg.maxhp)
 	{
-		if (mSock. != null)
+		if (mSock != null)
 		{
 			mSock.SysMessage("That being is not damaged!");
 			return;

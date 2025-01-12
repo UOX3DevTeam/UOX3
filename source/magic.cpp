@@ -2783,18 +2783,27 @@ void CMagic::AddSpell( CItem *book, SI32 spellNum )
     if( !ValidateObject( book ))
         return;
 
-    // Validate spell number range
+    // Validate spell number range for the book type
     if(( book->GetType() == IT_SPELLBOOK && ( spellNum < 1 || spellNum > 64 )) ||
-        ( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )))
+        ( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
+        ( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
     {
+        Console.Error( oldstrutil::format( "ERROR: AddSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
         return;
     }
 
+    // Adjust spell number for different book types
+    if( book->GetType() == IT_PALADINBOOK )
+        spellNum -= 200;
+    else if( book->GetType() == IT_NECROBOOK )
+        spellNum -= 100;
+
     // Calculate word and bit position
-    UI32 wordNum = spellNum / 32;
+    UI32 wordNum = ( spellNum - 1 ) / 32;  // Adjust for 0-based indexing
+    UI32 bitNum = ( spellNum - 1 ) % 32;  // Calculate the bit index within the word
+
     if( wordNum < 3 ) // Ensure valid word index
     {
-        UI32 bitNum = spellNum % 32;
         UI32 flagToSet = 1 << bitNum;
 
         // Retrieve current spells and update

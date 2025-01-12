@@ -118,7 +118,7 @@ function StatsCheck(mChar, mSock, spellType, mSpell)
 				mChar.SetTimer(Timer.SPELLTIME, 0);
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
-				return true;
+				return false;
 			}
 			if (mSpell.stamina > mChar.stamina)
 			{
@@ -129,7 +129,7 @@ function StatsCheck(mChar, mSock, spellType, mSpell)
 				mChar.SetTimer(Timer.SPELLTIME, 0);
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
-				return true;
+				return false;
 			}
 			if (mSpell.health >= mChar.health)
 			{
@@ -140,7 +140,7 @@ function StatsCheck(mChar, mSock, spellType, mSpell)
 				mChar.SetTimer(Timer.SPELLTIME, 0);
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
-				return true;
+				return false;
 			}
 			if (mSpell.tithing >= mChar.tithing) 
 			{
@@ -151,10 +151,11 @@ function StatsCheck(mChar, mSock, spellType, mSpell)
 				mChar.SetTimer(Timer.SPELLTIME, 0);
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
-				return true;
+				return false;
 			}
 		}
 	}
+	return true;
 }
 
 function onSpellCast(mSock, mChar, directCast, spellNum)
