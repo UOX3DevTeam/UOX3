@@ -102,6 +102,61 @@ function ItemInHandCheck(mChar, mSock, spellType)
 	return true;
 }
 
+function StatsCheck(mChar, mSock, spellType, mSpell)
+{
+	if (mChar.commandlevel < 2)
+	{
+		// type == 2 - Wands
+		if (spellType != 2)
+		{
+			if (mSpell.mana > mChar.mana)
+			{
+				if (mSock != null)
+				{
+					mSock.SysMessage(GetDictionaryEntry(696, mSock.language)); // You have insufficient mana to cast that spell.
+				}
+				mChar.SetTimer(Timer.SPELLTIME, 0);
+				mChar.isCasting = false;
+				mChar.spellCast = -1;
+				return true;
+			}
+			if (mSpell.stamina > mChar.stamina)
+			{
+				if (mSock != null)
+				{
+					mSock.SysMessage(GetDictionaryEntry(697, mSock.language)); // You have insufficient stamina to cast that spell.
+				}
+				mChar.SetTimer(Timer.SPELLTIME, 0);
+				mChar.isCasting = false;
+				mChar.spellCast = -1;
+				return true;
+			}
+			if (mSpell.health >= mChar.health)
+			{
+				if (mSock != null)
+				{
+					mSock.SysMessage(GetDictionaryEntry(698, mSock.language)); // You have insufficient health to cast that spell.
+				}
+				mChar.SetTimer(Timer.SPELLTIME, 0);
+				mChar.isCasting = false;
+				mChar.spellCast = -1;
+				return true;
+			}
+			if (mSpell.tithing >= mChar.tithing) 
+			{
+				if (mSock != null)
+				{
+					mSock.SysMessage("You must have at least " + mSpell.tithing + " Tithing Points to use this ability,"); // You must have at least ~1_TITHE_REQUIREMENT~ Tithing Points to use this ability,
+				}
+				mChar.SetTimer(Timer.SPELLTIME, 0);
+				mChar.isCasting = false;
+				mChar.spellCast = -1;
+				return true;
+			}
+		}
+	}
+}
+
 function onSpellCast(mSock, mChar, directCast, spellNum)
 {
 	// Are we recovering from another spell that was just cast
@@ -203,57 +258,9 @@ function onSpellCast(mSock, mChar, directCast, spellNum)
 	{
 		mChar.BreakConcentration(mSock);
 	}
-	if (mChar.commandlevel < 2)
-	{
-		// type == 2 - Wands
-		if (spellType != 2)
-		{
-			if (mSpell.mana > mChar.mana)
-			{
-				if (mSock != null)
-				{
-					mSock.SysMessage(GetDictionaryEntry(696, mSock.language)); // You have insufficient mana to cast that spell.
-				}
-				mChar.SetTimer(Timer.SPELLTIME, 0);
-				mChar.isCasting = false;
-				mChar.spellCast = -1;
-				return true;
-			}
-			if (mSpell.stamina > mChar.stamina)
-			{
-				if (mSock != null)
-				{
-					mSock.SysMessage(GetDictionaryEntry(697, mSock.language)); // You have insufficient stamina to cast that spell.
-				}
-				mChar.SetTimer(Timer.SPELLTIME, 0);
-				mChar.isCasting = false;
-				mChar.spellCast = -1;
-				return true;
-			}
-			if (mSpell.health >= mChar.health)
-			{
-				if (mSock != null)
-				{
-					mSock.SysMessage(GetDictionaryEntry(698, mSock.language)); // You have insufficient health to cast that spell.
-				}
-				mChar.SetTimer(Timer.SPELLTIME, 0);
-				mChar.isCasting = false;
-				mChar.spellCast = -1;
-				return true;
-			}
-			if (mSpell.tithing >= mChar.tithing) 
-			{
-				if (mSock != null)
-				{
-					mSock.SysMessage("You must have at least " + mSpell.tithing + " Tithing Points to use this ability,"); // You must have at least ~1_TITHE_REQUIREMENT~ Tithing Points to use this ability,
-				}
-				mChar.SetTimer(Timer.SPELLTIME, 0);
-				mChar.isCasting = false;
-				mChar.spellCast = -1;
-				return true;
-			}
-		}
-	}
+
+	if(! StatsCheck(mChar, mSock, spellType, mSpell))
+		return true;
 
 	mChar.nextAct = 75;		// why 75?
 
