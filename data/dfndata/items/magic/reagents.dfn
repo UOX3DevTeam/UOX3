@@ -38,6 +38,16 @@ packitem=0x0f8c,6
 packitem=0x0f8d,6
 }
 
+[bagofnecroreagents]
+{
+get=0x0e76
+packitem=gravedust,50
+packitem=daemonblood,50
+packitem=pigiron,50
+packitem=noxcrystal,50
+packitem=batwing,50
+}
+
 [0x0f7a]
 {
 get=base_reagent

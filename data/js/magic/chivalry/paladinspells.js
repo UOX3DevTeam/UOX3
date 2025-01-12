@@ -4,6 +4,9 @@ function SpellRegistration()
 	RegisterSpell(202, true);
 	RegisterSpell(203, true);
 	RegisterSpell(204, true);
+	RegisterSpell(207, true);
+	RegisterSpell(208, true);
+	RegisterSpell(210, true);
 }
 
 function SpellTimerCheck(mChar, mSock)
@@ -132,19 +135,32 @@ function onSpellCast(mSock, mChar, directCast, spellNum)
 	if (!JailTimerCheck(mChar, mSock))
 		return true;
 
-	// Region checks
-	var ourRegion = mChar.region;
-	if ((spellNum == 45 && ourRegion.canMark) || (spellNum == 52 && !ourRegion.canGate()) || (spellNum == 32 && !ourRegion.canRecall()))
+	if (spellNum == 210 && !GetServerSetting("TravelSpellsWhileAggressor") && mChar.IsAggressor())
 	{
-		if (mSock != null)
-		{
-			mSock.SysMessage(GetDictionaryEntry(705, mSock.language)); // This is not allowed here.
-		}
-		mChar.SetTimer(Timer.SPELLTIME, 0);
-		mChar.isCasting = false;
-		mChar.spellCast = -1;
+		mSock.SysMessage("You cannot use the Sacred Journey ability to flee from combat."); // You cannot use the Sacred Journey ability to flee from combat.
 		return true;
 	}
+
+	if (spellNum == 210 && (mChar.criminal || mChar.murderer))
+	{
+		mSock.SysMessage("Thou'rt a criminal and cannot escape so easily."); // Thou'rt a criminal and cannot escape so easily.
+		return true;
+	}
+
+
+	// Region checks
+	var ourRegion = mChar.region;
+	//if ((spellNum == 45 && ourRegion.canMark) || (spellNum == 52 && !ourRegion.canGate()) || ((spellNum == 32 || spellNum == 210) && !ourRegion.canRecall()))
+	//{
+	//	if (mSock != null)
+	//	{
+	//		mSock.SysMessage(GetDictionaryEntry(705, mSock.language)); // This is not allowed here.
+	//	}
+	//	mChar.SetTimer(Timer.SPELLTIME, 0);
+	//	mChar.isCasting = false;
+	//	mChar.spellCast = -1;
+	//	return true;
+	//}
 
 	if (mSpell.aggressiveSpell)
 	{
@@ -190,7 +206,8 @@ function onSpellCast(mSock, mChar, directCast, spellNum)
 	if (mChar.commandlevel < 2)
 	{
 		// type == 2 - Wands
-		if (spellType != 2) {
+		if (spellType != 2)
+		{
 			if (mSpell.mana > mChar.mana)
 			{
 				if (mSock != null)
@@ -255,7 +272,7 @@ function onSpellCast(mSock, mChar, directCast, spellNum)
 		mChar.SetTimer(Timer.SPELLTIME, 0);
 	}
 
-	if (!mChar.isonhorse)
+	if (!mChar.isonhorse && (spellNum != 207 || spellNum != 208))
 	{
 		var actionID = mSpell.action;
 		if (mChar.isHuman || actionID != 0x22)
@@ -274,177 +291,25 @@ function onSpellCast(mSock, mChar, directCast, spellNum)
 
 	mChar.isCasting = true;
 
-	mChar.StartTimer(delay * 1000, spellNum, true);
+	mChar.SpellStaticEffect(mSpell);
+	var triggerNum = 800;
+	switch (spellNum)
+	{
+		case 201: triggerNum = 6101; break;// Cleanse by Fire
+		case 202: triggerNum = 6102; break;// Close Wounds
+		case 204: triggerNum = 6104; break;// Dispel Evil
+		case 207: triggerNum = 6107; break;// Holy Light
+		case 208: triggerNum = 6108; break;// Noble Scrifice
+		case 210: triggerNum = 6110; break;// Sacred Journey
+	}
+
+	mChar.StartTimer(delay * 1000, spellNum, triggerNum);
 
 	return true;
 }
 
-function onCallback0(mSock, ourTarg) 
+function RegionCheck(mSock, sourceChar, mSpell, ourTarg)
 {
-	var mChar = mSock.currentChar;
-	if (!ValidateObject(mChar))
-		return;
-
-	if (ValidateObject(ourTarg) && ourTarg.isChar)
-	{
-		if (ourTarg != mChar && mChar.spellCast != -1)
-		{
-			if (DoesEventExist(2507, "onSpellTarget"))
-			{
-				if (TriggerEvent(2507, "onSpellTarget", ourTarg, mChar, mChar.spellCast) != false)
-				{
-					return;
-				}
-			}
-		}
-
-		onSpellSuccess(mSock, mChar, ourTarg, 0);
-	}
-	else
-	{
-		mChar.SetTimer(Timer.SPELLTIME, 0);
-		mChar.isCasting = false;
-		mChar.spellCast = -1;
-		mChar.frozen = false;
-		mChar.Refresh();
-	}
-}
-
-function onTimer(mChar, timerID) 
-{
-	mChar.isCasting = false;
-	mChar.frozen = false;
-	mChar.Refresh();
-
-	if (mChar.npc) 
-	{
-		var ourTarg = mChar.target;
-		if (ourTarg && ourTarg.isChar)
-		{
-			onSpellSuccess(null, mChar, ourTarg, timerID);
-		}
-	} 
-	else
-	{
-		var mSock = mChar.socket;
-		if (mSock != null)
-		{
-			var cursorType = 0;
-			var spellNum = mChar.spellCast;
-			if (spellNum == -1)
-				return;
-
-			if (Spells[spellNum].aggressiveSpell)
-			{
-				cursorType = 1; // Hostile cursor type
-			}
-			else if (spellNum == 202) // Heal
-			{
-				cursorType = 2; // Friendly cursor type
-			}
-
-			mChar.SetTimer(Timer.SPELLRECOVERYTIME, Spells[spellNum].recoveryDelay);
-			mSock.CustomTarget( 0, Spells[timerID].strToSay, cursorType );
-		}
-	}
-}
-
-function onSpellSuccess(mSock, mChar, ourTarg, spellID)
-{
-
-	if (mChar.isCasting)
-		return;
-
-	var spellNum = mChar.spellCast;
-	if (spellNum == -1) 
-	{
-		if (spellID != -1) 
-		{
-			spellNum = spellID;
-		}
-		else
-		{
-			return;
-		}
-	}
-
-	var mSpell = Spells[spellNum];
-	var spellType = 0;
-	var sourceChar = mChar;
-
-	if (mSock != null)
-	{
-		spellType = mSock.currentSpellType;
-	}
-
-	mChar.SetTimer(Timer.SPELLTIME, 0);
-	mChar.spellCast = -1;
-
-	// If player commandlevel is below GM-level, check for reagents
-	if (mSock != null && mChar.commandlevel < 2)
-	{
-		//Check for enough reagents
-		// type == 0 -> SpellBook
-		if (spellType == 0 && !TriggerEvent(6004, "CheckReagents", mChar, mSpell))
-		{
-			mChar.SetTimer(Timer.SPELLTIME, 0);
-			mChar.isCasting = false;
-			mChar.spellCast = -1;
-			return;
-		}
-	}
-
-	// Cut the casting requirement on scrolls
-	var lowSkill, highSkill;
-	if (spellType == 1)
-	{
-		lowSkill = mSpell.scrollLow;
-		highSkill = mSpell.scrollHigh;
-	}
-	else
-	{
-		lowSkill = mSpell.lowSkill;
-		highSkill = mSpell.highSkill;
-	}
-
-	// Do skillcheck
-	if ((mChar.commandlevel < 2) && (!mChar.CheckSkill(51, lowSkill, highSkill))) 
-	{
-		if (spellType == 0) 
-		{
-			TriggerEvent(6004, "DeleteReagents", mChar, mSpell);
-			mChar.SpellFail();
-			mChar.SetTimer(Timer.SPELLTIME, 0);
-			mChar.isCasting = false;
-			mChar.spellCast = -1;
-			return;
-		}
-	}
-
-	if (mChar.npc || spellType != 2)
-	{
-		mChar.mana -= mSpell.mana;
-		mChar.health -= mSpell.health;
-		mChar.stamina -= mSpell.stamina;
-		mChar.tithing -= mSpell.tithing;
-	}
-	if (!mChar.npc && spellType == 0) 
-	{
-		TriggerEvent(6004, "DeleteReagents", mChar, mSpell);
-	}
-
-	if (!mChar.InRange(ourTarg, 10))
-	{
-		if (mSock != null)
-		{
-			mSock.SysMessage(GetDictionaryEntry(712, mSock.language)); // You can't cast on someone that far away!
-		}
-		return;
-	}
-
-	if (!mChar.CanSee(ourTarg))
-		return;
-
 	var targRegion = ourTarg.region;
 	if (mSpell.aggressiveSpell) 
 	{
@@ -484,223 +349,6 @@ function onSpellSuccess(mSock, mChar, ourTarg, spellID)
 			}
 		}
 	}
-
-	if (spellNum != 5)
-	{
-		if (sourceChar.npc)
-		{
-			ourTarg.SoundEffect(mSpell.soundEffect, true);
-		}
-		else
-		{
-			sourceChar.SoundEffect(mSpell.soundEffect, true);
-		}
-		sourceChar.SpellMoveEffect(ourTarg, mSpell);
-		ourTarg.SpellStaticEffect(mSpell);
-	}
-
-	// This is where the code actually executes ... all of this setup for a single line of code!
-	DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, mChar);
-}
-
-function DispatchSpell(spellNum, mSpell, sourceChar, ourTarg, caster) 
-{
-	var chivalrySkill = caster.skills.chivalry;
-	if (spellNum == 201)// cleanse by fire
-	{
-		// Check if the target is poisoned or diseased
-		if (!ourTarg.poison /*&& !ourTarg.diseased*/)
-		{
-			if (caster.socket != null)
-			{
-				caster.socket.SysMessage("That creature is not poisoned!");
-			}
-			return;
-		}
-
-		// Chance to cure calculation
-		//var chivalrySkill = sourceChar.baseskills[51]; // Chivalry skill index
-		var poisonLevel = ourTarg.poison; // Poison level of the target
-		var chanceToCure = 10000 + (chivalrySkill * 75) - ((poisonLevel + 1) * 2000);
-		chanceToCure /= 100;
-
-		if (chanceToCure > RandomNumber(0, 100))
-		{
-			// Successfully cured
-			ourTarg.SetPoisoned(0, 0);
-			//ourTarg.diseased = false;
-			ourTarg.StaticEffect(0x373A, 0, 15); // Cleansing visual effect
-			ourTarg.SoundEffect(0x1E0, true);
-
-			if (caster.socket != null)
-			{
-				if (ourTarg == caster)
-				{
-					caster.socket.SysMessage("You have been cured of all poisons.");
-				}
-				else
-				{
-					caster.socket.SysMessage("You have cured the target of all poisons!");
-				}
-			}
-		}
-		else
-		{
-			if (caster.socket != null)
-			{
-				caster.socket.SysMessage("You have failed to cure your target!");
-			}
-		}
-
-		var damage = CalculateDamage(caster);
-
-		if (caster.health > damage)
-		{
-			caster.Damage(damage, caster); // Apply damage to the caster
-		}
-		else 
-		{
-			caster.health = 1; // Ensure the caster stays alive
-		}
-
-		//DoTempEffect(0, sourceChar, ourTarg, 4, Math.round(chivalrySkill / 100), 0, 0);
-	}
-	else if (spellNum == 202)// Close Wounds
-	{
-		if (caster.npc) 
-		{
-			ourTarg = caster;
-		}
-		if (caster.InRange(ourTarg, 2) && caster.CanSee(ourTarg) && Math.abs(caster.z - ourTarg.z) < 4) 
-		{
-			if (caster.socket != null)
-			{
-				caster.socket.SysMessage("You are too far away to perform that action!");
-			}
-			return;
-		}	
-		else if (ourTarg.dead) 
-		{
-			if (caster.socket != null) 
-			{
-				caster.socket.SysMessage("You cannot heal that which is not alive.");
-			}
-			return;
-		}
-		else if (ourTarg.health >= ourTarg.maxhp)
-		{
-			if (caster.socket != null)
-			{
-				caster.socket.SysMessage("That being is not damaged!");
-				return;
-			}
-		}
-		else if (ourTarg.poison)
-		{
-			if (caster.socket != null) 
-			{
-				if (ourTarg == caster)
-				{
-					caster.socket.SysMessage("You cannot heal yourself in your current state.");
-					return;
-				}
-				else 
-				{
-					caster.socket.SysMessage("You cannot heal that target in their current state.");
-					return;
-				}
-			}
-		}
-
-		var healingAmount = CalculateHealing(caster);
-		ourTarg.health += healingAmount;
-
-		if (ourTarg.socket != null)
-		{
-			ourTarg.socket.SysMessage("You have had " + healingAmount + " hit points of damage healed.");
-		}
-
-		ourTarg.SoundEffect(0x202, true);
-		ourTarg.StaticEffect(0x376A, 1, 62);
-		ourTarg.StaticEffect(0x3779, 1, 46);
-	}
-	else if (spellNum == 203) // Consecrate Weapon
-	{
-		if (caster.socket != null)
-		{
-			caster.socket.SysMessage("Not Created Yet, Check back later");
-		}
-		return
-	}
-	else if (spellNum == 204) // Dispel Evil
-	{
-		caster.SoundEffect(0xF5, true);
-		caster.SoundEffect(0x299, true);
-		caster.StaticEffect(0x37C4, 1, 25);
-
-		var radius = 4;
-		AreaCharacterFunction("dispelEvilAreaEffect", caster, radius, null);
-
-		return
-	}
-
-	if (ourObj.murderer || ourObj.criminal)
-	{
-		caster.criminal = true;
-	}
-}
-
-function dispelEvilAreaEffect(srcChar, targetChar, socket)
-{
-	var dispelSkill = ComputePowerValue(srcChar, 2);
-
-	var chivalrySkill = srcChar.baseskills[51]; // Caster's Chivalry skill
-	var dispelDifficulty = 10; // Target's Dispel Difficulty
-	var dispelFocus = 20; // Target's Dispel Focus
-
-	// Ensure Dispel Focus is valid to avoid division by zero
-	if (dispelFocus <= 0)
-	{
-		dispelFocus = 1; // Default to 1 if not properly defined
-	}
-
-	// Calculate the base dispel chance
-	var dispelChance = (50.0 + (100 * (chivalrySkill - dispelDifficulty)) / (dispelFocus * 2)) / 100;
-
-	// Adjust chance based on the computed dispel skill
-	dispelChance *= dispelSkill / 100.0;
-
-	if (dispelChance > RandomNumber(0, 1) && targetChar.isDispellable)
-	{
-		targetChar.SoundEffect(0x201, true);
-		targetChar.StaticEffect(0x3728, 8, 20);
-		targetChar.Delete();
-		return true;
-	}
-
-	if (targetChar.npc)
-	{// beging flee
-		targetChar.wandertype = 6;
-	}
-
-	// Additional effects for transformed necromancers
-	if (targetChar.socket && targetChar.skills.necromancy > 0)
-	{
-		// Calculate Stamina and Mana damage
-		var karmaFactor = (srcChar.karma + 10000) / 20000;
-		var staminaDamage = Math.round(10 * karmaFactor);
-		var manaDamage = Math.round(15 * karmaFactor);
-
-		targetChar.stamina -= staminaDamage;
-		targetChar.mana -= manaDamage;
-
-		// Notify the target
-		targetChar.TextMessage("You feel a draining force! Stamina: -" + staminaDamage + ", Mana: -" + manaDamage);
-
-		return true;
-	}
-
-	return false;
 }
 
 function CalculateHealing(mChar) 
@@ -716,15 +364,16 @@ function CalculateHealing(mChar)
 	if (toHeal < minHeal)
 	{
 		toHeal = minHeal;
-	} else if (toHeal > maxHeal)
+	}
+	else if (toHeal > maxHeal)
 	{
 		toHeal = maxHeal;
 	}
 
 	// Ensure healing does not exceed character's max health
-	if ((mChar.hp + toHeal) > mChar.hpMax) 
+	if ((mChar.health + toHeal) > mChar.maxhp) 
 	{
-		toHeal = mChar.hpMax - mChar.hp;
+		toHeal = mChar.maxhp - mChar.health;
 	}
 
 	return toHeal;
@@ -753,6 +402,72 @@ function CalculateDamage(mChar)
 	}
 
 	return damage;
+}
+
+function CalculateHitLoc()
+{
+	var BODYPERCENT = 0;
+	var ARMSPERCENT = 1;
+	var HEADPERCENT = 2;
+	var LEGSPERCENT = 3;
+	var NECKPERCENT = 4;
+	var OTHERPERCENT = 5;
+	var TOTALTARGETSPOTS = 6;
+
+	var LOCPERCENTAGES = new Array(44, 14, 14, 14, 7, 7);
+
+	var hitLoc = RandomNumber(0, 99); // Determine area of Body Hit
+	for (var t = BODYPERCENT; t < TOTALTARGETSPOTS; ++t)
+	{
+		hitLoc -= LOCPERCENTAGES[t];
+		if (hitLoc < 0)
+		{
+			hitLoc = t + 1;
+			break;
+		}
+	}
+	return hitLoc;
+}
+
+function MagicDamage(p, amount, attacker, mSock, element)
+{
+	if (p != attacker)
+	{
+		if (!ValidateObject(p) || !ValidateObject(attacker))
+			return;
+
+		if (p.dead || p.health <= 0)	// extra condition check, to see if deathstuff hasn't been hit yet
+			return;
+
+		if (p.frozen && p.dexterity > 0)
+		{
+			p.frozen = false;
+			p.Refresh();
+			if (mSock != null)
+			{
+				mSock.SysMessage(GetDictionaryEntry(700, mSock.language)); // You are no longer frozen.
+			}
+		}
+
+		if (p.vulnerable && p.region.canCastAggressive)
+		{
+			var hitLoc = CalculateHitLoc();
+			var damage = ApplyDamageBonuses(element, attacker, p, 25, hitLoc, amount);
+			damage = ApplyDefenseModifiers(element, attacker, p, 25, hitLoc, damage, true);
+
+			if (damage <= 0)
+			{
+				damage = 1;
+			}
+
+			// Double spell-damage against non-human NPCs
+			if (p.npc && !p.isHuman)
+			{
+				damage *= 2;
+			}
+			//DoTempEffect(0, attacker, p, 28, damage, 0, 0);
+		}
+	}
 }
 
 // Calculate damage to the caster based on Karma and Chivalry skill
