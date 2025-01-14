@@ -17,7 +17,7 @@ function onUseChecked( pUser, iBowl )
 		var bowlOwner = GetPackOwner( iBowl, 0 );
 		if( bowlOwner == null || bowlOwner != pUser )
 		{
-			socket.SysMessage( GetDictionaryEntry(19132, socket.language )); //You must have the object in your backpack to use it.
+			socket.SysMessage( GetDictionaryEntry( 19132, socket.language )); //You must have the object in your backpack to use it.
 		}
 		else
 		{
