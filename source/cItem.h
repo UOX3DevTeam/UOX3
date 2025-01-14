@@ -45,6 +45,7 @@ protected:
 	ItemLayers		layer;			// Layer if equipped on paperdoll
 	ItemTypes		type;			// For things that do special things on doubleclicking
 	SI08			offspell;
+	SI16			durabilityHpBonus;
 	UI16			entryMadeFrom;
 	SERIAL			creator;		// Store the serial of the player made this item
 	SI08			gridLoc;
@@ -112,6 +113,9 @@ public:
 
 	auto			GetStealable() const -> UI08;
 	auto			SetStealable( UI08 newValue ) -> void;
+
+	virtual SI16	GetDurabilityHpBonus(void) const;
+	virtual void	SetDurabilityHpBonus(SI16 newValue);
 
 	auto			IsDoorOpen() const -> bool;
 	auto			IsPileable() const -> bool;

@@ -94,7 +94,6 @@ const SI16			DEFBASE_KILLS		= 0;
 const UI16			DEFBASE_RESIST 		= 0;
 const bool			DEFBASE_NAMEREQUESTACTIVE = 0;
 const ExpansionRuleset	DEFBASE_ORIGIN	= ER_UO;
-const SI16			DEFBASE_DURABLITITYHPBONUS = 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
@@ -111,8 +110,7 @@ loDamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ),
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ),
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
-fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN ),
-durabilityHpBonus( DEFBASE_DURABLITITYHPBONUS )
+fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
@@ -1001,27 +999,6 @@ void CBaseObject::SetIntelligence( SI16 newValue )
 {
 	intelligence = newValue;
 
-	if( CanBeObjType( OT_ITEM ))
-	{
-		( static_cast<CItem *>( this ))->UpdateRegion();
-	}
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CBaseObject::GetDurabilityHpBonus()
-//|					CBaseObject::SetDurabilityHpBonus()
-//|	Date		-	5 May, 2024
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the Bonus hp on the object
-//o------------------------------------------------------------------------------------------------o
-
-SI16 CBaseObject::GetDurabilityHpBonus( void ) const
-{
-	return durabilityHpBonus;
-}
-void CBaseObject::SetDurabilityHpBonus( SI16 newValue )
-{
-	durabilityHpBonus = newValue;
 	if( CanBeObjType( OT_ITEM ))
 	{
 		( static_cast<CItem *>( this ))->UpdateRegion();

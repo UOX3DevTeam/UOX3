@@ -93,6 +93,7 @@ const UI16			DEFITEM_MAXUSES			= 0;
 const UI16			DEFITEM_REGIONNUM 		= 255;
 const UI16			DEFITEM_TEMPLASTTRADED	= 0;
 const SI08			DEFITEM_STEALABLE	 	= 1;
+const SI16			DEFITEM_DURABLITITYHPBONUS = 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem()
@@ -107,7 +108,7 @@ spd( DEFITEM_SPEED ), maxHp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
 creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
 maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM ), 
-tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE )
+tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), durabilityHpBonus( DEFITEM_DURABLITITYHPBONUS )
 {
 	spells[0]	= spells[1] = spells[2] = 0;
 	value[0]	= value[1] = value[2] = 0;
@@ -154,6 +155,26 @@ auto CItem::GetContSerial( void ) const -> SERIAL
 		return contObj->GetSerial();
 
 	return INVALIDSERIAL;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetDurabilityHpBonus()
+//|					CItem::SetDurabilityHpBonus()
+//|	Date		-	5 May, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Bonus hp on the object
+//o------------------------------------------------------------------------------------------------o
+SI16 CItem::GetDurabilityHpBonus(void) const
+{
+	return durabilityHpBonus;
+}
+void CItem::SetDurabilityHpBonus(SI16 newValue)
+{
+	durabilityHpBonus = newValue;
+	if (CanBeObjType(OT_ITEM))
+	{
+		(static_cast<CItem*>(this))->UpdateRegion();
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o

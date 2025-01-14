@@ -69,7 +69,6 @@ protected:
 	SI16				dexterity;
 	SI16				intelligence;
 	SI16				hitpoints;
-	SI16				durabilityHpBonus;
 	VisibleTypes		visible;
 	SI16				hiDamage;
 	SI16				loDamage;
@@ -223,9 +222,6 @@ public:
 	virtual void			SetIntelligence( SI16 newValue );
 	virtual void			SetHP( SI16 newValue );
 	void					IncHP( SI16 amtToChange );
-
-	virtual SI16			GetDurabilityHpBonus( void ) const;
-	virtual void			SetDurabilityHpBonus( SI16 newValue );
 
 	void					SetDir( UI08 newDir, bool sendUpdate = true );
 	UI08					GetDir( void ) const;
