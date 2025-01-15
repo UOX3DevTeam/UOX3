@@ -1043,7 +1043,7 @@ void CBaseObject::IncHP( SI16 amtToChange )
 //|	Function	-	CBaseObject::GetHitChance()
 //|					CBaseObject::SetHitChance()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the Defense Chance of the Item Equiped
+//|	Purpose		-	Gets/Sets the Defense Chance of the Item(s) Equiped or Character
 //o------------------------------------------------------------------------------------------------o
 SI16 CBaseObject::GetHitChance( void ) const
 {
@@ -1063,7 +1063,7 @@ void CBaseObject::SetHitChance( SI16 newValue )
 //|	Function	-	CBaseObject::GetDefenseChance()
 //|					CBaseObject::SetDefenseChance()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the Defense Chance of the Item Equiped
+//|	Purpose		-	Gets/Sets the Defense Chance of the Item(s) Equiped or Character
 //o------------------------------------------------------------------------------------------------o
 SI16 CBaseObject::GetDefenseChance( void ) const
 {
