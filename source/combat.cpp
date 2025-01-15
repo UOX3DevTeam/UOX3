@@ -3476,20 +3476,27 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 
 	R32 globalAttackSpeed = cwmWorldState->ServerData()->GlobalAttackSpeed(); //Defaults to 1.0
 
+	R32 speedFactor = 1 + speedBonus / 10.0f;
+
+	// Prevent zero or negative multipliers
+	if( speedFactor < 0.1f )
+		speedFactor = 0.1f;
+
+
 	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR )
 	{
 		// Weapon swing delay in LBR and earlier
-		getDelay = baseValue / ( getDelay * getOffset * ( 1 + speedBonus / static_cast<float>( 10 ) )) / globalAttackSpeed;
+		getDelay = baseValue / ( getDelay * getOffset * speedFactor ) / globalAttackSpeed;
 	}
 	else if( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML )
 	{
-		// Weapon swing delay in SE and earlier
-		getDelay = ( baseValue / ( getDelay * getOffset * ( 1 + speedBonus / static_cast<float>( 10 ) )) / 4 - 0.5 ) / globalAttackSpeed;
+		// Weapon swing delay in SE or earlier
+		getDelay = ( baseValue / ( getDelay * getOffset * speedFactor ) / 4 - 0.5 ) / globalAttackSpeed;
 	}
 	else
 	{
 		// Weapon swing delay in ML or later
-		getDelay = ( baseValue / ( getDelay * getOffset * ( 1 + speedBonus / static_cast<float>( 10 ) )) * 0.5 ) / globalAttackSpeed;
+		getDelay = ( baseValue / ( getDelay * getOffset * speedFactor ) * 0.5 ) / globalAttackSpeed;
 	}
 
 	return getDelay;
