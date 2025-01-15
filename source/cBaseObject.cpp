@@ -1572,9 +1572,10 @@ Point3_st CBaseObject::GetLocation( void ) const
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetSwingSpeedIncrease()
-//|					CBaseObject::SetSwingSpeedIncrease()
+//|					CBaseObject::SetSwingSpeedBonus()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the item's Swing Speed Increase  property (in percentage), which adjusts the base swing speed of the equipped weapon
+//|	Purpose		-	Gets/Sets the item's Swing Speed Bonus property (in percentage), which 
+//|					adjusts the base swing speed of the equipped weapon, or characters
 //o------------------------------------------------------------------------------------------------o
 SI16 CBaseObject::GetSwingSpeedIncrease( void ) const
 {
@@ -1686,7 +1687,7 @@ void CBaseObject::IncIntelligence( SI16 toInc )
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::IncSwingSpeedIncrease()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Increments the object's swing speed value
+//|	Purpose		-	Increments the object's swing speed bonus value
 //o------------------------------------------------------------------------------------------------o
 void CBaseObject::IncSwingSpeedIncrease( SI16 toInc )
 {

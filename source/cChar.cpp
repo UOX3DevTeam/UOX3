@@ -3140,7 +3140,7 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 	//-------------------------------------------------------------------------------------------
 	outStream << "CanRun=" + std::to_string((( CanRun() && IsNpc() ) ? 1 : 0 )) + newLine;
 	outStream << "CanAttack=" + std::to_string(( GetCanAttack() ? 1 : 0 )) + newLine;
-	outStream << "SpeedInc=" + std::to_string( GetSwingSpeedIncrease() ) + newLine;
+	outStream << "SwingSpeedInc=" + std::to_string( GetSwingSpeedIncrease() ) + newLine;
 	outStream << "AllMove=" + std::to_string(( AllMove() ? 1 : 0 )) + newLine;
 	outStream << "IsNpc=" + std::to_string(( IsNpc() ? 1 : 0 )) + newLine;
 	outStream << "IsShop=" + std::to_string(( IsShop() ? 1 : 0 )) + newLine;
@@ -4824,7 +4824,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					SetEmoteColour( static_cast<UI16>( std::stoul (oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
 					rValue = true;
 				}
-				else if( UTag == "SPEEDINC" )
+				else if( UTag == "SWINGSPEEDINCREASE" )
 				{
 					SetSwingSpeedIncrease( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;

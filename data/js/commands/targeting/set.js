@@ -169,11 +169,8 @@ function onCallback0( socket, ourObj )
 		ourObj.tempdex = nVal;
 		okMsg( socket );
 		break;
-	case "SPEEDINC":
-	case "SPEEDINCREASE":
 	case "SWINGSPEEDINC":
-	case "SWINGSPEEDINCREASE":
-		ourObj.speedIncrease = nVal;
+		ourObj.swingSpeedIncrease = nVal;
 		okMsg( socket );
 		break;
 	case "WIPABLE":
