@@ -548,7 +548,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_RAIN:			applyTo->SetWeatherDamage( RAIN, ndata != 0 );			break;
 			case DFNTAG_SECTIONID:		applyTo->SetSectionId( cdata );							break;
 			case DFNTAG_SK_MADE:		applyTo->SetMadeWith( static_cast<SI08>( ndata ));		break;
-			case DFNTAG_SPEEDINCREASE:	applyTo->SetSwingSpeedIncrease( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_SWINGSPEEDINCREASE:	applyTo->SetSwingSpeedIncrease( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_SPD:			applyTo->SetSpeed( static_cast<UI08>( ndata ));			break;
 			case DFNTAG_STRENGTH:		applyTo->SetStrength( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_STRADD:			applyTo->SetStrength2( static_cast<SI16>( ndata ));		break;
