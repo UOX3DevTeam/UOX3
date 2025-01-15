@@ -357,6 +357,8 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "houseicons",		CCP_HOUSEICONS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "spattack",		CCP_SPATTACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "spdelay",		CCP_SPDELAY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "hitChance",		CCP_HITCHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "defenseChance",	CCP_DEFENSECHANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "aitype",			CCP_AITYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "split",			CCP_SPLIT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "splitchance",	CCP_SPLITCHANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
