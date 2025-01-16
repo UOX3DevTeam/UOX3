@@ -557,11 +557,7 @@ SI16 CItem::GetArtifactRarity( void ) const
 void CItem::SetArtifactRarity( SI16 newValue )
 {
 	artifactRarity = newValue;
-
-	if( CanBeObjType( OT_ITEM ))
-	{
-		( static_cast<CItem*>( this ))->UpdateRegion();
-	}
+	UpdateRegion();
 }
 
 //o------------------------------------------------------------------------------------------------o
