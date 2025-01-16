@@ -171,10 +171,7 @@ SI16 CItem::GetDurabilityHpBonus(void) const
 void CItem::SetDurabilityHpBonus(SI16 newValue)
 {
 	durabilityHpBonus = newValue;
-	if (CanBeObjType(OT_ITEM))
-	{
-		(static_cast<CItem*>(this))->UpdateRegion();
-	}
+	UpdateRegion();
 }
 
 //o------------------------------------------------------------------------------------------------o
