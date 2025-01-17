@@ -112,11 +112,11 @@ public:
 	auto			GetGridLocation() const -> SI08;
 	auto			SetGridLocation( SI08 newLoc ) -> void;
 
-	virtual SI16	GetArtifactRarity(void) const;
-	virtual void	SetArtifactRarity(SI16 newValue);
+	SI16			GetArtifactRarity(void) const;
+	void			SetArtifactRarity(SI16 newValue);
 
-	virtual SI16	GetDurabilityHpBonus(void) const;
-	virtual void	SetDurabilityHpBonus(SI16 newValue);
+	SI16			GetDurabilityHpBonus(void) const;
+	void			SetDurabilityHpBonus(SI16 newValue);
 
 	auto			GetStealable() const -> UI08;
 	auto			SetStealable( UI08 newValue ) -> void;
