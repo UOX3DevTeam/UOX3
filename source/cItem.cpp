@@ -94,6 +94,7 @@ const UI16			DEFITEM_REGIONNUM 		= 255;
 const UI16			DEFITEM_TEMPLASTTRADED	= 0;
 const SI08			DEFITEM_STEALABLE	 	= 1;
 const SI16			DEFITEM_ARTIFACTRARITY = 0;
+const SI16			DEFITEM_LOWERSTATREQ	= 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem()
@@ -108,7 +109,7 @@ spd( DEFITEM_SPEED ), maxHp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
 creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
 maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM ), 
-tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), artifactRarity(DEFITEM_ARTIFACTRARITY)
+tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), artifactRarity( DEFITEM_ARTIFACTRARITY ), lowerStatReq( DEFITEM_LOWERSTATREQ )
 {
 	spells[0]	= spells[1] = spells[2] = 0;
 	value[0]	= value[1] = value[2] = 0;
@@ -557,6 +558,23 @@ SI16 CItem::GetArtifactRarity( void ) const
 void CItem::SetArtifactRarity( SI16 newValue )
 {
 	artifactRarity = newValue;
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetLowerStatReq()
+//|					CItem::GetLowerStatReq()
+//|	Date		-	30 April, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Stat Requirements of the object
+//o------------------------------------------------------------------------------------------------o
+SI16 CItem::GetLowerStatReq( void ) const
+{
+	return lowerStatReq;
+}
+void CItem::SetLowerStatReq( SI16 newValue )
+{
+	lowerStatReq = newValue;
 	UpdateRegion();
 }
 

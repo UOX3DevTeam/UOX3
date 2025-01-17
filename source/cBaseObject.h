@@ -69,7 +69,6 @@ protected:
 	SI16				dexterity;
 	SI16				intelligence;
 	SI16				hitpoints;
-	SI16				lowerStatReq;
 	VisibleTypes		visible;
 	SI16				hiDamage;
 	SI16				loDamage;
@@ -256,9 +255,6 @@ public:
 	void					IncStrength( SI16 toInc = 1 );
 	void					IncDexterity( SI16 toInc = 1 );
 	void					IncIntelligence( SI16 toInc = 1 );
-
-	virtual SI16			GetLowerStatReq( void ) const;
-	virtual void			SetLowerStatReq( SI16 newValue );
 
 	virtual void			PostLoadProcessing( void );
 	virtual bool			LoadRemnants( void ) = 0;
