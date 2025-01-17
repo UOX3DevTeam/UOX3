@@ -118,6 +118,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					Console.Warning( oldstrutil::format( "Invalid data found in AMOUNT tag inside item script [%s]", sectionId.c_str() ));
 				}
 				break;
+			case DFNTAG_DURABILITYHPBONUS:	applyTo->SetDurabilityHpBonus( static_cast<SI16>( ndata ));	break;
 			case DFNTAG_DAMAGE:
 			case DFNTAG_ATT:
 				if( ndata >= 0 )
