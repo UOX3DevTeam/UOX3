@@ -93,6 +93,7 @@ const UI16			DEFITEM_MAXUSES			= 0;
 const UI16			DEFITEM_REGIONNUM 		= 255;
 const UI16			DEFITEM_TEMPLASTTRADED	= 0;
 const SI08			DEFITEM_STEALABLE	 	= 1;
+const SI16			DEFITEM_ARTIFACTRARITY = 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem()
@@ -107,7 +108,7 @@ spd( DEFITEM_SPEED ), maxHp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
 creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
 maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM ), 
-tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE )
+tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), artifactRarity(DEFITEM_ARTIFACTRARITY)
 {
 	spells[0]	= spells[1] = spells[2] = 0;
 	value[0]	= value[1] = value[2] = 0;
@@ -539,6 +540,23 @@ auto CItem::IsSpawnerList() const -> bool
 auto CItem::SetSpawnerList( bool newValue ) -> void
 {
 	bools.set( BIT_SPAWNERLIST, newValue );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetArtifactRarity()
+//|					CBaseObject::SetArtifactRarity()
+//|	Date		-	9 May, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Artifacts Rarity of the object
+//o------------------------------------------------------------------------------------------------o
+SI16 CItem::GetArtifactRarity( void ) const
+{
+	return artifactRarity;
+}
+void CItem::SetArtifactRarity( SI16 newValue )
+{
+	artifactRarity = newValue;
 	UpdateRegion();
 }
 
@@ -1443,9 +1461,7 @@ auto CItem::LockDown( CMultiObj *multiObj ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CItem::IsShieldType() const -> bool
 {
-	return ( id >= 0x1B72 && id <= 0x1B7B ) || ( id >= 0x1BC3 && id <= 0x1BC7 ) ||
-		( id >= 0x4200 && id <= 0x420B ) || ( id >= 0x4228 && id <= 0x422C ) ||
-		( id == 0xA649 || id == 0xA64A ) || ( id == 0xA831 || id == 0xA832 );
+	return  type == IT_SHIELD;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1638,6 +1654,7 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetRndValueRate( GetRndValueRate() );
 	target->SetSpawn( GetSpawn() );
 	target->SetSpeed( GetSpeed() );
+	target->SetArtifactRarity( GetArtifactRarity() );
 	target->SetSpell( 0, GetSpell( 0 ));
 	target->SetSpell( 1, GetSpell( 1 ));
 	target->SetSpell( 2, GetSpell( 2 ));
@@ -1737,6 +1754,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "MaxItems=" + std::to_string( GetMaxItems() ) + newLine;
 	outStream << "MaxHP=" + std::to_string( GetMaxHP() ) + newLine;
 	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
+	outStream << "ArtifactRarity=" + std::to_string( GetArtifactRarity() ) + newLine;
 	outStream << "Movable=" + std::to_string( GetMovable() ) + newLine;
 	outStream << "Priv=" + std::to_string( GetPriv() ) + newLine;
 	outStream << "Value=" + std::to_string( GetBuyValue() ) + "," + std::to_string( GetSellValue() ) + "," + std::to_string( GetVendorPrice() ) + newLine;
@@ -1773,7 +1791,12 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 		switch(( UTag.data()[0] ))
 		{
 			case 'A':
-				if( UTag == "AMMO" )
+				if( UTag == "ARTIFACTRARITY" )
+				{
+					SetArtifactRarity( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "AMMO" )
 				{
 					if( csecs.size() == 2 )
 					{
