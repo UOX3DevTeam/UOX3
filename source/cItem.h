@@ -49,6 +49,7 @@ protected:
 	UI16			entryMadeFrom;
 	SERIAL			creator;		// Store the serial of the player made this item
 	SI08			gridLoc;
+	SI16			artifactRarity;
 	SI32			weightMax;		// Maximum weight a container can hold
 	SI32			baseWeight;		// Base weight of item. Applied when item is created for the first time, based on weight. Primarily used to determine base weight of containers
 	UI16			maxItems;		// Maximum amount of items a container can hold
@@ -110,6 +111,9 @@ public:
 
 	auto			GetGridLocation() const -> SI08;
 	auto			SetGridLocation( SI08 newLoc ) -> void;
+
+	virtual SI16	GetArtifactRarity(void) const;
+	virtual void	SetArtifactRarity(SI16 newValue);
 
 	auto			GetStealable() const -> UI08;
 	auto			SetStealable( UI08 newValue ) -> void;
