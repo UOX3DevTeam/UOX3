@@ -41,9 +41,6 @@ protected:
 	TIMERVAL		decayTime;
 	UI08			spd;			// The speed of the weapon
 	UI16			maxHp;			// Max number of hit points an item can have.
-	SI16			healthLeech;
-	SI16			staminaLeech;
-	SI16			manaLeech;
 	UI16			amount;			// Amount of items in pile
 	ItemLayers		layer;			// Layer if equipped on paperdoll
 	ItemTypes		type;			// For things that do special things on doubleclicking
@@ -168,19 +165,6 @@ public:
 	auto			GetRegionNum() const -> UI16;
 
 	auto			InDungeon() -> bool;
-
-	virtual SI16	GetHealthLeech( void ) const;
-	virtual void	SetHealthLeech( SI16 nVal );
-
-	virtual SI16	GetStaminaLeech( void ) const;
-	virtual void	SetStaminaLeech( SI16 nVal );
-
-	virtual SI16	GetManaLeech( void ) const;
-	virtual void	SetManaLeech( SI16 nVal );
-
-	void			IncHealthLeech( SI16 toInc = 1 );
-	void			IncStaminaLeech( SI16 toInc = 1 );
-	void			IncManaLeech( SI16 toInc = 1 );
 
 	auto			GetLayer() const -> ItemLayers;
 	auto			SetLayer( ItemLayers newValue ) -> void;
