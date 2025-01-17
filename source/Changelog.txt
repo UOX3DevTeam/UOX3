@@ -1,3 +1,6 @@
+13/05/2024 - Dragon Slayer
+	Added New Shield Type 107 so shield ID's no longer have to be in hard code for shields to work properly
+
 09/05/2024 - Dragon Slayer
 	Added ArtifactRarity AOS Property for items
 	-ARTIFACTRARITY=#
