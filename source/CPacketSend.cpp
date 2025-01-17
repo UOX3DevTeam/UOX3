@@ -7459,6 +7459,14 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		}
 		FinalizeData( tempEntry, totalStringLen );
 	}
+
+	if( cItem.GetArtifactRarity() > 0)
+	{
+		tempEntry.stringNum = 1061078; // // artifact rarity ~1_val~
+		tempEntry.ourText = oldstrutil::number( cItem.GetArtifactRarity() );
+		FinalizeData( tempEntry, totalStringLen );
+	}
+
 	if( cItem.GetType() == IT_MAGICWAND && cItem.GetTempVar( CITV_MOREZ ))
 	{
 		tempEntry.stringNum = 1060584; // uses remaining: ~1_val~
