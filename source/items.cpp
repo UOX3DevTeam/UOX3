@@ -1207,6 +1207,10 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 		{
 			iCreated->SetMaxHP( iCreated->GetHP() );
 		}
+		else
+		{// If you add a maxhp tag and have durabilityHpBonus, it will increase the Durability (aka Health).
+			iCreated->SetMaxHP( iCreated->GetMaxHP() + durabilityHpBonus );
+		}
 
 		// If maxUses is higher than usesLeft for a new item, randomize the amount of usesLeft the item should have!
 		if( iCreated->GetMaxUses() > iCreated->GetUsesLeft() )
