@@ -5311,5 +5311,39 @@
 19100=Udało Ci się przekonwertować metal.
 19101=Możesz wymieniać tylko pięćset sztabek na raz.
 19102=Przedmiot musi znajdować się w Twoim plecaku, aby można go było wymienić.
+// [19110-19200] Uprawa roślin
+19110=Musisz mieć ten przedmiot w plecaku lub zamknięty, aby go użyć.
+19111=Najpierw musisz zasiać ziarno w misce
+19112=Przycinasz roślinę. Ta roślina nie będzie już produkować zasobów ani nasion, ale nie będzie wymagać konserwacji.
+19113=Nie możesz zbierać pyłku ze zmutowanej rośliny!
+19114=Za wcześnie na zbieranie pyłku
+19115=Nie możesz zbierać pyłku z niezdrowej rośliny!
+19116=Wyceluj w roślinę, którą chcesz zapylić krzyżowo.
+19117=Możesz zapylać tylko inne, specjalnie wyhodowane rośliny!
+19118=Ta roślina nie jest w fazie kwitnienia. Nie można go zapylać!
+19119=Nie możesz zapylać niezdrowej rośliny!
+19120=Nie możesz zapylać krzyżowo ze zmutowaną rośliną!
+19121=Ta roślina została już zapylona!
+19122=Zapylasz roślinę własnym pyłkiem.
+19123=Udało Ci się krzyżować - zapylić roślinę.
+19124=Ta roślina nie ma nasion do zebrania!
+19125=Zbierasz nasiona rośliny.
+19126=Nie możesz dodać wody do tej rośliny.
+19127=Zmiękczasz brud wodą.
+19128=Nie możesz tego użyć na roślinie!
+19129=Nie masz w swoim zestawie żadnych silnych mikstur tego typu.
+19130=Powinieneś polewać miksturami tylko rośliny lub nasiona!
+19131=Roślina jest już nasączona tego typu miksturą!
+19132=Musisz mieć ten przedmiot w plecaku, aby z niego skorzystać.
+19133=Wybierz kawałek ziemi do zebrania.
+19134=Potrzebujesz więcej ziemi, aby wypełnić miskę z roślinami!
+19135=Napełniasz miskę świeżą ziemią.
+19136=Będziesz chciał zebrać świeżą ziemię, aby wyhodować zdrową roślinę!
+19137=Wybierz miskę ziemi, w której chcesz zasadzić to ziarno.
+19138=Musisz użyć nasion na przygotowanej glebie!
+19139=W tej misce brudu jest już nasionko %s!
+19140=Najpierw należy zmiękczyć brud.
+19141=Zasiewasz ziarno w misce z ziemią.
+19142=Musisz użyć nasion na misce ziemi!
 }
 EOF
