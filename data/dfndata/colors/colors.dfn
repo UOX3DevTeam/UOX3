@@ -1664,12 +1664,3 @@
 0x89B  // red
 0x08A0 // green
 }
-
-// seed colors
-[RANDOMCOLOR 10003]
-{
-0x0
-0x66D
-0x53D
-0x8A5
-}

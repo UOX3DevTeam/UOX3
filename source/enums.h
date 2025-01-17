@@ -527,7 +527,6 @@ enum ItemTypes
     IT_UNMORPHOBJECT		= 102,
     IT_DRINK				= 105,
     IT_STANDINGHARP			= 106,
-	IT_SHIELD				= 107,
     IT_ZEROKILLSGATE		= 111,
     IT_PLANK				= 117,
     IT_FIREWORKSWAND		= 118,

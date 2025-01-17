@@ -5311,39 +5311,5 @@
 19100=Has convertido exitosamente el metal.
 19101=Sólo puedes convertir quinientos lingotes a la vez.
 19102=El artículo debe estar en tu mochila para ser intercambiado.
-// [19110-19200] Cultivo de plantas
-19110=Debes tener el artículo en tu mochila o bajo llave para poder usarlo.
-19111=Primero debes plantar una semilla en el recipiente
-19112=Podas la planta. Esta planta ya no producirá recursos ni semillas, pero no requerirá mantenimiento.
-19113=¡No puedes recolectar polen de una planta mutada!
-19114=Demasiado pronto para recolectar polen
-19115=¡No puedes recolectar polen de una planta enferma!
-19116=Objetivo a la planta con la que desea realizar polinización cruzada.
-19117=¡Solo puedes polinizar otras plantas especialmente cultivadas!
-19118=Esta planta no se encuentra en etapa de floración. ¡No puedes polinizarlo!
-19119=¡No puedes polinizar una planta enferma!
-19120=¡No puedes realizar polinización cruzada con una planta mutada!
-19121=¡Esta planta ya ha sido polinizada!
-19122=Polinizas la planta con tu propio polen.
-19123=Cruzas - polinizas exitosamente la planta.
-19124=¡Esta planta no tiene semillas para recolectar!
-19125=Recolectas semillas de la planta.
-19126=No puedes agregar agua a esta planta.
-19127=Ablandas la suciedad con agua.
-19128=¡No puedes usar eso en una planta!
-19129=No tienes ninguna poción fuerte de ese tipo en tu paquete.
-19130=¡Solo debes verter pociones sobre una planta o semilla!
-19131=¡La planta ya está empapada con este tipo de poción!
-19132=Debes tener el objeto en tu mochila para usarlo.
-19133=Elige un trozo de tierra para recoger.
-19134=¡Necesitas más tierra para llenar un macetero!
-19135=Llenas el recipiente con tierra fresca.
-19136=¡Querrás recolectar tierra fresca para poder cultivar una planta saludable!
-19137=Elija un recipiente con tierra para plantar esta semilla.
-19138=¡Debes usar una semilla en algún suelo preparado!
-19139=¡Este cuenco de tierra ya tiene una semilla %s!
-19140=Primero es necesario ablandar la suciedad.
-19141=Plantas la semilla en el cuenco de tierra.
-19142=¡Debes usar una semilla en un recipiente con tierra!
 }
 EOF

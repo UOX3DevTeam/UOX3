@@ -7460,18 +7460,10 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		FinalizeData( tempEntry, totalStringLen );
 	}
 
-
 	if( cItem.GetDurabilityHpBonus() > 0)
 	{
 		tempEntry.stringNum = 1151780; // durability +~1_VAL~%
 		tempEntry.ourText = oldstrutil::number( cItem.GetDurabilityHpBonus() );
-		FinalizeData( tempEntry, totalStringLen );
-	}
-
-	if( cItem.GetArtifactRarity() > 0)
-	{
-		tempEntry.stringNum = 1061078; // // artifact rarity ~1_val~
-		tempEntry.ourText = oldstrutil::number( cItem.GetArtifactRarity() );
 		FinalizeData( tempEntry, totalStringLen );
 	}
 
