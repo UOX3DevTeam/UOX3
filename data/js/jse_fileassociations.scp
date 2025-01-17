@@ -284,6 +284,10 @@
 5059=item/powderoftranslocation.js
 5060=item/elixirofingots.js
 
+19100=item/plant_growing/plantsystem.js
+19101=item/plant_growing/plantbowl.js
+19102=item/plant_growing/seed.js
+
 //-------------------------------------------
 // treasure maps and chest [5400-5405]
 //-------------------------------------------
