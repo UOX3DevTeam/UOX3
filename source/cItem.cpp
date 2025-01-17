@@ -94,6 +94,7 @@ const UI16			DEFITEM_REGIONNUM 		= 255;
 const UI16			DEFITEM_TEMPLASTTRADED	= 0;
 const SI08			DEFITEM_STEALABLE	 	= 1;
 const SI16			DEFITEM_ARTIFACTRARITY = 0;
+const SI16			DEFITEM_DURABLITITYHPBONUS = 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem()
@@ -108,7 +109,7 @@ spd( DEFITEM_SPEED ), maxHp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
 creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
 maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM ), 
-tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), artifactRarity(DEFITEM_ARTIFACTRARITY)
+tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), artifactRarity(DEFITEM_ARTIFACTRARITY), durabilityHpBonus( DEFITEM_DURABLITITYHPBONUS )
 {
 	spells[0]	= spells[1] = spells[2] = 0;
 	value[0]	= value[1] = value[2] = 0;
@@ -1375,6 +1376,23 @@ auto CItem::SetBaseWeight( SI32 newValue ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetDurabilityHpBonus()
+//|					CItem::SetDurabilityHpBonus()
+//|	Date		-	5 May, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Bonus hp on the object
+//o------------------------------------------------------------------------------------------------o
+SI16 CItem::GetDurabilityHpBonus(void) const
+{
+	return durabilityHpBonus;
+}
+void CItem::SetDurabilityHpBonus(SI16 newValue)
+{
+	durabilityHpBonus = newValue;
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetMaxItems()
 //|					CItem::SetMaxItems()
 //o------------------------------------------------------------------------------------------------o
@@ -1655,6 +1673,7 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetSpawn( GetSpawn() );
 	target->SetSpeed( GetSpeed() );
 	target->SetArtifactRarity( GetArtifactRarity() );
+	target->SetDurabilityHpBonus( GetDurabilityHpBonus() );
 	target->SetSpell( 0, GetSpell( 0 ));
 	target->SetSpell( 1, GetSpell( 1 ));
 	target->SetSpell( 2, GetSpell( 2 ));
@@ -1755,6 +1774,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "MaxHP=" + std::to_string( GetMaxHP() ) + newLine;
 	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
 	outStream << "ArtifactRarity=" + std::to_string( GetArtifactRarity() ) + newLine;
+	outStream << "DurabilityHpBonus=" + std::to_string( GetDurabilityHpBonus() ) + newLine;
 	outStream << "Movable=" + std::to_string( GetMovable() ) + newLine;
 	outStream << "Priv=" + std::to_string( GetPriv() ) + newLine;
 	outStream << "Value=" + std::to_string( GetBuyValue() ) + "," + std::to_string( GetSellValue() ) + "," + std::to_string( GetVendorPrice() ) + newLine;
@@ -1875,6 +1895,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				if( UTag == "DIR" )
 				{
 					SetDir( static_cast<SI08>( std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "DURABILITYHPBONUS" )
+				{
+					SetDurabilityHpBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "DYEABLE" )

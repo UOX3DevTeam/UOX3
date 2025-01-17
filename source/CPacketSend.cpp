@@ -7467,6 +7467,13 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		FinalizeData( tempEntry, totalStringLen );
 	}
 
+	if( cItem.GetDurabilityHpBonus() > 0)
+	{
+		tempEntry.stringNum = 1151780; // durability +~1_VAL~%
+		tempEntry.ourText = oldstrutil::number( cItem.GetDurabilityHpBonus() );
+		FinalizeData( tempEntry, totalStringLen );
+	}
+
 	if( cItem.GetType() == IT_MAGICWAND && cItem.GetTempVar( CITV_MOREZ ))
 	{
 		tempEntry.stringNum = 1060584; // uses remaining: ~1_val~

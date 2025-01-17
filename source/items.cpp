@@ -1194,6 +1194,13 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 			Console.Error( "Trying to apply an item section failed" );
 		}
 
+		// If the durabilityhpbonus tag is on the item, it will add to its Durability (aka Health).
+		auto durabilityHpBonus = iCreated->GetDurabilityHpBonus();
+		if( durabilityHpBonus > 0 )
+		{
+			iCreated->SetHP( iCreated->GetHP() + durabilityHpBonus );
+		}
+
 		// If maxHP has not been defined for a new item, set it to the same value as HP
 		if( !iCreated->GetMaxHP() && iCreated->GetHP() )
 		{
