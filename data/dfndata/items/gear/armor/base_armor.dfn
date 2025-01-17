@@ -1936,11 +1936,14 @@ origin=tol
 restock=10
 }
 
+// Shields
+
 [base_shield]
 {
 get=base_item
 type=107
 decay=1
+movable=1
 good=16
 layer=0x02
 restock=10
@@ -1960,6 +1963,7 @@ id=0x1b72
 {
 get=base_shield
 name=buckler
+id=0x1b73
 }
 
 // Metal Kite Shield - Base item with shared DFN tags
