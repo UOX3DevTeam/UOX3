@@ -1974,6 +1974,7 @@ get=base_shield
 name=metal kite shield
 id=0x1b74
 str=20
+dyeable=1
 }
 
 // Heater Shield - Base item with shared DFN tags
