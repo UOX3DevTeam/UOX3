@@ -98,6 +98,7 @@
 2201=server/misc/hint_tooltip.js
 2202=server/misc/warning_trigger.js
 2203=server/misc/charges_left_tooltip.js
+2204=server/network/0xDF_buffBar.js
 
 // Server Data [2500-2749]
 2500=server/data/weapontypes.js
@@ -150,6 +151,7 @@
 3216=npc/ai/summon/energy_vortex.js
 3217=npc/ai/guildmaster.js
 3218=npc/ai/monster/chaos_dragoon.js
+3219=npc/ai/shopkeeper.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -206,6 +208,7 @@
 4033=skill/craft/crafting_complete.js
 4034=skill/craft/cooking.js
 4035=skill/craft/cartography.js
+4036=skill/craft/glassblowing.js
 4038=skill/craft/recipedata.js
 4039=skill/craft/makeitem.js
 4050=skill/mining.js
@@ -285,6 +288,10 @@
 5060=item/elixirofingots.js
 5061=item/recipescroll.js
 
+19100=item/plant_growing/plantsystem.js
+19101=item/plant_growing/plantbowl.js
+19102=item/plant_growing/seed.js
+
 //-------------------------------------------
 // treasure maps and chest [5400-5405]
 //-------------------------------------------
@@ -323,7 +330,7 @@
 6000=magic/helper/check_resist.js
 6001=magic/helper/calc_final_spell_damage.js
 6002=magic/helper/check_travel_restrictions.js
-6003=magic/helper/check_teleport.js
+6003=magic/helper/teleport_helper.js
 6004=magic/helper/check_reagents.js
 
 //-------------------------------------------

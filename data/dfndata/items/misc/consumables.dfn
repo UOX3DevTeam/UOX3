@@ -252,6 +252,7 @@ colour=0x487
 pileable=1
 amount=1
 decay=1
+origin=sa
 script=5060
 custominttag=typeID 1
 }
@@ -297,6 +298,7 @@ weight=01
 color=0x0835
 pileable=1
 amount=1
+origin=lbr
 script=5059//powderoftranslocation.js
 }
 
@@ -308,6 +310,7 @@ id=0x26B7
 pileable=1
 amount=1
 decay=1
+origin=lbr
 }
 
 [recipescroll]

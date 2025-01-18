@@ -2554,6 +2554,8 @@
 2794=pro %i zlato
 2795=Z trosek vylovíš nějaké drahokamy.
 2796=* Tvé tělo se zmítá v křečích z elektrického šoku *
+2797=Toto nemůžete použít při létání!
+2798=Byli jste uzemněni.
 // [2800-2999] House script
 2800=Vlastník domu:
 2801=VLASTNÍCI DOMU
@@ -3681,6 +3683,7 @@
 8212=Neplatná syntaxe příkazu pro opakované přidávání objektů: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 8213=ID sekce z DFNs objekt pochází z
 8214=Dá se předmět ukrást? 0 = nelze ukrást, 1 = lze ukrást, 2 = lze ukrást vzácně
+8215=Neplatný cíl. Vyberte platnou položku nebo NPC
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Číslo účtu přidružené k hráči. Řízeno serverem (pouze pro čtení)
 8301=Typ umělé inteligence NPC
@@ -5308,5 +5311,39 @@
 19100=Úspěšně jste převedli kov.
 19101=Najednou můžete převést pouze pět set ingotů.
 19102=Pro výměnu musí být položka ve vašem batohu.
+// [19110-19200] Pěstování rostlin
+19110=Abyste mohli položku použít, musíte ji mít v batohu nebo uzamčenou.
+19111=Nejprve musíte do misky zasadit semínko
+19112=Prořezáváte rostlinu. Tato rostlina již nebude produkovat zdroje ani semena, ale nebude vyžadovat žádnou údržbu.
+19113=Nemůžete sbírat pyl z mutované rostliny!
+19114=Příliš brzy na sběr pylu
+19115=Nemůžete sbírat pyl z nezdravé rostliny!
+19116=Zaměřte se na rostlinu, kterou chcete křížově opylit.
+19117=Můžete opylovat pouze jiné speciálně pěstované rostliny!
+19118=Tato rostlina není ve fázi květu. Nemůžete to opylit!
+19119=Nemůžete opylit nezdravou rostlinu!
+19120=Nemůžete křížově opylovat mutovanou rostlinou!
+19121=Tato rostlina již byla opylena!
+19122=Opylujete rostlinu vlastním pylem.
+19123=Úspěšně jste zkřížili - opylovali rostlinu.
+19124=Tato rostlina nemá semena ke sběru!
+19125=Sbíráte semena z rostliny.
+19126=Do této rostliny nemůžete přidat vodu.
+19127=Změkčíte špínu vodou.
+19128=To ​​nemůžete použít na rostlinu!
+19129=Ve svém balíčku nemáte žádné silné lektvary tohoto typu.
+19130=Lektvary byste měli nalít pouze na rostlinu nebo semeno!
+19131=Rostlina je tímto typem lektvaru již nasáklá!
+19132=Abyste jej mohli použít, musíte mít předmět v batohu.
+19133=Vyberte kousek špíny, který chcete nabrat.
+19134=Potřebujete více nečistot k naplnění misky na rostliny!
+19135=Naplňte misku čerstvou špínou.
+19136=Budete chtít nasbírat čerstvou špínu, abyste vypěstovali zdravou rostlinu!
+19137=Vyberte misku s hlínou, do které zasadíte toto semínko.
+19138=Musíte použít semeno na připravenou půdu!
+19139=Tato miska s nečistotami již obsahuje semínko %s!
+19140=Nejprve je třeba změkčit nečistoty.
+19141=Zasadíte semeno do misky s hlínou.
+19142=Musíte použít semínko na misku s nečistotami!
 }
 EOF
