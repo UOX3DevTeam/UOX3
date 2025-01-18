@@ -679,6 +679,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_HEALTHBONUS:		*vp = INT_TO_JSVAL( gPriv->GetHealthBonus() );			break;
 			case CIP_STAMINABONUS:		*vp = INT_TO_JSVAL( gPriv->GetStaminaBonus() );			break;
 			case CIP_MANABONUS:		*vp = INT_TO_JSVAL( gPriv->GetManaBonus() );			break;
+			case CIP_ARTIFACTRARITY:		*vp = INT_TO_JSVAL( gPriv->GetArtifactRarity() );			break;
 			case CIP_NAME2:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetName2().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
@@ -1327,6 +1328,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_HEALTHBONUS:		gPriv->SetHealthBonus( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_STAMINABONUS:		gPriv->SetStaminaBonus( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_MANABONUS:		gPriv->SetManaBonus( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_ARTIFACTRARITY:	gPriv->SetArtifactRarity( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_NAME2:			gPriv->SetName2( encaps.toString() );						break;
 			case CIP_RACE:			gPriv->SetRace( static_cast<RACEID>( encaps.toInt() ));		break;
 			case CIP_MAXHP:			gPriv->SetMaxHP( static_cast<SI16>( encaps.toInt() ));		break;
