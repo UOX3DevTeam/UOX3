@@ -4383,7 +4383,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					SetDead(( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 ));
 					rValue = true;
 				}
-				else if( UTag == "DEFENSECHANCE" )
+				else if( UTag == "DEFCHANCE" )
 				{
 					SetDefenseChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
