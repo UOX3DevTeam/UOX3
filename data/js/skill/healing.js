@@ -123,17 +123,26 @@ function onCallback1( socket, ourObj )
 
 			var healSkill;
 			var skillNum;
+			var buffIcon;
+			var priCliloc;
+			var scndCliloc;
 			if( IsTargetHealable( ourObj, false ))
 			{
 				// Target can be healed with Healing skill
 				healSkill = mChar.baseskills.healing;
 				skillNum  = 17;
+				buffIcon = 1069;
+				priCliloc = 1002082;
+				scndCliloc = 1151400;
 			}
 			else if( IsTargetHealable( ourObj, true ) || ( ourObj.tamed && ourObj.owner ))
 			{
 				// Target can be healed with Veterinary skill
 				healSkill = mChar.baseskills.veterinary;
 				skillNum  = 39;
+				buffIcon = 1101;
+				priCliloc = 1002167;
+				scndCliloc = 1151400;
 			}
 			else
 			{
@@ -269,6 +278,18 @@ function onCallback1( socket, ourObj )
 
 				mChar.AddScriptTrigger( 4014 ); // Add healing_slip.js script
 				SetSkillInUse( socket, mChar, ourObj, skillNum, healTimer, true );
+
+				var seconds = Math.round(healTimer / 1000);
+				// Add buff to target or yourself
+				if (ourObj != mChar && ourObj.socket)
+				{
+					TriggerEvent( 2204, "AddBuff", ourObj, buffIcon, priCliloc, scndCliloc, seconds, " " + ourObj.name );
+				}
+				else
+				{
+					TriggerEvent( 2204, "AddBuff", mChar, buffIcon, priCliloc, scndCliloc, seconds, " " + ourObj.name );
+				}
+
 				mChar.StartTimer( healTimer, 2, true );
 			}
 		}
