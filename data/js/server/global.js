@@ -37,10 +37,21 @@ function onLogin( socket, pChar )
     	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
     }
 
+
 	//Attach the special moves Book
 	if( !pChar.npc && !pChar.HasScriptTrigger( 7001 ))
 	{
 		pChar.AddScriptTrigger( 7001 );
+  }
+
+	// Re-adds Buff for disguise kit if player still has time left.
+	var currentTime = GetCurrentClock();
+	var disguiseKitTime = pChar.GetJSTimer( 1, 5023 );
+	var timeLeft = Math.round(( disguiseKitTime - currentTime ) / 1000 );
+	if( disguiseKitTime > 0 )
+	{
+		TriggerEvent( 2204, "RemoveBuff", pChar, 1033 );
+		TriggerEvent( 2204, "AddBuff", pChar, 1033, 1075821, 1075820, timeLeft, "" );
 	}
 }
 
