@@ -303,6 +303,12 @@ private:
 	SI16		htmlStatusEnabled;				//	If > 0 then it's enabled - only used at PC char creation - use elsewhere? (was # of seconds between updates)
 	SI16		sellMaxItems;					//	Maximum number of items that can be sold to a vendor
 	SI16		fishingstaminaloss;				//	The amount of stamina lost with each use of fishing skill
+	SI16		physicalResistCap;				//	The Cap for physical resist property
+	SI16		fireResistCap;					//	The Cap for fire resist property
+	SI16		coldResistCap;					//	The Cap for cold resist property
+	SI16		poisonResistCap;				//	The Cap for poison resist property
+	SI16		energyResistCap;				//	The Cap for energy resist property
+	SI16		defenseChanceIncreaseCap;		//	The Cap for energy resist property
 	UI08		maxControlSlots;				//	The default max amount of pet/follower control slots for each player
 	UI08		maxSafeTeleports;				//	The default max amount of free teleports to safety players get via the help menu per day
 	UI08		maxPetOwners;					//	The default max amount of different owners a pet may have in its lifetime
@@ -952,6 +958,20 @@ public:
 
 	auto		BODsFromCraftedItemsOnly( bool value ) -> void;
 	auto		BODsFromCraftedItemsOnly() const -> bool;
+
+	auto		PhysicalResistCap( SI16 value ) -> void;
+	SI16		PhysicalResistCap() const;
+	auto		FireResistCap( SI16 value ) -> void;
+	SI16		FireResistCap() const;
+	auto		ColdResistCap( SI16 value ) -> void;
+	SI16		ColdResistCap() const;
+	auto		PoisonResistCap( SI16 value ) -> void;
+	SI16		PoisonResistCap() const;
+	auto		EnergyResistCap( SI16 value ) -> void;
+	SI16		EnergyResistCap() const;
+
+	auto		DefenseChanceIncreaseCap( SI16 value ) -> void;
+	SI16		DefenseChanceIncreaseCap() const;
 
 	auto		MaxControlSlots( UI08 value ) -> void;
 	UI08		MaxControlSlots() const;

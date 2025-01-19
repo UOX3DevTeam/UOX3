@@ -369,7 +369,13 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SECRETSHARDKEY"s, 346},
 	{"MOONGATEFACETS"s, 347},
 	{"AUTOUNEQUIPPEDCASTING"s, 348},
-	{"LOOTDECAYSWITHNPCCORPSE"s, 349}
+	{"LOOTDECAYSWITHNPCCORPSE"s, 349},
+	{"PHYSICALRESISTCAP"s, 355},
+	{"FIRERESISTCAP"s, 356},
+	{"COLDRESISTCAP"s, 357},
+	{"POISONRESISTCAP"s, 358},
+	{"ENERGYRESISTCAP"s, 359},
+	{"DEFENSECHANCEINCREASECAP"s, 360},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -717,6 +723,12 @@ auto CServerData::ResetDefaults() -> void
 	GlobalAttackSpeed( 1.0 );
 	NPCSpellCastSpeed( 1.0 );
 	FishingStaminaLoss( 2 );
+	PhysicalResistCap( 70 );
+	FireResistCap( 70 );
+	ColdResistCap( 70 );
+	PoisonResistCap( 70 );
+	EnergyResistCap( 70 );
+	DefenseChanceIncreaseCap( 45 );
 	CombatArmorClassDamageBonus( false );
 	AlchemyDamageBonusEnabled( false );
 	AlchemyDamageBonusModifier( 5 );
@@ -5196,6 +5208,12 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SHOWITEMRESISTSTATS=" << ( ShowItemResistStats() ? 1 : 0 ) << '\n';
 		ofsOutput << "SHOWWEAPONDAMAGETYPES=" << ( ShowWeaponDamageTypes() ? 1 : 0 ) << '\n';
 		ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<UI16>( WeaponDamageBonusType() ) << '\n';
+		ofsOutput << "PHYSICALRESISTCAP=" << PhysicalResistCap() << '\n';
+		ofsOutput << "FIRERESISTCAP=" << FireResistCap() << '\n';
+		ofsOutput << "COLDRESISTCAP=" << ColdResistCap() << '\n';
+		ofsOutput << "POISONRESISTCAP=" << PoisonResistCap() << '\n';
+		ofsOutput << "ENERGYRESISTCAP=" << EnergyResistCap() << '\n';
+		ofsOutput << "DEFENSECHANCEINCREASECAP=" << DefenseChanceIncreaseCap() << '\n';
 
 		ofsOutput << "}" << '\n';
 
@@ -5393,6 +5411,90 @@ auto CServerData::TrackingRedisplayTime() const -> UI16
 auto CServerData::TrackingRedisplayTime( UI16 value ) -> void
 {
 	trackingMsgRedisplayTimer = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::PhysicalResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Physical cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::PhysicalResistCap() const -> SI16
+{
+	return physicalResistCap;
+}
+auto CServerData::PhysicalResistCap( SI16 value ) -> void
+{
+	physicalResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FireResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Fire cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::FireResistCap() const -> SI16
+{
+	return fireResistCap;
+}
+auto CServerData::FireResistCap( SI16 value ) -> void
+{
+	fireResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ColdResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Cold cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ColdResistCap() const -> SI16
+{
+	return coldResistCap;
+}
+auto CServerData::ColdResistCap( SI16 value ) -> void
+{
+	coldResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::PoisonResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Poison cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::PoisonResistCap() const -> SI16
+{
+	return poisonResistCap;
+}
+auto CServerData::PoisonResistCap( SI16 value ) -> void
+{
+	poisonResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::EnergyResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Energy cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::EnergyResistCap() const -> SI16
+{
+	return energyResistCap;
+}
+auto CServerData::EnergyResistCap( SI16 value ) -> void
+{
+	energyResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::DefenseChanceIncreaseCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Defense Chance Increase cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::DefenseChanceIncreaseCap() const -> SI16
+{
+	return defenseChanceIncreaseCap;
+}
+auto CServerData::DefenseChanceIncreaseCap( SI16 value ) -> void
+{
+	defenseChanceIncreaseCap = value;
 }
 
 
@@ -6564,6 +6666,24 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 349:	 // LOOTDECAYSWITHNPCCORPSE
 			NpcCorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 355:	// PHYSICALRESISTCAP
+			PhysicalResistCap( std::stof( value ));
+			break;
+		case 356:	// FIRERESISTCAP
+			FireResistCap( std::stof( value ));
+			break;
+		case 357:	// COLDRESISTCAP
+			ColdResistCap( std::stof( value ));
+			break;
+		case 358:	// POISONRESISTCAP
+			PoisonResistCap( std::stof( value ));
+			break;
+		case 359:	// ENERGYRESISTCAP
+			EnergyResistCap( std::stof( value ));
+			break;
+		case 360:	// DEFENSECHANCEINCREASECAP
+			DefenseChanceIncreaseCap( std::stof( value ));
 			break;
 		default:
 			rValue = false;

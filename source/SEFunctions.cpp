@@ -5086,6 +5086,24 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 349:	 // LOOTDECAYSWITHPLAYERCORPSE
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->NpcCorpseLootDecay() );
 				break;
+			case 355:	// PHYSICALRESISTCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->PhysicalResistCap() ));
+				break;
+			case 356:	// FIRERESISTCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->FireResistCap() ));
+				break;
+			case 357:	// COLDRESISTCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ColdResistCap() ));
+				break;
+			case 358:	// POISONRESISTCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->PoisonResistCap() ));
+				break;
+			case 359:	// ENGERYRESISTCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->EnergyResistCap() ));
+				break;
+			case 360:	// DEFENSECHANCEINCREASECAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->DefenseChanceIncreaseCap() ));
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;
