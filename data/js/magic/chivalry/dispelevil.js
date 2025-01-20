@@ -70,11 +70,11 @@ function onSpellSuccess(mSock, mChar, spellID)
 		TriggerEvent(6004, "DeleteReagents", mChar, mSpell);
 	}
 
-	caster.SoundEffect(0xF5, true);
-	caster.SoundEffect(0x299, true);
-	caster.StaticEffect(0x37C4, 1, 25);
+	mChar.SoundEffect(0xF5, true);
+	mChar.SoundEffect(0x299, true);
+	mChar.StaticEffect(0x37C4, 1, 25);
 
-	AreaCharacterFunction("AreaEffect", caster, 4, caster.socket);
+	AreaCharacterFunction("AreaEffect", mChar, 4, mChar.socket);
 }
 
 function AreaEffect(srcChar, targetChar, socket)

@@ -4,8 +4,11 @@ function SpellRegistration()
 	RegisterSpell(202, true);
 	RegisterSpell(203, true);
 	RegisterSpell(204, true);
+	RegisterSpell(205, true);
+	//RegisterSpell(206, true);
 	RegisterSpell(207, true);
 	RegisterSpell(208, true);
+	//RegisterSpell(209, true);
 	RegisterSpell(210, true);
 }
 
@@ -131,7 +134,8 @@ function StatsCheck(mChar, mSock, spellType, mSpell)
 				mChar.spellCast = -1;
 				return false;
 			}
-			if (mSpell.health >= mChar.health)
+
+			if (mSpell.health > mChar.health)
 			{
 				if (mSock != null)
 				{
@@ -142,7 +146,8 @@ function StatsCheck(mChar, mSock, spellType, mSpell)
 				mChar.spellCast = -1;
 				return false;
 			}
-			if (mSpell.tithing >= mChar.tithing) 
+
+			if (mSpell.tithing > mChar.tithing)
 			{
 				if (mSock != null)
 				{
@@ -260,7 +265,7 @@ function onSpellCast(mSock, mChar, directCast, spellNum)
 		mChar.BreakConcentration(mSock);
 	}
 
-	if(! StatsCheck(mChar, mSock, spellType, mSpell))
+	if(!StatsCheck(mChar, mSock, spellType, mSpell))
 		return true;
 
 	mChar.nextAct = 75;		// why 75?
@@ -280,9 +285,9 @@ function onSpellCast(mSock, mChar, directCast, spellNum)
 		mChar.SetTimer(Timer.SPELLTIME, 0);
 	}
 
-	if (!mChar.isonhorse && (spellNum != 207 || spellNum != 208))
+	var actionID = mSpell.action;
+	if (!mChar.isonhorse && actionID > 0 )
 	{
-		var actionID = mSpell.action;
 		if (mChar.isHuman || actionID != 0x22)
 		{
 			mChar.DoAction(actionID);
@@ -297,17 +302,27 @@ function onSpellCast(mSock, mChar, directCast, spellNum)
 		mChar.TextMessage(tempString);
 	}
 
-	mChar.isCasting = true;
+	// Check if Divine Fury is already active
+	if (mChar.GetTag("DivineFuryActive") == "true")
+	{
+		mChar.SysMessage("Divine Fury is already active.");
+		return false; // Prevent recasting
+	}
 
+	mChar.isCasting = true;
 	mChar.SpellStaticEffect(mSpell);
 	var triggerNum = 800;
 	switch (spellNum)
 	{
 		case 201: triggerNum = 6101; break;// Cleanse by Fire
 		case 202: triggerNum = 6102; break;// Close Wounds
+		case 203: triggerNum = 6103; break;// Consecrate Weapon
 		case 204: triggerNum = 6104; break;// Dispel Evil
+		case 205: triggerNum = 6105; break;// Divine Fury
+		//enemy of one
 		case 207: triggerNum = 6107; break;// Holy Light
 		case 208: triggerNum = 6108; break;// Noble Scrifice
+		//remove curses
 		case 210: triggerNum = 6110; break;// Sacred Journey
 	}
 
@@ -481,7 +496,8 @@ function MagicDamage(p, amount, attacker, mSock, element)
 // Calculate damage to the caster based on Karma and Chivalry skill
 function ComputePowerValue(mChar, div) 
 {
-	if (!mChar) {
+	if (!mChar)
+	{
 		return 0;
 	}
 
@@ -547,7 +563,7 @@ function SpellCasting(mChar, mSpell, spellType)
 		// Skill check failed
 		mChar.SysMessage("You failed to cast the spell.");
 		TriggerEvent(6004, "DeleteReagents", mChar, mSpell);
-		mChar.SpellFail();
+		//mChar.SpellFail(); currnetly doesnt show anything for spellfail in OSI
 		mChar.SetTimer(Timer.SPELLTIME, 0);
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -570,7 +586,7 @@ function SpellCasting(mChar, mSpell, spellType)
 	{
 		// Handle spell failure
 		TriggerEvent(6004, "DeleteReagents", mChar, mSpell);
-		mChar.SpellFail();
+		//mChar.SpellFail();
 		mChar.SetTimer(Timer.SPELLTIME, 0);
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
