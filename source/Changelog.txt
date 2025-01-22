@@ -1,3 +1,6 @@
+21/01/2025 - Dragon Slayer
+	Removed the skill check for damage being adjusted at the end. (combat.cpp)
+
 13/05/2024 - Dragon Slayer
 	Added New Shield Type 107 so shield ID's no longer have to be in hard code for shields to work properly
 
