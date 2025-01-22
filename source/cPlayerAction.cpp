@@ -3392,6 +3392,7 @@ void InitTagToItemType( void )
 	tagToItemType["SEXTANT"]				= IT_SEXTANT;
 	tagToItemType["HAIRDYE"]				= IT_HAIRDYE;
 	tagToItemType["SPELLCHANNELING"]		= IT_SPELLCHANNELING;
+	tagToItemType["SHIELD"]					= IT_SHIELD;
 }
 
 ItemTypes FindItemTypeFromTag( const std::string &strToFind )
