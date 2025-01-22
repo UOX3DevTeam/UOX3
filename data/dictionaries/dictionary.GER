@@ -5325,5 +5325,39 @@
 19100=Sie haben das Metall erfolgreich umgewandelt.
 19101=Sie können jeweils nur fünfhundert Barren umwandeln.
 19102=Der Artikel muss sich zum Umtausch in Ihrem Rucksack befinden.
+// [19110-19200] Pflanzenbau
+19110=Sie müssen den Gegenstand in Ihrem Rucksack haben oder verschlossen haben, um ihn verwenden zu können.
+19111=Sie müssen zuerst einen Samen in die Schüssel pflanzen
+19112=Sie beschneiden die Pflanze. Diese Pflanze produziert keine Ressourcen oder Samen mehr, benötigt aber keine Pflege.
+19113=Sie können keinen Pollen von einer mutierten Pflanze sammeln!
+19114=Zu früh, um Pollen zu sammeln
+19115=Sie können keinen Pollen von einer ungesunden Pflanze sammeln!
+19116=Zielen Sie auf die Pflanze, die Sie kreuzbestäuben möchten.
+19117=Sie können nur andere speziell gezüchtete Pflanzen bestäuben!
+19118=Diese Pflanze befindet sich nicht in der Blütephase. Sie können es nicht bestäuben!
+19119=Sie können eine ungesunde Pflanze nicht bestäuben!
+19120=Eine Kreuzbestäubung mit einer mutierten Pflanze ist nicht möglich!
+19121=Diese Pflanze wurde bereits bestäubt!
+19122=Sie bestäuben die Pflanze mit ihrem eigenen Pollen.
+19123=Sie haben die Pflanze erfolgreich kreuzbestäubt.
+19124=Diese Pflanze hat keine Samen zum Sammeln!
+19125=Sie sammeln Samen von der Pflanze.
+19126=Sie können dieser Pflanze kein Wasser hinzufügen.
+19127=Sie weichen den Schmutz mit Wasser auf.
+19128=Das kannst du nicht bei einer Pflanze anwenden!
+19129=Du hast keine starken Tränke dieser Art in deinem Rucksack.
+19130=Du solltest Tränke nur auf eine Pflanze oder einen Samen gießen!
+19131=Die Pflanze ist bereits mit dieser Art von Trank getränkt!
+19132=Sie müssen das Objekt in Ihrem Rucksack haben, um es verwenden zu können.
+19133=Wählen Sie ein Stück Erde zum Aufsammeln.
+19134=Sie benötigen mehr Erde, um eine Pflanzschale zu füllen!
+19135=Sie füllen die Schüssel mit frischer Erde.
+19136=Sie möchten frische Erde sammeln, um eine gesunde Pflanze zu züchten!
+19137=Wählen Sie eine Schüssel mit Erde, in die Sie diesen Samen pflanzen möchten.
+19138=Sie müssen einen Samen auf vorbereitetem Boden verwenden!
+19139=Diese Schüssel voller Erde enthält bereits einen Samen %s!
+19140=Der Schmutz muss zuerst aufgeweicht werden.
+19141=Sie pflanzen den Samen in die Schüssel mit Erde.
+19142=Sie müssen einen Samen auf eine Schüssel voller Erde verwenden!
 }
 EOF
