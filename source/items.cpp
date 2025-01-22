@@ -1197,19 +1197,32 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 
 		// If the durabilityhpbonus tag is on the item, it will add to its Durability (aka Health).
 		auto durabilityHpBonus = iCreated->GetDurabilityHpBonus();
-		if( durabilityHpBonus > 0 )
-		{
-			iCreated->SetHP( iCreated->GetHP() + durabilityHpBonus );
-		}
 
 		// If maxHP has not been defined for a new item, set it to the same value as HP
-		if( !iCreated->GetMaxHP() && iCreated->GetHP() )
+		if (!iCreated->GetMaxHP() && iCreated->GetHP())
 		{
-			iCreated->SetMaxHP( iCreated->GetHP() );
+			iCreated->SetMaxHP(iCreated->GetHP());
 		}
-		else
-		{// If you add a maxhp tag and have durabilityHpBonus, it will increase the Durability (aka Health).
-			iCreated->SetMaxHP( iCreated->GetMaxHP() + durabilityHpBonus );
+
+		if( durabilityHpBonus > 0 )
+		{
+			// Calculate percentage increase
+			auto baseHP = iCreated->GetHP();
+			auto baseMaxHP = iCreated->GetMaxHP();
+
+			// If maxHP has not been defined, default it to HP
+			if( baseMaxHP == 0 && baseHP > 0 )
+			{
+				baseMaxHP = baseHP;
+				iCreated->SetMaxHP( baseMaxHP );
+			}
+
+			// Apply the percentage bonus to HP and MaxHP
+			auto hpBonus = static_cast<int>( baseHP * ( durabilityHpBonus / 100.0 ));
+			auto maxHpBonus = static_cast<int>( baseMaxHP * ( durabilityHpBonus / 100.0 ));
+
+			iCreated->SetHP( baseHP + hpBonus );
+			iCreated->SetMaxHP( baseMaxHP + maxHpBonus );
 		}
 
 		// If maxUses is higher than usesLeft for a new item, randomize the amount of usesLeft the item should have!
