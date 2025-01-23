@@ -1,3 +1,6 @@
+20/11/2024 - Dragon Slayer
+	Added SE Npc AI to he following, Bake kitsune, kappa, raiju, yamandon, yomotsu_warrior.
+
 13/05/2024 - Dragon Slayer
 	Added New Shield Type 107 so shield ID's no longer have to be in hard code for shields to work properly
 
