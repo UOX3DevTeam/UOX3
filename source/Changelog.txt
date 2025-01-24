@@ -3,7 +3,8 @@
 
 11/05/2024 - Dragon Slayer/Xuri/Maarc
 	Added Support for new AOS property tag.
-	-DURABILITYHPBONUS - Add durability (aka Health) to the hp and max hp as a bonus
+	-DURABILITYHPBONUS = # - Add durability (aka Health) at percentage multiplier to hp.
+	 .durabilityhpbonus (js)
 
 09/05/2024 - Dragon Slayer
 	Added ArtifactRarity AOS Property for items
