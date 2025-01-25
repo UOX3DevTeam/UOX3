@@ -7702,7 +7702,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-      if( cItem.GetHitChance() > 0 )
+			if( cItem.GetHitChance() > 0 )
 			{
 				tempEntry.stringNum = 1060415; // hit chance increase ~1_val~%
 				tempEntry.ourText = oldstrutil::number( cItem.GetHitChance() );
@@ -7737,10 +7737,35 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-			if( cItem.GetStrength() > 1 )
+			const SI16 strReq = ( cItem.GetStrength() * ( 100 - cItem.GetLowerStatReq() )) / 100;
+			const SI16 dexReq = ( cItem.GetDexterity() * ( 100 - cItem.GetLowerStatReq() )) / 100;
+			const SI16 intReq = ( cItem.GetIntelligence() * ( 100 - cItem.GetLowerStatReq() )) / 100;
+
+			if( strReq > 0 )
 			{
 				tempEntry.stringNum = 1061170; // strength requirement ~1_val~
-				tempEntry.ourText = oldstrutil::number( cItem.GetStrength() );
+				tempEntry.ourText = oldstrutil::number( strReq );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( dexReq > 0 )
+			{
+				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				tempEntry.ourText = oldstrutil::format( "dexterity requirement %s", oldstrutil::number( dexReq ).c_str() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( intReq > 0 )
+			{
+				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				tempEntry.ourText = oldstrutil::format( "intelligence requirement %s", oldstrutil::number( intReq ).c_str() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetLowerStatReq() > 0 )
+			{
+				tempEntry.stringNum = 1060435; // lower requirements ~1_val~%
+				tempEntry.ourText = oldstrutil::number( cItem.GetLowerStatReq() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 		}

@@ -72,6 +72,10 @@
 	Fixed createfood to check for reagents on cast.
 	Fixed many places missing proper null checks and refresh checks in magic js scripts.
 
+30/04/2024 - Dragon Slayer/Xuri/Maarc
+	Added Support for new AOS property tag.
+	-LOWERSTATREQ - Lowers the strength requirements to wear an object.
+
 27/04/2024 - Dragon Slayer/Xuri
 	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.
 	Converted LOOTDECAYSWITHCORPSE ini setting to two new settings, one for player corpses, one for NPC corpses:
