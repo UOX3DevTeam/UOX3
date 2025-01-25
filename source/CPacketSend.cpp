@@ -7702,7 +7702,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-      if( cItem.GetHitChance() > 0 )
+			if( cItem.GetHitChance() > 0 )
 			{
 				tempEntry.stringNum = 1060415; // hit chance increase ~1_val~%
 				tempEntry.ourText = oldstrutil::number( cItem.GetHitChance() );
