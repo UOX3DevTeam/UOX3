@@ -7665,12 +7665,28 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-			const SI16 strReq = (cItem.GetStrength() * (100 - cItem.GetLowerStatReq())) / 100;
+			const SI16 strReq = ( cItem.GetStrength() * ( 100 - cItem.GetLowerStatReq() )) / 100;
+			const SI16 dexReq = ( cItem.GetDexterity() * ( 100 - cItem.GetLowerStatReq() )) / 100;
+			const SI16 intReq = ( cItem.GetIntelligence() * ( 100 - cItem.GetLowerStatReq() )) / 100;
 
 			if( strReq > 0 )
 			{
 				tempEntry.stringNum = 1061170; // strength requirement ~1_val~
 				tempEntry.ourText = oldstrutil::number( cItem.GetStrength() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( dexReq > 0 )
+			{
+				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				tempEntry.ourText = oldstrutil::format( "dexterity requirement %s", oldstrutil::number( cItem.GetDexterity()).c_str() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( intReq > 0 )
+			{
+				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				tempEntry.ourText = oldstrutil::format( "intelligence requirement %s", oldstrutil::number( cItem.GetIntelligence()).c_str() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
