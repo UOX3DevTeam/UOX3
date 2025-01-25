@@ -4,7 +4,7 @@ function onUseChecked( pUser, iUsed )
 	var headspike = new Gump;
 	var head = 0;
 
-	switch (iUsed.sectionID)
+	switch( iUsed.sectionID )
 	{
 		case "MrsTroubleMakersHeadOnASpike": head = 30522; break;
 		case "BrutrinsHeadOnASpike": head = 30522; break;
@@ -20,7 +20,7 @@ function onUseChecked( pUser, iUsed )
 		default: head = 30522;
 	}
 
-	headspike.AddGump(100, 100, head);
-	headspike.Send(pUser);
+	headspike.AddGump( 100, 100, head );
+	headspike.Send( pUser );
 	headspike.Free();
 }

@@ -2411,6 +2411,8 @@ void CChar::CopyData( CChar *target )
 	target->SetNextAct( nextAct );
 	target->SetSquelched( GetSquelched() );
 	target->SetMeditating( IsMeditating() );
+	target->SetHitChance( GetHitChance() );
+	target->SetDefenseChance( GetDefenseChance() );
 	target->SetStealth( stealth );
 	target->SetRunning( running );
 	target->SetRace( GetRace() );
@@ -2920,6 +2922,19 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
+			IncSwingSpeedIncrease( itemLayers[tLayer]->GetSwingSpeedIncrease() );
+
+			IncHealthLeech( itemLayers[tLayer]->GetHealthLeech() );
+			IncStaminaLeech( itemLayers[tLayer]->GetStaminaLeech() );
+			IncManaLeech( itemLayers[tLayer]->GetManaLeech() );
+
+      IncHitChance( itemLayers[tLayer]->GetHitChance() );
+			IncDefenseChance( itemLayers[tLayer]->GetDefenseChance() );
+
+			IncHealthBonus( itemLayers[tLayer]->GetHealthBonus() );
+			IncStaminaBonus( itemLayers[tLayer]->GetStaminaBonus() );
+			IncManaBonus( itemLayers[tLayer]->GetManaBonus() );
+
 			if( toWear->IsPostLoaded() )
 			{
 				if( itemLayers[tLayer]->GetPoisoned() )
@@ -2979,6 +2994,20 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncStrength2( -itemLayers[Layer]->GetStrength2() );
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
+
+		IncSwingSpeedIncrease( -itemLayers[Layer]->GetSwingSpeedIncrease() );
+
+    IncHealthLeech( -itemLayers[Layer]->GetHealthLeech() );
+		IncStaminaLeech( -itemLayers[Layer]->GetStaminaLeech() );
+		IncManaLeech( -itemLayers[Layer]->GetManaLeech() );
+
+		IncHitChance( -itemLayers[Layer]->GetHitChance() );
+		IncDefenseChance( -itemLayers[Layer]->GetDefenseChance() );
+
+		IncHealthBonus( -itemLayers[Layer]->GetHealthBonus() );
+		IncStaminaBonus( -itemLayers[Layer]->GetStaminaBonus() );
+		IncManaBonus( -itemLayers[Layer]->GetManaBonus() );
+
 		if( itemLayers[Layer]->GetPoisoned() )
 		{
 			if( itemLayers[Layer]->GetPoisoned() > GetPoisoned() )
@@ -3134,6 +3163,8 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 	//-------------------------------------------------------------------------------------------
 	outStream << "CanRun=" + std::to_string((( CanRun() && IsNpc() ) ? 1 : 0 )) + newLine;
 	outStream << "CanAttack=" + std::to_string(( GetCanAttack() ? 1 : 0 )) + newLine;
+	outStream << "HitChance=" + std::to_string( GetHitChance() ) + newLine;
+	outStream << "DefChance=" + std::to_string( GetDefenseChance() ) + newLine;
 	outStream << "AllMove=" + std::to_string(( AllMove() ? 1 : 0 )) + newLine;
 	outStream << "IsNpc=" + std::to_string(( IsNpc() ? 1 : 0 )) + newLine;
 	outStream << "IsShop=" + std::to_string(( IsShop() ? 1 : 0 )) + newLine;
@@ -3787,7 +3818,7 @@ UI16 CChar::GetMaxHP( void )
 		oldRace			= GetRace();
 
 	}
-	return maxHP;
+	return maxHP + GetHealthBonus();
 }
 void CChar::SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace )
 {
@@ -3830,7 +3861,7 @@ void CChar::SetFixedMaxHP( SI16 newmaxhp )
 SI16 CChar::GetMaxMana( void )
 {
 	if(( maxMana_oldint != GetIntelligence() || oldRace != GetRace() ) && !GetMaxManaFixed() )
-		//if int/race changed since last calculation, recalculate maxHp
+		//if int/race changed since last calculation, recalculate maxMana
 	{
 		CRace *pRace = Races->Race( GetRace() );
 
@@ -3847,7 +3878,7 @@ SI16 CChar::GetMaxMana( void )
 		oldRace			= GetRace();
 
 	}
-	return maxMana;
+	return maxMana + GetManaBonus();
 }
 void CChar::SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace )
 {
@@ -3889,7 +3920,7 @@ void CChar::SetFixedMaxMana( SI16 newmaxmana )
 //o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetMaxStam( void )
 {
-	// If dex/race changed since last calculation, recalculate maxHp
+	// If dex/race changed since last calculation, recalculate maxStam
 	if(( maxStam_olddex != GetDexterity() || oldRace != GetRace() ) && !GetMaxStamFixed() )
 	{
 		CRace *pRace = Races->Race( GetRace() );
@@ -3907,7 +3938,7 @@ SI16 CChar::GetMaxStam( void )
 		oldRace			= GetRace();
 
 	}
-	return maxStam;
+	return maxStam + GetStaminaBonus();
 }
 void CChar::SetMaxStam( SI16 newmaxstam, UI16 newolddex, RACEID newoldrace )
 {
@@ -4372,6 +4403,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					SetDead(( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 ));
 					rValue = true;
 				}
+				else if( UTag == "DEFCHANCE" )
+				{
+					SetDefenseChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
 				break;
 			case 'E':
 				if( UTag == "EMOTION" )
@@ -4460,7 +4496,12 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				break;
 			case 'H':
-				if( UTag == "HUNGER" )
+				if( UTag == "HITCHANCE" )
+				{
+					SetHitChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "HUNGER" )
 				{
 					SetHunger( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
@@ -5591,6 +5632,74 @@ void CChar::SetIntelligence2( SI16 nVal )
 	CBaseObject::SetIntelligence2( nVal );
 	Dirty( UT_MANA );
 	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetHealthBonus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets bonus Hits stat for character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetHealthBonus( SI16 nVal )
+{
+	CBaseObject::SetHealthBonus( nVal );
+	Dirty( UT_HITPOINTS );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetStaminaBonus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets bonus Stam stat for character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetStaminaBonus( SI16 nVal )
+{
+	CBaseObject::SetStaminaBonus( nVal );
+	Dirty( UT_STAMINA );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetManaBonus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets bonus Mana stat for character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetManaBonus( SI16 nVal )
+{
+	CBaseObject::SetManaBonus( nVal );
+	Dirty( UT_MANA );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::IncHealthBonus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Increments GetHealthBonus (modifications) by toAdd
+//o------------------------------------------------------------------------------------------------o
+void CChar::IncHealthBonus( SI16 toAdd )
+{
+	SetHealthBonus( static_cast<SI16>( GetHealthBonus() + toAdd ));
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::IncStaminaBonus()
+//| Date		-	26 May 2024
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Increments GetBonusStam (modifications) by toAdd
+//o------------------------------------------------------------------------------------------------o
+void CChar::IncStaminaBonus( SI16 toAdd )
+{
+	SetStaminaBonus( static_cast<SI16>( GetStaminaBonus() + toAdd ));
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::IncManaBonus()
+//| Date		-	26 May 2024
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Increments GetBonusMana (modifications) by toAdd
+//o------------------------------------------------------------------------------------------------o
+void CChar::IncManaBonus( SI16 toAdd )
+{
+	SetManaBonus( static_cast<SI16>( GetManaBonus() + toAdd ));
 }
 
 //o------------------------------------------------------------------------------------------------o
