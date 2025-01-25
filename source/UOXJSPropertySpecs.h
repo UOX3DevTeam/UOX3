@@ -357,6 +357,8 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "houseicons",		CCP_HOUSEICONS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "spattack",		CCP_SPATTACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "spdelay",		CCP_SPDELAY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "hitChance",		CCP_HITCHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "defenseChance",	CCP_DEFENSECHANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "aitype",			CCP_AITYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "split",			CCP_SPLIT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "splitchance",	CCP_SPLITCHANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -535,7 +537,19 @@ inline JSPropertySpec CItemProps[] =
 	{ "ammoFXHue",		CIP_AMMOFXHUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "ammoFXRender",	CIP_AMMOFXRENDER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "speed",			CIP_SPEED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+
+	{ "healthLeech",	CIP_HEALTHLEECH,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "staminaLeech",	CIP_STAMINALEECH,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "manaLeech",		CIP_MANALEECH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+
+	{ "hitChance",		CIP_HITCHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "defenseChance",	CIP_DEFENSECHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+
+	{ "healthBonus",	CIP_HEALTHBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "staminaBonus",	CIP_STAMINABONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "manaBonus",		CIP_MANABONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "artifactRarity",	CIP_ARTIFACTRARITY,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+
 	{ "multi",			CIP_MULTI,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "maxRange",		CIP_MAXRANGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "baseRange",		CIP_BASERANGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
