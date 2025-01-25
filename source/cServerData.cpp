@@ -724,6 +724,7 @@ auto CServerData::ResetDefaults() -> void
 	PetCombatTraining( true );
 	HirelingCombatTraining( true );
 	NpcCombatTraining( false );
+	SwingSpeedIncreaseCap( 60 );
 	WeaponDamageBonusType( 2 );
 
 	CheckPetControlDifficulty( true );
