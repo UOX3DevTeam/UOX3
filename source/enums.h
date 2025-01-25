@@ -373,8 +373,8 @@ enum Skills
     BUSHIDO,
     NINJITSU,
     SPELLWEAVING,
-    IMBUING,
     MYSTICISM,
+    IMBUING,
     THROWING,
 
     ALLSKILLS, // #skills+1
