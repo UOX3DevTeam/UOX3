@@ -1,8 +1,8 @@
 22/01/2025 - Dragon Slayer
-	Added New Haven for trammel. (Rgions.dfn)
-	Added New Haven Music. (Rgions.dfn)
-	Added new player quest training areas. (Rgions.dfn)
-	Fixed Britains music. (Rgions.dfn)
+	Added New Haven for trammel. (Regions.dfn)
+	Added New Haven Music. (Regions.dfn)
+	Added new player quest training areas. (Regions.dfn)
+	Fixed Britains music. (Regions.dfn)
 	marked old regions file as old because contains old haven.
 
 13/05/2024 - Dragon Slayer
