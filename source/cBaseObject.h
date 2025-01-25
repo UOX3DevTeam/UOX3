@@ -77,6 +77,9 @@ protected:
 	SI32				weight;
 	SI16				mana;
 	SI16				stamina;
+	SI16				healthLeech;
+	SI16				staminaLeech;
+	SI16				manaLeech;
 	UI16				scriptTrig;
 	SI16				st2;
 	SI16				dx2;
@@ -268,6 +271,19 @@ public:
 	void					IncIntelligence( SI16 toInc = 1 );
 
 
+	SI16					GetHealthLeech( void ) const;
+	virtual void			SetHealthLeech( SI16 nVal );
+
+	SI16					GetStaminaLeech( void ) const;
+	virtual void			SetStaminaLeech( SI16 nVal );
+
+	SI16					GetManaLeech( void ) const;
+	virtual void			SetManaLeech( SI16 nVal );
+
+	void					IncHealthLeech( SI16 toInc = 1 );
+	void					IncStaminaLeech( SI16 toInc = 1 );
+	void					IncManaLeech( SI16 toInc = 1 );
+
 	void					IncHitChance( SI16 toInc = 1 );
 	void					IncDefenseChance( SI16 toInc = 1 );
 
@@ -279,7 +295,6 @@ public:
 
 	SI16					GetManaBonus( void ) const;
 	virtual void			SetManaBonus( SI16 nVal );
-
 
 	virtual void			PostLoadProcessing( void );
 	virtual bool			LoadRemnants( void ) = 0;

@@ -7473,6 +7473,28 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		tempEntry.ourText = oldstrutil::number( cItem.GetTempVar( CITV_MOREZ ));
 		FinalizeData( tempEntry, totalStringLen );
 	}
+
+	if( cItem.GetManaLeech() > 0 )
+	{
+		tempEntry.stringNum = 1060427; // hit mana leech ~1_val~%
+		tempEntry.ourText = oldstrutil::number( cItem.GetManaLeech() );
+		FinalizeData( tempEntry, totalStringLen );
+	}
+
+	if( cItem.GetStaminaLeech() > 0 )
+	{
+		tempEntry.stringNum = 1060430; // hit stamina leech ~1_val~%
+		tempEntry.ourText = oldstrutil::number( cItem.GetStaminaLeech() );
+		FinalizeData( tempEntry, totalStringLen );
+	}
+
+	if( cItem.GetHealthLeech() > 0 )
+	{
+		tempEntry.stringNum = 1060422; // hit life leech ~1_val~%
+		tempEntry.ourText = oldstrutil::number( cItem.GetHealthLeech() );
+		FinalizeData( tempEntry, totalStringLen );
+	}
+
 	if( cItem.GetType() == IT_SPELLCHANNELING )
 	{
 		tempEntry.stringNum = 1060482; // spell channeling
