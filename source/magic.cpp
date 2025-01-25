@@ -4500,10 +4500,10 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 		return;
 	}
 	else if( caster->IsNpc() )
-    {
-        // Run a skillcheck for NPC to give them a chance to gain skill - if that option is enabled in ini
-        Skills->CheckSkill( caster, MAGERY, lowSkill, highSkill );
-    }
+	{
+		// Run a skillcheck for NPC to give them a chance to gain skill - if that option is enabled in ini
+		Skills->CheckSkill( caster, MAGERY, lowSkill, highSkill );
+	}
 
 	if( curSpell > 63 && static_cast<UI32>(curSpell) <= spellCount && spellCount <= 70 )
 	{
