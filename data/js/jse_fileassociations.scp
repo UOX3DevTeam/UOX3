@@ -337,6 +337,7 @@
 7000=combat/peacemake_effect.js
 7001=combat/special_moves.js
 7002=combat/blockequip.js
+7003=combat/leechstats.js
 
 //-------------------------------------------
 // Misc Player Scripts [8000-8499]

@@ -94,6 +94,16 @@ const SI16			DEFBASE_KILLS		= 0;
 const UI16			DEFBASE_RESIST 		= 0;
 const bool			DEFBASE_NAMEREQUESTACTIVE = 0;
 const ExpansionRuleset	DEFBASE_ORIGIN	= ER_UO;
+const SI16			DEFBASE_HEALTHLEECH = 0;
+const SI16			DEFBASE_STAMINALEECH = 0;
+const SI16			DEFBASE_MANALEECH = 0;
+
+const SI16			DEFBASE_HITCHANCE = 0;
+const SI16			DEFBASE_DEFENSECHANCE = 0;
+
+const SI16			DEFBASE_HEALTHBONUS = 0;
+const SI16			DEFBASE_STAMINABONOS = 0;
+const SI16			DEFBASE_MANABONUS = 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
@@ -110,7 +120,9 @@ loDamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ),
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ),
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
-fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN )
+fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN ),
+healthBonus( DEFBASE_HEALTHBONUS ),staminaBonus( DEFBASE_STAMINABONOS ), manaBonus( DEFBASE_MANABONUS ), hitChance( DEFBASE_HITCHANCE ), defenseChance( DEFBASE_DEFENSECHANCE ),
+healthLeech( DEFBASE_HEALTHLEECH ), staminaLeech( DEFBASE_STAMINALEECH ), manaLeech( DEFBASE_MANALEECH )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
@@ -1037,6 +1049,46 @@ void CBaseObject::IncHP( SI16 amtToChange )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetHitChance()
+//|					CBaseObject::SetHitChance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Defense Chance of the Item(s) Equiped or Character
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetHitChance( void ) const
+{
+	return hitChance;
+}
+void CBaseObject::SetHitChance( SI16 newValue )
+{
+	hitChance = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetDefenseChance()
+//|					CBaseObject::SetDefenseChance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Defense Chance of the Item(s) Equiped or Character
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetDefenseChance( void ) const
+{
+	return defenseChance;
+}
+void CBaseObject::SetDefenseChance( SI16 newValue )
+{
+	defenseChance = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetDir()
 //|					CBaseObject::SetDir()
 //|	Date		-	28 July, 2000
@@ -1632,6 +1684,126 @@ void CBaseObject::SetIntelligence2( SI16 nVal )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetHealthLeech()
+//|					CBaseObject::SetHealthLeech()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Health Leech
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetHealthLeech( void ) const
+{
+	return healthLeech;
+}
+void CBaseObject::SetHealthLeech( SI16 nVal )
+{
+	healthLeech = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//|	Function	-	CBaseObject::GetHealthBonus()
+//|					CBaseObject::SetHealthBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the health max var associated with the object. For chars, it's the
+//|					bonuses (via armour and such)
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetHealthBonus( void ) const
+{
+	return healthBonus;
+}
+void CBaseObject::SetHealthBonus( SI16 nVal )
+{
+	healthBonus = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetStaminaLeech()
+//|					CBaseObject::SetStaminaLeech()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Stamina Leech
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetStaminaLeech( void ) const
+{
+	return staminaLeech;
+}
+void CBaseObject::SetStaminaLeech( SI16 nVal )
+{
+	staminaLeech = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//|	Function	-	CBaseObject::GetStaminaBonus()
+//|					CBaseObject::SetStaminaBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the stamina max var associated with the object. For chars, it's the
+//|					bonuses (via armour and such)
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetStaminaBonus( void ) const
+{
+	return staminaBonus;
+}
+void CBaseObject::SetStaminaBonus( SI16 nVal )
+{
+	staminaBonus = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetManaLeech()
+//|					CBaseObject::SetManaLeech()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Mana Leech
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetManaLeech( void ) const
+{
+	return manaLeech;
+}
+void CBaseObject::SetManaLeech( SI16 nVal )
+{
+	manaLeech = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//|	Function	-	CBaseObject::GetManaBonus()
+//|					CBaseObject::SetManaBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Mana max var associated with the object. For chars, it's the
+//|					bonuses (via armour and such)
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetManaBonus( void ) const
+{
+	return manaBonus;
+}
+void CBaseObject::SetManaBonus( SI16 nVal )
+{
+	manaBonus = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::IncStrength()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Increments the object's strength value
@@ -1659,6 +1831,55 @@ void CBaseObject::IncDexterity( SI16 toInc )
 void CBaseObject::IncIntelligence( SI16 toInc )
 {
 	SetIntelligence( intelligence + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncHealthLeech()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Health Leech Points value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncHealthLeech( SI16 toInc )
+{
+	SetHealthLeech( healthLeech + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncStaminaLeech()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Stamina Leech Points value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncStaminaLeech( SI16 toInc )
+{
+	SetStaminaLeech( staminaLeech + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncManaLeech()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Mana Leech Points value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncManaLeech( SI16 toInc )
+{
+	SetManaLeech( manaLeech + toInc );
+}
+
+//|	Function	-	CBaseObject::IncHitChance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Hit Chance value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncHitChance( SI16 toInc )
+{
+	SetHitChance( hitChance + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncDefenseChance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Hit Chance value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncDefenseChance( SI16 toInc )
+{
+	SetDefenseChance( defenseChance + toInc );
 }
 
 //o------------------------------------------------------------------------------------------------o
