@@ -1,5 +1,6 @@
 8/12/2024 - Dragon Slayer
 	Added Karma Locking LBR Feature.
+		added js propertie .karmaLock
 		KARMALOCKING=1/0 // If 1 the system is enabled will lock karma if player goes negative.
 
 13/05/2024 - Dragon Slayer
