@@ -22,7 +22,7 @@ function onSpecialMove( pUser, abilityID )
 	if( abilityID >= 1 )
 		pUser.SetTempTag( "abilityID", abilityID );
 
-    return true;
+	return true;
 }
 
 function checkSkillRequirement( pUser, requiredSkillLevel, requiredSkill, skillMessage, abilityID ) 
@@ -323,35 +323,35 @@ function DeductMana(  pUser, abilityID )
 function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 {
 	var abilityID = pAttacker.GetTempTag( "abilityID" );
-    var baseDamage = pAttacker.attack;
+	var baseDamage = pAttacker.attack;
 
-    if( baseDamage == -1 )  // No damage if weapon breaks
-        return 0;
+	if( baseDamage == -1 )  // No damage if weapon breaks
+		return 0;
 
-    var damage = ApplyDamageBonuses( 1, pAttacker, pDefender, fightSkill, hitLoc, baseDamage );
+	var damage = ApplyDamageBonuses( 1, pAttacker, pDefender, fightSkill, hitLoc, baseDamage );
 
-    if( damage < 1 )
-        return 0;
+	if( damage < 1 )
+		return 0;
 
-    // Check if attacker has armor ignore enabled
+	// Check if attacker has armor ignore enabled
 	if( abilityID == 1 ) // armorignore
-    {
-        // Armor Ignore ignores defense modifiers, but deals only 90% of potential damage
-        damage *= 0.9;
+	{
+		// Armor Ignore ignores defense modifiers, but deals only 90% of potential damage
+		damage *= 0.9;
 
-        if( fightSkill == 31 ) // Archery
-        {
-            // Cap damage from Armor Strike attack at 30 for archery weapons
-            if( damage > 30 )
-                damage = 30;
-        }
-        else
+		if( fightSkill == 31 ) // Archery
 		{
-            // For all othe rfighting skills, cap damage from Armor Strike at 35
-            if( damage > 35 )
-                damage = 35;
-        }
-    }
+			// Cap damage from Armor Strike attack at 30 for archery weapons
+			if( damage > 30 )
+				damage = 30;
+		}
+		else
+		{
+			// For all othe rfighting skills, cap damage from Armor Strike at 35
+			if( damage > 35 )
+				damage = 35;
+		}
+	}
 	else if( abilityID == 12 )// shadowstrike
 	{
 		damage *= 1.25;
@@ -366,7 +366,7 @@ function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 		{
 			var hitsPercent = ( pDefender.hp / pDefender.maxhp ) * 100.0;
 
-            var manaPercent = 0;
+			var manaPercent = 0;
 
 			if( pDefender.maxmana > 0 )
 				manaPercent = ( pDefender.mana / pDefender.maxmana ) * 100.0;
@@ -374,21 +374,21 @@ function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 			damage += Math.min(Math.floor(Math.abs(hitsPercent - manaPercent) / 4), 20);
 		}
 	}
-    else
+	else
 	{
-        // Otherwise, apply normal defense modifiers
-        damage = ApplyDefenseModifiers( 1, pAttacker, pDefender, fightSkill, hitLoc, damage, true );
-    }
+		// Otherwise, apply normal defense modifiers
+		damage = ApplyDefenseModifiers( 1, pAttacker, pDefender, fightSkill, hitLoc, damage, true );
+	}
 
-    // If damage after defense modifiers is below 0, do a small random amount of damage still
-    if( damage <= 0 )
-        damage = RandomNumber( 0, 4 );
+	// If damage after defense modifiers is below 0, do a small random amount of damage still
+	if( damage <= 0 )
+		damage = RandomNumber( 0, 4 );
 
-    // If defender is a player, damage is divided by this modifier from uox.ini
+	// If defender is a player, damage is divided by this modifier from uox.ini
 	if( pAttacker.npc && !pDefender.npc )
 		damage /= GetServerSetting( "NPCDAMAGERATE" );
 
-    return damage;
+	return damage;
 }
 
 function onCombatHit( pAttacker, pDefender )
