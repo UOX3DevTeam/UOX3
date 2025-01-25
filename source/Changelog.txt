@@ -1,5 +1,5 @@
 12/08/2024 - Dragon Slayer
-	Flipped Imbuing and Mysticism Skill around.
+	Fixed an issue where Imbuing and Mysticism skills were listed in wrong order in skills.dfn and enums.h
 
 4/07/2024 - Dragon Slayer
 	Fixed Cleaver ID missing in the jse_objectassociations.scp for carving corpses
