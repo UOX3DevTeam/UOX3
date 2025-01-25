@@ -1,3 +1,6 @@
+07/12/2024 - Dragon Slayer
+	Updated the packet 0xf1 to reflect the current CUO Web Ping while maintaining backward compatibility with older ping statuses. (0xf1_freeshardServerPoll.js) (Thanks Karasho and Xuri)
+
 12/08/2024 - Dragon Slayer
 	Fixed an issue where Imbuing and Mysticism skills were listed in wrong order in skills.dfn and enums.h
 
