@@ -1,3 +1,8 @@
+05/08/2024 - Dragon Slayer Update
+	Resolved an issue with cooking functionality.
+	Fixed a duplicated dictionary number.
+	Corrected the required items for crafting sweet dough and regular dough.
+
 13/05/2024 - Dragon Slayer
 	Added New Shield Type 107 so shield ID's no longer have to be in hard code for shields to work properly
 
