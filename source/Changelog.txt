@@ -1,8 +1,19 @@
+13/06/2024 - Dragon Slayer
+	Added three More AOS Props
+	-HEALTHBONUS=#
+	-MANABONUS=#
+	-STAMINABONUS=#
+	Add this properties to any weapon/armor/jewlery will give the player more hp/mana/stam why its equiped. depending on number you add with it
+	These are also available as JS Engine object properties: .healthBonus, .staminaBonus, .manaBonus
+
 27/05/2024 - Dragon Slayer
 	Added Missing Wand ID's to combat weapon type in core and in js.
   
 13/05/2024 - Dragon Slayer
 	Added New Shield Type 107 so shield ID's no longer have to be in hard code for shields to work properly
+
+11/05/2024 - Dragon Slayer
+	Updated 'get command (js/commands/targeting/get.js) to use correct object reference when getting resist values for items, and added support for getting resist values for chars
 
 09/05/2024 - Dragon Slayer
 	Added ArtifactRarity AOS Property for items
