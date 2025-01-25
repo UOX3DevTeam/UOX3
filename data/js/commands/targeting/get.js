@@ -295,29 +295,26 @@ function HandleGetItem( socket, ourItem, uKey )
 		socket.SysMessage( ourItem.desc );
 		break;
 	case "DEF":
+	case "RESISTARMOR":
 		socket.SysMessage( ourItem.Resist( 1 ));
 		break;
-	case "DEF":
-	case "RESISTARMOR":
-		socket.SysMessage( ourObj.Resist( 1 ));
-		break;
 	case "RESISTLIGHT":
-		socket.SysMessage( ourObj.Resist( 2 ));
+		socket.SysMessage( ourItem.Resist( 2 ));
 		break;
 	case "RESISTWATER":
-		socket.SysMessage( ourObj.Resist( 3 ));
+		socket.SysMessage( ourItem.Resist( 3 ));
 		break;
 	case "RESISTCOLD":
-		socket.SysMessage( ourObj.Resist( 4 ));
+		socket.SysMessage( ourItem.Resist( 4 ));
 		break;
 	case "RESISTFIRE":
-		socket.SysMessage( ourObj.Resist( 5 ));
+		socket.SysMessage( ourItem.Resist( 5 ));
 		break;
 	case "RESISTENERGY":
-		socket.SysMessage( ourObj.Resist( 6 ));
+		socket.SysMessage( ourItem.Resist( 6 ));
 		break;
 	case "RESISTPOISON":
-		socket.SysMessage( ourObj.Resist( 7 ));
+		socket.SysMessage( ourItem.Resist( 7 ));
 		break;
 	case "ARMORCLASS":
 	case "ARMOURCLASS":
@@ -598,7 +595,26 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "ARMOUR":
 	case "ARMOR":
+	case "RESISTARMOR":
 		socket.SysMessage( ourChar.Resist( 1 ));
+		break;
+	case "RESISTLIGHT":
+		socket.SysMessage( ourChar.Resist( 2 ));
+		break;
+	case "RESISTWATER":
+		socket.SysMessage( ourChar.Resist( 3 ));
+		break;
+	case "RESISTCOLD":
+		socket.SysMessage( ourChar.Resist( 4 ));
+		break;
+	case "RESISTFIRE":
+		socket.SysMessage( ourChar.Resist( 5 ));
+		break;
+	case "RESISTENERGY":
+		socket.SysMessage( ourChar.Resist( 6 ));
+		break;
+	case "RESISTPOISON":
+		socket.SysMessage( ourChar.Resist( 7 ));
 		break;
 	case "MAXHP":
 		socket.SysMessage( ourChar.maxhp );

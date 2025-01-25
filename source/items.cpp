@@ -143,6 +143,9 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_STAMINALEECH:	applyTo->SetStaminaLeech( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_MANALEECH:		applyTo->SetManaLeech( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_BASERANGE:		applyTo->SetBaseRange( static_cast<UI08>( ndata ));		break;
+			case DFNTAG_HEALTHBONUS:		applyTo->SetHealthBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_STAMINABONUS:		applyTo->SetStaminaBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_MANABONUS:		applyTo->SetManaBonus( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_CREATOR:		applyTo->SetCreator( ndata );							break;
 			case DFNTAG_COLOUR:			applyTo->SetColour( static_cast<UI16>( ndata ));		break;
 			case DFNTAG_COLOURLIST:		applyTo->SetColour( AddRandomColor( cdata ));			break;
@@ -233,6 +236,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_DISPELLABLE:	applyTo->SetDispellable( true );			break;
 			case DFNTAG_DISABLED:		applyTo->SetDisabled( ndata != 0 );			break;
 			case DFNTAG_DOORFLAG:		break;
+			case DFNTAG_DEFENSECHANCE:	applyTo->SetDefenseChance( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_GOOD:			applyTo->SetGood( static_cast<SI16>( ndata ));			break;
 			case DFNTAG_GLOW:			applyTo->SetGlow( ndata );								break;
 			case DFNTAG_GLOWBC:			applyTo->SetGlowColour( static_cast<UI16>( ndata ));	break;
@@ -342,6 +346,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				break;
 			case DFNTAG_HIDAMAGE:		applyTo->SetHiDamage( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_HITCHANCE:	applyTo->SetHitChance( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_HEAT:			applyTo->SetWeatherDamage( HEAT, ndata != 0 );			break;
 			case DFNTAG_ID:				// applyTo->SetId( static_cast<UI16>( ndata ));				break;
 				if( ssecs.size() == 1 )

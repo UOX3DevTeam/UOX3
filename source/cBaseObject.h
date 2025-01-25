@@ -69,6 +69,8 @@ protected:
 	SI16				dexterity;
 	SI16				intelligence;
 	SI16				hitpoints;
+	SI16				hitChance;
+	SI16				defenseChance;
 	VisibleTypes		visible;
 	SI16				hiDamage;
 	SI16				loDamage;
@@ -82,6 +84,9 @@ protected:
 	SI16				st2;
 	SI16				dx2;
 	SI16				in2;
+	SI16				healthBonus;
+	SI16				staminaBonus;
+	SI16				manaBonus;
 	mutable SI32		FilePosition;
 	SERIAL				tempMulti;
 	std::string			name;
@@ -226,6 +231,12 @@ public:
 	virtual void			SetHP( SI16 newValue );
 	void					IncHP( SI16 amtToChange );
 
+	virtual SI16			GetHitChance( void ) const;
+	virtual void			SetHitChance( SI16 newValue );
+
+	virtual SI16			GetDefenseChance( void ) const;
+	virtual void			SetDefenseChance( SI16 newValue );
+
 	void					SetDir( UI08 newDir, bool sendUpdate = true );
 	UI08					GetDir( void ) const;
 
@@ -259,6 +270,7 @@ public:
 	void					IncDexterity( SI16 toInc = 1 );
 	void					IncIntelligence( SI16 toInc = 1 );
 
+
 	SI16					GetHealthLeech( void ) const;
 	virtual void			SetHealthLeech( SI16 nVal );
 
@@ -271,6 +283,18 @@ public:
 	void					IncHealthLeech( SI16 toInc = 1 );
 	void					IncStaminaLeech( SI16 toInc = 1 );
 	void					IncManaLeech( SI16 toInc = 1 );
+
+	void					IncHitChance( SI16 toInc = 1 );
+	void					IncDefenseChance( SI16 toInc = 1 );
+
+	SI16					GetHealthBonus( void ) const;
+	virtual void			SetHealthBonus( SI16 nVal );
+
+	SI16					GetStaminaBonus( void ) const;
+	virtual void			SetStaminaBonus( SI16 nVal );
+
+	SI16					GetManaBonus( void ) const;
+	virtual void			SetManaBonus( SI16 nVal );
 
 	virtual void			PostLoadProcessing( void );
 	virtual bool			LoadRemnants( void ) = 0;
