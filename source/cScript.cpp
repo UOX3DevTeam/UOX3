@@ -1010,28 +1010,28 @@ bool cScript::OnAttack( CChar *attacker, CChar *defender, bool hitStatus, SI08 h
 //o------------------------------------------------------------------------------------------------o
 bool cScript::OnDefense( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageReceived )
 {
-    if( !ValidateObject( attacker ) || !ValidateObject( defender ))
-        return false;
+	if( !ValidateObject( attacker ) || !ValidateObject( defender ))
+		return false;
 
-    if( !ExistAndVerify( seOnDefense, "onDefense" ))
-        return false;
+	if( !ExistAndVerify( seOnDefense, "onDefense" ))
+		return false;
 
-    jsval rval, params[5];
-    JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
-    JSObject *defObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
+	jsval rval, params[5];
+	JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
+	JSObject *defObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
 
-    params[0] = OBJECT_TO_JSVAL( attObj );
-    params[1] = OBJECT_TO_JSVAL( defObj );
-    params[2] = BOOLEAN_TO_JSVAL( hitStatus );
-    params[3] = INT_TO_JSVAL( hitLoc );
-    params[4] = INT_TO_JSVAL( damageReceived );
-    JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDefense", 5, params, &rval );
-    if( retVal == JS_FALSE )
-    {
-        SetEventExists( seOnDefense, false );
-    }
+	params[0] = OBJECT_TO_JSVAL( attObj );
+	params[1] = OBJECT_TO_JSVAL( defObj );
+	params[2] = BOOLEAN_TO_JSVAL( hitStatus );
+	params[3] = INT_TO_JSVAL( hitLoc );
+	params[4] = INT_TO_JSVAL( damageReceived );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDefense", 5, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnDefense, false );
+	}
 
-    return ( retVal == JS_TRUE );
+	return ( retVal == JS_TRUE );
 }
 
 //o------------------------------------------------------------------------------------------------o

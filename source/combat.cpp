@@ -2918,23 +2918,23 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			PlayMissedSoundEffect( &mChar );
 
 			for( auto scriptTrig : scriptTriggers )
-            {
-                cScript *toExecute = JSMapping->GetScript( scriptTrig );
-                if( toExecute != nullptr )
-                {
-                    toExecute->OnAttack( &mChar, ourTarg, skillPassed, -1, 0 );
-                }
-            }
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnAttack( &mChar, ourTarg, skillPassed, -1, 0 );
+				}
+			}
 
-            std::vector<UI16> defScriptTriggers = ourTarg->GetScriptTriggers();
-            for( auto scriptTrig : defScriptTriggers )
-            {
+			std::vector<UI16> defScriptTriggers = ourTarg->GetScriptTriggers();
+			for( auto scriptTrig : defScriptTriggers )
+			{
                 cScript *toExecute = JSMapping->GetScript( scriptTrig );
-                if( toExecute != nullptr )
-                {
-                    toExecute->OnDefense( &mChar, ourTarg, skillPassed, -1, 0 );
-                }
-            }
+				if( toExecute != nullptr )
+				{
+					toExecute->OnDefense( &mChar, ourTarg, skillPassed, -1, 0 );
+				}
+			}
 		}
 		else
 		{
