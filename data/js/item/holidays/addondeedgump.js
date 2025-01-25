@@ -181,7 +181,7 @@ function CheckForNearbyDoors( myTarget, itemToCheck, pSocket )
 				}
 			}
 
-			if( myTarget.DistanceTo(itemToCheck) <= 2 ) 
+			if( myTarget.DistanceTo( itemToCheck ) <= 2 ) 
 			{
 				return true;
 			}
