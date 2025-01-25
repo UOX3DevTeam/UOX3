@@ -1,3 +1,7 @@
+27/10/2024 -Dragon Slayer
+	Corrected a misspelling of IsBoat in magic.js.
+	Added additional checks for boats in various functions.
+
 1/05/2024 - Dragon Slayer/Xuri
 	Fixed AutoUnequipAttempt function in clumsy.js, createfood.js level1target.js, will no longer fail on casting and return to hardcode.
 	Fixed createfood to check for reagents on cast.
