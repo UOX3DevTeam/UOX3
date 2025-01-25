@@ -233,6 +233,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_DISPELLABLE:	applyTo->SetDispellable( true );			break;
 			case DFNTAG_DISABLED:		applyTo->SetDisabled( ndata != 0 );			break;
 			case DFNTAG_DOORFLAG:		break;
+			case DFNTAG_DEFENSECHANCE:	applyTo->SetDefenseChance( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_GOOD:			applyTo->SetGood( static_cast<SI16>( ndata ));			break;
 			case DFNTAG_GLOW:			applyTo->SetGlow( ndata );								break;
 			case DFNTAG_GLOWBC:			applyTo->SetGlowColour( static_cast<UI16>( ndata ));	break;
@@ -342,6 +343,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				break;
 			case DFNTAG_HIDAMAGE:		applyTo->SetHiDamage( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_HITCHANCE:	applyTo->SetHitChance( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_HEAT:			applyTo->SetWeatherDamage( HEAT, ndata != 0 );			break;
 			case DFNTAG_ID:				// applyTo->SetId( static_cast<UI16>( ndata ));				break;
 				if( ssecs.size() == 1 )

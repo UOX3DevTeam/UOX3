@@ -94,6 +94,10 @@ const SI16			DEFBASE_KILLS		= 0;
 const UI16			DEFBASE_RESIST 		= 0;
 const bool			DEFBASE_NAMEREQUESTACTIVE = 0;
 const ExpansionRuleset	DEFBASE_ORIGIN	= ER_UO;
+
+const SI16			DEFBASE_HITCHANCE = 0;
+const SI16			DEFBASE_DEFENSECHANCE = 0;
+
 const SI16			DEFBASE_HEALTHBONUS = 0;
 const SI16			DEFBASE_STAMINABONOS = 0;
 const SI16			DEFBASE_MANABONUS = 0;
@@ -114,7 +118,7 @@ mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ),
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN ),
-healthBonus( DEFBASE_HEALTHBONUS ),staminaBonus( DEFBASE_STAMINABONOS ), manaBonus( DEFBASE_MANABONUS )
+healthBonus( DEFBASE_HEALTHBONUS ),staminaBonus( DEFBASE_STAMINABONOS ), manaBonus( DEFBASE_MANABONUS ), hitChance( DEFBASE_HITCHANCE ), defenseChance( DEFBASE_DEFENSECHANCE )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
@@ -1041,6 +1045,46 @@ void CBaseObject::IncHP( SI16 amtToChange )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetHitChance()
+//|					CBaseObject::SetHitChance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Defense Chance of the Item(s) Equiped or Character
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetHitChance( void ) const
+{
+	return hitChance;
+}
+void CBaseObject::SetHitChance( SI16 newValue )
+{
+	hitChance = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetDefenseChance()
+//|					CBaseObject::SetDefenseChance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Defense Chance of the Item(s) Equiped or Character
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetDefenseChance( void ) const
+{
+	return defenseChance;
+}
+void CBaseObject::SetDefenseChance( SI16 newValue )
+{
+	defenseChance = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetDir()
 //|					CBaseObject::SetDir()
 //|	Date		-	28 July, 2000
@@ -1726,6 +1770,26 @@ void CBaseObject::IncDexterity( SI16 toInc )
 void CBaseObject::IncIntelligence( SI16 toInc )
 {
 	SetIntelligence( intelligence + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncHitChance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Hit Chance value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncHitChance( SI16 toInc )
+{
+	SetHitChance( hitChance + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncDefenseChance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Hit Chance value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncDefenseChance( SI16 toInc )
+{
+	SetDefenseChance( defenseChance + toInc );
 }
 
 //o------------------------------------------------------------------------------------------------o

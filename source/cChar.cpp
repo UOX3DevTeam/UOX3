@@ -2411,6 +2411,8 @@ void CChar::CopyData( CChar *target )
 	target->SetNextAct( nextAct );
 	target->SetSquelched( GetSquelched() );
 	target->SetMeditating( IsMeditating() );
+	target->SetHitChance( GetHitChance() );
+	target->SetDefenseChance( GetDefenseChance() );
 	target->SetStealth( stealth );
 	target->SetRunning( running );
 	target->SetRace( GetRace() );
@@ -2920,6 +2922,9 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
+			IncHitChance( itemLayers[tLayer]->GetHitChance() );
+			IncDefenseChance( itemLayers[tLayer]->GetDefenseChance() );
+
 			IncHealthBonus( itemLayers[tLayer]->GetHealthBonus() );
 			IncStaminaBonus( itemLayers[tLayer]->GetStaminaBonus() );
 			IncManaBonus( itemLayers[tLayer]->GetManaBonus() );
@@ -2983,6 +2988,9 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncStrength2( -itemLayers[Layer]->GetStrength2() );
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
+
+		IncHitChance( -itemLayers[Layer]->GetHitChance() );
+		IncDefenseChance( -itemLayers[Layer]->GetDefenseChance() );
 
 		IncHealthBonus( -itemLayers[Layer]->GetHealthBonus() );
 		IncStaminaBonus( -itemLayers[Layer]->GetStaminaBonus() );
@@ -3143,6 +3151,8 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 	//-------------------------------------------------------------------------------------------
 	outStream << "CanRun=" + std::to_string((( CanRun() && IsNpc() ) ? 1 : 0 )) + newLine;
 	outStream << "CanAttack=" + std::to_string(( GetCanAttack() ? 1 : 0 )) + newLine;
+	outStream << "HitChance=" + std::to_string( GetHitChance() ) + newLine;
+	outStream << "DefChance=" + std::to_string( GetDefenseChance() ) + newLine;
 	outStream << "AllMove=" + std::to_string(( AllMove() ? 1 : 0 )) + newLine;
 	outStream << "IsNpc=" + std::to_string(( IsNpc() ? 1 : 0 )) + newLine;
 	outStream << "IsShop=" + std::to_string(( IsShop() ? 1 : 0 )) + newLine;
@@ -4381,6 +4391,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					SetDead(( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 ));
 					rValue = true;
 				}
+				else if( UTag == "DEFCHANCE" )
+				{
+					SetDefenseChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
 				break;
 			case 'E':
 				if( UTag == "EMOTION" )
@@ -4469,7 +4484,12 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				break;
 			case 'H':
-				if( UTag == "HUNGER" )
+				if( UTag == "HITCHANCE" )
+				{
+					SetHitChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "HUNGER" )
 				{
 					SetHunger( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;

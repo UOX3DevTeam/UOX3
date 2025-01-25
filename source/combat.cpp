@@ -2881,18 +2881,24 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				R32 attHitChanceBonus = 0;
 				R32 defDefenseChanceBonus = 0;
 				R32 maxAttHitChanceBonus = 45;
+
 				if( cwmWorldState->ServerData()->ExpansionCombatHitChance() >= ER_SA && mChar.GetBodyType() == BT_GARGOYLE )
 				{
 					// If attacker is a Gargoyle player, and ExpansionCombatHitChance is ER_SA or higher, use 50 as hitchance bonus cap instead of 45
 					maxAttHitChanceBonus = 50;
 				}
 				
-				// Fetch bonuses to hitChance/defenseChance from AoS item properties, when implemented
-				//attHitChanceBonus = GetAttackerHitChanceBonus();
-				//defDefenseChanceBonus = GetDefenderDefenseChanceBonus();
+				// Fetch bonuses to hitChance/defenseChance from AoS item properties or characters
+				attHitChanceBonus = mChar.GetHitChance();
+				defDefenseChanceBonus = mChar.GetDefenseChance();
 
-				R32 attackerHitChance = ( static_cast<R32>( attackSkill / 10 ) + 20 ) * ( 100 + std::min( attHitChanceBonus, static_cast<R32>( maxAttHitChanceBonus )));
-				R32 defenderDefenseChance = ( static_cast<R32>( defendSkill / 10 ) + 20 ) * ( 100 + std::min( defDefenseChanceBonus, static_cast<R32>( 45 )));
+				// Clamp to ensure valid bonus ranges (e.g., no multiplier below 1)
+				R32 effectiveAttHitChanceBonus = std::max(-99.0f, std::min( attHitChanceBonus, maxAttHitChanceBonus )); // Cap at -99 and maxAttHitChanceBonus
+				R32 effectiveDefDefenseChanceBonus = std::max(-99.0f, std::min( defDefenseChanceBonus, 45.0f )); // Cap at -99 and 45
+
+				// Calculate the attacker's hit chance and defender's defense chance
+				R32 attackerHitChance = ( static_cast<R32>( attackSkill / 10 ) + 20 ) * ( 100 + effectiveAttHitChanceBonus );
+				R32 defenderDefenseChance = ( static_cast<R32>( defendSkill / 10 ) + 20 ) * ( 100 + effectiveDefDefenseChanceBonus );
 				hitChance = ( attackerHitChance / ( defenderDefenseChance * 2 )) * 100;
 
 				// Always leave at least 2% chance to hit

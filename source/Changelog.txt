@@ -1,3 +1,9 @@
+14/06/2024 - Dragon Slayer
+	Added two new DFN tags for Items:
+		HITCHANCE=# 		// Increases the player's chance to hit a target with wrestling, melee and ranged weapons.
+		DEFENSECHANCE=# 	// Increases the wearer's chance that his opponents' swings (or arrows/bolts) will miss.
+	These are also available as JS Engine object properties: .hitChance, .defenseChance
+
 13/06/2024 - Dragon Slayer
 	Added three More AOS Props
 	-HEALTHBONUS=#
