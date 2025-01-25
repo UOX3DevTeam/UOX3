@@ -1,5 +1,5 @@
 12/10/2024 - Dragon Slayer
-	Added Mini-House Addons from ML Expansion.
+	Added Mini-House Addons from AOS Expansion.
 
 13/05/2024 - Dragon Slayer
 	Added New Shield Type 107 so shield ID's no longer have to be in hard code for shields to work properly
