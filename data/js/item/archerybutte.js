@@ -155,6 +155,7 @@ function onUseUnChecked( pUser, iUsed )
 								mItem.Delete();
 						}
 					}
+
 					if( arrowCount == 0 && totalAmmoCount == 0)
 					{
 						pUser.SysMessage( GetDictionaryEntry( 1770, pSock.language )); // You do not have any arrows with which to practice.
