@@ -699,15 +699,18 @@ bool CPIEquipItem::Handle( void )
 	{
 		bool canWear = false;
 		const SI16 scaledStrength = ( i->GetStrength() * ( 100 - i->GetLowerStatReq() )) / 100;
+		const SI16 scaledDexterity = (i->GetDexterity() * (100 - i->GetLowerStatReq())) / 100;
+		const SI16 scaledIntelligence = (i->GetIntelligence() * (100 - i->GetLowerStatReq())) / 100;
+
 		if( scaledStrength > k->GetStrength() )
 		{
 			tSock->SysMessage( 1188 ); // You are not strong enough to use that. (NOTE: Should these messages use color 0x096a to stand out and replicate hard coded client message?)
 		}
-		else if( i->GetDexterity() > k->GetDexterity() )
+		else if( scaledDexterity > k->GetDexterity() )
 		{
 			tSock->SysMessage( 1189 ); // You are not agile enough to use that.
 		}
-		else if( i->GetIntelligence() > k->GetIntelligence() )
+		else if( scaledIntelligence > k->GetIntelligence() )
 		{
 			tSock->SysMessage( 1190 ); // You are not smart enough to use that.
 		}
