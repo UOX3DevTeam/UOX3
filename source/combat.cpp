@@ -3486,7 +3486,7 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR )
 	{
 		// Weapon swing delay in LBR and earlier
-		getDelay = baseValue / ( getDelay * getOffset * speedFactor ) / globalAttackSpeed;
+		getDelay = baseValue / ( getDelay * getOffset * speedBonus ) / globalAttackSpeed;
 	}
 	else if( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML )
 	{
