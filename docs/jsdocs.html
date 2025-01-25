@@ -4018,7 +4018,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSpellTargetSelect( pCaster, myTarget, spellID )</em></p>
+							<p><em>function onSpellTargetSelect( myTarget, pCaster, spellID )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -4043,7 +4043,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Script attached to an NPC that's immune to magic, where event returns 2 to reject spell being cast
-function onSpellTargetSelect( pCaster, myTarget, spellID )
+function onSpellTargetSelect( myTarget, pCaster, spellID )
 {
 	var socket = pCaster.socket;
 	if( socket != null )
