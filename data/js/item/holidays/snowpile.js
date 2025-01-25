@@ -59,7 +59,7 @@ function onCallback0( socket, myTarget )
 		pUser.visible = 0;
 	}
 
-	if (!socket.GetWord(1) && myTarget.isChar && myTarget.socket )
+	if( !socket.GetWord( 1 ) && myTarget.isChar && myTarget.socket )
 	{
 		pUser.DoAction( 0x9 );
 		pUser.SoundEffect( 0x145, true );
@@ -73,10 +73,10 @@ function onCallback0( socket, myTarget )
 	}
 }
 
-function onTimer( pUser, timerID ) 
+function onTimer( pUser, timerID )
 {
 	var socket = pUser.socket;
-	if( pUser.visible == 1 || pUser.visible == 2 ) 
+	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
 	}
