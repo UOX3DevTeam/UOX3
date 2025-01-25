@@ -1,11 +1,11 @@
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
-	socket.tempObj = iUsed;
 	var gumpID = 5037 + 0xffff;
 
 	if( socket && iUsed && iUsed.isItem && pUser.isGM )
 	{
+		socket.tempObj = iUsed;
 		socket.CloseGump( gumpID, 0 );
 		spawnerGump( socket, pUser, iUsed );
 	}
