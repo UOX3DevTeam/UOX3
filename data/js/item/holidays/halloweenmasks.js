@@ -3,7 +3,7 @@ function onCreateDFN( objMade, objType )
 	if( objType == 0 )
 	{
 		var maskname = "";
-		switch(objMade.GetTag( "paintedmask" )) 
+		switch( objMade.GetTag( "paintedmask" )) 
 		{
 			case 1: maskname = "A Evil Clown Mask"; break;
 			case 2: maskname = "A Daemon Mask"; break;
