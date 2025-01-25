@@ -140,6 +140,9 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				break;
 			case DFNTAG_AC:				applyTo->SetArmourClass( static_cast<UI08>( ndata ));	break;
 			case DFNTAG_BASERANGE:		applyTo->SetBaseRange( static_cast<UI08>( ndata ));		break;
+			case DFNTAG_HEALTHBONUS:		applyTo->SetHealthBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_STAMINABONUS:		applyTo->SetStaminaBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_MANABONUS:		applyTo->SetManaBonus( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_CREATOR:		applyTo->SetCreator( ndata );							break;
 			case DFNTAG_COLOUR:			applyTo->SetColour( static_cast<UI16>( ndata ));		break;
 			case DFNTAG_COLOURLIST:		applyTo->SetColour( AddRandomColor( cdata ));			break;
