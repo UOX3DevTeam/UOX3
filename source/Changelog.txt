@@ -1,3 +1,6 @@
+4/07/2024 - Dragon Slayer
+	Fixed Cleaver ID missing in the jse_objectassociations.scp or carving corpses
+
 18/06/2024 - Dragon Slayer
 	Added three new DFN tags for Items:
 		HEALTHLEECH=# 	// It gives an attacker the ability to leech health from his opponent every time he successfully delivers a hit adds it to himself.
