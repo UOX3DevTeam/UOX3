@@ -1631,29 +1631,29 @@ SI08 cScript::OnMultiLogout( CMultiObj *iMulti, CChar *cPlayer )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir )
 {
-    const SI08 RV_NOFUNC = -1;
-    if( !ValidateObject( iBoat ))
-        return RV_NOFUNC;
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( iBoat ))
+		return RV_NOFUNC;
 
-    if( !ExistAndVerify( seOnBoatTurn, "onBoatTurn" ))
-        return RV_NOFUNC;
+	if( !ExistAndVerify( seOnBoatTurn, "onBoatTurn" ))
+		return RV_NOFUNC;
 
-    jsval params[3], rval;
-    JSObject *myBoat = JSEngine->AcquireObject( IUE_ITEM, iBoat, runTime );
+	jsval params[3], rval;
+	JSObject *myBoat = JSEngine->AcquireObject( IUE_ITEM, iBoat, runTime );
     
 
-    params[0] = OBJECT_TO_JSVAL( myBoat );
-    params[1] = INT_TO_JSVAL( oldDir );
-    params[2] = INT_TO_JSVAL( newDir );
+	params[0] = OBJECT_TO_JSVAL( myBoat );
+	params[1] = INT_TO_JSVAL( oldDir );
+	params[2] = INT_TO_JSVAL( newDir );
 
-    JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoatTurn", 3, params, &rval );
-    if( retVal == JS_FALSE )
-    {
-        SetEventExists( seOnBoatTurn, false );
-        return RV_NOFUNC;
-    }
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoatTurn", 3, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnBoatTurn, false );
+		return RV_NOFUNC;
+	}
 
-    return TryParseJSVal( rval );
+	return TryParseJSVal( rval );
 }
 
 //o------------------------------------------------------------------------------------------------o

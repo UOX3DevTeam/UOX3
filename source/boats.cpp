@@ -903,18 +903,18 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 	}
 
 	auto scriptTriggers = b->GetScriptTriggers();
-    for( auto scriptTrig : scriptTriggers )
-    {
-        auto toExecute = JSMapping->GetScript( scriptTrig );
-        if( toExecute )
-        {
-            if( toExecute->OnBoatTurn( b, olddir, b->GetDir() ) == 1 )
-            {
-                // A script with the event returned true; prevent other scripts from running
-                break;
-            }
-        }
-    }
+	for( auto scriptTrig : scriptTriggers )
+	{
+		auto toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute )
+		{
+			if( toExecute->OnBoatTurn( b, olddir, b->GetDir() ) == 1 )
+			{
+				// A script with the event returned true; prevent other scripts from running
+				break;
+			}
+		}
+	}
 }
 
 void TurnBoat( CSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool rightTurn )
