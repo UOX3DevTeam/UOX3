@@ -1,5 +1,49 @@
+07/12/2024 - Dragon Slayer
+	Updated the packet 0xf1 to reflect the current CUO Web Ping while maintaining backward compatibility with older ping statuses. (0xf1_freeshardServerPoll.js) (Thanks Karasho and Xuri)
+
+12/08/2024 - Dragon Slayer
+	Fixed an issue where Imbuing and Mysticism skills were listed in wrong order in skills.dfn and enums.h
+
+4/07/2024 - Dragon Slayer
+	Fixed Cleaver ID missing in the jse_objectassociations.scp for carving corpses
+
+18/06/2024 - Dragon Slayer
+	Added three new DFN tags for Items:
+		HEALTHLEECH=# 	// It gives an attacker the ability to leech health from his opponent every time he successfully delivers a hit adds it to himself.
+		STAMINALEECH=# 	// It gives an attacker the ability to leech Stamina from his opponent every time he successfully delivers a hit adds it to himself.
+		MANALEECH=# 	// It gives an attacker the ability to leech Mana from his opponent every time he successfully delivers a hit adds it to himself.
+	These are also available as JS Engine object properties: .healthLeech, .staminaLeech and .manaLeech
+	Added leechstats.js file that controls the combat for the properties. (script 7003)
+	To add this script to a weapon only. add in SCRIPT=7003, HEALTHLEECH=# or STAMINALEECH=# or MANALEECH=# it can also be all three on the weapon.
+
+14/06/2024 - Dragon Slayer
+	Added two new DFN tags for Items:
+		HITCHANCE=# 		// Increases the player's chance to hit a target with wrestling, melee and ranged weapons.
+		DEFENSECHANCE=# 	// Increases the wearer's chance that his opponents' swings (or arrows/bolts) will miss.
+	These are also available as JS Engine object properties: .hitChance, .defenseChance
+
+13/06/2024 - Dragon Slayer
+	Added three More AOS Props
+	-HEALTHBONUS=#
+	-MANABONUS=#
+	-STAMINABONUS=#
+	Add this properties to any weapon/armor/jewlery will give the player more hp/mana/stam why its equiped. depending on number you add with it
+	These are also available as JS Engine object properties: .healthBonus, .staminaBonus, .manaBonus
+
+6/06/2024 - Dragon Slayer
+	Fixed Accepting bods, When the expansion is to to lbr or later.
+
+29/05/2024 - Dragon Slayer
+	House add-on deeds are now returned when an add-on is present in the house on demolish.
+
+27/05/2024 - Dragon Slayer
+	Added Missing Wand ID's to combat weapon type in core and in js.
+
 13/05/2024 - Dragon Slayer
 	Added New Shield Type 107 so shield ID's no longer have to be in hard code for shields to work properly
+
+11/05/2024 - Dragon Slayer
+	Updated 'get command (js/commands/targeting/get.js) to use correct object reference when getting resist values for items, and added support for getting resist values for chars
 
 09/05/2024 - Dragon Slayer
 	Added ArtifactRarity AOS Property for items
