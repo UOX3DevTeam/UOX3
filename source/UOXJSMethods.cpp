@@ -7955,7 +7955,7 @@ JSBool CBase_SetRandomName( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-	CBaseObject *mObj			= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
+	CBaseObject *mObj		= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
 	std::string namelist	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 
 	if( !namelist.empty() )
