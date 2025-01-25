@@ -699,8 +699,8 @@ bool CPIEquipItem::Handle( void )
 	{
 		bool canWear = false;
 		const SI16 scaledStrength = ( i->GetStrength() * ( 100 - i->GetLowerStatReq() )) / 100;
-		const SI16 scaledDexterity = (i->GetDexterity() * (100 - i->GetLowerStatReq())) / 100;
-		const SI16 scaledIntelligence = (i->GetIntelligence() * (100 - i->GetLowerStatReq())) / 100;
+		const SI16 scaledDexterity = ( i->GetDexterity() * ( 100 - i->GetLowerStatReq() )) / 100;
+		const SI16 scaledIntelligence = ( i->GetIntelligence() * ( 100 - i->GetLowerStatReq() )) / 100;
 
 		if( scaledStrength > k->GetStrength() )
 		{
