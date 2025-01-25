@@ -7672,21 +7672,21 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			if( strReq > 0 )
 			{
 				tempEntry.stringNum = 1061170; // strength requirement ~1_val~
-				tempEntry.ourText = oldstrutil::number( cItem.GetStrength() );
+				tempEntry.ourText = oldstrutil::number( strReq );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( dexReq > 0 )
 			{
 				tempEntry.stringNum = 1042971; // ~1_NOTHING~
-				tempEntry.ourText = oldstrutil::format( "dexterity requirement %s", oldstrutil::number( cItem.GetDexterity()).c_str() );
+				tempEntry.ourText = oldstrutil::format( "dexterity requirement %s", oldstrutil::number( dexReq ).c_str() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( intReq > 0 )
 			{
 				tempEntry.stringNum = 1042971; // ~1_NOTHING~
-				tempEntry.ourText = oldstrutil::format( "intelligence requirement %s", oldstrutil::number( cItem.GetIntelligence()).c_str() );
+				tempEntry.ourText = oldstrutil::format( "intelligence requirement %s", oldstrutil::number( intReq ).c_str() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
