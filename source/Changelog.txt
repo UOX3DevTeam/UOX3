@@ -10,6 +10,9 @@
 16/07/2024 - Dragon Slayer
 	Added fallback in 'add menu for older clients that don't support buttontileart (Thanks Xuri)(gumps.cpp)
 
+7/07/2024 - Dragon Slayer
+	Added Requirement to drink potion hand has to be free, This can be disabled within the potion.js file by switching the reqfreehand to false. (js potion).
+
 4/07/2024 - Dragon Slayer
 	Fixed Cleaver ID missing in the jse_objectassociations.scp for carving corpses
 
