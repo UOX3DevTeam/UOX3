@@ -94,6 +94,9 @@ const SI16			DEFBASE_KILLS		= 0;
 const UI16			DEFBASE_RESIST 		= 0;
 const bool			DEFBASE_NAMEREQUESTACTIVE = 0;
 const ExpansionRuleset	DEFBASE_ORIGIN	= ER_UO;
+const SI16			DEFBASE_HEALTHBONUS = 0;
+const SI16			DEFBASE_STAMINABONOS = 0;
+const SI16			DEFBASE_MANABONUS = 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
@@ -110,7 +113,8 @@ loDamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ),
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ),
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
-fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN )
+fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN ),
+healthBonus( DEFBASE_HEALTHBONUS ),staminaBonus( DEFBASE_STAMINABONOS ), manaBonus( DEFBASE_MANABONUS )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
@@ -1624,6 +1628,69 @@ SI16 CBaseObject::GetIntelligence2( void ) const
 void CBaseObject::SetIntelligence2( SI16 nVal )
 {
 	in2 = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetHealthBonus()
+//|					CBaseObject::SetHealthBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the health max var associated with the object. For chars, it's the
+//|					bonuses (via armour and such)
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetHealthBonus( void ) const
+{
+	return healthBonus;
+}
+void CBaseObject::SetHealthBonus( SI16 nVal )
+{
+	healthBonus = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetStaminaBonus()
+//|					CBaseObject::SetStaminaBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the stamina max var associated with the object. For chars, it's the
+//|					bonuses (via armour and such)
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetStaminaBonus( void ) const
+{
+	return staminaBonus;
+}
+void CBaseObject::SetStaminaBonus( SI16 nVal )
+{
+	staminaBonus = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetManaBonus()
+//|					CBaseObject::SetManaBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Mana max var associated with the object. For chars, it's the
+//|					bonuses (via armour and such)
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetManaBonus( void ) const
+{
+	return manaBonus;
+}
+void CBaseObject::SetManaBonus( SI16 nVal )
+{
+	manaBonus = nVal;
 
 	if( CanBeObjType( OT_ITEM ))
 	{
