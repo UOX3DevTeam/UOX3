@@ -2649,7 +2649,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 
 	if( getDef > 0 )
 	{
-		damage -= static_cast<R32>(( static_cast<R32>( getDef ) * static_cast<R32>( attSkill )) / 750 );
+		damage -= static_cast<R32>( getDef );
 	}
 
 	return static_cast<SI16>( std::round( damage ));
