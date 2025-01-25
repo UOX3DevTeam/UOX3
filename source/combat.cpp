@@ -801,6 +801,10 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x48B3: //gargish axe - SA
 			return TWOHND_AXES;
 		// Default Maces
+		case 0x0DF2: // Wand
+		case 0x0DF3: // Wand
+		case 0x0DF4: // Wand
+		case 0x0DF5: // Wand
 		case 0x13E3: //smith's hammer
 		case 0x13E4: //smith's hammer
 		case 0x13B3: //club
