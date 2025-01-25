@@ -628,6 +628,15 @@ public:
 	virtual void	SetStrength2( SI16 newValue ) override;
 	virtual void	SetDexterity2( SI16 newValue ) override;
 	virtual void	SetIntelligence2( SI16 newValue ) override;
+
+	virtual void	SetHealthBonus( SI16 newValue ) override;
+	virtual void	SetStaminaBonus( SI16 newValue ) override;
+	virtual void	SetManaBonus( SI16 newValue ) override;
+
+	void			IncHealthBonus( SI16 toAdd = 1 );
+	void			IncStaminaBonus( SI16 toAdd = 1 );
+	void			IncManaBonus( SI16 toAdd = 1 );
+
 	void			IncStamina( SI16 toInc );
 	void			IncMana( SI16 toInc );
 	void			SetMaxLoyalty( UI16 newMaxLoyalty );
