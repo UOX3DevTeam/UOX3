@@ -4,7 +4,7 @@ function onUseChecked( pUser, iUsed )
 	socket.tempObj = iUsed;
 	var gumpID = 5037 + 0xffff;
 
-	if( socket && iUsed && iUsed.isItem )
+	if( socket && iUsed && iUsed.isItem && pUser.isGM )
 	{
 		socket.CloseGump( gumpID, 0 );
 		spawnerGump( socket, pUser, iUsed );
