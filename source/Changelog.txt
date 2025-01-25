@@ -19,6 +19,16 @@
 	Added leechstats.js file that controls the combat for the properties. (script 7003)
 	To add this script to a weapon only. add in SCRIPT=7003, HEALTHLEECH=# or STAMINALEECH=# or MANALEECH=# it can also be all three on the weapon.
 
+16/06/2024 - Dragon Slayer/Xuri
+	Added new DFN tags for Items and Chars:
+		SPEEDINCREASE=# 		// item and char property that increases base weapon swing speed by the specified percentage
+	These are also available as JS Engine object properties: .speedIncrease
+	Added INI Settings:
+		SWINGSPEEDINCREASECAP=#  	// Max cap for for swing speed increase a char can have.
+	Combat code updated with era-specific weapon swing speed calculations for different eras (LBR or earlier/AoS/ML onwards).
+        Note that speeds are still defined with flat values in DFNs regardless of era, but for ML and beyond speed
+ 	will be displayed as swing delay in seconds in item tooltip.
+
 14/06/2024 - Dragon Slayer
 	Added two new DFN tags for Items:
 		HITCHANCE=# 		// Increases the player's chance to hit a target with wrestling, melee and ranged weapons.

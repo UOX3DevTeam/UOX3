@@ -357,6 +357,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "houseicons",		CCP_HOUSEICONS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "spattack",		CCP_SPATTACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "spdelay",		CCP_SPDELAY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "swingSpeedIncrease",	CCP_SWINGSPEEDINCREASE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "hitChance",		CCP_HITCHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "defenseChance",	CCP_DEFENSECHANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "aitype",			CCP_AITYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -537,6 +538,7 @@ inline JSPropertySpec CItemProps[] =
 	{ "ammoFXHue",		CIP_AMMOFXHUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "ammoFXRender",	CIP_AMMOFXRENDER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "speed",			CIP_SPEED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "swingSpeedIncrease",		CIP_SWINGSPEEDINCREASE ,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 
 	{ "healthLeech",	CIP_HEALTHLEECH,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "staminaLeech",	CIP_STAMINALEECH,	JSPROP_ENUMANDPERM, nullptr, nullptr },
