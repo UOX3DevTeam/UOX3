@@ -6,6 +6,9 @@
 	Add this properties to any weapon/armor/jewlery will give the player more hp/mana/stam why its equiped. depending on number you add with it
 	These are also available as JS Engine object properties: .healthBonus, .staminaBonus, .manaBonus
 
+6/06/2024 - Dragon Slayer
+	Fixed Accepting bods, When the expansion is to to lbr or later.
+
 29/05/2024 - Dragon Slayer
 	House add-on deeds are now returned when an add-on is present in the house on demolish.
 
