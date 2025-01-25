@@ -1,5 +1,5 @@
 14/10/2024 - Dragon Slayer
-    	Added CheckTimeSinceLastCombat in (SEFunctions.cpp).
+    	Added CheckTimeSinceLastCombat that records the time when combat starts as a timestamp(SEFunctions.cpp).
 
 1/05/2024 - Dragon Slayer/Xuri
 	Fixed AutoUnequipAttempt function in clumsy.js, createfood.js level1target.js, will no longer fail on casting and return to hardcode.
