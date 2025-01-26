@@ -39,8 +39,7 @@ function onLogin( socket, pChar )
     	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
     }
 
-	//Attach the special moves Book
-	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))
+	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))// Attach the special moves Book
 	{
 		pChar.AddScriptTrigger( 7001 );
 	}
