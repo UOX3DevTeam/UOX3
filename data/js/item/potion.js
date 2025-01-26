@@ -6,10 +6,19 @@ const alchemyBonusModifier = parseInt( GetServerSetting( "AlchemyBonusModifier" 
 
 // Other settings
 const randomizePotionCountdown = false; // If true, add/remove +1/-1 seconds to explosion potion countdowns
+const reqFreeHands = true;
 
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
+	var itemRHand = pUser.FindItemLayer( 0x01 );
+	var itemLHand = pUser.FindItemLayer( 0x02 );
+
+	if( reqFreeHands && ( itemRHand != null || itemLHand != null ) ) 
+	{
+		socket.SysMessage( GetDictionaryEntry( 6304, socket.language ) );// You must have a free hand to drink a potion.
+		return false;
+	}
 
 	if( pUser.visible == 1 || pUser.visible == 2 )
 	{

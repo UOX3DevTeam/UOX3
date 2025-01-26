@@ -3431,6 +3431,7 @@
 6301=Apenas um Grão-Mestre Alquimista pode aprender com este livro.
 6302=Você já aprendeu esta informação.
 6303=Você aprendeu a fazer itens de vidro. Você precisará encontrar mineiros para extrair areia fina para fazer esses itens.
+6304=Você deve ter a mão livre para beber uma poção.
 // [7000-7499] AI Scripts
 7000=Tu és um criminoso e não podes aceder à tua caixa bancária.
 7001=Que artigo deseja depositar na sua caixa bancária?
@@ -4679,7 +4680,6 @@
 11619=pão de pão
 11620=panha de biscoitos
 11621=bolo
-11622=muffins
 11622=quiché cozido
 11623=torta de carne assada
 11624=sausage pizza
@@ -4715,6 +4715,7 @@
 11654=É preciso estar perto de uma fonte de calor para cozinhar os alimentos.
 11655=Tem de estar perto de um moinho para criar farinha.
 11656=Tem de estar perto de um forno para cozer alimentos.
+11657=muffins
 // 11801 - 12000 Habilidade de Artesanato de Sininho
 // Página 1 - Artigos de madeira
 11801=Eixo
@@ -5311,5 +5312,39 @@
 19100=Você converteu o metal com sucesso.
 19101=Você só pode converter quinhentos lingotes por vez.
 19102=O item deve estar em sua mochila para ser trocado.
+// [19110-19200] Cultivo de Plantas
+19110=Você deve ter o item em sua mochila ou trancado para poder usá-lo.
+19111=Você precisa plantar uma semente na tigela primeiro
+19112=Você poda a planta. Esta planta não produzirá mais recursos ou sementes, mas não exigirá manutenção.
+19113=Você não pode coletar pólen de uma planta mutante!
+19114=Muito cedo para coletar pólen
+19115=Você não pode coletar pólen de uma planta insalubre!
+19116=Escolha a planta que você deseja polinizar cruzadamente.
+19117=Você só pode polinizar outras plantas especialmente cultivadas!
+19118=Esta planta não está em fase de floração. Você não pode polinizá-lo!
+19119=Você não pode polinizar uma planta insalubre!
+19120=Você não pode fazer polinização cruzada com uma planta mutante!
+19121=Esta planta já foi polinizada!
+19122=Você poliniza a planta com seu próprio pólen.
+19123=Você fez a polinização cruzada da planta com sucesso.
+19124=Esta planta não tem sementes para colher!
+19125=Você colhe sementes da planta.
+19126=Você não pode adicionar água a esta planta.
+19127=Você suaviza a sujeira com água.
+19128=Você não pode usar isso em uma planta!
+19129=Você não tem nenhuma poção forte desse tipo em seu pacote.
+19130=Você só deve colocar poções em uma planta ou semente!
+19131=A planta já está encharcada com esse tipo de poção!
+19132=Você deve ter o objeto em sua mochila para usá-lo.
+19133=Escolha um pedaço de terra para recolher.
+19134=Você precisa de mais terra para encher um vaso de plantas!
+19135=Você enche a tigela com terra fresca.
+19136=Você vai querer juntar terra fresca para cultivar uma planta saudável!
+19137=Escolha um recipiente com terra para plantar esta semente.
+19138=Você deve usar uma semente em solo preparado!
+19139=Esta tigela de terra já contém uma semente %s!
+19140=A sujeira precisa ser amolecida primeiro.
+19141=Você planta a semente na tigela de terra.
+19142=Você deve usar uma semente em uma tigela de terra!
 }
 EOF

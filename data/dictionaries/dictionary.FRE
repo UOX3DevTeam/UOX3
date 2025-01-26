@@ -3595,6 +3595,7 @@
 6301=Seul un grand maître alchimiste peut apprendre de ce livre.
 6302=Vous avez déjà appris cette information.
 6303=Vous avez appris à fabriquer des objets en verre. Vous devrez trouver des mineurs pour extraire du sable fin pour fabriquer ces objets.
+6304=Vous devez avoir les mains libres pour boire une potion.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?
@@ -4835,7 +4836,6 @@
 11619=miche de pain
 11620=panier de biscuits
 11621=gâteau
-11622=muffins
 11622=quiche au four
 11623=tarte à la viande cuite au four
 11624=pizza à la saucisse
@@ -4871,6 +4871,7 @@
 11654=Il faut être près d'une source de chaleur pour cuire les aliments.
 11655=Il faut être près d'un moulin pour créer de la farine.
 11656=Il faut être près d'un four pour cuire des aliments.
+11657=muffins
 // 11801 - 12000 Compétence en artisanat de bricolage
 // Page 1 - Objets en bois
 11801=Axe
@@ -5467,5 +5468,39 @@
 19100=Vous avez réussi à convertir le métal.
 19101=Vous ne pouvez convertir que cinq cents lingots à la fois.
 19102=L'article doit être dans votre sac à dos pour être échangé.
+// [19110-19200] Culture de plantes
+19110=Vous devez avoir l'objet dans votre sac à dos ou verrouillé pour pouvoir l'utiliser.
+19111=Vous devez d'abord planter une graine dans le bol
+19112=Vous taillez la plante. Cette plante ne produira plus de ressources ni de graines, mais ne nécessitera aucun entretien.
+19113=Vous ne pouvez pas récolter le pollen d'une plante mutée !
+19114=Trop tôt pour récolter le pollen
+19115=Vous ne pouvez pas récolter le pollen d'une plante en mauvaise santé !
+19116=Ciblez la plante avec laquelle vous souhaitez effectuer une pollinisation croisée.
+19117=Vous ne pouvez polliniser que d'autres plantes spécialement cultivées !
+19118=Cette plante n'est pas en phase de floraison. Vous ne pouvez pas le polliniser !
+19119=Vous ne pouvez pas polliniser une plante en mauvaise santé !
+19120=Vous ne pouvez pas effectuer de pollinisation croisée avec une plante mutée !
+19121=Cette plante a déjà été pollinisée !
+19122=Vous pollinisez la plante avec son propre pollen.
+19123=Vous avez réussi la pollinisation croisée de la plante.
+19124=Cette plante n'a pas de graines à récolter !
+19125=Vous récoltez les graines de la plante.
+19126=Vous ne pouvez pas ajouter d'eau à cette usine.
+19127=Vous adoucissez la saleté avec de l'eau.
+19128=Vous ne pouvez pas utiliser ça sur une plante !
+19129=Vous n'avez pas de potions puissantes de ce type dans votre pack.
+19130=Vous ne devriez verser des potions que sur une plante ou une graine !
+19131=La plante est déjà imbibée de ce type de potion !
+19132=Vous devez avoir l'objet dans votre sac à dos pour l'utiliser.
+19133=Choisissez une parcelle de terre à ramasser.
+19134=Vous avez besoin de plus de terre pour remplir un bol de plante !
+19135=Vous remplissez le bol de terre fraîche.
+19136=Vous aurez envie de ramasser de la terre fraîche afin de faire pousser une plante saine !
+19137=Choisissez un bol de terre pour y planter cette graine.
+19138=Vous devez utiliser une graine sur un sol préparé !
+19139=Ce bol de terre contient déjà une graine %s !
+19140=La saleté doit d'abord être ramollie.
+19141=Vous plantez la graine dans le bol de terre.
+19142=Vous devez utiliser une graine sur un bol de terre !
 }
 EOF
