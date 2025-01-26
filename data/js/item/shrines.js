@@ -1,4 +1,4 @@
-function onUseUnChecked(pUser, iUsed)
+function onUseUnChecked( pUser, iUsed )
 {
 	var userSocket = pUser.socket;
 
@@ -11,7 +11,7 @@ function onUseUnChecked(pUser, iUsed)
 	// Resurrection logic for non-murderers and murderers at Chaos Shrine
 	if( pUser.dead )
 	{
-		if( !pUser.murderer || ( pUser.murderer && iUsed.morex == 1 ))
+		if( !pUser.murderer || ( pUser.murderer && iUsed.morex == 9 ))
 		{
 			ResurrectGump( pUser, iUsed );
 		}
@@ -26,6 +26,63 @@ function onUseUnChecked(pUser, iUsed)
 
 	// Prevent hard-code from running
 	return false;
+}
+
+function onSpeech( strSaid, pTalking, shrineListener )
+{
+	// Define the shrines and their corresponding morex values and mantras
+	var shrines = {
+		1: "mu", // Compassion
+		2: "ahm", // Honesty
+		3: "summ", // Honor
+		4: "lum", // Humility
+		5: "beh", // Justice
+		6: "cah", // Sacrifice
+		7: "om", // Spirituality
+		8: "ra", // Valor
+		9: "bal" // Chaos
+	};
+
+	// Convert the spoken text to lowercase and manually trim whitespace for comparison
+	strSaid = strSaid.toLowerCase();
+	while( strSaid.charAt(0) == ' ' )
+	{
+		strSaid = strSaid.substring(1);
+	}
+	while( strSaid.charAt( strSaid.length - 1 ) == ' ' )
+	{
+		strSaid = strSaid.substring( 0, strSaid.length - 1 );
+	}
+
+	var shrineKey = parseInt( shrineListener.morex, 10 );
+	if( shrines[shrineKey] )
+	{
+		if( strSaid == shrines[shrineKey] )
+		{
+			if(shrineKey == 9)
+			{
+				if( pTalking.karmaLocked == false && pTalking.karma > 0 )
+				{
+					// Lock the karma for Chaos shrine
+					pTalking.karmaLocked = true;
+					pTalking.SysMessage( GetDictionaryEntry( 5752, pTalking.socket.language ));// Your karma has been locked. Your karma can no longer be raised.
+					return 2;
+				}
+			}
+			else
+			{
+				if( pTalking.karmaLocked == true )
+				{
+					// Unlock the karma
+					pTalking.karmaLocked = false;
+					pTalking.SysMessage( GetDictionaryEntry( 5753, pTalking.socket.language ));// Your karma has been unlocked. Your karma can be raised again.
+					return 2;
+				}
+			}
+		}
+	}
+
+	return 1;
 }
 
 function onContextMenuRequest( socket, shrine )
