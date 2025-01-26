@@ -5311,5 +5311,10 @@
 19100=Hai convertito con successo il metallo.
 19101=Puoi convertire solo cinquecento lingotti alla volta.
 19102=L'articolo deve essere nel tuo zaino per essere scambiato.
+// [19106-19110] Faretra
+19106=Non puoi far cadere la faretra su se stessa.
+19107=La faretra non può contenere più di 500 unità di munizioni.
+19108=Il contenitore non può contenere quel tipo di oggetto.
+19109=La faretra è ora vuota e può contenere un diverso tipo di munizioni.
 }
 EOF

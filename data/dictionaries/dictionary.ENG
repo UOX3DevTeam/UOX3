@@ -5312,5 +5312,10 @@
 19100=You've successfully converted the metal.
 19101=You can only convert five hundred ingots at a time.
 19102=The item must be in your backpack to be exchanged.
+// [19106-19110] Quiver
+19106=You cannot drop the quiver onto itself.
+19107=The quiver cannot hold more than 500 units of ammo.
+19108=The container cannot hold that type of object.
+19109=The quiver is now empty and can hold a different type of ammo.
 }
 EOF

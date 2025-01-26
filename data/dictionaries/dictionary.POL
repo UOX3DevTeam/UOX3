@@ -5311,5 +5311,10 @@
 19100=Udało Ci się przekonwertować metal.
 19101=Możesz wymieniać tylko pięćset sztabek na raz.
 19102=Przedmiot musi znajdować się w Twoim plecaku, aby można go było wymienić.
+// [19106-19110] Kołczan
+19106=Nie możesz upuścić kołczanu na siebie.
+19107=Kołczan nie może pomieścić więcej niż 500 jednostek amunicji.
+19108=Pojemnik nie może pomieścić tego typu obiektu.
+19109=Kołczan jest teraz pusty i może pomieścić inny rodzaj amunicji.
 }
 EOF

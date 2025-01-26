@@ -18,7 +18,7 @@ function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 	// Prevent the quiver from being dropped onto itself
 	if(( iDropped.id == 0x2FB7 && iDroppedOn.id == 0x2FB7 ) || ( iDropped.id == 0x3171 && iDroppedOn.id == 0x3171 )) 
 	{
-		cDropper.SysMessage("You cannot drop the quiver onto itself.");
+		cDropper.socket.SysMessage( GetDictionaryEntry( 19106, cDropper.socket.language ));// You cannot drop the quiver onto itself.
 		return false;
 	}
 
@@ -48,7 +48,7 @@ function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 	var maxAmmoCount = 500; // Define maximum ammo count
 	if( ammoCount + iDropped.amount > maxAmmoCount )
 	{
-		cDropper.SysMessage( "The quiver cannot hold more than 500 units of ammo." );
+		cDropper.socket.SysMessage( GetDictionaryEntry( 19107, cDropper.socket.language ));// The quiver cannot hold more than 500 units of ammo.
 		return false;
 	}
 
@@ -81,7 +81,7 @@ function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 	// If the ammo type doesn't match or the quiver already holds a different type of ammo
 	else 
 	{
-		cDropper.SysMessage( "The container cannot hold that type of object." );
+		cDropper.socket.SysMessage( GetDictionaryEntry( 19108, cDropper.socket.language ));// The container cannot hold that type of object.
 		return false;
 	}
 }
@@ -117,7 +117,7 @@ function onContRemoveItem( iCont, iItem, pChar )
 			{
 				iCont.SetTag( "AmmoType", "" );
 				iCont.SetTag( "AmmoCount", 0 );
-				pChar.SysMessage( "The quiver is now empty and can hold a different type of ammo." );
+				pChar.socket.SysMessage( GetDictionaryEntry( 19109, cDropper.socket.language ));// The quiver is now empty and can hold a different type of ammo.
 			}
 		}
 	}

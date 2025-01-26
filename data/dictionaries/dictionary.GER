@@ -5311,5 +5311,10 @@
 19100=Sie haben das Metall erfolgreich umgewandelt.
 19101=Sie können jeweils nur fünfhundert Barren umwandeln.
 19102=Der Artikel muss sich zum Umtausch in Ihrem Rucksack befinden.
+// [19106-19110] Köcher
+19106=Sie können den Köcher nicht auf sich selbst fallen lassen.
+19107=Der Köcher kann nicht mehr als 500 Munitionseinheiten aufnehmen.
+19108=Der Behälter kann diese Art von Objekt nicht aufnehmen.
+19109=Der Köcher ist jetzt leer und kann eine andere Art von Munition aufnehmen.
 }
 EOF

@@ -5311,5 +5311,10 @@
 19100=Has convertido exitosamente el metal.
 19101=Sólo puedes convertir quinientos lingotes a la vez.
 19102=El artículo debe estar en tu mochila para ser intercambiado.
+// [19106-19110] Carcaj
+19106=No puedes dejar caer el carcaj sobre sí mismo.
+19107=El carcaj no puede contener más de 500 unidades de munición.
+19108=El contenedor no puede contener ese tipo de objeto.
+19109=El carcaj ahora está vacío y puede contener un tipo diferente de munición.
 }
 EOF

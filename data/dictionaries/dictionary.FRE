@@ -5467,5 +5467,10 @@
 19100=Vous avez réussi à convertir le métal.
 19101=Vous ne pouvez convertir que cinq cents lingots à la fois.
 19102=L'article doit être dans votre sac à dos pour être échangé.
+// [19106-19110] Carquois
+19106=Vous ne pouvez pas laisser tomber le carquois sur lui-même.
+19107=Le carquois ne peut pas contenir plus de 500 unités de munitions.
+19108=Le conteneur ne peut pas contenir ce type d'objet.
+19109=Le carquois est maintenant vide et peut contenir un autre type de munitions.
 }
 EOF

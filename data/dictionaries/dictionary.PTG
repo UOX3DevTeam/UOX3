@@ -5311,5 +5311,10 @@
 19100=Você converteu o metal com sucesso.
 19101=Você só pode converter quinhentos lingotes por vez.
 19102=O item deve estar em sua mochila para ser trocado.
+// [19106-19110] Aljava
+19106=Não se pode deixar a aljava cair sobre si própria.
+19107=A aljava não pode conter mais de 500 unidades de munições.
+19108=O contentor não pode conter este tipo de objeto.
+19109=A aljava está agora vazia e pode conter um tipo diferente de munição.
 }
 EOF

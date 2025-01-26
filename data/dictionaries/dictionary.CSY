@@ -5311,5 +5311,10 @@
 19100=Úspěšně jste převedli kov.
 19101=Najednou můžete převést pouze pět set ingotů.
 19102=Pro výměnu musí být položka ve vašem batohu.
+// [19106-19110] Toulec
+19106=Nemůžete upustit toulec na sebe.
+19107=Toulec nemůže pojmout více než 500 jednotek munice.
+19108=Kontejner nemůže pojmout tento typ objektu.
+19109=Toulec je nyní prázdný a může pojmout jiný typ munice.
 }
 EOF
