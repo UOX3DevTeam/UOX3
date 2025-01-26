@@ -6372,50 +6372,50 @@ var invalidColour = INVALIDCOLOUR();
                             </div>
                         </div>
 
-                        <div class="spoilerWrapper">
-                            <input type="checkbox" id="spoiler_function_misc_CreateParty" />
-                            <label for="spoiler_function_misc_CreateParty">CreateParty <i class="fas fa-angle-down"></i></label>
-                            <div class="spoiler">
-                                <div class="settingsDiv">
-                                    <p><span class="hl">Prototype</span></p>
-                                    <p><em>PARTY CreateParty( partyleader );</em></p>
-                                </div>
-                                <div class="settingsDiv">
-                                    <p><span class="hl">Purpose</span></p>
-                                    <p>Create a new party/group with the specified character as leader</p>
-                                </div>
-                                <div class="settingsDiv">
-                                    <p><span class="hl">Example of usage</span></p>
-                                    <pre><code class="language-javascript">// Create a new party (myParty) with pUser as the leader
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_CreateParty" />
+							<label for="spoiler_function_misc_CreateParty">CreateParty <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>PARTY CreateParty( partyleader );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Create a new party/group with the specified character as leader</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Create a new party (myParty) with pUser as the leader
 var myParty = CreateParty( pUser );</code></pre>
-                                </div>
-                            </div>
-                        </div>
+								</div>
+							</div>
+						</div>
 
-                        <div class="spoilerWrapper">
-                            <input type="checkbox" id="spoiler_function_misc_CheckInstaLog" />
-                            <label for="spoiler_function_misc_CheckInstaLog">CheckInstaLog <i class="fas fa-angle-down"></i></label>
-                            <div class="spoiler">
-                                <div class="settingsDiv">
-                                    <p><span class="hl">Prototype</span></p>
-                                    <p><em>JSBool CheckInstaLog( x, y, world, instanceID );</em></p>
-                                </div>
-                                <div class="settingsDiv">
-                                    <p><span class="hl">Purpose</span></p>
-                                    <p>Checks if a specific location ( x, y, world, instanceID ) is within an instant logout zone.</p>
-                                </div>
-                                <div class="settingsDiv">
-                                    <p><span class="hl">Example of usage</span></p>
-                                    <pre><code class="language-javascript">// Check if the player is in an instant logout zone
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_CheckInstaLog" />
+							<label for="spoiler_function_misc_CheckInstaLog">CheckInstaLog <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>JSBool CheckInstaLog( x, y, world, instanceID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks if a specific location ( x, y, world, instanceID ) is within an instant logout zone.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Check if the player is in an instant logout zone
 var isInstaLog = CheckInstaLog(targX, targY, worldNumber, instanceID);
 
 if( isInstaLog )
 {
-    // Handle instant logout
+	// Handle instant logout
 }
 else
 {
-    // Handle other logout scenarios
+	// Handle other logout scenarios
 }</code></pre>
                                 </div>
                             </div>
