@@ -2944,6 +2944,8 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
+			IncSwingSpeedIncrease( itemLayers[tLayer]->GetSwingSpeedIncrease() );
+
 			IncHealthLeech( itemLayers[tLayer]->GetHealthLeech() );
 			IncStaminaLeech( itemLayers[tLayer]->GetStaminaLeech() );
 			IncManaLeech( itemLayers[tLayer]->GetManaLeech() );
@@ -3031,7 +3033,9 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
 
-		IncHealthLeech( -itemLayers[Layer]->GetHealthLeech() );
+		IncSwingSpeedIncrease( -itemLayers[Layer]->GetSwingSpeedIncrease() );
+
+    IncHealthLeech( -itemLayers[Layer]->GetHealthLeech() );
 		IncStaminaLeech( -itemLayers[Layer]->GetStaminaLeech() );
 		IncManaLeech( -itemLayers[Layer]->GetManaLeech() );
 

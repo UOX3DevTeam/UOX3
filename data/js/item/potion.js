@@ -6,14 +6,25 @@ const alchemyBonusModifier = parseInt( GetServerSetting( "AlchemyBonusModifier" 
 
 // Other settings
 const randomizePotionCountdown = false; // If true, add/remove +1/-1 seconds to explosion potion countdowns
+const reqFreeHands = true;
 
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
-	if ( pUser.visible == 1 || pUser.visible == 2 )
+	var itemRHand = pUser.FindItemLayer( 0x01 );
+	var itemLHand = pUser.FindItemLayer( 0x02 );
+
+	if( reqFreeHands && ( itemRHand != null || itemLHand != null ) ) 
+	{
+		socket.SysMessage( GetDictionaryEntry( 6304, socket.language ) );// You must have a free hand to drink a potion.
+		return false;
+	}
+
+	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
 	}
+
 	if( socket && iUsed && iUsed.isItem )
 	{
 		if( pUser.isUsingPotion )
@@ -329,9 +340,10 @@ function onCallback0( socket, ourObj )
 			var x = socket.GetWord( 11 );
 			var y = socket.GetWord( 13 );
 			var z = socket.GetSByte( 16 );
+			var StrangeByte = socket.GetWord(1);
 
 			// If connected with a client lower than v7.0.9, manually add height of targeted tile
-			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+			if ((StrangeByte == 0 && ourObj.isItem) || (socket.clientMajorVer <= 7 && socket.clientSubVer < 9))
 			{
 				z += GetTileHeight( socket.GetWord( 17 ));
 			}

@@ -94,6 +94,7 @@ const SI16			DEFBASE_KILLS		= 0;
 const UI16			DEFBASE_RESIST 		= 0;
 const bool			DEFBASE_NAMEREQUESTACTIVE = 0;
 const ExpansionRuleset	DEFBASE_ORIGIN	= ER_UO;
+const SI16			DEFBASE_SWINGSPEEDINCREASE = 0;
 const SI16			DEFBASE_HEALTHLEECH = 0;
 const SI16			DEFBASE_STAMINALEECH = 0;
 const SI16			DEFBASE_MANALEECH = 0;
@@ -122,7 +123,7 @@ in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN ),
 healthBonus( DEFBASE_HEALTHBONUS ),staminaBonus( DEFBASE_STAMINABONOS ), manaBonus( DEFBASE_MANABONUS ), hitChance( DEFBASE_HITCHANCE ), defenseChance( DEFBASE_DEFENSECHANCE ),
-healthLeech( DEFBASE_HEALTHLEECH ), staminaLeech( DEFBASE_STAMINALEECH ), manaLeech( DEFBASE_MANALEECH )
+healthLeech( DEFBASE_HEALTHLEECH ), staminaLeech( DEFBASE_STAMINALEECH ), manaLeech( DEFBASE_MANALEECH ), swingSpeedIncrease( DEFBASE_SWINGSPEEDINCREASE )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
@@ -805,6 +806,7 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Intelligence=" + std::to_string( intelligence ) + "," + std::to_string( temp_in2 ) + newLine;
 	outStream << "Strength=" + std::to_string( strength ) + "," + std::to_string( temp_st2 ) + newLine;
 	outStream << "HitPoints=" + std::to_string( hitpoints ) + newLine;
+	outStream << "SwingSpeedInc=" + std::to_string( GetSwingSpeedIncrease() ) + newLine;
 	outStream << "Race=" + std::to_string( race ) + newLine;
 	outStream << "Visible=" + std::to_string( visible ) + newLine;
 	outStream << "Disabled=" << ( IsDisabled() ? "1" : "0" ) << newLine;
@@ -1621,6 +1623,27 @@ Point3_st CBaseObject::GetLocation( void ) const
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetSwingSpeedIncrease()
+//|					CBaseObject::SetSwingSpeedBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the item's Swing Speed Bonus property (in percentage), which 
+//|					adjusts the base swing speed of the equipped weapon, or characters
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetSwingSpeedIncrease( void ) const
+{
+	return swingSpeedIncrease;
+}
+void CBaseObject::SetSwingSpeedIncrease( SI16 newValue )
+{
+	swingSpeedIncrease = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetStrength2()
 //|					CBaseObject::SetStrength2()
 //o------------------------------------------------------------------------------------------------o
@@ -1831,6 +1854,16 @@ void CBaseObject::IncDexterity( SI16 toInc )
 void CBaseObject::IncIntelligence( SI16 toInc )
 {
 	SetIntelligence( intelligence + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncSwingSpeedIncrease()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's swing speed bonus value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncSwingSpeedIncrease( SI16 toInc )
+{
+	SetSwingSpeedIncrease( swingSpeedIncrease + toInc );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2242,6 +2275,11 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			else if( UTag == "STRENGTH2" )
 			{
 				st2	= oldstrutil::value<SI16>( data );
+			}
+			else if( UTag == "SWINGSPEEDINC" )
+			{
+				SetSwingSpeedIncrease( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+				rValue = true;
 			}
 			else if( UTag == "SCPTRIG" )
 			{
@@ -2765,7 +2803,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetIntelligence2( GetIntelligence2() );
 	target->SetPoisoned( GetPoisoned() );
 	target->SetWeight( GetWeight() );
-
+	target->SetSwingSpeedIncrease( GetSwingSpeedIncrease() );
 	target->SetKarma( karma );
 	target->SetFame( fame );
 	target->SetKills( kills );

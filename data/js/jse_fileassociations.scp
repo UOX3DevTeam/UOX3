@@ -99,7 +99,8 @@
 2202=server/misc/warning_trigger.js
 2203=server/misc/charges_left_tooltip.js
 2204=server/network/0xDF_buffBar.js
-2205=server/network/0xbf_special_move.js
+2205=server/misc/spawnergump.js
+2206=server/network/0xbf_special_move.js
 
 // Server Data [2500-2749]
 2500=server/data/weapontypes.js
@@ -344,6 +345,7 @@
 //-------------------------------------------
 8000=player/death/return_stolen_items.js
 8001=player/young_player.js
+8002=player/death/resurrectpenalty.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js

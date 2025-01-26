@@ -1,13 +1,40 @@
 21/01/2025 - Dragon Slayer
 	Fixed damage dealt in combat was incorrectly modified while applying defense modifiers. (combat.cpp)
 
+15/12/2024 - Dragon Slayer
+	Added Ressurrect Penalty Script (js/player/death/resurrectpenalty.js) that controls any type of penalty you want on the char after resurrecting via shrines
+
 07/12/2024 - Dragon Slayer
 	Updated the packet 0xf1 to reflect the current CUO Web Ping while maintaining backward compatibility with older ping statuses. (0xf1_freeshardServerPoll.js) (Thanks Karasho and Xuri)
+
+31/10/2024 - Dragon Slayer
+	Fixed Z calculation in some scripts when targeting dynamic items. (Thanks Xuri)
+
+27/10/2024 -Dragon Slayer
+	Corrected a misspelling of IsBoat in magic.js.
+	Added support for iterating through items in boats using FirstItem(), NextItem() and FinishedItems() methods
+
+13/08/2024 - Dragon Slayer/Xuri
+	The onAttack/onDefense JS Events have been updated with three new parameters 	(hitStatus, hitLocation, damage) and will now also trigger when attacks miss.
 
 12/08/2024 - Dragon Slayer
 	Fixed an issue where Imbuing and Mysticism skills were listed in wrong order in skills.dfn and enums.h
 
-4/07/2024 - Dragon Slayer
+05/08/2024 - Dragon Slayer Update
+	Resolved an issue with cooking functionality.
+	Fixed a duplicated dictionary number.
+	Corrected the required items for crafting sweet dough and regular dough.
+
+04/08/2024 - Dragon Slayer
+	Added Run a skillcheck for NPC to give them a chance to gain skill - if that option is enabled in ini (xuri)
+
+16/07/2024 - Dragon Slayer
+	Added fallback in 'add menu for older clients that don't support buttontileart (Thanks Xuri)(gumps.cpp)
+
+07/07/2024 - Dragon Slayer
+	Added Requirement to drink potion hand has to be free, This can be disabled within the potion.js file by switching the reqfreehand to false. (js potion).
+
+04/07/2024 - Dragon Slayer
 	Fixed Cleaver ID missing in the jse_objectassociations.scp for carving corpses
 
 18/06/2024 - Dragon Slayer
@@ -18,6 +45,16 @@
 	These are also available as JS Engine object properties: .healthLeech, .staminaLeech and .manaLeech
 	Added leechstats.js file that controls the combat for the properties. (script 7003)
 	To add this script to a weapon only. add in SCRIPT=7003, HEALTHLEECH=# or STAMINALEECH=# or MANALEECH=# it can also be all three on the weapon.
+
+16/06/2024 - Dragon Slayer/Xuri
+	Added new DFN tags for Items and Chars:
+		SPEEDINCREASE=# 		// item and char property that increases base weapon swing speed by the specified percentage
+	These are also available as JS Engine object properties: .speedIncrease
+	Added INI Settings:
+		SWINGSPEEDINCREASECAP=#  	// Max cap for for swing speed increase a char can have.
+	Combat code updated with era-specific weapon swing speed calculations for different eras (LBR or earlier/AoS/ML onwards).
+        Note that speeds are still defined with flat values in DFNs regardless of era, but for ML and beyond speed
+ 	will be displayed as swing delay in seconds in item tooltip.
 
 14/06/2024 - Dragon Slayer
 	Added two new DFN tags for Items:
@@ -33,7 +70,7 @@
 	Add this properties to any weapon/armor/jewlery will give the player more hp/mana/stam why its equiped. depending on number you add with it
 	These are also available as JS Engine object properties: .healthBonus, .staminaBonus, .manaBonus
 
-6/06/2024 - Dragon Slayer
+06/06/2024 - Dragon Slayer
 	Fixed Accepting bods, When the expansion is to to lbr or later.
 
 29/05/2024 - Dragon Slayer
@@ -60,10 +97,18 @@
 	-ARTIFACTRARITY=#
 	-Artifact Rarity is an item property that is visible on some artifacts and meant to give players an idea of how rare the item is. Items with rarity 1 are supposed to be common while rarity 12 are extremely scarce.
 
-1/05/2024 - Dragon Slayer/Xuri
+05/05/2024 - Dragon Slayer
+	Added Spawner Gump and attached to the base_spawner, just another option for making editing spawners without using commands. (js spawnergump)
+	-Just double click any spawner you create from the addmenu or add from spawners.dfn file, gump will appear if you create a spawner with commands you would have to attach the script directly to it.
+
+01/05/2024 - Dragon Slayer/Xuri
 	Fixed AutoUnequipAttempt function in clumsy.js, createfood.js level1target.js, will no longer fail on casting and return to hardcode.
 	Fixed createfood to check for reagents on cast.
 	Fixed many places missing proper null checks and refresh checks in magic js scripts.
+
+30/04/2024 - Dragon Slayer/Xuri/Maarc
+	Added Support for new AOS property tag.
+	-LOWERSTATREQ - Lowers the strength requirements to wear an object.
 
 27/04/2024 - Dragon Slayer/Xuri
 	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.
