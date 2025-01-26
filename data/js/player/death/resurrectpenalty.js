@@ -8,6 +8,8 @@ function ResurrectFamePenalty( pUser )
 	}
 }
 
+// Penalty to karma is disabled by default, but can be enabled
+// via a TriggerEvent call in js/item/shrines.js (onGumpPress)
 function ResurrectKarmaPenalty( pUser )
 {
 	if( pUser.karma > 0 )
@@ -49,9 +51,14 @@ function ResurrectMurderPenalty( pUser )
 		{
 			pUser.dexterity = RandomNumber( 10, pUser.dexterity * loss );
 		}
+
+		// ResurrectSkillPenalty( pUser );
 	}
 }
 
+// Penalty to skills is disabled by default, but can be enabled
+// by uncommenting call in ResurrectMurderPenalty (for murderers) or
+// for all players via a TriggerEvent call in js/item/shrines.js (onGumpPress)
 function ResurrectSkillPenalty( pUser )
 {
 	// Define the reduction range (89% to 91%)
@@ -79,7 +86,7 @@ function ResurrectSkillPenalty( pUser )
 	pUser.SetTag( "recoveryCount", 0 ); // Track recovery intervals
 }
 
-// Recovery handler triggered by StartTimer
+// Skill Recovery handler triggered by StartTimer
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 0 )
