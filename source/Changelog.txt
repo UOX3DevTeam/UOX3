@@ -1,3 +1,7 @@
+10/09/2024 - Dragon Slayer
+	Added Puzzle Chest These are the same as the type of traps purchased from the 	Oddities Trader at the Lycaeum. The more lockpicking skill that you have the 	better 'hints' you receive. Opening the puzzle lock will unhide you. Answering 	incorrectly will damage you. These chests can only be unlocked by solving a puzzle.
+
+
 12/08/2024 - Dragon Slayer
 	Fixed an issue where Imbuing and Mysticism skills were listed in wrong order in skills.dfn and enums.h
 
