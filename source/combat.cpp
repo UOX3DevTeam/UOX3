@@ -2926,6 +2926,25 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			}
 
 			PlayMissedSoundEffect( &mChar );
+
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnAttack( &mChar, ourTarg, skillPassed, -1, 0 );
+				}
+			}
+
+			std::vector<UI16> defScriptTriggers = ourTarg->GetScriptTriggers();
+			for( auto scriptTrig : defScriptTriggers )
+			{
+                cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnDefense( &mChar, ourTarg, skillPassed, -1, 0 );
+				}
+			}
 		}
 		else
 		{
@@ -3045,7 +3064,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					toExecute->OnAttack( &mChar, ourTarg );
+					toExecute->OnAttack( &mChar, ourTarg, skillPassed, hitLoc, ourDamage );
 				}
 			}
 
@@ -3055,7 +3074,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					toExecute->OnDefense( &mChar, ourTarg );
+					toExecute->OnDefense( &mChar, ourTarg, skillPassed, hitLoc, ourDamage );
 				}
 			}
 		}
