@@ -7,16 +7,21 @@
 12/08/2024 - Dragon Slayer
 	Fixed an issue where Imbuing and Mysticism skills were listed in wrong order in skills.dfn and enums.h
 
-4/8/2024 - Dragon Slayer
+05/08/2024 - Dragon Slayer Update
+	Resolved an issue with cooking functionality.
+	Fixed a duplicated dictionary number.
+	Corrected the required items for crafting sweet dough and regular dough.
+
+04/08/2024 - Dragon Slayer
 	Added Run a skillcheck for NPC to give them a chance to gain skill - if that option is enabled in ini (xuri)
 
 16/07/2024 - Dragon Slayer
 	Added fallback in 'add menu for older clients that don't support buttontileart (Thanks Xuri)(gumps.cpp)
 
-7/07/2024 - Dragon Slayer
+07/07/2024 - Dragon Slayer
 	Added Requirement to drink potion hand has to be free, This can be disabled within the potion.js file by switching the reqfreehand to false. (js potion).
 
-4/07/2024 - Dragon Slayer
+04/07/2024 - Dragon Slayer
 	Fixed Cleaver ID missing in the jse_objectassociations.scp for carving corpses
 
 18/06/2024 - Dragon Slayer
@@ -52,7 +57,7 @@
 	Add this properties to any weapon/armor/jewlery will give the player more hp/mana/stam why its equiped. depending on number you add with it
 	These are also available as JS Engine object properties: .healthBonus, .staminaBonus, .manaBonus
 
-6/06/2024 - Dragon Slayer
+06/06/2024 - Dragon Slayer
 	Fixed Accepting bods, When the expansion is to to lbr or later.
 
 29/05/2024 - Dragon Slayer
@@ -72,11 +77,11 @@
 	-ARTIFACTRARITY=#
 	-Artifact Rarity is an item property that is visible on some artifacts and meant to give players an idea of how rare the item is. Items with rarity 1 are supposed to be common while rarity 12 are extremely scarce.
 
-5/05/2024 - Dragon Slayer
+05/05/2024 - Dragon Slayer
 	Added Spawner Gump and attached to the base_spawner, just another option for making editing spawners without using commands. (js spawnergump)
 	-Just double click any spawner you create from the addmenu or add from spawners.dfn file, gump will appear if you create a spawner with commands you would have to attach the script directly to it.
 
-1/05/2024 - Dragon Slayer/Xuri
+01/05/2024 - Dragon Slayer/Xuri
 	Fixed AutoUnequipAttempt function in clumsy.js, createfood.js level1target.js, will no longer fail on casting and return to hardcode.
 	Fixed createfood to check for reagents on cast.
 	Fixed many places missing proper null checks and refresh checks in magic js scripts.
