@@ -7199,7 +7199,7 @@ JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 	{
 		firstItem = ( static_cast<CItem *>( myObj ))->GetContainsList()->First();
 	}
-	else if( myObj->GetObjType() == OT_MULTI )
+	else if( myObj->GetObjType() == OT_MULTI || myObj->GetObjType() == OT_BOAT )
 	{
 		firstItem = ( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->First();
 	}
@@ -7250,7 +7250,7 @@ JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 	{
 		nextItem = ( static_cast<CItem *>( myObj ))->GetContainsList()->Next();
 	}
-	else if( myObj->GetObjType() == OT_MULTI )
+	else if( myObj->GetObjType() == OT_MULTI || myObj->GetObjType() == OT_BOAT )
 	{
 		nextItem = ( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Next();
 	}
@@ -7300,7 +7300,7 @@ JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 	{
 		*rval = BOOLEAN_TO_JSVAL(( static_cast<CItem *>( myObj ))->GetContainsList()->Finished() );
 	}
-	else if( myObj->GetObjType() == OT_MULTI )
+	else if( myObj->GetObjType() == OT_MULTI || myObj->GetObjType() == OT_BOAT )
 	{
 		*rval = BOOLEAN_TO_JSVAL(( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Finished() );
 	}

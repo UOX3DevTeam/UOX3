@@ -400,6 +400,7 @@ private:
 	SI16		combatNpcBaseFleeAt;			//	% of HP where an NPC will flee, if it's not defined for them
 	SI16		combatNpcBaseReattackAt;		//	% of HP where an NPC will resume attacking
 	SI16		combatAttackStamina;			//	Amount of stamina lost when hitting an opponent
+	SI16		swingSpeedIncreaseCap;			//	The Cap for swing speed property
 
 	// Start & Location Settings
 	std::vector<__STARTLOCATIONDATA__>	startlocations;
@@ -952,6 +953,9 @@ public:
 
 	auto		BODsFromCraftedItemsOnly( bool value ) -> void;
 	auto		BODsFromCraftedItemsOnly() const -> bool;
+
+	auto		SwingSpeedIncreaseCap( SI16 value ) -> void;
+	SI16		SwingSpeedIncreaseCap() const;
 
 	auto		MaxControlSlots( UI08 value ) -> void;
 	UI08		MaxControlSlots() const;

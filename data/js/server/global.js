@@ -2,6 +2,8 @@
 // Supported Events trigger for every character/item, use with care
 function onLogin( socket, pChar )
 {
+	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+
 	// Display Admin Welcome Gump for characters on admin account, until a choice has been made
 	if( pChar.accountNum == 0 )
 	{
@@ -43,6 +45,11 @@ function onLogin( socket, pChar )
     	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
     }
 
+	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))// Attach the special moves Book
+	{
+		pChar.AddScriptTrigger( 7001 );
+	}
+
 	// Re-adds Buff for disguise kit if player still has time left.
 	var currentTime = GetCurrentClock();
 	var disguiseKitTime = pChar.GetJSTimer( 1, 5023 );
@@ -79,6 +86,8 @@ function onLogout( pSock, pChar )
 
 function onCreatePlayer( pChar )
 {
+	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+
 	// If player character is created on a Young account, give them Young-specific items
 	if( pChar.account.isYoung )
 	{
@@ -89,6 +98,12 @@ function onCreatePlayer( pChar )
 		}
 
 		TriggerEvent( 8001, "GiveYoungPlayerItems", pChar.socket, pChar );
+	}
+
+	//Attach the special moves Book
+	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))
+	{
+		pChar.AddScriptTrigger( 7001 );
 	}
 }
 

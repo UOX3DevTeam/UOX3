@@ -1004,39 +1004,43 @@ SI08 cScript::onQuestToggle(CChar* toggler, CItem *iUsing)
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnAttack()
+//|    Function    -    cScript::OnAttack()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Triggers for character with event attached when attacking someone
-//|					Will also trigger the onDefense event for the character being attacked
+//|    Purpose        -    Triggers for character with event attached when attacking someone
+//|                    Will also trigger the onDefense event for the character being attacked
 //o------------------------------------------------------------------------------------------------o
-bool cScript::OnAttack( CChar *attacker, CChar *defender )
+bool cScript::OnAttack( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageDealt )
 {
-	if( !ValidateObject( attacker ) || !ValidateObject( defender ))
-		return false;
+    if( !ValidateObject( attacker ) || !ValidateObject( defender ))
+        return false;
 
-	if( !ExistAndVerify( seOnAttack, "onAttack" ))
-		return false;
+    if( !ExistAndVerify( seOnAttack, "onAttack" ))
+        return false;
 
-	jsval rval, params[2];
-	JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
-	JSObject *defObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
+    jsval rval, params[5];
+    JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
+    JSObject *defObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
 
-	params[0] = OBJECT_TO_JSVAL( attObj );
-	params[1] = OBJECT_TO_JSVAL( defObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onAttack", 2, params, &rval );
-	if( retVal == JS_FALSE )
-	{
-		SetEventExists( seOnAttack, false );
-	}
+    params[0] = OBJECT_TO_JSVAL( attObj );
+    params[1] = OBJECT_TO_JSVAL( defObj );
+    params[2] = BOOLEAN_TO_JSVAL( hitStatus );
+    params[3] = INT_TO_JSVAL( hitLoc );
+    params[4] = INT_TO_JSVAL( damageDealt );
+    JSBool retVal = JS_CallFunctionName( targContext, targObject, "onAttack", 5, params, &rval );
+    if( retVal == JS_FALSE )
+    {
+        SetEventExists( seOnAttack, false );
+    }
 
-	return ( retVal == JS_TRUE );
+    return ( retVal == JS_TRUE );
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	cScript::OnDefense()
+//|    Function    -    cScript::OnDefense()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Triggers for character with event attached when being attacked
+//|    Purpose        -    Triggers for character with event attached when being attacked
 //o------------------------------------------------------------------------------------------------o
-bool cScript::OnDefense( CChar *attacker, CChar *defender )
+bool cScript::OnDefense( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageReceived )
 {
 	if( !ValidateObject( attacker ) || !ValidateObject( defender ))
 		return false;
@@ -1044,13 +1048,16 @@ bool cScript::OnDefense( CChar *attacker, CChar *defender )
 	if( !ExistAndVerify( seOnDefense, "onDefense" ))
 		return false;
 
-	jsval rval, params[2];
+	jsval rval, params[5];
 	JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
 	JSObject *defObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( attObj );
 	params[1] = OBJECT_TO_JSVAL( defObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDefense", 2, params, &rval );
+	params[2] = BOOLEAN_TO_JSVAL( hitStatus );
+	params[3] = INT_TO_JSVAL( hitLoc );
+	params[4] = INT_TO_JSVAL( damageReceived );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDefense", 5, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDefense, false );
@@ -1649,6 +1656,38 @@ SI08 cScript::OnMultiLogout( CMultiObj *iMulti, CChar *cPlayer )
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnMultiLogout, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|    Function    -    cScript::OnBoatTurn()
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Triggers for Boat after it has turned successfully
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( iBoat ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnBoatTurn, "onBoatTurn" ))
+		return RV_NOFUNC;
+
+	jsval params[3], rval;
+	JSObject *myBoat = JSEngine->AcquireObject( IUE_ITEM, iBoat, runTime );
+    
+
+	params[0] = OBJECT_TO_JSVAL( myBoat );
+	params[1] = INT_TO_JSVAL( oldDir );
+	params[2] = INT_TO_JSVAL( newDir );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoatTurn", 3, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnBoatTurn, false );
 		return RV_NOFUNC;
 	}
 
@@ -3896,6 +3935,37 @@ SI08 cScript::OnCombatEnd( CChar *currChar, CChar *targChar )
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnCombatEnd, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnCombatHit()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for character with event attached when someone has taken damage.
+//|					
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnCombatHit( CChar *attacker, CChar *defender )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( attacker ) || !ValidateObject( defender ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnCombatHit, "onCombatHit" ))
+		return RV_NOFUNC;
+
+	jsval rval, params[2];
+	JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
+	JSObject *defObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( attObj );
+	params[1] = OBJECT_TO_JSVAL( defObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCombatHit", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnCombatHit, false );
 		return RV_NOFUNC;
 	}
 
