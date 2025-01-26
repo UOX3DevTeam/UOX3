@@ -3431,6 +3431,7 @@
 6301=Solo un Grande Maestro Alchimista può imparare da questo libro.
 6302=Hai già appreso questa informazione.
 6303=Hai imparato a creare oggetti in vetro. Dovrai trovare minatori che estraggano sabbia fine per poter realizzare questi oggetti.
+6304=Devi avere una mano libera per bere una pozione.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
@@ -4679,7 +4680,6 @@
 11619=pagnotta di pane
 11620=torta di biscotti
 11621=torta
-11622=muffin
 11622=quiche al forno
 11623=pasticcio di carne al forno
 11624=pizza con salsiccia
@@ -4715,6 +4715,7 @@
 11654=Devi essere vicino a una fonte di calore per cucinare il cibo.
 11655=Devi essere vicino a un mulino per creare farina.
 11656=Devi essere vicino a un forno per cuocere il cibo.
+11657=muffin
 // 11801 - 12000 Abilità Artigianato Tinkering
 // Pagina 1 - Oggetti in legno
 11801=Assale
