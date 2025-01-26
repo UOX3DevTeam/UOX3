@@ -2,6 +2,8 @@
 // Supported Events trigger for every character/item, use with care
 function onLogin( socket, pChar )
 {
+	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+
 	// Display Admin Welcome Gump for characters on admin account, until a choice has been made
 	if( pChar.accountNum == 0 )
 	{
@@ -37,12 +39,11 @@ function onLogin( socket, pChar )
     	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
     }
 
-
 	//Attach the special moves Book
-	if( !pChar.npc && !pChar.HasScriptTrigger( 7001 ))
+	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))
 	{
 		pChar.AddScriptTrigger( 7001 );
-  }
+	}
 
 	// Re-adds Buff for disguise kit if player still has time left.
 	var currentTime = GetCurrentClock();
