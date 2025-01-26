@@ -5346,5 +5346,42 @@
 19140=A sujeira precisa ser amolecida primeiro.
 19141=Você planta a semente na tigela de terra.
 19142=Você deve usar uma semente em uma tigela de terra!
+// [19201-19300] Movimentos Especiais
+19201=Você precisa de %i habilidade com arma para realizar esse ataque
+19202=Você precisa de %i mana para realizar esse ataque
+19203=Seu ataque penetra na armadura deles!
+19204=O golpe penetrou em sua armadura!
+19205=Seu alvo está sangrando!
+19206=Você está sangrando!
+19207=Você está sangrando muito
+19208=%i está sangrando profusamente
+19209=Você causou uma concussão!
+19210=Você se sente desorientado!
+19211=Você desferiu um golpe esmagador!
+19212=Você sofre dano extra com o ataque esmagador!
+19213=Você não pode desarmar seu oponente.
+19214=Seu alvo já está desarmado!
+19215=Você desarma a arma deles!
+19216=Sua arma foi desarmada!
+19217=Você não pode realizar esse ataque enquanto estiver montado ou voando!
+19218=Este ataque só funciona em alvos montados ou voadores
+19219=A força do seu ataque os desalojou da montaria!
+19220=Você foi derrubado da montaria por %i!
+19221=Sua arma deve ter uma dose de veneno para realizar um ataque infeccioso!
+19222=Seu ataque preciso aumentou o nível do veneno em 1
+19223=O veneno parece extremamente eficaz!
+19224=Você envenenou seu alvo: %i
+19225=%i: envenenou você!
+19226=Você causou um ferimento mortal!
+19227=Você foi mortalmente ferido!
+19228=Seu alvo resiste à paralisia.
+19229=Você resiste à paralisia.
+19230=O ataque paralisou você temporariamente!
+19231=Você não tem a furtividade necessária para realizar esse ataque
+19232=Você ataca e se esconde nas sombras!
+19233=Você fica atordoado com o ataque e seu atacante desaparece!
+19234=Sua confusão passou, agora você pode armar uma arma!
+19235=Você não está mais mortalmente ferido.
+19236=As feridas sangrentas sararam, você não está mais sangrando!
 }
 EOF

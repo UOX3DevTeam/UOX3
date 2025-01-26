@@ -97,6 +97,7 @@ enum ScriptEvent
 	seOnCombatStart,		//	**	allows overriding what happens when combat is initiated
 	seOnAICombatTarget,		//	**	allows overriding target selection taking place for regular AI behaviours
 	seOnCombatEnd,			//	**	allows overriding what happens when combat ends
+	seOnCombatHit,			//	**	allows overriding what happens when combat hits
 	seOnDeathBlow,
 	seOnCombatDamageCalc,
 	seOnDamage,
@@ -281,6 +282,7 @@ public:
 	SI08		OnSkillGump( CChar *mChar );
 	SI08		OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem );
 	SI08		OnAICombatTarget( CChar *attacker, CChar *target );
+	SI08		OnCombatHit( CChar *attacker, CChar *defender );
 	SI08		OnCombatStart( CChar *attacker, CChar *defender );
 	SI08		OnCombatEnd( CChar *attacker, CChar *defender );
 

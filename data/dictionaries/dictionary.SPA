@@ -5346,5 +5346,42 @@
 19140=Primero es necesario ablandar la suciedad.
 19141=Plantas la semilla en el cuenco de tierra.
 19142=¡Debes usar una semilla en un recipiente con tierra!
+// [19201-19300] Movimientos especiales
+19201=Necesitas %i habilidad con arma para realizar ese ataque
+19202=Necesitas %i mana para realizar ese ataque
+19203=¡Tu ataque penetra su armadura!
+19204=¡El golpe atravesó tu armadura!
+19205=¡Tu objetivo está sangrando!
+19206=¡Estás sangrando!
+19207=Estas sangrando profusamente
+19208=%i está sangrando profusamente
+19209=¡Has causado una conmoción cerebral!
+19210=¡Te sientes desorientado!
+19211=¡Has asestado un golpe aplastante!
+19212=¡Recibes daño extra por el ataque aplastante!
+19213=No puedes desarmar a tu oponente.
+19214=¡Tu objetivo ya está desarmado!
+19215=¡Desarmas su arma!
+19216=¡Tu arma ha sido desarmada!
+19217=¡No puedes realizar ese ataque mientras estás montado o volando!
+19218=Este ataque sólo funciona en objetivos montados o voladores
+19219=¡La fuerza de tu ataque los ha desalojado de su montura!
+19220=¡%i te ha derribado de tu montura!
+19221=¡Tu arma debe tener una dosis de veneno para realizar un ataque infeccioso!
+19222=Tu golpe preciso ha aumentado el nivel del veneno en 1
+19223=¡El veneno parece extra efectivo!
+19224=Has envenenado a tu objetivo: %i
+19225=%i: ¡te envenenó!
+19226=¡Has causado una herida mortal!
+19227=¡Has sido herido de muerte!
+19228=Tu objetivo resiste la parálisis.
+19229=Resistes la parálisis.
+19230=¡El ataque te ha paralizado temporalmente!
+19231=Te falta el sigilo necesario para realizar ese ataque
+19232=¡Atacas y te escondes en las sombras!
+19233=¡Estás aturdido por el ataque y tu atacante desaparece!
+19234=¡Tu confusión ha pasado, ahora puedes armar un arma!
+19235=Ya no estás herido de muerte.
+19236=Las heridas sangrantes han sanado, ¡ya no sangras!
 }
 EOF

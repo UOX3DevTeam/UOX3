@@ -79,6 +79,13 @@
 27/05/2024 - Dragon Slayer
 	Added Missing Wand ID's to combat weapon type in core and in js.
 
+25/05/2024 - Dragon Slayer
+	Added special_moves.js There is 12 special aos moves you can find on uoguide.com.
+	Added blockequip.js This script is used to block reqeuiping weapons.
+	Thanks to Xuri for making unequipattemp work for chars and not just items.
+	Added OnCombatHit
+		-Triggers for character with event attached when someone has taken damage.
+
 13/05/2024 - Dragon Slayer
 	Added New Shield Type 107 so shield ID's no longer have to be in hard code for shields to work properly
 
