@@ -302,7 +302,7 @@ function onSpeech( myString, pUser, myNPC )
 			{
 				if( CheckBodTimers( pUser, myNPC.GetTag( "bodType" ) ))
 				{
-					if( EraStringToNum( GetServerSetting( "CoreShardEra" )) <= EraStringToNum( "lbr" ))
+					if( EraStringToNum( GetServerSetting( "CoreShardEra" )) >= EraStringToNum( "lbr" ))
 					{
 						myNPC.SetTimer( Timer.MOVETIME, 1000 ); // Pause NPC in their tracks for a second
 						myNPC.TurnToward( pUser );
