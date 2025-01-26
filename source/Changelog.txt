@@ -4,6 +4,9 @@
 07/12/2024 - Dragon Slayer
 	Updated the packet 0xf1 to reflect the current CUO Web Ping while maintaining backward compatibility with older ping statuses. (0xf1_freeshardServerPoll.js) (Thanks Karasho and Xuri)
 
+31/10/2024 - Dragon Slayer
+	Fixed Z calculation in some scripts when targeting dynamic items. (Thanks Xuri)
+
 13/08/2024 - Dragon Slayer/Xuri
 	The onAttack/onDefense JS Events have been updated with three new parameters 	(hitStatus, hitLocation, damage) and will now also trigger when attacks miss.
 
