@@ -7,6 +7,10 @@
 31/10/2024 - Dragon Slayer
 	Fixed Z calculation in some scripts when targeting dynamic items. (Thanks Xuri)
 
+27/10/2024 -Dragon Slayer
+	Corrected a misspelling of IsBoat in magic.js.
+	Added support for iterating through items in boats using FirstItem(), NextItem() and FinishedItems() methods
+
 13/08/2024 - Dragon Slayer/Xuri
 	The onAttack/onDefense JS Events have been updated with three new parameters 	(hitStatus, hitLocation, damage) and will now also trigger when attacks miss.
 
