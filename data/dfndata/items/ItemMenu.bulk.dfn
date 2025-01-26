@@ -9097,6 +9097,8 @@ ADDITEM=0x0e7c
 ADDITEM=0x0e40
 0x0e41=metal chest
 ADDITEM=0x0e41
+0x0e41=Puzzle Chest
+ADDITEM=puzzlechest
 <=Previous Menu
 ITEMMENU=3
 }
