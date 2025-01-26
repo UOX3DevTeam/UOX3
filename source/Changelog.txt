@@ -1,6 +1,9 @@
 21/01/2025 - Dragon Slayer
 	Fixed damage dealt in combat was incorrectly modified while applying defense modifiers. (combat.cpp)
 
+15/12/2024 - Dragon Slayer
+	Added Ressurrect Penalty Script (js/player/death/resurrectpenalty.js) that controls any type of penalty you want on the char after resurrecting via shrines
+
 07/12/2024 - Dragon Slayer
 	Updated the packet 0xf1 to reflect the current CUO Web Ping while maintaining backward compatibility with older ping statuses. (0xf1_freeshardServerPoll.js) (Thanks Karasho and Xuri)
 
