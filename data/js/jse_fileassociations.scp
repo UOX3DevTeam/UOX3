@@ -98,6 +98,8 @@
 2201=server/misc/hint_tooltip.js
 2202=server/misc/warning_trigger.js
 2203=server/misc/charges_left_tooltip.js
+2204=server/network/0xDF_buffBar.js
+2205=server/misc/spawnergump.js
 
 // Server Data [2500-2749]
 2500=server/data/weapontypes.js
@@ -286,6 +288,10 @@
 5061=item/quivers.js
 5062=item/equip_effects/updatequivercount.js
 
+19100=item/plant_growing/plantsystem.js
+19101=item/plant_growing/plantbowl.js
+19102=item/plant_growing/seed.js
+
 //-------------------------------------------
 // treasure maps and chest [5400-5405]
 //-------------------------------------------
@@ -331,12 +337,14 @@
 // Combat Scripts [7000-7499]
 //-------------------------------------------
 7000=combat/peacemake_effect.js
+7003=combat/leechstats.js
 
 //-------------------------------------------
 // Misc Player Scripts [8000-8499]
 //-------------------------------------------
 8000=player/death/return_stolen_items.js
 8001=player/young_player.js
+8002=player/death/resurrectpenalty.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js

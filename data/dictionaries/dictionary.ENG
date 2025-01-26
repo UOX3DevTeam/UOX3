@@ -3431,6 +3431,7 @@
 6301=Only a Grandmaster Alchemist can learn from this book.
 6302=You have already learned this information.
 6303=You have learned to make items from glass.  You will need to find miners to mine fine sand for you to make these items.
+6304=You must have a free hand to drink a potion.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -4679,7 +4680,6 @@
 11619=bread loaf
 11620=pan of cookies
 11621=cake
-11622=muffins
 11622=baked quiche
 11623=baked meat pie
 11624=sausage pizza
@@ -4715,6 +4715,7 @@
 11654=You must be near a heat source to cook food.
 11655=You must be near a mill to create flour.
 11656=You must be near an oven to bake food.
+11657=muffins
 // 11801 - 12000 Tinkering Crafting Skill
 // Page 1 - Wooden Items
 11801=Axle
@@ -5312,10 +5313,44 @@
 19100=You've successfully converted the metal.
 19101=You can only convert five hundred ingots at a time.
 19102=The item must be in your backpack to be exchanged.
-// [19106-19110] Quiver
+// [19106-19109] Quiver
 19106=You cannot drop the quiver onto itself.
 19107=The quiver cannot hold more than 500 units of ammo.
 19108=The container cannot hold that type of object.
 19109=The quiver is now empty and can hold a different type of ammo.
+// [19110-19200] Plant Growing
+19110=You must have the item in your backpack or locked down in order to use it.
+19111=You need to plant a seed in the bowl first
+19112=You prune the plant. This plant will no longer produce resources or seeds, but will require no upkeep.
+19113=You cannot gather pollen from a mutated plant!
+19114=Too early to gather pollen
+19115=You cannot gather pollen from an unhealthy plant!
+19116=Target the plant you wish to cross-pollinate to.
+19117=You can only pollinate other specially grown plants!
+19118=This plant is not in the flowering stage. You cannot pollinate it!
+19119=You cannot pollinate an unhealthy plant!
+19120=You cannot cross-pollinate with a mutated plant!
+19121=This plant has already been pollinated!
+19122=You pollinate the plant with its own pollen.
+19123=You successfully cross - pollinate the plant.
+19124=This plant has no seeds to gather!
+19125=You gather seeds from the plant.
+19126=You can't add water to this plant.
+19127=You soften the dirt with water.
+19128=You can't use that on a plant!
+19129=You don't have any strong potions of that type in your pack.
+19130=You should only pour potions on a plant or seed!
+19131=The plant is already soaked with this type of potion!
+19132=You must have the object in your backpack to use it.
+19133=Choose a patch of dirt to scoop up.
+19134=You need more dirt to fill a plant bowl!
+19135=You fill the bowl with fresh dirt.
+19136=You'll want to gather fresh dirt in order to raise a healthy plant!
+19137=Choose a bowl of dirt to plant this seed in.
+19138=You must use a seed on some prepared soil!
+19139=This bowl of dirt already has a seed %s in it!
+19140=The dirt needs to be softened first.
+19141=You plant the seed in the bowl of dirt.
+19142=You must use a seed on a bowl of dirt!
 }
 EOF

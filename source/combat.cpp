@@ -801,6 +801,10 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x48B3: //gargish axe - SA
 			return TWOHND_AXES;
 		// Default Maces
+		case 0x0DF2: // Wand
+		case 0x0DF3: // Wand
+		case 0x0DF4: // Wand
+		case 0x0DF5: // Wand
 		case 0x13E3: //smith's hammer
 		case 0x13E4: //smith's hammer
 		case 0x13B3: //club
@@ -2645,7 +2649,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 
 	if( getDef > 0 )
 	{
-		damage -= static_cast<R32>(( static_cast<R32>( getDef ) * static_cast<R32>( attSkill )) / 750 );
+		damage -= static_cast<R32>( getDef );
 	}
 
 	return static_cast<SI16>( std::round( damage ));
@@ -2877,18 +2881,24 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				R32 attHitChanceBonus = 0;
 				R32 defDefenseChanceBonus = 0;
 				R32 maxAttHitChanceBonus = 45;
+
 				if( cwmWorldState->ServerData()->ExpansionCombatHitChance() >= ER_SA && mChar.GetBodyType() == BT_GARGOYLE )
 				{
 					// If attacker is a Gargoyle player, and ExpansionCombatHitChance is ER_SA or higher, use 50 as hitchance bonus cap instead of 45
 					maxAttHitChanceBonus = 50;
 				}
 				
-				// Fetch bonuses to hitChance/defenseChance from AoS item properties, when implemented
-				//attHitChanceBonus = GetAttackerHitChanceBonus();
-				//defDefenseChanceBonus = GetDefenderDefenseChanceBonus();
+				// Fetch bonuses to hitChance/defenseChance from AoS item properties or characters
+				attHitChanceBonus = mChar.GetHitChance();
+				defDefenseChanceBonus = mChar.GetDefenseChance();
 
-				R32 attackerHitChance = ( static_cast<R32>( attackSkill / 10 ) + 20 ) * ( 100 + std::min( attHitChanceBonus, static_cast<R32>( maxAttHitChanceBonus )));
-				R32 defenderDefenseChance = ( static_cast<R32>( defendSkill / 10 ) + 20 ) * ( 100 + std::min( defDefenseChanceBonus, static_cast<R32>( 45 )));
+				// Clamp to ensure valid bonus ranges (e.g., no multiplier below 1)
+				R32 effectiveAttHitChanceBonus = std::max(-99.0f, std::min( attHitChanceBonus, maxAttHitChanceBonus )); // Cap at -99 and maxAttHitChanceBonus
+				R32 effectiveDefDefenseChanceBonus = std::max(-99.0f, std::min( defDefenseChanceBonus, 45.0f )); // Cap at -99 and 45
+
+				// Calculate the attacker's hit chance and defender's defense chance
+				R32 attackerHitChance = ( static_cast<R32>( attackSkill / 10 ) + 20 ) * ( 100 + effectiveAttHitChanceBonus );
+				R32 defenderDefenseChance = ( static_cast<R32>( defendSkill / 10 ) + 20 ) * ( 100 + effectiveDefDefenseChanceBonus );
 				hitChance = ( attackerHitChance / ( defenderDefenseChance * 2 )) * 100;
 
 				// Always leave at least 2% chance to hit
@@ -2916,6 +2926,25 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			}
 
 			PlayMissedSoundEffect( &mChar );
+
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnAttack( &mChar, ourTarg, skillPassed, -1, 0 );
+				}
+			}
+
+			std::vector<UI16> defScriptTriggers = ourTarg->GetScriptTriggers();
+			for( auto scriptTrig : defScriptTriggers )
+			{
+                cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnDefense( &mChar, ourTarg, skillPassed, -1, 0 );
+				}
+			}
 		}
 		else
 		{
@@ -3035,7 +3064,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					toExecute->OnAttack( &mChar, ourTarg );
+					toExecute->OnAttack( &mChar, ourTarg, skillPassed, hitLoc, ourDamage );
 				}
 			}
 
@@ -3045,7 +3074,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					toExecute->OnDefense( &mChar, ourTarg );
+					toExecute->OnDefense( &mChar, ourTarg, skillPassed, hitLoc, ourDamage );
 				}
 			}
 		}
@@ -3430,7 +3459,8 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 	}
 
 	SI32 getOffset	= 0;
-	SI32 baseValue	= 15000;
+	SI32 baseValue = ( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR ) ? 15000 :
+					(( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML ) ? 80000 : 40000 );
 
 	CChar *ourTarg = mChar->GetTarg();
 
@@ -3455,18 +3485,49 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 		}
 	}
 
+	SI32 speedBonus = mChar->GetSwingSpeedIncrease();
+	
+	// Swing Speed Increase Cap per AOS
+	if ( speedBonus > cwmWorldState->ServerData()->SwingSpeedIncreaseCap() )
+	{
+		speedBonus = cwmWorldState->ServerData()->SwingSpeedIncreaseCap();
+	}
+
 	//Allow faster strikes on fleeing targets
 	if( ValidateObject( ourTarg ))
 	{
 		if( ourTarg->GetNpcWander() == WT_FLEE || ourTarg->GetNpcWander() == WT_SCARED )
 		{
-			baseValue = 10000;
+			baseValue = ( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR ) ? 10000 : 
+						(( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML ) ? 53333 : 26680 );
 		}
 	}
 
 	R32 globalAttackSpeed = cwmWorldState->ServerData()->GlobalAttackSpeed(); //Defaults to 1.0
 
-	getDelay = ( baseValue / ( getDelay * getOffset )) / globalAttackSpeed;
+	R32 speedFactor = 1 + speedBonus / 10.0f;
+
+	// Prevent zero or negative multipliers
+	if( speedFactor < 0.1f )
+		speedFactor = 0.1f;
+
+
+	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR )
+	{
+		// Weapon swing delay in LBR and earlier
+		getDelay = baseValue / ( getDelay * getOffset * speedFactor ) / globalAttackSpeed;
+	}
+	else if( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML )
+	{
+		// Weapon swing delay in SE or earlier
+		getDelay = ( baseValue / ( getDelay * getOffset * speedFactor ) / 4 - 0.5 ) / globalAttackSpeed;
+	}
+	else
+	{
+		// Weapon swing delay in ML or later
+		getDelay = ( baseValue / ( getDelay * getOffset * speedFactor ) * 0.5 ) / globalAttackSpeed;
+	}
+
 	return getDelay;
 }
 
