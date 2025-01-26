@@ -7,6 +7,9 @@
 12/08/2024 - Dragon Slayer
 	Fixed an issue where Imbuing and Mysticism skills were listed in wrong order in skills.dfn and enums.h
 
+4/8/2024 - Dragon Slayer
+	Added Run a skillcheck for NPC to give them a chance to gain skill - if that option is enabled in ini (xuri)
+
 16/07/2024 - Dragon Slayer
 	Added fallback in 'add menu for older clients that don't support buttontileart (Thanks Xuri)(gumps.cpp)
 
