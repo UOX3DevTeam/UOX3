@@ -77,6 +77,8 @@ function onLogout( pSock, pChar )
 
 function onCreatePlayer( pChar )
 {
+	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+
 	// If player character is created on a Young account, give them Young-specific items
 	if( pChar.account.isYoung )
 	{
@@ -90,7 +92,7 @@ function onCreatePlayer( pChar )
 	}
 
 	//Attach the special moves Book
-	if( !pChar.npc && !pChar.HasScriptTrigger( 7001 ))
+	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))
 	{
 		pChar.AddScriptTrigger( 7001 );
 	}
