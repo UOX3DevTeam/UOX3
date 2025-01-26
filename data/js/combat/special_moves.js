@@ -7,7 +7,7 @@ function onSpecialMove( pUser, abilityID )
 	if( restrictedAbilities.indexOf( abilityID ) != -1 )
 	{
 		pUser.SysMessage( "This ability is not yet available." );
-		TriggerEvent( 2205, "DeactivateSpecialMove", pUser, abilityID );
+		TriggerEvent( 2206, "DeactivateSpecialMove", pUser, abilityID );
 		return false;
 	}
 
@@ -32,7 +32,7 @@ function checkSkillRequirement( pUser, requiredSkillLevel, requiredSkill, skillM
 	{
 		pSock.SysMessage( GetDictionaryEntry( 19201, pSock.language), skillMessage); // You need %i weapon skill to perform that attack
 
-		TriggerEvent( 2205, "DeactivateSpecialMove", pUser, abilityID );
+		TriggerEvent( 2206, "DeactivateSpecialMove", pUser, abilityID );
 		return false;
 	}
 	return true;
@@ -289,7 +289,7 @@ function CheckMana( pUser, abilityID )
 	if( pUser.mana < requiredMana )
 	{
 		pSock.SysMessage( GetDictionaryEntry( 19202, pSock.language), requiredMana); // You need %i mana to perform that attack
-		TriggerEvent( 2205, "DeactivateSpecialMove", pUser, abilityID );
+		TriggerEvent( 2206, "DeactivateSpecialMove", pUser, abilityID );
 		return false;
 	}
 	else
@@ -415,7 +415,7 @@ function onAbility( pAttacker, pDefender, abilityID )
 	{
 		// Clear out any current ability the player is doing when he switches abilities
 		if( abilityID != 1 )
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 
 		//checking mana
 		if( CheckMana( pAttacker, abilityID ))
@@ -430,13 +430,13 @@ function onAbility( pAttacker, pDefender, abilityID )
 		pDefender.SoundEffect( 0x0056, true );
 		pDefender.StaticEffect( 0x3728, 0x09, 0x06 );
 
-		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+		TriggerEvent( 2206, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
 	else if( abilityID == 2 ) // bleedattack
 	{
 		// Clear out any current ability the player is doing when he switches abilities
 		if( abilityID != 2 )
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 
 		//checking mana
 		if( CheckMana( pAttacker, abilityID ))
@@ -462,13 +462,13 @@ function onAbility( pAttacker, pDefender, abilityID )
 		pAttacker.SoundEffect( 0x133, true );
 		pDefender.StaticEffect( 0x377A, 0x09, 0x32 );
 
-		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+		TriggerEvent( 2206, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
 	else if( abilityID == 3 ) // ConcussionBlow
 	{
 		// Clear out any current ability the player is doing when he switches abilities
 		if( abilityID != 3 )
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 
 		//checking mana
 		if( CheckMana( pAttacker, abilityID ))
@@ -484,14 +484,14 @@ function onAbility( pAttacker, pDefender, abilityID )
 		pAttacker.SoundEffect( 0x213, true );
 		pDefender.StaticEffect( 0x377A, 0x09, 0x32 );
 
-		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+		TriggerEvent( 2206, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
 	else if( abilityID == 4 ) // crushingblow
 	{
 
 		// Clear out any current ability the player is doing when he switches abilities
 		if( abilityID != 4 )
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 
 		//checking mana
 		if( CheckMana( pAttacker, abilityID ))
@@ -504,7 +504,7 @@ function onAbility( pAttacker, pDefender, abilityID )
 			pSockDefender.SysMessage( GetDictionaryEntry( 19212, pSockDefender.language ));// You take extra damage from the crushing attack!
 
 		pAttacker.SoundEffect( 0x1E1, true );
-		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+		TriggerEvent( 2206, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
 	else if( abilityID == 5 ) // Disarm
 	{
@@ -514,20 +514,20 @@ function onAbility( pAttacker, pDefender, abilityID )
 		if( pDefender.pack == null || itemLHand != null && itemLHand.movable >= 2 || itemRHand != null && itemRHand.movable >= 2 )
 		{
 			pSockAttacker.SysMessage( GetDictionaryEntry( 19213, pSockAttacker.language ));// You cannot disarm your opponent.
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 			return false;
 		}
 
 		if( itemLHand != null && itemLHand.type == 9 || itemRHand != null && itemRHand.type == 9 ) 
 		{
 			pSockAttacker.SysMessage( GetDictionaryEntry( 19214, pSockAttacker.language ));// Your target is already unarmed!
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 			return false;
 		}
 
 		// Clear out any current ability the player is doing when he switches abilities
 		if( abilityID != 5 )
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 
 		//checking mana
 		if( CheckMana( pAttacker, abilityID ))
@@ -558,7 +558,7 @@ function onAbility( pAttacker, pDefender, abilityID )
 
 		TriggerEvent(50104, "AddBuff", pDefender, 0x3ea, 1075637, 0, 5, " " );
 
-		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+		TriggerEvent( 2206, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
 	else if( abilityID == 6 ) // Dismount
 	{
@@ -566,7 +566,7 @@ function onAbility( pAttacker, pDefender, abilityID )
 		if( pAttacker.isonhorse || pAttacker.isflying )
 		{
 			pSockAttacker.SysMessage( GetDictionaryEntry( 19217, pSockAttacker.language ));// You cannot perform that attack while mounted or flying!
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 			return true;
 		}
 
@@ -574,13 +574,13 @@ function onAbility( pAttacker, pDefender, abilityID )
 		if( !pDefender.isonhorse || !pDefender.isflying )
 		{
 			pSockAttacker.SysMessage( GetDictionaryEntry( 19218, pSockAttacker.language ));// This attack only works on mounted or flying targets
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 			return true;
 		}
 
 		// Clear out any current ability the player is doing when he switches abilities
 		if( abilityID != 6 )
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 
 		//checking mana
 		if( CheckMana( pAttacker, abilityID )) 
@@ -599,13 +599,13 @@ function onAbility( pAttacker, pDefender, abilityID )
 		if( pSockDefender != null )
 			pSockDefender.SysMessage( GetDictionaryEntry( 19220, pSockDefender.language ), pAttacker.name );// You have been knocked off of your mount by %i !
 
-		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+		TriggerEvent( 2206, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
 	else if( abilityID == 7 ) // Double Strike
 	{
 		// Clear out any current ability the player is doing when he switches abilities
 		if( abilityID != 7 )
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 
 		//checking mana
 		if( CheckMana( pAttacker, abilityID ))
@@ -613,7 +613,7 @@ function onAbility( pAttacker, pDefender, abilityID )
 			DeductMana( pAttacker, abilityID );
 		}
 
-		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+		TriggerEvent( 2206, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
 	else if( abilityID == 8 ) // Infectious Strike
 	{
@@ -623,13 +623,13 @@ function onAbility( pAttacker, pDefender, abilityID )
 		if( itemLHand != null && itemLHand.poison <= 0 || itemRHand != null && itemRHand.poison <= 0 )
 		{
 			pSockAttacker.SysMessage( GetDictionaryEntry( 19221, pSockAttacker.language ));// Your weapon must have a dose of poison to perform an infectious strike!
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 			return;
 		}
 
 		// Clear out any current ability the player is doing when he switches abilities
 		if( abilityID != 8 )
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 
 		//checking mana
 		if( CheckMana( pAttacker, abilityID ))
@@ -681,14 +681,14 @@ function onAbility( pAttacker, pDefender, abilityID )
 
 		pAttacker.SoundEffect( 0xDD, true );
 		pDefender.StaticEffect( 0x3728, 0x09, 0x32 );
-		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+		TriggerEvent( 2206, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
 	else if( abilityID == 9 ) // Mortal Strike
 	{
 
 		// Clear out any current ability the player is doing when he switches abilities
 		if( abilityID != 9 )
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 
 		//checking mana
 		if( CheckMana( pAttacker, abilityID ))
@@ -716,13 +716,13 @@ function onAbility( pAttacker, pDefender, abilityID )
 		if( pDefender.socket )
 			TriggerEvent( 50104, "AddBuff", pDefender, 1027, 1075810, 1075811, 6, " " );
 
-		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+		TriggerEvent( 2206, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
 	else if( abilityID == 10 ) //  Moving Shot
 	{
 		// Clear out any current ability the player is doing when he switches abilities
 		if( abilityID != 10 )
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 
 		//checking mana
 		if( CheckMana( pAttacker, abilityID ))
@@ -730,13 +730,13 @@ function onAbility( pAttacker, pDefender, abilityID )
 			DeductMana( pAttacker, abilityID );
 		}
 
-		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+		TriggerEvent( 2206, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
 	else if( abilityID == 11 ) // ParalyzingBlow
 	{
 		// Clear out any current ability the player is doing when he switches abilities
 		if( abilityID != 11 )
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 
 		//checking mana
 		if( CheckMana( pAttacker, abilityID ))
@@ -775,20 +775,20 @@ function onAbility( pAttacker, pDefender, abilityID )
 		{
 			pSockAttacker.SysMessage( GetDictionaryEntry( 17702, pAttacker.socket.language), false, 0x3b2, 0, pAttacker.serial );// You deliver a paralyzing blow!
 		}
-		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+		TriggerEvent( 2206, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
 	else if( abilityID == 12 ) // shadowstrike
 	{
 		if( pAttacker.skills[47] < 800 ) // Stealth
 		{
 			pSockAttacker.SysMessage( GetDictionaryEntry( 19231, pSockAttacker.language ));// "You lack the required stealth to perform that attack
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 			return true;
 		}
 
 		// Clear out any current ability the player is doing when he switches abilities
 		if( abilityID != 12 )
-			TriggerEvent( 2205, "DeactivateSpecialMove", pAttacker, abilityID );
+			TriggerEvent( 2206, "DeactivateSpecialMove", pAttacker, abilityID );
 
 		//checking mana
 		if( CheckMana( pAttacker, abilityID ))
@@ -809,13 +809,13 @@ function onAbility( pAttacker, pDefender, abilityID )
 		pDefender.atWar = false;
 		pAttacker.visible = 1;
 
-		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );
+		TriggerEvent( 2206, "ClearSpecialMove", pAttacker, abilityID );
 	}
 	else if( abilityID == 13 ) //  Whirlwind Attack
 	{
 		// Clear out any current ability the player is doing when he switches abilities
 		if( abilityID != 13 )
-			TriggerEvent(2205, "DeactivateSpecialMove", pAttacker, abilityID);
+			TriggerEvent(2206, "DeactivateSpecialMove", pAttacker, abilityID);
 
 		//checking mana
 		if( CheckMana(pAttacker, abilityID ))
@@ -823,7 +823,7 @@ function onAbility( pAttacker, pDefender, abilityID )
 			DeductMana( pAttacker, abilityID );
 		}
 
-		TriggerEvent( 2205, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
+		TriggerEvent( 2206, "ClearSpecialMove", pAttacker, abilityID );// Clear the Ability after success
 	}
 }
 
@@ -842,7 +842,7 @@ function onTimer( timerObj, timerID )
 		timerObj.SetTempTag( "blockHeal", null );
 		timerObj.KillJSTimer( 9400, 7001 );
 		timerObj.SetTempTag( "doBleed", null );
-		TriggerEvent( 2205, "ClearSpecialMove", timerObj, abilityID );
+		TriggerEvent( 2206, "ClearSpecialMove", timerObj, abilityID );
 		return;
 	}
 	else if( timerID == 8000 )
