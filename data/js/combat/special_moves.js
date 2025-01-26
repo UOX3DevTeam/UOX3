@@ -1,7 +1,7 @@
 function onSpecialMove( pUser, abilityID )
 {
 	// Define the array of restricted ability IDs
-	var restrictedAbilities = [7, 10, 13, 14, 15, 16, 17,18,19,20,21,22,23,24,25,29];
+	var restrictedAbilities = [14, 15, 16, 17,18,19,20,21,22,23,24,25,29];
 
 	// Check if the abilityID is in the array of restricted abilities
 	if( restrictedAbilities.indexOf( abilityID ) != -1 )
@@ -245,7 +245,8 @@ function getAbilityManaTable()
 		10: { manaAmount: 20 },		// Moving Shot
 		11: { manaAmount: 35 },		// Paralyzing Blow
 		12: { manaAmount: 25 },		// Shadow Strike
-		13: { manaAmount: 25 },		// Whirlwind Attack // End AOS abilities
+		13: { manaAmount: 25 }		// Whirlwind Attack // End AOS abilities
+		/* 14-29 are not available
 		14: { manaAmount: 30 },		// Riding Swipe // Start SE abiltiies
 		15: { manaAmount: 30 },		// Frenzied Whirlwind
 		16: { manaAmount: 30 },		// Block
@@ -261,7 +262,7 @@ function getAbilityManaTable()
 		26: { manaAmount: 15 },		// Lightning Arrow
 		27: { manaAmount: 25 },		// Psychic Attack
 		28: { manaAmount: 35 },		// Serpent Arrow
-		29: { manaAmount: 35 }		// Force of Nature // End ML abilities
+		29: { manaAmount: 35 }		// Force of Nature // End ML abilities*/
 	};
 }
 
