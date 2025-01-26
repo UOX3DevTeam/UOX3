@@ -3431,6 +3431,7 @@
 6301=Tylko Wielki Mistrz Alchemik może uczyć się z tej książki.
 6302=Te informacje już znasz.
 6303=Nauczyłeś się robić przedmioty ze szkła. Będziesz musiał znaleźć górników, którzy wydobędą drobny piasek, aby móc wyprodukować te przedmioty.
+6304=Musisz mieć wolną rękę, żeby wypić miksturę.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?
@@ -4679,7 +4680,6 @@
 11619=bochenek chleba
 11620=panka ciasteczek
 11621=ciasto
-11622=muffiny
 11622=pieczony quiche
 11623=pieczony placek z mięsem
 11624=pizza z kiełbasą
@@ -4715,6 +4715,7 @@
 11654=Musisz być w pobliżu źródła ciepła, aby gotować jedzenie.
 11655=Musisz być w pobliżu młyna, aby wytworzyć mąkę.
 11656=Musisz być w pobliżu piekarnika, aby upiec jedzenie.
+11657=muffiny
 // 11801 - 12000 Umiejętność majsterkowania
 // Strona 1 - Przedmioty z drewna
 11801=Oś

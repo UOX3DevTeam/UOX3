@@ -365,6 +365,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_LAYER:			applyTo->SetLayer( static_cast<ItemLayers>( ndata ));	break;
 			case DFNTAG_LIGHT:			applyTo->SetWeatherDamage( LIGHT, ndata != 0 );			break;
 			case DFNTAG_LIGHTNING:		applyTo->SetWeatherDamage( LIGHTNING, ndata != 0 );		break;
+			case DFNTAG_LOWERSTATREQ:	applyTo->SetLowerStatReq( static_cast<SI16>( ndata ));	break;
 			case DFNTAG_MAXHP:			applyTo->SetMaxHP( static_cast<UI16>( ndata ));			break;
 			case DFNTAG_MAXITEMS:		applyTo->SetMaxItems( static_cast<UI16>( ndata ));		break;
 			case DFNTAG_MAXRANGE:		applyTo->SetMaxRange( static_cast<UI08>( ndata ));		break;
@@ -557,6 +558,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_RAIN:			applyTo->SetWeatherDamage( RAIN, ndata != 0 );			break;
 			case DFNTAG_SECTIONID:		applyTo->SetSectionId( cdata );							break;
 			case DFNTAG_SK_MADE:		applyTo->SetMadeWith( static_cast<SI08>( ndata ));		break;
+			case DFNTAG_SWINGSPEEDINCREASE:	applyTo->SetSwingSpeedIncrease( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_SPD:			applyTo->SetSpeed( static_cast<UI08>( ndata ));			break;
 			case DFNTAG_STRENGTH:		applyTo->SetStrength( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_STRADD:			applyTo->SetStrength2( static_cast<SI16>( ndata ));		break;
@@ -1829,7 +1831,8 @@ void cItem::CheckEquipment( CChar *p )
 		{
 			if( ValidateObject( i ))
 			{
-				if( i->GetStrength() > StrengthToCompare )//if strength required > character's strength
+				const SI16 scaledStrength = ( i->GetStrength() * ( 100 - i->GetLowerStatReq() )) / 100;
+				if( scaledStrength > StrengthToCompare )//if strength required > character's strength
 				{
 					itemsToUnequip.push_back( i );
 				}

@@ -99,6 +99,7 @@
 2202=server/misc/warning_trigger.js
 2203=server/misc/charges_left_tooltip.js
 2204=server/network/0xDF_buffBar.js
+2205=server/misc/spawnergump.js
 
 // Server Data [2500-2749]
 2500=server/data/weapontypes.js

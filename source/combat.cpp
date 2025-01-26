@@ -2649,7 +2649,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 
 	if( getDef > 0 )
 	{
-		damage -= static_cast<R32>(( static_cast<R32>( getDef ) * static_cast<R32>( attSkill )) / 750 );
+		damage -= static_cast<R32>( getDef );
 	}
 
 	return static_cast<SI16>( std::round( damage ));
@@ -2926,6 +2926,25 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			}
 
 			PlayMissedSoundEffect( &mChar );
+
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnAttack( &mChar, ourTarg, skillPassed, -1, 0 );
+				}
+			}
+
+			std::vector<UI16> defScriptTriggers = ourTarg->GetScriptTriggers();
+			for( auto scriptTrig : defScriptTriggers )
+			{
+                cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnDefense( &mChar, ourTarg, skillPassed, -1, 0 );
+				}
+			}
 		}
 		else
 		{
@@ -3045,7 +3064,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					toExecute->OnAttack( &mChar, ourTarg );
+					toExecute->OnAttack( &mChar, ourTarg, skillPassed, hitLoc, ourDamage );
 				}
 			}
 
@@ -3055,7 +3074,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					toExecute->OnDefense( &mChar, ourTarg );
+					toExecute->OnDefense( &mChar, ourTarg, skillPassed, hitLoc, ourDamage );
 				}
 			}
 		}
@@ -3440,7 +3459,8 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 	}
 
 	SI32 getOffset	= 0;
-	SI32 baseValue	= 15000;
+	SI32 baseValue = ( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR ) ? 15000 :
+					(( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML ) ? 80000 : 40000 );
 
 	CChar *ourTarg = mChar->GetTarg();
 
@@ -3465,18 +3485,49 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 		}
 	}
 
+	SI32 speedBonus = mChar->GetSwingSpeedIncrease();
+	
+	// Swing Speed Increase Cap per AOS
+	if ( speedBonus > cwmWorldState->ServerData()->SwingSpeedIncreaseCap() )
+	{
+		speedBonus = cwmWorldState->ServerData()->SwingSpeedIncreaseCap();
+	}
+
 	//Allow faster strikes on fleeing targets
 	if( ValidateObject( ourTarg ))
 	{
 		if( ourTarg->GetNpcWander() == WT_FLEE || ourTarg->GetNpcWander() == WT_SCARED )
 		{
-			baseValue = 10000;
+			baseValue = ( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR ) ? 10000 : 
+						(( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML ) ? 53333 : 26680 );
 		}
 	}
 
 	R32 globalAttackSpeed = cwmWorldState->ServerData()->GlobalAttackSpeed(); //Defaults to 1.0
 
-	getDelay = ( baseValue / ( getDelay * getOffset )) / globalAttackSpeed;
+	R32 speedFactor = 1 + speedBonus / 10.0f;
+
+	// Prevent zero or negative multipliers
+	if( speedFactor < 0.1f )
+		speedFactor = 0.1f;
+
+
+	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR )
+	{
+		// Weapon swing delay in LBR and earlier
+		getDelay = baseValue / ( getDelay * getOffset * speedFactor ) / globalAttackSpeed;
+	}
+	else if( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML )
+	{
+		// Weapon swing delay in SE or earlier
+		getDelay = ( baseValue / ( getDelay * getOffset * speedFactor ) / 4 - 0.5 ) / globalAttackSpeed;
+	}
+	else
+	{
+		// Weapon swing delay in ML or later
+		getDelay = ( baseValue / ( getDelay * getOffset * speedFactor ) * 0.5 ) / globalAttackSpeed;
+	}
+
 	return getDelay;
 }
 

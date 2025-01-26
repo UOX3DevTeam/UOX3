@@ -169,6 +169,9 @@ function onCallback0( socket, ourObj )
 	case "SECTIONID":
 		socket.SysMessage( ourObj.sectionID );
 		break;
+	case "SWINGSPEEDINC":
+		socket.SysMessage( swingSpeedIncrease );
+		break;
 	case "SHOULDSAVE":
 		socket.SysMessage( ourObj.shouldSave );
 		break;
@@ -315,6 +318,9 @@ function HandleGetItem( socket, ourItem, uKey )
 		break;
 	case "RESISTPOISON":
 		socket.SysMessage( ourItem.Resist( 7 ));
+		break;
+	case "LOWERSTATREQ":
+		socket.SysMessage( ourObj.lowerStatReq );
 		break;
 	case "ARMORCLASS":
 	case "ARMOURCLASS":
