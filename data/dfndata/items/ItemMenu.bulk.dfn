@@ -14253,3 +14253,30 @@ ADDITEM=mapmakerspen
 <=Previous Menu
 ITEMMENU=127
 }
+
+[ITEMMENU 261]
+{
+minihouseaddon_deeds.dfn
+0x14F0=Mini House: Stone and Plaster
+ADDITEM=stoneandplastermini
+0x14F0=Mini House: Field Stone
+ADDITEM=fieldstonemini
+0x14F0=Mini House: Small Brick
+ADDITEM=smallbrickmini
+0x14F0=Mini House: Wooden
+ADDITEM=woodenmini
+0x14F0=Mini House: Wood and Plaster
+ADDITEM=woodandplastermini
+0x14F0=Mini House: Thatched-Roof Cottage
+ADDITEM=thatchedroofcottage
+0x14F0=Mini House: Brick
+ADDITEM=brickmini
+0x14F0=Mini House: Two-Story Wood and Plaster
+ADDITEM=twostorywoodandplastermini
+0x14F0=Mini House: Malas Mountain Pass
+ADDITEM=malasmountainpassmini
+0x14F0=Mini House: Church at Night
+ADDITEM=churchatnightmini
+<=Previous Menu
+ITEMMENU=4
+}
