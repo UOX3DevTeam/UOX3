@@ -4,6 +4,7 @@
 name=Elven Bed (East)
 id=0x14F0
 morex=300
+origin=ml
 }
 
 // Elven Bed (South) Deed
@@ -12,6 +13,7 @@ morex=300
 name=Elven Bed (South)
 id=0x14F0
 morex=301
+origin=ml
 }
 
 // Alchemist Table (East) Deed
@@ -20,6 +22,7 @@ morex=301
 name=Alchemist Table (East)
 id=0x14F0
 morex=300
+origin=ml
 }
 
 // Alchemist Table (South) Deed
@@ -28,6 +31,7 @@ morex=300
 name=Alchemist Table (South)
 id=0x14F0
 morex=301
+origin=ml
 }
 
 // Elven Loveseat (East) Deed
@@ -36,6 +40,7 @@ morex=301
 name=Elven Loveseat (East)
 id=0x14F0
 morex=304
+origin=ml
 }
 
 // Elven Loveseat (South) Deed
@@ -44,6 +49,7 @@ morex=304
 name=Elven Loveseat (South)
 id=0x14F0
 morex=305
+origin=ml
 }
 
 // Elven Wash Basin (East) Deed
@@ -52,6 +58,7 @@ morex=305
 name=Elven Wash Basin (East)
 id=0x14F0
 morex=306
+origin=ml
 }
 
 // Elven Wash Basin (South) Deed
@@ -60,6 +67,7 @@ morex=306
 name=Elven Wash Basin (South)
 id=0x14F0
 morex=307
+origin=ml
 }
 
 // Fancy Couch (East) Deed
@@ -68,6 +76,7 @@ morex=307
 name=Fancy Couch (East)
 id=0x14F0
 morex=308
+origin=ml
 }
 
 // Fancy Couch (North) Deed
@@ -76,6 +85,7 @@ morex=308
 name=Fancy Couch (North)
 id=0x14F0
 morex=309
+origin=ml
 }
 
 // Fancy Couch (South) Deed
@@ -84,6 +94,7 @@ morex=309
 name=Fancy Couch (South)
 id=0x14F0
 morex=310
+origin=ml
 }
 
 // Fancy Couch (West) Deed
@@ -92,6 +103,7 @@ morex=310
 name=Fancy Couch (West)
 id=0x14F0
 morex=311
+origin=ml
 }
 
 // Hardwood Table (East) Deed
@@ -100,6 +112,7 @@ morex=311
 name=Hardwood Table (East)
 id=0x14F0
 morex=312
+origin=ml
 }
 
 // Hardwood Table (South) Deed
@@ -108,6 +121,7 @@ morex=312
 name=Hardwood Table (South)
 id=0x14F0
 morex=313
+origin=ml
 }
 
 // Fancy Loveseat (East) Deed
@@ -116,6 +130,7 @@ morex=313
 name=Fancy Loveseat (East)
 id=0x14F0
 morex=314
+origin=ml
 }
 
 // Fancy Loveseat (North) Deed
@@ -124,6 +139,7 @@ morex=314
 name=Fancy Loveseat (North)
 id=0x14F0
 morex=315
+origin=ml
 }
 
 // Fancy Loveseat (South) Deed
@@ -132,6 +148,7 @@ morex=315
 name=Fancy Loveseat (South)
 id=0x14F0
 morex=316
+origin=ml
 }
 
 // Fancy Loveseat (West) Deed
@@ -140,6 +157,7 @@ morex=316
 name=Fancy Loveseat (West)
 id=0x14F0
 morex=317
+origin=ml
 }
 
 // Ornate Table (East) Deed
@@ -148,6 +166,7 @@ morex=317
 name=Ornate Table (East)
 id=0x14F0
 morex=318
+origin=ml
 }
 
 // Ornate Table (South) Deed
@@ -156,6 +175,7 @@ morex=318
 name=Ornate Table (South)
 id=0x14F0
 morex=319
+origin=ml
 }
 
 // Plush Loveseat (East) Deed
@@ -164,6 +184,7 @@ morex=319
 name=Plush Loveseat (East)
 id=0x14F0
 morex=320
+origin=ml
 }
 
 // Plush Loveseat (South) Deed
@@ -172,6 +193,7 @@ morex=320
 name=Plush Loveseat (South)
 id=0x14F0
 morex=321
+origin=ml
 }
 
 // Tall Elven Bed (East) Deed
@@ -180,6 +202,7 @@ morex=321
 name=Tall Elven Bed (East)
 id=0x14F0
 morex=322
+origin=ml
 }
 
 // Tall Elven Bed (South) Deed
@@ -188,4 +211,5 @@ morex=322
 name=Tall Elven Bed (South)
 id=0x14F0
 morex=323
+origin=ml
 }
