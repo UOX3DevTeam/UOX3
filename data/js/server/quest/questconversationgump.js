@@ -10,7 +10,7 @@ function QuestConversationGump( pUser, npcTarget, questID )
 
 	if( !quest ) 
 	{
-		socket.SysMessage( "This quest does not exist." );
+		socket.SysMessage( GetDictionaryEntry( 19602, socket.language ));//This quest does not exist.
 		return;
 	}
 
@@ -34,11 +34,11 @@ function QuestConversationGump( pUser, npcTarget, questID )
 	{
 		if( currentQuestProgress.completed )
 		{
-			description = quest.complete || "You have completed this quest!";
+			description = quest.complete;
 		}
 		else
 		{
-			description = quest.uncomplete || "You have not completed this quest yet.";
+			description = quest.uncomplete;
 		}
 	}
 
@@ -136,7 +136,7 @@ function onGumpPress( pSock, pButton, gumpData )
 				}
 				else
 				{
-					pSock.SysMessage( "You need to have all required quest items to turn in this quest." );
+					pSock.SysMessage( GetDictionaryEntry( 19603, pSock.language ));// You need to have all required quest items to turn in this quest.
 				}
 			}
 			break;
@@ -185,14 +185,14 @@ function ResignQuest( player, questID )
 
 	if( !questFound )
 	{
-		socket.SysMessage( "You are not currently on this quest." );
+		socket.SysMessage( GetDictionaryEntry( 19604, socket.language ));//You are not currently on this quest.
 		return false;
 	}
 
 	// Write back the updated quest progress, excluding the resigned quest
 	TriggerEvent( 5800, "WriteQuestProgress", player, newQuestProgressArray );
 
-	socket.SysMessage( "The quest has been completely removed from your progress." );
+	socket.SysMessage( GetDictionaryEntry(19605, socket.language ));//The quest has been completely removed from your progress.
 	return true;
 }
 
@@ -203,7 +203,7 @@ function manageQuestItems( player, questID, mark )
 
 	if( !ValidateObject( pack ))
 	{
-		player.SysMessage( "You do not have a backpack." );
+		socket.SysMessage( GetDictionaryEntry( 19606, socket.language ));//You do not have a backpack.
 		return;
 	}
 
@@ -212,7 +212,6 @@ function manageQuestItems( player, questID, mark )
 
 	if( !quest || ( !quest.targetItems && !quest.deliveryItem )) 
 	{
-		socket.SysMessage( "This quest does not have item requirements." );
 		return;
 	}
 
@@ -448,11 +447,12 @@ function GetQuestRewards( quest )
 
 function processQuestTurnIn( player, questID )
 {
+	var socket = player.socket;
 	// Fetch the quest details
 	var quest = TriggerEvent( 5801, "QuestList", questID );
 	if( !quest )
 	{
-		player.SysMessage( "This quest does not exist." );
+		player.SysMessage( GetDictionaryEntry(19602, socket.language ));//This quest does not exist.
 		return false;
 	}
 
@@ -474,12 +474,12 @@ function processQuestTurnIn( player, questID )
 	{
 		if( questProgress.skillProgress >= quest.maxSkillPoints )
 		{
-			player.SysMessage( "You have completed the skill training for this quest!" );
+			socket.SysMessage(GetDictionaryEntry( 19607, socket.language ));//You have completed the skill training for this quest!
 			return true;
 		} 
 		else
 		{
-			player.SysMessage( "You still need to improve your skill. Current progress: " + ( questProgress.skillProgress / 10 ).toFixed( 1 ) + "/" + ( quest.maxSkillPoints / 10 ).toFixed( 1 ) );
+			socket.SysMessage( "You still need to improve your skill. Current progress: " + ( questProgress.skillProgress / 10 ).toFixed( 1 ) + "/" + ( quest.maxSkillPoints / 10 ).toFixed( 1 ) );
 			return false;
 		}
 	}
@@ -489,7 +489,6 @@ function processQuestTurnIn( player, questID )
 	{
 		if( !questProgress || !questProgress.harvestKills )
 		{
-			player.SysMessage( "You have not completed the kill objectives for this quest." );
 			return false;
 		}
 
@@ -497,24 +496,21 @@ function processQuestTurnIn( player, questID )
 		for( var i = 0; i < quest.targetKills.length; i++ )
 		{
 			var targetKill = quest.targetKills[i];
-			if( ( questProgress.harvestKills[targetKill.npcID] || 0 ) < targetKill.amount )
+			if(( questProgress.harvestKills[targetKill.npcID] || 0 ) < targetKill.amount )
 			{
-				player.SysMessage( "You have not killed enough " + targetKill.npcID + "s." );
+				socket.SysMessage( "You have not killed enough " + targetKill.npcID + "s." );
 				return false;
 			}
 		}
 
-		// If kill objectives are complete
-		player.SysMessage( "You have completed the kill objectives for this quest." );
 		return true;
 	}
 
 	// If the quest is not a kill quest, check for item turn-in
 	if( quest.type === "collect" || quest.type === "timecollect" || quest.type === "multi" )
 	{
-		if (!quest.targetItems || quest.targetItems.length === 0)
+		if( !quest.targetItems || quest.targetItems.length === 0 )
 		{
-			player.SysMessage( "This quest does not require item turn-in." );
 			return false;
 		}
 
@@ -547,7 +543,7 @@ function processQuestTurnIn( player, questID )
 
 					if( requiredItems[j].amount === 0 )
 					{
-						break; // Move to the next required item
+						break;
 					}
 				}
 			}
@@ -558,12 +554,12 @@ function processQuestTurnIn( player, questID )
 		{
 			if( requiredItems[k].amount > 0 )
 			{
-				player.SysMessage("You are still missing some items for this quest.");
+				socket.SysMessage( GetDictionaryEntry( 19608, socket.language ));// You are still missing some items for this quest.
 				return false;
 			}
 		}
 
-		player.SysMessage( "All quest items have been turned in successfully." );
+		socket.SysMessage( GetDictionaryEntry( 19609, socket.language ));// All quest items have been turned in successfully.
 		return true;
 	}
 
@@ -573,7 +569,6 @@ function processQuestTurnIn( player, questID )
 		// Validate NPC
 		if( quest.targetDelivery.npcID !== questNpc.serial )
 		{
-			player.SysMessage( "This is not the correct NPC for delivery." );
 			return false;
 		}
 
@@ -603,34 +598,32 @@ function processQuestTurnIn( player, questID )
 
 		if( !foundItem )
 		{
-			player.SysMessage( "You don't have the required item to deliver." );
+			socket.SysMessage( GetDictionaryEntry( 19610, socket.language ));//You don't have the required item to deliver.
 			return false;
 		}
 
-		player.SysMessage( "You have delivered the required item!" );
+		socket.SysMessage( GetDictionaryEntry( 19611, socket.language ));//You have delivered the required item!
 		return true;
 	}
 
-	// If quest type doesn't match known types
-	player.SysMessage( "This quest type is not supported for turn-in." );
 	return false;
 }
 
 function findQuestItems( player, questID )
 {
+	var socket = player.socket;
 	var questItems = [];
 	var pack = player.pack; // Get the player's backpack
 
 	if( !ValidateObject( pack ))
 	{
-		player.SysMessage( "You do not have a backpack." );
+		socket.SysMessage( GetDictionaryEntry( 19606, socket.language ));
 		return questItems; // Return an empty array if no backpack is found
 	}
 
 	var quest = TriggerEvent( 5801, "QuestList", questID );
 	if( !quest || ( !quest.targetItems && !quest.deliveryItem ))
 	{
-		player.SysMessage( "No target items or delivery items found for this quest." );
 		return questItems;
 	}
 
@@ -685,14 +678,13 @@ function QuestNpcInterAction( pUser, questNpc )
 	// Validate the targeted object and player
 	if( !ValidateObject( pUser ) || !ValidateObject( questNpc ))
 	{
-		socket.SysMessage( "Invalid target or player." );
 		return false;
 	}
 
 	// Check if the player is within range
 	if( !questNpc.InRange( pUser, 2 ))
 	{
-		pUser.SysMessage( "You are too far away." );
+		socket.SysMessage( "You are too far away." );
 		return false;
 	}
 
@@ -702,7 +694,7 @@ function QuestNpcInterAction( pUser, questNpc )
 	{
 		if( TriggerEvent( 5800, "CheckQuest", pUser, deliveryQuestID ))
 		{ // Validate quest eligibility
-			processDeliveryQuest(pUser, questNpc, deliveryQuestID);
+			processDeliveryQuest( pUser, questNpc, deliveryQuestID );
 		}
 		else
 		{
@@ -719,7 +711,6 @@ function QuestNpcInterAction( pUser, questNpc )
 	var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
 	if( !initialQuestID ) 
 	{
-		pUser.SysMessage( "This NPC has no quest assigned." );
 		return false;
 	}
 
@@ -729,7 +720,7 @@ function QuestNpcInterAction( pUser, questNpc )
 	if( !playerQuestID )
 	{
 		questNpc.TurnToward( pUser );
-		questNpc.TextMessage( "You have completed all quests" );
+		questNpc.TextMessage( GetDictionaryEntry( 19612, socket.language ));//You have completed all quests
 		return false;
 	}
 
@@ -738,7 +729,7 @@ function QuestNpcInterAction( pUser, questNpc )
 
 	if( DebugMessages ) 
 	{
-		pUser.SysMessage( "Archived quests loaded: " + archivedQuests.length );
+		socket.SysMessage( "Archived quests loaded: " + archivedQuests.length );
 	}
 
 	for( var i = 0; i < archivedQuests.length; i++ )
@@ -746,12 +737,12 @@ function QuestNpcInterAction( pUser, questNpc )
 		var archivedQuestID = parseInt( archivedQuests[i], 10 ); // Ensure it's treated as an integer
 		if( DebugMessages )
 		{
-			pUser.SysMessage( "Checking archived quest: " + archivedQuestID );
+			socket.SysMessage( "Checking archived quest: " + archivedQuestID );
 		}
 		if( archivedQuestID === playerQuestID ) // Compare consistently
 		{
 			targObj.TurnToward( pUser );
-			targObj.TextMessage( "I'm sorry, I have nothing for you at this time." );
+			targObj.TextMessage( "I'm sorry, I have nothing for you at this time.");
 			return false;
 		}
 	}
@@ -778,6 +769,7 @@ function QuestNpcInterAction( pUser, questNpc )
 
 function processDeliveryQuest( player, questNpc, deliveryQuestID )
 {
+	var socket = player.socket;
 	// Fetch the quest details
 	var quest = TriggerEvent( 5801, "QuestList", deliveryQuestID );
 	if( !quest || quest.type !== "delivery" )
@@ -813,7 +805,7 @@ function processDeliveryQuest( player, questNpc, deliveryQuestID )
 
 	if( !itemDelivered )
 	{
-		player.SysMessage( "You do not have the required item to deliver." );
+		socket.SysMessage( GetDictionaryEntry( 19613, socket.language ));//You do not have the required item to deliver.
 		return false;
 	}
 
@@ -848,7 +840,7 @@ function processDeliveryQuest( player, questNpc, deliveryQuestID )
 	TriggerEvent( 5800, "WriteQuestProgress", player, questProgressArray );
 
 	// Notify the player and complete the quest
-	player.SysMessage( "You have delivered the required item!" );
+	socket.SysMessage( GetDictionaryEntry( 19614, socket.language ));//You have delivered the required item!
 	TriggerEvent( 5800, "CompleteQuest", player, deliveryQuestID );
 	return true;
 }
@@ -967,7 +959,6 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 	// Validate the targeted object and player
 	if( !ValidateObject( pUser ) || !ValidateObject( targObj ))
 	{
-		pUser.SysMessage( "Invalid target or player." );
 		return false;
 	}
 
@@ -978,7 +969,6 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 				// Validate the targeted object and player
 				if( !ValidateObject( pUser ) || !ValidateObject( targObj ))
 				{
-					socket.SysMessage( "Invalid target or player." );
 					return false;
 				}
 

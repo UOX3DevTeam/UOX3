@@ -8,4 +8,3 @@ function onDeathBlow( victim, player )
 
 	return true;
 }
-

@@ -5383,5 +5383,21 @@
 19234=¡Tu confusión ha pasado, ahora puedes armar un arma!
 19235=Ya no estás herido de muerte.
 19236=Las heridas sangrantes han sanado, ¡ya no sangras!
+// [19600-19700] Sistema de misiones
+19600=Selecciona el objeto cuyo estado de objeto de misión deseas cambiar al <ESC> para cancelar
+19601=El objeto debe estar en tu mochila para cambiar su estado de misión.
+19602=Esta misión no existe.
+19603=Debes tener todos los objetos de misión necesarios para entregar esta misión.
+19604=Actualmente no estás en esta misión.
+19605=La misión ha sido completamente eliminada de tu progreso.
+19606=No tienes una mochila.
+19607=¡Has completado el entrenamiento de habilidades para esta misión!
+19608=Aún te faltan algunos objetos para esta misión.
+19609=Todos los objetos de la misión han sido entregados exitosamente.
+19610=No tienes el objeto requerido para entregar.
+19611=¡Has entregado el objeto solicitado!
+19612=Has completado todas las misiones
+19613=No tienes el objeto solicitado para entregar.
+19614=¡Has entregado el objeto solicitado!
 }
 EOF

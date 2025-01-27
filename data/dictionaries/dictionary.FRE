@@ -5539,5 +5539,21 @@
 19234=Votre confusion est passée, vous pouvez maintenant armer une arme !
 19235=Vous n'êtes plus mortellement blessé.
 19236=Les plaies saignantes ont guéri, vous ne saignez plus !
+// [19600-19700] Système de quête
+19600=Ciblez l'objet dont vous souhaitez changer le statut d'objet de quête sur <ESC> pour annuler
+19601=L'objet doit être dans votre sac à dos pour changer son statut de quête.
+19602=Cette quête n'existe pas.
+19603=Vous devez avoir tous les objets de quête requis pour rendre cette quête.
+19604=Vous n'êtes pas actuellement sur cette quête.
+19605=La quête a été complètement supprimée de votre progression.
+19606=Vous n'avez pas de sac à dos.
+19607=Vous avez terminé l'entraînement aux compétences pour cette quête !
+19608=Il vous manque encore des objets pour cette quête.
+19609=Tous les objets de quête ont été rendus avec succès.
+19610=Vous n'avez pas l'objet requis à livrer.
+19611=Vous avez livré l'objet requis !
+19612=Vous avez terminé toutes les quêtes
+19613=Vous n'avez pas l'objet requis à livrer.
+19614=Vous avez livré l'objet requis !
 }
 EOF

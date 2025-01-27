@@ -14,12 +14,12 @@ function onEnterRegion( pEntering, regionEntered )
 		return;
 	}
 	// Loop through active quests to check for skill training in the entered region
-	for (var i = 0; i < activeQuests.length; i++)
+	for( var i = 0; i < activeQuests.length; i++ )
 	{
 		var questEntry = activeQuests[i];
 
 		// Ensure the quest entry matches the player's serial
-		if (questEntry.serial != pEntering.serial)
+		if( questEntry.serial != pEntering.serial )
 		{
 			continue; // Skip quests not associated with the current player
 		}

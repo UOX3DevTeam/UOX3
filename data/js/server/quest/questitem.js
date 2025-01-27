@@ -27,7 +27,7 @@ function onDrop( iDropped, pDropper )
 
 	if( temp2 == 0xFF )
 	{ // do not allow Drop on the ground
-		pDropper.TextMessage( "Quest items cannot be dropped on the ground." );
+		pSock.SysMessage( "Quest items cannot be dropped on the ground." );
 		return 0; // Prevent ground drop
 	}
 
@@ -105,7 +105,6 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 		}
 	}
 
-	//pSock.SysMessage( "You picked up a quest item." );debug msg
 	return true; // Allow the pickup
 }
 

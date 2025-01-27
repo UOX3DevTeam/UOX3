@@ -5383,5 +5383,21 @@
 19234=Twoje zamieszanie minęło, możesz teraz uzbroić broń!
 19235=Nie jesteś już śmiertelnie ranny.
 19236=Krwawiące rany się zagoiły, już nie krwawisz!
+// [19600-19700] System zadań
+19600=Wybierz przedmiot, którego status przedmiotu zadania chcesz zmienić na <ESC>, aby anulować
+19601=Przedmiot musi znajdować się w plecaku, aby zmienić jego status zadania.
+19602=To zadanie nie istnieje.
+19603=Musisz mieć wszystkie wymagane przedmioty zadania, aby oddać to zadanie.
+19604=Obecnie nie wykonujesz tego zadania.
+19605=Zadanie zostało całkowicie usunięte z postępów.
+19606=Nie masz plecaka.
+19607=Ukończyłeś szkolenie umiejętności dla tego zadania!
+19608=Brakuje Ci nadal niektórych przedmiotów dla tego zadania.
+19609=Wszystkie przedmioty zadania zostały pomyślnie oddane.
+19610=Nie masz wymaganego przedmiotu do dostarczenia.
+19611=Dostarczyłeś wymagany przedmiot!
+19612=Ukończyłeś wszystkie zadania
+19613=Nie masz wymaganego przedmiotu do dostarczenia.
+19614=Dostarczyłeś wymagany przedmiot!
 }
 EOF

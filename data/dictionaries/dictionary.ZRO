@@ -5378,5 +5378,21 @@
 19234=Your confusion has passed, you may now arm a weapon!
 19235=You are no longer mortally wounded.
 19236=The bleeding wounds have healed, you are no longer bleeding!
+// [19600-19700] Quest System
+19600=Target the item you wish to toggle Quest Item status on <ESC> to cancel
+19601=The item must be in your backpack to toggle its quest status.
+19602=This quest does not exist.
+19603=You need to have all required quest items to turn in this quest.
+19604=You are not currently on this quest.
+19605=The quest has been completely removed from your progress.
+19606=You do not have a backpack.
+19607=You have completed the skill training for this quest!
+19608=You are still missing some items for this quest.
+19609=All quest items have been turned in successfully.
+19610=You don't have the required item to deliver.
+19611=You have delivered the required item!
+19612=You have completed all quests
+19613=You do not have the required item to deliver.
+19614=You have delivered the required item!
 }
 EOF

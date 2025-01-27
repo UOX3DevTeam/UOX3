@@ -5383,5 +5383,21 @@
 19234=Váš zmatek pominul, nyní můžete vyzbrojit zbraň!
 19235=Už nejsi smrtelně zraněný.
 19236=Krvácející rány se zahojily, už nekrvácíte!
+// [19600-19700] Quest System
+19600=Zacilte položku, u které chcete přepnout stav položky úkolu na <ESC>, aby se zrušila
+19601=Pro přepnutí stavu úkolu musí být předmět ve vašem batohu.
+19602=Tento úkol neexistuje.
+19603=Abyste mohli tento úkol odevzdat, musíte mít všechny požadované položky.
+19604=Momentálně nejste na tomto úkolu.
+19605=Úkol byl zcela odstraněn z vašeho postupu.
+19606=Nemáte batoh.
+19607=Dokončili jste výcvik dovedností pro tento úkol!
+19608=Stále vám chybí nějaké předměty pro tento úkol.
+19609=Všechny úkoly byly úspěšně odevzdány.
+19610=Nemáte požadovanou položku k doručení.
+19611=Doručili jste požadovanou položku!
+19612=Dokončili jste všechny úkoly
+19613=Nemáte požadovanou položku k doručení.
+19614=Doručili jste požadovanou položku!
 }
 EOF

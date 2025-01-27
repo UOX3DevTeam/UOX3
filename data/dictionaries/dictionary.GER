@@ -5383,5 +5383,21 @@
 19234=Ihre Verwirrung ist vorüber, Sie können jetzt eine Waffe bewaffnen!
 19235=Sie sind nicht mehr tödlich verwundet.
 19236=Die blutenden Wunden sind verheilt, Sie bluten nicht mehr!
+// [19600-19700] Quest-System
+19600=Zielen Sie auf das Objekt, dessen Quest-Objektstatus Sie ändern möchten, und drücken Sie <ESC>, um abzubrechen.
+19601=Das Objekt muss sich in Ihrem Rucksack befinden, um seinen Quest-Status zu ändern.
+19602=Diese Quest existiert nicht.
+19603=Sie müssen alle erforderlichen Quest-Objekte haben, um diese Quest abgeben zu können.
+19604=Sie befinden sich derzeit nicht in dieser Quest.
+19605=Die Quest wurde vollständig aus Ihrem Fortschritt entfernt.
+19606=Sie haben keinen Rucksack.
+19607=Sie haben das Fertigkeitstraining für diese Quest abgeschlossen!
+19608=Ihnen fehlen noch einige Objekte für diese Quest.
+19609=Alle Quest-Objekte wurden erfolgreich abgegeben.
+19610=Sie haben das erforderliche Objekt nicht zum Abliefern.
+19611=Sie haben das erforderliche Objekt abgeliefert!
+19612=Du hast alle Quests abgeschlossen
+19613=Du hast den benötigten Gegenstand nicht zum Abliefern.
+19614=Du hast den benötigten Gegenstand abgeliefert!
 }
 EOF
