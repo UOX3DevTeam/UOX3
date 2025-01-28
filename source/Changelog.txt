@@ -4,6 +4,11 @@
 15/12/2024 - Dragon Slayer
 	Added Ressurrect Penalty Script (js/player/death/resurrectpenalty.js) that controls any type of penalty you want on the char after resurrecting via shrines
 
+8/12/2024 - Dragon Slayer
+	Added Karma Locking LBR Feature.
+		added js propertie .karmaLock
+		KARMALOCKING=1/0 // If 1 the system is enabled will lock karma if player goes negative.
+
 07/12/2024 - Dragon Slayer
 	Updated the packet 0xf1 to reflect the current CUO Web Ping while maintaining backward compatibility with older ping statuses. (0xf1_freeshardServerPoll.js) (Thanks Karasho and Xuri)
 
