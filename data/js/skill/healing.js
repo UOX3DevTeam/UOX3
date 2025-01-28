@@ -241,6 +241,32 @@ function onCallback1( socket, ourObj )
 			}
 			else // Heal
 			{
+
+				if( ourObj.GetTempTag( "blockHeal" ) == true )
+				{
+					if( ourObj != mChar && ourObj.socket )
+					{
+						socket.SysMessage( "You cannot heal that target in their current state." );
+					}
+					else
+					{
+						socket.SysMessage( GetDictionaryEntry( 9058, socket.language ));// You can not heal yourself in your current state.
+					}
+				}
+				else if( ourObj.GetTempTag( "doBleed" ) == true )
+				{
+					if( ourObj != mChar && ourObj.socket ) 
+					{
+						socket.SysMessage( "You bind the wound and stop the bleeding" );
+					}
+					else
+					{
+						socket.SysMessage( "The bleeding wounds have healed, you are no longer bleeding!" );
+					}
+					ourObj.KillJSTimer( 9300, 7001 );
+					ourObj.SetTempTag( "doBleed", null );
+				}
+
 				// Consume some bandages
 				if( bItem.amount > 1 )
 				{

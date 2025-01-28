@@ -114,7 +114,7 @@ function SearchForWounded( srcChar, trgChar, pSock )
 }
 
 // Handle draining of health, stamina and mana on attack
-function onAttack( pAttacker, pDefender )
+function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	if( !ValidateObject( pDefender ))
 		return;

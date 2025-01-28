@@ -7,6 +7,9 @@
 #include "cEffects.h"
 #include "Dictionary.h"
 #include "StringUtility.hpp"
+#include "CJSMapping.h"
+#include "cScript.h"
+#include "CJSEngine.h"
 
 
 #define XP 0
@@ -897,6 +900,20 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 	for( auto &tSock :nearbyChars )
 	{
 		tSock->Send( &prSend );
+	}
+
+	auto scriptTriggers = b->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		auto toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute )
+		{
+			if( toExecute->OnBoatTurn( b, olddir, b->GetDir() ) == 1 )
+			{
+				// A script with the event returned true; prevent other scripts from running
+				break;
+			}
+		}
 	}
 }
 

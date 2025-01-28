@@ -3431,6 +3431,7 @@
 6301=Tylko Wielki Mistrz Alchemik może uczyć się z tej książki.
 6302=Te informacje już znasz.
 6303=Nauczyłeś się robić przedmioty ze szkła. Będziesz musiał znaleźć górników, którzy wydobędą drobny piasek, aby móc wyprodukować te przedmioty.
+6304=Musisz mieć wolną rękę, żeby wypić miksturę.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?
@@ -4679,7 +4680,6 @@
 11619=bochenek chleba
 11620=panka ciasteczek
 11621=ciasto
-11622=muffiny
 11622=pieczony quiche
 11623=pieczony placek z mięsem
 11624=pizza z kiełbasą
@@ -4715,6 +4715,7 @@
 11654=Musisz być w pobliżu źródła ciepła, aby gotować jedzenie.
 11655=Musisz być w pobliżu młyna, aby wytworzyć mąkę.
 11656=Musisz być w pobliżu piekarnika, aby upiec jedzenie.
+11657=muffiny
 // 11801 - 12000 Umiejętność majsterkowania
 // Strona 1 - Przedmioty z drewna
 11801=Oś
@@ -5345,5 +5346,42 @@
 19140=Najpierw należy zmiękczyć brud.
 19141=Zasiewasz ziarno w misce z ziemią.
 19142=Musisz użyć nasion na misce ziemi!
+// [19201-19300] Ruchy specjalne
+19201=Potrzebujesz %i umiejętności posługiwania się bronią, aby wykonać ten atak
+19202=Potrzebujesz %i many, aby wykonać ten atak
+19203=Twój atak przebija ich zbroję!
+19204=Cios przebił twoją zbroję!
+19205=Twój cel krwawi!
+19206=Krwawisz!
+19207=Obficie krwawisz
+19208=%i obficie krwawi
+19209=Doznałeś wstrząsu mózgu!
+19210=Czujesz się zdezorientowany!
+19211=Zadałeś miażdżący cios!
+19212=Otrzymujesz dodatkowe obrażenia od miażdżącego ataku!
+19213=Nie możesz rozbroić przeciwnika.
+19214=Twój cel jest już nieuzbrojony!
+19215=Rozbrajasz ich broń!
+19216=Twoja broń została rozbrojona!
+19217=Nie możesz wykonać tego ataku na koniu lub w locie!
+19218=Ten atak działa tylko na cele konne lub latające
+19219=Siła twojego ataku zrzuciła ich z wierzchowca!
+19220=Zostałeś strącony z wierzchowca przez %i!
+19221=Twoja broń musi zawierać dawkę trucizny, aby wykonać zaraźliwy atak!
+19222=Twoje precyzyjne uderzenie zwiększyło poziom trucizny o 1
+19223=Trucizna wydaje się wyjątkowo skuteczna!
+19224=Otrułeś swój cel: %i
+19225=%i: otrułem cię!
+19226=Zadajesz śmiertelną ranę!
+19227=Zostałeś śmiertelnie ranny!
+19228=Twój cel jest odporny na paraliż.
+19229=Jesteś odporny na paraliż.
+19230=Atak chwilowo cię sparaliżował!
+19231=Brakuje Ci wymaganej umiejętności ukrywania się, aby wykonać ten atak
+19232=Uderzasz i chowasz się w cieniu!
+19233=Jesteś oszołomiony atakiem i twój napastnik znika!
+19234=Twoje zamieszanie minęło, możesz teraz uzbroić broń!
+19235=Nie jesteś już śmiertelnie ranny.
+19236=Krwawiące rany się zagoiły, już nie krwawisz!
 }
 EOF
