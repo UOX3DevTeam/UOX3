@@ -47,6 +47,8 @@ SEngineFunc SE_CalcCharFromSer;		//											***
 SEngineFunc SE_CalcItemFromSer;		//											***
 SEngineFunc SE_CalcMultiFromSer;	//											***
 
+SEngineFunc SE_CheckInstaLog;
+
 SEngineFunc SE_MakeItem;			//											***
 
 SEngineFunc SE_CommandLevelReq;		//											*

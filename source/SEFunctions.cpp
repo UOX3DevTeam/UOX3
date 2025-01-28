@@ -288,6 +288,46 @@ JSBool SE_CalcCharFromSer( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_CheckInstaLog()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if a specific location is within an instant logout zone 
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_CheckInstaLog( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 4 )
+	{
+		ScriptError( cx, "CheckInstaLog: Invalid number of parameters (4)" );
+		return JS_FALSE;
+	}
+
+	SI16 targX = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+	SI16 targY = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+	UI08 targWorld = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI16 targInstanceId = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+
+	auto logLocs = cwmWorldState->logoutLocs;
+
+	*rval = JSVAL_FALSE;
+
+	if( logLocs.size() > 0 )
+	{
+		for( size_t i = 0; i < logLocs.size(); ++i )
+		{
+			if( logLocs[i].worldNum == targWorld && logLocs[i].instanceId == targInstanceId )
+			{
+				if(( targX >= logLocs[i].x1 && targX <= logLocs[i].x2 ) && ( targY >= logLocs[i].y1 && targY <= logLocs[i].y2 ))
+				{
+					*rval = JSVAL_TRUE;
+					return JS_TRUE;
+				}
+			}
+		}
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_DoMovingEffect()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a moving effect from source object to target object or location
