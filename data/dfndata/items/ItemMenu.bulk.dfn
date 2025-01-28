@@ -14255,3 +14255,58 @@ ADDITEM=mapmakerspen
 <=Previous Menu
 ITEMMENU=127
 }
+
+[ITEMMENU 260]
+{
+Houseaddon_ML_Deeds.dfn
+0x14F0=Elven Bed (East)
+ADDITEM=elvenbedeastdeed
+0x14F0=Elven Bed (South)
+ADDITEM=elvenbedsouthdeed
+0x14F0=Alchemist Table (East)
+ADDITEM=alchemisttabledeedeast
+0x14F0=Alchemist Table (South)
+ADDITEM=alchemisttablesouthdeed
+0x14F0=Elven Loveseat (East)
+ADDITEM=elvenloveseateastdeed
+0x14F0=Elven Loveseat (South)
+ADDITEM=elvenloveseatsouthdeed
+0x14F0=Elven Wash Basin (East)
+ADDITEM=elvenwashbasineastdeed
+0x14F0=Elven Wash Basin (South)
+ADDITEM=elvenwashbasinsouthdeed
+0x14F0=Fancy Couch (East)
+ADDITEM=fancycoucheastdeed
+0x14F0=Fancy Couch (North)
+ADDITEM=fancycouchnorthdeed
+0x14F0=Fancy Couch (South)
+ADDITEM=fancycouchsouthdeed
+0x14F0=Fancy Couch (West)
+ADDITEM=fancycouchwestdeed
+0x14F0=Hardwood Table (East)
+ADDITEM=hardwoodtableeastdeed
+0x14F0=Hardwood Table (South)
+ADDITEM=hardwoodtablesouthdeed
+0x14F0=Fancy Loveseat (East)
+ADDITEM=fancyloveseateastdeed
+0x14F0=Fancy Loveseat (North)
+ADDITEM=fancyloveseatnorthdeed
+0x14F0=Fancy Loveseat (South)
+ADDITEM=fancyloveseatsouthdeed
+0x14F0=Fancy Loveseat (West)
+ADDITEM=fancyloveseatwestdeed
+0x14F0=Ornate Table (East)
+ADDITEM=ornatetableeastdeed
+0x14F0=Ornate Table (South)
+ADDITEM=ornatetablesouthdeed
+0x14F0=Plush Loveseat (East)
+ADDITEM=plushloveseateastdeed
+0x14F0=Plush Loveseat (South)
+ADDITEM=plushloveseatsouthdeed
+0x14F0=Tall Elven Bed (East)
+ADDITEM=tallelvenbedeastdeed
+0x14F0=Tall Elven Bed (South)
+ADDITEM=tallelvenbedsouthdeed
+<=Previous Menu
+ITEMMENU=4
+}

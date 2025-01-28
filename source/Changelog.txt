@@ -14,6 +14,9 @@
 	Corrected a misspelling of IsBoat in magic.js.
 	Added support for iterating through items in boats using FirstItem(), NextItem() and FinishedItems() methods
 
+11/10/2024 - Dragon Slayer
+	Added ML House Addons.
+
 10/09/2024 - Dragon Slayer
 	Added base functionality for Khaldun Puzzle Chests, which can be unlocked by solving a puzzle, with bonus hints for the solution given based on player's lockpicking skill
 
