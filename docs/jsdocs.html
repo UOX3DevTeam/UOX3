@@ -5564,6 +5564,35 @@ function myAreaFunc( srcChar, trgItem, pSock )
 							</div>
 						</div>
 
+                        						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_CheckInstaLog" />
+							<label for="spoiler_function_misc_CheckInstaLog">CheckInstaLog <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>JSBool CheckInstaLog( x, y, world, instanceID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks if a specific location ( x, y, world, instanceID ) is within an instant logout zone.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Check if the player is in an instant logout zone
+var isInstaLog = CheckInstaLog(targX, targY, worldNumber, instanceID);
+
+if( isInstaLog )
+{
+	// Handle instant logout
+}
+else
+{
+	// Handle other logout scenarios
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
 						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_function_item_CalcTargetedItem"/>
 							<label for="spoiler_function_item_CalcTargetedItem">CalcTargetedItem <i class="fas fa-angle-down"></i></label>
