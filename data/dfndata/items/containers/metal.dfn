@@ -142,4 +142,5 @@ name=metal chest
 id=0x0e41
 movable=2
 script=5061
+origin=uor
 }
