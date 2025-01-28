@@ -963,3 +963,52 @@
 100|PaintedDaemonMask
 100|PaintedEvilClownMask
 }
+
+// Treasure Map Level 0
+[LOOTLIST TreasureMapLvl0Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl0
+}
+
+// Treasure Map Level 1
+[LOOTLIST TreasureMapLvl1Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl1
+}
+
+// Treasure Map Level 2
+[LOOTLIST TreasureMapLvl2Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl2
+}
+
+// Treasure Map Level 3
+[LOOTLIST TreasureMapLvl3Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl3
+}
+
+// Treasure Map Level 4
+[LOOTLIST TreasureMapLvl4Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl4
+}
+
+// Treasure Map Level 5
+[LOOTLIST TreasureMapLvl5Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl5
+}
+
+// Treasure Map Level 6
+[LOOTLIST TreasureMapLvl6Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl6
+}

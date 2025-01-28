@@ -95,6 +95,7 @@ function ItemInHandCheck( mChar, mSock, spellType )
 			}
 		}
 	}
+	return true;
 }
 
 function onSpellCast( mSock, mChar, directCast, spellNum )
