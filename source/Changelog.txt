@@ -1,8 +1,3 @@
-14/10/2024 - Dragon Slayer
-    Added the CheckInstaLog function to check if a specific location is within an instant logout zone (SEFunctions.cpp). (thanks, Xuri)
-
-1/05/2024 - Dragon Slayer/Xuri
-
 21/01/2025 - Dragon Slayer
 	Fixed damage dealt in combat was incorrectly modified while applying defense modifiers. (combat.cpp)
 
@@ -18,6 +13,9 @@
 27/10/2024 -Dragon Slayer
 	Corrected a misspelling of IsBoat in magic.js.
 	Added support for iterating through items in boats using FirstItem(), NextItem() and FinishedItems() methods
+
+14/10/2024 - Dragon Slayer
+    Added the CheckInstaLog JS function to allow checking if a specific location is within an instant logout zone (SEFunctions.cpp). (thanks, Xuri)
 
 12/10/2024 - Dragon Slayer
 	Added Mini-House Addons from AOS Expansion.
