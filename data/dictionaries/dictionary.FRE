@@ -3609,6 +3609,7 @@
 6301=Seul un grand maître alchimiste peut apprendre de ce livre.
 6302=Vous avez déjà appris cette information.
 6303=Vous avez appris à fabriquer des objets en verre. Vous devrez trouver des mineurs pour extraire du sable fin pour fabriquer ces objets.
+6304=Vous devez avoir les mains libres pour boire une potion.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?
@@ -4849,7 +4850,6 @@
 11619=miche de pain
 11620=panier de biscuits
 11621=gâteau
-11622=muffins
 11622=quiche au four
 11623=tarte à la viande cuite au four
 11624=pizza à la saucisse
@@ -4885,6 +4885,7 @@
 11654=Il faut être près d'une source de chaleur pour cuire les aliments.
 11655=Il faut être près d'un moulin pour créer de la farine.
 11656=Il faut être près d'un four pour cuire des aliments.
+11657=muffins
 // 11801 - 12000 Compétence en artisanat de bricolage
 // Page 1 - Objets en bois
 11801=Axe
@@ -5515,5 +5516,42 @@
 19140=La saleté doit d'abord être ramollie.
 19141=Vous plantez la graine dans le bol de terre.
 19142=Vous devez utiliser une graine sur un bol de terre !
+// [19201-19300] Coups spéciaux
+19201=Vous avez besoin de %i compétence d'arme pour effectuer cette attaque
+19202=Vous avez besoin de %i mana pour effectuer cette attaque
+19203=Votre attaque pénètre leur armure !
+19204=Le coup a pénétré votre armure !
+19205=Votre cible saigne !
+19206=Vous saignez !
+19207=Vous saignez abondamment
+19208=%i saigne abondamment
+19209=Vous avez provoqué une commotion cérébrale !
+19210=Vous vous sentez désorienté !
+19211=Vous avez porté un coup fatal !
+19212=Vous subissez des dégâts supplémentaires grâce à l'attaque écrasante !
+19213=Vous ne pouvez pas désarmer votre adversaire.
+19214=Votre cible n'est déjà pas armée !
+19215=Vous désarmez votre arme !
+19216=Votre arme a été désarmée !
+19217=Vous ne pouvez pas effectuer cette attaque en étant monté ou en vol !
+19218=Cette attaque ne fonctionne que sur des cibles montées ou volantes
+19219=La force de votre attaque les a déloges de leur monture !
+19220=Vous avez été renversé de votre monture par %i !
+19221=Votre arme doit contenir une dose de poison pour effectuer une frappe contagieuse !
+19222=Votre frappe précise a augmenté le niveau du poison de 1
+19223=Le poison semble très efficace !
+19224=Vous avez empoisonné votre cible : %i
+19225=%i : vous a empoisonné !
+19226=Vous infligez une blessure mortelle !
+19227=Vous avez été mortellement blessé !
+19228=Votre cible résiste à la paralysie.
+19229=Vous résistez à la paralysie.
+19230=L'attaque vous a temporairement paralysé !
+19231=Vous n'avez pas la furtivité requise pour effectuer cette attaque
+19232=Vous frappez et vous cachez dans l'ombre !
+19233=Vous êtes étourdi par l'attaque et votre attaquant disparaît !
+19234=Votre confusion est passée, vous pouvez maintenant armer une arme !
+19235=Vous n'êtes plus mortellement blessé.
+19236=Les plaies saignantes ont guéri, vous ne saignez plus !
 }
 EOF

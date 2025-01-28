@@ -52,7 +52,7 @@ function onCallback1( socket, ourObj )
 			var serialPart4 = ( shipSerial % 256 );
 			var shipMulti = CalcMultiFromSer( serialPart1, serialPart2, serialPart3, serialPart4 );
 
-			if( ValidateObject( shipMulti ) && shipMulti.isBoat() )
+			if( ValidateObject( shipMulti ) && shipMulti.IsBoat() )
 			{
 				if( shipMulti.worldnumber == socket.currentChar.worldnumber && shipMulti.instanceID == socket.currentChar.instanceID )
 				{

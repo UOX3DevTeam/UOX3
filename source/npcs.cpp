@@ -1541,6 +1541,8 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_NAMELIST:			SetRandomName( applyTo, cdata );		break;
 			case DFNTAG_NECROMANCY:			skillToSet = NECROMANCY;				break;
 			case DFNTAG_NINJITSU:			skillToSet = NINJITSU;					break;
+			case DFNTAG_HITCHANCE:			applyTo->SetHitChance( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_DEFENSECHANCE:		applyTo->SetDefenseChance( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_NPCWANDER:
 				if( !isGate )
 				{
@@ -1583,6 +1585,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_PEACEMAKING:		skillToSet = PEACEMAKING;				break;
 			case DFNTAG_PROVOCATION:		skillToSet = PROVOCATION;				break;
 			case DFNTAG_POISONING:			skillToSet = POISONING;					break;
+			case DFNTAG_SWINGSPEEDINCREASE:	applyTo->SetSwingSpeedIncrease( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_RESISTFIRE:
 				if( ndata >= 0 )
 				{

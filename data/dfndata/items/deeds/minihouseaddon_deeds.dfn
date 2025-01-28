@@ -1,0 +1,89 @@
+// Deed for Stone and Plaster Mini House
+[stoneandplastermini]
+{
+name=Mini House: Stone and Plaster
+id=0x14F0
+morex=500
+origin=aos
+}
+
+// Deed for Field Stone Mini House
+[fieldstonemini]
+{
+name=Mini House: Field Stone
+id=0x14F0
+morex=501
+origin=aos
+}
+
+// Deed for Small Brick Mini House
+[smallbrickmini]
+{
+name=Mini House: Small Brick
+id=0x14F0
+morex=502
+origin=aos
+}
+
+// Deed for Wooden Mini House
+[woodenmini]
+{
+name=Mini House: Wooden
+id=0x14F0
+morex=503
+origin=aos
+}
+
+// Deed for Wood and Plaster Mini House
+[woodandplastermini]
+{
+name=Mini House: Wood and Plaster
+id=0x14F0
+morex=504
+origin=aos
+}
+
+// Deed for Thatched-Roof Cottage Mini House
+[thatchedroofcottage]
+{
+name=Mini House: Thatched-Roof Cottage
+id=0x14F0
+morex=505
+origin=aos
+}
+
+// Deed for Brick Mini House
+[brickmini]
+{
+name=Mini House: Brick
+id=0x14F0
+morex=506
+origin=aos
+}
+
+// Deed for Two-Story Wood and Plaster Mini House
+[twostorywoodandplastermini]
+{
+name=Mini House: Two-Story Wood and Plaster
+id=0x14F0
+morex=507
+origin=aos
+}
+
+// Deed for Malas Mountain Pass Mini House
+[malasmountainpassmini]
+{
+name=Mini House: Malas Mountain Pass
+id=0x14F0
+morex=508
+origin=aos
+}
+
+// Deed for Church at Night Mini House
+[churchatnightmini]
+{
+name=Mini House: Church at Night
+id=0x14F0
+morex=509
+origin=aos
+}

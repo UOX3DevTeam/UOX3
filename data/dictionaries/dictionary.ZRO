@@ -3445,6 +3445,7 @@
 6301=Only a Grandmaster Alchemist can learn from this book.
 6302=You have already learned this information.
 6303=You have learned to make items from glass.  You will need to find miners to mine fine sand for you to make these items.
+6304=You must have a free hand to drink a potion.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -4693,7 +4694,6 @@
 11619=bread loaf
 11620=pan of cookies
 11621=cake
-11622=muffins
 11622=baked quiche
 11623=baked meat pie
 11624=sausage pizza
@@ -4729,6 +4729,7 @@
 11654=You must be near a heat source to cook food.
 11655=You must be near a mill to create flour.
 11656=You must be near an oven to bake food.
+11657=muffins
 // 11801 - 12000 Tinkering Crafting Skill
 // Page 1 - Wooden Items
 11801=Axle
@@ -5359,5 +5360,42 @@
 19140=The dirt needs to be softened first.
 19141=You plant the seed in the bowl of dirt.
 19142=You must use a seed on a bowl of dirt!
+// [19201-19300] Special Moves
+19201=You need %i weapon skill to perform that attack
+19202=You need %i mana to perform that attack
+19203=Your attack penetrates their armor!
+19204=The blow penetrated your armor!
+19205=Your target is bleeding!
+19206=You are bleeding!
+19207=You are bleeding profusely
+19208=%i is bleeding profusely
+19209=You have delivered a concussion!
+19210=You feel disoriented!
+19211=You have delivered a crushing blow!
+19212=You take extra damage from the crushing attack!
+19213=You cannot disarm your opponent.
+19214=Your target is already unarmed!
+19215=You disarm their weapon!
+19216=Your weapon has been disarmed!
+19217=You cannot perform that attack while mounted or flying!
+19218=This attack only works on mounted or flying targets
+19219=The force of your attack has dislodged them from their mount!
+19220=You have been knocked off of your mount by %i !
+19221=Your weapon must have a dose of poison to perform an infectious strike!
+19222=Your precise strike has increased the level of the poison by 1
+19223=The poison seems extra effective!
+19224=You have poisoned your target : %i
+19225=%i : poisoned you!
+19226=You deliver a mortal wound!
+19227=You have been mortally wounded!
+19228=Your target resists paralysis.
+19229=You resist paralysis.
+19230=The attack has temporarily paralyzed you!
+19231=You lack the required stealth to perform that attack
+19232=You strike and hide in the shadows!
+19233=You are dazed by the attack and your attacker vanishes!
+19234=Your confusion has passed, you may now arm a weapon!
+19235=You are no longer mortally wounded.
+19236=The bleeding wounds have healed, you are no longer bleeding!
 }
 EOF
