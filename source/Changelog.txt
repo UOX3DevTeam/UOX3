@@ -14,6 +14,9 @@
 	Corrected a misspelling of IsBoat in magic.js.
 	Added support for iterating through items in boats using FirstItem(), NextItem() and FinishedItems() methods
 
+12/10/2024 - Dragon Slayer
+	Added Mini-House Addons from AOS Expansion.
+
 11/10/2024 - Dragon Slayer
 	Added ML House Addons.
 
