@@ -14,7 +14,7 @@ function onUnequip( pUnequipper, iUnequipped )
 	pUnequipper.RemoveScriptTrigger( 5050 );
 }
 
-function onAttack( pAttacker, pDefender )
+function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	const coreShardEra = GetServerSetting( "CoreShardEra" );
 	var weaponType = TriggerEvent( 2500, "GetWeaponType", pAttacker, null );

@@ -1,5 +1,5 @@
 // Allows NPC to swing a bola and dismount a mounted player/character
-function onAttack( pAttacker, pDefender )
+function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	// Don't swing bola if attacker is invalid or dead
 	if( !ValidateObject( pAttacker ) || pAttacker.dead )

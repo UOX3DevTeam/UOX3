@@ -11,14 +11,14 @@ function onUseChecked( pUser, iUsed )
 	PottedPlantGump( pUser, iUsed );
 }
 
-function PottedPlantGump(pUser, iUsed)
+function PottedPlantGump( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	socket.tempObj = iUsed;
 	var pottedPlant = new Gump;
 
 	pottedPlant.AddPage( 0 );
-	pottedPlant.AddBackground(0, 0, 360, 195, 0xA28);
+	pottedPlant.AddBackground( 0, 0, 360, 195, 0xA28 );
 
 	pottedPlant.AddPage( 1 );
 	pottedPlant.AddText( 45, 15, 0, "Choose a Potted Plant:" );
@@ -35,7 +35,7 @@ function PottedPlantGump(pUser, iUsed)
 	pottedPlant.Free();
 }
 
-function onGumpPress(pSock, pButton, gumpData)
+function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
 	var iUsed = pSock.tempObj;
@@ -48,7 +48,7 @@ function onGumpPress(pSock, pButton, gumpData)
 	}
 
 	var pottedplant = "";
-	if ( pButton >= 1 && pButton <= 5 ) 
+	if( pButton >= 1 && pButton <= 5 ) 
 	{
 		var plantIds = [0x11C8, 0x11C9, 0x11CA, 0x11CB, 0x11CC];
 		pottedplant = "0x" + ( plantIds[pButton - 1] ).toString( 16 );
