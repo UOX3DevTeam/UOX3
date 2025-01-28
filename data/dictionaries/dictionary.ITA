@@ -5346,5 +5346,42 @@
 19140=Lo sporco deve prima essere ammorbidito.
 19141=Pianta il seme nella ciotola di terra.
 19142=Devi usare un seme su una ciotola di terra!
+// [19201-19300] Mosse speciali
+19201=Hai bisogno di %i abilità con l'arma per eseguire quell'attacco
+19202=Hai bisogno di %i mana per eseguire quell'attacco
+19203=Il tuo attacco penetra la loro armatura!
+19204=Il colpo ha penetrato la tua armatura!
+19205=Il tuo bersaglio sta sanguinando!
+19206=Stai sanguinando!
+19207=Stai sanguinando copiosamente
+19208=%i sta sanguinando copiosamente
+19209=Hai provocato una commozione cerebrale!
+19210=Ti senti disorientato!
+19211=Hai sferrato un colpo devastante!
+19212=Subisci danni extra dall'attacco devastante!
+19213=Non puoi disarmare il tuo avversario.
+19214=Il tuo bersaglio è già disarmato!
+19215=Disarma la loro arma!
+19216=La tua arma è stata disarmata!
+19217=Non puoi eseguire quell'attacco mentre sei a cavallo o mentre voli!
+19218=Questo attacco funziona solo su bersagli montati o volanti
+19219=La forza del tuo attacco li ha spostati dalla loro cavalcatura!
+19220=Sei stato buttato giù dalla tua cavalcatura da %i!
+19221=La tua arma deve avere una dose di veleno per eseguire un colpo infettivo!
+19222=Il tuo colpo preciso ha aumentato il livello del veleno di 1
+19223=Il veleno sembra estremamente efficace!
+19224=Hai avvelenato il tuo bersaglio: %i
+19225=%i: ti ha avvelenato!
+19226=Hai procurato una ferita mortale!
+19227=Sei stato ferito a morte!
+19228=Il tuo bersaglio resiste alla paralisi.
+19229=Resisti alla paralisi.
+19230=L'attacco ti ha temporaneamente paralizzato!
+19231=Non hai la furtività necessaria per eseguire quell'attacco
+19232=Colpisci e ti nascondi nell'ombra!
+19233=Sei stordito dall'attacco e il tuo aggressore svanisce!
+19234=La tua confusione è passata, ora puoi armare un'arma!
+19235=Non sei più ferito a morte.
+19236=Le ferite sanguinanti sono guarite, non stai più sanguinando!
 }
 EOF
