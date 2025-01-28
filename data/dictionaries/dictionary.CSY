@@ -3431,6 +3431,7 @@
 6301=Z této knihy se může učit pouze velmistr alchymista.
 6302=Tyto informace jste se již dozvěděli.
 6303=Naučili jste se vyrábět předměty ze skla. K výrobě těchto předmětů budete muset najít horníky, kteří budou těžit jemný písek.
+6304=Musíte mít volnou ruku, abyste mohli pít lektvar.
 // [7000-7499] AI Scripts
 7000=Jsi zločinec a nemáš přístup ke své bankovní schránce.
 7001=Který předmět si přeješ uložit do své bankovní schránky?
@@ -4679,7 +4680,6 @@
 11619=chlebový bochník
 11620=pánev sušenek
 11621=koláč
-11622=muffiny
 11622=pečený quiche
 11623=pečený masový koláč
 11624=pizza s uzeninou
@@ -4715,6 +4715,7 @@
 11654=Pro přípravu jídla musíte být v blízkosti zdroje tepla.
 11655=Musíte být v blízkosti mlýna, abyste mohli vyrábět mouku.
 11656=Musíte být v blízkosti pece, abyste mohli péct jídlo.
+11657=muffiny
 // 11801 - 12000 Dovednost řemeslné výroby
 // Strana 1 - Dřevěné předměty
 11801=Náprava
@@ -5345,5 +5346,42 @@
 19140=Nejprve je třeba změkčit nečistoty.
 19141=Zasadíte semeno do misky s hlínou.
 19142=Musíte použít semínko na misku s nečistotami!
+// [19201-19300] Speciální pohyby
+19201=K provedení tohoto útoku potřebujete %i zbraň
+19202=K provedení tohoto útoku potřebujete %i many
+19203=Váš útok proniká jejich pancířem!
+19204=Úder pronikl do vašeho brnění!
+19205=Váš cíl krvácí!
+19206=Ty krvácíš!
+19207=Hodně krvácíte
+19208=%i silně krvácí
+19209=Máte otřes mozku!
+19210=Cítíte se dezorientovaný!
+19211=Zasadil jsi zdrcující ránu!
+19212=Zdrcujícím útokem dostáváte další poškození!
+19213=Nemůžete odzbrojit svého protivníka.
+19214=Váš cíl již není ozbrojen!
+19215=Odzbrojte svou zbraň!
+19216=Vaše zbraň byla odzbrojena!
+19217=Nemůžete provést tento útok během jízdy nebo letu!
+19218=Tento útok funguje pouze na namontované nebo létající cíle
+19219=Síla vašeho útoku je vytlačila z jejich koně!
+19220=Byli jste sraženi z vašeho koně %i!
+19221=Vaše zbraň musí mít dávku jedu, aby mohla provést infekční útok!
+19222=Váš přesný zásah zvýšil úroveň jedu o 1
+19223=Jed se zdá být extra účinný!
+19224=Otrávili jste svůj cíl: %i
+19225=%i : otrávil tě!
+19226=Zasadil jsi smrtelnou ránu!
+19227=Byl jsi smrtelně zraněn!
+19228=Váš cíl odolává paralýze.
+19229=Odporujete paralýze.
+19230=Útok vás dočasně paralyzoval!
+19231=Chybí vám požadované utajení k provedení tohoto útoku
+19232=Úder a schováš se ve stínu!
+19233=Jste omráčeni útokem a váš útočník zmizí!
+19234=Váš zmatek pominul, nyní můžete vyzbrojit zbraň!
+19235=Už nejsi smrtelně zraněný.
+19236=Krvácející rány se zahojily, už nekrvácíte!
 }
 EOF

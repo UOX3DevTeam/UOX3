@@ -1,6 +1,6 @@
 // Hits all nearby characters when they attack with their axe
 
-function onAttack( pAttacker, pDefender )
+function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	pAttacker.SetTempTag( "pDefenderSerial", ( pDefender.serial ).toString() );
 	AreaCharacterFunction( "HitNearbyTargets", pAttacker, 1 );

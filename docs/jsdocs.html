@@ -431,7 +431,7 @@ function onAISliver( aiChar )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onAttack( pAttacker, pDefender )</em></p>
+							<p><em>function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -443,14 +443,20 @@ function onAISliver( aiChar )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>After pAttacker's script has been triggered, pDefender's onDefense event also triggers. Note that these events run <em>in addition</em> to hard-coded combat (and/or other combat events), after everything else is done, and do not replace these.</p>
+							<p>After pAttacker's script has been triggered, pDefender's onDefense event also triggers. Note that these events run <em>in addition</em> to hard-coded combat (and/or other combat events), after everything else is done, and do not replace these. hitStatus will be false if attack missed.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onAttack( pAttacker, pDefender )
+<pre><code class="language-javascript">function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
-	pAttacker.TextMessage( "Who lives in that castle?" );
-	pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    if( hitStatus )
+    {
+	    pAttacker.TextMessage( "Hah! I hit my target for " + damageDealt + "damage" );
+    }
+    else
+    {
+	    pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    }
 }</code></pre></p>
 						</div>
 					</div>
@@ -1549,7 +1555,7 @@ function onTimer( timerObj, timerID )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onDefense( pAttacker, pDefender )</em></p>
+							<p><em>function onDefense( pAttacker, pDefender, hitStatus, hitLoc, damageReceived  )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -1561,14 +1567,20 @@ function onTimer( timerObj, timerID )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>The event runs at the end of each hard-coded combat "round"</p>
+                            <p>The event runs at the end of each hard-coded combat "round". hitStatus will be false if attack missed.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onDefense( pAttacker, pDefender )
+<pre><code class="language-javascript">function onDefense( pAttacker, pDefender, hitStatus, hitLoc, damageReceived  )
 {
-	pAttacker.TextMessage( "Who lives in that castle?" );
-	pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    if( hitStatus )
+    {
+	    pAttacker.TextMessage( "Hah! I hit my target for " + damageReceived + "damage" );
+    }
+    else
+    {
+	    pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    }
 }</code></pre></p>
 						</div>
 					</div>
@@ -4043,7 +4055,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSpellTargetSelect( pCaster, myTarget, spellID )</em></p>
+							<p><em>function onSpellTargetSelect( myTarget, pCaster, spellID )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -4068,7 +4080,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Script attached to an NPC that's immune to magic, where event returns 2 to reject spell being cast
-function onSpellTargetSelect( pCaster, myTarget, spellID )
+function onSpellTargetSelect( myTarget, pCaster, spellID )
 {
 	var socket = pCaster.socket;
 	if( socket != null )
@@ -5576,6 +5588,35 @@ function myAreaFunc( srcChar, trgItem, pSock )
 								</div>
 							</div>
 						</div>
+
+                        						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_CheckInstaLog" />
+							<label for="spoiler_function_misc_CheckInstaLog">CheckInstaLog <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>JSBool CheckInstaLog( x, y, world, instanceID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks if a specific location ( x, y, world, instanceID ) is within an instant logout zone.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Check if the player is in an instant logout zone
+var isInstaLog = CheckInstaLog(targX, targY, worldNumber, instanceID);
+
+if( isInstaLog )
+{
+	// Handle instant logout
+}
+else
+{
+	// Handle other logout scenarios
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
 
 						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_function_item_CalcTargetedItem"/>
@@ -10055,6 +10096,25 @@ myChar.SetPoisoned( 2, 10000 );</code></pre>
 								</div>
 							</div>
 						</div>
+                        
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_method_char_SetRandomColor" />
+                            <label for="spoiler_method_char_SetRandomColor">SetRandomColor <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>void SetRandomColor( colorListID );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Applies a random color from a specified colorlist to character/item.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">myChar/myItem.SetRandomColor( "1" ); // Apply random color from Savage Warriors skin or can get random color from items colorlist depending on how its used.</code></pre>
+                                </div>
+                            </div>
+                        </div>
 
 						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_char_SetSkillByName"/>
