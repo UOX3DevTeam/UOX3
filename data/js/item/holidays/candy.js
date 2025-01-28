@@ -18,7 +18,6 @@ function onUseChecked(pUser, iUsed)
 		}
 		else 
 		{
-			socket.SysMessage("test 1");
 			if( Acidity <= 30 ) 
 			{
 				pUser.SetTempTag( "Acidity", Acidity += 5 );
@@ -26,7 +25,6 @@ function onUseChecked(pUser, iUsed)
 
 			if ( Toothach == 0)
 			{
-				socket.SysMessage("test 2");
 				pUser.SetTempTag( "toothach", 1 );
 				pUser.StartTimer( 1000, 0, true );
 			}

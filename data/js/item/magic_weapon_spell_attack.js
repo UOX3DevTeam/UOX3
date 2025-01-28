@@ -7,7 +7,7 @@ const scriptID = 3305;
 // spells.dfn
 const useAttackerMagerySkill = false;
 
-function onAttack( mAttacker, mDefender )
+function onAttack( mAttacker, mDefender, hitStatus, hitLoc, damageDealt )
 {
 	// Fetch weapon in main hand
 	var iWeapon = mAttacker.FindItemLayer( 0x01 );
