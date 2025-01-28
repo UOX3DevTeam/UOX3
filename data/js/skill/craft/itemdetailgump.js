@@ -1525,12 +1525,12 @@ function ItemDetailGump( pUser )
 			break;
 		case 1501: // Dough
 			createEntry = CreateEntries[1501];
-			HARVEST = [11637, 11639];
+			HARVEST = [11637, 11638];
 			mainSkill = parseInt( pUser.skills.cooking );
 			break;
 		case 1502: // Sweet Dough
 			createEntry = CreateEntries[1502];
-			HARVEST = [11607, 11638];
+			HARVEST = [11607, 11639];
 			mainSkill = parseInt( pUser.skills.cooking );
 			break;
 		case 1503: // Cake Mix

@@ -16,7 +16,7 @@ function onCreateDFN( objMade, objType )
 
 		if( objMade.id == 0x0C6A || objMade.id == 0x0C6B )
 		{
-			objMade.weight = Math.floor(Math.random() * ( 2500 - 1200 + 1 ) + 1200);
+			objMade.weight = Math.floor( Math.random() * ( 2500 - 1200 + 1 ) + 1200 );
 		} 
 		else if( objMade.id == 0x0C6C )
 		{
@@ -72,22 +72,22 @@ function onUseChecked( pUser, iUsed )
 		// Randomize countdown length, if enabled
 		if( randomizePumpkinCountdown )
 		{
-			iUsed.speed = RandomNumber(iUsed.speed - 1, iUsed.speed + 1);
+			iUsed.speed = RandomNumber( iUsed.speed - 1, iUsed.speed + 1 );
 		}
 		// Item's speed forms the basis of the countdownTime
 		var countdownTime = iUsed.speed * 1000;
 
 		// Start the initial timer that shows the first number over the character/object's head
-		iUsed.StartTimer(200, 1, true);
+		iUsed.StartTimer( 200, 1, true );
 
 		// Start timers with IDs from 2, and count until we reach item's speed + 1
 		var iCount = 2;
-		for (iCount = 2; iCount < (iUsed.speed + 2); iCount++)
+		for( iCount = 2; iCount < ( iUsed.speed + 2 ); iCount++ )
 		{
-			iUsed.StartTimer((iCount - 1) * 1000, iCount, true);
+			iUsed.StartTimer(( iCount - 1) * 1000, iCount, true );
 		}
 
-		socket.CustomTarget(0, GetDictionaryEntry(1348, socket.language)); //Now would be a good time to throw it!
+		socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.language )); //Now would be a good time to throw it!
 	}
 	return false;
 }
@@ -96,7 +96,7 @@ function onCallback0( socket, ourObj )
 {
 	var mChar = socket.currentChar;
 	var iUsed = socket.tempObj;
-	if ( mChar && mChar.isChar && iUsed && iUsed.isItem )
+	if( mChar && mChar.isChar && iUsed && iUsed.isItem )
 	{
 		var StrangeByte = socket.GetWord( 1 );
 		if( StrangeByte == 0 && ourObj )
@@ -107,7 +107,7 @@ function onCallback0( socket, ourObj )
 				iUsed.container = null;
 				iUsed.Teleport( ourObj );
 			}
-			else 
+			else
 			{
 				socket.SysMessage( GetDictionaryEntry( 1646, socket.language )); // You cannot see that
 
@@ -121,9 +121,10 @@ function onCallback0( socket, ourObj )
 			var x = socket.GetWord( 11 );
 			var y = socket.GetWord( 13 );
 			var z = socket.GetSByte( 16 );
+			var StrangeByte = socket.GetWord(1);
 
 			// If connected with a client lower than v7.0.9, manually add height of targeted tile
-			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+			if ((StrangeByte == 0 && ourObj.isItem) || (socket.clientMajorVer <= 7 && socket.clientSubVer < 9))
 			{
 				z += GetTileHeight( socket.GetWord( 17 ));
 			}
@@ -252,7 +253,7 @@ function ApplyExplosionDamage( timerObj, targetChar )
 			return;
 
 		// Deal damage, and do criminal check for source character!
-		targetChar.Damage(RandomNumber( timerObj.lodamage, timerObj.hidamage ), 5, sourceChar, true );
+		targetChar.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ), 5, sourceChar, true );
 
 		// If target is an NPC, make them attack the person who threw the potion!
 		if( targetChar.npc && targetChar.target == null && targetChar.atWar == false )
@@ -299,7 +300,7 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 				else if( iPickedUp.GetTag( "Named" ) == 0 )
 				{
 					iPickedUp.name = pGrabber.name + " Pumpkin";
-					iPickedUp.SetTag("Named", 1);
+					iPickedUp.SetTag( "Named", 1 );
 				}
 			}
 			return true;
