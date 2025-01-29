@@ -677,6 +677,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_DAMAGESNOW:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( SNOW ));	break;
 			case CIP_SWINGSPEEDINCREASE:	*vp = INT_TO_JSVAL( gPriv->GetSwingSpeedIncrease() );			break;
 			case CIP_SPEED:			*vp = INT_TO_JSVAL( gPriv->GetSpeed() );			break;
+			case CIP_DURABILITYHPBONUS:	*vp = INT_TO_JSVAL( gPriv->GetDurabilityHpBonus() );			break;
 			case CIP_LOWERSTATREQ:		*vp = INT_TO_JSVAL( gPriv->GetLowerStatReq() );			break;
 			case CIP_HEALTHLEECH:	*vp = INT_TO_JSVAL( gPriv->GetHealthLeech() );			break;
 			case CIP_STAMINALEECH:	*vp = INT_TO_JSVAL( gPriv->GetStaminaLeech() );			break;
@@ -1344,7 +1345,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_STAMINABONUS:		gPriv->SetStaminaBonus( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_MANABONUS:		gPriv->SetManaBonus( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_ARTIFACTRARITY:	gPriv->SetArtifactRarity( static_cast<SI16>( encaps.toInt() ));	break;
-
+			case CIP_DURABILITYHPBONUS:	gPriv->SetDurabilityHpBonus( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_NAME2:			gPriv->SetName2( encaps.toString() );						break;
 			case CIP_RACE:			gPriv->SetRace( static_cast<RACEID>( encaps.toInt() ));		break;
 			case CIP_MAXHP:			gPriv->SetMaxHP( static_cast<SI16>( encaps.toInt() ));		break;

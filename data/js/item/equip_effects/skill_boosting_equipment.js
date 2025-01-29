@@ -31,7 +31,7 @@ function onEquip( pEquipper, iEquipped )
 	}
 }
 
-function onUnequip( pUnquipper, iUnequipped )
+function onUnequip( pUnequipper, iUnequipped )
 {
 	var skillBonusID = iUnequipped.GetTag( "skillBonusID" );
 	var skillBonusVal = iUnequipped.GetTag( "skillBonusVal" );
@@ -39,10 +39,10 @@ function onUnequip( pUnquipper, iUnequipped )
 	switch( skillBonusID )
 	{
 		case 7: // Blacksmithing
-			pUnquipper.skills.blacksmithing -= skillBonusVal;
+			pUnequipper.skills.blacksmithing -= skillBonusVal;
 			break;
 		case 45: // Mining
-			pUnquipper.skills.mining -= skillBonusVal;
+			pUnequipper.skills.mining -= skillBonusVal;
 			break;
 		default:
 			break;

@@ -118,6 +118,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					Console.Warning( oldstrutil::format( "Invalid data found in AMOUNT tag inside item script [%s]", sectionId.c_str() ));
 				}
 				break;
+			case DFNTAG_DURABILITYHPBONUS:	applyTo->SetDurabilityHpBonus( static_cast<SI16>( ndata ));	break;
 			case DFNTAG_DAMAGE:
 			case DFNTAG_ATT:
 				if( ndata >= 0 )
@@ -1204,10 +1205,34 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 			Console.Error( "Trying to apply an item section failed" );
 		}
 
+		// If the durabilityhpbonus tag is on the item, it will add to its Durability (aka Health).
+		auto durabilityHpBonus = iCreated->GetDurabilityHpBonus();
+
 		// If maxHP has not been defined for a new item, set it to the same value as HP
-		if( !iCreated->GetMaxHP() && iCreated->GetHP() )
+		if (!iCreated->GetMaxHP() && iCreated->GetHP())
 		{
-			iCreated->SetMaxHP( iCreated->GetHP() );
+			iCreated->SetMaxHP(iCreated->GetHP());
+		}
+
+		if( durabilityHpBonus > 0 )
+		{
+			// Calculate percentage increase
+			auto baseHP = iCreated->GetHP();
+			auto baseMaxHP = iCreated->GetMaxHP();
+
+			// If maxHP has not been defined, default it to HP
+			if( baseMaxHP == 0 && baseHP > 0 )
+			{
+				baseMaxHP = baseHP;
+				iCreated->SetMaxHP( baseMaxHP );
+			}
+
+			// Apply the percentage bonus to HP and MaxHP
+			auto hpBonus = static_cast<int>( baseHP * ( durabilityHpBonus / 100.0 ));
+			auto maxHpBonus = static_cast<int>( baseMaxHP * ( durabilityHpBonus / 100.0 ));
+
+			iCreated->SetHP( baseHP + hpBonus );
+			iCreated->SetMaxHP( baseMaxHP + maxHpBonus );
 		}
 
 		// If maxUses is higher than usesLeft for a new item, randomize the amount of usesLeft the item should have!
