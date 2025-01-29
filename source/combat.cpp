@@ -236,9 +236,8 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		}
 	}
     // Record the time when combat starts as a timestamp
-	UI32 now = static_cast<UI32>( time( nullptr ));
-	cAttack->SetLastCombatTime( now );
-	cTarget->SetLastCombatTime( now );
+	cAttack->SetLastCombatTime( cwmWorldState->GetUICurrentTime() );
+	cTarget->SetLastCombatTime( cwmWorldState->GetUICurrentTime() );
 	return true;
 }
 
@@ -585,9 +584,8 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 		return;
 
     // Update last combat time for both the attacker and the target
-	UI32 now = static_cast<UI32>( time( nullptr ));
-	cAttack->SetLastCombatTime( now );
-	cTarget->SetLastCombatTime( now );
+	cAttack->SetLastCombatTime( cwmWorldState->GetUICurrentTime() );
+	cTarget->SetLastCombatTime( cwmWorldState->GetUICurrentTime() );
 
 	if( cAttack->CheckAggressorFlag( cTarget->GetSerial() ))
 	{

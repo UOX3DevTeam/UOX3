@@ -257,32 +257,35 @@ JSBool SE_CalcMultiFromSer( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if a character has engaged in combat within a given time span
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CheckTimeSinceLastCombat (JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+JSBool SE_CheckTimeSinceLastCombat( JSContext* cx, [[maybe_unused]] JSObject* obj, uintN argc, jsval* argv, jsval* rval )
 {
 	if (argc != 2)
 	{
-		ScriptError(cx, "CheckTimeSinceLastCombat: Invalid number of parameters (2)");
+		ScriptError( cx, "CheckTimeSinceLastCombat: Invalid number of parameters (2)" );
 		return JS_FALSE;
 	}
 
-	CChar *from = nullptr;
+	CChar* from = nullptr;
 	UI32 timespanInSeconds = 0;
 
-	if (!JSVAL_IS_OBJECT(argv[0]) || !(from = (CChar *)JS_GetPrivate(cx, JSVAL_TO_OBJECT(argv[0]))))
+	if( !JSVAL_IS_OBJECT( argv[0] ) || !( from = ( CChar* )JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ))))
 	{
-		ScriptError(cx, "CheckTimeSinceLastCombat: Invalid first argument (expected CChar)");
+		ScriptError( cx, "CheckTimeSinceLastCombat: Invalid first argument (expected CChar)" );
 		return JS_FALSE;
 	}
 
-	if (!JSVAL_IS_NUMBER(argv[1]) || !JS_ValueToInt32(cx, argv[1], (int32 *)&timespanInSeconds))
+	if( !JSVAL_IS_INT( argv[1] ))
 	{
-		ScriptError(cx, "CheckTimeSinceLastCombat: Invalid second argument (expected time in seconds)");
+		ScriptError( cx, "CheckTimeSinceLastCombat: Invalid second argument (expected time in seconds)" );
 		return JS_FALSE;
 	}
 
-	UI32 now = static_cast<UI32>(time(nullptr));
+	timespanInSeconds = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
 
-	if ((now - from->GetLastCombatTime()) < timespanInSeconds)
+	// Use GetGUITimerCurTime() instead of time(nullptr) for consistency
+	UI32 now = cwmWorldState->GetUICurrentTime();
+
+	if(( now - from->GetLastCombatTime() ) < timespanInSeconds )
 	{
 		*rval = JSVAL_TRUE;
 		return JS_TRUE;
@@ -291,7 +294,6 @@ JSBool SE_CheckTimeSinceLastCombat (JSContext *cx, [[maybe_unused]] JSObject *ob
 	*rval = JSVAL_FALSE;
 	return JS_TRUE;
 }
-
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_CalcCharFromSer()
