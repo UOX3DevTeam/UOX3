@@ -49,7 +49,11 @@ protected:
 	SERIAL			creator;		// Store the serial of the player made this item
 	SI08			gridLoc;
 	SI16			artifactRarity;
+
 	SI16			durabilityHpBonus;
+
+	SI16			lowerStatReq;
+
 	SI32			weightMax;		// Maximum weight a container can hold
 	SI32			baseWeight;		// Base weight of item. Applied when item is created for the first time, based on weight. Primarily used to determine base weight of containers
 	UI16			maxItems;		// Maximum amount of items a container can hold
@@ -117,6 +121,9 @@ public:
 
 	SI16			GetDurabilityHpBonus(void) const;
 	void			SetDurabilityHpBonus(SI16 newValue);
+
+	SI16			GetLowerStatReq( void ) const;
+	void			SetLowerStatReq( SI16 newValue );
 
 	auto			GetStealable() const -> UI08;
 	auto			SetStealable( UI08 newValue ) -> void;

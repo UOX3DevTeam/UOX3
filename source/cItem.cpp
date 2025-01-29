@@ -94,7 +94,11 @@ const UI16			DEFITEM_REGIONNUM 		= 255;
 const UI16			DEFITEM_TEMPLASTTRADED	= 0;
 const SI08			DEFITEM_STEALABLE	 	= 1;
 const SI16			DEFITEM_ARTIFACTRARITY = 0;
+
 const SI16			DEFITEM_DURABLITITYHPBONUS = 0;
+
+const SI16			DEFITEM_LOWERSTATREQ	= 0;
+
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem()
@@ -109,7 +113,7 @@ spd( DEFITEM_SPEED ), maxHp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
 creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
 maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM ), 
-tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), artifactRarity(DEFITEM_ARTIFACTRARITY), durabilityHpBonus( DEFITEM_DURABLITITYHPBONUS )
+tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), artifactRarity( DEFITEM_ARTIFACTRARITY ), lowerStatReq( DEFITEM_LOWERSTATREQ ), durabilityHpBonus( DEFITEM_DURABLITITYHPBONUS )
 {
 	spells[0]	= spells[1] = spells[2] = 0;
 	value[0]	= value[1] = value[2] = 0;
@@ -558,6 +562,23 @@ SI16 CItem::GetArtifactRarity( void ) const
 void CItem::SetArtifactRarity( SI16 newValue )
 {
 	artifactRarity = newValue;
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetLowerStatReq()
+//|					CItem::GetLowerStatReq()
+//|	Date		-	30 April, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Stat Requirements of the object
+//o------------------------------------------------------------------------------------------------o
+SI16 CItem::GetLowerStatReq( void ) const
+{
+	return lowerStatReq;
+}
+void CItem::SetLowerStatReq( SI16 newValue )
+{
+	lowerStatReq = newValue;
 	UpdateRegion();
 }
 
@@ -1672,14 +1693,22 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetRndValueRate( GetRndValueRate() );
 	target->SetSpawn( GetSpawn() );
 	target->SetSpeed( GetSpeed() );
+	target->SetHitChance( GetHitChance() );
+	target->SetDefenseChance( GetDefenseChance() );
+
 	target->SetArtifactRarity( GetArtifactRarity() );
+
 	target->SetDurabilityHpBonus( GetDurabilityHpBonus() );
+
 	target->SetSpell( 0, GetSpell( 0 ));
 	target->SetSpell( 1, GetSpell( 1 ));
 	target->SetSpell( 2, GetSpell( 2 ));
 	target->SetStamina( GetStamina() );
 	target->SetStrength( GetStrength() );
 	target->SetStrength2( GetStrength2() );
+	target->SetHealthLeech( GetHealthLeech() );
+	target->SetStaminaLeech( GetStaminaLeech() );
+	target->SetManaLeech( GetManaLeech() );
 	target->SetTitle( GetTitle() );
 	target->SetType( GetType() );
 	target->SetBuyValue( GetBuyValue() );
@@ -1690,12 +1719,16 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetWeightMax( GetWeightMax() );
 	target->SetBaseWeight( GetBaseWeight() );
 	target->SetMaxItems( GetMaxItems() );
+	target->SetHealthBonus( GetHealthBonus() );
+	target->SetStaminaBonus( GetStaminaBonus() );
+	target->SetManaBonus( GetManaBonus() );
 	//target->SetWipeable( IsWipeable() );
 	target->SetPriv( GetPriv() );
 	target->SetBaseRange( GetBaseRange() );
 	target->SetMaxRange( GetMaxRange() );
 	target->SetMaxUses( GetMaxUses() );
 	target->SetUsesLeft( GetUsesLeft() );
+	target->SetLowerStatReq( GetLowerStatReq() );
 	target->SetStealable( GetStealable() );
 
 	// Set damage types on new item
@@ -1772,11 +1805,16 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "BaseWeight=" + std::to_string( GetBaseWeight() ) + newLine;
 	outStream << "MaxItems=" + std::to_string( GetMaxItems() ) + newLine;
 	outStream << "MaxHP=" + std::to_string( GetMaxHP() ) + newLine;
+	outStream << "HitChance=" + std::to_string( GetHitChance() ) + newLine;
+	outStream << "DefenseChance=" + std::to_string( GetDefenseChance() ) + newLine;
 	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
+	outStream << "BonusStats=" + std::to_string( GetHealthBonus() ) + "," + std::to_string( GetStaminaBonus() ) + "," + std::to_string( GetManaBonus() ) + newLine;
 	outStream << "ArtifactRarity=" + std::to_string( GetArtifactRarity() ) + newLine;
 	outStream << "DurabilityHpBonus=" + std::to_string( GetDurabilityHpBonus() ) + newLine;
 	outStream << "Movable=" + std::to_string( GetMovable() ) + newLine;
 	outStream << "Priv=" + std::to_string( GetPriv() ) + newLine;
+	outStream << "LowerStatReq=" + std::to_string( GetLowerStatReq() ) + newLine;
+	outStream << "LeechStats=" + std::to_string( GetHealthLeech() ) + "," + std::to_string( GetStaminaLeech() ) + "," + std::to_string( GetManaLeech() ) + newLine;
 	outStream << "Value=" + std::to_string( GetBuyValue() ) + "," + std::to_string( GetSellValue() ) + "," + std::to_string( GetVendorPrice() ) + newLine;
 	outStream << "Restock=" + std::to_string( GetRestock() ) + newLine;
 	outStream << "AC=" + std::to_string( GetArmourClass() ) + newLine;
@@ -1863,6 +1901,13 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					bools = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
 					rValue = true;
 				}
+				else if( UTag == "BONUSSTATS" )
+				{
+				    SetHealthBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+				    SetStaminaBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+				    SetManaBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+				    rValue = true;
+				}
 				break;
 			case 'C':
 				if( UTag == "CONT" )
@@ -1905,6 +1950,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "DYEABLE" )
 				{
 					SetDye( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 );
+					rValue = true;
+				}
+				else if( UTag == "DEFENSECHANCE" )
+				{
+					SetDefenseChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -1953,6 +2003,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					SetWeatherDamage( HEAT, static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 );
 					rValue = true;
 				}
+				else if( UTag == "HITCHANCE" )
+				{
+					SetHitChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
 				break;
 			case 'L':
 				if( UTag == "LAYER" )
@@ -1968,6 +2023,18 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "LIGHTNING" )
 				{
 					SetWeatherDamage( LIGHTNING, static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 );
+					rValue = true;
+				}
+				else if( UTag == "LOWERSTATREQ" )
+				{
+					SetLowerStatReq( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "LEECHSTATS" )
+				{
+					SetHealthLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+					SetStaminaLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+					SetManaLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;

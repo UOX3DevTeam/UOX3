@@ -193,6 +193,7 @@ JSMethodFunc CBase_HasScriptTrigger;
 JSMethodFunc CBase_RemoveScriptTrigger;
 JSMethodFunc CBase_Refresh;
 JSMethodFunc CBase_SetRandomName;
+JSMethodFunc CBase_SetRandomColor;
 
 // Multi Methods
 JSMethodFunc CMulti_GetMultiCorner;
@@ -431,6 +432,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "Recall",				CChar_Recall,			1, 0, 0 },
 	{ "Mark",				CChar_Mark,				1, 0, 0 },
 	{ "SetRandomName",		CBase_SetRandomName,	1, 0, 0 },
+	{ "SetRandomColor",		CBase_SetRandomColor,	1, 0, 0 },
 	{ "SetSkillByName",		CChar_SetSkillByName,	2, 0, 0 },
 	{ "Kill",				CChar_Kill,				0, 0, 0 },
 	{ "Resurrect",			CChar_Resurrect,		0, 0, 0 },
@@ -566,7 +568,8 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "FinishedChars",		CMulti_FinishedChars,		1, 0, 0 },
 
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
-	{ "SetRandomName",		CBase_SetRandomName,	1, 0, 0 },
+	{ "SetRandomName",		CBase_SetRandomName,		1, 0, 0 },
+	{ "SetRandomColor",		CBase_SetRandomColor,		1, 0, 0 },
 	{ nullptr,				nullptr,					0, 0, 0 }
 };
 

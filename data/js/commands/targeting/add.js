@@ -110,9 +110,10 @@ function onCallback0( socket, ourObj )
 		var x = socket.GetWord( 11 );
 		var y = socket.GetWord( 13 );
 		var z = socket.GetSByte( 16 );
+		var StrangeByte = socket.GetWord(1);
 
 		// If connected with a client lower than v7.0.9, manually add height of targeted tile
-		if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+		if ((StrangeByte == 0 && ourObj.isItem) || (socket.clientMajorVer <= 7 && socket.clientSubVer < 9))
 		{
 			z += GetTileHeight( socket.GetWord( 17 ));
 		}
@@ -183,7 +184,7 @@ function onCallback1( socket, ourObj )
 			var z = socket.GetSByte( 16 );
 
 			// If connected with a client lower than v7.0.9, manually add height of targeted tile
-			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+			if ((StrangeByte == 0 && ourObj.isItem) || (socket.clientMajorVer <= 7 && socket.clientSubVer < 9))
 			{
 				z += GetTileHeight( socket.GetWord( 17 ));
 			}
@@ -257,7 +258,7 @@ function onCallback2( socket, ourObj )
 			var z = socket.GetSByte( 16 );
 
 			// If connected with a client lower than v7.0.9, manually add height of targeted tile
-			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+			if ((StrangeByte == 0 && ourObj.isItem) || (socket.clientMajorVer <= 7 && socket.clientSubVer < 9))
 			{
 				z += GetTileHeight( socket.GetWord( 17 ));
 			}
@@ -287,9 +288,10 @@ function onCallback3( socket, ourObj )
 		var x = socket.GetWord( 11 );
 		var y = socket.GetWord( 13 );
 		var z = socket.GetSByte( 16 );
+		var StrangeByte = socket.GetWord(1);
 
 		// If connected with a client lower than v7.0.9, manually add height of targeted tile
-		if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+		if ((StrangeByte == 0 && ourObj.isItem) || (socket.clientMajorVer <= 7 && socket.clientSubVer < 9))
 		{
 			z += GetTileHeight( socket.GetWord( 17 ));
 		}
@@ -324,9 +326,10 @@ function onCallback4( socket, ourObj )
 		var x = socket.GetWord( 11 );
 		var y = socket.GetWord( 13 );
 		var z = socket.GetSByte( 16 );
+		var StrangeByte = socket.GetWord(1);
 
 		// If connected with a client lower than v7.0.9, manually add height of targeted tile
-		if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+		if ((StrangeByte == 0 && ourObj.isItem) || (socket.clientMajorVer <= 7 && socket.clientSubVer < 9))
 		{
 			z += GetTileHeight( socket.GetWord( 17 ));
 		}
@@ -465,3 +468,5 @@ function AddXItemSpawner( socket, cmdString, itemType )
 		}
 	}
 }
+
+function _restorecontext_() {}

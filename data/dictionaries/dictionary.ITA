@@ -3298,6 +3298,20 @@
 5721=Non puoi cercare tesori lì!
 5722=coordinate %s
 5723=Completato
+// [5751-5765] Blocco del karma e santuario
+5751=Il karma è bloccato. Un mantra pronunciato in un santuario lo sbloccherà di nuovo.
+5752=Il tuo karma è stato bloccato. Il tuo karma non può più essere aumentato.
+5753=Il tuo karma è stato sbloccato. Il tuo karma può essere aumentato di nuovo.
+5754=Blocca il karma
+5755=Sblocca il karma
+5756=Resurrezione
+5757=Decima oro
+5758=Hai deciso di non dare la decima all'oro del santuario.
+5759=Non hai abbastanza oro per dare quella cifra!
+5760=Dai la decima all'oro del santuario come segno di devozione.
+5761=È possibile che tu resusciti qui in questo Santuario. Vuoi provare?<br>CONTINUA - Hai scelto di provare a tornare in vita ora.<br>ANNULLA - Preferisci rimanere un fantasma per ora.
+5762=È possibile che tu resusciti qui in questo santuario delle Virtù. Vuoi provare?<br>CONTINUA - Hai scelto di provare a tornare in vita ora.<br>ANNULLA - Preferisci rimanere un fantasma per ora.
+5763=<center>Resurrezione</center>
 // [6000-6499] Misc Skill Msgs
 6000=Quella persona sembra %s e %t.
 6001=Non puoi ricavarne nulla di utile.
@@ -3431,6 +3445,7 @@
 6301=Solo un Grande Maestro Alchimista può imparare da questo libro.
 6302=Hai già appreso questa informazione.
 6303=Hai imparato a creare oggetti in vetro. Dovrai trovare minatori che estraggano sabbia fine per poter realizzare questi oggetti.
+6304=Devi avere una mano libera per bere una pozione.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
@@ -4679,7 +4694,6 @@
 11619=pagnotta di pane
 11620=torta di biscotti
 11621=torta
-11622=muffin
 11622=quiche al forno
 11623=pasticcio di carne al forno
 11624=pizza con salsiccia
@@ -4715,6 +4729,7 @@
 11654=Devi essere vicino a una fonte di calore per cucinare il cibo.
 11655=Devi essere vicino a un mulino per creare farina.
 11656=Devi essere vicino a un forno per cuocere il cibo.
+11657=muffin
 // 11801 - 12000 Abilità Artigianato Tinkering
 // Pagina 1 - Oggetti in legno
 11801=Assale
@@ -5345,5 +5360,42 @@
 19140=Lo sporco deve prima essere ammorbidito.
 19141=Pianta il seme nella ciotola di terra.
 19142=Devi usare un seme su una ciotola di terra!
+// [19201-19300] Mosse speciali
+19201=Hai bisogno di %i abilità con l'arma per eseguire quell'attacco
+19202=Hai bisogno di %i mana per eseguire quell'attacco
+19203=Il tuo attacco penetra la loro armatura!
+19204=Il colpo ha penetrato la tua armatura!
+19205=Il tuo bersaglio sta sanguinando!
+19206=Stai sanguinando!
+19207=Stai sanguinando copiosamente
+19208=%i sta sanguinando copiosamente
+19209=Hai provocato una commozione cerebrale!
+19210=Ti senti disorientato!
+19211=Hai sferrato un colpo devastante!
+19212=Subisci danni extra dall'attacco devastante!
+19213=Non puoi disarmare il tuo avversario.
+19214=Il tuo bersaglio è già disarmato!
+19215=Disarma la loro arma!
+19216=La tua arma è stata disarmata!
+19217=Non puoi eseguire quell'attacco mentre sei a cavallo o mentre voli!
+19218=Questo attacco funziona solo su bersagli montati o volanti
+19219=La forza del tuo attacco li ha spostati dalla loro cavalcatura!
+19220=Sei stato buttato giù dalla tua cavalcatura da %i!
+19221=La tua arma deve avere una dose di veleno per eseguire un colpo infettivo!
+19222=Il tuo colpo preciso ha aumentato il livello del veleno di 1
+19223=Il veleno sembra estremamente efficace!
+19224=Hai avvelenato il tuo bersaglio: %i
+19225=%i: ti ha avvelenato!
+19226=Hai procurato una ferita mortale!
+19227=Sei stato ferito a morte!
+19228=Il tuo bersaglio resiste alla paralisi.
+19229=Resisti alla paralisi.
+19230=L'attacco ti ha temporaneamente paralizzato!
+19231=Non hai la furtività necessaria per eseguire quell'attacco
+19232=Colpisci e ti nascondi nell'ombra!
+19233=Sei stordito dall'attacco e il tuo aggressore svanisce!
+19234=La tua confusione è passata, ora puoi armare un'arma!
+19235=Non sei più ferito a morte.
+19236=Le ferite sanguinanti sono guarite, non stai più sanguinando!
 }
 EOF
