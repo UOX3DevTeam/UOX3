@@ -49,7 +49,7 @@ UI32 GetTotalItemCount( CItem *objCont )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item in a pack
 //o------------------------------------------------------------------------------------------------o
-auto GetSubItemAmount( CItem *p, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "" ) -> UI32
+auto GetSubItemAmount( CItem* p, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck, bool moreCheck, std::string sectionId ) -> UI32 
 {
 	UI32 total = 0;
 	auto pCont = p->GetContainsList();

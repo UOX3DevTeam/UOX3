@@ -3997,18 +3997,19 @@ JSBool CGuild_IsAtPeace( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unuse
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CChar_ResourceCount()
+//|	Function	-	CBase_ResourceCount()
 //|	Prototype	-	int ResourceCount( realId, colour )
 //|					int ResourceCount( realId, colour, moreVal )
 //|					int ResourceCount( realId, colour, moreVal, sectionId )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the amount of the items of given ID, colour and moreVal character has in packs
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_ResourceCount( JSContext* cx, JSObject* obj, uintN argc, jsval* argv, jsval* rval )
 {
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+	JSEncapsulate myClass( cx, obj );
+	CBaseObject* myObj = static_cast<CBaseObject*>( myClass.toObject() );
 
-	if( !ValidateObject( myChar ))
+	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "(ResourceCount) Invalid Object assigned" );
 		return JS_FALSE;
@@ -4035,13 +4036,24 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 	if( argc >= 4 )
 	{
-		sectionId = JS_GetStringBytes( JS_ValueToString( cx, argv[3] ));
+		sectionId = JS_GetStringBytes(JS_ValueToString( cx, argv[3] ));
 	}
 
 	bool colorCheck = ( itemColour != -1 ? true : false );
 	bool moreCheck = ( moreVal != -1 ? true : false );
 
-	*rval = INT_TO_JSVAL( GetItemAmount( myChar, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId ));
+	UI32 retVal = 0;
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		CChar* myChar = static_cast<CChar*>( myObj );
+		retVal = GetItemAmount( myChar, realId, static_cast<UI16>(itemColour), static_cast<UI32>(moreVal), colorCheck, moreCheck, sectionId );
+	}
+	else
+	{
+		CItem* myItem = static_cast<CItem*>( myObj );
+		retVal = GetSubItemAmount( myItem, realId, static_cast<UI16>(itemColour), static_cast<UI32>(moreVal), colorCheck, moreCheck, sectionId );
+	}
+	*rval = INT_TO_JSVAL( retVal );
 	return JS_TRUE;
 }
 

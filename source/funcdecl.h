@@ -98,6 +98,7 @@ TIMERVAL GetPoisonTickTime( UI08 poisonStrength );
 // Amount related
 //o------------------------------------------------------------------------------------------------o
 UI32	GetItemAmount( CChar *s, UI16 realId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "" );
+UI32	GetSubItemAmount( CItem* p, UI16 realId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "" );
 UI32	GetTotalItemCount( CItem *objCont );
 UI32	DeleteItemAmount( CChar *s, UI32 amount, UI16 realId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "" );
 UI32	DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "" );
