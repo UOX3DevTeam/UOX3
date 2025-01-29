@@ -1,3 +1,7 @@
+22/01/2025 - Dragon Slayer
+	Fixed an issue that prevented onUnequip JS event from triggering on items being unequipped
+	Minor cleanup of skill_boosting_equipment.js script
+
 21/01/2025 - Dragon Slayer
 	Fixed damage dealt in combat was incorrectly modified while applying defense modifiers. (combat.cpp)
 
