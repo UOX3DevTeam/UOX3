@@ -1,4 +1,11 @@
 22/01/2025 - Dragon Slayer
+	Added New Haven for trammel. (Regions.dfn)
+	Added New Haven Music. (Regions.dfn)
+	Added new player quest training areas. (Regions.dfn)
+	Fixed Britains music. (Regions.dfn)
+	marked old regions file as old because contains old haven.
+
+22/01/2025 - Dragon Slayer
 	Fixed an issue that prevented onUnequip JS event from triggering on items being unequipped
 	Minor cleanup of skill_boosting_equipment.js script
 
