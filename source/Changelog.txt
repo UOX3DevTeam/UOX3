@@ -1,10 +1,13 @@
-
 22/01/2025 - Dragon Slayer
 	Added New Haven for trammel. (Regions.dfn)
 	Added New Haven Music. (Regions.dfn)
 	Added new player quest training areas. (Regions.dfn)
 	Fixed Britains music. (Regions.dfn)
 	marked old regions file as old because contains old haven.
+
+22/01/2025 - Dragon Slayer
+	Fixed an issue that prevented onUnequip JS event from triggering on items being unequipped
+	Minor cleanup of skill_boosting_equipment.js script
 
 21/01/2025 - Dragon Slayer
 	Fixed damage dealt in combat was incorrectly modified while applying defense modifiers. (combat.cpp)
@@ -116,6 +119,11 @@
 
 13/05/2024 - Dragon Slayer
 	Added New Shield Type 107 so shield ID's no longer have to be in hard code for shields to work properly
+
+11/05/2024 - Dragon Slayer/Xuri/Maarc
+	Added Support for new AOS property tag.
+	-DURABILITYHPBONUS = # - Add durability (aka Health) at percentage multiplier to hp.
+	 .durabilityhpbonus (js)
 
 11/05/2024 - Dragon Slayer
 	Updated 'get command (js/commands/targeting/get.js) to use correct object reference when getting resist values for items, and added support for getting resist values for chars
