@@ -1,12 +1,6 @@
-14/10/2024 - Dragon Slayer
-    	Added CheckTimeSinceLastCombat that records the time when combat starts as a timestamp(SEFunctions.cpp).
-
-1/05/2024 - Dragon Slayer/Xuri
-
 22/01/2025 - Dragon Slayer
 	Fixed an issue that prevented onUnequip JS event from triggering on items being unequipped
 	Minor cleanup of skill_boosting_equipment.js script
-
 
 21/01/2025 - Dragon Slayer
 	Fixed damage dealt in combat was incorrectly modified while applying defense modifiers. (combat.cpp)
@@ -31,6 +25,9 @@
 
 20/10/2024 - Dragon Slayer
 	Added SetRandomColor("#") to js functions. (Thanks, Xuri)
+
+14/10/2024 - Dragon Slayer
+    	Added CheckTimeSinceLastCombat that records the time when combat starts as a timestamp(SEFunctions.cpp).
 
 14/10/2024 - Dragon Slayer
     Added the CheckInstaLog JS function to allow checking if a specific location is within an instant logout zone (SEFunctions.cpp). (thanks, Xuri)
