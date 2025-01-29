@@ -3298,6 +3298,20 @@
 5721=Da kann man nicht nach Schätzen graben!
 5722=Koordinaten %s
 5723=Abgeschlossen
+// [5751-5765] Karma-Sperre und Schrein
+5751=Karma ist gesperrt. Ein Mantra, das an einem Schrein gesprochen wird, wird es wieder entsperren.
+5752=Dein Karma wurde gesperrt. Dein Karma kann nicht mehr erhöht werden.
+5753=Dein Karma wurde entsperrt. Dein Karma kann wieder erhöht werden.
+5754=Karma sperren
+5755=Karma entsperren
+5756=Wiederbeleben
+5757=Gold verzehnten
+5758=Du hast beschlossen, dem Schrein kein Gold zu spenden.
+5759=Du hast nicht genug Gold, um diesen Betrag zu spenden!
+5760=Du spendest dem Schrein Gold als Zeichen der Hingabe.
+5761=Es ist möglich, dass Sie hier an diesem Schrein wieder auferstehen. Möchten Sie es versuchen?<br>WEITER – Sie haben sich entschieden, jetzt zu versuchen, wieder lebendig zu werden.<br>ABBRECHEN – Sie möchten vorerst lieber ein Geist bleiben.
+5762=Es ist möglich, dass Sie hier an diesem Schrein der Tugenden wieder auferstehen. Möchten Sie es versuchen?<br>WEITER – Sie haben sich entschieden, jetzt zu versuchen, wieder lebendig zu werden.<br>ABBRECHEN – Sie möchten vorerst lieber ein Geist bleiben.
+5763=<center>Auferstehung</center>
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.

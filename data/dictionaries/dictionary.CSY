@@ -3298,6 +3298,20 @@
 5721=Tam nemůžete kopat poklad!
 5722=souřadnice %s
 5723=Dokončeno
+// [5751-5765] Zamykání karmy a svatyně
+5751=Karma je uzamčena. Mantra vyslovená ve svatyni ji znovu odemkne.
+5752=Vaše karma byla uzamčena. Vaši karmu již nelze zvýšit.
+5753=Vaše karma byla odemčena. Vaše karma může být znovu zvýšena.
+5754=Uzamknout karmu
+5755=Odemknout karmu
+5756=Obnovit
+5757=Desátkové zlato
+5758=Rozhodli jste se nedat do svatyně žádné zlato.
+5759=Nemáte dostatek zlata na desátek této částky!
+5760=Dáváte desátek ze zlata do svatyně na znamení oddanosti.
+5761=Je možné, že budete vzkříšeni zde v této svatyni. Přejete si to zkusit?<br>POKRAČOVAT – Rozhodli jste se, že se nyní pokusíte vrátit k životu.<br>ZRUŠIT – Prozatím raději zůstanete duchem.
+5762=Je možné, že budete vzkříšeni zde v této svatyni ctností. Přejete si to zkusit?<br>POKRAČOVAT – Rozhodli jste se, že se nyní pokusíte vrátit k životu.<br>ZRUŠIT – Prozatím raději zůstanete duchem.
+5763=<center>Vzkříšení</center>
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.

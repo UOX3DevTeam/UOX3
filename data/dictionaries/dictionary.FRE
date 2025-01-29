@@ -3462,6 +3462,20 @@
 5721=Vous ne pouvez pas creuser de trésor là-bas !
 5722=coordonnées %s
 5723=Terminé
+// [5751-5765] Verrouillage du karma et sanctuaire
+5751=Le karma est verrouillé. Un mantra prononcé dans un sanctuaire le déverrouillera à nouveau.
+5752=Votre karma a été verrouillé. Votre karma ne peut plus être augmenté.
+5753=Votre karma a été déverrouillé. Votre karma peut être augmenté à nouveau.
+5754=Verrouiller le karma
+5755=Déverrouiller le karma
+5756=Resurrection
+5757=Dîmer l'or
+5758=Vous avez décidé de ne pas verser la dîme d'or au sanctuaire.
+5759=Vous n'avez pas assez d'or pour verser cette dîme !
+5760=Vous versez la dîme d'or au sanctuaire en signe de dévotion.
+5761=Il est possible pour vous de ressusciter ici dans ce sanctuaire. Souhaitez-vous essayer ?<br>CONTINUER - Vous avez choisi d'essayer de revenir à la vie maintenant.<br>ANNULER - Vous préférez rester un fantôme pour l'instant.
+5762=Il est possible pour vous de ressusciter ici dans ce sanctuaire des Vertus. Souhaitez-vous essayer ?<br>CONTINUER - Vous avez choisi d'essayer de revenir à la vie maintenant.<br>ANNULER - Vous préférez rester un fantôme pour l'instant.
+5763=<center>Résurrection</center>
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.

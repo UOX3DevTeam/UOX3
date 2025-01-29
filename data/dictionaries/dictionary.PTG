@@ -3298,6 +3298,20 @@
 5721=Você não pode cavar em busca de tesouros lá!
 5722=coordenadas %s
 5723=Concluído
+// [5751-5765] Bloqueio e Santuário do Karma
+5751=Karma está bloqueado. Um mantra falado num santuário irá desbloqueá-lo novamente.
+5752=O seu karma foi bloqueado. O seu carma não pode mais ser aumentado.
+5753=O seu karma foi desbloqueado. O seu carma pode ser aumentado novamente.
+5754=Bloquear Carma
+5755=Desbloquear Carma
+5756=Ressuscitar
+5757=Dízimo Ouro
+5758=Decidiu não dar o dízimo de ouro ao santuário.
+5759=Não tens ouro suficiente para dizimar essa quantia!
+5760=Dás o dízimo de ouro ao santuário como sinal de devoção.
+5761=É possível que ressuscite aqui neste Santuário. Deseja tentar?<br>CONTINUAR - Escolheu tentar voltar à vida agora.<br>CANCELAR - Prefere permanecer um fantasma por enquanto.
+5762=É possível que ressuscite aqui neste santuário das Virtudes. Deseja tentar?<br>CONTINUAR - Escolheu tentar voltar à vida agora.<br>CANCELAR - Prefere permanecer um fantasma por enquanto.
+5763=<center>Ressurreição</center>
 // [6000-6499] Misc Skill Msgs
 6000=Que a pessoa parece %s e %t.
 6001=Não se pode fazer nada de útil com isso.
