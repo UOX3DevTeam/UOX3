@@ -115,6 +115,7 @@ const UI32 BIT_WILLTHIRST		=	31;
 const UI32 BIT_HIRELING			=	32;
 const UI32 BIT_ISPASSIVE		=	33;
 const UI32 BIT_HASSTOLEN		=	34;
+const UI32 BIT_KARMALOCK		=	35;
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
@@ -320,6 +321,8 @@ npcGuild( DEFCHAR_NPCGUILD )
 	bools.set( BIT_MAXSTAMFIXED, false );
 	//SetCanAttack( true );
 	bools.set( BIT_CANATTACK, true );
+	//SetKarmaLock( false );
+	bools.set( BIT_KARMALOCK, false );
 	//SetBrkPeaceChanceGain( 0 );
 	brkPeaceChanceGain = 0;
 	//SetBrkPeaceChance( 0 );
@@ -1077,6 +1080,23 @@ void CChar::SetCanAttack( bool newValue )
 {
 	bools.set( BIT_CANATTACK, newValue );
 	SetBrkPeaceChance( 0 );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetKarmaLock()
+//|					CChar::SetKarmaLock()
+//|	Date		-	8. Dec, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the char karma is locked
+//o------------------------------------------------------------------------------------------------o
+bool CChar::GetKarmaLock( void ) const
+{
+	return bools.test( BIT_KARMALOCK );
+}
+void CChar::SetKarmaLock( bool newValue )
+{
+	bools.set( BIT_KARMALOCK, newValue );
 	UpdateRegion();
 }
 
@@ -2885,6 +2905,7 @@ CItem *CChar::GetItemAtLayer( ItemLayers Layer )
 //|	Purpose		-	Wears the item toWear and adjusts the stats if any are
 //|					required to change.  Returns true if successfully equipped
 //o------------------------------------------------------------------------------------------------o
+void Bounce( CSocket *bouncer, CItem *bouncing, UI08 mode = 5 );
 bool CChar::WearItem( CItem *toWear )
 {
 	// Run event prior to equipping item, allowing script to prevent equip
@@ -2900,6 +2921,27 @@ bool CChar::WearItem( CItem *toWear )
 				return false;
 			}
 		}
+	}
+
+	scriptTriggers.clear();
+    scriptTriggers.shrink_to_fit();
+    scriptTriggers = this->GetScriptTriggers();
+    for( auto i : scriptTriggers )
+    {
+        cScript *tScript = JSMapping->GetScript( i );
+        if( tScript != nullptr )
+        {
+            // If script returns false, prevent item from being equipped
+            if( tScript->OnEquipAttempt( this, toWear ) == 0 )
+            {
+                CSocket *mSock = this->GetSocket();
+                if( mSock != nullptr )
+                {
+                    Bounce( mSock, toWear );
+                }
+                return false;
+            }
+        }
 	}
 
 	bool rValue = true;
@@ -2986,6 +3028,22 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 				}
 			}
 		}
+
+		scriptTriggers.clear();
+        scriptTriggers.shrink_to_fit();
+        scriptTriggers = this->GetScriptTriggers();
+        for( auto i : scriptTriggers )
+        {
+            cScript *tScript = JSMapping->GetScript( i );
+            if( tScript != nullptr )
+            {
+                // If script returns false, prevent item from being equipped
+                if( tScript->OnUnequipAttempt( this, itemLayers[Layer] ) == 0 )
+                {
+                    return false;
+                }
+            }
+        }
 
 		if( Layer == IL_PACKITEM )	// It's our pack!
 		{
@@ -3165,6 +3223,7 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 	outStream << "CanAttack=" + std::to_string(( GetCanAttack() ? 1 : 0 )) + newLine;
 	outStream << "HitChance=" + std::to_string( GetHitChance() ) + newLine;
 	outStream << "DefChance=" + std::to_string( GetDefenseChance() ) + newLine;
+	outStream << "KarmaLock=" + std::to_string(( GetKarmaLock() ? 1 : 0 )) + newLine;
 	outStream << "AllMove=" + std::to_string(( AllMove() ? 1 : 0 )) + newLine;
 	outStream << "IsNpc=" + std::to_string(( IsNpc() ? 1 : 0 )) + newLine;
 	outStream << "IsShop=" + std::to_string(( IsShop() ? 1 : 0 )) + newLine;
@@ -4542,6 +4601,13 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "ISWARRING" )
 				{
 					SetWar(( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 ));
+					rValue = true;
+				}
+				break;
+			case 'K':
+				if( UTag == "KARMALOCK" )
+				{
+					SetKarmaLock( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 );
 					rValue = true;
 				}
 				break;

@@ -9,6 +9,11 @@
 15/12/2024 - Dragon Slayer
 	Added Ressurrect Penalty Script (js/player/death/resurrectpenalty.js) that controls any type of penalty you want on the char after resurrecting via shrines
 
+8/12/2024 - Dragon Slayer
+	Added Karma Locking LBR Feature.
+		added js propertie .karmaLock
+		KARMALOCKING=1/0 // If 1 the system is enabled will lock karma if player goes negative.
+
 07/12/2024 - Dragon Slayer
 	Updated the packet 0xf1 to reflect the current CUO Web Ping while maintaining backward compatibility with older ping statuses. (0xf1_freeshardServerPoll.js) (Thanks Karasho and Xuri)
 
@@ -18,6 +23,21 @@
 27/10/2024 -Dragon Slayer
 	Corrected a misspelling of IsBoat in magic.js.
 	Added support for iterating through items in boats using FirstItem(), NextItem() and FinishedItems() methods
+
+20/10/2024 - Dragon Slayer
+	Added SetRandomColor("#") to js functions. (Thanks, Xuri)
+
+14/10/2024 - Dragon Slayer
+    Added the CheckInstaLog JS function to allow checking if a specific location is within an instant logout zone (SEFunctions.cpp). (thanks, Xuri)
+
+12/10/2024 - Dragon Slayer
+	Added Mini-House Addons from AOS Expansion.
+
+11/10/2024 - Dragon Slayer
+	Added ML House Addons.
+
+10/09/2024 - Dragon Slayer
+	Added base functionality for Khaldun Puzzle Chests, which can be unlocked by solving a puzzle, with bonus hints for the solution given based on player's lockpicking skill
 
 13/08/2024 - Dragon Slayer/Xuri
 	The onAttack/onDefense JS Events have been updated with three new parameters 	(hitStatus, hitLocation, damage) and will now also trigger when attacks miss.
@@ -83,6 +103,13 @@
 
 27/05/2024 - Dragon Slayer
 	Added Missing Wand ID's to combat weapon type in core and in js.
+
+25/05/2024 - Dragon Slayer
+	Added special_moves.js There is 12 special aos moves you can find on uoguide.com.
+	Added blockequip.js This script is used to block reqeuiping weapons.
+	Thanks to Xuri for making unequipattemp work for chars and not just items.
+	Added OnCombatHit
+		-Triggers for character with event attached when someone has taken damage.
 
 13/05/2024 - Dragon Slayer
 	Added New Shield Type 107 so shield ID's no longer have to be in hard code for shields to work properly

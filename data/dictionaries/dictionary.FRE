@@ -3462,6 +3462,20 @@
 5721=Vous ne pouvez pas creuser de trésor là-bas !
 5722=coordonnées %s
 5723=Terminé
+// [5751-5765] Verrouillage du karma et sanctuaire
+5751=Le karma est verrouillé. Un mantra prononcé dans un sanctuaire le déverrouillera à nouveau.
+5752=Votre karma a été verrouillé. Votre karma ne peut plus être augmenté.
+5753=Votre karma a été déverrouillé. Votre karma peut être augmenté à nouveau.
+5754=Verrouiller le karma
+5755=Déverrouiller le karma
+5756=Resurrection
+5757=Dîmer l'or
+5758=Vous avez décidé de ne pas verser la dîme d'or au sanctuaire.
+5759=Vous n'avez pas assez d'or pour verser cette dîme !
+5760=Vous versez la dîme d'or au sanctuaire en signe de dévotion.
+5761=Il est possible pour vous de ressusciter ici dans ce sanctuaire. Souhaitez-vous essayer ?<br>CONTINUER - Vous avez choisi d'essayer de revenir à la vie maintenant.<br>ANNULER - Vous préférez rester un fantôme pour l'instant.
+5762=Il est possible pour vous de ressusciter ici dans ce sanctuaire des Vertus. Souhaitez-vous essayer ?<br>CONTINUER - Vous avez choisi d'essayer de revenir à la vie maintenant.<br>ANNULER - Vous préférez rester un fantôme pour l'instant.
+5763=<center>Résurrection</center>
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.
@@ -5507,5 +5521,42 @@
 19140=La saleté doit d'abord être ramollie.
 19141=Vous plantez la graine dans le bol de terre.
 19142=Vous devez utiliser une graine sur un bol de terre !
+// [19201-19300] Coups spéciaux
+19201=Vous avez besoin de %i compétence d'arme pour effectuer cette attaque
+19202=Vous avez besoin de %i mana pour effectuer cette attaque
+19203=Votre attaque pénètre leur armure !
+19204=Le coup a pénétré votre armure !
+19205=Votre cible saigne !
+19206=Vous saignez !
+19207=Vous saignez abondamment
+19208=%i saigne abondamment
+19209=Vous avez provoqué une commotion cérébrale !
+19210=Vous vous sentez désorienté !
+19211=Vous avez porté un coup fatal !
+19212=Vous subissez des dégâts supplémentaires grâce à l'attaque écrasante !
+19213=Vous ne pouvez pas désarmer votre adversaire.
+19214=Votre cible n'est déjà pas armée !
+19215=Vous désarmez votre arme !
+19216=Votre arme a été désarmée !
+19217=Vous ne pouvez pas effectuer cette attaque en étant monté ou en vol !
+19218=Cette attaque ne fonctionne que sur des cibles montées ou volantes
+19219=La force de votre attaque les a déloges de leur monture !
+19220=Vous avez été renversé de votre monture par %i !
+19221=Votre arme doit contenir une dose de poison pour effectuer une frappe contagieuse !
+19222=Votre frappe précise a augmenté le niveau du poison de 1
+19223=Le poison semble très efficace !
+19224=Vous avez empoisonné votre cible : %i
+19225=%i : vous a empoisonné !
+19226=Vous infligez une blessure mortelle !
+19227=Vous avez été mortellement blessé !
+19228=Votre cible résiste à la paralysie.
+19229=Vous résistez à la paralysie.
+19230=L'attaque vous a temporairement paralysé !
+19231=Vous n'avez pas la furtivité requise pour effectuer cette attaque
+19232=Vous frappez et vous cachez dans l'ombre !
+19233=Vous êtes étourdi par l'attaque et votre attaquant disparaît !
+19234=Votre confusion est passée, vous pouvez maintenant armer une arme !
+19235=Vous n'êtes plus mortellement blessé.
+19236=Les plaies saignantes ont guéri, vous ne saignez plus !
 }
 EOF

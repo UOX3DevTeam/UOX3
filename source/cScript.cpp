@@ -55,6 +55,7 @@ static JSFunctionSpec my_functions[] =
 	{ "CalcCharFromSer",			SE_CalcCharFromSer,			1, 0, 0 },
 	{ "CalcItemFromSer",			SE_CalcItemFromSer,			1, 0, 0 },
 	{ "CalcMultiFromSer",			SE_CalcMultiFromSer,		1, 0, 0 },
+	{ "CheckInstaLog",				SE_CheckInstaLog,			4, 0, 0 },
 	{ "GetHour",					SE_GetHour,					0, 0, 0 },
 	{ "GetMinute",					SE_GetMinute,				0, 0, 0 },
 	{ "GetDay",						SE_GetDay,					0, 0, 0 },
@@ -3903,6 +3904,37 @@ SI08 cScript::OnCombatEnd( CChar *currChar, CChar *targChar )
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnCombatEnd, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnCombatHit()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for character with event attached when someone has taken damage.
+//|					
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnCombatHit( CChar *attacker, CChar *defender )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( attacker ) || !ValidateObject( defender ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnCombatHit, "onCombatHit" ))
+		return RV_NOFUNC;
+
+	jsval rval, params[2];
+	JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
+	JSObject *defObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( attObj );
+	params[1] = OBJECT_TO_JSVAL( defObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCombatHit", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnCombatHit, false );
 		return RV_NOFUNC;
 	}
 

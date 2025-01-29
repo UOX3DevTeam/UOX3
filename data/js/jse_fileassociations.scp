@@ -100,6 +100,7 @@
 2203=server/misc/charges_left_tooltip.js
 2204=server/network/0xDF_buffBar.js
 2205=server/misc/spawnergump.js
+2206=server/network/0xbf_special_move.js
 
 // Server Data [2500-2749]
 2500=server/data/weapontypes.js
@@ -287,6 +288,8 @@
 5060=item/elixirofingots.js
 5061=item/quivers.js
 5062=item/equip_effects/updatequivercount.js
+5061=item/puzzlechest.js
+5062=item/shrines.js
 
 19100=item/plant_growing/plantsystem.js
 19101=item/plant_growing/plantbowl.js
@@ -337,6 +340,8 @@
 // Combat Scripts [7000-7499]
 //-------------------------------------------
 7000=combat/peacemake_effect.js
+7001=combat/special_moves.js
+7002=combat/blockequip.js
 7003=combat/leechstats.js
 
 //-------------------------------------------

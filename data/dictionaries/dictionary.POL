@@ -3298,6 +3298,20 @@
 5721=Nie możesz tam szukać skarbów!
 5722=współrzędne %s
 5723=Zakończono
+// [5751-5765] Blokada karmy i świątynia
+5751=Karma jest zablokowana. Mantra wypowiedziana w świątyni ją odblokuje.
+5752=Twoja karma została zablokowana. Twojej karmy nie można już podnieść.
+5753=Twoja karma została odblokowana. Twoją karmę można podnieść ponownie.
+5754=Zablokuj karmę
+5755=Odblokuj karmę
+5756=Wskrześ
+5757=Dziesięcina złota
+5758=Postanowiłeś nie dawać dziesięciny złota do świątyni.
+5759=Nie masz wystarczająco dużo złota, aby dać dziesięcinę w takiej kwocie!
+5760=Dajesz dziesięcinę złota do świątyni jako znak oddania.
+5761=Możesz zostać wskrzeszony tutaj, w tym Sanktuarium. Czy chcesz spróbować?<br>KONTYNUUJ - Wybrałeś próbę powrotu do życia teraz.<br>ANULUJ - Wolisz pozostać duchem na razie.
+5762=Możesz zostać wskrzeszony tutaj, w tym Sanktuarium Cnót. Czy chcesz spróbować?<br>KONTYNUUJ - Wybrałeś próbę powrotu do życia teraz.<br>ANULUJ - Wolisz pozostać duchem na razie.
+5763=<center>Zmartwychwstanie</center>
 // [6000-6499] Różne umiejętności Msgs
 6000=Ta osoba wygląda na %s i %t.
 6001=Nie możesz zrobić z tego nic użytecznego.
@@ -5351,5 +5365,42 @@
 19140=Najpierw należy zmiękczyć brud.
 19141=Zasiewasz ziarno w misce z ziemią.
 19142=Musisz użyć nasion na misce ziemi!
+// [19201-19300] Ruchy specjalne
+19201=Potrzebujesz %i umiejętności posługiwania się bronią, aby wykonać ten atak
+19202=Potrzebujesz %i many, aby wykonać ten atak
+19203=Twój atak przebija ich zbroję!
+19204=Cios przebił twoją zbroję!
+19205=Twój cel krwawi!
+19206=Krwawisz!
+19207=Obficie krwawisz
+19208=%i obficie krwawi
+19209=Doznałeś wstrząsu mózgu!
+19210=Czujesz się zdezorientowany!
+19211=Zadałeś miażdżący cios!
+19212=Otrzymujesz dodatkowe obrażenia od miażdżącego ataku!
+19213=Nie możesz rozbroić przeciwnika.
+19214=Twój cel jest już nieuzbrojony!
+19215=Rozbrajasz ich broń!
+19216=Twoja broń została rozbrojona!
+19217=Nie możesz wykonać tego ataku na koniu lub w locie!
+19218=Ten atak działa tylko na cele konne lub latające
+19219=Siła twojego ataku zrzuciła ich z wierzchowca!
+19220=Zostałeś strącony z wierzchowca przez %i!
+19221=Twoja broń musi zawierać dawkę trucizny, aby wykonać zaraźliwy atak!
+19222=Twoje precyzyjne uderzenie zwiększyło poziom trucizny o 1
+19223=Trucizna wydaje się wyjątkowo skuteczna!
+19224=Otrułeś swój cel: %i
+19225=%i: otrułem cię!
+19226=Zadajesz śmiertelną ranę!
+19227=Zostałeś śmiertelnie ranny!
+19228=Twój cel jest odporny na paraliż.
+19229=Jesteś odporny na paraliż.
+19230=Atak chwilowo cię sparaliżował!
+19231=Brakuje Ci wymaganej umiejętności ukrywania się, aby wykonać ten atak
+19232=Uderzasz i chowasz się w cieniu!
+19233=Jesteś oszołomiony atakiem i twój napastnik znika!
+19234=Twoje zamieszanie minęło, możesz teraz uzbroić broń!
+19235=Nie jesteś już śmiertelnie ranny.
+19236=Krwawiące rany się zagoiły, już nie krwawisz!
 }
 EOF
