@@ -34,6 +34,9 @@
 	Added SetRandomColor("#") to js functions. (Thanks, Xuri)
 
 14/10/2024 - Dragon Slayer
+    	Added CheckTimeSinceLastCombat that records the time when combat starts as a timestamp(SEFunctions.cpp).
+
+14/10/2024 - Dragon Slayer
     Added the CheckInstaLog JS function to allow checking if a specific location is within an instant logout zone (SEFunctions.cpp). (thanks, Xuri)
 
 12/10/2024 - Dragon Slayer
