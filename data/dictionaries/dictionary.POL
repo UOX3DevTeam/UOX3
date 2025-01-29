@@ -3298,6 +3298,20 @@
 5721=Nie możesz tam szukać skarbów!
 5722=współrzędne %s
 5723=Zakończono
+// [5751-5765] Blokada karmy i świątynia
+5751=Karma jest zablokowana. Mantra wypowiedziana w świątyni ją odblokuje.
+5752=Twoja karma została zablokowana. Twojej karmy nie można już podnieść.
+5753=Twoja karma została odblokowana. Twoją karmę można podnieść ponownie.
+5754=Zablokuj karmę
+5755=Odblokuj karmę
+5756=Wskrześ
+5757=Dziesięcina złota
+5758=Postanowiłeś nie dawać dziesięciny złota do świątyni.
+5759=Nie masz wystarczająco dużo złota, aby dać dziesięcinę w takiej kwocie!
+5760=Dajesz dziesięcinę złota do świątyni jako znak oddania.
+5761=Możesz zostać wskrzeszony tutaj, w tym Sanktuarium. Czy chcesz spróbować?<br>KONTYNUUJ - Wybrałeś próbę powrotu do życia teraz.<br>ANULUJ - Wolisz pozostać duchem na razie.
+5762=Możesz zostać wskrzeszony tutaj, w tym Sanktuarium Cnót. Czy chcesz spróbować?<br>KONTYNUUJ - Wybrałeś próbę powrotu do życia teraz.<br>ANULUJ - Wolisz pozostać duchem na razie.
+5763=<center>Zmartwychwstanie</center>
 // [6000-6499] Różne umiejętności Msgs
 6000=Ta osoba wygląda na %s i %t.
 6001=Nie możesz zrobić z tego nic użytecznego.

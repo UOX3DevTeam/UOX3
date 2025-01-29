@@ -13,6 +13,11 @@
 
 [ENVOKE]
 {
+//Shrines
+0x0002=5062
+0x0003=5062
+0x0004=5062
+0x0005=5062
 // -------------
 // cooking start
 // use : on : to get
