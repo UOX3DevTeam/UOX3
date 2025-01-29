@@ -3298,6 +3298,20 @@
 5721=Você não pode cavar em busca de tesouros lá!
 5722=coordenadas %s
 5723=Concluído
+// [5751-5765] Bloqueio e Santuário do Karma
+5751=Karma está bloqueado. Um mantra falado num santuário irá desbloqueá-lo novamente.
+5752=O seu karma foi bloqueado. O seu carma não pode mais ser aumentado.
+5753=O seu karma foi desbloqueado. O seu carma pode ser aumentado novamente.
+5754=Bloquear Carma
+5755=Desbloquear Carma
+5756=Ressuscitar
+5757=Dízimo Ouro
+5758=Decidiu não dar o dízimo de ouro ao santuário.
+5759=Não tens ouro suficiente para dizimar essa quantia!
+5760=Dás o dízimo de ouro ao santuário como sinal de devoção.
+5761=É possível que ressuscite aqui neste Santuário. Deseja tentar?<br>CONTINUAR - Escolheu tentar voltar à vida agora.<br>CANCELAR - Prefere permanecer um fantasma por enquanto.
+5762=É possível que ressuscite aqui neste santuário das Virtudes. Deseja tentar?<br>CONTINUAR - Escolheu tentar voltar à vida agora.<br>CANCELAR - Prefere permanecer um fantasma por enquanto.
+5763=<center>Ressurreição</center>
 // [6000-6499] Misc Skill Msgs
 6000=Que a pessoa parece %s e %t.
 6001=Não se pode fazer nada de útil com isso.
@@ -3431,6 +3445,7 @@
 6301=Apenas um Grão-Mestre Alquimista pode aprender com este livro.
 6302=Você já aprendeu esta informação.
 6303=Você aprendeu a fazer itens de vidro. Você precisará encontrar mineiros para extrair areia fina para fazer esses itens.
+6304=Você deve ter a mão livre para beber uma poção.
 // [7000-7499] AI Scripts
 7000=Tu és um criminoso e não podes aceder à tua caixa bancária.
 7001=Que artigo deseja depositar na sua caixa bancária?
@@ -4679,7 +4694,6 @@
 11619=pão de pão
 11620=panha de biscoitos
 11621=bolo
-11622=muffins
 11622=quiché cozido
 11623=torta de carne assada
 11624=sausage pizza
@@ -4715,6 +4729,7 @@
 11654=É preciso estar perto de uma fonte de calor para cozinhar os alimentos.
 11655=Tem de estar perto de um moinho para criar farinha.
 11656=Tem de estar perto de um forno para cozer alimentos.
+11657=muffins
 // 11801 - 12000 Habilidade de Artesanato de Sininho
 // Página 1 - Artigos de madeira
 11801=Eixo
@@ -5345,5 +5360,42 @@
 19140=A sujeira precisa ser amolecida primeiro.
 19141=Você planta a semente na tigela de terra.
 19142=Você deve usar uma semente em uma tigela de terra!
+// [19201-19300] Movimentos Especiais
+19201=Você precisa de %i habilidade com arma para realizar esse ataque
+19202=Você precisa de %i mana para realizar esse ataque
+19203=Seu ataque penetra na armadura deles!
+19204=O golpe penetrou em sua armadura!
+19205=Seu alvo está sangrando!
+19206=Você está sangrando!
+19207=Você está sangrando muito
+19208=%i está sangrando profusamente
+19209=Você causou uma concussão!
+19210=Você se sente desorientado!
+19211=Você desferiu um golpe esmagador!
+19212=Você sofre dano extra com o ataque esmagador!
+19213=Você não pode desarmar seu oponente.
+19214=Seu alvo já está desarmado!
+19215=Você desarma a arma deles!
+19216=Sua arma foi desarmada!
+19217=Você não pode realizar esse ataque enquanto estiver montado ou voando!
+19218=Este ataque só funciona em alvos montados ou voadores
+19219=A força do seu ataque os desalojou da montaria!
+19220=Você foi derrubado da montaria por %i!
+19221=Sua arma deve ter uma dose de veneno para realizar um ataque infeccioso!
+19222=Seu ataque preciso aumentou o nível do veneno em 1
+19223=O veneno parece extremamente eficaz!
+19224=Você envenenou seu alvo: %i
+19225=%i: envenenou você!
+19226=Você causou um ferimento mortal!
+19227=Você foi mortalmente ferido!
+19228=Seu alvo resiste à paralisia.
+19229=Você resiste à paralisia.
+19230=O ataque paralisou você temporariamente!
+19231=Você não tem a furtividade necessária para realizar esse ataque
+19232=Você ataca e se esconde nas sombras!
+19233=Você fica atordoado com o ataque e seu atacante desaparece!
+19234=Sua confusão passou, agora você pode armar uma arma!
+19235=Você não está mais mortalmente ferido.
+19236=As feridas sangrentas sararam, você não está mais sangrando!
 }
 EOF

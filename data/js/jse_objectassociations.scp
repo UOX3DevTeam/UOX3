@@ -13,6 +13,11 @@
 
 [ENVOKE]
 {
+//Shrines
+0x0002=5062
+0x0003=5062
+0x0004=5062
+0x0005=5062
 // -------------
 // cooking start
 // use : on : to get
@@ -580,6 +585,8 @@
 0x10a4=15007
 
 // Swords
+0x0EC2=5009 //cleaver
+0x0EC3=5009 //cleaver
 0x0EC4=5009 //skinning knife
 0x0EC5=5009 //skinning knife
 0x0F60=5009 //longsword
