@@ -1,0 +1,199 @@
+// Base Item for Mini House: Stone and Plaster
+[0x22C4]
+{
+get=base_item
+name=Mini House: Stone and Plaster
+id=0x22C4
+weight=1000
+movable=1
+origin=aos
+}
+
+// Base Item for Mini House: Field Stone
+[0x22DE]
+{
+get=base_item
+name=Mini House: Field Stone
+id=0x22DE
+weight=1000
+movable=1
+origin=aos
+}
+
+// Base Item for Mini House: Small Brick
+[0x22DF]
+{
+get=base_item
+name=Mini House: Small Brick
+id=0x22DF
+weight=1000
+movable=1
+origin=aos
+}
+
+// Base Item for Mini House: Wooden
+[0x22C9]
+{
+get=base_item
+name=Mini House: Wooden
+id=0x22C9
+weight=1000
+movable=1
+origin=aos
+}
+
+// Base Item for Mini House: Wood and Plaster
+[0x22E0]
+{
+get=base_item
+name=Mini House: Wood and Plaster
+id=0x22E0
+weight=1000
+movable=1
+origin=aos
+}
+
+// Base Item for Mini House: Thatched-Roof Cottage
+[0x22E1]
+{
+get=base_item
+name=Mini House: Thatched-Roof Cottage
+id=0x22E1
+weight=1000
+movable=1
+origin=aos
+}
+
+// Base Items for Mini House: Brick
+[0x22CD]
+{
+get=base_item
+name=Mini House: Brick Part 1
+id=0x22CD
+weight=1000
+movable=1
+origin=aos
+}
+
+[0x22CB]
+{
+get=base_item
+name=Mini House: Brick Part 2
+id=0x22CB
+weight=1000
+movable=1
+origin=aos
+}
+
+[0x22CC]
+{
+get=base_item
+name=Mini House: Brick Part 3
+id=0x22CC
+weight=1000
+movable=1
+origin=aos
+}
+
+[0x22CA]
+{
+get=base_item
+name=Mini House: Brick Part 4
+id=0x22CA
+weight=1000
+movable=1
+origin=aos
+}
+
+// Base Items for Mini House: Two-Story Wood and Plaster
+[0x2301]
+{
+get=base_item
+name=Mini House: Two-Story Wood and Plaster Part 1
+id=0x2301
+weight=1000
+movable=1
+origin=aos
+}
+
+[0x2302]
+{
+get=base_item
+name=Mini House: Two-Story Wood and Plaster Part 2
+id=0x2302
+weight=1000
+movable=1
+origin=aos
+}
+
+[0x2304]
+{
+get=base_item
+name=Mini House: Two-Story Wood and Plaster Part 3
+id=0x2304
+weight=1000
+movable=1
+origin=aos
+}
+
+[0x2303]
+{
+get=base_item
+name=Mini House: Two-Story Wood and Plaster Part 4
+id=0x2303
+weight=1000
+movable=1
+origin=aos
+}
+
+// Base Items for Mini House: Malas Mountain Pass
+[0x2316]
+{
+get=base_item
+name=Mini House: Malas Mountain Pass Part 1
+id=0x2316
+weight=1000
+movable=1
+origin=aos
+}
+
+[0x2315]
+{
+get=base_item
+name=Mini House: Malas Mountain Pass Part 2
+id=0x2315
+weight=1000
+movable=1
+origin=aos
+}
+
+[0x2314]
+{
+get=base_item
+name=Mini House: Malas Mountain Pass Part 3
+id=0x2314
+weight=1000
+movable=1
+origin=aos
+}
+
+[0x2313]
+{
+get=base_item
+name=Mini House: Malas Mountain Pass Part 4
+id=0x2313
+weight=1000
+movable=1
+origin=aos
+}
+
+// Base Item for Mini House: Church at Night
+[0x2318]
+{
+get=base_item
+name=Mini House: Church at Night
+id=0x2318
+weight=1000
+movable=1
+origin=aos
+}

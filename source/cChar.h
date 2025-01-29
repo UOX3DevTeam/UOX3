@@ -378,6 +378,7 @@ public:
 	bool		IsShop( void ) const;
 	bool		IsDead( void ) const;
 	bool		GetCanAttack( void ) const;
+	bool		GetKarmaLock( void ) const;
 	bool		IsAtWar( void ) const;
 	bool		IsPassive( void ) const;
 	auto		HasStolen() -> bool;
@@ -406,6 +407,7 @@ public:
 	void		SetShop( bool newVal );
 	void		SetDead( bool newValue );
 	void		SetCanAttack( bool newValue );
+	void		SetKarmaLock( bool newValue );
 	void		SetPeace( UI32 newValue );
 	void		SetWar( bool newValue );
 	void		SetPassive( bool newValue );

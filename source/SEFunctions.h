@@ -48,6 +48,7 @@ SEngineFunc SE_CalcItemFromSer;		//											***
 SEngineFunc SE_CalcMultiFromSer;	//											***
 
 SEngineFunc SE_CheckTimeSinceLastCombat;
+SEngineFunc SE_CheckInstaLog;
 
 SEngineFunc SE_MakeItem;			//											***
 
