@@ -7180,7 +7180,7 @@ JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 	{
 		firstItem = ( static_cast<CItem *>( myObj ))->GetContainsList()->First();
 	}
-	else if( myObj->GetObjType() == OT_MULTI )
+	else if( myObj->GetObjType() == OT_MULTI || myObj->GetObjType() == OT_BOAT )
 	{
 		firstItem = ( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->First();
 	}
@@ -7231,7 +7231,7 @@ JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 	{
 		nextItem = ( static_cast<CItem *>( myObj ))->GetContainsList()->Next();
 	}
-	else if( myObj->GetObjType() == OT_MULTI )
+	else if( myObj->GetObjType() == OT_MULTI || myObj->GetObjType() == OT_BOAT )
 	{
 		nextItem = ( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Next();
 	}
@@ -7281,7 +7281,7 @@ JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 	{
 		*rval = BOOLEAN_TO_JSVAL(( static_cast<CItem *>( myObj ))->GetContainsList()->Finished() );
 	}
-	else if( myObj->GetObjType() == OT_MULTI )
+	else if( myObj->GetObjType() == OT_MULTI || myObj->GetObjType() == OT_BOAT )
 	{
 		*rval = BOOLEAN_TO_JSVAL(( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Finished() );
 	}
@@ -7980,12 +7980,41 @@ JSBool CBase_SetRandomName( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-	CBaseObject *mObj			= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
+	CBaseObject *mObj		= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
 	std::string namelist	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 
 	if( !namelist.empty() )
 	{
 		SetRandomName( mObj, namelist );
+		*rval = JSVAL_TRUE;
+		return JS_TRUE;
+	}
+
+	*rval = JSVAL_FALSE;
+	return JS_TRUE;
+}
+
+UI16 AddRandomColor( const std::string& colorlist );
+//o------------------------------------------------------------------------------------------------o
+//|    Function    -    CBase_SetRandomColor()
+//|    Prototype    -    bool SetRandomColor( "colorlist" )
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Applies a random color from specified colorlist to character or item
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_SetRandomColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "SetRandomColor: Invalid number of arguments (takes 1, colorlist string)" );
+		return JS_FALSE;
+	}
+
+	CBaseObject *mObj			= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
+	std::string colorlist		= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+
+	if( !colorlist.empty() )
+	{
+		mObj->SetColour( AddRandomColor( colorlist ));
 		*rval = JSVAL_TRUE;
 		return JS_TRUE;
 	}

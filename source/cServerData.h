@@ -212,7 +212,7 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<106>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<107>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
@@ -406,6 +406,7 @@ private:
 	SI16		combatNpcBaseFleeAt;			//	% of HP where an NPC will flee, if it's not defined for them
 	SI16		combatNpcBaseReattackAt;		//	% of HP where an NPC will resume attacking
 	SI16		combatAttackStamina;			//	Amount of stamina lost when hitting an opponent
+	SI16		swingSpeedIncreaseCap;			//	The Cap for swing speed property
 
 	// Start & Location Settings
 	std::vector<__STARTLOCATIONDATA__>	startlocations;
@@ -634,6 +635,9 @@ public:
 
 	auto		YoungPlayerSystem( bool value ) -> void;
 	auto		YoungPlayerSystem() const -> bool;
+
+	auto		KarmaLocking( bool value ) -> void;
+	auto		KarmaLocking() const -> bool;
 
 	auto		ShowOfflinePCs( bool value ) -> void;
 	auto		ShowOfflinePCs() const -> bool;
@@ -959,6 +963,7 @@ public:
 	auto		BODsFromCraftedItemsOnly( bool value ) -> void;
 	auto		BODsFromCraftedItemsOnly() const -> bool;
 
+
 	auto		PhysicalResistCap( SI16 value ) -> void;
 	SI16		PhysicalResistCap() const;
 	auto		FireResistCap( SI16 value ) -> void;
@@ -972,6 +977,10 @@ public:
 
 	auto		DefenseChanceIncreaseCap( SI16 value ) -> void;
 	SI16		DefenseChanceIncreaseCap() const;
+
+	auto		SwingSpeedIncreaseCap( SI16 value ) -> void;
+	SI16		SwingSpeedIncreaseCap() const;
+
 
 	auto		MaxControlSlots( UI08 value ) -> void;
 	UI08		MaxControlSlots() const;

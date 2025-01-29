@@ -370,6 +370,8 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"MOONGATEFACETS"s, 347},
 	{"AUTOUNEQUIPPEDCASTING"s, 348},
 	{"LOOTDECAYSWITHNPCCORPSE"s, 349},
+	{"SWINGSPEEDINCREASECAP"s, 353},
+	{"KARMALOCKING"s, 354}
 	{"PHYSICALRESISTCAP"s, 355},
 	{"FIRERESISTCAP"s, 356},
 	{"COLDRESISTCAP"s, 357},
@@ -487,6 +489,7 @@ constexpr auto BIT_SNOOPAWARENESS					= UI32( 102 );
 constexpr auto BIT_YOUNGPLAYERSYSTEM				= UI32( 103 );
 constexpr auto BIT_AUTOUNEQUIPPEDCASTING			= UI32( 104 );
 constexpr auto BIT_LOOTDECAYSONNPCCORPSE			= UI32( 105 );
+constexpr auto BIT_KARMALOCKING						= UI32( 106 );
 
 
 // New uox3.ini format lookup
@@ -629,6 +632,7 @@ auto CServerData::ResetDefaults() -> void
 
 	InternalAccountStatus( true );
 	YoungPlayerSystem( true );
+	KarmaLocking( true );
 	CombatMaxRange( 10 );
 	CombatMaxSpellRange( 10 );
 
@@ -735,6 +739,7 @@ auto CServerData::ResetDefaults() -> void
 	PetCombatTraining( true );
 	HirelingCombatTraining( true );
 	NpcCombatTraining( false );
+	SwingSpeedIncreaseCap( 60 );
 	WeaponDamageBonusType( 2 );
 
 	CheckPetControlDifficulty( true );
@@ -2099,6 +2104,20 @@ auto CServerData::YoungPlayerSystem() const -> bool
 auto CServerData::YoungPlayerSystem( bool newVal ) -> void
 {
 	boolVals.set( BIT_YOUNGPLAYERSYSTEM, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::KarmaLocking()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the KarmaLocking system is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::KarmaLocking() const -> bool
+{
+	return boolVals.test( BIT_KARMALOCKING );
+}
+auto CServerData::KarmaLocking( bool newVal ) -> void
+{
+	boolVals.set( BIT_KARMALOCKING, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5084,6 +5103,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "ENABLENPCGUILDDISCOUNTS=" << ( EnableNPCGuildDiscounts() ? 1 : 0 ) << '\n';
 		ofsOutput << "ENABLENPCGUILDPREMIUMS=" << ( EnableNPCGuildPremiums() ? 1 : 0 ) << '\n';
 		ofsOutput << "YOUNGPLAYERSYSTEM=" << ( YoungPlayerSystem() ? 1 : 0 ) << '\n';
+		ofsOutput << "KARMALOCKING=" << ( KarmaLocking() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
@@ -5214,7 +5234,8 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "POISONRESISTCAP=" << PoisonResistCap() << '\n';
 		ofsOutput << "ENERGYRESISTCAP=" << EnergyResistCap() << '\n';
 		ofsOutput << "DEFENSECHANCEINCREASECAP=" << DefenseChanceIncreaseCap() << '\n';
-
+		ofsOutput << "WEAPONSWINGSPEEDINCREASECAP=" << SwingSpeedIncreaseCap() << '\n';
+    
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
@@ -5495,6 +5516,18 @@ auto CServerData::DefenseChanceIncreaseCap() const -> SI16
 auto CServerData::DefenseChanceIncreaseCap( SI16 value ) -> void
 {
 	defenseChanceIncreaseCap = value;
+}
+//|	Function	-	CServerData::SwingSpeedIncreaseCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for swing speed cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SwingSpeedIncreaseCap() const -> SI16
+{
+	return swingSpeedIncreaseCap;
+}
+auto CServerData::SwingSpeedIncreaseCap( SI16 value ) -> void
+{
+	swingSpeedIncreaseCap = value;
 }
 
 
@@ -6667,6 +6700,12 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 349:	 // LOOTDECAYSWITHNPCCORPSE
 			NpcCorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
+		case 353:	// SWINGSPEEDINCREASE
+			SwingSpeedIncreaseCap( std::stof( value ));
+			break;
+		case 354:	 // KARMALOCKING
+			KarmaLocking( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
 		case 355:	// PHYSICALRESISTCAP
 			PhysicalResistCap( std::stof( value ));
 			break;
@@ -6684,7 +6723,6 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 360:	// DEFENSECHANCEINCREASECAP
 			DefenseChanceIncreaseCap( std::stof( value ));
-			break;
 		default:
 			rValue = false;
 			break;
