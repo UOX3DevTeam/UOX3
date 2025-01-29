@@ -235,6 +235,9 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 			}
 		}
 	}
+    // Record the time when combat starts as a timestamp
+	cAttack->SetLastCombatTime( cwmWorldState->GetUICurrentTime() );
+	cTarget->SetLastCombatTime( cwmWorldState->GetUICurrentTime() );
 	return true;
 }
 
@@ -579,6 +582,10 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 
 	if( !StartAttack( cAttack, cTarget )) // Is the char allowed to initiate combat with the target?
 		return;
+
+    // Update last combat time for both the attacker and the target
+	cAttack->SetLastCombatTime( cwmWorldState->GetUICurrentTime() );
+	cTarget->SetLastCombatTime( cwmWorldState->GetUICurrentTime() );
 
 	if( cAttack->CheckAggressorFlag( cTarget->GetSerial() ))
 	{
