@@ -78,7 +78,6 @@ JSMethodFunc CChar_EmoteMessage;
 JSMethodFunc CChar_OpenBank;
 JSMethodFunc CChar_DirectionTo;
 JSMethodFunc CChar_TurnToward;
-JSMethodFunc CChar_ResourceCount;
 JSMethodFunc CChar_CheckSkill;
 JSMethodFunc CChar_FindItemLayer;
 JSMethodFunc CChar_SpeechInput;
@@ -187,6 +186,7 @@ JSMethodFunc CBase_UpdateStats;
 JSMethodFunc CBase_Resist;
 JSMethodFunc CBase_IsBoat;
 JSMethodFunc CBase_CanSee;
+JSMethodFunc CBase_ResourceCount;
 JSMethodFunc CBase_UseResource;
 JSMethodFunc CBase_AddScriptTrigger;
 JSMethodFunc CBase_HasScriptTrigger;
@@ -394,7 +394,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "OpenBank",			CChar_OpenBank,			1, 0, 0 },
 	{ "DirectionTo",		CChar_DirectionTo,		1, 0, 0 },
 	{ "TurnToward",			CChar_TurnToward,		1, 0, 0 },
-	{ "ResourceCount",		CChar_ResourceCount,	2, 0, 0 },
+	{ "ResourceCount",		CBase_ResourceCount,	2, 0, 0 },
 	{ "UseResource",		CBase_UseResource,		3, 0, 0 },
 	{ "CustomTarget",		CMisc_CustomTarget,		1, 0, 0 },
 	{ "PopUpTarget",		CMisc_PopUpTarget,		1, 0, 0 },
