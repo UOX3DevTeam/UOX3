@@ -8652,6 +8652,7 @@ myItem.TextMessage( "THIS IS A MESSAGE IN RUNIC LETTERS VISIBLE TO ALL", true, 0
 									<p><em>int UseResource( amount, itemID );</em></p>
 									<p><em>int UseResource( amount, itemID, colour );</em></p>
 									<p><em>int UseResource( amount, itemID, colour, moreVal );</em></p>
+									<p><em>int UseResource( amount, itemID, colour, moreVal, sectionID );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -8663,14 +8664,18 @@ myItem.TextMessage( "THIS IS A MESSAGE IN RUNIC LETTERS VISIBLE TO ALL", true, 0
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Use resource of specific ID, with specific color (0)
-myChar.UseResource( 5, 0x1bf2, 0 );
+									<pre><code class="language-javascript">
+	// Use resource of specific ID, with specific color (0)
+	myChar.UseResource( 5, 0x1bf2, 0 );
 
-// Use resource of specific ID, and colour
-myChar.UseResource( 5, 0x1bf2, 0x0482 );
+	// Use resource of specific ID, and colour
+	myChar.UseResource( 5, 0x1bf2, 0x0482 );
 
-// Use resource of specific ID, colour and MORE value
-myChar.UseResource( 5, 0x1bf2, 0x0482, 1 );</code></pre>
+	// Use resource of specific ID, colour and MORE value
+	myChar.UseResource( 5, 0x1bf2, 0x0482, 1 );
+
+	// Use resource of specific ID, colour and MORE value and sectionID
+	myChar.UseResource( 5, 0x1bf2, 0x0482, 1, "0x1bf2" );</code></pre>
 								</div>
 							</div>
 						</div>
