@@ -352,3 +352,18 @@ GETLBR=ratmanarcher_lbr
 GETAOS=ratmanarcher_aos
 GETTOL=ratmanarcher_tol
 }
+
+// Kapp - Base NPC with shared DFN tags
+[base_kappa]
+{
+GET=base_humanoid
+NAME=a kappa
+ID=0x0f0
+SCRIPT=3221
+ORIGIN=se
+}
+
+[kappa]
+{
+GETSE=kappa_se
+}

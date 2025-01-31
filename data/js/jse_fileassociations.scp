@@ -155,6 +155,7 @@
 3218=npc/ai/monster/chaos_dragoon.js
 3219=npc/ai/shopkeeper.js
 3220=npc/ai/bakekitsune.js
+3221=npc/ai/kappa.js
 
 // Magic Items
 3300=item/magic_items.js

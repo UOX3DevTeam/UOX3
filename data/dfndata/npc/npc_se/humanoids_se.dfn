@@ -1,0 +1,24 @@
+// NPCs in this file are generally not added or referenced directly.
+// Reference instead, the entries in the root npc folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+[kappa_se]
+{
+GET=base_kappa
+GOLD=175 225
+KARMA=-3000
+FAME=3000
+STR=195 225
+DEX=50 70
+INT=40 55
+HPMAX=150 180
+MAGICRESISTANCE=600 700
+TACTICS=800 900
+WRESTLING=600 650
+ANATOMY=0 0
+DAMAGE=13 26
+DEF=35 50
+ELEMENTRESIST=43 30 25 43
+TOPROV=636
+TOPEACE=636 5
+}
