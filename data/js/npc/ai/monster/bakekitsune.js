@@ -199,7 +199,7 @@ function RemoveDisguise( bakeKitsune )
 
 function onDeathBlow( bakeKitsune, pKiller )
 {
-	RemoveDisguiseCallback( bakeKitsune );
+	RemoveDisguise( bakeKitsune );
 	return true;
 }
 
