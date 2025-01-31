@@ -664,6 +664,13 @@ ADDITEM=0xC001,20
 ADDITEM=0x1bd1,100
 }
 
+//bake kitsune
+[CARVE 98]
+{
+ADDITEM=0x09f1,3// cut of raw ribs
+ADDITEM=0x1078,30// Pile of hides
+}
+
 [CARVE HUMAN]
 {
 ADDITEM=0x1DAE,1058

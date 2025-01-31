@@ -1,0 +1,33 @@
+// NPCs in this file are generally not added or referenced directly.
+// Reference instead, the entries in the root npc folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// bake kitsune - se stats
+[bakekitsune_se]
+{
+GET=base_bakekitsune
+GOLD=700 1000
+LOOT=midlevelscrolls,2
+LOOT=necroreagents,3
+//Missing Loot Special: Bonsai Seed
+STR=170 220
+DEX=125 145
+INT=375 425
+HP=310 350
+KARMA=-8000
+FAME=8000
+MAGERY=800 900
+MAGICRESISTANCE=800 1000
+EVALUATINGINTEL=800 900
+MEDITATION=850 950
+TACTICS=700 900
+WRESTLING=500 550
+DAMAGE=15 22
+//70% Physical Damage, 30% Energy Damage
+DEF=40 70
+ELEMENTRESIST=70 40 40 40
+TOTAME=807
+TOPROV=954
+TOPEACE=954 5
+SCRIPT=3300// magicitems.js
+}
