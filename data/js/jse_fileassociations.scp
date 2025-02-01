@@ -159,7 +159,6 @@
 3222=npc/ai/yomotsu_warrior.js
 3224=npc/ai/yamandon.js
 3225=npc/ai/raiju.js
-3226=npc/ai/summon/animated.js
 
 // Magic Items
 3300=item/magic_items.js
