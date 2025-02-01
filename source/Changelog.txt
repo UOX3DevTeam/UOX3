@@ -1,5 +1,5 @@
 01/02/2025 - Dragon Slayer
-	Fixed an issue where UOX3 would unnecessarily update a given player's status 	window repeatedly multiple times per server cycle (Thanks Xuri)
+	Fixed an issue where UOX3 would unnecessarily update a given player's status window repeatedly multiple times per server cycle (Thanks Xuri)
 
 22/01/2025 - Dragon Slayer
 	Added New Haven for trammel. (Regions.dfn)
