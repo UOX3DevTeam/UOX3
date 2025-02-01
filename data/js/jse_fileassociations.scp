@@ -154,8 +154,11 @@
 3217=npc/ai/guildmaster.js
 3218=npc/ai/monster/chaos_dragoon.js
 3219=npc/ai/shopkeeper.js
-3220=npc/ai/bakekitsune.js
+3220=npc/ai/bake_kitsune.js
 3221=npc/ai/kappa.js
+3222=npc/ai/yomotsu_warrior.js
+3224=npc/ai/yamandon.js
+3225=npc/ai/raiju.js
 
 // Magic Items
 3300=item/magic_items.js

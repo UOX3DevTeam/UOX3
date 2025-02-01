@@ -671,6 +671,12 @@ ADDITEM=0x09f1,3// cut of raw ribs
 ADDITEM=0x1078,30// Pile of hides
 }
 
+//yomotsu warrior
+[CARVE 99]
+{
+ADDITEM=0x09f1,1// cut of raw ribs
+}
+
 [CARVE HUMAN]
 {
 ADDITEM=0x1DAE,1058
