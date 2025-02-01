@@ -8056,7 +8056,7 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 		return false;
 	}</code></pre>
 
-									<pre><code class="language-javascript">// Looping through all items in character's backpack upon clicking an item with script attached
+    <pre><code class="language-javascript">// Looping through all items in character's backpack upon clicking an item with script attached
 	function onUseChecked( pUser, iUsed )
 	{
 		var mItem;
@@ -8070,7 +8070,7 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 		return false;
 	}</code></pre>
 
-									<pre><code class="language-javascript">// Looping through all items in a container upon using a container with script attached
+    <pre><code class="language-javascript">// Looping through all items in a container upon using a container with script attached
 	function onUseChecked( pUser, iUsed )
 	{
 		var mItem;
@@ -8621,16 +8621,14 @@ myObj.Teleport( iUsed );
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>
 										The function has 5 extra optional arguments (if including an optional parameter, make sure to also include the preceding argument):
-										<ul>
+										<p><<ul>
 											<li>allHear (broadcast true/false)</li>
 											<li>txtHue (colour of the text sent to the client)</li>
 											<li>speechTarget (intended target of message. 0 = only visible to sender and receiver, 1 = visible to all players in range, 2 = visible to all NPCs and players in range, 3 = visible to all PCs everywhere + NPCs in range, 4 = visible to all PCs everywhere (broadcast), 5 = only visible to receiver)</li>
 											<li>speechTargetSerial (serial of the receiver of the message, used if speechTarget is 0 or 5)</li>
 											<li>speechFontType (type of font to use. Defaults to normal. 0 = bold, 1 = normal with shadow, 2 = bold with shadow, 3 = normal, 4 = gothic, 5 = italic, 6 = small and dark, 7 = colourful, 8 = runic (only works with CAPS), 9 = small and light)</li>
-										</ul>
-									</p>
+										</ul></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
