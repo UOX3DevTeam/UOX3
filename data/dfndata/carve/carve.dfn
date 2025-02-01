@@ -677,6 +677,12 @@ ADDITEM=0x1078,30// Pile of hides
 ADDITEM=0x09f1,1// cut of raw ribs
 }
 
+//yamandon warrior
+[CARVE 100]
+{
+ADDITEM=0x1078,20// Pile of hides
+}
+
 [CARVE HUMAN]
 {
 ADDITEM=0x1DAE,1058

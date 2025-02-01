@@ -1,3 +1,16 @@
+// Base elementals with shared DFN tags
+[base_reptiles]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+NPCAI=2
+FLAG=NEUTRAL
+}
+
+//------------------------------------------------------------------------------------------------//
+
 [alligator]
 {
 NAME=#//an alligator
@@ -670,4 +683,19 @@ CARVE=45
 RACE=5
 FLAG=NEUTRAL
 CONTROLSLOTS=1
+}
+
+// yamandon - Base NPC with shared DFN tags
+[base_yamandon]
+{
+GET=base_yamandon
+NAME=a yamandon
+ID=0x0f9
+SCRIPT=3224
+ORIGIN=se
+}
+
+[yamandon]
+{
+GETSE=yamandon_se
 }
