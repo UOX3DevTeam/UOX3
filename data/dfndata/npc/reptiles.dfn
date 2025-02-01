@@ -689,7 +689,7 @@ CONTROLSLOTS=1
 [base_yamandon]
 {
 GET=base_yamandon
-NAME=a yamandon
+NAME=3249//a yamandon
 ID=0x0f9
 SCRIPT=3224
 ORIGIN=se
