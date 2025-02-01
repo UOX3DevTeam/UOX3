@@ -214,7 +214,7 @@ SCRIPT=3503
 [base_bakekitsune]
 {
 GET=base_agressiveanimals
-NAME=3246//a bake kitsune
+NAME=#//a bake kitsune
 ID=0x0f6
 NPCAI=2
 FLAG=EVIL

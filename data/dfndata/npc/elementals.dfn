@@ -657,7 +657,7 @@ FLAG=NEUTRAL
 [base_raiju]
 {
 GET=base_elemental
-NAME=3199//a Rai-Ju
+NAME=#//a Rai-Ju
 ID=0x0xc7
 SCRIPT=3225
 ORIGIN=se

@@ -357,7 +357,7 @@ GETTOL=ratmanarcher_tol
 [base_kappa]
 {
 GET=base_humanoid
-NAME=3240//a kappa
+NAME=#//a kappa
 ID=0x0f0
 SCRIPT=3221
 ORIGIN=se
@@ -372,7 +372,7 @@ GETSE=kappa_se
 [base_yomotsu_elder]
 {
 GET=base_humanoid
-NAME=3255//a yomotsu elder
+NAME=#//a yomotsu elder
 ID=0x0ff
 ORIGIN=se
 //Special Abilities:
@@ -390,7 +390,7 @@ GETSE=yomotsuelder_se
 [base_yomotsu_priest]
 {
 GET=base_humanoid
-NAME=3253//a yomotsu priest
+NAME=#//a yomotsu priest
 ID=0x0fd
 ORIGIN=se
 //Special Abilities:	
@@ -407,7 +407,7 @@ GETSE=yomotsupriest_se
 [base_yomotsu_warrior]
 {
 GET=base_humanoid
-NAME=3245//a yomotsu warrior
+NAME=#//a yomotsu warrior
 ID=0x0f5
 SCRIPT=3222
 ORIGIN=se
