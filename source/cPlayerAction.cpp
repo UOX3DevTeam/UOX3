@@ -1519,23 +1519,23 @@ bool ValidateLockdownAccess( CChar *mChar, CSocket *mSock, CItem *itemToCheck, b
 //o------------------------------------------------------------------------------------------------o
 void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDropped )
 {
-    // Check if the item is coming from a valid location
-    if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
-    {
-        Weight->SubtractItemWeight( &mChar, &iDropped );
-    }
+	// Check if the item is coming from a valid location
+	if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+	{
+		Weight->SubtractItemWeight( &mChar, &iDropped );
+	}
 
 	// Determine the type of spellbook
-    bool isPaladinBook = ( spellBook.GetType() == IT_PALADINBOOK );
-    bool isNecroBook = ( spellBook.GetType() == IT_NECROBOOK );
-    bool isRegularBook = ( spellBook.GetType() == IT_SPELLBOOK );
+	bool isPaladinBook = ( spellBook.GetType() == IT_PALADINBOOK );
+	bool isNecroBook = ( spellBook.GetType() == IT_NECROBOOK );
+	bool isRegularBook = ( spellBook.GetType() == IT_SPELLBOOK );
 
-    // Validate the dropped scroll's ID range
-    bool isPaladinScroll = ( iDropped.GetId() >= 0x2271 && iDropped.GetId() <= 0x227C ); // Paladin scrolls
-    bool isnNecroScroll = (iDropped.GetId() >= 0x2260 && iDropped.GetId() <= 0x2270); // Necro scrolls
-    bool isRegularScroll = ( iDropped.GetId() >= 0x1F2D && iDropped.GetId() <= 0x1F6C ); // Regular scrolls
+	// Validate the dropped scroll's ID range
+	bool isPaladinScroll = ( iDropped.GetId() >= 0x2271 && iDropped.GetId() <= 0x227C ); // Paladin scrolls
+	bool isnNecroScroll = (iDropped.GetId() >= 0x2260 && iDropped.GetId() <= 0x2270); // Necro scrolls
+	bool isRegularScroll = ( iDropped.GetId() >= 0x1F2D && iDropped.GetId() <= 0x1F6C ); // Regular scrolls
 
-    // Check if the dropped item is a valid spell scroll and is dropped on correct book.
+	// Check if the dropped item is a valid spell scroll and is dropped on correct book.
 	if(( isNecroBook && !isnNecroScroll ) || ( isPaladinBook && !isPaladinScroll ) || ( isRegularBook && !isRegularScroll ))
 	{
 		Bounce( &mSock, &iDropped );
@@ -1544,85 +1544,85 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 	}
 
 
-    // Check ownership of the spellbook
-    CChar* sbOwner = FindItemOwner( &spellBook );
-    if( ValidateObject( sbOwner ) && sbOwner != &mChar && !mChar.CanSnoop() )
-    {
-        Bounce( &mSock, &iDropped );
-        mSock.SysMessage( 1203 ); // "You cannot place spells in other people's spellbooks."
-        return;
-    }
+	// Check ownership of the spellbook
+	CChar* sbOwner = FindItemOwner( &spellBook );
+	if( ValidateObject( sbOwner ) && sbOwner != &mChar && !mChar.CanSnoop() )
+	{
+		Bounce( &mSock, &iDropped );
+		mSock.SysMessage( 1203 ); // "You cannot place spells in other people's spellbooks."
+		return;
+	}
 
-    // Check if the spellbook is locked for RP purposes
-    if( spellBook.GetTempVar( CITV_MORE, 1 ) == 1 )
-    {
-        mSock.SysMessage( 1204 ); // "There are no empty pages left in your book."
-        Bounce( &mSock, &iDropped );
-        return;
-    }
+	// Check if the spellbook is locked for RP purposes
+	if( spellBook.GetTempVar( CITV_MORE, 1 ) == 1 )
+	{
+		mSock.SysMessage( 1204 ); // "There are no empty pages left in your book."
+		Bounce( &mSock, &iDropped );
+		return;
+	}
 
-    // Handle All-Spell Scrolls
-    if( iDropped.GetName() == Dictionary->GetEntry( 1605 )) // "All-Spell Scroll"
-    {
-        if( spellBook.GetSpell( 0 ) == INVALIDSERIAL && 
-            spellBook.GetSpell( 1 ) == INVALIDSERIAL && 
-            spellBook.GetSpell( 2 ) == INVALIDSERIAL )
-        {
-            mSock.SysMessage( 1205 ); // "You already have a full book!"
-            Bounce( &mSock, &iDropped );
-            return;
-        }
+	// Handle All-Spell Scrolls
+	if( iDropped.GetName() == Dictionary->GetEntry( 1605 )) // "All-Spell Scroll"
+	{
+		if( spellBook.GetSpell( 0 ) == INVALIDSERIAL && 
+			spellBook.GetSpell( 1 ) == INVALIDSERIAL && 
+			spellBook.GetSpell( 2 ) == INVALIDSERIAL )
+		{
+			mSock.SysMessage( 1205 ); // "You already have a full book!"
+			Bounce( &mSock, &iDropped );
+			return;
+		}
 
-        // Mark all spells as added
-        spellBook.SetSpell( 0, INVALIDSERIAL );
-        spellBook.SetSpell( 1, INVALIDSERIAL );
-        spellBook.SetSpell( 2, INVALIDSERIAL );
-    }
-    else
-    {
-        // Determine the spell number from the scroll ID
-        SI32 targSpellNum = 0;
-        UI16 scrollId = iDropped.GetId();
+		// Mark all spells as added
+		spellBook.SetSpell( 0, INVALIDSERIAL );
+		spellBook.SetSpell( 1, INVALIDSERIAL );
+		spellBook.SetSpell( 2, INVALIDSERIAL );
+	}
+	else
+	{
+		// Determine the spell number from the scroll ID
+		SI32 targSpellNum = 0;
+		UI16 scrollId = iDropped.GetId();
 
-        // Regular spells (Magery)
-        if( scrollId >= 0x1F2D && scrollId <= 0x1F6C )
-        {
-            targSpellNum = scrollId - 0x1F2C; // Adjust to spell number range
-        }
+		// Regular spells (Magery)
+		if( scrollId >= 0x1F2D && scrollId <= 0x1F6C )
+		{
+			targSpellNum = scrollId - 0x1F2C; // Adjust to spell number range
+		}
 		else if( scrollId >= 0x2260 && scrollId <= 0x2270 ) 
 		{
-		    targSpellNum = scrollId - 0x225F + 100; // Adjust to Necromancer spell number range (101–117)
+			targSpellNum = scrollId - 0x225F + 100; // Adjust to Necromancer spell number range (101–117)
 		} 
-        else if( scrollId >= 0x2271 && scrollId <= 0x227C )
-        {
-            targSpellNum = scrollId - 0x2270 + 201; // Adjust to Paladin spell number range (201–210)
-        }
+		else if( scrollId >= 0x2271 && scrollId <= 0x227C )
+		{
+			targSpellNum = scrollId - 0x2270 + 201; // Adjust to Paladin spell number range (201–210)
+		}
 
-        // Check if the spell already exists in the book
-        if( Magic->HasSpell( &spellBook, targSpellNum ))
-        {
-            mSock.SysMessage( 1206 ); // "You already have that spell."
-            Bounce( &mSock, &iDropped );
-            return;
-        }
+		// Check if the spell already exists in the book
+		if( Magic->HasSpell( &spellBook, targSpellNum ))
+		{
+			mSock.SysMessage( 1206 ); // "You already have that spell."
+			Bounce( &mSock, &iDropped );
+			return;
+		}
 
-        // Add the spell to the book
-        Magic->AddSpell( &spellBook, targSpellNum );
-    }
+		// Add the spell to the book
+		Magic->AddSpell( &spellBook, targSpellNum );
+	}
 
-    // Play the sound effect
-    Effects->PlaySound( &mSock, 0x0042, false );
+	// Play the sound effect
+	Effects->PlaySound( &mSock, 0x0042, false );
 
-    // Handle scroll quantity
-    if( iDropped.GetAmount() > 1 )
-    {
-        iDropped.IncAmount( -1 );
-        Bounce( &mSock, &iDropped );
-    }
-    else
-    {
-        iDropped.Delete();
-    }
+	// Handle scroll quantity
+	if( iDropped.GetAmount() > 1 )
+	{
+		iDropped.IncAmount( -1 );
+		Bounce( &mSock, &iDropped );
+	}
+	else
+	{
+		iDropped.Delete();
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o

@@ -523,22 +523,22 @@ public:
 	virtual void	DamageMax( UI16 value );
 	virtual void	DamageMin( UI16 value );
 	virtual void	TithingPoints( UI32 value );
-    // Extended-6 (UOKR+) Stat Methods
+	// Extended-6 (UOKR+) Stat Methods
 	virtual void	PhysicalResistCap( UI16 value );
 	virtual void	FireResistCap( UI16 value );
 	virtual void	ColdResistCap( UI16 value );
 	virtual void	PoisonResistCap( UI16 value );
 	virtual void	EnergyResistCap( UI16 value );
-    virtual void	HitChanceIncrease( UI16 value );
-    virtual void	SwingSpeedIncrease( UI16 value );
-    virtual void	DamageChanceIncrease( UI16 value );
-    virtual void	LowerReagentCost( UI16 value );
-    virtual void    DefenseChanceIncrease( UI16 value );
-    virtual void    DefenseChanceIncreaseCap( UI16 value );
-    virtual void    SpellDamageIncrease( UI16 value );
-    virtual void    FasterCastRecovery( UI16 value );
-    virtual void    FasterCasting( UI16 value );
-    virtual void    LowerManaCost( UI16 value );
+	virtual void	HitChanceIncrease( UI16 value );
+	virtual void	SwingSpeedIncrease( UI16 value );
+	virtual void	DamageChanceIncrease( UI16 value );
+	virtual void	LowerReagentCost( UI16 value );
+	virtual void    DefenseChanceIncrease( UI16 value );
+	virtual void    DefenseChanceIncreaseCap( UI16 value );
+	virtual void    SpellDamageIncrease( UI16 value );
+	virtual void    FasterCastRecovery( UI16 value );
+	virtual void    FasterCasting( UI16 value );
+	virtual void    LowerManaCost( UI16 value );
 
 };
 

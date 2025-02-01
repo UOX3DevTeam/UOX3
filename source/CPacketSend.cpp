@@ -2164,10 +2164,10 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 				extended3 = true;
 				extended4 = true;
 				extended5 = true;
-			    extended6 = true;
-			    pStream.ReserveSize( 121 );
-			    pStream.WriteByte( 2, 121 );
-			    Flag( 6 );
+				extended6 = true;
+				pStream.ReserveSize( 121 );
+				pStream.WriteByte( 2, 121 );
+				Flag( 6 );
 			}
 			else if( target.ClientVersionMajor() >= 5 )
 			{
@@ -2197,7 +2197,6 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		else
 		{
 			// We haven't received any client details yet.. let's use default server settings
-
 			if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_HS ))
 			{
 				extended3 = true;
@@ -2388,8 +2387,8 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			DamageMax( Combat->CalcHighDamage( &toCopy ));
 			TithingPoints( toCopy.GetTithing() );
 		}
-        if( extended6 )
-        {
+		if( extended6 )
+		{
 			PhysicalResistCap( cwmWorldState->ServerData()->PhysicalResistCap() );
 			FireResistCap( cwmWorldState->ServerData()->FireResistCap() );
 			ColdResistCap( cwmWorldState->ServerData()->ColdResistCap());
@@ -2406,7 +2405,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			FasterCastRecovery( 0 );
 			FasterCasting( 0 );
 			LowerManaCost( 0 );
-        }
+		}
 	}
 }
 void CPStatWindow::InternalReset( void )
@@ -2630,64 +2629,64 @@ void CPStatWindow::EnergyResistCap( UI16 value )
 	byteOffset += 2;
 }
 
-void CPStatWindow::DefenseChanceIncrease(UI16 value)
+void CPStatWindow::DefenseChanceIncrease( UI16 value )
 {
-    pStream.WriteShort(byteOffset, value);
-    byteOffset += 2;
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 
-void CPStatWindow::DefenseChanceIncreaseCap(UI16 value)
+void CPStatWindow::DefenseChanceIncreaseCap( UI16 value )
 {
-    pStream.WriteShort(byteOffset, value);
-    byteOffset += 2;
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 
-void CPStatWindow::HitChanceIncrease(UI16 value)
+void CPStatWindow::HitChanceIncrease( UI16 value )
 {
-    pStream.WriteShort(byteOffset, value);
-    byteOffset += 2;
+	pStream.WriteShort(byteOffset, value);
+	byteOffset += 2;
 }
 
-void CPStatWindow::SwingSpeedIncrease(UI16 value)
+void CPStatWindow::SwingSpeedIncrease( UI16 value )
 {
-    pStream.WriteShort(byteOffset, value);
-    byteOffset += 2;
+	pStream.WriteShort(byteOffset, value);
+	byteOffset += 2;
 }
 
-void CPStatWindow::DamageChanceIncrease(UI16 value)
+void CPStatWindow::DamageChanceIncrease( UI16 value )
 {
-    pStream.WriteShort(byteOffset, value);
-    byteOffset += 2;
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 
-void CPStatWindow::LowerReagentCost(UI16 value)
+void CPStatWindow::LowerReagentCost( UI16 value )
 {
-    pStream.WriteShort(byteOffset, value);
-    byteOffset += 2;
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 
-void CPStatWindow::SpellDamageIncrease(UI16 value)
+void CPStatWindow::SpellDamageIncrease( UI16 value )
 {
-    pStream.WriteShort(byteOffset, value);
-    byteOffset += 2;
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 
-void CPStatWindow::FasterCastRecovery(UI16 value)
+void CPStatWindow::FasterCastRecovery( UI16 value )
 {
-    pStream.WriteShort(byteOffset, value);
-    byteOffset += 2;
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 
-void CPStatWindow::FasterCasting(UI16 value)
+void CPStatWindow::FasterCasting( UI16 value )
 {
-    pStream.WriteShort(byteOffset, value);
-    byteOffset += 2;
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 
-void CPStatWindow::LowerManaCost(UI16 value)
+void CPStatWindow::LowerManaCost( UI16 value )
 {
-    pStream.WriteShort(byteOffset, value);
-    byteOffset += 2;
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 
 //o------------------------------------------------------------------------------------------------o

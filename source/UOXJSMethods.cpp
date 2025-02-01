@@ -3013,87 +3013,87 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 //o------------------------------------------------------------------------------------------------o
 JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-    if( argc != 1 )
-    {
-        ScriptError( cx, "HasSpell: Invalid Number of Arguments: %d", argc );
-        return JS_FALSE;
-    }
+	if( argc != 1 )
+	{
+		ScriptError( cx, "HasSpell: Invalid Number of Arguments: %d", argc );
+		return JS_FALSE;
+	}
 
-    JSEncapsulate myClass( cx, obj );
-    SI32 spellId = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
+	JSEncapsulate myClass( cx, obj );
+	SI32 spellId = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
 
-    if( myClass.ClassName() == "UOXChar" )
-    {
-        CChar *myChar = static_cast<CChar *>( myClass.toObject() );
-        if( !ValidateObject( myChar ))
-        {
-            ScriptError(cx, "Invalid char for HasSpell");
-            return JS_FALSE;
-        }
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		CChar *myChar = static_cast<CChar *>( myClass.toObject() );
+		if( !ValidateObject( myChar ))
+		{
+			ScriptError(cx, "Invalid char for HasSpell");
+			return JS_FALSE;
+		}
 
-        // Find spellbooks
-        CItem *spellBook = FindItemOfType( myChar, IT_SPELLBOOK );
-        CItem *paladinBook = FindItemOfType( myChar, IT_PALADINBOOK );
+		// Find spellbooks
+		CItem *spellBook = FindItemOfType( myChar, IT_SPELLBOOK );
+		CItem *paladinBook = FindItemOfType( myChar, IT_PALADINBOOK );
 		CItem *necroBook = FindItemOfType( myChar, IT_NECROBOOK );
 
-        // If neither book is present, return false
-        if( !ValidateObject( spellBook ) && !ValidateObject( paladinBook ) && !ValidateObject( necroBook ))
-        {
-            *rval = BOOLEAN_TO_JSVAL(JS_FALSE);
-            return JS_TRUE;
-        }
+		// If neither book is present, return false
+		if( !ValidateObject( spellBook ) && !ValidateObject( paladinBook ) && !ValidateObject( necroBook ))
+		{
+			*rval = BOOLEAN_TO_JSVAL(JS_FALSE);
+			return JS_TRUE;
+		}
 
-        // Determine the active book and offset
-        CItem *activeBook = nullptr;
-        int offset = 0;
+		// Determine the active book and offset
+		CItem *activeBook = nullptr;
+		int offset = 0;
 
 		if( spellId >= 101 && spellId <= 117 && ValidateObject( necroBook ))
-        {
-            activeBook = necroBook;
-            offset = 100; // Necro spell offset
-        }
-        else if( spellId >= 201 && spellId <= 210 && ValidateObject( paladinBook ))
-        {
-            activeBook = paladinBook;
-            offset = 200; // Paladin spell offset
-        }
-        else if( spellId >= 1 && spellId <= 64 && ValidateObject( spellBook ))
-        {
-            activeBook = spellBook;
-            offset = 0; // Regular spell offset
-        }
+		{
+			activeBook = necroBook;
+			offset = 100; // Necro spell offset
+		}
+		else if( spellId >= 201 && spellId <= 210 && ValidateObject( paladinBook ))
+		{
+			activeBook = paladinBook;
+			offset = 200; // Paladin spell offset
+		}
+		else if( spellId >= 1 && spellId <= 64 && ValidateObject( spellBook ))
+		{
+			activeBook = spellBook;
+			offset = 0; // Regular spell offset
+		}
 
-        // Check if the spell exists in the active book
-        if( activeBook && Magic->HasSpell( activeBook, spellId - offset ))
-        {
-            *rval = BOOLEAN_TO_JSVAL(JS_TRUE);
-        }
-        else
-        {
-            *rval = BOOLEAN_TO_JSVAL(JS_FALSE);
-        }
-    }
-    else if( myClass.ClassName() == "UOXItem" )
-    {
-        CItem *myItem = static_cast<CItem *>( myClass.toObject() );
-        if( !ValidateObject( myItem ))
-        {
-            ScriptError(cx, "Invalid item for HasSpell");
-            return JS_FALSE;
-        }
+		// Check if the spell exists in the active book
+		if( activeBook && Magic->HasSpell( activeBook, spellId - offset ))
+		{
+			*rval = BOOLEAN_TO_JSVAL(JS_TRUE);
+		}
+		else
+		{
+			*rval = BOOLEAN_TO_JSVAL(JS_FALSE);
+		}
+	}
+	else if( myClass.ClassName() == "UOXItem" )
+	{
+		CItem *myItem = static_cast<CItem *>( myClass.toObject() );
+		if( !ValidateObject( myItem ))
+		{
+			ScriptError(cx, "Invalid item for HasSpell");
+			return JS_FALSE;
+		}
 
-        // Check if the item has the specified spell
-        if( Magic->HasSpell( myItem, spellId ))
-        {
-            *rval = BOOLEAN_TO_JSVAL( JS_TRUE );
-        }
-        else
-        {
-            *rval = BOOLEAN_TO_JSVAL( JS_FALSE );
-        }
-    }
+		// Check if the item has the specified spell
+		if( Magic->HasSpell( myItem, spellId ))
+		{
+			*rval = BOOLEAN_TO_JSVAL( JS_TRUE );
+		}
+		else
+		{
+			*rval = BOOLEAN_TO_JSVAL( JS_FALSE );
+		}
+	}
 
-    return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o------------------------------------------------------------------------------------------------o

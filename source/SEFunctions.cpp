@@ -5126,7 +5126,7 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 349:	 // LOOTDECAYSWITHPLAYERCORPSE
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->NpcCorpseLootDecay() );
 				break;
-      case 353:	// SWINGSPEEDINCREASECAP
+			case 353:	// SWINGSPEEDINCREASECAP
 				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->SwingSpeedIncreaseCap() ));
 				break;
 			case 354:	 // KARMALOCKING
