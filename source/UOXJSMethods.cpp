@@ -4739,7 +4739,7 @@ JSBool CBase_GetSerial( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN arg
 	return JS_TRUE;
 }
 
-void UpdateStats( CBaseObject *mObj, UI08 x );
+void UpdateStats( CBaseObject *mObj, UI08 x, bool skipStatWindowUpdate = false );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_UpdateStats()
 //|	Prototype	-	void UpdateStats( statType )
