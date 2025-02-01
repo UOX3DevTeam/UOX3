@@ -1,6 +1,10 @@
 
 20/11/2024 - Dragon Slayer
-	Added SE Npc AI to he following, Bake kitsune, kappa, raiju, yamandon, yomotsu_warrior.
+	Added SE NPCs AI to he following, Bake kitsune, kappa, raiju, yamandon, yomotsu_warrior.
+	Added new NPCs to dfndata/npc/npc_se/agressiveanimals_se.dfn: bakekitsune_se
+	Added new NPCs to dfndata/npc/npc_se/elementals_se.dfn: raiju_se
+	Added new NPCs to dfndata/npc/npc_se/humanoids_se.dfn: yomotsu_warrior_se, yomotsu_elder_se, yomotsu_priest_se, kappa_se
+	Added new NPCs to dfndata/npc/npc_se/reptiles_se.dfn: yamandon_se
 
 22/01/2025 - Dragon Slayer
 	Added New Haven for trammel. (Regions.dfn)
