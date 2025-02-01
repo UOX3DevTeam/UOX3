@@ -1,6 +1,10 @@
 01/02/2025 - Dragon Slayer
 	Fixed an issue where UOX3 would unnecessarily update a given player's status window repeatedly multiple times per server cycle (Thanks Xuri)
 
+30/1/2025 - Dragon Slayer
+	Updated ResourceCount can be used for both characters and items. (Thanks Xuri)
+	Updated documents for resourcecount and useresource to reflex what code shows.
+
 22/01/2025 - Dragon Slayer
 	Added New Haven for trammel. (Regions.dfn)
 	Added New Haven Music. (Regions.dfn)
