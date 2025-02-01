@@ -226,6 +226,19 @@ function RevokeYoungStatus( pSock, pChar, revokeReason )
 	pSock.SysMessage( revokeReason );
 	pSock.SysMessage( GetDictionaryEntry( 18704, pSock.language )); // You are no longer considered a young player of Ultima Online, and are no longer subject to the limitations and benefits of being in that caste.
 	pChar.account.isYoung = false;
+	var playerAccount = pChar.account;
+	for( var i = 1; i <= 7; i++ )
+	{
+		// Construct the property name, e.g., "character1", "character2", etc.
+		var charKey = "character" + i;
+		var tempChar = playerAccount[charKey];
+
+		// Validate the character object before performing any actions
+		if( ValidateObject( tempChar ))
+		{
+			tempChar.RemoveScriptTrigger( 8001 );
+		}
+	}
 	pChar.Refresh();
 }
 

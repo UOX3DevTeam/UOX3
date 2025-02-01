@@ -2724,26 +2724,25 @@ auto CWorldMain::CheckAutoTimers() -> void
 			{
 				auto uChar = static_cast<CChar *>( entry.first );
                 
-                // Let's ensure we only do one stat window update for self per cycle,
-                // by skipping subsequent updates if it has already been updated
-				bool skipStatWindowUpdate = false;
+				// Let's ensure we only do one stat window update for self per cycle,
+				bool triggerStatWindowUpdate = false;
 
 				if( uChar->GetUpdate( UT_HITPOINTS ))
 				{
-					UpdateStats( entry.first, 0, skipStatWindowUpdate );
-					skipStatWindowUpdate = true;
+					triggerStatWindowUpdate = true;
+					UpdateStats( entry.first, 0, false );
 				}
 				if( uChar->GetUpdate( UT_STAMINA ))
 				{
-					UpdateStats( entry.first, 1, skipStatWindowUpdate );
-					skipStatWindowUpdate = true;
+					triggerStatWindowUpdate = true;
+					UpdateStats( entry.first, 1, false );
 				}
 				if( uChar->GetUpdate( UT_MANA ))
 				{
-					UpdateStats( entry.first, 2, skipStatWindowUpdate );
-					skipStatWindowUpdate = true;
+					triggerStatWindowUpdate = true;
+					UpdateStats( entry.first, 2, false );
 				}
-
+				
 				if( uChar->GetUpdate( UT_LOCATION ))
 				{
 					uChar->Teleport();
@@ -2761,7 +2760,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 				{
 					uChar->Update();
 				}
-				else if( uChar->GetUpdate( UT_STATWINDOW ) && !skipStatWindowUpdate )
+				else if( uChar->GetUpdate( UT_STATWINDOW ) || triggerStatWindowUpdate )
 				{
 					CSocket *uSock = uChar->GetSocket();
 					if( uSock )
