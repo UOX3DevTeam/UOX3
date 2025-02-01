@@ -453,7 +453,6 @@
 601=magic/level1targ.js
 602=magic/createfood.js
 700=magic/wand_item_id.js
-701=magic/necrospells.js
 800=magic/chivalry/paladinspells.js
 }
 
