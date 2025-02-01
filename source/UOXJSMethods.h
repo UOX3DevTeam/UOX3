@@ -548,6 +548,7 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "GetMoreVar",			CItem_GetMoreVar,			2, 0, 0 },
 	{ "SetMoreVar",			CItem_SetMoreVar,			3, 0, 0 },
 	{ "Resist",				CBase_Resist,				1, 0, 0 },
+	{ "ResourceCount",		CBase_ResourceCount,		2, 0, 0 },
 	{ "UseResource",		CBase_UseResource,			3, 0, 0 },
 	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0, 0 },
 	{ "HasScriptTrigger",	CBase_HasScriptTrigger,		1, 0, 0 },
