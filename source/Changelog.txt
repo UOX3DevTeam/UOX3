@@ -29,10 +29,10 @@
 
 20/11/2024 - Dragon Slayer
 	Added SE NPCs AI to he following, Bake kitsune, kappa, raiju, yamandon, yomotsu_warrior.
-	Added new NPCs to dfndata/npc/npc_se/agressiveanimals_se.dfn: bakekitsune_se (available for SE era only)
-	Added new NPCs to dfndata/npc/npc_se/elementals_se.dfn: raiju_se (available for SE era only)
-	Added new NPCs to dfndata/npc/npc_se/humanoids_se.dfn: yomotsu_warrior_se, yomotsu_elder_se, yomotsu_priest_se, kappa_se (available for SE era only)
-	Added new NPCs to dfndata/npc/npc_se/reptiles_se.dfn: yamandon_se (available for SE era only)
+	Added new NPCs to dfndata/npc/agressiveanimals.dfn: bakekitsune_se (available for SE era only)
+	Added new NPCs to dfndata/npc/elementals.dfn: raiju_se (available for SE era only)
+	Added new NPCs to dfndata/npc/humanoids.dfn: yomotsu_warrior_se, yomotsu_elder_se, yomotsu_priest_se, kappa_se (available for SE era only)
+	Added new NPCs to dfndata/npc/reptiles.dfn: yamandon_se (available for SE era only)
 
 31/10/2024 - Dragon Slayer
 	Fixed Z calculation in some scripts when targeting dynamic items. (Thanks Xuri)
