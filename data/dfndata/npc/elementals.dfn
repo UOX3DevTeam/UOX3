@@ -1,3 +1,16 @@
+// Base elementals with shared DFN tags
+[base_elemental]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+NPCAI=2
+FLAG=NEUTRAL
+}
+
+//------------------------------------------------------------------------------------------------//
+
 [airele]
 {
 NAME=#//an air elemental
@@ -638,4 +651,19 @@ TOPEACE=753 5
 WALKINGSPEED=0.35
 FLEEAT=-1
 FLAG=NEUTRAL
+}
+
+// RaiJu - Base NPC with shared DFN tags
+[base_raiju]
+{
+GET=base_elemental
+NAME=#//a Rai-Ju
+ID=0x0xc7
+SCRIPT=3225
+ORIGIN=se
+}
+
+[raiju]
+{
+GETSE=raiju_se
 }
