@@ -2926,24 +2926,24 @@ bool CChar::WearItem( CItem *toWear )
 	}
 
 	scriptTriggers.clear();
-    scriptTriggers.shrink_to_fit();
-    scriptTriggers = this->GetScriptTriggers();
-    for( auto i : scriptTriggers )
-    {
-        cScript *tScript = JSMapping->GetScript( i );
-        if( tScript != nullptr )
-        {
-            // If script returns false, prevent item from being equipped
-            if( tScript->OnEquipAttempt( this, toWear ) == 0 )
-            {
-                CSocket *mSock = this->GetSocket();
-                if( mSock != nullptr )
-                {
-                    Bounce( mSock, toWear );
-                }
-                return false;
-            }
-        }
+	scriptTriggers.shrink_to_fit();
+	scriptTriggers = this->GetScriptTriggers();
+	for( auto i : scriptTriggers )
+	{
+		cScript *tScript = JSMapping->GetScript( i );
+		if( tScript != nullptr )
+		{
+			// If script returns false, prevent item from being equipped
+			if( tScript->OnEquipAttempt( this, toWear ) == 0 )
+			{
+				CSocket *mSock = this->GetSocket();
+				if( mSock != nullptr )
+				{
+					Bounce( mSock, toWear );
+				}
+				return false;
+			}
+		}
 	}
 
 	bool rValue = true;
@@ -2972,7 +2972,7 @@ bool CChar::WearItem( CItem *toWear )
 			IncStaminaLeech( itemLayers[tLayer]->GetStaminaLeech() );
 			IncManaLeech( itemLayers[tLayer]->GetManaLeech() );
 
-      IncHitChance( itemLayers[tLayer]->GetHitChance() );
+			IncHitChance( itemLayers[tLayer]->GetHitChance() );
 			IncDefenseChance( itemLayers[tLayer]->GetDefenseChance() );
 
 			IncHealthBonus( itemLayers[tLayer]->GetHealthBonus() );
@@ -3032,20 +3032,20 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		}
 
 		scriptTriggers.clear();
-        scriptTriggers.shrink_to_fit();
-        scriptTriggers = this->GetScriptTriggers();
-        for( auto i : scriptTriggers )
-        {
-            cScript *tScript = JSMapping->GetScript( i );
-            if( tScript != nullptr )
-            {
-                // If script returns false, prevent item from being equipped
-                if( tScript->OnUnequipAttempt( this, itemLayers[Layer] ) == 0 )
-                {
-                    return false;
-                }
-            }
-        }
+		scriptTriggers.shrink_to_fit();
+		scriptTriggers = this->GetScriptTriggers();
+		for( auto i : scriptTriggers )
+		{
+			cScript *tScript = JSMapping->GetScript( i );
+			if( tScript != nullptr )
+			{
+				// If script returns false, prevent item from being equipped
+				if( tScript->OnUnequipAttempt( this, itemLayers[Layer] ) == 0 )
+				{
+					return false;
+				}
+			}
+		}
 
 		if( Layer == IL_PACKITEM )	// It's our pack!
 		{
@@ -3057,7 +3057,7 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 
 		IncSwingSpeedIncrease( -itemLayers[Layer]->GetSwingSpeedIncrease() );
 
-    IncHealthLeech( -itemLayers[Layer]->GetHealthLeech() );
+		IncHealthLeech( -itemLayers[Layer]->GetHealthLeech() );
 		IncStaminaLeech( -itemLayers[Layer]->GetStaminaLeech() );
 		IncManaLeech( -itemLayers[Layer]->GetManaLeech() );
 
@@ -3080,6 +3080,9 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 			}
 		}
 
+		scriptTriggers.clear();
+		scriptTriggers.shrink_to_fit();
+		scriptTriggers = itemLayers[Layer]->GetScriptTriggers();
 		for( auto i : scriptTriggers )
 		{
 			cScript *tScript = JSMapping->GetScript( i );
@@ -5953,6 +5956,21 @@ UI32 CChar::LastMoveTime( void ) const
 void CChar::LastMoveTime( UI32 newValue )
 {
 	lastMoveTime = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetLastCombatTime()
+//|					CChar::SetLastCombatTime()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets timestamp for when player last combat
+//o------------------------------------------------------------------------------------------------o
+UI32 CChar::GetLastCombatTime() const
+{
+	return lastCombatTime;
+}
+void CChar::SetLastCombatTime( UI32 newValue )
+{
+	lastCombatTime = newValue;
 }
 
 //o------------------------------------------------------------------------------------------------o

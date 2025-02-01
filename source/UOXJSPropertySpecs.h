@@ -561,6 +561,8 @@ inline JSPropertySpec CItemProps[] =
 	{ "manaBonus",		CIP_MANABONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "artifactRarity",	CIP_ARTIFACTRARITY,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 
+	{ "durabilityHpBonus",	CIP_DURABILITYHPBONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+
 	{ "multi",			CIP_MULTI,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "maxRange",		CIP_MAXRANGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "baseRange",		CIP_BASERANGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
