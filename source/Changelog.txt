@@ -32,6 +32,13 @@
 07/12/2024 - Dragon Slayer
 	Updated the packet 0xf1 to reflect the current CUO Web Ping while maintaining backward compatibility with older ping statuses. (0xf1_freeshardServerPoll.js) (Thanks Karasho and Xuri)
 
+20/11/2024 - Dragon Slayer
+	Added SE NPCs AI to he following, Bake kitsune, kappa, raiju, yamandon, yomotsu_warrior.
+	Added new NPCs to dfndata/npc/agressiveanimals.dfn: bakekitsune_se (available for SE era only)
+	Added new NPCs to dfndata/npc/elementals.dfn: raiju_se (available for SE era only)
+	Added new NPCs to dfndata/npc/humanoids.dfn: yomotsu_warrior_se, yomotsu_elder_se, yomotsu_priest_se, kappa_se (available for SE era only)
+	Added new NPCs to dfndata/npc/reptiles.dfn: yamandon_se (available for SE era only)
+
 31/10/2024 - Dragon Slayer
 	Fixed Z calculation in some scripts when targeting dynamic items. (Thanks Xuri)
 

@@ -352,3 +352,68 @@ GETLBR=ratmanarcher_lbr
 GETAOS=ratmanarcher_aos
 GETTOL=ratmanarcher_tol
 }
+
+// Kapp - Base NPC with shared DFN tags
+[base_kappa]
+{
+GET=base_humanoid
+NAME=#//a kappa
+ID=0x0f0
+SCRIPT=3221
+ORIGIN=se
+}
+
+[kappa]
+{
+GETSE=kappa_se
+}
+
+// yomotsu elder - Base NPC with shared DFN tags
+[base_yomotsu_elder]
+{
+GET=base_humanoid
+NAME=#//a yomotsu elder
+ID=0x0ff
+ORIGIN=se
+//Special Abilities:
+//Paralysing Blow
+//Lightning Strike
+//Throws axes at ranged attackers
+}
+
+[yomotsuelder]
+{
+GETSE=yomotsuelder_se
+}
+
+// yomotsu priest - Base NPC with shared DFN tags
+[base_yomotsu_priest]
+{
+GET=base_humanoid
+NAME=#//a yomotsu priest
+ID=0x0fd
+ORIGIN=se
+//Special Abilities:	
+//Changes shape into other Tokuno Islands creatures
+//Lightning Strike
+}
+
+[yomotsupriest]
+{
+GETSE=yomotsupriest_se
+}
+
+// yomotsu warrior - Base NPC with shared DFN tags
+[base_yomotsu_warrior]
+{
+GET=base_humanoid
+NAME=#//a yomotsu warrior
+ID=0x0f5
+SCRIPT=3222
+ORIGIN=se
+}
+
+[yomotsuwarrior]
+{
+GETSE=yomotsuwarrior_se
+}
