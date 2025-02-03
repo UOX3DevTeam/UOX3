@@ -218,9 +218,10 @@ JS_STATIC_ASSERT(offsetof(JSScope, title) == sizeof(JSObjectMap));
 #define JS_IS_SCOPE_LOCKED(cx, scope)   JS_IS_TITLE_LOCKED(cx, &(scope)->title)
 
 #define OBJ_SCOPE(obj)                  ((JSScope *)(obj)->map)
+#define OBJ_SHAPE(obj)                  (OBJ_SCOPE(obj)->shape)
 
 #define SCOPE_MAKE_UNIQUE_SHAPE(cx,scope)                                     \
-    ((scope)->shape = js_GenerateShape((cx), JS_FALSE, NULL))
+    ((scope)->shape = js_GenerateShape((cx), JS_FALSE))
 
 #define SCOPE_EXTEND_SHAPE(cx,scope,sprop)                                    \
     JS_BEGIN_MACRO                                                            \
@@ -228,7 +229,7 @@ JS_STATIC_ASSERT(offsetof(JSScope, title) == sizeof(JSObjectMap));
             (scope)->shape == (scope)->lastProp->shape) {                     \
             (scope)->shape = (sprop)->shape;                                  \
         } else {                                                              \
-            (scope)->shape = js_GenerateShape((cx), JS_FALSE, sprop);         \
+            (scope)->shape = js_GenerateShape((cx), JS_FALSE);                \
         }                                                                     \
     JS_END_MACRO
 

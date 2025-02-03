@@ -52,14 +52,12 @@ JS_BEGIN_EXTERN_C
 
 JS_STATIC_ASSERT(JSTRACE_STRING == 2);
 
-#define JSTRACE_NAMESPACE   3
-#define JSTRACE_QNAME       4
-#define JSTRACE_XML         5
+#define JSTRACE_XML         3
 
 /*
  * One past the maximum trace kind.
  */
-#define JSTRACE_LIMIT       6
+#define JSTRACE_LIMIT       4
 
 /*
  * We use the trace kinds as the types for all GC things except external
@@ -68,8 +66,6 @@ JS_STATIC_ASSERT(JSTRACE_STRING == 2);
 #define GCX_OBJECT              JSTRACE_OBJECT      /* JSObject */
 #define GCX_DOUBLE              JSTRACE_DOUBLE      /* jsdouble */
 #define GCX_STRING              JSTRACE_STRING      /* JSString */
-#define GCX_NAMESPACE           JSTRACE_NAMESPACE   /* JSXMLNamespace */
-#define GCX_QNAME               JSTRACE_QNAME       /* JSXMLQName */
 #define GCX_XML                 JSTRACE_XML         /* JSXML */
 #define GCX_EXTERNAL_STRING     JSTRACE_LIMIT       /* JSString with external
                                                        chars */
@@ -231,7 +227,7 @@ js_IsAboutToBeFinalized(JSContext *cx, void *thing);
 #define IS_GC_MARKING_TRACER(trc) ((trc)->callback == NULL)
 
 #if JS_HAS_XML_SUPPORT
-# define JS_IS_VALID_TRACE_KIND(kind) ((uint32)(kind) <= JSTRACE_XML)
+# define JS_IS_VALID_TRACE_KIND(kind) ((uint32)(kind) < JSTRACE_LIMIT)
 #else
 # define JS_IS_VALID_TRACE_KIND(kind) ((uint32)(kind) <= JSTRACE_STRING)
 #endif
@@ -240,7 +236,7 @@ js_IsAboutToBeFinalized(JSContext *cx, void *thing);
  * JS_IS_VALID_TRACE_KIND assumes that JSTRACE_STRING is the last non-xml
  * trace kind when JS_HAS_XML_SUPPORT is false.
  */
-JS_STATIC_ASSERT(JSTRACE_STRING + 1 == JSTRACE_NAMESPACE);
+JS_STATIC_ASSERT(JSTRACE_STRING + 1 == JSTRACE_XML);
 
 /*
  * Trace jsval when JSVAL_IS_OBJECT(v) can be an arbitrary GC thing casted as
@@ -287,8 +283,8 @@ typedef enum JSGCInvocationKind {
     GC_SET_SLOT_REQUEST = GC_LOCK_HELD | 1,
 
     /*
-     * Called from js_NewGCThing as a last-ditch GC attempt. See comments
-     * in jsgc.c just before js_GC's definition for details.
+     * Called from js_NewGCThing as a last-ditch GC attempt. See comments in
+     * jsgc.c just before js_GC's definition for details.
      */
     GC_LAST_DITCH       = GC_LOCK_HELD | 2
 } JSGCInvocationKind;
@@ -328,6 +324,18 @@ typedef struct JSGCDoubleArenaList {
                                            things */
 } JSGCDoubleArenaList;
 
+typedef struct JSGCFreeListSet JSGCFreeListSet;
+
+struct JSGCFreeListSet {
+    JSGCThing           *array[GC_NUM_FREELISTS];
+    JSGCFreeListSet     *link;
+};
+
+extern const JSGCFreeListSet js_GCEmptyFreeListSet;
+
+extern void
+js_RevokeGCLocalFreeLists(JSContext *cx);
+
 struct JSWeakRoots {
     /* Most recently created things by type, members of the GC's root set. */
     void            *newborn[GCX_NTYPES];
@@ -341,6 +349,22 @@ struct JSWeakRoots {
 
 JS_STATIC_ASSERT(JSVAL_NULL == 0);
 #define JS_CLEAR_WEAK_ROOTS(wr) (memset((wr), 0, sizeof(JSWeakRoots)))
+
+/*
+ * Increase runtime->gcBytes by sz bytes to account for an allocation outside
+ * the GC that will be freed only after the GC is run. The function may run
+ * the last ditch GC to ensure that gcBytes does not exceed gcMaxBytes. It will
+ * fail if the latter is not possible.
+ *
+ * This function requires that runtime->gcLock is held on entry. On successful
+ * return the lock is still held and on failure it will be released with
+ * the error reported.
+ */
+extern JSBool
+js_AddAsGCBytes(JSContext *cx, size_t sz);
+
+extern void
+js_RemoveAsGCBytes(JSRuntime* rt, size_t sz);
 
 #ifdef DEBUG_notme
 #define JS_GCMETER 1

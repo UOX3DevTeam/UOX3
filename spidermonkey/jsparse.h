@@ -43,7 +43,7 @@
 /*
  * JS parser definitions.
  */
-#include "jsconfig.h"
+#include "jsversion.h"
 #include "jsprvtd.h"
 #include "jspubtd.h"
 #include "jsscan.h"
@@ -68,17 +68,9 @@ JS_BEGIN_EXTERN_C
  *                          pn_body: TOK_LC node for function body statements
  *                          pn_flags: TCF_FUN_* flags (see jsemit.h) collected
  *                            while parsing the function's body
- *                          pn_sclen: maximum lexical scope chain length
  *
  * <Statements>
  * TOK_LC       list        pn_head: list of pn_count statements
- * TOK_EXPORT   list        pn_head: list of pn_count TOK_NAMEs or one TOK_STAR
- *                            (which is not a multiply node)
- * TOK_IMPORT   list        pn_head: list of pn_count sub-trees of the form
- *                            a.b.*, a[b].*, a.*, a.b, or a[b] -- but never a.
- *                            Each member is expressed with TOK_DOT or TOK_LB.
- *                            Each sub-tree's root node has a pn_op in the set
- *                            JSOP_IMPORT{ALL,PROP,ELEM}
  * TOK_IF       ternary     pn_kid1: cond, pn_kid2: then, pn_kid3: else or null
  * TOK_SWITCH   binary      pn_left: discriminant
  *                          pn_right: list of TOK_CASE nodes, with at most one
@@ -284,7 +276,6 @@ struct JSParseNode {
             JSParsedObjectBox *funpob;  /* function object */
             JSParseNode *body;          /* TOK_LC list of statements */
             uint16      flags;          /* accumulated tree context flags */
-            uint16      sclen;          /* maximum scope chain length */
             uint32      index;          /* emitter's index */
         } func;
         struct {                        /* list of next-linked nodes */
@@ -302,6 +293,7 @@ struct JSParseNode {
             JSParseNode *left;
             JSParseNode *right;
             jsval       val;            /* switch case value */
+            uintN       iflags;         /* JSITER_* flags for TOK_FOR node */
         } binary;
         struct {                        /* one kid if unary */
             JSParseNode *kid;
@@ -334,7 +326,6 @@ struct JSParseNode {
 #define pn_funpob       pn_u.func.funpob
 #define pn_body         pn_u.func.body
 #define pn_flags        pn_u.func.flags
-#define pn_sclen        pn_u.func.sclen
 #define pn_index        pn_u.func.index
 #define pn_head         pn_u.list.head
 #define pn_tail         pn_u.list.tail
@@ -346,6 +337,7 @@ struct JSParseNode {
 #define pn_left         pn_u.binary.left
 #define pn_right        pn_u.binary.right
 #define pn_val          pn_u.binary.val
+#define pn_iflags       pn_u.binary.iflags
 #define pn_kid          pn_u.unary.kid
 #define pn_num          pn_u.unary.num
 #define pn_hidden       pn_u.unary.hidden
@@ -440,6 +432,8 @@ struct JSParseContext {
     JSTokenStream       tokenStream;
     void                *tempPoolMark;  /* initial JSContext.tempPool mark */
     JSPrincipals        *principals;    /* principals associated with source */
+    JSStackFrame        *callerFrame;   /* scripted caller frame for eval and
+                                           debug scripts */
     JSParseNode         *nodeList;      /* list of recyclable parse-node
                                            structs */
     JSParsedObjectBox   *traceListHead; /* list of parsed object for GC
@@ -459,8 +453,9 @@ extern JSParseNode *
 js_ParseScript(JSContext *cx, JSObject *chain, JSParseContext *pc);
 
 extern JSScript *
-js_CompileScript(JSContext *cx, JSObject *obj, JSPrincipals *principals,
-                 uint32 tcflags, const jschar *chars, size_t length,
+js_CompileScript(JSContext *cx, JSObject *scopeChain, JSStackFrame *callerFrame,
+                 JSPrincipals *principals, uint32 tcflags,
+                 const jschar *chars, size_t length,
                  FILE *file, const char *filename, uintN lineno);
 
 extern JSBool
@@ -487,6 +482,7 @@ js_ParseXMLText(JSContext *cx, JSObject *chain, JSParseContext *pc,
  */
 extern JSBool
 js_InitParseContext(JSContext *cx, JSParseContext *pc, JSPrincipals *principals,
+                    JSStackFrame *callerFrame,
                     const jschar *base, size_t length, FILE *fp,
                     const char *filename, uintN lineno);
 

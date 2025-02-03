@@ -43,13 +43,13 @@
 # Just ripped from Linux config
 #
 
-CC = cc
+CC = gcc
 CCC = g++
 CFLAGS +=  -Wall -Wno-format -MMD
 OS_CFLAGS = -DXP_UNIX -DSVR4 -DSYSV -D_BSD_SOURCE -DPOSIX_SOURCE -DDARWIN
 
 RANLIB = ranlib
-MKSHLIB = $(CC) -dynamiclib $(XMKSHLIBOPTS) -framework System
+MKSHLIB = $(CCC) -dynamiclib $(XMKSHLIBOPTS) -framework System
 
 SO_SUFFIX = dylib
 
@@ -60,6 +60,8 @@ CPU_ARCH = $(shell uname -m)
 ifeq (86,$(findstring 86,$(CPU_ARCH)))
 CPU_ARCH = x86
 OS_CFLAGS+= -DX86_LINUX
+OS_CFLAGS += -DAVMPLUS_IA32 -DAVMPLUS_UNIX
+NANOJIT_ARCH = i386
 endif
 GFX_ARCH = x
 

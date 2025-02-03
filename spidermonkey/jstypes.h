@@ -84,9 +84,6 @@
 # define JS_EXTERN_DATA(__type) extern __declspec(dllexport) __type
 # define JS_EXPORT_DATA(__type) __declspec(dllexport) __type
 
-# define JS_DLL_CALLBACK
-# define JS_STATIC_DLL_CALLBACK(__x)    static __x
-
 #elif defined(XP_OS2) && defined(__declspec)
 
 # define JS_EXTERN_API(__type)  extern __declspec(dllexport) __type
@@ -94,13 +91,12 @@
 # define JS_EXTERN_DATA(__type) extern __declspec(dllexport) __type
 # define JS_EXPORT_DATA(__type) __declspec(dllexport) __type
 
-# define JS_DLL_CALLBACK
-# define JS_STATIC_DLL_CALLBACK(__x)    static __x
-
 #else /* Unix */
 
 # ifdef HAVE_VISIBILITY_ATTRIBUTE
 #  define JS_EXTERNAL_VIS __attribute__((visibility ("default")))
+# elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
+#  define JS_EXTERNAL_VIS __global
 # else
 #  define JS_EXTERNAL_VIS
 # endif
@@ -109,9 +105,6 @@
 # define JS_EXPORT_API(__type)  JS_EXTERNAL_VIS __type
 # define JS_EXTERN_DATA(__type) extern JS_EXTERNAL_VIS __type
 # define JS_EXPORT_DATA(__type) JS_EXTERNAL_VIS __type
-
-# define JS_DLL_CALLBACK
-# define JS_STATIC_DLL_CALLBACK(__x)    static __x
 
 #endif
 
@@ -161,16 +154,38 @@
 #define JS_FRIEND_API(t)    JS_PUBLIC_API(t)
 #define JS_FRIEND_DATA(t)   JS_PUBLIC_DATA(t)
 
-#if defined(_MSC_VER)
-# define JS_INLINE __forceinline
-#elif defined(__GNUC__)
-# ifndef DEBUG
-#  define JS_INLINE __attribute__((always_inline))
-# else
-#  define JS_INLINE inline
-# endif
+#if defined(_MSC_VER) && defined(_M_IX86)
+#define JS_FASTCALL __fastcall
+#elif defined(__GNUC__) && defined(__i386__) &&                         \
+  ((__GNUC__ >= 4) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
+#define JS_FASTCALL __attribute__((fastcall))
 #else
-# define JS_INLINE
+#define JS_FASTCALL
+#define JS_NO_FASTCALL
+#endif
+
+#ifndef JS_INLINE
+# if defined __cplusplus
+#  define JS_INLINE          inline
+# elif defined _MSC_VER
+#  define JS_INLINE          __inline
+# elif defined __GNUC__
+#  define JS_INLINE          __inline__
+# else
+#  define JS_INLINE          inline
+# endif
+#endif
+
+#ifndef JS_ALWAYS_INLINE
+# if defined DEBUG
+#  define JS_ALWAYS_INLINE   JS_INLINE
+# elif defined _MSC_VER
+#  define JS_ALWAYS_INLINE   __forceinline
+# elif defined __GNUC__
+#  define JS_ALWAYS_INLINE   __attribute__((always_inline))
+# else
+#  define JS_ALWAYS_INLINE   JS_INLINE
+# endif
 #endif
 
 /***********************************************************************

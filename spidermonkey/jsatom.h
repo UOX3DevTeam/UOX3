@@ -43,7 +43,7 @@
  * JS atom table.
  */
 #include <stddef.h>
-#include "jsconfig.h"
+#include "jsversion.h"
 #include "jstypes.h"
 #include "jshash.h" /* Added by JSIFY */
 #include "jsdhash.h"
@@ -98,6 +98,7 @@ struct JSAtomListElement {
 #define ALE_SET_ATOM(ale,atom)  ((ale)->entry.key = (const void *)(atom))
 #define ALE_SET_INDEX(ale,index)((ale)->entry.value = JS_UINT32_TO_PTR(index))
 #define ALE_SET_JSOP(ale,op)    ((ale)->entry.value = JS_UINT32_TO_PTR(op))
+#define ALE_SET_VALUE(ale, v)   ((ale)->entry.value = (void *)(v))
 
 struct JSAtomList {
     JSHashEntry         *list;          /* literals indexed for mapping */
@@ -201,6 +202,7 @@ struct JSAtomState {
     JSAtom              *toSourceAtom;
     JSAtom              *toStringAtom;
     JSAtom              *valueOfAtom;
+    JSAtom              *toJSONAtom;
     JSAtom              *void0Atom;
 
 #if JS_HAS_XML_SUPPORT
@@ -336,6 +338,7 @@ extern const char   js_toString_str[];
 extern const char   js_toLocaleString_str[];
 extern const char   js_undefined_str[];
 extern const char   js_valueOf_str[];
+extern const char   js_toJSON_str[];
 extern const char   js_xml_str[];
 
 #ifdef NARCISSUS
