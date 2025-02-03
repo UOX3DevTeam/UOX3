@@ -50,7 +50,7 @@
 #include "jsapi.h"
 #include "jsatom.h"
 #include "jscntxt.h"
-#include "jsconfig.h"
+#include "jsversion.h"
 #include "jsgc.h"
 #include "jslock.h"
 #include "jsnum.h"
@@ -126,6 +126,7 @@ const char *const js_common_atom_names[] = {
     js_toSource_str,            /* toSourceAtom                 */
     js_toString_str,            /* toStringAtom                 */
     js_valueOf_str,             /* valueOfAtom                  */
+    js_toJSON_str,              /* toJSONAtom                   */
     "(void 0)",                 /* void0Atom                    */
 
 #if JS_HAS_XML_SUPPORT
@@ -185,6 +186,7 @@ const char js_toString_str[]        = "toString";
 const char js_toLocaleString_str[]  = "toLocaleString";
 const char js_undefined_str[]       = "undefined";
 const char js_valueOf_str[]         = "valueOf";
+const char js_toJSON_str[]          = "toJSON";
 
 #if JS_HAS_XML_SUPPORT
 const char js_etago_str[]           = "</";
@@ -241,16 +243,16 @@ JS_STATIC_ASSERT(ATOM_ENTRY_FLAG_MASK < JSVAL_ALIGN);
 #define CLEAR_ATOM_ENTRY_FLAGS(entry, flags)                                  \
     ((void)((entry)->keyAndFlags &= ~(jsuword)(flags)))
 
-JS_STATIC_DLL_CALLBACK(JSDHashNumber)
+static JSDHashNumber
 HashDouble(JSDHashTable *table, const void *key);
 
-JS_STATIC_DLL_CALLBACK(JSBool)
+static JSBool
 MatchDouble(JSDHashTable *table, const JSDHashEntryHdr *hdr, const void *key);
 
-JS_STATIC_DLL_CALLBACK(JSDHashNumber)
+static JSDHashNumber
 HashString(JSDHashTable *table, const void *key);
 
-JS_STATIC_DLL_CALLBACK(JSBool)
+static JSBool
 MatchString(JSDHashTable *table, const JSDHashEntryHdr *hdr, const void *key);
 
 static const JSDHashTableOps DoubleHashOps = {
@@ -280,7 +282,7 @@ static const JSDHashTableOps StringHashOps = {
 
 #define IS_INITIALIZED_STATE(state) IS_DOUBLE_TABLE(&(state)->doubleAtoms)
 
-JS_STATIC_DLL_CALLBACK(JSDHashNumber)
+static JSDHashNumber
 HashDouble(JSDHashTable *table, const void *key)
 {
     jsdouble d;
@@ -290,14 +292,14 @@ HashDouble(JSDHashTable *table, const void *key)
     return JSDOUBLE_HI32(d) ^ JSDOUBLE_LO32(d);
 }
 
-JS_STATIC_DLL_CALLBACK(JSDHashNumber)
+static JSDHashNumber
 HashString(JSDHashTable *table, const void *key)
 {
     JS_ASSERT(IS_STRING_TABLE(table));
     return js_HashString((JSString *)key);
 }
 
-JS_STATIC_DLL_CALLBACK(JSBool)
+static JSBool
 MatchDouble(JSDHashTable *table, const JSDHashEntryHdr *hdr, const void *key)
 {
     JSAtomHashEntry *entry = TO_ATOM_ENTRY(hdr);
@@ -321,7 +323,7 @@ MatchDouble(JSDHashTable *table, const JSDHashEntryHdr *hdr, const void *key)
     return d1 == d2;
 }
 
-JS_STATIC_DLL_CALLBACK(JSBool)
+static JSBool
 MatchString(JSDHashTable *table, const JSDHashEntryHdr *hdr, const void *key)
 {
     JSAtomHashEntry *entry = TO_ATOM_ENTRY(hdr);
@@ -390,7 +392,7 @@ js_InitAtomState(JSRuntime *rt)
     return JS_TRUE;
 }
 
-JS_STATIC_DLL_CALLBACK(JSDHashOperator)
+static JSDHashOperator
 js_string_uninterner(JSDHashTable *table, JSDHashEntryHdr *hdr,
                      uint32 number, void *arg)
 {
@@ -456,7 +458,7 @@ js_InitCommonAtoms(JSContext *cx)
     return JS_TRUE;
 }
 
-JS_STATIC_DLL_CALLBACK(JSDHashOperator)
+static JSDHashOperator
 js_atom_unpinner(JSDHashTable *table, JSDHashEntryHdr *hdr,
                  uint32 number, void *arg)
 {
@@ -477,7 +479,7 @@ js_FinishCommonAtoms(JSContext *cx)
 #endif
 }
 
-JS_STATIC_DLL_CALLBACK(JSDHashOperator)
+static JSDHashOperator
 js_locked_atom_tracer(JSDHashTable *table, JSDHashEntryHdr *hdr,
                       uint32 number, void *arg)
 {
@@ -494,7 +496,7 @@ js_locked_atom_tracer(JSDHashTable *table, JSDHashEntryHdr *hdr,
     return JS_DHASH_NEXT;
 }
 
-JS_STATIC_DLL_CALLBACK(JSDHashOperator)
+static JSDHashOperator
 js_pinned_atom_tracer(JSDHashTable *table, JSDHashEntryHdr *hdr,
                         uint32 number, void *arg)
 {
@@ -528,7 +530,7 @@ js_TraceAtomState(JSTracer *trc, JSBool allAtoms)
     }
 }
 
-JS_STATIC_DLL_CALLBACK(JSDHashOperator)
+static JSDHashOperator
 js_atom_sweeper(JSDHashTable *table, JSDHashEntryHdr *hdr,
                 uint32 number, void *arg)
 {
@@ -578,19 +580,19 @@ js_AtomizeDouble(JSContext *cx, jsdouble d)
     state = &cx->runtime->atomState;
     table = &state->doubleAtoms;
 
-    JS_LOCK(&state->lock, cx);
+    JS_LOCK(cx, &state->lock);
     entry = TO_ATOM_ENTRY(JS_DHashTableOperate(table, &d, JS_DHASH_ADD));
     if (!entry)
         goto failed_hash_add;
     if (entry->keyAndFlags == 0) {
         gen = ++table->generation;
-        JS_UNLOCK(&state->lock, cx);
+        JS_UNLOCK(cx, &state->lock);
 
         key = js_NewWeaklyRootedDouble(cx, d);
         if (!key)
             return NULL;
 
-        JS_LOCK(&state->lock, cx);
+        JS_LOCK(cx, &state->lock);
         if (table->generation == gen) {
             JS_ASSERT(entry->keyAndFlags == 0);
         } else {
@@ -608,12 +610,12 @@ js_AtomizeDouble(JSContext *cx, jsdouble d)
   finish:
     v = DOUBLE_TO_JSVAL((jsdouble *)ATOM_ENTRY_KEY(entry));
     cx->weakRoots.lastAtom = v;
-    JS_UNLOCK(&state->lock,cx);
+    JS_UNLOCK(cx, &state->lock);
 
     return (JSAtom *)v;
 
   failed_hash_add:
-    JS_UNLOCK(&state->lock,cx);
+    JS_UNLOCK(cx, &state->lock);
     JS_ReportOutOfMemory(cx);
     return NULL;
 }
@@ -634,7 +636,7 @@ js_AtomizeString(JSContext *cx, JSString *str, uintN flags)
     state = &cx->runtime->atomState;
     table = &state->stringAtoms;
 
-    JS_LOCK(&state->lock, cx);
+    JS_LOCK(cx, &state->lock);
     entry = TO_ATOM_ENTRY(JS_DHashTableOperate(table, str, JS_DHASH_ADD));
     if (!entry)
         goto failed_hash_add;
@@ -653,7 +655,7 @@ js_AtomizeString(JSContext *cx, JSString *str, uintN flags)
             key = str;
         } else {
             gen = table->generation;
-            JS_UNLOCK(&state->lock, cx);
+            JS_UNLOCK(cx, &state->lock);
 
             if (flags & ATOM_TMPSTR) {
                 if (flags & ATOM_NOCOPY) {
@@ -677,7 +679,7 @@ js_AtomizeString(JSContext *cx, JSString *str, uintN flags)
                 key = str;
             }
 
-            JS_LOCK(&state->lock, cx);
+            JS_LOCK(cx, &state->lock);
             if (table->generation == gen) {
                 JS_ASSERT(entry->keyAndFlags == 0);
             } else {
@@ -701,11 +703,11 @@ js_AtomizeString(JSContext *cx, JSString *str, uintN flags)
     JS_ASSERT(JSSTRING_IS_ATOMIZED(key));
     v = STRING_TO_JSVAL(key);
     cx->weakRoots.lastAtom = v;
-    JS_UNLOCK(&state->lock, cx);
+    JS_UNLOCK(cx, &state->lock);
     return (JSAtom *)v;
 
   failed_hash_add:
-    JS_UNLOCK(&state->lock,cx);
+    JS_UNLOCK(cx, &state->lock);
     JS_ReportOutOfMemory(cx);
     return NULL;
 }
@@ -766,12 +768,12 @@ js_GetExistingStringAtom(JSContext *cx, const jschar *chars, size_t length)
     JSFLATSTR_INIT(&str, (jschar *)chars, length);
     state = &cx->runtime->atomState;
 
-    JS_LOCK(&state->lock, cx);
+    JS_LOCK(cx, &state->lock);
     hdr = JS_DHashTableOperate(&state->stringAtoms, &str, JS_DHASH_LOOKUP);
     str2 = JS_DHASH_ENTRY_IS_BUSY(hdr)
            ? (JSString *)ATOM_ENTRY_KEY(TO_ATOM_ENTRY(hdr))
            : NULL;
-    JS_UNLOCK(&state->lock, cx);
+    JS_UNLOCK(cx, &state->lock);
 
     return str2 ? (JSAtom *)STRING_TO_JSVAL(str2) : NULL;
 }
@@ -790,8 +792,8 @@ js_AtomizePrimitiveValue(JSContext *cx, jsval v, JSAtom **atomp)
         if (!atom)
             return JS_FALSE;
     } else {
-        JS_ASSERT(JSVAL_IS_INT(v) || v == JSVAL_TRUE || v == JSVAL_FALSE ||
-                  v == JSVAL_NULL || v == JSVAL_VOID);
+        JS_ASSERT(JSVAL_IS_INT(v) || JSVAL_IS_BOOLEAN(v) ||
+                  JSVAL_IS_NULL(v) || JSVAL_IS_VOID(v));
         atom = (JSAtom *)v;
     }
     *atomp = atom;
@@ -832,7 +834,7 @@ js_ValueToStringId(JSContext *cx, jsval v, jsid *idp)
 
 #ifdef DEBUG
 
-JS_STATIC_DLL_CALLBACK(JSDHashOperator)
+static JSDHashOperator
 atom_dumper(JSDHashTable *table, JSDHashEntryHdr *hdr,
             uint32 number, void *arg)
 {
@@ -886,14 +888,14 @@ js_DumpAtoms(JSContext *cx, FILE *fp)
 
 #endif
 
-JS_STATIC_DLL_CALLBACK(JSHashNumber)
+static JSHashNumber
 js_hash_atom_ptr(const void *key)
 {
     const JSAtom *atom = (const JSAtom *) key;
     return ATOM_HASH(atom);
 }
 
-JS_STATIC_DLL_CALLBACK(void *)
+static void *
 js_alloc_temp_space(void *priv, size_t size)
 {
     JSContext *cx = (JSContext *) priv;
@@ -905,12 +907,12 @@ js_alloc_temp_space(void *priv, size_t size)
     return space;
 }
 
-JS_STATIC_DLL_CALLBACK(void)
+static void
 js_free_temp_space(void *priv, void *item)
 {
 }
 
-JS_STATIC_DLL_CALLBACK(JSHashEntry *)
+static JSHashEntry *
 js_alloc_temp_entry(void *priv, const void *key)
 {
     JSContext *cx = (JSContext *) priv;
@@ -924,7 +926,7 @@ js_alloc_temp_entry(void *priv, const void *key)
     return &ale->entry;
 }
 
-JS_STATIC_DLL_CALLBACK(void)
+static void
 js_free_temp_entry(void *priv, JSHashEntry *he, uintN flag)
 {
 }
@@ -996,7 +998,7 @@ js_IndexAtom(JSContext *cx, JSAtom *atom, JSAtomList *al)
     return ale;
 }
 
-JS_STATIC_DLL_CALLBACK(intN)
+static intN
 js_map_atom(JSHashEntry *he, intN i, void *arg)
 {
     JSAtomListElement *ale = (JSAtomListElement *)he;

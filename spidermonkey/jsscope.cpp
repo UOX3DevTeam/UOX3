@@ -393,7 +393,7 @@ ChangeScope(JSContext *cx, JSScope *scope, int change)
  */
 #define SPROP_FLAGS_NOT_MATCHED (SPROP_MARK | SPROP_FLAG_SHAPE_REGEN)
 
-JS_STATIC_DLL_CALLBACK(JSDHashNumber)
+static JSDHashNumber
 js_HashScopeProperty(JSDHashTable *table, const void *key)
 {
     const JSScopeProperty *sprop = (const JSScopeProperty *)key;
@@ -439,7 +439,7 @@ js_HashScopeProperty(JSDHashTable *table, const void *key)
      (((sprop)->flags ^ (aflags)) & ~SPROP_FLAGS_NOT_MATCHED) == 0 &&         \
      (sprop)->shortid == (ashortid))
 
-JS_STATIC_DLL_CALLBACK(JSBool)
+static JSBool
 js_MatchScopeProperty(JSDHashTable *table,
                       const JSDHashEntryHdr *hdr,
                       const void *key)
@@ -809,7 +809,6 @@ GetPropertyTreeChild(JSContext *cx, JSScopeProperty *parent,
     JSScopeProperty *sprop;
     PropTreeKidsChunk *chunk;
     uintN i, n;
-    uint32 shape;
 
     rt = cx->runtime;
     if (!parent) {
@@ -896,12 +895,6 @@ GetPropertyTreeChild(JSContext *cx, JSScopeProperty *parent,
     }
 
 locked_not_found:
-    /*
-     * Call js_GenerateShape before the allocation to prevent collecting the
-     * new property when the shape generation triggers the GC.
-     */
-    shape = js_GenerateShape(cx, JS_TRUE, NULL);
-
     sprop = NewScopeProperty(rt);
     if (!sprop)
         goto out_of_memory;
@@ -914,7 +907,7 @@ locked_not_found:
     sprop->flags = child->flags;
     sprop->shortid = child->shortid;
     sprop->parent = sprop->kids = NULL;
-    sprop->shape = shape;
+    sprop->shape = js_GenerateShape(cx, JS_TRUE);
 
     if (!parent) {
         entry->child = sprop;
@@ -1263,11 +1256,9 @@ js_AddScopeProperty(JSContext *cx, JSScope *scope, jsid id,
          */
         if (!JS_CLIST_IS_EMPTY(&cx->runtime->watchPointList) &&
             js_FindWatchPoint(cx->runtime, scope, id)) {
-            if (overwriting)
-                JS_PUSH_TEMP_ROOT_SPROP(cx, overwriting, &tvr);
+            JS_PUSH_TEMP_ROOT_SPROP(cx, overwriting, &tvr);
             setter = js_WrapWatchedSetter(cx, id, attrs, setter);
-            if (overwriting)
-                JS_POP_TEMP_ROOT(cx, &tvr);
+            JS_POP_TEMP_ROOT(cx, &tvr);
             if (!setter)
                 goto fail_overwrite;
         }
@@ -1626,7 +1617,7 @@ MeterPropertyTree(JSBasicStats *bs, JSScopeProperty *node)
     MeterKidCount(bs, nkids);
 }
 
-JS_STATIC_DLL_CALLBACK(JSDHashOperator)
+static JSDHashOperator
 js_MeterPropertyTree(JSDHashTable *table, JSDHashEntryHdr *hdr, uint32 number,
                      void *arg)
 {

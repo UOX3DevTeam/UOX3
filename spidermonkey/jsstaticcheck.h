@@ -1,5 +1,4 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
- * vim: set ts=8 sw=4 et tw=78:
  *
  * ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -14,14 +13,15 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is Mozilla SpiderMonkey JavaScript 1.8 code, released
- * March 4, 2008.
+ * The Original Code is Mozilla Communicator client code, released
+ * March 31, 1998.
  *
  * The Initial Developer of the Original Code is
- *   Igor Bukanov <igor@mir2.org>
+ * Netscape Communications Corporation.
+ * Portions created by the Initial Developer are Copyright (C) 1998
+ * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Brendan Eich <brendan@mozilla.org
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either of the GNU General Public License Version 2 or later (the "GPL"),
@@ -37,6 +37,21 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#define jsinvoke_cpp___
+#ifndef jsstaticcheck_h___
+#define jsstaticcheck_h___
 
-#include "jsinterp.cpp"
+#ifdef NS_STATIC_CHECKING
+/*
+ * Trigger a control flow check to make sure that code flows through label
+ */
+inline __attribute__ ((unused)) void MUST_FLOW_THROUGH(const char *label) {
+}
+
+/* avoid unused goto-label warnings */
+#define MUST_FLOW_LABEL(label) goto label; label:
+#else
+#define MUST_FLOW_THROUGH(label) ((void)0)
+#define MUST_FLOW_LABEL(label)
+#endif
+
+#endif /* jsstaticcheck_h___ */

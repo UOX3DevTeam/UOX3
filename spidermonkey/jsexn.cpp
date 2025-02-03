@@ -51,7 +51,7 @@
 #include "jsprf.h"
 #include "jsapi.h"
 #include "jscntxt.h"
-#include "jsconfig.h"
+#include "jsversion.h"
 #include "jsdbgapi.h"
 #include "jsexn.h"
 #include "jsfun.h"
@@ -61,6 +61,7 @@
 #include "jsopcode.h"
 #include "jsscope.h"
 #include "jsscript.h"
+#include "jsstaticcheck.h"
 
 /* Forward declarations for js_ErrorClass's initializer. */
 static JSBool
@@ -248,6 +249,7 @@ static JSBool
 InitExnPrivate(JSContext *cx, JSObject *exnObject, JSString *message,
                JSString *filename, uintN lineno, JSErrorReport *report)
 {
+    JSSecurityCallbacks *callbacks;
     JSCheckAccessOp checkAccess;
     JSErrorReporter older;
     JSExceptionState *state;
@@ -268,7 +270,10 @@ InitExnPrivate(JSContext *cx, JSObject *exnObject, JSString *message,
      * so we can suppress any checkAccess failures.  Such failures should stop
      * the backtrace procedure, not result in a failure of this constructor.
      */
-    checkAccess = cx->runtime->checkObjectAccess;
+    callbacks = JS_GetSecurityCallbacks(cx);
+    checkAccess = callbacks
+                  ? callbacks->checkObjectAccess
+                  : NULL;
     older = JS_SetErrorReporter(cx, NULL);
     state = JS_SaveExceptionState(cx);
 
@@ -897,9 +902,12 @@ exn_toSource(JSContext *cx, uintN argc, jsval *vp)
         return JS_FALSE;
     *vp = STRING_TO_JSVAL(name);
 
-    /* After this, control must flow through label out: to exit. */
+    MUST_FLOW_THROUGH("out");
     JS_PUSH_TEMP_ROOT(cx, 3, localroots, &tvr);
 
+#ifdef __GNUC__
+    message = filename = NULL;
+#endif
     ok = JS_GetProperty(cx, obj, js_message_str, &localroots[0]) &&
          (message = js_ValueToSource(cx, localroots[0]));
     if (!ok)
@@ -1010,9 +1018,9 @@ out:
 
 static JSFunctionSpec exception_methods[] = {
 #if JS_HAS_TOSOURCE
-    JS_FN(js_toSource_str,   exn_toSource,           0,0,0),
+    JS_FN(js_toSource_str,   exn_toSource,           0,0),
 #endif
-    JS_FN(js_toString_str,   exn_toString,           0,0,0),
+    JS_FN(js_toString_str,   exn_toString,           0,0),
     JS_FS_END
 };
 
@@ -1165,11 +1173,10 @@ js_ErrorToException(JSContext *cx, const char *message, JSErrorReport *reportp)
     JSString *messageStr, *filenameStr;
 
     /*
-     * Tell our caller to report immediately if cx has no active frames, or if
-     * this report is just a warning.
+     * Tell our caller to report immediately if this report is just a warning.
      */
     JS_ASSERT(reportp);
-    if (!cx->fp || JSREPORT_IS_WARNING(reportp->flags))
+    if (JSREPORT_IS_WARNING(reportp->flags))
         return JS_FALSE;
 
     /* Find the exception index associated with this error. */
@@ -1201,7 +1208,7 @@ js_ErrorToException(JSContext *cx, const char *message, JSErrorReport *reportp)
     if (cx->generatingError)
         return JS_FALSE;
 
-    /* After this point the control must flow through the label out. */
+    MUST_FLOW_THROUGH("out");
     cx->generatingError = JS_TRUE;
 
     /* Protect the newly-created strings below from nesting GCs. */

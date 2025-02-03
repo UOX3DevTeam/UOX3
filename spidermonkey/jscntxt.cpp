@@ -52,9 +52,10 @@
 #include "jsprf.h"
 #include "jsatom.h"
 #include "jscntxt.h"
-#include "jsconfig.h"
+#include "jsversion.h"
 #include "jsdbgapi.h"
 #include "jsexn.h"
+#include "jsfun.h"
 #include "jsgc.h"
 #include "jslock.h"
 #include "jsnum.h"
@@ -64,6 +65,7 @@
 #include "jsscope.h"
 #include "jsscript.h"
 #include "jsstr.h"
+#include "jstracer.h"
 
 #ifdef JS_THREADSAFE
 #include "prtypes.h"
@@ -76,8 +78,9 @@
 static PRUintn threadTPIndex;
 static JSBool  tpIndexInited = JS_FALSE;
 
+JS_BEGIN_EXTERN_C
 JSBool
-js_InitThreadPrivateIndex(void (JS_DLL_CALLBACK *ptr)(void *))
+js_InitThreadPrivateIndex(void (*ptr)(void *))
 {
     PRStatus status;
 
@@ -90,12 +93,13 @@ js_InitThreadPrivateIndex(void (JS_DLL_CALLBACK *ptr)(void *))
         tpIndexInited = JS_TRUE;
     return status == PR_SUCCESS;
 }
+JS_END_EXTERN_C
 
 /*
  * Callback function to delete a JSThread info when the thread that owns it
  * is destroyed.
  */
-void JS_DLL_CALLBACK
+void
 js_ThreadDestructorCB(void *ptr)
 {
     JSThread *thread = (JSThread *)ptr;
@@ -109,6 +113,9 @@ js_ThreadDestructorCB(void *ptr)
      */
     JS_ASSERT(JS_CLIST_IS_EMPTY(&thread->contextList));
     GSN_CACHE_CLEAR(&thread->gsnCache);
+#if defined JS_TRACER
+    js_FinishJIT(&thread->traceMonitor);
+#endif
     free(thread);
 }
 
@@ -144,6 +151,11 @@ js_GetCurrentThread(JSRuntime *rt)
         JS_INIT_CLIST(&thread->contextList);
         thread->id = js_CurrentThreadId();
         thread->gcMallocBytes = 0;
+#ifdef JS_TRACER
+        memset(&thread->traceMonitor, 0, sizeof(thread->traceMonitor));
+        js_InitJIT(&thread->traceMonitor);
+#endif
+        thread->scriptsToGC = NULL;
 
         /*
          * js_SetContextThread initializes the remaining fields as necessary.
@@ -168,11 +180,10 @@ js_SetContextThread(JSContext *cx)
     }
 
     /*
-     * Clear gcFreeLists and caches on each transition from 0 to 1 context
-     * active on the current thread. See bug 351602 and bug 425828.
+     * Clear caches on each transition from 0 to 1 context active on the
+     * current thread. See bug 425828.
      */
     if (JS_CLIST_IS_EMPTY(&thread->contextList)) {
-        memset(thread->gcFreeLists, 0, sizeof(thread->gcFreeLists));
         memset(&thread->gsnCache, 0, sizeof(thread->gsnCache));
         memset(&thread->propertyCache, 0, sizeof(thread->propertyCache));
     }
@@ -195,12 +206,6 @@ js_ClearContextThread(JSContext *cx)
      */
     JS_ASSERT(cx->thread == js_GetCurrentThread(cx->runtime) || !cx->thread);
     JS_REMOVE_AND_INIT_LINK(&cx->threadLinks);
-#ifdef DEBUG
-    if (JS_CLIST_IS_EMPTY(&cx->thread->contextList)) {
-        memset(cx->thread->gcFreeLists, JS_FREE_PATTERN,
-               sizeof(cx->thread->gcFreeLists));
-    }
-#endif
     cx->thread = NULL;
 }
 
@@ -243,6 +248,7 @@ js_NewContext(JSRuntime *rt, size_t stackChunkSize)
 #endif
     cx->scriptStackQuota = JS_DEFAULT_SCRIPT_STACK_QUOTA;
 #ifdef JS_THREADSAFE
+    cx->gcLocalFreeLists = (JSGCFreeListSet *) &js_GCEmptyFreeListSet;
     JS_INIT_CLIST(&cx->threadLinks);
     js_SetContextThread(cx);
 #endif
@@ -274,13 +280,28 @@ js_NewContext(JSRuntime *rt, size_t stackChunkSize)
     cx->version = JSVERSION_DEFAULT;
     JS_INIT_ARENA_POOL(&cx->stackPool, "stack", stackChunkSize, sizeof(jsval),
                        &cx->scriptStackQuota);
-    JS_INIT_ARENA_POOL(&cx->tempPool, "temp", 1024, sizeof(jsdouble),
-                       &cx->scriptStackQuota);
+
+    JS_INIT_ARENA_POOL(&cx->tempPool, "temp",
+                       1024,  /* FIXME: bug 421435 */
+                       sizeof(jsdouble), &cx->scriptStackQuota);
+
+    /*
+     * To avoid multiple allocations in InitMatch() (in jsregexp.c), the arena
+     * size parameter should be at least as big as:
+     *   INITIAL_BACKTRACK
+     *   + (sizeof(REProgState) * INITIAL_STATESTACK)
+     *   + (offsetof(REMatchState, parens) + avgParanSize * sizeof(RECapture))
+     */
+    JS_INIT_ARENA_POOL(&cx->regexpPool, "regexp",
+                       12 * 1024 - 40,  /* FIXME: bug 421435 */
+                       sizeof(void *), &cx->scriptStackQuota);
 
     if (!js_InitRegExpStatics(cx, &cx->regExpStatics)) {
         js_DestroyContext(cx, JSDCM_NEW_FAILED);
         return NULL;
     }
+
+    cx->resolveFlags = 0;
 
     /*
      * If cx is the first context on this runtime, initialize well-known atoms,
@@ -326,6 +347,7 @@ js_NewContext(JSRuntime *rt, size_t stackChunkSize)
         js_DestroyContext(cx, JSDCM_NEW_FAILED);
         return NULL;
     }
+
     return cx;
 }
 
@@ -363,6 +385,9 @@ js_DestroyContext(JSContext *cx, JSDestroyContextMode mode)
     last = (rt->contextList.next == &rt->contextList);
     if (last)
         rt->state = JSRTS_LANDING;
+#ifdef JS_THREADSAFE
+    js_RevokeGCLocalFreeLists(cx);
+#endif
     JS_UNLOCK_GC(rt);
 
     if (last) {
@@ -442,6 +467,7 @@ js_DestroyContext(JSContext *cx, JSDestroyContextMode mode)
     /* Free the stuff hanging off of cx. */
     JS_FinishArenaPool(&cx->stackPool);
     JS_FinishArenaPool(&cx->tempPool);
+    JS_FinishArenaPool(&cx->regexpPool);
 
     if (cx->lastMessage)
         free(cx->lastMessage);
@@ -497,9 +523,7 @@ js_ContextIterator(JSRuntime *rt, JSBool unlocked, JSContext **iterp)
 
     if (unlocked)
         JS_LOCK_GC(rt);
-    if (!cx)
-        cx = (JSContext *)&rt->contextList;
-    cx = (JSContext *)cx->links.next;
+    cx = (JSContext *) (cx ? cx->links.next : rt->contextList.next);
     if (&cx->links == &rt->contextList)
         cx = NULL;
     *iterp = cx;
@@ -508,7 +532,7 @@ js_ContextIterator(JSRuntime *rt, JSBool unlocked, JSContext **iterp)
     return cx;
 }
 
-JS_STATIC_DLL_CALLBACK(JSDHashNumber)
+static JSDHashNumber
 resolving_HashKey(JSDHashTable *table, const void *ptr)
 {
     const JSResolvingKey *key = (const JSResolvingKey *)ptr;
@@ -855,7 +879,7 @@ ReportError(JSContext *cx, const char *message, JSErrorReport *reportp)
      * propagates out of scope.  This is needed for compatability
      * with the old scheme.
      */
-    if (!js_ErrorToException(cx, message, reportp)) {
+    if (!cx->fp || !js_ErrorToException(cx, message, reportp)) {
         js_ReportErrorAgain(cx, message, reportp);
     } else if (cx->debugHooks->debugErrorHook && cx->errorReporter) {
         JSDebugErrorHook hook = cx->debugHooks->debugErrorHook;
@@ -1281,6 +1305,28 @@ js_ReportIsNullOrUndefined(JSContext *cx, intN spindex, jsval v,
     return ok;
 }
 
+void
+js_ReportMissingArg(JSContext *cx, jsval *vp, uintN arg)
+{
+    char argbuf[11];
+    char *bytes;
+    JSAtom *atom;
+
+    JS_snprintf(argbuf, sizeof argbuf, "%u", arg);
+    bytes = NULL;
+    if (VALUE_IS_FUNCTION(cx, *vp)) {
+        atom = GET_FUNCTION_PRIVATE(cx, JSVAL_TO_OBJECT(*vp))->atom;
+        bytes = js_DecompileValueGenerator(cx, JSDVG_SEARCH_STACK, *vp,
+                                           ATOM_TO_STRING(atom));
+        if (!bytes)
+            return;
+    }
+    JS_ReportErrorNumber(cx, js_GetErrorMessage, NULL,
+                         JSMSG_MISSING_FUN_ARG, argbuf,
+                         bytes ? bytes : "");
+    JS_free(cx, bytes);
+}
+
 JSBool
 js_ReportValueErrorFlags(JSContext *cx, uintN flags, const uintN errorNumber,
                          intN spindex, jsval v, JSString *fallback,
@@ -1314,7 +1360,7 @@ JSErrorFormatString js_ErrorFormatString[JSErr_Limit] = {
 #undef MSG_DEF
 };
 
-const JSErrorFormatString *
+JS_FRIEND_API(const JSErrorFormatString *)
 js_GetErrorMessage(void *userRef, const char *locale, const uintN errorNumber)
 {
     if ((errorNumber > 0) && (errorNumber < JSErr_Limit))

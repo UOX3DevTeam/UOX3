@@ -183,20 +183,7 @@ int main(int argc, char **argv)
     printf("/* AUTOMATICALLY GENERATED - DO NOT EDIT */\n\n");
 
 #ifdef CROSS_COMPILE
-#if defined(__APPLE__)
-    /*
-     * Darwin NSPR uses the same MDCPUCFG (_darwin.cfg) for multiple
-     * processors, and determines which processor to configure for based
-     * on compiler predefined macros.  We do the same thing here.
-     */
-    printf("#ifdef __LITTLE_ENDIAN__\n");
-    printf("#define IS_LITTLE_ENDIAN 1\n");
-    printf("#undef  IS_BIG_ENDIAN\n");
-    printf("#else\n");
-    printf("#undef  IS_LITTLE_ENDIAN\n");
-    printf("#define IS_BIG_ENDIAN 1\n");
-    printf("#endif\n\n");
-#elif defined(IS_LITTLE_ENDIAN)
+#if defined(IS_LITTLE_ENDIAN)
     printf("#define IS_LITTLE_ENDIAN 1\n");
     printf("#undef  IS_BIG_ENDIAN\n\n");
 #elif defined(IS_BIG_ENDIAN)
@@ -388,6 +375,11 @@ int main(int argc, char **argv)
 
     printf("#define JS_HAVE_LONG_LONG\n");
     printf("\n");
+
+#if defined __GNUC__ && defined __x86_64__
+    printf("#define HAVE_VA_LIST_AS_ARRAY 1\n");
+    printf("\n");
+#endif
 
     printf("#endif /* js_cpucfg___ */\n");
 

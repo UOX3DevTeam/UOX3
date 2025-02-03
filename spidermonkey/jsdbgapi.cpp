@@ -48,7 +48,7 @@
 #include "jsclist.h"
 #include "jsapi.h"
 #include "jscntxt.h"
-#include "jsconfig.h"
+#include "jsversion.h"
 #include "jsdbgapi.h"
 #include "jsemit.h"
 #include "jsfun.h"
@@ -61,6 +61,8 @@
 #include "jsscope.h"
 #include "jsscript.h"
 #include "jsstr.h"
+
+#include "jsautooplen.h"
 
 typedef struct JSTrap {
     JSCList         links;
@@ -84,7 +86,7 @@ FindTrap(JSRuntime *rt, JSScript *script, jsbytecode *pc)
     JSTrap *trap;
 
     for (trap = (JSTrap *)rt->trapList.next;
-         trap != (JSTrap *)&rt->trapList;
+         &trap->links != &rt->trapList;
          trap = (JSTrap *)trap->links.next) {
         if (trap->script == script && trap->pc == pc)
             return trap;
@@ -103,7 +105,8 @@ js_UntrapScriptCode(JSContext *cx, JSScript *script)
     rt = cx->runtime;
     DBG_LOCK(rt);
     for (trap = (JSTrap *)rt->trapList.next;
-         trap != (JSTrap *)&rt->trapList;
+         &trap->links !=
+                &rt->trapList;
          trap = (JSTrap *)trap->links.next) {
         if (trap->script == script &&
             (size_t)(trap->pc - script->code) < script->length) {
@@ -238,7 +241,7 @@ JS_ClearScriptTraps(JSContext *cx, JSScript *script)
     rt = cx->runtime;
     DBG_LOCK(rt);
     for (trap = (JSTrap *)rt->trapList.next;
-         trap != (JSTrap *)&rt->trapList;
+         &trap->links != &rt->trapList;
          trap = next) {
         next = (JSTrap *)trap->links.next;
         if (trap->script == script) {
@@ -262,7 +265,7 @@ JS_ClearAllTraps(JSContext *cx)
     rt = cx->runtime;
     DBG_LOCK(rt);
     for (trap = (JSTrap *)rt->trapList.next;
-         trap != (JSTrap *)&rt->trapList;
+         &trap->links != &rt->trapList;
          trap = next) {
         next = (JSTrap *)trap->links.next;
         sample = rt->debuggerMutations;
@@ -428,7 +431,7 @@ js_TraceWatchPoints(JSTracer *trc, JSObject *obj)
     rt = trc->context->runtime;
 
     for (wp = (JSWatchPoint *)rt->watchPointList.next;
-         wp != (JSWatchPoint *)&rt->watchPointList;
+         &wp->links != &rt->watchPointList;
          wp = (JSWatchPoint *)wp->links.next) {
         if (wp->object == obj) {
             TRACE_SCOPE_PROPERTY(trc, wp->sprop);
@@ -452,7 +455,7 @@ js_SweepWatchPoints(JSContext *cx)
     rt = cx->runtime;
     DBG_LOCK(rt);
     for (wp = (JSWatchPoint *)rt->watchPointList.next;
-         wp != (JSWatchPoint *)&rt->watchPointList;
+         &wp->links != &rt->watchPointList;
          wp = next) {
         next = (JSWatchPoint *)wp->links.next;
         if (js_IsAboutToBeFinalized(cx, wp->object)) {
@@ -479,7 +482,7 @@ FindWatchPoint(JSRuntime *rt, JSScope *scope, jsid id)
     JSWatchPoint *wp;
 
     for (wp = (JSWatchPoint *)rt->watchPointList.next;
-         wp != (JSWatchPoint *)&rt->watchPointList;
+         &wp->links != &rt->watchPointList;
          wp = (JSWatchPoint *)wp->links.next) {
         if (wp->object == scope->object && wp->sprop->id == id)
             return wp;
@@ -515,7 +518,7 @@ js_GetWatchedSetter(JSRuntime *rt, JSScope *scope,
     if (scope)
         DBG_LOCK(rt);
     for (wp = (JSWatchPoint *)rt->watchPointList.next;
-         wp != (JSWatchPoint *)&rt->watchPointList;
+         &wp->links != &rt->watchPointList;
          wp = (JSWatchPoint *)wp->links.next) {
         if ((!scope || wp->object == scope->object) && wp->sprop == sprop) {
             setter = wp->setter;
@@ -527,7 +530,7 @@ js_GetWatchedSetter(JSRuntime *rt, JSScope *scope,
     return setter;
 }
 
-JSBool JS_DLL_CALLBACK
+JSBool
 js_watch_set(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
 {
     JSRuntime *rt;
@@ -540,7 +543,7 @@ js_watch_set(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
     rt = cx->runtime;
     DBG_LOCK(rt);
     for (wp = (JSWatchPoint *)rt->watchPointList.next;
-         wp != (JSWatchPoint *)&rt->watchPointList;
+         &wp->links != &rt->watchPointList;
          wp = (JSWatchPoint *)wp->links.next) {
         sprop = wp->sprop;
         if (wp->object == obj && SPROP_USERID(sprop) == id &&
@@ -671,7 +674,7 @@ js_watch_set(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
     return JS_TRUE;
 }
 
-JSBool JS_DLL_CALLBACK
+JSBool
 js_watch_set_wrapper(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                      jsval *rval)
 {
@@ -732,13 +735,10 @@ JS_SetWatchPoint(JSContext *cx, JSObject *obj, jsval idval,
         return JS_FALSE;
     }
 
-    if (JSVAL_IS_INT(idval)) {
+    if (JSVAL_IS_INT(idval))
         propid = INT_JSVAL_TO_JSID(idval);
-    } else {
-        if (!js_ValueToStringId(cx, idval, &propid))
-            return JS_FALSE;
-        CHECK_FOR_STRING_INDEX(propid);
-    }
+    else if (!js_ValueToStringId(cx, idval, &propid))
+        return JS_FALSE;
 
     if (!js_LookupProperty(cx, obj, propid, &pobj, &prop))
         return JS_FALSE;
@@ -861,7 +861,7 @@ JS_ClearWatchPoint(JSContext *cx, JSObject *obj, jsval id,
     rt = cx->runtime;
     DBG_LOCK(rt);
     for (wp = (JSWatchPoint *)rt->watchPointList.next;
-         wp != (JSWatchPoint *)&rt->watchPointList;
+         &wp->links != &rt->watchPointList;
          wp = (JSWatchPoint *)wp->links.next) {
         if (wp->object == obj && SPROP_USERID(wp->sprop) == id) {
             if (handlerp)
@@ -889,7 +889,7 @@ JS_ClearWatchPointsForObject(JSContext *cx, JSObject *obj)
     rt = cx->runtime;
     DBG_LOCK(rt);
     for (wp = (JSWatchPoint *)rt->watchPointList.next;
-         wp != (JSWatchPoint *)&rt->watchPointList;
+         &wp->links != &rt->watchPointList;
          wp = next) {
         next = (JSWatchPoint *)wp->links.next;
         if (wp->object == obj) {
@@ -915,7 +915,7 @@ JS_ClearAllWatchPoints(JSContext *cx)
     rt = cx->runtime;
     DBG_LOCK(rt);
     for (wp = (JSWatchPoint *)rt->watchPointList.next;
-         wp != (JSWatchPoint *)&rt->watchPointList;
+         &wp->links != &rt->watchPointList;
          wp = next) {
         next = (JSWatchPoint *)wp->links.next;
         sample = rt->debuggerMutations;
@@ -1007,12 +1007,13 @@ JS_GetScriptedCaller(JSContext *cx, JSStackFrame *fp)
 JS_PUBLIC_API(JSPrincipals *)
 JS_StackFramePrincipals(JSContext *cx, JSStackFrame *fp)
 {
-    if (fp->fun) {
-        JSRuntime *rt = cx->runtime;
+    JSSecurityCallbacks *callbacks;
 
-        if (rt->findObjectPrincipals) {
+    if (fp->fun) {
+        callbacks = JS_GetSecurityCallbacks(cx);
+        if (callbacks && callbacks->findObjectPrincipals) {
             if (FUN_OBJECT(fp->fun) != fp->callee)
-                return rt->findObjectPrincipals(cx, fp->callee);
+                return callbacks->findObjectPrincipals(cx, fp->callee);
             /* FALL THROUGH */
         }
     }
@@ -1024,12 +1025,12 @@ JS_StackFramePrincipals(JSContext *cx, JSStackFrame *fp)
 JS_PUBLIC_API(JSPrincipals *)
 JS_EvalFramePrincipals(JSContext *cx, JSStackFrame *fp, JSStackFrame *caller)
 {
-    JSRuntime *rt;
     JSPrincipals *principals, *callerPrincipals;
+    JSSecurityCallbacks *callbacks;
 
-    rt = cx->runtime;
-    if (rt->findObjectPrincipals) {
-        principals = rt->findObjectPrincipals(cx, fp->callee);
+    callbacks = JS_GetSecurityCallbacks(cx);
+    if (callbacks && callbacks->findObjectPrincipals) {
+        principals = callbacks->findObjectPrincipals(cx, fp->callee);
     } else {
         principals = NULL;
     }
@@ -1155,19 +1156,12 @@ JS_GetFrameFunction(JSContext *cx, JSStackFrame *fp)
 JS_PUBLIC_API(JSObject *)
 JS_GetFrameFunctionObject(JSContext *cx, JSStackFrame *fp)
 {
-    /*
-     * Test both fp->fun and fp->argv to defend against any control flow from
-     * the compiler reaching this API entry point, where fp is a frame pushed
-     * by the compiler that has non-null fun but null argv.
-     */
-    if (fp->fun && fp->argv) {
-        JSObject *obj = fp->callee;
+    if (!fp->fun)
+        return NULL;
 
-        JS_ASSERT(OBJ_GET_CLASS(cx, obj) == &js_FunctionClass);
-        JS_ASSERT(OBJ_GET_PRIVATE(cx, obj) == fp->fun);
-        return obj;
-    }
-    return NULL;
+    JS_ASSERT(OBJ_GET_CLASS(cx, fp->callee) == &js_FunctionClass);
+    JS_ASSERT(OBJ_GET_PRIVATE(cx, fp->callee) == fp->fun);
+    return fp->callee;
 }
 
 JS_PUBLIC_API(JSBool)
@@ -1252,7 +1246,6 @@ JS_EvaluateUCInStackFrame(JSContext *cx, JSStackFrame *fp,
                           jsval *rval)
 {
     JSObject *scobj;
-    uint32 flags;
     JSScript *script;
     JSBool ok;
 
@@ -1260,16 +1253,11 @@ JS_EvaluateUCInStackFrame(JSContext *cx, JSStackFrame *fp,
     if (!scobj)
         return JS_FALSE;
 
-    /*
-     * XXX Hack around ancient compiler API to propagate the JSFRAME_SPECIAL
-     * flags to the code generator.
-     */
-    flags = fp->flags;
-    fp->flags |= JSFRAME_DEBUGGER | JSFRAME_EVAL;
-    script = js_CompileScript(cx, scobj, JS_StackFramePrincipals(cx, fp),
-                              TCF_COMPILE_N_GO, chars, length, NULL,
+    script = js_CompileScript(cx, scobj, fp, JS_StackFramePrincipals(cx, fp),
+                              TCF_COMPILE_N_GO |
+                              TCF_PUT_STATIC_DEPTH(fp->script->staticDepth + 1),
+                              chars, length, NULL,
                               filename, lineno);
-    fp->flags = flags;
     if (!script)
         return JS_FALSE;
 
@@ -1590,8 +1578,8 @@ JS_GetScriptTotalSize(JSContext *cx, JSScript *script)
     JSPrincipals *principals;
 
     nbytes = sizeof *script;
-    if (script->object)
-        nbytes += JS_GetObjectTotalSize(cx, script->object);
+    if (script->u.object)
+        nbytes += JS_GetObjectTotalSize(cx, script->u.object);
 
     nbytes += script->length * sizeof script->code[0];
     nbytes += script->atomMap.length * sizeof script->atomMap.vector[0];
@@ -1800,3 +1788,167 @@ js_DisconnectShark(JSContext *cx, JSObject *obj,
 }
 
 #endif /* MOZ_SHARK */
+
+#ifdef MOZ_CALLGRIND
+
+#include <valgrind/callgrind.h>
+
+JS_FRIEND_API(JSBool)
+js_StartCallgrind(JSContext *cx, JSObject *obj,
+                  uintN argc, jsval *argv, jsval *rval)
+{
+    CALLGRIND_START_INSTRUMENTATION;    
+    CALLGRIND_ZERO_STATS;
+    return JS_TRUE;
+}
+
+JS_FRIEND_API(JSBool)
+js_StopCallgrind(JSContext *cx, JSObject *obj,
+                 uintN argc, jsval *argv, jsval *rval)
+{
+    CALLGRIND_STOP_INSTRUMENTATION;
+    return JS_TRUE;
+}
+
+JS_FRIEND_API(JSBool)
+js_DumpCallgrind(JSContext *cx, JSObject *obj,
+                 uintN argc, jsval *argv, jsval *rval)
+{
+    JSString *str;
+    char *cstr;
+
+    if (argc > 0 && JSVAL_IS_STRING(argv[0])) {
+        str = JSVAL_TO_STRING(argv[0]);
+        cstr = js_DeflateString(cx, JSSTRING_CHARS(str), JSSTRING_LENGTH(str));
+        if (cstr) {
+            CALLGRIND_DUMP_STATS_AT(cstr);
+            JS_free(cx, cstr);
+            return JS_TRUE;
+        }
+    }
+    CALLGRIND_DUMP_STATS;
+
+    return JS_TRUE;
+}
+
+#endif /* MOZ_CALLGRIND */
+
+#ifdef MOZ_VTUNE
+#include <VTuneApi.h>
+
+static const char *vtuneErrorMessages[] = {
+  "unknown, error #0",
+  "invalid 'max samples' field",
+  "invalid 'samples per buffer' field",
+  "invalid 'sample interval' field",
+  "invalid path",
+  "sample file in use",
+  "invalid 'number of events' field",
+  "unknown, error #7",
+  "internal error",
+  "bad event name",
+  "VTStopSampling called without calling VTStartSampling",
+  "no events selected for event-based sampling",
+  "events selected cannot be run together",
+  "no sampling parameters",
+  "sample database already exists",
+  "sampling already started",
+  "time-based sampling not supported",
+  "invalid 'sampling parameters size' field",
+  "invalid 'event size' field",
+  "sampling file already bound",
+  "invalid event path",
+  "invalid license",
+  "invalid 'global options' field",
+
+};
+
+JS_FRIEND_API(JSBool)
+js_StartVtune(JSContext *cx, JSObject *obj,
+              uintN argc, jsval *argv, jsval *rval)
+{
+    VTUNE_EVENT events[] = { 
+	{ 1000000, 0, 0, 0, "CPU_CLK_UNHALTED.CORE" },
+	{ 1000000, 0, 0, 0, "INST_RETIRED.ANY" },
+    };
+
+    U32 n_events = sizeof(events) / sizeof(VTUNE_EVENT);
+    char *default_filename = "mozilla-vtune.tb5";
+    JSString *str;
+    U32 status;
+
+    VTUNE_SAMPLING_PARAMS params = { 
+        sizeof(VTUNE_SAMPLING_PARAMS),
+        sizeof(VTUNE_EVENT),
+        0, 0, /* Reserved fields */
+        1,    /* Initialize in "paused" state */
+        0,    /* Max samples, or 0 for "continuous" */
+        4096, /* Samples per buffer */
+        0.1,  /* Sampling interval in ms */
+        1,    /* 1 for event-based sampling, 0 for time-based */
+
+        n_events,
+        events,
+        default_filename,
+    };
+
+    if (argc > 0 && JSVAL_IS_STRING(argv[0])) {
+        str = JSVAL_TO_STRING(argv[0]);
+        params.tb5Filename = js_DeflateString(cx, 
+                                              JSSTRING_CHARS(str), 
+                                              JSSTRING_LENGTH(str));
+    }
+    
+    status = VTStartSampling(&params);
+
+    if (params.tb5Filename != default_filename)
+        JS_free(cx, params.tb5Filename);
+    
+    if (status != 0) { 
+        if (status == VTAPI_MULTIPLE_RUNS)
+            VTStopSampling(0);
+        if (status < sizeof(vtuneErrorMessages))
+            JS_ReportError(cx, "Vtune setup error: %s", 
+                           vtuneErrorMessages[status]);
+        else
+            JS_ReportError(cx, "Vtune setup error: %d", 
+                           status);            
+        return JS_FALSE;
+    }
+    return JS_TRUE;
+}
+
+JS_FRIEND_API(JSBool)
+js_StopVtune(JSContext *cx, JSObject *obj,
+             uintN argc, jsval *argv, jsval *rval)
+{
+    U32 status = VTStopSampling(1);
+    if (status) {
+        if (status < sizeof(vtuneErrorMessages))
+            JS_ReportError(cx, "Vtune shutdown error: %s", 
+                           vtuneErrorMessages[status]);
+        else
+            JS_ReportError(cx, "Vtune shutdown error: %d", 
+                           status);
+        return JS_FALSE;
+    }
+    return JS_TRUE;
+}
+
+JS_FRIEND_API(JSBool)
+js_PauseVtune(JSContext *cx, JSObject *obj,
+              uintN argc, jsval *argv, jsval *rval)
+{
+    VTPause();
+    return JS_TRUE;
+}
+
+JS_FRIEND_API(JSBool)
+js_ResumeVtune(JSContext *cx, JSObject *obj,
+               uintN argc, jsval *argv, jsval *rval)
+{
+    VTResume();
+    return JS_TRUE;
+}
+
+#endif /* MOZ_VTUNE */

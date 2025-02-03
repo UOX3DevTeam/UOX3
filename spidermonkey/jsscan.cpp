@@ -60,7 +60,7 @@
 #include "jsapi.h"
 #include "jsatom.h"
 #include "jscntxt.h"
-#include "jsconfig.h"
+#include "jsversion.h"
 #include "jsemit.h"
 #include "jsexn.h"
 #include "jsnum.h"
@@ -69,6 +69,7 @@
 #include "jsregexp.h"
 #include "jsscan.h"
 #include "jsscript.h"
+#include "jsstaticcheck.h"
 
 #if JS_HAS_XML_SUPPORT
 #include "jsxml.h"
@@ -535,7 +536,7 @@ js_ReportCompileErrorNumber(JSContext *cx, JSTokenStream *ts, JSParseNode *pn,
     linechars = NULL;
     linebytes = NULL;
 
-    /* From this point the control must flow through the label out.*/
+    MUST_FLOW_THROUGH("out");
     va_start(ap, errorNumber);
     ok = js_ExpandErrorArguments(cx, js_GetErrorMessage, NULL,
                                  errorNumber, &message, &report, &warning,
@@ -813,8 +814,6 @@ GetXMLEntity(JSContext *cx, JSTokenStream *ts)
     /* Put the entity, including the '&' already scanned, in ts->tokenbuf. */
     offset = PTRDIFF(ts->tokenbuf.ptr, ts->tokenbuf.base, jschar);
     FastAppendChar(&ts->tokenbuf, '&');
-    if (!STRING_BUFFER_OK(&ts->tokenbuf))
-        return JS_FALSE;
     while ((c = GetChar(ts)) != ';') {
         if (c == EOF || c == '\n') {
             js_ReportCompileErrorNumber(cx, ts, NULL, JSREPORT_ERROR,
@@ -822,8 +821,6 @@ GetXMLEntity(JSContext *cx, JSTokenStream *ts)
             return JS_FALSE;
         }
         FastAppendChar(&ts->tokenbuf, (jschar) c);
-        if (!STRING_BUFFER_OK(&ts->tokenbuf))
-            return JS_FALSE;
     }
 
     /* Let length be the number of jschars after the '&', including the ';'. */
@@ -909,8 +906,6 @@ badncr:
     msg = JSMSG_BAD_XML_NCR;
 bad:
     /* No match: throw a TypeError per ECMA-357 10.3.2.1 step 8(a). */
-    JS_ASSERT(STRING_BUFFER_OK(&ts->tokenbuf));
-    JS_ASSERT(PTRDIFF(ts->tokenbuf.ptr, bp, jschar) >= 1);
     bytes = js_DeflateString(cx, bp + 1,
                              PTRDIFF(ts->tokenbuf.ptr, bp, jschar) - 1);
     if (bytes) {
@@ -990,7 +985,7 @@ NewToken(JSTokenStream *ts, ptrdiff_t adjust)
     return tp;
 }
 
-static JS_INLINE JSBool
+static JS_ALWAYS_INLINE JSBool
 ScanAsSpace(jschar c)
 {
     /* Treat little- and big-endian BOMs as whitespace for compatibility. */
@@ -1209,7 +1204,7 @@ retry:
             if (ts->flags & TSF_NEWLINES)
                 break;
         }
-    } while (ScanAsSpace(c));
+    } while (ScanAsSpace((jschar)c));
 
     tp = NewToken(ts, -1);
     if (c == EOF) {
@@ -1731,7 +1726,7 @@ retry:
                     cp[3] == 'n' &&
                     cp[4] == 'e') {
                     SkipChars(ts, 5);
-                    while ((c = GetChar(ts)) != '\n' && ScanAsSpace(c))
+                    while ((c = GetChar(ts)) != '\n' && ScanAsSpace((jschar)c))
                         continue;
                     if (JS7_ISDEC(c)) {
                         line = JS7_UNDEC(c);
@@ -1743,7 +1738,7 @@ retry:
                             }
                             line = temp;
                         }
-                        while (c != '\n' && ScanAsSpace(c))
+                        while (c != '\n' && ScanAsSpace((jschar)c))
                             c = GetChar(ts);
                         i = 0;
                         if (c == '"') {
@@ -1758,7 +1753,7 @@ retry:
                             }
                             if (c == '"') {
                                 while ((c = GetChar(ts)) != '\n' &&
-                                       ScanAsSpace(c)) {
+                                       ScanAsSpace((jschar)c)) {
                                     continue;
                                 }
                             }
