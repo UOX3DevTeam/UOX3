@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
 project(jscript VERSION 1.8.0 LANGUAGES C)
 
-add_executable(jscpucfg ../../jscpucfg.c)
+add_executable(jscpucfg ../../jscpucfg.cpp)
 
 if(NOT WIN32)
 		target_compile_options( jscpucfg PRIVATE
@@ -22,67 +22,79 @@ add_library(jscript STATIC)
 
 target_sources(jscript
     PRIVATE
-        ../../js.c
-        ../../jsapi.c
-        ../../jsarena.c
-        ../../jsarray.c
-        ../../jsatom.c
-        ../../jsbool.c
-        ../../jscntxt.c
-        ../../jsdate.c
-        ../../jsdbgapi.c
-        ../../jsdhash.c
-        ../../jsdtoa.c
-        ../../jsemit.c
-        ../../jsexn.c
-        ../../jsfile.c
-        ../../jsfun.c
-        ../../jsgc.c
-        ../../jshash.c
-        ../../jsinterp.c
-        ../../jsinvoke.c
-        ../../jsiter.c
-        ../../jslock.c
-        ../../jslog2.c
-        ../../jslong.c
-        ../../jsmath.c
-        ../../jsnum.c
-        ../../jsobj.c
-        ../../jsopcode.c
-        ../../jsparse.c
-        ../../jsprf.c
-        ../../jsregexp.c
-        ../../jsscan.c
-        ../../jsscope.c
-        ../../jsscript.c
-        ../../jsstr.c
-        ../../jsutil.c
-        ../../jsxdrapi.c
-        ../../jsxml.c
-        ../../prmjtime.c
+        ../../js.cpp
+        ../../jsapi.cpp
+        ../../jsarena.cpp
+        ../../jsarray.cpp
+        ../../jsatom.cpp
+        ../../jsbool.cpp
+        ../../jsbuiltins.cpp
+        ../../jscntxt.cpp
+        ../../jsdate.cpp
+        ../../jsdbgapi.cpp
+        ../../jsdhash.cpp
+        ../../jsdtoa.cpp
+        ../../jsemit.cpp
+        ../../jsexn.cpp
+        ../../jsfile.cpp
+        ../../jsfun.cpp
+        ../../jsgc.cpp
+        ../../jshash.cpp
+        ../../jsinterp.cpp
+        ../../jsinvoke.cpp
+        ../../jsiter.cpp
+        ../../jslock.cpp
+        ../../jslog2.cpp
+        ../../jslong.cpp
+        ../../jsmath.cpp
+        ../../jsnum.cpp
+        ../../jsobj.cpp
+        ../../json.cpp
+        ../../jsopcode.cpp
+        ../../jsoplengen.cpp
+        ../../jsparse.cpp
+        ../../jsprf.cpp
+        ../../jsregexp.cpp
+        ../../jsscan.cpp
+        ../../jsscope.cpp
+        ../../jsscript.cpp
+        ../../jsstr.cpp
+        ../../jstracer.cpp
+        ../../jsutil.cpp
+        ../../jsxdrapi.cpp
+        ../../jsxml.cpp
+        ../../prmjtime.cpp
         ../../jsapi.h
         ../../jsarena.h
         ../../jsarray.h
         ../../jsatom.h
+        ../../jsbit.h
         ../../jsbool.h
+        ../../jsclist.h
         ../../jscntxt.h
+        ../../jscompat.h
         ../../jsdate.h
         ../../jsdbgapi.h
         ../../jsdhash.h
         ../../jsdtoa.h
+        ../../jsdtracef.h
         ../../jsemit.h
         ../../jsexn.h
+        ../../jsfile.h
         ../../jsfun.h
         ../../jsgc.h
         ../../jshash.h
         ../../jsinterp.h
         ../../jsiter.h
+        ../../jslibmath.h
         ../../jslock.h
         ../../jslong.h
         ../../jsmath.h
         ../../jsnum.h
         ../../jsobj.h
+        ../../json.h
         ../../jsopcode.h
+        ../../jsotypes.h
         ../../jsparse.h
         ../../jsprf.h
         ../../jsprvtd.h
@@ -91,14 +103,22 @@ target_sources(jscript
         ../../jsscan.h
         ../../jsscope.h
         ../../jsscript.h
+        ../../jsstaticcheck.h
         ../../jsstddef.h
         ../../jsstr.h
+        ../../jstracer.h
         ../../jstypes.h
         ../../jsutil.h
+        ../../jsversion.h
         ../../jsxdrapi.h
         ../../jsxml.h
         ../../prmjtime.h
+        ../../builtins.tbl
+        ../../jitstats.tbl
+        ../../jskeyword.tbl
         ../../jsopcode.tbl
+        ../../jsproto.tbl
+        ../../jsreops.tbl
 )
 
 # We only want this files for Unix platforms
