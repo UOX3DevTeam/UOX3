@@ -15,118 +15,118 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\jsapi.c">
+    <ClCompile Include="..\..\..\jsapi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsarena.c">
+    <ClCompile Include="..\..\..\jsarena.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsarray.c">
+    <ClCompile Include="..\..\..\jsarray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsatom.c">
+    <ClCompile Include="..\..\..\jsatom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsbool.c">
+    <ClCompile Include="..\..\..\jsbool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jscntxt.c">
+    <ClCompile Include="..\..\..\jscntxt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsdate.c">
+    <ClCompile Include="..\..\..\jsdate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsdbgapi.c">
+    <ClCompile Include="..\..\..\jsdbgapi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsdhash.c">
+    <ClCompile Include="..\..\..\jsdhash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsdtoa.c">
+    <ClCompile Include="..\..\..\jsdtoa.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsemit.c">
+    <ClCompile Include="..\..\..\jsemit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsexn.c">
+    <ClCompile Include="..\..\..\jsexn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsfun.c">
+    <ClCompile Include="..\..\..\jsfun.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsgc.c">
+    <ClCompile Include="..\..\..\jsgc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jshash.c">
+    <ClCompile Include="..\..\..\jshash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsinterp.c">
+    <ClCompile Include="..\..\..\jsinterp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsiter.c">
+    <ClCompile Include="..\..\..\jsiter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jslock.c">
+    <ClCompile Include="..\..\..\jslock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jslog2.c">
+    <ClCompile Include="..\..\..\jslog2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jslong.c">
+    <ClCompile Include="..\..\..\jslong.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsmath.c">
+    <ClCompile Include="..\..\..\jsmath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsnum.c">
+    <ClCompile Include="..\..\..\jsnum.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsobj.c">
+    <ClCompile Include="..\..\..\jsobj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsopcode.c">
+    <ClCompile Include="..\..\..\jsopcode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsparse.c">
+    <ClCompile Include="..\..\..\jsparse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsprf.c">
+    <ClCompile Include="..\..\..\jsprf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsregexp.c">
+    <ClCompile Include="..\..\..\jsregexp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsscan.c">
+    <ClCompile Include="..\..\..\jsscan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsscope.c">
+    <ClCompile Include="..\..\..\jsscope.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsscript.c">
+    <ClCompile Include="..\..\..\jsscript.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsstr.c">
+    <ClCompile Include="..\..\..\jsstr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsutil.c">
+    <ClCompile Include="..\..\..\jsutil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsxdrapi.c">
+    <ClCompile Include="..\..\..\jsxdrapi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsxml.c">
+    <ClCompile Include="..\..\..\jsxml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\prmjtime.c">
+    <ClCompile Include="..\..\..\prmjtime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\js.c">
+    <ClCompile Include="..\..\..\js.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsfile.c">
+    <ClCompile Include="..\..\..\jsfile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsinvoke.c">
+    <ClCompile Include="..\..\..\jsinvoke.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
