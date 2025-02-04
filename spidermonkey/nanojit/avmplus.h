@@ -87,6 +87,14 @@ void NanoAssertFail();
  * Can we just take a moment to think about what it means that MSVC doesn't have stdint.h in 2008?
  * Thanks for your time.
  */
+typedef unsigned char JSUint8;
+typedef signed char JSInt8;
+typedef unsigned short JSUint16;
+typedef signed short JSInt16;
+typedef unsigned int JSUint32;
+typedef signed int JSInt32;
+typedef unsigned long long JSUint64;
+typedef signed long long JSInt64;
 typedef JSUint8  uint8_t;
 typedef JSInt8   int8_t;
 typedef JSUint16 uint16_t;

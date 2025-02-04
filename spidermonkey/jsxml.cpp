@@ -292,7 +292,7 @@ NewXMLNamespace(JSContext *cx, JSString *prefix, JSString *uri, JSBool declared)
 
     obj = js_NewObject(cx, &js_NamespaceClass.base, NULL, NULL, 0);
     if (!obj)
-        return JS_FALSE;
+		return NULL;
     JS_ASSERT(JSVAL_IS_VOID(obj->fslots[JSSLOT_PREFIX]));
     JS_ASSERT(JSVAL_IS_VOID(obj->fslots[JSSLOT_URI]));
     JS_ASSERT(JSVAL_IS_VOID(obj->fslots[JSSLOT_DECLARED]));

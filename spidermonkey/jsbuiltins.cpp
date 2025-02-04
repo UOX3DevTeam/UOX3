@@ -94,6 +94,7 @@ js_imod(jsint a, jsint b)
         return -1;
     int r = a % b;
     return r;
+    #define JSVAL_ERROR_COOKIE ((jsval)0xBAD)
 }
 
 /* The following boxing/unboxing primitives we can't emit inline because

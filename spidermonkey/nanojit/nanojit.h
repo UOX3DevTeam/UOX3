@@ -35,12 +35,16 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-
 #ifndef __nanojit_h__
 #define __nanojit_h__
 
 #include <stddef.h>
 #include "avmplus.h"
+
+// Define the target architecture if not already defined
+#if !defined(AVMPLUS_IA32) && !defined(AVMPLUS_ARM) && !defined(AVMPLUS_PPC) && !defined(AVMPLUS_AMD64)
+    #define AVMPLUS_IA32 // Change this to the appropriate architecture
+#endif
 
 #ifdef AVMPLUS_IA32
 #define NANOJIT_IA32
@@ -54,6 +58,8 @@
 #else
 #error "unknown nanojit architecture"
 #endif
+
+// Rest of the code...
 
 namespace nanojit
 {
