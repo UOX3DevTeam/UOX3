@@ -22,7 +22,6 @@ add_library(jscript STATIC)
 
 target_sources(jscript
     PRIVATE
-        ../../js.cpp
         ../../jsapi.cpp
         ../../jsarena.cpp
         ../../jsarray.cpp
@@ -36,17 +35,17 @@ target_sources(jscript
         ../../jsdtoa.cpp
         ../../jsemit.cpp
         ../../jsexn.cpp
-        ../../jsfile.cpp
         ../../jsfun.cpp
         ../../jsgc.cpp
+        ../../jsgcchunk.cpp
         ../../jshash.cpp
         ../../jsinterp.cpp
         ../../jsinvoke.cpp
         ../../jsiter.cpp
         ../../jslock.cpp
         ../../jslog2.cpp
-        ../../jslong.cpp
         ../../jsmath.cpp
+        ../../jsnativestack.cpp
         ../../jsnum.cpp
         ../../jsobj.cpp
         ../../json.cpp
@@ -54,13 +53,20 @@ target_sources(jscript
         ../../jsoplengen.cpp
         ../../jsparse.cpp
         ../../jsprf.cpp
+        ../../jspropertycache.cpp
+        ../../jspropertytree.cpp
+        ../../jsproxy.cpp
+        ../../jsrecursion.cpp
         ../../jsregexp.cpp
         ../../jsscan.cpp
         ../../jsscope.cpp
         ../../jsscript.cpp
         ../../jsstr.cpp
+        ../../jstask.cpp
         ../../jstracer.cpp
+        ../../jstypedarray.cpp
         ../../jsutil.cpp
+        ../../jswrapper.cpp
         ../../jsxdrapi.cpp
         ../../jsxml.cpp
         ../../prmjtime.cpp
@@ -68,10 +74,13 @@ target_sources(jscript
         ../../jsarena.h
         ../../jsarray.h
         ../../jsatom.h
+        ../../jsatominlines.h
         ../../jsbit.h
         ../../jsbool.h
+        ../../jsbuiltins.h
         ../../jsclist.h
         ../../jscntxt.h
+        ../../jscntxtinlines.h
         ../../jscompat.h
         ../../jsdate.h
         ../../jsdbgapi.h
@@ -80,36 +89,50 @@ target_sources(jscript
         ../../jsdtracef.h
         ../../jsemit.h
         ../../jsexn.h
-        ../../jsfile.h
         ../../jsfun.h
         ../../jsgc.h
+        ../../jsgcchunk.h
         ../../jshash.h
+        ../../jshashtable.h
         ../../jsinterp.h
+        ../../jsinttypes.h
         ../../jsiter.h
         ../../jslibmath.h
         ../../jslock.h
         ../../jslong.h
         ../../jsmath.h
+        ../../jsnativestack.h
         ../../jsnum.h
         ../../jsobj.h
+        ../../jsobjinlines.h
         ../../json.h
         ../../jsopcode.h
-        ../../jsotypes.h
         ../../jsparse.h
         ../../jsprf.h
+        ../../jspropertycache.h
+        ../../jspropertycacheinlines.h
+        ../../jspropertytree.h
+        ../../jsproxy.h
         ../../jsprvtd.h
         ../../jspubtd.h
         ../../jsregexp.h
         ../../jsscan.h
         ../../jsscope.h
+        ../../jsscopeinlines.h
         ../../jsscript.h
+        ../../jsscriptinlines.h
         ../../jsstaticcheck.h
         ../../jsstddef.h
         ../../jsstr.h
+        ../../jsstrinlines.h
+        ../../jstask.h
+        ../../jstl.h
         ../../jstracer.h
+        ../../jstypedarray.h
         ../../jstypes.h
         ../../jsutil.h
         ../../jsversion.h
+        ../../jswrapper.h
         ../../jsxdrapi.h
         ../../jsxml.h
         ../../prmjtime.h
