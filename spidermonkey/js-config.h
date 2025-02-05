@@ -87,4 +87,12 @@
    correct. */
 #define JS_TRACER
 
+#if defined XP_WIN
+
+/* See configure.in for these, we don't care about WinMo/WinCE */
+#define HAVE_SYSTEMTIMETOFILETIME
+#define HAVE_GETSYSTEMTIMEASFILETIME
+
+#endif
+
 #endif /* js_config_h___ */
