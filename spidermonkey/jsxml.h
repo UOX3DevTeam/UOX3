@@ -39,8 +39,8 @@
 #ifndef jsxml_h___
 #define jsxml_h___
 
-#include "jsstddef.h"
 #include "jspubtd.h"
+#include "jsobj.h"
 
 JS_BEGIN_EXTERN_C
 
@@ -64,17 +64,61 @@ struct JSXMLArray {
     JSXMLArrayCursor    *cursors;
 };
 
+struct JSXMLArrayCursor
+{
+    JSXMLArray       *array;
+    uint32           index;
+    JSXMLArrayCursor *next;
+    JSXMLArrayCursor **prevp;
+    void             *root;
+
+    JSXMLArrayCursor(JSXMLArray *array)
+      : array(array), index(0), next(array->cursors), prevp(&array->cursors),
+        root(NULL)
+    {
+        if (next)
+            next->prevp = &next;
+        array->cursors = this;
+    }
+
+    ~JSXMLArrayCursor() { disconnect(); }
+
+    void disconnect() {
+        if (!array)
+            return;
+        if (next)
+            next->prevp = prevp;
+        *prevp = next;
+        array = NULL;
+    }
+
+    void *getNext() {
+        if (!array || index >= array->length)
+            return NULL;
+        return root = array->vector[index++];
+    }
+
+    void *getCurrent() {
+        if (!array || index >= array->length)
+            return NULL;
+        return root = array->vector[index];
+    }
+
+    void trace(JSTracer *trc) {
+#ifdef DEBUG
+        size_t index = 0;
+#endif
+        for (JSXMLArrayCursor *cursor = this; cursor; cursor = cursor->next) {
+            void *root = cursor->root;
+            JS_SET_TRACING_INDEX(trc, "cursor_root", index++);
+            js_CallValueTracerIfGCThing(trc, jsval(root));
+        }
+    }
+};
+
 #define JSXML_PRESET_CAPACITY   JS_BIT(31)
 #define JSXML_CAPACITY_MASK     JS_BITMASK(31)
 #define JSXML_CAPACITY(array)   ((array)->capacity & JSXML_CAPACITY_MASK)
-
-struct JSXMLArrayCursor {
-    JSXMLArray          *array;
-    uint32              index;
-    JSXMLArrayCursor    *next;
-    JSXMLArrayCursor    **prevp;
-    void                *root;
-};
 
 /*
  * NB: don't reorder this enum without changing all array initializers that
@@ -121,16 +165,16 @@ struct JSXML {
     void                *domnode;       /* DOM node if mapped info item */
     JSXML               *parent;
     JSObject            *name;
-    uint16              xml_class;      /* discriminates u, below */
-    uint16              xml_flags;      /* flags, see below */
+    uint32              xml_class;      /* discriminates u, below */
+    uint32              xml_flags;      /* flags, see below */
     union {
         JSXMLListVar    list;
         JSXMLElemVar    elem;
         JSString        *value;
     } u;
-
-    /* Don't add anything after u -- see js_NewXML for why. */
 };
+
+JS_STATIC_ASSERT(sizeof(JSXML) % JSVAL_ALIGN == 0);
 
 /* union member shorthands */
 #define xml_kids        u.list.kids
@@ -161,15 +205,12 @@ extern void
 js_FinalizeXML(JSContext *cx, JSXML *xml);
 
 extern JSObject *
-js_ParseNodeToXMLObject(JSContext *cx, JSParseContext *pc, JSParseNode *pn);
-
-extern JSObject *
 js_NewXMLObject(JSContext *cx, JSXMLClass xml_class);
 
 extern JSObject *
 js_GetXMLObject(JSContext *cx, JSXML *xml);
 
-extern JS_FRIEND_DATA(JSXMLObjectOps)   js_XMLObjectOps;
+extern JS_FRIEND_DATA(JSObjectOps)      js_XMLObjectOps;
 extern JS_FRIEND_DATA(JSClass)          js_XMLClass;
 extern JS_FRIEND_DATA(JSExtendedClass)  js_NamespaceClass;
 extern JS_FRIEND_DATA(JSExtendedClass)  js_QNameClass;
@@ -178,13 +219,30 @@ extern JS_FRIEND_DATA(JSClass)          js_AnyNameClass;
 extern JSClass                          js_XMLFilterClass;
 
 /*
- * Macros to test whether an object or a value is of type "xml" (per typeof).
- * NB: jsobj.h must be included before any call to OBJECT_IS_XML, and jsapi.h
- * and jsobj.h must be included before any call to VALUE_IS_XML.
+ * Methods to test whether an object or a value is of type "xml" (per typeof).
  */
-#define OBJECT_IS_XML(cx,obj)   ((obj)->map->ops == &js_XMLObjectOps.base)
-#define VALUE_IS_XML(cx,v)      (!JSVAL_IS_PRIMITIVE(v) &&                    \
-                                 OBJECT_IS_XML(cx, JSVAL_TO_OBJECT(v)))
+inline bool
+JSObject::isXML() const
+{
+    return map->ops == &js_XMLObjectOps;
+}
+
+#define VALUE_IS_XML(v)      (!JSVAL_IS_PRIMITIVE(v) && JSVAL_TO_OBJECT(v)->isXML())
+
+inline bool
+JSObject::isNamespace() const
+{
+    return getClass() == &js_NamespaceClass.base;
+}
+
+inline bool
+JSObject::isQName() const
+{
+    JSClass* clasp = getClass();
+    return clasp == &js_QNameClass.base ||
+           clasp == &js_AttributeNameClass ||
+           clasp == &js_AnyNameClass;
+}
 
 extern JSObject *
 js_InitNamespaceClass(JSContext *cx, JSObject *obj);
@@ -257,16 +315,13 @@ extern JSBool
 js_FindXMLProperty(JSContext *cx, jsval nameval, JSObject **objp, jsid *idp);
 
 extern JSBool
-js_GetXMLFunction(JSContext *cx, JSObject *obj, jsid id, jsval *vp);
+js_GetXMLMethod(JSContext *cx, JSObject *obj, jsid id, jsval *vp);
 
 extern JSBool
 js_GetXMLDescendants(JSContext *cx, JSObject *obj, jsval id, jsval *vp);
 
 extern JSBool
 js_DeleteXMLListElements(JSContext *cx, JSObject *listobj);
-
-extern JSObject *
-js_InitXMLFilterClass(JSContext *cx, JSObject* obj);
 
 extern JSBool
 js_StepXMLListFilter(JSContext *cx, JSBool initialized);
@@ -292,6 +347,12 @@ js_MakeXMLCommentString(JSContext *cx, JSString *str);
 
 extern JSString *
 js_MakeXMLPIString(JSContext *cx, JSString *name, JSString *str);
+
+extern JSBool
+js_TestXMLEquality(JSContext *cx, JSObject *obj, jsval v, JSBool *bp);
+
+extern JSBool
+js_ConcatenateXML(JSContext *cx, JSObject *obj, jsval v, jsval *vp);
 
 JS_END_EXTERN_C
 

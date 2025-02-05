@@ -1,4 +1,5 @@
-/* -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: t; tab-width: 4 -*- */
+/* -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4 -*- */
+/* vi: set ts=4 sw=4 expandtab: (add to ~/.vimrc: set modeline modelines=5) */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -43,315 +44,468 @@
 
 namespace nanojit
 {
-	/**
-	 * Some notes on this Assembler (Emitter).
-	 * 
-	 *     LIR_call is a generic call operation that is encoded using form [2].  The 24bit
-	 *     integer is used as an index into a function look-up table that contains information
-	 *     about the target that is to be called; including address, # parameters, etc.
-	 * 
-	 *   The class RegAlloc is essentially the register allocator from MIR
-	 * 
-	 *   The Assembler class parses the LIR instructions starting at any point and converts 
-	 *   them to machine code.  It does the translation using expression trees which are simply
-	 *   LIR instructions in the stream that have side-effects.  Any other instruction in the 
-	 *   stream is simply ignored.  
-	 *   This approach is interesting in that dead code elimination occurs for 'free', strength
-	 *   reduction occurs fairly naturally, along with some other optimizations.
-	 * 
-	 *   A negative is that we require state as we 'push' and 'pop' nodes along the tree.  
-	 *   Also, this is most easily performed using recursion which may not be desirable in 
-	 *   the mobile environment. 
-	 *   
-	 */
+    /**
+     * Some notes on this Assembler (Emitter).
+     *
+     *   The class RegAlloc is essentially the register allocator from MIR
+     *
+     *   The Assembler class parses the LIR instructions starting at any point and converts
+     *   them to machine code.  It does the translation using expression trees which are simply
+     *   LIR instructions in the stream that have side-effects.  Any other instruction in the
+     *   stream is simply ignored.
+     *   This approach is interesting in that dead code elimination occurs for 'free', strength
+     *   reduction occurs fairly naturally, along with some other optimizations.
+     *
+     *   A negative is that we require state as we 'push' and 'pop' nodes along the tree.
+     *   Also, this is most easily performed using recursion which may not be desirable in
+     *   the mobile environment.
+     *
+     */
 
-	#define STACK_GRANULARITY		sizeof(void *)
+    #define STACK_GRANULARITY        sizeof(void *)
 
-	/**
-	 * The Assembler is only concerned with transforming LIR to native instructions
-	 */
-    struct Reservation
-	{
-		uint32_t arIndex:16;	/* index into stack frame.  displ is -4*arIndex */
-		Register reg:8;			/* register UnkownReg implies not in register */
-        int cost:8;
-	};
+    // Basics:
+    // - 'entry' records the state of the native machine stack at particular
+    //   points during assembly.  Each entry represents four bytes.
+    //
+    // - Parts of the stack can be allocated by LIR_allocp, in which case each
+    //   slot covered by the allocation contains a pointer to the LIR_allocp
+    //   LIns.
+    //
+    // - The stack also holds spilled values, in which case each slot holding
+    //   a spilled value (one slot for 32-bit values, two slots for 64-bit
+    //   values) contains a pointer to the instruction defining the spilled
+    //   value.
+    //
+    // - Each LIns has a "reservation" which includes a stack index,
+    //   'arIndex'.  Combined with AR, it provides a two-way mapping between
+    //   stack slots and LIR instructions.
+    //
+    // - Invariant: the two-way mapping between active stack slots and their
+    //   defining/allocating instructions must hold in both directions and be
+    //   unambiguous.  More specifically:
+    //
+    //   * An LIns can appear in at most one contiguous sequence of slots in
+    //     AR, and the length of that sequence depends on the opcode (1 slot
+    //     for instructions producing 32-bit values, 2 slots for instructions
+    //     producing 64-bit values, N slots for LIR_allocp).
+    //
+    //   * An LIns named by 'entry[i]' must have an in-use reservation with
+    //     arIndex==i (or an 'i' indexing the start of the same contiguous
+    //     sequence that 'entry[i]' belongs to).
+    //
+    //   * And vice versa:  an LIns with an in-use reservation with arIndex==i
+    //     must be named by 'entry[i]'.
+    //
+    //   * If an LIns's reservation names has arIndex==0 then LIns should not
+    //     be in 'entry[]'.
+    //
+    class AR
+    {
+    private:
+        uint32_t        _highWaterMark;                 /* index of highest entry used since last clear() */
+        LIns*           _entries[ NJ_MAX_STACK_ENTRY ]; /* maps to 4B contiguous locations relative to the frame pointer.
+                                                            NB: _entries[0] is always unused */
 
-	struct AR
-	{
-		LIns*			entry[ NJ_MAX_STACK_ENTRY ];	/* maps to 4B contiguous locations relative to the frame pointer */
-		uint32_t		tos;							/* current top of stack entry */
-		uint32_t		highwatermark;					/* max tos hit */
-		uint32_t		lowwatermark;					/* we pre-allocate entries from 0 upto this index-1; so dynamic entries are added above this index */
-		LIns*			parameter[ NJ_MAX_PARAMETERS ]; /* incoming parameters */
-	};
+        #ifdef _DEBUG
+        static LIns* const BAD_ENTRY;
+        #endif
 
-    enum ArgSize {
-	    ARGSIZE_NONE = 0,
-	    ARGSIZE_F = 1,
-	    ARGSIZE_LO = 2,
-	    ARGSIZE_Q = 3,
-	    _ARGSIZE_MASK_INT = 2, 
-        _ARGSIZE_MASK_ANY = 3
+        bool isEmptyRange(uint32_t start, uint32_t nStackSlots) const;
+        static uint32_t nStackSlotsFor(LIns* ins);
+
+    public:
+        AR();
+
+        uint32_t stackSlotsNeeded() const;
+
+        void clear();
+        void freeEntryAt(uint32_t i);
+        uint32_t reserveEntry(LIns* ins); /* return 0 if unable to reserve the entry */
+
+        #ifdef _DEBUG
+        void validateQuick();
+        void validateFull();
+        void validate();
+        bool isValidEntry(uint32_t idx, LIns* ins) const; /* return true iff idx and ins are matched */
+        void checkForResourceConsistency(const RegAlloc& regs);
+        void checkForResourceLeaks() const;
+        #endif
+
+        class Iter
+        {
+        private:
+            const AR& _ar;
+            // '_i' points to the start of the entries for an LIns, or to the first NULL entry.
+            uint32_t _i;
+        public:
+            inline Iter(const AR& ar) : _ar(ar), _i(1) { }
+            bool next(LIns*& ins, uint32_t& nStackSlots, int32_t& offset);             // get the next one (moves iterator forward)
+        };
     };
 
-	struct CallInfo
-	{
-		intptr_t	_address;
-		uint16_t	_argtypes;		// 6 2-bit fields indicating arg type, by ARGSIZE above (including ret type): a1 a2 a3 a4 a5 ret
-		uint8_t		_cse;			// true if no side effects
-		uint8_t		_fold;			// true if no side effects
-		verbose_only ( const char* _name; )
-		
-		uint32_t FASTCALL _count_args(uint32_t mask) const;
-        uint32_t get_sizes(ArgSize*) const;
+    inline AR::AR()
+    {
+         _entries[0] = NULL;
+         clear();
+    }
 
-		inline uint32_t FASTCALL count_args() const { return _count_args(_ARGSIZE_MASK_ANY); }
-		inline uint32_t FASTCALL count_iargs() const { return _count_args(_ARGSIZE_MASK_INT); }
-		// fargs = args - iargs
-	};
+    inline /*static*/ uint32_t AR::nStackSlotsFor(LIns* ins)
+    {
+        uint32_t n = 0;
+        if (ins->isop(LIR_allocp)) {
+            n = ins->size() >> 2;
+        } else {
+            switch (ins->retType()) {
+            case LTy_I:   n = 1;          break;
+            CASE64(LTy_Q:)
+            case LTy_D:   n = 2;          break;
+            case LTy_V:  NanoAssert(0);  break;
+            default:        NanoAssert(0);  break;
+            }
+        }
+        return n;
+    }
 
-	#define FUNCTIONID(name) CI_avmplus_##name
+    inline uint32_t AR::stackSlotsNeeded() const
+    {
+        // NB: _highWaterMark is an index, not a count
+        return _highWaterMark+1;
+    }
 
-	#define INTERP_FOPCODE_LIST_BEGIN											enum FunctionID {
-	#define INTERP_FOPCODE_LIST_ENTRY_PRIM(nm)									
-	#define INTERP_FOPCODE_LIST_ENTRY_FUNCPRIM(nm,argtypes,cse,fold,ret,args)	FUNCTIONID(nm),
-	#define INTERP_FOPCODE_LIST_ENTRY_SUPER(nm,off)								
-	#define INTERP_FOPCODE_LIST_ENTRY_EXTERN(nm,off)							
-	#define INTERP_FOPCODE_LIST_ENTRY_LITC(nm,i)								
-	#define INTERP_FOPCODE_LIST_END												CI_Max } ;
-	#include "vm_fops.h"
-	#undef INTERP_FOPCODE_LIST_BEGIN
-	#undef INTERP_FOPCODE_LIST_ENTRY_PRIM
-	#undef INTERP_FOPCODE_LIST_ENTRY_FUNCPRIM
-	#undef INTERP_FOPCODE_LIST_ENTRY_SUPER
-	#undef INTERP_FOPCODE_LIST_ENTRY_EXTERN
-	#undef INTERP_FOPCODE_LIST_ENTRY_LITC
-	#undef INTERP_FOPCODE_LIST_END
+    #ifndef AVMPLUS_ALIGN16
+        #ifdef AVMPLUS_WIN32
+            #define AVMPLUS_ALIGN16(type) __declspec(align(16)) type
+        #else
+            #define AVMPLUS_ALIGN16(type) type __attribute__ ((aligned (16)))
+        #endif
+    #endif
 
-	#ifdef AVMPLUS_WIN32
-		#define AVMPLUS_ALIGN16(type) __declspec(align(16)) type
-	#else
-		#define AVMPLUS_ALIGN16(type) type __attribute__ ((aligned (16)))
-	#endif
+    // error codes
+    enum AssmError
+    {
+         None = 0
+        ,StackFull
+        ,UnknownBranch
+        ,ConditionalBranchTooFar
+    };
 
-	struct Stats
-	{
-		counter_define(steals;)
-		counter_define(remats;)
-		counter_define(spills;)
-		counter_define(native;)
-        counter_define(exitnative;)
-
-		DECLARE_PLATFORM_STATS()
-#ifdef __GNUC__
-		// inexplicably, gnuc gives padding/alignment warnings without this. pacify it.
-		bool pad[4];
+    typedef SeqBuilder<NIns*> NInsList;
+    typedef HashMap<NIns*, LIns*> NInsMap;
+#if NJ_USES_IMMD_POOL
+    typedef HashMap<uint64_t, uint64_t*> ImmDPoolMap;
 #endif
-	};
 
-	class Fragmento;
-	
-	// error codes
-	enum AssmError
-	{
-		 None = 0
-		,OutOMem
-		,StackFull
-		,ResvFull
-		,RegionFull
-        ,MaxLength
-        ,MaxExit
-        ,MaxXJump
-        ,UnknownPrim
-	};
+#ifdef VTUNE
+    class avmplus::CodegenLIR;
+#endif
 
-	typedef avmplus::List<NIns*, avmplus::LIST_NonGCObjects> NInsList;
+    class LabelState
+    {
+    public:
+        RegAlloc regs;
+        NIns *addr;
+        LabelState(NIns *a, RegAlloc &r) : regs(r), addr(a)
+        {}
+    };
+
+    class LabelStateMap
+    {
+        Allocator& alloc;
+        HashMap<LIns*, LabelState*> labels;
+    public:
+        LabelStateMap(Allocator& alloc) : alloc(alloc), labels(alloc)
+        {}
+
+        void clear() { labels.clear(); }
+        void add(LIns *label, NIns *addr, RegAlloc &regs);
+        LabelState *get(LIns *);
+    };
+
+    /** map tracking the register allocation state at each bailout point
+     *  (represented by SideExit*) in a trace fragment. */
+    typedef HashMap<SideExit*, RegAlloc*> RegAllocMap;
 
     /**
- 	 * Information about the activation record for the method is built up 
- 	 * as we generate machine code.  As part of the prologue, we issue
-	 * a stack adjustment instruction and then later patch the adjustment
-	 * value.  Temporary values can be placed into the AR as method calls
-	 * are issued.   Also MIR_alloc instructions will consume space.
-	 */
-	class Assembler MMGC_SUBCLASS_DECL
-	{
-		friend class DeadCodeFilter;
-		friend class VerboseBlockReader;
-		public:
-			#ifdef NJ_VERBOSE
-			static char  outline[8192]; 
-			static char* outputAlign(char* s, int col); 
-
-			void FASTCALL output(const char* s); 
-			void FASTCALL outputf(const char* format, ...); 
-			void FASTCALL output_asm(const char* s); 
-			
-			bool _verbose, vpad[3];
-			void printActivationState();
-
-			StringList* _outputCache;
-			#endif
-
-			Assembler(Fragmento* frago);
-            ~Assembler() {}
-
-			void		assemble(Fragment* frag, NInsList& loopJumps);
-			void		endAssembly(Fragment* frag, NInsList& loopJumps);
-			void		beginAssembly(Fragment *frag, RegAllocMap* map);
-			void		copyRegisters(RegAlloc* copyTo);
-			void		releaseRegisters();
-            void        patch(GuardRecord *lr);
-			void		unpatch(GuardRecord *lr);
-			AssmError   error()	{ return _err; }
-			void		setError(AssmError e) { _err = e; }
-			void		setCallTable(const CallInfo *functions);
-			void		pageReset();
-			Page*		handoverPages(bool exitPages=false);
-
-			debug_only ( void		pageValidate(); )
-			debug_only ( bool		onPage(NIns* where, bool exitPages=false); )
-			
-			// support calling out from a fragment ; used to debug the jit
-			debug_only( void		resourceConsistencyCheck(); )
-			debug_only( void		registerConsistencyCheck(LIns** resv); )
-			
-			Stats		_stats;		
-
-			const CallInfo* callInfoFor(uint32_t fid);
-			const CallInfo* callInfoFor(LInsp call)
-			{
-				return callInfoFor(call->fid());
-			}
-
-		private:
-			
-			void		gen(LirFilter* toCompile, NInsList& loopJumps);
-			NIns*		genPrologue(RegisterMask);
-			NIns*		genEpilogue(RegisterMask);
-
-			bool		ignoreInstruction(LInsp ins);
-
-			GuardRecord* placeGuardRecord(LInsp guard);
-			void		initGuardRecord(LInsp guard, GuardRecord*);
-
-			uint32_t	arReserve(LIns* l);
-			uint32_t	arFree(uint32_t idx);
-			void		arReset();
-
-			Register	registerAlloc(RegisterMask allow);
-			void		registerResetAll();
-			void		restoreCallerSaved();
-			void		mergeRegisterState(RegAlloc& saved);
-	        LInsp       findVictim(RegAlloc& regs, RegisterMask allow, RegisterMask prefer);
-		
-			int			findMemFor(LIns* i);
-			Register	findRegFor(LIns* i, RegisterMask allow);
-			void		findRegFor2(RegisterMask allow, LIns* ia, Reservation* &ra, LIns *ib, Reservation* &rb);
-			Register	findSpecificRegFor(LIns* i, Register w);
-			Register	prepResultReg(LIns *i, RegisterMask allow);
-			void		freeRsrcOf(LIns *i, bool pop);
-			void		evict(Register r);
-			RegisterMask hint(LIns*i, RegisterMask allow);
-
-			NIns*		pageAlloc(bool exitPage=false);
-			void		pagesFree(Page*& list);
-			void		internalReset();
-
-			Reservation* reserveAlloc(LInsp i);
-			void		reserveFree(LInsp i);
-			void		reserveReset();
-
-			Reservation* getresv(LIns *x) { return x->resv() ? &_resvTable[x->resv()] : 0; }
-
-			DWB(Fragmento*)		_frago;
-            GC*					_gc;
-            DWB(Fragment*)		_thisfrag;
-			RegAllocMap*		_branchStateMap;
-			GuardRecord*		_latestGuard;
-		
-			const CallInfo	*_functions;
-			
-			NIns*		_nIns;			// current native instruction
-			NIns*		_nExitIns;		// current instruction in exit fragment page
-			NIns*       _epilogue;
-			Page*		_nativePages;	// list of NJ_PAGE_SIZE pages that have been alloc'd
-			Page*		_nativeExitPages; // list of pages that have been allocated for exit code
-			AssmError	_err;			// 0 = means assemble() appears ok, otherwise it failed
-
-			AR			_activation;
-			RegAlloc	_allocator;
-
-			Reservation _resvTable[ NJ_MAX_STACK_ENTRY ]; // table where we house stack and register information
-			uint32_t	_resvFree;
-			bool		_inExit,vpad2[3];
-
-			void		asm_cmp(LIns *cond);
-#ifndef NJ_SOFTFLOAT
-			void		asm_fcmp(LIns *cond);
-#endif
-			void		asm_mmq(Register rd, int dd, Register rs, int ds);
-            NIns*       asm_exit(LInsp guard);
-			NIns*		asm_leave_trace(LInsp guard);
-            void        asm_qjoin(LIns *ins);
-            void        asm_store32(LIns *val, int d, LIns *base);
-            void        asm_store64(LIns *val, int d, LIns *base);
-			void		asm_restore(LInsp, Reservation*, Register);
-			void		asm_spill(LInsp i, Reservation *resv, bool pop);
-			void		asm_load64(LInsp i);
-			void		asm_pusharg(LInsp p);
-			NIns*		asm_adjustBranch(NIns* at, NIns* target);
-			void		asm_quad(LInsp i);
-			bool		asm_qlo(LInsp ins, LInsp q);
-			void		asm_fneg(LInsp ins);
-			void		asm_fop(LInsp ins);
-			void		asm_i2f(LInsp ins);
-			void		asm_u2f(LInsp ins);
-			Register	asm_prep_fcall(Reservation *rR, LInsp ins);
-			void		asm_nongp_copy(Register r, Register s);
-			void		asm_bailout(LInsp guard, Register state);
-			void		asm_call(LInsp);
-            void        asm_arg(ArgSize, LInsp, Register);
-			Register	asm_binop_rhs_reg(LInsp ins);
-
-			// platform specific implementation (see NativeXXX.cpp file)
-			void		nInit(uint32_t flags);
-			void		nInit(AvmCore *);
-			Register	nRegisterAllocFromSet(int32_t set);
-			void		nRegisterResetAll(RegAlloc& a);
-			void		nMarkExecute(Page* page, int32_t count=1, bool enable=true);
-			void		nFrameRestore(RegisterMask rmask);
-			static void	nPatchBranch(NIns* branch, NIns* location);
-			void		nFragExit(LIns* guard);
-
-			// platform specific methods
+     * Information about the activation record for the method is built up
+     * as we generate machine code.  As part of the prologue, we issue
+     * a stack adjustment instruction and then later patch the adjustment
+     * value.  Temporary values can be placed into the AR as method calls
+     * are issued.   Also LIR_allocp instructions will consume space.
+     */
+    class Assembler
+    {
+        friend class VerboseBlockReader;
+            #ifdef NJ_VERBOSE
         public:
-			DECLARE_PLATFORM_ASSEMBLER()
+            // Buffer for holding text as we generate it in reverse order.
+            StringList* _outputCache;
 
-		private:
-			debug_only( int32_t	_fpuStkDepth; )
-			debug_only( int32_t	_sv_fpuStkDepth; )
+            // Outputs the format string and 'outlineEOL', and resets
+            // 'outline' and 'outlineEOL'.
+            void outputf(const char* format, ...);
 
-			// since we generate backwards the depth is negative
-			inline void fpu_push() {
-				debug_only( ++_fpuStkDepth; /*char foo[8]= "FPUSTK0"; foo[6]-=_fpuStkDepth; output_asm(foo);*/ NanoAssert(_fpuStkDepth<=0); )
-			} 
-			inline void fpu_pop() { 
-				debug_only( --_fpuStkDepth; /*char foo[8]= "FPUSTK0"; foo[6]-=_fpuStkDepth; output_asm(foo);*/ NanoAssert(_fpuStkDepth<=0); )
-			}
-	#ifdef AVMPLUS_PORTING_API
-			// these pointers are required to store
-			// the address range where code has been
-			// modified so we can flush the instruction cache.
-			void* _endJit1Addr;
-			void* _endJit2Addr;
-	#endif // AVMPLUS_PORTING_API
-	};
+        private:
+            // Log controller object.  Contains what-stuff-should-we-print
+            // bits, and a sink function for debug printing.
+            LogControl* _logc;
 
-	inline int32_t disp(Reservation* r) 
-	{
-		return stack_direction((int32_t)STACK_GRANULARITY) * int32_t(r->arIndex) + NJ_STACK_OFFSET; 
-	}
+            // Buffer used in most of the output function.  It must big enough
+            // to hold both the output line and the 'outlineEOL' buffer, which
+            // is concatenated onto 'outline' just before it is printed.
+            static char  outline[8192];
+            // Buffer used to hold extra text to be printed at the end of some
+            // lines.
+            static char  outlineEOL[512];
+
+            // Outputs 'outline' and 'outlineEOL', and resets them both.
+            // Output goes to '_outputCache' if it's non-NULL, or is printed
+            // directly via '_logc'.
+            void output();
+
+            // Sets 'outlineEOL'.
+            void setOutputForEOL(const char* format, ...);
+
+            void printRegState();
+            void printActivationState();
+            #endif // NJ_VERBOSE
+
+        public:
+            #ifdef VTUNE
+            avmplus::CodegenLIR *cgen;
+            #endif
+
+            Assembler(CodeAlloc& codeAlloc, Allocator& dataAlloc, Allocator& alloc, AvmCore* core, LogControl* logc, const Config& config);
+
+            void        compile(Fragment *frag, Allocator& alloc, bool optimize
+                                verbose_only(, LInsPrinter*));
+
+            void        endAssembly(Fragment* frag);
+            void        assemble(Fragment* frag, LirFilter* reader);
+            void        beginAssembly(Fragment *frag);
+
+            void        releaseRegisters();
+            void        patch(GuardRecord *lr);
+            void        patch(SideExit *exit);
+#ifdef NANOJIT_IA32
+            void        patch(SideExit *exit, SwitchInfo* si);
+#endif
+            AssmError   error()    { return _err; }
+            void        setError(AssmError e) { _err = e; }
+
+            void        reset();
+
+            debug_only ( void       pageValidate(); )
+
+            // support calling out from a fragment ; used to debug the jit
+            debug_only( void        resourceConsistencyCheck(); )
+            debug_only( void        registerConsistencyCheck(); )
+
+            CodeList*   codeList;                   // finished blocks of code.
+
+        private:
+            void        gen(LirFilter* toCompile);
+            NIns*       genPrologue();
+            NIns*       genEpilogue();
+
+            uint32_t    arReserve(LIns* ins);
+            void        arFree(LIns* ins);
+            void        arReset();
+
+            Register    registerAlloc(LIns* ins, RegisterMask allow, RegisterMask prefer);
+            Register    registerAllocTmp(RegisterMask allow);
+            void        registerResetAll();
+            void        evictAllActiveRegs();
+            void        evictSomeActiveRegs(RegisterMask regs);
+            void        evictScratchRegsExcept(RegisterMask ignore);
+            void        intersectRegisterState(RegAlloc& saved);
+            void        unionRegisterState(RegAlloc& saved);
+            void        assignSaved(RegAlloc &saved, RegisterMask skip);
+            LInsp       findVictim(RegisterMask allow);
+
+            Register    getBaseReg(LIns *ins, int &d, RegisterMask allow);
+            void        getBaseReg2(RegisterMask allowValue, LIns* value, Register& rv,
+                                    RegisterMask allowBase, LIns* base, Register& rb, int &d);
+#if NJ_USES_IMMD_POOL
+            const uint64_t*
+                        findImmDFromPool(uint64_t q);
+#endif
+            int         findMemFor(LIns* ins);
+            Register    findRegFor(LIns* ins, RegisterMask allow);
+            void        findRegFor2(RegisterMask allowa, LIns* ia, Register &ra,
+                                    RegisterMask allowb, LIns *ib, Register &rb);
+            Register    findSpecificRegFor(LIns* ins, Register r);
+            Register    findSpecificRegForUnallocated(LIns* ins, Register r);
+            Register    deprecated_prepResultReg(LIns *ins, RegisterMask allow);
+            Register    prepareResultReg(LIns *ins, RegisterMask allow);
+            void        deprecated_freeRsrcOf(LIns *ins);
+            void        freeResourcesOf(LIns *ins);
+            void        evictIfActive(Register r);
+            void        evict(LIns* vic);
+            RegisterMask hint(LIns* ins);   // mask==0 means there's no preferred register(s)
+
+            void        codeAlloc(NIns *&start, NIns *&end, NIns *&eip
+                                  verbose_only(, size_t &nBytes));
+
+            // These instructions don't have to be saved & reloaded to spill,
+            // they can just be recalculated cheaply.
+            //
+            // WARNING: this function must match asm_restore() -- it should return
+            // true for the instructions that are handled explicitly without a spill
+            // in asm_restore(), and false otherwise.
+            //
+            // If it doesn't match asm_restore(), the register allocator's decisions
+            // about which values to evict will be suboptimal.
+            static bool canRemat(LIns*);
+
+            bool deprecated_isKnownReg(Register r) {
+                return r != deprecated_UnknownReg;
+            }
+
+            Allocator&          alloc;              // for items with same lifetime as this Assembler
+            CodeAlloc&          _codeAlloc;         // for code we generate
+            Allocator&          _dataAlloc;         // for data used by generated code
+            Fragment*           _thisfrag;
+            RegAllocMap         _branchStateMap;
+            NInsMap             _patches;
+            LabelStateMap       _labels;
+        #if NJ_USES_IMMD_POOL
+            ImmDPoolMap     _immDPool;
+        #endif
+
+            // We generate code into two places:  normal code chunks, and exit
+            // code chunks (for exit stubs).  We use a hack to avoid having to
+            // parameterise the code that does the generating -- we let that
+            // code assume that it's always generating into a normal code
+            // chunk (most of the time it is), and when we instead need to
+            // generate into an exit code chunk, we set _inExit to true and
+            // temporarily swap all the code/exit variables below (using
+            // swapCodeChunks()).  Afterwards we swap them all back and set
+            // _inExit to false again.
+            bool        _inExit, vpad2[3];
+            NIns        *codeStart, *codeEnd;   // current normal code chunk
+            NIns        *exitStart, *exitEnd;   // current exit code chunk
+            NIns*       _nIns;                  // current instruction in current normal code chunk
+            NIns*       _nExitIns;              // current instruction in current exit code chunk
+                                                // note: _nExitIns == NULL until the first side exit is seen.
+        #ifdef NJ_VERBOSE
+            size_t      codeBytes;              // bytes allocated in normal code chunks
+            size_t      exitBytes;              // bytes allocated in exit code chunks
+        #endif
+
+            #define     SWAP(t, a, b)   do { t tmp = a; a = b; b = tmp; } while (0)
+            void        swapCodeChunks();
+
+            NIns*       _epilogue;
+            AssmError   _err;           // 0 = means assemble() appears ok, otherwise it failed
+        #if PEDANTIC
+            NIns*       pedanticTop;
+        #endif
+
+            // Holds the current instruction during gen().
+            LInsp       currIns;
+
+            AR          _activation;
+            RegAlloc    _allocator;
+
+            verbose_only( void asm_inc_m32(uint32_t*); )
+            void        asm_mmq(Register rd, int dd, Register rs, int ds);
+            void        asm_jmp(LInsp ins, InsList& pending_lives);
+            void        asm_jcc(LInsp ins, InsList& pending_lives);
+            void        asm_x(LInsp ins);
+            void        asm_xcc(LInsp ins);
+            NIns*       asm_exit(LInsp guard);
+            NIns*       asm_leave_trace(LInsp guard);
+            void        asm_store32(LOpcode op, LIns *val, int d, LIns *base);
+            void        asm_store64(LOpcode op, LIns *val, int d, LIns *base);
+
+            // WARNING: the implementation of asm_restore() should emit fast code
+            // to rematerialize instructions where canRemat() returns true.
+            // Otherwise, register allocation decisions will be suboptimal.
+            void        asm_restore(LInsp, Register);
+
+            void        asm_maybe_spill(LInsp ins, bool pop);
+            void        asm_spill(Register rr, int d, bool pop, bool quad);
+            void        asm_load64(LInsp ins);
+            void        asm_ret(LInsp ins);
+#ifdef NANOJIT_64BIT
+            void        asm_immq(LInsp ins);
+#endif
+            void        asm_immd(LInsp ins);
+            void        asm_condd(LInsp ins);
+            void        asm_cond(LInsp ins);
+            void        asm_arith(LInsp ins);
+            void        asm_neg_not(LInsp ins);
+            void        asm_load32(LInsp ins);
+            void        asm_cmov(LInsp ins);
+            void        asm_param(LInsp ins);
+            void        asm_immi(LInsp ins);
+#if NJ_SOFTFLOAT_SUPPORTED
+            void        asm_qlo(LInsp ins);
+            void        asm_qhi(LInsp ins);
+            void        asm_qjoin(LIns *ins);
+#endif
+            void        asm_fneg(LInsp ins);
+            void        asm_fop(LInsp ins);
+            void        asm_i2d(LInsp ins);
+            void        asm_ui2d(LInsp ins);
+            void        asm_d2i(LInsp ins);
+#ifdef NANOJIT_64BIT
+            void        asm_q2i(LInsp ins);
+            void        asm_promote(LIns *ins);
+#endif
+            void        asm_nongp_copy(Register r, Register s);
+            void        asm_call(LInsp);
+            Register    asm_binop_rhs_reg(LInsp ins);
+            NIns*       asm_branch(bool branchOnFalse, LInsp cond, NIns* targ);
+            void        asm_branch_xov(LOpcode op, NIns* targ);
+            void        asm_switch(LIns* ins, NIns* target);
+            void        asm_jtbl(LIns* ins, NIns** table);
+            void        emitJumpTable(SwitchInfo* si, NIns* target);
+            void        assignSavedRegs();
+            void        reserveSavedRegs();
+            void        assignParamRegs();
+            void        handleLoopCarriedExprs(InsList& pending_lives);
+
+            // platform specific implementation (see NativeXXX.cpp file)
+            void        nInit(AvmCore *);
+            void        nBeginAssembly();
+            Register    nRegisterAllocFromSet(RegisterMask set);
+            void        nRegisterResetAll(RegAlloc& a);
+            static void nPatchBranch(NIns* branch, NIns* location);
+            void        nFragExit(LIns* guard);
+
+            // platform specific methods
+        public:
+            const static Register savedRegs[NumSavedRegs];
+            DECLARE_PLATFORM_ASSEMBLER()
+
+        private:
+#ifdef NANOJIT_IA32
+            debug_only( int32_t _fpuStkDepth; )
+            debug_only( int32_t _sv_fpuStkDepth; )
+
+            // since we generate backwards the depth is negative
+            inline void fpu_push() {
+                debug_only( ++_fpuStkDepth; NanoAssert(_fpuStkDepth<=0); )
+            }
+            inline void fpu_pop() {
+                debug_only( --_fpuStkDepth; NanoAssert(_fpuStkDepth<=0); )
+            }
+#endif
+            const Config& _config;
+    };
+
+    inline int32_t arDisp(LIns* ins)
+    {
+        // even on 64bit cpu's, we allocate stack area in 4byte chunks
+        return -4 * int32_t(ins->getArIndex());
+    }
+    // XXX: deprecated, use arDisp() instead.  See bug 538924.
+    inline int32_t deprecated_disp(LIns* ins)
+    {
+        // even on 64bit cpu's, we allocate stack area in 4byte chunks
+        return -4 * int32_t(ins->deprecated_getArIndex());
+    }
 }
 #endif // __nanojit_Assembler__

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  *
  * ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -42,10 +42,10 @@
  * "Fast Allocation and Deallocation of Memory Based on Object Lifetimes"
  * David R. Hanson, Software -- Practice and Experience, Vol. 20(1).
  */
-#include "jsstddef.h"
 #include <stdlib.h>
 #include <string.h>
 #include "jstypes.h"
+#include "jsstdint.h"
 #include "jsbit.h"
 #include "jsarena.h" /* Added by JSIFY */
 #include "jsutil.h" /* Added by JSIFY */
@@ -61,8 +61,8 @@ static JSArenaStats *arena_stats_list;
 #define JS_ARENA_DEFAULT_ALIGN  sizeof(double)
 
 JS_PUBLIC_API(void)
-JS_INIT_NAMED_ARENA_POOL(JSArenaPool *pool, const char *name, size_t size,
-                         size_t align, size_t *quotap)
+JS_InitArenaPool(JSArenaPool *pool, const char *name, size_t size,
+                 size_t align, size_t *quotap)
 {
     if (align == 0)
         align = JS_ARENA_DEFAULT_ALIGN;
@@ -160,12 +160,12 @@ JS_ArenaAllocate(JSArenaPool *pool, size_t nb)
             if (pool->quotap) {
                 if (gross > *pool->quotap)
                     return NULL;
-                b = (JSArena *) malloc(gross);
+                b = (JSArena *) js_malloc(gross);
                 if (!b)
                     return NULL;
                 *pool->quotap -= gross;
             } else {
-                b = (JSArena *) malloc(gross);
+                b = (JSArena *) js_malloc(gross);
                 if (!b)
                     return NULL;
             }
@@ -227,12 +227,12 @@ JS_ArenaRealloc(JSArenaPool *pool, void *p, size_t size, size_t incr)
         growth = gross - (a->limit - (jsuword) a);
         if (growth > *pool->quotap)
             return NULL;
-        a = (JSArena *) realloc(a, gross);
+        a = (JSArena *) js_realloc(a, gross);
         if (!a)
             return NULL;
         *pool->quotap -= growth;
     } else {
-        a = (JSArena *) realloc(a, gross);
+        a = (JSArena *) js_realloc(a, gross);
         if (!a)
             return NULL;
     }
@@ -315,7 +315,7 @@ FreeArenaList(JSArenaPool *pool, JSArena *head)
             *pool->quotap += a->limit - (jsuword) a;
         JS_CLEAR_ARENA(a);
         JS_COUNT_ARENA(pool,--);
-        free(a);
+        js_free(a);
     } while ((a = *ap) != NULL);
 
     pool->current = head;
@@ -354,7 +354,7 @@ JS_FinishArenaPool(JSArenaPool *pool)
         JSArenaStats *stats, **statsp;
 
         if (pool->stats.name) {
-            free(pool->stats.name);
+            js_free(pool->stats.name);
             pool->stats.name = NULL;
         }
         for (statsp = &arena_stats_list; (stats = *statsp) != 0;

@@ -44,12 +44,19 @@
 #ifndef jsutil_h___
 #define jsutil_h___
 
+#include "jstypes.h"
+#include <stdlib.h>
+
 JS_BEGIN_EXTERN_C
 
-#ifdef DEBUG
-
+/*
+ * JS_Assert is present even in release builds, for the benefit of applications
+ * that build DEBUG and link against a non-DEBUG SpiderMonkey library.
+ */
 extern JS_PUBLIC_API(void)
 JS_Assert(const char *s, const char *file, JSIntn ln);
+
+#ifdef DEBUG
 
 #define JS_ASSERT(expr)                                                       \
     ((expr) ? (void)0 : JS_Assert(#expr, __FILE__, __LINE__))
@@ -60,16 +67,19 @@ JS_Assert(const char *s, const char *file, JSIntn ln);
 #define JS_NOT_REACHED(reason)                                                \
     JS_Assert(reason, __FILE__, __LINE__)
 
+#define JS_ALWAYS_TRUE(expr) JS_ASSERT(expr)
+
 #else
 
 #define JS_ASSERT(expr)         ((void) 0)
 #define JS_ASSERT_IF(cond,expr) ((void) 0)
 #define JS_NOT_REACHED(reason)
+#define JS_ALWAYS_TRUE(expr)    ((void) (expr))
 
 #endif /* defined(DEBUG) */
 
 /*
- * Compile-time assert. "condition" must be a constant expression.
+ * Compile-time assert. "cond" must be a constant expression.
  * The macro can be used only in places where an "extern" declaration is
  * allowed.
  */
@@ -81,11 +91,19 @@ JS_Assert(const char *s, const char *file, JSIntn ln);
  * Turn off this assert for Sun Studio until this bug is fixed.
  */
 #ifdef __SUNPRO_CC
-#define JS_STATIC_ASSERT(condition)
+#define JS_STATIC_ASSERT(cond)
 #else
-#define JS_STATIC_ASSERT(condition)                                           \
-    extern void js_static_assert(int arg[(condition) ? 1 : -1])
+#ifdef __COUNTER__
+    #define JS_STATIC_ASSERT_GLUE1(x,y) x##y
+    #define JS_STATIC_ASSERT_GLUE(x,y) JS_STATIC_ASSERT_GLUE1(x,y)
+    #define JS_STATIC_ASSERT(cond)                                            \
+        typedef int JS_STATIC_ASSERT_GLUE(js_static_assert, __COUNTER__)[(cond) ? 1 : -1]
+#else
+    #define JS_STATIC_ASSERT(cond) extern void js_static_assert(int arg[(cond) ? 1 : -1])
 #endif
+#endif
+
+#define JS_STATIC_ASSERT_IF(cond, expr) JS_STATIC_ASSERT(!(cond) || (expr))
 
 /*
  * Abort the process in a non-graceful manner. This will cause a core file,
@@ -94,13 +112,12 @@ JS_Assert(const char *s, const char *file, JSIntn ln);
  */
 extern JS_PUBLIC_API(void) JS_Abort(void);
 
-#if 0
+#ifdef DEBUG
 # define JS_BASIC_STATS 1
-# define JS_SCOPE_DEPTH_METER 1
 #endif
 
-#if defined DEBUG && !defined JS_BASIC_STATS
-# define JS_BASIC_STATS 1
+#ifdef DEBUG_brendan
+# define JS_SCOPE_DEPTH_METER 1
 #endif
 
 #ifdef JS_BASIC_STATS
@@ -144,7 +161,7 @@ JS_DumpHistogram(JSBasicStats *bs, FILE *fp);
 #endif /* JS_BASIC_STATS */
 
 
-#ifdef XP_UNIX
+#if defined(DEBUG_notme) && defined(XP_UNIX)
 
 typedef struct JSCallsite JSCallsite;
 
@@ -159,10 +176,133 @@ struct JSCallsite {
     void        *handy;
 };
 
-extern JSCallsite *JS_Backtrace(int skip);
+extern JS_FRIEND_API(JSCallsite *)
+JS_Backtrace(int skip);
 
+extern JS_FRIEND_API(void)
+JS_DumpBacktrace(JSCallsite *trace);
 #endif
 
+#if defined JS_USE_CUSTOM_ALLOCATOR
+
+#include "jscustomallocator.h"
+
+#else
+
+static JS_INLINE void* js_malloc(size_t bytes) {
+    return malloc(bytes);
+}
+
+static JS_INLINE void* js_calloc(size_t bytes) {
+    return calloc(bytes, 1);
+}
+
+static JS_INLINE void* js_realloc(void* p, size_t bytes) {
+    return realloc(p, bytes);
+}
+
+static JS_INLINE void js_free(void* p) {
+    free(p);
+}
+#endif/* JS_USE_CUSTOM_ALLOCATOR */
+
 JS_END_EXTERN_C
+
+#ifdef __cplusplus
+
+/**
+ * The following classes are designed to cause assertions to detect
+ * inadvertent use of guard objects as temporaries.  In other words,
+ * when we have a guard object whose only purpose is its constructor and
+ * destructor (and is never otherwise referenced), the intended use
+ * might be:
+ *     JSAutoTempValueRooter tvr(cx, 1, &val);
+ * but is is easy to accidentally write:
+ *     JSAutoTempValueRooter(cx, 1, &val);
+ * which compiles just fine, but runs the destructor well before the
+ * intended time.
+ *
+ * They work by adding (#ifdef DEBUG) an additional parameter to the
+ * guard object's constructor, with a default value, so that users of
+ * the guard object's API do not need to do anything.  The default value
+ * of this parameter is a temporary object.  C++ (ISO/IEC 14882:1998),
+ * section 12.2 [class.temporary], clauses 4 and 5 seem to assume a
+ * guarantee that temporaries are destroyed in the reverse of their
+ * construction order, but I actually can't find a statement that that
+ * is true in the general case (beyond the two specific cases mentioned
+ * there).  However, it seems to be true.
+ *
+ * These classes are intended to be used only via the macros immediately
+ * below them:
+ *   JS_DECL_USE_GUARD_OBJECT_NOTIFIER declares (ifdef DEBUG) a member
+ *     variable, and should be put where a declaration of a private
+ *     member variable would be placed.
+ *   JS_GUARD_OBJECT_NOTIFIER_PARAM should be placed at the end of the
+ *     parameters to each constructor of the guard object; it declares
+ *     (ifdef DEBUG) an additional parameter.
+ *   JS_GUARD_OBJECT_NOTIFIER_INIT is a statement that belongs in each
+ *     constructor.  It uses the parameter declared by
+ *     JS_GUARD_OBJECT_NOTIFIER_PARAM.
+ */
+#ifdef DEBUG
+class JSGuardObjectNotifier
+{
+private:
+    bool* mStatementDone;
+public:
+    JSGuardObjectNotifier() : mStatementDone(NULL) {}
+
+    ~JSGuardObjectNotifier() {
+        *mStatementDone = true;
+    }
+
+    void SetStatementDone(bool *aStatementDone) {
+        mStatementDone = aStatementDone;
+    }
+};
+
+class JSGuardObjectNotificationReceiver
+{
+private:
+    bool mStatementDone;
+public:
+    JSGuardObjectNotificationReceiver() : mStatementDone(false) {}
+
+    ~JSGuardObjectNotificationReceiver() {
+        /*
+         * Assert that the guard object was not used as a temporary.
+         * (Note that this assert might also fire if Init is not called
+         * because the guard object's implementation is not using the
+         * above macros correctly.)
+         */
+        JS_ASSERT(mStatementDone);
+    }
+
+    void Init(const JSGuardObjectNotifier &aNotifier) {
+        /*
+         * aNotifier is passed as a const reference so that we can pass a
+         * temporary, but we really intend it as non-const
+         */
+        const_cast<JSGuardObjectNotifier&>(aNotifier).
+            SetStatementDone(&mStatementDone);
+    }
+};
+
+#define JS_DECL_USE_GUARD_OBJECT_NOTIFIER \
+    JSGuardObjectNotificationReceiver _mCheckNotUsedAsTemporary;
+#define JS_GUARD_OBJECT_NOTIFIER_PARAM \
+    , const JSGuardObjectNotifier& _notifier = JSGuardObjectNotifier()
+#define JS_GUARD_OBJECT_NOTIFIER_INIT \
+    JS_BEGIN_MACRO _mCheckNotUsedAsTemporary.Init(_notifier); JS_END_MACRO
+
+#else /* defined(DEBUG) */
+
+#define JS_DECL_USE_GUARD_OBJECT_NOTIFIER
+#define JS_GUARD_OBJECT_NOTIFIER_PARAM
+#define JS_GUARD_OBJECT_NOTIFIER_INIT JS_BEGIN_MACRO JS_END_MACRO
+
+#endif /* !defined(DEBUG) */
+
+#endif /* defined(__cplusplus) */
 
 #endif /* jsutil_h___ */

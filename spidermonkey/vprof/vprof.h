@@ -85,25 +85,19 @@
 #define THREADED 0
 #define THREAD_SAFE 0
 
-#ifdef _MSC_VER
-typedef unsigned char      uint8_t;
-typedef unsigned short     uint16_t;
-typedef signed char        int8_t;
-typedef short              int16_t;
-typedef unsigned int       uint32_t;
-typedef signed int         int32_t;
-typedef __int64            int64_t;
-typedef unsigned __int64   uint64_t;
-typedef long long          int64_t;
-typedef unsigned long long uint64_t;
-#else
-#include <inttypes.h>
-#endif
+#include "VMPI.h"
+
+// Note, this is not supported in configurations with more than one AvmCore running
+// in the same process.
 
 // portable align macro
 #if defined(_MSC_VER)
 	#define vprof_align8(t) __declspec(align(8)) t
 #elif defined(__GNUC__)
+	#define vprof_align8(t) t __attribute__ ((aligned (8)))
+#elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
+	#define vprof_align8(t) t __attribute__ ((aligned (8)))
+#elif defined(VMCFG_SYMBIAN)
 	#define vprof_align8(t) t __attribute__ ((aligned (8)))
 #endif
 
@@ -115,16 +109,24 @@ int profileValue (void** id, char* file, int line, int64_t value, ...);
 int _profileEntryValue (void* id, int64_t value);
 int histValue(void** id, char* file, int line, int64_t value, int nbins, ...);
 int _histEntryValue (void* id, int64_t value);
+int64_t _tprof_time();
+extern void* _tprof_before_id;
 
 #ifdef __cplusplus
 }
 #endif 
 
-#define DOPROF
+//#define DOPROF
 
 #ifndef DOPROF
-#define _vprof(v)
-#define _hprof(h)
+#define _nvprof(e,v)
+#ifndef VMCFG_SYMBIAN
+#define _vprof(v,...)
+#define _hprof(h,n,...)
+#define _nhprof(e,v,n,...)
+#define _ntprof(e)
+#define _tprof_end()
+#endif // ! VMCFG_SYMBIAN
 #else
 
 #define _vprof(v,...) \
@@ -137,13 +139,13 @@ int _histEntryValue (void* id, int64_t value);
     ;\
 }
 
-#define _nvprof(e,v,...) \
+#define _nvprof(e,v) \
 { \
     static void* id = 0; \
     (id != 0) ? \
         _profileEntryValue (id, (int64_t) (v)) \
     : \
-        profileValue (&id, (char*) (e), -1, (int64_t) (v), ##__VA_ARGS__, NULL) \
+        profileValue (&id, (char*) (e), -1, (int64_t) (v), NULL) \
     ; \
 }
 
@@ -166,11 +168,35 @@ int _histEntryValue (void* id, int64_t value);
         histValue (&id, (char*) (e), -1, (int64_t) (v), (int) (n), ##__VA_ARGS__) \
     ; \
 }
+
+#define _ntprof(e) \
+{ \
+    uint64_t v = _tprof_time();\
+    (_tprof_before_id != 0) ? \
+        _profileEntryValue(_tprof_before_id, v)\
+        : 0;\
+    static void* id = 0; \
+    (id != 0) ? \
+        _profileEntryValue (id, (int64_t) 0) \
+    : \
+        profileValue (&id, (char*)(e), -1, (int64_t) 0, NULL) \
+    ;\
+    _tprof_before_id = id;\
+}
+
+#define _tprof_end() \
+{\
+    uint64_t v = _tprof_time();\
+    if (_tprof_before_id)\
+        _profileEntryValue(_tprof_before_id, v);\
+    _tprof_before_id = 0;\
+}
+
 #endif
 
 #define NUM_EVARS 4
 
-typedef enum {
+enum {
     LOCK_IS_FREE = 0, 
     LOCK_IS_TAKEN = 1
 };

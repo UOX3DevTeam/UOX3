@@ -40,6 +40,7 @@
 /*
  * JS JSON functions.
  */
+#include "jsscan.h"
 
 #define JSON_MAX_DEPTH  2048
 #define JSON_PARSER_BUFSIZE 1024
@@ -52,8 +53,8 @@ extern JSObject *
 js_InitJSONClass(JSContext *cx, JSObject *obj);
 
 extern JSBool
-js_Stringify(JSContext *cx, jsval *vp, JSObject *replacer,
-             JSONWriteCallback callback, void *data, uint32 depth);
+js_Stringify(JSContext *cx, jsval *vp, JSObject *replacer, jsval space,
+             JSCharBuffer &cb);
 
 extern JSBool js_TryJSON(JSContext *cx, jsval *vp);
 
@@ -80,18 +81,7 @@ enum JSONDataType {
     JSON_DATA_KEYWORD
 };
 
-struct JSONParser {
-    /* Used while handling \uNNNN in strings */
-    jschar hexChar;
-    uint8 numHex;
-
-    JSONParserState *statep;
-    JSONParserState stateStack[JSON_MAX_DEPTH];
-    jsval *rootVal;
-    JSString *objectKey;
-    JSStringBuffer *buffer;
-    JSObject *objectStack;
-};
+struct JSONParser;
 
 extern JSONParser *
 js_BeginJSONParse(JSContext *cx, jsval *rootVal);
@@ -99,8 +89,8 @@ js_BeginJSONParse(JSContext *cx, jsval *rootVal);
 extern JSBool
 js_ConsumeJSONText(JSContext *cx, JSONParser *jp, const jschar *data, uint32 len);
 
-extern JSBool
-js_FinishJSONParse(JSContext *cx, JSONParser *jp);
+extern bool
+js_FinishJSONParse(JSContext *cx, JSONParser *jp, jsval reviver);
 
 JS_END_EXTERN_C
 

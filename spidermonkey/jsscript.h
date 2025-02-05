@@ -45,6 +45,7 @@
  */
 #include "jsatom.h"
 #include "jsprvtd.h"
+#include "jsdbgapi.h"
 
 JS_BEGIN_EXTERN_C
 
@@ -53,9 +54,9 @@ JS_BEGIN_EXTERN_C
  * for-in loops.
  */
 typedef enum JSTryNoteKind {
-    JSTN_CATCH,
-    JSTN_FINALLY,
-    JSTN_ITER
+    JSTRY_CATCH,
+    JSTRY_FINALLY,
+    JSTRY_ITER
 } JSTryNoteKind;
 
 /*
@@ -85,6 +86,9 @@ typedef struct JSUpvarArray {
     uint32          length;     /* count of indexed upvar cookies */
 } JSUpvarArray;
 
+#define CALLEE_UPVAR_SLOT               0xffff
+#define FREE_STATIC_LEVEL               0x3fff
+#define FREE_UPVAR_COOKIE               0xffffffff
 #define MAKE_UPVAR_COOKIE(skip,slot)    ((skip) << 16 | (slot))
 #define UPVAR_FRAME_SKIP(cookie)        ((uint32)(cookie) >> 16)
 #define UPVAR_FRAME_SLOT(cookie)        ((uint16)(cookie))
@@ -111,13 +115,18 @@ struct JSScript {
                                        regexps or 0 if none. */
     uint8           trynotesOffset; /* offset to the array of try notes or
                                        0 if none */
-    uint8           flags;      /* see below */
+    bool            noScriptRval:1; /* no need for result value of last
+                                       expression statement */
+    bool            savedCallerFun:1; /* object 0 is caller function */
+    bool            hasSharps:1;      /* script uses sharp variables */
+    bool            strictModeCode:1; /* code is in strict mode */
+
     jsbytecode      *main;      /* main entry point, after predef'ing prolog */
     JSAtomMap       atomMap;    /* maps immediate index to literal struct */
     const char      *filename;  /* source filename or null */
     uint32          lineno;     /* base line number of script */
     uint16          nslots;     /* vars plus maximum stack depth */
-    uint16          staticDepth;/* static depth for display maintenance */
+    uint16          staticLevel;/* static level for display maintenance */
     JSPrincipals    *principals;/* principals for this script */
     union {
         JSObject    *object;    /* optional Script-class object wrapper */
@@ -126,10 +135,75 @@ struct JSScript {
 #ifdef CHECK_SCRIPT_OWNER
     JSThread        *owner;     /* for thread-safe life-cycle assertions */
 #endif
+
+    /* Script notes are allocated right after the code. */
+    jssrcnote *notes() { return (jssrcnote *)(code + length); }
+
+    JSObjectArray *objects() {
+        JS_ASSERT(objectsOffset != 0);
+        return (JSObjectArray *)((uint8 *) this + objectsOffset);
+    }
+
+    JSUpvarArray *upvars() {
+        JS_ASSERT(upvarsOffset != 0);
+        return (JSUpvarArray *) ((uint8 *) this + upvarsOffset);
+    }
+
+    JSObjectArray *regexps() {
+        JS_ASSERT(regexpsOffset != 0);
+        return (JSObjectArray *) ((uint8 *) this + regexpsOffset);
+    }
+
+    JSTryNoteArray *trynotes() {
+        JS_ASSERT(trynotesOffset != 0);
+        return (JSTryNoteArray *) ((uint8 *) this + trynotesOffset);
+    }
+
+    JSAtom *getAtom(size_t index) {
+        JS_ASSERT(index < atomMap.length);
+        return atomMap.vector[index];
+    }
+
+    JSObject *getObject(size_t index) {
+        JSObjectArray *arr = objects();
+        JS_ASSERT(index < arr->length);
+        return arr->vector[index];
+    }
+
+    inline JSFunction *getFunction(size_t index);
+
+    inline JSObject *getRegExp(size_t index);
+
+    /*
+     * The isEmpty method tells whether this script has code that computes any
+     * result (not return value, result AKA normal completion value) other than
+     * JSVAL_VOID, or any other effects. It has a fast path for the case where
+     * |this| is the emptyScript singleton, but it also checks this->length and
+     * this->code, to handle debugger-generated mutable empty scripts.
+     */
+    inline bool isEmpty() const;
+
+    /*
+     * Accessor for the emptyScriptConst singleton, to consolidate const_cast.
+     * See the private member declaration.
+     */
+    static JSScript *emptyScript() {
+        return const_cast<JSScript *>(&emptyScriptConst);
+    }
+
+  private:
+    /*
+     * Use const to put this in read-only memory if possible. We are stuck with
+     * non-const JSScript * and jsbytecode * by legacy code (back in the 1990s,
+     * const wasn't supported correctly on all target platforms). The debugger
+     * does mutate bytecode, and script->u.object may be set after construction
+     * in some cases, so making JSScript pointers const will be "hard".
+     */
+    static const JSScript emptyScriptConst;
 };
 
-#define JSSF_NO_SCRIPT_RVAL     0x01    /* no need for result value of last
-                                           expression statement */
+#define SHARP_NSLOTS            2       /* [#array, #depth] slots if the script
+                                           uses sharp variables */
 
 static JS_INLINE uintN
 StackDepth(JSScript *script)
@@ -137,65 +211,21 @@ StackDepth(JSScript *script)
     return script->nslots - script->nfixed;
 }
 
-/* No need to store script->notes now that it is allocated right after code. */
-#define SCRIPT_NOTES(script)    ((jssrcnote*)((script)->code+(script)->length))
-
-#define JS_SCRIPT_OBJECTS(script)                                             \
-    (JS_ASSERT((script)->objectsOffset != 0),                                 \
-     (JSObjectArray *)((uint8 *)(script) + (script)->objectsOffset))
-
-#define JS_SCRIPT_UPVARS(script)                                              \
-    (JS_ASSERT((script)->upvarsOffset != 0),                                  \
-     (JSUpvarArray *)((uint8 *)(script) + (script)->upvarsOffset))
-
-#define JS_SCRIPT_REGEXPS(script)                                             \
-    (JS_ASSERT((script)->regexpsOffset != 0),                                 \
-     (JSObjectArray *)((uint8 *)(script) + (script)->regexpsOffset))
-
-#define JS_SCRIPT_TRYNOTES(script)                                            \
-    (JS_ASSERT((script)->trynotesOffset != 0),                                \
-     (JSTryNoteArray *)((uint8 *)(script) + (script)->trynotesOffset))
-
-#define JS_GET_SCRIPT_ATOM(script, index, atom)                               \
-    JS_BEGIN_MACRO                                                            \
-        JSAtomMap *atoms_ = &(script)->atomMap;                               \
-        JS_ASSERT((uint32)(index) < atoms_->length);                          \
-        (atom) = atoms_->vector[(index)];                                     \
-    JS_END_MACRO
-
-#define JS_GET_SCRIPT_OBJECT(script, index, obj)                              \
-    JS_BEGIN_MACRO                                                            \
-        JSObjectArray *objects_ = JS_SCRIPT_OBJECTS(script);                  \
-        JS_ASSERT((uint32)(index) < objects_->length);                        \
-        (obj) = objects_->vector[(index)];                                    \
-    JS_END_MACRO
-
-#define JS_GET_SCRIPT_FUNCTION(script, index, fun)                            \
-    JS_BEGIN_MACRO                                                            \
-        JSObject *funobj_;                                                    \
-                                                                              \
-        JS_GET_SCRIPT_OBJECT(script, index, funobj_);                         \
-        JS_ASSERT(HAS_FUNCTION_CLASS(funobj_));                               \
-        JS_ASSERT(funobj_ == (JSObject *) STOBJ_GET_PRIVATE(funobj_));        \
-        (fun) = (JSFunction *) funobj_;                                       \
-        JS_ASSERT(FUN_INTERPRETED(fun));                                      \
-    JS_END_MACRO
-
-#define JS_GET_SCRIPT_REGEXP(script, index, obj)                              \
-    JS_BEGIN_MACRO                                                            \
-        JSObjectArray *regexps_ = JS_SCRIPT_REGEXPS(script);                  \
-        JS_ASSERT((uint32)(index) < regexps_->length);                        \
-        (obj) = regexps_->vector[(index)];                                    \
-        JS_ASSERT(STOBJ_GET_CLASS(obj) == &js_RegExpClass);                   \
-    JS_END_MACRO
-
 /*
- * Check if pc is inside a try block that has finally code. GC calls this to
- * check if it is necessary to schedule generator.close() invocation for an
- * unreachable generator.
+ * If pc_ does not point within script_'s bytecode, then it must point into an
+ * imacro body, so we use cx->runtime common atoms instead of script_'s atoms.
+ * This macro uses cx from its callers' environments in the pc-in-imacro case.
  */
-JSBool
-js_IsInsideTryWithFinally(JSScript *script, jsbytecode *pc);
+#define JS_GET_SCRIPT_ATOM(script_, pc_, index, atom)                         \
+    JS_BEGIN_MACRO                                                            \
+        if ((pc_) < (script_)->code ||                                        \
+            (script_)->code + (script_)->length <= (pc_)) {                   \
+            JS_ASSERT((size_t)(index) < js_common_atom_count);                \
+            (atom) = COMMON_ATOMS_START(&cx->runtime->atomState)[index];      \
+        } else {                                                              \
+            (atom) = script_->getAtom(index);                                 \
+        }                                                                     \
+    JS_END_MACRO
 
 extern JS_FRIEND_DATA(JSClass) js_ScriptClass;
 
@@ -210,16 +240,8 @@ extern JSBool
 js_InitRuntimeScriptState(JSRuntime *rt);
 
 /*
- * On last context destroy for rt, if script filenames are all GC'd, free the
- * script filename table and its lock.
- */
-extern void
-js_FinishRuntimeScriptState(JSRuntime *rt);
-
-/*
  * On JS_DestroyRuntime(rt), forcibly free script filename prefixes and any
- * script filename table entries that have not been GC'd, the latter using
- * js_FinishRuntimeScriptState.
+ * script filename table entries that have not been GC'd.
  *
  * This allows script filename prefixes to outlive any context in rt.
  */
@@ -239,7 +261,7 @@ extern void
 js_MarkScriptFilename(const char *filename);
 
 extern void
-js_MarkScriptFilenames(JSRuntime *rt, JSBool keepAtoms);
+js_MarkScriptFilenames(JSRuntime *rt);
 
 extern void
 js_SweepScriptFilenames(JSRuntime *rt);
@@ -254,6 +276,12 @@ js_SweepScriptFilenames(JSRuntime *rt);
  * to the newly made script's function, if any -- so callers of js_NewScript
  * are responsible for notifying the debugger after successfully creating any
  * kind (function or other) of new JSScript.
+ *
+ * NB: js_NewScript always creates a new script; it never returns the empty
+ * script singleton (JSScript::emptyScript()). Callers who know they can use
+ * that read-only singleton are responsible for choosing it instead of calling
+ * js_NewScript with length and nsrcnotes equal to 1 and other parameters save
+ * cx all zero.
  */
 extern JSScript *
 js_NewScript(JSContext *cx, uint32 length, uint32 nsrcnotes, uint32 natoms,
@@ -291,7 +319,14 @@ js_TraceScript(JSTracer *trc, JSScript *script);
 extern jssrcnote *
 js_GetSrcNoteCached(JSContext *cx, JSScript *script, jsbytecode *pc);
 
-/* XXX need cx to lock function objects declared by prolog bytecodes. */
+/*
+ * NOTE: use js_FramePCToLineNumber(cx, fp) when you have an active fp, in
+ * preference to js_PCToLineNumber (cx, fp->script  fp->regs->pc), because
+ * fp->imacpc may be non-null, indicating an active imacro.
+ */
+extern uintN
+js_FramePCToLineNumber(JSContext *cx, JSStackFrame *fp);
+
 extern uintN
 js_PCToLineNumber(JSContext *cx, JSScript *script, jsbytecode *pc);
 
@@ -301,17 +336,34 @@ js_LineNumberToPC(JSScript *script, uintN lineno);
 extern JS_FRIEND_API(uintN)
 js_GetScriptLineExtent(JSScript *script);
 
+static JS_INLINE JSOp
+js_GetOpcode(JSContext *cx, JSScript *script, jsbytecode *pc)
+{
+    JSOp op = (JSOp) *pc;
+    if (op == JSOP_TRAP)
+        op = JS_GetTrapOpcode(cx, script, pc);
+    return op;
+}
+
 /*
  * If magic is non-null, js_XDRScript succeeds on magic number mismatch but
  * returns false in *magic; it reflects a match via a true *magic out param.
  * If magic is null, js_XDRScript returns false on bad magic number errors,
  * which it reports.
  *
- * NB: callers must call js_CallNewScriptHook after successful JSXDR_DECODE
- * and subsequent set-up of owning function or script object, if any.
+ * NB: after a successful JSXDR_DECODE, and provided that *scriptp is not the
+ * JSScript::emptyScript() immutable singleton, js_XDRScript callers must do
+ * any required subsequent set-up of owning function or script object and then
+ * call js_CallNewScriptHook.
+ *
+ * If the caller requires a mutable empty script (for debugging or u.object
+ * ownership setting), pass true for needMutableScript. Otherwise pass false.
+ * Call js_CallNewScriptHook only with a mutable script, i.e. never with the
+ * JSScript::emptyScript() singleton.
  */
 extern JSBool
-js_XDRScript(JSXDRState *xdr, JSScript **scriptp, JSBool *magic);
+js_XDRScript(JSXDRState *xdr, JSScript **scriptp, bool needMutableScript,
+             JSBool *hasMagic);
 
 JS_END_EXTERN_C
 

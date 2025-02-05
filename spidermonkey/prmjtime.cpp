@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  *
  * ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -40,12 +40,15 @@
 /*
  * PR time code.
  */
-#include "jsstddef.h"
 #ifdef SOLARIS
 #define _REENTRANT 1
 #endif
 #include <string.h>
 #include <time.h>
+
+#define __STDC_LIMIT_MACROS
+#include "jsstdint.h"
+
 #include "jstypes.h"
 #include "jsutil.h"
 
@@ -107,6 +110,14 @@ PRMJ_LocalGMTDifference()
 {
     struct tm ltime;
 
+#if defined(XP_WIN) && !defined(WINCE)
+    /* Windows does not follow POSIX. Updates to the
+     * TZ environment variable are not reflected
+     * immediately on that platform as they are
+     * on UNIX systems without this call.
+     */
+    _tzset();
+#endif
     /* get the difference between this time zone and GMT */
     memset((char *)&ltime,0,sizeof(ltime));
     ltime.tm_mday = 2;
@@ -139,12 +150,8 @@ PRMJ_ToExtendedTime(JSInt32 base_time)
 
     JSLL_UI2L(g1970GMTMicroSeconds,G1970GMTMICROHI);
     JSLL_UI2L(low,G1970GMTMICROLOW);
-#ifndef JS_HAVE_LONG_LONG
     JSLL_SHL(g1970GMTMicroSeconds,g1970GMTMicroSeconds,16);
     JSLL_SHL(g1970GMTMicroSeconds,g1970GMTMicroSeconds,16);
-#else
-    JSLL_SHL(g1970GMTMicroSeconds,g1970GMTMicroSeconds,32);
-#endif
     JSLL_ADD(g1970GMTMicroSeconds,g1970GMTMicroSeconds,low);
 
     JSLL_I2L(exttime,base_time);
@@ -153,9 +160,33 @@ PRMJ_ToExtendedTime(JSInt32 base_time)
     return exttime;
 }
 
-#ifdef XP_WIN
-typedef struct CalibrationData
+#ifdef HAVE_SYSTEMTIMETOFILETIME
+
+static const JSInt64 win2un = JSLL_INIT(0x19DB1DE, 0xD53E8000);
+
+#define FILETIME2INT64(ft) (((JSInt64)ft.dwHighDateTime) << 32LL | (JSInt64)ft.dwLowDateTime)
+
+#endif
+
+#if defined(HAVE_GETSYSTEMTIMEASFILETIME) || defined(HAVE_SYSTEMTIMETOFILETIME)
+
+#if defined(HAVE_GETSYSTEMTIMEASFILETIME)
+inline void
+LowResTime(LPFILETIME lpft)
 {
+    GetSystemTimeAsFileTime(lpft);
+}
+#elif defined(HAVE_SYSTEMTIMETOFILETIME)
+inline void
+LowResTime(LPFILETIME lpft)
+{
+    GetCurrentFT(lpft);
+}
+#else
+#error "No implementation of PRMJ_Now was selected."
+#endif
+
+typedef struct CalibrationData {
     long double freq;         /* The performance counter frequency */
     long double offset;       /* The low res 'epoch' */
     long double timer_offset; /* The high res 'epoch' */
@@ -169,13 +200,12 @@ typedef struct CalibrationData
     CRITICAL_SECTION data_lock;
     CRITICAL_SECTION calibration_lock;
 #endif
+#ifdef WINCE
+    JSInt64 granularity;
+#endif
 } CalibrationData;
 
-static const JSInt64 win2un = JSLL_INIT(0x19DB1DE, 0xD53E8000);
-
 static CalibrationData calibration = { 0 };
-
-#define FILETIME2INT64(ft) (((JSInt64)ft.dwHighDateTime) << 32LL | (JSInt64)ft.dwLowDateTime)
 
 static void
 NowCalibrate()
@@ -197,12 +227,16 @@ NowCalibrate()
         /* By wrapping a timeBegin/EndPeriod pair of calls around this loop,
            the loop seems to take much less time (1 ms vs 15ms) on Vista. */
         timeBeginPeriod(1);
-        GetSystemTimeAsFileTime(&ftStart);
+        LowResTime(&ftStart);
         do {
-            GetSystemTimeAsFileTime(&ft);
+            LowResTime(&ft);
         } while (memcmp(&ftStart,&ft, sizeof(ft)) == 0);
         timeEndPeriod(1);
 
+#ifdef WINCE
+        calibration.granularity = (FILETIME2INT64(ft) -
+                                   FILETIME2INT64(ftStart))/10;
+#endif
         /*
         calibrationDelta = (FILETIME2INT64(ft) - FILETIME2INT64(ftStart))/10;
         fprintf(stderr, "Calibration delta was %I64d us\n", calibrationDelta);
@@ -229,13 +263,18 @@ NowCalibrate()
 #define LASTLOCK_SPINCOUNT 4096
 
 #ifdef JS_THREADSAFE
-static PRStatus PR_CALLBACK
+static PRStatus
 NowInit(void)
 {
     memset(&calibration, 0, sizeof(calibration));
     NowCalibrate();
+#ifdef WINCE
+    InitializeCriticalSection(&calibration.calibration_lock);
+    InitializeCriticalSection(&calibration.data_lock);
+#else
     InitializeCriticalSectionAndSpinCount(&calibration.calibration_lock, CALIBRATIONLOCK_SPINCOUNT);
     InitializeCriticalSectionAndSpinCount(&calibration.data_lock, DATALOCK_SPINCOUNT);
+#endif
     return PR_SUCCESS;
 }
 
@@ -249,7 +288,11 @@ PRMJ_NowShutdown()
 #define MUTEX_LOCK(m) EnterCriticalSection(m)
 #define MUTEX_TRYLOCK(m) TryEnterCriticalSection(m)
 #define MUTEX_UNLOCK(m) LeaveCriticalSection(m)
+#ifdef WINCE
+#define MUTEX_SETSPINCOUNT(m, c)
+#else
 #define MUTEX_SETSPINCOUNT(m, c) SetCriticalSectionSpinCount((m),(c))
+#endif
 
 static PRCallOnceType calibrationOnce = { 0 };
 
@@ -262,9 +305,48 @@ static PRCallOnceType calibrationOnce = { 0 };
 
 #endif
 
+#endif /* HAVE_GETSYSTEMTIMEASFILETIME */
 
-#endif /* XP_WIN */
 
+#if defined(XP_OS2)
+JSInt64
+PRMJ_Now(void)
+{
+    JSInt64 s, us, ms2us, s2us;
+    struct timeb b;
+
+    ftime(&b);
+    JSLL_UI2L(ms2us, PRMJ_USEC_PER_MSEC);
+    JSLL_UI2L(s2us, PRMJ_USEC_PER_SEC);
+    JSLL_UI2L(s, b.time);
+    JSLL_UI2L(us, b.millitm);
+    JSLL_MUL(us, us, ms2us);
+    JSLL_MUL(s, s, s2us);
+    JSLL_ADD(s, s, us);
+    return s;
+}
+
+#elif defined(XP_UNIX) || defined(XP_BEOS)
+JSInt64
+PRMJ_Now(void)
+{
+    struct timeval tv;
+    JSInt64 s, us, s2us;
+
+#ifdef _SVID_GETTOD   /* Defined only on Solaris, see Solaris <sys/types.h> */
+    gettimeofday(&tv);
+#else
+    gettimeofday(&tv, 0);
+#endif /* _SVID_GETTOD */
+    JSLL_UI2L(s2us, PRMJ_USEC_PER_SEC);
+    JSLL_UI2L(s, tv.tv_sec);
+    JSLL_UI2L(us, tv.tv_usec);
+    JSLL_MUL(s, s, s2us);
+    JSLL_ADD(s, s, us);
+    return s;
+}
+
+#else
 /*
 
 Win32 python-esque pseudo code
@@ -328,14 +410,14 @@ def PRMJ_Now():
 
 */
 
+// We parameterize the delay count just so that shell builds can
+// set it to 0 in order to get high-resolution benchmarking.
+// 10 seems to be the number of calls to load with a blank homepage.
+int CALIBRATION_DELAY_COUNT = 10;
+
 JSInt64
 PRMJ_Now(void)
 {
-#ifdef XP_OS2
-    JSInt64 s, us, ms2us, s2us;
-    struct timeb b;
-#endif
-#ifdef XP_WIN
     static int nCalls = 0;
     long double lowresTime, highresTimerValue;
     FILETIME ft;
@@ -344,33 +426,14 @@ PRMJ_Now(void)
     JSBool needsCalibration = JS_FALSE;
     JSInt64 returnedTime;
     long double cachedOffset = 0.0;
-#endif
-#if defined(XP_UNIX) || defined(XP_BEOS)
-    struct timeval tv;
-    JSInt64 s, us, s2us;
-#endif /* XP_UNIX */
-
-#ifdef XP_OS2
-    ftime(&b);
-    JSLL_UI2L(ms2us, PRMJ_USEC_PER_MSEC);
-    JSLL_UI2L(s2us, PRMJ_USEC_PER_SEC);
-    JSLL_UI2L(s, b.time);
-    JSLL_UI2L(us, b.millitm);
-    JSLL_MUL(us, us, ms2us);
-    JSLL_MUL(s, s, s2us);
-    JSLL_ADD(s, s, us);
-    return s;
-#endif
-#ifdef XP_WIN
 
     /* To avoid regressing startup time (where high resolution is likely
        not needed), give the old behavior for the first few calls.
        This does not appear to be needed on Vista as the timeBegin/timeEndPeriod
        calls seem to immediately take effect. */
     int thiscall = JS_ATOMIC_INCREMENT(&nCalls);
-    /* 10 seems to be the number of calls to load with a blank homepage */
-    if (thiscall <= 10) {
-        GetSystemTimeAsFileTime(&ft);
+    if (thiscall <= CALIBRATION_DELAY_COUNT) {
+        LowResTime(&ft);
         return (FILETIME2INT64(ft)-win2un)/10L;
     }
 
@@ -402,7 +465,7 @@ PRMJ_Now(void)
 
 
         /* Calculate a low resolution time */
-        GetSystemTimeAsFileTime(&ft);
+        LowResTime(&ft);
         lowresTime = 0.1*(long double)(FILETIME2INT64(ft) - win2un);
 
         if (calibration.freq > 0.0) {
@@ -424,10 +487,14 @@ PRMJ_Now(void)
 
             /* On some dual processor/core systems, we might get an earlier time
                so we cache the last time that we returned */
-            calibration.last = max(calibration.last,(JSInt64)highresTime);
+            calibration.last = JS_MAX(calibration.last,(JSInt64)highresTime);
             returnedTime = calibration.last;
             MUTEX_UNLOCK(&calibration.data_lock);
 
+#ifdef WINCE
+            /* Get an estimate of clock ticks per second from our own test */
+            skewThreshold = calibration.granularity;
+#else
             /* Rather than assume the NT kernel ticks every 15.6ms, ask it */
             if (GetSystemTimeAdjustment(&timeAdjustment,
                                         &timeIncrement,
@@ -440,7 +507,7 @@ PRMJ_Now(void)
                     skewThreshold = timeIncrement/10.0;
                 }
             }
-
+#endif
             /* Check for clock skew */
             diff = lowresTime - highresTime;
 
@@ -488,75 +555,8 @@ PRMJ_Now(void)
     } while (needsCalibration);
 
     return returnedTime;
-#endif
-
-#if defined(XP_UNIX) || defined(XP_BEOS)
-#ifdef _SVID_GETTOD   /* Defined only on Solaris, see Solaris <sys/types.h> */
-    gettimeofday(&tv);
-#else
-    gettimeofday(&tv, 0);
-#endif /* _SVID_GETTOD */
-    JSLL_UI2L(s2us, PRMJ_USEC_PER_SEC);
-    JSLL_UI2L(s, tv.tv_sec);
-    JSLL_UI2L(us, tv.tv_usec);
-    JSLL_MUL(s, s, s2us);
-    JSLL_ADD(s, s, us);
-    return s;
-#endif /* XP_UNIX */
 }
-
-/* Get the DST timezone offset for the time passed in */
-JSInt64
-PRMJ_DSTOffset(JSInt64 local_time)
-{
-    JSInt64 us2s;
-    time_t local;
-    JSInt32 diff;
-    JSInt64  maxtimet;
-    struct tm tm;
-    PRMJTime prtm;
-#ifndef HAVE_LOCALTIME_R
-    struct tm *ptm;
 #endif
-
-
-    JSLL_UI2L(us2s, PRMJ_USEC_PER_SEC);
-    JSLL_DIV(local_time, local_time, us2s);
-
-    /* get the maximum of time_t value */
-    JSLL_UI2L(maxtimet,PRMJ_MAX_UNIX_TIMET);
-
-    if(JSLL_CMP(local_time,>,maxtimet)){
-        JSLL_UI2L(local_time,PRMJ_MAX_UNIX_TIMET);
-    } else if(!JSLL_GE_ZERO(local_time)){
-        /*go ahead a day to make localtime work (does not work with 0) */
-        JSLL_UI2L(local_time,PRMJ_DAY_SECONDS);
-    }
-    JSLL_L2UI(local,local_time);
-    PRMJ_basetime(local_time,&prtm);
-#ifndef HAVE_LOCALTIME_R
-    ptm = localtime(&local);
-    if(!ptm){
-        return 0;
-    }
-    tm = *ptm;
-#else
-    localtime_r(&local,&tm); /* get dst information */
-#endif
-
-    diff = ((tm.tm_hour - prtm.tm_hour) * PRMJ_HOUR_SECONDS) +
-	((tm.tm_min - prtm.tm_min) * 60);
-
-    if(diff < 0){
-	diff += PRMJ_DAY_SECONDS;
-    }
-
-    JSLL_UI2L(local_time,diff);
-
-    JSLL_MUL(local_time,local_time,us2s);
-
-    return(local_time);
-}
 
 #ifdef NS_HAVE_INVALID_PARAMETER_HANDLER
 static void
@@ -604,6 +604,16 @@ PRMJ_FormatTime(char *buf, int buflen, const char *fmt, PRMJTime *prtm)
     a.tm_mday = prtm->tm_mday;
     a.tm_mon = prtm->tm_mon;
     a.tm_wday = prtm->tm_wday;
+
+#if defined(HAVE_LOCALTIME_R) && defined(HAVE_TM_ZONE_TM_GMTOFF)
+    {
+        struct tm td;
+        time_t bogus = 0;
+        localtime_r(&bogus, &td);
+        a.tm_gmtoff = td.tm_gmtoff;
+        a.tm_zone = td.tm_zone;
+    }
+#endif
 
     /*
      * Years before 1900 and after 9999 cause strftime() to abort on Windows.
@@ -844,3 +854,175 @@ PRMJ_basetime(JSInt64 tsecs, PRMJTime *prtm)
     prtm->tm_year  = (JSInt16)year;
     prtm->tm_yday  = (JSInt16)yday;
 }
+
+JSInt64
+DSTOffsetCache::computeDSTOffsetMilliseconds(int64 localTimeSeconds)
+{
+    JS_ASSERT(localTimeSeconds >= 0);
+    JS_ASSERT(localTimeSeconds <= MAX_UNIX_TIMET);
+
+#if defined(XP_WIN) && !defined(WINCE)
+    /* Windows does not follow POSIX. Updates to the
+     * TZ environment variable are not reflected
+     * immediately on that platform as they are
+     * on UNIX systems without this call.
+     */
+    _tzset();
+#endif
+
+    time_t local = static_cast<time_t>(localTimeSeconds);
+    PRMJTime prtm;
+    struct tm tm;
+    PRMJ_basetime(localTimeSeconds, &prtm);
+#ifndef HAVE_LOCALTIME_R
+    struct tm *ptm = localtime(&local);
+    if (!ptm)
+        return 0;
+    tm = *ptm;
+#else
+    localtime_r(&local, &tm); /* get dst information */
+#endif
+
+    JSInt32 diff = ((tm.tm_hour - prtm.tm_hour) * SECONDS_PER_HOUR) +
+                   ((tm.tm_min - prtm.tm_min) * SECONDS_PER_MINUTE);
+
+    if (diff < 0)
+        diff += SECONDS_PER_DAY;
+
+    return diff * MILLISECONDS_PER_SECOND;
+}
+
+JSInt64
+DSTOffsetCache::getDSTOffsetMilliseconds(JSInt64 localTimeMilliseconds, JSContext *cx)
+{
+    sanityCheck();
+    noteOffsetCalculation();
+
+    JSInt64 localTimeSeconds = localTimeMilliseconds / MILLISECONDS_PER_SECOND;
+
+    if (localTimeSeconds > MAX_UNIX_TIMET) {
+        localTimeSeconds = MAX_UNIX_TIMET;
+    } else if (localTimeSeconds < 0) {
+        /* Go ahead a day to make localtime work (does not work with 0). */
+        localTimeSeconds = SECONDS_PER_DAY;
+    }
+
+    /*
+     * NB: Be aware of the initial range values when making changes to this
+     *     code: the first call to this method, with those initial range
+     *     values, must result in a cache miss.
+     */
+
+    if (rangeStartSeconds <= localTimeSeconds) {
+        if (localTimeSeconds <= rangeEndSeconds) {
+            noteCacheHit();
+            return offsetMilliseconds;
+        }
+
+        JSInt64 newEndSeconds = JS_MIN(rangeEndSeconds + RANGE_EXPANSION_AMOUNT, MAX_UNIX_TIMET);
+        if (newEndSeconds >= localTimeSeconds) {
+            JSInt64 endOffsetMilliseconds = computeDSTOffsetMilliseconds(newEndSeconds);
+            if (endOffsetMilliseconds == offsetMilliseconds) {
+                noteCacheMissIncrease();
+                rangeEndSeconds = newEndSeconds;
+                return offsetMilliseconds;
+            }
+
+            offsetMilliseconds = computeDSTOffsetMilliseconds(localTimeSeconds);
+            if (offsetMilliseconds == endOffsetMilliseconds) {
+                noteCacheMissIncreasingOffsetChangeUpper();
+                rangeStartSeconds = localTimeSeconds;
+                rangeEndSeconds = newEndSeconds;
+            } else {
+                noteCacheMissIncreasingOffsetChangeExpand();
+                rangeEndSeconds = localTimeSeconds;
+            }
+            return offsetMilliseconds;
+        }
+
+        noteCacheMissLargeIncrease();
+        offsetMilliseconds = computeDSTOffsetMilliseconds(localTimeSeconds);
+        rangeStartSeconds = rangeEndSeconds = localTimeSeconds;
+        return offsetMilliseconds;
+    }
+
+    JSInt64 newStartSeconds = JS_MAX(rangeStartSeconds - RANGE_EXPANSION_AMOUNT, 0);
+    if (newStartSeconds <= localTimeSeconds) {
+        JSInt64 startOffsetMilliseconds = computeDSTOffsetMilliseconds(newStartSeconds);
+        if (startOffsetMilliseconds == offsetMilliseconds) {
+            noteCacheMissDecrease();
+            rangeStartSeconds = newStartSeconds;
+            return offsetMilliseconds;
+        }
+
+        offsetMilliseconds = computeDSTOffsetMilliseconds(localTimeSeconds);
+        if (offsetMilliseconds == startOffsetMilliseconds) {
+            noteCacheMissDecreasingOffsetChangeLower();
+            rangeStartSeconds = newStartSeconds;
+            rangeEndSeconds = localTimeSeconds;
+        } else {
+            noteCacheMissDecreasingOffsetChangeExpand();
+            rangeStartSeconds = localTimeSeconds;
+        }
+        return offsetMilliseconds;
+    }
+
+    noteCacheMissLargeDecrease();
+    rangeStartSeconds = rangeEndSeconds = localTimeSeconds;
+    offsetMilliseconds = computeDSTOffsetMilliseconds(localTimeSeconds);
+    return offsetMilliseconds;
+}
+
+void
+DSTOffsetCache::sanityCheck()
+{
+    JS_ASSERT(rangeStartSeconds <= rangeEndSeconds);
+    JS_ASSERT_IF(rangeStartSeconds == INT64_MIN, rangeEndSeconds == INT64_MIN);
+    JS_ASSERT_IF(rangeEndSeconds == INT64_MIN, rangeStartSeconds == INT64_MIN);
+    JS_ASSERT_IF(rangeStartSeconds != INT64_MIN,
+                 rangeStartSeconds >= 0 && rangeEndSeconds >= 0);
+    JS_ASSERT_IF(rangeStartSeconds != INT64_MIN,
+                 rangeStartSeconds <= MAX_UNIX_TIMET && rangeEndSeconds <= MAX_UNIX_TIMET);
+
+#ifdef JS_METER_DST_OFFSET_CACHING
+    JS_ASSERT(totalCalculations ==
+              hit +
+              missIncreasing + missDecreasing +
+              missIncreasingOffsetChangeExpand + missIncreasingOffsetChangeUpper +
+              missDecreasingOffsetChangeExpand + missDecreasingOffsetChangeLower +
+              missLargeIncrease + missLargeDecrease);
+#endif
+}
+
+#ifdef JS_METER_DST_OFFSET_CACHING
+void
+DSTOffsetCache::dumpStats()
+{
+    if (!getenv("JS_METER_DST_OFFSET_CACHING"))
+        return;
+    FILE *fp = fopen("/tmp/dst-offset-cache.stats", "a");
+    if (!fp)
+        return;
+    typedef unsigned long UL;
+    fprintf(fp,
+            "hit:\n"
+            "  in range: %lu\n"
+            "misses:\n"
+            "  increase range end:                 %lu\n"
+            "  decrease range start:               %lu\n"
+            "  increase, offset change, expand:    %lu\n"
+            "  increase, offset change, new range: %lu\n"
+            "  decrease, offset change, expand:    %lu\n"
+            "  decrease, offset change, new range: %lu\n"
+            "  large increase:                     %lu\n"
+            "  large decrease:                     %lu\n"
+            "total: %lu\n\n",
+            UL(hit),
+            UL(missIncreasing), UL(missDecreasing),
+            UL(missIncreasingOffsetChangeExpand), UL(missIncreasingOffsetChangeUpper),
+            UL(missDecreasingOffsetChangeExpand), UL(missDecreasingOffsetChangeLower),
+            UL(missLargeIncrease), UL(missLargeDecrease),
+            UL(totalCalculations));
+    fclose(fp);
+}
+#endif

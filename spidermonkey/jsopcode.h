@@ -65,13 +65,13 @@ typedef enum JSOp {
  */
 #define JOF_BYTE          0       /* single bytecode, no immediates */
 #define JOF_JUMP          1       /* signed 16-bit jump offset immediate */
-#define JOF_ATOM          2       /* unsigned 16-bit constant pool index */
+#define JOF_ATOM          2       /* unsigned 16-bit constant index */
 #define JOF_UINT16        3       /* unsigned 16-bit immediate operand */
 #define JOF_TABLESWITCH   4       /* table switch */
 #define JOF_LOOKUPSWITCH  5       /* lookup switch */
 #define JOF_QARG          6       /* quickened get/set function argument ops */
 #define JOF_LOCAL         7       /* var or block-local variable */
-#define JOF_SLOTATOM      8       /* uint16 slot index + constant pool index */
+#define JOF_SLOTATOM      8       /* uint16 slot + constant index */
 #define JOF_JUMPX         9       /* signed 32-bit jump offset immediate */
 #define JOF_TABLESWITCHX  10      /* extended (32-bit offset) table switch */
 #define JOF_LOOKUPSWITCHX 11      /* extended (32-bit offset) lookup switch */
@@ -79,10 +79,12 @@ typedef enum JSOp {
 #define JOF_UINT8         13      /* uint8 immediate, e.g. top 8 bits of 24-bit
                                      atom index */
 #define JOF_INT32         14      /* int32 immediate operand */
-#define JOF_OBJECT        15      /* unsigned 16-bit object pool index */
-#define JOF_SLOTOBJECT    16      /* uint16 slot index + object pool index */
-#define JOF_REGEXP        17      /* unsigned 16-bit regexp pool index */
+#define JOF_OBJECT        15      /* unsigned 16-bit object index */
+#define JOF_SLOTOBJECT    16      /* uint16 slot index + object index */
+#define JOF_REGEXP        17      /* unsigned 16-bit regexp index */
 #define JOF_INT8          18      /* int8 immediate operand */
+#define JOF_ATOMOBJECT    19      /* uint16 constant index + object index */
+#define JOF_UINT16PAIR    20      /* pair of uint16 immediates */
 #define JOF_TYPEMASK      0x001f  /* mask for above immediate types */
 
 #define JOF_NAME          (1U<<5) /* name operation */
@@ -97,7 +99,7 @@ typedef enum JSOp {
 #define JOF_INC          (2U<<10) /* increment (++, not --) opcode */
 #define JOF_INCDEC       (3U<<10) /* increment or decrement opcode */
 #define JOF_POST         (1U<<12) /* postorder increment or decrement */
-#define JOF_FOR          (1U<<13) /* for-in property op */
+#define JOF_FOR          (1U<<13) /* for-in property op (akin to JOF_SET) */
 #define JOF_ASSIGNING     JOF_SET /* hint for JSClass.resolve, used for ops
                                      that do simplex assignment */
 #define JOF_DETECTING    (1U<<14) /* object detection for JSNewResolveOp */
@@ -117,6 +119,10 @@ typedef enum JSOp {
                                      besides the slots opcode uses */
 #define JOF_TMPSLOT_SHIFT 22
 #define JOF_TMPSLOT_MASK  (JS_BITMASK(2) << JOF_TMPSLOT_SHIFT)
+
+#define JOF_SHARPSLOT    (1U<<24) /* first immediate is uint16 stack slot no.
+                                     that needs fixup when in global code (see
+                                     Compiler::compileScript) */
 
 /* Shorthands for type from format and type from opcode. */
 #define JOF_TYPE(fmt)   ((fmt) & JOF_TYPEMASK)
@@ -225,8 +231,6 @@ typedef enum JSOp {
 #define INDEX_LIMIT_LOG2        23
 #define INDEX_LIMIT             ((uint32)1 << INDEX_LIMIT_LOG2)
 
-JS_STATIC_ASSERT(sizeof(uint32) * JS_BITS_PER_BYTE >= INDEX_LIMIT_LOG2 + 1);
-
 /* Actual argument count operand format helpers. */
 #define ARGC_HI(argc)           UINT16_HI(argc)
 #define ARGC_LO(argc)           UINT16_LO(argc)
@@ -257,6 +261,12 @@ extern uintN            js_NumCodeSpecs;
 extern const char       *js_CodeName[];
 extern const char       js_EscapeMap[];
 
+/* Silence unreferenced formal parameter warnings */
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable:4100)
+#endif
+
 /*
  * Return a GC'ed string containing the chars in str, with any non-printing
  * chars or quotes (' or " as specified by the quote argument) escaped, and
@@ -269,19 +279,16 @@ js_QuoteString(JSContext *cx, JSString *str, jschar quote);
  * JSPrinter operations, for printf style message formatting.  The return
  * value from js_GetPrinterOutput() is the printer's cumulative output, in
  * a GC'ed string.
+ *
+ * strict is true if the context in which the output will appear has
+ * already been marked as strict, thus indicating that nested
+ * functions need not be re-marked with a strict directive.  It should
+ * be false in the outermost printer.
  */
 
-#ifdef JS_ARENAMETER
-# define JS_NEW_PRINTER(cx, name, fun, indent, pretty)                        \
-    js_NewPrinter(cx, name, fun, indent, pretty)
-#else
-# define JS_NEW_PRINTER(cx, name, fun, indent, pretty)                        \
-    js_NewPrinter(cx, fun, indent, pretty)
-#endif
-
 extern JSPrinter *
-JS_NEW_PRINTER(JSContext *cx, const char *name, JSFunction *fun,
-               uintN indent, JSBool pretty);
+js_NewPrinter(JSContext *cx, const char *name, JSFunction *fun,
+              uintN indent, JSBool pretty, JSBool grouped, JSBool strict);
 
 extern void
 js_DestroyPrinter(JSPrinter *jp);
@@ -312,26 +319,45 @@ js_GetIndexFromBytecode(JSContext *cx, JSScript *script, jsbytecode *pc,
  */
 #define GET_ATOM_FROM_BYTECODE(script, pc, pcoff, atom)                       \
     JS_BEGIN_MACRO                                                            \
+        JS_ASSERT(*(pc) != JSOP_DOUBLE);                                      \
         uintN index_ = js_GetIndexFromBytecode(cx, (script), (pc), (pcoff));  \
-        JS_GET_SCRIPT_ATOM((script), index_, atom);                           \
+        JS_GET_SCRIPT_ATOM(script, pc, index_, atom);                         \
+    JS_END_MACRO
+
+/*
+ * Variant for getting a double atom when we might be in an imacro. Bytecodes
+ * with literals that are only ever doubles must use this macro, and never use
+ * GET_ATOM_FROM_BYTECODE or JS_GET_SCRIPT_ATOM.
+ *
+ * Unfortunately some bytecodes such as JSOP_LOOKUPSWITCH have immediates that
+ * might be string or double atoms. Those opcodes cannot be used from imacros.
+ * See the assertions in the JSOP_DOUBLE and JSOP_LOOKUPSWTICH* opcode cases in
+ * jsops.cpp.
+ */
+#define GET_DOUBLE_FROM_BYTECODE(script, pc, pcoff, atom)                     \
+    JS_BEGIN_MACRO                                                            \
+        uintN index_ = js_GetIndexFromBytecode(cx, (script), (pc), (pcoff));  \
+        JS_ASSERT(index_ < (script)->atomMap.length);                         \
+        (atom) = (script)->atomMap.vector[index_];                            \
+        JS_ASSERT(ATOM_IS_DOUBLE(atom));                                      \
     JS_END_MACRO
 
 #define GET_OBJECT_FROM_BYTECODE(script, pc, pcoff, obj)                      \
     JS_BEGIN_MACRO                                                            \
         uintN index_ = js_GetIndexFromBytecode(cx, (script), (pc), (pcoff));  \
-        JS_GET_SCRIPT_OBJECT((script), index_, obj);                          \
+        obj = (script)->getObject(index_);                                    \
     JS_END_MACRO
 
 #define GET_FUNCTION_FROM_BYTECODE(script, pc, pcoff, fun)                    \
     JS_BEGIN_MACRO                                                            \
         uintN index_ = js_GetIndexFromBytecode(cx, (script), (pc), (pcoff));  \
-        JS_GET_SCRIPT_FUNCTION((script), index_, fun);                        \
+        fun = (script)->getFunction(index_);                                  \
     JS_END_MACRO
 
 #define GET_REGEXP_FROM_BYTECODE(script, pc, pcoff, obj)                      \
     JS_BEGIN_MACRO                                                            \
         uintN index_ = js_GetIndexFromBytecode(cx, (script), (pc), (pcoff));  \
-        JS_GET_SCRIPT_REGEXP((script), index_, obj);                          \
+        obj = (script)->getRegExp(index_);                                    \
     JS_END_MACRO
 
 /*
@@ -345,7 +371,38 @@ js_GetVariableBytecodeLength(jsbytecode *pc);
  * or JSOP_NEWARRAY (for such ops, JSCodeSpec.nuses is -1).
  */
 extern uintN
-js_GetVariableStackUseLength(JSOp op, jsbytecode *pc);
+js_GetVariableStackUses(JSOp op, jsbytecode *pc);
+
+/*
+ * Find the number of stack slots defined by JSOP_ENTERBLOCK (for this op,
+ * JSCodeSpec.ndefs is -1).
+ */
+extern uintN
+js_GetEnterBlockStackDefs(JSContext *cx, JSScript *script, jsbytecode *pc);
+
+#ifdef __cplusplus /* Aargh, libgjs, bug 492720. */
+static JS_INLINE uintN
+js_GetStackUses(const JSCodeSpec *cs, JSOp op, jsbytecode *pc)
+{
+    JS_ASSERT(cs == &js_CodeSpec[op]);
+    if (cs->nuses >= 0)
+        return cs->nuses;
+    return js_GetVariableStackUses(op, pc);
+}
+
+static JS_INLINE uintN
+js_GetStackDefs(JSContext *cx, const JSCodeSpec *cs, JSOp op, JSScript *script,
+                jsbytecode *pc)
+{
+    JS_ASSERT(cs == &js_CodeSpec[op]);
+    if (cs->ndefs >= 0)
+        return cs->ndefs;
+
+    /* Only JSOP_ENTERBLOCK has a variable number of stack defs. */
+    JS_ASSERT(op == JSOP_ENTERBLOCK);
+    return js_GetEnterBlockStackDefs(cx, script, pc);
+}
+#endif
 
 #ifdef DEBUG
 /*
@@ -374,6 +431,20 @@ extern JSBool
 js_DecompileFunction(JSPrinter *jp);
 
 /*
+ * Some C++ compilers treat the language linkage (extern "C" vs.
+ * extern "C++") as part of function (and thus pointer-to-function)
+ * types. The use of this typedef (defined in "C") ensures that
+ * js_DecompileToString's definition (in "C++") gets matched up with
+ * this declaration.
+ */
+typedef JSBool (* JSDecompilerPtr)(JSPrinter *);
+
+extern JSString *
+js_DecompileToString(JSContext *cx, const char *name, JSFunction *fun,
+                     uintN indent, JSBool pretty, JSBool grouped, JSBool strict,
+                     JSDecompilerPtr decompiler);
+
+/*
  * Find the source expression that resulted in v, and return a newly allocated
  * C-string containing it.  Fall back on v's string conversion (fallback) if we
  * can't find the bytecode that generated and pushed v on the operand stack.
@@ -398,6 +469,10 @@ js_DecompileValueGenerator(JSContext *cx, intN spindex, jsval v,
  */
 extern uintN
 js_ReconstructStackDepth(JSContext *cx, JSScript *script, jsbytecode *pc);
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 JS_END_EXTERN_C
 

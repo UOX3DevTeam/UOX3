@@ -78,7 +78,7 @@ ifdef NARCISSUS
 DEFINES += -DNARCISSUS
 endif
 
-# Look in OBJDIR to find jsautocfg.h and jsautokw.h
+# Look in OBJDIR to find jsautocfg.h, jsautokw.h, and js-config.h
 INCLUDES   += -I. -I$(OBJDIR)
 
 ifdef JS_THREADSAFE
@@ -91,22 +91,29 @@ OTHER_LIBS += -L$(DIST)/lib -lnspr$(NSPR_LIBSUFFIX)
 endif
 endif
 
+ifdef JS_HAS_CTYPES
+DEFINES += -DJS_HAS_CTYPES
+INCLUDES += -I$(DIST)/include/nspr
+ifdef USE_MSVC
+OTHER_LIBS += $(DIST)/lib/libnspr$(NSPR_LIBSUFFIX).lib
+else
+OTHER_LIBS += -L$(DIST)/lib -lnspr$(NSPR_LIBSUFFIX)
+endif
+endif
+
 ifdef JS_NO_THIN_LOCKS
 DEFINES += -DJS_USE_ONLY_NSPR_LOCKS
 endif
 
-ifdef JS_HAS_FILE_OBJECT
-DEFINES += -DJS_HAS_FILE_OBJECT
+ifdef JS_GC_ZEAL
+DEFINES += -DJS_GC_ZEAL
 endif
-
 
 #
 # XCFLAGS may be set in the environment or on the gmake command line
 #
 #CFLAGS += -DDEBUG -DDEBUG_brendan -DJS_ARENAMETER -DJS_HASHMETER -DJS_DUMP_PROPTREE_STATS -DJS_DUMP_SCOPE_METERS -DJS_SCOPE_DEPTH_METER -DJS_BASIC_STATS
-CFLAGS          += $(OPTIMIZER) $(OS_CFLAGS) $(DEFINES) $(INCLUDES) $(XCFLAGS)
-INTERP_CFLAGS   += $(INTERP_OPTIMIZER) $(OS_CFLAGS) $(DEFINES) $(INCLUDES) $(XCFLAGS) $(INTERP_XCFLAGS)
-BUILTINS_CFLAGS += $(BUILTINS_OPTIMIZER) $(OS_CFLAGS) $(DEFINES) $(INCLUDES) $(XCFLAGS) $(BUILTINS_XCFLAGS)
+CFLAGS          += $(OS_CFLAGS) $(DEFINES) $(INCLUDES) $(XCFLAGS)
 
 LDFLAGS		= $(XLDFLAGS)
 LDFLAGS += $(OS_LDFLAGS)
@@ -222,7 +229,6 @@ JS_HFILES +=			\
 	nanojit/Native.h	\
 	nanojit/RegAlloc.h	\
 	nanojit/nanojit.h	\
-	nanojit/TraceTreeDrawer.h \
 	$(NULL)
 endif
 
@@ -242,7 +248,6 @@ OTHER_HFILES =		\
 	jscompat.h	\
 	jscpucfg.h	\
 	jsotypes.h	\
-	jsstddef.h	\
 	prmjtime.h	\
 	resource.h	\
 	jsopcode.tbl	\
@@ -252,14 +257,10 @@ OTHER_HFILES =		\
 	jskeyword.tbl	\
 	$(NULL)
 
-ifdef ENABLE_JIT
-OTHER_HFILES += builtins.tbl
-endif
-
 ifndef PREBUILT_CPUCFG
 OTHER_HFILES += $(OBJDIR)/jsautocfg.h
 endif
-OTHER_HFILES += $(OBJDIR)/jsautokw.h
+OTHER_HFILES += $(OBJDIR)/jsautokw.h $(OBJDIR)/js-config.h
 
 HFILES = $(JS_HFILES) $(API_HFILES) $(OTHER_HFILES)
 
@@ -315,24 +316,12 @@ JS_CPPFILES +=		       \
 	nanojit/avmplus.cpp    \
 	$(NULL)
 
-ifdef DEBUG
-JS_CPPFILES += nanojit/TraceTreeDrawer.cpp
-endif
 endif
 
 ifndef BUILD_OPT
 #JS_CPPFILES +=                 \
 #        vprof/vprof.cpp        \
 #        $(NULL)
-endif
-
-ifdef JS_LIVECONNECT
-DIRS      += liveconnect
-endif
-
-ifdef JS_HAS_FILE_OBJECT
-JS_CPPFILES += jsfile.cpp
-JS_HFILES += jsfile.h
 endif
 
 LIB_CPPFILES  = $(JS_CPPFILES)
@@ -361,7 +350,10 @@ nsinstall-target:
 # Automatic header generation
 #
 
-AUTO_HEADERS = $(OBJDIR)/jsautokw.h $(OBJDIR)/jsautooplen.h
+AUTO_HEADERS =					\
+	$(OBJDIR)/jsautokw.h			\
+	$(OBJDIR)/jsautooplen.h			\
+	$(NULL)
 
 $(OBJDIR)/jsautokw.h: jskeyword.tbl
 
@@ -376,7 +368,7 @@ GARBAGE	+= $(AUTO_HEADERS:$(OBJDIR)/jsauto%.h=$(OBJDIR)/js%gen.obj)
 
 $(AUTO_HEADERS): $(OBJDIR)/jsauto%.h: js%gen.cpp
 	@$(MAKE_OBJDIR)
-	$(CXX) -Fo$(OBJDIR)/ -c $(CFLAGS) $<
+	$(CXX) -Fo$(OBJDIR)/ -c $(CFLAGS) $(OPTIMIZER) $<
 	link.exe -out:"$(OBJDIR)/js$*gen$(HOST_BIN_SUFFIX)" $(EXE_LINK_FLAGS) $(OBJDIR)/js$*gen.obj
 	$(OBJDIR)/js$*gen$(HOST_BIN_SUFFIX) $@
 else
@@ -384,13 +376,44 @@ else
 GARBAGE	+= $(AUTO_HEADERS:$(OBJDIR)/jsauto%.h=$(OBJDIR)/js%gen.d)
 $(AUTO_HEADERS): $(OBJDIR)/jsauto%.h: js%gen.cpp
 	@$(MAKE_OBJDIR)
-	$(CXX) -o $(OBJDIR)/js$*gen$(HOST_BIN_SUFFIX) $(CFLAGS) $(LDFLAGS) $<
+	$(CXX) -o $(OBJDIR)/js$*gen$(HOST_BIN_SUFFIX) $(CFLAGS) $(OPTIMIZER) $(LDFLAGS) $<
 	$(OBJDIR)/js$*gen$(HOST_BIN_SUFFIX) $@
 
 endif
 
 # force creation of autoheaders before compiling any source that may use them
 $(LIB_OBJS) : $(AUTO_HEADERS)
+
+#
+# An installed header file describing configuration options that affect
+# the API.
+#
+
+# Avoid rebuilding unless js-config.h's contents actually change.  The
+# timestamp on js-config.h.stamp corresponds to the last time we
+# checked that js-config.h was up to date.  If the stamp changes but
+# js-config.h does not, then make concludes that targets depending on
+# js-config.h don't need to be rebuilt.  The dummy '@true' rule here
+# keeps make from concluding that js-config.h never changes.
+$(OBJDIR)/js-config.h: $(OBJDIR)/js-config.h.stamp
+	@true
+
+js-config-switch=$(if $(value $($1)),-e 's/\#undef $1/\#define $1/')
+$(OBJDIR)/js-config.h.stamp: js-config.h.in Makefile.ref
+	sed < $< > $(@:.stamp=.tmp)			\
+	    $(call js-config-switch,JS_THREADSAFE)	\
+	    $(call js-config-switch,JS_HAS_CTYPES)		\
+	    $(call js-config-switch,JS_GC_ZEAL)		\
+	    -e :dummy
+	if ! [ -f $(@:.stamp=) ] || ! cmp $(@:.stamp=.tmp) $(@:.stamp=); then \
+	    mv $(@:.stamp=.tmp) $(@:.stamp=);				      \
+	fi
+	touch $@
+
+GARBAGE += $(OBJDIR)/js-config.h $(OBJDIR)/js-config.h.stamp
+
+# Force creation of js-config.h before compiling any source that may use it.
+$(LIB_OBJS) : $(OBJDIR)/js-config.h
 
 #
 # JS shell executable

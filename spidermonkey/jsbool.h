@@ -43,29 +43,45 @@
  * JS boolean interface.
  */
 
+#include "jsapi.h"
+#include "jsobj.h"
+
 JS_BEGIN_EXTERN_C
 
 /*
- * Pseudo-booleans, not visible to script but used internally by the engine.
+ * Special values, not visible to script but used internally by the engine.
  *
  * JSVAL_HOLE is a useful value for identifying a hole in an array.  It's also
  * used in the interpreter to represent "no exception pending".  In general it
  * can be used to represent "no value".
  *
+ * A JSVAL_HOLE can be cheaply converted to undefined without affecting any
+ * other boolean (or special value) by masking out JSVAL_HOLE_FLAG.
+ *
  * JSVAL_ARETURN is used to throw asynchronous return for generator.close().
  *
- * NB: BOOLEAN_TO_JSVAL(2) is JSVAL_VOID (see jsapi.h).
+ * NB: SPECIAL_TO_JSVAL(2) is JSVAL_VOID (see jsapi.h).
  */
-#define JSVAL_HOLE      BOOLEAN_TO_JSVAL(3)
-#define JSVAL_ARETURN   BOOLEAN_TO_JSVAL(4)
+#define JSVAL_HOLE_FLAG jsval(4 << JSVAL_TAGBITS)
+#define JSVAL_HOLE      (JSVAL_VOID | JSVAL_HOLE_FLAG)
+#define JSVAL_ARETURN   SPECIAL_TO_JSVAL(8)
 
 extern JSClass js_BooleanClass;
+
+inline bool
+JSObject::isBoolean() const
+{
+    return getClass() == &js_BooleanClass;
+}
 
 extern JSObject *
 js_InitBooleanClass(JSContext *cx, JSObject *obj);
 
 extern JSString *
 js_BooleanToString(JSContext *cx, JSBool b);
+
+extern JSBool
+js_BooleanToCharBuffer(JSContext *cx, JSBool b, JSCharBuffer &cb);
 
 extern JSBool
 js_ValueToBoolean(jsval v);

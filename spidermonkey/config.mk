@@ -127,9 +127,9 @@ INTERP_OPTIMIZER = -O2 -GL
 BUILTINS_OPTIMIZER = -O2 -GL
 LDFLAGS    += -LTCG
 else
-OPTIMIZER  = -Os -fno-exceptions -fno-rtti -fstrict-aliasing -Wall -Wstrict-aliasing=2
-BUILTINS_OPTIMIZER = -O9 -fstrict-aliasing -fno-exceptions -fno-rtti
-INTERP_OPTIMIZER = -O3 -fstrict-aliasing -fno-exceptions -fno-rtti
+OPTIMIZER           = -Os -fno-exceptions -fno-rtti -fstrict-aliasing -Wstrict-aliasing=3
+BUILTINS_OPTIMIZER  = -O9 -fno-exceptions -fno-rtti -fstrict-aliasing
+INTERP_OPTIMIZER    = -O3 -fno-exceptions -fno-rtti -fstrict-aliasing
 endif
 DEFINES    += -UDEBUG -DNDEBUG -UDEBUG_$(USER)
 OBJDIR_TAG = _OPT
@@ -139,8 +139,8 @@ OPTIMIZER  = -Zi
 INTERP_OPTIMIZER = -Zi
 BUILTINS_OPTIMIZER = $(INTERP_OPTIMIZER)
 else
-OPTIMIZER  = -g3 -fno-exceptions -fno-rtti -Wall -fstrict-aliasing -Wstrict-aliasing=2
-INTERP_OPTIMIZER = -g3 -fno-exceptions -fno-rtti -Wall -fstrict-aliasing
+OPTIMIZER          = -g3 -fstrict-aliasing -fno-exceptions -fno-rtti -Wstrict-aliasing=3
+INTERP_OPTIMIZER   = -g3 -fstrict-aliasing -fno-exceptions -fno-rtti
 BUILTINS_OPTIMIZER = $(INTERP_OPTIMIZER)
 endif
 DEFINES    += -DDEBUG -DDEBUG_$(USER)
@@ -151,20 +151,7 @@ SO_SUFFIX = so
 
 NS_USE_NATIVE = 1
 
-# Java stuff
-CLASSDIR     = $(DEPTH)/liveconnect/classes
-JAVA_CLASSES = $(patsubst %.java,%.class,$(JAVA_SRCS))
-TARGETS     += $(addprefix $(CLASSDIR)/$(OBJDIR)/$(JARPATH)/, $(JAVA_CLASSES))
-JAVAC        = $(JDK)/bin/javac
-JAVAC_FLAGS  = -classpath "$(CLASSPATH)" -d $(CLASSDIR)/$(OBJDIR)
-ifeq ($(OS_ARCH), WINNT)
-  SEP        = ;
-else
-  SEP        = :
-endif
-CLASSPATH    = $(JDK)/lib/classes.zip$(SEP)$(CLASSDIR)/$(OBJDIR)
-
-include $(DEPTH)/config/$(OS_CONFIG).mk
+include $(DEPTH)/ref-config/$(OS_CONFIG).mk
 
 ifndef OBJ_SUFFIX
 ifdef USE_MSVC

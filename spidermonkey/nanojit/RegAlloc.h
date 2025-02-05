@@ -1,4 +1,5 @@
-/* -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: t; tab-width: 4 -*- */
+/* -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4 -*- */
+/* vi: set ts=4 sw=4 expandtab: (add to ~/.vimrc: set modeline modelines=5) */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -43,40 +44,137 @@
 
 namespace nanojit
 {
-	inline RegisterMask rmask(Register r)
-	{
-		return 1 << r;
-	}
+    class RegAlloc
+    {
+    public:
+        RegAlloc()
+        {
+            clear();
+        }
 
-	class RegAlloc MMGC_SUBCLASS_DECL
-	{
-		public:
-			RegAlloc() {}
-			void	clear();
-			bool	isFree(Register r); 
-			void	addFree(Register r);
-			void	removeFree(Register r);
-			void	addActive(Register r, LIns* ins);
-			void	removeActive(Register r);
-			LIns*	getActive(Register r); 
-			void	retire(Register r);
+        void clear()
+        {
+            VMPI_memset(this, 0, sizeof(*this));
+        }
 
-			debug_only( uint32_t	countFree(); )
-			debug_only( uint32_t	countActive(); )
-			debug_only( void		checkCount(); )
-			debug_only( bool		isConsistent(Register r, LIns* v); )
-			debug_only( uint32_t	count; )
-			debug_only( RegisterMask managed; )    // bitfield of 0..NJ_MAX_REGISTERS denoting which are under our management                     
+        bool isFree(Register r) const
+        {
+            NanoAssert(r != deprecated_UnknownReg);
+            return (free & rmask(r)) != 0;
+        }
 
-			// RegisterMask is a 32-bit value, so we can never have more than 32 active.
-			// hardcode 32 here in case we have non-contiguous register numbers
-			LIns*	active[32];  // active[r] = OP that defines r
-			RegisterMask	free;
-			RegisterMask	used;
+        void addFree(Register r)
+        {
+            NanoAssert(!isFree(r));
+            free |= rmask(r);
+        }
 
-			verbose_only( static void formatRegisters(RegAlloc& regs, char* s, Fragment*); )
+        void removeFree(Register r)
+        {
+            NanoAssert(isFree(r));
+            free &= ~rmask(r);
+        }
 
-			DECLARE_PLATFORM_REGALLOC()
-	};
+        void addActive(Register r, LIns* v)
+        {
+            //  Count++;
+            NanoAssert(v);
+            NanoAssert(r != deprecated_UnknownReg);
+            NanoAssert(active[r] == NULL);
+            active[r] = v;
+            useActive(r);
+        }
+
+        void useActive(Register r)
+        {
+            NanoAssert(r != deprecated_UnknownReg);
+            NanoAssert(active[r] != NULL);
+            usepri[r] = priority++;
+        }
+
+        void removeActive(Register r)
+        {
+            //registerReleaseCount++;
+            NanoAssert(r != deprecated_UnknownReg);
+            NanoAssert(active[r] != NULL);
+
+            // remove the given register from the active list
+            active[r] = NULL;
+        }
+
+        void retire(Register r)
+        {
+            NanoAssert(r != deprecated_UnknownReg);
+            NanoAssert(active[r] != NULL);
+            active[r] = NULL;
+            free |= rmask(r);
+        }
+
+        int32_t getPriority(Register r) {
+            NanoAssert(r != deprecated_UnknownReg && active[r]);
+            return usepri[r];
+        }
+
+        LIns* getActive(Register r) const {
+            NanoAssert(r != deprecated_UnknownReg);
+            return active[r];
+        }
+
+        debug_only( uint32_t    countActive(); )
+        debug_only( bool        isConsistent(Register r, LIns* v) const; )
+        debug_only( RegisterMask managed; )     // the registers managed by the register allocator
+
+        // Some basics:
+        //
+        // - 'active' indicates which registers are active at a particular
+        //   point, and for each active register, which instruction
+        //   defines the value it holds.  At the start of register
+        //   allocation no registers are active.
+        //
+        // - 'free' indicates which registers are free at a particular point
+        //   and thus available for use.  At the start of register
+        //   allocation most registers are free;  those that are not
+        //   aren't available for general use, e.g. the stack pointer and
+        //   frame pointer registers.
+        //
+        // - 'managed' is exactly this list of initially free registers,
+        //   ie. the registers managed by the register allocator.
+        //
+        // - Each LIns has a "reservation" which includes a register value,
+        //   'reg'.  Combined with 'active', this provides a two-way
+        //   mapping between registers and LIR instructions.
+        //
+        // - Invariant 1: each register must be in exactly one of the
+        //   following states at all times:  unmanaged, free, or active.
+        //   In terms of the relevant fields:
+        //
+        //   * A register in 'managed' must be in 'active' or 'free' but
+        //     not both.
+        //
+        //   * A register not in 'managed' must be in neither 'active' nor
+        //     'free'.
+        //
+        // - Invariant 2: the two-way mapping between active registers and
+        //   their defining instructions must always hold in both
+        //   directions and be unambiguous.  More specifically:
+        //
+        //   * An LIns can appear at most once in 'active'.
+        //
+        //   * An LIns named by 'active[R]' must have an in-use
+        //     reservation that names R.
+        //
+        //   * And vice versa:  an LIns with an in-use reservation that
+        //     names R must be named by 'active[R]'.
+        //
+        //   * If an LIns's reservation names 'deprecated_UnknownReg' then LIns
+        //     should not be in 'active'.
+        //
+        LIns*           active[LastReg + 1];    // active[r] = LIns that defines r
+        int32_t         usepri[LastReg + 1];    // used priority. lower = more likely to spill.
+        RegisterMask    free;
+        int32_t         priority;
+
+        DECLARE_PLATFORM_REGALLOC()
+    };
 }
 #endif // __nanojit_RegAlloc__

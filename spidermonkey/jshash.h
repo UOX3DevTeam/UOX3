@@ -67,7 +67,7 @@ typedef intN (* JSHashEnumerator)(JSHashEntry *he, intN i, void *arg);
 
 typedef struct JSHashAllocOps {
     void *              (*allocTable)(void *pool, size_t size);
-    void                (*freeTable)(void *pool, void *item);
+    void                (*freeTable)(void *pool, void *item, size_t size);
     JSHashEntry *       (*allocEntry)(void *pool, const void *key);
     void                (*freeEntry)(void *pool, JSHashEntry *he, uintN flag);
 } JSHashAllocOps;
@@ -115,9 +115,11 @@ JS_HashTableDestroy(JSHashTable *ht);
 extern JS_PUBLIC_API(JSHashEntry **)
 JS_HashTableRawLookup(JSHashTable *ht, JSHashNumber keyHash, const void *key);
 
+#ifdef __cplusplus
 extern JS_PUBLIC_API(JSHashEntry *)
-JS_HashTableRawAdd(JSHashTable *ht, JSHashEntry **hep, JSHashNumber keyHash,
+JS_HashTableRawAdd(JSHashTable *ht, JSHashEntry **&hep, JSHashNumber keyHash,
                    const void *key, void *value);
+#endif
 
 extern JS_PUBLIC_API(void)
 JS_HashTableRawRemove(JSHashTable *ht, JSHashEntry **hep, JSHashEntry *he);
