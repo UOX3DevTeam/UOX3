@@ -56,7 +56,6 @@ target_sources(jscript
         ../../jspropertycache.cpp
         ../../jspropertytree.cpp
         ../../jsproxy.cpp
-        ../../jsrecursion.cpp
         ../../jsregexp.cpp
         ../../jsscan.cpp
         ../../jsscope.cpp
@@ -122,7 +121,6 @@ target_sources(jscript
         ../../jsscript.h
         ../../jsscriptinlines.h
         ../../jsstaticcheck.h
-        ../../jsstddef.h
         ../../jsstr.h
         ../../jsstrinlines.h
         ../../jstask.h

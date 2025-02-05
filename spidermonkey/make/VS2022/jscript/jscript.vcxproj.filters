@@ -120,9 +120,6 @@
     <ClCompile Include="..\..\..\prmjtime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\js.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\jsfile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
