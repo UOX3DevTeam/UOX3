@@ -2107,6 +2107,44 @@ JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|    Function    -    CBase_GetTempEffect()
+//|    Prototype    -    UI32 CBase_GetTempEffect( tempEffectID )
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Get timer of specified temp effect for object, or 0 if it doesn't exist
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_GetTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "GetTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		return JS_FALSE;
+	}
+
+	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "GetTempEffect: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid tempe effect
+	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));\
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		// We only want results that have same object serial and tempEffectID as specified
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+		{
+			// Return the timestamp for when the Temp Effect timer expires
+			JS_NewNumberValue( cx, Effect->ExpireTime(), rval );
+		}
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_Delete()
 //|	Prototype	-	void Delete()
 //o------------------------------------------------------------------------------------------------o
