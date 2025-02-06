@@ -2106,6 +2106,53 @@ JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	return JS_TRUE;
 }
 
+void ReverseEffect( CTEffect *Effect );
+//o------------------------------------------------------------------------------------------------o
+//|    Function    -    CBase_ReverseEffect()
+//|    Prototype    -    void ReverseEffect()
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Force the reversion of a Temp Effect on item or character based on specified temp effect ID
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_ReverseEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+{
+    if( argc != 1 )
+    {
+        ScriptError( cx, "ReverseEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+        return JS_FALSE;
+    }
+    auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+    if( myObj == nullptr )
+    {
+        ScriptError( cx, "ReverseEffect: Invalid object assigned." );
+        return JS_FALSE;
+    }
+
+    *rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid temp effect found
+    UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+
+    SERIAL myObjSerial = myObj->GetSerial();
+    CTEffect *removeEffect = nullptr;
+
+    for( auto &Effect : cwmWorldState->tempEffects.collection() )
+    {
+        if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+        {
+            // Found our timer! Keep track of it for removal outside loop
+            removeEffect = Effect;
+            break;
+        }
+    }
+
+    if( removeEffect != nullptr )
+    {
+        ReverseEffect( removeEffect );
+        cwmWorldState->tempEffects.Remove( removeEffect, true );
+        *rval = INT_TO_JSVAL( 1 ); // Return 1 indicating temp effect was found and removed
+    }
+
+    return JS_TRUE;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_Delete()
 //|	Prototype	-	void Delete()
