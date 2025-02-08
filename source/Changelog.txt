@@ -1,3 +1,7 @@
+06/02/2025 - Dragon Slayer
+	Added .GetTempEffect js method, Get timer of specified temp effect for object, or 0 if it doesn't exist. ( Thanks Xuri )
+	Added .ReverseTempEffect js method, Force the reversion of a Temp Effect on item or character based on specified temp effect ID. ( Thanks Xuri )
+
 01/02/2025 - Dragon Slayer
 	Fixed an issue where UOX3 would unnecessarily update a given player's status window repeatedly multiple times per server cycle (Thanks Xuri)
 	Fixed Young Status Not removing off characters. (Thanks Xuri)
