@@ -7554,7 +7554,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">durabilityhpbonus</span>=<strong>[number]</strong><br>
-							A property in Ultima Online that increases an item's durability by a percentage</p>
+							A property that increases an item's durability by a percentage</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">damage</span>=<strong>[lodamage hidamage]</strong><br>
@@ -7578,7 +7578,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">defensechance</span>=<strong>[number]</strong><br>
-							A property in Ultima Online that increases a character's chance to avoid incoming physical attacks.</p>
+							A property that increases a character's chance to avoid incoming physical attacks by a percentage.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">dex</span>=<strong>[statpoints]</strong><br>
@@ -7646,7 +7646,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">healthleech</span>=<strong>[number]</strong><br>
-							A property in Ultima Online that grants a chance to convert a percentage of damage dealt into health for the attacker</p>
+							A property in that grants a chance to convert a percentage of damage dealt into health for the attacker</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">healthbonus</span>=<strong>[number]</strong><br>
@@ -7658,7 +7658,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">hitchance</span>=<strong>[number]</strong><br>
-							A property in Ultima Online that increases a character's chance to successfully land a physical attack on a target.</p>
+							A property in that increases a character's chance to successfully land a physical attack on a target by percentage.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">hp</span>=<strong>[hitpoints]</strong> or <strong>[lowhp highhp]</strong><br>
@@ -7702,15 +7702,20 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">lowerstatreq</span>=<strong>[number]</strong><br>
-							A property in Ultima Online that reduces the stat requirements needed to equip or use an item.</p>
+							A property that reduces the stat requirements needed to equip or use an item by a percentage.<br>
+							<ul>
+								<li>Lowers Strength on a item</li>
+								<li>Lowers Dexterity on a item</li>
+								<li>Lowers Intelligence on a item</li>
+							</ul></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">manaleech</span>=<strong>[number]</strong><br>
-							A property in Ultima Online that grants a chance to convert a percentage of damage dealt into mana for the attacker.</p>
+							A property that grants a chance to convert a percentage of damage dealt into mana for the attacker.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">manabonus</span>=<strong>[number]</strong><br>
-							A property in Ultima Online that provides a direct increase to a character’s maximum mana.</p>
+							A property that provides a direct increase to a character’s maximum mana by a percentage.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">maxhp</span>=<strong>[hitpoints]</strong><br>
@@ -7741,15 +7746,28 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">more0</span>=<strong>[more0]</strong><br>
-							Functions almost same as more does. read above</p>
+							 Generic property whose purpose changes depending on context/how it's used by different scripts. Can hold one large value (0 to 4294967295), or 4 small (0-255) values.<br>
+							<ul>
+								<li>Recall runes use more0 property to store instanceID of the marked location</li>
+								<li>more0=51200</li>
+								<li>more0=0 0 244 13</li>
+							</ul></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">more1</span>=<strong>[more1]</strong><br>
-							Functions almost same as more does. read above</p>
+							 Generic property whose purpose changes depending on context/how it's used by different scripts. Can hold one large value (0 to 4294967295), or 4 small (0-255) values.<br>
+							<ul>
+								<li>more1=51200</li>
+								<li>more1=0 0 244 13</li>
+							</ul></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">more2</span>=<strong>[more2]</strong><br>
-							Functions almost same as more does. read above</p>
+							 Generic property whose purpose changes depending on context/how it's used by different scripts. Can hold one large value (0 to 4294967295), or 4 small (0-255) values.<br>
+							<ul>
+								<li>more2=51200</li>
+								<li>more2=0 0 244 13</li>
+							</ul></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">morexyz</span>=<strong>[morex],[morey],[morez]</strong><br>
@@ -7830,19 +7848,19 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">resistfire</span>=<strong>[amount]</strong> or <strong>[minamount maxamount]</strong><br>
-							Reduces damage from fire-based attacks, spells, and environmental hazards.</p>
+							Decreases damage from fire-based attacks.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">resistcold</span>=<strong>[amount]</strong> or <strong>[minamount maxamount]</strong><br>
-							Decreases damage from cold-based attacks and spells.</p>
+							Decreases damage from cold-based attacks.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">resistlighting</span>=<strong>[amount]</strong> or <strong>[minamount maxamount]</strong><br>
-							Mitigates damage from energy-based attacks and magical effects.</p>
+							Decreases damage from energy-based attacks.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">resistpoison</span>=<strong>[amount]</strong> or <strong>[minamount maxamount]</strong><br>
-							Lowers the damage taken from poison-based attacks and effects.</p>
+							Decreases damage from poison-based attacks.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">rain</span>=<strong>[0/1]</strong><br>
@@ -7886,19 +7904,24 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">swingspeedincrease</span>=<strong>[number]</strong><br>
-							A property in Ultima Online that increases the speed at which a character swings their weapon.</p>
+							item and char property that increases base weapon swing speed by the specified percentage</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">stealable</span>=<strong>[0/1]</strong><br>
-							A property that determines under which conditions item can be stolen.</p>
+							<p><span class="hl">stealable</span>=<strong>[0/1/2]</strong><br>
+							A property that determines under which conditions item can be stolen.<br>
+							<ul>
+								<li>0 = not stealable under any circumstances.</li>
+								<li>1 = stealable under normal circumstances</li>
+								<li>2 = stealable under all circumstances, even if locked down</li>
+							</ul></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">staminaleech</span>=<strong>[number]</strong><br>
-							A property in Ultima Online that grants a chance to convert a percentage of damage dealt into stamina for the attacker.</p>
+							A property in that grants a chance to convert a percentage of damage dealt into stamina for the attacker.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">staminabonus</span>=<strong>[number]</strong><br>
-							A property in Ultima Online that provides a direct increase to a character’s maximum stamina.</p>
+							A property in that provides a direct increase to a character’s maximum stamina by  percentage.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">spells</span>=<strong>[hex value for circles 1-4],[hex value for circles 5-8],[hex value - unused]</strong><br>
