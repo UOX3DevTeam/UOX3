@@ -1,3 +1,6 @@
+08/02/2025 - Dragon Slayer
+	Updated Item DFN Documents with: artifactrarity, durabilityhpbonus, defensechance, event, healthleech, healthbonus, hitchance, lowerstatreq, manaleech, manabonus, maxitems, maxrange, maxuses, more0, more1, more2, resistfire, resistcold, resistlighting, resistpoison, swingspeedincrease, stealable, staminaleech, staminabonus, usesleft
+
 01/02/2025 - Dragon Slayer
 	Fixed an issue where UOX3 would unnecessarily update a given player's status window repeatedly multiple times per server cycle (Thanks Xuri)
 	Fixed Young Status Not removing off characters. (Thanks Xuri)
