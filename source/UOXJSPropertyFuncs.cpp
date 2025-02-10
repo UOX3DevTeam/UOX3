@@ -3523,6 +3523,10 @@ JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	{
 		*vp = INT_TO_JSVAL( static_cast<UI08>( myChar->GetSkillLock( skillId )));
 	}
+	else if( myClass.ClassName() == "UOXSkillsCap" )
+	{
+		*vp = INT_TO_JSVAL( myChar->GetSkillCap( skillId ));
+	}
 
 	return JS_TRUE;
 }
@@ -3600,6 +3604,20 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		else
 		{
 			myChar->SetSkillLock( static_cast<SkillLock>( newSkillValue ), skillId );
+		}
+	}
+	else if( myClass.ClassName() == "UOXSkillsCap" )
+	{
+		if( skillId == ALLSKILLS )
+		{
+			for( i = 0; i < ALLSKILLS; ++i )
+			{
+				myChar->SetSkillCap( newSkillValue, i );
+			}
+		}
+		else
+		{
+			myChar->SetSkillCap( newSkillValue, skillId );
 		}
 	}
 
