@@ -492,7 +492,7 @@ function onCallback1( pSock, ourObj )
 	ourObj.Delete();
 
 	// Run a generic skill check to give player a chance to increase their mining skill
-	mChar.CheckSkill( 45, 0, 1000 );
+	mChar.CheckSkill( 45, 0, mCharr.skillCaps.mining );
 
 	var newResource = CreateDFNItem( pSock, mChar, "0x1bf2", resourceAmount, "ITEM", true, resourceHue );
 	newResource.name = resourceName;
@@ -575,7 +575,7 @@ function onCallback2( pSock, ourObj )
 					mChar.StartTimer( repairDelay, 1, true );
 					return;
 				}
-				var maxDifficulty = Math.min( repairDifficulty + 250, 1000 );
+				var maxDifficulty = Math.min( repairDifficulty + 250, mChar.skillCaps.blacksmithing );
 
 				// Allow repair if random number between min and base difficulty is under player's skill
 				if( RandomNumber( minDifficulty, 1000 ) < ( Math.max( repairSkill + skillBonus, 999 )))

@@ -159,7 +159,7 @@ function onCallback1( pSock, toAttack )
 				var myInstrument = GetInstrument( pUser );
 				if( ValidateObject( myInstrument ))
 				{
-					if( pUser.CheckSkill( 29, 0, 1000 ))	// Musicianship
+					if( pUser.CheckSkill( 29, 0, mChar.skillCaps.musicianshio ))	// Musicianship
 					{
 						PlayInstrument( pSock, myInstrument, true );
 						if( pUser.CheckSkill( 22, pAttacker.skillToProv, 1200 ))	// Provocation

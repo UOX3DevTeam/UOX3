@@ -332,7 +332,7 @@ function onTimer( mChar, timerID )
 
 				if( mResource.logAmount > 0 )
 				{
-					if( mChar.CheckSkill( 44, 0, 1000 ))
+					if( mChar.CheckSkill( 44, 0, mChar.skillCaps.lumberjacking ))
 					{
 						mResource.logAmount = mResource.logAmount-1;
 						CreateDFNItem( socket, mChar, "0x1BE0", 10, "ITEM", true );

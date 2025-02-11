@@ -76,7 +76,7 @@ function Cooking( tSock, myTarget )
 			return;
 		}
 
-		if( !pUser.CheckSkill( 13, 0, 1000 ))
+		if( !pUser.CheckSkill( 13, 0, pUser.skillCaps.cooking ))
 		{
 			cookingMsg = GetDictionaryEntry( 6093, tSock.language ); // You burn the %s to a crisp! It's ruined.
 			tSock.SysMessage( cookingMsg.replace( /%s/gi, iUsed.name ));

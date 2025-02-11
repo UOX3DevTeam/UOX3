@@ -377,7 +377,13 @@ function SetSkillInUse( socket, mChar, ourObj, skillNum, healingTime, setVal )
 
 function onTimer( mChar, timerID )
 {
-	var skillNum = mChar.GetTempTag( "SK_HEALINGTYPE" );
+	var skillNum = mChar.GetTempTag("SK_HEALINGTYPE");
+	var skillCap = null;
+	switch( skillNum )
+	{
+		case 17: skillCap = mChar.skillCaps.healing; break;
+		case 39: skillCap = mChar.skillCaps.veterinary; break;
+	}
 	var ourObj = CalcCharFromSer( mChar.GetTempTag( "SK_HEALINGTARG" ));
 	var socket = mChar.socket;
 	if( socket != null )
@@ -405,7 +411,7 @@ function onTimer( mChar, timerID )
 					{
 						socket.SysMessage( GetDictionaryEntry( 9085, socket.language )); // The target is not dead.
 					}
-					else if( mChar.CheckSkill( skillNum, 800, 1000 ) && mChar.CheckSkill( 1, 800, 1000 ))
+					else if( mChar.CheckSkill( skillNum, 800, skillCap ) && mChar.CheckSkill( 1, 800, mChar.skillCaps.anatomy ))
 					{
 						var iMulti = ourObj.multi;
 						if( ValidateObject( iMulti ) && ( !iMulti.IsOnOwnerList( mChar ) && !iMulti.IsOnFriendList( mChar )) &&
@@ -429,7 +435,7 @@ function onTimer( mChar, timerID )
 					}
 					break;
 				case 1:	// Cure Poison
-					if( mChar.CheckSkill( skillNum, 600, 1000 ) && (( skillNum == 17 && mChar.CheckSkill( 1, 600, 1000 )) || ( skillNum == 39 && mChar.CheckSkill( 2, 600, 1000 ))))
+					if( mChar.CheckSkill( skillNum, 600, skillCap ) && (( skillNum == 17 && mChar.CheckSkill( 1, 600, mChar.skillCaps.anatomy )) || ( skillNum == 39 && mChar.CheckSkill( 2, 600, pUser.skillCaps.animallore ))))
 					{
 						ourObj.SetPoisoned( 0, 0 );
 						ourObj.StaticEffect( 0x373A, 0, 15 );
@@ -479,7 +485,7 @@ function onTimer( mChar, timerID )
 							secondarySkill = mChar.skills.anatomy;
 
 							// Perform generic Anatomy skill check to allow skill increase
-							mChar.CheckSkill( 1, 0, 1000 );
+							mChar.CheckSkill( 1, 0, pUser.skillCaps.anatomy );
 						}
 						else if( skillNum == 39 ) // Veterinary
 						{
@@ -487,7 +493,7 @@ function onTimer( mChar, timerID )
 							secondarySkill = mChar.skills.animallore;
 
 							// Perform generic Animal Lore skill check to allow skill increase
-							mChar.CheckSkill( 2, 0, 1000 );
+							mChar.CheckSkill( 2, 0, pUser.skillCaps.animallore );
 						}
 
 						// Retrieve amount of times character's hands slipped during healing

@@ -11,7 +11,7 @@ function onSkill( pUser, objType, skillUsed )
 		var myInstrument = GetInstrument( pUser );
 		if( ValidateObject( myInstrument ) )
 		{
-			if( pUser.CheckSkill( 29, 0, 1000 ))
+			if( pUser.CheckSkill( 29, 0, mChar.skillCaps.peacemaking ))
 			{
 				PlayInstrument( pSock, myInstrument, true );
 				AreaCharacterFunction( "PeaceMakeArea", pUser, 15 );
@@ -147,7 +147,7 @@ function PeaceMakeArea( pUser, targChar )
 	// Fetch skill-specific skill delay
 	var skillDelay = Skills[9].skillDelay;
 
-	if( pUser.CheckSkill( 9, targChar.skillToPeace, 1200 ))
+	if( pUser.CheckSkill( 9, targChar.skillToPeace, targChar.skillCaps.peacemaking ))
 	{
 		if( targSock )
 		{
