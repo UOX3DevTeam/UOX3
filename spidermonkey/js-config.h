@@ -85,7 +85,7 @@
 
 /* Some mozilla code uses JS-friend APIs that depend on JS_TRACER being
    correct. */
-#define JS_TRACER
+//#define JS_TRACER
 
 #if defined XP_WIN
 
