@@ -30,10 +30,9 @@ target_sources(host_jskwgen
         ../../jskeyword.tbl
 )
 
-
 add_custom_command(
     OUTPUT ../../jsautokw.h
-    COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ./host_jskwgen > ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautokw.h && echo "Build complete"
+    COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/host_jskwgen ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautokw.h && echo "Build complete"
     DEPENDS host_jskwgen
     COMMENT "Generating jsautokw.h"
 )
@@ -50,7 +49,7 @@ target_sources(host_jsoplengen
 
 add_custom_command(
     OUTPUT ../../jsautooplen.h
-    COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ./host_jsoplengen > ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautooplen.h && echo "Build complete"
+    COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/host_jsoplengen ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautooplen.h && echo "Build complete"
     DEPENDS host_jsoplengen
     COMMENT "Generating jsautooplen.h"
 )
