@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.18)
 project(jscript VERSION 1.8.0 LANGUAGES C)
 
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
+set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/../../../install" CACHE STRING "" FORCE)
+
 add_executable(jscpucfg ../../jscpucfg.cpp)
 
 if(NOT WIN32)
@@ -17,6 +20,40 @@ if(NOT WIN32)
         COMMENT "Generating jsautocfg.h"
     )
 endif(NOT WIN32)
+
+add_executable(host_jskwgen)
+
+target_sources(host_jskwgen
+    PRIVATE
+        ../../jskwgen.cpp
+        ../../jsversion.h
+        ../../jskeyword.tbl
+)
+
+
+add_custom_command(
+    OUTPUT ../../jsautokw.h
+    COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ./host_jskwgen > ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautokw.h && echo "Build complete"
+    DEPENDS host_jskwgen
+    COMMENT "Generating jsautokw.h"
+)
+
+add_executable(host_jsoplengen)
+
+target_sources(host_jsoplengen
+    PRIVATE
+        ../../jsoplengen.cpp
+        ../../jsversion.h
+        ../../jsopcode.tbl
+)
+
+
+add_custom_command(
+    OUTPUT ../../jsautooplen.h
+    COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ./host_jsoplengen > ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautooplen.h && echo "Build complete"
+    DEPENDS host_jsoplengen
+    COMMENT "Generating jsautooplen.h"
+)
 
 add_library(jscript STATIC)
 
@@ -74,6 +111,8 @@ target_sources(jscript
         ../../jsarray.h
         ../../jsatom.h
         ../../jsatominlines.h
+        ../../jsautokw.h
+        ../../jsautooplen.h
         ../../jsbit.h
         ../../jsbool.h
         ../../jsbuiltins.h
