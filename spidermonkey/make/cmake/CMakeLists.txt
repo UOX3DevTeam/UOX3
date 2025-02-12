@@ -202,7 +202,7 @@ if (WIN32)
         WIN32
         _WIN32
         NO_X11
-        _X86_
+        $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},4>:_X86_>
         HW_THREADS
         STDC_HEADERS
         WIN32_LEAN_AND_MEAN
@@ -215,6 +215,8 @@ if (WIN32)
         $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:NANOJIT_ARCH=X64>
         $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:AVMPLUS_AMD64>
         $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:AVMPLUS_64BIT>
+        $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:_WIN64>
+        $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:_AMD64_>
     )
     
     target_compile_options( jscript PRIVATE
