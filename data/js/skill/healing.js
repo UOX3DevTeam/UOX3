@@ -485,7 +485,7 @@ function onTimer( mChar, timerID )
 							secondarySkill = mChar.skills.anatomy;
 
 							// Perform generic Anatomy skill check to allow skill increase
-							mChar.CheckSkill( 1, 0, pUser.skillCaps.anatomy );
+							mChar.CheckSkill( 1, 0, mchar.skillCaps.anatomy );
 						}
 						else if( skillNum == 39 ) // Veterinary
 						{
@@ -493,7 +493,7 @@ function onTimer( mChar, timerID )
 							secondarySkill = mChar.skills.animallore;
 
 							// Perform generic Animal Lore skill check to allow skill increase
-							mChar.CheckSkill( 2, 0, pUser.skillCaps.animallore );
+							mChar.CheckSkill( 2, 0, mchar.skillCaps.animallore );
 						}
 
 						// Retrieve amount of times character's hands slipped during healing

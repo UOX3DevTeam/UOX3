@@ -492,7 +492,7 @@ function onCallback1( pSock, ourObj )
 	ourObj.Delete();
 
 	// Run a generic skill check to give player a chance to increase their mining skill
-	mChar.CheckSkill( 45, 0, mCharr.skillCaps.mining );
+	mChar.CheckSkill( 45, 0, mChar.skillCaps.mining );
 
 	var newResource = CreateDFNItem( pSock, mChar, "0x1bf2", resourceAmount, "ITEM", true, resourceHue );
 	newResource.name = resourceName;

@@ -2345,7 +2345,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 			if( ValidateObject( shield ))
 			{
 				// Perform a skillcheck to potentially give player a skill increase
-				Skills->CheckSkill( ourTarg, PARRYING, 0, mChar->GetSkillCap( PARRYING ) );
+				Skills->CheckSkill( ourTarg, PARRYING, 0, ourTarg->GetSkillCap( PARRYING ) );
 
 				// Get parry skill value
 				UI16 defendParry = ourTarg->GetSkill( PARRYING );
