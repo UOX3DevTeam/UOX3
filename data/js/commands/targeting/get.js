@@ -47,6 +47,12 @@ function onCallback0( socket, ourObj )
 	case "INTELLIGENCE":
 		socket.SysMessage( ourObj.intelligence );
 		break;
+	case "HITCHANCE":
+		socket.SysMessage( ourObj.hitChance );
+		break;
+	case "DEFENSECHANCE":
+		socket.SysMessage( ourObj.defenseChance );
+		break;
 	case "FAME":
 		socket.SysMessage( ourObj.fame );
 		break;
@@ -197,6 +203,9 @@ function HandleGetItem( socket, ourItem, uKey )
 {
 	switch( uKey )
 	{
+	case "ARTIFACTRARITY":
+		socket.SysMessage( ourItem.artifactRarity );
+		break;
 	case "ID":
 		var ourID = ( ourItem.id ).toString( 16 );
 		while( ourID.length < 4 )
@@ -320,7 +329,34 @@ function HandleGetItem( socket, ourItem, uKey )
 		socket.SysMessage( ourItem.Resist( 7 ));
 		break;
 	case "LOWERSTATREQ":
-		socket.SysMessage( ourObj.lowerStatReq );
+		socket.SysMessage( ourItem.lowerStatReq );
+		break;
+	case "HEALTHLEECH":
+		socket.SysMessage( ourItem.healthLeech );
+		break;
+	case "HEALTHBONUS":
+		socket.SysMessage( ourItem.healthBonus );
+		break;
+	case "MANLEECH":
+		socket.SysMessage( ourItem.manaLeech );
+		break;
+	case "MANABONUS":
+		socket.SysMessage( ourItem.manaBonus );
+		break;
+	case "MANSTAMINA":
+		socket.SysMessage( ourItem.staminaLeech );
+		break;
+	case "STAMINABONUS":
+		socket.SysMessage( ourItem.staminaBonus );
+		break;
+	case "KARMALOCK":
+		socket.SysMessage( ourItem.karmaLock );
+		break;
+	case "ARTIFACTRARITY":
+		socket.SysMessage( ourItem.artifactRarity);
+		break;
+	case "DURABILITYHPBONUS":
+		socket.SysMessage( ourItem.durabilityHpBonus );
 		break;
 	case "ARMORCLASS":
 	case "ARMOURCLASS":
@@ -630,6 +666,9 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "MAXSTAMINA":
 		socket.SysMessage( ourChar.maxstamina );
+		break;
+	case "STAMINA":
+		socket.SysMessage( ourChar.stamina );
 		break;
 	case "HUNGER":
 		socket.SysMessage( ourChar.hunger );

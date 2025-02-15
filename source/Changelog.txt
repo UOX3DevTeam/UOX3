@@ -1,3 +1,7 @@
+14/02/2025 - Dragon Slayer
+	Added Missing commands to get/set for all the new aos properties that as added plus a missing stamina command.
+	Fixed Miss spelling in documents at Get/SetTimer. (Thanks Xuri)
+
 08/02/2025 - Dragon Slayer
 	Updated Item DFN Documents with: artifactrarity, durabilityhpbonus, defensechance, event, healthleech, healthbonus, hitchance, lowerstatreq, manaleech, manabonus, maxitems, maxrange, maxuses, more0, more1, more2, resistfire, resistcold, resistlighting, resistpoison, swingspeedincrease, stealable, staminaleech, staminabonus, usesleft
 
