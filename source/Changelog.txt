@@ -1,3 +1,7 @@
+15/02/2025 - Dragon Slayer
+	Added .skillCaps to the documentation and implemented it in the code to allow getting and setting individual skill caps.
+	Introduced a default INI setting with a skill cap of 1000.
+
 08/02/2025 - Dragon Slayer
 	Updated Item DFN Documents with: artifactrarity, durabilityhpbonus, defensechance, event, healthleech, healthbonus, hitchance, lowerstatreq, manaleech, manabonus, maxitems, maxrange, maxuses, more0, more1, more2, resistfire, resistcold, resistlighting, resistpoison, swingspeedincrease, stealable, staminaleech, staminabonus, usesleft
 
