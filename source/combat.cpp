@@ -1745,6 +1745,48 @@ void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::PlayHitAnimations()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Plays the hit-animation for specified character
+//o------------------------------------------------------------------------------------------------o
+void CHandleCombat::PlayHitAnimations( CChar *mChar )
+{
+	UI16 charId = mChar->GetId();
+	UI08 hitAnim = 0;
+	UI08 hitAnimLength = 0;
+
+	if( mChar->IsOnHorse() )
+	{
+		return;
+	}
+
+	if( mChar->GetBodyType() == BT_GARGOYLE || cwmWorldState->ServerData()->ForceNewAnimationPacket() )
+	{		
+		Effects->PlayNewCharacterAnimation( mChar, 0x4, 0 );
+	}
+	else
+	{
+		if( cwmWorldState->creatures[charId].IsAmphibian() || cwmWorldState->creatures[charId].IsAnimal())
+		{
+			hitAnim = 0x07;
+			hitAnimLength = 5;
+		}
+		else if( !cwmWorldState->creatures[charId].IsHuman() ) // monster
+		{
+			hitAnim = 0x10;
+			hitAnimLength = 4;
+		}
+		else
+		{
+			hitAnim = 0x20;
+			hitAnimLength = 5;
+		}
+
+		Effects->PlayCharacterAnimation( mChar, hitAnim, 0, hitAnimLength );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CHandleCombat::PlayMissedSoundEffect()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Do the "Missed" Sound Effect
@@ -2955,6 +2997,8 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		}
 		else
 		{
+			PlayHitAnimations( ourTarg );
+
 			// It's a hit!
 			CSocket *targSock = ourTarg->GetSocket();
 
