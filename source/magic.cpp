@@ -734,7 +734,7 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI
 
 		auto minSkill = target->GetTempVar( CITV_MOREY, 3 ) * 10;
 		auto maxSkill = target->GetTempVar( CITV_MOREY, 4 ) * 10;
-		if( !Skills->CheckSkill( caster, MAGERY, minSkill, ( maxSkill > 0 ? maxSkill : 1000 )))
+		if( !Skills->CheckSkill( caster, MAGERY, minSkill, ( maxSkill > 0 ? maxSkill : caster->GetSkillCap( MAGERY ) )))
 		{
 			sock->SysMessage( 6092 ); // You are not skilled enough to do that.
 			return false;
@@ -780,7 +780,7 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI
 
 		auto minSkill = target->GetTempVar( CITV_MOREY, 3 ) * 10;
 		auto maxSkill = target->GetTempVar( CITV_MOREY, 4 ) * 10;
-		if( !Skills->CheckSkill( caster, MAGERY, minSkill, ( maxSkill > 0 ? maxSkill : 1000 )))
+		if( !Skills->CheckSkill( caster, MAGERY, minSkill, ( maxSkill > 0 ? maxSkill : caster->GetSkillCap( MAGERY ) )))
 		{
 			sock->SysMessage( 6092 ); // You are not skilled enough to do that.
 			return false;
@@ -825,7 +825,7 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI
 
 		auto minSkill = target->GetTempVar( CITV_MOREY, 3 ) * 10;
 		auto maxSkill = target->GetTempVar( CITV_MOREY, 4 ) * 10;
-		if( !Skills->CheckSkill( caster, MAGERY, minSkill, ( maxSkill > 0 ? maxSkill : 1000 )))
+		if( !Skills->CheckSkill( caster, MAGERY, minSkill, ( maxSkill > 0 ? maxSkill : caster->GetSkillCap( MAGERY ) )))
 		{
 			sock->SysMessage( 6092 ); // You are not skilled enough to do that.
 			return false;

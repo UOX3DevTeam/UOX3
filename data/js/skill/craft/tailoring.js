@@ -625,7 +625,7 @@ function onCallback2( pSock, ourObj )
 	ourObj.Delete();
 
 	// Run a generic skill check to give player a chance to increase their tailoring skill
-	mChar.CheckSkill( 34, 0, 1000 );
+	mChar.CheckSkill( 34, 0, mChar.skillCaps.tailoring );
 
 	// Determine the actual resource item to add to player's backpack
 	// We'll default to one specific resource per material type

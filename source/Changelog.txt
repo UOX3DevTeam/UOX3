@@ -1,3 +1,8 @@
+
+15/02/2025 - Dragon Slayer
+	Added .skillCaps to the documentation and implemented it in the code to allow getting and setting individual skill caps.
+	Introduced a default INI setting with a skill cap of 1000.
+
 14/02/2025 - Dragon Slayer
 	Added Missing commands to get/set for all the new aos properties that as added plus a missing stamina command.
 	Fixed Miss spelling in documents at Get/SetTimer. (Thanks Xuri)

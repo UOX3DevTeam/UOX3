@@ -166,7 +166,7 @@ function CheckTameSuccess( pUser, toTame )
 {
 	var hasBeenOwner = toTame.HasBeenOwner( pUser );
 
-	if( !hasBeenOwner && !pUser.CheckSkill( 35, toTame.orneriness, 1000 ))
+	if( !hasBeenOwner && !pUser.CheckSkill( 35, toTame.orneriness, pUser.skillCaps.taming ))
 	{
 		return false;
 	}
@@ -184,7 +184,7 @@ function CheckTameSuccess( pUser, toTame )
 		if( checkPetControlDifficulty && hasBeenOwner )
 		{
 			// Chance to calm down pet and reduce "orneriness" based on animal lore skill
-			if( pUser.CheckSkill( 2, toTame.orneriness, 1000 ))
+			if( pUser.CheckSkill( 2, toTame.orneriness, pUser.skillCaps.animallore ))
 			{
 				switch( toTame.ownerCount )
 				{
