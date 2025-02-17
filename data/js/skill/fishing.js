@@ -415,7 +415,7 @@ function onTimer( fishingTool, timerID )
 				// NOTE: Should the skill check be moved to after system has determined what to fish up? That way, can run different skill checks
 				// depending on the type of item being fished up, and prevent highly skilled fishermen from gaining more skill from fishing up boots
 				var isDeepSeaFishing = mChar.GetTempTag( "IsDeepSeaFishing" );
-				if(( isDeepSeaFishing && mChar.CheckSkill( 18, 0, 1000 )) || ( !isDeepSeaFishing && mChar.CheckSkill( 18, 0, 750 )))// Player cannot gain skill in shallow water if skill is over 75.0
+				if(( isDeepSeaFishing && mChar.CheckSkill( 18, 0, mChar.skillCaps.fishing )) || ( !isDeepSeaFishing && mChar.CheckSkill( 18, 0, 750 )))// Player cannot gain skill in shallow water if skill is over 75.0
 				{
 					// Do another effect on water to simulate fish being caught!
 					mChar.TurnToward( targX, targY );

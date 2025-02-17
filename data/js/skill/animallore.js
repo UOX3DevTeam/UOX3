@@ -77,7 +77,7 @@ function onCallback0( pSock, ourObj )
 		}
 
 		// All good, let's perform the skill check
-		if( pUser.CheckSkill( 2, 0, 1000 ))
+		if( pUser.CheckSkill( 2, 0, pUser.skillCaps.animallore ))
 		{
 			position = 20;
 			if( osiGumpEnabled )

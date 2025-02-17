@@ -2345,7 +2345,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 			if( ValidateObject( shield ))
 			{
 				// Perform a skillcheck to potentially give player a skill increase
-				Skills->CheckSkill( ourTarg, PARRYING, 0, 1000 );
+				Skills->CheckSkill( ourTarg, PARRYING, 0, ourTarg->GetSkillCap( PARRYING ) );
 
 				// Get parry skill value
 				UI16 defendParry = ourTarg->GetSkill( PARRYING );
@@ -2523,7 +2523,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 				if( mWeapon )
 				{
 					// Perform a skillcheck for Bushido regardless of weapon equipped
-					Skills->CheckSkill( ourTarg, BUSHIDO, 0, 1000 );
+					Skills->CheckSkill( ourTarg, BUSHIDO, 0, ourTarg->GetSkillCap( BUSHIDO ) );
 
 					// Fetch relevant skill values
 					UI16 defendParry = ourTarg->GetSkill( PARRYING );
@@ -2735,12 +2735,12 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	//Attacker Skill values
 	CItem *mWeapon				= GetWeapon( &mChar );
 	const UI08 getFightSkill	= GetCombatSkill( mWeapon );
-	const UI16 attackSkill		= std::min( 1000, static_cast<SI32>( mChar.GetSkill( getFightSkill )));
+	const UI16 attackSkill		= std::min( static_cast<SI32>( mChar.GetSkillCap( getFightSkill )), static_cast<SI32>( mChar.GetSkill( getFightSkill )));
 
 	//Defender Skill values
 	CItem *defWeapon			= GetWeapon( ourTarg );
 	const UI08 getTargetSkill	= GetCombatSkill( defWeapon );
-	const UI16 defendSkill		= std::min( 1000, static_cast<SI32>( ourTarg->GetSkill( getTargetSkill )));
+	const UI16 defendSkill		= std::min( static_cast<SI32>( ourTarg->GetSkillCap( getTargetSkill )), static_cast<SI32>( ourTarg->GetSkill( getTargetSkill )));
 
 	bool checkDist = ( ourDist <= 1 && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 );
 
@@ -2848,7 +2848,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		bool skillPassed = false;
 
 		// Do a skill check so the fight skill is increased
-		Skills->CheckSkill( &mChar, getFightSkill, 0, std::min( 1000, static_cast<SI32>(( getDefTactics * 1.25 ) + 100 )));
+		Skills->CheckSkill( &mChar, getFightSkill, 0, std::min(static_cast<SI32>( mChar.GetSkillCap( getFightSkill )), static_cast<SI32>(( getDefTactics * 1.25 ) + 100 )));
 
 		// Calculate Hit Chance
 		R32 hitChance = 0;
@@ -2958,8 +2958,8 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			// It's a hit!
 			CSocket *targSock = ourTarg->GetSocket();
 
-			Skills->CheckSkill( &mChar, TACTICS, 0, 1000 );
-			Skills->CheckSkill( ourTarg, TACTICS, 0, 1000 );
+			Skills->CheckSkill( &mChar, TACTICS, 0, mChar.GetSkillCap( TACTICS ) );
+			Skills->CheckSkill( ourTarg, TACTICS, 0, ourTarg->GetSkillCap( TACTICS ) );
 
 			switch( ourTarg->GetId() )
 			{

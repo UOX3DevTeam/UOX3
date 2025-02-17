@@ -86,7 +86,7 @@ function onCallback0( pSocket, myTarget )
   		return;
 	}
 
-	if( pUser.CheckSkill( 34, 0, 1000 ))
+	if( pUser.CheckSkill( 34, 0, pUser.skillCaps.tailoring ))
 	{
 		pUser.UseResource( 1, iUsed.id ); 	// remove some wool
 		pUser.SoundEffect( 0x021A, true );
