@@ -41,13 +41,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <CharacterSet>Unicode</CharacterSet>
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <CharacterSet>Unicode</CharacterSet>
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -128,7 +128,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;EXPORT_JS_API;JSFILE;XP_WIN;XP_WIN32;_WIN32;NO_X11;HW_THREADS;STDC_HEADERS;WIN32_LEAN_AND_MEAN;HAVE_SNPRINTF;ENABLE_TRACEJIT=1;FEATURE_NANOJIT;JS_TRACER;NANOJIT_ARCH=X64;AVMPLUS_AMD64;AVMPLUS_64BIT;_WIN64;_AMD64_</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;EXPORT_JS_API;JSFILE;XP_WIN;XP_WIN32;_WIN32;NO_X11;HW_THREADS;STDC_HEADERS;WIN32_LEAN_AND_MEAN;HAVE_SNPRINTF;ENABLE_TRACEJIT=1;FEATURE_NANOJIT;JS_TRACER;NANOJIT_ARCH=X64;AVMPLUS_WIN32;AVMPLUS_AMD64;AVMPLUS_64BIT;_WIN64;_AMD64_;DEBUG</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <SDLCheck>false</SDLCheck>
@@ -138,6 +138,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <AdditionalDependencies>winmm.lib</AdditionalDependencies>
@@ -153,7 +154,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;EXPORT_JS_API;JSFILE;XP_WIN;XP_WIN32;_WIN32;NO_X11;HW_THREADS;STDC_HEADERS;WIN32_LEAN_AND_MEAN;HAVE_SNPRINTF;ENABLE_TRACEJIT=1;FEATURE_NANOJIT;JS_TRACER;NANOJIT_ARCH=X64;AVMPLUS_AMD64;AVMPLUS_64BIT;_WIN64;_AMD64_</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;EXPORT_JS_API;JSFILE;XP_WIN;XP_WIN32;_WIN32;NO_X11;HW_THREADS;STDC_HEADERS;WIN32_LEAN_AND_MEAN;HAVE_SNPRINTF;ENABLE_TRACEJIT=1;FEATURE_NANOJIT;JS_TRACER;NANOJIT_ARCH=X64;AVMPLUS_WIN32;AVMPLUS_AMD64;AVMPLUS_64BIT;_WIN64;_AMD64_</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <SDLCheck>false</SDLCheck>
@@ -165,6 +166,7 @@
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <AdditionalDependencies>winmm.lib</AdditionalDependencies>
@@ -217,6 +219,17 @@
     <ClCompile Include="..\..\..\jswrapper.cpp" />
     <ClCompile Include="..\..\..\jsxdrapi.cpp" />
     <ClCompile Include="..\..\..\jsxml.cpp" />
+    <ClCompile Include="..\..\..\nanojit\Allocator.cpp" />
+    <ClCompile Include="..\..\..\nanojit\Assembler.cpp" />
+    <ClCompile Include="..\..\..\nanojit\avmplus.cpp" />
+    <ClCompile Include="..\..\..\nanojit\CodeAlloc.cpp" />
+    <ClCompile Include="..\..\..\nanojit\Containers.cpp" />
+    <ClCompile Include="..\..\..\nanojit\Fragmento.cpp" />
+    <ClCompile Include="..\..\..\nanojit\LIR.cpp" />
+    <ClCompile Include="..\..\..\nanojit\NativeX64.cpp" />
+    <ClCompile Include="..\..\..\nanojit\njconfig.cpp" />
+    <ClCompile Include="..\..\..\nanojit\RegAlloc.cpp" />
+    <ClCompile Include="..\..\..\nanojit\VMPI.cpp" />
     <ClCompile Include="..\..\..\prmjtime.cpp" />
   </ItemGroup>
   <ItemGroup>

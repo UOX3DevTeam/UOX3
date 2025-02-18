@@ -98,13 +98,27 @@ target_sources(jscript
         ../../jsscript.cpp
         ../../jsstr.cpp
         ../../jstask.cpp
-        ../../jstracer.cpp
         ../../jstypedarray.cpp
         ../../jsutil.cpp
         ../../jswrapper.cpp
         ../../jsxdrapi.cpp
         ../../jsxml.cpp
         ../../prmjtime.cpp
+# NanoJit
+        ../../jstracer.cpp
+        ../../nanojit/Assembler.cpp
+        ../../nanojit/Allocator.cpp
+        ../../nanojit/CodeAlloc.cpp
+        ../../nanojit/Containers.cpp
+        ../../nanojit/Fragmento.cpp
+        ../../nanojit/LIR.cpp
+        ../../nanojit/njconfig.cpp
+        ../../nanojit/RegAlloc.cpp
+        ../../nanojit/avmplus.cpp
+        ../../nanojit/Native$(NANOJIT_ARCH).cpp
+        ../../nanojit/jsbuiltins.cpp
+        ../../nanojit/VMPI.cpp
+# Headers
         ../../jsapi.h
         ../../jsarena.h
         ../../jsarray.h
@@ -172,6 +186,21 @@ target_sources(jscript
         ../../jsxdrapi.h
         ../../jsxml.h
         ../../prmjtime.h
+# NanoJIT
+        ../../nanojit/Assembler.h
+        ../../nanojit/Allocator.h
+        ../../nanojit/CodeAlloc.h
+        ../../nanojit/Containers.h
+        ../../nanojit/LIR.h
+        ../../nanojit/avmplus.h
+        ../../nanojit/Fragmento.h
+        ../../nanojit/Native.h
+        ../../nanojit/Native$(NANOJIT_ARCH).h
+        ../../nanojit/njconfig.h
+        ../../nanojit/RegAlloc.h
+        ../../nanojit/nanojit.h
+        ../../nanojit/VMPI.h
+# OpCode tables
         ../../builtins.tbl
         ../../jitstats.tbl
         ../../jskeyword.tbl
@@ -210,6 +239,7 @@ if (WIN32)
         ENABLE_TRACEJIT=1
         FEATURE_NANOJIT
         JS_TRACER
+        AVMPLUS_WIN32
         $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},4>:NANOJIT_ARCH=i386>
         $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},4>:AVMPLUS_IA32>
         $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:NANOJIT_ARCH=X64>
@@ -218,12 +248,12 @@ if (WIN32)
         $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:_WIN64>
         $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:_AMD64_>
     )
-    
+
     target_compile_options( jscript PRIVATE
         /W3
         /sdl-
-        /wd4244 
-        /wd4267 
+        /wd4244
+        /wd4267
         /wd4047
         /wd4146
         /wd4334
@@ -240,7 +270,7 @@ target_link_libraries(jscript PRIVATE
     $<$<PLATFORM_ID:Windows>:advapi32>
 )
 
-    
+
 else()
 
     target_compile_definitions( jscript PRIVATE
@@ -254,7 +284,7 @@ else()
         HAVE_LOCALTIME_R
         AVMPLUS_UNIX
     )
-    
+
     target_compile_options( jscript PRIVATE
         -Wno-shift-negative-value
         -Wno-implicit-function-declaration

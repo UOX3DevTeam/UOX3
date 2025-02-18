@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="NanoJIT">
+      <UniqueIdentifier>{1e5edee3-56cb-4908-9757-e58c728e0bb9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\jsapi.cpp">
@@ -129,9 +132,6 @@
     <ClCompile Include="..\..\..\jsoplengen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jstracer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\jsgcchunk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -155,6 +155,42 @@
     </ClCompile>
     <ClCompile Include="..\..\..\jswrapper.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\nanojit\Allocator.cpp">
+      <Filter>NanoJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\nanojit\Assembler.cpp">
+      <Filter>NanoJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\nanojit\avmplus.cpp">
+      <Filter>NanoJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\nanojit\CodeAlloc.cpp">
+      <Filter>NanoJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\nanojit\Containers.cpp">
+      <Filter>NanoJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\nanojit\Fragmento.cpp">
+      <Filter>NanoJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\nanojit\LIR.cpp">
+      <Filter>NanoJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\nanojit\NativeX64.cpp">
+      <Filter>NanoJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\nanojit\njconfig.cpp">
+      <Filter>NanoJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\nanojit\RegAlloc.cpp">
+      <Filter>NanoJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\nanojit\VMPI.cpp">
+      <Filter>NanoJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jstracer.cpp">
+      <Filter>NanoJIT</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -339,6 +375,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\jswrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jspropertycache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jspropertycacheinlines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jspropertytree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jsproxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
