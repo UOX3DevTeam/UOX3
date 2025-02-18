@@ -162,7 +162,7 @@ std::string JSEncapsulate::ClassName( void )
 			}
 			if( obj2 != nullptr )
 			{
-				JSClass *mClass = OBJ_GET_CLASS( cx, obj2 );
+				JSClass* mClass = JS_GetClass(obj2);
 				if( mClass->flags & JSCLASS_IS_EXTENDED )	// extended class
 				{
 					JSExtendedClass *mClass2 = reinterpret_cast<JSExtendedClass *>( mClass ); // (JSExtendedClass *)mClass;
