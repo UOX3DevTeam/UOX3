@@ -66,7 +66,7 @@
     <ClCompile Include="..\..\source\uox3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-<!-- Script group -->
+    <!-- Script group -->
     <ClCompile Include="..\..\source\cServerData.cpp">
       <Filter>Source Files\Script</Filter>
     </ClCompile>
@@ -82,8 +82,7 @@
     <ClCompile Include="..\..\source\ssection.cpp">
       <Filter>Source Files\Script</Filter>
     </ClCompile>
-
-<!-- Base Objects group -->
+    <!-- Base Objects group -->
     <ClCompile Include="..\..\source\boats.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
@@ -117,8 +116,7 @@
     <ClCompile Include="..\..\source\ObjectFactory.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
-
-<!-- Subsystem group -->
+    <!-- Subsystem group -->
     <ClCompile Include="..\..\source\books.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
@@ -209,8 +207,7 @@
     <ClCompile Include="..\..\source\worldmain.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
-
-<!-- Other group -->
+    <!-- Other group -->
     <ClCompile Include="..\..\source\ai.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
@@ -256,8 +253,7 @@
     <ClCompile Include="..\..\source\pcmanage.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
-
-<!-- JS Engine group -->
+    <!-- JS Engine group -->
     <ClCompile Include="..\..\source\CJSEngine.cpp">
       <Filter>Source Files\JS Engine</Filter>
     </ClCompile>
@@ -279,8 +275,7 @@
     <ClCompile Include="..\..\source\UOXJSPropertyFuncs.cpp">
       <Filter>Source Files\JS Engine</Filter>
     </ClCompile>
-
-<!-- Network group -->
+    <!-- Network group -->
     <ClCompile Include="..\..\source\CPacketReceive.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
@@ -293,8 +288,7 @@
     <ClCompile Include="..\..\source\IP4Address.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
-
-<!-- Utility group -->
+    <!-- Utility group -->
     <ClCompile Include="..\..\source\StringUtility.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
@@ -304,8 +298,7 @@
     <ClCompile Include="..\..\source\EventTimer.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
-
-<!-- UOData group -->
+    <!-- UOData group -->
     <ClCompile Include="..\..\source\mapstuff.cpp">
       <Filter>Source Files\UOData</Filter>
     </ClCompile>
@@ -315,14 +308,12 @@
     <ClCompile Include="..\..\source\UOPData.cpp">
       <Filter>Source Files\UOData</Filter>
     </ClCompile>
-
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\uox3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-        
-<!-- Script group -->
+    <!-- Script group -->
     <ClInclude Include="..\..\source\cServerData.h">
       <Filter>Header Files\Script</Filter>
     </ClInclude>
@@ -338,8 +329,7 @@
     <ClInclude Include="..\..\source\ssection.h">
       <Filter>Header Files\Script</Filter>
     </ClInclude>
-
-<!-- Base Objects group -->
+    <!-- Base Objects group -->
     <ClInclude Include="..\..\source\cBaseObject.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
@@ -379,8 +369,7 @@
     <ClInclude Include="..\..\source\uoxstruct.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
-    
-<!-- Subsystem group -->
+    <!-- Subsystem group -->
     <ClInclude Include="..\..\source\books.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
@@ -409,9 +398,6 @@
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cWeather.hpp">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\gump.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\jail.h">
@@ -453,8 +439,7 @@
     <ClInclude Include="..\..\source\PartySystem.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
-    
-<!-- Other group -->
+    <!-- Other group -->
     <ClInclude Include="..\..\source\cdice.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
@@ -497,8 +482,7 @@
     <ClInclude Include="..\..\source\UOXStdHeaders.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    
-<!-- JS Engine group -->
+    <!-- JS Engine group -->
     <ClInclude Include="..\..\source\CJSEngine.h">
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
@@ -526,11 +510,10 @@
     <ClInclude Include="..\..\source\UOXJSPropertyFuncs.h">
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
-     <ClInclude Include="..\..\source\UOXJSPropertySpecs.h">
+    <ClInclude Include="..\..\source\UOXJSPropertySpecs.h">
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
-   
-<!-- Network group -->
+    <!-- Network group -->
     <ClInclude Include="..\..\source\CPacketReceive.h">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
@@ -543,20 +526,17 @@
     <ClInclude Include="..\..\source\IP4Address.hpp">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
-    
-    
-<!-- Utility group -->
+    <!-- Utility group -->
     <ClInclude Include="..\..\source\StringUtility.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\TimeUtility.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
-     <ClInclude Include="..\..\source\EventTimer.hpp">
+    <ClInclude Include="..\..\source\EventTimer.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
-    
-<!-- UOData group -->
+    <!-- UOData group -->
     <ClInclude Include="..\..\source\mapstuff.h">
       <Filter>Header Files\UOData</Filter>
     </ClInclude>
@@ -569,7 +549,6 @@
     <ClInclude Include="..\..\source\UOPData.hpp">
       <Filter>Header Files\UOData</Filter>
     </ClInclude>
-
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\assets\uox3.rc">
