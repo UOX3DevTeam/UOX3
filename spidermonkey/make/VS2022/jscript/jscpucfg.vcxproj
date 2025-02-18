@@ -55,7 +55,7 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\Local\media\Code\repos\UOX3\UOX3\make\cmake\..\..\assets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -125,7 +125,7 @@ popD</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="D:\Local\media\Code\repos\UOX3\UOX3\spidermonkey\jscpucfg.cpp" />
+    <ClCompile Include="..\..\..\jscpucfg.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
