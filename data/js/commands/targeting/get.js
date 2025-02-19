@@ -337,13 +337,13 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "HEALTHBONUS":
 		socket.SysMessage( ourItem.healthBonus );
 		break;
-	case "MANLEECH":
+	case "MANALEECH":
 		socket.SysMessage( ourItem.manaLeech );
 		break;
 	case "MANABONUS":
 		socket.SysMessage( ourItem.manaBonus );
 		break;
-	case "MAXSTAMINA":
+	case "STAMINALEECH":
 		socket.SysMessage( ourItem.staminaLeech );
 		break;
 	case "STAMINABONUS":
