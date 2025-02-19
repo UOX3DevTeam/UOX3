@@ -65,6 +65,14 @@ function onCallback0( socket, ourObj )
 		ourObj.intelligence = nVal;
 		okMsg( socket );
 		break;
+	case "HITCHANCE":
+		ourObj.hitChance = nVal;
+		okMsg( socket );
+		break;
+	case "DEFENSECHANCE":
+		ourObj.defenseChance = nVal;
+		okMsg( socket );
+		break;
 	case "FAME":
 		ourObj.fame = nVal;
 		okMsg( socket );
@@ -96,10 +104,6 @@ function onCallback0( socket, ourObj )
 		break;
 	case "RESISTPOISON":
 		ourObj.Resist( 7, nVal );
-		okMsg( socket );
-		break;
-	case "LOWERSTATREQ":
-		ourItem.lowerStatReq = nVal;
 		okMsg( socket );
 		break;
 	case "HP":
@@ -257,6 +261,14 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 
 	switch( uKey )
 	{
+	case "ARTIFACTRARITY":
+		ourItem.artifactRarity = nVal;
+		okMsg( socket );
+		break;
+	case "DURABILITYHPBONUS":
+		ourItem.durabilityHpBonus = nVal;
+		okMsg( socket );
+		break;
 	case "ID":
 		ourItem.id = nVal;
 		okMsg( socket );
@@ -440,6 +452,38 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		break;
 	case "DEF":
 		ourItem.Resist( 1, nVal );
+		okMsg( socket );
+		break;
+	case "LOWERSTATREQ":
+		ourItem.lowerStatReq = nVal;
+		okMsg( socket );
+		break;
+	case "HEALTHLEECH":
+		ourItem.healthLeech = nVal;
+		okMsg( socket );
+		break;
+	case "HEALTHBONUS":
+		ourItem.healthBonus = nVal;
+		okMsg( socket );
+		break;
+	case "MANALEECH":
+		ourItem.manaLeech = nVal;
+		okMsg( socket );
+		break;
+	case "MANABONUS":
+		ourItem.manaBonus = nVal;
+		okMsg( socket );
+		break;
+	case "STAMINALEECH":
+		ourItem.staminaLeech = nVal;
+		okMsg( socket );
+		break;
+	case "STAMINABONUS":
+		ourItem.staminaBonus = nVal;
+		okMsg( socket );
+		break;
+	case "KARMALOCK":
+		ourItem.karmaLock = nVal;
 		okMsg( socket );
 		break;
 	case "ARMORCLASS":
@@ -738,6 +782,10 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		break;
 	case "MAXSTAMINA":
 		ourChar.maxstamina = nVal;
+		okMsg( socket );
+		break;
+	case "STAMINA":
+		ourChar.stamina = nVal;
 		okMsg( socket );
 		break;
 	case "HUNGER":
