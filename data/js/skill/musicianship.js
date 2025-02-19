@@ -1,6 +1,6 @@
 function onUseChecked( pUser, iUsed )
 {
-	var wellPlayed = pUser.CheckSkill( 29, 0, 1000 );
+	var wellPlayed = pUser.CheckSkill( 29, 0, pUser.skillCaps.musicianship );
 	var soundID;
 	switch( iUsed.id )
 	{

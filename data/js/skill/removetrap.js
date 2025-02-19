@@ -81,7 +81,7 @@ function onCallback0( pSock, ourObj )
 			skillCheckModifier = iGloves.weight;
 		}
 
-		if( pUser.skills.removetrap >= iMoreZPart4 || pUser.CheckSkill( 48, ( iMoreZPart3 + skillCheckModifier ), 1000 ))
+		if( pUser.skills.removetrap >= iMoreZPart4 || pUser.CheckSkill( 48, ( iMoreZPart3 + skillCheckModifier ), pUser.skillCaps.removetrap ))
 		{
 			// You successfully render the trap harmless
 			pSock.SysMessage( GetDictionaryEntry( 2096, pSock.language ));

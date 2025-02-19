@@ -1304,7 +1304,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							double focusBonus = 0;
 							if(cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_AOS)
 							{
-								Skills->CheckSkill(( &mChar ), FOCUS, 0, 1000 ); // Check FOCUS for skill gain AOS
+								Skills->CheckSkill(( &mChar ), FOCUS, 0, mChar.GetSkillCap( FOCUS ) ); // Check FOCUS for skill gain AOS
 								focusBonus = ( 0.1 * mChar.GetSkill( FOCUS ) / 10);	// Bonus for focus
 							}
 
