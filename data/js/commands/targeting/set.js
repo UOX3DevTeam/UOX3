@@ -474,7 +474,7 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		ourItem.manaBonus = nVal;
 		okMsg( socket );
 		break;
-	case "MANSTAMINA":
+	case "MAXSTAMINA":
 		ourItem.staminaLeech = nVal;
 		okMsg( socket );
 		break;

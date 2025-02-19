@@ -343,7 +343,7 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "MANABONUS":
 		socket.SysMessage( ourItem.manaBonus );
 		break;
-	case "MANSTAMINA":
+	case "MAXSTAMINA":
 		socket.SysMessage( ourItem.staminaLeech );
 		break;
 	case "STAMINABONUS":
