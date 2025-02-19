@@ -4420,7 +4420,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 						UI16 skillCapValue = 0;
 						if( secs.size() == 3 )
 						{
-							auto skillCapValue = static_cast<UI16>( std::stoul( secs[2].substr( 0, secs[2].size() - 1 ), nullptr, 0 ));
+							skillCapValue = static_cast<UI16>( std::stoul( secs[2].substr( 0, secs[2].size() - 1 ), nullptr, 0 ));
 						}
 						SetSkillCap( skillCapValue, skillNum );
 						SetBaseSkill( skillValue, skillNum );
