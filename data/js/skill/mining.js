@@ -437,7 +437,7 @@ function onTimer( mChar, timerID )
 				if( miningType == 1 )
 				{
 					// Regular mining
-					if( mChar.CheckSkill( 45, 0, 1000 ))
+					if( mChar.CheckSkill( 45, 0, mChar.skillCaps.mining ))
 					{
 						// Remove some ore from the ore resource
 						mResource.oreAmount = mResource.oreAmount - 1;
@@ -511,7 +511,7 @@ function onTimer( mChar, timerID )
 				else if( miningType == 3 )
 				{
 					// Sand mining
-					if( mChar.CheckSkill( 45, 0, 1000 ))
+					if( mChar.CheckSkill( 45, 0, mChar.skillCaps.mining ))
 					{
 						// Remove some ore from the ore resource
 						mResource.oreAmount = mResource.oreAmount - 1;

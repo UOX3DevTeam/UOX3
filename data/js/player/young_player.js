@@ -190,14 +190,14 @@ function GiveYoungPlayerItems( pSock, pChar )
 function onTalk( pTalking, strSaid )
 {
 	if( !youngPlayerSystem )
-		return false;
+		return true;
 
 	if( strSaid == "" )
-		return false;
+		return true;
 
 	var pSock = pTalking.socket;
 	if( pSock == null )
-		return false;
+		return true;
 
 
 	var trigWordHandled = false;
@@ -211,7 +211,7 @@ function onTalk( pTalking, strSaid )
 			case 53: // I renounce my young player status
 				// Display renounce confirmation gump
 				ShowRenounceYoungGump( pSock, pTalking );
-				break;
+				return false;
 			default:
 				break;
 		}
@@ -226,6 +226,19 @@ function RevokeYoungStatus( pSock, pChar, revokeReason )
 	pSock.SysMessage( revokeReason );
 	pSock.SysMessage( GetDictionaryEntry( 18704, pSock.language )); // You are no longer considered a young player of Ultima Online, and are no longer subject to the limitations and benefits of being in that caste.
 	pChar.account.isYoung = false;
+	var playerAccount = pChar.account;
+	for( var i = 1; i <= 7; i++ )
+	{
+		// Construct the property name, e.g., "character1", "character2", etc.
+		var charKey = "character" + i;
+		var tempChar = playerAccount[charKey];
+
+		// Validate the character object before performing any actions
+		if( ValidateObject( tempChar ))
+		{
+			tempChar.RemoveScriptTrigger( 8001 );
+		}
+	}
 	pChar.Refresh();
 }
 

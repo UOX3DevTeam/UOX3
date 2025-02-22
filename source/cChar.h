@@ -244,6 +244,7 @@ protected:
 
 	SKILLVAL	baseskill[ALLSKILLS]; 	// Base skills without stat modifiers
 	SKILLVAL	skill[INTELLECT+1]; 	// List of skills (with stat modifiers)
+	SKILLVAL	skillCap[INTELLECT+1]; 	// List of skill caps for skills
 
 	LAYERLIST				itemLayers;
 	LAYERLIST_ITERATOR		layerCtr;
@@ -531,9 +532,11 @@ public:
 	void		SetTownpriv( SI08 newValue );
 
 	UI16		GetBaseSkill( UI08 skillToGet ) const;
+	UI16		GetSkillCap( UI08 skillToGet ) const;
 	UI16		GetSkill( UI08 skillToGet ) const;
 
 	void		SetBaseSkill( SKILLVAL newSkillValue, UI08 skillToSet );
+	void		SetSkillCap( SKILLVAL newSkillValue, UI08 skillToSet );
 	void		SetSkill( SKILLVAL newSkillValue, UI08 skillToSet );
 
 	UI16		GetDeaths( void ) const;		// can we die 4 billion times?!

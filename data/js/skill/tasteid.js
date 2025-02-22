@@ -105,7 +105,7 @@ function IdentifyPotionKeg( pUser, potionKeg )
 	else
 	{
 		// Player can gain skill up to 100.0 by taste identifying potion kegs
-		if( pUser.CheckSkill( 36, 0, 1000 ))
+		if( pUser.CheckSkill( 36, 0, pUser.skillCaps.tasteid ))
 		{
 			TasteItem( pUser, potionKeg, true );
 		}

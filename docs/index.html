@@ -7491,6 +7491,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Automatically add item to add-menu when said menu is generated. Needs to be combined with <span class="hl">insertaddmenuitems</span> tag in associated itemmenu inside UOX3/dfndata/ItemMenu.bulk.dfn (BROKEN)</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">artifactrarity</span>=<strong>[number]</strong><br>
+							A property used in Ultima Online to indicate the rarity level of an artifact item.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">ammo</span>=<strong>[id]</strong> or <strong>[id][color]</strong><br>
 							Used with ranged weapons to specify required ammo. Color is optional</p>
 						</div>
@@ -7549,6 +7553,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Adds custom JS string tag to character.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">durabilityhpbonus</span>=<strong>[number]</strong><br>
+							A property that increases an item's durability by a percentage</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">damage</span>=<strong>[lodamage hidamage]</strong><br>
 							Same as <strong>Att</strong> tag. Used to set minimum and maximum damage values for weapons</p>
 						</div>
@@ -7567,6 +7575,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						<div class="settingsDiv">
 							<p><span class="hl">defbonus</span>=<strong>[minDefenseBonus maxDefenseBonus]</strong><br>
 							Set defense/physical resistance bonus applied on top of standard def (maxDefenseBonus is optional, but if specified, randomizes). Should be applied <em>after</em> the def tag.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">defensechance</span>=<strong>[number]</strong><br>
+							A property that increases a character's chance to avoid incoming physical attacks by a percentage.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">dex</span>=<strong>[statpoints]</strong><br>
@@ -7591,6 +7603,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						<div class="settingsDiv">
 							<p><span class="hl">dye</span><br>
 							If tag is present, marks the item as dyeable (with dye tubs)</p>
+						</div>
+						<div class="settingsDiv">
+						<p><span class="hl">event</span>=<strong>[string]</strong><br>
+						A property that can be used to associatea an item with a custom server event. See 'decorate command script (js/commands/decorate.js).</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">elementresist</span>=<strong>[fire cold energy poison]</strong><br>
@@ -7629,8 +7645,20 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							If set to 1, marks item with elemental type Heat, which defines the type of damage dealt if it's a weapon</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">healthleech</span>=<strong>[number]</strong><br>
+							A property that grants a chance to convert a percentage of damage dealt into health for the attacker</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">healthbonus</span>=<strong>[number]</strong><br>
+							A property that provides a direct increase to a character’s maximum health</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">hidamage</span>=<strong>[hidamage]</strong><br>
 							Maximum damage value of a weapon (randomized between this and lodamage)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">hitchance</span>=<strong>[number]</strong><br>
+							A property that increases a character's chance to successfully land a physical attack on a target by percentage.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">hp</span>=<strong>[hitpoints]</strong> or <strong>[lowhp highhp]</strong><br>
@@ -7673,8 +7701,37 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Adds random loot to a container based on specified lootListID in UOX3/dfndata/items/lootlists.dfn</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">lowerstatreq</span>=<strong>[number]</strong><br>
+							A property that reduces the stat requirements needed to equip or use an item by a percentage.<br>
+							<ul>
+								<li>Lowers Strength on a item</li>
+								<li>Lowers Dexterity on a item</li>
+								<li>Lowers Intelligence on a item</li>
+							</ul></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">manaleech</span>=<strong>[number]</strong><br>
+							A property that grants a chance to convert a percentage of damage dealt into mana for the attacker.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">manabonus</span>=<strong>[number]</strong><br>
+							A property that provides a direct increase to a character’s maximum mana by a percentage.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">maxhp</span>=<strong>[hitpoints]</strong><br>
 							Set maximum hitpoints of item - generally used as durability for armor or items with a limited number of uses.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">maxitems</span>=<strong>[number]</strong><br>
+							Set a maximum amount of items a container can hold.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">maxrange</span>=<strong>[number]</strong><br>
+							Set item's maximum range - primarily used by throwing/archery weapons.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">maxuses</span>=<strong>[number]</strong><br>
+							Set item's max uses property</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">more</span>=<strong>[hex value]</strong><br>
@@ -7685,6 +7742,28 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 								<li>The <strong>more</strong> variable is used by books to specify which pre-defined book text to load from UOX3/dfndata/misc/books.dfn. Such books cannot be altered in-game.</li>
 								<li>Guildstones use a <strong>more</strong> value to store the ID/guild number of the guild it belongs to</li>
 								<li>House keys store the serial of the house they belong to in their <strong>more</strong> variable</li>
+							</ul></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">more0</span>=<strong>[more0]</strong><br>
+							 Generic property whose purpose changes depending on context/how it's used by different scripts. Can hold one large value (0 to 4294967295), or 4 small (0-255) values.<br>
+							<ul>
+								<li>Recall runes use more0 property to store instanceID of the marked location</li>
+								<li>Example: <strong>more0=51200</strong> or <strong>more0=0 0 244 13</strong></li>
+							</ul></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">more1</span>=<strong>[more1]</strong><br>
+							 Generic property whose purpose changes depending on context/how it's used by different scripts. Can hold one large value (0 to 4294967295), or 4 small (0-255) values.<br>
+							<ul>
+								<li>Example: <strong>more1=51200</strong> or <strong>more1=0 0 244 13</strong></li>
+							</ul></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">more2</span>=<strong>[more2]</strong><br>
+							 Generic property whose purpose changes depending on context/how it's used by different scripts. Can hold one large value (0 to 4294967295), or 4 small (0-255) values.<br>
+							<ul>
+								<li>Example: <strong>more2=51200</strong> or <strong>more2=0 0 244 13</strong></li>
 							</ul></p>
 						</div>
 						<div class="settingsDiv">
@@ -7765,6 +7844,22 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Set ID of race that a weapon will deal double damage against in combat</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">resistfire</span>=<strong>[amount]</strong> or <strong>[minamount maxamount]</strong><br>
+							Decreases damage from fire-based attacks.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">resistcold</span>=<strong>[amount]</strong> or <strong>[minamount maxamount]</strong><br>
+							Decreases damage from cold-based attacks.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">resistlighting</span>=<strong>[amount]</strong> or <strong>[minamount maxamount]</strong><br>
+							Decreases damage from energy-based attacks.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">resistpoison</span>=<strong>[amount]</strong> or <strong>[minamount maxamount]</strong><br>
+							Decreases damage from poison-based attacks.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">rain</span>=<strong>[0/1]</strong><br>
 							If set to 1, marks item with elemental type Rain, which defines the type of damage dealt if it's a weapon</p>
 						</div>
@@ -7805,6 +7900,27 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Set attack speed of weapon (higher is faster)</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">swingspeedincrease</span>=<strong>[number]</strong><br>
+							item and char property that increases base weapon swing speed by the specified percentage</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">stealable</span>=<strong>[0/1/2]</strong><br>
+							A property that determines under which conditions item can be stolen.<br>
+							<ul>
+								<li>0 = not stealable under any circumstances.</li>
+								<li>1 = stealable under normal circumstances</li>
+								<li>2 = stealable under all circumstances, even if locked down</li>
+							</ul></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">staminaleech</span>=<strong>[number]</strong><br>
+							A property that grants a chance to convert a percentage of damage dealt into stamina for the attacker.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">staminabonus</span>=<strong>[number]</strong><br>
+							A property that provides a direct increase to a character’s maximum stamina by percentage.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">spells</span>=<strong>[hex value for circles 1-4],[hex value for circles 5-8],[hex value - unused]</strong><br>
 							Define which spells a new spellbook starts out pre-filled with, using the following syntax: SPELLS=0x00000000,0x00000000,0x00000000<br>
 							<ul>
@@ -7830,6 +7946,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						<div class="settingsDiv">
 							<p><span class="hl">type</span>=<strong>[itemType]</strong><br>
 							Set itemType of item. See <a href="#itemtypes" title="UOX3 Documentation - Item Types">Item Types</a> section</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">usesleft</span>=<strong>[number]</strong><br>
+							Set item's property for remaining uses</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">value</span>=<strong>[buyValue sellValue]</strong><br>

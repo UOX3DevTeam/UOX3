@@ -354,6 +354,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "attacker",		CCP_ATTACKER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "raceGate",		CCP_RACEGATE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "skillLock",		CCP_SKILLLOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "skillCaps",		CCP_SKILLCAP,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "deaths",			CCP_DEATHS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "ownerCount",		CCP_OWNERCOUNT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "nextAct",		CCP_NEXTACT,		JSPROP_ENUMANDPERM, nullptr, nullptr },

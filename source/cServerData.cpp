@@ -151,7 +151,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SKILLLEVEL"s, 124},
 	{"SNOOPISCRIME"s, 125},
 	{"BOOKSDIRECTORY"s, 126},
-	//{"SERVERLIST"s, 127},
+	{"SKILLCAPSINGLE"s, 127},
 	{"PORT"s, 128},
 	{"ACCESSDIRECTORY"s, 129},
 	{"LOGSDIRECTORY"s, 130},
@@ -4987,6 +4987,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
 		ofsOutput << "SKILLLEVEL=" << static_cast<UI16>( SkillLevel() ) << '\n';
 		ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
+		ofsOutput << "SKILLCAPSINGLE=" << ServerSkillCapStatus() << '\n';
 		ofsOutput << "SKILLDELAY=" << static_cast<UI16>( ServerSkillDelayStatus() ) << '\n';
 		ofsOutput << "STATCAP=" << ServerStatCapStatus() << '\n';
 		ofsOutput << "STATSAFFECTSKILLCHECKS=" << ( StatsAffectSkillChecks() ? 1 : 0 ) << '\n';
@@ -6048,7 +6049,8 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 126:	 // BOOKSDIRECTORY
 			Directory( CSDDP_BOOKS, value );
 			break;
-		case 127:	 // SERVERLIST
+		case 127:	 // SKILLCAPSINGLE
+			ServerSkillCap( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
 			break;
 		case 128:	 // PORT
 			ServerPort( static_cast<UI16>( std::stoul( value, nullptr, 0 )));

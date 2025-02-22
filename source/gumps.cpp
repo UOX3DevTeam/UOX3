@@ -230,7 +230,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 			}
 			break;
 		case 61:	// seize townstone!
-			if( !Skills->CheckSkill( mChar, STEALING, 950, 1000 )	) // minimum 95.0 stealing
+			if( !Skills->CheckSkill( mChar, STEALING, 950, mChar->GetSkillCap( STEALING ) )	) // minimum 95.0 stealing
 			{
 				targetRegion = CalcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceId() );
 				if( targetRegion != nullptr )
@@ -2108,7 +2108,7 @@ bool CPIGumpChoice::Handle( void )
 		}
 		else
 		{
-			if( !Skills->CheckSkill( mChar, TRACKING, 0, 1000 ))
+			if( !Skills->CheckSkill( mChar, TRACKING, 0, mChar->GetSkillCap( TRACKING ) ))
 			{
 				tSock->SysMessage( 575 ); // You fail your attempt at tracking.
 				return true;

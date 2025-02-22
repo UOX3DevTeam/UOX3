@@ -11,7 +11,7 @@ function onSkill( pUser, objType, skillUsed )
 		var myInstrument = GetInstrument( pUser );
 		if( ValidateObject( myInstrument ) )
 		{
-			if( pUser.CheckSkill( 29, 0, 1000 ))
+			if( pUser.CheckSkill( 29, 0, pUser.skillCaps.peacemaking ))
 			{
 				PlayInstrument( pSock, myInstrument, true );
 				AreaCharacterFunction( "PeaceMakeArea", pUser, 15 );

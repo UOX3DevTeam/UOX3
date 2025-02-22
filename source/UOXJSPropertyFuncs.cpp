@@ -2037,6 +2037,12 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				JS_SetPrivate( cx, TempObject, gPriv );
 				*vp	= OBJECT_TO_JSVAL( TempObject );
 				break;
+			case CCP_SKILLCAP:
+				TempObject = JS_NewObject( cx, &UOXSkillsCap_class, nullptr, obj );
+				JS_DefineProperties( cx, TempObject, CSkillsProps );
+				JS_SetPrivate( cx, TempObject, gPriv );
+				*vp = OBJECT_TO_JSVAL( TempObject );
+				break;
 			case CCP_DEATHS:		*vp = INT_TO_JSVAL( gPriv->GetDeaths() );					break;
 			case CCP_OWNERCOUNT:	*vp = INT_TO_JSVAL( static_cast<UI08>( gPriv->GetOwnerCount() ));		break;
 			case CCP_NEXTACT:		*vp = INT_TO_JSVAL( gPriv->GetNextAct() );					break;
@@ -2551,6 +2557,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 			case CCP_RACEGATE:		gPriv->SetRaceGate( static_cast<RACEID>( encaps.toInt() ));	break;
 			case CCP_SKILLLOCK:																	break;
+			case CCP_SKILLCAP:																	break;
 			case CCP_DEATHS:		gPriv->SetDeaths( static_cast<UI16>( encaps.toInt() ));		break;
 			case CCP_NEXTACT:		gPriv->SetNextAct( static_cast<UI08>( encaps.toInt() ));	break;
 			case CCP_CELL:			gPriv->SetCell( static_cast<SI08>( encaps.toInt() ));		break;
@@ -3545,6 +3552,10 @@ JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	{
 		*vp = INT_TO_JSVAL( static_cast<UI08>( myChar->GetSkillLock( skillId )));
 	}
+	else if( myClass.ClassName() == "UOXSkillsCap" )
+	{
+		*vp = INT_TO_JSVAL( myChar->GetSkillCap( skillId ));
+	}
 
 	return JS_TRUE;
 }
@@ -3622,6 +3633,20 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		else
 		{
 			myChar->SetSkillLock( static_cast<SkillLock>( newSkillValue ), skillId );
+		}
+	}
+	else if( myClass.ClassName() == "UOXSkillsCap" )
+	{
+		if( skillId == ALLSKILLS )
+		{
+			for( i = 0; i < ALLSKILLS; ++i )
+			{
+				myChar->SetSkillCap( newSkillValue, i );
+			}
+		}
+		else
+		{
+			myChar->SetSkillCap( newSkillValue, skillId );
 		}
 	}
 

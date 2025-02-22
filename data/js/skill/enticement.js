@@ -84,7 +84,7 @@ function onCallback1( pSock, toFollow )
 				var myInstrument = GetInstrument( pUser );
 				if( ValidateObject( myInstrument ))
 				{
-					if( pUser.CheckSkill( 29, 0, 1000 ) && pUser.CheckSkill( 15, 0, 1000 ))
+					if( pUser.CheckSkill( 29, 0, pUser.skillCaps.musicianship ) && pUser.CheckSkill( 15, 0, pUser.skillCaps.enticement ))
 					{
 						PlayInstrument( pSock, myInstrument, true );
 						var pFollower = pSock.tempObj;
