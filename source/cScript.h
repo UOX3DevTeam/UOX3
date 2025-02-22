@@ -97,7 +97,6 @@ enum ScriptEvent
 	seOnCombatStart,		//	**	allows overriding what happens when combat is initiated
 	seOnAICombatTarget,		//	**	allows overriding target selection taking place for regular AI behaviours
 	seOnCombatEnd,			//	**	allows overriding what happens when combat ends
-	seOnCombatHit,			//	**	allows overriding what happens when combat hits
 	seOnDeathBlow,
 	seOnCombatDamageCalc,
 	seOnDamage,
