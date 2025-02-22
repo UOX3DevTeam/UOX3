@@ -28,7 +28,7 @@ function onLogin( socket, pChar )
         pChar.AddScriptTrigger( 2508 );
     }
 
-    if( youngpLayerSystem && pChar.account.isYoung )
+	if( youngPlayerSystem && pChar.account.isYoung )
     {
   		// Attach "Young" player script, if the account is young and does not have script
 		if( !pChar.HasScriptTrigger( 8001 ))
@@ -84,9 +84,10 @@ function onLogout( pSock, pChar )
 function onCreatePlayer( pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
 
 	// If player character is created on a Young account, give them Young-specific items
-	if( pChar.account.isYoung )
+	if( youngPlayerSystem && pChar.account.isYoung )
 	{
 		// Attach "Young" player script, if the account is young and does not have script
 		if( !pChar.HasScriptTrigger( 8001 ))
@@ -95,6 +96,11 @@ function onCreatePlayer( pChar )
 		}
 
 		TriggerEvent( 8001, "GiveYoungPlayerItems", pChar.socket, pChar );
+	}
+	else if( !youngPlayerSystem )
+	{
+		// Remove young player script if system is inactive
+		pChar.RemoveScriptTrigger( 8001 );
 	}
 
 	//Attach the special moves Book
