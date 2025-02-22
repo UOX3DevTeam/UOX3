@@ -33,6 +33,7 @@ private:
 	SI16	CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc );
 
 	void	PlaySwingAnimations( CChar *mChar );
+	void	PlayHitAnimations( CChar *mChar );
 	void	PlayHitSoundEffect( CChar *mChar, CItem *mWeapon );
 	void	PlayMissedSoundEffect( CChar *mChar );
 
