@@ -1,5 +1,5 @@
 16/02/2025 - Dragon Slayer
-	Added Missing PlayHitAnimation (combat.cpp).
+	Characters will now play an impact-animation when they get hit in combat.
 
 08/02/2025 - Dragon Slayer
 	Updated Item DFN Documents with: artifactrarity, durabilityhpbonus, defensechance, event, healthleech, healthbonus, hitchance, lowerstatreq, manaleech, manabonus, maxitems, maxrange, maxuses, more0, more1, more2, resistfire, resistcold, resistlighting, resistpoison, swingspeedincrease, stealable, staminaleech, staminabonus, usesleft
