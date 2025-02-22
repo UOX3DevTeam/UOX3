@@ -190,14 +190,14 @@ function GiveYoungPlayerItems( pSock, pChar )
 function onTalk( pTalking, strSaid )
 {
 	if( !youngPlayerSystem )
-		return false;
+		return true;
 
 	if( strSaid == "" )
-		return false;
+		return true;
 
 	var pSock = pTalking.socket;
 	if( pSock == null )
-		return false;
+		return true;
 
 
 	var trigWordHandled = false;
@@ -211,7 +211,7 @@ function onTalk( pTalking, strSaid )
 			case 53: // I renounce my young player status
 				// Display renounce confirmation gump
 				ShowRenounceYoungGump( pSock, pTalking );
-				break;
+				return false;
 			default:
 				break;
 		}

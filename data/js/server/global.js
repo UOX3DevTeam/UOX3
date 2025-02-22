@@ -3,6 +3,7 @@
 function onLogin( socket, pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
 
 	// Display Admin Welcome Gump for characters on admin account, until a choice has been made
 	if( pChar.accountNum == 0 )
@@ -27,7 +28,7 @@ function onLogin( socket, pChar )
         pChar.AddScriptTrigger( 2508 );
     }
 
-    if( pChar.account.isYoung )
+    if( youngpLayerSystem && pChar.account.isYoung )
     {
   		// Attach "Young" player script, if the account is young and does not have script
 		if( !pChar.HasScriptTrigger( 8001 ))
@@ -37,7 +38,12 @@ function onLogin( socket, pChar )
 
     	// Check if "Young" player still meets requirement for being considered young
     	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
-    }
+	}
+	else if( !youngPlayerSystem )
+	{
+		// Remove young player script if system is inactive
+		pChar.RemoveScriptTrigger( 8001 );
+	}
 
 	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))// Attach the special moves Book
 	{
