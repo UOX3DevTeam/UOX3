@@ -3109,7 +3109,7 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 
 	if( myClass.ClassName() == "UOXChar" )
 	{
-		CChar *myChar = static_cast<CChar *>( myClass.toObject() );
+		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError(cx, "Invalid char for HasSpell");
@@ -3160,7 +3160,7 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 	else if( myClass.ClassName() == "UOXItem" )
 	{
-		CItem *myItem = static_cast<CItem *>( myClass.toObject() );
+		CItem *myItem = static_cast<CItem*>( myClass.toObject() );
 		if( !ValidateObject( myItem ))
 		{
 			ScriptError(cx, "Invalid item for HasSpell");

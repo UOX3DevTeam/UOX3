@@ -2728,19 +2728,19 @@ bool CMagic::HasSpell( CItem *book, SI32 spellNum )
 	if( !ValidateObject( book ))
 		return false;
 
-	// Validate spell range for the book type
-	if ((book->GetType() == IT_SPELLBOOK && (spellNum < 1 || spellNum > 64)) ||
-		(book->GetType() == IT_PALADINBOOK && (spellNum < 201 || spellNum > 210)) ||
-		(book->GetType() == IT_NECROBOOK && (spellNum < 101 || spellNum > 117)))
+	// Validate spell range for the book type 201 210
+	if(( book->GetType() == IT_SPELLBOOK && ( spellNum < 1 || spellNum > 64 )) ||
+		( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
+		( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
 	{
-		Console.Error(oldstrutil::format("ERROR: HasSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType()));
+		Console.Error( oldstrutil::format("ERROR: HasSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
 		return false;
 	}
 
 	// Adjust spell number for different book types
-	if (book->GetType() == IT_PALADINBOOK)
+	if( book->GetType() == IT_PALADINBOOK )
 		spellNum -= 200;
-	else if (book->GetType() == IT_NECROBOOK)
+	else if( book->GetType() == IT_NECROBOOK )
 		spellNum -= 100;
 
 	// Determine which word and bit to check
@@ -2752,10 +2752,10 @@ bool CMagic::HasSpell( CItem *book, SI32 spellNum )
 		return false;
 	}
 
-	UI32 sourceAmount = book->GetSpell(static_cast<UI08>(wordNum));
+	UI32 sourceAmount = book->GetSpell( static_cast<UI08>( wordNum ));
 	UI32 flagToCheck = 1 << bitNum;
 
-	return (( sourceAmount & flagToCheck ) == flagToCheck);
+	return (( sourceAmount & flagToCheck ) == flagToCheck );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2888,10 +2888,10 @@ void CMagic::SpellBook( CSocket *mSock )
 	}
 
 	// Determine the type of spellbook
-	bool isPaladinBook = (spellBook->GetType() == IT_PALADINBOOK);
-	bool isNecroBook = (spellBook->GetType() == IT_NECROBOOK);
-	int startSpell = isPaladinBook ? 201 : (isNecroBook ? 101 : 1);
-	int endSpell = isPaladinBook ? 210 : (isNecroBook ? 117 : 64);
+	bool isPaladinBook = ( spellBook->GetType() == IT_PALADINBOOK );
+	bool isNecroBook = ( spellBook->GetType() == IT_NECROBOOK );
+	int startSpell = isPaladinBook ? 201 : ( isNecroBook ? 101 : 1 );
+	int endSpell = isPaladinBook ? 210 : ( isNecroBook ? 117 : 64 );
 
 	// Initialize spellsList
 	UI08 spellsList[70] = {0}; // Covers maximum spells for fallback logic
@@ -2945,7 +2945,7 @@ void CMagic::SpellBook( CSocket *mSock )
 
 		for( int i = 0; i < ( endSpell - startSpell + 1 ); ++i )
 		{
-			if (spellsList[i])
+			if( spellsList[i] )
 			{
 				mItems.Add( runningCounter++, 0x41000000 + ( startSpell + i ), containerSerial, startSpell + i );
 			}
@@ -3236,7 +3236,7 @@ bool CMagic::CheckBook( int circle, int spellOffset, CItem* book )
 	else if( book->GetType() == IT_NECROBOOK )
 		baseSpellNum = 101;
 
-	int spellNum = (( circle - 1 ) * 8 ) + spellOffset + baseSpellNum;
+    int spellNum = (( circle - 1 ) * 8 ) + spellOffset + baseSpellNum;
 
 	bool result = HasSpell( book, spellNum );
 	return result;
