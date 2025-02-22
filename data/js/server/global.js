@@ -97,11 +97,6 @@ function onCreatePlayer( pChar )
 
 		TriggerEvent( 8001, "GiveYoungPlayerItems", pChar.socket, pChar );
 	}
-	else if( !youngPlayerSystem )
-	{
-		// Remove young player script if system is inactive
-		pChar.RemoveScriptTrigger( 8001 );
-	}
 
 	//Attach the special moves Book
 	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))
