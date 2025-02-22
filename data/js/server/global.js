@@ -28,7 +28,7 @@ function onLogin( socket, pChar )
         pChar.AddScriptTrigger( 2508 );
     }
 
-    if( youngpLayerSystem && pChar.account.isYoung )
+	if( youngPlayerSystem && pChar.account.isYoung )
     {
   		// Attach "Young" player script, if the account is young and does not have script
 		if( !pChar.HasScriptTrigger( 8001 ))
@@ -84,9 +84,10 @@ function onLogout( pSock, pChar )
 function onCreatePlayer( pChar )
 {
 	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
 
 	// If player character is created on a Young account, give them Young-specific items
-	if( pChar.account.isYoung )
+	if( youngPlayerSystem && pChar.account.isYoung )
 	{
 		// Attach "Young" player script, if the account is young and does not have script
 		if( !pChar.HasScriptTrigger( 8001 ))
