@@ -2400,7 +2400,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			DefenseChanceIncreaseCap( cwmWorldState->ServerData()->DefenseChanceIncreaseCap() );
 			HitChanceIncrease( toCopy.GetHitChance() );
 			SwingSpeedIncrease( toCopy.GetSwingSpeedIncrease() );
-			DamageChanceIncrease( 0 );
+			DamageChanceIncrease( toCopy.GetDamageIncrease() );
 			LowerReagentCost( 0 );
 			SpellDamageIncrease( 0 );
 			FasterCastRecovery( 0 );

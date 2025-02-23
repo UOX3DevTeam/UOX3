@@ -139,6 +139,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					Console.Warning( oldstrutil::format( "Invalid data found in ATT/DAMAGE tag inside item script [%s]", sectionId.c_str() ));
 				}
 				break;
+			case DFNTAG_DAMAGEINCREASE:	applyTo->SetDamageIncrease( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_AC:				applyTo->SetArmourClass( static_cast<UI08>( ndata ));	break;
 			case DFNTAG_HEALTHLEECH:	applyTo->SetHealthLeech( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_STAMINALEECH:	applyTo->SetStaminaLeech( static_cast<SI16>( ndata ));		break;

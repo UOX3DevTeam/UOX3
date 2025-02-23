@@ -1,3 +1,8 @@
+23/02/2025 - Dragon Slayer
+	Added new DFN tags for Items/Npcs:
+	DAMAGEINCREASE=# // This adds extra damage percent to the total base damage.
+	These are also available as JS Engine object propertie: .damageIncrease
+
 22/02/2025 - Dragon Slayer
 	Added UOKr Extended Status bar gump packets.
 	Added New INI settings: PHYSICALRESISTCAP, FIRERESISTCAP, COLDRESISTCAP, POISONRESISTCAP, ENGERYRESISTCAP, DEFENSECHANCEINCREASECAP. Set he default cap for ch resist  defense chance increase.

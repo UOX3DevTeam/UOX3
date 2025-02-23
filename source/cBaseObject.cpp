@@ -106,6 +106,8 @@ const SI16			DEFBASE_HEALTHBONUS = 0;
 const SI16			DEFBASE_STAMINABONOS = 0;
 const SI16			DEFBASE_MANABONUS = 0;
 
+const SI16			DEFBASE_DAMAGEiNCREASE = 0;
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
 //|	Date		-	26 July, 2000
@@ -123,7 +125,7 @@ in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN ),
 healthBonus( DEFBASE_HEALTHBONUS ),staminaBonus( DEFBASE_STAMINABONOS ), manaBonus( DEFBASE_MANABONUS ), hitChance( DEFBASE_HITCHANCE ), defenseChance( DEFBASE_DEFENSECHANCE ),
-healthLeech( DEFBASE_HEALTHLEECH ), staminaLeech( DEFBASE_STAMINALEECH ), manaLeech( DEFBASE_MANALEECH ), swingSpeedIncrease( DEFBASE_SWINGSPEEDINCREASE )
+healthLeech( DEFBASE_HEALTHLEECH ), staminaLeech( DEFBASE_STAMINALEECH ), manaLeech( DEFBASE_MANALEECH ), swingSpeedIncrease( DEFBASE_SWINGSPEEDINCREASE ), damageIncrease( DEFBASE_DAMAGEiNCREASE )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
@@ -806,7 +808,7 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Intelligence=" + std::to_string( intelligence ) + "," + std::to_string( temp_in2 ) + newLine;
 	outStream << "Strength=" + std::to_string( strength ) + "," + std::to_string( temp_st2 ) + newLine;
 	outStream << "HitPoints=" + std::to_string( hitpoints ) + newLine;
-	outStream << "ExtPropCommon=" + std::to_string( GetHitChance() ) + "," + std::to_string( GetDefenseChance() ) + "," + std::to_string( GetSwingSpeedIncrease() )+ newLine;
+	outStream << "ExtPropCommon=" + std::to_string( GetHitChance() ) + "," + std::to_string( GetDefenseChance() ) + "," + std::to_string( GetSwingSpeedIncrease() ) + "," + std::to_string( GetDamageIncrease() ) + newLine;
 	outStream << "Race=" + std::to_string( race ) + newLine;
 	outStream << "Visible=" + std::to_string( visible ) + newLine;
 	outStream << "Disabled=" << ( IsDisabled() ? "1" : "0" ) << newLine;
@@ -1644,6 +1646,27 @@ void CBaseObject::SetSwingSpeedIncrease( SI16 newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetDamageIncrease()
+//|					CBaseObject::SetDamageIncrease()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the item's Damagae Bonus property (in percentage), which 
+//|					adjusts the base Damage of the equipped weapon, or characters
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetDamageIncrease( void ) const
+{
+	return damageIncrease;
+}
+void CBaseObject::SetDamageIncrease( SI16 newValue )
+{
+	damageIncrease = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetStrength2()
 //|					CBaseObject::SetStrength2()
 //o------------------------------------------------------------------------------------------------o
@@ -1864,6 +1887,16 @@ void CBaseObject::IncIntelligence( SI16 toInc )
 void CBaseObject::IncSwingSpeedIncrease( SI16 toInc )
 {
 	SetSwingSpeedIncrease( swingSpeedIncrease + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncDamageIncrease()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Regen Mana Points value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncDamageIncrease( SI16 toInc )
+{
+	SetDamageIncrease( damageIncrease + toInc );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2091,6 +2124,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 					SetHitChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
 					SetDefenseChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
 					SetSwingSpeedIncrease( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+					SetDamageIncrease( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 )));\
 				}
 				rValue = true;
 			}
@@ -2813,6 +2847,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetHitChance( GetHitChance() );
 	target->SetDefenseChance( GetDefenseChance() );
 	target->SetSwingSpeedIncrease( GetSwingSpeedIncrease() );
+	target->SetDamageIncrease( GetDamageIncrease() );
 	target->SetKarma( karma );
 	target->SetFame( fame );
 	target->SetKills( kills );
