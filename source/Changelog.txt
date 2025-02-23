@@ -1,4 +1,4 @@
-17/02/2025 - Dragon Slayer
+21/02/2025 - Dragon Slayer
 	Added new save/load tags: ExtPropCombat, ExtPropDefense,ExtPropStats, ExtPropMisc, ExtPropCommon. for the AOS Properties that are being added.
 
 16/02/2025 - Dragon Slayer
