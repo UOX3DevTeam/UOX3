@@ -7812,6 +7812,13 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
+			if( cItem.GetDamageIncrease() > 0 )
+			{
+				tempEntry.stringNum = 1060401; // damage increase ~1_val~%
+				tempEntry.ourText = oldstrutil::number( cItem.GetDamageIncrease() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
 			if( cItem.GetHitChance() > 0 )
 			{
 				tempEntry.stringNum = 1060415; // hit chance increase ~1_val~%
