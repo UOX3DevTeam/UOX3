@@ -2388,8 +2388,8 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			DamageMax( Combat->CalcHighDamage( &toCopy ));
 			TithingPoints( 0 );
 		}
-        if( extended6 )
-        {
+		if( extended6 )
+		{
 			PhysicalResistCap( cwmWorldState->ServerData()->PhysicalResistCap() );
 			FireResistCap( cwmWorldState->ServerData()->FireResistCap() );
 			ColdResistCap( cwmWorldState->ServerData()->ColdResistCap());
@@ -2406,7 +2406,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			FasterCastRecovery( 0 );
 			FasterCasting( 0 );
 			LowerManaCost( 0 );
-        }
+		}
 	}
 }
 void CPStatWindow::InternalReset( void )

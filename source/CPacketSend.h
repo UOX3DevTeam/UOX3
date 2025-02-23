@@ -529,16 +529,16 @@ public:
 	virtual void	ColdResistCap( UI16 value );
 	virtual void	PoisonResistCap( UI16 value );
 	virtual void	EnergyResistCap( UI16 value );
-    virtual void	HitChanceIncrease( UI16 value );
-    virtual void	SwingSpeedIncrease( UI16 value );
-    virtual void	DamageChanceIncrease( UI16 value );
-    virtual void	LowerReagentCost( UI16 value );
-    virtual void    DefenseChanceIncrease( UI16 value );
-    virtual void    DefenseChanceIncreaseCap( UI16 value );
-    virtual void    SpellDamageIncrease( UI16 value );
-    virtual void    FasterCastRecovery( UI16 value );
-    virtual void    FasterCasting( UI16 value );
-    virtual void    LowerManaCost( UI16 value );
+	virtual void	HitChanceIncrease( UI16 value );
+	virtual void	SwingSpeedIncrease( UI16 value );
+	virtual void	DamageChanceIncrease( UI16 value );
+	virtual void	LowerReagentCost( UI16 value );
+	virtual void    DefenseChanceIncrease( UI16 value );
+	virtual void    DefenseChanceIncreaseCap( UI16 value );
+	virtual void    SpellDamageIncrease( UI16 value );
+	virtual void    FasterCastRecovery( UI16 value );
+	virtual void    FasterCasting( UI16 value );
+	virtual void    LowerManaCost( UI16 value );
 };
 
 class CPIdleWarning : public CPUOXBuffer
