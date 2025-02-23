@@ -1801,7 +1801,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "MaxItems=" + std::to_string( GetMaxItems() ) + newLine;
 	outStream << "MaxHP=" + std::to_string( GetMaxHP() ) + newLine;
 	outStream << "ExtPropCombat=0,0,0,0,0,0,0,0,0,0,0,0,0,0," + std::to_string( GetHealthLeech() ) + "," + std::to_string( GetStaminaLeech() ) + "," + std::to_string( GetManaLeech() ) + newLine;
-	outStream << "ExtPropDefense=0,0,0,0,0,0,0" + std::to_string( GetDurabilityHpBonus() ) + newLine;
+	outStream << "ExtPropDefense=0,0,0,0,0,0,0," + std::to_string( GetDurabilityHpBonus() ) + newLine;
 	outStream << "ExtPropStats=0,0,0," + std::to_string( GetHealthBonus() ) + "," + std::to_string( GetStaminaBonus() ) + "," + std::to_string( GetManaBonus() ) + ",0,0,0" + newLine;
 	outStream << "ExtPropMisc=0,"+ std::to_string( GetLowerStatReq() ) + ",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0," + std::to_string( GetArtifactRarity() ) + newLine;
 	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
@@ -1941,27 +1941,39 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "EXTPROPCOMBAT" )
 				{
-					SetHealthLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
-					SetStaminaLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
-					SetManaLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+					if( data.find( "," ) != std::string::npos )
+					{
+						SetHealthLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+						SetStaminaLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+						SetManaLeech( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+					}
 					rValue = true;
 				}
 				else if( UTag == "EXTPROPDEFENSE" )
 				{
-					SetDurabilityHpBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					if( data.find( "," ) != std::string::npos )
+					{
+						SetDurabilityHpBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[8], "//" )), nullptr, 0 )));
+					}
 					rValue = true;
 				}
 				else if( UTag == "EXTPROPSTATS" )
 				{
-				    SetHealthBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
-				    SetStaminaBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
-				    SetManaBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+					if( data.find( "," ) != std::string::npos )
+					{
+						SetHealthBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0 )));
+						SetStaminaBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0 )));
+						SetManaBonus( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0 )));
+					}
 					rValue = true;
 				}
 				else if( UTag == "EXTPROPMISC" )
 				{
-					SetLowerStatReq( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					SetArtifactRarity( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					if( data.find( "," ) != std::string::npos )
+					{
+						SetLowerStatReq( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+						SetArtifactRarity( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[21], "//" )), nullptr, 0 )));
+					}
 					rValue = true;
 				}
 				break;
