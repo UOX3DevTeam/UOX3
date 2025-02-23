@@ -1,3 +1,6 @@
+17/02/2025 - Dragon Slayer
+	Added new save/load tags: ExtPropCombat, ExtPropDefense,ExtPropStats, ExtPropMisc, ExtPropCommon. for the AOS Properties that are being added.
+
 16/02/2025 - Dragon Slayer
 	Characters will now play an impact-animation when they get hit in combat.
 	Removed onCombatHit JS Event, as it's redundant after updates to onAttack
