@@ -1745,6 +1745,50 @@ void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::PlayHitAnimations()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Plays the hit-animation for specified character
+//o------------------------------------------------------------------------------------------------o
+void CHandleCombat::PlayHitAnimations( CChar *mChar )
+{
+	UI16 charId = mChar->GetId();
+	UI08 hitAnim = 0;
+	UI08 hitAnimLength = 0;
+
+	if( mChar->IsOnHorse() )
+	{
+		return;
+	}
+
+	if( !cwmWorldState->creatures[charId].IsHuman() )
+	{
+		// Sea Creatures/Animals - always use old animation packet
+		if( cwmWorldState->creatures[charId].IsAmphibian() || cwmWorldState->creatures[charId].IsAnimal())
+		{
+			hitAnim = ACT_ANIMAL_GETHIT;
+			hitAnimLength = 5;
+		}
+		else // Monsters - always use old animation packet
+		{
+			hitAnim = ACT_MONSTER_IMPACT;
+			hitAnimLength = 4;
+		}
+
+		Effects->PlayCharacterAnimation( mChar, hitAnim, 0, hitAnimLength );
+	}
+	else if( mChar->GetBodyType() == BT_GARGOYLE || cwmWorldState->ServerData()->ForceNewAnimationPacket() )
+	{
+		// Players - either Gargoyles (always) or humans/elves with forced new anim packet
+		Effects->PlayNewCharacterAnimation( mChar, N_ACT_IMPACT, 0 );
+	}
+	else
+	{
+		// Players - Human/elves with old anims
+		Effects->PlayCharacterAnimation( mChar, ACT_IMPACT, 0, 5 );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CHandleCombat::PlayMissedSoundEffect()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Do the "Missed" Sound Effect
@@ -2820,8 +2864,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			if( mChar.IsNpc() || ( ammoId != 0 && DeleteItemAmount( &mChar, 1, ammoId,  ammoHue ) == 1 ))
 			{
 				PlaySwingAnimations( &mChar );
-				//Effects->PlayMovingAnimation( &mChar, ourTarg, ammoFX, 0x08, 0x00, 0x00, static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));
-				Effects->PlayMovingAnimation( mChar.GetX(), mChar.GetY(), mChar.GetZ() + 5, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), ammoFX, 0x08, 0x00, 0x00, static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));
+				Effects->PlayMovingAnimation( mChar.GetX(), mChar.GetY(), mChar.GetZ() + 5, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), ammoFX, 0x15, 0x1, 0x00, static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));
 			}
 			else
 			{
@@ -2955,6 +2998,8 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		}
 		else
 		{
+			PlayHitAnimations( ourTarg );
+
 			// It's a hit!
 			CSocket *targSock = ourTarg->GetSocket();
 
@@ -3029,15 +3074,6 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			{
 				// Show hit messages, if enabled
 				DoHitMessage( &mChar, ourTarg, hitLoc, ourDamage );
-
-				for( auto scriptTrig : scriptTriggers )
-				{
-					cScript *toExecute = JSMapping->GetScript( scriptTrig );
-					if( toExecute != nullptr )
-					{
-						toExecute->OnCombatHit( &mChar, ourTarg );
-					}
-				}
 
 				// Interrupt Spellcasting
 				if( !ourTarg->IsNpc() && targSock != nullptr )

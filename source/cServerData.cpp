@@ -371,7 +371,13 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"AUTOUNEQUIPPEDCASTING"s, 348},
 	{"LOOTDECAYSWITHNPCCORPSE"s, 349},
 	{"SWINGSPEEDINCREASECAP"s, 353},
-	{"KARMALOCKING"s, 354}
+	{"KARMALOCKING"s, 354},
+	{"PHYSICALRESISTCAP"s, 355},
+	{"FIRERESISTCAP"s, 356},
+	{"COLDRESISTCAP"s, 357},
+	{"POISONRESISTCAP"s, 358},
+	{"ENERGYRESISTCAP"s, 359},
+	{"DEFENSECHANCEINCREASECAP"s, 360},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -728,6 +734,12 @@ auto CServerData::ResetDefaults() -> void
 	HirelingCombatTraining( true );
 	NpcCombatTraining( false );
 	SwingSpeedIncreaseCap( 60 );
+	PhysicalResistCap( 70 );
+	FireResistCap( 70 );
+	ColdResistCap( 70 );
+	PoisonResistCap( 70 );
+	EnergyResistCap( 70 );
+	DefenseChanceIncreaseCap( 45 );
 	WeaponDamageBonusType( 2 );
 
 	CheckPetControlDifficulty( true );
@@ -5218,6 +5230,12 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SHOWWEAPONDAMAGETYPES=" << ( ShowWeaponDamageTypes() ? 1 : 0 ) << '\n';
 		ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<UI16>( WeaponDamageBonusType() ) << '\n';
 		ofsOutput << "WEAPONSWINGSPEEDINCREASECAP=" << SwingSpeedIncreaseCap() << '\n';
+		ofsOutput << "PHYSICALRESISTCAP=" << PhysicalResistCap() << '\n';
+		ofsOutput << "FIRERESISTCAP=" << FireResistCap() << '\n';
+		ofsOutput << "COLDRESISTCAP=" << ColdResistCap() << '\n';
+		ofsOutput << "POISONRESISTCAP=" << PoisonResistCap() << '\n';
+		ofsOutput << "ENERGYRESISTCAP=" << EnergyResistCap() << '\n';
+		ofsOutput << "DEFENSECHANCEINCREASECAP=" << DefenseChanceIncreaseCap() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
@@ -5430,6 +5448,89 @@ auto CServerData::SwingSpeedIncreaseCap( SI16 value ) -> void
 	swingSpeedIncreaseCap = value;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::PhysicalResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Physical cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::PhysicalResistCap() const -> SI16
+{
+	return physicalResistCap;
+}
+auto CServerData::PhysicalResistCap( SI16 value ) -> void
+{
+	physicalResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FireResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Fire cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::FireResistCap() const -> SI16
+{
+	return fireResistCap;
+}
+auto CServerData::FireResistCap( SI16 value ) -> void
+{
+	fireResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ColdResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Cold cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ColdResistCap() const -> SI16
+{
+	return coldResistCap;
+}
+auto CServerData::ColdResistCap( SI16 value ) -> void
+{
+	coldResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::PoisonResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Poison cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::PoisonResistCap() const -> SI16
+{
+	return poisonResistCap;
+}
+auto CServerData::PoisonResistCap( SI16 value ) -> void
+{
+	poisonResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::EnergyResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Energy cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::EnergyResistCap() const -> SI16
+{
+	return energyResistCap;
+}
+auto CServerData::EnergyResistCap( SI16 value ) -> void
+{
+	energyResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::DefenseChanceIncreaseCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Defense Chance Increase cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::DefenseChanceIncreaseCap() const -> SI16
+{
+	return defenseChanceIncreaseCap;
+}
+auto CServerData::DefenseChanceIncreaseCap( SI16 value ) -> void
+{
+	defenseChanceIncreaseCap = value;
+}
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ParseIni()
