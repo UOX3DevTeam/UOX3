@@ -2,6 +2,7 @@
 	Added new DFN tags for Items/Npcs:
 	DAMAGEINCREASE=# // This adds extra damage percent to the total base damage.
 	These are also available as JS Engine object propertie: .damageIncrease
+	Added New INI settings: DAMAGEINCREASECAP, Set the default cap of percent the char/item an increase.
 
 22/02/2025 - Dragon Slayer
 	Added UOKr Extended Status bar gump packets.

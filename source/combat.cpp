@@ -2145,8 +2145,8 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 				baseDamage = AdjustArmorClassDamage( mChar, ourTarg, mWeapon, baseDamage, hitLoc );
 			}
 
-			if( damageIncreasePercent > 100 )
-				damageIncreasePercent = 100; // Enforce the DI cap of 100%
+			if( damageIncreasePercent > cwmWorldState->ServerData()->DamageIncreaseCap() )
+				damageIncreasePercent = cwmWorldState->ServerData()->DamageIncreaseCap(); // Enforce the DI cap of ini setting
 
 			// Apply DI to base damage
 			baseDamage += static_cast<SI16>( baseDamage * damageIncreasePercent / 100 );
