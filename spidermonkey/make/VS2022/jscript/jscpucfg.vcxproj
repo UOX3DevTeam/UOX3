@@ -39,6 +39,16 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IntDir>$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IntDir>$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -77,7 +87,7 @@
     </ProjectReference>
     <PostBuildEvent>
       <Command>pushD $(OutDir)
-jscpucfg &gt; $(SolutionDir)../../../jsautocfg.h
+jscpucfg &gt; $(SolutionDir)../../spidermonkey/jsautocfg.h
 popD</Command>
     </PostBuildEvent>
     <PostBuildEvent>
@@ -119,7 +129,7 @@ popD</Command>
     </ProjectReference>
     <PostBuildEvent>
       <Command>pushD $(OutDir)
-jscpucfg &gt; $(SolutionDir)../../../jsautocfg.h
+jscpucfg &gt; $(SolutionDir)../../spidermonkey/jsautocfg.h
 popD</Command>
       <Message>Generating jsautocfg.h</Message>
     </PostBuildEvent>

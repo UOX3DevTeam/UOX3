@@ -39,6 +39,16 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IntDir>$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IntDir>$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -77,7 +87,7 @@
     </ProjectReference>
     <PostBuildEvent>
       <Command>pushD $(OutDir)
-host_jsoplengen $(SolutionDir)../../../jsautooplen.h
+host_jsoplengen $(SolutionDir)../../spidermonkey/jsautooplen.h
 popD</Command>
       <Message>Generating jsautooplen.h</Message>
     </PostBuildEvent>
@@ -118,7 +128,7 @@ popD</Command>
     </ProjectReference>
     <PostBuildEvent>
       <Command>pushD $(OutDir)
-host_jsoplengen $(SolutionDir)../../../jsautooplen.h
+host_jsoplengen $(SolutionDir)../../spidermonkey/jsautooplen.h
 popD</Command>
     </PostBuildEvent>
     <PostBuildEvent>

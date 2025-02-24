@@ -11,14 +11,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\jskeyword.tbl" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Header Files">
       <UniqueIdentifier>{37A44740-9EDC-3CFF-A6D9-A44C89F81B22}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{578CD6F2-BFAE-3000-B017-2C60D1980D36}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\jskeyword.tbl">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
