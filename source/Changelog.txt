@@ -1,5 +1,5 @@
 27/02/2025 - Dragon Slayer
-	Updated buttonId and tileId to support more numbers. (Thanks Xuri).
+	Updated JS Gump Methods .AddButton() and .AddButtonTileArt() to support larger values for buttonId and tileId parameters. (Thanks Xuri).
 
 22/02/2025 - Dragon Slayer
 	Added UOKr Extended Status bar gump packets.
