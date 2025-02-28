@@ -175,7 +175,7 @@ CJSRuntime::CJSRuntime( UI32 engineSize )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 	}
 
-	jsGlobal = JS_NewObject( jsContext, &global_class, nullptr, nullptr );
+	jsGlobal = JS_NewGlobalObject( jsContext, &global_class );
 	if( jsGlobal == nullptr )
 	{
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
@@ -250,6 +250,7 @@ void CJSRuntime::InitializePrototypes()
 	protoList[JSP_CREATEENTRY]		= JS_InitClass( cx, obj, nullptr, &UOXCreateEntry_class,	nullptr, 0,		CCreateEntryProperties, nullptr,			nullptr,	nullptr );
 	protoList[JSP_CREATEENTRIES]	= JS_InitClass( cx, obj, nullptr, &UOXCreateEntries_class,	nullptr, 0,		nullptr,				nullptr,			nullptr,	nullptr );
 	protoList[JSP_TIMER]	=	JS_InitClass( cx, obj, nullptr, &UOXTimer_class,		nullptr,		0,		CTimerProperties,		nullptr,			nullptr,	nullptr );
+	// This blows up because of an ENUMPERMIDX one - need to figure out
 	protoList[JSP_SOCK]		=	JS_InitClass( cx, obj, nullptr, &UOXSocket_class.base,	nullptr,		0,		CSocketProps,			CSocket_Methods,	nullptr,	nullptr );
 	protoList[JSP_ACCOUNTS]	=	JS_InitClass( cx, obj, nullptr, &UOXAccount_class,		nullptr,		0,		CAccountProperties,		CAccount_Methods,	nullptr,	nullptr );
 	protoList[JSP_CONSOLE]	=	JS_InitClass( cx, obj, nullptr, &UOXConsole_class,		nullptr,		0,		CConsoleProperties,		CConsole_Methods,	nullptr,	nullptr );
