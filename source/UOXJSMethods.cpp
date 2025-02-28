@@ -806,7 +806,7 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "button %i %i %i %i %i %i %i", tL, tR, gImage, gImage2, x1, x2, x3 ));
+	gList->one->push_back( oldstrutil::format( "button %i %i %i %i %i %i %i", tL, tR, gImage, gImage2, pageNum, buttonId, x3 ));
 
 	return JS_TRUE;
 }
