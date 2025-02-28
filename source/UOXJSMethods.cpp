@@ -831,8 +831,8 @@ JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	UI16 tileIdPush = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
 	SI16 buttonType = static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
 	SI16 pageNum = static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
-	SI16 buttonId = static_cast<SI16>( JSVAL_TO_INT( argv[6] ));
-	SI16 tileId = static_cast<SI16>( JSVAL_TO_INT( argv[7] ));
+	UI32 buttonId = static_cast<UI32>( JSVAL_TO_INT( argv[6] ));
+	UI16 tileId = static_cast<UI16>( JSVAL_TO_INT( argv[7] ));
 	SI16 hue = static_cast<SI16>( JSVAL_TO_INT( argv[8] ));
 	SI16 tileX = static_cast<SI16>( JSVAL_TO_INT( argv[9] ));
 	SI16 tileY = static_cast<SI16>( JSVAL_TO_INT( argv[10] ));
