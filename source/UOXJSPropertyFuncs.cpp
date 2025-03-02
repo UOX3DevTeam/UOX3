@@ -3039,9 +3039,6 @@ JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 				break;
 			case CGP_NUMMEMBERS:	*vp = INT_TO_JSVAL( gPriv->NumMembers() );	break;
 			case CGP_NUMRECRUITS:	*vp = INT_TO_JSVAL( gPriv->NumRecruits() );	break;
-			case CGP_MEMBERS:
-			case CGP_RECRUITS:
-				break;
 			case CGP_CHARTER:
 				tString = JS_NewStringCopyZ( cx, gPriv->Charter().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
@@ -3105,9 +3102,6 @@ JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 					gPriv->Stone( INVALIDSERIAL );
 				}
 				break;
-			case CGP_MEMBERS:
-			case CGP_RECRUITS:
-				break;
 			case CGP_CHARTER:			gPriv->Charter( encaps.toString() );				break;
 			case CGP_ABBREVIATION:		gPriv->Abbreviation( encaps.toString().c_str() );	break;
 			case CGP_WEBPAGE:			gPriv->Webpage( encaps.toString() );				break;
@@ -3157,16 +3151,12 @@ JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				tString = JS_NewStringCopyZ( cx, gPriv->Name().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
-			case CRP_WEAKTOWEATHER:
-				break;
 			case CRP_REQUIRESBEARD:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequiresBeard() );		break;
 			case CRP_REQUIRESNOBEARD:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoBeard() );				break;
 			case CRP_ISPLAYERRACE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsPlayerRace() );		break;
 			case CRP_GENDERRESTRICT:	*vp = INT_TO_JSVAL( gPriv->GenderRestriction() );		break;
 			case CRP_ARMOURCLASS:		*vp = INT_TO_JSVAL( gPriv->ArmourClassRestriction() );	break;
 			case CRP_LANGUAGESKILLMIN:	*vp = INT_TO_JSVAL( gPriv->LanguageMin() );				break;
-			case CRP_SKILLADJUSTMENT:
-				break;
 			case CRP_POISONRESISTANCE:	JS_NewNumberValue( cx, gPriv->PoisonResistance(), vp ); break;
 			case CRP_MAGICRESISTANCE:	JS_NewNumberValue( cx, gPriv->MagicResistance(), vp );  break;
 			case CRP_VISIBLEDISTANCE:	*vp = INT_TO_JSVAL( gPriv->VisibilityRange() );			break;
@@ -3194,16 +3184,12 @@ JSBool CRaceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		switch( JSVAL_TO_INT( id ))
 		{
 			case CRP_NAME:				gPriv->Name( encaps.toString() );						break;
-			case CRP_WEAKTOWEATHER:
-				break;
 			case CRP_REQUIRESBEARD:		gPriv->RequiresBeard( encaps.toBool() );				break;
 			case CRP_REQUIRESNOBEARD:	gPriv->NoBeard( encaps.toBool() );						break;
 			case CRP_ISPLAYERRACE:		gPriv->IsPlayerRace( encaps.toBool() );					break;
 			case CRP_GENDERRESTRICT:	gPriv->GenderRestriction( static_cast<GENDER>( encaps.toInt() ));		break;
 			case CRP_ARMOURCLASS:		gPriv->ArmourClassRestriction( static_cast<UI08>( encaps.toInt() ));	break;
 			case CRP_LANGUAGESKILLMIN:	gPriv->LanguageMin( static_cast<UI16>( encaps.toInt() ));				break;
-			case CRP_SKILLADJUSTMENT:
-				break;
 			case CRP_POISONRESISTANCE:	gPriv->PoisonResistance( encaps.toFloat() );					break;
 			case CRP_MAGICRESISTANCE:	gPriv->MagicResistance( encaps.toFloat() );						break;
 			case CRP_VISIBLEDISTANCE:	gPriv->VisibilityRange( static_cast<SI08>( encaps.toInt() ));	break;
@@ -3277,18 +3263,12 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 					gPriv->TempObj2( static_cast<CBaseObject *>( encaps.toObject() ));
 				}
 				break;
-			case CSOCKP_BUFFER:
-				break;
 			case CSOCKP_XTEXT:				gPriv->XText( encaps.toString() );						break;
 			case CSOCKP_XTEXT2:				gPriv->XText2( encaps.toString() );						break;
 			case CSOCKP_CLICKZ:				gPriv->ClickZ( static_cast<SI08>( encaps.toInt() ));	break;
-			case CSOCKP_ADDID:
-				break;
 			case CSOCKP_NEWCLIENT:			gPriv->NewClient( encaps.toBool() );					break;
 			case CSOCKP_FIRSTPACKET:		gPriv->FirstPacket( encaps.toBool() );					break;
 			case CSOCKP_CRYPTCLIENT:		gPriv->CryptClient( encaps.toBool() );					break;
-			case CSOCKP_CLIENTIP:
-				break;
 			case CSOCKP_WALKSEQUENCE:		gPriv->WalkSequence( static_cast<SI16>( encaps.toInt() ));		break;
 			case CSOCKP_CURRENTSPELLTYPE:	gPriv->CurrentSpellType( static_cast<SI08>( encaps.toInt() ));	break;
 			case CSOCKP_LOGGING:			gPriv->Logging( encaps.toBool() );								break;
@@ -3419,8 +3399,6 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				}
 			}
 				break;
-			case CSOCKP_BUFFER:
-				break;
 			case CSOCKP_XTEXT:				
 				tString = JS_NewStringCopyZ( cx, gPriv->XText().c_str() );
 				*vp = STRING_TO_JSVAL( tString );	break;
@@ -3428,13 +3406,9 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				tString = JS_NewStringCopyZ( cx, gPriv->XText2().c_str() );
 				*vp = STRING_TO_JSVAL( tString );	break;
 			case CSOCKP_CLICKZ:				*vp = INT_TO_JSVAL( gPriv->ClickZ() );					break;
-			case CSOCKP_ADDID:
-				break;
 			case CSOCKP_NEWCLIENT:			*vp = BOOLEAN_TO_JSVAL( gPriv->NewClient() );			break;
 			case CSOCKP_FIRSTPACKET:		*vp = BOOLEAN_TO_JSVAL( gPriv->FirstPacket() );			break;
 			case CSOCKP_CRYPTCLIENT:		*vp = BOOLEAN_TO_JSVAL( gPriv->CryptClient() );			break;
-			case CSOCKP_CLIENTIP:
-				break;
 			case CSOCKP_WALKSEQUENCE:		*vp = INT_TO_JSVAL( gPriv->WalkSequence() );			break;
 			case CSOCKP_CURRENTSPELLTYPE:	*vp = INT_TO_JSVAL( gPriv->CurrentSpellType() );		break;
 			case CSOCKP_LOGGING:			*vp = BOOLEAN_TO_JSVAL( gPriv->Logging() );				break;

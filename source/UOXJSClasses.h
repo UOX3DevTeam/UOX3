@@ -13,21 +13,21 @@ inline JSClass global_class =
 {
 	"global",
 	JSCLASS_GLOBAL_FLAGS,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
+	JS_PropertyStub,   // addProperty;
+	JS_PropertyStub,	 // delProperty;
+	JS_PropertyStub,	 // getProperty;
+	JS_PropertyStub,	 // setProperty;
+	JS_EnumerateStub,	 // enumerate;
+	JS_ResolveStub,		 // resolve;
+	JS_ConvertStub,		 // convert;
+	JS_FinalizeStub,	 // finalize;
 	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass uox_class =
 {
 	"uoxscript",
-	0,
+	JSCLASS_GLOBAL_FLAGS,
 	JS_PropertyStub,
 	JS_PropertyStub,
 	CScriptProps_getProperty,
