@@ -9537,7 +9537,7 @@ myChar.TextMessage(( myTarget.GetTimer( Timer.CRIMFLAG ) - GetCurrentClock() ).t
 
 // Set time from now in milliseconds that criminal flag will last, after making character a criminal
 myChar.criminal = true;
-myChar.SetTimer( timer.CRIMFLAG, 3000 );</code></pre>
+myChar.SetTimer( Timer.CRIMFLAG, 3000 );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -15133,6 +15133,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.skillsused</span> <strong>(object)</strong><br>
 							Get JS Object reference for skills that can be used to get/set whether individual skills are in use (???) (Read-Only)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.skillCaps</span> <strong>(object)</strong><br>
+							Get JS Object reference for skills Cap that can be used to get/set the value of individual skills Cap using a syntax like .skillCaps.alchemy = [0 - 1000] (1000 = 100.0 skillpoints) (Read-Only)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.socket</span> <strong>(object)</strong><br>

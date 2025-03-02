@@ -2107,6 +2107,91 @@ JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|    Function    -    CBase_GetTempEffect()
+//|    Prototype    -    UI32 CBase_GetTempEffect( tempEffectID )
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Get timer of specified temp effect for object, or 0 if it doesn't exist
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_GetTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "GetTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		return JS_FALSE;
+	}
+
+	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "GetTempEffect: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid tempe effect
+	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));\
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		// We only want results that have same object serial and tempEffectID as specified
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+		{
+			// Return the timestamp for when the Temp Effect timer expires
+			JS_NewNumberValue( cx, Effect->ExpireTime(), rval );
+		}
+	}
+
+	return JS_TRUE;
+}
+
+void ReverseEffect( CTEffect *Effect );
+//o------------------------------------------------------------------------------------------------o
+//|    Function    -    CBase_ReverseEffect()
+//|    Prototype    -    void ReverseEffect()
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Force the reversion of a Temp Effect on item or character based on specified temp effect ID
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_ReverseEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "ReverseEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		return JS_FALSE;
+	}
+	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "ReverseEffect: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid temp effect found
+	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	CTEffect *removeEffect = nullptr;
+
+	for( auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+		{
+			// Found our timer! Keep track of it for removal outside loop
+			removeEffect = Effect;
+			break;
+		}
+	}
+
+	if( removeEffect != nullptr )
+	{
+		ReverseEffect( removeEffect );
+		cwmWorldState->tempEffects.Remove( removeEffect, true );
+		*rval = INT_TO_JSVAL( 1 ); // Return 1 indicating temp effect was found and removed
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_Delete()
 //|	Prototype	-	void Delete()
 //o------------------------------------------------------------------------------------------------o
@@ -4795,7 +4880,7 @@ JSBool CBase_GetSerial( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN arg
 	return JS_TRUE;
 }
 
-void UpdateStats( CBaseObject *mObj, UI08 x );
+void UpdateStats( CBaseObject *mObj, UI08 x, bool skipStatWindowUpdate = false );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_UpdateStats()
 //|	Prototype	-	void UpdateStats( statType )

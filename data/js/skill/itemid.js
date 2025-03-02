@@ -118,7 +118,7 @@ function onCallback0( pSock, ourObj )
 				var spellName = GetDictionaryEntry( 592 + spellNum, pSock.language );
 				if( spellName != "" )
 				{
-					if( !idFromWand && !pUser.CheckSkill( 3, 750, 1000 ))
+					if( !idFromWand && !pUser.CheckSkill( 3, 750, pUser.skillCaps.itemid ))
 					{
 						pSock.SysMessage( GetDictionaryEntry( 1555, pSock.language ), spellName ); // It is enchanted with the spell %s, but you cannot determine how many charges remain.
 					}

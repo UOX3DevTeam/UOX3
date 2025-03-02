@@ -1,3 +1,35 @@
+22/02/2025 - Dragon Slayer
+	Added UOKr Extended Status bar gump packets.
+	Added New INI settings: PHYSICALRESISTCAP, FIRERESISTCAP, COLDRESISTCAP, POISONRESISTCAP, ENGERYRESISTCAP, DEFENSECHANCEINCREASECAP. Set he default cap for ch resist  defense chance increase.
+
+21/02/2025 - Dragon Slayer
+	Added new save/load tags: ExtPropCombat, ExtPropDefense,ExtPropStats, ExtPropMisc, ExtPropCommon. for the AOS Properties that are being added.
+
+16/02/2025 - Dragon Slayer
+	Characters will now play an impact-animation when they get hit in combat.
+	Removed onCombatHit JS Event, as it's redundant after updates to onAttack
+	Increased animation speed of missiles fired by ranged attacks - they now arrive at their target faster!
+
+15/02/2025 - Dragon Slayer
+	Added .skillCaps to the documentation and implemented it in the code to allow getting and setting individual skill caps.
+	Introduced a default INI setting (SKILLCAPSINGLE) with a skill cap of 1000.
+
+14/02/2025 - Dragon Slayer
+	Added Missing commands to get/set for all the new aos properties that as added plus a missing stamina command.
+	Fixed Miss spelling in documents at Get/SetTimer. (Thanks Xuri)
+
+08/02/2025 - Dragon Slayer
+	Updated Item DFN Documents with: artifactrarity, durabilityhpbonus, defensechance, event, healthleech, healthbonus, hitchance, lowerstatreq, manaleech, manabonus, maxitems, maxrange, maxuses, more0, more1, more2, resistfire, resistcold, resistlighting, resistpoison, swingspeedincrease, stealable, staminaleech, staminabonus, usesleft
+
+06/02/2025 - Dragon Slayer
+	Added .GetTempEffect js method, Get timer of specified temp effect for object, or 0 if it doesn't exist. ( Thanks Xuri )
+	Added .ReverseTempEffect js method, Force the reversion of a Temp Effect on item or character based on specified temp effect ID. ( Thanks Xuri )
+
+01/02/2025 - Dragon Slayer
+	Fixed an issue where UOX3 would unnecessarily update a given player's status window repeatedly multiple times per server cycle (Thanks Xuri)
+	Fixed Young Status Not removing off characters. (Thanks Xuri)
+	Fixed Wrong Order DFN Tags in ssection.h (Thanks Xuri)
+
 30/1/2025 - Dragon Slayer
 	Updated ResourceCount can be used for both characters and items. (Thanks Xuri)
 	Updated documents for resourcecount and useresource to reflex what code shows.

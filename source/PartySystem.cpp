@@ -20,7 +20,7 @@ CPartyEntry::CPartyEntry( CChar *m, bool isLeader, bool isLootable ) : member( m
 	settings.set( BIT_LOOTABLE, isLootable );
 }
 
-void UpdateStats( CBaseObject *mObj, UI08 x );
+void UpdateStats( CBaseObject *mObj, UI08 x, bool skipStatWindowUpdate = false );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	Party::AddMember()
 //o------------------------------------------------------------------------------------------------o

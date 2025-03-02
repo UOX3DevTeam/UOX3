@@ -8,7 +8,7 @@ function onSkill( pUser, objType, skillUsed )
 	var pSock = pUser.socket;
 	if( pSock )
 	{
-		if( !pUser.CheckSkill( 32, 0, 1000 ))
+		if( !pUser.CheckSkill( 32, 0, pUser.skillCaps.spiritspeak ))
 		{
 			pSock.SysMessage( GetDictionaryEntry( 1501, pSock.language )); // You fail your attempt at contacting the netherworld.
 		}

@@ -195,6 +195,8 @@ JSMethodFunc CBase_RemoveScriptTrigger;
 JSMethodFunc CBase_Refresh;
 JSMethodFunc CBase_SetRandomName;
 JSMethodFunc CBase_SetRandomColor;
+JSMethodFunc CBase_GetTempEffect;
+JSMethodFunc CBase_ReverseEffect;
 
 // Multi Methods
 JSMethodFunc CMulti_GetMultiCorner;
@@ -482,6 +484,8 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "RemoveFollower",		CChar_RemoveFollower,		1, 0, 0 },
 	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0, 0 },
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0, 0 },
+	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0, 0 },
+	{ "ReverseTempEffect",	CBase_ReverseEffect,		1, 0, 0 },
 	{ nullptr,				nullptr,				0, 0, 0 }
 };
 
@@ -573,6 +577,8 @@ inline JSFunctionSpec CItem_Methods[] =
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
 	{ "SetRandomName",		CBase_SetRandomName,		1, 0, 0 },
 	{ "SetRandomColor",		CBase_SetRandomColor,		1, 0, 0 },
+	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0, 0 },
+	{ "ReverseTempEffect",	CBase_ReverseEffect,		1, 0, 0 },
 	{ nullptr,				nullptr,					0, 0, 0 }
 };
 

@@ -2013,6 +2013,29 @@ void CChar::SetBaseSkill( SKILLVAL newSkillValue, UI08 skillToSet )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetSkillCap()
+//|					CChar::SetSkillCap()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets a character's specified skill cap (without modifiers)
+//o------------------------------------------------------------------------------------------------o
+SKILLVAL CChar::GetSkillCap( UI08 skillToGet ) const
+{
+	SKILLVAL rVal = 0;
+	if( skillToGet <= INTELLECT )
+	{
+		rVal            = skillCap[skillToGet];
+	}
+	return ( rVal > 0 ? rVal : cwmWorldState->ServerData()->ServerSkillCapStatus() );
+}
+void CChar::SetSkillCap( SKILLVAL newSkillCapValue, UI08 skillToSet )
+{
+	if( skillToSet <= INTELLECT )
+	{
+		skillCap[skillToSet] = newSkillCapValue;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetSkill()
 //|					CChar::SetSkill()
 //o------------------------------------------------------------------------------------------------o
@@ -3212,7 +3235,7 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 	outStream << "BaseSkills=";
 	for( UI08 bsc = 0; bsc < ALLSKILLS; ++bsc )
 	{
-		outStream << "[" + std::to_string( bsc ) + "," + std::to_string( GetBaseSkill( bsc )) + "]-";
+		outStream << "[" + std::to_string( bsc ) + "," + std::to_string( GetBaseSkill( bsc )) + "," + std::to_string( skillCap[bsc] ) + "]-";
 	}
 	outStream << "[END]" << newLine;
 
@@ -4385,12 +4408,21 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 							break;
 						}
 						auto secs = oldstrutil::sections( value, "," );
-						if( secs.size() != 2 )
+						if( secs.size() != 2 && secs.size() != 3 )
 						{
 							break;
 						}
+
 						auto skillNum = static_cast<SkillLock>( std::stoul( secs[0].substr( 1 ), nullptr, 0 ));
-						auto skillValue = static_cast<UI16>( std::stoul( secs[1].substr( 0, secs[1].size() - 1 ), nullptr, 0 ));
+						auto skillValue = ( secs.size() == 2 ? 
+							static_cast<UI16>( std::stoul( secs[1].substr( 0, secs[1].size() - 1 ), nullptr, 0 )) :
+							static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( secs[1], "//" )), nullptr, 0 )));
+						UI16 skillCapValue = 0;
+						if( secs.size() == 3 )
+						{
+							skillCapValue = static_cast<UI16>( std::stoul( secs[2].substr( 0, secs[2].size() - 1 ), nullptr, 0 ));
+						}
+						SetSkillCap( skillCapValue, skillNum );
 						SetBaseSkill( skillValue, skillNum );
 					}
 					rValue = true;
