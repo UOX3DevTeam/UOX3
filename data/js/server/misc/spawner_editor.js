@@ -79,12 +79,12 @@ function spawnerGump( socket, pUser, iUsed )
 	spawner.AddHTMLGump( 265, 267, 140, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9819, socket.language ) + "</basefont>" );// Apply Changes
 
 	// Text Entry fields
-    spawner.AddTextEntryLimited( 125, 35, 200, 25, 1153, 0, 14, iUsed.name, 30 );
-    spawner.AddTextEntryLimited( 30, 165, 178, 20, 1153, 0, 15, iUsed.spawnsection, 30 );
-    spawner.AddTextEntryLimited( 45, 235, 115, 20, 1153, 0, 16, iUsed.amount, 2 );
-    spawner.AddTextEntryLimited( 115, 235, 40, 20, 1153, 0, 17, iUsed.mininterval, 3 );
-    spawner.AddTextEntryLimited( 195, 235, 40, 20, 1153, 0, 18, iUsed.maxinterval, 3 );
-    spawner.AddTextEntryLimited( 295, 235, 115, 20, 1153, 0, 19, iUsed.GetMoreVar( "more", 3 ), 3);
+	spawner.AddTextEntryLimited( 125, 35, 200, 25, 1153, 0, 14, iUsed.name, 30 );
+	spawner.AddTextEntryLimited( 30, 165, 178, 20, 1153, 0, 15, iUsed.spawnsection, 30 );
+	spawner.AddTextEntryLimited( 45, 235, 115, 20, 1153, 0, 16, iUsed.amount, 2 );
+	spawner.AddTextEntryLimited( 115, 235, 40, 20, 1153, 0, 17, iUsed.mininterval, 3 );
+	spawner.AddTextEntryLimited( 195, 235, 40, 20, 1153, 0, 18, iUsed.maxinterval, 3 );
+	spawner.AddTextEntryLimited( 295, 235, 115, 20, 1153, 0, 19, iUsed.GetMoreVar( "more", 3 ), 3);
 
 	spawner.Send( socket );
 	spawner.Free();
