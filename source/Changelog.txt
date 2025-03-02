@@ -1,6 +1,11 @@
+02/03/2025 - Dragon Slayer
+	Renamed spawnergump.js to spawner_editor.js.
+	Added spawner_editor.js text to dictionaries.
+	Various enhancements to spawner editor gump, including support for another spawner type - area spawner (type 69)
+
 22/02/2025 - Dragon Slayer
 	Added UOKr Extended Status bar gump packets.
-	Added New INI settings: PHYSICALRESISTCAP, FIRERESISTCAP, COLDRESISTCAP, POISONRESISTCAP, ENGERYRESISTCAP, DEFENSECHANCEINCREASECAP. Set he default cap for ch resist  defense chance increase.
+	Added New INI settings: PHYSICALRESISTCAP, FIRERESISTCAP, COLDRESISTCAP, POISONRESISTCAP, ENGERYRESISTCAP, DEFENSECHANCEINCREASECAP. Set the default cap for chars resist, defense chance increase.
 
 21/02/2025 - Dragon Slayer
 	Added new save/load tags: ExtPropCombat, ExtPropDefense,ExtPropStats, ExtPropMisc, ExtPropCommon. for the AOS Properties that are being added.

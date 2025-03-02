@@ -4318,7 +4318,40 @@
 9410=You have learned how to mine fine sand. Target sand areas when mining to look for fine sand.
 9411=You have learned to mine for stones. Target mountains when mining to find stones.
 9412=There is no sand here to mine.
-// [9900 - 10000] Door and Sign Commands
+// [9800-9899] Spawner Editor
+9800=Spawner Object Editor
+9801=Spawner Name
+9802=Spawner Type
+9803=Item
+9804=Npc
+9805=Area
+9806=Escort
+9807=Spawn Section/List
+9808=Section ID or NPClist to spawn from DFNs
+9809=Spawnlist
+9810=If checked, spawner uses spawnlist instead of spawn section
+9811=Amount
+9812=Maximum amount to respawn
+9813=Min Time
+9814=Minimum time in min to respawn
+9815=Max Time
+9816=Maximum time in min to respawn
+9817=Radius (Area)
+9818=Radius to spawn NPCs in (Area-spawner only!)
+9819=Apply Changes
+9820=Changed Spawner Type to Item (61), amount reset to 1.
+9821=Changed Spawner Type to NPC (62).
+9822=Changed Spawner Type to Area (69), spawn radius updated (defaults to 1)
+9823=Changed Spawner Type to Escort (125).
+9824=Spawn Section updated to 
+9825=Min Time updated to 
+9826=Max Time updated to 
+9827=Amount updated to 
+9828=Spawn Radius updated to 
+9829=Spawner name updated to 
+9830=No longer using spawn list - assuming spawn section now refers to individual NPC definition.
+9831=Now using spawn list - assuming spawn section now refers to an NPC list.
+// [9900 - 9999] Door and Sign Commands
 9916=Page
 9917=Next
 9918=Back
