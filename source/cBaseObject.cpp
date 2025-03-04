@@ -2124,7 +2124,10 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 					SetHitChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
 					SetDefenseChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
 					SetSwingSpeedIncrease( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
-					SetDamageIncrease( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 )));
+					if( csecs.size() >= 4 )
+					{
+						SetDamageIncrease( static_cast<SI16>(std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 )));
+					}
 				}
 				rValue = true;
 			}
