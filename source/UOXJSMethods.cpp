@@ -596,7 +596,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "checkbox %i %i %i %i %i %i", tL, tR, gImage, gImageChk, initState, relay ));
+	gList->one->push_back( oldstrutil::format( "checkbox %i %i %u %u %i %i", tL, tR, gImage, gImageChk, initState, relay ));
 
 	return JS_TRUE;
 }
@@ -773,7 +773,7 @@ JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "resizepic %i %i %i %i %i", tL, tR, gImage, bL, bR ));
+	gList->one->push_back( oldstrutil::format( "resizepic %i %i %u %i %i", tL, tR, gImage, bL, bR ));
 
 	return JS_TRUE;
 }
@@ -796,8 +796,8 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 	UI16 gImage2 = ( argc == 6 ? (gImage + 1) : static_cast<UI16>( JSVAL_TO_INT( argv[3] )));
 	SI16 x1 = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[3] )) : static_cast<SI16>( JSVAL_TO_INT( argv[4] )));
-	SI16 x2 = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[4] )) : static_cast<SI16>( JSVAL_TO_INT( argv[5] )));
-	SI16 x3 = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[5] )) : static_cast<SI16>( JSVAL_TO_INT( argv[6] )));
+	UI32 pageNum = ( argc == 6 ? static_cast<UI32>( JSVAL_TO_INT( argv[4] )) : static_cast<UI32>( JSVAL_TO_INT( argv[5] )));
+	SI16 buttonId = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[5] )) : static_cast<SI16>( JSVAL_TO_INT( argv[6] )));
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
@@ -806,7 +806,7 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "button %i %i %i %i %i %i %i", tL, tR, gImage, gImage2, x1, x2, x3 ));
+	gList->one->push_back( oldstrutil::format( "button %i %i %u %u %i %i %u", tL, tR, gImage, gImage2, x1, pageNum, buttonId ));
 
 	return JS_TRUE;
 }
@@ -831,8 +831,8 @@ JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	UI16 tileIdPush = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
 	SI16 buttonType = static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
 	SI16 pageNum = static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
-	SI16 buttonId = static_cast<SI16>( JSVAL_TO_INT( argv[6] ));
-	SI16 tileId = static_cast<SI16>( JSVAL_TO_INT( argv[7] ));
+	UI32 buttonId = static_cast<UI32>( JSVAL_TO_INT( argv[6] ));
+	UI16 tileId = static_cast<UI16>( JSVAL_TO_INT( argv[7] ));
 	SI16 hue = static_cast<SI16>( JSVAL_TO_INT( argv[8] ));
 	SI16 tileX = static_cast<SI16>( JSVAL_TO_INT( argv[9] ));
 	SI16 tileY = static_cast<SI16>( JSVAL_TO_INT( argv[10] ));
@@ -845,7 +845,7 @@ JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "buttontileart %i %i %i %i %i %i %i %i %i %i %i", tL, tR, tileIdNorm, tileIdPush, buttonType, pageNum, buttonId, tileId, hue, tileX, tileY ));
+	gList->one->push_back( oldstrutil::format( "buttontileart %i %i %u %u %i %i %u %u %i %i %i", tL, tR, tileIdNorm, tileIdPush, buttonType, pageNum, buttonId, tileId, hue, tileX, tileY ));
 
 	return JS_TRUE;
 }
@@ -876,7 +876,7 @@ JSBool CGump_AddPageButton( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "button %i %i %i %i 0 %i", tL, tR, gImage, gImage2, pageNum ));
+	gList->one->push_back( oldstrutil::format( "button %i %i %u %u 0 %i", tL, tR, gImage, gImage2, pageNum ));
 
 	return JS_TRUE;
 }
@@ -1043,11 +1043,11 @@ JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 
 	if( rgbColor == 0 )
 	{
-		gList->one->push_back( oldstrutil::format( "gumppic %i %i %i", tL, tR, gImage ));
+		gList->one->push_back( oldstrutil::format( "gumppic %i %i %u", tL, tR, gImage ));
 	}
 	else
 	{
-		gList->one->push_back( oldstrutil::format( "gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColor ));
+		gList->one->push_back( oldstrutil::format( "gumppic %i %i %u hue=%i", tL, tR, gImage, rgbColor ));
 	}
 
 	return JS_TRUE;
@@ -1079,7 +1079,7 @@ JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColour ));
+	gList->one->push_back( oldstrutil::format( "gumppic %i %i %u hue=%i", tL, tR, gImage, rgbColour ));
 
 	return JS_TRUE;
 }
@@ -1239,7 +1239,7 @@ JSBool CGump_AddPicture( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "tilepic %i %i %i", tL, tR, gImage ));
+	gList->one->push_back( oldstrutil::format( "tilepic %i %i %u", tL, tR, gImage ));
 
 	return JS_TRUE;
 }
@@ -1270,7 +1270,7 @@ JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "tilepichue %i %i %i %i", tL, tR, gImage, rgbColour ));
+	gList->one->push_back( oldstrutil::format( "tilepichue %i %i %u %i", tL, tR, gImage, rgbColour ));
 
 	return JS_TRUE;
 }
@@ -1305,7 +1305,7 @@ JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "picinpic %i %i %i %i %i %i %i", x, y, gImage, spriteX, spriteY, width, height ));
+	gList->one->push_back( oldstrutil::format( "picinpic %i %i %u %i %i %i %i", x, y, gImage, spriteX, spriteY, width, height ));
 
 	return JS_TRUE;
 }
@@ -1346,7 +1346,7 @@ JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "itemproperty %i", trgSer ));
+	gList->one->push_back( oldstrutil::format( "itemproperty %u", trgSer ));
 
 	return JS_TRUE;
 }
@@ -1399,7 +1399,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "radio %i %i %i %i %i %i", tL, tR, gImage, gImageChk, initialState, relay ));
+	gList->one->push_back( oldstrutil::format( "radio %i %i %u %u %i %i", tL, tR, gImage, gImageChk, initialState, relay ));
 
 	return JS_TRUE;
 }
