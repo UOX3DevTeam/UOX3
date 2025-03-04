@@ -5192,6 +5192,10 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				break;
 			case 360:	// DEFENSECHANCEINCREASECAP
 				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->DefenseChanceIncreaseCap() ));
+				break;
+			case 361:	// DAMAGEINCREASECAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->DamageIncreaseCap() ));
+				break;
       default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;

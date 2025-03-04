@@ -2127,6 +2127,10 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			damage = static_cast<R32>( baseDamage );
 			break;
 		case PHYSICAL:
+		{
+			// Add Damage Increase (DI) from items, buffs, etc.
+			SI16 damageIncreasePercent = mChar->GetDamageIncrease(); // Total DI from items, buffs, etc.
+
 			// Race Dmg Modification: Bonus percentage.
 			RaceDamage = Races->DamageFromSkill( getFightSkill, mChar->GetRace() );
 			if( RaceDamage != 0 )
@@ -2142,6 +2146,12 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			{
 				baseDamage = AdjustArmorClassDamage( mChar, ourTarg, mWeapon, baseDamage, hitLoc );
 			}
+
+			if( damageIncreasePercent > cwmWorldState->ServerData()->DamageIncreaseCap() )
+				damageIncreasePercent = cwmWorldState->ServerData()->DamageIncreaseCap(); // Enforce the DI cap of ini setting
+
+			// Apply DI to base damage
+			baseDamage += static_cast<SI16>( baseDamage * damageIncreasePercent / 100 );
 
 			// Publish 5 (April 27, 2000 - UOR patch) had some changes to combat damage:
 			// The lumberjacking skill will provide a bonus to damage when the player is using one of the following axes. 
@@ -2327,6 +2337,7 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			multiplier /= 100;
 			damage = baseDamage + static_cast<R32>( baseDamage * multiplier );
 			break;
+		}
 		default:
 			damage = static_cast<R32>( baseDamage );
 

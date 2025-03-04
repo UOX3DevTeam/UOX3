@@ -356,6 +356,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "spattack",		CCP_SPATTACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "spdelay",		CCP_SPDELAY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "swingSpeedIncrease",	CCP_SWINGSPEEDINCREASE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "damageIncrease",	CCP_DAMAGEINCREASE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "hitChance",		CCP_HITCHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "defenseChance",	CCP_DEFENSECHANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "aitype",			CCP_AITYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -538,7 +539,7 @@ inline JSPropertySpec CItemProps[] =
 	{ "ammoFXRender",	CIP_AMMOFXRENDER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "speed",			CIP_SPEED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "swingSpeedIncrease",		CIP_SWINGSPEEDINCREASE ,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-
+	{ "damageIncrease",	CIP_DAMAGEINCREASE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "healthLeech",	CIP_HEALTHLEECH,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "staminaLeech",	CIP_STAMINALEECH,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "manaLeech",		CIP_MANALEECH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
