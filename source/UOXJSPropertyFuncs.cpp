@@ -2028,7 +2028,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_SPATTACK:		*vp = INT_TO_JSVAL( gPriv->GetSpAttack() );					break;
 			case CCP_SPDELAY:		*vp = INT_TO_JSVAL( gPriv->GetSpDelay() );					break;
 			case CCP_SWINGSPEEDINCREASE:	*vp = INT_TO_JSVAL( gPriv->GetSwingSpeedIncrease() );		break;
-			case CCP_DAMAGEINCREASE:*vp = BOOLEAN_TO_JSVAL( gPriv->GetDamageIncrease() );		break;
+			case CCP_DAMAGEINCREASE:*vp = INT_TO_JSVAL( gPriv->GetDamageIncrease() );			break;
 			case CCP_HITCHANCE:		*vp = INT_TO_JSVAL( gPriv->GetHitChance() );				break;
 			case CCP_DEFENSECHANCE:	*vp = INT_TO_JSVAL( gPriv->GetDefenseChance() );			break;
 			case CCP_AITYPE:		*vp = INT_TO_JSVAL( gPriv->GetNpcAiType() );				break;

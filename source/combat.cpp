@@ -2117,8 +2117,6 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 	R32 multiplier = 1;
 	R32 damage = 0;
 	SI32 RaceDamage = 0;
-	// Add Damage Increase (DI) from items, buffs, etc.
-	SI16 damageIncreasePercent = mChar->GetDamageIncrease(); // Total DI from items, buffs, etc.
 	CItem *mWeapon = GetWeapon( mChar );
 	CRace *rPtr = Races->Race( ourTarg->GetRace() );
 	auto serverData = cwmWorldState->ServerData();
@@ -2129,6 +2127,9 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			damage = static_cast<R32>( baseDamage );
 			break;
 		case PHYSICAL:
+			// Add Damage Increase (DI) from items, buffs, etc.
+			SI16 damageIncreasePercent = mChar->GetDamageIncrease(); // Total DI from items, buffs, etc.
+
 			// Race Dmg Modification: Bonus percentage.
 			RaceDamage = Races->DamageFromSkill( getFightSkill, mChar->GetRace() );
 			if( RaceDamage != 0 )
