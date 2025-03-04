@@ -53,6 +53,9 @@ function onCallback0( socket, ourObj )
 	case "DEFENSECHANCE":
 		socket.SysMessage( ourObj.defenseChance );
 		break;
+	case "DAMAGEINCREASE":
+		socket.SysMessage( ourObj.damageIncrease );
+		break;
 	case "FAME":
 		socket.SysMessage( ourObj.fame );
 		break;

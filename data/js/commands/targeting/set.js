@@ -73,6 +73,10 @@ function onCallback0( socket, ourObj )
 		ourObj.defenseChance = nVal;
 		okMsg( socket );
 		break;
+	case "DAMAGEINCREASE":
+		ourObj.damageIncrease = nVal;
+		okMsg(socket);
+		break;
 	case "FAME":
 		ourObj.fame = nVal;
 		okMsg( socket );

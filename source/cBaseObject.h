@@ -78,6 +78,7 @@ protected:
 	SI16				mana;
 	SI16				stamina;
 	SI16				swingSpeedIncrease;
+	SI16				damageIncrease;
 	SI16				healthLeech;
 	SI16				staminaLeech;
 	SI16				manaLeech;
@@ -236,6 +237,11 @@ public:
 	virtual void			SetSwingSpeedIncrease( SI16 newValue );
 
 	void					IncSwingSpeedIncrease( SI16 toInc = 1 );
+
+	virtual SI16			GetDamageIncrease( void ) const;
+	virtual void			SetDamageIncrease( SI16 newValue );
+
+	void					IncDamageIncrease( SI16 toInc = 1 );
 
 	virtual SI16			GetHitChance( void ) const;
 	virtual void			SetHitChance( SI16 newValue );

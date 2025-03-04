@@ -378,6 +378,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"POISONRESISTCAP"s, 358},
 	{"ENERGYRESISTCAP"s, 359},
 	{"DEFENSECHANCEINCREASECAP"s, 360},
+	{"DAMAGEINCREASECAP"s, 361},
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -740,6 +741,7 @@ auto CServerData::ResetDefaults() -> void
 	PoisonResistCap( 70 );
 	EnergyResistCap( 70 );
 	DefenseChanceIncreaseCap( 45 );
+	DamageIncreaseCap( 100 );
 	WeaponDamageBonusType( 2 );
 
 	CheckPetControlDifficulty( true );
@@ -5236,6 +5238,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "POISONRESISTCAP=" << PoisonResistCap() << '\n';
 		ofsOutput << "ENERGYRESISTCAP=" << EnergyResistCap() << '\n';
 		ofsOutput << "DEFENSECHANCEINCREASECAP=" << DefenseChanceIncreaseCap() << '\n';
+		ofsOutput << "DAMAGEINCREASECAP=" << DamageIncreaseCap() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
@@ -5530,6 +5533,20 @@ auto CServerData::DefenseChanceIncreaseCap() const -> SI16
 auto CServerData::DefenseChanceIncreaseCap( SI16 value ) -> void
 {
 	defenseChanceIncreaseCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::DamageIncreaseCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for damage Increase cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::DamageIncreaseCap() const -> SI16
+{
+	return damageIncreaseCap;
+}
+auto CServerData::DamageIncreaseCap( SI16 value ) -> void
+{
+	damageIncreaseCap = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
