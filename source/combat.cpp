@@ -2127,6 +2127,7 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			damage = static_cast<R32>( baseDamage );
 			break;
 		case PHYSICAL:
+		{
 			// Add Damage Increase (DI) from items, buffs, etc.
 			SI16 damageIncreasePercent = mChar->GetDamageIncrease(); // Total DI from items, buffs, etc.
 
@@ -2336,6 +2337,7 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			multiplier /= 100;
 			damage = baseDamage + static_cast<R32>( baseDamage * multiplier );
 			break;
+		}
 		default:
 			damage = static_cast<R32>( baseDamage );
 
