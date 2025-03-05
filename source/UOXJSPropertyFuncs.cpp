@@ -688,6 +688,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_STAMINABONUS:		*vp = INT_TO_JSVAL( gPriv->GetStaminaBonus() );			break;
 			case CIP_MANABONUS:		*vp = INT_TO_JSVAL( gPriv->GetManaBonus() );			break;
 			case CIP_ARTIFACTRARITY:		*vp = INT_TO_JSVAL( gPriv->GetArtifactRarity() );			break;
+			case CIP_DAMAGEINCREASE:		*vp = INT_TO_JSVAL( gPriv->GetDamageIncrease() );			break;
 
 			case CIP_NAME2:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetName2().c_str() );
@@ -2027,6 +2028,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_SPATTACK:		*vp = INT_TO_JSVAL( gPriv->GetSpAttack() );					break;
 			case CCP_SPDELAY:		*vp = INT_TO_JSVAL( gPriv->GetSpDelay() );					break;
 			case CCP_SWINGSPEEDINCREASE:	*vp = INT_TO_JSVAL( gPriv->GetSwingSpeedIncrease() );		break;
+			case CCP_DAMAGEINCREASE:*vp = INT_TO_JSVAL( gPriv->GetDamageIncrease() );			break;
 			case CCP_HITCHANCE:		*vp = INT_TO_JSVAL( gPriv->GetHitChance() );				break;
 			case CCP_DEFENSECHANCE:	*vp = INT_TO_JSVAL( gPriv->GetDefenseChance() );			break;
 			case CCP_AITYPE:		*vp = INT_TO_JSVAL( gPriv->GetNpcAiType() );				break;

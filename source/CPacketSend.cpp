@@ -2400,7 +2400,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			DefenseChanceIncreaseCap( cwmWorldState->ServerData()->DefenseChanceIncreaseCap() );
 			HitChanceIncrease( toCopy.GetHitChance() );
 			SwingSpeedIncrease( toCopy.GetSwingSpeedIncrease() );
-			DamageChanceIncrease( 0 );
+			DamageChanceIncrease( toCopy.GetDamageIncrease() );
 			LowerReagentCost( 0 );
 			SpellDamageIncrease( 0 );
 			FasterCastRecovery( 0 );
@@ -7809,6 +7809,13 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			{
 				tempEntry.stringNum = 1060486; // swing speed increase ~1_val~%
 				tempEntry.ourText = oldstrutil::number( cItem.GetSwingSpeedIncrease() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetDamageIncrease() > 0 )
+			{
+				tempEntry.stringNum = 1060401; // damage increase ~1_val~%
+				tempEntry.ourText = oldstrutil::number( cItem.GetDamageIncrease() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
