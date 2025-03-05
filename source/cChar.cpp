@@ -3000,6 +3000,8 @@ bool CChar::WearItem( CItem *toWear )
 			IncStaminaBonus( itemLayers[tLayer]->GetStaminaBonus() );
 			IncManaBonus( itemLayers[tLayer]->GetManaBonus() );
 
+			IncDamageIncrease( itemLayers[tLayer]->GetDamageIncrease() );
+
 			if( toWear->IsPostLoaded() )
 			{
 				if( itemLayers[tLayer]->GetPoisoned() )
@@ -3088,6 +3090,8 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncHealthBonus( -itemLayers[Layer]->GetHealthBonus() );
 		IncStaminaBonus( -itemLayers[Layer]->GetStaminaBonus() );
 		IncManaBonus( -itemLayers[Layer]->GetManaBonus() );
+
+		IncDamageIncrease( -itemLayers[Layer]->GetDamageIncrease() );
 
 		if( itemLayers[Layer]->GetPoisoned() )
 		{

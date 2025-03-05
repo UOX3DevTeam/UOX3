@@ -407,6 +407,7 @@ private:
 	SI16		poisonResistCap;				//	The Cap for poison resist property
 	SI16		energyResistCap;				//	The Cap for energy resist property
 	SI16		defenseChanceIncreaseCap;		//	The Cap for energy resist property
+	SI16		damageIncreaseCap;				//	The Cap for energy resist property
 
 	// Start & Location Settings
 	std::vector<__STARTLOCATIONDATA__>	startlocations;
@@ -983,6 +984,9 @@ public:
 
 	auto		DefenseChanceIncreaseCap( SI16 value ) -> void;
 	SI16		DefenseChanceIncreaseCap() const;
+
+	auto		DamageIncreaseCap( SI16 value ) -> void;
+	SI16		DamageIncreaseCap() const;
 
 	auto		MaxControlSlots( UI08 value ) -> void;
 	UI08		MaxControlSlots() const;

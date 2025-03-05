@@ -3,6 +3,17 @@
 	Added spawner_editor.js text to dictionaries.
 	Various enhancements to spawner editor gump, including support for another spawner type - area spawner (type 69)
 
+27/02/2025 - Dragon Slayer
+	Updated JS Gump Methods .AddButton() and .AddButtonTileArt() to support larger values for buttonId and tileId parameters. (Thanks Xuri)
+	Updated formatting of several gump command strings from JS Methods to ensure unsigned integers are correctly converted to string. (Thanks Xuri)
+
+23/02/2025 - Dragon Slayer
+	Added new DFN tags for Items/Npcs:
+	DAMAGEINCREASE=# // This adds extra damage percent to the total base damage.
+	These are also available as JS Engine object propertie: .damageIncrease
+	Added New INI settings: DAMAGEINCREASECAP, Set the default cap of percent the char/item an increase.
+
+
 22/02/2025 - Dragon Slayer
 	Added UOKr Extended Status bar gump packets.
 	Added New INI settings: PHYSICALRESISTCAP, FIRERESISTCAP, COLDRESISTCAP, POISONRESISTCAP, ENGERYRESISTCAP, DEFENSECHANCEINCREASECAP. Set the default cap for chars resist, defense chance increase.
