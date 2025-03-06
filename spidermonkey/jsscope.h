@@ -662,7 +662,7 @@ struct JSScopeProperty {
     uint8           attrs;              /* attributes, see jsapi.h JSPROP_* */
     uint8           flags;              /* flags, see below for defines */
   public:
-    int16           shortid;            /* tinyid, or local arg/var index */
+    intN            shortid;            /* tinyid, or local arg/var index */
     JSScopeProperty *parent;            /* parent node, reverse for..in order */
     union {
         JSScopeProperty *kids;          /* null, single child, or a tagged ptr

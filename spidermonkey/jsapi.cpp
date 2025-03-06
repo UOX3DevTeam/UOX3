@@ -3131,7 +3131,7 @@ JS_DefineProperty(JSContext *cx, JSObject *obj, const char *name, jsval value,
 }
 
 JS_PUBLIC_API(JSBool)
-JS_DefinePropertyWithTinyId(JSContext *cx, JSObject *obj, const char *name, int8 tinyid,
+JS_DefinePropertyWithTinyId(JSContext *cx, JSObject *obj, const char *name, intN tinyid,
                             jsval value, JSPropertyOp getter, JSPropertyOp setter, uintN attrs)
 {
     return DefineProperty(cx, obj, name, value, getter, setter, attrs,
@@ -3157,7 +3157,7 @@ JS_DefineUCProperty(JSContext *cx, JSObject *obj, const jschar *name, size_t nam
 
 JS_PUBLIC_API(JSBool)
 JS_DefineUCPropertyWithTinyId(JSContext *cx, JSObject *obj, const jschar *name, size_t namelen,
-                              int8 tinyid, jsval value, JSPropertyOp getter, JSPropertyOp setter,
+                              intN tinyid, jsval value, JSPropertyOp getter, JSPropertyOp setter,
                               uintN attrs)
 {
     return DefineUCProperty(cx, obj, name, namelen, value, getter, setter,

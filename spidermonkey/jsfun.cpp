@@ -1416,7 +1416,7 @@ fun_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
 
 struct LazyFunctionProp {
     uint16      atomOffset;
-    int8        tinyid;
+    intN        tinyid;
     uint8       attrs;
 };
 

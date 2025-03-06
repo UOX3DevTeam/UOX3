@@ -7933,7 +7933,7 @@ TraceRecorder::callProp(JSObject* obj, JSProperty* prop, jsid id, jsval*& vp,
     if (setflags && !sprop->writable())
         RETURN_STOP("writing to a read-only property");
 
-    uintN slot = uint16(sprop->shortid);
+    uintN slot = uint32(sprop->shortid);
 
     vp = NULL;
     uintN upvar_slot = SPROP_INVALID_SLOT;
@@ -11500,14 +11500,14 @@ TraceRecorder::setCallProp(JSObject *callobj, LIns *callobj_ins, JSScopeProperty
     if (fp) {
         if (sprop->setterOp() == SetCallArg) {
             JS_ASSERT(sprop->hasShortID());
-            uintN slot = uint16(sprop->shortid);
+            uintN slot = uint32(sprop->shortid);
             jsval *vp2 = &fp->argv[slot];
             CHECK_STATUS(setUpwardTrackedVar(vp2, v, v_ins));
             return RECORD_CONTINUE;
         }
         if (sprop->setterOp() == SetCallVar) {
             JS_ASSERT(sprop->hasShortID());
-            uintN slot = uint16(sprop->shortid);
+            uintN slot = uint32(sprop->shortid);
             jsval *vp2 = &fp->slots()[slot];
             CHECK_STATUS(setUpwardTrackedVar(vp2, v, v_ins));
             return RECORD_CONTINUE;
@@ -11521,7 +11521,7 @@ TraceRecorder::setCallProp(JSObject *callobj, LIns *callobj_ins, JSScopeProperty
         // object loses its frame it never regains one, on trace we will also
         // have a null private in the Call object. So all we need to do is
         // write the value to the Call object's slot.
-        int32 dslot_index = uint16(sprop->shortid);
+        int32 dslot_index = uint32(sprop->shortid);
         if (sprop->setterOp() == SetCallArg) {
             JS_ASSERT(dslot_index < ArgClosureTraits::slot_count(callobj));
             dslot_index += ArgClosureTraits::slot_offset(callobj);
@@ -11568,7 +11568,7 @@ TraceRecorder::setCallProp(JSObject *callobj, LIns *callobj_ins, JSScopeProperty
     // Case 1: storing to native stack area.
 
     // Compute native stack slot and address offset we are storing to.
-    unsigned slot = uint16(sprop->shortid);
+    unsigned slot = uint32(sprop->shortid);
     LIns *slot_ins;
     if (sprop->setterOp() == SetCallArg)
         slot_ins = ArgClosureTraits::adj_slot_lir(lir, fp_ins, slot);

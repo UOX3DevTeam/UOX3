@@ -3278,7 +3278,7 @@ js_XDRBlockObject(JSXDRState *xdr, JSObject **objp)
     JSScopeProperty *sprop;
     jsid propid;
     JSAtom *atom;
-    int16 shortid;
+    intN  shortid;
     JSBool ok;
 
     cx = xdr->cx;
@@ -3358,7 +3358,7 @@ js_XDRBlockObject(JSXDRState *xdr, JSObject **objp)
 
         /* XDR the real id, then the shortid. */
         if (!js_XDRStringAtom(xdr, &atom) ||
-            !JS_XDRUint16(xdr, (uint16 *)&shortid)) {
+            !JS_XDRUint32(xdr, (uint32 *)&shortid)) {
             return false;
         }
 
