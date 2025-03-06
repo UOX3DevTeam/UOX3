@@ -4343,12 +4343,12 @@
 9821=Changed Spawner Type to NPC (62).
 9822=Changed Spawner Type to Area (69), spawn radius updated (defaults to 1)
 9823=Changed Spawner Type to Escort (125).
-9824=Spawn Section updated to 
-9825=Min Time updated to 
-9826=Max Time updated to 
-9827=Amount updated to 
-9828=Spawn Radius updated to 
-9829=Spawner name updated to 
+9824=Spawn Section updated to %s
+9825=Min Time updated to %i
+9826=Max Time updated to %i
+9827=Amount updated to %i
+9828=Spawn Radius updated to %i
+9829=Spawner name updated to %s
 9830=No longer using spawn list - assuming spawn section now refers to individual NPC definition.
 9831=Now using spawn list - assuming spawn section now refers to an NPC list.
 // [9900 - 9999] Door and Sign Commands

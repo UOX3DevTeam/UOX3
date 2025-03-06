@@ -4343,12 +4343,12 @@
 9821=Změněn typ spawneru na NPC (62).
 9822=Změněn typ rozmnožovače na oblast (69), poloměr rozmnožování aktualizován (výchozí hodnota je 1)
 9823=Změněn typ spawnera na doprovod (125).
-9824=Sekce spawn aktualizována na
-9825=Minimální čas aktualizován na
-9826=Maximální čas aktualizován na
-9827=Částka aktualizována na
-9828=Poloměr spawnování aktualizován na
-9829=Jméno spawneru aktualizováno na
+9824=Sekce spawn aktualizována na %s
+9825=Minimální čas aktualizován na %i
+9826=Maximální čas aktualizován na %i
+9827=Částka aktualizována na %i
+9828=Poloměr spawnování aktualizován na %i
+9829=Jméno spawneru aktualizováno na %s
 9830=Již nepoužívá spawn list - za předpokladu, že sekce spawn nyní odkazuje na individuální definici NPC.
 9831=Nyní používám spawn list - za předpokladu, že sekce spawn nyní odkazuje na seznam NPC.
 // [9900 - 10000] Příkazy pro dveře a značky

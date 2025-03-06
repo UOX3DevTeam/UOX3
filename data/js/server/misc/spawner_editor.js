@@ -160,28 +160,32 @@ function onGumpPress( socket, pButton, gumpData )
 			if( spawnSection != iUsed.spawnsection )
 			{
 				iUsed.spawnsection = spawnSection;
-				iUsed.TextMessage( GetDictionaryEntry( 9824, socket.language ) + spawnSection, false, 0x3b2, 0, pUser.serial );// Spawn Section updated to 
+				let tmpMsg = GetDictionaryEntry( 9824, socket.language ); // Spawn Section updated to %s
+				iUsed.TextMessage( tmpMsg.replace( /%s/gi, spawnSection ), false, 0x3b2, 0, pUser.serial );
 			}
 			if( minInterval != iUsed.mininterval )
 			{
 				iUsed.mininterval = minInterval;
-				iUsed.TextMessage( GetDictionaryEntry( 9825, socket.language ) + minInterval, false, 0x3b2, 0, pUser.serial );// Min Time updated to 
+				let tmpMsg = GetDictionaryEntry( 9825, socket.language ); // Min Time updated to %i
+				iUsed.TextMessage( tmpMsg.replace( /%i/gi, mininterval), false, 0x3b2, 0, pUser.serial );
 			}
 			if( maxInterval != iUsed.maxinterval )
 			{
 				iUsed.maxinterval = maxInterval;
-				iUsed.TextMessage( GetDictionaryEntry( 9826, socket.language ) + maxInterval, false, 0x3b2, 0, pUser.serial );// Max Time updated to 
+				let tmpMsg = GetDictionaryEntry( 9826, socket.language ); // Max Time updated to %i
+				iUsed.TextMessage( tmpMsg.replace( /%i/gi, maxinterval), false, 0x3b2, 0, pUser.serial );
 			}
 			if( spawnAmount != iUsed.amount )
 			{
 				iUsed.amount = spawnAmount;
-				iUsed.TextMessage( GetDictionaryEntry( 9827, socket.language ) + spawnAmount, false, 0x3b2, 0, pUser.serial );// Amount updated to 
+				let tmpMsg = GetDictionaryEntry( 9827, socket.language ); // Amount updated to %i
+				iUsed.TextMessage( tmpMsg.replace( /%i/gi, spawnAmount), false, 0x3b2, 0, pUser.serial );
 			}
 			if( spawnRadius != iUsed.GetMoreVar( "more", 3 ))
 			{
 				iUsed.SetMoreVar( "more", 3, spawnRadius );
 				iUsed.SetMoreVar( "more", 4, spawnRadius );
-				iUsed.TextMessage( GetDictionaryEntry( 9828, socket.language ) + spawnRadius, false, 0x3b2, 0, pUser.serial );// Spawn Radius updated to 
+				iUsed.TextMessage( GetDictionaryEntry( 9828, socket.language ) + spawnRadius, false, 0x3b2, 0, pUser.serial );// Spawn Radius updated to %i
 			}
 
 			// Update spawner name
@@ -196,7 +200,7 @@ function onGumpPress( socket, pButton, gumpData )
 			else if( spawnerName != iUsed.name )
 			{
 				iUsed.name = spawnerName;
-				iUsed.TextMessage( GetDictionaryEntry( 9829, socket.language ) + spawnerName, false, 0x3b2, 0, pUser.serial );// Spawner name updated to 
+				iUsed.TextMessage( GetDictionaryEntry( 9829, socket.language ) + spawnerName, false, 0x3b2, 0, pUser.serial );// Spawner name updated to %s
 			}
 
 			// Handle Spawnlist Checkbox
