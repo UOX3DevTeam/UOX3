@@ -293,23 +293,22 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 		needsChecking[i].set();
 	}
 
-	targContext = JSEngine->GetContext( runTime ); //JS_NewContext( JSEngine->GetRuntime( runTime ), 0x2000 );
+	targContext = JSEngine->GetContext( runTime );
 	if( targContext == nullptr )
 		return;
 
-	targObject = JS_NewGlobalObject( targContext, &uox_class );
+	targObject = JS_NewObject( targContext, &uox_class, nullptr, nullptr );
 	if( targObject == nullptr )
 		return;
 
 	JS_LockGCThing( targContext, targObject );
-	//JS_AddRoot( targContext, &targObject );
 
 	// Moved here so it reports errors during script-startup too
 	JS_SetErrorReporter( targContext, UOX3ErrorReporter );
 
 	JS_SetGlobalObject( targContext, targObject );
 
-	JS_InitStandardClasses( targContext, targObject );
+	//JS_InitStandardClasses( targContext, targObject );
 	JS_DefineFunctions( targContext, targObject, my_functions );
 	targScript = JS_CompileFile( targContext, targObject, targFile.c_str() );
 	if( targScript == nullptr )
