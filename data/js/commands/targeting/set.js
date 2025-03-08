@@ -462,6 +462,10 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		ourItem.lowerStatReq = nVal;
 		okMsg( socket );
 		break;
+	case "LUCK":
+		ourItem.luck = nVal;
+		okMsg( socket );
+		break;
 	case "HEALTHLEECH":
 		ourItem.healthLeech = nVal;
 		okMsg( socket );

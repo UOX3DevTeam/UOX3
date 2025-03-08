@@ -369,6 +369,9 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "LAYER":
 		socket.SysMessage( "0x" + ( ourItem.layer ).toString( 16 ) + "( " + ourItem.layer + ")" );
 		break;
+	case "LUCK":
+		socket.SysMessage( ourItem.luck);
+		break;
 	case "LODAMAGE":
 		socket.SysMessage( ourItem.lodamage );
 		break;
