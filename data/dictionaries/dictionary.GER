@@ -4343,12 +4343,12 @@
 9821=Spawner-Typ auf NPC (62) geändert.
 9822=Spawner-Typ auf Bereich (69) geändert, Spawnradius aktualisiert (Standard: 1)
 9823=Spawner-Typ auf Eskorte (125) geändert.
-9824=Spawn-Abschnitt aktualisiert auf
-9825=Mindestzeit aktualisiert auf
-9826=Maximalzeit aktualisiert auf
-9827=Betrag aktualisiert auf
-9828=Spawnradius aktualisiert auf
-9829=Spawner-Name aktualisiert auf
+9824=Spawn-Abschnitt auf %s aktualisiert
+9825=Mindestzeit auf %i aktualisiert
+9826=Maximalzeit auf %i aktualisiert
+9827=Menge auf %i aktualisiert
+9828=Spawn-Radius auf %i aktualisiert
+9829=Spawner-Name auf %s aktualisiert
 9830=Spawn-Liste wird nicht mehr verwendet – angenommen, Spawn-Abschnitt bezieht sich jetzt auf individuelle NPC-Definition.
 9831=Spawn-Liste wird jetzt verwendet – angenommen, Spawn-Abschnitt bezieht sich jetzt auf eine NPC-Liste.
 // [9900 - 10000] Befehle für Türen und Schilder

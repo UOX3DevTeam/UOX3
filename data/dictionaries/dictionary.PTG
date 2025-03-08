@@ -4343,12 +4343,12 @@
 9821=Tipo de gerador alterado para NPC (62).
 9822=Tipo de gerador alterado para Área (69), raio de geração atualizado (padrão para 1)
 9823=Tipo de gerador alterado para Escolta (125).
-9824=Seção de geração atualizada para
-9825=Tempo mínimo atualizado para
-9826=Tempo máximo atualizado para
-9827=Quantidade atualizada para
-9828=Raio de geração atualizado para
-9829=Nome do gerador atualizado para
+9824=Seção de Spawn atualizada para %s
+9825=Tempo mínimo atualizado para %i
+9826=Tempo máximo atualizado para %i
+9827=Quantidade atualizada para %i
+9828=Raio de Spawn atualizado para %i
+9829=Nome do Spawner atualizado para %s
 9830=Não está mais usando a lista de geração - assumindo que a seção de geração agora se refere à definição de NPC individual.
 9831=Agora usando a lista de geração - assumindo que a seção de geração agora se refere a uma lista de NPC.
 // [9900 - 10000] Comandos de Porta e de Sinal

@@ -185,7 +185,8 @@ function onGumpPress( socket, pButton, gumpData )
 			{
 				iUsed.SetMoreVar( "more", 3, spawnRadius );
 				iUsed.SetMoreVar( "more", 4, spawnRadius );
-				iUsed.TextMessage( GetDictionaryEntry( 9828, socket.language ) + spawnRadius, false, 0x3b2, 0, pUser.serial );// Spawn Radius updated to %i
+				let tmpMsg = GetDictionaryEntry( 9828, socket.language ); // Spawn Radius updated to %i
+				iUsed.TextMessage( tmpMsg.replace( /%i/gi, spawnAmount), false, 0x3b2, 0, pUser.serial );
 			}
 
 			// Update spawner name
@@ -200,7 +201,8 @@ function onGumpPress( socket, pButton, gumpData )
 			else if( spawnerName != iUsed.name )
 			{
 				iUsed.name = spawnerName;
-				iUsed.TextMessage( GetDictionaryEntry( 9829, socket.language ) + spawnerName, false, 0x3b2, 0, pUser.serial );// Spawner name updated to %s
+				let tmpMsg = GetDictionaryEntry( 9829, socket.language ); // Spawner name updated to %s
+				iUsed.TextMessage( tmpMsg.replace( /%s/gi, spawnSection ), false, 0x3b2, 0, pUser.serial );
 			}
 
 			// Handle Spawnlist Checkbox

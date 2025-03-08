@@ -4343,12 +4343,12 @@
 9821=Zmieniono typ spawnera na NPC (62).
 9822=Zmieniono typ spawnera na obszar (69), promień odradzania zaktualizowano (domyślnie 1)
 9823=Zmieniono typ spawnera na eskortę (125).
-9824=Sekcja odradzania zaktualizowano do
-9825=Minimalny czas zaktualizowano do
-9826=Maksymalny czas zaktualizowano do
-9827=Ilość zaktualizowano do
-9828=Promień odradzania zaktualizowano do
-9829=Nazwa spawnera zaktualizowano do
+9824=Sekcja odradzania zaktualizowana do %s
+9825=Min. czas zaktualizowany do %i
+9826=Maks. czas zaktualizowany do %i
+9827=Ilość zaktualizowana do %i
+9828=Promień odradzania zaktualizowany do %i
+9829=Nazwa odradzacza zaktualizowana do %s
 9830=Nie używa się już listy odradzania — zakładając, że sekcja odradzania odnosi się teraz do indywidualnej definicji NPC. 9831=Teraz używana jest lista odrodzeń - zakładając, że sekcja odrodzeń odnosi się teraz do listy NPC.
 // [9900 - 10000] Polecenia dotyczące drzwi i znaków
 9916=Strona

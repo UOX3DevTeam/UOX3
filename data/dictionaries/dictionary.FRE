@@ -4499,12 +4499,12 @@
 9821 = Type de générateur modifié : PNJ (62).
 9822 = Type de générateur modifié : Zone (69), rayon d'apparition mis à jour (par défaut : 1).
 9823 = Type de générateur modifié : Escorte (125).
-9824 = Section d'apparition mise à jour :
-9825 = Temps minimum mis à jour :
-9826 = Temps maximum mis à jour :
-9827 = Quantité mise à jour :
-9828 = Rayon d'apparition mis à jour :
-9829 = Nom du générateur mis à jour :
+9824=Section d'apparition mise à jour à %s
+9825=Durée minimale mise à jour à %i
+9826=Durée maximale mise à jour à %i
+9827=Montant mis à jour à %i
+9828=Rayon d'apparition mis à jour à %i
+9829=Nom du générateur mis à jour à %s
 9830 = N'utilisez plus la liste d'apparition : nous supposons que la section d'apparition fait désormais référence à la définition individuelle du PNJ.
 9831 = Nous utilisons désormais la liste d'apparition - en supposant que la section d'apparition fait désormais référence à une liste de PNJ.
 // [9900 - 10000] Commandes pour les portes et les enseignes
