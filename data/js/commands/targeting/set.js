@@ -811,6 +811,10 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		ourChar.thirst = nVal;
 		okMsg( socket );
 		break;
+	case "TITHING":
+		ourChar.tithing = nVal;
+		okMsg( socket );
+		break;
 	// Account Properties
 	case "USERNAME":
 	case "CURRENTCHAR":

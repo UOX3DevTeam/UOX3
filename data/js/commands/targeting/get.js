@@ -541,6 +541,9 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "TOPEACE":
 		socket.SysMessage( ourChar.skillToPeace );
 		break;
+	case "TITHING":
+		socket.SysMessage( ourChar.tithing );
+		break;
 	case "NPCWANDER":
 		socket.SysMessage( ourChar.wandertype );
 		break;
