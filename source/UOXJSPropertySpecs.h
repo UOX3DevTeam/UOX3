@@ -551,6 +551,8 @@ inline JSPropertySpec CItemProps[] =
 	{ "hitChance",		CIP_HITCHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "defenseChance",	CIP_DEFENSECHANCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 
+	{ "luck",		CIP_LUCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+
 	{ "healthBonus",	CIP_HEALTHBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "staminaBonus",	CIP_STAMINABONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "manaBonus",		CIP_MANABONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },

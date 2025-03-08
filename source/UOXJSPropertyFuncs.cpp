@@ -684,6 +684,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MANALEECH:		*vp = INT_TO_JSVAL( gPriv->GetManaLeech() );			break;
 			case CIP_HITCHANCE:	*vp = INT_TO_JSVAL( gPriv->GetHitChance() );			break;
 			case CIP_DEFENSECHANCE:	*vp = INT_TO_JSVAL( gPriv->GetDefenseChance() );			break;
+			case CIP_LUCK:				*vp = INT_TO_JSVAL( gPriv->GetLuck() );				break;
 			case CIP_HEALTHBONUS:		*vp = INT_TO_JSVAL( gPriv->GetHealthBonus() );			break;
 			case CIP_STAMINABONUS:		*vp = INT_TO_JSVAL( gPriv->GetStaminaBonus() );			break;
 			case CIP_MANABONUS:		*vp = INT_TO_JSVAL( gPriv->GetManaBonus() );			break;

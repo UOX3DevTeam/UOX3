@@ -1053,6 +1053,26 @@ void CBaseObject::IncHP( SI16 amtToChange )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetLuck()
+//|					CBaseObject::SetLuck()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Luck of the item
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetLuck( void ) const
+{
+	return luck;
+}
+void CBaseObject::SetLuck( SI16 newValue )
+{
+	luck = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetHitChance()
 //|					CBaseObject::SetHitChance()
 //o------------------------------------------------------------------------------------------------o
@@ -1927,6 +1947,16 @@ void CBaseObject::IncStaminaLeech( SI16 toInc )
 void CBaseObject::IncManaLeech( SI16 toInc )
 {
 	SetManaLeech( manaLeech + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncLuck()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Luck value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncLuck( SI16 toInc )
+{
+	SetLuck( luck + toInc );
 }
 
 //|	Function	-	CBaseObject::IncHitChance()
