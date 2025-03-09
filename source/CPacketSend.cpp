@@ -7889,7 +7889,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			if( cItem.GetTithing() > 0 )
 			{
 				tempEntry.stringNum = 1042971; // ~1_NOTHING~
-				tempEntry.ourText = oldstrutil::format( "Tithing: %s", oldstrutil::number( cItem.GetTithing() ).c_str() );
+				tempEntry.ourText = oldstrutil::format( "Tithing: %i", cItem.GetTithing() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 		}
