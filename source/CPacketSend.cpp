@@ -2383,10 +2383,10 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			ColdResist( Combat->CalcDef( &toCopy, 0, false, COLD ));
 			PoisonResist( Combat->CalcDef( &toCopy, 0, false, POISON ));
 			EnergyResist( Combat->CalcDef( &toCopy, 0, false, LIGHTNING ));
-			Luck( 0 );
+			Luck( toCopy.GetLuck() );
 			DamageMin( Combat->CalcLowDamage( &toCopy ));
 			DamageMax( Combat->CalcHighDamage( &toCopy ));
-			TithingPoints( 0 );
+			TithingPoints( toCopy.GetTithing() );
 		}
 		if( extended6 )
 		{
@@ -7819,6 +7819,13 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
+			if( cItem.GetLuck() > 0 )
+			{
+				tempEntry.stringNum = 1060436; // luck ~1_val~
+				tempEntry.ourText = oldstrutil::number( cItem.GetLuck() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
 			if( cItem.GetHitChance() > 0 )
 			{
 				tempEntry.stringNum = 1060415; // hit chance increase ~1_val~%
@@ -7883,6 +7890,13 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			{
 				tempEntry.stringNum = 1060435; // lower requirements ~1_val~%
 				tempEntry.ourText = oldstrutil::number( cItem.GetLowerStatReq() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetTithing() > 0 )
+			{
+				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				tempEntry.ourText = oldstrutil::format( "Tithing: %i", cItem.GetTithing() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 		}

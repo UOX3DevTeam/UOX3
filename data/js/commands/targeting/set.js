@@ -236,8 +236,16 @@ function onCallback0( socket, ourObj )
 		ourObj.sectionID = socket.xText.substring( 10 );
 		okMsg( socket );
 		break;
+	case "LUCK":
+		ourObj.luck = nVal;
+		okMsg( socket );
+		break;
 	case "SHOULDSAVE":
 		ourObj.shouldSave = ( nVal == 1 );
+		okMsg( socket );
+		break;
+	case "TITHING":
+		ourObj.tithing = nVal;
 		okMsg( socket );
 		break;
 	default:
