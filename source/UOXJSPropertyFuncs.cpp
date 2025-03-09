@@ -147,6 +147,11 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			case CSP_ASH:				*vp = INT_TO_JSVAL( gPriv->Reagants().ash );			break;
 			case CSP_SHADE:				*vp = INT_TO_JSVAL( gPriv->Reagants().shade );			break;
 			case CSP_GARLIC:			*vp = INT_TO_JSVAL( gPriv->Reagants().garlic );			break;
+			case CSP_BATWING:			*vp = INT_TO_JSVAL( gPriv->Reagants().batwing );		break;
+			case CSP_DAEMONBLOOD:		*vp = INT_TO_JSVAL( gPriv->Reagants().daemonblood );	break;
+			case CSP_GRAVEDUST:			*vp = INT_TO_JSVAL( gPriv->Reagants().gravedust );		break;
+			case CSP_NOXCRYSTAL:		*vp = INT_TO_JSVAL( gPriv->Reagants().noxcrystal );		break;
+			case CSP_PIGIRON:			*vp = INT_TO_JSVAL( gPriv->Reagants().pigiron );		break;
 			case CSP_REQUIRETARGET:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireTarget() );		break;
 			case CSP_REQUIREITEM:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireItemTarget() );	break;
 			case CSP_REQUIRECHAR:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireCharTarget() );	break;

@@ -1,3 +1,8 @@
+09/03/2025 - Dragon Slayer
+	Added new DFN tags for Magic:
+	BATWING, DAEMONBLOOD, GRAVEDUST, NOXCRYSTAL, PIGIRON
+	These are also available as JS Engine object propertie: .batwing, .daemonBlood, .graveDust, .noxCrystal, .pigIron
+
 08/03/2025 - Dragon Slayer
 	Added new DFN tags for Items:
 	LUCK=# // Luck stacks across all items that a character has equipped to make up their Luck score for better AOS Magic Loot. Currently no AOS Magic Loot system in place.
@@ -13,6 +18,7 @@
 	Renamed spawnergump.js to spawner_editor.js.
 	Added spawner_editor.js text to dictionaries.
 	Various enhancements to spawner editor gump, including support for another spawner type - area spawner (type 69)
+
 
 27/02/2025 - Dragon Slayer
 	Updated JS Gump Methods .AddButton() and .AddButtonTileArt() to support larger values for buttonId and tileId parameters. (Thanks Xuri)
