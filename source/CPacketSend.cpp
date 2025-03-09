@@ -2383,7 +2383,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			ColdResist( Combat->CalcDef( &toCopy, 0, false, COLD ));
 			PoisonResist( Combat->CalcDef( &toCopy, 0, false, POISON ));
 			EnergyResist( Combat->CalcDef( &toCopy, 0, false, LIGHTNING ));
-			Luck( 0 );
+			Luck( toCopy.GetLuck() );
 			DamageMin( Combat->CalcLowDamage( &toCopy ));
 			DamageMax( Combat->CalcHighDamage( &toCopy ));
 			TithingPoints( toCopy.GetTithing() );
@@ -7816,6 +7816,13 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			{
 				tempEntry.stringNum = 1060401; // damage increase ~1_val~%
 				tempEntry.ourText = oldstrutil::number( cItem.GetDamageIncrease() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetLuck() > 0 )
+			{
+				tempEntry.stringNum = 1060436; // luck ~1_val~
+				tempEntry.ourText = oldstrutil::number( cItem.GetLuck() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 

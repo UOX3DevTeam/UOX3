@@ -2993,6 +2993,8 @@ bool CChar::WearItem( CItem *toWear )
 			IncStaminaLeech( itemLayers[tLayer]->GetStaminaLeech() );
 			IncManaLeech( itemLayers[tLayer]->GetManaLeech() );
 
+			IncLuck( itemLayers[tLayer]->GetLuck() );
+
 			IncHitChance( itemLayers[tLayer]->GetHitChance() );
 			IncDefenseChance( itemLayers[tLayer]->GetDefenseChance() );
 
@@ -3085,6 +3087,8 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncHealthLeech( -itemLayers[Layer]->GetHealthLeech() );
 		IncStaminaLeech( -itemLayers[Layer]->GetStaminaLeech() );
 		IncManaLeech( -itemLayers[Layer]->GetManaLeech() );
+
+		IncLuck( -itemLayers[Layer]->GetLuck() );
 
 		IncHitChance( -itemLayers[Layer]->GetHitChance() );
 		IncDefenseChance( -itemLayers[Layer]->GetDefenseChance() );

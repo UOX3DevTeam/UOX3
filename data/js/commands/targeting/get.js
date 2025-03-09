@@ -156,6 +156,9 @@ function onCallback0( socket, ourObj )
 	case "DAMAGEABLE":
 		socket.SysMessage( ourObj.isDamageable );
 		break;
+	case "LUCK":
+		socket.SysMessage( ourObj.luck );
+		break;
 	case "REGION":
 		socket.SysMessage( ourObj.region.id + " ( " + ourObj.region.name + ")" );
 		break;
@@ -182,7 +185,7 @@ function onCallback0( socket, ourObj )
 		socket.SysMessage( ourObj.sectionID );
 		break;
 	case "SWINGSPEEDINC":
-		socket.SysMessage( swingSpeedIncrease );
+		socket.SysMessage( ourObj.swingSpeedIncrease );
 		break;
 	case "SHOULDSAVE":
 		socket.SysMessage( ourObj.shouldSave );
