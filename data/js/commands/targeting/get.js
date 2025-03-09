@@ -179,7 +179,7 @@ function onCallback0( socket, ourObj )
 		socket.SysMessage( ourObj.sectionID );
 		break;
 	case "SWINGSPEEDINC":
-		socket.SysMessage( swingSpeedIncrease );
+		socket.SysMessage( ourObj.swingSpeedIncrease );
 		break;
 	case "SHOULDSAVE":
 		socket.SysMessage( ourObj.shouldSave );
