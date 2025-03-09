@@ -3866,6 +3866,26 @@ bool CMagic::CheckReagents( CChar *s, const Reag_st *reagents )
 	{
 		failmsg.silk = 1;
 	}
+	if( reagents->batwing != 0 && GetItemAmount( s, 0x0F78 ) < reagents->batwing )
+	{
+		failmsg.batwing = 1;
+	}
+	if( reagents->daemonblood != 0 && GetItemAmount( s, 0x0F7D ) < reagents->daemonblood )
+	{
+		failmsg.daemonblood = 1;
+	}
+	if( reagents->gravedust != 0 && GetItemAmount( s, 0x0F8F ) < reagents->gravedust )
+	{
+		failmsg.gravedust = 1;
+	}
+	if( reagents->noxcrystal != 0 && GetItemAmount( s, 0x0F8E ) < reagents->noxcrystal )
+	{
+		failmsg.noxcrystal = 1;
+	}
+	if( reagents->pigiron != 0 && GetItemAmount( s, 0x0F8A ) < reagents->pigiron  )
+	{
+		failmsg.pigiron = 1;
+	}
 	return RegMsg( s, failmsg );
 }
 
@@ -3921,6 +3941,26 @@ bool CMagic::RegMsg( CChar *s, Reag_st failmsg )
 	if( failmsg.silk )
 	{
 		display = true; tempString += "Ss, ";
+	}
+	if( failmsg.batwing )
+	{
+		display = true; tempString += "Ba, ";
+	}
+	if( failmsg.daemonblood )
+	{
+		display = true; tempString += "Db, ";
+	}
+	if( failmsg.gravedust )
+	{
+		display = true; tempString += "Gd, ";
+	}
+	if( failmsg.noxcrystal )
+	{
+		display = true; tempString += "Nc, ";
+	}
+	if( failmsg.pigiron )
+	{
+		display = true; tempString += "Pi, ";
 	}
 
 	// Append our temporary string to the end of the char array and add an end-bracket
@@ -5341,6 +5381,11 @@ void CMagic::DelReagents( CChar *s, Reag_st reags )
 	DeleteItemAmount( s, reags.shade, 0x0F88 );
 	DeleteItemAmount( s, reags.ash, 0x0F8C  );
 	DeleteItemAmount( s, reags.silk, 0x0F8D );
+	DeleteItemAmount( s, reags.batwing, 0x0F78 );
+	DeleteItemAmount( s, reags.daemonblood, 0x0F7D );
+	DeleteItemAmount( s, reags.gravedust, 0x0F8F );
+	DeleteItemAmount( s, reags.noxcrystal, 0x0F8E );
+	DeleteItemAmount( s, reags.pigiron, 0x0F8A );
 }
 
 //o------------------------------------------------------------------------------------------------o
