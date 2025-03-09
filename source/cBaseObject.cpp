@@ -1088,6 +1088,10 @@ void CBaseObject::SetLuck( SI16 newValue )
 	{
 		( static_cast<CItem *>( this ))->UpdateRegion();
 	}
+	else if( CanBeObjType( OT_CHAR ))
+	{
+		( static_cast<CChar *>( this ))->UpdateRegion();
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1108,6 +1112,10 @@ void CBaseObject::SetHitChance( SI16 newValue )
 	{
 		( static_cast<CItem *>( this ))->UpdateRegion();
 	}
+	else if( CanBeObjType( OT_CHAR ))
+	{
+		( static_cast<CChar *>( this ))->UpdateRegion();
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1127,6 +1135,10 @@ void CBaseObject::SetDefenseChance( SI16 newValue )
 	if( CanBeObjType( OT_ITEM ))
 	{
 		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+	else if( CanBeObjType( OT_CHAR ))
+	{
+		( static_cast<CChar *>( this ))->UpdateRegion();
 	}
 }
 
@@ -1680,6 +1692,10 @@ void CBaseObject::SetTithing( UI32 newValue )
 	{
 		( static_cast<CItem *>( this ))->UpdateRegion();
 	}
+	else if( CanBeObjType( OT_CHAR ))
+	{
+		( static_cast<CChar *>( this ))->UpdateRegion();
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1701,6 +1717,10 @@ void CBaseObject::SetSwingSpeedIncrease( SI16 newValue )
 	{
 		( static_cast<CItem *>( this ))->UpdateRegion();
 	}
+	else if( CanBeObjType( OT_CHAR ))
+	{
+		( static_cast<CChar *>( this ))->UpdateRegion();
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1721,6 +1741,10 @@ void CBaseObject::SetDamageIncrease( SI16 newValue )
 	if( CanBeObjType( OT_ITEM ))
 	{
 		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+	else if( CanBeObjType( OT_CHAR ))
+	{
+		( static_cast<CChar *>( this ))->UpdateRegion();
 	}
 }
 
