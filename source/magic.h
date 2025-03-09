@@ -93,7 +93,13 @@ struct Reag_st
 	UI08 ash;
 	UI08 shade;
 	UI08 garlic;
-	Reag_st() : ginseng( 0 ), moss( 0 ), drake( 0 ), pearl( 0 ), silk( 0 ), ash( 0 ), shade( 0 ), garlic( 0 )
+	UI08 batwing;
+	UI08 daemonblood;
+	UI08 gravedust;
+	UI08 noxcrystal;
+	UI08 pigiron;
+	Reag_st() : ginseng( 0 ), moss( 0 ), drake( 0 ), pearl( 0 ), silk( 0 ), ash( 0 ), shade( 0 ), garlic( 0 ), batwing( 0 ), daemonblood( 0 ), gravedust( 0 ),
+	noxcrystal( 0 ), pigiron( 0 )
 	{
 	}
 };
