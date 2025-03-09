@@ -127,11 +127,12 @@ private:
 	SI16		loskill;
 	SI16		sclo;
 	SI16		schi;
+	SI32		tithing;
 	UI16		jsScript;
 	SI16		baseDmg;
 public:
 	CSpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), damageDelay( 0 ), recoveryDelay( 1.0f ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ),
-	circle( 1 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( 0 ), baseDmg( 0 )
+	circle( 1 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), tithing( 0 ), jsScript( 0 ), baseDmg( 0 )
 	{
 	}
 
@@ -236,6 +237,10 @@ public:
 	{
 		return enabled;
 	}
+	SI32 Tithing( void ) const
+	{
+		return tithing;
+	}
 	bool RequireTarget( void ) const
 	{
 		return ( flags & 0x01 ) == 0x01;
@@ -311,6 +316,10 @@ public:
 	void Enabled( bool newVal )
 	{
 		enabled	= newVal;
+	}
+	void Tithing( SI32 newVal )
+	{
+		tithing	= newVal;
 	}
 	void Flags( UI16 newVal )
 	{
