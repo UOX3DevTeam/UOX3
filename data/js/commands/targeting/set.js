@@ -236,6 +236,10 @@ function onCallback0( socket, ourObj )
 		ourObj.sectionID = socket.xText.substring( 10 );
 		okMsg( socket );
 		break;
+	case "LUCK":
+		ourObj.luck = nVal;
+		okMsg( socket );
+		break;
 	case "SHOULDSAVE":
 		ourObj.shouldSave = ( nVal == 1 );
 		okMsg( socket );
@@ -460,10 +464,6 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		break;
 	case "LOWERSTATREQ":
 		ourItem.lowerStatReq = nVal;
-		okMsg( socket );
-		break;
-	case "LUCK":
-		ourItem.luck = nVal;
 		okMsg( socket );
 		break;
 	case "HEALTHLEECH":

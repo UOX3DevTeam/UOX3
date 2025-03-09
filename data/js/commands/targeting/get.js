@@ -153,6 +153,9 @@ function onCallback0( socket, ourObj )
 	case "DAMAGEABLE":
 		socket.SysMessage( ourObj.isDamageable );
 		break;
+	case "LUCK":
+		socket.SysMessage( ourObj.luck );
+		break;
 	case "REGION":
 		socket.SysMessage( ourObj.region.id + " ( " + ourObj.region.name + ")" );
 		break;
@@ -368,9 +371,6 @@ function HandleGetItem( socket, ourItem, uKey )
 		break;
 	case "LAYER":
 		socket.SysMessage( "0x" + ( ourItem.layer ).toString( 16 ) + "( " + ourItem.layer + ")" );
-		break;
-	case "LUCK":
-		socket.SysMessage( ourItem.luck);
 		break;
 	case "LODAMAGE":
 		socket.SysMessage( ourItem.lodamage );
