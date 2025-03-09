@@ -591,6 +591,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetType( iType );
 				}
 				break;
+			case DFNTAG_TITHING:		applyTo->SetTithing( static_cast<UI32>( ndata ));		break;
 			case DFNTAG_USESLEFT:		applyTo->SetUsesLeft( static_cast<UI16>( ndata ));			break;
 			case DFNTAG_VISIBLE:		applyTo->SetVisible( static_cast<VisibleTypes>( ndata ));	break;
 			case DFNTAG_VALUE:

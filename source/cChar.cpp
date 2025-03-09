@@ -147,14 +147,13 @@ const UI16			DEFPLAYER_CONTROLSLOTSUSED	= 0;
 const UI32			DEFPLAYER_CREATEDON			= 0;
 const UI32			DEFPLAYER_NPCGUILDJOINED	= 0;
 const UI32			DEFPLAYER_PLAYTIME			= 0;
-const UI32			DEFPLAYER_TITHING			= 0;
 
 CChar::PlayerValues_st::PlayerValues_st() : callNum( DEFPLAYER_CALLNUM ), playerCallNum( DEFPLAYER_PLAYERCALLNUM ), trackingTarget( DEFPLAYER_TRACKINGTARGET ),
 squelched( DEFPLAYER_SQUELCHED ), commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), hairStyle( DEFPLAYER_HAIRSTYLE ), beardStyle( DEFPLAYER_BEARDSTYLE ),
 hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( nullptr ), speechMode( DEFPLAYER_SPEECHMODE ), speechId( DEFPLAYER_SPEECHID ),
 speechCallback( nullptr ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origId( DEFPLAYER_ORIGID ),
 fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( nullptr ), townVote( DEFPLAYER_TOWNVOTE ), townPriv( DEFPLAYER_TOWNPRIV ), controlSlotsUsed( DEFPLAYER_CONTROLSLOTSUSED ),
-createdOn( DEFPLAYER_CREATEDON ), npcGuildJoined( DEFPLAYER_NPCGUILDJOINED ), playTime( DEFPLAYER_PLAYTIME ), tithing( DEFPLAYER_TITHING )
+createdOn( DEFPLAYER_CREATEDON ), npcGuildJoined( DEFPLAYER_NPCGUILDJOINED ), playTime( DEFPLAYER_PLAYTIME )
 {
 	//memset( &lockState[0],		0, sizeof( UI08 )		* (INTELLECT+1) );
 	// Changed to the following, as only the 15?16? first lockStates would get initialized or whanot
@@ -2454,7 +2453,6 @@ void CChar::CopyData( CChar *target )
 	target->SetSpellCast( spellCast );
 	target->SetNextAct( nextAct );
 	target->SetSquelched( GetSquelched() );
-	target->SetTithing( GetTithing() );
 	target->SetMeditating( IsMeditating() );
 	target->SetHitChance( GetHitChance() );
 	target->SetDefenseChance( GetDefenseChance() );
@@ -2998,6 +2996,8 @@ bool CChar::WearItem( CItem *toWear )
 			IncHitChance( itemLayers[tLayer]->GetHitChance() );
 			IncDefenseChance( itemLayers[tLayer]->GetDefenseChance() );
 
+			IncTithing( itemLayers[tLayer]->GetTithing() );
+
 			IncHealthBonus( itemLayers[tLayer]->GetHealthBonus() );
 			IncStaminaBonus( itemLayers[tLayer]->GetStaminaBonus() );
 			IncManaBonus( itemLayers[tLayer]->GetManaBonus() );
@@ -3088,6 +3088,8 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 
 		IncHitChance( -itemLayers[Layer]->GetHitChance() );
 		IncDefenseChance( -itemLayers[Layer]->GetDefenseChance() );
+
+		IncTithing( -itemLayers[Layer]->GetTithing() );
 
 		IncHealthBonus( -itemLayers[Layer]->GetHealthBonus() );
 		IncStaminaBonus( -itemLayers[Layer]->GetStaminaBonus() );
@@ -3255,7 +3257,6 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 	outStream << "CanAttack=" + std::to_string(( GetCanAttack() ? 1 : 0 )) + newLine;
 	outStream << "HitChance=" + std::to_string( GetHitChance() ) + newLine;
 	outStream << "DefChance=" + std::to_string( GetDefenseChance() ) + newLine;
-	outStream << "Tithing=" + std::to_string( GetTithing() ) + newLine;
 	outStream << "KarmaLock=" + std::to_string(( GetKarmaLock() ? 1 : 0 )) + newLine;
 	outStream << "AllMove=" + std::to_string(( AllMove() ? 1 : 0 )) + newLine;
 	outStream << "IsNpc=" + std::to_string(( IsNpc() ? 1 : 0 )) + newLine;
@@ -4996,11 +4997,6 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "TAMEDTHIRSTWILDCHANCE" )
 				{
 					SetTamedThirstWildChance( static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					rValue = true;
-				}
-				else if( UTag == "TITHING" )
-				{
-					SetTithing( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "TOWN" )
@@ -6797,37 +6793,6 @@ void CChar::SetSquelched( UI08 newValue )
 	if( IsValidPlayer() )
 	{
 		mPlayer->squelched = newValue;
-		UpdateRegion();
-	}
-}
-
-//o------------------------------------------------------------------------------------------------o
-//| Function	-	CChar::GetTithing()
-//|					CChar::SetTithing()
-//o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Gets/Sets the tithing status of the player's character
-//o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetTithing( void ) const
-{
-	UI32 rVal = DEFPLAYER_TITHING;
-	if( IsValidPlayer() )
-	{
-		rVal = mPlayer->tithing;
-	}
-	return rVal;
-}
-void CChar::SetTithing( UI32 newValue )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newValue != DEFPLAYER_TITHING )
-		{
-			CreatePlayer();
-		}
-	}
-	if( IsValidPlayer() )
-	{
-		mPlayer->tithing = newValue;
 		UpdateRegion();
 	}
 }

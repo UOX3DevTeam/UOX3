@@ -171,7 +171,6 @@ private:
 		UI32		createdOn;	// Timestamp for when player character was created
 		UI32		npcGuildJoined;	// Timestamp for when player character joined NPC guild (0=never joined)
 		UI32		playTime;	// Character's full playtime
-		UI32		tithing;
 
 		UI08		atrophy[INTELLECT+1];
 		SkillLock	lockState[INTELLECT+1];	// state of the skill locks
@@ -858,9 +857,6 @@ public:
 
 	UI08		GetSquelched( void ) const;
 	void		SetSquelched( UI08 newValue );
-
-	UI32		GetTithing( void ) const;
-	void		SetTithing( UI32 newValue );
 
 	CItem *		GetSpeechItem( void ) const;
 	UI08		GetSpeechMode( void ) const;

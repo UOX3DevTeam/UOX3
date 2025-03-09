@@ -107,6 +107,7 @@ const SI16			DEFBASE_STAMINABONOS = 0;
 const SI16			DEFBASE_MANABONUS = 0;
 
 const SI16			DEFBASE_DAMAGEiNCREASE = 0;
+const UI32			DEFBASE_TITHING		= 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
@@ -125,7 +126,7 @@ in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN ),
 healthBonus( DEFBASE_HEALTHBONUS ),staminaBonus( DEFBASE_STAMINABONOS ), manaBonus( DEFBASE_MANABONUS ), hitChance( DEFBASE_HITCHANCE ), defenseChance( DEFBASE_DEFENSECHANCE ),
-healthLeech( DEFBASE_HEALTHLEECH ), staminaLeech( DEFBASE_STAMINALEECH ), manaLeech( DEFBASE_MANALEECH ), swingSpeedIncrease( DEFBASE_SWINGSPEEDINCREASE ), damageIncrease( DEFBASE_DAMAGEiNCREASE )
+healthLeech( DEFBASE_HEALTHLEECH ), staminaLeech( DEFBASE_STAMINALEECH ), manaLeech( DEFBASE_MANALEECH ), swingSpeedIncrease( DEFBASE_SWINGSPEEDINCREASE ), damageIncrease( DEFBASE_DAMAGEiNCREASE ), tithing( DEFBASE_TITHING )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
@@ -809,6 +810,7 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Strength=" + std::to_string( strength ) + "," + std::to_string( temp_st2 ) + newLine;
 	outStream << "HitPoints=" + std::to_string( hitpoints ) + newLine;
 	outStream << "ExtPropCommon=" + std::to_string( GetHitChance() ) + "," + std::to_string( GetDefenseChance() ) + "," + std::to_string( GetSwingSpeedIncrease() ) + "," + std::to_string( GetDamageIncrease() ) + newLine;
+	outStream << "Tithing=" + std::to_string( GetTithing() ) + newLine;
 	outStream << "Race=" + std::to_string( race ) + newLine;
 	outStream << "Visible=" + std::to_string( visible ) + newLine;
 	outStream << "Disabled=" << ( IsDisabled() ? "1" : "0" ) << newLine;
@@ -1625,6 +1627,26 @@ Point3_st CBaseObject::GetLocation( void ) const
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetTithing()
+//|					CChar::SetTithing()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets the tithing status of the player's character/Item
+//o------------------------------------------------------------------------------------------------o
+UI32 CBaseObject::GetTithing( void ) const
+{
+	return tithing;
+}
+void CBaseObject::SetTithing( UI32 newValue )
+{
+	tithing = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetSwingSpeedIncrease()
 //|					CBaseObject::SetSwingSpeedBonus()
 //o------------------------------------------------------------------------------------------------o
@@ -1946,6 +1968,16 @@ void CBaseObject::IncHitChance( SI16 toInc )
 void CBaseObject::IncDefenseChance( SI16 toInc )
 {
 	SetDefenseChance( defenseChance + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncTithing()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Tithing value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncTithing( SI16 toInc )
+{
+	SetTithing( tithing + toInc );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2364,6 +2396,11 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 				tagvalObject.m_Destroy		= false;
 				tagvalObject.m_StringValue	= "";
 				SetTag( staticTagName, tagvalObject );
+			}
+			else if( UTag == "TITHING" )
+			{
+				SetTithing( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+				rValue = true;
 			}
 			else if( UTag == "TAGVALS" )
 			{
@@ -2838,6 +2875,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetColour( GetColour() );
 	target->SetHiDamage( GetHiDamage() );
 	target->SetLoDamage( GetLoDamage() );
+	target->SetTithing( GetTithing() );
 	for( UI08 resist = 0; resist < WEATHNUM; ++resist )
 	{
 		target->SetResist( GetResist( static_cast<WeatherType>( resist )), static_cast<WeatherType>( resist ));
