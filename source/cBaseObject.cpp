@@ -735,7 +735,7 @@ void CBaseObject::SetOwner( CChar *newOwner )
 //o------------------------------------------------------------------------------------------------o
 bool CBaseObject::DumpBody( std::ostream &outStream ) const
 {
-	SI16 temp_st2, temp_dx2, temp_in2;
+	SI16 temp_st2, temp_dx2, temp_in2, temp_tithing;
 	const char newLine = '\n';
 
 	// Hexadecimal Values
@@ -785,6 +785,7 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	temp_st2 = st2;
 	temp_dx2 = dx2;
 	temp_in2 = in2;
+	temp_tithing = tithing;
 	if( objType == OT_CHAR )
 	{
 		CChar *myChar = (CChar *)( this );
@@ -798,6 +799,7 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 				temp_st2 -= myItem->GetStrength2();
 				temp_dx2 -= myItem->GetDexterity2();
 				temp_in2 -= myItem->GetIntelligence2();
+				temp_tithing -= myItem->GetTithing();
 			}
 		}
 	}
@@ -810,7 +812,7 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Strength=" + std::to_string( strength ) + "," + std::to_string( temp_st2 ) + newLine;
 	outStream << "HitPoints=" + std::to_string( hitpoints ) + newLine;
 	outStream << "ExtPropCommon=" + std::to_string( GetHitChance() ) + "," + std::to_string( GetDefenseChance() ) + "," + std::to_string( GetSwingSpeedIncrease() ) + "," + std::to_string( GetDamageIncrease() ) + newLine;
-	outStream << "Tithing=" + std::to_string( GetTithing() ) + newLine;
+	outStream << "Tithing=" + std::to_string( temp_tithing ) + newLine;
 	outStream << "Race=" + std::to_string( race ) + newLine;
 	outStream << "Visible=" + std::to_string( visible ) + newLine;
 	outStream << "Disabled=" << ( IsDisabled() ? "1" : "0" ) << newLine;
