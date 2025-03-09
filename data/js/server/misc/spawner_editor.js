@@ -1,7 +1,9 @@
+var spawnEditorTooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
+
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
-	var gumpID = 5037 + 0xffff;
+	var gumpID = this.script_id + 0xffff;
 
 	if( socket && iUsed && iUsed.isItem && pUser.isGM )
 	{
@@ -16,114 +18,74 @@ function onUseChecked( pUser, iUsed )
 function spawnerGump( socket, pUser, iUsed )
 {
 	var spawner = new Gump;
-	var powerState = "";
-	var spawnName = "";
-	if( iUsed.sectionalist == true )
-	{
-		powerState = "<basefont color=#00ff00><big>Enabled</big></basefont>";
-		if( iUsed.type == 61 ) 
-		{
-			spawnName = "Item List"
-		}
-		else
-			spawnName = "Npc List"
-	}
-	else 
-	{
-		powerState = "<basefont color=#ff2800><big>Disabled</big></basefont>";
-		if( iUsed.type == 61 ) 
-		{
-			spawnName = "Item"
-		}
-		else
-			spawnName = "Npc"
-	}
-
-	var typeName = "";
-	switch( iUsed.type )
-	{
-		case 61: typeName = "<basefont color=#00ff00><big>Item</big></basefont>"; break
-		case 62: typeName = "<basefont color=#00ff00><big>Npc</big></basefont>"; break
-		case 125: typeName = "<basefont color=#00ff00><big>Escort</big></basefont>"; break
-	}
-
-	var amountLabel = ( iUsed.type != 61 ) ? "<basefont color=#ffffff>Amount</basefont>" : "<basefont color=#ffffff>Spawn Item DFN</basefont>";
-	var applyLabel = "<basefont color=#ffffff>Apply</basefont>";
-	var minLabel = "<basefont color=#ffffff>Min:</basefont>";
-	var maxLabel = "<basefont color=#ffffff>Max:</basefont>";
 
 	spawner.AddPage( 0 );
 
-	spawner.AddBackground( 40, 80, 413, 134, 5054 );
-	spawner.AddCheckerTrans( 40, 80, 413, 134 );
-	spawner.AddPicture( 50, 100, 7956 );
+	// Main Background and Header
+	spawner.AddBackground( 0, 0, 360, 295, 5054 );
+	spawner.AddCheckerTrans( 0, 0, 360, 295 );
+	spawner.AddHTMLGump(15, 7, 320, 60, 0, 0, "<CENTER><BIG><BASEFONT color=#EECD8B>" + GetDictionaryEntry( 9800, socket.language ) + "</BASEFONT></BIG></CENTER>" );// Spawner Object Editor
+	spawner.AddButton( 320, 1, 4017, 4018, 1, 0, 0 ); // Close Menu Button
+	spawner.AddPicture( 50, 10, 7956 ); // Image of a "spawn rune"
 
-	if( iUsed.type != 61 )
-	{
-		spawner.AddHTMLGump( 310, 100, 178, 22, false, false, amountLabel );
-		spawner.AddHTMLGump( 90, 100, 203, 22, false, false, "<basefont color=#ffffff>Spawn " + spawnName + " DFN</basefont>" );
+	// Spawner Name
+	spawner.AddHTMLGump( 20, 35, 140, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9801, socket.language ) + ":</basefont >" );// Spawner Name
+	spawner.AddBackground( 115, 30, 235, 28, 5120 ); // Spawner Name Background
 
-		spawner.AddHTMLGump( 255, 155, 140, 22, false, false, "<basefont color=#ffffff>Rename</basefont >" );
+	// Spawner Type
+	spawner.AddHTMLGump( 20, 68, 140, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9802, socket.language ) + ":</basefont>" );// Spawner Type
+	spawner.AddHTMLGump( 55, 100, 140, 22, false, false, "<basefont color=#00ff00><big>" + GetDictionaryEntry( 9803, socket.language ) + "</big></basefont>" );// Item
+	spawner.AddHTMLGump( 135, 100, 140, 22, false, false, "<basefont color=#00ff00><big>" + GetDictionaryEntry( 9804, socket.language ) + "</big></basefont>" );// Npc
+	spawner.AddHTMLGump( 215, 100, 140, 22, false, false, "<basefont color=#00ff00><big>" + GetDictionaryEntry( 9805, socket.language ) + "</big></basefont>" );// Area
+	spawner.AddHTMLGump( 295, 100, 140, 22, false, false, "<basefont color=#00ff00><big>" + GetDictionaryEntry( 9806, socket.language ) + "</big></basefont>" );// Escort
+	spawner.AddGroup( 1 );
+	spawner.AddRadio( 20, 95, 2472, 2153, ( iUsed.type == 61 ? 1 : 0 ), 0 );
+	spawner.AddRadio( 100, 95, 2472, 2153, ( iUsed.type == 62 ? 1 : 0 ), 1 );
+	spawner.AddRadio( 180, 95, 2472, 2153, ( iUsed.type == 69 ? 1 : 0 ), 2 );
+	spawner.AddRadio( 260, 95, 2472, 2153, ( iUsed.type == 125 ? 1 : 0 ), 3 );
+	spawner.EndGroup();
 
-		spawner.AddButton( 50, 180, 4005, 4007, 1, 0, 1 );
-		spawner.AddHTMLGump( 90, 180, 140, 22, false, false, applyLabel );
+	// Spawn Section/List
+	spawner.AddHTMLGump( 20, 135, 150, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9807, socket.language ) + ":</basefont>" );// Spawn Section/List
+	spawner.AddToolTip( spawnEditorTooltipClilocID, socket, GetDictionaryEntry( 9808, socket.language ));// Section ID or NPClist to spawn from DFNs
+	spawner.AddBackground( 20, 160, 205, 28, 5120 );
 
-		spawner.AddHTMLGump( 80, 152, 140, 22, false, false, minLabel );
-		spawner.AddHTMLGump( 160, 152, 140, 22, false, false, maxLabel );
+	// Spawnlist?
+	spawner.AddHTMLGump( 285, 155, 55, 44, false, false, "<center><basefont color=#ffffff>Use<br>" + GetDictionaryEntry( 9809, socket.language ) + "</basefont></center>" );// Spawnlist
+	spawner.AddToolTip( spawnEditorTooltipClilocID, socket, GetDictionaryEntry( 9810, socket.language ));// If checked, spawner uses spawnlist instead of spawn section
+	spawner.AddCheckbox( 250, 160, 2472, 2153, ( iUsed.sectionalist == true ? 1 : 0 ), 1 );
 
-		spawner.AddCheckbox( 130, 180, 2152, 0, 1 );
-		spawner.AddHTMLGump( 160, 185, 140, 22, false, false, "<basefont color=#ffffff>Spawnlist: " + powerState + "</basefont>" );
-		spawner.AddCheckbox( 300, 180, 2152, 0, 2 );
-		spawner.AddHTMLGump( 330, 185, 140, 22, false, false, "<basefont color=#ffffff>Spawn Type: " + typeName + "</basefont>" );
-		spawner.AddBackground( 80, 120, 201, 28, 5120 );
-		spawner.AddBackground( 305, 120, 134, 28, 5120 );
-		spawner.AddBackground( 105, 150, 50, 25, 5120 );
-		spawner.AddBackground( 190, 150, 50, 25, 5120 );
-		spawner.AddBackground(305, 152, 134, 28, 5120);
+	// Amount
+	spawner.AddHTMLGump( 35, 205, 120, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9811, socket.language ) + ":</basefont>" );// Amount
+	spawner.AddToolTip( spawnEditorTooltipClilocID, socket, GetDictionaryEntry( 9812, socket.language ));// Maximum amount to respawn
+	spawner.AddBackground( 30, 230, 50, 28, 5120 );
 
-		spawner.AddText( 90, 125, 0, iUsed.spawnsection );
-		spawner.AddText( 315, 125, 0, iUsed.amount );
-		spawner.AddText( 110, 155, 0, iUsed.mininterval );
-		spawner.AddText( 195, 155, 0, iUsed.maxinterval );
-		spawner.AddText(310, 152, 0, iUsed.name);
+	// Min / Max Time
+	spawner.AddHTMLGump( 105, 205, 140, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9813, socket.language ) + ":</basefont>" );// Min Time
+	spawner.AddToolTip( spawnEditorTooltipClilocID, socket, GetDictionaryEntry( 9814, socket.language ));// Minimum time in min to respawn
+	spawner.AddHTMLGump( 180, 205, 140, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9815, socket.language ) + ":</basefont>" );// Max Time
+	spawner.AddToolTip( spawnEditorTooltipClilocID, socket, GetDictionaryEntry( 9816, socket.language ));// Maximum time in min to respawn
+	spawner.AddBackground( 105, 230, 50, 28, 5120 );
+	spawner.AddBackground( 185, 230, 50, 28, 5120 );
 
-		spawner.AddTextEntry( 90, 125, 178, 20, 1153, 0, 8, iUsed.spawnsection );
-		spawner.AddTextEntry( 315, 125, 115, 20, 1153, 0, 9, iUsed.amount );
-		spawner.AddTextEntry( 110, 155, 40, 20, 1153, 0, 10, iUsed.mininterval );
-		spawner.AddTextEntry( 195, 155, 40, 20, 1153, 0, 11, iUsed.maxinterval );
-		spawner.AddTextEntry(310, 152, 140, 25, 1153, 0, 12, iUsed.name);
-	}
-	else
-	{
-		spawner.AddHTMLGump( 90, 100, 203, 22, false, false, "<basefont color=#ffffff>Spawn " + spawnName + " DFN</basefont>" );
-		spawner.AddHTMLGump( 255, 155, 140, 22, false, false, "<basefont color=#ffffff>Rename</basefont >" );
-		spawner.AddButton( 50, 180, 4005, 4007, 1, 0, 1 );
-		spawner.AddHTMLGump( 90, 180, 140, 22, false, false, applyLabel );
+	// Radius
+	spawner.AddHTMLGump( 260, 205, 170, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9817, socket.language ) + ":</basefont>" );// Radius (Area)
+	spawner.AddToolTip( spawnEditorTooltipClilocID, socket, GetDictionaryEntry( 9818, socket.language ));// Radius to spawn NPCs in (Area-spawner only!)
+	spawner.AddBackground( 280, 230, 50, 28, 5120 );
 
-		spawner.AddHTMLGump( 80, 152, 140, 22, false, false, minLabel );
-		spawner.AddHTMLGump( 160, 152, 140, 22, false, false, maxLabel );
+	// Apply!
+	//spawner.AddButton( 300, 190, 2122, 2124, 1, 0, 1 );
+	spawner.AddButton( 230, 265, 4005, 4007, 1, 0, 1 );
+	spawner.AddHTMLGump( 265, 267, 140, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9819, socket.language ) + "</basefont>" );// Apply Changes
 
-		spawner.AddCheckbox( 130, 180, 2152, 0, 1 );
-		spawner.AddHTMLGump( 160, 185, 140, 22, false, false, "<basefont color=#ffffff>Spawnlist: " + powerState + "</basefont>" );
-		spawner.AddCheckbox( 300, 180, 2152, 0, 2 );
-		spawner.AddHTMLGump( 330, 185, 140, 22, false, false, "<basefont color=#ffffff>Spawn Type: " + typeName + "</basefont>" );
+	// Text Entry fields
+	spawner.AddTextEntryLimited( 125, 35, 200, 25, 1153, 0, 14, iUsed.name, 30 );
+	spawner.AddTextEntryLimited( 30, 165, 178, 20, 1153, 0, 15, iUsed.spawnsection, 30 );
+	spawner.AddTextEntryLimited( 45, 235, 115, 20, 1153, 0, 16, iUsed.amount, 2 );
+	spawner.AddTextEntryLimited( 115, 235, 40, 20, 1153, 0, 17, iUsed.mininterval, 3 );
+	spawner.AddTextEntryLimited( 195, 235, 40, 20, 1153, 0, 18, iUsed.maxinterval, 3 );
+	spawner.AddTextEntryLimited( 295, 235, 115, 20, 1153, 0, 19, iUsed.GetMoreVar( "more", 3 ), 3);
 
-		spawner.AddBackground( 80, 120, 201, 28, 5120 );
-		spawner.AddBackground( 105, 150, 50, 25, 5120 );
-		spawner.AddBackground( 190, 150, 50, 25, 5120 );
-		spawner.AddBackground(305, 152, 134, 28, 5120);
-
-		spawner.AddText( 90, 125, 0, iUsed.spawnsection );
-		spawner.AddText( 110, 155, 0, iUsed.mininterval );
-		spawner.AddText( 195, 155, 0, iUsed.maxinterval );
-		spawner.AddText( 310, 152, 0, iUsed.name );
-
-		spawner.AddTextEntry( 90, 125, 178, 20, 1153, 0, 11, iUsed.spawnsection );
-		spawner.AddTextEntry( 110, 155, 40, 20, 1153, 0, 13, iUsed.maxinterval );
-		spawner.AddTextEntry( 195, 155, 40, 20, 1153, 0, 12, iUsed.mininterval );
-		spawner.AddTextEntry( 310, 152, 140, 25, 1153, 0, 10, iUsed.name );
-
-	}
 	spawner.Send( socket );
 	spawner.Free();
 }
@@ -133,87 +95,137 @@ function onGumpPress( socket, pButton, gumpData )
 	var pUser = socket.currentChar;
 	var iUsed = socket.tempObj;
 
-	var spawn = gumpData.getEdit( 0 );
-	if( iUsed.type != 61 ) 
+	// Fetch data from text-fields
+	var spawnerName = gumpData.getEdit( 0 );
+	var spawnSection = gumpData.getEdit( 1 );
+	var spawnAmount = parseInt( gumpData.getEdit( 2 ));
+	var minInterval = parseInt( gumpData.getEdit( 3 ));
+	var maxInterval = parseInt( gumpData.getEdit( 4 ));
+	var spawnRadius = parseInt( gumpData.getEdit( 5 ));
+
+	// Fetch data from radio/checkbox-buttons
+	var radiobtnGroup1 = gumpData.getButton( 0 );
+	var checkBtnSpawnlist = gumpData.getButton( 1 );
+
+	switch( pButton )
 	{
-		var num = gumpData.getEdit( 1 );
-		var min = gumpData.getEdit( 2 );
-		var max = gumpData.getEdit( 3 );
-		var name = gumpData.getEdit( 4 );
-	}
-	else 
-	{
-		var min = gumpData.getEdit( 1 );
-		var max = gumpData.getEdit( 2 );
-		var name = gumpData.getEdit( 3 );
-	}
-	var OtherButton = gumpData.getButton( 0 );
-	switch( pButton ) 
-	{
-		case 0:
+		case 0: // Close gump, no changes
 			break;
 		case 1:
-			if( iUsed.type != 61 )
+			// Handle Spawner Type Radiobuttons
+			switch( radiobtnGroup1 )
 			{
-				iUsed.spawnsection = spawn;
-				iUsed.amount = num;
-				iUsed.mininterval = min;
-				iUsed.maxinterval = max;
-			}
-			else
-			{
-				iUsed.spawnsection = spawn;
-				iUsed.mininterval = min;
-				iUsed.maxinterval = max;
-			}
-
-			if( name == null || name == " " )
-			{
-				socket.SysMessage(GetDictionaryEntry(9270, socket.language)); // That name is too short, or no name was entered.
-			}
-			else if( name.length > 50 )
-			{
-				pSocket.SysMessage(GetDictionaryEntry(9271, pSocket.language)); // That name is too long. Maximum 50 chars.
-			}
-			else
-			{
-				iUsed.name = name;
-			}
-
-			switch( OtherButton ) 
-			{
-				case 1:
-					if( iUsed.sectionalist == true ) 
+				case 0: // item
+					if( iUsed.type != 61 )
 					{
-						pUser.SysMessage( "You have disabled the spawn list. You can now add single DFN." );
-						iUsed.sectionalist = false;
+						iUsed.TextMessage( GetDictionaryEntry( 9820, socket.language ), false, 0x3b2, 0, pUser.serial );// Changed Spawner Type to Item (61), amount reset to 1.
+						iUsed.type = 61;
+						iUsed.amount = 1;
+						spawnAmount = 1;
+						spawnRadius = 0;
 					}
-					else
+					break
+				case 1: // npc
+					if( iUsed.type != 62 )
 					{
-						pUser.SysMessage( "You have enabled the spawn list. It will now only accept DFN lists." );
-						iUsed.sectionalist = true;
+						iUsed.TextMessage( GetDictionaryEntry( 9821, socket.language ), false, 0x3b2, 0, pUser.serial );// Changed Spawner Type to NPC (62).
+						iUsed.type = 62;
+						spawnRadius = 0;
 					}
 					break;
-				case 2:
-					var typeTransitions = {
-						61: { nextType: 62, message: "Changed Type to Npc", resetAmount: false },
-						62: { nextType: 125, message: "Changed Type to Escort", resetAmount: false },
-						125: { nextType: 61, message: "Changed Type to Item", resetAmount: true }
-					};
-
-					var currentTransition = typeTransitions[iUsed.type];
-					if( currentTransition ) 
+				case 2: // arena
+					if( iUsed.type != 69 )
 					{
-						iUsed.type = currentTransition.nextType;
-						if( currentTransition.resetAmount ) 
+						iUsed.TextMessage( GetDictionaryEntry( 9822, socket.language ), false, 0x3b2, 0, pUser.serial );// Changed Spawner Type to Area (69), spawn radius updated (defaults to 1)
+						iUsed.type = 69;
+						if( spawnRadius == 0 )
 						{
-							iUsed.amount = 0;
+							spawnRadius = 1;
 						}
-						pUser.SysMessage( currentTransition.message );
 					}
 					break;
+				case 3: // escort
+					if( iUsed.type != 125 )
+					{
+						iUsed.TextMessage( GetDictionaryEntry( 9823, socket.language ), false, 0x3b2, 0, pUser.serial );// Changed Spawner Type to Escort (125).
+						iUsed.type = 125;
+						spawnRadius = 0;
+					}
+					break;
+				default:
+					break;
 			}
+
+			// Update spawner properties
+			if( spawnSection != iUsed.spawnsection )
+			{
+				iUsed.spawnsection = spawnSection;
+				let tmpMsg = GetDictionaryEntry( 9824, socket.language ); // Spawn Section updated to %s
+				iUsed.TextMessage( tmpMsg.replace( /%s/gi, spawnSection ), false, 0x3b2, 0, pUser.serial );
+			}
+			if( minInterval != iUsed.mininterval )
+			{
+				iUsed.mininterval = minInterval;
+				let tmpMsg = GetDictionaryEntry( 9825, socket.language ); // Min Time updated to %i
+				iUsed.TextMessage( tmpMsg.replace( /%i/gi, mininterval), false, 0x3b2, 0, pUser.serial );
+			}
+			if( maxInterval != iUsed.maxinterval )
+			{
+				iUsed.maxinterval = maxInterval;
+				let tmpMsg = GetDictionaryEntry( 9826, socket.language ); // Max Time updated to %i
+				iUsed.TextMessage( tmpMsg.replace( /%i/gi, maxinterval), false, 0x3b2, 0, pUser.serial );
+			}
+			if( spawnAmount != iUsed.amount )
+			{
+				iUsed.amount = spawnAmount;
+				let tmpMsg = GetDictionaryEntry( 9827, socket.language ); // Amount updated to %i
+				iUsed.TextMessage( tmpMsg.replace( /%i/gi, spawnAmount), false, 0x3b2, 0, pUser.serial );
+			}
+			if( spawnRadius != iUsed.GetMoreVar( "more", 3 ))
+			{
+				iUsed.SetMoreVar( "more", 3, spawnRadius );
+				iUsed.SetMoreVar( "more", 4, spawnRadius );
+				let tmpMsg = GetDictionaryEntry( 9828, socket.language ); // Spawn Radius updated to %i
+				iUsed.TextMessage( tmpMsg.replace( /%i/gi, spawnRadius), false, 0x3b2, 0, pUser.serial );
+			}
+
+			// Update spawner name
+			if( spawnerName == null || spawnerName == "" )
+			{
+				socket.SysMessage( GetDictionaryEntry( 9270, socket.language )); // That name is too short, or no name was entered.
+			}
+			else if( spawnerName.length > 50 )
+			{
+				pSocket.SysMessage( GetDictionaryEntry( 9271, pSocket.language )); // That name is too long. Maximum 50 chars.
+			}
+			else if( spawnerName != iUsed.name )
+			{
+				iUsed.name = spawnerName;
+				let tmpMsg = GetDictionaryEntry( 9829, socket.language ); // Spawner name updated to %s
+				iUsed.TextMessage( tmpMsg.replace( /%s/gi, spawnerName ), false, 0x3b2, 0, pUser.serial );
+			}
+
+			// Handle Spawnlist Checkbox
+			if( checkBtnSpawnlist == -1 )
+			{
+				if( iUsed.sectionalist )
+				{
+					iUsed.TextMessage( GetDictionaryEntry( 9830, socket.language ), false, 0x3b2, 0, pUser.serial );// No longer using spawn list - assuming spawn section now refers to individual NPC definition.
+					iUsed.sectionalist = false;
+				}
+			}
+			else
+			{
+				if( !iUsed.sectionalist )
+				{
+					iUsed.TextMessage( GetDictionaryEntry( 9831, socket.language ), false, 0x3b2, 0, pUser.serial );// Now using spawn list - assuming spawn section now refers to an NPC list.
+					iUsed.sectionalist = true;
+				}
+			}
+
 			spawnerGump( socket, pUser, iUsed );
+			break;
+		default:
 			break;
 	}
 }
@@ -221,28 +233,33 @@ function onGumpPress( socket, pButton, gumpData )
 function onTooltip( spawner )
 {
 	var typeName = "";
-	switch( spawner.type ) 
+	switch( spawner.type )
 	{
 		case 61: typeName = "<basefont color=#00ff00><big>Item</big></basefont>"; break
 		case 62: typeName = "<basefont color=#00ff00><big>Npc</big></basefont>"; break
+		case 69: typeName = "<basefont color=#00ff00><big>Area</big></basefont>"; break
 		case 125: typeName = "<basefont color=#00ff00><big>Escort</big></basefont>"; break
 	}
-	var powerState = "";
-	if( spawner.sectionalist == true ) 
+	var spawnList = "";
+	if( spawner.sectionalist )
 	{
-		powerState = "<basefont color=#00ff00><big>Enabled</big></basefont>";
+		spawnList = "<basefont color=#00ff00><big>Enabled</big></basefont>";
 	}
 	else
 	{
-		powerState = "<basefont color=#ff2800><big>Disabled</big></basefont>";
+		spawnList = "<basefont color=#ff2800><big>Disabled</big></basefont>";
 	}
 
 	var tooltipText = "";
-	tooltipText = "Spawn DFN: " + spawner.spawnsection;
+	tooltipText = "Spawn Section: " + spawner.spawnsection;
 	tooltipText += "\n" + "Spawn Type: " + typeName;
-	tooltipText += "\n" + "Spawn List: " + powerState;
+	tooltipText += "\n" + "Spawn List: " + spawnList;
 	tooltipText += "\n" + "Amount: " + "<basefont color=#00ff00>" + spawner.amount + "</big></basefont >";
 	tooltipText += "\n" + "Min Interval: " + "<basefont color=#00ff00>" + spawner.mininterval + "</big></basefont>" + " Max Interval: " + "<basefont color=#00ff00>" + spawner.maxinterval + "</big></basefont>";
+	if( spawner.type == 69 )
+	{
+		tooltipText += "\n" + "Radius: " + "<basefont color=#00ff00>" + spawner.GetMoreVar( "more", 3 ) + "</big></basefont >";
+	}
 	tooltipText += "\n" + "Region: " + "<basefont color=#00ff00>" + spawner.region.name + "</big></basefont>";
 	return tooltipText;
 }
