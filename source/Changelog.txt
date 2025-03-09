@@ -1,3 +1,8 @@
+08/03/2025 - Dragon Slayer
+	Added new DFN tags for Items:
+	LUCK=# // Luck stacks across all items that a character has equipped to make up their Luck score for better AOS Magic Loot. Currently no AOS Magic Loot system in place.
+	These is also available as JS Engine object propertie: .luck
+
 02/03/2025 - Dragon Slayer
 	Renamed spawnergump.js to spawner_editor.js.
 	Added spawner_editor.js text to dictionaries.

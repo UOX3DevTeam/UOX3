@@ -69,6 +69,7 @@ protected:
 	SI16				dexterity;
 	SI16				intelligence;
 	SI16				hitpoints;
+	SI16				luck;
 	SI16				hitChance;
 	SI16				defenseChance;
 	VisibleTypes		visible;
@@ -243,6 +244,9 @@ public:
 
 	void					IncDamageIncrease( SI16 toInc = 1 );
 
+	virtual SI16			GetLuck( void ) const;
+	virtual void			SetLuck( SI16 newValue );
+
 	virtual SI16			GetHitChance( void ) const;
 	virtual void			SetHitChance( SI16 newValue );
 
@@ -295,6 +299,8 @@ public:
 	void					IncHealthLeech( SI16 toInc = 1 );
 	void					IncStaminaLeech( SI16 toInc = 1 );
 	void					IncManaLeech( SI16 toInc = 1 );
+
+	void					IncLuck( SI16 toInc = 1 );
 
 	void					IncHitChance( SI16 toInc = 1 );
 	void					IncDefenseChance( SI16 toInc = 1 );

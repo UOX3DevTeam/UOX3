@@ -1803,7 +1803,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 	outStream << "ExtPropCombat=0,0,0,0,0,0,0,0,0,0,0,0,0,0," + std::to_string( GetHealthLeech() ) + "," + std::to_string( GetStaminaLeech() ) + "," + std::to_string( GetManaLeech() ) + newLine;
 	outStream << "ExtPropDefense=0,0,0,0,0,0,0," + std::to_string( GetDurabilityHpBonus() ) + newLine;
 	outStream << "ExtPropStats=0,0,0," + std::to_string( GetHealthBonus() ) + "," + std::to_string( GetStaminaBonus() ) + "," + std::to_string( GetManaBonus() ) + ",0,0,0" + newLine;
-	outStream << "ExtPropMisc=0,"+ std::to_string( GetLowerStatReq() ) + ",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0," + std::to_string( GetArtifactRarity() ) + newLine;
+	outStream << "ExtPropMisc=0," + std::to_string( GetLowerStatReq() ) + ",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0," + std::to_string( GetArtifactRarity() ) + newLine;
 	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
 	outStream << "Movable=" + std::to_string( GetMovable() ) + newLine;
 	outStream << "Priv=" + std::to_string( GetPriv() ) + newLine;
@@ -1971,7 +1971,7 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					if( data.find( "," ) != std::string::npos )
 					{
-						SetLowerStatReq( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+						SetLowerStatReq( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
 						SetArtifactRarity( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[21], "//" )), nullptr, 0 )));
 					}
 					rValue = true;

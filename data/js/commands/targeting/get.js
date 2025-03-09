@@ -153,6 +153,9 @@ function onCallback0( socket, ourObj )
 	case "DAMAGEABLE":
 		socket.SysMessage( ourObj.isDamageable );
 		break;
+	case "LUCK":
+		socket.SysMessage( ourObj.luck );
+		break;
 	case "REGION":
 		socket.SysMessage( ourObj.region.id + " ( " + ourObj.region.name + ")" );
 		break;
