@@ -5278,6 +5278,10 @@ void CMagic::LoadScript( void )
 								{
 									spells[i].StringToSay( data );
 								}
+								else if( UTag == "TITHING" )
+								{
+									spells[i].Tithing(  static_cast<SI32>( std::stoi( data, nullptr, 0 )));
+								}
 								break;
 						}
 					}

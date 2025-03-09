@@ -108,6 +108,7 @@ const SI16			DEFBASE_MANABONUS = 0;
 
 const SI16			DEFBASE_DAMAGEiNCREASE = 0;
 const SI16			DEFBASE_LUCK	= 0;
+const UI32			DEFBASE_TITHING		= 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
@@ -127,7 +128,7 @@ poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 )
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN ),
 healthBonus( DEFBASE_HEALTHBONUS ),staminaBonus( DEFBASE_STAMINABONOS ), manaBonus( DEFBASE_MANABONUS ), hitChance( DEFBASE_HITCHANCE ), defenseChance( DEFBASE_DEFENSECHANCE ),
 healthLeech( DEFBASE_HEALTHLEECH ), staminaLeech( DEFBASE_STAMINALEECH ), manaLeech( DEFBASE_MANALEECH ), swingSpeedIncrease( DEFBASE_SWINGSPEEDINCREASE ), damageIncrease( DEFBASE_DAMAGEiNCREASE ),
-luck( DEFBASE_LUCK )
+luck( DEFBASE_LUCK ), tithing( DEFBASE_TITHING )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
@@ -736,7 +737,7 @@ void CBaseObject::SetOwner( CChar *newOwner )
 //o------------------------------------------------------------------------------------------------o
 bool CBaseObject::DumpBody( std::ostream &outStream ) const
 {
-	SI16 temp_st2, temp_dx2, temp_in2, temp_hitChance, temp_defChance, temp_swingSpeedInc, temp_damInc, temp_luck;
+	SI16 temp_st2, temp_dx2, temp_in2, temp_hitChance, temp_defChance, temp_swingSpeedInc, temp_damInc, temp_luck, temp_tithing;
 	const char newLine = '\n';
 
 	// Hexadecimal Values
@@ -791,6 +792,7 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	temp_swingSpeedInc = swingSpeedIncrease;
 	temp_damInc = damageIncrease;
 	temp_luck = luck;
+  temp_tithing = tithing;
 
   if( objType == OT_CHAR )
 	{
@@ -810,6 +812,7 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 				temp_swingSpeedInc -= myItem->GetSwingSpeedIncrease();
 				temp_damInc -= myItem->GetDamageIncrease();
 				temp_luck -= myItem->GetLuck();
+				temp_tithing -= myItem->GetTithing();
 			}
 		}
 	}
@@ -823,6 +826,7 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "HitPoints=" + std::to_string( hitpoints ) + newLine;
 	outStream << "ExtPropCommon=" + std::to_string( temp_hitChance ) + "," + std::to_string( temp_defChance ) + "," + std::to_string( temp_swingSpeedInc ) + "," + std::to_string( temp_damInc ) + newLine;
 	outStream << "Luck=" + std::to_string( temp_luck ) + newLine;
+  outStream << "Tithing=" + std::to_string( temp_tithing ) + newLine;
 	outStream << "Race=" + std::to_string( race ) + newLine;
 	outStream << "Visible=" + std::to_string( visible ) + newLine;
 	outStream << "Disabled=" << ( IsDisabled() ? "1" : "0" ) << newLine;
@@ -1659,6 +1663,26 @@ Point3_st CBaseObject::GetLocation( void ) const
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetTithing()
+//|					CChar::SetTithing()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets the tithing status of the player's character/Item
+//o------------------------------------------------------------------------------------------------o
+UI32 CBaseObject::GetTithing( void ) const
+{
+	return tithing;
+}
+void CBaseObject::SetTithing( UI32 newValue )
+{
+	tithing = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetSwingSpeedIncrease()
 //|					CBaseObject::SetSwingSpeedBonus()
 //o------------------------------------------------------------------------------------------------o
@@ -1990,6 +2014,16 @@ void CBaseObject::IncHitChance( SI16 toInc )
 void CBaseObject::IncDefenseChance( SI16 toInc )
 {
 	SetDefenseChance( defenseChance + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncTithing()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Tithing value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncTithing( SI16 toInc )
+{
+	SetTithing( tithing + toInc );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2412,6 +2446,11 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 				tagvalObject.m_Destroy		= false;
 				tagvalObject.m_StringValue	= "";
 				SetTag( staticTagName, tagvalObject );
+			}
+			else if( UTag == "TITHING" )
+			{
+				SetTithing( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+				rValue = true;
 			}
 			else if( UTag == "TAGVALS" )
 			{
@@ -2886,6 +2925,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetColour( GetColour() );
 	target->SetHiDamage( GetHiDamage() );
 	target->SetLoDamage( GetLoDamage() );
+	target->SetTithing( GetTithing() );
 	for( UI08 resist = 0; resist < WEATHNUM; ++resist )
 	{
 		target->SetResist( GetResist( static_cast<WeatherType>( resist )), static_cast<WeatherType>( resist ));
