@@ -816,7 +816,8 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Intelligence=" + std::to_string( intelligence ) + "," + std::to_string( temp_in2 ) + newLine;
 	outStream << "Strength=" + std::to_string( strength ) + "," + std::to_string( temp_st2 ) + newLine;
 	outStream << "HitPoints=" + std::to_string( hitpoints ) + newLine;
-	outStream << "ExtPropCommon=" + std::to_string( temp_hitChance ) + "," + std::to_string( temp_defChance ) + "," + std::to_string( temp_swingSpeedInc ) + "," + std::to_string( temp_damInc ) + newLine;	outStream << "Race=" + std::to_string( race ) + newLine;
+	outStream << "ExtPropCommon=" + std::to_string( temp_hitChance ) + "," + std::to_string( temp_defChance ) + "," + std::to_string( temp_swingSpeedInc ) + "," + std::to_string( temp_damInc ) + newLine;
+	outStream << "Race=" + std::to_string( race ) + newLine;
 	outStream << "Visible=" + std::to_string( visible ) + newLine;
 	outStream << "Disabled=" << ( IsDisabled() ? "1" : "0" ) << newLine;
 	outStream << "Damage=" + std::to_string( loDamage ) + "," + std::to_string( hiDamage ) + newLine;
