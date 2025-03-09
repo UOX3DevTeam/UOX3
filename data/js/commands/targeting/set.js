@@ -240,6 +240,10 @@ function onCallback0( socket, ourObj )
 		ourObj.shouldSave = ( nVal == 1 );
 		okMsg( socket );
 		break;
+	case "TITHING":
+		ourObj.tithing = nVal;
+		okMsg( socket );
+		break;
 	default:
 		if( ourObj.isChar )
 		{
@@ -809,10 +813,6 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		break;
 	case "THIRST":
 		ourChar.thirst = nVal;
-		okMsg( socket );
-		break;
-	case "TITHING":
-		ourChar.tithing = nVal;
 		okMsg( socket );
 		break;
 	// Account Properties

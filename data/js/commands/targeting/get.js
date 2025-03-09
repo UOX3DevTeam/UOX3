@@ -130,6 +130,9 @@ function onCallback0( socket, ourObj )
 	case "TEMPDEXTERITY":
 		socket.SysMessage( ourObj.tempdex );
 		break;
+	case "TITHING":
+		socket.SysMessage( ourObj.tithing );
+		break;
 	case "WIPABLE":
 	case "WIPEABLE":
 		socket.SysMessage( ourObj.wipable );
@@ -540,9 +543,6 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "TOPEACE":
 		socket.SysMessage( ourChar.skillToPeace );
-		break;
-	case "TITHING":
-		socket.SysMessage( ourChar.tithing );
 		break;
 	case "NPCWANDER":
 		socket.SysMessage( ourChar.wandertype );
