@@ -2385,7 +2385,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			Luck( 0 );
 			DamageMin( Combat->CalcLowDamage( &toCopy ));
 			DamageMax( Combat->CalcHighDamage( &toCopy ));
-			TithingPoints( toCopy.GetTithing() );
+			TithingPoints( 0 );
 		}
 		if( extended6 )
 		{

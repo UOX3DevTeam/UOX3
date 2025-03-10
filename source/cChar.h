@@ -147,7 +147,6 @@ private:
 		COLOUR		hairColour;
 		COLOUR		beardColour;
 		CItem *		speechItem;
-		UI32		tithing;
 		UI08		speechMode;
 		UI08		speechId;
 		cScript *	speechCallback;
@@ -858,9 +857,6 @@ public:
 
 	UI08		GetSquelched( void ) const;
 	void		SetSquelched( UI08 newValue );
-
-	UI32		GetTithing( void ) const;
-	void		SetTithing( UI32 newValue );
 
 	CItem *		GetSpeechItem( void ) const;
 	UI08		GetSpeechMode( void ) const;

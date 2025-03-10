@@ -5166,10 +5166,6 @@ void CMagic::LoadScript( void )
 								{
 									spells[i].BaseDmg( static_cast<SI16>( std::stoi( data, nullptr, 0 )));
 								}
-								else if( UTag == "BATWING" )
-								{
-									mRegs->batwing =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
 								break;
 							case 'C':
 								if( UTag == "CIRCLE" )
@@ -5185,10 +5181,6 @@ void CMagic::LoadScript( void )
 								else if( UTag == "DELAY" )
 								{
 									spells[i].Delay( static_cast<R32>( std::stof( data )));
-								}
-								else if( UTag == "DAEMONBLOOD" )
-								{
-									mRegs->daemonblood =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 								}
 								else if( UTag == "DRAKE" )
 								{
@@ -5225,10 +5217,6 @@ void CMagic::LoadScript( void )
 								else if( UTag == "GINSENG" )
 								{
 									mRegs->ginseng = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								else if( UTag == "GRAVEDUST" )
-								{
-									mRegs->gravedust =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 								}
 								break;
 							case 'H':
@@ -5273,22 +5261,11 @@ void CMagic::LoadScript( void )
 									}
 								}
 								break;
-							case 'N':
-								if( UTag == "NOXCRYSTAL" )
-								{
-									mRegs->noxcrystal =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								break;
 							case 'P':
 								if( UTag == "PEARL" )
 								{
 									mRegs->pearl = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 								}
-								else if( UTag == "PIGIRON" )
-								{
-									mRegs->pigiron = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-								}
-								break;
 								break;
 							case 'R':
 								if( UTag == "RECOVERYDELAY" )
@@ -5348,10 +5325,6 @@ void CMagic::LoadScript( void )
 								if( UTag == "TARG" )
 								{
 									spells[i].StringToSay( data );
-								}
-								else if( UTag == "TITHING" )
-								{
-									spells[i].Tithing(  static_cast<SI32>( std::stoi( data, nullptr, 0 )));
 								}
 								break;
 						}

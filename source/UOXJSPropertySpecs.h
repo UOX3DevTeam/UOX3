@@ -39,11 +39,6 @@ inline JSPropertySpec CSpellProperties[] =
 	{ "ash",				CSP_ASH,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "shade",				CSP_SHADE,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "garlic",				CSP_GARLIC,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "batwing",			CSP_BATWING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "daemonblood",		CSP_DAEMONBLOOD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "gravedust",			CSP_GRAVEDUST,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "noxcrystal",			CSP_NOXCRYSTAL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "pigiron",			CSP_PIGIRON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "requireTarget",		CSP_REQUIRETARGET,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "requireItem",		CSP_REQUIREITEM,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "requireLocation",    CSP_REQUIRELOCATION,    JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -56,7 +51,6 @@ inline JSPropertySpec CSpellProperties[] =
 	{ "soundEffect",		CSP_SOUNDEFFECT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "enabled",			CSP_ENABLED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "baseDmg",			CSP_BASEDMG,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tithing",			CSP_TITHING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 
@@ -273,7 +267,6 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "karma",			CCP_KARMA,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "attack",			CCP_ATTACK,			JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "canAttack",		CCP_CANATTACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ "tithing",		CCP_TITHING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "karmaLock",		CCP_KARMALOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "fleeAt",			CCP_FLEEAT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "reAttackAt",		CCP_REATTACKAT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
