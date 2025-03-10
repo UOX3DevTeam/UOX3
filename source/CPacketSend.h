@@ -1362,7 +1362,6 @@ public:
 	virtual			~CPNewSpellBook()
 	{
 	}
-	CPNewSpellBook();
 	CPNewSpellBook( CItem& obj );
 	virtual bool	ClientCanReceive( CSocket *mSock ) override;
 };

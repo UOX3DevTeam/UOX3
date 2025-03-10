@@ -1680,11 +1680,11 @@ Point3_st CBaseObject::GetLocation( void ) const
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the tithing status of the player's character/Item
 //o------------------------------------------------------------------------------------------------o
-UI32 CBaseObject::GetTithing( void ) const
+SI32 CBaseObject::GetTithing( void ) const
 {
 	return tithing;
 }
-void CBaseObject::SetTithing( UI32 newValue )
+void CBaseObject::SetTithing( SI32 newValue )
 {
 	tithing = newValue;
 
@@ -2045,7 +2045,7 @@ void CBaseObject::IncDefenseChance( SI16 toInc )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Increments the object's Tithing value
 //o------------------------------------------------------------------------------------------------o
-void CBaseObject::IncTithing( SI16 toInc )
+void CBaseObject::IncTithing( SI32 toInc )
 {
 	SetTithing( tithing + toInc );
 }

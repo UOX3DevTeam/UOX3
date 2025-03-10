@@ -250,7 +250,7 @@ const UI16			DEFCHAR_ADVOBJ 				= 0;
 const SERIAL		DEFCHAR_GUILDFEALTY			= INVALIDSERIAL;
 const SI16			DEFCHAR_GUILDNUMBER			= -1;
 const UI08			DEFCHAR_FLAG 				= 0x04;
-const SI08			DEFCHAR_SPELLCAST 			= -1;
+const SI32			DEFCHAR_SPELLCAST 			= -1;
 const UI08			DEFCHAR_NEXTACTION 			= 0;
 const SI08			DEFCHAR_STEALTH				= -1;
 const UI08			DEFCHAR_RUNNING				= 0;
@@ -1963,11 +1963,11 @@ void CChar::SetRaceGate( RACEID newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the spell ID of the next spell an NPC will be casting
 //o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetSpellCast( void ) const
+SI32 CChar::GetSpellCast( void ) const
 {
 	return spellCast;
 }
-void CChar::SetSpellCast( SI08 newValue )
+void CChar::SetSpellCast( SI32 newValue )
 {
 	spellCast = newValue;
 }

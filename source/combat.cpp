@@ -3174,7 +3174,7 @@ inline void QuickSwitch( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spellcasting during combat
 //o------------------------------------------------------------------------------------------------o
-bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum )
+bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI32 spellNum )
 {
 	if( !ValidateObject( mChar ) || !ValidateObject( ourTarg ) || mChar == ourTarg )
 		return false;

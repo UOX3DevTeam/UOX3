@@ -83,7 +83,7 @@ protected:
 	SI16				healthLeech;
 	SI16				staminaLeech;
 	SI16				manaLeech;
-	UI32				tithing;
+	SI32				tithing;
 	UI16				scriptTrig;
 	SI16				st2;
 	SI16				dx2;
@@ -238,8 +238,8 @@ public:
 	virtual SI16			GetSwingSpeedIncrease( void ) const;
 	virtual void			SetSwingSpeedIncrease( SI16 newValue );
 
-	virtual UI32			GetTithing( void ) const;
-	virtual void			SetTithing( UI32 newValue );
+	virtual SI32			GetTithing( void ) const;
+	virtual void			SetTithing( SI32 newValue );
 
 	void					IncSwingSpeedIncrease( SI16 toInc = 1 );
 
@@ -309,7 +309,7 @@ public:
 	void					IncHitChance( SI16 toInc = 1 );
 	void					IncDefenseChance( SI16 toInc = 1 );
 
-	void					IncTithing( SI16 toInc = 1 );
+	void					IncTithing( SI32 toInc = 1 );
 
 	SI16					GetHealthBonus( void ) const;
 	virtual void			SetHealthBonus( SI16 nVal );

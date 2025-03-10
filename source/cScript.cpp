@@ -3012,9 +3012,9 @@ SI08 cScript::OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFa
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached who targets someone with a spell
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, UI08 spellNum )
+SI32 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, SI32 spellNum )
 {
-	const SI08 RV_NOFUNC = -1;
+	const SI32 RV_NOFUNC = -1;
 	if( !ValidateObject( target ) || !ValidateObject( caster ))
 		return RV_NOFUNC;
 
@@ -3050,9 +3050,9 @@ SI08 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, UI08 spe
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached who is the target of a spell
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
+SI32 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, SI32 spellNum )
 {
-	const SI08 RV_NOFUNC = -1;
+	const SI32 RV_NOFUNC = -1;
 	if( !ValidateObject( target ) || !ValidateObject( caster ))
 		return RV_NOFUNC;
 
@@ -3116,7 +3116,7 @@ bool cScript::CallParticularEvent( const char *eventToCall, jsval *params, SI32 
 //|						-1: CANCEL spellcasting
 //|						0->inf: Spell delay in ms
 //o------------------------------------------------------------------------------------------------o
-SI16 cScript::OnSpellCast( CChar *tChar, UI08 SpellId )
+SI32 cScript::OnSpellCast( CChar *tChar, SI32 SpellId )
 {
 	if( !ValidateObject( tChar ))
 		return -2;
@@ -3150,7 +3150,7 @@ SI16 cScript::OnSpellCast( CChar *tChar, UI08 SpellId )
 //|						-1: CANCEL spellcasting
 //|						0->inf: Spell delay in ms
 //o------------------------------------------------------------------------------------------------o
-SI16 cScript::OnScrollCast( CChar *tChar, UI08 SpellId )
+SI32 cScript::OnScrollCast( CChar *tChar, SI32 SpellId )
 {
 	if( !ValidateObject( tChar ))
 		return -2;
@@ -3180,9 +3180,9 @@ SI16 cScript::OnScrollCast( CChar *tChar, UI08 SpellId )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers after character with event attached successfully casts a spell
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellSuccess( CChar *tChar, UI08 SpellId )
+SI32 cScript::OnSpellSuccess( CChar *tChar, SI32 SpellId )
 {
-	const SI08 RV_NOFUNC = -1;
+	const SI32 RV_NOFUNC = -1;
 	if( !ValidateObject( tChar ))
 		return RV_NOFUNC;
 
@@ -3298,9 +3298,9 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for spellbooks with event attached when spells are added to them
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellGain( CItem *book, const UI08 spellNum )
+SI32 cScript::OnSpellGain( CItem *book, const SI32 spellNum )
 {
-	const SI08 RV_NOFUNC = -1;
+	const SI32 RV_NOFUNC = -1;
 	if( !ValidateObject( book ))
 		return RV_NOFUNC;
 
@@ -3326,9 +3326,9 @@ SI08 cScript::OnSpellGain( CItem *book, const UI08 spellNum )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for spellbooks with event attached when spells are removed from them
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellLoss( CItem *book, const UI08 spellNum )
+SI32 cScript::OnSpellLoss( CItem *book, const SI32 spellNum )
 {
-	const SI08 RV_NOFUNC = -1;
+	const SI32 RV_NOFUNC = -1;
 	if( !ValidateObject( book ))
 		return RV_NOFUNC;
 

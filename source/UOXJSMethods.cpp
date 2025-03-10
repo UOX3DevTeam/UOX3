@@ -4767,7 +4767,7 @@ JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 
-	SI08 spellCast = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	SI32 spellCast = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
 
 	if( myChar->IsNpc() )
 	{
@@ -6591,7 +6591,7 @@ JSBool CChar_AddSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 	}
 
 	CChar *myChar	= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	UI08 spellNum	= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	SI32 spellNum	= static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
 	CItem *sBook	= FindItemOfType( myChar, IT_SPELLBOOK );
 	if( ValidateObject( sBook ))
 	{
