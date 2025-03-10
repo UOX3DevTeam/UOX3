@@ -3124,7 +3124,7 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		// If neither book is present, return false
 		if( !ValidateObject( spellBook ) && !ValidateObject( paladinBook ) && !ValidateObject( necroBook ))
 		{
-			*rval = BOOLEAN_TO_JSVAL(JS_FALSE);
+			*rval = BOOLEAN_TO_JSVAL( JS_FALSE );
 			return JS_TRUE;
 		}
 
@@ -3161,7 +3161,7 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 	else if( myClass.ClassName() == "UOXItem" )
 	{
-		CItem *myItem = static_cast<CItem *>( myClass.toObject() );
+		CItem *myItem = static_cast<CItem*>( myClass.toObject() );
 		if( !ValidateObject( myItem ))
 		{
 			ScriptError( cx, "Invalid item for HasSpell" );
