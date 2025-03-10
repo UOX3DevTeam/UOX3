@@ -53,34 +53,31 @@ JSBool CGuildsProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]
 JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	if( !JSVAL_IS_INT(id) )
-    {
-        ScriptError( cx, "Spells: Non-integer Spell ID provided" );
-        *vp = JSVAL_NULL;
-        return JS_FALSE;
-    }
+	{
+		ScriptError( cx, "Spells: Non-integer Spell ID provided" );
+		*vp = JSVAL_NULL;
+		return JS_FALSE;
+	}
 
-    int rawId = JSVAL_TO_INT( id );
-    //Console.Print(oldstrutil::format("DEBUG: Raw Spell ID passed to CSpellsProps_getProperty: %d", rawId));
+	int rawId = JSVAL_TO_INT( id );
 
-    // Reject negative IDs outright
-    if( rawId < 0 )
-    {
-        ScriptError( cx, oldstrutil::format( "Spells: Negative Spell ID (%d) provided", rawId).c_str() );
-        *vp = JSVAL_NULL;
-        return JS_FALSE;
-    }
+	// Reject negative IDs outright
+	if( rawId < 0 )
+	{
+		ScriptError( cx, oldstrutil::format( "Spells: Negative Spell ID (%d) provided", rawId ).c_str() );
+		*vp = JSVAL_NULL;
+		return JS_FALSE;
+	}
 
-    size_t spellId = static_cast<size_t>(rawId);
+	size_t spellId = static_cast<size_t>(rawId);
 
-    // Preemptive range check for both regular and Paladin spells
-    if( spellId < 1 || spellId > 210 )
-    {
-        ScriptError( cx, oldstrutil::format( "Spells: Out-of-range Spell ID (%d) provided", rawId).c_str() );
-        *vp = JSVAL_NULL;
-        return JS_FALSE;
-    }
-
-    //Console.Print(oldstrutil::format("DEBUG: Adjusted Spell ID: %d", spellId));
+	// Preemptive range check for both regular and Paladin spells
+	if( spellId < 1 || spellId > 210 )
+	{
+		ScriptError( cx, oldstrutil::format( "Spells: Out-of-range Spell ID (%d) provided", rawId).c_str() );
+		*vp = JSVAL_NULL;
+		return JS_FALSE;
+	}
 
 	if( spellId >= Magic->spells.size() )
 	{

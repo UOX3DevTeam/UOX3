@@ -2725,34 +2725,34 @@ CMagic::~CMagic()
 //o------------------------------------------------------------------------------------------------o
 bool CMagic::HasSpell( CItem *book, SI32 spellNum )
 {
-    if (!ValidateObject( book ))
-        return false;
+	if( !ValidateObject( book ))
+		return false;
 
-    // Validate spell range for the book type
-    if (( book->GetType() == IT_SPELLBOOK && ( spellNum < 1 || spellNum > 64 )) ||
-        ( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
-        ( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
-    {
-        Console.Error(oldstrutil::format( "ERROR: HasSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
-        return false;
-    }
+	// Validate spell range for the book type
+	if(( book->GetType() == IT_SPELLBOOK && ( spellNum < 1 || spellNum > 64 )) ||
+		( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
+		( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
+	{
+		Console.Error(oldstrutil::format( "ERROR: HasSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
+		return false;
+	}
 
 	// Adjust spell number for different book types
-    if( book->GetType() == IT_PALADINBOOK )
-        spellNum -= 200;
-    else if( book->GetType() == IT_NECROBOOK )
-        spellNum -= 100;
+	if( book->GetType() == IT_PALADINBOOK )
+		spellNum -= 200;
+	else if( book->GetType() == IT_NECROBOOK )
+		spellNum -= 100;
 
-    // Determine which word and bit to check
-    UI32 wordNum = ( spellNum - 1 ) / 32;  // Adjust for 0-based indexing
-    UI32 bitNum = ( spellNum - 1 ) % 32;  // Calculate the bit index within the word
+	// Determine which word and bit to check
+	UI32 wordNum = ( spellNum - 1 ) / 32;  // Adjust for 0-based indexing
+	UI32 bitNum = ( spellNum - 1 ) % 32;  // Calculate the bit index within the word
 
-    if( wordNum >= 3 )  // Ensure wordNum is valid
-    {
-        return false;
-    }
+	if( wordNum >= 3 )  // Ensure wordNum is valid
+	{
+		return false;
+	}
 
-    UI32 sourceAmount = book->GetSpell( static_cast<UI08>( wordNum ));
+	UI32 sourceAmount = book->GetSpell( static_cast<UI08>( wordNum ));
 	UI32 flagToCheck = 1 << bitNum;
 
 	return (( sourceAmount & flagToCheck ) == flagToCheck );
@@ -2765,53 +2765,53 @@ bool CMagic::HasSpell( CItem *book, SI32 spellNum )
 //o------------------------------------------------------------------------------------------------o
 void CMagic::AddSpell( CItem *book, SI32 spellNum )
 {
-    // Check for script triggers
-    std::vector<UI16> scriptTriggers = book->GetScriptTriggers();
-    for( auto scriptTrig : scriptTriggers )
-    {
-        cScript *toExecute = JSMapping->GetScript( scriptTrig );
-        if( toExecute != nullptr )
-        {
-            // If script returns false/0, prevent addition of spell to spellbook
-            if( toExecute->OnSpellGain( book, spellNum ) == 0 )
-            {
-                return;
-            }
-        }
-    }
+	// Check for script triggers
+	std::vector<UI16> scriptTriggers = book->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			// If script returns false/0, prevent addition of spell to spellbook
+			if( toExecute->OnSpellGain( book, spellNum ) == 0 )
+			{
+				return;
+			}
+		}
+	}
 
-    if( !ValidateObject( book ))
-        return;
+	if( !ValidateObject( book ))
+		return;
 
-    // Validate spell number range for the book type
-    if(( book->GetType() == IT_SPELLBOOK && ( spellNum < 1 || spellNum > 64 )) ||
-        ( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
-        ( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
-    {
-        Console.Error( oldstrutil::format( "ERROR: AddSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
-        return;
-    }
+	// Validate spell number range for the book type
+	if(( book->GetType() == IT_SPELLBOOK && ( spellNum < 1 || spellNum > 64 )) ||
+		( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
+		( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
+	{
+		Console.Error( oldstrutil::format( "ERROR: AddSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
+		return;
+	}
 
-    // Adjust spell number for different book types
-    if( book->GetType() == IT_PALADINBOOK )
-        spellNum -= 200;
-    else if( book->GetType() == IT_NECROBOOK )
-        spellNum -= 100;
+	// Adjust spell number for different book types
+	if( book->GetType() == IT_PALADINBOOK )
+		spellNum -= 200;
+	else if( book->GetType() == IT_NECROBOOK )
+		spellNum -= 100;
 
-    // Calculate word and bit position
-    UI32 wordNum = ( spellNum - 1 ) / 32;  // Adjust for 0-based indexing
-    UI32 bitNum = ( spellNum - 1 ) % 32;  // Calculate the bit index within the word
+	// Calculate word and bit position
+	UI32 wordNum = ( spellNum - 1 ) / 32;  // Adjust for 0-based indexing
+	UI32 bitNum = ( spellNum - 1 ) % 32;  // Calculate the bit index within the word
 
-    if( wordNum < 3 ) // Ensure valid word index
-    {
-        UI32 flagToSet = 1 << bitNum;
+	if( wordNum < 3 ) // Ensure valid word index
+	{
+		UI32 flagToSet = 1 << bitNum;
 
-        // Retrieve current spells and update
-        UI32 targAmount = book->GetSpell( static_cast<UI08>( wordNum )) | flagToSet;
-        book->SetSpell(static_cast<UI08>( wordNum ), targAmount );
+		// Retrieve current spells and update
+		UI32 targAmount = book->GetSpell( static_cast<UI08>( wordNum )) | flagToSet;
+		book->SetSpell(static_cast<UI08>( wordNum ), targAmount );
 
-        Console.Print( oldstrutil::format( "DEBUG: AddSpell: Successfully added SpellNum=%d to BookType=%d", spellNum, book->GetType() ));
-    }
+		Console.Print( oldstrutil::format( "DEBUG: AddSpell: Successfully added SpellNum=%d to BookType=%d", spellNum, book->GetType() ));
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2858,102 +2858,102 @@ void CMagic::RemoveSpell( CItem *book, SI32 spellNum )
 //o------------------------------------------------------------------------------------------------o
 void CMagic::SpellBook( CSocket *mSock )
 {
-    SERIAL serial = ( mSock->GetDWord( 1 ) & 0x7FFFFFFF );
-    CChar *mChar = mSock->CurrcharObj();
-    CItem *spellBook = CalcItemObjFromSer( serial );
+	SERIAL serial = ( mSock->GetDWord( 1 ) & 0x7FFFFFFF );
+	CChar *mChar = mSock->CurrcharObj();
+	CItem *spellBook = CalcItemObjFromSer( serial );
 
-    // Ensure we have the correct book
+	// Ensure we have the correct book
 	if( !ValidateObject( spellBook ))
-    {
-        spellBook = FindItemOfType( mChar, IT_SPELLBOOK );
-        if( !ValidateObject( spellBook ))
-        {
-            spellBook = FindItemOfType( mChar, IT_PALADINBOOK );
-        }
-        if( !ValidateObject( spellBook ))
-        {
-            spellBook = FindItemOfType( mChar, IT_NECROBOOK ); // Check for Necromancer book
-        }
-    }
+	{
+		spellBook = FindItemOfType( mChar, IT_SPELLBOOK );
+		if( !ValidateObject( spellBook ))
+		{
+			spellBook = FindItemOfType( mChar, IT_PALADINBOOK );
+		}
+		if( !ValidateObject( spellBook ))
+		{
+			spellBook = FindItemOfType( mChar, IT_NECROBOOK ); // Check for Necromancer book
+		}
+	}
 
-    if( !ValidateObject( spellBook )) // Still no book found
-    {
-        mSock->SysMessage( 692 ); // You have no spellbook upon you!
-        return;
-    }
+	if( !ValidateObject( spellBook )) // Still no book found
+	{
+		mSock->SysMessage( 692 ); // You have no spellbook upon you!
+		return;
+	}
 
-    CItem *pack = mChar->GetPackItem();
-    if( spellBook->GetCont() != mChar && spellBook->GetCont() != pack )
-    {
-        mSock->SysMessage( 403 ); // If you wish to open a spellbook, it must be equipped or in your main backpack.
-        return;
-    }
+	CItem *pack = mChar->GetPackItem();
+	if( spellBook->GetCont() != mChar && spellBook->GetCont() != pack )
+	{
+		mSock->SysMessage( 403 ); // If you wish to open a spellbook, it must be equipped or in your main backpack.
+		return;
+	}
 
-    // Determine the type of spellbook
-    bool isPaladinBook = ( spellBook->GetType() == IT_PALADINBOOK );
-    bool isNecroBook = ( spellBook->GetType() == IT_NECROBOOK );
-    int startSpell = isPaladinBook ? 201 : ( isNecroBook ? 101 : 1 );
-    int endSpell = isPaladinBook ? 210 : ( isNecroBook ? 117 : 64 );
+	// Determine the type of spellbook
+	bool isPaladinBook = ( spellBook->GetType() == IT_PALADINBOOK );
+	bool isNecroBook = ( spellBook->GetType() == IT_NECROBOOK );
+	int startSpell = isPaladinBook ? 201 : ( isNecroBook ? 101 : 1 );
+	int endSpell = isPaladinBook ? 210 : ( isNecroBook ? 117 : 64 );
 
-    // Initialize spellsList
-    UI08 spellsList[70] = {0}; // Covers maximum spells for fallback logic
+	// Initialize spellsList
+	UI08 spellsList[70] = {0}; // Covers maximum spells for fallback logic
 
-    // Populate spellsList with proper indexing
-    for( int spellID = startSpell; spellID <= endSpell; ++spellID )
+	// Populate spellsList with proper indexing
+	for( int spellID = startSpell; spellID <= endSpell; ++spellID )
 	{
 		if( HasSpell( spellBook, spellID ))
-	    {
+		{
 			spellsList[spellID - startSpell] = 1;
 		}
 	}
 
-    // Send the spellbook to the client
-    CPDrawContainer sbStart(*spellBook);
-    sbStart.Model( 0xFFFF );
-    if( mSock->ClientType() >= CV_HS2D && mSock->ClientVerShort() >= CVS_7090 )
-    {
-        sbStart.ContType( 0x7D );
-    }
-    mSock->Send( &sbStart );
+	// Send the spellbook to the client
+	CPDrawContainer sbStart(*spellBook);
+	sbStart.Model( 0xFFFF );
+	if( mSock->ClientType() >= CV_HS2D && mSock->ClientVerShort() >= CVS_7090 )
+	{
+		sbStart.ContType( 0x7D );
+	}
+	mSock->Send( &sbStart );
 
-    // Support for new Client Spellbook
-    CPNewSpellBook ourBook( *spellBook );
-    if( ourBook.ClientCanReceive( mSock ))
-    {
-        mSock->Send( &ourBook );
-        return;
-    }
+	// Support for new Client Spellbook
+	CPNewSpellBook ourBook( *spellBook );
+	if( ourBook.ClientCanReceive( mSock ))
+	{
+		mSock->Send( &ourBook );
+		return;
+	}
 
-    // Fallback logic for older clients
-    UI08 spellCount = 0;
-    for( int i = 0; i < ( endSpell - startSpell + 1 ); ++i )
-    {
-        if( spellsList[i] )
-        {
-            ++spellCount;
-        }
-    }
+	// Fallback logic for older clients
+	UI08 spellCount = 0;
+	for( int i = 0; i < ( endSpell - startSpell + 1 ); ++i )
+	{
+		if( spellsList[i] )
+		{
+			++spellCount;
+		}
+	}
 
-    if( spellCount > 0 )
-    {
-        CPItemsInContainer mItems;
-        if( mSock->ClientVerShort() >= CVS_6017 )
-        {
-            mItems.UOKRFlag( true );
-        }
-        mItems.NumberOfItems( spellCount );
-        UI16 runningCounter = 0;
-        const SERIAL containerSerial = spellBook->GetSerial();
+	if( spellCount > 0 )
+	{
+		CPItemsInContainer mItems;
+		if( mSock->ClientVerShort() >= CVS_6017 )
+		{
+			mItems.UOKRFlag( true );
+		}
+		mItems.NumberOfItems( spellCount );
+		UI16 runningCounter = 0;
+		const SERIAL containerSerial = spellBook->GetSerial();
 
-        for( int i = 0; i < ( endSpell - startSpell + 1 ); ++i )
-        {
-            if( spellsList[i] )
-            {
-                mItems.Add( runningCounter++, 0x41000000 + ( startSpell + i ), containerSerial, startSpell + i );
-            }
-        }
-        mSock->Send( &mItems );
-    }
+		for( int i = 0; i < ( endSpell - startSpell + 1 ); ++i )
+		{
+			if( spellsList[i] )
+			{
+				mItems.Add( runningCounter++, 0x41000000 + ( startSpell + i ), containerSerial, startSpell + i );
+			}
+		}
+		mSock->Send( &mItems );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3225,47 +3225,32 @@ void CMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 //o------------------------------------------------------------------------------------------------o
 bool CMagic::CheckBook( int circle, int spellOffset, CItem* book )
 {
-    if( !ValidateObject( book ))
-    {
-       // Console.Error("CheckBook: Invalid book object provided.");
-        return false;
-    }
+	if( !ValidateObject( book ))
+	{
+	   // Console.Error("CheckBook: Invalid book object provided.");
+		return false;
+	}
 
 	// Determine the type of spellbook and calculate the appropriate spell number range
-    int baseSpellNum = 1; // Default to regular spellbook
-    if( book->GetType() == IT_PALADINBOOK )
-        baseSpellNum = 201;
-    else if( book->GetType() == IT_NECROBOOK )
-        baseSpellNum = 101;
+	int baseSpellNum = 1; // Default to regular spellbook
+	if( book->GetType() == IT_PALADINBOOK )
+		baseSpellNum = 201;
+	else if( book->GetType() == IT_NECROBOOK )
+		baseSpellNum = 101;
 
-    int spellNum = (( circle - 1 ) * 8 ) + spellOffset + baseSpellNum;
+	int spellNum = (( circle - 1 ) * 8 ) + spellOffset + baseSpellNum;
 
 	// Ensure the spellNum is within valid range for the book type
-    if(( book->GetType() == IT_SPELLBOOK && ( spellNum < 1 || spellNum > 64 )) ||
-        ( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
-        ( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
-    {
-        Console.Error( oldstrutil::format( "ERROR: CheckBook: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
-        return false;
-    }
+	if(( book->GetType() == IT_SPELLBOOK && ( spellNum < 1 || spellNum > 64 )) ||
+		( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
+		( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
+	{
+		Console.Error( oldstrutil::format( "ERROR: CheckBook: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
+		return false;
+	}
 
-    // Debugging information
-    //Console.Print(oldstrutil::format( "DEBUG: CheckBook: Circle=%d, SpellOffset=%d, BaseSpellNum=%d, Calculated SpellNum=%d, BookType=%d",circle, spellOffset, baseSpellNum, spellNum, book->GetType()));
-
-    // Ensure the spellNum is within the valid range for the book type
-	//int startRange = (book->GetType() == IT_SPELLBOOK) ? 1 : 201;
-	//int endRange = (book->GetType() == IT_SPELLBOOK) ? 65 : 211;
-
-	//if (spellNum < startRange || spellNum > endRange)
-	//{
-	//	Console.Error(oldstrutil::format("ERROR: CheckBook: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType()));
-	//	return false;
-	//}
-
-    // Debugging HasSpell result
-    bool result = HasSpell( book, spellNum );
-   // Console.Print(oldstrutil::format("DEBUG: CheckBook: HasSpell returned %s for SpellNum=%d", result ? "true" : "false", spellNum));
-    return result;
+	bool result = HasSpell( book, spellNum );
+	return result;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4091,7 +4076,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 		Console.Error( "Invalid spell ID passed to CMagic::SelectSpell() - aborting spellcast attempt!" );
 		return false;
 	}
-	//Console.Print(oldstrutil::format("DEBUG: SelectSpell called with Spell ID: %d", num));
+
 	/*SI16 lowSkill = 0, highSkill = 0;*/
 	CChar *mChar = mSock->CurrcharObj();
 
@@ -4222,65 +4207,50 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 	}
 
 	// The following loop checks to see if any item is currently equipped (if not a GM)
-	/*if( !mChar->IsGM() )
-	{
-		if( type != 2 )
-		{
-			CItem *itemRHand = mChar->GetItemAtLayer( IL_RIGHTHAND );
-			CItem *itemLHand = mChar->GetItemAtLayer( IL_LEFTHAND );
-			if(( itemLHand != nullptr && itemLHand->GetType() != IT_SPELLCHANNELING ) || ( itemRHand != nullptr && itemRHand->GetType() != IT_SPELLBOOK && itemRHand->GetType() != IT_SPELLCHANNELING ))
-			{
-				mSock->SysMessage( 708 ); // You cannot cast with a weapon equipped.
-				mChar->StopSpell();
-				return false;
-			}
-		}
-	}*/
-
 	if( !mChar->IsGM() && type != 2 )
-    {
-       bool autoUnequipEnabled = cwmWorldState->ServerData()->AutoUnequippedCasting(); // Should be INI Setting
+	{
+	   bool autoUnequipEnabled = cwmWorldState->ServerData()->AutoUnequippedCasting(); // Should be INI Setting
 
-        CItem *itemRHand = mChar->GetItemAtLayer( IL_RIGHTHAND );
-        CItem *itemLHand = mChar->GetItemAtLayer( IL_LEFTHAND );
-        auto mCharPack = mChar->GetPackItem();
+		CItem *itemRHand = mChar->GetItemAtLayer( IL_RIGHTHAND );
+		CItem *itemLHand = mChar->GetItemAtLayer( IL_LEFTHAND );
+		auto mCharPack = mChar->GetPackItem();
 
-        // Function to check and possibly unequip an item if it blocks spell casting
-        auto handleItem = [&](CItem* item, auto itemCheck, bool blockFlag = true)
-        {
-            if( item && itemCheck( item ))
-            {
-                // If auto-unequip is enabled, make sure pack can hold another item before unequipping
-                if( autoUnequipEnabled && ValidateObject( mCharPack ) && mCharPack->GetContainsList()->Num() < mCharPack->GetMaxItems() )
-                {
-                    item->SetCont( mCharPack );
-                    blockFlag = false;
-                }
-                else
-                {
-                    blockFlag = true;
-                }
-            }
-            else
-            {
-                blockFlag = false;
-            }
-        };
+		// Function to check and possibly unequip an item if it blocks spell casting
+		auto handleItem = [&](CItem* item, auto itemCheck, bool blockFlag = true)
+		{
+			if( item && itemCheck( item ))
+			{
+				// If auto-unequip is enabled, make sure pack can hold another item before unequipping
+				if( autoUnequipEnabled && ValidateObject( mCharPack ) && mCharPack->GetContainsList()->Num() < mCharPack->GetMaxItems() )
+				{
+					item->SetCont( mCharPack );
+					blockFlag = false;
+				}
+				else
+				{
+					blockFlag = true;
+				}
+			}
+			else
+			{
+				blockFlag = false;
+			}
+		};
 
-        bool lHandBlocks = true;
-        bool rHandBlocks = true;
+		bool lHandBlocks = true;
+		bool rHandBlocks = true;
 
-        // Evaluate blocking for left and right hand items
-        handleItem( itemLHand, []( CItem* item ) { return item->GetType() != IT_SPELLCHANNELING; }, lHandBlocks );
-        handleItem( itemRHand, []( CItem* item ) { return item->GetType() != IT_SPELLBOOK && item->GetType() != IT_SPELLCHANNELING; }, rHandBlocks );
+		// Evaluate blocking for left and right hand items
+		handleItem( itemLHand, []( CItem* item ) { return item->GetType() != IT_SPELLCHANNELING; }, lHandBlocks );
+		handleItem( itemRHand, []( CItem* item ) { return item->GetType() != IT_SPELLBOOK && item->GetType() != IT_SPELLCHANNELING; }, rHandBlocks );
 
-        if( lHandBlocks || rHandBlocks )
-        {
-            mSock->SysMessage( 708 ); // You cannot cast with a weapon equipped.
-            mChar->StopSpell();
-            return false;
-        }
-    }
+		if( lHandBlocks || rHandBlocks )
+		{
+			mSock->SysMessage( 708 ); // You cannot cast with a weapon equipped.
+			mChar->StopSpell();
+			return false;
+		}
+	}
 
 	if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE )
 	{
