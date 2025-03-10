@@ -998,66 +998,85 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 							Skills->SkillUse( mSock, static_cast<UI08>( std::stoul( std::string(( char* )&buffer[4] ))));
 							break;
 						}
-						else if( buffer[3] == 0x27 || buffer[3] == 0x56 )  // Spell
+						else if( buffer[3] == 0x27 || buffer[3] == 0x56 ) // Casting a spell
 						{
-							// This'll find our spellbook for us
-							CItem *sBook	= FindItemOfType( ourChar, IT_SPELLBOOK );
-							CItem *p		= ourChar->GetPackItem();
-							if( ValidateObject( sBook ))
+							// Determine the spell number from the buffer
+							SI32 book = buffer[4] - 0x30; // Extract the first digit of the spell
+							if( buffer[5] > 0x20 )
 							{
-								bool validLoc = false;
-								if( sBook->GetCont() == ourChar )
-								{
-									validLoc = true;
-								}
-								else if( ValidateObject( p ) && sBook->GetCont() == p )
-								{
-									validLoc = true;
-								}
+								book = ( book * 10 ) + ( buffer[5] - 0x30 ); // Add the second digit if present
+							}
 
-								if( validLoc )
+							// Try to find both regular and Paladin spellbooks
+							CItem *sBook = FindItemOfType( ourChar, IT_SPELLBOOK );
+							CItem *pBook = FindItemOfType( ourChar, IT_PALADINBOOK );
+							CItem *nBook = FindItemOfType( ourChar, IT_NECROBOOK );
+							CItem *activeBook = nullptr;
+
+							// Match the spell number with the correct book type
+							if( book >= 101 && book <= 117 && ValidateObject( nBook ))
+							{
+								activeBook = nBook; // Necro book
+							}
+							else if( book >= 201 && book <= 210 && ValidateObject( pBook ))
+							{
+								activeBook = pBook; // Paladin book
+							}
+							else if( book >= 1 && book <= 64 && ValidateObject( sBook ))
+							{
+								activeBook = sBook; // Regular spellbook
+							}
+
+							if( !ValidateObject( activeBook )) // No valid book found
+							{
+								mSock->SysMessage( 765 ); // "To cast spells, your spellbook must be in your hands or in the first layer of your pack."
+								break;
+							}
+							else
+							{
+								Console.Print(oldstrutil::format( "DEBUG: Spellbook type: %d selected for spell: %d.", activeBook->GetType(), book ));
+								break;
+							}
+
+							// Validate the book's location
+							CItem *packItem = ourChar->GetPackItem();
+							bool validLoc = ( activeBook->GetCont() == ourChar) || ( ValidateObject( packItem ) && activeBook->GetCont() == packItem );
+
+							if( !validLoc )
+							{
+								mSock->SysMessage( 765 ); // "To cast spells, your spellbook must be in your hands or in the first layer of your pack."
+								break;
+							}
+
+							// Check if the spell exists in the active book
+							if( Magic->HasSpell( activeBook, book ))
+							{
+								if( ourChar->IsFrozen() )
 								{
-									book = buffer[4] - 0x30;
-									if( buffer[5] > 0x20 )
+									if( ourChar->IsCasting() )
 									{
-										book = ( book * 10 ) + ( buffer[5] - 0x30 );
-									}
-									if( Magic->CheckBook((( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, sBook ))
-									{
-										if( ourChar->IsFrozen() )
-										{
-											if( ourChar->IsCasting() )
-											{
-												mSock->SysMessage( 762 ); // You are already casting a spell.
-											}
-											else
-											{
-												mSock->SysMessage( 763 ); // You cannot cast spells while frozen.
-											}
-										}
-										else
-										{
-											mSock->CurrentSpellType( 0 );
-											Magic->SelectSpell( mSock, book );
-										}
+										mSock->SysMessage( 762 ); // "You are already casting a spell."
 									}
 									else
 									{
-										mSock->SysMessage( 764 ); // You do not have that spell.
+										mSock->SysMessage( 763 ); // "You cannot cast spells while frozen."
 									}
 								}
 								else
 								{
-									mSock->SysMessage( 765 ); // To cast spells, your spellbook must be in your hands or in the first layer of your pack.
+									mSock->CurrentSpellType( 0 );
+									Magic->SelectSpell( mSock, book );
 								}
 							}
-						}
-						else
-						{
-							if( buffer[2] == 0x05 && buffer[3] == 0x43 )  // Open spell book
+							else
 							{
-								Magic->SpellBook( mSock );
+								mSock->SysMessage( 764 ); // "You do not have that spell."
 							}
+							break;
+						}
+						else if( buffer[2] == 0x05 && buffer[3] == 0x43 ) // Open spellbook
+						{
+							Magic->SpellBook( mSock );
 							break;
 						}
 						break;
