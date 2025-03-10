@@ -884,6 +884,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 					Console.Warning( oldstrutil::format( "Invalid data found in ATT/DAMAGE tag inside NPC script [%s]", sectionId.c_str() ));
 				}
 				break;
+			case DFNTAG_DAMAGEINCREASE:	applyTo->SetDamageIncrease( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_AWAKE:
 				if( !isGate )
 				{
@@ -1486,10 +1487,12 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				break;
 			case DFNTAG_LOCKPICKING:		skillToSet = LOCKPICKING;				break;
 			case DFNTAG_LODAMAGE:			applyTo->SetLoDamage( static_cast<SI16>( ndata ));	break;
+			case DFNTAG_LUCK:				applyTo->SetLuck( static_cast<SI16>( ndata ));			break;
 			case DFNTAG_LUMBERJACKING:		skillToSet = LUMBERJACKING;				break;
 			case DFNTAG_LOYALTY:
 				applyTo->SetLoyalty( static_cast<UI16>( ndata ));
 				break;
+			case DFNTAG_TITHING:			applyTo->SetTithing( static_cast<UI32>( ndata )); break;
 			case DFNTAG_MACEFIGHTING:		skillToSet = MACEFIGHTING;				break;
 			case DFNTAG_MAGERY:				skillToSet = MAGERY;					break;
 			case DFNTAG_MAGICRESISTANCE:	skillToSet = MAGICRESISTANCE;			break;

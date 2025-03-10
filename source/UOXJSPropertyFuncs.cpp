@@ -168,6 +168,11 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			case CSP_ASH:				*vp = INT_TO_JSVAL( gPriv->Reagants().ash );			break;
 			case CSP_SHADE:				*vp = INT_TO_JSVAL( gPriv->Reagants().shade );			break;
 			case CSP_GARLIC:			*vp = INT_TO_JSVAL( gPriv->Reagants().garlic );			break;
+			case CSP_BATWING:			*vp = INT_TO_JSVAL( gPriv->Reagants().batwing );		break;
+			case CSP_DAEMONBLOOD:		*vp = INT_TO_JSVAL( gPriv->Reagants().daemonblood );	break;
+			case CSP_GRAVEDUST:			*vp = INT_TO_JSVAL( gPriv->Reagants().gravedust );		break;
+			case CSP_NOXCRYSTAL:		*vp = INT_TO_JSVAL( gPriv->Reagants().noxcrystal );		break;
+			case CSP_PIGIRON:			*vp = INT_TO_JSVAL( gPriv->Reagants().pigiron );		break;
 			case CSP_REQUIRETARGET:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireTarget() );		break;
 			case CSP_REQUIREITEM:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireItemTarget() );	break;
 			case CSP_REQUIRECHAR:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireCharTarget() );	break;
@@ -179,6 +184,7 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			case CSP_RESISTABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->Resistable() );			break;
 			case CSP_SOUNDEFFECT:		*vp = INT_TO_JSVAL( gPriv->Effect() );					break;
 			case CSP_ENABLED:			*vp = BOOLEAN_TO_JSVAL( gPriv->Enabled() );				break;
+			case CSP_TITHING:			*vp = INT_TO_JSVAL( gPriv->Tithing() );					break;
 			default:																			break;
 		}
 	}
@@ -705,10 +711,12 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MANALEECH:		*vp = INT_TO_JSVAL( gPriv->GetManaLeech() );			break;
 			case CIP_HITCHANCE:	*vp = INT_TO_JSVAL( gPriv->GetHitChance() );			break;
 			case CIP_DEFENSECHANCE:	*vp = INT_TO_JSVAL( gPriv->GetDefenseChance() );			break;
+			case CIP_LUCK:				*vp = INT_TO_JSVAL( gPriv->GetLuck() );				break;
 			case CIP_HEALTHBONUS:		*vp = INT_TO_JSVAL( gPriv->GetHealthBonus() );			break;
 			case CIP_STAMINABONUS:		*vp = INT_TO_JSVAL( gPriv->GetStaminaBonus() );			break;
 			case CIP_MANABONUS:		*vp = INT_TO_JSVAL( gPriv->GetManaBonus() );			break;
 			case CIP_ARTIFACTRARITY:		*vp = INT_TO_JSVAL( gPriv->GetArtifactRarity() );			break;
+			case CIP_DAMAGEINCREASE:		*vp = INT_TO_JSVAL( gPriv->GetDamageIncrease() );			break;
 
 			case CIP_NAME2:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetName2().c_str() );
@@ -784,6 +792,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_ISMETALTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsMetalType() );			break;
 			case CIP_ISLEATHERTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsLeatherType() );		break;
 			case CIP_CANBELOCKEDDOWN:	*vp = BOOLEAN_TO_JSVAL( gPriv->CanBeLockedDown() );	break;
+			case CIP_TITHING:		*vp = INT_TO_JSVAL( gPriv->GetTithing() );					break;
 			case CIP_ISCONTTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsContType() );			break;
 			case CIP_CARVESECTION:	*vp = INT_TO_JSVAL( gPriv->GetCarve() );				break;
 			case CIP_AMMOID:		*vp = INT_TO_JSVAL( gPriv->GetAmmoId() );				break;
@@ -1362,6 +1371,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MANALEECH:		gPriv->SetManaLeech( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_HITCHANCE:	gPriv->SetHitChance( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_DEFENSECHANCE:	gPriv->SetDefenseChance( static_cast<SI16>( encaps.toInt() ));	break;
+			case CIP_LUCK:			gPriv->SetLuck( static_cast<SI16>( encaps.toInt() ));		break;
 			case CIP_HEALTHBONUS:		gPriv->SetHealthBonus( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_STAMINABONUS:		gPriv->SetStaminaBonus( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_MANABONUS:		gPriv->SetManaBonus( static_cast<SI16>( encaps.toInt() ));	break;
@@ -2048,6 +2058,8 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_SPATTACK:		*vp = INT_TO_JSVAL( gPriv->GetSpAttack() );					break;
 			case CCP_SPDELAY:		*vp = INT_TO_JSVAL( gPriv->GetSpDelay() );					break;
 			case CCP_SWINGSPEEDINCREASE:	*vp = INT_TO_JSVAL( gPriv->GetSwingSpeedIncrease() );		break;
+			case CCP_LUCK:			*vp = INT_TO_JSVAL( gPriv->GetLuck() );						break;
+			case CCP_DAMAGEINCREASE:*vp = INT_TO_JSVAL( gPriv->GetDamageIncrease() );			break;
 			case CCP_HITCHANCE:		*vp = INT_TO_JSVAL( gPriv->GetHitChance() );				break;
 			case CCP_DEFENSECHANCE:	*vp = INT_TO_JSVAL( gPriv->GetDefenseChance() );			break;
 			case CCP_AITYPE:		*vp = INT_TO_JSVAL( gPriv->GetNpcAiType() );				break;
@@ -2083,6 +2095,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_CANRUN:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanRun() );					break;
 			case CCP_ISMEDITATING:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsMeditating() );			break;
 			case CCP_ISGM:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsGM() );					break;
+			case CCP_TITHING:		*vp = INT_TO_JSVAL( gPriv->GetTithing() );					break;
 			case CCP_CANBROADCAST:	*vp = BOOLEAN_TO_JSVAL( gPriv->CanBroadcast() );			break;
 			case CCP_SINGCLICKSER:	*vp = BOOLEAN_TO_JSVAL( gPriv->GetSingClickSer() );			break;
 			case CCP_NOSKILLTITLES:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoSkillTitles() );			break;
@@ -2558,6 +2571,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_SPATTACK:		gPriv->SetSpAttack( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_SPDELAY:		gPriv->SetSpDelay( static_cast<SI08>( encaps.toInt() ));	break;
 			case CCP_SWINGSPEEDINCREASE:	gPriv->SetSwingSpeedIncrease( static_cast<SI16>( encaps.toInt() ));		break;
+			case CCP_LUCK:			gPriv->SetLuck( static_cast<SI16>( encaps.toInt() ));		break;
 			case CCP_HITCHANCE:		gPriv->SetHitChance( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_DEFENSECHANCE:	gPriv->SetDefenseChance( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_AITYPE:		gPriv->SetNPCAiType( static_cast<SI16>( encaps.toInt() ));	break;
@@ -2605,6 +2619,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 			case CCP_ISMEDITATING:	gPriv->SetMeditating( encaps.toBool() );			break;
 			case CCP_ISGM:			gPriv->SetGM( encaps.toBool() );					break;
+			case CCP_TITHING:		gPriv->SetTithing( static_cast<SI32>( encaps.toInt() ));		break;
 			case CCP_CANBROADCAST:	gPriv->SetBroadcast( encaps.toBool() );				break;
 			case CCP_SINGCLICKSER:	gPriv->SetSingClickSer( encaps.toBool() );			break;
 			case CCP_NOSKILLTITLES:	gPriv->SetSkillTitles( encaps.toBool() );			break;

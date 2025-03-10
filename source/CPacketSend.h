@@ -539,7 +539,6 @@ public:
 	virtual void    FasterCastRecovery( UI16 value );
 	virtual void    FasterCasting( UI16 value );
 	virtual void    LowerManaCost( UI16 value );
-
 };
 
 class CPIdleWarning : public CPUOXBuffer

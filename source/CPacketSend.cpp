@@ -2164,10 +2164,10 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 				extended3 = true;
 				extended4 = true;
 				extended5 = true;
-				extended6 = true;
-				pStream.ReserveSize( 121 );
-				pStream.WriteByte( 2, 121 );
-				Flag( 6 );
+			  extended6 = true;
+			  pStream.ReserveSize( 121 );
+			  pStream.WriteByte( 2, 121 );
+			  Flag( 6 );
 			}
 			else if( target.ClientVersionMajor() >= 5 )
 			{
@@ -2382,10 +2382,29 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			ColdResist( Combat->CalcDef( &toCopy, 0, false, COLD ));
 			PoisonResist( Combat->CalcDef( &toCopy, 0, false, POISON ));
 			EnergyResist( Combat->CalcDef( &toCopy, 0, false, LIGHTNING ));
-			Luck( 0 );
+			Luck( toCopy.GetLuck() );
 			DamageMin( Combat->CalcLowDamage( &toCopy ));
 			DamageMax( Combat->CalcHighDamage( &toCopy ));
-			TithingPoints( 0 );
+			TithingPoints( toCopy.GetTithing() );
+		}
+		if( extended6 )
+		{
+			PhysicalResistCap( cwmWorldState->ServerData()->PhysicalResistCap() );
+			FireResistCap( cwmWorldState->ServerData()->FireResistCap() );
+			ColdResistCap( cwmWorldState->ServerData()->ColdResistCap());
+			PoisonResistCap( cwmWorldState->ServerData()->PoisonResistCap() );
+			EnergyResistCap( cwmWorldState->ServerData()->EnergyResistCap() );
+
+			DefenseChanceIncrease( toCopy.GetDefenseChance() );
+			DefenseChanceIncreaseCap( cwmWorldState->ServerData()->DefenseChanceIncreaseCap() );
+			HitChanceIncrease( toCopy.GetHitChance() );
+			SwingSpeedIncrease( toCopy.GetSwingSpeedIncrease() );
+			DamageChanceIncrease( toCopy.GetDamageIncrease() );
+			LowerReagentCost( 0 );
+			SpellDamageIncrease( 0 );
+			FasterCastRecovery( 0 );
+			FasterCasting( 0 );
+			LowerManaCost( 0 );
 		}
 		if( extended6 )
 		{
@@ -2600,6 +2619,92 @@ void CPStatWindow::TithingPoints( UI32 value )
 {
 	pStream.WriteLong( byteOffset, value );
 	byteOffset += 4;
+}
+// extended6 start
+void CPStatWindow::PhysicalResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value);
+	byteOffset += 2;
+}
+void CPStatWindow::FireResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value);
+	byteOffset += 2;
+}
+void CPStatWindow::ColdResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
+}
+void CPStatWindow::PoisonResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
+}
+void CPStatWindow::EnergyResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
+}
+
+void CPStatWindow::DefenseChanceIncrease( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::DefenseChanceIncreaseCap( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::HitChanceIncrease( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::SwingSpeedIncrease( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::DamageChanceIncrease( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::LowerReagentCost( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::SpellDamageIncrease( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::FasterCastRecovery( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::FasterCasting( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::LowerManaCost( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
 }
 //extended4 end
 // extended6 start
@@ -7857,6 +7962,20 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
+			if( cItem.GetDamageIncrease() > 0 )
+			{
+				tempEntry.stringNum = 1060401; // damage increase ~1_val~%
+				tempEntry.ourText = oldstrutil::number( cItem.GetDamageIncrease() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetLuck() > 0 )
+			{
+				tempEntry.stringNum = 1060436; // luck ~1_val~
+				tempEntry.ourText = oldstrutil::number( cItem.GetLuck() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
 			if( cItem.GetHitChance() > 0 )
 			{
 				tempEntry.stringNum = 1060415; // hit chance increase ~1_val~%
@@ -7921,6 +8040,13 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			{
 				tempEntry.stringNum = 1060435; // lower requirements ~1_val~%
 				tempEntry.ourText = oldstrutil::number( cItem.GetLowerStatReq() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetTithing() > 0 )
+			{
+				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				tempEntry.ourText = oldstrutil::format( "Tithing: %i", cItem.GetTithing() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 		}

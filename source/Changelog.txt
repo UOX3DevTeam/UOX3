@@ -1,3 +1,42 @@
+09/03/2025 - Dragon Slayer
+	Added new DFN tags for Magic:
+	BATWING, DAEMONBLOOD, GRAVEDUST, NOXCRYSTAL, PIGIRON
+	These are also available as JS Engine object propertie: .batwing, .daemonBlood, .graveDust, .noxCrystal, .pigIron
+
+08/03/2025 - Dragon Slayer
+	Added new DFN tags for Items:
+	LUCK=# // Luck stacks across all items that a character has equipped to make up their Luck score for better AOS Magic Loot. Currently no AOS Magic Loot system in place.
+	These is also available as JS Engine object propertie: .luck
+  
+07/03/2025 - Dragon Slayer
+	Added new DFN tags for Magic:
+	TITHING=# // This Make it so spells require tithing to cast.
+	I also Added new property to Players for tithing so it shows up in status bar and also says the amount of tithing the char set/get.
+	These are also available as JS Engine object propertie: .tithing for players/magic
+
+02/03/2025 - Dragon Slayer
+	Renamed spawnergump.js to spawner_editor.js.
+	Added spawner_editor.js text to dictionaries.
+	Various enhancements to spawner editor gump, including support for another spawner type - area spawner (type 69)
+
+
+27/02/2025 - Dragon Slayer
+	Updated JS Gump Methods .AddButton() and .AddButtonTileArt() to support larger values for buttonId and tileId parameters. (Thanks Xuri)
+	Updated formatting of several gump command strings from JS Methods to ensure unsigned integers are correctly converted to string. (Thanks Xuri)
+
+23/02/2025 - Dragon Slayer
+	Added new DFN tags for Items/Npcs:
+	DAMAGEINCREASE=# // This adds extra damage percent to the total base damage.
+	These are also available as JS Engine object propertie: .damageIncrease
+	Added New INI settings: DAMAGEINCREASECAP, Set the default cap of percent the char/item an increase.
+
+22/02/2025 - Dragon Slayer
+	Added UOKr Extended Status bar gump packets.
+	Added New INI settings: PHYSICALRESISTCAP, FIRERESISTCAP, COLDRESISTCAP, POISONRESISTCAP, ENGERYRESISTCAP, DEFENSECHANCEINCREASECAP. Set he default cap for ch resist  defense chance increase.
+
+21/02/2025 - Dragon Slayer
+	Added new save/load tags: ExtPropCombat, ExtPropDefense,ExtPropStats, ExtPropMisc, ExtPropCommon. for the AOS Properties that are being added.
+
 16/02/2025 - Dragon Slayer
 	Characters will now play an impact-animation when they get hit in combat.
 	Removed onCombatHit JS Event, as it's redundant after updates to onAttack

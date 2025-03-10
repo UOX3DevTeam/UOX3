@@ -2993,12 +2993,18 @@ bool CChar::WearItem( CItem *toWear )
 			IncStaminaLeech( itemLayers[tLayer]->GetStaminaLeech() );
 			IncManaLeech( itemLayers[tLayer]->GetManaLeech() );
 
+			IncLuck( itemLayers[tLayer]->GetLuck() );
+
 			IncHitChance( itemLayers[tLayer]->GetHitChance() );
 			IncDefenseChance( itemLayers[tLayer]->GetDefenseChance() );
+
+			IncTithing( itemLayers[tLayer]->GetTithing() );
 
 			IncHealthBonus( itemLayers[tLayer]->GetHealthBonus() );
 			IncStaminaBonus( itemLayers[tLayer]->GetStaminaBonus() );
 			IncManaBonus( itemLayers[tLayer]->GetManaBonus() );
+
+			IncDamageIncrease( itemLayers[tLayer]->GetDamageIncrease() );
 
 			if( toWear->IsPostLoaded() )
 			{
@@ -3082,12 +3088,18 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncStaminaLeech( -itemLayers[Layer]->GetStaminaLeech() );
 		IncManaLeech( -itemLayers[Layer]->GetManaLeech() );
 
+		IncLuck( -itemLayers[Layer]->GetLuck() );
+
 		IncHitChance( -itemLayers[Layer]->GetHitChance() );
 		IncDefenseChance( -itemLayers[Layer]->GetDefenseChance() );
+
+		IncTithing( -itemLayers[Layer]->GetTithing() );
 
 		IncHealthBonus( -itemLayers[Layer]->GetHealthBonus() );
 		IncStaminaBonus( -itemLayers[Layer]->GetStaminaBonus() );
 		IncManaBonus( -itemLayers[Layer]->GetManaBonus() );
+
+		IncDamageIncrease( -itemLayers[Layer]->GetDamageIncrease() );
 
 		if( itemLayers[Layer]->GetPoisoned() )
 		{

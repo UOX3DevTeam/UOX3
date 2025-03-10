@@ -53,6 +53,9 @@ function onCallback0( socket, ourObj )
 	case "DEFENSECHANCE":
 		socket.SysMessage( ourObj.defenseChance );
 		break;
+	case "DAMAGEINCREASE":
+		socket.SysMessage( ourObj.damageIncrease );
+		break;
 	case "FAME":
 		socket.SysMessage( ourObj.fame );
 		break;
@@ -127,6 +130,9 @@ function onCallback0( socket, ourObj )
 	case "TEMPDEXTERITY":
 		socket.SysMessage( ourObj.tempdex );
 		break;
+	case "TITHING":
+		socket.SysMessage( ourObj.tithing );
+		break;
 	case "WIPABLE":
 	case "WIPEABLE":
 		socket.SysMessage( ourObj.wipable );
@@ -149,6 +155,9 @@ function onCallback0( socket, ourObj )
 		break;
 	case "DAMAGEABLE":
 		socket.SysMessage( ourObj.isDamageable );
+		break;
+	case "LUCK":
+		socket.SysMessage( ourObj.luck );
 		break;
 	case "REGION":
 		socket.SysMessage( ourObj.region.id + " ( " + ourObj.region.name + ")" );
@@ -176,7 +185,7 @@ function onCallback0( socket, ourObj )
 		socket.SysMessage( ourObj.sectionID );
 		break;
 	case "SWINGSPEEDINC":
-		socket.SysMessage( swingSpeedIncrease );
+		socket.SysMessage( ourObj.swingSpeedIncrease );
 		break;
 	case "SHOULDSAVE":
 		socket.SysMessage( ourObj.shouldSave );
