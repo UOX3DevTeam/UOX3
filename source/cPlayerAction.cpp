@@ -1557,7 +1557,7 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 	if( spellBook.GetTempVar( CITV_MORE, 1 ) == 1 )
 	{
 		mSock.SysMessage( 1204 ); // "There are no empty pages left in your book."
-		Bounce(&mSock, &iDropped);
+		Bounce( &mSock, &iDropped );
 		return;
 	}
 
