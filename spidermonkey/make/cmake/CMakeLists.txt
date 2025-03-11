@@ -6,28 +6,23 @@ set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/../../../install" CACHE STRING "
 
 add_executable(jscpucfg ../../jscpucfg.cpp)
 
-if(NOT WIN32)
-        target_compile_options( jscpucfg PRIVATE
-            -Wno-format-security
-            -Wno-deprecated-declarations
-            $<$<CONFIG:Release>:-Os>
-        )
+target_compile_options( jscpucfg PRIVATE
+    $<$<CONFIG:Release>:-Os>
+)
 
-    add_custom_command(
-        OUTPUT ../../jsautocfg.h
-        COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ./jscpucfg > ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautocfg.h && echo "Build complete"
-        DEPENDS jscpucfg
-        COMMENT "Generating jsautocfg.h"
-    )
-endif(NOT WIN32)
+add_custom_command(
+    OUTPUT ../../jsautocfg.h
+    COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/jscpucfg > ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautocfg.h && echo "Build complete"
+    DEPENDS jscpucfg
+    COMMENT "Generating jsautocfg.h"
+)
 
 add_executable(host_jskwgen)
 
-target_sources(host_jskwgen
-    PRIVATE
-        ../../jskwgen.cpp
-        ../../jsversion.h
-        ../../jskeyword.tbl
+target_sources(host_jskwgen PRIVATE
+    ../../jskwgen.cpp
+    ../../jsversion.h
+    ../../jskeyword.tbl
 )
 
 add_custom_command(
@@ -39,13 +34,11 @@ add_custom_command(
 
 add_executable(host_jsoplengen)
 
-target_sources(host_jsoplengen
-    PRIVATE
-        ../../jsoplengen.cpp
-        ../../jsversion.h
-        ../../jsopcode.tbl
+target_sources(host_jsoplengen  PRIVATE
+    ../../jsoplengen.cpp
+    ../../jsversion.h
+    ../../jsopcode.tbl
 )
-
 
 add_custom_command(
     OUTPUT ../../jsautooplen.h
@@ -115,8 +108,7 @@ target_sources(jscript
         ../../nanojit/njconfig.cpp
         ../../nanojit/RegAlloc.cpp
         ../../nanojit/avmplus.cpp
-        ../../nanojit/Native$(NANOJIT_ARCH).cpp
-        ../../nanojit/jsbuiltins.cpp
+        ../../nanojit/NativeX64.cpp
         ../../nanojit/VMPI.cpp
 # Headers
         ../../jsapi.h
@@ -124,6 +116,7 @@ target_sources(jscript
         ../../jsarray.h
         ../../jsatom.h
         ../../jsatominlines.h
+        ../../jsautocfg.h
         ../../jsautokw.h
         ../../jsautooplen.h
         ../../jsbit.h
@@ -195,7 +188,7 @@ target_sources(jscript
         ../../nanojit/avmplus.h
         ../../nanojit/Fragmento.h
         ../../nanojit/Native.h
-        ../../nanojit/Native$(NANOJIT_ARCH).h
+        ../../nanojit/NativeX64.h
         ../../nanojit/njconfig.h
         ../../nanojit/RegAlloc.h
         ../../nanojit/nanojit.h
@@ -209,44 +202,35 @@ target_sources(jscript
         ../../jsreops.tbl
 )
 
-# We only want this files for Unix platforms
-if( NOT WIN32 )
-    target_sources(jscript PRIVATE
-        ../../jsautocfg.h
-    )
-endif()
-
 if (WIN32)
+
 
     # See Configure.in
     target_compile_definitions( jscript PRIVATE
-        _LIB
-        _CRT_SECURE_NO_DEPRECATE
+        _AMD64_
         _CRT_NONSTDC_NO_DEPRECATE
+        _CRT_SECURE_NO_DEPRECATE
+        _LIB
+        _WIN32
+        _WIN64
         _WINDOWS
+        AVMPLUS_64BIT
+        AVMPLUS_AMD64
+        AVMPLUS_WIN32
+        ENABLE_TRACEJIT=1
         EXPORT_JS_API
+        FEATURE_NANOJIT
+        HAVE_SNPRINTF
+        HW_THREADS
+        JS_TRACER
         JSFILE
+        NANOJIT_ARCH=X64
+        NO_X11
+        STDC_HEADERS
+        WIN32
+        WIN32_LEAN_AND_MEAN
         XP_WIN
         XP_WIN32
-        WIN32
-        _WIN32
-        NO_X11
-        $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},4>:_X86_>
-        HW_THREADS
-        STDC_HEADERS
-        WIN32_LEAN_AND_MEAN
-        HAVE_SNPRINTF
-        ENABLE_TRACEJIT=1
-        FEATURE_NANOJIT
-        JS_TRACER
-        AVMPLUS_WIN32
-        $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},4>:NANOJIT_ARCH=i386>
-        $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},4>:AVMPLUS_IA32>
-        $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:NANOJIT_ARCH=X64>
-        $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:AVMPLUS_AMD64>
-        $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:AVMPLUS_64BIT>
-        $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:_WIN64>
-        $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:_AMD64_>
     )
 
     target_compile_options( jscript PRIVATE
