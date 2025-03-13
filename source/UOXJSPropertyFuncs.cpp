@@ -52,32 +52,7 @@ JSBool CGuildsProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]
 
 JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	if( !JSVAL_IS_INT(id) )
-	{
-		ScriptError( cx, "Spells: Non-integer Spell ID provided" );
-		*vp = JSVAL_NULL;
-		return JS_FALSE;
-	}
-
-	int rawId = JSVAL_TO_INT( id );
-
-	// Reject negative IDs outright
-	if( rawId < 0 )
-	{
-		ScriptError( cx, oldstrutil::format( "Spells: Negative Spell ID (%d) provided", rawId ).c_str() );
-		*vp = JSVAL_NULL;
-		return JS_FALSE;
-	}
-
-	size_t spellId = static_cast<size_t>(rawId);
-
-	// Preemptive range check for both regular and Paladin spells
-	if( spellId < 1 || spellId > 210 )
-	{
-		ScriptError( cx, oldstrutil::format( "Spells: Out-of-range Spell ID (%d) provided", rawId).c_str() );
-		*vp = JSVAL_NULL;
-		return JS_FALSE;
-	}
+	size_t spellId = JSVAL_TO_INT( id );
 
 	if( spellId >= Magic->spells.size() )
 	{
