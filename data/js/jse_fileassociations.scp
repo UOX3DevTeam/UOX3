@@ -340,13 +340,13 @@
 6004=magic/helper/check_reagents.js
 6101=magic/chivalry/cleansebyfire.js
 6102=magic/chivalry/closewounds.js
-6103=magic/chivalry/consecratewepaon.js
+6103=magic/chivalry/consecrateweapon.js
 6104=magic/chivalry/dispelevil.js
 6105=magic/chivalry/divinefury.js
 6107=magic/chivalry/holylight.js
 6108=magic/chivalry/noblesacrifice.js
 6110=magic/chivalry/sacredjourney.js
-6111=magic/chivalry/consecratewepaonattached.js
+6111=magic/chivalry/consecrateweaponattached.js
 
 //-------------------------------------------
 // Combat Scripts [7000-7499]
