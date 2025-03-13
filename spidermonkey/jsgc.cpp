@@ -3289,7 +3289,7 @@ NewCompartment(JSContext *cx)
     JSCompartment *compartment = new JSCompartment(rt);
     if (!compartment) {
         JS_ReportOutOfMemory(cx);
-        return false;
+        return nullptr; // was false
     }
 
     AutoLockGC lock(rt);
@@ -3297,7 +3297,7 @@ NewCompartment(JSContext *cx)
     if (!rt->compartments.append(compartment)) {
         AutoUnlockGC unlock(rt);
         JS_ReportOutOfMemory(cx);
-        return false;
+        return nullptr; // as false
     }
 
     return compartment;

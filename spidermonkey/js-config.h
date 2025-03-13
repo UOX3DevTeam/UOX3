@@ -95,4 +95,19 @@
 
 #endif
 
+#if defined XP_UNIX
+#if !defined JS_BYTES_PER_WORD
+#define JS_BYTES_PER_WORD 8
+#endif
+#if !defined JS_ALIGN_OF_POINTER
+#define JS_ALIGN_OF_POINTER 8L
+#endif
+#if !defined JS_BYTES_PER_DOUBLE
+#define JS_BYTES_PER_DOUBLE 8L
+#endif
+#if !defined JS_BITS_PER_WORD_LOG2
+#define JS_BITS_PER_WORD_LOG2   6
+#endif
+#endif
+
 #endif /* js_config_h___ */

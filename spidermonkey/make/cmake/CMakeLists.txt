@@ -10,6 +10,8 @@ target_compile_options( jscpucfg PRIVATE
     $<$<CONFIG:Release>:-Os>
 )
 
+set_target_properties( jscpucfg PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/" )
+
 add_custom_command(
     OUTPUT ../../jsautocfg.h
     COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/jscpucfg > ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautocfg.h && echo "Build complete"
@@ -18,6 +20,8 @@ add_custom_command(
 )
 
 add_executable(host_jskwgen)
+
+set_target_properties( host_jskwgen PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/" )
 
 target_sources(host_jskwgen PRIVATE
     ../../jskwgen.cpp
@@ -33,6 +37,8 @@ add_custom_command(
 )
 
 add_executable(host_jsoplengen)
+
+set_target_properties( host_jsoplengen PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/" )
 
 target_sources(host_jsoplengen  PRIVATE
     ../../jsoplengen.cpp
@@ -202,6 +208,19 @@ target_sources(jscript
         ../../jsreops.tbl
 )
 
+target_compile_definitions( jscript PRIVATE
+    _LIB
+    AVMPLUS_64BIT
+    ENABLE_TRACEJIT=1
+    EXPORT_JS_API
+    FEATURE_NANOJIT
+    HW_THREADS
+    JS_TRACER
+    JSFILE
+    STDC_HEADERS
+)
+
+
 if (WIN32)
 
 
@@ -210,23 +229,14 @@ if (WIN32)
         _AMD64_
         _CRT_NONSTDC_NO_DEPRECATE
         _CRT_SECURE_NO_DEPRECATE
-        _LIB
         _WIN32
         _WIN64
         _WINDOWS
-        AVMPLUS_64BIT
         AVMPLUS_AMD64
         AVMPLUS_WIN32
-        ENABLE_TRACEJIT=1
-        EXPORT_JS_API
-        FEATURE_NANOJIT
         HAVE_SNPRINTF
-        HW_THREADS
-        JS_TRACER
-        JSFILE
         NANOJIT_ARCH=X64
         NO_X11
-        STDC_HEADERS
         WIN32
         WIN32_LEAN_AND_MEAN
         XP_WIN
@@ -254,12 +264,10 @@ target_link_libraries(jscript PRIVATE
     $<$<PLATFORM_ID:Windows>:advapi32>
 )
 
-
 else()
 
     target_compile_definitions( jscript PRIVATE
         XP_UNIX
-        EXPORT_JS_API
         HAVE_VA_LIST_AS_ARRAY
         SVR4
         SYSV
@@ -267,16 +275,13 @@ else()
         _DEFAULT_SOURCE
         HAVE_LOCALTIME_R
         AVMPLUS_UNIX
+        NANOJIT_ARCH=X64
     )
 
     target_compile_options( jscript PRIVATE
         -Wno-shift-negative-value
-        -Wno-implicit-function-declaration
-        -Wno-strict-prototypes
         -Wno-logical-not-parentheses
-        -Wno-pointer-to-int-cast
         -Wno-switch
-        -Wno-incompatible-pointer-types
         -Wno-deprecated-declarations
         -Wno-format-security
     )
@@ -284,6 +289,7 @@ else()
         target_compile_definitions( jscript PRIVATE
             XP_MACOSX
             NO_X11
+            AVMPLUS_ARM
         )
 
         target_compile_options( jscript PRIVATE
@@ -299,10 +305,15 @@ else()
     else()
         target_compile_definitions( jscript PRIVATE
             AVMPLUS_LINUX
-        )
+            AVMPLUS_AMD64
+            AVMPLUS_64BIT
+            )
         target_compile_options(jscript PRIVATE
+            -fpermissive
+            -Wno-narrowing
             -MMD
             $<$<CONFIG:Release>:-Os>
         )
+        target_include_directories(jscript PRIVATE ${PROJECT_SOURCE_DIR}/../../nanojit)
     endif()
 endif(WIN32)

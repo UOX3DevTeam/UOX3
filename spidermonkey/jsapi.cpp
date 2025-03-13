@@ -2778,7 +2778,7 @@ JS_NewGlobalObject(JSContext *cx, JSClass *clasp)
     JSObject *obj = NewObjectWithGivenProto(cx, clasp, NULL, NULL);
     if (obj && !js_SetReservedSlot(cx, obj, JSRESERVED_GLOBAL_COMPARTMENT,
                                    PRIVATE_TO_JSVAL(cx->compartment)))
-        return false;
+        return nullptr; // was false
     return obj;
 }
 
@@ -3611,7 +3611,7 @@ JS_Enumerate(JSContext *cx, JSObject *obj)
 
     JSIdArray *ida;
     if (!GetPropertyNames(cx, obj, JSITER_OWNONLY, &ida))
-        return false;
+        return nullptr; // was false
     for (size_t n = 0; n < size_t(ida->length); ++n)
         JS_ASSERT(js_CheckForStringIndex(ida->vector[n]) == ida->vector[n]);
     return ida;
