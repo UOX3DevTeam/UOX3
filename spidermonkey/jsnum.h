@@ -100,7 +100,7 @@ JSDOUBLE_IS_FINITE(jsdouble d)
 #ifdef WIN32
     return _finite(d);
 #else
-    return finite(d);
+    return isfinite(d);
 #endif
 }
 
