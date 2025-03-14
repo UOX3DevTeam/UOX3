@@ -95,7 +95,7 @@
 
 #endif
 
-#if defined XP_UNIX
+#if defined XP_UNIX || defined XP_MACOSX
 #if !defined JS_BYTES_PER_WORD
 #define JS_BYTES_PER_WORD 8
 #endif

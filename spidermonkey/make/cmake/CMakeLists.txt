@@ -289,7 +289,11 @@ else()
         target_compile_definitions( jscript PRIVATE
             XP_MACOSX
             NO_X11
-            AVMPLUS_ARM
+            AVMPLUS_AMD64
+            AVMPLUS_64BIT
+            USE_PTHREADS=1
+            UNIX_ASYNC_DNS
+            _BSD_SOURCE
         )
 
         target_compile_options( jscript PRIVATE
@@ -298,6 +302,7 @@ else()
             -Wno-tautological-constant-compare
             -Wno-narrowing
             -Wno-register
+            -fpermissive
             $<$<CONFIG:Release>:-Os>
         )
     elseif (UNIX AND NOT APPLE AND NOT LINUX)
