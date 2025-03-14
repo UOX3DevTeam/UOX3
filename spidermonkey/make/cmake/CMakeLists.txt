@@ -296,6 +296,7 @@ else()
             -Wno-non-literal-null-conversion
             -Wno-tautological-constant-out-of-range-compare
             -Wno-tautological-constant-compare
+            -Wno-narrowing
             $<$<CONFIG:Release>:-Os>
         )
     elseif (UNIX AND NOT APPLE AND NOT LINUX)
