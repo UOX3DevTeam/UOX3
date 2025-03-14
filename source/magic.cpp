@@ -2733,7 +2733,7 @@ bool CMagic::HasSpell( CItem *book, SI32 spellNum )
 		( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
 		( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
 	{
-		Console.Error(oldstrutil::format( "ERROR: HasSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
+		Console.Error( oldstrutil::format( "ERROR: HasSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
 		return false;
 	}
 
@@ -2808,7 +2808,7 @@ void CMagic::AddSpell( CItem *book, SI32 spellNum )
 
 		// Retrieve current spells and update
 		UI32 targAmount = book->GetSpell( static_cast<UI08>( wordNum )) | flagToSet;
-		book->SetSpell(static_cast<UI08>( wordNum ), targAmount );
+		book->SetSpell( static_cast<UI08>( wordNum ), targAmount );
 
 		Console.Print( oldstrutil::format( "DEBUG: AddSpell: Successfully added SpellNum=%d to BookType=%d", spellNum, book->GetType() ));
 	}
@@ -2908,7 +2908,7 @@ void CMagic::SpellBook( CSocket *mSock )
 	}
 
 	// Send the spellbook to the client
-	CPDrawContainer sbStart(*spellBook);
+	CPDrawContainer sbStart( *spellBook );
 	sbStart.Model( 0xFFFF );
 	if( mSock->ClientType() >= CV_HS2D && mSock->ClientVerShort() >= CVS_7090 )
 	{
