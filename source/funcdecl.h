@@ -142,7 +142,7 @@ void	CallGuards( CChar *mChar );
 //o------------------------------------------------------------------------------------------------o
 inline TIMERVAL BuildTimeValue( R32 timeFromNow )
 {
-	return static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + ( static_cast<R32>( 1000 ) * timeFromNow ));
+	return static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + static_cast<TIMERVAL>( std::round(( static_cast<R32>( 1000 ) * timeFromNow ))));
 }
 
 UI32	GetClock( void );

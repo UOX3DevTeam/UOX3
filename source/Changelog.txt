@@ -1,3 +1,7 @@
+15/03/2025 - Dragon Slayer
+	Fixed an issue where timestamps for system timers could be set in the past due to float-to-UI32 casting precision loss. ( Thanks Xuri )
+
+
 09/03/2025 - Dragon Slayer
 	Added new DFN tags for Magic:
 	BATWING, DAEMONBLOOD, GRAVEDUST, NOXCRYSTAL, PIGIRON
