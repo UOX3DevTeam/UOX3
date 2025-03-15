@@ -2730,10 +2730,12 @@ bool CMagic::HasSpell( CItem *book, SI32 spellNum )
 
 	// Validate spell range for the book type
 	if(( book->GetType() == IT_SPELLBOOK && ( spellNum < 1 || spellNum > 64 )) ||
-		( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
+		( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210)) ||
 		( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
 	{
-		Console.Error( oldstrutil::format( "ERROR: HasSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
+#if defined( UOX_DEBUG_MODE )
+		Console.Print( oldstrutil::format( "ERROR: HasSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
+#endif
 		return false;
 	}
 
@@ -2747,7 +2749,7 @@ bool CMagic::HasSpell( CItem *book, SI32 spellNum )
 	UI32 wordNum = ( spellNum - 1 ) / 32;  // Adjust for 0-based indexing
 	UI32 bitNum = ( spellNum - 1 ) % 32;  // Calculate the bit index within the word
 
-	if( wordNum >= 3 )  // Ensure wordNum is valid
+	if( wordNum >= 3 )  // you only have up to 3 32-bit words for spells
 	{
 		return false;
 	}
@@ -2788,7 +2790,9 @@ void CMagic::AddSpell( CItem *book, SI32 spellNum )
 		( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
 		( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
 	{
-		Console.Error( oldstrutil::format( "ERROR: AddSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
+#if defined( UOX_DEBUG_MODE )
+		Console.Print( oldstrutil::format( "ERROR: AddSpell: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
+#endif
 		return;
 	}
 
@@ -2809,8 +2813,9 @@ void CMagic::AddSpell( CItem *book, SI32 spellNum )
 		// Retrieve current spells and update
 		UI32 targAmount = book->GetSpell( static_cast<UI08>( wordNum )) | flagToSet;
 		book->SetSpell( static_cast<UI08>( wordNum ), targAmount );
-
+#if defined( UOX_DEBUG_MODE )
 		Console.Print( oldstrutil::format( "DEBUG: AddSpell: Successfully added SpellNum=%d to BookType=%d", spellNum, book->GetType() ));
+#endif
 	}
 }
 
@@ -3245,7 +3250,9 @@ bool CMagic::CheckBook( int circle, int spellOffset, CItem* book )
 		( book->GetType() == IT_PALADINBOOK && ( spellNum < 201 || spellNum > 210 )) ||
 		( book->GetType() == IT_NECROBOOK && ( spellNum < 101 || spellNum > 117 )))
 	{
+#if defined( UOX_DEBUG_MODE )
 		Console.Error( oldstrutil::format( "ERROR: CheckBook: SpellNum=%d is out of range for BookType=%d", spellNum, book->GetType() ));
+#endif
 		return false;
 	}
 

@@ -1034,7 +1034,9 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 							}
 							else
 							{
+#if defined( UOX_DEBUG_MODE )
 								Console.Print(oldstrutil::format( "DEBUG: Spellbook type: %d selected for spell: %d.", activeBook->GetType(), book ));
+#endif
 								break;
 							}
 
