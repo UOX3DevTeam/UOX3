@@ -2583,7 +2583,7 @@ class RegExpNativeCompiler {
     LIns* compileClass(RENode* node, LIns* pos, LInsList& fails)
     {
         if (!node->u.ucclass.sense)
-            return JS_FALSE;
+            return nullptr;
         /*
          * If we share generated native code, we need to make a copy
          * of the bitmap because the original regexp's copy is destroyed when
