@@ -3110,24 +3110,20 @@ auto CItem::PlaceInPack() -> void
 //o------------------------------------------------------------------------------------------------o
 auto CItem::GetSpell( UI08 part ) const -> UI32
 {
-    if( part < 3 )
-    {
-        UI32 value = spells[part];
-        return value;
-    }
-    return 0;
+	if( part < 3 )
+	{
+		UI32 value = spells[part];
+		return value;
+	}
+	return 0;
 }
 auto CItem::SetSpell( UI08 part, UI32 newValue ) -> void
 {
-    if( part < 3 )
-    {
-        spells[part] = newValue;
-        UpdateRegion();
-    }
-    else
-    {
-        Console.Error( oldstrutil::format( "SetSpell: Invalid part=%d. Must be 0, 1, or 2.", part ));
-    }
+	if( part < 3 )
+	{
+		spells[part] = newValue;
+		UpdateRegion();
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
