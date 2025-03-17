@@ -1595,7 +1595,7 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 		} 
 		else if( scrollId >= 0x2271 && scrollId <= 0x227C )
 		{
-			targSpellNum = scrollId - 0x2271 + 201; // Adjust to Paladin spell number range (201–210)
+			targSpellNum = scrollId - 0x2271 + 200; // Adjust to Paladin spell number range (201–210)
 		}
 		else
 		{
