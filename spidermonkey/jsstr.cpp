@@ -3042,7 +3042,7 @@ js_InitStringClass(JSContext *cx, JSObject *obj)
                                  JSVAL_VOID, NULL, NULL,
                                  JSPROP_READONLY | JSPROP_PERMANENT | JSPROP_SHARED, 0, 0,
                                  NULL)) {
-        return JS_FALSE;
+        return nullptr;
     }
 
     return proto;
