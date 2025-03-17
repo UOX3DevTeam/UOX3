@@ -1549,7 +1549,7 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 	if( ValidateObject( sbOwner ) && sbOwner != &mChar && !mChar.CanSnoop() )
 	{
 		Bounce( &mSock, &iDropped );
-		mSock.SysMessage( 1203 ); // You cannot place spells in other people spellbooks.
+		mSock.SysMessage( 1203 ); // You cannot place spells in other peoples spellbooks.
 		return;
 	}
 
