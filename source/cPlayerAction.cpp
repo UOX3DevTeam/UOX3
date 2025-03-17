@@ -1539,7 +1539,7 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 	if(( isNecroBook && !isnNecroScroll ) || ( isPaladinBook && !isPaladinScroll ) || ( isRegularBook && !isRegularScroll ))
 	{
 		Bounce( &mSock, &iDropped );
-		mSock.SysMessage( 1202 ); // "You can only place spell scrolls in a spellbook!"
+		mSock.SysMessage( 1202 ); // You can only place spell scrolls in a spellbook!
 		return;
 	}
 
@@ -1549,26 +1549,26 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 	if( ValidateObject( sbOwner ) && sbOwner != &mChar && !mChar.CanSnoop() )
 	{
 		Bounce( &mSock, &iDropped );
-		mSock.SysMessage( 1203 ); // "You cannot place spells in other people's spellbooks."
+		mSock.SysMessage( 1203 ); // You cannot place spells in other people spellbooks.
 		return;
 	}
 
 	// Check if the spellbook is locked for RP purposes
 	if( spellBook.GetTempVar( CITV_MORE, 1 ) == 1 )
 	{
-		mSock.SysMessage( 1204 ); // "There are no empty pages left in your book."
+		mSock.SysMessage( 1204 ); // There are no empty pages left in your book.
 		Bounce( &mSock, &iDropped );
 		return;
 	}
 
 	// Handle All-Spell Scrolls
-	if( iDropped.GetName() == Dictionary->GetEntry( 1605 )) // "All-Spell Scroll"
+	if( iDropped.GetName() == Dictionary->GetEntry( 1605 )) // All-Spell Scroll
 	{
 		if (spellBook.GetSpell( 0 ) == INVALIDSERIAL && 
 			spellBook.GetSpell( 1 ) == INVALIDSERIAL && 
 			spellBook.GetSpell( 2 ) == INVALIDSERIAL )
 		{
-			mSock.SysMessage( 1205 ); // "You already have a full book!"
+			mSock.SysMessage( 1205 ); // You already have a full book!
 			Bounce( &mSock, &iDropped );
 			return;
 		}
@@ -1599,7 +1599,7 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 		}
 		else
 		{
-			mSock.SysMessage( "Invalid spell scroll." ); // "Invalid spell scroll."
+			mSock.SysMessage( "Invalid spell scroll." ); // Invalid spell scroll.
 			Bounce( &mSock, &iDropped );
 			return;
 		}
@@ -1607,7 +1607,7 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 		// Check if the spell already exists in the book
 		if( Magic->HasSpell( &spellBook, targSpellNum ))
 		{
-			mSock.SysMessage( 1206 ); // "You already have that spell."
+			mSock.SysMessage( 1206 ); // You already have that spell.
 			Bounce( &mSock, &iDropped );
 			return;
 		}
