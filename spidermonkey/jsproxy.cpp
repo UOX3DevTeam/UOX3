@@ -158,8 +158,8 @@ JSProxyHandler::set(JSContext *cx, JSObject *proxy, JSObject *receiver, jsid id,
     desc.obj = proxy;
     desc.value = *vp;
     desc.attrs = 0;
-    desc.getter = JSVAL_NULL;
-    desc.setter = JSVAL_NULL;
+    desc.getter = nullptr;
+    desc.setter = nullptr;
     desc.shortid = 0;
     return defineProperty(cx, proxy, id, &desc);
 }
