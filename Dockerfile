@@ -1,4 +1,4 @@
-FROM quay.io/centos/centos:stream AS buildbase
+FROM registry.access.redhat.com/ubi8/ubi:latest AS buildbase
 RUN yum -y install tar unzip glibc.i686 gcc dos2unix cmake gcc-c++ && yum clean all && rm -rf /var/cache/yum
 RUN mkdir -p ~/uox3
 
@@ -9,7 +9,7 @@ RUN find /root/uox3 -name \* -type f -exec dos2unix {} \;
 RUN cd /root/uox3 && ./automake.sh
 CMD ["/bin/bash"]
 
-FROM quay.io/centos/centos:stream 
+FROM registry.access.redhat.com/ubi8/ubi:latest
 RUN yum -y install glibc.i686 dos2unix && yum clean all && rm -rf /var/cache/yum
 RUN adduser --system --create-home uox3
 USER uox3

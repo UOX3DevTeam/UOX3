@@ -8017,10 +8017,10 @@ Parser::primaryExpr(TokenKind tt, JSBool afterDot)
                 if (ATOM_IS_DOUBLE(atom)) {
                     JSString *str = js_NumberToString(context, pn3->pn_dval);
                     if (!str)
-                        return JS_FALSE;
+                        return nullptr;
                     atom = js_AtomizeString(context, str, 0);
                     if (!atom)
-                        return JS_FALSE;
+                        return nullptr;
                 }
 
                 JSAtomListElement *ale = seen.lookup(atom);
