@@ -1295,11 +1295,10 @@ JSPropertySpec TypedArray::jsprops[] = {
  * TypedArray boilerplate
  */
 
+#if defined XP_MACOSX
 #define IMPL_TYPED_ARRAY_STATICS(_typedArray)                                  \
 /* Forward declare */                                                          \
-#if defined XP_MACOSX                                                          \
 template<> JSObjectOps _typedArray::fastObjectOps;                             \
-#endif                                                                         \
 template<> JSObjectMap _typedArray::fastObjectMap(&_typedArray::fastObjectOps, \
                                                   JSObjectMap::SHAPELESS);     \
 template<> JSObjectOps _typedArray::fastObjectOps = {                          \
@@ -1326,7 +1325,35 @@ template<> JSFunctionSpec _typedArray::jsfuncs[] = {                           \
     JS_FN("slice", _typedArray::fun_slice, 2, 0),                              \
     JS_FS_END                                                                  \
 }
-
+#else
+#define IMPL_TYPED_ARRAY_STATICS(_typedArray)                                  \
+template<> JSObjectMap _typedArray::fastObjectMap(&_typedArray::fastObjectOps, \
+                                                  JSObjectMap::SHAPELESS);     \
+template<> JSObjectOps _typedArray::fastObjectOps = {                          \
+    &_typedArray::fastObjectMap,                                               \
+    _typedArray::obj_lookupProperty,                                           \
+    _typedArray::obj_defineProperty,                                           \
+    _typedArray::obj_getProperty,                                              \
+    _typedArray::obj_setProperty,                                              \
+    _typedArray::obj_getAttributes,                                            \
+    _typedArray::obj_setAttributes,                                            \
+    _typedArray::obj_deleteProperty,                                           \
+    js_DefaultValue,                                                           \
+    _typedArray::obj_enumerate,                                                \
+    js_CheckAccess,                                                            \
+    _typedArray::obj_typeOf,                                                   \
+    _typedArray::obj_trace,                                                    \
+    NULL,   /* thisObject */                                                   \
+    NULL,   /* call */                                                         \
+    NULL,   /* construct */                                                    \
+    NULL,   /* hasInstance */                                                  \
+    NULL    /* clear */                                                        \
+};                                                                             \
+template<> JSFunctionSpec _typedArray::jsfuncs[] = {                           \
+    JS_FN("slice", _typedArray::fun_slice, 2, 0),                              \
+    JS_FS_END                                                                  \
+}
+#endif
 #define IMPL_TYPED_ARRAY_SLOW_CLASS(_typedArray)                               \
 {                                                                              \
     #_typedArray,                                                              \
