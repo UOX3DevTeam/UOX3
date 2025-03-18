@@ -267,7 +267,7 @@ NewXMLNamespace(JSContext *cx, JSString *prefix, JSString *uri, JSBool declared)
 
     obj = NewObject(cx, &js_NamespaceClass.base, NULL, NULL);
     if (!obj)
-        return JS_FALSE;
+        return nullptr;
     JS_ASSERT(JSVAL_IS_VOID(obj->getNamePrefix()));
     JS_ASSERT(JSVAL_IS_VOID(obj->getNameURI()));
     JS_ASSERT(JSVAL_IS_VOID(obj->getNamespaceDeclared()));
