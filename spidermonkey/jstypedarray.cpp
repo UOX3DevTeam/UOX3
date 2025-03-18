@@ -1296,6 +1296,8 @@ JSPropertySpec TypedArray::jsprops[] = {
  */
 
 #define IMPL_TYPED_ARRAY_STATICS(_typedArray)                                  \
+template<> JSObjectMap _typedArray::fastObjectMap(&_typedArray::fastObjectOps, \
+                                                  JSObjectMap::SHAPELESS);     \
 template<> JSObjectOps _typedArray::fastObjectOps = {                          \
     &_typedArray::fastObjectMap,                                               \
     _typedArray::obj_lookupProperty,                                           \
@@ -1316,8 +1318,6 @@ template<> JSObjectOps _typedArray::fastObjectOps = {                          \
     NULL,   /* hasInstance */                                                  \
     NULL    /* clear */                                                        \
 };                                                                             \
-template<> JSObjectMap _typedArray::fastObjectMap(&_typedArray::fastObjectOps, \
-                                                  JSObjectMap::SHAPELESS);     \
 template<> JSFunctionSpec _typedArray::jsfuncs[] = {                           \
     JS_FN("slice", _typedArray::fun_slice, 2, 0),                              \
     JS_FS_END                                                                  \
