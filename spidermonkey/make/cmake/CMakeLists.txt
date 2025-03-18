@@ -103,19 +103,6 @@ target_sources(jscript
         ../../jsxdrapi.cpp
         ../../jsxml.cpp
         ../../prmjtime.cpp
-# NanoJit
-        ../../jstracer.cpp
-        ../../nanojit/Assembler.cpp
-        ../../nanojit/Allocator.cpp
-        ../../nanojit/CodeAlloc.cpp
-        ../../nanojit/Containers.cpp
-        ../../nanojit/Fragmento.cpp
-        ../../nanojit/LIR.cpp
-        ../../nanojit/njconfig.cpp
-        ../../nanojit/RegAlloc.cpp
-        ../../nanojit/avmplus.cpp
-        ../../nanojit/NativeX64.cpp
-        ../../nanojit/VMPI.cpp
 # Headers
         ../../jsapi.h
         ../../jsarena.h
@@ -185,20 +172,6 @@ target_sources(jscript
         ../../jsxdrapi.h
         ../../jsxml.h
         ../../prmjtime.h
-# NanoJIT
-        ../../nanojit/Assembler.h
-        ../../nanojit/Allocator.h
-        ../../nanojit/CodeAlloc.h
-        ../../nanojit/Containers.h
-        ../../nanojit/LIR.h
-        ../../nanojit/avmplus.h
-        ../../nanojit/Fragmento.h
-        ../../nanojit/Native.h
-        ../../nanojit/NativeX64.h
-        ../../nanojit/njconfig.h
-        ../../nanojit/RegAlloc.h
-        ../../nanojit/nanojit.h
-        ../../nanojit/VMPI.h
 # OpCode tables
         ../../builtins.tbl
         ../../jitstats.tbl
@@ -208,14 +181,44 @@ target_sources(jscript
         ../../jsreops.tbl
 )
 
+if ((WIN32 OR LINUX) AND NOT APPLE )
+
+target_sources(jscript
+    PRIVATE
+
+    # NanoJit
+    ../../jstracer.cpp
+    ../../nanojit/Assembler.cpp
+    ../../nanojit/Allocator.cpp
+    ../../nanojit/CodeAlloc.cpp
+    ../../nanojit/Containers.cpp
+    ../../nanojit/Fragmento.cpp
+    ../../nanojit/LIR.cpp
+    ../../nanojit/njconfig.cpp
+    ../../nanojit/RegAlloc.cpp
+    ../../nanojit/avmplus.cpp
+    ../../nanojit/NativeX64.cpp
+    ../../nanojit/VMPI.cpp
+    ../../nanojit/Assembler.h
+    ../../nanojit/Allocator.h
+    ../../nanojit/CodeAlloc.h
+    ../../nanojit/Containers.h
+    ../../nanojit/LIR.h
+    ../../nanojit/avmplus.h
+    ../../nanojit/Fragmento.h
+    ../../nanojit/Native.h
+    ../../nanojit/NativeX64.h
+    ../../nanojit/njconfig.h
+    ../../nanojit/RegAlloc.h
+    ../../nanojit/nanojit.h
+    ../../nanojit/VMPI.h
+)
+endif()
+
 target_compile_definitions( jscript PRIVATE
     _LIB
-    AVMPLUS_64BIT
-    ENABLE_TRACEJIT=1
     EXPORT_JS_API
-    FEATURE_NANOJIT
     HW_THREADS
-    JS_TRACER
     JSFILE
     STDC_HEADERS
 )
@@ -226,6 +229,10 @@ if (WIN32)
 
     # See Configure.in
     target_compile_definitions( jscript PRIVATE
+        AVMPLUS_64BIT
+        ENABLE_TRACEJIT=1
+        FEATURE_NANOJIT
+        JS_TRACER
         _AMD64_
         _CRT_NONSTDC_NO_DEPRECATE
         _CRT_SECURE_NO_DEPRECATE
@@ -274,12 +281,8 @@ else()
         POSIX_SOURCE
         _DEFAULT_SOURCE
         HAVE_LOCALTIME_R
-        AVMPLUS_UNIX
-        NANOJIT_ARCH=X64
     )
 
-    target_include_directories(jscript PRIVATE ${PROJECT_SOURCE_DIR}/../../nanojit)
-    
     target_compile_options( jscript PRIVATE
         -Wno-shift-negative-value
         -Wno-logical-not-parentheses
@@ -291,8 +294,6 @@ else()
         target_compile_definitions( jscript PRIVATE
             XP_MACOSX
             NO_X11
-            AVMPLUS_AMD64
-            AVMPLUS_64BIT
             USE_PTHREADS=1
             UNIX_ASYNC_DNS
             _BSD_SOURCE
@@ -312,7 +313,14 @@ else()
               $<$<CONFIG:Release>:-Os>
              )
     else()
-        target_compile_definitions( jscript PRIVATE
+        target_include_directories(jscript PRIVATE ${PROJECT_SOURCE_DIR}/../../nanojit)
+        target_compile_definitions(jscript PRIVATE
+            AVMPLUS_64BIT
+            AVMPLUS_UNIX
+            ENABLE_TRACEJIT=1
+            FEATURE_NANOJIT
+            JS_TRACER
+            NANOJIT_ARCH=X64
             AVMPLUS_LINUX
             AVMPLUS_AMD64
             AVMPLUS_64BIT
