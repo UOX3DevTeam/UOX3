@@ -23,6 +23,7 @@ RUN adduser --system --create-home uox3
 USER uox3
 RUN mkdir -p ~/app
 WORKDIR /home/uox3/app
+# Copy in the built application as our user
 COPY --from=buildapp --chown=uox3 /root/uox3/uox3 .
 COPY --chown=uox3 data data/
 COPY --chown=uox3 docs docs/

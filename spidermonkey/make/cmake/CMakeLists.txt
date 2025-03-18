@@ -62,7 +62,6 @@ target_sources(jscript
         ../../jsarray.cpp
         ../../jsatom.cpp
         ../../jsbool.cpp
-        ../../jsbuiltins.cpp
         ../../jscntxt.cpp
         ../../jsdate.cpp
         ../../jsdbgapi.cpp
@@ -181,12 +180,13 @@ target_sources(jscript
         ../../jsreops.tbl
 )
 
-if ((WIN32 OR LINUX) AND NOT APPLE )
+if ((WIN32 OR LINUX) AND NOT APPLE)
 
 target_sources(jscript
     PRIVATE
 
     # NanoJit
+    ../../jsbuiltins.cpp
     ../../jstracer.cpp
     ../../nanojit/Assembler.cpp
     ../../nanojit/Allocator.cpp
