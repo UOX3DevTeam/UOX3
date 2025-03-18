@@ -278,6 +278,8 @@ else()
         NANOJIT_ARCH=X64
     )
 
+    target_include_directories(jscript PRIVATE ${PROJECT_SOURCE_DIR}/../../nanojit)
+    
     target_compile_options( jscript PRIVATE
         -Wno-shift-negative-value
         -Wno-logical-not-parentheses
@@ -321,6 +323,5 @@ else()
             -MMD
             $<$<CONFIG:Release>:-Os>
         )
-        target_include_directories(jscript PRIVATE ${PROJECT_SOURCE_DIR}/../../nanojit)
     endif()
 endif(WIN32)

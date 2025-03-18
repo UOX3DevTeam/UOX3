@@ -18,6 +18,7 @@ CMD ["/bin/bash"]
 # Now actually generate the executable image
 FROM registry.access.redhat.com/ubi8/ubi:latest
 RUN yum -y install glibc.i686 dos2unix && yum clean all && rm -rf /var/cache/yum
+# Define our non-root user
 RUN adduser --system --create-home uox3
 USER uox3
 RUN mkdir -p ~/app
