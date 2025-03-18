@@ -1297,7 +1297,9 @@ JSPropertySpec TypedArray::jsprops[] = {
 
 #define IMPL_TYPED_ARRAY_STATICS(_typedArray)                                  \
 /* Forward declare */                                                          \
+#if defined XP_MACOSX                                                          \
 template<> JSObjectOps _typedArray::fastObjectOps;                             \
+#endif                                                                         \
 template<> JSObjectMap _typedArray::fastObjectMap(&_typedArray::fastObjectOps, \
                                                   JSObjectMap::SHAPELESS);     \
 template<> JSObjectOps _typedArray::fastObjectOps = {                          \
