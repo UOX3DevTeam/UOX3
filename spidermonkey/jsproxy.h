@@ -43,86 +43,115 @@
 #define jsproxy_h___
 
 #include "jsapi.h"
+#include "jscntxt.h"
 #include "jsobj.h"
 
 namespace js {
 
 /* Base class for all C++ proxy handlers. */
-class JSProxyHandler {
+class JS_FRIEND_API(JSProxyHandler) {
+    void *mFamily;
   public:
+    explicit JSProxyHandler(void *family);
     virtual ~JSProxyHandler();
 
     /* ES5 Harmony fundamental proxy traps. */
-    virtual bool getPropertyDescriptor(JSContext *cx, JSObject *proxy, jsid id,
-                                       JSPropertyDescriptor *desc) = 0;
-    virtual bool getOwnPropertyDescriptor(JSContext *cx, JSObject *proxy, jsid id,
-                                          JSPropertyDescriptor *desc) = 0;
+    virtual bool getPropertyDescriptor(JSContext *cx, JSObject *proxy, jsid id, bool set,
+                                       PropertyDescriptor *desc) = 0;
+    virtual bool getOwnPropertyDescriptor(JSContext *cx, JSObject *proxy, jsid id, bool set,
+                                          PropertyDescriptor *desc) = 0;
     virtual bool defineProperty(JSContext *cx, JSObject *proxy, jsid id,
-                                JSPropertyDescriptor *desc) = 0;
-    virtual bool getOwnPropertyNames(JSContext *cx, JSObject *proxy, JSIdArray **idap) = 0;
+                                PropertyDescriptor *desc) = 0;
+    virtual bool getOwnPropertyNames(JSContext *cx, JSObject *proxy, js::AutoIdVector &props) = 0;
     virtual bool delete_(JSContext *cx, JSObject *proxy, jsid id, bool *bp) = 0;
-    virtual bool enumerate(JSContext *cx, JSObject *proxy, JSIdArray **idap) = 0;
-    virtual bool fix(JSContext *cx, JSObject *proxy, jsval *vp) = 0;
+    virtual bool enumerate(JSContext *cx, JSObject *proxy, js::AutoIdVector &props) = 0;
+    virtual bool fix(JSContext *cx, JSObject *proxy, Value *vp) = 0;
 
     /* ES5 Harmony derived proxy traps. */
     virtual bool has(JSContext *cx, JSObject *proxy, jsid id, bool *bp);
     virtual bool hasOwn(JSContext *cx, JSObject *proxy, jsid id, bool *bp);
-    virtual bool get(JSContext *cx, JSObject *proxy, JSObject *receiver, jsid id, jsval *vp);
-    virtual bool set(JSContext *cx, JSObject *proxy, JSObject *receiver, jsid id, jsval *vp);
-    virtual bool enumerateOwn(JSContext *cx, JSObject *proxy, JSIdArray **idap);
-    virtual bool iterate(JSContext *cx, JSObject *proxy, uintN flags, jsval *vp);
+    virtual bool get(JSContext *cx, JSObject *proxy, JSObject *receiver, jsid id, js::Value *vp);
+    virtual bool set(JSContext *cx, JSObject *proxy, JSObject *receiver, jsid id, bool strict,
+                     js::Value *vp);
+    virtual bool keys(JSContext *cx, JSObject *proxy, js::AutoIdVector &props);
+    virtual bool iterate(JSContext *cx, JSObject *proxy, uintN flags, js::Value *vp);
 
     /* Spidermonkey extensions. */
+    virtual bool call(JSContext *cx, JSObject *proxy, uintN argc, js::Value *vp);
+    virtual bool construct(JSContext *cx, JSObject *proxy,
+                                          uintN argc, js::Value *argv, js::Value *rval);
+    virtual bool hasInstance(JSContext *cx, JSObject *proxy, const js::Value *vp, bool *bp);
+    virtual JSType typeOf(JSContext *cx, JSObject *proxy);
+    virtual JSString *obj_toString(JSContext *cx, JSObject *proxy);
+    virtual JSString *fun_toString(JSContext *cx, JSObject *proxy, uintN indent);
     virtual void finalize(JSContext *cx, JSObject *proxy);
     virtual void trace(JSTracer *trc, JSObject *proxy);
-    virtual const void *family() = 0;
+
+    virtual bool isOuterWindow() {
+        return false;
+    }
+
+    inline void *family() {
+        return mFamily;
+    }
 };
 
 /* Dispatch point for handlers that executes the appropriate C++ or scripted traps. */
 class JSProxy {
   public:
     /* ES5 Harmony fundamental proxy traps. */
-    static bool getPropertyDescriptor(JSContext *cx, JSObject *proxy, jsid id,
-                                      JSPropertyDescriptor *desc);
-    static bool getPropertyDescriptor(JSContext *cx, JSObject *proxy, jsid id, jsval *vp);
-    static bool getOwnPropertyDescriptor(JSContext *cx, JSObject *proxy, jsid id,
-                                         JSPropertyDescriptor *desc);
-    static bool getOwnPropertyDescriptor(JSContext *cx, JSObject *proxy, jsid id, jsval *vp);
-    static bool defineProperty(JSContext *cx, JSObject *proxy, jsid id, JSPropertyDescriptor *desc);
-    static bool defineProperty(JSContext *cx, JSObject *proxy, jsid id, jsval v);
-    static bool getOwnPropertyNames(JSContext *cx, JSObject *proxy, JSIdArray **idap);
+    static bool getPropertyDescriptor(JSContext *cx, JSObject *proxy, jsid id, bool set,
+                                      PropertyDescriptor *desc);
+    static bool getPropertyDescriptor(JSContext *cx, JSObject *proxy, jsid id, bool set, Value *vp);
+    static bool getOwnPropertyDescriptor(JSContext *cx, JSObject *proxy, jsid id, bool set,
+                                         PropertyDescriptor *desc);
+    static bool getOwnPropertyDescriptor(JSContext *cx, JSObject *proxy, jsid id, bool set,
+                                         Value *vp);
+    static bool defineProperty(JSContext *cx, JSObject *proxy, jsid id, PropertyDescriptor *desc);
+    static bool defineProperty(JSContext *cx, JSObject *proxy, jsid id, const Value &v);
+    static bool getOwnPropertyNames(JSContext *cx, JSObject *proxy, js::AutoIdVector &props);
     static bool delete_(JSContext *cx, JSObject *proxy, jsid id, bool *bp);
-    static bool enumerate(JSContext *cx, JSObject *proxy, JSIdArray **idap);
-    static bool fix(JSContext *cx, JSObject *proxy, jsval *vp);
+    static bool enumerate(JSContext *cx, JSObject *proxy, js::AutoIdVector &props);
+    static bool fix(JSContext *cx, JSObject *proxy, Value *vp);
 
     /* ES5 Harmony derived proxy traps. */
     static bool has(JSContext *cx, JSObject *proxy, jsid id, bool *bp);
     static bool hasOwn(JSContext *cx, JSObject *proxy, jsid id, bool *bp);
-    static bool get(JSContext *cx, JSObject *proxy, JSObject *receiver, jsid id, jsval *vp);
-    static bool set(JSContext *cx, JSObject *proxy, JSObject *receiver, jsid id, jsval *vp);
-    static bool enumerateOwn(JSContext *cx, JSObject *proxy, JSIdArray **idap);
-    static bool iterate(JSContext *cx, JSObject *proxy, uintN flags, jsval *vp);
+    static bool get(JSContext *cx, JSObject *proxy, JSObject *receiver, jsid id, Value *vp);
+    static bool set(JSContext *cx, JSObject *proxy, JSObject *receiver, jsid id, bool strict,
+                    Value *vp);
+    static bool keys(JSContext *cx, JSObject *proxy, js::AutoIdVector &props);
+    static bool iterate(JSContext *cx, JSObject *proxy, uintN flags, Value *vp);
+
+    /* Spidermonkey extensions. */
+    static bool call(JSContext *cx, JSObject *proxy, uintN argc, js::Value *vp);
+    static bool construct(JSContext *cx, JSObject *proxy, uintN argc, js::Value *argv, js::Value *rval);
+    static bool hasInstance(JSContext *cx, JSObject *proxy, const js::Value *vp, bool *bp);
+    static JSType typeOf(JSContext *cx, JSObject *proxy);
+    static JSString *obj_toString(JSContext *cx, JSObject *proxy);
+    static JSString *fun_toString(JSContext *cx, JSObject *proxy, uintN indent);
 };
 
 /* Shared between object and function proxies. */
-const uint32 JSSLOT_PROXY_HANDLER = JSSLOT_PRIVATE + 0;
-/* Object proxies only. */
-const uint32 JSSLOT_PROXY_CLASS = JSSLOT_PRIVATE + 1;
-const uint32 JSSLOT_PROXY_PRIVATE = JSSLOT_PRIVATE + 2;
+const uint32 JSSLOT_PROXY_HANDLER = 0;
+const uint32 JSSLOT_PROXY_PRIVATE = 1;
+const uint32 JSSLOT_PROXY_EXTRA   = 2;
 /* Function proxies only. */
-const uint32 JSSLOT_PROXY_CALL = JSSLOT_PRIVATE + 1;
-const uint32 JSSLOT_PROXY_CONSTRUCT = JSSLOT_PRIVATE + 2;
+const uint32 JSSLOT_PROXY_CALL = 3;
+const uint32 JSSLOT_PROXY_CONSTRUCT = 4;
 
-extern JS_FRIEND_API(JSClass) ObjectProxyClass;
-extern JS_FRIEND_API(JSClass) FunctionProxyClass;
-extern JSClass CallableObjectClass;
+extern JS_FRIEND_API(js::Class) ObjectProxyClass;
+extern JS_FRIEND_API(js::Class) FunctionProxyClass;
+extern JS_FRIEND_API(js::Class) OuterWindowProxyClass;
+extern js::Class CallableObjectClass;
 
 }
 
 inline bool
 JSObject::isObjectProxy() const
 {
-    return getClass() == &js::ObjectProxyClass;
+    return getClass() == &js::ObjectProxyClass ||
+           getClass() == &js::OuterWindowProxyClass;
 }
 
 inline bool
@@ -137,41 +166,47 @@ JSObject::isProxy() const
     return isObjectProxy() || isFunctionProxy();
 }
 
-inline jsval
+inline js::JSProxyHandler *
 JSObject::getProxyHandler() const
 {
     JS_ASSERT(isProxy());
-    jsval handler = fslots[js::JSSLOT_PROXY_HANDLER];
-    JS_ASSERT(JSVAL_IS_OBJECT(handler) || JSVAL_IS_INT(handler));
-    return handler;
+    return (js::JSProxyHandler *) getSlot(js::JSSLOT_PROXY_HANDLER).toPrivate();
 }
 
-inline jsval
+inline const js::Value &
 JSObject::getProxyPrivate() const
 {
-    JS_ASSERT(isObjectProxy());
-    return fslots[js::JSSLOT_PROXY_PRIVATE];
+    JS_ASSERT(isProxy());
+    return getSlot(js::JSSLOT_PROXY_PRIVATE);
 }
 
 inline void
-JSObject::setProxyPrivate(jsval priv)
+JSObject::setProxyPrivate(const js::Value &priv)
 {
-    JS_ASSERT(isObjectProxy());
-    fslots[js::JSSLOT_PROXY_PRIVATE] = priv;
+    JS_ASSERT(isProxy());
+    setSlot(js::JSSLOT_PROXY_PRIVATE, priv);
+}
+
+inline const js::Value &
+JSObject::getProxyExtra() const
+{
+    JS_ASSERT(isProxy());
+    return getSlot(js::JSSLOT_PROXY_EXTRA);
+}
+
+inline void
+JSObject::setProxyExtra(const js::Value &extra)
+{
+    JS_ASSERT(isProxy());
+    setSlot(js::JSSLOT_PROXY_EXTRA, extra);
 }
 
 namespace js {
 
 JS_FRIEND_API(JSObject *)
-NewObjectProxy(JSContext *cx, jsval handler, JSObject *proto, JSObject *parent,
-               JSString *className);
-
-JS_FRIEND_API(JSObject *)
-NewFunctionProxy(JSContext *cx, jsval handler, JSObject *proto, JSObject *parent,
-                 JSObject *call, JSObject *construct);
-
-JS_FRIEND_API(JSBool)
-GetProxyObjectClass(JSContext *cx, JSObject *proxy, const char **namep);
+NewProxyObject(JSContext *cx, JSProxyHandler *handler, const js::Value &priv,
+               JSObject *proto, JSObject *parent,
+               JSObject *call = NULL, JSObject *construct = NULL);
 
 JS_FRIEND_API(JSBool)
 FixProxy(JSContext *cx, JSObject *proxy, JSBool *bp);
@@ -180,7 +215,7 @@ FixProxy(JSContext *cx, JSObject *proxy, JSBool *bp);
 
 JS_BEGIN_EXTERN_C
 
-extern JSClass js_ProxyClass;
+extern js::Class js_ProxyClass;
 
 extern JS_FRIEND_API(JSObject *)
 js_InitProxyClass(JSContext *cx, JSObject *obj);

@@ -32,19 +32,13 @@
  *
  ***** END LICENSE BLOCK ***** */
 
+#include <signal.h>
 #include "nanojit.h"
 
 #ifdef SOLARIS
     typedef caddr_t maddr_ptr;
 #else
     typedef void *maddr_ptr;
-#endif
-
-#if defined(AVMPLUS_ARM) && defined(UNDER_CE)
-extern "C" bool
-blx_lr_broken() {
-    return false;
-}
 #endif
 
 using namespace avmplus;
@@ -62,7 +56,20 @@ avmplus::AvmLog(char const *msg, ...) {
 #ifdef _DEBUG
 namespace avmplus {
     void AvmAssertFail(const char* /* msg */) {
-        abort();
+        fflush(stderr);
+#if defined(WIN32)
+        DebugBreak();
+        exit(3);
+#elif defined(__APPLE__)
+        /*
+         * On Mac OS X, Breakpad ignores signals. Only real Mach exceptions are
+         * trapped.
+         */
+        *((int *) NULL) = 0;  /* To continue from here in GDB: "return" then "continue". */
+        raise(SIGABRT);  /* In case above statement gets nixed by the optimizer. */
+#else
+        raise(SIGABRT);  /* To continue from here in GDB: "signal 0". */
+#endif
     }
 }
 #endif

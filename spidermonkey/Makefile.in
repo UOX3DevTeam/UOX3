@@ -85,28 +85,26 @@ ifdef MOZ_PROFILE_GENERATE
 MODULE_OPTIMIZE_FLAGS = -O0
 else
 MODULE_OPTIMIZE_FLAGS = -O2 -ip
-#XXX: do we want different INTERP_OPTIMIZER flags here?
 endif
 else # not INTEL_CXX
-MODULE_OPTIMIZE_FLAGS = -O3 -fstrict-aliasing $(MOZ_OPTIMIZE_SIZE_TWEAK)
-ifeq ($(OS_ARCH),Linux)
-#TODO: move this up a line when we fix OS X (bug 517832)
+
+MODULE_OPTIMIZE_FLAGS = -O3 -fstrict-aliasing
+
+# We normally want -fomit-frame-pointer, but we want an explicit
+# -fno-omit-frame-pointer if we're using a sampling profiler.
+ifndef MOZ_PROFILING
 MODULE_OPTIMIZE_FLAGS += -fomit-frame-pointer
+else
+MODULE_OPTIMIZE_FLAGS += -fno-omit-frame-pointer
 endif
-# Special optimization flags for jsinterp.c
-INTERP_OPTIMIZER = -O3 -fstrict-aliasing
+
 endif
 else # not GNU_CXX
 ifeq ($(OS_ARCH),SunOS)
 MODULE_OPTIMIZE_FLAGS = -xO4
 endif
 ifeq ($(OS_ARCH),WINNT)
-ifdef WINCE
-# -GL is not supported on windows mobile while we are using the arm-wince-link command
 MODULE_OPTIMIZE_FLAGS = -O2
-else
-MODULE_OPTIMIZE_FLAGS = -O2 -GL
-endif
 endif
 endif
 
@@ -119,27 +117,35 @@ endif
 # In fact, we now build both a static and a shared library, as the
 # JS shell would like to link to the static library.
 
+ifdef JS_SHARED_LIBRARY
 FORCE_SHARED_LIB = 1
+endif
 FORCE_STATIC_LIB = 1
+DIST_INSTALL = 1
 
 VPATH		= $(srcdir)
 
 CPPSRCS		= \
+		jsanalyze.cpp \
 		jsapi.cpp \
 		jsarena.cpp \
 		jsarray.cpp \
 		jsatom.cpp \
 		jsbool.cpp \
+		jsclone.cpp \
 		jscntxt.cpp \
+		jscompartment.cpp \
 		jsdate.cpp \
 		jsdbgapi.cpp \
 		jsdhash.cpp \
 		jsdtoa.cpp \
 		jsemit.cpp \
 		jsexn.cpp \
+		jsfriendapi.cpp \
 		jsfun.cpp \
 		jsgc.cpp \
 		jsgcchunk.cpp \
+		jsgcstats.cpp \
 		jshash.cpp \
 		jsinterp.cpp \
 		jsinvoke.cpp \
@@ -155,32 +161,30 @@ CPPSRCS		= \
 		jsparse.cpp \
 		jsproxy.cpp \
 		jsprf.cpp \
+		jsprobes.cpp \
 		jspropertycache.cpp \
 		jspropertytree.cpp \
+		jsreflect.cpp \
 		jsregexp.cpp \
 		jsscan.cpp \
 		jsscope.cpp \
 		jsscript.cpp \
 		jsstr.cpp \
-		jstask.cpp \
 		jstypedarray.cpp \
 		jsutil.cpp \
 		jswrapper.cpp \
 		jsxdrapi.cpp \
 		jsxml.cpp \
 		prmjtime.cpp \
+		sharkctl.cpp \
 		$(NULL)
-
-ifdef HAVE_DTRACE
-CPPSRCS 	+= \
-		jsdtracef.cpp
-endif
 
 INSTALLED_HEADERS = \
 		js-config.h \
 		jsautocfg.h \
 		$(CURDIR)/jsautokw.h \
 		js.msg \
+		jsanalyze.h \
 		jsapi.h \
 		jsarray.h \
 		jsarena.h \
@@ -188,6 +192,7 @@ INSTALLED_HEADERS = \
 		jsbit.h \
 		jsbool.h \
 		jsclist.h \
+		jsclone.h \
 		jscntxt.h \
 		jscompat.h \
 		jsdate.h \
@@ -196,7 +201,12 @@ INSTALLED_HEADERS = \
 		jsdtoa.h \
 		jsemit.h \
 		jsfun.h \
+		jsfriendapi.h \
 		jsgc.h \
+		jscell.h \
+		jsgcchunk.h \
+		jsgcstats.h \
+		jscompartment.h \
 		jshash.h \
 		jsinterp.h \
 		jsinttypes.h \
@@ -209,25 +219,29 @@ INSTALLED_HEADERS = \
 		json.h \
 		jsopcode.tbl \
 		jsopcode.h \
+		jsopcodeinlines.h \
 		jsotypes.h \
 		jsparse.h \
 		jsproxy.h \
 		jsprf.h \
+		jsprobes.h \
 		jspropertycache.h \
 		jspropertycacheinlines.h \
 		jspropertytree.h \
 		jsproto.tbl \
 		jsprvtd.h \
 		jspubtd.h \
+		jsreflect.h \
 		jsregexp.h \
 		jsscan.h \
 		jsscope.h \
 		jsscript.h \
 		jsscriptinlines.h \
 		jsstaticcheck.h \
+		jsstdint.h \
 		jsstr.h \
-		jstask.h \
 		jstracer.h \
+		jshotloop.h \
 		jstypedarray.h \
 		jstypes.h \
 		jsutil.h \
@@ -238,11 +252,15 @@ INSTALLED_HEADERS = \
 		jswrapper.h \
 		jsxdrapi.h \
 		jsxml.h \
+		jsval.h \
+		jsvalue.h \
 		prmjtime.h \
 		$(NULL)
 
 ifdef ENABLE_TRACEJIT
-VPATH		+= $(srcdir)/nanojit
+VPATH		+= \
+		$(srcdir)/tracejit \
+		$(srcdir)/nanojit \
 
 INSTALLED_HEADERS += \
 		jsbuiltins.h    \
@@ -251,14 +269,18 @@ INSTALLED_HEADERS += \
 		CodeAlloc.h     \
 		Containers.h    \
 		LIR.h		\
+		LIRopcode.tbl \
 		avmplus.h	\
 		Fragmento.h	\
 		Native.h	\
+		NativeCommon.h	\
 		Native$(NANOJIT_ARCH).h \
-		njconfig.h  \
+		njconfig.h      \
+		njcpudetect.h   \
 		RegAlloc.h	\
 		nanojit.h	\
 		VMPI.h		\
+		Writer.h	\
 		$(NULL)
 
 CPPSRCS += \
@@ -273,8 +295,9 @@ CPPSRCS += \
 		RegAlloc.cpp   \
 		avmplus.cpp    \
 		Native$(NANOJIT_ARCH).cpp \
-		jsbuiltins.cpp         \
+		jsbuiltins.cpp \
 		VMPI.cpp       \
+		Writer.cpp     \
 		$(NULL)
 
 ifdef WINCE
@@ -285,6 +308,135 @@ ASFILES += jswince.asm
 endif
 
 endif # ENABLE_TRACEJIT
+ifdef ENABLE_METHODJIT
+
+###############################################
+# BEGIN include sources for the method JIT
+#
+VPATH += 	$(srcdir)/methodjit
+
+CPPSRCS += 	MethodJIT.cpp \
+		StubCalls.cpp \
+		Compiler.cpp \
+		FrameState.cpp \
+		FastArithmetic.cpp \
+		FastOps.cpp \
+		StubCompiler.cpp \
+		MonoIC.cpp \
+		PolyIC.cpp \
+		ImmutableSync.cpp \
+		InvokeHelpers.cpp \
+		Retcon.cpp \
+		TrampolineCompiler.cpp \
+		$(NULL)
+#		PICStubCompiler.cpp \
+
+ifeq (86, $(findstring 86,$(TARGET_CPU)))
+ifeq (x86_64, $(TARGET_CPU))
+ifdef _MSC_VER
+ASFILES +=	TrampolineMasmX64.asm
+endif
+ifdef SOLARIS_SUNPRO_CXX
+ASFILES +=	TrampolineSUNWX64.s
+endif
+#CPPSRCS		+= only_on_x86_64.cpp
+else
+#CPPSRCS		+= only_on_x86.cpp
+ifdef SOLARIS_SUNPRO_CXX
+ASFILES +=	TrampolineSUNWX86.s
+endif
+endif
+endif
+ifeq (arm, $(TARGET_CPU))
+#CPPSRCS		+= only_on_arm.cpp
+endif
+#
+# END enclude sources for the method JIT
+#############################################
+
+endif
+
+###############################################
+# BEGIN include sources for V8 dtoa
+#
+VPATH += 	$(srcdir)/v8-dtoa \
+		$(NONE)
+
+CPPSRCS += 	checks.cc \
+		conversions.cc \
+		diy-fp.cc \
+		v8-dtoa.cc \
+		fast-dtoa.cc \
+		platform.cc \
+		utils.cc \
+		$(NONE)
+
+#
+# END enclude sources for V8 dtoa
+#############################################
+
+ifeq (,$(filter-out powerpc sparc,$(TARGET_CPU)))
+
+VPATH +=	$(srcdir)/assembler \
+		$(srcdir)/assembler/wtf \
+		$(srcdir)/yarr/pcre \
+		$(NULL)
+
+CPPSRCS += 	pcre_compile.cpp \
+                pcre_exec.cpp \
+                pcre_tables.cpp \
+                pcre_xclass.cpp \
+                pcre_ucp_searchfuncs.cpp \
+		$(NULL)
+else
+
+###############################################
+# BEGIN include sources for the Nitro assembler
+#
+VPATH += 	$(srcdir)/assembler \
+		$(srcdir)/assembler/wtf \
+		$(srcdir)/assembler/jit \
+		$(srcdir)/assembler/assembler \
+		$(srcdir)/methodjit \
+		$(srcdir)/yarr \
+		$(srcdir)/yarr/yarr \
+		$(srcdir)/yarr/pcre \
+		$(srcdir)/yarr/wtf \
+		$(NONE)
+
+CPPSRCS += 	Assertions.cpp \
+		ExecutableAllocatorPosix.cpp \
+		ExecutableAllocatorWin.cpp \
+		ExecutableAllocatorOS2.cpp \
+		ExecutableAllocator.cpp \
+		ARMAssembler.cpp \
+                Logging.cpp \
+		MacroAssemblerARM.cpp \
+		MacroAssemblerX86Common.cpp \
+		RegexCompiler.cpp \
+		RegexJIT.cpp \
+		pcre_compile.cpp \
+                pcre_exec.cpp \
+                pcre_tables.cpp \
+                pcre_xclass.cpp \
+                pcre_ucp_searchfuncs.cpp \
+		$(NONE)
+
+ifeq (86, $(findstring 86,$(TARGET_CPU)))
+ifeq (x86_64, $(TARGET_CPU))
+#CPPSRCS		+= only_on_x86_64.cpp
+else
+#CPPSRCS		+= only_on_x86.cpp
+endif
+endif
+ifeq (arm, $(TARGET_CPU))
+#CPPSRCS		+= only_on_arm.cpp
+endif
+#
+# END enclude sources for the Nitro assembler
+#############################################
+
+endif
 
 ifdef JS_HAS_CTYPES
 VPATH += $(srcdir)/ctypes
@@ -313,9 +465,21 @@ endif # JS_HAS_CTYPES
 
 ifdef HAVE_DTRACE
 INSTALLED_HEADERS += \
-		jsdtracef.h \
 		$(CURDIR)/javascript-trace.h \
 		$(NULL)
+endif
+
+# PerfMeasurement is available regardless of low-level support for it;
+# it just doesn't necessarily do anything useful.  There is one
+# implementation source file per supported operating system, plus a stub
+# for unsupported OSes, plus the Javascript wrapper.
+VPATH += $(srcdir)/perf
+INSTALLED_HEADERS += jsperf.h
+CPPSRCS += jsperf.cpp
+ifdef HAVE_LINUX_PERF_EVENT_H
+CPPSRCS += pm_linux.cpp
+else
+CPPSRCS += pm_stub.cpp
 endif
 
 ifeq (,$(filter-out WINNT WINCE,$(OS_ARCH)))
@@ -409,15 +573,23 @@ check-valgrind::
 	$(check-sync-dirs) $(srcdir)/build $(MOZ_SYNC_BUILD_FILES)/build
 endif
 
+# The "find any vanilla new/new[] calls" script is tailored to Linux, so
+# only run it there.  That should be enough to catch any such calls that
+# creep in.
+ifeq ($(OS_ARCH),Linux)
+check::
+	$(srcdir)/config/find_vanilla_new_calls $(LIBRARY)
+endif
+
 ifdef ENABLE_TRACEJIT
 ifndef WINCE
 check::
-	$(wildcard $(RUN_TEST_PROGRAM)) $(PYTHON) -u $(srcdir)/trace-test/trace-test.py \
-	        --no-slow --no-progress --tinderbox $(DIST)/bin/js$(BIN_SUFFIX)
+	$(wildcard $(RUN_TEST_PROGRAM)) $(PYTHON) -u $(srcdir)/jit-test/jit_test.py \
+	        --no-slow --no-progress --tinderbox --jitflags=m,j,mj,mjp,mjd $(DIST)/bin/js$(BIN_SUFFIX)
 
 check-valgrind::
-	$(wildcard $(RUN_TEST_PROGRAM)) $(PYTHON) -u $(srcdir)/trace-test/trace-test.py \
-	        --valgrind --no-slow --no-progress --tinderbox $(DIST)/bin/js$(BIN_SUFFIX)
+	$(wildcard $(RUN_TEST_PROGRAM)) $(PYTHON) -u $(srcdir)/jit-test/jit_test.py \
+	        --valgrind --no-slow --no-progress --tinderbox --jitflags=m,j,mj,mjp,mjd $(DIST)/bin/js$(BIN_SUFFIX)
 endif
 endif
 
@@ -433,7 +605,13 @@ distclean::
 export::
 	mkdir -p nanojit
 
-DEFINES		+= -DEXPORT_JS_API 
+DEFINES		+= -DEXPORT_JS_API
+
+# Some platforms that have stdint.h include it in system headers.  So
+# to reliably get limit macros defined, we'd always have to define the
+# one below before including any header, but that's obscure and
+# fragile, so we do it here.
+DEFINES		+= -D__STDC_LIMIT_MACROS
 
 INCLUDES	+= -I$(srcdir)
 
@@ -449,6 +627,7 @@ endif
 
 ifdef JS_HAS_CTYPES
 DEFINES		+= -DJS_HAS_CTYPES
+DEFINES         += -DDLL_PREFIX=\"$(DLL_PREFIX)\" -DDLL_SUFFIX=\"$(DLL_SUFFIX)\"
 endif
 
 ifdef JS_NO_THIN_LOCKS
@@ -463,12 +642,6 @@ ifneq ($(findstring -L,$(NSPR_LIBS)),)
 NSPR_STATIC_PATH = $(subst -L,,$(findstring -L,$(NSPR_LIBS)))
 else
 NSPR_STATIC_PATH = $(DIST)/lib
-endif
-
-ifdef MOZ_SHARK
-CFLAGS += -F/System/Library/PrivateFrameworks
-CXXFLAGS += -F/System/Library/PrivateFrameworks
-LDFLAGS += -F/System/Library/PrivateFrameworks -framework CHUD
 endif
 
 ifdef MOZ_VTUNE
@@ -528,6 +701,7 @@ endif
 endif
 
 ifdef SOLARIS_SUNPRO_CXX
+ifeq ($(TARGET_CPU),sparc)
 # Sun Studio SPARC doesn't work well with gcc inline asm, use lock_SunOS_sparc*.il
 jslock.o: jslock.cpp Makefile.in lock_sparcv8plus.il lock_sparcv9.il
 	$(REPORT_BUILD)
@@ -537,17 +711,13 @@ ifeq (sparcv9,$(findstring sparcv9,$(OS_TEST)))
 else
 	$(CXX) -o $@ -c $(COMPILE_CFLAGS) $(srcdir)/lock_sparcv8plus.il $<
 endif # sparcv9
+endif # sparc
 endif # SOLARIS_SUNPRO_CXX
-
-# Allow building jsinterp.c with special optimization flags
-ifdef INTERP_OPTIMIZER
-jsinterp.$(OBJ_SUFFIX): MODULE_OPTIMIZE_FLAGS=$(INTERP_OPTIMIZER)
-endif
 
 ifeq ($(OS_ARCH),IRIX)
 ifndef GNU_CC
 _COMPILE_CFLAGS  = $(patsubst -O%,-O1,$(COMPILE_CFLAGS))
-jsapi.o jsxdrapi.o jsarena.o jsarray.o jsatom.o jsemit.o jsfun.o jsinterp.o jsregexp.o jsparse.o jsopcode.o jsscript.o: %.o: %.cpp Makefile.in
+jsapi.o jsxdrapi.o jsarena.o jsarray.o jsatom.o jsemit.o jsfun.o jsinterp.o jsreflect.o jsregexp.o jsparse.o jsopcode.o jsscript.o: %.o: %.cpp Makefile.in
 	$(REPORT_BUILD)
 	@$(MAKE_DEPS_AUTO_CXX)
 	$(CXX) -o $@ -c $(_COMPILE_CFLAGS) $<
@@ -687,22 +857,23 @@ $(CURDIR)/jsautooplen.h: host_jsoplengen$(HOST_BIN_SUFFIX)
 	./host_jsoplengen$(HOST_BIN_SUFFIX) $@
 
 # Force auto-header generation before compiling any source that may use them
-$(CPPSRCS:%.cpp=%.$(OBJ_SUFFIX)): $(CURDIR)/jsautokw.h $(CURDIR)/jsautooplen.h
+$(patsubst %.cc,%.$(OBJ_SUFFIX),$(CPPSRCS:%.cpp=%.$(OBJ_SUFFIX))): $(CURDIR)/jsautokw.h $(CURDIR)/jsautooplen.h
 
 ifdef HAVE_DTRACE
 $(CURDIR)/javascript-trace.h: $(srcdir)/javascript-trace.d
 	dtrace -h -s $(srcdir)/javascript-trace.d -o javascript-trace.h.in
-	sed 's/if _DTRACE_VERSION/ifdef INCLUDE_MOZILLA_DTRACE/' \
+	sed -e 's/if _DTRACE_VERSION/ifdef INCLUDE_MOZILLA_DTRACE/' \
+	    -e '/const/!s/char \*/const char */g' \
 	    javascript-trace.h.in > javascript-trace.h
 
 # We can't automatically generate dependencies on auto-generated headers;
 # we have to list them explicitly.
-$(addsuffix .$(OBJ_SUFFIX),jsdtracef jsinterp jsobj): $(CURDIR)/javascript-trace.h
+$(addsuffix .$(OBJ_SUFFIX),jsprobes jsinterp jsobj): $(CURDIR)/javascript-trace.h
 endif
 
 ifdef ENABLE_TRACEJIT
 # Imacro compilation.
-$(CURDIR)/imacros.c.out: $(srcdir)/imacro_asm.py $(srcdir)/imacros.jsasm
+$(CURDIR)/imacros.c.out: $(srcdir)/imacro_asm.py $(srcdir)/imacros.jsasm jsopcode.tbl
 	$(PYTHON) $< $(srcdir)/imacros.jsasm $(CURDIR)/imacros.c.out
 $(addsuffix .$(OBJ_SUFFIX),jstracer): $(CURDIR)/imacros.c.out
 
@@ -734,3 +905,36 @@ update-nanojit:
 
 .PHONY: update-nanojit
 endif
+
+###############################################
+# BEGIN kludges for the Nitro assembler
+#
+
+# Needed to "configure" it correctly.  Unfortunately these
+# flags wind up being applied to all code in js/src, not just
+# the code in js/src/assembler.
+CXXFLAGS += -DUSE_SYSTEM_MALLOC=1 -DENABLE_ASSEMBLER=1 -DENABLE_JIT=1
+
+INCLUDES +=	-I$(srcdir)/assembler -I$(srcdir)/yarr
+
+ifdef ENABLE_METHODJIT
+# Build a standalone test program that exercises the assembler
+# sources a bit.
+TESTMAIN_OBJS = \
+		Assertions.$(OBJ_SUFFIX) \
+		ExecutableAllocatorPosix.$(OBJ_SUFFIX) \
+		ExecutableAllocatorWin.$(OBJ_SUFFIX) \
+		ExecutableAllocator.$(OBJ_SUFFIX) \
+		ARMAssembler.$(OBJ_SUFFIX) \
+		MacroAssemblerARM.$(OBJ_SUFFIX) \
+		TestMain.$(OBJ_SUFFIX) \
+		jsutil.$(OBJ_SUFFIX) \
+		jslog2.$(OBJ_SUFFIX)
+TestMain$(HOST_BIN_SUFFIX): $(TESTMAIN_OBJS)
+	$(CXX) -o TestMain$(HOST_BIN_SUFFIX) $(TESTMAIN_OBJS)
+endif
+
+#
+# END kludges for the Nitro assembler
+###############################################
+

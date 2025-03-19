@@ -545,8 +545,9 @@ namespace nanojit
         return _nIns;
     }
 
-    void Assembler::asm_branch_xov(LOpcode, NIns*) {
-        TODO(asm_branch_xov);
+    NIns* Assembler::asm_branch_ov(LOpcode, NIns*) {
+        TODO(asm_branch_ov);
+        return _nIns;
     }
 
     void Assembler::asm_cmp(LOpcode condop, LIns *a, LIns *b, ConditionRegister cr) {
@@ -694,12 +695,13 @@ namespace nanojit
     }
 
     void Assembler::asm_call(LIns *ins) {
-        Register retReg = ( ins->isop(LIR_calld) ? F1 : retRegs[0] );
-        deprecated_prepResultReg(ins, rmask(retReg));
+        if (!ins->isop(LIR_callv)) {
+            Register retReg = ( ins->isop(LIR_calld) ? F1 : retRegs[0] );
+            deprecated_prepResultReg(ins, rmask(retReg));
+        }
 
         // Do this after we've handled the call result, so we don't
         // force the call result to be spilled unnecessarily.
-
         evictScratchRegsExcept(0);
 
         const CallInfo* call = ins->callInfo();
@@ -729,13 +731,13 @@ namespace nanojit
         for(uint32_t i = 0; i < argc; i++) {
             uint32_t j = argc - i - 1;
             ArgType ty = argTypes[j];
-            LInsp arg = ins->arg(j);
+            LIns* arg = ins->arg(j);
             NanoAssert(ty != ARGTYPE_V);
             if (ty != ARGTYPE_D) {
                 // GP arg
                 if (r <= R10) {
                     asm_regarg(ty, arg, r);
-                    r = nextreg(r);
+                    r = r + 1;
                     param_size += sizeof(void*);
                 } else {
                     // put arg on stack
@@ -745,11 +747,11 @@ namespace nanojit
                 // double
                 if (fr <= F13) {
                     asm_regarg(ty, arg, fr);
-                    fr = nextreg(fr);
+                    fr = fr + 1;
                 #ifdef NANOJIT_64BIT
-                    r = nextreg(r);
+                    r = r + 1;
                 #else
-                    r = nextreg(nextreg(r)); // skip 2 gpr's
+                    r = r + 2; // Skip 2 GPRs.
                 #endif
                     param_size += sizeof(double);
                 } else {
@@ -762,7 +764,7 @@ namespace nanojit
             max_param_size = param_size;
     }
 
-    void Assembler::asm_regarg(ArgType ty, LInsp p, Register r)
+    void Assembler::asm_regarg(ArgType ty, LIns* p, Register r)
     {
         NanoAssert(r != deprecated_UnknownReg);
         NanoAssert(ty != ARGTYPE_V);
@@ -826,7 +828,7 @@ namespace nanojit
         }
     }
 
-    void Assembler::asm_spill(Register rr, int d, bool /* pop */, bool quad) {
+    void Assembler::asm_spill(Register rr, int d, bool quad) {
         (void)quad;
         NanoAssert(d);
         if (IsFpReg(rr)) {
@@ -846,8 +848,8 @@ namespace nanojit
 
     void Assembler::asm_arith(LIns *ins) {
         LOpcode op = ins->opcode();
-        LInsp lhs = ins->oprnd1();
-        LInsp rhs = ins->oprnd2();
+        LIns* lhs = ins->oprnd1();
+        LIns* rhs = ins->oprnd2();
         RegisterMask allow = GpRegs;
         Register rr = deprecated_prepResultReg(ins, allow);
         Register ra = findRegFor(lhs, GpRegs);
@@ -948,8 +950,8 @@ namespace nanojit
 
     void Assembler::asm_fop(LIns *ins) {
         LOpcode op = ins->opcode();
-        LInsp lhs = ins->oprnd1();
-        LInsp rhs = ins->oprnd2();
+        LIns* lhs = ins->oprnd1();
+        LIns* rhs = ins->oprnd2();
         RegisterMask allow = FpRegs;
         Register rr = deprecated_prepResultReg(ins, allow);
         Register ra, rb;
@@ -1010,7 +1012,7 @@ namespace nanojit
     #endif
     }
 
-    void Assembler::asm_d2i(LInsp) {
+    void Assembler::asm_d2i(LIns*) {
         NanoAssertMsg(0, "NJ_F2I_SUPPORTED not yet supported for this architecture");
     }
 
@@ -1022,14 +1024,14 @@ namespace nanojit
         LWZ(rr, d+4, FP);
     }
 
-    void Assembler::asm_promote(LIns *ins) {
+    void Assembler::asm_ui2uq(LIns *ins) {
         LOpcode op = ins->opcode();
         Register r = deprecated_prepResultReg(ins, GpRegs);
         Register v = findRegFor(ins->oprnd1(), GpRegs);
         switch (op) {
         default:
             debug_only(outputf("%s",lirNames[op]));
-            TODO(asm_promote);
+            TODO(asm_ui2uq);
         case LIR_ui2uq:
             CLRLDI(r, v, 32); // clears the top 32 bits
             break;
@@ -1038,6 +1040,15 @@ namespace nanojit
             break;
         }
     }
+
+    void Assembler::asm_dasq(LIns*) {
+        TODO(asm_dasq);
+    }
+
+    void Assembler::asm_qasd(LIns*) {
+        TODO(asm_qasd);
+    }
+
     #endif
 
 #ifdef NANOJIT_64BIT
@@ -1211,7 +1222,7 @@ namespace nanojit
     #endif
     }
 
-    void Assembler::asm_cmov(LInsp ins)
+    void Assembler::asm_cmov(LIns* ins)
     {
         LIns* condval = ins->oprnd1();
         LIns* iftrue  = ins->oprnd2();
@@ -1250,24 +1261,12 @@ namespace nanojit
         asm_cmp(condval->opcode(), condval->oprnd1(), condval->oprnd2(), CR7);
     }
 
-    RegisterMask Assembler::hint(LIns* ins) {
-        LOpcode op = ins->opcode();
+    RegisterMask Assembler::nHint(LIns* ins) {
+        NanoAssert(ins->isop(LIR_paramp));
         RegisterMask prefer = 0;
-        if (op == LIR_calli)
-            prefer = rmask(R3);
-    #ifdef NANOJIT_64BIT
-        else if (op == LIR_callq)
-            prefer = rmask(R3);
-    #endif
-        else if (op == LIR_calld)
-            prefer = rmask(F1);
-        else if (op == LIR_paramp) {
-            if (ins->paramKind() == 0) {
-                if (ins->paramArg() < 8) {
-                    prefer = rmask(argRegs[ins->paramArg()]);
-                }
-            }
-        }
+        if (ins->paramKind() == 0)
+            if (ins->paramArg() < 8)
+                prefer = rmask(argRegs[ins->paramArg()]);
         return prefer;
     }
 
@@ -1282,6 +1281,12 @@ namespace nanojit
     }
 
     void Assembler::nInit(AvmCore*) {
+        nHints[LIR_calli]  = rmask(R3);
+    #ifdef NANOJIT_64BIT
+        nHints[LIR_callq]  = rmask(R3);
+    #endif
+        nHints[LIR_calld]  = rmask(F1);
+        nHints[LIR_paramp] = PREFER_SPECIAL;
     }
 
     void Assembler::nBeginAssembly() {
@@ -1330,7 +1335,7 @@ namespace nanojit
         // patch 64bit branch
         else if ((branch[0] & ~(31<<21)) == PPC_addis) {
             // general branch, using lis,ori,sldi,oris,ori to load the const 64bit addr.
-            Register rd = Register((branch[0] >> 21) & 31);
+            Register rd = { (branch[0] >> 21) & 31 };
             NanoAssert(branch[1] == PPC_ori  | GPR(rd)<<21 | GPR(rd)<<16);
             NanoAssert(branch[3] == PPC_oris | GPR(rd)<<21 | GPR(rd)<<16);
             NanoAssert(branch[4] == PPC_ori  | GPR(rd)<<21 | GPR(rd)<<16);
@@ -1347,7 +1352,7 @@ namespace nanojit
         else if ((branch[0] & ~(31<<21)) == PPC_addis) {
             // general branch, using lis,ori to load the const addr.
             // patch a lis,ori sequence with a 32bit value
-            Register rd = Register((branch[0] >> 21) & 31);
+            Register rd = { (branch[0] >> 21) & 31 };
             NanoAssert(branch[1] == PPC_ori | GPR(rd)<<21 | GPR(rd)<<16);
             uint32_t imm = uint32_t(target);
             branch[0] = PPC_addis | GPR(rd)<<21 | uint16_t(imm >> 16); // lis rd, imm >> 16
@@ -1362,7 +1367,7 @@ namespace nanojit
     static int cntzlw(int set) {
         // On PowerPC, prefer higher registers, to minimize
         // size of nonvolatile area that must be saved.
-        register Register i;
+        register uint32_t i;
         #ifdef __GNUC__
         asm ("cntlzw %0,%1" : "=r" (i) : "r" (set));
         #else // __GNUC__
@@ -1372,21 +1377,21 @@ namespace nanojit
     }
 
     Register Assembler::nRegisterAllocFromSet(RegisterMask set) {
-        Register i;
+        uint32_t i;
         // note, deliberate truncation of 64->32 bits
         if (set & 0xffffffff) {
-            i = Register(cntzlw(int(set))); // gp reg
+            i = cntzlw(int(set)); // gp reg
         } else {
-            i = Register(32+cntzlw(int(set>>32))); // fp reg
+            i = 32 + cntzlw(int(set>>32)); // fp reg
         }
-        _allocator.free &= ~rmask(i);
-        return i;
+        Register r = { i };
+        _allocator.free &= ~rmask(r);
+        return r;
     }
 
     void Assembler::nRegisterResetAll(RegAlloc &regs) {
         regs.clear();
         regs.free = SavedRegs | 0x1ff8 /* R3-12 */ | 0x3ffe00000000LL /* F1-13 */;
-        debug_only(regs.managed = regs.free);
     }
 
 #ifdef NANOJIT_64BIT
@@ -1443,6 +1448,10 @@ namespace nanojit
         SWAP(NIns*, codeStart, exitStart);
         SWAP(NIns*, codeEnd, exitEnd);
         verbose_only( SWAP(size_t, codeBytes, exitBytes); )
+    }
+
+    void Assembler::asm_insert_random_nop() {
+        NanoAssert(0); // not supported
     }
 
 } // namespace nanojit

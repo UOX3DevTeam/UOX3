@@ -1,9 +1,13 @@
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sw=4 et tw=99:
+ */
+
 #include "tests.h"
 
 static int g_counter;
 
 static JSBool
-CounterAdd(JSContext *cx, JSObject *obj, jsval idval, jsval *vp)
+CounterAdd(JSContext *cx, JSObject *obj, jsid id, jsval *vp)
 {
     g_counter++;
     return JS_TRUE;
@@ -12,7 +16,7 @@ CounterAdd(JSContext *cx, JSObject *obj, jsval idval, jsval *vp)
 static JSClass CounterClass = {
     "Counter",  /* name */
     0,  /* flags */
-    CounterAdd, JS_PropertyStub, JS_PropertyStub, JS_PropertyStub,
+    CounterAdd, JS_PropertyStub, JS_PropertyStub, JS_StrictPropertyStub,
     JS_EnumerateStub, JS_ResolveStub, JS_ConvertStub, JS_FinalizeStub,
     JSCLASS_NO_OPTIONAL_MEMBERS
 };

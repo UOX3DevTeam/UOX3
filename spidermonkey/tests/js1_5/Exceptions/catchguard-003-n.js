@@ -38,7 +38,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-var gTestfile = 'catchguard-003-n.js';
 
 DESCRIPTION = "Illegally constructed catchguard should have thrown an exception.";
 EXPECTED = "error";
@@ -65,7 +64,7 @@ function test()
   {  
     actual = e + ': 1';
   }
-  catch (e) /* two non-guarded catch statements shoud generate an error */
+  catch (e) /* two non-guarded catch statements should generate an error */
   {
     actual = e + ': 2';
   }

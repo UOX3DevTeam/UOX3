@@ -1,3 +1,7 @@
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sw=4 et tw=99:
+ */
+
 #include "tests.h"
 #include "jsdbgapi.h"
 
@@ -41,6 +45,9 @@ BEGIN_TEST(testTrap_gc)
     // Disable JIT for debugging
     JS_SetOptions(cx, JS_GetOptions(cx) & ~JSOPTION_JIT);
 
+    // Enable debug mode
+    CHECK(JS_SetDebugMode(cx, JS_TRUE));
+
     jsbytecode *line2 = JS_LineNumberToPC(cx, script, 1);
     CHECK(line2);
 
@@ -55,7 +62,7 @@ BEGIN_TEST(testTrap_gc)
 
     JS_GC(cx);
 
-    CHECK(0 == strcmp(trapClosureText, JS_GetStringBytes(trapClosure)));
+    CHECK(JS_FlatStringEqualsAscii(JS_ASSERT_STRING_IS_FLAT(trapClosure), trapClosureText));
 
     // execute
     CHECK(JS_ExecuteScript(cx, global, script, v2.addr()));
@@ -63,7 +70,7 @@ BEGIN_TEST(testTrap_gc)
 
     JS_GC(cx);
 
-    CHECK(0 == strcmp(trapClosureText, JS_GetStringBytes(trapClosure)));
+    CHECK(JS_FlatStringEqualsAscii(JS_ASSERT_STRING_IS_FLAT(trapClosure), trapClosureText));
 
     return true;
 }
