@@ -107,6 +107,8 @@ const SI16			DEFBASE_STAMINABONOS = 0;
 const SI16			DEFBASE_MANABONUS = 0;
 
 const SI16			DEFBASE_DAMAGEiNCREASE = 0;
+const SI16			DEFBASE_LUCK	= 0;
+const UI32			DEFBASE_TITHING		= 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
@@ -125,7 +127,8 @@ in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN ),
 healthBonus( DEFBASE_HEALTHBONUS ),staminaBonus( DEFBASE_STAMINABONOS ), manaBonus( DEFBASE_MANABONUS ), hitChance( DEFBASE_HITCHANCE ), defenseChance( DEFBASE_DEFENSECHANCE ),
-healthLeech( DEFBASE_HEALTHLEECH ), staminaLeech( DEFBASE_STAMINALEECH ), manaLeech( DEFBASE_MANALEECH ), swingSpeedIncrease( DEFBASE_SWINGSPEEDINCREASE ), damageIncrease( DEFBASE_DAMAGEiNCREASE )
+healthLeech( DEFBASE_HEALTHLEECH ), staminaLeech( DEFBASE_STAMINALEECH ), manaLeech( DEFBASE_MANALEECH ), swingSpeedIncrease( DEFBASE_SWINGSPEEDINCREASE ), damageIncrease( DEFBASE_DAMAGEiNCREASE ),
+luck( DEFBASE_LUCK ), tithing( DEFBASE_TITHING )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
@@ -734,7 +737,7 @@ void CBaseObject::SetOwner( CChar *newOwner )
 //o------------------------------------------------------------------------------------------------o
 bool CBaseObject::DumpBody( std::ostream &outStream ) const
 {
-	SI16 temp_st2, temp_dx2, temp_in2;
+	SI16 temp_st2, temp_dx2, temp_in2, temp_hitChance, temp_defChance, temp_swingSpeedInc, temp_damInc, temp_luck, temp_tithing;
 	const char newLine = '\n';
 
 	// Hexadecimal Values
@@ -784,7 +787,14 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	temp_st2 = st2;
 	temp_dx2 = dx2;
 	temp_in2 = in2;
-	if( objType == OT_CHAR )
+	temp_hitChance = hitChance;
+	temp_defChance = defenseChance;
+	temp_swingSpeedInc = swingSpeedIncrease;
+	temp_damInc = damageIncrease;
+	temp_luck = luck;
+  temp_tithing = tithing;
+
+  if( objType == OT_CHAR )
 	{
 		CChar *myChar = (CChar *)( this );
 
@@ -797,6 +807,12 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 				temp_st2 -= myItem->GetStrength2();
 				temp_dx2 -= myItem->GetDexterity2();
 				temp_in2 -= myItem->GetIntelligence2();
+				temp_hitChance -= myItem->GetHitChance();
+				temp_defChance -= myItem->GetDefenseChance();
+				temp_swingSpeedInc -= myItem->GetSwingSpeedIncrease();
+				temp_damInc -= myItem->GetDamageIncrease();
+				temp_luck -= myItem->GetLuck();
+				temp_tithing -= myItem->GetTithing();
 			}
 		}
 	}
@@ -808,7 +824,9 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Intelligence=" + std::to_string( intelligence ) + "," + std::to_string( temp_in2 ) + newLine;
 	outStream << "Strength=" + std::to_string( strength ) + "," + std::to_string( temp_st2 ) + newLine;
 	outStream << "HitPoints=" + std::to_string( hitpoints ) + newLine;
-	outStream << "ExtPropCommon=" + std::to_string( GetHitChance() ) + "," + std::to_string( GetDefenseChance() ) + "," + std::to_string( GetSwingSpeedIncrease() ) + "," + std::to_string( GetDamageIncrease() ) + newLine;
+	outStream << "ExtPropCommon=" + std::to_string( temp_hitChance ) + "," + std::to_string( temp_defChance ) + "," + std::to_string( temp_swingSpeedInc ) + "," + std::to_string( temp_damInc ) + newLine;
+	outStream << "Luck=" + std::to_string( temp_luck ) + newLine;
+  outStream << "Tithing=" + std::to_string( temp_tithing ) + newLine;
 	outStream << "Race=" + std::to_string( race ) + newLine;
 	outStream << "Visible=" + std::to_string( visible ) + newLine;
 	outStream << "Disabled=" << ( IsDisabled() ? "1" : "0" ) << newLine;
@@ -1053,6 +1071,30 @@ void CBaseObject::IncHP( SI16 amtToChange )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetLuck()
+//|					CBaseObject::SetLuck()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Luck of the item
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetLuck( void ) const
+{
+	return luck;
+}
+void CBaseObject::SetLuck( SI16 newValue )
+{
+	luck = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+	else if( CanBeObjType( OT_CHAR ))
+	{
+		( static_cast<CChar *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetHitChance()
 //|					CBaseObject::SetHitChance()
 //o------------------------------------------------------------------------------------------------o
@@ -1069,6 +1111,10 @@ void CBaseObject::SetHitChance( SI16 newValue )
 	if( CanBeObjType( OT_ITEM ))
 	{
 		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+	else if( CanBeObjType( OT_CHAR ))
+	{
+		( static_cast<CChar *>( this ))->UpdateRegion();
 	}
 }
 
@@ -1089,6 +1135,10 @@ void CBaseObject::SetDefenseChance( SI16 newValue )
 	if( CanBeObjType( OT_ITEM ))
 	{
 		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+	else if( CanBeObjType( OT_CHAR ))
+	{
+		( static_cast<CChar *>( this ))->UpdateRegion();
 	}
 }
 
@@ -1625,6 +1675,30 @@ Point3_st CBaseObject::GetLocation( void ) const
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetTithing()
+//|					CChar::SetTithing()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets the tithing status of the player's character/Item
+//o------------------------------------------------------------------------------------------------o
+SI32 CBaseObject::GetTithing( void ) const
+{
+	return tithing;
+}
+void CBaseObject::SetTithing( SI32 newValue )
+{
+	tithing = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+	else if( CanBeObjType( OT_CHAR ))
+	{
+		( static_cast<CChar *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetSwingSpeedIncrease()
 //|					CBaseObject::SetSwingSpeedBonus()
 //o------------------------------------------------------------------------------------------------o
@@ -1642,6 +1716,10 @@ void CBaseObject::SetSwingSpeedIncrease( SI16 newValue )
 	if( CanBeObjType( OT_ITEM ))
 	{
 		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+	else if( CanBeObjType( OT_CHAR ))
+	{
+		( static_cast<CChar *>( this ))->UpdateRegion();
 	}
 }
 
@@ -1663,6 +1741,10 @@ void CBaseObject::SetDamageIncrease( SI16 newValue )
 	if( CanBeObjType( OT_ITEM ))
 	{
 		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+	else if( CanBeObjType( OT_CHAR ))
+	{
+		( static_cast<CChar *>( this ))->UpdateRegion();
 	}
 }
 
@@ -1929,6 +2011,16 @@ void CBaseObject::IncManaLeech( SI16 toInc )
 	SetManaLeech( manaLeech + toInc );
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncLuck()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Luck value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncLuck( SI16 toInc )
+{
+	SetLuck( luck + toInc );
+}
+
 //|	Function	-	CBaseObject::IncHitChance()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Increments the object's Hit Chance value
@@ -1946,6 +2038,16 @@ void CBaseObject::IncHitChance( SI16 toInc )
 void CBaseObject::IncDefenseChance( SI16 toInc )
 {
 	SetDefenseChance( defenseChance + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncTithing()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Tithing value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncTithing( SI32 toInc )
+{
+	SetTithing( tithing + toInc );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2214,6 +2316,10 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 					instanceId = 0;
 				}
 			}
+			else if( UTag == "LUCK" )
+			{
+				SetLuck( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+			}
 			else if( UTag == "LODAMAGE" )
 			{
 				loDamage = oldstrutil::value<SI16>( data );
@@ -2364,6 +2470,11 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 				tagvalObject.m_Destroy		= false;
 				tagvalObject.m_StringValue	= "";
 				SetTag( staticTagName, tagvalObject );
+			}
+			else if( UTag == "TITHING" )
+			{
+				SetTithing( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+				rValue = true;
 			}
 			else if( UTag == "TAGVALS" )
 			{
@@ -2838,6 +2949,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetColour( GetColour() );
 	target->SetHiDamage( GetHiDamage() );
 	target->SetLoDamage( GetLoDamage() );
+	target->SetTithing( GetTithing() );
 	for( UI08 resist = 0; resist < WEATHNUM; ++resist )
 	{
 		target->SetResist( GetResist( static_cast<WeatherType>( resist )), static_cast<WeatherType>( resist ));
@@ -2851,6 +2963,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetDefenseChance( GetDefenseChance() );
 	target->SetSwingSpeedIncrease( GetSwingSpeedIncrease() );
 	target->SetDamageIncrease( GetDamageIncrease() );
+	target->SetLuck( GetLuck() );
 	target->SetKarma( karma );
 	target->SetFame( fame );
 	target->SetKills( kills );
