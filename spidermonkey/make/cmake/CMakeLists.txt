@@ -95,13 +95,14 @@ target_sources(jscript
         ../../jsscope.cpp
         ../../jsscript.cpp
         ../../jsstr.cpp
-        ../../jstask.cpp
         ../../jstypedarray.cpp
         ../../jsutil.cpp
         ../../jswrapper.cpp
         ../../jsxdrapi.cpp
         ../../jsxml.cpp
         ../../prmjtime.cpp
+# TraceJit
+        ../../tracejit/Writer.cpp
 # Headers
         ../../jsapi.h
         ../../jsarena.h
@@ -122,7 +123,6 @@ target_sources(jscript
         ../../jsdbgapi.h
         ../../jsdhash.h
         ../../jsdtoa.h
-        ../../jsdtracef.h
         ../../jsemit.h
         ../../jsexn.h
         ../../jsfun.h
@@ -135,7 +135,6 @@ target_sources(jscript
         ../../jsiter.h
         ../../jslibmath.h
         ../../jslock.h
-        ../../jslong.h
         ../../jsmath.h
         ../../jsnativestack.h
         ../../jsnum.h
@@ -160,7 +159,6 @@ target_sources(jscript
         ../../jsstaticcheck.h
         ../../jsstr.h
         ../../jsstrinlines.h
-        ../../jstask.h
         ../../jstl.h
         ../../jstracer.h
         ../../jstypedarray.h
@@ -171,8 +169,9 @@ target_sources(jscript
         ../../jsxdrapi.h
         ../../jsxml.h
         ../../prmjtime.h
+# TraceJit
+        ../../tracejit/Writer.h
 # OpCode tables
-        ../../builtins.tbl
         ../../jitstats.tbl
         ../../jskeyword.tbl
         ../../jsopcode.tbl
@@ -313,7 +312,12 @@ else()
               $<$<CONFIG:Release>:-Os>
              )
     else()
-        target_include_directories(jscript PRIVATE ${PROJECT_SOURCE_DIR}/../../nanojit)
+        target_include_directories(jscript PRIVATE 
+            ${PROJECT_SOURCE_DIR}/../../nanojit 
+            ${PROJECT_SOURCE_DIR}/../../tracejit 
+            ${PROJECT_SOURCE_DIR}/../../yarr 
+            ${PROJECT_SOURCE_DIR}/../..
+        )
         target_compile_definitions(jscript PRIVATE
             AVMPLUS_64BIT
             AVMPLUS_UNIX

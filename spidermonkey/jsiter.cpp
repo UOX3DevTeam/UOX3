@@ -425,7 +425,7 @@ NewIteratorObject(JSContext *cx, uintN flags)
          */
         JSObject *obj = js_NewGCObject(cx, FINALIZE_OBJECT0);
         if (!obj)
-            return false;
+            return nullptr;
         obj->init(cx, &js_IteratorClass, NULL, NULL, NULL, false);
         obj->setMap(cx->compartment->emptyEnumeratorShape);
         return obj;

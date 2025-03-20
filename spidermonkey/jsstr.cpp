@@ -1733,7 +1733,7 @@ class RegExpGuard
         if (flat) {
             patstr = flattenPattern(cx, fm.patstr);
             if (!patstr)
-                return false;
+                return nullptr;
         } else {
             patstr = fm.patstr;
         }
@@ -3399,7 +3399,7 @@ js_InitStringClass(JSContext *cx, JSObject *obj)
                                  UndefinedValue(), NULL, NULL,
                                  JSPROP_READONLY | JSPROP_PERMANENT | JSPROP_SHARED, 0, 0,
                                  NULL)) {
-        return JS_FALSE;
+        return nullptr;
     }
 
     return proto;

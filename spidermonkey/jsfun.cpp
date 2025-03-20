@@ -2052,7 +2052,7 @@ fun_toStringHelper(JSContext *cx, JSObject *obj, uintN indent)
 
     JSString *str = JS_DecompileFunction(cx, fun, indent);
     if (!str)
-        return false;
+        return nullptr;
 
     if (!indent)
         cx->compartment->toSourceCache.put(fun, str);
@@ -2658,7 +2658,7 @@ LookupInterpretedFunctionPrototype(JSContext *cx, JSObject *funobj)
     const Shape *shape = funobj->nativeLookup(id);
     if (!shape) {
         if (!ResolveInterpretedFunctionPrototype(cx, funobj))
-            return false;
+            return nullptr;
         shape = funobj->nativeLookup(id);
     }
     JS_ASSERT(!shape->configurable());

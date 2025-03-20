@@ -3352,7 +3352,7 @@ Parser::functionDef(JSAtom *funAtom, FunctionType type, uintN lambda)
     if (!outertc->inFunction() && bodyLevel && funAtom && !lambda && outertc->compiling()) {
         JS_ASSERT(pn->pn_cookie.isFree());
         if (!DefineGlobal(pn, outertc->asCodeGenerator(), funAtom))
-            return false;
+            return nullptr;
     }
 
     pn->pn_blockid = outertc->blockid();
