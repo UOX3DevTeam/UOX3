@@ -226,35 +226,42 @@ target_compile_definitions( jscript PRIVATE
 
 if (WIN32)
 
+    target_include_directories(jscript PRIVATE 
+        ${PROJECT_SOURCE_DIR}/../../nanojit 
+        ${PROJECT_SOURCE_DIR}/../../tracejit 
+        ${PROJECT_SOURCE_DIR}/../../yarr 
+        ${PROJECT_SOURCE_DIR}/../..
+    )
 
     # See Configure.in
     target_compile_definitions( jscript PRIVATE
-        __x86_64__
-        AVMPLUS_64BIT
-        ENABLE_TRACEJIT=1
-        FEATURE_NANOJIT
-        JS_TRACER
         _AMD64_
         _CRT_NONSTDC_NO_DEPRECATE
         _CRT_SECURE_NO_DEPRECATE
         _WIN32
         _WIN64
         _WINDOWS
+        AVMPLUS_64BIT
         AVMPLUS_AMD64
         AVMPLUS_WIN32
-        HAVE_SNPRINTF
-        NANOJIT_ARCH=X64
         ENABLE_METHODJIT=1
         ENABLE_MONOIC=1
-        ENABLE_POLYIC=1
         ENABLE_POLYIC_TYPED_ARRAY=1
+        ENABLE_POLYIC=1
+        ENABLE_TRACEJIT=1
+        FEATURE_NANOJIT
+        HAVE_SNPRINTF
+        JS_STDDEF_H_HAS_INTPTR_T
+        JS_TRACER
+        NANOJIT_ARCH=X64
         NO_X11
         WIN32
         WIN32_LEAN_AND_MEAN
         XP_WIN
         XP_WIN32
-        JS_STDDEF_H_HAS_INTPTR_T
     )
+
+    remove_definitions( -D_DEBUG )
 
     target_compile_options( jscript PRIVATE
         /W3
@@ -327,20 +334,19 @@ else()
         )
         target_compile_definitions(jscript PRIVATE
             __x86_64__
+            _REENTRANT
             AVMPLUS_64BIT
+            AVMPLUS_AMD64
+            AVMPLUS_LINUX
             AVMPLUS_UNIX
+            ENABLE_METHODJIT=1
+            ENABLE_MONOIC=1
+            ENABLE_POLYIC_TYPED_ARRAY=1
+            ENABLE_POLYIC=1
             ENABLE_TRACEJIT=1
             FEATURE_NANOJIT
             JS_TRACER
             NANOJIT_ARCH=X64
-            ENABLE_METHODJIT=1
-            ENABLE_MONOIC=1
-            ENABLE_POLYIC=1
-            ENABLE_POLYIC_TYPED_ARRAY=1
-            AVMPLUS_LINUX
-            AVMPLUS_AMD64
-            AVMPLUS_64BIT
-            _REENTRANT
         )
         target_compile_options(jscript PRIVATE
             -fpermissive
