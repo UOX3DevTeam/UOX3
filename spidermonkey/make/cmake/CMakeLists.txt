@@ -220,6 +220,7 @@ target_compile_definitions( jscript PRIVATE
     HW_THREADS
     JSFILE
     STDC_HEADERS
+    HAVE_CPP_NAMESPACE_STD
 )
 
 
@@ -228,6 +229,7 @@ if (WIN32)
 
     # See Configure.in
     target_compile_definitions( jscript PRIVATE
+        __x86_64__
         AVMPLUS_64BIT
         ENABLE_TRACEJIT=1
         FEATURE_NANOJIT
@@ -242,11 +244,16 @@ if (WIN32)
         AVMPLUS_WIN32
         HAVE_SNPRINTF
         NANOJIT_ARCH=X64
+        ENABLE_METHODJIT=1
+        ENABLE_MONOIC=1
+        ENABLE_POLYIC=1
+        ENABLE_POLYIC_TYPED_ARRAY=1
         NO_X11
         WIN32
         WIN32_LEAN_AND_MEAN
         XP_WIN
         XP_WIN32
+        JS_STDDEF_H_HAS_INTPTR_T
     )
 
     target_compile_options( jscript PRIVATE
@@ -319,20 +326,30 @@ else()
             ${PROJECT_SOURCE_DIR}/../..
         )
         target_compile_definitions(jscript PRIVATE
+            __x86_64__
             AVMPLUS_64BIT
             AVMPLUS_UNIX
             ENABLE_TRACEJIT=1
             FEATURE_NANOJIT
             JS_TRACER
             NANOJIT_ARCH=X64
+            ENABLE_METHODJIT=1
+            ENABLE_MONOIC=1
+            ENABLE_POLYIC=1
+            ENABLE_POLYIC_TYPED_ARRAY=1
             AVMPLUS_LINUX
             AVMPLUS_AMD64
             AVMPLUS_64BIT
-            )
+            _REENTRANT
+        )
         target_compile_options(jscript PRIVATE
             -fpermissive
             -Wno-narrowing
             -MMD
+            -Wno-invalid-offsetof
+            -Wno-ignored-attributes
+            -Wno-int-to-pointer-cast
+            -Wno-register
             $<$<CONFIG:Release>:-Os>
         )
     endif()
