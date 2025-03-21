@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.18)
+include(ExternalProject)
+
 project(uox3 VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
+
+set(CMAKE_CONFIGURATION_TYPES Debug Release)
 
 # *************************************************************************
 # The basic executable we are making
@@ -269,7 +273,17 @@ endif(NOT SYSTEM_ZLIB)
 # *************************************************************************
 # The items we need built first
 # *************************************************************************
-add_subdirectory(${PROJECT_SOURCE_DIR}/../../spidermonkey/make/cmake subproject/jscript)
+#add_subdirectory(${PROJECT_SOURCE_DIR}/../../spidermonkey/make/cmake subproject/jscript)
+ExternalProject_Add(
+    SpiderMonkey
+    SOURCE_DIR ${PROJECT_SOURCE_DIR}/../../spidermonkey/make/cmake
+    #BINARY_DIR ${CMAKE_BINARY_DIR}/spidermonkey-build
+    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+    BUILD_COMMAND ${CMAKE_COMMAND} --build <BINARY_DIR> --config Release
+    INSTALL_COMMAND ""  # Skip install step if not needed
+    LOG_BUILD ON
+)
+
 if (NOT SYSTEM_ZLIB)
 add_subdirectory(${PROJECT_SOURCE_DIR}/../../zlib/make/cmake subproject/zlib)
 endif(NOT SYSTEM_ZLIB)

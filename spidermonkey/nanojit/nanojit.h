@@ -207,14 +207,14 @@ namespace nanojit
     # pragma intrinsic(_BitScanReverse)
 
     // Returns the index of the most significant bit that is set.
-    static inline int msbSet32(uint32_t x) {
+    static inline unsigned int msbSet32(uint32_t x) {
         unsigned long idx;
         _BitScanReverse(&idx, (unsigned long)(x | 1)); // the '| 1' ensures a 0 result when x==0
         return idx;
     }
 
     // Returns the index of the least significant bit that is set.
-    static inline int lsbSet32(uint32_t x) {
+    static inline unsigned int lsbSet32(uint32_t x) {
         unsigned long idx;
         _BitScanForward(&idx, (unsigned long)(x | 0x80000000)); // the '| 0x80000000' ensures a 0 result when x==0
         return idx;

@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.18)
-project(jscript VERSION 1.8.0 LANGUAGES C)
+project(jscript VERSION 1.8.0 LANGUAGES CXX)
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/../../../install" CACHE STRING "" FORCE)
+set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Override build type" FORCE)
 
 add_executable(jscpucfg ../../jscpucfg.cpp)
 
@@ -54,6 +54,8 @@ add_custom_command(
 )
 
 add_library(jscript STATIC)
+
+set_target_properties(jscript PROPERTIES CMAKE_BUILD_TYPE "Release")
 
 target_sources(jscript
     PRIVATE
@@ -221,6 +223,8 @@ target_compile_definitions( jscript PRIVATE
     JSFILE
     STDC_HEADERS
     HAVE_CPP_NAMESPACE_STD
+    NDEBUG
+    $<$<CONFIG:Debug>:-U_DEBUG>
 )
 
 
