@@ -64,16 +64,20 @@ target_sources(jscript
         ../../jsarray.cpp
         ../../jsatom.cpp
         ../../jsbool.cpp
+        ../../jsclone.cpp
         ../../jscntxt.cpp
+        ../../jscompartment.cpp
         ../../jsdate.cpp
         ../../jsdbgapi.cpp
         ../../jsdhash.cpp
         ../../jsdtoa.cpp
         ../../jsemit.cpp
         ../../jsexn.cpp
+        ../../jsfriendapi.cpp
         ../../jsfun.cpp
         ../../jsgc.cpp
         ../../jsgcchunk.cpp
+        ../../jsgcstats.cpp
         ../../jshash.cpp
         ../../jsinterp.cpp
         ../../jsinvoke.cpp
@@ -89,9 +93,11 @@ target_sources(jscript
         ../../jsoplengen.cpp
         ../../jsparse.cpp
         ../../jsprf.cpp
+        ../../jsprobes.cpp
         ../../jspropertycache.cpp
         ../../jspropertytree.cpp
         ../../jsproxy.cpp
+        ../../jsreflect.cpp
         ../../jsregexp.cpp
         ../../jsscan.cpp
         ../../jsscope.cpp
@@ -103,8 +109,25 @@ target_sources(jscript
         ../../jsxdrapi.cpp
         ../../jsxml.cpp
         ../../prmjtime.cpp
+        ../../sharkctl.cpp
 # TraceJit
         ../../tracejit/Writer.cpp
+# V8 DTOA
+        ../../v8-dtoa/checks.cc
+        ../../v8-dtoa/conversions.cc
+        ../../v8-dtoa/diy-fp.cc
+        ../../v8-dtoa/fast-dtoa.cc
+        ../../v8-dtoa/platform.cc
+        ../../v8-dtoa/utils.cc
+        ../../v8-dtoa/v8-dtoa.cc
+# Yarr
+        ../../yarr/pcre/pcre_compile.cpp
+        ../../yarr/pcre/pcre_exec.cpp
+        ../../yarr/pcre/pcre_tables.cpp
+        ../../yarr/pcre/pcre_ucp_searchfuncs.cpp
+        ../../yarr/pcre/pcre_xclass.cpp
+        ../../yarr/yarr/RegexCompiler.cpp
+        ../../yarr/yarr/RegexJIT.cpp
 # Headers
         ../../jsapi.h
         ../../jsarena.h
@@ -186,6 +209,12 @@ if ((WIN32 OR LINUX) AND NOT APPLE)
 target_sources(jscript
     PRIVATE
 
+    # Assembler
+    ../../assembler/jit/ExecutableAllocator.cpp
+    ../../assembler/jit/ExecutableAllocatorOS2.cpp
+    ../../assembler/jit/ExecutableAllocatorPosix.cpp
+    ../../assembler/jit/ExecutableAllocatorWin.cpp
+
     # NanoJit
     ../../jsbuiltins.cpp
     ../../jstracer.cpp
@@ -231,6 +260,7 @@ target_compile_definitions( jscript PRIVATE
 if (WIN32)
 
     target_include_directories(jscript PRIVATE 
+        ${PROJECT_SOURCE_DIR}/../../assembler 
         ${PROJECT_SOURCE_DIR}/../../nanojit 
         ${PROJECT_SOURCE_DIR}/../../tracejit 
         ${PROJECT_SOURCE_DIR}/../../yarr 
@@ -248,6 +278,8 @@ if (WIN32)
         AVMPLUS_64BIT
         AVMPLUS_AMD64
         AVMPLUS_WIN32
+        ENABLE_ASSEMBLER=1
+        ENABLE_JIT=1
         ENABLE_METHODJIT=1
         ENABLE_MONOIC=1
         ENABLE_POLYIC_TYPED_ARRAY=1
@@ -331,6 +363,7 @@ else()
              )
     else()
         target_include_directories(jscript PRIVATE 
+            ${PROJECT_SOURCE_DIR}/../../assembler 
             ${PROJECT_SOURCE_DIR}/../../nanojit 
             ${PROJECT_SOURCE_DIR}/../../tracejit 
             ${PROJECT_SOURCE_DIR}/../../yarr 
@@ -343,6 +376,8 @@ else()
             AVMPLUS_AMD64
             AVMPLUS_LINUX
             AVMPLUS_UNIX
+            ENABLE_ASSEMBLER=1
+            ENABLE_JIT=1
             ENABLE_METHODJIT=1
             ENABLE_MONOIC=1
             ENABLE_POLYIC_TYPED_ARRAY=1
