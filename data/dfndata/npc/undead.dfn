@@ -1,3 +1,16 @@
+// Base undead with shared DFN tags
+[base_undead]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+NPCAI=2
+FLAG=NEUTRAL
+}
+
+//------------------------------------------------------------------------------------------------//
+
 [zombie]
 {
 NAME=#//a zombie
@@ -478,4 +491,18 @@ get=wraith
 NAME=#//a ghoul
 ID=0x0099
 SKIN=0x0
+}
+
+//lady of the snow - Base NPC with shared DFN tags
+[base_lady_of_the_snow]
+{
+GET=base_undead
+NAME=#//lady of the snow
+ID=0x0fc
+ORIGIN=se
+}
+
+[ladyofthesnow]
+{
+GETSE=ladyofthesnow_se
 }

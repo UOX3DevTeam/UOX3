@@ -417,3 +417,17 @@ ORIGIN=se
 {
 GETSE=yomotsuwarrior_se
 }
+
+//fan dancer - Base NPC with shared DFN tags
+[base_fan_dancer]
+{
+GET=base_humanoid
+NAME=#//fan dancer
+ID=0x0f7
+ORIGIN=se
+}
+
+[fandancer]
+{
+GETSE=fandancer_se
+}
