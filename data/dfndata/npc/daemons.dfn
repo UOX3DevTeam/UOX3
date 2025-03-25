@@ -1,3 +1,16 @@
+// Base daemons with shared DFN tags
+[base_daemons]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+NPCAI=2
+FLAG=NEUTRAL
+}
+
+//------------------------------------------------------------------------------------------------//
+
 [balron]
 {
 NAME=#//a balron
@@ -361,4 +374,18 @@ RUNS
 RACE=10
 FLAG=NEUTRAL
 ORIGIN=uor
+}
+
+//oni - Base NPC with shared DFN tags
+[base_oni]
+{
+GET=base_daemons
+NAME=#//oni
+ID=0x0f1
+ORIGIN=se
+}
+
+[oni]
+{
+GETSE=oni_se
 }
