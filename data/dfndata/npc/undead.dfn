@@ -506,3 +506,17 @@ ORIGIN=se
 {
 GETSE=ladyofthesnow_se
 }
+
+//revenant lion - Base NPC with shared DFN tags
+[base_revenant_lion]
+{
+GET=base_undead
+NAME=#//revenant lion
+ID=0x0fb
+ORIGIN=se
+}
+
+[revenantlion]
+{
+GETSE=revenant_lion_se
+}

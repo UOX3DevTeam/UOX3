@@ -1,5 +1,5 @@
 22/03/2025 - Dragon Slayer
-	Added - lesser hiryu mount, lady of the snow, fan dancer, oni, crane, gaman from UO SE.
+	Added - lesser hiryu mount, lady of the snow, fan dancer, oni, crane, gaman, revenant lion from UO SE.
 
 15/03/2025 - Dragon Slayer
 	Fixed an issue where timestamps for system timers could be set in the past due to float-to-UI32 casting precision loss. ( Thanks Xuri )
