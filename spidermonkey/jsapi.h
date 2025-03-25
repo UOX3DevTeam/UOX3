@@ -2075,7 +2075,7 @@ struct JSConstDoubleSpec {
  */
 struct JSPropertySpec {
     const char            *name;
-    int8                  tinyid;
+    intN                  tinyid;
     uint8                 flags;
     JSPropertyOp          getter;
     JSStrictPropertyOp    setter;
@@ -2269,7 +2269,7 @@ JS_SetPropertyAttributes(JSContext *cx, JSObject *obj, const char *name,
 
 extern JS_PUBLIC_API(JSBool)
 JS_DefinePropertyWithTinyId(JSContext *cx, JSObject *obj, const char *name,
-                            int8 tinyid, jsval value,
+                            intN tinyid, jsval value,
                             JSPropertyOp getter, JSStrictPropertyOp setter,
                             uintN attrs);
 
@@ -2409,7 +2409,7 @@ JS_SetUCPropertyAttributes(JSContext *cx, JSObject *obj,
 extern JS_PUBLIC_API(JSBool)
 JS_DefineUCPropertyWithTinyId(JSContext *cx, JSObject *obj,
                               const jschar *name, size_t namelen,
-                              int8 tinyid, jsval value,
+                              intN tinyid, jsval value,
                               JSPropertyOp getter, JSStrictPropertyOp setter,
                               uintN attrs);
 

@@ -86,7 +86,7 @@ ObjectType FindObjTypeFromString( std::string strToFind )
 //|	Purpose		-	Does a temporary effect (things like protection, night sight, and what not) frm
 //|					src to trg. If iType = 0, then it's a character, otherwise it's an item.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoTempEffect( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_DoTempEffect( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc < 7 )
 	{
@@ -163,7 +163,7 @@ void SysBroadcast( const std::string& txt );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Broadcasts specified string to all online players
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_BroadcastMessage( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_BroadcastMessage( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -185,7 +185,7 @@ JSBool SE_BroadcastMessage( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates and returns item object based on provided serial
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CalcItemFromSer( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CalcItemFromSer( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 && argc != 4 )
 	{
@@ -222,7 +222,7 @@ JSBool SE_CalcItemFromSer( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates and returns item object based on provided serial
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CalcMultiFromSer( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CalcMultiFromSer( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 && argc != 4 )
 	{
@@ -257,7 +257,7 @@ JSBool SE_CalcMultiFromSer( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if a character has engaged in combat within a given time span
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CheckTimeSinceLastCombat( JSContext* cx, [[maybe_unused]] JSObject* obj, uintN argc, jsval* argv, jsval* rval )
+JSBool SE_CheckTimeSinceLastCombat( JSContext *cx, uintN argc, jsval *vp )
 {
 	if (argc != 2)
 	{
@@ -300,7 +300,7 @@ JSBool SE_CheckTimeSinceLastCombat( JSContext* cx, [[maybe_unused]] JSObject* ob
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates and returns character object based on provided serial
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CalcCharFromSer( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CalcCharFromSer( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 && argc != 4 )
 	{
@@ -335,7 +335,7 @@ JSBool SE_CalcCharFromSer( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if a specific location is within an instant logout zone 
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CheckInstaLog( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CheckInstaLog( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 4 )
 	{
@@ -375,7 +375,7 @@ JSBool SE_CheckInstaLog( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a moving effect from source object to target object or location
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoMovingEffect( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_DoMovingEffect( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc < 6 )
 	{
@@ -510,7 +510,7 @@ JSBool SE_DoMovingEffect( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a static effect at a target location
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoStaticEffect( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_DoStaticEffect( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 7 )
 	{
@@ -536,7 +536,7 @@ JSBool SE_DoStaticEffect( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a random number between loNum and hiNum
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RandomNumber( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_RandomNumber( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -554,7 +554,7 @@ JSBool SE_RandomNumber( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Character creates specified item based on entry in CREATE DFNs
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_MakeItem( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_MakeItem( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 3 && argc != 4 )
 	{
@@ -593,7 +593,7 @@ JSBool SE_MakeItem( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the command level required to execute the specified command
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CommandLevelReq( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CommandLevelReq( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -623,7 +623,7 @@ JSBool SE_CommandLevelReq( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns whether specified command exists in command table or not
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CommandExists( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CommandExists( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -645,7 +645,7 @@ JSBool SE_CommandExists( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the name of the first command in the table. If nothing, it's a 0 length string.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_FirstCommand( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_FirstCommand( JSContext *cx, uintN argc, jsval *vp )
 {
 	const std::string tVal = Commands->FirstCommand();
 	JSString *strSpeech = nullptr;
@@ -667,7 +667,7 @@ JSBool SE_FirstCommand( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_u
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the name of the next command in the table. If nothing, it's a 0 length string.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_NextCommand( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_NextCommand( JSContext *cx, uintN argc, jsval *vp )
 {
 	const std::string tVal = Commands->NextCommand();
 	JSString *strSpeech = nullptr;
@@ -689,7 +689,7 @@ JSBool SE_NextCommand( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_un
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if there are no more commands left in the table.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_FinishedCommandList( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_FinishedCommandList( JSContext *cx, uintN argc, jsval *vp )
 {
 	*rval = BOOLEAN_TO_JSVAL( Commands->FinishedCommandList() );
 	return JS_TRUE;
@@ -704,7 +704,7 @@ JSBool SE_FinishedCommandList( [[maybe_unused]] JSContext *cx, [[maybe_unused]] 
 //|					script whose name corresponds with the command name, in the shape of
 //|						function command_CMDNAME( socket, cmdString )
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RegisterCommand( JSContext *cx, [[maybe_unused]] JSObject *obj , uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_RegisterCommand( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 3 )
 	{
@@ -734,7 +734,7 @@ JSBool SE_RegisterCommand( JSContext *cx, [[maybe_unused]] JSObject *obj , uintN
 //|					onSpellCast() event in the same script as a global listener for use of the
 //|					specified magic spell.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RegisterSpell( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_RegisterSpell( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -756,7 +756,7 @@ JSBool SE_RegisterSpell( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 //|					script is added under the SKILLUSE_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
 //|					and this function is called from a SkillRegistration() function
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RegisterSkill( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_RegisterSkill( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -807,7 +807,7 @@ JSBool SE_RegisterSkill( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 //|					if script is added under the PACKET_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
 //|					and this function is called from a PacketRegistration() function
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RegisterPacket( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_RegisterPacket( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -835,7 +835,7 @@ JSBool SE_RegisterPacket( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 //|					is added under the CONSOLE_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
 //|					and this function is called from a ConsoleRegistration() function
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RegisterKey( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_RegisterKey( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -878,7 +878,7 @@ JSBool SE_RegisterKey( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RegisterConsoleFunc( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_RegisterConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -904,7 +904,7 @@ JSBool SE_RegisterConsoleFunc( JSContext *cx, [[maybe_unused]] JSObject *obj, ui
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Disables a specified command on the server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DisableCommand( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_DisableCommand( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -921,7 +921,7 @@ JSBool SE_DisableCommand( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Disables specified key in console
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DisableKey( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_DisableKey( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -938,7 +938,7 @@ JSBool SE_DisableKey( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DisableConsoleFunc( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_DisableConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -955,7 +955,7 @@ JSBool SE_DisableConsoleFunc( JSContext *cx, [[maybe_unused]] JSObject *obj, uin
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Disables specified spell on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DisableSpell( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_DisableSpell( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -972,7 +972,7 @@ JSBool SE_DisableSpell( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables specified command on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_EnableCommand( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_EnableCommand( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -989,7 +989,7 @@ JSBool SE_EnableCommand( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables specified spell on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_EnableSpell( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_EnableSpell( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -1006,7 +1006,7 @@ JSBool SE_EnableSpell( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables specified key in console
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_EnableKey( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_EnableKey( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -1023,7 +1023,7 @@ JSBool SE_EnableKey( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_EnableConsoleFunc( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_EnableConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -1040,7 +1040,7 @@ JSBool SE_EnableConsoleFunc( JSContext *cx, [[maybe_unused]] JSObject *obj, uint
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the hour of the current UO day
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetHour( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetHour( JSContext *cx, uintN argc, jsval *vp )
 {
 	bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
 	UI08 hour = cwmWorldState->ServerData()->ServerTimeHours();
@@ -1060,7 +1060,7 @@ JSBool SE_GetHour( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *ob
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the minute of the current UO day
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetMinute( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetMinute( JSContext *cx, uintN argc, jsval *vp )
 {
 	UI08 minute = cwmWorldState->ServerData()->ServerTimeMinutes();
 	*rval = INT_TO_JSVAL( minute );
@@ -1072,7 +1072,7 @@ JSBool SE_GetMinute( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the day number of the server (UO days since server start)
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetDay( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetDay( JSContext *cx, uintN argc, jsval *vp )
 {
 	SI16 day = cwmWorldState->ServerData()->ServerTimeDay();
 	*rval = INT_TO_JSVAL( day );
@@ -1084,7 +1084,7 @@ JSBool SE_GetDay( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets the amonut of real life seconds associated with minute in the game
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_SecondsPerUOMinute( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_SecondsPerUOMinute( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc > 1 )
 	{
@@ -1105,7 +1105,7 @@ JSBool SE_SecondsPerUOMinute( [[maybe_unused]] JSContext *cx, [[maybe_unused]] J
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets timestamp for current server clock
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetCurrentClock( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetCurrentClock( JSContext *cx, uintN argc, jsval *vp )
 {
 	JS_NewNumberValue( cx, cwmWorldState->GetUICurrentTime(), rval );
 
@@ -1117,7 +1117,7 @@ JSBool SE_GetCurrentClock( JSContext *cx, [[maybe_unused]] JSObject *obj, [[mayb
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets timestamp for server startup time
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetStartTime( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetStartTime( JSContext *cx, uintN argc, jsval *vp )
 {
 	JS_NewNumberValue( cx, cwmWorldState->GetStartTime(), rval );
 
@@ -1129,7 +1129,7 @@ JSBool SE_GetStartTime( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_u
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets a random SOS area from list of such areas loaded from [SOSAREAS] section of regions.dfn
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetRandomSOSArea( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetRandomSOSArea( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -1201,7 +1201,7 @@ JSBool SE_GetRandomSOSArea( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Spawns NPC based on definition in NPC DFNs (or an NPCLIST)
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_SpawnNPC( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc < 5 || argc > 7 )
 	{
@@ -1244,7 +1244,7 @@ JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates item based on definition in item DFNs
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc < 3 )
 	{
@@ -1335,7 +1335,7 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //|	Purpose		-	Creates a "blank" item with default values from client's tiledata
 //|	Notes		-	Default values can be overridden through harditems.dfn
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CreateBlankItem( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CreateBlankItem( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 8 )
 	{
@@ -1396,7 +1396,7 @@ CMultiObj * BuildHouse( CSocket *s, UI16 houseEntry, bool checkLocation = true, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates multi based on definition in house DFNs
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CreateHouse( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CreateHouse( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc < 4 )
 	{
@@ -1462,7 +1462,7 @@ CMultiObj * BuildBaseMulti( UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 z
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates base multi based on ID from multi file
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CreateBaseMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CreateBaseMulti( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc < 4 )
 	{
@@ -1528,7 +1528,7 @@ JSBool SE_CreateBaseMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the max amount of kills allowed before a player turns red
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetMurderThreshold( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetMurderThreshold( JSContext *cx, uintN argc, jsval *vp )
 {
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->RepMaxKills() );
 	return JS_TRUE;
@@ -1539,7 +1539,7 @@ JSBool SE_GetMurderThreshold( [[maybe_unused]] JSContext *cx, [[maybe_unused]] J
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Rolls a die with specified number of sides, and adds a fixed value
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RollDice( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_RollDice( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc < 3 )
 	{
@@ -1564,7 +1564,7 @@ JSBool SE_RollDice( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *o
 //|					1 to 100 - allies
 //|					-1 to -100 - enemies
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_RaceCompareByRace( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_RaceCompareByRace( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -1582,7 +1582,7 @@ JSBool SE_RaceCompareByRace( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns multi at given coordinates, world and instanceId
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_FindMulti( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_FindMulti( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 && argc != 4 && argc != 5 )
 	{
@@ -1641,7 +1641,7 @@ JSBool SE_FindMulti( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns item closest to specified coordinates
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetItem( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetItem( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 4 && argc != 5 )
 	{
@@ -1681,7 +1681,7 @@ JSBool SE_GetItem( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns item of given ID that is closest to specified coordinates
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_FindItem( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 5 && argc != 6 )
 	{
@@ -1728,7 +1728,7 @@ JSBool SE_FindItem( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, j
 //|					4 - Same
 //|					5 - Count
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CompareGuildByGuild( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -1745,7 +1745,7 @@ JSBool SE_CompareGuildByGuild( [[maybe_unused]] JSContext *cx, [[maybe_unused]] 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Source town takes control over target town
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_PossessTown( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_PossessTown( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -1762,7 +1762,7 @@ JSBool SE_PossessTown( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if character's race is affected by given type of weather
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_IsRaceWeakToWeather( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_IsRaceWeakToWeather( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -1784,7 +1784,7 @@ JSBool SE_IsRaceWeakToWeather( [[maybe_unused]] JSContext *cx, [[maybe_unused]] 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns damage modifier for specified skill based on race
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetRaceSkillAdjustment( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetRaceSkillAdjustment( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -1801,7 +1801,7 @@ JSBool SE_GetRaceSkillAdjustment( [[maybe_unused]] JSContext *cx, [[maybe_unused
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Uses specified item
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_UseItem( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_UseItem( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -1931,7 +1931,7 @@ JSBool SE_UseItem( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Uses specified item
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_TriggerTrap( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_TriggerTrap( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -2003,7 +2003,7 @@ JSBool SE_TriggerTrap( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 //|	Notes		-	Takes at least 2 parameters, which is the script number to trigger and the
 //|					function name to call. Any extra parameters are extra parameters to the JS event
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_TriggerEvent( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc < 2 )
 	{
@@ -2041,7 +2041,7 @@ JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|	Notes		-	Takes 2 parameters, which is the script number to check and the
 //|					event name to check for
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoesEventExist( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_DoesEventExist( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -2070,7 +2070,7 @@ JSBool SE_DoesEventExist( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns owner of container item is contained in (if any)
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetPackOwner( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetPackOwner( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -2109,7 +2109,7 @@ JSBool SE_GetPackOwner( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns root container an item is contained in (if any)
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_FindRootContainer( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_FindRootContainer( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -2148,7 +2148,7 @@ JSBool SE_FindRootContainer( JSContext *cx, [[maybe_unused]] JSObject *obj, uint
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns targeted item stored on socket
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CalcTargetedItem( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CalcTargetedItem( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -2182,7 +2182,7 @@ JSBool SE_CalcTargetedItem( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns targeted character stored on socket
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CalcTargetedChar( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CalcTargetedChar( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -2216,7 +2216,7 @@ JSBool SE_CalcTargetedChar( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the map tile ID at given coordinates
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetTileIdAtMapCoord( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetTileIdAtMapCoord( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 3 )
 	{
@@ -2238,7 +2238,7 @@ JSBool SE_GetTileIdAtMapCoord( [[maybe_unused]] JSContext *cx, [[maybe_unused]] 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks for static within specified range of given location
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_StaticInRange( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_StaticInRange( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 5 )
 	{
@@ -2285,7 +2285,7 @@ JSBool SE_StaticInRange( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObje
 //|	Purpose		-	Checks for static at specified location
 //|	Notes		-	tile argument is optional; if not specified, will match ANY static found at location
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_StaticAt( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_StaticAt( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 4 && argc != 3 )
 	{
@@ -2321,7 +2321,7 @@ JSBool SE_StaticAt( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *o
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts string to number
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_StringToNum( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_StringToNum( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -2341,7 +2341,7 @@ JSBool SE_StringToNum( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts number to string
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_NumToString( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_NumToString( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -2361,7 +2361,7 @@ JSBool SE_NumToString( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts number to hex string
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_NumToHexString( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_NumToHexString( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -2399,7 +2399,7 @@ JSBool SE_GetRaceCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Using a passed in function name, executes a JS function on an area of characters
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_AreaCharacterFunction( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 3 && argc != 4 )
 	{
@@ -2481,7 +2481,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, [[maybe_unused]] JSObject *obj, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Using a passed in function name, executes a JS function on an area of items
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_AreaItemFunction( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_AreaItemFunction( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 3 && argc != 4 )
 	{
@@ -2559,7 +2559,7 @@ JSBool SE_AreaItemFunction( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows the JSScripts to pull entries from the dictionaries and convert them to a string.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetDictionaryEntry( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetDictionaryEntry( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc < 1 )
 	{
@@ -2588,7 +2588,7 @@ JSBool SE_GetDictionaryEntry( JSContext *cx, [[maybe_unused]] JSObject *obj, uin
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Globally yell a message from JS (Based on Commandlevel)
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_Yell( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_Yell( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc < 3 )
 	{
@@ -2671,7 +2671,7 @@ JSBool SE_Yell( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reloads certain server subsystems
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_Reload( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_Reload( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -2746,7 +2746,7 @@ JSBool SE_Reload( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Builds an info gump for specified static or map tile
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_SendStaticStats( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_SendStaticStats( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -2807,7 +2807,7 @@ JSBool SE_SendStaticStats( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the tile height of a specified tile (item)
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetTileHeight( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetTileHeight( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -2832,7 +2832,7 @@ bool SE_IterateFunctor( CBaseObject *a, UI32 &b, void *extraData )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through all world objects
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_IterateOver( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_IterateOver( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -2867,7 +2867,7 @@ bool SE_IterateSpawnRegionsFunctor( CSpawnRegion *a, UI32 &b, void *extraData )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops over all spawn regions in the world
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_IterateOverSpawnRegions( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_IterateOverSpawnRegions( JSContext *cx, uintN argc, jsval *vp )
 {
 	UI32 b = 0;
 	cScript *myScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
@@ -2895,7 +2895,7 @@ JSBool SE_IterateOverSpawnRegions( JSContext *cx, [[maybe_unused]] JSObject *obj
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets world bright level - brightest part of the regular day/night cycle
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_WorldBrightLevel( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_WorldBrightLevel( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc > 1 )
 	{
@@ -2917,7 +2917,7 @@ JSBool SE_WorldBrightLevel( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets world dark level - darkest part of the regular day/night cycle
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_WorldDarkLevel( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_WorldDarkLevel( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc > 1 )
 	{
@@ -2939,7 +2939,7 @@ JSBool SE_WorldDarkLevel( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets default light level in dungeons
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_WorldDungeonLevel( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_WorldDungeonLevel( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc > 1 )
 	{
@@ -2960,7 +2960,7 @@ JSBool SE_WorldDungeonLevel( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets enabled state of given spawn region
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetSpawnRegionFacetStatus( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetSpawnRegionFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc > 1 )
 	{
@@ -2988,7 +2988,7 @@ JSBool SE_GetSpawnRegionFacetStatus( [[maybe_unused]] JSContext *cx, [[maybe_unu
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets enabled state of spawn regions
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_SetSpawnRegionFacetStatus( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_SetSpawnRegionFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc > 2 )
 	{
@@ -3014,7 +3014,7 @@ JSBool SE_SetSpawnRegionFacetStatus( [[maybe_unused]] JSContext *cx, [[maybe_unu
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets enabled state of given moongates
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetMoongateFacetStatus( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetMoongateFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -3042,7 +3042,7 @@ JSBool SE_GetMoongateFacetStatus( [[maybe_unused]] JSContext *cx, [[maybe_unused
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets enabled state of moongates
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_SetMoongateFacetStatus( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_SetMoongateFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -3069,7 +3069,7 @@ JSBool SE_SetMoongateFacetStatus( [[maybe_unused]] JSContext *cx, [[maybe_unused
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns socket based on provided index, from list of connected clients
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetSocketFromIndex( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetSocketFromIndex( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -3102,7 +3102,7 @@ JSBool SE_GetSocketFromIndex( JSContext *cx, [[maybe_unused]] JSObject *obj, uin
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reload specified JS file by scriptId
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ReloadJSFile( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool SE_ReloadJSFile( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -3127,7 +3127,7 @@ JSBool SE_ReloadJSFile( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets amount of resource areas to split the world into
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ResourceArea( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_ResourceArea( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 0 )
 	{
@@ -3149,7 +3149,7 @@ JSBool SE_ResourceArea( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets amount of resources (logs/ore/fish) in each resource area on the server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ResourceAmount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_ResourceAmount( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc > 2 || argc == 0 )
 	{
@@ -3198,7 +3198,7 @@ JSBool SE_ResourceAmount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets respawn timers for ore/log resources on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ResourceTime( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_ResourceTime( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc > 2 || argc == 0 )
 	{
@@ -3247,7 +3247,7 @@ JSBool SE_ResourceTime( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a resource object allowing JS to modify resource data.
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ResourceRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_ResourceRegion( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 3 )
 	{
@@ -3279,7 +3279,7 @@ JSBool SE_ResourceRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if object is a valid and not nullptr or marked for deletion
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ValidateObject( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_ValidateObject( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -3308,7 +3308,7 @@ JSBool SE_ValidateObject( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns damage bonuses based on race/weather weakness and character skills
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ApplyDamageBonuses( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_ApplyDamageBonuses( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 6 )
 	{
@@ -3381,7 +3381,7 @@ JSBool SE_ApplyDamageBonuses( JSContext *cx, [[maybe_unused]] JSObject *obj, uin
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns defense modifiers based on shields/parrying, armor values and elemental damage
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_ApplyDefenseModifiers( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_ApplyDefenseModifiers( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 7 )
 	{
@@ -3450,7 +3450,7 @@ JSBool SE_ApplyDefenseModifiers( JSContext *cx, [[maybe_unused]] JSObject *obj, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if hostile action done by one character versus another will result in criminal flag
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_WillResultInCriminal( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_WillResultInCriminal( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -3491,7 +3491,7 @@ JSBool SE_WillResultInCriminal( JSContext *cx, [[maybe_unused]] JSObject *obj, u
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create a party with specified character as the party leader
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CreateParty( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CreateParty( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -3541,7 +3541,7 @@ JSBool SE_CreateParty( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets or sets Moon phases on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_Moon( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_Moon( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc > 2 || argc == 0 )
 	{
@@ -3566,7 +3566,7 @@ JSBool SE_Moon( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a specified region object
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetTownRegion( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetTownRegion( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -3600,7 +3600,7 @@ JSBool SE_GetTownRegion( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns region object associated with a specific location 
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetTownRegionFromXY( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetTownRegionFromXY( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 4 )
 	{
@@ -3633,7 +3633,7 @@ JSBool SE_GetTownRegionFromXY( JSContext *cx, [[maybe_unused]] JSObject *obj, ui
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a specified spawn region object
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetSpawnRegion( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetSpawnRegion( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 && argc != 4 )
 	{
@@ -3715,7 +3715,7 @@ JSBool SE_GetSpawnRegionCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns map elevation at given coordinates
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetMapElevation( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetMapElevation( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 3 )
 	{
@@ -3738,7 +3738,7 @@ JSBool SE_GetMapElevation( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
 //| Notes		-	First checks if player is in a static building. If false, checks if there's a multi
 //|					at the same location as the player, and assumes they are in the building if true
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_IsInBuilding( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_IsInBuilding( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 6 )
 	{
@@ -3783,7 +3783,7 @@ JSBool SE_IsInBuilding( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any statics at given coordinates has a specific flag
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CheckStaticFlag( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CheckStaticFlag( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 5 )
 	{
@@ -3807,7 +3807,7 @@ JSBool SE_CheckStaticFlag( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any dynamics at given coordinates has a specific flag
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CheckDynamicFlag( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CheckDynamicFlag( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 6 )
 	{
@@ -3832,7 +3832,7 @@ JSBool SE_CheckDynamicFlag( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether tile with given ID has a specific flag
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_CheckTileFlag( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_CheckTileFlag( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
 	{
@@ -3853,7 +3853,7 @@ JSBool SE_CheckTileFlag( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObje
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if statics at/above given coordinates blocks movement, etc
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoesStaticBlock( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_DoesStaticBlock( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 5 )
 	{
@@ -3876,7 +3876,7 @@ JSBool SE_DoesStaticBlock( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if dynamics at/above given coordinates blocks movement, etc
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoesDynamicBlock( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_DoesDynamicBlock( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 9 )
 	{
@@ -3903,7 +3903,7 @@ JSBool SE_DoesDynamicBlock( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if map tile at/above given coordinates blocks movement, etc
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoesMapBlock( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_DoesMapBlock( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 8 )
 	{
@@ -3929,7 +3929,7 @@ JSBool SE_DoesMapBlock( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if characters at/above given coordinates blocks movement, etc
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoesCharacterBlock( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_DoesCharacterBlock( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 5 )
 	{
@@ -3952,7 +3952,7 @@ JSBool SE_DoesCharacterBlock( [[maybe_unused]] JSContext *cx, [[maybe_unused]] J
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes a file from the server's harddrive...
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DeleteFile( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc < 1 || argc > 3 )
 	{
@@ -4021,7 +4021,7 @@ JSBool SE_DeleteFile( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts an UO era string to an int value for easier comparison in JavaScripts
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_EraStringToNum( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_EraStringToNum( JSContext *cx, uintN argc, jsval *vp )
 {
 	*rval = reinterpret_cast<long>(nullptr);
 
@@ -4058,7 +4058,7 @@ JSBool SE_EraStringToNum( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets value of specified server setting
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 {
 	*rval = reinterpret_cast<long>(nullptr);
 
@@ -5214,7 +5214,7 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if a specific client feature is enabled on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetClientFeature( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetClientFeature( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -5232,7 +5232,7 @@ JSBool SE_GetClientFeature( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if a specific Server feature is enabled on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetServerFeature( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_GetServerFeature( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -5250,7 +5250,7 @@ JSBool SE_GetServerFeature( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of accounts on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetAccountCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetAccountCount( JSContext *cx, uintN argc, jsval *vp )
 {
 	*rval = INT_TO_JSVAL( Accounts->size() );
 	return JS_TRUE;
@@ -5261,7 +5261,7 @@ JSBool SE_GetAccountCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of players online on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetPlayerCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetPlayerCount( JSContext *cx, uintN argc, jsval *vp )
 {
 	*rval = INT_TO_JSVAL( cwmWorldState->GetPlayersOnline() );
 	return JS_TRUE;
@@ -5272,7 +5272,7 @@ JSBool SE_GetPlayerCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of items on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetItemCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetItemCount( JSContext *cx, uintN argc, jsval *vp )
 {
 	*rval = INT_TO_JSVAL( ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ));
 	return JS_TRUE;
@@ -5283,7 +5283,7 @@ JSBool SE_GetItemCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of multis on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetMultiCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetMultiCount( JSContext *cx, uintN argc, jsval *vp )
 {
 	*rval = INT_TO_JSVAL( ObjectFactory::GetSingleton().CountOfObjects( OT_MULTI ));
 	return JS_TRUE;
@@ -5294,7 +5294,7 @@ JSBool SE_GetMultiCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObje
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of characters on server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetCharacterCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetCharacterCount( JSContext *cx, uintN argc, jsval *vp )
 {
 	*rval = INT_TO_JSVAL( ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ));
 	return JS_TRUE;
@@ -5305,7 +5305,7 @@ JSBool SE_GetCharacterCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets server version as a string
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetServerVersionString( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetServerVersionString( JSContext *cx, uintN argc, jsval *vp )
 {
 	std::string versionString = CVersionClass::GetVersion() + "." + CVersionClass::GetBuild() + " [" + OS_STR + "]";
 	JSString *tString = JS_NewStringCopyZ( cx, versionString.c_str() );
@@ -5318,7 +5318,7 @@ JSBool SE_GetServerVersionString( JSContext *cx, [[maybe_unused]] JSObject *obj,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the distance between two locations, or two objects - or a combination of both
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DistanceBetween( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_DistanceBetween( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 && argc != 3 && argc != 4 && argc != 6 )
 	{
@@ -5382,7 +5382,7 @@ JSBool SE_DistanceBetween( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the value of the BASEITEMSERIAL constant
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_BASEITEMSERIAL( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_BASEITEMSERIAL( JSContext *cx, uintN argc, jsval *vp )
 {
 	JS_NewNumberValue( cx, BASEITEMSERIAL, rval );
 	return JS_TRUE;
@@ -5393,7 +5393,7 @@ JSBool SE_BASEITEMSERIAL( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the value of the INVALIDSERIAL constant
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_INVALIDSERIAL( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_INVALIDSERIAL( JSContext *cx, uintN argc, jsval *vp )
 {
 	JS_NewNumberValue( cx, INVALIDSERIAL, rval );
 	return JS_TRUE;
@@ -5404,7 +5404,7 @@ JSBool SE_INVALIDSERIAL( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the value of the INVALIDID constant
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_INVALIDID( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_INVALIDID( JSContext *cx, uintN argc, jsval *vp )
 {
 	JS_NewNumberValue( cx, INVALIDID, rval );
 	return JS_TRUE;
@@ -5415,7 +5415,7 @@ JSBool SE_INVALIDID( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unus
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the value of the INVALIDCOLOUR constant
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_INVALIDCOLOUR( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_INVALIDCOLOUR( JSContext *cx, uintN argc, jsval *vp )
 {
 	JS_NewNumberValue( cx, INVALIDCOLOUR, rval );
 	return JS_TRUE;

@@ -1,78 +1,77 @@
 //o------------------------------------------------------------------------------------------------o
-//|	File		-	UOXJSPropertyFuncts.cpp
+//|	File		-	UOXJSPropertyOpts.cpp
 //|	Date		-	12/14/2001
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	1.0		14th December, 2001 Initial implementation
 //|							Includes property getters for CItem and CChar, and property
 //|							setters for CChar
 //o------------------------------------------------------------------------------------------------o
-#ifndef __UOXJSPropertyFuncs__
-#define __UOXJSPropertyFuncs__
+#ifndef __UOXJSPropertyOps__
+#define __UOXJSPropertyOps__
 
-typedef JSBool ( JSPropertyFunc )( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 
-JSPropertyFunc CSpellsProps_getProperty;
-JSPropertyFunc CSpellProps_getProperty;
-JSPropertyFunc CSpellProps_setProperty;
+JSPropertyOp CSpellsProps_getProperty;
+JSPropertyOp CSpellProps_getProperty;
+JSStrictPropertyOp CSpellProps_setProperty;
 
-JSPropertyFunc CGlobalSkillsProps_getProperty;
-JSPropertyFunc CGlobalSkillProps_getProperty;
-JSPropertyFunc CGlobalSkillProps_setProperty;
+JSPropertyOp CGlobalSkillsProps_getProperty;
+JSPropertyOp CGlobalSkillProps_getProperty;
+JSStrictPropertyOp CGlobalSkillProps_setProperty;
 
-JSPropertyFunc CCreateEntriesProps_getProperty;
-JSPropertyFunc CCreateEntryProps_getProperty;
-JSPropertyFunc CCreateEntryProps_setProperty;
+JSPropertyOp CCreateEntriesProps_getProperty;
+JSPropertyOp CCreateEntryProps_getProperty;
+JSStrictPropertyOp CCreateEntryProps_setProperty;
 
-JSPropertyFunc CTimerProps_getProperty;
+JSPropertyOp CTimerProps_getProperty;
 
-JSPropertyFunc CItemProps_getProperty;
-JSPropertyFunc CItemProps_setProperty;
-JSPropertyFunc CCharacterProps_getProperty;
-JSPropertyFunc CCharacterProps_setProperty;
+JSPropertyOp CItemProps_getProperty;
+JSStrictPropertyOp CItemProps_setProperty;
+JSPropertyOp CCharacterProps_getProperty;
+JSStrictPropertyOp CCharacterProps_setProperty;
 JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
 
-JSPropertyFunc CRegionProps_getProperty;
-JSPropertyFunc CRegionProps_setProperty;
+JSPropertyOp CRegionProps_getProperty;
+JSStrictPropertyOp CRegionProps_setProperty;
 
-JSPropertyFunc CSpawnRegionProps_getProperty;
-JSPropertyFunc CSpawnRegionProps_setProperty;
+JSPropertyOp CSpawnRegionProps_getProperty;
+JSStrictPropertyOp CSpawnRegionProps_setProperty;
 
-JSPropertyFunc CGuildProps_getProperty;
-JSPropertyFunc CGuildProps_setProperty;
-JSPropertyFunc CGuildsProps_getProperty;
-JSPropertyFunc CGuildsProps_setProperty;
+JSPropertyOp CGuildProps_getProperty;
+JSStrictPropertyOp CGuildProps_setProperty;
+JSPropertyOp CGuildsProps_getProperty;
+JSStrictPropertyOp CGuildsProps_setProperty;
 
-JSPropertyFunc CRaceProps_getProperty;
-JSPropertyFunc CRaceProps_setProperty;
+JSPropertyOp CRaceProps_getProperty;
+JSStrictPropertyOp CRaceProps_setProperty;
 
-JSPropertyFunc CSocketProps_getProperty;
-JSPropertyFunc CSocketProps_setProperty;
+JSPropertyOp CSocketProps_getProperty;
+JSStrictPropertyOp CSocketProps_setProperty;
 JSBool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
 
-JSPropertyFunc CSkillsProps_getProperty;
-JSPropertyFunc CSkillsProps_setProperty;
+JSPropertyOp CSkillsProps_getProperty;
+JSStrictPropertyOp CSkillsProps_setProperty;
 
-JSPropertyFunc CGumpDataProps_getProperty;
+JSPropertyOp CGumpDataProps_getProperty;
 
-JSPropertyFunc CFileProps_getProperty;
-JSPropertyFunc CFileProps_setProperty;
+JSPropertyOp CFileProps_getProperty;
+JSStrictPropertyOp CFileProps_setProperty;
 
-JSPropertyFunc CAccountProps_getProperty;
-JSPropertyFunc CAccountProps_setProperty;
+JSPropertyOp CAccountProps_getProperty;
+JSStrictPropertyOp CAccountProps_setProperty;
 
-JSPropertyFunc CConsoleProps_getProperty;
-JSPropertyFunc CConsoleProps_setProperty;
+JSPropertyOp CConsoleProps_getProperty;
+JSStrictPropertyOp CConsoleProps_setProperty;
 
-JSPropertyFunc CScriptSectionProps_getProperty;
-JSPropertyFunc CScriptSectionProps_setProperty;
+JSPropertyOp CScriptSectionProps_getProperty;
+JSStrictPropertyOp CScriptSectionProps_setProperty;
 
-JSPropertyFunc CScriptProps_getProperty;
+JSPropertyOp CScriptProps_getProperty;
 
-JSPropertyFunc CResourceProps_getProperty;
-JSPropertyFunc CResourceProps_setProperty;
+JSPropertyOp CResourceProps_getProperty;
+JSStrictPropertyOp CResourceProps_setProperty;
 
-JSPropertyFunc CPartyProps_getProperty;
-JSPropertyFunc CPartyProps_setProperty;
+JSPropertyOp CPartyProps_getProperty;
+JSStrictPropertyOp CPartyProps_setProperty;
 JSBool CParty_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
 
 #endif

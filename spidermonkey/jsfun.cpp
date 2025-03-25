@@ -1647,13 +1647,13 @@ fun_getProperty(JSContext *cx, JSObject *obj, jsid id, Value *vp)
 
 struct LazyFunctionDataProp {
     uint16      atomOffset;
-    int8        tinyid;
+    intN        tinyid;
     uint8       attrs;
 };
 
 struct PoisonPillProp {
     uint16       atomOffset;
-    int8         tinyid;
+    intN         tinyid;
 };
 
 /* NB: no sentinels at ends -- use JS_ARRAY_LENGTH to bound loops. */

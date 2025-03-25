@@ -16,7 +16,7 @@ inline JSClass global_class =
 	JS_PropertyStub,   // addProperty;
 	JS_PropertyStub,	 // delProperty;
 	JS_PropertyStub,	 // getProperty;
-	JS_PropertyStub,	 // setProperty;
+	JS_StrictPropertyStub,	 // setProperty;
 	JS_EnumerateStub,	 // enumerate;
 	JS_ResolveStub,		 // resolve;
 	JS_ConvertStub,		 // convert;
@@ -31,7 +31,7 @@ inline JSClass uox_class =
 	JS_PropertyStub,
 	JS_PropertyStub,
 	CScriptProps_getProperty,
-	JS_PropertyStub,
+	JS_StrictPropertyStub,
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
@@ -61,7 +61,7 @@ inline JSClass UOXSpells_class =
 	JS_PropertyStub,
 	JS_PropertyStub,
 	CSpellsProps_getProperty,
-	JS_PropertyStub,
+	JS_StrictPropertyStub,
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
@@ -91,7 +91,7 @@ inline  JSClass UOXGlobalSkills_class =
 	JS_PropertyStub,
 	JS_PropertyStub,
 	CGlobalSkillsProps_getProperty,
-	JS_PropertyStub,
+	JS_StrictPropertyStub,
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
@@ -121,7 +121,7 @@ inline JSClass UOXCreateEntries_class =
 	JS_PropertyStub,
 	JS_PropertyStub,
 	CCreateEntriesProps_getProperty,
-	JS_PropertyStub,
+	JS_StrictPropertyStub,
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
@@ -136,7 +136,7 @@ inline JSClass UOXTimer_class =
 	JS_PropertyStub,
 	JS_PropertyStub,
 	CTimerProps_getProperty,
-	JS_PropertyStub,
+	JS_StrictPropertyStub,
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
@@ -296,23 +296,6 @@ inline JSClass UOXGuild_class =
 	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
-/* Unused
-static JSClass UOXGuilds_class =
-{
-	"UOXGuilds",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CGuildsProps_getProperty,
-	CGuildsProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
-};
-*/
-
 inline JSClass UOXRegion_class =
 {
 	"UOXRegion",
@@ -371,7 +354,7 @@ inline JSClass UOXFile_class =
 	JS_PropertyStub,
 	JS_PropertyStub,
 	JS_PropertyStub,
-	JS_PropertyStub,
+	JS_StrictPropertyStub,
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
@@ -387,7 +370,7 @@ inline JSClass UOXGump_class =
 	JS_PropertyStub,			// addProperty
 	JS_PropertyStub,			// delProperty
 	JS_PropertyStub,			// getProperty
-	JS_PropertyStub,			// setProperty
+	JS_StrictPropertyStub,			// setProperty
 	JS_EnumerateStub,			// enumerate
 	JS_ResolveStub,				// resolve
 	JS_ConvertStub,				// convert
@@ -406,7 +389,7 @@ inline JSClass UOXGumpData_class =
 	JS_PropertyStub,
 	JS_PropertyStub,
 	CGumpDataProps_getProperty,
-	JS_PropertyStub,
+	JS_StrictPropertyStub,
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
@@ -444,23 +427,6 @@ inline JSClass UOXConsole_class =
 	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
-/* Unused
-static JSClass UOXScriptSection_class =
-{
-	"UOXScriptSection",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CScriptSectionProps_getProperty,
-	CScriptSectionProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
-};
-*/
-
 inline JSClass UOXResource_class =
 {
 	"UOXResource",
@@ -483,7 +449,7 @@ inline JSClass UOXPacket_class =
 	JS_PropertyStub,
 	JS_PropertyStub,
 	JS_PropertyStub,
-	JS_PropertyStub,
+	JS_StrictPropertyStub,
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
