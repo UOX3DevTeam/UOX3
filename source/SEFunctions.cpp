@@ -1317,6 +1317,7 @@ JSBool SE_SpawnNPC( JSContext *cx, uintN argc, jsval *vp )
 JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	if( argc < 3 )
 	{
@@ -1410,6 +1411,7 @@ JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp )
 JSBool SE_CreateBlankItem( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	if( argc != 8 )
 	{
@@ -1472,6 +1474,7 @@ CMultiObj * BuildHouse( CSocket *s, UI16 houseEntry, bool checkLocation = true, 
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CreateHouse( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc < 4 )
@@ -1541,6 +1544,7 @@ CMultiObj * BuildBaseMulti( UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 z
 JSBool SE_CreateBaseMulti( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	if( argc < 4 )
 	{
@@ -1900,6 +1904,7 @@ JSBool SE_GetRaceSkillAdjustment( JSContext *cx, uintN argc, jsval *vp )
 JSBool SE_UseItem( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	if( argc != 2 )
 	{
@@ -2032,6 +2037,7 @@ JSBool SE_UseItem( JSContext *cx, uintN argc, jsval *vp )
 JSBool SE_TriggerTrap( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	if( argc != 2 )
 	{
@@ -2106,6 +2112,7 @@ JSBool SE_TriggerTrap( JSContext *cx, uintN argc, jsval *vp )
 JSBool SE_TriggerEvent( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	if( argc < 2 )
 	{
@@ -3414,6 +3421,7 @@ JSBool SE_ResourceTime( JSContext *cx, uintN argc, jsval *vp )
 JSBool SE_ResourceRegion( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	if( argc != 3 )
 	{
