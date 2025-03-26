@@ -60,6 +60,15 @@ void InitStringToObjType( void )
 	stringToObjType["BOAT"]			= OT_BOAT;
 }
 
+std::string JS_GetStringBytes( JSContext* cx, jsval val )
+{
+	JSString* str = JS_ValueToString( cx, val );
+	char* chars = JS_EncodeString( cx, str );
+	std::string nnpcNum(chars);
+	js_free( chars );
+	return nnpcNum;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	FindObjTypeFromString()
 //o------------------------------------------------------------------------------------------------o
@@ -172,7 +181,7 @@ JSBool SE_BroadcastMessage( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 	jsval *argv = JS_ARGV( cx, vp );
-	std::string trgMessage = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string trgMessage = JS_GetStringBytes( cx, argv[0] );
 	if( trgMessage.empty() || trgMessage.length() == 0 )
 	{
 		ScriptError( cx, oldstrutil::format( "BroadcastMessage: Invalid string (%s)", trgMessage.c_str() ).c_str() );
@@ -198,7 +207,7 @@ JSBool SE_CalcItemFromSer( JSContext *cx, uintN argc, jsval *vp )
 	jsval *argv = JS_ARGV( cx, vp );
 	if( argc == 1 )
 	{
-		std::string str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+		std::string str = JS_GetStringBytes( cx, argv[0]);
 		targSerial = oldstrutil::value<SERIAL>( str );
 	}
 	else
@@ -621,7 +630,7 @@ JSBool SE_CommandLevelReq( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "CommandLevelReq: Invalid number of arguments (takes 1)" );
 		return JS_FALSE;
 	}
-	std::string test = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string test = JS_GetStringBytes( cx, argv[0]);
 	if( test.empty() || test.length() == 0 )
 	{
 		ScriptError( cx, "CommandLevelReq: Invalid command name" );
@@ -653,7 +662,7 @@ JSBool SE_CommandExists( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "CommandExists: Invalid number of arguments (takes 1)" );
 		return JS_FALSE;
 	}
-	std::string test = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string test = JS_GetStringBytes( cx, argv[0]);
 	if( test.empty() || test.length() == 0 )
 	{
 		ScriptError( cx, "CommandExists: Invalid command name" );
@@ -736,7 +745,7 @@ JSBool SE_RegisterCommand( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "  RegisterCommand: Invalid number of arguments (takes 4)" );
 		return JS_FALSE;
 	}
-	std::string toRegister	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string toRegister	= JS_GetStringBytes( cx, argv[0]);
 	UI08 execLevel			= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
 	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
 	UI16 scriptId			= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
@@ -876,7 +885,7 @@ JSBool SE_RegisterKey( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 	JSEncapsulate encaps( cx, &( argv[0] ));
-	std::string toRegister	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
+	std::string toRegister	= JS_GetStringBytes( cx, argv[1]);
 	UI16 scriptId			= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	if( scriptId == 0xFFFF )
@@ -920,8 +929,8 @@ JSBool SE_RegisterConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "RegisterConsoleFunc: Invalid number of arguments (takes 2)" );
 		return JS_FALSE;
 	}
-	std::string funcToRegister	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
-	std::string toRegister		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
+	std::string funcToRegister	= JS_GetStringBytes( cx, argv[0]);
+	std::string toRegister		= JS_GetStringBytes( cx, argv[1]);
 	UI16 scriptId				= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	if( scriptId == 0xFFFF )
@@ -948,7 +957,7 @@ JSBool SE_DisableCommand( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "DisableCommand: Invalid number of arguments (takes 1)" );
 		return JS_FALSE;
 	}
-	std::string toDisable = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string toDisable = JS_GetStringBytes( cx, argv[0]);
 	Commands->SetCommandStatus( toDisable, false );
 	return JS_TRUE;
 }
@@ -986,7 +995,7 @@ JSBool SE_DisableConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "DisableConsoleFunc: Invalid number of arguments (takes 1)" );
 		return JS_FALSE;
 	}
-	std::string toDisable = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string toDisable = JS_GetStringBytes( cx, argv[0]);
 	Console.SetFuncStatus( toDisable, false );
 	return JS_TRUE;
 }
@@ -1024,7 +1033,7 @@ JSBool SE_EnableCommand( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "EnableCommand: Invalid number of arguments (takes 1)" );
 		return JS_FALSE;
 	}
-	std::string toEnable = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string toEnable = JS_GetStringBytes( cx, argv[0]);
 	Commands->SetCommandStatus( toEnable, true );
 	return JS_TRUE;
 }
@@ -1081,7 +1090,7 @@ JSBool SE_EnableConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "EnableConsoleFunc: Invalid number of arguments (takes 1)" );
 		return JS_FALSE;
 	}
-	std::string toEnable	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string toEnable	= JS_GetStringBytes( cx, argv[0]);
 	Console.SetFuncStatus( toEnable, false );
 	return JS_TRUE;
 }
@@ -1271,10 +1280,7 @@ JSBool SE_SpawnNPC( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	CChar *cMade		= nullptr;
-	//std::string nnpcNum	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
-	JSString* str = JS_ValueToString(cx, argv[0]);
-	char* chars = JS_EncodeString(cx, str);
-	std::string nnpcNum(chars);
+	std::string nnpcNum	= JS_GetStringBytes( cx, argv[0] );
 	UI16 x				= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 	UI16 y				= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 	SI08 z				= static_cast<SI08>( JSVAL_TO_INT( argv[3] ));
@@ -1332,7 +1338,7 @@ JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp )
 		myChar					= static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
 	}
 
-	std::string bpSectNumber	= JS_GetStringBytes( JS_ValueToString( cx, argv[2] ));
+	std::string bpSectNumber	= JS_GetStringBytes( cx, argv[2]);
 	bool bInPack				= true;
 	UI16 iAmount				= 1;
 	ObjectType itemType			= OT_ITEM;
@@ -1346,7 +1352,7 @@ JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp )
 	}
 	if( argc > 4 )
 	{
-		std::string objType	= JS_GetStringBytes( JS_ValueToString( cx, argv[4] ));
+		std::string objType	= JS_GetStringBytes( cx, argv[4]);
 		itemType			= FindObjTypeFromString( objType );
 	}
 	if( argc > 5 )
@@ -1426,10 +1432,10 @@ JSBool SE_CreateBlankItem( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	SI32 amount				= static_cast<SI32>( JSVAL_TO_INT( argv[2] ));
-	std::string itemName	= JS_GetStringBytes( JS_ValueToString( cx, argv[3] ));
+	std::string itemName	= JS_GetStringBytes( cx, argv[3]);
 	UI16 itemId				= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
 	UI16 colour				= static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
-	std::string objType		= JS_GetStringBytes( JS_ValueToString( cx, argv[6] ));
+	std::string objType		= JS_GetStringBytes( cx, argv[6]);
 	ObjectType itemType		= FindObjTypeFromString( objType );
 	bool inPack				= ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
 
@@ -2107,7 +2113,7 @@ JSBool SE_TriggerEvent( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	UI16 scriptNumberToFire = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	char *eventToFire		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
+	char *eventToFire		= JS_GetStringBytes( cx, argv[1]);
 	cScript *toExecute		= JSMapping->GetScript( scriptNumberToFire );
 
 	if( toExecute == nullptr || eventToFire == nullptr )
@@ -2148,7 +2154,7 @@ JSBool SE_DoesEventExist( JSContext *cx, uintN argc, jsval *vp )
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) );
 	UI16 scriptNumberToCheck = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	char *eventToCheck		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
+	char *eventToCheck		= JS_GetStringBytes( cx, argv[1]);
 	cScript *toExecute		= JSMapping->GetScript( scriptNumberToCheck );
 
 	if( toExecute == nullptr || eventToCheck == nullptr )
@@ -2443,7 +2449,7 @@ JSBool SE_StringToNum( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	std::string str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string str = JS_GetStringBytes( cx, argv[0]);
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( std::stoi( str, nullptr, 0 )) );
 	return JS_TRUE;
@@ -2531,7 +2537,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp )
 	// Do parameter validation here
 	JSObject *srcSocketObj	= nullptr;
 	CSocket *srcSocket		= nullptr;
-	char *trgFunc			= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	char *trgFunc			= JS_GetStringBytes( cx, argv[0]);
 	if( trgFunc == nullptr )
 	{
 		ScriptError( cx, "AreaCharacterFunction: Argument 0 not a valid string" );
@@ -2615,7 +2621,7 @@ JSBool SE_AreaItemFunction( JSContext *cx, uintN argc, jsval *vp )
 	// Do parameter validation here
 	JSObject *srcSocketObj	= nullptr;
 	CSocket *srcSocket		= nullptr;
-	char *trgFunc			= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	char *trgFunc			= JS_GetStringBytes( cx, argv[0]);
 	if( trgFunc == nullptr )
 	{
 		ScriptError( cx, "AreaItemFunction: Argument 0 not a valid string" );
@@ -2725,7 +2731,7 @@ JSBool SE_Yell( JSContext *cx, uintN argc, jsval *vp )
 	JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
 	CSocket *mySock			= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
 	CChar *myChar			= mySock->CurrcharObj();
-	std::string textToYell	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
+	std::string textToYell	= JS_GetStringBytes( cx, argv[1]);
 	UI08 commandLevel		= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
 
 	std::string yellTo = "";
@@ -2975,7 +2981,7 @@ JSBool SE_IterateOver( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	UI32 b				= 0;
-	std::string objType = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string objType = JS_GetStringBytes( cx, argv[0]);
 	ObjectType toCheck	= FindObjTypeFromString( objType );
 	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ));
 	if( myScript != nullptr )
@@ -3289,7 +3295,7 @@ JSBool SE_ResourceArea( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
+	auto resType = std::string( JS_GetStringBytes( cx, argv[0]));
 	resType = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( resType, "//" )));
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( cwmWorldState->ServerData()->ResourceAreaSize() ) );
@@ -3312,7 +3318,7 @@ JSBool SE_ResourceAmount( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, oldstrutil::format( "ResourceAmount: Invalid Count of Arguments: %d", argc ).c_str() );
 		return JS_FALSE;
 	}
-	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
+	auto resType = std::string( JS_GetStringBytes( cx, argv[0]));
 	resType = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( resType, "//" )));
 
 	if( argc == 2 )
@@ -3364,7 +3370,7 @@ JSBool SE_ResourceTime( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
+	auto resType = std::string( JS_GetStringBytes( cx, argv[0]));
 	resType = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( resType, "//" )));
 	if( argc == 2 )
 	{
@@ -4160,11 +4166,11 @@ JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	char *fileName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	char *fileName = JS_GetStringBytes( cx, argv[0]);
 	char *subFolderName = nullptr;
 	if( argc >= 2 )
 	{
-		subFolderName = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
+		subFolderName = JS_GetStringBytes( cx, argv[1]);
 	}
 	bool useScriptDataDir = false;
 	if( argc >= 3 )
@@ -4232,7 +4238,7 @@ JSBool SE_EraStringToNum( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	std::string eraString = oldstrutil::upper( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
+	std::string eraString = oldstrutil::upper( JS_GetStringBytes( cx, argv[0]));
 	if( !eraString.empty() )
 	{
 		UI08 eraNum = static_cast<UI08>( cwmWorldState->ServerData()->EraStringToEnum( eraString, false, false ));
@@ -4271,7 +4277,7 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	JSString *tString;
-	std::string settingName = oldstrutil::upper( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
+	std::string settingName = oldstrutil::upper( JS_GetStringBytes( cx, argv[0]));
 	if( !settingName.empty() )
 	{
 		auto settingId = cwmWorldState->ServerData()->LookupINIValue( settingName );
