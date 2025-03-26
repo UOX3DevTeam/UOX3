@@ -221,6 +221,7 @@ JSBool CPacket_WriteByte( JSContext *cx, uintN argc, jsval *vp )
 		return JS_TRUE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
 	UI08	toWrite		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
 
@@ -251,6 +252,7 @@ JSBool CPacket_WriteShort( JSContext *cx, uintN argc, jsval *vp )
 		return JS_TRUE;
 	}
 
+	jsval* argv = JS_ARGV(cx, vp);
 	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
 	UI16	toWrite		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 
@@ -281,6 +283,7 @@ JSBool CPacket_WriteLong( JSContext *cx, uintN argc, jsval *vp )
 		return JS_TRUE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
 	//UI32	toWrite		= static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
 	char *	toWriteChar	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
@@ -313,6 +316,7 @@ JSBool CPacket_WriteString( JSContext *cx, uintN argc, jsval *vp )
 		return JS_TRUE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
 	char *	toWrite		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
 	size_t	len			= static_cast<size_t>( JSVAL_TO_INT( argv[2] ));
@@ -344,8 +348,8 @@ JSBool CPacket_ReserveSize( JSContext *cx, uintN argc, jsval *vp )
 		return JS_TRUE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	size_t len = static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
-
 
 	myPacket->GetPacketStream().ReserveSize( len );
 
@@ -367,6 +371,7 @@ JSBool CSocket_Send( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
 	CSocket *mSock			= static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
 	JSObject *jsObj			= JSVAL_TO_OBJECT( argv[0] );
 	CPUOXBuffer *myPacket	= static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, jsObj ));
@@ -459,7 +464,7 @@ JSBool CGumpData_GetEdit( JSContext *cx, uintN argc, jsval *vp )
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getEdit) Invalid Number of Arguments %d, needs: 1 ", argc );
-		*rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, ""));
+		JS_SET_RVAL( cx, vp, STRING_TO_JSVAL(JS_NewStringCopyZ(cx, "")) );
 		return JS_TRUE;
 	}
 
@@ -469,19 +474,20 @@ JSBool CGumpData_GetEdit( JSContext *cx, uintN argc, jsval *vp )
 	if( myItem == nullptr  )
 	{
 		ScriptError( cx, "(DataGump-getEdit) Invalid object assigned" );
-		*rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, ""));
+		JS_SET_RVAL(cx, vp, STRING_TO_JSVAL(JS_NewStringCopyZ(cx, "")) );
 		return JS_TRUE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	size_t index = JSVAL_TO_INT( argv[0] );
 
 	if( index < myItem->sEdits.size() )
 	{
-		*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, myItem->sEdits[index].c_str() ));
+		JS_SET_RVAL(cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, myItem->sEdits[index].c_str() )) );
 	}
 	else
 	{
-		*rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, ""));
+		JS_SET_RVAL(cx, vp, STRING_TO_JSVAL(JS_NewStringCopyZ(cx, "")) );
 	}
 	return JS_TRUE;
 }
@@ -497,7 +503,7 @@ JSBool CGumpData_GetId( JSContext *cx, uintN argc, jsval *vp )
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getID) Invalid Number of Arguments %d, needs: 1 ", argc );
-		*rval = INT_TO_JSVAL( -1 );
+		JS_SET_RVAL(cx, vp, INT_TO_JSVAL( -1 ) );
 		return JS_TRUE;
 	}
 
@@ -507,18 +513,19 @@ JSBool CGumpData_GetId( JSContext *cx, uintN argc, jsval *vp )
 	if( myItem == nullptr  )
 	{
 		ScriptError( cx, "(DataGump_getID) Invalid object assigned" );
-		*rval = INT_TO_JSVAL( -1 );
+		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( -1 ) );
 		return JS_TRUE;
 	}
+	jsval *argv = JS_ARGV( cx, vp );
 	size_t index = JSVAL_TO_INT( argv[0] );
 
 	if( index < myItem->nIDs.size() )
 	{
-		*rval = INT_TO_JSVAL( myItem->nIDs[index] );
+		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myItem->nIDs[index] ) );
 	}
 	else
 	{
-		*rval = INT_TO_JSVAL( -1 );
+		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( -1 ) );
 	}
 
 	return JS_TRUE;
@@ -582,6 +589,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, uintN argc, jsval *vp )
 	SI16 initState = 0;
 	SI16 relay = 0;
 
+	jsval *argv = JS_ARGV( cx, vp );
 	if( argc == 5 )
 	{
 		tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
@@ -747,6 +755,7 @@ JSBool CGump_MasterGump( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI32 masterGumpId = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st *>( JS_GetPrivate( cx, obj ));
@@ -777,6 +786,7 @@ JSBool CGump_AddBackground( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 	SI16 bL = static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
@@ -809,6 +819,7 @@ JSBool CGump_AddButton( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "AddButton: Invalid number of arguments (takes 6 or 7)" );
 		return JS_FALSE;
 	}
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
@@ -844,6 +855,7 @@ JSBool CGump_AddButtonTileArt( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "AddButtonTileArt: Invalid number of arguments (takes 11)" );
 		return JS_FALSE;
 	}
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 	UI16 tileIdNorm = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
@@ -883,6 +895,7 @@ JSBool CGump_AddPageButton( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "AddPageButton: Invalid number of arguments (takes 4 or 5)" );
 		return JS_FALSE;
 	}
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
@@ -917,6 +930,7 @@ JSBool CGump_AddCheckerTrans( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
 	SI16 y		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
 	SI16 width	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
@@ -950,6 +964,7 @@ JSBool CGump_AddCroppedText( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 TextX		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
 	SI16 TextY		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
 	SI16 TextHue	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // Hue
@@ -1003,6 +1018,7 @@ JSBool CGump_AddGroup(( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	gList->one->push_back( oldstrutil::format( "group %d", JSVAL_TO_INT( argv[0] )));
 
 	return JS_TRUE;
@@ -1029,6 +1045,7 @@ JSBool CGump_EndGroup( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	gList->one->push_back( oldstrutil::format( "endgroup", JSVAL_TO_INT( argv[0] )));
 
 	return JS_TRUE;
@@ -1048,6 +1065,7 @@ JSBool CGump_AddGump( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
@@ -1090,6 +1108,7 @@ JSBool CGump_AddGumpColor( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 	UI16 gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
@@ -1137,6 +1156,7 @@ JSBool CGump_AddToolTip( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI32 tooltip = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
 	std::stringstream temp;
 	if( argc > 1 )
@@ -1178,6 +1198,7 @@ JSBool CGump_AddHTMLGump( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
 	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
 	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
@@ -1235,6 +1256,7 @@ JSBool CGump_AddPage( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	gList->one->push_back( oldstrutil::format( "page %d", JSVAL_TO_INT( argv[0] )));
 
 	return JS_TRUE;
@@ -1254,6 +1276,7 @@ JSBool CGump_AddPicture( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 tL		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
@@ -1285,6 +1308,7 @@ JSBool CGump_AddPictureColor( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 	UI16 gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
@@ -1318,6 +1342,7 @@ JSBool CGump_AddPicInPic( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // starting x
 	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // starting y
 	UI16 gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] )); // GumpId
@@ -1357,6 +1382,7 @@ JSBool CGump_AddItemProperty( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
 	CBaseObject *trgObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, tObj ));
 
@@ -1402,6 +1428,7 @@ JSBool CGump_AddRadio( JSContext *cx, uintN argc, jsval *vp )
 	SI16 initialState = 0;
 	SI16 relay = 0;
 
+	jsval *argv = JS_ARGV( cx, vp );
 	if( argc == 5 )
 	{
 		tL				= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
@@ -1451,6 +1478,7 @@ JSBool CGump_AddText( JSContext *cx, uintN argc, jsval *vp )
 
 	UI32 textId;
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 TextX		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
 	SI16 TextY		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
 	SI16 TextHue	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // Hue
@@ -1494,6 +1522,7 @@ JSBool CGump_AddTextEntry( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 tL					= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 	SI16 width				= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
@@ -1537,6 +1566,7 @@ JSBool CGump_AddTextEntryLimited( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 tL					= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 	SI16 width				= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
@@ -1582,6 +1612,7 @@ JSBool CGump_AddTiledGump( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
 	SI16 y		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
 	SI16 width	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
@@ -1616,6 +1647,7 @@ JSBool CGump_AddXMFHTMLGump( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
 	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
 	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
@@ -1655,6 +1687,7 @@ JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
 	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
 	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
@@ -1694,6 +1727,7 @@ JSBool CGump_AddXMFHTMLTok( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
 	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
 	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
@@ -1737,6 +1771,7 @@ JSBool CGump_Send( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	if( !JSVAL_IS_OBJECT( argv[0] ))
 	{
 		ScriptError( cx, "You have to pass a valid Socket or Character" );
@@ -1802,6 +1837,7 @@ JSBool CBase_TextMessage( JSContext *cx, uintN argc, jsval *vp )
 	JSEncapsulate myClass( cx, obj );
 	CBaseObject *myObj		= static_cast<CBaseObject*>( myClass.toObject() );
 
+	jsval *argv = JS_ARGV( cx, vp );
 	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
 	char *trgMessage		= JS_GetStringBytes( targMessage );
 	if( trgMessage == nullptr )
@@ -1948,6 +1984,7 @@ JSBool CBase_KillTimers( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -1999,6 +2036,7 @@ JSBool CBase_GetJSTimer( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2006,7 +2044,7 @@ JSBool CBase_GetJSTimer( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid timer found
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
 	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
 	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 
@@ -2028,7 +2066,6 @@ JSBool CBase_GetJSTimer( JSContext *cx, uintN argc, jsval *vp )
 			if( tScript != nullptr && ( scriptId == Effect->AssocScript() || scriptId == Effect->More2() ))
 			{
 				// Return the timestamp for when the Effect timer expires
-				//*rval = INT_TO_JSVAL( Effect->ExpireTime() );
 				JS_NewNumberValue( cx, Effect->ExpireTime(), rval );
 			}
 		}
@@ -2052,6 +2089,7 @@ JSBool CBase_SetJSTimer( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2059,7 +2097,7 @@ JSBool CBase_SetJSTimer( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = INT_TO_JSVAL( 0 ); // Return value is 0 by default, indicating no timer was found or updated
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value is 0 by default, indicating no timer was found or updated
 	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
 	UI32 expireTime = BuildTimeValue( JSVAL_TO_INT( argv[1] ) / 1000.0f );
 	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
@@ -2083,7 +2121,7 @@ JSBool CBase_SetJSTimer( JSContext *cx, uintN argc, jsval *vp )
 			{
 				// Set the timestamp for when the Effect timer expires to that specified in parameters
 				Effect->ExpireTime( expireTime );
-				*rval = INT_TO_JSVAL( 1 ); // Return 1 indicating timer was found and updated
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and updated
 			}
 		}
 	}
@@ -2105,6 +2143,7 @@ JSBool CBase_KillJSTimer( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2112,7 +2151,7 @@ JSBool CBase_KillJSTimer( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid timer found
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
 	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
 	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 
@@ -2144,7 +2183,7 @@ JSBool CBase_KillJSTimer( JSContext *cx, uintN argc, jsval *vp )
 	if( removeEffect != nullptr )
 	{
 		cwmWorldState->tempEffects.Remove( removeEffect, true );
-		*rval = INT_TO_JSVAL( 1 ); // Return 1 indicating timer was found and removed
+		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and removed
 	}
 
 	return JS_TRUE;
@@ -2165,6 +2204,7 @@ JSBool CBase_GetTempEffect( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2172,8 +2212,8 @@ JSBool CBase_GetTempEffect( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid tempe effect
-	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));\
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid tempe effect
+	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
@@ -2204,6 +2244,7 @@ JSBool CBase_ReverseEffect( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
@@ -2211,7 +2252,7 @@ JSBool CBase_ReverseEffect( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid temp effect found
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid temp effect found
 	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
 
 	SERIAL myObjSerial = myObj->GetSerial();
@@ -2231,7 +2272,7 @@ JSBool CBase_ReverseEffect( JSContext *cx, uintN argc, jsval *vp )
 	{
 		ReverseEffect( removeEffect );
 		cwmWorldState->tempEffects.Remove( removeEffect, true );
-		*rval = INT_TO_JSVAL( 1 ); // Return 1 indicating temp effect was found and removed
+		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating temp effect was found and removed
 	}
 
 	return JS_TRUE;
@@ -2290,6 +2331,7 @@ JSBool CChar_Wander( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	SI16 x1 = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 y1 = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 	SI16 x2 = static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
@@ -2339,6 +2381,7 @@ JSBool CChar_Follow( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ) || !myChar->IsNpc() )
 	{
@@ -2384,6 +2427,7 @@ JSBool CChar_DoAction( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
 	UI16 targAction = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 targSubAction = -1;
 	UI16 frameCount = 7;
@@ -2448,6 +2492,7 @@ JSBool CChar_EmoteMessage( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	JSString *targMessage = JS_ValueToString( cx, argv[0] );
 	char *trgMessage = JS_GetStringBytes( targMessage );
@@ -2544,6 +2589,7 @@ JSBool CMisc_SysMessage( JSContext *cx, uintN argc, jsval *vp )
 
 	CSocket *mySock = nullptr;
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
 	JSEncapsulate myClass( cx, obj );
 
 	if( myClass.ClassName() == "UOXChar" )
@@ -2653,6 +2699,7 @@ JSBool CSocket_Disconnect( JSContext *cx, uintN argc, jsval *vp )
 JSBool CBase_Teleport( JSContext *cx, uintN argc, jsval *vp )
 {
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
 	JSEncapsulate myClass( cx, obj );
 
 	CBaseObject *myObj	= static_cast<CBaseObject*>( myClass.toObject() );
@@ -2992,7 +3039,7 @@ JSBool CMisc_SoundEffect( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMisc_SellTo( JSContext *cx, uintN argc, jsval *vp )
 {
-	*rval = JSVAL_FALSE;
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SellTo: Invalid Number of Arguments: %d", argc );
@@ -3029,7 +3076,7 @@ JSBool CMisc_SellTo( JSContext *cx, uintN argc, jsval *vp )
 			if( toSend.CanSellItems(( *mChar ), ( *myNPC )))
 			{
 				mySock->Send( &toSend );
-				*rval = JSVAL_TRUE;
+				JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 			}
 		}
 	}
@@ -3047,7 +3094,7 @@ JSBool CMisc_SellTo( JSContext *cx, uintN argc, jsval *vp )
 		if( toSend.CanSellItems(( *myChar ), ( *myNPC )))
 		{
 			mSock->Send( &toSend );
-			*rval = JSVAL_TRUE;
+			JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 		}
 	}
 
@@ -3182,18 +3229,18 @@ JSBool CMisc_HasSpell( JSContext *cx, uintN argc, jsval *vp )
 
 		if( !ValidateObject( myItem ))
 		{
-			*rval = BOOLEAN_TO_JSVAL( JS_FALSE );
+			JS_SET_RVAL( cx, vp, JS_FALSE );
 			return JS_TRUE;
 		}
 
 		// Code checks for spell based on index starting at 0, while spells have spellIDs starting from 1
 		if( Magic->HasSpell( myItem, spellId - 1 ))
 		{
-			*rval = BOOLEAN_TO_JSVAL( JS_TRUE );
+			JS_SET_RVAL(cx, vp, JS_TRUE );
 		}
 		else
 		{
-			*rval = BOOLEAN_TO_JSVAL( JS_FALSE );
+			JS_SET_RVAL(cx, vp, JS_FALSE );
 		}
 	}
 	else if( myClass.ClassName() == "UOXItem" )
@@ -3207,11 +3254,11 @@ JSBool CMisc_HasSpell( JSContext *cx, uintN argc, jsval *vp )
 
 		if( Magic->HasSpell( myItem, spellId ))
 		{
-			*rval = BOOLEAN_TO_JSVAL( JS_TRUE );
+			JS_SET_RVAL( cx, vp, JS_TRUE );
 		}
 		else
 		{
-			*rval = BOOLEAN_TO_JSVAL( JS_FALSE );
+			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( JS_FALSE );
 		}
 	}
 
@@ -3310,15 +3357,15 @@ JSBool CBase_GetTag( JSContext *cx, uintN argc, jsval *vp )
 	if( localObject.m_ObjectType == TAGMAP_TYPE_STRING )
 	{
 		JSString *localJSString = JS_NewStringCopyN( cx, ( const char* )localObject.m_StringValue.c_str(), localObject.m_StringValue.length() );
-		*rval = static_cast<jsval>( STRING_TO_JSVAL( localJSString ));
+		JS_SET_RVAL( cx, vp, static_cast<jsval>( STRING_TO_JSVAL( localJSString )) );
 	}
 	else if( localObject.m_ObjectType == TAGMAP_TYPE_BOOL )
 	{
-		*rval = static_cast<jsval>( BOOLEAN_TO_JSVAL(( localObject.m_IntValue == 1 )));
+		JS_SET_RVAL( cx, vp, static_cast<jsval>( BOOLEAN_TO_JSVAL(( localObject.m_IntValue == 1 ))) );
 	}
 	else
 	{
-		*rval = static_cast<jsval>( INT_TO_JSVAL( localObject.m_IntValue ));
+		JS_SET_RVAL( cx, vp, static_cast<jsval>( INT_TO_JSVAL( localObject.m_IntValue )) );
 	}
 	return JS_TRUE;
 }
@@ -3453,15 +3500,15 @@ JSBool CBase_GetTempTag( JSContext *cx, uintN argc, jsval *vp )
 	if( localObject.m_ObjectType == TAGMAP_TYPE_STRING )
 	{
 		JSString *localJSString = JS_NewStringCopyN( cx, ( const char* )localObject.m_StringValue.c_str(), localObject.m_StringValue.length() );
-		*rval = static_cast<jsval>( STRING_TO_JSVAL( localJSString ));
+		JS_SET_RVAL( cx, vp, static_cast<jsval>( STRING_TO_JSVAL( localJSString )) );
 	}
 	else if( localObject.m_ObjectType == TAGMAP_TYPE_BOOL )
 	{
-		*rval = static_cast<jsval>( BOOLEAN_TO_JSVAL(( localObject.m_IntValue == 1 )));
+		JS_SET_RVAL( cx, vp, static_cast<jsval>( BOOLEAN_TO_JSVAL(( localObject.m_IntValue == 1 ))) );
 	}
 	else
 	{
-		*rval = static_cast<jsval>( INT_TO_JSVAL( localObject.m_IntValue ));
+		JS_SET_RVAL( cx, vp, static_cast<jsval>( INT_TO_JSVAL( localObject.m_IntValue )) );
 	}
 	return JS_TRUE;
 }
@@ -3592,7 +3639,7 @@ JSBool CBase_GetNumTags( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = INT_TO_JSVAL( myObj->GetNumTags() );
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myObj->GetNumTags() ) );
 	return JS_TRUE;
 }
 
@@ -3675,7 +3722,7 @@ JSBool CBase_GetTagMap( JSContext *cx, uintN argc, jsval *vp )
 		i++;
 	}
 
-	*rval = OBJECT_TO_JSVAL( jsTagMap );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsTagMap ) );
 	return JS_TRUE;
 }
 
@@ -3758,7 +3805,7 @@ JSBool CBase_GetTempTagMap( JSContext *cx, uintN argc, jsval *vp )
 		i++;
 	}
 
-	*rval = OBJECT_TO_JSVAL( jsTagMap );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsTagMap ) );
 	return JS_TRUE;
 }
 
@@ -4055,7 +4102,7 @@ JSBool CChar_DirectionTo( JSContext *cx, uintN argc, jsval *vp )
 
 	UI08 NewDir = Movement->Direction( myChar, x, y );
 
-	*rval = INT_TO_JSVAL( NewDir );
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( NewDir ) );
 
 	return JS_TRUE;
 }
@@ -4147,7 +4194,7 @@ JSBool CGuild_IsAtPeace( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myGuild->IsAtPeace() );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myGuild->IsAtPeace() ) );
 
 	return JS_TRUE;
 }
@@ -4209,7 +4256,7 @@ JSBool CBase_ResourceCount( JSContext *cx, uintN argc, jsval *vp )
 		CItem* myItem = static_cast<CItem*>(myObj);
 		retVal = GetSubItemAmount(myItem, realId, static_cast<UI16>(itemColour), static_cast<UI32>(moreVal), colorCheck, moreCheck, sectionId);
 	}
-	*rval = INT_TO_JSVAL( retVal );
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( retVal ) );
 	return JS_TRUE;
 }
 
@@ -4275,7 +4322,7 @@ JSBool CBase_UseResource( JSContext *cx, uintN argc, jsval *vp )
 		CItem *myItem	= static_cast<CItem *>( myObj );
 		retVal			= DeleteSubItemAmount( myItem, amount, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
 	}
-	*rval = INT_TO_JSVAL( retVal );
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( retVal ) );
 	return JS_TRUE;
 }
 
@@ -4476,12 +4523,12 @@ JSBool CBase_InRange( JSContext *cx, uintN argc, jsval *vp )
 		CItem *myItem = static_cast<CItem *>( them );
 		if( myItem->GetCont() != nullptr )
 		{
-			*rval = BOOLEAN_TO_JSVAL( FindItemOwner( myItem ) == me );
+			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( FindItemOwner( myItem ) == me ) );
 			return JS_TRUE;
 		}
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( ObjInRange( me, them, distance ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ObjInRange( me, them, distance )) );
 	return JS_TRUE;
 }
 
@@ -4588,7 +4635,7 @@ JSBool CChar_CheckSkill( JSContext *cx, uintN argc, jsval *vp )
 	{
 		isCraftSkill = JSVAL_TO_BOOLEAN( argv[3] );
 	}
-	*rval = BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill )) );
 	return JS_TRUE;
 }
 
@@ -4621,13 +4668,13 @@ JSBool CChar_FindItemLayer( JSContext *cx, uintN argc, jsval *vp )
 
 	if( !ValidateObject( myItem ))
 	{
-		*rval = JSVAL_NULL;
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 		return JS_TRUE;
 	}
 
 	JSObject *myJSItem = JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
-	*rval = OBJECT_TO_JSVAL( myJSItem );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSItem ) );
 
 	return JS_TRUE;
 }
@@ -4658,13 +4705,13 @@ JSBool CChar_FindItemType( JSContext *cx, uintN argc, jsval *vp )
 	CItem *myItem = FindItemOfType( myChar, static_cast<ItemTypes>( iType ));
 	if( !ValidateObject( myItem ))
 	{
-		*rval = JSVAL_NULL;
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 		return JS_TRUE;
 	}
 
 	JSObject *myJSItem	= JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
-	*rval = OBJECT_TO_JSVAL( myJSItem );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSItem ) );
 
 	return JS_TRUE;
 }
@@ -4695,13 +4742,13 @@ JSBool CChar_FindItemSection( JSContext *cx, uintN argc, jsval *vp )
 	CItem *myItem = FindItemOfSectionId( myChar, sectionID );
 	if( !ValidateObject( myItem ))
 	{
-		*rval = JSVAL_NULL;
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 		return JS_TRUE;
 	}
 
 	JSObject *myJSItem	= JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
-	*rval = OBJECT_TO_JSVAL( myJSItem );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSItem ) );
 
 	return JS_TRUE;
 }
@@ -4832,7 +4879,7 @@ JSBool CChar_CastSpell( JSContext *cx, uintN argc, jsval *vp )
 		else
 		{
 			bool spellSuccess = Magic->SelectSpell( sock, spellCast );
-			*rval = BOOLEAN_TO_JSVAL( spellSuccess );
+			JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( spellSuccess ) );
 		}
 	}
 	return JS_TRUE;
@@ -4875,11 +4922,11 @@ JSBool CChar_GetSerial( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myObj ) || ( part == 0 ) || ( part > 4 ))
 	{
 		ScriptError( cx, "GetSerial: Invalid Object/Argument, takes 1 arg: part of serial (1-4)" );
-		*rval = INT_TO_JSVAL( 0 );
+		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) );
 		return JS_FALSE;
 	}
 
-	*rval = INT_TO_JSVAL( myObj->GetSerial( part ));
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myObj->GetSerial( part )) );
 
 	return JS_TRUE;
 }
@@ -4898,11 +4945,11 @@ JSBool CBase_GetSerial( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myObj ) || ( part == 0 ) || ( part > 4 ))
 	{
 		ScriptError( cx, "GetSerial: Invalid Object/Argument, takes 1 arg: part of serial (1-4)" );
-		*rval = INT_TO_JSVAL( 0 );
+		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) );
 		return JS_FALSE;
 	}
 
-	*rval = INT_TO_JSVAL( myObj->GetSerial( part ));
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myObj->GetSerial( part )) );
 
 	return JS_TRUE;
 }
@@ -5093,7 +5140,7 @@ JSBool CItem_SetCont( JSContext *cx, uintN argc, jsval *vp )
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	// return true if the change was successful, false otherwise
-	*rval = BOOLEAN_TO_JSVAL( myItem->SetCont( trgObj ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->SetCont( trgObj )) );
 
 	// Active script-context might have been lost, so restore it...
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
@@ -5121,7 +5168,7 @@ JSBool CItem_IsMulti( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(IsMulti) Invalid Number of Arguments %d, needs: 0", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5130,11 +5177,11 @@ JSBool CItem_IsMulti( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ))
 	{
 		ScriptError( cx, "(IsMulti) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myItem->CanBeObjType( OT_MULTI ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->CanBeObjType( OT_MULTI )) );
 	return JS_TRUE;
 }
 
@@ -5149,7 +5196,7 @@ JSBool CBase_IsBoat( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(IsBoat) Invalid Number of Arguments %d, needs: 0", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5158,11 +5205,11 @@ JSBool CBase_IsBoat( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myObject ))
 	{
 		ScriptError( cx, "(IsMulti) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myObject->CanBeObjType( OT_BOAT ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObject->CanBeObjType( OT_BOAT )) );
 	return JS_TRUE;
 }
 
@@ -5177,7 +5224,7 @@ JSBool CMulti_IsInMulti( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsInMulti) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5186,18 +5233,18 @@ JSBool CMulti_IsInMulti( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(IsInMulti) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 	CBaseObject *toFind = static_cast<CBaseObject *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsInMulti) Invalid object in house" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL(( toFind->GetMultiObj() == myItem ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( toFind->GetMultiObj() == myItem )) );
 	return JS_TRUE;
 }
 
@@ -5212,7 +5259,7 @@ JSBool CMulti_IsOnBanList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnBanList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5221,18 +5268,18 @@ JSBool CMulti_IsOnBanList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(IsOnBanList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnBanList) Invalid character" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnBanList( toFind ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOnBanList( toFind )) );
 	return JS_TRUE;
 }
 
@@ -5247,7 +5294,7 @@ JSBool CMulti_IsOnFriendList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnFriendList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5256,18 +5303,18 @@ JSBool CMulti_IsOnFriendList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(IsOnFriendList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnFriendList) Invalid character" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnFriendList( toFind ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOnFriendList( toFind )) );
 	return JS_TRUE;
 }
 
@@ -5282,7 +5329,7 @@ JSBool CMulti_IsOnGuestList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnGuestList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5291,18 +5338,18 @@ JSBool CMulti_IsOnGuestList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(IsOnGuestList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnGuestList) Invalid character" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnGuestList( toFind ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOnGuestList( toFind )) );
 	return JS_TRUE;
 }
 
@@ -5317,7 +5364,7 @@ JSBool CMulti_IsOnOwnerList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnOwnerList) Invalid Number of Arguments %d, needs: 1 or 2", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5326,18 +5373,18 @@ JSBool CMulti_IsOnOwnerList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(IsOnOwnerList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnOwnerList) Invalid character" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnOwnerList( toFind ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOnOwnerList( toFind )) );
 	return JS_TRUE;
 }
 
@@ -5352,7 +5399,7 @@ JSBool CMulti_IsOwner( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOwner) Invalid Number of Arguments %d, needs: 1 or 2", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5361,18 +5408,18 @@ JSBool CMulti_IsOwner( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(IsOwner) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOwner) Invalid character" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( myItem->IsOwner( toFind ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myItem->IsOwner( toFind )) );
 	return JS_TRUE;
 }
 
@@ -5404,7 +5451,7 @@ JSBool CMulti_AddToBanList( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	myItem->AddToBanList( toFind );
 	return JS_TRUE;
 }
@@ -5420,7 +5467,7 @@ JSBool CMulti_AddToFriendList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToFriendList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5429,18 +5476,18 @@ JSBool CMulti_AddToFriendList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(AddToFriendList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToFriendList) Invalid character" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	myItem->AddAsFriend( toFind );
 	return JS_TRUE;
 }
@@ -5456,7 +5503,7 @@ JSBool CMulti_AddToGuestList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToGuestList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5465,18 +5512,18 @@ JSBool CMulti_AddToGuestList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(AddToGuestList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToGuestList) Invalid character" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	myItem->AddAsGuest( toFind );
 	return JS_TRUE;
 }
@@ -5492,7 +5539,7 @@ JSBool CMulti_AddToOwnerList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5501,18 +5548,18 @@ JSBool CMulti_AddToOwnerList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(AddToOwnerList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToOwnerList) Invalid character" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	myItem->AddAsOwner( toFind );
 	return JS_TRUE;
 }
@@ -5528,7 +5575,7 @@ JSBool CMulti_RemoveFromBanList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromBanList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5537,18 +5584,18 @@ JSBool CMulti_RemoveFromBanList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(RemoveFromBanList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromBanList) Invalid character" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	myItem->RemoveFromBanList( toFind );
 	return JS_TRUE;
 }
@@ -5564,7 +5611,7 @@ JSBool CMulti_RemoveFromFriendList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromFriendList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5573,18 +5620,18 @@ JSBool CMulti_RemoveFromFriendList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(RemoveFromFriendList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromFriendList) Invalid character" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	myItem->RemoveAsFriend( toFind );
 	return JS_TRUE;
 }
@@ -5600,7 +5647,7 @@ JSBool CMulti_RemoveFromGuestList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromGuestList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5609,18 +5656,18 @@ JSBool CMulti_RemoveFromGuestList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(RemoveFromGuestList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromGuestList) Invalid character" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	myItem->RemoveAsGuest( toFind );
 	return JS_TRUE;
 }
@@ -5636,7 +5683,7 @@ JSBool CMulti_RemoveFromOwnerList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5645,18 +5692,18 @@ JSBool CMulti_RemoveFromOwnerList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(RemoveFromOwnerList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromOwnerList) Invalid character" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	myItem->RemoveAsOwner( toFind );
 	return JS_TRUE;
 }
@@ -5672,7 +5719,7 @@ JSBool CMulti_ClearBanList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearBanList) Invalid Number of Arguments %d, needs: 0", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5681,11 +5728,11 @@ JSBool CMulti_ClearBanList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(ClearBanList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	myItem->ClearBanList();
 	return JS_TRUE;
 }
@@ -5701,7 +5748,7 @@ JSBool CMulti_ClearFriendList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearFriendList) Invalid Number of Arguments %d, needs: 0", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5710,11 +5757,11 @@ JSBool CMulti_ClearFriendList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(ClearFriendList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	myItem->ClearFriendList();
 	return JS_TRUE;
 }
@@ -5730,7 +5777,7 @@ JSBool CMulti_ClearGuestList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearGuestList) Invalid Number of Arguments %d, needs: 0", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5739,11 +5786,11 @@ JSBool CMulti_ClearGuestList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(ClearGuestList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	myItem->ClearGuestList();
 	return JS_TRUE;
 }
@@ -5759,7 +5806,7 @@ JSBool CMulti_ClearOwnerList( JSContext *cx, uintN argc, jsval *vp )
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearOwnerList) Invalid Number of Arguments %d, needs: 0", argc );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -5768,11 +5815,11 @@ JSBool CMulti_ClearOwnerList( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(ClearOwnerList) Invalid object assigned" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	myItem->ClearOwnerList();
 	return JS_TRUE;
 }
@@ -5812,7 +5859,7 @@ JSBool CItem_PlaceInPack( JSContext *cx, uintN argc, jsval *vp )
 		CItem *myCont = static_cast<CItem *>( myItem->GetCont() );
 		if( ValidateObject( myCont ))
 		{
-			*rval = INT_TO_JSVAL( HandleAutoStack( myItem, myCont, nullptr, nullptr ));
+			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( HandleAutoStack( myItem, myCont, nullptr, nullptr )) );
 		}
 	}
 
@@ -5933,7 +5980,7 @@ JSBool CSocket_GetWord( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 	SI32 offset = JSVAL_TO_INT( argv[0] );
-	*rval = INT_TO_JSVAL( mySock->GetWord( offset ));
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mySock->GetWord( offset )) );
 	return JS_TRUE;
 }
 
@@ -5958,7 +6005,7 @@ JSBool CSocket_GetSWord( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 	SI32 offset = JSVAL_TO_INT( argv[0] );
-	*rval = INT_TO_JSVAL( static_cast<SI16>(mySock->GetWord( offset )));
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>(mySock->GetWord( offset ))) );
 	return JS_TRUE;
 }
 
@@ -6008,7 +6055,7 @@ JSBool CSocket_GetSDWord( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 	SI32 offset = JSVAL_TO_INT( argv[0] );
-	*rval = INT_TO_JSVAL( static_cast<SI32>(mySock->GetDWord( offset )));
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI32>(mySock->GetDWord( offset ))) );
 	return JS_TRUE;
 }
 
@@ -6055,7 +6102,7 @@ JSBool CSocket_GetString( JSContext *cx, uintN argc, jsval *vp )
 
 	JSString *strSpeech = nullptr;
 	strSpeech = JS_NewStringCopyZ( cx, toReturn );
-	*rval = STRING_TO_JSVAL( strSpeech );
+	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( strSpeech ) );
 
 	return JS_TRUE;
 }
@@ -6484,7 +6531,7 @@ JSBool CRace_CanWearArmour( JSContext *cx, uintN argc, jsval *vp )
 
 	ARMORCLASS srcClass = myRace->ArmourClassRestriction();
 	ARMORCLASS trgClass = toFind->GetArmourClass();
-	*rval = BOOLEAN_TO_JSVAL(( trgClass == 0 ) || (( srcClass & trgClass ) != 0 ));	// they have a matching class
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( trgClass == 0 ) || (( srcClass & trgClass ) != 0 )) );	// they have a matching class
 	return JS_TRUE;
 }
 
@@ -6510,7 +6557,7 @@ JSBool CRace_IsValidHairColour( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
-	*rval = BOOLEAN_TO_JSVAL(( myRace->IsValidHair( cVal )));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( myRace->IsValidHair( cVal ))) );
 	return JS_TRUE;
 }
 
@@ -6536,7 +6583,7 @@ JSBool CRace_IsValidSkinColour( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
-	*rval = BOOLEAN_TO_JSVAL(( myRace->IsValidSkin( cVal )));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( myRace->IsValidSkin( cVal ))) );
 	return JS_TRUE;
 }
 
@@ -6562,7 +6609,7 @@ JSBool CRace_IsValidBeardColour( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
-	*rval = BOOLEAN_TO_JSVAL(( myRace->IsValidBeard( cVal )));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( myRace->IsValidBeard( cVal ))) );
 	return JS_TRUE;
 }
 
@@ -6810,7 +6857,7 @@ JSBool CItem_IsOnFoodList( JSContext *cx, uintN argc, jsval *vp )
 	}
 	std::string foodList = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 
-	*rval = BOOLEAN_TO_JSVAL( IsOnFoodList( foodList, myItem->GetId() ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( IsOnFoodList( foodList, myItem->GetId() )) );
 	return JS_TRUE;
 }
 
@@ -7117,7 +7164,7 @@ JSBool CFile_Read( JSContext *cx, uintN argc, jsval *vp )
 	// We don't care about return value, so suppress compiler warning
 	[[maybe_unused]] size_t bytesRead = fread( data, 1, bytes, mFile->mWrap );
 
-	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, data ));
+	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, data )) );
 	return JS_TRUE;
 }
 
@@ -7167,7 +7214,7 @@ JSBool CFile_ReadUntil( JSContext *cx, uintN argc, jsval *vp )
 	}
 	line[c < 512 ? c : 511] = 0;
 
-	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, line ));
+	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, line )) );
 	return JS_TRUE;
 }
 
@@ -7226,7 +7273,7 @@ JSBool CFile_EOF( JSContext *cx, uintN argc, jsval *vp )
 	if( !mFile || !mFile->mWrap )
 		return JS_FALSE;
 
-	*rval = BOOLEAN_TO_JSVAL(( feof( mFile->mWrap ) != 0 ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( feof( mFile->mWrap ) != 0 )) );
 
 	return JS_TRUE;
 }
@@ -7249,13 +7296,13 @@ JSBool CFile_Length( JSContext *cx, uintN argc, jsval *vp )
 
 	if( !mFile || !mFile->mWrap )
 	{
-		*rval = INT_TO_JSVAL( -1 );
+		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( -1 ) );
 		return JS_TRUE;
 	}
 
 	long fpos = ftell( mFile->mWrap );
 	fseek( mFile->mWrap, 0, SEEK_END );
-	*rval = INT_TO_JSVAL( ftell( mFile->mWrap ));
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( ftell( mFile->mWrap )) );
 
 	if( fpos > -1 )
 	{
@@ -7289,7 +7336,7 @@ JSBool CFile_Pos( JSContext *cx, uintN argc, jsval *vp )
 		[[maybe_unused]] int newFPos = fseek( mFile->mWrap, JSVAL_TO_INT( argv[0] ), SEEK_SET );
 	}
 
-	*rval = INT_TO_JSVAL( ftell( mFile->mWrap ));
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( ftell( mFile->mWrap )) );
 
 	return JS_TRUE;
 }
@@ -7336,11 +7383,11 @@ JSBool CBase_FirstItem( JSContext *cx, uintN argc, jsval *vp )
 	if( ValidateObject( firstItem ))
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, firstItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		*rval = OBJECT_TO_JSVAL( myObj );
+		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 	}
 	return JS_TRUE;
 }
@@ -7387,11 +7434,11 @@ JSBool CBase_NextItem( JSContext *cx, uintN argc, jsval *vp )
 	if( ValidateObject( nextItem ))
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, nextItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		*rval = OBJECT_TO_JSVAL( myObj );
+		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 	}
 	return JS_TRUE;
 }
@@ -7418,15 +7465,15 @@ JSBool CBase_FinishedItems( JSContext *cx, uintN argc, jsval *vp )
 	}
 	if( myObj->GetObjType() == OT_CHAR )
 	{
-		*rval = BOOLEAN_TO_JSVAL(( static_cast<CChar *>( myObj ))->FinishedItems() );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( static_cast<CChar *>( myObj ))->FinishedItems() ) );
 	}
 	else if( myObj->GetObjType() == OT_ITEM )
 	{
-		*rval = BOOLEAN_TO_JSVAL(( static_cast<CItem *>( myObj ))->GetContainsList()->Finished() );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( static_cast<CItem *>( myObj ))->GetContainsList()->Finished() ) );
 	}
 	else if( myObj->GetObjType() == OT_MULTI || myObj->GetObjType() == OT_BOAT )
 	{
-		*rval = BOOLEAN_TO_JSVAL(( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Finished() );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL(( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Finished() ) );
 	}
 	return JS_TRUE;
 }
@@ -7772,7 +7819,7 @@ JSBool CBase_DistanceTo( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = INT_TO_JSVAL( GetDist( thisObj, myObj ));
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( GetDist( thisObj, myObj )) );
 	return JS_TRUE;
 }
 
@@ -8129,11 +8176,11 @@ JSBool CBase_SetRandomName( JSContext *cx, uintN argc, jsval *vp )
 	if( !namelist.empty() )
 	{
 		SetRandomName( mObj, namelist );
-		*rval = JSVAL_TRUE;
+		JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 		return JS_TRUE;
 	}
 
-	*rval = JSVAL_FALSE;
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 	return JS_TRUE;
 }
 
@@ -8158,11 +8205,11 @@ JSBool CBase_SetRandomColor( JSContext *cx, uintN argc, jsval *vp )
 	if( !colorlist.empty() )
 	{
 		mObj->SetColour( AddRandomColor( colorlist ));
-		*rval = JSVAL_TRUE;
+		JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 		return JS_TRUE;
 	}
 
-	*rval = JSVAL_FALSE;
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 	return JS_TRUE;
 }
 
@@ -8200,11 +8247,11 @@ JSBool CChar_SetSkillByName( JSContext *cx, uintN argc, jsval *vp )
 			{
 				mSock->UpdateSkill( i );
 			}
-			*rval = JSVAL_TRUE;
+			JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 			return JS_TRUE;
 		}
 	}
-	*rval = JSVAL_FALSE;
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 	return JS_TRUE;
 }
 
@@ -8352,7 +8399,7 @@ JSBool CItem_Dupe( JSContext *cx, uintN argc, jsval *vp )
 		dupeItem = JSEngine->AcquireObject( IUE_ITEM, dupeItemTemp, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 	}
 
-	*rval = OBJECT_TO_JSVAL( dupeItem );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( dupeItem ) );
 	return JS_TRUE;
 }
 
@@ -8390,7 +8437,7 @@ JSBool CChar_Dupe( JSContext *cx, uintN argc, jsval *vp )
 	JSObject *dupeChar = nullptr;
 	dupeChar = JSEngine->AcquireObject( IUE_CHAR, dupeCharTemp, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
-	*rval = OBJECT_TO_JSVAL( dupeChar );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( dupeChar ) );
 	return JS_TRUE;
 }
 
@@ -9135,7 +9182,7 @@ JSBool CItem_Carve( JSContext *cx, uintN argc, jsval *vp )
 	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
-	*rval = BOOLEAN_TO_JSVAL( NewCarveTarget( mSock, toCarve ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( NewCarveTarget( mSock, toCarve )) );
 
 	// Active script-context might have been lost, so restore it...
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
@@ -9177,7 +9224,7 @@ JSBool CItem_GetTileName( JSContext *cx, uintN argc, jsval *vp )
 
 	JSString *tString;
 	tString = JS_NewStringCopyZ( cx, itemName.c_str() );
-	*rval = STRING_TO_JSVAL( tString );
+	JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( tString ) );
 	return JS_TRUE;
 }
 
@@ -9200,7 +9247,7 @@ JSBool CMulti_GetMultiCorner( JSContext *cx, uintN argc, jsval *vp )
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(GetMultiCorner) Invalid object referenced - multi required" );
-		*rval = JSVAL_FALSE;
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
 
@@ -9214,17 +9261,17 @@ JSBool CMulti_GetMultiCorner( JSContext *cx, uintN argc, jsval *vp )
 	switch( cornerToFind )
 	{
 		case 0: // NW
-			*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x1 ) + "," + std::to_string( y1 )).c_str() ));
+			JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x1 ) + "," + std::to_string( y1 )).c_str() )) );
 			break;
 		case 1: // NE
-			*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x2 ) + "," + std::to_string( y1 )).c_str() ));
+			JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x2 ) + "," + std::to_string( y1 )).c_str() )) );
 			break;
 		case 2: // SW
-			*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x1 ) + "," + std::to_string( y2 )).c_str() ));
+			JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x1 ) + "," + std::to_string( y2 )).c_str() )) );
 			break;
 		case 3: // SE
 		{
-			*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x2 ) + "," + std::to_string( y2 )).c_str() ));
+			JS_SET_RVAL( cx, vp, STRING_TO_JSVAL( JS_NewStringCopyZ( cx, ( std::to_string( x2 ) + "," + std::to_string( y2 )).c_str() )) );
 			break;
 		}
 		default:
@@ -9248,7 +9295,7 @@ JSBool CMulti_SecureContainer( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = JSVAL_FALSE;
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
@@ -9271,7 +9318,7 @@ JSBool CMulti_SecureContainer( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	multiObject->SecureContainer( itemToSecure );
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	return JS_TRUE;
 }
 
@@ -9289,7 +9336,7 @@ JSBool CMulti_UnsecureContainer( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = JSVAL_FALSE;
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
@@ -9312,7 +9359,7 @@ JSBool CMulti_UnsecureContainer( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	multiObject->UnsecureContainer( itemToUnsecure );
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	return JS_TRUE;
 }
 
@@ -9330,7 +9377,7 @@ JSBool CMulti_IsSecureContainer( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = JSVAL_FALSE;
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
@@ -9353,7 +9400,7 @@ JSBool CMulti_IsSecureContainer( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	bool isSecureContainer = multiObject->IsSecureContainer( itemToCheck );
-	*rval = BOOLEAN_TO_JSVAL( isSecureContainer );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( isSecureContainer ) );
 	return JS_TRUE;
 }
 
@@ -9371,7 +9418,7 @@ JSBool CMulti_LockDownItem( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = JSVAL_FALSE;
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
@@ -9394,7 +9441,7 @@ JSBool CMulti_LockDownItem( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	multiObject->LockDownItem( itemToLockDown );
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	return JS_TRUE;
 }
 
@@ -9412,7 +9459,7 @@ JSBool CMulti_ReleaseItem( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = JSVAL_FALSE;
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
@@ -9435,7 +9482,7 @@ JSBool CMulti_ReleaseItem( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	multiObject->ReleaseItem( itemToRemove );
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	return JS_TRUE;
 }
 
@@ -9453,7 +9500,7 @@ JSBool CMulti_AddTrashCont( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = JSVAL_FALSE;
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
@@ -9476,7 +9523,7 @@ JSBool CMulti_AddTrashCont( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	multiObject->AddTrashContainer( itemToLockDown );
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	return JS_TRUE;
 }
 
@@ -9494,7 +9541,7 @@ JSBool CMulti_RemoveTrashCont( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = JSVAL_FALSE;
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
@@ -9517,7 +9564,7 @@ JSBool CMulti_RemoveTrashCont( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	multiObject->RemoveTrashContainer( itemToRemove );
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	return JS_TRUE;
 }
 
@@ -9536,7 +9583,7 @@ JSBool CMulti_KillKeys( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = JSVAL_FALSE;
+	JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
@@ -9562,7 +9609,7 @@ JSBool CMulti_KillKeys( JSContext *cx, uintN argc, jsval *vp )
 		KillKeys( multiObject->GetSerial() );
 	}
 
-	*rval = JSVAL_TRUE;
+	JS_SET_RVAL( cx, vp, JSVAL_TRUE );
 	return JS_TRUE;
 }
 
@@ -9626,11 +9673,11 @@ JSBool CMulti_FirstChar( JSContext *cx, uintN argc, jsval *vp )
 	if( ValidateObject( firstChar ))
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, firstChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		*rval = OBJECT_TO_JSVAL( myObj );
+		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 	}
 	return JS_TRUE;
 }
@@ -9695,11 +9742,11 @@ JSBool CMulti_NextChar( JSContext *cx, uintN argc, jsval *vp )
 	if( ValidateObject( nextChar ))
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, nextChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		*rval = OBJECT_TO_JSVAL( myObj );
+		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myObj ) );
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 	}
 	return JS_TRUE;
 }
@@ -9737,23 +9784,23 @@ JSBool CMulti_FinishedChars( JSContext *cx, uintN argc, jsval *vp )
 
 	if( listType == "visitor" ) // All chars inside the multi
 	{
-		*rval = BOOLEAN_TO_JSVAL( myObj->GetCharsInMultiList()->Finished() );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetCharsInMultiList()->Finished() ) );
 	}
 	else if( listType == "owner" ) // Owners
 	{
-		*rval = BOOLEAN_TO_JSVAL( myObj->GetOwnersOfMultiList()->Finished() );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetOwnersOfMultiList()->Finished() ) );
 	}
 	else if( listType == "friend" ) // Friends
 	{
-		*rval = BOOLEAN_TO_JSVAL( myObj->GetFriendsOfMultiList()->Finished() );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetFriendsOfMultiList()->Finished() ) );
 	}
 	else if( listType == "guest" ) // Guests
 	{
-		*rval = BOOLEAN_TO_JSVAL( myObj->GetGuestsOfMultiList()->Finished() );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetGuestsOfMultiList()->Finished() ) );
 	}
 	else if( listType == "banned" ) // Banned
 	{
-		*rval = BOOLEAN_TO_JSVAL( myObj->GetBannedFromMultiList()->Finished() );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( myObj->GetBannedFromMultiList()->Finished() ) );
 	}
 	else
 	{
@@ -9827,19 +9874,19 @@ JSBool CBase_CanSee( JSContext *cx, uintN argc, jsval *vp )
 			if( tSock == nullptr )
 			{
 				ScriptError( cx, "CanSee: Passed an invalid Socket to look at" );
-				*rval = JSVAL_FALSE;
+				JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 				return JS_TRUE;
 			}
 			CChar *tChar = tSock->CurrcharObj();
 			if( !ValidateObject( tChar ))
 			{
 				ScriptError( cx, "CanSee: Socket to look at has invalid Character attached" );
-				*rval = JSVAL_FALSE;
+				JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 				return JS_TRUE;
 			}
 			if( tChar->WorldNumber() != mChar->WorldNumber() || tChar->GetInstanceId() != mChar->GetInstanceId() )
 			{
-				*rval = JSVAL_FALSE;
+				JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 				return JS_TRUE;
 			}
 			x = tChar->GetX();
@@ -9852,12 +9899,12 @@ JSBool CBase_CanSee( JSContext *cx, uintN argc, jsval *vp )
 			if( !ValidateObject( tObj ))
 			{
 				ScriptError( cx, "CanSee: Object to look at is invalid" );
-				*rval = JSVAL_FALSE;
+				JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 				return JS_TRUE;
 			}
 			if( tObj->WorldNumber() != mChar->WorldNumber() || tObj->GetInstanceId() != mChar->GetInstanceId() )
 			{
-				*rval = JSVAL_FALSE;
+				JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 				return JS_TRUE;
 			}
 			if( tObj->CanBeObjType( OT_ITEM ))
@@ -9865,7 +9912,7 @@ JSBool CBase_CanSee( JSContext *cx, uintN argc, jsval *vp )
 				if(( static_cast<CItem *>( tObj ))->GetCont() != nullptr )
 				{
 					ScriptError( cx, "CanSee: Object to look at cannot be in a container" );
-					*rval = JSVAL_FALSE;
+					JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 					return JS_TRUE;
 				}
 
@@ -9891,11 +9938,11 @@ JSBool CBase_CanSee( JSContext *cx, uintN argc, jsval *vp )
 
 	if( ValidateObject( mChar ))
 	{
-		*rval = BOOLEAN_TO_JSVAL( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, zTop ));
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, zTop )) );
 	}
 	else
 	{
-		*rval = BOOLEAN_TO_JSVAL( false );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
 	}
 
 	return JS_TRUE;
@@ -10105,7 +10152,7 @@ JSBool CChar_InitiateCombat( JSContext *cx, uintN argc, jsval *vp )
 	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
-	*rval = BOOLEAN_TO_JSVAL( Combat->StartAttack( mChar, ourTarget ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( Combat->StartAttack( mChar, ourTarget )) );
 
 	// Active script-context might have been lost, so restore it...
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
@@ -10256,7 +10303,7 @@ JSBool CChar_CheckAggressorFlag( JSContext *cx, uintN argc, jsval *vp )
 		return JS_TRUE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->CheckAggressorFlag( ourTarget->GetSerial() ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->CheckAggressorFlag( ourTarget->GetSerial() )) );
 	return JS_TRUE;
 }
 
@@ -10341,7 +10388,7 @@ JSBool CChar_IsAggressor( JSContext *cx, uintN argc, jsval *vp )
 
 	bool checkForPlayerOnly	= ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->IsAggressor( checkForPlayerOnly ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->IsAggressor( checkForPlayerOnly )) );
 	return JS_TRUE;
 }
 
@@ -10437,7 +10484,7 @@ JSBool CChar_CheckPermaGreyFlag( JSContext *cx, uintN argc, jsval *vp )
 		return JS_TRUE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->CheckPermaGreyFlag( ourTarget->GetSerial() ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->CheckPermaGreyFlag( ourTarget->GetSerial() )) );
 	return JS_TRUE;
 }
 
@@ -10522,7 +10569,7 @@ JSBool CChar_IsPermaGrey( JSContext *cx, uintN argc, jsval *vp )
 
 	bool checkForPlayerOnly	= ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->IsPermaGrey( checkForPlayerOnly ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->IsPermaGrey( checkForPlayerOnly )) );
 	return JS_TRUE;
 }
 
@@ -10650,20 +10697,20 @@ JSBool CBase_Resist( JSContext *cx, uintN argc, jsval *vp )
 	{
 		if( ValidateObject( mChar ))
 		{
-			*rval = INT_TO_JSVAL( mChar->GetResist( static_cast<WeatherType>( resistType.toInt() )));
+			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mChar->GetResist( static_cast<WeatherType>( resistType.toInt() ))) );
 		}
 		else if( ValidateObject( mItem ))
 		{
-			*rval = INT_TO_JSVAL( mItem->GetResist( static_cast<WeatherType>( resistType.toInt() )));
+			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mItem->GetResist( static_cast<WeatherType>( resistType.toInt() ))) );
 		}
 		else
 		{
-			*rval = JS_FALSE;
+			JS_SET_RVAL( cx, vp, JS_FALSE );
 		}
 	}
 	if( argc == 2 )
 	{
-		*rval = JS_TRUE;
+		JS_SET_RVAL( cx, vp, JS_TRUE );
 		JSEncapsulate value( cx, &( argv[1] ));
 		if( ValidateObject( mChar ))
 		{
@@ -10675,7 +10722,7 @@ JSBool CBase_Resist( JSContext *cx, uintN argc, jsval *vp )
 		}
 		else
 		{
-			*rval = JS_FALSE;
+			JS_SET_RVAL( cx, vp, JS_FALSE );
 		}
 	}
 	return JS_TRUE;
@@ -10728,7 +10775,7 @@ JSBool CChar_Defense( JSContext *cx, uintN argc, jsval *vp )
 	JSEncapsulate resistType( cx, &( argv[1] ));
 	JSEncapsulate doArmorDamage( cx, &( argv[2] ));
 
-	*rval = INT_TO_JSVAL( Combat->CalcDef( mChar, static_cast<UI08>( hitLoc.toInt() ), doArmorDamage.toBool(), static_cast<WeatherType>( resistType.toInt() )));
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( Combat->CalcDef( mChar, static_cast<UI08>( hitLoc.toInt() ), doArmorDamage.toBool(), static_cast<WeatherType>( resistType.toInt() ))) );
 	return JS_TRUE;
 }
 
@@ -10807,7 +10854,7 @@ JSBool CItem_GetMoreVar( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	// Fetch the value of the moreVarPart and return it to the script
-	*rval = INT_TO_JSVAL( mItem->GetTempVar( static_cast<CITempVars>( moreVar ), moreVarPart ));
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( mItem->GetTempVar( static_cast<CITempVars>( moreVar ), moreVarPart )) );
 	return JS_TRUE;
 }
 
@@ -11004,7 +11051,7 @@ JSBool CBase_HasScriptTrigger( JSContext *cx, uintN argc, jsval *vp )
 	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
 	if( scriptId > 0 && myObj->HasScriptTrigger( scriptId ))
 	{
-		*rval = BOOLEAN_TO_JSVAL( true );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ) );
 	}
 
 	return JS_TRUE;
@@ -11175,7 +11222,7 @@ JSBool CRegion_GetOrePref( JSContext *cx, uintN argc, jsval *vp )
 	JS_SetElement( cx, jsOrePref, 1, &jsOrePrefChance );
 
 	// Convert orePref array object to jsval and pass it to script
-	*rval = OBJECT_TO_JSVAL( jsOrePref );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsOrePref ) );
 
 	return JS_TRUE;
 }
@@ -11201,7 +11248,7 @@ JSBool CRegion_GetOreChance( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = INT_TO_JSVAL( myObj->GetOreChance() );
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( myObj->GetOreChance() ) );
 	return JS_TRUE;
 }
 
@@ -11245,7 +11292,7 @@ JSBool CChar_AddFriend( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->AddFriend( newFriend ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->AddFriend( newFriend )) );
 	return JS_TRUE;
 }
 
@@ -11289,7 +11336,7 @@ JSBool CChar_RemoveFriend( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->RemoveFriend( friendToRemove ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->RemoveFriend( friendToRemove )) );
 	return JS_TRUE;
 }
 
@@ -11349,7 +11396,7 @@ JSBool CChar_GetFriendList( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	// Convert ArrayObject to jsval and pass it to script
-	*rval = OBJECT_TO_JSVAL( jsFriendList );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsFriendList ) );
 	return JS_TRUE;
 }
 
@@ -11389,7 +11436,7 @@ JSBool CChar_ClearFriendList( JSContext *cx, uintN argc, jsval *vp )
 	// Clear friend list
 	mChar->ClearFriendList();
 
-	*rval = BOOLEAN_TO_JSVAL( true );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ) );
 	return JS_TRUE;
 }
 
@@ -11455,7 +11502,7 @@ JSBool CChar_GetPetList( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	// Convert ArrayObject to jsval and pass it to script
-	*rval = OBJECT_TO_JSVAL( jsPetList );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsPetList ) );
 	return JS_TRUE;
 }
 
@@ -11502,7 +11549,7 @@ JSBool CChar_HasBeenOwner( JSContext *cx, uintN argc, jsval *vp )
 
 	bool hasBeenOwner = mChar->IsOnPetOwnerList( pChar );
 
-	*rval = BOOLEAN_TO_JSVAL( hasBeenOwner );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( hasBeenOwner ) );
 	return JS_TRUE;
 }
 
@@ -11549,7 +11596,7 @@ JSBool CChar_CalculateControlChance( JSContext *cx, uintN argc, jsval *vp )
 
 	UI16 petControlChance = Skills->CalculatePetControlChance( mChar, pChar );
 
-	*rval = INT_TO_JSVAL( petControlChance );
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( petControlChance ) );
 	return JS_TRUE;
 }
 
@@ -11593,7 +11640,7 @@ JSBool CChar_AddFollower( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->AddFollower( newFollower ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->AddFollower( newFollower )) );
 	return JS_TRUE;
 }
 
@@ -11637,7 +11684,7 @@ JSBool CChar_RemoveFollower( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mChar->RemoveFollower( followerToRemove ));
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mChar->RemoveFollower( followerToRemove )) );
 	return JS_TRUE;
 }
 
@@ -11703,7 +11750,7 @@ JSBool CChar_GetFollowerList( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	// Convert ArrayObject to jsval and pass it to script
-	*rval = OBJECT_TO_JSVAL( jsFollowerList );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsFollowerList ) );
 	return JS_TRUE;
 }
 
@@ -11739,7 +11786,7 @@ JSBool CParty_Remove( JSContext *cx, uintN argc, jsval *vp )
 			ScriptError( cx, "Remove: Invalid character to remove" );
 			return JS_FALSE;
 		}
-		*rval = BOOLEAN_TO_JSVAL( ourParty->RemoveMember( charToRemove ));
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ourParty->RemoveMember( charToRemove )) );
 	}
 
 	return JS_TRUE;
@@ -11762,7 +11809,7 @@ JSBool CParty_Add( JSContext *cx, uintN argc, jsval *vp )
 	JSEncapsulate myClass( cx, obj );
 
 	// let's setup our default return value here
-	*rval = BOOLEAN_TO_JSVAL( false );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
 
 	if( myClass.ClassName() == "UOXParty" )
 	{
@@ -11784,11 +11831,11 @@ JSBool CParty_Add( JSContext *cx, uintN argc, jsval *vp )
 		{
 			if( ourParty->IsNPC() )
 			{
-				*rval = BOOLEAN_TO_JSVAL( ourParty->AddMember( charToAdd ));
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( ourParty->AddMember( charToAdd )) );
 			}
 			else
 			{
-				*rval = BOOLEAN_TO_JSVAL( false );
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
 				ScriptError( cx, "Add: Adding NPC to a PC party attempted" );
 			}
 		}
@@ -11796,7 +11843,7 @@ JSBool CParty_Add( JSContext *cx, uintN argc, jsval *vp )
 		{
 			if( ourParty->IsNPC() )
 			{
-				*rval = BOOLEAN_TO_JSVAL( false );
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
 				ScriptError( cx, "Add: Adding PC to a NPC party attempted" );
 			}
 			else
@@ -11817,17 +11864,17 @@ JSBool CParty_Add( JSContext *cx, uintN argc, jsval *vp )
 						toSend.Leader( leader );
 						targSock->Send( &toSend );
 						targSock->SysMessage( 9002 ); // You have been invited to join a party, type /accept or /decline to deal with the invitation
-						*rval = BOOLEAN_TO_JSVAL( true );
+						JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ) );
 					}
 					else
 					{
-						*rval = BOOLEAN_TO_JSVAL( false );
+						JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
 						ScriptError( cx, "Add: PC selected is not online" );
 					}
 				}
 				else
 				{
-					*rval = BOOLEAN_TO_JSVAL( false );
+					JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
 					ScriptError( cx, "Add: PC selected is not online" );
 				}
 			}
@@ -11865,22 +11912,22 @@ JSBool CParty_GetMember( JSContext *cx, uintN argc, jsval *vp )
 		if( memberOffset >= ourParty->MemberList()->size() )
 		{
 			ScriptError( cx, "GetMember: Invalid character to get, index out of bounds" );
-			*rval = JSVAL_NULL;
+			JS_SET_RVAL( cx, vp, JSVAL_NULL );
 			return JS_TRUE;
 		}
 		CChar *mChar = (*( ourParty->MemberList() ))[memberOffset]->Member();
 		if( mChar == nullptr )
 		{
-			*rval = JSVAL_NULL;
+			JS_SET_RVAL( cx, vp, JSVAL_NULL );
 		}
 		else
 		{
 			JSObject *myJSChar	= JSEngine->AcquireObject( IUE_CHAR, mChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-			*rval = OBJECT_TO_JSVAL( myJSChar );
+			JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSChar ) );
 		}
 	}
 	else
-		*rval = JSVAL_NULL;
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 	return JS_TRUE;
 }
 
@@ -11905,7 +11952,7 @@ JSBool CSocket_FirstTriggerWord( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 	UI16 trigWord = mySock->FirstTrigWord();
-	*rval = INT_TO_JSVAL( trigWord );
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( trigWord ) );
 	return JS_TRUE;
 }
 
@@ -11930,7 +11977,7 @@ JSBool CSocket_NextTriggerWord( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 	UI16 trigWord = mySock->NextTrigWord();
-	*rval = INT_TO_JSVAL( trigWord );
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( trigWord ) );
 	return JS_TRUE;
 }
 
@@ -11955,7 +12002,7 @@ JSBool CSocket_FinishedTriggerWords( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	*rval = BOOLEAN_TO_JSVAL( mySock->FinishedTrigWords() );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( mySock->FinishedTrigWords() ) );
 	return JS_TRUE;
 }
 
