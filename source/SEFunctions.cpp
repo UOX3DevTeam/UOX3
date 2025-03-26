@@ -227,6 +227,8 @@ JSBool SE_CalcItemFromSer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CalcMultiFromSer( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 && argc != 4 )
 	{
 		ScriptError( cx, "CalcMultiFromSer: Invalid number of arguments (takes 1 or 4)" );
@@ -262,6 +264,8 @@ JSBool SE_CalcMultiFromSer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CheckTimeSinceLastCombat( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if (argc != 2)
 	{
 		ScriptError( cx, "CheckTimeSinceLastCombat: Invalid number of parameters (2)" );
@@ -305,6 +309,8 @@ JSBool SE_CheckTimeSinceLastCombat( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CalcCharFromSer( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 && argc != 4 )
 	{
 		ScriptError( cx, "CalcCharFromSer: Invalid number of arguments (takes 1 or 4)" );
@@ -340,6 +346,8 @@ JSBool SE_CalcCharFromSer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CheckInstaLog( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 4 )
 	{
 		ScriptError( cx, "CheckInstaLog: Invalid number of parameters (4)" );
@@ -380,6 +388,8 @@ JSBool SE_CheckInstaLog( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_DoMovingEffect( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc < 6 )
 	{
 		ScriptError( cx, "DoMovingEffect: Invalid number of arguments (takes 6->8 or 8->10, or 10->12)" );
@@ -515,6 +525,8 @@ JSBool SE_DoMovingEffect( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_DoStaticEffect( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 7 )
 	{
 		ScriptError( cx, "StaticEffect: Invalid number of arguments (takes 7 - targX, targY, targZ, effectID, speed, loop, explode)" );
@@ -541,6 +553,8 @@ JSBool SE_DoStaticEffect( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RandomNumber( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RandomNumber: Invalid number of arguments (takes 2)" );
@@ -559,6 +573,8 @@ JSBool SE_RandomNumber( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_MakeItem( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 3 && argc != 4 )
 	{
 		ScriptError( cx, "MakeItem: Invalid number of arguments (takes 3, or 4 - socket, character, createID - and optionally - resourceColour)" );
@@ -598,6 +614,8 @@ JSBool SE_MakeItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CommandLevelReq( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CommandLevelReq: Invalid number of arguments (takes 1)" );
@@ -628,6 +646,8 @@ JSBool SE_CommandLevelReq( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CommandExists( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CommandExists: Invalid number of arguments (takes 1)" );
@@ -709,6 +729,8 @@ JSBool SE_FinishedCommandList( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterCommand( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 3 )
 	{
 		ScriptError( cx, "  RegisterCommand: Invalid number of arguments (takes 4)" );
@@ -739,6 +761,8 @@ JSBool SE_RegisterCommand( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterSpell( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterSpell: Invalid number of arguments (takes 2)" );
@@ -761,6 +785,8 @@ JSBool SE_RegisterSpell( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterSkill( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterSkill: Invalid number of arguments (takes 2)" );
@@ -812,6 +838,8 @@ JSBool SE_RegisterSkill( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterPacket( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterPacket: Invalid number of arguments (takes 2)" );
@@ -840,6 +868,8 @@ JSBool SE_RegisterPacket( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterKey( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterKey: Invalid number of arguments (takes 2)" );
@@ -883,6 +913,8 @@ JSBool SE_RegisterKey( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, "RegisterConsoleFunc: Invalid number of arguments (takes 2)" );
@@ -909,6 +941,8 @@ JSBool SE_RegisterConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_DisableCommand( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DisableCommand: Invalid number of arguments (takes 1)" );
@@ -926,6 +960,8 @@ JSBool SE_DisableCommand( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_DisableKey( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DisableKey: Invalid number of arguments (takes 1)" );
@@ -943,6 +979,8 @@ JSBool SE_DisableKey( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_DisableConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DisableConsoleFunc: Invalid number of arguments (takes 1)" );
@@ -960,6 +998,8 @@ JSBool SE_DisableConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_DisableSpell( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DisableSpell: Invalid number of arguments (takes 1)" );
@@ -977,6 +1017,8 @@ JSBool SE_DisableSpell( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_EnableCommand( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "EnableCommand: Invalid number of arguments (takes 1)" );
@@ -994,6 +1036,8 @@ JSBool SE_EnableCommand( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_EnableSpell( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "EnableSpell: Invalid number of arguments (takes 1)" );
@@ -1011,6 +1055,8 @@ JSBool SE_EnableSpell( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_EnableKey( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "EnableKey: Invalid number of arguments (takes 1)" );
@@ -1028,6 +1074,8 @@ JSBool SE_EnableKey( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_EnableConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "EnableConsoleFunc: Invalid number of arguments (takes 1)" );
@@ -1089,6 +1137,8 @@ JSBool SE_GetDay( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_SecondsPerUOMinute( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc > 1 )
 	{
 		ScriptError( cx, "SecondsPerUOMinute: Invalid number of arguments (takes 0 or 1)" );
@@ -1110,6 +1160,7 @@ JSBool SE_SecondsPerUOMinute( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetCurrentClock( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* rval = &JS_RVAL(cx, vp);
 	JS_NewNumberValue( cx, cwmWorldState->GetUICurrentTime(), rval );
 
 	return JS_TRUE;
@@ -1122,6 +1173,7 @@ JSBool SE_GetCurrentClock( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetStartTime( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* rval = &JS_RVAL(cx, vp);
 	JS_NewNumberValue( cx, cwmWorldState->GetStartTime(), rval );
 
 	return JS_TRUE;
@@ -1134,6 +1186,8 @@ JSBool SE_GetStartTime( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetRandomSOSArea( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, "GetRandomSOSArea: Invalid number of arguments (takes 2)" );
@@ -1206,6 +1260,10 @@ JSBool SE_GetRandomSOSArea( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_SpawnNPC( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+	jsval* rval = &JS_RVAL(cx, vp);
+	JSObject* obj = JS_THIS_OBJECT(cx, vp);
+
 	if( argc < 5 || argc > 7 )
 	{
 		ScriptError( cx, "SpawnNPC: Invalid number of arguments (takes 5, 6 or 7)" );
@@ -1213,7 +1271,10 @@ JSBool SE_SpawnNPC( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	CChar *cMade		= nullptr;
-	std::string nnpcNum	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	//std::string nnpcNum	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	JSString* str = JS_ValueToString(cx, argv[0]);
+	char* chars = JS_EncodeString(cx, str);
+	std::string nnpcNum(chars);
 	UI16 x				= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 	UI16 y				= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 	SI08 z				= static_cast<SI08>( JSVAL_TO_INT( argv[3] ));
@@ -1249,6 +1310,8 @@ JSBool SE_SpawnNPC( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc < 3 )
 	{
 		ScriptError( cx, "CreateDFNItem: Invalid number of arguments (takes at least 3, max 8)" );
@@ -1340,6 +1403,8 @@ JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CreateBlankItem( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 8 )
 	{
 		ScriptError( cx, "CreateBlankItem: Invalid number of arguments (takes 7)" );
@@ -1401,6 +1466,8 @@ CMultiObj * BuildHouse( CSocket *s, UI16 houseEntry, bool checkLocation = true, 
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CreateHouse( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc < 4 )
 	{
 		ScriptError( cx, "CreateHouse: Invalid number of arguments (takes at least 4, max 8)" );
@@ -1467,6 +1534,8 @@ CMultiObj * BuildBaseMulti( UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 z
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CreateBaseMulti( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc < 4 )
 	{
 		ScriptError( cx, "CreateBaseMulti: Invalid number of arguments (takes at least 4, max 8)" );
@@ -1544,6 +1613,8 @@ JSBool SE_GetMurderThreshold( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RollDice( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc < 3 )
 	{
 		ScriptError( cx, "RollDice: Invalid number of arguments (takes 3)" );
@@ -1569,6 +1640,8 @@ JSBool SE_RollDice( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RaceCompareByRace( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		return JS_FALSE;
@@ -1587,6 +1660,8 @@ JSBool SE_RaceCompareByRace( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_FindMulti( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 && argc != 4 && argc != 5 )
 	{
 		ScriptError( cx, "FindMulti: Invalid number of parameters (1, 4 or 5)" );
@@ -1646,6 +1721,8 @@ JSBool SE_FindMulti( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetItem( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 4 && argc != 5 )
 	{
 		ScriptError( cx, "GetItem: Invalid number of parameters (4 or 5)" );
@@ -1686,6 +1763,8 @@ JSBool SE_GetItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 5 && argc != 6 )
 	{
 		ScriptError( cx, "FindItem: Invalid number of parameters (5 or 6)" );
@@ -1733,6 +1812,8 @@ JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		return JS_FALSE;
@@ -1750,6 +1831,8 @@ JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_PossessTown( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		return JS_FALSE;
@@ -1767,6 +1850,8 @@ JSBool SE_PossessTown( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_IsRaceWeakToWeather( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		return JS_FALSE;
@@ -1789,6 +1874,8 @@ JSBool SE_IsRaceWeakToWeather( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetRaceSkillAdjustment( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		return JS_FALSE;
@@ -1806,6 +1893,8 @@ JSBool SE_GetRaceSkillAdjustment( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_UseItem( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, "UseItem: Invalid number of arguments (takes 2 - socket/char, and item used)" );
@@ -1936,6 +2025,8 @@ JSBool SE_UseItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_TriggerTrap( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, "UseItem: Invalid number of arguments (takes 2 - socket/char, and item (trap) triggered)" );
@@ -2008,6 +2099,8 @@ JSBool SE_TriggerTrap( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_TriggerEvent( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc < 2 )
 	{
 		return JS_FALSE;
@@ -2046,6 +2139,8 @@ JSBool SE_TriggerEvent( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_DoesEventExist( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		return JS_FALSE;
@@ -2075,6 +2170,8 @@ JSBool SE_DoesEventExist( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetPackOwner( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, "GetPackOwner: Invalid number of arguments (takes 2)" );
@@ -2114,6 +2211,8 @@ JSBool SE_GetPackOwner( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_FindRootContainer( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, "FindRootContainer: Invalid number of arguments (takes 2)" );
@@ -2153,6 +2252,8 @@ JSBool SE_FindRootContainer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CalcTargetedItem( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CalcTargetedItem: Invalid number of arguments (takes 1)" );
@@ -2187,6 +2288,8 @@ JSBool SE_CalcTargetedItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CalcTargetedChar( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CalcTargetedChar: Invalid number of arguments (takes 1)" );
@@ -2221,6 +2324,8 @@ JSBool SE_CalcTargetedChar( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetTileIdAtMapCoord( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+	jsval* rval = &JS_RVAL(cx, vp);
 	if( argc != 3 )
 	{
 		ScriptError( cx, "GetTileIDAtMapCoord: Invalid number of arguments (takes 3)" );
@@ -2243,6 +2348,8 @@ JSBool SE_GetTileIdAtMapCoord( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_StaticInRange( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 5 )
 	{
 		ScriptError( cx, "StaticInRange: Invalid number of arguments (takes 5, x, y, world, radius, tile)" );
@@ -2290,6 +2397,8 @@ JSBool SE_StaticInRange( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_StaticAt( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 4 && argc != 3 )
 	{
 		ScriptError( cx, "StaticAt: Invalid number of arguments (takes 4, x, y, world, tile)" );
@@ -2326,6 +2435,8 @@ JSBool SE_StaticAt( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_StringToNum( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "StringToNum: Invalid number of arguments (takes 1)" );
@@ -2346,6 +2457,8 @@ JSBool SE_StringToNum( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_NumToString( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "NumToString: Invalid number of arguments (takes 1)" );
@@ -2366,6 +2479,8 @@ JSBool SE_NumToString( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_NumToHexString( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "NumToHexString: Invalid number of arguments (takes 1)" );
@@ -2404,6 +2519,8 @@ JSBool SE_GetRaceCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 3 && argc != 4 )
 	{
 		// function name, source character, range
@@ -2486,6 +2603,8 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_AreaItemFunction( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 3 && argc != 4 )
 	{
 		// function name, source character, range
@@ -2564,6 +2683,8 @@ JSBool SE_AreaItemFunction( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetDictionaryEntry( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc < 1 )
 	{
 		ScriptError( cx, "GetDictionaryEntry: Invalid number of arguments (takes at least 1)" );
@@ -2593,6 +2714,8 @@ JSBool SE_GetDictionaryEntry( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_Yell( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc < 3 )
 	{
 		ScriptError( cx, "Yell: Invalid number of arguments (takes 3)" );
@@ -2676,6 +2799,8 @@ JSBool SE_Yell( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_Reload( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Reload: needs 1 argument!" );
@@ -2751,6 +2876,8 @@ JSBool SE_Reload( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_SendStaticStats( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SendStaticStats: needs 1 argument!" );
@@ -2812,6 +2939,8 @@ JSBool SE_SendStaticStats( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetTileHeight( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetTileHeight: needs 1 argument!" );
@@ -2837,6 +2966,8 @@ bool SE_IterateFunctor( CBaseObject *a, UI32 &b, void *extraData )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_IterateOver( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IterateOver: needs 1 argument!" );
@@ -2900,6 +3031,8 @@ JSBool SE_IterateOverSpawnRegions( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_WorldBrightLevel( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc > 1 )
 	{
 		ScriptError( cx, oldstrutil::format( "WorldBrightLevel: Unknown Count of Arguments: %d", argc ).c_str() );
@@ -2922,6 +3055,8 @@ JSBool SE_WorldBrightLevel( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_WorldDarkLevel( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc > 1 )
 	{
 		ScriptError( cx, oldstrutil::format( "WorldDarkLevel: Unknown Count of Arguments: %d", argc ).c_str() );
@@ -2944,6 +3079,8 @@ JSBool SE_WorldDarkLevel( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_WorldDungeonLevel( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc > 1 )
 	{
 		ScriptError( cx, oldstrutil::format( "WorldDungeonLevel: Unknown Count of Arguments: %d", argc ).c_str() );
@@ -2965,6 +3102,8 @@ JSBool SE_WorldDungeonLevel( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetSpawnRegionFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc > 1 )
 	{
 		ScriptError( cx, oldstrutil::format( "GetSpawnRegionFacetStatus: Unknown Count of Arguments: %d", argc ).c_str() );
@@ -2993,6 +3132,8 @@ JSBool SE_GetSpawnRegionFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_SetSpawnRegionFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc > 2 )
 	{
 		ScriptError( cx, oldstrutil::format( "SetSpawnRegionFacetStatus: Unknown Count of Arguments: %d", argc ).c_str() );
@@ -3019,6 +3160,8 @@ JSBool SE_SetSpawnRegionFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetMoongateFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, oldstrutil::format( "GetShowMoongateFacetStatus: Unknown Count of Arguments: %d", argc ).c_str() );
@@ -3047,6 +3190,8 @@ JSBool SE_GetMoongateFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_SetMoongateFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, oldstrutil::format( "SetMoongateFacetStatus: Unknown Count of Arguments: %d", argc ).c_str() );
@@ -3074,6 +3219,8 @@ JSBool SE_SetMoongateFacetStatus( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetSocketFromIndex( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetSocketFromIndex: Invalid number of arguments (takes 1)" );
@@ -3107,6 +3254,8 @@ JSBool SE_GetSocketFromIndex( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_ReloadJSFile( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReloadJSFile: Invalid number of arguments (takes 1)" );
@@ -3132,6 +3281,8 @@ JSBool SE_ReloadJSFile( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_ResourceArea( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 0 )
 	{
 		ScriptError( cx, oldstrutil::format( "ResourceArea: Invalid Count of Arguments: %d", argc ).c_str() );
@@ -3154,6 +3305,8 @@ JSBool SE_ResourceArea( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_ResourceAmount( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc > 2 || argc == 0 )
 	{
 		ScriptError( cx, oldstrutil::format( "ResourceAmount: Invalid Count of Arguments: %d", argc ).c_str() );
@@ -3203,6 +3356,8 @@ JSBool SE_ResourceAmount( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_ResourceTime( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc > 2 || argc == 0 )
 	{
 		ScriptError( cx, oldstrutil::format( "ResourceTime: Invalid Count of Arguments: %d", argc ).c_str() );
@@ -3252,6 +3407,8 @@ JSBool SE_ResourceTime( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_ResourceRegion( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 3 )
 	{
 		ScriptError( cx, "ResourceRegion: Invalid number of arguments (takes 3)" );
@@ -3284,6 +3441,8 @@ JSBool SE_ResourceRegion( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_ValidateObject( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ValidateObject: Invalid number of arguments (takes 1)" );
@@ -3313,6 +3472,8 @@ JSBool SE_ValidateObject( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_ApplyDamageBonuses( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 6 )
 	{
 		ScriptError( cx, "ApplyDamageBonuses: Invalid number of arguments (takes 6)" );
@@ -3386,6 +3547,8 @@ JSBool SE_ApplyDamageBonuses( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_ApplyDefenseModifiers( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 7 )
 	{
 		ScriptError( cx, "ApplyDefenseModifiers: Invalid number of arguments (takes 7)" );
@@ -3455,6 +3618,8 @@ JSBool SE_ApplyDefenseModifiers( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_WillResultInCriminal( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, "WillResultInCriminal: Invalid number of arguments (takes 2: srcChar and trgChar)" );
@@ -3496,6 +3661,8 @@ JSBool SE_WillResultInCriminal( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CreateParty( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+	jsval* rval = &JS_RVAL(cx, vp);
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CreateParty: Invalid number of arguments (takes 1, the leader)" );
@@ -3546,6 +3713,8 @@ JSBool SE_CreateParty( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_Moon( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc > 2 || argc == 0 )
 	{
 		ScriptError( cx, oldstrutil::format( "Moon: Invalid Count of Arguments: %d", argc ).c_str() );
@@ -3571,6 +3740,8 @@ JSBool SE_Moon( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetTownRegion( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetTownRegion: Invalid number of parameters (1)" );
@@ -3605,6 +3776,8 @@ JSBool SE_GetTownRegion( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetTownRegionFromXY( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 4 )
 	{
 		ScriptError( cx, "GetTownRegion: Invalid number of parameters (4)" );
@@ -3638,6 +3811,8 @@ JSBool SE_GetTownRegionFromXY( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetSpawnRegion( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+	jsval* rval = &JS_RVAL(cx, vp);
 	if( argc != 1 && argc != 4 )
 	{
 		ScriptError( cx, "GetSpawnRegion: Invalid number of parameters (1 - spawnRegionID, or 4 - x, y, world and instanceID)" );
@@ -3704,6 +3879,8 @@ JSBool SE_GetSpawnRegion( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetSpawnRegionCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetSpawnRegionCount: Invalid number of arguments (takes 0)" );
@@ -3720,6 +3897,8 @@ JSBool SE_GetSpawnRegionCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] 
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetMapElevation( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 3 )
 	{
 		ScriptError( cx, "GetMapElevation: Invalid number of arguments (takes 3: X, Y and WorldNumber)" );
@@ -3743,6 +3922,8 @@ JSBool SE_GetMapElevation( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_IsInBuilding( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 6 )
 	{
 		ScriptError( cx, "IsInBuilding: Invalid number of arguments (takes 6: X, Y, Z, WorldNumber and instanceId)" );
@@ -3788,6 +3969,8 @@ JSBool SE_IsInBuilding( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CheckStaticFlag( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 5 )
 	{
 		ScriptError( cx, "CheckStaticFlag: Invalid number of arguments (takes 5: X, Y, Z, WorldNumber and TileFlagID)" );
@@ -3812,6 +3995,8 @@ JSBool SE_CheckStaticFlag( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CheckDynamicFlag( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 6 )
 	{
 		ScriptError( cx, "CheckDynamicFlag: Invalid number of arguments (takes 6: X, Y, Z, WorldNumber, instanceId and TileFlagID)" );
@@ -3837,6 +4022,8 @@ JSBool SE_CheckDynamicFlag( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CheckTileFlag( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 2 )
 	{
 		ScriptError( cx, "CheckTileFlag: Invalid number of arguments (takes 2: itemId and tileFlagID)" );
@@ -3858,6 +4045,8 @@ JSBool SE_CheckTileFlag( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_DoesStaticBlock( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 5 )
 	{
 		ScriptError( cx, "DoesStaticBlock: Invalid number of arguments (takes 5: X, Y, Z, WorldNumber and checkWater)" );
@@ -3881,6 +4070,8 @@ JSBool SE_DoesStaticBlock( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_DoesDynamicBlock( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 9 )
 	{
 		ScriptError( cx, "DoesDynamicBlock: Invalid number of arguments (takes 9: X, Y, Z, WorldNumber, instanceId, checkWater, waterWalk, checkOnlyMultis and checkOnlyNonMultis)" );
@@ -3908,6 +4099,8 @@ JSBool SE_DoesDynamicBlock( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_DoesMapBlock( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 8 )
 	{
 		ScriptError( cx, "DoesMapBlock: Invalid number of arguments (takes 8: X, Y, Z, WorldNumber, checkWater, waterWalk, checkMultiPlacement and checkForRoad)" );
@@ -3934,6 +4127,8 @@ JSBool SE_DoesMapBlock( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_DoesCharacterBlock( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 5 )
 	{
 		ScriptError( cx, "DoesCharacterBlock: Invalid number of arguments (takes 5: X, Y, z, WorldNumber, instanceId)" );
@@ -3957,6 +4152,8 @@ JSBool SE_DoesCharacterBlock( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc < 1 || argc > 3 )
 	{
 		ScriptError( cx, "DeleteFile: Invalid number of arguments (takes 1 to 3 - fileName and (optionally) subFolderName and useScriptDataDir bool)" );
@@ -4027,6 +4224,7 @@ JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 JSBool SE_EraStringToNum( JSContext *cx, uintN argc, jsval *vp )
 {
 	JS_SET_RVAL( cx, vp, reinterpret_cast<long>(nullptr) );
+	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 1 )
 	{
@@ -4064,6 +4262,7 @@ JSBool SE_EraStringToNum( JSContext *cx, uintN argc, jsval *vp )
 JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 {
 	JS_SET_RVAL( cx, vp, reinterpret_cast<long>(nullptr) );
+	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 1 )
 	{
@@ -5219,6 +5418,8 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetClientFeature( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetClientFeature: Invalid number of arguments (takes 1 - feature ID)" );
@@ -5237,6 +5438,8 @@ JSBool SE_GetClientFeature( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetServerFeature( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetServerFeature: Invalid number of arguments (takes 1 - feature ID)" );
@@ -5323,6 +5526,8 @@ JSBool SE_GetServerVersionString( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_DistanceBetween( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval* argv = JS_ARGV( cx, vp );
+	jsval* rval = &JS_RVAL(cx, vp);
 	if( argc != 2 && argc != 3 && argc != 4 && argc != 6 )
 	{
 		ScriptError( cx, "DistanceBetween: needs 2, 3, 4 or 6 arguments - object a, object b - or object a, object b, (bool)checkZ - or x1, y1 and x2, y2 - or x1, y1, z1 and x2, y2, z2!" );
@@ -5387,7 +5592,7 @@ JSBool SE_DistanceBetween( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_BASEITEMSERIAL( JSContext *cx, uintN argc, jsval *vp )
 {
-	JS_NewNumberValue( cx, BASEITEMSERIAL, rval );
+	JS_NewNumberValue( cx, BASEITEMSERIAL, &JS_RVAL( cx, vp ));
 	return JS_TRUE;
 }
 
@@ -5398,7 +5603,7 @@ JSBool SE_BASEITEMSERIAL( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_INVALIDSERIAL( JSContext *cx, uintN argc, jsval *vp )
 {
-	JS_NewNumberValue( cx, INVALIDSERIAL, rval );
+	JS_NewNumberValue( cx, INVALIDSERIAL, &JS_RVAL( cx, vp ));
 	return JS_TRUE;
 }
 
@@ -5409,7 +5614,7 @@ JSBool SE_INVALIDSERIAL( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_INVALIDID( JSContext *cx, uintN argc, jsval *vp )
 {
-	JS_NewNumberValue( cx, INVALIDID, rval );
+	JS_NewNumberValue( cx, INVALIDID, &JS_RVAL( cx, vp ));
 	return JS_TRUE;
 }
 
@@ -5420,6 +5625,6 @@ JSBool SE_INVALIDID( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_INVALIDCOLOUR( JSContext *cx, uintN argc, jsval *vp )
 {
-	JS_NewNumberValue( cx, INVALIDCOLOUR, rval );
+	JS_NewNumberValue( cx, INVALIDCOLOUR, &JS_RVAL( cx, vp ));
 	return JS_TRUE;
 }
