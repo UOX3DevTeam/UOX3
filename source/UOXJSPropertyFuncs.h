@@ -10,68 +10,68 @@
 #define __UOXJSPropertyOps__
 
 
-JSPropertyOp CSpellsProps_getProperty;
-JSPropertyOp CSpellProps_getProperty;
-JSStrictPropertyOp CSpellProps_setProperty;
+JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CSpellProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 
-JSPropertyOp CGlobalSkillsProps_getProperty;
-JSPropertyOp CGlobalSkillProps_getProperty;
-JSStrictPropertyOp CGlobalSkillProps_setProperty;
+JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CGlobalSkillProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 
-JSPropertyOp CCreateEntriesProps_getProperty;
-JSPropertyOp CCreateEntryProps_getProperty;
-JSStrictPropertyOp CCreateEntryProps_setProperty;
+JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CCreateEntryProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 
-JSPropertyOp CTimerProps_getProperty;
+JSBool CTimerProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
 
-JSPropertyOp CItemProps_getProperty;
-JSStrictPropertyOp CItemProps_setProperty;
-JSPropertyOp CCharacterProps_getProperty;
-JSStrictPropertyOp CCharacterProps_setProperty;
+JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
+JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
 
-JSPropertyOp CRegionProps_getProperty;
-JSStrictPropertyOp CRegionProps_setProperty;
+JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 
-JSPropertyOp CSpawnRegionProps_getProperty;
-JSStrictPropertyOp CSpawnRegionProps_setProperty;
+JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 
-JSPropertyOp CGuildProps_getProperty;
-JSStrictPropertyOp CGuildProps_setProperty;
-JSPropertyOp CGuildsProps_getProperty;
-JSStrictPropertyOp CGuildsProps_setProperty;
+JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
+JSBool CGuildsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CGuildsProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 
-JSPropertyOp CRaceProps_getProperty;
-JSStrictPropertyOp CRaceProps_setProperty;
+JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CRaceProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 
-JSPropertyOp CSocketProps_getProperty;
-JSStrictPropertyOp CSocketProps_setProperty;
+JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 JSBool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
 
-JSPropertyOp CSkillsProps_getProperty;
-JSStrictPropertyOp CSkillsProps_setProperty;
+JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 
-JSPropertyOp CGumpDataProps_getProperty;
+JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
 
-JSPropertyOp CFileProps_getProperty;
-JSStrictPropertyOp CFileProps_setProperty;
+JSBool CFileProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CFileProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 
-JSPropertyOp CAccountProps_getProperty;
-JSStrictPropertyOp CAccountProps_setProperty;
+JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 
-JSPropertyOp CConsoleProps_getProperty;
-JSStrictPropertyOp CConsoleProps_setProperty;
+JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CConsoleProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 
-JSPropertyOp CScriptSectionProps_getProperty;
-JSStrictPropertyOp CScriptSectionProps_setProperty;
+JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CScriptSectionProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 
-JSPropertyOp CScriptProps_getProperty;
+JSBool CScriptProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
 
-JSPropertyOp CResourceProps_getProperty;
-JSStrictPropertyOp CResourceProps_setProperty;
+JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 
-JSPropertyOp CPartyProps_getProperty;
-JSStrictPropertyOp CPartyProps_setProperty;
+JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
+JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsid id, JSBool strict, jsval *vp );
 JSBool CParty_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
 
 #endif

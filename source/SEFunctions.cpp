@@ -2514,7 +2514,7 @@ JSBool SE_NumToHexString( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the total number of races found in the server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetRaceCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetRaceCount( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 0 )
 	{
@@ -2545,8 +2545,8 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp )
 	// Do parameter validation here
 	JSObject *srcSocketObj	= nullptr;
 	CSocket *srcSocket		= nullptr;
-	char *trgFunc			= JS_GetStringBytes( cx, argv[0]);
-	if( trgFunc == nullptr )
+	std::string trgFunc			= JS_GetStringBytes( cx, argv[0]);
+	if( trgFunc.empty() )
 	{
 		ScriptError( cx, "AreaCharacterFunction: Argument 0 not a valid string" );
 		return JS_FALSE;
@@ -2594,7 +2594,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp )
 	{
 		std::for_each( charsFound.begin(), charsFound.end(), [myScript, trgFunc, srcObject, srcSocket, &retCounter]( CChar *tempChar )
 		{
-			if( myScript->AreaObjFunc( trgFunc, srcObject, tempChar, srcSocket ))
+			if( myScript->AreaObjFunc( trgFunc.c_str(), srcObject, tempChar, srcSocket))
 			{
 				++retCounter;
 			}
@@ -2629,8 +2629,8 @@ JSBool SE_AreaItemFunction( JSContext *cx, uintN argc, jsval *vp )
 	// Do parameter validation here
 	JSObject *srcSocketObj	= nullptr;
 	CSocket *srcSocket		= nullptr;
-	char *trgFunc			= JS_GetStringBytes( cx, argv[0]);
-	if( trgFunc == nullptr )
+	std::string trgFunc			= JS_GetStringBytes( cx, argv[0]);
+	if( trgFunc.empty() )
 	{
 		ScriptError( cx, "AreaItemFunction: Argument 0 not a valid string" );
 		return JS_FALSE;
@@ -2679,7 +2679,7 @@ JSBool SE_AreaItemFunction( JSContext *cx, uintN argc, jsval *vp )
 	// Now iterate over all the characters that we found previously, and run the area function for each
 	std::for_each( itemsFound.begin(), itemsFound.end(), [myScript, trgFunc, srcObject, srcSocket, &retCounter]( CItem *tempItem )
 	{
-		if( myScript->AreaObjFunc( trgFunc, srcObject, tempItem, srcSocket ))
+		if( myScript->AreaObjFunc( trgFunc.c_str(), srcObject, tempItem, srcSocket))
 		{
 			++retCounter;
 		}
@@ -3892,7 +3892,7 @@ JSBool SE_GetSpawnRegion( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the total number of spawn regions found in the server
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_GetSpawnRegionCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSBool SE_GetSpawnRegionCount( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval* argv = JS_ARGV( cx, vp );
 
@@ -4175,8 +4175,8 @@ JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	char *fileName = JS_GetStringBytes( cx, argv[0]);
-	char *subFolderName = nullptr;
+	std::string fileName = JS_GetStringBytes( cx, argv[0]);
+	std::string subFolderName;
 	if( argc >= 2 )
 	{
 		subFolderName = JS_GetStringBytes( cx, argv[1]);
@@ -4196,7 +4196,7 @@ JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 	std::string pathString	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
 
 	// if subFolderName argument was supplied, use it
-	if( subFolderName != nullptr )
+	if( !subFolderName.empty() )
 	{
 		// However, don't allow special characters in the folder name
 		if( strstr( subFolderName, ".." ) || strstr( subFolderName, "\\" ) || strstr( subFolderName, "/" ))

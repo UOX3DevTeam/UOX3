@@ -269,7 +269,7 @@ public:
 	SI08		OnSpecialMove( CChar *mChar, UI08 abilityId );
 	SI08		OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet );
 
-	bool		AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
+	bool		AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
 	bool		CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams, jsval *eventRetVal );
 
 	bool		ScriptRegistration( std::string scriptType );

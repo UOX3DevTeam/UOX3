@@ -3386,7 +3386,7 @@ SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 //|	Purpose		-	Calls the function represented in funcName for the script
 //|				-	passing in two character parameters
 //o------------------------------------------------------------------------------------------------o
-bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s )
+bool cScript::AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s )
 {
 	if( !ValidateObject( srcObject ) || !ValidateObject( tmpObject ) || funcName == nullptr )
 		return false;
