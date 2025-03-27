@@ -187,5 +187,6 @@ JSNative SE_INVALIDSERIAL;			//										***
 JSNative SE_INVALIDID;				//										***
 JSNative SE_INVALIDCOLOUR;			//										***
 
+std::string JS_GetStringBytes( JSContext* cx, jsval val );
 
 #endif

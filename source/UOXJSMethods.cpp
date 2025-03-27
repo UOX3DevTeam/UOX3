@@ -286,7 +286,7 @@ JSBool CPacket_WriteLong( JSContext *cx, uintN argc, jsval *vp )
 	jsval *argv = JS_ARGV( cx, vp );
 	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
 	//UI32	toWrite		= static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
-	char *	toWriteChar	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
+	char *	toWriteChar	= JS_GetStringBytes( cx, argv[1]);
 	UI32 toWrite = oldstrutil::value<UI32>( toWriteChar );
 
 	myPacket->GetPacketStream().WriteLong( position, toWrite );
@@ -318,7 +318,7 @@ JSBool CPacket_WriteString( JSContext *cx, uintN argc, jsval *vp )
 
 	jsval *argv = JS_ARGV( cx, vp );
 	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
-	char *	toWrite		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
+	char *	toWrite		= JS_GetStringBytes( cx, argv[1]);
 	size_t	len			= static_cast<size_t>( JSVAL_TO_INT( argv[2] ));
 
 	myPacket->GetPacketStream().WriteString( position, toWrite, len );
@@ -972,7 +972,7 @@ JSBool CGump_AddCroppedText( JSContext *cx, uintN argc, jsval *vp )
 	SI16 TextHeight	= static_cast<SI16>( JSVAL_TO_INT( argv[4] )); // height
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	char *TextString = JS_GetStringBytes( JS_ValueToString( cx, argv[5] ));
+	char *TextString = JS_GetStringBytes( cx, argv[5]);
 
 	if( TextString == nullptr )
 	{
@@ -1167,7 +1167,7 @@ JSBool CGump_AddToolTip( JSContext *cx, uintN argc, jsval *vp )
 		std::string tempArg;
 		for( UI32 i = 2; i < argc; i++ )
 		{
-			tempArg = JS_GetStringBytes( JS_ValueToString( cx, argv[i] ));
+			tempArg = JS_GetStringBytes( cx, argv[i]);
 			temp << ( i == 2 ? tempArg : ( "\t" + tempArg ));
 		}
 		temp << "@";
@@ -1206,7 +1206,7 @@ JSBool CGump_AddHTMLGump( JSContext *cx, uintN argc, jsval *vp )
 	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
 	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
 
-	char *TextString = JS_GetStringBytes( JS_ValueToString( cx, argv[6] ));
+	char *TextString = JS_GetStringBytes( cx, argv[6]);
 
 	if( TextString == nullptr )
 	{
@@ -1483,7 +1483,7 @@ JSBool CGump_AddText( JSContext *cx, uintN argc, jsval *vp )
 	SI16 TextY		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
 	SI16 TextHue	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // Hue
 
-	char *TextString = JS_GetStringBytes( JS_ValueToString( cx, argv[3] ));
+	char *TextString = JS_GetStringBytes( cx, argv[3]);
 
 	if( TextString == nullptr )
 	{
@@ -1530,7 +1530,7 @@ JSBool CGump_AddTextEntry( JSContext *cx, uintN argc, jsval *vp )
 	SI16 hue				= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
 	SI16 relay				= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
 	SI16 initialTextIndex	= static_cast<SI16>( JSVAL_TO_INT( argv[6] ));
-	char *test = JS_GetStringBytes( JS_ValueToString( cx, argv[7] ));
+	char *test = JS_GetStringBytes( cx, argv[7]);
 
 	if( test == nullptr )
 	{
@@ -1574,7 +1574,7 @@ JSBool CGump_AddTextEntryLimited( JSContext *cx, uintN argc, jsval *vp )
 	SI16 hue				= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
 	SI16 relay				= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
 	SI16 initialTextIndex	= static_cast<SI16>( JSVAL_TO_INT( argv[6] ));
-	char *test = JS_GetStringBytes( JS_ValueToString( cx, argv[7] ));
+	char *test = JS_GetStringBytes( cx, argv[7]);
 	SI16 textEntrySize		= static_cast<SI16>( JSVAL_TO_INT( argv[8] ));
 
 	if( test == nullptr )
@@ -1737,9 +1737,9 @@ JSBool CGump_AddXMFHTMLTok( JSContext *cx, uintN argc, jsval *vp )
 	SI32 rgbColour		= static_cast<SI32>( JSVAL_TO_INT( argv[6] ));	// colour
 	SI32 number			= static_cast<SI32>( JSVAL_TO_INT( argv[7] )); // number
 
-	char *TextString1	= JS_GetStringBytes( JS_ValueToString( cx, argv[8] )); // ClilocArgument1
-	char *TextString2	= JS_GetStringBytes( JS_ValueToString( cx, argv[9] )); // ClilocArgument2
-	char *TextString3	= JS_GetStringBytes( JS_ValueToString( cx, argv[10] )); // ClilocArgument3
+	char *TextString1	= JS_GetStringBytes( cx, argv[8]); // ClilocArgument1
+	char *TextString2	= JS_GetStringBytes( cx, argv[9]); // ClilocArgument2
+	char *TextString3	= JS_GetStringBytes( cx, argv[10]); // ClilocArgument3
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -2629,11 +2629,11 @@ JSBool CMisc_SysMessage( JSContext *cx, uintN argc, jsval *vp )
 	{
 		if( msgArg.empty() )
 		{
-			msgArg += JS_GetStringBytes( JS_ValueToString( cx, argv[i] ));
+			msgArg += JS_GetStringBytes( cx, argv[i]);
 		}
 		else
 		{
-			msgArg += std::string(",") + JS_GetStringBytes( JS_ValueToString( cx, argv[i] ));
+			msgArg += std::string(",") + JS_GetStringBytes( cx, argv[i]);
 		}
 	}
 
@@ -3352,7 +3352,7 @@ JSBool CBase_GetTag( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	std::string localString		= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string localString		= JS_GetStringBytes( cx, argv[0]);
 	TAGMAPOBJECT localObject	= myObj->GetTag( localString );
 	if( localObject.m_ObjectType == TAGMAP_TYPE_STRING )
 	{
@@ -3394,7 +3394,7 @@ JSBool CBase_SetTag( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	std::string localString = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string localString = JS_GetStringBytes( cx, argv[0]);
 	TAGMAPOBJECT localObject;
 	if( argc == 2 )
 	{
@@ -3495,7 +3495,7 @@ JSBool CBase_GetTempTag( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	std::string localString		= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string localString		= JS_GetStringBytes( cx, argv[0]);
 	TAGMAPOBJECT localObject	= myObj->GetTempTag( localString );
 	if( localObject.m_ObjectType == TAGMAP_TYPE_STRING )
 	{
@@ -3538,7 +3538,7 @@ JSBool CBase_SetTempTag( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	std::string localString = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string localString = JS_GetStringBytes( cx, argv[0]);
 	TAGMAPOBJECT localObject;
 	if( argc == 2 )
 	{
@@ -4239,7 +4239,7 @@ JSBool CBase_ResourceCount( JSContext *cx, uintN argc, jsval *vp )
 	}
 	if( argc >= 4 )
 	{
-		sectionId = JS_GetStringBytes( JS_ValueToString( cx, argv[3] ));
+		sectionId = JS_GetStringBytes( cx, argv[3]);
 	}
 
 	bool colorCheck = ( itemColour != -1 ? true : false );
@@ -4304,7 +4304,7 @@ JSBool CBase_UseResource( JSContext *cx, uintN argc, jsval *vp )
 	}
 	if( argc >= 5 )
 	{
-		sectionId = JS_GetStringBytes( JS_ValueToString( cx, argv[4] ));
+		sectionId = JS_GetStringBytes( cx, argv[4]);
 	}
 
 	bool colorCheck = ( itemColour != -1 ? true : false );
@@ -4405,7 +4405,7 @@ JSBool CMisc_CustomTarget( JSContext *cx, uintN argc, jsval *vp )
 	std::string toSay;
 	if( argc >= 2 )
 	{
-		toSay = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
+		toSay = JS_GetStringBytes( cx, argv[1]);
 		if( toSay.size() > maxsize )
 		{
 			toSay = toSay.substr( 0, maxsize );
@@ -4481,7 +4481,7 @@ JSBool CMisc_PopUpTarget( JSContext *cx, uintN argc, jsval *vp )
 	std::string toSay;
 	if( argc == 2 )
 	{
-		toSay = oldstrutil::format( 512, "%s", JS_GetStringBytes( JS_ValueToString( cx, argv[1] )));
+		toSay = oldstrutil::format( 512, "%s", JS_GetStringBytes( cx, argv[1]));
 	}
 
 	mySock->SendTargetCursor( 0, tNum, toSay );
@@ -4737,7 +4737,7 @@ JSBool CChar_FindItemSection( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	std::string sectionID = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string sectionID = JS_GetStringBytes( cx, argv[0]);
 
 	CItem *myItem = FindItemOfSectionId( myChar, sectionID );
 	if( !ValidateObject( myItem ))
@@ -5904,7 +5904,7 @@ JSBool CSocket_OpenURL( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "OpenURL: Invalid socket!" );
 		return JS_FALSE;
 	}
-	std::string url = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string url = JS_GetStringBytes( cx, argv[0]);
 	mySock->OpenURL( url );
 	return JS_TRUE;
 }
@@ -6211,7 +6211,7 @@ JSBool CSocket_SetString( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	SI32 offset = JSVAL_TO_INT( argv[0] );
-	char *trgMessage = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
+	char *trgMessage = JS_GetStringBytes( cx, argv[1]);
 	if( trgMessage == nullptr )
 	{
 		ScriptError( cx, "SetString: No string to set" );
@@ -6632,7 +6632,7 @@ JSBool CBase_ApplySection( JSContext *cx, uintN argc, jsval *vp )
 
 	JSEncapsulate myClass( cx, obj );
 	CBaseObject *myObj		= static_cast<CBaseObject*>( myClass.toObject() );
-	std::string trgSection	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string trgSection	= JS_GetStringBytes( cx, argv[0]);
 
 	if( trgSection.empty() || trgSection.length() == 0 )
 	{
@@ -6855,7 +6855,7 @@ JSBool CItem_IsOnFoodList( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "IsOnFoodList: Invalid parameter specifled, string required!" );
 		return JS_FALSE;
 	}
-	std::string foodList = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string foodList = JS_GetStringBytes( cx, argv[0]);
 
 	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( IsOnFoodList( foodList, myItem->GetId() )) );
 	return JS_TRUE;
@@ -6904,9 +6904,9 @@ JSBool CAccount_AddAccount( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "Account.AddAccount(user,pass,email,flags): Invalid parameter specifled, please check param types." );
 		return JS_FALSE;
 	}
-	std::string lpszUsername	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
-	std::string lpszPassword	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
-	std::string lpszComment		= JS_GetStringBytes( JS_ValueToString( cx, argv[2] ));
+	std::string lpszUsername	= JS_GetStringBytes( cx, argv[0]);
+	std::string lpszPassword	= JS_GetStringBytes( cx, argv[1]);
+	std::string lpszComment		= JS_GetStringBytes( cx, argv[2]);
 	UI16 u16Flags		= 0;
 
 	if( JSVAL_IS_INT( argv[3] ))
@@ -6915,7 +6915,7 @@ JSBool CAccount_AddAccount( JSContext *cx, uintN argc, jsval *vp )
 	}
 	else
 	{
-		u16Flags = static_cast<UI16>( std::stoul( JS_GetStringBytes( JS_ValueToString( cx, argv[3] )), nullptr, 0 ));
+		u16Flags = static_cast<UI16>( std::stoul( JS_GetStringBytes( cx, argv[3] )), nullptr, 0);
 	}
 
 	if( lpszUsername.empty() || lpszPassword.empty() || lpszComment.empty() || lpszUsername.length() == 0 || lpszPassword.length() == 0 || lpszComment.length() == 0 )
@@ -6953,7 +6953,7 @@ JSBool CAccount_DelAccount( JSContext *cx, uintN argc, jsval *vp )
 	if( JSVAL_IS_STRING( argv[0] ))
 	{
 		char *lpszUsername = nullptr;
-		lpszUsername = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+		lpszUsername = JS_GetStringBytes( cx, argv[0]);
 		if( !Accounts->DelAccount( lpszUsername ))
 		{
 			ScriptError( cx, " Account.DelAccount(username): Unable to remove account specified." );
@@ -7050,12 +7050,12 @@ JSBool CFile_Open( JSContext *cx, uintN argc, jsval *vp )
 	}
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 
-	char *fileName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
-	std::string mode = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
+	char *fileName = JS_GetStringBytes( cx, argv[0]);
+	std::string mode = JS_GetStringBytes( cx, argv[1]);
 	char *folderName = nullptr;
 	if( argc >= 3 )
 	{
-		folderName = JS_GetStringBytes( JS_ValueToString( cx, argv[2] ));
+		folderName = JS_GetStringBytes( cx, argv[2]);
 	}
 	bool useScriptDataDir = false;
 	if( argc >= 4 )
@@ -7190,7 +7190,7 @@ JSBool CFile_ReadUntil( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "ReadUntil: Error reading file, is not opened or has reached EOF" );
 		return JS_FALSE;
 	}
-	char *until = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	char *until = JS_GetStringBytes( cx, argv[0]);
 	char line[512];
 	SI32 c;
 
@@ -7245,7 +7245,7 @@ JSBool CFile_Write( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	char *str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	char *str = JS_GetStringBytes( cx, argv[0]);
 	if( str != nullptr )
 	{
 		fprintf( mFile->mWrap, "%s", str );
@@ -8171,7 +8171,7 @@ JSBool CBase_SetRandomName( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	CBaseObject *mObj		= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
-	std::string namelist	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string namelist	= JS_GetStringBytes( cx, argv[0]);
 
 	if( !namelist.empty() )
 	{
@@ -8200,7 +8200,7 @@ JSBool CBase_SetRandomColor( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	CBaseObject *mObj			= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
-	std::string colorlist		= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string colorlist		= JS_GetStringBytes( cx, argv[0]);
 
 	if( !colorlist.empty() )
 	{
@@ -8229,7 +8229,7 @@ JSBool CChar_SetSkillByName( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	CChar *mChar			= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	std::string skillName	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string skillName	= JS_GetStringBytes( cx, argv[0]);
 	UI16 value				= JSVAL_TO_INT( argv[1] );
 	CSocket *mSock			= nullptr;
 	if( !mChar->IsNpc() )
@@ -9636,7 +9636,7 @@ JSBool CMulti_FirstChar( JSContext *cx, uintN argc, jsval *vp )
 	std::string listType;
 	if( argc == 1 )
 	{
-		listType = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+		listType = JS_GetStringBytes( cx, argv[0]);
 	}
 	else
 	{
@@ -9705,7 +9705,7 @@ JSBool CMulti_NextChar( JSContext *cx, uintN argc, jsval *vp )
 	std::string listType;
 	if( argc == 1 )
 	{
-		listType = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+		listType = JS_GetStringBytes( cx, argv[0]);
 	}
 	else
 	{
@@ -9775,7 +9775,7 @@ JSBool CMulti_FinishedChars( JSContext *cx, uintN argc, jsval *vp )
 	std::string listType;
 	if( argc == 1 )
 	{
-		listType = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+		listType = JS_GetStringBytes( cx, argv[0]);
 	}
 	else
 	{
@@ -10818,7 +10818,7 @@ JSBool CItem_GetMoreVar( JSContext *cx, uintN argc, jsval *vp )
 	// Fetch data from the function arguments, and figure out which tempVar to get data from
 	UI08 moreVar			= 0;
 	UI08 moreVarPart		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
-	std::string moreVarName	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string moreVarName	= JS_GetStringBytes( cx, argv[0]);
 	if( moreVarName == "more" )
 	{
 		moreVar = 0;
@@ -10899,7 +10899,7 @@ JSBool CItem_SetMoreVar( JSContext *cx, uintN argc, jsval *vp )
 	UI08 moreVar			= 0;
 	UI08 moreVarPart		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
 	UI08 moreVarValue		= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
-	std::string moreVarName	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+	std::string moreVarName	= JS_GetStringBytes( cx, argv[0]);
 	if( moreVarName == "more" )
 	{
 		moreVar = 0;

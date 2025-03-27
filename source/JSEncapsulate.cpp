@@ -3,6 +3,7 @@
 #include "StringUtility.hpp"
 #include "jsobj.h"
 #include "jsutil.h"
+#include "SEFunctions.h"
 
 void JSEncapsulate::InternalReset( void )
 {
@@ -197,7 +198,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 					break;
 				case JSOT_BOOL:		intVal = (( JSVAL_TO_BOOLEAN(( *vp )) == JS_TRUE) ? 1 : 0 );	break;
 				case JSOT_STRING:
-					svalue = JS_GetStringBytes( JS_ValueToString( cx, *vp ));
+					svalue = JS_GetStringBytes( cx, *vp );
 					intVal = std::stoi( svalue, nullptr, 0 );
 					break;
 				default:
@@ -218,7 +219,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 					break;
 				case JSOT_BOOL:		floatVal	= (( JSVAL_TO_BOOLEAN(( *vp )) == JS_TRUE ) ? 1.0f : 0.0f );	break;
 				case JSOT_STRING:
-					svalue		= JS_GetStringBytes( JS_ValueToString( cx, *vp ));
+					svalue		= JS_GetStringBytes( cx, *vp );
 					floatVal	= std::stof( svalue );
 					break;
 				default:
@@ -239,7 +240,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 					break;
 				case JSOT_BOOL:		boolVal = ( JSVAL_TO_BOOLEAN(( *vp )) == JS_TRUE );	break;
 				case JSOT_STRING:
-					svalue	= JS_GetStringBytes( JS_ValueToString( cx, *vp ));
+					svalue	= JS_GetStringBytes( cx, *vp );
 					boolVal = ( oldstrutil::upper( svalue ) == "TRUE" );
 					break;
 				default:
@@ -270,7 +271,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 					}
 					break;
 				case JSOT_STRING:
-					stringVal	= JS_GetStringBytes( JS_ValueToString( cx, *vp ));
+					stringVal	= JS_GetStringBytes( cx, *vp );
 					break;
 				default:
 				case JSOT_COUNT:

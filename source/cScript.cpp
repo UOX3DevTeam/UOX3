@@ -319,8 +319,7 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 	JSBool ok = JS_ExecuteScript( targContext, targObject, targScript, &rval );
 	if( ok != JS_TRUE )
 	{
-		JSString *str = JS_ValueToString( targContext, rval );
-		Console << "script result: " << JS_GetStringBytes( str ) << myendl;
+		Console << "script result: " << JS_GetStringBytes( targContext, rval ) << myendl;
 	}
 }
 
@@ -876,8 +875,7 @@ std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 
 	try
 	{
-		JSString *str = JS_ValueToString( targContext, rval );
-		std::string returnString = JS_GetStringBytes( str );
+		std::string returnString = JS_GetStringBytes( targContext, rval );
 
 		return returnString;
 	}
@@ -947,8 +945,7 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI
 			return "";
 		}
 
-		JSString *str = JS_ValueToString( targContext, rval );
-		std::string returnString = JS_GetStringBytes( str );
+		std::string returnString = JS_GetStringBytes( targContext, rval );
 
 		// If no string was returned from the event, make sure we return an empty string instead of "undefined", "false" or "true"
 		if( returnString == "undefined" || returnString == "false" || returnString == "true" )

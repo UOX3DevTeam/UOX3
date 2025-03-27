@@ -2111,8 +2111,9 @@ JSBool SE_TriggerTrap( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_TriggerEvent( JSContext *cx, uintN argc, jsval *vp )
 {
-	jsval* argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *rval = &JS_RVAL( cx, vp );
 
 	if( argc < 2 )
 	{
@@ -2120,16 +2121,16 @@ JSBool SE_TriggerEvent( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	UI16 scriptNumberToFire = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	char *eventToFire		= JS_GetStringBytes( cx, argv[1]);
+	std::string eventToFire		= JS_GetStringBytes( cx, argv[1]);
 	cScript *toExecute		= JSMapping->GetScript( scriptNumberToFire );
 
-	if( toExecute == nullptr || eventToFire == nullptr )
+	if( toExecute == nullptr || eventToFire == "" )
 		return JS_FALSE;
 
 	auto origContext = cx;
 	auto origObject = obj;
 
-	JSBool retVal = toExecute->CallParticularEvent( eventToFire, &argv[2], argc - 2, rval );
+	JSBool retVal = toExecute->CallParticularEvent( eventToFire.c_str(), &argv[2], argc - 2, rval);
 
 	if( retVal )
 	{
@@ -2161,13 +2162,13 @@ JSBool SE_DoesEventExist( JSContext *cx, uintN argc, jsval *vp )
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) );
 	UI16 scriptNumberToCheck = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	char *eventToCheck		= JS_GetStringBytes( cx, argv[1]);
+	std::string eventToCheck		= JS_GetStringBytes( cx, argv[1]);
 	cScript *toExecute		= JSMapping->GetScript( scriptNumberToCheck );
 
-	if( toExecute == nullptr || eventToCheck == nullptr )
+	if( toExecute == nullptr || eventToCheck == "" )
 		return JS_FALSE;
 
-	bool retVal = toExecute->DoesEventExist( eventToCheck );
+	bool retVal = toExecute->DoesEventExist( eventToCheck.c_str() );
 	if( !retVal )
 	{
 		JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) );
