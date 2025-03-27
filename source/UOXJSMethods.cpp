@@ -168,6 +168,7 @@ void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR
 //o------------------------------------------------------------------------------------------------o
 JSBool Packet( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CPUOXBuffer *toAdd = new CPUOXBuffer;
 
 	JS_DefineFunctions( cx, obj, CPacket_Methods );
@@ -3942,6 +3943,7 @@ JSBool CSocket_OpenContainer( JSContext *cx, uintN argc, jsval *vp )
 JSBool CChar_OpenLayer( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ))
 	{
@@ -3993,6 +3995,7 @@ JSBool CChar_OpenLayer( JSContext *cx, uintN argc, jsval *vp )
 JSBool CChar_TurnToward( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ))
@@ -4083,6 +4086,7 @@ JSBool CChar_TurnToward( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_DirectionTo( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ))
@@ -4136,6 +4140,7 @@ JSBool CChar_DirectionTo( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_ExecuteCommand( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ExecuteCommand: Invalid number of arguments (takes 1)" );
@@ -4165,6 +4170,7 @@ JSBool CChar_ExecuteCommand( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CGuild_AcceptRecruit( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
 
 	if( myGuild == nullptr )
@@ -4204,6 +4210,7 @@ JSBool CGuild_AcceptRecruit( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CGuild_IsAtPeace( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(IsAtPeace) Invalid Parameter Count: %d", argc );
@@ -4232,6 +4239,7 @@ JSBool CGuild_IsAtPeace( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_ResourceCount( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	JSEncapsulate myClass( cx, obj );
 	jsval *argv = JS_ARGV( cx, vp );
 	CBaseObject* myObj = static_cast<CBaseObject*>( myClass.toObject() );
@@ -4296,6 +4304,7 @@ JSBool CBase_ResourceCount( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_UseResource( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	JSEncapsulate myClass( cx, obj );
 	jsval *argv = JS_ARGV( cx, vp );
 	CBaseObject *myObj = static_cast<CBaseObject*>( myClass.toObject() );
@@ -4359,6 +4368,7 @@ JSBool CBase_UseResource( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_BoltEffect( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( ValidateObject( myChar ))
 	{
@@ -4387,6 +4397,7 @@ JSBool CChar_BoltEffect( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMisc_CustomTarget( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	JSEncapsulate myClass( cx, obj );
 
 	if(( argc > 3 ) || ( argc < 1 ))
@@ -4465,6 +4476,7 @@ JSBool CMisc_CustomTarget( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMisc_PopUpTarget( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if(( argc > 2 ) || ( argc < 1 ))
 	{
 		ScriptError( cx, "(PopUpTarget) Invalid count of parameters: %d, either needs 1 or 2", argc );
@@ -4523,6 +4535,7 @@ JSBool CMisc_PopUpTarget( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_InRange( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "(InRange): Invalid count of parameters: %d needs 2 (Item/Char and distance)", argc );
@@ -4575,6 +4588,7 @@ JSBool CBase_InRange( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_StartTimer( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObj ))
@@ -4642,6 +4656,7 @@ JSBool CBase_StartTimer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_CheckSkill( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 3 && argc != 4 )
 	{
 		ScriptError( cx, "CheckSkill: Invalid number of arguments (takes 3 or 4, skillNum, minSkill, maxSkill and isCraftSkill (optional))" );
@@ -4677,6 +4692,7 @@ JSBool CChar_CheckSkill( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_FindItemLayer( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	jsval *argv = JS_ARGV( cx, vp );
 	CItem *myItem = nullptr;
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
@@ -4718,6 +4734,7 @@ JSBool CChar_FindItemLayer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_FindItemType( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(FindItemType) Invalid Count of Arguments, takes 1" );
@@ -4756,6 +4773,7 @@ JSBool CChar_FindItemType( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_FindItemSection( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(FindItemSection) Invalid Count of Arguments, takes 1" );
@@ -4795,6 +4813,7 @@ void OpenPlank( CItem *p );
 //o------------------------------------------------------------------------------------------------o
 JSBool CItem_OpenPlank( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(OpenPlank) Invalid Count of Arguments: %d, needs: 0", argc );
@@ -4825,7 +4844,7 @@ JSBool CChar_SpeechInput( JSContext *cx, uintN argc, jsval *vp )
 	// Get our own Script ID
 	UI08 speechId		= 0;
 	CItem *speechItem	= nullptr;
-
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	jsval *argv = JS_ARGV( cx, vp );
 	if( argc == 1 ) // Just the ID has been passed
 	{
@@ -4886,6 +4905,7 @@ JSBool CChar_CastSpell( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ))
@@ -4929,6 +4949,7 @@ JSBool CChar_CastSpell( JSContext *cx, uintN argc, jsval *vp )
 JSBool CChar_MagicEffect( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	SI08 spellId = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
 
 	CChar *myObj = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
@@ -4953,6 +4974,7 @@ JSBool CChar_MagicEffect( JSContext *cx, uintN argc, jsval *vp )
 JSBool CChar_GetSerial( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CChar *myObj = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	UI08 part = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
 
@@ -4977,6 +4999,7 @@ JSBool CChar_GetSerial( JSContext *cx, uintN argc, jsval *vp )
 JSBool CBase_GetSerial( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	UI08 part = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
 
@@ -5002,6 +5025,7 @@ void UpdateStats( CBaseObject *mObj, UI08 x, bool skipStatWindowUpdate = false )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_UpdateStats( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(UpdateStats) Invalid Number of Arguments %d, needs: 1 (stat type - 0, 1 or 2 for Health, Mana or Stamina)", argc );
@@ -5061,6 +5085,7 @@ JSBool CBase_UpdateStats( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_SetPoisoned( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc < 2 || argc > 3 )
 	{
 		ScriptError( cx, "(SetPoisoned) Invalid Number of Arguments %d, needs: 2 or 3", argc );
@@ -5113,6 +5138,7 @@ JSBool CChar_ExplodeItem( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
 	CBaseObject *trgObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, tObj ));
@@ -5147,6 +5173,7 @@ JSBool CChar_SetInvisible( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	UI08 newVal = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
 
@@ -5168,6 +5195,7 @@ JSBool CChar_SetInvisible( JSContext *cx, uintN argc, jsval *vp )
 JSBool CItem_SetCont( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CItem *myItem = static_cast<CItem*>( JS_GetPrivate( cx, obj ));
 	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
 	CBaseObject *trgObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, tObj ));
@@ -5214,7 +5242,7 @@ JSBool CItem_IsMulti( JSContext *cx, uintN argc, jsval *vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
-
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myItem ))
@@ -5242,7 +5270,7 @@ JSBool CBase_IsBoat( JSContext *cx, uintN argc, jsval *vp )
 		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
 		return JS_TRUE;
 	}
-
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CBaseObject *myObject = static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObject ))
@@ -5272,6 +5300,7 @@ JSBool CMulti_IsInMulti( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
@@ -5301,6 +5330,7 @@ JSBool CMulti_IsInMulti( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_IsOnBanList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnBanList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5337,6 +5367,7 @@ JSBool CMulti_IsOnBanList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_IsOnFriendList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnFriendList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5373,6 +5404,7 @@ JSBool CMulti_IsOnFriendList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_IsOnGuestList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnGuestList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5409,6 +5441,7 @@ JSBool CMulti_IsOnGuestList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_IsOnOwnerList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnOwnerList) Invalid Number of Arguments %d, needs: 1 or 2", argc );
@@ -5445,6 +5478,7 @@ JSBool CMulti_IsOnOwnerList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_IsOwner( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOwner) Invalid Number of Arguments %d, needs: 1 or 2", argc );
@@ -5481,6 +5515,7 @@ JSBool CMulti_IsOwner( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_AddToBanList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToBanList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5515,6 +5550,7 @@ JSBool CMulti_AddToBanList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_AddToFriendList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToFriendList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5552,6 +5588,7 @@ JSBool CMulti_AddToFriendList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_AddToGuestList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToGuestList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5589,6 +5626,7 @@ JSBool CMulti_AddToGuestList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_AddToOwnerList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5626,6 +5664,7 @@ JSBool CMulti_AddToOwnerList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_RemoveFromBanList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromBanList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5663,6 +5702,7 @@ JSBool CMulti_RemoveFromBanList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_RemoveFromFriendList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromFriendList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5700,6 +5740,7 @@ JSBool CMulti_RemoveFromFriendList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_RemoveFromGuestList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromGuestList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5737,6 +5778,7 @@ JSBool CMulti_RemoveFromGuestList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_RemoveFromOwnerList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5774,6 +5816,7 @@ JSBool CMulti_RemoveFromOwnerList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_ClearBanList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearBanList) Invalid Number of Arguments %d, needs: 0", argc );
@@ -5804,6 +5847,7 @@ JSBool CMulti_ClearBanList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_ClearFriendList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearFriendList) Invalid Number of Arguments %d, needs: 0", argc );
@@ -5834,6 +5878,7 @@ JSBool CMulti_ClearFriendList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_ClearGuestList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearGuestList) Invalid Number of Arguments %d, needs: 0", argc );
@@ -5864,6 +5909,7 @@ JSBool CMulti_ClearGuestList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMulti_ClearOwnerList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearOwnerList) Invalid Number of Arguments %d, needs: 0", argc );
@@ -5897,6 +5943,7 @@ UI16 HandleAutoStack( CItem *mItem, CItem *mCont, CSocket *mSock = nullptr, CCha
 JSBool CItem_PlaceInPack( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "(PlaceInPack) Invalid Number of Arguments %d, needs: 0 or 1", argc );
@@ -5955,6 +6002,7 @@ JSBool CItem_PlaceInPack( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_OpenURL( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "OpenURL: Invalid Number of Arguments %d, needs: 1" );
@@ -5981,6 +6029,7 @@ JSBool CSocket_OpenURL( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_GetByte( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetByte: Invalid Number of Arguments %d, needs: 1 (offset)" );
@@ -6007,6 +6056,7 @@ JSBool CSocket_GetByte( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_GetSByte( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetSByte: Invalid Number of Arguments %d, needs: 1 (offset)" );
@@ -6033,6 +6083,7 @@ JSBool CSocket_GetSByte( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_GetWord( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
@@ -6059,6 +6110,7 @@ JSBool CSocket_GetWord( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_GetSWord( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetSWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
@@ -6085,6 +6137,7 @@ JSBool CSocket_GetSWord( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_GetDWord( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetDWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
@@ -6111,6 +6164,7 @@ JSBool CSocket_GetDWord( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_GetSDWord( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetSDWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
@@ -6138,6 +6192,7 @@ JSBool CSocket_GetSDWord( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_GetString( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "GetString: Invalid number of arguments. Takes 1 (offset) or 2 (offset, length)" );
@@ -6186,6 +6241,7 @@ JSBool CSocket_GetString( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_SetByte( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetByte: Invalid number of arguments (takes 3)" );
@@ -6213,6 +6269,7 @@ JSBool CSocket_SetByte( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_SetWord( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetWord: Invalid number of arguments (takes 3)" );
@@ -6242,6 +6299,7 @@ JSBool CSocket_SetWord( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_SetDWord( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetDWord: Invalid number of arguments (takes 3)" );
@@ -6271,6 +6329,7 @@ JSBool CSocket_SetDWord( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_SetString( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetString: Invalid number of arguments (takes 3)" );
@@ -6306,6 +6365,7 @@ JSBool CSocket_SetString( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_ReadBytes( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReadBytes: Invalid number of arguments (takes 1)" );
@@ -6334,6 +6394,7 @@ JSBool CSocket_ReadBytes( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_WhoList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mySock == nullptr )
 	{
@@ -6369,6 +6430,7 @@ JSBool CSocket_WhoList( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_Music( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Music: Invalid number of arguments (takes 1)" );
@@ -6397,6 +6459,7 @@ JSBool CSocket_Music( JSContext *cx, uintN argc, jsval *vp )
 JSBool CChar_YellMessage( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "YellMessage: Invalid number of arguments (takes 1)" );
@@ -6460,6 +6523,7 @@ JSBool CChar_YellMessage( JSContext *cx, uintN argc, jsval *vp )
 JSBool CChar_WhisperMessage( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "WhisperMessage: Invalid number of arguments (takes 1)" );
@@ -6523,6 +6587,7 @@ void BuildGumpFromScripts( CSocket *s, UI16 m );
 JSBool CSocket_OpenGump( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "OpenGump: Invalid number of arguments (takes 1, number)" );
@@ -6557,6 +6622,7 @@ JSBool CSocket_OpenGump( JSContext *cx, uintN argc, jsval *vp )
 JSBool CSocket_CloseGump( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "CloseGump: Invalid number of arguments (takes 2 - gumpId to close, and buttonId to send as response)" );
@@ -6591,6 +6657,7 @@ JSBool CSocket_CloseGump( JSContext *cx, uintN argc, jsval *vp )
 JSBool CRace_CanWearArmour( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CanWearArmour: Invalid number of arguments (takes 1, number)" );
@@ -6626,6 +6693,7 @@ JSBool CRace_CanWearArmour( JSContext *cx, uintN argc, jsval *vp )
 JSBool CRace_IsValidHairColour( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsValidHairColour: Invalid number of arguments (takes 1, number)" );
@@ -6653,6 +6721,7 @@ JSBool CRace_IsValidHairColour( JSContext *cx, uintN argc, jsval *vp )
 JSBool CRace_IsValidSkinColour( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsValidSkinColour: Invalid number of arguments (takes 1, number)" );
@@ -6680,6 +6749,7 @@ JSBool CRace_IsValidSkinColour( JSContext *cx, uintN argc, jsval *vp )
 JSBool CRace_IsValidBeardColour( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsValidBeardColour: Invalid number of arguments (takes 1, number)" );
@@ -6710,6 +6780,7 @@ bool ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 JSBool CBase_ApplySection( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ApplySection: Invalid number of arguments (takes 1)" );
@@ -6763,6 +6834,7 @@ JSBool CBase_ApplySection( JSContext *cx, uintN argc, jsval *vp )
 JSBool CChar_AddSpell( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddSpell: Invalid number of arguments (takes 1)" );
@@ -6805,6 +6877,7 @@ JSBool CChar_AddSpell( JSContext *cx, uintN argc, jsval *vp )
 JSBool CChar_SpellFail( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "SpellFail: Invalid number of arguments (takes 0)" );
@@ -6836,6 +6909,7 @@ JSBool CChar_SpellFail( JSContext *cx, uintN argc, jsval *vp )
 JSBool CBase_Refresh( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Refresh: Invalid number of arguments (takes 0)" );
@@ -6904,6 +6978,7 @@ JSBool CBase_Refresh( JSContext *cx, uintN argc, jsval *vp )
 JSBool CItem_ApplyRank( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "ApplyRank: Invalid number of arguments (takes 2)" );
@@ -6927,6 +7002,7 @@ bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemId );
 JSBool CItem_IsOnFoodList( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 || argc > 7 )
 	{
 		ScriptError( cx, "(IsOnFoodList) Invalid Number of Arguments %d, needs: 1 - foodlist name", argc );
@@ -6985,6 +7061,7 @@ JSBool CAccount_SetAccount(JSContext* cx, uintN argc, jsval* vp)
 JSBool CAccount_AddAccount( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 4 )
 	{
 		ScriptError( cx, "Account.AddAccount(user,pass,email,flags): Invalid number of arguments (takes 4)" );
@@ -7037,6 +7114,7 @@ JSBool CAccount_AddAccount( JSContext *cx, uintN argc, jsval *vp )
 JSBool CAccount_DelAccount( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Account.DelAccount([username/id]): Invalid number of arguments (takes 1)" );
@@ -7094,6 +7172,7 @@ JSBool CAccount_SaveAccounts(JSContext* cx, uintN argc, jsval* vp)
 // UOXCFile constructor !
 JSBool UOXCFile( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	UOXFileWrapper_st *toAdd = new UOXFileWrapper_st;
 	toAdd->mWrap = nullptr;
 
@@ -7114,6 +7193,7 @@ JSBool UOXCFile( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CFile_Free( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Free: Invalid number of arguments (takes 0)" );
@@ -7136,6 +7216,7 @@ JSBool CFile_Free( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CFile_Open( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	jsval *argv = JS_ARGV( cx, vp );
 	if( argc < 2 || argc > 4 )
 	{
@@ -7235,6 +7316,7 @@ JSBool CFile_Close( JSContext *cx, uintN argc, jsval *vp )
 JSBool CFile_Read( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Read: Invalid number of arguments (takes 1)" );
@@ -7274,6 +7356,7 @@ JSBool CFile_Read( JSContext *cx, uintN argc, jsval *vp )
 JSBool CFile_ReadUntil( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReadUntil: Invalid number of arguments (takes 1)" );
@@ -7324,6 +7407,7 @@ JSBool CFile_ReadUntil( JSContext *cx, uintN argc, jsval *vp )
 JSBool CFile_Write( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Write: Invalid number of arguments (takes 1)" );
@@ -7360,6 +7444,7 @@ JSBool CFile_Write( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CFile_EOF( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "EOF: Invalid number of arguments (takes 0)" );
@@ -7384,6 +7469,7 @@ JSBool CFile_EOF( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CFile_Length( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Length: Invalid number of arguments (takes 0)" );
@@ -7419,6 +7505,7 @@ JSBool CFile_Length( JSContext *cx, uintN argc, jsval *vp )
 JSBool CFile_Pos( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "Pos: Invalid number of arguments (takes 0 or 1)" );
@@ -7448,6 +7535,7 @@ JSBool CFile_Pos( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_FirstItem( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FirstItem: Invalid count of arguments :%d, needs :0", argc );
@@ -7499,6 +7587,7 @@ JSBool CBase_FirstItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_NextItem( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "NextItem: Invalid count of arguments :%d, needs :0", argc );
@@ -7550,6 +7639,7 @@ JSBool CBase_NextItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_FinishedItems( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FinishedItems: Invalid count of arguments :%d, needs :0", argc );
@@ -7588,6 +7678,7 @@ JSBool CBase_FinishedItems( JSContext *cx, uintN argc, jsval *vp )
 JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 && argc != 3 )
 	{
 		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 or 3)" );
@@ -7701,6 +7792,7 @@ JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 JSBool CChar_RunTo( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 && argc != 3 )
 	{
 		ScriptError( cx, "RunTo: Invalid number of arguments (takes 2 or 3)" );
@@ -7814,6 +7906,7 @@ JSBool CChar_RunTo( JSContext *cx, uintN argc, jsval *vp )
 JSBool CMisc_GetTimer( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetTimer: Invalid number of arguments (takes 1)" );
@@ -7855,6 +7948,8 @@ JSBool CMisc_GetTimer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMisc_SetTimer( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetTimer: Invalid number of arguments (takes 2)" );
@@ -7903,6 +7998,8 @@ JSBool CMisc_SetTimer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_DistanceTo( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DistanceTo: Invalid number of arguments (takes 1, game object)" );
@@ -7932,6 +8029,8 @@ JSBool CBase_DistanceTo( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CItem_Glow( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	JSObject *mSock	= JSVAL_TO_OBJECT( argv[0] );
 	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
 
@@ -8003,6 +8102,8 @@ JSBool CItem_Glow( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CItem_UnGlow( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	JSObject *mSock	= JSVAL_TO_OBJECT( argv[0] );
 	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
 
@@ -8069,6 +8170,8 @@ JSBool CItem_UnGlow( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_Gate( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 && argc != 4 && argc != 5 )
 	{
 		ScriptError( cx, "Gate: Invalid number of arguments (takes 1: item/place; 4: x y z worldNumber; or 5: x y z worldNumber instanceID)" );
@@ -8148,6 +8251,8 @@ JSBool CChar_Gate( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_Recall( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Recall: Invalid number of arguments (takes 1, item)" );
@@ -8216,6 +8321,8 @@ JSBool CChar_Recall( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_Mark( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Mark: Invalid number of arguments (takes 1, character)" );
@@ -8265,6 +8372,8 @@ void SetRandomName( CBaseObject *s, const std::string& namelist );
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_SetRandomName( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SetRandomName: Invalid number of arguments (takes 1, namelist string)" );
@@ -8294,6 +8403,8 @@ UI16 AddRandomColor( const std::string& colorlist );
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_SetRandomColor( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SetRandomColor: Invalid number of arguments (takes 1, colorlist string)" );
@@ -8323,6 +8434,8 @@ JSBool CBase_SetRandomColor( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_SetSkillByName( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetSkillByName: Invalid number of arguments (takes 2, string, value)" );
@@ -8364,6 +8477,8 @@ JSBool CChar_SetSkillByName( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_Kill( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Kill: Invalid number of arguments (takes 0)" );
@@ -8421,6 +8536,8 @@ JSBool CChar_Kill( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_Resurrect( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Resurrect: Invalid number of arguments (takes 0)" );
@@ -8462,6 +8579,8 @@ JSBool CChar_Resurrect( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CItem_Dupe( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Dupe: Invalid number of arguments (takes 1 - socket/null)" );
@@ -8512,6 +8631,8 @@ JSBool CItem_Dupe( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_Dupe( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Dupe: Invalid number of arguments (takes 0)" );
@@ -8551,6 +8672,8 @@ JSBool CChar_Dupe( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_Jail( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Jail: Invalid number of arguments (takes 0 or 1, seconds to Jail)" );
@@ -8582,6 +8705,8 @@ JSBool CChar_Jail( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_Release( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Release: Invalid number of arguments (takes 0)" );
@@ -8609,6 +8734,8 @@ void GMPage( CSocket *s, const std::string& reason );
 //o------------------------------------------------------------------------------------------------o
 JSBool CSocket_Page( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Page: Invalid number of arguments (takes 1, pageType)" );
@@ -8658,6 +8785,7 @@ JSBool CSocket_Page( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CConsole_Print( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Print: Invalid number of arguments (takes 1)" );
@@ -8677,6 +8805,7 @@ JSBool CConsole_Print( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CConsole_Log( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "Log: Invalid number of arguments (takes 1 or 2)" );
@@ -8704,6 +8833,7 @@ JSBool CConsole_Log( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CConsole_Error( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Error: Invalid number of arguments (takes 1)" );
@@ -8722,6 +8852,7 @@ JSBool CConsole_Error( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CConsole_Warning( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Warning: Invalid number of arguments (takes 1)" );
@@ -8860,6 +8991,7 @@ JSBool CConsole_TurnBrightWhite( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CConsole_PrintDone( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "PrintDone: Invalid number of arguments (takes 0 or 1)" );
@@ -8891,6 +9023,7 @@ JSBool CConsole_PrintDone( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CConsole_PrintFailed( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "PrintFailed: Invalid number of arguments (takes 0 or 1)" );
@@ -8955,6 +9088,7 @@ JSBool CConsole_ClearScreen( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CConsole_PrintBasedOnVal( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "PrintBasedOnVal: Invalid number of arguments (takes 1)" );
@@ -8974,6 +9108,7 @@ JSBool CConsole_PrintBasedOnVal( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CConsole_MoveTo( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "MoveTo: Invalid number of arguments (takes 2)" );
@@ -9001,6 +9136,7 @@ JSBool CConsole_MoveTo( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CConsole_PrintSpecial( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "PrintSpecial: Invalid number of arguments (takes 2)" );
@@ -9046,6 +9182,7 @@ JSBool CConsole_BeginShutdown( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CConsole_Reload( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Reload: Invalid number of arguments (takes 1)" );
@@ -9071,6 +9208,8 @@ JSBool CConsole_Reload( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_SpellMoveEffect( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SpellMoveEffect: Invalid number of arguments (takes 2)" );
@@ -9110,6 +9249,8 @@ JSBool CChar_SpellMoveEffect( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_SpellStaticEffect( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SpellStaticEffect: Invalid number of arguments (takes 1)" );
@@ -9149,6 +9290,8 @@ JSBool CChar_SpellStaticEffect( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_BreakConcentration( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "BreakConcentration: Invalid number of arguments (takes 0 or 1)" );
@@ -9186,6 +9329,8 @@ JSBool CChar_BreakConcentration( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CSocket_SendAddMenu( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SendAddMenu: Invalid number of arguments (takes 1)" );
@@ -9214,6 +9359,8 @@ JSBool CSocket_SendAddMenu( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CItem_LockDown( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "LockDown: Invalid number of arguments (takes 0)" );
@@ -9240,6 +9387,7 @@ JSBool CItem_LockDown( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_InitWanderArea( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ) || !mChar->IsNpc() )
 	{
@@ -9259,6 +9407,8 @@ auto NewCarveTarget( CSocket *s, CItem *i ) -> bool;
 //o------------------------------------------------------------------------------------------------o
 JSBool CItem_Carve( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Carve: Invalid number of arguments (1)" );
@@ -9307,6 +9457,8 @@ JSBool CItem_Carve( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CItem_GetTileName( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetTileName: needs 0 arguments!" );
@@ -9337,6 +9489,8 @@ JSBool CItem_GetTileName( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMulti_GetMultiCorner( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetMultiCorner: Invalid number of arguments (1 required)" );
@@ -9390,6 +9544,8 @@ JSBool CMulti_GetMultiCorner( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMulti_SecureContainer( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SecureContainer: Invalid number of arguments (1 required)" );
@@ -9431,6 +9587,8 @@ JSBool CMulti_SecureContainer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMulti_UnsecureContainer( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "UnsecureContainer: Invalid number of arguments (1 required)" );
@@ -9472,6 +9630,8 @@ JSBool CMulti_UnsecureContainer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMulti_IsSecureContainer( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsSecureContainer: Invalid number of arguments (1 required)" );
@@ -9513,6 +9673,8 @@ JSBool CMulti_IsSecureContainer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMulti_LockDownItem( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "LockDownItem: Invalid number of arguments (1 required)" );
@@ -9554,6 +9716,8 @@ JSBool CMulti_LockDownItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMulti_ReleaseItem( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReleaseItem: Invalid number of arguments (1 required)" );
@@ -9595,6 +9759,8 @@ JSBool CMulti_ReleaseItem( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMulti_AddTrashCont( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddTrashCont: Invalid number of arguments (1 required)" );
@@ -9636,6 +9802,8 @@ JSBool CMulti_AddTrashCont( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMulti_RemoveTrashCont( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveTrashCont: Invalid number of arguments (1 required)" );
@@ -9678,6 +9846,8 @@ void KillKeys( SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL );
 //o------------------------------------------------------------------------------------------------o
 JSBool CMulti_KillKeys( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "KillKeys: Invalid number of arguments (0 or 1 (character) required)" );
@@ -9722,6 +9892,8 @@ JSBool CMulti_KillKeys( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMulti_FirstChar( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "FirstChar: Invalid count of arguments :%d, needs :0 or 1", argc );
@@ -9791,6 +9963,8 @@ JSBool CMulti_FirstChar( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMulti_NextChar( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "NextChar: Invalid count of arguments :%d, needs :0 or 1", argc );
@@ -9860,6 +10034,8 @@ JSBool CMulti_NextChar( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CMulti_FinishedChars( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "FinishedChars: Invalid count of arguments :%d, needs :0 or 1", argc );
@@ -9921,6 +10097,8 @@ JSBool CMulti_FinishedChars( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_CanSee( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 && argc != 3 )
 	{
 		ScriptError( cx, "CanSee: Invalid number of arguments (takes 1, a char/item or 3, an x/y/z)" );
@@ -10057,6 +10235,8 @@ JSBool CBase_CanSee( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CSocket_DisplayDamage( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "(CSocket_DisplayDamage) Invalid Number of Arguments %d, needs: 2", argc );
@@ -10096,6 +10276,8 @@ JSBool CSocket_DisplayDamage( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_ReactOnDamage( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "(CChar_ReactOnDamage) Invalid Number of Arguments %d, needs: 1 (damageType) or 2 (damageType and attacker)", argc );
@@ -10150,6 +10332,8 @@ JSBool CChar_ReactOnDamage( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_Damage( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc < 1 || argc > 4 )
 	{
 		ScriptError( cx, "(CChar_Damage) Invalid Number of Arguments %d, needs: 1 (amount), 2 (amount, damageType), 3 (amount, damageType and attacker) or 4 (amount, damageType, attacker and doRepsys)", argc );
@@ -10229,6 +10413,8 @@ JSBool CChar_Damage( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_InitiateCombat( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(InitiateCombat) Invalid Number of Arguments %d, takes: 1 (targetChar))", argc );
@@ -10278,6 +10464,8 @@ JSBool CChar_InitiateCombat( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_InvalidateAttacker( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(InvalidateAttacker) Invalid Number of Arguments %d, takes: 0)", argc );
@@ -10320,6 +10508,8 @@ JSBool CChar_InvalidateAttacker( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_AddAggressorFlag( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -10352,6 +10542,8 @@ JSBool CChar_AddAggressorFlag( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_RemoveAggressorFlag( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -10384,6 +10576,8 @@ JSBool CChar_RemoveAggressorFlag( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_CheckAggressorFlag( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(CheckAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -10416,6 +10610,8 @@ JSBool CChar_CheckAggressorFlag( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_UpdateAggressorFlagTimestamp( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(UpdateAggressorFlagTimestamp) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -10448,6 +10644,8 @@ JSBool CChar_UpdateAggressorFlagTimestamp( JSContext *cx, uintN argc, jsval *vp 
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_ClearAggressorFlags( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearAggressorFlags) Invalid Number of Arguments %d, takes: 0)", argc );
@@ -10474,6 +10672,8 @@ JSBool CChar_ClearAggressorFlags( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_IsAggressor( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "(IsAggressor) Invalid Number of Arguments %d, takes: 0 or 1)", argc );
@@ -10501,6 +10701,8 @@ JSBool CChar_IsAggressor( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_AddPermaGreyFlag( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddPermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -10533,6 +10735,8 @@ JSBool CChar_AddPermaGreyFlag( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_RemovePermaGreyFlag( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemovePermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -10565,6 +10769,8 @@ JSBool CChar_RemovePermaGreyFlag( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_CheckPermaGreyFlag( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(CheckPermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -10597,6 +10803,8 @@ JSBool CChar_CheckPermaGreyFlag( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_UpdatePermaGreyFlagTimestamp( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(UpdatePermaGreyFlagTimestamp) Invalid Number of Arguments %d, takes: 1)", argc );
@@ -10629,6 +10837,8 @@ JSBool CChar_UpdatePermaGreyFlagTimestamp( JSContext *cx, uintN argc, jsval *vp 
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_ClearPermaGreyFlags( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearPermaGreyFlags) Invalid Number of Arguments %d, takes: 0)", argc );
@@ -10655,6 +10865,8 @@ JSBool CChar_ClearPermaGreyFlags( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_IsPermaGrey( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "(IsPermaGrey) Invalid Number of Arguments %d, takes: 0 or 1)", argc );
@@ -10683,6 +10895,8 @@ JSBool CChar_IsPermaGrey( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_Heal( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "(CChar_Heal) Invalid Number of Arguments %d, needs: 1 (amount) or 2 (amount and healer)", argc );
@@ -10761,6 +10975,8 @@ JSBool CChar_Heal( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_Resist( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "Resist: Invalid number of arguments (takes 1, the resist type or 2, the resist type and value to set)" );
@@ -10847,6 +11063,8 @@ JSBool CBase_Resist( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_Defense( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 3)
 	{
 		ScriptError( cx, "Defense: Invalid number of arguments (takes 3, the hit location, the resist type and if the armor should get damaged)" );
@@ -10891,6 +11109,8 @@ JSBool CChar_Defense( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CItem_GetMoreVar( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 2 )
 	{
 		ScriptError( cx, "GetMoreVar: Invalid number of arguments (takes 2, the moreVarName (more, more0, more1, more2, morex, morey or morez - and the moreVarPart (1 to 4))" );
@@ -10971,6 +11191,8 @@ JSBool CItem_GetMoreVar( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CItem_SetMoreVar( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 3 )
 	{
 		ScriptError( cx, "SetMoreVar: Invalid number of arguments (takes 3, the moreVarName (more, more0, more1, more2, morex, morey or morez); the moreVarPart (1 to 4) and the moreVarValue (0-255)" );
@@ -11048,6 +11270,8 @@ JSBool CItem_SetMoreVar( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_AddScriptTrigger( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddScriptTrigger: Invalid number of arguments (takes 1)" );
@@ -11092,6 +11316,8 @@ JSBool CBase_AddScriptTrigger( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_RemoveScriptTrigger( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveScriptTrigger: Invalid number of arguments (takes 1)" );
@@ -11131,6 +11357,8 @@ JSBool CBase_RemoveScriptTrigger( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_HasScriptTrigger( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "HasScriptTrigger: Invalid number of arguments (takes 1)" );
@@ -11166,6 +11394,8 @@ JSBool CBase_HasScriptTrigger( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CRegion_AddScriptTrigger( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddScriptTrigger: Invalid number of arguments (takes 1)" );
@@ -11211,6 +11441,8 @@ JSBool CRegion_AddScriptTrigger( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CRegion_RemoveScriptTrigger( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveScriptTrigger: Invalid number of arguments (takes 1)" );
@@ -11250,6 +11482,8 @@ JSBool CRegion_RemoveScriptTrigger( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CRegion_GetOrePref( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetOrePref: Invalid number of arguments (takes 1 - oreId)" );
@@ -11336,6 +11570,8 @@ JSBool CRegion_GetOrePref( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CRegion_GetOreChance( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetOreChance: Invalid number of arguments (takes 0)" );
@@ -11361,6 +11597,8 @@ JSBool CRegion_GetOreChance( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_AddFriend( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddFriend: Invalid number of arguments (takes 1 - playerObject)" );
@@ -11405,6 +11643,8 @@ JSBool CChar_AddFriend( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_RemoveFriend( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveFriend: Invalid number of arguments (takes 1 - playerObject)" );
@@ -11449,6 +11689,8 @@ JSBool CChar_RemoveFriend( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_GetFriendList( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetFriendList: Invalid number of arguments (takes 0)" );
@@ -11509,6 +11751,8 @@ JSBool CChar_GetFriendList( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_ClearFriendList( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "ClearFriendList: Invalid number of arguments (takes 0)" );
@@ -11549,6 +11793,8 @@ JSBool CChar_ClearFriendList( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_GetPetList( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetPetList: Invalid number of arguments (takes 0)" );
@@ -11615,6 +11861,8 @@ JSBool CChar_GetPetList( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_HasBeenOwner( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "HasBeenOwner: Invalid number of arguments (takes 1)" );
@@ -11662,6 +11910,8 @@ JSBool CChar_HasBeenOwner( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_CalculateControlChance( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CalculateControlChance: Invalid number of arguments (takes 1 - pChar)" );
@@ -11709,6 +11959,8 @@ JSBool CChar_CalculateControlChance( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_AddFollower( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddFollower: Invalid number of arguments (takes 1 - npcObject)" );
@@ -11753,6 +12005,8 @@ JSBool CChar_AddFollower( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_RemoveFollower( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveFollower: Invalid number of arguments (takes 1 - followerObject)" );
@@ -11797,6 +12051,8 @@ JSBool CChar_RemoveFollower( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_GetFollowerList( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetFollowerList: Invalid number of arguments (takes 0)" );
@@ -11864,6 +12120,8 @@ JSBool CChar_GetFollowerList( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CParty_Remove( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Remove: Invalid number of arguments (1)" );
@@ -11901,6 +12159,8 @@ JSBool CParty_Remove( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CParty_Add( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Add: Invalid number of arguments (1)" );
@@ -11992,6 +12252,8 @@ JSBool CParty_Add( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CParty_GetMember( JSContext *cx, uintN argc, jsval *vp )
 {
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc > 1 )
 	{
 		ScriptError( cx, "GetMember: Invalid number of arguments (1)" );
@@ -12041,6 +12303,7 @@ JSBool CParty_GetMember( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CSocket_FirstTriggerWord( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FirstTriggerWord: Invalid count of arguments :%d, needs :0", argc );
@@ -12066,6 +12329,7 @@ JSBool CSocket_FirstTriggerWord( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CSocket_NextTriggerWord( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "NextTriggerWord: Invalid count of arguments :%d, needs :0", argc );
@@ -12091,6 +12355,7 @@ JSBool CSocket_NextTriggerWord( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CSocket_FinishedTriggerWords( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FinishedTriggerWords: Invalid count of arguments :%d, needs :0", argc );
