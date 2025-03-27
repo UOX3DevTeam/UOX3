@@ -4187,7 +4187,7 @@ JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 		useScriptDataDir = ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
 	}
 
-	if( strstr( fileName, ".." ) || strstr( fileName, "\\" ) || strstr( fileName, "/" ))
+	if( fileName.find( ".." ) != std::string::npos || fileName.find( "\\" ) != std::string::npos || fileName.find( "/" ) != std::string::npos )
 	{
 		ScriptError( cx, "DeleteFile: file names may not contain \".\", \"..\", \"\\\", or \"/\"." );
 		return JS_FALSE;
@@ -4199,7 +4199,7 @@ JSBool SE_DeleteFile( JSContext *cx, uintN argc, jsval *vp )
 	if( !subFolderName.empty() )
 	{
 		// However, don't allow special characters in the folder name
-		if( strstr( subFolderName, ".." ) || strstr( subFolderName, "\\" ) || strstr( subFolderName, "/" ))
+		if( subFolderName.find( ".." ) != std::string::npos || subFolderName.find( "\\" ) != std::string::npos || subFolderName.find( "/") != std::string::npos )
 		{
 			ScriptError( cx, "DeleteFile: folder names may not contain \".\", \"..\", \"\\\", or \"/\"." );
 			return JS_FALSE;

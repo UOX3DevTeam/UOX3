@@ -63,7 +63,7 @@ void ScriptError( JSContext *cx, const char *txt, ... );
 //|	Purpose		-	Adds speech entry of specified type, font, color, etc to the speech queue
 //| Notes		-	Copied that here from SEFunctions.cpp. Default paramters weren't working !?
 //o------------------------------------------------------------------------------------------------o
-void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR sColour = 0x005A, 
+void MethodSpeech( CBaseObject &speaker, const char *message, SpeechType sType, COLOUR sColour = 0x005A, 
 		FontType fType = FNT_NORMAL, SpeechTarget spTrg = SPTRG_PCNPC, SERIAL spokenTo = INVALIDSERIAL, bool useUnicode = false )
 {
 	if( useUnicode )
@@ -319,7 +319,7 @@ JSBool CPacket_WriteString( JSContext *cx, uintN argc, jsval *vp )
 
 	jsval *argv = JS_ARGV( cx, vp );
 	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
-	char *	toWrite		= JS_GetStringBytes( cx, argv[1]);
+	std::string	toWrite		= JS_GetStringBytes( cx, argv[1]);
 	size_t	len			= static_cast<size_t>( JSVAL_TO_INT( argv[2] ));
 
 	myPacket->GetPacketStream().WriteString( position, toWrite, len );
@@ -975,9 +975,9 @@ JSBool CGump_AddCroppedText( JSContext *cx, uintN argc, jsval *vp )
 	SI16 TextHeight	= static_cast<SI16>( JSVAL_TO_INT( argv[4] )); // height
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
-	char *TextString = JS_GetStringBytes( cx, argv[5]);
+	std::string TextString = JS_GetStringBytes( cx, argv[5]);
 
-	if( TextString == nullptr )
+	if( TextString.empty() )
 	{
 		ScriptError( cx, "AddCroppedText: Text is required" );
 		return JS_FALSE;
@@ -1488,9 +1488,9 @@ JSBool CGump_AddText( JSContext *cx, uintN argc, jsval *vp )
 	SI16 TextY		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
 	SI16 TextHue	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // Hue
 
-	char *TextString = JS_GetStringBytes( cx, argv[3]);
+	std::string TextString = JS_GetStringBytes( cx, argv[3]);
 
-	if( TextString == nullptr )
+	if( TextString.empty() )
 	{
 		ScriptError( cx, "AddText: Text is required" );
 		return JS_FALSE;
@@ -1910,7 +1910,7 @@ JSBool CBase_TextMessage( JSContext *cx, uintN argc, jsval *vp )
 		{
 			speechType = OBJ;
 		}
-		MethodSpeech( *myItem, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode );
+		MethodSpeech( *myItem, trgMessage.c_str(), speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode);
 	}
 	else if( myClass.ClassName() == "UOXChar" )
 	{
@@ -1945,7 +1945,7 @@ JSBool CBase_TextMessage( JSContext *cx, uintN argc, jsval *vp )
 			{
 				txtHue = 0x0026;
 			}
-			MethodSpeech( *myChar, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode );
+			MethodSpeech( *myChar, trgMessage.c_str(), speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode);
 		}
 		else
 		{
@@ -1953,7 +1953,7 @@ JSBool CBase_TextMessage( JSContext *cx, uintN argc, jsval *vp )
 			{
 				txtHue = myChar->GetSayColour();
 			}
-			MethodSpeech( *myChar, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode );
+			MethodSpeech( *myChar, trgMessage.c_str(), speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode );
 		}
 	}
 
@@ -2499,8 +2499,7 @@ JSBool CChar_EmoteMessage( JSContext *cx, uintN argc, jsval *vp )
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	jsval *argv = JS_ARGV( cx, vp );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
-	JSString *targMessage = JS_ValueToString( cx, argv[0] );
-	std::string trgMessage = JS_GetStringBytes( targMessage );
+	std::string trgMessage = JS_GetStringBytes( cx, argv[0] );
 
 	if( !ValidateObject( myChar ) || trgMessage.empty() )
 	{
@@ -2541,7 +2540,7 @@ JSBool CChar_EmoteMessage( JSContext *cx, uintN argc, jsval *vp )
 
 	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
 
-	MethodSpeech( *myChar, trgMessage, EMOTE, txtHue, static_cast<FontType>( myChar->GetFontType() ), speechTarget, speechTargetSerial, useUnicode );
+	MethodSpeech( *myChar, trgMessage.c_str(), EMOTE, txtHue, static_cast<FontType>( myChar->GetFontType() ), speechTarget, speechTargetSerial, useUnicode );
 	return JS_TRUE;
 }
 
@@ -2674,7 +2673,6 @@ JSBool CSocket_Disconnect( JSContext *cx, uintN argc, jsval *vp )
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	Network->Disconnect( targSock );
-	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	JS_SetPrivate( cx, obj, nullptr ); // yes we should do that...
 
 	// Active script-context might have been lost, so restore it...
@@ -4148,13 +4146,12 @@ JSBool CChar_ExecuteCommand( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	jsval *argv = JS_ARGV( cx, vp );
-	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
 	CChar *myChar			= static_cast<CChar*>( JS_GetPrivate( cx, obj ));
-	char *trgMessage		= JS_GetStringBytes( targMessage );
+	std::string trgMessage		= JS_GetStringBytes( cx, argv[0] );
 	CSocket *targSock		= myChar->GetSocket();
-	if( targSock == nullptr || trgMessage == nullptr )
+	if( targSock == nullptr || trgMessage.empty() )
 	{
-		ScriptError( cx, "ExecuteCommand: Invalid socket or speech (%s)", targMessage );
+		ScriptError( cx, "ExecuteCommand: Invalid socket or speech" );
 		return JS_FALSE;
 	}
 	Commands->Command( targSock, myChar, trgMessage );
@@ -6344,15 +6341,15 @@ JSBool CSocket_SetString( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	SI32 offset = JSVAL_TO_INT( argv[0] );
-	char *trgMessage = JS_GetStringBytes( cx, argv[1]);
-	if( trgMessage == nullptr )
+	std::string trgMessage = JS_GetStringBytes( cx, argv[1]);
+	if( trgMessage.empty() )
 	{
 		ScriptError( cx, "SetString: No string to set" );
 		return JS_FALSE;
 	}
 	// FIXME
-	auto size = strlen( trgMessage );
-	strcopy(( char * ) & ( mSock->Buffer() )[offset], size + 1, trgMessage );
+	auto size = trgMessage.length();
+	strcopy(( char * ) & ( mSock->Buffer() )[offset], size + 1, trgMessage.c_str() );
 	return JS_TRUE;
 }
 
@@ -6468,10 +6465,9 @@ JSBool CChar_YellMessage( JSContext *cx, uintN argc, jsval *vp )
 
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
-	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
-	char *trgMessage		= JS_GetStringBytes( targMessage );
+	std::string trgMessage		= JS_GetStringBytes( cx, argv[0] );
 
-	if( trgMessage == nullptr )
+	if( trgMessage.empty() )
 	{
 		ScriptError( cx, "YellMessage: You have to supply a messagetext" );
 	}
@@ -6491,11 +6487,11 @@ JSBool CChar_YellMessage( JSContext *cx, uintN argc, jsval *vp )
 
 	if( myChar->GetNpcAiType() == AI_EVIL || myChar->GetNpcAiType() == AI_EVIL_CASTER )
 	{
-		MethodSpeech( *myChar, trgMessage, YELL, 0x0026, static_cast<FontType>( myChar->GetFontType() ), SPTRG_PCNPC, INVALIDSERIAL, useUnicode );
+		MethodSpeech( *myChar, trgMessage.c_str(), YELL, 0x0026, static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL, useUnicode);
 	}
 	else
 	{
-		MethodSpeech( *myChar, trgMessage, YELL, myChar->GetSayColour(), static_cast<FontType>( myChar->GetFontType() ), SPTRG_PCNPC, INVALIDSERIAL, useUnicode );
+		MethodSpeech( *myChar, trgMessage.c_str(), YELL, myChar->GetSayColour(), static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL, useUnicode);
 	}
 
 	// Active script-context might have been lost, so restore it...
@@ -6532,10 +6528,9 @@ JSBool CChar_WhisperMessage( JSContext *cx, uintN argc, jsval *vp )
 
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
-	JSString *targMessage = JS_ValueToString( cx, argv[0] );
-	char *trgMessage = JS_GetStringBytes( targMessage );
+	std::string trgMessage = JS_GetStringBytes( cx, argv[0] );
 
-	if( trgMessage == nullptr )
+	if( trgMessage.empty() )
 	{
 		ScriptError( cx, "WhisperMessage: You have to supply a messagetext" );
 	}
@@ -6555,11 +6550,11 @@ JSBool CChar_WhisperMessage( JSContext *cx, uintN argc, jsval *vp )
 
 	if( myChar->GetNpcAiType() == AI_EVIL || myChar->GetNpcAiType() == AI_EVIL_CASTER  )
 	{
-		MethodSpeech( *myChar, trgMessage, WHISPER, 0x0026, static_cast<FontType>( myChar->GetFontType() ), SPTRG_PCNPC, INVALIDSERIAL, useUnicode );
+		MethodSpeech( *myChar, trgMessage.c_str(), WHISPER, 0x0026, static_cast<FontType>( myChar->GetFontType() ), SPTRG_PCNPC, INVALIDSERIAL, useUnicode );
 	}
 	else
 	{
-		MethodSpeech( *myChar, trgMessage, WHISPER, myChar->GetSayColour(), static_cast<FontType>( myChar->GetFontType() ), SPTRG_PCNPC, INVALIDSERIAL, useUnicode );
+		MethodSpeech( *myChar, trgMessage.c_str(), WHISPER, myChar->GetSayColour(), static_cast<FontType>( myChar->GetFontType() ), SPTRG_PCNPC, INVALIDSERIAL, useUnicode );
 	}
 
 	// Active script-context might have been lost, so restore it...
@@ -7123,8 +7118,7 @@ JSBool CAccount_DelAccount( JSContext *cx, uintN argc, jsval *vp )
 	// Ok get out object from the global context
 	if( JSVAL_IS_STRING( argv[0] ))
 	{
-		char *lpszUsername = nullptr;
-		lpszUsername = JS_GetStringBytes( cx, argv[0]);
+		std::string lpszUsername = JS_GetStringBytes( cx, argv[0]);
 		if( !Accounts->DelAccount( lpszUsername ))
 		{
 			ScriptError( cx, " Account.DelAccount(username): Unable to remove account specified." );
@@ -7225,9 +7219,9 @@ JSBool CFile_Open( JSContext *cx, uintN argc, jsval *vp )
 	}
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 
-	char *fileName = JS_GetStringBytes( cx, argv[0]);
+	std::string fileName = JS_GetStringBytes( cx, argv[0]);
 	std::string mode = JS_GetStringBytes( cx, argv[1]);
-	char *folderName = nullptr;
+	std::string folderName;
 	if( argc >= 3 )
 	{
 		folderName = JS_GetStringBytes( cx, argv[2]);
@@ -7243,7 +7237,7 @@ JSBool CFile_Open( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "Open: Invalid mode must be \"read\", \"write\", or \"append\"!" );
 		return JS_FALSE;
 	}
-	if( strstr( fileName, ".." ) || strstr( fileName, "\\" ) || strstr( fileName, "/" ))
+	if( fileName.find( ".." ) != std::string::npos  || fileName.find( "\\" ) != std::string::npos || fileName.find( "/" ) != std::string::npos )
 	{
 		ScriptError( cx, "Open: file names may not contain \"..\", \"\\\", or \"/\"." );
 		return JS_FALSE;
@@ -7255,7 +7249,7 @@ JSBool CFile_Open( JSContext *cx, uintN argc, jsval *vp )
 	if( folderName != nullptr )
 	{
 		// However, don't allow special characters in the folder name
-		if( strstr( folderName, ".." ) || strstr( folderName, "\\" ) || strstr( folderName, "/" ))
+		if( folderName.find( ".." ) != std::string::npos || folderName.find( "\\" ) != std::string::npos || folderName.find( "/") != std::string::npos )
 		{
 			ScriptError( cx, "Open: folder names may not contain \"..\", \"\\\", or \"/\"." );
 			return JS_FALSE;
@@ -7300,6 +7294,7 @@ JSBool CFile_Close( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "Open: Invalid number of arguments (takes 0)" );
 		return JS_FALSE;
 	}
+	JSObject* obj = JS_THIS_OBJECT(cx, vp);
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 
 	fclose( mFile->mWrap );
@@ -7369,11 +7364,11 @@ JSBool CFile_ReadUntil( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "ReadUntil: Error reading file, is not opened or has reached EOF" );
 		return JS_FALSE;
 	}
-	char *until = JS_GetStringBytes( cx, argv[0]);
+	std::string until = JS_GetStringBytes( cx, argv[0]);
 	char line[512];
 	SI32 c;
 
-	if( until[0] == '\\' && strlen( until ) > 1 )
+	if( until[0] == '\\' && until.length() > 1 )
 	{
 		switch( until[1] )
 		{
@@ -7426,10 +7421,10 @@ JSBool CFile_Write( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
-	char *str = JS_GetStringBytes( cx, argv[0]);
-	if( str != nullptr )
+	std::string str = JS_GetStringBytes( cx, argv[0]);
+	if( !str.empty() )
 	{
-		fprintf( mFile->mWrap, "%s", str );
+		fprintf( mFile->mWrap, "%s", str.c_str() );
 	}
 
 	return JS_TRUE;
