@@ -183,7 +183,7 @@ public:
 	bool		OnIterate( CBaseObject *a, UI32 &b );
 	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
-	bool		DoesEventExist( char *eventToFind );
+	bool		DoesEventExist( const char *eventToFind );
 	SI08		OnCommand( CSocket *mSock, std::string command );
 	bool		OnDelete( CBaseObject *thingDestroyed );
 	SI08		OnSpeech( const char *speech, CChar *personTalking, CBaseObject *talkingTo );

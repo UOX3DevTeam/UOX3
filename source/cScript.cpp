@@ -406,7 +406,7 @@ bool cScript::OnStop( void )
 //|	Purpose		-	Allows scripters to check if a particular JS event (or function) exists in a
 //|					script before attempting to call it via TriggerEvent
 //o------------------------------------------------------------------------------------------------o
-bool cScript::DoesEventExist( char *eventToFind )
+bool cScript::DoesEventExist( const char *eventToFind )
 {
 	jsval Func = JSVAL_NULL;
 	JS_GetProperty( targContext, targObject, eventToFind, &Func );
