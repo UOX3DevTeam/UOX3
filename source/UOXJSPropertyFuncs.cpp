@@ -485,7 +485,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_VISIBLE:		*vp = INT_TO_JSVAL( static_cast<UI08>( gPriv->GetVisible() ));	break;
 			case CIP_SERIAL:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetSerial() ))
+				int64_t serialVal = gPriv->GetSerial();
+				if( serialVal < INT_MIN || serialVal > INT_MAX )
 				{
 					JS_NewNumberValue( cx, gPriv->GetSerial(), vp );
 				}
@@ -574,7 +575,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_TYPE:			*vp = INT_TO_JSVAL( static_cast<UI16>( gPriv->GetType() ));		break;
 			case CIP_MORE:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE )))
+				int64_t moreVal = gPriv->GetTempVar( CITV_MORE );
+				if( moreVal < INT_MIN || moreVal > INT_MAX )
 				{
 					 JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE ), vp );
 				}
@@ -586,7 +588,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MORE0:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE0 )))
+				int64_t more0Val = gPriv->GetTempVar( CITV_MORE0 );
+				if( more0Val < INT_MIN || more0Val > INT_MAX )
 				{
 					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE0 ), vp );
 				}
@@ -598,7 +601,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MORE1:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE1 )))
+				int64_t more1Val = gPriv->GetTempVar( CITV_MORE1 );
+				if( more1Val < INT_MIN || more1Val > INT_MAX )
 				{
 					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE1 ), vp );
 				}
@@ -610,7 +614,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MORE2:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE2 )))
+				int64_t more2Val = gPriv->GetTempVar( CITV_MORE2 );
+				if( more2Val < INT_MIN || more2Val > INT_MAX )
 				{
 					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE2 ), vp );
 				}
@@ -622,7 +627,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MOREX:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MOREX )))
+				int64_t morexVal = gPriv->GetTempVar( CITV_MOREX );
+				if( morexVal < INT_MIN || morexVal > INT_MAX )
 				{
 					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MOREX ), vp );
 				}
@@ -634,7 +640,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MOREY:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MOREY )))
+				int64_t moreyVal = gPriv->GetTempVar( CITV_MOREY );
+				if( moreyVal < INT_MIN || moreyVal > INT_MAX )
 				{
 					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MOREY ), vp );
 				}
@@ -646,7 +653,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MOREZ:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MOREZ )))
+				int64_t morezVal = gPriv->GetTempVar( CITV_MOREZ );
+				if( morezVal < INT_MIN || morezVal > INT_MAX )
 				{
 					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MOREZ ), vp );
 				}
