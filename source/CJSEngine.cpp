@@ -241,8 +241,8 @@ void CJSRuntime::InitializePrototypes()
 	JSContext *cx			= jsContext;
 	JSObject *obj			= jsGlobal;
 
-	protoList[JSP_CHAR]		=	JS_InitClass( cx, obj, nullptr, &UOXChar_class.base,	nullptr,		0,		CCharacterProps,		CChar_Methods,		nullptr,	nullptr );
-	protoList[JSP_ITEM]		=	JS_InitClass( cx, obj, nullptr, &UOXItem_class.base,	nullptr,		0,		CItemProps,				CItem_Methods,		nullptr,	nullptr );
+	protoList[JSP_CHAR]		=	JS_InitClass( cx, obj, nullptr, &UOXChar_class,	nullptr,		0,		CCharacterProps,		CChar_Methods,		nullptr,	nullptr );
+	protoList[JSP_ITEM]		=	JS_InitClass( cx, obj, nullptr, &UOXItem_class,	nullptr,		0,		CItemProps,				CItem_Methods,		nullptr,	nullptr );
 	protoList[JSP_SPELL]	=	JS_InitClass( cx, obj, nullptr, &UOXSpell_class,		nullptr,		0,		CSpellProperties,		nullptr,			nullptr,	nullptr );
 	protoList[JSP_SPELLS]	=	JS_InitClass( cx, obj, nullptr, &UOXSpells_class,		nullptr,		0,		nullptr,				nullptr,			nullptr,	nullptr );
 	protoList[JSP_GLOBALSKILL]		= JS_InitClass( cx, obj, nullptr, &UOXGlobalSkill_class,		nullptr,		0,		CGlobalSkillProperties,	nullptr,			nullptr,	nullptr );
@@ -250,7 +250,7 @@ void CJSRuntime::InitializePrototypes()
 	protoList[JSP_CREATEENTRY]		= JS_InitClass( cx, obj, nullptr, &UOXCreateEntry_class,	nullptr, 0,		CCreateEntryProperties, nullptr,			nullptr,	nullptr );
 	protoList[JSP_CREATEENTRIES]	= JS_InitClass( cx, obj, nullptr, &UOXCreateEntries_class,	nullptr, 0,		nullptr,				nullptr,			nullptr,	nullptr );
 	protoList[JSP_TIMER]	=	JS_InitClass( cx, obj, nullptr, &UOXTimer_class,		nullptr,		0,		CTimerProperties,		nullptr,			nullptr,	nullptr );
-	protoList[JSP_SOCK]		=	JS_InitClass( cx, obj, nullptr, &UOXSocket_class.base,	nullptr,		0,		CSocketProps,			CSocket_Methods,	nullptr,	nullptr );
+	protoList[JSP_SOCK]		=	JS_InitClass( cx, obj, nullptr, &UOXSocket_class,	nullptr,		0,		CSocketProps,			CSocket_Methods,	nullptr,	nullptr );
 	protoList[JSP_ACCOUNTS]	=	JS_InitClass( cx, obj, nullptr, &UOXAccount_class,		nullptr,		0,		CAccountProperties,		CAccount_Methods,	nullptr,	nullptr );
 	protoList[JSP_CONSOLE]	=	JS_InitClass( cx, obj, nullptr, &UOXConsole_class,		nullptr,		0,		CConsoleProperties,		CConsole_Methods,	nullptr,	nullptr );
 	protoList[JSP_REGION]	=	JS_InitClass( cx, obj, nullptr, &UOXRegion_class,		nullptr,		0,		CRegionProperties,		CRegion_Methods,	nullptr,	nullptr );
@@ -258,7 +258,7 @@ void CJSRuntime::InitializePrototypes()
 	protoList[JSP_RESOURCE]	=	JS_InitClass( cx, obj, nullptr, &UOXResource_class,		nullptr,		0,		CResourceProperties,	nullptr,			nullptr,	nullptr );
 	protoList[JSP_RACE]		=	JS_InitClass( cx, obj, nullptr, &UOXRace_class,			nullptr,		0,		CRaceProperties,		CRace_Methods,		nullptr,	nullptr );
 	protoList[JSP_GUILD]	=	JS_InitClass( cx, obj, nullptr, &UOXGuild_class,		nullptr,		0,		CGuildProperties,		CGuild_Methods,		nullptr,	nullptr );
-	protoList[JSP_PARTY]	=	JS_InitClass( cx, obj, nullptr, &UOXParty_class.base,	nullptr,		0,		CPartyProperties,		CParty_Methods,		nullptr,	nullptr );
+	protoList[JSP_PARTY]	=	JS_InitClass( cx, obj, nullptr, &UOXParty_class,	nullptr,		0,		CPartyProperties,		CParty_Methods,		nullptr,	nullptr );
 	protoList[JSP_PACKET]	=	JS_InitClass( cx, obj, nullptr, &UOXPacket_class,		Packet,			0,		nullptr,				nullptr,			nullptr,	nullptr );
 	protoList[JSP_GUMP]		=	JS_InitClass( cx, obj, nullptr, &UOXGump_class,			Gump,			0,		nullptr,				nullptr,			nullptr,	nullptr );
 	protoList[JSP_FILE]		=	JS_InitClass( cx, obj, nullptr, &UOXFile_class,			UOXCFile,		0,		nullptr,				nullptr,			nullptr,	nullptr );
@@ -354,13 +354,13 @@ JSObject *CJSRuntime::MakeNewObject( IUEEntries iType )
 	switch( iType )
 	{
 		case IUE_RACE:				toMake = JS_NewObject( jsContext, &UOXRace_class, protoList[JSP_RACE], jsGlobal );								break;
-		case IUE_CHAR:				toMake = JS_NewObject( jsContext, &UOXChar_class.base, protoList[JSP_CHAR], jsGlobal );						break;
-		case IUE_ITEM:				toMake = JS_NewObject( jsContext, &UOXItem_class.base, protoList[JSP_ITEM], jsGlobal );						break;
-		case IUE_SOCK:				toMake = JS_NewObject( jsContext, &UOXSocket_class.base, protoList[JSP_SOCK], jsGlobal );					break;
+		case IUE_CHAR:				toMake = JS_NewObject( jsContext, &UOXChar_class, protoList[JSP_CHAR], jsGlobal );						break;
+		case IUE_ITEM:				toMake = JS_NewObject( jsContext, &UOXItem_class, protoList[JSP_ITEM], jsGlobal );						break;
+		case IUE_SOCK:				toMake = JS_NewObject( jsContext, &UOXSocket_class, protoList[JSP_SOCK], jsGlobal );					break;
 		case IUE_GUILD:				toMake = JS_NewObject( jsContext, &UOXGuild_class, protoList[JSP_GUILD], jsGlobal );							break;
 		case IUE_REGION:			toMake = JS_NewObject( jsContext, &UOXRegion_class, protoList[JSP_REGION], jsGlobal );						break;
 		case IUE_SPAWNREGION:	toMake = JS_NewObject( jsContext, &UOXSpawnRegion_class, protoList[JSP_SPAWNREGION], jsGlobal );	break;
-		case IUE_PARTY:				toMake = JS_NewObject( jsContext, &UOXParty_class.base, protoList[JSP_PARTY], jsGlobal );					break;
+		case IUE_PARTY:				toMake = JS_NewObject( jsContext, &UOXParty_class, protoList[JSP_PARTY], jsGlobal );					break;
 		case IUE_ACCOUNT:			toMake = JS_NewObject( jsContext, &UOXAccount_class, protoList[JSP_ACCOUNT], jsGlobal );					break;
 		default:
 		case IUE_COUNT:				return nullptr;

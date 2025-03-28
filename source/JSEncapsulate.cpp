@@ -163,17 +163,8 @@ std::string JSEncapsulate::ClassName( void )
 			}
 			if( obj2 != nullptr )
 			{
-				JSClass* mClass = obj2->getClass();
-				if( mClass->flags & JSCLASS_IS_EXTENDED )	// extended class
-				{
-					JSExtendedClass *mClass2 = reinterpret_cast<JSExtendedClass *>( mClass ); // (JSExtendedClass *)mClass;
-					className					= mClass2->base.name;
-				}
-				else
-				{
-					className = mClass->name;
-				}
-				rVal = className;
+				js::Class* mClass = obj2->getClass();
+				rVal = mClass->name;
 			}
 		}
 		classCached = true;

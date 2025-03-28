@@ -3333,7 +3333,7 @@ JSBool CSocketProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 	return JS_TRUE;
 }
 
-JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CSocket *gPriv = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
@@ -4250,90 +4250,6 @@ JSBool CScriptProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]
 			default:
 				break;
 		}
-	}
-	return JS_TRUE;
-}
-
-JSBool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
-{
-	JSEncapsulate srcObj( cx, obj );
-	CSocket *srcSock = static_cast<CSocket *>( srcObj.toObject() );
-	JSEncapsulate trgObj( cx, &v );
-	if( trgObj.isType( JSOT_OBJECT ))
-	{
-		if( srcObj.ClassName() != trgObj.ClassName() )
-		{
-			*bp = JS_FALSE;
-		}
-		else
-		{
-			CSocket *trgSock = static_cast<CSocket *>( trgObj.toObject() );
-			*bp = ( srcSock == trgSock ) ? JS_TRUE : JS_FALSE;
-		}
-	}
-	else
-	{
-		*bp = ( srcSock == nullptr && trgObj.isType( JSOT_NULL )) ? JS_TRUE : JS_FALSE;
-	}
-	return JS_TRUE;
-}
-JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
-{
-	JSEncapsulate srcObj( cx, obj );
-	CBaseObject *src = static_cast<CBaseObject *>( srcObj.toObject() );
-	if( !ValidateObject( src ))
-	{
-		*bp = JS_FALSE;
-	}
-	else
-	{
-		JSEncapsulate trgObj( cx, &v );
-		if( trgObj.isType( JSOT_OBJECT ))
-		{
-			if( srcObj.ClassName() != trgObj.ClassName() )
-			{
-				*bp = JS_FALSE;
-			}
-			else
-			{
-				CBaseObject *trg = static_cast<CBaseObject *>( trgObj.toObject() );
-				if( !ValidateObject( trg ))
-				{
-					*bp = JS_FALSE;
-				}
-				else	// both valid base objects!  Now, we'll declare equality based on SERIAL, not pointer
-				{
-					*bp = ( src->GetSerial() == trg->GetSerial() ) ? JS_TRUE : JS_FALSE;
-				}
-			}
-		}
-		else
-		{
-			*bp = ( src == nullptr && trgObj.isType( JSOT_NULL )) ? JS_TRUE : JS_FALSE;
-		}
-	}
-	return JS_TRUE;
-}
-JSBool CParty_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
-{
-	JSEncapsulate srcObj( cx, obj );
-	Party *srcParty = static_cast<Party *>( srcObj.toObject() );
-	JSEncapsulate trgObj( cx, &v );
-	if( trgObj.isType( JSOT_OBJECT ))
-	{
-		if( srcObj.ClassName() != trgObj.ClassName() )
-		{
-			*bp = JS_FALSE;
-		}
-		else
-		{
-			Party *trgParty	= static_cast<Party *>( trgObj.toObject() );
-			*bp = ( srcParty == trgParty ) ? JS_TRUE : JS_FALSE;
-		}
-	}
-	else
-	{
-		*bp = ( srcParty == nullptr && trgObj.isType( JSOT_NULL )) ? JS_TRUE : JS_FALSE;
 	}
 	return JS_TRUE;
 }

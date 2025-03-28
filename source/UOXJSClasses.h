@@ -144,46 +144,34 @@ inline JSClass UOXTimer_class =
 	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
-inline JSExtendedClass UOXChar_class =
+inline JSClass UOXChar_class =
 {
-	{	"UOXChar",
-		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED,
-		JS_PropertyStub,
-		JS_PropertyStub,
-		CCharacterProps_getProperty,
-		CCharacterProps_setProperty,
-		JS_EnumerateStub,
-		JS_ResolveStub,
-		JS_ConvertStub,
-		JS_FinalizeStub,
-		nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr
-	},
-	CBaseObject_equality,
-	nullptr,
-	nullptr,
-	JSCLASS_NO_RESERVED_MEMBERS
+	"UOXChar",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CCharacterProps_getProperty,
+	CCharacterProps_setProperty,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub,
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
-inline JSExtendedClass UOXItem_class =
+inline JSClass UOXItem_class =
 {
-	{	"UOXItem",
-		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED,
-		JS_PropertyStub,
-		JS_PropertyStub,
-		CItemProps_getProperty,
-		CItemProps_setProperty,
-		JS_EnumerateStub,
-		JS_ResolveStub,
-		JS_ConvertStub,
-		JS_FinalizeStub,
-		nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr
-	},
-	CBaseObject_equality,
-	nullptr,
-	nullptr,
-	JSCLASS_NO_RESERVED_MEMBERS
+	"UOXItem",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CItemProps_getProperty,
+	CItemProps_setProperty,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub,
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 //
@@ -326,25 +314,19 @@ inline JSClass UOXSpawnRegion_class =
 	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
-inline JSExtendedClass UOXSocket_class =
+inline JSClass UOXSocket_class =
 {
-	{	"UOXSocket",
-		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED,
-		JS_PropertyStub,
-		JS_PropertyStub,
-		CSocketProps_getProperty,
-		CSocketProps_setProperty,
-		JS_EnumerateStub,
-		JS_ResolveStub,
-		JS_ConvertStub,
-		JS_FinalizeStub,
-		nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr
-	},
-	CSocket_equality,
-	nullptr,
-	nullptr,
-	JSCLASS_NO_RESERVED_MEMBERS
+	"UOXSocket",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CSocketProps_getProperty,
+	CSocketProps_setProperty,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub,
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXFile_class =
@@ -457,25 +439,19 @@ inline JSClass UOXPacket_class =
 	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
-inline JSExtendedClass UOXParty_class =
+inline JSClass UOXParty_class =
 {
-	{	"UOXParty",
-		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED,
-		JS_PropertyStub,
-		JS_PropertyStub,
-		CPartyProps_getProperty,
-		CPartyProps_setProperty,
-		JS_EnumerateStub,
-		JS_ResolveStub,
-		JS_ConvertStub,
-		JS_FinalizeStub,
-		nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr
-	},
-	CParty_equality,
-	nullptr,
-	nullptr,
-	JSCLASS_NO_RESERVED_MEMBERS
+	"UOXParty",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CPartyProps_getProperty,
+	CPartyProps_setProperty,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub,
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 #endif

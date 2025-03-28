@@ -639,7 +639,7 @@ JSBool CGump_NoClose( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "NoClose: Wrong count of Parameters, needs 0" );
 		return JS_FALSE;
 	}
-
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 
 	if( gList == nullptr )
@@ -1042,6 +1042,7 @@ JSBool CGump_EndGroup( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
@@ -1113,6 +1114,7 @@ JSBool CGump_AddGumpColor( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	jsval *argv = JS_ARGV( cx, vp );
 	SI16 tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
