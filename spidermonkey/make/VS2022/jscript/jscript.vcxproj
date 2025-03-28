@@ -87,13 +87,14 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;EXPORT_JS_API;JSFILE;XP_WIN;XP_WIN32;_WIN32;NO_X11;HW_THREADS;STDC_HEADERS;WIN32_LEAN_AND_MEAN;HAVE_SNPRINTF;ENABLE_TRACEJIT=1;FEATURE_NANOJIT;JS_TRACER;NANOJIT_ARCH=X64;AVMPLUS_WIN32;AVMPLUS_AMD64;AVMPLUS_64BIT;_WIN64;_AMD64_;DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_AMD64_;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_WIN32;_WIN64;_WINDOWS;AVMPLUS_64BIT;AVMPLUS_AMD64;AVMPLUS_WIN32;ENABLE_ASSEMBLER=1;ENABLE_JIT=1;ENABLE_METHODJIT=1;ENABLE_MONOIC=1;ENABLE_POLYIC_TYPED_ARRAY=1;ENABLE_POLYIC=1;ENABLE_TRACEJIT=1;EXPORT_JS_API;FEATURE_NANOJIT;HAVE_SNPRINTF;JS_STDDEF_H_HAS_INTPTR_T;JS_TRACER;NANOJIT_ARCH=X64;NO_X11;WIN32;WIN32_LEAN_AND_MEAN;XP_WIN;XP_WIN32;DEBUG</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <SDLCheck>false</SDLCheck>
       <TreatWarningAsError>false</TreatWarningAsError>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(ProjectDir)/../../../assembler;$(ProjectDir)/../../../nanojit;$(ProjectDir)/../../../tracejit;$(ProjectDir)/../../../yarr;$(ProjectDir)/../../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -137,6 +138,7 @@
     <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocatorOS2.cpp" />
     <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocatorPosix.cpp" />
     <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocatorWin.cpp" />
+    <ClCompile Include="..\..\..\assembler\wtf\Assertions.cpp" />
     <ClCompile Include="..\..\..\jsapi.cpp" />
     <ClCompile Include="..\..\..\jsarena.cpp" />
     <ClCompile Include="..\..\..\jsarray.cpp" />
@@ -188,6 +190,7 @@
     <ClCompile Include="..\..\..\jswrapper.cpp" />
     <ClCompile Include="..\..\..\jsxdrapi.cpp" />
     <ClCompile Include="..\..\..\jsxml.cpp" />
+    <ClCompile Include="..\..\..\methodjit\Logging.cpp" />
     <ClCompile Include="..\..\..\nanojit\Allocator.cpp" />
     <ClCompile Include="..\..\..\nanojit\Assembler.cpp" />
     <ClCompile Include="..\..\..\nanojit\avmplus.cpp" />

@@ -28,6 +28,9 @@
     <Filter Include="Source Files\Yarr">
       <UniqueIdentifier>{29dbdb9e-b54b-4555-9421-8c0d48666c24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\MethodJit">
+      <UniqueIdentifier>{65cd946d-cea0-47c7-8888-81d00cda3dd5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\jsapi.cpp">
@@ -278,6 +281,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\yarr\yarr\RegexJIT.cpp">
       <Filter>Source Files\Yarr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\methodjit\Logging.cpp">
+      <Filter>Source Files\MethodJit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\assembler\wtf\Assertions.cpp">
+      <Filter>Source Files\Assembler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
