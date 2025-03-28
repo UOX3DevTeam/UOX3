@@ -1552,7 +1552,7 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", JS_ARGV( cx, vp ), 0, vp);
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
@@ -1672,14 +1672,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_VISIBLE:		*vp = INT_TO_JSVAL( static_cast<UI08>( gPriv->GetVisible() ));	break;
 			case CCP_SERIAL:
 			{
-				if( !INT_FITS_IN_JSVAL( gPriv->GetSerial() ))
-				{
-					JS_NewNumberValue( cx, gPriv->GetSerial(), vp );
-				}
-				else
-				{
-					*vp = INT_TO_JSVAL( gPriv->GetSerial() );
-				}
+				JS_NewNumberValue( cx, gPriv->GetSerial(), vp );
 				break;
 			}
 			case CCP_HEALTH:		*vp = INT_TO_JSVAL( gPriv->GetHP() );				break;
@@ -2668,7 +2661,7 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", JS_ARGV(cx, vp), 0, vp );
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
@@ -2864,7 +2857,7 @@ JSBool CRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", JS_ARGV(cx, vp), 0, vp );
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
@@ -3003,7 +2996,7 @@ JSBool CSpawnRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSB
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", JS_ARGV( cx, vp ), 0, vp );
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
@@ -3137,7 +3130,7 @@ JSBool CGuildProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool st
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", JS_ARGV( cx, vp ), 0, vp );
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
@@ -3225,7 +3218,7 @@ JSBool CRaceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 	// Active script-context might have been lost, so restore it!
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
 	{
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", JS_ARGV( cx, vp ), 0, vp );
 		if( retVal == JS_FALSE )
 		{
 			Console.Warning( oldstrutil::format( "Script context lost after setting Race property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
@@ -3322,7 +3315,7 @@ JSBool CSocketProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", JS_ARGV( cx, vp ), 0, vp );
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
@@ -3641,7 +3634,7 @@ JSBool CSkillsProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", JS_ARGV( cx, vp ), 0, vp );
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
@@ -4007,7 +4000,7 @@ JSBool CAccountProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool 
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", JS_ARGV( cx, vp ), 0, vp );
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
@@ -4116,7 +4109,7 @@ JSBool CResourceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", JS_ARGV( cx, vp ), 0, vp );
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
@@ -4197,7 +4190,7 @@ JSBool CPartyProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool st
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", JS_ARGV( cx, vp ), 0, vp );
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
