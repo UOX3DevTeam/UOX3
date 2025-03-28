@@ -13,8 +13,20 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="NanoJIT">
+    <Filter Include="Source Files\NanoJIT">
       <UniqueIdentifier>{1e5edee3-56cb-4908-9757-e58c728e0bb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\V8 DTOA">
+      <UniqueIdentifier>{87f36710-b749-4d72-b92f-1d43c9d05627}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TraceJIT">
+      <UniqueIdentifier>{4850db3d-f452-4632-8e27-27ad68852bbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Assembler">
+      <UniqueIdentifier>{c407ba42-6b95-4b33-bbc8-2271509b75d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Yarr">
+      <UniqueIdentifier>{29dbdb9e-b54b-4555-9421-8c0d48666c24}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -123,9 +135,6 @@
     <ClCompile Include="..\..\..\jsinvoke.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsbuiltins.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\json.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -147,9 +156,6 @@
     <ClCompile Include="..\..\..\jsproxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jstask.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\jstypedarray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -157,40 +163,121 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\nanojit\Allocator.cpp">
-      <Filter>NanoJIT</Filter>
+      <Filter>Source Files\NanoJIT</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\nanojit\Assembler.cpp">
-      <Filter>NanoJIT</Filter>
+      <Filter>Source Files\NanoJIT</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\nanojit\avmplus.cpp">
-      <Filter>NanoJIT</Filter>
+      <Filter>Source Files\NanoJIT</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\nanojit\CodeAlloc.cpp">
-      <Filter>NanoJIT</Filter>
+      <Filter>Source Files\NanoJIT</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\nanojit\Containers.cpp">
-      <Filter>NanoJIT</Filter>
+      <Filter>Source Files\NanoJIT</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\nanojit\Fragmento.cpp">
-      <Filter>NanoJIT</Filter>
+      <Filter>Source Files\NanoJIT</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\nanojit\LIR.cpp">
-      <Filter>NanoJIT</Filter>
+      <Filter>Source Files\NanoJIT</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\nanojit\NativeX64.cpp">
-      <Filter>NanoJIT</Filter>
+      <Filter>Source Files\NanoJIT</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\nanojit\njconfig.cpp">
-      <Filter>NanoJIT</Filter>
+      <Filter>Source Files\NanoJIT</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\nanojit\RegAlloc.cpp">
-      <Filter>NanoJIT</Filter>
+      <Filter>Source Files\NanoJIT</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\nanojit\VMPI.cpp">
-      <Filter>NanoJIT</Filter>
+      <Filter>Source Files\NanoJIT</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\jstracer.cpp">
-      <Filter>NanoJIT</Filter>
+      <Filter>Source Files\NanoJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jsclone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jscompartment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jsfriendapi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jsgcstats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jsprobes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jsreflect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sharkctl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocator.cpp">
+      <Filter>Source Files\Assembler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocatorOS2.cpp">
+      <Filter>Source Files\Assembler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocatorPosix.cpp">
+      <Filter>Source Files\Assembler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocatorWin.cpp">
+      <Filter>Source Files\Assembler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jsbuiltins.cpp">
+      <Filter>Source Files\NanoJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tracejit\Writer.cpp">
+      <Filter>Source Files\TraceJIT</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\v8-dtoa\checks.cc">
+      <Filter>Source Files\V8 DTOA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\v8-dtoa\conversions.cc">
+      <Filter>Source Files\V8 DTOA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\v8-dtoa\diy-fp.cc">
+      <Filter>Source Files\V8 DTOA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\v8-dtoa\fast-dtoa.cc">
+      <Filter>Source Files\V8 DTOA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\v8-dtoa\platform.cc">
+      <Filter>Source Files\V8 DTOA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\v8-dtoa\utils.cc">
+      <Filter>Source Files\V8 DTOA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\v8-dtoa\v8-dtoa.cc">
+      <Filter>Source Files\V8 DTOA</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_compile.cpp">
+      <Filter>Source Files\Yarr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_exec.cpp">
+      <Filter>Source Files\Yarr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_tables.cpp">
+      <Filter>Source Files\Yarr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_ucp_searchfuncs.cpp">
+      <Filter>Source Files\Yarr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_xclass.cpp">
+      <Filter>Source Files\Yarr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\yarr\yarr\RegexCompiler.cpp">
+      <Filter>Source Files\Yarr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\yarr\yarr\RegexJIT.cpp">
+      <Filter>Source Files\Yarr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

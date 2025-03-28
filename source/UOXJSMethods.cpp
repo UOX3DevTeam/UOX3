@@ -7248,7 +7248,7 @@ JSBool CFile_Open( JSContext *cx, uintN argc, jsval *vp )
 	std::string filePath = cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
 
 	// if folderName argument was supplied, use it, and create the appropriate folder under the /shared/ folder
-	if( folderName != nullptr )
+	if( !folderName.empty() )
 	{
 		// However, don't allow special characters in the folder name
 		if( folderName.find( ".." ) != std::string::npos || folderName.find( "\\" ) != std::string::npos || folderName.find( "/") != std::string::npos )

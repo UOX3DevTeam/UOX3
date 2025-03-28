@@ -3865,7 +3865,7 @@ JSBool SE_GetSpawnRegion( JSContext *cx, uintN argc, jsval *vp )
 		UI16 instanceID = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
 
 		// Iterate over each spawn region to find the right one
-		auto iter = std::find_if( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&x, &y, &worldNum, &instanceID, &cx, &rval]( std::pair<UI16, CSpawnRegion*> entry )
+		auto iter = std::find_if( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&x, &y, &worldNum, &instanceID, &cx, &vp, &rval]( std::pair<UI16, CSpawnRegion*> entry )
 		{
 			if( entry.second && x >= entry.second->GetX1() && x <= entry.second->GetX2() && y >= entry.second->GetY1()
 				&& y <= entry.second->GetY2() && entry.second->GetInstanceId() == instanceID && entry.second->WorldNumber() == worldNum )

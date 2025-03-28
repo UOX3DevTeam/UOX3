@@ -113,13 +113,14 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;EXPORT_JS_API;JSFILE;XP_WIN;XP_WIN32;_WIN32;NO_X11;HW_THREADS;STDC_HEADERS;WIN32_LEAN_AND_MEAN;HAVE_SNPRINTF;ENABLE_TRACEJIT=1;FEATURE_NANOJIT;JS_TRACER;NANOJIT_ARCH=X64;AVMPLUS_WIN32;AVMPLUS_AMD64;AVMPLUS_64BIT;_WIN64;_AMD64_</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);NDEBUG;_AMD64_;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_WIN32;_WIN64;_WINDOWS;AVMPLUS_64BIT;AVMPLUS_AMD64;AVMPLUS_WIN32;ENABLE_ASSEMBLER=1;ENABLE_JIT=1;ENABLE_METHODJIT=1;ENABLE_MONOIC=1;ENABLE_POLYIC_TYPED_ARRAY=1;ENABLE_POLYIC=1;ENABLE_TRACEJIT=1;EXPORT_JS_API;FEATURE_NANOJIT;HAVE_SNPRINTF;JS_STDDEF_H_HAS_INTPTR_T;JS_TRACER;NANOJIT_ARCH=X64;NO_X11;WIN32;WIN32_LEAN_AND_MEAN;XP_WIN;XP_WIN32</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <SDLCheck>false</SDLCheck>
       <TreatWarningAsError>false</TreatWarningAsError>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(ProjectDir)/../../../assembler;$(ProjectDir)/../../../nanojit;$(ProjectDir)/../../../tracejit;$(ProjectDir)/../../../yarr;$(ProjectDir)/../../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
@@ -132,22 +133,30 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocator.cpp" />
+    <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocatorOS2.cpp" />
+    <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocatorPosix.cpp" />
+    <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocatorWin.cpp" />
     <ClCompile Include="..\..\..\jsapi.cpp" />
     <ClCompile Include="..\..\..\jsarena.cpp" />
     <ClCompile Include="..\..\..\jsarray.cpp" />
     <ClCompile Include="..\..\..\jsatom.cpp" />
     <ClCompile Include="..\..\..\jsbool.cpp" />
     <ClCompile Include="..\..\..\jsbuiltins.cpp" />
+    <ClCompile Include="..\..\..\jsclone.cpp" />
     <ClCompile Include="..\..\..\jscntxt.cpp" />
+    <ClCompile Include="..\..\..\jscompartment.cpp" />
     <ClCompile Include="..\..\..\jsdate.cpp" />
     <ClCompile Include="..\..\..\jsdbgapi.cpp" />
     <ClCompile Include="..\..\..\jsdhash.cpp" />
     <ClCompile Include="..\..\..\jsdtoa.cpp" />
     <ClCompile Include="..\..\..\jsemit.cpp" />
     <ClCompile Include="..\..\..\jsexn.cpp" />
+    <ClCompile Include="..\..\..\jsfriendapi.cpp" />
     <ClCompile Include="..\..\..\jsfun.cpp" />
     <ClCompile Include="..\..\..\jsgc.cpp" />
     <ClCompile Include="..\..\..\jsgcchunk.cpp" />
+    <ClCompile Include="..\..\..\jsgcstats.cpp" />
     <ClCompile Include="..\..\..\jshash.cpp" />
     <ClCompile Include="..\..\..\jsinterp.cpp" />
     <ClCompile Include="..\..\..\jsinvoke.cpp" />
@@ -163,15 +172,16 @@
     <ClCompile Include="..\..\..\jsoplengen.cpp" />
     <ClCompile Include="..\..\..\jsparse.cpp" />
     <ClCompile Include="..\..\..\jsprf.cpp" />
+    <ClCompile Include="..\..\..\jsprobes.cpp" />
     <ClCompile Include="..\..\..\jspropertycache.cpp" />
     <ClCompile Include="..\..\..\jspropertytree.cpp" />
     <ClCompile Include="..\..\..\jsproxy.cpp" />
+    <ClCompile Include="..\..\..\jsreflect.cpp" />
     <ClCompile Include="..\..\..\jsregexp.cpp" />
     <ClCompile Include="..\..\..\jsscan.cpp" />
     <ClCompile Include="..\..\..\jsscope.cpp" />
     <ClCompile Include="..\..\..\jsscript.cpp" />
     <ClCompile Include="..\..\..\jsstr.cpp" />
-    <ClCompile Include="..\..\..\jstask.cpp" />
     <ClCompile Include="..\..\..\jstracer.cpp" />
     <ClCompile Include="..\..\..\jstypedarray.cpp" />
     <ClCompile Include="..\..\..\jsutil.cpp" />
@@ -190,6 +200,22 @@
     <ClCompile Include="..\..\..\nanojit\RegAlloc.cpp" />
     <ClCompile Include="..\..\..\nanojit\VMPI.cpp" />
     <ClCompile Include="..\..\..\prmjtime.cpp" />
+    <ClCompile Include="..\..\..\sharkctl.cpp" />
+    <ClCompile Include="..\..\..\tracejit\Writer.cpp" />
+    <ClCompile Include="..\..\..\v8-dtoa\checks.cc" />
+    <ClCompile Include="..\..\..\v8-dtoa\conversions.cc" />
+    <ClCompile Include="..\..\..\v8-dtoa\diy-fp.cc" />
+    <ClCompile Include="..\..\..\v8-dtoa\fast-dtoa.cc" />
+    <ClCompile Include="..\..\..\v8-dtoa\platform.cc" />
+    <ClCompile Include="..\..\..\v8-dtoa\utils.cc" />
+    <ClCompile Include="..\..\..\v8-dtoa\v8-dtoa.cc" />
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_compile.cpp" />
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_exec.cpp" />
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_tables.cpp" />
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_ucp_searchfuncs.cpp" />
+    <ClCompile Include="..\..\..\yarr\pcre\pcre_xclass.cpp" />
+    <ClCompile Include="..\..\..\yarr\yarr\RegexCompiler.cpp" />
+    <ClCompile Include="..\..\..\yarr\yarr\RegexJIT.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\jsapi.h" />
