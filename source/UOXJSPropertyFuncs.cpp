@@ -45,7 +45,7 @@ JSBool CGuildsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *v
 	return JS_TRUE;
 }
 
-JSBool CGuildsProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
+JSBool CGuildsProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	return JS_TRUE;
 }
@@ -77,7 +77,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *v
 	return JS_TRUE;
 }
 
-JSBool CSpellProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
+JSBool CSpellProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	return JS_TRUE;
 }
@@ -170,7 +170,7 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 	return JS_TRUE;
 }
 
-JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	size_t skillId = JSVAL_TO_INT( id );
 
@@ -197,12 +197,12 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 	return JS_TRUE;
 }
 
-JSBool CGlobalSkillProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
+JSBool CGlobalSkillProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	return JS_TRUE;
 }
 
-JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CWorldMain::Skill_st *gPriv = static_cast<CWorldMain::Skill_st*>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
@@ -234,7 +234,7 @@ JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 	return JS_TRUE;
 }
 
-JSBool CTimerProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
+JSBool CTimerProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	if( JSVAL_IS_INT( id ))
 	{
@@ -284,7 +284,7 @@ JSBool CTimerProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]]
 	return JS_TRUE;
 }
 
-JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	UI16 createEntryId = static_cast<UI16>( JSVAL_TO_INT( id ));
 
@@ -304,12 +304,12 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	return JS_TRUE;
 }
 
-JSBool CCreateEntryProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
+JSBool CCreateEntryProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	return JS_TRUE;
 }
 
-JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CreateEntry_st *gPriv = static_cast<CreateEntry_st*>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
@@ -419,7 +419,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 	return JS_TRUE;
 }
 
-JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CItem *gPriv = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
 	SERIAL TempSerial = INVALIDSERIAL;
@@ -1563,7 +1563,7 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 	return JS_TRUE;
 }
 
-JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CChar *gPriv = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 
@@ -2172,7 +2172,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		// ... by calling a dummy function in original script!
 		// ... but keep track of the property value we're trying to retrieve, stored in vp!
 		jsval origVp = *vp;
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", JS_ARGV( cx, vp ), 0, vp);
 		*vp = origVp;
 		if( retVal == JS_FALSE )
 		{
@@ -2672,7 +2672,7 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 	return JS_TRUE;
 }
 
-JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CTownRegion *gPriv = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
@@ -2867,7 +2867,7 @@ JSBool CRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 
 	return JS_TRUE;
 }
-JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CSpawnRegion *gPriv = static_cast<CSpawnRegion *>( JS_GetPrivate( cx, obj ));
 
@@ -3007,7 +3007,7 @@ JSBool CSpawnRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSB
 	return JS_TRUE;
 }
 
-JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CGuild *gPriv = static_cast<CGuild *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
@@ -3140,7 +3140,7 @@ JSBool CGuildProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool st
 
 	return JS_TRUE;
 }
-JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CRace *gPriv = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
 
@@ -3487,7 +3487,7 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *v
 	return JS_TRUE;
 }
 
-JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	JSEncapsulate myClass( cx, obj );
 	CChar *myChar = static_cast<CChar*>( myClass.toObject() );
@@ -3645,7 +3645,7 @@ JSBool CSkillsProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 	return JS_TRUE;
 }
 
-JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	SEGumpData_st *gPriv = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
 
@@ -3669,7 +3669,7 @@ JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 	return JS_TRUE;
 }
 
-JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CAccountBlock_st *myAccount = static_cast<CAccountBlock_st *>( JS_GetPrivate( cx, obj ));
 	if( myAccount == nullptr )
@@ -4011,7 +4011,7 @@ JSBool CAccountProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool 
 	return JS_TRUE;
 }
 
-JSBool CConsoleProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
+JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	if( JSVAL_IS_INT( id ))
 	{
@@ -4043,7 +4043,7 @@ JSBool CConsoleProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool 
 	return JS_TRUE;
 }
 
-JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	CScriptSection *gPriv = static_cast<CScriptSection *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
@@ -4120,7 +4120,7 @@ JSBool CResourceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool
 	return JS_TRUE;
 }
 
-JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	MapResource_st *gPriv = static_cast<MapResource_st*>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
@@ -4201,7 +4201,7 @@ JSBool CPartyProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool st
 	return JS_TRUE;
 }
 
-JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	Party *gPriv = static_cast<Party *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
@@ -4231,7 +4231,7 @@ JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 	return JS_TRUE;
 }
 
-JSBool CScriptProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
+JSBool CScriptProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	if( JSVAL_IS_INT( id ))
 	{

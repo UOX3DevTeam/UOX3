@@ -170,7 +170,7 @@ JSBool Packet( JSContext *cx, uintN argc, jsval *vp )
 {
 	CPUOXBuffer *toAdd = new CPUOXBuffer;
 
-	JSObject* obj = JS_NewObject( cx, &UOXPacket_class, nullptr, obj );
+	JSObject* obj = JS_NewObject( cx, &UOXPacket_class, nullptr, nullptr );
 	JS_DefineFunctions( cx, obj, CPacket_Methods );
 	JS_SetPrivate( cx, obj, toAdd);
 	JS_LockGCThing( cx, obj );
@@ -401,7 +401,7 @@ JSBool Gump( JSContext *cx, uintN argc, jsval *vp )
 	toAdd->two = new std::vector<std::string>();
 	toAdd->textId = 0;
 
-	JSObject* obj = JS_NewObject( cx, &UOXGump_class, nullptr, obj );
+	JSObject* obj = JS_NewObject( cx, &UOXGump_class, nullptr, nullptr );
 	JS_DefineFunctions( cx, obj, CGump_Methods );
 	JS_SetPrivate( cx, obj, toAdd);
 	JS_LockGCThing( cx, obj );
