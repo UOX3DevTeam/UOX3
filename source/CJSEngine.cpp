@@ -175,11 +175,12 @@ CJSRuntime::CJSRuntime( UI32 engineSize )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 	}
 
-	jsGlobal = JS_NewGlobalObject( jsContext, &global_class );
-	if( jsGlobal == nullptr )
+	jsGlobal = JS_NewCompartmentAndGlobalObject(jsContext, &global_class, nullptr);
+	if (jsGlobal == nullptr)
 	{
-		Shutdown( FATAL_UOX3_JAVASCRIPT );
+		Shutdown(FATAL_UOX3_JAVASCRIPT);
 	}
+
 	JS_LockGCThing( jsContext, jsGlobal );
 	JS_InitStandardClasses( jsContext, jsGlobal );
 
