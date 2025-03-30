@@ -308,7 +308,7 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 
 	JS_SetGlobalObject( targContext, targObject );
 
-	//JS_InitStandardClasses( targContext, targObject );
+	JS_InitStandardClasses( targContext, targObject );
 	JS_DefineFunctions( targContext, targObject, my_functions );
 	targScript = JS_CompileFile( targContext, targObject, targFile.c_str() );
 	if( targScript == nullptr )
