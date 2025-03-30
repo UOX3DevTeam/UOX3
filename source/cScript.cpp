@@ -297,7 +297,7 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 	if( targContext == nullptr )
 		return;
 
-	targObject = JS_NewObject( targContext, &uox_class, nullptr, nullptr );
+	targObject = JS_NewGlobalObject( targContext, &uox_class );
 	if( targObject == nullptr )
 		return;
 
