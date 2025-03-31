@@ -175,6 +175,7 @@ JSBool Packet( JSContext *cx, uintN argc, jsval *vp )
 	JS_SetPrivate( cx, obj, toAdd);
 	JS_LockGCThing( cx, obj );
 	//JS_AddRoot( cx, &obj );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( obj ) );
 	return JS_TRUE;
 }
 
@@ -406,6 +407,7 @@ JSBool Gump( JSContext *cx, uintN argc, jsval *vp )
 	JS_SetPrivate( cx, obj, toAdd);
 	JS_LockGCThing( cx, obj );
 	//JS_AddRoot( cx, &obj );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( obj ) );
 	return JS_TRUE;
 }
 
@@ -7169,15 +7171,15 @@ JSBool CAccount_SaveAccounts(JSContext* cx, uintN argc, jsval* vp)
 // UOXCFile constructor !
 JSBool UOXCFile( JSContext *cx, uintN argc, jsval *vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	UOXFileWrapper_st *toAdd = new UOXFileWrapper_st;
 	toAdd->mWrap = nullptr;
 
-	//JSBool myVal = JS_DefineFunctions( cx, obj, CFile_Methods );
+	JSObject* obj = JS_NewObject( cx, &UOXFile_class, nullptr, nullptr );
 	JS_DefineFunctions( cx, obj, CFile_Methods );
 	JS_SetPrivate( cx, obj, toAdd );
 	JS_LockGCThing( cx, obj );
 	//JS_AddRoot( cx, &obj );
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( obj ) );
 	return JS_TRUE;
 }
 

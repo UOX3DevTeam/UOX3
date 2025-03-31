@@ -1304,7 +1304,7 @@ JSBool SE_SpawnNPC( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	// JS_SetGlobalObject( origContext, origObject );
 
 	return JS_TRUE;
 }
@@ -1398,7 +1398,7 @@ JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	// JS_SetGlobalObject( origContext, origObject );
 	return JS_TRUE;
 }
 
@@ -1461,7 +1461,7 @@ JSBool SE_CreateBlankItem( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	// JS_SetGlobalObject( origContext, origObject );
 
 	return JS_TRUE;
 }
@@ -1531,7 +1531,7 @@ JSBool SE_CreateHouse( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	// JS_SetGlobalObject( origContext, origObject );
 	return JS_TRUE;
 }
 
@@ -1601,7 +1601,7 @@ JSBool SE_CreateBaseMulti( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	// JS_SetGlobalObject( origContext, origObject );
 	return JS_TRUE;
 }
 
@@ -2024,7 +2024,7 @@ JSBool SE_UseItem( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	// JS_SetGlobalObject( origContext, origObject );
 
 	return JS_TRUE;
 }
@@ -2097,7 +2097,7 @@ JSBool SE_TriggerTrap( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	// JS_SetGlobalObject( origContext, origObject );
 
 	return JS_TRUE;
 }
@@ -2134,12 +2134,12 @@ JSBool SE_TriggerEvent( JSContext *cx, uintN argc, jsval *vp )
 
 	if( retVal )
 	{
-		JS_SetGlobalObject( origContext, origObject );
+		// JS_SetGlobalObject( origContext, origObject );
 		return JS_TRUE;
 	}
 	else
 	{
-		JS_SetGlobalObject( origContext, origObject );
+		// JS_SetGlobalObject( origContext, origObject );
 		return JS_FALSE;
 	}
 }
