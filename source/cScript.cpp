@@ -297,7 +297,9 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 	if( targContext == nullptr )
 		return;
 
-	targObject = JS_NewGlobalObject( targContext, &uox_class );
+	auto glob = JS_GetGlobalObject( targContext );
+
+	targObject = JS_NewObject( targContext, &uox_class, glob, glob );
 	if( targObject == nullptr )
 		return;
 
@@ -306,9 +308,8 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 	// Moved here so it reports errors during script-startup too
 	JS_SetErrorReporter( targContext, UOX3ErrorReporter );
 
-	JS_SetGlobalObject( targContext, targObject );
-
-	JS_InitStandardClasses( targContext, targObject );
+	//JS_SetGlobalObject( targContext, targObject );
+	//JS_InitStandardClasses( targContext, targObject );
 	JS_DefineFunctions( targContext, targObject, my_functions );
 	targScript = JS_CompileFile( targContext, targObject, targFile.c_str() );
 	if( targScript == nullptr )
