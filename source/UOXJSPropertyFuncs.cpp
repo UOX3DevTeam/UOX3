@@ -52,7 +52,7 @@ JSBool CGuildsProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 
 JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
-	size_t spellId = JSVAL_TO_INT( id );
+	size_t spellId = JSID_TO_INT( id );
 
 	if( spellId >= Magic->spells.size() )
 	{
@@ -90,12 +90,12 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 
 	std::string spellName = "";
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		JSString *tString = nullptr;
 		bool bDone = false;
 		size_t i = 0;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CSP_ID:
 				for( i = 0; i < Magic->spells.size() && !bDone; ++i )
@@ -172,7 +172,7 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 
 JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
-	size_t skillId = JSVAL_TO_INT( id );
+	size_t skillId = JSID_TO_INT( id );
 
 	if( skillId > THROWING )
 	{
@@ -210,10 +210,10 @@ JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsv
 
 	std::string skillName = "";
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CGSKILL_NAME:
 				tString = JS_NewStringCopyZ( cx, gPriv->name.c_str() );
@@ -236,9 +236,9 @@ JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsv
 
 JSBool CTimerProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			// Character timers (PC and NPC)
 			case TIMER_TIMEOUT:			*vp = INT_TO_JSVAL( tCHAR_TIMEOUT );		break;
@@ -286,7 +286,7 @@ JSBool CTimerProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 
 JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
-	UI16 createEntryId = static_cast<UI16>( JSVAL_TO_INT( id ));
+	UI16 createEntryId = static_cast<UI16>( JSID_TO_INT( id ));
 
 	CreateEntry_st *myCreateEntry = Skills->FindItem( createEntryId );
 	if( myCreateEntry == nullptr )
@@ -315,10 +315,10 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsv
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 		case CMAKE_ID:
 			*vp = INT_TO_JSVAL( gPriv->targId );
@@ -427,10 +427,10 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp 
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CIP_SECTIONID:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetSectionId().c_str() );
@@ -1094,10 +1094,10 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		TIMERVAL newTime;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CIP_SECTIONID:		gPriv->SetSectionId( encaps.toString() );					break;
 			case CIP_NAME:			gPriv->SetName( encaps.toString() );						break;
@@ -1556,7 +1556,7 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( oldstrutil::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSID_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -1574,12 +1574,12 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval
 	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		CItem *TempItem			= nullptr;
 		JSObject *TempObject	= nullptr;
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CCP_ACCOUNTNUM:	*vp = INT_TO_JSVAL( gPriv->GetAccountNum() );	break;
 			case CCP_ACCOUNT:
@@ -2177,7 +2177,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( oldstrutil::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSID_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -2196,9 +2196,9 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 
 	JSEncapsulate encaps( cx, vp );
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CCP_ACCOUNTNUM:	gPriv->SetAccountNum( static_cast<UI16>( encaps.toInt() ));					break;
 			case CCP_CREATEDON:		break;
@@ -2665,7 +2665,7 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Character property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( oldstrutil::format( "Script context lost after setting Character property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSID_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -2678,10 +2678,10 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *v
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CREGP_NAME:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
@@ -2780,9 +2780,9 @@ JSBool CRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CREGP_NAME:				gPriv->SetName( encaps.toString() );						break;
 			case CREGP_MAYOR:				gPriv->SetMayorSerial( static_cast<UI32>( encaps.toInt() )); break;
@@ -2861,7 +2861,7 @@ JSBool CRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Region property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( oldstrutil::format( "Script context lost after setting Region property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSID_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -2874,10 +2874,10 @@ JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsv
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CSPAWNREGP_NAME:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
@@ -2962,9 +2962,9 @@ JSBool CSpawnRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSB
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CSPAWNREGP_NAME:				gPriv->SetName( encaps.toString() );							break;
 			case CSPAWNREGP_ITEM:				gPriv->SetItem( encaps.toString() );							break;
@@ -3000,7 +3000,7 @@ JSBool CSpawnRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSB
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting SpawnRegion property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( oldstrutil::format( "Script context lost after setting SpawnRegion property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSID_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3013,10 +3013,10 @@ JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CGP_NAME:
 				tString = JS_NewStringCopyZ( cx, gPriv->Name().c_str() );
@@ -3084,9 +3084,9 @@ JSBool CGuildProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool st
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CGP_NAME:				gPriv->Name( encaps.toString() );						break;
 			case CGP_TYPE:				gPriv->Type( static_cast<GuildType>( encaps.toInt() ));	break;
@@ -3134,7 +3134,7 @@ JSBool CGuildProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool st
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Guild property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( oldstrutil::format( "Script context lost after setting Guild property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSID_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3147,11 +3147,11 @@ JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp 
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		JSString *tString = nullptr;
 		UI08 TempRace = 0;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CRP_ID:
 				for( TempRace = 0; TempRace < Races->Count(); ++TempRace )
@@ -3195,9 +3195,9 @@ JSBool CRaceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CRP_NAME:				gPriv->Name( encaps.toString() );						break;
 			case CRP_REQUIRESBEARD:		gPriv->RequiresBeard( encaps.toBool() );				break;
@@ -3221,7 +3221,7 @@ JSBool CRaceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", JS_ARGV( cx, vp ), 0, vp );
 		if( retVal == JS_FALSE )
 		{
-			Console.Warning( oldstrutil::format( "Script context lost after setting Race property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( oldstrutil::format( "Script context lost after setting Race property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSID_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3239,9 +3239,9 @@ JSBool CSocketProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CSOCKP_ACCOUNT:
 				break;
@@ -3319,7 +3319,7 @@ JSBool CSocketProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Socket property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( oldstrutil::format( "Script context lost after setting Socket property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSID_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3332,11 +3332,11 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *v
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		CChar *myChar;
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CSOCKP_ACCOUNT:
 			{
@@ -3495,7 +3495,7 @@ JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *v
 	if( !ValidateObject( myChar ))
 		return JS_FALSE;
 
-	UI08 skillId		= static_cast<UI08>( JSVAL_TO_INT( id ));
+	UI08 skillId		= static_cast<UI08>( JSID_TO_INT( id ));
 
 	if( myClass.ClassName() == "UOXSkills" )
 	{
@@ -3534,7 +3534,7 @@ JSBool CSkillsProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	JSEncapsulate encaps( cx, vp );
-	UI08 skillId		= static_cast<UI08>( JSVAL_TO_INT( id ));
+	UI08 skillId		= static_cast<UI08>( JSID_TO_INT( id ));
 	SI16 newSkillValue	= static_cast<SI16>( encaps.toInt() );
 	UI08 i				= 0;
 
@@ -3638,7 +3638,7 @@ JSBool CSkillsProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Skill property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( oldstrutil::format( "Script context lost after setting Skill property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSID_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3652,9 +3652,9 @@ JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval 
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CGumpData_ID:
 				*vp = INT_TO_JSVAL( gPriv->nIDs.size() );
@@ -3675,10 +3675,10 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *
 	if( myAccount == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
 		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CACCOUNT_ID:	*vp = INT_TO_JSVAL( myAccount->wAccountIndex );		break;
 			case CACCOUNT_USERNAME:
@@ -3926,9 +3926,9 @@ JSBool CAccountProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool 
 
 	JSEncapsulate encaps( cx, vp );
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CACCOUNT_ID: 
 			case CACCOUNT_USERNAME:
@@ -4004,7 +4004,7 @@ JSBool CAccountProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool 
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Account property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( oldstrutil::format( "Script context lost after setting Account property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSID_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -4013,9 +4013,9 @@ JSBool CAccountProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool 
 
 JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CCONSOLE_MODE:		*vp = INT_TO_JSVAL( Console.CurrentMode() );	break;
 			case CCONSOLE_LOGECHO:	*vp = INT_TO_JSVAL( Console.LogEcho() );		break;
@@ -4029,9 +4029,9 @@ JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *
 JSBool CConsoleProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CCONSOLE_MODE:		Console.CurrentMode( encaps.toInt() );		break;
 			case CCONSOLE_LOGECHO:	Console.LogEcho( encaps.toBool() );			break;
@@ -4049,9 +4049,9 @@ JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, j
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CSS_NUMTAGS:		*vp = INT_TO_JSVAL( gPriv->NumEntries() );			break;
 			case CSS_ATEND:			*vp = BOOLEAN_TO_JSVAL( gPriv->AtEnd() );			break;
@@ -4079,9 +4079,9 @@ JSBool CResourceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CRESP_LOGAMT:				gPriv->logAmt	= encaps.toInt();			break;
 			case CRESP_LOGTIME:
@@ -4113,7 +4113,7 @@ JSBool CResourceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Resource property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( oldstrutil::format( "Script context lost after setting Resource property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSID_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -4126,9 +4126,9 @@ JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval 
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CRESP_LOGAMT:				*vp = INT_TO_JSVAL( gPriv->logAmt );			break;
 			case CRESP_LOGTIME:				JS_NewNumberValue( cx, gPriv->logTime, vp );	break;
@@ -4153,9 +4153,9 @@ JSBool CPartyProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool st
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CPARTYP_LEADER:
 			{
@@ -4194,7 +4194,7 @@ JSBool CPartyProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool st
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Party property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( oldstrutil::format( "Script context lost after setting Party property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSID_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -4207,9 +4207,9 @@ JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CPARTYP_LEADER:
 			{
@@ -4233,9 +4233,9 @@ JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 
 JSBool CScriptProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
-	if( JSVAL_IS_INT( id ))
+	if( JSID_IS_INT( id ))
 	{
-		switch( JSVAL_TO_INT( id ))
+		switch( JSID_TO_INT( id ))
 		{
 			case CSCRIPT_SCRIPTID:		
 				*vp = INT_TO_JSVAL( JSMapping->GetScriptId( JS_GetGlobalObject( cx )) );
