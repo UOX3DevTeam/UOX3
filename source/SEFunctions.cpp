@@ -738,17 +738,18 @@ JSBool SE_FinishedCommandList( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterCommand( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 3 )
 	{
-		ScriptError( cx, "  RegisterCommand: Invalid number of arguments (takes 4)" );
+		ScriptError( cx, "  RegisterCommand: Invalid number of arguments (takes 3)" );
 		return JS_FALSE;
 	}
 	std::string toRegister	= JS_GetStringBytes( cx, argv[0]);
 	UI08 execLevel			= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
 	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
-	UI16 scriptId			= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	UI16 scriptId			= JSMapping->GetScriptId( scriptEnv );
 
 	if( scriptId == 0xFFFF )
 	{
@@ -770,6 +771,7 @@ JSBool SE_RegisterCommand( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterSpell( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 2 )
@@ -779,7 +781,7 @@ JSBool SE_RegisterSpell( JSContext *cx, uintN argc, jsval *vp )
 	}
 	SI32 spellNumber	= JSVAL_TO_INT( argv[0] );
 	bool isEnabled		= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
-	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	cScript *myScript	= JSMapping->GetScript( scriptEnv );
 	Magic->Register( myScript, spellNumber, isEnabled );
 	return JS_TRUE;
 }
@@ -794,6 +796,7 @@ JSBool SE_RegisterSpell( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterSkill( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 2 )
@@ -803,7 +806,7 @@ JSBool SE_RegisterSkill( JSContext *cx, uintN argc, jsval *vp )
 	}
 	SI32 skillNumber	= JSVAL_TO_INT( argv[0] );
 	bool isEnabled		= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
-	UI16 scriptId		= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	UI16 scriptId		= JSMapping->GetScriptId( scriptEnv );
 	if( scriptId != 0xFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
@@ -847,6 +850,7 @@ JSBool SE_RegisterSkill( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterPacket( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 2 )
@@ -856,7 +860,7 @@ JSBool SE_RegisterPacket( JSContext *cx, uintN argc, jsval *vp )
 	}
 	UI08 packet			= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
 	UI08 subCmd			= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
-	UI16 scriptId		= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	UI16 scriptId		= JSMapping->GetScriptId( scriptEnv );
 	if( scriptId != 0xFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
@@ -877,6 +881,7 @@ JSBool SE_RegisterPacket( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterKey( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 2 )
@@ -886,7 +891,7 @@ JSBool SE_RegisterKey( JSContext *cx, uintN argc, jsval *vp )
 	}
 	JSEncapsulate encaps( cx, &( argv[0] ));
 	std::string toRegister	= JS_GetStringBytes( cx, argv[1]);
-	UI16 scriptId			= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	UI16 scriptId			= JSMapping->GetScriptId( scriptEnv );
 
 	if( scriptId == 0xFFFF )
 	{
@@ -923,6 +928,7 @@ JSBool SE_RegisterKey( JSContext *cx, uintN argc, jsval *vp )
 JSBool SE_RegisterConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 
 	if( argc != 2 )
 	{
@@ -931,7 +937,7 @@ JSBool SE_RegisterConsoleFunc( JSContext *cx, uintN argc, jsval *vp )
 	}
 	std::string funcToRegister	= JS_GetStringBytes( cx, argv[0]);
 	std::string toRegister		= JS_GetStringBytes( cx, argv[1]);
-	UI16 scriptId				= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	UI16 scriptId				= JSMapping->GetScriptId( scriptEnv );
 
 	if( scriptId == 0xFFFF )
 	{
@@ -2533,6 +2539,7 @@ JSBool SE_GetRaceCount( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 3 && argc != 4 )
@@ -2569,7 +2576,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp )
 
 	std::vector<CChar *> charsFound;
 	UI16 retCounter	= 0;
-	cScript *myScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	cScript *myScript = JSMapping->GetScript( scriptEnv );
 	for( auto &MapArea : MapRegion->PopulateList( srcObject ))
 	{
 		if( MapArea )
@@ -2617,6 +2624,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_AreaItemFunction( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 3 && argc != 4 )
@@ -2656,7 +2664,7 @@ JSBool SE_AreaItemFunction( JSContext *cx, uintN argc, jsval *vp )
 
 	std::vector<CItem *> itemsFound;
 	UI16 retCounter	= 0;
-	cScript *myScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	cScript *myScript = JSMapping->GetScript( scriptEnv );
 	for( auto &MapArea : MapRegion->PopulateList( srcObject ))
 	{
 		if( MapArea )
@@ -2980,6 +2988,7 @@ bool SE_IterateFunctor( CBaseObject *a, UI32 &b, void *extraData )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_IterateOver( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 1 )
@@ -2991,7 +3000,7 @@ JSBool SE_IterateOver( JSContext *cx, uintN argc, jsval *vp )
 	UI32 b				= 0;
 	std::string objType = JS_GetStringBytes( cx, argv[0]);
 	ObjectType toCheck	= FindObjTypeFromString( objType );
-	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	cScript *myScript	= JSMapping->GetScript( scriptEnv );
 	if( myScript != nullptr )
 	{
 		ObjectFactory::GetSingleton().IterateOver( toCheck, b, myScript, &SE_IterateFunctor );
@@ -3018,7 +3027,8 @@ bool SE_IterateSpawnRegionsFunctor( CSpawnRegion *a, UI32 &b, void *extraData )
 JSBool SE_IterateOverSpawnRegions( JSContext *cx, uintN argc, jsval *vp )
 {
 	UI32 b = 0;
-	cScript *myScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
+	cScript *myScript = JSMapping->GetScript( scriptEnv );
 
 	if( myScript != nullptr )
 	{
@@ -3268,6 +3278,7 @@ JSBool SE_GetSocketFromIndex( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_ReloadJSFile( JSContext *cx, uintN argc, jsval *vp )
 {
+	JSObject* scriptEnv = JS_THIS_OBJECT( cx, vp );	
 	jsval* argv = JS_ARGV( cx, vp );
 
 	if( argc != 1 )
@@ -3276,7 +3287,7 @@ JSBool SE_ReloadJSFile( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	if( scriptId == JSMapping->GetScriptId( JS_GetGlobalObject( cx )))
+	if( scriptId == JSMapping->GetScriptId( scriptEnv ) )
 	{
 		ScriptError( cx, oldstrutil::format( "ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)", scriptId ).c_str() );
 		return JS_FALSE;
