@@ -164,7 +164,8 @@ std::string JSEncapsulate::ClassName( void )
 			if( obj2 != nullptr )
 			{
 				js::Class* mClass = obj2->getClass();
-				rVal = mClass->name;
+				rVal = oldstrutil::trim( mClass->name ); // Remove any whitespace, though I wouldn't have expected any?
+				className = rVal;	// Ensure we update the cached value for subsequent calls
 			}
 		}
 		classCached = true;
