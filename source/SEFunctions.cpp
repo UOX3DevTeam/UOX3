@@ -2133,21 +2133,8 @@ JSBool SE_TriggerEvent( JSContext *cx, uintN argc, jsval *vp )
 	if( toExecute == nullptr || eventToFire == "" )
 		return JS_FALSE;
 
-	auto origContext = cx;
-	auto origObject = obj;
-
 	JSBool retVal = toExecute->CallParticularEvent( eventToFire.c_str(), &argv[2], argc - 2, rval);
-
-	if( retVal )
-	{
-		// JS_SetGlobalObject( origContext, origObject );
-		return JS_TRUE;
-	}
-	else
-	{
-		// JS_SetGlobalObject( origContext, origObject );
-		return JS_FALSE;
-	}
+	return retVal;
 }
 
 //o------------------------------------------------------------------------------------------------o

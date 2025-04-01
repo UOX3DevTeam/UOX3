@@ -4436,8 +4436,7 @@ JSBool CMisc_CustomTarget( JSContext *cx, uintN argc, jsval *vp )
 		return JS_TRUE;
 	}
 	
-	mySock->scriptForCallBack = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	//mySock->TempInt( static_cast<SI64>( JSMapping->GetScript( JS_GetGlobalObject( cx ))));
+	mySock->scriptForCallBack = JSMapping->GetScript( JS_GetGlobalForScopeChain( cx ));
 	UI08 tNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
 
 	constexpr auto maxsize = 512; // Could become long (make sure it's nullptr )
