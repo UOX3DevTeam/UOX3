@@ -1309,9 +1309,6 @@ JSBool SE_SpawnNPC( JSContext *cx, uintN argc, jsval *vp )
 		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 	}
 
-	// Restore original script context and object
-	// JS_SetGlobalObject( origContext, origObject );
-
 	return JS_TRUE;
 }
 
@@ -1403,8 +1400,6 @@ JSBool SE_CreateDFNItem( JSContext *cx, uintN argc, jsval *vp )
 		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 	}
 
-	// Restore original script context and object
-	// JS_SetGlobalObject( origContext, origObject );
 	return JS_TRUE;
 }
 
@@ -1465,9 +1460,6 @@ JSBool SE_CreateBlankItem( JSContext *cx, uintN argc, jsval *vp )
 	{
 		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 	}
-
-	// Restore original script context and object
-	// JS_SetGlobalObject( origContext, origObject );
 
 	return JS_TRUE;
 }
@@ -1536,8 +1528,6 @@ JSBool SE_CreateHouse( JSContext *cx, uintN argc, jsval *vp )
 		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 	}
 
-	// Restore original script context and object
-	// JS_SetGlobalObject( origContext, origObject );
 	return JS_TRUE;
 }
 
@@ -1606,8 +1596,6 @@ JSBool SE_CreateBaseMulti( JSContext *cx, uintN argc, jsval *vp )
 		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 	}
 
-	// Restore original script context and object
-	// JS_SetGlobalObject( origContext, origObject );
 	return JS_TRUE;
 }
 
@@ -2029,9 +2017,6 @@ JSBool SE_UseItem( JSContext *cx, uintN argc, jsval *vp )
 		}
 	}
 
-	// Restore original script context and object
-	// JS_SetGlobalObject( origContext, origObject );
-
 	return JS_TRUE;
 }
 
@@ -2101,9 +2086,6 @@ JSBool SE_TriggerTrap( JSContext *cx, uintN argc, jsval *vp )
 	{
 		Magic->MagicTrap( mChar, myItem );
 	}
-
-	// Restore original script context and object
-	// JS_SetGlobalObject( origContext, origObject );
 
 	return JS_TRUE;
 }

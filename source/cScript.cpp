@@ -2551,9 +2551,6 @@ bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 			}
 			params[1] = OBJECT_TO_JSVAL( myObj2 );
 		}
-		// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
-		//JS_SetGlobalObject( targContext, targObject );
-
 
 		JSBool retVal = JS_CallFunctionName( targContext, targObject, oldstrutil::format( "onCallback%i", callNum ).c_str(), 2, params, &rval );
 		return ( retVal == JS_TRUE );
@@ -3090,7 +3087,6 @@ bool cScript::CallParticularEvent( const char *eventToCall, jsval *params, SI32 
 		return false;
 
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
-	// JS_SetGlobalObject( targContext, targObject );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, eventToCall, numParams, params, eventRetVal );
 
 	if( retVal == JS_FALSE )
@@ -3435,7 +3431,6 @@ bool cScript::AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseOb
 		params[2]	= JSVAL_NULL;
 	}
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
-	// JS_SetGlobalObject( targContext, targObject );
 
 	//FIXME === do we need this retvalue?
 	//JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
@@ -3503,7 +3498,6 @@ bool cScript::ExistAndVerify( ScriptEvent eventNum, std::string functionName )
 		}
 	}
 
-	// JS_SetGlobalObject( targContext, targObject );
 	return true;
 }
 
@@ -3520,7 +3514,6 @@ bool cScript::ScriptRegistration( std::string scriptType )
 	scriptType += "Registration";
 	jsval params[1], rval;
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
-	// JS_SetGlobalObject( targContext, targObject );
 
 	jsval Func = JSVAL_NULL;
 	JS_GetProperty( targContext, targObject, scriptType.c_str(), &Func );
