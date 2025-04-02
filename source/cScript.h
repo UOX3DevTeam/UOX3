@@ -142,6 +142,7 @@ private:
 	JSScript *			targScript;
 	JSContext *			targContext;
 	JSObject *			targObject;
+	UI16						scriptID;
 
 	bool				isFiring;
 	UI08				runTime;
@@ -169,7 +170,7 @@ public:
 	void		HandleGumpPress( CPIGumpMenuSelect *packet );
 	void		HandleGumpInput( CPIGumpInput *pressing );
 
-	cScript( std::string targFile, UI08 runTime );
+	cScript( std::string targFile, UI08 runTime, UI16 scrID );
 	~cScript();
 
 	JSObject *	Object( void ) const;	// returns object pointer

@@ -285,7 +285,7 @@ SI32 TryParseJSVal( jsval toParse )
 	}
 }
 
-cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( rT )
+cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false ), runTime( rT ), scriptID( scrID )
 {
 	for( SI32 i = 0; i < 3; ++i )
 	{
@@ -3547,7 +3547,7 @@ bool cScript::executeCommand( CSocket *s, std::string funcName, std::string exec
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = STRING_TO_JSVAL( execString );
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
-	// JS_SetGlobalObject( targContext, targObject );
+	JS_SetReservedSlot( targContext, myObj, 0, UINT_TO_JSVAL( scriptID ) );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName.c_str(), 2, params, &rval );
 
 	return ( retVal == JS_TRUE );

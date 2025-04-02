@@ -4401,6 +4401,7 @@ JSBool CMisc_CustomTarget( JSContext *cx, uintN argc, jsval *vp )
 	jsval *argv = JS_ARGV( cx, vp );
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	JSEncapsulate myClass( cx, obj );
+	UI16 scriptID = 0xFFFF;
 
 	if(( argc > 3 ) || ( argc < 1 ))
 	{
@@ -4427,6 +4428,10 @@ JSBool CMisc_CustomTarget( JSContext *cx, uintN argc, jsval *vp )
 	{
 		// We have a socket here
 		mySock = static_cast<CSocket*>( myClass.toObject() );
+		jsval reserved;
+		if( JS_GetReservedSlot( cx, obj, 0, &reserved ) ) {
+			scriptID = JSVAL_TO_INT( reserved );
+		}
 	}
 
 	if( mySock == nullptr )
@@ -4435,15 +4440,20 @@ JSBool CMisc_CustomTarget( JSContext *cx, uintN argc, jsval *vp )
 		// and DONT create a non-running jscript
 		return JS_TRUE;
 	}
+	if( scriptID == 0xFFFF )
+	{
+		Console.Warning( "Unable to determine script to callback into for CustomTarget" );
+		return JS_TRUE;
+	}
 	
-	mySock->scriptForCallBack = JSMapping->GetScript( JS_GetGlobalForScopeChain( cx ));
+	mySock->scriptForCallBack = JSMapping->GetScript( scriptID );
 	UI08 tNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
 
 	constexpr auto maxsize = 512; // Could become long (make sure it's nullptr )
 	std::string toSay;
 	if( argc >= 2 )
 	{
-		toSay = JS_GetStringBytes( cx, argv[1]);
+		toSay = JS_GetStringBytes( cx, argv[1] );
 		if( toSay.size() > maxsize )
 		{
 			toSay = toSay.substr( 0, maxsize );

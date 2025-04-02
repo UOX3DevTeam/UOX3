@@ -351,7 +351,7 @@ auto CJSMappingSection::Parse( Script *fileAssocData ) -> void
 			{
 				try
 				{
-					auto toAdd = new cScript( fullPath, runTime );
+					auto toAdd = new cScript( fullPath, runTime, scriptId );
 					if( toAdd )
 					{
 						scriptIdMap[scriptId]			= toAdd;
@@ -442,7 +442,7 @@ auto CJSMappingSection::Reload( UI16 toLoad ) -> void
 									scriptIdMap[toLoad] = nullptr;
 								}
 							}
-							auto toAdd = new cScript( fullPath, runTime );
+							auto toAdd = new cScript( fullPath, runTime, scriptId );
 							if( toAdd )
 							{
 								scriptIdMap[scriptId]			= toAdd;
