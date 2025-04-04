@@ -27,7 +27,7 @@ inline JSClass global_class =
 inline JSClass uox_class =
 {
 	"uoxscript",
-	JSCLASS_HAS_PRIVATE/* | JSCLASS_GLOBAL_FLAGS*/,
+	JSCLASS_HAS_PRIVATE,
 	JS_PropertyStub,
 	JS_PropertyStub,
 	CScriptProps_getProperty,

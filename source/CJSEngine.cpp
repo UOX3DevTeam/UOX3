@@ -198,7 +198,6 @@ CJSRuntime::~CJSRuntime( void )
 	JS_UnlockGCThing( jsContext, consoleObj );
 	JS_UnlockGCThing( jsContext, createEntriesObj );
 	JS_UnlockGCThing( jsContext, timerObj );
-	JS_UnlockGCThing( jsContext, scriptObj );
 
 	for( size_t i = JSP_ITEM; i < JSP_COUNT; ++i )
 	{
@@ -270,7 +269,6 @@ void CJSRuntime::InitializePrototypes()
 	consoleObj				=	JS_DefineObject( cx, obj, "Console", &UOXConsole_class, protoList[JSP_CONSOLE], 0 );
 	createEntriesObj		=	JS_DefineObject( cx, obj, "CreateEntries", &UOXCreateEntries_class, protoList[JSP_CREATEENTRIES], 0 );
 	timerObj				=	JS_DefineObject( cx, obj, "Timer", &UOXTimer_class, protoList[JSP_TIMER], 0 );
-	scriptObj				=	JS_DefineObject( cx, obj, "SCRIPT", &uox_class, protoList[JSP_SCRIPT], 0 );
 	JS_LockGCThing( cx, spellsObj );
 	JS_LockGCThing( cx, skillsObj );
 	JS_LockGCThing( cx, accountsObj );

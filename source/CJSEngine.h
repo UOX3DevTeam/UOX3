@@ -59,7 +59,6 @@ private:
 	JSObject * consoleObj;
 	JSObject * createEntriesObj;
 	JSObject * timerObj;
-	JSObject * scriptObj;
 	JSRuntime * jsRuntime;
 	JSContext * jsContext;
 	JSObject * jsGlobal;

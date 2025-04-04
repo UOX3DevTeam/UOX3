@@ -4040,16 +4040,23 @@ JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 
 JSBool CScriptProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
-	if( JSID_IS_INT( id ))
+	cScript *gPriv = static_cast<cScript*>( JS_GetPrivate( cx, obj ) );
+	if( JSID_IS_INT( id ) && JSID_TO_INT( id ) == CSCRIPT_SCRIPTID )
 	{
-		switch( JSID_TO_INT( id ))
+		*vp = INT_TO_JSVAL( gPriv->GetScriptID() );
+	}
+	else if( JSID_IS_STRING( id ) )
+	{
+		// This is trying to resolve *everything* - functions, global variables, etc
+		// We *only* care about script_id
+		JSString* str = JSID_TO_STRING( id );
+		char* chars = JS_EncodeString(cx, str);
+		std::string propID(chars);
+		if( propID == "script_id" )
 		{
-			case CSCRIPT_SCRIPTID:		
-				*vp = INT_TO_JSVAL( JSMapping->GetScriptId( JS_GetGlobalObject( cx )) );
-				break;
-			default:
-				break;
+			*vp = INT_TO_JSVAL( gPriv->GetScriptID() );
 		}
+		js_free(chars);
 	}
 	return JS_TRUE;
 }

@@ -270,14 +270,7 @@ SI32 TryParseJSVal( jsval toParse )
 	else if( JSVAL_IS_BOOLEAN( toParse ) == JS_TRUE )
 	{
 		// jsval is a bool! convert it to int
-		if( JSVAL_TO_BOOLEAN( toParse ) == JS_TRUE )
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+		return( JSVAL_TO_BOOLEAN( toParse ) );
 	}
 	else
 	{
@@ -307,8 +300,14 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 
 	// Moved here so it reports errors during script-startup too
 	JS_SetErrorReporter( targContext, UOX3ErrorReporter );
-
 	JS_DefineFunctions( targContext, targObject, my_functions );
+	JS_SetPrivate( targContext, targObject, this );
+
+	auto proto = JSEngine->GetPrototype( rT, JSP_SCRIPT );
+	scriptObj = JS_DefineObject( targContext, targObject, "SCRIPT", &uox_class, proto, 0 );
+	JS_LockGCThing( targContext, scriptObj );
+	JS_SetPrivate( targContext, scriptObj, this );
+
 	targScript = JS_CompileFile( targContext, targObject, targFile.c_str() );
 	if( targScript == nullptr )
 	{
@@ -332,19 +331,18 @@ void cScript::Cleanup( void )
 	gumpDisplays.resize( 0 );
 
 	JS_UnlockGCThing( targContext, targObject );
-	//JS_RemoveRoot( targContext, &targObject );
 }
 void cScript::CollectGarbage( void )
 {
-	//	if( JS_IsRunning( targContext ) == JS_FALSE )
-	//	{
 	Cleanup();
 	JS_LockGCThing( targContext, targObject );
-	//JS_AddRoot( targContext, &targObject );
-	//	}
 }
 cScript::~cScript()
 {
+	if( scriptObj != nullptr )
+	{
+		JS_UnlockGCThing( targContext, scriptObj );
+	}
 	JS_GC( targContext );
 	if( targScript != nullptr )
 	{
@@ -352,8 +350,6 @@ cScript::~cScript()
 	}
 	Cleanup();
 	JS_GC( targContext );
-	//	if( targContext != nullptr )
-	//		JS_DestroyContext( targContext );
 }
 
 bool cScript::IsFiring( void )
@@ -2565,6 +2561,11 @@ bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 JSObject *cScript::Object( void ) const
 {
 	return targObject;
+}
+
+UI16 cScript::GetScriptID( void ) const
+{
+	return scriptID;
 }
 
 //o------------------------------------------------------------------------------------------------o

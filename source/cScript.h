@@ -142,6 +142,7 @@ private:
 	JSScript *			targScript;
 	JSContext *			targContext;
 	JSObject *			targObject;
+	JSObject *			scriptObj;
 	UI16						scriptID;
 
 	bool				isFiring;
@@ -174,6 +175,8 @@ public:
 	~cScript();
 
 	JSObject *	Object( void ) const;	// returns object pointer
+
+	UI16		GetScriptID( void ) const;
 
 
 	//|	Modification	-	08162003 - Added these event to handle any script initialization and clean up as the server starts, and is shut down
