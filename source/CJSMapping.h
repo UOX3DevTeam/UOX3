@@ -1,6 +1,8 @@
 #ifndef __CJSMAPPING_H__
 #define __CJSMAPPING_H__
 
+#include <stack> 
+
 enum SCRIPTTYPE
 {
 	SCPT_NORMAL		= 0,
@@ -58,6 +60,8 @@ private:
 	void				Cleanup( void );
 	void				Parse( SCRIPTTYPE toParse = SCPT_COUNT );
 
+	std::stack< cScript * > activeScript;
+
 public:
 	CJSMapping() = default;
 	~CJSMapping();
@@ -75,6 +79,25 @@ public:
 
 	CEnvoke *			GetEnvokeById( void );
 	CEnvoke *			GetEnvokeByType( void );
+
+	void pushActive( cScript* next )
+	{
+		activeScript.push( next );
+	}
+
+	cScript *currentActive( void )
+	{
+		if( activeScript.empty() )
+			return nullptr;
+		return activeScript.top();
+	}
+
+	cScript* popActive(void)
+	{
+		activeScript.pop();
+		return currentActive();
+	}
+
 };
 
 class CEnvoke

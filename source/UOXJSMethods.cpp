@@ -1800,7 +1800,7 @@ JSBool CGump_Send( JSContext *cx, uintN argc, jsval *vp )
 			ScriptError( cx, "Send: Passed an invalid Socket" );
 			return JS_FALSE;
 		}
-		UI32 gumpId = ( 0xFFFF + JSMapping->GetScriptId( JS_GetGlobalObject( cx )));
+		UI32 gumpId = ( 0xFFFF + JSMapping->currentActive()->GetScriptID() );
 		SendVecsAsGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
 	}
 	else if( myClass.ClassName() == "UOXChar" )
@@ -1813,7 +1813,7 @@ JSBool CGump_Send( JSContext *cx, uintN argc, jsval *vp )
 		}
 
 		CSocket *mySock = myChar->GetSocket();
-		UI32 gumpId = ( 0xFFFF + JSMapping->GetScriptId( JS_GetGlobalObject( cx )));
+		UI32 gumpId = ( 0xFFFF + JSMapping->currentActive()->GetScriptID() );
 		SendVecsAsGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
 	}
 	else
@@ -4453,7 +4453,7 @@ JSBool CBase_StartTimer( JSContext *cx, uintN argc, jsval *vp )
 		{
 			if( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE )
 			{
-				Effect->AssocScript( JSMapping->GetScriptId( JS_GetGlobalObject( cx )));
+				Effect->AssocScript( JSMapping->currentActive()->GetScriptID() );
 			}
 			else
 			{
@@ -4722,7 +4722,7 @@ JSBool CChar_SpeechInput( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	myChar->SetSpeechId( speechId );
-	myChar->SetSpeechCallback( JSMapping->GetScript( JS_GetGlobalObject( cx )));
+	myChar->SetSpeechCallback( JSMapping->currentActive() );
 
 	return JS_TRUE;
 }

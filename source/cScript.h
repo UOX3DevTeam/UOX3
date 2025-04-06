@@ -159,6 +159,7 @@ private:
 	std::vector<SEGump_st *>		gumpDisplays;
 
 	void		Cleanup( void );
+	JSBool	InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval );
 
 public:
 	void		CollectGarbage( void );

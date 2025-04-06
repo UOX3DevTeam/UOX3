@@ -13,6 +13,8 @@
 #include "StringUtility.hpp"
 #include "osunique.hpp"
 
+static constexpr SI08 RV_NOFUNC = -1;
+
 //o------------------------------------------------------------------------------------------------o
 //|	File		-	cScript.cpp
 //|	Date		-	August 26th, 2000
@@ -365,6 +367,14 @@ void cScript::Stop( void )
 	isFiring = false;
 }
 
+JSBool cScript::InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval )
+{
+	JSMapping->pushActive( this );
+	JSBool rVal = JS_CallFunctionName( targContext, targObject, name, argc, argv, rval );
+	JSMapping->popActive();
+	return rVal;
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnStart()
 //|	Date		-	8/16/2003 3:44:50 AM
@@ -458,7 +468,7 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlaye
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( paramType );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, functionName.c_str(), 2, params, &rval );
+	JSBool retVal = InvokeEvent( functionName.c_str(), 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		if( isPlayer )
@@ -505,7 +515,7 @@ bool cScript::OnDelete( CBaseObject *thingDestroyed )
 	}
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( paramType );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDelete", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onDelete", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDelete, false );
@@ -532,7 +542,6 @@ bool cScript::OnDelete( CBaseObject *thingDestroyed )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *talkingTo )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( speech == nullptr || !ValidateObject( personTalking ) || !ValidateObject( talkingTo ))
 		return RV_NOFUNC;
 
@@ -559,7 +568,7 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 	params[0] = STRING_TO_JSVAL( strSpeech );
 	params[1] = OBJECT_TO_JSVAL( ptObj );
 	params[2] = OBJECT_TO_JSVAL( ttObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpeech", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onSpeech", 3, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -623,7 +632,7 @@ bool cScript::InRange( CBaseObject *srcObj, CBaseObject *objInRange )
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( myObj2 );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "inRange", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "inRange", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -640,7 +649,6 @@ bool cScript::InRange( CBaseObject *srcObj, CBaseObject *objInRange )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCollideWith )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objColliding ) || !ValidateObject( objCollideWith ))
 		return RV_NOFUNC;
 
@@ -664,7 +672,7 @@ SI08 cScript::OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCo
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
 
-	if( JS_CallFunctionName( targContext, targObject, "onCollide", 3, params, &rval ) == JS_FALSE )
+	if( InvokeEvent( "onCollide", 3, params, &rval ) == JS_FALSE )
 	{
 		SetEventExists( seOnCollide, false );
 		return RV_NOFUNC;
@@ -680,7 +688,6 @@ SI08 cScript::OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCo
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnMoveDetect( CBaseObject *sourceObj, CChar *charInRange, UI08 rangeToChar, UI16 oldCharX, UI16 oldCharY )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( sourceObj ) || !ValidateObject( charInRange ))
 		return RV_NOFUNC;
 
@@ -705,7 +712,7 @@ SI08 cScript::OnMoveDetect( CBaseObject *sourceObj, CChar *charInRange, UI08 ran
 	params[3] = INT_TO_JSVAL( oldCharX );
 	params[4] = INT_TO_JSVAL( oldCharY );
 
-	if( JS_CallFunctionName( targContext, targObject, "onMoveDetect", 5, params, &rval ) == JS_FALSE )
+	if( InvokeEvent( "onMoveDetect", 5, params, &rval ) == JS_FALSE )
 	{
 		SetEventExists( seOnMoveDetect, false );
 		return RV_NOFUNC;
@@ -721,7 +728,6 @@ SI08 cScript::OnMoveDetect( CBaseObject *sourceObj, CChar *charInRange, UI08 ran
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSteal( CChar *thief, CItem *theft, CChar *victim )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( thief ) || !ValidateObject( theft ) || !ValidateObject( victim ))
 		return RV_NOFUNC;
 
@@ -737,7 +743,7 @@ SI08 cScript::OnSteal( CChar *thief, CItem *theft, CChar *victim )
 	params[1] = OBJECT_TO_JSVAL( itemObj );
 	params[2] = OBJECT_TO_JSVAL( victimCharObj );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSteal", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onSteal", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSteal, false );
@@ -754,7 +760,6 @@ SI08 cScript::OnSteal( CChar *thief, CItem *theft, CChar *victim )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDispel( CBaseObject *dispelled )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( dispelled ))
 		return RV_NOFUNC;
 
@@ -775,7 +780,7 @@ SI08 cScript::OnDispel( CBaseObject *dispelled )
 	}
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDispel", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onDispel", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -818,7 +823,7 @@ bool cScript::OnSkill( CBaseObject *skillUse, SI08 skillUsed )
 	}
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( skillUsed );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkill", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onSkill", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSkill, false );
@@ -854,7 +859,7 @@ std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 
 	params[0] = OBJECT_TO_JSVAL( tooltipObj );
 	params[1] = OBJECT_TO_JSVAL( sockObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onTooltip", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onTooltip", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnTooltip, false );
@@ -926,7 +931,7 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI
 		params[0] = OBJECT_TO_JSVAL( nameRequestObj );
 		params[1] = OBJECT_TO_JSVAL( nameRequesterObj );
 		params[2] = INT_TO_JSVAL( requestSource );
-		JSBool retVal = JS_CallFunctionName( targContext, targObject, "onNameRequest", 3, params, &rval );
+		JSBool retVal = InvokeEvent( "onNameRequest", 3, params, &rval );
 		if( retVal == JS_FALSE )
 		{
 			SetEventExists( seOnNameRequest, false );
@@ -987,7 +992,7 @@ bool cScript::OnAttack( CChar *attacker, CChar *defender, bool hitStatus, SI08 h
     params[2] = BOOLEAN_TO_JSVAL( hitStatus );
     params[3] = INT_TO_JSVAL( hitLoc );
     params[4] = INT_TO_JSVAL( damageDealt );
-    JSBool retVal = JS_CallFunctionName( targContext, targObject, "onAttack", 5, params, &rval );
+    JSBool retVal = InvokeEvent( "onAttack", 5, params, &rval );
     if( retVal == JS_FALSE )
     {
         SetEventExists( seOnAttack, false );
@@ -1018,7 +1023,7 @@ bool cScript::OnDefense( CChar *attacker, CChar *defender, bool hitStatus, SI08 
 	params[2] = BOOLEAN_TO_JSVAL( hitStatus );
 	params[3] = INT_TO_JSVAL( hitLoc );
 	params[4] = INT_TO_JSVAL( damageReceived );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDefense", 5, params, &rval );
+	JSBool retVal = InvokeEvent( "onDefense", 5, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDefense, false );
@@ -1034,7 +1039,6 @@ bool cScript::OnDefense( CChar *attacker, CChar *defender, bool hitStatus, SI08 
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSkillGain( CChar *player, SI08 skill, UI32 skillGainAmount )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( player ))
 		return RV_NOFUNC;
 
@@ -1047,7 +1051,7 @@ SI08 cScript::OnSkillGain( CChar *player, SI08 skill, UI32 skillGainAmount )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( skill );
 	params[2] = INT_TO_JSVAL( skillGainAmount );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillGain", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onSkillGain", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSkillGain, false );
@@ -1064,7 +1068,6 @@ SI08 cScript::OnSkillGain( CChar *player, SI08 skill, UI32 skillGainAmount )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnStatGained( CChar *player, UI32 stat, SI08 skill, UI32 statGainedAmount )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( player ))
 		return RV_NOFUNC;
 
@@ -1078,7 +1081,7 @@ SI08 cScript::OnStatGained( CChar *player, UI32 stat, SI08 skill, UI32 statGaine
 	params[1] = INT_TO_JSVAL( stat );
 	params[2] = INT_TO_JSVAL( skill );
 	params[3] = INT_TO_JSVAL( statGainedAmount );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatGained", 4, params, &rval );
+	JSBool retVal = InvokeEvent( "onStatGained", 4, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnStatGained, false );
@@ -1108,7 +1111,7 @@ bool cScript::OnStatGain( CChar *player, UI32 stat, SI08 skill, UI32 statGainAmo
 	params[1] = INT_TO_JSVAL( stat );
 	params[2] = INT_TO_JSVAL( skill );
 	params[3] = INT_TO_JSVAL( statGainAmount );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatGain", 4, params, &rval );
+	JSBool retVal = InvokeEvent( "onStatGain", 4, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnStatGain, false );
@@ -1125,7 +1128,6 @@ bool cScript::OnStatGain( CChar *player, UI32 stat, SI08 skill, UI32 statGainAmo
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonId )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( mChar ) || !ValidateObject( tChar ))
 		return RV_NOFUNC;
 
@@ -1139,7 +1141,7 @@ SI08 cScript::OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonId )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = OBJECT_TO_JSVAL( targObj );
 	params[2] = INT_TO_JSVAL( buttonId );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onVirtueGumpPress", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onVirtueGumpPress", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnVirtueGumpPress, false );
@@ -1157,7 +1159,6 @@ SI08 cScript::OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonId )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnQuestGump( CChar *mChar )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( mChar ))
 		return RV_NOFUNC;
 
@@ -1168,7 +1169,7 @@ SI08 cScript::OnQuestGump( CChar *mChar )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onQuestGump", 1, params, &rval );
+	JSBool retVal = InvokeEvent( "onQuestGump", 1, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -1187,7 +1188,6 @@ SI08 cScript::OnQuestGump( CChar *mChar )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnHelpButton( CChar *mChar )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( mChar ))
 		return RV_NOFUNC;
 
@@ -1198,7 +1198,7 @@ SI08 cScript::OnHelpButton( CChar *mChar )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onHelpButton", 1, params, &rval );
+	JSBool retVal = InvokeEvent( "onHelpButton", 1, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -1217,7 +1217,6 @@ SI08 cScript::OnHelpButton( CChar *mChar )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( baseObj ) || tSock == nullptr )
 		return RV_NOFUNC;
  
@@ -1238,7 +1237,7 @@ SI08 cScript::OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj )
  
 	params[0] = OBJECT_TO_JSVAL( mySockObj );
 	params[1] = OBJECT_TO_JSVAL( myObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onContextMenuRequest", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onContextMenuRequest", 2, params, &rval );
  
 	if( retVal == JS_FALSE )
 	{
@@ -1257,7 +1256,6 @@ SI08 cScript::OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 popupEntry )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( baseObj ) || tSock == nullptr )
 		return RV_NOFUNC;
  
@@ -1279,7 +1277,7 @@ SI08 cScript::OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 po
 	params[0] = OBJECT_TO_JSVAL( mySockObj );
 	params[1] = OBJECT_TO_JSVAL( myObj );
 	params[2] = INT_TO_JSVAL( popupEntry );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onContextMenuSelect", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onContextMenuSelect", 3, params, &rval );
  
 	if( retVal == JS_FALSE )
 	{
@@ -1298,7 +1296,6 @@ SI08 cScript::OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 po
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnWarModeToggle( CChar *mChar )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( mChar ))
 		return RV_NOFUNC;
 
@@ -1309,7 +1306,7 @@ SI08 cScript::OnWarModeToggle( CChar *mChar )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onWarModeToggle", 1, params, &rval );
+	JSBool retVal = InvokeEvent( "onWarModeToggle", 1, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -1327,7 +1324,6 @@ SI08 cScript::OnWarModeToggle( CChar *mChar )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpecialMove( CChar *mChar, UI08 abilityId )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( mChar ))
 		return RV_NOFUNC;
 
@@ -1339,7 +1335,7 @@ SI08 cScript::OnSpecialMove( CChar *mChar, UI08 abilityId )
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( abilityId );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpecialMove", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onSpecialMove", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -1358,7 +1354,6 @@ SI08 cScript::OnSpecialMove( CChar *mChar, UI08 abilityId )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDrop( CItem *item, CChar *dropper )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( item ) || !ValidateObject( dropper ))
 		return RV_NOFUNC;
 
@@ -1371,7 +1366,7 @@ SI08 cScript::OnDrop( CItem *item, CChar *dropper )
 
 	params[0] = OBJECT_TO_JSVAL( itemObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDrop", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onDrop", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDrop, false );
@@ -1389,7 +1384,6 @@ SI08 cScript::OnDrop( CItem *item, CChar *dropper )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( item ) || !ValidateObject( dropper ) || !ValidateObject( dest ))
 		return RV_NOFUNC;
 
@@ -1404,7 +1398,7 @@ SI08 cScript::OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest )
 	params[0] = OBJECT_TO_JSVAL( itemObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( destObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDropItemOnItem", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onDropItemOnItem", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDropItemOnItem, false );
@@ -1425,7 +1419,6 @@ SI08 cScript::OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnPickup( CItem *item, CChar *pickerUpper, CBaseObject *objCont )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( item ) || !ValidateObject( pickerUpper ))
 		return RV_NOFUNC;
 
@@ -1451,7 +1444,7 @@ SI08 cScript::OnPickup( CItem *item, CChar *pickerUpper, CBaseObject *objCont )
 	params[0] = OBJECT_TO_JSVAL( itemObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( objContObj );
-	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onPickup", 3, params, &rval );
+	JSBool retVal	= InvokeEvent( "onPickup", 3, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -1484,7 +1477,7 @@ bool cScript::OnContRemoveItem( CItem *contItem, CItem *item, CChar *itemRemover
 	params[0] = OBJECT_TO_JSVAL( contObj );
 	params[1] = OBJECT_TO_JSVAL( itemObj );
 	params[2] = OBJECT_TO_JSVAL( charObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onContRemoveItem", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onContRemoveItem", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnContRemoveItem, false );
@@ -1500,7 +1493,6 @@ bool cScript::OnContRemoveItem( CItem *contItem, CItem *item, CChar *itemRemover
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( swinger ) || !ValidateObject( swingTarg ))
 		return RV_NOFUNC;
 
@@ -1515,7 +1507,7 @@ SI08 cScript::OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg )
 	params[0] = OBJECT_TO_JSVAL( itemObj );
 	params[1] = OBJECT_TO_JSVAL( attObj );
 	params[2] = OBJECT_TO_JSVAL( defObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSwing", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onSwing", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSwing, false );
@@ -1532,7 +1524,6 @@ SI08 cScript::OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDecay( CItem *decaying )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( decaying ))
 		return RV_NOFUNC;
 
@@ -1542,7 +1533,7 @@ SI08 cScript::OnDecay( CItem *decaying )
 	jsval params[1], rval;
 	JSObject *myObj = JSEngine->AcquireObject( IUE_ITEM, decaying, runTime );
 	params[0] = OBJECT_TO_JSVAL( myObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDecay", 1, params, &rval );
+	JSBool retVal = InvokeEvent( "onDecay", 1, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDecay, false );
@@ -1559,7 +1550,6 @@ SI08 cScript::OnDecay( CItem *decaying )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnLeaving( CMultiObj *left, CBaseObject *leaving )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( left ) || !ValidateObject( leaving ))
 		return RV_NOFUNC;
 
@@ -1582,7 +1572,7 @@ SI08 cScript::OnLeaving( CMultiObj *left, CBaseObject *leaving )
 	params[0] = OBJECT_TO_JSVAL( myItem );
 	params[1] = OBJECT_TO_JSVAL( myObj );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onLeaving", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onLeaving", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnLeaving, false );
@@ -1599,7 +1589,6 @@ SI08 cScript::OnLeaving( CMultiObj *left, CBaseObject *leaving )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnMultiLogout( CMultiObj *iMulti, CChar *cPlayer )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( iMulti ) || !ValidateObject( cPlayer ))
 		return RV_NOFUNC;
 
@@ -1613,7 +1602,7 @@ SI08 cScript::OnMultiLogout( CMultiObj *iMulti, CChar *cPlayer )
 	params[0] = OBJECT_TO_JSVAL( myMulti );
 	params[1] = OBJECT_TO_JSVAL( myPlayer );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onMultiLogout", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onMultiLogout", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnMultiLogout, false );
@@ -1630,7 +1619,6 @@ SI08 cScript::OnMultiLogout( CMultiObj *iMulti, CChar *cPlayer )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( iBoat ))
 		return RV_NOFUNC;
 
@@ -1645,7 +1633,7 @@ SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir )
 	params[1] = INT_TO_JSVAL( oldDir );
 	params[2] = INT_TO_JSVAL( newDir );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoatTurn", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onBoatTurn", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnBoatTurn, false );
@@ -1662,7 +1650,6 @@ SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnEquipAttempt( CChar *equipper, CItem *equipping )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( equipper ) || !ValidateObject( equipping ))
 		return RV_NOFUNC;
 
@@ -1675,7 +1662,7 @@ SI08 cScript::OnEquipAttempt( CChar *equipper, CItem *equipping )
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = OBJECT_TO_JSVAL( itemObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onEquipAttempt", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onEquipAttempt", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnEquipAttempt, false );
@@ -1692,7 +1679,6 @@ SI08 cScript::OnEquipAttempt( CChar *equipper, CItem *equipping )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnEquip( CChar *equipper, CItem *equipping )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( equipper ) || !ValidateObject( equipping ))
 		return RV_NOFUNC;
 
@@ -1705,7 +1691,7 @@ SI08 cScript::OnEquip( CChar *equipper, CItem *equipping )
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = OBJECT_TO_JSVAL( itemObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onEquip", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onEquip", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnEquip, false );
@@ -1722,7 +1708,6 @@ SI08 cScript::OnEquip( CChar *equipper, CItem *equipping )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnUnequipAttempt( CChar *equipper, CItem *equipping )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( equipper ) || !ValidateObject( equipping ))
 		return RV_NOFUNC;
 
@@ -1735,7 +1720,7 @@ SI08 cScript::OnUnequipAttempt( CChar *equipper, CItem *equipping )
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = OBJECT_TO_JSVAL( itemObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onUnequipAttempt", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onUnequipAttempt", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnUnequipAttempt, false );
@@ -1752,7 +1737,6 @@ SI08 cScript::OnUnequipAttempt( CChar *equipper, CItem *equipping )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnUnequip( CChar *equipper, CItem *equipping )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( equipper ) || !ValidateObject( equipping ))
 		return RV_NOFUNC;
 
@@ -1765,7 +1749,7 @@ SI08 cScript::OnUnequip( CChar *equipper, CItem *equipping )
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = OBJECT_TO_JSVAL( itemObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onUnequip", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onUnequip", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnUnequip, false );
@@ -1792,7 +1776,6 @@ SI08 cScript::OnUnequip( CChar *equipper, CItem *equipping )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnUseChecked( CChar *user, CItem *iUsing )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( user ) || !ValidateObject( iUsing ))
 		return RV_NOFUNC;
 
@@ -1806,7 +1789,7 @@ SI08 cScript::OnUseChecked( CChar *user, CItem *iUsing )
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = OBJECT_TO_JSVAL( itemObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onUseChecked", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onUseChecked", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnUseChecked, false );
@@ -1833,7 +1816,6 @@ SI08 cScript::OnUseChecked( CChar *user, CItem *iUsing )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnUseUnChecked( CChar *user, CItem *iUsing )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( user ) || !ValidateObject( iUsing ))
 		return RV_NOFUNC;
 
@@ -1847,7 +1829,7 @@ SI08 cScript::OnUseUnChecked( CChar *user, CItem *iUsing )
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = OBJECT_TO_JSVAL( itemObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onUseUnChecked", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onUseUnChecked", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnUseUnChecked, false );
@@ -1872,7 +1854,6 @@ SI08 cScript::OnUseUnChecked( CChar *user, CItem *iUsing )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( srcChar ) || !ValidateObject( dstChar ) || !ValidateObject( item ))
 		return RV_NOFUNC;
 
@@ -1888,7 +1869,7 @@ SI08 cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item )
 	params[1] = OBJECT_TO_JSVAL( dstObj );
 	params[2] = OBJECT_TO_JSVAL( itemObj );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDropItemOnNpc", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onDropItemOnNpc", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDropItemOnNpc, false );
@@ -1905,7 +1886,6 @@ SI08 cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnEntrance( CMultiObj *left, CBaseObject *leaving )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( left ) || !ValidateObject( leaving ))
 		return RV_NOFUNC;
 
@@ -1928,7 +1908,7 @@ SI08 cScript::OnEntrance( CMultiObj *left, CBaseObject *leaving )
 	params[0] = OBJECT_TO_JSVAL( myItem );
 	params[1] = OBJECT_TO_JSVAL( myObj );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onEntrance", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onEntrance", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnEntrance, false );
@@ -1977,7 +1957,7 @@ bool cScript::OutOfRange( CBaseObject *srcObj, CBaseObject *objVanish )
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( myObj2 );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "outOfRange", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "outOfRange", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOutOfRange, false );
@@ -2005,7 +1985,7 @@ bool cScript::OnLogin( CSocket *sockPlayer, CChar *pPlayer )
 
 	params[0] = OBJECT_TO_JSVAL( sockObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onLogin", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onLogin", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnLogin, false );
@@ -2035,7 +2015,7 @@ bool cScript::OnLogout( CSocket *sockPlayer, CChar *pPlayer )
 
 	params[0] = OBJECT_TO_JSVAL( sockObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onLogout", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onLogout", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnLogout, false );
@@ -2052,7 +2032,6 @@ bool cScript::OnLogout( CSocket *sockPlayer, CChar *pPlayer )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnClick( CSocket *sockPlayer, CBaseObject *objClicked )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objClicked ))
 		return false;
 
@@ -2073,7 +2052,7 @@ SI08 cScript::OnClick( CSocket *sockPlayer, CBaseObject *objClicked )
 	jsval params[2], rval;
 	params[0] = OBJECT_TO_JSVAL( sockObj );
 	params[1] = OBJECT_TO_JSVAL( myObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onClick", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onClick", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnClick, false );
@@ -2100,7 +2079,7 @@ bool cScript::OnFall( CChar *pFall, SI08 fallDistance )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pFall, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( fallDistance );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onFall", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onFall", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnFall, false );
@@ -2116,7 +2095,6 @@ bool cScript::OnFall( CChar *pFall, SI08 fallDistance )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnAISliver( CChar *pSliver )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( pSliver ))
 		return RV_NOFUNC;
 
@@ -2126,7 +2104,7 @@ SI08 cScript::OnAISliver( CChar *pSliver )
 	jsval params[1], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pSliver, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onAISliver", 1, params, &rval );
+	JSBool retVal = InvokeEvent( "onAISliver", 1, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnAISliver, false );
@@ -2147,7 +2125,7 @@ bool cScript::OnSystemSlice( void )
 		return false;
 
 	jsval rval;
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSystemSlice", 0, nullptr, &rval );
+	JSBool retVal = InvokeEvent( "onSystemSlice", 0, nullptr, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSystemSlice, false );
@@ -2163,7 +2141,6 @@ bool cScript::OnSystemSlice( void )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnLightChange( CBaseObject *tObject, UI08 lightLevel )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( tObject ))
 		return RV_NOFUNC;
 
@@ -2183,7 +2160,7 @@ SI08 cScript::OnLightChange( CBaseObject *tObject, UI08 lightLevel )
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( lightLevel );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onLightChange", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onLightChange", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnLightChange, false );
@@ -2220,7 +2197,7 @@ bool cScript::OnWeatherChange( CBaseObject *tObject, WeatherType element )
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( element );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onWeatherChange", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onWeatherChange", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnWeatherChange, false );
@@ -2256,7 +2233,7 @@ bool cScript::OnTempChange( CBaseObject *tObject, SI08 temp )
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( temp );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onTempChange", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onTempChange", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnTempChange, false );
@@ -2292,7 +2269,7 @@ bool cScript::OnTimer( CBaseObject *tObject, UI16 timerId )
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( timerId );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onTimer", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onTimer", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnTimer, false );
@@ -2308,7 +2285,6 @@ bool cScript::OnTimer( CBaseObject *tObject, UI16 timerId )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnStatLoss( CChar *player, UI32 stat, UI32 statLossAmount )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( player ))
 		return RV_NOFUNC;
 
@@ -2320,7 +2296,7 @@ SI08 cScript::OnStatLoss( CChar *player, UI32 stat, UI32 statLossAmount )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( stat );
 	params[2] = INT_TO_JSVAL( statLossAmount );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatLoss", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onStatLoss", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnStatLoss, false );
@@ -2348,7 +2324,7 @@ bool cScript::OnStatChange( CChar *player, UI32 stat, SI32 statChangeAmount )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( stat );
 	params[2] = INT_TO_JSVAL( statChangeAmount );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatChange", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onStatChange", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnStatChange, false );
@@ -2364,7 +2340,6 @@ bool cScript::OnStatChange( CChar *player, UI32 stat, SI32 statChangeAmount )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSkillLoss( CChar *player, SI08 skill, UI32 skillLossAmount )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( player ))
 		return RV_NOFUNC;
 
@@ -2376,7 +2351,7 @@ SI08 cScript::OnSkillLoss( CChar *player, SI08 skill, UI32 skillLossAmount )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( skill );
 	params[2] = INT_TO_JSVAL( skillLossAmount );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillLoss", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onSkillLoss", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSkillLoss, false );
@@ -2404,7 +2379,7 @@ bool cScript::OnSkillChange( CChar *player, SI08 skill, SI32 skillChangeAmount )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( skill );
 	params[2] = INT_TO_JSVAL( skillChangeAmount );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillChange", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onSkillChange", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSkillChange, false );
@@ -2420,7 +2395,6 @@ bool cScript::OnSkillChange( CChar *player, SI08 skill, SI32 skillChangeAmount )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDeath( CChar *pDead, CItem *iCorpse )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( pDead ) || !ValidateObject( iCorpse ))
 		return RV_NOFUNC;
 
@@ -2432,7 +2406,7 @@ SI08 cScript::OnDeath( CChar *pDead, CItem *iCorpse )
 	JSObject *corpseObj = JSEngine->AcquireObject( IUE_ITEM, iCorpse, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = OBJECT_TO_JSVAL( corpseObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDeath", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onDeath", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDeath, false );
@@ -2450,7 +2424,6 @@ SI08 cScript::OnDeath( CChar *pDead, CItem *iCorpse )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnResurrect( CChar *pAlive )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( pAlive ))
 		return RV_NOFUNC;
 
@@ -2460,7 +2433,7 @@ SI08 cScript::OnResurrect( CChar *pAlive )
 	jsval params[1], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pAlive, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onResurrect", 1, params, &rval );
+	JSBool retVal = InvokeEvent( "onResurrect", 1, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnResurrect, false );
@@ -2477,7 +2450,6 @@ SI08 cScript::OnResurrect( CChar *pAlive )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( pChanging ))
 		return RV_NOFUNC;
 
@@ -2489,7 +2461,7 @@ SI08 cScript::OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( newStatus );
 	params[2] = INT_TO_JSVAL( oldStatus );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onFlagChange", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onFlagChange", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnFlagChange, false );
@@ -2548,7 +2520,7 @@ bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 			params[1] = OBJECT_TO_JSVAL( myObj2 );
 		}
 
-		JSBool retVal = JS_CallFunctionName( targContext, targObject, oldstrutil::format( "onCallback%i", callNum ).c_str(), 2, params, &rval );
+		JSBool retVal = InvokeEvent( oldstrutil::format( "onCallback%i", callNum ).c_str(), 2, params, &rval );
 		return ( retVal == JS_TRUE );
 	}
 	catch( ... )
@@ -2575,7 +2547,6 @@ UI16 cScript::GetScriptID( void ) const
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnLoyaltyChange( CChar *pChanging, SI08 newStatus )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( pChanging ))
 		return RV_NOFUNC;
 
@@ -2586,7 +2557,7 @@ SI08 cScript::OnLoyaltyChange( CChar *pChanging, SI08 newStatus )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( newStatus );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onLoyaltyChange", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onLoyaltyChange", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnLoyaltyChange, false );
@@ -2603,7 +2574,6 @@ SI08 cScript::OnLoyaltyChange( CChar *pChanging, SI08 newStatus )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnHungerChange( CChar *pChanging, SI08 newStatus )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( pChanging ))
 		return RV_NOFUNC;
 
@@ -2614,7 +2584,7 @@ SI08 cScript::OnHungerChange( CChar *pChanging, SI08 newStatus )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( newStatus );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onHungerChange", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onHungerChange", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnHungerChange, false );
@@ -2631,7 +2601,6 @@ SI08 cScript::OnHungerChange( CChar *pChanging, SI08 newStatus )
 //o------------------------------------------------------------------------------------------------o
 bool cScript::OnThirstChange( CChar* pChanging, SI08 newStatus )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( pChanging ))
 		return RV_NOFUNC;
 
@@ -2642,7 +2611,7 @@ bool cScript::OnThirstChange( CChar* pChanging, SI08 newStatus )
 	JSObject* charObj = JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( newStatus );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onThirstChange", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onThirstChange", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnThirstChange, false );
@@ -2659,7 +2628,6 @@ bool cScript::OnThirstChange( CChar* pChanging, SI08 newStatus )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( stealing ) || !ValidateObject( stolenFrom ) || !ValidateObject( stolen ))
 		return RV_NOFUNC;
 
@@ -2675,7 +2643,7 @@ SI08 cScript::OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen )
 	params[0] = OBJECT_TO_JSVAL( thiefObj );
 	params[1] = OBJECT_TO_JSVAL( victimObj );
 	params[2] = OBJECT_TO_JSVAL( itemObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStolenFrom", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onStolenFrom", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnStolenFrom, false );
@@ -2692,7 +2660,6 @@ SI08 cScript::OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSnooped( CChar *snooped, CChar *snooper, bool success )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( snooped ) || !ValidateObject( snooper ))
 		return RV_NOFUNC;
 
@@ -2707,7 +2674,7 @@ SI08 cScript::OnSnooped( CChar *snooped, CChar *snooper, bool success )
 	params[0] = OBJECT_TO_JSVAL( thiefObj );
 	params[1] = OBJECT_TO_JSVAL( victimObj );
 	params[2] = BOOLEAN_TO_JSVAL( success );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSnooped", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onSnooped", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSnooped, false );
@@ -2724,7 +2691,6 @@ SI08 cScript::OnSnooped( CChar *snooped, CChar *snooper, bool success )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSnoopAttempt( CChar *snooped, CItem *pack, CChar *snooper )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( snooped ) || !ValidateObject( pack ) || !ValidateObject( snooper ))
 		return RV_NOFUNC;
 
@@ -2740,7 +2706,7 @@ SI08 cScript::OnSnoopAttempt( CChar *snooped, CItem *pack, CChar *snooper )
 	params[0] = OBJECT_TO_JSVAL( thiefObj );
 	params[1] = OBJECT_TO_JSVAL( packObj );
 	params[2] = OBJECT_TO_JSVAL( victimObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSnoopAttempt", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onSnoopAttempt", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSnoopAttempt, false );
@@ -2861,7 +2827,7 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 	jsvParams[0] = OBJECT_TO_JSVAL( myObj );
 	jsvParams[1] = INT_TO_JSVAL( button );
 	jsvParams[2] = OBJECT_TO_JSVAL( jsoObject );
-	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, "onGumpPress", 3, jsvParams, &jsvRVal );
+	[[maybe_unused]] JSBool retVal = InvokeEvent( "onGumpPress", 3, jsvParams, &jsvRVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2884,7 +2850,7 @@ void cScript::HandleGumpInput( CPIGumpInput *pressing )
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( pressing->Index() );
 	params[2] = STRING_TO_JSVAL( gumpReply );
-	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, "onGumpInput", 3, params, &rval );
+	[[maybe_unused]] JSBool retVal = InvokeEvent( "onGumpInput", 3, params, &rval );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2895,7 +2861,6 @@ void cScript::HandleGumpInput( CPIGumpInput *pressing )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnScrollingGumpPress( CSocket *tSock, UI16 gumpId, UI16 buttonId )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( tSock == nullptr )
 		return RV_NOFUNC;
 
@@ -2907,7 +2872,7 @@ SI08 cScript::OnScrollingGumpPress( CSocket *tSock, UI16 gumpId, UI16 buttonId )
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( gumpId );
 	params[2] = INT_TO_JSVAL( buttonId );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onScrollingGumpPress", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onScrollingGumpPress", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnScrollingGumpPress, false );
@@ -2935,7 +2900,7 @@ bool cScript::OnEnterRegion( CChar *entering, UI16 region )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, entering, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( region );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onEnterRegion", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onEnterRegion", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnEnterRegion, false );
@@ -2960,7 +2925,7 @@ bool cScript::OnLeaveRegion( CChar *leaving, UI16 region )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, leaving, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( region );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onLeaveRegion", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onLeaveRegion", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnLeaveRegion, false );
@@ -2976,7 +2941,6 @@ bool cScript::OnLeaveRegion( CChar *leaving, UI16 region )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( mChar ))
 		return RV_NOFUNC;
 
@@ -2989,7 +2953,7 @@ SI08 cScript::OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFa
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( oldFacet );
 	params[2] = INT_TO_JSVAL( newFacet );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onFacetChange", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onFacetChange", 3, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3007,7 +2971,6 @@ SI08 cScript::OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFa
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, UI08 spellNum )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( target ) || !ValidateObject( caster ))
 		return RV_NOFUNC;
 
@@ -3028,7 +2991,7 @@ SI08 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, UI08 spe
 	params[0] = OBJECT_TO_JSVAL( targObj );
 	params[1] = OBJECT_TO_JSVAL( castObj );
 	params[2] = INT_TO_JSVAL( spellNum );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellTargetSelect", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onSpellTargetSelect", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSpellTargetSelect, false );
@@ -3045,7 +3008,6 @@ SI08 cScript::OnSpellTargetSelect(  CChar *caster, CBaseObject *target, UI08 spe
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( target ) || !ValidateObject( caster ))
 		return RV_NOFUNC;
 
@@ -3066,7 +3028,7 @@ SI08 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
 	params[0] = OBJECT_TO_JSVAL( targObj );
 	params[1] = OBJECT_TO_JSVAL( castObj );
 	params[2] = INT_TO_JSVAL( spellNum );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellTarget", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onSpellTarget", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSpellTarget, false );
@@ -3088,7 +3050,7 @@ bool cScript::CallParticularEvent( const char *eventToCall, jsval *params, SI32 
 		return false;
 
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, eventToCall, numParams, params, eventRetVal );
+	JSBool retVal = InvokeEvent( eventToCall, numParams, params, eventRetVal );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3122,7 +3084,7 @@ SI16 cScript::OnSpellCast( CChar *tChar, UI08 SpellId )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( SpellId );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellCast", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onSpellCast", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3156,7 +3118,7 @@ SI16 cScript::OnScrollCast( CChar *tChar, UI08 SpellId )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( SpellId );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onScrollCast", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onScrollCast", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3174,7 +3136,6 @@ SI16 cScript::OnScrollCast( CChar *tChar, UI08 SpellId )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellSuccess( CChar *tChar, UI08 SpellId )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( tChar ))
 		return RV_NOFUNC;
 
@@ -3187,7 +3148,7 @@ SI08 cScript::OnSpellSuccess( CChar *tChar, UI08 SpellId )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( SpellId );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellSuccess", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onSpellSuccess", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3205,7 +3166,6 @@ SI08 cScript::OnSpellSuccess( CChar *tChar, UI08 SpellId )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnTalk( CChar *myChar, const char *mySpeech )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( myChar ))
 		return RV_NOFUNC;
 
@@ -3224,7 +3184,7 @@ SI08 cScript::OnTalk( CChar *myChar, const char *mySpeech )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = STRING_TO_JSVAL( strSpeech );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onTalk", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onTalk", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3274,7 +3234,7 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 	params[2] = STRING_TO_JSVAL( strSpeech );
 	params[3] = INT_TO_JSVAL( myChar->GetSpeechId() );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpeechInput", 4, params, &rval );
+	JSBool retVal = InvokeEvent( "onSpeechInput", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3292,7 +3252,6 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellGain( CItem *book, const UI08 spellNum )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( book ))
 		return RV_NOFUNC;
 
@@ -3303,7 +3262,7 @@ SI08 cScript::OnSpellGain( CItem *book, const UI08 spellNum )
 	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, book, runTime );
 	params[0] = OBJECT_TO_JSVAL( itemObj );
 	params[1] = INT_TO_JSVAL( spellNum );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellGain", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onSpellGain", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSpellGain, false );
@@ -3320,7 +3279,6 @@ SI08 cScript::OnSpellGain( CItem *book, const UI08 spellNum )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellLoss( CItem *book, const UI08 spellNum )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( book ))
 		return RV_NOFUNC;
 
@@ -3331,7 +3289,7 @@ SI08 cScript::OnSpellLoss( CItem *book, const UI08 spellNum )
 	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, book, runTime );
 	params[0] = OBJECT_TO_JSVAL( itemObj );
 	params[1] = INT_TO_JSVAL( spellNum );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellLoss", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onSpellLoss", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSpellLoss, false );
@@ -3348,7 +3306,6 @@ SI08 cScript::OnSpellLoss( CItem *book, const UI08 spellNum )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( myChar ) || skill > ALLSKILLS )
 		return RV_NOFUNC;
 
@@ -3362,7 +3319,7 @@ SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 	params[2] = INT_TO_JSVAL( lowSkill );
 	params[3] = INT_TO_JSVAL( highSkill );
 	params[4] = BOOLEAN_TO_JSVAL( isCraftSkill );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillCheck", 5, params, &rval );
+	JSBool retVal = InvokeEvent( "onSkillCheck", 5, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSkillCheck, false );
@@ -3437,7 +3394,7 @@ bool cScript::AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseOb
 	//JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
 	try
 	{
-		[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
+		[[maybe_unused]] JSBool retVal = InvokeEvent( funcName, 3, params, &rval );
 	}
 	catch( ... )
 	{
@@ -3454,7 +3411,6 @@ bool cScript::AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseOb
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( mSock  == nullptr || command == "" )
 		return RV_NOFUNC;
 
@@ -3467,7 +3423,7 @@ SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 	strCmd = JS_NewStringCopyZ( targContext, oldstrutil::lower( command ).c_str() );
 	params[0]	= OBJECT_TO_JSVAL( myObj );
 	params[1]	= STRING_TO_JSVAL( strCmd );
-	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onCommand", 2, params, &rval );
+	JSBool retVal	= InvokeEvent( "onCommand", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnCommand, false );
@@ -3524,7 +3480,7 @@ bool cScript::ScriptRegistration( std::string scriptType )
 		return false;
 	}
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, scriptType.c_str(), 0, params, &rval );
+	JSBool retVal = InvokeEvent( scriptType.c_str(), 0, params, &rval );
 	return ( retVal == JS_TRUE );
 }
 
@@ -3542,7 +3498,7 @@ bool cScript::executeCommand( CSocket *s, std::string funcName, std::string exec
 	params[1] = STRING_TO_JSVAL( execString );
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
 	JS_SetReservedSlot( targContext, myObj, 0, UINT_TO_JSVAL( scriptID ) );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName.c_str(), 2, params, &rval );
+	JSBool retVal = InvokeEvent( funcName.c_str(), 2, params, &rval );
 
 	return ( retVal == JS_TRUE );
 }
@@ -3569,7 +3525,7 @@ bool cScript::MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI3
 	params[2] = BOOLEAN_TO_JSVAL( directCast );
 	params[3] = INT_TO_JSVAL( spellNum );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellCast", 4, params, &rval );
+	JSBool retVal = InvokeEvent( "onSpellCast", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3608,7 +3564,7 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 
-	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onIterate", 1, params, &rval );
+	JSBool retVal	= InvokeEvent( "onIterate", 1, params, &rval );
 
 	/*	if( ValidateObject( a ))
 	{
@@ -3655,7 +3611,7 @@ bool cScript::OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b )
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onIterateSpawnRegions", 1, params, &rval );
+	JSBool retVal = InvokeEvent( "onIterateSpawnRegions", 1, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3689,7 +3645,7 @@ bool cScript::OnPacketReceive( CSocket *mSock, UI16 packetNum )
 	params[0]		= OBJECT_TO_JSVAL( myObj );
 	params[1]		= INT_TO_JSVAL( static_cast<UI08>( packetNum % 256 ));
 	params[2]		= INT_TO_JSVAL( static_cast<UI08>( packetNum >> 8 ));
-	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onPacketReceive", 3, params, &rval );
+	JSBool retVal	= InvokeEvent( "onPacketReceive", 3, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3708,7 +3664,6 @@ bool cScript::OnPacketReceive( CSocket *mSock, UI16 packetNum )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( currChar ) || !ValidateObject( targChar ))
 		return RV_NOFUNC;
 
@@ -3721,7 +3676,7 @@ SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar )
 
 	params[0] = OBJECT_TO_JSVAL( srcObj );
 	params[1] = OBJECT_TO_JSVAL( trgObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCharDoubleClick", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onCharDoubleClick", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3741,7 +3696,6 @@ SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSkillGump( CChar *currChar )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( currChar ))
 		return RV_NOFUNC;
 
@@ -3752,7 +3706,7 @@ SI08 cScript::OnSkillGump( CChar *currChar )
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, currChar, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
-	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onSkillGump", 1, params, &rval );
+	JSBool retVal	= InvokeEvent( "onSkillGump", 1, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3771,7 +3725,6 @@ SI08 cScript::OnSkillGump( CChar *currChar )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( targChar ) || mSock == nullptr )
 		return RV_NOFUNC;
 
@@ -3786,7 +3739,7 @@ SI08 cScript::OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandage
 	params[0] = OBJECT_TO_JSVAL( mSockObj );
 	params[1] = OBJECT_TO_JSVAL( targCharObj );
 	params[2] = OBJECT_TO_JSVAL( bandageItemObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onUseBandageMacro", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onUseBandageMacro", 3, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3807,7 +3760,6 @@ SI08 cScript::OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandage
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnAICombatTarget( CChar *attacker, CChar *target )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( attacker ) || !ValidateObject( target ))
 		return RV_NOFUNC;
 
@@ -3821,7 +3773,7 @@ SI08 cScript::OnAICombatTarget( CChar *attacker, CChar *target )
 
 	params[0] = OBJECT_TO_JSVAL( attObj );
 	params[1] = OBJECT_TO_JSVAL( targObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onAICombatTarget", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onAICombatTarget", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnAICombatTarget, false );
@@ -3841,7 +3793,6 @@ SI08 cScript::OnAICombatTarget( CChar *attacker, CChar *target )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCombatStart( CChar *attacker, CChar *defender )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( attacker ) || !ValidateObject( defender ))
 		return RV_NOFUNC;
 
@@ -3855,7 +3806,7 @@ SI08 cScript::OnCombatStart( CChar *attacker, CChar *defender )
 
 	params[0] = OBJECT_TO_JSVAL( attObj );
 	params[1] = OBJECT_TO_JSVAL( defObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCombatStart", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onCombatStart", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnCombatStart, false );
@@ -3875,7 +3826,6 @@ SI08 cScript::OnCombatStart( CChar *attacker, CChar *defender )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCombatEnd( CChar *currChar, CChar *targChar )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( currChar ))
 		return RV_NOFUNC;
 
@@ -3889,7 +3839,7 @@ SI08 cScript::OnCombatEnd( CChar *currChar, CChar *targChar )
 
 	params[0] = OBJECT_TO_JSVAL( attObj );
 	params[1] = OBJECT_TO_JSVAL( defObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCombatEnd", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onCombatEnd", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3910,7 +3860,6 @@ SI08 cScript::OnCombatEnd( CChar *currChar, CChar *targChar )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( mKilled )) // || !ValidateObject( mKiller ))
 		return RV_NOFUNC;
 
@@ -3923,7 +3872,7 @@ SI08 cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 
 	params[0] = OBJECT_TO_JSVAL( killedObj );
 	params[1] = OBJECT_TO_JSVAL( killerObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDeathBlow", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onDeathBlow", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDeathBlow, false );
@@ -3961,7 +3910,7 @@ SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFigh
 	params[2] = INT_TO_JSVAL( getFightSkill );
 	params[3] = INT_TO_JSVAL( hitLoc );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCombatDamageCalc", 4, params, &rval );
+	JSBool retVal = InvokeEvent( "onCombatDamageCalc", 4, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnCombatDamageCalc, false );
@@ -3989,7 +3938,6 @@ SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFigh
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( damaged ))
 		return RV_NOFUNC;
 
@@ -4013,7 +3961,7 @@ SI08 cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, Weath
 	params[2] = INT_TO_JSVAL( damageValue );
 	params[3] = INT_TO_JSVAL( damageType );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDamage", 4, params, &rval );
+	JSBool retVal = InvokeEvent( "onDamage", 4, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDamage, false );
@@ -4030,7 +3978,6 @@ SI08 cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, Weath
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDamageDeal( CChar *attacker, CChar *damaged, SI16 damageValue, WeatherType damageType )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( damaged ))
 		return RV_NOFUNC;
 
@@ -4048,7 +3995,7 @@ SI08 cScript::OnDamageDeal( CChar *attacker, CChar *damaged, SI16 damageValue, W
 	params[2] = INT_TO_JSVAL( damageValue );
 	params[3] = INT_TO_JSVAL( damageType );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDamageDeal", 4, params, &rval );
+	JSBool retVal = InvokeEvent( "onDamageDeal", 4, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDamageDeal, false );
@@ -4066,7 +4013,6 @@ SI08 cScript::OnDamageDeal( CChar *attacker, CChar *damaged, SI16 damageValue, W
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnBuy( CSocket *tSock, CChar *objVendor )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || tSock == nullptr )
 		return RV_NOFUNC;
 
@@ -4080,7 +4026,7 @@ SI08 cScript::OnBuy( CSocket *tSock, CChar *objVendor )
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBuy", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onBuy", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -4099,7 +4045,6 @@ SI08 cScript::OnBuy( CSocket *tSock, CChar *objVendor )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSell( CSocket *tSock, CChar *objVendor )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || tSock == nullptr )
 		return RV_NOFUNC;
 
@@ -4113,7 +4058,7 @@ SI08 cScript::OnSell( CSocket *tSock, CChar *objVendor )
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSell", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onSell", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -4133,7 +4078,6 @@ SI08 cScript::OnSell( CSocket *tSock, CChar *objVendor )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBuying )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == nullptr || numItemsBuying == 0 )
 		return RV_NOFUNC;
 
@@ -4154,7 +4098,7 @@ SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *ob
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
 	params[3] = INT_TO_JSVAL( numItemsBuying );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBuyFromVendor", 4, params, &rval );
+	JSBool retVal = InvokeEvent( "onBuyFromVendor", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -4174,7 +4118,6 @@ SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *ob
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSelling )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == nullptr || numItemsSelling == 0 )
 		return RV_NOFUNC;
 
@@ -4195,7 +4138,7 @@ SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
 	params[3] = INT_TO_JSVAL( numItemsSelling );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSellToVendor", 4, params, &rval );
+	JSBool retVal = InvokeEvent( "onSellToVendor", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -4215,7 +4158,6 @@ SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBought )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == nullptr )
 		return RV_NOFUNC;
 
@@ -4236,7 +4178,7 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
 	params[3] = INT_TO_JSVAL( numItemsBought );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoughtFromVendor", 4, params, &rval );
+	JSBool retVal = InvokeEvent( "onBoughtFromVendor", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -4256,7 +4198,6 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSold )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == nullptr )
 		return RV_NOFUNC;
 
@@ -4277,7 +4218,7 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
 	params[3] = INT_TO_JSVAL( numItemsSold );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSoldToVendor", 4, params, &rval );
+	JSBool retVal = InvokeEvent( "onSoldToVendor", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -4295,7 +4236,6 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdId )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objMulti ) || tSock == nullptr )
 		return RV_NOFUNC;
 
@@ -4310,7 +4250,7 @@ SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdId )
 	params[1] = OBJECT_TO_JSVAL( multiObj );
 	params[2] = INT_TO_JSVAL( cmdId );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onHouseCommand", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onHouseCommand", 3, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -4328,7 +4268,6 @@ SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdId )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryId )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objChar ) || mSock == nullptr )
 		return RV_NOFUNC;
 
@@ -4345,7 +4284,7 @@ SI08 cScript::OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 c
 	params[2] = OBJECT_TO_JSVAL( myItem );
 	params[3] = INT_TO_JSVAL( createEntryId );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onMakeItem", 4, params, &rval );
+	JSBool retVal = InvokeEvent( "onMakeItem", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -4364,7 +4303,6 @@ SI08 cScript::OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 c
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnPathfindEnd( CChar *npc, SI08 pathfindResult )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( npc ))
 		return RV_NOFUNC;
 
@@ -4377,7 +4315,7 @@ SI08 cScript::OnPathfindEnd( CChar *npc, SI08 pathfindResult )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( pathfindResult );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onPathfindEnd", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onPathfindEnd", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnPathfindEnd, false );
@@ -4395,7 +4333,6 @@ SI08 cScript::OnPathfindEnd( CChar *npc, SI08 pathfindResult )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnEnterEvadeState( CChar *npc, CChar *enemy )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( npc ) || !ValidateObject( enemy ))
 		return RV_NOFUNC;
 
@@ -4409,7 +4346,7 @@ SI08 cScript::OnEnterEvadeState( CChar *npc, CChar *enemy )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = OBJECT_TO_JSVAL( enemyObj );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onEnterEvadeState", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onEnterEvadeState", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnEnterEvadeState, false );
@@ -4426,7 +4363,6 @@ SI08 cScript::OnEnterEvadeState( CChar *npc, CChar *enemy )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCarveCorpse( CChar *player, CItem *corpse )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( player ) || !ValidateObject( corpse ))
 		return RV_NOFUNC;
 
@@ -4440,7 +4376,7 @@ SI08 cScript::OnCarveCorpse( CChar *player, CItem *corpse )
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = OBJECT_TO_JSVAL( corpseObj );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCarveCorpse", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onCarveCorpse", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnCarveCorpse, false );
@@ -4457,7 +4393,6 @@ SI08 cScript::OnCarveCorpse( CChar *player, CItem *corpse )
 //o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDyeTarget( CChar *player, CItem *dyeTub, CItem *target )
 {
-	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( player ) || !ValidateObject( dyeTub ) || !ValidateObject( target ))
 		return RV_NOFUNC;
 
@@ -4473,7 +4408,7 @@ SI08 cScript::OnDyeTarget( CChar *player, CItem *dyeTub, CItem *target )
 	params[1] = OBJECT_TO_JSVAL( dyeTubObj );
 	params[2] = OBJECT_TO_JSVAL( targObj );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDyeTarget", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onDyeTarget", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDyeTarget, false );
