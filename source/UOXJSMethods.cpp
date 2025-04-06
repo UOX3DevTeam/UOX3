@@ -4254,10 +4254,6 @@ JSBool CMisc_CustomTarget( JSContext *cx, uintN argc, jsval *vp )
 	{
 		// We have a socket here
 		mySock = static_cast<CSocket*>( myClass.toObject() );
-		jsval reserved;
-		if( JS_GetReservedSlot( cx, obj, 0, &reserved ) ) {
-			scriptID = JSVAL_TO_INT( reserved );
-		}
 	}
 
 	if( mySock == nullptr )
@@ -4266,15 +4262,11 @@ JSBool CMisc_CustomTarget( JSContext *cx, uintN argc, jsval *vp )
 		// and DONT create a non-running jscript
 		return JS_TRUE;
 	}
-	if( scriptID == 0xFFFF )
-	{
-		Console.Warning( "Unable to determine script to callback into for CustomTarget" );
-		return JS_TRUE;
-	}
 	
-	mySock->scriptForCallBack = JSMapping->GetScript( scriptID );
+	mySock->scriptForCallBack = JSMapping->currentActive();
 	UI08 tNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
 
+	Console.Warning( oldstrutil::format( "CustomTarget script ID: %d", mySock->scriptForCallBack->GetScriptID() ) );
 	constexpr auto maxsize = 512; // Could become long (make sure it's nullptr )
 	std::string toSay;
 	if( argc >= 2 )
@@ -4453,6 +4445,9 @@ JSBool CBase_StartTimer( JSContext *cx, uintN argc, jsval *vp )
 		{
 			if( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE )
 			{
+#if defined UOX_DEBUG_MODE
+				Console.Log( oldstrutil::format( "Firing a new timer from script %d", JSMapping->currentActive()->GetScriptID() ) );
+#endif
 				Effect->AssocScript( JSMapping->currentActive()->GetScriptID() );
 			}
 			else

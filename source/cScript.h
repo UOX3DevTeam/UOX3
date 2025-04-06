@@ -167,7 +167,6 @@ public:
 	size_t		NewGumpList( void );
 	SEGump_st *	GetGumpList( SI32 index );
 	void		RemoveGumpList( SI32 index );
-	void		SendGumpList( SI32 index, CSocket *toSendTo );
 
 	void		HandleGumpPress( CPIGumpMenuSelect *packet );
 	void		HandleGumpInput( CPIGumpInput *pressing );

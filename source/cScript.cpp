@@ -193,7 +193,7 @@ static JSFunctionSpec my_functions[] =
 
 void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *report )
 {
-	UI16 scriptNum = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	UI16 scriptNum = JSMapping->currentActive()->GetScriptID();
 	// If we're loading the world then do NOT print out anything!
 	Console.Error( oldstrutil::format( "JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
 	if( report == nullptr || report->filename == nullptr )
@@ -2763,20 +2763,6 @@ void cScript::RemoveGumpList( SI32 index )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	cScript::SendGumpList()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	UNUSED
-//o------------------------------------------------------------------------------------------------o
-void cScript::SendGumpList( SI32 index, CSocket *toSendTo )
-{
-	if( index < 0 || static_cast<size_t>( index ) >= gumpDisplays.size() )
-		return;
-
-	UI32 gumpId = (0xFFFF + JSMapping->GetScriptId( targObject ));
-	SendVecsAsGump( toSendTo, *( gumpDisplays[index]->one ), *( gumpDisplays[index]->two ), gumpId, INVALIDSERIAL );
-}
-
-//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::HandleGumpPress()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Process a gump button press
@@ -3497,7 +3483,6 @@ bool cScript::executeCommand( CSocket *s, std::string funcName, std::string exec
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = STRING_TO_JSVAL( execString );
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
-	JS_SetReservedSlot( targContext, myObj, 0, UINT_TO_JSVAL( scriptID ) );
 	JSBool retVal = InvokeEvent( funcName.c_str(), 2, params, &rval );
 
 	return ( retVal == JS_TRUE );

@@ -317,7 +317,7 @@ inline JSClass UOXSpawnRegion_class =
 inline JSClass UOXSocket_class =
 {
 	"UOXSocket",
-	JSCLASS_HAS_PRIVATE | JSCLASS_HAS_RESERVED_SLOTS(1),
+	JSCLASS_HAS_PRIVATE,
 	JS_PropertyStub,
 	JS_PropertyStub,
 	CSocketProps_getProperty,

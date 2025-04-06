@@ -2433,9 +2433,8 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			}
 			else if( UTag == "SCPTRIG" )
 			{
-				//scriptTrig	= oldstrutil::value<UI16>(data);
 				UI16 scriptId = oldstrutil::value<UI16>( data );
-				if( scriptId != 0 && scriptId != 65535 )
+				if( scriptId != 0 && scriptId != 0xFFFF )
 				{
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )

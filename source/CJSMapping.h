@@ -85,17 +85,20 @@ public:
 		activeScript.push( next );
 	}
 
-	cScript *currentActive( void )
+	cScript *currentActive( bool askedFor = true )
 	{
 		if( activeScript.empty() )
+		{
+			if( askedFor ) { Console.Warning( "ActiveScript is null" ); }
 			return nullptr;
+		}
 		return activeScript.top();
 	}
 
 	cScript* popActive(void)
 	{
 		activeScript.pop();
-		return currentActive();
+		return currentActive( false );
 	}
 
 };
