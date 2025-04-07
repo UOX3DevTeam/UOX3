@@ -39,38 +39,48 @@
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );
 
-std::map< std::string, intN >		propLookupItem;
+std::map< std::string, intN >		propLookupAccount;
 std::map< std::string, intN >		propLookupChar;
+std::map< std::string, intN >		propLookupConsole;
+std::map< std::string, intN >		propLookupGuild;
+std::map< std::string, intN >		propLookupItem;
+std::map< std::string, intN >		propLookupParty;
+std::map< std::string, intN >		propLookupRace;
+std::map< std::string, intN >		propLookupRegion;
+std::map< std::string, intN >		propLookupResource;
+std::map< std::string, intN >		propLookupSkills;
+std::map< std::string, intN >		propLookupSocket;
+std::map< std::string, intN >		propLookupSpawnRegion;
 
 
 UI16    GetPropByName( JSPrototypes protoNum, const std::string& prop )
 {
 	const std::map< std::string, intN > * toScan = nullptr;
-	switch (protoNum)
+	switch( protoNum )
 	{
 	case JSP_ITEM: toScan = &propLookupItem; break;
 	case JSP_CHAR: toScan = &propLookupChar; break;
-	case JSP_SOCK:
-	case JSP_GUMP:
-	case JSP_PACKET:
-	case JSP_GUILD:
-	case JSP_RACE:
-	case JSP_REGION:
-	case JSP_SPAWNREGION:
+	case JSP_SOCK: toScan = &propLookupSocket; break;
+	case JSP_GUILD: toScan = &propLookupGuild; break;
+	case JSP_RACE: toScan = &propLookupRace; break;
+	case JSP_REGION: toScan = &propLookupRegion; break;
+	case JSP_SPAWNREGION: toScan = &propLookupSpawnRegion; break;
+	case JSP_RESOURCE: toScan = &propLookupResource; break;
+	case JSP_ACCOUNT: toScan = &propLookupAccount; break;
+	case JSP_CONSOLE: toScan = &propLookupConsole; break;
+	case JSP_PARTY: toScan = &propLookupParty; break;
+	case JSP_GLOBALSKILLS: toScan = &propLookupSkills; break;
 	case JSP_SPELL:
 	case JSP_SPELLS:
 	case JSP_GLOBALSKILL:
-	case JSP_GLOBALSKILLS:
-	case JSP_RESOURCE:
-	case JSP_ACCOUNT:
 	case JSP_ACCOUNTS:
-	case JSP_CONSOLE:
 	case JSP_FILE:
-	case JSP_PARTY:
 	case JSP_CREATEENTRY:
 	case JSP_CREATEENTRIES:
 	case JSP_TIMER:
 	case JSP_SCRIPT:
+	case JSP_GUMP:
+	case JSP_PACKET:
 		break;
 	};
 	if( toScan != nullptr )
@@ -88,6 +98,27 @@ UI16    GetPropByName( JSPrototypes protoNum, const std::string& prop )
 		return 0xFFFF;
 	}
 
+}
+
+UI16 getScriptID( JSContext *cx, jsid id, JSPrototypes section )
+{
+	UI16 propID = 0xFFFF;
+	if( JSID_IS_STRING( id ) )
+	{
+		auto str = JSID_TO_STRING( id );
+		char* chars = JS_EncodeString( cx, str );
+		propID = GetPropByName( section, chars );
+		if( propID == 0xFFFF )
+		{
+			Console.Warning( oldstrutil::format( "String property '%s' found on object type %d in script %d", chars, section, JSMapping->currentActive()->GetScriptID() ) );
+		}
+		js_free( chars );
+	}
+	else if( JSID_IS_INT( id ) )
+	{
+		propID = JSID_TO_INT( id );
+	}
+	return propID;
 }
 
 
@@ -1142,22 +1173,7 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	UI16 propID = 0xFFFF;
-	if( JSID_IS_STRING( id ) )
-	{
-		auto str = JSID_TO_STRING(id);
-		char* chars = JS_EncodeString(cx, str);
-		propID = GetPropByName( JSP_ITEM, chars );
-		if( propID == 0xFFFF )
-		{
-			Console.Warning( oldstrutil::format( "String property '%s' found on item with serial %d in script %d", chars, gPriv->GetSerial(), JSMapping->currentActive()->GetScriptID() ) );
-		}
-		js_free(chars);
-	}
-	else if( JSID_IS_INT( id ) )
-	{
-		propID = JSID_TO_INT( id );
-	}
+	UI16 propID = getScriptID( cx, id, JSP_ITEM );
 
 	if( propID != 0xFFFF )
 	{
@@ -2232,22 +2248,7 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	UI16 propID = 0xFFFF;
-	if( JSID_IS_STRING( id ) )
-	{
-		auto str = JSID_TO_STRING(id);
-		char* chars = JS_EncodeString(cx, str);
-		propID = GetPropByName( JSP_ITEM, chars );
-		if( propID == 0xFFFF )
-		{
-			Console.Warning( oldstrutil::format( "String property '%s' found on character with serial %d in script %d", chars, gPriv->GetSerial(), JSMapping->currentActive()->GetScriptID() ) );
-		}
-		js_free(chars);
-	}
-	else if( JSID_IS_INT( id ) )
-	{
-		propID = JSID_TO_INT( id );
-	}
+	UI16 propID = getScriptID( cx, id, JSP_CHAR );
 
 	if( propID != 0xFFFF )
 	{
@@ -2817,9 +2818,11 @@ JSBool CRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSID_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_REGION );
+
+	if( propID != 0xFFFF )
 	{
-		switch( JSID_TO_INT( id ))
+		switch( propID )
 		{
 			case CREGP_NAME:				gPriv->SetName( encaps.toString() );						break;
 			case CREGP_MAYOR:				gPriv->SetMayorSerial( static_cast<UI32>( encaps.toInt() )); break;
@@ -2983,9 +2986,11 @@ JSBool CSpawnRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSB
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSID_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_SPAWNREGION );
+
+	if( propID != 0xFFFF )
 	{
-		switch( JSID_TO_INT( id ))
+		switch( propID )
 		{
 			case CSPAWNREGP_NAME:				gPriv->SetName( encaps.toString() );							break;
 			case CSPAWNREGP_ITEM:				gPriv->SetItem( encaps.toString() );							break;
@@ -3089,9 +3094,11 @@ JSBool CGuildProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool st
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSID_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_GUILD );
+
+	if( propID != 0xFFFF )
 	{
-		switch( JSID_TO_INT( id ))
+		switch( propID )
 		{
 			case CGP_NAME:				gPriv->Name( encaps.toString() );						break;
 			case CGP_TYPE:				gPriv->Type( static_cast<GuildType>( encaps.toInt() ));	break;
@@ -3184,9 +3191,11 @@ JSBool CRaceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSID_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_RACE );
+
+	if( propID != 0xFFFF )
 	{
-		switch( JSID_TO_INT( id ))
+		switch( propID )
 		{
 			case CRP_NAME:				gPriv->Name( encaps.toString() );						break;
 			case CRP_REQUIRESBEARD:		gPriv->RequiresBeard( encaps.toBool() );				break;
@@ -3214,9 +3223,11 @@ JSBool CSocketProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSID_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_SOCK );
+
+	if( propID != 0xFFFF )
 	{
-		switch( JSID_TO_INT( id ))
+		switch( propID )
 		{
 			case CSOCKP_ACCOUNT:
 				break;
@@ -3493,7 +3504,8 @@ JSBool CSkillsProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	UI08 skillId		= static_cast<UI08>( JSID_TO_INT( id ));
+	UI16 propID = getScriptID( cx, id, JSP_GLOBALSKILLS );
+	UI08 skillId		= static_cast<UI08>( propID );
 	SI16 newSkillValue	= static_cast<SI16>( encaps.toInt() );
 	UI08 i				= 0;
 
@@ -3869,9 +3881,10 @@ JSBool CAccountProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool 
 
 	JSEncapsulate encaps( cx, vp );
 
-	if( JSID_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_ACCOUNT );
+	if( propID != 0xFFFF )
 	{
-		switch( JSID_TO_INT( id ))
+		switch( propID )
 		{
 			case CACCOUNT_ID: 
 			case CACCOUNT_USERNAME:
@@ -3960,9 +3973,10 @@ JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *
 JSBool CConsoleProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool strict, jsval* vp )
 {
 	JSEncapsulate encaps( cx, vp );
-	if( JSID_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_CONSOLE );
+	if( propID != 0xFFFF )
 	{
-		switch( JSID_TO_INT( id ))
+		switch( propID )
 		{
 			case CCONSOLE_MODE:		Console.CurrentMode( encaps.toInt() );		break;
 			case CCONSOLE_LOGECHO:	Console.LogEcho( encaps.toBool() );			break;
@@ -4006,9 +4020,10 @@ JSBool CResourceProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSID_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_RESOURCE );
+	if( propID != 0xFFFF )
 	{
-		switch( JSID_TO_INT( id ))
+		switch( propID )
 		{
 			case CRESP_LOGAMT:				gPriv->logAmt	= encaps.toInt();			break;
 			case CRESP_LOGTIME:
@@ -4064,9 +4079,10 @@ JSBool CPartyProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool st
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-	if( JSID_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_PARTY );
+	if( propID != 0xFFFF )
 	{
-		switch( JSID_TO_INT( id ))
+		switch( propID )
 		{
 			case CPARTYP_LEADER:
 			{

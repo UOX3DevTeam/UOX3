@@ -84,6 +84,7 @@ public:
 
 	JSObject *	AcquireObject( IUEEntries iType, void *index );
 	void		ReleaseObject( IUEEntries IType, void *index );
+
 };
 
 class CJSEngine

@@ -9,8 +9,18 @@
 #ifndef __UOXJSPropertyOps__
 #define __UOXJSPropertyOps__
 
-extern std::map< std::string, intN >		propLookupItem;
+extern std::map< std::string, intN >		propLookupAccount;
 extern std::map< std::string, intN >		propLookupChar;
+extern std::map< std::string, intN >		propLookupConsole;
+extern std::map< std::string, intN >		propLookupGuild;
+extern std::map< std::string, intN >		propLookupItem;
+extern std::map< std::string, intN >		propLookupParty;
+extern std::map< std::string, intN >		propLookupRace;
+extern std::map< std::string, intN >		propLookupRegion;
+extern std::map< std::string, intN >		propLookupResource;
+extern std::map< std::string, intN >		propLookupSkills;
+extern std::map< std::string, intN >		propLookupSocket;
+extern std::map< std::string, intN >		propLookupSpawnRegion;
 
 JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );
 JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp );

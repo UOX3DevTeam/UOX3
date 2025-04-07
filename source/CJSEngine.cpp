@@ -234,6 +234,19 @@ void CJSRuntime::CollectGarbage()
 	JS_GC( jsContext );
 }
 
+void setupMap( std::map< std::string, intN >& lkpMap, const JSPropertySpec lkpProps[], int countOfProps )
+{
+	lkpMap.clear();
+	for( int i = 0; i < countOfProps; ++i )
+	{
+		if( lkpProps[i].name != nullptr)
+		{
+			lkpMap[lkpProps[i].name] = lkpProps[i].tinyid;
+		}
+	}
+}
+
+
 void CJSRuntime::InitializePrototypes()
 {
 	protoList.resize( JSP_COUNT );
@@ -281,22 +294,18 @@ void CJSRuntime::InitializePrototypes()
 		JS_LockGCThing( cx, protoList[i] );
 	}
 
-	propLookupItem.clear();
-	propLookupChar.clear();
-	for( auto&& item : CItemProps )
-	{
-		if( item.name != nullptr )
-		{
-			propLookupItem[item.name] = item.tinyid;
-		}
-	}
-	for( auto&& item : CCharacterProps )
-	{
-		if( item.name != nullptr )
-		{
-			propLookupChar[item.name] = item.tinyid;
-		}
-	}
+	setupMap( propLookupAccount, CAccountProperties, std::size( CAccountProperties ) );
+	setupMap( propLookupChar, CCharacterProps, std::size( CCharacterProps ) );
+	setupMap( propLookupConsole, CConsoleProperties, std::size( CConsoleProperties ) );
+	setupMap( propLookupGuild, CGuildProperties, std::size( CGuildProperties ) );
+	setupMap( propLookupItem, CItemProps, std::size( CItemProps ) );
+	setupMap( propLookupParty, CPartyProperties, std::size( CPartyProperties ) );
+	setupMap( propLookupRace, CRaceProperties, std::size( CRaceProperties ) );
+	setupMap( propLookupRegion, CRegionProperties, std::size( CRegionProperties ) );
+	setupMap( propLookupResource, CResourceProperties, std::size( CResourceProperties ) );
+	setupMap( propLookupSkills, CSkillsProps, std::size( CSkillsProps ) );
+	setupMap( propLookupSocket, CSocketProps, std::size( CSocketProps ) );
+	setupMap( propLookupSpawnRegion, CSpawnRegionProperties, std::size( CSpawnRegionProperties ) );
 }
 
 JSRuntime *CJSRuntime::GetRuntime( void ) const
