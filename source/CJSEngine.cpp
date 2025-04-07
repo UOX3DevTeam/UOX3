@@ -280,6 +280,23 @@ void CJSRuntime::InitializePrototypes()
 	{
 		JS_LockGCThing( cx, protoList[i] );
 	}
+
+	propLookupItem.clear();
+	propLookupChar.clear();
+	for( auto&& item : CItemProps )
+	{
+		if( item.name != nullptr )
+		{
+			propLookupItem[item.name] = item.tinyid;
+		}
+	}
+	for( auto&& item : CCharacterProps )
+	{
+		if( item.name != nullptr )
+		{
+			propLookupChar[item.name] = item.tinyid;
+		}
+	}
 }
 
 JSRuntime *CJSRuntime::GetRuntime( void ) const

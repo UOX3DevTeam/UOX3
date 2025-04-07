@@ -39,6 +39,58 @@
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );
 
+std::map< std::string, intN >		propLookupItem;
+std::map< std::string, intN >		propLookupChar;
+
+
+UI16    GetPropByName( JSPrototypes protoNum, const std::string& prop )
+{
+	const std::map< std::string, intN > * toScan = nullptr;
+	switch (protoNum)
+	{
+	case JSP_ITEM: toScan = &propLookupItem; break;
+	case JSP_CHAR: toScan = &propLookupChar; break;
+	case JSP_SOCK:
+	case JSP_GUMP:
+	case JSP_PACKET:
+	case JSP_GUILD:
+	case JSP_RACE:
+	case JSP_REGION:
+	case JSP_SPAWNREGION:
+	case JSP_SPELL:
+	case JSP_SPELLS:
+	case JSP_GLOBALSKILL:
+	case JSP_GLOBALSKILLS:
+	case JSP_RESOURCE:
+	case JSP_ACCOUNT:
+	case JSP_ACCOUNTS:
+	case JSP_CONSOLE:
+	case JSP_FILE:
+	case JSP_PARTY:
+	case JSP_CREATEENTRY:
+	case JSP_CREATEENTRIES:
+	case JSP_TIMER:
+	case JSP_SCRIPT:
+		break;
+	};
+	if( toScan != nullptr )
+	{
+		std::map< std::string, intN >::const_iterator citer = toScan->find( prop );
+		if( citer != toScan->cend() ) {
+			return citer->second;
+		}
+		else {
+			return 0xFFFF;
+		}
+	}
+	else
+	{
+		return 0xFFFF;
+	}
+
+}
+
+
 JSBool CGuildsProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp )
 {
 	*vp = INT_TO_JSVAL( 0 );
@@ -1089,25 +1141,28 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
 
-	//bool isInt = JSID_IS_INT(id);
-	//bool isString = JSID_IS_STRING(id);
-	//bool isVoid = JSID_IS_VOID(id);
-	//if (isInt) {
-	//	int rVal = JSID_TO_INT(id);
-	//	rVal++;
-	//}
-	//if (isString) {
-	//	auto str = JSID_TO_STRING( id );
-	//	char* chars = JS_EncodeString(cx, str);
-	//	std::string strVal(chars);
-	//	js_free(chars);
-	//}
-
 	JSEncapsulate encaps( cx, vp );
-	if( JSID_IS_INT( id ))
+	UI16 propID = 0xFFFF;
+	if( JSID_IS_STRING( id ) )
+	{
+		auto str = JSID_TO_STRING(id);
+		char* chars = JS_EncodeString(cx, str);
+		propID = GetPropByName( JSP_ITEM, chars );
+		if( propID == 0xFFFF )
+		{
+			Console.Warning( oldstrutil::format( "String property '%s' found on item with serial %d in script %d", chars, gPriv->GetSerial(), JSMapping->currentActive()->GetScriptID() ) );
+		}
+		js_free(chars);
+	}
+	else if( JSID_IS_INT( id ) )
+	{
+		propID = JSID_TO_INT( id );
+	}
+
+	if( propID != 0xFFFF )
 	{
 		TIMERVAL newTime;
-		switch( JSID_TO_INT( id ))
+		switch( propID )
 		{
 			case CIP_SECTIONID:		gPriv->SetSectionId( encaps.toString() );					break;
 			case CIP_NAME:			gPriv->SetName( encaps.toString() );						break;
@@ -2177,10 +2232,26 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 		return JS_FALSE;
 
 	JSEncapsulate encaps( cx, vp );
-
-	if( JSID_IS_INT( id ))
+	UI16 propID = 0xFFFF;
+	if( JSID_IS_STRING( id ) )
 	{
-		switch( JSID_TO_INT( id ))
+		auto str = JSID_TO_STRING(id);
+		char* chars = JS_EncodeString(cx, str);
+		propID = GetPropByName( JSP_ITEM, chars );
+		if( propID == 0xFFFF )
+		{
+			Console.Warning( oldstrutil::format( "String property '%s' found on character with serial %d in script %d", chars, gPriv->GetSerial(), JSMapping->currentActive()->GetScriptID() ) );
+		}
+		js_free(chars);
+	}
+	else if( JSID_IS_INT( id ) )
+	{
+		propID = JSID_TO_INT( id );
+	}
+
+	if( propID != 0xFFFF )
+	{
+		switch( propID )
 		{
 			case CCP_ACCOUNTNUM:	gPriv->SetAccountNum( static_cast<UI16>( encaps.toInt() ));					break;
 			case CCP_CREATEDON:		break;
