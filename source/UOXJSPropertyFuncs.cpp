@@ -1089,6 +1089,20 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
 
+	//bool isInt = JSID_IS_INT(id);
+	//bool isString = JSID_IS_STRING(id);
+	//bool isVoid = JSID_IS_VOID(id);
+	//if (isInt) {
+	//	int rVal = JSID_TO_INT(id);
+	//	rVal++;
+	//}
+	//if (isString) {
+	//	auto str = JSID_TO_STRING( id );
+	//	char* chars = JS_EncodeString(cx, str);
+	//	std::string strVal(chars);
+	//	js_free(chars);
+	//}
+
 	JSEncapsulate encaps( cx, vp );
 	if( JSID_IS_INT( id ))
 	{
@@ -1542,6 +1556,13 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 			default:
 				break;
 		}
+	}
+	else if (JSID_IS_STRING(id))
+	{
+		auto str = JSID_TO_STRING( id );
+		char* chars = JS_EncodeString(cx, str);
+		Console.Warning( oldstrutil::format( "String property '%s' found on item with serial %d in script %d", chars, gPriv->GetSerial(), JSMapping->currentActive()->GetScriptID() ) );
+		js_free(chars);
 	}
 
 	return JS_TRUE;

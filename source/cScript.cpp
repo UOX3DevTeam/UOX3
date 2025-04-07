@@ -370,6 +370,9 @@ void cScript::Stop( void )
 JSBool cScript::InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval )
 {
 	JSMapping->pushActive( this );
+#if defined UOX_DEBUG_MODE
+	Console.Warning( oldstrutil::format( "Triggering event '%s' from script %d", name, GetScriptID() ) );
+#endif
 	JSBool rVal = JS_CallFunctionName( targContext, targObject, name, argc, argv, rval );
 	JSMapping->popActive();
 	return rVal;
