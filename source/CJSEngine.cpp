@@ -169,6 +169,7 @@ CJSRuntime::CJSRuntime( UI32 engineSize )
 
 	// Specify JS 1.8 as version to unlock const variables, let, etc
 	JS_SetVersion( jsContext, JSVERSION_LATEST );
+	JS_SetOptions( jsContext, JS_GetOptions( jsContext ) | JSOPTION_JIT | JSOPTION_METHODJIT );
 
 	if( jsContext == nullptr )
 	{
