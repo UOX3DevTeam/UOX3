@@ -11,7 +11,7 @@
 // product info
 //o------------------------------------------------------------------------------------------------o
 const std::string VER				= "0.99";
-const std::string BUILD				= "6a";
+const std::string BUILD				= "6b";
 const std::string REALBUILD			= "0";
 const std::string SVER				= "2.0";
 const std::string CVER				= "2.0";
