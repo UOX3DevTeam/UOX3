@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.18)
 project(jscript VERSION 1.8.0 LANGUAGES CXX)
 
 set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/../../../install" CACHE STRING "" FORCE)
-set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Override build type" FORCE)
 
 add_executable(jscpucfg ../../jscpucfg.cpp)
 
@@ -259,11 +258,11 @@ target_compile_definitions( jscript PRIVATE
 
 if (WIN32)
 
-    target_include_directories(jscript PRIVATE 
-        ${PROJECT_SOURCE_DIR}/../../assembler 
-        ${PROJECT_SOURCE_DIR}/../../nanojit 
-        ${PROJECT_SOURCE_DIR}/../../tracejit 
-        ${PROJECT_SOURCE_DIR}/../../yarr 
+    target_include_directories(jscript PRIVATE
+        ${PROJECT_SOURCE_DIR}/../../assembler
+        ${PROJECT_SOURCE_DIR}/../../nanojit
+        ${PROJECT_SOURCE_DIR}/../../tracejit
+        ${PROJECT_SOURCE_DIR}/../../yarr
         ${PROJECT_SOURCE_DIR}/../..
     )
 
@@ -296,8 +295,6 @@ if (WIN32)
         XP_WIN
         XP_WIN32
     )
-
-    remove_definitions( -D_DEBUG )
 
     target_compile_options( jscript PRIVATE
         /W3
@@ -362,11 +359,11 @@ else()
               $<$<CONFIG:Release>:-Os>
              )
     else()
-        target_include_directories(jscript PRIVATE 
-            ${PROJECT_SOURCE_DIR}/../../assembler 
-            ${PROJECT_SOURCE_DIR}/../../nanojit 
-            ${PROJECT_SOURCE_DIR}/../../tracejit 
-            ${PROJECT_SOURCE_DIR}/../../yarr 
+        target_include_directories(jscript PRIVATE
+            ${PROJECT_SOURCE_DIR}/../../assembler
+            ${PROJECT_SOURCE_DIR}/../../nanojit
+            ${PROJECT_SOURCE_DIR}/../../tracejit
+            ${PROJECT_SOURCE_DIR}/../../yarr
             ${PROJECT_SOURCE_DIR}/../..
         )
         target_compile_definitions(jscript PRIVATE
