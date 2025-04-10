@@ -324,6 +324,7 @@ else()
         -Wno-format-security
     )
     if (APPLE)
+        add_compile_options(-v)
         target_compile_definitions( jscript PRIVATE
             XP_MACOSX
             NO_X11
