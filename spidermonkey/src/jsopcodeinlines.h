@@ -1,57 +1,119 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
- *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is the Mozilla SpiderMonkey JaegerMonkey implementation
- *
- * The Initial Developer of the Original Code is
- *   Mozilla Foundation
- * Portions created by the Initial Developer are Copyright (C) 2002-2010
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sts=4 et sw=4 tw=99:
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "jsautooplen.h"
+#ifndef jsopcodeinlines_h
+#define jsopcodeinlines_h
+
+#include "jsopcode.h"
+
+#include "jsscript.h"
 
 namespace js {
 
-/* 
- * Warning: this does not skip JSOP_RESETBASE* or JSOP_INDEXBASE* ops, so it is
- * useful only when checking for optimization opportunities.
- */
-JS_ALWAYS_INLINE jsbytecode *
-AdvanceOverBlockchainOp(jsbytecode *pc)
+static inline unsigned
+GetDefCount(JSScript* script, unsigned offset)
 {
-    if (*pc == JSOP_NULLBLOCKCHAIN)
-        return pc + JSOP_NULLBLOCKCHAIN_LENGTH;
-    if (*pc == JSOP_BLOCKCHAIN)
-        return pc + JSOP_BLOCKCHAIN_LENGTH;
-    return pc;
+    jsbytecode* pc = script->offsetToPC(offset);
+
+    /*
+     * Add an extra pushed value for OR/AND opcodes, so that they are included
+     * in the pushed array of stack values for type inference.
+     */
+    switch (JSOp(*pc)) {
+      case JSOP_OR:
+      case JSOP_AND:
+        return 1;
+      case JSOP_PICK:
+        /*
+         * Pick pops and pushes how deep it looks in the stack + 1
+         * items. i.e. if the stack were |a b[2] c[1] d[0]|, pick 2
+         * would pop b, c, and d to rearrange the stack to |a c[0]
+         * d[1] b[2]|.
+         */
+        return pc[1] + 1;
+      default:
+        return StackDefs(script, pc);
+    }
 }
 
+static inline unsigned
+GetUseCount(JSScript* script, unsigned offset)
+{
+    jsbytecode* pc = script->offsetToPC(offset);
+
+    if (JSOp(*pc) == JSOP_PICK)
+        return pc[1] + 1;
+    if (js_CodeSpec[*pc].nuses == -1)
+        return StackUses(script, pc);
+    return js_CodeSpec[*pc].nuses;
 }
+
+static inline JSOp
+ReverseCompareOp(JSOp op)
+{
+    switch (op) {
+      case JSOP_GT:
+        return JSOP_LT;
+      case JSOP_GE:
+        return JSOP_LE;
+      case JSOP_LT:
+        return JSOP_GT;
+      case JSOP_LE:
+        return JSOP_GE;
+      case JSOP_EQ:
+      case JSOP_NE:
+      case JSOP_STRICTEQ:
+      case JSOP_STRICTNE:
+        return op;
+      default:
+        MOZ_CRASH("unrecognized op");
+    }
+}
+
+static inline JSOp
+NegateCompareOp(JSOp op)
+{
+    switch (op) {
+      case JSOP_GT:
+        return JSOP_LE;
+      case JSOP_GE:
+        return JSOP_LT;
+      case JSOP_LT:
+        return JSOP_GE;
+      case JSOP_LE:
+        return JSOP_GT;
+      case JSOP_EQ:
+        return JSOP_NE;
+      case JSOP_NE:
+        return JSOP_EQ;
+      case JSOP_STRICTNE:
+        return JSOP_STRICTEQ;
+      case JSOP_STRICTEQ:
+        return JSOP_STRICTNE;
+      default:
+        MOZ_CRASH("unrecognized op");
+    }
+}
+
+class BytecodeRange {
+  public:
+    BytecodeRange(JSContext* cx, JSScript* script)
+      : script(cx, script), pc(script->code()), end(pc + script->length())
+    {}
+    bool empty() const { return pc == end; }
+    jsbytecode* frontPC() const { return pc; }
+    JSOp frontOpcode() const { return JSOp(*pc); }
+    size_t frontOffset() const { return script->pcToOffset(pc); }
+    void popFront() { pc += GetBytecodeLength(pc); }
+
+  private:
+    RootedScript script;
+    jsbytecode* pc, *end;
+};
+
+}
+
+#endif /* jsopcodeinlines_h */

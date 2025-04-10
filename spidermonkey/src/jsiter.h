@@ -1,63 +1,22 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
- * vim: set ts=8 sw=4 et tw=78:
- *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1 *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Mozilla Communicator client code, released
- * March 31, 1998.
- *
- * The Initial Developer of the Original Code is
- * Netscape Communications Corporation.
- * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sts=4 et sw=4 tw=99:
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef jsiter_h___
-#define jsiter_h___
+#ifndef jsiter_h
+#define jsiter_h
 
 /*
  * JavaScript iterators.
  */
-#include "jscntxt.h"
-#include "jsprvtd.h"
-#include "jspubtd.h"
-#include "jsversion.h"
 
-/*
- * NB: these flag bits are encoded into the bytecode stream in the immediate
- * operand of JSOP_ITER, so don't change them without advancing jsxdrapi.h's
- * JSXDR_BYTECODE_VERSION.
- */
-#define JSITER_ENUMERATE  0x1   /* for-in compatible hidden default iterator */
-#define JSITER_FOREACH    0x2   /* return [key, value] pair rather than key */
-#define JSITER_KEYVALUE   0x4   /* destructuring for-in wants [key, value] */
-#define JSITER_OWNONLY    0x8   /* iterate over obj's own properties only */
-#define JSITER_HIDDEN     0x10  /* also enumerate non-enumerable properties */
+#include "mozilla/MemoryReporting.h"
+
+#include "jscntxt.h"
+
+#include "gc/Barrier.h"
+#include "vm/Stack.h"
 
 /*
  * For cacheable native iterators, whether the iterator is currently active.
@@ -68,24 +27,33 @@
 
 namespace js {
 
-struct NativeIterator {
-    JSObject  *obj;
-    jsid      *props_array;
-    jsid      *props_cursor;
-    jsid      *props_end;
-    uint32    *shapes_array;
-    uint32    shapes_length;
-    uint32    shapes_key;
-    uint32    flags;
-    JSObject  *next;  /* Forms cx->enumerators list, garbage otherwise. */
+struct NativeIterator
+{
+    HeapPtrObject obj;                  // Object being iterated.
+    JSObject* iterObj_;                 // Internal iterator object.
+    HeapPtrFlatString* props_array;
+    HeapPtrFlatString* props_cursor;
+    HeapPtrFlatString* props_end;
+    Shape** shapes_array;
+    uint32_t shapes_length;
+    uint32_t shapes_key;
+    uint32_t flags;
 
-    bool isKeyIter() const { return (flags & JSITER_FOREACH) == 0; }
+  private:
+    /* While in compartment->enumerators, these form a doubly linked list. */
+    NativeIterator* next_;
+    NativeIterator* prev_;
 
-    inline jsid *begin() const {
+  public:
+    bool isKeyIter() const {
+        return (flags & JSITER_FOREACH) == 0;
+    }
+
+    inline HeapPtrFlatString* begin() const {
         return props_array;
     }
 
-    inline jsid *end() const {
+    inline HeapPtrFlatString* end() const {
         return props_end;
     }
 
@@ -93,156 +61,160 @@ struct NativeIterator {
         return end() - begin();
     }
 
-    jsid *current() const {
-        JS_ASSERT(props_cursor < props_end);
+    JSObject* iterObj() const {
+        return iterObj_;
+    }
+    HeapPtrFlatString* current() const {
+        MOZ_ASSERT(props_cursor < props_end);
         return props_cursor;
+    }
+
+    NativeIterator* next() {
+        return next_;
+    }
+
+    static inline size_t offsetOfNext() {
+        return offsetof(NativeIterator, next_);
+    }
+    static inline size_t offsetOfPrev() {
+        return offsetof(NativeIterator, prev_);
     }
 
     void incCursor() {
         props_cursor = props_cursor + 1;
     }
+    void link(NativeIterator* other) {
+        /* A NativeIterator cannot appear in the enumerator list twice. */
+        MOZ_ASSERT(!next_ && !prev_);
+        MOZ_ASSERT(flags & JSITER_ENUMERATE);
 
-    static NativeIterator *allocateIterator(JSContext *cx, uint32 slength,
-                                            const js::AutoIdVector &props);
-    void init(JSObject *obj, uintN flags, uint32 slength, uint32 key);
+        this->next_ = other;
+        this->prev_ = other->prev_;
+        other->prev_->next_ = this;
+        other->prev_ = this;
+    }
+    void unlink() {
+        MOZ_ASSERT(flags & JSITER_ENUMERATE);
 
-    void mark(JSTracer *trc);
+        next_->prev_ = prev_;
+        prev_->next_ = next_;
+        next_ = nullptr;
+        prev_ = nullptr;
+    }
+
+    static NativeIterator* allocateSentinel(JSContext* cx);
+    static NativeIterator* allocateIterator(JSContext* cx, uint32_t slength,
+                                            const js::AutoIdVector& props);
+    void init(JSObject* obj, JSObject* iterObj, unsigned flags, uint32_t slength, uint32_t key);
+
+    void mark(JSTracer* trc);
+
+    static void destroy(NativeIterator* iter) {
+        js_free(iter);
+    }
+};
+
+class PropertyIteratorObject : public NativeObject
+{
+  public:
+    static const Class class_;
+
+    NativeIterator* getNativeIterator() const {
+        return static_cast<js::NativeIterator*>(getPrivate());
+    }
+    void setNativeIterator(js::NativeIterator* ni) {
+        setPrivate(ni);
+    }
+
+    size_t sizeOfMisc(mozilla::MallocSizeOf mallocSizeOf) const;
+
+  private:
+    static void trace(JSTracer* trc, JSObject* obj);
+    static void finalize(FreeOp* fop, JSObject* obj);
+};
+
+class ArrayIteratorObject : public JSObject
+{
+  public:
+    static const Class class_;
+};
+
+class StringIteratorObject : public JSObject
+{
+  public:
+    static const Class class_;
 };
 
 bool
-VectorToIdArray(JSContext *cx, js::AutoIdVector &props, JSIdArray **idap);
-
-JS_FRIEND_API(bool)
-GetPropertyNames(JSContext *cx, JSObject *obj, uintN flags, js::AutoIdVector *props);
+VectorToIdArray(JSContext* cx, AutoIdVector& props, JSIdArray** idap);
 
 bool
-GetIterator(JSContext *cx, JSObject *obj, uintN flags, js::Value *vp);
+GetIterator(JSContext* cx, HandleObject obj, unsigned flags, MutableHandleObject objp);
 
-bool
-VectorToKeyIterator(JSContext *cx, JSObject *obj, uintN flags, js::AutoIdVector &props, js::Value *vp);
-
-bool
-VectorToValueIterator(JSContext *cx, JSObject *obj, uintN flags, js::AutoIdVector &props, js::Value *vp);
+JSObject*
+GetIteratorObject(JSContext* cx, HandleObject obj, unsigned flags);
 
 /*
  * Creates either a key or value iterator, depending on flags. For a value
  * iterator, performs value-lookup to convert the given list of jsids.
  */
 bool
-EnumeratedIdVectorToIterator(JSContext *cx, JSObject *obj, uintN flags, js::AutoIdVector &props, js::Value *vp);
+EnumeratedIdVectorToIterator(JSContext* cx, HandleObject obj, unsigned flags, AutoIdVector& props,
+                             MutableHandleObject objp);
 
-}
+bool
+NewEmptyPropertyIterator(JSContext* cx, unsigned flags, MutableHandleObject objp);
 
 /*
  * Convert the value stored in *vp to its iteration object. The flags should
- * contain JSITER_ENUMERATE if js_ValueToIterator is called when enumerating
+ * contain JSITER_ENUMERATE if js::ValueToIterator is called when enumerating
  * for-in semantics are required, and when the caller can guarantee that the
  * iterator will never be exposed to scripts.
  */
-extern JS_FRIEND_API(JSBool)
-js_ValueToIterator(JSContext *cx, uintN flags, js::Value *vp);
-
-extern JS_FRIEND_API(JSBool)
-js_CloseIterator(JSContext *cx, JSObject *iterObj);
+bool
+ValueToIterator(JSContext* cx, unsigned flags, MutableHandleValue vp);
 
 bool
-js_SuppressDeletedProperty(JSContext *cx, JSObject *obj, jsid id);
+CloseIterator(JSContext* cx, HandleObject iterObj);
 
 bool
-js_SuppressDeletedIndexProperties(JSContext *cx, JSObject *obj, jsint begin, jsint end);
+UnwindIteratorForException(JSContext* cx, HandleObject obj);
+
+void
+UnwindIteratorForUncatchableException(JSContext* cx, JSObject* obj);
+
+bool
+IteratorConstructor(JSContext* cx, unsigned argc, Value* vp);
+
+extern bool
+SuppressDeletedProperty(JSContext* cx, HandleObject obj, jsid id);
+
+extern bool
+SuppressDeletedElement(JSContext* cx, HandleObject obj, uint32_t index);
+
+extern bool
+SuppressDeletedElements(JSContext* cx, HandleObject obj, uint32_t begin, uint32_t end);
 
 /*
- * IteratorMore() indicates whether another value is available. It might
- * internally call iterobj.next() and then cache the value until its
- * picked up by IteratorNext(). The value is cached in the current context.
+ * IteratorMore() returns the next iteration value. If no value is available,
+ * MagicValue(JS_NO_ITER_VALUE) is returned.
  */
-extern JSBool
-js_IteratorMore(JSContext *cx, JSObject *iterobj, js::Value *rval);
+extern bool
+IteratorMore(JSContext* cx, HandleObject iterobj, MutableHandleValue rval);
 
-extern JSBool
-js_IteratorNext(JSContext *cx, JSObject *iterobj, js::Value *rval);
-
-extern JSBool
-js_ThrowStopIteration(JSContext *cx);
-
-#if JS_HAS_GENERATORS
+extern bool
+ThrowStopIteration(JSContext* cx);
 
 /*
- * Generator state codes.
+ * Create an object of the form { value: VALUE, done: DONE }.
+ * ES6 draft from 2013-09-05, section 25.4.3.4.
  */
-typedef enum JSGeneratorState {
-    JSGEN_NEWBORN,  /* not yet started */
-    JSGEN_OPEN,     /* started by a .next() or .send(undefined) call */
-    JSGEN_RUNNING,  /* currently executing via .next(), etc., call */
-    JSGEN_CLOSING,  /* close method is doing asynchronous return */
-    JSGEN_CLOSED    /* closed, cannot be started or closed again */
-} JSGeneratorState;
+extern JSObject*
+CreateItrResultObject(JSContext* cx, HandleValue value, bool done);
 
-struct JSGenerator {
-    JSObject            *obj;
-    JSGeneratorState    state;
-    JSFrameRegs         regs;
-    JSObject            *enumerators;
-    JSStackFrame        *floating;
-    js::Value           floatingStack[1];
+extern JSObject*
+InitIteratorClasses(JSContext* cx, HandleObject obj);
 
-    JSStackFrame *floatingFrame() {
-        return floating;
-    }
+} /* namespace js */
 
-    JSStackFrame *liveFrame() {
-        JS_ASSERT((state == JSGEN_RUNNING || state == JSGEN_CLOSING) ==
-                  (regs.fp != floatingFrame()));
-        return regs.fp;
-    }
-};
-
-extern JSObject *
-js_NewGenerator(JSContext *cx);
-
-/*
- * Generator stack frames do not have stable pointers since they get copied to
- * and from the generator object and the stack (see SendToGenerator). This is a
- * problem for Block and With objects, which need to store a pointer to the
- * enclosing stack frame. The solution is for Block and With objects to store
- * a pointer to the "floating" stack frame stored in the generator object,
- * since it is stable, and maintain, in the generator object, a pointer to the
- * "live" stack frame (either a copy on the stack or the floating frame). Thus,
- * Block and With objects must "normalize" to and from the floating/live frames
- * in the case of generators using the following functions.
- */
-inline JSStackFrame *
-js_FloatingFrameIfGenerator(JSContext *cx, JSStackFrame *fp)
-{
-    JS_ASSERT(cx->stack().contains(fp));
-    if (JS_UNLIKELY(fp->isGeneratorFrame()))
-        return cx->generatorFor(fp)->floatingFrame();
-    return fp;
-}
-
-/* Given a floating frame, given the JSGenerator containing it. */
-extern JSGenerator *
-js_FloatingFrameToGenerator(JSStackFrame *fp);
-
-inline JSStackFrame *
-js_LiveFrameIfGenerator(JSStackFrame *fp)
-{
-    return fp->isGeneratorFrame() ? js_FloatingFrameToGenerator(fp)->liveFrame() : fp;
-}
-
-#endif
-
-extern js::Class js_GeneratorClass;
-extern js::Class js_IteratorClass;
-extern js::Class js_StopIterationClass;
-
-static inline bool
-js_ValueIsStopIteration(const js::Value &v)
-{
-    return v.isObject() && v.toObject().getClass() == &js_StopIterationClass;
-}
-
-extern JSObject *
-js_InitIteratorClasses(JSContext *cx, JSObject *obj);
-
-#endif /* jsiter_h___ */
+#endif /* jsiter_h */

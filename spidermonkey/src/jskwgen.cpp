@@ -1,61 +1,26 @@
 /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
- * vim: set sw=4 ts=8 et tw=80:
- *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is String Switch Generator for JavaScript Keywords,
- * released 2005-12-09.
- *
- * The Initial Developer of the Original Code is
- * Igor Bukanov.
- * Portions created by the Initial Developer are Copyright (C) 2005-2006
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+ * vim: set ts=8 sts=4 et sw=4 tw=99:
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include <stddef.h>
 #include <assert.h>
+#include <ctype.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
-#include <ctype.h>
 
-#include "jsversion.h"
+#include "vm/Keywords.h"
 
-const char * const keyword_list[] = {
-#define JS_KEYWORD(keyword, type, op, version) #keyword,
-#include "jskeyword.tbl"
-#undef JS_KEYWORD
+static const char * const keyword_list[] = {
+#define KEYWORD_STRING(keyword, name, type, version) #keyword,
+    FOR_EACH_JAVASCRIPT_KEYWORD(KEYWORD_STRING)
+#undef KEYWORD_STRING
 };
 
 struct gen_opt {
-    FILE *output;                       /* output file for generated source */
+    FILE* output;                       /* output file for generated source */
     unsigned use_if_threshold;          /* max number of choices to generate
                                            "if" selector instead of "switch" */
     unsigned char_tail_test_threshold;  /* max number of unprocessed columns
@@ -68,18 +33,18 @@ struct gen_opt {
 static unsigned column_to_compare;
 
 static int
-length_comparator(const void *a, const void *b)
+length_comparator(const void* a, const void* b)
 {
-    const char *str1 = keyword_list[*(unsigned *)a];
-    const char *str2 = keyword_list[*(unsigned *)b];
+    const char* str1 = keyword_list[*(unsigned*)a];
+    const char* str2 = keyword_list[*(unsigned*)b];
     return (int)strlen(str1) - (int)strlen(str2);
 }
 
 static int
-column_comparator(const void *a, const void *b)
+column_comparator(const void* a, const void* b)
 {
-    const char *str1 = keyword_list[*(unsigned *)a];
-    const char *str2 = keyword_list[*(unsigned *)b];
+    const char* str1 = keyword_list[*(unsigned*)a];
+    const char* str2 = keyword_list[*(unsigned*)b];
     return (int)str1[column_to_compare] - (int)str2[column_to_compare];
 }
 
@@ -103,7 +68,7 @@ count_different_lengths(unsigned indexes[], unsigned nelem)
 
 static void
 find_char_span_and_count(unsigned indexes[], unsigned nelem, unsigned column,
-                         unsigned *span_result, unsigned *count_result)
+                         unsigned* span_result, unsigned* count_result)
 {
     unsigned i, count;
     unsigned char c, prev, minc, maxc;
@@ -129,10 +94,10 @@ find_char_span_and_count(unsigned indexes[], unsigned nelem, unsigned column,
 }
 
 static unsigned
-find_optimal_switch_column(struct gen_opt *opt,
+find_optimal_switch_column(struct gen_opt* opt,
                            unsigned indexes[], unsigned nelem,
                            unsigned columns[], unsigned unprocessed_columns,
-                           int *use_if_result)
+                           int* use_if_result)
 {
     unsigned i;
     unsigned span, min_span, min_span_index;
@@ -186,7 +151,7 @@ find_optimal_switch_column(struct gen_opt *opt,
 
 
 static void
-p(struct gen_opt *opt, const char *format, ...)
+p(struct gen_opt* opt, const char* format, ...)
 {
     va_list ap;
 
@@ -198,10 +163,10 @@ p(struct gen_opt *opt, const char *format, ...)
 /* Size for '\xxx' where xxx is octal escape */
 #define MIN_QUOTED_CHAR_BUFFER 7
 
-static char *
-qchar(char c, char *quoted_buffer)
+static char*
+qchar(char c, char* quoted_buffer)
 {
-    char *s;
+    char* s;
 
     s = quoted_buffer;
     *s++ = '\'';
@@ -231,13 +196,13 @@ qchar(char c, char *quoted_buffer)
 }
 
 static void
-nl(struct gen_opt *opt)
+nl(struct gen_opt* opt)
 {
     putc('\n', opt->output);
 }
 
 static void
-indent(struct gen_opt *opt)
+indent(struct gen_opt* opt)
 {
     unsigned n = opt->indent_level;
     while (n != 0) {
@@ -247,7 +212,7 @@ indent(struct gen_opt *opt)
 }
 
 static void
-line(struct gen_opt *opt, const char *format, ...)
+line(struct gen_opt* opt, const char* format, ...)
 {
     va_list ap;
 
@@ -259,7 +224,7 @@ line(struct gen_opt *opt, const char *format, ...)
 }
 
 static void
-generate_letter_switch_r(struct gen_opt *opt,
+generate_letter_switch_r(struct gen_opt* opt,
                          unsigned indexes[], unsigned nelem,
                          unsigned columns[], unsigned unprocessed_columns)
 {
@@ -268,7 +233,7 @@ generate_letter_switch_r(struct gen_opt *opt,
     assert(nelem != 0);
     if (nelem == 1) {
         unsigned kw_index = indexes[0];
-        const char *keyword = keyword_list[kw_index];
+        const char* keyword = keyword_list[kw_index];
 
         if (unprocessed_columns == 0) {
             line(opt, "JSKW_GOT_MATCH(%u) /* %s */", kw_index, keyword);
@@ -346,14 +311,14 @@ generate_letter_switch_r(struct gen_opt *opt,
 }
 
 static void
-generate_letter_switch(struct gen_opt *opt,
+generate_letter_switch(struct gen_opt* opt,
                        unsigned indexes[], unsigned nelem,
                        unsigned current_length)
 {
-    unsigned *columns;
+    unsigned* columns;
     unsigned i;
 
-    columns = (unsigned *) malloc(sizeof(columns[0]) * current_length);
+    columns = (unsigned*) malloc(sizeof(columns[0]) * current_length);
     if (!columns) {
         perror("malloc");
         exit(EXIT_FAILURE);
@@ -367,9 +332,9 @@ generate_letter_switch(struct gen_opt *opt,
 
 
 static void
-generate_switch(struct gen_opt *opt)
+generate_switch(struct gen_opt* opt)
 {
-    unsigned *indexes;
+    unsigned* indexes;
     unsigned nlength;
     unsigned i, current;
     int use_if;
@@ -384,7 +349,7 @@ generate_switch(struct gen_opt *opt)
     }
     line(opt, " */");
 
-    indexes = (unsigned *) malloc(sizeof(indexes[0]) * nelem);
+    indexes = (unsigned*) malloc(sizeof(indexes[0]) * nelem);
     if (!indexes) {
         perror("malloc");
         exit(EXIT_FAILURE);
@@ -430,7 +395,7 @@ generate_switch(struct gen_opt *opt)
     free(indexes);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     struct gen_opt opt;
 

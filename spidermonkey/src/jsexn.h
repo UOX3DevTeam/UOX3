@@ -1,68 +1,57 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
- *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Mozilla Communicator client code, released
- * March 31, 1998.
- *
- * The Initial Developer of the Original Code is
- * Netscape Communications Corporation.
- * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sts=4 et sw=4 tw=99:
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /*
  * JS runtime exception classes.
  */
 
-#ifndef jsexn_h___
-#define jsexn_h___
+#ifndef jsexn_h
+#define jsexn_h
 
-extern js::Class js_ErrorClass;
+#include "jsapi.h"
+#include "NamespaceImports.h"
 
-/*
- * Initialize the exception constructor/prototype hierarchy.
- */
-extern JSObject *
-js_InitExceptionClasses(JSContext *cx, JSObject *obj);
+namespace js {
+class ErrorObject;
+
+JSErrorReport*
+CopyErrorReport(JSContext* cx, JSErrorReport* report);
+
+JSString*
+ComputeStackString(JSContext* cx);
 
 /*
  * Given a JSErrorReport, check to see if there is an exception associated with
  * the error number.  If there is, then create an appropriate exception object,
  * set it as the pending exception, and set the JSREPORT_EXCEPTION flag on the
  * error report.  Exception-aware host error reporters should probably ignore
- * error reports so flagged.  Returns JS_TRUE if an associated exception is
- * found and set, JS_FALSE otherwise.
+ * error reports so flagged.
+ *
+ * Return true if cx->throwing and cx->exception were set.
+ *
+ * This means that:
+ *
+ *   - If the error is successfully converted to an exception and stored in
+ *     cx->exception, the return value is true. This is the "normal", happiest
+ *     case for the caller.
+ *
+ *   - If we try to convert, but fail with OOM or some other error that ends up
+ *     setting cx->throwing to true and setting cx->exception, then we also
+ *     return true (because callers want to treat that case the same way).
+ *     The original error described by *reportp typically won't be reported
+ *     anywhere; instead OOM is reported.
+ *
+ *   - If *reportp is just a warning, or the error code is unrecognized, or if
+ *     we decided to do nothing in order to avoid recursion, then return
+ *     false. In those cases, this error is just being swept under the rug
+ *     unless the caller decides to call CallErrorReporter explicitly.
  */
-extern JSBool
-js_ErrorToException(JSContext *cx, const char *message, JSErrorReport *reportp,
-                    JSErrorCallback callback, void *userRef);
+extern bool
+ErrorToException(JSContext* cx, const char* message, JSErrorReport* reportp,
+                 JSErrorCallback callback, void* userRef);
 
 /*
  * Called if a JS API call to js_Execute or js_InternalCall fails; calls the
@@ -80,14 +69,66 @@ js_ErrorToException(JSContext *cx, const char *message, JSErrorReport *reportp,
  * other contexts may want to use an error reporter that ignores errors with
  * this flag.
  */
-extern JSBool
-js_ReportUncaughtException(JSContext *cx);
+extern bool
+ReportUncaughtException(JSContext* cx);
 
-extern JSErrorReport *
-js_ErrorFromException(JSContext *cx, jsval exn);
+extern JSErrorReport*
+ErrorFromException(JSContext* cx, HandleObject obj);
 
-extern const JSErrorFormatString *
-js_GetLocalizedErrorMessage(JSContext* cx, void *userRef, const char *locale,
-                            const uintN errorNumber);
+/*
+ * Make a copy of errobj parented to cx's compartment's global.
+ *
+ * errobj may be in a different compartment than cx, but it must be an Error
+ * object (not a wrapper of one) and it must not be one of the standard error
+ * prototype objects (errobj->getPrivate() must not be nullptr).
+ */
+extern JSObject*
+CopyErrorObject(JSContext* cx, JS::Handle<ErrorObject*> errobj);
 
-#endif /* jsexn_h___ */
+static_assert(JSEXN_ERR == 0 &&
+              JSProto_Error + JSEXN_INTERNALERR == JSProto_InternalError &&
+              JSProto_Error + JSEXN_EVALERR == JSProto_EvalError &&
+              JSProto_Error + JSEXN_RANGEERR == JSProto_RangeError &&
+              JSProto_Error + JSEXN_REFERENCEERR == JSProto_ReferenceError &&
+              JSProto_Error + JSEXN_SYNTAXERR == JSProto_SyntaxError &&
+              JSProto_Error + JSEXN_TYPEERR == JSProto_TypeError &&
+              JSProto_Error + JSEXN_URIERR == JSProto_URIError &&
+              JSEXN_URIERR + 1 == JSEXN_LIMIT,
+              "GetExceptionProtoKey and ExnTypeFromProtoKey require that "
+              "each corresponding JSExnType and JSProtoKey value be separated "
+              "by the same constant value");
+
+static inline JSProtoKey
+GetExceptionProtoKey(JSExnType exn)
+{
+    MOZ_ASSERT(JSEXN_ERR <= exn);
+    MOZ_ASSERT(exn < JSEXN_LIMIT);
+    return JSProtoKey(JSProto_Error + int(exn));
+}
+
+static inline JSExnType
+ExnTypeFromProtoKey(JSProtoKey key)
+{
+    JSExnType type = static_cast<JSExnType>(key - JSProto_Error);
+    MOZ_ASSERT(type >= JSEXN_ERR);
+    MOZ_ASSERT(type < JSEXN_LIMIT);
+    return type;
+}
+
+class AutoClearPendingException
+{
+    JSContext* cx;
+
+  public:
+    explicit AutoClearPendingException(JSContext* cxArg)
+      : cx(cxArg)
+    { }
+
+    ~AutoClearPendingException() {
+        cx->clearPendingException();
+    }
+};
+
+} // namespace js
+
+#endif /* jsexn_h */

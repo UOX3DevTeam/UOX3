@@ -1,50 +1,14 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*-
- * vim: set ts=8 sw=4 et tw=99 ft=cpp:
- *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Mozilla SpiderMonkey JavaScript 1.9 code, released
- * June 12, 2009.
- *
- * The Initial Developer of the Original Code is
- *   the Mozilla Corporation.
- *
- * Contributor(s):
- *   Dave Herman <dherman@mozilla.com>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sts=4 et sw=4 tw=99:
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /*
  * JS reflection package.
  */
-#ifndef jsreflect_h___
-#define jsreflect_h___
-
-#include <stdlib.h>
-#include "jspubtd.h"
+#ifndef jsreflect_h
+#define jsreflect_h
 
 namespace js {
 
@@ -81,13 +45,11 @@ enum BinaryOperator {
     /* shift */
     BINOP_LSH, BINOP_RSH, BINOP_URSH,
     /* arithmetic */
-    BINOP_PLUS, BINOP_MINUS, BINOP_STAR, BINOP_DIV, BINOP_MOD,
+    BINOP_ADD, BINOP_SUB, BINOP_STAR, BINOP_DIV, BINOP_MOD,
     /* binary */
     BINOP_BITOR, BINOP_BITXOR, BINOP_BITAND,
     /* misc */
     BINOP_IN, BINOP_INSTANCEOF,
-    /* xml */
-    BINOP_DBLDOT,
 
     BINOP_LIMIT
 };
@@ -111,7 +73,6 @@ enum VarDeclKind {
     VARDECL_VAR = 0,
     VARDECL_CONST,
     VARDECL_LET,
-    VARDECL_LET_HEAD,
     VARDECL_LIMIT
 };
 
@@ -120,20 +81,15 @@ enum PropKind {
     PROP_INIT = 0,
     PROP_GETTER,
     PROP_SETTER,
+    PROP_MUTATEPROTO,
     PROP_LIMIT
 };
 
-extern char const *aopNames[];
-extern char const *binopNames[];
-extern char const *unopNames[];
-extern char const *nodeTypeNames[];
+extern char const * const aopNames[];
+extern char const * const binopNames[];
+extern char const * const unopNames[];
+extern char const * const nodeTypeNames[];
 
 } /* namespace js */
 
-extern js::Class js_ReflectClass;
-
-extern JSObject *
-js_InitReflectClass(JSContext *cx, JSObject *obj);
-
-
-#endif /* jsreflect_h___ */
+#endif /* jsreflect_h */

@@ -1,1269 +1,913 @@
 /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
- * vim: set ts=8 sw=4 et tw=99:
- *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is SpiderMonkey JSON.
- *
- * The Initial Developer of the Original Code is
- * Mozilla Corporation.
- * Portions created by the Initial Developer are Copyright (C) 1998-1999
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Robert Sayre <sayrer@gmail.com>
- *   Dave Camp <dcamp@mozilla.com>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
-
-#include <string.h>
-#include "jsapi.h"
-#include "jsarena.h"
-#include "jsarray.h"
-#include "jsatom.h"
-#include "jsbool.h"
-#include "jscntxt.h"
-#include "jsfun.h"
-#include "jsinterp.h"
-#include "jsiter.h"
-#include "jsnum.h"
-#include "jsobj.h"
-#include "jsprf.h"
-#include "jsscan.h"
-#include "jsstr.h"
-#include "jstypes.h"
-#include "jsstdint.h"
-#include "jsutil.h"
-#include "jsxml.h"
-#include "jsvector.h"
+ * vim: set ts=8 sts=4 et sw=4 tw=99:
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "json.h"
 
+#include "mozilla/FloatingPoint.h"
+#include "mozilla/Range.h"
+
+#include "jsarray.h"
+#include "jsatom.h"
+#include "jscntxt.h"
+#include "jsnum.h"
+#include "jsobj.h"
+#include "jsstr.h"
+#include "jstypes.h"
+#include "jsutil.h"
+
+#include "vm/Interpreter.h"
+#include "vm/JSONParser.h"
+#include "vm/StringBuffer.h"
+
 #include "jsatominlines.h"
-#include "jsobjinlines.h"
+#include "jsboolinlines.h"
+
+#include "vm/NativeObject-inl.h"
 
 using namespace js;
 using namespace js::gc;
 
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable:4351)
-#endif
+using mozilla::IsFinite;
+using mozilla::Maybe;
+using mozilla::RangedPtr;
 
-struct JSONParser
+const Class js::JSONClass = {
+    js_JSON_str,
+    JSCLASS_HAS_CACHED_PROTO(JSProto_JSON)
+};
+
+static inline bool
+IsQuoteSpecialCharacter(char16_t c)
 {
-    JSONParser(JSContext *cx)
-     : hexChar(), numHex(), statep(), stateStack(), rootVal(), objectStack(),
-       objectKey(cx), buffer(cx), suppressErrors(false)
+    static_assert('\b' < ' ', "'\\b' must be treated as special below");
+    static_assert('\f' < ' ', "'\\f' must be treated as special below");
+    static_assert('\n' < ' ', "'\\n' must be treated as special below");
+    static_assert('\r' < ' ', "'\\r' must be treated as special below");
+    static_assert('\t' < ' ', "'\\t' must be treated as special below");
+
+    return c == '"' || c == '\\' || c < ' ';
+}
+
+/* ES5 15.12.3 Quote. */
+template <typename CharT>
+static bool
+Quote(StringBuffer& sb, JSLinearString* str)
+{
+    size_t len = str->length();
+
+    /* Step 1. */
+    if (!sb.append('"'))
+        return false;
+
+    /* Step 2. */
+    JS::AutoCheckCannotGC nogc;
+    const RangedPtr<const CharT> buf(str->chars<CharT>(nogc), len);
+    for (size_t i = 0; i < len; ++i) {
+        /* Batch-append maximal character sequences containing no escapes. */
+        size_t mark = i;
+        do {
+            if (IsQuoteSpecialCharacter(buf[i]))
+                break;
+        } while (++i < len);
+        if (i > mark) {
+            if (!sb.appendSubstring(str, mark, i - mark))
+                return false;
+            if (i == len)
+                break;
+        }
+
+        char16_t c = buf[i];
+        if (c == '"' || c == '\\') {
+            if (!sb.append('\\') || !sb.append(c))
+                return false;
+        } else if (c == '\b' || c == '\f' || c == '\n' || c == '\r' || c == '\t') {
+           char16_t abbrev = (c == '\b')
+                         ? 'b'
+                         : (c == '\f')
+                         ? 'f'
+                         : (c == '\n')
+                         ? 'n'
+                         : (c == '\r')
+                         ? 'r'
+                         : 't';
+           if (!sb.append('\\') || !sb.append(abbrev))
+               return false;
+        } else {
+            MOZ_ASSERT(c < ' ');
+            if (!sb.append("\\u00"))
+                return false;
+            MOZ_ASSERT((c >> 4) < 10);
+            uint8_t x = c >> 4, y = c % 16;
+            if (!sb.append(Latin1Char('0' + x)) ||
+                !sb.append(Latin1Char(y < 10 ? '0' + y : 'a' + (y - 10))))
+            {
+                return false;
+            }
+        }
+    }
+
+    /* Steps 3-4. */
+    return sb.append('"');
+}
+
+static bool
+Quote(JSContext* cx, StringBuffer& sb, JSString* str)
+{
+    JSLinearString* linear = str->ensureLinear(cx);
+    if (!linear)
+        return false;
+
+    return linear->hasLatin1Chars()
+           ? Quote<Latin1Char>(sb, linear)
+           : Quote<char16_t>(sb, linear);
+}
+
+namespace {
+
+class StringifyContext
+{
+  public:
+    StringifyContext(JSContext* cx, StringBuffer& sb, const StringBuffer& gap,
+                     HandleObject replacer, const AutoIdVector& propertyList)
+      : sb(sb),
+        gap(gap),
+        replacer(cx, replacer),
+        propertyList(propertyList),
+        depth(0)
     {}
 
-    /* Used while handling \uNNNN in strings */
-    jschar hexChar;
-    uint8 numHex;
-
-    JSONParserState *statep;
-    JSONParserState stateStack[JSON_MAX_DEPTH];
-    Value *rootVal;
-    JSObject *objectStack;
-    js::Vector<jschar, 8> objectKey;
-    js::Vector<jschar, 8> buffer;
-    bool suppressErrors;
+    StringBuffer& sb;
+    const StringBuffer& gap;
+    RootedObject replacer;
+    const AutoIdVector& propertyList;
+    uint32_t depth;
 };
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+} /* anonymous namespace */
 
-Class js_JSONClass = {
-    js_JSON_str,
-    JSCLASS_HAS_CACHED_PROTO(JSProto_JSON),
-    PropertyStub,        /* addProperty */
-    PropertyStub,        /* delProperty */
-    PropertyStub,        /* getProperty */
-    StrictPropertyStub,  /* setProperty */
-    EnumerateStub,
-    ResolveStub,
-    ConvertStub
-};
+static bool Str(JSContext* cx, const Value& v, StringifyContext* scx);
 
-JSBool
-js_json_parse(JSContext *cx, uintN argc, Value *vp)
+static bool
+WriteIndent(JSContext* cx, StringifyContext* scx, uint32_t limit)
 {
-    JSString *s = NULL;
-    Value *argv = vp + 2;
-    AutoValueRooter reviver(cx);
+    if (!scx->gap.empty()) {
+        if (!scx->sb.append('\n'))
+            return false;
 
-    if (!JS_ConvertArguments(cx, argc, Jsvalify(argv), "S / v", &s, reviver.addr()))
-        return JS_FALSE;
-
-    JSLinearString *linearStr = s->ensureLinear(cx);
-    if (!linearStr)
-        return JS_FALSE;
-
-    JSONParser *jp = js_BeginJSONParse(cx, vp);
-    JSBool ok = jp != NULL;
-    if (ok) {
-        const jschar *chars = linearStr->chars();
-        size_t length = linearStr->length();
-        ok = js_ConsumeJSONText(cx, jp, chars, length);
-        ok &= !!js_FinishJSONParse(cx, jp, reviver.value());
+        if (scx->gap.isUnderlyingBufferLatin1()) {
+            for (uint32_t i = 0; i < limit; i++) {
+                if (!scx->sb.append(scx->gap.rawLatin1Begin(), scx->gap.rawLatin1End()))
+                    return false;
+            }
+        } else {
+            for (uint32_t i = 0; i < limit; i++) {
+                if (!scx->sb.append(scx->gap.rawTwoByteBegin(), scx->gap.rawTwoByteEnd()))
+                    return false;
+            }
+        }
     }
+
+    return true;
+}
+
+namespace {
+
+template<typename KeyType>
+class KeyStringifier {
+};
+
+template<>
+class KeyStringifier<uint32_t> {
+  public:
+    static JSString* toString(JSContext* cx, uint32_t index) {
+        return IndexToString(cx, index);
+    }
+};
+
+template<>
+class KeyStringifier<HandleId> {
+  public:
+    static JSString* toString(JSContext* cx, HandleId id) {
+        return IdToString(cx, id);
+    }
+};
+
+} /* anonymous namespace */
+
+/*
+ * ES5 15.12.3 Str, steps 2-4, extracted to enable preprocessing of property
+ * values when stringifying objects in JO.
+ */
+template<typename KeyType>
+static bool
+PreprocessValue(JSContext* cx, HandleObject holder, KeyType key, MutableHandleValue vp, StringifyContext* scx)
+{
+    RootedString keyStr(cx);
+
+    /* Step 2. */
+    if (vp.isObject()) {
+        RootedValue toJSON(cx);
+        RootedObject obj(cx, &vp.toObject());
+        if (!GetProperty(cx, obj, obj, cx->names().toJSON, &toJSON))
+            return false;
+
+        if (IsCallable(toJSON)) {
+            keyStr = KeyStringifier<KeyType>::toString(cx, key);
+            if (!keyStr)
+                return false;
+
+            InvokeArgs args(cx);
+            if (!args.init(1))
+                return false;
+
+            args.setCallee(toJSON);
+            args.setThis(vp);
+            args[0].setString(keyStr);
+
+            if (!Invoke(cx, args))
+                return false;
+            vp.set(args.rval());
+        }
+    }
+
+    /* Step 3. */
+    if (scx->replacer && scx->replacer->isCallable()) {
+        if (!keyStr) {
+            keyStr = KeyStringifier<KeyType>::toString(cx, key);
+            if (!keyStr)
+                return false;
+        }
+
+        InvokeArgs args(cx);
+        if (!args.init(2))
+            return false;
+
+        args.setCallee(ObjectValue(*scx->replacer));
+        args.setThis(ObjectValue(*holder));
+        args[0].setString(keyStr);
+        args[1].set(vp);
+
+        if (!Invoke(cx, args))
+            return false;
+        vp.set(args.rval());
+    }
+
+    /* Step 4. */
+    if (vp.get().isObject()) {
+        RootedObject obj(cx, &vp.get().toObject());
+        if (ObjectClassIs(obj, ESClass_Number, cx)) {
+            double d;
+            if (!ToNumber(cx, vp, &d))
+                return false;
+            vp.setNumber(d);
+        } else if (ObjectClassIs(obj, ESClass_String, cx)) {
+            JSString* str = ToStringSlow<CanGC>(cx, vp);
+            if (!str)
+                return false;
+            vp.setString(str);
+        } else if (ObjectClassIs(obj, ESClass_Boolean, cx)) {
+            if (!Unbox(cx, obj, vp))
+                return false;
+        }
+    }
+
+    return true;
+}
+
+/*
+ * Determines whether a value which has passed by ES5 150.2.3 Str steps 1-4's
+ * gauntlet will result in Str returning |undefined|.  This function is used to
+ * properly omit properties resulting in such values when stringifying objects,
+ * while properly stringifying such properties as null when they're encountered
+ * in arrays.
+ */
+static inline bool
+IsFilteredValue(const Value& v)
+{
+    return v.isUndefined() || v.isSymbol() || IsCallable(v);
+}
+
+/* ES5 15.12.3 JO. */
+static bool
+JO(JSContext* cx, HandleObject obj, StringifyContext* scx)
+{
+    /*
+     * This method implements the JO algorithm in ES5 15.12.3, but:
+     *
+     *   * The algorithm is somewhat reformulated to allow the final string to
+     *     be streamed into a single buffer, rather than be created and copied
+     *     into place incrementally as the ES5 algorithm specifies it.  This
+     *     requires moving portions of the Str call in 8a into this algorithm
+     *     (and in JA as well).
+     */
+
+    /* Steps 1-2, 11. */
+    AutoCycleDetector detect(cx, obj);
+    if (!detect.init())
+        return false;
+    if (detect.foundCycle()) {
+        JS_ReportErrorNumber(cx, GetErrorMessage, nullptr, JSMSG_JSON_CYCLIC_VALUE,
+                             js_object_str);
+        return false;
+    }
+
+    if (!scx->sb.append('{'))
+        return false;
+
+    /* Steps 5-7. */
+    Maybe<AutoIdVector> ids;
+    const AutoIdVector* props;
+    if (scx->replacer && !scx->replacer->isCallable()) {
+        MOZ_ASSERT(IsArray(scx->replacer, cx));
+        props = &scx->propertyList;
+    } else {
+        MOZ_ASSERT_IF(scx->replacer, scx->propertyList.length() == 0);
+        ids.emplace(cx);
+        if (!GetPropertyKeys(cx, obj, JSITER_OWNONLY, ids.ptr()))
+            return false;
+        props = ids.ptr();
+    }
+
+    /* My kingdom for not-quite-initialized-from-the-start references. */
+    const AutoIdVector& propertyList = *props;
+
+    /* Steps 8-10, 13. */
+    bool wroteMember = false;
+    RootedId id(cx);
+    for (size_t i = 0, len = propertyList.length(); i < len; i++) {
+        /*
+         * Steps 8a-8b.  Note that the call to Str is broken up into 1) getting
+         * the property; 2) processing for toJSON, calling the replacer, and
+         * handling boxed Number/String/Boolean objects; 3) filtering out
+         * values which process to |undefined|, and 4) stringifying all values
+         * which pass the filter.
+         */
+        id = propertyList[i];
+        RootedValue outputValue(cx);
+        if (!GetProperty(cx, obj, obj, id, &outputValue))
+            return false;
+        if (!PreprocessValue(cx, obj, HandleId(id), &outputValue, scx))
+            return false;
+        if (IsFilteredValue(outputValue))
+            continue;
+
+        /* Output a comma unless this is the first member to write. */
+        if (wroteMember && !scx->sb.append(','))
+            return false;
+        wroteMember = true;
+
+        if (!WriteIndent(cx, scx, scx->depth))
+            return false;
+
+        JSString* s = IdToString(cx, id);
+        if (!s)
+            return false;
+
+        if (!Quote(cx, scx->sb, s) ||
+            !scx->sb.append(':') ||
+            !(scx->gap.empty() || scx->sb.append(' ')) ||
+            !Str(cx, outputValue, scx))
+        {
+            return false;
+        }
+    }
+
+    if (wroteMember && !WriteIndent(cx, scx, scx->depth - 1))
+        return false;
+
+    return scx->sb.append('}');
+}
+
+/* ES5 15.12.3 JA. */
+static bool
+JA(JSContext* cx, HandleObject obj, StringifyContext* scx)
+{
+    /*
+     * This method implements the JA algorithm in ES5 15.12.3, but:
+     *
+     *   * The algorithm is somewhat reformulated to allow the final string to
+     *     be streamed into a single buffer, rather than be created and copied
+     *     into place incrementally as the ES5 algorithm specifies it.  This
+     *     requires moving portions of the Str call in 8a into this algorithm
+     *     (and in JO as well).
+     */
+
+    /* Steps 1-2, 11. */
+    AutoCycleDetector detect(cx, obj);
+    if (!detect.init())
+        return false;
+    if (detect.foundCycle()) {
+        JS_ReportErrorNumber(cx, GetErrorMessage, nullptr, JSMSG_JSON_CYCLIC_VALUE,
+                             js_object_str);
+        return false;
+    }
+
+    if (!scx->sb.append('['))
+        return false;
+
+    /* Step 6. */
+    uint32_t length;
+    if (!GetLengthProperty(cx, obj, &length))
+        return false;
+
+    /* Steps 7-10. */
+    if (length != 0) {
+        /* Steps 4, 10b(i). */
+        if (!WriteIndent(cx, scx, scx->depth))
+            return false;
+
+        /* Steps 7-10. */
+        RootedValue outputValue(cx);
+        for (uint32_t i = 0; i < length; i++) {
+            /*
+             * Steps 8a-8c.  Again note how the call to the spec's Str method
+             * is broken up into getting the property, running it past toJSON
+             * and the replacer and maybe unboxing, and interpreting some
+             * values as |null| in separate steps.
+             */
+            if (!GetElement(cx, obj, obj, i, &outputValue))
+                return false;
+            if (!PreprocessValue(cx, obj, i, &outputValue, scx))
+                return false;
+            if (IsFilteredValue(outputValue)) {
+                if (!scx->sb.append("null"))
+                    return false;
+            } else {
+                if (!Str(cx, outputValue, scx))
+                    return false;
+            }
+
+            /* Steps 3, 4, 10b(i). */
+            if (i < length - 1) {
+                if (!scx->sb.append(','))
+                    return false;
+                if (!WriteIndent(cx, scx, scx->depth))
+                    return false;
+            }
+        }
+
+        /* Step 10(b)(iii). */
+        if (!WriteIndent(cx, scx, scx->depth - 1))
+            return false;
+    }
+
+    return scx->sb.append(']');
+}
+
+static bool
+Str(JSContext* cx, const Value& v, StringifyContext* scx)
+{
+    /* Step 11 must be handled by the caller. */
+    MOZ_ASSERT(!IsFilteredValue(v));
+
+    JS_CHECK_RECURSION(cx, return false);
+
+    /*
+     * This method implements the Str algorithm in ES5 15.12.3, but:
+     *
+     *   * We move property retrieval (step 1) into callers to stream the
+     *     stringification process and avoid constantly copying strings.
+     *   * We move the preprocessing in steps 2-4 into a helper function to
+     *     allow both JO and JA to use this method.  While JA could use it
+     *     without this move, JO must omit any |undefined|-valued property per
+     *     so it can't stream out a value using the Str method exactly as
+     *     defined by ES5.
+     *   * We move step 11 into callers, again to ease streaming.
+     */
+
+    /* Step 8. */
+    if (v.isString())
+        return Quote(cx, scx->sb, v.toString());
+
+    /* Step 5. */
+    if (v.isNull())
+        return scx->sb.append("null");
+
+    /* Steps 6-7. */
+    if (v.isBoolean())
+        return v.toBoolean() ? scx->sb.append("true") : scx->sb.append("false");
+
+    /* Step 9. */
+    if (v.isNumber()) {
+        if (v.isDouble()) {
+            if (!IsFinite(v.toDouble()))
+                return scx->sb.append("null");
+        }
+
+        return NumberValueToStringBuffer(cx, v, scx->sb);
+    }
+
+    /* Step 10. */
+    MOZ_ASSERT(v.isObject());
+    RootedObject obj(cx, &v.toObject());
+
+    scx->depth++;
+    bool ok;
+    if (IsArray(obj, cx))
+        ok = JA(cx, obj, scx);
+    else
+        ok = JO(cx, obj, scx);
+    scx->depth--;
 
     return ok;
 }
 
-JSBool
-js_json_stringify(JSContext *cx, uintN argc, Value *vp)
+/* ES5 15.12.3. */
+bool
+js::Stringify(JSContext* cx, MutableHandleValue vp, JSObject* replacer_, Value space_,
+              StringBuffer& sb)
 {
-    Value *argv = vp + 2;
-    AutoValueRooter space(cx);
-    AutoObjectRooter replacer(cx);
+    RootedObject replacer(cx, replacer_);
+    RootedValue space(cx, space_);
 
-    // Must throw an Error if there isn't a first arg
-    if (!JS_ConvertArguments(cx, argc, Jsvalify(argv), "v / o v", vp, replacer.addr(), space.addr()))
-        return JS_FALSE;
+    /* Step 4. */
+    AutoIdVector propertyList(cx);
+    if (replacer) {
+        if (replacer->isCallable()) {
+            /* Step 4a(i): use replacer to transform values.  */
+        } else if (IsArray(replacer, cx)) {
+            /*
+             * Step 4b: The spec algorithm is unhelpfully vague about the exact
+             * steps taken when the replacer is an array, regarding the exact
+             * sequence of [[Get]] calls for the array's elements, when its
+             * overall length is calculated, whether own or own plus inherited
+             * properties are considered, and so on.  A rewrite was proposed in
+             * <https://mail.mozilla.org/pipermail/es5-discuss/2011-April/003976.html>,
+             * whose steps are copied below, and which are implemented here.
+             *
+             * i.   Let PropertyList be an empty internal List.
+             * ii.  Let len be the result of calling the [[Get]] internal
+             *      method of replacer with the argument "length".
+             * iii. Let i be 0.
+             * iv.  While i < len:
+             *      1. Let item be undefined.
+             *      2. Let v be the result of calling the [[Get]] internal
+             *         method of replacer with the argument ToString(i).
+             *      3. If Type(v) is String then let item be v.
+             *      4. Else if Type(v) is Number then let item be ToString(v).
+             *      5. Else if Type(v) is Object then
+             *         a. If the [[Class]] internal property of v is "String"
+             *            or "Number" then let item be ToString(v).
+             *      6. If item is not undefined and item is not currently an
+             *         element of PropertyList then,
+             *         a. Append item to the end of PropertyList.
+             *      7. Let i be i + 1.
+             */
+
+            /* Step 4b(ii). */
+            uint32_t len;
+            if (!GetLengthProperty(cx, replacer, &len))
+                return false;
+            if (replacer->is<ArrayObject>() && !replacer->isIndexed())
+                len = Min(len, replacer->as<ArrayObject>().getDenseInitializedLength());
+
+            // Cap the initial size to a moderately small value.  This avoids
+            // ridiculous over-allocation if an array with bogusly-huge length
+            // is passed in.  If we end up having to add elements past this
+            // size, the set will naturally resize to accommodate them.
+            const uint32_t MaxInitialSize = 1024;
+            HashSet<jsid, JsidHasher> idSet(cx);
+            if (!idSet.init(Min(len, MaxInitialSize)))
+                return false;
+
+            /* Step 4b(iii). */
+            uint32_t i = 0;
+
+            /* Step 4b(iv). */
+            RootedValue v(cx);
+            for (; i < len; i++) {
+                if (!CheckForInterrupt(cx))
+                    return false;
+
+                /* Step 4b(iv)(2). */
+                if (!GetElement(cx, replacer, replacer, i, &v))
+                    return false;
+
+                RootedId id(cx);
+                if (v.isNumber()) {
+                    /* Step 4b(iv)(4). */
+                    int32_t n;
+                    if (v.isNumber() && ValueFitsInInt32(v, &n) && INT_FITS_IN_JSID(n)) {
+                        id = INT_TO_JSID(n);
+                    } else {
+                        if (!ValueToId<CanGC>(cx, v, &id))
+                            return false;
+                    }
+                } else if (v.isString() ||
+                           IsObjectWithClass(v, ESClass_String, cx) ||
+                           IsObjectWithClass(v, ESClass_Number, cx))
+                {
+                    /* Step 4b(iv)(3), 4b(iv)(5). */
+                    if (!ValueToId<CanGC>(cx, v, &id))
+                        return false;
+                } else {
+                    continue;
+                }
+
+                /* Step 4b(iv)(6). */
+                HashSet<jsid, JsidHasher>::AddPtr p = idSet.lookupForAdd(id);
+                if (!p) {
+                    /* Step 4b(iv)(6)(a). */
+                    if (!idSet.add(p, id) || !propertyList.append(id))
+                        return false;
+                }
+            }
+        } else {
+            replacer = nullptr;
+        }
+    }
+
+    /* Step 5. */
+    if (space.isObject()) {
+        RootedObject spaceObj(cx, &space.toObject());
+        if (ObjectClassIs(spaceObj, ESClass_Number, cx)) {
+            double d;
+            if (!ToNumber(cx, space, &d))
+                return false;
+            space = NumberValue(d);
+        } else if (ObjectClassIs(spaceObj, ESClass_String, cx)) {
+            JSString* str = ToStringSlow<CanGC>(cx, space);
+            if (!str)
+                return false;
+            space = StringValue(str);
+        }
+    }
+
+    StringBuffer gap(cx);
+
+    if (space.isNumber()) {
+        /* Step 6. */
+        double d;
+        JS_ALWAYS_TRUE(ToInteger(cx, space, &d));
+        d = Min(10.0, d);
+        if (d >= 1 && !gap.appendN(' ', uint32_t(d)))
+            return false;
+    } else if (space.isString()) {
+        /* Step 7. */
+        JSLinearString* str = space.toString()->ensureLinear(cx);
+        if (!str)
+            return false;
+        size_t len = Min(size_t(10), str->length());
+        if (!gap.appendSubstring(str, 0, len))
+            return false;
+    } else {
+        /* Step 8. */
+        MOZ_ASSERT(gap.empty());
+    }
+
+    /* Step 9. */
+    RootedPlainObject wrapper(cx, NewBuiltinClassInstance<PlainObject>(cx));
+    if (!wrapper)
+        return false;
+
+    /* Step 10. */
+    RootedId emptyId(cx, NameToId(cx->names().empty));
+    if (!NativeDefineProperty(cx, wrapper, emptyId, vp, nullptr, nullptr, JSPROP_ENUMERATE))
+        return false;
+
+    /* Step 11. */
+    StringifyContext scx(cx, sb, gap, replacer, propertyList);
+    if (!PreprocessValue(cx, wrapper, HandleId(emptyId), vp, &scx))
+        return false;
+    if (IsFilteredValue(vp))
+        return true;
+
+    return Str(cx, vp, &scx);
+}
+
+/* ES5 15.12.2 Walk. */
+static bool
+Walk(JSContext* cx, HandleObject holder, HandleId name, HandleValue reviver, MutableHandleValue vp)
+{
+    JS_CHECK_RECURSION(cx, return false);
+
+    /* Step 1. */
+    RootedValue val(cx);
+    if (!GetProperty(cx, holder, holder, name, &val))
+        return false;
+
+    /* Step 2. */
+    if (val.isObject()) {
+        RootedObject obj(cx, &val.toObject());
+
+        if (IsArray(obj, cx)) {
+            /* Step 2a(ii). */
+            uint32_t length;
+            if (!GetLengthProperty(cx, obj, &length))
+                return false;
+
+            /* Step 2a(i), 2a(iii-iv). */
+            RootedId id(cx);
+            RootedValue newElement(cx);
+            for (uint32_t i = 0; i < length; i++) {
+                if (!IndexToId(cx, i, &id))
+                    return false;
+
+                /* Step 2a(iii)(1). */
+                if (!Walk(cx, obj, id, reviver, &newElement))
+                    return false;
+
+                if (newElement.isUndefined()) {
+                    /* Step 2a(iii)(2). */
+                    ObjectOpResult ignored;
+                    if (!DeleteProperty(cx, obj, id, ignored))
+                        return false;
+                } else {
+                    /* Step 2a(iii)(3). */
+                    // XXX This definition should ignore success/failure, when
+                    //     our property-definition APIs indicate that.
+                    if (!DefineProperty(cx, obj, id, newElement))
+                        return false;
+                }
+            }
+        } else {
+            /* Step 2b(i). */
+            AutoIdVector keys(cx);
+            if (!GetPropertyKeys(cx, obj, JSITER_OWNONLY, &keys))
+                return false;
+
+            /* Step 2b(ii). */
+            RootedId id(cx);
+            RootedValue newElement(cx);
+            for (size_t i = 0, len = keys.length(); i < len; i++) {
+                /* Step 2b(ii)(1). */
+                id = keys[i];
+                if (!Walk(cx, obj, id, reviver, &newElement))
+                    return false;
+
+                if (newElement.isUndefined()) {
+                    /* Step 2b(ii)(2). */
+                    ObjectOpResult ignored;
+                    if (!DeleteProperty(cx, obj, id, ignored))
+                        return false;
+                } else {
+                    /* Step 2b(ii)(3). */
+                    // XXX This definition should ignore success/failure, when
+                    //     our property-definition APIs indicate that.
+                    if (!DefineProperty(cx, obj, id, newElement))
+                        return false;
+                }
+            }
+        }
+    }
+
+    /* Step 3. */
+    RootedString key(cx, IdToString(cx, name));
+    if (!key)
+        return false;
+
+    InvokeArgs args(cx);
+    if (!args.init(2))
+        return false;
+
+    args.setCallee(reviver);
+    args.setThis(ObjectValue(*holder));
+    args[0].setString(key);
+    args[1].set(val);
+
+    if (!Invoke(cx, args))
+        return false;
+    vp.set(args.rval());
+    return true;
+}
+
+static bool
+Revive(JSContext* cx, HandleValue reviver, MutableHandleValue vp)
+{
+    RootedPlainObject obj(cx, NewBuiltinClassInstance<PlainObject>(cx));
+    if (!obj)
+        return false;
+
+    if (!DefineProperty(cx, obj, cx->names().empty, vp))
+        return false;
+
+    Rooted<jsid> id(cx, NameToId(cx->names().empty));
+    return Walk(cx, obj, id, reviver, vp);
+}
+
+template <typename CharT>
+bool
+js::ParseJSONWithReviver(JSContext* cx, const mozilla::Range<const CharT> chars, HandleValue reviver,
+                         MutableHandleValue vp)
+{
+    /* 15.12.2 steps 2-3. */
+    JSONParser<CharT> parser(cx, chars);
+    if (!parser.parse(vp))
+        return false;
+
+    /* 15.12.2 steps 4-5. */
+    if (IsCallable(reviver))
+        return Revive(cx, reviver, vp);
+    return true;
+}
+
+template bool
+js::ParseJSONWithReviver(JSContext* cx, const mozilla::Range<const Latin1Char> chars,
+                         HandleValue reviver, MutableHandleValue vp);
+
+template bool
+js::ParseJSONWithReviver(JSContext* cx, const mozilla::Range<const char16_t> chars, HandleValue reviver,
+                         MutableHandleValue vp);
+
+#if JS_HAS_TOSOURCE
+static bool
+json_toSource(JSContext* cx, unsigned argc, Value* vp)
+{
+    CallArgs args = CallArgsFromVp(argc, vp);
+    args.rval().setString(cx->names().JSON);
+    return true;
+}
+#endif
+
+/* ES5 15.12.2. */
+static bool
+json_parse(JSContext* cx, unsigned argc, Value* vp)
+{
+    CallArgs args = CallArgsFromVp(argc, vp);
+
+    /* Step 1. */
+    JSString* str = (args.length() >= 1)
+                    ? ToString<CanGC>(cx, args[0])
+                    : cx->names().undefined;
+    if (!str)
+        return false;
+
+    JSLinearString* linear = str->ensureLinear(cx);
+    if (!linear)
+        return false;
+
+    AutoStableStringChars linearChars(cx);
+    if (!linearChars.init(cx, linear))
+        return false;
+
+    HandleValue reviver = args.get(1);
+
+    /* Steps 2-5. */
+    return linearChars.isLatin1()
+           ? ParseJSONWithReviver(cx, linearChars.latin1Range(), reviver, args.rval())
+           : ParseJSONWithReviver(cx, linearChars.twoByteRange(), reviver, args.rval());
+}
+
+/* ES5 15.12.3. */
+bool
+json_stringify(JSContext* cx, unsigned argc, Value* vp)
+{
+    CallArgs args = CallArgsFromVp(argc, vp);
+    RootedObject replacer(cx, args.get(1).isObject() ? &args[1].toObject() : nullptr);
+    RootedValue value(cx, args.get(0));
+    RootedValue space(cx, args.get(2));
 
     StringBuffer sb(cx);
-
-    if (!js_Stringify(cx, vp, replacer.object(), space.value(), sb))
-        return JS_FALSE;
+    if (!Stringify(cx, &value, replacer, space, sb))
+        return false;
 
     // XXX This can never happen to nsJSON.cpp, but the JSON object
     // needs to support returning undefined. So this is a little awkward
     // for the API, because we want to support streaming writers.
     if (!sb.empty()) {
-        JSString *str = sb.finishString();
+        JSString* str = sb.finishString();
         if (!str)
-            return JS_FALSE;
-        vp->setString(str);
-    } else {
-        vp->setUndefined();
-    }
-
-    return JS_TRUE;
-}
-
-JSBool
-js_TryJSON(JSContext *cx, Value *vp)
-{
-    // Checks whether the return value implements toJSON()
-    JSBool ok = JS_TRUE;
-
-    if (vp->isObject()) {
-        JSObject *obj = &vp->toObject();
-        ok = js_TryMethod(cx, obj, cx->runtime->atomState.toJSONAtom, 0, NULL, vp);
-    }
-
-    return ok;
-}
-
-
-static const char quote = '\"';
-static const char backslash = '\\';
-static const char unicodeEscape[] = "\\u00";
-
-static JSBool
-write_string(JSContext *cx, StringBuffer &sb, const jschar *buf, uint32 len)
-{
-    if (!sb.append(quote))
-        return JS_FALSE;
-
-    uint32 mark = 0;
-    uint32 i;
-    for (i = 0; i < len; ++i) {
-        if (buf[i] == quote || buf[i] == backslash) {
-            if (!sb.append(&buf[mark], i - mark) || !sb.append(backslash) ||
-                !sb.append(buf[i])) {
-                return JS_FALSE;
-            }
-            mark = i + 1;
-        } else if (buf[i] <= 31 || buf[i] == 127) {
-            if (!sb.append(&buf[mark], i - mark) ||
-                !sb.append(unicodeEscape)) {
-                return JS_FALSE;
-            }
-            char ubuf[3];
-            size_t len = JS_snprintf(ubuf, sizeof(ubuf), "%.2x", buf[i]);
-            JS_ASSERT(len == 2);
-            jschar wbuf[3];
-            size_t wbufSize = JS_ARRAY_LENGTH(wbuf);
-            if (!js_InflateStringToBuffer(cx, ubuf, len, wbuf, &wbufSize) ||
-                !sb.append(wbuf, wbufSize)) {
-                return JS_FALSE;
-            }
-            mark = i + 1;
-        }
-    }
-
-    if (mark < len && !sb.append(&buf[mark], len - mark))
-        return JS_FALSE;
-
-    return sb.append(quote);
-}
-
-class StringifyContext
-{
-public:
-    StringifyContext(JSContext *cx, StringBuffer &sb, JSObject *replacer)
-    : sb(sb), gap(cx), replacer(replacer), depth(0), objectStack(cx)
-    {}
-
-    bool initializeGap(JSContext *cx, const Value &space) {
-        AutoValueRooter gapValue(cx, space);
-
-        if (space.isObject()) {
-            JSObject &obj = space.toObject();
-            Class *clasp = obj.getClass();
-            if (clasp == &js_NumberClass || clasp == &js_StringClass)
-                *gapValue.addr() = obj.getPrimitiveThis();
-        }
-
-        if (gapValue.value().isString()) {
-            if (!ValueToStringBuffer(cx, gapValue.value(), gap))
-                return false;
-            if (gap.length() > 10)
-                gap.resize(10);
-        } else if (gapValue.value().isNumber()) {
-            jsdouble d = gapValue.value().isInt32()
-                         ? gapValue.value().toInt32()
-                         : js_DoubleToInteger(gapValue.value().toDouble());
-            d = JS_MIN(10, d);
-            if (d >= 1 && !gap.appendN(' ', uint32(d)))
-                return false;
-        }
-
-        return true;
-    }
-
-    bool initializeStack() {
-        return objectStack.init(16);
-    }
-
-#ifdef DEBUG
-    ~StringifyContext() { JS_ASSERT(objectStack.empty()); }
-#endif
-
-    StringBuffer &sb;
-    StringBuffer gap;
-    JSObject *replacer;
-    uint32 depth;
-    HashSet<JSObject *> objectStack;
-};
-
-static JSBool CallReplacerFunction(JSContext *cx, jsid id, JSObject *holder,
-                                   StringifyContext *scx, Value *vp);
-static JSBool Str(JSContext *cx, jsid id, JSObject *holder,
-                  StringifyContext *scx, Value *vp, bool callReplacer = true);
-
-static JSBool
-WriteIndent(JSContext *cx, StringifyContext *scx, uint32 limit)
-{
-    if (!scx->gap.empty()) {
-        if (!scx->sb.append('\n'))
-            return JS_FALSE;
-        for (uint32 i = 0; i < limit; i++) {
-            if (!scx->sb.append(scx->gap.begin(), scx->gap.end()))
-                return JS_FALSE;
-        }
-    }
-
-    return JS_TRUE;
-}
-
-class CycleDetector
-{
-  public:
-    CycleDetector(StringifyContext *scx, JSObject *obj)
-      : objectStack(scx->objectStack), obj(obj) {
-    }
-
-    bool init(JSContext *cx) {
-        HashSet<JSObject *>::AddPtr ptr = objectStack.lookupForAdd(obj);
-        if (ptr) {
-            JS_ReportErrorNumber(cx, js_GetErrorMessage, NULL, JSMSG_CYCLIC_VALUE, js_object_str);
             return false;
-        }
-        return objectStack.add(ptr, obj);
+        args.rval().setString(str);
+    } else {
+        args.rval().setUndefined();
     }
 
-    ~CycleDetector() {
-        objectStack.remove(obj);
-    }
-
-  private:
-    HashSet<JSObject *> &objectStack;
-    JSObject *const obj;
-};
-
-static JSBool
-JO(JSContext *cx, Value *vp, StringifyContext *scx)
-{
-    JSObject *obj = &vp->toObject();
-
-    CycleDetector detect(scx, obj);
-    if (!detect.init(cx))
-        return JS_FALSE;
-
-    if (!scx->sb.append('{'))
-        return JS_FALSE;
-
-    Value vec[3] = { NullValue(), NullValue(), NullValue() };
-    AutoArrayRooter tvr(cx, JS_ARRAY_LENGTH(vec), vec);
-    Value& outputValue = vec[0];
-    Value& whitelistElement = vec[1];
-    AutoIdRooter idr(cx);
-    jsid& id = *idr.addr();
-
-    Value *keySource = vp;
-    bool usingWhitelist = false;
-
-    // if the replacer is an array, we use the keys from it
-    if (scx->replacer && JS_IsArrayObject(cx, scx->replacer)) {
-        usingWhitelist = true;
-        vec[2].setObject(*scx->replacer);
-        keySource = &vec[2];
-    }
-
-    JSBool memberWritten = JS_FALSE;
-    AutoIdVector props(cx);
-    if (!GetPropertyNames(cx, &keySource->toObject(), JSITER_OWNONLY, &props))
-        return JS_FALSE;
-
-    for (size_t i = 0, len = props.length(); i < len; i++) {
-        outputValue.setUndefined();
-
-        if (!usingWhitelist) {
-            if (!js_ValueToStringId(cx, IdToValue(props[i]), &id))
-                return JS_FALSE;
-        } else {
-            // skip non-index properties
-            jsuint index = 0;
-            if (!js_IdIsIndex(props[i], &index))
-                continue;
-
-            if (!scx->replacer->getProperty(cx, props[i], &whitelistElement))
-                return JS_FALSE;
-
-            if (!js_ValueToStringId(cx, whitelistElement, &id))
-                return JS_FALSE;
-        }
-
-        // We should have a string id by this point. Either from 
-        // JS_Enumerate's id array, or by converting an element
-        // of the whitelist.
-        JS_ASSERT(JSID_IS_ATOM(id));
-
-        if (!JS_GetPropertyById(cx, obj, id, Jsvalify(&outputValue)))
-            return JS_FALSE;
-
-        if (outputValue.isObjectOrNull() && !js_TryJSON(cx, &outputValue))
-            return JS_FALSE;
-
-        // call this here, so we don't write out keys if the replacer function
-        // wants to elide the value.
-        if (!CallReplacerFunction(cx, id, obj, scx, &outputValue))
-            return JS_FALSE;
-
-        JSType type = JS_TypeOfValue(cx, Jsvalify(outputValue));
-
-        // elide undefined values and functions and XML
-        if (outputValue.isUndefined() || type == JSTYPE_FUNCTION || type == JSTYPE_XML)
-            continue;
-
-        // output a comma unless this is the first member to write
-        if (memberWritten && !scx->sb.append(','))
-            return JS_FALSE;
-        memberWritten = JS_TRUE;
-
-        if (!WriteIndent(cx, scx, scx->depth))
-            return JS_FALSE;
-
-        // Be careful below, this string is weakly rooted
-        JSString *s = js_ValueToString(cx, IdToValue(id));
-        if (!s)
-            return JS_FALSE;
-
-        size_t length = s->length();
-        const jschar *chars = s->getChars(cx);
-        if (!chars)
-            return JS_FALSE;
-
-        if (!write_string(cx, scx->sb, chars, length) ||
-            !scx->sb.append(':') ||
-            !(scx->gap.empty() || scx->sb.append(' ')) ||
-            !Str(cx, id, obj, scx, &outputValue, true)) {
-            return JS_FALSE;
-        }
-    }
-
-    if (memberWritten && !WriteIndent(cx, scx, scx->depth - 1))
-        return JS_FALSE;
-
-    return scx->sb.append('}');
-}
-
-static JSBool
-JA(JSContext *cx, Value *vp, StringifyContext *scx)
-{
-    JSObject *obj = &vp->toObject();
-
-    CycleDetector detect(scx, obj);
-    if (!detect.init(cx))
-        return JS_FALSE;
-
-    if (!scx->sb.append('['))
-        return JS_FALSE;
-
-    jsuint length;
-    if (!js_GetLengthProperty(cx, obj, &length))
-        return JS_FALSE;
-
-    if (length != 0 && !WriteIndent(cx, scx, scx->depth))
-        return JS_FALSE;
-
-    AutoValueRooter outputValue(cx);
-
-    jsid id;
-    jsuint i;
-    for (i = 0; i < length; i++) {
-        id = INT_TO_JSID(i);
-
-        if (!obj->getProperty(cx, id, outputValue.addr()))
-            return JS_FALSE;
-
-        if (!Str(cx, id, obj, scx, outputValue.addr()))
-            return JS_FALSE;
-
-        if (outputValue.value().isUndefined()) {
-            if (!scx->sb.append("null"))
-                return JS_FALSE;
-        }
-
-        if (i < length - 1) {
-            if (!scx->sb.append(','))
-                return JS_FALSE;
-            if (!WriteIndent(cx, scx, scx->depth))
-                return JS_FALSE;
-        }
-    }
-
-    if (length != 0 && !WriteIndent(cx, scx, scx->depth - 1))
-        return JS_FALSE;
-
-    return scx->sb.append(']');
-}
-
-static JSBool
-CallReplacerFunction(JSContext *cx, jsid id, JSObject *holder, StringifyContext *scx, Value *vp)
-{
-    if (scx->replacer && scx->replacer->isCallable()) {
-        Value vec[2] = { IdToValue(id), *vp};
-        if (!JS_CallFunctionValue(cx, holder, OBJECT_TO_JSVAL(scx->replacer),
-                                  2, Jsvalify(vec), Jsvalify(vp))) {
-            return JS_FALSE;
-        }
-    }
-
-    return JS_TRUE;
-}
-
-static JSBool
-Str(JSContext *cx, jsid id, JSObject *holder, StringifyContext *scx, Value *vp, bool callReplacer)
-{
-    JS_CHECK_RECURSION(cx, return JS_FALSE);
-
-    if (vp->isObject() && !js_TryJSON(cx, vp))
-        return JS_FALSE;
-
-    if (callReplacer && !CallReplacerFunction(cx, id, holder, scx, vp))
-        return JS_FALSE;
-
-    // catches string and number objects with no toJSON
-    if (vp->isObject()) {
-        JSObject *obj = &vp->toObject();
-        Class *clasp = obj->getClass();
-        if (clasp == &js_StringClass || clasp == &js_NumberClass)
-            *vp = obj->getPrimitiveThis();
-    }
-
-    if (vp->isString()) {
-        JSString *str = vp->toString();
-        size_t length = str->length();
-        const jschar *chars = str->getChars(cx);
-        if (!chars)
-            return JS_FALSE;
-        return write_string(cx, scx->sb, chars, length);
-    }
-
-    if (vp->isNull())
-        return scx->sb.append("null");
-
-    if (vp->isBoolean())
-        return vp->toBoolean() ? scx->sb.append("true") : scx->sb.append("false");
-
-    if (vp->isNumber()) {
-        if (vp->isDouble()) {
-            jsdouble d = vp->toDouble();
-            if (!JSDOUBLE_IS_FINITE(d))
-                return scx->sb.append("null");
-        }
-
-        StringBuffer sb(cx);
-        if (!NumberValueToStringBuffer(cx, *vp, sb))
-            return JS_FALSE;
-
-        return scx->sb.append(sb.begin(), sb.length());
-    }
-
-    if (vp->isObject() && !IsFunctionObject(*vp) && !IsXML(*vp)) {
-        JSBool ok;
-
-        scx->depth++;
-        ok = (JS_IsArrayObject(cx, &vp->toObject()) ? JA : JO)(cx, vp, scx);
-        scx->depth--;
-
-        return ok;
-    }
-
-    vp->setUndefined();
-    return JS_TRUE;
-}
-
-JSBool
-js_Stringify(JSContext *cx, Value *vp, JSObject *replacer, const Value &space,
-             StringBuffer &sb)
-{
-    StringifyContext scx(cx, sb, replacer);
-    if (!scx.initializeGap(cx, space) || !scx.initializeStack())
-        return JS_FALSE;
-
-    JSObject *obj = NewBuiltinClassInstance(cx, &js_ObjectClass);
-    if (!obj)
-        return JS_FALSE;
-
-    AutoObjectRooter tvr(cx, obj);
-    if (!obj->defineProperty(cx, ATOM_TO_JSID(cx->runtime->atomState.emptyAtom),
-                             *vp, NULL, NULL, JSPROP_ENUMERATE)) {
-        return JS_FALSE;
-    }
-
-    return Str(cx, ATOM_TO_JSID(cx->runtime->atomState.emptyAtom), obj, &scx, vp);
-}
-
-// helper to determine whether a character could be part of a number
-static JSBool IsNumChar(jschar c)
-{
-    return ((c <= '9' && c >= '0') || c == '.' || c == '-' || c == '+' || c == 'e' || c == 'E');
-}
-
-static JSBool HandleDataString(JSContext *cx, JSONParser *jp);
-static JSBool HandleDataKeyString(JSContext *cx, JSONParser *jp);
-static JSBool HandleDataNumber(JSContext *cx, JSONParser *jp);
-static JSBool HandleDataKeyword(JSContext *cx, JSONParser *jp);
-static JSBool PopState(JSContext *cx, JSONParser *jp);
-
-static bool
-Walk(JSContext *cx, jsid id, JSObject *holder, const Value &reviver, Value *vp)
-{
-    JS_CHECK_RECURSION(cx, return false);
-
-    if (!holder->getProperty(cx, id, vp))
-        return false;
-
-    JSObject *obj;
-
-    if (vp->isObject() && !(obj = &vp->toObject())->isCallable()) {
-        AutoValueRooter propValue(cx);
-
-        if(obj->isArray()) {
-            jsuint length = 0;
-            if (!js_GetLengthProperty(cx, obj, &length))
-                return false;
-
-            for (jsuint i = 0; i < length; i++) {
-                jsid index;
-                if (!js_IndexToId(cx, i, &index))
-                    return false;
-
-                if (!Walk(cx, index, obj, reviver, propValue.addr()))
-                    return false;
-
-                if (!obj->defineProperty(cx, index, propValue.value(), NULL, NULL, JSPROP_ENUMERATE))
-                    return false;
-            }
-        } else {
-            AutoIdVector props(cx);
-            if (!GetPropertyNames(cx, obj, JSITER_OWNONLY, &props))
-                return false;
-
-            for (size_t i = 0, len = props.length(); i < len; i++) {
-                jsid idName = props[i];
-                if (!Walk(cx, idName, obj, reviver, propValue.addr()))
-                    return false;
-                if (propValue.value().isUndefined()) {
-                    if (!js_DeleteProperty(cx, obj, idName, propValue.addr(), false))
-                        return false;
-                } else {
-                    if (!obj->defineProperty(cx, idName, propValue.value(), NULL, NULL,
-                                             JSPROP_ENUMERATE)) {
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-
-    // return reviver.call(holder, key, value);
-    const Value &value = *vp;
-    JSString *key = js_ValueToString(cx, IdToValue(id));
-    if (!key)
-        return false;
-
-    Value vec[2] = { StringValue(key), value };
-    Value reviverResult;
-    if (!JS_CallFunctionValue(cx, holder, Jsvalify(reviver),
-                              2, Jsvalify(vec), Jsvalify(&reviverResult))) {
-        return false;
-    }
-
-    *vp = reviverResult;
     return true;
 }
 
-static JSBool
-JSONParseError(JSONParser *jp, JSContext *cx)
-{
-    if (!jp->suppressErrors)
-        JS_ReportErrorNumber(cx, js_GetErrorMessage, NULL, JSMSG_JSON_BAD_PARSE);
-    return JS_FALSE;
-}
-
-static bool
-Revive(JSContext *cx, const Value &reviver, Value *vp)
-{
-
-    JSObject *obj = NewBuiltinClassInstance(cx, &js_ObjectClass);
-    if (!obj)
-        return false;
-
-    AutoObjectRooter tvr(cx, obj);
-    if (!obj->defineProperty(cx, ATOM_TO_JSID(cx->runtime->atomState.emptyAtom),
-                             *vp, NULL, NULL, JSPROP_ENUMERATE)) {
-        return false;
-    }
-
-    return Walk(cx, ATOM_TO_JSID(cx->runtime->atomState.emptyAtom), obj, reviver, vp);
-}
-
-JSONParser *
-js_BeginJSONParse(JSContext *cx, Value *rootVal, bool suppressErrors /*= false*/)
-{
-    if (!cx)
-        return NULL;
-
-    JSObject *arr = NewDenseEmptyArray(cx);
-    if (!arr)
-        return NULL;
-
-    JSONParser *jp = cx->create<JSONParser>(cx);
-    if (!jp)
-        return NULL;
-
-    jp->objectStack = arr;
-    if (!JS_AddNamedObjectRoot(cx, &jp->objectStack, "JSON parse stack"))
-        goto bad;
-
-    jp->statep = jp->stateStack;
-    *jp->statep = JSON_PARSE_STATE_INIT;
-    jp->rootVal = rootVal;
-    jp->suppressErrors = suppressErrors;
-
-    return jp;
-
-bad:
-    js_FinishJSONParse(cx, jp, NullValue());
-    return NULL;
-}
-
-bool
-js_FinishJSONParse(JSContext *cx, JSONParser *jp, const Value &reviver)
-{
-    if (!jp)
-        return true;
-
-    JSBool early_ok = JS_TRUE;
-
-    // Check for unprocessed primitives at the root. This doesn't happen for
-    // strings because a closing quote triggers value processing.
-    if ((jp->statep - jp->stateStack) == 1) {
-        if (*jp->statep == JSON_PARSE_STATE_KEYWORD) {
-            early_ok = HandleDataKeyword(cx, jp);
-            if (early_ok)
-                PopState(cx, jp);
-        } else if (*jp->statep == JSON_PARSE_STATE_NUMBER) {
-            early_ok = HandleDataNumber(cx, jp);
-            if (early_ok)
-                PopState(cx, jp);
-        }
-    }
-
-    // This internal API is infallible, in spite of its JSBool return type.
-    js_RemoveRoot(cx->runtime, &jp->objectStack);
-
-    bool ok = *jp->statep == JSON_PARSE_STATE_FINISHED;
-    Value *vp = jp->rootVal;
-
-    if (!early_ok) {
-        ok = false;
-    } else if (!ok) {
-        JSONParseError(jp, cx);
-    } else if (reviver.isObject() && reviver.toObject().isCallable()) {
-        ok = Revive(cx, reviver, vp);
-    }
-
-    cx->destroy(jp);
-
-    return ok;
-}
-
-static JSBool
-PushState(JSContext *cx, JSONParser *jp, JSONParserState state)
-{
-    if (*jp->statep == JSON_PARSE_STATE_FINISHED) {
-        // extra input
-        return JSONParseError(jp, cx);
-    }
-
-    jp->statep++;
-    if ((uint32)(jp->statep - jp->stateStack) >= JS_ARRAY_LENGTH(jp->stateStack)) {
-        // too deep
-        return JSONParseError(jp, cx);
-    }
-
-    *jp->statep = state;
-
-    return JS_TRUE;
-}
-
-static JSBool
-PopState(JSContext *cx, JSONParser *jp)
-{
-    jp->statep--;
-    if (jp->statep < jp->stateStack) {
-        jp->statep = jp->stateStack;
-        return JSONParseError(jp, cx);
-    }
-
-    if (*jp->statep == JSON_PARSE_STATE_INIT)
-        *jp->statep = JSON_PARSE_STATE_FINISHED;
-
-    return JS_TRUE;
-}
-
-static JSBool
-PushValue(JSContext *cx, JSONParser *jp, JSObject *parent, const Value &value)
-{
-    JSBool ok;
-    if (parent->isArray()) {
-        jsuint len;
-        ok = js_GetLengthProperty(cx, parent, &len);
-        if (ok) {
-            jsid index;
-            if (!js_IndexToId(cx, len, &index))
-                return JS_FALSE;
-            ok = parent->defineProperty(cx, index, value, NULL, NULL, JSPROP_ENUMERATE);
-        }
-    } else {
-        ok = JS_DefineUCProperty(cx, parent, jp->objectKey.begin(),
-                                 jp->objectKey.length(), Jsvalify(value),
-                                 NULL, NULL, JSPROP_ENUMERATE);
-        jp->objectKey.clear();
-    }
-
-    return ok;
-}
-
-static JSBool
-PushObject(JSContext *cx, JSONParser *jp, JSObject *obj)
-{
-    jsuint len;
-    if (!js_GetLengthProperty(cx, jp->objectStack, &len))
-        return JS_FALSE;
-    if (len >= JSON_MAX_DEPTH)
-        return JSONParseError(jp, cx);
-
-    AutoObjectRooter tvr(cx, obj);
-    Value v = ObjectOrNullValue(obj);
-
-    // Check if this is the root object
-    if (len == 0) {
-        *jp->rootVal = v;
-        // This property must be enumerable to keep the array dense
-        if (!jp->objectStack->defineProperty(cx, INT_TO_JSID(0), *jp->rootVal,
-                                             NULL, NULL, JSPROP_ENUMERATE)) {
-            return JS_FALSE;
-        }
-        return JS_TRUE;
-    }
-
-    Value p;
-    if (!jp->objectStack->getProperty(cx, INT_TO_JSID(len - 1), &p))
-        return JS_FALSE;
-
-    JSObject *parent = &p.toObject();
-    if (!PushValue(cx, jp, parent, v))
-        return JS_FALSE;
-
-    // This property must be enumerable to keep the array dense
-    if (!jp->objectStack->defineProperty(cx, INT_TO_JSID(len), v,
-                                         NULL, NULL, JSPROP_ENUMERATE)) {
-        return JS_FALSE;
-    }
-
-    return JS_TRUE;
-}
-
-static JSBool
-OpenObject(JSContext *cx, JSONParser *jp)
-{
-    JSObject *obj = NewBuiltinClassInstance(cx, &js_ObjectClass);
-    if (!obj)
-        return JS_FALSE;
-
-    return PushObject(cx, jp, obj);
-}
-
-static JSBool
-OpenArray(JSContext *cx, JSONParser *jp)
-{
-    // Add an array to an existing array or object
-    JSObject *arr = NewDenseEmptyArray(cx);
-    if (!arr)
-        return JS_FALSE;
-
-    return PushObject(cx, jp, arr);
-}
-
-static JSBool
-CloseObject(JSContext *cx, JSONParser *jp)
-{
-    jsuint len;
-    if (!js_GetLengthProperty(cx, jp->objectStack, &len))
-        return JS_FALSE;
-    if (!js_SetLengthProperty(cx, jp->objectStack, len - 1))
-        return JS_FALSE;
-
-    return JS_TRUE;
-}
-
-static JSBool
-CloseArray(JSContext *cx, JSONParser *jp)
-{
-    return CloseObject(cx, jp);
-}
-
-static JSBool
-PushPrimitive(JSContext *cx, JSONParser *jp, const Value &value)
-{
-    AutoValueRooter tvr(cx, value);
-
-    jsuint len;
-    if (!js_GetLengthProperty(cx, jp->objectStack, &len))
-        return JS_FALSE;
-
-    if (len > 0) {
-        Value o;
-        if (!jp->objectStack->getProperty(cx, INT_TO_JSID(len - 1), &o))
-            return JS_FALSE;
-
-        return PushValue(cx, jp, &o.toObject(), value);
-    }
-
-    // root value must be primitive
-    *jp->rootVal = value;
-    return JS_TRUE;
-}
-
-static JSBool
-HandleNumber(JSContext *cx, JSONParser *jp, const jschar *buf, uint32 len)
-{
-    const jschar *ep;
-    double val;
-    if (!js_strtod(cx, buf, buf + len, &ep, &val))
-        return JS_FALSE;
-    if (ep != buf + len) {
-        // bad number input
-        return JSONParseError(jp, cx);
-    }
-
-    return PushPrimitive(cx, jp, NumberValue(val));
-}
-
-static JSBool
-HandleString(JSContext *cx, JSONParser *jp, const jschar *buf, uint32 len)
-{
-    JSString *str = js_NewStringCopyN(cx, buf, len);
-    if (!str)
-        return JS_FALSE;
-
-    return PushPrimitive(cx, jp, StringValue(str));
-}
-
-static JSBool
-HandleKeyword(JSContext *cx, JSONParser *jp, const jschar *buf, uint32 len)
-{
-    const KeywordInfo *ki = FindKeyword(buf, len);
-    if (!ki || ki->tokentype != TOK_PRIMARY) {
-        // bad keyword
-        return JSONParseError(jp, cx);
-    }
-
-    Value keyword;
-    if (buf[0] == 'n') {
-        keyword.setNull();
-    } else if (buf[0] == 't') {
-        keyword.setBoolean(true);
-    } else if (buf[0] == 'f') {
-        keyword.setBoolean(false);
-    } else {
-        return JSONParseError(jp, cx);
-    }
-
-    return PushPrimitive(cx, jp, keyword);
-}
-
-static JSBool
-HandleDataString(JSContext *cx, JSONParser *jp)
-{
-    JSBool ok = HandleString(cx, jp, jp->buffer.begin(), jp->buffer.length());
-    if (ok)
-        jp->buffer.clear();
-    return ok;
-}
-
-static JSBool
-HandleDataKeyString(JSContext *cx, JSONParser *jp)
-{
-    JSBool ok = jp->objectKey.append(jp->buffer.begin(), jp->buffer.end());
-    if (ok)
-        jp->buffer.clear();
-    return ok;
-}
-
-static JSBool
-HandleDataNumber(JSContext *cx, JSONParser *jp)
-{
-    JSBool ok = HandleNumber(cx, jp, jp->buffer.begin(), jp->buffer.length());
-    if (ok)
-        jp->buffer.clear();
-    return ok;
-}
-
-static JSBool
-HandleDataKeyword(JSContext *cx, JSONParser *jp)
-{
-    JSBool ok = HandleKeyword(cx, jp, jp->buffer.begin(), jp->buffer.length());
-    if (ok)
-        jp->buffer.clear();
-    return ok;
-}
-
-JSBool
-js_ConsumeJSONText(JSContext *cx, JSONParser *jp, const jschar *data, uint32 len,
-                   DecodingMode decodingMode)
-{
-    CHECK_REQUEST(cx);
-
-    if (*jp->statep == JSON_PARSE_STATE_INIT) {
-        PushState(cx, jp, JSON_PARSE_STATE_VALUE);
-    }
-
-    for (uint32 i = 0; i < len; i++) {
-        jschar c = data[i];
-        switch (*jp->statep) {
-          case JSON_PARSE_STATE_ARRAY_INITIAL_VALUE:
-            if (c == ']') {
-                if (!PopState(cx, jp))
-                    return JS_FALSE;
-                JS_ASSERT(*jp->statep == JSON_PARSE_STATE_ARRAY_AFTER_ELEMENT);
-                if (!CloseArray(cx, jp) || !PopState(cx, jp))
-                    return JS_FALSE;
-                break;
-            }
-            // fall through if non-empty array or whitespace
-
-          case JSON_PARSE_STATE_VALUE:
-            if (c == '"') {
-                *jp->statep = JSON_PARSE_STATE_STRING;
-                break;
-            }
-
-            if (IsNumChar(c)) {
-                *jp->statep = JSON_PARSE_STATE_NUMBER;
-                if (!jp->buffer.append(c))
-                    return JS_FALSE;
-                break;
-            }
-
-            if (JS7_ISLET(c)) {
-                *jp->statep = JSON_PARSE_STATE_KEYWORD;
-                if (!jp->buffer.append(c))
-                    return JS_FALSE;
-                break;
-            }
-
-            if (c == '{') {
-                *jp->statep = JSON_PARSE_STATE_OBJECT_AFTER_PAIR;
-                if (!OpenObject(cx, jp) || !PushState(cx, jp, JSON_PARSE_STATE_OBJECT_INITIAL_PAIR))
-                    return JS_FALSE;
-            } else if (c == '[') {
-                *jp->statep = JSON_PARSE_STATE_ARRAY_AFTER_ELEMENT;
-                if (!OpenArray(cx, jp) || !PushState(cx, jp, JSON_PARSE_STATE_ARRAY_INITIAL_VALUE))
-                    return JS_FALSE;
-            } else if (JS_ISXMLSPACE(c)) {
-                // nothing to do
-            } else if (decodingMode == LEGACY && c == ']') {
-                if (!PopState(cx, jp))
-                    return JS_FALSE;
-                JS_ASSERT(*jp->statep == JSON_PARSE_STATE_ARRAY_AFTER_ELEMENT);
-                if (!CloseArray(cx, jp) || !PopState(cx, jp))
-                    return JS_FALSE;
-            } else {
-                return JSONParseError(jp, cx);
-            }
-            break;
-
-          case JSON_PARSE_STATE_ARRAY_AFTER_ELEMENT:
-            if (c == ',') {
-                if (!PushState(cx, jp, JSON_PARSE_STATE_VALUE))
-                    return JS_FALSE;
-            } else if (c == ']') {
-                if (!CloseArray(cx, jp) || !PopState(cx, jp))
-                    return JS_FALSE;
-            } else if (!JS_ISXMLSPACE(c)) {
-                return JSONParseError(jp, cx);
-            }
-            break;
-
-          case JSON_PARSE_STATE_OBJECT_AFTER_PAIR:
-            if (c == ',') {
-                if (!PushState(cx, jp, JSON_PARSE_STATE_OBJECT_PAIR))
-                    return JS_FALSE;
-            } else if (c == '}') {
-                if (!CloseObject(cx, jp) || !PopState(cx, jp))
-                    return JS_FALSE;
-            } else if (!JS_ISXMLSPACE(c)) {
-                return JSONParseError(jp, cx);
-            }
-            break;
-
-          case JSON_PARSE_STATE_OBJECT_INITIAL_PAIR:
-            if (c == '}') {
-                if (!PopState(cx, jp))
-                    return JS_FALSE;
-                JS_ASSERT(*jp->statep == JSON_PARSE_STATE_OBJECT_AFTER_PAIR);
-                if (!CloseObject(cx, jp) || !PopState(cx, jp))
-                    return JS_FALSE;
-                break;
-            }
-            // fall through if non-empty object or whitespace
-
-          case JSON_PARSE_STATE_OBJECT_PAIR:
-            if (c == '"') {
-                // we want to be waiting for a : when the string has been read
-                *jp->statep = JSON_PARSE_STATE_OBJECT_IN_PAIR;
-                if (!PushState(cx, jp, JSON_PARSE_STATE_STRING))
-                    return JS_FALSE;
-            } else if (JS_ISXMLSPACE(c)) {
-                // nothing to do
-            } else if (decodingMode == LEGACY && c == '}') {
-                if (!PopState(cx, jp))
-                    return JS_FALSE;
-                JS_ASSERT(*jp->statep == JSON_PARSE_STATE_OBJECT_AFTER_PAIR);
-                if (!CloseObject(cx, jp) || !PopState(cx, jp))
-                    return JS_FALSE;
-            } else {
-                return JSONParseError(jp, cx);
-            }
-            break;
-
-          case JSON_PARSE_STATE_OBJECT_IN_PAIR:
-            if (c == ':') {
-                *jp->statep = JSON_PARSE_STATE_VALUE;
-            } else if (!JS_ISXMLSPACE(c)) {
-                return JSONParseError(jp, cx);
-            }
-            break;
-
-          case JSON_PARSE_STATE_STRING:
-            if (c == '"') {
-                if (!PopState(cx, jp))
-                    return JS_FALSE;
-                if (*jp->statep == JSON_PARSE_STATE_OBJECT_IN_PAIR) {
-                    if (!HandleDataKeyString(cx, jp))
-                        return JS_FALSE;
-                } else {
-                    if (!HandleDataString(cx, jp))
-                        return JS_FALSE;
-                }
-            } else if (c == '\\') {
-                *jp->statep = JSON_PARSE_STATE_STRING_ESCAPE;
-            } else if (c <= 0x1F) {
-                // The JSON lexical grammer does not allow a JSONStringCharacter to be
-                // any of the Unicode characters U+0000 thru U+001F (control characters).
-                return JSONParseError(jp, cx);
-            } else {
-                if (!jp->buffer.append(c))
-                    return JS_FALSE;
-            }
-            break;
-
-          case JSON_PARSE_STATE_STRING_ESCAPE:
-            switch (c) {
-              case '"':
-              case '\\':
-              case '/':
-                break;
-              case 'b' : c = '\b'; break;
-              case 'f' : c = '\f'; break;
-              case 'n' : c = '\n'; break;
-              case 'r' : c = '\r'; break;
-              case 't' : c = '\t'; break;
-              default :
-                if (c == 'u') {
-                    jp->numHex = 0;
-                    jp->hexChar = 0;
-                    *jp->statep = JSON_PARSE_STATE_STRING_HEX;
-                    continue;
-                } else {
-                    return JSONParseError(jp, cx);
-                }
-            }
-
-            if (!jp->buffer.append(c))
-                return JS_FALSE;
-            *jp->statep = JSON_PARSE_STATE_STRING;
-            break;
-
-          case JSON_PARSE_STATE_STRING_HEX:
-            if (('0' <= c) && (c <= '9')) {
-                jp->hexChar = (jp->hexChar << 4) | (c - '0');
-            } else if (('a' <= c) && (c <= 'f')) {
-                jp->hexChar = (jp->hexChar << 4) | (c - 'a' + 0x0a);
-            } else if (('A' <= c) && (c <= 'F')) {
-                jp->hexChar = (jp->hexChar << 4) | (c - 'A' + 0x0a);
-            } else {
-                return JSONParseError(jp, cx);
-            }
-
-            if (++(jp->numHex) == 4) {
-                if (!jp->buffer.append(jp->hexChar))
-                    return JS_FALSE;
-                jp->hexChar = 0;
-                jp->numHex = 0;
-                *jp->statep = JSON_PARSE_STATE_STRING;
-            }
-            break;
-
-          case JSON_PARSE_STATE_KEYWORD:
-            if (JS7_ISLET(c)) {
-                if (!jp->buffer.append(c))
-                    return JS_FALSE;
-            } else {
-                // this character isn't part of the keyword, process it again
-                i--;
-                if (!PopState(cx, jp))
-                    return JS_FALSE;
-
-                if (!HandleDataKeyword(cx, jp))
-                    return JS_FALSE;
-            }
-            break;
-
-          case JSON_PARSE_STATE_NUMBER:
-            if (IsNumChar(c)) {
-                if (!jp->buffer.append(c))
-                    return JS_FALSE;
-            } else {
-                // this character isn't part of the number, process it again
-                i--;
-                if (!PopState(cx, jp))
-                    return JS_FALSE;
-                if (!HandleDataNumber(cx, jp))
-                    return JS_FALSE;
-            }
-            break;
-
-          case JSON_PARSE_STATE_FINISHED:
-            if (!JS_ISXMLSPACE(c)) {
-                // extra input
-                return JSONParseError(jp, cx);
-            }
-            break;
-
-          default:
-            JS_NOT_REACHED("Invalid JSON parser state");
-        }
-    }
-
-    return JS_TRUE;
-}
-
-#if JS_HAS_TOSOURCE
-static JSBool
-json_toSource(JSContext *cx, uintN argc, Value *vp)
-{
-    vp->setString(ATOM_TO_STRING(CLASS_ATOM(cx, JSON)));
-    return JS_TRUE;
-}
-#endif
-
-static JSFunctionSpec json_static_methods[] = {
+static const JSFunctionSpec json_static_methods[] = {
 #if JS_HAS_TOSOURCE
     JS_FN(js_toSource_str,  json_toSource,      0, 0),
 #endif
-    JS_FN("parse",          js_json_parse,      2, 0),
-    JS_FN("stringify",      js_json_stringify,  3, 0),
+    JS_FN("parse",          json_parse,         2, 0),
+    JS_FN("stringify",      json_stringify,     3, 0),
     JS_FS_END
 };
 
-JSObject *
-js_InitJSONClass(JSContext *cx, JSObject *obj)
+JSObject*
+js::InitJSONClass(JSContext* cx, HandleObject obj)
 {
-    JSObject *JSON;
+    Rooted<GlobalObject*> global(cx, &obj->as<GlobalObject>());
 
-    JSON = NewNonFunction<WithProto::Class>(cx, &js_JSONClass, NULL, obj);
+    RootedObject proto(cx, global->getOrCreateObjectPrototype(cx));
+    if (!proto)
+        return nullptr;
+    RootedObject JSON(cx, NewObjectWithGivenProto(cx, &JSONClass, proto, SingletonObject));
     if (!JSON)
-        return NULL;
-    if (!JS_DefineProperty(cx, obj, js_JSON_str, OBJECT_TO_JSVAL(JSON),
-                           JS_PropertyStub, JS_StrictPropertyStub, 0))
-        return NULL;
+        return nullptr;
+
+    if (!JS_DefineProperty(cx, global, js_JSON_str, JSON, 0,
+                           JS_STUBGETTER, JS_STUBSETTER))
+        return nullptr;
 
     if (!JS_DefineFunctions(cx, JSON, json_static_methods))
-        return NULL;
+        return nullptr;
+
+    global->setConstructor(JSProto_JSON, ObjectValue(*JSON));
 
     return JSON;
 }

@@ -1,41 +1,10 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
- *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Mozilla Communicator client code, released
- * March 31, 1998.
- *
- * The Initial Developer of the Original Code is
- * Simmule Turner and Rich Salz.
- * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#ifndef editline_editline_h
+#define editline_editline_h
 
 /*
  * Copyright 1992,1993 Simmule Turner and Rich Salz.  All rights reserved.
@@ -84,25 +53,18 @@ typedef unsigned char	CHAR;
 #define STATIC	/* NULL */
 #endif	/* !defined(HIDE) */
 
-#if	!defined(CONST)
-#if	defined(__STDC__)
 #define CONST	const
-#else
-#define CONST
-#endif	/* defined(__STDC__) */
-#endif	/* !defined(CONST) */
-
 
 #define MEM_INC		64
 #define SCREEN_INC	256
 
-#define DISPOSE(p)	free((char *)(p))
+#define DISPOSE(p)	free((char*)(p))
 #define NEW(T, c)	\
-	((T *)malloc((unsigned int)(sizeof (T) * (c))))
+	((T*)malloc((unsigned int)(sizeof (T) * (c))))
 #define RENEW(p, T, c)	\
-	(p = (T *)realloc((char *)(p), (unsigned int)(sizeof (T) * (c))))
+	(p = (T*)realloc((char*)(p), (unsigned int)(sizeof (T) * (c))))
 #define COPYFROMTO(new, p, len)	\
-	(void)memcpy((char *)(new), (char *)(p), (int)(len))
+	(void)memcpy((char*)(new), (char*)(p), (int)(len))
 
 
 /*
@@ -115,7 +77,7 @@ extern unsigned rl_kill;
 extern unsigned rl_quit;
 extern char	*rl_complete();
 extern int	rl_list_possib();
-extern void	rl_ttyset();
+extern void	rl_ttyset(int);
 extern void	rl_add_slash();
 
 #if	!defined(HAVE_STDLIB)
@@ -133,3 +95,4 @@ extern int	strlen();
 extern int	strncmp();
 #endif	/* !defined(HAVE_STDLIB) */
 
+#endif /* editline_editline_h */

@@ -1,77 +1,47 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
- *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Mozilla Communicator client code, released
- * March 31, 1998.
- *
- * The Initial Developer of the Original Code is
- * Netscape Communications Corporation.
- * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sts=4 et sw=4 tw=99:
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef jsdtoa_h___
-#define jsdtoa_h___
+#ifndef jsdtoa_h
+#define jsdtoa_h
+
 /*
  * Public interface to portable double-precision floating point to string
  * and back conversion package.
  */
 
-#include "jscompat.h"
-
-JS_BEGIN_EXTERN_C
+#include <stddef.h>
 
 struct DtoaState;
 
-DtoaState *
-js_NewDtoaState();
+namespace js {
 
-void
-js_DestroyDtoaState(DtoaState *state);
+extern DtoaState*
+NewDtoaState();
+
+extern void
+DestroyDtoaState(DtoaState* state);
+
+} // namespace js
 
 /*
  * js_strtod_harder() returns as a double-precision floating-point number the
  * value represented by the character string pointed to by s00. The string is
  * scanned up to the first unrecognized character.
  *
- * If se is not NULL, *se receives a pointer to the character terminating the
- * scan. If no number can be formed, *se receives a pointer to the first
+ * If se is not nullptr, *se receives a pointer to the character terminating
+ * the scan. If no number can be formed, *se receives a pointer to the first
  * unparseable character in s00, and zero is returned.
  *
- * *err is set to zero on success; it's set to JS_DTOA_ERANGE on range
- * errors and JS_DTOA_ENOMEM on memory failure.
+ * On overflow, this function returns infinity and does not indicate an error.
+ *
+ * *err is set to zero on success; it's set to JS_DTOA_ENOMEM on memory failure.
  */
-#define JS_DTOA_ERANGE 1
 #define JS_DTOA_ENOMEM 2
 double
-js_strtod_harder(DtoaState *state, const char *s00, char **se, int *err);
+js_strtod_harder(DtoaState* state, const char* s00, char** se, int* err);
 
 /*
  * Modes for converting floating-point numbers to strings.
@@ -104,7 +74,7 @@ typedef enum JSDToStrMode {
 
 /*
  * DO NOT USE THIS FUNCTION IF YOU CAN AVOID IT.  js::NumberToCString() is a
- * better function to use.  
+ * better function to use.
  *
  * Convert dval according to the given mode and return a pointer to the
  * resulting ASCII string.  If mode == DTOSTR_STANDARD and precision == 0 it's
@@ -116,15 +86,15 @@ typedef enum JSDToStrMode {
  * beginning.  The size of buffer is given in bufferSize, and must be at least
  * as large as given by the above macros.
  *
- * Return NULL if out of memory.
+ * Return nullptr if out of memory.
  */
-char *
-js_dtostr(DtoaState *state, char *buffer, size_t bufferSize, JSDToStrMode mode, int precision,
+char*
+js_dtostr(DtoaState* state, char* buffer, size_t bufferSize, JSDToStrMode mode, int precision,
           double dval);
 
 /*
  * DO NOT USE THIS FUNCTION IF YOU CAN AVOID IT.  js::NumberToCString() is a
- * better function to use.  
+ * better function to use.
  *
  * Convert d to a string in the given base.  The integral part of d will be
  * printed exactly in that base, regardless of how large it is, because there
@@ -137,12 +107,10 @@ js_dtostr(DtoaState *state, char *buffer, size_t bufferSize, JSDToStrMode mode, 
  * would equal d (except for -0.0, which converts to "0", and NaN, which is
  * not equal to itself).
  *
- * Return NULL if out of memory.  If the result is not NULL, it must be
+ * Return nullptr if out of memory.  If the result is not nullptr, it must be
  * released via js_free().
  */
-char *
-js_dtobasestr(DtoaState *state, int base, double d);
+char*
+js_dtobasestr(DtoaState* state, int base, double d);
 
-JS_END_EXTERN_C
-
-#endif /* jsdtoa_h___ */
+#endif /* jsdtoa_h */
