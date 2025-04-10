@@ -54,8 +54,6 @@ add_custom_command(
 
 add_library(jscript STATIC)
 
-set_target_properties(jscript PROPERTIES CMAKE_BUILD_TYPE "Release")
-
 target_sources(jscript
     PRIVATE
         ../../jsapi.cpp
@@ -109,6 +107,25 @@ target_sources(jscript
         ../../jsxml.cpp
         ../../prmjtime.cpp
         ../../sharkctl.cpp
+# Assembler
+        ../../assembler/jit/ExecutableAllocator.cpp
+        ../../assembler/jit/ExecutableAllocatorOS2.cpp
+        ../../assembler/jit/ExecutableAllocatorPosix.cpp
+        ../../assembler/jit/ExecutableAllocatorWin.cpp
+# NanoJit
+        ../../jsbuiltins.cpp
+        ../../jstracer.cpp
+        ../../nanojit/Assembler.cpp
+        ../../nanojit/Allocator.cpp
+        ../../nanojit/CodeAlloc.cpp
+        ../../nanojit/Containers.cpp
+        ../../nanojit/Fragmento.cpp
+        ../../nanojit/LIR.cpp
+        ../../nanojit/njconfig.cpp
+        ../../nanojit/RegAlloc.cpp
+        ../../nanojit/avmplus.cpp
+        ../../nanojit/NativeX64.cpp
+        ../../nanojit/VMPI.cpp
 # TraceJit
         ../../tracejit/Writer.cpp
 # V8 DTOA
@@ -193,6 +210,20 @@ target_sources(jscript
         ../../jsxdrapi.h
         ../../jsxml.h
         ../../prmjtime.h
+# NanoJit
+        ../../nanojit/Assembler.h
+        ../../nanojit/Allocator.h
+        ../../nanojit/CodeAlloc.h
+        ../../nanojit/Containers.h
+        ../../nanojit/LIR.h
+        ../../nanojit/avmplus.h
+        ../../nanojit/Fragmento.h
+        ../../nanojit/Native.h
+        ../../nanojit/NativeX64.h
+        ../../nanojit/njconfig.h
+        ../../nanojit/RegAlloc.h
+        ../../nanojit/nanojit.h
+        ../../nanojit/VMPI.h
 # TraceJit
         ../../tracejit/Writer.h
 # OpCode tables
@@ -203,47 +234,6 @@ target_sources(jscript
         ../../jsreops.tbl
 )
 
-if ((WIN32 OR LINUX) AND NOT APPLE)
-
-target_sources(jscript
-    PRIVATE
-
-    # Assembler
-    ../../assembler/jit/ExecutableAllocator.cpp
-    ../../assembler/jit/ExecutableAllocatorOS2.cpp
-    ../../assembler/jit/ExecutableAllocatorPosix.cpp
-    ../../assembler/jit/ExecutableAllocatorWin.cpp
-
-    # NanoJit
-    ../../jsbuiltins.cpp
-    ../../jstracer.cpp
-    ../../nanojit/Assembler.cpp
-    ../../nanojit/Allocator.cpp
-    ../../nanojit/CodeAlloc.cpp
-    ../../nanojit/Containers.cpp
-    ../../nanojit/Fragmento.cpp
-    ../../nanojit/LIR.cpp
-    ../../nanojit/njconfig.cpp
-    ../../nanojit/RegAlloc.cpp
-    ../../nanojit/avmplus.cpp
-    ../../nanojit/NativeX64.cpp
-    ../../nanojit/VMPI.cpp
-    ../../nanojit/Assembler.h
-    ../../nanojit/Allocator.h
-    ../../nanojit/CodeAlloc.h
-    ../../nanojit/Containers.h
-    ../../nanojit/LIR.h
-    ../../nanojit/avmplus.h
-    ../../nanojit/Fragmento.h
-    ../../nanojit/Native.h
-    ../../nanojit/NativeX64.h
-    ../../nanojit/njconfig.h
-    ../../nanojit/RegAlloc.h
-    ../../nanojit/nanojit.h
-    ../../nanojit/VMPI.h
-)
-endif()
-
 target_compile_definitions( jscript PRIVATE
     _LIB
     EXPORT_JS_API
@@ -251,20 +241,27 @@ target_compile_definitions( jscript PRIVATE
     JSFILE
     STDC_HEADERS
     HAVE_CPP_NAMESPACE_STD
-    NDEBUG
-    $<$<CONFIG:Debug>:-U_DEBUG>
+    AVMPLUS_64BIT
+    ENABLE_ASSEMBLER=1
+    ENABLE_JIT=1
+    ENABLE_METHODJIT=1
+    ENABLE_MONOIC=1
+    ENABLE_POLYIC_TYPED_ARRAY=1
+    ENABLE_POLYIC=1
+    ENABLE_TRACEJIT=1
+    FEATURE_NANOJIT
+    JS_TRACER
 )
 
+target_include_directories(jscript PRIVATE
+    ${PROJECT_SOURCE_DIR}/../../assembler
+    ${PROJECT_SOURCE_DIR}/../../nanojit
+    ${PROJECT_SOURCE_DIR}/../../tracejit
+    ${PROJECT_SOURCE_DIR}/../../yarr
+    ${PROJECT_SOURCE_DIR}/../..
+)
 
 if (WIN32)
-
-    target_include_directories(jscript PRIVATE
-        ${PROJECT_SOURCE_DIR}/../../assembler
-        ${PROJECT_SOURCE_DIR}/../../nanojit
-        ${PROJECT_SOURCE_DIR}/../../tracejit
-        ${PROJECT_SOURCE_DIR}/../../yarr
-        ${PROJECT_SOURCE_DIR}/../..
-    )
 
     # See Configure.in
     target_compile_definitions( jscript PRIVATE
@@ -274,20 +271,10 @@ if (WIN32)
         _WIN32
         _WIN64
         _WINDOWS
-        AVMPLUS_64BIT
         AVMPLUS_AMD64
         AVMPLUS_WIN32
-        ENABLE_ASSEMBLER=1
-        ENABLE_JIT=1
-        ENABLE_METHODJIT=1
-        ENABLE_MONOIC=1
-        ENABLE_POLYIC_TYPED_ARRAY=1
-        ENABLE_POLYIC=1
-        ENABLE_TRACEJIT=1
-        FEATURE_NANOJIT
         HAVE_SNPRINTF
         JS_STDDEF_H_HAS_INTPTR_T
-        JS_TRACER
         NANOJIT_ARCH=X64
         NO_X11
         WIN32
@@ -343,6 +330,9 @@ else()
             USE_PTHREADS=1
             UNIX_ASYNC_DNS
             _BSD_SOURCE
+            AVMPLUS_AMD64
+            AVMPLUS_MAC
+            NANOJIT_ARCH=X64
         )
 
         target_compile_options( jscript PRIVATE
@@ -359,29 +349,12 @@ else()
               $<$<CONFIG:Release>:-Os>
              )
     else()
-        target_include_directories(jscript PRIVATE
-            ${PROJECT_SOURCE_DIR}/../../assembler
-            ${PROJECT_SOURCE_DIR}/../../nanojit
-            ${PROJECT_SOURCE_DIR}/../../tracejit
-            ${PROJECT_SOURCE_DIR}/../../yarr
-            ${PROJECT_SOURCE_DIR}/../..
-        )
         target_compile_definitions(jscript PRIVATE
             __x86_64__
             _REENTRANT
-            AVMPLUS_64BIT
             AVMPLUS_AMD64
             AVMPLUS_LINUX
             AVMPLUS_UNIX
-            ENABLE_ASSEMBLER=1
-            ENABLE_JIT=1
-            ENABLE_METHODJIT=1
-            ENABLE_MONOIC=1
-            ENABLE_POLYIC_TYPED_ARRAY=1
-            ENABLE_POLYIC=1
-            ENABLE_TRACEJIT=1
-            FEATURE_NANOJIT
-            JS_TRACER
             NANOJIT_ARCH=X64
         )
         target_compile_options(jscript PRIVATE
