@@ -80,6 +80,7 @@ static JSFunctionSpec my_functions[] =
 	{ "UseItem",					SE_UseItem,					2, 0 },
 	{ "TriggerTrap",				SE_TriggerTrap,				2, 0 },
 	{ "CompareGuildByGuild",		SE_CompareGuildByGuild,		2, 0 },
+	{ "CreateNewGuild",				SE_CreateNewGuild,			2, 0 },
 	{ "CommandLevelReq",			SE_CommandLevelReq,			1, 0 },
 	{ "CommandExists",				SE_CommandExists,			1, 0 },
 	{ "FirstCommand",				SE_FirstCommand,			0, 0 },
