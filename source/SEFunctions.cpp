@@ -1829,6 +1829,72 @@ JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_IsAtWar()
+//|	Prototype	-	bool IsAtWar( guildID, otherGuildID )
+//|	Notes		-	Returns true if guild is at war with otherGuild
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_IsAtWar( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 2 )
+		return JS_FALSE;
+
+	jsval* argv = JS_ARGV( cx, vp );
+	GUILDID src = static_cast<GUILDID>( JSVAL_TO_INT(argv[0]) );
+	GUILDID tgt = static_cast<GUILDID>( JSVAL_TO_INT(argv[1]) );
+
+	CGuild* g = GuildSys->Guild(src);
+	if( !g )
+		return JS_FALSE;
+
+	*vp = BOOLEAN_TO_JSVAL( g->IsAtWar(tgt) );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_IsAlly()
+//|	Prototype	-	bool IsAlly( guildID, otherGuildID )
+//|	Notes		-	Returns true if guild is allied with otherGuild
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_IsAlly( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 2 )
+		return JS_FALSE;
+
+	jsval* argv = JS_ARGV( cx, vp );
+	GUILDID src = static_cast<GUILDID>( JSVAL_TO_INT(argv[0]) );
+	GUILDID tgt = static_cast<GUILDID>( JSVAL_TO_INT(argv[1]) );
+
+	CGuild* g = GuildSys->Guild(src);
+	if( !g )
+		return JS_FALSE;
+
+	*vp = BOOLEAN_TO_JSVAL( g->IsAlly(tgt) );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_IsNeutral()
+//|	Prototype	-	bool IsNeutral( guildID, otherGuildID )
+//|	Notes		-	Returns true if guild is neutral to otherGuild
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_IsNeutral( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 2 )
+		return JS_FALSE;
+
+	jsval* argv = JS_ARGV( cx, vp );
+	GUILDID src = static_cast<GUILDID>( JSVAL_TO_INT(argv[0]) );
+	GUILDID tgt = static_cast<GUILDID>( JSVAL_TO_INT(argv[1]) );
+
+	CGuild* g = GuildSys->Guild(src);
+	if( !g )
+		return JS_FALSE;
+
+	*vp = BOOLEAN_TO_JSVAL( g->IsNeutral(tgt) );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_PossessTown()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Source town takes control over target town
