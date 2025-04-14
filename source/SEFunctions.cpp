@@ -1829,24 +1829,50 @@ JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_CreateNewGuild()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a new guild and returns the JS guild object to the script
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_CreateNewGuild( JSContext* cx, uintN argc, jsval* vp )
+{
+	auto tempGuildId = GuildSys->NewGuild();
+	auto newGuild    = GuildSys->Guild( tempGuildId );
+
+	if( newGuild != nullptr )
+	{
+		JSObject *jsGuildObj = JSEngine->AcquireObject( IUE_GUILD, newGuild, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsGuildObj ));
+	}
+	else
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_IsAtWar()
 //|	Prototype	-	bool IsAtWar( guildID, otherGuildID )
 //|	Notes		-	Returns true if guild is at war with otherGuild
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_IsAtWar( JSContext *cx, uintN argc, jsval *vp )
+JSBool SE_GuildIsAtWar( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
+	{
 		return JS_FALSE;
+	}
 
 	jsval* argv = JS_ARGV( cx, vp );
 	GUILDID src = static_cast<GUILDID>( JSVAL_TO_INT(argv[0]) );
 	GUILDID tgt = static_cast<GUILDID>( JSVAL_TO_INT(argv[1]) );
 
-	CGuild* g = GuildSys->Guild(src);
-	if( !g )
+	CGuild* guild = GuildSys->Guild(src);
+	if( !guild )
+	{
 		return JS_FALSE;
-
-	*vp = BOOLEAN_TO_JSVAL( g->IsAtWar(tgt) );
+	}
+	*vp = BOOLEAN_TO_JSVAL( guild->IsAtWar(tgt) );
 	return JS_TRUE;
 }
 
@@ -1855,20 +1881,24 @@ JSBool SE_IsAtWar( JSContext *cx, uintN argc, jsval *vp )
 //|	Prototype	-	bool IsAlly( guildID, otherGuildID )
 //|	Notes		-	Returns true if guild is allied with otherGuild
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_IsAlly( JSContext *cx, uintN argc, jsval *vp )
+JSBool SE_GuildIsAlly( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
+	{
 		return JS_FALSE;
+	}
 
 	jsval* argv = JS_ARGV( cx, vp );
 	GUILDID src = static_cast<GUILDID>( JSVAL_TO_INT(argv[0]) );
 	GUILDID tgt = static_cast<GUILDID>( JSVAL_TO_INT(argv[1]) );
 
-	CGuild* g = GuildSys->Guild(src);
-	if( !g )
+	CGuild* guild = GuildSys->Guild(src);
+	if( !guild )
+	{
 		return JS_FALSE;
+	}
 
-	*vp = BOOLEAN_TO_JSVAL( g->IsAlly(tgt) );
+	*vp = BOOLEAN_TO_JSVAL( guild->IsAlly(tgt) );
 	return JS_TRUE;
 }
 
@@ -1877,20 +1907,22 @@ JSBool SE_IsAlly( JSContext *cx, uintN argc, jsval *vp )
 //|	Prototype	-	bool IsNeutral( guildID, otherGuildID )
 //|	Notes		-	Returns true if guild is neutral to otherGuild
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_IsNeutral( JSContext *cx, uintN argc, jsval *vp )
+JSBool SE_GuildIsNeutral( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 2 )
+	{
 		return JS_FALSE;
-
+	}
 	jsval* argv = JS_ARGV( cx, vp );
 	GUILDID src = static_cast<GUILDID>( JSVAL_TO_INT(argv[0]) );
 	GUILDID tgt = static_cast<GUILDID>( JSVAL_TO_INT(argv[1]) );
 
-	CGuild* g = GuildSys->Guild(src);
-	if( !g )
+	CGuild* guild = GuildSys->Guild(src);
+	if( !guild )
+	{
 		return JS_FALSE;
-
-	*vp = BOOLEAN_TO_JSVAL( g->IsNeutral(tgt) );
+	}
+	*vp = BOOLEAN_TO_JSVAL( guild->IsNeutral(tgt) );
 	return JS_TRUE;
 }
 

@@ -92,9 +92,10 @@ JSBool SE_GetItem( JSContext *cx, uintN argc, jsval *vp );					//										***
 JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp );				//										***
 
 JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp );		//										**
-JSBool SE_IsAtWar( JSContext *cx, uintN argc, jsval *vp );		//										**
-JSBool SE_IsAlly( JSContext *cx, uintN argc, jsval *vp );		//										**
-JSBool SE_IsNeutral( JSContext *cx, uintN argc, jsval *vp );		//										**
+JSBool SE_CreateNewGuild( JSContext *cx, uintN argc, jsval *vp );		//										**
+JSBool SE_GuildIsAtWar( JSContext *cx, uintN argc, jsval *vp );		//										**
+JSBool SE_GuildIsAlly( JSContext *cx, uintN argc, jsval *vp );		//										**
+JSBool SE_GuildIsNeutral( JSContext *cx, uintN argc, jsval *vp );		//										**
 
 JSBool SE_PossessTown( JSContext *cx, uintN argc, jsval *vp );				//										***
 
