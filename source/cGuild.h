@@ -140,6 +140,7 @@ public:
 	CGuildCollection() = default;
 	size_t			NumGuilds( void ) const;
 	GUILDID			NewGuild( void );
+	GUILDID			FindGuildId( const CGuild * );
 	CGuild *		Guild( GUILDID num ) const;
 	CGuild *		operator[]( GUILDID num );
 	void			Save();

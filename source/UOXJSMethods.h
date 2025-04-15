@@ -138,6 +138,7 @@ JSBool CChar_AddFollower( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_RemoveFollower( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_HasBeenOwner( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_CalculateControlChance( JSContext *cx, uintN argc, jsval *vp );
+JSBool CChar_CheckGuild( JSContext *cx, uintN argc, jsval *vp );
 
 // Item Methods
 JSBool CItem_OpenPlank( JSContext *cx, uintN argc, jsval *vp );
@@ -260,6 +261,9 @@ JSBool CGuild_NewRecruit( JSContext *cx, uintN argc, jsval *vp );
 JSBool CGuild_RemoveRecruit( JSContext *cx, uintN argc, jsval *vp );
 JSBool CGuild_RemoveMember( JSContext *cx, uintN argc, jsval *vp );
 JSBool CGuild_RecruitToMember( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_GuildIsAtWar( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_GuildIsAlly( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_GuildIsNeutral( JSContext *cx, uintN argc, jsval *vp );
 
 // Misc
 JSBool CMisc_SoundEffect( JSContext *cx, uintN argc, jsval *vp );
@@ -486,6 +490,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0 },
 	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0 },
 	{ "ReverseTempEffect",	CBase_ReverseEffect,		1, 0 },
+	{ "CheckGuild",			CChar_CheckGuild,			1, 0 },
 	JS_FS_END
 };
 
@@ -641,6 +646,9 @@ inline JSFunctionSpec CGuild_Methods[] =
 	{ "RemoveRecruit",		CGuild_RemoveRecruit,		1, 0 },
 	{ "RemoveMember",		CGuild_RemoveMember,		1, 0 },
 	{ "RecruitToMember",	CGuild_RecruitToMember,		1, 0 },
+	{ "GuildIsAtWar",		CGuild_GuildIsAtWar,		1, 0 },
+	{ "GuildIsAlly",		CGuild_GuildIsAlly,			1, 0 },
+	{ "GuildIsNeutral",		CGuild_GuildIsNeutral,		1, 0 },
 	JS_FS_END
 };
 

@@ -1830,95 +1830,38 @@ JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp )
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_CreateNewGuild()
+//|	Prototype	-	object CreateNewGuild()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Creates a new guild and returns the JS guild object to the script
+//|	Purpose		-	Creates a new guild, assigns it to the calling character, and returns the guild object
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_CreateNewGuild( JSContext* cx, uintN argc, jsval* vp )
 {
-	auto tempGuildId = GuildSys->NewGuild();
-	auto newGuild    = GuildSys->Guild( tempGuildId );
+	JSObject* jsThis = JS_THIS_OBJECT( cx, vp );
+	if( jsThis == nullptr )
+		return JS_FALSE;
+
+	CChar* myChar = static_cast<CChar*>(JS_GetPrivate(cx, jsThis));
+	if( myChar == nullptr )
+	{
+		ScriptError(cx, "(CreateNewGuild) Invalid character context");
+		JS_SET_RVAL(cx, vp, JSVAL_NULL);
+		return JS_TRUE;
+	}
+
+	GUILDID tempGuildId = GuildSys->NewGuild();
+	CGuild* newGuild = GuildSys->Guild(tempGuildId);
 
 	if( newGuild != nullptr )
 	{
-		JSObject *jsGuildObj = JSEngine->AcquireObject( IUE_GUILD, newGuild, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsGuildObj ));
+		myChar->SetGuildNumber(tempGuildId);
+		JSObject* jsGuildObj = JSEngine->AcquireObject(IUE_GUILD, newGuild, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+		JS_SET_RVAL(cx, vp, OBJECT_TO_JSVAL(jsGuildObj));
 	}
 	else
 	{
-		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		JS_SET_RVAL(cx, vp, JSVAL_NULL);
 	}
 
-	return JS_TRUE;
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	SE_GuildIsAtWar()
-//|	Prototype	-	bool GuildIsAtWar( guildID, otherGuildID )
-//|	Notes		-	Returns true only if relation is GR_WAR (1)
-//o------------------------------------------------------------------------------------------------o
-JSBool SE_GuildIsAtWar( JSContext *cx, uintN argc, jsval *vp )
-{
-	if( argc != 2 )
-	{
-		ScriptError( cx, "(GuildIsAtWar) Invalid Parameter Count: %d", argc );
-		return JS_FALSE;
-	}
-
-	jsval* argv = JS_ARGV( cx, vp );
-	GUILDID src = static_cast<GUILDID>( JSVAL_TO_INT(argv[0]) );
-	GUILDID tgt = static_cast<GUILDID>( JSVAL_TO_INT(argv[1]) );
-
-	GUILDRELATION relation = GuildSys->Compare(src, tgt);
-
-	// Return true only if they're at war (1)
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( relation == GR_WAR ) );
-
-	return JS_TRUE;
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	SE_GuildIsAlly()
-//|	Prototype	-	bool GuildIsAlly( guildID, otherGuildID )
-//|	Notes		-	Returns true if relation is GR_ALLY (2)
-//o------------------------------------------------------------------------------------------------o
-JSBool SE_GuildIsAlly( JSContext *cx, uintN argc, jsval *vp )
-{
-	if( argc != 2 )
-	{
-		ScriptError( cx, "(GuildIsAlly) Invalid Parameter Count: %d", argc );
-		return JS_FALSE;
-	}
-
-	jsval* argv = JS_ARGV( cx, vp );
-	GUILDID src = static_cast<GUILDID>( JSVAL_TO_INT(argv[0]) );
-	GUILDID tgt = static_cast<GUILDID>( JSVAL_TO_INT(argv[1]) );
-
-	GUILDRELATION relation = GuildSys->Compare(src, tgt);
-
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( relation == GR_ALLY ) );
-	return JS_TRUE;
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	SE_GuildIsNeutral()
-//|	Prototype	-	bool GuildIsNeutral( guildID, otherGuildID )
-//|	Notes		-	Returns true if relation is GR_NEUTRAL (0)
-//o------------------------------------------------------------------------------------------------o
-JSBool SE_GuildIsNeutral( JSContext *cx, uintN argc, jsval *vp )
-{
-	if( argc != 2 )
-	{
-		ScriptError( cx, "(GuildIsNeutral) Invalid Parameter Count: %d", argc );
-		return JS_FALSE;
-	}
-
-	jsval* argv = JS_ARGV( cx, vp );
-	GUILDID src = static_cast<GUILDID>( JSVAL_TO_INT(argv[0]) );
-	GUILDID tgt = static_cast<GUILDID>( JSVAL_TO_INT(argv[1]) );
-
-	GUILDRELATION relation = GuildSys->Compare(src, tgt);
-
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( relation == GR_NEUTRAL ) );
 	return JS_TRUE;
 }
 

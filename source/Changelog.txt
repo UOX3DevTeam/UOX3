@@ -1,3 +1,23 @@
+14/04/2025 - Dragon Slayer
+	Internal Enhancements:
+	Integrated FindGuildId( const CGuild* ) in guild relation functions for better JS mapping
+   		(Thanks to Xuri for the base implementation)
+ 	Guild System JS Enhancements:
+	Added new character method: CheckGuild() to check if a character is currently in a guild
+	Added new global function: CreateNewGuild()
+		Automatically assigns the calling character to the newly created guild
+		Returns the guild object for further setup
+	Added guild object methods:
+   		NewMember(), NewRecruit(), RemoveRecruit(), RemoveMember(), RecruitToMember()
+	Added relation-checking methods:
+   		GuildIsAtWar(targetGuild), GuildIsAlly(targetGuild), GuildIsNeutral(targetGuild)
+	Documentation Updates:
+	Added full documentation entries for all new guild/character functions and methods
+	Includes prototypes, purpose descriptions, behavior notes, and usage examples for:
+		CreateNewGuild() in guild methods
+		CheckGuild() in character methods
+		All Guild management and relation-checking methods
+
 15/03/2025 - Dragon Slayer
 	Fixed an issue where timestamps for system timers could be set in the past due to float-to-UI32 casting precision loss. ( Thanks Xuri )
 

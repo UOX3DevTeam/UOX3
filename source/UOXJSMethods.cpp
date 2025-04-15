@@ -4283,6 +4283,161 @@ JSBool CGuild_RecruitToMember( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CGuild_GuildIsAtWar()
+//|	Prototype	-	bool GuildIsAtWar( targetGuild )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if this guild considers the target guild to be an enemy (at war)
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_GuildIsAtWar( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(IsAtWar) Invalid Parameter Count: %d", argc );
+		return JS_FALSE;
+	}
+
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CGuild* myGuild = static_cast<CGuild*>(JS_GetPrivate( cx, obj ));
+	if( myGuild == nullptr )
+	{
+		ScriptError(cx, "(IsAtWar) Invalid Object assigned");
+		return JS_FALSE;
+	}
+
+	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* otherObj = JSVAL_TO_OBJECT( argv[0] );
+	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
+	if( otherGuild == nullptr )
+	{
+		ScriptError( cx, "(IsAtWar) Invalid target Guild object" );
+		return JS_FALSE;
+	}
+
+	GUILDID otherID = GuildSys->FindGuildId( otherGuild ); // Assuming Guilds is your CGuildCollection instance
+	if( otherID == -1 )
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+
+	bool result = myGuild->IsAtWar( otherID );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	 CGuild_GuildIsAlly()
+//| Prototype	-	 bool GuildIsAlly( targetGuild )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	 Checks if this guild considers the target guild an ally
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_GuildIsAlly( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(IsAlly) Invalid Parameter Count: %d", argc );
+		return JS_FALSE;
+	}
+
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+	if( myGuild == nullptr )
+	{
+		ScriptError( cx, "(IsAlly) Invalid Guild object" );
+		return JS_FALSE;
+	}
+
+	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* otherObj = JSVAL_TO_OBJECT( argv[0] );
+	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
+	if( otherGuild == nullptr )
+	{
+		ScriptError( cx, "(IsAlly) Invalid target Guild object" );
+		return JS_FALSE;
+	}
+
+	GUILDID otherID = GuildSys->FindGuildId( otherGuild );
+	if( otherID == -1 )
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+
+	bool result = myGuild->IsAlly( otherID );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	 CGuild_GuildIsNeutral()
+//| Prototype	-	 bool GuildIsNeutral( targetGuild )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	 Checks if this guild considers the target guild neutral
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_GuildIsNeutral( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(IsNeutral) Invalid Parameter Count: %d", argc );
+		return JS_FALSE;
+	}
+
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+	if( myGuild == nullptr )
+	{
+		ScriptError( cx, "(IsNeutral) Invalid Guild object" );
+		return JS_FALSE;
+	}
+
+	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* otherObj = JSVAL_TO_OBJECT(argv[0] );
+	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
+	if( otherGuild == nullptr )
+	{
+		ScriptError( cx, "(IsNeutral) Invalid target Guild object" );
+		return JS_FALSE;
+	}
+
+	GUILDID otherID = GuildSys->FindGuildId( otherGuild );
+	if( otherID == -1 )
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+
+	bool result = myGuild->IsNeutral( otherID );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	 -	CChar_CheckGuild()
+//| Prototype	 -	bool CheckGuild()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		 -	Returns true if the character is currently in a guild
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_CheckGuild( JSContext* cx, uintN argc, jsval* vp )
+{
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( obj == nullptr )
+	{
+		return JS_FALSE;
+	}
+
+	CChar* myChar = static_cast<CChar*>( JS_GetPrivate(cx, obj));
+	if( myChar == nullptr )
+	{
+		ScriptError( cx, "(checkGuild) Invalid character object" );
+		return JS_FALSE;
+	}
+
+	bool checkGuild = ( myChar->GetGuildNumber() != -1 );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( checkGuild ));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_ResourceCount()
 //|	Prototype	-	int ResourceCount( realId, colour )
 //|					int ResourceCount( realId, colour, moreVal )
