@@ -5,6 +5,7 @@
 //
 
 #include "StringUtility.hpp"
+#include <cstdint>
 #include <cctype>
 #include <regex>
 #include <locale>
