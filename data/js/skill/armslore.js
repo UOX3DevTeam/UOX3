@@ -33,7 +33,7 @@ function onCallback0( pSock, ourObj )
 			var ourOwner = GetPackOwner( ourObj, 0 );
 			if( ourOwner && ourOwner.isChar && ourOwner.serial == pUser.serial )
 			{
-				if( !pUser.CheckSkill( 4, 0, 1000 ))
+				if( !pUser.CheckSkill( 4, 0, pUser.skillCaps.armslore ))
 				{
 					pSock.SysMessage( GetDictionaryEntry( 1504, pLanguage )); // You are not certain...
 				}

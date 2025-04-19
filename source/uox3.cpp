@@ -938,7 +938,7 @@ auto IsOnline( CChar& mChar ) -> bool
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates object's stats
 //o------------------------------------------------------------------------------------------------o
-auto UpdateStats( CBaseObject *mObj, UI08 x ) -> void
+auto UpdateStats( CBaseObject *mObj, UI08 x, bool skipStatWindowUpdate = false ) -> void
 {
 	for( auto &tSock : FindNearbyPlayers( mObj ))
 	{
@@ -946,7 +946,7 @@ auto UpdateStats( CBaseObject *mObj, UI08 x ) -> void
 		{
 			// Normalize stats if we're updating our stats for other players
 			auto normalizeStats = true;
-			if( tSock->CurrcharObj()->GetSerial() == mObj->GetSerial() )
+			if( !skipStatWindowUpdate && tSock->CurrcharObj()->GetSerial() == mObj->GetSerial() )
 			{
 				tSock->StatWindow( mObj );
 				normalizeStats = false;
@@ -2987,18 +2987,24 @@ auto CWorldMain::CheckAutoTimers() -> void
 			if( entry.first->CanBeObjType( OT_CHAR ))
 			{
 				auto uChar = static_cast<CChar *>( entry.first );
-				
+                
+				// Let's ensure we only do one stat window update for self per cycle,
+				bool triggerStatWindowUpdate = false;
+
 				if( uChar->GetUpdate( UT_HITPOINTS ))
 				{
-					UpdateStats( entry.first, 0 );
+					triggerStatWindowUpdate = true;
+					UpdateStats( entry.first, 0, false );
 				}
 				if( uChar->GetUpdate( UT_STAMINA ))
 				{
-					UpdateStats( entry.first, 1 );
+					triggerStatWindowUpdate = true;
+					UpdateStats( entry.first, 1, false );
 				}
 				if( uChar->GetUpdate( UT_MANA ))
 				{
-					UpdateStats( entry.first, 2 );
+					triggerStatWindowUpdate = true;
+					UpdateStats( entry.first, 2, false );
 				}
 				
 				if( uChar->GetUpdate( UT_LOCATION ))
@@ -3018,7 +3024,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 				{
 					uChar->Update();
 				}
-				else if( uChar->GetUpdate( UT_STATWINDOW ))
+				else if( uChar->GetUpdate( UT_STATWINDOW ) || triggerStatWindowUpdate )
 				{
 					CSocket *uSock = uChar->GetSocket();
 					if( uSock )

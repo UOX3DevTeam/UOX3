@@ -1988,216 +1988,175 @@ restock=10
 
 // Shields
 
-// Bronze Shield - Base item with shared DFN tags
-[base_bronze_shield]
+[base_shield]
 {
 get=base_item
-name=bronze shield
-id=0x1b72
+type=107
 decay=1
+movable=1
 good=16
 layer=0x02
 restock=10
+}
+
+// Bronze Shield - Base item with shared DFN tags
+[base_bronze_shield]
+{
+get=base_shield
+name=bronze shield
+id=0x1b72
 str=20
 }
 
 // Buckler - Base item with shared DFN tags
 [base_buckler]
 {
-get=base_item
+get=base_shield
 name=buckler
 id=0x1b73
-decay=1
-good=16
-layer=0x02
-restock=10
+str=20
 }
 
 // Metal Kite Shield - Base item with shared DFN tags
 [base_metal_kite_shield]
 {
-get=base_item
+get=base_shield
 name=metal kite shield
 id=0x1b74
-decay=1
+str=20
 dyeable=1
-good=16
-layer=0x02
-restock=10
 }
 
 // Heater Shield - Base item with shared DFN tags
 [base_heater_shield]
 {
-get=base_item
+get=base_shield
 name=heater shield
 id=0x1b76
-decay=1
-good=16
-layer=0x02
-restock=10
+str=20
 }
 
 // Metal Shield - Base item with shared DFN tags
 [base_metal_shield]
 {
-get=base_item
+get=base_shield
 name=metal shield
 id=0x1b7b
-decay=1
-good=16
-layer=0x02
-restock=10
+str=20
 }
 
 // Kite Shield (Wooden) - Base item with shared DFN tags
 [base_wooden_kite_shield]
 {
-get=base_item
+get=base_shield
 name=kite shield
 id=0x1b78
-decay=1
-good=16
-layer=2
-movable=1
-restock=10
+str=20
 }
 
 // Wooden Shield - Base item with shared DFN tags
 [base_wooden_shield]
 {
-get=base_item
+get=base_shield
 name=wooden shield
 id=0x1b7a
-decay=1
-good=16
-layer=2
-movable=1
-restock=10
+str=20
 }
 
 // Order Shield - Base item with shared DFN tags
 [base_order_shield]
 {
-get=base_item
+get=base_shield
 name=order shield
 id=0x1bc4
-decay=1
-good=16
-layer=0x02
+str=20
 }
 
 // Chaos Shield - Base item with shared DFN tags
 [base_chaos_shield]
 {
-get=base_item
+get=base_shield
 name=chaos shield
 id=0x1bc3
-decay=1
-good=16
-layer=0x02
+str=20
 }
 
 // Gargish Chaos Shield - Base item with shared DFN tags
 [base_gargish_chaos_shield]
 {
-get=base_item
+get=base_shield
 name=gargish chaos shield
 id=0x4228
-decay=1
-good=16
-layer=0x02
+str=20
 origin=sa
-restock=10
 }
 
 // Gargish Kite Shield - Base item with shared DFN tags
 [base_gargish_kite_shield]
 {
-get=base_item
+get=base_shield
 name=gargish kite shield
 id=0x4201
-decay=1
-good=16
-layer=0x02
+str=20
 origin=sa
-restock=10
 }
 
 // Gargish Order Shield - Base item with shared DFN tags
 [base_gargish_order_shield]
 {
-get=base_item
+get=base_shield
 name=gargish order shield
 id=0x422a
-decay=1
-good=16
-layer=0x02
+str=20
 origin=sa
-restock=10
 }
 
 // Large Plate Shield - Base item with shared DFN tags
 [base_large_plate_shield]
 {
-get=base_item
+get=base_shield
 name=large plate shield
 id=0x4204
-decay=1
-good=16
-layer=0x02
+str=20
 origin=sa
-restock=10
 }
 
 // Large Stone Shield - Base item with shared DFN tags
 [base_large_stone_shield]
 {
-get=base_item
+get=base_shield
 name=large stone shield
 id=0x4205
-decay=1
-good=16
-layer=0x02
+str=20
 origin=sa
-restock=10
 }
 
 // Medium Plate Shield - Base item with shared DFN tags
 [base_medium_plate_shield]
 {
-get=base_item
+get=base_shield
 name=medium plate shield
 id=0x4203
-decay=1
-good=16
-layer=0x02
+str=20
 origin=sa
-restock=10
 }
 
 // Small Plate Shield - Base item with shared DFN tags
 [base_small_plate_shield]
 {
-get=base_item
+get=base_shield
 name=small plate shield
 id=0x4202
-decay=1
-good=16
-layer=0x02
+str=20
 origin=sa
-restock=10
 }
 
 // Gargish Wooden Shield - Base item with shared DFN tags
 [base_gargish_wooden_shield]
 {
-get=base_item
+get=base_shield
 name=gargish wooden shield
 id=0x4200
-decay=1
-good=16
-layer=0x02
+str=20
 origin=sa
-restock=10
 }

@@ -59,7 +59,7 @@ function onCallback0( pSock, ourObj )
 				return;
 			}
 
-			if( !pUser.CheckSkill( 37, 0, 1000 ))
+			if( !pUser.CheckSkill( 37, 0, pUser.skillCaps.tinkering ))
 			{
 				pSock.SysMessage( GetDictionaryEntry( 964, pSock.language )); // Your fingers slip and you break one of the parts.
 			}

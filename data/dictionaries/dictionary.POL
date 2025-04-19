@@ -3298,6 +3298,20 @@
 5721=Nie możesz tam szukać skarbów!
 5722=współrzędne %s
 5723=Zakończono
+// [5751-5765] Blokada karmy i świątynia
+5751=Karma jest zablokowana. Mantra wypowiedziana w świątyni ją odblokuje.
+5752=Twoja karma została zablokowana. Twojej karmy nie można już podnieść.
+5753=Twoja karma została odblokowana. Twoją karmę można podnieść ponownie.
+5754=Zablokuj karmę
+5755=Odblokuj karmę
+5756=Wskrześ
+5757=Dziesięcina złota
+5758=Postanowiłeś nie dawać dziesięciny złota do świątyni.
+5759=Nie masz wystarczająco dużo złota, aby dać dziesięcinę w takiej kwocie!
+5760=Dajesz dziesięcinę złota do świątyni jako znak oddania.
+5761=Możesz zostać wskrzeszony tutaj, w tym Sanktuarium. Czy chcesz spróbować?<br>KONTYNUUJ - Wybrałeś próbę powrotu do życia teraz.<br>ANULUJ - Wolisz pozostać duchem na razie.
+5762=Możesz zostać wskrzeszony tutaj, w tym Sanktuarium Cnót. Czy chcesz spróbować?<br>KONTYNUUJ - Wybrałeś próbę powrotu do życia teraz.<br>ANULUJ - Wolisz pozostać duchem na razie.
+5763=<center>Zmartwychwstanie</center>
 // [6000-6499] Różne umiejętności Msgs
 6000=Ta osoba wygląda na %s i %t.
 6001=Nie możesz zrobić z tego nic użytecznego.
@@ -3431,6 +3445,7 @@
 6301=Tylko Wielki Mistrz Alchemik może uczyć się z tej książki.
 6302=Te informacje już znasz.
 6303=Nauczyłeś się robić przedmioty ze szkła. Będziesz musiał znaleźć górników, którzy wydobędą drobny piasek, aby móc wyprodukować te przedmioty.
+6304=Musisz mieć wolną rękę, żeby wypić miksturę.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?
@@ -4303,6 +4318,38 @@
 9410=Nauczyłeś się wydobywać drobny piasek. Podczas wydobywania celuj w obszary piaszczyste w poszukiwaniu drobnego piasku.
 9411=Nauczyłeś się wydobywać kamienie. Podczas wydobywania celuj w góry, aby znaleźć kamienie.
 9412=Nie ma tu piasku do wydobycia.
+// [9800-9899] Edytor spawnera
+9800=Edytor obiektów spawnera
+9801=Nazwa spawnera
+9802=Typ spawnera
+9803=Przedmiot
+9804=Npc
+9805=Obszar
+9806=Eskorta
+9807=Sekcja/lista spawnerów
+9808=Identyfikator sekcji lub lista NPC do spawnowania z DFN-ów
+9809=Lista spawnerów
+9810=Jeśli zaznaczone, spawner używa listy spawnerów zamiast sekcji spawnerów
+9811=Ilość
+9812=Maksymalna ilość do odrodzenia
+9813=Minimalny czas
+9814=Minimalny czas w minutach do odrodzenia
+9815=Maksymalny czas
+9816=Maksymalny czas w minutach do odrodzenia
+9817=Promień (Obszar)
+9818=Promień do odradzania NPC-ów (tylko obszar-spawner!)
+9819=Zastosuj zmiany
+9820=Zmieniono typ spawnera na przedmiot (61), ilość zresetowano do 1.
+9821=Zmieniono typ spawnera na NPC (62).
+9822=Zmieniono typ spawnera na obszar (69), promień odradzania zaktualizowano (domyślnie 1)
+9823=Zmieniono typ spawnera na eskortę (125).
+9824=Sekcja odradzania zaktualizowana do %s
+9825=Min. czas zaktualizowany do %i
+9826=Maks. czas zaktualizowany do %i
+9827=Ilość zaktualizowana do %i
+9828=Promień odradzania zaktualizowany do %i
+9829=Nazwa odradzacza zaktualizowana do %s
+9830=Nie używa się już listy odradzania — zakładając, że sekcja odradzania odnosi się teraz do indywidualnej definicji NPC. 9831=Teraz używana jest lista odrodzeń - zakładając, że sekcja odrodzeń odnosi się teraz do listy NPC.
 // [9900 - 10000] Polecenia dotyczące drzwi i znaków
 9916=Strona
 9917=Następny
@@ -4679,7 +4726,6 @@
 11619=bochenek chleba
 11620=panka ciasteczek
 11621=ciasto
-11622=muffiny
 11622=pieczony quiche
 11623=pieczony placek z mięsem
 11624=pizza z kiełbasą
@@ -4715,6 +4761,7 @@
 11654=Musisz być w pobliżu źródła ciepła, aby gotować jedzenie.
 11655=Musisz być w pobliżu młyna, aby wytworzyć mąkę.
 11656=Musisz być w pobliżu piekarnika, aby upiec jedzenie.
+11657=muffiny
 // 11801 - 12000 Umiejętność majsterkowania
 // Strona 1 - Przedmioty z drewna
 11801=Oś
@@ -5311,5 +5358,76 @@
 19100=Udało Ci się przekonwertować metal.
 19101=Możesz wymieniać tylko pięćset sztabek na raz.
 19102=Przedmiot musi znajdować się w Twoim plecaku, aby można go było wymienić.
+// [19110-19200] Uprawa roślin
+19110=Musisz mieć ten przedmiot w plecaku lub zamknięty, aby go użyć.
+19111=Najpierw musisz zasiać ziarno w misce
+19112=Przycinasz roślinę. Ta roślina nie będzie już produkować zasobów ani nasion, ale nie będzie wymagać konserwacji.
+19113=Nie możesz zbierać pyłku ze zmutowanej rośliny!
+19114=Za wcześnie na zbieranie pyłku
+19115=Nie możesz zbierać pyłku z niezdrowej rośliny!
+19116=Wyceluj w roślinę, którą chcesz zapylić krzyżowo.
+19117=Możesz zapylać tylko inne, specjalnie wyhodowane rośliny!
+19118=Ta roślina nie jest w fazie kwitnienia. Nie można go zapylać!
+19119=Nie możesz zapylać niezdrowej rośliny!
+19120=Nie możesz zapylać krzyżowo ze zmutowaną rośliną!
+19121=Ta roślina została już zapylona!
+19122=Zapylasz roślinę własnym pyłkiem.
+19123=Udało Ci się krzyżować - zapylić roślinę.
+19124=Ta roślina nie ma nasion do zebrania!
+19125=Zbierasz nasiona rośliny.
+19126=Nie możesz dodać wody do tej rośliny.
+19127=Zmiękczasz brud wodą.
+19128=Nie możesz tego użyć na roślinie!
+19129=Nie masz w swoim zestawie żadnych silnych mikstur tego typu.
+19130=Powinieneś polewać miksturami tylko rośliny lub nasiona!
+19131=Roślina jest już nasączona tego typu miksturą!
+19132=Musisz mieć ten przedmiot w plecaku, aby z niego skorzystać.
+19133=Wybierz kawałek ziemi do zebrania.
+19134=Potrzebujesz więcej ziemi, aby wypełnić miskę z roślinami!
+19135=Napełniasz miskę świeżą ziemią.
+19136=Będziesz chciał zebrać świeżą ziemię, aby wyhodować zdrową roślinę!
+19137=Wybierz miskę ziemi, w której chcesz zasadzić to ziarno.
+19138=Musisz użyć nasion na przygotowanej glebie!
+19139=W tej misce brudu jest już nasionko %s!
+19140=Najpierw należy zmiękczyć brud.
+19141=Zasiewasz ziarno w misce z ziemią.
+19142=Musisz użyć nasion na misce ziemi!
+// [19201-19300] Ruchy specjalne
+19201=Potrzebujesz %i umiejętności posługiwania się bronią, aby wykonać ten atak
+19202=Potrzebujesz %i many, aby wykonać ten atak
+19203=Twój atak przebija ich zbroję!
+19204=Cios przebił twoją zbroję!
+19205=Twój cel krwawi!
+19206=Krwawisz!
+19207=Obficie krwawisz
+19208=%i obficie krwawi
+19209=Doznałeś wstrząsu mózgu!
+19210=Czujesz się zdezorientowany!
+19211=Zadałeś miażdżący cios!
+19212=Otrzymujesz dodatkowe obrażenia od miażdżącego ataku!
+19213=Nie możesz rozbroić przeciwnika.
+19214=Twój cel jest już nieuzbrojony!
+19215=Rozbrajasz ich broń!
+19216=Twoja broń została rozbrojona!
+19217=Nie możesz wykonać tego ataku na koniu lub w locie!
+19218=Ten atak działa tylko na cele konne lub latające
+19219=Siła twojego ataku zrzuciła ich z wierzchowca!
+19220=Zostałeś strącony z wierzchowca przez %i!
+19221=Twoja broń musi zawierać dawkę trucizny, aby wykonać zaraźliwy atak!
+19222=Twoje precyzyjne uderzenie zwiększyło poziom trucizny o 1
+19223=Trucizna wydaje się wyjątkowo skuteczna!
+19224=Otrułeś swój cel: %i
+19225=%i: otrułem cię!
+19226=Zadajesz śmiertelną ranę!
+19227=Zostałeś śmiertelnie ranny!
+19228=Twój cel jest odporny na paraliż.
+19229=Jesteś odporny na paraliż.
+19230=Atak chwilowo cię sparaliżował!
+19231=Brakuje Ci wymaganej umiejętności ukrywania się, aby wykonać ten atak
+19232=Uderzasz i chowasz się w cieniu!
+19233=Jesteś oszołomiony atakiem i twój napastnik znika!
+19234=Twoje zamieszanie minęło, możesz teraz uzbroić broń!
+19235=Nie jesteś już śmiertelnie ranny.
+19236=Krwawiące rany się zagoiły, już nie krwawisz!
 }
 EOF

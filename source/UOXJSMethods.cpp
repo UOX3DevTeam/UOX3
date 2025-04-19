@@ -596,7 +596,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "checkbox %i %i %i %i %i %i", tL, tR, gImage, gImageChk, initState, relay ));
+	gList->one->push_back( oldstrutil::format( "checkbox %i %i %u %u %i %i", tL, tR, gImage, gImageChk, initState, relay ));
 
 	return JS_TRUE;
 }
@@ -773,7 +773,7 @@ JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "resizepic %i %i %i %i %i", tL, tR, gImage, bL, bR ));
+	gList->one->push_back( oldstrutil::format( "resizepic %i %i %u %i %i", tL, tR, gImage, bL, bR ));
 
 	return JS_TRUE;
 }
@@ -796,8 +796,8 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 	UI16 gImage2 = ( argc == 6 ? (gImage + 1) : static_cast<UI16>( JSVAL_TO_INT( argv[3] )));
 	SI16 x1 = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[3] )) : static_cast<SI16>( JSVAL_TO_INT( argv[4] )));
-	SI16 x2 = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[4] )) : static_cast<SI16>( JSVAL_TO_INT( argv[5] )));
-	SI16 x3 = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[5] )) : static_cast<SI16>( JSVAL_TO_INT( argv[6] )));
+	UI32 pageNum = ( argc == 6 ? static_cast<UI32>( JSVAL_TO_INT( argv[4] )) : static_cast<UI32>( JSVAL_TO_INT( argv[5] )));
+	SI16 buttonId = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[5] )) : static_cast<SI16>( JSVAL_TO_INT( argv[6] )));
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
@@ -806,7 +806,7 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "button %i %i %i %i %i %i %i", tL, tR, gImage, gImage2, x1, x2, x3 ));
+	gList->one->push_back( oldstrutil::format( "button %i %i %u %u %i %i %u", tL, tR, gImage, gImage2, x1, pageNum, buttonId ));
 
 	return JS_TRUE;
 }
@@ -831,8 +831,8 @@ JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	UI16 tileIdPush = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
 	SI16 buttonType = static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
 	SI16 pageNum = static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
-	SI16 buttonId = static_cast<SI16>( JSVAL_TO_INT( argv[6] ));
-	SI16 tileId = static_cast<SI16>( JSVAL_TO_INT( argv[7] ));
+	UI32 buttonId = static_cast<UI32>( JSVAL_TO_INT( argv[6] ));
+	UI16 tileId = static_cast<UI16>( JSVAL_TO_INT( argv[7] ));
 	SI16 hue = static_cast<SI16>( JSVAL_TO_INT( argv[8] ));
 	SI16 tileX = static_cast<SI16>( JSVAL_TO_INT( argv[9] ));
 	SI16 tileY = static_cast<SI16>( JSVAL_TO_INT( argv[10] ));
@@ -845,7 +845,7 @@ JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "buttontileart %i %i %i %i %i %i %i %i %i %i %i", tL, tR, tileIdNorm, tileIdPush, buttonType, pageNum, buttonId, tileId, hue, tileX, tileY ));
+	gList->one->push_back( oldstrutil::format( "buttontileart %i %i %u %u %i %i %u %u %i %i %i", tL, tR, tileIdNorm, tileIdPush, buttonType, pageNum, buttonId, tileId, hue, tileX, tileY ));
 
 	return JS_TRUE;
 }
@@ -876,7 +876,7 @@ JSBool CGump_AddPageButton( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "button %i %i %i %i 0 %i", tL, tR, gImage, gImage2, pageNum ));
+	gList->one->push_back( oldstrutil::format( "button %i %i %u %u 0 %i", tL, tR, gImage, gImage2, pageNum ));
 
 	return JS_TRUE;
 }
@@ -1043,11 +1043,11 @@ JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 
 	if( rgbColor == 0 )
 	{
-		gList->one->push_back( oldstrutil::format( "gumppic %i %i %i", tL, tR, gImage ));
+		gList->one->push_back( oldstrutil::format( "gumppic %i %i %u", tL, tR, gImage ));
 	}
 	else
 	{
-		gList->one->push_back( oldstrutil::format( "gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColor ));
+		gList->one->push_back( oldstrutil::format( "gumppic %i %i %u hue=%i", tL, tR, gImage, rgbColor ));
 	}
 
 	return JS_TRUE;
@@ -1079,7 +1079,7 @@ JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColour ));
+	gList->one->push_back( oldstrutil::format( "gumppic %i %i %u hue=%i", tL, tR, gImage, rgbColour ));
 
 	return JS_TRUE;
 }
@@ -1239,7 +1239,7 @@ JSBool CGump_AddPicture( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "tilepic %i %i %i", tL, tR, gImage ));
+	gList->one->push_back( oldstrutil::format( "tilepic %i %i %u", tL, tR, gImage ));
 
 	return JS_TRUE;
 }
@@ -1270,7 +1270,7 @@ JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "tilepichue %i %i %i %i", tL, tR, gImage, rgbColour ));
+	gList->one->push_back( oldstrutil::format( "tilepichue %i %i %u %i", tL, tR, gImage, rgbColour ));
 
 	return JS_TRUE;
 }
@@ -1305,7 +1305,7 @@ JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "picinpic %i %i %i %i %i %i %i", x, y, gImage, spriteX, spriteY, width, height ));
+	gList->one->push_back( oldstrutil::format( "picinpic %i %i %u %i %i %i %i", x, y, gImage, spriteX, spriteY, width, height ));
 
 	return JS_TRUE;
 }
@@ -1346,7 +1346,7 @@ JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "itemproperty %i", trgSer ));
+	gList->one->push_back( oldstrutil::format( "itemproperty %u", trgSer ));
 
 	return JS_TRUE;
 }
@@ -1399,7 +1399,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "radio %i %i %i %i %i %i", tL, tR, gImage, gImageChk, initialState, relay ));
+	gList->one->push_back( oldstrutil::format( "radio %i %i %u %u %i %i", tL, tR, gImage, gImageChk, initialState, relay ));
 
 	return JS_TRUE;
 }
@@ -2101,6 +2101,91 @@ JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	{
 		cwmWorldState->tempEffects.Remove( removeEffect, true );
 		*rval = INT_TO_JSVAL( 1 ); // Return 1 indicating timer was found and removed
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|    Function    -    CBase_GetTempEffect()
+//|    Prototype    -    UI32 CBase_GetTempEffect( tempEffectID )
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Get timer of specified temp effect for object, or 0 if it doesn't exist
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_GetTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "GetTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		return JS_FALSE;
+	}
+
+	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "GetTempEffect: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid tempe effect
+	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));\
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		// We only want results that have same object serial and tempEffectID as specified
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+		{
+			// Return the timestamp for when the Temp Effect timer expires
+			JS_NewNumberValue( cx, Effect->ExpireTime(), rval );
+		}
+	}
+
+	return JS_TRUE;
+}
+
+void ReverseEffect( CTEffect *Effect );
+//o------------------------------------------------------------------------------------------------o
+//|    Function    -    CBase_ReverseEffect()
+//|    Prototype    -    void ReverseEffect()
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Force the reversion of a Temp Effect on item or character based on specified temp effect ID
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_ReverseEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "ReverseEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		return JS_FALSE;
+	}
+	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "ReverseEffect: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid temp effect found
+	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	CTEffect *removeEffect = nullptr;
+
+	for( auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+		{
+			// Found our timer! Keep track of it for removal outside loop
+			removeEffect = Effect;
+			break;
+		}
+	}
+
+	if( removeEffect != nullptr )
+	{
+		ReverseEffect( removeEffect );
+		cwmWorldState->tempEffects.Remove( removeEffect, true );
+		*rval = INT_TO_JSVAL( 1 ); // Return 1 indicating temp effect was found and removed
 	}
 
 	return JS_TRUE;
@@ -3997,18 +4082,19 @@ JSBool CGuild_IsAtPeace( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unuse
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CChar_ResourceCount()
+//|	Function	-	CBase_ResourceCount()
 //|	Prototype	-	int ResourceCount( realId, colour )
 //|					int ResourceCount( realId, colour, moreVal )
 //|					int ResourceCount( realId, colour, moreVal, sectionId )
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns the amount of the items of given ID, colour and moreVal character has in packs
+//|	Purpose		-	Returns the amount of the items of given ID, colour and moreVal character or item has in packs
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
+	JSEncapsulate myClass( cx, obj );
+	CBaseObject* myObj = static_cast<CBaseObject*>( myClass.toObject() );
 
-	if( !ValidateObject( myChar ))
+	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "(ResourceCount) Invalid Object assigned" );
 		return JS_FALSE;
@@ -4041,7 +4127,18 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	bool colorCheck = ( itemColour != -1 ? true : false );
 	bool moreCheck = ( moreVal != -1 ? true : false );
 
-	*rval = INT_TO_JSVAL( GetItemAmount( myChar, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId ));
+	UI32 retVal = 0;
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		CChar* myChar = static_cast<CChar*>( myObj );
+		retVal = GetItemAmount( myChar, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
+	}
+	else
+	{
+		CItem* myItem = static_cast<CItem*>(myObj);
+		retVal = GetSubItemAmount(myItem, realId, static_cast<UI16>(itemColour), static_cast<UI32>(moreVal), colorCheck, moreCheck, sectionId);
+	}
+	*rval = INT_TO_JSVAL( retVal );
 	return JS_TRUE;
 }
 
@@ -4739,7 +4836,7 @@ JSBool CBase_GetSerial( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN arg
 	return JS_TRUE;
 }
 
-void UpdateStats( CBaseObject *mObj, UI08 x );
+void UpdateStats( CBaseObject *mObj, UI08 x, bool skipStatWindowUpdate = false );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_UpdateStats()
 //|	Prototype	-	void UpdateStats( statType )
@@ -7155,7 +7252,7 @@ JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 	{
 		firstItem = ( static_cast<CItem *>( myObj ))->GetContainsList()->First();
 	}
-	else if( myObj->GetObjType() == OT_MULTI )
+	else if( myObj->GetObjType() == OT_MULTI || myObj->GetObjType() == OT_BOAT )
 	{
 		firstItem = ( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->First();
 	}
@@ -7206,7 +7303,7 @@ JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 	{
 		nextItem = ( static_cast<CItem *>( myObj ))->GetContainsList()->Next();
 	}
-	else if( myObj->GetObjType() == OT_MULTI )
+	else if( myObj->GetObjType() == OT_MULTI || myObj->GetObjType() == OT_BOAT )
 	{
 		nextItem = ( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Next();
 	}
@@ -7256,7 +7353,7 @@ JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 	{
 		*rval = BOOLEAN_TO_JSVAL(( static_cast<CItem *>( myObj ))->GetContainsList()->Finished() );
 	}
-	else if( myObj->GetObjType() == OT_MULTI )
+	else if( myObj->GetObjType() == OT_MULTI || myObj->GetObjType() == OT_BOAT )
 	{
 		*rval = BOOLEAN_TO_JSVAL(( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Finished() );
 	}
@@ -7955,12 +8052,41 @@ JSBool CBase_SetRandomName( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-	CBaseObject *mObj			= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
+	CBaseObject *mObj		= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
 	std::string namelist	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 
 	if( !namelist.empty() )
 	{
 		SetRandomName( mObj, namelist );
+		*rval = JSVAL_TRUE;
+		return JS_TRUE;
+	}
+
+	*rval = JSVAL_FALSE;
+	return JS_TRUE;
+}
+
+UI16 AddRandomColor( const std::string& colorlist );
+//o------------------------------------------------------------------------------------------------o
+//|    Function    -    CBase_SetRandomColor()
+//|    Prototype    -    bool SetRandomColor( "colorlist" )
+//o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Applies a random color from specified colorlist to character or item
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_SetRandomColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "SetRandomColor: Invalid number of arguments (takes 1, colorlist string)" );
+		return JS_FALSE;
+	}
+
+	CBaseObject *mObj			= static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
+	std::string colorlist		= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
+
+	if( !colorlist.empty() )
+	{
+		mObj->SetColour( AddRandomColor( colorlist ));
 		*rval = JSVAL_TRUE;
 		return JS_TRUE;
 	}

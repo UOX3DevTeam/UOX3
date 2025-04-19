@@ -65,6 +65,18 @@ function onCallback0( socket, ourObj )
 		ourObj.intelligence = nVal;
 		okMsg( socket );
 		break;
+	case "HITCHANCE":
+		ourObj.hitChance = nVal;
+		okMsg( socket );
+		break;
+	case "DEFENSECHANCE":
+		ourObj.defenseChance = nVal;
+		okMsg( socket );
+		break;
+	case "DAMAGEINCREASE":
+		ourObj.damageIncrease = nVal;
+		okMsg(socket);
+		break;
 	case "FAME":
 		ourObj.fame = nVal;
 		okMsg( socket );
@@ -181,6 +193,10 @@ function onCallback0( socket, ourObj )
 		ourObj.tempdex = nVal;
 		okMsg( socket );
 		break;
+	case "SWINGSPEEDINC":
+		ourObj.swingSpeedIncrease = nVal;
+		okMsg( socket );
+		break;
 	case "WIPABLE":
 	case "WIPEABLE":
 		ourObj.wipable = ( nVal == 1 );
@@ -232,8 +248,16 @@ function onCallback0( socket, ourObj )
 		ourObj.sectionID = socket.xText.substring( 10 );
 		okMsg( socket );
 		break;
+	case "LUCK":
+		ourObj.luck = nVal;
+		okMsg( socket );
+		break;
 	case "SHOULDSAVE":
 		ourObj.shouldSave = ( nVal == 1 );
+		okMsg( socket );
+		break;
+	case "TITHING":
+		ourObj.tithing = nVal;
 		okMsg( socket );
 		break;
 	default:
@@ -261,6 +285,14 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 
 	switch( uKey )
 	{
+	case "ARTIFACTRARITY":
+		ourItem.artifactRarity = nVal;
+		okMsg( socket );
+		break;
+	case "DURABILITYHPBONUS":
+		ourItem.durabilityHpBonus = nVal;
+		okMsg( socket );
+		break;
 	case "ID":
 		ourItem.id = nVal;
 		okMsg( socket );
@@ -444,6 +476,38 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		break;
 	case "DEF":
 		ourItem.Resist( 1, nVal );
+		okMsg( socket );
+		break;
+	case "LOWERSTATREQ":
+		ourItem.lowerStatReq = nVal;
+		okMsg( socket );
+		break;
+	case "HEALTHLEECH":
+		ourItem.healthLeech = nVal;
+		okMsg( socket );
+		break;
+	case "HEALTHBONUS":
+		ourItem.healthBonus = nVal;
+		okMsg( socket );
+		break;
+	case "MANALEECH":
+		ourItem.manaLeech = nVal;
+		okMsg( socket );
+		break;
+	case "MANABONUS":
+		ourItem.manaBonus = nVal;
+		okMsg( socket );
+		break;
+	case "STAMINALEECH":
+		ourItem.staminaLeech = nVal;
+		okMsg( socket );
+		break;
+	case "STAMINABONUS":
+		ourItem.staminaBonus = nVal;
+		okMsg( socket );
+		break;
+	case "KARMALOCK":
+		ourItem.karmaLock = nVal;
 		okMsg( socket );
 		break;
 	case "ARMORCLASS":
@@ -742,6 +806,10 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		break;
 	case "MAXSTAMINA":
 		ourChar.maxstamina = nVal;
+		okMsg( socket );
+		break;
+	case "STAMINA":
+		ourChar.stamina = nVal;
 		okMsg( socket );
 		break;
 	case "HUNGER":

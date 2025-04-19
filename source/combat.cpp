@@ -235,6 +235,9 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 			}
 		}
 	}
+    // Record the time when combat starts as a timestamp
+	cAttack->SetLastCombatTime( cwmWorldState->GetUICurrentTime() );
+	cTarget->SetLastCombatTime( cwmWorldState->GetUICurrentTime() );
 	return true;
 }
 
@@ -580,6 +583,10 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 	if( !StartAttack( cAttack, cTarget )) // Is the char allowed to initiate combat with the target?
 		return;
 
+    // Update last combat time for both the attacker and the target
+	cAttack->SetLastCombatTime( cwmWorldState->GetUICurrentTime() );
+	cTarget->SetLastCombatTime( cwmWorldState->GetUICurrentTime() );
+
 	if( cAttack->CheckAggressorFlag( cTarget->GetSerial() ))
 	{
 		// Send attacker message to all nearby players
@@ -801,6 +808,10 @@ UI08 CHandleCombat::GetWeaponType( CItem *i )
 		case 0x48B3: //gargish axe - SA
 			return TWOHND_AXES;
 		// Default Maces
+		case 0x0DF2: // Wand
+		case 0x0DF3: // Wand
+		case 0x0DF4: // Wand
+		case 0x0DF5: // Wand
 		case 0x13E3: //smith's hammer
 		case 0x13E4: //smith's hammer
 		case 0x13B3: //club
@@ -1756,6 +1767,50 @@ void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::PlayHitAnimations()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Plays the hit-animation for specified character
+//o------------------------------------------------------------------------------------------------o
+void CHandleCombat::PlayHitAnimations( CChar *mChar )
+{
+	UI16 charId = mChar->GetId();
+	UI08 hitAnim = 0;
+	UI08 hitAnimLength = 0;
+
+	if( mChar->IsOnHorse() )
+	{
+		return;
+	}
+
+	if( !cwmWorldState->creatures[charId].IsHuman() )
+	{
+		// Sea Creatures/Animals - always use old animation packet
+		if( cwmWorldState->creatures[charId].IsAmphibian() || cwmWorldState->creatures[charId].IsAnimal())
+		{
+			hitAnim = ACT_ANIMAL_GETHIT;
+			hitAnimLength = 5;
+		}
+		else // Monsters - always use old animation packet
+		{
+			hitAnim = ACT_MONSTER_IMPACT;
+			hitAnimLength = 4;
+		}
+
+		Effects->PlayCharacterAnimation( mChar, hitAnim, 0, hitAnimLength );
+	}
+	else if( mChar->GetBodyType() == BT_GARGOYLE || cwmWorldState->ServerData()->ForceNewAnimationPacket() )
+	{
+		// Players - either Gargoyles (always) or humans/elves with forced new anim packet
+		Effects->PlayNewCharacterAnimation( mChar, N_ACT_IMPACT, 0 );
+	}
+	else
+	{
+		// Players - Human/elves with old anims
+		Effects->PlayCharacterAnimation( mChar, ACT_IMPACT, 0, 5 );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CHandleCombat::PlayMissedSoundEffect()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Do the "Missed" Sound Effect
@@ -2094,6 +2149,10 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			damage = static_cast<R32>( baseDamage );
 			break;
 		case PHYSICAL:
+		{
+			// Add Damage Increase (DI) from items, buffs, etc.
+			SI16 damageIncreasePercent = mChar->GetDamageIncrease(); // Total DI from items, buffs, etc.
+
 			// Race Dmg Modification: Bonus percentage.
 			RaceDamage = Races->DamageFromSkill( getFightSkill, mChar->GetRace() );
 			if( RaceDamage != 0 )
@@ -2109,6 +2168,12 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			{
 				baseDamage = AdjustArmorClassDamage( mChar, ourTarg, mWeapon, baseDamage, hitLoc );
 			}
+
+			if( damageIncreasePercent > cwmWorldState->ServerData()->DamageIncreaseCap() )
+				damageIncreasePercent = cwmWorldState->ServerData()->DamageIncreaseCap(); // Enforce the DI cap of ini setting
+
+			// Apply DI to base damage
+			baseDamage += static_cast<SI16>( baseDamage * damageIncreasePercent / 100 );
 
 			// Publish 5 (April 27, 2000 - UOR patch) had some changes to combat damage:
 			// The lumberjacking skill will provide a bonus to damage when the player is using one of the following axes. 
@@ -2294,6 +2359,7 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			multiplier /= 100;
 			damage = baseDamage + static_cast<R32>( baseDamage * multiplier );
 			break;
+		}
 		default:
 			damage = static_cast<R32>( baseDamage );
 
@@ -2356,7 +2422,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 			if( ValidateObject( shield ))
 			{
 				// Perform a skillcheck to potentially give player a skill increase
-				Skills->CheckSkill( ourTarg, PARRYING, 0, 1000 );
+				Skills->CheckSkill( ourTarg, PARRYING, 0, ourTarg->GetSkillCap( PARRYING ) );
 
 				// Get parry skill value
 				UI16 defendParry = ourTarg->GetSkill( PARRYING );
@@ -2534,7 +2600,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 				if( mWeapon )
 				{
 					// Perform a skillcheck for Bushido regardless of weapon equipped
-					Skills->CheckSkill( ourTarg, BUSHIDO, 0, 1000 );
+					Skills->CheckSkill( ourTarg, BUSHIDO, 0, ourTarg->GetSkillCap( BUSHIDO ) );
 
 					// Fetch relevant skill values
 					UI16 defendParry = ourTarg->GetSkill( PARRYING );
@@ -2667,7 +2733,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 
 	if( getDef > 0 )
 	{
-		damage -= static_cast<R32>(( static_cast<R32>( getDef ) * static_cast<R32>( attSkill )) / 750 );
+		damage -= static_cast<R32>( getDef );
 	}
 
 	return static_cast<SI16>( std::round( damage ));
@@ -2746,12 +2812,12 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	//Attacker Skill values
 	CItem *mWeapon				= GetWeapon( &mChar );
 	const UI08 getFightSkill	= GetCombatSkill( mWeapon );
-	const UI16 attackSkill		= std::min( 1000, static_cast<SI32>( mChar.GetSkill( getFightSkill )));
+	const UI16 attackSkill		= std::min( static_cast<SI32>( mChar.GetSkillCap( getFightSkill )), static_cast<SI32>( mChar.GetSkill( getFightSkill )));
 
 	//Defender Skill values
 	CItem *defWeapon			= GetWeapon( ourTarg );
 	const UI08 getTargetSkill	= GetCombatSkill( defWeapon );
-	const UI16 defendSkill		= std::min( 1000, static_cast<SI32>( ourTarg->GetSkill( getTargetSkill )));
+	const UI16 defendSkill		= std::min( static_cast<SI32>( ourTarg->GetSkillCap( getTargetSkill )), static_cast<SI32>( ourTarg->GetSkill( getTargetSkill )));
 
 	bool checkDist = ( ourDist <= 1 && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 );
 
@@ -2831,8 +2897,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			if( mChar.IsNpc() || ( ammoId != 0 && DeleteItemAmount( &mChar, 1, ammoId,  ammoHue ) == 1 ))
 			{
 				PlaySwingAnimations( &mChar );
-				//Effects->PlayMovingAnimation( &mChar, ourTarg, ammoFX, 0x08, 0x00, 0x00, static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));
-				Effects->PlayMovingAnimation( mChar.GetX(), mChar.GetY(), mChar.GetZ() + 5, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), ammoFX, 0x08, 0x00, 0x00, static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));
+				Effects->PlayMovingAnimation( mChar.GetX(), mChar.GetY(), mChar.GetZ() + 5, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), ammoFX, 0x15, 0x1, 0x00, static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));
 			}
 			else
 			{
@@ -2859,7 +2924,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		bool skillPassed = false;
 
 		// Do a skill check so the fight skill is increased
-		Skills->CheckSkill( &mChar, getFightSkill, 0, std::min( 1000, static_cast<SI32>(( getDefTactics * 1.25 ) + 100 )));
+		Skills->CheckSkill( &mChar, getFightSkill, 0, std::min(static_cast<SI32>( mChar.GetSkillCap( getFightSkill )), static_cast<SI32>(( getDefTactics * 1.25 ) + 100 )));
 
 		// Calculate Hit Chance
 		R32 hitChance = 0;
@@ -2899,18 +2964,24 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				R32 attHitChanceBonus = 0;
 				R32 defDefenseChanceBonus = 0;
 				R32 maxAttHitChanceBonus = 45;
+
 				if( cwmWorldState->ServerData()->ExpansionCombatHitChance() >= ER_SA && mChar.GetBodyType() == BT_GARGOYLE )
 				{
 					// If attacker is a Gargoyle player, and ExpansionCombatHitChance is ER_SA or higher, use 50 as hitchance bonus cap instead of 45
 					maxAttHitChanceBonus = 50;
 				}
 				
-				// Fetch bonuses to hitChance/defenseChance from AoS item properties, when implemented
-				//attHitChanceBonus = GetAttackerHitChanceBonus();
-				//defDefenseChanceBonus = GetDefenderDefenseChanceBonus();
+				// Fetch bonuses to hitChance/defenseChance from AoS item properties or characters
+				attHitChanceBonus = mChar.GetHitChance();
+				defDefenseChanceBonus = mChar.GetDefenseChance();
 
-				R32 attackerHitChance = ( static_cast<R32>( attackSkill / 10 ) + 20 ) * ( 100 + std::min( attHitChanceBonus, static_cast<R32>( maxAttHitChanceBonus )));
-				R32 defenderDefenseChance = ( static_cast<R32>( defendSkill / 10 ) + 20 ) * ( 100 + std::min( defDefenseChanceBonus, static_cast<R32>( 45 )));
+				// Clamp to ensure valid bonus ranges (e.g., no multiplier below 1)
+				R32 effectiveAttHitChanceBonus = std::max(-99.0f, std::min( attHitChanceBonus, maxAttHitChanceBonus )); // Cap at -99 and maxAttHitChanceBonus
+				R32 effectiveDefDefenseChanceBonus = std::max(-99.0f, std::min( defDefenseChanceBonus, 45.0f )); // Cap at -99 and 45
+
+				// Calculate the attacker's hit chance and defender's defense chance
+				R32 attackerHitChance = ( static_cast<R32>( attackSkill / 10 ) + 20 ) * ( 100 + effectiveAttHitChanceBonus );
+				R32 defenderDefenseChance = ( static_cast<R32>( defendSkill / 10 ) + 20 ) * ( 100 + effectiveDefDefenseChanceBonus );
 				hitChance = ( attackerHitChance / ( defenderDefenseChance * 2 )) * 100;
 
 				// Always leave at least 2% chance to hit
@@ -2938,14 +3009,35 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			}
 
 			PlayMissedSoundEffect( &mChar );
+
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnAttack( &mChar, ourTarg, skillPassed, -1, 0 );
+				}
+			}
+
+			std::vector<UI16> defScriptTriggers = ourTarg->GetScriptTriggers();
+			for( auto scriptTrig : defScriptTriggers )
+			{
+                cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnDefense( &mChar, ourTarg, skillPassed, -1, 0 );
+				}
+			}
 		}
 		else
 		{
+			PlayHitAnimations( ourTarg );
+
 			// It's a hit!
 			CSocket *targSock = ourTarg->GetSocket();
 
-			Skills->CheckSkill( &mChar, TACTICS, 0, 1000 );
-			Skills->CheckSkill( ourTarg, TACTICS, 0, 1000 );
+			Skills->CheckSkill( &mChar, TACTICS, 0, mChar.GetSkillCap( TACTICS ) );
+			Skills->CheckSkill( ourTarg, TACTICS, 0, ourTarg->GetSkillCap( TACTICS ) );
 
 			switch( ourTarg->GetId() )
 			{
@@ -3057,7 +3149,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					toExecute->OnAttack( &mChar, ourTarg );
+					toExecute->OnAttack( &mChar, ourTarg, skillPassed, hitLoc, ourDamage );
 				}
 			}
 
@@ -3067,7 +3159,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					toExecute->OnDefense( &mChar, ourTarg );
+					toExecute->OnDefense( &mChar, ourTarg, skillPassed, hitLoc, ourDamage );
 				}
 			}
 		}
@@ -3452,7 +3544,8 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 	}
 
 	SI32 getOffset	= 0;
-	SI32 baseValue	= 15000;
+	SI32 baseValue = ( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR ) ? 15000 :
+					(( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML ) ? 80000 : 40000 );
 
 	CChar *ourTarg = mChar->GetTarg();
 
@@ -3477,18 +3570,49 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 		}
 	}
 
+	SI32 speedBonus = mChar->GetSwingSpeedIncrease();
+	
+	// Swing Speed Increase Cap per AOS
+	if ( speedBonus > cwmWorldState->ServerData()->SwingSpeedIncreaseCap() )
+	{
+		speedBonus = cwmWorldState->ServerData()->SwingSpeedIncreaseCap();
+	}
+
 	//Allow faster strikes on fleeing targets
 	if( ValidateObject( ourTarg ))
 	{
 		if( ourTarg->GetNpcWander() == WT_FLEE || ourTarg->GetNpcWander() == WT_SCARED )
 		{
-			baseValue = 10000;
+			baseValue = ( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR ) ? 10000 : 
+						(( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML ) ? 53333 : 26680 );
 		}
 	}
 
 	R32 globalAttackSpeed = cwmWorldState->ServerData()->GlobalAttackSpeed(); //Defaults to 1.0
 
-	getDelay = ( baseValue / ( getDelay * getOffset )) / globalAttackSpeed;
+	R32 speedFactor = 1 + speedBonus / 10.0f;
+
+	// Prevent zero or negative multipliers
+	if( speedFactor < 0.1f )
+		speedFactor = 0.1f;
+
+
+	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR )
+	{
+		// Weapon swing delay in LBR and earlier
+		getDelay = baseValue / ( getDelay * getOffset * speedFactor ) / globalAttackSpeed;
+	}
+	else if( cwmWorldState->ServerData()->ExpansionCoreShardEra() < ER_ML )
+	{
+		// Weapon swing delay in SE or earlier
+		getDelay = ( baseValue / ( getDelay * getOffset * speedFactor ) / 4 - 0.5 ) / globalAttackSpeed;
+	}
+	else
+	{
+		// Weapon swing delay in ML or later
+		getDelay = ( baseValue / ( getDelay * getOffset * speedFactor ) * 0.5 ) / globalAttackSpeed;
+	}
+
 	return getDelay;
 }
 

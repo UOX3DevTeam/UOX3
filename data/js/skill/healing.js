@@ -123,17 +123,26 @@ function onCallback1( socket, ourObj )
 
 			var healSkill;
 			var skillNum;
+			var buffIcon;
+			var priCliloc;
+			var scndCliloc;
 			if( IsTargetHealable( ourObj, false ))
 			{
 				// Target can be healed with Healing skill
 				healSkill = mChar.baseskills.healing;
 				skillNum  = 17;
+				buffIcon = 1069;
+				priCliloc = 1002082;
+				scndCliloc = 1151400;
 			}
 			else if( IsTargetHealable( ourObj, true ) || ( ourObj.tamed && ourObj.owner ))
 			{
 				// Target can be healed with Veterinary skill
 				healSkill = mChar.baseskills.veterinary;
 				skillNum  = 39;
+				buffIcon = 1101;
+				priCliloc = 1002167;
+				scndCliloc = 1151400;
 			}
 			else
 			{
@@ -232,6 +241,32 @@ function onCallback1( socket, ourObj )
 			}
 			else // Heal
 			{
+
+				if( ourObj.GetTempTag( "blockHeal" ) == true )
+				{
+					if( ourObj != mChar && ourObj.socket )
+					{
+						socket.SysMessage( "You cannot heal that target in their current state." );
+					}
+					else
+					{
+						socket.SysMessage( GetDictionaryEntry( 9058, socket.language ));// You can not heal yourself in your current state.
+					}
+				}
+				else if( ourObj.GetTempTag( "doBleed" ) == true )
+				{
+					if( ourObj != mChar && ourObj.socket ) 
+					{
+						socket.SysMessage( "You bind the wound and stop the bleeding" );
+					}
+					else
+					{
+						socket.SysMessage( "The bleeding wounds have healed, you are no longer bleeding!" );
+					}
+					ourObj.KillJSTimer( 9300, 7001 );
+					ourObj.SetTempTag( "doBleed", null );
+				}
+
 				// Consume some bandages
 				if( bItem.amount > 1 )
 				{
@@ -269,6 +304,18 @@ function onCallback1( socket, ourObj )
 
 				mChar.AddScriptTrigger( 4014 ); // Add healing_slip.js script
 				SetSkillInUse( socket, mChar, ourObj, skillNum, healTimer, true );
+
+				var seconds = Math.round(healTimer / 1000);
+				// Add buff to target or yourself
+				if (ourObj != mChar && ourObj.socket)
+				{
+					TriggerEvent( 2204, "AddBuff", ourObj, buffIcon, priCliloc, scndCliloc, seconds, " " + ourObj.name );
+				}
+				else
+				{
+					TriggerEvent( 2204, "AddBuff", mChar, buffIcon, priCliloc, scndCliloc, seconds, " " + ourObj.name );
+				}
+
 				mChar.StartTimer( healTimer, 2, true );
 			}
 		}
@@ -330,7 +377,13 @@ function SetSkillInUse( socket, mChar, ourObj, skillNum, healingTime, setVal )
 
 function onTimer( mChar, timerID )
 {
-	var skillNum = mChar.GetTempTag( "SK_HEALINGTYPE" );
+	var skillNum = mChar.GetTempTag("SK_HEALINGTYPE");
+	var skillCap = null;
+	switch( skillNum )
+	{
+		case 17: skillCap = mChar.skillCaps.healing; break;
+		case 39: skillCap = mChar.skillCaps.veterinary; break;
+	}
 	var ourObj = CalcCharFromSer( mChar.GetTempTag( "SK_HEALINGTARG" ));
 	var socket = mChar.socket;
 	if( socket != null )
@@ -358,7 +411,7 @@ function onTimer( mChar, timerID )
 					{
 						socket.SysMessage( GetDictionaryEntry( 9085, socket.language )); // The target is not dead.
 					}
-					else if( mChar.CheckSkill( skillNum, 800, 1000 ) && mChar.CheckSkill( 1, 800, 1000 ))
+					else if( mChar.CheckSkill( skillNum, 800, skillCap ) && mChar.CheckSkill( 1, 800, mChar.skillCaps.anatomy ))
 					{
 						var iMulti = ourObj.multi;
 						if( ValidateObject( iMulti ) && ( !iMulti.IsOnOwnerList( mChar ) && !iMulti.IsOnFriendList( mChar )) &&
@@ -382,7 +435,7 @@ function onTimer( mChar, timerID )
 					}
 					break;
 				case 1:	// Cure Poison
-					if( mChar.CheckSkill( skillNum, 600, 1000 ) && (( skillNum == 17 && mChar.CheckSkill( 1, 600, 1000 )) || ( skillNum == 39 && mChar.CheckSkill( 2, 600, 1000 ))))
+					if( mChar.CheckSkill( skillNum, 600, skillCap ) && (( skillNum == 17 && mChar.CheckSkill( 1, 600, mChar.skillCaps.anatomy )) || ( skillNum == 39 && mChar.CheckSkill( 2, 600, pUser.skillCaps.animallore ))))
 					{
 						ourObj.SetPoisoned( 0, 0 );
 						ourObj.StaticEffect( 0x373A, 0, 15 );
@@ -432,7 +485,7 @@ function onTimer( mChar, timerID )
 							secondarySkill = mChar.skills.anatomy;
 
 							// Perform generic Anatomy skill check to allow skill increase
-							mChar.CheckSkill( 1, 0, 1000 );
+							mChar.CheckSkill( 1, 0, mchar.skillCaps.anatomy );
 						}
 						else if( skillNum == 39 ) // Veterinary
 						{
@@ -440,7 +493,7 @@ function onTimer( mChar, timerID )
 							secondarySkill = mChar.skills.animallore;
 
 							// Perform generic Animal Lore skill check to allow skill increase
-							mChar.CheckSkill( 2, 0, 1000 );
+							mChar.CheckSkill( 2, 0, mchar.skillCaps.animallore );
 						}
 
 						// Retrieve amount of times character's hands slipped during healing

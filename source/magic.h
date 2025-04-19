@@ -93,7 +93,13 @@ struct Reag_st
 	UI08 ash;
 	UI08 shade;
 	UI08 garlic;
-	Reag_st() : ginseng( 0 ), moss( 0 ), drake( 0 ), pearl( 0 ), silk( 0 ), ash( 0 ), shade( 0 ), garlic( 0 )
+	UI08 batwing;
+	UI08 daemonblood;
+	UI08 gravedust;
+	UI08 noxcrystal;
+	UI08 pigiron;
+	Reag_st() : ginseng( 0 ), moss( 0 ), drake( 0 ), pearl( 0 ), silk( 0 ), ash( 0 ), shade( 0 ), garlic( 0 ), batwing( 0 ), daemonblood( 0 ), gravedust( 0 ),
+	noxcrystal( 0 ), pigiron( 0 )
 	{
 	}
 };
@@ -121,11 +127,12 @@ private:
 	SI16		loskill;
 	SI16		sclo;
 	SI16		schi;
+	SI32		tithing;
 	UI16		jsScript;
 	SI16		baseDmg;
 public:
 	CSpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), damageDelay( 0 ), recoveryDelay( 1.0f ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ),
-	circle( 1 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( 0 ), baseDmg( 0 )
+	circle( 1 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), tithing( 0 ), jsScript( 0 ), baseDmg( 0 )
 	{
 	}
 
@@ -230,6 +237,10 @@ public:
 	{
 		return enabled;
 	}
+	SI32 Tithing( void ) const
+	{
+		return tithing;
+	}
 	bool RequireTarget( void ) const
 	{
 		return ( flags & 0x01 ) == 0x01;
@@ -305,6 +316,10 @@ public:
 	void Enabled( bool newVal )
 	{
 		enabled	= newVal;
+	}
+	void Tithing( SI32 newVal )
+	{
+		tithing	= newVal;
 	}
 	void Flags( UI16 newVal )
 	{

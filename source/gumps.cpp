@@ -230,7 +230,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 			}
 			break;
 		case 61:	// seize townstone!
-			if( !Skills->CheckSkill( mChar, STEALING, 950, 1000 )	) // minimum 95.0 stealing
+			if( !Skills->CheckSkill( mChar, STEALING, 950, mChar->GetSkillCap( STEALING ) )	) // minimum 95.0 stealing
 			{
 				targetRegion = CalcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceId() );
 				if( targetRegion != nullptr )
@@ -669,10 +669,21 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 			if( tag.data()[0] != '<' && tag.data()[0] != ' ' )	// it actually has a picture, well bugger me! :>
 			{
 				// Draw a frame for the item to make it stand out a touch more.
-				toSend.addCommand( oldstrutil::format( "checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 110, 110 ));
-				toSend.addCommand( oldstrutil::format( "buttontileart %u %u 0x0a9f 0x0aa1 %u %u %u %u %u %u %u", xOffset, yOffset, 1, 0, buttonnum, std::stoi( tag, nullptr, 0 ), 0, 25, 25 ));
-				toSend.addCommand( oldstrutil::format( "tooltip 1042971 @%s@", data.c_str() ));
-				toSend.addCommand( oldstrutil::format( "croppedtext %u %u %u %u %u %u", xOffset + 15, yOffset + 85, 100, 20, 50, linenum++ ));
+				if( s->ClientVerShort() <= CVS_70160 )
+				{
+					// Fallback for older clients that don't support buttontileart
+					toSend.addCommand( oldstrutil::format("resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 ));
+					toSend.addCommand( oldstrutil::format("checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82 ));
+					toSend.addCommand( oldstrutil::format("tilepic %u %u %i", xOffset + 5, yOffset + 10, std::stoi(tag, nullptr, 0) ));
+					toSend.addCommand( oldstrutil::format("croppedtext %u %u %u %u %u %u", xOffset, yOffset + 65, 65, 20, 55, linenum++ ));
+				}
+				else
+				{
+					toSend.addCommand( oldstrutil::format( "checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 110, 110 ));
+					toSend.addCommand( oldstrutil::format( "buttontileart %u %u 0x0a9f 0x0aa1 %u %u %u %u %u %u %u", xOffset, yOffset, 1, 0, buttonnum, std::stoi( tag, nullptr, 0 ), 0, 25, 25 ));
+					toSend.addCommand( oldstrutil::format( "tooltip 1042971 @%s@", data.c_str() ));
+					toSend.addCommand( oldstrutil::format( "croppedtext %u %u %u %u %u %u", xOffset + 15, yOffset + 85, 100, 20, 50, linenum++ ));
+				}
 				toSend.addText( data );
 				xOffset += XOFFSET;
 				if( xOffset > 640 )
@@ -2097,7 +2108,7 @@ bool CPIGumpChoice::Handle( void )
 		}
 		else
 		{
-			if( !Skills->CheckSkill( mChar, TRACKING, 0, 1000 ))
+			if( !Skills->CheckSkill( mChar, TRACKING, 0, mChar->GetSkillCap( TRACKING ) ))
 			{
 				tSock->SysMessage( 575 ); // You fail your attempt at tracking.
 				return true;

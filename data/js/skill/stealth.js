@@ -22,7 +22,7 @@ function onSkill( pUser, objType, skillUsed )
 			pUser.visible = 0;
 			pUser.stealth = -1;
 		}
-		else if( !pUser.CheckSkill( 47, 0, 1000 ) )
+		else if( !pUser.CheckSkill( 47, 0, pUser.skillCaps.stealth ))
 		{
 			pUser.visible = 0;
 			pUser.stealth = -1;

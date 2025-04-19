@@ -253,6 +253,49 @@ JSBool SE_CalcMultiFromSer( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_CombatTimeCheck()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if a character has engaged in combat within a given time span
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_CheckTimeSinceLastCombat( JSContext* cx, [[maybe_unused]] JSObject* obj, uintN argc, jsval* argv, jsval* rval )
+{
+	if (argc != 2)
+	{
+		ScriptError( cx, "CheckTimeSinceLastCombat: Invalid number of parameters (2)" );
+		return JS_FALSE;
+	}
+
+	CChar* from = nullptr;
+	UI32 timespanInSeconds = 0;
+
+	if( !JSVAL_IS_OBJECT( argv[0] ) || !( from = ( CChar* )JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ))))
+	{
+		ScriptError( cx, "CheckTimeSinceLastCombat: Invalid first argument (expected CChar)" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_INT( argv[1] ))
+	{
+		ScriptError( cx, "CheckTimeSinceLastCombat: Invalid second argument (expected time in seconds)" );
+		return JS_FALSE;
+	}
+
+	timespanInSeconds = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
+
+	// Use GetGUITimerCurTime() instead of time(nullptr) for consistency
+	UI32 now = cwmWorldState->GetUICurrentTime();
+
+	if(( now - from->GetLastCombatTime() ) < timespanInSeconds )
+	{
+		*rval = JSVAL_TRUE;
+		return JS_TRUE;
+	}
+
+	*rval = JSVAL_FALSE;
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_CalcCharFromSer()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates and returns character object based on provided serial
@@ -284,6 +327,46 @@ JSBool SE_CalcCharFromSer( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 	{
 		*rval = JSVAL_NULL;
 	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_CheckInstaLog()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if a specific location is within an instant logout zone 
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_CheckInstaLog( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 4 )
+	{
+		ScriptError( cx, "CheckInstaLog: Invalid number of parameters (4)" );
+		return JS_FALSE;
+	}
+
+	SI16 targX = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+	SI16 targY = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+	UI08 targWorld = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI16 targInstanceId = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+
+	auto logLocs = cwmWorldState->logoutLocs;
+
+	*rval = JSVAL_FALSE;
+
+	if( logLocs.size() > 0 )
+	{
+		for( size_t i = 0; i < logLocs.size(); ++i )
+		{
+			if( logLocs[i].worldNum == targWorld && logLocs[i].instanceId == targInstanceId )
+			{
+				if(( targX >= logLocs[i].x1 && targX <= logLocs[i].x2 ) && ( targY >= logLocs[i].y1 && targY <= logLocs[i].y2 ))
+				{
+					*rval = JSVAL_TRUE;
+					return JS_TRUE;
+				}
+			}
+		}
+	}
+
 	return JS_TRUE;
 }
 
@@ -5097,6 +5180,33 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 352:	// MANAREGENCAP
 				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ManaRegenCap() ));
 				break;
+			case 353:	// SWINGSPEEDINCREASECAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->SwingSpeedIncreaseCap() ));
+				break;
+			case 354:	 // KARMALOCKING
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KarmaLocking() );
+				break;
+			case 355:	// PHYSICALRESISTCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->PhysicalResistCap() ));
+				break;
+			case 356:	// FIRERESISTCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->FireResistCap() ));
+				break;
+			case 357:	// COLDRESISTCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ColdResistCap() ));
+				break;
+			case 358:	// POISONRESISTCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->PoisonResistCap() ));
+				break;
+			case 359:	// ENGERYRESISTCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->EnergyResistCap() ));
+				break;
+			case 360:	// DEFENSECHANCEINCREASECAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->DefenseChanceIncreaseCap() ));
+				break;
+			case 361:	// DAMAGEINCREASECAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->DamageIncreaseCap() ));
+				break;
 			case 362:	// HEALINGAFFECTHEALTHREGEN
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HealingAffectHealthRegen() );
 				break;
@@ -5142,8 +5252,7 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 376:	// GARGOYLEMANAREGENBONUS
 				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleManaRegenBonus() ));
 				break;
-
-			default:
+      default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;
 		}

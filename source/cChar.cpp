@@ -115,6 +115,7 @@ const UI32 BIT_WILLTHIRST		=	31;
 const UI32 BIT_HIRELING			=	32;
 const UI32 BIT_ISPASSIVE		=	33;
 const UI32 BIT_HASSTOLEN		=	34;
+const UI32 BIT_KARMALOCK		=	35;
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
@@ -320,6 +321,8 @@ npcGuild( DEFCHAR_NPCGUILD )
 	bools.set( BIT_MAXSTAMFIXED, false );
 	//SetCanAttack( true );
 	bools.set( BIT_CANATTACK, true );
+	//SetKarmaLock( false );
+	bools.set( BIT_KARMALOCK, false );
 	//SetBrkPeaceChanceGain( 0 );
 	brkPeaceChanceGain = 0;
 	//SetBrkPeaceChance( 0 );
@@ -1077,6 +1080,23 @@ void CChar::SetCanAttack( bool newValue )
 {
 	bools.set( BIT_CANATTACK, newValue );
 	SetBrkPeaceChance( 0 );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetKarmaLock()
+//|					CChar::SetKarmaLock()
+//|	Date		-	8. Dec, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the char karma is locked
+//o------------------------------------------------------------------------------------------------o
+bool CChar::GetKarmaLock( void ) const
+{
+	return bools.test( BIT_KARMALOCK );
+}
+void CChar::SetKarmaLock( bool newValue )
+{
+	bools.set( BIT_KARMALOCK, newValue );
 	UpdateRegion();
 }
 
@@ -1993,6 +2013,29 @@ void CChar::SetBaseSkill( SKILLVAL newSkillValue, UI08 skillToSet )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetSkillCap()
+//|					CChar::SetSkillCap()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets a character's specified skill cap (without modifiers)
+//o------------------------------------------------------------------------------------------------o
+SKILLVAL CChar::GetSkillCap( UI08 skillToGet ) const
+{
+	SKILLVAL rVal = 0;
+	if( skillToGet <= INTELLECT )
+	{
+		rVal            = skillCap[skillToGet];
+	}
+	return ( rVal > 0 ? rVal : cwmWorldState->ServerData()->ServerSkillCapStatus() );
+}
+void CChar::SetSkillCap( SKILLVAL newSkillCapValue, UI08 skillToSet )
+{
+	if( skillToSet <= INTELLECT )
+	{
+		skillCap[skillToSet] = newSkillCapValue;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetSkill()
 //|					CChar::SetSkill()
 //o------------------------------------------------------------------------------------------------o
@@ -2411,6 +2454,8 @@ void CChar::CopyData( CChar *target )
 	target->SetNextAct( nextAct );
 	target->SetSquelched( GetSquelched() );
 	target->SetMeditating( IsMeditating() );
+	target->SetHitChance( GetHitChance() );
+	target->SetDefenseChance( GetDefenseChance() );
 	target->SetStealth( stealth );
 	target->SetRunning( running );
 	target->SetRace( GetRace() );
@@ -2883,6 +2928,7 @@ CItem *CChar::GetItemAtLayer( ItemLayers Layer )
 //|	Purpose		-	Wears the item toWear and adjusts the stats if any are
 //|					required to change.  Returns true if successfully equipped
 //o------------------------------------------------------------------------------------------------o
+void Bounce( CSocket *bouncer, CItem *bouncing, UI08 mode = 5 );
 bool CChar::WearItem( CItem *toWear )
 {
 	// Run event prior to equipping item, allowing script to prevent equip
@@ -2895,6 +2941,27 @@ bool CChar::WearItem( CItem *toWear )
 			// If script returns false, prevent item from being equipped
 			if( tScript->OnEquipAttempt( this, toWear ) == 0 )
 			{
+				return false;
+			}
+		}
+	}
+
+	scriptTriggers.clear();
+	scriptTriggers.shrink_to_fit();
+	scriptTriggers = this->GetScriptTriggers();
+	for( auto i : scriptTriggers )
+	{
+		cScript *tScript = JSMapping->GetScript( i );
+		if( tScript != nullptr )
+		{
+			// If script returns false, prevent item from being equipped
+			if( tScript->OnEquipAttempt( this, toWear ) == 0 )
+			{
+				CSocket *mSock = this->GetSocket();
+				if( mSock != nullptr )
+				{
+					Bounce( mSock, toWear );
+				}
 				return false;
 			}
 		}
@@ -2923,6 +2990,25 @@ bool CChar::WearItem( CItem *toWear )
 			IncHealthRegenBonus( itemLayers[tLayer]->GetHealthRegenBonus() );
 			IncStaminaRegenBonus( itemLayers[tLayer]->GetStaminaRegenBonus() );
 			IncManaRegenBonus( itemLayers[tLayer]->GetManaRegenBonus() );
+
+      IncSwingSpeedIncrease( itemLayers[tLayer]->GetSwingSpeedIncrease() );
+
+			IncHealthLeech( itemLayers[tLayer]->GetHealthLeech() );
+			IncStaminaLeech( itemLayers[tLayer]->GetStaminaLeech() );
+			IncManaLeech( itemLayers[tLayer]->GetManaLeech() );
+
+			IncLuck( itemLayers[tLayer]->GetLuck() );
+
+			IncHitChance( itemLayers[tLayer]->GetHitChance() );
+			IncDefenseChance( itemLayers[tLayer]->GetDefenseChance() );
+
+			IncTithing( itemLayers[tLayer]->GetTithing() );
+
+			IncHealthBonus( itemLayers[tLayer]->GetHealthBonus() );
+			IncStaminaBonus( itemLayers[tLayer]->GetStaminaBonus() );
+			IncManaBonus( itemLayers[tLayer]->GetManaBonus() );
+
+			IncDamageIncrease( itemLayers[tLayer]->GetDamageIncrease() );
 
 			if( toWear->IsPostLoaded() )
 			{
@@ -2976,6 +3062,22 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 			}
 		}
 
+		scriptTriggers.clear();
+		scriptTriggers.shrink_to_fit();
+		scriptTriggers = this->GetScriptTriggers();
+		for( auto i : scriptTriggers )
+		{
+			cScript *tScript = JSMapping->GetScript( i );
+			if( tScript != nullptr )
+			{
+				// If script returns false, prevent item from being equipped
+				if( tScript->OnUnequipAttempt( this, itemLayers[Layer] ) == 0 )
+				{
+					return false;
+				}
+			}
+		}
+
 		if( Layer == IL_PACKITEM )	// It's our pack!
 		{
 			SetPackItem( nullptr );
@@ -2987,6 +3089,25 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncHealthRegenBonus( -itemLayers[Layer]->GetHealthRegenBonus() );
 		IncStaminaRegenBonus( -itemLayers[Layer]->GetStaminaRegenBonus() );
 		IncManaRegenBonus( -itemLayers[Layer]->GetManaRegenBonus() );
+
+		IncSwingSpeedIncrease( -itemLayers[Layer]->GetSwingSpeedIncrease() );
+
+		IncHealthLeech( -itemLayers[Layer]->GetHealthLeech() );
+		IncStaminaLeech( -itemLayers[Layer]->GetStaminaLeech() );
+		IncManaLeech( -itemLayers[Layer]->GetManaLeech() );
+
+		IncLuck( -itemLayers[Layer]->GetLuck() );
+
+		IncHitChance( -itemLayers[Layer]->GetHitChance() );
+		IncDefenseChance( -itemLayers[Layer]->GetDefenseChance() );
+
+		IncTithing( -itemLayers[Layer]->GetTithing() );
+
+		IncHealthBonus( -itemLayers[Layer]->GetHealthBonus() );
+		IncStaminaBonus( -itemLayers[Layer]->GetStaminaBonus() );
+		IncManaBonus( -itemLayers[Layer]->GetManaBonus() );
+
+		IncDamageIncrease( -itemLayers[Layer]->GetDamageIncrease() );
 
 		if( itemLayers[Layer]->GetPoisoned() )
 		{
@@ -3000,6 +3121,9 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 			}
 		}
 
+		scriptTriggers.clear();
+		scriptTriggers.shrink_to_fit();
+		scriptTriggers = itemLayers[Layer]->GetScriptTriggers();
 		for( auto i : scriptTriggers )
 		{
 			cScript *tScript = JSMapping->GetScript( i );
@@ -3131,7 +3255,7 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 	outStream << "BaseSkills=";
 	for( UI08 bsc = 0; bsc < ALLSKILLS; ++bsc )
 	{
-		outStream << "[" + std::to_string( bsc ) + "," + std::to_string( GetBaseSkill( bsc )) + "]-";
+		outStream << "[" + std::to_string( bsc ) + "," + std::to_string( GetBaseSkill( bsc )) + "," + std::to_string( skillCap[bsc] ) + "]-";
 	}
 	outStream << "[END]" << newLine;
 
@@ -3143,6 +3267,9 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 	//-------------------------------------------------------------------------------------------
 	outStream << "CanRun=" + std::to_string((( CanRun() && IsNpc() ) ? 1 : 0 )) + newLine;
 	outStream << "CanAttack=" + std::to_string(( GetCanAttack() ? 1 : 0 )) + newLine;
+	outStream << "HitChance=" + std::to_string( GetHitChance() ) + newLine;
+	outStream << "DefChance=" + std::to_string( GetDefenseChance() ) + newLine;
+	outStream << "KarmaLock=" + std::to_string(( GetKarmaLock() ? 1 : 0 )) + newLine;
 	outStream << "AllMove=" + std::to_string(( AllMove() ? 1 : 0 )) + newLine;
 	outStream << "IsNpc=" + std::to_string(( IsNpc() ? 1 : 0 )) + newLine;
 	outStream << "IsShop=" + std::to_string(( IsShop() ? 1 : 0 )) + newLine;
@@ -3796,7 +3923,7 @@ UI16 CChar::GetMaxHP( void )
 		oldRace			= GetRace();
 
 	}
-	return maxHP;
+	return maxHP + GetHealthBonus();
 }
 void CChar::SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace )
 {
@@ -3839,7 +3966,7 @@ void CChar::SetFixedMaxHP( SI16 newmaxhp )
 SI16 CChar::GetMaxMana( void )
 {
 	if(( maxMana_oldint != GetIntelligence() || oldRace != GetRace() ) && !GetMaxManaFixed() )
-		//if int/race changed since last calculation, recalculate maxHp
+		//if int/race changed since last calculation, recalculate maxMana
 	{
 		CRace *pRace = Races->Race( GetRace() );
 
@@ -3856,7 +3983,7 @@ SI16 CChar::GetMaxMana( void )
 		oldRace			= GetRace();
 
 	}
-	return maxMana;
+	return maxMana + GetManaBonus();
 }
 void CChar::SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace )
 {
@@ -3898,7 +4025,7 @@ void CChar::SetFixedMaxMana( SI16 newmaxmana )
 //o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetMaxStam( void )
 {
-	// If dex/race changed since last calculation, recalculate maxHp
+	// If dex/race changed since last calculation, recalculate maxStam
 	if(( maxStam_olddex != GetDexterity() || oldRace != GetRace() ) && !GetMaxStamFixed() )
 	{
 		CRace *pRace = Races->Race( GetRace() );
@@ -3916,7 +4043,7 @@ SI16 CChar::GetMaxStam( void )
 		oldRace			= GetRace();
 
 	}
-	return maxStam;
+	return maxStam + GetStaminaBonus();
 }
 void CChar::SetMaxStam( SI16 newmaxstam, UI16 newolddex, RACEID newoldrace )
 {
@@ -4301,12 +4428,21 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 							break;
 						}
 						auto secs = oldstrutil::sections( value, "," );
-						if( secs.size() != 2 )
+						if( secs.size() != 2 && secs.size() != 3 )
 						{
 							break;
 						}
+
 						auto skillNum = static_cast<SkillLock>( std::stoul( secs[0].substr( 1 ), nullptr, 0 ));
-						auto skillValue = static_cast<UI16>( std::stoul( secs[1].substr( 0, secs[1].size() - 1 ), nullptr, 0 ));
+						auto skillValue = ( secs.size() == 2 ? 
+							static_cast<UI16>( std::stoul( secs[1].substr( 0, secs[1].size() - 1 ), nullptr, 0 )) :
+							static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( secs[1], "//" )), nullptr, 0 )));
+						UI16 skillCapValue = 0;
+						if( secs.size() == 3 )
+						{
+							skillCapValue = static_cast<UI16>( std::stoul( secs[2].substr( 0, secs[2].size() - 1 ), nullptr, 0 ));
+						}
+						SetSkillCap( skillCapValue, skillNum );
 						SetBaseSkill( skillValue, skillNum );
 					}
 					rValue = true;
@@ -4379,6 +4515,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "DEAD" )
 				{
 					SetDead(( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 ));
+					rValue = true;
+				}
+				else if( UTag == "DEFCHANCE" )
+				{
+					SetDefenseChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -4469,7 +4610,12 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				break;
 			case 'H':
-				if( UTag == "HUNGER" )
+				if( UTag == "HITCHANCE" )
+				{
+					SetHitChance( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "HUNGER" )
 				{
 					SetHunger( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
@@ -4510,6 +4656,13 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "ISWARRING" )
 				{
 					SetWar(( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 ));
+					rValue = true;
+				}
+				break;
+			case 'K':
+				if( UTag == "KARMALOCK" )
+				{
+					SetKarmaLock( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) == 1 );
 					rValue = true;
 				}
 				break;
@@ -5604,6 +5757,74 @@ void CChar::SetIntelligence2( SI16 nVal )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetHealthBonus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets bonus Hits stat for character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetHealthBonus( SI16 nVal )
+{
+	CBaseObject::SetHealthBonus( nVal );
+	Dirty( UT_HITPOINTS );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetStaminaBonus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets bonus Stam stat for character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetStaminaBonus( SI16 nVal )
+{
+	CBaseObject::SetStaminaBonus( nVal );
+	Dirty( UT_STAMINA );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetManaBonus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets bonus Mana stat for character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetManaBonus( SI16 nVal )
+{
+	CBaseObject::SetManaBonus( nVal );
+	Dirty( UT_MANA );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::IncHealthBonus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Increments GetHealthBonus (modifications) by toAdd
+//o------------------------------------------------------------------------------------------------o
+void CChar::IncHealthBonus( SI16 toAdd )
+{
+	SetHealthBonus( static_cast<SI16>( GetHealthBonus() + toAdd ));
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::IncStaminaBonus()
+//| Date		-	26 May 2024
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Increments GetBonusStam (modifications) by toAdd
+//o------------------------------------------------------------------------------------------------o
+void CChar::IncStaminaBonus( SI16 toAdd )
+{
+	SetStaminaBonus( static_cast<SI16>( GetStaminaBonus() + toAdd ));
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::IncManaBonus()
+//| Date		-	26 May 2024
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Increments GetBonusMana (modifications) by toAdd
+//o------------------------------------------------------------------------------------------------o
+void CChar::IncManaBonus( SI16 toAdd )
+{
+	SetManaBonus( static_cast<SI16>( GetManaBonus() + toAdd ));
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::IncStamina()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Increase character's stamina by specified value
@@ -5780,6 +6001,21 @@ UI32 CChar::LastMoveTime( void ) const
 void CChar::LastMoveTime( UI32 newValue )
 {
 	lastMoveTime = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetLastCombatTime()
+//|					CChar::SetLastCombatTime()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets timestamp for when player last combat
+//o------------------------------------------------------------------------------------------------o
+UI32 CChar::GetLastCombatTime() const
+{
+	return lastCombatTime;
+}
+void CChar::SetLastCombatTime( UI32 newValue )
+{
+	lastCombatTime = newValue;
 }
 
 //o------------------------------------------------------------------------------------------------o

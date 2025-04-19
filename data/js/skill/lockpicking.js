@@ -43,7 +43,7 @@ function onCallback0( pSock, ourObj )
 				if( ourObj.more == 0 )
 				{
 					var minSkill = 0;
-					var maxSkill = 1000;
+					var maxSkill = pUser.skillCaps.lockpicking;
 					var isTrapped = ( ourObj.morez >> 24 );
 					if( isTrapped == 1 )
 					{

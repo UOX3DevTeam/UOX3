@@ -70,7 +70,7 @@ using namespace std::string_literals;
 //|						BYTE[2] unknown5 (0x0)
 //|						BYTE[4] unknown6 (0x0)
 //|
-//|						Note: Only send once after login. Itís mandatory to send it once.
+//|						Note: Only send once after login. It‚Äôs mandatory to send it once.
 //o------------------------------------------------------------------------------------------------o
 void CPCharLocBody::Log( std::ostream &outStream, bool fullHeader )
 {
@@ -1411,7 +1411,7 @@ CPPaperdoll &CPPaperdoll::operator = ( CChar &toCopy )
 //|
 //|					Packet Build
 //|						BYTE cmd
-//|						BYTE type (0x00 ñ ìIt starts to rainî, 0x01 ñ ìA fierce storm approaches.î, 0x02 ñ ìIt begins to snowî, 0x03 - ìA storm is brewing.î, 0xFF ñ None (turns off sound effects), 0xFE (no effect?? Set temperature?)
+//|						BYTE type (0x00 ‚Äì ‚ÄúIt starts to rain‚Äù, 0x01 ‚Äì ‚ÄúA fierce storm approaches.‚Äù, 0x02 ‚Äì ‚ÄúIt begins to snow‚Äù, 0x03 - ‚ÄúA storm is brewing.‚Äù, 0xFF ‚Äì None (turns off sound effects), 0xFE (no effect?? Set temperature?)
 //|						BYTE num (number of weather effects on screen)
 //|						BYTE temperature
 //|
@@ -1422,8 +1422,8 @@ CPPaperdoll &CPPaperdoll::operator = ( CChar &toCopy )
 //|					Note: Weather messages are only displayed when weather starts.
 //|					Note: Weather will end automatically after 6 minutes without any weather change packets.
 //|					Note: You can totally end weather (to display a new message) by teleporting.
-//|						I think itís either the 0x78 or 0x20 messages that reset it, though I
-//|						havenít checked to be sure (other possibilities, 0x4F or 0x4E)
+//|						I think it‚Äôs either the 0x78 or 0x20 messages that reset it, though I
+//|						haven‚Äôt checked to be sure (other possibilities, 0x4F or 0x4E)
 //o------------------------------------------------------------------------------------------------o
 void CPWeather::InternalReset( void )
 {
@@ -2043,7 +2043,7 @@ void CPOpenGump::Serial( SERIAL toSet )
 //|						BYTE unknown (0x00)
 //|						BYTE click zLoc
 //|						BYTE[2] model # (if a static tile, 0 if a map/landscape tile)
-//|							Note: the model # shouldnít be trusted.
+//|							Note: the model # shouldn‚Äôt be trusted.
 //o------------------------------------------------------------------------------------------------o
 CPTargetCursor::CPTargetCursor()
 {
@@ -2159,18 +2159,17 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 	{
 		if( target.ReceivedVersion() )
 		{
-			/*if( target.ClientVersionMajor() >= 6 )
+			if( target.ClientVersionMajor() >= 6 )
 			{
-				// Extended stats not implemented yet
 				extended3 = true;
 				extended4 = true;
 				extended5 = true;
-				extended6 = true;
-				pStream.ReserveSize( 121 );
-				pStream.WriteByte( 2, 121 );
-				Flag( 6 );
-			}*/
-			if( target.ClientVersionMajor() >= 5 )
+			    extended6 = true;
+			    pStream.ReserveSize( 121 );
+			    pStream.WriteByte( 2, 121 );
+			    Flag( 6 );
+			}
+			else if( target.ClientVersionMajor() >= 5 )
 			{
 				extended3 = true;
 				extended4 = true;
@@ -2199,9 +2198,8 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		{
 			// We haven't received any client details yet.. let's use default server settings
 
-			/*if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_HS ))
+			if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_HS ))
 			{
-				// Extended stats not implemented yet
 				extended3 = true;
 				extended4 = true;
 				extended5 = true;
@@ -2209,8 +2207,8 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 				pStream.ReserveSize( 121 );
 				pStream.WriteByte( 2, 121 );
 				Flag( 6 );
-			}*/
-			if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_ML ))
+			}
+			else if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_ML ))
 			{
 				extended3 = true;
 				extended4 = true;
@@ -2385,10 +2383,29 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			ColdResist( Combat->CalcDef( &toCopy, 0, false, COLD, false, true ));
 			PoisonResist( Combat->CalcDef( &toCopy, 0, false, POISON, false, true ));
 			EnergyResist( Combat->CalcDef( &toCopy, 0, false, LIGHTNING, false, true ));
-			Luck( 0 );
+			Luck( toCopy.GetLuck() );
 			DamageMin( Combat->CalcLowDamage( &toCopy ));
 			DamageMax( Combat->CalcHighDamage( &toCopy ));
-			TithingPoints( 0 );
+			TithingPoints( toCopy.GetTithing() );
+		}
+		if( extended6 )
+		{
+			PhysicalResistCap( cwmWorldState->ServerData()->PhysicalResistCap() );
+			FireResistCap( cwmWorldState->ServerData()->FireResistCap() );
+			ColdResistCap( cwmWorldState->ServerData()->ColdResistCap());
+			PoisonResistCap( cwmWorldState->ServerData()->PoisonResistCap() );
+			EnergyResistCap( cwmWorldState->ServerData()->EnergyResistCap() );
+
+			DefenseChanceIncrease( toCopy.GetDefenseChance() );
+			DefenseChanceIncreaseCap( cwmWorldState->ServerData()->DefenseChanceIncreaseCap() );
+			HitChanceIncrease( toCopy.GetHitChance() );
+			SwingSpeedIncrease( toCopy.GetSwingSpeedIncrease() );
+			DamageChanceIncrease( toCopy.GetDamageIncrease() );
+			LowerReagentCost( 0 );
+			SpellDamageIncrease( 0 );
+			FasterCastRecovery( 0 );
+			FasterCasting( 0 );
+			LowerManaCost( 0 );
 		}
 	}
 }
@@ -2585,6 +2602,92 @@ void CPStatWindow::TithingPoints( UI32 value )
 	pStream.WriteLong( byteOffset, value );
 	byteOffset += 4;
 }
+// extended6 start
+void CPStatWindow::PhysicalResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value);
+	byteOffset += 2;
+}
+void CPStatWindow::FireResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value);
+	byteOffset += 2;
+}
+void CPStatWindow::ColdResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
+}
+void CPStatWindow::PoisonResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
+}
+void CPStatWindow::EnergyResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
+}
+
+void CPStatWindow::DefenseChanceIncrease( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::DefenseChanceIncreaseCap( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::HitChanceIncrease( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::SwingSpeedIncrease( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::DamageChanceIncrease( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::LowerReagentCost( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::SpellDamageIncrease( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::FasterCastRecovery( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::FasterCasting( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
+
+void CPStatWindow::LowerManaCost( UI16 value )
+{
+    pStream.WriteShort( byteOffset, value );
+    byteOffset += 2;
+}
 //extended4 end
 
 //o------------------------------------------------------------------------------------------------o
@@ -2601,7 +2704,7 @@ void CPStatWindow::TithingPoints( UI32 value )
 //|							0x07 idle
 //|							0x05 another character is online
 //|								"Another character from this account is currently online in this world.
-//|								You must either log in as that character or wait for it to time out.î
+//|								You must either log in as that character or wait for it to time out.‚Äù
 //o------------------------------------------------------------------------------------------------o
 void CPIdleWarning::InternalReset( void )
 {
@@ -3107,12 +3210,12 @@ CPMultiPlacementView::CPMultiPlacementView( SERIAL toSet )
 //|						0	neither T2A NOR LBR, equal to not sending it at all,
 //|						1	is T2A, chatbutton,
 //|						2	is LBR without chatbutton,
-//|						3	is LBR with chatbuttonÖ
+//|						3	is LBR with chatbutton‚Ä¶
 //|						8013	LBR + chatbutton + AOS enabled
 //|
 //|						Note1: this message is send immediately after login.
-//|						Note2: on OSI  servers this controls features OSI enables/disables via ìupgrade codes.î
-//|						Note3: a 3 doesnít seem to ìhurtî older (NON LBR) clients.
+//|						Note2: on OSI  servers this controls features OSI enables/disables via ‚Äúupgrade codes.‚Äù
+//|						Note3: a 3 doesn‚Äôt seem to ‚Äúhurt‚Äù older (NON LBR) clients.
 //o------------------------------------------------------------------------------------------------o
 CPEnableClientFeatures::CPEnableClientFeatures( CSocket *mSock )
 {
@@ -6118,7 +6221,7 @@ void CPObjectInfo::Objects( CItem& mItem, CChar& mChar )
 //|						BYTE[2] Font
 //|						BYTE[4] Language
 //|						BYTE[30] Name
-//|						BYTE[?][2] Msg ñ Null Terminated (blockSize - 48)
+//|						BYTE[?][2] Msg ‚Äì Null Terminated (blockSize - 48)
 //|
 //|					The various types of text is as follows:
 //|						0x00 - Normal
@@ -6294,7 +6397,7 @@ void CPUnicodeSpeech::GhostIt( [[maybe_unused]] UI08 method )
 //|						BYTE[2] Font
 //|						BYTE[4] Language
 //|						BYTE[30] Name
-//|						BYTE[?][2] Msg ñ Null Terminated (blockSize - 48)
+//|						BYTE[?][2] Msg ‚Äì Null Terminated (blockSize - 48)
 //|
 //|					The various types of text is as follows:
 //|						0x00 - Normal
@@ -6572,7 +6675,7 @@ void CPSecureTrading::Name( const std::string& nameFollowing )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet with server response to all names request
 //o------------------------------------------------------------------------------------------------o
-//|	Notes		-	Packet: 0x98 (All-names ì3Dî)
+//|	Notes		-	Packet: 0x98 (All-names ‚Äú3D‚Äù)
 //|					Size: Variable
 //|
 //|					Packet Build
@@ -6588,7 +6691,7 @@ void CPSecureTrading::Name( const std::string& nameFollowing )
 //|						Client asks for name of object with ID x.
 //|						Server has to reply with ID + name
 //|						Client automatically knows names of items.
-//|						Hence it only asks only for NPC/Player names nearby, but shows bars of items plus NPCís.
+//|						Hence it only asks only for NPC/Player names nearby, but shows bars of items plus NPC‚Äôs.
 //|
 //|						Client request has 7 bytes, server-reply 37
 //|						Triggered by Crtl + Shift.
@@ -6641,7 +6744,7 @@ void CPAllNames3D::Object( CBaseObject& obj )
 //|								BYTE[var] null terminated line
 //|						Note:
 //|						server side: # of pages equals value given in 0x93/0xd4
-//|						EACH page # given. If empty: # lines: 0 + terminator (=3 0ís)
+//|						EACH page # given. If empty: # lines: 0 + terminator (=3 0‚Äôs)
 //|						client side:  # of pages always 1. if 2 pages changed, client generates 2 packets.
 //o------------------------------------------------------------------------------------------------o
 void CPBookPage::IncLength( UI08 amount )
@@ -7009,7 +7112,7 @@ bool CPNewSpellBook::ClientCanReceive( CSocket *mSock )
 //|							BYTE[4]	Serial
 //|							BYTE Damage // how much damage was done ?
 //|
-//|						Note: displays damage above the npc/playerís head.
+//|						Note: displays damage above the npc/player‚Äôs head.
 //o------------------------------------------------------------------------------------------------o
 void CPDisplayDamage::InternalReset( void )
 {
@@ -7459,12 +7562,49 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		}
 		FinalizeData( tempEntry, totalStringLen );
 	}
+
+	if( cItem.GetArtifactRarity() > 0)
+	{
+		tempEntry.stringNum = 1061078; // // artifact rarity ~1_val~
+		tempEntry.ourText = oldstrutil::number( cItem.GetArtifactRarity() );
+		FinalizeData( tempEntry, totalStringLen );
+	}
+
+	if( cItem.GetDurabilityHpBonus() > 0)
+	{
+		tempEntry.stringNum = 1151780; // durability +~1_VAL~%
+		tempEntry.ourText = oldstrutil::number( cItem.GetDurabilityHpBonus() );
+		FinalizeData( tempEntry, totalStringLen );
+	}
+
 	if( cItem.GetType() == IT_MAGICWAND && cItem.GetTempVar( CITV_MOREZ ))
 	{
 		tempEntry.stringNum = 1060584; // uses remaining: ~1_val~
 		tempEntry.ourText = oldstrutil::number( cItem.GetTempVar( CITV_MOREZ ));
 		FinalizeData( tempEntry, totalStringLen );
 	}
+
+	if( cItem.GetManaLeech() > 0 )
+	{
+		tempEntry.stringNum = 1060427; // hit mana leech ~1_val~%
+		tempEntry.ourText = oldstrutil::number( cItem.GetManaLeech() );
+		FinalizeData( tempEntry, totalStringLen );
+	}
+
+	if( cItem.GetStaminaLeech() > 0 )
+	{
+		tempEntry.stringNum = 1060430; // hit stamina leech ~1_val~%
+		tempEntry.ourText = oldstrutil::number( cItem.GetStaminaLeech() );
+		FinalizeData( tempEntry, totalStringLen );
+	}
+
+	if( cItem.GetHealthLeech() > 0 )
+	{
+		tempEntry.stringNum = 1060422; // hit life leech ~1_val~%
+		tempEntry.ourText = oldstrutil::number( cItem.GetHealthLeech() );
+		FinalizeData( tempEntry, totalStringLen );
+	}
+
 	if( cItem.GetType() == IT_SPELLCHANNELING )
 	{
 		tempEntry.stringNum = 1060482; // spell channeling
@@ -7544,7 +7684,15 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			if( cItem.GetSpeed() > 0 )
 			{
 				tempEntry.stringNum = 1061167; // weapon speed ~1_val~
-				tempEntry.ourText = oldstrutil::number( cItem.GetSpeed() );
+				if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_ML )
+				{
+					R64 wpnSpeedInSeconds = std::round(( 40000.0 / ( 200 * cItem.GetSpeed() ) * 0.5 ) * 10 ) / 10;
+					tempEntry.ourText = oldstrutil::format( "%.1fs", wpnSpeedInSeconds );
+				}
+				else
+				{
+					tempEntry.ourText = oldstrutil::number( cItem.GetSpeed() );
+				}
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
@@ -7678,10 +7826,98 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-			if( cItem.GetStrength() > 1 )
+			if( cItem.GetSwingSpeedIncrease() > 0 )
+			{
+				tempEntry.stringNum = 1060486; // swing speed increase ~1_val~%
+				tempEntry.ourText = oldstrutil::number( cItem.GetSwingSpeedIncrease() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetDamageIncrease() > 0 )
+			{
+				tempEntry.stringNum = 1060401; // damage increase ~1_val~%
+				tempEntry.ourText = oldstrutil::number( cItem.GetDamageIncrease() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetLuck() > 0 )
+			{
+				tempEntry.stringNum = 1060436; // luck ~1_val~
+				tempEntry.ourText = oldstrutil::number( cItem.GetLuck() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetHitChance() > 0 )
+			{
+				tempEntry.stringNum = 1060415; // hit chance increase ~1_val~%
+				tempEntry.ourText = oldstrutil::number( cItem.GetHitChance() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetDefenseChance() > 0 )
+			{
+				tempEntry.stringNum = 1060408; // defense chance increase ~1_val~%
+				tempEntry.ourText = oldstrutil::number( cItem.GetDefenseChance() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetHealthBonus() > 0 )
+			{
+				tempEntry.stringNum = 1060431; // hit point increase ~1_val~
+				tempEntry.ourText = oldstrutil::number( cItem.GetHealthBonus() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetStaminaBonus() > 0 )
+			{
+				tempEntry.stringNum = 1060484; // stamina increase ~1_val~
+				tempEntry.ourText = oldstrutil::number( cItem.GetStaminaBonus() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetManaBonus() > 0 )
+			{
+				tempEntry.stringNum = 1060439; // mana increase ~1_val~
+				tempEntry.ourText = oldstrutil::number( cItem.GetManaBonus() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			const SI16 strReq = ( cItem.GetStrength() * ( 100 - cItem.GetLowerStatReq() )) / 100;
+			const SI16 dexReq = ( cItem.GetDexterity() * ( 100 - cItem.GetLowerStatReq() )) / 100;
+			const SI16 intReq = ( cItem.GetIntelligence() * ( 100 - cItem.GetLowerStatReq() )) / 100;
+
+			if( strReq > 0 )
 			{
 				tempEntry.stringNum = 1061170; // strength requirement ~1_val~
-				tempEntry.ourText = oldstrutil::number( cItem.GetStrength() );
+				tempEntry.ourText = oldstrutil::number( strReq );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( dexReq > 0 )
+			{
+				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				tempEntry.ourText = oldstrutil::format( "dexterity requirement %s", oldstrutil::number( dexReq ).c_str() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( intReq > 0 )
+			{
+				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				tempEntry.ourText = oldstrutil::format( "intelligence requirement %s", oldstrutil::number( intReq ).c_str() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetLowerStatReq() > 0 )
+			{
+				tempEntry.stringNum = 1060435; // lower requirements ~1_val~%
+				tempEntry.ourText = oldstrutil::number( cItem.GetLowerStatReq() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetTithing() > 0 )
+			{
+				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				tempEntry.ourText = oldstrutil::format( "Tithing: %i", cItem.GetTithing() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 		}
@@ -8049,9 +8285,9 @@ bool CPSellList::CanSellItems( CChar &mChar, CChar &vendor )
 //|						 BYTE[2] len
 //|						 BYTE subcmd
 //|						 BYTE[ len - 4 ] submessage
-//|							Submessage 0 ñ Display Bulletin Board
+//|							Submessage 0 ‚Äì Display Bulletin Board
 //|							BYTE[4] Board serial
-//|							BYTE[22] board name (default is ìbulletin boardî, the rest nulls)
+//|							BYTE[22] board name (default is ‚Äúbulletin board‚Äù, the rest nulls)
 //|							BYTE[4] unknown/ID?
 //|							BYTE[4] zero (0)
 //o------------------------------------------------------------------------------------------------o
@@ -8131,7 +8367,7 @@ CPOpenMessageBoard::CPOpenMessageBoard( CSocket *mSock )
 //|							BYTE subjectLen
 //|							BYTE[subjectLen] subject (null terminated string)
 //|							BYTE timeLen
-//|							BYTE[timeLen] time (null terminated string with time of posting) (ìDay 1 @ 11:28î)
+//|							BYTE[timeLen] time (null terminated string with time of posting) (‚ÄúDay 1 @ 11:28‚Äù)
 //o------------------------------------------------------------------------------------------------o
 //|					Subcommand: 0x2 (Message Summary)
 //|					Size: Variable
@@ -8148,7 +8384,7 @@ CPOpenMessageBoard::CPOpenMessageBoard( CSocket *mSock )
 //|							BYTE subjectLen
 //|							BYTE[subjectLen] subject (null terminated string)
 //|							BYTE timeLen
-//|							BYTE[timeLen] time (null terminated string with time of posting) (ìDay 1 @ 11:28î)
+//|							BYTE[timeLen] time (null terminated string with time of posting) (‚ÄúDay 1 @ 11:28‚Äù)
 //|							BYTE[5] Unknown (01 90 03 F7 00)
 //|							BYTE numlines
 //|							For each line:

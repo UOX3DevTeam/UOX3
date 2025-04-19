@@ -3462,6 +3462,20 @@
 5721=Vous ne pouvez pas creuser de trésor là-bas !
 5722=coordonnées %s
 5723=Terminé
+// [5751-5765] Verrouillage du karma et sanctuaire
+5751=Le karma est verrouillé. Un mantra prononcé dans un sanctuaire le déverrouillera à nouveau.
+5752=Votre karma a été verrouillé. Votre karma ne peut plus être augmenté.
+5753=Votre karma a été déverrouillé. Votre karma peut être augmenté à nouveau.
+5754=Verrouiller le karma
+5755=Déverrouiller le karma
+5756=Resurrection
+5757=Dîmer l'or
+5758=Vous avez décidé de ne pas verser la dîme d'or au sanctuaire.
+5759=Vous n'avez pas assez d'or pour verser cette dîme !
+5760=Vous versez la dîme d'or au sanctuaire en signe de dévotion.
+5761=Il est possible pour vous de ressusciter ici dans ce sanctuaire. Souhaitez-vous essayer ?<br>CONTINUER - Vous avez choisi d'essayer de revenir à la vie maintenant.<br>ANNULER - Vous préférez rester un fantôme pour l'instant.
+5762=Il est possible pour vous de ressusciter ici dans ce sanctuaire des Vertus. Souhaitez-vous essayer ?<br>CONTINUER - Vous avez choisi d'essayer de revenir à la vie maintenant.<br>ANNULER - Vous préférez rester un fantôme pour l'instant.
+5763=<center>Résurrection</center>
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.
@@ -3595,6 +3609,7 @@
 6301=Seul un grand maître alchimiste peut apprendre de ce livre.
 6302=Vous avez déjà appris cette information.
 6303=Vous avez appris à fabriquer des objets en verre. Vous devrez trouver des mineurs pour extraire du sable fin pour fabriquer ces objets.
+6304=Vous devez avoir les mains libres pour boire une potion.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?
@@ -4459,6 +4474,39 @@
 9410=Vous avez appris à extraire du sable fin. Ciblez les zones de sable lors de l’exploitation minière pour rechercher du sable fin.
 9411=Vous avez appris à extraire des pierres. Ciblez les montagnes lors de l’exploitation minière pour trouver des pierres.
 9412=Il n'y a pas de sable ici à exploiter.
+// [9800-9899] Éditeur de générateurs
+9800=Éditeur d'objets de générateurs
+9801=Nom du générateur
+9802=Type de générateur
+9803=Objet
+9804=PNJ
+9805=Zone
+9806=Escorte
+9807=Section/Liste de générateurs
+9808=ID de section ou liste de PNJ à partir desquels générer des DFN
+9809=Liste de générateurs
+9810=Si cette case est cochée, le générateur utilise la liste de générateurs au lieu de la section de générateurs
+9811=Quantité
+9812=Quantité maximale pour réapparaître
+9813=Durée minimale
+9814=Durée minimale en minutes pour réapparaître
+9815=Durée maximale
+9816=Durée maximale en minutes pour réapparaître
+9817=Rayon (Zone)
+9818=Rayon dans lequel générer des PNJ (Générateur de zone uniquement !)
+9819 = Appliquer les modifications
+9820 = Type de générateur modifié : Objet (61), quantité réinitialisée à 1.
+9821 = Type de générateur modifié : PNJ (62).
+9822 = Type de générateur modifié : Zone (69), rayon d'apparition mis à jour (par défaut : 1).
+9823 = Type de générateur modifié : Escorte (125).
+9824=Section d'apparition mise à jour à %s
+9825=Durée minimale mise à jour à %i
+9826=Durée maximale mise à jour à %i
+9827=Montant mis à jour à %i
+9828=Rayon d'apparition mis à jour à %i
+9829=Nom du générateur mis à jour à %s
+9830 = N'utilisez plus la liste d'apparition : nous supposons que la section d'apparition fait désormais référence à la définition individuelle du PNJ.
+9831 = Nous utilisons désormais la liste d'apparition - en supposant que la section d'apparition fait désormais référence à une liste de PNJ.
 // [9900 - 10000] Commandes pour les portes et les enseignes
 9916=Page
 9917=Suivant
@@ -4835,7 +4883,6 @@
 11619=miche de pain
 11620=panier de biscuits
 11621=gâteau
-11622=muffins
 11622=quiche au four
 11623=tarte à la viande cuite au four
 11624=pizza à la saucisse
@@ -4871,6 +4918,7 @@
 11654=Il faut être près d'une source de chaleur pour cuire les aliments.
 11655=Il faut être près d'un moulin pour créer de la farine.
 11656=Il faut être près d'un four pour cuire des aliments.
+11657=muffins
 // 11801 - 12000 Compétence en artisanat de bricolage
 // Page 1 - Objets en bois
 11801=Axe
@@ -5467,5 +5515,76 @@
 19100=Vous avez réussi à convertir le métal.
 19101=Vous ne pouvez convertir que cinq cents lingots à la fois.
 19102=L'article doit être dans votre sac à dos pour être échangé.
+// [19110-19200] Culture de plantes
+19110=Vous devez avoir l'objet dans votre sac à dos ou verrouillé pour pouvoir l'utiliser.
+19111=Vous devez d'abord planter une graine dans le bol
+19112=Vous taillez la plante. Cette plante ne produira plus de ressources ni de graines, mais ne nécessitera aucun entretien.
+19113=Vous ne pouvez pas récolter le pollen d'une plante mutée !
+19114=Trop tôt pour récolter le pollen
+19115=Vous ne pouvez pas récolter le pollen d'une plante en mauvaise santé !
+19116=Ciblez la plante avec laquelle vous souhaitez effectuer une pollinisation croisée.
+19117=Vous ne pouvez polliniser que d'autres plantes spécialement cultivées !
+19118=Cette plante n'est pas en phase de floraison. Vous ne pouvez pas le polliniser !
+19119=Vous ne pouvez pas polliniser une plante en mauvaise santé !
+19120=Vous ne pouvez pas effectuer de pollinisation croisée avec une plante mutée !
+19121=Cette plante a déjà été pollinisée !
+19122=Vous pollinisez la plante avec son propre pollen.
+19123=Vous avez réussi la pollinisation croisée de la plante.
+19124=Cette plante n'a pas de graines à récolter !
+19125=Vous récoltez les graines de la plante.
+19126=Vous ne pouvez pas ajouter d'eau à cette usine.
+19127=Vous adoucissez la saleté avec de l'eau.
+19128=Vous ne pouvez pas utiliser ça sur une plante !
+19129=Vous n'avez pas de potions puissantes de ce type dans votre pack.
+19130=Vous ne devriez verser des potions que sur une plante ou une graine !
+19131=La plante est déjà imbibée de ce type de potion !
+19132=Vous devez avoir l'objet dans votre sac à dos pour l'utiliser.
+19133=Choisissez une parcelle de terre à ramasser.
+19134=Vous avez besoin de plus de terre pour remplir un bol de plante !
+19135=Vous remplissez le bol de terre fraîche.
+19136=Vous aurez envie de ramasser de la terre fraîche afin de faire pousser une plante saine !
+19137=Choisissez un bol de terre pour y planter cette graine.
+19138=Vous devez utiliser une graine sur un sol préparé !
+19139=Ce bol de terre contient déjà une graine %s !
+19140=La saleté doit d'abord être ramollie.
+19141=Vous plantez la graine dans le bol de terre.
+19142=Vous devez utiliser une graine sur un bol de terre !
+// [19201-19300] Coups spéciaux
+19201=Vous avez besoin de %i compétence d'arme pour effectuer cette attaque
+19202=Vous avez besoin de %i mana pour effectuer cette attaque
+19203=Votre attaque pénètre leur armure !
+19204=Le coup a pénétré votre armure !
+19205=Votre cible saigne !
+19206=Vous saignez !
+19207=Vous saignez abondamment
+19208=%i saigne abondamment
+19209=Vous avez provoqué une commotion cérébrale !
+19210=Vous vous sentez désorienté !
+19211=Vous avez porté un coup fatal !
+19212=Vous subissez des dégâts supplémentaires grâce à l'attaque écrasante !
+19213=Vous ne pouvez pas désarmer votre adversaire.
+19214=Votre cible n'est déjà pas armée !
+19215=Vous désarmez votre arme !
+19216=Votre arme a été désarmée !
+19217=Vous ne pouvez pas effectuer cette attaque en étant monté ou en vol !
+19218=Cette attaque ne fonctionne que sur des cibles montées ou volantes
+19219=La force de votre attaque les a déloges de leur monture !
+19220=Vous avez été renversé de votre monture par %i !
+19221=Votre arme doit contenir une dose de poison pour effectuer une frappe contagieuse !
+19222=Votre frappe précise a augmenté le niveau du poison de 1
+19223=Le poison semble très efficace !
+19224=Vous avez empoisonné votre cible : %i
+19225=%i : vous a empoisonné !
+19226=Vous infligez une blessure mortelle !
+19227=Vous avez été mortellement blessé !
+19228=Votre cible résiste à la paralysie.
+19229=Vous résistez à la paralysie.
+19230=L'attaque vous a temporairement paralysé !
+19231=Vous n'avez pas la furtivité requise pour effectuer cette attaque
+19232=Vous frappez et vous cachez dans l'ombre !
+19233=Vous êtes étourdi par l'attaque et votre attaquant disparaît !
+19234=Votre confusion est passée, vous pouvez maintenant armer une arme !
+19235=Vous n'êtes plus mortellement blessé.
+19236=Les plaies saignantes ont guéri, vous ne saignez plus !
 }
 EOF

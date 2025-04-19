@@ -3298,6 +3298,20 @@
 5721=¡No puedes buscar tesoros allí!
 5722=coordenadas %s
 5723=Completado
+// [5751-5765] Bloqueo de karma y santuario
+5751=El karma está bloqueado. Si se dice un mantra en un santuario, se desbloqueará de nuevo.
+5752=Tu karma ha sido bloqueado. Ya no se puede aumentar.
+5753=Tu karma ha sido desbloqueado. Se puede aumentar de nuevo.
+5754=Bloquear karma
+5755=Desbloquear karma
+5756=Resucitar
+5757=Diezmar oro
+5758=Has decidido no diezmar oro en el santuario.
+5759=¡No tienes suficiente oro para diezmar esa cantidad!
+5760=Diezmas oro en el santuario como señal de devoción.
+5761=Es posible que usted resucite aquí en este Santuario. ¿Desea intentarlo?<br>CONTINUAR - Usted eligió intentar volver a la vida ahora.<br>CANCELAR - Prefiere seguir siendo un fantasma por ahora.
+5762=Es posible que usted resucite aquí en este Santuario de las Virtudes. ¿Desea intentarlo?<br>CONTINUAR - Usted eligió intentar volver a la vida ahora.<br>CANCELAR - Prefiere seguir siendo un fantasma por ahora.
+5763=<center>Resurrección</center>
 // [6000-6499] Misc Skill Msgs
 6000=Esa persona parece %s y %t.
 6001=No se puede hacer nada útil con eso.
@@ -3431,6 +3445,7 @@
 6301=Sólo un Gran Maestro Alquimista puede aprender de este libro.
 6302=Ya has aprendido esta información.
 6303=Has aprendido a fabricar objetos de vidrio. Necesitará encontrar mineros que extraigan arena fina para poder fabricar estos artículos.
+6304=Debes tener las manos libres para beber una poción.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
@@ -4303,6 +4318,39 @@
 9410=Has aprendido a extraer arena fina. Apunte a las áreas de arena cuando extraiga para buscar arena fina.
 9411=Has aprendido a extraer piedras. Apunte a las montañas cuando extraiga piedras.
 9412=Aquí no hay arena para extraer.
+// [9800-9899] Editor de generadores
+9800=Editor de objetos de generadores
+9801=Nombre del generador
+9802=Tipo de generador
+9803=Elemento
+9804=PNJ
+9805=Área
+9806=Escolta
+9807=Sección/Lista de generación
+9808=ID de sección o lista de NPC desde la que generar DFN
+9809=Lista de generación
+9810=Si está marcada, el generador usa la lista de generación en lugar de la sección de generación
+9811=Cantidad
+9812=Cantidad máxima para reaparecer
+9813=Tiempo mínimo
+9814=Tiempo mínimo en minutos para reaparecer
+9815=Tiempo máximo
+9816=Tiempo máximo en minutos para reaparecer
+9817=Radio (Área)
+9818=Radio para generar NPC en (¡Solo para generadores de área!)
+9819=Aplicar cambios
+9820=Se cambió el tipo de generador a Objeto (61), la cantidad se restableció a 1.
+9821=Se cambió el tipo de generador a PNJ (62).
+9822=Se cambió el tipo de generador a Área (69), el radio de generación se actualizó (el valor predeterminado es 1)
+9823=Se cambió el tipo de generador a Escolta (125).
+9824=Sección de generación actualizada a %s
+9825=Tiempo mínimo actualizado a %i
+9826=Tiempo máximo actualizado a %i
+9827=Cantidad actualizada a %i
+9828=Radio de generación actualizado a %i
+9829=Nombre del generador actualizado a %s
+9830=Ya no se usa la lista de generación; se asume que la sección de generación ahora se refiere a la definición individual de PNJ.
+9831=Ahora se usa la lista de aparición, asumiendo que la sección de aparición ahora se refiere a una lista de NPC.
 // [9900 - 10000] Comandos de puertas y señales
 9916=Página
 9917=Siguiente
@@ -4679,7 +4727,6 @@
 11619=pan de pan
 11620=pan de galletas
 11621=pastel
-11622=magdalenas
 11622=quiche al horno
 11623=pastel de carne al horno
 11624=pizza de salchicha
@@ -4715,6 +4762,7 @@
 11654=Debes estar cerca de una fuente de calor para cocinar los alimentos.
 11655=Debes estar cerca de un molino para crear harina.
 11656=Debes estar cerca de un horno para cocer alimentos.
+11657=magdalenas
 // 11801 - 12000 Habilidad de Artesanía
 // Página 1 - Artículos de madera
 11801=Eje
@@ -5311,5 +5359,76 @@
 19100=Has convertido exitosamente el metal.
 19101=Sólo puedes convertir quinientos lingotes a la vez.
 19102=El artículo debe estar en tu mochila para ser intercambiado.
+// [19110-19200] Cultivo de plantas
+19110=Debes tener el artículo en tu mochila o bajo llave para poder usarlo.
+19111=Primero debes plantar una semilla en el recipiente
+19112=Podas la planta. Esta planta ya no producirá recursos ni semillas, pero no requerirá mantenimiento.
+19113=¡No puedes recolectar polen de una planta mutada!
+19114=Demasiado pronto para recolectar polen
+19115=¡No puedes recolectar polen de una planta enferma!
+19116=Objetivo a la planta con la que desea realizar polinización cruzada.
+19117=¡Solo puedes polinizar otras plantas especialmente cultivadas!
+19118=Esta planta no se encuentra en etapa de floración. ¡No puedes polinizarlo!
+19119=¡No puedes polinizar una planta enferma!
+19120=¡No puedes realizar polinización cruzada con una planta mutada!
+19121=¡Esta planta ya ha sido polinizada!
+19122=Polinizas la planta con tu propio polen.
+19123=Cruzas - polinizas exitosamente la planta.
+19124=¡Esta planta no tiene semillas para recolectar!
+19125=Recolectas semillas de la planta.
+19126=No puedes agregar agua a esta planta.
+19127=Ablandas la suciedad con agua.
+19128=¡No puedes usar eso en una planta!
+19129=No tienes ninguna poción fuerte de ese tipo en tu paquete.
+19130=¡Solo debes verter pociones sobre una planta o semilla!
+19131=¡La planta ya está empapada con este tipo de poción!
+19132=Debes tener el objeto en tu mochila para usarlo.
+19133=Elige un trozo de tierra para recoger.
+19134=¡Necesitas más tierra para llenar un macetero!
+19135=Llenas el recipiente con tierra fresca.
+19136=¡Querrás recolectar tierra fresca para poder cultivar una planta saludable!
+19137=Elija un recipiente con tierra para plantar esta semilla.
+19138=¡Debes usar una semilla en algún suelo preparado!
+19139=¡Este cuenco de tierra ya tiene una semilla %s!
+19140=Primero es necesario ablandar la suciedad.
+19141=Plantas la semilla en el cuenco de tierra.
+19142=¡Debes usar una semilla en un recipiente con tierra!
+// [19201-19300] Movimientos especiales
+19201=Necesitas %i habilidad con arma para realizar ese ataque
+19202=Necesitas %i mana para realizar ese ataque
+19203=¡Tu ataque penetra su armadura!
+19204=¡El golpe atravesó tu armadura!
+19205=¡Tu objetivo está sangrando!
+19206=¡Estás sangrando!
+19207=Estas sangrando profusamente
+19208=%i está sangrando profusamente
+19209=¡Has causado una conmoción cerebral!
+19210=¡Te sientes desorientado!
+19211=¡Has asestado un golpe aplastante!
+19212=¡Recibes daño extra por el ataque aplastante!
+19213=No puedes desarmar a tu oponente.
+19214=¡Tu objetivo ya está desarmado!
+19215=¡Desarmas su arma!
+19216=¡Tu arma ha sido desarmada!
+19217=¡No puedes realizar ese ataque mientras estás montado o volando!
+19218=Este ataque sólo funciona en objetivos montados o voladores
+19219=¡La fuerza de tu ataque los ha desalojado de su montura!
+19220=¡%i te ha derribado de tu montura!
+19221=¡Tu arma debe tener una dosis de veneno para realizar un ataque infeccioso!
+19222=Tu golpe preciso ha aumentado el nivel del veneno en 1
+19223=¡El veneno parece extra efectivo!
+19224=Has envenenado a tu objetivo: %i
+19225=%i: ¡te envenenó!
+19226=¡Has causado una herida mortal!
+19227=¡Has sido herido de muerte!
+19228=Tu objetivo resiste la parálisis.
+19229=Resistes la parálisis.
+19230=¡El ataque te ha paralizado temporalmente!
+19231=Te falta el sigilo necesario para realizar ese ataque
+19232=¡Atacas y te escondes en las sombras!
+19233=¡Estás aturdido por el ataque y tu atacante desaparece!
+19234=¡Tu confusión ha pasado, ahora puedes armar un arma!
+19235=Ya no estás herido de muerte.
+19236=Las heridas sangrantes han sanado, ¡ya no sangras!
 }
 EOF

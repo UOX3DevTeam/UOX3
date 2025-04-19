@@ -2,6 +2,9 @@
 // Supported Events trigger for every character/item, use with care
 function onLogin( socket, pChar )
 {
+	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
+
 	// Display Admin Welcome Gump for characters on admin account, until a choice has been made
 	if( pChar.accountNum == 0 )
 	{
@@ -25,7 +28,7 @@ function onLogin( socket, pChar )
         pChar.AddScriptTrigger( 2508 );
     }
 
-    if( pChar.account.isYoung )
+	if( youngPlayerSystem && pChar.account.isYoung )
     {
   		// Attach "Young" player script, if the account is young and does not have script
 		if( !pChar.HasScriptTrigger( 8001 ))
@@ -35,7 +38,27 @@ function onLogin( socket, pChar )
 
     	// Check if "Young" player still meets requirement for being considered young
     	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
-    }
+	}
+	else if( !youngPlayerSystem )
+	{
+		// Remove young player script if system is inactive
+		pChar.RemoveScriptTrigger( 8001 );
+	}
+
+	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))// Attach the special moves Book
+	{
+		pChar.AddScriptTrigger( 7001 );
+	}
+
+	// Re-adds Buff for disguise kit if player still has time left.
+	var currentTime = GetCurrentClock();
+	var disguiseKitTime = pChar.GetJSTimer( 1, 5023 );
+	var timeLeft = Math.round(( disguiseKitTime - currentTime ) / 1000 );
+	if( disguiseKitTime > 0 )
+	{
+		TriggerEvent( 2204, "RemoveBuff", pChar, 1033 );
+		TriggerEvent( 2204, "AddBuff", pChar, 1033, 1075821, 1075820, timeLeft, "" );
+	}
 }
 
 function onLogout( pSock, pChar )
@@ -60,8 +83,11 @@ function onLogout( pSock, pChar )
 
 function onCreatePlayer( pChar )
 {
+	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
+
 	// If player character is created on a Young account, give them Young-specific items
-	if( pChar.account.isYoung )
+	if( youngPlayerSystem && pChar.account.isYoung )
 	{
 		// Attach "Young" player script, if the account is young and does not have script
 		if( !pChar.HasScriptTrigger( 8001 ))
@@ -70,6 +96,12 @@ function onCreatePlayer( pChar )
 		}
 
 		TriggerEvent( 8001, "GiveYoungPlayerItems", pChar.socket, pChar );
+	}
+
+	//Attach the special moves Book
+	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))
+	{
+		pChar.AddScriptTrigger( 7001 );
 	}
 }
 

@@ -36,7 +36,7 @@ function onCallback0( pSock, ourObj )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 905, pLanguage )); // That would be foolish.
 		}
-		else if( !pUser.CheckSkill( 6, 0, 1000 ) )
+		else if( !pUser.CheckSkill( 6, 0, pUser.skillCaps.begging ) )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 902, pLanguage )); // They seem to ignore your begging pleas.
 		}

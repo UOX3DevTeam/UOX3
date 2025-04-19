@@ -417,6 +417,14 @@ private:
 	SI16		combatNpcBaseFleeAt;			//	% of HP where an NPC will flee, if it's not defined for them
 	SI16		combatNpcBaseReattackAt;		//	% of HP where an NPC will resume attacking
 	SI16		combatAttackStamina;			//	Amount of stamina lost when hitting an opponent
+	SI16		swingSpeedIncreaseCap;			//	The Cap for swing speed property
+	SI16		physicalResistCap;				//	The Cap for physical resist property
+	SI16		fireResistCap;					//	The Cap for fire resist property
+	SI16		coldResistCap;					//	The Cap for cold resist property
+	SI16		poisonResistCap;				//	The Cap for poison resist property
+	SI16		energyResistCap;				//	The Cap for energy resist property
+	SI16		defenseChanceIncreaseCap;		//	The Cap for energy resist property
+	SI16		damageIncreaseCap;				//	The Cap for energy resist property
 
 	// Start & Location Settings
 	std::vector<__STARTLOCATIONDATA__>	startlocations;
@@ -645,6 +653,9 @@ public:
 
 	auto		YoungPlayerSystem( bool value ) -> void;
 	auto		YoungPlayerSystem() const -> bool;
+
+	auto		KarmaLocking( bool value ) -> void;
+	auto		KarmaLocking() const -> bool;
 
 	auto		ShowOfflinePCs( bool value ) -> void;
 	auto		ShowOfflinePCs() const -> bool;
@@ -987,6 +998,30 @@ public:
 
 	auto		BODsFromCraftedItemsOnly( bool value ) -> void;
 	auto		BODsFromCraftedItemsOnly() const -> bool;
+
+	auto		SwingSpeedIncreaseCap( SI16 value ) -> void;
+	SI16		SwingSpeedIncreaseCap() const;
+
+	auto		PhysicalResistCap( SI16 value ) -> void;
+	SI16		PhysicalResistCap() const;
+
+	auto		FireResistCap( SI16 value ) -> void;
+	SI16		FireResistCap() const;
+
+	auto		ColdResistCap( SI16 value ) -> void;
+	SI16		ColdResistCap() const;
+
+	auto		PoisonResistCap( SI16 value ) -> void;
+	SI16		PoisonResistCap() const;
+
+	auto		EnergyResistCap( SI16 value ) -> void;
+	SI16		EnergyResistCap() const;
+
+	auto		DefenseChanceIncreaseCap( SI16 value ) -> void;
+	SI16		DefenseChanceIncreaseCap() const;
+
+	auto		DamageIncreaseCap( SI16 value ) -> void;
+	SI16		DamageIncreaseCap() const;
 
 	auto		MaxControlSlots( UI08 value ) -> void;
 	UI08		MaxControlSlots() const;

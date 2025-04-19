@@ -151,7 +151,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SKILLLEVEL"s, 124},
 	{"SNOOPISCRIME"s, 125},
 	{"BOOKSDIRECTORY"s, 126},
-	//{"SERVERLIST"s, 127},
+	{"SKILLCAPSINGLE"s, 127},
 	{"PORT"s, 128},
 	{"ACCESSDIRECTORY"s, 129},
 	{"LOGSDIRECTORY"s, 130},
@@ -373,6 +373,15 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"HEALTHREGENCAP"s, 350},
 	{"STAMINAREGENCAP"s, 351},
 	{"MANAREGENCAP"s, 352},
+  {"SWINGSPEEDINCREASECAP"s, 353},
+	{"KARMALOCKING"s, 354},
+	{"PHYSICALRESISTCAP"s, 355},
+	{"FIRERESISTCAP"s, 356},
+	{"COLDRESISTCAP"s, 357},
+	{"POISONRESISTCAP"s, 358},
+	{"ENERGYRESISTCAP"s, 359},
+	{"DEFENSECHANCEINCREASECAP"s, 360},
+	{"DAMAGEINCREASECAP"s, 361},
 	{"HEALINGAFFECTHEALTHREGEN"s, 362},
 	{"HPREGENMODE"s, 363},
 	{"STAMINAREGENMODE"s, 364},
@@ -499,6 +508,7 @@ constexpr auto BIT_SNOOPAWARENESS					= UI32( 102 );
 constexpr auto BIT_YOUNGPLAYERSYSTEM				= UI32( 103 );
 constexpr auto BIT_AUTOUNEQUIPPEDCASTING			= UI32( 104 );
 constexpr auto BIT_LOOTDECAYSONNPCCORPSE			= UI32( 105 );
+constexpr auto BIT_KARMALOCKING						= UI32( 106 );
 constexpr auto BIT_HEALINGAFFECTHEALTHREGEN			= UI32( 107 );
 constexpr auto BIT_HUNGERAFFECTHEALTHREGEN			= UI32( 108 );
 constexpr auto BIT_THIRSTAFFECTSTAMINAREGEN			= UI32( 109 );
@@ -644,6 +654,7 @@ auto CServerData::ResetDefaults() -> void
 
 	InternalAccountStatus( true );
 	YoungPlayerSystem( true );
+	KarmaLocking( true );
 	CombatMaxRange( 10 );
 	CombatMaxSpellRange( 10 );
 
@@ -753,6 +764,14 @@ auto CServerData::ResetDefaults() -> void
 	PetCombatTraining( true );
 	HirelingCombatTraining( true );
 	NpcCombatTraining( false );
+	SwingSpeedIncreaseCap( 60 );
+	PhysicalResistCap( 70 );
+	FireResistCap( 70 );
+	ColdResistCap( 70 );
+	PoisonResistCap( 70 );
+	EnergyResistCap( 70 );
+	DefenseChanceIncreaseCap( 45 );
+	DamageIncreaseCap( 100 );
 	WeaponDamageBonusType( 2 );
 
 	CheckPetControlDifficulty( true );
@@ -2263,6 +2282,20 @@ auto CServerData::YoungPlayerSystem() const -> bool
 auto CServerData::YoungPlayerSystem( bool newVal ) -> void
 {
 	boolVals.set( BIT_YOUNGPLAYERSYSTEM, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::KarmaLocking()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the KarmaLocking system is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::KarmaLocking() const -> bool
+{
+	return boolVals.test( BIT_KARMALOCKING );
+}
+auto CServerData::KarmaLocking( bool newVal ) -> void
+{
+	boolVals.set( BIT_KARMALOCKING, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5280,6 +5313,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
 		ofsOutput << "SKILLLEVEL=" << static_cast<UI16>( SkillLevel() ) << '\n';
 		ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
+		ofsOutput << "SKILLCAPSINGLE=" << ServerSkillCapStatus() << '\n';
 		ofsOutput << "SKILLDELAY=" << static_cast<UI16>( ServerSkillDelayStatus() ) << '\n';
 		ofsOutput << "STATCAP=" << ServerStatCapStatus() << '\n';
 		ofsOutput << "STATSAFFECTSKILLCHECKS=" << ( StatsAffectSkillChecks() ? 1 : 0 ) << '\n';
@@ -5415,6 +5449,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "ENABLENPCGUILDDISCOUNTS=" << ( EnableNPCGuildDiscounts() ? 1 : 0 ) << '\n';
 		ofsOutput << "ENABLENPCGUILDPREMIUMS=" << ( EnableNPCGuildPremiums() ? 1 : 0 ) << '\n';
 		ofsOutput << "YOUNGPLAYERSYSTEM=" << ( YoungPlayerSystem() ? 1 : 0 ) << '\n';
+		ofsOutput << "KARMALOCKING=" << ( KarmaLocking() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
@@ -5541,7 +5576,14 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SHOWITEMRESISTSTATS=" << ( ShowItemResistStats() ? 1 : 0 ) << '\n';
 		ofsOutput << "SHOWWEAPONDAMAGETYPES=" << ( ShowWeaponDamageTypes() ? 1 : 0 ) << '\n';
 		ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<UI16>( WeaponDamageBonusType() ) << '\n';
-
+		ofsOutput << "WEAPONSWINGSPEEDINCREASECAP=" << SwingSpeedIncreaseCap() << '\n';
+		ofsOutput << "PHYSICALRESISTCAP=" << PhysicalResistCap() << '\n';
+		ofsOutput << "FIRERESISTCAP=" << FireResistCap() << '\n';
+		ofsOutput << "COLDRESISTCAP=" << ColdResistCap() << '\n';
+		ofsOutput << "POISONRESISTCAP=" << PoisonResistCap() << '\n';
+		ofsOutput << "ENERGYRESISTCAP=" << EnergyResistCap() << '\n';
+		ofsOutput << "DEFENSECHANCEINCREASECAP=" << DefenseChanceIncreaseCap() << '\n';
+		ofsOutput << "DAMAGEINCREASECAP=" << DamageIncreaseCap() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
@@ -5740,6 +5782,117 @@ auto CServerData::TrackingRedisplayTime( UI16 value ) -> void
 	trackingMsgRedisplayTimer = value;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SwingSpeedIncreaseCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for swing speed cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SwingSpeedIncreaseCap() const -> SI16
+{
+	return swingSpeedIncreaseCap;
+}
+auto CServerData::SwingSpeedIncreaseCap( SI16 value ) -> void
+{
+	swingSpeedIncreaseCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::PhysicalResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Physical cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::PhysicalResistCap() const -> SI16
+{
+	return physicalResistCap;
+}
+auto CServerData::PhysicalResistCap( SI16 value ) -> void
+{
+	physicalResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::FireResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Fire cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::FireResistCap() const -> SI16
+{
+	return fireResistCap;
+}
+auto CServerData::FireResistCap( SI16 value ) -> void
+{
+	fireResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ColdResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Cold cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ColdResistCap() const -> SI16
+{
+	return coldResistCap;
+}
+auto CServerData::ColdResistCap( SI16 value ) -> void
+{
+	coldResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::PoisonResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Poison cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::PoisonResistCap() const -> SI16
+{
+	return poisonResistCap;
+}
+auto CServerData::PoisonResistCap( SI16 value ) -> void
+{
+	poisonResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::EnergyResistCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Energy cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::EnergyResistCap() const -> SI16
+{
+	return energyResistCap;
+}
+auto CServerData::EnergyResistCap( SI16 value ) -> void
+{
+	energyResistCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::DefenseChanceIncreaseCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for Defense Chance Increase cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::DefenseChanceIncreaseCap() const -> SI16
+{
+	return defenseChanceIncreaseCap;
+}
+auto CServerData::DefenseChanceIncreaseCap( SI16 value ) -> void
+{
+	defenseChanceIncreaseCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::DamageIncreaseCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for damage Increase cap propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::DamageIncreaseCap() const -> SI16
+{
+	return damageIncreaseCap;
+}
+auto CServerData::DamageIncreaseCap( SI16 value ) -> void
+{
+	damageIncreaseCap = value;
+}
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ParseIni()
@@ -6258,7 +6411,8 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 126:	 // BOOKSDIRECTORY
 			Directory( CSDDP_BOOKS, value );
 			break;
-		case 127:	 // SERVERLIST
+		case 127:	 // SKILLCAPSINGLE
+			ServerSkillCap( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
 			break;
 		case 128:	 // PORT
 			ServerPort( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
@@ -6919,6 +7073,12 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 352:	// MANAREGENCAP
 			ManaRegenCap( std::stoi( value, nullptr, 0 ));
 			break;
+		case 353:	// SWINGSPEEDINCREASE
+			SwingSpeedIncreaseCap( std::stof( value ));
+			break;
+		case 354:	 // KARMALOCKING
+			KarmaLocking( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;   
 		case 362:	// HEALINGAFFECTHEALTHREGEN
 			HealingAffectHealthRegen(( static_cast<UI08>( std::stoul( value, nullptr, 0 )) > 0 ? true : false ));
 			break;
@@ -6964,7 +7124,6 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 376:	// GARGOYLEMANAREGENBONUS
 			GargoyleManaRegenBonus( std::stoi( value, nullptr, 0 ));
 			break;
-
 		default:
 			rValue = false;
 			break;

@@ -3298,6 +3298,20 @@
 5721=Tam nemůžete kopat poklad!
 5722=souřadnice %s
 5723=Dokončeno
+// [5751-5765] Zamykání karmy a svatyně
+5751=Karma je uzamčena. Mantra vyslovená ve svatyni ji znovu odemkne.
+5752=Vaše karma byla uzamčena. Vaši karmu již nelze zvýšit.
+5753=Vaše karma byla odemčena. Vaše karma může být znovu zvýšena.
+5754=Uzamknout karmu
+5755=Odemknout karmu
+5756=Obnovit
+5757=Desátkové zlato
+5758=Rozhodli jste se nedat do svatyně žádné zlato.
+5759=Nemáte dostatek zlata na desátek této částky!
+5760=Dáváte desátek ze zlata do svatyně na znamení oddanosti.
+5761=Je možné, že budete vzkříšeni zde v této svatyni. Přejete si to zkusit?<br>POKRAČOVAT – Rozhodli jste se, že se nyní pokusíte vrátit k životu.<br>ZRUŠIT – Prozatím raději zůstanete duchem.
+5762=Je možné, že budete vzkříšeni zde v této svatyni ctností. Přejete si to zkusit?<br>POKRAČOVAT – Rozhodli jste se, že se nyní pokusíte vrátit k životu.<br>ZRUŠIT – Prozatím raději zůstanete duchem.
+5763=<center>Vzkříšení</center>
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.
@@ -3431,6 +3445,7 @@
 6301=Z této knihy se může učit pouze velmistr alchymista.
 6302=Tyto informace jste se již dozvěděli.
 6303=Naučili jste se vyrábět předměty ze skla. K výrobě těchto předmětů budete muset najít horníky, kteří budou těžit jemný písek.
+6304=Musíte mít volnou ruku, abyste mohli pít lektvar.
 // [7000-7499] AI Scripts
 7000=Jsi zločinec a nemáš přístup ke své bankovní schránce.
 7001=Který předmět si přeješ uložit do své bankovní schránky?
@@ -4303,6 +4318,39 @@
 9410=Naučili jste se těžit jemný písek. Při těžbě se zaměřte na pískové oblasti a hledejte jemný písek.
 9411=Naučil jste se těžit kameny. Zaměřte se na hory při těžbě, abyste našli kameny.
 9412=Není zde žádný písek k těžbě.
+// [9800-9899] Spawner Editor
+9800=Editor objektů Spawner
+9801=Jméno spouštěče
+9802=Typ spawner
+9803 = Položka
+9804 = Npc
+9805 = Oblast
+9806 = Doprovod
+9807=Založit sekci/seznam
+9808=ID sekce nebo seznam NPC k vytvoření z DFN
+9809 = Seznam
+9810=Je-li zaškrtnuto, spawner použije spawnlist místo spawn sekce
+9811 = Částka
+9812=Maximální množství pro znovuzrození
+9813 = Min. čas
+9814=Minimální doba v minutách do znovuzrození
+9815 = Maximální čas
+9816=Maximální čas v minutách do znovuzrození
+9817 = Rádius (plocha)
+9818=Poloměr pro spawnování NPC v (pouze oblastní spawner!)
+9819=Použít změny
+9820=Typ spawnera byl změněn na položku (61), částka byla resetována na 1.
+9821=Změněn typ spawneru na NPC (62).
+9822=Změněn typ rozmnožovače na oblast (69), poloměr rozmnožování aktualizován (výchozí hodnota je 1)
+9823=Změněn typ spawnera na doprovod (125).
+9824=Sekce spawn aktualizována na %s
+9825=Minimální čas aktualizován na %i
+9826=Maximální čas aktualizován na %i
+9827=Částka aktualizována na %i
+9828=Poloměr spawnování aktualizován na %i
+9829=Jméno spawneru aktualizováno na %s
+9830=Již nepoužívá spawn list - za předpokladu, že sekce spawn nyní odkazuje na individuální definici NPC.
+9831=Nyní používám spawn list - za předpokladu, že sekce spawn nyní odkazuje na seznam NPC.
 // [9900 - 10000] Příkazy pro dveře a značky
 9916=Strana
 9917=Další
@@ -4679,7 +4727,6 @@
 11619=chlebový bochník
 11620=pánev sušenek
 11621=koláč
-11622=muffiny
 11622=pečený quiche
 11623=pečený masový koláč
 11624=pizza s uzeninou
@@ -4715,6 +4762,7 @@
 11654=Pro přípravu jídla musíte být v blízkosti zdroje tepla.
 11655=Musíte být v blízkosti mlýna, abyste mohli vyrábět mouku.
 11656=Musíte být v blízkosti pece, abyste mohli péct jídlo.
+11657=muffiny
 // 11801 - 12000 Dovednost řemeslné výroby
 // Strana 1 - Dřevěné předměty
 11801=Náprava
@@ -5311,5 +5359,76 @@
 19100=Úspěšně jste převedli kov.
 19101=Najednou můžete převést pouze pět set ingotů.
 19102=Pro výměnu musí být položka ve vašem batohu.
+// [19110-19200] Pěstování rostlin
+19110=Abyste mohli položku použít, musíte ji mít v batohu nebo uzamčenou.
+19111=Nejprve musíte do misky zasadit semínko
+19112=Prořezáváte rostlinu. Tato rostlina již nebude produkovat zdroje ani semena, ale nebude vyžadovat žádnou údržbu.
+19113=Nemůžete sbírat pyl z mutované rostliny!
+19114=Příliš brzy na sběr pylu
+19115=Nemůžete sbírat pyl z nezdravé rostliny!
+19116=Zaměřte se na rostlinu, kterou chcete křížově opylit.
+19117=Můžete opylovat pouze jiné speciálně pěstované rostliny!
+19118=Tato rostlina není ve fázi květu. Nemůžete to opylit!
+19119=Nemůžete opylit nezdravou rostlinu!
+19120=Nemůžete křížově opylovat mutovanou rostlinou!
+19121=Tato rostlina již byla opylena!
+19122=Opylujete rostlinu vlastním pylem.
+19123=Úspěšně jste zkřížili - opylovali rostlinu.
+19124=Tato rostlina nemá semena ke sběru!
+19125=Sbíráte semena z rostliny.
+19126=Do této rostliny nemůžete přidat vodu.
+19127=Změkčíte špínu vodou.
+19128=To ​​nemůžete použít na rostlinu!
+19129=Ve svém balíčku nemáte žádné silné lektvary tohoto typu.
+19130=Lektvary byste měli nalít pouze na rostlinu nebo semeno!
+19131=Rostlina je tímto typem lektvaru již nasáklá!
+19132=Abyste jej mohli použít, musíte mít předmět v batohu.
+19133=Vyberte kousek špíny, který chcete nabrat.
+19134=Potřebujete více nečistot k naplnění misky na rostliny!
+19135=Naplňte misku čerstvou špínou.
+19136=Budete chtít nasbírat čerstvou špínu, abyste vypěstovali zdravou rostlinu!
+19137=Vyberte misku s hlínou, do které zasadíte toto semínko.
+19138=Musíte použít semeno na připravenou půdu!
+19139=Tato miska s nečistotami již obsahuje semínko %s!
+19140=Nejprve je třeba změkčit nečistoty.
+19141=Zasadíte semeno do misky s hlínou.
+19142=Musíte použít semínko na misku s nečistotami!
+// [19201-19300] Speciální pohyby
+19201=K provedení tohoto útoku potřebujete %i zbraň
+19202=K provedení tohoto útoku potřebujete %i many
+19203=Váš útok proniká jejich pancířem!
+19204=Úder pronikl do vašeho brnění!
+19205=Váš cíl krvácí!
+19206=Ty krvácíš!
+19207=Hodně krvácíte
+19208=%i silně krvácí
+19209=Máte otřes mozku!
+19210=Cítíte se dezorientovaný!
+19211=Zasadil jsi zdrcující ránu!
+19212=Zdrcujícím útokem dostáváte další poškození!
+19213=Nemůžete odzbrojit svého protivníka.
+19214=Váš cíl již není ozbrojen!
+19215=Odzbrojte svou zbraň!
+19216=Vaše zbraň byla odzbrojena!
+19217=Nemůžete provést tento útok během jízdy nebo letu!
+19218=Tento útok funguje pouze na namontované nebo létající cíle
+19219=Síla vašeho útoku je vytlačila z jejich koně!
+19220=Byli jste sraženi z vašeho koně %i!
+19221=Vaše zbraň musí mít dávku jedu, aby mohla provést infekční útok!
+19222=Váš přesný zásah zvýšil úroveň jedu o 1
+19223=Jed se zdá být extra účinný!
+19224=Otrávili jste svůj cíl: %i
+19225=%i : otrávil tě!
+19226=Zasadil jsi smrtelnou ránu!
+19227=Byl jsi smrtelně zraněn!
+19228=Váš cíl odolává paralýze.
+19229=Odporujete paralýze.
+19230=Útok vás dočasně paralyzoval!
+19231=Chybí vám požadované utajení k provedení tohoto útoku
+19232=Úder a schováš se ve stínu!
+19233=Jste omráčeni útokem a váš útočník zmizí!
+19234=Váš zmatek pominul, nyní můžete vyzbrojit zbraň!
+19235=Už nejsi smrtelně zraněný.
+19236=Krvácející rány se zahojily, už nekrvácíte!
 }
 EOF

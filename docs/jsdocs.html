@@ -431,7 +431,7 @@ function onAISliver( aiChar )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onAttack( pAttacker, pDefender )</em></p>
+							<p><em>function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -443,14 +443,20 @@ function onAISliver( aiChar )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>After pAttacker's script has been triggered, pDefender's onDefense event also triggers. Note that these events run <em>in addition</em> to hard-coded combat (and/or other combat events), after everything else is done, and do not replace these.</p>
+							<p>After pAttacker's script has been triggered, pDefender's onDefense event also triggers. Note that these events run <em>in addition</em> to hard-coded combat (and/or other combat events), after everything else is done, and do not replace these. hitStatus will be false if attack missed.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onAttack( pAttacker, pDefender )
+<pre><code class="language-javascript">function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
-	pAttacker.TextMessage( "Who lives in that castle?" );
-	pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    if( hitStatus )
+    {
+	    pAttacker.TextMessage( "Hah! I hit my target for " + damageDealt + "damage" );
+    }
+    else
+    {
+	    pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    }
 }</code></pre></p>
 						</div>
 					</div>
@@ -1549,7 +1555,7 @@ function onTimer( timerObj, timerID )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onDefense( pAttacker, pDefender )</em></p>
+							<p><em>function onDefense( pAttacker, pDefender, hitStatus, hitLoc, damageReceived  )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -1561,14 +1567,20 @@ function onTimer( timerObj, timerID )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>The event runs at the end of each hard-coded combat "round"</p>
+                            <p>The event runs at the end of each hard-coded combat "round". hitStatus will be false if attack missed.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onDefense( pAttacker, pDefender )
+<pre><code class="language-javascript">function onDefense( pAttacker, pDefender, hitStatus, hitLoc, damageReceived  )
 {
-	pAttacker.TextMessage( "Who lives in that castle?" );
-	pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    if( hitStatus )
+    {
+	    pAttacker.TextMessage( "Hah! I hit my target for " + damageReceived + "damage" );
+    }
+    else
+    {
+	    pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    }
 }</code></pre></p>
 						</div>
 					</div>
@@ -1692,36 +1704,44 @@ function onDispel( objDispelled, objType )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDrop( iDropped, pDropper )
 {
 	var pSock = pDropper.socket;
 
-	//Lets fetch the serial of the target-location
-	var temp1 = pSock.GetByte( 10 );
-	var temp2 = pSock.GetByte( 11 );
-	var temp3 = pSock.GetByte( 12 );
-	var temp4 = pSock.GetByte( 13 );
+	// Client version 6.0.1.7+ has an additional byte before serial of target container
+	// Will contain a value for backpack grid index item was dropped in when using clients that support grid containers
+	// Will contain a value of -1 in regular 2D UO client and 0 in ClassicUO
+	var serOffset = (pSock.clientMajorVer > 6 || ( pSock.clientMajorVer == 6 && pSock.clientSubVer >= 1 && pSock.clientLetterVer >= 7)) ? 11 : 10;
+	targSer1 = pSock.GetByte( serOffset + 0 ); // 0 = dropped on character, 0xFF = ground/item
+	targSer2 = pSock.GetByte( serOffset + 1 );
+	targSer3 = pSock.GetByte( serOffset + 2 );
+	targSer4 = pSock.GetByte( serOffset + 3 )
 
-	//Check the value of Byte 10 to determine if the target is ground, character or container
-	if( temp1 == 0 ) //Target is a character
+	if( targSer1 == 0 ) // Target is a character
 	{
-		var targetChar = CalcCharFromSer( temp1, temp2, temp3, temp4 )
-		pDropper.TextMessage( "I've dropped this item on a character named "+targetChar.name+", let's bounce it back." );
-		return false;
+		var targetChar = CalcCharFromSer( targSer1, targSer2, targSer3, targSer4 )
+		if( ValidateObject( targetChar ))
+		{
+			pDropper.TextMessage( "I've dropped this item on a character, deny if not my own character!!" );
+			if( targetChar.serial != pDropper.serial )
+			{
+				pDropper.TextMessage( "DENIED!" );
+				return false;
+			}
+		}
 	}
-	if( temp1 == 0xFF ) //Target is ground or another item
+	else if( targSer1 == 0xFF ) // Target is ground or another non-container item
 	{
-		pDropper.TextMessage( "I've dropped this item on the ground or on another item." );
-		return true;
+		pDropper.TextMessage( "I've dropped this item on the ground or on another item, let's approve!" );
 	}
-	if( temp1 <= 0x40 ) //Target is a container
-	{
-		var targetItem = CalcItemFromItem( temp1, temp2, temp3, temp4 );
-		pDropper.TextMessage( "I've dropped this item in/on a container with ID "+targetItem.id+"." );
-		return true;
-	}
-}</code></pre></p>
+
+	// Default to allow dropping, let code handle it!
+	return true;
+}
+</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1768,6 +1788,23 @@ function onDispel( objDispelled, objType )
 		cDropper.TextMessage( "Generic error message!" );
 		return false;
 	}
+}
+
+function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
+{
+    if( !ValidateObject( iDroppedOn ))
+        return false;
+
+    pDropper.TextMessage( "I've dropped this item in/on a container, deny if it's not my main pack!" );
+    var iPack = pDropper.pack;
+    if( !ValidateObject( iPack ) || iPack.serial != iDroppedOn.serial )
+    {
+        pDropper.TextMessage( "DENIED!" );
+        return false;
+    }
+
+    // Default to allow dropping, let code handle it!
+    return true;
 }</code></pre></p>
 						</div>
 					</div>
@@ -4018,7 +4055,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSpellTargetSelect( pCaster, myTarget, spellID )</em></p>
+							<p><em>function onSpellTargetSelect( myTarget, pCaster, spellID )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -4043,7 +4080,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Script attached to an NPC that's immune to magic, where event returns 2 to reject spell being cast
-function onSpellTargetSelect( pCaster, myTarget, spellID )
+function onSpellTargetSelect( myTarget, pCaster, spellID )
 {
 	var socket = pCaster.socket;
 	if( socket != null )
@@ -5012,6 +5049,33 @@ function myAreaFunc( srcChar, trgChar, pSock )
 						</div>
 					</div>
 
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_combat_CheckTimeSinceLastCombat"/>
+                            <label for="spoiler_function_combat_CheckTimeSinceLastCombat">CheckTimeSinceLastCombat <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>CheckTimeSinceLastCombat( pUser, 120 );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Checks if a character has engaged in combat within a specified time frame (in seconds).</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Check if the player has been in combat within the last 120 seconds (2 minutes)
+if( CheckTimeSinceLastCombat( pUser, 120 ))
+{
+  pUser.SysMessage( "You must wait two minutes after engaging in combat before you can use this item." );
+}
+else
+{
+	pUser.SysMessage( "You are free to use the item." );
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
 					</div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -5552,6 +5616,35 @@ function myAreaFunc( srcChar, trgItem, pSock )
 							</div>
 						</div>
 
+                        						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_CheckInstaLog"/>
+							<label for="spoiler_function_misc_CheckInstaLog">CheckInstaLog <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>JSBool CheckInstaLog( x, y, world, instanceID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks if a specific location ( x, y, world, instanceID ) is within an instant logout zone.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Check if the player is in an instant logout zone
+var isInstaLog = CheckInstaLog(targX, targY, worldNumber, instanceID);
+
+if( isInstaLog )
+{
+	// Handle instant logout
+}
+else
+{
+	// Handle other logout scenarios
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
 						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_function_item_CalcTargetedItem"/>
 							<label for="spoiler_function_item_CalcTargetedItem">CalcTargetedItem <i class="fas fa-angle-down"></i></label>
@@ -5764,7 +5857,7 @@ var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
 									<p><em>ITEM FindRootContainer( iObj );</em></p>
-									<p><em>ITEM FindRootContainer( iObjSerial );</em></p>
+									<p><em>ITEM FindRootContainer( iObjSerial  );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -7948,7 +8041,7 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-	<pre><code class="language-javascript">// Looping through all items equipped on character
+									<pre><code class="language-javascript">// Looping through all items equipped on character
 	// (including backpack, bankbox, hair, etc) upon clicking an item with script attached
 	function onUseChecked( pUser, iUsed )
 	{
@@ -7963,7 +8056,7 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 		return false;
 	}</code></pre>
 
-	<pre><code class="language-javascript">// Looping through all items in character's backpack upon clicking an item with script attached
+    <pre><code class="language-javascript">// Looping through all items in character's backpack upon clicking an item with script attached
 	function onUseChecked( pUser, iUsed )
 	{
 		var mItem;
@@ -7977,7 +8070,7 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 		return false;
 	}</code></pre>
 
-	<pre><code class="language-javascript">// Looping through all items in a container upon using a container with script attached
+    <pre><code class="language-javascript">// Looping through all items in a container upon using a container with script attached
 	function onUseChecked( pUser, iUsed )
 	{
 		var mItem;
@@ -8304,6 +8397,44 @@ spellbookItem.RemoveSpell( 0 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_ResourceCount"/>
+							<label for="spoiler_method_baseObj_ResourceCount">ResourceCount <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int ResourceCount( realItemID );</em></p>
+									<p><em>int ResourceCount( realItemID, colour );</em></p>
+									<p><em>int ResourceCount( realItemID, colour, moreVal );</em></p>
+									<p><em>int ResourceCount( realItemID, colour, moreVal, sectionID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the amount of items with specified ID realItemID, colour (optional) and MORE value (optional), SectionID (optional) from character's or Items packs</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>A colour value of -1 will make UOX3 count ANY item of the specified realItemID regardless of colour. If moreVal is specified, UOX3 will only count items with a matching MORE value.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">
+    // Count all items in character's or item's packs with specified ID (0x1bf2) and colour (0)
+    var iCount = myChar.ResourceCount( 0x1bf2, 0 );
+
+    // Count all items in character's or item's packs with specified ID (0x1bf2), of ANY colour
+    var iCount = myChar.ResourceCount( 0x1bf2, -1 );
+
+    // Count all items in character's or item's packs with specified ID (0x1bf2), colour (0x0482) and MORE value (1)
+    var iCount = myChar.ResourceCount( 0x1bf2, 0x0482, 1 );
+
+    // Count all items in character's or item's packs with specified ID (0x1bf2), colour (0x0482) and MORE value (1) and sectionID ("0x1bf2")
+    var iCount = myChar.ResourceCount( 0x1bf2, 0x0482, 1, "0x1bf2");
+</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_baseObj_Resist"/>
 							<label for="spoiler_method_baseObj_Resist">Resist <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -8318,7 +8449,8 @@ spellbookItem.RemoveSpell( 0 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>Available item types:
+									<p>
+										Available item types:
 										<ul>
 											<li>1 - Armor</li>
 											<li>2 - Light</li>
@@ -8489,8 +8621,8 @@ myObj.Teleport( iUsed );
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>The function has 5 extra optional arguments (if including an optional parameter, make sure to also include the preceding argument):
-										<ul>
+										The function has 5 extra optional arguments (if including an optional parameter, make sure to also include the preceding argument):
+										<p><<ul>
 											<li>allHear (broadcast true/false)</li>
 											<li>txtHue (colour of the text sent to the client)</li>
 											<li>speechTarget (intended target of message. 0 = only visible to sender and receiver, 1 = visible to all players in range, 2 = visible to all NPCs and players in range, 3 = visible to all PCs everywhere + NPCs in range, 4 = visible to all PCs everywhere (broadcast), 5 = only visible to receiver)</li>
@@ -8510,6 +8642,43 @@ myItem.TextMessage( "THIS IS A MESSAGE IN RUNIC LETTERS VISIBLE TO ALL", true, 0
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_UseResource"/>
+							<label for="spoiler_method_baseObj_UseResource">UseResource <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int UseResource( amount, itemID );</em></p>
+									<p><em>int UseResource( amount, itemID, colour );</em></p>
+									<p><em>int UseResource( amount, itemID, colour, moreVal );</em></p>
+									<p><em>int UseResource( amount, itemID, colour, moreVal, sectionID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Removes amount of items with specified itemID, colour (optional) and MORE value (optional) from character's or items Packs, and returns amount deleted</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>If an item of the specified resource is found with .usesLeft property higher than 1, the appropriate amount of uses is extracted from said item before eventually deleting the resource item itself.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">
+	// Use resource of specific ID, with specific color (0)
+	myChar.UseResource( 5, 0x1bf2, 0 );
+
+	// Use resource of specific ID, and colour
+	myChar.UseResource( 5, 0x1bf2, 0x0482 );
+
+	// Use resource of specific ID, colour and MORE value
+	myChar.UseResource( 5, 0x1bf2, 0x0482, 1 );
+
+	// Use resource of specific ID, colour and MORE value and sectionID
+	myChar.UseResource( 5, 0x1bf2, 0x0482, 1, "0x1bf2" );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_baseObj_UpdateStats"/>
 							<label for="spoiler_method_baseObj_UpdateStats">UpdateStats <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -8523,12 +8692,14 @@ myItem.TextMessage( "THIS IS A MESSAGE IN RUNIC LETTERS VISIBLE TO ALL", true, 0
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>Can be used with any character, as well as with items/multis with damageable flag enabled. Supported stat types:
+									<p>
+										Can be used with any character, as well as with items/multis with damageable flag enabled. Supported stat types:
 										<ul>
 											<li>0 - Health (Characters and Items</li>
 											<li>1 - Mana (Characters only)</li>
 											<li>2 - Stamina (Characters only)</li>
-										</ul></p>
+										</ul>
+									</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -9369,7 +9540,7 @@ myChar.TextMessage(( myTarget.GetTimer( Timer.CRIMFLAG ) - GetCurrentClock() ).t
 
 // Set time from now in milliseconds that criminal flag will last, after making character a criminal
 myChar.criminal = true;
-myChar.SetTimer( timer.CRIMFLAG, 3000 );</code></pre>
+myChar.SetTimer( Timer.CRIMFLAG, 3000 );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -9871,38 +10042,6 @@ var coldResist = pUser.Resist( 4 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_char_ResourceCount"/>
-							<label for="spoiler_method_char_ResourceCount">ResourceCount <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>int ResourceCount( realItemID );</em></p>
-									<p><em>int ResourceCount( realItemID, colour );</em></p>
-									<p><em>int ResourceCount( realItemID, colour, moreVal );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Returns the amount of items with specified ID realItemID, colour (optional) and MORE value (optional) from character's backpack</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>A colour value of -1 will make UOX3 count ANY item of the specified realItemID regardless of colour. If moreVal is specified, UOX3 will only count items with a matching MORE value.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Count all items in character's backpack with specified ID (0x1bf2) and colour (0)
-var iCount = myChar.ResourceCount( 0x1bf2, 0 );
-
-// Count all items in character's backpack with specified ID (0x1bf2), of ANY colour
-var iCount = myChar.ResourceCount( 0x1bf2, -1 );
-
-// Count all items in character's backpack with specified ID (0x1bf2), colour (0x0482) and MORE value (1)
-var iCount = myChar.ResourceCount( 0x1bf2, 0x0482, 1 );</code></pre>
-								</div>
-							</div>
-						</div>
-
-						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_char_Resurrect"/>
 							<label for="spoiler_method_char_Resurrect">Resurrect <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -10033,6 +10172,25 @@ myChar.SetPoisoned( 2, 10000 );</code></pre>
 								</div>
 							</div>
 						</div>
+                        
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_method_char_SetRandomColor"/>
+                            <label for="spoiler_method_char_SetRandomColor">SetRandomColor <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>void SetRandomColor( colorListID );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Applies a random color from a specified colorlist to character/item.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">myChar/myItem.SetRandomColor( "1" ); // Apply random color from Savage Warriors skin or can get random color from items colorlist depending on how its used.</code></pre>
+                                </div>
+                            </div>
+                        </div>
 
 						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_char_SetSkillByName"/>
@@ -10246,38 +10404,6 @@ myNPC.TurnToward( myObject.x, myObject.y );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">pUser.UpdatePermaGreyFlagTimestamp( otherChar );</code></pre>
-								</div>
-							</div>
-						</div>
-
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_char_UseResource"/>
-							<label for="spoiler_method_char_UseResource">UseResource <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>int UseResource( amount, itemID );</em></p>
-									<p><em>int UseResource( amount, itemID, colour );</em></p>
-									<p><em>int UseResource( amount, itemID, colour, moreVal );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Removes amount of items with specified itemID, colour (optional) and MORE value (optional) from character's backpack, and returns amount deleted</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>If an item of the specified resource is found with .usesLeft property higher than 1, the appropriate amount of uses is extracted from said item before eventually deleting the resource item itself.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Use resource of specific ID, with specific color (0)
-myChar.UseResource( 5, 0x1bf2, 0 );
-
-// Use resource of specific ID, and colour
-myChar.UseResource( 5, 0x1bf2, 0x0482 );
-
-// Use resource of specific ID, colour and MORE value
-myChar.UseResource( 5, 0x1bf2, 0x0482, 1 );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -15010,6 +15136,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.skillsused</span> <strong>(object)</strong><br>
 							Get JS Object reference for skills that can be used to get/set whether individual skills are in use (???) (Read-Only)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.skillCaps</span> <strong>(object)</strong><br>
+							Get JS Object reference for skills Cap that can be used to get/set the value of individual skills Cap using a syntax like .skillCaps.alchemy = [0 - 1000] (1000 = 100.0 skillpoints) (Read-Only)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.socket</span> <strong>(object)</strong><br>

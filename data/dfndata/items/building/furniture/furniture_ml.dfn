@@ -1,0 +1,539 @@
+// Elven Bed (East)
+[0x304D]
+{
+get=base_item
+name=Elven Bed (East) Part 1
+id=0x304D
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x304C]
+{
+get=base_item
+name=Elven Bed (East) Part 2
+id=0x304C
+weight=1000
+movable=1
+origin=ml
+}
+
+// Elven Bed (South)
+[0x3050]
+{
+get=base_item
+name=Elven Bed (South) Part 1
+id=0x3050
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3051]
+{
+get=base_item
+name=Elven Bed (South) Part 2
+id=0x3051
+weight=1000
+movable=1
+origin=ml
+}
+
+// Alchemist Table (East)
+[0x3077]
+{
+get=base_item
+name=Alchemist Table (East) Part 1
+id=0x3077
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3078]
+{
+get=base_item
+name=Alchemist Table (East) Part 2
+id=0x3078
+weight=1000
+movable=1
+origin=ml
+}
+
+// Alchemist Table (South)
+[0x3079]
+{
+get=base_item
+name=Alchemist Table (South) Part 1
+id=0x3079
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x307A]
+{
+get=base_item
+name=Alchemist Table (South) Part 2
+id=0x307A
+weight=1000
+movable=1
+origin=ml
+}
+
+// Elven Loveseat (East)
+[0x3089]
+{
+get=base_item
+name=Elven Loveseat (East) Part 1
+id=0x3089
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3088]
+{
+get=base_item
+name=Elven Loveseat (East) Part 2
+id=0x3088
+weight=1000
+movable=1
+origin=ml
+}
+
+// Elven Loveseat (South)
+[0x308A]
+{
+get=base_item
+name=Elven Loveseat (South) Part 1
+id=0x308A
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x308B]
+{
+get=base_item
+name=Elven Loveseat (South) Part 2
+id=0x308B
+weight=1000
+movable=1
+origin=ml
+}
+
+// Elven Wash Basin (East)
+[0x30DF]
+{
+get=base_item
+name=Elven Wash Basin (East) Part 1
+id=0x30DF
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x30E0]
+{
+get=base_item
+name=Elven Wash Basin (East) Part 2
+id=0x30E0
+weight=1000
+movable=1
+origin=ml
+}
+
+// Elven Wash Basin (South)
+[0x30E1]
+{
+get=base_item
+name=Elven Wash Basin (South) Part 1
+id=0x30E1
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x30E2]
+{
+get=base_item
+name=Elven Wash Basin (South) Part 2
+id=0x30E2
+weight=1000
+movable=1
+origin=ml
+}
+
+// Fancy Couch (East)
+[0x4C8C]
+{
+get=base_item
+name=Fancy Couch (East) Part 1
+id=0x4C8C
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x4C8A]
+{
+get=base_item
+name=Fancy Couch (East) Part 2
+id=0x4C8A
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x4C8B]
+{
+get=base_item
+name=Fancy Couch (East) Part 3
+id=0x4C8B
+weight=1000
+movable=1
+origin=ml
+}
+
+// Fancy Couch (North)
+[0x9C62]
+{
+get=base_item
+name=Fancy Couch (North) Part 1
+id=0x9C62
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x9C61]
+{
+get=base_item
+name=Fancy Couch (North) Part 2
+id=0x9C61
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x9C60]
+{
+get=base_item
+name=Fancy Couch (North) Part 3
+id=0x9C60
+weight=1000
+movable=1
+origin=ml
+}
+
+// Fancy Couch (South)
+[0x4C8D]
+{
+get=base_item
+name=Fancy Couch (South) Part 1
+id=0x4C8D
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x4C8E]
+{
+get=base_item
+name=Fancy Couch (South) Part 2
+id=0x4C8E
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x4C8F]
+{
+get=base_item
+name=Fancy Couch (South) Part 3
+id=0x4C8F
+weight=1000
+movable=1
+origin=ml
+}
+
+// Fancy Couch (West)
+[0x9C5F]
+{
+get=base_item
+name=Fancy Couch (West) Part 1
+id=0x9C5F
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x9C5E]
+{
+get=base_item
+name=Fancy Couch (West) Part 2
+id=0x9C5E
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x9C5D]
+{
+get=base_item
+name=Fancy Couch (West) Part 3
+id=0x9C5D
+weight=1000
+movable=1
+origin=ml
+}
+
+// Hardwood Table (East)
+[0x3094]
+{
+get=base_item
+name=Hardwood Table (East) Part 1
+id=0x3094
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3093]
+{
+get=base_item
+name=Hardwood Table (East) Part 2
+id=0x3093
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3092]
+{
+get=base_item
+name=Hardwood Table (East) Part 3
+id=0x3092
+weight=1000
+movable=1
+origin=ml
+}
+
+// Hardwood Table (South)
+[0x3095]
+{
+get=base_item
+name=Hardwood Table (South) Part 1
+id=0x3095
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3096]
+{
+get=base_item
+name=Hardwood Table (South) Part 2
+id=0x3096
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3097]
+{
+get=base_item
+name=Hardwood Table (South) Part 3
+id=0x3097
+weight=1000
+movable=1
+origin=ml
+}
+
+// Ornate Table (East)
+[0x308F]
+{
+get=base_item
+name=Ornate Table (East) Part 1
+id=0x308F
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3090]
+{
+get=base_item
+name=Ornate Table (East) Part 2
+id=0x3090
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3091]
+{
+get=base_item
+name=Ornate Table (East) Part 3
+id=0x3091
+weight=1000
+movable=1
+origin=ml
+}
+
+// Ornate Table (South)
+[0x308E]
+{
+get=base_item
+name=Ornate Table (South) Part 1
+id=0x308E
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x308D]
+{
+get=base_item
+name=Ornate Table (South) Part 2
+id=0x308D
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x308C]
+{
+get=base_item
+name=Ornate Table (South) Part 3
+id=0x308C
+weight=1000
+movable=1
+origin=ml
+}
+
+// Plush Loveseat (East)
+[0x4C84]
+{
+get=base_item
+name=Plush Loveseat (East) Part 1
+id=0x4C84
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x4C85]
+{
+get=base_item
+name=Plush Loveseat (East) Part 2
+id=0x4C85
+weight=1000
+movable=1
+origin=ml
+}
+
+// Plush Loveseat (South)
+[0x4C83]
+{
+get=base_item
+name=Plush Loveseat (South) Part 1
+id=0x4C83
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x4C82]
+{
+get=base_item
+name=Plush Loveseat (South) Part 2
+id=0x4C82
+weight=1000
+movable=1
+origin=ml
+}
+
+// Tall Elven Bed (East)
+[0x3054]
+{
+get=base_item
+name=Tall Elven Bed (East) Part 1
+id=0x3054
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3053]
+{
+get=base_item
+name=Tall Elven Bed (East) Part 2
+id=0x3053
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3055]
+{
+get=base_item
+name=Tall Elven Bed (East) Part 3
+id=0x3055
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3052]
+{
+get=base_item
+name=Tall Elven Bed (East) Part 4
+id=0x3052
+weight=1000
+movable=1
+origin=ml
+}
+
+// Tall Elven Bed (South)
+[0x3058]
+{
+get=base_item
+name=Tall Elven Bed (South) Part 1
+id=0x3058
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3057]
+{
+get=base_item
+name=Tall Elven Bed (South) Part 2
+id=0x3057
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3059]
+{
+get=base_item
+name=Tall Elven Bed (South) Part 3
+id=0x3059
+weight=1000
+movable=1
+origin=ml
+}
+
+[0x3056]
+{
+get=base_item
+name=Tall Elven Bed (South) Part 4
+id=0x3056
+weight=1000
+movable=1
+origin=ml
+}

@@ -30,7 +30,7 @@ function onSkill( pUser, objType, skillUsed )
 			pUser.isMeditating = false;
 			pSock.SetTimer( Timer.SOCK_SKILLDELAY, ( pSkillDelay * 1000 ) / 2 );
 		}
-		else if( !pUser.CheckSkill( 46, 0, 1000 ))
+		else if( !pUser.CheckSkill( 46, 0, pUser.skillCaps.meditation ))
 		{
 			pSock.SysMessage( GetDictionaryEntry( 970, pSock.language )); // You cannot focus your concentration.
 			pUser.isMeditating = false;

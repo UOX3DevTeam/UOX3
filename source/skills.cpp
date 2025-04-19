@@ -385,7 +385,7 @@ void CSkills::SmeltOre( CSocket *s )
 						return;
 					}
 
-					if( !CheckSkill( chr, MINING, oreType->minSkill, 1000 ))	// if we do not have minimum skill to use it
+					if( !CheckSkill( chr, MINING, oreType->minSkill, chr->GetSkillCap( MINING ) ))	// if we do not have minimum skill to use it
 					{
 						if( itemToSmelt->GetAmount() > 1 )	// If more than 1 ore, half it
 						{

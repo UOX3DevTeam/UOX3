@@ -152,7 +152,7 @@ function searchForPlayers( srcChar, trgChar, pSock )
 }
 
 // Triggers when NPC attacks
-function onAttack( pAttacker, pDefender )
+function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	// Random chance to speak when killing someone
 	if( ValidateObject( pDefender ) && pDefender.dead )

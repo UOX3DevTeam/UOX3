@@ -67,7 +67,7 @@ function SnoopAttempt( snoopTarget, targCont, pUser )
 	}
 
 	var targScriptTriggers = snoopTarget.scriptTriggers;
-	if( pUser.commandlevel > snoopTarget.commandlevel || pUser.CheckSkill( 28, minDifficulty, 1000 ))
+	if( pUser.commandlevel > snoopTarget.commandlevel || pUser.CheckSkill( 28, minDifficulty, pUser.skillCaps.snooping ))
 	{
 		// Successful snoop!
 		// Open targCont for player

@@ -72,16 +72,28 @@ protected:
 	SI16				healthRegenBonus;
 	SI16				staminaRegenBonus;
 	SI16				manaRegenBonus;
+	SI16				luck;
+	SI16				hitChance;
+	SI16				defenseChance;
 	VisibleTypes		visible;
 	SI16				hiDamage;
 	SI16				loDamage;
 	SI32				weight;
 	SI16				mana;
 	SI16				stamina;
+	SI16				swingSpeedIncrease;
+	SI16				damageIncrease;
+	SI16				healthLeech;
+	SI16				staminaLeech;
+	SI16				manaLeech;
+	SI32				tithing;
 	UI16				scriptTrig;
 	SI16				st2;
 	SI16				dx2;
 	SI16				in2;
+	SI16				healthBonus;
+	SI16				staminaBonus;
+	SI16				manaBonus;
 	mutable SI32		FilePosition;
 	SERIAL				tempMulti;
 	std::string			name;
@@ -233,6 +245,27 @@ public:
 	virtual void			SetHealthRegenBonus( SI16 newValue );
 	virtual void			SetStaminaRegenBonus( SI16 newValue );
 	virtual void			SetManaRegenBonus( SI16 newValue );
+	virtual SI16			GetSwingSpeedIncrease( void ) const;
+	virtual void			SetSwingSpeedIncrease( SI16 newValue );
+
+	virtual SI32			GetTithing( void ) const;
+	virtual void			SetTithing( SI32 newValue );
+
+	void					IncSwingSpeedIncrease( SI16 toInc = 1 );
+
+	virtual SI16			GetDamageIncrease( void ) const;
+	virtual void			SetDamageIncrease( SI16 newValue );
+
+	void					IncDamageIncrease( SI16 toInc = 1 );
+
+	virtual SI16			GetLuck( void ) const;
+	virtual void			SetLuck( SI16 newValue );
+
+	virtual SI16			GetHitChance( void ) const;
+	virtual void			SetHitChance( SI16 newValue );
+
+	virtual SI16			GetDefenseChance( void ) const;
+	virtual void			SetDefenseChance( SI16 newValue );
 
 	void					SetDir( UI08 newDir, bool sendUpdate = true );
 	UI08					GetDir( void ) const;
@@ -270,6 +303,35 @@ public:
 	void					IncHealthRegenBonus( SI16 toInc = 1 );
 	void					IncStaminaRegenBonus( SI16 toInc = 1 );
 	void					IncManaRegenBonus( SI16 toInc = 1 );
+
+	SI16					GetHealthLeech( void ) const;
+	virtual void			SetHealthLeech( SI16 nVal );
+
+	SI16					GetStaminaLeech( void ) const;
+	virtual void			SetStaminaLeech( SI16 nVal );
+
+	SI16					GetManaLeech( void ) const;
+	virtual void			SetManaLeech( SI16 nVal );
+
+	void					IncHealthLeech( SI16 toInc = 1 );
+	void					IncStaminaLeech( SI16 toInc = 1 );
+	void					IncManaLeech( SI16 toInc = 1 );
+
+	void					IncLuck( SI16 toInc = 1 );
+
+	void					IncHitChance( SI16 toInc = 1 );
+	void					IncDefenseChance( SI16 toInc = 1 );
+
+	void					IncTithing( SI32 toInc = 1 );
+
+	SI16					GetHealthBonus( void ) const;
+	virtual void			SetHealthBonus( SI16 nVal );
+
+	SI16					GetStaminaBonus( void ) const;
+	virtual void			SetStaminaBonus( SI16 nVal );
+
+	SI16					GetManaBonus( void ) const;
+	virtual void			SetManaBonus( SI16 nVal );
 
 	virtual void			PostLoadProcessing( void );
 	virtual bool			LoadRemnants( void ) = 0;

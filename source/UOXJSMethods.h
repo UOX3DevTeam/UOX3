@@ -78,7 +78,6 @@ JSMethodFunc CChar_EmoteMessage;
 JSMethodFunc CChar_OpenBank;
 JSMethodFunc CChar_DirectionTo;
 JSMethodFunc CChar_TurnToward;
-JSMethodFunc CChar_ResourceCount;
 JSMethodFunc CChar_CheckSkill;
 JSMethodFunc CChar_FindItemLayer;
 JSMethodFunc CChar_SpeechInput;
@@ -187,12 +186,16 @@ JSMethodFunc CBase_UpdateStats;
 JSMethodFunc CBase_Resist;
 JSMethodFunc CBase_IsBoat;
 JSMethodFunc CBase_CanSee;
+JSMethodFunc CBase_ResourceCount;
 JSMethodFunc CBase_UseResource;
 JSMethodFunc CBase_AddScriptTrigger;
 JSMethodFunc CBase_HasScriptTrigger;
 JSMethodFunc CBase_RemoveScriptTrigger;
 JSMethodFunc CBase_Refresh;
 JSMethodFunc CBase_SetRandomName;
+JSMethodFunc CBase_SetRandomColor;
+JSMethodFunc CBase_GetTempEffect;
+JSMethodFunc CBase_ReverseEffect;
 
 // Multi Methods
 JSMethodFunc CMulti_GetMultiCorner;
@@ -393,7 +396,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "OpenBank",			CChar_OpenBank,			1, 0, 0 },
 	{ "DirectionTo",		CChar_DirectionTo,		1, 0, 0 },
 	{ "TurnToward",			CChar_TurnToward,		1, 0, 0 },
-	{ "ResourceCount",		CChar_ResourceCount,	2, 0, 0 },
+	{ "ResourceCount",		CBase_ResourceCount,	2, 0, 0 },
 	{ "UseResource",		CBase_UseResource,		3, 0, 0 },
 	{ "CustomTarget",		CMisc_CustomTarget,		1, 0, 0 },
 	{ "PopUpTarget",		CMisc_PopUpTarget,		1, 0, 0 },
@@ -431,6 +434,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "Recall",				CChar_Recall,			1, 0, 0 },
 	{ "Mark",				CChar_Mark,				1, 0, 0 },
 	{ "SetRandomName",		CBase_SetRandomName,	1, 0, 0 },
+	{ "SetRandomColor",		CBase_SetRandomColor,	1, 0, 0 },
 	{ "SetSkillByName",		CChar_SetSkillByName,	2, 0, 0 },
 	{ "Kill",				CChar_Kill,				0, 0, 0 },
 	{ "Resurrect",			CChar_Resurrect,		0, 0, 0 },
@@ -478,6 +482,8 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "RemoveFollower",		CChar_RemoveFollower,		1, 0, 0 },
 	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0, 0 },
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0, 0 },
+	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0, 0 },
+	{ "ReverseTempEffect",	CBase_ReverseEffect,		1, 0, 0 },
 	{ nullptr,				nullptr,				0, 0, 0 }
 };
 
@@ -546,6 +552,7 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "GetMoreVar",			CItem_GetMoreVar,			2, 0, 0 },
 	{ "SetMoreVar",			CItem_SetMoreVar,			3, 0, 0 },
 	{ "Resist",				CBase_Resist,				1, 0, 0 },
+	{ "ResourceCount",		CBase_ResourceCount,		2, 0, 0 },
 	{ "UseResource",		CBase_UseResource,			3, 0, 0 },
 	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0, 0 },
 	{ "HasScriptTrigger",	CBase_HasScriptTrigger,		1, 0, 0 },
@@ -566,7 +573,10 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "FinishedChars",		CMulti_FinishedChars,		1, 0, 0 },
 
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
-	{ "SetRandomName",		CBase_SetRandomName,	1, 0, 0 },
+	{ "SetRandomName",		CBase_SetRandomName,		1, 0, 0 },
+	{ "SetRandomColor",		CBase_SetRandomColor,		1, 0, 0 },
+	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0, 0 },
+	{ "ReverseTempEffect",	CBase_ReverseEffect,		1, 0, 0 },
 	{ nullptr,				nullptr,					0, 0, 0 }
 };
 
