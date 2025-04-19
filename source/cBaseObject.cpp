@@ -799,7 +799,6 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "HitPoints=" + std::to_string( hitpoints ) + newLine;
 	outStream << "RegenBonusStats=" + std::to_string( GetHealthRegenBonus() ) + "," + std::to_string( GetStaminaRegenBonus() ) + "," + std::to_string( GetManaRegenBonus() ) + newLine;
 	outStream << "Race=" + std::to_string( race ) + newLine;
-	outStream << "RegenStats=" + std::to_string( GetHealthRegen() ) + "," + std::to_string( GetStaminaRegen() ) + "," + std::to_string( GetManaRegen() ) + newLine;
 	outStream << "Visible=" + std::to_string( visible ) + newLine;
 	outStream << "Disabled=" << ( IsDisabled() ? "1" : "0" ) << newLine;
 	outStream << "Damage=" + std::to_string( loDamage ) + "," + std::to_string( hiDamage ) + newLine;
@@ -2091,13 +2090,6 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 					SetKarma( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
 					SetKills( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
 				}
-			}
-			else if( UTag == "REGENSTATS" )
-			{
-				SetHealthRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
-				SetStaminaRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
-				SetManaRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
-				rValue = true;
 			}
 			else
 			{
