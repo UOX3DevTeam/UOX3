@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 14. October, 2023</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6</small></p>
+	<p style="margin:0"><small>Last Updated: 20. April, 2025</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6b</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -8954,11 +8954,11 @@ myChar.Damage( 15, 6, attackerChar, true );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>int Defense( hitLoc, damageType, doArmorDamage )</em></p>
+									<p><em>int Defense( hitLoc, damageType, doArmorDamage[, ignoreMedable, includeShield] )</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns the defense value against damageType of the armor item at the location hitLoc and does armor damage if needed</p>
+									<p>Returns the defense value against damageType of the armor item at the location hitLoc and does armor damage if needed, and can also exclude medable armor (optional) and include shield defense value (optional)</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
@@ -8968,7 +8968,10 @@ myChar.Damage( 15, 6, attackerChar, true );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Get the defense value of the head armor against Physical damage and damage the armor:
-value = mChar.Defense( 3, 1, true);</code></pre>
+value = mChar.Defense( 3, 1, true);
+
+// Get the total physical defense value for character, excluding medable armor, including shield
+value = mChar.Defense( 0, 1, false, false, true );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -17209,7 +17212,7 @@ function findNearbyItems( pUser, trgItem, pSock )
 	<div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>UOX3 JSE Docs by Geir Ove Alnes @ Copyright 2022-2023</small></p>
+	<p><small>UOX3 JSE Docs by Geir Ove Alnes @ Copyright 2022-2025</small></p>
 	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" rel="noopener" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
 </div>
 <script defer>

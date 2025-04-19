@@ -3,6 +3,8 @@ function SkillRegistration()
 	RegisterSkill( 46, true ); // Meditation
 }
 
+const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
@@ -11,7 +13,7 @@ function onSkill( pUser, objType, skillUsed )
 		// Fetch skill-specific skill delay to use on failure
 		var pSkillDelay = Skills[46].skillDelay;
 
-		if( pUser.Defense( 0, 1, false ) > 10 )
+		if(( coreShardEra <= EraStringToNum( "lbr" ) && pUser.Defense( 0, 1, false, true ) > 10 ) || ( coreShardEra > EraStringToNum( "aos" ) && pUser.Defense( 0, 1, true, true ) > 0 ))
 		{
 			pSock.SysMessage( GetDictionaryEntry( 967, pSock.language )); // The energies cannot be absorbed through your armour.
 			pUser.isMeditating = false;
@@ -22,7 +24,7 @@ function onSkill( pUser, objType, skillUsed )
 			pUser.isMeditating = false;
 			pSock.SetTimer( Timer.SOCK_SKILLDELAY, ( pSkillDelay * 1000 ) / 4 );
 		}
-		else if( pUser.mana == pUser.maxMana )
+		else if( pUser.mana == pUser.maxmana )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 969, pSock.language )); // You are at peace.
 			pUser.isMeditating = false;

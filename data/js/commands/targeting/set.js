@@ -98,16 +98,16 @@ function onCallback0( socket, ourObj )
 		ourObj.Resist( 7, nVal );
 		okMsg( socket );
 		break;
-	case "HEALTHREGEN":
-		ourItem.healthRegen = nVal;
+	case "HEALTHREGENBONUS":
+		ourObj.healthRegenBonus = nVal;
 		okMsg( socket );
 		break;
-	case "STAMINAREGEN":
-		ourItem.staminaRegen = nVal;
+	case "STAMINAREGENBONUS":
+		ourObj.staminaRegenBonus = nVal;
 		okMsg( socket );
 		break;
-	case "MANAREGEN":
-		ourItem.manaRegen = nVal;
+	case "MANAREGENBONUS":
+		ourObj.manaRegenBonus = nVal;
 		okMsg( socket );
 		break;
 	case "HP":

@@ -835,6 +835,7 @@ auto DoMessageLoop() -> void
 							LoadCreatures();
 							LoadCustomTitle();
 							LoadSkills();
+							Races->Load();
 							LoadPlaces();
 							Skills->Load(); break;
 						case '7': // Reload JS
@@ -1224,13 +1225,380 @@ auto CallGuards( CChar *mChar, CChar *targChar ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	PassiveHealthRegen()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Perform passive health regeneration for character
+//o------------------------------------------------------------------------------------------------o
+auto PassiveHealthRegen( CChar &mChar, UI16 maxHP ) -> SI32
+{
+	SI32 nextHealthRegen = static_cast<SI32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000 ); // next health regen time
+
+	if( mChar.GetHP() < maxHP )
+	{
+		if( !cwmWorldState->ServerData()->HungerSystemEnabled() || ( mChar.GetHunger() > 0 )
+			|| ( !Races->DoesHunger( mChar.GetRace() ) && (( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0) || mChar.IsNpc() )))
+		{
+			// Bonus passive hp regen from healing skill
+			R64 healthRegenBonus = 0;
+			if( cwmWorldState->ServerData()->HealingAffectHealthRegen() )
+			{
+				healthRegenBonus += ( 0.1 * mChar.GetSkill( HEALING ) / 10.0 ); // Max +10 at GM Healing
+			}
+
+			// Include health regen bonus from character/from items equipped on character
+			healthRegenBonus += std::min( mChar.GetHealthRegenBonus(), cwmWorldState->ServerData()->HealthRegenCap() ); // Publish 42 (ML) and beyond: capped at 18
+
+			// +2 health regen if human, in ML and beyond (on top of cap)
+			healthRegenBonus += Races->Race( mChar.GetRace() )->HPRegenBonus();
+
+			// Also include adjustment to health regen bonus based on hunger level
+			if( cwmWorldState->ServerData()->HungerSystemEnabled() && cwmWorldState->ServerData()->HungerAffectHealthRegen() )
+			{
+				auto hungerLvl = mChar.GetHunger();
+				if( hungerLvl >= 4 )
+				{
+					// Add to bonus if character is not hungry; increase bonus more the more full character is
+					healthRegenBonus += 2.0 * ( static_cast<R32>( hungerLvl ) - 3.0 ); // 4 -> +2, 5 -> +4, 6 -> +6
+				}
+				else
+				{
+					// Subtract from bonus if character is hungry; decrease bonus more the more hungry character is
+					healthRegenBonus -= 2.0 * ( 4.0 - static_cast<R32>( hungerLvl )); // 3 -> -2, 2 -> -4, 1 -> -6
+				}
+			}
+
+			// With a health regen timer of 8.0 seconds, Healing skill of 100.0 and hunger level at 6/6 can reduce that to 6.95 seconds
+			// With 18 (from items) + 2 (race bonus for humans) bonus health regen on top of that, it can be further reduced to 6.5 seconds
+			nextHealthRegen /= ( 1.0 + ( healthRegenBonus / 100.0 ));
+			mChar.IncHP( 1 ); // Regardless of bonuses to regen rate, we only increase health by 1 each time
+		}
+	}
+	return nextHealthRegen;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PassiveStaminaRegen()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Perform passive stamina regeneration for character
+//o------------------------------------------------------------------------------------------------o
+auto PassiveStaminaRegen( CChar &mChar, UI16 maxStam ) -> SI32
+{
+	SI32 nextStamRegen = static_cast<SI32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ); // next stamina regen time
+
+	auto mStamina = mChar.GetStamina(); // get character's current stamina
+	if( mStamina < maxStam )
+	{
+		// Continue with stamina regen if  character is not yet fully parched, or if character is parched but has less than 25% stamina, or if char belongs to race that does not thirst
+		if( !cwmWorldState->ServerData()->ThirstSystemEnabled() || ( mChar.GetThirst() > 0 )|| (( mChar.GetThirst() == 0) && ( mStamina < static_cast<SI16>( maxStam * 0.25 )))
+			|| ( !Races->DoesThirst( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE ) == 0 || mChar.IsNpc() )))
+		{
+			R64 stamRegenBonus = 0;
+			auto staminaRegenMode = cwmWorldState->ServerData()->StaminaRegenMode();
+			if( staminaRegenMode >= SREG_AOS ) // AoS and beyond
+			{
+				Skills->CheckSkill(( &mChar ), FOCUS, 0, 1000 ); // Check FOCUS for skill gain
+				stamRegenBonus += ( 0.1 * mChar.GetSkill( FOCUS ) / 10.0 );	// Bonus for focus
+			}
+
+			// Additional bonuses that should still respect cap: vampiric embrace, kirin (animal)
+			// ...
+
+			// Include stamina regen bonus from character/from items equipped on character
+			stamRegenBonus += std::min( mChar.GetStaminaRegenBonus(), cwmWorldState->ServerData()->StaminaRegenCap() ); // Publish 42 (ML) and beyond: capped at 24
+			
+			// Additional bonuses beyond cap: skill masteries (rampage)
+			// ...
+
+			// Add stamina regen bonus from races, if setup
+			stamRegenBonus += Races->Race( mChar.GetRace() )->StamRegenBonus();
+
+			// Also include adjustment to health regen bonus based on hunger level
+			if( cwmWorldState->ServerData()->ThirstSystemEnabled() && cwmWorldState->ServerData()->ThirstAffectStaminaRegen() )
+			{
+				auto thirstLvl = mChar.GetThirst();
+				if( thirstLvl >= 4 )
+				{
+					// Add to bonus if character is not thirsty; increase bonus more the more satiated character is
+					stamRegenBonus += 2.0 * ( static_cast<R32>( thirstLvl ) - 3.0 ); // 4 -> +2, 5 -> +4, 6 -> +6
+				}
+				else
+				{
+					// Subtract from bonus if character is thirsty; decrease bonus more the more parched character is
+					stamRegenBonus -= 2.0 * ( 4.0 - static_cast<R32>( thirstLvl )); // 3 -> -2, 2 -> -4, 1 -> -6
+				}
+			}
+
+			// With base regen timer of 0.7 (SA and beyond), and a bonus of 0, the result is 85 stamina per minute
+			// With base regen timer of 2.5 (prior to SA), and a bonus of 0, the result is 24 stamina per minute
+			nextStamRegen /= ( 1.0 + ( stamRegenBonus / 100.0 ));
+
+			if( staminaRegenMode >= SREG_SA && mChar.IsNpc() && !cwmWorldState->creatures[mChar.GetId()].IsAnimal() ) // SA and beyond
+			{
+				// Adjust rate if character is an NPC/monster
+				nextStamRegen *= 1.95;
+			}
+
+			mChar.IncStamina( 1 ); // Regardless of bonuses to regen rate, we only increase stamina by 1 each time
+		}
+	}
+	return nextStamRegen;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PassiveManaRegen()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Perform passive mana regeneration for character
+//o------------------------------------------------------------------------------------------------o
+auto PassiveManaRegen( CSocket *mSock, CChar &mChar, UI16 maxMana ) -> SI32
+{
+	SI32 nextManaRegen = static_cast<SI32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000 ); // 5 seconds for >= ML, 7 seconds for <= SE
+	R32 armorPenalty = 1;
+
+	if( mChar.GetMana() < maxMana )
+	{
+		R64 medSkill = mChar.GetSkill( MEDITATION );
+		R64 focusSkill = mChar.GetSkill( FOCUS );
+		auto intStat = mChar.GetIntelligence();
+
+		auto manaRegenMode = cwmWorldState->ServerData()->ManaRegenMode();
+		// Mondain's Legacy era and beyond
+		if( manaRegenMode >= MREG_ML ) // ML and beyond
+		{
+			R64 baselineRate = 0.2; // 0.2 mana/sec => 1 mana per 5 seconds
+
+			R64 focusBonus = ( focusSkill / 10.0 ) / 200.0;
+
+			// Calculate base mana regen from Meditation, Intelligence and GM meditation or not
+			R64 meditationBonus = (( 0.0075 * ( medSkill / 10.0 )) + ( 0.0025 * intStat )) * ( medSkill >= 1000 ? 1.1 : 1.0 );
+
+			if( cwmWorldState->ServerData()->ArmorAffectManaRegen() )
+			{
+				// if CalcDef returns a value higher than 0, character has non-medable armor equipped
+				if( Combat->CalcDef(( &mChar ), 0, false, PHYSICAL, true, true ) > 0 )
+				{
+					// Calculator from stratics lies - it should not remove meditation bonus entirely
+					// when wearing non-meddable armor, but set it at a fixed 0.1 value instead!
+					meditationBonus = 0.1;
+				}
+			}
+
+			// If meditating, apply additional bonuses
+			if( mChar.IsMeditating() )
+			{
+				// Also double the regen speed if actively meditating
+				meditationBonus *= 2.0;
+			}
+
+			// Get mana regen bonuses from character, items equipped on character, etc.
+			// Cap total mana regeneration from equipment based on cap defined in uox.ini
+			R64 bonusManaRegen = mChar.GetManaRegenBonus();
+
+			// Add mana regen bonus from races, if setup
+			// Publish 65, April 5, 2010, Stygian Abyss expansion
+			//     Gargoyles receive +2 Mana Regeneration which stacks with Meditation and Focus.
+			bonusManaRegen += Races->Race( mChar.GetRace() )->ManaRegenBonus();
+
+			// Add additional bonus mana points here:
+				
+			// ... Vampiric Embrace (+3 Mana Regen)
+			// EXAMPLE: if( mChar.GetTransform() == TF_VAMPIRIC ) bonusManaRegen += 3;
+
+			// ... Lich Form
+			// EXAMPLE: if( mChar.GetTransform() == TF_LICH ) bonusManaRegen += 13;
+
+			R64 manaRegenCap = static_cast<R64>( cwmWorldState->ServerData()->ManaRegenCap() ); // 30 for ML results in 5.5 after square root operation
+			if( manaRegenMode >= MREG_KR ) // KR era and beyond
+			{
+				// Apply diminishing returns for bonus mana regen points, as introduced in Publish 46
+				// Treats mana regen cap from uox.ini as a "soft cap" beyond which diminishing returns kick in
+				if( bonusManaRegen > manaRegenCap )
+				{
+					// Low value = slower growth beyond cap
+					// High value = faster growth beyond cap
+					R64 growthScale = 0.5;
+					bonusManaRegen = manaRegenCap + ( growthScale * std::sqrt( bonusManaRegen - manaRegenCap ));
+				}
+			}
+			else
+			{
+				// Cap it based on uox.ini
+				bonusManaRegen = std::min( bonusManaRegen, manaRegenCap );
+			}
+
+			bonusManaRegen = sqrt( bonusManaRegen );
+
+			// Calculate base for bonus mana regen, from char/items
+			R64 baseBonusManaRegen = ((((( medSkill / 10.0 ) / 2.0 + ( focusSkill / 10.0 ) / 4.0 ) / 90.0 ) * 0.65 ) + 2.35 );
+
+			// Cap the minimum value of this to 0
+			bonusManaRegen = std::max( static_cast<R64>( 0 ), (( baseBonusManaRegen * bonusManaRegen ) - ( baseBonusManaRegen - 1 )) / 10.0 );
+			R64 manaPerSecond = ( 0.2 + focusBonus + meditationBonus + bonusManaRegen );
+
+			// Scale the baseline time by (baselineRate / totalRate)
+			nextManaRegen = static_cast<SI32>( std::round( nextManaRegen * ( baselineRate / manaPerSecond )));
+
+			mChar.IncMana( 1 );
+		}
+		else if( manaRegenMode >= MREG_AOS1 )
+		{
+			// Age of Shadows/Samurai Empire
+			R64 baselineRate = 1.0 / cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ); // 1 mana per 7 seconds = 0.1428 mana/sec
+			R64 intPoints = 0;
+			R64 medPoints = 0;
+			R64 focusPoints = 0;
+
+			if( manaRegenMode == MREG_AOS1 ) // Early AoS, pre-Pub18
+			{
+				// Based on era-contemporary information from https://community.stratics.com/threads/old-faq-update-thread-reference-only.10616/post-128182
+				intPoints = std::floor( intStat / 38.0 );
+				medPoints = std::floor(( medSkill / 10.0 ) / 10.0 );
+				focusPoints = std::floor(( focusSkill / 10.0 ) / 20.0 );
+			}
+			else // Late AoS, post-Pub18
+			{
+				// Calculate base mana regen from meditation skill, int stat and whether character is GM meditation or not
+				medPoints = intStat + (( medSkill / 10.0 ) * 3 );
+				medPoints *= ( medSkill < 1000 ) ? 0.025 : 0.0275;
+
+				// Every 20 points in focus is worth 1 mana per 10 seconds (same as 1 mana regen point on items), or 0.1 mana per second
+				focusPoints = std::floor(( focusSkill / 10.0 ) / 200.0 ) * 0.1;
+				//focusPoints = (( focusSkill / 10 ) * 0.05 ) * 0.1;
+			}
+
+			if( cwmWorldState->ServerData()->ArmorAffectManaRegen() )
+			{
+				// if CalcDef returns a value higher than 0, character has non-medable armor equipped
+				if( Combat->CalcDef(( &mChar ), 0, false, PHYSICAL, true, true ) > 0 )
+				{
+					medPoints = 0;
+				}
+			}
+
+			// Grab mana bonuses from character (from equipped items, primarily)
+			R64 bonusManaRegen = mChar.GetManaRegenBonus();
+
+			// Add additional bonus mana points here:
+
+			// ... Vampiric Embrace (+3 Mana Regen)
+			// EXAMPLE: if( mChar.GetTransform() == TF_VAMPIRIC ) bonusManaRegen += 3;
+
+			// ... Lich Form
+			// EXAMPLE: if( mChar.GetTransform() == TF_LICH ) bonusManaRegen += 13;
+
+			// Add mana regen bonus from races, if setup
+			bonusManaRegen += Races->Race( mChar.GetRace() )->ManaRegenBonus();
+
+			// Cap regen bonus from items based on ini setting
+			bonusManaRegen = ( std::min( bonusManaRegen, static_cast<R64>( cwmWorldState->ServerData()->ManaRegenCap() )));
+
+			if( manaRegenMode == MREG_AOS1 )
+			{
+				R64 totalPoints = intPoints + medPoints + focusPoints + bonusManaRegen + ( mChar.IsMeditating() ? ( medPoints > 13.0 ? 13.0 : medPoints ) : 0.0 );
+				R64 manaPerSecondRate;
+				if( totalPoints >= 21 )
+				{
+					manaPerSecondRate = 2.0; // 2 mana/sec -> 0.5 sec/mana
+				}
+				else if( totalPoints >= 14 )
+				{
+					manaPerSecondRate = 4.0 / 3.0; // ~1.33 mana/sec -> 0.75 sec/mana
+				}
+				else
+				{
+					manaPerSecondRate = 1.0; // 1 mana/sec -> 1.0 sec/mana
+				}
+
+				manaPerSecondRate *= cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN );
+				nextManaRegen = ( 1.0 / manaPerSecondRate ) * 1000;
+			}
+			else
+			{
+				// Add it all up, and double bonus from Meditation if character is actively meditating, but cap it at 13
+				R64 totalPoints = bonusManaRegen + focusPoints + medPoints + ( mChar.IsMeditating() ? ( medPoints > 13.0 ? 13.0 : medPoints ) : 0.0 );
+				auto manaPerSec = 0.1 * ( ( baselineRate * 10.0 ) + totalPoints );
+				nextManaRegen = 1000 / manaPerSec;
+			}
+
+			mChar.IncMana( 1 );
+		}
+		else if( manaRegenMode == MREG_LBR ) // LBR and earlier
+		{
+			// LBR and below - custom approximation to match up to expected results
+			UI16 baseArmor = 0;
+			if( cwmWorldState->ServerData()->ArmorAffectManaRegen() ) // If armor effects mana regeneration...
+			{
+				// Calculate base armor character is wearing, excluding medable armor
+				baseArmor = Combat->CalcDef(( &mChar ), 0, false, PHYSICAL, true, true );
+
+				// Cap the base armor used for calculations at 100 just in case
+				if( baseArmor > 100 )
+				{
+					baseArmor = 100;
+				}
+			}
+
+			// Optional mana regen bonus (usually not part of LBR calculations) from character/equipped items, and races
+			R64 bonusManaRegen = mChar.GetManaRegenBonus();
+			bonusManaRegen += Races->Race( mChar.GetRace() )->ManaRegenBonus();
+
+			//bonusManaRegen = ( std::min( bonusManaRegen, static_cast<R64>( cwmWorldState->ServerData()->ManaRegenCap() ))) / 10.0;
+			bonusManaRegen = ( std::min( bonusManaRegen, static_cast<R64>( cwmWorldState->ServerData()->ManaRegenCap() )));
+
+			// Normalize values
+			R64 normalizedInt = std::min( 1.0, ( intStat / 100.0 ));
+			R64 normalizedMed = std::min( 1.0, ( medSkill / 1000.0 ));
+			R64 normalizedArmor = std::min( 1.0, ( baseArmor / 65.0 )); // Normalize armor based on a "cap" of 65
+			R64 normalizedBonus = std::min( 1.0, ( bonusManaRegen / 73.0 ));
+
+			// Define weights
+			R64 intWeight = 0.25; // How much int affects regen time
+			R64 medWeight = 0.75; // How much med affects regen time
+			R64 armorWeight = 1.5; // How much armor affects regen time (inversely)
+			R64 bonusWeight = 0.5; // How much mana regen bonuses affects regen time
+
+			// Calculate positive and negative effects based on normalized values and weights
+			R64 positiveEffect = (( intWeight * normalizedInt ) + ( medWeight * normalizedMed ) + ( bonusWeight * normalizedBonus )) * 6.0;
+			R64 negativeEffect = ( armorWeight * normalizedArmor ) * 6.0;
+
+			// Calculate final time until next mana regen, in seconds
+			nextManaRegen = (( nextManaRegen / 1000 ) * ( 7.0 - positiveEffect + negativeEffect )) * 1000;
+
+			// Increment mana based on the calculated regeneration time
+			SI32 manaIncrement = mChar.IsMeditating() ? 2 : 1; // double if actively meditating
+			mChar.IncMana( std::min( manaIncrement, maxMana - mChar.GetMana() ));
+		}
+
+		if( manaRegenMode >= MREG_AOS1 ) // AoS and beyond
+		{
+			// Check FOCUS for skill gain for AoS expansions and above
+			Skills->CheckSkill(( &mChar ), FOCUS, 0, 1000 );
+		}
+
+		// Check Meditation for skill gain ala OSI, as long as player is not actively meditating
+		if( !mChar.IsMeditating() )
+		{
+			Skills->CheckSkill(( &mChar ), MEDITATION, 0, 1000 );
+		}
+
+		if( mChar.GetMana() >= maxMana && mChar.IsMeditating() )
+		{
+			if( mSock )
+			{
+				mSock->SysMessage( 969 ); // You are at peace.
+			}
+			mChar.SetMeditating( false );
+		}
+	}
+	return nextManaRegen;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	GenericCheck()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check characters status.  Returns true if character was killed
 //o------------------------------------------------------------------------------------------------o
 auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool doWeather ) -> bool
 {
-	UI16 c;
 	if( !mChar.IsDead() )
 	{
 		const auto maxHP = mChar.GetMaxHP();
@@ -1250,177 +1618,32 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			mChar.SetMana( maxMana );
 		}
 
-		if( mChar.GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		auto hpRegenMode = cwmWorldState->ServerData()->HealthRegenMode();
+		if( hpRegenMode > 0 && mChar.GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			if( mChar.GetHP() < maxHP )
-			{
-				if( !cwmWorldState->ServerData()->HungerSystemEnabled() || ( mChar.GetHunger() > 0)
-				   || ( !Races->DoesHunger( mChar.GetRace() ) && (( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0) || mChar.IsNpc() )))
-				{
-					for( auto c = 0; c <= maxHP; ++c )
-					{
-						if( mChar.GetHP() <= maxHP && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000 )) <= cwmWorldState->GetUICurrentTime() )
-						{
-							auto healingSkill = mChar.GetSkill( HEALING );
-							UI08 hpIncrement = 0;
-							if( healingSkill < 500 )
-							{
-								hpIncrement = 1;
-							}
-							else if( healingSkill < 800 )
-							{
-								hpIncrement = 2;
-							}
-							else
-							{
-								hpIncrement = 3;
-							}
+			// Perform passive health regeneration
+			auto nextHpRegen = PassiveHealthRegen( mChar, maxHP );
 
-							SI16 totalRegenBonus = std::min( mChar.GetHealthRegen(), cwmWorldState->ServerData()->HealthRegenCap() );
-								
-							mChar.IncHP( static_cast<SI16>( hpIncrement ) + totalRegenBonus ); // Increment character's HP with the total regeneration bonus
-							if( mChar.GetHP() >= maxHP )
-							{
-								mChar.SetHP( maxHP );
-								break;
-							}
-						}
-						else // either we're all healed up, or all time periods have passed
-						{
-							break;
-						}
-					}
-				}
-			}
-			mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_HITPOINTREGEN ), 0 );
+			// Set time for next health regen
+			mChar.SetRegen( cwmWorldState->GetUICurrentTime() + nextHpRegen, 0 );
 		}
-		if( mChar.GetRegen( 1 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		auto staminaRegenMode = cwmWorldState->ServerData()->StaminaRegenMode();
+		if( staminaRegenMode > 0 && mChar.GetRegen( 1 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			auto mStamina = mChar.GetStamina();
-			if( mStamina < maxStam )
-			{
-				// Continue with stamina regen if  character is not yet fully parched, or if character is parched but has less than 25% stamina, or if char belongs to race that does not thirst
-				if( !cwmWorldState->ServerData()->ThirstSystemEnabled() || ( mChar.GetThirst() > 0 )|| (( mChar.GetThirst() == 0) && ( mStamina < static_cast<SI16>( maxStam * 0.25 )))
-				   || ( !Races->DoesThirst( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE ) == 0 || mChar.IsNpc() )))
-				{
-					for( auto c = 0; c <= maxStam; ++c )
-					{
-						if(( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 )) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= maxStam )
-						{
-							R64 focusBonus = 0;
-							if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_AOS )
-							{
-								Skills->CheckSkill(( &mChar ), FOCUS, 0, 1000 ); // Check FOCUS for skill gain AOS
-								focusBonus = ( 0.1 * mChar.GetSkill( FOCUS ) / 10 );	// Bonus for focus
-							}
-
-							SI16 totalRegenBonus = std::min( mChar.GetStaminaRegen(), cwmWorldState->ServerData()->StaminaRegenCap() );
-
-							mChar.IncStamina( 1 + focusBonus + totalRegenBonus );
-							
-							if( mChar.GetStamina() >= maxStam )
-							{
-								mChar.SetStamina( maxStam );
-								break;
-							}
-						}
-						else
-						{
-							break;
-						}
-					}
-				}
-			}
-			mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_STAMINAREGEN ), 1 );
+			// Perform passive stamina regeneration
+			auto nextStaminaRegen = PassiveStaminaRegen( mChar, maxStam );
+			
+			// Set time for next stamina regen
+			mChar.SetRegen( cwmWorldState->GetUICurrentTime() + nextStaminaRegen, 1 );
 		}
 
 		// MANA REGENERATION:Rewrite of passive and active meditation code
-		if( mChar.GetRegen( 2 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		auto manaRegenMode = cwmWorldState->ServerData()->ManaRegenMode();
+		if( manaRegenMode > 0 && mChar.GetRegen( 2 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			if( mChar.GetMana() < maxMana )
-			{
-				for( c = 0; c < maxMana + 1; ++c )
-				{
-					if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000 ) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= maxMana )
-					{
-						R64 focusBonus = 0;
-						if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_AOS )
-						{
-							Skills->CheckSkill(( &mChar ), FOCUS, 0, 1000 ); // Check FOCUS for skill gain AOS
-							focusBonus = mChar.GetSkill( FOCUS ) / 200; // Bonus for focus
-
-							// Bonus from Meditation
-							R64 meditationBonus = ( mChar.GetSkill( MEDITATION ) * 0.3 + mChar.GetIntelligence() / 400 ) * ( cwmWorldState->ServerData()->ArmorAffectManaRegen() && ( mChar.IsMeditating() || !cwmWorldState->ServerData()->ArmorAffectManaRegen() ) ? ( mChar.IsMeditating() ? 1.1 : 1.0 ) : 0.0 );
-
-							// Variables to accumulate mana over the timer interval
-							R64 totalManaRegenerated = 0.0;
-
-							// Calculation of base mana regeneration per second
-							R64 manaRegPerSecond = 0.2 + focusBonus + meditationBonus;
-
-							// If meditating, apply additional bonuses
-							if( mChar.IsMeditating() )
-							{
-								R64 itemBonus = sqrt( mChar.GetManaRegen() ) - 1;
-								itemBonus = std::min( itemBonus, 5.5 ); // Cap item bonus at 5.5
-								R64 additionalBonus = (( mChar.GetSkill( MEDITATION ) / 2 + mChar.GetSkill( FOCUS ) / 4 ) * 1 / 90 * 0.65 + 2.35 );
-							    manaRegPerSecond += ( itemBonus + 0.1 * sqrt( mChar.GetManaRegen() )) * additionalBonus;
-							}
-
-							// Calculate the total mana regeneration from equipment
-							R64 totalManaRegenFromEquipment = std::min( sqrt( mChar.GetManaRegen()), 30.0 ); // Cap total mana regeneration from equipment at 30
-
-							R64 timerIntervalInSeconds = static_cast<R64>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN )) / 1000.0;
-
-							//auto timerInterval = cwmWorldState->ServerData()->SystemTimer(tSERVER_MANAREGEN);
-							totalManaRegenerated += manaRegPerSecond * timerIntervalInSeconds + totalManaRegenFromEquipment;
-
-							// Increment mana by the total regenerated over the timer interval
-							mChar.IncMana( 1 + totalManaRegenerated ); // No need to divide by timerIntervalInSeconds
-
-						}
-						else
-						{
-							SI16 totalRegenBonus = std::min( mChar.GetManaRegen(), cwmWorldState->ServerData()->ManaRegenCap() );
-							mChar.IncMana( 1 + focusBonus + totalRegenBonus );	// Gain a mana point
-						}
-
-						Skills->CheckSkill(( &mChar ), MEDITATION, 0, 1000 ); // Check Meditation for skill gain ala OSI
-						if( mChar.GetMana() == maxMana )
-						{
-							if( mChar.IsMeditating() )
-							{
-								if( mSock )
-								{
-									mSock->SysMessage( 969 ); // You are at peace.
-								}
-								mChar.SetMeditating( false );
-							}
-							break;
-						}
-					}
-				}
-			}
-			const R32 MeditationBonus = ( .00075f * mChar.GetSkill( MEDITATION ));	// Bonus for Meditation
-			SI32 NextManaRegen = static_cast<SI32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * ( 1 - MeditationBonus ) * 1000 );
-			if( cwmWorldState->ServerData()->ArmorAffectManaRegen() ) // If armor effects mana regeneration...
-			{
-				R32 ArmorPenalty = Combat->CalcDef(( &mChar ), 0, false );	// Penalty taken due to high def
-				if( ArmorPenalty > 100 ) // For def higher then 100, penalty is the same...just in case
-				{
-					ArmorPenalty = 100;
-				}
-				ArmorPenalty = 1 + ( ArmorPenalty / 25 );
-				NextManaRegen = static_cast<SI32>( NextManaRegen * ArmorPenalty );
-			}
-			if( mChar.IsMeditating() ) // If player is meditation...
-			{
-				mChar.SetRegen(( cwmWorldState->GetUICurrentTime() + ( NextManaRegen / 2 )), 2 );
-			}
-			else
-			{
-				mChar.SetRegen(( cwmWorldState->GetUICurrentTime() + NextManaRegen ), 2 );
-			}
+			// Perform passive mana regeneration
+			auto nextManaRegen = PassiveManaRegen( mSock, mChar, maxMana );	
+			mChar.SetRegen( cwmWorldState->GetUICurrentTime() + nextManaRegen , 2 );
 		}
 	}
 

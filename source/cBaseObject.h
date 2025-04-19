@@ -69,9 +69,9 @@ protected:
 	SI16				dexterity;
 	SI16				intelligence;
 	SI16				hitpoints;
-	SI16				healthRegen;
-	SI16				staminaRegen;
-	SI16				manaRegen;
+	SI16				healthRegenBonus;
+	SI16				staminaRegenBonus;
+	SI16				manaRegenBonus;
 	VisibleTypes		visible;
 	SI16				hiDamage;
 	SI16				loDamage;
@@ -220,9 +220,9 @@ public:
 	virtual SI16			GetIntelligence( void ) const;
 	SI16					GetHP( void ) const;
 
-	virtual SI16			GetHealthRegen( void ) const;
-	virtual SI16			GetStaminaRegen( void ) const;
-	virtual SI16			GetManaRegen( void ) const;
+	virtual SI16			GetHealthRegenBonus( void ) const;
+	virtual SI16			GetStaminaRegenBonus( void ) const;
+	virtual SI16			GetManaRegenBonus( void ) const;
 
 	virtual void			SetStrength( SI16 newValue );
 	virtual void			SetDexterity( SI16 newValue );
@@ -230,9 +230,9 @@ public:
 	virtual void			SetHP( SI16 newValue );
 	void					IncHP( SI16 amtToChange );
 
-	virtual void			SetHealthRegen( SI16 newValue );
-	virtual void			SetStaminaRegen( SI16 newValue );
-	virtual void			SetManaRegen( SI16 newValue );
+	virtual void			SetHealthRegenBonus( SI16 newValue );
+	virtual void			SetStaminaRegenBonus( SI16 newValue );
+	virtual void			SetManaRegenBonus( SI16 newValue );
 
 	void					SetDir( UI08 newDir, bool sendUpdate = true );
 	UI08					GetDir( void ) const;
@@ -267,9 +267,9 @@ public:
 	void					IncDexterity( SI16 toInc = 1 );
 	void					IncIntelligence( SI16 toInc = 1 );
 
-	void					IncHealthRegen( SI16 toInc = 1 );
-	void					IncStaminaRegen( SI16 toInc = 1 );
-	void					IncManaRegen( SI16 toInc = 1 );
+	void					IncHealthRegenBonus( SI16 toInc = 1 );
+	void					IncStaminaRegenBonus( SI16 toInc = 1 );
+	void					IncManaRegenBonus( SI16 toInc = 1 );
 
 	virtual void			PostLoadProcessing( void );
 	virtual bool			LoadRemnants( void ) = 0;

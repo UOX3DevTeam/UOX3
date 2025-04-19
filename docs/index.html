@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 14. October, 2023</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6</small></p>
+	<p style="margin:0"><small>Last Updated: 20. April, 2025</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6b</small></p>
 </div>
 
 <div id="filterMainDocs" contenteditable="true" placeholder="(Search...)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px; margin-top: 5px;"></div>
@@ -60,6 +60,11 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>April 20th, 2025</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on additional settings: HEALTHREGENMODE, STAMINAREGENMODE, MANAREGENMODE, HEALTHREGENCAP, STAMINAREGENCAP, MANAREGENCAP, HUMANHEALTHREGENBONUS, HUMANSTAMINAREGENBONUS, HUMANMANAREGENBONUS, ELFHEALTHREGENBONUS, ELFSTAMINAREGENBONUS, ELFMANAREGENBONUS, GARGOYLEHEALTHREGENBONUS, GARGOYLESTAMINAREGENBONUS, GARGOYLEMANAREGENBONUS</li>
+							<li>Added <a href="#statRegeneration">Stat Regeneration</a> feature info with details on how characters regenerate stats like health, stamina and mana</li>
+						</ul>
 						<h4>October 13th, 2023</h4>
 						<ul>
 							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on additional settings: SHOWITEMRESISTSTATS, SHOWWEAPONDAMAGETYPES</li>
@@ -1282,8 +1287,28 @@ packitem=0x0f8d,30
 							Determines if snooping is a crime or not.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">SNOOPAWARENESS</span><strong>=0</strong><br>
+							Determines if targets of snooping become more aware of it over time. The more aware they are, the more difficult it becomes.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">ARMORAFFECTMANAREGEN</span><strong>=1</strong><br>
 							Toggles whether or not armor affects mana regeneration rate</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HEALINGAFFECTHEALTHREGEN</span><strong>=1</strong><br>
+							Toggles whether or not Healing skill affects passive health regeneration rate</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HEALTHREGENMODE</span><strong>=1</strong><br>
+							0 = no passive health regeneration, 1 = default passive health regeneration.  See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">STAMINAREGENMODE</span><strong>=1</strong><br>
+							0 = no passive stamina regen, 1 = default passive stamina regen (LBR or below), 2 = AoS or beyond, 3 = SA and beyond. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">MANAREGENMODE</span><strong>=1</strong><br>
+							0 = no passive mana regen, 1 = default passive mana regen (LBR or below), 2 = AoS (pre-Pub18), 3 = AoS/SE (post-Pub18), 4 = ML, 5 = KR and beyond. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
 						</div>
 					</div>
 
@@ -1474,6 +1499,48 @@ packitem=0x0f8d,30
 								<li><strong>uor to pub15</strong> - Additional bonus hit chance for archery</li>
 								<li><strong>aos to tol</strong> - hit chance based on attacker's skill (and hit chance increase) vs defender's skill (and defense chance increase). Minimum 2% chance to hit</li>
 							</ul>
+						</div>
+					</div>
+
+					<input type="checkbox" id="spoiler_ini_defaultracebonuses">
+					<label for="spoiler_ini_defaultracebonuses">[default race bonuses] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>Note: Can be overridden/expanded to other races via races.dfn</p>
+						<div class="settingsDiv">
+							<p><span class="hl">HUMANHEALTHREGENBONUS</span><strong>=0</strong><br>
+							Defines the default health regen bonus for the human race (race 0 in races.dfn). From Mondain's Legacy expansion and onwards, this would be set to a value of 2.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HUMANSTAMINAREGENBONUS</span><strong>=0</strong><br>
+							Defines the default stamina regen bonus for the human race (race 0 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HUMANMANAREGENBONUS</span><strong>=0</strong><br>
+							Defines the default mana regen bonus for the human race (race 0 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ELFHEALTHREGENBONUS</span><strong>=0</strong><br>
+							Defines the default health regen bonus for the elf race (race 1 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ELFSTAMINAREGENBONUS</span><strong>=0</strong><br>
+							Defines the default stamina regen bonus for the elf race (race 1 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ELFMANAREGENBONUS</span><strong>=0</strong><br>
+							Defines the default mana regen bonus for the elf race (race 1 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">GARGOYLEHEALTHREGENBONUS</span><strong>=0</strong><br>
+							Defines the default health regen bonus for the gargoyle race (race 2 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">GARGOYLESTAMINAREGENBONUS</span><strong>=0</strong><br>
+							Defines the default stamina regen bonus for the gargoyle race (race 2 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">GARGOYLEMANAREGENBONUS</span><strong>=0</strong><br>
+							Defines the default mana regen bonus for the gargoyle race (race 2 in races.dfn). From Stygian Abyss expansion and onwards, this would be set to a value of 2.</p>
 						</div>
 					</div>
 
@@ -2007,12 +2074,20 @@ packitem=0x0f8d,30
 					<label for="spoiler_ini_hunger">[hunger] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
+							<p><span class="hl">HUNGERENABLED</span><strong>=1</strong><br>
+							Enables (1) or disables (0) global hunger system.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">HUNGERRATE</span><strong>=6000</strong><br>
-							Amount of time in seconds a player has before his hunger level decreases.</p>
+							Amount of time in seconds before hunger level decreases for characters.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">HUNGERDMGVAL</span><strong>=2</strong><br>
-							Amount of damage applied if hungry and below threshold.</p>
+							Amount of damage applied if maximum hungry, every X seconds (defined by HUNGERRATE).</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HUNGERAFFECTHEALTHREGEN</span><strong>=1</strong><br>
+							If enabled (1), and if hunger system is enabled, will provide bonuses/penalties to passive health regeneration based on hunger level. Hunger levels 6 to 4 give bonuses, 3 to 0 give penalties.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">PETHUNGEROFFLINE</span><strong>=1</strong><br>
@@ -2021,6 +2096,31 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">PETOFFLINETIMEOUT</span><strong>=5</strong><br>
 							Sets the time in days for when an offline player's pet becomes wild again.</p>
+						</div>
+					</div>
+
+					<input type="checkbox" id="spoiler_ini_thirst">
+					<label for="spoiler_ini_thirst">[thirst] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="hl">THIRSTENABLED</span><strong>=0</strong><br>
+							Enables (1) or disables (0) global thirst system.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">THIRSTRATE</span><strong>=6000</strong><br>
+							Amount of time in seconds before thirst level decreases for characters.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">THIRSTDRAINVAL</span><strong>=2</strong><br>
+							Amount of stamina drained when maximum thirsty, every X seconds (defined by THIRSTRATE).</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">THIRSTAFFECTSTAMINAREGEN</span><strong>=0</strong><br>
+							If enabled (1), and if thirst system is enabled, will provide bonuses/penalties to passive stamina regeneration based on thirst level. Thirst levels 6 to 4 give bonuses, 3 to 0 give penalties.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">PETTHIRSTOFFLINE</span><strong>=0</strong><br>
+							Toggles whether pets should thirst while the player (owner) is offline or not.</p>
 						</div>
 					</div>
 
@@ -6470,6 +6570,159 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<li><strong>Circle 7:</strong> 	Chain Lightning, FlameStrike, Mana Vampire, Meteor Swarm</li>
 						<li><strong>Circle 8:</strong> 	Earthquake, Energy Vortex</li>
 					</ul></p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#statRegeneration" id="statRegeneration"><span>Stat Regeneration</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+				  	<h3>Passive Regeneration</h3>
+						<p>Characters will passively regenerate stats like <strong>hit points</strong>, <strong>stamina</strong> and <strong>mana</strong> over time. The amount regenerated can be controlled via a number of different factors in UOX3, such as:
+							<ul>
+								<li><span class="hl">Regen mode settings</span> in UOX.INI</li>
+								<li><span class="hl">Base regeneration timers</span> set in UOX.INI</li>
+								<li><span class="hl">Regeneration bonuses</span> set on character, equipped items or race (and caps defined in INI)</li>
+								<li><span class="hl">Hunger/Thirst-levels</span> (for hitpoints/stamina)</li>
+								<li>The character's <span class="hl">Healing skill</span> (for hitpoint regen)</li>
+								<li>The character's <span class="hl">Meditation/Focus skill</span> (for mana regen)</li>
+							</ul>
+						</p>
+						<p>Read more about each of these below:</p>
+				  	<input type="checkbox" id="spoiler_regen_modes">
+						<label for="spoiler_regen_modes">Regen Mode Settings <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>The following UOX.INI settings define the modes used to calculate regeneration for the different stats. High-level formulas used in code included.</p>
+
+							<p><span class="hl">HEALTHREGENMODE=#</span></p>
+							<div style="padding-left:10px">
+								<p><strong>0 = no passive health regen</strong></p>
+								<p><strong>1 = All UO Eras (default passive health regen mode)</strong><br>
+									<em><span style="margin-left:15px; opacity:0.75">nextHealthRegen = [HITPOINTREGENTIMER from UOX.INI]</span><br>
+									<span style="margin-left:15px; opacity:0.75">healthRegenBonus = bonusFromHealing + bonusFromChar + bonusFromItems + bonusFromRace + bonusFromHunger</span><br>
+									<span style="margin-left:15px; opacity:0.75">nextHealthRegen /= ( 1.0 + ( healthRegenBonus / 100.0 ))</span></em>
+								</p>
+							</div>
+
+							<p><span class="hl">STAMINAREGENMODE=#</span></p>
+							<div style="padding-left:10px">
+								<p><strong>0 = no passive stamina regen</strong></p>
+								<p><strong>1 = LBR and below (default passive stamina regen mode)</strong><br>
+								<em><span style="margin-left:15px; opacity:0.75">nextStaminaRegen = [STAMINAREGENTIMER from UOX.INI]</span><br>
+									<span style="margin-left:15px; opacity:0.75">stamRegenBonus = bonusFromChar + bonusFromItems + bonusFromThirst</span><br>
+									<span style="margin-left:15px; opacity:0.75">nextStaminaRegen /= ( 1.0 + ( stamRegenBonus / 100.0 ))</span></em></p>
+								<p><strong>2 = AoS -> ML</strong><br>
+								<em><span style="margin-left:15px; opacity:0.75">Same as mode 1, but with additional bonus (and skillcheck) from Focus skill</span></em></p>
+								<p><strong>3 = SA and beyond</strong></br>
+								<em><span style="margin-left:15px; opacity:0.75">Same as mode 2, but with near double regen rate for NPCs</span></em></p>
+							</div>
+
+							<p><span class="hl">MANAREGENMODE=#</span></p>
+							<div style="padding-left:10px">
+								<p><strong>0 = no passive mana regen</strong></p>
+								<p><strong>1 = LBR and below (default passive mana regen mode</strong><br>
+								<em><span style="margin-left:15px; opacity:0.75">nextManaRegen = [MANAREGENTIMER from UOX.INI]</span><br>
+									<span style="margin-left:15px; opacity:0.75">manaRegenPenalty = penaltyFromArmor</span><br>
+									<span style="margin-left:15px; opacity:0.75">manaRegenBonus = bonusFromInt + bonusFromMeditation + bonusFromChar + bonusFromItems + bonusFromRace</span><br>
+									<span style="margin-left:15px; opacity:0.75">nextManaRegen = ( nextManaRegen / 1000 ) * ( 7.0 - manaRegenBonus + manaRegenPenalty )) * 1000</span></em></p>
+								<p><strong>2 = AoS (Pub17)</strong><br>
+								<em><span style="margin-left:15px; opacity:0.75">nextManaRegen = [MANAREGENTIMER from UOX.INI, defaults to 1.0 for this particular publish]</span><br>
+									<span style="margin-left:15px; opacity:0.75">intPoints = floor( int / 38.0 )</span><br>
+									<span style="margin-left:15px; opacity:0.75">medPoints = floor( meditation / 10.0 ) [or 0 if wearing non-medable armor]</span><br>
+									<span style="margin-left:15px; opacity:0.75">focusPoints = floor( focus / 20.0 )</span><br>
+									<span style="margin-left:15px; opacity:0.75">totalPoints = intPoints + medPoints [x2 if Meditating] + focusPoints + bonusFromChar + bonusFromItems + bonusFromRace</span><br>
+									<span style="margin-left:15px; opacity:0.75">manaPerSecondRate = 1.0 [if less than 14 total points] or 1.33 [if more than 14 points] or 2.0 [if more than 21 points]</span><br>
+									<span style="margin-left:15px; opacity:0.75">nextManaRegen = ( 1.0 / ( manaPerSecondRate * nextManaRegen ) * 1000</span></em></p>
+								<p><strong>3 = AoS (Pub18 and beyond)/SE</strong><br>
+									<em><span style="margin-left:15px; opacity:0.75">nextManaRegen = [MANAREGENTIMER from UOX.INI, defaults to 7.0 for eras below ML]</span><br>
+									<span style="margin-left:15px; opacity:0.75">baselineRate = 1.0 / nextManaRegen</span><br>
+									<span style="margin-left:15px; opacity:0.75">medPoints = int + ( meditation * 3 ) [or 0 if wearing non-medable armor] * 0.025 [if under GM meditation skill] or 0.0275 [if GM or higher]</span><br>
+									<span style="margin-left:15px; opacity:0.75">focusPoints = floor( focus / 200.0 ) * 0.1</span><br>
+									<span style="margin-left:15px; opacity:0.75">totalPoints = focusPoints + medPoints [x2 if Meditating] + bonusFromChar + bonusFromItems + bonusFromRace</span><br>
+									<span style="margin-left:15px; opacity:0.75">manaPerSec = 0.1 + (( baselineRate * 10.0 ) + totalPoints )</span><br>
+									<span style="margin-left:15px; opacity:0.75">nextManaRegen = 1000 / manaPerSec</span></em></p>
+								<p><strong>4 = ML</strong><br>
+									<em><span style="margin-left:15px; opacity:0.75">nextManaRegen = [MANAREGENTIMER from UOX.INI, defaults to 5.0 for eras above and including ML]</span><br>
+									<span style="margin-left:15px; opacity:0.75">baselineRate = 1.0 / nextManaRegen</span><br>
+									<span style="margin-left:15px; opacity:0.75">medPoints = ((( 0.0075 * meditation ) + ( 0.0025 * int )) [or 0.1 if wearing non-medable armor] * 1.0 [if below GM Meditation] or 1.1 [if GM or above]) * 2 if Meditating</span><br>
+									<span style="margin-left:15px; opacity:0.75">focusPoints = ( focus / 200.0 )</span><br>
+									<span style="margin-left:15px; opacity:0.75">bonusManaRegen = sqrt( bonusFromChar + bonusFromItems + bonusFromRace )</span><br>
+									<span style="margin-left:15px; opacity:0.75">baseBonusManaRegen = (((( meditation / 2.0 + focus / 4.0 ) / 90.0 ) * 0.65 ) * 2.35 )</span><br>
+									<span style="margin-left:15px; opacity:0.75">bonusManaRegen = highest of (0) or ((( baseBonusManaRegen * bonusManaRegen ) - ( baseBonusManaRegen - 1 )) / 10.0 )</span><br>
+									<span style="margin-left:15px; opacity:0.75">manaPerSecond = 0.2 + focusBonus + meditationBonus + bonusManaRegen</span><br>
+									<span style="margin-left:15px; opacity:0.75">nextManaRegen = round( nextManaRegen * ( baselineRate / manaPerSecond ))</span></em></p>
+								<p><strong>5 = KR</strong><br>
+									<em><span style="margin-left:15px; opacity:0.75">Same as mode 4, but with diminishing returns for bonusManaRegen from char/items rather than hard cap (still using MANAREGENCAP from UOX.INI)</span></em></p>
+							</div>
+						</div>
+
+				  	<input type="checkbox" id="spoiler_baseregen_timers">
+						<label for="spoiler_baseregen_timers">Base Regeneration Timers <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>The UOX.INI settings below define the base regeneration timers for character hitpoints, stamina and mana.</p>
+							<p><span class="hl">HITPOINTREGENTIMER=8</span> // seconds per HP regen</p>
+							<p><span class="hl">STAMINAREGENTIMER=2</span> // seconds per Stamina regen</p>
+							<p><span class="hl">MANAREGENTIMER=7</span> // seconds per Mana regen<br>
+								Depending on which MANAREGENMODE is selected, you'll want this option set differently. For ML and above, consider 5 seconds per Mana regen (or 0.2 mana/sec). For SE and below, consider 7 seconds per Mana regen (0.1428 mana/sec) instead. For AoS (pre-Pub18), 1 second might be more appropriate.</p>
+						</div>
+
+				  	<input type="checkbox" id="spoiler_regen_bonuses">
+						<label for="spoiler_regen_bonuses">Regeneration Bonuses <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Regen bonuses can be accumulated via different sources:
+								<ul>
+									<li>Directly from the <strong>character</strong> itself</li>
+									<li>From <strong>items equipped</strong> on the character (if the Mana Regen Bonus property is used)</li>
+									<li>From <strong>race properties</strong> of the race the character belongs to (humans get +2 health regen bonus, gargoyles get +2 mana regen bonus)</li>
+								</ul>
+								These bonuses can be defined directly on NPCs, or on items, or in race definitions using the DFN tags <span class="hl">HEALTHREGENBONUS</span>, <span class="hl">STAMINAREGENBONUS</span> and <span class="hl">MANAREGENBONUS</span>. These properties are also exposed to JS engine for characters (including players) and items as <span class="hl">.healthRegenBonus</span>, <span class="hl">.staminaRegenBonus</span> and <span class="hl">.manaRegenBonus</span></p>
+							<h4>Bonus Caps</h4>
+							<p>The total bonuses a player can get, regardless of source, can be capped via the following UOX.INI settings:
+								<ul>
+									<li><span class="hl">HEALTHREGENCAP=18</span> // SE and below = no cap, ML and beyond = 18 (hard cap)</li>
+									<li><span class="hl">STAMINAREGENCAP=24</span> // Same across eras</li>
+									<li><span class="hl">MANAREGENCAP=18</span> // SE and below = no cap, ML = 18 (hard cap), KR and beyond = 30 (soft cap) </li>
+								</ul></p>
+						</div>
+
+				  	<input type="checkbox" id="spoiler_hungerthirst_levels">
+						<label for="spoiler_hungerthirst_levels">Hunger/Thirst-levels <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<h4>Hunger</h4>
+							<p>If <span class="hl">HUNGERENABLED</span> and <span class="hl">HUNGERAFFECTHEALTHREGEN</span> are both set to 1 in UOX.INI, a character's hunger level will directly affect their <strong>bonus health regen</strong>. The hungrier the character is, the higher the penalty to the bonus health regen will be. Inversely, the less hungry you are, the higher positive impact it has on bonus health regen:</p>
+							<ul>
+								<li>Hunger Level 6 = +6 bonus health regen</li>
+								<li>Hunger Level 5 = +4 bonus health regen</li>
+								<li>Hunger Level 4 = +2 bonus health regen</li>
+								<li>Hunger Level 3 = -2 bonus health regen</li>
+								<li>Hunger Level 2 = -4 bonus health regen</li>
+								<li>Hunger Level 1 = -6 bonus health regen</li>
+							</ul>
+							<p>Hunger has no impact on the <strong>base</strong> passive health regen.</p>
+							<h4>Thirst</h4>
+							<p>If <span class="hl">THIRSTENABLED</span> and <span class="hl">THIRSTAFFECTSTAMINAREGEN</span> are both set to 1 in UOX.INI, a character's thirst level will directly affect their <strong>bonus stamina regen</strong>. The thirstier the character is, the higher the penalty to the bonus stamina regen will be. Inversely, the less thirsty you are the higher positive impact it has on bonus stamina regen:</p>
+							<ul>
+								<li>Thirst Level 6 = +6 bonus stamina regen</li>
+								<li>Thirst Level 5 = +4 bonus stamina regen</li>
+								<li>Thirst Level 4 = +2 bonus stamina regen</li>
+								<li>Thirst Level 3 = -2 bonus stamina regen</li>
+								<li>Thirst Level 2 = -4 bonus stamina regen</li>
+								<li>Thirst Level 1 = -6 bonus stamina regen</li>
+							</ul>
+							<p>Thirst has no impact on the <strong>base</strong> passive stamina regen.</p>
+						</div>
+
+				  	<input type="checkbox" id="spoiler_skillbased_bonuses">
+						<label for="spoiler_skillbased_bonuses">Skill-based Bonuses <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p><strong>Meditation</strong> and <strong>Focus</strong> skills give bonuses even to passive mana regeneration.</p>
+							<p><strong>Healing</strong> skill gives bonus to passive health regeneration, if <span class="hl">HEALINGAFFECTHEALTHREGEN</span> is set to 1 in UOX.INI. At GM Healing, this provides a +10 bonus to health regeneration.</p>
+							<p><strong>Focus</strong> skill gives bonus to passive stamina regeneration, and a smaller bonus to passive mana regeneration. At GM Focus, this provides a +10 bonus to stamina regeneration.</p>
+						</div>
+
+						<h3>Active Regeneration</h3>
+						<p>Mana can be regenerated actively using the <span class="hl">Meditation skill</span>, which essentially <strong>doubles</strong> the based mana regeneration gotten from Meditation skill (excluding other bonuses).</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -11619,7 +11872,7 @@ function commandTitle()
   <div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>Docs revamp by Geir Ove Alnes @ Copyright 2020 - 2023</small></p>
+	<p><small>Docs revamp by Geir Ove Alnes @ Copyright 2020 - 2025</small></p>
 	<p><small>Built on <a href="https://codyhouse.co/demo/faq-template" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framework by CodyHouse</a>.</small></p>
 </div>
 <script defer>

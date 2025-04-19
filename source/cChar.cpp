@@ -2920,9 +2920,9 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
-			IncHealthRegen( itemLayers[tLayer]->GetHealthRegen() );
-			IncStaminaRegen( itemLayers[tLayer]->GetStaminaRegen() );
-			IncManaRegen( itemLayers[tLayer]->GetManaRegen() );
+			IncHealthRegenBonus( itemLayers[tLayer]->GetHealthRegenBonus() );
+			IncStaminaRegenBonus( itemLayers[tLayer]->GetStaminaRegenBonus() );
+			IncManaRegenBonus( itemLayers[tLayer]->GetManaRegenBonus() );
 
 			if( toWear->IsPostLoaded() )
 			{
@@ -2984,9 +2984,9 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
 
-		IncHealthRegen( -itemLayers[Layer]->GetHealthRegen() );
-		IncStaminaRegen( -itemLayers[Layer]->GetStaminaRegen() );
-		IncManaRegen( -itemLayers[Layer]->GetManaRegen() );
+		IncHealthRegenBonus( -itemLayers[Layer]->GetHealthRegenBonus() );
+		IncStaminaRegenBonus( -itemLayers[Layer]->GetStaminaRegenBonus() );
+		IncManaRegenBonus( -itemLayers[Layer]->GetManaRegenBonus() );
 
 		if( itemLayers[Layer]->GetPoisoned() )
 		{
@@ -4730,21 +4730,6 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					SetReattackAt( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
-				else if( UTag == "REGENHITS" )
-				{
-					SetHealthRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					rValue = true;
-				}
-				else if( UTag == "REGENSTAM" )
-				{
-					SetStaminaRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					rValue = true;
-				}
-				else if( UTag == "REGENMANA" )
-				{
-					SetManaRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					rValue = true;
-				}
 				else if( UTag == "RUNNINGSPEED" )
 				{
 					SetRunningSpeed( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
@@ -5264,6 +5249,7 @@ void CChar::TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spa
 		va_list argptr;
 		va_start( argptr, spamTimer );
 		auto msg = oldstrutil::format( txt, argptr );
+		va_end( argptr ); // va_end in same function as va_start
 		if( msg.size() > 512 )
 		{
 			msg = msg.substr( 0, 512 );

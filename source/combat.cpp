@@ -1293,11 +1293,19 @@ SI16 CHandleCombat::CalcHighDamage( CChar *p )
 //|	Purpose		-	Checks the defense of checkItem vs the defense of currItem and returns
 //|							the item with the greater Def and its def value
 //o------------------------------------------------------------------------------------------------o
-CItem *CHandleCombat::CheckDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType )
+CItem *CHandleCombat::CheckDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType, bool excludeMedableArmor )
 {
 	if( ValidateObject( checkItem ) && checkItem->GetResist( resistType ) > currDef )
 	{
-		currDef = checkItem->GetResist( resistType );
+		if( excludeMedableArmor )
+		{
+			// Special case to retrieve physical armor value only for non-medable armor
+			currDef = checkItem->GetNonMedableArmorRating();
+		}
+		else
+		{
+			currDef = checkItem->GetResist( resistType );
+		}
 		return checkItem;
 	}
 	return currItem;
@@ -1310,18 +1318,18 @@ CItem *CHandleCombat::CheckDef( CItem *checkItem, CItem *currItem, SI32 &currDef
 //|	Purpose		-	Finds the item covering the location bodyLoc with the greatest AR and
 //|							returns it along with its def value
 //o------------------------------------------------------------------------------------------------o
-CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal, WeatherType resistType )
+CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal, WeatherType resistType, bool excludeMedableArmor, bool includeShield )
 {
 	SI32 armorDef = 0;
 	CItem *currItem = nullptr;
 	switch( bodyLoc )
 	{
 		case 1:		// Torso
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_INNERSHIRT ), currItem, armorDef, resistType );	// Shirt
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_TUNIC ), currItem, armorDef, resistType );		// Torso (Inner - Chest Armor)
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_OUTERSHIRT ), currItem, armorDef, resistType );	// Torso (Middle - Tunic, etc)
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_CLOAK ), currItem, armorDef, resistType );		// Back (Cloak)
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_ROBE ), currItem, armorDef, resistType );		// Torso (Outer - Robe)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_INNERSHIRT ), currItem, armorDef, resistType, excludeMedableArmor );	// Shirt
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_TUNIC ), currItem, armorDef, resistType, excludeMedableArmor );		// Torso (Inner - Chest Armor)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_OUTERSHIRT ), currItem, armorDef, resistType, excludeMedableArmor );	// Torso (Middle - Tunic, etc)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_CLOAK ), currItem, armorDef, resistType, excludeMedableArmor );		// Back (Cloak)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_ROBE ), currItem, armorDef, resistType, excludeMedableArmor );		// Torso (Outer - Robe)
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1331,7 +1339,7 @@ CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 2:		// Arms
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_ARMS ), currItem, armorDef, resistType );	// Arms
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_ARMS ), currItem, armorDef, resistType, excludeMedableArmor );	// Arms
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1341,7 +1349,7 @@ CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 3:		// Head
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_HELM ), currItem, armorDef, resistType );	// Head
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_HELM ), currItem, armorDef, resistType, excludeMedableArmor );	// Head
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1351,11 +1359,11 @@ CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 4:		// Legs
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_FOOTWEAR ), currItem, armorDef, resistType );	// Shoes
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_PANTS ), currItem, armorDef, resistType );	// Pants
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_WAIST ), currItem, armorDef, resistType );	// Waist (Half Apron)
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_OUTERLEGGINGS ), currItem, armorDef, resistType );	// Legs (Outer - Skirt, Kilt)
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_INNERLEGGINGS ), currItem, armorDef, resistType );	// Legs (Inner - Leg Armor)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_FOOTWEAR ), currItem, armorDef, resistType, excludeMedableArmor );	// Shoes
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_PANTS ), currItem, armorDef, resistType, excludeMedableArmor );	// Pants
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_WAIST ), currItem, armorDef, resistType, excludeMedableArmor );	// Waist (Half Apron)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_OUTERLEGGINGS ), currItem, armorDef, resistType, excludeMedableArmor );	// Legs (Outer - Skirt, Kilt)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_INNERLEGGINGS ), currItem, armorDef, resistType, excludeMedableArmor );	// Legs (Inner - Leg Armor)
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1365,7 +1373,7 @@ CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 5:		// Neck
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_NECK ), currItem, armorDef, resistType );	// Neck
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_NECK ), currItem, armorDef, resistType, excludeMedableArmor );	// Neck
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1375,13 +1383,20 @@ CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 6:		// Hands
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_GLOVES ), currItem, armorDef, resistType );	// Gloves
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_GLOVES ), currItem, armorDef, resistType, excludeMedableArmor );	// Gloves
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
 				{
 					armorDef = static_cast<SI32>( 100 * static_cast<R32>( armorDef / 14.5 ));
 				}
+			}
+			break;
+		case 7: // Shield
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_LEFTHAND ), currItem, armorDef, resistType, excludeMedableArmor ); // Shield
+			if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
+			{
+				armorDef = static_cast<SI32>( 100 * ((( static_cast<R64>( mChar->GetSkill( PARRYING ) / 10.0 ) * armorDef ) / 200.0 ) + ( resistType == PHYSICAL ? 1 : 0 )));
 			}
 			break;
 		default:
@@ -1406,7 +1421,7 @@ CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the defense value of a specific location or the entire character based on hitLoc
 //o------------------------------------------------------------------------------------------------o
-UI16 CHandleCombat::CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType resistType )
+UI16 CHandleCombat::CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType resistType, bool excludeMedableArmor, bool includeShield )
 {
 	if( !ValidateObject( mChar ))
 		return 0;
@@ -1420,8 +1435,15 @@ UI16 CHandleCombat::CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 		{
 			for( UI08 getLoc = 1; getLoc < 7; ++getLoc )
 			{
-				GetArmorDef( mChar, total, getLoc, true, resistType );
+				GetArmorDef( mChar, total, getLoc, true, resistType, excludeMedableArmor );
 			}
+
+			// Account for shield as well?
+			if( includeShield )
+			{
+				GetArmorDef( mChar, total, 7, true, resistType, excludeMedableArmor, true );
+			}
+
 			if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
 			{
 				total = ( total / 100 );
@@ -1429,7 +1451,7 @@ UI16 CHandleCombat::CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 		}
 		else
 		{
-			defendItem = GetArmorDef( mChar, total, hitLoc, false, resistType );
+			defendItem = GetArmorDef( mChar, total, hitLoc, false, resistType, excludeMedableArmor, false );
 		}
 
 		// Deal damage to armor on hit, if enabled
@@ -1869,7 +1891,7 @@ SI16 CHandleCombat::AdjustArmorClassDamage( CChar *attacker, CChar *defender, CI
 	if( hitLoc != 0 )
 	{
 		// If hit location system is enabled, check armor class of item at specified hit location
-		defenderItem = GetArmorDef( attacker, bonusDamage, hitLoc, false, PHYSICAL );
+		defenderItem = GetArmorDef( attacker, bonusDamage, hitLoc, false, PHYSICAL, false, false );
 
 		if( ValidateObject( defenderItem ) && attackerWeapon->GetArmourClass() == defenderItem->GetArmourClass() )
 		{
@@ -1883,7 +1905,7 @@ SI16 CHandleCombat::AdjustArmorClassDamage( CChar *attacker, CChar *defender, CI
 		SI32 bonusPotential = 0;
 		for( UI08 getLoc = 1; getLoc < 7; ++getLoc )
 		{
-			defenderItem = GetArmorDef( attacker, bonusPotential, getLoc, false, PHYSICAL );
+			defenderItem = GetArmorDef( attacker, bonusPotential, getLoc, false, PHYSICAL, false, false );
 
 			if( ValidateObject( defenderItem ) && attackerWeapon->GetArmourClass() == defenderItem->GetArmourClass() )
 			{
@@ -2426,7 +2448,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 						}
 
 						// Calculate defense given by armor
-						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
+						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
 
 						// Apply damage to shield from parrying action?
 						if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1, 100 )) // 20% chance by default
@@ -2448,7 +2470,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 						}
 
 						// Calculate defense given by armor
-						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
+						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
 
 						// Apply damage to shield from parrying action?
 						if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1, 100 )) // 20% chance by default
@@ -2486,7 +2508,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					{
 						// Old Pre-AoS (LBR, ~Publish 15) block with shield
 						damage -= HalfRandomNum( shield->GetResist( PHYSICAL ));
-						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
+						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
 
 						// Apply damage to shield from parrying action?
 						if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1, 100 )) // 20% chance by default
@@ -2630,16 +2652,16 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 			// No shield, no weapon parry, no wrestling parry - armor needs to take the brunt of damage!
 			if( damage > 0 && getDef == 0 )
 			{
-				getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
+				getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
 			}
 			break;
 		}
 		case POISON:		//	POISON Damage
-			damageModifier = ( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType ) / 100 );
+			damageModifier = ( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType, false, false ) / 100 );
 			damage = static_cast<SI16>( std::round(( static_cast<R32>( baseDamage ) - ( static_cast<R32>( baseDamage ) * damageModifier ))));
 			break;
 		default:			//	Elemental damage
-			getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType ));
+			getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType, false, false ));
 			break;
 	}
 

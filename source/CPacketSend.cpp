@@ -2381,10 +2381,10 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		}
 		if( extended4 )
 		{
-			FireResist( Combat->CalcDef( &toCopy, 0, false, HEAT ));
-			ColdResist( Combat->CalcDef( &toCopy, 0, false, COLD ));
-			PoisonResist( Combat->CalcDef( &toCopy, 0, false, POISON ));
-			EnergyResist( Combat->CalcDef( &toCopy, 0, false, LIGHTNING ));
+			FireResist( Combat->CalcDef( &toCopy, 0, false, HEAT, false, true ));
+			ColdResist( Combat->CalcDef( &toCopy, 0, false, COLD, false, true ));
+			PoisonResist( Combat->CalcDef( &toCopy, 0, false, POISON, false, true ));
+			EnergyResist( Combat->CalcDef( &toCopy, 0, false, LIGHTNING, false, true ));
 			Luck( 0 );
 			DamageMin( Combat->CalcLowDamage( &toCopy ));
 			DamageMax( Combat->CalcHighDamage( &toCopy ));
@@ -7657,24 +7657,24 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-			if( cItem.GetHealthRegen() > 0 )
+			if( cItem.GetHealthRegenBonus() > 0 )
 			{
 				tempEntry.stringNum = 1060444; // hit point regeneration ~1_val~
-				tempEntry.ourText = oldstrutil::number( cItem.GetHealthRegen() );
+				tempEntry.ourText = oldstrutil::number( cItem.GetHealthRegenBonus() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-			if( cItem.GetStaminaRegen() > 0 )
+			if( cItem.GetStaminaRegenBonus() > 0 )
 			{
 				tempEntry.stringNum = 1060443; // stamina regeneration ~1_val~
-				tempEntry.ourText = oldstrutil::number( cItem.GetStaminaRegen() );
+				tempEntry.ourText = oldstrutil::number( cItem.GetStaminaRegenBonus() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-			if( cItem.GetManaRegen() > 0 )
+			if( cItem.GetManaRegenBonus() > 0 )
 			{
 				tempEntry.stringNum = 1060440; // mana regeneration ~1_val~
-				tempEntry.ourText = oldstrutil::number( cItem.GetManaRegen() );
+				tempEntry.ourText = oldstrutil::number( cItem.GetManaRegenBonus() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
