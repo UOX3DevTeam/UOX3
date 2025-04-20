@@ -7882,6 +7882,12 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
+			if( cItem.GetTempVar( CITV_MORE, 2 ) == 1 )
+			{
+				tempEntry.stringNum = 1060437; // mage armor
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
 			const SI16 strReq = ( cItem.GetStrength() * ( 100 - cItem.GetLowerStatReq() )) / 100;
 			const SI16 dexReq = ( cItem.GetDexterity() * ( 100 - cItem.GetLowerStatReq() )) / 100;
 			const SI16 intReq = ( cItem.GetIntelligence() * ( 100 - cItem.GetLowerStatReq() )) / 100;
