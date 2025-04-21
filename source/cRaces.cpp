@@ -42,7 +42,7 @@ CRace * cRaces::Race( RACEID x )
 	return races[x];
 }
 
-cRaces::cRaces():initialized(false)
+cRaces::cRaces():initialized( false ), nextUniqueRaceID( 0 )
 {
 }
 cRaces::~cRaces()
@@ -104,7 +104,10 @@ void cRaces::Load()
 
 	for( i = 0; i < raceCount; ++i )
 	{
-		races.push_back( new CRace( raceCount ));
+		CRace* newRace = new CRace( raceCount );
+		newRace->SetRaceID( nextUniqueRaceID );
+		nextUniqueRaceID++;
+		races.push_back( newRace );
 	}
 
 	CScriptSection *CombatMods = FileLookup->FindEntry( std::string( "COMBAT MODS" ), race_def );
@@ -1095,6 +1098,19 @@ void cRaces::IsPlayerRace( RACEID x, bool value )
 //|	cRace
 //o------------------------------------------------------------------------------------------------o
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cRace::GetRaceID()/SetRaceID()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets race ID associated with race
+//o------------------------------------------------------------------------------------------------o
+RACEID CRace::GetRaceID( void ) const
+{
+	return raceID;
+}
+void CRace::SetRaceID( RACEID newValue )
+{
+	raceID = newValue;
+}
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::Skill()
@@ -1444,7 +1460,7 @@ bool CRace::CanEquipItem( UI16 itemId ) const
 	return true;
 }
 
-CRace::CRace() : bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
+CRace::CRace() : raceID( 0xFFFFFFFF ), bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
 restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f ), bloodColour( 0 )
 {
 	iSkills.fill( 0 );
@@ -1460,6 +1476,9 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	HPModifier( 0 );
 	ManaModifier( 0 );
 	StamModifier( 0 );
+	HPRegenBonus( 0 );
+	ManaRegenBonus( 0 );
+	StamRegenBonus( 0 );
 	DoesHunger( false );
 	SetHungerRate( 0 );
 	SetHungerDamage( 0 );
@@ -1484,6 +1503,9 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	HPModifier( 0 );
 	ManaModifier( 0 );
 	StamModifier( 0 );
+	HPRegenBonus( 0 );
+	ManaRegenBonus( 0 );
+	StamRegenBonus( 0 );
 	DoesHunger( false );
 	SetHungerRate( 0 );
 	SetHungerDamage( 0 );
@@ -1681,6 +1703,114 @@ void CRace::StamModifier( SI16 value )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CRace::HPRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets race's hp regen bonus
+//o------------------------------------------------------------------------------------------------o
+SI16 CRace::HPRegenBonus( void ) const
+{
+	if( RaceHPRegenBonus == 0 ) // only use global overrides if property in race-definition is 0
+	{
+		switch( raceID )
+		{
+			case 0: // Human by default
+				return cwmWorldState->ServerData()->HumanHealthRegenBonus();
+			case 1: // Elf by default
+				return cwmWorldState->ServerData()->ElfHealthRegenBonus();
+			case 2: // Gargoyle by default
+				return cwmWorldState->ServerData()->GargoyleHealthRegenBonus();
+			default:
+				break;
+		}
+	}
+
+	return RaceHPRegenBonus;
+}
+void CRace::HPRegenBonus( SI16 value )
+{
+	if( value > -100 )
+	{
+		RaceHPRegenBonus = value;
+	}
+	else
+	{
+		RaceHPRegenBonus = -99;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CRace::ManaRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets race's mana regen bonus
+//o------------------------------------------------------------------------------------------------o
+SI16 CRace::ManaRegenBonus( void ) const
+{
+	if( RaceManaRegenBonus == 0 ) // only use global overrides if property in race-definition is 0
+	{
+		switch( raceID )
+		{
+			case 0: // Human by default
+				return cwmWorldState->ServerData()->HumanManaRegenBonus();
+			case 1: // Elf by default
+				return cwmWorldState->ServerData()->ElfManaRegenBonus();
+			case 2: // Gargoyle by default
+				return cwmWorldState->ServerData()->GargoyleManaRegenBonus();
+			default:
+				break;
+		}
+	}
+
+	return RaceManaRegenBonus;
+}
+void CRace::ManaRegenBonus( SI16 value )
+{
+	if( value > -100 )
+	{
+		RaceManaRegenBonus = value;
+	}
+	else
+	{
+		RaceManaRegenBonus = -99;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CRace::StamRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets race's stamina regen bonus
+//o------------------------------------------------------------------------------------------------o
+SI16 CRace::StamRegenBonus( void ) const
+{
+	if( RaceStamRegenBonus == 0 ) // only use global overrides if property in race-definition is 0
+	{
+		switch( raceID )
+		{
+			case 0: // Human by default
+				return cwmWorldState->ServerData()->HumanStaminaRegenBonus();
+			case 1: // Elf by default
+				return cwmWorldState->ServerData()->ElfStaminaRegenBonus();
+			case 2: // Gargoyle by default
+				return cwmWorldState->ServerData()->GargoyleStaminaRegenBonus();
+			default:
+				break;
+		}
+	}
+
+	return RaceStamRegenBonus;
+}
+void CRace::StamRegenBonus( SI16 value )
+{
+	if( value > -100 )
+	{
+		RaceStamRegenBonus = value;
+	}
+	else
+	{
+		RaceStamRegenBonus = -99;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CRace::Load()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load details of race from races.dfn
@@ -1717,7 +1847,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					std::string subSect = std::string( "EQUIPLIST " ) + oldstrutil::number( static_cast<UI08>( std::stoul( data, nullptr, 0 )));
 					CScriptSection *RacialEquipment = FileLookup->FindEntry( subSect, race_def );
 					if( RacialEquipment == nullptr )
-						break;
+						continue;
 
 					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
 					{
@@ -1742,10 +1872,12 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 								break;
 						}
 					}
+					continue;
 				}
 				else if( UTag == "ARMORREST" ) // 8 classes, value 0 is all, else it's a bit comparison
 				{
 					ArmourClassRestriction( static_cast<UI08>( std::stoul( data, nullptr, 0 )));
+					continue;
 				}
 				break;
 			}
@@ -1760,7 +1892,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					std::string subSect = std::string( "EQUIPLIST " ) + oldstrutil::number( static_cast<UI08>( std::stoul( data, nullptr, 0 )));
 					CScriptSection *RacialEquipment = FileLookup->FindEntry( subSect, race_def );
 					if( RacialEquipment == nullptr )
-						break;
+						continue;
 
 					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
 					{
@@ -1785,18 +1917,22 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 								break;
 						}
 					}
+					continue;
 				}
 				else if( UTag == "BEARDMIN" )
 				{
 					beardMin = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+					continue;
 				}
 				else if( UTag == "BEARDMAX" )
 				{
 					beardColours.push_back( ColourPair_st( beardMin, static_cast<UI16>( std::stoul( data, nullptr, 0 ))));
+					continue;
 				}
 				else if( UTag == "BLOODCOLOUR" )
 				{
 					bloodColour = static_cast<COLOUR>( std::stoul( data, nullptr, 0 ));
+					continue;
 				}
 				break;
 
@@ -1805,18 +1941,22 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				if( UTag == "COLDAFFECT" ) // are we affected by cold?
 				{
 					AffectedBy( true, COLD );
+					continue;
 				}
 				else if( UTag == "COLDLEVEL" ) // cold level at which to take damage
 				{
 					ColdLevel( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
+					continue;
 				}
 				else if( UTag == "COLDDAMAGE" ) // how much damage to take from cold
 				{
 					WeatherDamage( static_cast<UI16>( std::stoul( data, nullptr, 0 )), COLD );
+					continue;
 				}
 				else if( UTag == "COLDSECS" ) // how often cold affects in secs
 				{
 					WeatherSeconds( static_cast<UI16>( std::stoul( data, nullptr, 0 )), COLD );
+					continue;
 				}
 				break;
 
@@ -1825,6 +1965,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				if( UTag == "DEXCAP" )
 				{
 					Skill( static_cast<UI16>( std::stoul( data, nullptr, 0 )), DEXTERITY );
+					continue;
 				}
 				break;
 
@@ -1845,6 +1986,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					{
 						GenderRestriction( MALE );
 					}
+					continue;
 				}
 				break;
 
@@ -1853,34 +1995,47 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				if( UTag == "HAIRMIN" )
 				{
 					hairMin = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+					continue;
 				}
 				else if( UTag == "HAIRMAX" )
 				{
 					hairColours.push_back( ColourPair_st( hairMin, static_cast<UI16>( std::stoul( data, nullptr, 0 ))));
+					continue;
 				}
 				else if( UTag == "HEATAFFECT" )
 				{
 					// are we affected by light?
 					AffectedBy( true, HEAT );
+					continue;
 				}
 				else if( UTag == "HEATDAMAGE" )
 				{
 					// how much damage to take from light
 					WeatherDamage( static_cast<UI16>( std::stoul( data, nullptr, 0 )), HEAT );
+					continue;
 				}
 				else if( UTag == "HEATLEVEL" )
 				{
 					// heat level at which to take damage
 					HeatLevel( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
+					continue;
 				}
 				else if( UTag == "HEATSECS" )
 				{		// how often light affects in secs
 					WeatherSeconds( static_cast<UI16>( std::stoul( data, nullptr, 0 )), HEAT );
+					continue;
 				}
 				else if( UTag == "HPMOD" )
 				{
 					// how high percentage of strength is added as bonus hitpoints
 					HPModifier( static_cast<SI16>( std::stoi( data, nullptr, 0 )));
+					continue;
+				}
+				else if( UTag == "HEALTHREGENBONUS" )
+				{
+					// how much hitpoint regen bonus to add over 10 seconds of regen
+					HPRegenBonus( static_cast<SI16>( std::stoi( data, nullptr, 0 )));
+					continue;
 				}
 				else if( UTag == "HUNGER" )	
 				{
@@ -1904,6 +2059,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					{
 						DoesHunger( false );
 					}
+					continue;
 				}
 				break;
 
@@ -1912,6 +2068,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				if( UTag == "INTCAP" )
 				{
 					Skill( static_cast<UI16>( std::stoul( data, nullptr, 0 )), INTELLECT );
+					continue;
 				}
 				break;
 
@@ -1920,35 +2077,42 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				if( UTag == "LIGHTAFFECT" ) // are we affected by light?
 				{
 					AffectedBy( true, LIGHT );
+					continue;
 				}
 				else if( UTag == "LIGHTDAMAGE" ) // how much damage to take from light
 				{
 					WeatherDamage( static_cast<UI16>( std::stoul( data, nullptr, 0 )), LIGHT );
+					continue;
 				}
 				else if( UTag == "LIGHTLEVEL" ) // light level at which to take damage
 				{
 					LightLevel( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
+					continue;
 				}
 				else if( UTag == "LIGHTSECS" ) // how often light affects in secs
 				{
 					WeatherSeconds( static_cast<UI16>( std::stoul( data, nullptr, 0 )), LIGHT );
+					continue;
 				}
-
 				else if( UTag == "LIGHTNINGAFFECT" ) // are we affected by light?
 				{
 					AffectedBy( true, LIGHTNING );
+					continue;
 				}
 				else if( UTag == "LIGHTNINGDAMAGE" ) // how much damage to take from light
 				{
 					WeatherDamage( static_cast<UI16>( std::stoul( data, nullptr, 0 )), LIGHTNING );
+					continue;
 				}
 				else if( UTag == "LIGHTNINGCHANCE" ) // how big is the chance to get hit by a lightning
 				{
 					WeatherSeconds( static_cast<UI16>( std::stoul( data, nullptr, 0 )), LIGHTNING );
+					continue;
 				}
 				else if( UTag == "LANGUAGEMIN" ) // set language min
 				{
 					LanguageMin( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
+					continue;
 				}
 				break;
 
@@ -1957,10 +2121,18 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				if( UTag == "MAGICRESISTANCE" )	// magic resistance?
 				{
 					MagicResistance( std::stof( data ));
+					continue;
 				}
 				else if( UTag == "MANAMOD" ) // how high percentage of int to add as bonus mana
 				{
 					ManaModifier( static_cast<SI16>( std::stoi( data, nullptr, 0 )));
+					continue;
+				}
+				else if( UTag == "MANAREGENBONUS" )
+				{
+					// how much mana regen bonus to add over 10 seconds of regen
+					ManaRegenBonus( static_cast<SI16>( std::stoi( data, nullptr, 0 )));
+					continue;
 				}
 				break;
 
@@ -1969,18 +2141,22 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				if( UTag == "NAME" )
 				{
 					Name( data );
+					continue;
 				}
 				else if( UTag == "NOBEARD" )
 				{
 					NoBeard( true );
+					continue;
 				}
 				else if( UTag == "NOHAIR" )
 				{
 					NoHair( true );
+					continue;
 				}
 				else if( UTag == "NIGHTVIS" ) // night vision level... light bonus
 				{
 					NightVision( static_cast<UI08>( std::stoul( data, nullptr, 0 )));
+					continue;
 				}
 				break;
 
@@ -1989,10 +2165,12 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				if( UTag == "PLAYERRACE" )// is it a player race?
 				{
 					IsPlayerRace(( static_cast<UI16>( std::stoul( data, nullptr, 0 )) != 0 ));
+					continue;
 				}
 				else if( UTag == "POISONRESISTANCE" ) // poison resistance?
 				{
 					PoisonResistance( std::stof( data ));
+					continue;
 				}
 				else if( UTag == "PARENTRACE" )
 				{
@@ -2001,6 +2179,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					{
 						( *this ) = ( *pRace );
 					}
+					continue;
 				}
 				break;
 
@@ -2009,18 +2188,22 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				if( UTag == "REQUIREBEARD" )
 				{
 					RequiresBeard( true );
+					continue;
 				}
 				else if( UTag == "RAINAFFECT" ) // are we affected by light?
 				{
 					AffectedBy( true, RAIN );
+					continue;
 				}
 				else if( UTag == "RAINDAMAGE" )	// how much damage to take from light
 				{
 					WeatherDamage( static_cast<UI16>( std::stoul( data, nullptr, 0 )), RAIN );
+					continue;
 				}
 				else if( UTag == "RAINSECS" ) // how often light affects in secs
 				{
 					WeatherSeconds( static_cast<UI16>( std::stoul( data, nullptr, 0 )), RAIN );
+					continue;
 				}
 				else if( UTag == "RACERELATION" )
 				{
@@ -2029,6 +2212,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					{
 						RaceRelation( static_cast<RaceRelate>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 )), static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
 					}
+					continue;
 				}
 				else if( UTag == "RACIALENEMY" )
 				{
@@ -2041,6 +2225,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					{
 						RaceRelation( RACE_ENEMY, static_cast<RACEID>( raceDiff ));
 					}
+					continue;
 				}
 				else if( UTag == "RACIALAID" )
 				{
@@ -2053,6 +2238,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					{
 						RaceRelation( RACE_ALLY, static_cast<RACEID>( raceDiff ));
 					}
+					continue;
 				}
 				break;
 
@@ -2061,42 +2247,58 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				if( UTag == "STRCAP" )
 				{
 					Skill( static_cast<UI16>( std::stoul( data, nullptr, 0 )), STRENGTH );
+					continue;
 				}
 				else if( UTag == "SKINMIN" )
 				{
 					skinMin = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+					continue;
 				}
 				else if( UTag == "SKINMAX" )
 				{
 					skinColours.push_back( ColourPair_st( skinMin, static_cast<UI16>( std::stoul( data, nullptr, 0 ))));
+					continue;
 				}
 				else if( UTag == "SNOWAFFECT" ) // are we affected by light?
 				{
 					AffectedBy( true, SNOW );
+					continue;
 				}
 				else if( UTag == "SNOWDAMAGE" ) // how much damage to take from light
 				{
 					WeatherDamage( static_cast<UI16>( std::stoul( data, nullptr, 0 )), SNOW );
+					continue;
 				}
 				else if( UTag == "SNOWSECS" ) // how often light affects in secs
 				{
 					WeatherSeconds( static_cast<UI16>( std::stoul( data, nullptr, 0 )), SNOW );
+					continue;
 				}
 				else if( UTag == "STORMAFFECT" ) // are we affected by storm?
 				{
 					AffectedBy( true, STORM );
+					continue;
 				}
 				else if( UTag == "STORMDAMAGE" ) // how much damage to take from storm
 				{
 					WeatherDamage( static_cast<UI16>( std::stoul( data, nullptr, 0 )), STORM );
+					continue;
 				}
 				else if( UTag == "STORMSECS" ) // how often storm affects in secs
 				{
 					WeatherSeconds( static_cast<UI16>( std::stoul( data, nullptr, 0 )), STORM );
+					continue;
 				}
 				else if( UTag == "STAMMOD" ) // how high percentage of dex is added as bonus stamina
 				{
 					StamModifier( static_cast<SI16>( std::stoi( data, nullptr, 0 )));
+					continue;
+				}
+				else if( UTag == "STAMINAREGENBONUS" )
+				{
+					// how much stamina regen bonus to add over 10 seconds of regen
+					StamRegenBonus( static_cast<SI16>( std::stoi( data, nullptr, 0 )));
+					continue;
 				}
 				break;
 			case 't':
@@ -2123,6 +2325,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					{
 						DoesThirst( false );
 					}
+					continue;
 				}
 				break;
 
@@ -2131,23 +2334,26 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				if( UTag == "VISRANGE" ) // set visibility range ... defaults to 18
 				{
 					VisibilityRange( static_cast<char>( std::stoi( data, nullptr, 0 )));
+					continue;
 				}
+				break;
+			default:
 				break;
 		}
 
 		for( SI32 iCountA = 0; iCountA < ALLSKILLS; ++iCountA )
 		{
-			std::string skillthing = cwmWorldState->skill[iCountA].name;
+			std::string skillthing = oldstrutil::upper( cwmWorldState->skill[iCountA].name );
 			skillthing += "G";
-			if( skillthing == tag )
+			if( skillthing == UTag )
 			{
 				Skill( static_cast<UI16>( std::stoul( data, nullptr, 0 )), iCountA );
 			}
 			else
 			{
-				skillthing = cwmWorldState->skill[iCountA].name;
+				skillthing = oldstrutil::upper( cwmWorldState->skill[iCountA].name );
 				skillthing += "L";
-				if( skillthing == tag )
+				if( skillthing == UTag )
 				{
 					Skill( modCount + static_cast<UI16>( std::stoul( data, nullptr, 0 )), iCountA );
 				}

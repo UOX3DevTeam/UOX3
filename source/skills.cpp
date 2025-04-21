@@ -608,10 +608,10 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 		// Same if chance of success is 100% already - no need to proceed!
 		if( s->GetCommandLevel() > 0 || chanceSkillSuccess == 1000 )
 		{
-			if( s->GetCommandLevel() > 0 && mSock != nullptr )
+			if( RandomNum( 1, 100 ) > 80 && s->GetCommandLevel() > 0 && mSock != nullptr )
 			{
 				// Inform the counselor/gm to make it obvious why skillcheck always succeeds
-				mSock->SysMessage( 6279 ); // Skill check success guaranteed due to elevated command level!
+				mSock->SysMessage( 6279 ); // Tip: Skill check success guaranteed due to elevated command level!
 			}
 			skillCheck = true;
 		}

@@ -2379,10 +2379,10 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		}
 		if( extended4 )
 		{
-			FireResist( Combat->CalcDef( &toCopy, 0, false, HEAT ));
-			ColdResist( Combat->CalcDef( &toCopy, 0, false, COLD ));
-			PoisonResist( Combat->CalcDef( &toCopy, 0, false, POISON ));
-			EnergyResist( Combat->CalcDef( &toCopy, 0, false, LIGHTNING ));
+			FireResist( Combat->CalcDef( &toCopy, 0, false, HEAT, false, true ));
+			ColdResist( Combat->CalcDef( &toCopy, 0, false, COLD, false, true ));
+			PoisonResist( Combat->CalcDef( &toCopy, 0, false, POISON, false, true ));
+			EnergyResist( Combat->CalcDef( &toCopy, 0, false, LIGHTNING, false, true ));
 			Luck( toCopy.GetLuck() );
 			DamageMin( Combat->CalcLowDamage( &toCopy ));
 			DamageMax( Combat->CalcHighDamage( &toCopy ));
@@ -7805,6 +7805,27 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
+			if( cItem.GetHealthRegenBonus() > 0 )
+			{
+				tempEntry.stringNum = 1060444; // hit point regeneration ~1_val~
+				tempEntry.ourText = oldstrutil::number( cItem.GetHealthRegenBonus() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetStaminaRegenBonus() > 0 )
+			{
+				tempEntry.stringNum = 1060443; // stamina regeneration ~1_val~
+				tempEntry.ourText = oldstrutil::number( cItem.GetStaminaRegenBonus() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetManaRegenBonus() > 0 )
+			{
+				tempEntry.stringNum = 1060440; // mana regeneration ~1_val~
+				tempEntry.ourText = oldstrutil::number( cItem.GetManaRegenBonus() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
 			if( cItem.GetSwingSpeedIncrease() > 0 )
 			{
 				tempEntry.stringNum = 1060486; // swing speed increase ~1_val~%
@@ -7858,6 +7879,12 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			{
 				tempEntry.stringNum = 1060439; // mana increase ~1_val~
 				tempEntry.ourText = oldstrutil::number( cItem.GetManaBonus() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetTempVar( CITV_MORE, 2 ) == 1 )
+			{
+				tempEntry.stringNum = 1060437; // mage armor
 				FinalizeData( tempEntry, totalStringLen );
 			}
 

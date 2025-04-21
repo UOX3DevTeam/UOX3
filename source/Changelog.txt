@@ -1,3 +1,48 @@
+20/04/2025 - Dragon Slayer/Xuri
+	Updated code calculating passive health, stamina and mana regeneration for characters, based on new UOX.INI settings and bonuses from characters/items/races
+	Added three new Character/Item/Race DFN tags to grant bonus health/stamina/mana regeneration:
+		HEALTHREGENBONUS=# 	// 10 bonus points equates to 0.01 extra hp regen per second, independent of era
+		STAMINAREGENBONUS=# // 10 bonus points equates to 0.05 extra stamina regen per second
+		MANAREGENBONUS=# 	// 10 bonus point equates to 0.1 extra mana regen per second
+		...also available as JS Properties:
+			.healthRegenBonus
+			.staminaRegenBonus
+			.manaRegenBonus
+	Updated get/set JS commands to allow getting/setting regen bonuses for health, stamina and mana
+	Updated races.dfn to include default +2 health regen bonus for humans, and +2 mana regen bonus for gargoyles.
+	Added new UOX.INI settings under [Skills and Stats] section:
+		HEALTHREGENMODE=1 	// 0 = no passive health regen, 1 = default passive health regen
+		STAMINAREGENMODE=1 	// 0 = no passive stamina regen, 1 = default passive stamina regen (LBR or below), 2 = AoS or beyond, 3 = SA and beyond
+		MANAREGENMODE=1 	// 0 = no passive mana regen, 1 = default passive mana regen (LBR or below), 2 = AoS (Pub17), 3 = AoS/SE (Pub18 and beyond), 4 = ML, 5 = KR, 6 = SA and beyond
+		HEALTHREGENCAP=#  	// Max cap for Health Regeneration Bonus stat per character
+		STAMINAREGENCAP=# 	// Max cap for Stamina Regeneration Bonus stat per character
+		MANAREGENCAP=#		// Max cap for Mana Regeneration Bonus stat per character
+	Added new UOX.INI section ([default race bonuses]) with the following new settings for the 3 default playable races (only used if nothing else specified in races.dfn):
+		HUMANHEALTHREGENBONUS=0 	// default health regen bonus for human race (2 from ML expansion onwards)
+		HUMANSTAMINAREGENBONUS=0 	// default stamina regen bonus for human race
+		HUMANMANAREGENBONUS=0 		// default mana regen bonus for human race
+		ELFHEALTHREGENBONUS=0 		// default health regen bonus for elf race
+		ELFSTAMINAREGENBONUS=0 		// default stamina regen bonus for elf race
+		ELFMANAREGENBONUS=0 		// default mana regen bonus for elf race
+		GARGOYLEHEALTHREGENBONUS=0 	// default health regen bonus for gargoyle race
+		GARGOYLESTAMINAREGENBONUS=0 // default stamina regen bonus for gargoyle race
+		GARGOYLEMANAREGENBONUS=0 	// default mana regen bonus for gargoyle race (2 from SA expansion onwards)
+	Updated UOX3 Documentation with new feature section on Stat Regeneration with details on stat regeneration rules and recommended settings per UO era
+	Added support for Medable armors (have no effect on meditation skill and/or passive regen of mana when worn) and Mage Armors (can turn non-medable armor into medable armor)
+		These properties are defined per armor piece using the first and second bits of the MORE property:
+			MORE=0x1 0x0 0x0 0x0 // Medable Armor
+			MORE=0x0 0x1 0x0 0x0 // Mage Armor
+		The following armor types have been marked as medable by default:
+			leather armor, leather ninja armor, leather samurai armor, leaf armor, gargish cloth armor, gargish leather armor and all hats and masks
+	Updated JS Method .Defense() to support optional fourth and fifth parameters - excludeMedableArmor (true/false) and includeShield (true/false)
+	Updated CalfDef function to support including shields in the calculations, and updated mana regen code to include shields when checking for equipped armor
+	Updated Meditation skill JS script to exclude medable armor from armor check, include shields, and apply different rules for active meditation depending on mana regen mode
+	Updated stat window to include defensive rating of shields (based on Parrying skill) and/or elemental resistances (if enabled in ini)
+	Added a new property to CRace class, which is automatically set and incremented as UOX3 loads in races from races.dfn: raceID
+	Added new Getters/Setters for CRace class to retrieve ID of a specific Race object
+	Updated JS property .id for Race JS Object to return new race ID instead of iterating through list of races to compare race object and return index
+	Reloading DFNs now also reloads Races
+
 15/03/2025 - Dragon Slayer
 	Fixed an issue where timestamps for system timers could be set in the past due to float-to-UI32 casting precision loss. ( Thanks Xuri )
 
