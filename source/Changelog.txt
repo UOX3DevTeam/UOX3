@@ -1,3 +1,9 @@
+22/04/2025 - Xuri
+	Tooltip entries for Characters/Items now have a sorting order associated with them, defined in code via a "sortOrder" parameter in the ToolTipEntry
+	For custom tooltips in scripts, sort order can be set via the temporary tag. Example:
+		iUsed.SetTempTag( "tooltipSortOrder", 1 ); // sort tooltip after name (sortOrder 0), but before maker's mark (sortOrder 5).
+	This information and a list of the default hard-coded sort order can also be found in the updated UOX3 Documentation, under Features > Object Tooltips
+
 20/04/2025 - Dragon Slayer/Xuri
 	Updated code calculating passive health, stamina and mana regeneration for characters, based on new UOX.INI settings and bonuses from characters/items/races
 	Added three new Character/Item/Race DFN tags to grant bonus health/stamina/mana regeneration:

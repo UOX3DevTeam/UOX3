@@ -27,7 +27,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 20. April, 2025</small></p>
+	<p style="margin:0"><small>Last Updated: 22. April, 2025</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6b</small></p>
 </div>
 
@@ -60,6 +60,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>April 22nd, 2025</h4>
+						<ul>
+							<li>Added <a href="#objectTooltips">Object Tooltips</a> feature info with details on how object tooltips work in UOX3, including how custom tooltips can be added.</li>
+						</ul>
 						<h4>April 20th, 2025</h4>
 						<ul>
 							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on additional settings: HEALTHREGENMODE, STAMINAREGENMODE, MANAREGENMODE, HEALTHREGENCAP, STAMINAREGENCAP, MANAREGENCAP, HUMANHEALTHREGENBONUS, HUMANSTAMINAREGENBONUS, HUMANMANAREGENBONUS, ELFHEALTHREGENBONUS, ELFSTAMINAREGENBONUS, ELFMANAREGENBONUS, GARGOYLEHEALTHREGENBONUS, GARGOYLESTAMINAREGENBONUS, GARGOYLEMANAREGENBONUS</li>
@@ -1400,21 +1404,21 @@ packitem=0x0f8d,30
 					<input type="checkbox" id="spoiler_ini_expansion_settings">
 					<label for="spoiler_ini_expansion_settings">[expansion settings] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>Supported era values: core, t2a, uor, td, lbr, pub15, aos, se, ml, sa, hs, tol<br>Note: A value of 'core' inherits whatever is set in CORESHARDERA</p>
+						<p>Supported era values: core, uo, t2a, uor, td, lbr, aos, se, ml, sa, hs, tol<br>Note: A value of 'core' inherits whatever is set in CORESHARDERA</p>
 						<div class="settingsDiv">
-							<p><span class="hl">CORESHARDERA</span><strong>=pub15</strong><br>
-							Defines the "core" era of the shard. Defaults to pub15 (Publish 15).</p>
+							<p><span class="hl">CORESHARDERA</span><strong>=lbr</strong><br>
+							Defines the "core" era of the shard. Defaults to lbr (Lord Blackthorn's Revenge/Publish 15).</p>
 							<ul>
-								<li><strong>any</strong> - determines which Item/NPC DFNs gets loaded, based on tags like GETT2A, GETPUB15</li>
+								<li><strong>any</strong> - determines which Item/NPC DFNs gets loaded, based on tags like GETT2A, GETLBR</li>
 								<li><strong>uor or later</strong> - enables bonus hit chance for archery via ARCHERYHITBONUS setting</li>
-								<li><strong>pub15 or earlier</strong> - final combat damage value reduced by half</li>
+								<li><strong>lbr or earlier</strong> - final combat damage value reduced by half</li>
 							</ul>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">ARMORCALCULATION</span><strong>=core</strong><br>
 							Defines era to base armor calculations on</p>
 							<ul>
-								<li><strong>pub15 or earlier</strong> - different armor pieces contribute different percentage of the total Armor Rating</li>
+								<li><strong>lbr or earlier</strong> - different armor pieces contribute different percentage of the total Armor Rating</li>
 								<li><strong>aos or later</strong> - each armor piece contribute to sum total of Physical Resistance, and other elemental resistance stats</li>
 							</ul>
 						</div>
@@ -1430,7 +1434,7 @@ packitem=0x0f8d,30
 							<p><span class="hl">TACTICSDAMAGEBONUS</span><strong>=core</strong><br>
 							Defines era to base tactics damage bonus on</p>
 							<ul>
-								<li><strong>pub15 or earlier</strong> - bonus = Tactics skill + 50</li>
+								<li><strong>lbr or earlier</strong> - bonus = Tactics skill + 50</li>
 								<li><strong>aos or later</strong> - 68.75% damage bonus if GM Tactics, 62.5% bonus if below</li>
 							</ul>
 						</div>
@@ -1463,7 +1467,7 @@ packitem=0x0f8d,30
 							<p><span class="hl">DAMAGEBONUSCAP</span><strong>=core</strong><br>
 							Defines era to base damage bonus cap on</p>
 							<ul>
-								<li><strong>pub15 or earlier</strong> - No cap on damage bonus multiplier</li>
+								<li><strong>lbr or earlier</strong> - No cap on damage bonus multiplier</li>
 								<li><strong>aos or later</strong> - Total damage bonus multiplier capped at 300% higher than base damage</li>
 							</ul>
 						</div>
@@ -1472,7 +1476,7 @@ packitem=0x0f8d,30
 							Defines era to base shield parry calculations on</p>
 							<ul>
 								<li><strong>t2a</strong> - chance to block is parryskill / 2. shield absorbs damage equivalent of AR/2 for melee, or equivalent of AR for archery</li>
-								<li><strong>uor to pub15</strong> - higher AR equals lower block chance, but more damage absorbed.</li>
+								<li><strong>uor to lbr</strong> - higher AR equals lower block chance, but more damage absorbed.</li>
 								<li><strong>aos or later</strong> - chance to block dependent on parry skill vs bushido skill, with dex modifier</li>
 							</ul>
 						</div>
@@ -1495,8 +1499,8 @@ packitem=0x0f8d,30
 							<p><span class="hl">COMBATHITCHANCE</span><strong>=core</strong><br>
 							Defines era to base combat hit chance calculations on</p>
 							<ul>
-								<li><strong>t2a to pub15</strong> - hit chance based on attacker's skill vs defender's skill. No minimum chance to hit</li>
-								<li><strong>uor to pub15</strong> - Additional bonus hit chance for archery</li>
+								<li><strong>t2a to lbr</strong> - hit chance based on attacker's skill vs defender's skill. No minimum chance to hit</li>
+								<li><strong>uor to lbr</strong> - Additional bonus hit chance for archery</li>
 								<li><strong>aos to tol</strong> - hit chance based on attacker's skill (and hit chance increase) vs defender's skill (and defense chance increase). Minimum 2% chance to hit</li>
 							</ul>
 						</div>
@@ -5993,6 +5997,148 @@ packitem=0x0f8d,30
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#objectTooltips" id="objectTooltips"><span>Object Tooltips</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+				  	<h3>Object Tooltips in UOX3</h3>
+				  	<p>UOX3 supports three modes for displaying object tooltips on mouse-over (or click):</p>
+				  	<ul>
+				  		<li><span class="hl">Old-School Tooltips</span></li>
+				  		<li><span class="hl">Basic Tooltips</span></li>
+				  		<li><span class="hl">Advanced Tooltips</span></li>
+				  	</ul>
+					<input type="checkbox" id="spoiler_oldschool_tooltips">
+					<label for="spoiler_oldschool_tooltips">Old-School Tooltips <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+					  	<p style="margin-left: 5px; overflow: auto; display: block; margin-bottom: 10px;"><img style="float: left; width: 12%; margin-right: 10px; clear: both;" src="assets/images/oldschool_tooltip.png" alt="Old-school UO Tooltip">The most old-school of tooltips, these show nothing other than the item's <strong>name and amount</strong> (if higher than 1). The exact details remain up to the player to figure out via testing, use of skills like Arms Lore, etc.<br><br>To setup UOX3 for this type of tooltip, all you need to do is ensure that the <span class="hl">SERVERFEATURES</span> setting in UOX.INI does not include the "AoS" bit. If you're starting with the default UOX3 setup, just subtract the value 32 from the default SERVERFEATURES value, and you're good to go (after a restart). See <a href="index.html#uoxINISettings" title="UOX3 Documentation - UOX.INI Settings">UOX.INI Settings</a> for more details.<br><br><img style="float: left; width: 12%; margin-right: 10px; clear: both;" src="assets/images/aos_combat_books.png" alt="Old-school UO Tooltip">A potential downside is that this also disables some AoS-specific features in the client, such as the <strong>combat books</strong>. So if you want to support AoS classes like the Paladin on your shard, you cannot go with these old-school tooltips.</p>
+				  	</div>
+
+						<input type="checkbox" id="spoiler_basic_tooltips">
+						<label for="spoiler_basic_tooltips">Basic Tooltips <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+					  	<p>Luckily, there's another option for those who want to keep things simple: <span class="hl">BASICTOOLTIPSONLY=0</span></p>
+					  	<p style="margin-left: 5px; overflow: auto; display: block; margin-bottom: 10px;"><img style="float: left; width: 12%; margin-right: 10px; clear: both;" src="assets/images/basic_tooltips_only.png" alt="UOX3 - Basic Tooltip Only">By enabling this setting in UOX.INI, you can have your cake and eat it too; it will still use the "mouse-over" tooltips from AoS, but will only display a <strong>bare minimum</strong> of information like <strong>name, weight of item, number of items in container</strong>, etc.</p>
+						</div>
+
+						<input type="checkbox" id="spoiler_advanced_tooltips">
+						<label for="spoiler_advanced_tooltips">Advanced Tooltips and Options <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+					  	<p style="margin-left: 5px; overflow: auto; display: block; margin-bottom: 10px;"><img style="float: left; width: 12%; margin-right: 10px; clear: both;" src="assets/images/default_tooltips.png" alt="UOX3 - Default Tooltip">By default, the tooltips in UOX3 are more comprehensive than for the basic options mentioned above, and can even show custom tooltip entries (same is true for the Basic Tooltips option).<br><br>Basically, UOX3 determines what to show on what is found on a given object, and on various server settings, like the ones below:</p>
+					  	<p><strong>For Characters:</strong></p>
+					  	<ul>
+					  		<li><span class="hl">SHOWREPUTATIONTITLEINTOOLTIP=1</span> // If enabled, shows fame/karma titles in character tooltips</li>
+					  		<li><span class="hl">SHOWGUILDINFOINTOOLTIP=1</span> // If enabled, shows guild info in character tooltips</li>
+					  		<li><span class="hl">SHOWNPCTITLESINTOOLTIPS=1</span> // If enabled, shows NPC titles in character tooltips</li>
+					  	</ul>
+					  	<p><strong>For Items:</strong></p>
+					  	<ul>
+					  		<li><span class="hl">SHOWITEMRESISTSTATS=0</span> // If enabled, shows item resist stats from AoS and beyond in item tooltips</li>
+					  		<li><span class="hl">SHOWWEAPONDAMAGETYPES=1</span> // If enabled, shows weapon damage types from AoS and beyond in item tooltips</li>
+					  	</ul>
+						</div>
+
+				  	<h3>Custom Tooltips</h3>
+				  	<p>Custom tooltips can be displayed for both characters and items via the <a href="jsdocs.html#eventOnTooltip" title="UOX3 JS Docs - onTooltip Event">JS Event <strong>onTooltip</strong></a>, which will be triggered whenever object information is being sent to the client (whether for the first time or as a refresh).</p>
+				  	<p>The <strong>string of text returned from this event</strong> will be displayed alongside other tooltips when mousing over/clicking on dynamic objects in the game, while two distinct temporary tags can be set on the object to specify which <strong>cliloc-id</strong> to use for the tooltip entry, and which <strong>sorting order</strong> to use:</p>
+				  	<ul>
+				  		<li><span class="hl">clilocTooltip"</span> - defines which entry from client-side cliloc dictionaries to display in tooltip</li>
+				  		<li><span class="hl">"tooltipSortOrder"</span> - defines how entry will be sorted in tooltip</li>
+				  	</ul>
+				  	<p>If no cliloc ID or sort order is provided, default values will be used.</p>
+						<input type="checkbox" id="spoiler_tooltip_example">
+						<label for="spoiler_tooltip_example"><em>Example of custom tooltip</em> <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>
+<pre><code class="language-javascript">// This tooltip will be shown <em>after</em> the [Blessed] entry for newbie items (which has a hardcoded sorting order of 20)
+function onTooltip( myItem, pSocket )
+{
+    tooltipText = "My Custom Tooltip";
+    myItem.SetTempTag( "tooltipSortOrder", 21 );
+
+    return tooltipText;
+}</code></pre>
+				  		</p>
+				  	</div>
+						<input type="checkbox" id="spoiler_tooltip_sorting">
+						<label for="spoiler_tooltip_sorting"><em>List of hard-coded tooltip sorting</em> <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<h4>Items</h4>
+							<ul>
+								<li>0 - name</li>
+								<li>5 - maker's mark</li>
+								<li>10 - locked down state</li>
+								<li>15 - [Guarded]</li>
+								<li>20 - [Blessed]</li>
+								<li>25 - locked state (door)</li>
+								<li>30 - custom tooltips (default)</li>
+								<li>35 - [Locked] (container)</li>
+								<li>40 - weight (container)</li>
+								<li>45 - capacity (container)/[Locked] (spawn container)/house sign name/[unidentified] magic item/potion/recall rune facet name/weight</li>
+								<li>50 - house sign owner name</li>
+								<li>55 - physical damage %</li>
+								<li>60 - light damage %</li>
+								<li>65 - rain damage %</li>
+								<li>70 - cold damage %</li>
+								<li>75 - fire damage %</li>
+								<li>80 - energy damage %</li>
+								<li>85 - poison damage %</li>
+								<li>90 - snow damage %</li>
+								<li>95 - storm damage %</li>
+								<li>100 - weapon damage</li>
+								<li>105 - weapon speed</li>
+								<li>110 - one/two-handed weapon</li>
+								<li>115 - skill required</li>
+								<li>120 - physical resist %/Armor Rating</li>
+								<li>125 - fire resist %</li>
+								<li>130 - cold resist %</li>
+								<li>135 - poison resist %</li>
+								<li>140 - energy/electrical resist %</li>
+								<li>145 - durability</li>
+								<li>150 - strength bonus</li>
+								<li>155 - dexterity bonus</li>
+								<li>160 - intelligence bonus</li>
+								<li>165 - hit point regeneration</li>
+								<li>170 - stamina regeneration</li>
+								<li>175 - mana regeneration</li>
+								<li>180 - swing speed increase</li>
+								<li>185 - damage increase</li>
+								<li>190 - luck</li>
+								<li>195 - hit chance increase</li>
+								<li>200 - defense chance increase increase</li>
+								<li>205 - hit point increase</li>
+								<li>210 - stamina increase</li>
+								<li>215 - mana increase</li>
+								<li>220 - artifact rarity</li>
+								<li>225 - durability</li>
+								<li>230 - uses remaining</li>
+								<li>235 - hit mana leech</li>
+								<li>240 - hit stamina leech</li>
+								<li>245 - hit life leech</li>
+								<li>250 - spell channeling</li>
+								<li>255 - mage armor</li>
+								<li>260 - strength requirement</li>
+								<li>265 - dexterity requirement</li>
+								<li>270 - intelligence requirement</li>
+								<li>275 - lower requirements</li>
+								<li>280 - tithing</li>
+								<li>285 - price (player vendor item)</li>
+								<li>290 - Seller's Description (player vendor item)</li>
+							</ul>
+							<h4>Characters</h4>
+							<ul>
+								<li>0 - name</li>
+								<li>5 - guild title</li>
+								<li>10 - race name</li>
+								<li>15 - [Guarded]</li>
+								<li>20 - npc title</li>
+								<li>30 - custom tooltip (default)</li>
+							</ul>
+						</div>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#pvpRuleSet" id="pvpRuleSet"><span>PvP Ruleset</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
@@ -7311,7 +7457,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Inherit properties from NPC defined by npcSectionID in NPC DFNs</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">gett2a/gettd/getuor/getlbr/getpub15/getaos/getse/getml/getsa/gettol</span>=<strong>[npcSectionID]</strong><br>
+							<p><span class="hl">getuo/gett2a/gettd/getuor/getlbr/getaos/getse/getml/getsa/gettol</span>=<strong>[npcSectionID]</strong><br>
 							Inherit properties from NPC defined by npcSectionID in NPC DFNs, based on selected era in expansion settings of uox.ini</p>
 						</div>
 						<div class="settingsDiv">
@@ -7878,7 +8024,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Inherit properties of item with specified itemSectionID from item DFNs</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">gett2a/gettd/getuor/getlbr/getpub15/getaos/getse/getml/getsa/gettol</span>=<strong>[itemSectionID]</strong><br>
+							<p><span class="hl">getuo/gett2a/gettd/getuor/getlbr/getaos/getse/getml/getsa/gettol</span>=<strong>[itemSectionID]</strong><br>
 							Inherit properties from Item defined by itemSectionID in Item DFNs, based on selected era in expansion settings of uox.ini</p>
 						</div>
 						<div class="settingsDiv">
@@ -11984,8 +12130,8 @@ function commandTitle()
 						<input type="checkbox" id="spoiler_history_halloffame_active"/>
 						<label for="spoiler_history_halloffame_active"><h3>Active Contributors</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Contributors active within last year (as of November 2023):</p>
-							<p><span class="hl">Xuri, punt, Dragon Slayer, Azzerhoden Razeri, ldilley</span><br></p>
+							<p>Contributors active within last year (as of April 2025):</p>
+							<p><span class="hl">Xuri, Dragon Slayer, Maarc</span><br></p>
 						</div>
 					</div>
 				  </div>
