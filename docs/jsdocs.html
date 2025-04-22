@@ -13883,8 +13883,8 @@ Timer.SOCK_TRAFFICWARDEN 	// Time until next time traffic warden resets</code></
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 										<pre><code class="language-javascript">// Get timestamp for when player can next use an object, and spit out remaining time in milliseconds
-var objectDelayTimestamp = myChar.GetTimer( Timer.SOCK_OBJDELAY );
-myChar.TextMessage(( myTarget.GetTimer( Timer.SOCK_OBJDELAY ) - GetCurrentClock() ).toString() );
+var objectDelayTimestamp = mySock.GetTimer( Timer.SOCK_OBJDELAY );
+myChar.TextMessage(( objectDelayTimestamp - GetCurrentClock() ).toString() );
 
 // Set time from now in milliseconds until next time player can use another item
 mySock.SetTimer( timer.SOCK_OBJDELAY, 3000 );</code></pre>
@@ -13926,25 +13926,6 @@ mySock.SetTimer( timer.SOCK_OBJDELAY, 3000 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<p><strong>See FirstTriggerWord() Method</strong></p>
-								</div>
-							</div>
-						</div>
-
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_socket_openContainer"/>
-							<label for="spoiler_method_socket_openContainer">OpenContainer <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>void OpenContainer( iCont )</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Opens the specified container (iCont) for the specified socket</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">socket.OpenContainer( iCont );</code></pre>
 								</div>
 							</div>
 						</div>
