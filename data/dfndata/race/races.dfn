@@ -25,6 +25,7 @@
 //*	HEATDAMAGE=# - Max amount of damage taken by heat	  *
 //*	HEATSECS=# - How often heat damages in seconds		  *
 //*	HPMOD=# - Max health modificator			  *
+//* HEALTHREGENBONUS=# - HP Regen Bonus over 10 seconds of regen
 //*	HUNGER=#,# - The first number is the time between hunger  *
 //*		     checks, the second one the damage when starving
 //*	INTCAP=# - INTELLECT cap of race			  *
@@ -38,6 +39,7 @@
 //*	LANGUAGEMIN=#						  *
 //*	MAGICRESISTANCE=#					  *
 //*	MANAMOD=# - Max mana modificator			  *
+//* MANAREGENBONUS=# - Mana Regen Bonus over 10 seconds of regen
 //*	NAME=abc - Name of the race				  *
 //*	NOBEARD							  *
 //*	NIGHTVIS=# - Default night vision level			  *
@@ -63,6 +65,7 @@
 //*	STORMDAMAGE=# - Max amount of damage taken by storm	  *
 //*	STORMSECS=# - How often storm damages in seconds	  *
 //*	STAMMOD=# - Max stamina modificator			  *
+//* STAMINAREGENBONUS=# - Stamina Regen Bonus over 10 seconds of regen
 //*	VISRANGE=# - Default visibility range			  *
 //*								  *
 //*                                                               *
@@ -95,6 +98,9 @@ INTCAP=100
 PLAYERRACE=0
 BANEQUIPLIST=1
 BANEQUIPLIST=2
+HEALTHREGENBONUS=0
+STAMINAREGENBONUS=0
+MANAREGENBONUS=0
 }
 
 [RACE 1]
@@ -104,6 +110,9 @@ NAME=Elf
 PLAYERRACE=0
 NOBEARD
 BANEQUIPLIST=2
+HEALTHREGENBONUS=0
+STAMINAREGENBONUS=0
+MANAREGENBONUS=0
 }
 
 [RACE 2]
@@ -115,6 +124,9 @@ RACIALAID=3
 NOBEARD
 ALLOWEQUIPLIST=0
 ALLOWEQUIPLIST=2
+HEALTHREGENBONUS=0
+STAMINAREGENBONUS=0
+MANAREGENBONUS=2
 }
 
 [RACE 3]

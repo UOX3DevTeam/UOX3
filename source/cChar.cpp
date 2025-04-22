@@ -2987,7 +2987,11 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
-			IncSwingSpeedIncrease( itemLayers[tLayer]->GetSwingSpeedIncrease() );
+			IncHealthRegenBonus( itemLayers[tLayer]->GetHealthRegenBonus() );
+			IncStaminaRegenBonus( itemLayers[tLayer]->GetStaminaRegenBonus() );
+			IncManaRegenBonus( itemLayers[tLayer]->GetManaRegenBonus() );
+
+      IncSwingSpeedIncrease( itemLayers[tLayer]->GetSwingSpeedIncrease() );
 
 			IncHealthLeech( itemLayers[tLayer]->GetHealthLeech() );
 			IncStaminaLeech( itemLayers[tLayer]->GetStaminaLeech() );
@@ -3081,6 +3085,10 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncStrength2( -itemLayers[Layer]->GetStrength2() );
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
+
+		IncHealthRegenBonus( -itemLayers[Layer]->GetHealthRegenBonus() );
+		IncStaminaRegenBonus( -itemLayers[Layer]->GetStaminaRegenBonus() );
+		IncManaRegenBonus( -itemLayers[Layer]->GetManaRegenBonus() );
 
 		IncSwingSpeedIncrease( -itemLayers[Layer]->GetSwingSpeedIncrease() );
 
@@ -5394,6 +5402,7 @@ void CChar::TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spa
 		va_list argptr;
 		va_start( argptr, spamTimer );
 		auto msg = oldstrutil::format( txt, argptr );
+		va_end( argptr ); // va_end in same function as va_start
 		if( msg.size() > 512 )
 		{
 			msg = msg.substr( 0, 512 );

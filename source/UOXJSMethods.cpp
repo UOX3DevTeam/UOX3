@@ -10584,10 +10584,11 @@ JSBool CBase_Resist( JSContext *cx, uintN argc, jsval *vp )
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_Defense()
-//|	Prototype	-	int Defense( hitLoc, damageType, doArmorDamage )
+//|	Prototype	-	int Defense( hitLoc, damageType, doArmorDamage, ignoreMedable, includeShield )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the defense value against damageType of the armor item at the location
-//|					hitLoc and does armor damage if needed
+//|					hitLoc and does armor damage if needed, and can also exclude medable armor (optional),
+//|					and include shield defense value (optional)
 //o------------------------------------------------------------------------------------------------o
 //|	Notes		-	hitLoc = the hit location
 //|						0 the whole char
@@ -10602,9 +10603,9 @@ JSBool CChar_Defense( JSContext *cx, uintN argc, jsval *vp )
 {
 	jsval *argv = JS_ARGV( cx, vp );
 	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	if( argc != 3)
+	if( argc < 3 || argc > 5 )
 	{
-		ScriptError( cx, "Defense: Invalid number of arguments (takes 3, the hit location, the resist type and if the armor should get damaged)" );
+		ScriptError( cx, "Defense: Invalid number of arguments (takes 3-5, the hit location, the resist type, if the armor should get damaged, (optional) whether to ignore medable armor and (optional) whether to include shield)" );
 		return JS_FALSE;
 	}
 
@@ -10630,8 +10631,10 @@ JSBool CChar_Defense( JSContext *cx, uintN argc, jsval *vp )
 	JSEncapsulate hitLoc( cx, &( argv[0] ));
 	JSEncapsulate resistType( cx, &( argv[1] ));
 	JSEncapsulate doArmorDamage( cx, &( argv[2] ));
+	bool excludeMedableArmor = ( argc == 4 ? ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE ) : false );
+	bool includeShield = ( argc == 5 ? ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE ) : false );
 
-	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( Combat->CalcDef( mChar, static_cast<UI08>( hitLoc.toInt() ), doArmorDamage.toBool(), static_cast<WeatherType>( resistType.toInt() ))) );
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( Combat->CalcDef( mChar, static_cast<UI08>( hitLoc.toInt() ), doArmorDamage.toBool(), static_cast<WeatherType>( resistType.toInt() ), excludeMedableArmor, includeShield )) );
 	return JS_TRUE;
 }
 

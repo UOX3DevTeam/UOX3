@@ -1174,6 +1174,30 @@ auto CItem::SetArmourClass( ARMORCLASS newValue ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetNonMedableArmourRating()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns physical resist value of armor, if it's non-medable/not a mage armor
+//o------------------------------------------------------------------------------------------------o
+auto CItem::GetNonMedableArmorRating() const -> R64
+{
+	auto rVal = 0;
+	// Check for mage armor property here, return 0 if found
+	// Mage armor is defined using the second part of the MORE property. If it's 1, it's a mage armor!
+	// Allows for meditation in armor pieces that are usually non-medable
+	if( GetTempVar( CITV_MORE, 2 ) == 1 )
+		return rVal;
+
+	// Return physical resist value if armor is not medable
+	// Medable armor is defined using the first part of the MORE property. If it's 1, it's medable!
+	if( GetTempVar( CITV_MORE, 1 ) == 0 )
+	{
+		rVal = this->GetResist( PHYSICAL );
+	}
+	
+	return rVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetRank()
 //|					CItem::SetRank()
 //o------------------------------------------------------------------------------------------------o

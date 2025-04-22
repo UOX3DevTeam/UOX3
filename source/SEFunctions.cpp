@@ -2821,6 +2821,7 @@ JSBool SE_Reload( JSContext *cx, uintN argc, jsval *vp )
 			FileLookup->Reload();
 			LoadSkills();
 			Skills->Load();
+			Races->Load();
 			break;
 		case 5: // Reload JScripts
 			messageLoop << MSG_RELOADJS;
@@ -2842,6 +2843,7 @@ JSBool SE_Reload( JSContext *cx, uintN argc, jsval *vp )
 			Commands->Load();
 			LoadSkills();
 			Skills->Load();
+			Races->Load();
 			messageLoop << MSG_RELOADJS;
 			HTMLTemplates->Unload();
 			HTMLTemplates->Load();
@@ -5366,6 +5368,15 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 			case 349:	 // LOOTDECAYSWITHPLAYERCORPSE
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->NpcCorpseLootDecay() ) );
 				break;
+			case 350:	// HEALTHREGENCAP
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HealthRegenCap() ) ) );
+				break;
+			case 351:	// STAMINAREGENCAP
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->StaminaRegenCap() ) ) );
+				break;
+			case 352:	// MANAREGENCAP
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ManaRegenCap() ) ) );
+				break;
 			case 353:	// SWINGSPEEDINCREASECAP
 				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->SwingSpeedIncreaseCap() )) );
 				break;
@@ -5392,6 +5403,51 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 				break;
 			case 361:	// DAMAGEINCREASECAP
 				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->DamageIncreaseCap() )) );
+				break;
+			case 362:	// HEALINGAFFECTHEALTHREGEN
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HealingAffectHealthRegen() ) );
+				break;
+			case 363:	// HEALTHREGENMODE
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->HealthRegenMode() ) ) );
+				break;
+			case 364:	// STAMINAREGENMODE
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->StaminaRegenMode() ) ) );
+				break;
+			case 365:	// MANAREGENMODE
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->ManaRegenMode() ) ) );
+				break;
+			case 366:	// HUNGERAFFECTHEALTHREGEN
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HungerAffectHealthRegen() ) );
+				break;
+			case 367:	// THIRSTAFFECTSTAMINAREGEN
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ThirstAffectStaminaRegen() ) );
+				break;
+			case 368:	// HUMANHEALTHREGENBONUS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HumanHealthRegenBonus() ) ) );
+				break;
+			case 369:	// HUMANSTAMINAREGENBONUS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HumanStaminaRegenBonus() ) ) );
+				break;
+			case 370:	// HUMANMANAREGENBONUS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HumanManaRegenBonus() ) ) );
+				break;
+			case 371:	// ELFHEALTHREGENBONUS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ElfHealthRegenBonus() ) ) );
+				break;
+			case 372:	// ELFSTAMINAREGENBONUS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ElfStaminaRegenBonus() ) ) );
+				break;
+			case 373:	// ELFMANAREGENBONUS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ElfManaRegenBonus() ) ) );
+				break;
+			case 374:	// GARGOYLEHEALTHREGENBONUS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleHealthRegenBonus() ) ) );
+				break;
+			case 375:	// GARGOYLESTAMINAREGENBONUS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleStaminaRegenBonus() ) ) );
+				break;
+			case 376:	// GARGOYLEMANAREGENBONUS
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleManaRegenBonus() ) ) );
 				break;
       default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );

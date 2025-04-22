@@ -1797,6 +1797,7 @@ void CTownRegion::TellMembers( SI32 dictEntry, ...)
 			va_list argptr;
 			va_start( argptr, dictEntry );
 			msg += oldstrutil::format( txt, argptr );
+			va_end( argptr ); // va_end in same function as va_start
 
 			if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 			{
