@@ -373,7 +373,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"HEALTHREGENCAP"s, 350},
 	{"STAMINAREGENCAP"s, 351},
 	{"MANAREGENCAP"s, 352},
-  {"SWINGSPEEDINCREASECAP"s, 353},
+	{"SWINGSPEEDINCREASECAP"s, 353},
 	{"KARMALOCKING"s, 354},
 	{"PHYSICALRESISTCAP"s, 355},
 	{"FIRERESISTCAP"s, 356},
@@ -396,7 +396,10 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"ELFMANAREGENBONUS"s, 373},
 	{"GARGOYLEHEALTHREGENBONUS"s, 374},
 	{"GARGOYLESTAMINAREGENBONUS"s, 375},
-	{"GARGOYLEMANAREGENBONUS"s, 376}
+	{"GARGOYLEMANAREGENBONUS"s, 376},
+	{"HUMANMAXWEIGHTBONUS"s, 377},
+	{"ELFMAXWEIGHTBONUS"s, 378},
+	{"GARGOYLEMAXWEIGHTBONUS"s, 379}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -829,12 +832,15 @@ auto CServerData::ResetDefaults() -> void
 	HumanHealthRegenBonus( 0 ); // 2 from ML and onwards
 	HumanStaminaRegenBonus( 0 );
 	HumanManaRegenBonus( 0 );
+	HumanMaxWeightBonus( 0 );
 	ElfHealthRegenBonus( 0 );
 	ElfStaminaRegenBonus( 0 );
 	ElfManaRegenBonus( 0 );
+	ElfMaxWeightBonus( 0 );
 	GargoyleHealthRegenBonus( 0 );
 	GargoyleStaminaRegenBonus( 0 );
 	GargoyleManaRegenBonus( 2 ); // 2 from SA and onwards
+	GargoyleMaxWeightBonus( 0 );
 
 	BuyThreshold( 2000 );
 	GuardStatus( true );
@@ -2020,6 +2026,21 @@ auto CServerData::HumanManaRegenBonus( SI16 value ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HumanMaxWeightBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default max weight bonus for human race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HumanMaxWeightBonus() const -> SI16
+{
+	return humanMaxWeightBonus;
+}
+auto CServerData::HumanMaxWeightBonus( SI16 value ) -> void
+{
+	humanMaxWeightBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ElfHealthRegenBonus()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default health regen bonus for elf race
@@ -2065,6 +2086,21 @@ auto CServerData::ElfManaRegenBonus( SI16 value ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ElfMaxWeightBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default max weight bonus for elf race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ElfMaxWeightBonus() const -> SI16
+{
+	return elfMaxWeightBonus;
+}
+auto CServerData::ElfMaxWeightBonus( SI16 value ) -> void
+{
+	elfMaxWeightBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::GargoyleHealthRegenBonus()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default health regen bonus for gargoyle race
@@ -2107,6 +2143,21 @@ auto CServerData::GargoyleManaRegenBonus() const -> SI16
 auto CServerData::GargoyleManaRegenBonus( SI16 value ) -> void
 {
 	gargoyleManaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GargoyleMaxWeightBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default max weight bonus for gargoyle race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GargoyleMaxWeightBonus() const -> SI16
+{
+	return gargoyleMaxWeightBonus;
+}
+auto CServerData::GargoyleMaxWeightBonus( SI16 value ) -> void
+{
+	gargoyleMaxWeightBonus = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5379,12 +5430,15 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "HUMANHEALTHREGENBONUS=" << HumanHealthRegenBonus() << '\n';
 		ofsOutput << "HUMANSTAMINAREGENBONUS=" << HumanStaminaRegenBonus() << '\n';
 		ofsOutput << "HUMANMANAREGENBONUS=" << HumanManaRegenBonus() << '\n';
+		ofsOutput << "HUMANMAXWEIGHTBONUS=" << HumanMaxWeightBonus() << '\n';
 		ofsOutput << "ELFHEALTHREGENBONUS=" << ElfHealthRegenBonus() << '\n';
 		ofsOutput << "ELFSTAMINAREGENBONUS=" << ElfStaminaRegenBonus() << '\n';
 		ofsOutput << "ELFMANAREGENBONUS=" << ElfManaRegenBonus() << '\n';
+		ofsOutput << "ELFMAXWEIGHTBONUS=" << ElfMaxWeightBonus() << '\n';
 		ofsOutput << "GARGOYLEHEALTHREGENBONUS=" << GargoyleHealthRegenBonus() << '\n';
 		ofsOutput << "GARGOYLESTAMINAREGENBONUS=" << GargoyleStaminaRegenBonus() << '\n';
 		ofsOutput << "GARGOYLEMANAREGENBONUS=" << GargoyleManaRegenBonus() << '\n';
+		ofsOutput << "GARGOYLEMAXWEIGHTBONUS=" << GargoyleMaxWeightBonus() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
@@ -7123,6 +7177,15 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 376:	// GARGOYLEMANAREGENBONUS
 			GargoyleManaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 377:	// HUMANMAXWEIGHTBONUS
+			HumanMaxWeightBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 378:	// ELFMAXWEIGHTBONUS
+			ElfMaxWeightBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 379:	// GARGOYLEMAXWEIGHTBONUS
+			GargoyleMaxWeightBonus( std::stoi( value, nullptr, 0 ));
 			break;
 		default:
 			rValue = false;

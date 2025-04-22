@@ -27,7 +27,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 22. April, 2025</small></p>
+	<p style="margin:0"><small>Last Updated: 23. April, 2025</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6b</small></p>
 </div>
 
@@ -60,6 +60,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>April 23nd, 2025</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on additional settings: HUMANMAXWEIGHTBONUS, ELFMAXWEIGHTBONUS, GARGOYLEMAXWEIGHTBONUS</li>
+						</ul>
 						<h4>April 22nd, 2025</h4>
 						<ul>
 							<li>Added <a href="#objectTooltips">Object Tooltips</a> feature info with details on how object tooltips work in UOX3, including how custom tooltips can be added.</li>
@@ -1523,6 +1527,10 @@ packitem=0x0f8d,30
 							Defines the default mana regen bonus for the human race (race 0 in races.dfn). Defaults to 0 for all eras.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">HUMANMAXWEIGHTBONUS</span><strong>=0</strong><br>
+							Defines the default max weight bonus for the human race (race 0 in races.dfn). From Mondain's Legacy expansion and onwards, this would be set to a value of 60 (for 60 extra stones of capacity) for humans.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">ELFHEALTHREGENBONUS</span><strong>=0</strong><br>
 							Defines the default health regen bonus for the elf race (race 1 in races.dfn). Defaults to 0 for all eras.</p>
 						</div>
@@ -1535,6 +1543,10 @@ packitem=0x0f8d,30
 							Defines the default mana regen bonus for the elf race (race 1 in races.dfn). Defaults to 0 for all eras.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">ELFMAXWEIGHTBONUS</span><strong>=0</strong><br>
+							Defines the default max weight bonus for the elf race (race 1 in races.dfn).</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">GARGOYLEHEALTHREGENBONUS</span><strong>=0</strong><br>
 							Defines the default health regen bonus for the gargoyle race (race 2 in races.dfn). Defaults to 0 for all eras.</p>
 						</div>
@@ -1545,6 +1557,10 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">GARGOYLEMANAREGENBONUS</span><strong>=0</strong><br>
 							Defines the default mana regen bonus for the gargoyle race (race 2 in races.dfn). From Stygian Abyss expansion and onwards, this would be set to a value of 2.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">GARGOYLEMAXWEIGHTBONUS</span><strong>=0</strong><br>
+							Defines the default max weight bonus for the gargoyle race (race 2 in races.dfn).</p>
 						</div>
 					</div>
 
@@ -8388,6 +8404,14 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Members of the race can equip items listed in the specified EQUIPLIST section</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">ALLSKILLSG</span>=<strong>[combatModID]</strong></strong><br>
+							Bonus applied to skill checks for ALL skills, based on percentage value provided in [COMBAT MODS] section for specified ID. For instance, ALLSKILLSG=3 will apply a 20% bonus to all skill checks for members of a race with that tag, if using the default [COMBAT MODS] section.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ALLSKILLSL</span>=<strong>[combatModID]</strong></strong><br>
+							Penalty applied to skill checks for ALL skills, based on percentage value provided in [COMBAT MODS] section for specified ID. For instance, ALLSKILLSL=3 will apply a 20% penalty to all skill checks for members of a race with that tag, if using the default [COMBAT MODS] section.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">ARMORREST</span>=<strong>[number]</strong></strong><br>
 							Sets the armor class restriction of the race (0-127). Race will be unable to equip any armor with the specified AC, or which contains an AC included in the ARMORREST value (which can combine multiple ac values, which are checked using bit comparison)</p>
 						</div>
@@ -8508,6 +8532,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Adjusts maximum mana of member of the race by a percentage value of the character's intelligence. Example: 100 base mana, 50 intelligence and MANAMOD=50 will give a character max mana of <span class="hl">100 + ( 50 * 0.50 ) = 125</span></p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">MAXWEIGHTBONUS</span>=<strong>[number]</strong><br>
+							Bonus to max weight capacity for members of race</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">NAME</span>=<strong>[text]</strong><br>
 							Name of the race</p>
 						</div>
@@ -8564,7 +8592,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Bonus applied to skill checks for specified SKILLNAME, based on percentage value provided in [COMBAT MODS] section for specified ID. For instance, SWORDSMANSHIPG=3 will apply a 20% bonus to swordsmanship skill checks for members of a race with that tag, if using the default [COMBAT MODS] section. The same bonus is also applied to base damage in combat, before other damage modifiers.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">[SKILLNAME]L</span>=<strong>[number]</strong><br>
+							<p><span class="hl">[SKILLNAME]L</span>=<strong>[combatModID]</strong><br>
 							Penalty applied to skill checks for specified SKILLNAME, based on percentage value provided in [COMBAT MODS] section for specified ID. For instance, SWORDSMANSHIPL=3 will apply a 20% penalty to swordsmanship skill checks for members of a race with that tag, if using the default [COMBAT MODS] section. The same penalty is also applied to base damage in combat, before other damage modifiers.</p>
 						</div>
 						<div class="settingsDiv">
@@ -8635,6 +8663,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						<div class="settingsDiv">
 							<p><span class="hl">chanceforbigore</span>=<strong>[percentage]</strong><br>
 							Chance from 0 to 100 of finding 5 ores instead of 1 while mining in this region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">disabled</span>=<strong>[0/1]</strong><br>
+							If set to 1, marks this region as disabled, and causes it to be ignored by UOX3. Region can still be enabled dynamically via JS scripts, though.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">dungeon</span>=<strong>[0/1]</strong><br>

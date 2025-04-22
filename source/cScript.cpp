@@ -3597,7 +3597,7 @@ bool cScript::MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI3
 //|	Purpose		-	Called after IterateOver JS function is used, and iterates over all items or
 //|					characters (as specified) in the game
 //o------------------------------------------------------------------------------------------------o
-bool cScript::OnIterate( CBaseObject *a, UI32 &b )
+bool cScript::OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock )
 {
 	if( !ValidateObject( a ))
 		return true;
@@ -3605,7 +3605,7 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 	if( !ExistAndVerify( seOnIterate, "onIterate" ))
 		return false;
 
-	jsval params[1], rval;
+	jsval params[2], rval;
 
 	JSObject *myObj = nullptr;
 	if( a->GetObjType() == OT_CHAR )
@@ -3617,9 +3617,16 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 		myObj = JSEngine->AcquireObject( IUE_ITEM, a, runTime );
 	}
 
-	params[0] = OBJECT_TO_JSVAL( myObj );
+	JSObject *sockObj = nullptr;
+	if( mSock )
+	{
+		sockObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	}
 
-	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onIterate", 1, params, &rval );
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( sockObj );
+
+	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onIterate", 2, params, &rval );
 
 	/*	if( ValidateObject( a ))
 	{

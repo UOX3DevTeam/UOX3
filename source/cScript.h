@@ -180,7 +180,7 @@ public:
 	bool		OnStop( void );
 	//
 	bool		OnPacketReceive( CSocket *mSock, UI16 packetNum );
-	bool		OnIterate( CBaseObject *a, UI32 &b );
+	bool		OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock );
 	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
 	bool		DoesEventExist( char *eventToFind );

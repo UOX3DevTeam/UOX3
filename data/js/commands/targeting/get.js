@@ -172,6 +172,8 @@ function onCallback0( socket, ourObj )
 		socket.SysMessage( ourObj.region.id + " ( " + ourObj.region.name + ")" );
 		break;
 	case "DEF":
+	case "ARMOUR":
+	case "ARMOR":
 	case "RESISTARMOR":
 		socket.SysMessage( ourObj.Resist( 1 ));
 		break;
@@ -652,29 +654,6 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "VISIBLE":
 		socket.SysMessage( ourChar.visible );
-		break;
-	case "ARMOUR":
-	case "ARMOR":
-	case "RESISTARMOR":
-		socket.SysMessage( ourChar.Resist( 1 ));
-		break;
-	case "RESISTLIGHT":
-		socket.SysMessage( ourChar.Resist( 2 ));
-		break;
-	case "RESISTWATER":
-		socket.SysMessage( ourChar.Resist( 3 ));
-		break;
-	case "RESISTCOLD":
-		socket.SysMessage( ourChar.Resist( 4 ));
-		break;
-	case "RESISTFIRE":
-		socket.SysMessage( ourChar.Resist( 5 ));
-		break;
-	case "RESISTENERGY":
-		socket.SysMessage( ourChar.Resist( 6 ));
-		break;
-	case "RESISTPOISON":
-		socket.SysMessage( ourChar.Resist( 7 ));
 		break;
 	case "MAXHP":
 		socket.SysMessage( ourChar.maxhp );

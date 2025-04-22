@@ -28,7 +28,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 20. April, 2025</small></p>
+	<p style="margin:0"><small>Last Updated: 23. April, 2025</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6b</small></p>
 </div>
 
@@ -55,6 +55,13 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>April 23rd, 2025</h4>
+						<ul>
+							<li>Added details for new JS Methods: AddSkill, TurnBoat</li>
+							<li>Updated details for JS Method: Refresh</li>
+							<li>Updated details for JS Function: IterateOver</li>
+							<li>Updated details for JS Event: onIterate</li>
+						</ul>
 						<h4>October 27th, 2023</h4>
 						<ul>
 							<li>Updated details for JS Function: SetRandomName</li>
@@ -2460,7 +2467,7 @@ function onEnterRegion( pEntering, regionEntered )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onIterate( object )</em></p>
+							<p><em>function onIterate( object[, socket] )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -2479,11 +2486,12 @@ function onEnterRegion( pEntering, regionEntered )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>The IterateOver() function will return a count of all objects that onIterate returned true for.</p>
+							<p>The IterateOver() function will return a count of all objects that onIterate returned true for. It also supports an optional socket parameter, which can be passed in via the IterateOver Function.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function doStuff( socket, pUser )
+<pre><code class="language-javascript">// Example without socket parameter
+function KillNPCs( socket, pUser )
 {
 	socket.SysMessage( "Killing all NPCs (including invulnerable ones!)" );
 	var numKilled = IterateOver( "CHARACTER" );
@@ -2498,7 +2506,26 @@ function onIterate( charCheck )
 		return true;
 	}
 	return false;
-}</code></pre></p>
+}
+
+// Example with the optional socket parameter:
+function KillAllMurderers( socket, pUser )
+{
+	var numKilled = IterateOver( "CHARACTER", socket );
+	pUser.TextMessage( "I killed " + numKilled + " murderers!" );
+}
+
+function onIterate( charCheck, socket )
+{
+	if( ValidateObject( charCheck ) && !charCheck.npc && charCheck.murderer )
+	{
+		socket.SysMessage( "Found a murderer by the name of " + charCheck.name + "! Killing..." );
+		charCheck.Kill();
+		return true;
+	}
+	return false;
+}
+</code></pre></p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -6773,7 +6800,7 @@ var socket = GetSocketFromIndex( 0 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>int IterateOver( objectType );</em></p>
+									<p><em>int IterateOver( objectType[, socket] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -6781,7 +6808,7 @@ var socket = GetSocketFromIndex( 0 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>For every object it comes across, the iterator will call a function <strong>onIterate( object )</strong> in the same script. Supported object types: "BASEOBJ", "CHARACTER", "ITEM", "SPAWNER", "MULTI", "BOAT"</p>
+									<p>For every object it comes across, the iterator will call a function <strong>onIterate( object[, socket] )</strong> in the same script. Supported object types: "BASEOBJ", "CHARACTER", "ITEM", "SPAWNER", "MULTI", "BOAT". If the optional socket parameter is included in IterateOver, it will be passed to the onIterate event.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -8340,16 +8367,19 @@ myObject.KillTimers( 1 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void Refresh();</em></p>
+									<p><em>void Refresh( [socket] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Causes the Character/Item to be refreshed for nearby sockets in range to see it</p>
+									<p>Causes the Character/Item to be refreshed for nearby sockets in range to see it. If a specific socket is specified, object will be refreshed only for that socket.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Refreshes myObj by sending it to all nearby sockets
-myObj.Refresh();</code></pre>
+myObj.Refresh();
+
+// Refreshes myObj for a specific socket/player only
+myObj.Refresh( mySocket );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -8777,6 +8807,25 @@ myChar.UpdateStats( 2 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">pUser.AddPermaGreyFlag( otherChar );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_addSkill"/>
+							<label for="spoiler_method_char_addSkill">AddSkill <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void AddSkill( skillID, skillAmt, triggerEvents [true/false] )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Grant skill points to a character without triggering skillchange JS events. Useful if adding skill points from within a skillchange event, to avoid infinite loops!</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myChar.AddSkill( 0, 10, false ); // Adds 1.0 skillpoints to skill with ID 0 (Alchemy) without triggering skill change JS events</code></pre>
 								</div>
 							</div>
 						</div>
@@ -12853,6 +12902,36 @@ if( iSecure )
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_TurnBoat"/>
+							<label for="spoiler_method_multi_TurnBoat">TurnBoat <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool TurnBoat( turnDirection );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Turns boat in specified direction, relative to it's current direction</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>turnDirection can be 0 (go straight), 1 (turn left 90 degrees), 2 (turn right 90 degrees) or 3 (flip boat 180 degrees)</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">myBoat.TurnBoat( 0 ); // Do nothing
+
+myBoat.TurnBoat( 1 ); // Turn 90 degrees left
+
+myBoat.TurnBoat( 2 ); // Turn 90 degrees right
+
+myBoat.TurnBoat( 3 ); // Flip boat around 180 degrees
+</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_multi_KillKeys"/>
 							<label for="spoiler_method_multi_KillKeys">KillKeys <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -15932,6 +16011,42 @@ myObject.propertyName = newValue;
 							Get/Set the max number of player vendors allowed in a multi</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.moveType</span> <strong>(int, <em>-1 - 24</em>)</strong><br>
+							Get/Set the active movement type for Boats, which UOX3 will apply to said boat during each boat update until another movement type is set (or boat is forced to stop).</p>
+							<input type="checkbox" id="spoiler_multi_movetype"/>
+							<label for="spoiler_multi_movetype">Supported Move Types <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<ul>
+									<li><span class="hl">-1</span> // Anchored, unable to move</li>
+									<li><span class="hl">0</span> // Stop, don't move</li>
+									<li><span class="hl">1</span> // Move forward</li>
+									<li><span class="hl">2</span> // Move backward</li>
+									<li><span class="hl">3</span> // Move left</li>
+									<li><span class="hl">4</span> // Move right</li>
+									<li><span class="hl">5</span> // Move forward left</li>
+									<li><span class="hl">6</span> // Move forward right</li>
+									<li><span class="hl">7</span> // Move backward left</li>
+									<li><span class="hl">8</span> // Move backward right</li>
+									<li><span class="hl">9</span> // Move left slowly</li>
+									<li><span class="hl">10</span> // Move right slowly</li>
+									<li><span class="hl">11</span> // Move forward slowly</li>
+									<li><span class="hl">12</span> // Move backward slowly</li>
+									<li><span class="hl">13</span> // Move forward left slowly</li>
+									<li><span class="hl">14</span> // Move forward right slowly</li>
+									<li><span class="hl">15</span> // Move backward right slowly</li>
+									<li><span class="hl">16</span> // Move backward left slowly</li>
+									<li><span class="hl">17</span> // Move left once</li>
+									<li><span class="hl">18</span> // Move right once</li>
+									<li><span class="hl">19</span> // Move forward once</li>
+									<li><span class="hl">20</span> // Move backward once</li>
+									<li><span class="hl">21</span> // Move forward left once</li>
+									<li><span class="hl">22</span> // Move forward right once</li>
+									<li><span class="hl">23</span> // Move backward left once</li>
+									<li><span class="hl">24</span> // Move backward right once</li>
+								</ul>
+							</div>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.owners</span> <strong>(int)</strong><br>
 							Get the number of owners in a multi's owner list (Read-Only)</p>
 						</div>
@@ -16077,6 +16192,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.isDungeon</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether region is considered a dungeon. Primarily used for light level stuff, and to determine if houses can be placed in a region (houses cannot be placed in dungeons)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.isDisabled</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Get/Set whether region is disabled. If disabled, UOX3 will ignore it.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.isGuarded</span> <strong>(bool, <em>true/false</em>)</strong><br>

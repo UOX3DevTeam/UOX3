@@ -1,3 +1,34 @@
+23/04/2025 - Xuri
+	Added support for MAXWEIGHTBONUS DFN tag for races, to allow increasing weight that can be carried by specific race, and a new GetWeightMax() code function to do the necessary calculations on demand
+	Updated [default race bonuses] UOX.INI section with the following new settings for the 3 default playable races (only used if nothing else specified in races.dfn):
+		HUMANMAXWEIGHTBONUS=0
+		ELFMAXWEIGHTBONUS=0
+		GARGOYLEMAXWEIGHTBONUS=0
+	Added support for ALLSKILLSG and ALLSKILLSL DFN tags for races, which allow defining skill bonus or loss across all skills for a given race
+	Added new Character JS Method for adding skill points without triggering skillchange JS Events:
+		.AddSkill( skillID, skillAmt, triggerEvents[true/false] )
+	Added new Boat JS Property to allow getting/setting movement types for Boats via scripts:
+		.moveType // See UOX3 JS Engine Docs > JS Object Properties > Multi Properties for a detailed list of all supported movement types
+	Added new Boat JS Method to allow turning boats via scripts:
+		.TurnBoat( turnDir ) // 0 = straight (no turning), 1 = turn left, 2 = turn right, 3 = flip around
+	Updated IterateOver/OnIterate JS Function/Event to support passing in optional socket parameter. New syntax:
+		IterateOver( objectType[, socket ]);
+		.OnIterate( sourceObject, targetObject, socket )
+	Updated Character/Item JS Method .Refresh() to support an optional socket argument, to specify which player to refresh the object for. New syntax:
+		.Refresh( [socket] )
+	Added support for new region setting that can define a region as disabled/enabled via DFN (tag) or script (JS property). Disabled regions will be ignored by UOX3:
+		DISABLED=0/1 // Region DFN tag
+		.isDisabled // Region JS Property
+	Fixed issue where JS tags and temporary JS tags would not be copied over when duplicating a character or item
+	Removed strength requirements from base shield definitions - stats like these are handled per era (dfndata/items/gear/armor/base_armor.dfn)
+	Fixed an issue where necromancer newbie armor would incorrectly inherit base versions of leather armor without stats (dfndata/items/gear/armor/leather_armor/leather.dfn)
+	Fixed an issue where players would not correctly leave combat after hiding (js/skill/hiding.js)
+	Fixed an issue with Healing skill where skill-checks for healing/veterinary would fail due to a misspelled variable (js/skill/healing.js)
+	Updated smart-turn furniture script to prevent players from being able to turn furnitures that are occupied by characters (js/server/misc/furniture_smartturn.js)
+	Updated Buff-bar script to only add buffs for client versions higher than 5.0.2, the client patch where this feature was added (js/server/network/0xDF_buffBar.js)
+	Updated Vendor BDO Dispenser script to add alternative reward-table for AoS era (js/npc/ai/vendor_bdo_dispenser.js)
+	Cleaned up some code (spaces to tabs, indentation, spacing)
+
 22/04/2025 - Xuri
 	Tooltip entries for Characters/Items now have a sorting order associated with them, defined in code via a "sortOrder" parameter in the ToolTipEntry
 	For custom tooltips in scripts, sort order can be set via the temporary tag. Example:

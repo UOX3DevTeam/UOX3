@@ -305,12 +305,15 @@ private:
 	SI16		humanHealthRegenBonus;			//	The default health regen bonus for human race
 	SI16		humanStaminaRegenBonus;			//	The default stamina regen bonus for human race
 	SI16		humanManaRegenBonus;			//	The default mana regen bonus for human race
+	SI16		humanMaxWeightBonus;			//	The default max weight bonus for human race
 	SI16		elfHealthRegenBonus;			//	The default health regen bonus for elf race
 	SI16		elfStaminaRegenBonus;			//	The default stamina regen bonus for elf race
 	SI16		elfManaRegenBonus;				//	The default mana regen bonus for elf race
+	SI16		elfMaxWeightBonus;				//	The default max weight bonus for elf race
 	SI16		gargoyleHealthRegenBonus;		//	The default health regen bonus for gargoyle race
 	SI16		gargoyleStaminaRegenBonus;		//	The default stamina regen bonus for gargoyle race
 	SI16		gargoyleManaRegenBonus;			//	The default mana regen bonus for gargoyle race
+	SI16		gargoyleMaxWeightBonus;			//	The default max weight bonus for gargoyle race
 
 	// Settings
 	SI16		ambientSounds;					//	Ambient sounds - values from 1->10 - higher values indicate sounds occur less often
@@ -1137,6 +1140,9 @@ public:
 	auto		HumanManaRegenBonus( SI16 value ) -> void;
 	SI16		HumanManaRegenBonus() const;
 
+	auto		HumanMaxWeightBonus( SI16 value ) -> void;
+	SI16		HumanMaxWeightBonus() const;
+
 	auto		ElfHealthRegenBonus( SI16 value ) -> void;
 	SI16		ElfHealthRegenBonus() const;
 
@@ -1146,6 +1152,9 @@ public:
 	auto		ElfManaRegenBonus( SI16 value ) -> void;
 	SI16		ElfManaRegenBonus() const;
 
+	auto		ElfMaxWeightBonus( SI16 value ) -> void;
+	SI16		ElfMaxWeightBonus() const;
+
 	auto		GargoyleHealthRegenBonus( SI16 value ) -> void;
 	SI16		GargoyleHealthRegenBonus() const;
 
@@ -1154,6 +1163,9 @@ public:
 
 	auto		GargoyleManaRegenBonus( SI16 value ) -> void;
 	SI16		GargoyleManaRegenBonus() const;
+
+	auto		GargoyleMaxWeightBonus( SI16 value ) -> void;
+	SI16		GargoyleMaxWeightBonus() const;
 
 	auto		CombatNPCBaseReattackAt( SI16 value ) -> void;
 	SI16		CombatNPCBaseReattackAt() const;
