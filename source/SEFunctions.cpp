@@ -2702,6 +2702,7 @@ JSBool SE_Reload( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj
 			FileLookup->Reload();
 			LoadSkills();
 			Skills->Load();
+			Races->Load();
 			break;
 		case 5: // Reload JScripts
 			messageLoop << MSG_RELOADJS;
@@ -2723,6 +2724,7 @@ JSBool SE_Reload( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj
 			Commands->Load();
 			LoadSkills();
 			Skills->Load();
+			Races->Load();
 			messageLoop << MSG_RELOADJS;
 			HTMLTemplates->Unload();
 			HTMLTemplates->Load();
@@ -5124,50 +5126,59 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 335:	// ENABLENPCGUILDPREMIUMS
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->EnableNPCGuildPremiums() );
 				break;
-			case 336:	 // AGGRESSORFLAGTIMER
+			case 336:	// AGGRESSORFLAGTIMER
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_AGGRESSORFLAG )));
 				break;
-			case 337:	 // PERMAGREYFLAGTIMER
+			case 337:	// PERMAGREYFLAGTIMER
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_PERMAGREYFLAG )));
 				break;
-			case 338:	 // STEALINGFLAGTIMER
+			case 338:	// STEALINGFLAGTIMER
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_STEALINGFLAG )));
 				break;
-			case 339:	 // SNOOPAWARENESS
+			case 339:	// SNOOPAWARENESS
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SnoopAwareness() );
 				break;
-			case 340:	 // APSPERFTHRESHOLD
+			case 340:	// APSPERFTHRESHOLD
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->APSPerfThreshold() ));
 				break;
-			case 341:	 // APSINTERVAL
+			case 341:	// APSINTERVAL
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->APSPerfThreshold() ));
 				break;
-			case 342:	 // APSDELAYSTEP
+			case 342:	// APSDELAYSTEP
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->APSDelayStep() ));
 				break;
-			case 343:	 // APSDELAYMAXCAP
+			case 343:	// APSDELAYMAXCAP
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->APSDelayMaxCap() ));
 				break;
-			case 344:	 // YOUNGPLAYERSYSTEM
+			case 344:	// YOUNGPLAYERSYSTEM
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->YoungPlayerSystem() );
 				break;
 			//case 345:	 // YOUNGLOCATION
 				//break;
-			case 346:	 // SECRETSHARDKEY
+			case 346:	// SECRETSHARDKEY
 			{
 				std::string tempString = { cwmWorldState->ServerData()->SecretShardKey() };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
 				*rval = STRING_TO_JSVAL( tString );
 				break;
 			}
-			case 347:	 // MOONGATESFACETS
+			case 347:	// MOONGATESFACETS
 				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->GetMoongateFacetStatus() ));
 				break;
-			case 348:	 // AUTOUNEQUIPPEDCASTING
+			case 348:	// AUTOUNEQUIPPEDCASTING
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AutoUnequippedCasting() );
 				break;
-			case 349:	 // LOOTDECAYSWITHPLAYERCORPSE
+			case 349:	// LOOTDECAYSWITHPLAYERCORPSE
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->NpcCorpseLootDecay() );
+				break;
+			case 350:	// HEALTHREGENCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HealthRegenCap() ));
+				break;
+			case 351:	// STAMINAREGENCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->StaminaRegenCap() ));
+				break;
+			case 352:	// MANAREGENCAP
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ManaRegenCap() ));
 				break;
 			case 353:	// SWINGSPEEDINCREASECAP
 				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->SwingSpeedIncreaseCap() ));
@@ -5195,6 +5206,51 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				break;
 			case 361:	// DAMAGEINCREASECAP
 				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->DamageIncreaseCap() ));
+				break;
+			case 362:	// HEALINGAFFECTHEALTHREGEN
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HealingAffectHealthRegen() );
+				break;
+			case 363:	// HEALTHREGENMODE
+				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->HealthRegenMode() ));
+				break;
+			case 364:	// STAMINAREGENMODE
+				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->StaminaRegenMode() ));
+				break;
+			case 365:	// MANAREGENMODE
+				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->ManaRegenMode() ));
+				break;
+			case 366:	// HUNGERAFFECTHEALTHREGEN
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HungerAffectHealthRegen() );
+				break;
+			case 367:	// THIRSTAFFECTSTAMINAREGEN
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ThirstAffectStaminaRegen() );
+				break;
+			case 368:	// HUMANHEALTHREGENBONUS
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HumanHealthRegenBonus() ));
+				break;
+			case 369:	// HUMANSTAMINAREGENBONUS
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HumanStaminaRegenBonus() ));
+				break;
+			case 370:	// HUMANMANAREGENBONUS
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HumanManaRegenBonus() ));
+				break;
+			case 371:	// ELFHEALTHREGENBONUS
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ElfHealthRegenBonus() ));
+				break;
+			case 372:	// ELFSTAMINAREGENBONUS
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ElfStaminaRegenBonus() ));
+				break;
+			case 373:	// ELFMANAREGENBONUS
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ElfManaRegenBonus() ));
+				break;
+			case 374:	// GARGOYLEHEALTHREGENBONUS
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleHealthRegenBonus() ));
+				break;
+			case 375:	// GARGOYLESTAMINAREGENBONUS
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleStaminaRegenBonus() ));
+				break;
+			case 376:	// GARGOYLEMANAREGENBONUS
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleManaRegenBonus() ));
 				break;
       default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );

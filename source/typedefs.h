@@ -106,7 +106,7 @@ constexpr auto MAXPOSTS		= std::uint8_t( 128 );		// Maximum number of posts on a
 
 constexpr auto ILLEGAL_Z	= std::int8_t( -128 );
 
-
+constexpr auto DEFAULT_TOOLTIP_SORT = std::uint8_t( 30 ); // Default sort order used for custom tooltip entries
 
 constexpr auto NORTH		= std::uint8_t( 0x00 );
 constexpr auto NORTHEAST	= std::uint8_t( 0x01 );

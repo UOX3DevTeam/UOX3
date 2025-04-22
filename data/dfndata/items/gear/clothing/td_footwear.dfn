@@ -18,6 +18,7 @@ decay=1
 good=19
 origin=td
 sectionid=0x2655
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // TD Jester Shoes

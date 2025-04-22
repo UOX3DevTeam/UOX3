@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 14. October, 2023</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6</small></p>
+	<p style="margin:0"><small>Last Updated: 20. April, 2025</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6b</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -9125,11 +9125,11 @@ myChar.Damage( 15, 6, attackerChar, true );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>int Defense( hitLoc, damageType, doArmorDamage )</em></p>
+									<p><em>int Defense( hitLoc, damageType, doArmorDamage[, ignoreMedable, includeShield] )</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns the defense value against damageType of the armor item at the location hitLoc and does armor damage if needed</p>
+									<p>Returns the defense value against damageType of the armor item at the location hitLoc and does armor damage if needed, and can also exclude medable armor (optional) and include shield defense value (optional)</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
@@ -9139,7 +9139,10 @@ myChar.Damage( 15, 6, attackerChar, true );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Get the defense value of the head armor against Physical damage and damage the armor:
-value = mChar.Defense( 3, 1, true);</code></pre>
+value = mChar.Defense( 3, 1, true);
+
+// Get the total physical defense value for character, excluding medable armor, including shield
+value = mChar.Defense( 0, 1, false, false, true );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -13880,8 +13883,8 @@ Timer.SOCK_TRAFFICWARDEN 	// Time until next time traffic warden resets</code></
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 										<pre><code class="language-javascript">// Get timestamp for when player can next use an object, and spit out remaining time in milliseconds
-var objectDelayTimestamp = myChar.GetTimer( Timer.SOCK_OBJDELAY );
-myChar.TextMessage(( myTarget.GetTimer( Timer.SOCK_OBJDELAY ) - GetCurrentClock() ).toString() );
+var objectDelayTimestamp = mySock.GetTimer( Timer.SOCK_OBJDELAY );
+myChar.TextMessage(( objectDelayTimestamp - GetCurrentClock() ).toString() );
 
 // Set time from now in milliseconds until next time player can use another item
 mySock.SetTimer( timer.SOCK_OBJDELAY, 3000 );</code></pre>
@@ -13923,25 +13926,6 @@ mySock.SetTimer( timer.SOCK_OBJDELAY, 3000 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<p><strong>See FirstTriggerWord() Method</strong></p>
-								</div>
-							</div>
-						</div>
-
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_socket_openContainer"/>
-							<label for="spoiler_method_socket_openContainer">OpenContainer <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>void OpenContainer( iCont )</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Opens the specified container (iCont) for the specified socket</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">socket.OpenContainer( iCont );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -14825,6 +14809,10 @@ myObject.propertyName = newValue;
 							Get/Set character's current health/hitpoints (cannot exceed value of maxhp property)</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.healthRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set character's inherent health regeneration bonus, which affects passive health regeneration. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.hidamage</span> <strong>(int, <em>0 - 32767</em>)</strong><br>
 							Get/Set highest damage character can deal in combat with wrestling/unarmed attacks (randomized between lodamage and hidamage)</p>
 						</div>
@@ -14879,6 +14867,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.mana</span> <strong>(int, <em>0 - 32767</em>)</strong><br>
 							Get/Set character's current mana</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.manaRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set character's inherent mana regeneration bonus, which affects passive mana regeneration. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.maxhp</span> <strong>(int, <em>0 - 65535</em>)</strong><br>
@@ -15003,6 +14995,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.stamina</span> <strong>(int, <em>0 - 32737</em>)</strong><br>
 							Get/Set the character's current stamina</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.staminaRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set character's inherent stamina regeneration bonus, which affects passive stamina regeneration. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.stealth</span> <strong>(int, <em>0 - 127</em>)</strong><br>
@@ -15631,6 +15627,10 @@ myObject.propertyName = newValue;
 							Get/Set the current amount of hitpoints of the item</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.healthRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set amount of bonus health regen points character will gain while equipping item. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.hidamage</span> <strong>(int)</strong><br>
 							Get/Set the maximum amount of damage the item can deal, if it's a weapon</p>
 						</div>
@@ -15653,6 +15653,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.madeWith</span> <strong>(int)</strong><br>
 							Get/Set ID of primary skill used to craft item</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.manaRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set amount of bonus mana regen points character will gain while equipping item. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.maxhp</span> <strong>(int)</strong><br>
@@ -15741,6 +15745,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.speed</span> <strong>(int)</strong><br>
 							Get/Set the speed of the item, primarily used for weapons to determine how fast/how often the character wielding the weapon can attack in combat</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.staminaRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set amount of bonus stamina regen points character will gain while equipping item. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.strength</span> <strong>(int)</strong><br>
@@ -17339,7 +17347,7 @@ function findNearbyItems( pUser, trgItem, pSock )
 	<div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>UOX3 JSE Docs by Geir Ove Alnes @ Copyright 2022-2023</small></p>
+	<p><small>UOX3 JSE Docs by Geir Ove Alnes @ Copyright 2022-2025</small></p>
 	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" rel="noopener" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
 </div>
 <script defer>

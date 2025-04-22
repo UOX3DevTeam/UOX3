@@ -93,6 +93,15 @@ function onCallback0( socket, ourObj )
 	case "MULTI":
 		socket.SysMessage( ourObj.multi );
 		break;
+	case "HEALTHREGENBONUS":
+		socket.SysMessage( ourObj.healthRegenBonus );
+		break;
+	case "STAMINAREGENBONUS":
+		socket.SysMessage( ourObj.staminaRegenBonus );
+		break;
+	case "MANAREGENBONUS":
+		socket.SysMessage( ourObj.manaRegenBonus );
+		break;
 	case "OWNER":
 		if( ourObj.owner )
 		{
@@ -161,6 +170,28 @@ function onCallback0( socket, ourObj )
 		break;
 	case "REGION":
 		socket.SysMessage( ourObj.region.id + " ( " + ourObj.region.name + ")" );
+		break;
+	case "DEF":
+	case "RESISTARMOR":
+		socket.SysMessage( ourObj.Resist( 1 ));
+		break;
+	case "RESISTLIGHT":
+		socket.SysMessage( ourObj.Resist( 2 ));
+		break;
+	case "RESISTWATER":
+		socket.SysMessage( ourObj.Resist( 3 ));
+		break;
+	case "RESISTCOLD":
+		socket.SysMessage( ourObj.Resist( 4 ));
+		break;
+	case "RESISTFIRE":
+		socket.SysMessage( ourObj.Resist( 5 ));
+		break;
+	case "RESISTENERGY":
+		socket.SysMessage( ourObj.Resist( 6 ));
+		break;
+	case "RESISTPOISON":
+		socket.SysMessage( ourObj.Resist( 7 ));
 		break;
 	case "SCRIPTTRIGGER":
 	{
@@ -314,28 +345,6 @@ function HandleGetItem( socket, ourItem, uKey )
 		break;
 	case "DESC":
 		socket.SysMessage( ourItem.desc );
-		break;
-	case "DEF":
-	case "RESISTARMOR":
-		socket.SysMessage( ourItem.Resist( 1 ));
-		break;
-	case "RESISTLIGHT":
-		socket.SysMessage( ourItem.Resist( 2 ));
-		break;
-	case "RESISTWATER":
-		socket.SysMessage( ourItem.Resist( 3 ));
-		break;
-	case "RESISTCOLD":
-		socket.SysMessage( ourItem.Resist( 4 ));
-		break;
-	case "RESISTFIRE":
-		socket.SysMessage( ourItem.Resist( 5 ));
-		break;
-	case "RESISTENERGY":
-		socket.SysMessage( ourItem.Resist( 6 ));
-		break;
-	case "RESISTPOISON":
-		socket.SysMessage( ourItem.Resist( 7 ));
 		break;
 	case "LOWERSTATREQ":
 		socket.SysMessage( ourItem.lowerStatReq );
