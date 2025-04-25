@@ -57,7 +57,8 @@
 					<div class="spoiler">
 						<h4>April 23rd, 2025</h4>
 						<ul>
-							<li>Added details for new JS Methods: AddSkill, TurnBoat</li>
+							<li>Added details for new JS Events: onTurnBoat
+							<li>Added details for new JS Methods: AddSkill, TurnBoat, GetTiller</li>
 							<li>Updated details for JS Method: Refresh</li>
 							<li>Updated details for JS Function: IterateOver</li>
 							<li>Updated details for JS Event: onIterate</li>
@@ -4557,6 +4558,49 @@ function onTooltip( myObj, pSocket )
 					</div>
 				</div> --> <!-- cd-faq__content -->
 			<!-- </li> -->
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnTooltip" id="eventOnTooltip"><span>onTooltip</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onTurnBoat( iBoat, oldDir, newDir, iTiller )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow reactions in script after a boat has successfully turned</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Triggers for boat objects after boat has successfully turned. oldDir is old direction, newDir is new direction after turning, iTiller is tillerman reference.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> or nothing to prevent other scripts from triggering same event</li>
+								<li><strong>return true</strong> to allow other scripts from triggering same event</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Make Tillerman respond after boat has turned
+function onTurnBoat( iBoat, oldDir, newDir, iTiller )
+{
+	if( oldDir != newDir )
+	{
+		iTiller.TextMessage( "Everything's different now!" );
+	}
+	else
+	{
+		iTiller.TextMessage( "Nothing ever changes." );
+	}
+	return true;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
 
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnUnequip" id="eventOnUnequip"><span>onUnEquip</span></a>

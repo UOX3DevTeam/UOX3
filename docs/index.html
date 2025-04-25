@@ -1060,12 +1060,8 @@ packitem=0x0f8d,30
 							Number of saves before a backup occurs.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">SAVESTIMER</span><strong>=300</strong><br>
+							<p><span class="hl">SAVESTIMER</span><strong>=600</strong><br>
 							Number of seconds between world saves.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">ACCOUNTISOLATION</span><strong>=1</strong><br>
-							Not in use.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">UOGENABLED</span><strong>=0</strong><br>
@@ -1108,11 +1104,11 @@ packitem=0x0f8d,30
 							Default colour of system messages sent to players.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">MAXCLIENTBYTESIN</span><strong>=25000</strong><br>
+							<p><span class="hl">MAXCLIENTBYTESIN</span><strong>=50000</strong><br>
 							Network budget for incoming traffic from a given connected client, usage beyond which they will receive warnings for, or temporary bans.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">MAXCLIENTBYTESOUT</span><strong>=100000</strong><br>
+							<p><span class="hl">MAXCLIENTBYTESOUT</span><strong>=200000</strong><br>
 							Network budget for outgoing traffic to a given connected client, usage beyond which they will receive warnings for, or temporary bans.</p>
 						</div>
 						<div class="settingsDiv">
@@ -1263,6 +1259,10 @@ packitem=0x0f8d,30
 							Total number of skillpoints available for each player.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">SKILLCAPSINGLE</span><strong>=1000</strong><br>
+							Maximum amount of skillpoints player can have in an individual skill, by default. Can be overridden on a per-player-and-skill basis via powerscrolls, scripts, etc.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">SKILLDELAY</span><strong>=5</strong><br>
 							Number of seconds that must pass after a skill is used, before another skill can be used.</p>
 						</div>
@@ -1318,14 +1318,30 @@ packitem=0x0f8d,30
 							<p><span class="hl">MANAREGENMODE</span><strong>=1</strong><br>
 							0 = no passive mana regen, 1 = default passive mana regen (LBR or below), 2 = AoS (pre-Pub18), 3 = AoS/SE (post-Pub18), 4 = ML, 5 = KR and beyond. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
 						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HEALTHREGENCAP</span><strong>=18</strong><br>
+							Gets/Sets cap for health regen. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">STAMINAREGENCAP</span><strong>=24</strong><br>
+							Gets/Sets cap for stamina regen. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">MANAREGENCAP</span><strong>=18</strong><br>
+							Gets/Sets cap for mana regen. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
+						</div>
 					</div>
 
 					<input type="checkbox" id="spoiler_ini_timers">
 					<label for="spoiler_ini_timers">[timers] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
-							<p><span class="hl">CORPSEDECAYTIMER</span><strong>=900</strong><br>
-							Amount of time in seconds for a corpse to decay.</p>
+							<p><span class="hl">CORPSEDECAYTIMER</span><strong>=420</strong><br>
+							Amount of time in seconds for a player corpse to decay.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">NPCCORPSEDECAYTIMER</span><strong>=420</strong><br>
+							Amount of time in seconds for an NPC corpse to decay.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">WEATHERTIMER</span><strong>=60</strong><br>
@@ -1336,7 +1352,7 @@ packitem=0x0f8d,30
 							Amount of time in seconds between shopkeeper restocks.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">DECAYTIMER</span><strong>=300</strong><br>
+							<p><span class="hl">DECAYTIMER</span><strong>=1800</strong><br>
 							Amount of time in seconds a decayable item will remain on the ground before disappearing.</p>
 						</div>
 						<div class="settingsDiv">
@@ -1365,15 +1381,15 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">HITPOINTREGENTIMER</span><strong>=8</strong><br>
-							Amount of time in seconds required to regenerate a single point of health.</p>
+							Base amount of time in seconds required to regenerate a single point of health.Final value depends on HEALTHREGENMODE and more. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">STAMINAREGENTIMER</span><strong>=3</strong><br>
-							Amount of time in seconds required to regenerate a single point of stamina.</p>
+							Base amount of time in seconds required to regenerate a single point of stamina. Final value depends on STAMINAREGENMODE and more. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">MANAREGENTIMER</span><strong>=5</strong><br>
-							Amount of time in seconds required to regenerate a single point of mana.</p>
+							Base amount of time in seconds required to regenerate a single point of mana. Final value depends on MANAREGENMODE and more. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">BASEFISHINGTIMER</span><strong>=10</strong><br>
@@ -1568,8 +1584,11 @@ packitem=0x0f8d,30
 					<label for="spoiler_ini_settings">[settings] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
-							<p><span class="hl">LOOTDECAYSWITHCORPSE</span><strong>=1</strong><br>
-							Determines if loot decays along with corpses or not.</p>
+							<p><span class="hl">LOOTDECAYSWITHPLAYERCORPSE</span><strong>=1</strong><br>
+							Determines if loot decays along with player corpses or not, or if it drops to the ground</p>
+						</div>
+							<p><span class="hl">LOOTDECAYSWITHNPCCORPSE</span><strong>=1</strong><br>
+							Determines if loot decays along with NPC corpses, or if it drops to the ground.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">GUARDSACTIVE</span><strong>=1</strong><br>
@@ -1600,12 +1619,12 @@ packitem=0x0f8d,30
 							If enabled, then the stealing skill is enabled.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">PLAYERPERSECUTION</span><strong>=0</strong><br>
+							<p><span class="hl">PLAYERPERSECUTION</span><strong>=1</strong><br>
 							If enabled, dead players can attack living ones, and thus drain their mana.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">ACCOUNTFLUSH</span><strong>=0</strong><br>
-							How often (in seconds) online accounts are checked to see if they really ARE online.</p>
+							<p><span class="hl">ACCOUNTFLUSH</span><strong>=5</strong><br>
+							How often (in minutes) online accounts are checked to see if they really ARE online.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">HTMLSTATUSENABLED</span><strong>=-1</strong><br>
@@ -1756,10 +1775,6 @@ packitem=0x0f8d,30
 							If enabled, shows player's guild info in tooltip. Defaults to 1</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">SHOWITEMRESISTSTATS</span><strong>=0</strong><br>
-							If enabled, shows item resistance stats in item tooltip. Defaults to 0</p>
-						</div>
-						<div class="settingsDiv">
 							<p><span class="hl">SHOWNPCTITLESINTOOLTIPS</span><strong>=1</strong><br>
 							If enabled, shows NPC titles in tooltip. Defaults to 1</p>
 						</div>
@@ -1778,10 +1793,6 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">SHOWRACEINPAPERDOLL</span><strong>=1</strong><br>
 							If enabled, shows a character's race in the paperdoll. Defaults to 1</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">SHOWWEAPONDAMAGETYPES</span><strong>=1</strong><br>
-							If enabled, shows weapon damage types in item tooltip. Defaults to 1</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">GLOBALITEMDECAY</span><strong>=1</strong><br>
@@ -1856,7 +1867,7 @@ packitem=0x0f8d,30
 							If enabled, players will always be teleported to their nearest safe location (town, or shrine). If disabled, they will be teleported to a random safe location within their current facet. Disabled by default.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">ALLOWAWAKENPCS</span><strong>=0</strong><br>
+							<p><span class="hl">ALLOWAWAKENPCS</span><strong>=1</strong><br>
 							If enabled, NPCs marked as awake will be checked by server (AI, timers, updates) regardless of whether the region they are in is inactive because of no nearby online players. If disabled, those NPCs are treated like any other NPCs. Disabled by default.</p>
 						</div>
 						<div class="settingsDiv">
@@ -1871,7 +1882,10 @@ packitem=0x0f8d,30
 							<p><span class="hl">YOUNGPLAYERSYSTEM</span><strong>=1</strong><br>
 							If enabled, all newly created player accounts are automatically marked with Young flag, and all characters created under those accounts will be treated as Young players, with those restrictions that that entails.</p>
 						</div>
-
+						<div class="settingsDiv">
+							<p><span class="hl">KARMALOCKING</span><strong>=1</strong><br>
+							If enabled, the Karma Locking system is enabled, and players can lock their karma at the current level at shrines.</p>
+						</div>
 					</div>
 
 					<input type="checkbox" id="spoiler_ini_petsandfollowers">
@@ -2051,18 +2065,30 @@ packitem=0x0f8d,30
 							<p><span class="hl">CRIMINALTIMER</span><strong>=120</strong><br>
 							Amount of time in seconds a character remains criminal after committing a criminal act.</p>
 						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">AGGRESSORFLAGTIMER</span><strong>=120</strong><br>
+							Amount of time in seconds a player will be marked as aggressor after attacking someone.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">PERMAGREYFLAGTIMER</span><strong>=0</strong><br>
+							Amount of time in seconds a player will be marked as "permagrey" to specific targets. With a timer of 0, persists until player dies.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">STEALINGFLAGTIMER</span><strong>=120</strong><br>
+							Amount of time in seconds a player will be flagged for stealing.</p>
+						</div>
 					</div>
 
 					<input type="checkbox" id="spoiler_ini_resources">
 					<label for="spoiler_ini_resources">[resources] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
-							<p><span class="hl">MINECHECK</span><strong>=1</strong><br>
-							Type of mining check performed - 0 = anywhere, 1 = mountains/cavefloors</p>
-						</div>
-						<div class="settingsDiv">
 							<p><span class="hl">RESOURCEAREASIZE</span><strong>=8</strong><br>
 							Affects the number of resource-areas the world is split into. A value of 8 splits the world into areas sized 8x8 tiles</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">MINECHECK</span><strong>=1</strong><br>
+							0 = player is allowed to mine anywhere, 1 = player is allowed to mine in mountains/cavefloors</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">OREPERAREA</span><strong>=10</strong><br>
@@ -2208,10 +2234,6 @@ packitem=0x0f8d,30
 							If 1, archery from horseback is possible.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">COMBATEXPLODEDELAY</span><strong>=2</strong><br>
-							The amount of time in seconds it takes for the damage from the Explosion spell to be inflicted on the target.</p>
-						</div>
-						<div class="settingsDiv">
 							<p><span class="hl">WEAPONDAMAGECHANCE</span><strong>=17</strong><br>
 							The chance (in %) of weapons taking damage in combat.</p>
 						</div>
@@ -2236,6 +2258,10 @@ packitem=0x0f8d,30
 							The max amount of damage (randomized) armor can take if it takes damage in combat.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">ARMORCLASSDAMAGEBONUS</span><strong>=0</strong><br>
+							Enables/disables double damage from armour class bonuses. Defaults to disabled.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">ALCHEMYBONUSENABLED</span><strong>=0</strong><br>
 							Enables/disables bonus damage from Alchemy skill for explosion potions. Defaults to disabled.</p>
 						</div>
@@ -2244,8 +2270,73 @@ packitem=0x0f8d,30
 							The modifier used to add bonus damage based on Alchemy skill for explosion potions. Defaults to 1 bonus damage per 5 skill-points in Alchemy skill, using the following formula: bonusDamage = alchemySkill / modifier</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">ARMORCLASSDAMAGEBONUS</span><strong>=0</strong><br>
-							Enables/disables double damage from armour class bonuses. Defaults to disabled.</p>
+							<p><span class="hl">BLOODEFFECTCHANCE</span><strong>=25</strong><br>
+							Chance to spawn blood splatter effects on ground in combat.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ITEMSINTERRUPTCASTING</span><strong>=1</strong><br>
+							If enabled, spellcasting gets interrupted by equipping/picking up items. Defaults to enabled.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">PETCOMBATTRAINING</span><strong>=1</strong><br>
+							If enabled, pets can gain skills/stats from fighting.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HIRELINGCOMBATTRAINING</span><strong>=1</strong><br>
+							If enabled, hirelings can gain skills/stats from fighting.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">NPCCOMBATTRAINING</span><strong>=1</strong><br>
+							If enabled, normal NPCs can gain skills/stats from fighting.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SHOWITEMRESISTSTATS</span><strong>=0</strong><br>
+							If enabled, shows item resistance stats in item tooltip. Defaults to 0</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SHOWWEAPONDAMAGETYPES</span><strong>=1</strong><br>
+							If enabled, shows weapon damage types in item tooltip. Defaults to 1</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">WEAPONDAMAGEBONUSTYPE</span><strong>=2</strong><br>
+							Defines how damage bonuses are applied to weapons during creation of magic weapons (see js/items/magic_items.js):</p>
+							<ul>
+								<li>0 - Apply flat weapon damage bonus to .hidamage</li>
+								<li>1 - Split weapon damage bonus between .lodamage and .hidamage</li>
+								<li>2 - Apply flat weapon damage bonus to BOTH .lodamage and .hidamage (Default)</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">WEAPONSWINGSPEEDINCREASECAP</span><strong>=60</strong><br>
+							Sets cap for swing speed increase (AoS) property  players can get from items.</p>
+						</div>
+						<!-- <div class="settingsDiv">
+							<p><span class="hl">PHYSICALRESISTCAP</span><strong>=70</strong><br>
+							Sets cap for physical resist on player characters.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">FIRERESISTCAP</span><strong>=70</strong><br>
+							Sets cap for fire resist on player characters.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">COLDRESISTCAP</span><strong>=70</strong><br>
+							Sets cap for cold resist on player characters.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">POISONRESISTCAP</span><strong>=70</strong><br>
+							Sets cap for poison resist on player characters.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ENERGYRESISTCAP</span><strong>=70</strong><br>
+							Sets cap for energy resist on player characters.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">DEFENSECHANCEINCREASECAP</span><strong>=45</strong><br>
+							Sets cap for defense chance increase (AoS) property players can get from items.</p>
+						</div> -->
+						<div class="settingsDiv">
+							<p><span class="hl">DAMAGEINCREASECAP</span><strong>=45</strong><br>
+							Sets cap for damage increase (AoS) property players can get from items.</p>
 						</div>
 					</div>
 
@@ -2279,6 +2370,10 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">CASTSPELLSWHILEMOVING</span><strong>=0</strong><br>
 							Toggles whether spells can be cast while moving, without ever having to stop!</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">AUTOUNEQUIPPEDCASTING</span><strong>=0</strong><br>
+							 If enabled, spells will auto unequipe the hands not holding a spellbook or spellchanneling type item.</p>
 						</div>
 					</div>
 
@@ -2327,7 +2422,25 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">STARTPRIVS</span><strong>=0</strong><br>
-							Starting privileges of new characters (UNUSED).</p>
+							Starting privileges of new characters. Treat as bitset, i.e. combine desired privs into one value.</p>
+							<ul>
+								<li><span class="hl">0 - Has GM privileges</span> // 0x1</li>
+								<li><span class="hl">1 - Can Broadcast messags on server</span> // 0x2</li>
+								<li><span class="hl">2 - Is Invulnerable</span> // 0x4</li>
+								<li><span class="hl">3 - Can see Single Click Serials</span> // 0x8</li>
+								<li><span class="hl">4 - Can see Skill Titles</span> // 0x10</li>
+								<li><span class="hl">5 - Can answer GM pages</span> // 0x20</li>
+								<li><span class="hl">6 - Can snoop in player/NPC backpacks</span> // 0x40</li>
+								<li><span class="hl">7 - Has Counselor privileges</span> // 0x80</li>
+								<li><span class="hl">8 - Can move all objects regardless of movable setting</span> // 0x100</li>
+								<li><span class="hl">9 - Is frozen, cannot move</span> // 0x200</li>
+								<li><span class="hl">10 - View Player houses as deeds (Not working)</span> // 0x400</li>
+								<li><span class="hl">11 - Doesn't need mana for spellcasting</span> // 0x800</li>
+								<li><span class="hl">12 - Can be dispelled (for summoned characters)</span> // 0x1000</li>
+								<li><span class="hl">13 - Is temporarily protected by magic reflect spell</span> // 0x2000</li>
+								<li><span class="hl">14 - Doesn't need reagents to cast spells</span> // 0x4000</li>
+								<li><span class="hl">15 - Is permanently protected by magic reflect spell</span> // 0x8000</li>
+							</ul>
 						</div>
 					</div>
 
@@ -5023,7 +5136,7 @@ packitem=0x0f8d,30
 					<input type="checkbox" id="spoiler_optional_other_branches">
 					<label for="spoiler_optional_other_branches">(Optional) Checking out Other Branches </strong> <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>If you'd rather grab another branch of the git repository, like the <strong>develop</strong> branch where most updates get pushed first before being merged into the master branch, you can use the following command after completing the previous step:<br><span class="hl">git checkout develop</span></p>
+						<p>If you'd rather grab another branch of the git repository, like the <strong>develop</strong> branch where most updates get pushed first before being merged into the master branch, you can use the following command after completing the previous step, and <strong>after navigating into</strong> the directory created for the UOX3 repository:<br>(UOX3\) <span class="hl">git checkout develop</span></p>
 						<p>GitHub Desktop users can change the active branch via the Current Branch dropdown menu in GitHub Desktop.</p>
 					</div>
 

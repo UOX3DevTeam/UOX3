@@ -3682,6 +3682,34 @@ bool CPIDblClick::Handle( void )
 		}
 	}
 
+	// If no scripts were found, or if no script contained onUseUnchecked events, proceed with envoke stuff
+	if( scriptTriggers.size() == 0 || !scriptExecuted )
+	{
+		UI16 itemId	= iUsed->GetId();
+		cScript *toExecute = nullptr;
+		UI16 envTrig = 0;
+
+		if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>( iType )))
+		{
+			// Get script to run by item type
+			envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>( iType ));
+			toExecute = JSMapping->GetScript( envTrig );
+		}
+		else if( JSMapping->GetEnvokeById()->Check( itemId ))
+		{
+			// Get script to run by item ID
+			envTrig = JSMapping->GetEnvokeById()->GetScript( itemId );
+			toExecute = JSMapping->GetScript( envTrig );
+		}
+
+		// Check for the onUse events in envoke scripts!
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnUseUnChecked( ourChar, iUsed ) == 0 )
+				return true;
+		}
+	}
+
 	bool itemUsageCheckComplete = false;
 	// Then loop through all scripts again, checking for OnUseChecked event - but first run item usage check
 	// once to make sure player can actually use item!
@@ -3747,9 +3775,6 @@ bool CPIDblClick::Handle( void )
 		// Check for the onUse events in envoke scripts!
 		if( toExecute != nullptr )
 		{
-			if( toExecute->OnUseUnChecked( ourChar, iUsed ) == 0 )
-				return true;
-
 			if( toExecute->OnUseChecked( ourChar, iUsed ) == 0 )
 				return true;
 		}

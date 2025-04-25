@@ -155,7 +155,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"PORT"s, 128},
 	{"ACCESSDIRECTORY"s, 129},
 	{"LOGSDIRECTORY"s, 130},
-	{"ACCOUNTISOLATION"s, 131},
+	// 131 free
 	{"HTMLDIRECTORY"s, 132},
 	{"SHOOTONANIMALBACK"s, 133},
 	{"NPCTRAININGENABLED"s, 134},
@@ -2949,7 +2949,7 @@ auto CServerData::ManaRegenMode( UI08 mode ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::HealthRegenCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the cap for regen hits propertie
+//|	Purpose		-	Gets/Sets cap for health regen points
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::HealthRegenCap() const -> SI16
 {
@@ -2963,7 +2963,7 @@ auto CServerData::HealthRegenCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::StaminaRegenCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for regen stam propertie
+//|	Purpose		-	Gets/Sets cap for stamina regen points
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::StaminaRegenCap() const -> SI16
 {
@@ -2977,7 +2977,7 @@ auto CServerData::StaminaRegenCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ManaRegenCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for regen mana propertie
+//|	Purpose		-	Gets/Sets cap for mana regen points
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ManaRegenCap() const -> SI16
 {
@@ -5309,7 +5309,6 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "BACKUPSENABLED=" << ( ServerBackupStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "BACKUPSAVERATIO=" << BackupRatio() << '\n';
 		ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << '\n';
-		ofsOutput << "ACCOUNTISOLATION=" << "1" << '\n';
 		ofsOutput << "UOGENABLED=" << ( ServerUOGEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "FREESHARDSERVERPOLL=" << ( FreeshardServerPoll() ? 1 : 0 ) << '\n';
 		ofsOutput << "RANDOMSTARTINGLOCATION=" << ( ServerRandomStartingLocation() ? 1 : 0 ) << '\n';
@@ -5631,12 +5630,12 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SHOWWEAPONDAMAGETYPES=" << ( ShowWeaponDamageTypes() ? 1 : 0 ) << '\n';
 		ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<UI16>( WeaponDamageBonusType() ) << '\n';
 		ofsOutput << "WEAPONSWINGSPEEDINCREASECAP=" << SwingSpeedIncreaseCap() << '\n';
-		ofsOutput << "PHYSICALRESISTCAP=" << PhysicalResistCap() << '\n';
-		ofsOutput << "FIRERESISTCAP=" << FireResistCap() << '\n';
-		ofsOutput << "COLDRESISTCAP=" << ColdResistCap() << '\n';
-		ofsOutput << "POISONRESISTCAP=" << PoisonResistCap() << '\n';
-		ofsOutput << "ENERGYRESISTCAP=" << EnergyResistCap() << '\n';
-		ofsOutput << "DEFENSECHANCEINCREASECAP=" << DefenseChanceIncreaseCap() << '\n';
+		//ofsOutput << "PHYSICALRESISTCAP=" << PhysicalResistCap() << '\n';
+		//ofsOutput << "FIRERESISTCAP=" << FireResistCap() << '\n';
+		//ofsOutput << "COLDRESISTCAP=" << ColdResistCap() << '\n';
+		//ofsOutput << "POISONRESISTCAP=" << PoisonResistCap() << '\n';
+		//ofsOutput << "ENERGYRESISTCAP=" << EnergyResistCap() << '\n';
+		//ofsOutput << "DEFENSECHANCEINCREASECAP=" << DefenseChanceIncreaseCap() << '\n';
 		ofsOutput << "DAMAGEINCREASECAP=" << DamageIncreaseCap() << '\n';
 		ofsOutput << "}" << '\n';
 
@@ -5839,7 +5838,7 @@ auto CServerData::TrackingRedisplayTime( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::SwingSpeedIncreaseCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for swing speed cap propertie
+//|	Purpose		-	Gets/Sets cap for swing speed increase
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::SwingSpeedIncreaseCap() const -> SI16
 {
@@ -5853,7 +5852,7 @@ auto CServerData::SwingSpeedIncreaseCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::PhysicalResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Physical cap propertie
+//|	Purpose		-	Gets/Sets cap for physical resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::PhysicalResistCap() const -> SI16
 {
@@ -5867,7 +5866,7 @@ auto CServerData::PhysicalResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::FireResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Fire cap propertie
+//|	Purpose		-	Gets/Sets cap for fire resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::FireResistCap() const -> SI16
 {
@@ -5881,7 +5880,7 @@ auto CServerData::FireResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ColdResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Cold cap propertie
+//|	Purpose		-	Gets/Sets cap for cold resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ColdResistCap() const -> SI16
 {
@@ -5895,7 +5894,7 @@ auto CServerData::ColdResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::PoisonResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Poison cap propertie
+//|	Purpose		-	Gets/Sets cap for poison resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::PoisonResistCap() const -> SI16
 {
@@ -5909,7 +5908,7 @@ auto CServerData::PoisonResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::EnergyResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Energy cap propertie
+//|	Purpose		-	Gets/Sets cap for energy resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::EnergyResistCap() const -> SI16
 {
@@ -5923,7 +5922,7 @@ auto CServerData::EnergyResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DefenseChanceIncreaseCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Defense Chance Increase cap propertie
+//|	Purpose		-	Gets/Sets cap for defense chance increase
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DefenseChanceIncreaseCap() const -> SI16
 {
@@ -5937,7 +5936,7 @@ auto CServerData::DefenseChanceIncreaseCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DamageIncreaseCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for damage Increase cap propertie
+//|	Purpose		-	Gets/Sets cap for damage increase
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DamageIncreaseCap() const -> SI16
 {
@@ -6477,7 +6476,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 130:	 // LOGSDIRECTORY
 			Directory( CSDDP_LOGS, value );
 			break;
-		case 131:	 // ACCOUNTISOLATION
+		case 131:	 // NOT USED
 			break;
 		case 132:	 // HTMLDIRECTORY
 			Directory( CSDDP_HTML, value );

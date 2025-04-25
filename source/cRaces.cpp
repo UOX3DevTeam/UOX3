@@ -1460,7 +1460,7 @@ bool CRace::CanEquipItem( UI16 itemId ) const
 	return true;
 }
 
-CRace::CRace() : raceID( 0xFFFFFFFF ), bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
+CRace::CRace() : raceID( 0xFFFF ), bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
 restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f ), bloodColour( 0 )
 {
 	iSkills.fill( 0 );
