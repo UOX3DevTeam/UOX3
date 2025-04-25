@@ -2822,10 +2822,21 @@ JSBool SE_GetTileHeight( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObje
 	return JS_TRUE;
 }
 
+struct IterateExtraData
+{
+	cScript* script;
+	CSocket* socket;
+};
+
 bool SE_IterateFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
-	cScript *myScript = static_cast<cScript *>( extraData );
-	return myScript->OnIterate( a, b );
+	// Cast 'extraData' to our struct
+	auto* iterData = static_cast<IterateExtraData*>( extraData );
+	if( !iterData || !iterData->script )
+		return true;
+
+	// Call OnIterate( a, b, [optional socket] ) 
+	return iterData->script->OnIterate( a, b, iterData->socket );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2836,20 +2847,49 @@ bool SE_IterateFunctor( CBaseObject *a, UI32 &b, void *extraData )
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_IterateOver( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 )
+	if( argc < 1 || argc > 2 )
 	{
-		ScriptError( cx, "IterateOver: needs 1 argument!" );
+		ScriptError( cx, "IterateOver: needs 1 or 2 arguments!" );
 		return JS_FALSE;
 	}
 
-	UI32 b				= 0;
+	// Parse the object type to iterate over
 	std::string objType = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
-	ObjectType toCheck	= FindObjTypeFromString( objType );
-	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	if( myScript != nullptr )
+	ObjectType toCheck   = FindObjTypeFromString( objType );
+	cScript* myScript    = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	if( myScript == nullptr )
 	{
-		ObjectFactory::GetSingleton().IterateOver( toCheck, b, myScript, &SE_IterateFunctor );
+		*rval = INT_TO_JSVAL( 0 );
+		return JS_TRUE;
 	}
+
+	// Prepare our struct
+	auto* iterData = new IterateExtraData;
+	iterData->script = myScript;
+	iterData->socket = nullptr; // default if no 2nd arg
+
+								// If there's a 2nd argument, see if it's a Socket
+	if( argc == 2 && JSVAL_IS_OBJECT( argv[1] ) )
+	{
+		JSObject* sockObj = JSVAL_TO_OBJECT( argv[1] );
+		if( sockObj )
+		{
+			// Our CSocket pointer is stored in the JS private data for that object
+			CSocket* pSock = static_cast<CSocket*>( JS_GetPrivate( cx, sockObj ) );
+			if( pSock )
+				iterData->socket = pSock;
+		}
+	}
+
+	// The b param is an out-counter for how many we found
+	UI32 b = 0;
+
+	// Pass our struct to IterateOver, which calls SE_IterateFunctor
+	ObjectFactory::GetSingleton().IterateOver( toCheck, b, iterData, &SE_IterateFunctor );
+
+	// Cleanup
+	delete iterData;
+	iterData = nullptr;
 
 	JS_MaybeGC( cx );
 
@@ -5252,7 +5292,16 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 376:	// GARGOYLEMANAREGENBONUS
 				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleManaRegenBonus() ));
 				break;
-      default:
+			case 377:	// HUMANMAXWEIGHTBONUS
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->HumanMaxWeightBonus() ));
+				break;
+			case 378:	// ELFMAXWEIGHTBONUS
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ElfMaxWeightBonus() ));
+				break;
+			case 379:	// GARGOYLEMAXWEIGHTBONUS
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleMaxWeightBonus() ));
+				break;
+			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;
 		}

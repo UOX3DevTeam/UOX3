@@ -2005,7 +2005,6 @@ restock=10
 get=base_shield
 name=bronze shield
 id=0x1b72
-str=20
 }
 
 // Buckler - Base item with shared DFN tags
@@ -2014,7 +2013,6 @@ str=20
 get=base_shield
 name=buckler
 id=0x1b73
-str=20
 }
 
 // Metal Kite Shield - Base item with shared DFN tags
@@ -2023,7 +2021,6 @@ str=20
 get=base_shield
 name=metal kite shield
 id=0x1b74
-str=20
 dyeable=1
 }
 
@@ -2033,7 +2030,6 @@ dyeable=1
 get=base_shield
 name=heater shield
 id=0x1b76
-str=20
 }
 
 // Metal Shield - Base item with shared DFN tags
@@ -2042,7 +2038,6 @@ str=20
 get=base_shield
 name=metal shield
 id=0x1b7b
-str=20
 }
 
 // Kite Shield (Wooden) - Base item with shared DFN tags
@@ -2051,7 +2046,6 @@ str=20
 get=base_shield
 name=kite shield
 id=0x1b78
-str=20
 }
 
 // Wooden Shield - Base item with shared DFN tags
@@ -2060,7 +2054,6 @@ str=20
 get=base_shield
 name=wooden shield
 id=0x1b7a
-str=20
 }
 
 // Order Shield - Base item with shared DFN tags
@@ -2069,7 +2062,6 @@ str=20
 get=base_shield
 name=order shield
 id=0x1bc4
-str=20
 }
 
 // Chaos Shield - Base item with shared DFN tags
@@ -2078,7 +2070,6 @@ str=20
 get=base_shield
 name=chaos shield
 id=0x1bc3
-str=20
 }
 
 // Gargish Chaos Shield - Base item with shared DFN tags
@@ -2087,7 +2078,6 @@ str=20
 get=base_shield
 name=gargish chaos shield
 id=0x4228
-str=20
 origin=sa
 }
 
@@ -2097,7 +2087,6 @@ origin=sa
 get=base_shield
 name=gargish kite shield
 id=0x4201
-str=20
 origin=sa
 }
 
@@ -2107,7 +2096,6 @@ origin=sa
 get=base_shield
 name=gargish order shield
 id=0x422a
-str=20
 origin=sa
 }
 
@@ -2117,7 +2105,6 @@ origin=sa
 get=base_shield
 name=large plate shield
 id=0x4204
-str=20
 origin=sa
 }
 
@@ -2127,7 +2114,6 @@ origin=sa
 get=base_shield
 name=large stone shield
 id=0x4205
-str=20
 origin=sa
 }
 
@@ -2137,7 +2123,6 @@ origin=sa
 get=base_shield
 name=medium plate shield
 id=0x4203
-str=20
 origin=sa
 }
 
@@ -2147,7 +2132,6 @@ origin=sa
 get=base_shield
 name=small plate shield
 id=0x4202
-str=20
 origin=sa
 }
 
@@ -2157,6 +2141,5 @@ origin=sa
 get=base_shield
 name=gargish wooden shield
 id=0x4200
-str=20
 origin=sa
 }

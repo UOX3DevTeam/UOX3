@@ -2338,7 +2338,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		Weight( static_cast<UI16>( toCopy.GetWeight() / 100 ));
 		if( extended5 )
 		{
-			MaxWeight( toCopy.GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40 );
+			MaxWeight( toCopy.GetWeightMax() );
 			UI16 bodyId = toCopy.GetId();
 			switch( bodyId )
 			{
