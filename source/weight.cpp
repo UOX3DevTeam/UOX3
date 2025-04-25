@@ -1,6 +1,7 @@
 #include "uox3.h"
 #include "weight.h"
 #include "mapstuff.h"
+#include "cRaces.h"
 
 //o------------------------------------------------------------------------------------------------o
 //|	File		-	weight.cpp
@@ -434,7 +435,9 @@ void CWeight::SubtractItemWeight( CItem *pack, CItem *item )
 //o------------------------------------------------------------------------------------------------o
 bool CWeight::IsOverloaded( CChar *mChar ) const
 {
-	if( static_cast<R32>( mChar->GetWeight() / 100 ) > (( mChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr() ) + 40 ))
+	SI16 weightBonus = Races->Race( mChar->GetRace() )->MaxWeightBonus();
+
+	if( static_cast<R32>( mChar->GetWeight() / 100 ) > mChar->GetWeightMax() )
 		return true;
 
 	return false;

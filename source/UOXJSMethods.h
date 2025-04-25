@@ -79,6 +79,7 @@ JSMethodFunc CChar_OpenBank;
 JSMethodFunc CChar_DirectionTo;
 JSMethodFunc CChar_TurnToward;
 JSMethodFunc CChar_CheckSkill;
+JSMethodFunc CChar_AddSkill;
 JSMethodFunc CChar_FindItemLayer;
 JSMethodFunc CChar_SpeechInput;
 JSMethodFunc CChar_CastSpell;
@@ -229,6 +230,7 @@ JSMethodFunc CMulti_ClearOwnerList;
 JSMethodFunc CMulti_FirstChar;
 JSMethodFunc CMulti_NextChar;
 JSMethodFunc CMulti_FinishedChars;
+JSMethodFunc CMulti_TurnBoat;
 
 // Socket Methods
 JSMethodFunc CSocket_Disconnect;
@@ -404,6 +406,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "FindItemLayer",		CChar_FindItemLayer,	1, 0, 0 },
 	{ "StartTimer",			CBase_StartTimer,		2, 0, 0 },
 	{ "CheckSkill",			CChar_CheckSkill,		4, 0, 0 },
+	{ "AddSkill",			CChar_AddSkill,			3, 0, 0 },
 	{ "SpeechInput",		CChar_SpeechInput,		1, 0, 0 },
 	{ "CastSpell",			CChar_CastSpell,		2, 0, 0 },
 	{ "SysMessage",			CMisc_SysMessage,		10, 0, 0 },
@@ -571,6 +574,8 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "FirstChar",			CMulti_FirstChar,			1, 0, 0 },
 	{ "NextChar",			CMulti_NextChar,			1, 0, 0 },
 	{ "FinishedChars",		CMulti_FinishedChars,		1, 0, 0 },
+
+	{ "TurnBoat",			CMulti_TurnBoat,			1, 0, 0 },
 
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
 	{ "SetRandomName",		CBase_SetRandomName,		1, 0, 0 },

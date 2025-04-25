@@ -1758,6 +1758,10 @@ auto CItem::CopyData( CItem *target ) -> void
 
 	// Add any script triggers present on object to the new object
 	target->scriptTriggers = GetScriptTriggers();
+
+	// Don't forget to copy the tags
+	target->tags = GetTagMap();
+	target->tempTags = GetTempTagMap();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1921,7 +1925,20 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "CREATOR" || UTag == "CREATER" )
 				{
-					SetCreator( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					auto dataVal = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+					if( !dataVal.empty() ) // Fixes incompatibility with really old UOX3 world saves, where "creater" tags were blank
+					{
+						try
+						{
+							auto numVal = std::stoul( dataVal, nullptr, 0 );
+							SetCreator( static_cast<UI32>( numVal ));
+						}
+						catch(...)
+						{
+
+						}
+						//SetCreator( static_cast<UI32>( std::stoul( dataVal, nullptr, 0 )));
+					}
 					rValue = true;
 				}
 				else if( UTag == "CORPSE" )

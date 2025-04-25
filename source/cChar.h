@@ -278,6 +278,7 @@ public:
 	BodyType	GetBodyType( void );
 
 	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true ) override;
+	auto		GetWeightMax() const -> SI32;
 
 	bool		GetUpdate( UpdateTypes updateType ) const;
 	void		ClearUpdate( void );

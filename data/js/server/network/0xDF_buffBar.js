@@ -14,6 +14,13 @@ function AddBuff( pUser, iconID, priCliloc, scndCliloc, seconds, stringData )
 	}
 
 	var pSocket = pUser.socket;
+
+	// Only add buffs if client version is higher than 5.0.2, the patch where buff bar was added
+	if( pSocket.clientMajorVer < 5 || ( pSocket.clientMajorVer == 5 && pSocket.clientSubVer < 2 ))
+	{
+		return false;
+	}
+
 	if( seconds >= 1 )
 	{
 		pUser.StartTimer( seconds * 1000, iconID, 2204 );
