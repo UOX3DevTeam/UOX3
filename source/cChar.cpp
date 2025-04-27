@@ -5159,10 +5159,118 @@ bool CChar::LoadRemnants( void )
 			if( !IsNpc() )
 			{
 				Accounts->AddCharacter( GetAccountNum(), this );	// account ID, and account object.
+
+#if defined( UOX_DEBUG_MODE )
+				// Sanity-check lastOn vs lastOnSecs for player characters
+				ValidateLastOn();
+#endif
 			}
 		}
 	}
 	return rValue;
+}
+
+void CChar::ValidateLastOn()
+{
+	if( !GetLastOn().empty() )
+	{
+		const std::string currentLastOnString = GetLastOn();
+		UI32 currentLastOnSecs = GetLastOnSecs();
+		time_t currentTime = time( nullptr );
+		const time_t futureThreshold = currentTime + 93600; // ~26 hours buffer to account for timezone variance - we don't want any time travellers
+
+		bool requiresUpdateFromStr = false;
+		std::string updateReason = "";
+
+		// First, check if we actually need to update anything
+		if( currentLastOnSecs == 0 )
+		{
+			requiresUpdateFromStr = true;
+			updateReason = "LastOnSecs was 0";
+		}
+		else if( currentLastOnSecs > futureThreshold )
+		{
+			requiresUpdateFromStr = true;
+			updateReason = "LastOnSecs > future threshold (" + std::to_string( currentLastOnSecs ) + ")";
+		}
+		else
+		{
+			// LastOnSecs is > 0 and not unreasonably far in the future
+			// Validate by converting back to the canonical string format and comparing
+			struct tm localTmCheck;
+			errno_t errCheck = localtime_s( &localTmCheck, ( const time_t* )&currentLastOnSecs );
+
+			if( errCheck == 0 )
+			{
+				char checkBuffer[100];
+				const char* formatCheck = "%a %b %d %H:%M:%S %Y";
+				size_t bytesWrittenCheck = strftime( checkBuffer, sizeof( checkBuffer ), formatCheck, &localTmCheck );
+
+				if( bytesWrittenCheck > 0 )
+				{
+					std::string currentSecsAsString = checkBuffer;
+					if( currentLastOnString != currentSecsAsString )
+					{
+						// Mismatch between time strings found! Let's update lastOnSecs for this one from the string
+						requiresUpdateFromStr = true;
+						updateReason = "Mismatch between lastOn and LastOnSecs ('" + currentSecsAsString + "')";
+					}
+					else
+					{
+						// Strings match! Existing LastOnSecs is validated and consistent. Do nothing.
+						requiresUpdateFromStr = false;
+					}
+				}
+				else
+				{
+					Console.Warning( oldstrutil::format( "strftime failed during validation for char %u, timestamp %u. Cannot validate, no update.", GetSerial(), currentLastOnSecs ));
+					requiresUpdateFromStr = false;
+				}
+			}
+			else
+			{
+				Console.Warning( oldstrutil::format( "localtime_s failed (err %d) during validation for char %u, timestamp %u. Cannot validate, no update.", errCheck, GetSerial(), currentLastOnSecs ));
+				requiresUpdateFromStr = false;
+			}
+		}
+
+		// Second, if an update is required, parse the lastOn string and update lastOnSecs based on that
+		if( requiresUpdateFromStr )
+		{
+			std::tm timeStructParse = {};
+			std::stringstream ssParse( currentLastOnString );
+			const std::locale c_localeParse( "C" );
+			[[maybe_unused]] std::locale prevLocaleParse = ssParse.imbue( c_localeParse );
+
+			std::string formatParse = "%a %b %d %H:%M:%S %Y";
+			ssParse >> std::get_time( &timeStructParse, formatParse.c_str() );
+
+			if( !ssParse.fail() )
+			{
+				// Check parsing success
+				timeStructParse.tm_isdst = -1;
+				time_t parsedTimestamp = mktime( &timeStructParse ); // Calculate timestamp from string
+
+				if( parsedTimestamp != -1 )
+				{
+					SetLastOnSecs( static_cast<UI32>( parsedTimestamp ));
+					Console.Log( oldstrutil::format( "Updating LastOnSecs for char %u to %u based on lastOn. Reason: %s. Parsing: '%s'",
+						GetSerial(), GetLastOnSecs(), updateReason.c_str(), currentLastOnString.c_str() ));
+
+				}
+				else
+				{
+					// mktime failed
+					Console.Warning( oldstrutil::format( "mktime failed for char %u after parsing: %s", GetSerial(), currentLastOnString.c_str() ));
+				}
+			}
+			else
+			{
+				// get_time failed
+				Console.Warning( oldstrutil::format( "std::get_time failed to parse char %u, LastOn string: '%s'", GetSerial(), currentLastOnString.c_str() ));
+			}
+		}
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o

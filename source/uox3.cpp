@@ -2664,6 +2664,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 		UI32 maxItemsSpawned	= 0;
 		UI32 maxNpcsSpawned		= 0;
 		
+		const UI32 s_t = GetClock();
 		for( auto &[regnum, spawnReg] : cwmWorldState->spawnRegions )
 		{
 			if( spawnReg )
@@ -2679,6 +2680,8 @@ auto CWorldMain::CheckAutoTimers() -> void
 				maxNpcsSpawned += static_cast<UI32>( spawnReg->GetMaxCharSpawn() );
 			}
 		}
+		const UI32 e_t = GetClock();
+		Console.Print( oldstrutil::format( "Regionspawn cycle completed in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 
 		// Adaptive spawn region check timer. The closer spawn regions as a whole are to being at their defined max capacity,
 		// the less frequently UOX3 will check spawn regions again. Similarly, the more room there is to spawn additional

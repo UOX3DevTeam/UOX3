@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="Documentation for UOX3's scripting engine, based on SpiderMonkey 1.7">
+	<meta name="description" content="Documentation for UOX3's scripting engine, based on SpiderMonkey 1.8">
 	<script>document.getElementsByTagName("html")[0].className += " js";</script>
 	<link rel="stylesheet" href="assets/css/style.css" deferred>
 	<link rel="stylesheet" href="assets/css/all.css" deferred>
@@ -55,10 +55,14 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>April 27th, 2025</h4>
+						<ul>
+							<li>Added details for new JS Events: onBoatTurn
+							<li>Added details for new JS Methods: TurnBoat, GetTiller</li>
+						</ul>
 						<h4>April 23rd, 2025</h4>
 						<ul>
-							<li>Added details for new JS Events: onTurnBoat
-							<li>Added details for new JS Methods: AddSkill, TurnBoat, GetTiller</li>
+							<li>Added details for new JS Methods: AddSkill</li>
 							<li>Updated details for JS Method: Refresh</li>
 							<li>Updated details for JS Function: IterateOver</li>
 							<li>Updated details for JS Event: onIterate</li>
@@ -545,6 +549,45 @@ function onAISliver( aiChar )
 	var pUser = pSock.currentChar;
 	pUser.TextMessage( "I am buying " + iAmount + " item(s) ("+iBought.name+") from a vendor!" );
 	npcVendor.TextMessage( "I am selling an item!" );
+	return true;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnBoatTurn" id="eventOnBoatTurn"><span>onBoatTurn</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onBoatTurn( iBoat, oldDir, newDir, iTiller )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow reacting to boat being turned</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Runs on boat item after boat has successfully turned</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>oldDir refers to previous direction boat was pointing in, while newDir refers to the new updated direction.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> allows other scripts with same event from running, if any</li>
+								<li><strong>return true</strong> prevents other scripts with same event from running, if any</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onBoatTurn( iBoat, oldDir, newDir, iTiller )
+{
+	iTiller.TextMessage( "Yarr, capt'n! She's come about!")
 	return true;
 }</code></pre></p>
 						</div>
@@ -12734,6 +12777,25 @@ var cornerY = parseInt(multiCornerCoords[1]);</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_GetTiller"/>
+							<label for="spoiler_method_multi_GetTiller">GetTiller <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>item GetTiller();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Fetches reference to boat's Tillerman</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var iTiller = myBoat.GetTiller();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_multi_IsInMulti"/>
 							<label for="spoiler_method_multi_IsInMulti">IsInMulti <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -14972,6 +15034,10 @@ myObject.propertyName = newValue;
 							Get/Set character's current karma level</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.lastOnSecs</span> <strong>(int, <em>0 - 65535</em>)</strong><br>
+							Gets timestamp (in seconds since Unix epoch) for when player was last online (Read-Only)</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.lightlevel</span> <strong>(int, <em>0 - 255</em>)</strong><br>
 							Get/Set character's fixed light level. Use value of 255 to disable fixed light level and start using global lightlevel again.</p>
 						</div>
@@ -15278,6 +15344,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.guildTitle</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
 							Get/Set guild title of character that belongs to a guild</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.lastOn</span> <strong>(text)</strong><br>
+							Gets text-formatted timestamp for when player was last online (Read-Only)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.name</span> <strong>(text, <em>max 127 characters</em>)</strong><br>

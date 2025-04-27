@@ -1,3 +1,22 @@
+27/04/2025 - Xuri
+	Revamped 'wholist GM command entirely in JS, now comes with filters for names, online/offline status, sorting by name or last online date, quick-buttons to tweak/teleport/inspect, etc. Updated syntax:
+		'wholist [on]
+		'wholist off
+		'wholist force
+		Also available under alias 'playeradmin, with the same parameters
+	Added new JS command for GMs to assist managing NPCs, using updated wholist menu as basis: 'npcadmin
+	Added new JS command for GMs to assist managing object-based Spawners, using updated wholist menu as basis: 'spawnadmin
+	Exposed the following character properties to JS engine:
+		.lastOn // String-formatted timestamp of last time character was oniline
+		.lastOnSecs // Timestamp of last time character was online, expressed as seconds since Unix epoch
+	Added some validation (and re-synching) of lastOn vs lastOnSecs player character properties - only active when running in debug mode
+	Updated onBoatTurn JS Event to support a 4th parameter - a reference to the boat's tillerman:
+		onBoatTurn( iBoat, oldDir, newDir, iTiller )
+	Added (missing from last commit) JS Method for boats to fetch tillerman reference: .GetTiller()
+	Updated JS Docs with details about onBoatTurn JS event, .GetTiller() method and .lastOn/.lastOnSecs properties
+	Added some console output with details about time taken for each regionspawn cycle
+	Added some new tiledata override entries for some tiles (stairs/platforms) missing NoShoot flag in some older clients (dfndata/maps/tiles.dfn)
+
 23/04/2025 - Xuri
 	Fixed an issue where onUseUnchecked JS event in envoked scripts (via object ID or type) would never trigger because hard-coded checks would run before envoking script
 	Added function _restorecontext_() {} to archerybutte.js script (Thanks, DS)
