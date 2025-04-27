@@ -5195,73 +5195,61 @@ void CChar::ValidateLastOn()
 		}
 		else
 		{
-			// LastOnSecs is > 0 and not unreasonably far in the future
-			// Validate by converting back to the canonical string format and comparing
-			struct tm localTmCheck;
-			errno_t errCheck = localtime_s( &localTmCheck, ( const time_t* )&currentLastOnSecs );
-
-			if( errCheck == 0 )
+			// LastOnSecs is > 0 and not unreasonably far into the future - let's validate
+			char checkBuffer[100];
+			const time_t secsToCheck = static_cast<time_t>( currentLastOnSecs );
+			char *resultPtr = mctime( checkBuffer, sizeof( checkBuffer ), &secsToCheck );
+			if( resultPtr != nullptr && checkBuffer[0] != '\0' )
 			{
-				char checkBuffer[100];
-				const char* formatCheck = "%a %b %d %H:%M:%S %Y";
-				size_t bytesWrittenCheck = strftime( checkBuffer, sizeof( checkBuffer ), formatCheck, &localTmCheck );
+				// Trim whitespace from output
+				std::string tempStringFromBuffer = checkBuffer;
+				std::string currentSecsAsString = oldstrutil::trim( tempStringFromBuffer );
 
-				if( bytesWrittenCheck > 0 )
+				if( currentLastOnString != currentSecsAsString )
 				{
-					std::string currentSecsAsString = checkBuffer;
-					if( currentLastOnString != currentSecsAsString )
-					{
-						// Mismatch between time strings found! Let's update lastOnSecs for this one from the string
-						requiresUpdateFromStr = true;
-						updateReason = "Mismatch between lastOn and LastOnSecs ('" + currentSecsAsString + "')";
-					}
-					else
-					{
-						// Strings match! Existing LastOnSecs is validated and consistent. Do nothing.
-						requiresUpdateFromStr = false;
-					}
+					requiresUpdateFromStr = true;
+					updateReason = "Mismatch between string and mctime LastOnSecs ('" + currentSecsAsString + "')";
 				}
 				else
 				{
-					Console.Warning( oldstrutil::format( "strftime failed during validation for char %u, timestamp %u. Cannot validate, no update.", GetSerial(), currentLastOnSecs ));
+					// Strings match! Existing LastOnSecs is validated and consistent. Do nothing.
 					requiresUpdateFromStr = false;
 				}
 			}
-			else
+			else // mctime call failed or returned empty string
 			{
-				Console.Warning( oldstrutil::format( "localtime_s failed (err %d) during validation for char %u, timestamp %u. Cannot validate, no update.", errCheck, GetSerial(), currentLastOnSecs ));
-				requiresUpdateFromStr = false;
+				Console.Warning( oldstrutil::format( "mctime failed during validation for char %u, ts %u. Cannot validate, no update.", GetSerial(), currentLastOnSecs ));
+				requiresUpdateFromStr = false; // Can't validate, don't update
 			}
 		}
 
-		// Second, if an update is required, parse the lastOn string and update lastOnSecs based on that
 		if( requiresUpdateFromStr )
 		{
+			// Parsing logic using std::get_time and mktime remains the same
 			std::tm timeStructParse = {};
 			std::stringstream ssParse( currentLastOnString );
 			const std::locale c_localeParse( "C" );
 			[[maybe_unused]] std::locale prevLocaleParse = ssParse.imbue( c_localeParse );
-
 			std::string formatParse = "%a %b %d %H:%M:%S %Y";
 			ssParse >> std::get_time( &timeStructParse, formatParse.c_str() );
-
 			if( !ssParse.fail() )
 			{
-				// Check parsing success
 				timeStructParse.tm_isdst = -1;
-				time_t parsedTimestamp = mktime( &timeStructParse ); // Calculate timestamp from string
-
-				if( parsedTimestamp != -1 )
+				time_t parsedTimestamp = mktime( &timeStructParse );
+				if( parsedTimestamp != -1 && parsedTimestamp <= futureThreshold )
 				{
 					SetLastOnSecs( static_cast<UI32>( parsedTimestamp ));
 					Console.Log( oldstrutil::format( "Updating LastOnSecs for char %u to %u based on lastOn. Reason: %s. Parsing: '%s'",
 						GetSerial(), GetLastOnSecs(), updateReason.c_str(), currentLastOnString.c_str() ));
-
+				}
+				else if( parsedTimestamp == -1 )
+				{
+					Console.Warning( oldstrutil::format( "mktime failed for char %u after parsing: %s", GetSerial(), currentLastOnString.c_str() ));
 				}
 				else
 				{
-					// mktime failed
-					Console.Warning( oldstrutil::format( "mktime failed for char %u after parsing: %s", GetSerial(), currentLastOnString.c_str() ));
+					// parsedTimestamp > futureThreshold
+					Console.Warning( oldstrutil::format( "Parsed timestamp for char %u ALSO future date (%lld). Skipping update.", GetSerial(), static_cast<long long>( parsedTimestamp )));
 				}
 			}
 			else
