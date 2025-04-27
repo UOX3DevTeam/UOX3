@@ -831,8 +831,8 @@ JSBool CGump_AddButton( JSContext *cx, uintN argc, jsval *vp )
 	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 	UI16 gImage2 = ( argc == 6 ? (gImage + 1) : static_cast<UI16>( JSVAL_TO_INT( argv[3] )));
 	SI16 x1 = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[3] )) : static_cast<SI16>( JSVAL_TO_INT( argv[4] )));
-	UI32 pageNum = ( argc == 6 ? static_cast<UI32>( JSVAL_TO_INT( argv[4] )) : static_cast<UI32>( JSVAL_TO_INT( argv[5] )));
-	SI16 buttonId = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[5] )) : static_cast<SI16>( JSVAL_TO_INT( argv[6] )));
+	SI16 pageNum = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[4] )) : static_cast<SI16>( JSVAL_TO_INT( argv[5] )));
+	UI32 buttonId = ( argc == 6 ? static_cast<UI32>( JSVAL_TO_INT( argv[5] )) : static_cast<UI32>( JSVAL_TO_INT( argv[6] )));
 
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -4063,7 +4063,7 @@ JSBool CGuild_IsAtPeace( JSContext *cx, uintN argc, jsval *vp )
 //|					int ResourceCount( realId, colour, moreVal )
 //|					int ResourceCount( realId, colour, moreVal, sectionId )
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns the amount of the items of given ID, colour and moreVal character or item has in packs
+//|	Purpose		-	Returns the amount of the items of given ID, colour, moreVal and sectionId in a container
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_ResourceCount( JSContext *cx, uintN argc, jsval *vp )
 {
@@ -4108,13 +4108,13 @@ JSBool CBase_ResourceCount( JSContext *cx, uintN argc, jsval *vp )
 	UI32 retVal = 0;
 	if( myClass.ClassName() == "UOXChar" )
 	{
-		CChar* myChar = static_cast<CChar*>( myObj );
+		CChar *myChar	= static_cast<CChar *>( myObj );
 		retVal = GetItemAmount( myChar, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
 	}
 	else
 	{
-		CItem* myItem = static_cast<CItem*>(myObj);
-		retVal = GetSubItemAmount(myItem, realId, static_cast<UI16>(itemColour), static_cast<UI32>(moreVal), colorCheck, moreCheck, sectionId);
+		CItem *myItem	= static_cast<CItem *>( myObj );
+		retVal			= GetSubItemAmount( myItem, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
 	}
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( retVal ) );
 	return JS_TRUE;
@@ -4517,6 +4517,50 @@ JSBool CChar_CheckSkill( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_AddSkill()
+//|	Prototype	-	void AddSkill( skillID, skillAmt, triggerEvent )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Add skill points to a character without triggering skillchange events
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_AddSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 3 )
+	{
+		ScriptError( cx, "AddSkill: Invalid number of arguments (takes 3)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+
+	if( myChar == nullptr )
+	{
+		ScriptError( cx, "Invalid Object assigned (AddSkill)" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_INT( argv[0] ) || !JSVAL_IS_INT( argv[1] ))
+	{
+		ScriptError( cx, "Invalid parameters! Only integers between 0-65535 are accepted for the first two parameters of .AddSkill Method." );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_BOOLEAN( argv[2] ) )
+	{
+		ScriptError( cx, "Invalid parameters! Only boolean is accepted for the third parameter of .AddSkill Method." );
+		return JS_FALSE;
+	}
+
+	UI16 skillID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	SKILLVAL skillAmt = static_cast<SKILLVAL>( JSVAL_TO_INT( argv[1] ));
+	bool triggerEvent = ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
+
+	Skills->AdvanceSkill( myChar, skillID, false, skillAmt, triggerEvent );
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_FindItemLayer()
 //|	Prototype	-	Item FindItemLayer( layer )
 //o------------------------------------------------------------------------------------------------o
@@ -4661,6 +4705,68 @@ JSBool CItem_OpenPlank( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	OpenPlank( myItem );
+
+	return JS_TRUE;
+}
+
+void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks );
+void TurnBoat( CSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool rightTurn );
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CMulti_TurnBoat()
+//|	Prototype	-	void TurnBoat()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Turns boat in indicated direction
+//o------------------------------------------------------------------------------------------------o
+JSBool CMulti_TurnBoat( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(TurnBoat) Invalid Count of Arguments: %d, needs: 1", argc );
+		return JS_FALSE;
+	}
+
+	CBoatObj *myBoat = static_cast<CBoatObj *>( JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myBoat ))
+	{
+		ScriptError( cx, "(TurnBoat) Invalid Object assigned" );
+		return JS_FALSE;
+	}
+
+	UI08 turnDir = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	auto currDir = myBoat->GetDir();
+	auto myTiller =  CalcItemObjFromSer( myBoat->GetTiller() );
+
+	switch( turnDir )
+	{
+		default:
+		case 0: // Straight, no turning needed
+			break;
+		case 1: // Turn left
+			currDir += 2;
+			if( currDir > 7 )
+			{
+				currDir -= 8;
+			}
+			TurnBoat( nullptr, myBoat, myTiller, currDir, false );
+			break;
+		case 2: // Turn right
+			if( currDir >= 2 )
+			{
+				currDir -= 2;
+			}
+			else
+			{
+				currDir	+= 6;
+			}
+			TurnBoat( nullptr, myBoat, myTiller, currDir, true );
+			break;
+		case 3: // Flip around
+			myTiller->TextMessage( nullptr, 10 ); // Aye, sir.
+			TurnBoat( myBoat, true, true );
+			TurnBoat( myBoat, true, true );
+			break;
+	}
 
 	return JS_TRUE;
 }
@@ -4892,13 +4998,13 @@ JSBool CBase_UpdateStats( JSContext *cx, uintN argc, jsval *vp )
 	switch( statType )
 	{
 		case 0: // Health
-			UpdateStats( myObj, 0 );
+			UpdateStats( myObj, 0, false );
 			break;
 		case 1: // Mana - only relevant for characters
-			UpdateStats( myObj, 1 );
+			UpdateStats( myObj, 1, false );
 			break;
 		case 2: // Stamina - only relevant for characters
-			UpdateStats( myObj, 2 );
+			UpdateStats( myObj, 2, false );
 			break;
 		default:
 			ScriptError( cx, "UpdateStats: Argument can only contain values 0, 1 or 2 for Health, Mana or Stamina respectively" );
@@ -6658,13 +6764,13 @@ JSBool CChar_SpellFail( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_Refresh( JSContext *cx, uintN argc, jsval *vp )
 {
-	jsval *argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	if( argc != 0 )
+	if( argc != 0 && argc != 1 )
 	{
-		ScriptError( cx, "Refresh: Invalid number of arguments (takes 0)" );
+		ScriptError( cx, "Refresh: Invalid number of arguments (takes 0 or 1 - socket to refresh for)" );
 		return JS_FALSE;
 	}
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
@@ -6679,7 +6785,17 @@ JSBool CBase_Refresh( JSContext *cx, uintN argc, jsval *vp )
 		CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 		if( ValidateObject( myChar ))
 		{
-			myChar->Update();
+			CSocket *mySock = nullptr;
+			if( argc == 1 )
+			{
+				JSEncapsulate myClass( cx, &( argv[0] ));
+				if( myClass.ClassName() == "UOXSocket" )
+				{
+					mySock = static_cast<CSocket *>( myClass.toObject() );
+		}
+	}
+
+			myChar->Update( mySock );
 		}
 	}
 	else if( myObj->CanBeObjType( OT_ITEM ))

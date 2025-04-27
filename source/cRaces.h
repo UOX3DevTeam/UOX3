@@ -28,6 +28,8 @@ private:
 	SI16				RaceHPRegenBonus;
 	SI16				RaceStamRegenBonus;
 	SI16				RaceManaRegenBonus;
+
+	SI16				RaceMaxWeightBonus;
 private:
 	std::array<SKILLVAL, SKILLS> iSkills;
 	//SKILLVAL			iSkills[SKILLS];
@@ -137,6 +139,10 @@ public:
 	void			ManaRegenBonus( SI16 value );
 	SI16			StamRegenBonus( void ) const;
 	void			StamRegenBonus( SI16 value );
+
+	SI16			MaxWeightBonus( void ) const;
+	void			MaxWeightBonus( SI16 value );
+
 	void			MagicResistance( R32 value );
 	void			PoisonResistance( R32 value );
 

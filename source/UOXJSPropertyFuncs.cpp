@@ -1162,6 +1162,16 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp 
 					*vp = JSVAL_NULL;
 				}
 				break;
+			case CIP_MOVETYPE:
+				if( gPriv->GetObjType() == OT_BOAT )
+				{
+					*vp = INT_TO_JSVAL(( static_cast<CBoatObj *>( gPriv )->GetMoveType() ));
+				}
+				else
+				{
+					*vp = JSVAL_NULL;
+				}
+				break;
 			default:
 				break;
 		}
@@ -1628,6 +1638,12 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 				if( gPriv->GetObjType() == OT_MULTI )
 				{
 					( static_cast<CMultiObj *>( gPriv ))->SetBanY( static_cast<SI16>( encaps.toInt() ));
+				}
+				break;
+			case CIP_MOVETYPE:
+				if( gPriv->GetObjType() == OT_BOAT )
+				{
+					( static_cast<CBoatObj *>( gPriv ))->SetMoveType( static_cast<SI08>( encaps.toInt() ));
 				}
 				break;
 			default:
@@ -2769,6 +2785,7 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *v
 			case CREGP_ISSAFEZONE:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsSafeZone() );			break;
 			case CREGP_HEALTH:				*vp = INT_TO_JSVAL( gPriv->GetHealth() );				break;
 			case CREGP_ISDUNGEON:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsDungeon() );			break;
+			case CREGP_ISDISABLED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsDisabled() );			break;
 			case CREGP_CHANCEBIGORE:		*vp = INT_TO_JSVAL( gPriv->GetChanceBigOre() );			break;
 			case CREGP_NUMOREPREFERENCES:	*vp = INT_TO_JSVAL( gPriv->GetNumOrePreferences() );	break;
 			case CREGP_POPULATION:			*vp = INT_TO_JSVAL( gPriv->GetPopulation() );			break;
@@ -2851,6 +2868,7 @@ JSBool CRegionProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool s
 			case CREGP_ISSAFEZONE:			gPriv->IsSafeZone( encaps.toBool() );						break;
 			case CREGP_HEALTH:				gPriv->SetHealth( static_cast<SI16>( encaps.toInt() ));		break;
 			case CREGP_ISDUNGEON:			gPriv->IsDungeon( encaps.toBool() );						break;
+			case CREGP_ISDISABLED:			gPriv->IsDisabled( encaps.toBool() );						break;
 			case CREGP_CHANCEBIGORE:		gPriv->SetChanceBigOre( static_cast<UI08>( encaps.toInt() ));	break;
 			case CREGP_NUMGUARDS:			gPriv->SetNumGuards( static_cast<UI16>( encaps.toInt() ));	break;
 			case CREGP_SCRIPTTRIGGER:

@@ -155,7 +155,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"PORT"s, 128},
 	{"ACCESSDIRECTORY"s, 129},
 	{"LOGSDIRECTORY"s, 130},
-	{"ACCOUNTISOLATION"s, 131},
+	// 131 free
 	{"HTMLDIRECTORY"s, 132},
 	{"SHOOTONANIMALBACK"s, 133},
 	{"NPCTRAININGENABLED"s, 134},
@@ -373,7 +373,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"HEALTHREGENCAP"s, 350},
 	{"STAMINAREGENCAP"s, 351},
 	{"MANAREGENCAP"s, 352},
-  {"SWINGSPEEDINCREASECAP"s, 353},
+	{"SWINGSPEEDINCREASECAP"s, 353},
 	{"KARMALOCKING"s, 354},
 	{"PHYSICALRESISTCAP"s, 355},
 	{"FIRERESISTCAP"s, 356},
@@ -396,7 +396,10 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"ELFMANAREGENBONUS"s, 373},
 	{"GARGOYLEHEALTHREGENBONUS"s, 374},
 	{"GARGOYLESTAMINAREGENBONUS"s, 375},
-	{"GARGOYLEMANAREGENBONUS"s, 376}
+	{"GARGOYLEMANAREGENBONUS"s, 376},
+	{"HUMANMAXWEIGHTBONUS"s, 377},
+	{"ELFMAXWEIGHTBONUS"s, 378},
+	{"GARGOYLEMAXWEIGHTBONUS"s, 379}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -829,12 +832,15 @@ auto CServerData::ResetDefaults() -> void
 	HumanHealthRegenBonus( 0 ); // 2 from ML and onwards
 	HumanStaminaRegenBonus( 0 );
 	HumanManaRegenBonus( 0 );
+	HumanMaxWeightBonus( 0 );
 	ElfHealthRegenBonus( 0 );
 	ElfStaminaRegenBonus( 0 );
 	ElfManaRegenBonus( 0 );
+	ElfMaxWeightBonus( 0 );
 	GargoyleHealthRegenBonus( 0 );
 	GargoyleStaminaRegenBonus( 0 );
 	GargoyleManaRegenBonus( 2 ); // 2 from SA and onwards
+	GargoyleMaxWeightBonus( 0 );
 
 	BuyThreshold( 2000 );
 	GuardStatus( true );
@@ -2020,6 +2026,21 @@ auto CServerData::HumanManaRegenBonus( SI16 value ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HumanMaxWeightBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default max weight bonus for human race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HumanMaxWeightBonus() const -> SI16
+{
+	return humanMaxWeightBonus;
+}
+auto CServerData::HumanMaxWeightBonus( SI16 value ) -> void
+{
+	humanMaxWeightBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ElfHealthRegenBonus()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default health regen bonus for elf race
@@ -2065,6 +2086,21 @@ auto CServerData::ElfManaRegenBonus( SI16 value ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ElfMaxWeightBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default max weight bonus for elf race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ElfMaxWeightBonus() const -> SI16
+{
+	return elfMaxWeightBonus;
+}
+auto CServerData::ElfMaxWeightBonus( SI16 value ) -> void
+{
+	elfMaxWeightBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::GargoyleHealthRegenBonus()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default health regen bonus for gargoyle race
@@ -2107,6 +2143,21 @@ auto CServerData::GargoyleManaRegenBonus() const -> SI16
 auto CServerData::GargoyleManaRegenBonus( SI16 value ) -> void
 {
 	gargoyleManaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GargoyleMaxWeightBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default max weight bonus for gargoyle race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GargoyleMaxWeightBonus() const -> SI16
+{
+	return gargoyleMaxWeightBonus;
+}
+auto CServerData::GargoyleMaxWeightBonus( SI16 value ) -> void
+{
+	gargoyleMaxWeightBonus = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2898,7 +2949,7 @@ auto CServerData::ManaRegenMode( UI08 mode ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::HealthRegenCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the cap for regen hits propertie
+//|	Purpose		-	Gets/Sets cap for health regen points
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::HealthRegenCap() const -> SI16
 {
@@ -2912,7 +2963,7 @@ auto CServerData::HealthRegenCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::StaminaRegenCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for regen stam propertie
+//|	Purpose		-	Gets/Sets cap for stamina regen points
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::StaminaRegenCap() const -> SI16
 {
@@ -2926,7 +2977,7 @@ auto CServerData::StaminaRegenCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ManaRegenCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for regen mana propertie
+//|	Purpose		-	Gets/Sets cap for mana regen points
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ManaRegenCap() const -> SI16
 {
@@ -5258,7 +5309,6 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "BACKUPSENABLED=" << ( ServerBackupStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "BACKUPSAVERATIO=" << BackupRatio() << '\n';
 		ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << '\n';
-		ofsOutput << "ACCOUNTISOLATION=" << "1" << '\n';
 		ofsOutput << "UOGENABLED=" << ( ServerUOGEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "FREESHARDSERVERPOLL=" << ( FreeshardServerPoll() ? 1 : 0 ) << '\n';
 		ofsOutput << "RANDOMSTARTINGLOCATION=" << ( ServerRandomStartingLocation() ? 1 : 0 ) << '\n';
@@ -5379,12 +5429,15 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "HUMANHEALTHREGENBONUS=" << HumanHealthRegenBonus() << '\n';
 		ofsOutput << "HUMANSTAMINAREGENBONUS=" << HumanStaminaRegenBonus() << '\n';
 		ofsOutput << "HUMANMANAREGENBONUS=" << HumanManaRegenBonus() << '\n';
+		ofsOutput << "HUMANMAXWEIGHTBONUS=" << HumanMaxWeightBonus() << '\n';
 		ofsOutput << "ELFHEALTHREGENBONUS=" << ElfHealthRegenBonus() << '\n';
 		ofsOutput << "ELFSTAMINAREGENBONUS=" << ElfStaminaRegenBonus() << '\n';
 		ofsOutput << "ELFMANAREGENBONUS=" << ElfManaRegenBonus() << '\n';
+		ofsOutput << "ELFMAXWEIGHTBONUS=" << ElfMaxWeightBonus() << '\n';
 		ofsOutput << "GARGOYLEHEALTHREGENBONUS=" << GargoyleHealthRegenBonus() << '\n';
 		ofsOutput << "GARGOYLESTAMINAREGENBONUS=" << GargoyleStaminaRegenBonus() << '\n';
 		ofsOutput << "GARGOYLEMANAREGENBONUS=" << GargoyleManaRegenBonus() << '\n';
+		ofsOutput << "GARGOYLEMAXWEIGHTBONUS=" << GargoyleMaxWeightBonus() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
@@ -5577,12 +5630,12 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SHOWWEAPONDAMAGETYPES=" << ( ShowWeaponDamageTypes() ? 1 : 0 ) << '\n';
 		ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<UI16>( WeaponDamageBonusType() ) << '\n';
 		ofsOutput << "WEAPONSWINGSPEEDINCREASECAP=" << SwingSpeedIncreaseCap() << '\n';
-		ofsOutput << "PHYSICALRESISTCAP=" << PhysicalResistCap() << '\n';
-		ofsOutput << "FIRERESISTCAP=" << FireResistCap() << '\n';
-		ofsOutput << "COLDRESISTCAP=" << ColdResistCap() << '\n';
-		ofsOutput << "POISONRESISTCAP=" << PoisonResistCap() << '\n';
-		ofsOutput << "ENERGYRESISTCAP=" << EnergyResistCap() << '\n';
-		ofsOutput << "DEFENSECHANCEINCREASECAP=" << DefenseChanceIncreaseCap() << '\n';
+		//ofsOutput << "PHYSICALRESISTCAP=" << PhysicalResistCap() << '\n';
+		//ofsOutput << "FIRERESISTCAP=" << FireResistCap() << '\n';
+		//ofsOutput << "COLDRESISTCAP=" << ColdResistCap() << '\n';
+		//ofsOutput << "POISONRESISTCAP=" << PoisonResistCap() << '\n';
+		//ofsOutput << "ENERGYRESISTCAP=" << EnergyResistCap() << '\n';
+		//ofsOutput << "DEFENSECHANCEINCREASECAP=" << DefenseChanceIncreaseCap() << '\n';
 		ofsOutput << "DAMAGEINCREASECAP=" << DamageIncreaseCap() << '\n';
 		ofsOutput << "}" << '\n';
 
@@ -5785,7 +5838,7 @@ auto CServerData::TrackingRedisplayTime( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::SwingSpeedIncreaseCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for swing speed cap propertie
+//|	Purpose		-	Gets/Sets cap for swing speed increase
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::SwingSpeedIncreaseCap() const -> SI16
 {
@@ -5799,7 +5852,7 @@ auto CServerData::SwingSpeedIncreaseCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::PhysicalResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Physical cap propertie
+//|	Purpose		-	Gets/Sets cap for physical resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::PhysicalResistCap() const -> SI16
 {
@@ -5813,7 +5866,7 @@ auto CServerData::PhysicalResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::FireResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Fire cap propertie
+//|	Purpose		-	Gets/Sets cap for fire resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::FireResistCap() const -> SI16
 {
@@ -5827,7 +5880,7 @@ auto CServerData::FireResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ColdResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Cold cap propertie
+//|	Purpose		-	Gets/Sets cap for cold resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ColdResistCap() const -> SI16
 {
@@ -5841,7 +5894,7 @@ auto CServerData::ColdResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::PoisonResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Poison cap propertie
+//|	Purpose		-	Gets/Sets cap for poison resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::PoisonResistCap() const -> SI16
 {
@@ -5855,7 +5908,7 @@ auto CServerData::PoisonResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::EnergyResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Energy cap propertie
+//|	Purpose		-	Gets/Sets cap for energy resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::EnergyResistCap() const -> SI16
 {
@@ -5869,7 +5922,7 @@ auto CServerData::EnergyResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DefenseChanceIncreaseCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Defense Chance Increase cap propertie
+//|	Purpose		-	Gets/Sets cap for defense chance increase
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DefenseChanceIncreaseCap() const -> SI16
 {
@@ -5883,7 +5936,7 @@ auto CServerData::DefenseChanceIncreaseCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DamageIncreaseCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for damage Increase cap propertie
+//|	Purpose		-	Gets/Sets cap for damage increase
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DamageIncreaseCap() const -> SI16
 {
@@ -6423,7 +6476,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 130:	 // LOGSDIRECTORY
 			Directory( CSDDP_LOGS, value );
 			break;
-		case 131:	 // ACCOUNTISOLATION
+		case 131:	 // NOT USED
 			break;
 		case 132:	 // HTMLDIRECTORY
 			Directory( CSDDP_HTML, value );
@@ -7123,6 +7176,15 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 376:	// GARGOYLEMANAREGENBONUS
 			GargoyleManaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 377:	// HUMANMAXWEIGHTBONUS
+			HumanMaxWeightBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 378:	// ELFMAXWEIGHTBONUS
+			ElfMaxWeightBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 379:	// GARGOYLEMAXWEIGHTBONUS
+			GargoyleMaxWeightBonus( std::stoi( value, nullptr, 0 ));
 			break;
 		default:
 			rValue = false;

@@ -165,6 +165,7 @@ inline JSPropertySpec CRegionProperties[] =
 	{ "isSafeZone",			CREGP_ISSAFEZONE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "health",				CREGP_HEALTH,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isDungeon",			CREGP_ISDUNGEON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isDisabled",			CREGP_ISDISABLED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "worldNumber",		CREGP_WORLDNUMBER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "instanceID",			CREGP_INSTANCEID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "chanceBigOre",		CREGP_CHANCEBIGORE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -609,6 +610,7 @@ inline JSPropertySpec CItemProps[] =
 	{ "banX",			CIP_BANX,			JSPROP_ENUMANDPERM, nullptr, nullptr},
 	{ "banY",			CIP_BANY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tithing",		CIP_TITHING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "moveType",		CIP_MOVETYPE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 

@@ -1460,7 +1460,7 @@ bool CRace::CanEquipItem( UI16 itemId ) const
 	return true;
 }
 
-CRace::CRace() : raceID( 0xFFFFFFFF ), bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
+CRace::CRace() : raceID( 0xFFFF ), bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
 restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f ), bloodColour( 0 )
 {
 	iSkills.fill( 0 );
@@ -1479,6 +1479,7 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	HPRegenBonus( 0 );
 	ManaRegenBonus( 0 );
 	StamRegenBonus( 0 );
+	MaxWeightBonus( 0 );
 	DoesHunger( false );
 	SetHungerRate( 0 );
 	SetHungerDamage( 0 );
@@ -1506,6 +1507,7 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	HPRegenBonus( 0 );
 	ManaRegenBonus( 0 );
 	StamRegenBonus( 0 );
+	MaxWeightBonus( 0 );
 	DoesHunger( false );
 	SetHungerRate( 0 );
 	SetHungerDamage( 0 );
@@ -1811,6 +1813,35 @@ void CRace::StamRegenBonus( SI16 value )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CRace::MaxWeightBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets race's max weight capacity bonus
+//o------------------------------------------------------------------------------------------------o
+SI16 CRace::MaxWeightBonus( void ) const
+{
+	if( RaceMaxWeightBonus == 0 ) // only use global overrides if property in race-definition is 0
+	{
+		switch( raceID )
+		{
+			case 0: // Human by default
+				return cwmWorldState->ServerData()->HumanMaxWeightBonus();
+			case 1: // Elf by default
+				return cwmWorldState->ServerData()->ElfMaxWeightBonus();
+			case 2: // Gargoyle by default
+				return cwmWorldState->ServerData()->GargoyleMaxWeightBonus();
+			default:
+				break;
+		}
+	}
+
+	return RaceMaxWeightBonus;
+}
+void CRace::MaxWeightBonus( SI16 value )
+{
+	RaceMaxWeightBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CRace::Load()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load details of race from races.dfn
@@ -1828,6 +1859,9 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 
 	COLOUR beardMin = 0, skinMin = 0, hairMin = 0;
 
+	bool allSkillsG = false;
+	bool allSkillsL = false;
+
 	for( tag = RacialPart->First(); !RacialPart->AtEnd(); tag = RacialPart->Next() )
 	{
 		UTag = oldstrutil::upper( tag );
@@ -1838,7 +1872,17 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 			case 'a':
 			case 'A':
 			{
-				if( UTag == "ALLOWEQUIPLIST" )
+				if( UTag == "ALLSKILLSG" )
+				{
+					allSkillsG = true;
+					break;
+				}
+				else if( UTag == "ALLSKILLSL" )
+				{
+					allSkillsL = true;
+					break;
+				}
+				else if( UTag == "ALLOWEQUIPLIST" )
 				{
 					// Allowed equipment from [EQUIPMENT #] sections in races.dfn
 					std::string subTag;
@@ -2345,7 +2389,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 		{
 			std::string skillthing = oldstrutil::upper( cwmWorldState->skill[iCountA].name );
 			skillthing += "G";
-			if( skillthing == UTag )
+			if( allSkillsG || skillthing == UTag )
 			{
 				Skill( static_cast<UI16>( std::stoul( data, nullptr, 0 )), iCountA );
 			}
@@ -2353,7 +2397,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 			{
 				skillthing = oldstrutil::upper( cwmWorldState->skill[iCountA].name );
 				skillthing += "L";
-				if( skillthing == UTag )
+				if( allSkillsL || skillthing == UTag )
 				{
 					Skill( modCount + static_cast<UI16>( std::stoul( data, nullptr, 0 )), iCountA );
 				}
