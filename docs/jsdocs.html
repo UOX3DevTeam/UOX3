@@ -139,7 +139,7 @@
 					<input type="checkbox" id="spoiler_faq_language"/>
 					<label for="spoiler_faq_language">What language is UOX3's JavaScript Engine based on? <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>UOX3's JavaScript Engine is based on an embedded version of SpiderMonkey 1.7. This provides a similar feature-set to JavaScript 1.7 or ECMAScript 5, minus any web/browser-specific stuff.</p>
+						<p>UOX3's JavaScript Engine is based on an embedded version of SpiderMonkey 1.8. This provides a similar feature-set to JavaScript 1.8 or ECMAScript 5, minus any web/browser-specific stuff.</p>
 					</div>
 					<input type="checkbox" id="spoiler_faq_global_vars"/>
 					<label for="spoiler_faq_global_vars">Are global variables unique per script? <i class="fas fa-angle-down"></i></label>
@@ -1069,39 +1069,39 @@ function onCommand( mySock, cmdString )
 				</div> <!-- cd-faq__content -->
 			</li>
 
-           <li class="cd-faq__item">
-                <a class="cd-faq__trigger" href="#eventOnContextMenuRequest" id="eventOnContextMenuRequest"><span>onContextMenuRequest</span></a>
-                <div class="cd-faq__content">
-                    <div class="text-component">
-                        <div class="settingsDiv">
-                            <p><span class="hl">Prototype</span></p>
-                            <p><em>function onContextMenuRequest( socket, targObj )</em></p>
-                        </div>
-                        <div class="settingsDiv">
-                            <p><span class="hl">Purpose</span></p>
-                            <p>To allow reactions to player attempts at opening context menus for chars/items</p>
-                        </div>
-                        <div class="settingsDiv">
-                            <p><span class="hl">When Triggered</span></p>
-                            <p>When a player attempts to trigger context menu on items or characters, script activates on said item/character</p>
-                            <p>Usable in Global script? <span class="hl">Yes</span></p>
-                        </div>
-                        <div class="settingsDiv">
-                            <p><span class="hl">Return Values</span></p>
-                            <ul>
-                                <li><strong>return false</strong> to override and prevent hard-coded context menus from showing</li>
-                                <li><strong>return true</strong> to let code handle context menu instead</li>
-                            </ul>
-                        </div>
-                        <div class="settingsDiv">
-                            <p><span class="hl">Example of usage</span><br>
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnContextMenuRequest" id="eventOnContextMenuRequest"><span>onContextMenuRequest</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onContextMenuRequest( socket, targObj )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow reactions to player attempts at opening context menus for chars/items</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When a player attempts to trigger context menu on items or characters, script activates on said item/character</p>
+							<p>Usable in Global script? <span class="hl">Yes</span></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> to override and prevent hard-coded context menus from showing</li>
+								<li><strong>return true</strong> to let code handle context menu instead</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onContextMenuRequest( socket, targObj )
 {
     // handle your own packet with context menu here
     var pUser = socket.currentChar;
     var offset = 12;
     var numEntries = 1; // Increase with number of Entries
- 
+
     // Prepare packet
     var toSend = new Packet();
     var packetLen = ( 12 + ( numEntries * 8 ));
@@ -1112,78 +1112,78 @@ function onCommand( mySock, cmdString )
     toSend.WriteShort( 5, 0x0001 ); // 0x0001 for 2D client, 0x0002 for KR (maybe this needs to be 0x0002?)
     toSend.WriteLong( 7, targObj.serial );
     toSend.WriteByte( 11, numEntries ); // Number of entries
- 
+
     // Context Menu Entry 1 - Open Paperdoll Context menu
     toSend.WriteShort( offset, 0x000a );    // Unique ID
     toSend.WriteShort( offset += 2, 6123);
     toSend.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
     toSend.WriteShort( offset += 2, 0x03E0 ); // Hue of text
- 
+
     offset += 2; // for each additional entry
- 
+
     // Context Menu Entry 2 - Unlink pet
     toSend.WriteShort( offset, 0x000b );    // Unique ID
     toSend.WriteShort( offset += 2, 6182 );
     toSend.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
     toSend.WriteShort( offset += 2, 0x03E0 ); // Hue of text
- 
+
     //Send packet
     socket.Send( toSend );
     toSend.Free();
- 
-    return false;
+
+	return false;
 }</code></pre></p>
-                        </div>
-                    </div>
-                </div> <!-- cd-faq__content -->
-            </li>
- 
-            <li class="cd-faq__item">
-                <a class="cd-faq__trigger" href="#eventOnContextMenuSelect" id="eventOnContextMenuSelect"><span>onContextMenuSelect</span></a>
-                <div class="cd-faq__content">
-                    <div class="text-component">
-                        <div class="settingsDiv">
-                            <p><span class="hl">Prototype</span></p>
-                            <p><em>function onContextMenuSelect( socket, targObj, popupEntry )</em></p>
-                        </div>
-                        <div class="settingsDiv">
-                            <p><span class="hl">Purpose</span></p>
-                            <p>To allow custom handling of context menu selection for chars/items</p>
-                        </div>
-                        <div class="settingsDiv">
-                            <p><span class="hl">When Triggered</span></p>
-                            <p>When a player selects a popup from a context menu on an item/character, script activates on said item/character</p>
-                            <p>Usable in Global script? <span class="hl">Yes</span></p>
-                        </div>
-                        <div class="settingsDiv">
-                            <p><span class="hl">Return Values</span></p>
-                            <ul>
-                                <li><strong>return false</strong> to override and prevent hard-coded context menu selection handling</li>
-                                <li><strong>return true</strong> to let code handle context menu selection handling</li>
-                            </ul>
-                        </div>
-                        <div class="settingsDiv">
-                            <p><span class="hl">Example of usage</span><br>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnContextMenuSelect" id="eventOnContextMenuSelect"><span>onContextMenuSelect</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onContextMenuSelect( socket, targObj, popupEntry )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow custom handling of context menu selection for chars/items</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When a player selects a popup from a context menu on an item/character, script activates on said item/character</p>
+							<p>Usable in Global script? <span class="hl">Yes</span></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> to override and prevent hard-coded context menu selection handling</li>
+								<li><strong>return true</strong> to let code handle context menu selection handling</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onContextMenuSelect( socket, targObj, popupEntry )
 {
     switch( popupEntry )
     {
-        case 0x000A: // Open Paperdoll
-            // Show custom paperdoll?
-            break;
-        case 0x000B: // Unlink Pet
-            // Handle unlinking of pet here
-            break;
-        default:
-            break;
+    	case 0x000A: // Open Paperdoll
+    		// Show custom paperdoll?
+    		break;
+    	case 0x000B: // Unlink Pet
+    		// Handle unlinking of pet here
+    		break;
+    	default:
+    		break;
     }
- 
-    return false;
+
+	return false;
 }</code></pre></p>
-                        </div>
-                    </div>
-                </div> <!-- cd-faq__content -->
-            </li>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
 
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnContRemoveItem" id="eventOnContRemoveItem"><span>onContRemoveItem</span></a>
@@ -5971,7 +5971,7 @@ var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
 									<p><em>ITEM FindRootContainer( iObj );</em></p>
-									<p><em>ITEM FindRootContainer( iObjSerial  );</em></p>
+									<p><em>ITEM FindRootContainer( iObjSerial );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -8155,7 +8155,7 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Looping through all items equipped on character
+	<pre><code class="language-javascript">// Looping through all items equipped on character
 	// (including backpack, bankbox, hair, etc) upon clicking an item with script attached
 	function onUseChecked( pUser, iUsed )
 	{
@@ -8566,8 +8566,7 @@ spellbookItem.RemoveSpell( 0 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>
-										Available item types:
+									<p>Available item types:
 										<ul>
 											<li>1 - Armor</li>
 											<li>2 - Light</li>
@@ -8738,14 +8737,14 @@ myObj.Teleport( iUsed );
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-										The function has 5 extra optional arguments (if including an optional parameter, make sure to also include the preceding argument):
-										<p><<ul>
-											<li>allHear (broadcast true/false)</li>
-											<li>txtHue (colour of the text sent to the client)</li>
-											<li>speechTarget (intended target of message. 0 = only visible to sender and receiver, 1 = visible to all players in range, 2 = visible to all NPCs and players in range, 3 = visible to all PCs everywhere + NPCs in range, 4 = visible to all PCs everywhere (broadcast), 5 = only visible to receiver)</li>
-											<li>speechTargetSerial (serial of the receiver of the message, used if speechTarget is 0 or 5)</li>
-											<li>speechFontType (type of font to use. Defaults to normal. 0 = bold, 1 = normal with shadow, 2 = bold with shadow, 3 = normal, 4 = gothic, 5 = italic, 6 = small and dark, 7 = colourful, 8 = runic (only works with CAPS), 9 = small and light)</li>
-										</ul></p>
+									<p>The function has 5 extra optional arguments (if including an optional parameter, make sure to also include the preceding argument):</p>
+									<ul>
+										<li>allHear (broadcast true/false)</li>
+										<li>txtHue (colour of the text sent to the client)</li>
+										<li>speechTarget (intended target of message. 0 = only visible to sender and receiver, 1 = visible to all players in range, 2 = visible to all NPCs and players in range, 3 = visible to all PCs everywhere + NPCs in range, 4 = visible to all PCs everywhere (broadcast), 5 = only visible to receiver)</li>
+										<li>speechTargetSerial (serial of the receiver of the message, used if speechTarget is 0 or 5)</li>
+										<li>speechFontType (type of font to use. Defaults to normal. 0 = bold, 1 = normal with shadow, 2 = bold with shadow, 3 = normal, 4 = gothic, 5 = italic, 6 = small and dark, 7 = colourful, 8 = runic (only works with CAPS), 9 = small and light)</li>
+									</ul>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -11547,7 +11546,7 @@ if( myGuild.IsAtPeace() )
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Notes</span></p>
-								<p>background and scrollbar either <strong>false</strong> or <strong>true</strong>, for respectively off/on. HTMLText is the text in the gump, can use HTML here. Supported tags: &lt;B&gt;&lt;/B&gt; &lt;BIG&gt;&lt;/BIG&gt; &lt;SMALL&gt;&lt;/SMALL&gt; &lt;EM&gt;&lt;/EM&gt; &lt;I&gt;&lt;/I&gt; &lt;U&gt;&lt;/U&gt;
+								<p>background and scrollbar either <strong>false</strong> or <strong>true</strong>, for respectively off/on. HTMLText is the text in the gump, can use HTML here. Supported tags: &lt;BODYBGCOLOR=[color name]|[#colorid]&gt;&lt;/BODYBGCOLOR&gt; &lt;B&gt;&lt;/B&gt; &lt;BIG&gt;&lt;/BIG&gt; &lt;SMALL&gt;&lt;/SMALL&gt; &lt;EM&gt;&lt;/EM&gt; &lt;I&gt;&lt;/I&gt; &lt;U&gt;&lt;/U&gt;
 &lt;H1&gt;&lt;/H1&gt; &lt;H2&gt;&lt;/H2&gt; &lt;H3&gt;&lt;/H3&gt; &lt;H4&gt;&lt;/H4&gt; &lt;H5&gt;&lt;/H5&gt; &lt;H6&gt;&lt;/H6&gt; &lt;a href=\&quot;\&quot;&gt;&lt;/a&gt;
 &lt;div align=\&quot;right\&quot;&gt;&lt;div align=\&quot;left\&quot;&gt;&lt;/DIV&gt; &lt;left&gt;&lt;/left&gt; &lt;P&gt; &lt;CENTER&gt;&lt;/CENTER&gt; &lt;BR&gt;&lt;/BR&gt; &lt;BASEFONT color=#ffffff size=1-7&gt;&lt;/BASEFONT&gt;</p>
 							</div>
@@ -12175,7 +12174,7 @@ for( var i = 0; i < numCheckedBoxes; i++ )
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Gets data input from TextEntr(y/ies) in JS Gump</p>
+									<p>Gets data input from TextEntr(y/ies) in JS Gump. First input will have editIndex 0, second will have editIndex 1, etc.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -12830,17 +12829,17 @@ if( ValidateObject( iMulti ))
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>bool IsMulti();</em></p>
+									<p><em>bool IsBoat();</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns true if an Item is actually a Multi</p>
+									<p>Returns true if an Item is actually a Boat. Note that a Boat is also a Multi!</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">if( iToCheck.IsMulti() )
+									<pre><code class="language-javascript">if( iToCheck.IsBoat() )
 {
-	pUser.TextMessage( "Yep, it's definitely a multi." );
+	pUser.TextMessage( "Yep, it's definitely a boat." );
 }</code></pre>
 								</div>
 							</div>
@@ -14111,6 +14110,25 @@ mySock.SetTimer( timer.SOCK_OBJDELAY, 3000 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<p><strong>See FirstTriggerWord() Method</strong></p>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_socket_openContainer"/>
+							<label for="spoiler_method_socket_openContainer">OpenContainer <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void OpenContainer( iCont )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Opens the specified container (iCont) for the specified socket</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">socket.OpenContainer( iCont );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -17580,7 +17598,7 @@ function findNearbyItems( pUser, trgItem, pSock )
 	<div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>UOX3 JSE Docs by Geir Ove Alnes @ Copyright 2022-2025</small></p>
+	<p><small>UOX3 JSE Docs by Xuri @ Copyright 2022-2025</small></p>
 	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" rel="noopener" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
 </div>
 <script defer>

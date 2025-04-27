@@ -239,15 +239,27 @@ function DisplayCharacterListGump( socket, filteredList, filterString, sortByDat
 		}
 		charListGump.AddText( 40, baseYPos + 5 + ( 26 * i ), ( pageSlice[i].isGM ? 53 : ( pageSlice[i].murderer ? 32 : 0 )), name );
 
+		let btnColor = 1000;
+		if( pageSlice[i].serial == socket.currentChar.serial )
+		{
+			btnColor = 981;
+		}
+
 		// Teleport-to-character button
-		charListGump.AddButton( 152, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 1000000 + pageSlice[i].serial );
-		charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2614, sockLang )); // Teleport to character
-		charListGump.AddText( 157, baseYPos + 5 + ( 26 * i ), 1000, "t" );
+		if( pageSlice[i].serial != socket.currentChar.serial )
+		{
+			charListGump.AddButton( 152, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 1000000 + pageSlice[i].serial );
+			charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2614, sockLang )); // Teleport to character
+		}
+		charListGump.AddText( 157, baseYPos + 5 + ( 26 * i ), btnColor, "t" );
 
 		// Get/Fetch-character button
-		charListGump.AddButton( 172, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 2000000 + pageSlice[i].serial );
-		charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2615, sockLang )); // Get character
-		charListGump.AddText( 178, baseYPos + 5 + ( 26 * i ), 1000, "g" );
+		if( pageSlice[i].serial != socket.currentChar.serial )
+		{
+			charListGump.AddButton( 172, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 2000000 + pageSlice[i].serial );
+			charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2615, sockLang )); // Get character
+		}
+		charListGump.AddText( 178, baseYPos + 5 + ( 26 * i ), btnColor, "g" );
 
 		// Inspect character
 		charListGump.AddButton( 192, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 3000000 + pageSlice[i].serial );
@@ -259,9 +271,12 @@ function DisplayCharacterListGump( socket, filteredList, filterString, sortByDat
 		if( listType == 1 ) // Players only
 		{
 			// Jail/Release character
-			charListGump.AddButton( 212, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 4000000 + pageSlice[i].serial );
-			charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2617, sockLang )); // Jail/Release character
-			charListGump.AddText( 218, baseYPos + 5 + ( 26 * i ), 1000, "j" );
+			if( pageSlice[i].serial != socket.currentChar.serial )
+			{
+				charListGump.AddButton( 212, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 4000000 + pageSlice[i].serial );
+				charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2617, sockLang )); // Jail/Release character
+			}
+			charListGump.AddText( 218, baseYPos + 5 + ( 26 * i ), btnColor, "j" );
 
 			// Kick player
 			charListGump.AddButton( 232, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 5000000 + pageSlice[i].serial );
@@ -269,9 +284,12 @@ function DisplayCharacterListGump( socket, filteredList, filterString, sortByDat
 			charListGump.AddText( 239, baseYPos + 5 + ( 26 * i ), 1000, "k" );
 
 			// Ban player
-			charListGump.AddButton( 252, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 6000000 + pageSlice[i].serial );
-			charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2619, sockLang )); // Ban Player
-			charListGump.AddText( 259, baseYPos + 5 + ( 26 * i ), 1000, "b" );
+			if( pageSlice[i].serial != socket.currentChar.serial )
+			{
+				charListGump.AddButton( 252, baseYPos + 4 + ( 26 * i ), 9028, 9026, 1, 0, 6000000 + pageSlice[i].serial );
+				charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2619, sockLang )); // Ban Player
+			}
+			charListGump.AddText( 259, baseYPos + 5 + ( 26 * i ), btnColor, "b" );
 			horizontalBtnCount += 3;
 		}
 		else

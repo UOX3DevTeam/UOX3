@@ -4777,9 +4777,9 @@ JSBool CMulti_TurnBoat( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 //o------------------------------------------------------------------------------------------------o
 JSBool CMulti_GetTiller( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
-	if( argc != 1 )
+	if( argc > 0 )
 	{
-		ScriptError( cx, "(GetTiller) Invalid Count of Arguments: %d, needs: 1", argc );
+		ScriptError( cx, "(GetTiller) Invalid Count of Arguments: %d, needs: 0", argc );
 		return JS_FALSE;
 	}
 
