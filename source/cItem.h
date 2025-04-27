@@ -244,6 +244,8 @@ public:
 	auto			GetArmourClass() const -> ARMORCLASS;
 	auto			SetArmourClass( ARMORCLASS newValue ) -> void;
 
+	auto			GetNonMedableArmorRating() const -> R64;
+
 	auto			GetRank() const -> SI08;
 	auto			SetRank( SI08 newValue ) -> void;
 

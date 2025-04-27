@@ -51,11 +51,11 @@ function onLogin( socket, pChar )
 	}
 
 	// Re-adds Buff for disguise kit if player still has time left.
-	var currentTime = GetCurrentClock();
 	var disguiseKitTime = pChar.GetJSTimer( 1, 5023 );
-	var timeLeft = Math.round(( disguiseKitTime - currentTime ) / 1000 );
 	if( disguiseKitTime > 0 )
 	{
+		var currentTime = GetCurrentClock();
+		var timeLeft = Math.round(( disguiseKitTime - currentTime ) / 1000 );
 		TriggerEvent( 2204, "RemoveBuff", pChar, 1033 );
 		TriggerEvent( 2204, "AddBuff", pChar, 1033, 1075821, 1075820, timeLeft, "" );
 	}

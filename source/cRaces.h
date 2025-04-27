@@ -25,10 +25,16 @@ private:
 	SI16				HPMod;
 	SI16				ManaMod;
 	SI16				StamMod;
+	SI16				RaceHPRegenBonus;
+	SI16				RaceStamRegenBonus;
+	SI16				RaceManaRegenBonus;
+
+	SI16				RaceMaxWeightBonus;
 private:
 	std::array<SKILLVAL, SKILLS> iSkills;
 	//SKILLVAL			iSkills[SKILLS];
 	std::string			raceName;
+	RACEID				raceID;
 
 	std::bitset<8>		bools;
 	RANGE				visDistance;
@@ -74,6 +80,7 @@ public:
 
 	SKILLVAL		Skill( SI32 skillNum ) const;
 	const std::string Name( void ) const;
+	void			SetRaceID( RACEID id );
 	bool			RequiresBeard( void ) const;
 	bool			NoBeard( void ) const;
 	bool			IsPlayerRace( void ) const;
@@ -112,6 +119,7 @@ public:
 
 	void			Skill( SKILLVAL newValue, SI32 iNum );
 	void			Name( const std::string& newName );
+	RACEID			GetRaceID() const;
 	void			RequiresBeard( bool newValue );
 	void			NoBeard( bool newValue );
 	void			IsPlayerRace( bool newValue );
@@ -124,6 +132,16 @@ public:
 	void			ManaModifier( SI16 value );
 	SI16			StamModifier( void ) const;
 	void			StamModifier( SI16 value );
+
+	SI16			HPRegenBonus( void ) const;
+	void			HPRegenBonus( SI16 value );
+	SI16			ManaRegenBonus( void ) const;
+	void			ManaRegenBonus( SI16 value );
+	SI16			StamRegenBonus( void ) const;
+	void			StamRegenBonus( SI16 value );
+
+	SI16			MaxWeightBonus( void ) const;
+	void			MaxWeightBonus( SI16 value );
 
 	void			MagicResistance( R32 value );
 	void			PoisonResistance( R32 value );
@@ -172,6 +190,7 @@ private:
 	// data
 	RACELIST		races;
 	MODIFIERLIST	combat;
+	RACEID			nextUniqueRaceID;
 
 	void			DefaultInitCombat( void );
 

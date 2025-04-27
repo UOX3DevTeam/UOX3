@@ -212,7 +212,7 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<107>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<110>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
@@ -271,6 +271,9 @@ private:
 	UI16		statCap;						//	A cap on the total of a PC's stats
 	SI16		maxStealthMovement;				//	Max number of steps allowed with stealth skill at 100.0
 	SI16		maxStaminaMovement;				//	Max number of steps allowed while running before stamina is reduced
+	UI08		healthRegenMode;				//	Hp regen mode - see HpRegenMode enum for details
+	UI08		staminaRegenMode;				//	Stamina regen mode - see StaminaRegenMode enum for details
+	UI08		manaRegenMode;					//	Mana regen mode - see ManaRegenMode enum for details
 
 	// ServerTimers
 	// array
@@ -298,11 +301,28 @@ private:
 	UI08		expansionWrestlingParry;		// Determines which era ruleset to use for wrestling parry calculations
 	UI08		expansionCombatHitChance;		// Determines which era ruleset to use for calculating melee hit chance
 
+	// Default race bonuses
+	SI16		humanHealthRegenBonus;			//	The default health regen bonus for human race
+	SI16		humanStaminaRegenBonus;			//	The default stamina regen bonus for human race
+	SI16		humanManaRegenBonus;			//	The default mana regen bonus for human race
+	SI16		humanMaxWeightBonus;			//	The default max weight bonus for human race
+	SI16		elfHealthRegenBonus;			//	The default health regen bonus for elf race
+	SI16		elfStaminaRegenBonus;			//	The default stamina regen bonus for elf race
+	SI16		elfManaRegenBonus;				//	The default mana regen bonus for elf race
+	SI16		elfMaxWeightBonus;				//	The default max weight bonus for elf race
+	SI16		gargoyleHealthRegenBonus;		//	The default health regen bonus for gargoyle race
+	SI16		gargoyleStaminaRegenBonus;		//	The default stamina regen bonus for gargoyle race
+	SI16		gargoyleManaRegenBonus;			//	The default mana regen bonus for gargoyle race
+	SI16		gargoyleMaxWeightBonus;			//	The default max weight bonus for gargoyle race
+
 	// Settings
 	SI16		ambientSounds;					//	Ambient sounds - values from 1->10 - higher values indicate sounds occur less often
 	SI16		htmlStatusEnabled;				//	If > 0 then it's enabled - only used at PC char creation - use elsewhere? (was # of seconds between updates)
 	SI16		sellMaxItems;					//	Maximum number of items that can be sold to a vendor
 	SI16		fishingstaminaloss;				//	The amount of stamina lost with each use of fishing skill
+	SI16		healthRegenCap;					//	The Cap for health regen property
+	SI16		staminaRegenCap;				//	The Cap for stamina regen property
+	SI16		manaRegenCap;					//	The Cap for mana regen property
 	UI08		maxControlSlots;				//	The default max amount of pet/follower control slots for each player
 	UI08		maxSafeTeleports;				//	The default max amount of free teleports to safety players get via the help menu per day
 	UI08		maxPetOwners;					//	The default max amount of different owners a pet may have in its lifetime
@@ -745,6 +765,24 @@ public:
 	auto		FishingStaminaLoss( SI16 value ) -> void;
 	SI16		FishingStaminaLoss() const;
 
+	auto		HealthRegenCap( SI16 value ) -> void;
+	SI16		HealthRegenCap() const;
+
+	auto		StaminaRegenCap( SI16 value ) -> void;
+	SI16		StaminaRegenCap() const;
+
+	auto		ManaRegenCap( SI16 value ) -> void;
+	SI16		ManaRegenCap() const;
+
+	auto		HealthRegenMode( UI08 value ) -> void;
+	UI08		HealthRegenMode() const;
+
+	auto		StaminaRegenMode( UI08 value ) -> void;
+	UI08		StaminaRegenMode() const;
+
+	auto		ManaRegenMode( UI08 value ) -> void;
+	UI08		ManaRegenMode() const;
+
 	auto		CombatAttackStamina( SI16 value ) -> void;
 	SI16		CombatAttackStamina() const;
 
@@ -1015,8 +1053,14 @@ public:
 	auto		HungerSystemEnabled( bool value ) -> void;
 	auto		HungerSystemEnabled() const -> bool;
 
+	auto		HungerAffectHealthRegen( bool value ) -> void;
+	auto		HungerAffectHealthRegen() const -> bool;
+
 	auto		ThirstSystemEnabled( bool value ) -> void;
 	auto		ThirstSystemEnabled() const -> bool;
+
+	auto		ThirstAffectStaminaRegen( bool value ) -> void;
+	auto		ThirstAffectStaminaRegen() const -> bool;
 
 	auto		HungerDamage( SI16 value ) -> void;
 	SI16		HungerDamage() const;
@@ -1086,6 +1130,42 @@ public:
 
 	void		ExpansionCombatHitChance( UI08 value );
 	UI08		ExpansionCombatHitChance() const;
+
+	auto		HumanHealthRegenBonus( SI16 value ) -> void;
+	SI16		HumanHealthRegenBonus() const;
+
+	auto		HumanStaminaRegenBonus( SI16 value ) -> void;
+	SI16		HumanStaminaRegenBonus() const;
+
+	auto		HumanManaRegenBonus( SI16 value ) -> void;
+	SI16		HumanManaRegenBonus() const;
+
+	auto		HumanMaxWeightBonus( SI16 value ) -> void;
+	SI16		HumanMaxWeightBonus() const;
+
+	auto		ElfHealthRegenBonus( SI16 value ) -> void;
+	SI16		ElfHealthRegenBonus() const;
+
+	auto		ElfStaminaRegenBonus( SI16 value ) -> void;
+	SI16		ElfStaminaRegenBonus() const;
+
+	auto		ElfManaRegenBonus( SI16 value ) -> void;
+	SI16		ElfManaRegenBonus() const;
+
+	auto		ElfMaxWeightBonus( SI16 value ) -> void;
+	SI16		ElfMaxWeightBonus() const;
+
+	auto		GargoyleHealthRegenBonus( SI16 value ) -> void;
+	SI16		GargoyleHealthRegenBonus() const;
+
+	auto		GargoyleStaminaRegenBonus( SI16 value ) -> void;
+	SI16		GargoyleStaminaRegenBonus() const;
+
+	auto		GargoyleManaRegenBonus( SI16 value ) -> void;
+	SI16		GargoyleManaRegenBonus() const;
+
+	auto		GargoyleMaxWeightBonus( SI16 value ) -> void;
+	SI16		GargoyleMaxWeightBonus() const;
 
 	auto		CombatNPCBaseReattackAt( SI16 value ) -> void;
 	SI16		CombatNPCBaseReattackAt() const;
@@ -1195,6 +1275,9 @@ public:
 
 	auto		ArmorAffectManaRegen( bool newVal ) -> void;
 	auto		ArmorAffectManaRegen() const -> bool;
+
+	auto		HealingAffectHealthRegen( bool newVal ) -> void;
+	auto		HealingAffectHealthRegen() const -> bool;
 
 	auto		AdvancedPathfinding( bool value ) -> void;
 	auto		AdvancedPathfinding() const -> bool;

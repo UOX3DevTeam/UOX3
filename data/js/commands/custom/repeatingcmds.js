@@ -304,7 +304,7 @@ function onCallback6( pSock, myTarget )
 		var StrangeByte = pSock.GetWord(1);
 
 		// If connected with a client lower than v7.0.9, manually add height of targeted tile
-		if ((StrangeByte == 0 && myTarget.isItem) || (pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9))
+		if(( StrangeByte == 0 && myTarget.isItem ) || ( pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9))
 		{
 			targZ += GetTileHeight( pSock.GetWord( 17 ));
 		}
@@ -470,7 +470,7 @@ function onCallback8( pSock, myTarget )
 			var StrangeByte = pSock.GetWord(1);
 
 			// If connected with a client lower than v7.0.9, manually add height of targeted tile
-			if ((StrangeByte == 0 && myTarget.isItem) || (pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9))
+			if(( StrangeByte == 0 && myTarget.isItem ) || ( pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9 ))
 			{
 				targZ += GetTileHeight( pSock.GetWord( 17 ));
 			}
@@ -553,7 +553,7 @@ function onCallback9( pSock, myTarget )
 		var StrangeByte = pSock.GetWord(1);
 
 		// If connected with a client lower than v7.0.9, manually add height of targeted tile
-		if ((StrangeByte == 0 && myTarget.isItem) || (pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9))
+		if(( StrangeByte == 0 && myTarget.isItem ) || ( pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9 ))
 		{
 			targZ += GetTileHeight( pSock.GetWord( 17 ));
 		}
@@ -591,7 +591,7 @@ function onCallback10( pSock, myTarget )
 			var StrangeByte = pSock.GetWord(1);
 
 			// If connected with a client lower than v7.0.9, manually add height of targeted tile
-			if ((StrangeByte == 0 && myTarget.isItem) || (pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9))
+			if(( StrangeByte == 0 && myTarget.isItem ) || ( pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9 ))
 			{
 				targZ += GetTileHeight( pSock.GetWord( 17 ));
 			}
@@ -635,7 +635,7 @@ function onCallback11( pSock, myTarget )
 			var StrangeByte = pSock.GetWord(1);
 
 			// If connected with a client lower than v7.0.9, manually add height of targeted tile
-			if ((StrangeByte == 0 && myTarget.isItem) || (pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9))
+			if(( StrangeByte == 0 && myTarget.isItem ) || ( pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9 ))
 			{
 				targZ += GetTileHeight( pSock.GetWord( 17 ));
 			}

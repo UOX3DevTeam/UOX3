@@ -26,6 +26,7 @@ const UI32 BIT_GUARDED		=	0;
 const UI32 BIT_MARK			=	1;
 const UI32 BIT_GATE			=	2;
 const UI32 BIT_RECALL		=	3;
+const UI32 BIT_DISABLED		=	5;
 const UI32 BIT_AGGRESSIVE	=	6;
 const UI32 BIT_DUNGEON		=	7;
 const UI32 BIT_SAFEZONE		=	8;
@@ -557,7 +558,11 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 				}
 				break;
 			case 'E':
-				if( UTag == "ESCORTS" )
+				if( UTag == "DISABLED" )
+				{
+					IsDisabled(( duint == 1 ));
+				}
+				else if( UTag == "ESCORTS" )
 				{
 					// Load the region number in the global array of valid escortable regions
 					if( duint == 1 )
@@ -1797,6 +1802,7 @@ void CTownRegion::TellMembers( SI32 dictEntry, ...)
 			va_list argptr;
 			va_start( argptr, dictEntry );
 			msg += oldstrutil::format( txt, argptr );
+			va_end( argptr ); // va_end in same function as va_start
 
 			if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 			{
@@ -2045,6 +2051,20 @@ bool CTownRegion::IsDungeon( void ) const
 void CTownRegion::IsDungeon( bool value )
 {
 	priv.set( BIT_DUNGEON, value );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CTownRegion::IsDisabled()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether townregion is disabled
+//o------------------------------------------------------------------------------------------------o
+bool CTownRegion::IsDisabled( void ) const
+{
+	return priv.test( BIT_DISABLED );
+}
+void CTownRegion::IsDisabled( bool value )
+{
+	priv.set( BIT_DISABLED, value );
 }
 
 //o------------------------------------------------------------------------------------------------o

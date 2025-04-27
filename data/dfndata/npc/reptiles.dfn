@@ -688,7 +688,7 @@ CONTROLSLOTS=1
 // yamandon - Base NPC with shared DFN tags
 [base_yamandon]
 {
-GET=base_yamandon
+GET=base_reptiles
 NAME=#//a yamandon
 ID=0x0f9
 SCRIPT=3224

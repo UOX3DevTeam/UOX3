@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 14. October, 2023</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6</small></p>
+	<p style="margin:0"><small>Last Updated: 23. April, 2025</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6b</small></p>
 </div>
 
 <div id="filterMainDocs" contenteditable="true" placeholder="(Search...)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px; margin-top: 5px;"></div>
@@ -60,6 +60,19 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>April 23nd, 2025</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on additional settings: HUMANMAXWEIGHTBONUS, ELFMAXWEIGHTBONUS, GARGOYLEMAXWEIGHTBONUS</li>
+						</ul>
+						<h4>April 22nd, 2025</h4>
+						<ul>
+							<li>Added <a href="#objectTooltips">Object Tooltips</a> feature info with details on how object tooltips work in UOX3, including how custom tooltips can be added.</li>
+						</ul>
+						<h4>April 20th, 2025</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on additional settings: HEALTHREGENMODE, STAMINAREGENMODE, MANAREGENMODE, HEALTHREGENCAP, STAMINAREGENCAP, MANAREGENCAP, HUMANHEALTHREGENBONUS, HUMANSTAMINAREGENBONUS, HUMANMANAREGENBONUS, ELFHEALTHREGENBONUS, ELFSTAMINAREGENBONUS, ELFMANAREGENBONUS, GARGOYLEHEALTHREGENBONUS, GARGOYLESTAMINAREGENBONUS, GARGOYLEMANAREGENBONUS</li>
+							<li>Added <a href="#statRegeneration">Stat Regeneration</a> feature info with details on how characters regenerate stats like health, stamina and mana</li>
+						</ul>
 						<h4>October 13th, 2023</h4>
 						<ul>
 							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on additional settings: SHOWITEMRESISTSTATS, SHOWWEAPONDAMAGETYPES</li>
@@ -1047,12 +1060,8 @@ packitem=0x0f8d,30
 							Number of saves before a backup occurs.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">SAVESTIMER</span><strong>=300</strong><br>
+							<p><span class="hl">SAVESTIMER</span><strong>=600</strong><br>
 							Number of seconds between world saves.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">ACCOUNTISOLATION</span><strong>=1</strong><br>
-							Not in use.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">UOGENABLED</span><strong>=0</strong><br>
@@ -1095,11 +1104,11 @@ packitem=0x0f8d,30
 							Default colour of system messages sent to players.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">MAXCLIENTBYTESIN</span><strong>=25000</strong><br>
+							<p><span class="hl">MAXCLIENTBYTESIN</span><strong>=50000</strong><br>
 							Network budget for incoming traffic from a given connected client, usage beyond which they will receive warnings for, or temporary bans.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">MAXCLIENTBYTESOUT</span><strong>=100000</strong><br>
+							<p><span class="hl">MAXCLIENTBYTESOUT</span><strong>=200000</strong><br>
 							Network budget for outgoing traffic to a given connected client, usage beyond which they will receive warnings for, or temporary bans.</p>
 						</div>
 						<div class="settingsDiv">
@@ -1250,6 +1259,10 @@ packitem=0x0f8d,30
 							Total number of skillpoints available for each player.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">SKILLCAPSINGLE</span><strong>=1000</strong><br>
+							Maximum amount of skillpoints player can have in an individual skill, by default. Can be overridden on a per-player-and-skill basis via powerscrolls, scripts, etc.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">SKILLDELAY</span><strong>=5</strong><br>
 							Number of seconds that must pass after a skill is used, before another skill can be used.</p>
 						</div>
@@ -1282,8 +1295,40 @@ packitem=0x0f8d,30
 							Determines if snooping is a crime or not.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">SNOOPAWARENESS</span><strong>=0</strong><br>
+							Determines if targets of snooping become more aware of it over time. The more aware they are, the more difficult it becomes.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">ARMORAFFECTMANAREGEN</span><strong>=1</strong><br>
 							Toggles whether or not armor affects mana regeneration rate</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HEALINGAFFECTHEALTHREGEN</span><strong>=1</strong><br>
+							Toggles whether or not Healing skill affects passive health regeneration rate</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HEALTHREGENMODE</span><strong>=1</strong><br>
+							0 = no passive health regeneration, 1 = default passive health regeneration.  See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">STAMINAREGENMODE</span><strong>=1</strong><br>
+							0 = no passive stamina regen, 1 = default passive stamina regen (LBR or below), 2 = AoS or beyond, 3 = SA and beyond. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">MANAREGENMODE</span><strong>=1</strong><br>
+							0 = no passive mana regen, 1 = default passive mana regen (LBR or below), 2 = AoS (pre-Pub18), 3 = AoS/SE (post-Pub18), 4 = ML, 5 = KR and beyond. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HEALTHREGENCAP</span><strong>=18</strong><br>
+							Gets/Sets cap for health regen. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">STAMINAREGENCAP</span><strong>=24</strong><br>
+							Gets/Sets cap for stamina regen. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">MANAREGENCAP</span><strong>=18</strong><br>
+							Gets/Sets cap for mana regen. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
 						</div>
 					</div>
 
@@ -1291,8 +1336,12 @@ packitem=0x0f8d,30
 					<label for="spoiler_ini_timers">[timers] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
-							<p><span class="hl">CORPSEDECAYTIMER</span><strong>=900</strong><br>
-							Amount of time in seconds for a corpse to decay.</p>
+							<p><span class="hl">CORPSEDECAYTIMER</span><strong>=420</strong><br>
+							Amount of time in seconds for a player corpse to decay.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">NPCCORPSEDECAYTIMER</span><strong>=420</strong><br>
+							Amount of time in seconds for an NPC corpse to decay.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">WEATHERTIMER</span><strong>=60</strong><br>
@@ -1303,7 +1352,7 @@ packitem=0x0f8d,30
 							Amount of time in seconds between shopkeeper restocks.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">DECAYTIMER</span><strong>=300</strong><br>
+							<p><span class="hl">DECAYTIMER</span><strong>=1800</strong><br>
 							Amount of time in seconds a decayable item will remain on the ground before disappearing.</p>
 						</div>
 						<div class="settingsDiv">
@@ -1332,15 +1381,15 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">HITPOINTREGENTIMER</span><strong>=8</strong><br>
-							Amount of time in seconds required to regenerate a single point of health.</p>
+							Base amount of time in seconds required to regenerate a single point of health.Final value depends on HEALTHREGENMODE and more. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">STAMINAREGENTIMER</span><strong>=3</strong><br>
-							Amount of time in seconds required to regenerate a single point of stamina.</p>
+							Base amount of time in seconds required to regenerate a single point of stamina. Final value depends on STAMINAREGENMODE and more. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">MANAREGENTIMER</span><strong>=5</strong><br>
-							Amount of time in seconds required to regenerate a single point of mana.</p>
+							Base amount of time in seconds required to regenerate a single point of mana. Final value depends on MANAREGENMODE and more. See <a href="#statRegeneration">Stat Regeneration</a> feature for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">BASEFISHINGTIMER</span><strong>=10</strong><br>
@@ -1375,21 +1424,21 @@ packitem=0x0f8d,30
 					<input type="checkbox" id="spoiler_ini_expansion_settings">
 					<label for="spoiler_ini_expansion_settings">[expansion settings] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>Supported era values: core, t2a, uor, td, lbr, pub15, aos, se, ml, sa, hs, tol<br>Note: A value of 'core' inherits whatever is set in CORESHARDERA</p>
+						<p>Supported era values: core, uo, t2a, uor, td, lbr, aos, se, ml, sa, hs, tol<br>Note: A value of 'core' inherits whatever is set in CORESHARDERA</p>
 						<div class="settingsDiv">
-							<p><span class="hl">CORESHARDERA</span><strong>=pub15</strong><br>
-							Defines the "core" era of the shard. Defaults to pub15 (Publish 15).</p>
+							<p><span class="hl">CORESHARDERA</span><strong>=lbr</strong><br>
+							Defines the "core" era of the shard. Defaults to lbr (Lord Blackthorn's Revenge/Publish 15).</p>
 							<ul>
-								<li><strong>any</strong> - determines which Item/NPC DFNs gets loaded, based on tags like GETT2A, GETPUB15</li>
+								<li><strong>any</strong> - determines which Item/NPC DFNs gets loaded, based on tags like GETT2A, GETLBR</li>
 								<li><strong>uor or later</strong> - enables bonus hit chance for archery via ARCHERYHITBONUS setting</li>
-								<li><strong>pub15 or earlier</strong> - final combat damage value reduced by half</li>
+								<li><strong>lbr or earlier</strong> - final combat damage value reduced by half</li>
 							</ul>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">ARMORCALCULATION</span><strong>=core</strong><br>
 							Defines era to base armor calculations on</p>
 							<ul>
-								<li><strong>pub15 or earlier</strong> - different armor pieces contribute different percentage of the total Armor Rating</li>
+								<li><strong>lbr or earlier</strong> - different armor pieces contribute different percentage of the total Armor Rating</li>
 								<li><strong>aos or later</strong> - each armor piece contribute to sum total of Physical Resistance, and other elemental resistance stats</li>
 							</ul>
 						</div>
@@ -1405,7 +1454,7 @@ packitem=0x0f8d,30
 							<p><span class="hl">TACTICSDAMAGEBONUS</span><strong>=core</strong><br>
 							Defines era to base tactics damage bonus on</p>
 							<ul>
-								<li><strong>pub15 or earlier</strong> - bonus = Tactics skill + 50</li>
+								<li><strong>lbr or earlier</strong> - bonus = Tactics skill + 50</li>
 								<li><strong>aos or later</strong> - 68.75% damage bonus if GM Tactics, 62.5% bonus if below</li>
 							</ul>
 						</div>
@@ -1438,7 +1487,7 @@ packitem=0x0f8d,30
 							<p><span class="hl">DAMAGEBONUSCAP</span><strong>=core</strong><br>
 							Defines era to base damage bonus cap on</p>
 							<ul>
-								<li><strong>pub15 or earlier</strong> - No cap on damage bonus multiplier</li>
+								<li><strong>lbr or earlier</strong> - No cap on damage bonus multiplier</li>
 								<li><strong>aos or later</strong> - Total damage bonus multiplier capped at 300% higher than base damage</li>
 							</ul>
 						</div>
@@ -1447,7 +1496,7 @@ packitem=0x0f8d,30
 							Defines era to base shield parry calculations on</p>
 							<ul>
 								<li><strong>t2a</strong> - chance to block is parryskill / 2. shield absorbs damage equivalent of AR/2 for melee, or equivalent of AR for archery</li>
-								<li><strong>uor to pub15</strong> - higher AR equals lower block chance, but more damage absorbed.</li>
+								<li><strong>uor to lbr</strong> - higher AR equals lower block chance, but more damage absorbed.</li>
 								<li><strong>aos or later</strong> - chance to block dependent on parry skill vs bushido skill, with dex modifier</li>
 							</ul>
 						</div>
@@ -1470,10 +1519,64 @@ packitem=0x0f8d,30
 							<p><span class="hl">COMBATHITCHANCE</span><strong>=core</strong><br>
 							Defines era to base combat hit chance calculations on</p>
 							<ul>
-								<li><strong>t2a to pub15</strong> - hit chance based on attacker's skill vs defender's skill. No minimum chance to hit</li>
-								<li><strong>uor to pub15</strong> - Additional bonus hit chance for archery</li>
+								<li><strong>t2a to lbr</strong> - hit chance based on attacker's skill vs defender's skill. No minimum chance to hit</li>
+								<li><strong>uor to lbr</strong> - Additional bonus hit chance for archery</li>
 								<li><strong>aos to tol</strong> - hit chance based on attacker's skill (and hit chance increase) vs defender's skill (and defense chance increase). Minimum 2% chance to hit</li>
 							</ul>
+						</div>
+					</div>
+
+					<input type="checkbox" id="spoiler_ini_defaultracebonuses">
+					<label for="spoiler_ini_defaultracebonuses">[default race bonuses] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>Note: Can be overridden/expanded to other races via races.dfn</p>
+						<div class="settingsDiv">
+							<p><span class="hl">HUMANHEALTHREGENBONUS</span><strong>=0</strong><br>
+							Defines the default health regen bonus for the human race (race 0 in races.dfn). From Mondain's Legacy expansion and onwards, this would be set to a value of 2.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HUMANSTAMINAREGENBONUS</span><strong>=0</strong><br>
+							Defines the default stamina regen bonus for the human race (race 0 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HUMANMANAREGENBONUS</span><strong>=0</strong><br>
+							Defines the default mana regen bonus for the human race (race 0 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HUMANMAXWEIGHTBONUS</span><strong>=0</strong><br>
+							Defines the default max weight bonus for the human race (race 0 in races.dfn). From Mondain's Legacy expansion and onwards, this would be set to a value of 60 (for 60 extra stones of capacity) for humans.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ELFHEALTHREGENBONUS</span><strong>=0</strong><br>
+							Defines the default health regen bonus for the elf race (race 1 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ELFSTAMINAREGENBONUS</span><strong>=0</strong><br>
+							Defines the default stamina regen bonus for the elf race (race 1 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ELFMANAREGENBONUS</span><strong>=0</strong><br>
+							Defines the default mana regen bonus for the elf race (race 1 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ELFMAXWEIGHTBONUS</span><strong>=0</strong><br>
+							Defines the default max weight bonus for the elf race (race 1 in races.dfn).</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">GARGOYLEHEALTHREGENBONUS</span><strong>=0</strong><br>
+							Defines the default health regen bonus for the gargoyle race (race 2 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">GARGOYLESTAMINAREGENBONUS</span><strong>=0</strong><br>
+							Defines the default stamina regen bonus for the gargoyle race (race 2 in races.dfn). Defaults to 0 for all eras.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">GARGOYLEMANAREGENBONUS</span><strong>=0</strong><br>
+							Defines the default mana regen bonus for the gargoyle race (race 2 in races.dfn). From Stygian Abyss expansion and onwards, this would be set to a value of 2.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">GARGOYLEMAXWEIGHTBONUS</span><strong>=0</strong><br>
+							Defines the default max weight bonus for the gargoyle race (race 2 in races.dfn).</p>
 						</div>
 					</div>
 
@@ -1481,8 +1584,11 @@ packitem=0x0f8d,30
 					<label for="spoiler_ini_settings">[settings] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
-							<p><span class="hl">LOOTDECAYSWITHCORPSE</span><strong>=1</strong><br>
-							Determines if loot decays along with corpses or not.</p>
+							<p><span class="hl">LOOTDECAYSWITHPLAYERCORPSE</span><strong>=1</strong><br>
+							Determines if loot decays along with player corpses or not, or if it drops to the ground</p>
+						</div>
+							<p><span class="hl">LOOTDECAYSWITHNPCCORPSE</span><strong>=1</strong><br>
+							Determines if loot decays along with NPC corpses, or if it drops to the ground.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">GUARDSACTIVE</span><strong>=1</strong><br>
@@ -1513,12 +1619,12 @@ packitem=0x0f8d,30
 							If enabled, then the stealing skill is enabled.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">PLAYERPERSECUTION</span><strong>=0</strong><br>
+							<p><span class="hl">PLAYERPERSECUTION</span><strong>=1</strong><br>
 							If enabled, dead players can attack living ones, and thus drain their mana.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">ACCOUNTFLUSH</span><strong>=0</strong><br>
-							How often (in seconds) online accounts are checked to see if they really ARE online.</p>
+							<p><span class="hl">ACCOUNTFLUSH</span><strong>=5</strong><br>
+							How often (in minutes) online accounts are checked to see if they really ARE online.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">HTMLSTATUSENABLED</span><strong>=-1</strong><br>
@@ -1669,10 +1775,6 @@ packitem=0x0f8d,30
 							If enabled, shows player's guild info in tooltip. Defaults to 1</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">SHOWITEMRESISTSTATS</span><strong>=0</strong><br>
-							If enabled, shows item resistance stats in item tooltip. Defaults to 0</p>
-						</div>
-						<div class="settingsDiv">
 							<p><span class="hl">SHOWNPCTITLESINTOOLTIPS</span><strong>=1</strong><br>
 							If enabled, shows NPC titles in tooltip. Defaults to 1</p>
 						</div>
@@ -1691,10 +1793,6 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">SHOWRACEINPAPERDOLL</span><strong>=1</strong><br>
 							If enabled, shows a character's race in the paperdoll. Defaults to 1</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">SHOWWEAPONDAMAGETYPES</span><strong>=1</strong><br>
-							If enabled, shows weapon damage types in item tooltip. Defaults to 1</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">GLOBALITEMDECAY</span><strong>=1</strong><br>
@@ -1769,7 +1867,7 @@ packitem=0x0f8d,30
 							If enabled, players will always be teleported to their nearest safe location (town, or shrine). If disabled, they will be teleported to a random safe location within their current facet. Disabled by default.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">ALLOWAWAKENPCS</span><strong>=0</strong><br>
+							<p><span class="hl">ALLOWAWAKENPCS</span><strong>=1</strong><br>
 							If enabled, NPCs marked as awake will be checked by server (AI, timers, updates) regardless of whether the region they are in is inactive because of no nearby online players. If disabled, those NPCs are treated like any other NPCs. Disabled by default.</p>
 						</div>
 						<div class="settingsDiv">
@@ -1784,7 +1882,10 @@ packitem=0x0f8d,30
 							<p><span class="hl">YOUNGPLAYERSYSTEM</span><strong>=1</strong><br>
 							If enabled, all newly created player accounts are automatically marked with Young flag, and all characters created under those accounts will be treated as Young players, with those restrictions that that entails.</p>
 						</div>
-
+						<div class="settingsDiv">
+							<p><span class="hl">KARMALOCKING</span><strong>=1</strong><br>
+							If enabled, the Karma Locking system is enabled, and players can lock their karma at the current level at shrines.</p>
+						</div>
 					</div>
 
 					<input type="checkbox" id="spoiler_ini_petsandfollowers">
@@ -1964,18 +2065,30 @@ packitem=0x0f8d,30
 							<p><span class="hl">CRIMINALTIMER</span><strong>=120</strong><br>
 							Amount of time in seconds a character remains criminal after committing a criminal act.</p>
 						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">AGGRESSORFLAGTIMER</span><strong>=120</strong><br>
+							Amount of time in seconds a player will be marked as aggressor after attacking someone.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">PERMAGREYFLAGTIMER</span><strong>=0</strong><br>
+							Amount of time in seconds a player will be marked as "permagrey" to specific targets. With a timer of 0, persists until player dies.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">STEALINGFLAGTIMER</span><strong>=120</strong><br>
+							Amount of time in seconds a player will be flagged for stealing.</p>
+						</div>
 					</div>
 
 					<input type="checkbox" id="spoiler_ini_resources">
 					<label for="spoiler_ini_resources">[resources] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
-							<p><span class="hl">MINECHECK</span><strong>=1</strong><br>
-							Type of mining check performed - 0 = anywhere, 1 = mountains/cavefloors</p>
-						</div>
-						<div class="settingsDiv">
 							<p><span class="hl">RESOURCEAREASIZE</span><strong>=8</strong><br>
 							Affects the number of resource-areas the world is split into. A value of 8 splits the world into areas sized 8x8 tiles</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">MINECHECK</span><strong>=1</strong><br>
+							0 = player is allowed to mine anywhere, 1 = player is allowed to mine in mountains/cavefloors</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">OREPERAREA</span><strong>=10</strong><br>
@@ -2007,12 +2120,20 @@ packitem=0x0f8d,30
 					<label for="spoiler_ini_hunger">[hunger] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
+							<p><span class="hl">HUNGERENABLED</span><strong>=1</strong><br>
+							Enables (1) or disables (0) global hunger system.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">HUNGERRATE</span><strong>=6000</strong><br>
-							Amount of time in seconds a player has before his hunger level decreases.</p>
+							Amount of time in seconds before hunger level decreases for characters.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">HUNGERDMGVAL</span><strong>=2</strong><br>
-							Amount of damage applied if hungry and below threshold.</p>
+							Amount of damage applied if maximum hungry, every X seconds (defined by HUNGERRATE).</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HUNGERAFFECTHEALTHREGEN</span><strong>=1</strong><br>
+							If enabled (1), and if hunger system is enabled, will provide bonuses/penalties to passive health regeneration based on hunger level. Hunger levels 6 to 4 give bonuses, 3 to 0 give penalties.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">PETHUNGEROFFLINE</span><strong>=1</strong><br>
@@ -2021,6 +2142,31 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">PETOFFLINETIMEOUT</span><strong>=5</strong><br>
 							Sets the time in days for when an offline player's pet becomes wild again.</p>
+						</div>
+					</div>
+
+					<input type="checkbox" id="spoiler_ini_thirst">
+					<label for="spoiler_ini_thirst">[thirst] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="hl">THIRSTENABLED</span><strong>=0</strong><br>
+							Enables (1) or disables (0) global thirst system.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">THIRSTRATE</span><strong>=6000</strong><br>
+							Amount of time in seconds before thirst level decreases for characters.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">THIRSTDRAINVAL</span><strong>=2</strong><br>
+							Amount of stamina drained when maximum thirsty, every X seconds (defined by THIRSTRATE).</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">THIRSTAFFECTSTAMINAREGEN</span><strong>=0</strong><br>
+							If enabled (1), and if thirst system is enabled, will provide bonuses/penalties to passive stamina regeneration based on thirst level. Thirst levels 6 to 4 give bonuses, 3 to 0 give penalties.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">PETTHIRSTOFFLINE</span><strong>=0</strong><br>
+							Toggles whether pets should thirst while the player (owner) is offline or not.</p>
 						</div>
 					</div>
 
@@ -2088,10 +2234,6 @@ packitem=0x0f8d,30
 							If 1, archery from horseback is possible.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">COMBATEXPLODEDELAY</span><strong>=2</strong><br>
-							The amount of time in seconds it takes for the damage from the Explosion spell to be inflicted on the target.</p>
-						</div>
-						<div class="settingsDiv">
 							<p><span class="hl">WEAPONDAMAGECHANCE</span><strong>=17</strong><br>
 							The chance (in %) of weapons taking damage in combat.</p>
 						</div>
@@ -2116,6 +2258,10 @@ packitem=0x0f8d,30
 							The max amount of damage (randomized) armor can take if it takes damage in combat.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">ARMORCLASSDAMAGEBONUS</span><strong>=0</strong><br>
+							Enables/disables double damage from armour class bonuses. Defaults to disabled.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">ALCHEMYBONUSENABLED</span><strong>=0</strong><br>
 							Enables/disables bonus damage from Alchemy skill for explosion potions. Defaults to disabled.</p>
 						</div>
@@ -2124,8 +2270,73 @@ packitem=0x0f8d,30
 							The modifier used to add bonus damage based on Alchemy skill for explosion potions. Defaults to 1 bonus damage per 5 skill-points in Alchemy skill, using the following formula: bonusDamage = alchemySkill / modifier</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">ARMORCLASSDAMAGEBONUS</span><strong>=0</strong><br>
-							Enables/disables double damage from armour class bonuses. Defaults to disabled.</p>
+							<p><span class="hl">BLOODEFFECTCHANCE</span><strong>=25</strong><br>
+							Chance to spawn blood splatter effects on ground in combat.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ITEMSINTERRUPTCASTING</span><strong>=1</strong><br>
+							If enabled, spellcasting gets interrupted by equipping/picking up items. Defaults to enabled.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">PETCOMBATTRAINING</span><strong>=1</strong><br>
+							If enabled, pets can gain skills/stats from fighting.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">HIRELINGCOMBATTRAINING</span><strong>=1</strong><br>
+							If enabled, hirelings can gain skills/stats from fighting.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">NPCCOMBATTRAINING</span><strong>=1</strong><br>
+							If enabled, normal NPCs can gain skills/stats from fighting.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SHOWITEMRESISTSTATS</span><strong>=0</strong><br>
+							If enabled, shows item resistance stats in item tooltip. Defaults to 0</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SHOWWEAPONDAMAGETYPES</span><strong>=1</strong><br>
+							If enabled, shows weapon damage types in item tooltip. Defaults to 1</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">WEAPONDAMAGEBONUSTYPE</span><strong>=2</strong><br>
+							Defines how damage bonuses are applied to weapons during creation of magic weapons (see js/items/magic_items.js):</p>
+							<ul>
+								<li>0 - Apply flat weapon damage bonus to .hidamage</li>
+								<li>1 - Split weapon damage bonus between .lodamage and .hidamage</li>
+								<li>2 - Apply flat weapon damage bonus to BOTH .lodamage and .hidamage (Default)</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">WEAPONSWINGSPEEDINCREASECAP</span><strong>=60</strong><br>
+							Sets cap for swing speed increase (AoS) property  players can get from items.</p>
+						</div>
+						<!-- <div class="settingsDiv">
+							<p><span class="hl">PHYSICALRESISTCAP</span><strong>=70</strong><br>
+							Sets cap for physical resist on player characters.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">FIRERESISTCAP</span><strong>=70</strong><br>
+							Sets cap for fire resist on player characters.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">COLDRESISTCAP</span><strong>=70</strong><br>
+							Sets cap for cold resist on player characters.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">POISONRESISTCAP</span><strong>=70</strong><br>
+							Sets cap for poison resist on player characters.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ENERGYRESISTCAP</span><strong>=70</strong><br>
+							Sets cap for energy resist on player characters.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">DEFENSECHANCEINCREASECAP</span><strong>=45</strong><br>
+							Sets cap for defense chance increase (AoS) property players can get from items.</p>
+						</div> -->
+						<div class="settingsDiv">
+							<p><span class="hl">DAMAGEINCREASECAP</span><strong>=45</strong><br>
+							Sets cap for damage increase (AoS) property players can get from items.</p>
 						</div>
 					</div>
 
@@ -2159,6 +2370,10 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">CASTSPELLSWHILEMOVING</span><strong>=0</strong><br>
 							Toggles whether spells can be cast while moving, without ever having to stop!</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">AUTOUNEQUIPPEDCASTING</span><strong>=0</strong><br>
+							 If enabled, spells will auto unequipe the hands not holding a spellbook or spellchanneling type item.</p>
 						</div>
 					</div>
 
@@ -2207,7 +2422,25 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">STARTPRIVS</span><strong>=0</strong><br>
-							Starting privileges of new characters (UNUSED).</p>
+							Starting privileges of new characters. Treat as bitset, i.e. combine desired privs into one value.</p>
+							<ul>
+								<li><span class="hl">0 - Has GM privileges</span> // 0x1</li>
+								<li><span class="hl">1 - Can Broadcast messags on server</span> // 0x2</li>
+								<li><span class="hl">2 - Is Invulnerable</span> // 0x4</li>
+								<li><span class="hl">3 - Can see Single Click Serials</span> // 0x8</li>
+								<li><span class="hl">4 - Can see Skill Titles</span> // 0x10</li>
+								<li><span class="hl">5 - Can answer GM pages</span> // 0x20</li>
+								<li><span class="hl">6 - Can snoop in player/NPC backpacks</span> // 0x40</li>
+								<li><span class="hl">7 - Has Counselor privileges</span> // 0x80</li>
+								<li><span class="hl">8 - Can move all objects regardless of movable setting</span> // 0x100</li>
+								<li><span class="hl">9 - Is frozen, cannot move</span> // 0x200</li>
+								<li><span class="hl">10 - View Player houses as deeds (Not working)</span> // 0x400</li>
+								<li><span class="hl">11 - Doesn't need mana for spellcasting</span> // 0x800</li>
+								<li><span class="hl">12 - Can be dispelled (for summoned characters)</span> // 0x1000</li>
+								<li><span class="hl">13 - Is temporarily protected by magic reflect spell</span> // 0x2000</li>
+								<li><span class="hl">14 - Doesn't need reagents to cast spells</span> // 0x4000</li>
+								<li><span class="hl">15 - Is permanently protected by magic reflect spell</span> // 0x8000</li>
+							</ul>
 						</div>
 					</div>
 
@@ -4903,7 +5136,7 @@ packitem=0x0f8d,30
 					<input type="checkbox" id="spoiler_optional_other_branches">
 					<label for="spoiler_optional_other_branches">(Optional) Checking out Other Branches </strong> <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>If you'd rather grab another branch of the git repository, like the <strong>develop</strong> branch where most updates get pushed first before being merged into the master branch, you can use the following command after completing the previous step:<br><span class="hl">git checkout develop</span></p>
+						<p>If you'd rather grab another branch of the git repository, like the <strong>develop</strong> branch where most updates get pushed first before being merged into the master branch, you can use the following command after completing the previous step, and <strong>after navigating into</strong> the directory created for the UOX3 repository:<br>(UOX3\) <span class="hl">git checkout develop</span></p>
 						<p>GitHub Desktop users can change the active branch via the Current Branch dropdown menu in GitHub Desktop.</p>
 					</div>
 
@@ -5893,6 +6126,148 @@ packitem=0x0f8d,30
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#objectTooltips" id="objectTooltips"><span>Object Tooltips</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+				  	<h3>Object Tooltips in UOX3</h3>
+				  	<p>UOX3 supports three modes for displaying object tooltips on mouse-over (or click):</p>
+				  	<ul>
+				  		<li><span class="hl">Old-School Tooltips</span></li>
+				  		<li><span class="hl">Basic Tooltips</span></li>
+				  		<li><span class="hl">Advanced Tooltips</span></li>
+				  	</ul>
+					<input type="checkbox" id="spoiler_oldschool_tooltips">
+					<label for="spoiler_oldschool_tooltips">Old-School Tooltips <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+					  	<p style="margin-left: 5px; overflow: auto; display: block; margin-bottom: 10px;"><img style="float: left; width: 12%; margin-right: 10px; clear: both;" src="assets/images/oldschool_tooltip.png" alt="Old-school UO Tooltip">The most old-school of tooltips, these show nothing other than the item's <strong>name and amount</strong> (if higher than 1). The exact details remain up to the player to figure out via testing, use of skills like Arms Lore, etc.<br><br>To setup UOX3 for this type of tooltip, all you need to do is ensure that the <span class="hl">SERVERFEATURES</span> setting in UOX.INI does not include the "AoS" bit. If you're starting with the default UOX3 setup, just subtract the value 32 from the default SERVERFEATURES value, and you're good to go (after a restart). See <a href="index.html#uoxINISettings" title="UOX3 Documentation - UOX.INI Settings">UOX.INI Settings</a> for more details.<br><br><img style="float: left; width: 12%; margin-right: 10px; clear: both;" src="assets/images/aos_combat_books.png" alt="Old-school UO Tooltip">A potential downside is that this also disables some AoS-specific features in the client, such as the <strong>combat books</strong>. So if you want to support AoS classes like the Paladin on your shard, you cannot go with these old-school tooltips.</p>
+				  	</div>
+
+						<input type="checkbox" id="spoiler_basic_tooltips">
+						<label for="spoiler_basic_tooltips">Basic Tooltips <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+					  	<p>Luckily, there's another option for those who want to keep things simple: <span class="hl">BASICTOOLTIPSONLY=0</span></p>
+					  	<p style="margin-left: 5px; overflow: auto; display: block; margin-bottom: 10px;"><img style="float: left; width: 12%; margin-right: 10px; clear: both;" src="assets/images/basic_tooltips_only.png" alt="UOX3 - Basic Tooltip Only">By enabling this setting in UOX.INI, you can have your cake and eat it too; it will still use the "mouse-over" tooltips from AoS, but will only display a <strong>bare minimum</strong> of information like <strong>name, weight of item, number of items in container</strong>, etc.</p>
+						</div>
+
+						<input type="checkbox" id="spoiler_advanced_tooltips">
+						<label for="spoiler_advanced_tooltips">Advanced Tooltips and Options <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+					  	<p style="margin-left: 5px; overflow: auto; display: block; margin-bottom: 10px;"><img style="float: left; width: 12%; margin-right: 10px; clear: both;" src="assets/images/default_tooltips.png" alt="UOX3 - Default Tooltip">By default, the tooltips in UOX3 are more comprehensive than for the basic options mentioned above, and can even show custom tooltip entries (same is true for the Basic Tooltips option).<br><br>Basically, UOX3 determines what to show on what is found on a given object, and on various server settings, like the ones below:</p>
+					  	<p><strong>For Characters:</strong></p>
+					  	<ul>
+					  		<li><span class="hl">SHOWREPUTATIONTITLEINTOOLTIP=1</span> // If enabled, shows fame/karma titles in character tooltips</li>
+					  		<li><span class="hl">SHOWGUILDINFOINTOOLTIP=1</span> // If enabled, shows guild info in character tooltips</li>
+					  		<li><span class="hl">SHOWNPCTITLESINTOOLTIPS=1</span> // If enabled, shows NPC titles in character tooltips</li>
+					  	</ul>
+					  	<p><strong>For Items:</strong></p>
+					  	<ul>
+					  		<li><span class="hl">SHOWITEMRESISTSTATS=0</span> // If enabled, shows item resist stats from AoS and beyond in item tooltips</li>
+					  		<li><span class="hl">SHOWWEAPONDAMAGETYPES=1</span> // If enabled, shows weapon damage types from AoS and beyond in item tooltips</li>
+					  	</ul>
+						</div>
+
+				  	<h3>Custom Tooltips</h3>
+				  	<p>Custom tooltips can be displayed for both characters and items via the <a href="jsdocs.html#eventOnTooltip" title="UOX3 JS Docs - onTooltip Event">JS Event <strong>onTooltip</strong></a>, which will be triggered whenever object information is being sent to the client (whether for the first time or as a refresh).</p>
+				  	<p>The <strong>string of text returned from this event</strong> will be displayed alongside other tooltips when mousing over/clicking on dynamic objects in the game, while two distinct temporary tags can be set on the object to specify which <strong>cliloc-id</strong> to use for the tooltip entry, and which <strong>sorting order</strong> to use:</p>
+				  	<ul>
+				  		<li><span class="hl">clilocTooltip"</span> - defines which entry from client-side cliloc dictionaries to display in tooltip</li>
+				  		<li><span class="hl">"tooltipSortOrder"</span> - defines how entry will be sorted in tooltip</li>
+				  	</ul>
+				  	<p>If no cliloc ID or sort order is provided, default values will be used.</p>
+						<input type="checkbox" id="spoiler_tooltip_example">
+						<label for="spoiler_tooltip_example"><em>Example of custom tooltip</em> <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>
+<pre><code class="language-javascript">// This tooltip will be shown <em>after</em> the [Blessed] entry for newbie items (which has a hardcoded sorting order of 20)
+function onTooltip( myItem, pSocket )
+{
+    tooltipText = "My Custom Tooltip";
+    myItem.SetTempTag( "tooltipSortOrder", 21 );
+
+    return tooltipText;
+}</code></pre>
+				  		</p>
+				  	</div>
+						<input type="checkbox" id="spoiler_tooltip_sorting">
+						<label for="spoiler_tooltip_sorting"><em>List of hard-coded tooltip sorting</em> <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<h4>Items</h4>
+							<ul>
+								<li>0 - name</li>
+								<li>5 - maker's mark</li>
+								<li>10 - locked down state</li>
+								<li>15 - [Guarded]</li>
+								<li>20 - [Blessed]</li>
+								<li>25 - locked state (door)</li>
+								<li>30 - custom tooltips (default)</li>
+								<li>35 - [Locked] (container)</li>
+								<li>40 - weight (container)</li>
+								<li>45 - capacity (container)/[Locked] (spawn container)/house sign name/[unidentified] magic item/potion/recall rune facet name/weight</li>
+								<li>50 - house sign owner name</li>
+								<li>55 - physical damage %</li>
+								<li>60 - light damage %</li>
+								<li>65 - rain damage %</li>
+								<li>70 - cold damage %</li>
+								<li>75 - fire damage %</li>
+								<li>80 - energy damage %</li>
+								<li>85 - poison damage %</li>
+								<li>90 - snow damage %</li>
+								<li>95 - storm damage %</li>
+								<li>100 - weapon damage</li>
+								<li>105 - weapon speed</li>
+								<li>110 - one/two-handed weapon</li>
+								<li>115 - skill required</li>
+								<li>120 - physical resist %/Armor Rating</li>
+								<li>125 - fire resist %</li>
+								<li>130 - cold resist %</li>
+								<li>135 - poison resist %</li>
+								<li>140 - energy/electrical resist %</li>
+								<li>145 - durability</li>
+								<li>150 - strength bonus</li>
+								<li>155 - dexterity bonus</li>
+								<li>160 - intelligence bonus</li>
+								<li>165 - hit point regeneration</li>
+								<li>170 - stamina regeneration</li>
+								<li>175 - mana regeneration</li>
+								<li>180 - swing speed increase</li>
+								<li>185 - damage increase</li>
+								<li>190 - luck</li>
+								<li>195 - hit chance increase</li>
+								<li>200 - defense chance increase increase</li>
+								<li>205 - hit point increase</li>
+								<li>210 - stamina increase</li>
+								<li>215 - mana increase</li>
+								<li>220 - artifact rarity</li>
+								<li>225 - durability</li>
+								<li>230 - uses remaining</li>
+								<li>235 - hit mana leech</li>
+								<li>240 - hit stamina leech</li>
+								<li>245 - hit life leech</li>
+								<li>250 - spell channeling</li>
+								<li>255 - mage armor</li>
+								<li>260 - strength requirement</li>
+								<li>265 - dexterity requirement</li>
+								<li>270 - intelligence requirement</li>
+								<li>275 - lower requirements</li>
+								<li>280 - tithing</li>
+								<li>285 - price (player vendor item)</li>
+								<li>290 - Seller's Description (player vendor item)</li>
+							</ul>
+							<h4>Characters</h4>
+							<ul>
+								<li>0 - name</li>
+								<li>5 - guild title</li>
+								<li>10 - race name</li>
+								<li>15 - [Guarded]</li>
+								<li>20 - npc title</li>
+								<li>30 - custom tooltip (default)</li>
+							</ul>
+						</div>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#pvpRuleSet" id="pvpRuleSet"><span>PvP Ruleset</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
@@ -6470,6 +6845,159 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<li><strong>Circle 7:</strong> 	Chain Lightning, FlameStrike, Mana Vampire, Meteor Swarm</li>
 						<li><strong>Circle 8:</strong> 	Earthquake, Energy Vortex</li>
 					</ul></p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#statRegeneration" id="statRegeneration"><span>Stat Regeneration</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+				  	<h3>Passive Regeneration</h3>
+						<p>Characters will passively regenerate stats like <strong>hit points</strong>, <strong>stamina</strong> and <strong>mana</strong> over time. The amount regenerated can be controlled via a number of different factors in UOX3, such as:
+							<ul>
+								<li><span class="hl">Regen mode settings</span> in UOX.INI</li>
+								<li><span class="hl">Base regeneration timers</span> set in UOX.INI</li>
+								<li><span class="hl">Regeneration bonuses</span> set on character, equipped items or race (and caps defined in INI)</li>
+								<li><span class="hl">Hunger/Thirst-levels</span> (for hitpoints/stamina)</li>
+								<li>The character's <span class="hl">Healing skill</span> (for hitpoint regen)</li>
+								<li>The character's <span class="hl">Meditation/Focus skill</span> (for mana regen)</li>
+							</ul>
+						</p>
+						<p>Read more about each of these below:</p>
+				  	<input type="checkbox" id="spoiler_regen_modes">
+						<label for="spoiler_regen_modes">Regen Mode Settings <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>The following UOX.INI settings define the modes used to calculate regeneration for the different stats. High-level formulas used in code included.</p>
+
+							<p><span class="hl">HEALTHREGENMODE=#</span></p>
+							<div style="padding-left:10px">
+								<p><strong>0 = no passive health regen</strong></p>
+								<p><strong>1 = All UO Eras (default passive health regen mode)</strong><br>
+									<em><span style="margin-left:15px; opacity:0.75">nextHealthRegen = [HITPOINTREGENTIMER from UOX.INI]</span><br>
+									<span style="margin-left:15px; opacity:0.75">healthRegenBonus = bonusFromHealing + bonusFromChar + bonusFromItems + bonusFromRace + bonusFromHunger</span><br>
+									<span style="margin-left:15px; opacity:0.75">nextHealthRegen /= ( 1.0 + ( healthRegenBonus / 100.0 ))</span></em>
+								</p>
+							</div>
+
+							<p><span class="hl">STAMINAREGENMODE=#</span></p>
+							<div style="padding-left:10px">
+								<p><strong>0 = no passive stamina regen</strong></p>
+								<p><strong>1 = LBR and below (default passive stamina regen mode)</strong><br>
+								<em><span style="margin-left:15px; opacity:0.75">nextStaminaRegen = [STAMINAREGENTIMER from UOX.INI]</span><br>
+									<span style="margin-left:15px; opacity:0.75">stamRegenBonus = bonusFromChar + bonusFromItems + bonusFromThirst</span><br>
+									<span style="margin-left:15px; opacity:0.75">nextStaminaRegen /= ( 1.0 + ( stamRegenBonus / 100.0 ))</span></em></p>
+								<p><strong>2 = AoS -> ML</strong><br>
+								<em><span style="margin-left:15px; opacity:0.75">Same as mode 1, but with additional bonus (and skillcheck) from Focus skill</span></em></p>
+								<p><strong>3 = SA and beyond</strong></br>
+								<em><span style="margin-left:15px; opacity:0.75">Same as mode 2, but with near double regen rate for NPCs</span></em></p>
+							</div>
+
+							<p><span class="hl">MANAREGENMODE=#</span></p>
+							<div style="padding-left:10px">
+								<p><strong>0 = no passive mana regen</strong></p>
+								<p><strong>1 = LBR and below (default passive mana regen mode</strong><br>
+								<em><span style="margin-left:15px; opacity:0.75">nextManaRegen = [MANAREGENTIMER from UOX.INI]</span><br>
+									<span style="margin-left:15px; opacity:0.75">manaRegenPenalty = penaltyFromArmor</span><br>
+									<span style="margin-left:15px; opacity:0.75">manaRegenBonus = bonusFromInt + bonusFromMeditation + bonusFromChar + bonusFromItems + bonusFromRace</span><br>
+									<span style="margin-left:15px; opacity:0.75">nextManaRegen = ( nextManaRegen / 1000 ) * ( 7.0 - manaRegenBonus + manaRegenPenalty )) * 1000</span></em></p>
+								<p><strong>2 = AoS (Pub17)</strong><br>
+								<em><span style="margin-left:15px; opacity:0.75">nextManaRegen = [MANAREGENTIMER from UOX.INI, defaults to 1.0 for this particular publish]</span><br>
+									<span style="margin-left:15px; opacity:0.75">intPoints = floor( int / 38.0 )</span><br>
+									<span style="margin-left:15px; opacity:0.75">medPoints = floor( meditation / 10.0 ) [or 0 if wearing non-medable armor]</span><br>
+									<span style="margin-left:15px; opacity:0.75">focusPoints = floor( focus / 20.0 )</span><br>
+									<span style="margin-left:15px; opacity:0.75">totalPoints = intPoints + medPoints [x2 if Meditating] + focusPoints + bonusFromChar + bonusFromItems + bonusFromRace</span><br>
+									<span style="margin-left:15px; opacity:0.75">manaPerSecondRate = 1.0 [if less than 14 total points] or 1.33 [if more than 14 points] or 2.0 [if more than 21 points]</span><br>
+									<span style="margin-left:15px; opacity:0.75">nextManaRegen = ( 1.0 / ( manaPerSecondRate * nextManaRegen ) * 1000</span></em></p>
+								<p><strong>3 = AoS (Pub18 and beyond)/SE</strong><br>
+									<em><span style="margin-left:15px; opacity:0.75">nextManaRegen = [MANAREGENTIMER from UOX.INI, defaults to 7.0 for eras below ML]</span><br>
+									<span style="margin-left:15px; opacity:0.75">baselineRate = 1.0 / nextManaRegen</span><br>
+									<span style="margin-left:15px; opacity:0.75">medPoints = int + ( meditation * 3 ) [or 0 if wearing non-medable armor] * 0.025 [if under GM meditation skill] or 0.0275 [if GM or higher]</span><br>
+									<span style="margin-left:15px; opacity:0.75">focusPoints = floor( focus / 200.0 ) * 0.1</span><br>
+									<span style="margin-left:15px; opacity:0.75">totalPoints = focusPoints + medPoints [x2 if Meditating] + bonusFromChar + bonusFromItems + bonusFromRace</span><br>
+									<span style="margin-left:15px; opacity:0.75">manaPerSec = 0.1 + (( baselineRate * 10.0 ) + totalPoints )</span><br>
+									<span style="margin-left:15px; opacity:0.75">nextManaRegen = 1000 / manaPerSec</span></em></p>
+								<p><strong>4 = ML</strong><br>
+									<em><span style="margin-left:15px; opacity:0.75">nextManaRegen = [MANAREGENTIMER from UOX.INI, defaults to 5.0 for eras above and including ML]</span><br>
+									<span style="margin-left:15px; opacity:0.75">baselineRate = 1.0 / nextManaRegen</span><br>
+									<span style="margin-left:15px; opacity:0.75">medPoints = ((( 0.0075 * meditation ) + ( 0.0025 * int )) [or 0.1 if wearing non-medable armor] * 1.0 [if below GM Meditation] or 1.1 [if GM or above]) * 2 if Meditating</span><br>
+									<span style="margin-left:15px; opacity:0.75">focusPoints = ( focus / 200.0 )</span><br>
+									<span style="margin-left:15px; opacity:0.75">bonusManaRegen = sqrt( bonusFromChar + bonusFromItems + bonusFromRace )</span><br>
+									<span style="margin-left:15px; opacity:0.75">baseBonusManaRegen = (((( meditation / 2.0 + focus / 4.0 ) / 90.0 ) * 0.65 ) * 2.35 )</span><br>
+									<span style="margin-left:15px; opacity:0.75">bonusManaRegen = highest of (0) or ((( baseBonusManaRegen * bonusManaRegen ) - ( baseBonusManaRegen - 1 )) / 10.0 )</span><br>
+									<span style="margin-left:15px; opacity:0.75">manaPerSecond = 0.2 + focusBonus + meditationBonus + bonusManaRegen</span><br>
+									<span style="margin-left:15px; opacity:0.75">nextManaRegen = round( nextManaRegen * ( baselineRate / manaPerSecond ))</span></em></p>
+								<p><strong>5 = KR</strong><br>
+									<em><span style="margin-left:15px; opacity:0.75">Same as mode 4, but with diminishing returns for bonusManaRegen from char/items rather than hard cap (still using MANAREGENCAP from UOX.INI)</span></em></p>
+							</div>
+						</div>
+
+				  	<input type="checkbox" id="spoiler_baseregen_timers">
+						<label for="spoiler_baseregen_timers">Base Regeneration Timers <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>The UOX.INI settings below define the base regeneration timers for character hitpoints, stamina and mana.</p>
+							<p><span class="hl">HITPOINTREGENTIMER=8</span> // seconds per HP regen</p>
+							<p><span class="hl">STAMINAREGENTIMER=2</span> // seconds per Stamina regen</p>
+							<p><span class="hl">MANAREGENTIMER=7</span> // seconds per Mana regen<br>
+								Depending on which MANAREGENMODE is selected, you'll want this option set differently. For ML and above, consider 5 seconds per Mana regen (or 0.2 mana/sec). For SE and below, consider 7 seconds per Mana regen (0.1428 mana/sec) instead. Specifically for AoS (pre-Pub18), go with 1 second as baseline.</p>
+						</div>
+
+				  	<input type="checkbox" id="spoiler_regen_bonuses">
+						<label for="spoiler_regen_bonuses">Regeneration Bonuses <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Regen bonuses can be accumulated via different sources:
+								<ul>
+									<li>Directly from the <strong>character</strong> itself</li>
+									<li>From <strong>items equipped</strong> on the character (if the Mana Regen Bonus property is used)</li>
+									<li>From <strong>race properties</strong> of the race the character belongs to (humans get +2 health regen bonus, gargoyles get +2 mana regen bonus)</li>
+								</ul>
+								These bonuses can be defined directly on NPCs, or on items, or in race definitions using the DFN tags <span class="hl">HEALTHREGENBONUS</span>, <span class="hl">STAMINAREGENBONUS</span> and <span class="hl">MANAREGENBONUS</span>. These properties are also exposed to JS engine for characters (including players) and items as <span class="hl">.healthRegenBonus</span>, <span class="hl">.staminaRegenBonus</span> and <span class="hl">.manaRegenBonus</span></p>
+							<h4>Bonus Caps</h4>
+							<p>The total bonuses a player can get, regardless of source, can be capped via the following UOX.INI settings:
+								<ul>
+									<li><span class="hl">HEALTHREGENCAP=18</span> // SE and below = no cap, ML and beyond = 18 (hard cap)</li>
+									<li><span class="hl">STAMINAREGENCAP=24</span> // Same across eras</li>
+									<li><span class="hl">MANAREGENCAP=18</span> // SE and below = no cap, ML = 18 (hard cap), KR and beyond = 30 (soft cap) </li>
+								</ul></p>
+						</div>
+
+				  	<input type="checkbox" id="spoiler_hungerthirst_levels">
+						<label for="spoiler_hungerthirst_levels">Hunger/Thirst-levels <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<h4>Hunger</h4>
+							<p>If <span class="hl">HUNGERENABLED</span> and <span class="hl">HUNGERAFFECTHEALTHREGEN</span> are both set to 1 in UOX.INI, a character's hunger level will directly affect their <strong>bonus health regen</strong>. The hungrier the character is, the higher the penalty to the bonus health regen will be. Inversely, the less hungry you are, the higher positive impact it has on bonus health regen:</p>
+							<ul>
+								<li>Hunger Level 6 = +6 bonus health regen</li>
+								<li>Hunger Level 5 = +4 bonus health regen</li>
+								<li>Hunger Level 4 = +2 bonus health regen</li>
+								<li>Hunger Level 3 = -2 bonus health regen</li>
+								<li>Hunger Level 2 = -4 bonus health regen</li>
+								<li>Hunger Level 1 = -6 bonus health regen</li>
+							</ul>
+							<p>Hunger has no impact on the <strong>base</strong> passive health regen.</p>
+							<h4>Thirst</h4>
+							<p>If <span class="hl">THIRSTENABLED</span> and <span class="hl">THIRSTAFFECTSTAMINAREGEN</span> are both set to 1 in UOX.INI, a character's thirst level will directly affect their <strong>bonus stamina regen</strong>. The thirstier the character is, the higher the penalty to the bonus stamina regen will be. Inversely, the less thirsty you are the higher positive impact it has on bonus stamina regen:</p>
+							<ul>
+								<li>Thirst Level 6 = +6 bonus stamina regen</li>
+								<li>Thirst Level 5 = +4 bonus stamina regen</li>
+								<li>Thirst Level 4 = +2 bonus stamina regen</li>
+								<li>Thirst Level 3 = -2 bonus stamina regen</li>
+								<li>Thirst Level 2 = -4 bonus stamina regen</li>
+								<li>Thirst Level 1 = -6 bonus stamina regen</li>
+							</ul>
+							<p>Thirst has no impact on the <strong>base</strong> passive stamina regen.</p>
+						</div>
+
+				  	<input type="checkbox" id="spoiler_skillbased_bonuses">
+						<label for="spoiler_skillbased_bonuses">Skill-based Bonuses <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p><strong>Meditation</strong> and <strong>Focus</strong> skills give bonuses even to passive mana regeneration.</p>
+							<p><strong>Healing</strong> skill gives bonus to passive health regeneration, if <span class="hl">HEALINGAFFECTHEALTHREGEN</span> is set to 1 in UOX.INI. At GM Healing, this provides a +10 bonus to health regeneration.</p>
+							<p><strong>Focus</strong> skill gives bonus to passive stamina regeneration, and a smaller bonus to passive mana regeneration. At GM Focus, this provides a +10 bonus to stamina regeneration.</p>
+						</div>
+
+						<h3>Active Regeneration</h3>
+						<p>Mana can be regenerated actively using the <span class="hl">Meditation skill</span>, which essentially <strong>doubles</strong> the based mana regeneration gotten from Meditation skill (excluding other bonuses).</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -7058,7 +7586,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Inherit properties from NPC defined by npcSectionID in NPC DFNs</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">gett2a/gettd/getuor/getlbr/getpub15/getaos/getse/getml/getsa/gettol</span>=<strong>[npcSectionID]</strong><br>
+							<p><span class="hl">getuo/gett2a/gettd/getuor/getlbr/getaos/getse/getml/getsa/gettol</span>=<strong>[npcSectionID]</strong><br>
 							Inherit properties from NPC defined by npcSectionID in NPC DFNs, based on selected era in expansion settings of uox.ini</p>
 						</div>
 						<div class="settingsDiv">
@@ -7625,7 +8153,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Inherit properties of item with specified itemSectionID from item DFNs</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">gett2a/gettd/getuor/getlbr/getpub15/getaos/getse/getml/getsa/gettol</span>=<strong>[itemSectionID]</strong><br>
+							<p><span class="hl">getuo/gett2a/gettd/getuor/getlbr/getaos/getse/getml/getsa/gettol</span>=<strong>[itemSectionID]</strong><br>
 							Inherit properties from Item defined by itemSectionID in Item DFNs, based on selected era in expansion settings of uox.ini</p>
 						</div>
 						<div class="settingsDiv">
@@ -7989,6 +8517,14 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Members of the race can equip items listed in the specified EQUIPLIST section</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">ALLSKILLSG</span>=<strong>[combatModID]</strong></strong><br>
+							Bonus applied to skill checks for ALL skills, based on percentage value provided in [COMBAT MODS] section for specified ID. For instance, ALLSKILLSG=3 will apply a 20% bonus to all skill checks for members of a race with that tag, if using the default [COMBAT MODS] section.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ALLSKILLSL</span>=<strong>[combatModID]</strong></strong><br>
+							Penalty applied to skill checks for ALL skills, based on percentage value provided in [COMBAT MODS] section for specified ID. For instance, ALLSKILLSL=3 will apply a 20% penalty to all skill checks for members of a race with that tag, if using the default [COMBAT MODS] section.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">ARMORREST</span>=<strong>[number]</strong></strong><br>
 							Sets the armor class restriction of the race (0-127). Race will be unable to equip any armor with the specified AC, or which contains an AC included in the ARMORREST value (which can combine multiple ac values, which are checked using bit comparison)</p>
 						</div>
@@ -8109,6 +8645,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Adjusts maximum mana of member of the race by a percentage value of the character's intelligence. Example: 100 base mana, 50 intelligence and MANAMOD=50 will give a character max mana of <span class="hl">100 + ( 50 * 0.50 ) = 125</span></p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">MAXWEIGHTBONUS</span>=<strong>[number]</strong><br>
+							Bonus to max weight capacity for members of race</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">NAME</span>=<strong>[text]</strong><br>
 							Name of the race</p>
 						</div>
@@ -8165,7 +8705,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Bonus applied to skill checks for specified SKILLNAME, based on percentage value provided in [COMBAT MODS] section for specified ID. For instance, SWORDSMANSHIPG=3 will apply a 20% bonus to swordsmanship skill checks for members of a race with that tag, if using the default [COMBAT MODS] section. The same bonus is also applied to base damage in combat, before other damage modifiers.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">[SKILLNAME]L</span>=<strong>[number]</strong><br>
+							<p><span class="hl">[SKILLNAME]L</span>=<strong>[combatModID]</strong><br>
 							Penalty applied to skill checks for specified SKILLNAME, based on percentage value provided in [COMBAT MODS] section for specified ID. For instance, SWORDSMANSHIPL=3 will apply a 20% penalty to swordsmanship skill checks for members of a race with that tag, if using the default [COMBAT MODS] section. The same penalty is also applied to base damage in combat, before other damage modifiers.</p>
 						</div>
 						<div class="settingsDiv">
@@ -8236,6 +8776,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						<div class="settingsDiv">
 							<p><span class="hl">chanceforbigore</span>=<strong>[percentage]</strong><br>
 							Chance from 0 to 100 of finding 5 ores instead of 1 while mining in this region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">disabled</span>=<strong>[0/1]</strong><br>
+							If set to 1, marks this region as disabled, and causes it to be ignored by UOX3. Region can still be enabled dynamically via JS scripts, though.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">dungeon</span>=<strong>[0/1]</strong><br>
@@ -11731,8 +12275,8 @@ function commandTitle()
 						<input type="checkbox" id="spoiler_history_halloffame_active"/>
 						<label for="spoiler_history_halloffame_active"><h3>Active Contributors</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Contributors active within last year (as of November 2023):</p>
-							<p><span class="hl">Xuri, punt, Dragon Slayer, Azzerhoden Razeri, ldilley</span><br></p>
+							<p>Contributors active within last year (as of April 2025):</p>
+							<p><span class="hl">Xuri, Dragon Slayer, Maarc</span><br></p>
 						</div>
 					</div>
 				  </div>
@@ -11747,7 +12291,7 @@ function commandTitle()
   <div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>Docs revamp by Geir Ove Alnes @ Copyright 2020 - 2023</small></p>
+	<p><small>Docs revamp by Geir Ove Alnes @ Copyright 2020 - 2025</small></p>
 	<p><small>Built on <a href="https://codyhouse.co/demo/faq-template" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framework by CodyHouse</a>.</small></p>
 </div>
 <script defer>

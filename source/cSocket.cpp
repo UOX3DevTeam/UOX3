@@ -1863,6 +1863,7 @@ void CSocket::SysMessage( const std::string txt, ... )
 
 	va_start( argptr, txt );
 	auto msg = oldstrutil::format( txt, argptr );
+	va_end( argptr ); // va_end in same function as va_start
 	if( msg.size() > 512 )
 	{
 		msg = msg.substr( 0, 512 );
@@ -1964,6 +1965,7 @@ void CSocket::SysMessage( SI32 dictEntry, ... )
 
 	va_start( argptr, dictEntry );
 	auto msg = oldstrutil::format( txt, argptr );
+	va_end( argptr ); // va_end in same function as va_start
 	if( msg.size() > 512 )
 	{
 		msg = msg.substr( 0, 512 );
@@ -2015,8 +2017,8 @@ void CSocket::ObjMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, 
 
 	va_list argptr;
 	va_start( argptr, Colour );
-
 	ObjMessage( oldstrutil::format( txt, argptr ).c_str(), getObj, secsFromNow, Colour );
+	va_end( argptr ); // va_end in same function as va_start
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2357,6 +2359,7 @@ void CSocket::SendTargetCursor( UI08 targType, UI08 targId, UI08 cursorType, SI3
 	va_list argptr;
 	va_start( argptr, dictEntry );
 	auto msg = oldstrutil::format( txt, argptr );
+	va_end( argptr ); // va_end in same function as va_start
 	if( msg.size() > 512 )
 	{
 		msg = msg.substr( 0, 512 );
@@ -2505,7 +2508,7 @@ void CSocket::StatWindow( CBaseObject *targObj, bool updateParty )
 		if( !targChar->IsNpc() && mChar == targChar )
 		{
 			toSend.Gold( GetItemAmount( targChar, 0x0EED ));
-			toSend.AC( Combat->CalcDef( targChar, 0, false ));
+			toSend.AC( Combat->CalcDef( targChar, 0, false, PHYSICAL, false, true ));
 		}
 
 		Send( &toSend );
