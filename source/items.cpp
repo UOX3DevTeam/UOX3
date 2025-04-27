@@ -482,6 +482,9 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetRank( 10 );
 				}
 				break;
+			case DFNTAG_HEALTHREGENBONUS:	applyTo->SetHealthRegenBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_STAMINAREGENBONUS:	applyTo->SetStaminaRegenBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_MANAREGENBONUS:		applyTo->SetManaRegenBonus( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_RACE:			applyTo->SetRace( static_cast<UI16>( ndata ));			break;
 			case DFNTAG_RESISTFIRE:
 				if( ndata >= 0 )

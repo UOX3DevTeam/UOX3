@@ -165,6 +165,7 @@ inline JSPropertySpec CRegionProperties[] =
 	{ "isSafeZone",			CREGP_ISSAFEZONE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "health",				CREGP_HEALTH,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isDungeon",			CREGP_ISDUNGEON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "isDisabled",			CREGP_ISDISABLED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "worldNumber",		CREGP_WORLDNUMBER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "instanceID",			CREGP_INSTANCEID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "chanceBigOre",		CREGP_CHANCEBIGORE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -261,6 +262,9 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "actualDexterity",	CCP_ACTUALDEXTERITY,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "actualIntelligence",	CCP_ACTUALINTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "actualStrength",		CCP_ACTUALSTRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "healthRegenBonus",	CCP_HEALTHREGENBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "staminaRegenBonus",	CCP_STAMINAREGENBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "manaRegenBonus",		CCP_MANAREGENBONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "skills",			CCP_SKILLS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "mana",			CCP_MANA,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "stamina",		CCP_STAMINA,		JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -514,6 +518,9 @@ inline JSPropertySpec CItemProps[] =
 	{ "strength",		CIP_STRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "dexterity",		CIP_DEXTERITY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "intelligence",	CIP_INTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "healthRegenBonus",	CIP_HEALTHREGENBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "staminaRegenBonus",	CIP_STAMINAREGENBONUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "manaRegenBonus",		CIP_MANAREGENBONUS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "corpse",			CIP_CORPSE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "desc",			CIP_DESC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "event",			CIP_EVENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -603,6 +610,7 @@ inline JSPropertySpec CItemProps[] =
 	{ "banX",			CIP_BANX,			JSPROP_ENUMANDPERM, nullptr, nullptr},
 	{ "banY",			CIP_BANY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tithing",		CIP_TITHING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "moveType",		CIP_MOVETYPE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 

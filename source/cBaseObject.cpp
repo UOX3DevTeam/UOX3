@@ -92,6 +92,9 @@ const SI16			DEFBASE_KARMA		= 0;
 const SI16			DEFBASE_FAME		= 0;
 const SI16			DEFBASE_KILLS		= 0;
 const UI16			DEFBASE_RESIST 		= 0;
+const SI16			DEFBASE_HEALTHREGENBONUS = 0;
+const SI16			DEFBASE_STAMREGENBONUS = 0;
+const SI16			DEFBASE_MANAREGENBONUS = 0;
 const bool			DEFBASE_NAMEREQUESTACTIVE = 0;
 const ExpansionRuleset	DEFBASE_ORIGIN	= ER_UO;
 const SI16			DEFBASE_SWINGSPEEDINCREASE = 0;
@@ -103,10 +106,10 @@ const SI16			DEFBASE_HITCHANCE = 0;
 const SI16			DEFBASE_DEFENSECHANCE = 0;
 
 const SI16			DEFBASE_HEALTHBONUS = 0;
-const SI16			DEFBASE_STAMINABONOS = 0;
+const SI16			DEFBASE_STAMINABONUS = 0;
 const SI16			DEFBASE_MANABONUS = 0;
 
-const SI16			DEFBASE_DAMAGEiNCREASE = 0;
+const SI16			DEFBASE_DAMAGEINCREASE = 0;
 const SI16			DEFBASE_LUCK	= 0;
 const UI32			DEFBASE_TITHING		= 0;
 
@@ -126,8 +129,9 @@ mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ),
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN ),
-healthBonus( DEFBASE_HEALTHBONUS ),staminaBonus( DEFBASE_STAMINABONOS ), manaBonus( DEFBASE_MANABONUS ), hitChance( DEFBASE_HITCHANCE ), defenseChance( DEFBASE_DEFENSECHANCE ),
-healthLeech( DEFBASE_HEALTHLEECH ), staminaLeech( DEFBASE_STAMINALEECH ), manaLeech( DEFBASE_MANALEECH ), swingSpeedIncrease( DEFBASE_SWINGSPEEDINCREASE ), damageIncrease( DEFBASE_DAMAGEiNCREASE ),
+healthRegenBonus( DEFBASE_HEALTHREGENBONUS ), staminaRegenBonus( DEFBASE_STAMREGENBONUS ), manaRegenBonus( DEFBASE_MANAREGENBONUS ), healthBonus( DEFBASE_HEALTHBONUS ),
+staminaBonus( DEFBASE_STAMINABONUS ), manaBonus( DEFBASE_MANABONUS ), hitChance( DEFBASE_HITCHANCE ), defenseChance( DEFBASE_DEFENSECHANCE ), healthLeech( DEFBASE_HEALTHLEECH ), 
+staminaLeech( DEFBASE_STAMINALEECH ), manaLeech( DEFBASE_MANALEECH ), swingSpeedIncrease( DEFBASE_SWINGSPEEDINCREASE ), damageIncrease( DEFBASE_DAMAGEINCREASE ),
 luck( DEFBASE_LUCK ), tithing( DEFBASE_TITHING )
 {
 	multis = nullptr;
@@ -824,6 +828,7 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Intelligence=" + std::to_string( intelligence ) + "," + std::to_string( temp_in2 ) + newLine;
 	outStream << "Strength=" + std::to_string( strength ) + "," + std::to_string( temp_st2 ) + newLine;
 	outStream << "HitPoints=" + std::to_string( hitpoints ) + newLine;
+	outStream << "RegenBonusStats=" + std::to_string( GetHealthRegenBonus() ) + "," + std::to_string( GetStaminaRegenBonus() ) + "," + std::to_string( GetManaRegenBonus() ) + newLine;
 	outStream << "ExtPropCommon=" + std::to_string( temp_hitChance ) + "," + std::to_string( temp_defChance ) + "," + std::to_string( temp_swingSpeedInc ) + "," + std::to_string( temp_damInc ) + newLine;
 	outStream << "Luck=" + std::to_string( temp_luck ) + newLine;
   outStream << "Tithing=" + std::to_string( temp_tithing ) + newLine;
@@ -1032,6 +1037,69 @@ SI16 CBaseObject::GetIntelligence( void ) const
 void CBaseObject::SetIntelligence( SI16 newValue )
 {
 	intelligence = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetHealthRegenBonus()
+//|					CBaseObject::SetHealthRegenBonus()
+//|	Date		-	29 April, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Health Regen bonus provided by object
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetHealthRegenBonus( void ) const
+{
+	return healthRegenBonus;
+}
+void CBaseObject::SetHealthRegenBonus( SI16 newValue )
+{
+	healthRegenBonus = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetStaminaRegenBonus()
+//|					CBaseObject::SetStaminaRegenBonus()
+//|	Date		-	29 April, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Stamina Regen bonus provided by object
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetStaminaRegenBonus( void ) const
+{
+	return staminaRegenBonus;
+}
+void CBaseObject::SetStaminaRegenBonus( SI16 newValue )
+{
+	staminaRegenBonus = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetManaRegenBonus()
+//|					CBaseObject::SetManaRegenBonus()
+//|	Date		-	29 April, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Mana Regen bonus provided by object
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetManaRegenBonus( void ) const
+{
+	return manaRegenBonus;
+}
+void CBaseObject::SetManaRegenBonus( SI16 newValue )
+{
+	manaRegenBonus = newValue;
 
 	if( CanBeObjType( OT_ITEM ))
 	{
@@ -1831,6 +1899,7 @@ void CBaseObject::SetHealthLeech( SI16 nVal )
 	}
 }
 
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetHealthBonus()
 //|					CBaseObject::SetHealthBonus()
 //o------------------------------------------------------------------------------------------------o
@@ -1871,6 +1940,7 @@ void CBaseObject::SetStaminaLeech( SI16 nVal )
 	}
 }
 
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetStaminaBonus()
 //|					CBaseObject::SetStaminaBonus()
 //o------------------------------------------------------------------------------------------------o
@@ -1911,6 +1981,7 @@ void CBaseObject::SetManaLeech( SI16 nVal )
 	}
 }
 
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetManaBonus()
 //|					CBaseObject::SetManaBonus()
 //o------------------------------------------------------------------------------------------------o
@@ -1959,6 +2030,36 @@ void CBaseObject::IncDexterity( SI16 toInc )
 void CBaseObject::IncIntelligence( SI16 toInc )
 {
 	SetIntelligence( intelligence + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncHealthRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Health Regen bonus value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncHealthRegenBonus( SI16 toInc )
+{
+	SetHealthRegenBonus( healthRegenBonus + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncStaminaRegen()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Stamina Regen bonus value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncStaminaRegenBonus( SI16 toInc )
+{
+	SetStaminaRegenBonus( staminaRegenBonus + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncManaRegen()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Mana Regen bonus value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncManaRegenBonus( SI16 toInc )
+{
+	SetManaRegenBonus( manaRegenBonus + toInc );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2382,6 +2483,15 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			if( UTag == "RACE" )
 			{
 				race = oldstrutil::value<UI16>( data );
+			}
+			else if( UTag == "REGENBONUSSTATS" )
+			{
+				if( csecs.size() == 3 )
+				{
+					SetHealthRegenBonus( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+					SetStaminaRegenBonus( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+					SetManaRegenBonus( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+				}
 			}
 			else if( UTag == "REPUTATION" )
 			{
@@ -2938,6 +3048,9 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetStrength( GetStrength() );
 	target->SetDexterity( GetDexterity() );
 	target->SetIntelligence( GetIntelligence() );
+	target->SetHealthRegenBonus( GetHealthRegenBonus() );
+	target->SetStaminaRegenBonus( GetStaminaRegenBonus() );
+	target->SetManaRegenBonus( GetManaRegenBonus() );
 	target->SetHP( GetHP() );
 	target->SetDir( GetDir() );
 	target->SetVisible( GetVisible() );

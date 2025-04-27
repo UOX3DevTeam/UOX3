@@ -76,6 +76,7 @@ JSBool CChar_OpenBank( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_DirectionTo( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_TurnToward( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_CheckSkill( JSContext *cx, uintN argc, jsval *vp );
+JSBool CChar_AddSkill( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_FindItemLayer( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_SpeechInput( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_CastSpell( JSContext *cx, uintN argc, jsval *vp );
@@ -227,6 +228,7 @@ JSBool CMulti_ClearOwnerList( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_FirstChar( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_NextChar( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_FinishedChars( JSContext *cx, uintN argc, jsval *vp );
+JSBool CMulti_TurnBoat( JSContext *cx, uintN argc, jsval *vp );
 
 // Socket Methods
 JSBool CSocket_Disconnect( JSContext *cx, uintN argc, jsval *vp );
@@ -374,6 +376,8 @@ inline JSFunctionSpec CGump_Methods[] =
 
 inline JSFunctionSpec CChar_Methods[] =
 {
+	{ "AddSkill",			CChar_AddSkill,			3, 0 },
+	{ "SpeechInput",		CChar_SpeechInput,		1, 0 },
 	{ "KillTimers",			CBase_KillTimers,		1, 0 },
 	{ "GetJSTimer",			CBase_GetJSTimer,		2, 0 },
 	{ "SetJSTimer",			CBase_SetJSTimer,		3, 0 },
@@ -579,6 +583,9 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "NextChar",			CMulti_NextChar,			1, 0 },
 	{ "FinishedChars",		CMulti_FinishedChars,		1, 0 },
 
+	{ "TurnBoat",			CMulti_TurnBoat,			1, 0 },
+
+	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0 },
 	{ "SetRandomName",		CBase_SetRandomName,		1, 0 },
 	{ "SetRandomColor",		CBase_SetRandomColor,		1, 0 },

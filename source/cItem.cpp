@@ -1174,6 +1174,30 @@ auto CItem::SetArmourClass( ARMORCLASS newValue ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetNonMedableArmourRating()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns physical resist value of armor, if it's non-medable/not a mage armor
+//o------------------------------------------------------------------------------------------------o
+auto CItem::GetNonMedableArmorRating() const -> R64
+{
+	auto rVal = 0;
+	// Check for mage armor property here, return 0 if found
+	// Mage armor is defined using the second part of the MORE property. If it's 1, it's a mage armor!
+	// Allows for meditation in armor pieces that are usually non-medable
+	if( GetTempVar( CITV_MORE, 2 ) == 1 )
+		return rVal;
+
+	// Return physical resist value if armor is not medable
+	// Medable armor is defined using the first part of the MORE property. If it's 1, it's medable!
+	if( GetTempVar( CITV_MORE, 1 ) == 0 )
+	{
+		rVal = this->GetResist( PHYSICAL );
+	}
+	
+	return rVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetRank()
 //|					CItem::SetRank()
 //o------------------------------------------------------------------------------------------------o
@@ -1734,6 +1758,10 @@ auto CItem::CopyData( CItem *target ) -> void
 
 	// Add any script triggers present on object to the new object
 	target->scriptTriggers = GetScriptTriggers();
+
+	// Don't forget to copy the tags
+	target->tags = GetTagMap();
+	target->tempTags = GetTempTagMap();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1897,7 +1925,20 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "CREATOR" || UTag == "CREATER" )
 				{
-					SetCreator( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					auto dataVal = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+					if( !dataVal.empty() ) // Fixes incompatibility with really old UOX3 world saves, where "creater" tags were blank
+					{
+						try
+						{
+							auto numVal = std::stoul( dataVal, nullptr, 0 );
+							SetCreator( static_cast<UI32>( numVal ));
+						}
+						catch(...)
+						{
+
+						}
+						//SetCreator( static_cast<UI32>( std::stoul( dataVal, nullptr, 0 )));
+					}
 					rValue = true;
 				}
 				else if( UTag == "CORPSE" )

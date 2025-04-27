@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 14. October, 2023</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6</small></p>
+	<p style="margin:0"><small>Last Updated: 23. April, 2025</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6b</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -55,6 +55,14 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>April 23rd, 2025</h4>
+						<ul>
+							<li>Added details for new JS Events: onTurnBoat
+							<li>Added details for new JS Methods: AddSkill, TurnBoat, GetTiller</li>
+							<li>Updated details for JS Method: Refresh</li>
+							<li>Updated details for JS Function: IterateOver</li>
+							<li>Updated details for JS Event: onIterate</li>
+						</ul>
 						<h4>October 27th, 2023</h4>
 						<ul>
 							<li>Updated details for JS Function: SetRandomName</li>
@@ -2460,7 +2468,7 @@ function onEnterRegion( pEntering, regionEntered )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onIterate( object )</em></p>
+							<p><em>function onIterate( object[, socket] )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -2479,11 +2487,12 @@ function onEnterRegion( pEntering, regionEntered )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>The IterateOver() function will return a count of all objects that onIterate returned true for.</p>
+							<p>The IterateOver() function will return a count of all objects that onIterate returned true for. It also supports an optional socket parameter, which can be passed in via the IterateOver Function.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function doStuff( socket, pUser )
+<pre><code class="language-javascript">// Example without socket parameter
+function KillNPCs( socket, pUser )
 {
 	socket.SysMessage( "Killing all NPCs (including invulnerable ones!)" );
 	var numKilled = IterateOver( "CHARACTER" );
@@ -2498,7 +2507,26 @@ function onIterate( charCheck )
 		return true;
 	}
 	return false;
-}</code></pre></p>
+}
+
+// Example with the optional socket parameter:
+function KillAllMurderers( socket, pUser )
+{
+	var numKilled = IterateOver( "CHARACTER", socket );
+	pUser.TextMessage( "I killed " + numKilled + " murderers!" );
+}
+
+function onIterate( charCheck, socket )
+{
+	if( ValidateObject( charCheck ) && !charCheck.npc && charCheck.murderer )
+	{
+		socket.SysMessage( "Found a murderer by the name of " + charCheck.name + "! Killing..." );
+		charCheck.Kill();
+		return true;
+	}
+	return false;
+}
+</code></pre></p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -4530,6 +4558,49 @@ function onTooltip( myObj, pSocket )
 					</div>
 				</div> --> <!-- cd-faq__content -->
 			<!-- </li> -->
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnTooltip" id="eventOnTooltip"><span>onTooltip</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onTurnBoat( iBoat, oldDir, newDir, iTiller )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow reactions in script after a boat has successfully turned</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Triggers for boat objects after boat has successfully turned. oldDir is old direction, newDir is new direction after turning, iTiller is tillerman reference.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> or nothing to prevent other scripts from triggering same event</li>
+								<li><strong>return true</strong> to allow other scripts from triggering same event</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Make Tillerman respond after boat has turned
+function onTurnBoat( iBoat, oldDir, newDir, iTiller )
+{
+	if( oldDir != newDir )
+	{
+		iTiller.TextMessage( "Everything's different now!" );
+	}
+	else
+	{
+		iTiller.TextMessage( "Nothing ever changes." );
+	}
+	return true;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
 
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnUnequip" id="eventOnUnequip"><span>onUnEquip</span></a>
@@ -6806,7 +6877,7 @@ var socket = GetSocketFromIndex( 0 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>int IterateOver( objectType );</em></p>
+									<p><em>int IterateOver( objectType[, socket] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -6814,7 +6885,7 @@ var socket = GetSocketFromIndex( 0 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>For every object it comes across, the iterator will call a function <strong>onIterate( object )</strong> in the same script. Supported object types: "BASEOBJ", "CHARACTER", "ITEM", "SPAWNER", "MULTI", "BOAT"</p>
+									<p>For every object it comes across, the iterator will call a function <strong>onIterate( object[, socket] )</strong> in the same script. Supported object types: "BASEOBJ", "CHARACTER", "ITEM", "SPAWNER", "MULTI", "BOAT". If the optional socket parameter is included in IterateOver, it will be passed to the onIterate event.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -8373,16 +8444,19 @@ myObject.KillTimers( 1 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void Refresh();</em></p>
+									<p><em>void Refresh( [socket] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Causes the Character/Item to be refreshed for nearby sockets in range to see it</p>
+									<p>Causes the Character/Item to be refreshed for nearby sockets in range to see it. If a specific socket is specified, object will be refreshed only for that socket.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Refreshes myObj by sending it to all nearby sockets
-myObj.Refresh();</code></pre>
+myObj.Refresh();
+
+// Refreshes myObj for a specific socket/player only
+myObj.Refresh( mySocket );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -8815,6 +8889,25 @@ myChar.UpdateStats( 2 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_addSkill"/>
+							<label for="spoiler_method_char_addSkill">AddSkill <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void AddSkill( skillID, skillAmt, triggerEvents [true/false] )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Grant skill points to a character without triggering skillchange JS events. Useful if adding skill points from within a skillchange event, to avoid infinite loops!</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myChar.AddSkill( 0, 10, false ); // Adds 1.0 skillpoints to skill with ID 0 (Alchemy) without triggering skill change JS events</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_char_addSpell"/>
 							<label for="spoiler_method_char_addSpell">AddSpell <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -9181,11 +9274,11 @@ myChar.Damage( 15, 6, attackerChar, true );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>int Defense( hitLoc, damageType, doArmorDamage )</em></p>
+									<p><em>int Defense( hitLoc, damageType, doArmorDamage[, ignoreMedable, includeShield] )</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns the defense value against damageType of the armor item at the location hitLoc and does armor damage if needed</p>
+									<p>Returns the defense value against damageType of the armor item at the location hitLoc and does armor damage if needed, and can also exclude medable armor (optional) and include shield defense value (optional)</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
@@ -9195,7 +9288,10 @@ myChar.Damage( 15, 6, attackerChar, true );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Get the defense value of the head armor against Physical damage and damage the armor:
-value = mChar.Defense( 3, 1, true);</code></pre>
+value = mChar.Defense( 3, 1, true);
+
+// Get the total physical defense value for character, excluding medable armor, including shield
+value = mChar.Defense( 0, 1, false, false, true );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -13107,6 +13203,36 @@ if( iSecure )
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_TurnBoat"/>
+							<label for="spoiler_method_multi_TurnBoat">TurnBoat <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool TurnBoat( turnDirection );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Turns boat in specified direction, relative to it's current direction</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>turnDirection can be 0 (go straight), 1 (turn left 90 degrees), 2 (turn right 90 degrees) or 3 (flip boat 180 degrees)</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">myBoat.TurnBoat( 0 ); // Do nothing
+
+myBoat.TurnBoat( 1 ); // Turn 90 degrees left
+
+myBoat.TurnBoat( 2 ); // Turn 90 degrees right
+
+myBoat.TurnBoat( 3 ); // Flip boat around 180 degrees
+</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_multi_KillKeys"/>
 							<label for="spoiler_method_multi_KillKeys">KillKeys <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -14137,8 +14263,8 @@ Timer.SOCK_TRAFFICWARDEN 	// Time until next time traffic warden resets</code></
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 										<pre><code class="language-javascript">// Get timestamp for when player can next use an object, and spit out remaining time in milliseconds
-var objectDelayTimestamp = myChar.GetTimer( Timer.SOCK_OBJDELAY );
-myChar.TextMessage(( myTarget.GetTimer( Timer.SOCK_OBJDELAY ) - GetCurrentClock() ).toString() );
+var objectDelayTimestamp = mySock.GetTimer( Timer.SOCK_OBJDELAY );
+myChar.TextMessage(( objectDelayTimestamp - GetCurrentClock() ).toString() );
 
 // Set time from now in milliseconds until next time player can use another item
 mySock.SetTimer( timer.SOCK_OBJDELAY, 3000 );</code></pre>
@@ -14180,25 +14306,6 @@ mySock.SetTimer( timer.SOCK_OBJDELAY, 3000 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<p><strong>See FirstTriggerWord() Method</strong></p>
-								</div>
-							</div>
-						</div>
-
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_socket_openContainer"/>
-							<label for="spoiler_method_socket_openContainer">OpenContainer <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>void OpenContainer( iCont )</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Opens the specified container (iCont) for the specified socket</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">socket.OpenContainer( iCont );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -15082,6 +15189,10 @@ myObject.propertyName = newValue;
 							Get/Set character's current health/hitpoints (cannot exceed value of maxhp property)</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.healthRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set character's inherent health regeneration bonus, which affects passive health regeneration. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.hidamage</span> <strong>(int, <em>0 - 32767</em>)</strong><br>
 							Get/Set highest damage character can deal in combat with wrestling/unarmed attacks (randomized between lodamage and hidamage)</p>
 						</div>
@@ -15136,6 +15247,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.mana</span> <strong>(int, <em>0 - 32767</em>)</strong><br>
 							Get/Set character's current mana</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.manaRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set character's inherent mana regeneration bonus, which affects passive mana regeneration. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.maxhp</span> <strong>(int, <em>0 - 65535</em>)</strong><br>
@@ -15260,6 +15375,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.stamina</span> <strong>(int, <em>0 - 32737</em>)</strong><br>
 							Get/Set the character's current stamina</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.staminaRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set character's inherent stamina regeneration bonus, which affects passive stamina regeneration. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.stealth</span> <strong>(int, <em>0 - 127</em>)</strong><br>
@@ -15888,6 +16007,10 @@ myObject.propertyName = newValue;
 							Get/Set the current amount of hitpoints of the item</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.healthRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set amount of bonus health regen points character will gain while equipping item. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.hidamage</span> <strong>(int)</strong><br>
 							Get/Set the maximum amount of damage the item can deal, if it's a weapon</p>
 						</div>
@@ -15910,6 +16033,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.madeWith</span> <strong>(int)</strong><br>
 							Get/Set ID of primary skill used to craft item</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.manaRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set amount of bonus mana regen points character will gain while equipping item. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.maxhp</span> <strong>(int)</strong><br>
@@ -15998,6 +16125,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.speed</span> <strong>(int)</strong><br>
 							Get/Set the speed of the item, primarily used for weapons to determine how fast/how often the character wielding the weapon can attack in combat</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.staminaRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set amount of bonus stamina regen points character will gain while equipping item. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.strength</span> <strong>(int)</strong><br>
@@ -16181,6 +16312,42 @@ myObject.propertyName = newValue;
 							Get/Set the max number of player vendors allowed in a multi</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.moveType</span> <strong>(int, <em>-1 - 24</em>)</strong><br>
+							Get/Set the active movement type for Boats, which UOX3 will apply to said boat during each boat update until another movement type is set (or boat is forced to stop).</p>
+							<input type="checkbox" id="spoiler_multi_movetype"/>
+							<label for="spoiler_multi_movetype">Supported Move Types <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<ul>
+									<li><span class="hl">-1</span> // Anchored, unable to move</li>
+									<li><span class="hl">0</span> // Stop, don't move</li>
+									<li><span class="hl">1</span> // Move forward</li>
+									<li><span class="hl">2</span> // Move backward</li>
+									<li><span class="hl">3</span> // Move left</li>
+									<li><span class="hl">4</span> // Move right</li>
+									<li><span class="hl">5</span> // Move forward left</li>
+									<li><span class="hl">6</span> // Move forward right</li>
+									<li><span class="hl">7</span> // Move backward left</li>
+									<li><span class="hl">8</span> // Move backward right</li>
+									<li><span class="hl">9</span> // Move left slowly</li>
+									<li><span class="hl">10</span> // Move right slowly</li>
+									<li><span class="hl">11</span> // Move forward slowly</li>
+									<li><span class="hl">12</span> // Move backward slowly</li>
+									<li><span class="hl">13</span> // Move forward left slowly</li>
+									<li><span class="hl">14</span> // Move forward right slowly</li>
+									<li><span class="hl">15</span> // Move backward right slowly</li>
+									<li><span class="hl">16</span> // Move backward left slowly</li>
+									<li><span class="hl">17</span> // Move left once</li>
+									<li><span class="hl">18</span> // Move right once</li>
+									<li><span class="hl">19</span> // Move forward once</li>
+									<li><span class="hl">20</span> // Move backward once</li>
+									<li><span class="hl">21</span> // Move forward left once</li>
+									<li><span class="hl">22</span> // Move forward right once</li>
+									<li><span class="hl">23</span> // Move backward left once</li>
+									<li><span class="hl">24</span> // Move backward right once</li>
+								</ul>
+							</div>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.owners</span> <strong>(int)</strong><br>
 							Get the number of owners in a multi's owner list (Read-Only)</p>
 						</div>
@@ -16326,6 +16493,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.isDungeon</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether region is considered a dungeon. Primarily used for light level stuff, and to determine if houses can be placed in a region (houses cannot be placed in dungeons)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.isDisabled</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Get/Set whether region is disabled. If disabled, UOX3 will ignore it.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.isGuarded</span> <strong>(bool, <em>true/false</em>)</strong><br>
@@ -17596,7 +17767,7 @@ function findNearbyItems( pUser, trgItem, pSock )
 	<div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>UOX3 JSE Docs by Geir Ove Alnes @ Copyright 2022-2023</small></p>
+	<p><small>UOX3 JSE Docs by Geir Ove Alnes @ Copyright 2022-2025</small></p>
 	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" rel="noopener" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
 </div>
 <script defer>

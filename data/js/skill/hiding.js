@@ -41,6 +41,9 @@ function onSkill( pUser, objType, skillUsed )
 			pSock.SysMessage( GetDictionaryEntry( 835, pSock.language )); // You have hidden yourself well.
 			pUser.visible = 1;
 			pUser.stealth = -1;
+			pUser.target = null;
+			pUser.atWar = false;
+			//myTarget.attacker = null;
 
 			// Use global skill delay on success
 			var globalSkillDelay = GetServerSetting( "SKILLDELAY" );
