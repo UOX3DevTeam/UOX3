@@ -6252,7 +6252,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 								targetObj.currentChar.Disconnect();
 							}
 						}
-						else if( propertyName == "movable" )
+						else if( propertyName == "movable" || propertyName == "lodamage" || propertyName == "hidamage" )
 						{
 							targetObj.Refresh();
 						}

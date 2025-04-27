@@ -244,3 +244,7 @@ pre > code {
 	color: hsl(210, 14%, 49%);
     color: var(--cd-color-3);
 }
+
+blockquote {
+	margin-left: 10px;
+}

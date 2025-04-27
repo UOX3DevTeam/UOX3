@@ -608,10 +608,10 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 		// Same if chance of success is 100% already - no need to proceed!
 		if( s->GetCommandLevel() > 0 || chanceSkillSuccess == 1000 )
 		{
-			if( s->GetCommandLevel() > 0 && mSock != nullptr )
+			if( RandomNum( 1, 100 ) > 80 && s->GetCommandLevel() > 0 && mSock != nullptr )
 			{
 				// Inform the counselor/gm to make it obvious why skillcheck always succeeds
-				mSock->SysMessage( 6279 ); // Skill check success guaranteed due to elevated command level!
+				mSock->SysMessage( 6279 ); // Tip: Skill check success guaranteed due to elevated command level!
 			}
 			skillCheck = true;
 		}
@@ -684,7 +684,8 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 
 	std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
 
-	SKILLVAL amtToGain = 1;
+	SKILLVAL amtToGain			= 1;
+
 	if( skAmt > 0 )
 	{
 		amtToGain = skAmt;
@@ -702,7 +703,7 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 		{
 			for( auto scriptTrig : scriptTriggers )
 			{
-				cScript* toExecute = JSMapping->GetScript( scriptTrig );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
 					// If retVal is -1, event doesn't exist in script
@@ -724,7 +725,8 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 		{
 			for( auto scriptTrig : scriptTriggers )
 			{
-				cScript* toExecute = JSMapping->GetScript( scriptTrig );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+
 				if( toExecute != nullptr )
 				{
 					toExecute->OnSkillChange( c, sk, amtToGain );
@@ -785,17 +787,20 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 		if( toDec != 0xFF )
 		{
 			// Check for existence of onSkillLoss event for player
-			for( auto scriptTrig : scriptTriggers )
+			if( triggerEvent )
 			{
-				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != nullptr )
+				for( auto scriptTrig : scriptTriggers )
 				{
-					// If retVal is -1, event doesn't exist in script
-					// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
-					// If retVal is 1, event exists, proceed with hard code/other scripts
-					if( !toExecute->OnSkillLoss( c, toDec, amtToGain ))
+					cScript *toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute != nullptr )
 					{
-						return;
+						// If retVal is -1, event doesn't exist in script
+						// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
+						// If retVal is 1, event exists, proceed with hard code/other scripts
+						if( !toExecute->OnSkillLoss( c, toDec, amtToGain ))
+						{
+							return;
+						}
 					}
 				}
 			}
@@ -809,10 +814,10 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 			{
 				for( auto scriptTrig : scriptTriggers )
 				{
-					cScript* toExecute = JSMapping->GetScript( scriptTrig );
+					cScript *toExecute = JSMapping->GetScript( scriptTrig );
 					if( toExecute != nullptr )
 					{
-						toExecute->OnSkillChange( c, sk, amtToGain );
+						toExecute->OnSkillChange( c, toDec, ( amtToGain * -1 ));
 					}
 				}
 			}
@@ -823,17 +828,20 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	if( skillCap > static_cast<UI16>( totalSkill ))
 	{
 		// Check for existence of onSkillGain event for player
-		for( auto scriptTrig : scriptTriggers )
+		if( triggerEvent )
 		{
-			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != nullptr )
+			for( auto scriptTrig : scriptTriggers )
 			{
-				// If retVal is -1, event doesn't exist in script
-				// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
-				// If retVal is 1, event exists, proceed with hard code/other scripts
-				if( !toExecute->OnSkillGain( c, sk, amtToGain ))
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
 				{
-					return;
+					// If retVal is -1, event doesn't exist in script
+					// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
+					// If retVal is 1, event exists, proceed with hard code/other scripts
+					if( !toExecute->OnSkillGain( c, sk, amtToGain ))
+					{
+						return;
+					}
 				}
 			}
 		}
@@ -846,7 +854,8 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 		{
 			for( auto scriptTrig : scriptTriggers )
 			{
-				cScript* toExecute = JSMapping->GetScript( scriptTrig );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+        
 				if( toExecute != nullptr )
 				{
 					toExecute->OnSkillChange( c, sk, amtToGain );
@@ -1719,10 +1728,10 @@ auto CSkills::LoadCreateMenus() -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Advance players skill based on success or failure in CheckSkill()
 //o------------------------------------------------------------------------------------------------o
-bool CSkills::AdvanceSkill(CChar* s, UI08 sk, bool skillUsed, SKILLVAL skAmt, bool triggerEvent) 
+bool CSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed, SKILLVAL skAmt, bool triggerEvent )
 {
 	bool advSkill = false;
-	SI16 skillGain;
+	SI16 skillGain = 0;
 
 	SI08 skillAdvance = FindSkillPoint( sk, s->GetBaseSkill( sk ));
 

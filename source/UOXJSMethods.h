@@ -230,6 +230,7 @@ JSMethodFunc CMulti_ClearOwnerList;
 JSMethodFunc CMulti_FirstChar;
 JSMethodFunc CMulti_NextChar;
 JSMethodFunc CMulti_FinishedChars;
+JSMethodFunc CMulti_TurnBoat;
 
 // Socket Methods
 JSMethodFunc CSocket_Disconnect;
@@ -573,6 +574,8 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "FirstChar",			CMulti_FirstChar,			1, 0, 0 },
 	{ "NextChar",			CMulti_NextChar,			1, 0, 0 },
 	{ "FinishedChars",		CMulti_FinishedChars,		1, 0, 0 },
+
+	{ "TurnBoat",			CMulti_TurnBoat,			1, 0, 0 },
 
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
 	{ "SetRandomName",		CBase_SetRandomName,		1, 0, 0 },

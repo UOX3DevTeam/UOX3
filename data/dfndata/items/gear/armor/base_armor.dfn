@@ -174,6 +174,7 @@ decay=1
 good=13
 layer=0x13
 restock=15
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Gloves - Base item with shared DFN tags
@@ -186,6 +187,7 @@ decay=1
 good=13
 layer=0x07
 restock=15
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Gorget - Base item with shared DFN tags
@@ -198,6 +200,7 @@ decay=1
 good=13
 layer=0x0a
 restock=15
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Cap - Base item with shared DFN tags
@@ -210,6 +213,7 @@ decay=1
 good=13
 layer=0x06
 restock=15
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Leggings - Base item with shared DFN tags
@@ -222,6 +226,7 @@ decay=1
 good=13
 layer=0x04
 restock=15
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Tunic - Base item with shared DFN tags
@@ -234,6 +239,7 @@ decay=1
 good=13
 layer=0x0d
 restock=15
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Shorts (Female) - Base item with shared DFN tags
@@ -246,6 +252,7 @@ decay=1
 good=13
 layer=0x04
 restock=15
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Armor (Female) - Base item with shared DFN tags
@@ -258,6 +265,7 @@ decay=1
 good=13
 layer=0x0d
 restock=15
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Skirt (Female) - Base item with shared DFN tags
@@ -270,6 +278,7 @@ decay=1
 good=13
 layer=0x04
 restock=15
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Bustier (Female) - Base item with shared DFN tags
@@ -282,6 +291,7 @@ decay=1
 good=13
 layer=0x0d
 restock=15
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 //Studded Leather Armor
@@ -699,6 +709,7 @@ good=13
 layer=0x06
 origin=se
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Ninja Belt - Base item with shared DFN tags
@@ -712,6 +723,7 @@ good=13
 layer=0x0c
 origin=se
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Ninja Pants - Base item with shared DFN tags
@@ -725,6 +737,7 @@ good=13
 layer=0x04
 origin=se
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Ninja Mitts - Base item with shared DFN tags
@@ -738,6 +751,7 @@ good=13
 layer=0x07
 origin=se
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Ninja Jacket - Base item with shared DFN tags
@@ -751,6 +765,7 @@ good=13
 layer=0x0d
 origin=se
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // SE Samurai Leather
@@ -766,6 +781,7 @@ good=13
 layer=0x06
 origin=se
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Mempo - Base item with shared DFN tags
@@ -779,6 +795,7 @@ good=13
 layer=0x0a
 origin=se
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Do - Base item with shared DFN tags
@@ -792,6 +809,7 @@ good=13
 layer=0x0d
 origin=se
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Hiro Sode - Base item with shared DFN tags
@@ -805,6 +823,7 @@ good=13
 layer=0x13
 origin=se
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Suneate - Base item with shared DFN tags
@@ -818,6 +837,7 @@ good=13
 layer=0x18
 origin=se
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leather Haidate - Base item with shared DFN tags
@@ -831,6 +851,7 @@ good=13
 layer=0x17
 origin=se
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // SE Samurai Studded Leather
@@ -913,6 +934,7 @@ good=13
 layer=0x13
 origin=ml
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leaf Tunic - Base item with shared DFN tags
@@ -926,6 +948,7 @@ good=13
 layer=0x0d
 origin=ml
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leaf Armor (Female) - Base item with shared DFN tags
@@ -939,6 +962,7 @@ good=13
 layer=0x0d
 origin=ml
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leaf Gloves - Base item with shared DFN tags
@@ -952,6 +976,7 @@ good=13
 layer=0x07
 origin=ml
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leaf Gorget - Base item with shared DFN tags
@@ -965,6 +990,7 @@ good=13
 layer=0x0a
 origin=ml
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leaf Leggings - Base item with shared DFN tags
@@ -978,6 +1004,7 @@ good=13
 layer=0x04
 origin=ml
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Leaf Tonlet - Base item with shared DFN tags
@@ -991,6 +1018,7 @@ good=13
 layer=0x04
 origin=ml
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // ML Hide Armor
@@ -1233,6 +1261,7 @@ good=15
 layer=0x06
 origin=ml
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Royal Circlet - Base item with shared DFN tags
@@ -1246,6 +1275,7 @@ good=15
 layer=0x06
 origin=ml
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Gemmed Circlet - Base item with shared DFN tags
@@ -1259,6 +1289,7 @@ good=15
 layer=0x06
 origin=ml
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Raven Helm - Base item with shared DFN tags
@@ -1311,6 +1342,7 @@ good=15
 layer=0x06
 origin=ml
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -1328,6 +1360,7 @@ good=13
 layer=0x13
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Gargish Cloth Arms (Female) - Base item with shared DFN tags
@@ -1341,6 +1374,7 @@ good=13
 layer=0x13
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Gargish Cloth Chest - Base item with shared DFN tags
@@ -1354,6 +1388,7 @@ good=13
 layer=0x0d
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Female Gargish Cloth Chest - Base item with shared DFN tags
@@ -1367,6 +1402,7 @@ good=13
 layer=0x0d
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Gargish Cloth Leggings - Base item with shared DFN tags
@@ -1380,6 +1416,7 @@ good=13
 layer=0x04
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Female Gargish Cloth Leggings - Base item with shared DFN tags
@@ -1393,6 +1430,7 @@ good=13
 layer=0x04
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Gargish Cloth Kilt - Base item with shared DFN tags
@@ -1406,6 +1444,7 @@ good=13
 layer=0x04
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Gargish Cloth Kilt (Female) - Base item with shared DFN tags
@@ -1419,6 +1458,7 @@ good=13
 layer=0x04
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Gargish Cloth Wing Armor - Base item with shared DFN tags
@@ -1431,6 +1471,7 @@ decay=1
 good=13
 layer=0x14
 origin=sa
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // SA Gargish Leather Armor
@@ -1446,6 +1487,7 @@ good=13
 layer=0x13
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Female Gargish Leather Arms - Base item with shared DFN tags
@@ -1459,6 +1501,7 @@ good=13
 layer=0x13
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Gargish Leather Chest - Base item with shared DFN tags
@@ -1472,6 +1515,7 @@ good=13
 layer=0x0d
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Female Gargish Leather Chest - Base item with shared DFN tags
@@ -1485,6 +1529,7 @@ good=13
 layer=0x0d
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Gargish Leather Leggings - Base item with shared DFN tags
@@ -1498,6 +1543,7 @@ good=13
 layer=0x07
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Female Gargish Leather Leggings - Base item with shared DFN tags
@@ -1511,6 +1557,7 @@ good=13
 layer=0x04
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Gargish Leather Kilt - Base item with shared DFN tags
@@ -1524,6 +1571,7 @@ good=13
 layer=0x07
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Female Gargish Leather Kilt - Base item with shared DFN tags
@@ -1537,6 +1585,7 @@ good=13
 layer=0x07
 origin=sa
 restock=10
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Gargish Leather Wing Armor - Base item with shared DFN tags
@@ -1549,6 +1598,7 @@ decay=1
 good=13
 layer=0x14
 origin=sa
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // SA Gargish Plate Armor
@@ -1955,7 +2005,6 @@ restock=10
 get=base_shield
 name=bronze shield
 id=0x1b72
-str=20
 }
 
 // Buckler - Base item with shared DFN tags
@@ -1964,7 +2013,6 @@ str=20
 get=base_shield
 name=buckler
 id=0x1b73
-str=20
 }
 
 // Metal Kite Shield - Base item with shared DFN tags
@@ -1973,7 +2021,6 @@ str=20
 get=base_shield
 name=metal kite shield
 id=0x1b74
-str=20
 dyeable=1
 }
 
@@ -1983,7 +2030,6 @@ dyeable=1
 get=base_shield
 name=heater shield
 id=0x1b76
-str=20
 }
 
 // Metal Shield - Base item with shared DFN tags
@@ -1992,7 +2038,6 @@ str=20
 get=base_shield
 name=metal shield
 id=0x1b7b
-str=20
 }
 
 // Kite Shield (Wooden) - Base item with shared DFN tags
@@ -2001,7 +2046,6 @@ str=20
 get=base_shield
 name=kite shield
 id=0x1b78
-str=20
 }
 
 // Wooden Shield - Base item with shared DFN tags
@@ -2010,7 +2054,6 @@ str=20
 get=base_shield
 name=wooden shield
 id=0x1b7a
-str=20
 }
 
 // Order Shield - Base item with shared DFN tags
@@ -2019,7 +2062,6 @@ str=20
 get=base_shield
 name=order shield
 id=0x1bc4
-str=20
 }
 
 // Chaos Shield - Base item with shared DFN tags
@@ -2028,7 +2070,6 @@ str=20
 get=base_shield
 name=chaos shield
 id=0x1bc3
-str=20
 }
 
 // Gargish Chaos Shield - Base item with shared DFN tags
@@ -2037,7 +2078,6 @@ str=20
 get=base_shield
 name=gargish chaos shield
 id=0x4228
-str=20
 origin=sa
 }
 
@@ -2047,7 +2087,6 @@ origin=sa
 get=base_shield
 name=gargish kite shield
 id=0x4201
-str=20
 origin=sa
 }
 
@@ -2057,7 +2096,6 @@ origin=sa
 get=base_shield
 name=gargish order shield
 id=0x422a
-str=20
 origin=sa
 }
 
@@ -2067,7 +2105,6 @@ origin=sa
 get=base_shield
 name=large plate shield
 id=0x4204
-str=20
 origin=sa
 }
 
@@ -2077,7 +2114,6 @@ origin=sa
 get=base_shield
 name=large stone shield
 id=0x4205
-str=20
 origin=sa
 }
 
@@ -2087,7 +2123,6 @@ origin=sa
 get=base_shield
 name=medium plate shield
 id=0x4203
-str=20
 origin=sa
 }
 
@@ -2097,7 +2132,6 @@ origin=sa
 get=base_shield
 name=small plate shield
 id=0x4202
-str=20
 origin=sa
 }
 
@@ -2107,6 +2141,5 @@ origin=sa
 get=base_shield
 name=gargish wooden shield
 id=0x4200
-str=20
 origin=sa
 }

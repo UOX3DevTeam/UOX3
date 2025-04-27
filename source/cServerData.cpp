@@ -155,7 +155,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"PORT"s, 128},
 	{"ACCESSDIRECTORY"s, 129},
 	{"LOGSDIRECTORY"s, 130},
-	{"ACCOUNTISOLATION"s, 131},
+	// 131 free
 	{"HTMLDIRECTORY"s, 132},
 	{"SHOOTONANIMALBACK"s, 133},
 	{"NPCTRAININGENABLED"s, 134},
@@ -370,6 +370,9 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"MOONGATEFACETS"s, 347},
 	{"AUTOUNEQUIPPEDCASTING"s, 348},
 	{"LOOTDECAYSWITHNPCCORPSE"s, 349},
+	{"HEALTHREGENCAP"s, 350},
+	{"STAMINAREGENCAP"s, 351},
+	{"MANAREGENCAP"s, 352},
 	{"SWINGSPEEDINCREASECAP"s, 353},
 	{"KARMALOCKING"s, 354},
 	{"PHYSICALRESISTCAP"s, 355},
@@ -379,6 +382,24 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"ENERGYRESISTCAP"s, 359},
 	{"DEFENSECHANCEINCREASECAP"s, 360},
 	{"DAMAGEINCREASECAP"s, 361},
+	{"HEALINGAFFECTHEALTHREGEN"s, 362},
+	{"HPREGENMODE"s, 363},
+	{"STAMINAREGENMODE"s, 364},
+	{"MANAREGENMODE"s, 365},
+	{"HUNGERAFFECTHEALTHREGEN"s, 366},
+	{"THIRSTAFFECTSTAMINAREGEN"s, 367},
+	{"HUMANHEALTHREGENBONUS"s, 368},
+	{"HUMANSTAMINAREGENBONUS"s, 369},
+	{"HUMANMANAREGENBONUS"s, 370},
+	{"ELFHEALTHREGENBONUS"s, 371},
+	{"ELFSTAMINAREGENBONUS"s, 372},
+	{"ELFMANAREGENBONUS"s, 373},
+	{"GARGOYLEHEALTHREGENBONUS"s, 374},
+	{"GARGOYLESTAMINAREGENBONUS"s, 375},
+	{"GARGOYLEMANAREGENBONUS"s, 376},
+	{"HUMANMAXWEIGHTBONUS"s, 377},
+	{"ELFMAXWEIGHTBONUS"s, 378},
+	{"GARGOYLEMAXWEIGHTBONUS"s, 379}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -491,6 +512,9 @@ constexpr auto BIT_YOUNGPLAYERSYSTEM				= UI32( 103 );
 constexpr auto BIT_AUTOUNEQUIPPEDCASTING			= UI32( 104 );
 constexpr auto BIT_LOOTDECAYSONNPCCORPSE			= UI32( 105 );
 constexpr auto BIT_KARMALOCKING						= UI32( 106 );
+constexpr auto BIT_HEALINGAFFECTHEALTHREGEN			= UI32( 107 );
+constexpr auto BIT_HUNGERAFFECTHEALTHREGEN			= UI32( 108 );
+constexpr auto BIT_THIRSTAFFECTSTAMINAREGEN			= UI32( 109 );
 
 
 // New uox3.ini format lookup
@@ -668,10 +692,12 @@ auto CServerData::ResetDefaults() -> void
 	SystemTimer( tSERVER_HUNGERRATE, 6000 );
 	HungerDamage( 2 );
 	HungerSystemEnabled( true );
+	HungerAffectHealthRegen( true );
 
 	SystemTimer( tSERVER_THIRSTRATE, 6000 );
 	ThirstDrain( 2 );
 	ThirstSystemEnabled( false );
+	ThirstAffectStaminaRegen( false );
 
 	ServerSkillDelay( 5 );
 	SystemTimer( tSERVER_OBJECTUSAGE, 1 );
@@ -679,6 +705,7 @@ auto CServerData::ResetDefaults() -> void
 	SystemTimer( tSERVER_STAMINAREGEN, 3 );
 	SystemTimer( tSERVER_MANAREGEN, 5 );
 	ArmorAffectManaRegen( true );
+	HealingAffectHealthRegen( true );
 	SnoopIsCrime( false );
 	SnoopAwareness( false );
 	SystemTimer( tSERVER_GATE, 30 );
@@ -728,6 +755,12 @@ auto CServerData::ResetDefaults() -> void
 	GlobalAttackSpeed( 1.0 );
 	NPCSpellCastSpeed( 1.0 );
 	FishingStaminaLoss( 2 );
+	HealthRegenMode( HREG_LBR );
+	StaminaRegenMode( SREG_LBR );
+	ManaRegenMode( MREG_LBR );
+	HealthRegenCap( 18 );
+	StaminaRegenCap( 24 );
+	ManaRegenCap( 18 );
 	CombatArmorClassDamageBonus( false );
 	AlchemyDamageBonusEnabled( false );
 	AlchemyDamageBonusModifier( 5 );
@@ -794,6 +827,20 @@ auto CServerData::ResetDefaults() -> void
 	ExpansionWeaponParry( ER_CORE );
 	ExpansionWrestlingParry( ER_CORE );
 	ExpansionCombatHitChance( ER_CORE );
+
+	// Default Race Bonuses
+	HumanHealthRegenBonus( 0 ); // 2 from ML and onwards
+	HumanStaminaRegenBonus( 0 );
+	HumanManaRegenBonus( 0 );
+	HumanMaxWeightBonus( 0 );
+	ElfHealthRegenBonus( 0 );
+	ElfStaminaRegenBonus( 0 );
+	ElfManaRegenBonus( 0 );
+	ElfMaxWeightBonus( 0 );
+	GargoyleHealthRegenBonus( 0 );
+	GargoyleStaminaRegenBonus( 0 );
+	GargoyleManaRegenBonus( 2 ); // 2 from SA and onwards
+	GargoyleMaxWeightBonus( 0 );
 
 	BuyThreshold( 2000 );
 	GuardStatus( true );
@@ -1934,6 +1981,186 @@ auto CServerData::ExpansionCombatHitChance( UI08 setting ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HumanHealthRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default health regen bonus for human race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HumanHealthRegenBonus() const -> SI16
+{
+	return humanHealthRegenBonus;
+}
+auto CServerData::HumanHealthRegenBonus( SI16 value ) -> void
+{
+	humanHealthRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HumanStaminaRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default stamina regen bonus for human race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HumanStaminaRegenBonus() const -> SI16
+{
+	return humanStaminaRegenBonus;
+}
+auto CServerData::HumanStaminaRegenBonus( SI16 value ) -> void
+{
+	humanStaminaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HumanManaRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default mana regen bonus for human race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HumanManaRegenBonus() const -> SI16
+{
+	return humanManaRegenBonus;
+}
+auto CServerData::HumanManaRegenBonus( SI16 value ) -> void
+{
+	humanManaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HumanMaxWeightBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default max weight bonus for human race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HumanMaxWeightBonus() const -> SI16
+{
+	return humanMaxWeightBonus;
+}
+auto CServerData::HumanMaxWeightBonus( SI16 value ) -> void
+{
+	humanMaxWeightBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ElfHealthRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default health regen bonus for elf race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ElfHealthRegenBonus() const -> SI16
+{
+	return elfHealthRegenBonus;
+}
+auto CServerData::ElfHealthRegenBonus( SI16 value ) -> void
+{
+	elfHealthRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ElfStaminaRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default stamina regen bonus for elf race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ElfStaminaRegenBonus() const -> SI16
+{
+	return elfStaminaRegenBonus;
+}
+auto CServerData::ElfStaminaRegenBonus( SI16 value ) -> void
+{
+	elfStaminaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ElfManaRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default mana regen bonus for elf race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ElfManaRegenBonus() const -> SI16
+{
+	return elfManaRegenBonus;
+}
+auto CServerData::ElfManaRegenBonus( SI16 value ) -> void
+{
+	elfManaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ElfMaxWeightBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default max weight bonus for elf race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ElfMaxWeightBonus() const -> SI16
+{
+	return elfMaxWeightBonus;
+}
+auto CServerData::ElfMaxWeightBonus( SI16 value ) -> void
+{
+	elfMaxWeightBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GargoyleHealthRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default health regen bonus for gargoyle race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GargoyleHealthRegenBonus() const -> SI16
+{
+	return gargoyleHealthRegenBonus;
+}
+auto CServerData::GargoyleHealthRegenBonus( SI16 value ) -> void
+{
+	gargoyleHealthRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GargoyleStaminaRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default stamina regen bonus for gargoyle race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GargoyleStaminaRegenBonus() const -> SI16
+{
+	return gargoyleStaminaRegenBonus;
+}
+auto CServerData::GargoyleStaminaRegenBonus( SI16 value ) -> void
+{
+	gargoyleStaminaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GargoyleManaRegenBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default mana regen bonus for gargoyle race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GargoyleManaRegenBonus() const -> SI16
+{
+	return gargoyleManaRegenBonus;
+}
+auto CServerData::GargoyleManaRegenBonus( SI16 value ) -> void
+{
+	gargoyleManaRegenBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GargoyleMaxWeightBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default max weight bonus for gargoyle race
+//|					Can be overridden/extended to other races via races.dfn
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GargoyleMaxWeightBonus() const -> SI16
+{
+	return gargoyleMaxWeightBonus;
+}
+auto CServerData::GargoyleMaxWeightBonus( SI16 value ) -> void
+{
+	gargoyleMaxWeightBonus = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ShootOnAnimalBack()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether players can shoot arrows while riding mounts
@@ -2653,6 +2880,112 @@ auto CServerData::FishingStaminaLoss() const -> SI16
 auto CServerData::FishingStaminaLoss( SI16 value ) -> void
 {
 	fishingstaminaloss = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HealthRegenMode()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Set calculation mode for passive hitpoint regeneration for players and npcs
+//|	Notes		-		0 = Disabled, no passive regen
+//|						1 = Enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HealthRegenMode() const -> UI08
+{
+	return healthRegenMode;
+}
+auto CServerData::HealthRegenMode( UI08 mode ) -> void
+{
+	if( mode >= HREG_COUNT )
+	{
+		mode = HREG_COUNT - 1;
+	}
+	healthRegenMode = mode;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::StaminaRegenMode()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Set calculation mode for passive stamina regeneration for players and npcs
+//|	Notes		-		0 = Disabled, no passive regen
+//|						1 = LBR - Calculations meant for Lord Blackthorn's Revenge or earlier
+//|						2 = AoS - Calculations meant for Age of Shadows or later
+//|						3 = SA - Calculations meant for Stygian Abyss or later
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::StaminaRegenMode() const -> UI08
+{
+	return staminaRegenMode;
+}
+auto CServerData::StaminaRegenMode( UI08 mode ) -> void
+{
+	if( mode >= SREG_COUNT )
+	{
+		mode = SREG_COUNT - 1;
+	}
+	staminaRegenMode = mode;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ManaRegenMode()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Set calculation mode for passive stamina regeneration for players and npcs
+//|	Notes		-		0 = Disabled, no passive regen
+//|						1 = LBR - Calculations meant for Lord Blackthorn's Revenge or earlier
+//|						2 = AoS - Calculations meant for Age of Shadows or later
+//|						3 = SA - Calculations meant for Stygian Abyss or later
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ManaRegenMode() const -> UI08
+{
+	return manaRegenMode;
+}
+auto CServerData::ManaRegenMode( UI08 mode ) -> void
+{
+	if( mode >= MREG_COUNT )
+	{
+		mode = MREG_COUNT - 1;
+	}
+	manaRegenMode = mode;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HealthRegenCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for health regen points
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HealthRegenCap() const -> SI16
+{
+	return healthRegenCap;
+}
+auto CServerData::HealthRegenCap( SI16 value ) -> void
+{
+	healthRegenCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::StaminaRegenCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for stamina regen points
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::StaminaRegenCap() const -> SI16
+{
+	return staminaRegenCap;
+}
+auto CServerData::StaminaRegenCap( SI16 value ) -> void
+{
+	staminaRegenCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ManaRegenCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for mana regen points
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ManaRegenCap() const -> SI16
+{
+	return manaRegenCap;
+}
+auto CServerData::ManaRegenCap( SI16 value ) -> void
+{
+	manaRegenCap = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3661,6 +3994,20 @@ auto CServerData::HungerSystemEnabled( bool newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    -   CServerData::HungerAffectHealthRegen()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether hunger system affects passive health regen
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HungerAffectHealthRegen() const -> bool
+{
+	return boolVals.test( BIT_HUNGERAFFECTHEALTHREGEN );
+}
+auto CServerData::HungerAffectHealthRegen( bool newVal ) -> void
+{
+	boolVals.set( BIT_HUNGERAFFECTHEALTHREGEN, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function    -   CServerData::ThirstSystemEnabled()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets whether hunger system is enabled or disabled
@@ -3672,6 +4019,20 @@ auto CServerData::ThirstSystemEnabled() const -> bool
 auto CServerData::ThirstSystemEnabled( bool newVal ) -> void
 {
 	boolVals.set( BIT_THIRSTSYSTEMENABLED, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   CServerData::ThirstAffectStaminaRegen()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether hunger system affects passive health regen
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ThirstAffectStaminaRegen() const -> bool
+{
+	return boolVals.test( BIT_THIRSTAFFECTSTAMINAREGEN );
+}
+auto CServerData::ThirstAffectStaminaRegen( bool newVal ) -> void
+{
+	boolVals.set( BIT_THIRSTAFFECTSTAMINAREGEN, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3817,6 +4178,20 @@ auto CServerData::ArmorAffectManaRegen() const -> bool
 auto CServerData::ArmorAffectManaRegen( bool newVal ) -> void
 {
 	boolVals.set( BIT_ARMORAFFECTMANAREGEN, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   CServerData::HealingAffectHealthRegen()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether passive healing regen gets bonus from Healing skill
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HealingAffectHealthRegen() const -> bool
+{
+	return boolVals.test( BIT_HEALINGAFFECTHEALTHREGEN );
+}
+auto CServerData::HealingAffectHealthRegen( bool newVal ) -> void
+{
+	boolVals.set( BIT_HEALINGAFFECTHEALTHREGEN, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4934,7 +5309,6 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "BACKUPSENABLED=" << ( ServerBackupStatus() ? 1 : 0 ) << '\n';
 		ofsOutput << "BACKUPSAVERATIO=" << BackupRatio() << '\n';
 		ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << '\n';
-		ofsOutput << "ACCOUNTISOLATION=" << "1" << '\n';
 		ofsOutput << "UOGENABLED=" << ( ServerUOGEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "FREESHARDSERVERPOLL=" << ( FreeshardServerPoll() ? 1 : 0 ) << '\n';
 		ofsOutput << "RANDOMSTARTINGLOCATION=" << ( ServerRandomStartingLocation() ? 1 : 0 ) << '\n';
@@ -5000,6 +5374,13 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SNOOPISCRIME=" << ( SnoopIsCrime() ? 1 : 0 ) << '\n';
 		ofsOutput << "SNOOPAWARENESS=" << ( SnoopAwareness() ? 1 : 0 ) << '\n';
 		ofsOutput << "ARMORAFFECTMANAREGEN=" << ( ArmorAffectManaRegen() ? 1 : 0) << '\n';
+		ofsOutput << "HEALTHREGENMODE=" << static_cast<UI16>( HealthRegenMode() ) << '\n';
+		ofsOutput << "STAMINAREGENMODE=" << static_cast<UI16>( StaminaRegenMode() ) << '\n';
+		ofsOutput << "MANAREGENMODE=" << static_cast<UI16>( ManaRegenMode() ) << '\n';
+		ofsOutput << "HEALINGAFFECTHEALTHREGEN=" << ( HealingAffectHealthRegen() ? 1 : 0) << '\n';
+		ofsOutput << "HEALTHREGENCAP=" << HealthRegenCap() << '\n';
+		ofsOutput << "STAMINAREGENCAP=" << StaminaRegenCap() << '\n';
+		ofsOutput << "MANAREGENCAP=" << ManaRegenCap() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[timers]" << '\n' << "{" << '\n';
@@ -5041,7 +5422,22 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "WEAPONPARRY=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionWeaponParry )) << '\n';
 		ofsOutput << "WRESTLINGPARRY=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionWrestlingParry )) << '\n';
 		ofsOutput << "COMBATHITCHANCE=" << EraEnumToString( static_cast<ExpansionRuleset>( expansionCombatHitChance )) << '\n';
+		ofsOutput << "}" << '\n';
 
+		ofsOutput << '\n' << "// Note: Can be overridden/expanded to other races via races.dfn" << '\n';
+		ofsOutput << "[default race bonuses]" << '\n' << "{" << '\n';
+		ofsOutput << "HUMANHEALTHREGENBONUS=" << HumanHealthRegenBonus() << '\n';
+		ofsOutput << "HUMANSTAMINAREGENBONUS=" << HumanStaminaRegenBonus() << '\n';
+		ofsOutput << "HUMANMANAREGENBONUS=" << HumanManaRegenBonus() << '\n';
+		ofsOutput << "HUMANMAXWEIGHTBONUS=" << HumanMaxWeightBonus() << '\n';
+		ofsOutput << "ELFHEALTHREGENBONUS=" << ElfHealthRegenBonus() << '\n';
+		ofsOutput << "ELFSTAMINAREGENBONUS=" << ElfStaminaRegenBonus() << '\n';
+		ofsOutput << "ELFMANAREGENBONUS=" << ElfManaRegenBonus() << '\n';
+		ofsOutput << "ELFMAXWEIGHTBONUS=" << ElfMaxWeightBonus() << '\n';
+		ofsOutput << "GARGOYLEHEALTHREGENBONUS=" << GargoyleHealthRegenBonus() << '\n';
+		ofsOutput << "GARGOYLESTAMINAREGENBONUS=" << GargoyleStaminaRegenBonus() << '\n';
+		ofsOutput << "GARGOYLEMANAREGENBONUS=" << GargoyleManaRegenBonus() << '\n';
+		ofsOutput << "GARGOYLEMAXWEIGHTBONUS=" << GargoyleMaxWeightBonus() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
@@ -5184,6 +5580,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "HUNGERENABLED=" << ( HungerSystemEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "HUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << '\n';
 		ofsOutput << "HUNGERDMGVAL=" << HungerDamage() << '\n';
+		ofsOutput << "HUNGERAFFECTHEALTHREGEN=" << ( HungerAffectHealthRegen() ? 1 : 0) << '\n';
 		ofsOutput << "PETHUNGEROFFLINE=" << ( PetHungerOffline() ? 1 : 0 ) << '\n';
 		ofsOutput << "PETOFFLINETIMEOUT=" << PetOfflineTimeout() << '\n';
 		ofsOutput << "}" << '\n';
@@ -5192,6 +5589,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "THIRSTENABLED=" << ( ThirstSystemEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "THIRSTRATE=" << SystemTimer( tSERVER_THIRSTRATE ) << '\n';
 		ofsOutput << "THIRSTDRAINVAL=" << ThirstDrain() << '\n';
+		ofsOutput << "THIRSTAFFECTSTAMINAREGEN=" << ( ThirstAffectStaminaRegen() ? 1 : 0) << '\n';
 		ofsOutput << "PETTHIRSTOFFLINE=" << ( PetThirstOffline() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
@@ -5232,12 +5630,12 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SHOWWEAPONDAMAGETYPES=" << ( ShowWeaponDamageTypes() ? 1 : 0 ) << '\n';
 		ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<UI16>( WeaponDamageBonusType() ) << '\n';
 		ofsOutput << "WEAPONSWINGSPEEDINCREASECAP=" << SwingSpeedIncreaseCap() << '\n';
-		ofsOutput << "PHYSICALRESISTCAP=" << PhysicalResistCap() << '\n';
-		ofsOutput << "FIRERESISTCAP=" << FireResistCap() << '\n';
-		ofsOutput << "COLDRESISTCAP=" << ColdResistCap() << '\n';
-		ofsOutput << "POISONRESISTCAP=" << PoisonResistCap() << '\n';
-		ofsOutput << "ENERGYRESISTCAP=" << EnergyResistCap() << '\n';
-		ofsOutput << "DEFENSECHANCEINCREASECAP=" << DefenseChanceIncreaseCap() << '\n';
+		//ofsOutput << "PHYSICALRESISTCAP=" << PhysicalResistCap() << '\n';
+		//ofsOutput << "FIRERESISTCAP=" << FireResistCap() << '\n';
+		//ofsOutput << "COLDRESISTCAP=" << ColdResistCap() << '\n';
+		//ofsOutput << "POISONRESISTCAP=" << PoisonResistCap() << '\n';
+		//ofsOutput << "ENERGYRESISTCAP=" << EnergyResistCap() << '\n';
+		//ofsOutput << "DEFENSECHANCEINCREASECAP=" << DefenseChanceIncreaseCap() << '\n';
 		ofsOutput << "DAMAGEINCREASECAP=" << DamageIncreaseCap() << '\n';
 		ofsOutput << "}" << '\n';
 
@@ -5440,7 +5838,7 @@ auto CServerData::TrackingRedisplayTime( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::SwingSpeedIncreaseCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for swing speed cap propertie
+//|	Purpose		-	Gets/Sets cap for swing speed increase
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::SwingSpeedIncreaseCap() const -> SI16
 {
@@ -5454,7 +5852,7 @@ auto CServerData::SwingSpeedIncreaseCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::PhysicalResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Physical cap propertie
+//|	Purpose		-	Gets/Sets cap for physical resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::PhysicalResistCap() const -> SI16
 {
@@ -5468,7 +5866,7 @@ auto CServerData::PhysicalResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::FireResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Fire cap propertie
+//|	Purpose		-	Gets/Sets cap for fire resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::FireResistCap() const -> SI16
 {
@@ -5482,7 +5880,7 @@ auto CServerData::FireResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ColdResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Cold cap propertie
+//|	Purpose		-	Gets/Sets cap for cold resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ColdResistCap() const -> SI16
 {
@@ -5496,7 +5894,7 @@ auto CServerData::ColdResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::PoisonResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Poison cap propertie
+//|	Purpose		-	Gets/Sets cap for poison resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::PoisonResistCap() const -> SI16
 {
@@ -5510,7 +5908,7 @@ auto CServerData::PoisonResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::EnergyResistCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Energy cap propertie
+//|	Purpose		-	Gets/Sets cap for energy resist
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::EnergyResistCap() const -> SI16
 {
@@ -5524,7 +5922,7 @@ auto CServerData::EnergyResistCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DefenseChanceIncreaseCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for Defense Chance Increase cap propertie
+//|	Purpose		-	Gets/Sets cap for defense chance increase
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DefenseChanceIncreaseCap() const -> SI16
 {
@@ -5538,7 +5936,7 @@ auto CServerData::DefenseChanceIncreaseCap( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DamageIncreaseCap()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the for damage Increase cap propertie
+//|	Purpose		-	Gets/Sets cap for damage increase
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DamageIncreaseCap() const -> SI16
 {
@@ -6078,7 +6476,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 130:	 // LOGSDIRECTORY
 			Directory( CSDDP_LOGS, value );
 			break;
-		case 131:	 // ACCOUNTISOLATION
+		case 131:	 // NOT USED
 			break;
 		case 132:	 // HTMLDIRECTORY
 			Directory( CSDDP_HTML, value );
@@ -6719,11 +7117,74 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 349:	 // LOOTDECAYSWITHNPCCORPSE
 			NpcCorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
+		case 350:	// HEALTHREGENCAP
+			HealthRegenCap( std::stoi( value, nullptr, 0 ));
+			break;
+		case 351:	// STAMINAREGENCAP
+			StaminaRegenCap( std::stoi( value, nullptr, 0 ));
+			break;
+		case 352:	// MANAREGENCAP
+			ManaRegenCap( std::stoi( value, nullptr, 0 ));
+			break;
 		case 353:	// SWINGSPEEDINCREASE
 			SwingSpeedIncreaseCap( std::stof( value ));
 			break;
 		case 354:	 // KARMALOCKING
 			KarmaLocking( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;   
+		case 362:	// HEALINGAFFECTHEALTHREGEN
+			HealingAffectHealthRegen(( static_cast<UI08>( std::stoul( value, nullptr, 0 )) > 0 ? true : false ));
+			break;
+		case 363:	// HEALTHREGENMODE
+			HealthRegenMode( static_cast<UI08>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 364:	// STAMINAREGENMODE
+			StaminaRegenMode( static_cast<UI08>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 365:	// MANAREGENMODE
+			ManaRegenMode( static_cast<UI08>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 366:	// HUNGERAFFECTHEALTHREGEN
+			HungerAffectHealthRegen(( static_cast<UI08>( std::stoul( value, nullptr, 0 )) > 0 ? true : false ));
+			break;
+		case 367:	// THIRSTAFFECTSTAMINAREGEN
+			ThirstAffectStaminaRegen(( static_cast<UI08>( std::stoul( value, nullptr, 0 )) > 0 ? true : false ));
+			break;
+		case 368:	// HUMANHEALTHREGENBONUS
+			HumanHealthRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 369:	// HUMANSTAMINAREGENBONUS
+			HumanStaminaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 370:	// HUMANMANAREGENBONUS
+			HumanManaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 371:	// ELFHEALTHREGENBONUS
+			ElfHealthRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 372:	// ELFSTAMINAREGENBONUS
+			ElfStaminaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 373:	// ELFMANAREGENBONUS
+			ElfManaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 374:	// GARGOYLEHEALTHREGENBONUS
+			GargoyleHealthRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 375:	// GARGOYLESTAMINAREGENBONUS
+			GargoyleStaminaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 376:	// GARGOYLEMANAREGENBONUS
+			GargoyleManaRegenBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 377:	// HUMANMAXWEIGHTBONUS
+			HumanMaxWeightBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 378:	// ELFMAXWEIGHTBONUS
+			ElfMaxWeightBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 379:	// GARGOYLEMAXWEIGHTBONUS
+			GargoyleMaxWeightBonus( std::stoi( value, nullptr, 0 ));
 			break;
 		default:
 			rValue = false;

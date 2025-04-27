@@ -305,9 +305,9 @@ function onCallback1( socket, ourObj )
 				mChar.AddScriptTrigger( 4014 ); // Add healing_slip.js script
 				SetSkillInUse( socket, mChar, ourObj, skillNum, healTimer, true );
 
-				var seconds = Math.round(healTimer / 1000);
 				// Add buff to target or yourself
-				if (ourObj != mChar && ourObj.socket)
+				var seconds = Math.round(healTimer / 1000);
+				if( ourObj != mChar && ourObj.socket )
 				{
 					TriggerEvent( 2204, "AddBuff", ourObj, buffIcon, priCliloc, scndCliloc, seconds, " " + ourObj.name );
 				}
@@ -485,7 +485,7 @@ function onTimer( mChar, timerID )
 							secondarySkill = mChar.skills.anatomy;
 
 							// Perform generic Anatomy skill check to allow skill increase
-							mChar.CheckSkill( 1, 0, mchar.skillCaps.anatomy );
+							mChar.CheckSkill( 1, 0, mChar.skillCaps.anatomy );
 						}
 						else if( skillNum == 39 ) // Veterinary
 						{
@@ -493,7 +493,7 @@ function onTimer( mChar, timerID )
 							secondarySkill = mChar.skills.animallore;
 
 							// Perform generic Animal Lore skill check to allow skill increase
-							mChar.CheckSkill( 2, 0, mchar.skillCaps.animallore );
+							mChar.CheckSkill( 2, 0, mChar.skillCaps.animallore );
 						}
 
 						// Retrieve amount of times character's hands slipped during healing

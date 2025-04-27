@@ -23,6 +23,7 @@ value=14 6
 def=1
 hp=100
 sectionid=0x153f
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Bandana
@@ -49,6 +50,7 @@ layer=0x06
 def=3
 hp=50
 sectionid=0x171a
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 [featheredhat]
@@ -68,6 +70,7 @@ layer=0x06
 def=3
 hp=50
 sectionid=0x1713
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 [floppyhat]
@@ -87,6 +90,7 @@ layer=0x06
 def=3
 hp=50
 sectionid=0x1719
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 [bonnet]
@@ -106,6 +110,7 @@ layer=0x06
 def=3
 hp=50
 sectionid=0x1715
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 [cap]
@@ -125,6 +130,7 @@ layer=0x6
 def=3
 hp=50
 sectionid=0x171c
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 [jesterhat]
@@ -144,6 +150,7 @@ layer=0x6
 def=1
 hp=50
 sectionid=0x1543
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Skullcap
@@ -172,6 +179,7 @@ layer=0x6
 def=3
 hp=50
 sectionid=0x1717
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 [strawhat]
@@ -191,6 +199,7 @@ layer=0x6
 def=3
 hp=50
 sectionid=0x1716
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 [tallstrawhat]
@@ -210,6 +219,7 @@ layer=0x06
 def=3
 hp=50
 sectionid=0x1714
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 [widebrimhat]
@@ -231,6 +241,7 @@ hp=50
 stradd=-5
 intadd=5
 sectionid=0x1718
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 [wizardshat]
@@ -249,6 +260,7 @@ value=31 15
 layer=0x06
 def=3
 sectionid=0x172e
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 [jesterscap]
@@ -268,6 +280,7 @@ layer=0x06
 def=3
 hp=50
 sectionid=0x171b
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 [tricornehat]
@@ -287,6 +300,7 @@ layer=0x6
 def=5
 hp=50
 sectionid=0x1549
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Tribal Mask
@@ -313,6 +327,7 @@ layer=0x6
 def=5
 hp=50
 sectionid=0x154b
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Tribal Mask (Red)
@@ -355,6 +370,7 @@ layer=0x06
 def=6
 hp=50
 sectionid=0x1545
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Bear Mask
@@ -381,6 +397,7 @@ layer=0x06
 def=6
 hp=50
 sectionid=0x1547
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Deer Mask
@@ -407,6 +424,7 @@ layer=0x6
 def=5
 hp=50
 sectionid=0x141b
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Orc Mask

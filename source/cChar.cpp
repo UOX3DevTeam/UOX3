@@ -477,7 +477,7 @@ SI08 CChar::GetHunger( void ) const
 }
 bool CChar::SetHunger( SI08 newValue )
 {
-	if( IsValidNPC() )
+	if( IsValidPlayer() || IsValidNPC() )
 	{
 		std::vector<UI16> scriptTriggers = GetScriptTriggers();
 		for( auto i : scriptTriggers )
@@ -655,7 +655,7 @@ SI08 CChar::GetThirst( void ) const
 
 bool CChar::SetThirst( SI08 newValue )
 {
-	if( IsValidNPC() )
+	if( IsValidPlayer() || IsValidNPC() )
 	{
 		std::vector<UI16> scriptTriggers = GetScriptTriggers();
 		for( auto i : scriptTriggers )
@@ -2536,6 +2536,10 @@ void CChar::CopyData( CChar *target )
 
 	// Add any script triggers present on object to the new object
 	target->scriptTriggers = GetScriptTriggers();
+
+	// Don't forget to copy the tags
+	target->tags = GetTagMap();
+	target->tempTags = GetTempTagMap();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2921,6 +2925,7 @@ CItem *CChar::GetItemAtLayer( ItemLayers Layer )
 	return rVal;
 }
 
+void Bounce( CSocket *bouncer, CItem *bouncing, UI08 mode = 5 );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar::WearItem()
 //|	Date		-	13 March 2001
@@ -2928,7 +2933,6 @@ CItem *CChar::GetItemAtLayer( ItemLayers Layer )
 //|	Purpose		-	Wears the item toWear and adjusts the stats if any are
 //|					required to change.  Returns true if successfully equipped
 //o------------------------------------------------------------------------------------------------o
-void Bounce( CSocket *bouncer, CItem *bouncing, UI08 mode = 5 );
 bool CChar::WearItem( CItem *toWear )
 {
 	// Run event prior to equipping item, allowing script to prevent equip
@@ -2941,6 +2945,11 @@ bool CChar::WearItem( CItem *toWear )
 			// If script returns false, prevent item from being equipped
 			if( tScript->OnEquipAttempt( this, toWear ) == 0 )
 			{
+				CSocket *mSock = this->GetSocket();
+				if( mSock != nullptr )
+				{
+					Bounce( mSock, toWear );
+				}
 				return false;
 			}
 		}
@@ -2987,7 +2996,11 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
-			IncSwingSpeedIncrease( itemLayers[tLayer]->GetSwingSpeedIncrease() );
+			IncHealthRegenBonus( itemLayers[tLayer]->GetHealthRegenBonus() );
+			IncStaminaRegenBonus( itemLayers[tLayer]->GetStaminaRegenBonus() );
+			IncManaRegenBonus( itemLayers[tLayer]->GetManaRegenBonus() );
+
+      IncSwingSpeedIncrease( itemLayers[tLayer]->GetSwingSpeedIncrease() );
 
 			IncHealthLeech( itemLayers[tLayer]->GetHealthLeech() );
 			IncStaminaLeech( itemLayers[tLayer]->GetStaminaLeech() );
@@ -3081,6 +3094,10 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncStrength2( -itemLayers[Layer]->GetStrength2() );
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
+
+		IncHealthRegenBonus( -itemLayers[Layer]->GetHealthRegenBonus() );
+		IncStaminaRegenBonus( -itemLayers[Layer]->GetStaminaRegenBonus() );
+		IncManaRegenBonus( -itemLayers[Layer]->GetManaRegenBonus() );
 
 		IncSwingSpeedIncrease( -itemLayers[Layer]->GetSwingSpeedIncrease() );
 
@@ -5200,8 +5217,7 @@ void CChar::PostLoadProcessing( void )
 		SetPackItem( nullptr );
 	}
 
-	SI32 maxWeight = GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
-	if( GetWeight() <= 0 || GetWeight() > MAX_WEIGHT || GetWeight() > maxWeight )
+	if( GetWeight() <= 0 || GetWeight() > MAX_WEIGHT || GetWeight() > GetWeightMax() )
 	{
 		SetWeight( Weight->CalcCharWeight( this ));
 	}
@@ -5394,6 +5410,7 @@ void CChar::TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spa
 		va_list argptr;
 		va_start( argptr, spamTimer );
 		auto msg = oldstrutil::format( txt, argptr );
+		va_end( argptr ); // va_end in same function as va_start
 		if( msg.size() > 512 )
 		{
 			msg = msg.substr( 0, 512 );
@@ -9307,6 +9324,17 @@ void CChar::SetWeight( SI32 newVal, [[maybe_unused]] bool doWeightUpdate )
 	Dirty( UT_STATWINDOW );
 	weight = newVal;
 	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetWeightMax()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets maximum weight in stones a character can hold
+//o------------------------------------------------------------------------------------------------o
+auto CChar::GetWeightMax() const -> SI32
+{
+	SI16 racialWeightBonus = Races->Race( GetRace() )->MaxWeightBonus();
+	return ( GetStrength() * cwmWorldState->ServerData()->WeightPerStr() ) + 40 + racialWeightBonus;
 }
 
 //o------------------------------------------------------------------------------------------------o

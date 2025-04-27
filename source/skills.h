@@ -176,7 +176,7 @@ public:
 	void SkillUse( CSocket *s, UI08 x );
 	void UpdateSkillLevel( CChar *c, UI08 s) const;
 	void AdvanceStats( CChar *s, UI08 sk, bool skillsuccess );
-	bool AdvanceSkill(CChar* s, UI08 sk, bool skillused, SKILLVAL skAmt = 0, bool triggerEvent = true);
+	bool AdvanceSkill( CChar *s, UI08 sk, bool skillused, SKILLVAL skAmt = 0, bool triggerEvent = true );
 
 	size_t		GetNumberOfOres( void );
 	MiningData_st *GetOre( size_t number );
