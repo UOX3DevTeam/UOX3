@@ -4522,7 +4522,7 @@ JSBool CChar_CheckSkill( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add skill points to a character without triggering skillchange events
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_AddSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool CChar_AddSkill( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 3 )
 	{
@@ -4530,6 +4530,8 @@ JSBool CChar_AddSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		return JS_FALSE;
 	}
 
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
 	JSEncapsulate myClass( cx, obj );
 	CChar *myChar = static_cast<CChar*>( myClass.toObject() );
 
@@ -4717,7 +4719,7 @@ void TurnBoat( CSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool r
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Turns boat in indicated direction
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_TurnBoat( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool CMulti_TurnBoat( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
@@ -4725,6 +4727,8 @@ JSBool CMulti_TurnBoat( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 		return JS_FALSE;
 	}
 
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	CBoatObj *myBoat = static_cast<CBoatObj *>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myBoat ))
