@@ -433,6 +433,8 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "housesOwned",	CCP_HOUSESOWNED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "housesCoOwned",	CCP_HOUSESCOOWNED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tithing",		CCP_TITHING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "lastOn",			CCP_LASTON,			JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "lastOnSecs",		CCP_LASTONSECS,		JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 

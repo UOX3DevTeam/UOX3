@@ -272,6 +272,8 @@ protected:
 	bool		IsValidNPC( void ) const;
 	bool		IsValidPlayer( void ) const;
 
+	void		ValidateLastOn( void );
+
 
 public:
 
