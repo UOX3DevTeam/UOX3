@@ -2457,6 +2457,45 @@
 2585=Do nádoby naliješ trochu moštu.
 2586=Nalijte do nádoby trochu alkoholu.
 2587=Nalijete do sklenice trochu vína.
+// [2600-2699] Player/NPC/Spawn Admin Script
+2600=Vybraná NPC (%s, %i) byla odstraněna.
+2601=Upozornění: U postavy nebyl nalezen žádný batoh!
+2602=Upozornění: Pro postavu nebyla nalezena žádná bankovní schránka!
+2603=Příliš daleko na to, aby bylo možné zkontrolovat paperdoll (aktuální rozsah: %i)
+2604=Odstranění NPC
+2605=<BASEFONT color=#EECD8B>Prosím, potvrďte odstranění:</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>Není zde žádné tlačítko pro vrácení zpět. </BASEFONT>
+2607=Filtr pro jména začínající na '%s'
+2608=Správa hráčů - %s
+2609=Správa NPC
+2610=Všechny
+2611=Online
+2612=Offline
+2613=Správa postavy:<br>seriál: %s<br>Poslední zap: 2614=Teleport k postavě
+2615=Získat postavu
+2616=Prohlédnout postavu
+2617=Uvěznit/propustit postavu
+2618=Vykopnout hráče
+2619=Zakázat hráče
+2620=Odstranit NPC
+2621=Nenašly se žádné záznamy!
+2622=Stránka %i / %u
+2623=Použít filtr
+2624=Filtr pro online hráče
+2625=Filtr pro offline hráče
+2626=Sortovat podle Last On (%s)
+2627=Vzestupně
+2628=Sestupně
+2629=Nalezeno %i postav hráčů za %u milisekund.
+2630=Nalezeno %i NPC za %u milisekund.
+2631=Nalezeno %i spawnerů založených na předmětech za %u milisekund.
+2632=Správa spawnovacích objektů
+2633=Spravování spawnovacích objektů:<br>seriál: %s<br>spawn-sekce: %w<br>Množství: 2634=Teleport do Spawn Object
+2635=Otevřít editor Spawn Object
+2636=Odstranit Spawn Object
+2637=Filtr pro NPC Spawnery
+2638=Filtr pro Item Spawnery
+2639=Sortovat podle počtu Spawnů (%s)
 // [2700-2799] Misc scripts
 2700=Nábytek může otáčet pouze majitel domu.
 2701=Toto zřejmě nefunguje.

@@ -5159,10 +5159,106 @@ bool CChar::LoadRemnants( void )
 			if( !IsNpc() )
 			{
 				Accounts->AddCharacter( GetAccountNum(), this );	// account ID, and account object.
+
+#if defined( UOX_DEBUG_MODE )
+				// Sanity-check lastOn vs lastOnSecs for player characters
+				ValidateLastOn();
+#endif
 			}
 		}
 	}
 	return rValue;
+}
+
+void CChar::ValidateLastOn()
+{
+	if( !GetLastOn().empty() )
+	{
+		const std::string currentLastOnString = GetLastOn();
+		UI32 currentLastOnSecs = GetLastOnSecs();
+		time_t currentTime = time( nullptr );
+		const time_t futureThreshold = currentTime + 93600; // ~26 hours buffer to account for timezone variance - we don't want any time travellers
+
+		bool requiresUpdateFromStr = false;
+		std::string updateReason = "";
+
+		// First, check if we actually need to update anything
+		if( currentLastOnSecs == 0 )
+		{
+			requiresUpdateFromStr = true;
+			updateReason = "LastOnSecs was 0";
+		}
+		else if( currentLastOnSecs > futureThreshold )
+		{
+			requiresUpdateFromStr = true;
+			updateReason = "LastOnSecs > future threshold (" + std::to_string( currentLastOnSecs ) + ")";
+		}
+		else
+		{
+			// LastOnSecs is > 0 and not unreasonably far into the future - let's validate
+			char checkBuffer[100];
+			const time_t secsToCheck = static_cast<time_t>( currentLastOnSecs );
+			char *resultPtr = mctime( checkBuffer, sizeof( checkBuffer ), &secsToCheck );
+			if( resultPtr != nullptr && checkBuffer[0] != '\0' )
+			{
+				// Trim whitespace from output
+				std::string tempStringFromBuffer = checkBuffer;
+				std::string currentSecsAsString = oldstrutil::trim( tempStringFromBuffer );
+
+				if( currentLastOnString != currentSecsAsString )
+				{
+					requiresUpdateFromStr = true;
+					updateReason = "Mismatch between string and mctime LastOnSecs ('" + currentSecsAsString + "')";
+				}
+				else
+				{
+					// Strings match! Existing LastOnSecs is validated and consistent. Do nothing.
+					requiresUpdateFromStr = false;
+				}
+			}
+			else // mctime call failed or returned empty string
+			{
+				Console.Warning( oldstrutil::format( "mctime failed during validation for char %u, ts %u. Cannot validate, no update.", GetSerial(), currentLastOnSecs ));
+				requiresUpdateFromStr = false; // Can't validate, don't update
+			}
+		}
+
+		if( requiresUpdateFromStr )
+		{
+			// Parsing logic using std::get_time and mktime remains the same
+			std::tm timeStructParse = {};
+			std::stringstream ssParse( currentLastOnString );
+			const std::locale c_localeParse( "C" );
+			[[maybe_unused]] std::locale prevLocaleParse = ssParse.imbue( c_localeParse );
+			std::string formatParse = "%a %b %d %H:%M:%S %Y";
+			ssParse >> std::get_time( &timeStructParse, formatParse.c_str() );
+			if( !ssParse.fail() )
+			{
+				timeStructParse.tm_isdst = -1;
+				time_t parsedTimestamp = mktime( &timeStructParse );
+				if( parsedTimestamp != -1 && parsedTimestamp <= futureThreshold )
+				{
+					SetLastOnSecs( static_cast<UI32>( parsedTimestamp ));
+					Console.Log( oldstrutil::format( "Updating LastOnSecs for char %u to %u based on lastOn. Reason: %s. Parsing: '%s'",
+						GetSerial(), GetLastOnSecs(), updateReason.c_str(), currentLastOnString.c_str() ));
+				}
+				else if( parsedTimestamp == -1 )
+				{
+					Console.Warning( oldstrutil::format( "mktime failed for char %u after parsing: %s", GetSerial(), currentLastOnString.c_str() ));
+				}
+				else
+				{
+					// parsedTimestamp > futureThreshold
+					Console.Warning( oldstrutil::format( "Parsed timestamp for char %u ALSO future date (%lld). Skipping update.", GetSerial(), static_cast<long long>( parsedTimestamp )));
+				}
+			}
+			else
+			{
+				// get_time failed
+				Console.Warning( oldstrutil::format( "std::get_time failed to parse char %u, LastOn string: '%s'", GetSerial(), currentLastOnString.c_str() ));
+			}
+		}
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o

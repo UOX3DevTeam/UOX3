@@ -2457,6 +2457,47 @@
 2585=Deita-se um pouco de cidra no recipiente.
 2586=Deita-se um pouco de licor para dentro do recipiente.
 2587=Deita-se um pouco de vinho no copo.
+// [2600-2699] Script de administrador de jogador/NPC/spawn
+2600=O NPC escolhido (%s, %i) foi removido.
+2601=Aviso: Não foi encontrada nenhuma mochila no personagem!
+2602=Aviso: Não foi encontrada nenhuma caixa bancária para o personagem!
+2603=Muito longe para inspecionar o boneco (alcance atual: %i)
+2604=Remoção de NPC
+2605=<BASEFONT color=#EECD8B>Confirme a remoção de:</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>Não há botão para desfazer.
+2607=Filtrar por nomes que começam com '%s'
+2608=Gerir jogadores - %s
+2609=Gerir NPCs
+2610=Todos
+2611=Online
+2612=Offline
+2613=Ajustar personagem:<br>série: %s<br>Última vez online: %w
+2614=Teletransportar para personagem
+2615=Obter personagem
+2616=Inspecionar personagem
+2617=Prender/Liberar personagem
+2618=Expulsar jogador
+2619=Banir jogador
+2620=Remover NPC
+2621=Nenhuma entrada encontrada!
+2622=Página %i / %u
+2623=Aplicar filtro
+2624=Filtrar por jogadores online
+2625=Filtrar por jogadores offline
+2626=Ordenar por último acesso (%s)
+2627=Ascendente
+2628=Descendente
+2629=Encontrados %i personagens de jogadores em %u milissegundos.
+2630=Encontrados %i NPCs em %u milissegundos.
+2631=Encontrados %i geradores baseados em itens em %u milissegundos.
+2632=Gerir objetos de spawn
+2633=Ajustar objeto de spawn:<br>serial: %s<br>secção de spawn: %w<br>Quantidade: %i<br>Na região: (%u) %z
+2634=Teletransportar para objeto de spawn
+2635=Abrir editor de objetos de spawn
+2636=Remover objeto de spawn
+2637=Filtrar por geradores de NPC
+2638=Filtrar por geradores de itens
+2639=Ordenar por contagem de spawn (%s)
 // [2700-2799] Misc scripts
 2700=Só o proprietário da casa pode girar o mobiliário.
 2701=Isso não parece funcionar.
