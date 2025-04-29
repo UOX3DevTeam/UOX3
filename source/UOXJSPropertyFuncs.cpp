@@ -2258,6 +2258,16 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval
 				break;
 			case CCP_HOUSESOWNED:		*vp = INT_TO_JSVAL( gPriv->CountHousesOwned( false ));	break;
 			case CCP_HOUSESCOOWNED:		*vp = INT_TO_JSVAL( gPriv->CountHousesOwned( true ));	break;
+			case CCP_LASTON:
+			{
+				auto lastOnString = gPriv->GetLastOn();
+				tString = JS_NewStringCopyZ( cx, lastOnString.c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case CCP_LASTONSECS:
+				JS_NewNumberValue( cx, gPriv->GetLastOnSecs(), vp );
+				break;
 			default:
 				break;
 		}

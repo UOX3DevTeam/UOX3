@@ -4776,6 +4776,42 @@ JSBool CMulti_TurnBoat( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CMulti_GetTiller()
+//|	Prototype	-	Item GetTiller()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Fetch item reference to tillerman on boat
+//o------------------------------------------------------------------------------------------------o
+JSBool CMulti_GetTiller( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc > 0 )
+	{
+		ScriptError( cx, "(GetTiller) Invalid Count of Arguments: %d, needs: 0", argc );
+		return JS_FALSE;
+	}
+
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CBoatObj *myBoat = static_cast<CBoatObj *>( JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myBoat ))
+	{
+		ScriptError( cx, "(GetTiller) Invalid Object assigned" );
+		return JS_FALSE;
+	}
+
+	auto myTiller =  CalcItemObjFromSer( myBoat->GetTiller() );
+	if( !ValidateObject( myTiller ))
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		return JS_TRUE;
+	}
+
+	JSObject *myJSTiller	= JSEngine->AcquireObject( IUE_ITEM, myTiller, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSTiller ) );
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_SpeechInput()
 //|	Prototype	-	void SpeechInput( speechId )
 //o------------------------------------------------------------------------------------------------o

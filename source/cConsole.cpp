@@ -1140,6 +1140,7 @@ auto CConsole::Process(std::int32_t c) -> void
 					messageLoop << MSG_PRINTDONE;
 					// Reload the serve spawn regions
 					messageLoop << "     Loading Spawn Regions... ";
+					FileLookup->Reload( spawn_def );
 					UnloadSpawnRegions();
 					LoadSpawnRegions();
 					messageLoop << MSG_PRINTDONE;

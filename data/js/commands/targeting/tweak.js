@@ -469,8 +469,16 @@ function command_TWEAK( pSocket, cmdString )
 	}
 	else
 	{
-		// If not, request a custom target
-		pSocket.CustomTarget( 0, GetDictionaryEntry( 229, pSocket.language )); // Select item or character to tweak.
+		target = CalcItemFromSer( parseInt( pSocket.xText ));
+		if( ValidateObject( target ))
+		{
+			onCallback0( pSocket, target );
+		}
+		else
+		{
+			// If not, request a custom target
+			pSocket.CustomTarget( 0, GetDictionaryEntry( 229, pSocket.language )); // Select item or character to tweak.
+		}
 	}
 }
 

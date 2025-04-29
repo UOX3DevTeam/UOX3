@@ -228,6 +228,7 @@ JSBool CMulti_FirstChar( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_NextChar( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_FinishedChars( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_TurnBoat( JSContext *cx, uintN argc, jsval *vp );
+JSBool CMulti_GetTiller( JSContext *cx, uintN argc, jsval *vp );
 
 // Socket Methods
 JSBool CSocket_Disconnect( JSContext *cx, uintN argc, jsval *vp );
@@ -574,6 +575,7 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "FinishedChars",		CMulti_FinishedChars,		1, 0 },
 
 	{ "TurnBoat",			CMulti_TurnBoat,			1, 0 },
+	{ "GetTiller",			CMulti_GetTiller,			0, 0 },
 
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0 },
