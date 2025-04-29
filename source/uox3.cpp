@@ -824,13 +824,18 @@ auto DoMessageLoop() -> void
 							LoadRegions();
 							LoadTeleportLocations(); 
 							break;
-						case '3':	UnloadSpawnRegions();	LoadSpawnRegions(); break;	// Reload spawn regions
+						case '3': // Reload spawn regions
+							// Also requires reloading spawn region DFN data
+							FileLookup->Reload( spawn_def );
+							UnloadSpawnRegions();
+							LoadSpawnRegions();
+							break;
 						case '4':	Magic->LoadScript(); break;	// Reload spells
 						case '5':	// Reload commands	
 							JSMapping->Reload( SCPT_COMMAND );
 							Commands->Load();	 
 							break;
-						case '6': // Reload definition files
+						case '6': // Reload DFNs
 							FileLookup->Reload();
 							LoadCreatures();
 							LoadCustomTitle();

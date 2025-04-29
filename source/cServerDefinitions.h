@@ -72,6 +72,7 @@ public:
 	~CServerDefinitions();
 	auto Startup() -> void;
 	auto Reload() -> bool;
+	auto Reload( DEFINITIONCATEGORIES toReload ) -> bool;
 	auto Dispose(DEFINITIONCATEGORIES toDispose ) -> bool;
 
 	auto FindEntry( const std::string &toFind, DEFINITIONCATEGORIES typeToFind ) -> CScriptSection*;

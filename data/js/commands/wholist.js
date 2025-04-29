@@ -126,15 +126,16 @@ function onIterate( toCheck, socket )
 	return false;
 }
 
-function DisplayCharacterListGump( socket, filteredList, filterString, sortByDate, listType )
+function DisplayCharacterListGump( socket, filteredList, incFilterString, sortByDate, listType )
 {
 	if( socket == null )
 		return;
 
+	var filterString = " ";
 	var sockLang = socket.language;
-	if( filterString == null )
+	if( incFilterString != null && incFilterString != "" && incFilterString != " " )
 	{
-		filterString = "";
+		filterString = incFilterString;
 	}
 
 	var pageSize = 20;
@@ -145,7 +146,7 @@ function DisplayCharacterListGump( socket, filteredList, filterString, sortByDat
 	}
 
 	var myCharList = [];
-	if( filteredList != null ) // && filteredList.length > 0 )
+	if( filteredList != null )
 	{
 		myCharList = filteredList;
 	}
@@ -222,9 +223,9 @@ function DisplayCharacterListGump( socket, filteredList, filterString, sortByDat
 	}
 
 	// Loop over pageSlice, based on current page to show
+	var horizontalBtnCount = 0;
 	for( var i = 0; i < pageSlice.length; i++ )
 	{
-		Console.Print( pageSlice[i].lastOnSecs + "\n" );
 		// Character names/tweak button
 		charListGump.AddButton( 40, baseYPos + 5 + ( 26 * i ), 5031, 0x13ad, 1, 0, 50 + pageSlice[i].serial );
 
@@ -266,7 +267,7 @@ function DisplayCharacterListGump( socket, filteredList, filterString, sortByDat
 		charListGump.AddToolTip( charAdminTooltipClilocID, socket, GetDictionaryEntry( 2616, sockLang )); // Inspect character
 		charListGump.AddText( 200, baseYPos + 5 + ( 26 * i ), 1000, "i" );
 
-		var horizontalBtnCount = 4;
+		horizontalBtnCount = 4;
 
 		if( listType == 1 ) // Players only
 		{
@@ -303,12 +304,13 @@ function DisplayCharacterListGump( socket, filteredList, filterString, sortByDat
 		}
 	}
 
+	var textEntryID = letters.length + ( pageSlice.length * horizontalBtnCount ) + 1;
+
 	if( myCharList.length == 0 )
 	{
 		charListGump.AddText( 40, baseYPos + 5 + ( 26 * i ), 99, GetDictionaryEntry( 2621, sockLang )); // No entries found!
+		textEntryID++;
 	}
-
-	var textEntryID = letters.length + ( pageSlice.length * horizontalBtnCount ) + 1;
 
 	// Only show "Prev Page" if > page 1
 	if( currentPage > 1 )
@@ -418,7 +420,7 @@ function onGumpPress( socket, pButton, gumpData )
 			pUser.SetTempTag(( listType == 1 ? "playerAdminCurrentPage" : "npcAdminCurrentPage" ), pageNum );
 
 			// Re-apply filter to playerlist
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 			var strictFilter = false;
 			var finalList = ( listType == 1 ? adminPlayerList : adminNpcList );
 			if( filterString && filterString.length > 0 )
@@ -442,7 +444,7 @@ function onGumpPress( socket, pButton, gumpData )
 			pUser.SetTempTag(( listType == 1 ? "playerAdminCurrentPage" : "npcAdminCurrentPage" ), pageNum );
 
 			// Re-apply filter to playerlist
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 			var strictFilter = false;
 			var finalList = ( listType == 1 ? adminPlayerList : adminNpcList );
 			if( filterString && filterString.length > 0 )
@@ -456,7 +458,7 @@ function onGumpPress( socket, pButton, gumpData )
 		case 3: // Do nothing, close gump
 			break;
 		case 4: // Filter by name
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 
 			var strictFilter = false;
 			var filteredList = ( listType == 1 ? adminPlayerList : adminNpcList );
@@ -471,7 +473,7 @@ function onGumpPress( socket, pButton, gumpData )
 			// Reset page to 1
 			pUser.SetTempTag( "playerAdminCurrentPage", 1 );
 
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 			if( socket.tempInt2 != 1 )
 			{
 				ShowPlayerList( socket, "online", null, filterString )
@@ -485,7 +487,7 @@ function onGumpPress( socket, pButton, gumpData )
 			// Reset page to 1
 			pUser.SetTempTag( "playerAdminCurrentPage", 1 );
 
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 			if( socket.tempInt2 != -1 )
 			{
 				ShowPlayerList( socket, "offline", null, filterString )
@@ -497,7 +499,7 @@ function onGumpPress( socket, pButton, gumpData )
 			break;
 		case 7: // Sort by "last on" timestamp
 			// First sort by name
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 
 			var strictFilter = false;
 			var filteredList = ( listType == 1 ? adminPlayerList : adminNpcList );
@@ -524,7 +526,7 @@ function onGumpPress( socket, pButton, gumpData )
 			}
 
 			// Re-apply filter to playerlist
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 			var strictFilter = false;
 			var finalList = ( listType == 1 ? adminPlayerList : adminNpcList );
 			if( filterString && filterString.length > 0 )
@@ -537,7 +539,7 @@ function onGumpPress( socket, pButton, gumpData )
 			break;
 		case 9: // Cancel Removal of NPC
 			// Re-apply filter to playerlist
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 			var strictFilter = false;
 			var finalList = ( listType == 1 ? adminPlayerList : adminNpcList );
 			if( filterString && filterString.length > 0 )
@@ -770,7 +772,14 @@ function SendObjectInfoPacket( socket, objectToSend )
 
 	// Create a packet to send object info even though target char is out of range
 	var pStream = new Packet;
-	pStream.ReserveSize( 24 ); // 24 bytes SA, 26 bytes HS
+	if( socket.clientType <= 9 )
+	{
+		pStream.ReserveSize( 24 ); // 24 bytes SA
+	}
+	else
+	{
+		pStream.ReserveSize( 26 ); // 26 bytes HS
+	}
 	pStream.WriteByte( 0, 0xf3 ); // cmd
 	pStream.WriteShort( 1, 0x1 ); // Always 0x1
 	pStream.WriteByte( 3, objectToSend.isItem ? 0x00 : 0x01 ); // 0x00 = item, 0x01 = character, 0x02 = Multi
@@ -785,6 +794,10 @@ function SendObjectInfoPacket( socket, objectToSend )
 	pStream.WriteByte( 20, objectToSend.dir ); // direction/light level
 	pStream.WriteShort( 21, objectToSend.colour ); // colour
 	pStream.WriteByte( 23, 0x20 ); // flag
+	if( socket.clientType >= 10 )
+	{
+		pStream.WriteShort( 24, 0x00 ); // Extra 2 bytes for HS and beyond
+	}
 	socket.Send( pStream );
 	pStream.Free();
 }

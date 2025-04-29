@@ -58,15 +58,16 @@ function onIterate( toCheck, socket )
 	return false;
 }
 
-function DisplaySpawnerListGump( socket, filteredList, filterString, spawnCountSort )
+function DisplaySpawnerListGump( socket, filteredList, incFilterString, spawnCountSort )
 {
 	if( socket == null )
 		return;
 
+	var filterString = " ";
 	var sockLang = socket.language;
-	if( filterString == null )
+	if( incFilterString != null && incFilterString != "" && incFilterString != " " )
 	{
-		filterString = "";
+		filterString = incFilterString;
 	}
 
 	var pageSize = 20;
@@ -293,7 +294,7 @@ function onGumpPress( socket, pButton, gumpData )
 			var filteredList = FilterListBySpawnerType( spawnerList, pUser );
 
 			// Re-apply filter to spawnerList
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 			var strictFilter = false;
 			if( filterString && filterString.length > 0 )
 			{
@@ -317,7 +318,7 @@ function onGumpPress( socket, pButton, gumpData )
 			var filteredList = FilterListBySpawnerType( spawnerList, pUser );
 
 			// Re-apply filter to spawnerList
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 			var strictFilter = false;
 			if( filterString && filterString.length > 0 )
 			{
@@ -329,7 +330,7 @@ function onGumpPress( socket, pButton, gumpData )
 		case 3: // Do nothing, close gump
 			break;
 		case 4: // Filter by name
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 
 			var filteredList = FilterListBySpawnerType( spawnerList, pUser );
 
@@ -362,7 +363,7 @@ function onGumpPress( socket, pButton, gumpData )
 			}
 
 			// Don't forget about the name filter
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 
 			var strictFilter = false;
 			if( filterString && filterString.length > 0 )
@@ -397,7 +398,7 @@ function onGumpPress( socket, pButton, gumpData )
 			}
 
 			// Don't forget about the name filter
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 			var strictFilter = false;
 			if( filterString && filterString.length > 0 )
 			{
@@ -414,7 +415,7 @@ function onGumpPress( socket, pButton, gumpData )
 			var filteredList = FilterListBySpawnerType( spawnerList, pUser );
 
 			// Don't forget about the name filter
-			filterString = gumpData.getEdit( 0 );
+			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
 			var strictFilter = false;
 			if( filterString && filterString.length > 0 )
 			{
