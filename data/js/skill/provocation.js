@@ -132,7 +132,7 @@ function onCallback1( pSock, toAttack )
 			else
 			{
 				// If provoker is a Young player, and target is a player, or a player's pet - disallow
-				if( GetServerSetting( "YoungPlayerStatus" ))
+				if( GetServerSetting( "YoungPlayerSystem" ))
 				{
 					if( pUser.account.isYoung && ( !toAttack.npc || ( ValidateObject( toAttack.owner ) && !toAttack.owner.npc )))
 					{
