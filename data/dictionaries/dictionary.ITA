@@ -2457,6 +2457,47 @@
 2585=Si versa un po' di sidro nel contenitore.
 2586=Si versa del liquore nel contenitore.
 2587=Si versa del vino nel bicchiere.
+// [2600-2699] Player/NPC/Spawn Admin Script
+2600=NPC selezionato (%s, %i) è stato rimosso.
+2601=Avviso: nessun zaino trovato sul personaggio!
+2602=Avviso: nessuna cassetta di sicurezza trovata per il personaggio!
+2603=Troppo lontano per ispezionare il paperdoll (distanza attuale: %i)
+2604=Rimozione NPC
+2605=<BASEFONT color=#EECD8B>Conferma la rimozione di:</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>Non è disponibile il pulsante Annulla.
+2607=Filtra i nomi che iniziano con '%s'
+2608=Gestisci giocatori - %s
+2609=Gestisci NPC
+2610=Tutti
+2611=Online
+2612=Offline
+2613=Modifica personaggio:<br>seriale: %s<br>Ultimo accesso: %w
+2614=Teleportati al personaggio
+2615=Ottieni personaggio
+2616=Ispeziona personaggio
+2617=Imprigiona/Libera personaggio
+2618=Caccia giocatore
+2619=Banna giocatore
+2620=Rimuovi NPC
+2621=Nessuna voce trovata!
+2622=Pagina %i / %u
+2623=Applica filtro
+2624=Filtra per giocatori online
+2625=Filtra per giocatori offline
+2626=Ordina per ultimo accesso (%s)
+2627=Crescente
+2628=Decrescente
+2629=Trovati %i personaggi giocatore in %u millisecondi.
+2630=Trovati %i NPC in %u millisecondi.
+2631=Trovati %i spawn basati su oggetti in %u millisecondi.
+2632=Gestisci oggetti spawn
+2633=Modifica oggetto spawn:<br>seriale: %s<br>sezione spawn: %w<br>Quantità: %i<br>Nella regione: (%u) %z
+2634=Teletrasportati all'oggetto spawn
+2635=Apri editor oggetti spawn
+2636=Rimuovi oggetto spawn
+2637=Filtra per generatori NPC
+2638=Filtra per generatori oggetti
+2639=Ordina per numero di spawn (%s)
 // [2700-2799] Misc Scripts
 2700=Solo il proprietario della casa può ruotare i mobili.
 2701=Questo non sembra funzionare.

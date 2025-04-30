@@ -1669,7 +1669,7 @@ SI08 cScript::OnMultiLogout( CMultiObj *iMulti, CChar *cPlayer )
 //o------------------------------------------------------------------------------------------------o
 //|    Purpose        -    Triggers for Boat after it has turned successfully
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir )
+SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir, CItem *iTiller )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( iBoat ))
@@ -1678,15 +1678,17 @@ SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir )
 	if( !ExistAndVerify( seOnBoatTurn, "onBoatTurn" ))
 		return RV_NOFUNC;
 
-	jsval params[3], rval;
+	jsval params[4], rval;
 	JSObject *myBoat = JSEngine->AcquireObject( IUE_ITEM, iBoat, runTime );
+	JSObject *myTiller = JSEngine->AcquireObject( IUE_ITEM, iTiller, runTime );
     
 
 	params[0] = OBJECT_TO_JSVAL( myBoat );
 	params[1] = INT_TO_JSVAL( oldDir );
 	params[2] = INT_TO_JSVAL( newDir );
+	params[3] = OBJECT_TO_JSVAL( myTiller );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoatTurn", 3, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoatTurn", 4, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnBoatTurn, false );

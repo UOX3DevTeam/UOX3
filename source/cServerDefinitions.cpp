@@ -99,6 +99,18 @@ auto CServerDefinitions::Reload() -> bool
 	return true;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerDefinitions::Reload( DEFINITIONCATEGORIES toReload )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Reload a specific set of dfn files.
+//o------------------------------------------------------------------------------------------------o
+auto CServerDefinitions::Reload( DEFINITIONCATEGORIES toReload ) -> bool
+{
+	Dispose( toReload );
+	LoadDFNCategory( toReload );
+	return true;
+}
+
 //==================================================================================================
 auto CServerDefinitions::Cleanup() -> void
 {

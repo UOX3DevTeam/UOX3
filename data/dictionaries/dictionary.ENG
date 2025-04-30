@@ -2457,6 +2457,47 @@
 2585=You pour some cider into the container.
 2586=You pour some liquor into the container.
 2587=You pour some wine into the glass.
+// [2600-2699] Player/NPC/Spawn Admin Script
+2600=Chosen NPC (%s, %i) has been removed.
+2601=Warning: No backpack found on character!
+2602=Warning: No bank box found for character!
+2603=Too far away to inspect paperdoll (current range: %i)
+2604=NPC Removal
+2605=<BASEFONT color=#EECD8B>Please confirm removal of:</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>There is no undo button.</BASEFONT>
+2607=Filter for names starting with '%s'
+2608=Manage Players - %s
+2609=Manage NPCs
+2610=All
+2611=Online
+2612=Offline
+2613=Tweak character:<br>serial: %s<br>Last On: %w
+2614=Teleport to character
+2615=Get character
+2616=Inspect character
+2617=Jail/Release character
+2618=Kick player
+2619=Ban player
+2620=Remove NPC
+2621=No entries found!
+2622=Page %i / %u
+2623=Apply Filter
+2624=Filter for Online Players
+2625=Filter for Offline Players
+2626=Sort by Last On (%s)
+2627=Ascending
+2628=Descending
+2629=Found %i player characters in %u milliseconds.
+2630=Found %i NPCs in %u milliseconds.
+2631=Found %i item-based spawners in %u milliseconds.
+2632=Manage Spawn Objects
+2633=Tweak Spawn Object:<br>serial: %s<br>spawn-section: %w<br>Amount: %i<br>In region: (%u) %z
+2634=Teleport to Spawn Object
+2635=Open Spawn Object Editor
+2636=Remove Spawn Object
+2637=Filter for NPC Spawners
+2638=Filter for Item Spawners
+2639=Sort by Spawn Count (%s)
 // [2700-2799] Misc scripts
 2700=Only the house owner can rotate furniture.
 2701=That does not appear to work.
