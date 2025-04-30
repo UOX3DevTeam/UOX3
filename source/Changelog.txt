@@ -1,5 +1,5 @@
 30/04/2025 - Dragon Slayer
-	Fixed mismatched servername YoungPlayerStatus to YoungPlayerSystem in pumpkins.js and provocation.js.
+	Fixed issue where pumpkins.js and provocation.js scripts tried to look up "YoungPlayerStatus" server setting instead of "YoungPlayerSystem"
 
 29/04/2025 - Xuri
 	Revamped 'wholist GM command entirely in JS, now comes with filters for names, online/offline status, sorting by name or last online date, quick-buttons to tweak/teleport/inspect, etc. Updated syntax:
