@@ -1,3 +1,6 @@
+30/04/2025 - Dragon Slayer
+	Fixed: Dropping gold on NPCs flagged as guildmasters or BOD handlers will now correctly allow skill training unless the player is explicitly attempting to join a guild or turn in a BOD.
+
 29/04/2025 - Xuri
 	Revamped 'wholist GM command entirely in JS, now comes with filters for names, online/offline status, sorting by name or last online date, quick-buttons to tweak/teleport/inspect, etc. Updated syntax:
 		'wholist [on]

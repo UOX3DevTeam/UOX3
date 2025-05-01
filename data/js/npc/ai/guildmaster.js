@@ -152,6 +152,7 @@ function onSpeech( strSaid, pChar, npcGuildMaster )
 						dictMsg = dictMsg.replace( /%d/gi, GetDictionaryEntry( npcGuilds[npcGuildMaster.npcGuild][0], pSock.language )); // %d [npc guild name]
 						dictMsg = GetDictionaryEntry( 17602, pSock.language ); // There is a fee in gold coins for joining the guild : %i
 						npcGuildMaster.TextMessage( dictMsg.replace( /%i/gi, joinGuildCost ));
+						pChar.SetTempTag( "guildServiceRequest", true );
 					}
 					trigWordHandled = true;
 					break;
@@ -218,7 +219,7 @@ function onDropItemOnNpc( pChar, npcGuildMaster, iDropped )
 	if( pSock == null )
 		return 0;
 
-	if( iDropped.id == 0x0eed ) // Gold
+	if( iDropped.id == 0x0eed && pChar.GetTempTag( "guildServiceRequest" ) == true ) // Gold
 	{
 		if( pChar.npcGuild == npcGuildMaster.npcGuild )
 		{

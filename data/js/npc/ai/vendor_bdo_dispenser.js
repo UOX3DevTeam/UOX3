@@ -668,6 +668,11 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 	if( socket == null )
 		return false;
 
+	if( iDropped.id == 0x0eed )
+	{
+		return 1;
+	}
+
 	var amountMax 	  = iDropped.GetTag( "amountMax" ); 	 // amount you have to make of the item
 	var amountCur 	  = iDropped.GetTag( "amountCur" ); 	 // amount you have combined
 	var iBodType 	  = iDropped.GetTag( "bodType" ); 	     // BOD type of the BOD itself
