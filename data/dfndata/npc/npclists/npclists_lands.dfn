@@ -123,10 +123,12 @@ direwolf
 npclist=tamewoods
 }
 
+// Yew Orc Fort
 [NPCLIST location_8_medium]
 {
-npclist=weakorc
-npclist=allettin
+75|npclist=weakorc
+20|npclist=strongorc
+5|npclist=allettin
 }
 
 [NPCLIST location_9_heavy]
@@ -609,10 +611,12 @@ skeleton
 boneaxeman
 }
 
+// Cove Orc Fort
 [NPCLIST location_45_heavy]
 {
-7|npclist=weakorc
-npclist=allettin
+75|npclist=weakorc
+20|npclist=strongorc
+5|npclist=allettin
 }
 
 [NPCLIST location_46_light]
