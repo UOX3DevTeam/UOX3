@@ -697,5 +697,9 @@ ORIGIN=se
 
 [yamandon]
 {
+GETT2A=yamandon_se
+GETLBR=yamandon_se
+GETAOS=yamandon_se
 GETSE=yamandon_se
+GETTOL=yamandon_se
 }
