@@ -1,3 +1,17 @@
+
+01/05/2025 - Xuri
+	Fixed some issues that prevented NPCLISTS containing other NPCLISTS and/or weighted NPCLISTS from working correctly
+	Updated spawn regions and NPCLISTS used for Yew/Cove orc forts to provide a better mix of weak/strong orcs, and fewer ettins
+	Fixed an issue where Yew/Skara brigand camp used a duplicate spawnregion ID, causing no NPCs to spawn
+	Added humanoids_t2a.dfn, with T2A-specific definitions for orcs, ratmen and lizardmen, with some stat adjustments
+	Updated NPC definitions for orcs, ratmen and lizardmen with placeholder GET tags for different eras, pointing to nearest available era definition
+	Updated NPC definitions for [kappa], [yomotsuelder], [yomotsupriest] and [yomotsuwarrior] with placeholder GET tags for different eras, all pointing to SE definition for now
+	Updated NPC definitions for [yamadon], [rajiu], [bakekitsune] with placeholder GET tags for different eras, all pointing to SE definition for now
+
+30/04/2025 - Dragon Slayer
+	Fixed: Dropping gold on NPCs flagged as guildmasters or BOD handlers will now correctly allow skill training unless the player is explicitly attempting to join a guild or turn in a BOD.
+	Fixed issue where pumpkins.js and provocation.js scripts tried to look up "YoungPlayerStatus" server setting instead of "YoungPlayerSystem"
+
 29/04/2025 - Xuri
 	Revamped 'wholist GM command entirely in JS, now comes with filters for names, online/offline status, sorting by name or last online date, quick-buttons to tweak/teleport/inspect, etc. Updated syntax:
 		'wholist [on]
@@ -16,7 +30,7 @@
 	Updated JS Docs with details about onBoatTurn JS event, .GetTiller() method and .lastOn/.lastOnSecs properties
 	Added some console output with details about time taken for each regionspawn cycle
 	Added some new tiledata override entries for some tiles (stairs/platforms) missing NoShoot flag in some older clients (dfndata/maps/tiles.dfn)
-	Fixes for updated wholist menu crashing under certain circumstances using regular UO client
+	Fixes for updated wholist/spawnadmin menu crashing under certain circumstances using regular UO client
 	Updated logging of CPCharAndStartLoc packet to account for both old and new version of packet
 	Reloading Spawn Regions via 'reloadspawnregions JS command will now do a full reload from the DFN files (previously needed manual DFN reload before spawn region reload)
 	Reloading DFNs via 'reloaddfns JS command will now also reload creatures.dfn, titles.dfn, location.dfn

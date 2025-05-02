@@ -668,6 +668,12 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 	if( socket == null )
 		return false;
 
+	// Return true allows code/other scripts to handle "gold drop" on this NPC
+	if( iDropped.id == 0x0eed )
+	{
+		return true;
+	}
+
 	var amountMax 	  = iDropped.GetTag( "amountMax" ); 	 // amount you have to make of the item
 	var amountCur 	  = iDropped.GetTag( "amountCur" ); 	 // amount you have combined
 	var iBodType 	  = iDropped.GetTag( "bodType" ); 	     // BOD type of the BOD itself

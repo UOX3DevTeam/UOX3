@@ -8446,6 +8446,9 @@ auto CChar::CheckCombatIgnore( SERIAL toCheck ) -> bool
 //o------------------------------------------------------------------------------------------------o
 auto CChar::CombatIgnoreMaintenance() -> void
 {
+	if( mNPC == nullptr )
+		return;
+
 	// Loop through list of ignored targets in combat and add any serials with expired timers to a vector
 	std::vector<SERIAL> serialsToRemove;
 	for( auto it = mNPC->combatIgnore.begin(); it != mNPC->combatIgnore.end(); ++it )

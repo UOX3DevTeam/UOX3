@@ -38,8 +38,16 @@ ORIGIN=uo
 // Orc
 [orc]
 {
+GETUO=orc_t2a
+GETT2A=orc_t2a
+GETUOR=orc_t2a
+GETTD=orc_lbr
 GETLBR=orc_lbr
 GETAOS=orc_aos
+GETSE=orc_aos
+GETML=orc_tol
+GETSA=orc_tol
+GETHS=orc_tol
 GETTOL=orc_tol
 }
 
@@ -72,8 +80,16 @@ ORIGIN=uo
 // Orc Captain
 [orccaptain]
 {
+GETUO=orccaptain_t2a
+GETT2A=orccaptain_t2a
+GETUOR=orccaptain_t2a
+GETTD=orccaptain_lbr
 GETLBR=orccaptain_lbr
 GETAOS=orccaptain_aos
+GETSE=orccaptain_aos
+GETML=orccaptain_tol
+GETSA=orccaptain_tol
+GETHS=orccaptain_tol
 GETTOL=orccaptain_tol
 }
 
@@ -93,8 +109,16 @@ ORIGIN=uo
 // Orc Mage
 [orcmage]
 {
+GETUO=orcmage_t2a
+GETT2A=orcmage_t2a
+GETUOR=orcmage_t2a
+GETTD=orcmage_lbr
 GETLBR=orcmage_lbr
 GETAOS=orcmage_aos
+GETSE=orcmage_aos
+GETML=orcmage_tol
+GETSA=orcmage_tol
+GETHS=orcmage_tol
 GETTOL=orcmage_tol
 }
 
@@ -118,8 +142,16 @@ ORIGIN=uo
 // Orc Lord
 [orclord]
 {
+GETUO=orclord_t2a
+GETT2A=orclord_t2a
+GETUOR=orclord_t2a
+GETTD=orclord_lbr
 GETLBR=orclord_lbr
 GETAOS=orclord_aos
+GETSE=orclord_aos
+GETML=orclord_tol
+GETSA=orclord_tol
+GETHS=orclord_tol
 GETTOL=orclord_tol
 }
 
@@ -138,8 +170,16 @@ ORIGIN=td
 // Orc Bomber
 [orcbomber]
 {
+GETUO=orcbomber_t2a
+GETT2A=orcbomber_t2a
+GETUOR=orcbomber_t2a
+GETTD=orcbomber_lbr
 GETLBR=orcbomber_lbr
 GETAOS=orcbomber_aos
+GETSE=orcbomber_aos
+GETML=orcbomber_tol
+GETSA=orcbomber_tol
+GETHS=orcbomber_tol
 GETTOL=orcbomber_tol
 }
 
@@ -161,8 +201,16 @@ ORIGIN=td
 // Orc Scout
 [orcscout]
 {
+GETUO=orcscout_t2a
+GETT2A=orcscout_t2a
+GETUOR=orcscout_t2a
+GETTD=orcscout_lbr
 GETLBR=orcscout_lbr
 GETAOS=orcscout_aos
+GETSE=orcscout_aos
+GETML=orcscout_tol
+GETSA=orcscout_tol
+GETHS=orcscout_tol
 GETTOL=orcscout_tol
 }
 
@@ -185,8 +233,16 @@ ORIGIN=td
 // Orc Brute
 [orcbrute]
 {
+GETUO=orcbrute_t2a
+GETT2A=orcbrute_t2a
+GETUOR=orcbrute_t2a
+GETTD=orcbrute_lbr
 GETLBR=orcbrute_lbr
 GETAOS=orcbrute_aos
+GETSE=orcbrute_aos
+GETML=orcbrute_tol
+GETSA=orcbrute_tol
+GETHS=orcbrute_tol
 GETTOL=orcbrute_tol
 }
 
@@ -209,8 +265,16 @@ ORIGIN=td
 // Orc Chopper
 [orcchopper]
 {
+GETUO=orcchopper_t2a
+GETT2A=orcchopper_t2a
+GETUOR=orcchopper_t2a
+GETTD=orcchopper_lbr
 GETLBR=orcchopper_lbr
 GETAOS=orcchopper_aos
+GETSE=orcchopper_aos
+GETML=orcchopper_tol
+GETSA=orcchopper_tol
+GETHS=orcchopper_tol
 GETTOL=orcchopper_tol
 }
 
@@ -235,8 +299,16 @@ ORIGIN=uo
 // Lizardman
 [lizardman]
 {
+GETUO=lizardman_t2a
+GETT2A=lizardman_t2a
+GETUOR=lizardman_t2a
+GETTD=lizardman_lbr
 GETLBR=lizardman_lbr
 GETAOS=lizardman_aos
+GETSE=lizardman_aos
+GETML=lizardman_tol
+GETSA=lizardman_tol
+GETHS=lizardman_tol
 GETTOL=lizardman_tol
 }
 
@@ -279,8 +351,16 @@ ORIGIN=uo
 // Ratman
 [ratman]
 {
+GETUO=ratman_t2a
+GETT2A=ratman_t2a
+GETUOR=ratman_t2a
+GETTD=ratman_lbr
 GETLBR=ratman_lbr
 GETAOS=ratman_aos
+GETSE=ratman_aos
+GETML=ratman_tol
+GETSA=ratman_tol
+GETHS=ratman_tol
 GETTOL=ratman_tol
 }
 
@@ -324,8 +404,16 @@ SCRIPT=3001//monster speech
 // Ratman Mage
 [ratmanmage]
 {
+GETUO=ratmanmage_t2a
+GETT2A=ratmanmage_t2a
+GETUOR=ratmanmage_t2a
+GETTD=ratmanmage_lbr
 GETLBR=ratmanmage_lbr
 GETAOS=ratmanmage_aos
+GETSE=ratmanmage_aos
+GETML=ratmanmage_tol
+GETSA=ratmanmage_tol
+GETHS=ratmanmage_tol
 GETTOL=ratmanmage_tol
 }
 
@@ -348,8 +436,16 @@ SCRIPT=3001//monster speech
 // Ratman Archer
 [ratmanarcher]
 {
+GETUO=ratmanarcher_t2a
+GETT2A=ratmanarcher_t2a
+GETUOR=ratmanarcher_t2a
+GETTD=ratmanarcher_lbr
 GETLBR=ratmanarcher_lbr
 GETAOS=ratmanarcher_aos
+GETSE=ratmanarcher_aos
+GETML=ratmanarcher_tol
+GETSA=ratmanarcher_tol
+GETHS=ratmanarcher_tol
 GETTOL=ratmanarcher_tol
 }
 
@@ -365,7 +461,17 @@ ORIGIN=se
 
 [kappa]
 {
+GETUO=kappa_se
+GETT2A=kappa_se
+GETUOR=kappa_se
+GETTD=kappa_se
+GETLBR=kappa_se
+GETAOS=kappa_se
 GETSE=kappa_se
+GETML=kappa_se
+GETSA=kappa_se
+GETHS=kappa_se
+GETTOL=kappa_se
 }
 
 // yomotsu elder - Base NPC with shared DFN tags
@@ -383,7 +489,17 @@ ORIGIN=se
 
 [yomotsuelder]
 {
+GETUO=yomotsuelder_se
+GETT2A=yomotsuelder_se
+GETUOR=yomotsuelder_se
+GETTD=yomotsuelder_se
+GETLBR=yomotsuelder_se
+GETAOS=yomotsuelder_se
 GETSE=yomotsuelder_se
+GETML=yomotsuelder_se
+GETSA=yomotsuelder_se
+GETHS=yomotsuelder_se
+GETTOL=yomotsuelder_se
 }
 
 // yomotsu priest - Base NPC with shared DFN tags
@@ -400,7 +516,17 @@ ORIGIN=se
 
 [yomotsupriest]
 {
+GETUO=yomotsupriest_se
+GETT2A=yomotsupriest_se
+GETUOR=yomotsupriest_se
+GETTD=yomotsupriest_se
+GETLBR=yomotsupriest_se
+GETAOS=yomotsupriest_se
 GETSE=yomotsupriest_se
+GETML=yomotsupriest_se
+GETSA=yomotsupriest_se
+GETHS=yomotsupriest_se
+GETTOL=yomotsupriest_se
 }
 
 // yomotsu warrior - Base NPC with shared DFN tags
@@ -415,7 +541,17 @@ ORIGIN=se
 
 [yomotsuwarrior]
 {
+GETUO=yomotsuwarrior_se
+GETT2A=yomotsuwarrior_se
+GETUOR=yomotsuwarrior_se
+GETTD=yomotsuwarrior_se
+GETLBR=yomotsuwarrior_se
+GETAOS=yomotsuwarrior_se
 GETSE=yomotsuwarrior_se
+GETML=yomotsuwarrior_se
+GETSA=yomotsuwarrior_se
+GETHS=yomotsuwarrior_se
+GETTOL=yomotsuwarrior_se
 }
 
 //fan dancer - Base NPC with shared DFN tags
