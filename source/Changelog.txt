@@ -1,3 +1,4 @@
+
 01/05/2025 - Xuri
 	Fixed some issues that prevented NPCLISTS containing other NPCLISTS and/or weighted NPCLISTS from working correctly
 	Updated spawn regions and NPCLISTS used for Yew/Cove orc forts to provide a better mix of weak/strong orcs, and fewer ettins
@@ -6,6 +7,9 @@
 	Updated NPC definitions for orcs, ratmen and lizardmen with placeholder GET tags for different eras, pointing to nearest available era definition
 	Updated NPC definitions for [kappa], [yomotsuelder], [yomotsupriest] and [yomotsuwarrior] with placeholder GET tags for different eras, all pointing to SE definition for now
 	Updated NPC definitions for [yamadon], [rajiu], [bakekitsune] with placeholder GET tags for different eras, all pointing to SE definition for now
+
+30/04/2025 - Dragon Slayer
+	Fixed issue where pumpkins.js and provocation.js scripts tried to look up "YoungPlayerStatus" server setting instead of "YoungPlayerSystem"
 
 29/04/2025 - Xuri
 	Revamped 'wholist GM command entirely in JS, now comes with filters for names, online/offline status, sorting by name or last online date, quick-buttons to tweak/teleport/inspect, etc. Updated syntax:
