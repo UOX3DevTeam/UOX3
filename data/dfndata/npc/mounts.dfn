@@ -7,6 +7,19 @@
 //-=                                                        =-
 //-==========================================================-
 
+// Base mounts with shared DFN tags
+[base_mounts]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+FLAG=NEUTRAL
+CONTROLSLOTS=1
+}
+
+//------------------------------------------------------------------------------------------------//
+
 [horse]
 {
 NAME=#//a horse
@@ -639,43 +652,6 @@ SKIN=0x4001
 ORIGIN=aos
 }
 
-[hiryu]
-{
-GET=horse
-NAME=#//a hiryu
-ID=0x00f3
-GOLD=1500 1900
-LOOT=randomgems,4
-FAME=18000
-KARMA=-18000
-STR=1200 1410
-DEX=170 270
-INT=300 325
-ANATOMY=750 800
-MAGICRESISTANCE=850 1000
-TACTICS=1000 1100
-WRESTLING=1000 1200
-DAMAGE=11 53
-DEF=40
-TOPROV=1153
-TOPEACE=1153 5
-TOTAME=987
-FOOD=meat
-CONTROLSLOTS=4
-ORIGIN=se
-SCRIPT=3300
-}
-
-[etherealhiryu]
-{
-GET=hiryu
-NAME=5109//an ethereal hiryu
-ID=0x00f3
-SKIN=0x4001
-CONTROLSLOTS=1
-ORIGIN=sa
-}
-
 [reptalon]
 {
 GET=horse
@@ -810,4 +786,43 @@ NAME=an ethereal tiger
 ID=0x04e7
 SKIN=0x4001
 ORIGIN=hs
+}
+
+//hiryu - Base NPC with shared DFN tags
+[base_hiryu]
+{
+GET=base_mounts
+NAME=#//hiryu
+ID=0x0f3
+ORIGIN=se
+}
+
+[hiryu]
+{
+GETUO=hiryu_se
+GETT2A=hiryu_se
+GETUOR=hiryu_se
+GETTD=hiryu_se
+GETLBR=hiryu_se
+GETAOS=hiryu_se
+GETSE=hiryu_se
+GETML=hiryu_se
+GETSA=hiryu_se
+GETHS=hiryu_se
+GETTOL=hiryu_se
+}
+
+[lesserhiryu]
+{
+GETUO=lesser_hiryu_se
+GETT2A=lesser_hiryu_se
+GETUOR=lesser_hiryu_se
+GETTD=lesser_hiryu_se
+GETLBR=lesser_hiryu_se
+GETAOS=lesser_hiryu_se
+GETSE=lesser_hiryu_se
+GETML=lesser_hiryu_se
+GETSA=lesser_hiryu_se
+GETHS=lesser_hiryu_se
+GETTOL=lesser_hiryu_se
 }

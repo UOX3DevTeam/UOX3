@@ -1,3 +1,16 @@
+// Base undead with shared DFN tags
+[base_undead]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+NPCAI=2
+FLAG=NEUTRAL
+}
+
+//------------------------------------------------------------------------------------------------//
+
 [zombie]
 {
 NAME=#//a zombie
@@ -478,4 +491,52 @@ get=wraith
 NAME=#//a ghoul
 ID=0x0099
 SKIN=0x0
+}
+
+//lady of the snow - Base NPC with shared DFN tags
+[base_lady_of_the_snow]
+{
+GET=base_undead
+NAME=#//lady of the snow
+ID=0x0fc
+ORIGIN=se
+}
+
+[ladyofthesnow]
+{
+GETUO=ladyofthesnow_se
+GETT2A=ladyofthesnow_se
+GETUOR=ladyofthesnow_se
+GETTD=ladyofthesnow_se
+GETLBR=ladyofthesnow_se
+GETAOS=ladyofthesnow_se
+GETSE=ladyofthesnow_se
+GETML=ladyofthesnow_se
+GETSA=ladyofthesnow_se
+GETHS=ladyofthesnow_se
+GETTOL=ladyofthesnow_se
+}
+
+//revenant lion - Base NPC with shared DFN tags
+[base_revenant_lion]
+{
+GET=base_undead
+NAME=#//revenant lion
+ID=0x0fb
+ORIGIN=se
+}
+
+[revenantlion]
+{
+GETUO=revenant_lion_se
+GETT2A=revenant_lion_se
+GETUOR=revenant_lion_se
+GETTD=revenant_lion_se
+GETLBR=revenant_lion_se
+GETAOS=revenant_lion_se
+GETSE=revenant_lion_se
+GETML=revenant_lion_se
+GETSA=revenant_lion_se
+GETHS=revenant_lion_se
+GETTOL=revenant_lion_se
 }

@@ -36,6 +36,7 @@
 	Reloading DFNs via 'reloaddfns JS command will now also reload creatures.dfn, titles.dfn, location.dfn
 	Reloading ALL via 'reloadall JS command will now also reload teleport.scp, creatures.dfn, titles.dfn, location.dfn
 
+
 23/04/2025 - Xuri
 	Fixed an issue where onUseUnchecked JS event in envoked scripts (via object ID or type) would never trigger because hard-coded checks would run before envoking script
 	Added function _restorecontext_() {} to archerybutte.js script (Thanks, DS)
@@ -123,6 +124,9 @@
 	Added new Getters/Setters for CRace class to retrieve ID of a specific Race object
 	Updated JS property .id for Race JS Object to return new race ID instead of iterating through list of races to compare race object and return index
 	Reloading DFNs now also reloads Races
+	
+22/03/2025 - Dragon Slayer
+	Added - lesser hiryu mount, lady of the snow, fan dancer, oni, crane, gaman, revenant lion from UO SE.
 
 15/03/2025 - Dragon Slayer
 	Fixed an issue where timestamps for system timers could be set in the past due to float-to-UI32 casting precision loss. ( Thanks Xuri )
