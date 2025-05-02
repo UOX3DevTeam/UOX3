@@ -5970,8 +5970,8 @@ var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>ITEM FindRootContainer( iObj );</em></p>
-									<p><em>ITEM FindRootContainer( iObjSerial );</em></p>
+									<p><em>ITEM FindRootContainer( iObj, type );</em></p>
+									<p><em>ITEM FindRootContainer( iObjSerial, type );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -5981,8 +5981,8 @@ var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9
 									<p><span class="hl">Notes</span></p>
 									<p>Parameters:
 										<ul>
-											<li>iObj - item to find root container for</li>
-											<li>iObjSerial - item serial to find root container for</li>
+											<li>iObj/iObjSerial - item or item serial to find root container for</li>
+											<li>type - indicate type of lookup; 0 = item, 1 = item serial</li>
 										</ul>
 									</p>
 								</div>
@@ -5990,7 +5990,7 @@ var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">function onUseChecked( pUser, iUsed )
 {
-	var rootContainer = FindRootContainer( iUsed );
+	var rootContainer = FindRootContainer( iUsed, 0 );
 	if( ValidateObject( rootContainer ))
 		pUser.TextMessage( "The item is in a container! The root container's name is " + rootContainer.name );
 	else

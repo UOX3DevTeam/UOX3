@@ -1,3 +1,13 @@
+03/05/2025 - Xuri
+	Fixed an issue where creatures with a taming requirement of 0 could not be tamed (js/skill/taming.js)
+	Fixed a server crash related to attempts to tame non-NPC characters (js/skill/taming.js)
+	Young players will no longer see warnings about being attacked when non-hostile NPCs perform a routine target validation check
+	Playing an instrument will now store it as the player's last played instrument (js/item/musicianship.js)
+	Bard-skills will now always use the last instrument a player played, if any (js/skill/provocation.js/enticement.js/peacemaking.js)
+	Added Line-of-Sight checks to Bard-skills (js/skill/provocation.js/enticement.js/peacemaking.js), though this can be disabled via setting at top of each script
+	Provocation now uses player's provocation skillcap value as max skill check for LBR-era shards and below
+	Provocation is now difficulty-based by default for AoS-era shards and beyond, controllable by setting at top of provocation script. This means, difficulty of provoking a target on another target is based on the average provocation difficulty between them, with a -25.0 (lowest chance of success) and +25.0 (max skill check beyond which success is guaranteed and no more skill-gains are possible) window
+	Updated hunger settings of "predator" animal race from races.dfn from HUNGER=300,5 to HUNGER=3000,2 so they don't grow hungry and die from starvation so fast
 
 01/05/2025 - Xuri
 	Fixed some issues that prevented NPCLISTS containing other NPCLISTS and/or weighted NPCLISTS from working correctly
