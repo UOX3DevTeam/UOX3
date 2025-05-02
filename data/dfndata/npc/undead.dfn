@@ -504,7 +504,17 @@ ORIGIN=se
 
 [ladyofthesnow]
 {
+GETUO=ladyofthesnow_se
+GETT2A=ladyofthesnow_se
+GETUOR=ladyofthesnow_se
+GETTD=ladyofthesnow_se
+GETLBR=ladyofthesnow_se
+GETAOS=ladyofthesnow_se
 GETSE=ladyofthesnow_se
+GETML=ladyofthesnow_se
+GETSA=ladyofthesnow_se
+GETHS=ladyofthesnow_se
+GETTOL=ladyofthesnow_se
 }
 
 //revenant lion - Base NPC with shared DFN tags
@@ -518,5 +528,15 @@ ORIGIN=se
 
 [revenantlion]
 {
+GETUO=revenant_lion_se
+GETT2A=revenant_lion_se
+GETUOR=revenant_lion_se
+GETTD=revenant_lion_se
+GETLBR=revenant_lion_se
+GETAOS=revenant_lion_se
 GETSE=revenant_lion_se
+GETML=revenant_lion_se
+GETSA=revenant_lion_se
+GETHS=revenant_lion_se
+GETTOL=revenant_lion_se
 }

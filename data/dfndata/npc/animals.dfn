@@ -940,7 +940,17 @@ ORIGIN=se
 
 [crane]
 {
+GETUO=crane_se
+GETT2A=crane_se
+GETUOR=crane_se
+GETTD=crane_se
+GETLBR=crane_se
+GETAOS=crane_se
 GETSE=crane_se
+GETML=crane_se
+GETSA=crane_se
+GETHS=crane_se
+GETTOL=crane_se
 }
 
 //gaman - Base NPC with shared DFN tags
@@ -954,5 +964,15 @@ ORIGIN=se
 
 [gaman]
 {
+GETUO=gaman_se
+GETT2A=gaman_se
+GETUOR=gaman_se
+GETTD=gaman_se
+GETLBR=gaman_se
+GETAOS=gaman_se
 GETSE=gaman_se
+GETML=gaman_se
+GETSA=gaman_se
+GETHS=gaman_se
+GETTOL=gaman_se
 }

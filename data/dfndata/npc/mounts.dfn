@@ -799,10 +799,30 @@ ORIGIN=se
 
 [hiryu]
 {
+GETUO=hiryu_se
+GETT2A=hiryu_se
+GETUOR=hiryu_se
+GETTD=hiryu_se
+GETLBR=hiryu_se
+GETAOS=hiryu_se
 GETSE=hiryu_se
+GETML=hiryu_se
+GETSA=hiryu_se
+GETHS=hiryu_se
+GETTOL=hiryu_se
 }
 
 [lesserhiryu]
 {
+GETUO=lesser_hiryu_se
+GETT2A=lesser_hiryu_se
+GETUOR=lesser_hiryu_se
+GETTD=lesser_hiryu_se
+GETLBR=lesser_hiryu_se
+GETAOS=lesser_hiryu_se
 GETSE=lesser_hiryu_se
+GETML=lesser_hiryu_se
+GETSA=lesser_hiryu_se
+GETHS=lesser_hiryu_se
+GETTOL=lesser_hiryu_se
 }

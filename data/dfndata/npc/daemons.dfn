@@ -387,5 +387,15 @@ ORIGIN=se
 
 [oni]
 {
+GETUO=oni_se
+GETT2A=oni_se
+GETUOR=oni_se
+GETTD=oni_se
+GETLBR=oni_se
+GETAOS=oni_se
 GETSE=oni_se
+GETML=oni_se
+GETSA=oni_se
+GETHS=oni_se
+GETTOL=oni_se
 }

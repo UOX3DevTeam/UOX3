@@ -565,5 +565,15 @@ ORIGIN=se
 
 [fandancer]
 {
+GETUO=fandancer_se
+GETT2A=fandancer_se
+GETUOR=fandancer_se
+GETTD=fandancer_se
+GETLBR=fandancer_se
+GETAOS=fandancer_se
 GETSE=fandancer_se
+GETML=fandancer_se
+GETSA=fandancer_se
+GETHS=fandancer_se
+GETTOL=fandancer_se
 }
