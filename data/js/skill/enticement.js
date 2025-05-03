@@ -3,6 +3,8 @@ function SkillRegistration()
 	RegisterSkill( 15, true );	// Enticement
 }
 
+const useLoSCheckForEnticement = true;
+
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
@@ -25,6 +27,7 @@ function onSkill( pUser, objType, skillUsed )
 	return true;
 }
 
+// Enticement - First Target
 function onCallback0( pSock, ourObj )
 {
 	if( ValidateObject( ourObj ) && ourObj.isChar )
@@ -50,8 +53,23 @@ function onCallback0( pSock, ourObj )
 				}
 			}
 			var pUser = pSock.currentChar;
+
+			// Can player see the target?
+			if( useLoSCheckForEnticement && !pUser.CanSee( ourObj ))
+			{
+				pSock.SysMessage( GetDictionaryEntry( 1646, pSock.language )); // You cannot see that
+				return;
+			}
+
 			if( ValidateObject( pUser ))
 			{
+				// TODO: At some point, base range of all bard abilities was 8, with increase of 1 tile per 15 points of skill in the ability
+				if( !pUser.InRange( ourObj, 10 ))
+				{
+					pSock.SysMessage( GetDictionaryEntry( 393, pSock.language )); // That is too far away.
+					return;
+				}
+
 				var myInstrument = GetInstrument( pUser );
 				if( ValidateObject( myInstrument ))
 				{
@@ -68,6 +86,7 @@ function onCallback0( pSock, ourObj )
 	}
 }
 
+// Enticement - Second Target
 function onCallback1( pSock, toFollow )
 {
 	if( ValidateObject( toFollow ))
@@ -78,33 +97,52 @@ function onCallback1( pSock, toFollow )
 		}
 		else
 		{
+			var pFollower = pSock.tempObj;
+			if( !ValidateObject( pFollower ))
+				return;
+
 			var pUser = pSock.currentChar;
-			if( ValidateObject( pUser ))
+			if( !ValidateObject( pUser ))
+				return;
+
+			// TODO: At some point, base range of all bard abilities was 8, with increase of 1 tile per 15 points of skill in the ability
+			if( !pFollower.InRange( toFollow, 10 ))
 			{
-				var myInstrument = GetInstrument( pUser );
-				if( ValidateObject( myInstrument ))
+				// The two NPCs involved are too far away from one another
+				pSock.SysMessage( GetDictionaryEntry( 393, pSock.language )); // That is too far away.
+				return;
+			}
+
+			// Ensure target can see secondary target
+			if( !pFollower.CanSee( toFollow ))
+			{
+				// No line of sight
+				pFollower.TextMessage( GetDictionaryEntry( 1669, pSock.language ), false, 0x3b2, 0, pUser.serial ); // Cannot see target!
+				return;
+			}
+
+			var myInstrument = GetInstrument( pUser );
+			if( ValidateObject( myInstrument ))
+			{
+				if( pUser.CheckSkill( 29, 0, pUser.skillCaps.musicianship ) && pUser.CheckSkill( 15, 0, pUser.skillCaps.enticement ))
 				{
-					if( pUser.CheckSkill( 29, 0, pUser.skillCaps.musicianship ) && pUser.CheckSkill( 15, 0, pUser.skillCaps.enticement ))
+					PlayInstrument( pSock, myInstrument, true );
+					if( ValidateObject( pFollower ))
 					{
-						PlayInstrument( pSock, myInstrument, true );
-						var pFollower = pSock.tempObj;
-						if( ValidateObject( pFollower ))
-						{
-							pUser.criminal = true;
-							pFollower.Follow( toFollow );
-							pSock.SysMessage( GetDictionaryEntry( 1447, pSock.language )); // You play your hypnotic music, luring them near your target.
-						}
-					}
-					else
-					{
-						PlayInstrument( pSock, myInstrument, false );
-						pSock.SysMessage( GetDictionaryEntry( 1448, pSock.language )); // Your music fails to attract them.
+						pUser.criminal = true;
+						pFollower.Follow( toFollow );
+						pSock.SysMessage( GetDictionaryEntry( 1447, pSock.language )); // You play your hypnotic music, luring them near your target.
 					}
 				}
 				else
 				{
-					pSock.SysMessage( GetDictionaryEntry( 1438, pSock.language )); // You do not have an instrument to play on!
+					PlayInstrument( pSock, myInstrument, false );
+					pSock.SysMessage( GetDictionaryEntry( 1448, pSock.language )); // Your music fails to attract them.
 				}
+			}
+			else
+			{
+				pSock.SysMessage( GetDictionaryEntry( 1438, pSock.language )); // You do not have an instrument to play on!
 			}
 		}
 	}
@@ -113,30 +151,27 @@ function onCallback1( pSock, toFollow )
 
 function GetInstrument( pUser )
 {
-	if( ValidateObject( pUser.pack ))
+	// Fetch last instrument player played (set in musicianship.js)
+	var lastInstrument = CalcItemFromSer( parseInt( pUser.GetTempTag( "lastInstrument" )));
+	if( ValidateObject( lastInstrument ))
 	{
-		for( var toCheck = pUser.pack.FirstItem(); !pUser.pack.FinishedItems(); toCheck = pUser.pack.NextItem() )
+		if( ValidateObject( lastInstrument.container ))
 		{
-			if( ValidateObject( toCheck ))
+			// Instrument is in a container. This should only work if item is inside player pack somewhere
+			var rootCont = FindRootContainer( lastInstrument, 0 );
+			if( ValidateObject( rootCont ) && rootCont == pUser.pack )
 			{
-				switch( toCheck.id )
-				{
-				case 0x0E9C:
-				case 0x0E9D:
-				case 0x0E9E:
-				case 0x0EB1:
-				case 0x0EB2:
-				case 0x0EB3:
-				case 0x0EB4:
-				case 0x2805:
-				case 0x2807:
-					return toCheck;
-				default:
-					break;
-				}
+				// Found instrument in player's pack somewhere!
+				return lastInstrument;
 			}
 		}
+		else if( pUser.InRange( lastInstrument, 3 ))
+		{
+			// Player is within range of the instrument!
+			return lastInstrument;
+		}
 	}
+
 	return null;
 }
 
@@ -197,7 +232,7 @@ function PlayInstrument( pSock, myInstrument, wellPlayed )
 			soundID = 0x004D;
 		}
 		break;
-	case 0x2805:	//Bamboo Flute
+	case 0x2805:	// Bamboo Flute
 	case 0x2807:
 		if( wellPlayed )
 		{
