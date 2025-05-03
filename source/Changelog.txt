@@ -8,6 +8,7 @@
 	Provocation now uses player's provocation skillcap value as max skill check for LBR-era shards and below
 	Provocation is now difficulty-based by default for AoS-era shards and beyond, controllable by setting at top of provocation script. This means, difficulty of provoking a target on another target is based on the average provocation difficulty between them, with a -25.0 (lowest chance of success) and +25.0 (max skill check beyond which success is guaranteed and no more skill-gains are possible) window
 	Updated hunger settings of "predator" animal race from races.dfn from HUNGER=300,5 to HUNGER=3000,2 so they don't grow hungry and die from starvation so fast
+	Revamped broken backup feature to actually work (with additional error-checking and logging), and to include full world state; now backs up _everything_ inside /shared directory, plus /accounts, /books and /msgboards directories.
 
 01/05/2025 - Xuri
 	Fixed some issues that prevented NPCLISTS containing other NPCLISTS and/or weighted NPCLISTS from working correctly
