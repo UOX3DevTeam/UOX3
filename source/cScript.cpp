@@ -309,7 +309,7 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 
 	JS_SetGlobalObject( targContext, targObject );
 
-	JS_InitStandardClasses( targContext, targObject );
+	//JS_InitStandardClasses( targContext, targObject );
 	JS_DefineFunctions( targContext, targObject, my_functions );
 	targScript = JS_CompileFile( targContext, targObject, targFile.c_str() );
 	if( targScript == nullptr )
@@ -339,22 +339,19 @@ void cScript::Cleanup( void )
 }
 void cScript::CollectGarbage( void )
 {
-	//	if( JS_IsRunning( targContext ) == JS_FALSE )
-	//	{
 	Cleanup();
 	JS_LockGCThing( targContext, targObject );
-	//JS_AddRoot( targContext, &targObject );
-	//	}
 }
 cScript::~cScript()
 {
-	JS_GC( targContext );
+	//JS_GC( targContext );
 	if( targScript != nullptr )
 	{
 		JS_DestroyScript( targContext, targScript );
+		targScript = nullptr;
 	}
 	Cleanup();
-	JS_GC( targContext );
+	//JS_GC( targContext );
 	//	if( targContext != nullptr )
 	//		JS_DestroyContext( targContext );
 }

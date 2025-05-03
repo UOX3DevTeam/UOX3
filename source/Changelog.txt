@@ -1,4 +1,19 @@
 03/05/2025 - Xuri
+	Fixed an error on shutdown when running UOX3 in debug mode in VS due to CCommands constructor attempting to unnecessarily clear CommandMap, TargetMap and JSCommandMaps
+	Fixed an issue in Portuguese dictionary where a commented line was lacking a forward slash
+	Fixed some soft exceptions related to loading of dictionary files
+	Fixed soft exceptions related to checking file sizes of potentially non-existing worldfiles on startup
+	Fixed some soft exceptions related to loading of regions from DFNs and townregions from WSC
+	Fixed misordered datatype entries in dfnDataTypes for DFNTAG_DYEHAIR and DFNTAG_DEFENSECHANCE
+	Fixed double "GET" entry in strToDFNTag mapping. One of them should've been "GETUO"
+	Fixed strToDFNTag mapping error for "LOYALTY" DFN tag, which was being incorrectly mapped to DFNTAG_MAXLOYALTY
+	Added missing strToDFNTag entry for WILLTHIRST DFN tag
+	Removed unknown and unused DFN tag/mapping named SKILLVAR
+	Fixed misordered DFNTAG_SWINGSPEEDINCREASE entry in DFNTAGS enum, which caused tags following it to be associated with incorrect datatypes
+	Fixed some crash/slowdown issues with reloading of all JS scripts (console menu option 8), especially noticable in VS debug mode
+	Fixed an issue where shopkeepers would sometimes fail to recognize items they should want to buy from players due to section ID case sensitivity
+
+03/05/2025 - Xuri
 	Fixed an issue where creatures with a taming requirement of 0 could not be tamed (js/skill/taming.js)
 	Fixed a server crash related to attempts to tame non-NPC characters (js/skill/taming.js)
 	Young players will no longer see warnings about being attacked when non-hostile NPCs perform a routine target validation check
