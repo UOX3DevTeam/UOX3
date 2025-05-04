@@ -324,6 +324,8 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "fx2",			CCP_FX2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "fy2",			CCP_FY2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "fz",				CCP_FZ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "pathTargX",		CCP_PATHTARGX,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "pathTargY",		CCP_PATHTARGY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isonhorse",		CCP_ISONHORSE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isFlying",		CCP_ISFLYING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isGuarded",		CCP_ISGUARDED,		JSPROP_ENUMANDPERM, nullptr, nullptr },

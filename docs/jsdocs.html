@@ -10201,12 +10201,23 @@ var coldResist = pUser.Resist( 4 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void RunTo( object, maxSteps );</em></p>
-									<p><em>void RunTo( x, y, maxSteps );</em></p>
+									<p><em>void RunTo( object, maxSteps[, allowPartial, ignoreDoors] );</em></p>
+									<p><em>void RunTo( x, y, maxSteps[, allowPartial, ignoreDoors] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Makes the (NPC only) character run to a specific object/location, halting if it takes too many steps.</p>
+									<p>Makes the (NPC only) character run to a specific object/location, if a successful path can be calculated by pathfinding code.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Supported parameters:</p>
+									<ul>
+										<li><strong>object</strong> - Dynamic object to pathfind to</li>
+										<li><strong>x, y</strong> - Alternative to object, location to pathfind to</li>
+										<li><strong>maxSteps</strong> - Max steps to use in pathfinding calculation to find a valid path</li>
+										<li><strong>allowPartial</strong> - Optional, if true will allow partial pathfinding that will calculate a path near to desired location, if actual location is blocked</li>
+										<li><strong>ignoreDoors</strong> - Pathfinding will calculate a path as if doors are not there. Up to script/custom NPC AIs to open the doors to get them through and continue on their way (using onPathFindEnd, for instance)</li>
+									</ul>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -10549,16 +10560,27 @@ myNPC.TurnToward( myObject.x, myObject.y );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void WalkTo( object, maxSteps );</em></p>
-									<p><em>void WalkTo( x, y, maxSteps );</em></p>
+									<p><em>void WalkTo( object, maxSteps[, allowPartial, ignoreDoors] );</em></p>
+									<p><em>void WalkTo( x, y, maxSteps[, allowPartial, ignoreDoors] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Makes the (NPC only) character walk to a specific object/location, halting if it takes too many steps.</p>
+									<p>Makes the (NPC only) character walk to a specific object/location, if a successful path can be calculated by pathfinding code.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Supported parameters:</p>
+									<ul>
+										<li><strong>object</strong> - Dynamic object to pathfind to</li>
+										<li><strong>x, y</strong> - Alternative to object, location to pathfind to</li>
+										<li><strong>maxSteps</strong> - Max steps to use in pathfinding calculation to find a valid path</li>
+										<li><strong>allowPartial</strong> - Optional, if true will allow partial pathfinding that will calculate a path near to desired location, if actual location is blocked</li>
+										<li><strong>ignoreDoors</strong> - Pathfinding will calculate a path as if doors are not there. Up to script/custom NPC AIs to open the doors to get them through and continue on their way (using onPathFindEnd, for instance)</li>
+									</ul>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myNPC.WalkTo( pUser, 10 );</code></pre>
+									<pre><code class="language-javascript">myNPC.WalkTo( pUser, 20 );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -14115,25 +14137,6 @@ mySock.SetTimer( timer.SOCK_OBJDELAY, 3000 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_socket_openContainer"/>
-							<label for="spoiler_method_socket_openContainer">OpenContainer <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>void OpenContainer( iCont )</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Opens the specified container (iCont) for the specified socket</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">socket.OpenContainer( iCont );</code></pre>
-								</div>
-							</div>
-						</div>
-
-						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_socket_OpenContainer"/>
 							<label for="spoiler_method_socket_OpenContainer">OpenContainer <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -15130,6 +15133,14 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.ownerCount</span> <strong>(int, <em>0 - 255</em>)</strong><br>
 							Get the total number of owners a pet/follower has had (Read-Only)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.pathTargX</span> <strong>(int, <em>0 - 7168</em>)</strong><br>
+							Current NPC pathfinding target, X coordinate</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.pathTargY</span> <strong>(int, <em>0 - 4096</em>)</strong><br>
+							Current NPC pathfinding target, Y coordinate</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.petCount</span> <strong>(int, <em>0 - 65535</em>)</strong><br>

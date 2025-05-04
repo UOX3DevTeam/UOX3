@@ -352,7 +352,8 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 				{
 					bool newPath = false;
-					newPath = AdvancedPathfinding( c, c->GetPathTargX(), c->GetPathTargY(), ( c->GetRunning() > 0 ));
+					bool allowPartial = true; // Allow partial pathfinding, if it gets us closer
+					newPath = AdvancedPathfinding( c, c->GetPathTargX(), c->GetPathTargY(), ( c->GetRunning() > 0 ), allowPartial );
 					if( !newPath )
 					{
 						c->SetPathResult( 0 ); // partial success
@@ -793,7 +794,7 @@ void CMovement::GetBlockingStatics( SI16 x, SI16 y, std::vector<Tile_st> &xybloc
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a list of dynamic items that block character movement
 //o------------------------------------------------------------------------------------------------o
-auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceId ) -> void
+auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceId, bool ignoreDoors ) -> void
 {
 	if( xycount >= XYMAX ) // don't overflow
 		return;
@@ -818,8 +819,11 @@ auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblo
 							tile.tileId = tItem->GetId();
 							tile.altitude = tItem->GetZ();
 							tile.artInfo = &Map->SeekTile( tItem->GetId() );
-							xyblock.push_back( tile );
-							++xycount;
+							if( !ignoreDoors || !tile.CheckFlag( TF_DOOR ))
+							{
+								xyblock.push_back( tile );
+								++xycount;
+							}
 							if( xycount >= XYMAX ) // don't overflow
 							{
 								return;
@@ -1641,7 +1645,8 @@ void CMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 
 				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 				{
-					pathFound = AdvancedPathfinding( i, fx1, fy1, true );
+					bool allowPartial = false; // Don't allow partial pathfinding here - we need the NPC back in the box!
+					pathFound = AdvancedPathfinding( i, fx1, fy1, true, allowPartial );
 				}
 				else
 				{
@@ -1677,7 +1682,8 @@ void CMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 				i->SetNpcWander( WT_PATHFIND );
 				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 				{
-					pathFound = AdvancedPathfinding( i, fx1, fy1, true );
+					bool allowPartial = false; // Don't allow partial pathfinding here, we need the NPC back in the circle!
+					pathFound = AdvancedPathfinding( i, fx1, fy1, true, false );
 				}
 				else
 				{
@@ -2006,16 +2012,38 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 					oldTargX = mChar.GetOldTargLocX();
 					oldTargY = mChar.GetOldTargLocY();
 
-					if( !mChar.StillGotDirs() || (( oldTargX != kChar->GetX() || oldTargY != kChar->GetY() ) && RandomNum( 0, 10 ) >= 6 ))
+					// Calculate direction from NPC towards player
+					const UI08 directionToPlayer = Movement->Direction(mChar.GetX(), mChar.GetY(), kChar->GetX(), kChar->GetY());
+
+					// Get NPC's current direction
+					const UI08 npcDir = mChar.GetDir();
+
+					// Determine if NPC is already heading generally toward player (direct or adjacent directions)
+					const bool isHeadingTowardsPlayer = (npcDir == directionToPlayer ||
+						npcDir == (directionToPlayer + 1) % 8 ||
+						npcDir == (directionToPlayer + 7) % 8);
+
+					// Only recalculate path if out of steps to follow, or if player's position has updated and NPC is not
+					// already heading in that general direction
+					if( !mChar.StillGotDirs() || 
+						(( oldTargX != kChar->GetX() || oldTargY != kChar->GetY() ) && RandomNum( 0, 10 ) >= 6 &&
+							!isHeadingTowardsPlayer ))
 					{
 						if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 						{
-							if( !AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY(), canRun ))
+							mChar.FlushPath();
+
+							bool allowPartial = false; // Don't allow partial pathfinding; if follower cannot keep up, teleport them!
+							if( !AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY(), canRun, allowPartial ))
 							{
 								// If NPC is unable to follow owner, teleport to owner
 								if( mChar.GetOwnerObj() == kChar )
 								{
 									mChar.SetLocation( kChar );
+									mChar.FlushPath();
+									mChar.SetOldTargLocX( 0 );
+									mChar.SetOldTargLocY( 0 );
+									mChar.SetPathFail( 0 );
 								}
 								else
 								{
@@ -2038,9 +2066,20 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 						}
 					}
 
-					j = mChar.PopDirection();
-					Walking( nullptr, &mChar, j, 256 );
-					shouldRun = (( j&0x80 ) != 0 );
+					UI08 newDir = mChar.PopDirection();
+					UI08 baseNewDir = ( newDir & 0x7F );
+					UI08 baseOldDir = ( mChar.GetDir() & 0x7F );
+
+					// Check if direction is changing
+					if( baseOldDir != UNKNOWNDIR && baseOldDir != baseNewDir )
+					{
+						// Insert an extra push at the front of the queue,
+						// so this move will be triggered twice - requirement for NPC to turn
+						mChar.PushDirection( newDir, true );
+					}
+
+					shouldRun = (( newDir&0x80 ) != 0);
+					Walking( nullptr, &mChar, newDir, 256 );
 				}
 				// Has the Escortee reached the destination ??
 				if( !kChar->IsDead() && mChar.GetQuestDestRegion() == mChar.GetRegionNum() )
@@ -2140,7 +2179,8 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 						{
 							if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 							{
-								if( AdvancedPathfinding( &mChar, myx, myy, canRun ))
+								bool allowPartial = true; // Allow partial pathfinding, anything that helps NPC flee further!
+								if( AdvancedPathfinding( &mChar, myx, myy, canRun, allowPartial ))
 								{
 									// As long as pathfinding succeeds, avoid random wandering
 									wanderAimlessly = false;
@@ -2219,9 +2259,20 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 		case WT_PATHFIND:		// Pathfinding!!!!
 			if( mChar.StillGotDirs() )
 			{
-				j = mChar.PopDirection();
-				shouldRun = (( j&0x80 ) != 0);
-				Walking( nullptr, &mChar, j, 256 );
+				UI08 newDir = mChar.PopDirection();
+				UI08 baseNewDir = ( newDir & 0x7F );
+				UI08 baseOldDir = ( mChar.GetDir() & 0x7F );
+
+				// Check if direction is changing
+				if( baseOldDir != UNKNOWNDIR && baseOldDir != baseNewDir )
+				{
+					// Insert an extra push at the front of the queue,
+					// so this move will be triggered twice - requirement for NPC to turn
+					mChar.PushDirection( newDir, true );
+				}
+
+				shouldRun = (( newDir&0x80 ) != 0);
+				Walking( nullptr, &mChar, newDir, 256 );
 			}
 			else
 			{
@@ -2381,9 +2432,26 @@ void CMovement::NpcMovement( CChar& mChar )
 						targY = l->GetY();
 					}
 
-					if( !mChar.StillGotDirs() || (( oldTargX != targX || oldTargY != targY ) && RandomNum( 0, 10 ) >= 6 ))
+					// Calculate direction from NPC towards player
+					const UI08 directionToTarget = Movement->Direction( mChar.GetX(), mChar.GetY(), targX, targY );
+
+					// Get NPC's current direction
+					const UI08 npcDir = mChar.GetDir();
+
+					// Determine if NPC is already heading generally toward player (direct or adjacent directions)
+					const bool isHeadingTowardsTarget = ( npcDir == directionToTarget ||
+						npcDir == ( directionToTarget + 1 ) % 8 ||
+						npcDir == ( directionToTarget + 7 ) % 8 );
+
+					// Only recalculate path if out of steps to follow, or if target's position has updated and NPC is not
+					// already heading in that general direction
+					if( !mChar.StillGotDirs() || 
+						(( oldTargX != targX || oldTargY != targY ) && RandomNum( 0, 10 ) >= 6 &&
+							!isHeadingTowardsTarget ))
 					{
-						if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY(), canRun ))
+						bool waterWalk = cwmWorldState->creatures[mChar.GetId()].IsWater();
+						bool allowPartial = waterWalk ? true : false; // Allow partial here, since we try a "pseudo partial" further down anyway!
+						if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY(), canRun, allowPartial ))
 						{
 							mChar.SetPathFail( mChar.GetPathFail() + 1 );
 
@@ -2395,7 +2463,7 @@ void CMovement::NpcMovement( CChar& mChar )
 								SI16 rndTargX = l->GetX() + rndNum1;
 								SI16 rndTargY = l->GetY() + rndNum2;
 
-								if( AdvancedPathfinding( &mChar, rndTargX, rndTargY, canRun ))
+								if( AdvancedPathfinding( &mChar, rndTargX, rndTargY, canRun, allowPartial ))
 								{
 									mChar.SetPathFail( 0 );
 									mChar.SetOldTargLocX( rndTargX );
@@ -2470,9 +2538,21 @@ void CMovement::NpcMovement( CChar& mChar )
 				{
 					PathFind( &mChar, l->GetX(), l->GetY(), canRun ); // Non-advanced pathfinding
 				}
-				const UI08 j	= mChar.PopDirection();
-				shouldRun		= (( j&0x80 ) != 0);
-				Walking( nullptr, &mChar, j, 256 );
+
+				UI08 newDir = mChar.PopDirection();
+				UI08 baseNewDir = ( newDir & 0x7F );
+				UI08 baseOldDir = ( mChar.GetDir() & 0x7F );
+
+				// Check if direction is changing
+				if( baseOldDir != UNKNOWNDIR && baseOldDir != baseNewDir )
+				{
+					// Insert an extra push at the front of the queue,
+					// so this move will be triggered twice - requirement for NPC to turn
+					mChar.PushDirection( newDir, true );
+				}
+
+				shouldRun = (( newDir&0x80 ) != 0);
+				Walking( nullptr, &mChar, newDir, 256 );
 			}
 			else
 			{
@@ -2495,7 +2575,7 @@ void CMovement::NpcMovement( CChar& mChar )
 				}
 				else
 				{
-					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() / 1.5 )); // Increase follow speed so NPC pets/escorts can keep up with players
+					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() / 1.5f )); // Increase follow speed so NPC pets/escorts can keep up with players
 				}
 			}
 			else if( npcWanderType != WT_FLEE && npcWanderType != WT_SCARED )
@@ -2540,7 +2620,9 @@ void CMovement::NpcMovement( CChar& mChar )
 	else
 	{
 		// Play some idle/fidgeting animation instead - if character is not busy doing something else
-		if( !mChar.IsAtWar() && !ValidateObject( mChar.GetTarg() ) && mChar.GetNpcWander() != WT_FLEE && mChar.GetNpcWander() != WT_SCARED && mChar.GetNpcWander() != WT_FROZEN )
+		auto npcWander = mChar.GetNpcWander();
+		if( !mChar.IsAtWar() && !ValidateObject( mChar.GetTarg() ) && npcWander != WT_FLEE && npcWander != WT_SCARED && npcWander != WT_FROZEN && npcWander != WT_PATHFIND &&
+			( npcWander != WT_FOLLOW || ( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) > static_cast<UI32>( 3000 )))
 		{
 			if( mChar.GetTimer( tNPC_IDLEANIMTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 			{
@@ -2891,7 +2973,7 @@ UI08 CMovement::Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy )
 //|						new z - value        if not blocked
 //|						illegal_z == -128, if walk is blocked
 //o------------------------------------------------------------------------------------------------o
-SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz, [[maybe_unused]] bool justask, bool waterWalk )
+SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz, [[maybe_unused]] bool justask, bool waterWalk, bool ignoreDoors )
 {
 	if( !ValidateObject( c ))
 		return ILLEGAL_Z;
@@ -2906,7 +2988,7 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 
 	std::vector<Tile_st> xyblock;
 	GetBlockingStatics( x, y, xyblock, xycount, worldNumber );
-	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber, instanceId );
+	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber, instanceId, ignoreDoors );
 
 	auto map	= Map->SeekMap( x, y, c->WorldNumber() );
 
@@ -3152,7 +3234,7 @@ bool operator > ( const NodeFCost_st& x, const NodeFCost_st& y )
 //o------------------------------------------------------------------------------------------------o
 bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI16 curY, SI08 curZ,
 							UI32 parentSer, std::map<UI32, PfNode_st>& openList, 
-							std::map<UI32, UI32>& closedList, std::deque<NodeFCost_st>& fCostList )
+							std::map<UI32, UI32>& closedList, std::deque<NodeFCost_st>& fCostList, bool ignoreDoors )
 {
 	std::map<UI32, bool> blockList;
 	blockList.clear();
@@ -3174,11 +3256,11 @@ bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 
 			if( amphibianWalk || !waterWalk )
 			{
-				newZ = CalcWalk( mChar, checkX, checkY, curX, curY, curZ, false );
+				newZ = CalcWalk( mChar, checkX, checkY, curX, curY, curZ, false, false, ignoreDoors );
 			}
 			if( waterWalk || ( amphibianWalk && newZ == ILLEGAL_Z ))
 			{
-				newZ = CalcWalk( mChar, checkX, checkY, curX, curY, curZ, false, true );
+				newZ = CalcWalk( mChar, checkX, checkY, curX, curY, curZ, false, true, ignoreDoors );
 			}
 			if( ILLEGAL_Z == newZ )
 			{
@@ -3255,7 +3337,18 @@ bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 			}
 			else if( closedList.find( locSer ) == closedList.end() )
 			{
-				UI16 hCost = 10 * ( abs( checkX - targX) + abs( checkY - targY ));
+				// (Old) Manhattan Distance Heuristic
+				// UI16 hCost = 10 * ( abs( checkX - targX) + abs( checkY - targY ));
+
+				// (New) Octile Distance Heuristic
+				uint16_t dx = std::abs( checkX - targX );
+				uint16_t dy = std::abs( checkY - targY );
+
+				// Let D=10 (orth cost), D2=14 (diag cost)
+				uint16_t D  = 10;
+				uint16_t D2 = 14;
+
+				UI16 hCost = D*( dx + dy ) + ( D2 - 2 * D ) * std::min( dx, dy );
 				UI16 fCost = gCost + hCost;
 
 				openList[locSer] = PfNode_st( hCost, gCost, parentSer, newZ );
@@ -3273,7 +3366,7 @@ bool CMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 //|	Purpose		-	Handle the advanced variant of NPC pathfinding
 //|					Enabled/Disabled throuugh UOX.INI setting - ADVANCEDPATHFINDING=0/1
 //o------------------------------------------------------------------------------------------------o
-bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun, UI16 maxSteps )
+bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun, bool allowPartial, UI16 maxSteps, bool ignoreDoors )
 {
 	UI16 startX			= mChar->GetX();
 	UI16 startY			= mChar->GetY();
@@ -3300,7 +3393,7 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 			}
 			else
 			{
-				maxSteps = 50;
+				maxSteps = 75;
 			}
 		}
 		else
@@ -3343,6 +3436,7 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	openList[parentSer]		= PfNode_st();
 	openList[parentSer].z	= curZ;
 	fCostList.push_back( NodeFCost_st( 0, parentSer ));
+
 	while(( curX != targX || curY != targY ) && loopCtr < maxSteps )
 	{
 		parentSer = fCostList[0].xySer;
@@ -3354,8 +3448,9 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		openList.erase( openList.find( parentSer ));
 		fCostList.pop_front();
 
-		if( PFGrabNodes( mChar, targX, targY, curX, curY, curZ, parentSer, openList, closedList, fCostList ))
+		if( PFGrabNodes( mChar, targX, targY, curX, curY, curZ, parentSer, openList, closedList, fCostList, ignoreDoors ))
 		{
+			std::vector<UI08> dirsToPush;
 			while( parentSer != 0 )
 			{
 				UI08 newDir = Direction( curX, curY, targX, targY );
@@ -3365,11 +3460,7 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 					newDir |= 0x80;
 				}
 
-				if( oldDir != UNKNOWNDIR && oldDir != newDir )
-				{
-					mChar->PushDirection( newDir, true );	// NPC's need to "walk" twice when turning
-				}
-				mChar->PushDirection( newDir, true );
+				dirsToPush.push_back( newDir );
 
 				oldDir		= newDir;
 				targX		= curX;
@@ -3377,6 +3468,20 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 				parentSer 	= closedList[parentSer];
 				curX		= static_cast<UI16>( parentSer >> 16 );
 				curY		= static_cast<UI16>( parentSer % 65536 );
+			}
+
+			UI08 origDir = mChar->GetDir();
+
+			// Iterate over list of directions in reverse
+			for( int i = static_cast<int>( dirsToPush.size() ) - 1; i >= 0; i-- )
+			{
+				UI08 newDir = dirsToPush[i];
+
+				// Push direction
+				mChar->PushDirection( newDir, false );
+
+				// Update
+				origDir = newDir;
 			}
 			break;
 		}
@@ -3386,20 +3491,133 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		}
 		++loopCtr;
 	}
-	if( loopCtr == maxSteps )
+	if( loopCtr == maxSteps || ( loopCtr > 0 && closedList.size() > 0 && mChar->GetX() != targX && mChar->GetY() != targY ))
 	{
+		// Failed to find full path to target location, max step limit reached
 #if defined( UOX_DEBUG_MODE )
 		std::string charName = GetNpcDictName( mChar, nullptr, NRS_SYSTEM );
-		Console.Warning( oldstrutil::format( "AdvancedPathfinding: NPC (%s at %i %i %i %i) unable to find a path, max steps limit (%i) reached, aborting.\n",
-			charName.c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps ));
+		Console.Warning( oldstrutil::format( "AdvancedPathfinding: NPC (%s at %i %i %i %i) unable to find a complete path, max steps limit (%i) reached.\n",
+			charName.c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps ) );
 #endif
-		if( !cwmWorldState->creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20 )
+
+		// Try to find partial path that takes NPC within 1 tile of target location
+		if( allowPartial )
 		{
-			IgnoreAndEvadeTarget( mChar );
+			UI32 startKey = startY + ( startX << 16 );
+			UI32 bestCandidate = 0;
+			UI16 bestCandidateDist = 0xFFFF;
+
+			// Iterate through ist of fully evaluated tiles to find reachable tile near target
+			for( auto it = closedList.begin(); it != closedList.end(); ++it )
+			{
+				UI32 candidateKey = it->first;
+
+				// Skip the starting node, doesn't contribute to movement
+				if( candidateKey == startKey )
+					continue;
+
+				UI16 candX = static_cast<UI16>( candidateKey >> 16 );
+				UI16 candY = static_cast<UI16>( candidateKey % 65536 );
+
+				UI16 dx = std::abs( static_cast<SI16>( candX ) - static_cast<SI16>( targX ));
+				UI16 dy = std::abs( static_cast<SI16>( candY ) - static_cast<SI16>( targY ));
+
+				// Manhattan + Step Cost Weight
+				UI16 stepCost = closedList.size() % 5; // Slight weight to favor lower steps
+				UI16 d = ( dx + dy ) + stepCost;
+
+				if( d < bestCandidateDist )
+				{
+					bestCandidateDist = d;
+					bestCandidate = candidateKey;
+				}
+			}
+
+			if( bestCandidate != 0 )
+			{
+				std::vector<UI32> pathChain;
+				UI32 curCandidate = bestCandidate;
+
+				while( curCandidate != 0 && closedList.find(curCandidate) != closedList.end() )
+				{
+					pathChain.push_back( curCandidate );
+
+					// Ensure we are not looping infinitely
+					if( closedList[curCandidate] == curCandidate )
+						break;
+
+					curCandidate = closedList[curCandidate];
+				}
+
+				std::reverse( pathChain.begin(), pathChain.end() );
+
+				if( pathChain.size() < 2 )
+				{
+#if defined( UOX_DEBUG_MODE )
+					Console.Warning( "AdvancedPathfinding: Partial pathfinding failed - best candidate path too short.\n" );
+#endif
+					return false;
+				}
+
+				// Move NPC along path
+				UI08 oldDir = UNKNOWNDIR;
+				for( size_t i = 0; i < pathChain.size() - 1; i++ )
+				{
+					UI32 fromKey = pathChain[i];
+					UI32 toKey = pathChain[i+1];
+
+					UI16 fromX = static_cast<UI16>( fromKey >> 16 );
+					UI16 fromY = static_cast<UI16>( fromKey % 65536 );
+					UI16 toX = static_cast<UI16>( toKey >> 16 );
+					UI16 toY = static_cast<UI16>( toKey % 65536 );
+					//Console.Warning( oldstrutil::format( "AdvancedPathfinding: Going to %u, %u.\n", toX, toY ));
+
+					UI08 newDir = Direction( fromX, fromY, toX, toY );
+
+					if( willRun )
+					{
+						newDir |= 0x80;
+					}
+
+					mChar->PushDirection( newDir );
+					oldDir = newDir;
+
+					// **NEW: Stop if we're adjacent to the blocked target**
+					if( std::abs(( int )toX - ( int )targX ) <= 1 && std::abs(( int )toY - ( int )targY ) <= 1 )
+					{
+						break;
+					}
+				}
+
+				// Finalize movement
+				mChar->SetPathResult( 0 ); // Partial pathfinding success
+				mChar->SetTimer( tNPC_MOVETIME, 0 );
+#if defined( UOX_DEBUG_MODE )
+				Console.Warning( "AdvancedPathfinding: Partial pathfinding success - adjacent candidate near target location found.\n" );
+#endif
+				return true;
+			}
+			else
+			{
+				// 6) **No valid adjacent tile found; fail pathfinding**
+#if defined( UOX_DEBUG_MODE )
+				Console.Warning( "AdvancedPathfinding: Partial pathfinding failure - No valid adjacent candidate near target location, aborting.\n" );
+#endif
+				mChar->SetPathResult( -1 );
+				return false;
+			}
+			EVENT_TIMER_NOW( mytimer, "Time when loopCtr == maxSteps", 1 );
 		}
-		mChar->SetPathResult( -1 ); // Pathfinding failed
-		EVENT_TIMER_NOW( mytimer, Time when loopCtr == maxSteps, 1 );
-		return false;
+		else
+		{
+			if( !cwmWorldState->creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20 )
+			{
+				IgnoreAndEvadeTarget( mChar );
+			}
+			mChar->SetPathResult( -1 ); // Pathfinding failed
+			EVENT_TIMER_NOW( mytimer, Time when loopCtr == maxSteps, 1 );
+			return false;
+		}
 	}
 	else if( loopCtr == 0 && GetDist( mChar->GetLocation(), Point3_st( targX, targY, curZ )) > 1 )
 	{
@@ -3411,7 +3629,7 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 			IgnoreAndEvadeTarget( mChar );
 		}
 		mChar->SetPathResult( -1 ); // Pathfinding failed
-		EVENT_TIMER_NOW( mytimer, Time when loopCtr == 0 and distance > 1, 1 );
+		EVENT_TIMER_NOW( mytimer, "Time when loopCtr == 0 and distance > 1", 1 );
 		return false;
 	}
 	else if( mChar->GetX() == startX && mChar->GetY() == startY && GetDist( mChar->GetLocation(), Point3_st( targX, targY, curZ )) > 1 )
@@ -3422,7 +3640,7 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 			IgnoreAndEvadeTarget( mChar );
 		}
 		mChar->SetPathResult( -1 ); // Pathfinding failed
-		EVENT_TIMER_NOW( mytimer, Time when NPC never moved, 1 );
+		EVENT_TIMER_NOW( mytimer, "Time when NPC never moved", 1 );
 
 		return false;
 	}
@@ -3438,9 +3656,10 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		else
 		{
 			mChar->SetPathResult( 1 ); // Pathfinding success
+			mChar->SetTimer( tNPC_MOVETIME, 0 );
 		}
 	}
-	EVENT_TIMER_NOW( mytimer, Time when total pathfinding used, 1 );
+	EVENT_TIMER_NOW( mytimer, "Time when total pathfinding used", 1 );
 	return true;
 }
 
@@ -3524,7 +3743,8 @@ auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
 				mChar->SetOldNpcWander( mChar->GetNpcWander() );
 			}
 			mChar->SetNpcWander( WT_PATHFIND );
-			[[maybe_unused]] bool retVal = AdvancedPathfinding( mChar, evadeTargX, evadeTargY, true, 20 );
+			bool allowPartial = true; // Sure, let's allow partial here
+			[[maybe_unused]] bool retVal = AdvancedPathfinding( mChar, evadeTargX, evadeTargY, true, allowPartial, 20 );
 		}
 
 		if( mChar->GetAttacker() == mTarget )
@@ -3537,5 +3757,6 @@ auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
 			}
 		}
 		mChar->SetTarg( nullptr );
+		mChar->SetWar( false );
 	}
 }
