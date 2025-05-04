@@ -1,3 +1,14 @@
+// Base animals with shared DFN tags
+[base_animals]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+}
+
+//------------------------------------------------------------------------------------------------//
+
 [brownbear]
 {
 NAME=#//a bear
@@ -916,4 +927,52 @@ RACE=9
 CONTROLSLOTS=1
 NPCAI=12
 ORIGIN=ml
+}
+
+//crane - Base NPC with shared DFN tags
+[base_crane]
+{
+GET=base_animals
+NAME=#//crane
+ID=0x0fe
+ORIGIN=se
+}
+
+[crane]
+{
+GETUO=crane_se
+GETT2A=crane_se
+GETUOR=crane_se
+GETTD=crane_se
+GETLBR=crane_se
+GETAOS=crane_se
+GETSE=crane_se
+GETML=crane_se
+GETSA=crane_se
+GETHS=crane_se
+GETTOL=crane_se
+}
+
+//gaman - Base NPC with shared DFN tags
+[base_gaman]
+{
+GET=base_animals
+NAME=#//gaman
+ID=0x0f8
+ORIGIN=se
+}
+
+[gaman]
+{
+GETUO=gaman_se
+GETT2A=gaman_se
+GETUOR=gaman_se
+GETTD=gaman_se
+GETLBR=gaman_se
+GETAOS=gaman_se
+GETSE=gaman_se
+GETML=gaman_se
+GETSA=gaman_se
+GETHS=gaman_se
+GETTOL=gaman_se
 }

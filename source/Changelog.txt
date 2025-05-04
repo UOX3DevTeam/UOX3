@@ -1,3 +1,28 @@
+03/05/2025 - Xuri
+	Fixed an issue where creatures with a taming requirement of 0 could not be tamed (js/skill/taming.js)
+	Fixed a server crash related to attempts to tame non-NPC characters (js/skill/taming.js)
+	Young players will no longer see warnings about being attacked when non-hostile NPCs perform a routine target validation check
+	Playing an instrument will now store it as the player's last played instrument (js/item/musicianship.js)
+	Bard-skills will now always use the last instrument a player played, if any (js/skill/provocation.js/enticement.js/peacemaking.js)
+	Added Line-of-Sight checks to Bard-skills (js/skill/provocation.js/enticement.js/peacemaking.js), though this can be disabled via setting at top of each script
+	Provocation now uses player's provocation skillcap value as max skill check for LBR-era shards and below
+	Provocation is now difficulty-based by default for AoS-era shards and beyond, controllable by setting at top of provocation script. This means, difficulty of provoking a target on another target is based on the average provocation difficulty between them, with a -25.0 (lowest chance of success) and +25.0 (max skill check beyond which success is guaranteed and no more skill-gains are possible) window
+	Updated hunger settings of "predator" animal race from races.dfn from HUNGER=300,5 to HUNGER=3000,2 so they don't grow hungry and die from starvation so fast
+	Revamped broken backup feature to actually work (with additional error-checking and logging), and to include full world state; now backs up _everything_ inside /shared directory, plus /accounts, /books and /msgboards directories.
+
+01/05/2025 - Xuri
+	Fixed some issues that prevented NPCLISTS containing other NPCLISTS and/or weighted NPCLISTS from working correctly
+	Updated spawn regions and NPCLISTS used for Yew/Cove orc forts to provide a better mix of weak/strong orcs, and fewer ettins
+	Fixed an issue where Yew/Skara brigand camp used a duplicate spawnregion ID, causing no NPCs to spawn
+	Added humanoids_t2a.dfn, with T2A-specific definitions for orcs, ratmen and lizardmen, with some stat adjustments
+	Updated NPC definitions for orcs, ratmen and lizardmen with placeholder GET tags for different eras, pointing to nearest available era definition
+	Updated NPC definitions for [kappa], [yomotsuelder], [yomotsupriest] and [yomotsuwarrior] with placeholder GET tags for different eras, all pointing to SE definition for now
+	Updated NPC definitions for [yamadon], [rajiu], [bakekitsune] with placeholder GET tags for different eras, all pointing to SE definition for now
+
+30/04/2025 - Dragon Slayer
+	Fixed: Dropping gold on NPCs flagged as guildmasters or BOD handlers will now correctly allow skill training unless the player is explicitly attempting to join a guild or turn in a BOD.
+	Fixed issue where pumpkins.js and provocation.js scripts tried to look up "YoungPlayerStatus" server setting instead of "YoungPlayerSystem"
+
 29/04/2025 - Xuri
 	Revamped 'wholist GM command entirely in JS, now comes with filters for names, online/offline status, sorting by name or last online date, quick-buttons to tweak/teleport/inspect, etc. Updated syntax:
 		'wholist [on]
@@ -16,11 +41,12 @@
 	Updated JS Docs with details about onBoatTurn JS event, .GetTiller() method and .lastOn/.lastOnSecs properties
 	Added some console output with details about time taken for each regionspawn cycle
 	Added some new tiledata override entries for some tiles (stairs/platforms) missing NoShoot flag in some older clients (dfndata/maps/tiles.dfn)
-	Fixes for updated wholist menu crashing under certain circumstances using regular UO client
+	Fixes for updated wholist/spawnadmin menu crashing under certain circumstances using regular UO client
 	Updated logging of CPCharAndStartLoc packet to account for both old and new version of packet
 	Reloading Spawn Regions via 'reloadspawnregions JS command will now do a full reload from the DFN files (previously needed manual DFN reload before spawn region reload)
 	Reloading DFNs via 'reloaddfns JS command will now also reload creatures.dfn, titles.dfn, location.dfn
 	Reloading ALL via 'reloadall JS command will now also reload teleport.scp, creatures.dfn, titles.dfn, location.dfn
+
 
 23/04/2025 - Xuri
 	Fixed an issue where onUseUnchecked JS event in envoked scripts (via object ID or type) would never trigger because hard-coded checks would run before envoking script
@@ -109,6 +135,9 @@
 	Added new Getters/Setters for CRace class to retrieve ID of a specific Race object
 	Updated JS property .id for Race JS Object to return new race ID instead of iterating through list of races to compare race object and return index
 	Reloading DFNs now also reloads Races
+	
+22/03/2025 - Dragon Slayer
+	Added - lesser hiryu mount, lady of the snow, fan dancer, oni, crane, gaman, revenant lion from UO SE.
 
 15/03/2025 - Dragon Slayer
 	Fixed an issue where timestamps for system timers could be set in the past due to float-to-UI32 casting precision loss. ( Thanks Xuri )

@@ -258,7 +258,15 @@ auto CCharStuff::NpcListLookup( const std::string &npclist ) -> std::string
 		}
 
 		auto npcSection = ( csecs.size() > 1 ? csecs[1] : csecs[0] );
-		npcListVector.emplace_back( npcSection, sectionWeight );
+		auto npcData = npcList->GrabData();
+		if( !npcData.empty() )
+		{
+			npcListVector.emplace_back( npcSection + "=" + npcData, sectionWeight );
+		}
+		else
+		{
+			npcListVector.emplace_back( npcSection, sectionWeight );
+		}
 	}
 
 	auto chosenNpcSection = ChooseNpcToCreate( npcListVector );
@@ -269,7 +277,7 @@ auto CCharStuff::NpcListLookup( const std::string &npclist ) -> std::string
 	if( oldstrutil::upper( csecs[0] ) == "NPCLIST" )
 	{
 		// Chosen entry contained another NPCLIST! Let's dive back into it...
-		chosenNpcSection = NpcListLookup( chosenNpcSection );
+		chosenNpcSection = NpcListLookup( csecs[1] );
 	}
 
 	return chosenNpcSection;
@@ -308,7 +316,15 @@ auto CCharStuff::CreateRandomNPC( const std::string &npclist ) -> CChar *
 		}
 
 		auto npcSection = ( csecs.size() > 1 ? csecs[1] : csecs[0] );
-		npcListVector.emplace_back( npcSection, sectionWeight );
+		auto npcData = npcList->GrabData();
+		if( !npcData.empty() )
+		{
+			npcListVector.emplace_back( npcSection + "=" + npcData, sectionWeight );
+		}
+		else
+		{
+			npcListVector.emplace_back( npcSection, sectionWeight );
+		}
 	}
 
 	auto chosenNpcSection = ChooseNpcToCreate( npcListVector );
@@ -320,7 +336,7 @@ auto CCharStuff::CreateRandomNPC( const std::string &npclist ) -> CChar *
 	if( oldstrutil::upper( csecs[0] ) == "NPCLIST" )
 	{
 		// Chosen entry contained another NPCLIST! Let's dive back into it...
-		cCreated = CreateRandomNPC( npcList->GrabData() );
+		cCreated = CreateRandomNPC( csecs[1] );
 	}
 	else
 	{
