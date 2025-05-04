@@ -21,15 +21,25 @@ CMapHandler *MapRegion;
 //o------------------------------------------------------------------------------------------------o
 SI32 FileSize( std::string filename )
 {
+	std::error_code ec;
 	SI32 retVal = 0;
 
-	try
-	{
-		retVal = static_cast<SI32>( std::filesystem::file_size( filename ));
-	}
-	catch( ... )
+	std::uintmax_t size = std::filesystem::file_size( filename, ec );
+	if( ec )
 	{
 		retVal = 0;
+	}
+	else
+	{
+		constexpr std::uintmax_t max_si32 = static_cast<std::uintmax_t>( std::numeric_limits<SI32>::max() );
+		if( size > max_si32 )
+		{
+			retVal = 0;
+		}
+		else
+		{
+			retVal = static_cast<SI32>( size );
+		}
 	}
 
 	return retVal;
