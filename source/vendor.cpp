@@ -535,7 +535,7 @@ bool CPISellItem::Handle( void )
 				{
 					if( ValidateObject( k ))
 					{
-						if(( k->GetId() == j->GetId() || k->GetSectionId() == j->GetSectionId() ) && j->GetType() == k->GetType() )
+						if(( k->GetId() == j->GetId() || oldstrutil::lower( k->GetSectionId() ) == oldstrutil::lower( j->GetSectionId() )) && j->GetType() == k->GetType() )
 						{
 							if( j->GetId() != 0x14f0 || ( j->GetTempVar( CITV_MOREX ) == k->GetTempVar( CITV_MOREX )))
 							{
