@@ -549,6 +549,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 			else
 			{
 				DisplayLoadingWorldTips( pSocket );
+				pSocket.currentChar.ExecuteCommand( "save" );
 				pSocket.currentChar.StartTimer( 100, 1, true );
 			}
 			break;

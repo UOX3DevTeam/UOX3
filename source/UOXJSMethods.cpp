@@ -7513,8 +7513,8 @@ JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_WalkTo()
-//|	Prototype	-	void WalkTo( object, maxsteps )
-//|					void WalkTo( x, y, maxsteps )
+//|	Prototype	-	void WalkTo( object, maxsteps, allowPartial, ignoreDoors )
+//|					void WalkTo( x, y, maxsteps, allowPartial, ignoreDoors )
 //|	Date		-	06 Sep 2003
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Begins pathfinding for a character, making them walk to target location,
@@ -7522,9 +7522,9 @@ JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
-	if( argc != 2 && argc != 3 )
+	if( argc < 2 || argc > 5 )
 	{
-		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 or 3)" );
+		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 to 5)" );
 		return JS_FALSE;
 	}
 	CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
@@ -7535,7 +7535,9 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 	}
 	SI16 gx			= 0;
 	SI16 gy			= 0;
-	UI08 maxSteps	= 0;
+	UI16 maxSteps	= 0;
+	bool allowPartial = false;
+	bool ignoreDoors = false;
 	switch( argc )
 	{
 		case 2:
@@ -7565,15 +7567,25 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 					ScriptError( cx, "Invalid class of object" );
 					return JS_FALSE;
 				}
-				maxSteps = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+				maxSteps = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 				break;
 			}
 			return JS_FALSE;
 			// 2 Parameters, x + y
 		case 3:
+		case 4:
+		case 5:
 			gx			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 			gy			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-			maxSteps	= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+			if( argc >= 4 )
+			{
+				allowPartial = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
+			}
+			if( argc == 5 )
+			{
+				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
+			}
 			break;
 		default:
 			ScriptError( cx, "Invalid number of arguments passed to WalkTo, needs either 2 or 3" );
@@ -7602,7 +7614,7 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 	cMove->SetNpcWander( WT_PATHFIND );
 	if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 	{
-		Movement->AdvancedPathfinding( cMove, gx, gy, false, maxSteps );
+		Movement->AdvancedPathfinding( cMove, gx, gy, false, allowPartial, maxSteps, ignoreDoors );
 	}
 	else
 	{
@@ -7625,8 +7637,8 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_RunTo()
-//|	Prototype	-	void RunTo( object, maxsteps )
-//|					void RunTo( x, y, maxsteps )
+//|	Prototype	-	void RunTo( object, maxsteps, allowPartial, ignoreDoors )
+//|					void RunTo( x, y, maxsteps, allowPartial, ignoreDoors )
 //|	Date		-	06 Sep 2003
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Begins pathfinding for a character, making them run to target location,
@@ -7634,9 +7646,9 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
-	if( argc != 2 && argc != 3 )
+	if( argc < 2 || argc > 5 )
 	{
-		ScriptError( cx, "RunTo: Invalid number of arguments (takes 2 or 3)" );
+		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 to 5)" );
 		return JS_FALSE;
 	}
 	CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
@@ -7647,7 +7659,9 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 	}
 	UI16 gx			= 0;
 	UI16 gy			= 0;
-	UI08 maxSteps	= 0;
+	UI16 maxSteps	= 0;
+	bool allowPartial = false;
+	bool ignoreDoors = false;
 	switch( argc )
 	{
 		case 2:
@@ -7677,16 +7691,26 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 					ScriptError( cx, "Invalid class of object" );
 					return JS_FALSE;
 				}
-				maxSteps = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+				maxSteps = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 				break;
 			}
 			return JS_FALSE;
 
 			// 2 Parameters, x + y
 		case 3:
+		case 4:
+		case 5:
 			gx			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 			gy			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-			maxSteps	= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+			if( argc >= 4 )
+			{
+				allowPartial = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
+			}
+			if( argc == 5 )
+			{
+				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
+			}
 			break;
 		default:
 			ScriptError( cx, "Invalid number of arguments passed to RunTo, needs either 2 or 3" );
@@ -7705,7 +7729,7 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 
 	cMove->FlushPath();
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( oldstrutil::format( "RunTo: Moving character %i to (%i,%i) with a maximum of %i steps", cMove->GetSerial(), gx, gy, maxSteps ));
+	Console.Print( oldstrutil::format( "RunTo: Moving character %i to (%i,%i) with a maximum of %i steps\n", cMove->GetSerial(), gx, gy, maxSteps ));
 #endif
 	if( cMove->GetNpcWander() != WT_PATHFIND )
 	{
@@ -7716,7 +7740,7 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 
 	if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 	{
-		Movement->AdvancedPathfinding( cMove, gx, gy, true );
+		Movement->AdvancedPathfinding( cMove, gx, gy, true, allowPartial, maxSteps, ignoreDoors );
 	}
 	else
 	{

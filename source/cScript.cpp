@@ -338,22 +338,19 @@ void cScript::Cleanup( void )
 }
 void cScript::CollectGarbage( void )
 {
-	//	if( JS_IsRunning( targContext ) == JS_FALSE )
-	//	{
 	Cleanup();
 	JS_LockGCThing( targContext, targObject );
-	//JS_AddRoot( targContext, &targObject );
-	//	}
 }
 cScript::~cScript()
 {
-	JS_GC( targContext );
+	//JS_GC( targContext );
 	if( targScript != nullptr )
 	{
 		JS_DestroyScript( targContext, targScript );
+		targScript = nullptr;
 	}
 	Cleanup();
-	JS_GC( targContext );
+	//JS_GC( targContext );
 	//	if( targContext != nullptr )
 	//		JS_DestroyContext( targContext );
 }

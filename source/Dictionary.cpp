@@ -198,11 +198,11 @@ auto CDictionary::ParseFile( const std::string &dictionaryfile ) -> bool
 								state = search_t::endsection;
 								rValue = true;
 							}
+							break;
 						}
-						[[fallthrough]];
 						case static_cast<int>( search_t::endsection ):
 						{
-							if( line != "}" )
+							if( line != "}" && line != "EOF" )
 							{
 								auto [key, value] = oldstrutil::split( line, "=" );
 								try

@@ -257,13 +257,27 @@ function DoWipe( socket, ourObj )
 	// Perform the wipe
 	Console.PrintSectionBegin();
 	Console.Print( mChar.name + " has initiated a wipe.\n" );
-	socket.SysMessage( GetDictionaryEntry( 8117, socket.language )); // Wiping..
-	var counter 	= IterateOver( "ITEM" );
-	var counterStr	= counter.toString();
+	socket.SysMessage( GetDictionaryEntry( 8117, socket.language )); // Wiping items..
+	socket.toCheckType = 1; // items
+	var itemCounter 	= 0;
+	itemCounter += IterateOver( "ITEM", socket );
+	var itemCounterStr	= itemCounter.toString();
 
 	var tempMsg = GetDictionaryEntry( 8118, socket.language ); // Wiped %i items
-	socket.SysMessage( tempMsg.replace( /%s/gi, counterStr ));
-	Console.Print( "Wipe deleted " + counterStr + " items.\n" );
+	socket.SysMessage( tempMsg.replace( /%i/gi, itemCounterStr ));
+	Console.Print( "Wipe deleted " + itemCounterStr + " items " );
+
+	// Now wipe NPCs
+	socket.SysMessage( GetDictionaryEntry( 8251, socket.language )); // Wiping npcs..
+	socket.toCheckType = 2; // NPCs
+	var npcCounter = 0;
+	npcCounter += IterateOver( "CHARACTER", socket );
+	var npcCounterStr = npcCounter.toString();
+
+	var tempMsg = GetDictionaryEntry( 8252, socket.language ); // Wiped %i NPCs
+	socket.SysMessage( tempMsg.replace( /%i/gi, npcCounterStr ));
+	Console.Print( "and " + npcCounterStr + " NPCs.\n" );
+
 	Console.PrintDone();
 
 	// Reset temporary socket variables and reset global variables
@@ -279,7 +293,7 @@ function DoWipe( socket, ourObj )
 }
 
 // Iterate through all objects of specified type
-function onIterate( toCheck )
+function onIterate( toCheck, socket )
 {
 	if( ValidateObject( toCheck ))
 	{
@@ -325,7 +339,8 @@ function onIterate( toCheck )
 		}
 		else // Are we wiping objects only in a defined area?
 		{
-			if( toCheck.isItem == true && toCheck.container == null )
+			var toCheckType = socket.toCheckType;
+			if( toCheck.isItem == true && toCheckType == 1 && toCheck.container == null )
 			{
 				// If a facet was specified, make sure only that facet is wiped
 				if( facetToWipe >= 0 )
@@ -349,6 +364,35 @@ function onIterate( toCheck )
 					{
 						toCheck.Delete();
 						return true;
+					}
+				}
+			}
+			else if( toCheck.isChar == true && toCheckType == 2 && toCheck.npc )
+			{
+				if( toCheck.vulnerable == 1 && toCheck.owner == null )
+				{
+					if( facetToWipe >= 0 )
+					{
+						if( toCheck.worldnumber != facetToWipe )
+							return false;
+					}
+
+					// Only wipe NPCs that aren't inside a valid multi
+					var toCheckMulti = toCheck.multi
+					if( !toCheckMulti )
+					{
+						var shouldWipe = iWipe;
+						var tX 		= toCheck.x;
+						var tY 		= toCheck.y;
+						if( tX >= x1 && tX <= x2 && tY >= y1 && tY <= y2 )
+						{
+							shouldWipe = !iWipe;
+						}
+						if( shouldWipe )
+						{
+							toCheck.Delete();
+							return true;
+						}
 					}
 				}
 			}

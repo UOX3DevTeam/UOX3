@@ -9,6 +9,7 @@ var spawnerList = [];
 var spawnerListButtonID = 50;
 var spawnerListUpdated = 0;
 var spawnerListTooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
+var spawnerListForceUpdate = false;
 
 function command_SPAWNADMIN( socket, cmdString )
 {
@@ -17,11 +18,11 @@ function command_SPAWNADMIN( socket, cmdString )
 
 function ShowSpawnerList( socket, cmdString, filteredList, filterString )
 {
-	var gumpID = this.script_id + 0xffff;
+	var gumpID = 1064 + 0xffff;
 	socket.CloseGump( gumpID, 0 );
 
 	// Only refresh spawner list if it hasn't been updated in the last X seconds
-	if( cmdString != "" || GetCurrentClock() - spawnerListUpdated > 20000 )
+	if( spawnerListForceUpdate || cmdString != "" || GetCurrentClock() - spawnerListUpdated > 20000 )
 	{
 		var timeStart = new Date().getTime();
 
@@ -35,7 +36,6 @@ function ShowSpawnerList( socket, cmdString, filteredList, filterString )
 		let foundMsg = GetDictionaryEntry( 2631, socket.language ).replace( /%i/gi, spawnerList.length );
 		socket.SysMessage( foundMsg.replace( /%u/gi, totalTime )); // Found %i item-based spawners in %u milliseconds.
 	}
-
 	DisplaySpawnerListGump( socket, filteredList, filterString, 0 );
 }
 
@@ -434,12 +434,14 @@ function onGumpPress( socket, pButton, gumpData )
 			{
 				pUser.TextMessage( "Chosen spawn object (" + objToRemove.name + ", " + objToRemove.serial.toString() + ") has been removed.", false, 0x3b2, 0, pUser.serial );
 				objToRemove.Delete();
+				spawnerListForceUpdate = true;
 			}
 
-			pUser.StartTimer( 50, 0, this.script_id );
+			// Call directly to force refresh list
+			ShowSpawnerList( socket, "", null, null );
 			break;
 		case 9: // Cancel Removal of Spawn Object
-			pUser.StartTimer( 50, 0, this.script_id );
+			pUser.StartTimer( 50, 0, 1064 );
 			break;
 		default:
 			if( pButton >= 50 && pButton < 1000000 )
@@ -475,7 +477,7 @@ function onGumpPress( socket, pButton, gumpData )
 						break;
 					}
 				}
-				pUser.StartTimer( 50, 0, this.script_id );
+				pUser.StartTimer( 50, 0, 1064 );
 
 				if( ValidateObject( chosenSpawnObj ))
 				{
@@ -495,7 +497,7 @@ function onGumpPress( socket, pButton, gumpData )
 						break;
 					}
 				}
-				pUser.StartTimer( 50, 0, this.script_id );
+				pUser.StartTimer( 50, 0, 1064 );
 
 				if( ValidateObject( chosenSpawnObj ))
 				{

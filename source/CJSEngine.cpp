@@ -276,6 +276,7 @@ void CJSRuntime::InitializePrototypes()
 	JS_LockGCThing( cx, consoleObj );
 	JS_LockGCThing( cx, createEntriesObj );
 	JS_LockGCThing( cx, timerObj );
+	JS_LockGCThing( cx, scriptObj );
 
 	for( size_t i = JSP_ITEM; i < JSP_COUNT; ++i )
 	{

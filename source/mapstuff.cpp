@@ -1033,13 +1033,13 @@ auto CMulHandler::DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t 
 //o------------------------------------------------------------------------------------------------o
 auto CMulHandler::MapElevation( std::int16_t x, std::int16_t y, std::uint8_t worldNumber, bool ignoreVoid ) -> std::int8_t
 {
-    const auto &map = SeekMap( x, y, worldNumber );
-    // make sure nothing can move into black areas
-    if( !ignoreVoid && map.isVoid() )
-    {
-        return ILLEGAL_Z;
-    }
-    return map.altitude;
+	const auto &map = SeekMap( x, y, worldNumber );
+	// make sure nothing can move into black areas
+	if( !ignoreVoid && map.isVoid() )
+	{
+		return ILLEGAL_Z;
+	}
+	return map.altitude;
 }
 
 //o------------------------------------------------------------------------------------------------o
