@@ -1,4 +1,71 @@
+05/05/2025 - Xuri
+	Updated target-based 'wipe command to also affect valid NPCs (non-invulnerable, non-pets) (js/commands/wipe.js)
+	NPC admin gump (js/commands/wholist.js) will now force-refresh on next open after NPCs have been removed via the remove button in the menu
+	Spawn Object admin gump (js/commands/spawnadmin.js) will now force-refresh on next open after spawn objects have been removed via the remove button in the menu
+	Added three new GM commands (js/commands/targeting/xwalk.js) that can be used to control NPCs remotely:
+		'xwalk	// Makes targeted NPC pathfind and walk to target location
+		'xrun	// Makes targeted NPC pathfind and run to target location
+		'xturn	// Makes targeted NPC turn towards target location
+	Updated AdvancedPathfinding() in movement.cpp to include two optional parameters
+		allowPartial // if true, move even if calculated path is blocked, until blocked (defaults to false)
+		ignoreDoors // if true, ignore doors during pathfinding calculations and calculate the path is if the door was not there (defaults to false)
+	Updated .WalkTo() and .RunTo() JS Character Methods to support the two additional pathfinding parameters, and also to support maxSteps values beyond 255
+	Updated pathfinding heuristic from Manhattan (4-way) to Octile (8-way) distance for improved pathfinding accuracy and increased performance with diagonal movement
+	In some situations, UOX3 will now calculate a new partial path for NPCs who failed to follow their assigned path, to get them closer to their final destination
+	Optimized pathfinding logic for NPCs following a target (like pets/hirelings, or NPCs in combat), to reduce the amount of pathfinding calculations required when target is moving. The NPCs will now keep track of the general direction towards their target, and if the NPCs are already heading in the right direction, they'll  keep going as long as they have a path left to follow or until direction towards target has changed. This also eliminates a problem where NPCs would stick to their path until they reach the end, even if target has gone in a different direction.
+	Updated logic for how NPCs turn during pathfinding. Instead of adding an extra "push" for direction into the calculated path itself to ensure NPC will both turn and move in that direction, which allowed some inaccuracies to creep into the calculated paths, that extra push is now handled while NPC is executing the path instead, whenever direction changes are needed
+	Partial pathfinding is now enabled for fleeing NPCs by default, to increase their chances of getting further away from their opponent in combat
+	Partial pathfinding is now enabled for NPCs in water by default, to allow them to get as close as possible to their opponent in combat
+	Fixed an issue where NPC movement speeds would misbehave at certain speeds where the calculated movement time would get rounded down to zero
+	NPCs will now play a fidgeting animation if they've remained motionless for 3 seconds or more while not in a state of actively trying to move/pathfind
+	Increased max pathfinding steps for NPCs in combat from 50 to 75
+	Fixed an issue where NPCs would stop and wait when they should have been moving, after successful pathfinding calculation
+	Fixed an issue where NPCs that ignore a target and enter evade state would not leave combat
+	Added two new JS Character properties that can be used to evaluate pathfinding success (for instance in combination with onPathFindEnd Event), and/or opens for manipulating pathfinding target locations via scripts:
+		.pathTargX // Current NPC pathfinding target, X coordinate
+		.pathTargY // Current NPC pathfinding target, Y coordinate
+	Added colorlists for frenzied and forest ostards, and applied these to their NPC definitions
+
+04/05/2025 - Xuri
+	Fixed an error on shutdown when running UOX3 in debug mode in VS due to CCommands constructor attempting to unnecessarily clear CommandMap, TargetMap and JSCommandMaps
+	Fixed an issue in Portuguese dictionary where a commented line was lacking a forward slash
+	Fixed some soft exceptions related to loading of dictionary files
+	Fixed soft exceptions related to checking file sizes of potentially non-existing worldfiles on startup
+	Fixed some soft exceptions related to loading of regions from DFNs and townregions from WSC
+	Fixed misordered datatype entries in dfnDataTypes for DFNTAG_DYEHAIR and DFNTAG_DEFENSECHANCE
+	Fixed double "GET" entry in strToDFNTag mapping. One of them should've been "GETUO"
+	Fixed strToDFNTag mapping error for "LOYALTY" DFN tag, which was being incorrectly mapped to DFNTAG_MAXLOYALTY
+	Added missing strToDFNTag entry for WILLTHIRST DFN tag
+	Removed unknown and unused DFN tag/mapping named SKILLVAR
+	Fixed misordered DFNTAG_SWINGSPEEDINCREASE entry in DFNTAGS enum, which caused tags following it to be associated with incorrect datatypes
+	Fixed some crash/slowdown issues with reloading of all JS scripts (console menu option 8), especially noticable in VS debug mode
+	Fixed an issue where shopkeepers would sometimes fail to recognize items they should want to buy from players due to section ID case sensitivity
+	Fixed an issue where help gump could be opened multiple times in regular UO client (js/server/misc/helpgump.js)
+	Admin welcome gump will now trigger a worldsave to save spawning option selections to ini file (js/server/admin_welcome.js)
+
+03/05/2025 - Xuri
+	Fixed an issue where creatures with a taming requirement of 0 could not be tamed (js/skill/taming.js)
+	Fixed a server crash related to attempts to tame non-NPC characters (js/skill/taming.js)
+	Young players will no longer see warnings about being attacked when non-hostile NPCs perform a routine target validation check
+	Playing an instrument will now store it as the player's last played instrument (js/item/musicianship.js)
+	Bard-skills will now always use the last instrument a player played, if any (js/skill/provocation.js/enticement.js/peacemaking.js)
+	Added Line-of-Sight checks to Bard-skills (js/skill/provocation.js/enticement.js/peacemaking.js), though this can be disabled via setting at top of each script
+	Provocation now uses player's provocation skillcap value as max skill check for LBR-era shards and below
+	Provocation is now difficulty-based by default for AoS-era shards and beyond, controllable by setting at top of provocation script. This means, difficulty of provoking a target on another target is based on the average provocation difficulty between them, with a -25.0 (lowest chance of success) and +25.0 (max skill check beyond which success is guaranteed and no more skill-gains are possible) window
+	Updated hunger settings of "predator" animal race from races.dfn from HUNGER=300,5 to HUNGER=3000,2 so they don't grow hungry and die from starvation so fast
+	Revamped broken backup feature to actually work (with additional error-checking and logging), and to include full world state; now backs up _everything_ inside /shared directory, plus /accounts, /books and /msgboards directories.
+
+01/05/2025 - Xuri
+	Fixed some issues that prevented NPCLISTS containing other NPCLISTS and/or weighted NPCLISTS from working correctly
+	Updated spawn regions and NPCLISTS used for Yew/Cove orc forts to provide a better mix of weak/strong orcs, and fewer ettins
+	Fixed an issue where Yew/Skara brigand camp used a duplicate spawnregion ID, causing no NPCs to spawn
+	Added humanoids_t2a.dfn, with T2A-specific definitions for orcs, ratmen and lizardmen, with some stat adjustments
+	Updated NPC definitions for orcs, ratmen and lizardmen with placeholder GET tags for different eras, pointing to nearest available era definition
+	Updated NPC definitions for [kappa], [yomotsuelder], [yomotsupriest] and [yomotsuwarrior] with placeholder GET tags for different eras, all pointing to SE definition for now
+	Updated NPC definitions for [yamadon], [rajiu], [bakekitsune] with placeholder GET tags for different eras, all pointing to SE definition for now
+
 30/04/2025 - Dragon Slayer
+	Fixed: Dropping gold on NPCs flagged as guildmasters or BOD handlers will now correctly allow skill training unless the player is explicitly attempting to join a guild or turn in a BOD.
 	Fixed issue where pumpkins.js and provocation.js scripts tried to look up "YoungPlayerStatus" server setting instead of "YoungPlayerSystem"
 
 29/04/2025 - Xuri
@@ -19,11 +86,12 @@
 	Updated JS Docs with details about onBoatTurn JS event, .GetTiller() method and .lastOn/.lastOnSecs properties
 	Added some console output with details about time taken for each regionspawn cycle
 	Added some new tiledata override entries for some tiles (stairs/platforms) missing NoShoot flag in some older clients (dfndata/maps/tiles.dfn)
-	Fixes for updated wholist menu crashing under certain circumstances using regular UO client
+	Fixes for updated wholist/spawnadmin menu crashing under certain circumstances using regular UO client
 	Updated logging of CPCharAndStartLoc packet to account for both old and new version of packet
 	Reloading Spawn Regions via 'reloadspawnregions JS command will now do a full reload from the DFN files (previously needed manual DFN reload before spawn region reload)
 	Reloading DFNs via 'reloaddfns JS command will now also reload creatures.dfn, titles.dfn, location.dfn
 	Reloading ALL via 'reloadall JS command will now also reload teleport.scp, creatures.dfn, titles.dfn, location.dfn
+
 
 23/04/2025 - Xuri
 	Fixed an issue where onUseUnchecked JS event in envoked scripts (via object ID or type) would never trigger because hard-coded checks would run before envoking script
@@ -112,6 +180,9 @@
 	Added new Getters/Setters for CRace class to retrieve ID of a specific Race object
 	Updated JS property .id for Race JS Object to return new race ID instead of iterating through list of races to compare race object and return index
 	Reloading DFNs now also reloads Races
+	
+22/03/2025 - Dragon Slayer
+	Added - lesser hiryu mount, lady of the snow, fan dancer, oni, crane, gaman, revenant lion from UO SE.
 
 15/03/2025 - Dragon Slayer
 	Fixed an issue where timestamps for system timers could be set in the past due to float-to-UI32 casting precision loss. ( Thanks Xuri )

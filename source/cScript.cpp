@@ -349,9 +349,10 @@ cScript::~cScript()
 	if( targScript != nullptr )
 	{
 		JS_DestroyScript( targContext, targScript );
+		targScript = nullptr;
 	}
 	Cleanup();
-	JS_GC( targContext );
+	//JS_GC( targContext );
 }
 
 bool cScript::IsFiring( void )

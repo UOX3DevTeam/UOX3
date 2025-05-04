@@ -55,14 +55,14 @@ function onCallback0( pSock, ourObj )
 		var skillToTame = ourObj.skillToTame;
 		var pLanguage 	= pSock.language;
 
-		var hasBeenOwner = ourObj.HasBeenOwner( pUser );
-
-		if( !skillToTame )
+		if( !ourObj.npc || skillToTame == 0x7FFF )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 1593, pLanguage )); // You can't tame that creature
 			return;
 		}
-		else if( !hasBeenOwner && skillToTame > pUser.skills.taming )
+
+		var hasBeenOwner = ourObj.HasBeenOwner( pUser );
+		if( !hasBeenOwner && skillToTame > pUser.skills.taming )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 2398, pLanguage )); // You are not skilled enough to tame that creature
 			return;
@@ -117,7 +117,7 @@ function onCallback0( pSock, ourObj )
 			tempMsg = tempMsg.replace( /%s/gi, pUser.name )
 			pUser.EmoteMessage( tempMsg.replace( /%t/gi, ourObj.name ));
 
-			pUser.StartTimer( 3000, 1, true );
+			pUser.StartTimer( 3000, 1, 807 );
 		}
 	}
 	else
@@ -140,7 +140,7 @@ function onTimer( pUser, timerID )
 		SayTameMessage( pUser, toTame );
 		if( !CheckTameSuccess( pUser, toTame ))
 		{
-			pUser.StartTimer( 3000, 2, true );
+			pUser.StartTimer( 3000, 2, 807 );
 		}
 	}
 	else if( timerID == 2 )
@@ -148,7 +148,7 @@ function onTimer( pUser, timerID )
 		SayTameMessage( pUser, toTame );
 		if( !CheckTameSuccess( pUser, toTame ))
 		{
-			pUser.StartTimer( 3000, 3, true );
+			pUser.StartTimer( 3000, 3, 807 );
 		}
 	}
 	else if( timerID == 3 )
@@ -342,11 +342,11 @@ function RunTameChecks( pUser )
 		// Unable to tame because of taming restrictions
 		return false;
 	}
-	else if( !toTame.skillToTame )
-	{
-		pUser.TextMessage( GetDictionaryEntry( 1593, pSock.language ), false, 0x3b2 ); // You can't tame that creature.
-		return false;
-	}
+    else if( !toTame.npc || toTame.skillToTame == 0x7FFF )
+    {
+        pUser.TextMessage( GetDictionaryEntry( 1593, pSock.language ), false, 0x3b2 ); // You can't tame that creature.
+        return false;
+    }
 	else if( toTame.tamed )
 	{
 		toTame.TextMessage( GetDictionaryEntry( 1595, pSock.language ), false, 0x3b2, 0, pUser.serial ); // That creature is already controlled by another!
@@ -416,3 +416,5 @@ function CheckTamingRestrictions( toTame, pUser )
 			return false;
 	}
 }
+
+function _restorecontext_() {}

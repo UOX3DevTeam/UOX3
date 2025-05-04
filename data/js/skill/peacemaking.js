@@ -3,6 +3,8 @@ function SkillRegistration()
 	RegisterSkill( 9, true );	// Peacemaking
 }
 
+const useLoSCheckForPeacemaking = true;
+
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
@@ -14,6 +16,8 @@ function onSkill( pUser, objType, skillUsed )
 			if( pUser.CheckSkill( 29, 0, pUser.skillCaps.peacemaking ))
 			{
 				PlayInstrument( pSock, myInstrument, true );
+
+				// TODO: At some point, base range of all bard abilities was 8, with increase of 1 tile per 15 points of skill in the ability
 				AreaCharacterFunction( "PeaceMakeArea", pUser, 15 );
 			}
 			else
@@ -36,30 +40,27 @@ function onSkill( pUser, objType, skillUsed )
 
 function GetInstrument( pUser )
 {
-	if( ValidateObject( pUser.pack ) )
+	// Fetch last instrument player played (set in musicianship.js)
+	var lastInstrument = CalcItemFromSer( parseInt( pUser.GetTempTag( "lastInstrument" )));
+	if( ValidateObject( lastInstrument ))
 	{
-		for( var toCheck = pUser.pack.FirstItem(); !pUser.pack.FinishedItems(); toCheck = pUser.pack.NextItem() )
+		if( ValidateObject( lastInstrument.container ))
 		{
-			if( ValidateObject( toCheck ))
+			// Instrument is in a container. This should only work if item is inside player pack somewhere
+			var rootCont = FindRootContainer( lastInstrument, 0 );
+			if( ValidateObject( rootCont ) && rootCont == pUser.pack )
 			{
-				switch( toCheck.id )
-				{
-					case 0x0E9C:
-					case 0x0E9D:
-					case 0x0E9E:
-					case 0x0EB1:
-					case 0x0EB2:
-					case 0x0EB3:
-					case 0x0EB4:
-					case 0x2805:
-					case 0x2807:
-						return toCheck;
-					default:
-						break;
-				}
+				// Found instrument in player's pack somewhere!
+				return lastInstrument;
 			}
 		}
+		else if( pUser.InRange( lastInstrument, 3 ))
+		{
+			// Player is within range of the instrument!
+			return lastInstrument;
+		}
 	}
+
 	return null;
 }
 
@@ -142,10 +143,16 @@ function PeaceMakeArea( pUser, targChar )
 	if( pUser == targChar )
 		return;
 
+	if( useLoSCheckForPeacemaking && !pUser.CanSee( targChar ))
+		return;
+
 	var targSock = targChar.socket;
 
 	// Fetch skill-specific skill delay
 	var skillDelay = Skills[9].skillDelay;
+
+	// TODO: At some point, musicianship skill started giving 1% success bonus per point of musicianship over 100.0
+	// for attempts at Discordance, Targeted Peacemaking and Provocation
 
 	if( pUser.CheckSkill( 9, targChar.skillToPeace, 1200 ))
 	{
@@ -153,7 +160,7 @@ function PeaceMakeArea( pUser, targChar )
 		{
 			targSock.SysMessage( GetDictionaryEntry( 1440, targSock.language )); // You hear some lovely music, and forget about fighting.
 		}
-		targChar.setPeace = 60;
+		targChar.setPeace = 60; // At some point this was set to 2-10 seconds only for creatures?
 
 		// Half skill delay on successful use of peacemaking
 		pUser.socket.SetTimer( Timer.SOCK_SKILLDELAY, ( skillDelay * 1000 ) / 2 );

@@ -41,7 +41,7 @@ class CMovement
 {
 	// Function declarations
 public:
-	bool	AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun = false, UI16 maxSteps = 0 );
+	bool	AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun = false, bool allowPartial = false, UI16 maxSteps = 0, bool ignoreDoors = false );
 	auto	IgnoreAndEvadeTarget( CChar *mChar ) -> void;
 	void	Walking( CSocket *mSock, CChar *s, UI08 dir, SI16 sequence );
 	void	CombatWalk( CChar *i );
@@ -49,9 +49,9 @@ public:
 	void	PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun = false, UI08 pathLen = P_PF_MRV );
 	UI08	Direction( CChar *c, SI16 x, SI16 y );
 	bool	CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz );
-	SI08	CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz, bool justask, bool waterWalk = false );
+	SI08	CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz, bool justask, bool waterWalk = false, bool ignoreDoors = false );
 private:
-	bool	PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI16 curY, SI08 curZ, UI32 parentSer, std::map<UI32, PfNode_st>& openList, std::map<UI32, UI32>& closedList, std::deque<NodeFCost_st>& fCostList );
+	bool	PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI16 curY, SI08 curZ, UI32 parentSer, std::map<UI32, PfNode_st>& openList, std::map<UI32, UI32>& closedList, std::deque<NodeFCost_st>& fCostList, bool ignoreDoors = false );
 	bool	CalcMove( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir );
 
 	bool	HandleNPCWander( CChar& mChar );
@@ -64,7 +64,7 @@ private:
 	void	GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& zlow, SI08& ztop, UI16 instanceId, bool waterWalk );
 
 	void	GetBlockingStatics( SI16 x, SI16 y, std::vector<Tile_st> &xyblock, UI16 &xycount, UI08 worldNumber );
-	void	GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceId );
+	void	GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceId, bool ignoreDoors = false );
 
 	UI08	Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy );
 

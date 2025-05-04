@@ -7578,7 +7578,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
-	else if( !cItem.IsCorpse() && cItem.GetType() != IT_POTION && cItem.GetSectionId() != "potionkeg" && cItem.GetName2() != "#" && cItem.GetName2() != "" )
+	else if( !cItem.IsCorpse() && cItem.GetType() != IT_POTION && oldstrutil::lower( cItem.GetSectionId() ) != "potionkeg" && cItem.GetName2() != "#" && cItem.GetName2() != "" )
 	{
 		tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 		tempEntry.ourText = oldstrutil::format( " \t%s\t ", Dictionary->GetEntry( 9402 ).c_str(), tSock->Language() ); // [Unidentified]
@@ -8375,7 +8375,7 @@ auto CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack,
 			{
 				AddContainer( tReg, spItem, opItem, packetLen );
 			}
-			else if(( opItem->GetSectionId() == spItem->GetSectionId() && opItem->GetSectionId() != "UNKNOWN" )
+			else if(( oldstrutil::lower( opItem->GetSectionId() ) == oldstrutil::lower( spItem->GetSectionId() ) && opItem->GetSectionId() != "UNKNOWN" )
 				&& ( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ))
 			{
 				// Basing it on GetSectionId() should replace all the other checks below...
