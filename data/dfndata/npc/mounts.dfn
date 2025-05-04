@@ -122,6 +122,7 @@ ORIGIN=t2a
 GET=horse
 NAME=#//a frenzied ostard
 ID=0x00DB
+SKINLIST=41
 BACKPACK
 STR=94 170
 DEX=96 115
@@ -152,6 +153,7 @@ ORIGIN=t2a
 GET=horse
 NAME=#//a forest ostard
 ID=0x00da
+SKINLIST=40
 BACKPACK
 STR=94 170
 DEX=56 75

@@ -12,6 +12,7 @@ var adminPlayerList = [];
 var adminPlayerListUpdated = 0;
 var adminNpcList = [];
 var adminNpcListUpdated = 0;
+var adminNpcListForceUpdate = false;
 const charAdminTooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 
 function command_WHOLIST( socket, cmdString )
@@ -80,7 +81,7 @@ function ShowNpcList( socket, cmdString, filteredList, filterString )
 	socket.CloseGump( gumpID, 0 );
 
 	// Only refresh npclist if it hasn't been updated in the last X seconds
-	if( cmdString != "" || GetCurrentClock() - adminNpcListUpdated > 20000 )
+	if( adminNpcListForceUpdate || cmdString != "" || GetCurrentClock() - adminNpcListUpdated > 20000 )
 	{
 		var timeStart = new Date().getTime();
 		socket.tempInt2 = 2;
@@ -523,19 +524,11 @@ function onGumpPress( socket, pButton, gumpData )
 				rmvMsg = rmvMsg.replace( /%s/gi, npcToRemove.name );
 				pUser.TextMessage( rmvMsg.replace( /%w/gi, npcToRemove.serial.toString() ), false, 0x3b2, 0, pUser.serial );
 				npcToRemove.Delete();
+				adminNpcListForceUpdate = true;
 			}
 
-			// Re-apply filter to playerlist
-			filterString = gumpData.getEdit( 0 ).replace(/^\s+/, '');
-			var strictFilter = false;
-			var finalList = ( listType == 1 ? adminPlayerList : adminNpcList );
-			if( filterString && filterString.length > 0 )
-			{
-				finalList = FilterListByName( finalList, filterString, strictFilter )
-			}
-
-			DisplayCharacterListGump( socket, finalList, filterString, 0, listType );
-			pUser.StartTimer( 50, 0, this.script_id );
+			// Call directly to force refresh list
+			ShowNpcList( socket, "", null, null );
 			break;
 		case 9: // Cancel Removal of NPC
 			// Re-apply filter to playerlist
