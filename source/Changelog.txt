@@ -24,6 +24,7 @@
 	Added two new JS Character properties that can be used to evaluate pathfinding success (for instance in combination with onPathFindEnd Event), and/or opens for manipulating pathfinding target locations via scripts:
 		.pathTargX // Current NPC pathfinding target, X coordinate
 		.pathTargY // Current NPC pathfinding target, Y coordinate
+	Added colorlists for frenzied and forest ostards, and applied these to their NPC definitions
 
 04/05/2025 - Xuri
 	Fixed an error on shutdown when running UOX3 in debug mode in VS due to CCommands constructor attempting to unnecessarily clear CommandMap, TargetMap and JSCommandMaps
