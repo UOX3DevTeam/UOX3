@@ -21,10 +21,10 @@ function QuestList(questID)
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
 			targetItems: [
-				{ itemID: "ore", amount: 5, name: "Iron Ore" }
+				{ sectionID: "ore", amount: 5, name: "Iron Ore" }
 			],
 			rewards: [
-				{ type: "item", itemID: "minerssatchel", amount: 1, name: "Craftsman's Satchel" }
+				{ type: "item", sectionID: "minerssatchel", amount: 1, name: "Craftsman's Satchel" }
 			]
 		},
 		"2": {
@@ -44,11 +44,11 @@ function QuestList(questID)
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
 			targetItems: [
-				{ itemID: "0x1eff", amount: 1, name: "Fancy Dress" }
+				{ sectionID: "0x1eff", amount: 1, name: "Fancy Dress" }
 			],
 			rewards: [
-				{ type: "item", itemID: "oldring", amount: 1, name: "an old ring" },
-				{ type: "item", itemID: "oldnecklace", amount: 1, name: "an old necklace" }
+				{ type: "item", sectionID: "oldring", amount: 1, name: "an old ring" },
+				{ type: "item", sectionID: "oldnecklace", amount: 1, name: "an old necklace" }
 			]
 		},
 		"3": {
@@ -68,10 +68,10 @@ function QuestList(questID)
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
 			targetItems: [
-				{ itemID: "0x103F", amount: 5, name: "Cookie Mix" }
+				{ sectionID: "0x103F", amount: 5, name: "Cookie Mix" }
 			],
 			rewards: [
-				{ type: "item", itemID: "chefssatchel", amount: 1, name: "Craftsman's Satchel" }
+				{ type: "item", sectionID: "chefssatchel", amount: 1, name: "Craftsman's Satchel" }
 			]
 		},
 		"4": {
@@ -88,10 +88,10 @@ function QuestList(questID)
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
 			targetItems: [
-				{ itemID: "0x1BE0", amount: 60, name: "Log" }
+				{ sectionID: "0x1BE0", amount: 60, name: "Log" }
 			],
 			rewards: [
-				{ type: "item", itemID: "lumberjackssatchel", amount: 1, name: "Craftsman's Satchel" }
+				{ type: "item", sectionID: "lumberjackssatchel", amount: 1, name: "Craftsman's Satchel" }
 			]
 		},
 		"5": {
@@ -110,10 +110,10 @@ function QuestList(questID)
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
 			targetItems: [
-				{ itemID: "Buckler", amount: 10, name: "Buckler" }
+				{ sectionID: "Buckler", amount: 10, name: "Buckler" }
 			],
 			rewards: [
-				{ type: "item", itemID: "smithssatchel", amount: 1, name: "Craftsman's Satchel" }
+				{ type: "item", sectionID: "smithssatchel", amount: 1, name: "Craftsman's Satchel" }
 			]
 		},
 		"6": {
@@ -131,10 +131,10 @@ function QuestList(questID)
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
 			targetItems: [
-				{ itemID: "0x104F", amount: 5, name: "Clock Parts" }
+				{ sectionID: "0x104F", amount: 5, name: "Clock Parts" }
 			],
 			rewards: [
-				{ type: "item", itemID: "tinkerssatchel", amount: 1, name: "Craftsman's Satchel" }
+				{ type: "item", sectionID: "tinkerssatchel", amount: 1, name: "Craftsman's Satchel" }
 			]
 		},
 		"7": {
@@ -179,7 +179,7 @@ function QuestList(questID)
 			minPoint: 2,   //min skill point 0.2
 			maxPoint: 5,	//max skill point 0.5
 			rewards: [
-				{ type: "item", itemID: "jacobspickaxe", amount: 1, name: "Jacob's Pickaxe" }
+				{ type: "item", sectionID: "jacobspickaxe", amount: 1, name: "Jacob's Pickaxe" }
 			]
 		},
 		"8": {
@@ -219,7 +219,7 @@ function QuestList(questID)
 			minPoint: 2,   //min skill point 0.2
 			maxPoint: 5,	//max skill point 0.5
 			rewards: [
-				{ type: "item", itemID: "claspofconcentration", amount: 1, name: "Clasp of Concentration" }
+				{ type: "item", sectionID: "claspofconcentration", amount: 1, name: "Clasp of Concentration" }
 			]
 		},
 		"9": {
@@ -245,7 +245,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "apprenticeblacksmithhammer", "amount": 1, "name": "Apprentice Blacksmith Hammer" }
+				{ "type": "item", "sectionID": "apprenticeblacksmithhammer", "amount": 1, "name": "Apprentice Blacksmith Hammer" }
 			]
 		},
 		"10": {
@@ -272,7 +272,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "ameliastoolbox", "amount": 1, "name": "Amelia's Toolbox" }
+				{ "type": "item", "sectionID": "ameliastoolbox", "amount": 1, "name": "Amelia's Toolbox" }
 			]
 		},
 		"11": {
@@ -299,7 +299,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "tunicoffguarding", "amount": 1, "name": "Tunic of Guarding" }
+				{ "type": "item", "sectionID": "tunicoffguarding", "amount": 1, "name": "Tunic of Guarding" }
 			]
 		},
 		"12": {
@@ -326,7 +326,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "healerstouch", "amount": 1, "name": "Healer's Touch" }
+				{ "type": "item", "sectionID": "healerstouch", "amount": 1, "name": "Healer's Touch" }
 			]
 		},
 		"13": {
@@ -354,7 +354,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "bagofsmokebombs", "amount": 1, "name": "Bag of Smoke Bombs" }
+				{ "type": "item", "sectionID": "bagofsmokebombs", "amount": 1, "name": "Bag of Smoke Bombs" }
 			]
 		},
 		"14": {
@@ -381,7 +381,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "twilightjacket", "amount": 1, "name": "Twilight Jacket" }
+				{ "type": "item", "sectionID": "twilightjacket", "amount": 1, "name": "Twilight Jacket" }
 			]
 		},
 		"15": {
@@ -408,7 +408,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "silverserpentblade", "amount": 1, "name": "Silver Serpent Blade" }
+				{ "type": "item", "sectionID": "silverserpentblade", "amount": 1, "name": "Silver Serpent Blade" }
 			]
 		},
 		"16": {
@@ -437,7 +437,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "walkersleggings", "amount": 1, "name": "Walker's Leggings" }
+				{ "type": "item", "sectionID": "walkersleggings", "amount": 1, "name": "Walker's Leggings" }
 			]
 		},
 		"17": {
@@ -464,7 +464,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "thedragonstail", "amount": 1, "name": "The Dragon's Tail" }
+				{ "type": "item", "sectionID": "thedragonstail", "amount": 1, "name": "The Dragon's Tail" }
 			]
 		},
 		"18": {
@@ -491,7 +491,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "braceletofresilience", "amount": 1, "name": "Bracelet of Resilience" }
+				{ "type": "item", "sectionID": "braceletofresilience", "amount": 1, "name": "Bracelet of Resilience" }
 			]
 		},
 		"19": {
@@ -518,7 +518,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "philosophershat", "amount": 1, "name": "Philosopher's Hat" }
+				{ "type": "item", "sectionID": "philosophershat", "amount": 1, "name": "Philosopher's Hat" }
 			]
 		},
 		"20": {
@@ -545,7 +545,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "hallowedspellbook", "amount": 1, "name": "Hallowed Spellbook" }
+				{ "type": "item", "sectionID": "hallowedspellbook", "amount": 1, "name": "Hallowed Spellbook" }
 			]
 		},
 		"21": {
@@ -572,7 +572,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "emberstaff", "amount": 1, "name": "Ember Staff" }
+				{ "type": "item", "sectionID": "emberstaff", "amount": 1, "name": "Ember Staff" }
 			]
 		},
 		"22": {
@@ -599,7 +599,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "ringofthesavant", "amount": 1, "name": "Ring of the Savant" }
+				{ "type": "item", "sectionID": "ringofthesavant", "amount": 1, "name": "Ring of the Savant" }
 			]
 		},
 		"23": {
@@ -626,7 +626,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "armsofarmstrong", "amount": 1, "name": "Arms of Armstrong" }
+				{ "type": "item", "sectionID": "armsofarmstrong", "amount": 1, "name": "Arms of Armstrong" }
 			]
 		},
 		"24": {
@@ -653,7 +653,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "churchillswarmace", "amount": 1, "name": "Churchill's War Mace" }
+				{ "type": "item", "sectionID": "churchillswarmace", "amount": 1, "name": "Churchill's War Mace" }
 			]
 		},
 		"25": {
@@ -680,7 +680,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "jocklesquicksword", "amount": 1, "name": "Jockles' Quick Sword" }
+				{ "type": "item", "sectionID": "jocklesquicksword", "amount": 1, "name": "Jockles' Quick Sword" }
 			]
 		},
 		"26": {
@@ -707,7 +707,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "recarosriposte", "amount": 1, "name": "Recaro's Riposte" }
+				{ "type": "item", "sectionID": "recarosriposte", "amount": 1, "name": "Recaro's Riposte" }
 			]
 		},
 		"27": {
@@ -734,7 +734,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "heartseeker", "amount": 1, "name": "Heartseeker" }
+				{ "type": "item", "sectionID": "heartseeker", "amount": 1, "name": "Heartseeker" }
 			]
 		},
 		"28": {
@@ -761,7 +761,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "escutcheondeariadne", "amount": 1, "name": "Escutcheon de Ariadne" }
+				{ "type": "item", "sectionID": "escutcheondeariadne", "amount": 1, "name": "Escutcheon de Ariadne" }
 			]
 		},
 		"29": {
@@ -788,7 +788,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "bulwarkleggings", "amount": 1, "name": "Bulwark Leggings" }
+				{ "type": "item", "sectionID": "bulwarkleggings", "amount": 1, "name": "Bulwark Leggings" }
 			]
 		},
 		"30": {
@@ -815,7 +815,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "glovesofsafeguarding", "amount": 1, "name": "Gloves of Safeguarding" }
+				{ "type": "item", "sectionID": "glovesofsafeguarding", "amount": 1, "name": "Gloves of Safeguarding" }
 			]
 		},
 		"31": {
@@ -842,7 +842,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "bagofnecroreagents", "amount": 1, "name": "Bag of Necromancer Reagents" }
+				{ "type": "item", "sectionID": "bagofnecroreagents", "amount": 1, "name": "Bag of Necromancer Reagents" }
 			]
 		},
 		"32": {
@@ -869,7 +869,7 @@ function QuestList(questID)
 			"minPoint": 2,
 			"maxPoint": 5,
 			"rewards": [
-				{ "type": "item", "itemID": "completenecromancerspellbook", "amount": 1, "name": "Complete Necromancer Spellbook" }
+				{ "type": "item", "sectionID": "completenecromancerspellbook", "amount": 1, "name": "Complete Necromancer Spellbook" }
 			]
 		},
 		"33": {
@@ -884,10 +884,10 @@ function QuestList(questID)
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
 			targetItems: [
-				{ itemID: "arrow", amount: 20, name: "arrow" }
+				{ sectionID: "arrow", amount: 20, name: "arrow" }
 			],
 			rewards: [
-				{ type: "item", itemID: "fletcherssatchel", amount: 1, name: "Craftsman's Satchel" }
+				{ type: "item", sectionID: "fletcherssatchel", amount: 1, name: "Craftsman's Satchel" }
 			]
 		},
 		"34": {
@@ -902,10 +902,10 @@ function QuestList(questID)
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
 			targetItems: [
-				{ itemID: "arrow", amount: 20, name: "arrow" }
+				{ sectionID: "arrow", amount: 20, name: "arrow" }
 			],
 			rewards: [
-				{ type: "item", itemID: "fletcherssatchel", amount: 1, name: "Craftsman's Satchel" }
+				{ type: "item", sectionID: "fletcherssatchel", amount: 1, name: "Craftsman's Satchel" }
 			]
 		},
 		"35": {
@@ -923,7 +923,7 @@ function QuestList(questID)
 				{ npcID: "sheep", amount: 10, name: "sheep" }
 			],
 			rewards: [
-				{ type: "item", itemID: "trinketbag", amount: 1, name: "A bag of trinkets." }
+				{ type: "item", sectionID: "trinketbag", amount: 1, name: "A bag of trinkets." }
 			]
 		},
 		"36": {
@@ -938,10 +938,10 @@ function QuestList(questID)
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
 			targetItems: [
-				{ itemID: "BambooChair", amount: 1, name: "Straw Chair" }
+				{ sectionID: "BambooChair", amount: 1, name: "Straw Chair" }
 			],
 			rewards: [
-				{ type: "item", itemID: "carpenterssatchel", amount: 1, name: "Craftsman's Satchel" }
+				{ type: "item", sectionID: "carpenterssatchel", amount: 1, name: "Craftsman's Satchel" }
 			]
 		},
 		"37": {
@@ -956,10 +956,10 @@ function QuestList(questID)
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
 			targetItems: [
-				{ itemID: "recallscroll", amount: 5, name: "Recall Scroll" }
+				{ sectionID: "recallscroll", amount: 5, name: "Recall Scroll" }
 			],
 			rewards: [
-				{ type: "item", itemID: "redleatherbook", amount: 1, name: "a book bound in red leather" }
+				{ type: "item", sectionID: "redleatherbook", amount: 1, name: "a book bound in red leather" }
 			]
 		},
 		"38": {
@@ -974,10 +974,10 @@ function QuestList(questID)
 			questTurnIn: 1, // 0 = auto-complete
 			bankgold: 0,
 			targetItems: [
-				{ itemID: "refreshpotion", amount: 10, name: "Refresh Potion" }
+				{ sectionID: "refreshpotion", amount: 10, name: "Refresh Potion" }
 			],
 			rewards: [
-				{ type: "item", itemID: "alchemistssatchel", amount: 1, name: "a book bound in red leather" }
+				{ type: "item", sectionID: "alchemistssatchel", amount: 1, name: "a book bound in red leather" }
 			]
 		},
 		//Custom Example Quests
@@ -995,13 +995,13 @@ function QuestList(questID)
 			type: "collect",
 			questTurnIn: 1, // 0 = auto-complete
 			targetItems: [
-				{ itemID: "0x13e3", amount: 2, name: "Apples" }, // Apples
-				{ itemID: "0x13e4", amount: 3, name: "Oranges" }, // Oranges
-				{ itemID: "0x13e5", amount: 1, name: "Bananas" }  // Bananas
+				{ sectionID: "0x13e3", amount: 2, name: "Apples" }, // Apples
+				{ sectionID: "0x13e4", amount: 3, name: "Oranges" }, // Oranges
+				{ sectionID: "0x13e5", amount: 1, name: "Bananas" }  // Bananas
 			],
 			rewards: [
 				{ type: "gold", amount: 500, name: "Gold Coins" },
-				{ type: "item", itemID: "0x1f4c", amount: 1, name: "Magical Scroll" },
+				{ type: "item", sectionID: "0x1f4c", amount: 1, name: "Magical Scroll" },
 				{ type: "karma", amount: 50, name: "Karma Points" },
 				{ type: "fame", amount: 30, name: "Fame Points" }
 			]
@@ -1024,11 +1024,11 @@ function QuestList(questID)
 			title: "Collect Fruits",
 			type: "collect",
 			targetItems: [
-				{ itemID: "0x13e3", amount: 2 }, // Apples
+				{ sectionID: "0x13e3", amount: 2 }, // Apples
 			],
 			rewards: [
 				{ type: "gold", amount: 500 }, // Give 500 gold
-				{ type: "item", itemID: "0x1f4c", amount: 1 }, // Give a magical scroll
+				{ type: "item", sectionID: "0x1f4c", amount: 1 }, // Give a magical scroll
 				{ type: "karma", amount: 50 }, // Add 50 karma
 				{ type: "fame", amount: 30 }   // Add 30 fame
 			]
@@ -1037,14 +1037,14 @@ function QuestList(questID)
 			title: "Gather Fruits and Hunt Animals",
 			type: "multi", // New type for combined objectives
 			targetItems: [
-				{ itemID: "0x13e3", amount: 1 } // Collect 3 apples
+				{ sectionID: "0x13e3", amount: 1 } // Collect 3 apples
 			],
 			targetKills: [
 				{ npcID: "dog", amount: 1 }, // Kill 1 dog
 			],
 			rewards: [
 				{ type: "gold", amount: 500 }, // Give 500 gold
-				{ type: "item", itemID: "0x1f4c", amount: 1 }, // Give a magical scroll
+				{ type: "item", sectionID: "0x1f4c", amount: 1 }, // Give a magical scroll
 				{ type: "karma", amount: 50 }, // Add 50 karma
 				{ type: "fame", amount: 30 }   // Add 30 fame
 			]
@@ -1053,7 +1053,7 @@ function QuestList(questID)
 			title: "Timed Fruit Collection",
 			type: "timecollect",
 			targetItems: [
-				{ itemID: "0x13e3", amount: 5 } // Collect 5 apples
+				{ sectionID: "0x13e3", amount: 5 } // Collect 5 apples
 			],
 			timeLimit: 300, // Time limit in seconds
 			rewards: [
@@ -1078,7 +1078,7 @@ function QuestList(questID)
 			description: "Collect 10 apples from the orchard.",
 			type: "collect",
 			questTurnIn: 1, // 0 = auto-complete
-			targetItems: [{ itemID: "0x13e3", amount: 1, name: "Apple" }],
+			targetItems: [{ sectionID: "0x13e3", amount: 1, name: "Apple" }],
 			rewards: [{ type: "gold", amount: 500 }],
 			nextQuestID: "1007" // Chain to the next quest
 		},
@@ -1096,10 +1096,10 @@ function QuestList(questID)
 			description: "Bring the supplies to the guard at the eastern gate.",
 			type: "delivery",
 			targetDelivery: { npcID: "nail", location: { x: 1000, y: 2000, z: 0 } },
-			deliveryItem: { itemID: "0x1F4C", amount: 1 },
+			deliveryItem: { sectionID: "0x1F4C", amount: 1 },
 			rewards: [
 				{ type: "gold", amount: 1000 },
-				{ type: "item", itemID: "0x1B7A", amount: 1 }
+				{ type: "item", sectionID: "0x1B7A", amount: 1 }
 			],
 			nextQuestID: null
 		},
@@ -1108,7 +1108,7 @@ function QuestList(questID)
 			"type": "delivery",
 			"description": "Deliver the package to Nail, the receiver, located at his usual spot.",
 			"deliveryItem": {
-				"itemID": "0x0E21", // Package item ID
+				"sectionID": "0x0E21", // Package item ID
 				"name": "Sealed Package", // Friendly name for the item
 				"amount": 1 // Quantity
 			},
@@ -1124,7 +1124,7 @@ function QuestList(questID)
 			},
 			"rewards": [
 				{ "type": "gold", "amount": 500 },
-				{ "type": "item", "itemID": "0x1F4C", "amount": 1 }
+				{ "type": "item", "sectionID": "0x1F4C", "amount": 1 }
 			]
 		},
 		"1012": {
@@ -1135,10 +1135,10 @@ function QuestList(questID)
 			questTurnIn: 1, // 0 = auto-complete
 			dailyQuest: 1,
 			resetDailyTime: 24, // Reset after 24 hours
-			targetItems: [{ itemID: "ore", amount: 50, name: "Iron Ore"}], // Ore ID
+			targetItems: [{ sectionID: "ore", amount: 50, name: "Iron Ore"}], // Ore ID
 			rewards: [
 				{ type: "gold", amount: 2000, name: "Gold"},
-				{ type: "item", itemID: "0x1F4C", amount: 1, name: "Recall Scroll" }
+				{ type: "item", sectionID: "0x1F4C", amount: 1, name: "Recall Scroll" }
 			]
 		}
 	};

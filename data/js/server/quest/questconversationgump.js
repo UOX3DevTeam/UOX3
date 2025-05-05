@@ -231,7 +231,7 @@ function manageQuestItems( player, questID, mark )
 				var targetItem = quest.targetItems[i];
 
 				// Check if the item matches the quest requirement
-				if( String( currentItem.sectionID ) === String( targetItem.itemID ))
+				if( String( currentItem.sectionID ) === String( targetItem.sectionID ))
 				{
 					if( mark )
 					{
@@ -268,7 +268,7 @@ function manageQuestItems( player, questID, mark )
 		// Handle delivery items
 		if( quest.type === "delivery" && quest.deliveryItem )
 		{
-			if( String( currentItem.sectionID ) === String( quest.deliveryItem.itemID ))
+			if( String( currentItem.sectionID ) === String( quest.deliveryItem.sectionID ))
 			{
 				if( mark )
 				{
@@ -307,7 +307,7 @@ function GetQuestObjectives( quest, questProgress )
 		{
 			var targetItem = quest.targetItems[i];
 			var itemName = targetItem.name || "Unknown Item"; // Use `name` if available, fallback to "Unknown Item"
-			var collected = ( questProgress && questProgress.collectedItems[targetItem.itemID] ) || 0;
+			var collected = ( questProgress && questProgress.collectedItems[targetItem.sectionID] ) || 0;
 
 			objectives += "- " + itemName + ": " + collected + "/" + targetItem.amount + "<br>";
 		}
@@ -521,7 +521,7 @@ function processQuestTurnIn( player, questID )
 		for( var i = 0; i < quest.targetItems.length; i++ )
 		{
 			var targetItem = quest.targetItems[i];
-			requiredItems.push({ itemID: targetItem.itemID, amount: targetItem.amount });
+			requiredItems.push({ sectionID: targetItem.sectionID, amount: targetItem.amount });
 		}
 
 		// Validate collected items against required objectives
@@ -530,7 +530,7 @@ function processQuestTurnIn( player, questID )
 			var item = questItems[i];
 			for( var j = 0; j < requiredItems.length; j++ )
 			{
-				if( String( item.sectionID) === String( requiredItems[j].itemID ))
+				if( String( item.sectionID) === String( requiredItems[j].sectionID ))
 				{
 					var toDeduct = Math.min( item.amount, requiredItems[j].amount );
 					requiredItems[j].amount -= toDeduct; // Deduct the required amount
@@ -579,7 +579,7 @@ function processQuestTurnIn( player, questID )
 		for( var i = 0; i < deliveryItems.length; i++ )
 		{
 			var item = deliveryItems[i];
-			if( String( item.sectionID ) === String( quest.deliveryItem.itemID ) && item.amount >= quest.deliveryItem.amount )
+			if( String( item.sectionID ) === String( quest.deliveryItem.sectionID ) && item.amount >= quest.deliveryItem.amount )
 			{
 				foundItem = true;
 
@@ -628,19 +628,19 @@ function findQuestItems( player, questID )
 	}
 
 	// Build the list of required item IDs
-	var requiredItemIDs = [];
+	var requiredsectionIDs = [];
 	if( quest.targetItems ) 
 	{
 		for( var i = 0; i < quest.targetItems.length; i++ )
 		{
-			requiredItemIDs.push( String( quest.targetItems[i].itemID ));
+			requiredsectionIDs.push( String( quest.targetItems[i].sectionID ));
 		}
 	}
 
 	// Add delivery item ID if it's a delivery quest
 	if( quest.type === "delivery" && quest.deliveryItem )
 	{
-		requiredItemIDs.push( String( quest.deliveryItem.itemID ));
+		requiredsectionIDs.push( String( quest.deliveryItem.sectionID ));
 	}
 
 	var currentItem;
@@ -654,7 +654,7 @@ function findQuestItems( player, questID )
 		}
 
 		// Check if the item matches the quest and has the "QuestItem" tag
-		if( currentItem.GetTag( "QuestItem" ) && requiredItemIDs.indexOf( String( currentItem.sectionID )) !== -1 ) 
+		if( currentItem.GetTag( "QuestItem" ) && requiredsectionIDs.indexOf( String( currentItem.sectionID )) !== -1 ) 
 		{
 			questItems.push( currentItem );
 		}
@@ -792,7 +792,7 @@ function processDeliveryQuest( player, questNpc, deliveryQuestID )
 
 	for( var i = 0; i < questItems.length; i++ )
 	{
-		if( String( questItems[i].sectionID ) === String( requiredItem.itemID ))
+		if( String( questItems[i].sectionID ) === String( requiredItem.sectionID ))
 		{
 			// Check if enough items are delivered
 			if( questItems[i].amount >= requiredItem.amount )
@@ -812,7 +812,7 @@ function processDeliveryQuest( player, questNpc, deliveryQuestID )
 	// Remove the item from the player's inventory
 	for( var j = 0; j < questItems.length; j++ )
 	{
-		if( String( questItems[j].sectionID ) === String( requiredItem.itemID )) 
+		if( String( questItems[j].sectionID ) === String( requiredItem.sectionID )) 
 		{
 			if( questItems[j].amount > requiredItem.amount )
 			{

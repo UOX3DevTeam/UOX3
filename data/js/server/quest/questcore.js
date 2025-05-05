@@ -20,7 +20,7 @@ function StartQuest( player, questID )
 		for( var i = 0; i < quest.targetItems.length; i++ )
 		{
 			var targetItem = quest.targetItems[i];
-			collectedItems[targetItem.itemID] = 0; // Start with 0 collected
+			collectedItems[targetItem.sectionID] = 0; // Start with 0 collected
 		}
 	}
 
@@ -36,7 +36,7 @@ function StartQuest( player, questID )
 	// Add the delivery item to the player's backpack if it's a delivery quest
 	if( quest.type == "delivery" && quest.deliveryItem )
 	{
-			var package = CreateDFNItem( player.socket, player, quest.deliveryItem.itemID, quest.deliveryItem.amount, "ITEM", true )
+			var package = CreateDFNItem( player.socket, player, quest.deliveryItem.sectionID, quest.deliveryItem.amount, "ITEM", true )
 			if( ValidateObject( package )) 
 			{
 				// Set the item's name to the delivery item name from the quest
@@ -235,7 +235,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 					{
 						var target = quest.targetItems[j];
 
-						if( String( target.itemID ) === String( identifier ))
+						if( String( target.sectionID ) === String( identifier ))
 						{
 							questEntry.collectedItems[identifier] = ( questEntry.collectedItems[identifier] || 0 ) + progressValue;
 
@@ -247,7 +247,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 						}
 
 						// Check if all items are collected
-						if( !questEntry.collectedItems || ( questEntry.collectedItems[target.itemID] || 0 ) < target.amount )
+						if( !questEntry.collectedItems || ( questEntry.collectedItems[target.sectionID] || 0 ) < target.amount )
 						{
 							allObjectivesCompleted = false;
 						}
@@ -302,7 +302,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 						}
 
 						// Check if the item matches the delivery item and has the correct tag
-						if( currentItem.GetTag( "QuestItem" ) && String( currentItem.sectionID ) === String( quest.deliveryItem.itemID ) && currentItem.amount >= quest.deliveryItem.amount )
+						if( currentItem.GetTag( "QuestItem" ) && String( currentItem.sectionID ) === String( quest.deliveryItem.sectionID ) && currentItem.amount >= quest.deliveryItem.amount )
 						{
 							hasItem = true;
 
@@ -481,7 +481,7 @@ function QuestRewards( player, quest, socket )
 				GoldReward( player, reward, bankBox, socket );
 				break;
 			case "item":
-				CreateDFNItem( player.socket, player, reward.itemID, reward.amount, "ITEM", true );
+				CreateDFNItem( player.socket, player, reward.sectionID, reward.amount, "ITEM", true );
 				socket.SysMessage( "You receive a reward: " + reward.amount + " of item " + reward.name + "!" );
 				break;
 			case "karma":
@@ -605,10 +605,10 @@ function onItemCollected( player, item, isToggledOff )
 
 				if( DebugMessages )
 				{
-					player.SysMessage( "Checking target itemID: " + target.itemID );
+					player.SysMessage( "Checking target sectionID: " + target.sectionID );
 				}
 
-				if( String( target.itemID ) === String( item.sectionID ))
+				if( String( target.sectionID ) === String( item.sectionID ))
 				{
 					var currentCount = questEntry.collectedItems[item.sectionID] || 0;
 					var remaining = target.amount - currentCount;
