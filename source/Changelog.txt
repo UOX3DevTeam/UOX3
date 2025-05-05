@@ -1,3 +1,31 @@
+05/05/2025 - Xuri
+	Updated target-based 'wipe command to also affect valid NPCs (non-invulnerable, non-pets) (js/commands/wipe.js)
+	NPC admin gump (js/commands/wholist.js) will now force-refresh on next open after NPCs have been removed via the remove button in the menu
+	Spawn Object admin gump (js/commands/spawnadmin.js) will now force-refresh on next open after spawn objects have been removed via the remove button in the menu
+	Added three new GM commands (js/commands/targeting/xwalk.js) that can be used to control NPCs remotely:
+		'xwalk	// Makes targeted NPC pathfind and walk to target location
+		'xrun	// Makes targeted NPC pathfind and run to target location
+		'xturn	// Makes targeted NPC turn towards target location
+	Updated AdvancedPathfinding() in movement.cpp to include two optional parameters
+		allowPartial // if true, move even if calculated path is blocked, until blocked (defaults to false)
+		ignoreDoors // if true, ignore doors during pathfinding calculations and calculate the path is if the door was not there (defaults to false)
+	Updated .WalkTo() and .RunTo() JS Character Methods to support the two additional pathfinding parameters, and also to support maxSteps values beyond 255
+	Updated pathfinding heuristic from Manhattan (4-way) to Octile (8-way) distance for improved pathfinding accuracy and increased performance with diagonal movement
+	In some situations, UOX3 will now calculate a new partial path for NPCs who failed to follow their assigned path, to get them closer to their final destination
+	Optimized pathfinding logic for NPCs following a target (like pets/hirelings, or NPCs in combat), to reduce the amount of pathfinding calculations required when target is moving. The NPCs will now keep track of the general direction towards their target, and if the NPCs are already heading in the right direction, they'll  keep going as long as they have a path left to follow or until direction towards target has changed. This also eliminates a problem where NPCs would stick to their path until they reach the end, even if target has gone in a different direction.
+	Updated logic for how NPCs turn during pathfinding. Instead of adding an extra "push" for direction into the calculated path itself to ensure NPC will both turn and move in that direction, which allowed some inaccuracies to creep into the calculated paths, that extra push is now handled while NPC is executing the path instead, whenever direction changes are needed
+	Partial pathfinding is now enabled for fleeing NPCs by default, to increase their chances of getting further away from their opponent in combat
+	Partial pathfinding is now enabled for NPCs in water by default, to allow them to get as close as possible to their opponent in combat
+	Fixed an issue where NPC movement speeds would misbehave at certain speeds where the calculated movement time would get rounded down to zero
+	NPCs will now play a fidgeting animation if they've remained motionless for 3 seconds or more while not in a state of actively trying to move/pathfind
+	Increased max pathfinding steps for NPCs in combat from 50 to 75
+	Fixed an issue where NPCs would stop and wait when they should have been moving, after successful pathfinding calculation
+	Fixed an issue where NPCs that ignore a target and enter evade state would not leave combat
+	Added two new JS Character properties that can be used to evaluate pathfinding success (for instance in combination with onPathFindEnd Event), and/or opens for manipulating pathfinding target locations via scripts:
+		.pathTargX // Current NPC pathfinding target, X coordinate
+		.pathTargY // Current NPC pathfinding target, Y coordinate
+	Added colorlists for frenzied and forest ostards, and applied these to their NPC definitions
+
 04/05/2025 - Xuri
 	Fixed an error on shutdown when running UOX3 in debug mode in VS due to CCommands constructor attempting to unnecessarily clear CommandMap, TargetMap and JSCommandMaps
 	Fixed an issue in Portuguese dictionary where a commented line was lacking a forward slash

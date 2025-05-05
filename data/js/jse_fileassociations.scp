@@ -449,6 +449,7 @@
 1062=commands/playtime.js
 1063=commands/moongate.js
 1064=commands/spawnadmin.js
+1065=commands/targeting/xwalk.js
 }
 
 //-------------------------------------------
