@@ -179,13 +179,13 @@ function onTimer( timerObj, timerID )
 	for( var i = 0; i < questProgressArray.length; i++ )
 	{
 		var questEntry = questProgressArray[i];
-		if( questEntry.questID === timerID && !questEntry.completed )
+		if( questEntry.questID == timerID && !questEntry.completed )
 		{
 			var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
 
 			TriggerEvent( 5802, "manageQuestItems", player, questEntry.questID, false );
 
-			if( quest.type === "skillgain" ) 
+			if( quest.type == "skillgain" ) 
 			{
 				player.SetTag( "AcceleratedSkillGain", null ); // Remove the tag
 				player.RemoveScriptTrigger( 5811 ); // Remove the quest skill gain script trigger
@@ -227,7 +227,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 			var allObjectivesCompleted = true;
 
 			// Check item collection objectives
-			if( quest.type === "collect" || quest.type === "timecollect" || quest.type === "multi" )
+			if( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" )
 			{
 				if( quest.targetItems )
 				{
@@ -235,7 +235,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 					{
 						var target = quest.targetItems[j];
 
-						if( String( target.sectionID ) === String( identifier ))
+						if( String( target.sectionID ) == String( identifier ))
 						{
 							questEntry.collectedItems[identifier] = ( questEntry.collectedItems[identifier] || 0 ) + progressValue;
 
@@ -264,7 +264,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 					{
 						var target = quest.targetKills[k];
 
-						if( String( target.npcID ) === String( identifier ))
+						if( String( target.npcID ) == String( identifier ))
 						{
 							questEntry.harvestKills[identifier] = ( questEntry.harvestKills[identifier] || 0 ) + progressValue;
 
@@ -287,7 +287,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 			if( quest.type == "delivery" )
 			{
 				// Check if the player delivered the item to the correct NPC
-				if( identifier === quest.targetDelivery.npcID ) 
+				if( identifier == quest.targetDelivery.npcID ) 
 				{
 					// Fetch the delivery item from the player's backpack
 					var pack = player.pack; // Get the player's backpack
@@ -302,7 +302,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 						}
 
 						// Check if the item matches the delivery item and has the correct tag
-						if( currentItem.GetTag( "QuestItem" ) && String( currentItem.sectionID ) === String( quest.deliveryItem.sectionID ) && currentItem.amount >= quest.deliveryItem.amount )
+						if( currentItem.GetTag( "QuestItem" ) && String( currentItem.sectionID ) == String( quest.deliveryItem.sectionID ) && currentItem.amount >= quest.deliveryItem.amount )
 						{
 							hasItem = true;
 
@@ -363,7 +363,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 				if( quest.questTurnIn == 1 )
 				{
 					questEntry.completed = true;
-					if( quest.type === "skillgain" && quest.oncomplete )
+					if( quest.type == "skillgain" && quest.oncomplete )
 					{
 						socket.SysMessage( quest.oncomplete );
 					}
@@ -376,7 +376,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 				else
 				{
 					questEntry.completed = true;
-					if (quest.type === "skillgain" && quest.oncomplete )
+					if (quest.type == "skillgain" && quest.oncomplete )
 					{
 						socket.SysMessage( quest.oncomplete );
 					}
@@ -608,7 +608,7 @@ function onItemCollected( player, item, isToggledOff )
 					player.SysMessage( "Checking target sectionID: " + target.sectionID );
 				}
 
-				if( String( target.sectionID ) === String( item.sectionID ))
+				if( String( target.sectionID ) == String( item.sectionID ))
 				{
 					var currentCount = questEntry.collectedItems[item.sectionID] || 0;
 					var remaining = target.amount - currentCount;
@@ -756,7 +756,7 @@ function ReadPlayerSettings( player )
 				var value = manualTrim( parts[1] ); // Use manualTrim on the value
 
 				// Check if the value is a quoted string
-				if( value.charAt( 0 ) == '"' && value.charAt( value.length - 1 ) === '"' )
+				if( value.charAt( 0 ) == '"' && value.charAt( value.length - 1 ) == '"' )
 				{
 					// Remove quotes and unescape internal quotes
 					settings[key] = value.substring( 1, value.length - 1 ).replace( /\\"/g, '"' );
@@ -809,11 +809,11 @@ function SavePlayerSettings( player, settings )
 				var value = settings[key];
 
 				// Serialize based on data type
-				if( typeof value === "string" ) 
+				if( typeof value == "string" ) 
 				{
 					mFile.Write( key + "=" + '"' + value.replace( /"/g, '\\"' ) + '"' + "\n" ); // Escape quotes for strings
 				} 
-				else if( typeof value === "boolean" )
+				else if( typeof value == "boolean" )
 				{
 					mFile.Write( key + "=" + ( value ? "1" : "0" ) + "\n" ); // Boolean as 1/0
 				} 
@@ -916,29 +916,29 @@ function ReadFailedQuests( player )
 			line = manualTrim( line ); // Remove leading/trailing spaces
 
 			// Skip empty lines
-			if( line === "" )
+			if( line == "" )
 			{
 				continue;
 			}
 
 			// Split the line into key and value
 			var parts = line.split( "=" );
-			if( parts.length === 2 )
+			if( parts.length == 2 )
 			{
 				var key = manualTrim( parts[0] ).toLowerCase(  );
 				var value = manualTrim( parts[1] );
 
-				if( key === "questid" )
+				if( key == "questid" )
 				{
 					currentQuestID = parseInt( value, 10 ); // Parse the QuestID
 				} 
-				else if( key === "serial" )
+				else if( key == "serial" )
 				{
 					currentSerial = parseInt( value, 10 ); // Parse the Serial
 				}
 
 				// If we reach the end of an entry and Serial matches the player, save the QuestID
-				if( key === "failed" && value === "1" && currentQuestID !== null && currentSerial === player.serial )
+				if( key == "failed" && value == "1" && currentQuestID != null && currentSerial == player.serial )
 				{
 					failedQuests.push( currentQuestID );
 					currentQuestID = null; // Reset for next entry
@@ -1006,7 +1006,7 @@ function ArchiveCompletedQuest( player, completedQuest )
 
 		// Add skill progress
 		var skillProgressStr = "";
-		if( quest && quest.type === "skillgain" )
+		if( quest && quest.type == "skillgain" )
 		{
 			skillProgressStr = "SkillProgress=" + ( completedQuest.skillProgress || 0 ) + "\n" +
 				"MaxSkillPoints=" + ( quest.maxSkillPoints || 0 ) + "\n" +
@@ -1015,7 +1015,7 @@ function ArchiveCompletedQuest( player, completedQuest )
 
 		// Add delivery progress
 		var deliveryProgressStr = "";
-		if( quest && quest.type === "delivery" )
+		if( quest && quest.type == "delivery" )
 		{
 			deliveryProgressStr = "DeliveryProgress=" + (completedQuest.deliveryProgress || 0 ) + "\n" +
 				"DeliveryItem=" + ( completedQuest.deliveryItem || "null" ) + "\n" +
@@ -1063,10 +1063,10 @@ function ReadArchivedQuests( player )
 			line = manualTrim( line ); // Remove leading/trailing spaces
 
 			// Skip empty lines
-			if( line === "" ) 
+			if( line == "" ) 
 			{
 				// Check if we reached the end of an entry
-				if( currentQuestID !== null && currentSerial === player.serial ) 
+				if( currentQuestID !== null && currentSerial == player.serial ) 
 				{
 					archivedQuests.push( currentQuestID ); // Add the quest ID
 				}
@@ -1077,21 +1077,21 @@ function ReadArchivedQuests( player )
 
 			// Split the line into key and value
 			var parts = line.split( "=" );
-			if( parts.length === 2 ) 
+			if( parts.length == 2 ) 
 			{
 				var key = manualTrim( parts[0] ).toLowerCase(  );
 				var value = manualTrim( parts[1] );
 
-				if( key === "questid" ) 
+				if( key == "questid" ) 
 				{
 					currentQuestID = parseInt( value, 10 ); // Parse quest ID
-				} else if( key === "serial" )
+				} else if( key == "serial" )
 				{
 					currentSerial = parseInt( value, 10 ); // Parse player serial
 				}
 
 				// Add quest ID if marked as completed
-				if( key === "completed" && value === "1" && currentQuestID !== null && currentSerial === player.serial ) 
+				if( key == "completed" && value == "1" && currentQuestID != null && currentSerial == player.serial ) 
 				{
 					archivedQuests.push( currentQuestID );
 				}
@@ -1290,8 +1290,8 @@ function ReadQuestProgress( player )
 function finalizeQuestEntry( entry, player )
 {
 	entry.questID = parseInt( entry.questid || "0", 10 );
-	entry.completed = entry.completed === "1";
-	entry.questTurnIn = entry.questturnin === "1";
+	entry.completed = entry.completed == "1";
+	entry.questTurnIn = entry.questturnin == "1";
 	entry.startTime = parseInt( entry.starttime || "0", 10 );
 	entry.timeLimit = parseInt( entry.timelimit || "0", 10 );
 	entry.skillProgress = parseFloat( entry.skillprogress || "0.0" );
@@ -1316,7 +1316,7 @@ function processCollectedItems( entry, player )
 		player.SysMessage( "Processing collected items: " + collectedItemsStr );
 	}
 
-	if( collectedItemsStr === "" ) 
+	if( collectedItemsStr == "" ) 
 	{
 		if( DebugMessages ) 
 		{
@@ -1329,7 +1329,7 @@ function processCollectedItems( entry, player )
 	for( var i = 0; i < collectedItems.length; i++ )
 	{
 		var pair = collectedItems[i].split( ":" );
-		if( pair.length === 2 )
+		if( pair.length == 2 )
 		{
 			var key = manualTrim( pair[0] );
 			var value = parseInt( manualTrim( pair[1] ), 10 );
@@ -1365,7 +1365,7 @@ function processKills( entry, player )
 	}
 
 	// If killsStr is empty, there’s nothing to process
-	if( killsStr === "" )
+	if( killsStr == "" )
 	{
 		if( DebugMessages )
 		{
@@ -1378,7 +1378,7 @@ function processKills( entry, player )
 	for( var i = 0; i < harvestKills.length; i++ ) 
 	{
 		var pair = harvestKills[i].split( ":" );
-		if( pair.length === 2 )
+		if( pair.length == 2 )
 		{
 			var key = manualTrim( pair[0] );
 			var value = parseInt( manualTrim( pair[1] ), 10 );

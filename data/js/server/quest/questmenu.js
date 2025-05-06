@@ -30,7 +30,7 @@ function QuestMenu( pUser )
 			var questCategory = manualTrim( quest.category || "" ).toLowerCase();
 			var playerCategory = manualTrim( currentCategory || "" ).toLowerCase();
 
-			if( playerCategory == "all quests" || questCategory === playerCategory )
+			if( playerCategory == "all quests" || questCategory == playerCategory )
 			{
 				filteredQuests.push( questEntry );
 			}
@@ -184,7 +184,7 @@ function QuestMenu( pUser )
 	gump.AddButton( 550, 420, 247, 249, 1, 0, 1 );//okay button
 
 	// Add a fallback for when no quests are found
-	if( filteredQuests.length === 0 )
+	if( filteredQuests.length == 0 )
 	{
 		gump.AddText( 50, 250, 0, "No quests match the selected category." );
 	}
@@ -213,7 +213,7 @@ function CompletedQuestsMenu( pUser )
 	var uniqueQuests = [];
 	for( var i = 0; i < completedQuests.length; i++ )
 	{
-		if( uniqueQuests.indexOf( completedQuests[i] ) === -1 )
+		if( uniqueQuests.indexOf( completedQuests[i] ) == -1 )
 		{
 			uniqueQuests.push( completedQuests[i] );
 		}
@@ -318,17 +318,17 @@ function onGumpPress( pSock, pButton, gumpData )
 	var gumpID = 5823 + 0xffff;
 
 	// Handle button presses for navigating between active and completed quests
-	if( pButton === 1 ) 
+	if( pButton == 1 ) 
 	{
 		pSock.CloseGump(gumpID, 0);
 		QuestMenu(pUser);
 	}
-	else if( pButton === 20 )
+	else if( pButton == 20 )
 	{
 		pSock.CloseGump( gumpID, 0 );
 		QuestMenu( pUser );
 	} 
-	else if( pButton === 21 )
+	else if( pButton == 21 )
 	{
 		pSock.CloseGump( gumpID, 0 );
 		CompletedQuestsMenu( pUser );
@@ -357,7 +357,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			pSock.CloseGump( gumpID, 0 );
 			QuestMenu( pUser );
 		}
-		else if( OtherButton === 2001 ) 
+		else if( OtherButton == 2001 ) 
 		{ // Transparency toggle button
 			// Load existing settings
 			var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};

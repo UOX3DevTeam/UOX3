@@ -231,7 +231,7 @@ function manageQuestItems( player, questID, mark )
 				var targetItem = quest.targetItems[i];
 
 				// Check if the item matches the quest requirement
-				if( String( currentItem.sectionID ) === String( targetItem.sectionID ))
+				if( String( currentItem.sectionID ) == String( targetItem.sectionID ))
 				{
 					if( mark )
 					{
@@ -266,9 +266,9 @@ function manageQuestItems( player, questID, mark )
 		}
 
 		// Handle delivery items
-		if( quest.type === "delivery" && quest.deliveryItem )
+		if( quest.type == "delivery" && quest.deliveryItem )
 		{
-			if( String( currentItem.sectionID ) === String( quest.deliveryItem.sectionID ))
+			if( String( currentItem.sectionID ) == String( quest.deliveryItem.sectionID ))
 			{
 				if( mark )
 				{
@@ -335,7 +335,7 @@ function GetQuestObjectives( quest, questProgress )
 		objectives += "- " + minutes + " minute( s ) and " + seconds + " second( s )<br>";
 	}
 
-	if( quest.type === "delivery" ) 
+	if( quest.type == "delivery" ) 
 	{
 		objectives += "<b>Delivery Quest:</b><br>";
 
@@ -365,7 +365,7 @@ function GetQuestObjectives( quest, questProgress )
 	}
 
 	// Skill objectives
-	if( quest.type === "skillgain" && quest.targetSkill !== undefined && quest.maxSkillPoints !== undefined )
+	if( quest.type == "skillgain" && quest.targetSkill != undefined && quest.maxSkillPoints != undefined )
 	{
 		objectives += "<b>Skill Training:</b><br>";
 		var skillName = GetSkillName( quest.targetSkill ) || "Unknown Skill"; // Use a helper to get the skill name
@@ -397,7 +397,7 @@ function GetQuestObjectives( quest, questProgress )
 		}
 	}
 
-	if( objectives === "" )
+	if( objectives == "" )
 	{
 		objectives = "No specific objectives.";
 	}
@@ -462,7 +462,7 @@ function processQuestTurnIn( player, questID )
 	// Find the quest progress entry
 	for( var i = 0; i < questProgressArray.length; i++ )
 	{
-		if( questProgressArray[i].questID === questID )
+		if( questProgressArray[i].questID == questID )
 		{
 			questProgress = questProgressArray[i];
 			break;
@@ -470,7 +470,7 @@ function processQuestTurnIn( player, questID )
 	}
 
 	// Handle skill gain quests
-	if( quest.type === "skillgain" ) 
+	if( quest.type == "skillgain" ) 
 	{
 		if( questProgress.skillProgress >= quest.maxSkillPoints )
 		{
@@ -485,7 +485,7 @@ function processQuestTurnIn( player, questID )
 	}
 
 	// Check if the quest is a "kill" type and validate completion
-	if( quest.type === "kill" || quest.type === "timekills" || quest.type === "multi" )
+	if( quest.type == "kill" || quest.type == "timekills" || quest.type == "multi" )
 	{
 		if( !questProgress || !questProgress.harvestKills )
 		{
@@ -507,9 +507,9 @@ function processQuestTurnIn( player, questID )
 	}
 
 	// If the quest is not a kill quest, check for item turn-in
-	if( quest.type === "collect" || quest.type === "timecollect" || quest.type === "multi" )
+	if( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" )
 	{
-		if( !quest.targetItems || quest.targetItems.length === 0 )
+		if( !quest.targetItems || quest.targetItems.length == 0 )
 		{
 			return false;
 		}
@@ -530,18 +530,18 @@ function processQuestTurnIn( player, questID )
 			var item = questItems[i];
 			for( var j = 0; j < requiredItems.length; j++ )
 			{
-				if( String( item.sectionID) === String( requiredItems[j].sectionID ))
+				if( String( item.sectionID) == String( requiredItems[j].sectionID ))
 				{
 					var toDeduct = Math.min( item.amount, requiredItems[j].amount );
 					requiredItems[j].amount -= toDeduct; // Deduct the required amount
 					item.amount -= toDeduct; // Deduct from the item's stack
 
-					if( item.amount === 0 )
+					if( item.amount == 0 )
 					{
 						item.Delete(); // Remove the item if the stack is empty
 					}
 
-					if( requiredItems[j].amount === 0 )
+					if( requiredItems[j].amount == 0 )
 					{
 						break;
 					}
@@ -564,7 +564,7 @@ function processQuestTurnIn( player, questID )
 	}
 
 	// Handle delivery quests
-	if( quest.type === "delivery" )
+	if( quest.type == "delivery" )
 	{
 		// Validate NPC
 		if( quest.targetDelivery.npcID !== questNpc.serial )
@@ -579,7 +579,7 @@ function processQuestTurnIn( player, questID )
 		for( var i = 0; i < deliveryItems.length; i++ )
 		{
 			var item = deliveryItems[i];
-			if( String( item.sectionID ) === String( quest.deliveryItem.sectionID ) && item.amount >= quest.deliveryItem.amount )
+			if( String( item.sectionID ) == String( quest.deliveryItem.sectionID ) && item.amount >= quest.deliveryItem.amount )
 			{
 				foundItem = true;
 
@@ -638,7 +638,7 @@ function findQuestItems( player, questID )
 	}
 
 	// Add delivery item ID if it's a delivery quest
-	if( quest.type === "delivery" && quest.deliveryItem )
+	if( quest.type == "delivery" && quest.deliveryItem )
 	{
 		requiredsectionIDs.push( String( quest.deliveryItem.sectionID ));
 	}
@@ -739,7 +739,7 @@ function QuestNpcInterAction( pUser, questNpc )
 		{
 			socket.SysMessage( "Checking archived quest: " + archivedQuestID );
 		}
-		if( archivedQuestID === playerQuestID ) // Compare consistently
+		if( archivedQuestID == playerQuestID ) // Compare consistently
 		{
 			targObj.TurnToward( pUser );
 			targObj.TextMessage( "I'm sorry, I have nothing for you at this time.");
@@ -753,7 +753,7 @@ function QuestNpcInterAction( pUser, questNpc )
 
 	for( var i = 0; i < questProgressArray.length; i++ ) 
 	{
-		if( questProgressArray[i].questID === playerQuestID ) 
+		if( questProgressArray[i].questID == playerQuestID ) 
 		{
 			currentQuestProgress = questProgressArray[i];
 			break;
@@ -792,7 +792,7 @@ function processDeliveryQuest( player, questNpc, deliveryQuestID )
 
 	for( var i = 0; i < questItems.length; i++ )
 	{
-		if( String( questItems[i].sectionID ) === String( requiredItem.sectionID ))
+		if( String( questItems[i].sectionID ) == String( requiredItem.sectionID ))
 		{
 			// Check if enough items are delivered
 			if( questItems[i].amount >= requiredItem.amount )
@@ -812,7 +812,7 @@ function processDeliveryQuest( player, questNpc, deliveryQuestID )
 	// Remove the item from the player's inventory
 	for( var j = 0; j < questItems.length; j++ )
 	{
-		if( String( questItems[j].sectionID ) === String( requiredItem.sectionID )) 
+		if( String( questItems[j].sectionID ) == String( requiredItem.sectionID )) 
 		{
 			if( questItems[j].amount > requiredItem.amount )
 			{
@@ -830,7 +830,7 @@ function processDeliveryQuest( player, questNpc, deliveryQuestID )
 	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", player );
 	for( var i = 0; i < questProgressArray.length; i++ )
 	{
-		if( questProgressArray[i].questID === deliveryQuestID )
+		if( questProgressArray[i].questID == deliveryQuestID )
 		{
 			questProgressArray[i].completed = true;
 			break;
@@ -901,7 +901,7 @@ function isQuestArchived( array, value )
 	value = parseInt( value, 10 ); // Ensure value is a number
 	for( var i = 0; i < array.length; i++ ) 
 	{
-		if( parseInt( array[i], 10 ) === value )
+		if( parseInt( array[i], 10 ) == value )
 		{
 			return true;
 		}
@@ -912,7 +912,7 @@ function isQuestArchived( array, value )
 // Helper function to check if a value is an array
 function isArray( value ) 
 {
-	return Object.prototype.toString.call( value ) === "[object Array]";
+	return Object.prototype.toString.call( value ) == "[object Array]";
 }
 
 function onContextMenuRequest( socket, targObj )

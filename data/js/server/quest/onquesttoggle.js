@@ -23,7 +23,7 @@ function onCallback1( socket, iTarget )
 	}
 
 	var itemOwner = GetPackOwner( iTarget, 0 );
-	if( !itemOwner || itemOwner.serial !== pUser.serial )
+	if( !itemOwner || itemOwner.serial != pUser.serial )
 	{
 		socket.SysMessage( GetDictionaryEntry( 19601, socket.language ));//The item must be in your backpack to toggle its quest status.
 		return;
