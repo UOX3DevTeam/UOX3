@@ -37,7 +37,56 @@
       "name": "DoMovingEffect",
       "cppName": "SE_DoMovingEffect",
       "params": {
-        "num": 6
+        "sets": [
+          {
+            "num": 6,
+            "max": 8,
+            "list": [
+              { "name": "src", "type": "CharOrItem", "required": true },
+              { "name": "trg", "type": "CharOrItem", "required": true },
+              { "name": "effectId", "type": "number", "required": true },
+              { "name": "speed", "type": "number", "required": true },
+              { "name": "loop", "type": "number", "required": true },
+              { "name": "explode", "type": "boolean", "required": true },
+              { "name": "hue", "type": "number", "required": false },
+              { "name": "renderMode", "type": "number", "required": false }
+            ]
+          },
+          {
+            "num": 8,
+            "max": 10,
+            "list": [
+              { "name": "src", "type": "CharOrItem", "required": true },
+              { "name": "trgX", "type": "number", "required": true },
+              { "name": "trgY", "type": "number", "required": true },
+              { "name": "trgZ", "type": "number", "required": true },
+              { "name": "effectId", "type": "number", "required": true },
+              { "name": "speed", "type": "number", "required": true },
+              { "name": "loop", "type": "number", "required": true },
+              { "name": "explode", "type": "boolean", "required": true },
+              { "name": "hue", "type": "number", "required": false },
+              { "name": "renderMode", "type": "number", "required": false }
+            ]
+          },
+          {
+            "num": 10,
+            "max": 12,
+            "list": [
+              { "name": "srcX", "type": "number", "required": true },
+              { "name": "srcY", "type": "number", "required": true },
+              { "name": "srcZ", "type": "number", "required": true },
+              { "name": "trgX", "type": "number", "required": true },
+              { "name": "trgY", "type": "number", "required": true },
+              { "name": "trgZ", "type": "number", "required": true },
+              { "name": "effectId", "type": "number", "required": true },
+              { "name": "speed", "type": "number", "required": true },
+              { "name": "loop", "type": "number", "required": true },
+              { "name": "explode", "type": "boolean", "required": true },
+              { "name": "hue", "type": "number", "required": false },
+              { "name": "renderMode", "type": "number", "required": false }
+            ]
+          }
+        ]
       }
     },
     {
@@ -156,14 +205,25 @@
       "name": "CheckTimeSinceLastCombat",
       "cppName": "SE_CheckTimeSinceLastCombat",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "toon", "type": "Character", "required": true },
+          { "name": "timespanSecs", "type": "number", "required": true }
+        ]
+      },
+      "returns": "boolean"
     },
     {
       "name": "CheckInstaLog",
       "cppName": "SE_CheckInstaLog",
       "params": {
-        "num": 4
+        "num": 4,
+        "list": [
+          { "name": "x", "type": "number", "required": true },
+          { "name": "y", "type": "number", "required": true },
+          { "name": "world", "type": "number", "required": true },
+          { "name": "instanceId", "type": "number", "required": true }
+        ]
       }
     },
     {
@@ -171,196 +231,346 @@
       "cppName": "SE_GetHour",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "GetMinute",
       "cppName": "SE_GetMinute",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "GetDay",
       "cppName": "SE_GetDay",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "SecondsPerUOMinute",
       "cppName": "SE_SecondsPerUOMinute",
       "params": {
-        "num": 0
-      }
+        "num": 0,
+        "max": 1,
+        "list": [
+          { "name": "newVal", "type": "number", "required": false }
+        ]
+      },
+      "returns": "number"
     },
     {
       "name": "GetCurrentClock",
       "cppName": "SE_GetCurrentClock",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "GetStartTime",
       "cppName": "SE_GetStartTime",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "GetMurderThreshold",
       "cppName": "SE_GetMurderThreshold",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "RollDice",
       "cppName": "SE_RollDice",
       "params": {
-        "num": 3
-      }
+        "num": 3,
+        "list": [
+          { "name": "dice", "type": "number", "required": true },
+          { "name": "face", "type": "number", "required": true },
+          { "name": "add",  "type": "number", "required": true }
+        ]
+      },
+      "returns": "number"
     },
     {
       "name": "RaceCompareByRace",
       "cppName": "SE_RaceCompareByRace",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "raceA", "type": "number", "required": true },
+          { "name": "raceB",  "type": "number", "required": true }
+        ]
+      },
+      "returns": "number"
     },
     {
       "name": "GetRandomSOSArea",
       "cppName": "SE_GetRandomSOSArea",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "worldNum",   "type": "number", "required": true },
+          { "name": "instanceId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "number[]"
     },
     {
       "name": "DoTempEffect",
       "cppName": "SE_DoTempEffect",
       "params": {
-        "num": 7
-      }
+        "num": 7,
+        "max": 8,
+        "list": [
+          { "name": "iType",    "type": "number",     "required": true },
+          { "name": "src",      "type": "CharOrNull", "required": true },
+          { "name": "dst",      "type": "CharOrItem", "required": true },
+          { "name": "targNum",  "type": "number",     "required": true },
+          { "name": "more1",    "type": "number",     "required": true },
+          { "name": "more2",    "type": "number",     "required": true },
+          { "name": "more3",    "type": "number",     "required": true },
+          { "name": "item",     "type": "Item",       "required": false }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "MakeItem",
       "cppName": "SE_MakeItem",
       "params": {
-        "num": 3
-      }
+        "num": 3,
+        "max": 4,
+        "list": [
+          { "name": "mSock",          "type": "Socket",     "required": true },
+          { "name": "player",         "type": "Character",  "required": true },
+          { "name": "itemMenu",       "type": "number",     "required": true },
+          { "name": "resourceColour", "type": "number",     "required": false }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "FindMulti",
       "cppName": "SE_FindMulti",
       "params": {
-        "num": 4
-      }
+        "sets": [
+          {
+            "num": 1,
+            "list": [
+              { "name": "src",  "type": "CharOrItem", "required": true }
+            ]
+          },
+          {
+            "num": 4,
+            "max": 5,
+            "list": [
+              { "name": "x",          "type": "number", "required": true },
+              { "name": "y",          "type": "number", "required": true },
+              { "name": "z",          "type": "number", "required": true },
+              { "name": "worldNum",   "type": "number", "required": true },
+              { "name": "instanceId", "type": "number", "required": false }
+            ]
+          }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "GetItem",
       "cppName": "SE_GetItem",
       "params": {
-        "num": 4
-      }
+        "num": 4,
+        "max": 5,
+            "list": [
+              { "name": "x",          "type": "number", "required": true },
+              { "name": "y",          "type": "number", "required": true },
+              { "name": "z",          "type": "number", "required": true },
+              { "name": "worldNum",   "type": "number", "required": true },
+              { "name": "instanceId", "type": "number", "required": false }
+            ]
+      },
+      "returns": "ItemOrNull"
     },
     {
       "name": "FindItem",
       "cppName": "SE_FindItem",
       "params": {
-        "num": 5
-      }
+        "num": 5,
+        "max": 6,
+            "list": [
+              { "name": "x",          "type": "number", "required": true },
+              { "name": "y",          "type": "number", "required": true },
+              { "name": "z",          "type": "number", "required": true },
+              { "name": "worldNum",   "type": "number", "required": true },
+              { "name": "id",         "type": "number", "required": true },
+              { "name": "instanceId", "type": "number", "required": false }
+            ]
+      },
+      "returns": "ItemOrNull"
     },
     {
       "name": "PossessTown",
       "cppName": "SE_PossessTown",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "town",       "type": "number", "required": true },
+          { "name": "sTown",      "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "IsRaceWeakToWeather",
       "cppName": "SE_IsRaceWeakToWeather",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "raceID",     "type": "number", "required": true },
+          { "name": "weathType",  "type": "number", "required": true }
+        ]
+      },
+      "returns": "boolean"
     },
     {
       "name": "GetRaceSkillAdjustment",
       "cppName": "SE_GetRaceSkillAdjustment",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "raceID",   "type": "number", "required": true },
+          { "name": "skillID",  "type": "number", "required": true }
+        ]
+      },
+      "returns": "number"
     },
     {
       "name": "UseItem",
       "cppName": "SE_UseItem",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "src",  "type": "CharOrSocket", "required": true },
+          { "name": "item", "type": "Item",         "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "TriggerTrap",
       "cppName": "SE_TriggerTrap",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "src",  "type": "CharOrSocket", "required": true },
+          { "name": "item", "type": "Item",         "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "CompareGuildByGuild",
       "cppName": "SE_CompareGuildByGuild",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "guild1", "type": "number", "required": true },
+          { "name": "guild2", "type": "number", "required": true }
+        ]
+      },
+      "returns": "number"
     },
     {
       "name": "CommandLevelReq",
       "cppName": "SE_CommandLevelReq",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "command", "type": "string", "required": true }
+        ]
+      },
+      "returns": "number"
     },
     {
       "name": "CommandExists",
       "cppName": "SE_CommandExists",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "command", "type": "string", "required": true }
+        ]
+      },
+      "returns": "boolean"
     },
     {
       "name": "FirstCommand",
       "cppName": "SE_FirstCommand",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "string"
     },
     {
       "name": "NextCommand",
       "cppName": "SE_NextCommand",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "string"
     },
     {
       "name": "FinishedCommandList",
       "cppName": "SE_FinishedCommandList",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "boolean"
     },
     {
       "name": "CreateDFNItem",
       "cppName": "SE_CreateDFNItem",
       "params": {
-        "num": 3
-      }
+        "num": 3,
+        "max": 9,
+        "list": [
+          { "name": "sock",       "type": "SocketOrNull", "required": true },
+          { "name": "toon",       "type": "CharOrNull",   "required": true },
+          { "name": "sectNumber", "type": "string",       "required": true },
+          { "name": "itemAmount", "type": "number",       "required": false },
+          { "name": "itemType",   "type": "string",       "required": false },
+          { "name": "inPack",     "type": "boolean",      "required": false },
+          { "name": "color",      "type": "int",          "required": false },
+          { "name": "worldNum",   "type": "int",          "required": false },
+          { "name": "instanceId", "type": "int",          "required": false }
+        ]
+      },
+      "returns": "Item"
     },
     {
       "name": "CreateBlankItem",
       "cppName": "SE_CreateBlankItem",
       "params": {
-        "num": 8
-      }
+        "num": 8,
+        "list": [
+          { "name": "sock",       "type": "SocketOrNull", "required": true },
+          { "name": "toon",       "type": "CharOrNull",   "required": true },
+          { "name": "itemAmount", "type": "number",       "required": true },
+          { "name": "name",       "type": "string",       "required": true },
+          { "name": "itemId",     "type": "int",          "required": true },
+          { "name": "color",      "type": "int",          "required": true },
+          { "name": "objType",    "type": "string",       "required": true },
+          { "name": "inPack",     "type": "boolean",      "required": true }
+        ]
+      },
+      "returns": "Item"
     },
     {
       "name": "CreateHouse",
@@ -683,7 +893,7 @@
           { "name": "checkHeight", "type": "boolean", "required": true }
         ]
       },
-      "return": "boolean"
+      "returns": "boolean"
     },
     {
       "name": "CheckStaticFlag",
@@ -799,8 +1009,39 @@
       "name": "DistanceBetween",
       "cppName": "SE_DistanceBetween",
       "params": {
-        "num": 4
-      }
+        "sets": [
+          {
+            "num": 2,
+            "max": 3,
+            "list": [
+              { "name": "src", "type": "CharOrItem", "required": true },
+              { "name": "trg", "type": "CharOrItem", "required": true },
+              { "name": "checkZ", "type": "boolean", "required": false }
+            ]
+          },
+          {
+            "num": 4,
+            "list": [
+              { "name": "srcX", "type": "number", "required": true },
+              { "name": "srcY", "type": "number", "required": true },
+              { "name": "trgX", "type": "number", "required": true },
+              { "name": "trgY", "type": "number", "required": true }
+            ]
+          },
+          {
+            "num": 6,
+            "list": [
+              { "name": "srcX", "type": "number", "required": true },
+              { "name": "srcY", "type": "number", "required": true },
+              { "name": "srcZ", "type": "number", "required": true },
+              { "name": "trgX", "type": "number", "required": true },
+              { "name": "trgY", "type": "number", "required": true },
+              { "name": "trgZ", "type": "number", "required": true }
+            ]
+          }
+        ]
+      },
+      "returns": "number"
     },
     {
       "name": "ResourceArea",
@@ -1250,6 +1491,14 @@
     {
       "name": "Multi",
       "extends": "Item"
+    },
+    {
+      "name": "CharOrNull",
+      "definition": "Character | null | undefined"
+    },
+    {
+      "name": "ItemOrNull",
+      "definition": "Item | null | undefined"
     }
   ]
 }
