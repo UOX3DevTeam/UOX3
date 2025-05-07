@@ -93,6 +93,7 @@ enum ScriptEvent
 	seOnIterateSpawnRegions,
 	seOnPacketReceive,
 	seOnCharDoubleClick,	//	**  the event that replaces hardcoded character doubleclick-stuff
+	seOnDismount,
 	seOnSkillGump,			//	**	allows overriding client's request to open default skill gump
 	seOnCombatStart,		//	**	allows overriding what happens when combat is initiated
 	seOnAICombatTarget,		//	**	allows overriding target selection taking place for regular AI behaviours
@@ -278,6 +279,7 @@ public:
 
 	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum );
 	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar );
+	SI08		OnDismount( CChar *currChar, CChar *npcMount );
 	SI08		OnSkillGump( CChar *mChar );
 	SI08		OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem );
 	SI08		OnAICombatTarget( CChar *attacker, CChar *target );

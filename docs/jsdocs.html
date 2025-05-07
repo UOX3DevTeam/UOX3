@@ -1674,6 +1674,70 @@ function onTimer( timerObj, timerID )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnDismount" id="eventOnDismount"><span>onDismount</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onDismount( pUser, npcMount )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Allows triggering effects upon dismounting.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When pUser dismounts npcMount, npcMount's script is activated</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>This runs after a successful dismount. No return values supported.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Randomly change color of mount while riding it, stop the show when dismounting
+function onCharDoubleClick( pUser, targChar )
+{
+	// Store player's serial as a string in a tag on mount, and start a timer
+	targChar.SetTag( "mountedBy", pUser.serial.toString() );
+	targChar.StartTimer( 1000, 1, 19701 );
+	return true;
+}
+
+function onDismount( pUser, npcMount )
+{
+	// Dismounting, so let's stop the disco effect
+	npcMount.KillJSTimer( 1, 19701 );
+
+	// Clear the tag we set earlier
+	npcMount.SetTag( "mountedBy", null );
+}
+
+function onTimer( npcMount, timerID )
+{
+	// Apply random color to mount
+	npcMount.skin = RandomNumber( 0, 2000 );
+
+	 // Find who is riding the mount
+	var pUser = CalcCharFromSer( parseInt( npcMount.GetTag( "mountedBy" )));
+	if( ValidateObject( pUser ))
+	{
+		// Find the "mount item" equipped on character
+		var mountItem  = pUser.FindItemLayer( 0x19 );
+
+		// Apply same color to mount item as mount has
+		mountItem.color = npcMount.skin;
+	}
+
+	 // Restart timer
+	npcMount.StartTimer( 1000, 1, 19701 );
+}<code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnDispel" id="eventOnDispel"><span>onDispel</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -8308,6 +8372,35 @@ myDoor.KillJSTimer( 0, 4500 );
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_GetTempEffect"/>
+							<label for="spoiler_method_baseObj_GetTempEffect">GetTempEffect <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetTempEffect( tempEffectID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns timestamp for when temp effect with specified ID expires, or 0 if it doesn't exist/has already expired</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">// Fetch timestamp for when paralysis temp effect expires
+var expireTime = myChar.GetTempEffect( 1 );
+if( expireTime > 0 )
+{
+	myChar.TextMessage( "Paralysis expires in " + ( expireTime - GetCurrentClock() ) + " seconds!" );
+}
+</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_baseObj_GetTempTagSetTempTag"/>
 							<label for="spoiler_method_baseObj_GetTempTagSetTempTag">GetTempTag/SetTempTag <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -8449,6 +8542,49 @@ myObject.KillTimers( 1 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_pauseresumeJsTimer"/>
+							<label for="spoiler_method_baseObj_pauseresumeJsTimer">PauseJSTimer/ResumeJSTimer <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void PauseJSTimer( timerID, scriptID )</em></p>
+									<p><em>void ResumeJSTimer( timerID, scriptID )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Pauses or resumes JS Timer on character/item based on provided timerID and scriptID</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myChar.StartTimer( 5000, 1, [scriptID] );
+myChar.PauseJSTimer( 1, [scriptID] );
+myChar.ResumeJSTimer( 1, [scriptID] );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_pauseresumeTempEffect"/>
+							<label for="spoiler_method_baseObj_pauseresumeTempEffect">PauseTempEffect/ResumeTempEffect <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void PauseTempEffect( tempEffectID )</em></p>
+									<p><em>void ResumeTempEffect( tempEffectID )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Pauses or resumes Temp Effect on character/item based on provided tempEffectID</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myChar.PauseTempEffect( 1 ); // Pause paralysis effect. Character remains paralysed
+myChar.ResumeTempEffect( 1 ); // Paralysis effect timer continues where it left off</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_baseObj_Refresh"/>
 							<label for="spoiler_method_baseObj_Refresh">Refresh <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -8585,6 +8721,36 @@ mItem.Resist( 1, 25 );
 
 // Get the armor value of an item:
 value = mItem.Resist( 1 );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_ReverseTempEffect"/>
+							<label for="spoiler_method_baseObj_ReverseTempEffect">ReverseTempEffect <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int ReverseTempEffect( tempEffectID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Force revert a temp effect on item or character based on specified temp effect ID</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">// Force revert paralysis effect on character
+var expireTime = myChar.GetTempEffect( 1 );
+if( expireTime > 0 )
+{
+	myChar.ReverseEffect( 1 );
+	myChar.TextMessage( "I'm free!" );
+}
+</code></pre>
 								</div>
 							</div>
 						</div>
