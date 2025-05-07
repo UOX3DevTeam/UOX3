@@ -224,7 +224,8 @@
           { "name": "world", "type": "number", "required": true },
           { "name": "instanceId", "type": "number", "required": true }
         ]
-      }
+      },
+      "returns": "boolean"
     },
     {
       "name": "GetHour",
@@ -576,57 +577,116 @@
       "name": "CreateHouse",
       "cppName": "SE_CreateHouse",
       "params": {
-        "num": 8
-      }
+        "num": 4,
+        "max": 8,
+        "list": [
+          { "name": "houseId",       "type": "number",  "required": true },
+          { "name": "x",             "type": "number",  "required": true },
+          { "name": "y",             "type": "number",  "required": true },
+          { "name": "z",             "type": "number",  "required": true },
+          { "name": "worldNum",      "type": "number",  "required": false },
+          { "name": "instanceId",    "type": "number",  "required": false },
+          { "name": "color",         "type": "number",  "required": false },
+          { "name": "checkLocation", "type": "boolean", "required": false }
+        ]
+      },
+      "returns": "Multi"
     },
     {
       "name": "CreateBaseMulti",
       "cppName": "SE_CreateBaseMulti",
       "params": {
-        "num": 8
-      }
+        "num": 4,
+        "max": 8,
+        "list": [
+          { "name": "multiId",       "type": "number",  "required": true },
+          { "name": "x",             "type": "number",  "required": true },
+          { "name": "y",             "type": "number",  "required": true },
+          { "name": "z",             "type": "number",  "required": true },
+          { "name": "worldNum",      "type": "number",  "required": false },
+          { "name": "instanceId",    "type": "number",  "required": false },
+          { "name": "color",         "type": "number",  "required": false },
+          { "name": "checkLocation", "type": "boolean", "required": false }
+        ]
+      },
+      "returns": "Multi"
     },
     {
       "name": "SpawnNPC",
       "cppName": "SE_SpawnNPC",
       "params": {
-        "num": 6
-      }
+        "num": 5,
+        "max": 7,
+        "list": [
+          { "name": "npcNum",        "type": "string",  "required": true },
+          { "name": "x",             "type": "number",  "required": true },
+          { "name": "y",             "type": "number",  "required": true },
+          { "name": "z",             "type": "number",  "required": true },
+          { "name": "worldNum",      "type": "number",  "required": true },
+          { "name": "instanceId",    "type": "number",  "required": false },
+          { "name": "useNpcList",    "type": "boolean", "required": false }
+        ]
+      },
+      "returns": "Character"
     },
     {
       "name": "GetPackOwner",
       "cppName": "SE_GetPackOwner",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "src",    "type": "ItemOrSerial",  "required": true },
+          { "name": "type",   "type": "number",        "required": true }
+        ]
+      },
+      "returns": "Character"
     },
     {
       "name": "FindRootContainer",
       "cppName": "SE_FindRootContainer",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "src",    "type": "ItemOrSerial",  "required": true },
+          { "name": "type",   "type": "number",        "required": true }
+        ]
+      },
+      "returns": "Item"
     },
     {
       "name": "CalcTargetedItem",
       "cppName": "SE_CalcTargetedItem",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "src",    "type": "Socket",  "required": true }
+        ]
+      },
+      "returns": "ItemOrNull"
     },
     {
       "name": "CalcTargetedChar",
       "cppName": "SE_CalcTargetedChar",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "src",    "type": "Socket",  "required": true }
+        ]
+      },
+      "returns": "CharOrNull"
     },
     {
       "name": "GetTileIDAtMapCoord",
       "cppName": "SE_GetTileIdAtMapCoord",
       "params": {
-        "num": 3
-      }
+        "num": 3,
+        "list": [
+          { "name": "x",             "type": "number",  "required": true },
+          { "name": "y",             "type": "number",  "required": true },
+          { "name": "worldNum",      "type": "number",  "required": true }
+        ]
+      },
+      "returns": "number"
     },
     {
       "name": "GetDictionaryEntry",
@@ -719,7 +779,8 @@
           { "name": "spawnRegionFacet", "type": "number", "required": true },
           { "name": "spawnRegionFacetVal", "type": "boolean", "required": false }
         ]
-      }
+      },
+      "returns": "void"
     },
     {
       "name": "GetMoongateFacetStatus",
@@ -742,7 +803,8 @@
           { "name": "moongateFacet", "type": "number", "required": true },
           { "name": "moongateFacetVal", "type": "boolean", "required": false }
         ]
-      }
+      },
+      "returns": "void"
     },
     {
       "name": "AreaCharacterFunction",
@@ -778,15 +840,27 @@
       "name": "TriggerEvent",
       "cppName": "SE_TriggerEvent",
       "params": {
-        "num": 3
-      }
+        "num": 2,
+        "max": -1,
+        "list": [
+          { "name": "scriptId", "type": "number", "required": true },
+          { "name": "eventToFire", "type": "string", "required": true },
+          { "name": "...extra", "type": "any[]", "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "DoesEventExist",
       "cppName": "SE_DoesEventExist",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "scriptId", "type": "number", "required": true },
+          { "name": "eventToFire", "type": "string", "required": true }
+        ]
+      },
+      "returns": "boolean"
     },
     {
       "name": "Reload",
@@ -1371,77 +1445,91 @@
       "cppName": "SE_GetAccountCount",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "GetPlayerCount",
       "cppName": "SE_GetPlayerCount",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "GetItemCount",
       "cppName": "SE_GetItemCount",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "GetMultiCount",
       "cppName": "SE_GetMultiCount",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "GetCharacterCount",
       "cppName": "SE_GetCharacterCount",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "GetServerVersionString",
       "cppName": "SE_GetServerVersionString",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "string"
     },
     {
       "name": "EraStringToNum",
       "cppName": "SE_EraStringToNum",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "era", "type": "string", "required": true }
+        ]
+      },
+      "returns": "number"
     },
     {
       "name": "BASEITEMSERIAL",
       "cppName": "SE_BASEITEMSERIAL",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "INVALIDSERIAL",
       "cppName": "SE_INVALIDSERIAL",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "INVALIDID",
       "cppName": "SE_INVALIDID",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     },
     {
       "name": "INVALIDCOLOUR",
       "cppName": "SE_INVALIDCOLOUR",
       "params": {
         "num": 0
-      }
+      },
+      "returns": "number"
     }
   ],
   "types": [
@@ -1499,6 +1587,10 @@
     {
       "name": "ItemOrNull",
       "definition": "Item | null | undefined"
+    },
+    {
+      "name": "ItemOrSerial",
+      "definition": "Item | number"
     }
   ]
 }
