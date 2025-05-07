@@ -44,43 +44,113 @@
       "name": "DoStaticEffect",
       "cppName": "SE_DoStaticEffect",
       "params": {
-        "num": 7
-      }
+        "num": 7,
+        "list": [
+          { "name": "x", "type": "number", "required": true },
+          { "name": "y", "type": "number", "required": true },
+          { "name": "z", "type": "number", "required": true },
+          { "name": "effectId", "type": "number", "required": true },
+          { "name": "speed", "type": "number", "required": true },
+          { "name": "loop", "type": "number", "required": true },
+          { "name": "explode", "type": "boolean", "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "BroadcastMessage",
       "cppName": "SE_BroadcastMessage",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "message",  "type": "string", "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "RandomNumber",
       "cppName": "SE_RandomNumber",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "low",  "type": "number", "required": true },
+          { "name": "high", "type": "number", "required": true }
+        ]
+      },
+      "returns": "number"
     },
     {
       "name": "CalcCharFromSer",
       "cppName": "SE_CalcCharFromSer",
       "params": {
-        "num": 1
-      }
+        "sets": [
+          {
+            "num": 1,
+            "list": [
+              { "name": "serial",  "type": "number", "required": true }
+            ]
+          },
+          {
+            "num": 4,
+            "list": [
+              { "name": "byte1", "type": "number", "required": true },
+              { "name": "byte2", "type": "number", "required": true },
+              { "name": "byte3", "type": "number", "required": true },
+              { "name": "byte4", "type": "number", "required": true }
+            ]
+          }
+        ]
+      },
+      "returns": "Character"
     },
     {
       "name": "CalcItemFromSer",
       "cppName": "SE_CalcItemFromSer",
       "params": {
-        "num": 1
-      }
+        "sets": [
+          {
+            "num": 1,
+            "list": [
+              { "name": "serial",  "type": "number", "required": true }
+            ]
+          },
+          {
+            "num": 4,
+            "list": [
+              { "name": "byte1", "type": "number", "required": true },
+              { "name": "byte2", "type": "number", "required": true },
+              { "name": "byte3", "type": "number", "required": true },
+              { "name": "byte4", "type": "number", "required": true }
+            ]
+          }
+        ]
+      },
+      "returns": "Item"
     },
     {
       "name": "CalcMultiFromSer",
       "cppName": "SE_CalcMultiFromSer",
       "params": {
-        "num": 1
-      }
+        "sets": [
+          {
+            "num": 1,
+            "list": [
+              { "name": "serial",  "type": "number", "required": true }
+            ]
+          },
+          {
+            "num": 4,
+            "list": [
+              { "name": "byte1", "type": "number", "required": true },
+              { "name": "byte2", "type": "number", "required": true },
+              { "name": "byte3", "type": "number", "required": true },
+              { "name": "byte4", "type": "number", "required": true }
+            ]
+          }
+        ]
+      },
+      "returns": "Multi"
     },
     {
       "name": "CheckTimeSinceLastCombat",
@@ -1176,6 +1246,10 @@
     },
     {
       "name": "TileFlags"
+    },
+    {
+      "name": "Multi",
+      "extends": "Item"
     }
   ]
 }
