@@ -3,7 +3,23 @@ $content = Get-Content "coreDefinitions.json" | ConvertFrom-Json
 $lines = @(
   "declare global {"
 )
-foreach ( $types in $content.types ) {
+function createTypeProps( $type ) {
+  $lines = @()
+
+  foreach( $prop in ($type.properties | Sort-Object -Property name) ) {
+    if( $null -eq $prop.unused -or ( $null -ne $prop.unused -and $prop.unused -eq $false ) ) {
+      $toAdd = "    "
+      if( $null -ne $prop.readOnly -and $prop.readOnly -eq $true ) {
+        $toAdd += "readonly "
+      }
+      $toAdd += $prop.name + ": " + $prop.type + ";"
+      $lines += $toAdd
+    }
+  }
+
+  return $lines
+}
+foreach ( $types in ($content.types | Sort-Object -Property name) ) {
   if ( $null -ne $types.definition ) {
     $lines += "  type $($types.Name) = $($types.definition);"
   }
@@ -13,8 +29,10 @@ foreach ( $types in $content.types ) {
       $decl += " extends " + $types.extends
     }
     $decl += " {"
+    $parms = createTypeProps $types
     $lines += @(
       $decl,
+      $parms,
       "  }"
     )
     if ( $null -ne $types.aka ) {

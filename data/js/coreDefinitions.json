@@ -1637,6 +1637,9 @@
   ],
   "types": [
     {
+      "name": "BaseObject"
+    },
+    {
       "name": "CharOrItem",
       "definition": "Character | Item"
     },
@@ -1645,13 +1648,244 @@
       "definition": "Character | Socket"
     },
     {
-      "name": "Character"
+      "name": "Character",
+      "extends": "BaseObject"
     },
     {
-      "name": "Item"
+      "name": "Item",
+      "extends": "BaseObject"
     },
     {
-      "name": "Socket"
+      "name": "Socket",
+      "properties": [
+        {
+          "name": "account",
+          "cppID": "CSOCKP_ACCOUNT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "Account | undefined | null"
+        },
+        {
+          "name": "currentChar",
+          "cppID": "CSOCKP_CURRENTCHAR",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "optional": true,
+          "type": "Character | undefined | null"
+        },
+        {
+          "name": "idleTimeout",
+          "cppID": "CSOCKP_IDLETIMEOUT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "unused": true
+        },
+        {
+          "name": "wasIdleWarned",
+          "cppID": "CSOCKP_WASIDLEWARNED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "tempInt",
+          "cppID": "CSOCKP_TEMPINT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "tempInt2",
+          "cppID": "CSOCKP_TEMPINT2",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "buffer",
+          "cppID": "CSOCKP_BUFFER",
+          "cppType": "JSPROP_ENUMPERMIDX",
+          "unused": true
+        },
+        {
+          "name": "xText",
+          "cppID": "CSOCKP_XTEXT",
+          "cppType": "JSPROP_ENUMPERMIDX",
+          "type": "string"
+        },
+        {
+          "name": "xText2",
+          "cppID": "CSOCKP_XTEXT2",
+          "cppType": "JSPROP_ENUMPERMIDX",
+          "type": "string"
+        },
+        {
+          "name": "clickZ",
+          "cppID": "CSOCKP_CLICKZ",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "addID",
+          "cppID": "CSOCKP_ADDID",
+          "cppType": "JSPROP_ENUMPERMIDX",
+          "unused": true
+        },
+        {
+          "name": "newClient",
+          "cppID": "CSOCKP_NEWCLIENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "firstPacket",
+          "cppID": "CSOCKP_FIRSTPACKET",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "cryptClient",
+          "cppID": "CSOCKP_CRYPTCLIENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "clientIP",
+          "cppID": "CSOCKP_CLIENTIP",
+          "cppType": "JSPROP_ENUMPERMIDX",
+          "unused": true
+        },
+        {
+          "name": "walkSequence",
+          "cppID": "CSOCKP_WALKSEQUENCE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "currentSpellType",
+          "cppID": "CSOCKP_CURRENTSPELLTYPE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "logging",
+          "cppID": "CSOCKP_LOGGING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "bytesSent",
+          "cppID": "CSOCKP_BYTESSENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "bytesReceived",
+          "cppID": "CSOCKP_BYTESRECEIVED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "targetOK",
+          "cppID": "CSOCKP_TARGETOK",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "clickX",
+          "cppID": "CSOCKP_CLICKX",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "clickY",
+          "cppID": "CSOCKP_CLICKY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "pickupX",
+          "cppID": "CSOCKP_PICKUPX",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "pickupY",
+          "cppID": "CSOCKP_PICKUPY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "pickupZ",
+          "cppID": "CSOCKP_PICKUPZ",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "pickupSpot",
+          "cppID": "CSOCKP_PICKUPSPOT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "pickupSerial",
+          "cppID": "CSOCKP_PICKUPSERIAL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true
+        },
+        {
+          "name": "language",
+          "cppID": "CSOCKP_LANGUAGE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "clientMajorVer",
+          "cppID": "CSOCKP_CLIENTMAJORVER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "clientMinorVer",
+          "cppID": "CSOCKP_CLIENTMINORVER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "clientSubVer",
+          "cppID": "CSOCKP_CLIENTSUBVER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "clientLetterVer",
+          "cppID": "CSOCKP_CLIENTLETTERVER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "clientType",
+          "cppID": "CSOCKP_CLIENTTYPE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "target",
+          "cppID": "CSOCKP_TARGET",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "BaseObject | undefined | null"
+        },
+        {
+          "name": "tempObj",
+          "cppID": "CSOCKP_TEMPOBJ",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "BaseObject | undefined | null"
+        },
+        {
+          "name": "tempObj2",
+          "cppID": "CSOCKP_TEMPOBJ2",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "BaseObject | undefined | null"
+        }
+      ]
     },
     {
       "name": "UOXResource"
@@ -1700,6 +1934,9 @@
     },
     {
       "name": "ServerFeature"
+    },
+    {
+      "name": "Account"
     }
   ]
 }
