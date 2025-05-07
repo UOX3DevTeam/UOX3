@@ -1828,7 +1828,8 @@
           "name": "pickupSerial",
           "cppID": "CSOCKP_PICKUPSERIAL",
           "cppType": "JSPROP_ENUMANDPERM",
-          "readOnly": true
+          "readOnly": true,
+          "type": "number"
         },
         {
           "name": "language",
@@ -1930,7 +1931,34 @@
       "definition": "Item | number"
     },
     {
-      "name": "ClientFeature"
+      "name": "ClientFeature",
+      "values": [
+        { "label": "CF_BIT_CHAT",      "value": 0,  "comment": "0x01" },
+        { "label": "CF_BIT_UOR",                    "comment": "0x02" },
+        { "label": "CF_BIT_TD",                     "comment": "0x04" },
+        { "label": "CF_BIT_LBR",                    "comment": "0x08 - Enables LBR features: mp3s instead of midi, show new LBR monsters" },
+        { "label": "CF_BIT_AOS",                    "comment": "0x10 - Enable AoS monsters/map, AoS skills, Necro/Pala/Fight book stuff - works for 4.0+" },
+        { "label": "CF_BIT_SIXCHARS",               "comment": "0x20 - Enable sixth character slot" },
+        { "label": "CF_BIT_SE",                     "comment": "0x40" },
+        { "label": "CF_BIT_ML",                     "comment": "0x80 - Elven race, new spells, skills + housing tiles" },
+        { "label": "CF_BIT_EIGHTAGE",               "comment": "0x100 - Splash screen for 8th age" },
+        { "label": "CF_BIT_NINTHAGE",               "comment": "0x200 - Splash screen for 9th age" },
+        { "label": "CF_BIT_TENTHAGE",               "comment": "0x400 - Splash screen for 10th age - crystal/shadow house tiles" },
+        { "label": "CF_BIT_UNKNOWN1",               "comment": "0x800 - Increased housing/bank storage (6.0.3.0 or earlier)" },
+        { "label": "CF_BIT_SEVENCHARS",             "comment": "0x1000 - Enable seventh character slot" },
+        { "label": "CF_BIT_KRFACES",                "comment": "0x2000 - KR release (6.0.0.0)", "disabled": true },
+        { "label": "CF_BIT_TRIAL",                  "comment": "0x4000 - Trial account", "disabled": true },
+        { "label": "CF_BIT_EXPANSION", "value": 15, "comment": "0x8000 - Live account" },
+        { "label": "CF_BIT_SA",                     "comment": "0x10000 - Enable SA features: gargoyle race, spells, skills, housing tiles - clients 6.0.14.2+" },
+        { "label": "CF_BIT_HS",                     "comment": "0x20000 - Enable HS features: boats, new movementtype? ++" },
+        { "label": "CF_BIT_GOTHHOUSE",              "comment": "0x40000" },
+        { "label": "CF_BIT_RUSTHOUSE",              "comment": "0x80000" },
+        { "label": "CF_BIT_JUNGLEHOUSE",            "comment": "0x100000 - Enable Jungle housing tiles" },
+        { "label": "CF_BIT_SHADOWHOUSE",            "comment": "0x200000 - Enable Shadowguard housing tiles" },
+        { "label": "CF_BIT_TOLHOUSE",               "comment": "0x400000 - Enable Time of Legends features" },
+        { "label": "CF_BIT_ENDLESSHOUSE",           "comment": "0x800000 - Enable Endless Journey account" },
+        { "label": "CF_BIT_COUNT" }
+      ]
     },
     {
       "name": "ServerFeature"

@@ -6,22 +6,58 @@ $lines = @(
 function createTypeProps( $type ) {
   $lines = @()
 
-  foreach( $prop in ($type.properties | Sort-Object -Property name) ) {
-    if( $null -eq $prop.unused -or ( $null -ne $prop.unused -and $prop.unused -eq $false ) ) {
+  $maxLabelLength = ($type.properties | ForEach-Object { $_.name.Length } | Measure-Object -Maximum).Maximum
+  foreach ( $prop in ($type.properties | Sort-Object -Property name) ) {
+    if ( $null -eq $prop.unused -or ( $null -ne $prop.unused -and $prop.unused -eq $false ) ) {
       $toAdd = "    "
-      if( $null -ne $prop.readOnly -and $prop.readOnly -eq $true ) {
+      if ( $null -ne $prop.readOnly -and $prop.readOnly -eq $true ) {
         $toAdd += "readonly "
       }
-      $toAdd += $prop.name + ": " + $prop.type + ";"
+      else {
+        $toAdd += "         "
+      }
+      $toAdd += $prop.name + ": "
+      $toAdd = $toAdd.PadRight( $maxLabelLength + 15 ) # 9 for readonly, 4 for indent, 2 for colon
+      $toAdd += $prop.type + ";"
       $lines += $toAdd
     }
   }
-
+  return $lines
+}
+function createTypeEnums( $values ) {
+  $lines = @()
+  $maxLabelLength = ($values | ForEach-Object { $_.label.Length } | Measure-Object -Maximum).Maximum
+  foreach( $value in $values ) {
+    $toAdd = "    "
+    if( $null -ne $value.disabled -and $value.disabled -eq $true ) {
+      $toAdd += "// "
+    }
+    $toAdd += $value.label
+    if( $null -ne $value.value ) {
+      $toAdd += " = " + $value.value
+    }
+    $toAdd += ","
+    $toAdd = $toAdd.PadRight( $maxLabelLength + 8 ) # 4 for indent, 3 for possible comment, 1 for comma
+    if( $null -ne $value.comment ) {
+      $toAdd += " // " + $value.comment
+    }
+    $lines += $toAdd
+  }
   return $lines
 }
 foreach ( $types in ($content.types | Sort-Object -Property name) ) {
   if ( $null -ne $types.definition ) {
     $lines += "  type $($types.Name) = $($types.definition);"
+  }
+  elseif ( $null -ne $types.values ) {
+    # An enum!
+    $decl = "  enum $($types.Name) {"
+    $values = createTypeEnums $types.values
+    $lines += @(
+      $decl,
+      $values,
+      "  }"
+    )
   }
   else {
     $decl = "  interface $($types.Name)"
@@ -54,7 +90,8 @@ function createFunc( $funcName, $funcParms, $funcReturn ) {
     }
     if ( $pCount -gt 0 ) {
       $toAdd += ", "
-    } else {
+    }
+    else {
       $toAdd += " "
     }
     $toAdd += $parms.name + $qual + ": " + $parms.type
@@ -69,7 +106,7 @@ foreach ( $function in ($content.globalFuncs | Sort-Object -Property Name) ) {
   # function GetAccountCount(data: string): number;
   if ( $null -ne $function.params.sets ) {
     # Multiple definitions
-    foreach( $parmSet in $function.params.sets ) {
+    foreach ( $parmSet in $function.params.sets ) {
       $lines += createFunc $function.Name $parmSet.list $function.returns
     }
   }
