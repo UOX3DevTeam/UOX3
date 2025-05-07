@@ -1,0 +1,1181 @@
+{
+  "globalFuncs": [
+    {
+      "name": "StringToNum",
+      "cppName": "SE_StringToNum",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "in", "type": "number", "required": true }
+        ]
+      },
+      "returns": "string"
+    },
+    {
+      "name": "NumToString",
+      "cppName": "SE_NumToString",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "in", "type": "string", "required": true }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "NumToHexString",
+      "cppName": "SE_NumToHexString",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "in", "type": "number", "required": true }
+        ]
+      },
+      "returns": "string"
+    },
+    {
+      "name": "DoMovingEffect",
+      "cppName": "SE_DoMovingEffect",
+      "params": {
+        "num": 6
+      }
+    },
+    {
+      "name": "DoStaticEffect",
+      "cppName": "SE_DoStaticEffect",
+      "params": {
+        "num": 7
+      }
+    },
+    {
+      "name": "BroadcastMessage",
+      "cppName": "SE_BroadcastMessage",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "RandomNumber",
+      "cppName": "SE_RandomNumber",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "CalcCharFromSer",
+      "cppName": "SE_CalcCharFromSer",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "CalcItemFromSer",
+      "cppName": "SE_CalcItemFromSer",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "CalcMultiFromSer",
+      "cppName": "SE_CalcMultiFromSer",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "CheckTimeSinceLastCombat",
+      "cppName": "SE_CheckTimeSinceLastCombat",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "CheckInstaLog",
+      "cppName": "SE_CheckInstaLog",
+      "params": {
+        "num": 4
+      }
+    },
+    {
+      "name": "GetHour",
+      "cppName": "SE_GetHour",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "GetMinute",
+      "cppName": "SE_GetMinute",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "GetDay",
+      "cppName": "SE_GetDay",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "SecondsPerUOMinute",
+      "cppName": "SE_SecondsPerUOMinute",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "GetCurrentClock",
+      "cppName": "SE_GetCurrentClock",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "GetStartTime",
+      "cppName": "SE_GetStartTime",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "GetMurderThreshold",
+      "cppName": "SE_GetMurderThreshold",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "RollDice",
+      "cppName": "SE_RollDice",
+      "params": {
+        "num": 3
+      }
+    },
+    {
+      "name": "RaceCompareByRace",
+      "cppName": "SE_RaceCompareByRace",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "GetRandomSOSArea",
+      "cppName": "SE_GetRandomSOSArea",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "DoTempEffect",
+      "cppName": "SE_DoTempEffect",
+      "params": {
+        "num": 7
+      }
+    },
+    {
+      "name": "MakeItem",
+      "cppName": "SE_MakeItem",
+      "params": {
+        "num": 3
+      }
+    },
+    {
+      "name": "FindMulti",
+      "cppName": "SE_FindMulti",
+      "params": {
+        "num": 4
+      }
+    },
+    {
+      "name": "GetItem",
+      "cppName": "SE_GetItem",
+      "params": {
+        "num": 4
+      }
+    },
+    {
+      "name": "FindItem",
+      "cppName": "SE_FindItem",
+      "params": {
+        "num": 5
+      }
+    },
+    {
+      "name": "PossessTown",
+      "cppName": "SE_PossessTown",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "IsRaceWeakToWeather",
+      "cppName": "SE_IsRaceWeakToWeather",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "GetRaceSkillAdjustment",
+      "cppName": "SE_GetRaceSkillAdjustment",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "UseItem",
+      "cppName": "SE_UseItem",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "TriggerTrap",
+      "cppName": "SE_TriggerTrap",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "CompareGuildByGuild",
+      "cppName": "SE_CompareGuildByGuild",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "CommandLevelReq",
+      "cppName": "SE_CommandLevelReq",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "CommandExists",
+      "cppName": "SE_CommandExists",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "FirstCommand",
+      "cppName": "SE_FirstCommand",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "NextCommand",
+      "cppName": "SE_NextCommand",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "FinishedCommandList",
+      "cppName": "SE_FinishedCommandList",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "CreateDFNItem",
+      "cppName": "SE_CreateDFNItem",
+      "params": {
+        "num": 3
+      }
+    },
+    {
+      "name": "CreateBlankItem",
+      "cppName": "SE_CreateBlankItem",
+      "params": {
+        "num": 8
+      }
+    },
+    {
+      "name": "CreateHouse",
+      "cppName": "SE_CreateHouse",
+      "params": {
+        "num": 8
+      }
+    },
+    {
+      "name": "CreateBaseMulti",
+      "cppName": "SE_CreateBaseMulti",
+      "params": {
+        "num": 8
+      }
+    },
+    {
+      "name": "SpawnNPC",
+      "cppName": "SE_SpawnNPC",
+      "params": {
+        "num": 6
+      }
+    },
+    {
+      "name": "GetPackOwner",
+      "cppName": "SE_GetPackOwner",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "FindRootContainer",
+      "cppName": "SE_FindRootContainer",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "CalcTargetedItem",
+      "cppName": "SE_CalcTargetedItem",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "CalcTargetedChar",
+      "cppName": "SE_CalcTargetedChar",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "GetTileIDAtMapCoord",
+      "cppName": "SE_GetTileIdAtMapCoord",
+      "params": {
+        "num": 3
+      }
+    },
+    {
+      "name": "GetDictionaryEntry",
+      "cppName": "SE_GetDictionaryEntry",
+      "params": {
+        "num": 1,
+        "max": 2,
+        "list": [
+          { "name": "entry", "type": "number", "required": true },
+          { "name": "lang", "type": "UnicodeTypes", "required": false }
+        ]
+      },
+      "returns": "string"
+    },
+    {
+      "name": "Yell",
+      "cppName": "SE_Yell",
+      "params": {
+        "num": 3,
+        "list": [
+          { "name": "source", "type": "Socket", "required": true },
+          { "name": "value", "type": "string", "required": true },
+          { "name": "commandLevel", "type": "CommandLevels", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "GetRaceCount",
+      "cppName": "SE_GetRaceCount",
+      "params": {
+        "num": 0
+      },
+      "returns": "number"
+    },
+    {
+      "name": "WorldBrightLevel",
+      "cppName": "SE_WorldBrightLevel",
+      "params": {
+        "num": 0,
+        "max": 1,
+        "list": [
+          { "name": "newLevel", "type": "number", "required": false }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "WorldDarkLevel",
+      "cppName": "SE_WorldDarkLevel",
+      "params": {
+        "num": 0,
+        "max": 1,
+        "list": [
+          { "name": "newLevel", "type": "number", "required": false }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "WorldDungeonLevel",
+      "cppName": "SE_WorldDungeonLevel",
+      "params": {
+        "num": 0,
+        "max": 1,
+        "list": [
+          { "name": "newLevel", "type": "number", "required": false }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "GetSpawnRegionFacetStatus",
+      "cppName": "SE_GetSpawnRegionFacetStatus",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "spawnRegionFacet", "type": "number", "required": true }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "SetSpawnRegionFacetStatus",
+      "cppName": "SE_SetSpawnRegionFacetStatus",
+      "params": {
+        "num": 1,
+        "max": 2,
+        "list": [
+          { "name": "spawnRegionFacet", "type": "number", "required": true },
+          { "name": "spawnRegionFacetVal", "type": "boolean", "required": false }
+        ]
+      }
+    },
+    {
+      "name": "GetMoongateFacetStatus",
+      "cppName": "SE_GetMoongateFacetStatus",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "moongateFacet", "type": "number", "required": true }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "SetMoongateFacetStatus",
+      "cppName": "SE_SetMoongateFacetStatus",
+      "params": {
+        "num": 1,
+        "max": 2,
+        "list": [
+          { "name": "moongateFacet", "type": "number", "required": true },
+          { "name": "moongateFacetVal", "type": "boolean", "required": false }
+        ]
+      }
+    },
+    {
+      "name": "AreaCharacterFunction",
+      "cppName": "SE_AreaCharacterFunction",
+      "params": {
+        "num": 3,
+        "max": 4,
+        "list": [
+          { "name": "inFunction", "type": "string", "required": true },
+          { "name": "source", "type": "Character", "required": true },
+          { "name": "range", "type": "number", "required": true },
+          { "name": "sock", "type": "Socket", "required": false }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "AreaItemFunction",
+      "cppName": "SE_AreaItemFunction",
+      "params": {
+        "num": 3,
+        "max": 4,
+        "list": [
+          { "name": "inFunction", "type": "string", "required": true },
+          { "name": "source", "type": "Item", "required": true },
+          { "name": "range", "type": "number", "required": true },
+          { "name": "sock", "type": "Socket", "required": false }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "TriggerEvent",
+      "cppName": "SE_TriggerEvent",
+      "params": {
+        "num": 3
+      }
+    },
+    {
+      "name": "DoesEventExist",
+      "cppName": "SE_DoesEventExist",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "Reload",
+      "cppName": "SE_Reload",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "toReload", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "SendStaticStats",
+      "cppName": "SE_SendStaticStats",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "target", "type": "Socket", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "GetTileHeight",
+      "cppName": "SE_GetTileHeight",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "tileID", "type": "number", "required": true }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "IterateOver",
+      "cppName": "SE_IterateOver",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "objType", "type": "string", "required": true }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "IterateOverSpawnRegions",
+      "cppName": "SE_IterateOverSpawnRegions",
+      "params": {
+        "num": 1
+      },
+      "returns": "number",
+      "broken": true
+    },
+    {
+      "name": "GetSocketFromIndex",
+      "cppName": "SE_GetSocketFromIndex",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "index", "type": "number", "required": true }
+        ]
+      },
+      "returns": "Socket"
+    },
+    {
+      "name": "StaticAt",
+      "cppName": "SE_StaticAt",
+      "params": {
+        "num": 4
+      }
+    },
+    {
+      "name": "StaticInRange",
+      "cppName": "SE_StaticInRange",
+      "params": {
+        "num": 5
+      }
+    },
+    {
+      "name": "GetMapElevation",
+      "cppName": "SE_GetMapElevation",
+      "params": {
+        "num": 3,
+        "list": [
+          { "name": "x", "type": "number", "required": true },
+          { "name": "y", "type": "number", "required": true },
+          { "name": "world", "type": "number", "required": true }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "IsInBuilding",
+      "cppName": "SE_IsInBuilding",
+      "params": {
+        "num": 6,
+        "list": [
+          { "name": "x", "type": "number", "required": true },
+          { "name": "y", "type": "number", "required": true },
+          { "name": "z", "type": "number", "required": true },
+          { "name": "world", "type": "number", "required": true },
+          { "name": "instanceId", "type": "number", "required": true },
+          { "name": "checkHeight", "type": "boolean", "required": true }
+        ]
+      },
+      "return": "boolean"
+    },
+    {
+      "name": "CheckStaticFlag",
+      "cppName": "SE_CheckStaticFlag",
+      "params": {
+        "num": 5,
+        "list": [
+          { "name": "x", "type": "number", "required": true },
+          { "name": "y", "type": "number", "required": true },
+          { "name": "z", "type": "number", "required": true },
+          { "name": "world", "type": "number", "required": true },
+          { "name": "toCheck", "type": "TileFlags", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
+      "name": "CheckDynamicFlag",
+      "cppName": "SE_CheckDynamicFlag",
+      "params": {
+        "num": 6,
+        "list": [
+          { "name": "x", "type": "number", "required": true },
+          { "name": "y", "type": "number", "required": true },
+          { "name": "z", "type": "number", "required": true },
+          { "name": "world", "type": "number", "required": true },
+          { "name": "instanceId", "type": "number", "required": true },
+          { "name": "toCheck", "type": "TileFlags", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
+      "name": "CheckTileFlag",
+      "cppName": "SE_CheckTileFlag",
+      "params": {
+        "num": 2,
+        "list": [
+          { "name": "tileId", "type": "number", "required": true },
+          { "name": "toCheck", "type": "TileFlags", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
+      "name": "DoesDynamicBlock",
+      "cppName": "SE_DoesDynamicBlock",
+      "params": {
+        "num": 9,
+        "list": [
+          { "name": "x", "type": "number", "required": true },
+          { "name": "y", "type": "number", "required": true },
+          { "name": "z", "type": "number", "required": true },
+          { "name": "world", "type": "number", "required": true },
+          { "name": "instanceId", "type": "number", "required": true },
+          { "name": "checkWater", "type": "boolean", "required": true },
+          { "name": "waterWalk", "type": "boolean", "required": true },
+          { "name": "checkOnlyMultis", "type": "boolean", "required": true },
+          { "name": "checkOnlyNonMultis", "type": "boolean", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
+      "name": "DoesStaticBlock",
+      "cppName": "SE_DoesStaticBlock",
+      "params": {
+        "num": 5,
+        "list": [
+          { "name": "x", "type": "number", "required": true },
+          { "name": "y", "type": "number", "required": true },
+          { "name": "z", "type": "number", "required": true },
+          { "name": "world", "type": "number", "required": true },
+          { "name": "checkWater", "type": "boolean", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
+      "name": "DoesMapBlock",
+      "cppName": "SE_DoesMapBlock",
+      "params": {
+        "num": 8,
+        "list": [
+          { "name": "x", "type": "number", "required": true },
+          { "name": "y", "type": "number", "required": true },
+          { "name": "z", "type": "number", "required": true },
+          { "name": "world", "type": "number", "required": true },
+          { "name": "checkWater", "type": "boolean", "required": true },
+          { "name": "waterWalk", "type": "boolean", "required": true },
+          { "name": "checkMultiPlacement", "type": "boolean", "required": true },
+          { "name": "checkForRoad", "type": "boolean", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
+      "name": "DoesCharacterBlock",
+      "cppName": "SE_DoesCharacterBlock",
+      "params": {
+        "num": 5,
+        "list": [
+          { "name": "x", "type": "number", "required": true },
+          { "name": "y", "type": "number", "required": true },
+          { "name": "z", "type": "number", "required": true },
+          { "name": "world", "type": "number", "required": true },
+          { "name": "instanceId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
+      "name": "DistanceBetween",
+      "cppName": "SE_DistanceBetween",
+      "params": {
+        "num": 4
+      }
+    },
+    {
+      "name": "ResourceArea",
+      "cppName": "SE_ResourceArea",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "resType", "type": "string", "required": true }
+        ]
+      },
+      "returns": "number",
+      "broken": true
+    },
+    {
+      "name": "ResourceAmount",
+      "cppName": "SE_ResourceAmount",
+      "params": {
+        "num": 1,
+        "max": 2,
+        "list": [
+          { "name": "resType", "type": "string", "required": true },
+          { "name": "newVal", "type": "number", "required": false }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "ResourceTime",
+      "cppName": "SE_ResourceTime",
+      "params": {
+        "num": 1,
+        "max": 2,
+        "list": [
+          { "name": "resType", "type": "string", "required": true },
+          { "name": "newVal", "type": "number", "required": false }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "ResourceRegion",
+      "cppName": "SE_ResourceRegion",
+      "params": {
+        "num": 3,
+        "list": [
+          { "name": "x", "type": "number", "required": true },
+          { "name": "y", "type": "number", "required": true },
+          { "name": "world", "type": "number", "required": true }
+        ]
+      },
+      "returns": "UOXResource"
+    },
+    {
+      "name": "Moon",
+      "cppName": "SE_Moon",
+      "params": {
+        "num": 1,
+        "max": 2,
+        "list": [
+          { "name": "slot", "type": "number", "required": true },
+          { "name": "newVal", "type": "number", "required": false }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "GetTownRegion",
+      "cppName": "SE_GetTownRegion",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "id", "type": "number", "required": true }
+        ]
+      },
+      "returns": "TownRegion"
+    },
+    {
+      "name": "GetTownRegionFromXY",
+      "cppName": "SE_GetTownRegionFromXY",
+      "params": {
+        "num": 4,
+        "list": [
+          { "name": "x", "type": "number", "required": true },
+          { "name": "y", "type": "number", "required": true },
+          { "name": "world", "type": "number", "required": true },
+          { "name": "instance", "type": "number", "required": true }
+        ]
+      },
+      "returns": "TownRegion"
+    },
+    {
+      "name": "GetSpawnRegion",
+      "cppName": "SE_GetSpawnRegion",
+      "params": {
+        "num": 1,
+        "max": 4,
+        "list": [
+          { "name": "xOrIndex", "type": "number", "required": true },
+          { "name": "y", "type": "number", "required": true },
+          { "name": "world", "type": "number", "required": true },
+          { "name": "instance", "type": "number", "required": true }
+        ]
+      },
+      "returns": "SpawnRegion"
+    },
+    {
+      "name": "GetSpawnRegionCount",
+      "cppName": "SE_GetSpawnRegionCount",
+      "params": {
+        "num": 0
+      },
+      "returns": "number"
+    },
+    {
+      "name": "RegisterCommand",
+      "cppName": "SE_RegisterCommand",
+      "params": {
+        "num": 3
+      }
+    },
+    {
+      "name": "DisableCommand",
+      "cppName": "SE_DisableCommand",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "EnableCommand",
+      "cppName": "SE_EnableCommand",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "RegisterKey",
+      "cppName": "SE_RegisterKey",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "DisableKey",
+      "cppName": "SE_DisableKey",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "EnableKey",
+      "cppName": "SE_EnableKey",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "RegisterConsoleFunc",
+      "cppName": "SE_RegisterConsoleFunc",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "DisableConsoleFunc",
+      "cppName": "SE_DisableConsoleFunc",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "EnableConsoleFunc",
+      "cppName": "SE_EnableConsoleFunc",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "RegisterSpell",
+      "cppName": "SE_RegisterSpell",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "DisableSpell",
+      "cppName": "SE_DisableSpell",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "EnableSpell",
+      "cppName": "SE_EnableSpell",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "RegisterSkill",
+      "cppName": "SE_RegisterSkill",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "RegisterPacket",
+      "cppName": "SE_RegisterPacket",
+      "params": {
+        "num": 2
+      }
+    },
+    {
+      "name": "ReloadJSFile",
+      "cppName": "SE_ReloadJSFile",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "scriptId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "ValidateObject",
+      "cppName": "SE_ValidateObject",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "obj", "type": "CharOrItem", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
+      "name": "ApplyDamageBonuses",
+      "cppName": "SE_ApplyDamageBonuses",
+      "params": {
+        "num": 6,
+        "list": [
+          { "name": "damageType", "type": "WeatherType", "required": true },
+          { "name": "attacker", "type": "Character", "required": true },
+          { "name": "defender", "type": "Character", "required": true },
+          { "name": "fightSkill", "type": "number", "required": true },
+          { "name": "hitLoc", "type": "number", "required": true },
+          { "name": "baseDamage", "type": "number", "required": true }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "ApplyDefenseModifiers",
+      "cppName": "SE_ApplyDefenseModifiers",
+      "params": {
+        "num": 7,
+        "list": [
+          { "name": "damageType", "type": "WeatherType", "required": true },
+          { "name": "attacker", "type": "Character", "required": true },
+          { "name": "defender", "type": "Character", "required": true },
+          { "name": "fightSkill", "type": "number", "required": true },
+          { "name": "hitLoc", "type": "number", "required": true },
+          { "name": "baseDamage", "type": "number", "required": true },
+          { "name": "doArmorDamage", "type": "boolean", "required": true }
+        ]
+      },
+      "returns": "number"
+    },
+    {
+      "name": "WillResultInCriminal",
+      "cppName": "SE_WillResultInCriminal",
+      "params": {
+        "num": 2,
+        "list": [
+          { "name": "source", "type": "Character", "required": true },
+          { "name": "target", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
+      "name": "CreateParty",
+      "cppName": "SE_CreateParty",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "source", "type": "CharOrSocket", "required": true }
+        ]
+      },
+      "returns": "Party"
+    },
+    {
+      "name": "GetClientFeature",
+      "cppName": "SE_GetClientFeature",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "GetServerFeature",
+      "cppName": "SE_GetServerFeature",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "GetServerSetting",
+      "cppName": "SE_GetServerSetting",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "DeleteFile",
+      "cppName": "SE_DeleteFile",
+      "params": {
+        "num": 1,
+        "max": 3,
+        "list": [
+          { "name": "file", "type": "string", "required": true },
+          { "name": "folder", "type": "string", "required": false },
+          { "name": "scriptDataDir", "type": "boolean", "required": false }
+        ]
+      },
+      "returns": "boolean"
+    },
+    {
+      "name": "GetAccountCount",
+      "cppName": "SE_GetAccountCount",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "GetPlayerCount",
+      "cppName": "SE_GetPlayerCount",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "GetItemCount",
+      "cppName": "SE_GetItemCount",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "GetMultiCount",
+      "cppName": "SE_GetMultiCount",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "GetCharacterCount",
+      "cppName": "SE_GetCharacterCount",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "GetServerVersionString",
+      "cppName": "SE_GetServerVersionString",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "EraStringToNum",
+      "cppName": "SE_EraStringToNum",
+      "params": {
+        "num": 1
+      }
+    },
+    {
+      "name": "BASEITEMSERIAL",
+      "cppName": "SE_BASEITEMSERIAL",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "INVALIDSERIAL",
+      "cppName": "SE_INVALIDSERIAL",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "INVALIDID",
+      "cppName": "SE_INVALIDID",
+      "params": {
+        "num": 0
+      }
+    },
+    {
+      "name": "INVALIDCOLOUR",
+      "cppName": "SE_INVALIDCOLOUR",
+      "params": {
+        "num": 0
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "CharOrItem",
+      "definition": "Character | Item"
+    },
+    {
+      "name": "CharOrSocket",
+      "definition": "Character | Socket"
+    },
+    {
+      "name": "Character"
+    },
+    {
+      "name": "Item"
+    },
+    {
+      "name": "Socket"
+    },
+    {
+      "name": "UOXResource"
+    },
+    {
+      "name": "UnicodeTypes"
+    },
+    {
+      "name": "CommandLevels"
+    },
+    {
+      "name": "WeatherType"
+    },
+    {
+      "name": "Party"
+    },
+    {
+      "name": "TownRegion",
+      "aka": "UOXRegion"
+    },
+    {
+      "name": "SpawnRegion",
+      "aka": "UOXSpawnRegion"
+    },
+    {
+      "name": "TileFlags"
+    }
+  ]
+}
