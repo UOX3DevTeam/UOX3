@@ -5,11 +5,11 @@ function onEquipAttempt( pEquipper, iEquipped )
 	if( iEquipped.GetTag( "QuestItem" ))
 	{
 		pSock.SysMessage( "This item cannot be equipped as it is a quest item." );
-		iEquipped.SetTag( "QuestItem", null );
-		iEquipped.RemoveScriptTrigger( 5810 );
-		var questItemColor = iEquipped.GetTag( "saveColor" );
-		iEquipped.color = questItemColor;
-		pSock.SysMessage( "You removed Quest Item status from the item." );
+		//iEquipped.SetTag( "QuestItem", null );
+		//iEquipped.RemoveScriptTrigger( 5810 );
+		//var questItemColor = iEquipped.GetTag( "saveColor" );
+		//iEquipped.color = questItemColor;
+		//pSock.SysMessage( "You removed Quest Item status from the item." );
 		return false; // Prevent equipping
 	}
 	return true;

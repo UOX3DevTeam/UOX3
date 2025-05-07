@@ -419,7 +419,7 @@ function CompleteQuest( player, questID )
 		var questEntry = questProgressArray[i];
 
 		// Ensure the quest is tied to the current player and matches the questID
-		if( questEntry.serial !== player.serial || questEntry.questID !== questID )
+		if( questEntry.serial != player.serial || questEntry.questID != questID )
 		{
 			newQuestProgressArray.push( questEntry );
 			continue;
@@ -580,10 +580,10 @@ function onItemCollected( player, item, isToggledOff )
 
 	var questProgressArray = ReadQuestProgress( player );
 
-	if( DebugMessages )
-	{
-		socket.SysMessage( "Item sectionID: " + item.sectionID );
-	}
+	///if( DebugMessages )
+	//{
+	//	socket.SysMessage( "Item sectionID: " + item.sectionID );
+	//}
 
 	for( var i = 0; i < questProgressArray.length; i++ )
 	{
@@ -1066,7 +1066,7 @@ function ReadArchivedQuests( player )
 			if( line == "" ) 
 			{
 				// Check if we reached the end of an entry
-				if( currentQuestID !== null && currentSerial == player.serial ) 
+				if( currentQuestID != null && currentSerial == player.serial ) 
 				{
 					archivedQuests.push( currentQuestID ); // Add the quest ID
 				}

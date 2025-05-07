@@ -567,7 +567,7 @@ function processQuestTurnIn( player, questID )
 	if( quest.type == "delivery" )
 	{
 		// Validate NPC
-		if( quest.targetDelivery.npcID !== questNpc.serial )
+		if( quest.targetDelivery.npcID != questNpc.serial )
 		{
 			return false;
 		}
@@ -654,7 +654,7 @@ function findQuestItems( player, questID )
 		}
 
 		// Check if the item matches the quest and has the "QuestItem" tag
-		if( currentItem.GetTag( "QuestItem" ) && requiredsectionIDs.indexOf( String( currentItem.sectionID )) !== -1 ) 
+		if( currentItem.GetTag( "QuestItem" ) && requiredsectionIDs.indexOf( String( currentItem.sectionID )) != -1 ) 
 		{
 			questItems.push( currentItem );
 		}
@@ -772,14 +772,14 @@ function processDeliveryQuest( player, questNpc, deliveryQuestID )
 	var socket = player.socket;
 	// Fetch the quest details
 	var quest = TriggerEvent( 5801, "QuestList", deliveryQuestID );
-	if( !quest || quest.type !== "delivery" )
+	if( !quest || quest.type != "delivery" )
 	{
 		questNpc.TextMessage( "This is not a delivery quest." );
 		return false;
 	}
 
 	// Ensure the NPC matches the quest's recipient
-	if( questNpc.sectionID !== quest.targetDelivery.sectionID )
+	if( questNpc.sectionID != quest.targetDelivery.sectionID )
 	{
 		questNpc.TextMessage( "I am not the intended recipient of this delivery." );
 		return false;
