@@ -1,4 +1,4 @@
-const DebugMessages = false;
+const DebugMessages = true;
 function StartQuest( player, questID )
 {
 	var socket = player.socket;
@@ -204,7 +204,6 @@ function onTimer( timerObj, timerID )
 		}
 	}
 }
-
 function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 {
 	var socket = player.socket;
@@ -237,7 +236,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 
 						if( String( target.sectionID ) == String( identifier ))
 						{
-							questEntry.collectedItems[identifier] = ( questEntry.collectedItems[identifier] || 0 ) + progressValue;
+							questEntry.collectedItems[identifier] = Math.max( 0, questEntry.collectedItems[identifier] + progressValue );
 
 							// Cap the collected amount to the target amount
 							if( questEntry.collectedItems[identifier] > target.amount )
@@ -247,7 +246,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 						}
 
 						// Check if all items are collected
-						if( !questEntry.collectedItems || ( questEntry.collectedItems[target.sectionID] || 0 ) < target.amount )
+						if( !questEntry.collectedItems || ( questEntry.collectedItems[target.sectionID] ) < target.amount )
 						{
 							allObjectivesCompleted = false;
 						}
@@ -388,6 +387,11 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 					CompleteQuest( player, questID );
 				}
 				return;
+			}
+			else
+			{
+				// If any objectives are now missing, make sure it's not marked as completed
+				questEntry.completed = false;
 			}
 
 			questUpdated = true;
@@ -568,7 +572,6 @@ function onCreatureKilled( creature, player )
 		}
 	}
 }
-
 function onItemCollected( player, item, isToggledOff )
 {
 	var socket = player.socket;
@@ -580,10 +583,10 @@ function onItemCollected( player, item, isToggledOff )
 
 	var questProgressArray = ReadQuestProgress( player );
 
-	///if( DebugMessages )
-	//{
-	//	socket.SysMessage( "Item sectionID: " + item.sectionID );
-	//}
+	if( DebugMessages )
+	{
+		socket.SysMessage( "Item sectionID: " + item.sectionID );
+	}
 
 	for( var i = 0; i < questProgressArray.length; i++ )
 	{
@@ -594,10 +597,10 @@ function onItemCollected( player, item, isToggledOff )
 		{
 			continue;
 		}
-
+		socket.SysMessage(questEntry.questID);
 		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
 
-		if( quest && ( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" ) && !questEntry.completed )
+		if( quest && ( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" ))
 		{
 			for( var j = 0; j < quest.targetItems.length; j++ )
 			{
@@ -607,10 +610,10 @@ function onItemCollected( player, item, isToggledOff )
 				{
 					player.SysMessage( "Checking target sectionID: " + target.sectionID );
 				}
-
+				socket.SysMessage("target sectionID: " + target.sectionID);
 				if( String( target.sectionID ) == String( item.sectionID ))
 				{
-					var currentCount = questEntry.collectedItems[item.sectionID] || 0;
+					var currentCount = questEntry.collectedItems[item.sectionID];
 					var remaining = target.amount - currentCount;
 
 					if( isToggledOff )
