@@ -87,7 +87,8 @@
             ]
           }
         ]
-      }
+      },
+      "returns": "void"
     },
     {
       "name": "DoStaticEffect",
@@ -930,15 +931,31 @@
       "name": "StaticAt",
       "cppName": "SE_StaticAt",
       "params": {
-        "num": 4
-      }
+        "num": 3,
+        "max": 4,
+        "list": [
+          { "name": "x",        "type": "number", "required": true },
+          { "name": "y",        "type": "number", "required": true },
+          { "name": "worldNum", "type": "number", "required": true },
+          { "name": "tileId",   "type": "number", "required": false }
+        ]
+      },
+      "returns": "boolean"
     },
     {
       "name": "StaticInRange",
       "cppName": "SE_StaticInRange",
       "params": {
-        "num": 5
-      }
+        "num": 5,
+        "list": [
+          { "name": "x",        "type": "number", "required": true },
+          { "name": "y",        "type": "number", "required": true },
+          { "name": "worldNum", "type": "number", "required": true },
+          { "name": "radius",   "type": "number", "required": true },
+          { "name": "tileId",   "type": "number", "required": true }
+        ]
+      },
+      "returns": "boolean"
     },
     {
       "name": "GetMapElevation",
@@ -1233,99 +1250,173 @@
       "name": "RegisterCommand",
       "cppName": "SE_RegisterCommand",
       "params": {
-        "num": 3
-      }
+        "num": 3,
+        "list": [
+          { "name": "command",   "type": "string",  "required": true },
+          { "name": "execLevel", "type": "number",  "required": true },
+          { "name": "isEnabled", "type": "boolean", "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "DisableCommand",
       "cppName": "SE_DisableCommand",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "command",   "type": "string",  "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "EnableCommand",
       "cppName": "SE_EnableCommand",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "command",   "type": "string",  "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "RegisterKey",
       "cppName": "SE_RegisterKey",
       "params": {
-        "num": 2
-      }
+        "sets": [
+          {
+            "num": 2,
+            "list": [
+              { "name": "key",        "type": "string",  "required": true },
+              { "name": "toRegister", "type": "string",  "required": true }
+            ]
+              },
+          {
+            "num": 2,
+            "list": [
+              { "name": "key",     "type": "number",  "required": true },
+              { "name": "cmdName", "type": "string",  "required": true }
+            ]
+          }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "DisableKey",
       "cppName": "SE_DisableKey",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "key",        "type": "number",  "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "EnableKey",
       "cppName": "SE_EnableKey",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "key",        "type": "number",  "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "RegisterConsoleFunc",
       "cppName": "SE_RegisterConsoleFunc",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "funcToRegister", "type": "string",  "required": true },
+          { "name": "cmdName",        "type": "string",  "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "DisableConsoleFunc",
       "cppName": "SE_DisableConsoleFunc",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "funcToDisable", "type": "string",  "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "EnableConsoleFunc",
       "cppName": "SE_EnableConsoleFunc",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "funcToEnable", "type": "string",  "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "RegisterSpell",
       "cppName": "SE_RegisterSpell",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "spellNumber", "type": "number",  "required": true },
+          { "name": "isEnabled",   "type": "boolean",  "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "DisableSpell",
       "cppName": "SE_DisableSpell",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "spellNumber", "type": "number",  "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "EnableSpell",
       "cppName": "SE_EnableSpell",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "spellNumber", "type": "number",  "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "RegisterSkill",
       "cppName": "SE_RegisterSkill",
       "params": {
-        "num": 2
-      }
+        "num": 2,
+        "list": [
+          { "name": "skillNumber", "type": "number",  "required": true },
+          { "name": "isEnabled",   "type": "boolean",  "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "RegisterPacket",
       "cppName": "SE_RegisterPacket",
       "params": {
-        "num": 2
-      }
+        "num": ,
+        "list": [
+          { "name": "packet", "type": "number",  "required": true },
+          { "name": "subCmd", "type": "number",  "required": true }
+        ]
+      },
+      "returns": "void"
     },
     {
       "name": "ReloadJSFile",
@@ -1409,22 +1500,34 @@
       "name": "GetClientFeature",
       "cppName": "SE_GetClientFeature",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "feature", "type": "ClientFeature",  "required": true }
+        ]
+      },
+      "returns": "boolean"
     },
     {
       "name": "GetServerFeature",
       "cppName": "SE_GetServerFeature",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "feature", "type": "ServerFeature",  "required": true }
+        ]
+      },
+      "returns": "boolean"
     },
     {
       "name": "GetServerSetting",
       "cppName": "SE_GetServerSetting",
       "params": {
-        "num": 1
-      }
+        "num": 1,
+        "list": [
+          { "name": "setting", "type": "string",  "required": true }
+        ]
+      },
+      "returns": "boolean | string | int"
     },
     {
       "name": "DeleteFile",
@@ -1591,6 +1694,12 @@
     {
       "name": "ItemOrSerial",
       "definition": "Item | number"
+    },
+    {
+      "name": "ClientFeature"
+    },
+    {
+      "name": "ServerFeature"
     }
   ]
 }
