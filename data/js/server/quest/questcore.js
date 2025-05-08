@@ -1,4 +1,4 @@
-const DebugMessages = true;
+const DebugMessages = false;
 function StartQuest( player, questID )
 {
 	var socket = player.socket;
@@ -597,10 +597,10 @@ function onItemCollected( player, item, isToggledOff )
 		{
 			continue;
 		}
-		socket.SysMessage(questEntry.questID);
+
 		var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
 
-		if( quest && ( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" ))
+		if( quest && ( quest.type == "collect" || quest.type == "timecollect" || quest.type == "multi" ) && !questEntry.completed )
 		{
 			for( var j = 0; j < quest.targetItems.length; j++ )
 			{
@@ -610,7 +610,7 @@ function onItemCollected( player, item, isToggledOff )
 				{
 					player.SysMessage( "Checking target sectionID: " + target.sectionID );
 				}
-				socket.SysMessage("target sectionID: " + target.sectionID);
+
 				if( String( target.sectionID ) == String( item.sectionID ))
 				{
 					var currentCount = questEntry.collectedItems[item.sectionID];
