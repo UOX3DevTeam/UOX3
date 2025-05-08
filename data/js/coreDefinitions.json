@@ -1886,10 +1886,387 @@
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "BaseObject | undefined | null"
         }
+      ],
+      "methods": [
+        {
+          "name": "SysMessage",
+          "cppName": "CMisc_SysMessage",
+          "params": {
+            "sets": [
+              {
+                "num": 2,
+                "max": 10,
+                "list": [
+                  { "name": "color", "type": "number", "required": true },
+                  { "name": "msg",   "type": "string", "required": true },
+                  { "name": "parm1", "type": "string", "required": false },
+                  { "name": "parm2", "type": "string", "required": false },
+                  { "name": "parm3", "type": "string", "required": false },
+                  { "name": "parm4", "type": "string", "required": false },
+                  { "name": "parm5", "type": "string", "required": false },
+                  { "name": "parm6", "type": "string", "required": false },
+                  { "name": "parm7", "type": "string", "required": false },
+                  { "name": "parm8", "type": "string", "required": false }
+                ]
+              },
+              {
+                "num": 2,
+                "max": 10,
+                "list": [
+                  { "name": "msg",   "type": "string", "required": true },
+                  { "name": "parm1", "type": "string", "required": false },
+                  { "name": "parm2", "type": "string", "required": false },
+                  { "name": "parm3", "type": "string", "required": false },
+                  { "name": "parm4", "type": "string", "required": false },
+                  { "name": "parm5", "type": "string", "required": false },
+                  { "name": "parm6", "type": "string", "required": false },
+                  { "name": "parm7", "type": "string", "required": false },
+                  { "name": "parm8", "type": "string", "required": false },
+                  { "name": "parm9", "type": "string", "required": false }
+                ]
+              },
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "Disconnect",
+          "cppName": "CSocket_Disconnect",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "SoundEffect",
+          "cppName": "CMisc_SoundEffect",
+          "params": {
+            "num": 2
+          }
+        },
+        {
+          "name": "CustomTarget",
+          "cppName": "CMisc_CustomTarget",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "PopUpTarget",
+          "cppName": "CMisc_PopUpTarget",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "GetByte",
+          "cppName": "CSocket_GetByte",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "offset", "type": "number", "required": true }
+            ]
+          },
+          "returns": "number"
+        },
+        {
+          "name": "GetWord",
+          "cppName": "CSocket_GetWord",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "offset", "type": "number", "required": true }
+            ]
+          },
+          "returns": "number"
+        },
+        {
+          "name": "GetDWord",
+          "cppName": "CSocket_GetDWord",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "offset", "type": "number", "required": true }
+            ]
+          },
+          "returns": "number"
+        },
+        {
+          "name": "GetSByte",
+          "cppName": "CSocket_GetSByte",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "offset", "type": "number", "required": true }
+            ]
+          },
+          "returns": "number"
+        },
+        {
+          "name": "GetSWord",
+          "cppName": "CSocket_GetSWord",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "offset", "type": "number", "required": true }
+            ]
+          },
+          "returns": "number"
+        },
+        {
+          "name": "GetSDWord",
+          "cppName": "CSocket_GetSDWord",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "offset", "type": "number", "required": true }
+            ]
+          },
+          "returns": "number"
+        },
+        {
+          "name": "GetString",
+          "cppName": "CSocket_GetString",
+          "params": {
+            "num": 1,
+            "max": 2,
+            "list": [
+              { "name": "offset", "type": "number", "required": true },
+              { "name": "length", "type": "number", "required": false }
+            ]
+          },
+          "returns": "string"
+        },
+        {
+          "name": "SetByte",
+          "cppName": "CSocket_SetByte",
+          "params": {
+            "num": 2,
+            "list": [
+              { "name": "offset", "type": "number", "required": true },
+              { "name": "value",  "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "SetWord",
+          "cppName": "CSocket_SetWord",
+          "params": {
+            "num": 2,
+            "list": [
+              { "name": "offset", "type": "number", "required": true },
+              { "name": "value",  "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "SetDWord",
+          "cppName": "CSocket_SetDWord",
+          "params": {
+            "num": 2,
+            "list": [
+              { "name": "offset", "type": "number", "required": true },
+              { "name": "value",  "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "SetString",
+          "cppName": "CSocket_SetString",
+          "params": {
+            "num": 2,
+            "list": [
+              { "name": "offset", "type": "number", "required": true },
+              { "name": "value",  "type": "string", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "ReadBytes",
+          "cppName": "CSocket_ReadBytes",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "OpenContainer",
+          "cppName": "CSocket_OpenContainer",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "OpenGump",
+          "cppName": "CSocket_OpenGump",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "CloseGump",
+          "cppName": "CSocket_CloseGump",
+          "params": {
+            "num": 2
+          }
+        },
+        {
+          "name": "OpenURL",
+          "cppName": "CSocket_OpenURL",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "BuyFrom",
+          "cppName": "CMisc_BuyFrom",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "SellTo",
+          "cppName": "CMisc_SellTo",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "WhoList",
+          "cppName": "CSocket_WhoList",
+          "params": {
+            "num": 0
+          }
+        },
+        {
+          "name": "Music",
+          "cppName": "CSocket_Music",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "GetTimer",
+          "cppName": "CMisc_GetTimer",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "SetTimer",
+          "cppName": "CMisc_SetTimer",
+          "params": {
+            "num": 2
+          }
+        },
+        {
+          "name": "SendAddMenu",
+          "cppName": "CSocket_SendAddMenu",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "Page",
+          "cppName": "CSocket_Page",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "MakeMenu",
+          "cppName": "CMisc_MakeMenu",
+          "params": {
+            "num": 2
+          }
+        },
+        {
+          "name": "Send",
+          "cppName": "CSocket_Send",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "CanSee",
+          "cppName": "CBase_CanSee",
+          "params": {
+            "num": 1
+          }
+        },
+        {
+          "name": "DisplayDamage",
+          "cppName": "CSocket_DisplayDamage",
+          "params": {
+            "num": 2
+          }
+        },
+        {
+          "name": "FirstTriggerWord",
+          "cppName": "CSocket_FirstTriggerWord",
+          "params": {
+            "num": 0
+          }
+        },
+        {
+          "name": "NextTriggerWord",
+          "cppName": "CSocket_NextTriggerWord",
+          "params": {
+            "num": 0
+          }
+        },
+        {
+          "name": "FinishedTriggerWords",
+          "cppName": "CSocket_FinishedTriggerWords",
+          "params": {
+            "num": 0
+          }
+        }
       ]
     },
     {
-      "name": "UOXResource"
+      "name": "UOXResource",
+      "properties": [
+        {
+          "name": "logAmount",
+          "cppID": "CRESP_LOGAMT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "logTime",
+          "cppID": "CRESP_LOGTIME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "oreAmount",
+          "cppID": "CRESP_OREAMT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "oreTime",
+          "cppID": "CRESP_ORETIME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "fishAmount",
+          "cppID": "CRESP_FISHAMT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "fishTime",
+          "cppID": "CRESP_FISHTIME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        }
+      ]
     },
     {
       "name": "UnicodeTypes",
