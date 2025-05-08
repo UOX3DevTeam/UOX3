@@ -1941,22 +1941,43 @@
           "name": "SoundEffect",
           "cppName": "CMisc_SoundEffect",
           "params": {
-            "num": 2
-          }
+            "num": 2,
+            "max": 3,
+            "list": [
+              { "name": "soundId",         "type": "number",  "required": true },
+              { "name": "allHear",         "type": "boolean", "required": true },
+              { "name": "tmpMonsterSound", "type": "number",  "required": false }
+            ]
+          },
+          "broken": true,
+          "returns": "void"
         },
         {
           "name": "CustomTarget",
           "cppName": "CMisc_CustomTarget",
           "params": {
-            "num": 1
-          }
+            "num": 1,
+            "max": 3,
+            "list": [
+              { "name": "tNum",       "type": "number", "required": true },
+              { "name": "toSay",      "type": "string", "required": false },
+              { "name": "cursorType", "type": "number", "required": false }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "PopUpTarget",
           "cppName": "CMisc_PopUpTarget",
           "params": {
-            "num": 1
-          }
+            "num": 1,
+            "max": 2,
+            "list": [
+              { "name": "tNum",       "type": "number", "required": true },
+              { "name": "toSay",      "type": "string", "required": false }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "GetByte",
@@ -2089,15 +2110,23 @@
           "name": "ReadBytes",
           "cppName": "CSocket_ReadBytes",
           "params": {
-            "num": 1
-          }
+            "num": 1,
+            "list": [
+              { "name": "length", "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "OpenContainer",
           "cppName": "CSocket_OpenContainer",
           "params": {
-            "num": 1
-          }
+            "num": 1,
+            "list": [
+              { "name": "container", "type": "ItemOrNull", "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "OpenGump",
