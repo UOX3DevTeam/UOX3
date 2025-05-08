@@ -11,13 +11,16 @@ function createTypeProps( $type ) {
     if ( $null -eq $prop.unused -or ( $null -ne $prop.unused -and $prop.unused -eq $false ) ) {
       $toAdd = "    "
       if ( $null -ne $prop.readOnly -and $prop.readOnly -eq $true ) {
-        $toAdd += "readonly "
+        $toAdd += "readonly  "
+      }
+      elseif ( $null -ne $prop.writeOnly -and $prop.writeOnly -eq $true ) {
+        $toAdd += "writeonly "
       }
       else {
-        $toAdd += "         "
+        $toAdd += "          "
       }
       $toAdd += $prop.name + ": "
-      $toAdd = $toAdd.PadRight( $maxLabelLength + 15 ) # 9 for readonly, 4 for indent, 2 for colon
+      $toAdd = $toAdd.PadRight( $maxLabelLength + 16 ) # 9 for readonly, 4 for indent, 2 for colon
       $toAdd += $prop.type + ";"
       $lines += $toAdd
     }
@@ -27,58 +30,26 @@ function createTypeProps( $type ) {
 function createTypeEnums( $values ) {
   $lines = @()
   $maxLabelLength = ($values | ForEach-Object { $_.label.Length } | Measure-Object -Maximum).Maximum
-  foreach( $value in $values ) {
+  foreach ( $value in $values ) {
     $toAdd = "    "
-    if( $null -ne $value.disabled -and $value.disabled -eq $true ) {
+    if ( $null -ne $value.disabled -and $value.disabled -eq $true ) {
       $toAdd += "// "
     }
     $toAdd += $value.label
-    if( $null -ne $value.value ) {
+    if ( $null -ne $value.value ) {
       $toAdd += " = " + $value.value
     }
     $toAdd += ","
     $toAdd = $toAdd.PadRight( $maxLabelLength + 8 ) # 4 for indent, 3 for possible comment, 1 for comma
-    if( $null -ne $value.comment ) {
+    if ( $null -ne $value.comment ) {
       $toAdd += " // " + $value.comment
     }
     $lines += $toAdd
   }
   return $lines
 }
-foreach ( $types in ($content.types | Sort-Object -Property name) ) {
-  if ( $null -ne $types.definition ) {
-    $lines += "  type $($types.Name) = $($types.definition);"
-  }
-  elseif ( $null -ne $types.values ) {
-    # An enum!
-    $decl = "  enum $($types.Name) {"
-    $values = createTypeEnums $types.values
-    $lines += @(
-      $decl,
-      $values,
-      "  }"
-    )
-  }
-  else {
-    $decl = "  interface $($types.Name)"
-    if ( $null -ne $types.extends ) {
-      $decl += " extends " + $types.extends
-    }
-    $decl += " {"
-    $parms = createTypeProps $types
-    $lines += @(
-      $decl,
-      $parms,
-      "  }"
-    )
-    if ( $null -ne $types.aka ) {
-      $lines += "  type $($types.aka) = $($types.Name);"
-    }
-  }
-}
-
-function createFunc( $funcName, $funcParms, $funcReturn ) {
-  $toAdd = "  function $funcName("
+function createFunc( $funcName, $funcParms, $funcReturn, $indent ) {
+  $toAdd = $indent + "function $funcName("
   $pCount = 0
   $pad = ""
   foreach ( $parms in $funcParms ) {
@@ -102,20 +73,60 @@ function createFunc( $funcName, $funcParms, $funcReturn ) {
   return $toAdd
 }
 
-foreach ( $function in ($content.globalFuncs | Sort-Object -Property Name) ) {
-  # function GetAccountCount(data: string): number;
-  if ( $null -ne $function.params.sets ) {
-    # Multiple definitions
-    foreach ( $parmSet in $function.params.sets ) {
-      $lines += createFunc $function.Name $parmSet.list $function.returns
+function createFuncSet( $funcs, $indent ) {
+  $lines = @()
+  foreach ( $function in ($funcs | Sort-Object -Property Name) ) {
+    # function GetAccountCount(data: string): number;
+    if ( $null -ne $function.params.sets ) {
+      # Multiple definitions
+      foreach ( $parmSet in $function.params.sets ) {
+        $lines += createFunc $function.Name $parmSet.list $function.returns $indent
+      }
+    }
+    else {
+      # Singular definition
+      $lines += createFunc $function.Name $function.params.list $function.returns $indent
     }
   }
+  return $lines
+}
+
+
+foreach ( $types in ($content.types | Sort-Object -Property name) ) {
+  if ( $null -ne $types.definition ) {
+    $lines += "  type $($types.Name) = $($types.definition);"
+  }
+  elseif ( $null -ne $types.values ) {
+    # An enum!
+    $decl = "  enum $($types.Name) {"
+    $values = createTypeEnums $types.values
+    $lines += @(
+      $decl,
+      $values,
+      "  }"
+    )
+  }
   else {
-    # Singular definition
-    $lines += createFunc $function.Name $function.params.list $function.returns
+    $decl = "  interface $($types.Name)"
+    if ( $null -ne $types.extends ) {
+      $decl += " extends " + $types.extends
+    }
+    $decl += " {"
+    $parms = createTypeProps $types
+    $funcs = createFuncSet $types.methods "    "
+    $lines += @(
+      $decl,
+      $parms,
+      $funcs,
+      "  }"
+    )
+    if ( $null -ne $types.aka ) {
+      $lines += "  type $($types.aka) = $($types.Name);"
+    }
   }
 }
 
+$lines += createFuncSet $content.globalFuncs "  "
 $lines += @(
   "}",
   "",

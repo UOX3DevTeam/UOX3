@@ -2185,7 +2185,264 @@
       ]
     },
     {
-      "name": "Account"
+      "name": "Account",
+      "properties": [
+        {
+          "name": "id",
+          "cppID": "CACCOUNT_ID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "username",
+          "cppID": "CACCOUNT_USERNAME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string",
+          "readOnly": true
+        },
+        {
+          "name": "password",
+          "cppID": "CACCOUNT_PASSWORD",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string",
+          "writeOnly": true
+        },
+        {
+          "name": "flags",
+          "cppID": "CACCOUNT_FLAGS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "path",
+          "cppID": "CACCOUNT_PATH",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "",
+          "unused": true,
+          "readOnly": true
+        },
+        {
+          "name": "comment",
+          "cppID": "CACCOUNT_COMMENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "timeban",
+          "cppID": "CACCOUNT_TIMEBAN",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "firstLogin",
+          "cppID": "CACCOUNT_FIRSTLOGIN",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "totalPlayTime",
+          "cppID": "CACCOUNT_TOTALPLAYTIME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "character1",
+          "cppID": "CACCOUNT_CHARACTER1",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "CharOrNull",
+          "readOnly": true
+        },
+        {
+          "name": "character2",
+          "cppID": "CACCOUNT_CHARACTER2",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "CharOrNull",
+          "readOnly": true
+        },
+        {
+          "name": "character3",
+          "cppID": "CACCOUNT_CHARACTER3",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "CharOrNull",
+          "readOnly": true
+        },
+        {
+          "name": "character4",
+          "cppID": "CACCOUNT_CHARACTER4",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "CharOrNull",
+          "readOnly": true
+        },
+        {
+          "name": "character5",
+          "cppID": "CACCOUNT_CHARACTER5",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "CharOrNull",
+          "readOnly": true
+        },
+        {
+          "name": "character6",
+          "cppID": "CACCOUNT_CHARACTER6",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "CharOrNull",
+          "readOnly": true
+        },
+        {
+          "name": "character7",
+          "cppID": "CACCOUNT_CHARACTER7",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "CharOrNull",
+          "readOnly": true
+        },
+        {
+          "name": "currentChar",
+          "cppID": "CACCOUNT_CURRENTCHAR",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "CharOrNull",
+          "readOnly": true
+        },
+        {
+          "name": "lastIP",
+          "cppID": "CACCOUNT_LASTIP",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "isBanned",
+          "cppID": "CACCOUNT_BANNED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isSuspended",
+          "cppID": "CACCOUNT_SUSPENDED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isPublic",
+          "cppID": "CACCOUNT_PUBLIC",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isOnline",
+          "cppID": "CACCOUNT_ONLINE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isSlot1Blocked",
+          "cppID": "CACCOUNT_CHARSLOT1BLOCKED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isSlot2Blocked",
+          "cppID": "CACCOUNT_CHARSLOT2BLOCKED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isSlot3Blocked",
+          "cppID": "CACCOUNT_CHARSLOT3BLOCKED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isSlot4Blocked",
+          "cppID": "CACCOUNT_CHARSLOT4BLOCKED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isSlot5Blocked",
+          "cppID": "CACCOUNT_CHARSLOT5BLOCKED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isSlot6Blocked",
+          "cppID": "CACCOUNT_CHARSLOT6BLOCKED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isSlot7Blocked",
+          "cppID": "CACCOUNT_CHARSLOT7BLOCKED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isYoung",
+          "cppID": "CACCOUNT_YOUNG",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "unused10",
+          "cppID": "CACCOUNT_UNUSED10",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isSeer",
+          "cppID": "CACCOUNT_SEER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isCounselor",
+          "cppID": "CACCOUNT_COUNSELOR",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isGM",
+          "cppID": "CACCOUNT_GM",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        }
+      ],
+      "methods": [
+        {
+          "name": "AddAccount",
+          "cppName": "CAccount_AddAccount",
+          "params": {
+            "num": 4,
+            "list": [
+              { "name": "username", "type": "string", "required": true },
+              { "name": "password", "type": "string", "required": true },
+              { "name": "comment",  "type": "string", "required": true },
+              { "name": "flags",    "type": "string | number", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "DelAccount",
+          "cppName": "CAccount_DelAccount",
+          "params": {
+            "sets": [
+              {
+                "num": 1,
+                "list": [
+                  { "name": "username", "type": "string", "required": true }
+                ]
+              },
+              {
+                "num": 1,
+                "list": [
+                  { "name": "accountId", "type": "number", "required": true }
+                ]
+              }
+            ]
+          },
+          "returns": "void"
+        }
+      ]
     }
   ]
 }
