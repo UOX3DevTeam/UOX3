@@ -6,10 +6,10 @@
       "params": {
         "num": 1,
         "list": [
-          { "name": "in", "type": "number", "required": true }
+          { "name": "value", "type": "string", "required": true }
         ]
       },
-      "returns": "string"
+      "returns": "number"
     },
     {
       "name": "NumToString",
@@ -17,10 +17,10 @@
       "params": {
         "num": 1,
         "list": [
-          { "name": "in", "type": "string", "required": true }
+          { "name": "value", "type": "number", "required": true }
         ]
       },
-      "returns": "number"
+      "returns": "string"
     },
     {
       "name": "NumToHexString",
@@ -28,7 +28,7 @@
       "params": {
         "num": 1,
         "list": [
-          { "name": "in", "type": "number", "required": true }
+          { "name": "value", "type": "number", "required": true }
         ]
       },
       "returns": "string"
@@ -2132,127 +2132,207 @@
           "name": "OpenGump",
           "cppName": "CSocket_OpenGump",
           "params": {
-            "num": 1
-          }
+            "num": 1,
+            "list": [
+              { "name": "menuNumber", "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "CloseGump",
           "cppName": "CSocket_CloseGump",
           "params": {
-            "num": 2
-          }
+            "num": 2,
+            "list": [
+              { "name": "gumpId",   "type": "number", "required": true },
+              { "name": "buttonId", "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "OpenURL",
           "cppName": "CSocket_OpenURL",
           "params": {
-            "num": 1
-          }
+            "num": 1,
+            "list": [
+              { "name": "url", "type": "string", "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "BuyFrom",
           "cppName": "CMisc_BuyFrom",
           "params": {
-            "num": 1
-          }
+            "num": 1,
+            "list": [
+              { "name": "npc", "type": "Character", "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "SellTo",
           "cppName": "CMisc_SellTo",
           "params": {
-            "num": 1
-          }
+            "num": 1,
+            "list": [
+              { "name": "npc", "type": "Character", "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "WhoList",
           "cppName": "CSocket_WhoList",
           "params": {
-            "num": 0
-          }
+            "num": 0,
+            "max": 1,
+            "list": [
+              { "name": "forceRefresh", "type": "boolean", "required": false }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "Music",
           "cppName": "CSocket_Music",
           "params": {
-            "num": 1
-          }
+            "num": 1,
+            "list": [
+              { "name": "songId", "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "GetTimer",
           "cppName": "CMisc_GetTimer",
           "params": {
-            "num": 1
-          }
+            "num": 1,
+            "list": [
+              { "name": "timerID", "type": "SocketTimerID", "required": true }
+            ]
+          },
+          "returns": "number"
         },
         {
           "name": "SetTimer",
           "cppName": "CMisc_SetTimer",
           "params": {
-            "num": 2
-          }
+            "num": 2,
+            "list": [
+              { "name": "timerID", "type": "SocketTimerID", "required": true },
+              { "name": "value",   "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "SendAddMenu",
           "cppName": "CSocket_SendAddMenu",
           "params": {
-            "num": 1
-          }
+            "num": 1,
+            "list": [
+              { "name": "menuId", "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "Page",
           "cppName": "CSocket_Page",
           "params": {
-            "num": 1
-          }
+            "num": 1,
+            "list": [
+              { "name": "pageType", "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "MakeMenu",
           "cppName": "CMisc_MakeMenu",
           "params": {
-            "num": 2
-          }
+            "num": 2,
+            "list": [
+              { "name": "menuId",   "type": "number", "required": true },
+              { "name": "skillNum", "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "Send",
           "cppName": "CSocket_Send",
           "params": {
-            "num": 1
-          }
+            "num": 1,
+            "list": [
+              { "name": "packet",   "type": "Packet", "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "CanSee",
           "cppName": "CBase_CanSee",
           "params": {
-            "num": 1
-          }
+            "sets": [
+              {
+                "num": 1,
+                "list": [
+                  { "name": "target",   "type": "Socket | Character | Item", "required": true }
+                ]
+              },
+              {
+                "num": 3,
+                "list": [
+                  { "name": "x",   "type": "number", "required": true },
+                  { "name": "y",   "type": "number", "required": true },
+                  { "name": "z",   "type": "number", "required": true }
+                ]
+              }
+            ]
+          },
+          "returns": "boolean"
         },
         {
           "name": "DisplayDamage",
           "cppName": "CSocket_DisplayDamage",
           "params": {
-            "num": 2
-          }
+            "num": 2,
+            "list": [
+              { "name": "toon",    "type": "Character", "required": true },
+              { "name": "damage",  "type": "number",    "required": true }
+            ]
+          },
+          "returns": "void"
         },
         {
           "name": "FirstTriggerWord",
           "cppName": "CSocket_FirstTriggerWord",
           "params": {
             "num": 0
-          }
+          },
+          "returns": "number"
         },
         {
           "name": "NextTriggerWord",
           "cppName": "CSocket_NextTriggerWord",
           "params": {
             "num": 0
-          }
+          },
+          "returns": "number"
         },
         {
           "name": "FinishedTriggerWords",
           "cppName": "CSocket_FinishedTriggerWords",
           "params": {
             "num": 0
-          }
+          },
+          "returns": "boolean"
         }
       ]
     },
@@ -2612,7 +2692,8 @@
           "cppID": "CACCOUNT_PASSWORD",
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "string",
-          "writeOnly": true
+          "writeOnly": true,
+          "unused": true
         },
         {
           "name": "flags",
@@ -2849,6 +2930,13 @@
           "returns": "void"
         }
       ]
+    },
+    {
+      "name": "SockerTimerID",
+      "values": []
+    },
+    {
+      "name": "Packet"
     }
   ],
   "events": [
@@ -3116,7 +3204,8 @@
           { "name": "dfnCreated",   "type": "boolean",    "required": true },
           { "name": "isPlayer",     "type": "boolean",    "required": true }
         ]
-      }
+      },
+      "returns": "void"
     },
     {
       "name": "onCreatePlayer",
@@ -3947,7 +4036,8 @@
           { "name": "stolenFrom", "type": "Character", "required": true },
           { "name": "stolen", "type": "Item", "required": true }
         ]
-      }
+      },
+      "returns": "void"
     },
     {
       "name": "onStop",
@@ -4123,7 +4213,8 @@
           { "name": "srcObj", "type": "BaseObject", "required": true },
           { "name": "objVanish", "type": "BaseObject", "required": true }
         ]
-      }
+      },
+      "returns": "void"
     }
   ]
 }

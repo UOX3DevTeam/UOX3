@@ -48,8 +48,8 @@ function createTypeEnums( $values ) {
   }
   return $lines
 }
-function createFunc( $funcName, $funcParms, $funcReturn, $indent ) {
-  $toAdd = $indent + "function $funcName("
+function createFunc( $funcName, $funcParms, $funcReturn, $indent, $funcLeader ) {
+  $toAdd = $indent + "$funcLeader$funcName("
   $pCount = 0
   $pad = ""
   foreach ( $parms in $funcParms ) {
@@ -73,19 +73,19 @@ function createFunc( $funcName, $funcParms, $funcReturn, $indent ) {
   return $toAdd
 }
 
-function createFuncSet( $funcs, $indent ) {
+function createFuncSet( $funcs, $indent, $funcLeader ) {
   $lines = @()
   foreach ( $function in ($funcs | Sort-Object -Property Name) ) {
     # function GetAccountCount(data: string): number;
     if ( $null -ne $function.params.sets ) {
       # Multiple definitions
       foreach ( $parmSet in $function.params.sets ) {
-        $lines += createFunc $function.Name $parmSet.list $function.returns $indent
+        $lines += createFunc $function.Name $parmSet.list $function.returns $indent $funcLeader
       }
     }
     else {
       # Singular definition
-      $lines += createFunc $function.Name $function.params.list $function.returns $indent
+      $lines += createFunc $function.Name $function.params.list $function.returns $indent $funcLeader
     }
   }
   return $lines
@@ -114,7 +114,7 @@ foreach ( $types in ($content.types | Sort-Object -Property name) ) {
     }
     $decl += " {"
     $parms = createTypeProps $types
-    $funcs = createFuncSet $types.methods "    "
+    $funcs = createFuncSet $types.methods "    " ""
     $lines += @(
       $decl,
       $parms,
@@ -128,10 +128,10 @@ foreach ( $types in ($content.types | Sort-Object -Property name) ) {
 }
 
 $lines += @( "", "// Global Functions", "" )
-$lines += createFuncSet $content.globalFuncs "  "
+$lines += createFuncSet $content.globalFuncs "  " "function "
 
 $lines += @( "", "// Event Functions", "" )
-$lines += createFuncSet $content.events "  "
+$lines += createFuncSet $content.events "  " "function "
 
 $lines += @(
   "}",
