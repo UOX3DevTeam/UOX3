@@ -549,9 +549,9 @@
           { "name": "itemAmount", "type": "number",       "required": false },
           { "name": "itemType",   "type": "string",       "required": false },
           { "name": "inPack",     "type": "boolean",      "required": false },
-          { "name": "color",      "type": "int",          "required": false },
-          { "name": "worldNum",   "type": "int",          "required": false },
-          { "name": "instanceId", "type": "int",          "required": false }
+          { "name": "color",      "type": "number",       "required": false },
+          { "name": "worldNum",   "type": "number",       "required": false },
+          { "name": "instanceId", "type": "number",       "required": false }
         ]
       },
       "returns": "Item"
@@ -566,8 +566,8 @@
           { "name": "toon",       "type": "CharOrNull",   "required": true },
           { "name": "itemAmount", "type": "number",       "required": true },
           { "name": "name",       "type": "string",       "required": true },
-          { "name": "itemId",     "type": "int",          "required": true },
-          { "name": "color",      "type": "int",          "required": true },
+          { "name": "itemId",     "type": "number",       "required": true },
+          { "name": "color",      "type": "number",       "required": true },
           { "name": "objType",    "type": "string",       "required": true },
           { "name": "inPack",     "type": "boolean",      "required": true }
         ]
@@ -1527,7 +1527,7 @@
           { "name": "setting", "type": "string",  "required": true }
         ]
       },
-      "returns": "boolean | string | int"
+      "returns": "boolean | string | number"
     },
     {
       "name": "DeleteFile",
@@ -2607,12 +2607,20 @@
       "extends": "Item"
     },
     {
+      "name": "Boat",
+      "extends": "Multi"
+    },
+    {
       "name": "CharOrNull",
       "definition": "Character | null | undefined"
     },
     {
       "name": "ItemOrNull",
       "definition": "Item | null | undefined"
+    },
+    {
+      "name": "SocketOrNull",
+      "definition": "Socket | null | undefined"
     },
     {
       "name": "ItemOrSerial",
@@ -2932,7 +2940,7 @@
       ]
     },
     {
-      "name": "SockerTimerID",
+      "name": "SocketTimerID",
       "values": []
     },
     {
@@ -2996,7 +3004,7 @@
       "params": {
         "num": 4,
         "list": [
-          { "name": "iMulti",  "type": "CBoatObj", "required": true },
+          { "name": "iMulti",  "type": "Boat",     "required": true },
           { "name": "oldDir",  "type": "number",   "required": true },
           { "name": "newDir",  "type": "number",   "required": true },
           { "name": "iTiller", "type": "Item",     "required": true }
@@ -3521,7 +3529,7 @@
       "cppName": "OnIterateSpawnRegions",
       "params": {
         "list": [
-          { "name": "a", "type": "CSpawnRegion", "required": true },
+          { "name": "a", "type": "SpawnRegion", "required": true },
           { "name": "b", "type": "number", "required": true }
         ]
       },
@@ -4010,7 +4018,7 @@
         "list": [
           { "name": "player", "type": "Character", "required": true },
           { "name": "stat", "type": "number", "required": true },
-          { "name": "statLossAmount", "type": "CUI32Char", "required": true }
+          { "name": "statLossAmount", "type": "number", "required": true }
         ]
       },
       "returns": "void"

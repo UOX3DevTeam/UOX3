@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "checkJs": true,
+        "strict": true,
+        "noEmit": true
+    },
+    "include": ["definitions.d.ts", "**/*"]
+}
