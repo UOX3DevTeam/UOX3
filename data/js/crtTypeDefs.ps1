@@ -91,6 +91,7 @@ function createFuncSet( $funcs, $indent ) {
   return $lines
 }
 
+$lines += @( "// Object Types", "" )
 
 foreach ( $types in ($content.types | Sort-Object -Property name) ) {
   if ( $null -ne $types.definition ) {
@@ -126,7 +127,12 @@ foreach ( $types in ($content.types | Sort-Object -Property name) ) {
   }
 }
 
+$lines += @( "", "// Global Functions", "" )
 $lines += createFuncSet $content.globalFuncs "  "
+
+$lines += @( "", "// Event Functions", "" )
+$lines += createFuncSet $content.events "  "
+
 $lines += @(
   "}",
   "",

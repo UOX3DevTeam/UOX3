@@ -1410,7 +1410,7 @@
       "name": "RegisterPacket",
       "cppName": "SE_RegisterPacket",
       "params": {
-        "num": ,
+        "num": 2,
         "list": [
           { "name": "packet", "type": "number",  "required": true },
           { "name": "subCmd", "type": "number",  "required": true }
@@ -1924,7 +1924,7 @@
                   { "name": "parm8", "type": "string", "required": false },
                   { "name": "parm9", "type": "string", "required": false }
                 ]
-              },
+              }
             ]
           },
           "returns": "void"
@@ -2849,6 +2849,1281 @@
           "returns": "void"
         }
       ]
+    }
+  ],
+  "events": [
+    {
+      "name": "inRange",
+      "cppName": "InRange",
+      "params": {
+        "num": 2,
+        "list": [
+          { "name": "srcObj",     "type": "BaseObject", "required": true },
+          { "name": "objInRange", "type": "BaseObject", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onAICombatTarget",
+      "cppName": "OnAICombatTarget",
+      "params": {
+        "num": 2,
+        "list": [
+          { "name": "attacker", "type": "Character", "required": true },
+          { "name": "target",   "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onAISliver",
+      "cppName": "OnAISliver",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "pSliver", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onAttack",
+      "cppName": "OnAttack",
+      "params": {
+        "num": 5,
+        "list": [
+          { "name": "attacker",    "type": "Character", "required": true },
+          { "name": "defender",    "type": "Character", "required": true },
+          { "name": "hitStatus",   "type": "boolean",   "required": true },
+          { "name": "hitLoc",      "type": "number",    "required": true },
+          { "name": "damageDealt", "type": "number",    "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onBoatTurn",
+      "cppName": "OnBoatTurn",
+      "params": {
+        "num": 4,
+        "list": [
+          { "name": "iMulti",  "type": "CBoatObj", "required": true },
+          { "name": "oldDir",  "type": "number",   "required": true },
+          { "name": "newDir",  "type": "number",   "required": true },
+          { "name": "iTiller", "type": "Item",     "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onBoughtFromVendor",
+      "cppName": "OnBoughtFromVendor",
+      "params": {
+        "num": 4,
+        "list": [
+          { "name": "targSock",       "type": "Socket",     "required": true },
+          { "name": "objVendor",      "type": "Character",  "required": true },
+          { "name": "objItemBought",  "type": "BaseObject", "required": true },
+          { "name": "numItemsBought", "type": "number",     "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onBuy",
+      "cppName": "OnBuy",
+      "params": {
+        "num": 2,
+        "list": [
+          { "name": "targSock",  "type": "Socket",    "required": true },
+          { "name": "objVendor", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onBuyFromVendor",
+      "cppName": "OnBuyFromVendor",
+      "params": {
+        "num": 4,
+        "list": [
+          { "name": "targSock",       "type": "Socket",     "required": true },
+          { "name": "objVendor",      "type": "Character",  "required": true },
+          { "name": "objItemBought",  "type": "BaseObject", "required": true },
+          { "name": "numItemsBuying", "type": "number",     "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onCallback",
+      "cppName": "OnCallback",
+      "params": {
+        "num": 3,
+        "list": [
+          { "name": "tSock",    "type": "Socket", "required": true },
+          { "name": "targeted", "type": "number", "required": true },
+          { "name": "callNum",  "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onCarveCorpse",
+      "cppName": "OnCarveCorpse",
+      "params": {
+        "num": 2,
+        "list": [
+          { "name": "player", "type": "Character", "required": true },
+          { "name": "corpse", "type": "Item",      "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onCharDoubleClick",
+      "cppName": "OnCharDoubleClick",
+      "params": {
+        "num": 2,
+        "list": [
+          { "name": "currChar", "type": "Character", "required": true },
+          { "name": "targChar", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onClick",
+      "cppName": "OnClick",
+      "params": {
+        "num": 2,
+        "list": [
+          { "name": "sockPlayer", "type": "Socket",     "required": true },
+          { "name": "objClicked", "type": "BaseObject", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onCollide",
+      "cppName": "OnCollide",
+      "params": {
+        "num": 3,
+        "list": [
+          { "name": "targSock",       "type": "Socket",     "required": true },
+          { "name": "objColliding",   "type": "Character",  "required": true },
+          { "name": "objCollideWith", "type": "BaseObject", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onCombatDamageCalc",
+      "cppName": "OnCombatDamageCalc",
+      "params": {
+        "num": 4,
+        "list": [
+          { "name": "attacker",      "type": "Character", "required": true },
+          { "name": "defender",      "type": "Character", "required": true },
+          { "name": "getFightSkill", "type": "number",    "required": true },
+          { "name": "hitLoc",        "type": "number",    "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onCombatEnd",
+      "cppName": "OnCombatEnd",
+      "params": {
+        "num": 2,
+        "list": [
+          { "name": "attacker", "type": "Character", "required": true },
+          { "name": "defender", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onCombatStart",
+      "cppName": "OnCombatStart",
+      "params": {
+        "num": 2,
+        "list": [
+          { "name": "attacker", "type": "Character", "required": true },
+          { "name": "defender", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onCommand",
+      "cppName": "OnCommand",
+      "params": {
+        "num": 2,
+        "list": [
+          { "name": "mSock",   "type": "Socket", "required": true },
+          { "name": "command", "type": "string", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onContextMenuRequest",
+      "cppName": "OnContextMenuRequest",
+      "params": {
+        "num": 2,
+        "list": [
+          { "name": "tSock",   "type": "Socket",     "required": true },
+          { "name": "baseObj", "type": "BaseObject", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onContextMenuSelect",
+      "cppName": "OnContextMenuSelect",
+      "params": {
+        "num": 3,
+        "list": [
+          { "name": "tSock",      "type": "Socket",     "required": true },
+          { "name": "baseObj",    "type": "BaseObject", "required": true },
+          { "name": "popupEntry", "type": "number",     "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onContRemoveItem",
+      "cppName": "OnContRemoveItem",
+      "params": {
+        "num": 3,
+        "list": [
+          { "name": "contItem",    "type": "Item",      "required": true },
+          { "name": "item",        "type": "Item",      "required": true },
+          { "name": "pickerUpper", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onCreateDFN",
+      "cppName": "OnCreateDFN",
+      "params": {
+        "num": 3,
+        "list": [
+          { "name": "thingCreated", "type": "BaseObject", "required": true },
+          { "name": "dfnCreated",   "type": "boolean",    "required": true },
+          { "name": "isPlayer",     "type": "boolean",    "required": true }
+        ]
+      }
+    },
+    {
+      "name": "onCreatePlayer",
+      "cppName": "OnCreatePlayer",
+      "params": {
+        "num": 3,
+        "list": [
+          { "name": "thingCreated", "type": "BaseObject", "required": true },
+          { "name": "dfnCreated",   "type": "boolean",    "required": true },
+          { "name": "isPlayer",     "type": "boolean",    "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onCreateTile",
+      "cppName": "OnCreateTile",
+      "params": {
+        "num": 3,
+        "list": [
+          { "name": "thingCreated", "type": "BaseObject", "required": true },
+          { "name": "dfnCreated",   "type": "boolean",    "required": true },
+          { "name": "isPlayer",     "type": "boolean",    "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onDamage",
+      "cppName": "OnDamage",
+      "params": {
+        "num": 4,
+        "list": [
+          { "name": "damaged",     "type": "Character",   "required": true },
+          { "name": "attacker",    "type": "Character",   "required": true },
+          { "name": "damageValue", "type": "number",      "required": true },
+          { "name": "damageType",  "type": "WeatherType", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onDamageDeal",
+      "cppName": "OnDamageDeal",
+      "params": {
+        "num": 4,
+        "list": [
+          { "name": "damaged",     "type": "Character",   "required": true },
+          { "name": "attacker",    "type": "Character",   "required": true },
+          { "name": "damageValue", "type": "number",      "required": true },
+          { "name": "damageType",  "type": "WeatherType", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onDeath",
+      "cppName": "OnDeath",
+      "params": {
+        "num": 2,
+        "list": [
+              { "name": "pDead",   "type": "Character", "required": true },
+              { "name": "iCorpse", "type": "Item",      "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onDeathBlow",
+      "cppName": "OnDeathBlow",
+      "params": {
+        "num": 2,
+        "list": [
+              { "name": "mKilled", "type": "Character", "required": true },
+              { "name": "mKiller", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onDecay",
+      "cppName": "OnDecay",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "decaying", "type": "Item", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onDefense",
+      "cppName": "OnDefense",
+      "params": {
+        "num": 5,
+        "list": [
+          { "name": "attacker",       "type": "Character", "required": true },
+          { "name": "defender",       "type": "Character", "required": true },
+          { "name": "hitStatus",      "type": "boolean",   "required": true },
+          { "name": "hitLoc",         "type": "number",    "required": true },
+          { "name": "damageReceived", "type": "number",    "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onDelete",
+      "cppName": "OnDelete",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "thingDestroyed", "type": "BaseObject", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onDispel",
+      "cppName": "OnDispel",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "dispelled", "type": "BaseObject", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onDrop",
+      "cppName": "OnDrop",
+      "params": {
+        "num": 2,
+        "list": [
+          { "name": "item",    "type": "Item",      "required": true },
+          { "name": "dropper", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onDropItemOnItem",
+      "cppName": "OnDropItemOnItem",
+      "params": {
+        "list": [
+          { "name": "item", "type": "Item", "required": true },
+          { "name": "dropper", "type": "Character", "required": true },
+          { "name": "dest", "type": "Item", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onDropItemOnNpc",
+      "cppName": "OnDropItemOnNpc",
+      "params": {
+        "list": [
+          { "name": "srcChar",  "type": "Character", "required": true },
+          { "name": "targChar", "type": "Character", "required": true },
+          { "name": "i", "type": "Item", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onDyeTarget",
+      "cppName": "OnDyeTarget",
+      "params": {
+        "list": [
+          { "name": "player", "type": "Character", "required": true },
+          { "name": "dyeTub", "type": "Item", "required": true },
+          { "name": "target", "type": "Item", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onEnterEvadeState",
+      "cppName": "OnEnterEvadeState",
+      "params": {
+        "list": [
+          { "name": "npc", "type": "Character", "required": true },
+          { "name": "enemy", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onEnterRegion",
+      "cppName": "OnEnterRegion",
+      "params": {
+        "list": [
+          { "name": "entering", "type": "Character", "required": true },
+          { "name": "region", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onEntrance",
+      "cppName": "OnEntrance",
+      "params": {
+        "list": [
+          { "name": "left", "type": "Multi", "required": true },
+          { "name": "leaving", "type": "BaseObject", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onEquip",
+      "cppName": "OnEquip",
+      "params": {
+        "list": [
+          { "name": "equipper", "type": "Character", "required": true },
+          { "name": "equipping", "type": "Item", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onEquipAttempt",
+      "cppName": "OnEquipAttempt",
+      "params": {
+        "list": [
+          { "name": "equipper", "type": "Character", "required": true },
+          { "name": "equipping", "type": "Item", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onFacetChange",
+      "cppName": "OnFacetChange",
+      "params": {
+        "list": [
+            { "name": "mChar", "type": "Character", "required": true },
+            { "name": "oldFacet", "type": "number", "required": true },
+            { "name": "newFacet", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onFall",
+      "cppName": "OnFall",
+      "params": {
+        "list": [
+          { "name": "pFall", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onFlagChange",
+      "cppName": "OnFlagChange",
+      "params": {
+        "list": [
+          { "name": "pChanging", "type": "Character", "required": true },
+          { "name": "newStatus", "type": "number", "required": true },
+          { "name": "oldStatus", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onHelpButton",
+      "cppName": "OnHelpButton",
+      "params": {
+        "num": 1,
+        "list": [
+          { "name": "mChar", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onHouseCommand",
+      "cppName": "OnHouseCommand",
+      "params": {
+        "list": [
+          { "name": "targSock", "type": "Socket", "required": true },
+          { "name": "multiObj", "type": "Multi", "required": true },
+          { "name": "targId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onHungerChange",
+      "cppName": "OnHungerChange",
+      "params": {
+        "list": [
+          { "name": "pChanging", "type": "Character", "required": true },
+          { "name": "newStatus", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onIterate",
+      "cppName": "OnIterate",
+      "params": {
+        "list": [
+          { "name": "a",     "type": "BaseObject", "required": true },
+          { "name": "b",     "type": "number", "required": true },
+          { "name": "mSock", "type": "Socket", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onIterateSpawnRegions",
+      "cppName": "OnIterateSpawnRegions",
+      "params": {
+        "list": [
+          { "name": "a", "type": "CSpawnRegion", "required": true },
+          { "name": "b", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onLeaveRegion",
+      "cppName": "OnLeaveRegion",
+      "params": {
+        "list": [
+          { "name": "entering", "type": "Character", "required": true },
+          { "name": "region", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onLeaving",
+      "cppName": "OnLeaving",
+      "params": {
+        "list": [
+          { "name": "left", "type": "Multi", "required": true },
+          { "name": "leaving", "type": "BaseObject", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onLightChange",
+      "cppName": "OnLightChange",
+      "params": {
+        "list": [
+          { "name": "tObject", "type": "BaseObject", "required": true },
+          { "name": "lightLevel", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onLogin",
+      "cppName": "OnLogin",
+      "params": {
+        "list": [
+          { "name": "sockPlayer", "type": "Socket", "required": true },
+          { "name": "pPlayer", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onLogout",
+      "cppName": "OnLogout",
+      "params": {
+        "list": [
+          { "name": "sockPlayer", "type": "Socket", "required": true },
+          { "name": "pPlayer", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onLoyaltyChange",
+      "cppName": "OnLoyaltyChange",
+      "params": {
+        "list": [
+          { "name": "pChanging", "type": "Character", "required": true },
+          { "name": "newStatus", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onMakeItem",
+      "cppName": "OnMakeItem",
+      "params": {
+        "list": [
+          { "name": "mSock",         "type": "Socket", "required": true },
+          { "name": "objChar",       "type": "Character", "required": true },
+          { "name": "objItem",       "type": "Item", "required": true },
+          { "name": "createEntryId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onMoveDetect",
+      "cppName": "OnMoveDetect",
+      "params": {
+        "list": [
+          { "name": "sourceObj",   "type": "BaseObject", "required": true },
+          { "name": "CharInRange", "type": "Character", "required": true },
+          { "name": "rangeToChar", "type": "number", "required": true },
+          { "name": "oldCharX",    "type": "number", "required": true },
+          { "name": "oldCharY",    "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onMultiLogout",
+      "cppName": "OnMultiLogout",
+      "params": {
+        "list": [
+          { "name": "iMulti", "type": "Multi", "required": true },
+          { "name": "cPlayer", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onNameRequest",
+      "cppName": "OnNameRequest",
+      "params": {
+        "list": [
+          { "name": "myObj", "type": "BaseObject", "required": true },
+          { "name": "nameRequester", "type": "Character", "required": true },
+          { "name": "requestSource", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onPacketReceive",
+      "cppName": "OnPacketReceive",
+      "params": {
+        "list": [
+          { "name": "mSock", "type": "Socket", "required": true },
+          { "name": "packetNum", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onPathfindEnd",
+      "cppName": "OnPathfindEnd",
+      "params": {
+        "list": [
+          { "name": "npc", "type": "Character", "required": true },
+          { "name": "pathfindResult", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onPickup",
+      "cppName": "OnPickup",
+      "params": {
+        "list": [
+          { "name": "item", "type": "Item", "required": true },
+          { "name": "pickerUpper", "type": "Character", "required": true },
+          { "name": "objCont", "type": "BaseObject", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onQuestGump",
+      "cppName": "OnQuestGump",
+      "params": {
+        "list": [
+          { "name": "mChar", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onResurrect",
+      "cppName": "OnResurrect",
+      "params": {
+        "list": [
+          { "name": "pAlive", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onScrollCast",
+      "cppName": "OnScrollCast",
+      "params": {
+        "list": [
+          { "name": "tChar", "type": "Character", "required": true },
+          { "name": "SpellId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onScrollingGumpPress",
+      "cppName": "OnScrollingGumpPress",
+      "params": {
+        "list": [
+          { "name": "tSock", "type": "Socket", "required": true },
+          { "name": "gumpId", "type": "number", "required": true },
+          { "name": "buttonId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSell",
+      "cppName": "OnSell",
+      "params": {
+        "list": [
+          { "name": "targSock", "type": "Socket", "required": true },
+          { "name": "objVendor", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSellToVendor",
+      "cppName": "OnSellToVendor",
+      "params": {
+        "list": [
+          { "name": "targSock", "type": "Socket", "required": true },
+          { "name": "objVendor", "type": "Character", "required": true },
+          { "name": "objItemSold", "type": "BaseObject", "required": true },
+          { "name": "numItemsSelling", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSkill",
+      "cppName": "OnSkill",
+      "params": {
+        "list": [
+          { "name": "skillUse", "type": "BaseObject", "required": true },
+          { "name": "skillUsed", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSkillChange",
+      "cppName": "OnSkillChange",
+      "params": {
+        "list": [
+          { "name": "player", "type": "Character", "required": true },
+          { "name": "skill", "type": "number", "required": true },
+          { "name": "skillAmtChanged", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSkillCheck",
+      "cppName": "OnSkillCheck",
+      "params": {
+        "list": [
+          { "name": "myChar", "type": "Character", "required": true },
+          { "name": "skill", "type": "number", "required": true },
+          { "name": "lowSkill", "type": "number", "required": true },
+          { "name": "highSkill", "type": "number", "required": true },
+          { "name": "isCraftSkill", "type": "boolean", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSkillGain",
+      "cppName": "OnSkillGain",
+      "params": {
+        "list": [
+          { "name": "player", "type": "Character", "required": true },
+          { "name": "skill", "type": "number", "required": true },
+          { "name": "skillAmtGained", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSkillGump",
+      "cppName": "OnSkillGump",
+      "params": {
+        "list": [
+          { "name": "mChar", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSkillLoss",
+      "cppName": "OnSkillLoss",
+      "params": {
+        "list": [
+          { "name": "player", "type": "Character", "required": true },
+          { "name": "skill", "type": "number", "required": true },
+          { "name": "skillAmtLost", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSnoopAttempt",
+      "cppName": "OnSnoopAttempt",
+      "params": {
+        "list": [
+          { "name": "snooped", "type": "Character", "required": true },
+          { "name": "pack", "type": "Item", "required": true },
+          { "name": "snooper", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSnooped",
+      "cppName": "OnSnooped",
+      "params": {
+        "list": [
+          { "name": "snooped", "type": "Character", "required": true },
+          { "name": "snooper", "type": "Character", "required": true },
+          { "name": "success", "type": "boolean", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSoldToVendor",
+      "cppName": "OnSoldToVendor",
+      "params": {
+        "list": [
+          { "name": "targSock",     "type": "Socket", "required": true },
+          { "name": "objVendor",    "type": "Character", "required": true },
+          { "name": "objItemSold",  "type": "BaseObject", "required": true },
+          { "name": "numItemsSold", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSpecialMove",
+      "cppName": "OnSpecialMove",
+      "params": {
+        "list": [
+          { "name": "mChar", "type": "Character", "required": true },
+          { "name": "abilityId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSpeech",
+      "cppName": "OnSpeech",
+      "params": {
+        "list": [
+          { "name": "speech", "type": "string", "required": true },
+          { "name": "personTalking", "type": "Character", "required": true },
+          { "name": "talkingTo", "type": "BaseObject", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSpeechInput",
+      "cppName": "OnSpeechInput",
+      "params": {
+        "list": [
+          { "name": "myChar", "type": "Character", "required": true },
+          { "name": "myItem", "type": "Item", "required": true },
+          { "name": "mySpeech", "type": "string", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSpellCast",
+      "cppName": "OnSpellCast",
+      "params": {
+        "list": [
+          { "name": "tChar", "type": "Character", "required": true },
+          { "name": "SpellId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSpellGain",
+      "cppName": "OnSpellGain",
+      "params": {
+        "list": [
+          { "name": "book", "type": "Item", "required": true },
+          { "name": "spellNum", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSpellLoss",
+      "cppName": "OnSpellLoss",
+      "params": {
+        "list": [
+          { "name": "book", "type": "Item", "required": true },
+          { "name": "spellNum", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSpellSuccess",
+      "cppName": "OnSpellSuccess",
+      "params": {
+        "list": [
+          { "name": "tChar", "type": "Character", "required": true },
+          { "name": "SpellId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSpellTarget",
+      "cppName": "OnSpellTarget",
+      "params": {
+        "list": [
+          { "name": "target", "type": "BaseObject", "required": true },
+          { "name": "caster", "type": "Character", "required": true },
+          { "name": "spellNum", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSpellTargetSelect",
+      "cppName": "OnSpellTargetSelect",
+      "params": {
+        "list": [
+          { "name": "caster", "type": "Character", "required": true },
+          { "name": "target", "type": "BaseObject", "required": true },
+          { "name": "spellNum", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onStart",
+      "cppName": "OnStart",
+      "returns": "void"
+    },
+    {
+      "name": "onStat",
+      "cppName": "OnStat",
+      "returns": "void"
+    },
+    {
+      "name": "onStatChange",
+      "cppName": "OnStatChange",
+      "params": {
+        "list": [
+          { "name": "player", "type": "Character", "required": true },
+          { "name": "stat", "type": "number", "required": true },
+          { "name": "statChangeAmount", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onStatGain",
+      "cppName": "OnStatGain",
+      "params": {
+        "list": [
+          { "name": "player", "type": "Character", "required": true },
+          { "name": "stat", "type": "number", "required": true },
+          { "name": "skill", "type": "number", "required": true },
+          { "name": "statGainAmount", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onStatGained",
+      "cppName": "OnStatGained",
+      "params": {
+        "list": [
+          { "name": "player", "type": "Character", "required": true },
+          { "name": "stat", "type": "number", "required": true },
+          { "name": "skill", "type": "number", "required": true },
+          { "name": "statGainedAmount", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onStatLoss",
+      "cppName": "OnStatLoss",
+      "params": {
+        "list": [
+          { "name": "player", "type": "Character", "required": true },
+          { "name": "stat", "type": "number", "required": true },
+          { "name": "statLossAmount", "type": "CUI32Char", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSteal",
+      "cppName": "OnSteal",
+      "params": {
+        "list": [
+          { "name": "thief", "type": "Character", "required": true },
+          { "name": "theft", "type": "Item", "required": true },
+          { "name": "victim", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onStolenFrom",
+      "cppName": "OnStolenFrom",
+      "params": {
+        "list": [
+          { "name": "stealing",   "type": "Character", "required": true },
+          { "name": "stolenFrom", "type": "Character", "required": true },
+          { "name": "stolen", "type": "Item", "required": true }
+        ]
+      }
+    },
+    {
+      "name": "onStop",
+      "cppName": "OnStop",
+      "returns": "void"
+    },
+    {
+      "name": "onSwing",
+      "cppName": "OnSwing",
+      "params": {
+        "list": [
+          { "name": "swinging", "type": "Item", "required": true },
+          { "name": "swinger", "type": "Character", "required": true },
+          { "name": "swingTarg", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onSystemSlice",
+      "cppName": "OnSystemSlice",
+      "returns": "void"
+    },
+    {
+      "name": "onTalk",
+      "cppName": "OnTalk",
+      "params": {
+        "list": [
+          { "name": "myChar", "type": "Character", "required": true },
+          { "name": "mySpeech", "type": "string", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onTempChange",
+      "cppName": "OnTempChange",
+      "params": {
+        "list": [
+          { "name": "tObject", "type": "BaseObject", "required": true },
+          { "name": "temp", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onThirstChange",
+      "cppName": "OnThirstChange",
+      "params": {
+        "list": [
+          { "name": "pChanging", "type": "Character", "required": true },
+          { "name": "newStatus", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onTimer",
+      "cppName": "OnTimer",
+      "params": {
+        "list": [
+          { "name": "tObject", "type": "BaseObject", "required": true },
+          { "name": "timerId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onTooltip",
+      "cppName": "OnTooltip",
+      "params": {
+        "list": [
+          { "name": "myObj", "type": "BaseObject", "required": true },
+          { "name": "pSocket", "type": "Socket", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onUnequip",
+      "cppName": "OnUnequip",
+      "params": {
+        "list": [
+          { "name": "equipper", "type": "Character", "required": true },
+          { "name": "equipping", "type": "Item", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onUnequipAttempt",
+      "cppName": "OnUnequipAttempt",
+      "params": {
+        "list": [
+          { "name": "equipper", "type": "Character", "required": true },
+          { "name": "equipping", "type": "Item", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onUseBandageMacro",
+      "cppName": "OnUseBandageMacro",
+      "params": {
+        "list": [
+          { "name": "mSock", "type": "Socket", "required": true },
+          { "name": "targChar", "type": "Character", "required": true },
+          { "name": "bandageItem", "type": "Item", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onUseChecked",
+      "cppName": "OnUseChecked",
+      "params": {
+        "list": [
+          { "name": "user", "type": "Character", "required": true },
+          { "name": "iUsing", "type": "Item", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onUseUnChecked",
+      "cppName": "OnUseUnChecked",
+      "params": {
+        "list": [
+          { "name": "user", "type": "Character", "required": true },
+          { "name": "iUsing", "type": "Item", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onVirtueGumpPress",
+      "cppName": "OnVirtueGumpPress",
+      "params": {
+        "list": [
+          { "name": "mChar", "type": "Character", "required": true },
+          { "name": "tChar", "type": "Character", "required": true },
+          { "name": "buttonId", "type": "number", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onWarModeToggle",
+      "cppName": "OnWarModeToggle",
+      "params": {
+        "list": [
+          { "name": "mChar", "type": "Character", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "onWeatherChange",
+      "cppName": "OnWeatherChange",
+      "params": {
+        "list": [
+          { "name": "tObject", "type": "BaseObject", "required": true },
+          { "name": "element", "type": "WeatherType", "required": true }
+        ]
+      },
+      "returns": "void"
+    },
+    {
+      "name": "outOfRange",
+      "cppName": "OutOfRange",
+      "params": {
+        "list": [
+          { "name": "srcObj", "type": "BaseObject", "required": true },
+          { "name": "objVanish", "type": "BaseObject", "required": true }
+        ]
+      }
     }
   ]
 }
