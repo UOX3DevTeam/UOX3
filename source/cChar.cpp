@@ -295,6 +295,7 @@ npcGuild( DEFCHAR_NPCGUILD )
 	memset( &charTimers[0],		0, sizeof( TIMERVAL )	* tCHAR_COUNT );
 	memset( &baseskill[0],		0, sizeof( SKILLVAL )	* ALLSKILLS );
 	memset( &skill[0],			0, sizeof( SKILLVAL )	* ( INTELLECT + 1 ));
+	memset( &skillCap[0],		0, sizeof( SKILLVAL )	* ( INTELLECT + 1 ));
 
 	//SetCanTrain( true );
 	bools.set( BIT_TRAIN, true );

@@ -172,7 +172,7 @@ public:
 	void Snooping( CSocket *s, CChar *target, CItem *pack );
 
 	UI16 CalculatePetControlChance( CChar *mChar, CChar *Npc );
-	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill = false );
+	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill = false, SI08 overrideOutcome = 0 );
 	void SkillUse( CSocket *s, UI08 x );
 	void UpdateSkillLevel( CChar *c, UI08 s) const;
 	void AdvanceStats( CChar *s, UI08 sk, bool skillsuccess );
