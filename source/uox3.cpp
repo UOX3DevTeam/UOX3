@@ -1116,6 +1116,19 @@ auto DismountCreature( CChar *s ) -> void
 				tMount->SetVisible( VT_VISIBLE );
 			}
 			ci->Delete();
+
+			if( ValidateObject( tMount ))
+			{
+				std::vector<UI16> scriptTriggers = tMount->GetScriptTriggers();
+				for( auto &i : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( i );
+					if( toExecute != nullptr )
+					{
+						toExecute->OnDismount( s, tMount );
+					}
+				}
+			}
 		}
 	}
 }
