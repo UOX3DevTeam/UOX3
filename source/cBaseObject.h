@@ -119,7 +119,7 @@ protected:
 		0,   // LIGHTNING
 		0,   // POISON
 		0,   // SNOW
-		0   // STORM
+		0	// STORM
 	};
 
 	void			RemoveFromMulti( bool fireTrigger = true );

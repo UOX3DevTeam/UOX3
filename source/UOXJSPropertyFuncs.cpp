@@ -684,6 +684,27 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_DAMAGEPOISON:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( POISON ));	break;
 			case CIP_DAMAGERAIN:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( RAIN ));	break;
 			case CIP_DAMAGESNOW:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( SNOW ));	break;
+			case CIP_DAMAGETYPE:
+			{
+				std::string value;
+				for( UI08 i = 0; i < 9; ++i )
+				{
+					value += std::to_string( gPriv->GetDamageType( i ));
+					if( i < 8 )
+			value += " ";
+				}
+
+				JSString* str = JS_NewStringCopyZ( cx, value.c_str() );
+				if( str )
+				{
+					*vp = STRING_TO_JSVAL( str );
+				}
+				else
+				{
+					*vp = JSVAL_NULL;
+				}
+				break;
+			}
 			case CIP_SWINGSPEEDINCREASE:	*vp = INT_TO_JSVAL( gPriv->GetSwingSpeedIncrease() );			break;
 			case CIP_SPEED:			*vp = INT_TO_JSVAL( gPriv->GetSpeed() );			break;
 			case CIP_DURABILITYHPBONUS:	*vp = INT_TO_JSVAL( gPriv->GetDurabilityHpBonus() );			break;
@@ -1358,6 +1379,24 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_DAMAGEPOISON:	gPriv->SetWeatherDamage( POISON, encaps.toBool() );			break;
 			case CIP_DAMAGERAIN:	gPriv->SetWeatherDamage( RAIN, encaps.toBool() );			break;
 			case CIP_DAMAGESNOW:	gPriv->SetWeatherDamage( SNOW, encaps.toBool() );			break;
+			case CIP_DAMAGETYPE:
+			{
+				auto sEncaps = encaps.toString();
+				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+
+				auto encapsSections = oldstrutil::sections( sEncaps, " " ); // Or "," if you prefer
+
+				if( encapsSections.size() >= 1 )
+				{
+					for( UI08 i = 0; i < 9 && i < encapsSections.size(); ++i )
+					{
+						auto valStr = oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[i], "//" ));
+						SI16 val = static_cast<SI16>( std::stoi( valStr, nullptr, 0 ));
+						gPriv->SetDamageType( i, val );
+					}
+				}
+				break;
+			}
 			case CIP_SPEED:			gPriv->SetSpeed( static_cast<UI08>( encaps.toInt() ));		break;
 			case CIP_LOWERSTATREQ:	gPriv->SetLowerStatReq( static_cast<SI16>( encaps.toInt() ));	break;
 			case CIP_SWINGSPEEDINCREASE:	gPriv->SetSwingSpeedIncrease( static_cast<SI16>( encaps.toInt() ));	break;

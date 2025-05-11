@@ -839,6 +839,14 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Poisoned=" + std::to_string( poisoned ) + newLine;
 	outStream << "Carve=" + std::to_string( GetCarve() ) + newLine;
 	outStream << "Damageable=" << ( IsDamageable() ? "1" : "0" ) << newLine;
+	outStream << "Damagetype=";
+	for( UI08 i = 0; i < 9; ++i )
+	{
+		outStream << std::to_string( GetDamageType( i ));
+		if( i < 8 )
+			outStream << ","; // comma between values, no trailing comma
+	}
+	outStream << newLine;
 
 	outStream << "Defense=";
 	for( UI08 resist = 1; resist < WEATHNUM; ++resist )
@@ -1134,7 +1142,6 @@ void CBaseObject::SetHP( SI16 newValue )
 //|	Purpose		-	Retrieve the damage percentage assigned to a specific elemental index.
 //|					Supports PHYSICAL (0) to STORM (8). Returns 0 if index is out of bounds.
 //o------------------------------------------------------------------------------------------------o
-
 SI16 CBaseObject::GetDamageType( UI08 index ) const
 {
 	if( index < 9 )
@@ -3136,6 +3143,10 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetKills( kills );
 	target->SetWipeable( IsWipeable() );
 	target->SetDamageable( IsDamageable() );
+	for( UI08 i = 0; i < 9; ++i )
+	{
+		target->SetDamageType( i, this->GetDamageType( i ) );
+	}
 
     // Don't forget to copy the tags
     target->tags = GetTagMap();
