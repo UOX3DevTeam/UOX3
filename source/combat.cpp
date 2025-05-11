@@ -2779,8 +2779,6 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 	DamageType( weapon, split );      // Fill it via reference
 	WeatherType types[9] = { PHYSICAL, LIGHT, RAIN, COLD, HEAT, LIGHTNING, POISON, SNOW, STORM };
 
-	SI16 totalDmg = 0;
-
 	for( UI08 i = 0; i < 9; ++i )
 	{
 		SI16 partDmg = ( baseDamage * split[i] ) / 100;
