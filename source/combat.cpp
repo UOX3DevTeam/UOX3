@@ -2774,23 +2774,23 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 	if( baseDamage == -1 )  // No damage if weapon breaks
 		return 0;
 
-	CItem *weapon = GetWeapon(mChar);
-	SI16 split[5];                         // Declare the array
+	CItem *weapon = GetWeapon( mChar );
+	SI16 split[9];                         // Declare the array
 	DamageType( weapon, split );      // Fill it via reference
-	WeatherType types[5] = { PHYSICAL, HEAT, COLD, POISON, LIGHT };
+	WeatherType types[9] = { PHYSICAL, LIGHT, RAIN, COLD, HEAT, LIGHTNING, POISON, SNOW, STORM };
 
 	SI16 totalDmg = 0;
 
-	for( UI08 i = 0; i < 5; ++i )
+	for( UI08 i = 0; i < 9; ++i )
 	{
-		SI16 partDmg = (baseDamage * split[i]) / 100;
+		SI16 partDmg = ( baseDamage * split[i] ) / 100;
 		if( partDmg <= 0 )
 		continue;
 
-		SI16 bonus = ApplyDamageBonuses(types[i], mChar, ourTarg, getFightSkill, hitLoc, partDmg);
-		SI16 reduced = ApplyDefenseModifiers(types[i], mChar, ourTarg, getFightSkill, hitLoc, bonus, true);
+		SI16 bonus = ApplyDamageBonuses( types[i], mChar, ourTarg, getFightSkill, hitLoc, partDmg );
+		SI16 reduced = ApplyDefenseModifiers( types[i], mChar, ourTarg, getFightSkill, hitLoc, bonus, true );
 
-		totalDmg += std::max((SI16)0, reduced);
+		totalDmg += std::max(( SI16 ) 0, reduced );
 	}
 
 	if( totalDmg <= 0 )
@@ -2814,17 +2814,26 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 }
 
 // -- New helper function that reads elemental split from weapon's more1-5
-void CHandleCombat::DamageType( CItem *weapon, SI16 (&splitOut)[5] )
+void CHandleCombat::DamageType( CItem *weapon, SI16 ( &splitOut)[9] )
 {
-	if( !ValidateObject( weapon ) )
+	if( !ValidateObject( weapon ))
 	{
-		splitOut[0] = 100; splitOut[1] = 0; splitOut[2] = 0;
-		splitOut[3] = 0;   splitOut[4] = 0;
+		splitOut[0] = 100; // PHYSICAL
+		splitOut[1] = 0;   // LIGHT
+		splitOut[2] = 0;   // RAIN
+		splitOut[3] = 0;   // COLD
+		splitOut[4] = 0;   // HEAT
+		splitOut[5] = 0;   // LIGHTNING
+		splitOut[6] = 0;   // POISON
+		splitOut[7] = 0;   // SNOW
+		splitOut[8] = 0;   // STORM
 		return;
 	}
 
-	for( UI08 i = 0; i < 5; ++i )
-		splitOut[i] = weapon->GetDamageType(i);
+	for( UI08 i = 0; i < 9; ++i )
+	{
+		splitOut[i] = weapon->GetDamageType( i );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o

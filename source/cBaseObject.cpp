@@ -1129,15 +1129,15 @@ void CBaseObject::SetHP( SI16 newValue )
 
 SI16 CBaseObject::GetDamageType( UI08 index ) const
 {
-	if( index < 5 )
-		return damageSplit[index];
+	if( index < 9 )
+		return damageType[index];
 	return 0;
 }
 
 void CBaseObject::SetDamageType( UI08 index, SI16 value )
 {
-	if( index < 5 )
-		damageSplit[index] = value;
+	if( index < 9 )
+		damageType[index] = value;
 
 	if( CanBeObjType( OT_ITEM ) )
 	{
@@ -2289,7 +2289,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 					UI08 i = 0;
 					for( const auto &val : csecs )
 					{
-						if( i >= 5 )
+						if( i >= 9 )
 							break;
 
 						if( !val.empty() )
@@ -2304,7 +2304,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 				{
 					// Single value fallback - 100% physical
 					SetDamageType( 0, static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
-					for( UI08 i = 1; i < 5; ++i )
+					for( UI08 i = 1; i < 9; ++i )
 					{
 						SetDamageType( i, 0 );
 					}

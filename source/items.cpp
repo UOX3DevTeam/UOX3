@@ -177,7 +177,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			{
 				if( ssecs.size() >= 1 )
 				{
-					for( UI08 i = 0; i < 5 && i < ssecs.size(); ++i )
+					for( UI08 i = 0; i < 9 && i < ssecs.size(); ++i )
 					{
 						auto valStr = oldstrutil::trim( oldstrutil::removeTrailing( ssecs[i], "//" ));
 						auto val = static_cast<SI16>( std::stoi( valStr, nullptr, 0 ));

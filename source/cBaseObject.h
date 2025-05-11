@@ -110,7 +110,17 @@ protected:
 	SI16				karma;
 	SI16				kills;
 	UI16				subRegion;
-	SI16 damageSplit[5] = { 100, 0, 0, 0, 0 }; // Default: 100% physical`
+	SI16 damageType[9] = {
+		100, // PHYSICAL
+		0,   // LIGHT
+		0,   // RAIN
+		0,   // COLD
+		0,   // HEAT
+		0,   // LIGHTNING
+		0,   // POISON
+		0,   // SNOW
+		0   // STORM
+	};
 
 	void			RemoveFromMulti( bool fireTrigger = true );
 	void			AddToMulti( bool fireTrigger = true );
