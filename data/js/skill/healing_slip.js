@@ -16,8 +16,8 @@ function onDamage( damaged, attacker, damageValue, damageType )
 	if( coreShardEra >= EraStringToNum( "hs" ))
 	{
 		// With Publish 71 for HS, threshold for slipping now scales by dexterity
-		slipOnPlayerDamage = 19 + Math.Round( damaged.dexterity / 12 );
-		slipOnNPCDamage = 26 + Math.Round( damaged.dexterity / 12 );
+		slipOnPlayerDamage = 19 + Math.round( damaged.dexterity / 12 );
+		slipOnNPCDamage = 26 + Math.round( damaged.dexterity / 12 );
 	}
 	else if( coreShardEra >= EraStringToNum( "se" ))
 	{

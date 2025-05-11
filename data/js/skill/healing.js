@@ -50,52 +50,29 @@ const useDifficultyScalingForHealing = 1;
 // This script's ID
 const healingScriptID = 4000;
 
+// This is called by onUseBandageMacro event from global script, and skips manual target selection
 function onUseCheckedTriggered( pUser, targChar, iUsed )
 {
-	if( pUser && iUsed && iUsed.isItem )
+	if( ValidateObject( pUser ) && ValidateObject( targChar ) && targChar.isChar && ValidateObject( iUsed ) && iUsed.isItem )
 	{
-		var socket = pUser.socket;
-		var pLanguage = socket.language;
-		if( iUsed.movable == 2 || iUsed.movable == 3 )
-		{
-			if( socket != null )
-			{
-				socket.SysMessage( GetDictionaryEntry( 774, pLanguage )); // That is locked down and you cannot use it.
-			}
-			return;
-		}
+		// Temporarily store targChar in a custom property on pUser
+		pUser.tempHealTarg = targChar;
 
-		if( pUser.visible == 1 || pUser.visible == 2 ) // Using bandages will now unhide you. February_2,_1999
-		{
-			pUser.visible = 0;
-		}
-
-		if( socket != null )
-		{
-			if( pUser.skillsused.healing || pUser.skillsused.veterinary )
-			{
-				socket.SysMessage( GetDictionaryEntry( 1971, pLanguage )); // You are too busy to do that.
-			}
-			else if( socket.GetTimer( Timer.SOCK_SKILLDELAY ) <= GetCurrentClock() )
-			{
-				socket.tempObj = iUsed;
-				socket.SetTimer( Timer.SOCK_SKILLDELAY, 5000 );
-				onCallback1( socket, targChar );
-			}
-			else
-			{
-				socket.SysMessage( GetDictionaryEntry( 473, pLanguage )); // You must wait a few moments before using another skill.
-			}
-		}
+		// Call onUseChecked directly
+		onUseChecked( pUser, iUsed );
 	}
-	return true;
+	return;
 }
+
 function onUseChecked( pUser, iUsed )
 {
-	var socket = pUser.socket;
-	if( socket && iUsed && iUsed.isItem )
+	if( ValidateObject( pUser ) && ValidateObject( iUsed ) && iUsed.isItem )
 	{
-		var pLanguage = socket.language;
+		let socket = pUser.socket;
+		if( !ValidateObject( socket ))
+			return false;
+
+		let pLanguage = socket.language;
 		if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
 			socket.SysMessage( GetDictionaryEntry( 774, pLanguage )); // That is locked down and you cannot use it.
@@ -109,14 +86,25 @@ function onUseChecked( pUser, iUsed )
 
 		if( pUser.skillsused.healing || pUser.skillsused.veterinary )
 		{
-			socket.SysMessage( GetDictionaryEntry(1971, pLanguage)); // You are too busy to do that.
+			socket.SysMessage( GetDictionaryEntry( 1971, pLanguage )); // You are too busy to do that.
 		}
-		else if( socket.GetTimer( Timer.SOCK_SKILLDELAY ) <= GetCurrentClock() )	// Skill timer
+		else if( socket.GetTimer( Timer.SOCK_SKILLDELAY ) <= GetCurrentClock() )
 		{
 			socket.tempObj = iUsed;
-			var targMsg = GetDictionaryEntry( 472, pLanguage ); // Who will you use the bandages on?
-			socket.CustomTarget( 1, targMsg );
 			socket.SetTimer( Timer.SOCK_SKILLDELAY, 5000 ); // Reset the skill timer
+
+			let healTarg = pUser.tempHealTarg;
+			if( healTarg !== undefined && ValidateObject( healTarg ))
+			{
+				// We already have our target, hit the callback directly
+				delete pUser.tempHealTarg;
+				onCallback1( socket, healTarg );
+			}
+			else
+			{
+				let targMsg = GetDictionaryEntry( 472, pLanguage ); // Who will you use the bandages on?
+				socket.CustomTarget( 1, targMsg );
+			}
 		}
 		else
 		{
@@ -128,14 +116,14 @@ function onUseChecked( pUser, iUsed )
 
 function onCallback1( socket, ourObj )
 {
-	var bItem = socket.tempObj;
-	var mChar = socket.currentChar;
+	let bItem = socket.tempObj;
+	let mChar = socket.currentChar;
 
 	socket.tempObj = null;
 
-	if( bItem && bItem.isItem && ourObj && ourObj.isChar && mChar && mChar.isChar )
+	if( ValidateObject( bItem ) && bItem.isItem && ValidateObject( ourObj ) && ourObj.isChar && ValidateObject( mChar ) && mChar.isChar )
 	{
-		var maxRange = ( overrideMaxBandageRange ? overrideMaxBandageRange : ( coreShardEra >= EraStringToNum( "se" ) ? 2 : 1 )); // Range increased to 2 with SE expansion
+		let maxRange = ( overrideMaxBandageRange ? overrideMaxBandageRange : ( coreShardEra >= EraStringToNum( "se" ) ? 2 : 1 )); // Range increased to 2 with SE expansion
 		if( mChar.InRange( ourObj, maxRange ) && mChar.CanSee( ourObj ) && Math.abs( mChar.z - ourObj.z ) < 4 )
 		{
 			if( ourObj.GetTempTag( "SK_BEINGHEALED" ))
@@ -152,11 +140,11 @@ function onCallback1( socket, ourObj )
 				}
 			}
 
-			var healSkill;
-			var skillNum;
-			var buffIcon;
-			var priCliloc;
-			var scndCliloc;
+			let healSkill;
+			let skillNum;
+			let buffIcon;
+			let priCliloc;
+			let scndCliloc;
 			if( IsTargetHealable( ourObj, false ))
 			{
 				// Target can be healed with Healing skill
@@ -181,7 +169,7 @@ function onCallback1( socket, ourObj )
 				return;
 			}
 
-			var iMulti = FindMulti( ourObj );
+			let iMulti = FindMulti( ourObj );
 			if( iMulti )
 			{
 				if( iMulti.IsInMulti( ourObj ))
@@ -193,20 +181,16 @@ function onCallback1( socket, ourObj )
 					}
 				}
 			}
-			var anatSkill = mChar.baseskills.anatomy;
-			var combinedCureHeal = false;
+			let healTimer = 0;
+			let healTimerID = -1;
+			let anatSkill = mChar.baseskills.anatomy;
+			let combinedCureHeal = false;
+			let affectedByMortalStrike = ourObj.GetTempTag( "blockHeal" );
 			if( ourObj.dead ) // Resurrection
 			{
 				if( healSkill >= 800 && anatSkill >= 800 )
 				{
-					// Consume some bandages
-					ConsumeBandage( bItem, 1 );
-
-					// Flag healer as criminal if target is murderer/criminal
-					FlagHealer( mChar, ourObj );
-
 					// Resurrecting takes between 8 - 10 seconds depending on dexterity
-					var healTimer = 0;
 					if( coreShardEra >= EraStringToNum( "uor" ))
 					{
 						// UOR introduced dexterity as a modifier for healing timer
@@ -222,19 +206,19 @@ function onCallback1( socket, ourObj )
 						// Did original UO have a different resurrect timer than T2A?
 						// ???
 					}*/
-					SetSkillInUse( socket, mChar, ourObj, skillNum, healTimer, true );
-					mChar.StartTimer( healTimer, 0, healingScriptID );
+
+					healTimerID = 0; // Resurrect
 				}
 				else
 				{
 					socket.SysMessage( GetDictionaryEntry( 1493, socket.language )); // You are not skilled enough to resurrect.
+					return;
 				}
-				return;
 			}
 			else if( ourObj.poison > 0 || ourObj.GetTempTag( "doBleed" ))	// Cure Poison/Bleed
 			{
 				if( mChar.serial == ourObj.serial && ourObj.health < ourObj.maxhp
-					&& coreShardEra >= EraStringToNum( "hs" ) && healSkill >= 800 && anatSkill >= 800 )
+					&& !affectedByMortalStrike && coreShardEra >= EraStringToNum( "hs" ) && healSkill >= 800 && anatSkill >= 800 )
 				{
 					// When targeting self, attempt to remove poison/bleed at half the normal healing duration,
 					// but with reduced amount healed after finishing normal heal duration
@@ -242,34 +226,27 @@ function onCallback1( socket, ourObj )
 				}
 				else if( healSkill >= 600 && anatSkill >= 600 )
 				{
-					// Consume some bandages
-					ConsumeBandage( bItem, 1 );
-
-					// Flag healer as criminal if target is murderer/criminal
-					FlagHealer( mChar, ourObj );
-
-					var cureTimer;
 					if( mChar.serial == ourObj.serial )
 					{
 						if( coreShardEra >= EraStringToNum( "hs" ))
 						{
 							// HS+: curing self: 10 to 15 seconds
-							cureTimer = 15000 - (( mChar.dexterity / 24 ) * 1000 );
+							healTimer = 15000 - (( mChar.dexterity / 24 ) * 1000 );
 						}
 						else if( coreShardEra >= EraStringToNum( "aos" ))
 						{
 							// AOS: Curing Self takes 9 to 15 seconds depending on dexterity
-							cureTimer = 15000 - (( mChar.dexterity / 20 ) * 1000 );
+							healTimer = 15000 - (( mChar.dexterity / 20 ) * 1000 );
 						}
 						else if( coreShardEra >= EraStringToNum( "uor" ))
 						{
 							// UOR: Curing Self takes 13 to 18 seconds depending on dexterity
-							cureTimer = 18000 - (( mChar.dexterity / 24 ) * 1000 );
+							healTimer = 18000 - (( mChar.dexterity / 24 ) * 1000 );
 						}
 						else
 						{
 							// T2A: Curing self takes 18 seconds flat
-							cureTimer = 18000;
+							healTimer = 18000;
 						}
 					}
 					else
@@ -277,40 +254,39 @@ function onCallback1( socket, ourObj )
 						if( coreShardEra >= EraStringToNum( "hs" ))
 						{
 							// HS+: curing others: 3-5 seconds depending on dexterity
-							cureTimer = 5000 - (( mChar.dexterity / 40 ) * 1000 );
+							healTimer = 5000 - (( mChar.dexterity / 40 ) * 1000 );
 						}
 						else if( coreShardEra >= EraStringToNum( "uor" ))
 						{
 							// UOR and later: Curing others takes 4 to 6 seconds depending on dexterity
-							cureTimer = 6000 - (( mChar.dexterity / 50 ) * 1000 );
+							healTimer = 6000 - (( mChar.dexterity / 50 ) * 1000 );
 						}
 						else if( coreShardEra >= EraStringToNum( "t2a" ))
 						{
 							// T2A: Cure others takes 6 seconds flat
-							cureTimer = 6000;
+							healTimer = 6000;
 						}
 						else
 						{
 							// Original UO
-							cureTimer = 18000; // Curing self/others takes 18 seconds
+							healTimer = 18000; // Curing self/others takes 18 seconds
 						}
 					}
 
 					// Cut cure timer in two if we're trying to "cure" a bleed (which only lasts 10 seconds)
 					if( ourObj.GetTempTag( "doBleed" ))
 					{
-						cureTimer /= 2;
+						healTimer /= 2;
 					}
 
-					SetSkillInUse( socket, mChar, ourObj, skillNum, cureTimer, true );
-					mChar.StartTimer( cureTimer, 1, healingScriptID );
+					healTimerID = 1; // Cure
 				}
 				else
 				{
 					socket.SysMessage( GetDictionaryEntry( 1495, socket.language )); // You are not skilled enough to cure poison.
 					socket.SysMessage( GetDictionaryEntry( 1496, socket.language )); // The poison in your target's system counters the bandage's effect.
+					return;
 				}
-				return;
 			}
 			else if( ourObj.health == ourObj.maxhp )
 			{
@@ -319,7 +295,7 @@ function onCallback1( socket, ourObj )
 			}
 
 			// Mortal Strike effect prevents healing attempts
-			if( ourObj.GetTempTag( "blockHeal" ) == true )
+			if( affectedByMortalStrike )
 			{
 				if( ourObj != mChar && ourObj.socket )
 				{
@@ -332,6 +308,72 @@ function onCallback1( socket, ourObj )
 				return;
 			}
 
+			if( healTimerID == -1 ) // Not already ressing/curing, let's heal
+			{
+				if( mChar.serial == ourObj.serial )
+				{
+					// Healing self
+					if( coreShardEra >= EraStringToNum( "hs" ))
+					{
+						// HS and beyond, healing self takes 5 - 8 seconds (max duration reduced with Publish 71)
+						healTimer = 8000 - (( mChar.dexterity / 50 ) * 1000 );
+					}
+					else if( coreShardEra >= EraStringToNum( "ml" ))
+					{
+						// ML and beyond: Healing self takes 4 to 11 seconds
+						healTimer = 11000 - (( mChar.dexterity / 17.12 ) * 1000 )
+					}
+					else if( coreShardEra >= EraStringToNum( "se" ))
+					{
+						// SE: Healing self takes 5 to 10 seconds (Publish 21)
+						healTimer = 10000 - (( mChar.dexterity / 24 ) * 1000 );
+					}
+					else if( coreShardEra >= EraStringToNum( "aos" ))
+					{
+						// AOS: Healing self takes 9 to 16 seconds
+						healTimer = ( 9.4 + ( 0.6 * (( 120 - mChar.dexterity ) / 10 ))) * 1000;
+					}
+					else if( coreShardEra >= EraStringToNum( "uor" ))
+					{
+						// T2A to LBR: Healing self takes 11 to 15 seconds
+						healTimer = ( 11 + ( 0.4 * (( 100 - mChar.dexterity ) / 10 ))) * 1000;
+					}
+					else
+					{
+						// Original UO/T2A: Healing self takes 15 seconds flat
+						healTimer = 15000;
+					}
+				}
+				else
+				{
+					// Healing others
+					if( coreShardEra >= EraStringToNum( "ml" ))
+					{
+						// ML and beyond: healing others takes 2 to 4 seconds (4 - ( dex / 60 ))
+						healTimer = 4000 - (( mChar.dexterity / 60 ) * 1000 );
+					}
+					else if( coreShardEra >= EraStringToNum( "uor" ))
+					{
+						// AoS and earlier: Healing others takes 3 to 5 seconds, depending on dexterity
+						healTimer = 5000 - (( mChar.dexterity / 50 ) * 1000 );
+					}
+					else if( coreShardEra >= EraStringToNum( "t2a" ))
+					{
+						// t2a: Healing others takes 5 seconds flat (Publish May 25, 1999)
+						healTimer = 5000;
+					}
+					else
+					{
+						// Original UO
+						healTimer = 15000; // Healing self/others takes 15 seconds flat
+					}
+				}
+
+				healTimerID = 2; // Heal
+			}
+
+			// Section below is shared between resurrect/cure/heal
+
 			// Consume some bandages
 			ConsumeBandage( bItem, 1 );
 
@@ -341,75 +383,15 @@ function onCallback1( socket, ourObj )
 			// Inform the target
 			if( ourObj != mChar && ourObj.socket )
 			{
-				var tempMsg = GetDictionaryEntry( 6016, ourObj.socket.language ); // %s is attempting to heal you.
+				let tempMsg = GetDictionaryEntry( 6016, ourObj.socket.language ); // %s is attempting to heal you.
 				ourObj.SysMessage( tempMsg.replace( /%s/gi, mChar.name ));
-			}
-
-			var healTimer;
-			if( mChar.serial == ourObj.serial )
-			{
-				// Healing self
-				if( coreShardEra >= EraStringToNum( "hs" ))
-				{
-					// HS and beyond, healing self takes 5 - 8 seconds (max duration reduced with Publish 71)
-					healTimer = 8000 - (( mChar.dexterity / 50 ) * 1000 );
-				}
-				else if( coreShardEra >= EraStringToNum( "ml" ))
-				{
-					// ML and beyond: Healing self takes 4 to 11 seconds
-					healTimer = 11000 - (( mChar.dexterity / 17.12 ) * 1000 )
-				}
-				else if( coreShardEra >= EraStringToNum( "se" ))
-				{
-					// SE: Healing self takes 5 to 10 seconds (Publish 21)
-					healTimer = 10000 - (( mChar.dexterity / 24 ) * 1000 );
-				}
-				else if( coreShardEra >= EraStringToNum( "aos" ))
-				{
-					// AOS: Healing self takes 9 to 16 seconds
-					healTimer = ( 9.4 + ( 0.6 * (( 120 - mChar.dexterity ) / 10 )));
-				}
-				else if( coreShardEra >= EraStringToNum( "uor" ))
-				{
-					// T2A to LBR: Healing self takes 11 to 15 seconds
-					healTimer = ( 11 + ( 0.4 * (( 100 - mChar.dexterity ) / 10 )));
-				}
-				else
-				{
-					// Original UO/T2A: Healing self takes 15 seconds flat
-					healTimer = 15000;
-				}
-			}
-			else
-			{
-				// Healing others
-				if( coreShardEra >= EraStringToNum( "ml" ))
-				{
-					// ML and beyond: healing others takes 2 to 4 seconds (4 - ( dex / 60 ))
-					healTimer = 4000 - (( mChar.dexterity / 60 ) * 1000 );
-				}
-				else if( coreShardEra >= EraStringToNum( "uor" ))
-				{
-					// AoS and earlier: Healing others takes 3 to 5 seconds, depending on dexterity
-					healTimer = 5000 - (( mChar.dexterity / 50 ) * 1000 );
-				}
-				else if( coreShardEra >= EraStringToNum( "t2a" ))
-				{
-					// t2a: Healing others takes 5 seconds flat (Publish May 25, 1999)
-					healTimer = 5000;
-				}
-				else
-				{
-					// Original UO
-					healTimer = 15000; // Healing self/others takes 15 seconds flat
-				}
 			}
 
 			mChar.AddScriptTrigger( 4014 ); // Add healing_slip.js script
 			SetSkillInUse( socket, mChar, ourObj, skillNum, healTimer, true );
 
 			// Add buff to target or yourself
-			var seconds = Math.round( healTimer / 1000 );
+			let seconds = Math.round( healTimer / 1000 );
 			if( ourObj != mChar && ourObj.socket )
 			{
 				TriggerEvent( 2204, "AddBuff", ourObj, buffIcon, priCliloc, scndCliloc, seconds, " " + ourObj.name );
@@ -422,14 +404,16 @@ function onCallback1( socket, ourObj )
 			if( combinedCureHeal )
 			{
 				mChar.SetTempTag( "combinedCureHeal", true );
+
 				// Start a timer to attempt poison curing at half the regular healing time
-				mChar.StartTimer( healtimer / 2, 1, healingScriptID );
+				mChar.StartTimer( healTimer / 2, 1, healingScriptID );
 			}
 			else
 			{
-				mChar.SetTempTag( "combinedCureHeal", null );
+				mChar.SetTempTag( "combinedCureHeal", null ); // Just making sure we clear this
 			}
-			mChar.StartTimer( healTimer, 2, healingScriptID );
+
+			mChar.StartTimer( healTimer, healTimerID, healingScriptID );
 		}
 		else
 		{
@@ -460,7 +444,7 @@ function FlagHealer( mChar, ourObj )
 
 function IsTargetHealable( ourObj, useVetSkill )
 {
-	var id = ourObj.id;
+	let id = ourObj.id;
 	if( useVetSkill )
 	{
 		return ( validVetTargets.indexOf( id ) != -1 );
@@ -512,15 +496,15 @@ function onTimer( mChar, timerID )
 	if( !ValidateObject( mChar ))
 		return;
 
-	var ourObj = CalcCharFromSer( mChar.GetTempTag( "SK_HEALINGTARG" ));
+	let ourObj = CalcCharFromSer( mChar.GetTempTag( "SK_HEALINGTARG" ));
 	if( !ValidateObject( ourObj ))
 		return;
 
-	var skillNum = mChar.GetTempTag("SK_HEALINGTYPE");
-	var primarySkill = 0;
-	var secondarySkill = 0;
-	var primarySkillCap = 0;
-	var secondarySkillCap = 0;
+	let skillNum = mChar.GetTempTag("SK_HEALINGTYPE");
+	let primarySkill = 0;
+	let secondarySkill = 0;
+	let primarySkillCap = 0;
+	let secondarySkillCap = 0;
 	switch( skillNum )
 	{
 		case 17:
@@ -537,7 +521,7 @@ function onTimer( mChar, timerID )
 			break;
 	}
 
-	var socket = mChar.socket;
+	let socket = mChar.socket;
 	if( socket != null )
 	{
 		if( mChar.dead )
@@ -546,12 +530,8 @@ function onTimer( mChar, timerID )
 			return;
 		}
 
-		var maxRange = ( overrideMaxBandageRange ? overrideMaxBandageRange : ( coreShardEra >= EraStringToNum( "se" ) ? 2 : 1 )); // Range increased to 2 with SE expansion
-		if( !ValidateObject( ourObj ))
-		{
-			return;
-		}
-		else if( ourObj.dead && timerID != 0 )
+		let maxRange = ( overrideMaxBandageRange ? overrideMaxBandageRange : ( coreShardEra >= EraStringToNum( "se" ) ? 2 : 1 )); // Range increased to 2 with SE expansion
+		if( ourObj.dead && timerID != 0 )
 		{
 			socket.SysMessage( GetDictionaryEntry( 9086, socket.language )); // You cannot heal that which is not alive.
 		}
@@ -569,7 +549,7 @@ function onTimer( mChar, timerID )
 					// Base 25% chance to resurrect at 80.0 healing and 80.0 anatomy
 					// Base 65% chance to resurrect at 100.0 healing and 100.0 anatomy
 					// Base 100% (clamped) chance to resurrect at 120.0 healing and 120.0 anatomy
-					var chanceToRes = 0.25 + (((( primarySkill + secondarySkill ) / 2 ) - 800 ) * 0.002 );
+					let chanceToRes = 0.25 + (((( primarySkill + secondarySkill ) / 2 ) - 800 ) * 0.002 );
 
 					// Reduce chance by 2% per number of times healer's fingers "slipped" during bandaging
 					chanceToRes -= ( mChar.GetTempTag( "slipCount" ) * 0.02 );
@@ -577,11 +557,11 @@ function onTimer( mChar, timerID )
 					// Clamp at 0.0 - 1.0
 					chanceToRes = Math.max( 0.0, Math.min( 1.0, chanceToRes ));
 
-					var resResult = -1;
+					let resResult = -1;
 					if( chanceToRes >= RandomNumber( 0.0, 1.0 ))
 					{
 						// Arise, and live!
-						var iMulti = ourObj.multi;
+						let iMulti = ourObj.multi;
 						if( ValidateObject( iMulti ) && ( !iMulti.IsOnOwnerList( mChar ) && !iMulti.IsOnFriendList( mChar )) &&
 							( !iMulti.IsOnOwnerList( ourObj ) && !iMulti.IsOnFriendList( ourObj )))
 						{
@@ -609,13 +589,13 @@ function onTimer( mChar, timerID )
 
 					break;
 				case 1:	// Cure Poison
-					var chanceToCure = 0;
-					var cureBleed = ourObj.GetTempTag( "doBleed" );
-					var combinedCureHeal = mChar.GetTempTag( "combinedCureHeal" );
+					let chanceToCure = 0;
+					let cureBleed = ourObj.GetTempTag( "doBleed" );
+					let combinedCureHeal = mChar.GetTempTag( "combinedCureHeal" );
 					if( combinedCureHeal )
 					{
 						// Chance for a "half heal duration" cure
-						chanceToCure = (((( primarySkill + secondarySkill ) / 10 ) - 120 ) * 25 ) / ( ourObj.poison * 20 );
+						chanceToCure = (((( primarySkill + secondarySkill ) / 10 ) - 120 ) * 25 ) / (( cureBleed ? 3 : Math.max( 1, ourObj.poison )) * 20 );
 					}
 					else
 					{
@@ -625,7 +605,7 @@ function onTimer( mChar, timerID )
 						chanceToCure = 0.80 + (((( primarySkill + secondarySkill ) / 2 ) - 600 ) * 0.00035 );
 
 						// Reduce chance by 10% per poison level on target
-						chanceToCure -= ((( cureBleed ? 3 : ourObj.poison ) - 1 ) * 0.1 );
+						chanceToCure -= ((( cureBleed ? 3 : Math.max( 1, ourObj.poison )) - 1 ) * 0.1 );
 					}
 
 					// Reduce chance by 2% per number of times healer's fingers "slipped" during bandaging
@@ -634,7 +614,7 @@ function onTimer( mChar, timerID )
 					// Clamp at 0.0 - 1.0
 					chanceToCure = Math.max( 0.0, Math.min( 1.0, chanceToCure ));
 
-					var cureResult = -1;
+					let cureResult = -1;
 					if( chanceToCure >= RandomNumber( 0.0, 1.0 ))
 					{
 						// Cured!
@@ -665,8 +645,8 @@ function onTimer( mChar, timerID )
 							ourObj.StaticEffect( 0x373A, 0, 15 );
 							ourObj.SoundEffect( 0x01E0, true );
 							socket.SysMessage( GetDictionaryEntry( 1274, socket.language )); // You have cured the poison.
-							var objSock = ourObj.socket;
-							if( objSock && objSock != myChar.socket ) // Don't spam the player
+							let objSock = ourObj.socket;
+							if( objSock && objSock != mChar.socket ) // Don't spam the player
 							{
 								objSock.SysMessage( GetDictionaryEntry( 1273, objSock.language )); // You have been cured of poison.
 							}
@@ -679,13 +659,13 @@ function onTimer( mChar, timerID )
 					}
 
 					// Run skill checks for chance to gain skill, but override the check to match up with the manual check done above, so a success is still a success, and a failure is still a failure
-					var useSkillGainCaps = ( !overrideCappedT2AHealing && coreShardEra <= EraStringToNum( "t2a" ));
+					let useSkillGainCaps = ( !overrideCappedT2AHealing && coreShardEra <= EraStringToNum( "t2a" ));
 					mChar.CheckSkill( skillNum, 600, ( useSkillGainCaps ? cureSkillGainCap : primarySkillCap ), false, cureResult ); // Primary skill
 					mChar.CheckSkill(( skillNum == 17 ? 1 : 2 ), 600, ( useSkillGainCaps ? cureSkillGainCap : secondarySkillCap ), false, cureResult ); // Secondary skill
 					break;
 				case 2:	// Heal
-					var upperBound = 1000;
-					var healthLoss = ( ourObj.maxhp - ourObj.health );
+					let upperBound = 1000;
+					let healthLoss = ( ourObj.maxhp - ourObj.health );
 					if( healthLoss == 0 )
 					{
 						socket.SysMessage( GetDictionaryEntry( 1497, socket.language )); // That being is undamaged.
@@ -708,17 +688,17 @@ function onTimer( mChar, timerID )
 					{
 						// Scale difficulty based on %loss of health on target + maxHP
 						// i.e. requires higher and higher amount of health lost in order for healer to gain skill
-						var normalizedHealthLoss = healthLoss / ourObj.maxhp; // get a value between 0.0 and 1.0
-						var idealHealAmtPerSkill = Math.max( 10, primarySkill * 0.155 );
-						var healTrainingEffectiveness = Math.min( 1.0, ourObj.maxhp / idealHealAmtPerSkill );
+						let normalizedHealthLoss = healthLoss / ourObj.maxhp; // get a value between 0.0 and 1.0
+						let idealHealAmtPerSkill = Math.max( 10, primarySkill * 0.155 );
+						let healTrainingEffectiveness = Math.min( 1.0, ourObj.maxhp / idealHealAmtPerSkill );
 						upperBound = Math.min( upperBound, Math.round( normalizedHealthLoss * primarySkillCap * healTrainingEffectiveness ));
 					}
 
 					// Perform skill check
 					if( mChar.CheckSkill( skillNum, 0, upperBound ))
 					{
-						var mItem;
-						var healBonus = 0;
+						let mItem;
+						let healBonus = 0;
 						for( mItem = mChar.FirstItem(); !mChar.FinishedItems(); mItem = mChar.NextItem() )
 						{
 							if( !ValidateObject( mItem ))
@@ -747,7 +727,7 @@ function onTimer( mChar, timerID )
 
 						mChar.RemoveScriptTrigger( 4014 ); // Remove healing_slip.js script
 						// Retrieve amount of times character's hands slipped during healing
-						var slipCount = mChar.GetTempTag( "slipCount" );
+						let slipCount = mChar.GetTempTag( "slipCount" );
 						mChar.SetTempTag( "slipCount", null );
 
 						if( slipCount > 5 )
@@ -759,8 +739,8 @@ function onTimer( mChar, timerID )
 						else
 						{
 							// Minimum amount healed = Anatomy(or Animal Lore)/5 + Healing/5 + 3  Maximum amount healed = Anatomy(or Animal Lore)/5 + Healing/2 + 10
-							var minValue = 0;
-							var maxValue = 0;
+							let minValue = 0;
+							let maxValue = 0;
 							if( coreShardEra >= EraStringToNum( "se" ))
 							{
 								// SE and above, max heal at GM level is 36-60
@@ -773,13 +753,13 @@ function onTimer( mChar, timerID )
 								minValue = Math.round(( secondarySkill / 50 ) + ( primarySkill / 50 ) + 3 );
 								maxValue = Math.round(( secondarySkill / 50 ) + ( primarySkill / 20 ) + 10 );
 							}
-							var healAmt = RandomNumber( minValue, maxValue );
+							let healAmt = RandomNumber( minValue, maxValue );
 
 							// Reduce the amount healed with each slip caused by damage taken while healing
 							// T2A and earlier, this amount is reduced by dexterity stat
 							// UOR and later, amount is reduced by dexterity stat & healing skill
-							var slipModifier = ( coreShardEra >= EraStringToNum( "uor" ) ? ( Math.round( primarySkill / 10 ) + mChar.dexterity ) : ( mChar.dexterity )) / 750;
-							for( var i = 0; i < slipCount; i++ )
+							let slipModifier = ( coreShardEra >= EraStringToNum( "uor" ) ? ( Math.round( primarySkill / 10 ) + mChar.dexterity ) : ( mChar.dexterity )) / 750;
+							for( let i = 0; i < slipCount; i++ )
 							{
 								// Reduce healing done by a percentage (35%) modified by healer's Healing skills and Dexterity for each slip up
 								healAmt -= Math.round( healAmt * ( 0.35 - slipModifier ));
@@ -793,7 +773,7 @@ function onTimer( mChar, timerID )
 
 							if( ourObj == mChar && coreShardEra >= EraStringToNum( "hs" ))
 							{
-								var poisonLvlCured = mChar.GetTempTag( "combinedCureHeal" );
+								let poisonLvlCured = mChar.GetTempTag( "combinedCureHeal" );
 								if( poisonLvlCured > 0 )
 								{
 									// Reduce healing amount proportional to level of poison cured since we did a combined curing/healing action
