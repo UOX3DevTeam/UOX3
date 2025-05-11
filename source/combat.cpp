@@ -2775,7 +2775,8 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 		return 0;
 
 	CItem *weapon = GetWeapon(mChar);
-	std::vector<SI16> split = GetDamageSplit(weapon); // New function you define elsewhere
+	SI16 split[5];                         // Declare the array
+	DamageType( weapon, split );      // Fill it via reference
 	WeatherType types[5] = { PHYSICAL, HEAT, COLD, POISON, LIGHT };
 
 	SI16 totalDmg = 0;
@@ -2813,7 +2814,7 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 }
 
 // -- New helper function that reads elemental split from weapon's more1-5
-void CHandleCombat::GetDamageSplit( CItem *weapon, SI16 (&splitOut)[5] )
+void CHandleCombat::DamageType( CItem *weapon, SI16 (&splitOut)[5] )
 {
 	if( !ValidateObject( weapon ) )
 	{
