@@ -110,6 +110,7 @@ protected:
 	SI16				karma;
 	SI16				kills;
 	UI16				subRegion;
+	SI16 damageSplit[5] = { 100, 0, 0, 0, 0 }; // Default: 100% physical`
 
 	void			RemoveFromMulti( bool fireTrigger = true );
 	void			AddToMulti( bool fireTrigger = true );
@@ -231,7 +232,8 @@ public:
 	virtual SI16			GetDexterity( void ) const;
 	virtual SI16			GetIntelligence( void ) const;
 	SI16					GetHP( void ) const;
-
+	SI16					GetDamageType( UI08 index ) const;
+	void					SetDamageType( UI08 index, SI16 value );
 	virtual SI16			GetHealthRegenBonus( void ) const;
 	virtual SI16			GetStaminaRegenBonus( void ) const;
 	virtual SI16			GetManaRegenBonus( void ) const;

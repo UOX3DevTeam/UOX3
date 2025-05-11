@@ -1127,6 +1127,24 @@ void CBaseObject::SetHP( SI16 newValue )
 	}
 }
 
+SI16 CBaseObject::GetDamageType( UI08 index ) const
+{
+	if( index < 5 )
+		return damageSplit[index];
+	return 0;
+}
+
+void CBaseObject::SetDamageType( UI08 index, SI16 value )
+{
+	if( index < 5 )
+		damageSplit[index] = value;
+
+	if( CanBeObjType( OT_ITEM ) )
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::IncHP()
 //|	Date		-	28 July, 2000
@@ -2263,6 +2281,34 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			else if( UTag == "DAMAGEABLE" )
 			{
 				SetDamageable( oldstrutil::value<UI08>( data ) == 1 );
+			}
+			else if( UTag == "DAMAGETYPE" )
+			{
+				if( data.find( "," ) != std::string::npos )
+				{
+					UI08 i = 0;
+					for( const auto &val : csecs )
+					{
+						if( i >= 5 )
+							break;
+
+						if( !val.empty() )
+						{
+							auto clean = oldstrutil::trim( oldstrutil::removeTrailing( val, "//" ));
+							SetDamageType( i, static_cast<SI16>( std::stoi( clean, nullptr, 0 )));
+							++i;
+						}
+					}
+				}
+				else
+				{
+					// Single value fallback - 100% physical
+					SetDamageType( 0, static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					for( UI08 i = 1; i < 5; ++i )
+					{
+						SetDamageType( i, 0 );
+					}
+				}
 			}
 			else if( UTag == "DIRECTION" || UTag == "DIR" )
 			{

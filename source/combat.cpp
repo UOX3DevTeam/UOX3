@@ -2746,7 +2746,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 //o------------------------------------------------------------------------------------------------o
 SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc )
 {
-	SI16 damage = -1;
+	SI16 totalDmg = -1;
 
 	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
@@ -2756,17 +2756,17 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 		{
 			// -1 == event doesn't exist, default to hard code
 			// Other value = calculated damage from script
-			damage = toExecute->OnCombatDamageCalc( mChar, ourTarg, getFightSkill, hitLoc );
+			totalDmg = toExecute->OnCombatDamageCalc( mChar, ourTarg, getFightSkill, hitLoc );
 		}
 	}
 
-	if( damage >= 0 )
+	if( totalDmg >= 0 )
 	{
-		return damage;
+		return totalDmg;
 	}
 	else
 	{
-		damage = 0;
+		totalDmg = 0;
 	}
 
 	const SI16 baseDamage = CalcAttackPower( mChar, true );
@@ -2774,31 +2774,56 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 	if( baseDamage == -1 )  // No damage if weapon breaks
 		return 0;
 
-	damage = ApplyDamageBonuses( PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, baseDamage );
+	CItem *weapon = GetWeapon(mChar);
+	std::vector<SI16> split = GetDamageSplit(weapon); // New function you define elsewhere
+	WeatherType types[5] = { PHYSICAL, HEAT, COLD, POISON, LIGHT };
 
-	if( damage < 1 )
-		return 0;
+	SI16 totalDmg = 0;
 
-	damage = ApplyDefenseModifiers( PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, damage, true );
-
-	if( damage <= 0 )
+	for( UI08 i = 0; i < 5; ++i )
 	{
-		damage = RandomNum( 0, 4 );
+		SI16 partDmg = (baseDamage * split[i]) / 100;
+		if( partDmg <= 0 )
+		continue;
+
+		SI16 bonus = ApplyDamageBonuses(types[i], mChar, ourTarg, getFightSkill, hitLoc, partDmg);
+		SI16 reduced = ApplyDefenseModifiers(types[i], mChar, ourTarg, getFightSkill, hitLoc, bonus, true);
+
+		totalDmg += std::max((SI16)0, reduced);
+	}
+
+	if( totalDmg <= 0 )
+	{
+		totalDmg = RandomNum( 0, 4 );
 	}
 
 	// Half remaining damage by 2 if LBR (Pub15) or earlier
 	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR )
 	{
-		damage /= 2;
+		totalDmg /= 2;
 	}
 
 	// Divide damage dealt by NPCs to players by NPCDAMAGERATE value in uox.ini
 	if( mChar->IsNpc() && !ourTarg->IsNpc() )
 	{
-		damage /= cwmWorldState->ServerData()->CombatNpcDamageRate();
+		totalDmg /= cwmWorldState->ServerData()->CombatNpcDamageRate();
 	}
 
-	return damage;
+	return totalDmg;
+}
+
+// -- New helper function that reads elemental split from weapon's more1-5
+void CHandleCombat::GetDamageSplit( CItem *weapon, SI16 (&splitOut)[5] )
+{
+	if( !ValidateObject( weapon ) )
+	{
+		splitOut[0] = 100; splitOut[1] = 0; splitOut[2] = 0;
+		splitOut[3] = 0;   splitOut[4] = 0;
+		return;
+	}
+
+	for( UI08 i = 0; i < 5; ++i )
+		splitOut[i] = weapon->GetDamageType(i);
 }
 
 //o------------------------------------------------------------------------------------------------o

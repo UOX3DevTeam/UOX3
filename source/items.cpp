@@ -173,6 +173,19 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				break;
 			case DFNTAG_EVENT:			applyTo->SetEvent( cdata );				break;
 			case DFNTAG_DAMAGEABLE:		applyTo->SetDamageable(ndata != 0 );	break;
+			case DFNTAG_DAMAGETYPE:
+			{
+				if( ssecs.size() >= 1 )
+				{
+					for( UI08 i = 0; i < 5 && i < ssecs.size(); ++i )
+					{
+						auto valStr = oldstrutil::trim( oldstrutil::removeTrailing( ssecs[i], "//" ));
+						auto val = static_cast<SI16>( std::stoi( valStr, nullptr, 0 ));
+						applyTo->SetDamageType( i, val );
+					}
+				}
+				break;
+			}
 			case DFNTAG_DEF:
 				if( ndata >= 0 )
 				{
