@@ -1127,6 +1127,14 @@ void CBaseObject::SetHP( SI16 newValue )
 	}
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetDamageType()
+//|	Date		-	10 May, 2025
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Retrieve the damage percentage assigned to a specific elemental index.
+//|					Supports PHYSICAL (0) to STORM (8). Returns 0 if index is out of bounds.
+//o------------------------------------------------------------------------------------------------o
+
 SI16 CBaseObject::GetDamageType( UI08 index ) const
 {
 	if( index < 9 )

@@ -2811,7 +2811,15 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 	return totalDmg;
 }
 
-// -- New helper function that reads elemental split from weapon's more1-5
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::DamageType()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Read elemental damage split from a weapon into an output array.
+//|					If the weapon is invalid, fallback to 100% physical damage.
+//|					Supports 9 damage types: PHYSICAL, LIGHT, RAIN, COLD, HEAT,
+//|					LIGHTNING, POISON, SNOW, STORM
+//o------------------------------------------------------------------------------------------------o
+
 void CHandleCombat::DamageType( CItem *weapon, SI16 ( &splitOut)[9] )
 {
 	if( !ValidateObject( weapon ))
