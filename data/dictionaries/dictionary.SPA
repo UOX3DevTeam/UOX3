@@ -3741,6 +3741,15 @@
 8213=Identificación de la sección de DFNs de la que procede el objeto
 8214=¿Se puede robar el objeto? 0 = no robable, 1 = robable, 2 = robable raro
 8215=Alvo inválido. Selecione um item ou NPC válido
+8251=Borrar NPC...
+8252=Se han borrado %i NPC
+8253=Selecciona un NPC para moverlo a distancia con xrun:
+8254=Selecciona un NPC para moverlo a distancia con xwalk:
+8255=Selecciona un NPC para girarlo a distancia con xturn:
+8256=Selecciona el destino del movimiento (%s):
+8257=¡Debes seleccionar un NPC!
+8258=Vendas la herida y detienes la hemorragia.
+8259=Las heridas sangrantes se han curado, ¡ya no sangras!
 // [8300-8499] Menú de ajustes - Descripciones de las propiedades de los personajes
 8300=Número de cuenta asociado al jugador. Controlado por el servidor (sólo lectura)
 8301=Tipo de IA del PNJ

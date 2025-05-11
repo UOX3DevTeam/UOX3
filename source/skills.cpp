@@ -523,7 +523,7 @@ UI16 CSkills::CalculatePetControlChance( CChar *mChar, CChar *Npc )
 //|					with.  If skill is < than lowskill check will fail, but player will gain in the
 //|					skill, if the players skill is > than highskill player will not gain
 //o------------------------------------------------------------------------------------------------o
-bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill, SI08 overrideOutcome )
+bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill, SI08 forceResult )
 {
 	bool skillCheck		= false;
 	bool exists			= false;
@@ -534,7 +534,7 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 		if( toExecute != nullptr )
 		{
 			// If script returns true/1, allows skillcheck to proceed, but also prevents other scripts with event from running
-			if( toExecute->OnSkillCheck( s, sk, lowSkill, highSkill, isCraftSkill, overrideOutcome ) == 1 )
+			if( toExecute->OnSkillCheck( s, sk, lowSkill, highSkill, isCraftSkill, forceResult ) == 1 )
 			{
 				exists = true;
 				break;
@@ -566,7 +566,7 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 		CSocket *mSock = s->GetSocket();
 		R32 chanceSkillSuccess = 0;
 
-		if( !ValidateObject( s ) || (( highSkill - lowSkill ) <= 0 || s->GetSkill( sk ) < lowSkill ))
+		if( !ValidateObject( s ) || (( highSkill - lowSkill ) <= 0 || ( s->GetSkill( sk ) < lowSkill && forceResult <= 0 )))
 			return false;
 
 		if( s->IsDead() && mSock != nullptr )
@@ -575,12 +575,12 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 			return false;
 		}
 
-		if( s->GetSkill( sk ) >= highSkill && overrideOutcome >= 0 )
+		if( s->GetSkill( sk ) >= highSkill && forceResult >= 0 )
 			return true;
 
-		if( overrideOutcome != 0 )
+		if( forceResult != 0 )
 		{
-			skillCheck = ( overrideOutcome == 1 ? true : false );
+			skillCheck = ( forceResult == 1 ? true : false );
 		}
 		else
 		{

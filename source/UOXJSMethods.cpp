@@ -4687,7 +4687,7 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_CheckSkill()
-//|	Prototype	-	bool CheckSkill( skillnum, minskill, maxskill[, isCraftSkill] )
+//|	Prototype	-	bool CheckSkill( skillnum, minskill, maxskill[, isCraftSkill, forceResult] )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Performs a skillcheck for character based on specified skill. Returns true
 //|					if result of skillcheck is between provided minimum and maximum values.
@@ -4699,7 +4699,7 @@ JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 {
 	if( argc < 3 || argc > 5 )
 	{
-		ScriptError( cx, "CheckSkill: Invalid number of arguments (takes 3 to 5, skillNum, minSkill, maxSkill, isCraftSkill (optional) and overrideOutcome (optional))" );
+		ScriptError( cx, "CheckSkill: Invalid number of arguments (takes 3 to 5, skillNum, minSkill, maxSkill, isCraftSkill (optional) and forceResult (optional))" );
 		return JS_FALSE;
 	}
 
@@ -4715,16 +4715,16 @@ JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	UI16 minSkill = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 	UI16 maxSkill = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 	bool isCraftSkill = false;
-	SI08 overrideOutcome = 0;
+	SI08 forceResult = 0;
 	if( argc == 4 )
 	{
 		isCraftSkill = JSVAL_TO_BOOLEAN( argv[3] );
 	}
 	if( argc == 5 )
 	{
-		overrideOutcome = static_cast<SI08>( JSVAL_TO_INT( argv[4] ));
+		forceResult = static_cast<SI08>( JSVAL_TO_INT( argv[4] ));
 	}
-	*rval = BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill, overrideOutcome ));
+	*rval = BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill, forceResult ));
 	return JS_TRUE;
 }
 

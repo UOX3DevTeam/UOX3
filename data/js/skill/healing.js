@@ -149,7 +149,7 @@ function onCallback1( socket, ourObj )
 			{
 				// Target can be healed with Healing skill
 				healSkill = mChar.baseskills.healing;
-				skillNum  = 17;
+				skillNum = 17;
 				buffIcon = 1069;
 				priCliloc = 1002082;
 				scndCliloc = 1151400;
@@ -158,7 +158,7 @@ function onCallback1( socket, ourObj )
 			{
 				// Target can be healed with Veterinary skill
 				healSkill = mChar.baseskills.veterinary;
-				skillNum  = 39;
+				skillNum = 39;
 				buffIcon = 1101;
 				priCliloc = 1002167;
 				scndCliloc = 1151400;
@@ -184,7 +184,7 @@ function onCallback1( socket, ourObj )
 			let healTimer = 0;
 			let healTimerID = -1;
 			let anatSkill = mChar.baseskills.anatomy;
-			let combinedCureHeal = false;
+			let triggerBonusCure = false;
 			let affectedByMortalStrike = ourObj.GetTempTag( "blockHeal" );
 			if( ourObj.dead ) // Resurrection
 			{
@@ -220,17 +220,24 @@ function onCallback1( socket, ourObj )
 				if( mChar.serial == ourObj.serial && ourObj.health < ourObj.maxhp
 					&& !affectedByMortalStrike && coreShardEra >= EraStringToNum( "hs" ) && healSkill >= 800 && anatSkill >= 800 )
 				{
-					// When targeting self, attempt to remove poison/bleed at half the normal healing duration,
-					// but with reduced amount healed after finishing normal heal duration
-					combinedCureHeal = true;
+					// When targeting self, trigger bonus attempt to remove poison/bleed at half normal heal duration.
+					// If successful, will do a reduced bonus heal at end of normal duration
+					// If not successful, will just do normal cure attempt at end of normal duration
+					triggerBonusCure = true;
 				}
-				else if( healSkill >= 600 && anatSkill >= 600 )
+
+				if( healSkill >= 600 && anatSkill >= 600 )
 				{
 					if( mChar.serial == ourObj.serial )
 					{
-						if( coreShardEra >= EraStringToNum( "hs" ))
+						if( coreShardEra >= EraStringToNum( "tol" ))
 						{
-							// HS+: curing self: 10 to 15 seconds
+							// TOL: curing self: 8 to 11 seconds
+							healTimer = 11000 - (( mChar.dexterity / 40 ) * 1000 );
+						}
+						else if( coreShardEra >= EraStringToNum( "hs" ))
+						{
+							// HS: curing self: 10 to 15 seconds
 							healTimer = 15000 - (( mChar.dexterity / 24 ) * 1000 );
 						}
 						else if( coreShardEra >= EraStringToNum( "aos" ))
@@ -253,7 +260,7 @@ function onCallback1( socket, ourObj )
 					{
 						if( coreShardEra >= EraStringToNum( "hs" ))
 						{
-							// HS+: curing others: 3-5 seconds depending on dexterity
+							// HS: curing others: 3-5 seconds depending on dexterity
 							healTimer = 5000 - (( mChar.dexterity / 40 ) * 1000 );
 						}
 						else if( coreShardEra >= EraStringToNum( "uor" ))
@@ -295,7 +302,7 @@ function onCallback1( socket, ourObj )
 			}
 
 			// Mortal Strike effect prevents healing attempts
-			if( affectedByMortalStrike )
+			if( healTimerID == -1 && affectedByMortalStrike )
 			{
 				if( ourObj != mChar && ourObj.socket )
 				{
@@ -372,7 +379,7 @@ function onCallback1( socket, ourObj )
 				healTimerID = 2; // Heal
 			}
 
-			// Section below is shared between resurrect/cure/heal
+			// Section below is SHARED between resurrect/cure/heal
 
 			// Consume some bandages
 			ConsumeBandage( bItem, 1 );
@@ -401,16 +408,16 @@ function onCallback1( socket, ourObj )
 				TriggerEvent( 2204, "AddBuff", mChar, buffIcon, priCliloc, scndCliloc, seconds, " " + ourObj.name );
 			}
 
-			if( combinedCureHeal )
+			if( triggerBonusCure )
 			{
-				mChar.SetTempTag( "combinedCureHeal", true );
+				mChar.SetTempTag( "triggerBonusCure", true );
 
-				// Start a timer to attempt poison curing at half the regular healing time
+				// Start a timer to attempt poison curing at half the regular time to cure
 				mChar.StartTimer( healTimer / 2, 1, healingScriptID );
 			}
 			else
 			{
-				mChar.SetTempTag( "combinedCureHeal", null ); // Just making sure we clear this
+				mChar.SetTempTag( "triggerBonusCure", null ); // Just making sure we clear this
 			}
 
 			mChar.StartTimer( healTimer, healTimerID, healingScriptID );
@@ -483,7 +490,7 @@ function SetSkillInUse( socket, mChar, ourObj, skillNum, healingTime, setVal )
 	if( ValidateObject( ourObj ))
 	{
 		ourObj.SetTempTag( "SK_BEINGHEALED", setVal );
-		ourObj.SetTempTag( "SK_HEALINGTIME", healingTime );
+		ourObj.SetTempTag( "SK_HEALTIMER", healingTime );
 		if( setVal )
 		{
 			mChar.SetTempTag( "SK_HEALINGTARG", ourObj.serial );
@@ -498,9 +505,12 @@ function onTimer( mChar, timerID )
 
 	let ourObj = CalcCharFromSer( mChar.GetTempTag( "SK_HEALINGTARG" ));
 	if( !ValidateObject( ourObj ))
+	{
+		let skillNum = mChar.GetTempTag( "SK_HEALINGTYPE" );
+		SetSkillInUse( socket, mChar, null, skillNum, 0, false );
 		return;
+	}
 
-	let skillNum = mChar.GetTempTag("SK_HEALINGTYPE");
 	let primarySkill = 0;
 	let secondarySkill = 0;
 	let primarySkillCap = 0;
@@ -537,6 +547,16 @@ function onTimer( mChar, timerID )
 		}
 		else if( mChar.InRange( ourObj, maxRange ) && mChar.CanSee( ourObj ))
 		{
+			// Retrieve amount of times character's hands slipped during healing
+			let slipCount = mChar.GetTempTag( "slipCount" );
+
+			if( mChar.GetTempTag( "bonusCureLevel" ))
+			{
+				// Poison/Bleed was cured with bonus attempt already!
+				// Proceed to do a small heal as a reward instead of continuing with main cure attempt
+				timerID = 2;
+			}
+
 			switch ( timerID )
 			{
 				case 0:	// Resurrect
@@ -552,7 +572,7 @@ function onTimer( mChar, timerID )
 					let chanceToRes = 0.25 + (((( primarySkill + secondarySkill ) / 2 ) - 800 ) * 0.002 );
 
 					// Reduce chance by 2% per number of times healer's fingers "slipped" during bandaging
-					chanceToRes -= ( mChar.GetTempTag( "slipCount" ) * 0.02 );
+					chanceToRes -= ( slipCount * 0.02 );
 
 					// Clamp at 0.0 - 1.0
 					chanceToRes = Math.max( 0.0, Math.min( 1.0, chanceToRes ));
@@ -567,6 +587,8 @@ function onTimer( mChar, timerID )
 						{
 							// Don't resurrect dead players in multis not owned by either target or healer
 							socket.SysMessage( GetDictionaryEntry( 9087, socket.language )); // Target cannot be resurrected at that location.
+							mChar.RemoveScriptTrigger( 4014 ); // Remove healing_slip.js script
+							mChar.SetTempTag( "slipCount", null );
 							return;
 						}
 						else
@@ -576,6 +598,8 @@ function onTimer( mChar, timerID )
 							ourObj.SoundEffect( 0x214, true );
 							socket.SysMessage( GetDictionaryEntry( 1272, socket.language )); // You successfully resurrected the patient!
 							resResult = 1;
+							mChar.RemoveScriptTrigger( 4014 ); // Remove healing_slip.js script
+							mChar.SetTempTag( "slipCount", null );
 						}
 					}
 					else
@@ -590,12 +614,13 @@ function onTimer( mChar, timerID )
 					break;
 				case 1:	// Cure Poison
 					let chanceToCure = 0;
+					let poisonLvl = ourObj.poison;
 					let cureBleed = ourObj.GetTempTag( "doBleed" );
-					let combinedCureHeal = mChar.GetTempTag( "combinedCureHeal" );
-					if( combinedCureHeal )
+					let triggerBonusCure = mChar.GetTempTag( "triggerBonusCure" );
+					if( triggerBonusCure )
 					{
 						// Chance for a "half heal duration" cure
-						chanceToCure = (((( primarySkill + secondarySkill ) / 10 ) - 120 ) * 25 ) / (( cureBleed ? 3 : Math.max( 1, ourObj.poison )) * 20 );
+						chanceToCure = (((( primarySkill + secondarySkill ) / 10 ) - 120 ) * 25 ) / (( cureBleed ? 3 : Math.max( 1, poisonLvl )) * 20 );
 					}
 					else
 					{
@@ -605,11 +630,14 @@ function onTimer( mChar, timerID )
 						chanceToCure = 0.80 + (((( primarySkill + secondarySkill ) / 2 ) - 600 ) * 0.00035 );
 
 						// Reduce chance by 10% per poison level on target
-						chanceToCure -= ((( cureBleed ? 3 : Math.max( 1, ourObj.poison )) - 1 ) * 0.1 );
+						if( useDifficultyScalingForHealing )
+						{
+							chanceToCure -= ((( cureBleed ? 3 : Math.max( 1, poisonLvl )) - 1 ) * 0.1 );
+						}
 					}
 
 					// Reduce chance by 2% per number of times healer's fingers "slipped" during bandaging
-					chanceToCure -= ( mChar.GetTempTag( "slipCount" ) * 0.02 );
+					chanceToCure -= ( slipCount * 0.02 );
 
 					// Clamp at 0.0 - 1.0
 					chanceToCure = Math.max( 0.0, Math.min( 1.0, chanceToCure ));
@@ -619,22 +647,30 @@ function onTimer( mChar, timerID )
 					{
 						// Cured!
 						cureResult = 1;
-						if( combinedCureHeal )
+						if( triggerBonusCure )
 						{
 							// Update combined cure/heal tag to reflect level of poison that was cured
-							// we'll use this later in the heal-portion of the timer
-							mChar.SetTempTag( "combinedCureHeal", ourObj.poison );
+							// we'll use this later in the bonus heal-portion
+							mChar.SetTempTag( "triggerBonusCure", null );
+							mChar.SetTempTag( "bonusCureLevel", ( cureBleed ? 3 : poisonLvl ));
 						}
+						else
+						{
+							// Remove these, as this was the final cure attempt
+							mChar.RemoveScriptTrigger( 4014 ); // Remove healing_slip.js script
+							mChar.SetTempTag( "slipCount", null );
+						}
+
 						if( cureBleed )
 						{
 							// Cure the Bleed!
 							if( ourObj != mChar && ourObj.socket )
 							{
-								socket.SysMessage( "You bind the wound and stop the bleeding" );
+								ourObj.socket.SysMessage( GetDictionaryEntry( 8259, ourObj.socket.language )); // The bleeding wounds have healed, you are no longer bleeding!
 							}
 							else
 							{
-								socket.SysMessage( "The bleeding wounds have healed, you are no longer bleeding!" );
+								socket.SysMessage( GetDictionaryEntry( 8258, socket.language )); // You bind the wound and stop the bleeding
 							}
 							ourObj.KillJSTimer( 9300, 7001 ); // Stop the bleed timer on target
 							ourObj.SetTempTag( "doBleed", null );
@@ -654,8 +690,18 @@ function onTimer( mChar, timerID )
 					}
 					else
 					{
-						mChar.SetTempTag( "combinedCureHeal", null );
-						socket.SysMessage( GetDictionaryEntry( 1494, socket.language )); // You fail to counter the poison.
+						if( !triggerBonusCure )
+						{
+							if( cureBleed )
+							{
+								socket.SysMessage( GetDictionaryEntry( 9089, socket.language )); // You finish applying the bandages, but they barely help.
+							}
+							else
+							{
+								socket.SysMessage( GetDictionaryEntry( 1494, socket.language )); // You fail to counter the poison.
+							}
+						}
+						mChar.SetTempTag( "triggerBonusCure", null );
 					}
 
 					// Run skill checks for chance to gain skill, but override the check to match up with the manual check done above, so a success is still a success, and a failure is still a failure
@@ -669,7 +715,7 @@ function onTimer( mChar, timerID )
 					if( healthLoss == 0 )
 					{
 						socket.SysMessage( GetDictionaryEntry( 1497, socket.language )); // That being is undamaged.
-						mChar.SetTempTag( "combinedCureHeal", null );
+						mChar.SetTempTag( "bonusCureLevel", null );
 						break;
 					}
 
@@ -704,7 +750,7 @@ function onTimer( mChar, timerID )
 							if( !ValidateObject( mItem ))
 								continue;
 
-							healBonus += parseInt( mItem.GetTag( "healingBonus" ) );
+							healBonus += parseInt( mItem.GetTag( "healingBonus" ));
 						}
 
 						// Increase karma when healing innocent/neutral characters
@@ -724,11 +770,6 @@ function onTimer( mChar, timerID )
 							// Perform generic Animal Lore skill check to allow skill increase
 							mChar.CheckSkill( 2, 0, secondarySkillCap );
 						}
-
-						mChar.RemoveScriptTrigger( 4014 ); // Remove healing_slip.js script
-						// Retrieve amount of times character's hands slipped during healing
-						let slipCount = mChar.GetTempTag( "slipCount" );
-						mChar.SetTempTag( "slipCount", null );
 
 						if( slipCount > 5 )
 						{
@@ -773,7 +814,7 @@ function onTimer( mChar, timerID )
 
 							if( ourObj == mChar && coreShardEra >= EraStringToNum( "hs" ))
 							{
-								let poisonLvlCured = mChar.GetTempTag( "combinedCureHeal" );
+								let poisonLvlCured = mChar.GetTempTag( "bonusCureLevel" );
 								if( poisonLvlCured > 0 )
 								{
 									// Reduce healing amount proportional to level of poison cured since we did a combined curing/healing action
@@ -794,7 +835,9 @@ function onTimer( mChar, timerID )
 							}
 						}
 					}
-					mChar.SetTempTag( "combinedCureHeal", null );
+					mChar.SetTempTag( "bonusCureLevel", null );
+					mChar.RemoveScriptTrigger( 4014 ); // Remove healing_slip.js script
+					mChar.SetTempTag( "slipCount", null );
 					break;
 			}
 		}
@@ -803,7 +846,7 @@ function onTimer( mChar, timerID )
 			socket.SysMessage( GetDictionaryEntry( 6018, socket.language )); // You are no longer close enough to heal your target.
 		}
 	}
-	if( !mChar.GetTempTag( "combinedCureHeal" ))
+	if( !mChar.GetTempTag( "bonusCureLevel" ))
 	{
 		SetSkillInUse( socket, mChar, ourObj, skillNum, 0, false );
 	}
