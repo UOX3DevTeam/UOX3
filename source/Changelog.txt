@@ -1,3 +1,17 @@
+12/05/2025 - Dragon Slayer
+	Overhauled elemental damage and resistance system in combat code to align with Age of Shadows mechanics:
+		• Added support for 9 WeatherType-based damage types: PHYSICAL, LIGHT, RAIN, COLD, HEAT, LIGHTNING, POISON, SNOW, STORM
+		• Added support for new DFN tag DAMAGETYPE=x,x,x,... to define per-weapon elemental damage split (up to 9 values)
+		• Updated CalcDamage() to distribute total damage per WeatherType using weapon-defined split percentages
+		• Each damage portion now passes through ApplyDamageBonuses() and ApplyDefenseModifiers(), enabling full per-type mitigation
+		• Created HandleParryAndArmor() to handle AoS-era shield parry, bushido weapon parry, NPC wrestling parry, and armor mitigation
+		• Added per-type resistance cap checks using expansion-aware methods like FireResistCap(), ColdResistCap(), etc.
+		• Damage is reduced as a percent of capped resistance (e.g. 500 = 50%) after armor/parry mitigation
+		• PHYSICAL damage follows existing full parry + armor rules; elemental types now optionally follow same logic per expansion
+		• POISON bypasses parry, but respects capped resistance in AoS and beyond
+		• Updated ApplyDefenseModifiers() and CalcDef() to support WeatherType and expansion-accurate behavior
+		• Removed legacy flat getDef application post-defense when using elemental breakdown
+
 08/05/2025 - Xuri
 	Added new JS Event that triggers when dismounting
 		onDismount( pUser, npcMount )
