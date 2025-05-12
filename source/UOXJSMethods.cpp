@@ -56,6 +56,9 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 bool BuyShop( CSocket *s, CChar *c );
 void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway );
 void ScriptError( JSContext *cx, const char *txt, ... );
+void ReverseEffect( CTEffect *Effect );
+void PauseEffect( CTEffect *Effect );
+void ResumeEffect( CTEffect *Effect );
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	MethodSpeech()
@@ -2184,10 +2187,134 @@ JSBool CBase_KillJSTimer( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|    Function    -    CBase_GetTempEffect()
-//|    Prototype    -    UI32 CBase_GetTempEffect( tempEffectID )
+//|	Function	-	CBase_PauseJSTimer()
+//|	Prototype	-	void PauseJSTimer()
 //o------------------------------------------------------------------------------------------------o
-//|    Purpose        -    Get timer of specified temp effect for object, or 0 if it doesn't exist
+//|	Purpose		-	Pause JS timer on item or character based on specified scriptId and timerId
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_PauseJSTimer( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 2 )
+	{
+		ScriptError( cx, "PauseJSTimer: Invalid count of arguments :%d, needs 2 (timerId, scriptId)", argc );
+		return JS_FALSE;
+	}
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
+	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "PauseJSTimer: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
+	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	CTEffect *removeEffect = nullptr;
+
+	for( auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		if( myObjSerial == Effect->Destination() && Effect->More1() == timerId )
+		{
+			// Check for a valid script associated with Effect
+			cScript *tScript = JSMapping->GetScript( Effect->AssocScript() );
+			if( tScript == nullptr && Effect->More2() != 0xFFFF )
+			{
+				// If no default script was associated with effect, check if another script was stored in More2
+				tScript = JSMapping->GetScript( Effect->More2() );
+			}
+
+			// If a valid script is associated with Effect, and the Effect's scriptId matches the provided scriptId...
+			if( tScript != nullptr && ( scriptId == Effect->AssocScript() || scriptId == Effect->More2() ))
+			{
+				// Found our timer! Pause it, if not already paused
+				if( Effect->PauseTime() == 0 )
+				{
+					PauseEffect( Effect );
+					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and paused
+				}
+				else
+				{
+					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 2 ) ); // Return 2 indicating timer was found, but already paused
+				}
+				break;
+			}
+		}
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBase_ResumeJSTimer()
+//|	Prototype	-	void ResumeJSTimer()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Resume JS timer on item or character based on specified scriptId and timerId
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_ResumeJSTimer( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 2 )
+	{
+		ScriptError( cx, "ResumeJSTimer: Invalid count of arguments :%d, needs 2 (timerId, scriptId)", argc );
+		return JS_FALSE;
+	}
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
+	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "ResumeJSTimer: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
+	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	CTEffect *removeEffect = nullptr;
+
+	for( auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		if( myObjSerial == Effect->Destination() && Effect->More1() == timerId )
+		{
+			// Check for a valid script associated with Effect
+			cScript *tScript = JSMapping->GetScript( Effect->AssocScript() );
+			if( tScript == nullptr && Effect->More2() != 0xFFFF )
+			{
+				// If no default script was associated with effect, check if another script was stored in More2
+				tScript = JSMapping->GetScript( Effect->More2() );
+			}
+
+			// If a valid script is associated with Effect, and the Effect's scriptId matches the provided scriptId...
+			if( tScript != nullptr && ( scriptId == Effect->AssocScript() || scriptId == Effect->More2() ))
+			{
+				// Found our timer! Resume it!
+				if( Effect->PauseTime() > 0 )
+				{
+					ResumeEffect( Effect );
+					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and resumed
+				}
+				else
+				{
+					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 2 ) ); // Return 2 indicating timer was found, but it was not paused!
+				}
+				break;
+			}
+		}
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-    CBase_GetTempEffect()
+//|	Prototype	-    UI32 CBase_GetTempEffect( tempEffectID )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose	-    Get timer of specified temp effect for object, or 0 if it doesn't exist
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_GetTempEffect( JSContext *cx, uintN argc, jsval *vp )
 {
@@ -2223,18 +2350,17 @@ JSBool CBase_GetTempEffect( JSContext *cx, uintN argc, jsval *vp )
 	return JS_TRUE;
 }
 
-void ReverseEffect( CTEffect *Effect );
 //o------------------------------------------------------------------------------------------------o
-//|    Function    -    CBase_ReverseEffect()
-//|    Prototype    -    void ReverseEffect()
+//|	Function	-    CBase_ReverseTempEffect()
+//|	Prototype	-    void ReverseTempEffect()
 //o------------------------------------------------------------------------------------------------o
-//|    Purpose        -    Force the reversion of a Temp Effect on item or character based on specified temp effect ID
+//|	Purpose	-    Force the reversion of a Temp Effect on item or character based on specified temp effect ID
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_ReverseEffect( JSContext *cx, uintN argc, jsval *vp )
+JSBool CBase_ReverseTempEffect( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
-		ScriptError( cx, "ReverseEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		ScriptError( cx, "ReverseTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
 		return JS_FALSE;
 	}
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
@@ -2242,7 +2368,7 @@ JSBool CBase_ReverseEffect( JSContext *cx, uintN argc, jsval *vp )
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
-		ScriptError( cx, "ReverseEffect: Invalid object assigned." );
+		ScriptError( cx, "ReverseTempEffect: Invalid object assigned." );
 		return JS_FALSE;
 	}
 
@@ -2271,6 +2397,91 @@ JSBool CBase_ReverseEffect( JSContext *cx, uintN argc, jsval *vp )
 
 	return JS_TRUE;
 }
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBase_PauseTempEffect()
+//|	Prototype	-	void PauseTempEffect()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Pause a specific Temp Effect on item or character based on temp effect ID
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_PauseTempEffect( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "PauseTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		return JS_FALSE;
+	}
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
+	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "PauseTempEffect: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid temp effect found
+	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	CTEffect *pauseEffect = nullptr;
+
+	for( auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+		{
+			// Found our timer! Let's pause it
+			PauseEffect( pauseEffect );
+			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating temp effect was found and paused
+			break;
+		}
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBase_ResumeTempEffect()
+//|	Prototype	-	void ResumeTempEffect()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Resume a specific paused Temp Effect on item or character based on temp effect ID
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_ResumeTempEffect( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "ResumeTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		return JS_FALSE;
+	}
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
+	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "ResumeTempEffect: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid paused temp effect found
+	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	CTEffect *resumeEffect = nullptr;
+
+	for( auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID && Effect->PauseTime() > 0 )
+		{
+			// Found our timer! Let's resume it
+			ResumeEffect( resumeEffect );
+			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating temp effect was found and resumed
+			break;
+		}
+	}
+
+	return JS_TRUE;
+}
+
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_Delete()

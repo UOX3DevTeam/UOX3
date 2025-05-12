@@ -193,7 +193,11 @@ JSBool CBase_Refresh( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBase_SetRandomName( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBase_SetRandomColor( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBase_GetTempEffect( JSContext *cx, uintN argc, jsval *vp );
-JSBool CBase_ReverseEffect( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBase_ReverseTempEffect( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBase_PauseTempEffect( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBase_ResumeTempEffect( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBase_PauseJSTimer( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBase_ResumeJSTimer( JSContext *cx, uintN argc, jsval *vp );
 
 // Multi Methods
 JSBool CMulti_GetMultiCorner( JSContext *cx, uintN argc, jsval *vp );
@@ -485,7 +489,11 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0 },
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0 },
 	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0 },
-	{ "ReverseTempEffect",	CBase_ReverseEffect,		1, 0 },
+	{ "ReverseTempEffect",	CBase_ReverseTempEffect,		1, 0 },
+	{ "PauseTempEffect",	CBase_PauseTempEffect,		1, 0 },
+	{ "ResumeTempEffect",	CBase_ResumeTempEffect,		1, 0 },
+	{ "PauseJSTimer",	CBase_PauseJSTimer,		1, 0 },
+	{ "ResumeJSTimer",	CBase_ResumeJSTimer,		1, 0 },
 	JS_FS_END
 };
 
@@ -582,7 +590,11 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "SetRandomName",		CBase_SetRandomName,		1, 0 },
 	{ "SetRandomColor",		CBase_SetRandomColor,		1, 0 },
 	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0 },
-	{ "ReverseTempEffect",	CBase_ReverseEffect,		1, 0 },
+	{ "ReverseTempEffect",	CBase_ReverseTempEffect,		1, 0 },
+	{ "PauseTempEffect",	CBase_PauseTempEffect,		1, 0 },
+	{ "ResumeTempEffect",	CBase_ResumeTempEffect,		1, 0 },
+	{ "PauseJSTimer",	CBase_PauseJSTimer,		1, 0 },
+	{ "ResumeJSTimer",	CBase_ResumeJSTimer,		1, 0 },
 	{ nullptr,				nullptr,					0, 0 }
 };
 
