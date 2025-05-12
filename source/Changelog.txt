@@ -18,6 +18,9 @@
 	Fixed an issue where skill caps for player characters were not correctly initialized, resulting in unpredictable behavior
 	Fixed an issue with mana regen timer for MANAREGENMODE=1 (LBR and below) where timer was never adjusted
 	Fix for pets getting stuck staring at potential targets in combat while simultaneously ignoring them
+	The damage of a weapon can now also be modified via the 'set damage # command. Supported syntax:
+		'set damage # // sets both lodamage and hidamage to value of #
+		'set damage # # // sets lowdamage to first value, hidamage to second value
 
 08/05/2025 - Xuri
 	Added new JS Event that triggers when dismounting

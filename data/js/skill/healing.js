@@ -69,7 +69,7 @@ function onUseChecked( pUser, iUsed )
 	if( ValidateObject( pUser ) && ValidateObject( iUsed ) && iUsed.isItem )
 	{
 		let socket = pUser.socket;
-		if( !ValidateObject( socket ))
+		if( socket == null )
 			return false;
 
 		let pLanguage = socket.language;
@@ -503,10 +503,10 @@ function onTimer( mChar, timerID )
 	if( !ValidateObject( mChar ))
 		return;
 
+	let skillNum = mChar.GetTempTag( "SK_HEALINGTYPE" );
 	let ourObj = CalcCharFromSer( mChar.GetTempTag( "SK_HEALINGTARG" ));
 	if( !ValidateObject( ourObj ))
 	{
-		let skillNum = mChar.GetTempTag( "SK_HEALINGTYPE" );
 		SetSkillInUse( socket, mChar, null, skillNum, 0, false );
 		return;
 	}
@@ -835,6 +835,12 @@ function onTimer( mChar, timerID )
 							}
 						}
 					}
+					else
+					{
+						// Skill Check failed
+						socket.SysMessage( GetDictionaryEntry( 9089, socket.language )); // You finish applying the bandages, but they barely help.
+					}
+
 					mChar.SetTempTag( "bonusCureLevel", null );
 					mChar.RemoveScriptTrigger( 4014 ); // Remove healing_slip.js script
 					mChar.SetTempTag( "slipCount", null );
