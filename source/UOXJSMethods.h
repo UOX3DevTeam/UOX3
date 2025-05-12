@@ -196,7 +196,11 @@ JSMethodFunc CBase_Refresh;
 JSMethodFunc CBase_SetRandomName;
 JSMethodFunc CBase_SetRandomColor;
 JSMethodFunc CBase_GetTempEffect;
-JSMethodFunc CBase_ReverseEffect;
+JSMethodFunc CBase_ReverseTempEffect;
+JSMethodFunc CBase_PauseTempEffect;
+JSMethodFunc CBase_ResumeTempEffect;
+JSMethodFunc CBase_PauseJSTimer;
+JSMethodFunc CBase_ResumeJSTimer;
 
 // Multi Methods
 JSMethodFunc CMulti_GetMultiCorner;
@@ -487,7 +491,11 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0, 0 },
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0, 0 },
 	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0, 0 },
-	{ "ReverseTempEffect",	CBase_ReverseEffect,		1, 0, 0 },
+	{ "ReverseTempEffect",	CBase_ReverseTempEffect,	1, 0, 0 },
+	{ "PauseTempEffect",	CBase_PauseTempEffect,	1, 0, 0 },
+	{ "ResumeTempEffect",	CBase_ResumeTempEffect,	1, 0, 0 },
+	{ "PauseJSTimer",		CBase_PauseJSTimer,		1, 0, 0 },
+	{ "ResumeJSTimer",		CBase_ResumeJSTimer,	1, 0, 0 },
 	{ nullptr,				nullptr,				0, 0, 0 }
 };
 
@@ -583,7 +591,11 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "SetRandomName",		CBase_SetRandomName,		1, 0, 0 },
 	{ "SetRandomColor",		CBase_SetRandomColor,		1, 0, 0 },
 	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0, 0 },
-	{ "ReverseTempEffect",	CBase_ReverseEffect,		1, 0, 0 },
+	{ "ReverseTempEffect",	CBase_ReverseTempEffect,	1, 0, 0 },
+	{ "PauseTempEffect",	CBase_PauseTempEffect,		1, 0, 0 },
+	{ "ResumeTempEffect",	CBase_ResumeTempEffect,		1, 0, 0 },
+	{ "PauseJSTimer",		CBase_PauseJSTimer,			1, 0, 0 },
+	{ "ResumeJSTimer",		CBase_ResumeJSTimer,		1, 0, 0 },
 	{ nullptr,				nullptr,					0, 0, 0 }
 };
 
