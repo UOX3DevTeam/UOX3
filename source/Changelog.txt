@@ -1,3 +1,16 @@
+08/05/2025 - Xuri
+	Added new JS Event that triggers when dismounting
+		onDismount( pUser, npcMount )
+	Added four new JS Methods for Characters/Items:
+		.PauseTempEffect( tempEffectID ) // pauses selected temp effect indefinitely until resumed/killed
+		.ResumeTempEffect( tempEffectID ) // resumes selected temp effect, if paused, and extends original effect timer to account for paused time
+		.PauseJSTimer( timerID, scriptID ) // pauses JS timer based on provided timerID and scriptID
+		.ResumeJSTimer( timerID, scriptID ) // resumes JS timer based on provided timerID and scriptID
+	Renamed previously added JS Method RevertEffect to RevertTempEffect	(code change only, script was always the latter)
+	Fixed issue that prevented 'xrun command from working (js/commands/targeting/xwalk.js)
+	Fixed an exception related to loading in data from jails.wsc on startup
+	Fixed an exception related to periodic check/release of prisoners from jail
+
 05/05/2025 - Xuri
 	Updated target-based 'wipe command to also affect valid NPCs (non-invulnerable, non-pets) (js/commands/wipe.js)
 	NPC admin gump (js/commands/wholist.js) will now force-refresh on next open after NPCs have been removed via the remove button in the menu
