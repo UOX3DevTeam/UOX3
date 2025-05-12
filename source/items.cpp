@@ -175,14 +175,22 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_DAMAGEABLE:		applyTo->SetDamageable(ndata != 0 );	break;
 			case DFNTAG_DAMAGETYPE:
 			{
-				if( ssecs.size() >= 1 )
+				if( ssecs.size() >= 9 )
 				{
-					for( UI08 i = 0; i < 9 && i < ssecs.size(); ++i )
-					{
-						auto valStr = oldstrutil::trim( oldstrutil::removeTrailing( ssecs[i], "//" ));
-						auto val = static_cast<SI16>( std::stoi( valStr, nullptr, 0 ));
-						applyTo->SetDamageType( i, val );
-					}
+					applyTo->SetDamageType( 0, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 1, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 2, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 3, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 4, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[4], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 5, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[5], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 6, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[6], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 7, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[7], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 8, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[8], "//" )), nullptr, 0 )));
+				}
+				else
+				{
+					Console.Warning( oldstrutil::format(
+						"DAMAGETYPE tag in section [%s] must have at least 9 values. Got %zu.", sectionId.c_str(), ssecs.size() ));
 				}
 				break;
 			}

@@ -2486,7 +2486,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 		damage *= ( 1.0f - resistPercent );
 		damage = std::max( 0.0f, damage );
 	}
-
+	mChar->GetSocket()->SysMessage( "Final damage from %s: %d", damageType, static_cast<SI16>(damage) );
 	return static_cast<SI16>( std::round( damage ));
 }
 
