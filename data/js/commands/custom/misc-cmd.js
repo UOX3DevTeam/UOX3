@@ -60,6 +60,7 @@ function CommandRegistration()
 	RegisterCommand( "listpets", 2, true ); // Spit out a list of all pets owned by target
 	RegisterCommand( "listfollowers", 2, true ); // Spit out a list of all followers of target
 	RegisterCommand( "resetskillcaps", 3, true ); // Fix corrupted player skill caps
+	RegisterCommand( "resetskillusage", 3, true ); // Fix stuck skill usage for all players
 }
 
 function command_RENAME( pSock, execString )
@@ -1405,6 +1406,7 @@ function onCallback38( pSock, ourObj )
 	}
 }
 
+// Reset corrupted skill caps for player characters. Only use in emergency.
 function command_RESETSKILLCAPS( pSock, execString )
 {
 	var resetCount = IterateOver( "CHARACTER" );
@@ -1416,6 +1418,23 @@ function onIterate( toCheck )
 	if( toCheck.isChar && !toCheck.npc )
 	{
 		toCheck.skillCaps.allskills = 0;
+		return true;
+	}
+	return false;
+}
+
+// Reset stuck skill usage for player characters. Only use in emergency.
+function command_RESETSKILLUSAGE( pSock, execString )
+{
+	var resetCount = IterateOver( "CHARACTER" );
+	pSock.SysMessage( "Reset skill usage for " + resetCount + " players back to false." );
+}
+
+function onIterate( toCheck )
+{
+	if( toCheck.isChar && !toCheck.npc )
+	{
+		toCheck.skillsused.allskills = false;
 		return true;
 	}
 	return false;

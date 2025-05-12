@@ -21,6 +21,9 @@
 	The damage of a weapon can now also be modified via the 'set damage # command. Supported syntax:
 		'set damage # // sets both lodamage and hidamage to value of #
 		'set damage # # // sets lowdamage to first value, hidamage to second value
+	Added two new Admin commands to help address issues with player characters. Use sparingly!
+		'resetskillcaps // Resets ALL individual skillcaps for ALL player characters back to default
+		'resetskillusage // Resets skill usage status of all skills for ALL player characters to false, to unblock their use
 
 08/05/2025 - Xuri
 	Added new JS Event that triggers when dismounting
