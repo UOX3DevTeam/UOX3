@@ -3754,6 +3754,7 @@ auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
 			if( mTarget->GetTarg() == mChar )
 			{
 				mTarget->SetTarg( nullptr );
+				mTarget->SetWar( false );
 			}
 		}
 		mChar->SetTarg( nullptr );

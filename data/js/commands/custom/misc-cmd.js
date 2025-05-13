@@ -59,6 +59,8 @@ function CommandRegistration()
 	RegisterCommand( "gettemptagmap", 2, true ); // Spit out a list of all custom tags on object
 	RegisterCommand( "listpets", 2, true ); // Spit out a list of all pets owned by target
 	RegisterCommand( "listfollowers", 2, true ); // Spit out a list of all followers of target
+	RegisterCommand( "resetskillcaps", 3, true ); // Fix corrupted player skill caps
+	RegisterCommand( "resetskillusage", 3, true ); // Fix stuck skill usage for all players
 }
 
 function command_RENAME( pSock, execString )
@@ -1051,7 +1053,7 @@ function onCallback29( pSock, myTarget )
 			pSock.SysMessage( tempMsg.replace( /%s/gi, newExpiryTime ));
 
 			tempMsg = GetDictionaryEntry( 2765, pSock.language ); // // Remaining time: %d seconds
-			pSock.SysMessage(tempMsg.replace(/%d/gi, Math.round(( expiryTime - currentTime ) / 1000 ).toString() ));
+			pSock.SysMessage( tempMsg.replace( /%d/gi, Math.round(( expiryTime - currentTime ) / 1000 ).toString() ));
 		}
 		else
 		{
@@ -1192,7 +1194,7 @@ function onCallback32( socket, ourObj )
 		var StrangeByte = socket.GetWord(1);
 
 		// If connected with a client lower than v7.0.9, manually add height of targeted tile
-		if ((StrangeByte == 0 && ourObj.isItem) || (socket.clientMajorVer <= 7 && socket.clientSubVer < 9))
+		if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
 		{
 			z += GetTileHeight( socket.GetWord( 17 ));
 		}
@@ -1243,7 +1245,7 @@ function onCallback33( socket, ourObj )
 		var StrangeByte = socket.GetWord(1);
 
 		// If connected with a client lower than v7.0.9, manually add height of targeted tile
-		if ((StrangeByte == 0 && ourObj.isItem) || (socket.clientMajorVer <= 7 && socket.clientSubVer < 9))
+		if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
 		{
 			z += GetTileHeight( socket.GetWord( 17 ));
 		}
@@ -1402,6 +1404,40 @@ function onCallback38( pSock, ourObj )
 			}
 		}
 	}
+}
+
+// Reset corrupted skill caps for player characters. Only use in emergency.
+function command_RESETSKILLCAPS( pSock, execString )
+{
+	var resetCount = IterateOver( "CHARACTER" );
+	pSock.SysMessage( "Reset skillcaps for " + resetCount + " players back to default." );
+}
+
+function onIterate( toCheck )
+{
+	if( toCheck.isChar && !toCheck.npc )
+	{
+		toCheck.skillCaps.allskills = 0;
+		return true;
+	}
+	return false;
+}
+
+// Reset stuck skill usage for player characters. Only use in emergency.
+function command_RESETSKILLUSAGE( pSock, execString )
+{
+	var resetCount = IterateOver( "CHARACTER" );
+	pSock.SysMessage( "Reset skill usage for " + resetCount + " players back to false." );
+}
+
+function onIterate( toCheck )
+{
+	if( toCheck.isChar && !toCheck.npc )
+	{
+		toCheck.skillsused.allskills = false;
+		return true;
+	}
+	return false;
 }
 
 function _restorecontext_() {}
