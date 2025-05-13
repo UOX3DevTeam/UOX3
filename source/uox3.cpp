@@ -1579,7 +1579,7 @@ auto PassiveManaRegen( CSocket *mSock, CChar &mChar, UI16 maxMana ) -> SI32
 			R64 negativeEffect = ( armorWeight * normalizedArmor ) * 6.0;
 
 			// Calculate final time until next mana regen, in seconds
-			nextManaRegen = (( nextManaRegen / 1000 ) * ( 7.0 - positiveEffect + negativeEffect )) * 1000;
+			nextManaRegen = (( nextManaRegen / 1000 ) - positiveEffect + negativeEffect ) * 1000;
 
 			// Increment mana based on the calculated regeneration time
 			SI32 manaIncrement = mChar.IsMeditating() ? 2 : 1; // double if actively meditating
