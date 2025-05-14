@@ -1166,7 +1166,7 @@ void CSkills::UpdateSkillLevel( CChar *c, UI08 s ) const
 	SI16 aInt = c->ActualIntelligence();
 	UI16 bSkill = c->GetBaseSkill( s );
 
-	UI16 temp = ((( sStr * aStr ) / 100 + ( sDex * aDex ) / 100 + ( sInt + aInt ) / 100) * ( 1000 - bSkill )) / 1000 + bSkill;
+	UI16 temp = (( static_cast<R32>( sStr * aStr ) / 100.0f + static_cast<R32>( sDex * aDex ) / 100.0f + static_cast<R32>( sInt * aInt ) / 100.0f ) * static_cast<R32>( 1000 - bSkill )) / 1000.0f + static_cast<R32>( bSkill );
 	c->SetSkill( std::max( bSkill, temp ), s );
 }
 
