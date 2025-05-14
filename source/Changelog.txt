@@ -1,3 +1,7 @@
+14/05/2025 - Xuri
+	Fixed an issue where integer division and rounding of values could lead to skill gains not being visible to player
+	Fixed an issue where intelligence stat would not contribute to skill points based on skills.dfn setup the same way as dex/str
+
 12/05/2025 - Xuri
 	Updated global script (js/server/global.js) to make use of onUseBandageMacro() to enable usage of bandage macros in client
 	Overhaul of Healing skill (js/skill/healing.js and js/skill/healing_slip.js) with fixes and improved era support. Script now includes some options that can be modified at top of script to override era-specific behavior. Summary of changes:
