@@ -520,6 +520,20 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		ourItem.layer = nVal;
 		okMsg( socket );
 		break;
+	case "DAMAGE":
+		var splitValues = socket.xText.split( " " );
+		if( splitValues[2] )
+		{
+			ourItem.lodamage = parseInt( splitValues[1] );
+			ourItem.hidamage = parseInt( splitValues[2] );
+		}
+		else
+		{
+			ourItem.lodamage = parseInt( splitValues[1] );
+			ourItem.hidamage = parseInt( splitValues[1] );
+		}
+		ourItem.Refresh();
+		okMsg( socket );
 	case "LODAMAGE":
 		ourItem.lodamage = nVal;
 		okMsg( socket );

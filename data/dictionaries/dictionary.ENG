@@ -3741,6 +3741,15 @@
 8213=Section ID from DFNs object originated from
 8214=Is item stealable? 0 = not stealable, 1 = stealable, 2 = stealable rare
 8215=Invalid target. Please select a valid item or NPC
+8251=Wiping NPCs...
+8252=Wiped %i NPCs
+8253=Select NPC to move remotely using xrun:
+8254=Select NPC to move remotely using xwalk:
+8255=Select NPC to turn remotely using xturn:
+8256=Select movement (%s) destination:
+8257=You must target an NPC!
+8258=You bind the wound and stop the bleeding
+8259=The bleeding wounds have healed, you are no longer bleeding!
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Account number associated with player. Controlled by server (Read-Only)
 8301=NPC AI Type

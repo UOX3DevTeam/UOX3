@@ -1,3 +1,34 @@
+14/05/2025 - Xuri
+	Fixed an issue where integer division and rounding of values could lead to skill gains not being visible to player
+	Fixed an issue where intelligence stat would not contribute to skill points based on skills.dfn setup the same way as dex/str
+
+12/05/2025 - Xuri
+	Updated global script (js/server/global.js) to make use of onUseBandageMacro() to enable usage of bandage macros in client
+	Overhaul of Healing skill (js/skill/healing.js and js/skill/healing_slip.js) with fixes and improved era support. Script now includes some options that can be modified at top of script to override era-specific behavior. Summary of changes:
+		Healing actions are now difficulty based:
+			Resurrect chance scales from 25% (min 80.0 primary/secondary skill) to 65% at avg 100.0 skill to 100% at avg 120.0 skill
+			Cure chance scales from 80% (min 60.0 primary/secondary skill) to 92% at avg 100.0 skill and 100% at avg 120.0 skill, and is reduced by 10% per level of poison on target
+			Upper difficulty for Healing skill checks now changes based on % loss of health on target and based on its maxhp, so to continue gaining skills from healing, one needs to heal targets with higher and higher % of their health lost
+			For T2A core shard era, healing can only bring player to ~65.0 skill, curing can bring player from 60.0 to ~85.0 skill, and resurrection can bring player from 80.0 to 100+ skill.
+			For UOR and beyond, healing damage can bring player all the way to GM skill and beyond, without need to cure/resurrect
+		Base amount of damage healed with bandages in SE era and beyond adjusted to 36-60, compared to 43-80 for AoS and below
+		In HS era and beyond, min 80.0 primary and 80.0 secondary healing skill will now trigger attempt at curing poison/bleed at half normal heal duration (but with lower chance of success). If it succeeds, amount of health healed is reduced proportional to strength of poison cured. If it fails, another cure attempt is made after the heal.
+		Mortal Strike now blocks heal attempts on a target, but not attempts to cure poison/bleed
+		Fingers slipping due to being attacked while bandaging now has a higher threshold to take place for SE era and beyond, and scales further based on dexterity in HS era and beyond - while AOS era and below has a very low threshold for this
+	Updated .CheckSkill() Character JS Method to support another parameter which can force the result of a skillcheck (-1 = failure, 0 = use skillcheck result, 1 = success):
+		.CheckSkill( skillNum, minSkill, maxSkill[, isCraftSkill, forceResult ] )
+	Updated onSkillCheck() JS Event with another parameter, with the value of the optional forceResult parameter in CheckSkill()
+		onSkillCheck( pUser, skillID, lowSkill, highSkill, forceResult )
+	Fixed an issue where skill caps for player characters were not correctly initialized, resulting in unpredictable behavior
+	Fixed an issue with mana regen timer for MANAREGENMODE=1 (LBR and below) where timer was never adjusted
+	Fix for pets getting stuck staring at potential targets in combat while simultaneously ignoring them
+	The damage of a weapon can now also be modified via the 'set damage # command. Supported syntax:
+		'set damage # // sets both lodamage and hidamage to value of #
+		'set damage # # // sets lowdamage to first value, hidamage to second value
+	Added two new Admin commands to help address issues with player characters. Use sparingly!
+		'resetskillcaps // Resets ALL individual skillcaps for ALL player characters back to default
+		'resetskillusage // Resets skill usage status of all skills for ALL player characters to false, to unblock their use
+
 08/05/2025 - Xuri
 	Added new JS Event that triggers when dismounting
 		onDismount( pUser, npcMount )
