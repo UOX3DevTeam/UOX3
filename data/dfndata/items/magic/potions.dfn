@@ -373,3 +373,15 @@ script=5041
 {
 get=0x1940
 }
+
+[petbondingpotion]
+{
+get=base_potion
+name=Pet Bonding Potion
+id=0x0F04
+colour=2629
+value=80 40
+type=19
+morey=10
+morez=1
+}
