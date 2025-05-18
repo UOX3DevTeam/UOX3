@@ -3741,6 +3741,15 @@
 8213=Identyfikator sekcji z DFN, z którego pochodzi obiekt
 8214=Czy przedmiot można ukraść? 0 = nie można ukraść, 1 = można ukraść, 2 = można ukraść rzadko
 8215=Nieprawidłowy cel. Wybierz prawidłowy przedmiot lub NPC
+8251=Usuwanie postaci niezależnych...
+8252=Usunięto %i postaci niezależnych
+8253=Wybierz postać niezależną do zdalnego przeniesienia za pomocą xrun:
+8254=Wybierz postać niezależną do zdalnego przeniesienia za pomocą xwalk:
+8255=Wybierz postać niezależną do zdalnego obrócenia za pomocą xturn:
+8256=Wybierz cel ruchu (%s):
+8257=Musisz wybrać postać niezależną!
+8258=Opatrujesz ranę i zatrzymujesz krwawienie
+8259=Krwawiące rany zostały wyleczone, nie krwawisz już!
 // [8300-8499] Menu ustawień - opisy właściwości znaków
 8300=Numer konta powiązanego z graczem. Kontrolowany przez serwer (tylko do odczytu)
 8301=Typ SI NPC

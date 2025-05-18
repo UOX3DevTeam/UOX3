@@ -3741,6 +3741,15 @@
 8213=Schnittstellen-ID aus DFNs, aus denen das Objekt stammt
 8214=Ist der Gegenstand stehlbar? 0 = nicht stehlbar, 1 = stehlbar, 2 = selten stehlbar
 8215=Ungültiges Ziel. Bitte wählen Sie einen gültigen Gegenstand oder NPC aus
+8251=NPCs löschen...
+8252=%i NPCs gelöscht
+8253=Wähle einen NPC aus, der mit xrun ferngesteuert bewegt werden soll:
+8254=Wähle einen NPC aus, der mit xwalk ferngesteuert bewegt werden soll:
+8255=Wähle einen NPC aus, der mit xturn ferngesteuert gedreht werden soll:
+8256=Wähle das Bewegungsziel (%s) aus:
+8257=Du musst einen NPC als Ziel auswählen!
+8258=Du verbindest die Wunde und stillst die Blutung
+8259=Die blutenden Wunden sind verheilt, du blutest nicht mehr!
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Kontonummer, die dem Spieler zugeordnet ist. Wird vom Server gesteuert (Read-Only)
 8301=NPC-KI-Typ

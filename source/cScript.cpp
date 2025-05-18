@@ -3385,7 +3385,7 @@ SI08 cScript::OnSpellLoss( CItem *book, const UI08 spellNum )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when a skillcheck is performed
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill )
+SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill, SI08 overrideOutcome )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( myChar ) || skill > ALLSKILLS )
@@ -3394,14 +3394,15 @@ SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 	if( !ExistAndVerify( seOnSkillCheck, "onSkillCheck" ))
 		return RV_NOFUNC;
 
-	jsval params[5], rval;
+	jsval params[6], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( skill );
 	params[2] = INT_TO_JSVAL( lowSkill );
 	params[3] = INT_TO_JSVAL( highSkill );
 	params[4] = BOOLEAN_TO_JSVAL( isCraftSkill );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillCheck", 5, params, &rval );
+	params[5] = INT_TO_JSVAL( overrideOutcome );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillCheck", 6, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSkillCheck, false );
@@ -3779,6 +3780,35 @@ SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar )
 	}
 
 	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDismount()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Allows triggering effects upon dismounting a mount
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnDismount( CChar *pChar, CChar *npcMount )
+{
+	if( !ValidateObject( pChar ) || !ValidateObject( npcMount ))
+		return false;
+
+	if( !ExistAndVerify( seOnDismount, "onDismount" ))
+		return false;
+
+	jsval params[2], rval;
+	JSObject *pObj = JSEngine->AcquireObject( IUE_CHAR, pChar, runTime );
+	JSObject *npcObj = JSEngine->AcquireObject( IUE_CHAR, npcMount, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( pObj );
+	params[1] = OBJECT_TO_JSVAL( npcObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDismount", 2, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnDismount, false );
+	}
+
+	return ( retVal == JS_TRUE );
 }
 
 //o------------------------------------------------------------------------------------------------o

@@ -243,3 +243,17 @@ function onDeath( pDead, iCorpse )
 
 	return TriggerEvent( 5045, "onDeath", pDead, iCorpse );
 }
+
+// Triggers based on bandage macro in client
+function onUseBandageMacro( pSock, targChar, bandageItem )
+{
+	if( pSock != null && ValidateObject( targChar ) && ValidateObject( bandageItem ) && bandageItem.amount >= 1 )
+	{
+		var pUser = pSock.currentChar;
+		if( ValidateObject( pUser ))
+		{
+			TriggerEvent( 4000, "onUseCheckedTriggered", pUser, targChar, bandageItem );
+		}
+	}
+	return true;
+}

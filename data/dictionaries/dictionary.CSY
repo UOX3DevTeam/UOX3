@@ -3739,6 +3739,15 @@
 8213=ID sekce z DFNs objekt pochází z
 8214=Dá se předmět ukrást? 0 = nelze ukrást, 1 = lze ukrást, 2 = lze ukrást vzácně
 8215=Neplatný cíl. Vyberte platnou položku nebo NPC
+8251=Vymazání NPC...
+8252=Vymazáno %i NPC
+8253=Vyberte NPC, které chcete přesunout na dálku pomocí xrun:
+8254=Vyberte NPC, které chcete přesunout na dálku pomocí xwalk:
+8255=Vyberte NPC, které chcete otočit na dálku pomocí xturn:
+8256=Vyberte cíl pohybu (%s):
+8257=Musíte vybrat NPC!
+8258=Ošetřil jsi ránu a zastavil krvácení
+8259=Krvácející rány se zahojily, už nekrvácíš!
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Číslo účtu přidružené k hráči. Řízeno serverem (pouze pro čtení)
 8301=Typ umělé inteligence NPC

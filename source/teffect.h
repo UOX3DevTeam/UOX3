@@ -14,9 +14,10 @@ private:
 	bool			dispellable;
 	CBaseObject *	objptr;
 	UI16			assocScript;
+	UI32			pauseTime;
 
 public:
-	CTEffect() : source( INVALIDSERIAL ), dest( INVALIDSERIAL ), expiretime( 0 ), num( 0 ), more1( 0 ), more2( 0 ), more3( 0 ), dispellable( false ), objptr( nullptr ), assocScript( 0xFFFF )
+	CTEffect() : source( INVALIDSERIAL ), dest( INVALIDSERIAL ), expiretime( 0 ), pauseTime( 0 ), num( 0 ), more1( 0 ), more2( 0 ), more3( 0 ), dispellable( false ), objptr( nullptr ), assocScript( 0xFFFF )
 	{
 	}
 
@@ -24,6 +25,7 @@ public:
 	CBaseObject *ObjPtr( void ) const		{	return objptr;			}
 	bool	Dispellable( void ) const		{	return dispellable;		}
 	UI32	ExpireTime( void ) const		{	return expiretime;		}
+	UI32	PauseTime( void ) const			{	return pauseTime;		}
 	SERIAL	Source( void ) const			{	return source;			}
 	SERIAL	Destination( void ) const		{	return dest;			}
 	UI08	Number( void ) const			{	return num;				}
@@ -41,6 +43,7 @@ public:
 	void	Dispellable( bool value )		{	dispellable = value;	}
 	void	ObjPtr( CBaseObject *value )	{	objptr = value;			}
 	void	AssocScript( UI16 value )		{	assocScript = value;	}
+	void	PauseTime( UI32 value )			{	pauseTime = value;	}
 
 	bool	Save( std::ostream &effectDestination ) const; // saves the current effect
 };

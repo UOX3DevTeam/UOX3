@@ -634,7 +634,7 @@ auto cEffects::CheckTempeffects() -> void
 			removeEffects.push_back( Effect );
 			continue;
 		}
-		if( Effect->ExpireTime() > j )
+		if( Effect->ExpireTime() > j || Effect->PauseTime() > 0 )
 			continue;
 
 		if( Effect->Destination() < BASEITEMSERIAL )
@@ -1179,6 +1179,39 @@ void ReverseEffect( CTEffect *Effect )
 		}
 	}
 	Items->CheckEquipment( s );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PauseEffect()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Pause a temp effect
+//o------------------------------------------------------------------------------------------------o
+void PauseEffect( CTEffect *Effect )
+{
+	// Store timestamp for when effect was paused
+	// We'll use this later when we resume the effect
+	// That's all!
+	Effect->PauseTime( BuildTimeValue( 0 ));
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ResumeEffect()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Resume a temp effect that has been paused
+//o------------------------------------------------------------------------------------------------o
+void ResumeEffect( CTEffect *Effect )
+{
+	// Let's resume the effect - if it's paused
+	auto pauseTime = Effect->PauseTime();
+	if( pauseTime > 0 )
+	{
+		// Effect IS paused, let's resume it and prolong the original timer by the amount of time it's been paused
+		const UI32 currTime = cwmWorldState->GetUICurrentTime();
+		auto expireTime = Effect->ExpireTime();
+		expireTime = expireTime + ( currTime - pauseTime );
+		Effect->ExpireTime( expireTime );
+		Effect->PauseTime( 0 );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1927,6 +1960,12 @@ void cEffects::LoadEffects( void )
 										}
 									}
 									break;
+								case 'P':
+									if( UTag == "PAUSE" )
+									{
+										toLoad->PauseTime( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) + cwmWorldState->GetUICurrentTime() );
+									}
+									break;
 								case 'S':
 									if( UTag == "SOURCE" )
 									{
@@ -1981,6 +2020,7 @@ bool CTEffect::Save( std::ostream &effectDestination ) const
 	// Decimal / String Values
 	effectDestination << std::dec;
 	effectDestination << "Expire=" + std::to_string( ExpireTime() - cwmWorldState->GetUICurrentTime() ) + newLine;
+	effectDestination << "Pause=" + std::to_string( PauseTime() - cwmWorldState->GetUICurrentTime() ) + newLine;
 	effectDestination << "Number=" + std::to_string( Number() ) + newLine;
 	effectDestination << "More1=" + std::to_string( More1() ) + newLine;
 	effectDestination << "More2=" + std::to_string( More2() ) + newLine;

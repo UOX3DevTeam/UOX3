@@ -3905,6 +3905,15 @@
 8213=Identification de la section dans les DFNs d'où provient l'objet.
 8214=L'objet est-il volable ? 0 = non volable, 1 = volable, 2 = volable rare
 8215=Cible invalide. Veuillez sélectionner un objet ou un PNJ valide
+8251=Suppression des PNJ...
+8252=Suppression de %i PNJ
+8253=Sélectionnez le PNJ à déplacer à distance à l'aide de xrun :
+8254=Sélectionnez le PNJ à déplacer à distance à l'aide de xwalk :
+8255=Sélectionnez le PNJ à faire pivoter à distance à l'aide de xturn :
+8256=Sélectionnez la destination du déplacement (%s) :
+8257=Vous devez cibler un PNJ !
+8258=Vous pansez la blessure et arrêtez l'hémorragie
+8259=Les blessures hémorragiques sont guéries, vous ne saignez plus !
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numéro de compte associé au joueur. Contrôlé par le serveur (en lecture seule).
 8301=Type d'IA du PNJ
