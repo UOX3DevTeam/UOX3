@@ -2191,7 +2191,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	{
 		if( i->IsTamed() && ValidateObject( i->GetOwnerObj() ) && !cwmWorldState->creatures[i->GetId()].IsHuman() )
 		{
-			TAGMAPOBJECT petBond =i->GetTag( "isBondedPet");
+			TAGMAPOBJECT petBond = i->GetTag( "isBondedPet" );
 			if( petBond.m_IntValue == 1  )
 			{
 				charName += " (bonded) ";

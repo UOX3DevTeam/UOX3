@@ -2177,6 +2177,15 @@ void CCharStuff::ReleasePet( CChar *pet )
 		default:
 			break;
 	}
+
+	// Remove Bonding if its Bonded
+	TAGMAPOBJECT petBond = pet->GetTag( "isBondedPet" );
+	if( petBond.m_IntValue == 1  )
+	{
+		petBond.m_IntValue = 0;
+		pet->SetTag( "isBondedPet", petBond );
+		pet->RemoveScriptTrigger( 3107 );// Bonding.js
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
