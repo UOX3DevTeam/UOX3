@@ -179,6 +179,7 @@ function CheckTameSuccess( pUser, toTame )
 		toTame.aitype		= 0;
 		toTame.tamed		= true;
 		toTame.loyalty 		= 25; // start at 25 out of 100
+		toTame.AddScriptTrigger( 3107 );//Add bonding script trigger
 
 		var hasBeenOwner = toTame.HasBeenOwner( pUser );
 		if( checkPetControlDifficulty && hasBeenOwner )

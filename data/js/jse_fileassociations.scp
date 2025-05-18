@@ -132,6 +132,8 @@
 // pets from pet static end
 3105=npc/ai/stablemaster.js
 3106=npc/pets/mount_restrictions.js
+3107=npc/pets/bonding.js
+3108=server/network/0xbf_sendnpcghostmode.js
 // ------------------------
 
 // AI-Stuff

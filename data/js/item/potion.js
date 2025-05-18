@@ -278,12 +278,27 @@ function onUseChecked( pUser, iUsed )
 				pUser.isUsingPotion = true;
 				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
+			case 10:		// Pet Bonding Potion
+				switch( iUsed.morez )
+				{
+					case 1:
+						socket.tempObj = iUsed;
+						socket.CustomTarget( 1, "Target the pet you wish to bond with. Press ESC to cancel. This item is consumed on successful use, so choose wisely!");
+						break;
+					default:
+						break;
+				}
+				pUser.StaticEffect( 0x376A, 0x09, 0x06 );
+				pUser.SoundEffect( 0x01E7, true );
+				pUser.isUsingPotion = true;
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
+				break;
 			default:
 				break;
 		}
 
 		// For potions other than explosion potions, consume potion upon use
-		if( iUsed.morey != 3 )
+		if( iUsed.morey != 3 || iUsed.morey != 10)
 		{
 			pUser.SoundEffect( 0x0030, true );
 			if( pUser.id > 0x0189 && !pUser.isonhorse )
@@ -368,6 +383,41 @@ function onCallback0( socket, ourObj )
 
 		// Play moving effect of potion being thrown to potion's target location
 		DoMovingEffect( mChar, iUsed, 0x0F0D, 5, 0, false, 0, 0 );
+	}
+}
+
+function onCallback1( socket, ourObj )
+{
+	var mChar = socket.currentChar;
+	var iUsed = socket.tempObj;
+	if( ourObj.GetTag ("isBondedPet"))
+	{
+		socket.SysMessage( "That pet is already bonded to you."); // That pet is already bonded to you.
+	}
+	else if (ourObj.owner != mChar)
+	{
+		socket.SysMessage( "This is not your pet!"); // This is not your pet!
+	}
+	else
+	{
+		ourObj.SetTag ("isBondedPet", true);
+		socket.SysMessage( "Your pet has bonded with you!"); // Your pet has bonded with you!
+
+		if( iUsed.amount > 1 )
+		{
+			iUsed.amount--;
+		}
+		else
+		{
+			iUsed.Delete();
+		}
+
+		// Create empty bottle
+		var eBottle = CreateDFNItem( socket, pUser, "0x0F0E", 1, "ITEM", true );
+		if( eBottle && eBottle.isItem )
+		{
+			eBottle.decay = true;
+		}
 	}
 }
 
