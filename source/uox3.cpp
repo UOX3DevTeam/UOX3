@@ -1253,6 +1253,13 @@ auto PassiveHealthRegen( CChar &mChar, UI16 maxHP ) -> SI32
 
 	if( mChar.GetHP() < maxHP )
 	{
+		TAGMAPOBJECT deadPet = mChar.GetTag( "isPetDead" );
+		if( deadPet.m_IntValue == 1 )
+		{
+			// If the pet is dead, we don't want to regen health for the owner
+			return nextHealthRegen;
+		}
+
 		if( !cwmWorldState->ServerData()->HungerSystemEnabled() || ( mChar.GetHunger() > 0 )
 			|| ( !Races->DoesHunger( mChar.GetRace() ) && (( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0) || mChar.IsNpc() )))
 		{

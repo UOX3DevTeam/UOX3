@@ -13,8 +13,6 @@ function onDeathBlow( killedPet, petKiller )
 		killedPet.SetTag( "PetsAI", killedPet.aitype.toString() );
 		killedPet.SetTag( "PetsHue", killedPet.colour.toString() );
 		killedPet.SetTag( "isPetDead", true );
-		killedPet.hunger = 6;
-		killedPet.willhunger  = false;
 		killedPet.aitype = 0;
 		killedPet.health = 1;
 		killedPet.target = null;
@@ -36,29 +34,6 @@ function onDeathBlow( killedPet, petKiller )
 		return false;
 	}
 	return true;
-}
-
-function onAISliver( aiPet )
-{
-	if( !aiPet.tamed )
-	{
-		if( aiPet.GetTag( "isPetDead" ) == true )
-		{
-			aiPet.Delete();
-		}
-		else
-		{
-			aiPet.SetTag( "isBondedPet", false );
-			aiPet.RemoveScriptTrigger( 3107 ); //Remove bonding script trigger
-		}
-	}
-
-	if( aiPet.tamed && aiPet.GetTag( "isPetDead" ) == true )
-	{
-		aiPet.health = 1;
-	}
-
-	return false;
 }
 
 function onSpeech( strSaid, pTalking, pet ) 

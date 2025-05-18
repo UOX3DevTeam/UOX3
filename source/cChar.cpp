@@ -592,8 +592,9 @@ void CChar::DoHunger( CSocket *mSock )
 		}
 		else if( IsTamed() && GetTamedHungerRate() > 0 )
 		{
+			TAGMAPOBJECT deadPet = GetTag( "isPetDead" );
 			// Handle hunger for pets
-			if( !WillHunger() || GetMounted() || GetStabled() )
+			if( !WillHunger() || GetMounted() || GetStabled() || deadPet.m_IntValue == 1 )
 				return;
 
 			// Pets don't hunger if owner is offline
