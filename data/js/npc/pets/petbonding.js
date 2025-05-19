@@ -51,7 +51,7 @@ function onCombatStart( pAttacker, pDefender )
 		var pAttackSock = pAttacker.socket;
 		if( pAttackSock )
 		{
-			pAttackSock.SysMessage( "You can not perform beneficial acts on your target.");
+			pAttackSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language ));// You can not perform beneficial acts on your target.
 		}
 		return false;
 	}
@@ -70,7 +70,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 		var pSock = pCaster.socket;
 		if( pSock != null )
 		{
-			pSock.SysMessage( "You can not perform beneficial acts on your target." ); // You may not cast that on the Young.
+			pSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language )); // You can not perform beneficial acts on your target.
 			return 2;
 		}
 	}
@@ -95,7 +95,7 @@ function onDamage(damaged, pAttacker, damageValue, damageType)
 	{
 		var atkSock = ValidateObject(pAttacker) ? pAttacker.socket : null;
 		if (atkSock)
-			atkSock.SysMessage( "You can not perform beneficial acts on your target." );
+			atkSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language ));// You can not perform beneficial acts on your target.
 		return false;
 	}
 

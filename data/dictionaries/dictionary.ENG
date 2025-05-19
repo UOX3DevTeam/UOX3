@@ -5505,5 +5505,6 @@
 19320=That pet is already bonded to you.
 19321=This is not your pet!
 19322=Are you sure you want to release your pet? Summoned Pets will vanish permanently!
+19323=You can not perform beneficial acts on your target.
 }
 EOF
