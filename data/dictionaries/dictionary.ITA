@@ -5481,5 +5481,28 @@
 19234=La tua confusione è passata, ora puoi armare un'arma!
 19235=Non sei più ferito a morte.
 19236=Le ferite sanguinanti sono guarite, non stai più sanguinando!
+// [19301-19330] Animale domestico legato e morto
+19301=Non puoi scambiare un animale domestico morto.
+19302=L'animale domestico morto non può attaccare.
+19303=Non sei abbastanza abile da resuscitare quell'animale.
+19304=Solo gli animali domestici legati al loro proprietario possono essere resuscitati.
+19306=Hai resuscitato con successo l'animale!
+19307=Puoi resuscitare solo gli animali domestici legati al loro proprietario.
+19308=Il tuo animale domestico si è legato a te!
+19309=Il tuo animale domestico è morto e non risponderà a quel comando.
+19310=Hai interrotto il legame con il tuo animale domestico.
+19311=Sei sicuro di voler interrompere il legame con il tuo animale domestico?
+19311=Liberare un animale domestico fantasma lo distruggerà, senza possibilità di recupero. Vuoi continuare?
+19312=Il proprietario dell'animale domestico deve essere nelle vicinanze per tentare la resurrezione.
+19313=Il tuo animale domestico non può creare un legame con te finché la tua capacità di addomesticamento non è aumentata.
+19314=Il tuo animale domestico non può creare un legame con te finché la tua capacità di bushido non è aumentata.
+19315=Solo gli animali domestici legati al loro proprietario possono essere resuscitati.
+19316=L'animale deve trovarsi nella stessa casa in cui si trova per essere resuscitato.
+19317=Il proprietario dell'animale domestico deve essere all'interno di questa casa prima di poter rianimare questa creatura.
+19318=Scegli l'animale domestico con cui desideri creare un legame. Premi ESC per annullare. Questo oggetto si consuma con l'uso riuscito, quindi scegli con saggezza!
+19319=Legame con l'animale domestico annullato.
+19320=Quell'animale domestico è già legato a te. 19321=Questo non è il tuo animale domestico!
+19322=Sei sicuro di voler liberare il tuo animale domestico? Gli animali domestici evocati spariranno definitivamente!
+19323=Non puoi compiere azioni benefiche sul tuo bersaglio.
 }
 EOF

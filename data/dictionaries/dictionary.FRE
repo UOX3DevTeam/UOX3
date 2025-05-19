@@ -5637,5 +5637,27 @@
 19234=Votre confusion est passée, vous pouvez maintenant armer une arme !
 19235=Vous n'êtes plus mortellement blessé.
 19236=Les plaies saignantes ont guéri, vous ne saignez plus !
+// [19301-19330] Animal lié et mort
+19301=Vous ne pouvez pas échanger un animal mort.
+19302=L'animal mort ne peut pas attaquer.
+19303=Vous n'êtes pas assez compétent pour ressusciter cet animal.
+19304=Seuls les animaux liés à leur propriétaire peuvent être ressuscités.
+19306=Vous avez ressuscité l'animal avec succès !
+19307=Vous ne pouvez ressusciter que les animaux liés à leur propriétaire.
+19308=Votre animal s'est lié à vous !
+19309=Votre animal est mort et ne répondra pas à cet ordre.
+19310=Vous avez rompu le lien avec votre animal.
+19311=Êtes-vous sûr de vouloir rompre le lien avec votre animal ?
+19311=Libérer un animal fantôme le détruira, sans aucune chance de récupération. Souhaitez-vous continuer ? 19312=Le propriétaire de l'animal doit être à proximité pour tenter la résurrection.
+19313=Votre animal ne peut pas se lier à vous tant que votre compétence d'apprivoisement n'est pas activée.
+19314=Votre animal ne peut pas se lier à vous tant que votre compétence de bushido n'est pas activée.
+19315=Seuls les animaux liés à leur propriétaire peuvent être ressuscités.
+19316=L'animal doit se trouver dans la même maison que vous pour être ressuscité.
+19317=Le propriétaire de l'animal doit être à l'intérieur de cette maison pour que vous puissiez ressusciter cette créature.
+19318=Ciblez l'animal avec lequel vous souhaitez vous lier. Appuyez sur ÉCHAP pour annuler. Cet objet est consommé en cas d'utilisation réussie, alors choisissez judicieusement !
+19319=Lien avec l'animal annulé.
+19320=Cet animal est déjà lié à vous.
+19321=Ce n'est pas votre animal ! 19322=Êtes-vous sûr de vouloir libérer votre familier ? Les familiers invoqués disparaîtront définitivement !
+19323=Vous ne pouvez pas effectuer d'actions bénéfiques sur votre cible.
 }
 EOF

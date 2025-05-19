@@ -5480,5 +5480,28 @@
 19234=Twoje zamieszanie minęło, możesz teraz uzbroić broń!
 19235=Nie jesteś już śmiertelnie ranny.
 19236=Krwawiące rany się zagoiły, już nie krwawisz!
+// [19301-19330] Związany i martwy zwierzak
+19301=Nie możesz handlować martwym zwierzakiem.
+19302=Martwy zwierzak nie może atakować.
+19303=Nie masz wystarczających umiejętności, aby wskrzesić tego zwierzaka.
+19304=Można wskrzesić tylko zwierzaki związane ze swoim właścicielem.
+19306=Pomyślnie wskrzesiłeś zwierzaka!
+19307=Możesz wskrzesić tylko zwierzaki związane ze swoim właścicielem.
+19308=Twój zwierzak nawiązał z tobą więź!
+19309=Twój zwierzak nie żyje i nie zareaguje na to polecenie.
+19310=Zrywasz więź ze swoim zwierzakiem.
+19311=Czy na pewno chcesz zerwać więź ze swoim zwierzakiem?
+19311=Uwolnienie ducha zwierzaka zniszczy go, bez szansy na odzyskanie. Czy chcesz kontynuować?
+19312=Właściciel zwierzaka musi być w pobliżu, aby podjąć próbę wskrzeszenia.
+19313=Twój zwierzak nie może nawiązać z tobą więzi, dopóki nie wzrośnie twoja zdolność oswajania zwierząt.
+19314=Twój zwierzak nie może nawiązać z tobą więzi, dopóki nie wzrośnie twoja zdolność bushido.
+19315=Można wskrzesić tylko zwierzaki związane ze swoim właścicielem.
+19316=Zwierzę musi znajdować się w tym samym domu co ty, aby zostać wskrzeszone.
+19317=Właściciel zwierzaka musi znajdować się w tym domu, zanim będziesz mógł wskrzesić to stworzenie.
+19318=Wybierz zwierzaka, z którym chcesz się związać. Naciśnij ESC, aby anulować. Ten przedmiot zostanie zużyty po pomyślnym użyciu, więc wybieraj mądrze!
+19319=Anulowano wiązanie ze zwierzakiem.
+19320=Ten zwierzak jest już związany z tobą.
+19321=To nie jest twój zwierzak! 19322=Czy na pewno chcesz uwolnić swojego zwierzaka? Przywołane zwierzaki znikną na stałe!
+19323=Nie możesz wykonywać korzystnych działań na swoim celu.
 }
 EOF

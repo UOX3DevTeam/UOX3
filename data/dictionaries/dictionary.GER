@@ -5481,5 +5481,29 @@
 19234=Ihre Verwirrung ist vorüber, Sie können jetzt eine Waffe bewaffnen!
 19235=Sie sind nicht mehr tödlich verwundet.
 19236=Die blutenden Wunden sind verheilt, Sie bluten nicht mehr!
+// [19301-19330] Verbundenes und totes Haustier
+19301=Du kannst ein totes Haustier nicht tauschen.
+19302=Das tote Haustier kann nicht angreifen.
+19303=Du bist nicht geschickt genug, um dieses Haustier wiederzubeleben.
+19304=Nur Haustiere, die mit ihrem Besitzer verbunden sind, können wiederbelebt werden.
+19306=Du hast das Haustier erfolgreich wiederbelebt!
+19307=Du kannst nur Haustiere wiederbeleben, die mit ihrem Besitzer verbunden sind.
+19308=Dein Haustier hat eine Bindung zu dir aufgebaut!
+19309=Dein Haustier ist tot und reagiert nicht auf diesen Befehl.
+19310=Du löst die Bindung zu deinem Haustier.
+19311=Möchtest du die Bindung zu deinem Haustier wirklich lösen?
+19311=Das Freilassen eines Geister-Haustiers zerstört es und kann nicht wiederhergestellt werden. Möchten Sie fortfahren?
+19312=Der Besitzer des Haustiers muss in der Nähe sein, um die Wiederbelebung zu versuchen.
+19313=Ihr Haustier kann keine Bindung zu Ihnen aufbauen, bis Ihre Fähigkeit zur Tierzähmung gestiegen ist.
+19314=Ihr Haustier kann keine Bindung zu Ihnen aufbauen, bis Ihre Bushido-Fähigkeit gestiegen ist.
+19315=Nur Haustiere, die mit ihrem Besitzer verbunden sind, können wiederbelebt werden.
+19316=Das Tier muss sich im selben Haus wie Sie befinden, um wiederbelebt zu werden.
+19317=Der Besitzer des Haustiers muss sich in diesem Haus befinden, bevor Sie dieses Tier wiederbeleben können.
+19318=Zielen Sie auf das Haustier, mit dem Sie eine Bindung aufbauen möchten. Drücken Sie ESC, um abzubrechen. Dieser Gegenstand wird bei erfolgreicher Verwendung verbraucht, wählen Sie also mit Bedacht!
+19319=Tierbindung abgebrochen.
+19320=Das Haustier ist bereits mit Ihnen verbunden.
+19321=Das ist nicht dein Haustier!
+19322=Möchtest du dein Haustier wirklich freilassen? Beschworene Haustiere verschwinden dauerhaft!
+19323=Du kannst keine positiven Handlungen an deinem Ziel vornehmen.
 }
 EOF

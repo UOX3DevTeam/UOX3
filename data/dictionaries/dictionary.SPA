@@ -5481,5 +5481,28 @@
 19234=¡Tu confusión ha pasado, ahora puedes armar un arma!
 19235=Ya no estás herido de muerte.
 19236=Las heridas sangrantes han sanado, ¡ya no sangras!
+// [19301-19330] Mascota vinculada y muerta
+19301=No puedes intercambiar una mascota muerta.
+19302=La mascota muerta no puede atacar.
+19303=No tienes la habilidad suficiente para resucitar a esa mascota.
+19304=Solo las mascotas vinculadas con su dueño pueden ser resucitadas.
+19306=¡Has resucitado a la mascota con éxito!
+19307=Solo puedes resucitar mascotas vinculadas con su dueño.
+19308=¡Tu mascota se ha vinculado contigo!
+19309=Tu mascota está muerta y no responderá a esa orden.
+19310=Rompiste el vínculo con tu mascota.
+19311=¿Estás seguro de que quieres romper el vínculo con tu mascota?
+19311=Liberar una mascota fantasma la destruirá, sin posibilidad de recuperación. ¿Deseas continuar?
+19312=El dueño de la mascota debe estar cerca para intentar la resurrección.
+19313=Tu mascota no puede formar un vínculo contigo hasta que tu habilidad de domesticación de animales haya aumentado.
+19314=Tu mascota no puede formar un vínculo contigo hasta que tu habilidad de bushido haya aumentado.
+19315=Solo las mascotas vinculadas con su dueño pueden resucitar.
+19316=El animal debe estar en la misma casa que tú para resucitar.
+19317=El dueño de la mascota debe estar dentro de esta casa para que puedas revivir a esta criatura.
+19318=Selecciona la mascota con la que deseas vincularte. Pulsa ESC para cancelar. Este objeto se consume al usarlo con éxito, ¡así que elige con cuidado!
+19319=Vínculo con la mascota cancelado.
+19320=Esa mascota ya está vinculada contigo. 19321=¡Esta no es tu mascota!
+19322=¿Seguro que quieres liberar a tu mascota? ¡Las mascotas invocadas desaparecerán permanentemente!
+19323=No puedes realizar acciones beneficiosas en tu objetivo.
 }
 EOF

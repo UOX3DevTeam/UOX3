@@ -5479,5 +5479,29 @@
 19234=Váš zmatek pominul, nyní můžete vyzbrojit zbraň!
 19235=Už nejsi smrtelně zraněný.
 19236=Krvácející rány se zahojily, už nekrvácíte!
+// [19301-19330] Poutaný a mrtvý mazlíček
+19301=Mrtvého mazlíčka nelze vyměnit.
+19302=Mrtvý mazlíček nemůže útočit.
+19303=Nejste dostatečně zkušení, abyste tohoto mazlíčka vzkřísili.
+19304=Vzkřísit lze pouze mazlíčky, kteří jsou poutáni se svým majitelem.
+19306=Malíčka jste úspěšně vzkřísili!
+19307=Můžete vzkřísit pouze mazlíčky, kteří jsou poutáni se svým majitelem.
+19308=Váš mazlíček se s vámi poutal!
+19309=Váš mazlíček je mrtvý a na tento příkaz nereaguje.
+19310=Přerušíte pouto se svým mazlíčkem.
+19311=Jste si jisti, že chcete přerušit pouto se svým mazlíčkem?
+19311=Vypuštění ducha mazlíčka ho zničí bez šance na uzdravení. Chcete pokračovat?
+19312=Majitel mazlíčka musí být poblíž, aby se mohl pokusit o vzkříšení.
+19313=Váš mazlíček si s vámi nemůže vytvořit pouto, dokud se nezvýší vaše schopnost ochočování zvířat.
+19314=Váš mazlíček si s vámi nemůže vytvořit pouto, dokud se nezvýší vaše schopnost bushido.
+19315=Vzkřísit lze pouze mazlíčky, kteří jsou s majitelem spojeni.
+19316=Zvíře musí být ve stejném domě jako vy, aby mohlo být vzkříšeno.
+19317=Majitel mazlíčka musí být uvnitř tohoto domu, než budete moci tohoto tvora oživit.
+19318=Zaměřte se na mazlíčka, se kterým se chcete spojit. Stiskněte ESC pro zrušení. Tato položka se při úspěšném použití spotřebuje, proto si vybírejte moudře!
+19319=Spojení s mazlíčkem zrušeno.
+19320=Tento mazlíček je s vámi již spojen.
+19321=Toto není váš mazlíček!
+19322=Jste si jisti, že chcete svého mazlíčka uvolnit? Přivolaní mazlíčci zmizí trvale!
+19323=Na svém cíli nemůžete provádět užitečné činy.
 }
 EOF

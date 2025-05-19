@@ -5481,5 +5481,29 @@
 19234=Sua confusão passou, agora você pode armar uma arma!
 19235=Você não está mais mortalmente ferido.
 19236=As feridas sangrentas sararam, você não está mais sangrando!
+// [19301-19330] Animal de estimação Bonded and Dead
+19301=Não se pode trocar um animal de estimação morto.
+19302=O animal de estimação morto não pode atacar.
+19303=Não és habilidoso o suficiente para ressuscitar aquele animal de estimação.
+19304=Apenas os animais de estimação ligados ao seu dono podem ser ressuscitados.
+19306=Resuscitaste o animal de estimação com sucesso!
+19307=Só pode ressuscitar animais de estimação que estejam ligados ao seu dono.
+19308=O seu animal de estimação criou um laço consigo!
+19309=O seu animal de estimação está morto e não responderá a este comando.
+19310=Quebra o vínculo com o seu animal de estimação.
+19311=Tem a certeza de que quer quebrar o vínculo com o seu animal de estimação?
+19311=Libertar um animal de estimação fantasma irá destruí-lo, sem qualquer hipótese de recuperação. Deseja continuar?
+19312=O dono do animal de estimação deve estar por perto para tentar a ressurreição.
+19313=O seu animal de estimação não pode criar um vínculo consigo até que a sua capacidade de domesticar animais tenha aumentado.
+19314=O seu animal de estimação não pode formar um vínculo consigo até que a sua habilidade bushido tenha aumentado.
+19315=Apenas os animais de estimação ligados ao seu dono podem ser ressuscitados.
+19316=O animal tem de estar na mesma casa que tu para ser ressuscitado.
+19317=O dono do animal de estimação deve estar dentro desta casa antes de poder reviver esta criatura.
+19318=Escolha o animal de estimação com o qual pretende criar laços. Prima ESC para cancelar. Este item é consumido com uma utilização bem-sucedida, por isso escolha com sabedoria!
+19319=Vínculo de animais de estimação cancelado.
+19320=Este animal de estimação já está ligado a si.
+19321=Este não é o seu animal de estimação!
+19322=Tem a certeza de que pretende libertar o seu animal de estimação? Os animais de estimação invocados desaparecerão permanentemente!
+19323=Não pode realizar atos benéficos no seu alvo.
 }
 EOF
