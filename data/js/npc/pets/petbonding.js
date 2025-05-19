@@ -148,7 +148,7 @@ function onDropItemOnNpc(pDropper, pPet, iFood)
 			pPet.SetTag( "bondingPlayer", pDropper.serial );
 
 			var bondingDelay = 3 * 24 * 60 * 60 * 1000; // 3 days
-			pPet.StartTimer( 1000, 42, true ); // TimerID 42, callback to same script
+			pPet.StartTimer( bondingDelay, 42, true ); // TimerID 42, callback to same script
 		}
 	}
 	else
