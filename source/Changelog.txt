@@ -1,3 +1,14 @@
+18/05/2025 - Dragon Slayer
+	Added support for pet bonding system similar to OSI mechanics
+		Pets now track bonding status using 'isBondedPet' tag
+		Bonding begins when player tames a tameable pet that meets taming skill requirements,
+		Pets become bonded after 7 days (604800000 ms) of loyalty to their owner,
+		Bonded pets no longer delete on death, but enter ghost state,
+		Added packet 'SendNpcGhostMode( pSock, unknownFlag, serial, ghostFlag )' to trigger bonded ghost appearance,
+	New JS event hook: onReleasePet( pTamer, pPet )
+		Triggered when a player releases a controlled pet,
+		Can be used to reset bonded status or perform cleanup.
+
 14/05/2025 - Xuri
 	Fixed an issue where integer division and rounding of values could lead to skill gains not being visible to player
 	Fixed an issue where intelligence stat would not contribute to skill points based on skills.dfn setup the same way as dex/str
