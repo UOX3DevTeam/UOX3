@@ -390,6 +390,13 @@ function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;
 	var iUsed = socket.tempObj;
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+	{
+		socket.SysMessage( GetDictionaryEntry( 19319, socket.language )); // Pet bonding canceled.
+		return;
+	}
+
 	if( ourObj.GetTag ( "isBondedPet" ))
 	{
 		socket.SysMessage( GetDictionaryEntry( 19320, socket.language )); // That pet is already bonded to you.
