@@ -160,8 +160,8 @@ function StartBonding( pUser, pPet )
 			pPet.SetTag( "bondingStarted", true );
 			pPet.SetTag( "bondingPlayer", pUser.serial );
 
-			var bondingDelay = 3 * 24 * 60 * 60 * 1000; // 3 days
-			pPet.StartTimer( 1000, 42, 3107 ); // TimerID 42, callback to same script
+			var bondingDelay = 604800000; // 7 days in milliseconds
+			pPet.StartTimer( bondingDelay, 42, 3107 ); // TimerID 42, callback to same script
 		}
 	}
 	else
