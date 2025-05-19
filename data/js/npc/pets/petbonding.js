@@ -137,32 +137,42 @@ function onReleasePet( pUser, pet )
 
 function onDropItemOnNpc(pDropper, pPet, iFood)
 {
-	var tameSkillRequired = pPet.skillToTame;
-	var dropperTameSkill = pDropper.baseskills.animaltaming;
-
-	if(( tameSkillRequired <= 291 || dropperTameSkill >= tameSkillRequired ) && pPet.GetTag( "isBondedPet" ) == false )
+	if( pPet.GetTag( "isPetDead" ) == true )
 	{
-		if( !pPet.GetTag( "bondingStarted" ))
-		{
-			pPet.SetTag( "bondingStarted", true );
-			pPet.SetTag( "bondingPlayer", pDropper.serial );
-
-			var bondingDelay = 3 * 24 * 60 * 60 * 1000; // 3 days
-			pPet.StartTimer( bondingDelay, 42, true ); // TimerID 42, callback to same script
-		}
-	}
-	else
-	{
-		pDropper.socket.SysMessage( GetDictionaryEntry( 19313, pDropper.socket.language ));// Your pet cannot form a bond with you until your animal taming ability has risen.
+		iFood.Refresh()
+		return 0;
 	}
 
 	iFood.Refresh()
 	return 1;
 }
 
+function StartBonding( pUser, pPet )
+{
+	pUser.socket.SysMessage("test" + pPet.name);
+	var tameSkillRequired = pPet.skillToTame;
+	var pUserTameSkill = pUser.baseskills.animaltaming;
+
+	if( tameSkillRequired <= 291 || pUserTameSkill >= tameSkillRequired )
+	{
+		if( !pPet.GetTag( "bondingStarted" ))
+		{
+			pPet.SetTag( "bondingStarted", true );
+			pPet.SetTag( "bondingPlayer", pUser.serial );
+
+			var bondingDelay = 3 * 24 * 60 * 60 * 1000; // 3 days
+			pPet.StartTimer( 1000, 42, 3107 ); // TimerID 42, callback to same script
+		}
+	}
+	else
+	{
+		pUser.socket.SysMessage( GetDictionaryEntry( 19313, pUser.socket.language ));// Your pet cannot form a bond with you until your animal taming ability has risen.
+	}
+}
+
 function onTimer( timerObj, timerID )
 {
-	if( timerID == 42 && timerObj.npc && !timerObj.GetTag( "isBondedPet" ))
+	if( timerID == 42 )
 	{
 		timerObj.SetTag( "isBondedPet", true );
 		timerObj.Refresh();

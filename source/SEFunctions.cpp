@@ -5313,6 +5313,9 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 379:	// GARGOYLEMAXWEIGHTBONUS
 				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleMaxWeightBonus() ));
 				break;
+			case 380:	// PETBONDINGENABLED
+				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->PetBondingEnabled() ));
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;

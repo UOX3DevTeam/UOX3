@@ -10,6 +10,7 @@ const maxFollowers = GetServerSetting( "MaxFollowers" );
 const maxPetOwners = GetServerSetting( "MaxPetOwners" );
 const maxTimesTamed = 5; // The maximum number of times a pet can be tamed (by different players)
 const checkPetControlDifficulty = GetServerSetting( "CheckPetControlDifficulty" );
+const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );
 
 function onSkill( pUser, objType, skillUsed )
 {
@@ -179,7 +180,11 @@ function CheckTameSuccess( pUser, toTame )
 		toTame.aitype		= 0;
 		toTame.tamed		= true;
 		toTame.loyalty 		= 25; // start at 25 out of 100
-		toTame.AddScriptTrigger( 3107 );//Add bonding script trigger
+		if( petBondingEnabled > 0 )
+		{
+			toTame.AddScriptTrigger( 3107 );//Add bonding script trigger
+			TriggerEvent( 3107, "StartBonding", pUser, toTame  );
+		}
 
 		var hasBeenOwner = toTame.HasBeenOwner( pUser );
 		if( checkPetControlDifficulty && hasBeenOwner )

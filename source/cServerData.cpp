@@ -399,7 +399,8 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"GARGOYLEMANAREGENBONUS"s, 376},
 	{"HUMANMAXWEIGHTBONUS"s, 377},
 	{"ELFMAXWEIGHTBONUS"s, 378},
-	{"GARGOYLEMAXWEIGHTBONUS"s, 379}
+	{"GARGOYLEMAXWEIGHTBONUS"s, 379},
+	{"PETBONDINGENABLED"s, 380}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -442,7 +443,7 @@ constexpr auto BIT_ITEMDECAYINHOUSES	= UI32( 32 );
 constexpr auto BIT_PAPERDOLLGUILDBUTTON = UI32( 33 );
 constexpr auto BIT_ATTSPEEDFROMSTAMINA	= UI32( 34 );
 constexpr auto BIT_SHOWDAMAGENUMBERS	= UI32( 35 );
-// 37 free!
+constexpr auto BIT_PETBONDINGENABLED		= UI32( 37 );
 constexpr auto BIT_EXTENDEDSTARTINGSTATS	= UI32( 38 );
 constexpr auto BIT_EXTENDEDSTARTINGSKILLS	= UI32( 39 );
 constexpr auto BIT_ASSISTANTNEGOTIATION		= UI32( 40 );
@@ -877,6 +878,7 @@ auto CServerData::ResetDefaults() -> void
 	MaxControlSlots( 0 ); // Default to 0, which is equal to off
 	MaxFollowers( 5 );
 	MaxPetOwners( 10 );
+	PetBondingEnabled( 0 );
 	ToolUseLimit( true );
 	ToolUseBreak( true );
 	ItemRepairDurabilityLoss( true );
@@ -1449,6 +1451,20 @@ auto CServerData::MaxStaminaMovement( SI16 value ) -> void
 auto CServerData::BuildSystemTimeValue( cSD_TID timerId ) const ->TIMERVAL
 {
 	return BuildTimeValue( static_cast<R32>( SystemTimer( timerId )));
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::PetBondingEnabled()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets status of server accouncements for players connecting/disconnecting
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::PetBondingEnabled() const -> bool
+{
+	return boolVals.test( BIT_PETBONDINGENABLED );
+}
+auto CServerData::PetBondingEnabled( bool newVal ) -> void
+{
+	boolVals.set( BIT_PETBONDINGENABLED, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5513,6 +5529,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "PETLOYALTYGAINONSUCCESS=" << static_cast<UI16>( GetPetLoyaltyGainOnSuccess() ) << '\n';
 		ofsOutput << "PETLOYALTYLOSSONFAILURE=" << static_cast<UI16>( GetPetLoyaltyLossOnFailure() ) << '\n';
 		ofsOutput << "PETLOYALTYRATE=" << SystemTimer( tSERVER_LOYALTYRATE ) << '\n';
+		ofsOutput << "PETBONDINGENABLED=" << ( PetBondingEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
@@ -7185,6 +7202,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 379:	// GARGOYLEMAXWEIGHTBONUS
 			GargoyleMaxWeightBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 380:	// PETBONDINGENABLED
+			PetBondingEnabled( std::stoi( value, nullptr, 0 ));
 			break;
 		default:
 			rValue = false;
