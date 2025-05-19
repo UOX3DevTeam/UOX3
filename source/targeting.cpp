@@ -1217,6 +1217,13 @@ void TransferTarget( CSocket *s )
 		return;
 	}
 
+	TAGMAPOBJECT deadPet = petChar->GetTag( "isPetDead" );
+	if( deadPet.m_IntValue == 1 )
+	{
+		s->SysMessage( 19301 ); // You may not trade a dead pet.
+		return;
+	}
+
 	if( cwmWorldState->ServerData()->YoungPlayerSystem() )
 	{
 		if( !mChar->IsNpc() && mChar->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && !targChar->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))

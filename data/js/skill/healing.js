@@ -230,12 +230,12 @@ function onCallback1( socket, ourObj )
 						}
 						else
 						{
-							socket.SysMessage("Only the pet's owner or friend can attempt resurrection.");
+							socket.SysMessage( GetDictionaryEntry( 19304, socket.language ));// Only pets bonded with their owner can be resurrected..
 						}
 					}
 					else
 					{
-						socket.SysMessage( " You are not skilled enough to resurrect that pet." );
+						socket.SysMessage( GetDictionaryEntry( 19303, socket.language ));// You are not skilled enough to resurrect that pet.
 						return;
 					}
 				}
@@ -652,7 +652,7 @@ function onTimer( mChar, timerID )
 								onPetResurrect( socket, ourObj );
 								ourObj.StaticEffect( 0x376A, 10, 16 );
 								ourObj.SoundEffect( 0x214, true );
-								socket.SysMessage( GetDictionaryEntry( 1272, socket.language )); // You successfully resurrected the patient!
+								socket.SysMessage( GetDictionaryEntry( 19306, socket.language )); // You successfully resurrected the pet!
 								resResult = 1;
 								mChar.RemoveScriptTrigger( 4014 ); // Remove healing_slip.js script
 								mChar.SetTempTag( "slipCount", null );
@@ -931,8 +931,6 @@ function onPetResurrect( socket, deadPet )
 	var petsHue = deadPet.GetTag( "PetsHue" );
 
 	TriggerEvent( 3108, "SendNpcGhostMode", socket, 0, deadPet.serial, 0  );
-	deadPet.hunger = 6;
-	deadPet.willhunger  = true;
 	deadPet.aitype = petsAI;
 	deadPet.colour = petsHue;
 	deadPet.target = null;

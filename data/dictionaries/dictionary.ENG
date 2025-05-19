@@ -5482,5 +5482,28 @@
 19234=Your confusion has passed, you may now arm a weapon!
 19235=You are no longer mortally wounded.
 19236=The bleeding wounds have healed, you are no longer bleeding!
+// [19301-19330] Bonded and Dead pet
+19301=You may not trade a dead pet.
+19302=The dead pet cannot attack.
+19303=You are not skilled enough to resurrect that pet.
+19304=Only pets bonded with their owner can be resurrected.
+19306=You successfully resurrected the pet!
+19307=Thou can only resurrect pets that are bonded with their owner.
+19308=Your pet has bonded with you!
+19309=Your pet is dead and will not respond to that command.
+19310=You break the bond with your pet.
+19311=Are you sure you want to break the bond with your pet?
+19311=Releasing a ghost pet will destroy it, with no chance of recovery. Do you wish to continue?
+19312=The pet's owner must be nearby to attempt resurrection.
+19313=Your pet cannot form a bond with you until your animal taming ability has risen.
+19314=Your pet cannot form a bond with you until your bushido ability has risen.
+19315=Only pets bonded with their owner can be resurrected.
+19316=The animal must be in the same house as you to be resurrected.
+19317=The pet's owner must be inside this house before you can revive this creature.
+19318=Target the pet you wish to bond with. Press ESC to cancel. This item is consumed on successful use, so choose wisely!
+19319=Pet bonding canceled.
+19320=That pet is already bonded to you.
+19321=This is not your pet!
+19322=Are you sure you want to release your pet? Summoned Pets will vanish permanently!
 }
 EOF

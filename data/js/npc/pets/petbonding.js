@@ -36,20 +36,12 @@ function onDeathBlow( killedPet, petKiller )
 	return true;
 }
 
-function onSpeech( strSaid, pTalking, pet ) 
+function inRange( pet, objInRange )
 {
 	if( pet.GetTag( "isPetDead" ) == true )
 	{
-		return 1;
+		TriggerEvent( 3108, "SendNpcGhostMode", objInRange.socket, 0, pet.serial, 1  );
 	}
-}
-
-function onTalk( pet, mySpeech )
-{
-	if( pet.GetTag( "isPetDead" ) == true )
-		return false;
-	else
-		return true;
 }
 
 function onCombatStart( pAttacker, pDefender )
@@ -119,10 +111,25 @@ function onCharDoubleClick( pUser, pet )
 	return true;
 }
 
-function onContextMenuRequest( socket, pet )
+function onReleasePet( pUser, pet )
 {
 	if( pet.GetTag( "isPetDead" ) == true )
 	{
+		var myGump = new Gump;
+		myGump.AddPage( 0 );
+		myGump.AddBackground( 0, 0, 270, 120, 0x13BE );
+
+		myGump.AddXMFHTMLGump( 10, 10, 250, 75, 1049669, true, false ); // <div align=center>Releasing a ghost pet will destroy it, with no chance of recovery.  Do you wish to continue?</div>
+
+		myGump.AddXMFHTMLGump(55, 90, 75, 20, 1011011, false, false ); // CONTINUE
+		myGump.AddButton( 20, 90, 0xFA5, 0xFA7, 1, 0, 1 );
+
+		myGump.AddXMFHTMLGump(170, 90, 75, 20, 1011012, false, false ); // CANCEL
+		myGump.AddButton( 135, 90, 0xFA5, 0xFA7, 1, 0, 0 );
+		myGump.Send( pUser );
+		myGump.Free();
+
+		pUser.SetTempTag( "petSerial", pet.serial );
 		return false;
 	}
 	return true;
@@ -142,9 +149,11 @@ function onDropItemOnNpc(pDropper, pPet, iFood)
 
 			var bondingDelay = 3 * 24 * 60 * 60 * 1000; // 3 days
 			pPet.StartTimer( 1000, 42, true ); // TimerID 42, callback to same script
-
-			pDropper.socket.SysMessage( "Your pet seems closer to forming a bond with you..." );
 		}
+	}
+	else
+	{
+		pDropper.socket.SysMessage( GetDictionaryEntry( 19313, pDropper.socket.language ));// Your pet cannot form a bond with you until your animal taming ability has risen.
 	}
 
 	iFood.Refresh()
@@ -156,7 +165,6 @@ function onTimer( timerObj, timerID )
 	if( timerID == 42 && timerObj.npc && !timerObj.GetTag( "isBondedPet" ))
 	{
 		timerObj.SetTag( "isBondedPet", true );
-		timerObj.TextMessage( "*a magical bond has been forged*" );
 		timerObj.Refresh();
 
 		var ownerSerial = timerObj.GetTag( "bondingPlayer" );
@@ -165,7 +173,7 @@ function onTimer( timerObj, timerID )
 			var owner = CalcCharFromSer( ownerSerial );
 			if (ValidateObject( owner ))
 			{
-				owner.socket.SysMessage( "Your pet has bonded with you!" ); // Your pet has bonded with you!
+				owner.socket.SysMessage( GetDictionaryEntry( 19308, owner.socket.language )); // Your pet has bonded with you!
 			}
 		}
 		timerObj.SetTag( "bondingStarted", null );
@@ -173,15 +181,14 @@ function onTimer( timerObj, timerID )
 	}
 }
 
-function onTooltip( pet )
+function onGumpPress( pSock, pButton, gumpData )
 {
-	var tooltipText = "";
-	if( pet.tamed && pet.GetTag( "isBondedPet" ) == true )
+	var pUser = pSock.currentChar;
+	var petrSerial = CalcCharFromSer( pUser.GetTempTag( "petSerial" ));
+	if( pButton == 1 )
 	{
-		tooltipText = "[Bonded]";
+		petrSerial.Delete();
 	}
-
-	return tooltipText;
 }
 
 function _restorecontext_() {}

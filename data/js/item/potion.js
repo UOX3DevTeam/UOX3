@@ -283,7 +283,7 @@ function onUseChecked( pUser, iUsed )
 				{
 					case 1:
 						socket.tempObj = iUsed;
-						socket.CustomTarget( 1, "Target the pet you wish to bond with. Press ESC to cancel. This item is consumed on successful use, so choose wisely!");
+						socket.CustomTarget( 1, GetDictionaryEntry( 19318, socket.language )); //"Target the pet you wish to bond with. Press ESC to cancel. This item is consumed on successful use, so choose wisely!"
 						break;
 					default:
 						break;
@@ -390,18 +390,18 @@ function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;
 	var iUsed = socket.tempObj;
-	if( ourObj.GetTag ("isBondedPet"))
+	if( ourObj.GetTag ( "isBondedPet" ))
 	{
-		socket.SysMessage( "That pet is already bonded to you."); // That pet is already bonded to you.
+		socket.SysMessage( GetDictionaryEntry( 19320, socket.language )); // That pet is already bonded to you.
 	}
 	else if (ourObj.owner != mChar)
 	{
-		socket.SysMessage( "This is not your pet!"); // This is not your pet!
+		socket.SysMessage( GetDictionaryEntry( 19321, socket.language )); // This is not your pet!
 	}
 	else
 	{
-		ourObj.SetTag ("isBondedPet", true);
-		socket.SysMessage( "Your pet has bonded with you!"); // Your pet has bonded with you!
+		ourObj.SetTag ( "isBondedPet", true );
+		socket.SysMessage( GetDictionaryEntry( 19308, socket.language )); // Your pet has bonded with you!
 
 		if( iUsed.amount > 1 )
 		{

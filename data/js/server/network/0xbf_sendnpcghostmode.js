@@ -1,6 +1,6 @@
 // Sends a packet to toggle ghost mode appearance for an NPC on the client.
 // Typically used to make dead pets or NPCs appear as transparent ghosts without affecting game logic.
-function SendNpcGhostMode( pSock, unknownFlag, serial, ghostFlag )
+function SendNpcGhostMode( pSock, unknownFlag, petSerial, ghostFlag )
 {
     var pkt = new Packet();				// Create a new packet
     pkt.ReserveSize( 11 );				// Reserve 11 bytes of space
@@ -9,7 +9,7 @@ function SendNpcGhostMode( pSock, unknownFlag, serial, ghostFlag )
     pkt.WriteShort( 1, 11 );			// Total packet length
     pkt.WriteShort( 3, 0x19 );			// Subcommand: 0x19 (SendNpcGhostMode)
     pkt.WriteByte( 5, unknownFlag );	// Unknown/extra flag (often 0)
-    pkt.WriteLong( 6, serial );			// Target serial
+    pkt.WriteLong( 6, petSerial );		// Pet serial
     pkt.WriteByte( 10, ghostFlag );		// Ghost flag (1 = Ghost, 0 = not Ghost)
 
     pSock.Send( pkt );					// Send packet to client

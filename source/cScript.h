@@ -120,7 +120,8 @@ enum ScriptEvent
 	seOnContextMenuSelect,
 	seOnWarModeToggle,
 	seOnSpecialMove,
-	seOnFacetChange
+	seOnFacetChange,
+	seOnReleasePet
 };
 
 struct SEGump_st
@@ -299,6 +300,7 @@ public:
 	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSold );
 	SI08		OnHouseCommand( CSocket *targSock, CMultiObj *multiObj, UI08 targId );
 	SI08		OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryId );
+	SI08		OnReleasePet( CChar *owner, CChar *pet );
 
 	//	Critical handler type stuff
 	bool		IsFiring( void );

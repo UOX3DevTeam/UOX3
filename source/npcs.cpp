@@ -2126,6 +2126,15 @@ void CCharStuff::FinalizeTransfer( CChar *petChar, CChar *srcChar, CChar *targCh
 	// Update control slots used for both old and new owners
 	srcChar->SetControlSlotsUsed( std::max(0, srcChar->GetControlSlotsUsed() - petChar->GetControlSlots() ));
 	targChar->SetControlSlotsUsed( std::clamp( targChar->GetControlSlotsUsed() + petChar->GetControlSlots(), 0, 255 ));
+
+	// Remove Pet Bonding if its Bonded
+	TAGMAPOBJECT petBond = petChar->GetTag( "isBondedPet" );
+	if( petBond.m_IntValue == 1  )
+	{
+		petBond.m_IntValue = 0;
+		petChar->SetTag( "isBondedPet", petBond );
+		petChar->RemoveScriptTrigger( 3107 );// petbonding.js
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2184,7 +2193,7 @@ void CCharStuff::ReleasePet( CChar *pet )
 	{
 		petBond.m_IntValue = 0;
 		pet->SetTag( "isBondedPet", petBond );
-		pet->RemoveScriptTrigger( 3107 );// Bonding.js
+		pet->RemoveScriptTrigger( 3107 );// petbonding.js
 	}
 }
 

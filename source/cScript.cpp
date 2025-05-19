@@ -1559,6 +1559,37 @@ SI08 cScript::OnDecay( CItem *decaying )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnReleasePet()
+//|	Purpose		-	Script trigger for when a player tries to release a pet
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnReleasePet( CChar *owner, CChar *pet )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( owner ) || !ValidateObject( pet ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnReleasePet, "onReleasePet" ))
+		return RV_NOFUNC;
+
+	jsval params[2], rval;
+	JSObject *ownerObj = JSEngine->AcquireObject( IUE_CHAR, owner, runTime );
+	JSObject *petObj   = JSEngine->AcquireObject( IUE_CHAR, pet, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( ownerObj );
+	params[1] = OBJECT_TO_JSVAL( petObj );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onReleasePet", 2, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnReleasePet, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnLeaving()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when leaving a multi
