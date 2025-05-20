@@ -5503,5 +5503,10 @@
 19320=Ten zwierzak jest już związany z tobą.
 19321=To nie jest twój zwierzak! 19322=Czy na pewno chcesz uwolnić swojego zwierzaka? Przywołane zwierzaki znikną na stałe!
 19323=Nie możesz wykonywać korzystnych działań na swoim celu.
+19324=Wybierz zwierzaka, aby natychmiast się z nim związać.
+19325=Nieprawidłowy cel.
+19326=To stworzenie musi zostać oswojone, zanim będzie można je związać.
+19327=To zwierzę jest już związane.
+19328=Zwierzę zostało natychmiast związane!
 }
 EOF

@@ -5659,5 +5659,10 @@
 19320=Cet animal est déjà lié à vous.
 19321=Ce n'est pas votre animal ! 19322=Êtes-vous sûr de vouloir libérer votre familier ? Les familiers invoqués disparaîtront définitivement !
 19323=Vous ne pouvez pas effectuer d'actions bénéfiques sur votre cible.
+19324=Sélectionnez un familier pour créer un lien instantané.
+19325=Cible invalide.
+19326=Cette créature doit être apprivoisée avant de pouvoir créer un lien.
+19327=Ce familier est déjà lié.
+19328=Le lien a été instantanément créé !
 }
 EOF

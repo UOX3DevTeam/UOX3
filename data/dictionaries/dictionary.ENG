@@ -5506,5 +5506,10 @@
 19321=This is not your pet!
 19322=Are you sure you want to release your pet? Summoned Pets will vanish permanently!
 19323=You can not perform beneficial acts on your target.
+19324=Select a pet to instantly bond.
+19325=Invalid target.
+19326=That creature must be tamed before it can be bonded.
+19327=That pet is already bonded.
+19328=Pet has been instantly bonded!
 }
 EOF

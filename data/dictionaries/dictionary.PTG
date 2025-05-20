@@ -5505,5 +5505,10 @@
 19321=Este não é o seu animal de estimação!
 19322=Tem a certeza de que pretende libertar o seu animal de estimação? Os animais de estimação invocados desaparecerão permanentemente!
 19323=Não pode realizar atos benéficos no seu alvo.
+19324=Selecione um animal de estimação para criar um vínculo instantâneo.
+19325=Alvo inválido.
+19326=Esta criatura deve ser domesticada antes de poder ser ligada.
+19327=Este animal de estimação já está vinculado.
+19328=O animal de estimação foi ligado instantaneamente!
 }
 EOF

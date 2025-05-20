@@ -5505,5 +5505,10 @@
 19321=Das ist nicht dein Haustier!
 19322=Möchtest du dein Haustier wirklich freilassen? Beschworene Haustiere verschwinden dauerhaft!
 19323=Du kannst keine positiven Handlungen an deinem Ziel vornehmen.
+19324=Wähle ein Haustier für die sofortige Bindung aus.
+19325=Ungültiges Ziel.
+19326=Diese Kreatur muss gezähmt werden, bevor sie gebunden werden kann.
+19327=Das Haustier ist bereits gebunden.
+19328=Das Haustier wurde sofort gebunden!
 }
 EOF

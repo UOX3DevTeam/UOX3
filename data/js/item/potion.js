@@ -401,7 +401,7 @@ function onCallback1( socket, ourObj )
 	{
 		socket.SysMessage( GetDictionaryEntry( 19320, socket.language )); // That pet is already bonded to you.
 	}
-	else if (ourObj.owner != mChar)
+	else if( ourObj.owner != mChar )
 	{
 		socket.SysMessage( GetDictionaryEntry( 19321, socket.language )); // This is not your pet!
 	}

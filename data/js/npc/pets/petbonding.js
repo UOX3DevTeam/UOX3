@@ -79,9 +79,9 @@ function onSpellTarget( myTarget, pCaster, spellID )
 	return 0;
 }
 
-function onDamage(damaged, pAttacker, damageValue, damageType)
+function onDamage( damaged, pAttacker, damageValue, damageType )
 {
-	if (!ValidateObject(damaged))
+	if (!ValidateObject( damaged ))
 		return false;
 
 	// If attacker is a pet, use the owner instead
@@ -93,8 +93,8 @@ function onDamage(damaged, pAttacker, damageValue, damageType)
 	// Prevent damaging a bonded pet that is ghosted
 	if( damaged.GetTag( "isPetDead" ))
 	{
-		var atkSock = ValidateObject(pAttacker) ? pAttacker.socket : null;
-		if (atkSock)
+		var atkSock = ValidateObject( pAttacker ) ? pAttacker.socket : null;
+		if( atkSock )
 			atkSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language ));// You can not perform beneficial acts on your target.
 		return false;
 	}

@@ -5504,5 +5504,10 @@
 19320=Esa mascota ya está vinculada contigo. 19321=¡Esta no es tu mascota!
 19322=¿Seguro que quieres liberar a tu mascota? ¡Las mascotas invocadas desaparecerán permanentemente!
 19323=No puedes realizar acciones beneficiosas en tu objetivo.
+19324=Selecciona una mascota para vincularla instantáneamente.
+19325=Objetivo no válido.
+19326=Esa criatura debe ser domesticada antes de vincularla.
+19327=Esa mascota ya está vinculada.
+19328=¡La mascota ha sido vinculada instantáneamente!
 }
 EOF
