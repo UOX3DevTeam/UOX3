@@ -3025,44 +3025,6 @@ function onIterate( charCheck, socket )
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#eventOnReleasePet" id="eventOnReleasePet"><span>onReleasePet</span></a>
-				<div class="cd-faq__content">
-					<div class="text-component">
-						<div class="settingsDiv">
-							<p><span class="hl">Prototype</span></p>
-							<p><em>function onReleasePet( player, pet )</em></p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Purpose</span></p>
-							<p>Lets script authors override or block the release of a pet by a player. Return <code>false</code> to prevent the release and handle it through script (e.g., open a confirmation gump), or <code>true</code> to allow the default UOX3 behavior.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">When Triggered</span></p>
-							<p>When a player attempts to release a pet using the “release” context menu or other command.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Notes</span></p>
-							<p>The pet must be valid and under the control of the player. Script can check bonded status, or open a custom UI to confirm release. Be sure to <strong>return true or false explicitly</strong>; omitting a return will default to false (blocking release).</p>
-						</div>
-
-						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onReleasePet( player, pet )
-{
-	if( pet.GetTag("isBondedPet") == 1 )
-	{
-		player.SysMessage("You cannot release a bonded pet!");
-		return false;
-	}
-	return true;
-}</code></pre></p>
-						</div>
-					</div>
-				</div> <!-- cd-faq__content -->
-			</li>
-
-
-			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnPacketReceive" id="eventOnPacketReceive"><span>onPacketReceive</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -3259,6 +3221,43 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 <pre><code class="language-javascript">function onQuestGump( pUser )
 {
 	pUser.TextMessage( "I pressed the Quest button in paperdoll!" );
+	return true;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+					<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnReleasePet" id="eventOnReleasePet"><span>onReleasePet</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onReleasePet( player, pet )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Lets script authors override or block the release of a pet by a player. Return <code>false</code> to prevent the release and handle it through script (e.g., open a confirmation gump), or <code>true</code> to allow the default UOX3 behavior.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When a player attempts to release a pet using the “release” context menu or other command.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>The pet must be valid and under the control of the player. Script can check bonded status, or open a custom UI to confirm release. Be sure to <strong>return true or false explicitly</strong>; omitting a return will default to false (blocking release).</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onReleasePet( player, pet )
+{
+	if( pet.GetTag("isBondedPet") == 1 )
+	{
+		player.SysMessage("You cannot release a bonded pet!");
+		return false;
+	}
 	return true;
 }</code></pre></p>
 						</div>
