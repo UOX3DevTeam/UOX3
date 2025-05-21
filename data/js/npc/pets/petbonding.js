@@ -7,12 +7,20 @@ function onDeathBlow( killedPet, petKiller )
 		petCorpse.amount = killedPet.id;
 		petCorpse.dir = killedPet.dir;
 		petCorpse.colour = killedPet.colour;
+		petCorpse.type = 1;
+		petCorpse.corpse = true;
+		petCorpse.carveSection = 26;
+		petCorpse.decaytime = 300;
 		petCorpse.decayable = true;
+		petCorpse.maxItems = 150;
+		petCorpse.wipable = true;
+		petCorpse.weightMax = 50000
 
 		TriggerEvent( 3108, "SendNpcGhostMode", petOwner.socket, 0, killedPet.serial, 1  );
 		killedPet.SetTag( "PetsAI", killedPet.aitype.toString() );
 		killedPet.SetTag( "PetsHue", killedPet.colour.toString() );
 		killedPet.SetTag( "isPetDead", true );
+		killedPet.colour = 0x3e6;
 		killedPet.aitype = 0;
 		killedPet.health = 1;
 		killedPet.target = null;
