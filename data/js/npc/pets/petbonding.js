@@ -44,6 +44,14 @@ function inRange( pet, objInRange )
 	}
 }
 
+function outOfRange( pet, objVanish )
+{
+	if( pet.GetTag( "isPetDead" ) == true )
+	{
+		TriggerEvent( 3108, "SendNpcGhostMode", objVanish.socket, 0, pet.serial, 1  );
+	}
+}
+
 function onCombatStart( pAttacker, pDefender )
 {
 	if( pDefender.GetTag( "isPetDead" ) == true )
