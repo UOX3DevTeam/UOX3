@@ -5510,5 +5510,6 @@
 19326=That creature must be tamed before it can be bonded.
 19327=That pet is already bonded.
 19328=Pet has been instantly bonded!
+19329=Pet bonding is disabled on this server.
 }
 EOF

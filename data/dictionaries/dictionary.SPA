@@ -5509,5 +5509,6 @@
 19326=Esa criatura debe ser domesticada antes de vincularla.
 19327=Esa mascota ya está vinculada.
 19328=¡La mascota ha sido vinculada instantáneamente!
+19329=La vinculación de mascotas está deshabilitada en este servidor.
 }
 EOF
