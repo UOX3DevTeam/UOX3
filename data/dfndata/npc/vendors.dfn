@@ -173,10 +173,10 @@ GET=m_tinker f_tinker
 GET=m_vagabond f_vagabond
 }
 
-//[vet]
-//{Note: Not implanted Yet
-//GET=m_vet f_vet
-//}
+[veterinarian]
+{
+GET=m_veterinarian f_veterinarian
+}
 
 [waiter]
 {

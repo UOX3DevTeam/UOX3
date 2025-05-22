@@ -1,3 +1,5 @@
+const feedEnabled = false; // Enable/disable pet bonding by feeding.
+
 function onDeathBlow( killedPet, petKiller )
 {
 	if( killedPet.tamed && killedPet.GetTag( "isBondedPet" ))
@@ -44,8 +46,21 @@ function onDeathBlow( killedPet, petKiller )
 	return true;
 }
 
+function onCollide( socket, objCollider, objCollideWith )
+{
+	if( objCollideWith.GetTag( "isPetDead" ) == true )
+	{
+		return false;
+	}
+	return true;
+}
+
 function inRange( pet, objInRange )
 {
+	if (objInRange.socket == null)
+	{
+		return;
+	}
 	if( pet.GetTag( "isPetDead" ) == true )
 	{
 		TriggerEvent( 3108, "SendNpcGhostMode", objInRange.socket, 0, pet.serial, 1  );
@@ -54,6 +69,10 @@ function inRange( pet, objInRange )
 
 function outOfRange( pet, objVanish )
 {
+	if (objVanish.socket == null)
+	{
+		return;
+	}
 	if( pet.GetTag( "isPetDead" ) == true )
 	{
 		TriggerEvent( 3108, "SendNpcGhostMode", objVanish.socket, 0, pet.serial, 1  );
@@ -159,30 +178,40 @@ function onDropItemOnNpc(pDropper, pPet, iFood)
 		return 0;
 	}
 
+	if( feedEnabled && !pPet.GetTag( "bondingStarted" ))
+	{
+		StartBonding( pDropper, pPet );
+	}
 	iFood.Refresh()
 	return 1;
 }
 
 function StartBonding( pUser, pPet )
 {
-	pUser.socket.SysMessage("test" + pPet.name);
-	var tameSkillRequired = pPet.skillToTame;
-	var pUserTameSkill = pUser.baseskills.animaltaming;
-
-	if( tameSkillRequired <= 291 || pUserTameSkill >= tameSkillRequired )
+	if( !feedEnabled )
 	{
-		if( !pPet.GetTag( "bondingStarted" ))
-		{
-			pPet.SetTag( "bondingStarted", true );
-			pPet.SetTag( "bondingPlayer", pUser.serial );
-
-			var bondingDelay = 604800000; // 7 days in milliseconds
-			pPet.StartTimer( bondingDelay, 42, 3107 );
-		}
+		return;
 	}
 	else
 	{
-		pUser.socket.SysMessage( GetDictionaryEntry( 19313, pUser.socket.language ));// Your pet cannot form a bond with you until your animal taming ability has risen.
+		var tameSkillRequired = pPet.skillToTame;
+		var pUserTameSkill = pUser.baseskills.animaltaming;
+	
+		if( tameSkillRequired <= 291 || pUserTameSkill >= tameSkillRequired )
+		{
+			if( !pPet.GetTag( "bondingStarted" ))
+			{
+				pPet.SetTag( "bondingStarted", true );
+				pPet.SetTag( "bondingPlayer", pUser.serial );
+
+				var bondingDelay = 604800000; // 7 days in milliseconds
+				pPet.StartTimer( bondingDelay, 42, 3107 );
+			}
+		}
+		else
+		{
+			pUser.socket.SysMessage( GetDictionaryEntry( 19313, pUser.socket.language ));// Your pet cannot form a bond with you until your animal taming ability has risen.
+		}
 	}
 }
 

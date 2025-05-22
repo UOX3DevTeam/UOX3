@@ -134,6 +134,7 @@
 3106=npc/pets/mount_restrictions.js
 3107=npc/pets/petbonding.js
 3108=server/network/0xbf_sendnpcghostmode.js
+3109=npc/ai/veterinarian.js
 // ------------------------
 
 // AI-Stuff
