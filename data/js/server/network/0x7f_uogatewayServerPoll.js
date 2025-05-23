@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Handler for Server Poll requests from
 // UOGateway (https://www.uogateway.com)
 // ShardPortal (https://www.shardportal.com)
@@ -8,12 +10,12 @@ function PacketRegistration()
 	RegisterPacket( 0x7F, 0x0 );
 }
 
-function onPacketReceive( pSocket, packetNum, subCommand )
+/** @type {(mSock: Socket, packetNum: number) => void} */
+function onPacketReceive( pSocket, packetNum )
 {
 	var cmd = pSocket.GetByte( 0 );
 	if( cmd != packetNum )
 		return;
-
 	pSocket.ReadBytes( 8 );
 	var len = pSocket.GetWord( 1 );
 	var subCmd = pSocket.GetByte( 3 );
@@ -35,6 +37,7 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 	return;
 }
 
+/** @type {(pSocket: Socket) => void} */
 function SendUOGServerPollInfo( pSocket )
 {
 	var shardName = GetServerSetting( "SERVERNAME" );
