@@ -3476,7 +3476,78 @@
       "values": []
     },
     {
-      "name": "Packet"
+      "name": "Packet",
+      "type": "class",
+      "methods": [
+        {
+          "name": "Free",
+          "cppName": "CPacket_Free",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "WriteByte",
+          "cppName": "CPacket_WriteByte",
+          "params": {
+            "num": 2,
+            "list": [
+              { "name": "position", "type": "number", "required": true },
+              { "name": "value", "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "WriteShort",
+          "cppName": "CPacket_WriteShort",
+          "params": {
+            "num": 2,
+            "list": [
+              { "name": "position", "type": "number", "required": true },
+              { "name": "value", "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "WriteLong",
+          "cppName": "CPacket_WriteLong",
+          "params": {
+            "num": 2,
+            "list": [
+              { "name": "position", "type": "number", "required": true },
+              { "name": "value", "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "WriteString",
+          "cppName": "CPacket_WriteString",
+          "params": {
+            "num": 3,
+            "list": [
+              { "name": "position", "type": "number", "required": true },
+              { "name": "value", "type": "string", "required": true },
+              { "name": "len", "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "ReserveSize",
+          "cppName": "CPacket_ReserveSize",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "len", "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
+        }
+      ]
     }
   ],
   "events": [

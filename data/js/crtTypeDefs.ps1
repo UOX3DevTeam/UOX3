@@ -108,13 +108,20 @@ foreach ( $types in ($content.types | Sort-Object -Property name) ) {
     )
   }
   else {
-    $decl = "  interface $($types.Name)"
+    if( $types.type -eq "class" ) {
+      $decl = "  class $($types.Name)"
+    } else {
+      $decl = "  interface $($types.Name)"
+    }
     if ( $null -ne $types.extends ) {
       $decl += " extends " + $types.extends
     }
     $decl += " {"
     $parms = createTypeProps $types
     $funcs = createFuncSet $types.methods "    " ""
+    if( $types.type -eq "class" ) {
+      $funcs += "    constructor();"
+    }
     $lines += @(
       $decl,
       $parms,
