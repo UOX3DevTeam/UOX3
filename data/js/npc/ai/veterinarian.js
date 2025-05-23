@@ -1,78 +1,55 @@
-const searchAmount = 4;
-const searchInterval = 5000;
-const searchRange = 8;
-const searchTimer = 15000;
-
-function inRange(myNPC, objInRange)
+function inRange( npc, player )
 {
-	//if (!ValidateObject(objInRange) || objInRange.npc || !objInRange.online || objInRange.dead || objInRange.isGM || objInRange.isCounselor)
-	//	return;
-
-	//var sock = objInRange.socket;
-	//if (!ValidateObject(sock))
-	//	return;
-
-	// Skip if player already has the gump open
-	if (objInRange.GetTempTag("vetGumpOpen") == true)
+	if( player.npc )
 		return;
 
-	// Show gump right away and set tag
-	showVetResurrectGump(objInRange.socket);
-	objInRange.SetTempTag("vetGumpOpen", true);
+	var serial = player.serial;
+	var spokenList = [];
 
-	// Get the current server clock, and if it exists, the time for when the last search was started
-	// Compare the two, and the script will see if enough time has passed to initiate a new search
-	// This also ensures that the script stays working even if the server saves in the middle of a
-	// search, but crashes before the next save.
-	var iTime = GetCurrentClock();
-	var initSearchTime = parseInt( myNPC.GetTempTag( "initSearchTime" ));
+	if( spokenList.indexOf( serial ) == -1 )
+		spokenList.push( serial );
 
-	// If search has already been initiated, don't start a new search, unless an abnormal amount of time has passed
-	if(( initSearchTime != null && initSearchTime != 0 ) && (((( iTime - initSearchTime ) / 1000 ) < searchTimer ) && !( initSearchTime > iTime )))
-	{
-		return;
-	}
-
-	if(((( iTime - initSearchTime ) / 1000 ) > searchTimer ) || initSearchTime > iTime )
-	{
-		myNPC.SetTempTag( "initSearchTime", iTime.toString() );
-		myNPC.StartTimer( searchInterval, 1, true );
-	}
+	npc.SetTag( "vetSpokenList", spokenList.toString() );
 }
 
-
-function onTimer( srcChar, timerID )
+function onAISliver( npc )
 {
-	if( timerID < searchAmount )
+	var spokenList = npc.GetTag( "vetSpokenList" );
+	var now = GetCurrentClock();
+
+	for( var i = 0; i < spokenList.length; ++i )
 	{
-		//Search for nearby characters the specified amount of times
-		AreaCharacterFunction( "searchForPlayers", srcChar, searchRange );
-		srcChar.StartTimer( searchInterval, timerID + 1, true );
+		var rawSer = spokenList[i];          // might be string or JS object
+		var serial = parseInt( rawSer );       // make sure it's a number
+		var player = CalcCharFromSer( serial );
+
+		if( player.npc )
+			return;
+
+		if( GetDistance( npc, player ) <= 6 && player.GetTempTag( "vetGumpOpen" ) != true )
+		{
+			// Prevent gump spam: check delay
+			var lastShown = parseInt(player.GetTempTag( "vetGumpLastShown_" + npc.serial ));
+			var cooldown = 10000; // 10 seconds
+
+			if(( now - lastShown ) < cooldown )
+				continue;
+
+			player.SetTempTag( "vetGumpOpen", true );
+			player.SetTempTag( "vetGumpLastShown_" + npc.serial, now.toString() );
+			showVetResurrectGump( player.socket, npc );
+		}
 	}
 }
 
-// This function iterates through all characters within the specified radius in AreaCharacterFunction
-// It then checks to make sure they are valid for msgs
-function searchForPlayers( srcChar, trgChar, pSock )
+function GetDistance( char1, char2 )
 {
-	if( srcChar == trgChar )
-		return false;
-
-	//if( !ValidateObject( trgChar ) || trgChar.npc || !trgChar.online || trgChar.dead || trgChar.isGM || trgChar.isCounselor )
-	//	return false;
-
-	if (trgChar.GetTempTag("vetGumpOpen") == true)
-		return false;
-
-	var sock = trgChar.socket;
-	if (ValidateObject(sock))
-	{
-		showVetResurrectGump(sock);
-		trgChar.SetTempTag("vetGumpOpen", true);
-	}
+	var dx = Math.abs( char1.x - char2.x );
+	var dy = Math.abs( char1.y - char2.y );
+	return Math.max( dx, dy ); // This matches how UO treats distance (chebyshev metric)
 }
 
-function showVetResurrectGump(socket)
+function showVetResurrectGump( socket )
 {
 	var pUser = socket.currentChar;
 	if( !ValidateObject( pUser ))
@@ -88,8 +65,8 @@ function showVetResurrectGump(socket)
 			continue;
 
 		// Only include dead bonded pets
-		if( pet.GetTag("isPetDead") == true )
-			petList.push(pet);
+		if( pet.GetTag( "isPetDead" ) == true )
+			petList.push( pet );
 	}
 
 	if( petList.length == 0 )
@@ -161,7 +138,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( pButton == 0 )
 	{
 		pUser.SetTempTag( "serialPet", null )
-		pUser.SetTempTag("vetGumpOpen", null);
+		pUser.SetTempTag( "vetGumpOpen", null );
 		return;
 	}
 	var selectedSerial = gumpData.getButton( 0 );
@@ -171,6 +148,8 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( goldInPack < cost )
 	{
 		pSock.SysMessage( "You do not have enough gold on you to pay the fee." );
+		pUser.SetTempTag( "serialPet", null )
+		pUser.SetTempTag( "vetGumpOpen", null );
 		return;
 	}
 
