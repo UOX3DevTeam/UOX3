@@ -133,6 +133,10 @@ $lines += createFuncSet $content.globalFuncs "  " "function "
 $lines += @( "", "// Event Functions", "" )
 $lines += createFuncSet $content.events "  " "function "
 
+$lines += @( "", "// Global Objects", "" )
+foreach( $g in $content.globals ) {
+  $lines += "  const $($g.name): $($g.type);"
+}
 $lines += @(
   "}",
   "",

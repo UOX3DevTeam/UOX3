@@ -1640,6 +1640,534 @@
       "name": "BaseObject"
     },
     {
+      "name": "Spell",
+      "aka": "UOXSpell",
+      "properties": [
+        {
+          "name": "id",
+          "cppName": "CSP_ID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "action",
+          "cppName": "CSP_ACTION",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "delay",
+          "cppName": "CSP_DELAY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "damageDelay",
+          "cppName": "CSP_DAMAGEDELAY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "recoveryDelay",
+          "cppName": "CSP_RECOVERYDELAY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "health",
+          "cppName": "CSP_HEALTH",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "stamina",
+          "cppName": "CSP_STAMINA",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "mana",
+          "cppName": "CSP_MANA",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "mantra",
+          "cppName": "CSP_MANTRA",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "cppName": "CSP_NAME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "string"
+        },
+        {
+          "name": "strToSay",
+          "cppName": "CSP_STRTOSAY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "string"
+        },
+        {
+          "name": "scrollLow",
+          "cppName": "CSP_SCROLLLOW",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "scrollHigh",
+          "cppName": "CSP_SCROLLHIGH",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "circle",
+          "cppName": "CSP_CIRCLE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "lowSkill",
+          "cppName": "CSP_LOWSKILL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "highSkill",
+          "cppName": "CSP_HIGHSKILL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "ginseng",
+          "cppName": "CSP_GINSENG",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "moss",
+          "cppName": "CSP_MOSS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "drake",
+          "cppName": "CSP_DRAKE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "pearl",
+          "cppName": "CSP_PEARL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "silk",
+          "cppName": "CSP_SILK",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "ash",
+          "cppName": "CSP_ASH",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "shade",
+          "cppName": "CSP_SHADE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "garlic",
+          "cppName": "CSP_GARLIC",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "batwing",
+          "cppName": "CSP_BATWING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "daemonBlood",
+          "cppName": "CSP_DAEMONBLOOD",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "graveDust",
+          "cppName": "CSP_GRAVEDUST",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "noxCrystal",
+          "cppName": "CSP_NOXCRYSTAL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "pigIron",
+          "cppName": "CSP_PIGIRON",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "requireTarget",
+          "cppName": "CSP_REQUIRETARGET",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "requireItem",
+          "cppName": "CSP_REQUIREITEM",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "requireLocation",
+          "cppName": "CSP_REQUIRELOCATION",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "requireChar",
+          "cppName": "CSP_REQUIRECHAR",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "travelSpell",
+          "cppName": "CSP_TRAVELSPELL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "fieldSpell",
+          "cppName": "CSP_FIELDSPELL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "reflectable",
+          "cppName": "CSP_REFLECTABLE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "aggressiveSpell",
+          "cppName": "CSP_AGGRESSIVESPELL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "resistable",
+          "cppName": "CSP_RESISTABLE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "soundEffect",
+          "cppName": "CSP_SOUNDEFFECT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "enabled",
+          "cppName": "CSP_ENABLED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "tithing",
+          "cppName": "CSP_TITHING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "baseDmg",
+          "cppName": "CSP_BASEDMG",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        }
+      ]
+    },
+    {
+      "name": "Skills",
+      "aka": "UOXGlobalSkills"
+    },
+    {
+      "name": "Accounts",
+      "type": "Accounts"
+    },
+    {
+      "name": "Console",
+      "aka": "UOXConsole",
+      "properties": [
+        {
+          "name": "mode",
+          "cppName": "CCONSOLE_MODE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "logEcho",
+          "cppName": "CCONSOLE_LOGECHO",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        }
+      ],
+      "methods": [
+        {
+          "name": "Print",
+          "cppName": "CConsole_Print",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "value", "type": "string", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "Log",
+          "cppName": "CConsole_Log",
+          "params": {
+            "num": 1,
+            "max": 2,
+            "list": [
+              { "name": "value", "type": "string", "required": true },
+              { "name": "filename", "type": "string", "required": false }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "Error",
+          "cppName": "CConsole_Error",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "value", "type": "string", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "Warning",
+          "cppName": "CConsole_Warning",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "value", "type": "string", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "PrintSectionBegin",
+          "cppName": "CConsole_PrintSectionBegin",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "TurnYellow",
+          "cppName": "CConsole_TurnYellow",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "TurnRed",
+          "cppName": "CConsole_TurnRed",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "TurnGreen",
+          "cppName": "CConsole_TurnGreen",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "TurnBlue",
+          "cppName": "CConsole_TurnBlue",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "TurnNormal",
+          "cppName": "CConsole_TurnNormal",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "TurnBrightWhite",
+          "cppName": "CConsole_TurnBrightWhite",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "PrintDone",
+          "cppName": "CConsole_PrintDone",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "PrintFailed",
+          "cppName": "CConsole_PrintFailed",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "PrintPassed",
+          "cppName": "CConsole_PrintPassed",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "ClearScreen",
+          "cppName": "CConsole_ClearScreen",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "PrintBasedOnVal",
+          "cppName": "CConsole_PrintBasedOnVal",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "value", "type": "boolean", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "MoveTo",
+          "cppName": "CConsole_MoveTo",
+          "params": {
+            "num": 2,
+            "list": [
+              { "name": "x", "type": "number", "required": true },
+              { "name": "y", "type": "number", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "PrintSpecial",
+          "cppName": "CConsole_PrintSpecial",
+          "params": {
+            "num": 2,
+            "list": [
+              { "name": "color", "type": "number", "required": true },
+              { "name": "msg", "type": "string", "required": true }
+            ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "BeginShutdown",
+          "cppName": "CConsole_BeginShutdown",
+          "params": {
+            "num": 0
+          },
+          "returns": "void"
+        },
+        {
+          "name": "Reload",
+          "cppName": "CConsole_Reload",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "value", "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8", "required": true }
+            ]
+          },
+          "returns": "void"
+        }
+      ]
+    },
+    {
+      "name": "CreateEntries",
+      "aka": "UOXCreateEntries"
+    },
+    {
+      "name": "Timer",
+      "aka": "UOXTimer"
+    },
+    {
+      "name": "SCRIPT",
+      "aka": "uox_class"
+    },
+    {
       "name": "CharOrItem",
       "definition": "Character | Item"
     },
@@ -1649,14 +2177,17 @@
     },
     {
       "name": "Character",
-      "extends": "BaseObject"
+      "extends": "BaseObject",
+      "aka": "UOXChar_class"
     },
     {
       "name": "Item",
-      "extends": "BaseObject"
+      "extends": "BaseObject",
+      "aka": "UOXItem_class"
     },
     {
       "name": "Socket",
+      "cppName": "UOXSocket_class",
       "properties": [
         {
           "name": "account",
@@ -2338,6 +2869,7 @@
     },
     {
       "name": "UOXResource",
+      "aka": "UOXResource_class",
       "properties": [
         {
           "name": "logAmount",
@@ -4223,6 +4755,36 @@
         ]
       },
       "returns": "void"
+    }
+  ],
+  "globals": [
+    {
+      "name": "Spells",
+      "type": "Spell[]"
+    },
+    {
+      "name": "Skills",
+      "type": "UOXGlobalSkills"
+    },
+    {
+      "name": "Accounts",
+      "type": "Accounts"
+    },
+    {
+      "name": "Console",
+      "type": "UOXConsole"
+    },
+    {
+      "name": "CreateEntries",
+      "type": "UOXCreateEntries"
+    },
+    {
+      "name": "Timer",
+      "type": "UOXTimer"
+    },
+    {
+      "name": "SCRIPT",
+      "type": "uox_class"
     }
   ]
 }
