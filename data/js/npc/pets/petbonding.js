@@ -19,8 +19,8 @@ function onDeathBlow( killedPet, petKiller )
 		petCorpse.weightMax = 50000
 
 		TriggerEvent( 3108, "SendNpcGhostMode", petOwner.socket, 0, killedPet.serial, 1  );
-		killedPet.SetTag( "PetsAI", killedPet.aitype.toString() );
-		killedPet.SetTag( "PetsHue", killedPet.colour.toString() );
+		killedPet.SetTag( "PetAI", killedPet.aitype.toString() );
+		killedPet.SetTag( "PetHue", killedPet.colour.toString() );
 		killedPet.SetTag( "isPetDead", true );
 		killedPet.colour = 0x3e6;
 		killedPet.aitype = 0;
@@ -28,6 +28,9 @@ function onDeathBlow( killedPet, petKiller )
 		killedPet.target = null;
 		killedPet.atWar = false;
 		killedPet.attacker = null;
+
+		var petDeleteTime = 86400000;// 24 hours until pet self deletes
+		killedPet.StartTimer( petDeleteTime, 32, 3107 );
 
 		if( ValidateObject( petKiller ))
 		{
@@ -217,6 +220,16 @@ function StartBonding( pUser, pPet )
 
 function onTimer( timerObj, timerID )
 {
+	if( timerID == 32 )
+	{//Delete pet if 24 hours have passed since death
+		var petOwner = timerObj.owner;
+
+		// Remove pet as an active follower
+		petOwner.RemoveFollower( timerObj );
+		// Reduce control slots in use for player by amount occupied by pet that was stabled
+		petOwner.controlSlotsUsed = Math.max( 0, petOwner.controlSlotsUsed - timerObj.controlSlots );
+		timerObj.Delete();
+	}
 	if( timerID == 42 )
 	{
 		timerObj.SetTag( "isBondedPet", true );
@@ -239,10 +252,14 @@ function onTimer( timerObj, timerID )
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
-	var petrSerial = CalcCharFromSer( pUser.GetTempTag( "petSerial" ));
+	var petSerial = CalcCharFromSer( pUser.GetTempTag( "petSerial" ));
 	if( pButton == 1 )
 	{
-		petrSerial.Delete();
+		// Remove pet as an active follower
+		pUser.RemoveFollower( petSerial );
+		// Reduce control slots in use for player by amount occupied by pet that was stabled
+		pUser.controlSlotsUsed = Math.max( 0, pUser.controlSlotsUsed - petSerial.controlSlots );
+		petSerial.Delete();
 	}
 }
 

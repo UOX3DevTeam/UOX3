@@ -219,12 +219,7 @@ function onCallback1( socket, ourObj )
 							{
 								// T2A (Publish May 25, 1999), resurrecting "now" takes 10 seconds flat
 								healTimer = 10000;
-							}
-							/*else
-							{
-								// Did original UO have a different resurrect timer than T2A?
-								// ???
-							}*/			
+							}	
 
 							healTimerID = 0; // Resurrect
 						}
@@ -927,8 +922,8 @@ function onTimer( mChar, timerID )
 
 function onPetResurrect( socket, deadPet )
 {
-	var petsAI = deadPet.GetTag( "PetsAI" );
-	var petsHue = deadPet.GetTag( "PetsHue" );
+	var petsAI = deadPet.GetTag( "PetAI" );
+	var petsHue = deadPet.GetTag( "PetHue" );
 
 	TriggerEvent( 3108, "SendNpcGhostMode", socket, 0, deadPet.serial, 0  );
 	deadPet.aitype = petsAI;
