@@ -22,6 +22,7 @@ function onDeathBlow( killedPet, petKiller )
 		killedPet.SetTag( "PetAI", killedPet.aitype.toString() );
 		killedPet.SetTag( "PetHue", killedPet.colour.toString() );
 		killedPet.SetTag( "isPetDead", true );
+		killedPet.SetTag( "playTimeAtDeath", petOwner.playTime ); // store current playtime
 		killedPet.colour = 0x3e6;
 		killedPet.aitype = 0;
 		killedPet.health = 1;
@@ -29,8 +30,11 @@ function onDeathBlow( killedPet, petKiller )
 		killedPet.atWar = false;
 		killedPet.attacker = null;
 
-		var petDeleteTime = 86400000;// 24 hours until pet self deletes
-		killedPet.StartTimer( petDeleteTime, 32, 3107 );
+		// Start immediate, repeating timer (30 mins) to monitor playtime
+		killedPet.StartTimer( 30 * 60 * 1000, 32, 3107 );
+
+		// Start one-time 7-day fallback timer
+		killedPet.StartTimer( 7 * 24 * 60 * 60 * 1000, 33, 3107 );
 
 		if( ValidateObject( petKiller ))
 		{
@@ -221,13 +225,58 @@ function StartBonding( pUser, pPet )
 function onTimer( timerObj, timerID )
 {
 	if( timerID == 32 )
-	{//Delete pet if 24 hours have passed since death
-		var petOwner = timerObj.owner;
+	{
+		if( !timerObj.GetTag( "isPetDead" ))
+		{// Pet has been resurrected, stop checking.
+			return;
+		}
 
-		// Remove pet as an active follower
-		petOwner.RemoveFollower( timerObj );
-		// Reduce control slots in use for player by amount occupied by pet that was stabled
-		petOwner.controlSlotsUsed = Math.max( 0, petOwner.controlSlotsUsed - timerObj.controlSlots );
+		var petOwner = timerObj.owner;
+		if( !ValidateObject( petOwner ))
+		{
+			timerObj.Delete();
+			return;
+		}
+
+		var playTimeAtDeath = parseInt( timerObj.GetTag( "playTimeAtDeath" ));
+		var currentPlayTime = petOwner.playTime;
+		var hoursPlayedSinceDeath = ( currentPlayTime - playTimeAtDeath ) / 60;
+
+		if( hoursPlayedSinceDeath >= 24 ) // 24 hours of playtime since death
+		{
+			petOwner.RemoveFollower( timerObj );
+			petOwner.controlSlotsUsed = Math.max( 0, petOwner.controlSlotsUsed - timerObj.controlSlots );
+
+			Console.Log(
+				"Pet [" + timerObj.name + "] (Serial: " + timerObj.serial.toString() + 
+				") owned by " + petOwner.name + " (Serial: " + petOwner.serial.toString() + 
+				") was auto-deleted after 24 hours of active character playtime without resurrection." );
+
+			timerObj.Delete();
+		}
+		else
+		{
+			// Recheck again in 30 minutes
+			timerObj.StartTimer( 30 * 60 * 1000, 32, 3107 );
+		}
+	}
+	if( timerID == 33 )
+	{
+		// Fallback: force delete if pet is still dead after 7 real days
+		if( !timerObj.GetTag( "isPetDead" ))
+			return;
+
+		var petOwner = timerObj.owner;
+		if( ValidateObject( petOwner ))
+		{
+			petOwner.RemoveFollower( timerObj );
+			petOwner.controlSlotsUsed = Math.max( 0, petOwner.controlSlotsUsed - timerObj.controlSlots );
+		}
+
+		Console.Log(
+			"Pet [" + timerObj.name + "] (Serial: " + timerObj.serial.toString() +
+			") was force-deleted after 7 days of inactivity." );
+
 		timerObj.Delete();
 	}
 	if( timerID == 42 )
@@ -259,6 +308,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		pUser.RemoveFollower( petSerial );
 		// Reduce control slots in use for player by amount occupied by pet that was stabled
 		pUser.controlSlotsUsed = Math.max( 0, pUser.controlSlotsUsed - petSerial.controlSlots );
+		Console.Log( pUser.name + " (Serial: " + pUser.serial.toString() + ") released dead pet [" + petSerial.name + "] (Serial: " + petSerial.serial.toString() + ")" );
 		petSerial.Delete();
 	}
 }
