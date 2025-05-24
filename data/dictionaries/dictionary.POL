@@ -5496,5 +5496,27 @@
 19612=Ukończyłeś wszystkie zadania
 19613=Nie masz wymaganego przedmiotu do dostarczenia.
 19614=Dostarczyłeś wymagany przedmiot!
+19615=Nie udało się utworzyć przedmiotu dostawy.
+19616=Jesteś już pod wpływem zwoju przyspieszonego zdobywania umiejętności.
+19617=Zaakceptowałeś zadanie.
+19618=Już pracujesz nad tym zadaniem.
+19619=To zadanie można wykonać tylko raz, a Ty już je ukończyłeś.
+19620=Pomyślnie dostarczyłeś przedmiot!
+19621=Nie masz wymaganego przedmiotu do dostarczenia.
+19622=To nie jest właściwy NPC do dostarczenia przedmiotu.
+19623=Ukończyłeś zadanie! Nie zapomnij odebrać nagrody.
+19624=Brak aktualizacji postępu zadania.
+19625=Jeszcze nie ukończyłeś zadania.
+19626=Nie można pobrać danych zadania.
+19627=Złoto zostało zdeponowane w twoim banku.
+19628=Bank jest pełny. Złoto zostało dodane do twojego plecaka.
+19629=Nie można dalej zmniejszyć. Aktualna liczba wynosi 0.
+19630=Ten przedmiot nie może zostać wyposażony, ponieważ jest przedmiotem zadania.
+19631=Przedmiotów zadania nie można upuścić na ziemię.
+19632=Ten przedmiot nie jest oznaczony jako przedmiot zadania.
+19633=Możesz upuścić przedmioty zadania tylko na najwyższy poziom swojego plecaka, jeśli nadal potrzebujesz ich do zadania.
+19634=Stosy przedmiotów zadania nie mogą zostać rozłożone.
+19635=Przedmiotów zadania nie można używać w ten sposób.
+19636=Przedmiot zadania
 }
 EOF

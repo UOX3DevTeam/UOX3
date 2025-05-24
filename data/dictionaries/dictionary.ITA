@@ -5497,5 +5497,26 @@
 19612=Hai completato tutte le missioni
 19613=Non hai l'oggetto richiesto da consegnare.
 19614=Hai consegnato l'oggetto richiesto!
+19615=Impossibile creare l'oggetto da consegnare.
+19616=Sei già sotto l'effetto di una pergamena di acquisizione abilità accelerata.
+19617=Hai accettato la missione.
+19618=Stai già lavorando a questa missione.
+19619=Questa missione può essere completata una sola volta e l'hai già completata.
+19620=Hai consegnato l'oggetto con successo!
+19621=Non hai l'oggetto richiesto da consegnare.
+19622=Questo non è il PNG corretto per consegnare l'oggetto.
+19623=Hai completato la missione! Non dimenticare di ritirare la tua ricompensa.
+19624=Nessun progresso aggiornato per la missione.
+19625=Non hai ancora completato la missione.
+19626=Impossibile recuperare i dati della missione. 19627=L'oro è stato depositato nella tua banca.
+19628=La banca è piena. Oro aggiunto al tuo zaino.
+19629=Impossibile diminuire ulteriormente. Il conteggio attuale è 0.
+19630=Questo oggetto non può essere equipaggiato in quanto è un oggetto di missione.
+19631=Gli oggetti di missione non possono essere lasciati a terra.
+19632=Questo oggetto non è contrassegnato come oggetto di missione.
+19633=Puoi lasciare gli oggetti di missione solo nel livello più alto del tuo zaino, finché ti servono per la missione.
+19634=Le pile di oggetti di missione non possono essere rimosse.
+19635=Gli oggetti di missione non possono essere utilizzati in questo modo.
+19636=Oggetto di missione
 }
 EOF

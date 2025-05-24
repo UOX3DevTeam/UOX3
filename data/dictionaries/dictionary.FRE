@@ -5653,5 +5653,27 @@
 19612=Vous avez terminé toutes les quêtes
 19613=Vous n'avez pas l'objet requis à livrer.
 19614=Vous avez livré l'objet requis !
+19615=Échec de la création de l'objet de livraison.
+19616=Vous êtes déjà sous l'effet d'un parchemin de gain de compétence accéléré.
+19617=Vous avez accepté la quête.
+19618=Vous travaillez déjà sur cette quête.
+19619=Cette quête ne peut être accomplie qu'une seule fois, et vous l'avez déjà terminée.
+19620=Vous avez livré l'objet avec succès !
+19621=Vous n'avez pas l'objet requis à livrer.
+19622=Ce PNJ n'est pas le bon pour livrer l'objet.
+19623=Vous avez terminé la quête ! N'oubliez pas de récupérer votre récompense.
+19624=Aucune progression n'a été mise à jour pour la quête.
+19625=Vous n'avez pas encore terminé la quête.
+19626=Les données de la quête n'ont pas pu être récupérées.
+19627=De l'or a été déposé dans votre banque.
+19628=La banque est pleine. De l'or a été ajouté à votre sac à dos.
+19629=Ne peut plus diminuer. Le nombre actuel est de 0.
+19630=Cet objet ne peut pas être équipé, car il s'agit d'un objet de quête.
+19631=Les objets de quête ne peuvent pas être déposés au sol.
+19632=Cet objet n'est pas marqué comme objet de quête.
+19633=Vous ne pouvez déposer des objets de quête que dans le niveau supérieur de votre sac à dos, tant que vous en avez encore besoin pour votre quête.
+19634=Les piles d'objets de quête ne peuvent pas être décompactées.
+19635=Les objets de quête ne peuvent pas être utilisés de cette façon.
+19636=Objet de quête
 }
 EOF

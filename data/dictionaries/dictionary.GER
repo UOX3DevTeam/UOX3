@@ -5497,5 +5497,27 @@
 19612=Du hast alle Quests abgeschlossen
 19613=Du hast den benötigten Gegenstand nicht zum Abliefern.
 19614=Du hast den benötigten Gegenstand abgeliefert!
+19615=Liefergegenstand konnte nicht erstellt werden.
+19616=Du stehst bereits unter dem Einfluss einer Schriftrolle für beschleunigten Fertigkeitserwerb.
+19617=Du hast die Quest angenommen.
+19618=Du arbeitest bereits an dieser Quest.
+19619=Diese Quest kann nur einmal abgeschlossen werden, und du hast sie bereits abgeschlossen.
+19620=Du hast den Gegenstand erfolgreich geliefert!
+19621=Du hast den benötigten Gegenstand nicht.
+19622=Dies ist nicht der richtige NPC für die Lieferung.
+19623=Du hast die Quest abgeschlossen! Vergiss nicht, deine Belohnung abzuholen.
+19624=Für die Quest wurde kein Fortschritt angezeigt.
+19625=Du hast die Quest noch nicht abgeschlossen.
+19626=Questdaten konnten nicht abgerufen werden.
+19627=Gold wurde auf deine Bank eingezahlt.
+19628=Bank ist voll. Gold wurde deinem Rucksack hinzugefügt.
+19629=Kann nicht weiter verringert werden. Aktueller Zählerstand: 0.
+19630=Dieser Gegenstand kann nicht angelegt werden, da es sich um einen Questgegenstand handelt.
+19631=Questgegenstände können nicht auf den Boden fallen gelassen werden.
+19632=Dieser Gegenstand ist nicht als Questgegenstand gekennzeichnet.
+19633=Du kannst Questgegenstände nur in die oberste Ebene deines Rucksacks fallen lassen, solange du sie noch für deine Quest benötigst.
+19634=Stapel von Questgegenständen können nicht auseinandergenommen werden.
+19635=Questgegenstände können nicht auf diese Weise verwendet werden.
+19636=Questgegenstand
 }
 EOF

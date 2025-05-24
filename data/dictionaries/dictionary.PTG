@@ -5497,5 +5497,27 @@
 19612=Concluíste todas as missões
 19613=Não tem o artigo necessário para entregar.
 19614=Entregou o item necessário!
+19615=Falha ao criar o artigo de entrega.
+19616=Já está sob o efeito de um pergaminho de ganho de habilidade acelerado.
+19617=Aceitou a missão.
+19618=Já está a trabalhar nesta missão.
+19619=Esta missão só pode ser concluída uma vez, e já a completaste.
+19620=Entregou o artigo com sucesso!
+19621=Não tem o artigo necessário para entregar.
+19622=Este não é o NPC correto para entregar o item.
+19623=Concluíste a missão! Não se esqueça de recolher a sua recompensa.
+19624=Nenhum progresso atualizado para a missão.
+19625=Ainda não completaste a missão.
+19626=Os dados da missão não puderam ser recuperados.
+19627=Ouro foi depositado no seu banco.
+19628=O banco está cheio. Ouro adicionado à sua mochila.
+19629=Não é possível diminuir mais. A contagem atual é 0.
+19630=Este item não pode ser equipado, pois é um item de missão.
+19631=Os itens de missão não podem ser atirados para o chão.
+19632=Este item não está marcado como item de missão.
+19633=Só pode colocar os itens de missão no nível mais alto da sua mochila enquanto ainda precisar deles para a sua missão.
+19634=As pilhas de itens de missão não podem ser desempilhadas.
+19635=Os itens de missão não podem ser utilizados desta forma.
+19636=Item de Missão
 }
 EOF

@@ -5497,5 +5497,26 @@
 19612=Has completado todas las misiones
 19613=No tienes el objeto solicitado para entregar.
 19614=¡Has entregado el objeto solicitado!
+19615=Error al crear el objeto de entrega.
+19616=Ya estás bajo el efecto de un pergamino de adquisición de habilidad acelerada.
+19617=Has aceptado la misión.
+19618=Ya estás trabajando en esta misión.
+19619=Esta misión solo se puede completar una vez y ya la has completado.
+19620=¡Has entregado el objeto con éxito!
+19621=No tienes el objeto necesario para entregar.
+19622=Este no es el PNJ correcto para entregar el objeto.
+19623=¡Has completado la misión! No olvides recoger tu recompensa.
+19624=No se ha actualizado el progreso de la misión.
+19625=Aún no has completado la misión.
+19626=No se pudieron recuperar los datos de la misión. 19627=Se ha depositado oro en tu banco.
+19628=El banco está lleno. Oro añadido a tu mochila.
+19629=No se puede reducir más. La cuenta actual es 0.
+19630=Este objeto no se puede equipar, ya que es un objeto de misión.
+19631=Los objetos de misión no se pueden dejar caer al suelo.
+19632=Este objeto no está marcado como objeto de misión.
+19633=Solo puedes dejar caer objetos de misión en el nivel superior de tu mochila mientras los necesites para la misión.
+19634=Las pilas de objetos de misión no se pueden desapilar.
+19635=Los objetos de misión no se pueden usar de esta manera.
+19636=Objeto de misión
 }
 EOF

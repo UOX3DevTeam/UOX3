@@ -5495,5 +5495,27 @@
 19612=Dokončili jste všechny úkoly
 19613=Nemáte požadovanou položku k doručení.
 19614=Doručili jste požadovanou položku!
+19615=Nepodařilo se vytvořit doručovací předmět.
+19616=Již se na vás vztahuje svitek pro zrychlený nárůst dovedností.
+19617=Úkol jste přijali.
+19618=Na tomto úkolu již pracujete.
+19619=Tento úkol lze splnit pouze jednou a vy jste ho již splnili.
+19620=Předmět jste úspěšně doručili!
+19621=Nemáte požadovaný předmět k doručení.
+19622=Toto není správný NPC pro doručení předmětu.
+19623=Úkol jste splnili! Nezapomeňte si vyzvednout odměnu.
+19624=Postup úkolu nebyl aktualizován.
+19625=Úkol jste zatím nesplnili.
+19626=Data úkolu se nepodařilo načíst.
+19627=Zlato bylo vloženo do vaší banky.
+19628=Banka je plná. Zlato bylo přidáno do vašeho batohu.
+19629=Nelze dále snižovat. Aktuální počet je 0.
+19630=Tento předmět nelze vybavit, protože se jedná o úkolový předmět.
+19631=Úkolové předměty nelze odhodit na zem.
+19632=Tento předmět není označen jako úkolový předmět.
+19633=Úkolové předměty můžete odhodit do nejvyšší úrovně batohu, pouze pokud je pro svůj úkol stále potřebujete.
+19634=Hromady úkolových předmětů nelze odložit.
+19635=Úkolové předměty nelze tímto způsobem použít.
+19636=Úkolový předmět
 }
 EOF
