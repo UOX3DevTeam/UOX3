@@ -5498,5 +5498,28 @@
 19612=You have completed all quests
 19613=You do not have the required item to deliver.
 19614=You have delivered the required item!
+
+19615=Failed to create the delivery item.
+19616=You are already under the effect of an accelerated skillgain scroll.
+19617=You have accepted the Quest.
+19618=You are already working on this quest.
+19619=This quest can only be completed once, and you have already completed it.
+19620=You have successfully delivered the item!
+19621=You don't have the required item to deliver.
+19622=This is not the correct NPC to deliver the item.
+19623=You've completed the quest! Don't forget to collect your reward.
+19624=No progress updated for the quest.
+19625=You haven't completed the quest yet.
+19626=Quest data could not be retrieved.
+19627=Gold has been deposited into your bank.
+19628=Bank is full. Gold added to your backpack.
+19629=Cannot decrease further. Current count is 0.
+19630=This item cannot be equipped as it is a quest item.
+19631=Quest items cannot be dropped on the ground.
+19632=This item is not marked as a quest item.
+19633=You can only drop quest items into the top-most level of your backpack while you still need them for your quest.
+19634=Stacks of quest items cannot be unstacked.
+19635=Quest items cannot be used in this way.
+19636=Quest Item
 }
 EOF

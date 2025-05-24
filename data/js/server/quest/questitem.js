@@ -4,7 +4,7 @@ function onEquipAttempt( pEquipper, iEquipped )
 	var pSock = pEquipper.socket;
 	if( iEquipped.GetTag( "QuestItem" ))
 	{
-		pSock.SysMessage( "This item cannot be equipped as it is a quest item." );
+		pSock.SysMessage( GetDictionaryEntry( 19630, pSock.language )); // This item cannot be equipped as it is a quest item.
 		//iEquipped.SetTag( "QuestItem", null );
 		//iEquipped.RemoveScriptTrigger( 5810 );
 		//var questItemColor = iEquipped.GetTag( "saveColor" );
@@ -27,7 +27,7 @@ function onDrop( iDropped, pDropper )
 
 	if( temp2 == 0xFF )
 	{ // do not allow Drop on the ground
-		pSock.SysMessage( "Quest items cannot be dropped on the ground." );
+		pSock.SysMessage( GetDictionaryEntry( 19631, pSock.language ));//Quest items cannot be dropped on the ground.
 		return 0; // Prevent ground drop
 	}
 
@@ -40,7 +40,7 @@ function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 	// Check if the dropped item is marked as a quest item
 	if( !iDropped.GetTag( "QuestItem" ))
 	{
-		pSock.SysMessage( "This item is not marked as a quest item." );
+		pSock.SysMessage( GetDictionaryEntry( 19632, pSock.language )); // This item is not marked as a quest item.
 		return true;
 	}
 
@@ -55,14 +55,14 @@ function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 		}
 		else
 		{
-			pSock.SysMessage( "You can only drop quest items into the top-most level of your backpack while you still need them for your quest." );
+			pSock.SysMessage( GetDictionaryEntry( 19633, pSock.language )); // You can only drop quest items into the top-most level of your backpack while you still need them for your quest.
 			return false;
 		}
 	}
 
 	if( iDroppedOn.layer != 21 ) 
 	{
-		pSock.SysMessage( "You can only drop quest items into the top-most level of your backpack while you still need them for your quest." );
+		pSock.SysMessage( GetDictionaryEntry( 19633, pSock.language )); // You can only drop quest items into the top-most level of your backpack while you still need them for your quest.
 
 		return false;
 	}
@@ -71,7 +71,7 @@ function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 	var packOwner = GetPackOwner( iDropped, 0 );
 	if( packOwner != null && packOwner.serial != cDropper.serial )
 	{
-		pSock.SysMessage( "You can only drop quest items into the top-most level of your backpack while you still need them for your quest." );
+		pSock.SysMessage( GetDictionaryEntry( 19633, pSock.language )); // You can only drop quest items into the top-most level of your backpack while you still need them for your quest.
 		return false;
 	}
 
@@ -100,7 +100,7 @@ function onPickup( iPickedUp, pGrabber, containerObj )
 
 		if( pickupAmount !== totalAmount )
 		{
-			pSock.SysMessage( "Stacks of quest items cannot be unstacked." );
+			pSock.SysMessage( GetDictionaryEntry( 19634, pSock.language )); // Stacks of quest items cannot be unstacked.
 			return false; // Prevent partial stack pickup
 		}
 	}
@@ -113,7 +113,7 @@ function onUseChecked( pUser, iUsed )
 {
 	if( iUsed.GetTag( "QuestItem" ))
 	{
-		pUser.TextMessage( "Quest items cannot be used in this way." );
+		pUser.TextMessage( GetDictionaryEntry( 19635, pSock.language )); // Quest items cannot be used in this way.
 		return false; // Prevent usage
 	}
 
@@ -122,6 +122,7 @@ function onUseChecked( pUser, iUsed )
 
 function onTooltip( questitem, pSocket ) 
 {
-	var tooltipText = "Quest Item";
+	var tooltipText = "[" + GetDictionaryEntry( 19636, pSocket.language ) + "]"; // Quest Item
+	questitem.SetTempTag( "tooltipSortOrder", 1 );
 	return tooltipText;
 }

@@ -54,7 +54,7 @@ function StartQuest( player, questID )
 			} 
 			else
 			{
-				socket.SysMessage( "Failed to create the delivery item." );
+				socket.SysMessage( GetDictionaryEntry( 19615, socket.language )); // Failed to create the delivery item.
 			}
 	}
 
@@ -69,7 +69,7 @@ function StartQuest( player, questID )
 		}
 		else
 		{
-			socket.SysMessage( "You are already under the effect of an accelerated skillgain scroll." );
+			socket.SysMessage( GetDictionaryEntry( 19616, socket.language )); // You are already under the effect of an accelerated skillgain scroll.
 		}
 	}
 
@@ -94,7 +94,7 @@ function StartQuest( player, questID )
 
 	WriteQuestProgress( player, questProgressArray );
 
-	socket.SysMessage( "You have accepted the Quest." );
+	socket.SysMessage( GetDictionaryEntry( 19617, socket.language )); // You have accepted the Quest.
 
 	// Start the timer if the quest is timed
 	if( quest.timeLimit )
@@ -126,9 +126,9 @@ function CheckQuest( player, questID )
 	// Ensure no duplicate quests for the same player
 	for (var i = 0; i < questProgressArray.length; i++) 
 	{
-		if (questProgressArray[i].questID == questID && questProgressArray[i].serial == playerSerial) 
+		if( questProgressArray[i].questID == questID && questProgressArray[i].serial == playerSerial ) 
 		{
-			socket.SysMessage("You are already working on this quest.");
+			socket.SysMessage( GetDictionaryEntry( 19618, socket.language )); // You are already working on this quest.
 			return;
 		}
 	}
@@ -140,7 +140,7 @@ function CheckQuest( player, questID )
 		{
 			if( archivedQuests[i].questID == questID ) 
 			{
-				socket.SysMessage( "This quest can only be completed once, and you have already completed it." );
+				socket.SysMessage( GetDictionaryEntry( 19619, socket.language )); // This quest can only be completed once, and you have already completed it.
 				return false; // Indicate that the quest cannot proceed
 			}
 		}
@@ -321,16 +321,16 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 					if( hasItem )
 					{
 						questEntry.completed = true;
-						socket.SysMessage( "You have successfully delivered the item!" );
+						socket.SysMessage( GetDictionaryEntry( 19620, socket.language )); // You have successfully delivered the item!
 					}
 					else
 					{
-						socket.SysMessage( "You don't have the required item to deliver." );
+						socket.SysMessage( GetDictionaryEntry( 19621, socket.language )); // You don't have the required item to deliver.
 					}
 				}
 				else
 				{
-					socket.SysMessage( "This is not the correct NPC to deliver the item." );
+					socket.SysMessage( GetDictionaryEntry( 19622, socket.language )); // This is not the correct NPC to deliver the item.
 				}
 			}
 
@@ -368,7 +368,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 					}
 					else 
 					{
-						socket.SysMessage( "You've completed the quest! Don't forget to collect your reward." );
+						socket.SysMessage( GetDictionaryEntry( 19623, socket.language ));
 					}
 					WriteQuestProgress( player, questProgressArray );
 				}
@@ -381,7 +381,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 					}
 					else
 					{
-						socket.SysMessage( "You've completed the quest! Don't forget to collect your reward." );
+						socket.SysMessage( GetDictionaryEntry( 19623, socket.language )); // You've completed the quest! Don't forget to collect your reward.
 					}
 					WriteQuestProgress( player, questProgressArray );
 					CompleteQuest( player, questID );
@@ -405,7 +405,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 	}
 	else
 	{
-		socket.SysMessage( "No progress updated for the quest." );
+		socket.SysMessage( GetDictionaryEntry( 19624, socket.language )); // No progress updated for the quest.
 	}
 
 	return questProgressArray;
@@ -432,14 +432,14 @@ function CompleteQuest( player, questID )
 		// Ensure the quest is completed
 		if( !questEntry.completed )
 		{
-			socket.SysMessage( "You haven't completed the quest yet." );
+			socket.SysMessage( GetDictionaryEntry( 19625, socket.language ));//You haven't completed the quest yet.
 			return;
 		}
 
 		var quest = TriggerEvent( 5801, "QuestList", questID );
 		if( !quest )
 		{
-			socket.SysMessage( "Quest data could not be retrieved." );
+			socket.SysMessage( GetDictionaryEntry( 19626, socket.language )); //Quest data could not be retrieved.
 			return;
 		}
 
@@ -510,11 +510,11 @@ function GoldReward( player, reward, bankBox, socket )
 		{
 			var gold = CreateDFNItem( player.socket, player, "0x0eed", reward.amount, "ITEM", false );
 			gold.container = bankBox
-			socket.SysMessage( "Gold has been deposited into your bank." );
+			socket.SysMessage( GetDictionaryEntry( 19627, socket.language )); // Gold has been deposited into your bank.
 		}
 		else
 		{
-			socket.SysMessage( "Bank is full. Gold added to your backpack." );
+			socket.SysMessage( GetDictionaryEntry( 19628, socket.language )); // Bank is full. Gold added to your backpack.
 			CreateDFNItem( player.socket, player, "0x0eed", reward.amount, "ITEM", true );
 		}
 	}
@@ -572,6 +572,7 @@ function onCreatureKilled( creature, player )
 		}
 	}
 }
+
 function onItemCollected( player, item, isToggledOff )
 {
 	var socket = player.socket;
@@ -613,13 +614,13 @@ function onItemCollected( player, item, isToggledOff )
 
 				if( String( target.sectionID ) == String( item.sectionID ))
 				{
-					var currentCount = questEntry.collectedItems[item.sectionID];
+					var currentCount = questEntry.collectedItems[item.sectionID] || 0;
 					var remaining = target.amount - currentCount;
 
 					if( isToggledOff )
 					{
 						// Decrease the count when untoggled, ensuring it doesn't go below 0
-						if( currentCount > 0 ) 
+						if( currentCount > 0 )
 						{
 							var amountToRemove = Math.min( item.amount, currentCount );
 							UpdateQuestProgress( player, questEntry.questID, item.sectionID, -amountToRemove, "collect" );
@@ -629,13 +630,20 @@ function onItemCollected( player, item, isToggledOff )
 							item.isNewbie = false;
 							item.isDyeable = true;
 							item.SetTag( "QuestItem", null );
+							item.SetTag( "QuestSectionID", null );
 							item.RemoveScriptTrigger( 5806 ); // Quest Item script trigger
 
 							socket.SysMessage( "You removed " + amountToRemove + " Quest Item(s)." );
+							if (DebugMessages)
+							{
+								socket.SysMessage("Current collected count: " + currentCount);
+								socket.SysMessage("Is toggled off? " + isToggledOff);
+								socket.SysMessage("Quest item sectionID: " + item.sectionID);
+							}
 						}
 						else
 						{
-							socket.SysMessage( "Cannot decrease further. Current count is 0." );
+							socket.SysMessage( GetDictionaryEntry( 19629, socket.language ));// Cannot decrease further. Current count is 0.
 						}
 					}
 					else
@@ -651,6 +659,7 @@ function onItemCollected( player, item, isToggledOff )
 							item.isDyeable = false;
 							item.isNewbie = true;
 							item.SetTag( "QuestItem", true );
+							item.SetTag( "QuestSectionID", item.sectionID );
 							item.AddScriptTrigger( 5806 ); // Quest Item script trigger
 
 							socket.SysMessage( "You set " + amountToAdd + " item(s) to Quest Item status." );
@@ -1223,6 +1232,7 @@ function ReadQuestProgress( player )
 
 	var questProgressArray = [];
 	mFile.Open( fileName, "r", "Quests" );
+
 	if( mFile && mFile.Length() >= 0 )
 	{
 		var currentEntry = null;
