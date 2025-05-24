@@ -1940,8 +1940,59 @@
       ]
     },
     {
-      "name": "Skills",
-      "aka": "UOXGlobalSkills"
+      "name": "Skill",
+      "aka": "UOXGlobalSkill",
+      "properties": [
+        {
+          "name": "name",
+          "cppName": "CGSKILL_NAME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "string"
+        },
+        {
+          "name": "madeWord",
+          "cppName": "CGSKILL_MADEWORD",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "string"
+        },
+        {
+          "name": "strength",
+          "cppName": "CGSKILL_STRENGTH",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "dexterity",
+          "cppName": "CGSKILL_DEXTERITY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "intelligence",
+          "cppName": "CGSKILL_INTELLIGENCE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "skillDelay",
+          "cppName": "CGSKILL_SKILLDELAY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "scriptID",
+          "cppName": "CGSKILL_SCRIPTID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        }
+      ]
     },
     {
       "name": "Accounts",
@@ -4835,7 +4886,7 @@
     },
     {
       "name": "Skills",
-      "type": "UOXGlobalSkills"
+      "type": "Skill[]"
     },
     {
       "name": "Accounts",
