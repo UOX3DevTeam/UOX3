@@ -1,6 +1,14 @@
 function onCharDoubleClick( pUser, targChar )
 {
-	DismountEtherealMount( pUser );
+	var pPack = pUser.pack;
+	if( pPack.totalItemCount >= pPack.maxItems || pPack.weight >= pPack.weightMax )
+	{
+		pSocket.SysMessage( "You cannot dismount your ethereal because your pack cannot hold it" ); // You cannot dismount your ethereal because your pack cannot hold it
+	}
+	else
+	{
+		DismountEtherealMount( pUser );
+	}
 	return true;
 }
 

@@ -5,17 +5,37 @@ const coreShardEra = EraStringToNum(GetServerSetting("CoreShardEra"));
 
 function onUseChecked( pUser, iUsed )
 {
+	// Find owner of root container iUsed is contained in, if any
+	var packOwner = GetPackOwner( iUsed, 0 );
 	var socket = pUser.socket;
 	var etherealMount = pUser.FindItemLayer( 0x19 );
+
+	if( packOwner == null && packOwner.serial != pUser.serial )
+	{
+		socket.SysMessage( "This must be in the top layer of your pack to use it." );// This must be in the top layer of your pack to use it.
+		return;
+	}
+	if( pUser.race == 2 )
+	{
+		socket.SysMessage( "Gargoyles are unable to ride animals." );// Gargoyles are unable to ride animals.
+		return;
+	}
+
 	if( etherealMount != null )
 	{
-		socket.SysMessage( "You are already mounted." );
+		socket.SysMessage( "Please dismount first." );// Please dismount first.
+		return;
+	}
+
+	if( pUser.isPolymorphed )
+	{
+		socket.SysMessage( "You can't do that while polymorphed." );// You can't do that while polymorphed.
 		return;
 	}
 
 	if( pUser.frozen || pUser.dead )
 	{
-		socket.SysMessage( "You cannot summon a mount right now." );
+		socket.SysMessage( "You cannot summon a mount right now." );// You cannot summon a mount right now.
 		return;
 	}
 
@@ -124,17 +144,17 @@ function onTimer(pUser, timerID)
 
 		var statueData = statueMap[etherealSectionID];
 
-		if (!statueData)
+		if( !statueData )
 		{
-			pUser.SysMessage("Unknown etherealSectionID: " + etherealSectionID);
-			pUser.SetTag("EtherealMountSerial", null);
-			pUser.SetTag("EtherealMountSectionID", null);
+			pUser.SysMessage( "Unknown etherealSectionID: " + etherealSectionID );
+			pUser.SetTag( "EtherealMountSerial", null );
+			pUser.SetTag( "EtherealMountSectionID", null );
 			pUser.frozen = false;
 			return;
 		}
 
-		var itemMade = CreateDFNItem(socket, pUser, statueData.section, 1, "ITEM", true);
-		if (itemMade)
+		var itemMade = CreateDFNItem( socket, pUser, statueData.section, 1, "ITEM", true );
+		if( itemMade )
 		{
 			itemMade.container = pUser;
 			itemMade.layer = 0x19;
@@ -152,7 +172,6 @@ function onTimer(pUser, timerID)
 		}
 
 		etherealStatus.Delete();
-		pUser.Mounted  = true;
 		pUser.SetTag( "EtherealMountSerial", null );
 		pUser.SetTag( "EtherealMountSectionID", null );
 		pUser.frozen = false;
