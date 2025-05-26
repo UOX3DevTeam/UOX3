@@ -93,42 +93,56 @@ function onTimer(pUser, timerID)
 		if( !ValidateObject( pUser ) || pUser.mounted || pUser.dead || pUser.npc )
 			return;
 
-		var statue = "";
-		if( etherealSectionID == "etherealhorsestatuette" )
-        {
-            statue = "etherealhorse";
-        }
-        else if( etherealSectionID == "etherealllamastatuette" )
-        {
-            statue = "ethereal_llama";
-        }
-        else if( etherealSectionID == "etherealostardstatuette" )
-        {
-            statue = "ethereal_llama";
-        }
-		else if( etherealSectionID == "etherealridgebackstatuette" )
-        {
-            statue = "etherealridgeback";
-        }
-		else if( etherealSectionID == "etherealswampdragonstatuette" )
-        {
-            statue = "etherealswampdragon";
-        }
-        else
-        {
-            pUser.SysMessage( "Unknown etherealSectionID: " + etherealSectionID );
-			pUser.SetTag( "EtherealMountSerial", null );
-			pUser.SetTag( "EtherealMountSectionID", null );
-			pUser.frozen = false;
-            return;
-        }
+		var statueMap = {
+			"etherealhorsestatuette": { section: "etherealhorse", color: 0x4001 },
+			"etherealllamastatuette": { section: "ethereal_llama", color: 0x4001 },
+			"etherealostardstatuette": { section: "etherealostard", color: 0x4001 },
+			"etherealridgebackstatuette": { section: "etherealridgeback", color: 0x4001 },
+			"etherealswampdragonstatuette": { section: "etherealswampdragon", color: 0x4001 },
+			"etherealbeetlestatuette": { section: "etherealbeetle", color: 0x4001 },
+			"etherealkirinstatuette": { section: "etherealkirin", color: 0x4001 },
+			"etherealunicornstatuette": { section: "etherealunicorn", color: 0x4001 },
+			"etherealcusidhestatuette": { section: "cusidhe" },
+			"etherealreptalonstatuette": { section: "reptalon" },
+			"etherealancienthellhoundstatuette": { section: "ancienthellhound" },
+			"chargerofthefallenstatuette": { section: "chargerofthefallen" },
+			"rideablebourastatuette": { section: "boura" },
+			"lasherstatuette": { section: "lasher" },
+			"etherealdragonstatuette": { section: "serpentinedragin" },
+			"etherealwarboarstatuette": { section: "warboar" },
+			"tarantulastatuette": { section: "tarantula" },
+			"etherealtigerstatuette": { section: "tiger" },
+			"rideablepolarbearstatuette": { section: "polarbear" },
+			"windrunnerstatuette": { section: "windrunner" },
+			"eowmustatuette": { section: "eowmu" },
+			"coconutcrabstatuette": { section: "coconutcrab" },
+			"capybarastatuette": { section: "capybara" },
+			"skeletalcatstatuette": { section: "skeletalcat" },
+			"manticorestatuette": { section: "manticore" },
+			"molderingursinestatuette": { section: "molderingursine" }
+		};
 
-		var itemMade = CreateDFNItem( socket, pUser, statue, 1, "ITEM", true );
-		if( itemMade )
+		var statueData = statueMap[etherealSectionID];
+
+		if (!statueData)
+		{
+			pUser.SysMessage("Unknown etherealSectionID: " + etherealSectionID);
+			pUser.SetTag("EtherealMountSerial", null);
+			pUser.SetTag("EtherealMountSectionID", null);
+			pUser.frozen = false;
+			return;
+		}
+
+		var itemMade = CreateDFNItem(socket, pUser, statueData.section, 1, "ITEM", true);
+		if (itemMade)
 		{
 			itemMade.container = pUser;
 			itemMade.layer = 0x19;
-			itemMade.color = 0x4001
+			// Assign color only if explicitly defined
+			if (statueData.color != undefined)
+			{
+				itemMade.color = statueData.color;
+			}
 		}
 
 		// Increase pet control slots in use for owner, if feature is enabled

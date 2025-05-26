@@ -295,9 +295,9 @@ LAYER=25
 NEWBIE
 }
 
-[mondainsteed]
+[chargerofthefallen]
 {
-NAME=mondain's steed
+NAME=charger of the fallen
 ID=0x3E92
 LAYER=25
 NEWBIE
@@ -338,7 +338,7 @@ NEWBIE
 
 [boura]
 {
-NAME=a horse
+NAME=a boura
 ID=0x3EC6
 LAYER=25
 NEWBIE
@@ -348,6 +348,118 @@ NEWBIE
 {
 NAME=a tiger
 ID=0x3EC7
+LAYER=25
+NEWBIE
+}
+
+[etherealtiger]
+{
+NAME=a ethereal tiger
+ID=0x3EC8
+LAYER=25
+NEWBIE
+}
+
+[ancienthellhound]
+{
+NAME=a ancient hell hound
+ID=0x3EC9
+LAYER=25
+NEWBIE
+}
+
+[lasher]
+{
+NAME=a lasher
+ID=0x3ECB
+LAYER=25
+NEWBIE
+}
+
+[serpentinedragin]
+{
+NAME=a serpentine dragin
+ID=0x3ECE
+LAYER=25
+NEWBIE
+}
+
+[warboar]
+{
+NAME=a war boar
+ID=0x3ED2
+LAYER=25
+NEWBIE
+}
+
+[tarantula]
+{
+NAME=a tarantula
+ID=0x3ECA
+LAYER=25
+NEWBIE
+}
+
+[polarbear]
+{
+NAME=a polar bear
+ID=0x3EC5
+LAYER=25
+NEWBIE
+}
+
+[windrunner]
+{
+NAME=a windrunner
+ID=0x3ECC
+LAYER=25
+NEWBIE
+}
+
+[eowmu]
+{
+NAME=a eowmu
+ID=0x3ECF
+LAYER=25
+NEWBIE
+}
+
+[coconutcrab]
+{
+NAME=a coconut crab
+ID=0x3ED1
+LAYER=25
+NEWBIE
+}
+
+[capybara]
+{
+NAME=a capybara
+ID=0x3ED3
+LAYER=25
+NEWBIE
+}
+
+[skeletalcat]
+{
+NAME=a skeletal cat
+ID=0x3ED0
+LAYER=25
+NEWBIE
+}
+
+[manticore]
+{
+NAME=a manticore
+ID=0x3EDB
+LAYER=25
+NEWBIE
+}
+
+[molderingursine]
+{
+NAME=a moldering ursine
+ID=0x3EDC
 LAYER=25
 NEWBIE
 }

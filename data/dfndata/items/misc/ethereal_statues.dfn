@@ -1,0 +1,214 @@
+[base_ethereal_statuette]
+{
+SCRIPT=5300
+NEWBIE
+WEIGHT=100
+}
+
+[etherealhorsestatuette]
+{
+GET=base_ethereal_statuette
+NAME=ethereal horse statuette
+ID=0x20DD
+ORGIN=td
+}
+
+[etherealllamastatuette]
+{
+GET=base_ethereal_statuette
+NAME=ethereal llama statuette
+ID=0x20F6
+ORGIN=td
+}
+
+[etherealostardstatuette]
+{
+GET=base_ethereal_statuette
+NAME=ethereal ostard statuette
+ID=0x2135
+ORGIN=td
+}
+
+[etherealridgebackstatuette]
+{
+GET=base_ethereal_statuette
+NAME=ethereal ridgeback statuette
+ID=0x2615
+ORGIN=lbr
+}
+
+[etherealswampdragonstatuette]
+{
+GET=base_ethereal_statuette
+NAME=ethereal swamp dragon statuette
+ID=0x2615
+ORGIN=aos
+}
+
+[etherealbeetlestatuette]
+{
+GET=base_ethereal_statuette
+NAME=ethereal beetle statuette
+ID=0x260F
+ORGIN=ml
+}
+
+[etherealkirinstatuette]
+{
+GET=base_ethereal_statuette
+NAME=ethereal ki-rin statuette
+ID=0x25A0
+ORGIN=se
+}
+
+[etherealunicornstatuette]
+{
+GET=base_ethereal_statuette
+NAME=ethereal unicorn statuette
+ID=0x25CE
+ORGIN=se
+}
+
+[etherealcusidhestatuette]
+{//nontransparent
+GET=base_ethereal_statuette
+NAME=ethereal cusidhe statuette
+ID=0x2D96
+ORGIN=ml
+}
+
+[etherealreptalonstatuette]
+{//nontransparent
+GET=base_ethereal_statuette
+NAME=ethereal reptalon statuette
+ID=0x2d95
+ORGIN=ml
+}
+
+[etherealancienthellhoundstatuette]
+{//nontransparent
+GET=base_ethereal_statuette
+NAME=ancient hell hound statuette
+ID=0x3FFD
+ORGIN=sa
+}
+
+[chargerofthefallenstatuette]
+{//nontransparent
+GET=base_ethereal_statuette
+NAME=charger of the fallen statuette
+ID=0x2D9C
+ORGIN=ml
+}
+
+[rideablebourastatuette]
+{//nontransparent
+GET=base_ethereal_statuette
+NAME=rideable boura statuette
+ID=0x46F8
+ORGIN=sa
+}
+
+[lasherstatuette]
+{//nontransparent
+GET=base_ethereal_statuette
+NAME=lasher
+ID=0x9E35
+ORGIN=hs
+}
+
+[etherealdragonstatuette]
+{//nontransparent
+GET=base_ethereal_statuette
+NAME=ethereal dragon statuette
+ID=0xA010
+ORGIN=hs
+}
+
+[etherealwarboarstatuette]
+{//nontransparent
+GET=base_ethereal_statuette
+NAME=ethereal war boar statuette
+ID=0xA554
+ORGIN=hs
+}
+
+[tarantulastatuette]
+{//nontransparent
+GET=base_ethereal_statuette
+NAME=tarantula statuette
+ID=0x9DD6
+ORGIN=hs
+}
+
+[etherealtigerstatuette]
+{//nontransparent
+GET=base_ethereal_statuette
+NAME=ethereal tiger statuette
+ID=0x9844
+ORGIN=tol
+}
+
+[rideablepolarbearstatuette]
+{//nontransparent
+GET=base_ethereal_statuette
+NAME=rideable polar bear
+ID=0x20E1
+ORGIN=se
+}
+
+[windrunnerstatuette]
+{
+GET=base_ethereal_statuette
+NAME=windrunner
+ID=0x9ED5
+ORGIN=tol
+}
+
+[eowmustatuette]
+{
+GET=base_ethereal_statuette
+NAME=eowmu
+ID=0xA0C0
+ORGIN=tol
+}
+
+[coconutcrabstatuette]
+{
+GET=base_ethereal_statuette
+NAME=coconut crab
+ID=0xA335
+ORGIN=tol
+}
+
+[capybarastatuette]
+{
+GET=base_ethereal_statuette
+NAME=capybara
+ID=0xA57B
+ORGIN=tol
+}
+
+[skeletalcatstatuette]
+{
+GET=base_ethereal_statuette
+NAME=skeletal cat
+ID=0xA138
+ORGIN=tol
+}
+
+[manticorestatuette]
+{
+GET=base_ethereal_statuette
+NAME=manticore
+ID=0xA771
+ORGIN=tol
+}
+
+[molderingursinestatuette]
+{
+GET=base_ethereal_statuette
+NAME=moldering ursine
+ID=0xAF77
+ORGIN=tol
+}
