@@ -71,7 +71,7 @@ function onUseChecked( pUser, iUsed )
 	pUser.StartTimer( 1300, 1, 5300 );
 }
 
-function onTimer(pUser, timerID)
+function onTimer( pUser, timerID )
 {
 	var socket = pUser.socket;
 	if( pUser.atWar || pUser.attacker != null)
@@ -122,16 +122,17 @@ function onTimer(pUser, timerID)
 			"etherealbeetlestatuette": { section: "etherealbeetle", color: 0x4001 },
 			"etherealkirinstatuette": { section: "etherealkirin", color: 0x4001 },
 			"etherealunicornstatuette": { section: "etherealunicorn", color: 0x4001 },
-			"etherealcusidhestatuette": { section: "cusidhe" },
-			"etherealreptalonstatuette": { section: "reptalon" },
-			"etherealancienthellhoundstatuette": { section: "ancienthellhound" },
+			"etherealcusidhestatuette": { section: "cusidhe", color: 0x4001  },
+			"etherealreptalonstatuette": { section: "hiryu", color: 0x4001  },
+			"etherealhiryustatuette": { section: "reptalon", color: 0x4001  },
+			"etherealancienthellhoundstatuette": { section: "ancienthellhound", color: 0x4001   },
 			"chargerofthefallenstatuette": { section: "chargerofthefallen" },
 			"rideablebourastatuette": { section: "boura" },
 			"lasherstatuette": { section: "lasher" },
-			"etherealdragonstatuette": { section: "serpentinedragin" },
-			"etherealwarboarstatuette": { section: "warboar" },
+			"etherealdragonstatuette": { section: "serpentinedragin", color: 0x4001  },
+			"etherealwarboarstatuette": { section: "warboar", color: 0x4001 },
 			"tarantulastatuette": { section: "tarantula" },
-			"etherealtigerstatuette": { section: "tiger" },
+			"etherealtigerstatuette": { section: "etherealtiger", color: 0x4001 },
 			"rideablepolarbearstatuette": { section: "polarbear" },
 			"windrunnerstatuette": { section: "windrunner" },
 			"eowmustatuette": { section: "eowmu" },
@@ -179,4 +180,38 @@ function onTimer(pUser, timerID)
 		pUser.SoundEffect( 0x5B5, true );
 		socket.SysMessage( "You summon your ethereal steed." );
 	}
+}
+
+function onTooltip( etherealStatuette )
+{
+	var tooltipText = "";
+	var vetReward = etherealStatuette.GetTag( "vetRewardYear" );
+	var retouchColor = etherealStatuette.GetTag( "retouching" );
+
+	// Handle vetRewardYear
+	if( vetReward )
+	{
+		var indicator = "th";
+		switch( vetReward )
+		{
+			case 1: indicator = "st"; break;
+			case 2: indicator = "nd"; break;
+			case 3: indicator = "rd"; break;
+		}
+		tooltipText = vetReward + indicator + " Year Veteran Reward";
+	}
+
+	// Handle retouching color
+	if( retouchColor != null )
+	{
+		if( tooltipText != "" )
+			tooltipText += "\n";
+
+		tooltipText += "Mount Hue: " + retouchColor;
+	}
+
+	if( tooltipText != "" )
+		etherealStatuette.SetTempTag( "tooltipSortOrder", 21 );
+
+	return tooltipText;
 }

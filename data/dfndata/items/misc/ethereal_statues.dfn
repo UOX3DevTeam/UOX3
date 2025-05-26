@@ -11,6 +11,8 @@ GET=base_ethereal_statuette
 NAME=ethereal horse statuette
 ID=0x20DD
 ORGIN=td
+custominttag=vetRewardYear 1
+customstringtag=retouching transparent
 }
 
 [etherealllamastatuette]
@@ -19,6 +21,8 @@ GET=base_ethereal_statuette
 NAME=ethereal llama statuette
 ID=0x20F6
 ORGIN=td
+custominttag=vetRewardYear 3
+customstringtag=retouching transparent
 }
 
 [etherealostardstatuette]
@@ -27,6 +31,8 @@ GET=base_ethereal_statuette
 NAME=ethereal ostard statuette
 ID=0x2135
 ORGIN=td
+custominttag=vetRewardYear 3
+customstringtag=retouching transparent
 }
 
 [etherealridgebackstatuette]
@@ -35,6 +41,8 @@ GET=base_ethereal_statuette
 NAME=ethereal ridgeback statuette
 ID=0x2615
 ORGIN=lbr
+custominttag=vetRewardYear 4
+customstringtag=retouching transparent
 }
 
 [etherealswampdragonstatuette]
@@ -43,6 +51,8 @@ GET=base_ethereal_statuette
 NAME=ethereal swamp dragon statuette
 ID=0x2615
 ORGIN=aos
+custominttag=vetRewardYear 5
+customstringtag=retouching transparent
 }
 
 [etherealbeetlestatuette]
@@ -51,6 +61,8 @@ GET=base_ethereal_statuette
 NAME=ethereal beetle statuette
 ID=0x260F
 ORGIN=ml
+custominttag=vetRewardYear 5
+customstringtag=retouching transparent
 }
 
 [etherealkirinstatuette]
@@ -59,6 +71,8 @@ GET=base_ethereal_statuette
 NAME=ethereal ki-rin statuette
 ID=0x25A0
 ORGIN=se
+custominttag=vetRewardYear 4
+customstringtag=retouching transparent
 }
 
 [etherealunicornstatuette]
@@ -67,94 +81,125 @@ GET=base_ethereal_statuette
 NAME=ethereal unicorn statuette
 ID=0x25CE
 ORGIN=se
+custominttag=vetRewardYear 4
+customstringtag=retouching transparent
+}
+
+[etherealhiryustatuette]
+{
+GET=base_ethereal_statuette
+NAME=ethereal hiryu statuette
+ID=0x276A
+ORGIN=se
+custominttag=vetRewardYear 12
+customstringtag=retouching transparent
 }
 
 [etherealcusidhestatuette]
-{//nontransparent
+{
 GET=base_ethereal_statuette
 NAME=ethereal cusidhe statuette
 ID=0x2D96
 ORGIN=ml
+custominttag=vetRewardYear 10
+customstringtag=retouching transparent
 }
 
 [etherealreptalonstatuette]
-{//nontransparent
+{
 GET=base_ethereal_statuette
 NAME=ethereal reptalon statuette
 ID=0x2d95
 ORGIN=ml
+custominttag=vetRewardYear 11
+customstringtag=retouching transparent
 }
 
 [etherealancienthellhoundstatuette]
-{//nontransparent
+{
 GET=base_ethereal_statuette
 NAME=ancient hell hound statuette
 ID=0x3FFD
 ORGIN=sa
+custominttag=vetRewardYear 15
+customstringtag=retouching normal
 }
 
 [chargerofthefallenstatuette]
-{//nontransparent
+{
 GET=base_ethereal_statuette
 NAME=charger of the fallen statuette
 ID=0x2D9C
 ORGIN=ml
+customstringtag=retouching normal
 }
 
 [rideablebourastatuette]
-{//nontransparent
+{
 GET=base_ethereal_statuette
 NAME=rideable boura statuette
 ID=0x46F8
 ORGIN=sa
+custominttag=vetRewardYear 13
+customstringtag=retouching normal
 }
 
 [lasherstatuette]
-{//nontransparent
+{
 GET=base_ethereal_statuette
 NAME=lasher
 ID=0x9E35
 ORGIN=hs
+customstringtag=retouching normal
 }
 
 [etherealdragonstatuette]
-{//nontransparent
+{
 GET=base_ethereal_statuette
 NAME=ethereal dragon statuette
 ID=0xA010
 ORGIN=hs
+custominttag=vetRewardYear 20
+customstringtag=retouching transparent
 }
 
 [etherealwarboarstatuette]
-{//nontransparent
+{
 GET=base_ethereal_statuette
 NAME=ethereal war boar statuette
 ID=0xA554
 ORGIN=hs
+customstringtag=retouching transparent
 }
 
 [tarantulastatuette]
-{//nontransparent
+{
 GET=base_ethereal_statuette
 NAME=tarantula statuette
 ID=0x9DD6
 ORGIN=hs
+custominttag=vetRewardYear 15
+customstringtag=retouching normal
 }
 
 [etherealtigerstatuette]
-{//nontransparent
+{
 GET=base_ethereal_statuette
 NAME=ethereal tiger statuette
 ID=0x9844
 ORGIN=tol
+custominttag=vetRewardYear 15
+customstringtag=retouching transparent
 }
 
 [rideablepolarbearstatuette]
-{//nontransparent
+{
 GET=base_ethereal_statuette
 NAME=rideable polar bear
 ID=0x20E1
 ORGIN=se
+custominttag=vetRewardYear 9
+customstringtag=retouching transparent
 }
 
 [windrunnerstatuette]
@@ -163,6 +208,7 @@ GET=base_ethereal_statuette
 NAME=windrunner
 ID=0x9ED5
 ORGIN=tol
+customstringtag=retouching normal
 }
 
 [eowmustatuette]
@@ -171,6 +217,7 @@ GET=base_ethereal_statuette
 NAME=eowmu
 ID=0xA0C0
 ORGIN=tol
+customstringtag=retouching normal
 }
 
 [coconutcrabstatuette]
@@ -179,6 +226,7 @@ GET=base_ethereal_statuette
 NAME=coconut crab
 ID=0xA335
 ORGIN=tol
+customstringtag=retouching normal
 }
 
 [capybarastatuette]
@@ -187,6 +235,7 @@ GET=base_ethereal_statuette
 NAME=capybara
 ID=0xA57B
 ORGIN=tol
+customstringtag=retouching normal
 }
 
 [skeletalcatstatuette]
@@ -195,6 +244,7 @@ GET=base_ethereal_statuette
 NAME=skeletal cat
 ID=0xA138
 ORGIN=tol
+customstringtag=retouching normal
 }
 
 [manticorestatuette]
@@ -203,6 +253,7 @@ GET=base_ethereal_statuette
 NAME=manticore
 ID=0xA771
 ORGIN=tol
+customstringtag=retouching normal
 }
 
 [molderingursinestatuette]
@@ -211,4 +262,5 @@ GET=base_ethereal_statuette
 NAME=moldering ursine
 ID=0xAF77
 ORGIN=tol
+customstringtag=retouching normal
 }
