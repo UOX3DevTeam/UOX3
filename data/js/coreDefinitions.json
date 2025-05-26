@@ -1637,7 +1637,260 @@
   ],
   "types": [
     {
-      "name": "BaseObject"
+      "name": "BaseObject",
+      "properties":
+      [
+        {
+          "name": "color",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "colour",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damageIncrease",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "defenseChance",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "dexterity",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "health",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "healthRegenBonus",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "hidamage",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "hitChance",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "hue",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "id",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "instanceID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "intelligence",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "isChar",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isDispellable",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isGuarded",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isItem",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isSpawner",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "lodamage",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "luck",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "manaRegenBonus",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxhp",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "multi",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "MultiOrNull"
+        },
+        {
+          "name": "name",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "oldX",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "oldY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "oldZ",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "origin",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "owner",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "CharOrNull"
+        },
+        {
+          "name": "poison",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "race",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "region",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "TownRegion"
+        },
+        {
+          "name": "scripttrigger",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "scriptTriggers",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "sectionID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "serial",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "shouldSave",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "skin",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "spawnSerial",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "staminaRegenBonus",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "strength",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "swingSpeedIncrease",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "tithing",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "title",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "visible",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "VisibleTypes"
+        },
+        {
+          "name": "weight",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "worldnumber",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "x",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "y",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "z",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        }
+      ]
     },
     {
       "name": "Spell",
@@ -3111,6 +3364,16 @@
       ]
     },
     {
+      "name": "VisibleTypes",
+      "values": [
+        { "label": "VT_VISIBLE", "value": 0, "comment": "Visible to All" },
+        { "label": "VT_TEMPHIDDEN", "comment": "Hidden (With Skill) / Visible To Item Owner" },
+        { "label": "VT_INVISIBLE", "comment": "Magically Hidden" },
+        { "label": "VT_PERMHIDDEN", "comment": "Permanent Hidden (GM Hidden)" },
+        { "label": "VT_GHOSTHIDDEN", "comment": "Hidden because the player is a ghost" }
+      ]
+    },
+    {
       "name": "WeatherType",
       "values": [
         { "label": "NONE", "value": 0 },
@@ -3200,6 +3463,10 @@
     {
       "name": "ItemOrNull",
       "definition": "Item | null | undefined"
+    },
+    {
+      "name": "MultiOrNull",
+      "definition": "Multi | null | undefined"
     },
     {
       "name": "SocketOrNull",
