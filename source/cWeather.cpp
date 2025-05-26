@@ -2226,12 +2226,8 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 	if( !( weatherSys > weather.size() || weather.empty() ) && mChar.GetWeathDamage( element ) != 0 && mChar.GetWeathDamage( element ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		const R32 tempCurrent	= Temp( weatherSys );
-		//const R32 tempMax		= MaxTemp( weatherSys );
-		//const R32 tempMin		= MinTemp( weatherSys );
-		//const R32 tempSnowMax	= SnowThreshold( weatherSys );
 		const R32 tempEffMax	= EffectiveMaxTemp( weatherSys );
 		const R32 tempEffMin	= EffectiveMinTemp( weatherSys );
-
 
 		R32 damageModifier		= 0;
 		SI32 damage				= 0;

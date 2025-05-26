@@ -797,7 +797,7 @@ void CMapHandler::Save( void )
 	onePercent /= 100.0f;
 	const char blockDiscriminator[] = "\n\n---REGION---\n\n";
 	UI32 count						= 0;
-	const UI32 s_t						= GetClock();
+	const TVAL s_t						= GetClock();
 
 	Console << "Saving Character and Item Map Region data...   ";
 	Console.TurnYellow();
@@ -907,7 +907,7 @@ void CMapHandler::Save( void )
 	Console << "\b\b\b\b";
 	Console.PrintDone();
 
-	const UI32 e_t = GetClock();
+	const TVAL e_t = GetClock();
 	Console.Print( oldstrutil::format( "World saved in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 
 	i = 0;
@@ -944,7 +944,7 @@ void CMapHandler::Load( void )
 	std::ifstream readDestination;
 	Console.TurnYellow();
 	Console << "0%";
-	UI32 s_t				= GetClock();
+	TVAL s_t				= GetClock();
 	std::string basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
 	std::string filename;
 
@@ -1025,7 +1025,7 @@ void CMapHandler::Load( void )
 	ObjectFactory::GetSingleton().IterateOver( OT_CHAR, b, nullptr, &PostLoadFunctor );
 	houseDestination.close();
 
-	UI32 e_t	= GetClock();
+	TVAL e_t	= GetClock();
 	Console.Print( oldstrutil::format( "ASCII world loaded in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 
 	UI08 i		= 0;

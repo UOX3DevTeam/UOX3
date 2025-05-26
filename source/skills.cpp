@@ -179,11 +179,11 @@ void CSkills::RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum )
 	MapResource_st *orePart	= MapRegion->GetResource( grX, grY, worldNum );
 	SI16 oreCeiling			= cwmWorldState->ServerData()->ResOre();
 	UI16 oreTimer			= cwmWorldState->ServerData()->ResOreTime();
-	if( static_cast<UI32>( orePart->oreTime) <= cwmWorldState->GetUICurrentTime() )	// regenerate some more?
+	if( orePart->oreTime <= cwmWorldState->GetUICurrentTime() )	// regenerate some more?
 	{
 		for( SI16 counter = 0; counter < oreCeiling; ++counter )	// keep regenerating ore
 		{
-			if( orePart->oreAmt < oreCeiling && static_cast<UI32>( orePart->oreAmt + counter * oreTimer * 1000 ) < cwmWorldState->GetUICurrentTime() )
+			if( orePart->oreAmt < oreCeiling && static_cast<TVAL>( orePart->oreAmt + counter * oreTimer * 1000 ) < cwmWorldState->GetUICurrentTime() )
 			{
 				++orePart->oreAmt;
 			}
@@ -743,8 +743,6 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 
 	if( mSock == nullptr )
 		return;
-
-	//srand( GetClock() ); // Randomize
 
 	atrop[ALLSKILLS] = 0; // set the last of out copy array
 	for( counter = 0; counter < ALLSKILLS; ++counter )

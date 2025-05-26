@@ -187,11 +187,11 @@ void CWorldMain::SetLoaded( bool newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets current time
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetUICurrentTime( void ) const
+TVAL CWorldMain::GetUICurrentTime( void ) const
 {
 	return uiCurrentTime;
 }
-void CWorldMain::SetUICurrentTime( UI32 newVal )
+void CWorldMain::SetUICurrentTime( TVAL newVal )
 {
 	uiCurrentTime = newVal;
 }
@@ -203,11 +203,11 @@ void CWorldMain::SetUICurrentTime( UI32 newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets UO Minutes
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetUOTickCount( void ) const
+TVAL CWorldMain::GetUOTickCount( void ) const
 {
 	return uoTickCount;
 }
-void CWorldMain::SetUOTickCount( UI32 newVal )
+void CWorldMain::SetUOTickCount( TVAL newVal )
 {
 	uoTickCount = newVal;
 }
@@ -235,11 +235,11 @@ void CWorldMain::SetOverflow( bool newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time when server started up
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetStartTime( void ) const
+TVAL CWorldMain::GetStartTime( void ) const
 {
 	return startTime;
 }
-void CWorldMain::SetStartTime( UI32 newVal )
+void CWorldMain::SetStartTime( TVAL newVal )
 {
 	startTime = newVal;
 }
@@ -251,11 +251,11 @@ void CWorldMain::SetStartTime( UI32 newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time when server will shutdown
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetEndTime( void ) const
+TVAL CWorldMain::GetEndTime( void ) const
 {
 	return endTime;
 }
-void CWorldMain::SetEndTime( UI32 newVal )
+void CWorldMain::SetEndTime( TVAL newVal )
 {
 	endTime = newVal;
 }
@@ -267,11 +267,11 @@ void CWorldMain::SetEndTime( UI32 newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets end time
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetLClock( void ) const
+TVAL CWorldMain::GetLClock( void ) const
 {
 	return lClock;
 }
-void CWorldMain::SetLClock( UI32 newVal )
+void CWorldMain::SetLClock( TVAL newVal )
 {
 	lClock = newVal;
 }
@@ -283,11 +283,11 @@ void CWorldMain::SetLClock( UI32 newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for next auto worldsave
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetNewTime( void ) const
+TVAL CWorldMain::GetNewTime( void ) const
 {
 	return newTime;
 }
-void CWorldMain::SetNewTime( UI32 newVal )
+void CWorldMain::SetNewTime( TVAL newVal )
 {
 	newTime = newVal;
 }
@@ -299,11 +299,11 @@ void CWorldMain::SetNewTime( UI32 newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time of last auto worldsave
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetOldTime( void ) const
+TVAL CWorldMain::GetOldTime( void ) const
 {
 	return oldTime;
 }
-void CWorldMain::SetOldTime( UI32 newVal )
+void CWorldMain::SetOldTime( TVAL newVal )
 {
 	oldTime = newVal;
 }
@@ -411,11 +411,11 @@ void CWorldMain::CheckTimers( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for next auto IP update
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetNewIPTime( void ) const
+TVAL CWorldMain::GetNewIPTime( void ) const
 {
 	return newIPtime;
 }
-void CWorldMain::SetNewIPTime( UI32 newVal )
+void CWorldMain::SetNewIPTime( TVAL newVal )
 {
 	newIPtime = newVal;
 }
@@ -426,11 +426,11 @@ void CWorldMain::SetNewIPTime( UI32 newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time of last auto IP update
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetOldIPTime( void ) const
+TVAL CWorldMain::GetOldIPTime( void ) const
 {
 	return oldIPtime;
 }
-void CWorldMain::SetOldIPTime( UI32 newVal )
+void CWorldMain::SetOldIPTime( TVAL newVal )
 {
 	oldIPtime = newVal;
 }

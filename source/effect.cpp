@@ -619,7 +619,7 @@ auto cEffects::CheckTempeffects() -> void
 	CSocket *tSock = nullptr;
 	CBaseObject *myObj = nullptr;
 
-	const UI32 j = cwmWorldState->GetUICurrentTime();
+	const TVAL j = cwmWorldState->GetUICurrentTime();
 	std::vector<CTEffect*> removeEffects;
 	auto collection = cwmWorldState->tempEffects.collection();
 	for( auto &Effect : collection )
@@ -1206,7 +1206,7 @@ void ResumeEffect( CTEffect *Effect )
 	if( pauseTime > 0 )
 	{
 		// Effect IS paused, let's resume it and prolong the original timer by the amount of time it's been paused
-		const UI32 currTime = cwmWorldState->GetUICurrentTime();
+		const TVAL currTime = cwmWorldState->GetUICurrentTime();
 		auto expireTime = Effect->ExpireTime();
 		expireTime = expireTime + ( currTime - pauseTime );
 		Effect->ExpireTime( expireTime );
@@ -1801,7 +1801,7 @@ void cEffects::SaveEffects( void )
 {
 	std::ofstream effectDestination;
 	const char blockDiscriminator[] = "\n\n---EFFECT---\n\n";
-	SI32 s_t = GetClock();
+	TVAL s_t = GetClock();
 
 	Console << "Saving Effects...   ";
 	Console.TurnYellow();
@@ -1827,7 +1827,7 @@ void cEffects::SaveEffects( void )
 	Console << "\b\b\b\b";
 	Console.PrintDone();
 
-	SI32 e_t = GetClock();
+	TVAL e_t = GetClock();
 	Console.Print( oldstrutil::format("Effects saved in %.02fsec\n", ( static_cast<R32>( e_t-s_t )) / 1000.0f ));
 }
 

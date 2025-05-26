@@ -145,7 +145,7 @@ inline TIMERVAL BuildTimeValue( R32 timeFromNow )
 	return static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + static_cast<TIMERVAL>( std::round(( static_cast<R32>( 1000 ) * timeFromNow ))));
 }
 
-UI32	GetClock( void );
+TVAL	GetClock( void );
 inline char *	RealTime( char *time_str )
 {
 	auto timet = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );

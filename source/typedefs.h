@@ -69,7 +69,8 @@ using COLOUR		= std::uint16_t;
 using SKILLVAL		= std::uint16_t;
 using WEATHID		= std::uint16_t;
 using GUILDID		= std::int16_t;
-using TIMERVAL		= std::uint32_t;
+using TIMERVAL		= std::uint64_t;
+using TVAL		= std::uint64_t; // Abstract it away once and for all
 
 #if defined(_WIN32)
 using UOXSOCKET = 	std::uint32_t;

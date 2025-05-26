@@ -22,13 +22,13 @@ const SI16 UpperY = static_cast<SI16>( 4096 / MapRowSize );
 struct MapResource_st
 {
 	SI16	oreAmt;
-	UI32	oreTime;
+	TVAL	oreTime;
 	SI16	logAmt;
-	UI32	logTime;
+	TVAL	logTime;
 	SI16	fishAmt;
-	UI32	fishTime;
+	TVAL	fishTime;
 
-	MapResource_st( SI16 defOre = 0, SI16 defLog = 0, SI16 defFish = 0, UI32 defOreTime = 0, UI32 defLogTIme = 0, UI32 defFishTIme = 0 ) : 
+	MapResource_st( SI16 defOre = 0, SI16 defLog = 0, SI16 defFish = 0, TVAL defOreTime = 0, TVAL defLogTIme = 0, TVAL defFishTIme = 0 ) :
 		oreAmt( defOre ), oreTime( defOreTime ), logAmt( defLog ), logTime( defLogTIme ), fishAmt( defFish ), fishTime( defFishTIme )
 	{
 	}

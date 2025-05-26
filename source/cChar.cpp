@@ -6099,11 +6099,11 @@ void CChar::SetRobe( SERIAL newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp for when player last moved
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::LastMoveTime( void ) const
+TVAL CChar::LastMoveTime( void ) const
 {
 	return lastMoveTime;
 }
-void CChar::LastMoveTime( UI32 newValue )
+void CChar::LastMoveTime( TVAL newValue )
 {
 	lastMoveTime = newValue;
 }
@@ -6114,11 +6114,11 @@ void CChar::LastMoveTime( UI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp for when player last combat
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetLastCombatTime() const
+TVAL CChar::GetLastCombatTime() const
 {
 	return lastCombatTime;
 }
-void CChar::SetLastCombatTime( UI32 newValue )
+void CChar::SetLastCombatTime( TVAL newValue )
 {
 	lastCombatTime = newValue;
 }
@@ -6184,7 +6184,7 @@ void CChar::SetLastOnSecs( UI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player character was created
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetCreatedOn( void ) const
+TVAL CChar::GetCreatedOn( void ) const
 {
 	UI32 rVal = 0;
 	if( IsValidPlayer() )
@@ -6193,7 +6193,7 @@ UI32 CChar::GetCreatedOn( void ) const
 	}
 	return rVal;
 }
-void CChar::SetCreatedOn( UI32 newValue )
+void CChar::SetCreatedOn( TVAL newValue )
 {
 	if( IsValidPlayer() )
 	{
@@ -7583,16 +7583,16 @@ void CChar::SetNPCGuild( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player character joined NPC guild
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetNPCGuildJoined( void ) const
+TVAL CChar::GetNPCGuildJoined( void ) const
 {
-	UI32 rVal = 0;
+	TVAL rVal = 0;
 	if( IsValidPlayer() )
 	{
 		rVal = mPlayer->npcGuildJoined;
 	}
 	return rVal;
 }
-void CChar::SetNPCGuildJoined( UI32 newValue )
+void CChar::SetNPCGuildJoined(TVAL newValue )
 {
 	if( IsValidPlayer() )
 	{

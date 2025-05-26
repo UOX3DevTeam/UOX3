@@ -660,7 +660,7 @@ void cHTMLTemplate::Load( CScriptSection *found )
 
 		if( UTag == "UPDATE" )
 		{
-			updateTimer = static_cast<UI32>( std::stoul( data, nullptr, 0 ));
+			updateTimer = static_cast<TVAL>( std::stoul( data, nullptr, 0 ));
 		}
 		else if( UTag == "TYPE" )
 		{
@@ -868,7 +868,7 @@ std::string cHTMLTemplate::GetInput( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the next scheduled Update time
 //o------------------------------------------------------------------------------------------------o
-UI32 cHTMLTemplate::GetScheduledUpdate( void ) const
+TVAL cHTMLTemplate::GetScheduledUpdate( void ) const
 {
 	return scheduledUpdate;
 }
@@ -878,7 +878,7 @@ UI32 cHTMLTemplate::GetScheduledUpdate( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Update timer
 //o------------------------------------------------------------------------------------------------o
-UI32 cHTMLTemplate::GetUpdateTimer( void ) const
+TVAL cHTMLTemplate::GetUpdateTimer( void ) const
 {
 	return updateTimer;
 }

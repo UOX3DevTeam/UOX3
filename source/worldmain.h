@@ -103,18 +103,18 @@ private:
 	bool		hasLoaded;
 
 	// Time Functions
-	UI32		uoTickCount;
-	UI32		startTime, endTime, lClock;
+	TVAL		uoTickCount;
+	TVAL		startTime, endTime, lClock;
 	bool		overflow;
-	UI32		uiCurrentTime;
+	TVAL		uiCurrentTime;
 
 	// Worldsave
-	UI32		oldTime, newTime;
+	TVAL		oldTime, newTime;
 	bool		autoSaved;
 	SaveStatus	worldSaveProgress;
 
 	// IP Update
-	UI32		oldIPtime, newIPtime;
+	TVAL		oldIPtime, newIPtime;
 	bool		ipUpdated;
 
 	// Misc
@@ -165,34 +165,34 @@ public:
 	bool		GetLoaded( void ) const;
 
 	// Time Functions
-	void		SetUICurrentTime( UI32 newVal );
-	UI32		GetUICurrentTime( void ) const;
-	void		SetUOTickCount( UI32 newVal );
-	UI32		GetUOTickCount( void ) const;
+	void		SetUICurrentTime( TVAL newVal );
+	TVAL	GetUICurrentTime( void ) const;
+	void		SetUOTickCount( TVAL newVal );
+	TVAL	GetUOTickCount( void ) const;
 	void		SetOverflow( bool newVal );
 	bool		GetOverflow( void ) const;
-	void		SetStartTime( UI32 newVal );
-	UI32		GetStartTime( void ) const;
-	void		SetEndTime( UI32 newVal );
-	UI32		GetEndTime( void ) const;
-	void		SetLClock( UI32 newVal );
-	UI32		GetLClock( void ) const;
+	void		SetStartTime( TVAL newVal );
+	TVAL	GetStartTime( void ) const;
+	void		SetEndTime( TVAL newVal );
+	TVAL	GetEndTime( void ) const;
+	void		SetLClock( TVAL newVal );
+	TVAL	GetLClock( void ) const;
 
 	// Worldsave
-	void		SetNewTime( UI32 newVal );
-	UI32		GetNewTime( void ) const;
-	void		SetOldTime( UI32 newVal );
-	UI32		GetOldTime( void ) const;
+	void		SetNewTime( TVAL newVal );
+	TVAL	GetNewTime( void ) const;
+	void		SetOldTime( TVAL newVal );
+	TVAL	GetOldTime( void ) const;
 	void		SetAutoSaved( bool newVal );
 	bool		GetAutoSaved( void ) const;
 	void		SetWorldSaveProgress( SaveStatus newVal );
 	SaveStatus	GetWorldSaveProgress( void ) const;
 
 	// IP update
-	UI32		GetNewIPTime( void ) const;
-	void		SetNewIPTime( UI32 newVal );
-	UI32		GetOldIPTime( void ) const;
-	void		SetOldIPTime( UI32 newVal );
+	TVAL	GetNewIPTime( void ) const;
+	void		SetNewIPTime( TVAL newVal );
+	TVAL	GetOldIPTime( void ) const;
+	void		SetOldIPTime( TVAL newVal );
 	void		SetIPUpdated( bool newVal );
 	bool		GetIPUpdated( void ) const;
 

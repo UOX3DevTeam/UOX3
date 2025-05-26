@@ -303,7 +303,6 @@ auto main( SI32 argc, char *argv[] ) ->int
 		StartMilliTimer( tempSecs, tempMilli );
 		
 		cwmWorldState->CheckTimers();
-		//stopwatch.output( "Delta for CheckTimers" );
 		cwmWorldState->SetUICurrentTime( GetClock() );
 		tempTime = CheckMilliTimer( tempSecs, tempMilli );
 		cwmWorldState->ServerProfile()->IncTimerTime( tempTime );
@@ -1141,7 +1140,7 @@ auto DismountCreature( CChar *s ) -> void
 auto EndMessage( [[maybe_unused]] SI32 x ) -> void
 {
 	x = 0; // Really, then why take a parameter?
-	const UI32 iGetClock = cwmWorldState->GetUICurrentTime();
+	const TVAL iGetClock = cwmWorldState->GetUICurrentTime();
 	if( cwmWorldState->GetEndTime() < iGetClock )
 	{
 		cwmWorldState->SetEndTime( iGetClock );
@@ -2556,8 +2555,8 @@ auto CWorldMain::CheckAutoTimers() -> void
 						Network->Disconnect( tSock );
 					}
 				}
-				else if((( static_cast<UI32>( tSock->IdleTimeout() + 300 * 1000 ) <= GetUICurrentTime() 
-					&& static_cast<UI32>( tSock->IdleTimeout() + 200 * 1000 ) >= GetUICurrentTime() ) || GetOverflow() ) && !tSock->WasIdleWarned() )
+				else if((( static_cast<TVAL>( tSock->IdleTimeout() + 300 * 1000 ) <= GetUICurrentTime()
+					&& static_cast<TVAL>( tSock->IdleTimeout() + 200 * 1000 ) >= GetUICurrentTime() ) || GetOverflow() ) && !tSock->WasIdleWarned() )
 				{
 					//is their idle time between 3 and 5 minutes, and they haven't been warned already?
 					CPIdleWarning warn( 0x07 );
@@ -2567,7 +2566,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 
 				if( serverData->KickOnAssistantSilence() )
 				{
-					if( !tSock->NegotiatedWithAssistant() && tSock->NegotiateTimeout() != -1 && static_cast<UI32>( tSock->NegotiateTimeout() ) <= GetUICurrentTime() )
+					if( !tSock->NegotiatedWithAssistant() && tSock->NegotiateTimeout() != -1 && tSock->NegotiateTimeout() <= GetUICurrentTime() )
 					{
 						const CChar *tChar = tSock->CurrcharObj();
 						if( !ValidateObject( tChar ))
@@ -2642,14 +2641,14 @@ auto CWorldMain::CheckAutoTimers() -> void
 			{
 				if( wsSocket )
 				{
-					if( static_cast<UI32>( wsSocket->IdleTimeout() ) < GetUICurrentTime() )
+					if( wsSocket->IdleTimeout() < GetUICurrentTime() )
 					{
 						wsSocket->IdleTimeout( BuildTimeValue( 60.0F ));
 						wsSocket->WasIdleWarned( true );//don't give them the message if they only have 60s
 					}
 					if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
 					{
-						if( !wsSocket->NegotiatedWithAssistant() && static_cast<UI32>( wsSocket->NegotiateTimeout() ) < GetUICurrentTime() )
+						if( !wsSocket->NegotiatedWithAssistant() && wsSocket->NegotiateTimeout() < GetUICurrentTime() )
 						{
 							wsSocket->NegotiateTimeout( BuildTimeValue( 60.0F ));
 						}
@@ -2682,7 +2681,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 		UI32 maxItemsSpawned	= 0;
 		UI32 maxNpcsSpawned		= 0;
 		
-		const UI32 s_t = GetClock();
+		const TVAL s_t = GetClock();
 		for( auto &[regnum, spawnReg] : cwmWorldState->spawnRegions )
 		{
 			if( spawnReg )
@@ -2698,7 +2697,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 				maxNpcsSpawned += static_cast<UI32>( spawnReg->GetMaxCharSpawn() );
 			}
 		}
-		const UI32 e_t = GetClock();
+		const TVAL e_t = GetClock();
 		Console.Print( oldstrutil::format( "Regionspawn cycle completed in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 
 		// Adaptive spawn region check timer. The closer spawn regions as a whole are to being at their defined max capacity,
@@ -2771,23 +2770,6 @@ auto CWorldMain::CheckAutoTimers() -> void
 #endif
 		}
 	}
-
-	/*time_t oldIPTime = GetOldIPTime();
-	if( !GetIPUpdated() )
-	{
-		SetIPUpdated( true );
-		time(&oldIPTime);
-		SetOldIPTime( static_cast<UI32>(oldIPTime) );
-	}
-	time_t newIPTime = GetNewIPTime();
-	time(&newIPTime);
-	SetNewIPTime( static_cast<UI32>(newIPTime) );
-
-	if( difftime( GetNewIPTime(), GetOldIPTime() ) >= 120 )
-	{
-		ServerData()->RefreshIPs();
-		SetIPUpdated( false );
-	}*/
 
 	//Time functions
 	if(( GetUOTickCount() <= GetUICurrentTime() ) || ( GetOverflow() ))
@@ -3488,10 +3470,10 @@ auto AdvanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return CPU time used, Emulates clock()
 //o------------------------------------------------------------------------------------------------o
-auto GetClock() -> UI32
+auto GetClock() -> TVAL
 {
 	auto now = std::chrono::system_clock::now();
-	return static_cast<UI32>( std::chrono::duration_cast<std::chrono::milliseconds>( now - current ).count() );
+	return static_cast<TVAL>( std::chrono::duration_cast<std::chrono::milliseconds>( now - current ).count() );
 }
 
 //o------------------------------------------------------------------------------------------------o

@@ -783,7 +783,7 @@ void Command_RegSpawn( CSocket *s )
 
 		if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 		{
-			const UI32 s_t						= GetClock();
+			const TVAL s_t						= GetClock();
 			std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&itemsSpawned, &npcsSpawned]( std::pair<UI16, CSpawnRegion *> entry )
 			{
 				if( entry.second )
@@ -799,7 +799,7 @@ void Command_RegSpawn( CSocket *s )
 			{
 				s->SysMessage( 9022, cwmWorldState->spawnRegions.size() ); // Failed to spawn any new items or npcs in %u SpawnRegions
 			}
-			const UI32 e_t = GetClock();
+			const TVAL e_t = GetClock();
 			Console.Print( oldstrutil::format( "RegionSpawn cycle completed in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 		}
 		else
