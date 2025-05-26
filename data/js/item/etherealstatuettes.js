@@ -5,6 +5,11 @@ const coreShardEra = EraStringToNum(GetServerSetting("CoreShardEra"));
 
 function onUseChecked( pUser, iUsed )
 {
+	var iTime = GetCurrentClock();
+	var NextUse = iUsed.GetTempTag( "castDelayed" );
+	var delayed = pUser.GetTempTag( "statueDelayed" );
+	var Delay = 3000;
+
 	// Find owner of root container iUsed is contained in, if any
 	var packOwner = GetPackOwner( iUsed, 0 );
 	var socket = pUser.socket;
@@ -15,6 +20,21 @@ function onUseChecked( pUser, iUsed )
 		socket.SysMessage( "This must be in the top layer of your pack to use it." );// This must be in the top layer of your pack to use it.
 		return;
 	}
+
+	if( delayed )
+	{
+		socket.SysMessage( "You must finish casting before using another one." );// You must finish casting before using another one.
+		return;
+	}
+
+	NextUse = NextUse != null ? parseInt( NextUse ) : 0;
+
+	if(( iTime - NextUse ) < Delay )
+	{
+		pUser.SysMessage( "You must finish casting before using another one." );// You must finish casting before using another one.
+		return;
+	}
+
 	if( pUser.race == 2 )
 	{
 		socket.SysMessage( "Gargoyles are unable to ride animals." );// Gargoyles are unable to ride animals.
@@ -66,8 +86,10 @@ function onUseChecked( pUser, iUsed )
 
 	pUser.DoAction( 230 );
 	pUser.SoundEffect( 0x5B4, true );
-	pUser.SetTag( "EtherealMountSerial", iUsed.serial.toString() );
+	pUser.SetTag( "EtherealMountStatueSerial", iUsed.serial.toString() );
 	pUser.SetTag( "EtherealMountSectionID", iUsed.sectionID );
+	iUsed.SetTempTag( "castDelayed", iTime.toString() );
+	pUser.SetTempTag( "statueDelayed", true );
 	pUser.StartTimer( 1300, 1, 5300 );
 }
 
@@ -77,7 +99,7 @@ function onTimer( pUser, timerID )
 	if( pUser.atWar || pUser.attacker != null)
 	{
 		socket.SysMessage( "You have been disrupted while attempting to summon your ethereal mount!" ); // You have been disrupted while attempting to summon your ethereal mount!
-		pUser.SetTag( "EtherealMountSerial", null );
+		pUser.SetTag( "EtherealMountStatueSerial", null );
 		pUser.SetTag( "EtherealMountSectionID", null );
 		pUser.frozen = false;
 		return;
@@ -86,7 +108,7 @@ function onTimer( pUser, timerID )
 	if( pUser.dead )
 	{
 		socket.SysMessage( "You have been disrupted while attempting to summon your ethereal mount!" ); // You have been disrupted while attempting to summon your ethereal mount!
-		pUser.SetTag( "EtherealMountSerial", null );
+		pUser.SetTag( "EtherealMountStatueSerial", null );
 		pUser.SetTag( "EtherealMountSectionID", null );
 		pUser.frozen = false;
 		return;
@@ -106,9 +128,9 @@ function onTimer( pUser, timerID )
 
 	if( timerID == timeId )
 	{
-		var etherealSerial = parseInt(pUser.GetTag( "EtherealMountSerial" ));
+		var etherealSerial = parseInt(pUser.GetTag( "EtherealMountStatueSerial" ));
 		var etherealSectionID = pUser.GetTag( "EtherealMountSectionID" );
-		var etherealStatus = CalcItemFromSer( etherealSerial );
+		var etherealStatuette = CalcItemFromSer( etherealSerial );
 
 		if( !ValidateObject( pUser ) || pUser.mounted || pUser.dead || pUser.npc )
 			return;
@@ -148,21 +170,41 @@ function onTimer( pUser, timerID )
 		if( !statueData )
 		{
 			pUser.SysMessage( "Unknown etherealSectionID: " + etherealSectionID );
-			pUser.SetTag( "EtherealMountSerial", null );
+			pUser.SetTag( "EtherealMountStatueSerial", null );
 			pUser.SetTag( "EtherealMountSectionID", null );
 			pUser.frozen = false;
 			return;
 		}
 
+		// Check retouching style: transparent or normal
+		var retouchingStyle = etherealStatuette.GetTag( "retouching" );
+		var savedHue = parseInt( etherealStatuette.GetTag( "saveColor" ));
+		var customHue = etherealStatuette.color;
 		var itemMade = CreateDFNItem( socket, pUser, statueData.section, 1, "ITEM", true );
 		if( itemMade )
 		{
 			itemMade.container = pUser;
 			itemMade.layer = 0x19;
-			// Assign color only if explicitly defined
-			if (statueData.color != undefined)
+
+			if( retouchingStyle == "transparent" )
 			{
-				itemMade.color = statueData.color;
+				itemMade.color = 0x4001;
+				pUser.SetTag( "retouching", "transparent" );
+			}
+			else
+			{
+				// Use custom dyed hue if present, else fallback to default
+				if( customHue != null && customHue != 0 || savedHue != 0)
+				{
+					itemMade.color = customHue;
+					pUser.SetTag( "customhue", customHue );
+					itemMade.SetTag( "saveColor", customHue );
+				}
+				else if( statueData.color != undefined )
+				{
+					itemMade.color = statueData.color;
+				}
+				pUser.SetTag( "retouching", "normal" );
 			}
 		}
 
@@ -172,8 +214,9 @@ function onTimer( pUser, timerID )
 			pUser.controlSlotsUsed = pUser.controlSlotsUsed + 1;
 		}
 
-		etherealStatus.Delete();
-		pUser.SetTag( "EtherealMountSerial", null );
+		etherealStatuette.Delete();
+		pUser.SetTempTag( "statueDelayed", false );
+		pUser.SetTag( "EtherealMountStatueSerial", null );
 		pUser.SetTag( "EtherealMountSectionID", null );
 		pUser.frozen = false;
 		pUser.AddScriptTrigger( 5301 );
@@ -215,3 +258,5 @@ function onTooltip( etherealStatuette )
 
 	return tooltipText;
 }
+
+function _restorecontext_() {}

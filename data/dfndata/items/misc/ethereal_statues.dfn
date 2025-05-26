@@ -5,6 +5,19 @@ NEWBIE
 WEIGHT=100
 }
 
+[retouchingtool]
+{
+get=base_item
+name=retouching tool
+id=0x42C6
+weight=100
+decay=1
+script=5302
+newbie
+origin=hs
+custominttag=vetRewardYear 11
+}
+
 [etherealhorsestatuette]
 {
 GET=base_ethereal_statuette

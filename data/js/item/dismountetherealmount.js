@@ -56,9 +56,34 @@ function DismountEtherealMount( pUser )
 		var sectionID = mountIDtoSection[etherealMount.id];
 		if( sectionID )
 		{
+			var customHue = parseInt( pUser.GetTag( "customhue" ));
 			var iMountStatue = CreateDFNItem( pUser.socket, pUser, sectionID, 1, "ITEM", true );
 			if( ValidateObject( iMountStatue ))
 			{
+				// Read the retouching state from the player
+				var retouchState = pUser.GetTag( "retouching" );
+
+				if( retouchState == "transparent" )
+				{
+					iMountStatue.SetTag( "retouching", "transparent" );
+					iMountStatue.SetTag( "saveColor", customHue );
+				}
+				else
+				{
+					iMountStatue.SetTag( "retouching", "normal" );
+					iMountStatue.SetTag( "saveColor", customHue );
+					if (customHue != null && customHue != 0)
+					{
+						iMountStatue.color = customHue;
+					}
+					else
+					{
+						var customHue2 = parseInt( iMountStatue.GetTag( "saveColor" ));
+						iMountStatue.color = customHue2; // Default color for ethereal mounts
+					}
+				}
+
+				pUser.SetTag( "retouching", null );
 				pUser.RemoveScriptTrigger(5301);
 				pUser.controlSlotsUsed = Math.max( 0, pUser.controlSlotsUsed - 1 );
 				etherealMount.Delete();
@@ -66,3 +91,5 @@ function DismountEtherealMount( pUser )
 		}
 	}
 }
+
+function _restorecontext_() {}
