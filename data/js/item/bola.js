@@ -104,6 +104,7 @@ function onCallback0( socket, myTarget)
 				if( myTarget.socket != null )
 				{
 					myTarget.socket.SysMessage( GetDictionaryEntry( 2716, myTarget.socket.language )); // You have been knocked off your mount!
+					TriggerEvent( 5301, "DismountEtherealMount", pUser );
 				}
 				iUsed.Delete();
 			}

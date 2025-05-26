@@ -298,6 +298,9 @@
 19101=item/plant_growing/plantbowl.js
 19102=item/plant_growing/seed.js
 
+5300=item/etherealstatuettes.js
+5301=item/dismountetherealmount.js
+
 //-------------------------------------------
 // treasure maps and chest [5400-5405]
 //-------------------------------------------
