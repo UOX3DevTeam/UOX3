@@ -2,6 +2,7 @@ const maxControlSlots = GetServerSetting( "MaxControlSlots" );
 // maxFollowers only comes into play if maxControlSlots is set to 0 in UOX.INI
 const maxFollowers = GetServerSetting( "MaxFollowers" );
 const coreShardEra = EraStringToNum(GetServerSetting("CoreShardEra"));
+const VetRewardEnabled = true;
 
 function onUseChecked( pUser, iUsed )
 {
@@ -115,7 +116,7 @@ function onTimer( pUser, timerID )
 	}
 
 	var timeId = 2;
-	if (coreShardEra >= EraStringToNum( "aos" ))
+	if( coreShardEra >= EraStringToNum( "aos" ))
 	{
 		timeId = 3;
 	}
@@ -188,6 +189,7 @@ function onTimer( pUser, timerID )
 
 			if( retouchingStyle == "transparent" )
 			{
+				itemMade.SetTag( "saveColor", customHue );
 				itemMade.color = 0x4001;
 				pUser.SetTag( "retouching", "transparent" );
 			}
@@ -232,7 +234,7 @@ function onTooltip( etherealStatuette )
 	var retouchColor = etherealStatuette.GetTag( "retouching" );
 
 	// Handle vetRewardYear
-	if( vetReward )
+	if( vetReward && VetRewardEnabled )
 	{
 		var indicator = "th";
 		switch( vetReward )
@@ -245,7 +247,7 @@ function onTooltip( etherealStatuette )
 	}
 
 	// Handle retouching color
-	if( retouchColor != null )
+	if( retouchColor != null && coreShardEra >= EraStringToNum( "aos" ))
 	{
 		if( tooltipText != "" )
 			tooltipText += "\n";
