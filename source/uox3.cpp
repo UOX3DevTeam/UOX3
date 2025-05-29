@@ -2291,7 +2291,7 @@ auto CheckItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 				case IT_ESCORTNPCSPAWNER:
 				case IT_PLANK:
 				{
-					if(( itemCheck->GetTempTimer() <= cwmWorldState->GetUICurrentTime() ) || cwmWorldState->GetOverflow() )
+					if( itemCheck->GetTempTimer() <= cwmWorldState->GetUICurrentTime() )
 					{
 						if( itemCheck->GetObjType() == OT_SPAWNER )
 						{

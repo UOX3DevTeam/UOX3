@@ -1,3 +1,11 @@
+29/05/2025 - Xuri
+	Fixed misc edge-case-issues with handling of timestamps via GetCurrentClock() in various scripts, especially those stored in custom object tags. In cases of timestamps supposed to persist for a long time (and across server restarts), this is now handled via Date.now() instead.
+
+27/05/2025 - Maarc
+	Bump the types for the timer from the uint32_t to uint64_t and encapsulate behind a TVAL type definition.
+		According to the C++ reference, chrono should support at least 45 bits of accuracy for milliseconds.
+		This gives a 1115 year wraparound.
+
 14/05/2025 - Xuri
 	Fixed an issue where integer division and rounding of values could lead to skill gains not being visible to player
 	Fixed an issue where intelligence stat would not contribute to skill points based on skills.dfn setup the same way as dex/str

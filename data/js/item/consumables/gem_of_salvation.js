@@ -11,9 +11,9 @@ function onDeath( pDead, iCorpse )
 		// Player has a Gem of Salvation in their pack, give them chance to resurrect!
 		// Fetch timestamp for when they last used it
 		var lastUsedGoS = parseInt( pDead.GetTag( "lastUsedGoS" ));
-		if( lastUsedGoS > 0 && ( GetCurrentClock() / 1000 ) - lastUsedGoS < 21600 ) // 21600 seconds / 360 minutes / 6 hours
+		if( lastUsedGoS > 0 && ( Date.now() / 1000 ) - lastUsedGoS < 21600 ) // 21600 seconds / 360 minutes / 6 hours
 		{
-			pDead.socket.SysMessage( GetDictionaryEntry( 18500, pDead.socket.language ), Math.ceil(( lastUsedGoS + 21600 - ( GetCurrentClock() / 1000 )) / 60 )); // Your spirit lacks cohesion. You must wait %i minutes before invoking the power of a Gem of Salvation.
+			pDead.socket.SysMessage( GetDictionaryEntry( 18500, pDead.socket.language ), Math.ceil(( lastUsedGoS + 21600 - ( Date.now() / 1000 )) / 60 )); // Your spirit lacks cohesion. You must wait %i minutes before invoking the power of a Gem of Salvation.
 		}
 		else
 		{
@@ -82,7 +82,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			pDead.SysMessage( GetDictionaryEntry( 18501, pSock.language )); // The gem infuses you with its power and is destroyed in the process.
 
 			// Store a timestamp for when Gem of Salvation was last used
-			pDead.SetTag( "lastUsedGoS", Math.round( GetCurrentClock() / 1000 ).toString() );
+			pDead.SetTag( "lastUsedGoS", Math.round( Date.now() / 1000 ).toString() );
 
 			if( gemOfSalvation.amount > 1 )
 			{
