@@ -1334,13 +1334,17 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_ITEMSINSIDE:																break;
 			case CIP_DECAYABLE:		gPriv->SetDecayable( encaps.toBool() );				 		break;
 			case CIP_DECAYTIME:
-				newTime = encaps.toInt();
-				if( newTime != 0 )
+			{
+				jsdouble newTime_double;
+				JS_ValueToNumber( cx, *vp, &newTime_double );
+				newTime = 0;
+				if( newTime_double != 0 )
 				{
-					newTime = BuildTimeValue( newTime );
+					newTime = BuildTimeValue( static_cast<R64>( newTime_double ));
 				}
 				gPriv->SetDecayTime( newTime );
 				break;
+			}
 			case CIP_LODAMAGE:		gPriv->SetLoDamage( static_cast<SI16>( encaps.toInt() ));			break;
 			case CIP_HIDAMAGE:		gPriv->SetHiDamage( static_cast<SI16>( encaps.toInt() ));			break;
 			case CIP_AC:			gPriv->SetArmourClass( static_cast<UI08>( encaps.toInt() ));		break;
@@ -1403,17 +1407,29 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_DESC:			gPriv->SetDesc( encaps.toString() );						break;
 			case CIP_EVENT:			gPriv->SetEvent( encaps.toString() );						break;
 			case CIP_TEMPLASTTRADED:
-				newTime = encaps.toInt();
-				if( newTime != 0 )
-					newTime = BuildTimeValue( newTime );
+			{
+				jsdouble newTime_double;
+				JS_ValueToNumber( cx, *vp, &newTime_double );
+				newTime = 0;
+				if( newTime_double != 0 )
+				{
+					newTime = BuildTimeValue( static_cast<R64>( newTime_double ));
+				}
 				gPriv->SetTempLastTraded( newTime );
 				break;
+			}
 			case CIP_TEMPTIMER:
-				newTime = encaps.toInt();
-				if( newTime != 0 )
-					newTime = BuildTimeValue( newTime );
+			{
+				jsdouble newTime_double;
+				JS_ValueToNumber( cx, *vp, &newTime_double );
+				newTime = 0;
+				if( newTime_double != 0 )
+				{
+					newTime = BuildTimeValue( static_cast<R64>( newTime_double ));
+				}
 				gPriv->SetTempTimer( newTime );
 				break;
+			}
 			case CIP_SHOULDSAVE:	gPriv->ShouldSave( encaps.toBool() );						break;
 			case CIP_ISNEWBIE:		gPriv->SetNewbie( encaps.toBool() );						break;
 			case CIP_ISDISPELLABLE:	gPriv->SetDispellable( encaps.toBool() );					break;

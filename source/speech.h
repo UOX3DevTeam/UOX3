@@ -324,7 +324,7 @@ private:
 	SpeechTarget	targType;
 	FontType		targFont;
 	UnicodeTypes	targLanguage;
-	TVAL			timeToSayAt;	// time when it should be said
+	TIMERVAL			timeToSayAt;	// time when it should be said
 	std::string		toSay;
 	std::string		sName;
 	UI08			minCmdLevelToReceive;
@@ -348,7 +348,7 @@ public:
 	SpeechTarget		TargType( void ) const			{	return targType;				}
 	FontType			Font( void ) const				{	return targFont;				}
 	UnicodeTypes		Language( void ) const			{	return targLanguage;			}
-	TVAL				At( void ) const				{	return timeToSayAt;				}
+	TIMERVAL				At( void ) const				{	return timeToSayAt;				}
 	const std::string	Speech( void ) const			{	return toSay;					}
 	const std::string	SpeakerName( void ) const		{	return sName;					}
 	UI08				CmdLevel( void ) const			{	return minCmdLevelToReceive;	}
@@ -362,7 +362,7 @@ public:
 	void				TargType( SpeechTarget type )	{	targType = type;				}
 	void				Font( FontType type )			{	targFont = type;				}
 	void				Language( UnicodeTypes val )	{	targLanguage = val;				}
-	void				At( TVAL newTime )				{	timeToSayAt = newTime;			}
+	void				At( TIMERVAL newTime )				{	timeToSayAt = newTime;			}
 	void				CmdLevel( UI08 nLevel )			{	minCmdLevelToReceive = nLevel;	}
 
 	void Speech( const std::string& said )

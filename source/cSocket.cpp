@@ -413,11 +413,11 @@ void CSocket::ForceOffline( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time point at which the char times out
 //o------------------------------------------------------------------------------------------------o
-TVAL CSocket::IdleTimeout( void ) const
+TIMERVAL CSocket::IdleTimeout( void ) const
 {
 	return idleTimeout;
 }
-void CSocket::IdleTimeout( TVAL newValue )
+void CSocket::IdleTimeout( TIMERVAL newValue )
 {
 	idleTimeout = newValue;
 	wasIdleWarned = false;
@@ -471,11 +471,11 @@ void CSocket::SkillDelayMsgShown( bool value )
 //|	Purpose		-	Gets/Sets the time point at which the player gets kicked if assistant tool
 //|					has not responded to request to negotiate for features
 //o------------------------------------------------------------------------------------------------o
-TVAL CSocket::NegotiateTimeout( void ) const
+TIMERVAL CSocket::NegotiateTimeout( void ) const
 {
 	return negotiateTimeout;
 }
-void CSocket::NegotiateTimeout( TVAL newValue )
+void CSocket::NegotiateTimeout( TIMERVAL newValue )
 {
 	negotiateTimeout = newValue;
 }
@@ -1060,8 +1060,8 @@ SI32 CSocket::Receive( SI32 x, bool doLog )
 {
 	SI32 count			= 0;
 	UI08 recvAttempts	= 0;
-	TVAL curTime		= GetClock();
-	TVAL nexTime		= curTime;
+	TIMERVAL curTime		= GetClock();
+	TIMERVAL nexTime		= curTime;
 	do
 	{
 		count = static_cast<int>( recv( static_cast<UOXSOCKET>( cliSocket ), ( char * )&buffer[inlength], x - inlength, 0 ));

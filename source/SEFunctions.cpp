@@ -286,7 +286,7 @@ JSBool SE_CheckTimeSinceLastCombat( JSContext* cx, [[maybe_unused]] JSObject* ob
 	timespanInSeconds = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
 
 	// Use GetGUITimerCurTime() instead of time(nullptr) for consistency
-	TVAL now = cwmWorldState->GetUICurrentTime();
+	TIMERVAL now = cwmWorldState->GetUICurrentTime();
 
 	if(( now - from->GetLastCombatTime() ) < timespanInSeconds )
 	{

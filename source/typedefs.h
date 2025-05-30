@@ -44,8 +44,8 @@ typedef void *  va_list;
 // Setting up types used
 //o------------------------------------------------------------------------------------------------o
 
-using R32 = float;
-using R64 = double;
+using R32 = float;			// Exact for all integers within +/-16777216 (2^24)., with general precision for ~7 decimal digits
+using R64 = double;			// Exact for all integers within +/-9007199254740992 (2^53)., with general precision for ~15-17 decimal digits
 using UI08 = std::uint8_t;	// 0 to 255
 using SI08 = std::int8_t;	// -128 to 127
 using UI16 = std::uint16_t;	// 0 to 65535
@@ -69,8 +69,7 @@ using COLOUR		= std::uint16_t;
 using SKILLVAL		= std::uint16_t;
 using WEATHID		= std::uint16_t;
 using GUILDID		= std::int16_t;
-using TIMERVAL		= std::uint64_t;
-using TVAL		= std::uint64_t; // Abstract it away once and for all
+using TIMERVAL		= std::uint64_t; // Abstract it away once and for all
 
 #if defined(_WIN32)
 using UOXSOCKET = 	std::uint32_t;

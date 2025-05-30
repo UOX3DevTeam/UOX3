@@ -42,7 +42,7 @@ void cEffects::DeathAction( CChar *s, CItem *x, UI08 fallDirection )
 CItem * cEffects::SpawnBloodEffect( UI08 worldNum, UI16 instanceId, UI16 bloodColour, BloodTypes bloodType )
 {
 	// Use default blood decay timer from ini setting
-	R32 bloodDecayTimer = static_cast<R32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAY ));
+	R64 bloodDecayTimer = static_cast<R64>( cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAY ));
 
 	// Blood effects, sorted by size of effect from small to large
 	std::vector<UI16> bloodIds{ 0x1645, 0x122C, 0x122E, 0x122B, 0x122D, 0x122A, 0x122F };
@@ -52,7 +52,7 @@ CItem * cEffects::SpawnBloodEffect( UI08 worldNum, UI16 instanceId, UI16 bloodCo
 	{
 		case BLOOD_DEATH:
 			// Use corpse-specific blood decay timer instead of default one
-			bloodDecayTimer = static_cast<R32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAYCORPSE ));
+			bloodDecayTimer = static_cast<R64>( cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAYCORPSE ));
 
 			// Randomize between large blood effects
 			bloodEffectId = bloodIds[RandomNum( static_cast<UI16>( 3 ), static_cast<UI16>( 6 ))];
@@ -619,7 +619,7 @@ auto cEffects::CheckTempeffects() -> void
 	CSocket *tSock = nullptr;
 	CBaseObject *myObj = nullptr;
 
-	const TVAL j = cwmWorldState->GetUICurrentTime();
+	const TIMERVAL j = cwmWorldState->GetUICurrentTime();
 	std::vector<CTEffect*> removeEffects;
 	auto collection = cwmWorldState->tempEffects.collection();
 	for( auto &Effect : collection )
@@ -768,7 +768,7 @@ auto cEffects::CheckTempeffects() -> void
 				src = CalcCharObjFromSer( Effect->Source() );
 				if( src->GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
 				{
-					src->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 1 ));
+					src->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 1.0 ));
 					std::string mTemp = oldstrutil::number( Effect->More3() );
 					if( tSock )
 					{
@@ -1191,7 +1191,7 @@ void PauseEffect( CTEffect *Effect )
 	// Store timestamp for when effect was paused
 	// We'll use this later when we resume the effect
 	// That's all!
-	Effect->PauseTime( BuildTimeValue( 0 ));
+	Effect->PauseTime( BuildTimeValue( 0.0 ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1206,7 +1206,7 @@ void ResumeEffect( CTEffect *Effect )
 	if( pauseTime > 0 )
 	{
 		// Effect IS paused, let's resume it and prolong the original timer by the amount of time it's been paused
-		const TVAL currTime = cwmWorldState->GetUICurrentTime();
+		const TIMERVAL currTime = cwmWorldState->GetUICurrentTime();
 		auto expireTime = Effect->ExpireTime();
 		expireTime = expireTime + ( currTime - pauseTime );
 		Effect->ExpireTime( expireTime );
@@ -1276,14 +1276,14 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 		{
 			dest->SetFrozen( true );
 			dest->Dirty( UT_UPDATE );
-			R32 effectDuration = 0;
+			R64 effectDuration = 0;
 			if( source == nullptr )
 			{
-				effectDuration = static_cast<R32>( more2 );
+				effectDuration = static_cast<R64>( more2 );
 				if( more3 != 0 )
 				{
 					// Divide duration by more3 value
-					effectDuration /= static_cast<R32>( more3 );
+					effectDuration /= static_cast<R64>( more3 );
 				}
 
 				// Keep a reference to more1, if different than 0
@@ -1294,7 +1294,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			}
 			else
 			{
-				effectDuration = static_cast<R32>( source->GetSkill( MAGERY )) / 100.0f;
+				effectDuration = static_cast<R64>( source->GetSkill( MAGERY )) / 100.0;
 			}
 			toAdd->ExpireTime( BuildTimeValue( effectDuration ));
 			toAdd->Dispellable( true );
@@ -1307,14 +1307,14 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			dest->SetFixedLight( static_cast<UI08>( worldbrightlevel ));
 			DoLight( tSock, static_cast<SI08>( worldbrightlevel ));
 
-			R32 effectDuration = 0;
+			R64 effectDuration = 0;
 			if( source == nullptr )
 			{
-				effectDuration = static_cast<R32>( more2 );
+				effectDuration = static_cast<R64>( more2 );
 			}
 			else
 			{
-				effectDuration = static_cast<R32>( source->GetSkill( MAGERY )) / 2.0f;
+				effectDuration = static_cast<R64>( source->GetSkill( MAGERY )) / 2.0;
 			}
 			toAdd->ExpireTime( BuildTimeValue( effectDuration ));
 			toAdd->Dispellable( true );
@@ -1329,18 +1329,18 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			dest->IncDexterity2( -more1 );
 			dest->SetStamina( std::min( dest->GetStamina(), dest->GetMaxStam() ));
 
-			R32 effectDuration = 0;
+			R64 effectDuration = 0;
 			if( source == nullptr )
 			{
 				// Use duration provided with effect call
-				effectDuration = static_cast<R32>( more2 );
+				effectDuration = static_cast<R64>( more2 );
 				
 				// Halve effect-duration on resist
 				spellResisted = Magic->CheckResist( more3, dest, 1 );
 			}
 			else
 			{
-				effectDuration = static_cast<R32>( source->GetSkill( MAGERY ) / 10.0f );
+				effectDuration = static_cast<R64>( source->GetSkill( MAGERY ) / 10.0 );
 
 				//Halve effect-timer on resist
 				spellResisted = Magic->CheckResist( source, dest, 1 );
@@ -1348,7 +1348,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 
 			if( spellResisted )
 			{
-				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0f ));
+				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0 ));
 			}
 			else
 			{
@@ -1368,18 +1368,18 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			dest->IncIntelligence2( -more1 );
 			dest->SetMana( std::min( dest->GetMana(), dest->GetMaxMana() ));
 
-			R32 effectDuration = 0;
+			R64 effectDuration = 0;
 			if( source == nullptr )
 			{
 				// Use duration provided with effect call
-				effectDuration = static_cast<R32>( more2 );
+				effectDuration = static_cast<R64>( more2 );
 
 				// Halve effect-duration on resist
 				spellResisted = Magic->CheckResist( more3, dest, 3 );
 			}
 			else
 			{
-				effectDuration = static_cast<R32>( source->GetSkill( MAGERY ) / 10.0f );
+				effectDuration = static_cast<R64>( source->GetSkill( MAGERY ) / 10.0 );
 
 				//Halve effect-timer on resist
 				spellResisted = Magic->CheckResist( source, dest, 1 );
@@ -1387,7 +1387,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 
 			if( spellResisted )
 			{
-				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0f ));
+				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0 ));
 			}
 			else
 			{
@@ -1407,18 +1407,18 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			dest->IncStrength2( -more1 );
 			dest->SetHP( std::min( dest->GetHP(), static_cast<SI16>( dest->GetMaxHP() )));
 
-			R32 effectDuration = 0;
+			R64 effectDuration = 0;
 			if( source == nullptr )
 			{
 				// Use duration provided with effect call
-				effectDuration = static_cast<R32>( more2 );
+				effectDuration = static_cast<R64>( more2 );
 
 				// Halve effect-duration on resist
 				spellResisted = Magic->CheckResist( more3, dest, 1 );
 			}
 			else
 			{
-				effectDuration = static_cast<R32>( source->GetSkill( MAGERY ) / 10.0f );
+				effectDuration = static_cast<R64>( source->GetSkill( MAGERY ) / 10.0 );
 
 				//Halve effect-timer on resist
 				spellResisted = Magic->CheckResist( source, dest, 1 );
@@ -1427,7 +1427,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			//Halve effect-timer on resist
 			if( spellResisted )
 			{
-				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0f ));
+				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0 ));
 			}
 			else
 			{
@@ -1443,11 +1443,11 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			if( source == nullptr )
 			{
 				// Use duration provided with effect call
-				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( more2 )));
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more2 )));
 			}
 			else
 			{
-				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( source->GetSkill( MAGERY )) / 10.0f ));
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( source->GetSkill( MAGERY )) / 10.0 ));
 			}
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
@@ -1458,11 +1458,11 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			if( source == nullptr )
 			{
 				// Use duration provided with effect call
-				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(more2) ));
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more2 )));
 			}
 			else
 			{
-				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( source->GetSkill( MAGERY )) / 10.0f ));
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( source->GetSkill( MAGERY )) / 10.0 ));
 			}
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
@@ -1472,23 +1472,23 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			if( source == nullptr )
 			{
 				// Use duration provided with effect call
-				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( more2 )));
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more2 )));
 			}
 			else
 			{
-				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( source->GetSkill( MAGERY )) / 10.0f ));
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( source->GetSkill( MAGERY )) / 10.0 ));
 			}
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
 		case 9: // Grind Necro Reagent
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( more2 )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more2 )));
 			toAdd->More1( more1 );
 			toAdd->More2( more2 );
 			toAdd->Dispellable( false );
 			break;
 		case 10: // ???
-			toAdd->ExpireTime( BuildTimeValue( 12.0f ));
+			toAdd->ExpireTime( BuildTimeValue( 12.0 ));
 			toAdd->Dispellable( false );
 			toAdd->More1( more1 );
 			toAdd->More2( more2 );
@@ -1512,7 +1512,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 				dest->IncStrength2( more1 );
 				dest->IncDexterity2( more2 );
 				dest->IncIntelligence2( more3 );
-				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( source->GetSkill( MAGERY )) / 10.0f ));
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( source->GetSkill( MAGERY )) / 10.0 ));
 				toAdd->More1( more1 );
 				toAdd->More2( more2 );
 				toAdd->More3( more3 );
@@ -1522,7 +1522,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 		case 12: // Curse Spell
 		{
 			bool spellResisted = false;
-			R32 effectDuration = 0;
+			R64 effectDuration = 0.0;
 			if( source == nullptr )
 			{
 				auto effectStrength = more1;
@@ -1546,7 +1546,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 				toAdd->More3( more1 );
 
 				// Use duration provided with effect call
-				effectDuration = static_cast<R32>( more2 );
+				effectDuration = static_cast<R64>( more2 );
 
 				// Halve effect-duration on resist
 				spellResisted = Magic->CheckResist( more3, dest, 4 );
@@ -1572,7 +1572,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 				toAdd->More2( more2 );
 				toAdd->More3( more3 );
 
-				effectDuration = static_cast<R32>( source->GetSkill( MAGERY )) / 10.0f;
+				effectDuration = static_cast<R64>( source->GetSkill( MAGERY )) / 10.0;
 
 				//Halve effect-timer on resist
 				spellResisted = Magic->CheckResist( source, dest, 4 );
@@ -1580,7 +1580,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 
 			if( spellResisted )
 			{
-				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0f ));
+				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0 ));
 			}
 			else
 			{
@@ -1593,16 +1593,16 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 		case 15: // Reactive Armor Spell
 			if( source != nullptr )
 			{
-				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( source->GetSkill( MAGERY )) / 10.0f ));
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( source->GetSkill( MAGERY )) / 10.0 ));
 			}
 			else
 			{
-				toAdd->ExpireTime( BuildTimeValue( 6.0f ));
+				toAdd->ExpireTime( BuildTimeValue( 6.0 ));
 			}
 			toAdd->Dispellable( true );
 			break;
 		case 16: // Explosion potion messages (JS)
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( more2 )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more2 )));
 			toAdd->More1( more1 ); //item/potion
 			toAdd->More2( more2 ); //seconds
 			toAdd->More3( more3 ); //countdown#
@@ -1631,19 +1631,19 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			}
 			break;
 		case 19: // Incognito Spell
-			toAdd->ExpireTime( BuildTimeValue( 90.0f )); // 90 seconds
+			toAdd->ExpireTime( BuildTimeValue( 90.0 )); // 90 seconds
 			toAdd->Dispellable( false );
 			break;
 		case 21: // Protection Spell
 		{
-			R32 effectDuration = 0;
+			R64 effectDuration = 0.0;
 			if( source == nullptr )
 			{
-				effectDuration = static_cast<R32>( more2 );
+				effectDuration = static_cast<R64>( more2 );
 			}
 			else
 			{
-				effectDuration = 120.0f;
+				effectDuration = 120.0;
 			}
 			toAdd->ExpireTime( BuildTimeValue( effectDuration ));
 			toAdd->Dispellable( true );
@@ -1652,7 +1652,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			break;
 		}
 		case 25: // Temporarily set item as disabled
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( more1 )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more1 )));
 			toAdd->ObjPtr( dest );
 			dest->SetDisabled( true );
 			toAdd->More2( 1 );
@@ -1662,59 +1662,59 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			dest->SetUsingPotion( true );
 			break;
 		case 27: // Explosion Spell
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( Magic->spells[43].DamageDelay() )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( Magic->spells[43].DamageDelay() )));
 			toAdd->More1( more1 );
 			break;
 		case 28: // Magic Arrow Spell
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[5].DamageDelay() )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( Magic->spells[5].DamageDelay() )));
 			toAdd->More1( more1 );
 			break;
 		case 29: // Harm Spell
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[12].DamageDelay() )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( Magic->spells[12].DamageDelay() )));
 			toAdd->More1( more1 );
 			break;
 		case 30: // Fireball Spell
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[18].DamageDelay() )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( Magic->spells[18].DamageDelay() )));
 			toAdd->More1( more1 );
 			break;
 		case 31: // Lightning Spell
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[30].DamageDelay() )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( Magic->spells[30].DamageDelay() )));
 			toAdd->More1( more1 );
 			break;
 		case 32: // Mind Blast Spell
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[37].DamageDelay() )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( Magic->spells[37].DamageDelay() )));
 			toAdd->More1( more1 );
 			break;
 		case 33: // Energy Bolt Spell
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[42].DamageDelay() )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( Magic->spells[42].DamageDelay() )));
 			toAdd->More1( more1 );
 			break;
 		case 34: // Chain Lightning Spell
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[49].DamageDelay() )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( Magic->spells[49].DamageDelay() )));
 			toAdd->More1( more1 );
 			break;
 		case 35: // Flamestrike Spell
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[51].DamageDelay() )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( Magic->spells[51].DamageDelay() )));
 			toAdd->More1( more1 );
 			break;
 		case 36: // Meteor Swarm
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[55].DamageDelay() )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( Magic->spells[55].DamageDelay() )));
 			toAdd->More1( more1 );
 			break;
 		case 40: // Used by JS timers
-			toAdd->ExpireTime( BuildTimeValue(( static_cast<R32>( more1 ) + static_cast<R32>( more2 ) / 1000.0f )));
+			toAdd->ExpireTime( BuildTimeValue(( static_cast<R64>( more1 ) + static_cast<R64>( more2 )) / 1000.0 ));
 			toAdd->More1( more3 );
 			break;
 		case 41: // creating item
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( more1 ) / 100.0f ));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more1 ) / 100.0 ));
 			toAdd->More2( more2 );
 			break;
 		case 42: // delayed sound effect for crafting
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( more1 ) / 100.0f ));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more1 ) / 100.0 ));
 			toAdd->More2( more2 );
 			break;
 		case 43: // regain wool for sheeps (JS)
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( more1 )));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more1 )));
 			break;
 		default:
 			Console.Error( oldstrutil::format( " Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num ));
@@ -1750,7 +1750,7 @@ void cEffects::TempEffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 	switch( num )
 	{
 		case 10: // Crafting Potion??
-			toAdd->ExpireTime( BuildTimeValue( 12 ));
+			toAdd->ExpireTime( BuildTimeValue( 12.0 ));
 			toAdd->Dispellable( false );
 			toAdd->More1( more1 );
 			toAdd->More2( more2 );
@@ -1762,24 +1762,24 @@ void cEffects::TempEffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 				dest->SetDoorOpen( true );
 			}
 
-			toAdd->ExpireTime( BuildTimeValue( 10 ));
+			toAdd->ExpireTime( BuildTimeValue( 10.0 ));
 			toAdd->Dispellable( false );
 			break;
 		case 17: // Explosion potion (explosion)  Tauriel (explode in 4 seconds)
-			toAdd->ExpireTime( BuildTimeValue( 4 ));
+			toAdd->ExpireTime( BuildTimeValue( 4.0 ));
 			toAdd->More1( more1 );
 			toAdd->More2( more2 );
 			toAdd->ObjPtr( dest );
 			toAdd->Dispellable( false );
 			break;
 		case 25: // // Temporarily set item as disabled
-			toAdd->ExpireTime( BuildTimeValue( more1 ));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more1 )));
 			toAdd->ObjPtr( dest );
 			dest->SetDisabled( true );
 			toAdd->More2( 0 );
 			break;
 		case 50: // Magically locked, expires in X seconds (more1, based on caster's Magery skill)
-			toAdd->ExpireTime( BuildTimeValue( more1 ));
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R64>( more1 )));
 			toAdd->ObjPtr( dest );
 			toAdd->Dispellable( false );
 			break;
@@ -1801,7 +1801,7 @@ void cEffects::SaveEffects( void )
 {
 	std::ofstream effectDestination;
 	const char blockDiscriminator[] = "\n\n---EFFECT---\n\n";
-	TVAL s_t = GetClock();
+	TIMERVAL s_t = GetClock();
 
 	Console << "Saving Effects...   ";
 	Console.TurnYellow();
@@ -1827,7 +1827,7 @@ void cEffects::SaveEffects( void )
 	Console << "\b\b\b\b";
 	Console.PrintDone();
 
-	TVAL e_t = GetClock();
+	TIMERVAL e_t = GetClock();
 	Console.Print( oldstrutil::format("Effects saved in %.02fsec\n", ( static_cast<R32>( e_t-s_t )) / 1000.0f ));
 }
 
@@ -1895,7 +1895,7 @@ void cEffects::LoadEffects( void )
 								case 'E':
 									if( UTag == "EXPIRE" )
 									{
-										toLoad->ExpireTime( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) + cwmWorldState->GetUICurrentTime() );
+										toLoad->ExpireTime( static_cast<TIMERVAL>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) + cwmWorldState->GetUICurrentTime() );
 									}
 									break;
 								case 'I':
@@ -1963,7 +1963,7 @@ void cEffects::LoadEffects( void )
 								case 'P':
 									if( UTag == "PAUSE" )
 									{
-										toLoad->PauseTime( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) + cwmWorldState->GetUICurrentTime() );
+										toLoad->PauseTime( static_cast<TIMERVAL>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) + cwmWorldState->GetUICurrentTime() );
 									}
 									break;
 								case 'S':
