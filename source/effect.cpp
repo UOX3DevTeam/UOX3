@@ -1963,7 +1963,8 @@ void cEffects::LoadEffects( void )
 								case 'P':
 									if( UTag == "PAUSE" )
 									{
-										toLoad->PauseTime( static_cast<TIMERVAL>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )) + cwmWorldState->GetUICurrentTime() );
+										auto pauseTime = static_cast<TIMERVAL>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
+										toLoad->PauseTime( pauseTime > 0 ? pauseTime + cwmWorldState->GetUICurrentTime() : 0 );
 									}
 									break;
 								case 'S':
@@ -2020,7 +2021,7 @@ bool CTEffect::Save( std::ostream &effectDestination ) const
 	// Decimal / String Values
 	effectDestination << std::dec;
 	effectDestination << "Expire=" + std::to_string( ExpireTime() - cwmWorldState->GetUICurrentTime() ) + newLine;
-	effectDestination << "Pause=" + std::to_string( PauseTime() - cwmWorldState->GetUICurrentTime() ) + newLine;
+	effectDestination << "Pause=" + std::to_string( PauseTime() > 0 ? PauseTime() - cwmWorldState->GetUICurrentTime() : 0 ) + newLine;
 	effectDestination << "Number=" + std::to_string( Number() ) + newLine;
 	effectDestination << "More1=" + std::to_string( More1() ) + newLine;
 	effectDestination << "More2=" + std::to_string( More2() ) + newLine;

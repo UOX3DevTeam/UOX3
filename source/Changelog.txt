@@ -1,3 +1,6 @@
+02/06/2025 - Xuri
+	Fixed an issue where UOX3 would not save/lead the pauseTime of effects correctly, causing JS-timers and tempeffect timers in general to break on server restart. Manual fix for already affected effects: open effects.wcs and set all pauseTime values with ridiculously high values to 0, then save file.
+
 31/05/2025 - Xuri
 	Got rid of the Overflow() function, which no longer serves a purpose after timers have been upgraded from uint32_t to uint64_t
 	Unified usage of TIMERVAL (UI64) and TVAL (also UI64) across code base; now only TIMERVAL is used
