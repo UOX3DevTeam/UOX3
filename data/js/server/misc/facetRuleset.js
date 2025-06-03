@@ -213,10 +213,10 @@ function onFlagChange( pChanging, newStatus, oldStatus )
 			{
 				// Murderers can go to Ilshenar once per month. This limitation does not reset if they "go blue" and then turn red again
 				var lastIlshenarVisit = parseInt( pChanging.GetTag( "ilshMurderVisit" ));
-				if( lastIlshenarVisit == 0 || (( GetCurrentClock() - lastIlshenarVisit ) / 1000 > timeBetweenMurdererVisit ))
+				if( lastIlshenarVisit == 0 || (( Date.now() - lastIlshenarVisit ) / 1000 > timeBetweenMurdererVisit ))
 				{
 					// Allow them to stay in Ilshenar, since it's more than 30 days since their last visit as a murderer (but update timestamp)
-					pChanging.SetTag( "ilshMurderVisit", GetCurrentClock().toString() );
+					pChanging.SetTag( "ilshMurderVisit", Date.now().toString() );
 					return false;
 				}
 			}

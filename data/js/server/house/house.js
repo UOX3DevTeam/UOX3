@@ -109,13 +109,13 @@ function onEntrance( iMulti, charEntering, objType )
 		if( iMulti.isPublic && !iMulti.IsOnOwnerList( charEntering ) && !iMulti.IsOnFriendList( charEntering ))
 		{
 			// Has more than 24 hours passed since the visitorTracker was last cleared? If so, clear it now
-			var lastPurgeTime = iMulti.GetTag( "lastPurge" );
+			var lastPurgeTime = parseInt( iMulti.GetTag( "lastPurge" ));
 			if( lastPurgeTime != 0 )
 			{
-				if(( GetCurrentClock() - parseInt( lastPurgeTime )) / 1000 > visitorPurgeTimer )
+				if(( Date.now() - lastPurgeTime ) / 1000 > visitorPurgeTimer )
 				{
 					PurgeVisitTracker( iMulti );
-					iMulti.SetTag( "lastPurge", GetCurrentClock().toString() );
+					iMulti.SetTag( "lastPurge", Date.now().toString() );
 				}
 
 				// Count visitor if they haven't entered the building for the past 24 hours
@@ -129,7 +129,7 @@ function onEntrance( iMulti, charEntering, objType )
 			else
 			{
 				// Tag didn't exist! This is the first visit, ever
-				iMulti.SetTag( "lastPurge", GetCurrentClock().toString() );
+				iMulti.SetTag( "lastPurge", Date.now().toString() );
 
 				// Assume no file exists already, and just add visitor directly!
 				if( AddVisitor( iMulti, charEntering ))
@@ -309,7 +309,7 @@ function AddVisitor( iMulti, charEntering )
 	if( mFile != null )
 	{
 		// Append a new line to the file with the visitor's serial and timestamp
-		var visitTime = GetCurrentClock();
+		var visitTime = Date.now();
 		var newLine = ( charEntering.serial ).toString() + "," + visitTime.toString();
 		mFile.Write( newLine + "\n" );
 		mFile.Close()

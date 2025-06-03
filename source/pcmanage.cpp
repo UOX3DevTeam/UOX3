@@ -1508,7 +1508,7 @@ void StartChar( CSocket *mSock, bool onCreate )
 				{
 					// Start timer to kick player if assistant tool hasn't responded in 30 seconds
 					mSock->SysMessage( 9013 ); // This server requires use of an assistant tool that supports feature negotiation. Enable the tool's option for negotiating features with server, or get kicked in 30 seconds.
-					mSock->NegotiateTimeout( cwmWorldState->GetUICurrentTime() + ( 30 * 1000 ));
+					mSock->NegotiateTimeout( static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + ( 30.0 * 1000.0 )));
 				}
 			}
 

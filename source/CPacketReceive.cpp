@@ -4783,7 +4783,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				if( ObjInRange( mChar, targChar, 8 ))
 				{
-					targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
+					targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 					BuyShop( tSock, targChar );
 				}
 				else
@@ -4797,7 +4797,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				if( ObjInRange( mChar, targChar, 8 ))
 				{
-					targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
+					targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 					CPSellList toSend;
 					if( toSend.CanSellItems(( *mChar ), ( *targChar )))
 					{

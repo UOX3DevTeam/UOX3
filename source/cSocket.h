@@ -79,11 +79,11 @@ private:
 	UI16			accountNum;
 
 	CChar *			currCharObj;
-	SI32			idleTimeout;
+	TIMERVAL			idleTimeout;
 	bool			wasIdleWarned;
 	bool			objDelayMsgShown;
 	bool			skillDelayMsgShown;
-	SI32			negotiateTimeout;
+	TIMERVAL			negotiateTimeout;
 	bool			negotiatedWithAssistant;
 
 	UI08			buffer[MAXBUFFER];
@@ -194,11 +194,11 @@ public:
 	PickupLocations	PickupSpot( void ) const;
 	SERIAL			PickupSerial( void ) const;
 	bool			FirstPacket( void ) const;
-	SI32			IdleTimeout( void ) const;
+	TIMERVAL			IdleTimeout( void ) const;
 	bool			WasIdleWarned( void ) const;
 	bool			ObjDelayMsgShown( void ) const;
 	bool			SkillDelayMsgShown( void ) const;
-	SI32			NegotiateTimeout( void ) const;
+	TIMERVAL			NegotiateTimeout( void ) const;
 	bool			NegotiatedWithAssistant( void ) const;
 	UI08 *			Buffer( void );
 	UI08 *			OutBuffer( void );
@@ -263,11 +263,11 @@ public:
 	void			PickupSpot( PickupLocations newValue );
 	void			PickupSerial( SERIAL pickupSerial );
 	void			FirstPacket( bool newValue );
-	void			IdleTimeout( SI32 newValue );
+	void			IdleTimeout( TIMERVAL newValue );
 	void			WasIdleWarned( bool value );
 	void			ObjDelayMsgShown( bool value );
 	void			SkillDelayMsgShown( bool value );
-	void			NegotiateTimeout( SI32 newValue );
+	void			NegotiateTimeout( TIMERVAL newValue );
 	void			NegotiatedWithAssistant( bool value );
 	void			WalkSequence( SI16 newValue );
 	void			AcctNo( UI16 newValue );

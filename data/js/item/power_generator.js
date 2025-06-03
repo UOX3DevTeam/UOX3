@@ -108,7 +108,7 @@ function onUseUnChecked( pUser, iUsed )
 	}
 
 	// Check if control panel has been accessed in the last X seconds, if so, it's probably being used by another player!
-	var lastUsedAt = parseInt( iUsed.GetTag( "lastUsedAt" ));
+	var lastUsedAt = parseInt( iUsed.GetTempTag( "lastUsedAt" ));
 	if( lastUsedAt > 0 && ( GetCurrentClock() / 1000 ) - lastUsedAt < 120 ) // 120 seconds / 2 minutes
 	{
 		pUser.SysMessage( GetDictionaryEntry( 2450, pSocket.language )); // Someone else is using this right now.
@@ -116,7 +116,7 @@ function onUseUnChecked( pUser, iUsed )
 	}
 
 	// Store timestamp for when control panel was last used
-	iUsed.SetTag( "lastUsedAt", Math.round( GetCurrentClock() / 1000 ).toString() );
+	iUsed.SetTempTag( "lastUsedAt", Math.round( GetCurrentClock() / 1000 ).toString() );
 
 	// Store a reference to the control panel on player
 	pUser.SetTempTag( "powerGenControlPanelSer", iUsed.serial.toString() );

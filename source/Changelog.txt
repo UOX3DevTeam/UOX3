@@ -1,3 +1,22 @@
+02/06/2025 - Xuri
+	Fixed an issue where UOX3 would not save/lead the pauseTime of effects correctly, causing JS-timers and tempeffect timers in general to break on server restart. Manual fix for already affected effects: open effects.wcs and set all pauseTime values with ridiculously high values to 0, then save file.
+
+31/05/2025 - Xuri
+	Got rid of the Overflow() function, which no longer serves a purpose after timers have been upgraded from uint32_t to uint64_t
+	Unified usage of TIMERVAL (UI64) and TVAL (also UI64) across code base; now only TIMERVAL is used
+	Updated BuildTimeValue() function parameter from R32 to R64
+	Updated casting of values passed into BuildTimeValue() across source base
+	Updated JS Timers and Temp Effects to support starting, saving and loading very long term effect timers; no more 49 days upper limit
+	Ninja fix for new items added to a container appearing underneath other items in the container instead of over
+
+29/05/2025 - Xuri
+	Fixed misc edge-case-issues with handling of timestamps via GetCurrentClock() in various scripts, especially those stored in custom object tags. In cases of timestamps supposed to persist for a long time (and across server restarts), this is now handled via Date.now() instead.
+
+27/05/2025 - Maarc
+	Bump the types for the timer from the uint32_t to uint64_t and encapsulate behind a TVAL type definition.
+		According to the C++ reference, chrono should support at least 45 bits of accuracy for milliseconds.
+		This gives a 1115 year wraparound.
+    
 18/05/2025 - Dragon Slayer
 	Added support for pet bonding system similar to OSI mechanics
 		Pets now track bonding status using 'isBondedPet' tag
