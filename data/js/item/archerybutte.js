@@ -2,8 +2,8 @@ function onUseUnChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
 	var lastUsedBy = iUsed.GetTag( "lastUsedBy" );
-	var lastUsed = iUsed.GetTag( "lastUsed" );
-	var timeNow = GetCurrentClock();
+	var lastUsed = parseInt( iUsed.GetTag( "lastUsed" ));
+	var timeNow = Date.now();
 
 	if( pUser.dead == 1 )
 	{
@@ -336,8 +336,7 @@ function onUseUnChecked( pUser, iUsed )
 			var totalScore = iUsed.GetTag( "totalScore" ) + points;
 			iUsed.SetTag( "totalScore", totalScore );
 			iUsed.SetTag( "lastUsedBy", ( pUser.serial & 0x00FFFFFF ) );
-			var lastUsed = GetCurrentClock();
-			iUsed.SetTag( "lastUsed", lastUsed );
+			iUsed.SetTag( "lastUsed", Date.now().toString() );
 
 			// Report overall score
 			var tempMsg = GetDictionaryEntry( 2464, pSock.language ) // Score: %i after %u shots.
@@ -347,3 +346,5 @@ function onUseUnChecked( pUser, iUsed )
 	}
 	return false;
 }
+
+function _restorecontext_() {}

@@ -93,6 +93,7 @@ enum ScriptEvent
 	seOnIterateSpawnRegions,
 	seOnPacketReceive,
 	seOnCharDoubleClick,	//	**  the event that replaces hardcoded character doubleclick-stuff
+	seOnDismount,
 	seOnSkillGump,			//	**	allows overriding client's request to open default skill gump
 	seOnCombatStart,		//	**	allows overriding what happens when combat is initiated
 	seOnAICombatTarget,		//	**	allows overriding target selection taking place for regular AI behaviours
@@ -180,7 +181,7 @@ public:
 	bool		OnStop( void );
 	//
 	bool		OnPacketReceive( CSocket *mSock, UI16 packetNum );
-	bool		OnIterate( CBaseObject *a, UI32 &b );
+	bool		OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock );
 	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
 	bool		DoesEventExist( char *eventToFind );
@@ -217,7 +218,7 @@ public:
 	SI08		OnEntrance( CMultiObj *left, CBaseObject *leaving );
 	SI08		OnLeaving( CMultiObj *left, CBaseObject *leaving );
 	SI08		OnMultiLogout( CMultiObj* iMulti, CChar* cPlayer );
-	SI08		OnBoatTurn( CBoatObj* iMulti, UI08 oldDir, UI08 newDir );
+	SI08		OnBoatTurn( CBoatObj* iMulti, UI08 oldDir, UI08 newDir, CItem *iTiller );
 	SI08		OnEquipAttempt( CChar *equipper, CItem *equipping );
 	SI08		OnEquip( CChar *equipper, CItem *equipping );
 	SI08		OnUnequipAttempt( CChar *equipper, CItem *equipping );
@@ -256,7 +257,7 @@ public:
 	bool		OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech );
 	SI32		OnSpellGain( CItem *book, const SI32 spellNum );
 	SI32		OnSpellLoss( CItem *book, const SI32 spellNum );
-	SI08		OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill );
+	SI08		OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill, SI08 overrideOutcome );
 	SI08		OnDropItemOnNpc( CChar *srcChar, CChar *targChar, CItem *i );
 	SI08		OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest );
 	SI08		OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonId );
@@ -278,6 +279,7 @@ public:
 
 	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum );
 	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar );
+	SI08		OnDismount( CChar *currChar, CChar *npcMount );
 	SI08		OnSkillGump( CChar *mChar );
 	SI08		OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem );
 	SI08		OnAICombatTarget( CChar *attacker, CChar *target );

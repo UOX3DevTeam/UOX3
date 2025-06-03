@@ -79,6 +79,7 @@ JSMethodFunc CChar_OpenBank;
 JSMethodFunc CChar_DirectionTo;
 JSMethodFunc CChar_TurnToward;
 JSMethodFunc CChar_CheckSkill;
+JSMethodFunc CChar_AddSkill;
 JSMethodFunc CChar_FindItemLayer;
 JSMethodFunc CChar_SpeechInput;
 JSMethodFunc CChar_CastSpell;
@@ -195,7 +196,11 @@ JSMethodFunc CBase_Refresh;
 JSMethodFunc CBase_SetRandomName;
 JSMethodFunc CBase_SetRandomColor;
 JSMethodFunc CBase_GetTempEffect;
-JSMethodFunc CBase_ReverseEffect;
+JSMethodFunc CBase_ReverseTempEffect;
+JSMethodFunc CBase_PauseTempEffect;
+JSMethodFunc CBase_ResumeTempEffect;
+JSMethodFunc CBase_PauseJSTimer;
+JSMethodFunc CBase_ResumeJSTimer;
 
 // Multi Methods
 JSMethodFunc CMulti_GetMultiCorner;
@@ -229,6 +234,8 @@ JSMethodFunc CMulti_ClearOwnerList;
 JSMethodFunc CMulti_FirstChar;
 JSMethodFunc CMulti_NextChar;
 JSMethodFunc CMulti_FinishedChars;
+JSMethodFunc CMulti_TurnBoat;
+JSMethodFunc CMulti_GetTiller;
 
 // Socket Methods
 JSMethodFunc CSocket_Disconnect;
@@ -404,6 +411,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "FindItemLayer",		CChar_FindItemLayer,	1, 0, 0 },
 	{ "StartTimer",			CBase_StartTimer,		2, 0, 0 },
 	{ "CheckSkill",			CChar_CheckSkill,		4, 0, 0 },
+	{ "AddSkill",			CChar_AddSkill,			3, 0, 0 },
 	{ "SpeechInput",		CChar_SpeechInput,		1, 0, 0 },
 	{ "CastSpell",			CChar_CastSpell,		2, 0, 0 },
 	{ "SysMessage",			CMisc_SysMessage,		10, 0, 0 },
@@ -483,7 +491,11 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0, 0 },
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0, 0 },
 	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0, 0 },
-	{ "ReverseTempEffect",	CBase_ReverseEffect,		1, 0, 0 },
+	{ "ReverseTempEffect",	CBase_ReverseTempEffect,	1, 0, 0 },
+	{ "PauseTempEffect",	CBase_PauseTempEffect,	1, 0, 0 },
+	{ "ResumeTempEffect",	CBase_ResumeTempEffect,	1, 0, 0 },
+	{ "PauseJSTimer",		CBase_PauseJSTimer,		1, 0, 0 },
+	{ "ResumeJSTimer",		CBase_ResumeJSTimer,	1, 0, 0 },
 	{ nullptr,				nullptr,				0, 0, 0 }
 };
 
@@ -572,11 +584,18 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "NextChar",			CMulti_NextChar,			1, 0, 0 },
 	{ "FinishedChars",		CMulti_FinishedChars,		1, 0, 0 },
 
+	{ "TurnBoat",			CMulti_TurnBoat,			1, 0, 0 },
+	{ "GetTiller",			CMulti_GetTiller,			0, 0, 0 },
+
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
 	{ "SetRandomName",		CBase_SetRandomName,		1, 0, 0 },
 	{ "SetRandomColor",		CBase_SetRandomColor,		1, 0, 0 },
 	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0, 0 },
-	{ "ReverseTempEffect",	CBase_ReverseEffect,		1, 0, 0 },
+	{ "ReverseTempEffect",	CBase_ReverseTempEffect,	1, 0, 0 },
+	{ "PauseTempEffect",	CBase_PauseTempEffect,		1, 0, 0 },
+	{ "ResumeTempEffect",	CBase_ResumeTempEffect,		1, 0, 0 },
+	{ "PauseJSTimer",		CBase_PauseJSTimer,			1, 0, 0 },
+	{ "ResumeJSTimer",		CBase_ResumeJSTimer,		1, 0, 0 },
 	{ nullptr,				nullptr,					0, 0, 0 }
 };
 

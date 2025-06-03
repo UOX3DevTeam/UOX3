@@ -58,7 +58,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 <details>
   <summary>(Optional) Checking out Other Branches</summary>
 
-  > If you'd rather grab another branch of the git repository, like the **develop** branch where most updates get pushed first before being merged into the master branch, you can use the following command *after* completing the previous step:
+  > If you'd rather grab another branch of the git repository, like the **develop** branch where most updates get pushed first before being merged into the master branch, you can use the following command *after* completing the previous step, and *after* navigating into the directory created for the UOX3 repository:
     `git checkout develop`
 
   > GitHub Desktop users can change the active branch via the *Current Branch* dropdown menu in GitHub Desktop.

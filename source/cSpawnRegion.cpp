@@ -513,7 +513,16 @@ void CSpawnRegion::LoadNPCList( const std::string &npcList )
 			}
 			else
 			{
-				sNpcs.push_back( npc );
+				auto charData = CharList->GrabData();
+				if( !charData.empty() )
+				{
+					// Entry in npclist contains data, likely another npclist with weight in front
+					sNpcs.push_back( npc + "=" + CharList->GrabData() );
+				}
+				else
+				{
+					sNpcs.push_back( npc );
+				}
 			}
 		}
 	}
@@ -743,7 +752,7 @@ void CSpawnRegion::DoRegionSpawn( UI32& itemsSpawned, UI32& npcsSpawned )
 		}
 	}
 
-	SetNextTime( BuildTimeValue( static_cast<R32>( RandomNum( static_cast<UI16>( GetMinTime() * 60 ), static_cast<UI16>( GetMaxTime() * 60 )))));
+	SetNextTime( BuildTimeValue( static_cast<R64>( RandomNum( static_cast<UI16>( GetMinTime() * 60 ), static_cast<UI16>( GetMaxTime() * 60 )))));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -778,7 +787,7 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar *
 	if( oldstrutil::upper( csecs[0] ) == "NPCLIST" )
 	{
 		// Chosen entry contained another NPCLIST! Let's dive back into it...
-		ourNPC = Npcs->NpcListLookup( ourNPC );
+		ourNPC = Npcs->NpcListLookup( csecs[1] );
 	}
 
 	CScriptSection *npcCreate = FileLookup->FindEntry( ourNPC, npc_def );

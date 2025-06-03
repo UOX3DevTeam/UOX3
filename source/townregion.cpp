@@ -26,6 +26,7 @@ const UI32 BIT_GUARDED		=	0;
 const UI32 BIT_MARK			=	1;
 const UI32 BIT_GATE			=	2;
 const UI32 BIT_RECALL		=	3;
+const UI32 BIT_DISABLED		=	5;
 const UI32 BIT_AGGRESSIVE	=	6;
 const UI32 BIT_DUNGEON		=	7;
 const UI32 BIT_SAFEZONE		=	8;
@@ -119,27 +120,18 @@ bool CTownRegion::Load( Script *ss )
 		tag = sec->tag;
 		data = sec->data;
 		UTag = oldstrutil::upper( tag );
-		UI32 duint;
-		try
-		{
-			duint = static_cast<UI32>( std::stoul( data, nullptr, 0 ));
-		}
-		catch (...)
-		{
-			duint = 0;
-		}
 		switch(( UTag.data()[0] ))
 		{
 			case 'A':
 				if( UTag == "ALLYTOWN" )
 				{
-					alliedTowns.push_back( static_cast<UI08>( duint ));
+					alliedTowns.push_back( static_cast<UI08>( std::stoul( data, nullptr, 0 )));
 				}
 				break;
 			case 'E':
 				if( UTag == "ELECTIONTIME" )
 				{
-					timeToElectionClose = static_cast<SI32>( duint );
+					timeToElectionClose = static_cast<SI32>( std::stoi( data, nullptr, 0 ));
 				}
 				break;
 			case 'G':
@@ -153,13 +145,13 @@ bool CTownRegion::Load( Script *ss )
 				}
 				else if( UTag == "GUARDSBOUGHT" ) // num guards bought
 				{
-					guardsPurchased = static_cast<SI16>( duint );
+					guardsPurchased = static_cast<SI16>( std::stoi( data, nullptr, 0 ));
 				}
 				break;
 			case 'H':
 				if( UTag == "HEALTH" )
 				{
-					health = static_cast<SI16>( duint );
+					health = static_cast<SI16>( std::stoi( data, nullptr, 0 ));
 				}
 				break;
 			case 'M':
@@ -168,11 +160,11 @@ bool CTownRegion::Load( Script *ss )
 					location = townMember.size();
 					townMember.resize( location + 1 );
 					townMember[location].targVote = INVALIDSERIAL;
-					townMember[location].townMember = duint;
+					townMember[location].townMember = std::stoul( data, nullptr, 0 );
 				}
 				else if( UTag == "MAYOR" )
 				{
-					mayorSerial = duint;
+					mayorSerial = std::stoul( data, nullptr, 0 );
 				}
 				break;
 			case 'N':
@@ -182,7 +174,7 @@ bool CTownRegion::Load( Script *ss )
 				}
 				else if( UTag == "NUMGUARDS" )
 				{
-					numGuards = static_cast<UI16>( duint );
+					numGuards = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 				}
 				break;
 			case 'P':
@@ -190,7 +182,7 @@ bool CTownRegion::Load( Script *ss )
 				{
 					if( parentRegion > 0 )
 					{
-						parentRegion = static_cast<UI16>( duint );
+						parentRegion = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 						IsSubRegion( true );
 					}
 				}
@@ -202,45 +194,45 @@ bool CTownRegion::Load( Script *ss )
 				}
 				else if( UTag == "POLLTIME" )
 				{
-					timeToNextPoll = static_cast<SI32>( duint );
+					timeToNextPoll = static_cast<SI32>( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				break;
 			case 'R':
 				if( UTag == "RACE" )
 				{
-					race = static_cast<UI16>( duint );
+					race = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 				}
 				else if( UTag == "RESOURCEAMOUNT" )
 				{
-					goldReserved = static_cast<SI32>( duint );
+					goldReserved = static_cast<SI32>( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				else if( UTag == "RESOURCECOLLECTED" )
 				{
-					resourceCollected = static_cast<SI32>( duint );
+					resourceCollected = static_cast<SI32>( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				break;
 			case 'T':
 				if( UTag == "TAXEDID" )
 				{
-					taxedResource = static_cast<UI16>( duint );
+					taxedResource = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 				}
 				else if( UTag == "TAXEDAMOUNT" )
 				{
-					taxedAmount = static_cast<UI16>( duint );
+					taxedAmount = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 				}
 				else if( UTag == "TIMET" )
 				{
-					timeSinceTaxedMembers = static_cast<SI32>( duint );
+					timeSinceTaxedMembers = static_cast<SI32>( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				else if( UTag == "TIMEG" )
 				{
-					timeSinceGuardsPaid = static_cast<SI32>( duint );
+					timeSinceGuardsPaid = static_cast<SI32>( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				break;
 			case 'V':
 				if( UTag == "VOTE" && location != 0xFFFFFFFF )
 				{
-					townMember[location].targVote = duint;
+					townMember[location].targVote = std::stoul( data, nullptr, 0 );
 				}
 				break;
 		}
@@ -498,21 +490,13 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 		tag = sec->tag;
 		data = sec->data;
 		UTag = oldstrutil::upper( tag );
-		UI32 duint;
-		try
-		{
-			duint = static_cast<UI32>( std::stoul( data, nullptr, 0 ));
-		}
-		catch (...)
-		{
-			duint = 0;
-		}
+
 		switch(( UTag.data()[0] ))
 		{
 			case 'A':
 				if( UTag == "ABWEATH" )
 				{
-					weather = static_cast<UI08>( duint );
+					weather = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 				}
 				else if( UTag == "APPEARANCE" )
 				{
@@ -536,7 +520,7 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 				{
 					if( actgood > - 1 )
 					{
-						goodList[actgood].buyVal = static_cast<SI32>( duint );
+						goodList[actgood].buyVal = static_cast<SI32>( std::stoi( data, nullptr, 0 ));
 					}
 					else
 					{
@@ -547,20 +531,24 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 			case 'C':
 				if( UTag == "CHANCEFORBIGORE" )
 				{
-					chanceFindBigOre =static_cast<UI08>( duint );
+					chanceFindBigOre =static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 				}
 				break;
 			case 'D':
 				if( UTag == "DUNGEON" )
 				{
-					IsDungeon(( duint == 1 ));
+					IsDungeon( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				break;
 			case 'E':
-				if( UTag == "ESCORTS" )
+				if( UTag == "DISABLED" )
+				{
+					IsDisabled( std::stoi( data, nullptr, 0 ) == 1 );
+				}
+				else if( UTag == "ESCORTS" )
 				{
 					// Load the region number in the global array of valid escortable regions
-					if( duint == 1 )
+					if( std::stoi( data, nullptr, 0 ) == 1 )
 					{
 						cwmWorldState->escortRegions.push_back( regionNum );
 					}
@@ -581,48 +569,48 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 				}
 				else if( UTag == "GUARDED" )
 				{
-					IsGuarded(( duint == 1 ));
+					IsGuarded( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				else if( UTag == "GATE" )
 				{
-					CanGate(( duint == 1 ));
+					CanGate( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				else if( UTag == "GOOD" )
 				{
-					actgood = static_cast<int>( duint );
+					actgood = static_cast<SI32>( std::stoi( data, nullptr, 0 ));
 				}
 				break;
 			case 'H':
 				if( UTag == "HOUSING" )
 				{
-					CanPlaceHouse(( duint == 1 ));
+					CanPlaceHouse( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				break;
 			case 'I':
 				if( UTag == "INSTANCEID" )
 				{
-					instanceId = static_cast<UI16>( duint );
+					instanceId = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 				}
 				break;
 			case 'M':
 				if( UTag == "MUSICLIST" || UTag == "MIDILIST" )
 				{
-					musicList = static_cast<UI16>( duint );
+					musicList = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 				}
 				else if( UTag == "MAGICDAMAGE" )
 				{
-					CanCastAggressive(( duint == 1 ));
+					CanCastAggressive( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				else if( UTag == "MARK" )
 				{
-					CanMark(( duint == 1 ));
+					CanMark( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				break;
 			case 'N':
 				if( UTag == "NAME" )
 				{
 					name = data;
-					actgood = -1;
+					actgood = -1; // Loading new region, reset to -1
 				}
 				break;
 			case 'O':
@@ -666,7 +654,7 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 				if( UTag == "PARENTREGION" )
 				{
 					// Region has a parent region! Store reference to parent region...
-					parentRegion = static_cast<UI16>( duint );
+					parentRegion = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 
 					// ...and mark this region as a subregion
 					IsSubRegion( true );
@@ -675,7 +663,7 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 			case 'R':
 				if( UTag == "RECALL" )
 				{
-					CanRecall(( duint == 1 ));
+					CanRecall( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				else if( UTag == "RANDOMVALUE" )
 				{
@@ -689,7 +677,7 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 						}
 						else
 						{
-							goodList[actgood].rand1 = static_cast<SI32>( duint );
+							goodList[actgood].rand1 = static_cast<SI32>( std::stoi( data, nullptr, 0 ));
 							goodList[actgood].rand2 = goodList[actgood].rand1;
 						}
 						if( goodList[actgood].rand2 < goodList[actgood].rand1 )
@@ -705,19 +693,19 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 				}
 				else if( UTag == "RACE" )
 				{
-					race = static_cast<UI16>( duint );
+					race = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 				}
 				break;
 			case 'S':
 				if( UTag == "SAFEZONE" )
 				{
-					IsSafeZone(( duint == 1 ));
+					IsSafeZone( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				else if( UTag == "SELLABLE" )
 				{
 					if( actgood > - 1 )
 					{
-						goodList[actgood].sellVal = static_cast<SI32>( duint );
+						goodList[actgood].sellVal = static_cast<SI32>( std::stoi( data, nullptr, 0 ));
 					}
 					else
 					{
@@ -755,7 +743,7 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 				}
 				else if( UTag == "SCRIPT" )
 				{
-					UI16 scriptId = static_cast<UI16>( duint );
+					UI16 scriptId = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 					if( scriptId != 0 )
 					{
 						cScript *toExecute	= JSMapping->GetScript( scriptId );
@@ -773,33 +761,33 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 			case 'T':
 				if( UTag == "TELEPORT" )
 				{
-					CanTeleport(( duint == 1 ));
+					CanTeleport( std::stoi( data, nullptr, 0 ) == 1 );
 				}
 				break;
 			case 'W':
 				if( UTag == "WORLD" )
 				{
-					worldNumber = static_cast<UI08>( duint );
+					worldNumber = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 				}
 				break;
 			case 'X':
 				if( UTag == "X1" )
 				{
-					ourLoc.x1 = static_cast<UI16>( duint );
+					ourLoc.x1 = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 				}
 				else if( UTag == "X2" )
 				{
-					ourLoc.x2 = static_cast<UI16>( duint );
+					ourLoc.x2 = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 				}
 				break;
 			case 'Y':
 				if( UTag == "Y1" )
 				{
-					ourLoc.y1 = static_cast<UI16>( duint );
+					ourLoc.y1 = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 				}
 				else if( UTag == "Y2" )
 				{
-					ourLoc.y2 = static_cast<UI16>( duint );
+					ourLoc.y2 = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 					locations.push_back( ourLoc );
 				}
 				break;
@@ -1797,6 +1785,7 @@ void CTownRegion::TellMembers( SI32 dictEntry, ...)
 			va_list argptr;
 			va_start( argptr, dictEntry );
 			msg += oldstrutil::format( txt, argptr );
+			va_end( argptr ); // va_end in same function as va_start
 
 			if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 			{
@@ -2045,6 +2034,20 @@ bool CTownRegion::IsDungeon( void ) const
 void CTownRegion::IsDungeon( bool value )
 {
 	priv.set( BIT_DUNGEON, value );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CTownRegion::IsDisabled()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether townregion is disabled
+//o------------------------------------------------------------------------------------------------o
+bool CTownRegion::IsDisabled( void ) const
+{
+	return priv.test( BIT_DISABLED );
+}
+void CTownRegion::IsDisabled( bool value )
+{
+	priv.set( BIT_DISABLED, value );
 }
 
 //o------------------------------------------------------------------------------------------------o

@@ -282,11 +282,11 @@ auto main( SI32 argc, char *argv[] ) ->int
 		StartMilliTimer( tempSecs, tempMilli );
 		EVENT_TIMER_RESET( stopwatch );
 		
-		if( uiNextCheckConn <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		if( uiNextCheckConn <= cwmWorldState->GetUICurrentTime() )
 		{
 			// Cut lag on CheckConn by not doing it EVERY loop.
 			Network->CheckConnections();
-			uiNextCheckConn = BuildTimeValue( 1.0f );
+			uiNextCheckConn = BuildTimeValue( 1.0 );
 		}
 		Network->CheckMessages();
 		EVENT_TIMER_NOW( stopwatch, Complete net checkmessages, EVENT_TIMER_KEEP );
@@ -303,7 +303,6 @@ auto main( SI32 argc, char *argv[] ) ->int
 		StartMilliTimer( tempSecs, tempMilli );
 		
 		cwmWorldState->CheckTimers();
-		//stopwatch.output( "Delta for CheckTimers" );
 		cwmWorldState->SetUICurrentTime( GetClock() );
 		tempTime = CheckMilliTimer( tempSecs, tempMilli );
 		cwmWorldState->ServerProfile()->IncTimerTime( tempTime );
@@ -588,8 +587,8 @@ auto StartInitialize( CServerData &serverdata ) -> void
 
 	Console << "Starting World Timers          ";
 	cwmWorldState->SetTimer( tWORLD_LIGHTTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_WEATHER ));
-	cwmWorldState->SetTimer( tWORLD_NEXTNPCAI, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->CheckNpcAISpeed() )));
-	cwmWorldState->SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ));
+	cwmWorldState->SetTimer( tWORLD_NEXTNPCAI, BuildTimeValue( cwmWorldState->ServerData()->CheckNpcAISpeed() ));
+	cwmWorldState->SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5 ));
 	cwmWorldState->SetTimer( tWORLD_SHOPRESTOCK, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_SHOPSPAWN ));
 	cwmWorldState->SetTimer( tWORLD_PETOFFLINECHECK, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_PETOFFLINECHECK ));
 
@@ -824,17 +823,23 @@ auto DoMessageLoop() -> void
 							LoadRegions();
 							LoadTeleportLocations(); 
 							break;
-						case '3':	UnloadSpawnRegions();	LoadSpawnRegions(); break;	// Reload spawn regions
+						case '3': // Reload spawn regions
+							// Also requires reloading spawn region DFN data
+							FileLookup->Reload( spawn_def );
+							UnloadSpawnRegions();
+							LoadSpawnRegions();
+							break;
 						case '4':	Magic->LoadScript(); break;	// Reload spells
 						case '5':	// Reload commands	
 							JSMapping->Reload( SCPT_COMMAND );
 							Commands->Load();	 
 							break;
-						case '6': // Reload definition files
+						case '6': // Reload DFNs
 							FileLookup->Reload();
 							LoadCreatures();
 							LoadCustomTitle();
 							LoadSkills();
+							Races->Load();
 							LoadPlaces();
 							Skills->Load(); break;
 						case '7': // Reload JS
@@ -1110,6 +1115,19 @@ auto DismountCreature( CChar *s ) -> void
 				tMount->SetVisible( VT_VISIBLE );
 			}
 			ci->Delete();
+
+			if( ValidateObject( tMount ))
+			{
+				std::vector<UI16> scriptTriggers = tMount->GetScriptTriggers();
+				for( auto &i : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( i );
+					if( toExecute != nullptr )
+					{
+						toExecute->OnDismount( s, tMount );
+					}
+				}
+			}
 		}
 	}
 }
@@ -1122,7 +1140,7 @@ auto DismountCreature( CChar *s ) -> void
 auto EndMessage( [[maybe_unused]] SI32 x ) -> void
 {
 	x = 0; // Really, then why take a parameter?
-	const UI32 iGetClock = cwmWorldState->GetUICurrentTime();
+	const TIMERVAL iGetClock = cwmWorldState->GetUICurrentTime();
 	if( cwmWorldState->GetEndTime() < iGetClock )
 	{
 		cwmWorldState->SetEndTime( iGetClock );
@@ -1224,13 +1242,380 @@ auto CallGuards( CChar *mChar, CChar *targChar ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	PassiveHealthRegen()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Perform passive health regeneration for character
+//o------------------------------------------------------------------------------------------------o
+auto PassiveHealthRegen( CChar &mChar, UI16 maxHP ) -> SI32
+{
+	SI32 nextHealthRegen = static_cast<SI32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000 ); // next health regen time
+
+	if( mChar.GetHP() < maxHP )
+	{
+		if( !cwmWorldState->ServerData()->HungerSystemEnabled() || ( mChar.GetHunger() > 0 )
+			|| ( !Races->DoesHunger( mChar.GetRace() ) && (( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0) || mChar.IsNpc() )))
+		{
+			// Bonus passive hp regen from healing skill
+			R64 healthRegenBonus = 0;
+			if( cwmWorldState->ServerData()->HealingAffectHealthRegen() )
+			{
+				healthRegenBonus += ( 0.1 * mChar.GetSkill( HEALING ) / 10.0 ); // Max +10 at GM Healing
+			}
+
+			// Include health regen bonus from character/from items equipped on character
+			healthRegenBonus += std::min( mChar.GetHealthRegenBonus(), cwmWorldState->ServerData()->HealthRegenCap() ); // Publish 42 (ML) and beyond: capped at 18
+
+			// +2 health regen if human, in ML and beyond (on top of cap)
+			healthRegenBonus += Races->Race( mChar.GetRace() )->HPRegenBonus();
+
+			// Also include adjustment to health regen bonus based on hunger level
+			if( cwmWorldState->ServerData()->HungerSystemEnabled() && cwmWorldState->ServerData()->HungerAffectHealthRegen() )
+			{
+				auto hungerLvl = mChar.GetHunger();
+				if( hungerLvl >= 4 )
+				{
+					// Add to bonus if character is not hungry; increase bonus more the more full character is
+					healthRegenBonus += 2.0 * ( static_cast<R32>( hungerLvl ) - 3.0 ); // 4 -> +2, 5 -> +4, 6 -> +6
+				}
+				else
+				{
+					// Subtract from bonus if character is hungry; decrease bonus more the more hungry character is
+					healthRegenBonus -= 2.0 * ( 4.0 - static_cast<R32>( hungerLvl )); // 3 -> -2, 2 -> -4, 1 -> -6
+				}
+			}
+
+			// With a health regen timer of 8.0 seconds, Healing skill of 100.0 and hunger level at 6/6 can reduce that to 6.95 seconds
+			// With 18 (from items) + 2 (race bonus for humans) bonus health regen on top of that, it can be further reduced to 6.5 seconds
+			nextHealthRegen /= ( 1.0 + ( healthRegenBonus / 100.0 ));
+			mChar.IncHP( 1 ); // Regardless of bonuses to regen rate, we only increase health by 1 each time
+		}
+	}
+	return nextHealthRegen;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PassiveStaminaRegen()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Perform passive stamina regeneration for character
+//o------------------------------------------------------------------------------------------------o
+auto PassiveStaminaRegen( CChar &mChar, UI16 maxStam ) -> SI32
+{
+	SI32 nextStamRegen = static_cast<SI32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ); // next stamina regen time
+
+	auto mStamina = mChar.GetStamina(); // get character's current stamina
+	if( mStamina < maxStam )
+	{
+		// Continue with stamina regen if  character is not yet fully parched, or if character is parched but has less than 25% stamina, or if char belongs to race that does not thirst
+		if( !cwmWorldState->ServerData()->ThirstSystemEnabled() || ( mChar.GetThirst() > 0 )|| (( mChar.GetThirst() == 0) && ( mStamina < static_cast<SI16>( maxStam * 0.25 )))
+			|| ( !Races->DoesThirst( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE ) == 0 || mChar.IsNpc() )))
+		{
+			R64 stamRegenBonus = 0;
+			auto staminaRegenMode = cwmWorldState->ServerData()->StaminaRegenMode();
+			if( staminaRegenMode >= SREG_AOS ) // AoS and beyond
+			{
+				Skills->CheckSkill(( &mChar ), FOCUS, 0, 1000 ); // Check FOCUS for skill gain
+				stamRegenBonus += ( 0.1 * mChar.GetSkill( FOCUS ) / 10.0 );	// Bonus for focus
+			}
+
+			// Additional bonuses that should still respect cap: vampiric embrace, kirin (animal)
+			// ...
+
+			// Include stamina regen bonus from character/from items equipped on character
+			stamRegenBonus += std::min( mChar.GetStaminaRegenBonus(), cwmWorldState->ServerData()->StaminaRegenCap() ); // Publish 42 (ML) and beyond: capped at 24
+			
+			// Additional bonuses beyond cap: skill masteries (rampage)
+			// ...
+
+			// Add stamina regen bonus from races, if setup
+			stamRegenBonus += Races->Race( mChar.GetRace() )->StamRegenBonus();
+
+			// Also include adjustment to health regen bonus based on hunger level
+			if( cwmWorldState->ServerData()->ThirstSystemEnabled() && cwmWorldState->ServerData()->ThirstAffectStaminaRegen() )
+			{
+				auto thirstLvl = mChar.GetThirst();
+				if( thirstLvl >= 4 )
+				{
+					// Add to bonus if character is not thirsty; increase bonus more the more satiated character is
+					stamRegenBonus += 2.0 * ( static_cast<R32>( thirstLvl ) - 3.0 ); // 4 -> +2, 5 -> +4, 6 -> +6
+				}
+				else
+				{
+					// Subtract from bonus if character is thirsty; decrease bonus more the more parched character is
+					stamRegenBonus -= 2.0 * ( 4.0 - static_cast<R32>( thirstLvl )); // 3 -> -2, 2 -> -4, 1 -> -6
+				}
+			}
+
+			// With base regen timer of 0.7 (SA and beyond), and a bonus of 0, the result is 85 stamina per minute
+			// With base regen timer of 2.5 (prior to SA), and a bonus of 0, the result is 24 stamina per minute
+			nextStamRegen /= ( 1.0 + ( stamRegenBonus / 100.0 ));
+
+			if( staminaRegenMode >= SREG_SA && mChar.IsNpc() && !cwmWorldState->creatures[mChar.GetId()].IsAnimal() ) // SA and beyond
+			{
+				// Adjust rate if character is an NPC/monster
+				nextStamRegen *= 1.95;
+			}
+
+			mChar.IncStamina( 1 ); // Regardless of bonuses to regen rate, we only increase stamina by 1 each time
+		}
+	}
+	return nextStamRegen;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	PassiveManaRegen()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Perform passive mana regeneration for character
+//o------------------------------------------------------------------------------------------------o
+auto PassiveManaRegen( CSocket *mSock, CChar &mChar, UI16 maxMana ) -> SI32
+{
+	SI32 nextManaRegen = static_cast<SI32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000 ); // 5 seconds for >= ML, 7 seconds for <= SE
+	R32 armorPenalty = 1;
+
+	if( mChar.GetMana() < maxMana )
+	{
+		R64 medSkill = mChar.GetSkill( MEDITATION );
+		R64 focusSkill = mChar.GetSkill( FOCUS );
+		auto intStat = mChar.GetIntelligence();
+
+		auto manaRegenMode = cwmWorldState->ServerData()->ManaRegenMode();
+		// Mondain's Legacy era and beyond
+		if( manaRegenMode >= MREG_ML ) // ML and beyond
+		{
+			R64 baselineRate = 0.2; // 0.2 mana/sec => 1 mana per 5 seconds
+
+			R64 focusBonus = ( focusSkill / 10.0 ) / 200.0;
+
+			// Calculate base mana regen from Meditation, Intelligence and GM meditation or not
+			R64 meditationBonus = (( 0.0075 * ( medSkill / 10.0 )) + ( 0.0025 * intStat )) * ( medSkill >= 1000 ? 1.1 : 1.0 );
+
+			if( cwmWorldState->ServerData()->ArmorAffectManaRegen() )
+			{
+				// if CalcDef returns a value higher than 0, character has non-medable armor equipped
+				if( Combat->CalcDef(( &mChar ), 0, false, PHYSICAL, true, true ) > 0 )
+				{
+					// Calculator from stratics lies - it should not remove meditation bonus entirely
+					// when wearing non-meddable armor, but set it at a fixed 0.1 value instead!
+					meditationBonus = 0.1;
+				}
+			}
+
+			// If meditating, apply additional bonuses
+			if( mChar.IsMeditating() )
+			{
+				// Also double the regen speed if actively meditating
+				meditationBonus *= 2.0;
+			}
+
+			// Get mana regen bonuses from character, items equipped on character, etc.
+			// Cap total mana regeneration from equipment based on cap defined in uox.ini
+			R64 bonusManaRegen = mChar.GetManaRegenBonus();
+
+			// Add mana regen bonus from races, if setup
+			// Publish 65, April 5, 2010, Stygian Abyss expansion
+			//     Gargoyles receive +2 Mana Regeneration which stacks with Meditation and Focus.
+			bonusManaRegen += Races->Race( mChar.GetRace() )->ManaRegenBonus();
+
+			// Add additional bonus mana points here:
+				
+			// ... Vampiric Embrace (+3 Mana Regen)
+			// EXAMPLE: if( mChar.GetTransform() == TF_VAMPIRIC ) bonusManaRegen += 3;
+
+			// ... Lich Form
+			// EXAMPLE: if( mChar.GetTransform() == TF_LICH ) bonusManaRegen += 13;
+
+			R64 manaRegenCap = static_cast<R64>( cwmWorldState->ServerData()->ManaRegenCap() ); // 30 for ML results in 5.5 after square root operation
+			if( manaRegenMode >= MREG_KR ) // KR era and beyond
+			{
+				// Apply diminishing returns for bonus mana regen points, as introduced in Publish 46
+				// Treats mana regen cap from uox.ini as a "soft cap" beyond which diminishing returns kick in
+				if( bonusManaRegen > manaRegenCap )
+				{
+					// Low value = slower growth beyond cap
+					// High value = faster growth beyond cap
+					R64 growthScale = 0.5;
+					bonusManaRegen = manaRegenCap + ( growthScale * std::sqrt( bonusManaRegen - manaRegenCap ));
+				}
+			}
+			else
+			{
+				// Cap it based on uox.ini
+				bonusManaRegen = std::min( bonusManaRegen, manaRegenCap );
+			}
+
+			bonusManaRegen = sqrt( bonusManaRegen );
+
+			// Calculate base for bonus mana regen, from char/items
+			R64 baseBonusManaRegen = ((((( medSkill / 10.0 ) / 2.0 + ( focusSkill / 10.0 ) / 4.0 ) / 90.0 ) * 0.65 ) + 2.35 );
+
+			// Cap the minimum value of this to 0
+			bonusManaRegen = std::max( static_cast<R64>( 0 ), (( baseBonusManaRegen * bonusManaRegen ) - ( baseBonusManaRegen - 1 )) / 10.0 );
+			R64 manaPerSecond = ( 0.2 + focusBonus + meditationBonus + bonusManaRegen );
+
+			// Scale the baseline time by (baselineRate / totalRate)
+			nextManaRegen = static_cast<SI32>( std::round( nextManaRegen * ( baselineRate / manaPerSecond )));
+
+			mChar.IncMana( 1 );
+		}
+		else if( manaRegenMode >= MREG_AOS1 )
+		{
+			// Age of Shadows/Samurai Empire
+			R64 baselineRate = 1.0 / cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ); // 1 mana per 7 seconds = 0.1428 mana/sec
+			R64 intPoints = 0;
+			R64 medPoints = 0;
+			R64 focusPoints = 0;
+
+			if( manaRegenMode == MREG_AOS1 ) // Early AoS, pre-Pub18
+			{
+				// Based on era-contemporary information from https://community.stratics.com/threads/old-faq-update-thread-reference-only.10616/post-128182
+				intPoints = std::floor( intStat / 38.0 );
+				medPoints = std::floor(( medSkill / 10.0 ) / 10.0 );
+				focusPoints = std::floor(( focusSkill / 10.0 ) / 20.0 );
+			}
+			else // Late AoS, post-Pub18
+			{
+				// Calculate base mana regen from meditation skill, int stat and whether character is GM meditation or not
+				medPoints = intStat + (( medSkill / 10.0 ) * 3 );
+				medPoints *= ( medSkill < 1000 ) ? 0.025 : 0.0275;
+
+				// Every 20 points in focus is worth 1 mana per 10 seconds (same as 1 mana regen point on items), or 0.1 mana per second
+				focusPoints = std::floor(( focusSkill / 10.0 ) / 200.0 ) * 0.1;
+				//focusPoints = (( focusSkill / 10 ) * 0.05 ) * 0.1;
+			}
+
+			if( cwmWorldState->ServerData()->ArmorAffectManaRegen() )
+			{
+				// if CalcDef returns a value higher than 0, character has non-medable armor equipped
+				if( Combat->CalcDef(( &mChar ), 0, false, PHYSICAL, true, true ) > 0 )
+				{
+					medPoints = 0;
+				}
+			}
+
+			// Grab mana bonuses from character (from equipped items, primarily)
+			R64 bonusManaRegen = mChar.GetManaRegenBonus();
+
+			// Add additional bonus mana points here:
+
+			// ... Vampiric Embrace (+3 Mana Regen)
+			// EXAMPLE: if( mChar.GetTransform() == TF_VAMPIRIC ) bonusManaRegen += 3;
+
+			// ... Lich Form
+			// EXAMPLE: if( mChar.GetTransform() == TF_LICH ) bonusManaRegen += 13;
+
+			// Add mana regen bonus from races, if setup
+			bonusManaRegen += Races->Race( mChar.GetRace() )->ManaRegenBonus();
+
+			// Cap regen bonus from items based on ini setting
+			bonusManaRegen = ( std::min( bonusManaRegen, static_cast<R64>( cwmWorldState->ServerData()->ManaRegenCap() )));
+
+			if( manaRegenMode == MREG_AOS1 )
+			{
+				R64 totalPoints = intPoints + medPoints + focusPoints + bonusManaRegen + ( mChar.IsMeditating() ? ( medPoints > 13.0 ? 13.0 : medPoints ) : 0.0 );
+				R64 manaPerSecondRate;
+				if( totalPoints >= 21 )
+				{
+					manaPerSecondRate = 2.0; // 2 mana/sec -> 0.5 sec/mana
+				}
+				else if( totalPoints >= 14 )
+				{
+					manaPerSecondRate = 4.0 / 3.0; // ~1.33 mana/sec -> 0.75 sec/mana
+				}
+				else
+				{
+					manaPerSecondRate = 1.0; // 1 mana/sec -> 1.0 sec/mana
+				}
+
+				manaPerSecondRate *= cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN );
+				nextManaRegen = ( 1.0 / manaPerSecondRate ) * 1000;
+			}
+			else
+			{
+				// Add it all up, and double bonus from Meditation if character is actively meditating, but cap it at 13
+				R64 totalPoints = bonusManaRegen + focusPoints + medPoints + ( mChar.IsMeditating() ? ( medPoints > 13.0 ? 13.0 : medPoints ) : 0.0 );
+				auto manaPerSec = 0.1 * ( ( baselineRate * 10.0 ) + totalPoints );
+				nextManaRegen = 1000 / manaPerSec;
+			}
+
+			mChar.IncMana( 1 );
+		}
+		else if( manaRegenMode == MREG_LBR ) // LBR and earlier
+		{
+			// LBR and below - custom approximation to match up to expected results
+			UI16 baseArmor = 0;
+			if( cwmWorldState->ServerData()->ArmorAffectManaRegen() ) // If armor effects mana regeneration...
+			{
+				// Calculate base armor character is wearing, excluding medable armor
+				baseArmor = Combat->CalcDef(( &mChar ), 0, false, PHYSICAL, true, true );
+
+				// Cap the base armor used for calculations at 100 just in case
+				if( baseArmor > 100 )
+				{
+					baseArmor = 100;
+				}
+			}
+
+			// Optional mana regen bonus (usually not part of LBR calculations) from character/equipped items, and races
+			R64 bonusManaRegen = mChar.GetManaRegenBonus();
+			bonusManaRegen += Races->Race( mChar.GetRace() )->ManaRegenBonus();
+
+			//bonusManaRegen = ( std::min( bonusManaRegen, static_cast<R64>( cwmWorldState->ServerData()->ManaRegenCap() ))) / 10.0;
+			bonusManaRegen = ( std::min( bonusManaRegen, static_cast<R64>( cwmWorldState->ServerData()->ManaRegenCap() )));
+
+			// Normalize values
+			R64 normalizedInt = std::min( 1.0, ( intStat / 100.0 ));
+			R64 normalizedMed = std::min( 1.0, ( medSkill / 1000.0 ));
+			R64 normalizedArmor = std::min( 1.0, ( baseArmor / 65.0 )); // Normalize armor based on a "cap" of 65
+			R64 normalizedBonus = std::min( 1.0, ( bonusManaRegen / 73.0 ));
+
+			// Define weights
+			R64 intWeight = 0.25; // How much int affects regen time
+			R64 medWeight = 0.75; // How much med affects regen time
+			R64 armorWeight = 1.5; // How much armor affects regen time (inversely)
+			R64 bonusWeight = 0.5; // How much mana regen bonuses affects regen time
+
+			// Calculate positive and negative effects based on normalized values and weights
+			R64 positiveEffect = (( intWeight * normalizedInt ) + ( medWeight * normalizedMed ) + ( bonusWeight * normalizedBonus )) * 6.0;
+			R64 negativeEffect = ( armorWeight * normalizedArmor ) * 6.0;
+
+			// Calculate final time until next mana regen, in seconds
+			nextManaRegen = (( nextManaRegen / 1000 ) - positiveEffect + negativeEffect ) * 1000;
+
+			// Increment mana based on the calculated regeneration time
+			SI32 manaIncrement = mChar.IsMeditating() ? 2 : 1; // double if actively meditating
+			mChar.IncMana( std::min( manaIncrement, maxMana - mChar.GetMana() ));
+		}
+
+		if( manaRegenMode >= MREG_AOS1 ) // AoS and beyond
+		{
+			// Check FOCUS for skill gain for AoS expansions and above
+			Skills->CheckSkill(( &mChar ), FOCUS, 0, 1000 );
+		}
+
+		// Check Meditation for skill gain ala OSI, as long as player is not actively meditating
+		if( !mChar.IsMeditating() )
+		{
+			Skills->CheckSkill(( &mChar ), MEDITATION, 0, 1000 );
+		}
+
+		if( mChar.GetMana() >= maxMana && mChar.IsMeditating() )
+		{
+			if( mSock )
+			{
+				mSock->SysMessage( 969 ); // You are at peace.
+			}
+			mChar.SetMeditating( false );
+		}
+	}
+	return nextManaRegen;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	GenericCheck()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check characters status.  Returns true if character was killed
 //o------------------------------------------------------------------------------------------------o
 auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool doWeather ) -> bool
 {
-	UI16 c;
 	if( !mChar.IsDead() )
 	{
 		const auto maxHP = mChar.GetMaxHP();
@@ -1250,140 +1635,36 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			mChar.SetMana( maxMana );
 		}
 
-		if( mChar.GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		auto hpRegenMode = cwmWorldState->ServerData()->HealthRegenMode();
+		if( hpRegenMode > 0 && mChar.GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() )
 		{
-			if( mChar.GetHP() < maxHP )
-			{
-				if( !cwmWorldState->ServerData()->HungerSystemEnabled() || ( mChar.GetHunger() > 0)
-				   || ( !Races->DoesHunger( mChar.GetRace() ) && (( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0) || mChar.IsNpc() )))
-				{
-					for( auto c = 0; c <= maxHP; ++c )
-					{
-						if( mChar.GetHP() <= maxHP && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000 )) <= cwmWorldState->GetUICurrentTime() )
-						{
-							if( mChar.GetSkill( HEALING ) < 500 )
-							{
-								mChar.IncHP( 1 );
-							}
-							else if( mChar.GetSkill( HEALING ) < 800 )
-							{
-								mChar.IncHP( 2 );
-							}
-							else
-							{
-								mChar.IncHP( 3 );
-							}
-							if( mChar.GetHP() >= maxHP )
-							{
-								mChar.SetHP( maxHP );
-								break;
-							}
-						}
-						else // either we're all healed up, or all time periods have passed
-						{
-							break;
-						}
-					}
-				}
-			}
-			mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_HITPOINTREGEN ), 0 );
-		}
-		if( mChar.GetRegen( 1 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
-		{
-			auto mStamina = mChar.GetStamina();
-			if( mStamina < maxStam )
-			{
-				// Continue with stamina regen if  character is not yet fully parched, or if character is parched but has less than 25% stamina, or if char belongs to race that does not thirst
-				if( !cwmWorldState->ServerData()->ThirstSystemEnabled() || ( mChar.GetThirst() > 0 )|| (( mChar.GetThirst() == 0) && ( mStamina < static_cast<SI16>( maxStam * 0.25 )))
-				   || ( !Races->DoesThirst( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE ) == 0 || mChar.IsNpc() )))
-				{
-					for( auto c = 0; c <= maxStam; ++c )
-					{
-						if(( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 )) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= maxStam )
-						{
-							double focusBonus = 0;
-							if(cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_AOS)
-							{
-								Skills->CheckSkill(( &mChar ), FOCUS, 0, mChar.GetSkillCap( FOCUS ) ); // Check FOCUS for skill gain AOS
-								focusBonus = ( 0.1 * mChar.GetSkill( FOCUS ) / 10);	// Bonus for focus
-							}
+			// Perform passive health regeneration
+			auto nextHpRegen = PassiveHealthRegen( mChar, maxHP );
 
-							mChar.IncStamina( 1 + focusBonus );
-							
-							if( mChar.GetStamina() >= maxStam )
-							{
-								mChar.SetStamina( maxStam );
-								break;
-							}
-						}
-						else
-						{
-							break;
-						}
-					}
-				}
-			}
-			mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_STAMINAREGEN ), 1 );
+			// Set time for next health regen
+			mChar.SetRegen( cwmWorldState->GetUICurrentTime() + nextHpRegen, 0 );
+		}
+		auto staminaRegenMode = cwmWorldState->ServerData()->StaminaRegenMode();
+		if( staminaRegenMode > 0 && mChar.GetRegen( 1 ) <= cwmWorldState->GetUICurrentTime() )
+		{
+			// Perform passive stamina regeneration
+			auto nextStaminaRegen = PassiveStaminaRegen( mChar, maxStam );
+			
+			// Set time for next stamina regen
+			mChar.SetRegen( cwmWorldState->GetUICurrentTime() + nextStaminaRegen, 1 );
 		}
 
 		// MANA REGENERATION:Rewrite of passive and active meditation code
-		if( mChar.GetRegen( 2 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		auto manaRegenMode = cwmWorldState->ServerData()->ManaRegenMode();
+		if( manaRegenMode > 0 && mChar.GetRegen( 2 ) <= cwmWorldState->GetUICurrentTime() )
 		{
-			if( mChar.GetMana() < maxMana )
-			{
-				for( c = 0; c < maxMana + 1; ++c )
-				{
-					if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000 ) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= maxMana )
-					{
-						double focusBonus = 0;
-						if(cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_AOS)
-						{
-								Skills->CheckSkill(( &mChar ), FOCUS, 0, 1000 ); // Check FOCUS for skill gain AOS
-								double focus = mChar.GetSkill( FOCUS );	// Bonus for focus
-								double focusBonus = focus / 200;
-						}
-
-						Skills->CheckSkill(( &mChar ), MEDITATION, 0, 1000 );	// Check Meditation for skill gain ala OSI
-						mChar.IncMana( 1 + focusBonus );	// Gain a mana point
-						if( mChar.GetMana() == maxMana )
-						{
-							if( mChar.IsMeditating() )
-							{
-								if( mSock )
-								{
-									mSock->SysMessage( 969 ); // You are at peace.
-								}
-								mChar.SetMeditating( false );
-							}
-							break;
-						}
-					}
-				}
-			}
-			const R32 MeditationBonus = ( .00075f * mChar.GetSkill( MEDITATION ));	// Bonus for Meditation
-			SI32 NextManaRegen = static_cast<SI32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * ( 1 - MeditationBonus ) * 1000 );
-			if( cwmWorldState->ServerData()->ArmorAffectManaRegen() ) // If armor effects mana regeneration...
-			{
-				R32 ArmorPenalty = Combat->CalcDef(( &mChar ), 0, false );	// Penalty taken due to high def
-				if( ArmorPenalty > 100 ) // For def higher then 100, penalty is the same...just in case
-				{
-					ArmorPenalty = 100;
-				}
-				ArmorPenalty = 1 + ( ArmorPenalty / 25 );
-				NextManaRegen = static_cast<SI32>( NextManaRegen * ArmorPenalty );
-			}
-			if( mChar.IsMeditating() ) // If player is meditation...
-			{
-				mChar.SetRegen(( cwmWorldState->GetUICurrentTime() + ( NextManaRegen / 2 )), 2 );
-			}
-			else
-			{
-				mChar.SetRegen(( cwmWorldState->GetUICurrentTime() + NextManaRegen ), 2 );
-			}
+			// Perform passive mana regeneration
+			auto nextManaRegen = PassiveManaRegen( mSock, mChar, maxMana );	
+			mChar.SetRegen( cwmWorldState->GetUICurrentTime() + nextManaRegen , 2 );
 		}
 	}
 
-	if( mChar.GetVisible() == VT_INVISIBLE && ( mChar.GetTimer( tCHAR_INVIS ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
+	if( mChar.GetVisible() == VT_INVISIBLE && mChar.GetTimer( tCHAR_INVIS ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		mChar.ExposeToView();
 	}
@@ -1409,7 +1690,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 
 		if( !mChar.IsInvulnerable() && mChar.GetPoisoned() > 0 )
 		{
-			if( mChar.GetTimer( tCHAR_POISONTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			if( mChar.GetTimer( tCHAR_POISONTIME ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				if( mChar.GetTimer( tCHAR_POISONWEAROFF ) > cwmWorldState->GetUICurrentTime() )
 				{
@@ -1419,10 +1700,10 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 					{
 						case 1: // Lesser Poison
 						{
-							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 2 ));
-							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 2.0 ));
+							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() )
 							{
-								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 6 ));
+								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 6.0 ));
 								mChar.TextMessage( nullptr, 1240, EMOTE, 1, mCharName.c_str() ); // * %s looks a bit nauseous *
 							}
 							SI16 poisonDmgPercent = RandomNum( 3, 6 ); // 3% to 6% of current health per tick
@@ -1432,10 +1713,10 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 						}
 						case 2: // Normal Poison
 						{
-							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ));
-							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3.0 ));
+							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() )
 							{
-								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ));
+								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10.0 ));
 								mChar.TextMessage( nullptr, 1241, EMOTE, 1, mCharName.c_str() ); // * %s looks disoriented and nauseous! *
 							}
 							SI16 poisonDmgPercent = RandomNum( 4, 8 ); // 4% to 8% of current health per tick
@@ -1445,10 +1726,10 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 						}
 						case 3: // Greater Poison
 						{
-							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 4 ));
-							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 4.0 ));
+							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() )
 							{
-								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ));
+								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10.0 ));
 								mChar.TextMessage( nullptr, 1242, EMOTE, 1, mCharName.c_str() ); // * %s is in severe pain! *
 							}
 							SI16 poisonDmgPercent = RandomNum( 8, 12 ); // 8% to 12% of current health per tick
@@ -1458,10 +1739,10 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 						}
 						case 4: // Deadly Poison
 						{
-							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5 ));
-							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5.0 ));
+							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() )
 							{
-								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ));
+								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10.0 ));
 								mChar.TextMessage( nullptr, 1243, EMOTE, 1, mCharName.c_str() ); // * %s looks extremely weak and is wrecked in pain! *
 							}
 							SI16 poisonDmgPercent = RandomNum( 12, 25 ); // 12% to 25% of current health per tick
@@ -1471,10 +1752,10 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 						}
 						case 5: // Lethal Poison - Used by monsters only
 						{
-							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5 ));
-							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5.0 ));
+							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() )
 							{
-								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ));
+								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10.0 ));
 								mChar.TextMessage( nullptr, 1243, EMOTE, 1, mCharName.c_str() ); // * %s looks extremely weak and is wrecked in pain! *
 							}
 							SI16 poisonDmgPercent = RandomNum( 25, 50 ); // 25% to 50% of current health per tick
@@ -1552,7 +1833,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		mChar.PermaGreyFlagMaintenance();
 	}
 
-	if( mChar.IsCriminal() && mChar.GetTimer( tCHAR_CRIMFLAG ) && ( mChar.GetTimer( tCHAR_CRIMFLAG ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
+	if( mChar.IsCriminal() && mChar.GetTimer( tCHAR_CRIMFLAG ) && mChar.GetTimer( tCHAR_CRIMFLAG ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		if( mSock != nullptr )
 		{
@@ -1561,13 +1842,13 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		mChar.SetTimer( tCHAR_CRIMFLAG, 0 );
 		UpdateFlag( &mChar );
 	}
-	if( mChar.HasStolen() && mChar.GetTimer( tCHAR_STEALFLAG ) && ( mChar.GetTimer( tCHAR_STEALFLAG ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+	if( mChar.HasStolen() && mChar.GetTimer( tCHAR_STEALFLAG ) && mChar.GetTimer( tCHAR_STEALFLAG ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		mChar.SetTimer( tCHAR_STEALFLAG, 0 );
 		mChar.HasStolen( false );
 		UpdateFlag( &mChar );
 	}
-	if( mChar.GetKills() && ( mChar.GetTimer( tCHAR_MURDERRATE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
+	if( mChar.GetKills() && mChar.GetTimer( tCHAR_MURDERRATE ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		mChar.SetKills( static_cast<SI16>( mChar.GetKills() - 1 ));
 
@@ -1666,7 +1947,7 @@ auto CheckPC( CSocket *mSock, CChar& mChar ) -> void
 
 	if( mChar.GetSquelched() == 2 )
 	{
-		if( mSock->GetTimer( tPC_MUTETIME ) != 0 && ( mSock->GetTimer( tPC_MUTETIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
+		if( mSock->GetTimer( tPC_MUTETIME ) != 0 && mSock->GetTimer( tPC_MUTETIME ) <= cwmWorldState->GetUICurrentTime() )
 		{
 			mChar.SetSquelched( 0 );
 			mSock->SetTimer( tPC_MUTETIME, 0 );
@@ -1679,10 +1960,10 @@ auto CheckPC( CSocket *mSock, CChar& mChar ) -> void
 		// Casting a spell
 		auto spellNum = mChar.GetSpellCast();
 		mChar.SetNextAct( mChar.GetNextAct() - 1 );
-		if( mChar.GetTimer( tCHAR_SPELLTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) // Spell is complete target it.
+		if( mChar.GetTimer( tCHAR_SPELLTIME ) <= cwmWorldState->GetUICurrentTime() ) // Spell is complete target it.
 		{
 			// Set the recovery time before another spell can be cast
-			mChar.SetTimer( tCHAR_SPELLRECOVERYTIME, BuildTimeValue( static_cast<R32>( Magic->spells[spellNum].RecoveryDelay() )));
+			mChar.SetTimer( tCHAR_SPELLRECOVERYTIME, BuildTimeValue( static_cast<R64>( Magic->spells[spellNum].RecoveryDelay() )));
 
 			if( Magic->spells[spellNum].RequireTarget() )
 			{
@@ -1743,7 +2024,7 @@ auto CheckPC( CSocket *mSock, CChar& mChar ) -> void
 	{
 		if( mSock->GetTimer( tPC_TRACKINGDISPLAY ) <= cwmWorldState->GetUICurrentTime() )
 		{
-			mSock->SetTimer( tPC_TRACKINGDISPLAY, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->TrackingRedisplayTime() )));
+			mSock->SetTimer( tPC_TRACKINGDISPLAY, BuildTimeValue( static_cast<R64>( cwmWorldState->ServerData()->TrackingRedisplayTime() )));
 			Skills->Track( &mChar );
 		}
 	}
@@ -1773,7 +2054,7 @@ auto CheckPC( CSocket *mSock, CChar& mChar ) -> void
 		{
 			mChar.SetOnHorse( false );	// turn it off, we aren't on one because there's no item!
 		}
-		else if( horseItem->GetDecayTime() != 0 && ( horseItem->GetDecayTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
+		else if( horseItem->GetDecayTime() != 0 && horseItem->GetDecayTime() <= cwmWorldState->GetUICurrentTime() )
 		{
 			mChar.SetOnHorse( false );
 			horseItem->Delete();
@@ -1828,7 +2109,7 @@ auto CheckNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 
 	if( mChar.GetTimer( tNPC_SUMMONTIME ))
 	{
-		if(( mChar.GetTimer( tNPC_SUMMONTIME ) <= cwmWorldState->GetUICurrentTime() ) || cwmWorldState->GetOverflow() )
+		if(( mChar.GetTimer( tNPC_SUMMONTIME ) <= cwmWorldState->GetUICurrentTime() ) )
 		{
 			// Added Dec 20, 1999
 			// QUEST expire check - after an Escort quest is created a timer is set
@@ -1845,7 +2126,7 @@ auto CheckNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 
 			if( mChar.GetNpcAiType() == AI_GUARD && mChar.IsAtWar() )
 			{
-				mChar.SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25 ));
+				mChar.SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25.0 ));
 				return;
 			}
 			Effects->PlaySound( &mChar, 0x01FE );
@@ -1867,9 +2148,9 @@ auto CheckNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 	auto mNpcWander = mChar.GetNpcWander();
 	if( mNpcWander == WT_SCARED )
 	{
-		if( mChar.GetTimer( tNPC_FLEECOOLDOWN ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		if( mChar.GetTimer( tNPC_FLEECOOLDOWN ) <= cwmWorldState->GetUICurrentTime() )
 		{
-			if( mChar.GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			if( mChar.GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				mChar.SetFleeDistance( static_cast<UI08>( 0 ));
 				CChar *mTarget = mChar.GetTarg();
@@ -1907,7 +2188,7 @@ auto CheckNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 	}
 	else if( mNpcWander != WT_FLEE && mNpcWander != WT_FROZEN && ( mChar.GetHP() < mChar.GetMaxHP() * mChar.GetFleeAt() / 100 ))
 	{
-		if( mChar.GetTimer( tNPC_FLEECOOLDOWN ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		if( mChar.GetTimer( tNPC_FLEECOOLDOWN ) <= cwmWorldState->GetUICurrentTime() )
 		{
 			// Make NPC try to flee away from their opponent, if still within range
 			CChar *mTarget = mChar.GetTarg();
@@ -1930,7 +2211,7 @@ auto CheckNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 	else if(( mNpcWander == WT_FLEE ) && ( mChar.GetHP() > mChar.GetMaxHP() * mChar.GetReattackAt() / 100 ))
 	{
 		// Bring NPC out of flee-mode and back to their original wandermode
-		mChar.SetTimer( tNPC_FLEECOOLDOWN, BuildTimeValue( 5 )); // Wait at least 5 seconds before reentring flee-mode!
+		mChar.SetTimer( tNPC_FLEECOOLDOWN, BuildTimeValue( 5.0 )); // Wait at least 5 seconds before reentring flee-mode!
 		mChar.SetNpcWander( mChar.GetOldNpcWander() );
 		if( mChar.GetMounted() )
 		{
@@ -1968,7 +2249,7 @@ auto CheckItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 					// Don't decay signs that belong to houses
 					itemCheck->SetDecayable( false );
 				}
-				if(( itemCheck->GetDecayTime() <= cwmWorldState->GetUICurrentTime() ) || cwmWorldState->GetOverflow() )
+				if(( itemCheck->GetDecayTime() <= cwmWorldState->GetUICurrentTime() ) )
 				{
 					auto scriptTriggers = itemCheck->GetScriptTriggers();
 					for( auto scriptTrig : scriptTriggers )
@@ -2010,7 +2291,7 @@ auto CheckItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 				case IT_ESCORTNPCSPAWNER:
 				case IT_PLANK:
 				{
-					if(( itemCheck->GetTempTimer() <= cwmWorldState->GetUICurrentTime() ) || cwmWorldState->GetOverflow() )
+					if( itemCheck->GetTempTimer() <= cwmWorldState->GetUICurrentTime() )
 					{
 						if( itemCheck->GetObjType() == OT_SPAWNER )
 						{
@@ -2019,7 +2300,7 @@ auto CheckItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 							{
 								continue;
 							}
-							spawnItem->SetTempTimer( BuildTimeValue( static_cast<R32>( RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ))));
+							spawnItem->SetTempTimer( BuildTimeValue( static_cast<R64>( RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ))));
 						}
 						else if( itemCheck->GetObjType() == OT_ITEM && itemCheck->GetType() == IT_PLANK)
 						{
@@ -2064,7 +2345,7 @@ auto CheckItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 		{
 			CBoatObj *mBoat = static_cast<CBoatObj *>( itemCheck );
 			SI08 boatMoveType = mBoat->GetMoveType();
-			if( ValidateObject( mBoat ) && boatMoveType && (( mBoat->GetMoveTime() <= cwmWorldState->GetUICurrentTime() ) || cwmWorldState->GetOverflow() ))
+			if( ValidateObject( mBoat ) && boatMoveType && mBoat->GetMoveTime() <= cwmWorldState->GetUICurrentTime() )
 			{
 				if( boatMoveType != BOAT_ANCHORED )
 				{
@@ -2162,24 +2443,24 @@ auto CheckItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 					if( boatMoveType == BOAT_LEFT || boatMoveType == BOAT_RIGHT )
 					{
 						// Move 50% slower left/right than forward/back
-						mBoat->SetMoveTime( BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->CheckBoatSpeed() ) * 1.5 ));
+						mBoat->SetMoveTime( BuildTimeValue( cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ));
 					}
 					else if( boatMoveType >= BOAT_ONELEFT && boatMoveType <= BOAT_ONEBACKWARDRIGHT )
 					{
 						mBoat->SetMoveType( 0 );
 
 						// Set timer to restrict movement to normal boat speed if player spams command
-						mBoat->SetMoveTime( BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->CheckBoatSpeed() ) * 1.5 ));
+						mBoat->SetMoveTime( BuildTimeValue( cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ));
 					}
 					else if( boatMoveType >= BOAT_SLOWLEFT && boatMoveType <= BOAT_SLOWBACKWARDLEFT )
 					{
 						// Set timer to slowly move the boat forward
-						mBoat->SetMoveTime( BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->CheckBoatSpeed() ) * 2.0 ));
+						mBoat->SetMoveTime( BuildTimeValue( cwmWorldState->ServerData()->CheckBoatSpeed() * 2.0 ));
 					}
 					else
 					{
 						// Set timer to move the boat forward at normal speed
-						mBoat->SetMoveTime( BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->CheckBoatSpeed() )));
+						mBoat->SetMoveTime( BuildTimeValue( cwmWorldState->ServerData()->CheckBoatSpeed() ));
 					}
 				}
 			}
@@ -2200,19 +2481,19 @@ auto CheckItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 //o------------------------------------------------------------------------------------------------o
 auto CWorldMain::CheckAutoTimers() -> void
 {
-	static UI32 nextCheckSpawnRegions	= 0;
-	static UI32 nextCheckTownRegions	= 0;
-	static UI32 nextCheckItems			= 0;
-	static UI32 nextDecayItems			= 0;
-	static UI32 nextDecayItemsInHouses	= 0;
-	static UI32 nextSetNPCFlagTime		= 0;
-	static UI32 accountFlush			= 0;
+	static TIMERVAL nextCheckSpawnRegions	= 0;
+	static TIMERVAL nextCheckTownRegions	= 0;
+	static TIMERVAL nextCheckItems			= 0;
+	static TIMERVAL nextDecayItems			= 0;
+	static TIMERVAL nextDecayItemsInHouses	= 0;
+	static TIMERVAL nextSetNPCFlagTime		= 0;
+	static TIMERVAL accountFlush			= 0;
 	bool doWeather						= false;
 	bool doPetOfflineCheck				= false;
 	CServerData *serverData				= ServerData();
 
 	// modify this stuff to take into account more variables
-	if(( accountFlush <= GetUICurrentTime() ) || GetOverflow() )
+	if( accountFlush <= GetUICurrentTime() )
 	{
 		bool reallyOn = false;
 		// time to flush our account status!
@@ -2249,7 +2530,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 				}
 			}
 		}
-		accountFlush = BuildTimeValue( static_cast<R32>( serverData->AccountFlushTimer() ));
+		accountFlush = BuildTimeValue( serverData->AccountFlushTimer() );
 	}
 	//Network->On();   //<<<<<< WHAT the HECK, this is why you dont bury mutex locking
 	// PushConn and PopConn lock and unlock as well (yes, bad)
@@ -2260,7 +2541,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 		{
 			for( auto &tSock : Network->connClients )
 			{
-				if(( tSock->IdleTimeout() != -1 ) && static_cast<UI32>( tSock->IdleTimeout() ) <= GetUICurrentTime() )
+				if(( tSock->IdleTimeout() != -1 ) && tSock->IdleTimeout() <= GetUICurrentTime() )
 				{
 					CChar *tChar = tSock->CurrcharObj();
 					if( !ValidateObject( tChar ))
@@ -2274,8 +2555,8 @@ auto CWorldMain::CheckAutoTimers() -> void
 						Network->Disconnect( tSock );
 					}
 				}
-				else if((( static_cast<UI32>( tSock->IdleTimeout() + 300 * 1000 ) <= GetUICurrentTime() 
-					&& static_cast<UI32>( tSock->IdleTimeout() + 200 * 1000 ) >= GetUICurrentTime() ) || GetOverflow() ) && !tSock->WasIdleWarned() )
+				else if(( static_cast<TIMERVAL>( tSock->IdleTimeout() + 300 * 1000 ) <= GetUICurrentTime()
+					&& static_cast<TIMERVAL>( tSock->IdleTimeout() + 200 * 1000 ) >= GetUICurrentTime() ) && !tSock->WasIdleWarned() )
 				{
 					//is their idle time between 3 and 5 minutes, and they haven't been warned already?
 					CPIdleWarning warn( 0x07 );
@@ -2285,7 +2566,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 
 				if( serverData->KickOnAssistantSilence() )
 				{
-					if( !tSock->NegotiatedWithAssistant() && tSock->NegotiateTimeout() != -1 && static_cast<UI32>( tSock->NegotiateTimeout() ) <= GetUICurrentTime() )
+					if( !tSock->NegotiatedWithAssistant() && tSock->NegotiateTimeout() != -1 && tSock->NegotiateTimeout() <= GetUICurrentTime() )
 					{
 						const CChar *tChar = tSock->CurrcharObj();
 						if( !ValidateObject( tChar ))
@@ -2347,7 +2628,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 					// Reset amount of bytes received and sent, and restart timer
 					tSock->BytesReceived( 0 );
 					tSock->BytesSent( 0 );
-					tSock->SetTimer( tPC_TRAFFICWARDEN, BuildTimeValue( static_cast<R32>( 10 )));
+					tSock->SetTimer( tPC_TRAFFICWARDEN, BuildTimeValue( 10.0 ));
 				}
 			}
 		}
@@ -2360,16 +2641,16 @@ auto CWorldMain::CheckAutoTimers() -> void
 			{
 				if( wsSocket )
 				{
-					if( static_cast<UI32>( wsSocket->IdleTimeout() ) < GetUICurrentTime() )
+					if( wsSocket->IdleTimeout() < GetUICurrentTime() )
 					{
-						wsSocket->IdleTimeout( BuildTimeValue( 60.0F ));
+						wsSocket->IdleTimeout( BuildTimeValue( 60.0 ));
 						wsSocket->WasIdleWarned( true );//don't give them the message if they only have 60s
 					}
 					if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
 					{
-						if( !wsSocket->NegotiatedWithAssistant() && static_cast<UI32>( wsSocket->NegotiateTimeout() ) < GetUICurrentTime() )
+						if( !wsSocket->NegotiatedWithAssistant() && wsSocket->NegotiateTimeout() < GetUICurrentTime() )
 						{
-							wsSocket->NegotiateTimeout( BuildTimeValue( 60.0F ));
+							wsSocket->NegotiateTimeout( BuildTimeValue( 60.0 ));
 						}
 					}
 				}
@@ -2377,7 +2658,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 		}
 		SetWorldSaveProgress( SS_NOTSAVING );
 	}
-	if(( nextCheckTownRegions <= GetUICurrentTime() ) || GetOverflow() )
+	if( nextCheckTownRegions <= GetUICurrentTime() )
 	{
 		std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),[]( std::pair<const UI16, CTownRegion*> &town )
 		{
@@ -2386,7 +2667,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 				town.second->PeriodicCheck();
 			}
 		});
-		nextCheckTownRegions = BuildTimeValue( 10 ); // do checks every 10 seconds or so, rather than every single time
+		nextCheckTownRegions = BuildTimeValue( 10.0 ); // do checks every 10 seconds or so, rather than every single time
 		JailSys->PeriodicCheck();
 	}
 	
@@ -2400,6 +2681,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 		UI32 maxItemsSpawned	= 0;
 		UI32 maxNpcsSpawned		= 0;
 		
+		const TIMERVAL s_t = GetClock();
 		for( auto &[regnum, spawnReg] : cwmWorldState->spawnRegions )
 		{
 			if( spawnReg )
@@ -2415,6 +2697,8 @@ auto CWorldMain::CheckAutoTimers() -> void
 				maxNpcsSpawned += static_cast<UI32>( spawnReg->GetMaxCharSpawn() );
 			}
 		}
+		const TIMERVAL e_t = GetClock();
+		Console.Print( oldstrutil::format( "Regionspawn cycle completed in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 
 		// Adaptive spawn region check timer. The closer spawn regions as a whole are to being at their defined max capacity,
 		// the less frequently UOX3 will check spawn regions again. Similarly, the more room there is to spawn additional
@@ -2487,25 +2771,8 @@ auto CWorldMain::CheckAutoTimers() -> void
 		}
 	}
 
-	/*time_t oldIPTime = GetOldIPTime();
-	if( !GetIPUpdated() )
-	{
-		SetIPUpdated( true );
-		time(&oldIPTime);
-		SetOldIPTime( static_cast<UI32>(oldIPTime) );
-	}
-	time_t newIPTime = GetNewIPTime();
-	time(&newIPTime);
-	SetNewIPTime( static_cast<UI32>(newIPTime) );
-
-	if( difftime( GetNewIPTime(), GetOldIPTime() ) >= 120 )
-	{
-		ServerData()->RefreshIPs();
-		SetIPUpdated( false );
-	}*/
-
 	//Time functions
-	if(( GetUOTickCount() <= GetUICurrentTime() ) || ( GetOverflow() ))
+	if( GetUOTickCount() <= GetUICurrentTime() )
 	{
 		UI08 oldHour = serverData->ServerTimeHours();
 		if( serverData->IncMinute() )
@@ -2520,7 +2787,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 		SetUOTickCount( BuildTimeValue( serverData->ServerSecondsPerUOMinute() ));
 	}
 
-	if(( GetTimer( tWORLD_LIGHTTIME ) <= GetUICurrentTime() ) || GetOverflow() )
+	if( GetTimer( tWORLD_LIGHTTIME ) <= GetUICurrentTime() )
 	{
 		DoWorldLight();  //Changes lighting, if it is currently time to.
 		Weather->DoStuff();	// updates the weather types
@@ -2528,14 +2795,14 @@ auto CWorldMain::CheckAutoTimers() -> void
 		doWeather = true;
 	}
 
-	if(( GetTimer( tWORLD_PETOFFLINECHECK ) <= GetUICurrentTime() ) || GetOverflow() )
+	if( GetTimer( tWORLD_PETOFFLINECHECK ) <= GetUICurrentTime() )
 	{
 		SetTimer( tWORLD_PETOFFLINECHECK, serverData->BuildSystemTimeValue( tSERVER_PETOFFLINECHECK ));
 		doPetOfflineCheck = true;
 	}
 
 	bool checkFieldEffects = false;
-	if(( GetTimer( tWORLD_NEXTFIELDEFFECT ) <= GetUICurrentTime() ) || GetOverflow() )
+	if( GetTimer( tWORLD_NEXTFIELDEFFECT ) <= GetUICurrentTime() )
 	{
 		checkFieldEffects = true;
 		SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ));
@@ -2597,24 +2864,24 @@ auto CWorldMain::CheckAutoTimers() -> void
 
 	// Reduce some lag checking these timers constantly in the loop
 	bool setNPCFlags = false, checkItems = false, checkAI = false, doRestock = false;
-	if(( nextSetNPCFlagTime <= GetUICurrentTime() ) || GetOverflow() )
+	if( nextSetNPCFlagTime <= GetUICurrentTime() )
 	{
 		nextSetNPCFlagTime = serverData->BuildSystemTimeValue( tSERVER_NPCFLAGUPDATETIMER );	// Slow down lag "needed" for setting flags, they are set often enough;-)
 		setNPCFlags = true;
 	}
-	if(( nextCheckItems <= GetUICurrentTime() ) || GetOverflow() )
+	if( nextCheckItems <= GetUICurrentTime() )
 	{
-		nextCheckItems = BuildTimeValue( static_cast<R32>( serverData->CheckItemsSpeed() ));
+		nextCheckItems = BuildTimeValue( serverData->CheckItemsSpeed() );
 		nextDecayItems = serverData->BuildSystemTimeValue( tSERVER_DECAY );
 		nextDecayItemsInHouses = serverData->BuildSystemTimeValue( tSERVER_DECAYINHOUSE );
 		checkItems = true;
 	}
-	if(( GetTimer( tWORLD_NEXTNPCAI ) <= GetUICurrentTime() ) || GetOverflow() )
+	if( GetTimer( tWORLD_NEXTNPCAI ) <= GetUICurrentTime() )
 	{
-		SetTimer( tWORLD_NEXTNPCAI, BuildTimeValue( static_cast<R32>( serverData->CheckNpcAISpeed() )));
+		SetTimer( tWORLD_NEXTNPCAI, BuildTimeValue( serverData->CheckNpcAISpeed() ));
 		checkAI = true;
 	}
-	if(( GetTimer( tWORLD_SHOPRESTOCK ) <= GetUICurrentTime() ) || GetOverflow() )
+	if( GetTimer( tWORLD_SHOPRESTOCK ) <= GetUICurrentTime() )
 	{
 		SetTimer( tWORLD_SHOPRESTOCK, serverData->BuildSystemTimeValue( tSERVER_SHOPSPAWN ));
 		doRestock = true;
@@ -2656,7 +2923,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 							charCheck->RemoveFromSight();
 							charCheck->Update();
 						}
-						else if(( oaiw == charCheck->GetSerial() ) && (( charCheck->GetTimer( tPC_LOGOUT ) <= GetUICurrentTime() ) || GetOverflow() ))
+						else if( oaiw == charCheck->GetSerial() && charCheck->GetTimer( tPC_LOGOUT ) <= GetUICurrentTime() )
 						{
 							actbTemp.dwInGame = INVALIDSERIAL;
 							charCheck->SetTimer( tPC_LOGOUT, 0 );
@@ -3203,10 +3470,10 @@ auto AdvanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return CPU time used, Emulates clock()
 //o------------------------------------------------------------------------------------------------o
-auto GetClock() -> UI32
+auto GetClock() -> TIMERVAL
 {
 	auto now = std::chrono::system_clock::now();
-	return static_cast<UI32>( std::chrono::duration_cast<std::chrono::milliseconds>( now - current ).count() );
+	return static_cast<TIMERVAL>( std::chrono::duration_cast<std::chrono::milliseconds>( now - current ).count() );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3234,7 +3501,7 @@ auto DoLight( CSocket *s, UI08 level ) -> void
 
 	if(( Races->Affect( mChar->GetRace(), LIGHT )) && mChar->GetWeathDamage( LIGHT ) == 0 )
 	{
-		mChar->SetWeathDamage( static_cast<UI32>( BuildTimeValue( static_cast<R32>( Races->Secs( mChar->GetRace(), LIGHT )))), LIGHT );
+		mChar->SetWeathDamage( BuildTimeValue( static_cast<R64>( Races->Secs( mChar->GetRace(), LIGHT ))), LIGHT );
 	}
 
 	if( mChar->GetFixedLight() != 255 )
@@ -3328,7 +3595,7 @@ auto DoLight( CChar *mChar, UI08 level ) -> void
 {
 	if(( Races->Affect( mChar->GetRace(), LIGHT )) && ( mChar->GetWeathDamage( LIGHT ) == 0 ))
 	{
-		mChar->SetWeathDamage( static_cast<UI32>( BuildTimeValue( static_cast<R32>( Races->Secs( mChar->GetRace(), LIGHT )))), LIGHT );
+		mChar->SetWeathDamage( BuildTimeValue( static_cast<R64>( Races->Secs( mChar->GetRace(), LIGHT ))), LIGHT );
 	}
 
 	auto curRegion 	= mChar->GetRegion();

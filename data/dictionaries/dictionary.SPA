@@ -1677,6 +1677,7 @@
 1663=Mi pequeño hijo Timmy necesita una operación, ¿tenéis algo de oro para ayudar a la causa?
 1664=Mi mujer está embarazada de nuestro séptimo hijo, tenga un poco de piedad en forma de oro para un hombre desesperado.
 // Fin del texto inicial
+1669=¡No se ve el objetivo!
 1670=No puedes disfrazarte mientras llevas pintura corporal
 1671=No puedes polimorfar mientras llevas pintura corporal
 1672=No puedes usar el incógnito mientras llevas pintura corporal
@@ -2457,6 +2458,47 @@
 2585=Se vierte un poco de sidra en el recipiente.
 2586=Se vierte un poco de licor en el recipiente.
 2587=Se sirve un poco de vino en el vaso.
+// [2600-2699] Script de administrador de jugadores/PNJ/aparición
+2600=Se ha eliminado el PNJ seleccionado (%s, %i).
+2601=Advertencia: ¡No se ha encontrado ninguna mochila en el personaje!
+2602=Advertencia: ¡No se ha encontrado ninguna caja de banco para el personaje!
+2603=Demasiado lejos para inspeccionar el muñeco de papel (alcance actual: %i)
+2604=Eliminación de NPC
+2605=<BASEFONT color=#EECD8B>Confirma la eliminación de:</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>No hay botón para deshacer.
+2607=Filtrar nombres que empiezan por «%s»
+2608=Gestionar jugadores - %s
+2609=Gestionar NPC
+2610=Todos
+2611=En línea
+2612=Fuera de línea
+2613=Modificar personaje:<br>serial: %s<br>Última conexión: %w
+2614=Teletransportarse al personaje
+2615=Obtener personaje
+2616=Inspeccionar personaje
+2617=Encarcelar/Liberar personaje
+2618=Expulsar jugador
+2619=Prohibir jugador
+2620=Eliminar NPC
+2621=¡No se han encontrado entradas!
+2622=Página %i / %u
+2623=Aplicar filtro
+2624=Filtrar por jugadores en línea
+2625=Filtrar por jugadores desconectados
+2626=Ordenar por última conexión (%s)
+2627=Ascendente
+2628=Descendente
+2629=Se han encontrado %i personajes de jugador en %u milisegundos.
+2630=Se han encontrado %i NPC en %u milisegundos.
+2631=Se han encontrado %i generadores basados en objetos en %u milisegundos.
+2632=Gestionar objetos de aparición
+2633=Ajustar objeto de aparición:<br>serial: %s<br>sección de aparición: %w<br>Cantidad: %i<br>En región: (%u) %z
+2634=Teletransportarse al objeto de aparición
+2635=Abrir editor de objetos de aparición
+2636=Eliminar objeto de aparición
+2637=Filtrar generadores de NPC
+2638=Filtrar generadores de objetos
+2639=Ordenar por número de apariciones (%s)
 // [2700-2799] Guiones varios
 2700=Sólo el propietario de la casa puede rotar los muebles.
 2701=Eso no parece funcionar.
@@ -3439,7 +3481,7 @@
 6276=No tienes la habilidad de cocinar para crear la pintura corporal.
 6277=El ID del recurso no se encuentra en la lista de recursos utilizados para elaborar el artículo.
 6278=Tienes que usar tu habilidad de identificación de sabores para saber más sobre esta poción.
-6279=¡Exito de la comprobación de habilidad garantizado debido al elevado nivel de mando!
+6279=Consejo: ¡Exito de la comprobación de habilidad garantizado debido al elevado nivel de mando!
 6280=¡Retraso de lanzamiento ignorado debido al elevado nivel de mando!
 6300=No has aprendido a soplar vidrio.
 6301=Sólo un Gran Maestro Alquimista puede aprender de este libro.
@@ -3699,6 +3741,15 @@
 8213=Identificación de la sección de DFNs de la que procede el objeto
 8214=¿Se puede robar el objeto? 0 = no robable, 1 = robable, 2 = robable raro
 8215=Alvo inválido. Selecione um item ou NPC válido
+8251=Borrar NPC...
+8252=Se han borrado %i NPC
+8253=Selecciona un NPC para moverlo a distancia con xrun:
+8254=Selecciona un NPC para moverlo a distancia con xwalk:
+8255=Selecciona un NPC para girarlo a distancia con xturn:
+8256=Selecciona el destino del movimiento (%s):
+8257=¡Debes seleccionar un NPC!
+8258=Vendas la herida y detienes la hemorragia.
+8259=Las heridas sangrantes se han curado, ¡ya no sangras!
 // [8300-8499] Menú de ajustes - Descripciones de las propiedades de los personajes
 8300=Número de cuenta asociado al jugador. Controlado por el servidor (sólo lectura)
 8301=Tipo de IA del PNJ

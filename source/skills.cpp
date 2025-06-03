@@ -179,11 +179,11 @@ void CSkills::RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum )
 	MapResource_st *orePart	= MapRegion->GetResource( grX, grY, worldNum );
 	SI16 oreCeiling			= cwmWorldState->ServerData()->ResOre();
 	UI16 oreTimer			= cwmWorldState->ServerData()->ResOreTime();
-	if( static_cast<UI32>( orePart->oreTime) <= cwmWorldState->GetUICurrentTime() )	// regenerate some more?
+	if( orePart->oreTime <= cwmWorldState->GetUICurrentTime() )	// regenerate some more?
 	{
 		for( SI16 counter = 0; counter < oreCeiling; ++counter )	// keep regenerating ore
 		{
-			if( orePart->oreAmt < oreCeiling && static_cast<UI32>( orePart->oreAmt + counter * oreTimer * 1000 ) < cwmWorldState->GetUICurrentTime() )
+			if( orePart->oreAmt < oreCeiling && static_cast<TIMERVAL>( orePart->oreAmt + counter * oreTimer * 1000 ) < cwmWorldState->GetUICurrentTime() )
 			{
 				++orePart->oreAmt;
 			}
@@ -192,7 +192,7 @@ void CSkills::RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum )
 				break;
 			}
 		}
-		orePart->oreTime = BuildTimeValue( static_cast<R32>( oreTimer ));
+		orePart->oreTime = BuildTimeValue( static_cast<R64>( oreTimer ));
 	}
 	if( orePart->oreAmt > oreCeiling )
 	{
@@ -523,7 +523,7 @@ UI16 CSkills::CalculatePetControlChance( CChar *mChar, CChar *Npc )
 //|					with.  If skill is < than lowskill check will fail, but player will gain in the
 //|					skill, if the players skill is > than highskill player will not gain
 //o------------------------------------------------------------------------------------------------o
-bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill )
+bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill, SI08 forceResult )
 {
 	bool skillCheck		= false;
 	bool exists			= false;
@@ -534,7 +534,7 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 		if( toExecute != nullptr )
 		{
 			// If script returns true/1, allows skillcheck to proceed, but also prevents other scripts with event from running
-			if( toExecute->OnSkillCheck( s, sk, lowSkill, highSkill, isCraftSkill ) == 1 )
+			if( toExecute->OnSkillCheck( s, sk, lowSkill, highSkill, isCraftSkill, forceResult ) == 1 )
 			{
 				exists = true;
 				break;
@@ -566,7 +566,7 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 		CSocket *mSock = s->GetSocket();
 		R32 chanceSkillSuccess = 0;
 
-		if(( highSkill - lowSkill ) <= 0 || !ValidateObject( s ) || s->GetSkill( sk ) < lowSkill )
+		if( !ValidateObject( s ) || (( highSkill - lowSkill ) <= 0 || ( s->GetSkill( sk ) < lowSkill && forceResult <= 0 )))
 			return false;
 
 		if( s->IsDead() && mSock != nullptr )
@@ -575,53 +575,60 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 			return false;
 		}
 
-		if( s->GetSkill( sk ) >= highSkill )
+		if( s->GetSkill( sk ) >= highSkill && forceResult >= 0 )
 			return true;
 
-		// Calculate base chance of success at using a skill
-		chanceSkillSuccess = ( static_cast<R32>( s->GetSkill( sk )) - static_cast<R32>( lowSkill ));
-
-		// Modify chance based on the range of highSkill vs lowSkill
-		chanceSkillSuccess /= ( static_cast<R32>( highSkill ) - static_cast<R32>( lowSkill ));
-
-		// Let's work with whole numbers again
-		chanceSkillSuccess *= 1000;
-
-		if( isCraftSkill )
+		if( forceResult != 0 )
 		{
-			// Give players at least 50% chance at success if this is a crafting skill and their skill is above minimum requirement
-			chanceSkillSuccess = std::max( static_cast<R32>( 500 ), chanceSkillSuccess );
-		}
-
-		// Cap chance of success at 1000 (100.0%)
-		chanceSkillSuccess = std::min( static_cast<R32>( 1000 ), chanceSkillSuccess );
-
-		if( cwmWorldState->ServerData()->StatsAffectSkillChecks() )
-		{
-			// Modify base chance of success with bonuses from stats, if this feature is enabled in ini
-			chanceSkillSuccess += static_cast<R32>( s->GetStrength() * cwmWorldState->skill[sk].strength ) / 1000.0f;
-			chanceSkillSuccess += static_cast<R32>( s->GetDexterity() * cwmWorldState->skill[sk].dexterity ) / 1000.0f;
-			chanceSkillSuccess += static_cast<R32>( s->GetIntelligence() * cwmWorldState->skill[sk].intelligence ) / 1000.0f;
-		}
-
-		// If player's command-level is equal to Counselor or higher, pass the skill-check automatically
-		// Same if chance of success is 100% already - no need to proceed!
-		if( s->GetCommandLevel() > 0 || chanceSkillSuccess == 1000 )
-		{
-			if( s->GetCommandLevel() > 0 && mSock != nullptr )
-			{
-				// Inform the counselor/gm to make it obvious why skillcheck always succeeds
-				mSock->SysMessage( 6279 ); // Skill check success guaranteed due to elevated command level!
-			}
-			skillCheck = true;
+			skillCheck = ( forceResult == 1 ? true : false );
 		}
 		else
 		{
-			// Generate a random number between 0 and highSkill (if less than 1000) or 1000 (if higher than 1000)
-			SI16 rnd = RandomNum( 0, std::min( 1000, ( highSkill + 100 )));
+			// Calculate base chance of success at using a skill
+			chanceSkillSuccess = ( static_cast<R32>( s->GetSkill( sk )) - static_cast<R32>( lowSkill ));
 
-			// Compare to chanceOfSkillSuccess to see if player succeeds!
-			skillCheck = ( static_cast<SI16>( chanceSkillSuccess ) >= rnd );
+			// Modify chance based on the range of highSkill vs lowSkill
+			chanceSkillSuccess /= ( static_cast<R32>( highSkill ) - static_cast<R32>( lowSkill ));
+
+			// Let's work with whole numbers again
+			chanceSkillSuccess *= 1000;
+
+			if( isCraftSkill )
+			{
+				// Give players at least 50% chance at success if this is a crafting skill and their skill is above minimum requirement
+				chanceSkillSuccess = std::max( static_cast<R32>( 500 ), chanceSkillSuccess );
+			}
+
+			// Cap chance of success at 1000 (100.0%)
+			chanceSkillSuccess = std::min( static_cast<R32>( 1000 ), chanceSkillSuccess );
+
+			if( cwmWorldState->ServerData()->StatsAffectSkillChecks() )
+			{
+				// Modify base chance of success with bonuses from stats, if this feature is enabled in ini
+				chanceSkillSuccess += static_cast<R32>( s->GetStrength() * cwmWorldState->skill[sk].strength ) / 1000.0f;
+				chanceSkillSuccess += static_cast<R32>( s->GetDexterity() * cwmWorldState->skill[sk].dexterity ) / 1000.0f;
+				chanceSkillSuccess += static_cast<R32>( s->GetIntelligence() * cwmWorldState->skill[sk].intelligence ) / 1000.0f;
+			}
+
+			// If player's command-level is equal to Counselor or higher, pass the skill-check automatically
+			// Same if chance of success is 100% already - no need to proceed!
+			if( s->GetCommandLevel() > 0 || chanceSkillSuccess == 1000 )
+			{
+				if( RandomNum( 1, 100 ) > 80 && s->GetCommandLevel() > 0 && mSock != nullptr )
+				{
+					// Inform the counselor/gm to make it obvious why skillcheck always succeeds
+					mSock->SysMessage( 6279 ); // Tip: Skill check success guaranteed due to elevated command level!
+				}
+				skillCheck = true;
+			}
+			else
+			{
+				// Generate a random number between 0 and highSkill (if less than 1000) or 1000 (if higher than 1000)
+				SI16 rnd = RandomNum( 0, std::min( 1000, ( highSkill + 100 )));
+
+				// Compare to chanceOfSkillSuccess to see if player succeeds!
+				skillCheck = ( static_cast<SI16>( chanceSkillSuccess ) >= rnd );
+			}
 		}
 
 		if( mSock != nullptr )
@@ -673,7 +680,7 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 //|					skills for a skill that can be lowered, if one is found lower it and increase
 //|					sk, if we can't find one, do nothing if atrophy is not need, increase sk.
 //o------------------------------------------------------------------------------------------------o
-void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool success )
+void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool success, SKILLVAL skAmt, bool triggerEvent )
 {
 	UI32 totalSkill			= 0;
 	UI08 rem				= 0;
@@ -684,8 +691,12 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 
 	std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
 
-	UI08 amtToGain			= 1;
-	if( success )
+	SKILLVAL amtToGain			= 1;
+	if( skAmt > 0 )
+	{
+		amtToGain = skAmt;
+	}
+	else if( success )
 	{
 		amtToGain			= cwmWorldState->skill[sk].advancement[skillAdvance].amtToGain;
 	}
@@ -694,17 +705,20 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	if( c->IsNpc() )
 	{
 		// Check for existence of onSkillGain event for NPC
-		for( auto scriptTrig : scriptTriggers )
+		if( triggerEvent )
 		{
-			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != nullptr )
+			for( auto scriptTrig : scriptTriggers )
 			{
-				// If retVal is -1, event doesn't exist in script
-				// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
-				// If retVal is 1, event exists, proceed with hard code/other scripts
-				if( !toExecute->OnSkillGain( c, sk, amtToGain ))
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
 				{
-					return;
+					// If retVal is -1, event doesn't exist in script
+					// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
+					// If retVal is 1, event exists, proceed with hard code/other scripts
+					if( !toExecute->OnSkillGain( c, sk, amtToGain ))
+					{
+						return;
+					}
 				}
 			}
 		}
@@ -713,12 +727,15 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
 
 		// Check for existence of onSkillChange event for NPC
-		for( auto scriptTrig : scriptTriggers )
+		if( triggerEvent )
 		{
-			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != nullptr )
+			for( auto scriptTrig : scriptTriggers )
 			{
-				toExecute->OnSkillChange( c, sk, amtToGain );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnSkillChange( c, sk, amtToGain );
+				}
 			}
 		}
 		return;
@@ -726,8 +743,6 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 
 	if( mSock == nullptr )
 		return;
-
-	//srand( GetClock() ); // Randomize
 
 	atrop[ALLSKILLS] = 0; // set the last of out copy array
 	for( counter = 0; counter < ALLSKILLS; ++counter )
@@ -775,17 +790,20 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 		if( toDec != 0xFF )
 		{
 			// Check for existence of onSkillLoss event for player
-			for( auto scriptTrig : scriptTriggers )
+			if( triggerEvent )
 			{
-				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != nullptr )
+				for( auto scriptTrig : scriptTriggers )
 				{
-					// If retVal is -1, event doesn't exist in script
-					// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
-					// If retVal is 1, event exists, proceed with hard code/other scripts
-					if( !toExecute->OnSkillLoss( c, toDec, amtToGain ))
+					cScript *toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute != nullptr )
 					{
-						return;
+						// If retVal is -1, event doesn't exist in script
+						// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
+						// If retVal is 1, event exists, proceed with hard code/other scripts
+						if( !toExecute->OnSkillLoss( c, toDec, amtToGain ))
+						{
+							return;
+						}
 					}
 				}
 			}
@@ -795,12 +813,15 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 			c->SetBaseSkill( c->GetBaseSkill( toDec ) - amtToGain, toDec );
 
 			// Check for existence of onSkillChange event for player
-			for( auto scriptTrig : scriptTriggers )
+			if( triggerEvent )
 			{
-				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != nullptr )
+				for( auto scriptTrig : scriptTriggers )
 				{
-					toExecute->OnSkillChange( c, toDec, ( amtToGain * -1 ));
+					cScript *toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute != nullptr )
+					{
+						toExecute->OnSkillChange( c, toDec, ( amtToGain * -1 ));
+					}
 				}
 			}
 			mSock->UpdateSkill( toDec );
@@ -810,17 +831,20 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	if( skillCap > static_cast<UI16>( totalSkill ))
 	{
 		// Check for existence of onSkillGain event for player
-		for( auto scriptTrig : scriptTriggers )
+		if( triggerEvent )
 		{
-			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != nullptr )
+			for( auto scriptTrig : scriptTriggers )
 			{
-				// If retVal is -1, event doesn't exist in script
-				// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
-				// If retVal is 1, event exists, proceed with hard code/other scripts
-				if( !toExecute->OnSkillGain( c, sk, amtToGain ))
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
 				{
-					return;
+					// If retVal is -1, event doesn't exist in script
+					// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
+					// If retVal is 1, event exists, proceed with hard code/other scripts
+					if( !toExecute->OnSkillGain( c, sk, amtToGain ))
+					{
+						return;
+					}
 				}
 			}
 		}
@@ -829,12 +853,15 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
 
 		// Check for existence of onSkillChange event for player
-		for( auto scriptTrig : scriptTriggers )
+		if( triggerEvent )
 		{
-			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != nullptr )
+			for( auto scriptTrig : scriptTriggers )
 			{
-				toExecute->OnSkillChange( c, sk, amtToGain );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnSkillChange( c, sk, amtToGain );
+				}
 			}
 		}
 		mSock->UpdateSkill( sk );
@@ -916,12 +943,12 @@ void CSkills::SkillUse( CSocket *s, UI08 x )
 			if( cwmWorldState->skill[x].skillDelay != -1 )
 			{
 				// Use skill-specific skill delay if one has been set
-				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>( cwmWorldState->skill[x].skillDelay )));
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R64>( cwmWorldState->skill[x].skillDelay )));
 			}
 			else
 			{
 				// Otherwise use global skill delay from uox.ini
-				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ServerSkillDelayStatus() )));
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R64>( cwmWorldState->ServerData()->ServerSkillDelayStatus() )));
 			}
 		}
 		return;
@@ -950,8 +977,8 @@ void CSkills::Tracking( CSocket *s, SI32 selection )
 	i->SetTrackingTarget( i->GetTrackingTargets( selection ));
 
 	// tracking time in seconds ... gm tracker -> basetimer + 1 seconds, 0 tracking -> 1 sec, new calc
-	s->SetTimer( tPC_TRACKING, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->TrackingBaseTimer() * i->GetSkill( TRACKING ) / 1000 + 1 )));
-	s->SetTimer( tPC_TRACKINGDISPLAY, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->TrackingRedisplayTime() )));
+	s->SetTimer( tPC_TRACKING, BuildTimeValue( static_cast<R64>( cwmWorldState->ServerData()->TrackingBaseTimer() * i->GetSkill( TRACKING ) / 1000 + 1 )));
+	s->SetTimer( tPC_TRACKINGDISPLAY, BuildTimeValue( static_cast<R64>( cwmWorldState->ServerData()->TrackingRedisplayTime() )));
 	if( ValidateObject( i->GetTrackingTarget() ))
 	{
 		std::string trackingTargetName = GetNpcDictName( i->GetTrackingTarget(), nullptr, NRS_SPEECH );
@@ -1137,7 +1164,7 @@ void CSkills::UpdateSkillLevel( CChar *c, UI08 s ) const
 	SI16 aInt = c->ActualIntelligence();
 	UI16 bSkill = c->GetBaseSkill( s );
 
-	UI16 temp = ((( sStr * aStr ) / 100 + ( sDex * aDex ) / 100 + ( sInt + aInt ) / 100) * ( 1000 - bSkill )) / 1000 + bSkill;
+	UI16 temp = (( static_cast<R32>( sStr * aStr ) / 100.0f + static_cast<R32>( sDex * aDex ) / 100.0f + static_cast<R32>( sInt * aInt ) / 100.0f ) * static_cast<R32>( 1000 - bSkill )) / 1000.0f + static_cast<R32>( bSkill );
 	c->SetSkill( std::max( bSkill, temp ), s );
 }
 
@@ -1173,12 +1200,12 @@ void CSkills::Persecute( CSocket *s )
 			if( cwmWorldState->skill[SPIRITSPEAK].skillDelay != -1 )
 			{
 				// Use skill-specific skill delay if one has been set
-				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>( cwmWorldState->skill[SPIRITSPEAK].skillDelay )));
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R64>( cwmWorldState->skill[SPIRITSPEAK].skillDelay )));
 			}
 			else
 			{
 				// Otherwise use global skill delay from uox.ini
-				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ServerSkillDelayStatus() )));
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R64>( cwmWorldState->ServerData()->ServerSkillDelayStatus() )));
 			}
 
 			std::string targCharName = GetNpcDictName( targChar, nullptr, NRS_SPEECH );
@@ -1703,32 +1730,35 @@ auto CSkills::LoadCreateMenus() -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Advance players skill based on success or failure in CheckSkill()
 //o------------------------------------------------------------------------------------------------o
-bool CSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
+bool CSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed, SKILLVAL skAmt, bool triggerEvent )
 {
 	bool advSkill = false;
-	SI16 skillGain;
+	SI16 skillGain = 0;
 
 	SI08 skillAdvance = FindSkillPoint( sk, s->GetBaseSkill( sk ));
 
-	if( skillUsed )
+	if( skAmt == 0 )
 	{
-		skillGain = ( cwmWorldState->skill[sk].advancement[skillAdvance].success );
-	}
-	else
-	{
-		skillGain = ( cwmWorldState->skill[sk].advancement[skillAdvance].failure );
+		if( skillUsed )
+		{
+			skillGain = ( cwmWorldState->skill[sk].advancement[skillAdvance].success );
+		}
+		else
+		{
+			skillGain = ( cwmWorldState->skill[sk].advancement[skillAdvance].failure );
+		}
 	}
 
-	if( skillGain > RandomNum( 1, 100 ))
+	if( skAmt > 0 || skillGain > RandomNum( 1, 100 ))
 	{
 		advSkill = true;
 		if( s->GetSkillLock( sk ) == SKILL_INCREASE )
 		{
-			HandleSkillChange( s, sk, skillAdvance, skillUsed );
+			HandleSkillChange( s, sk, skillAdvance, skillUsed, skAmt, triggerEvent );
 		}
 	}
 
-	if( s->GetSkillLock( sk ) != SKILL_LOCKED ) // if it's locked, stats can't advance
+	if( triggerEvent && s->GetSkillLock( sk ) != SKILL_LOCKED ) // if it's locked, stats can't advance
 	{
 		AdvanceStats( s, sk, skillUsed );
 	}

@@ -39,8 +39,8 @@ private:
 
 	void	HandleNPCSpellAttack( CChar *mChar, CChar *ourTarg, UI16 playerDistance );
 
-	CItem *	CheckDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType );
-	CItem *	GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal = false, WeatherType resistType = NONE );
+	CItem *	CheckDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType, bool excludeMedableArmor = false );
+	CItem *	GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal = false, WeatherType resistType = NONE, bool excludeMedableArmor = false, bool includeShield = false );
 
 public:
 	bool	StartAttack( CChar *mChar, CChar *ourTarg );
@@ -56,7 +56,7 @@ public:
 
 	void	DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI16 damage );
 	SI08	CalculateHitLoc( void );
-	UI16	CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage = false, WeatherType element = PHYSICAL );
+	UI16	CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage = false, WeatherType element = PHYSICAL, bool excludeMedableArmor = false, bool includeShield = false );
 	SI16	CalcAttackPower( CChar *mChar, bool doDamage = false );
 	SI16	CalcLowDamage( CChar *p );
 	SI16	CalcHighDamage( CChar *p );

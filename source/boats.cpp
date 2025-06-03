@@ -908,7 +908,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 		auto toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute )
 		{
-			if( toExecute->OnBoatTurn( b, olddir, b->GetDir() ) == 1 )
+			if( toExecute->OnBoatTurn( b, olddir, b->GetDir(), tiller ) == 1 )
 			{
 				// A script with the event returned true; prevent other scripts from running
 				break;

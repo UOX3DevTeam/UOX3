@@ -1677,6 +1677,7 @@
 1663=My little son Timmy requires an operation have ye some gold to help d'cause?
 1664=My wife is pregnant with our 7th child, have some pity in the form of some gold for a desperate man.
 // End begging text
+1669=Cannot see target!
 1670=You cannot disguise yourself while wearing body paint
 1671=You cannot polymorph while wearing body paint
 1672=You cannot use incognito while wearing body paint
@@ -2457,6 +2458,47 @@
 2585=You pour some cider into the container.
 2586=You pour some liquor into the container.
 2587=You pour some wine into the glass.
+// [2600-2699] Player/NPC/Spawn Admin Script
+2600=Chosen NPC (%s, %i) has been removed.
+2601=Warning: No backpack found on character!
+2602=Warning: No bank box found for character!
+2603=Too far away to inspect paperdoll (current range: %i)
+2604=NPC Removal
+2605=<BASEFONT color=#EECD8B>Please confirm removal of:</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>There is no undo button.</BASEFONT>
+2607=Filter for names starting with '%s'
+2608=Manage Players - %s
+2609=Manage NPCs
+2610=All
+2611=Online
+2612=Offline
+2613=Tweak character:<br>serial: %s<br>Last On: %w
+2614=Teleport to character
+2615=Get character
+2616=Inspect character
+2617=Jail/Release character
+2618=Kick player
+2619=Ban player
+2620=Remove NPC
+2621=No entries found!
+2622=Page %i / %u
+2623=Apply Filter
+2624=Filter for Online Players
+2625=Filter for Offline Players
+2626=Sort by Last On (%s)
+2627=Ascending
+2628=Descending
+2629=Found %i player characters in %u milliseconds.
+2630=Found %i NPCs in %u milliseconds.
+2631=Found %i item-based spawners in %u milliseconds.
+2632=Manage Spawn Objects
+2633=Tweak Spawn Object:<br>serial: %s<br>spawn-section: %w<br>Amount: %i<br>In region: (%u) %z
+2634=Teleport to Spawn Object
+2635=Open Spawn Object Editor
+2636=Remove Spawn Object
+2637=Filter for NPC Spawners
+2638=Filter for Item Spawners
+2639=Sort by Spawn Count (%s)
 // [2700-2799] Misc scripts
 2700=Only the house owner can rotate furniture.
 2701=That does not appear to work.
@@ -3439,7 +3481,7 @@
 6276=You don't have the cooking skill to create the body paint.
 6277=Resource ID not found in list of resources used to craft item.
 6278=You have to use your taste identification skill to know more about this potion.
-6279=Skill check success guaranteed due to elevated command level!
+6279=Tip: Skill check success guaranteed due to elevated command level!
 6280=Spellcast delay ignored due to elevated command level!
 6300=You havent learned glassblowing.
 6301=Only a Grandmaster Alchemist can learn from this book.
@@ -3699,6 +3741,15 @@
 8213=Section ID from DFNs object originated from
 8214=Is item stealable? 0 = not stealable, 1 = stealable, 2 = stealable rare
 8215=Invalid target. Please select a valid item or NPC
+8251=Wiping NPCs...
+8252=Wiped %i NPCs
+8253=Select NPC to move remotely using xrun:
+8254=Select NPC to move remotely using xwalk:
+8255=Select NPC to turn remotely using xturn:
+8256=Select movement (%s) destination:
+8257=You must target an NPC!
+8258=You bind the wound and stop the bleeding
+8259=The bleeding wounds have healed, you are no longer bleeding!
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Account number associated with player. Controlled by server (Read-Only)
 8301=NPC AI Type

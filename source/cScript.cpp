@@ -309,7 +309,7 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 
 	JS_SetGlobalObject( targContext, targObject );
 
-	JS_InitStandardClasses( targContext, targObject );
+	//JS_InitStandardClasses( targContext, targObject );
 	JS_DefineFunctions( targContext, targObject, my_functions );
 	targScript = JS_CompileFile( targContext, targObject, targFile.c_str() );
 	if( targScript == nullptr )
@@ -339,22 +339,19 @@ void cScript::Cleanup( void )
 }
 void cScript::CollectGarbage( void )
 {
-	//	if( JS_IsRunning( targContext ) == JS_FALSE )
-	//	{
 	Cleanup();
 	JS_LockGCThing( targContext, targObject );
-	//JS_AddRoot( targContext, &targObject );
-	//	}
 }
 cScript::~cScript()
 {
-	JS_GC( targContext );
+	//JS_GC( targContext );
 	if( targScript != nullptr )
 	{
 		JS_DestroyScript( targContext, targScript );
+		targScript = nullptr;
 	}
 	Cleanup();
-	JS_GC( targContext );
+	//JS_GC( targContext );
 	//	if( targContext != nullptr )
 	//		JS_DestroyContext( targContext );
 }
@@ -1637,7 +1634,7 @@ SI08 cScript::OnMultiLogout( CMultiObj *iMulti, CChar *cPlayer )
 //o------------------------------------------------------------------------------------------------o
 //|    Purpose        -    Triggers for Boat after it has turned successfully
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir )
+SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir, CItem *iTiller )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( iBoat ))
@@ -1646,15 +1643,17 @@ SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir )
 	if( !ExistAndVerify( seOnBoatTurn, "onBoatTurn" ))
 		return RV_NOFUNC;
 
-	jsval params[3], rval;
+	jsval params[4], rval;
 	JSObject *myBoat = JSEngine->AcquireObject( IUE_ITEM, iBoat, runTime );
+	JSObject *myTiller = JSEngine->AcquireObject( IUE_ITEM, iTiller, runTime );
     
 
 	params[0] = OBJECT_TO_JSVAL( myBoat );
 	params[1] = INT_TO_JSVAL( oldDir );
 	params[2] = INT_TO_JSVAL( newDir );
+	params[3] = OBJECT_TO_JSVAL( myTiller );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoatTurn", 3, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoatTurn", 4, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnBoatTurn, false );
@@ -3354,7 +3353,7 @@ SI32 cScript::OnSpellLoss( CItem *book, const SI32 spellNum )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when a skillcheck is performed
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill )
+SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill, SI08 overrideOutcome )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( myChar ) || skill > ALLSKILLS )
@@ -3363,14 +3362,15 @@ SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 	if( !ExistAndVerify( seOnSkillCheck, "onSkillCheck" ))
 		return RV_NOFUNC;
 
-	jsval params[5], rval;
+	jsval params[6], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( skill );
 	params[2] = INT_TO_JSVAL( lowSkill );
 	params[3] = INT_TO_JSVAL( highSkill );
 	params[4] = BOOLEAN_TO_JSVAL( isCraftSkill );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillCheck", 5, params, &rval );
+	params[5] = INT_TO_JSVAL( overrideOutcome );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillCheck", 6, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSkillCheck, false );
@@ -3597,7 +3597,7 @@ bool cScript::MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI3
 //|	Purpose		-	Called after IterateOver JS function is used, and iterates over all items or
 //|					characters (as specified) in the game
 //o------------------------------------------------------------------------------------------------o
-bool cScript::OnIterate( CBaseObject *a, UI32 &b )
+bool cScript::OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock )
 {
 	if( !ValidateObject( a ))
 		return true;
@@ -3605,7 +3605,7 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 	if( !ExistAndVerify( seOnIterate, "onIterate" ))
 		return false;
 
-	jsval params[1], rval;
+	jsval params[2], rval;
 
 	JSObject *myObj = nullptr;
 	if( a->GetObjType() == OT_CHAR )
@@ -3617,9 +3617,16 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 		myObj = JSEngine->AcquireObject( IUE_ITEM, a, runTime );
 	}
 
-	params[0] = OBJECT_TO_JSVAL( myObj );
+	JSObject *sockObj = nullptr;
+	if( mSock )
+	{
+		sockObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	}
 
-	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onIterate", 1, params, &rval );
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( sockObj );
+
+	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onIterate", 2, params, &rval );
 
 	/*	if( ValidateObject( a ))
 	{
@@ -3741,6 +3748,35 @@ SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar )
 	}
 
 	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDismount()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Allows triggering effects upon dismounting a mount
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnDismount( CChar *pChar, CChar *npcMount )
+{
+	if( !ValidateObject( pChar ) || !ValidateObject( npcMount ))
+		return false;
+
+	if( !ExistAndVerify( seOnDismount, "onDismount" ))
+		return false;
+
+	jsval params[2], rval;
+	JSObject *pObj = JSEngine->AcquireObject( IUE_CHAR, pChar, runTime );
+	JSObject *npcObj = JSEngine->AcquireObject( IUE_CHAR, npcMount, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( pObj );
+	params[1] = OBJECT_TO_JSVAL( npcObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDismount", 2, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnDismount, false );
+	}
+
+	return ( retVal == JS_TRUE );
 }
 
 //o------------------------------------------------------------------------------------------------o

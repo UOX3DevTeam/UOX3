@@ -345,7 +345,7 @@ auto SearchSubPackForItemOfSectionId( CItem *toSearch, std::string sectionId )->
 	{
 		if( ValidateObject( toCheck ))
 		{
-			if( toCheck->GetSectionId() == sectionId ) // it's in our hand
+			if( oldstrutil::lower( toCheck->GetSectionId() ) == oldstrutil::lower( sectionId )) // it's in our hand
 			{
 				return toCheck; // we've found the first occurance on the person!
 			}
@@ -374,7 +374,7 @@ CItem *FindItemOfSectionId( CChar *toFind, std::string sectionId )
 	{
 		if( ValidateObject( toCheck ))
 		{
-			if( toCheck->GetSectionId() == sectionId ) // it's in our hand
+			if( oldstrutil::lower( toCheck->GetSectionId() ) == oldstrutil::lower( sectionId )) // it's in our hand
 			{
 				return toCheck;	// we've found the first occurance on the person!
 			}

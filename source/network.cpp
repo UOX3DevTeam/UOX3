@@ -791,7 +791,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 		SI32 count = mSock->Receive( 4 );
 		if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
 		{
-			SI32 ho, mi, se, total;
+			SI64 ho, mi, se, total;
 			total = ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
 			ho = total / 3600;
 			total -= ho * 3600;
@@ -913,7 +913,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 
 						if( ourChar->GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() )
 						{
-							ourChar->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( 1 ));
+							ourChar->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( 1.0 ));
 						}
 						else
 						{

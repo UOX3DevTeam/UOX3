@@ -1841,6 +1841,7 @@
 1663=Mon petit garcon Tom a besoin d'une operation... Pourriez vous m'aider avec un peu d'or?
 1664=Ma femme est enceinte de notre 7e enfant,ayez un peu de pitie et donnez un peu d'or a un homme desespere...
 // Fin du texte de mendiant
+1669=Cible invisible !
 1670=Vous ne pouvez pas vous déguiser en portant de la peinture corporelle.
 1671=Vous ne pouvez pas vous polymorpher en portant de la peinture corporelle.
 1672=Vous ne pouvez pas utiliser incognito en portant de la peinture corporelle.
@@ -2621,6 +2622,47 @@
 2585=Versez du cidre dans le récipient.
 2586=Tu verses de la liqueur dans le récipient.
 2587=Vous versez du vin dans le verre.
+// [2600-2699] Player/NPC/Spawn Admin Script
+2600=Le PNJ choisi (%s, %i) a été supprimé.
+2601=Avertissement : Aucun sac à dos n'a été trouvé sur le personnage !
+2602=Avertissement : Aucun coffret bancaire n'a été trouvé pour le personnage !
+2603=Trop loin pour inspecter la poupée en papier (portée actuelle : %i)
+2604=Retrait du PNJ
+2605=<BASEFONT color=#EECD8B>Veuillez confirmer le retrait de :</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>Il n'y a pas de bouton d'annulation. </BASEFONT>
+2607=Filtre pour les noms commençant par '%s'
+2608=Gestion des joueurs - %s
+2609=Gestion des PNJ
+2610=Tous
+2611=En ligne
+2612=Hors ligne
+2613=Tweak character:<br>serial : %s<br>Last On : %w
+2614=Téléportation vers le personnage
+2615=Accéder au personnage
+2616=Inspecter le personnage
+2617=Jail/Release le personnage
+2618=Frapper le joueur
+2619=Banquer le joueur
+2620=Remove NPC
+2621=Aucune entrée trouvée !
+2622=Page %i / %u
+2623=Appliquer le filtre
+2624=Filtre pour les joueurs en ligne
+2625=Filtre pour les joueurs hors ligne
+2626=Tri par Last On (%s)
+2627=Ascendant
+2628=Descendant
+2629=Trouvé %i personnages joueurs en %u millisecondes.
+2630=Trouvé %i PNJ en %u millisecondes.
+2631=Trouvé %i spawners basés sur des objets en %u millisecondes.
+2632=Gestion des objets spawn
+2633=Mise au point d'un objet spawn:<br>série : %s<br>section spawn : %w<br>Montant : %i<br>Dans la région : (%u) %z
+2634=Téléportation vers l'objet Spawn
+2635=Ouvrir l'éditeur d'objet Spawn
+2636=Renlever l'objet Spawn
+2637=Filtre pour les spawners PNJ
+2638=Filtre pour les spawners d'objets
+2639=Tri par nombre de spawn (%s)
 // [2700-2799] Misc scripts
 2700=Seul le propriétaire de la maison peut faire pivoter les meubles.
 2701=Cela ne semble pas fonctionner.
@@ -3603,7 +3645,7 @@
 6276=Vous n'avez pas la compétence cuisine pour créer la peinture corporelle.
 6277=Resource ID non trouvée dans la liste des ressources utilisées pour fabriquer l'objet.
 6278=Vous devez utiliser votre compétence d'identification des goûts pour en savoir plus sur cette potion.
-6279=Succès de la vérification des compétences garanti grâce à un niveau de commande élevé !
+6279=Conseil: Succès de la vérification des compétences garanti grâce à un niveau de commande élevé !
 6280=Délai de lancement de sort ignoré en raison d'un niveau de commande élevé !
 6300=Vous n'avez pas appris le soufflage du verre.
 6301=Seul un grand maître alchimiste peut apprendre de ce livre.
@@ -3863,6 +3905,15 @@
 8213=Identification de la section dans les DFNs d'où provient l'objet.
 8214=L'objet est-il volable ? 0 = non volable, 1 = volable, 2 = volable rare
 8215=Cible invalide. Veuillez sélectionner un objet ou un PNJ valide
+8251=Suppression des PNJ...
+8252=Suppression de %i PNJ
+8253=Sélectionnez le PNJ à déplacer à distance à l'aide de xrun :
+8254=Sélectionnez le PNJ à déplacer à distance à l'aide de xwalk :
+8255=Sélectionnez le PNJ à faire pivoter à distance à l'aide de xturn :
+8256=Sélectionnez la destination du déplacement (%s) :
+8257=Vous devez cibler un PNJ !
+8258=Vous pansez la blessure et arrêtez l'hémorragie
+8259=Les blessures hémorragiques sont guéries, vous ne saignez plus !
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numéro de compte associé au joueur. Contrôlé par le serveur (en lecture seule).
 8301=Type d'IA du PNJ

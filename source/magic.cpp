@@ -178,7 +178,7 @@ bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, 
 				i->SetDecayable( true );
 
 				// Duration of field item based on caster's Magery skill
-				i->SetDecayTime( BuildTimeValue( static_cast<R32>( caster->GetSkill( MAGERY ) / 15 )));
+				i->SetDecayTime( BuildTimeValue( static_cast<R64>( caster->GetSkill( MAGERY )) / 15.0 ));
 
 				// If Poison Field, use average of caster's Magery and Poisoning skills
 				if( spellNum == 39 ) // Poison Field
@@ -2572,7 +2572,7 @@ bool DiamondSpell( [[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 
 		{
 			i->SetDispellable( true );
 			i->SetDecayable( true );
-			i->SetDecayTime( BuildTimeValue( static_cast<R32>( caster->GetSkill( MAGERY ) / 15 )));
+			i->SetDecayTime( BuildTimeValue( static_cast<R64>( caster->GetSkill( MAGERY )) / 15.0 ));
 			i->SetTempVar( CITV_MOREX, caster->GetSkill( MAGERY )); // remember casters magery skill for damage
 			i->SetTempVar( CITV_MOREY, caster->GetSerial() );
 			i->SetLocation( x + fx[j], y + fy[j], Map->Height( x + fx[j], y + fy[j], z, worldNumber, instanceId ));
@@ -2591,7 +2591,7 @@ bool DiamondSpell( [[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 
 				{
 					i->SetDispellable( true );
 					i->SetDecayable( true );
-					i->SetDecayTime( BuildTimeValue(static_cast<R32>( caster->GetSkill( MAGERY ) / 15 )));
+					i->SetDecayTime( BuildTimeValue( static_cast<R64>( caster->GetSkill( MAGERY )) / 15.0 ));
 					i->SetTempVar( CITV_MOREX, caster->GetSkill( MAGERY )); // remember casters magery skill for damage
 					i->SetTempVar( CITV_MOREY, caster->GetSerial() );
 					const SI16 newX = x + counter2 * counter3;
@@ -2634,7 +2634,7 @@ bool SquareSpell( [[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x
 			{
 				i->SetDispellable( true );
 				i->SetDecayable( true );
-				i->SetDecayTime( BuildTimeValue( static_cast<R32>( caster->GetSkill( MAGERY ) / 15 )));
+				i->SetDecayTime( BuildTimeValue( static_cast<R64>( caster->GetSkill( MAGERY )) / 15.0 ));
 				i->SetTempVar( CITV_MOREX, caster->GetSkill( MAGERY )); // remember casters magery skill for damage
 				i->SetTempVar( CITV_MOREY, caster->GetSerial() );
 				switch( j )
@@ -2682,7 +2682,7 @@ bool FloodSpell( [[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x,
 			{
 				i->SetDispellable( true );
 				i->SetDecayable( true );
-				i->SetDecayTime( BuildTimeValue( static_cast<R32>( caster->GetSkill( MAGERY ) / 15 )));
+				i->SetDecayTime( BuildTimeValue( static_cast<R64>( caster->GetSkill( MAGERY )) / 15.0 ));
 				i->SetTempVar( CITV_MOREX, caster->GetSkill( MAGERY )); // remember casters magery skill for damage
 				i->SetTempVar( CITV_MOREY, caster->GetSerial() );
 				i->SetLocation( counter1, counter2, Map->Height( counter1, counter2, z, worldNumber, instanceId ));
@@ -3095,7 +3095,7 @@ void CMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 
 			newChar->SetOwner( caster );
 			caster->SetControlSlotsUsed( std::clamp( controlSlotsUsed + newChar->GetControlSlots(), 0, 255 ));
-			newChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( static_cast<R32>( caster->GetSkill( MAGERY ) / 5 )));
+			newChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( static_cast<R64>( caster->GetSkill( MAGERY )) / 5.0 ));
 			newChar->SetLocation( caster );
 			Effects->PlayCharacterAnimation( newChar, ACT_SPELL_AREA, 0, 7 ); // 0x11, used to be 0x0C
 			newChar->SetFTarg( caster );
@@ -3202,7 +3202,7 @@ void CMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 	}
 
 	newChar->SetSpDelay( 10 );
-	newChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( static_cast<R32>( caster->GetSkill( MAGERY ) / 5 )));
+	newChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( static_cast<R64>( caster->GetSkill( MAGERY )) / 5.0 ));
 	Effects->PlayCharacterAnimation( newChar, ACT_SPELL_AREA, 0, 7 ); // 0x11, used to be 0x0C
 	// (9/99) - added the chance to make the monster attack
 	// the person you targeted ( if you targeted a char, naturally :) )
@@ -3689,10 +3689,10 @@ bool CMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 		caster = CalcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ));	// store caster in morey
 		if( ValidateObject( caster) )
 		{
-			if( mChar->GetTimer( tCHAR_FIREFIELDTICK ) < cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			if( mChar->GetTimer( tCHAR_FIREFIELDTICK ) < cwmWorldState->GetUICurrentTime() )
 			{
 				// Set a timer, so another field spell cannot "tick" for this character for a short while
-				mChar->SetTimer( tCHAR_FIREFIELDTICK, BuildTimeValue( static_cast<R32>( Magic->spells[28].DamageDelay() )));
+				mChar->SetTimer( tCHAR_FIREFIELDTICK, BuildTimeValue( static_cast<R64>( Magic->spells[28].DamageDelay() )));
 
 				// Fetch spell damage from Fire Field spell
 				auto spellDamage = Magic->spells[28].BaseDmg();
@@ -3721,10 +3721,10 @@ bool CMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 				MakeCriminal( caster );
 			}
 		}
-		if( mChar->GetTimer( tCHAR_POISONFIELDTICK ) < cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		if( mChar->GetTimer( tCHAR_POISONFIELDTICK ) < cwmWorldState->GetUICurrentTime() )
 		{
 			// Set a timer, so another field spell cannot "tick" for this character for a short while
-			mChar->SetTimer( tCHAR_POISONFIELDTICK, BuildTimeValue( static_cast<R32>( Magic->spells[39].DamageDelay() )));
+			mChar->SetTimer( tCHAR_POISONFIELDTICK, BuildTimeValue( static_cast<R64>( Magic->spells[39].DamageDelay() )));
 
 			// Calculate strength of poison, but disregard range check
 			UI08 poisonStrength = 1;
@@ -3751,10 +3751,10 @@ bool CMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 				MakeCriminal( caster );
 			}
 		}
-		if( mChar->GetTimer( tCHAR_PARAFIELDTICK ) < cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		if( mChar->GetTimer( tCHAR_PARAFIELDTICK ) < cwmWorldState->GetUICurrentTime() )
 		{
 			// Set a timer, so another field spell cannot "tick" for this character for a short while
-			mChar->SetTimer( tCHAR_PARAFIELDTICK, BuildTimeValue( static_cast<R32>( Magic->spells[39].DamageDelay() )));
+			mChar->SetTimer( tCHAR_PARAFIELDTICK, BuildTimeValue( static_cast<R64>( Magic->spells[39].DamageDelay() )));
 
 			if( !CheckResist( nullptr, mChar, 6 ))
 			{
@@ -4139,7 +4139,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 	// Spell recovery time active? This timer stars as soon as targeting cursor is ready, and defaults to 1.0 seconds unless set otherwise in spells.dfn
 	if( mChar->GetTimer( tCHAR_SPELLRECOVERYTIME ) != 0 )
 	{
-		if( mChar->GetTimer( tCHAR_SPELLRECOVERYTIME ) > cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		if( mChar->GetTimer( tCHAR_SPELLRECOVERYTIME ) > cwmWorldState->GetUICurrentTime() )
 		{
 			mSock->SysMessage( 1638 ); // You must wait a little while before casting
 			return false;
@@ -4154,7 +4154,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 			mSock->SysMessage( 762 ); // You are already casting a spell.
 			return false;
 		}
-		else if( mChar->GetTimer( tCHAR_SPELLTIME ) > cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		else if( mChar->GetTimer( tCHAR_SPELLTIME ) > cwmWorldState->GetUICurrentTime() )
 		{
 			mSock->SysMessage( 1638 ); // You must wait a little while before casting
 			return false;
@@ -4215,15 +4215,14 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 	// The following loop checks to see if any item is currently equipped (if not a GM)
 	if( !mChar->IsGM() && type != 2 )
-	{
-	   bool autoUnequipEnabled = cwmWorldState->ServerData()->AutoUnequippedCasting(); // Should be INI Setting
+       bool autoUnequipEnabled = cwmWorldState->ServerData()->AutoUnequippedCasting();
 
 		CItem *itemRHand = mChar->GetItemAtLayer( IL_RIGHTHAND );
 		CItem *itemLHand = mChar->GetItemAtLayer( IL_LEFTHAND );
 		auto mCharPack = mChar->GetPackItem();
 
 		// Function to check and possibly unequip an item if it blocks spell casting
-		auto handleItem = [&](CItem* item, auto itemCheck, bool blockFlag = true)
+    auto handleItem = [&]( CItem* item, auto itemCheck, bool& blockFlag )
 		{
 			if( item && itemCheck( item ))
 			{
@@ -4338,7 +4337,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 	// Delay measurement...
 	if( castDelay >= 0 )
 	{
-		mChar->SetTimer( tCHAR_SPELLTIME, BuildTimeValue(static_cast<R32>( castDelay / 1000 )));
+		mChar->SetTimer( tCHAR_SPELLTIME, BuildTimeValue( static_cast<R64>( castDelay ) / 1000.0 ));
 		if( !cwmWorldState->ServerData()->CastSpellsWhileMoving() )
 		{
 			mChar->SetFrozen( true );
@@ -4347,7 +4346,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 	}
 	else if( type == 0 && mChar->GetCommandLevel() < 2 ) // if they are a gm they don't have a delay :-)
 	{
-		mChar->SetTimer( tCHAR_SPELLTIME, BuildTimeValue( static_cast<R32>( curSpellCasting.Delay() )));
+		mChar->SetTimer( tCHAR_SPELLTIME, BuildTimeValue( static_cast<R64>( curSpellCasting.Delay() )));
 		if( !cwmWorldState->ServerData()->CastSpellsWhileMoving() )
 		{
 			mChar->SetFrozen( true );

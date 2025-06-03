@@ -1402,6 +1402,12 @@ protected:
 		std::string ourText;
 		UI32 stringNum;
 		size_t stringLen;
+		SI16 sortOrder = DEFAULT_TOOLTIP_SORT; // default, if nothing else is specified
+
+		// Overload the less-than operator for sorting
+		bool operator<( const ToolTipEntry_st& other ) const {
+			return sortOrder < other.sortOrder;
+		}
 	};
 	std::vector<ToolTipEntry_st> ourEntries;
 

@@ -1677,6 +1677,7 @@
 1663=Mein kleiner Sohn Timmy muss operiert werden. Habt Ihr ein bisschen Gold, um zu helfen?
 1664=Meine Frau ist schwanger mit unserem 7. Kind, habt etwas Mitleid in Form von etwas Gold für einen verzweifelten Mann.
 // End begging text
+1669=Ziel nicht sichtbar!
 1670=Du kannst dich nicht verkleiden, während du Körperfarbe trägst
 1671=Du kannst dich nicht polymorphisieren, während du Körperfarbe trägst
 1672=Du kannst inkognito nicht benutzen, während du Körperfarbe trägst
@@ -2457,6 +2458,47 @@
 2585=Sie schütten etwas Apfelwein in den Behälter.
 2586=Sie schütten etwas Likör in den Behälter.
 2587=Sie schütten etwas Wein in das Glas.
+// [2600-2699] Player/NPC/Spawn Admin Script
+2600=Ausgewählter NPC (%s, %i) wurde entfernt.
+2601=Warnung: Kein Rucksack am Charakter gefunden!
+2602=Warnung: Keine Bankbox für den Charakter gefunden!
+2603=Zu weit entfernt, um Paperdoll zu inspizieren (aktueller Bereich: %i)
+2604=NPC-Entfernung
+2605=<BASEFONT color=#EECD8B>Bitte bestätige die Entfernung von:</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>Es gibt keine Rückgängig-Taste. </BASEFONT>
+2607=Filter für Namen, die mit '%s' beginnen
+2608=Spieler verwalten - %s
+2609=NPCs verwalten
+2610=Alle
+2611=Online
+2612=Offline
+2613=Zwischen Charakter:<br>Serie: %s<br>Last On: %w
+2614=Teleport zu Charakter
+2615=Charakter holen
+2616=Charakter untersuchen
+2617=Charakter einsperren/freilassen
+2618=Spieler kicken
+2619=Spieler bannen
+2620=NPC entfernen
+2621=Keine Einträge gefunden!
+2622=Seite %i / %u
+2623=Filter anwenden
+2624=Filter für Online-Spieler
+2625=Filter für Offline-Spieler
+2626=Sortieren nach Last On (%s)
+2627=Aufsteigend
+2628=Absteigend
+2629=Fand %i Spielercharaktere in %u Millisekunden.
+2630=Gefundene %i NPCs in %u Millisekunden.
+2631=Gefundene %i Gegenstandsspawns in %u Millisekunden.
+2632=Spawn-Objekte verwalten
+2633=Spawn-Objekt anpassen:<br>Seriennummer: %s<br>Spawn-Abschnitt: %w<br>Anzahl: %i<br>In Region: (%u) %z
+2634=Teleport zum Spawn-Objekt
+2635=Editor für Spawn-Objekte öffnen
+2636=Spawn-Objekt entfernen
+2637=Filter für NPC-Spawns
+2638=Filter für Item-Spawns
+2639=Sortieren nach Spawn-Anzahl (%s)
 // [2700-2799] Misc scripts
 2700=Nur der Hausbesitzer kann die Möbel drehen.
 2701=Das scheint nicht zu funktionieren.
@@ -3439,7 +3481,7 @@
 6276=Du hast nicht die Fertigkeit Kochen, um die Körperfarbe herzustellen.
 6277=Ressourcen-ID nicht in der Liste der für die Herstellung des Gegenstands verwendeten Ressourcen gefunden.
 6278=Um mehr über diesen Trank zu erfahren, musst du deine Fähigkeit zur Geschmackserkennung einsetzen.
-6279=Erfolgsgarantie für Fertigkeitsprüfung aufgrund erhöhter Befehlsstufe!
+6279=Tipp: Erfolgsgarantie für Fertigkeitsprüfung aufgrund erhöhter Befehlsstufe!
 6280=Zauberverzögerung wegen erhöhter Befehlsstufe ignoriert!
 6300=Sie haben das Glasblasen nicht gelernt.
 6301=Nur ein Großmeister-Alchemist kann aus diesem Buch lernen.
@@ -3699,6 +3741,15 @@
 8213=Schnittstellen-ID aus DFNs, aus denen das Objekt stammt
 8214=Ist der Gegenstand stehlbar? 0 = nicht stehlbar, 1 = stehlbar, 2 = selten stehlbar
 8215=Ungültiges Ziel. Bitte wählen Sie einen gültigen Gegenstand oder NPC aus
+8251=NPCs löschen...
+8252=%i NPCs gelöscht
+8253=Wähle einen NPC aus, der mit xrun ferngesteuert bewegt werden soll:
+8254=Wähle einen NPC aus, der mit xwalk ferngesteuert bewegt werden soll:
+8255=Wähle einen NPC aus, der mit xturn ferngesteuert gedreht werden soll:
+8256=Wähle das Bewegungsziel (%s) aus:
+8257=Du musst einen NPC als Ziel auswählen!
+8258=Du verbindest die Wunde und stillst die Blutung
+8259=Die blutenden Wunden sind verheilt, du blutest nicht mehr!
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Kontonummer, die dem Spieler zugeordnet ist. Wird vom Server gesteuert (Read-Only)
 8301=NPC-KI-Typ

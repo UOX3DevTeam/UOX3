@@ -20,7 +20,7 @@ function onLogin( socket, pChar )
 
 	// Store login timestamp (in minutes) in temp tag
 	var loginTime = Math.round( GetCurrentClock() / 1000 / 60 );
-	pChar.SetTempTag( "loginTime", loginTime );
+	pChar.SetTempTag( "loginTime", loginTime.toString() );
 
 	// Attach OnFacetChange to characters logging into the shard
 	if( !pChar.HasScriptTrigger( 2508 ))
@@ -51,11 +51,11 @@ function onLogin( socket, pChar )
 	}
 
 	// Re-adds Buff for disguise kit if player still has time left.
-	var currentTime = GetCurrentClock();
 	var disguiseKitTime = pChar.GetJSTimer( 1, 5023 );
-	var timeLeft = Math.round(( disguiseKitTime - currentTime ) / 1000 );
 	if( disguiseKitTime > 0 )
 	{
+		var currentTime = GetCurrentClock();
+		var timeLeft = Math.round(( disguiseKitTime - currentTime ) / 1000 );
 		TriggerEvent( 2204, "RemoveBuff", pChar, 1033 );
 		TriggerEvent( 2204, "AddBuff", pChar, 1033, 1075821, 1075820, timeLeft, "" );
 	}
@@ -63,7 +63,7 @@ function onLogin( socket, pChar )
 
 function onLogout( pSock, pChar )
 {
-	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - pChar.GetTempTag( "loginTime" );
+	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - parseInt( pChar.GetTempTag( "loginTime" ));
 	pChar.playTime += minSinceLogin;
 	pChar.account.totalPlayTime += minSinceLogin;
 
@@ -221,4 +221,18 @@ function onDeath( pDead, iCorpse )
 		return false;
 
 	return TriggerEvent( 5045, "onDeath", pDead, iCorpse );
+}
+
+// Triggers based on bandage macro in client
+function onUseBandageMacro( pSock, targChar, bandageItem )
+{
+	if( pSock != null && ValidateObject( targChar ) && ValidateObject( bandageItem ) && bandageItem.amount >= 1 )
+	{
+		var pUser = pSock.currentChar;
+		if( ValidateObject( pUser ))
+		{
+			TriggerEvent( 4000, "onUseCheckedTriggered", pUser, targChar, bandageItem );
+		}
+	}
+	return true;
 }
