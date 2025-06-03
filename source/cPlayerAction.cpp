@@ -1023,7 +1023,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 					targNPC->SetPoisoned( poisonStrength );
 
 					// Set time until next time poison "ticks"
-					targNPC->SetTimer( tCHAR_POISONTIME, BuildTimeValue( static_cast<R32>( GetPoisonTickTime( poisonStrength ))));
+					targNPC->SetTimer( tCHAR_POISONTIME, BuildTimeValue( GetPoisonTickTime( poisonStrength )));
 
 					// Set time until poison wears off completely
 					targNPC->SetTimer( tCHAR_POISONWEAROFF, targNPC->GetTimer( tCHAR_POISONTIME ) + ( 1000 * GetPoisonDuration( poisonStrength ))); //wear off starts after poison takes effect
@@ -2991,7 +2991,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 
 						// Start a timer to auto-close the plank
 						mSock->SysMessage( 9144 ); // You open the plank, though it's still locked.
-						iUsed->SetTempTimer( BuildTimeValue( static_cast<R32>( 5 )));
+						iUsed->SetTempTimer( BuildTimeValue( 5.0 ));
 					}
 					else
 					{
@@ -3526,7 +3526,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 	}
 	if( ourChar->GetCommandLevel() < CL_CNS )
 	{
-		if(( tSock->GetTimer( tPC_OBJDELAY ) >= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
+		if( tSock->GetTimer( tPC_OBJDELAY ) >= cwmWorldState->GetUICurrentTime() )
 		{
 			if( !tSock->ObjDelayMsgShown() )
 			{

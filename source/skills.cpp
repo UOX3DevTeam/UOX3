@@ -179,11 +179,11 @@ void CSkills::RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum )
 	MapResource_st *orePart	= MapRegion->GetResource( grX, grY, worldNum );
 	SI16 oreCeiling			= cwmWorldState->ServerData()->ResOre();
 	UI16 oreTimer			= cwmWorldState->ServerData()->ResOreTime();
-	if( static_cast<UI32>( orePart->oreTime) <= cwmWorldState->GetUICurrentTime() )	// regenerate some more?
+	if( orePart->oreTime <= cwmWorldState->GetUICurrentTime() )	// regenerate some more?
 	{
 		for( SI16 counter = 0; counter < oreCeiling; ++counter )	// keep regenerating ore
 		{
-			if( orePart->oreAmt < oreCeiling && static_cast<UI32>( orePart->oreAmt + counter * oreTimer * 1000 ) < cwmWorldState->GetUICurrentTime() )
+			if( orePart->oreAmt < oreCeiling && static_cast<TIMERVAL>( orePart->oreAmt + counter * oreTimer * 1000 ) < cwmWorldState->GetUICurrentTime() )
 			{
 				++orePart->oreAmt;
 			}
@@ -192,7 +192,7 @@ void CSkills::RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum )
 				break;
 			}
 		}
-		orePart->oreTime = BuildTimeValue( static_cast<R32>( oreTimer ));
+		orePart->oreTime = BuildTimeValue( static_cast<R64>( oreTimer ));
 	}
 	if( orePart->oreAmt > oreCeiling )
 	{
@@ -746,8 +746,6 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	if( mSock == nullptr )
 		return;
 
-	//srand( GetClock() ); // Randomize
-
 	atrop[ALLSKILLS] = 0; // set the last of out copy array
 	for( counter = 0; counter < ALLSKILLS; ++counter )
 	{
@@ -948,12 +946,12 @@ void CSkills::SkillUse( CSocket *s, UI08 x )
 			if( cwmWorldState->skill[x].skillDelay != -1 )
 			{
 				// Use skill-specific skill delay if one has been set
-				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>( cwmWorldState->skill[x].skillDelay )));
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R64>( cwmWorldState->skill[x].skillDelay )));
 			}
 			else
 			{
 				// Otherwise use global skill delay from uox.ini
-				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ServerSkillDelayStatus() )));
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R64>( cwmWorldState->ServerData()->ServerSkillDelayStatus() )));
 			}
 		}
 		return;
@@ -982,8 +980,8 @@ void CSkills::Tracking( CSocket *s, SI32 selection )
 	i->SetTrackingTarget( i->GetTrackingTargets( selection ));
 
 	// tracking time in seconds ... gm tracker -> basetimer + 1 seconds, 0 tracking -> 1 sec, new calc
-	s->SetTimer( tPC_TRACKING, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->TrackingBaseTimer() * i->GetSkill( TRACKING ) / 1000 + 1 )));
-	s->SetTimer( tPC_TRACKINGDISPLAY, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->TrackingRedisplayTime() )));
+	s->SetTimer( tPC_TRACKING, BuildTimeValue( static_cast<R64>( cwmWorldState->ServerData()->TrackingBaseTimer() * i->GetSkill( TRACKING ) / 1000 + 1 )));
+	s->SetTimer( tPC_TRACKINGDISPLAY, BuildTimeValue( static_cast<R64>( cwmWorldState->ServerData()->TrackingRedisplayTime() )));
 	if( ValidateObject( i->GetTrackingTarget() ))
 	{
 		std::string trackingTargetName = GetNpcDictName( i->GetTrackingTarget(), nullptr, NRS_SPEECH );
@@ -1205,12 +1203,12 @@ void CSkills::Persecute( CSocket *s )
 			if( cwmWorldState->skill[SPIRITSPEAK].skillDelay != -1 )
 			{
 				// Use skill-specific skill delay if one has been set
-				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>( cwmWorldState->skill[SPIRITSPEAK].skillDelay )));
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R64>( cwmWorldState->skill[SPIRITSPEAK].skillDelay )));
 			}
 			else
 			{
 				// Otherwise use global skill delay from uox.ini
-				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ServerSkillDelayStatus() )));
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R64>( cwmWorldState->ServerData()->ServerSkillDelayStatus() )));
 			}
 
 			std::string targCharName = GetNpcDictName( targChar, nullptr, NRS_SPEECH );

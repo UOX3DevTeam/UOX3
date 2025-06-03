@@ -359,8 +359,8 @@ auto CItem::SetCont( CBaseObject *newCont, bool removeFromView ) -> bool
 						RemoveFromSight();
 					}
 
-					//itemHolder->GetContainsList()->Add( this );
-					itemHolder->GetContainsList()->AddInFront( this );
+					itemHolder->GetContainsList()->Add( this );
+					//itemHolder->GetContainsList()->AddInFront( this );
 
 					// Set new save flag on item based on save flag of new container
 					ShouldSave( itemHolder->ShouldSave() );

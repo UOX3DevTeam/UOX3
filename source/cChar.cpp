@@ -522,7 +522,7 @@ void CChar::DoHunger( CSocket *mSock )
 		{
 			if( WillHunger() && GetCommandLevel() == CL_PLAYER  )
 			{
-				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					if( Races->DoesHunger( GetRace() )) // prefer the hunger settings frome the race
 					{
@@ -564,7 +564,7 @@ void CChar::DoHunger( CSocket *mSock )
 							}
 						}
 					}
-					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
+					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R64>( hungerRate )));
 				}
 			}
 		}
@@ -574,7 +574,7 @@ void CChar::DoHunger( CSocket *mSock )
 			if( !WillHunger() || GetMounted() || GetStabled() )
 				return;
 
-			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				hungerRate	 = Races->GetHungerRate( GetRace() );
 				hungerDamage = Races->GetHungerDamage( GetRace() );
@@ -587,7 +587,7 @@ void CChar::DoHunger( CSocket *mSock )
 				{
 					[[maybe_unused]] bool retVal = Damage( hungerDamage, PHYSICAL );
 				}
-				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
+				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R64>( hungerRate )));
 			}
 		}
 		else if( IsTamed() && GetTamedHungerRate() > 0 )
@@ -607,7 +607,7 @@ void CChar::DoHunger( CSocket *mSock )
 					return;
 			}
 
-			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				// Get hungerrate for tamed creatures
 				hungerRate = GetTamedHungerRate();
@@ -637,7 +637,7 @@ void CChar::DoHunger( CSocket *mSock )
 				}
 
 				// Set timer for next time pet should grow more hungry
-				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
+				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R64>( hungerRate )));
 			}
 		}
 	}
@@ -700,7 +700,7 @@ void CChar::DoThirst( CSocket* mSock )
 		{
 			if( WillThirst() && GetCommandLevel() == CL_PLAYER )
 			{
-				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					if( Races->DoesThirst( GetRace() )) // prefer the thirst settings frome the race
 					{
@@ -740,7 +740,7 @@ void CChar::DoThirst( CSocket* mSock )
 							mSock->SysMessage( 2052 ); // You have no stamina because of dehydration.
 						}
 					}
-					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R32>( thirstRate )));
+					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R64>( thirstRate )));
 				}
 			}
 		}
@@ -748,7 +748,7 @@ void CChar::DoThirst( CSocket* mSock )
 		{
 			if( WillThirst() && !GetMounted() && !GetStabled() )
 			{
-				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					thirstRate = Races->GetThirstRate( GetRace() );
 					thirstDrain = Races->GetThirstDrain( GetRace() );
@@ -761,7 +761,7 @@ void CChar::DoThirst( CSocket* mSock )
 					{
 						SetStamina( std::max( static_cast<SI16>( 1 ), static_cast<SI16>( GetStamina() - thirstDrain )));
 					}
-					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R32>( thirstRate )));
+					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R64>( thirstRate )));
 				}
 			}
 		}
@@ -779,7 +779,7 @@ void CChar::DoThirst( CSocket* mSock )
 						return;
 				}
 
-				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					thirstRate = GetTamedThirstRate();
 
@@ -792,7 +792,7 @@ void CChar::DoThirst( CSocket* mSock )
 						SetOwner( nullptr );
 						SetThirst( 6 );
 					}
-					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R32>( thirstRate )));
+					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R64>( thirstRate )));
 				}
 			}
 		}
@@ -4701,7 +4701,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "MURDERTIMER" )
 				{
-					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ))))));
+					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				else if( UTag == "MAXHP" )
@@ -4836,7 +4836,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "PEACETIMER" )
 				{
-					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ))))));
+					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				else if( UTag == "PLAYTIME" )
@@ -5372,7 +5372,7 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 		{
 			if( GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
 			{
-				SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 10 ));
+				SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 10.0 ));
 				canSpeak = true;
 			}
 		}
@@ -6099,11 +6099,11 @@ void CChar::SetRobe( SERIAL newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp for when player last moved
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::LastMoveTime( void ) const
+TIMERVAL CChar::LastMoveTime( void ) const
 {
 	return lastMoveTime;
 }
-void CChar::LastMoveTime( UI32 newValue )
+void CChar::LastMoveTime( TIMERVAL newValue )
 {
 	lastMoveTime = newValue;
 }
@@ -6114,11 +6114,11 @@ void CChar::LastMoveTime( UI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp for when player last combat
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetLastCombatTime() const
+TIMERVAL CChar::GetLastCombatTime() const
 {
 	return lastCombatTime;
 }
-void CChar::SetLastCombatTime( UI32 newValue )
+void CChar::SetLastCombatTime( TIMERVAL newValue )
 {
 	lastCombatTime = newValue;
 }
@@ -6184,7 +6184,7 @@ void CChar::SetLastOnSecs( UI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player character was created
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetCreatedOn( void ) const
+TIMERVAL CChar::GetCreatedOn( void ) const
 {
 	UI32 rVal = 0;
 	if( IsValidPlayer() )
@@ -6193,7 +6193,7 @@ UI32 CChar::GetCreatedOn( void ) const
 	}
 	return rVal;
 }
-void CChar::SetCreatedOn( UI32 newValue )
+void CChar::SetCreatedOn( TIMERVAL newValue )
 {
 	if( IsValidPlayer() )
 	{
@@ -7298,14 +7298,14 @@ void CChar::DoLoyaltyUpdate( void )
 	if( !ValidateObject( GetOwnerObj() ))
 		return;
 
-	if( GetTimer( tNPC_LOYALTYTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+	if( GetTimer( tNPC_LOYALTYTIME ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		UI16 loyaltyRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_LOYALTYRATE );
 		if( GetLoyalty() > 0 )
 		{
 			// Reduce loyalty by 1, reset timer
 			SetLoyalty( std::max( 0, GetLoyalty() - 1 ));
-			SetTimer( tNPC_LOYALTYTIME, BuildTimeValue( static_cast<R32>( loyaltyRate )));
+			SetTimer( tNPC_LOYALTYTIME, BuildTimeValue( static_cast<R64>( loyaltyRate )));
 
 			// Provide some feedback to the player, if they're online
 			CSocket *mSock = GetOwnerObj()->GetSocket();
@@ -7583,16 +7583,16 @@ void CChar::SetNPCGuild( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player character joined NPC guild
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetNPCGuildJoined( void ) const
+TIMERVAL CChar::GetNPCGuildJoined( void ) const
 {
-	UI32 rVal = 0;
+	TIMERVAL rVal = 0;
 	if( IsValidPlayer() )
 	{
 		rVal = mPlayer->npcGuildJoined;
 	}
 	return rVal;
 }
-void CChar::SetNPCGuildJoined( UI32 newValue )
+void CChar::SetNPCGuildJoined(TIMERVAL newValue )
 {
 	if( IsValidPlayer() )
 	{

@@ -292,7 +292,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 					if( npcWanderType == WT_FLEE || npcWanderType == WT_SCARED )
 					{
 						// If NPC fails to flee, reset to original wandermode instead, and put a cooldown on the fleeing
-						c->SetTimer( tNPC_FLEECOOLDOWN, BuildTimeValue( 30 ));
+						c->SetTimer( tNPC_FLEECOOLDOWN, BuildTimeValue( 30.0 ));
 						c->SetNpcWander( c->GetOldNpcWander() );
 						if( c->GetMounted() )
 						{
@@ -389,7 +389,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 					c->SetOldNpcWander( c->GetNpcWander() );
 				}
 				c->SetNpcWander( WT_NONE );
-				c->SetTimer( tNPC_MOVETIME, BuildTimeValue( 5 ));
+				c->SetTimer( tNPC_MOVETIME, BuildTimeValue( 5.0 ));
 				return;
 			}
 			else
@@ -409,7 +409,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 				{
 					c->SetOldNpcWander( npcWanderType );
 					c->SetNpcWander( WT_NONE );
-					c->SetTimer( tNPC_MOVETIME, BuildTimeValue( 30 ));
+					c->SetTimer( tNPC_MOVETIME, BuildTimeValue( 30.0 ));
 				}
 				return;
 			}
@@ -2117,7 +2117,7 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 			if( mChar.GetFleeDistance() > P_PF_MAXFD )
 			{
 				// Don't let them run for ever! Take them out of flee/scared mode, and set a cooldown on re-entering
-				mChar.SetTimer( tNPC_FLEECOOLDOWN, BuildTimeValue( 30 ));
+				mChar.SetTimer( tNPC_FLEECOOLDOWN, BuildTimeValue( 30.0 ));
 				resetWanderMode = true;
 				mChar.TextMessage( nullptr, 2792, EMOTE, false );
 			}
@@ -2315,7 +2315,7 @@ void CMovement::NpcMovement( CChar& mChar )
 
 	bool canRun	= (( mChar.GetStamina() > 0 ) && mChar.CanRun() );
 
-	if( mChar.GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+	if( mChar.GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() )
 	{
 #if DEBUG_NPCWALK
 		std::string charName = GetNpcDictName( mChar, nullptr, NRS_SYSTEM );
@@ -2359,7 +2359,7 @@ void CMovement::NpcMovement( CChar& mChar )
 						mChar.FlushPath();
 						mChar.SetOldTargLocX( 0 );
 						mChar.SetOldTargLocY( 0 );
-						mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 10 ));
+						mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 10.0 ));
 						mChar.TextMessage( nullptr, Dictionary->GetEntry( 9049 ), SYSTEM, false ); // [Evading]
 						mChar.SetHP( mChar.GetMaxHP() );
 						mChar.SetEvadeState( true );
@@ -2418,7 +2418,7 @@ void CMovement::NpcMovement( CChar& mChar )
 							mChar.SetOldNpcWander( mChar.GetNpcWander() );
 						}
 						mChar.SetNpcWander( WT_NONE );
-						mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 5 ));
+						mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 5.0 ));
 						return;
 					}
 					else if( mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 )
@@ -2502,7 +2502,7 @@ void CMovement::NpcMovement( CChar& mChar )
 								mChar.FlushPath();
 								mChar.SetOldTargLocX( 0 );
 								mChar.SetOldTargLocY( 0 );
-								mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 10 ));
+								mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 10.0 ));
 								mChar.TextMessage( nullptr, Dictionary->GetEntry( 9049 ), SYSTEM, false ); // [Evading]
 								mChar.SetHP( mChar.GetMaxHP() );
 								mChar.SetEvadeState( true );
@@ -2622,11 +2622,11 @@ void CMovement::NpcMovement( CChar& mChar )
 		// Play some idle/fidgeting animation instead - if character is not busy doing something else
 		auto npcWander = mChar.GetNpcWander();
 		if( !mChar.IsAtWar() && !ValidateObject( mChar.GetTarg() ) && npcWander != WT_FLEE && npcWander != WT_SCARED && npcWander != WT_FROZEN && npcWander != WT_PATHFIND &&
-			( npcWander != WT_FOLLOW || ( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) > static_cast<UI32>( 3000 )))
+			( npcWander != WT_FOLLOW || ( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) > static_cast<TIMERVAL>( 3000 )))
 		{
-			if( mChar.GetTimer( tNPC_IDLEANIMTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			if( mChar.GetTimer( tNPC_IDLEANIMTIME ) <= cwmWorldState->GetUICurrentTime() )
 			{
-				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 3 ));
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 3.0 ));
 				mChar.SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( RandomNum( 5, 20 )));
 
 				if( mChar.GetBodyType() == BT_GARGOYLE || cwmWorldState->ServerData()->ForceNewAnimationPacket() )

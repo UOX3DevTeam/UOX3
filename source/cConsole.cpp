@@ -1174,7 +1174,7 @@ auto CConsole::Process(std::int32_t c) -> void
 			case 'T':
 				// Timed shut down(10 minutes)
 				messageLoop << "CMD: 10 Minute Server Shutdown Announced(Timed)";
-				cwmWorldState->SetEndTime( BuildTimeValue( 600 ));
+				cwmWorldState->SetEndTime( BuildTimeValue( 600.0 ));
 				EndMessage( 0 );
 				break;
 			case  'D':
