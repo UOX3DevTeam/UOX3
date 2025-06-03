@@ -130,7 +130,7 @@ function SummonPet( pUser, iUsed )
 	var maxCharges = parseInt( myCharges[2] );
 
 	var iTime = GetCurrentClock();
-	var NextUse = iUsed.GetTempTag( "delay" );
+	var NextUse = parseInt( iUsed.GetTempTag( "delay" ));
 	var Delay = 15000;
 
 	if( charges == 0)

@@ -9163,7 +9163,7 @@ void CPPopupMenu::CopyData( CBaseObject& toCopy, CSocket &tSock )
 	{
 		if( toCopyChar->GetNpcWander() != WT_PATHFIND && toCopyChar->GetNpcWander() != WT_FOLLOW && toCopyChar->GetNpcWander() != WT_FLEE )
 		{
-			toCopyChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 3 ));
+			toCopyChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 3.0 ));
 		}
 	}
 	else
