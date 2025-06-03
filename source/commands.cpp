@@ -17,9 +17,9 @@ auto CCommands::Startup() -> void
 
 CCommands::~CCommands()
 {
-	CommandMap.clear();
-	TargetMap.clear();
-	JSCommandMap.clear();
+	//CommandMap.clear();
+	//TargetMap.clear();
+	//JSCommandMap.clear();
 	for( size_t clearIter = 0; clearIter < clearance.size(); ++clearIter )
 	{
 		delete clearance[clearIter];

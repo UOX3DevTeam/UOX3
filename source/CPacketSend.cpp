@@ -4993,36 +4993,25 @@ void CPCharAndStartLoc::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 		outStream << "[SEND]Packet   : CPCharAndStartLoc 0xA9 --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+
+	// Character logging
+	UI08 numCharSlots = pStream.GetByte( 3 ); // Get number of character slots from packet data
 	outStream << "# Chars        : " << static_cast<SI16>( pStream.GetByte( 3 )) << std::endl;
 	outStream << "Characters --" << std::endl;
 
-	UI32 startLocOffset, realChars;
-	if( pStream.GetByte( 3 ) > 6 )
+	// Loop through character slots
+	for( UI08 i = 0; i < numCharSlots; ++i )
 	{
-		startLocOffset	= 424;
-		realChars		= 7;
-	}
-	else if( pStream.GetByte( 3 ) > 5 )
-	{
-		startLocOffset	= 364;
-		realChars		= 6;
-	}
-	else
-	{
-		startLocOffset	= 304;
-		realChars		= 5;
-	}
-
-	for( UI08 i = 0; i < realChars; ++i )
-	{
-		UI32 baseOffset = 4 + i * 60;
+		// Calculate base offset for character entry (1 byte Cmd, 2 bytes Len, 1 byte NumChars)
+		size_t baseOffset = 4 + static_cast<size_t>( i ) * 60;
 		outStream << "    Character " << static_cast<UI16>( i ) << ":" << std::endl;
 		outStream << "      Name: ";
 		for( UI08 j = 0; j < 30; ++j )
 		{
-			if( pStream.GetByte( static_cast<size_t>( baseOffset ) + j ) != 0 )
+			SI08 characterByte = static_cast<SI08>( pStream.GetByte( baseOffset + j ));
+			if( characterByte != 0 )
 			{
-				outStream << static_cast<SI08>( pStream.GetByte( static_cast<size_t>( baseOffset ) + j ));
+				outStream << characterByte;
 			}
 			else
 			{
@@ -5032,53 +5021,106 @@ void CPCharAndStartLoc::Log( std::ostream &outStream, bool fullHeader )
 		outStream << std::endl << "      Pass: ";
 		for( UI08 k = 0; k < 30; ++k )
 		{
-			if( pStream.GetByte( static_cast<size_t>( baseOffset ) + k + 30 ) != 0 )
+			UI08 passwordByteValue = pStream.GetByte( baseOffset + k + 30 );
+			if( passwordByteValue == 0 )
 			{
-				outStream << static_cast<SI08>( pStream.GetByte( static_cast<size_t>( baseOffset ) + k + 30 ));
+				// Stop if we hit null terminator
+				break;
 			}
 			else
 			{
-				break;
+				// Output asterisk instead of actual password character
+				
+				outStream << ( RandomNum( 0, 1 ) ? "*" : "**" );
 			}
 		}
 		outStream << std::endl;
 	}
 
-	outStream << "# Starts       : " << static_cast<SI16>( pStream.GetByte( startLocOffset )) << std::endl;
+	// Log starting locations
+	// Calculate offset to byte holding number of starting locations
+	size_t startLocHeaderOffset = 4 + static_cast<size_t>( numCharSlots ) * 60;
+	UI08 numLocs = pStream.GetByte( startLocHeaderOffset );
+	outStream << "# Starts       : " << static_cast<SI16>( numLocs ) << std::endl;
 	outStream << "Starting locations --" << std::endl;
-	for( UI08 l = 0; l < pStream.GetByte( startLocOffset ); ++l )
+
+	if( numLocs > 0 )
 	{
-		UI32 baseOffset = startLocOffset + 1 + l * 63;
-		outStream << "    Start " << static_cast<SI16>( l ) << std::endl;
-		outStream << "      Index       : " << static_cast<SI16>( pStream.GetByte( baseOffset )) << std::endl;
-		outStream << "      General Name: ";
-		++baseOffset;
-		for( UI08 m = 0; m < 31; ++m )
+		size_t actualSize = pStream.GetSize();
+		size_t locationsDataStartOffset = startLocHeaderOffset + 1;
+
+		// Location entry sizes depend on packet size (old packet vs new)
+		size_t locationEntrySize = 63; // Defaults to old format
+		size_t nameSize = 31; // Default field size for old format
+
+		// Calculate expected start of footer (Flags + optional 2 bytes for 3D) for old packet
+		size_t footerOffsetOld = locationsDataStartOffset + static_cast<size_t>( numLocs ) * 63;
+
+		// Calculate expected start of footer for new packet
+		size_t footerOffsetNew = locationsDataStartOffset + static_cast<size_t>( numLocs ) * 89;
+
+		// Check if NEW format size calculation matches the actual packet size.
+		// Allows for a 4-byte footer (flags) or a 6-byte footer (flags + 2 bytes for 3D client?).
+
+		// Check if we're actually dealing with the newer packet instad of the old (default) one
+		if(( footerOffsetNew + 4 == actualSize ) || ( footerOffsetNew + 6 == actualSize ))
 		{
-			if( pStream.GetByte( static_cast<size_t>( baseOffset ) + m ) != 0 )
-			{
-				outStream << pStream.GetByte( static_cast<size_t>( baseOffset ) + m );
-			}
-			else
-			{
-				break;
-			}
+			// Use new format, with 32-byte name fields
+			locationEntrySize = 89;
+			nameSize = 32;
 		}
-		outStream << std::endl << "      Exact Name  : ";
-		baseOffset += 31;
-		for( UI08 n = 0; n < 31; ++n )
+
+		// Loop through locations and output to logs
+		for( UI08 l = 0; l < numLocs; ++l )
 		{
-			if( pStream.GetByte( static_cast<size_t>( baseOffset ) + n ) != 0 )
+			// Calculate base offset for current location entry
+			size_t baseOffset = locationsDataStartOffset + static_cast<size_t>( l ) * locationEntrySize;
+
+			outStream << "    Start " << static_cast<SI16>( l ) << std::endl;
+			
+			// Log the location Index (first byte of the entry)
+			outStream << "      Index        : " << static_cast<SI16>( pStream.GetByte( baseOffset ) ) << std::endl; 
+
+			// Read name and output to log, byte by byte
+			outStream << "      General Name: ";
+			size_t generalNameOffset = baseOffset + 1; // name starts 1 byte after index
+			for( UI08 m = 0; m < nameSize; ++m ) 
 			{
-				outStream << pStream.GetByte( static_cast<size_t>( baseOffset ) + n );
+				SI08 nameByte = static_cast<SI08>( pStream.GetByte( generalNameOffset + m )); 
+				if( nameByte != 0 )
+				{
+					outStream << nameByte; 
+				}
+				else
+				{
+					break; // Stop at null terminator
+				}
 			}
-			else
+			outStream << std::endl;
+
+			// Read exact name and output to log, byte by byte
+			outStream << "      Exact Name  : ";
+			size_t exactNameOffset = generalNameOffset + nameSize; // Exact name starts immediately after general name
+			for( UI08 n = 0; n < nameSize; ++n ) 
 			{
-				break;
+				SI08 nameByte = static_cast<SI08>( pStream.GetByte( exactNameOffset + n )); 
+				if( nameByte != 0 )
+				{
+					outStream << nameByte; 
+				}
+				else
+				{
+					break; // Stop at null terminator
+				}
 			}
+			outStream << std::endl;
 		}
-		outStream << std::endl;
 	}
+	else
+	{
+		outStream << "    (No starting locations)" << std::endl;
+	}
+
 	UI16 lastByte = pStream.GetUShort( pStream.GetSize() - 2 );
 	outStream << "Flags          : " << std::hex << static_cast<UI32>( lastByte ) << std::dec << std::endl;
 	if(( lastByte & 0x02 ) == 0x02 )
@@ -7536,7 +7578,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
-	else if( !cItem.IsCorpse() && cItem.GetType() != IT_POTION && cItem.GetSectionId() != "potionkeg" && cItem.GetName2() != "#" && cItem.GetName2() != "" )
+	else if( !cItem.IsCorpse() && cItem.GetType() != IT_POTION && oldstrutil::lower( cItem.GetSectionId() ) != "potionkeg" && cItem.GetName2() != "#" && cItem.GetName2() != "" )
 	{
 		tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 		tempEntry.ourText = oldstrutil::format( " \t%s\t ", Dictionary->GetEntry( 9402 ).c_str(), tSock->Language() ); // [Unidentified]
@@ -8333,7 +8375,7 @@ auto CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack,
 			{
 				AddContainer( tReg, spItem, opItem, packetLen );
 			}
-			else if(( opItem->GetSectionId() == spItem->GetSectionId() && opItem->GetSectionId() != "UNKNOWN" )
+			else if(( oldstrutil::lower( opItem->GetSectionId() ) == oldstrutil::lower( spItem->GetSectionId() ) && opItem->GetSectionId() != "UNKNOWN" )
 				&& ( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ))
 			{
 				// Basing it on GetSectionId() should replace all the other checks below...
@@ -9121,7 +9163,7 @@ void CPPopupMenu::CopyData( CBaseObject& toCopy, CSocket &tSock )
 	{
 		if( toCopyChar->GetNpcWander() != WT_PATHFIND && toCopyChar->GetNpcWander() != WT_FOLLOW && toCopyChar->GetNpcWander() != WT_FLEE )
 		{
-			toCopyChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 3 ));
+			toCopyChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 3.0 ));
 		}
 	}
 	else

@@ -320,6 +320,8 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "fx2",			CCP_FX2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "fy2",			CCP_FY2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "fz",				CCP_FZ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "pathTargX",		CCP_PATHTARGX,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "pathTargY",		CCP_PATHTARGY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isonhorse",		CCP_ISONHORSE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isFlying",		CCP_ISFLYING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isGuarded",		CCP_ISGUARDED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -429,6 +431,8 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "housesOwned",	CCP_HOUSESOWNED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "housesCoOwned",	CCP_HOUSESCOOWNED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tithing",		CCP_TITHING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "lastOn",			CCP_LASTON,			JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "lastOnSecs",		CCP_LASTONSECS,		JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
 };
 

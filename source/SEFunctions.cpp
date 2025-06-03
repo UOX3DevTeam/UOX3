@@ -44,6 +44,9 @@ void		LoadRegions( void );
 void		UnloadRegions( void );
 void		UnloadSpawnRegions( void );
 void		LoadSkills( void );
+void		LoadCreatures( void );
+void		LoadCustomTitle( void );
+void		LoadPlaces( void );
 void		ScriptError( JSContext *cx, const char *txt, ... );
 
 #define __EXTREMELY_VERBOSE__
@@ -299,7 +302,7 @@ JSBool SE_CheckTimeSinceLastCombat( JSContext *cx, uintN argc, jsval *vp )
 	timespanInSeconds = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
 
 	// Use GetGUITimerCurTime() instead of time(nullptr) for consistency
-	UI32 now = cwmWorldState->GetUICurrentTime();
+	TIMERVAL now = cwmWorldState->GetUICurrentTime();
 
 	if(( now - from->GetLastCombatTime() ) < timespanInSeconds )
 	{
@@ -2845,6 +2848,8 @@ JSBool SE_Reload( JSContext *cx, uintN argc, jsval *vp )
 			LoadTeleportLocations();
 			break;
 		case 1:	// Reload spawn regions
+			// Also requires reloading spawn region DFN data
+			FileLookup->Reload( spawn_def );
 			UnloadSpawnRegions();
 			LoadSpawnRegions();
 			break;
@@ -2852,13 +2857,17 @@ JSBool SE_Reload( JSContext *cx, uintN argc, jsval *vp )
 			Magic->LoadScript();
 			break;
 		case 3: // Reload Commands
+			JSMapping->Reload( SCPT_COMMAND );
 			Commands->Load();
 			break;
 		case 4:	// Reload DFNs
 			FileLookup->Reload();
+			LoadCreatures();
+			LoadCustomTitle();
 			LoadSkills();
-			Skills->Load();
 			Races->Load();
+			LoadPlaces();
+			Skills->Load();
 			break;
 		case 5: // Reload JScripts
 			messageLoop << MSG_RELOADJS;
@@ -2874,13 +2883,16 @@ JSBool SE_Reload( JSContext *cx, uintN argc, jsval *vp )
 			FileLookup->Reload();
 			UnloadRegions();
 			LoadRegions();
+			LoadTeleportLocations();
 			UnloadSpawnRegions();
 			LoadSpawnRegions();
 			Magic->LoadScript();
-			Commands->Load();
+			LoadCreatures();
+			LoadCustomTitle();
 			LoadSkills();
-			Skills->Load();
 			Races->Load();
+			LoadPlaces();
+			Skills->Load();
 			messageLoop << MSG_RELOADJS;
 			HTMLTemplates->Unload();
 			HTMLTemplates->Load();

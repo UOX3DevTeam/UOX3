@@ -1677,6 +1677,7 @@
 1663=Mój mały syn Timmy wymaga operacji, macie trochę złota, żeby pomóc?
 1664=Moja żona jest w ciąży z naszym siódmym dzieckiem, miejcie trochę litości w postaci złota dla zdesperowanego człowieka.
 // End begging text
+1669=Nie widzę celu!
 1670=Nie możesz się przebrać, gdy nosisz farbę do ciała.
 1671=Nie możesz polimorfować podczas noszenia farby do ciała.
 1672=Nie możesz używać incognito nosząc farbę do ciała.
@@ -2457,6 +2458,47 @@
 2585=Wlewasz trochę cydru do pojemnika.
 2586=Wlejesz trochę likieru do pojemnika.
 2587=Wlewasz trochę wina do kieliszka.
+// [2600-2699] Skrypt administratora gracza/NPC/spawnu
+2600=Wybrany NPC (%s, %i) został usunięty.
+2601=Ostrzeżenie: nie znaleziono plecaka postaci!
+2602=Ostrzeżenie: nie znaleziono skrzynki bankowej postaci!
+2603=Zbyt daleko, aby sprawdzić paperdoll (aktualny zasięg: %i)
+2604=Usunięcie NPC
+2605=<BASEFONT color=#EECD8B>Potwierdź usunięcie:</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>Nie ma przycisku cofania.
+2607=Filtruj nazwy zaczynające się od „%s”
+2608=Zarządzaj graczami – %s
+2609=Zarządzaj postaciami niezależnymi
+2610=Wszystkie
+2611=Online
+2612=Offline
+2613=Modyfikuj postać:<br>serial: %s<br>Ostatnie logowanie: %w
+2614=Teleportuj do postaci
+2615=Pobierz postać
+2616=Sprawdź postać
+2617=Wsadź do więzienia/wypuść postać
+2618=Wyrzuć gracza
+2619=Zablokuj gracza
+2620=Usuń NPC
+2621=Nie znaleziono wpisów!
+2622=Strona %i / %u
+2623=Zastosuj filtr
+2624=Filtruj graczy online
+2625=Filtruj według graczy offline
+2626=Sortuj według ostatniego logowania (%s)
+2627=Rosnąco
+2628=Malejąco
+2629=Znaleziono %i postaci graczy w %u milisekund.
+2630=Znaleziono %i NPC w %u milisekund.
+2631=Znaleziono %i generatorów przedmiotów w %u milisekund.
+2632=Zarządzaj obiektami pojawiającymi się
+2633=Dostosuj obiekt pojawiający się:<br>serial: %s<br>sekcja pojawiania się: %w<br>Ilość: %i<br>W regionie: (%u) %z
+2634=Teleportuj do obiektu pojawiającego się
+2635=Otwórz edytor obiektów pojawiających się
+2636=Usuń obiekt pojawiający się
+2637=Filtruj generatorów NPC
+2638=Filtruj generatorów przedmiotów
+2639=Sortuj według liczby pojawień (%s)
 // [2700-2799] Różne skrypty
 2700=Tylko właściciel domu może obracać meble.
 2701=To chyba nie działa.
@@ -3699,6 +3741,15 @@
 8213=Identyfikator sekcji z DFN, z którego pochodzi obiekt
 8214=Czy przedmiot można ukraść? 0 = nie można ukraść, 1 = można ukraść, 2 = można ukraść rzadko
 8215=Nieprawidłowy cel. Wybierz prawidłowy przedmiot lub NPC
+8251=Usuwanie postaci niezależnych...
+8252=Usunięto %i postaci niezależnych
+8253=Wybierz postać niezależną do zdalnego przeniesienia za pomocą xrun:
+8254=Wybierz postać niezależną do zdalnego przeniesienia za pomocą xwalk:
+8255=Wybierz postać niezależną do zdalnego obrócenia za pomocą xturn:
+8256=Wybierz cel ruchu (%s):
+8257=Musisz wybrać postać niezależną!
+8258=Opatrujesz ranę i zatrzymujesz krwawienie
+8259=Krwawiące rany zostały wyleczone, nie krwawisz już!
 // [8300-8499] Menu ustawień - opisy właściwości znaków
 8300=Numer konta powiązanego z graczem. Kontrolowany przez serwer (tylko do odczytu)
 8301=Typ SI NPC

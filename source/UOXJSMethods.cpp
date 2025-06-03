@@ -56,6 +56,9 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 bool BuyShop( CSocket *s, CChar *c );
 void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway );
 void ScriptError( JSContext *cx, const char *txt, ... );
+void ReverseEffect( CTEffect *Effect );
+void PauseEffect( CTEffect *Effect );
+void ResumeEffect( CTEffect *Effect );
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	MethodSpeech()
@@ -2093,7 +2096,9 @@ JSBool CBase_SetJSTimer( JSContext *cx, uintN argc, jsval *vp )
 
 	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value is 0 by default, indicating no timer was found or updated
 	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI32 expireTime = BuildTimeValue( JSVAL_TO_INT( argv[1] ) / 1000.0f );
+	jsdouble expireTime_double;
+	JS_ValueToNumber( cx, argv[1], &expireTime_double );
+	TIMERVAL expireTime = BuildTimeValue( static_cast<R64>( expireTime_double ) / 1000.0 );
 	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 
 	SERIAL myObjSerial = myObj->GetSerial();
@@ -2184,10 +2189,134 @@ JSBool CBase_KillJSTimer( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|    Function    -    CBase_GetTempEffect()
-//|    Prototype    -    UI32 CBase_GetTempEffect( tempEffectID )
+//|	Function	-	CBase_PauseJSTimer()
+//|	Prototype	-	void PauseJSTimer()
 //o------------------------------------------------------------------------------------------------o
-//|    Purpose        -    Get timer of specified temp effect for object, or 0 if it doesn't exist
+//|	Purpose		-	Pause JS timer on item or character based on specified scriptId and timerId
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_PauseJSTimer( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 2 )
+	{
+		ScriptError( cx, "PauseJSTimer: Invalid count of arguments :%d, needs 2 (timerId, scriptId)", argc );
+		return JS_FALSE;
+	}
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
+	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "PauseJSTimer: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
+	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	CTEffect *removeEffect = nullptr;
+
+	for( auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		if( myObjSerial == Effect->Destination() && Effect->More1() == timerId )
+		{
+			// Check for a valid script associated with Effect
+			cScript *tScript = JSMapping->GetScript( Effect->AssocScript() );
+			if( tScript == nullptr && Effect->More2() != 0xFFFF )
+			{
+				// If no default script was associated with effect, check if another script was stored in More2
+				tScript = JSMapping->GetScript( Effect->More2() );
+			}
+
+			// If a valid script is associated with Effect, and the Effect's scriptId matches the provided scriptId...
+			if( tScript != nullptr && ( scriptId == Effect->AssocScript() || scriptId == Effect->More2() ))
+			{
+				// Found our timer! Pause it, if not already paused
+				if( Effect->PauseTime() == 0 )
+				{
+					PauseEffect( Effect );
+					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and paused
+				}
+				else
+				{
+					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 2 ) ); // Return 2 indicating timer was found, but already paused
+				}
+				break;
+			}
+		}
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBase_ResumeJSTimer()
+//|	Prototype	-	void ResumeJSTimer()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Resume JS timer on item or character based on specified scriptId and timerId
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_ResumeJSTimer( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 2 )
+	{
+		ScriptError( cx, "ResumeJSTimer: Invalid count of arguments :%d, needs 2 (timerId, scriptId)", argc );
+		return JS_FALSE;
+	}
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
+	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "ResumeJSTimer: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid timer found
+	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	CTEffect *removeEffect = nullptr;
+
+	for( auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		if( myObjSerial == Effect->Destination() && Effect->More1() == timerId )
+		{
+			// Check for a valid script associated with Effect
+			cScript *tScript = JSMapping->GetScript( Effect->AssocScript() );
+			if( tScript == nullptr && Effect->More2() != 0xFFFF )
+			{
+				// If no default script was associated with effect, check if another script was stored in More2
+				tScript = JSMapping->GetScript( Effect->More2() );
+			}
+
+			// If a valid script is associated with Effect, and the Effect's scriptId matches the provided scriptId...
+			if( tScript != nullptr && ( scriptId == Effect->AssocScript() || scriptId == Effect->More2() ))
+			{
+				// Found our timer! Resume it!
+				if( Effect->PauseTime() > 0 )
+				{
+					ResumeEffect( Effect );
+					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating timer was found and resumed
+				}
+				else
+				{
+					JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 2 ) ); // Return 2 indicating timer was found, but it was not paused!
+				}
+				break;
+			}
+		}
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-    CBase_GetTempEffect()
+//|	Prototype	-    UI32 CBase_GetTempEffect( tempEffectID )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose	-    Get timer of specified temp effect for object, or 0 if it doesn't exist
 //o------------------------------------------------------------------------------------------------o
 JSBool CBase_GetTempEffect( JSContext *cx, uintN argc, jsval *vp )
 {
@@ -2223,18 +2352,17 @@ JSBool CBase_GetTempEffect( JSContext *cx, uintN argc, jsval *vp )
 	return JS_TRUE;
 }
 
-void ReverseEffect( CTEffect *Effect );
 //o------------------------------------------------------------------------------------------------o
-//|    Function    -    CBase_ReverseEffect()
-//|    Prototype    -    void ReverseEffect()
+//|	Function	-    CBase_ReverseTempEffect()
+//|	Prototype	-    void ReverseTempEffect()
 //o------------------------------------------------------------------------------------------------o
-//|    Purpose        -    Force the reversion of a Temp Effect on item or character based on specified temp effect ID
+//|	Purpose	-    Force the reversion of a Temp Effect on item or character based on specified temp effect ID
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_ReverseEffect( JSContext *cx, uintN argc, jsval *vp )
+JSBool CBase_ReverseTempEffect( JSContext *cx, uintN argc, jsval *vp )
 {
 	if( argc != 1 )
 	{
-		ScriptError( cx, "ReverseEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		ScriptError( cx, "ReverseTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
 		return JS_FALSE;
 	}
 	JSObject *obj = JS_THIS_OBJECT( cx, vp );
@@ -2242,7 +2370,7 @@ JSBool CBase_ReverseEffect( JSContext *cx, uintN argc, jsval *vp )
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
-		ScriptError( cx, "ReverseEffect: Invalid object assigned." );
+		ScriptError( cx, "ReverseTempEffect: Invalid object assigned." );
 		return JS_FALSE;
 	}
 
@@ -2271,6 +2399,91 @@ JSBool CBase_ReverseEffect( JSContext *cx, uintN argc, jsval *vp )
 
 	return JS_TRUE;
 }
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBase_PauseTempEffect()
+//|	Prototype	-	void PauseTempEffect()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Pause a specific Temp Effect on item or character based on temp effect ID
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_PauseTempEffect( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "PauseTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		return JS_FALSE;
+	}
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
+	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "PauseTempEffect: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid temp effect found
+	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	CTEffect *pauseEffect = nullptr;
+
+	for( auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID )
+		{
+			// Found our timer! Let's pause it
+			PauseEffect( pauseEffect );
+			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating temp effect was found and paused
+			break;
+		}
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBase_ResumeTempEffect()
+//|	Prototype	-	void ResumeTempEffect()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Resume a specific paused Temp Effect on item or character based on temp effect ID
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_ResumeTempEffect( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "ResumeTempEffect: Invalid count of arguments :%d, needs 1 (tempEffectID)", argc );
+		return JS_FALSE;
+	}
+	JSObject *obj = JS_THIS_OBJECT( cx, vp );
+	jsval *argv = JS_ARGV( cx, vp );
+	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "ResumeTempEffect: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 0 ) ); // Return value 0 by default, to indicate no valid paused temp effect found
+	UI16 tempEffectID = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	CTEffect *resumeEffect = nullptr;
+
+	for( auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		if( myObjSerial == Effect->Destination() && Effect->Number() == tempEffectID && Effect->PauseTime() > 0 )
+		{
+			// Found our timer! Let's resume it
+			ResumeEffect( resumeEffect );
+			JS_SET_RVAL( cx, vp, INT_TO_JSVAL( 1 ) ); // Return 1 indicating temp effect was found and resumed
+			break;
+		}
+	}
+
+	return JS_TRUE;
+}
+
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_Delete()
@@ -3018,7 +3231,7 @@ JSBool CMisc_SellTo( JSContext *cx, uintN argc, jsval *vp )
 		CChar *mChar = mySock->CurrcharObj();
 		if( ValidateObject( mChar ))
 		{
-			myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0f ));
+			myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 			if( toSend.CanSellItems(( *mChar ), ( *myNPC )))
 			{
 				mySock->Send( &toSend );
@@ -3035,7 +3248,7 @@ JSBool CMisc_SellTo( JSContext *cx, uintN argc, jsval *vp )
 			return JS_FALSE;
 		}
 
-		myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0f ));
+		myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 		CSocket *mSock = myChar->GetSocket();
 		if( toSend.CanSellItems(( *myChar ), ( *myNPC )))
 		{
@@ -4814,7 +5027,9 @@ JSBool CBase_StartTimer( JSContext *cx, uintN argc, jsval *vp )
 
 	jsval *argv = JS_ARGV( cx, vp );
 	// 1. Parameter Delay, 2. Parameter Callback
-	UI32 ExpireTime = BuildTimeValue( JSVAL_TO_INT( argv[0] ) / 1000.0f );
+	jsdouble expireTime_double;
+	JS_ValueToNumber( cx, argv[0], &expireTime_double );
+	TIMERVAL ExpireTime = BuildTimeValue( static_cast<R64>( expireTime_double ) / 1000.0 );
 	UI16 TriggerNum = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 
 	CTEffect *Effect = new CTEffect;
@@ -4858,7 +5073,7 @@ JSBool CBase_StartTimer( JSContext *cx, uintN argc, jsval *vp )
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_CheckSkill()
-//|	Prototype	-	bool CheckSkill( skillnum, minskill, maxskill[, isCraftSkill] )
+//|	Prototype	-	bool CheckSkill( skillnum, minskill, maxskill[, isCraftSkill, forceResult] )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Performs a skillcheck for character based on specified skill. Returns true
 //|					if result of skillcheck is between provided minimum and maximum values.
@@ -4868,13 +5083,13 @@ JSBool CBase_StartTimer( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_CheckSkill( JSContext *cx, uintN argc, jsval *vp )
 {
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	if( argc != 3 && argc != 4 )
+	if( argc < 3 || argc > 5 )
 	{
-		ScriptError( cx, "CheckSkill: Invalid number of arguments (takes 3 or 4, skillNum, minSkill, maxSkill and isCraftSkill (optional))" );
+		ScriptError( cx, "CheckSkill: Invalid number of arguments (takes 3 to 5, skillNum, minSkill, maxSkill, isCraftSkill (optional) and forceResult (optional))" );
 		return JS_FALSE;
 	}
 
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
 	jsval *argv = JS_ARGV( cx, vp );
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
@@ -4888,11 +5103,16 @@ JSBool CChar_CheckSkill( JSContext *cx, uintN argc, jsval *vp )
 	UI16 minSkill = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 	UI16 maxSkill = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 	bool isCraftSkill = false;
+	SI08 forceResult = 0;
 	if( argc == 4 )
 	{
 		isCraftSkill = JSVAL_TO_BOOLEAN( argv[3] );
 	}
-	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill )) );
+	if( argc == 5 )
+	{
+		forceResult = static_cast<SI08>( JSVAL_TO_INT( argv[4] ));
+	}
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill, forceResult ) ) );
 	return JS_TRUE;
 }
 
@@ -5151,6 +5371,42 @@ JSBool CMulti_TurnBoat( JSContext *cx, uintN argc, jsval *vp )
 			TurnBoat( myBoat, true, true );
 			break;
 	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CMulti_GetTiller()
+//|	Prototype	-	Item GetTiller()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Fetch item reference to tillerman on boat
+//o------------------------------------------------------------------------------------------------o
+JSBool CMulti_GetTiller( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc > 0 )
+	{
+		ScriptError( cx, "(GetTiller) Invalid Count of Arguments: %d, needs: 0", argc );
+		return JS_FALSE;
+	}
+
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CBoatObj *myBoat = static_cast<CBoatObj *>( JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myBoat ))
+	{
+		ScriptError( cx, "(GetTiller) Invalid Object assigned" );
+		return JS_FALSE;
+	}
+
+	auto myTiller =  CalcItemObjFromSer( myBoat->GetTiller() );
+	if( !ValidateObject( myTiller ))
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+		return JS_TRUE;
+	}
+
+	JSObject *myJSTiller	= JSEngine->AcquireObject( IUE_ITEM, myTiller, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+	JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( myJSTiller ) );
 
 	return JS_TRUE;
 }
@@ -5436,7 +5692,7 @@ JSBool CChar_SetPoisoned( JSContext *cx, uintN argc, jsval *vp )
 				newVal = myChar->GetPoisoned();
 			}
 		}
-		myChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R32>( wearOff ) / 1000.0f ));
+		myChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R64>( wearOff ) / 1000.0 ));
 	}
 
 	//myChar->SetPoisonStrength( newVal );
@@ -5503,7 +5759,7 @@ JSBool CChar_SetInvisible( JSContext *cx, uintN argc, jsval *vp )
 	if( argc == 2 )
 	{
 		UI32 TimeOut = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
-		myChar->SetTimer( tCHAR_INVIS, BuildTimeValue( static_cast<R32>( TimeOut ) / 1000.0f ));
+		myChar->SetTimer( tCHAR_INVIS, BuildTimeValue( static_cast<R64>( TimeOut ) / 1000.0 ));
 	}
 	return JS_TRUE;
 }
@@ -7902,8 +8158,8 @@ JSBool CBase_FinishedItems( JSContext *cx, uintN argc, jsval *vp )
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_WalkTo()
-//|	Prototype	-	void WalkTo( object, maxsteps )
-//|					void WalkTo( x, y, maxsteps )
+//|	Prototype	-	void WalkTo( object, maxsteps, allowPartial, ignoreDoors )
+//|					void WalkTo( x, y, maxsteps, allowPartial, ignoreDoors )
 //|	Date		-	06 Sep 2003
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Begins pathfinding for a character, making them walk to target location,
@@ -7911,13 +8167,14 @@ JSBool CBase_FinishedItems( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 {
-	jsval *argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	if( argc != 2 && argc != 3 )
+
 	{
-		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 or 3)" );
+		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 to 5)" );
 		return JS_FALSE;
 	}
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+
 	CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( cMove ))
 	{
@@ -7926,7 +8183,9 @@ JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 	}
 	SI16 gx			= 0;
 	SI16 gy			= 0;
-	UI08 maxSteps	= 0;
+	UI16 maxSteps	= 0;
+	bool allowPartial = false;
+	bool ignoreDoors = false;
 	switch( argc )
 	{
 		case 2:
@@ -7956,15 +8215,25 @@ JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 					ScriptError( cx, "Invalid class of object" );
 					return JS_FALSE;
 				}
-				maxSteps = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+				maxSteps = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 				break;
 			}
 			return JS_FALSE;
 			// 2 Parameters, x + y
 		case 3:
+		case 4:
+		case 5:
 			gx			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 			gy			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-			maxSteps	= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+			if( argc >= 4 )
+			{
+				allowPartial = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
+			}
+			if( argc == 5 )
+			{
+				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
+			}
 			break;
 		default:
 			ScriptError( cx, "Invalid number of arguments passed to WalkTo, needs either 2 or 3" );
@@ -7989,7 +8258,7 @@ JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 	cMove->SetNpcWander( WT_PATHFIND );
 	if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 	{
-		Movement->AdvancedPathfinding( cMove, gx, gy, false, maxSteps );
+		Movement->AdvancedPathfinding( cMove, gx, gy, false, allowPartial, maxSteps, ignoreDoors );
 	}
 	else
 	{
@@ -8001,8 +8270,8 @@ JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_RunTo()
-//|	Prototype	-	void RunTo( object, maxsteps )
-//|					void RunTo( x, y, maxsteps )
+//|	Prototype	-	void RunTo( object, maxsteps, allowPartial, ignoreDoors )
+//|					void RunTo( x, y, maxsteps, allowPartial, ignoreDoors )
 //|	Date		-	06 Sep 2003
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Begins pathfinding for a character, making them run to target location,
@@ -8010,13 +8279,14 @@ JSBool CChar_WalkTo( JSContext *cx, uintN argc, jsval *vp )
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_RunTo( JSContext *cx, uintN argc, jsval *vp )
 {
-	jsval *argv = JS_ARGV( cx, vp );
-	JSObject* obj = JS_THIS_OBJECT( cx, vp );
-	if( argc != 2 && argc != 3 )
+	if( argc < 2 || argc > 5 )
 	{
-		ScriptError( cx, "RunTo: Invalid number of arguments (takes 2 or 3)" );
+		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 to 5)" );
 		return JS_FALSE;
 	}
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+
 	CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( cMove ))
 	{
@@ -8025,7 +8295,9 @@ JSBool CChar_RunTo( JSContext *cx, uintN argc, jsval *vp )
 	}
 	UI16 gx			= 0;
 	UI16 gy			= 0;
-	UI08 maxSteps	= 0;
+	UI16 maxSteps	= 0;
+	bool allowPartial = false;
+	bool ignoreDoors = false;
 	switch( argc )
 	{
 		case 2:
@@ -8055,16 +8327,26 @@ JSBool CChar_RunTo( JSContext *cx, uintN argc, jsval *vp )
 					ScriptError( cx, "Invalid class of object" );
 					return JS_FALSE;
 				}
-				maxSteps = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+				maxSteps = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 				break;
 			}
 			return JS_FALSE;
 
 			// 2 Parameters, x + y
 		case 3:
+		case 4:
+		case 5:
 			gx			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 			gy			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-			maxSteps	= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+			maxSteps	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+			if( argc >= 4 )
+			{
+				allowPartial = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
+			}
+			if( argc == 5 )
+			{
+				ignoreDoors = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
+			}
 			break;
 		default:
 			ScriptError( cx, "Invalid number of arguments passed to RunTo, needs either 2 or 3" );
@@ -8079,7 +8361,7 @@ JSBool CChar_RunTo( JSContext *cx, uintN argc, jsval *vp )
 
 	cMove->FlushPath();
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( oldstrutil::format( "RunTo: Moving character %i to (%i,%i) with a maximum of %i steps", cMove->GetSerial(), gx, gy, maxSteps ));
+	Console.Print( oldstrutil::format( "RunTo: Moving character %i to (%i,%i) with a maximum of %i steps\n", cMove->GetSerial(), gx, gy, maxSteps ));
 #endif
 	if( cMove->GetNpcWander() != WT_PATHFIND )
 	{
@@ -8090,7 +8372,7 @@ JSBool CChar_RunTo( JSContext *cx, uintN argc, jsval *vp )
 
 	if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 	{
-		Movement->AdvancedPathfinding( cMove, gx, gy, true );
+		Movement->AdvancedPathfinding( cMove, gx, gy, true, allowPartial, maxSteps, ignoreDoors );
 	}
 	else
 	{
@@ -8159,13 +8441,14 @@ JSBool CMisc_SetTimer( JSContext *cx, uintN argc, jsval *vp )
 		return JS_FALSE;
 	}
 	JSEncapsulate encaps( cx, &( argv[0] ));
-	JSEncapsulate encaps2( cx, &( argv[1] ));
 	JSEncapsulate myClass( cx, obj );
 
-	R32 timerVal = encaps2.toFloat();
-	if( timerVal != 0 )
+	jsdouble timerVal_double;
+	JS_ValueToNumber( cx, argv[1], &timerVal_double );
+	TIMERVAL timerVal = 0;
+	if( timerVal_double != 0 )
 	{
-		timerVal = BuildTimeValue( timerVal / 1000.0f );
+		timerVal = BuildTimeValue( static_cast<R64>( timerVal_double ) / 1000.0 );
 	}
 	if( myClass.ClassName() == "UOXChar" )
 	{
@@ -8176,7 +8459,7 @@ JSBool CMisc_SetTimer( JSContext *cx, uintN argc, jsval *vp )
 			return JS_FALSE;
 		}
 
-		cMove->SetTimer( static_cast<cC_TID>( encaps.toInt() ), static_cast<TIMERVAL>( timerVal ));
+		cMove->SetTimer( static_cast<cC_TID>( encaps.toInt() ), timerVal );
 	}
 	else if( myClass.ClassName() == "UOXSocket" )
 	{
@@ -10964,7 +11247,7 @@ JSBool CChar_Heal( JSContext *cx, uintN argc, jsval *vp )
 		ScriptError( cx, "(CChar_Heal): Operating on an invalid Character" );
 		return JS_TRUE;
 	}
-	JSEncapsulate Heal( cx, &( argv[0] ));
+	SI16 healVal = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 
 	if( argc == 2 )
 	{
@@ -10990,7 +11273,7 @@ JSBool CChar_Heal( JSContext *cx, uintN argc, jsval *vp )
 		}
 	}
 
-	mChar->Heal( static_cast<SI16>( Heal.toInt() ), healer );
+	mChar->Heal( healVal, healer );
 	return JS_TRUE;
 }
 

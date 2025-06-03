@@ -1677,6 +1677,7 @@
 1663=O meu filhinho Timmy precisa de uma operação, tem algum ouro para ajudar a causar?
 1664=A minha mulher está grávida do nosso 7º filho, tem algum poço sob a forma de algum ouro para um homem desesperado.
 // End begging text
+1669=Não consigo ver o alvo!
 1670=Não se pode disfarçar enquanto se usa tinta corporal
 1671=Não se pode polimorfosear enquanto se usa tinta corporal
 1672=Não se pode usar incógnito enquanto se usa tinta corporal
@@ -2457,6 +2458,47 @@
 2585=Deita-se um pouco de cidra no recipiente.
 2586=Deita-se um pouco de licor para dentro do recipiente.
 2587=Deita-se um pouco de vinho no copo.
+// [2600-2699] Script de administrador de jogador/NPC/spawn
+2600=O NPC escolhido (%s, %i) foi removido.
+2601=Aviso: Não foi encontrada nenhuma mochila no personagem!
+2602=Aviso: Não foi encontrada nenhuma caixa bancária para o personagem!
+2603=Muito longe para inspecionar o boneco (alcance atual: %i)
+2604=Remoção de NPC
+2605=<BASEFONT color=#EECD8B>Confirme a remoção de:</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>Não há botão para desfazer.
+2607=Filtrar por nomes que começam com '%s'
+2608=Gerir jogadores - %s
+2609=Gerir NPCs
+2610=Todos
+2611=Online
+2612=Offline
+2613=Ajustar personagem:<br>série: %s<br>Última vez online: %w
+2614=Teletransportar para personagem
+2615=Obter personagem
+2616=Inspecionar personagem
+2617=Prender/Liberar personagem
+2618=Expulsar jogador
+2619=Banir jogador
+2620=Remover NPC
+2621=Nenhuma entrada encontrada!
+2622=Página %i / %u
+2623=Aplicar filtro
+2624=Filtrar por jogadores online
+2625=Filtrar por jogadores offline
+2626=Ordenar por último acesso (%s)
+2627=Ascendente
+2628=Descendente
+2629=Encontrados %i personagens de jogadores em %u milissegundos.
+2630=Encontrados %i NPCs em %u milissegundos.
+2631=Encontrados %i geradores baseados em itens em %u milissegundos.
+2632=Gerir objetos de spawn
+2633=Ajustar objeto de spawn:<br>serial: %s<br>secção de spawn: %w<br>Quantidade: %i<br>Na região: (%u) %z
+2634=Teletransportar para objeto de spawn
+2635=Abrir editor de objetos de spawn
+2636=Remover objeto de spawn
+2637=Filtrar por geradores de NPC
+2638=Filtrar por geradores de itens
+2639=Ordenar por contagem de spawn (%s)
 // [2700-2799] Misc scripts
 2700=Só o proprietário da casa pode girar o mobiliário.
 2701=Isso não parece funcionar.
@@ -3699,6 +3741,15 @@
 8213=Secção ID do objecto do DFN originado de
 8214=O artigo pode ser roubado? 0 = não pode ser roubado, 1 = pode ser roubado, 2 = pode ser roubado raramente
 8215=Alvo inválido. Selecione um item ou NPC válido
+8251=A limpar NPCs...
+8252=Limpos %i NPCs
+8253=Selecione o NPC para mover remotamente usando xrun:
+8254=Selecione o NPC para mover remotamente usando xwalk:
+8255=Selecione o NPC para virar remotamente usando xturn:
+8256=Selecione o destino do movimento (%s):
+8257=Tem de selecionar um NPC!
+8258=Você faz um curativo e estanca o sangramento
+8259=As feridas sangrentas sararam, você não está mais sangrando!
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Número de conta associado ao jogador. Controlado por servidor (Read-Only)
 8301=NPC Tipo de IA
@@ -5066,7 +5117,7 @@
 17223=Um barril especialmente forrado para poções.
 17224=Não há nada no barril a saborear!
 17225=Já está familiarizado com o conteúdo deste barril.
-/Sistema de Ordens de Compras a Granel
+// Sistema de Ordens de Compras a Granel
 17250=Uma encomenda a granel
 17251=Montante a fazer:
 17252=montante terminado:
