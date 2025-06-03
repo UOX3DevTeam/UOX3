@@ -20,7 +20,7 @@ function onLogin( socket, pChar )
 
 	// Store login timestamp (in minutes) in temp tag
 	var loginTime = Math.round( GetCurrentClock() / 1000 / 60 );
-	pChar.SetTempTag( "loginTime", loginTime );
+	pChar.SetTempTag( "loginTime", loginTime.toString() );
 
 	// Attach OnFacetChange to characters logging into the shard
 	if( !pChar.HasScriptTrigger( 2508 ))
@@ -63,7 +63,7 @@ function onLogin( socket, pChar )
 
 function onLogout( pSock, pChar )
 {
-	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - pChar.GetTempTag( "loginTime" );
+	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - parseInt( pChar.GetTempTag( "loginTime" ));
 	pChar.playTime += minSinceLogin;
 	pChar.account.totalPlayTime += minSinceLogin;
 

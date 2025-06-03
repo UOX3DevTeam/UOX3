@@ -5,17 +5,17 @@ const fireBreathManaCost = 30;
 
 function onAISliver( mNPC )
 {
-	var nextFireBallTime = parseInt( mNPC.GetTag( "nextFB" ));
+	var nextFireBallTime = parseInt( mNPC.GetTempTag( "nextFB" ));
 	if( mNPC.target != null && ( nextFireBallTime < GetCurrentClock() || nextFireBallTime > GetCurrentClock() + ( fireBreathDelay * 2000 )) && mNPC.InRange( mNPC.target, fireBreathMaxRange ))
 	{
-		var chanceOfFireBreath = mNPC.GetTag( "fbChance" );
+		var chanceOfFireBreath = mNPC.GetTempTag( "fbChance" );
 		if( mNPC.mana >= fireBreathManaCost && RandomNumber( 1, 2000 ) <= chanceOfFireBreath )
 		{
 			// Cast Fire Breath, then reset chance to cast back to 0
 			chanceOfFireBreath = 1;
 			nextFireBallTime = (( RandomNumber( fireBreathDelay, fireBreathDelay * 2 ) * 1000 ) + GetCurrentClock() );
-			mNPC.SetTag( "fbChance", chanceOfFireBreath );
-			mNPC.SetTag( "nextFB", nextFireBallTime.toString() );
+			mNPC.SetTempTag( "fbChance", chanceOfFireBreath );
+			mNPC.SetTempTag( "nextFB", nextFireBallTime.toString() );
 			if( !mNPC.CanSee( mNPC.target ))
 			{
 				return;
@@ -26,7 +26,7 @@ function onAISliver( mNPC )
 		{
 			// Every cycle Fire Breath is NOT cast, increase chance to cast it in next cycle
 			chanceOfFireBreath++;
-			mNPC.SetTag( "fbChance", chanceOfFireBreath );
+			mNPC.SetTempTag( "fbChance", chanceOfFireBreath );
 		}
 	}
 }

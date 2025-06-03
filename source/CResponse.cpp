@@ -470,7 +470,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 			if( cwmWorldState->creatures[nearbyNpc->GetId()].IsHuman() )
 			{
 				// Stop the NPC from moving for a minute while talking with the player
-				nearbyNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
+				nearbyNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 				mSock->TempObj( nullptr ); //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
 				SI16 skill = -1;
 
@@ -959,7 +959,7 @@ CVendorBuyResponse::CVendorBuyResponse( bool vendVal, const std::string &text ) 
 //o------------------------------------------------------------------------------------------------o
 bool CVendorBuyResponse::Handle( CSocket *mSock, [[maybe_unused]] CChar *mChar, CChar *vendorNpc )
 {
-	vendorNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
+	vendorNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 	if( vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 	{
 		mSock->TempObj( vendorNpc );
@@ -1000,7 +1000,7 @@ bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *vendorNpc
 		}
 	}
 
-	vendorNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
+	vendorNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 	CPSellList toSend;
 	if( toSend.CanSellItems(( *mChar ), ( *vendorNpc )))
 	{
@@ -1248,7 +1248,7 @@ void CBoatMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 	}
 	else
 	{
-		mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->CheckBoatSpeed() )));
+		mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( cwmWorldState->ServerData()->CheckBoatSpeed() ));
 	}
 
 	CBoatObj *boat = GetBoat( mSock );

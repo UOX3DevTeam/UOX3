@@ -59,7 +59,7 @@ function onAISliver( mNPC )
 	if( !mNPC.atWar )
 		return;
 
-	var nextDispelTime = mNPC.GetTempTag( "nextDispel" );
+	var nextDispelTime = parseInt( mNPC.GetTempTag( "nextDispel" ));
 	if( nextDispelTime < GetCurrentClock() || nextDispelTime > GetCurrentClock() + ( dispelSummonsDelay * 2000 ))
 	{
 		// Look for nearby summoned creatures
@@ -67,7 +67,7 @@ function onAISliver( mNPC )
 
 		// Set a "timer" for when to next be allowed to use the dispel
 		nextDispelTime = (( RandomNumber( dispelSummonsDelay, dispelSummonsDelay * 2 ) * 1000 ) + GetCurrentClock() );
-		mNPC.SetTempTag( "nextDispel", nextDispelTime );
+		mNPC.SetTempTag( "nextDispel", nextDispelTime.toString() );
 	}
 }
 
