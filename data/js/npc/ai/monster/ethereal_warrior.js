@@ -27,14 +27,14 @@ function inRange( pCharacter, objInRange )
 	// This also ensures that the script stays working even if the server saves in the middle of a
 	// search, but crashes before the next save.
 	var iTime = GetCurrentClock();
-	var initSearchTime = pCharacter.GetTag( "initSearchTime" );
+	var initSearchTime = parseInt( pCharacter.GetTempTag( "initSearchTime" ));
 
 	//If search has already been initiated, don't start a new search, unless an abnormal amount of time has passed
 	if(( initSearchTime != null && initSearchTime != 0 ) && ((( iTime - initSearchTime ) < searchTimer ) && !( initSearchTime > iTime )))
 		return;
 	else if((( iTime - initSearchTime ) > searchTimer ) || initSearchTime > iTime )
 	{
-		pCharacter.SetTag( "initSearchTime", iTime );
+		pCharacter.SetTempTag( "initSearchTime", iTime.toString() );
 		pCharacter.StartTimer( searchInterval, 1, true );
 	}
 }
@@ -62,13 +62,13 @@ function Resurrect( deadChar, npcHealer )
 				return;
 
 			var iTime = GetCurrentClock();
-			var lastResTime = deadChar.GetTag( "lastResTime" );
+			var lastResTime = parseInt( deadChar.GetTempTag( "lastResTime" ));
 			if(( lastResTime == null || lastResTime == 0 ) || ((( iTime - lastResTime ) > resTimer ) || ( lastResTime > iTime )))
 			{
                	npcHealer.StaticEffect( 0x376A, 0, 0x0f );
 				npcHealer.SoundEffect( 0x1F2, true );
 				deadChar.Resurrect();
-				deadChar.SetTag( "lastResTime", iTime );
+				deadChar.SetTempTag( "lastResTime", iTime.toString() );
 				npcHealer.mana -= manaCostRes;
 			}
 		}

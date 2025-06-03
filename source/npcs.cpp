@@ -438,7 +438,7 @@ void CCharStuff::PostSpawnUpdate( CChar *cCreated )
 
 	// Set hunger timer so NPC's hunger level doesn't instantly drop after spawning
 	auto hungerRate	 = Races->GetHungerRate( cCreated->GetRace() );
-	cCreated->SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
+	cCreated->SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R64>( hungerRate )));
 
 	UpdateFlag( cCreated );
 	cCreated->Update();

@@ -48,7 +48,7 @@ enum cC_TID
 
 struct TargetInfo
 {
-	UI32 timestamp;
+	TIMERVAL timestamp;
 	bool isNpc;
 };
 
@@ -168,8 +168,8 @@ private:
 		SERIAL		townVote;
 		SI08		townPriv;  //0=non resident (Other privledges added as more functionality added)
 		UI08		controlSlotsUsed; // The total number of control slots currently taken up by followers/pets
-		UI32		createdOn;	// Timestamp for when player character was created
-		UI32		npcGuildJoined;	// Timestamp for when player character joined NPC guild (0=never joined)
+		TIMERVAL		createdOn;	// Timestamp for when player character was created
+		TIMERVAL		npcGuildJoined;	// Timestamp for when player character joined NPC guild (0=never joined)
 		UI32		playTime;	// Character's full playtime
 
 		UI08		atrophy[INTELLECT+1];
@@ -839,17 +839,17 @@ public:
 	auto		GetPlayTime() const -> UI32;
 	auto		SetPlayTime( UI32 newValue ) -> void;
 
-	void		SetCreatedOn( UI32 newValue );
-	UI32		GetCreatedOn( void ) const;
+	void		SetCreatedOn( TIMERVAL newValue );
+	TIMERVAL		GetCreatedOn( void ) const;
 
-	void		SetNPCGuildJoined( UI32 newValue );
-	UI32		GetNPCGuildJoined( void ) const;
+	void		SetNPCGuildJoined( TIMERVAL newValue );
+	TIMERVAL		GetNPCGuildJoined( void ) const;
 
-	UI32		LastMoveTime( void ) const;
-	void		LastMoveTime( UI32 newValue );
+	TIMERVAL		LastMoveTime( void ) const;
+	void		LastMoveTime( TIMERVAL newValue );
 
-	UI32		GetLastCombatTime() const;
-	void		SetLastCombatTime(UI32 newValue);
+	TIMERVAL		GetLastCombatTime() const;
+	void		SetLastCombatTime(TIMERVAL newValue);
 
 
 	CChar *		GetTrackingTarget( void ) const;

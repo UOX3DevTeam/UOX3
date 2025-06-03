@@ -14,8 +14,8 @@ function onDeath( pDead, iCorpse )
 			var origOwner = CalcCharFromSer( parseInt( origOwnerSerial ));
 			if( ValidateObject( origOwner ))
 			{
-				var stolenTime = toCheck.GetTempTag( "stolenAtTime" );
-				if( stolenTime && Math.floor( GetCurrentClock() / 1000 ) - parseInt( stolenTime ) < 30000 )
+				var stolenTime = parseInt( toCheck.GetTempTag( "stolenAtTime" ));
+				if( stolenTime && GetCurrentClock() - stolenTime < 30000 )
 				{
 					// Return stolen item to original owner
 					var origOwnerPack = origOwner.pack;
