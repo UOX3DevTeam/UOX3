@@ -14,17 +14,20 @@ function inRange( npc, player )
 
 function onAISliver( npc )
 {
-	var spokenList = npc.GetTag( "vetSpokenList" );
+	var spokenListRaw = npc.GetTag( "vetSpokenList" ) || "";
+	var spokenList = spokenListRaw.split(",");
 	var now = GetCurrentClock();
 
 	for( var i = 0; i < spokenList.length; ++i )
 	{
-		var rawSer = spokenList[i];          // might be string or JS object
-		var serial = parseInt( rawSer );       // make sure it's a number
-		var player = CalcCharFromSer( serial );
+		var rawSer = spokenList[i].replace( /^\s+|\s+$/g, "" ); // remove leading/trailing whitespace
+		var serial = parseInt( rawSer, 10 );
+		if( isNaN( serial ))
+			continue;
 
-		if( player.npc )
-			return;
+		var player = CalcCharFromSer( serial );
+		if( !ValidateObject( player ))
+			continue;
 
 		if( GetDistance( npc, player ) <= 6 && player.GetTempTag( "vetGumpOpen" ) != true )
 		{

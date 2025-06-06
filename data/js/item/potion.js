@@ -298,7 +298,7 @@ function onUseChecked( pUser, iUsed )
 		}
 
 		// For potions other than explosion potions, consume potion upon use
-		if( iUsed.morey != 3 || iUsed.morey != 10)
+		if( iUsed.morey != 3 && iUsed.morey != 10)
 		{
 			pUser.SoundEffect( 0x0030, true );
 			if( pUser.id > 0x0189 && !pUser.isonhorse )
@@ -409,18 +409,20 @@ function onCallback1( socket, ourObj )
 	{
 		ourObj.SetTag ( "isBondedPet", true );
 		socket.SysMessage( GetDictionaryEntry( 19308, socket.language )); // Your pet has bonded with you!
-
-		if( iUsed.amount > 1 )
+		if( iUsed && iUsed.isItem )
 		{
-			iUsed.amount--;
-		}
-		else
-		{
-			iUsed.Delete();
+			if( iUsed.amount > 1 )
+			{
+				iUsed.amount--;
+			}
+			else
+			{
+				iUsed.Delete();
+			}
 		}
 
 		// Create empty bottle
-		var eBottle = CreateDFNItem( socket, pUser, "0x0F0E", 1, "ITEM", true );
+		var eBottle = CreateDFNItem( socket, mChar, "0x0F0E", 1, "ITEM", true );
 		if( eBottle && eBottle.isItem )
 		{
 			eBottle.decay = true;
