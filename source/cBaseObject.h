@@ -110,6 +110,17 @@ protected:
 	SI16				karma;
 	SI16				kills;
 	UI16				subRegion;
+	SI16 damageType[9] = {
+		100, // PHYSICAL
+		0,   // LIGHT
+		0,   // RAIN
+		0,   // COLD
+		0,   // HEAT
+		0,   // LIGHTNING
+		0,   // POISON
+		0,   // SNOW
+		0	// STORM
+	};
 
 	void			RemoveFromMulti( bool fireTrigger = true );
 	void			AddToMulti( bool fireTrigger = true );
@@ -231,7 +242,8 @@ public:
 	virtual SI16			GetDexterity( void ) const;
 	virtual SI16			GetIntelligence( void ) const;
 	SI16					GetHP( void ) const;
-
+	SI16					GetDamageType( UI08 index ) const;
+	void					SetDamageType( UI08 index, SI16 value );
 	virtual SI16			GetHealthRegenBonus( void ) const;
 	virtual SI16			GetStaminaRegenBonus( void ) const;
 	virtual SI16			GetManaRegenBonus( void ) const;

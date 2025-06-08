@@ -31,6 +31,7 @@ private:
 	bool	CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum );
 
 	SI16	CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc );
+	void	DamageType( CItem *weapon, SI16 (&splitOut)[9] );
 
 	void	PlaySwingAnimations( CChar *mChar );
 	void	PlayHitAnimations( CChar *mChar );
@@ -69,6 +70,7 @@ public:
 
 	SI16	ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage );
 	SI16	ApplyDefenseModifiers( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage, bool doArmorDamage );
+	SI16	HandleParryAndArmor( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage, bool doArmorDamage, WeatherType dmgType );
 
 	SI16	AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapon, SI16 bDamage, UI08 hitLoc, UI08 getFightSkill );
 	SI16	AdjustArmorClassDamage( CChar *attack, CChar *defend, CItem *weapon, SI16 bDamage, UI08 hitLoc );

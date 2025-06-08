@@ -173,6 +173,27 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				break;
 			case DFNTAG_EVENT:			applyTo->SetEvent( cdata );				break;
 			case DFNTAG_DAMAGEABLE:		applyTo->SetDamageable(ndata != 0 );	break;
+			case DFNTAG_DAMAGETYPE:
+			{
+				if( ssecs.size() >= 9 )
+				{
+					applyTo->SetDamageType( 0, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 1, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 2, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 3, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 4, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[4], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 5, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[5], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 6, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[6], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 7, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[7], "//" )), nullptr, 0 )));
+					applyTo->SetDamageType( 8, static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[8], "//" )), nullptr, 0 )));
+				}
+				else
+				{
+					Console.Warning( oldstrutil::format(
+						"DAMAGETYPE tag in section [%s] must have at least 9 values. Got %zu.", sectionId.c_str(), ssecs.size() ));
+				}
+				break;
+			}
 			case DFNTAG_DEF:
 				if( ndata >= 0 )
 				{

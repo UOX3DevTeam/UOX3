@@ -2415,319 +2415,34 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 	switch( damageType )
 	{
 		case NONE: break;	//	No Armor protection
-		case PHYSICAL:		//	Physical damage
+		case PHYSICAL:
+		case COLD:
+		case STORM:
+		case HEAT:
+		case SNOW:
+		case LIGHT:
+		case LIGHTNING:
+		case RAIN:
+			damage = HandleParryAndArmor( mChar, ourTarg, getFightSkill, hitLoc, baseDamage, doArmorDamage, damageType );
+			break;
+		case POISON: // POISON Damage
 		{
-			// Check Shield Defense
-			bool parrySuccess = false;
-			if( ValidateObject( shield ))
+			if( serverData->ExpansionWrestlingParry() >= ER_AOS )
 			{
-				// Perform a skillcheck to potentially give player a skill increase
-				Skills->CheckSkill( ourTarg, PARRYING, 0, ourTarg->GetSkillCap( PARRYING ) );
+				UI16 resistValue = CalcDef( ourTarg, hitLoc, doArmorDamage, POISON, false, false );
+				SI16 cappedResist = ( resistValue > serverData->PoisonResistCap() ) ? serverData->PoisonResistCap() : resistValue;
+				R32 resistPercent = static_cast<R32>( cappedResist ) / 1000.0f;
 
-				// Get parry skill value
-				UI16 defendParry = ourTarg->GetSkill( PARRYING );
-
-				if( serverData->ExpansionShieldParry() <= ER_T2A )
-				{
-					// T2A parry formula: parryChance = parrySkill / 2
-					// AR of shield is then used to absorb a portion of the potential damage dealt; 8 AR shield absorbs 8 damage
-					// Source https://forums.uosecondage.com/viewtopic.php?t=13478
-					R32 parryChance = static_cast<R32>(( defendParry / 2 ) / 10);
-					if( RandomNum( 1, 100 ) < parryChance )
-					{
-						parrySuccess = true;
-					}
-				}
-				else if( serverData->ExpansionShieldParry() < ER_AOS )
-				{
-					// Renaissance Publish (UOR) - https://uo.com/wiki/ultima-online-wiki/technical/previous-publishes/2000-2/2000-publish-05-27th-april/
-					// The higher a shield's AR, the lower the chance to block, but the more damage is absorbed upon blocking
-					// The lower a shield's AR, the higher the chance to block, but the less damage is absorbed upon blocking
-					// parryChance = parrySkill - (shield AR * 2) 
-					R32 parryChance = (defendParry / 10 ) - ( shield->GetResist( PHYSICAL ) * 2 ); // or is it 1.33?
-					if( RandomNum( 1, 100 ) < parryChance )
-					{
-						parrySuccess = true;
-					}
-				}
-				else if( serverData->ExpansionShieldParry() >= ER_AOS )
-				{
-					// Post-AoS Parrying with Shield
-					UI16 defendBushido = ourTarg->GetSkill( BUSHIDO );
-
-					// % Chance = (Parrying - Bushido) / 4 (If less than 0, the chance is 0)
-					R32 parryChance = (( defendParry - defendBushido ) / 4 ) / 10;
-					if( defendParry >= 1000 || defendBushido >= 1000 )
-					{
-						parryChance += 5.0;
-					}
-
-					// Dexterity Modifier if dex is less than 80*: (80 - Dexterity) / 100 (If Dexterity is higher than 80, the modifier is 0)
-					// Final % Chance of blocking = Base Chance * (1 - Dexterity Modifier)
-					R32 dexModifier = ( ourTarg->GetDexterity() > 80 ? 0 : ( 80 - ourTarg->GetDexterity() ) / 100 );
-					parryChance *= ( 1 - dexModifier );
-
-					if( RandomNum( 1, 100 ) < parryChance )
-					{
-						parrySuccess = true;
-					}
-				}
-				/*else
-				{
-					// Old UOX3 parry chance
-					if( HalfRandomNum( defendParry ) >= HalfRandomNum( attSkill ))
-						parrySuccess = true;
-				}*/
-
-				if( parrySuccess )
-				{
-					// Play shield parrying FX
-					Effects->PlayStaticAnimation( ourTarg, 0x37b9, 10, 16 );
-
-					auto loShieldDamage = cwmWorldState->ServerData()->CombatParryDamageMin();
-					auto hiShieldDamage = cwmWorldState->ServerData()->CombatParryDamageMax();
-					SI16 shieldDamage = -( RandomNum( static_cast<SI16>( loShieldDamage ), static_cast<SI16>( hiShieldDamage )));
-
-					if( cwmWorldState->ServerData()->CombatDisplayHitMessage() )
-					{
-						if( targSock != nullptr )
-						{
-							targSock->SysMessage( 1805 ); // You block the attack!
-						}
-						else if( ValidateObject( mChar ) && mChar->GetSocket() != nullptr )
-						{
-							mChar->GetSocket()->SysMessage( 2060 ); // Your attack was blocked!
-						}
-					}
-
-					if( serverData->ExpansionShieldParry() <= ER_T2A )
-					{
-						// http://web.archive.org/web/19991009001809/http://uo.stratics.com/combat.htm
-						// FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage Absorbed = AR of Shield
-						if( getFightSkill == ARCHERY )
-						{
-							damage -= static_cast<R32>( shield->GetResist( PHYSICAL ));
-						}
-						else
-						{
-							damage -= static_cast<R32>( shield->GetResist( PHYSICAL ) / 2 );
-						}
-
-						// Calculate defense given by armor
-						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
-
-						// Apply damage to shield from parrying action?
-						if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1, 100 )) // 20% chance by default
-						{
-							shield->IncHP( shieldDamage );
-						}
-					}
-					else if( serverData->ExpansionShieldParry() < ER_AOS )
-					{
-						// Pre-AoS/LBR/UOR
-						// FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage Absorbed = AR of Shield
-						if( getFightSkill == ARCHERY )
-						{
-							damage -= static_cast<R32>( shield->GetResist( PHYSICAL ));
-						}
-						else
-						{
-							damage -= static_cast<R32>( shield->GetResist( PHYSICAL ) / 2 );
-						}
-
-						// Calculate defense given by armor
-						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
-
-						// Apply damage to shield from parrying action?
-						if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1, 100 )) // 20% chance by default
-						{
-							shield->IncHP( shieldDamage );
-						}
-					}
-					else if( serverData->ExpansionShieldParry() >= ER_AOS )
-					{
-						// Block attack completely
-						damage = 0;
-						getDef = 0;
-
-						if( serverData->ExpansionShieldParry() >= ER_ML )
-						{
-							// If you successfully parry a blow, shield has 20% chance to take a point of damage
-							// Unless attacker's weapon is a mace, in which case chance to take a point of damage is 75%
-							bool damageShield = false;
-							if( getFightSkill == MACEFIGHTING )
-							{
-								damageShield = ( RandomNum( 1, 4 ) < 4 ); // 75% chance
-							}
-							else
-							{
-								damageShield = ( RandomNum( 1, 5 ) == 1 ); // 20% chance
-							}
-
-							if( damageShield )
-							{
-								shield->IncHP( shieldDamage );
-							}
-						}
-					}
-					/*else
-					{
-						// Old Pre-AoS (LBR, ~Publish 15) block with shield
-						damage -= HalfRandomNum( shield->GetResist( PHYSICAL ));
-						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
-
-						// Apply damage to shield from parrying action?
-						if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1, 100 )) // 20% chance by default
-						{
-							shield->IncHP( shieldDamage );
-						}
-					}*/
-
-					if( shield->GetHP() <= 0 )
-					{
-						if( targSock != nullptr )
-						{
-							targSock->SysMessage( 283 ); // Your shield has been destroyed!
-						}
-						shield->Delete();
-					}
-				}
+				damage = static_cast<R32>( baseDamage ) * ( 1.0f - resistPercent );
 			}
-			else if( serverData->ExpansionWeaponParry() >= ER_AOS )
+			else
 			{
-				// Let's check if character can parry with weapon via Bushido skill
-				CItem *mWeapon = GetWeapon( ourTarg );
-				if( mWeapon )
-				{
-					// Perform a skillcheck for Bushido regardless of weapon equipped
-					Skills->CheckSkill( ourTarg, BUSHIDO, 0, ourTarg->GetSkillCap( BUSHIDO ) );
-
-					// Fetch relevant skill values
-					UI16 defendParry = ourTarg->GetSkill( PARRYING );
-					UI16 defendBushido = ourTarg->GetSkill( BUSHIDO );
-					R32 parryChance = 0;
-					R32 dividerValue = 48000; // default for 1H weapon
-
-					if( mWeapon->GetLayer() == IL_LEFTHAND )
-					{
-						dividerValue = 41140;
-					}
-
-					// New = (Parrying * 10) * (Bushido * 10) / dividerValue (Add 5% if Parrying or Bushido skill is 100 or above)
-					R32 parryChanceNew = ( defendParry * defendBushido ) / dividerValue;
-					if( defendParry >= 1000 || defendBushido >= 1000 )
-					{
-						parryChanceNew += 50;
-					}
-
-					// Legacy = (Parrying * 10) / 80 (Add 5% if Parrying skill if 100 or above)
-					R32 parryChanceLegacy = static_cast<R32>( defendParry / 80 );
-					if( defendParry >= 1000 )
-					{
-						parryChanceLegacy += 50;
-					}
-
-					// % Chance = Whichever is highest of the New and the Legacy formula.
-					parryChance = std::max( parryChanceNew, parryChanceLegacy );
-
-					// Dexterity Modifier if dex is less than 80*: (80 - Dexterity) / 100 (If Dexterity is higher than 80, the modifier is 0)
-					// Final % Chance of blocking = Base Chance * (1 - Dexterity Modifier)
-					R32 dexModifier = ( ourTarg->GetDexterity() > 80 ? 0 : ( 80 - ourTarg->GetDexterity() ) / 100 );
-					parryChance *= ( 1 - dexModifier );
-
-					// Check if parrying succeedes
-					if( RandomNum( 0, 1000 ) < parryChance )
-					{
-						// Successfully parried! Block attack completely
-						getDef = 0;
-						damage = 0;
-
-						// Play parrying FX
-						Effects->PlayStaticAnimation( ourTarg, 0x37b9, 10, 16 );
-
-						if( cwmWorldState->ServerData()->CombatDisplayHitMessage() && targSock != NULL )
-						{
-							targSock->SysMessage( 1982 ); // You parry the attack!
-						}
-
-						if( serverData->ExpansionWeaponParry() >= ER_ML )
-						{
-							// If parrying with a weapon, 5% chance weapon will take 1 point of damage
-							// Unless attacker has a mace weapon, then chance is 75% to take 1 point of damage
-							bool damageWeapon = false;
-							if( getFightSkill == MACEFIGHTING )
-							{
-								damageWeapon = ( RandomNum( 1, 4 ) < 4 ); // 75% chance
-							}
-							else
-							{
-								damageWeapon = ( RandomNum( 1, 20 ) == 1 ); // 5% chance
-							}
-
-							// Apply damage to weapon from parrying action?
-							if( damageWeapon )
-							{
-								mWeapon->IncHP( -1 );
-							}
-						}
-						else
-						{
-							// Apply damage to weapon from parrying action?
-							if( !RandomNum( 0, 5 )) // 16.6% chance of weapon damage when parrying
-							{
-								mWeapon->IncHP( -1 );
-							}
-						}
-
-						// Destroy weapon if it ran out of hitpoints
-						if( mWeapon->GetHP() <= 0 )
-						{
-							if( targSock != NULL )
-							{
-								targSock->SysMessage( 1983 ); // Your weapon has been destroyed!
-							}
-							mWeapon->Delete();
-						}
-					}
-				}
-				else if( serverData->ExpansionWrestlingParry() >= ER_TOL && !cwmWorldState->creatures[ourTarg->GetId()].IsHuman() )
-				{
-					// In Publish 97, all NPC creatures with Wrestling skill of 100.0 or higher were given a chance to parry attacks
-					// https://www.uoguide.com/Publish_97
-					R32 parryChance = 0;
-					UI16 defendWrestling = ourTarg->GetSkill( WRESTLING );
-
-					if( defendWrestling >= 1000 )
-					{
-						// ~12.5% chance for a NPC creature with GM Wrestling to parry an attack
-						// TODO Turn the wrestling parry chance into a ini setting
-						parryChance = HalfRandomNum( defendWrestling ) / 8;
-
-						if( RandomNum( 0, 1000 ) < parryChance )
-						{
-							damage = 0;
-							getDef = 0;
-
-							// Play parrying FX
-							Effects->PlayStaticAnimation( ourTarg, 0x37b9, 10, 16 );
-						}
-					}
-				}
-			}
-
-			// No shield, no weapon parry, no wrestling parry - armor needs to take the brunt of damage!
-			if( damage > 0 && getDef == 0 )
-			{
-				getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
+				R32 damageModifier = CalcDef( ourTarg, hitLoc, doArmorDamage, POISON, false, false ) / 100.0f;
+				damage = static_cast<R32>( baseDamage ) * ( 1.0f - damageModifier );
 			}
 			break;
 		}
-		case POISON:		//	POISON Damage
-			damageModifier = ( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType, false, false ) / 100 );
-			damage = static_cast<SI16>( std::round(( static_cast<R32>( baseDamage ) - ( static_cast<R32>( baseDamage ) * damageModifier ))));
-			break;
-		default:			//	Elemental damage
-			getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType, false, false ));
+		default:
 			break;
 	}
 
@@ -2736,7 +2451,302 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 		damage -= static_cast<R32>( getDef );
 	}
 
+	if( damage > 0 )
+	{
+		UI16 resistValue = CalcDef( ourTarg, hitLoc, false, damageType, false, false );
+		SI16 cappedResist = resistValue;
+
+		switch( damageType )
+		{
+			case PHYSICAL:
+				if( resistValue > serverData->PhysicalResistCap() )
+					cappedResist = serverData->PhysicalResistCap();
+				break;
+			case HEAT:
+				if( resistValue > serverData->FireResistCap() )
+					cappedResist = serverData->FireResistCap();
+				break;
+			case COLD:
+			case SNOW:
+				if( resistValue > serverData->ColdResistCap() )
+					cappedResist = serverData->ColdResistCap();
+				break;
+			case LIGHT:
+			case LIGHTNING:
+			case STORM:
+			case RAIN:
+				if( resistValue > serverData->EnergyResistCap() )
+					cappedResist = serverData->EnergyResistCap();
+				break;
+			default:
+				break;
+		}
+
+		R32 resistPercent = static_cast<R32>( cappedResist ) / 1000.0f;
+		damage *= ( 1.0f - resistPercent );
+		damage = std::max( 0.0f, damage );
+	}
+	mChar->GetSocket()->SysMessage( "Final damage from %s: %d", damageType, static_cast<SI16>(damage) );
 	return static_cast<SI16>( std::round( damage ));
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::HandleParryAndArmor()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles all defense mechanics for physical and elemental damage types,
+//|					including shield parry, weapon parry (Bushido), wrestling parry (for NPCs),
+//|					and armor mitigation based on CalcDef() and expansion settings.
+//|
+//|					- Shield Parry (PHYSICAL only): Uses expansion-based formulas to determine
+//|					  block chance and shield durability damage. Supports pre-AoS and AoS+ mechanics.
+//|
+//|					- Weapon Parry (Bushido): Enables players with Bushido skill to parry without
+//|					  a shield. Applies damage to weapon if block succeeds. Era-aware via ExpansionWeaponParry().
+//|
+//|					- Wrestling Parry (NPCs): Non-human NPCs with GM Wrestling can parry blows if
+//|					  ExpansionWrestlingParry() >= ER_TOL.
+//|
+//|					- Armor Mitigation: Applies partial reduction to remaining damage using CalcDef(),
+//|					  and applies armor damage if enabled. Shared across physical and elemental types.
+//|
+//|					- Era-aware: Applies era-based rules (e.g., LBR damage halving, ML equipment damage),
+//|					  and NPC-vs-player damage scaling via CombatNpcDamageRate().
+//o------------------------------------------------------------------------------------------------o
+SI16 CHandleCombat::HandleParryAndArmor( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage, bool doArmorDamage, WeatherType dmgType )
+{
+	if( !ValidateObject( ourTarg ))
+		return baseDamage;
+
+	R32 damage = static_cast<R32>( baseDamage );
+	UI16 getDef = 0;
+	CSocket *targSock = ourTarg->GetSocket();
+	auto serverData = cwmWorldState->ServerData();
+	CItem *shield = GetShield( ourTarg );
+
+	// Check Shield Defense
+	bool parrySuccess = false;
+	if( dmgType == PHYSICAL && ValidateObject( shield ))
+	{
+		// Perform a skillcheck to potentially give player a skill increase
+		Skills->CheckSkill( ourTarg, PARRYING, 0, ourTarg->GetSkillCap( PARRYING ) );
+
+		// Get parry skill value
+		UI16 defendParry = ourTarg->GetSkill( PARRYING );
+
+		if( serverData->ExpansionShieldParry() <= ER_T2A )
+		{
+			// T2A parry formula: parryChance = parrySkill / 2
+			// AR of shield is then used to absorb a portion of the potential damage dealt; 8 AR shield absorbs 8 damage
+			// Source https://forums.uosecondage.com/viewtopic.php?t=13478
+			R32 parryChance = static_cast<R32>(( defendParry / 2 ) / 10);
+			if( RandomNum( 1, 100 ) < parryChance )
+				parrySuccess = true;
+		}
+		else if( serverData->ExpansionShieldParry() < ER_AOS )
+		{
+			// Renaissance Publish (UOR) - https://uo.com/wiki/ultima-online-wiki/technical/previous-publishes/2000-2/2000-publish-05-27th-april/
+			// The higher a shield's AR, the lower the chance to block, but the more damage is absorbed upon blocking
+			// The lower a shield's AR, the higher the chance to block, but the less damage is absorbed upon blocking
+			// parryChance = parrySkill - (shield AR * 2) 
+			R32 parryChance = ( defendParry / 10 ) - ( shield->GetResist( PHYSICAL ) * 2 );
+			if( RandomNum( 1, 100 ) < parryChance )
+				parrySuccess = true;
+		}
+		else if( serverData->ExpansionShieldParry() >= ER_AOS )
+		{
+			// Post-AoS Parrying with Shield
+			UI16 defendBushido = ourTarg->GetSkill( BUSHIDO );
+
+			// % Chance = (Parrying - Bushido) / 4 (If less than 0, the chance is 0)
+			R32 parryChance = (( defendParry - defendBushido ) / 4 ) / 10;
+			if( defendParry >= 1000 || defendBushido >= 1000 )
+				parryChance += 5.0;
+
+			// Dexterity Modifier if dex is less than 80*: (80 - Dexterity) / 100 (If Dexterity is higher than 80, the modifier is 0)
+			// Final % Chance of blocking = Base Chance * (1 - Dexterity Modifier)
+			R32 dexModifier = ( ourTarg->GetDexterity() > 80 ? 0 : ( 80 - ourTarg->GetDexterity() ) / 100 );
+			parryChance *= ( 1 - dexModifier );
+
+			if( RandomNum( 1, 100 ) < parryChance )
+				parrySuccess = true;
+		}
+
+		if( parrySuccess )
+		{
+			// Play shield parrying FX
+			Effects->PlayStaticAnimation( ourTarg, 0x37b9, 10, 16 );
+
+			auto loShieldDamage = serverData->CombatParryDamageMin();
+			auto hiShieldDamage = serverData->CombatParryDamageMax();
+			SI16 shieldDamage = -( RandomNum( static_cast<SI16>( loShieldDamage ), static_cast<SI16>( hiShieldDamage )));
+
+			if( serverData->CombatDisplayHitMessage() )
+			{
+				if( targSock )
+					targSock->SysMessage( 1805 ); // You block the attack!
+				else if( mChar && mChar->GetSocket() )
+					mChar->GetSocket()->SysMessage( 2060 ); // Your attack was blocked!
+			}
+
+			if( serverData->ExpansionShieldParry() <= ER_T2A )
+			{
+				// http://web.archive.org/web/19991009001809/http://uo.stratics.com/combat.htm
+				// FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage Absorbed = AR of Shield
+				if( getFightSkill == ARCHERY )
+					damage -= static_cast<R32>( shield->GetResist( PHYSICAL ));
+				else
+					damage -= static_cast<R32>( shield->GetResist( PHYSICAL ) / 2 );
+
+				// Calculate defense given by armor
+				getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
+
+				// Apply damage to shield from parrying action?
+				if( serverData->CombatParryDamageChance() >= RandomNum( 1, 100 ))
+					shield->IncHP( shieldDamage );
+			}
+			else if( serverData->ExpansionShieldParry() < ER_AOS )
+			{
+				// Pre-AoS/LBR/UOR
+				if( getFightSkill == ARCHERY )
+					damage -= static_cast<R32>( shield->GetResist( PHYSICAL ));
+				else
+					damage -= static_cast<R32>( shield->GetResist( PHYSICAL ) / 2 );
+
+				getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
+
+				if( serverData->CombatParryDamageChance() >= RandomNum( 1, 100 ))
+					shield->IncHP( shieldDamage );
+			}
+			else if( serverData->ExpansionShieldParry() >= ER_AOS )
+			{
+				// Block attack completely
+				damage = 0;
+				getDef = 0;
+
+				if( serverData->ExpansionShieldParry() >= ER_ML )
+				{
+					// If you successfully parry a blow, shield has 20% chance to take a point of damage
+					// Unless attacker's weapon is a mace, in which case chance to take a point of damage is 75%
+					bool damageShield = ( getFightSkill == MACEFIGHTING )
+						? ( RandomNum( 1, 4 ) < 4 )  // 75% chance
+						: ( RandomNum( 1, 5 ) == 1 ); // 20% chance
+
+					if( damageShield )
+						shield->IncHP( shieldDamage );
+				}
+			}
+
+			if( shield->GetHP() <= 0 )
+			{
+				if( targSock )
+					targSock->SysMessage( 283 ); // Your shield has been destroyed!
+				shield->Delete();
+			}
+
+			return static_cast<SI16>( std::round( damage ));
+		}
+	}
+	else if( serverData->ExpansionWeaponParry() >= ER_AOS )
+	{
+		// Let's check if character can parry with weapon via Bushido skill
+		CItem *mWeapon = GetWeapon( ourTarg );
+		if( mWeapon )
+		{
+			// Perform a skillcheck for Bushido regardless of weapon equipped
+			Skills->CheckSkill( ourTarg, BUSHIDO, 0, ourTarg->GetSkillCap( BUSHIDO ) );
+
+			// Fetch relevant skill values
+			UI16 defendParry = ourTarg->GetSkill( PARRYING );
+			UI16 defendBushido = ourTarg->GetSkill( BUSHIDO );
+			R32 parryChance = 0;
+			R32 dividerValue = 48000;
+
+			if( mWeapon->GetLayer() == IL_LEFTHAND )
+				dividerValue = 41140;
+
+			// New = (Parrying * 10) * (Bushido * 10) / dividerValue (Add 5% if Parrying or Bushido skill is 100 or above)
+			R32 parryChanceNew = ( defendParry * defendBushido ) / dividerValue;
+			if( defendParry >= 1000 || defendBushido >= 1000 )
+				parryChanceNew += 50;
+
+			// Legacy = (Parrying * 10) / 80 (Add 5% if Parrying skill if 100 or above)
+			R32 parryChanceLegacy = static_cast<R32>( defendParry / 80 );
+			if( defendParry >= 1000 )
+				parryChanceLegacy += 50;
+
+			parryChance = std::max( parryChanceNew, parryChanceLegacy );
+
+			// Final % Chance of blocking = Base Chance * (1 - Dexterity Modifier)
+			R32 dexModifier = ( ourTarg->GetDexterity() > 80 ? 0 : ( 80 - ourTarg->GetDexterity() ) / 100 );
+			parryChance *= ( 1 - dexModifier );
+
+			if( RandomNum( 0, 1000 ) < parryChance )
+			{
+				// Successfully parried! Block attack completely
+				getDef = 0;
+				damage = 0;
+
+				Effects->PlayStaticAnimation( ourTarg, 0x37b9, 10, 16 );
+
+				if( serverData->CombatDisplayHitMessage() && targSock )
+					targSock->SysMessage( 1982 ); // You parry the attack!
+
+				bool damageWeapon = ( serverData->ExpansionWeaponParry() >= ER_ML )
+					? ( getFightSkill == MACEFIGHTING ? RandomNum( 1, 4 ) < 4 : RandomNum( 1, 20 ) == 1 )
+					: ( !RandomNum( 0, 5 ));
+
+				if( damageWeapon )
+					mWeapon->IncHP( -1 );
+
+				if( mWeapon->GetHP() <= 0 )
+				{
+					if( targSock )
+						targSock->SysMessage( 1983 ); // Your weapon has been destroyed!
+					mWeapon->Delete();
+				}
+
+				return 0;
+			}
+		}
+		else if( serverData->ExpansionWrestlingParry() >= ER_TOL && !cwmWorldState->creatures[ourTarg->GetId()].IsHuman() )
+		{
+			// In Publish 97, all NPC creatures with Wrestling skill of 100.0 or higher were given a chance to parry attacks
+			// https://www.uoguide.com/Publish_97
+			UI16 defendWrestling = ourTarg->GetSkill( WRESTLING );
+
+			if( defendWrestling >= 1000 )
+			{
+				// ~12.5% chance for a NPC creature with GM Wrestling to parry an attack
+				R32 parryChance = HalfRandomNum( defendWrestling ) / 8;
+
+				if( RandomNum( 0, 1000 ) < parryChance )
+				{
+					damage = 0;
+					getDef = 0;
+
+					// Play parrying FX
+					Effects->PlayStaticAnimation( ourTarg, 0x37b9, 10, 16 );
+				}
+			}
+		}
+	}
+
+	// No shield, no weapon parry, no wrestling parry - armor needs to take the brunt of damage!
+	if( damage > 0 && getDef == 0 )
+	{
+		getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, dmgType, false, false ));
+		damage -= getDef;
+	}
+
+	// Era-based damage halving
+	if( serverData->ExpansionCoreShardEra() <= ER_LBR )
+		damage /= 2;
+
+	// Divide damage dealt by NPCs to players by NPCDAMAGERATE value in uox.ini
+	if( mChar && mChar->IsNpc() && !ourTarg->IsNpc() )
+		damage /= serverData->CombatNpcDamageRate();
+
+	return static_cast<SI16>( std::round( std::max( 0.0f, damage )));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2746,7 +2756,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 //o------------------------------------------------------------------------------------------------o
 SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc )
 {
-	SI16 damage = -1;
+	SI16 totalDmg = -1;
 
 	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
@@ -2756,17 +2766,17 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 		{
 			// -1 == event doesn't exist, default to hard code
 			// Other value = calculated damage from script
-			damage = toExecute->OnCombatDamageCalc( mChar, ourTarg, getFightSkill, hitLoc );
+			totalDmg = toExecute->OnCombatDamageCalc( mChar, ourTarg, getFightSkill, hitLoc );
 		}
 	}
 
-	if( damage >= 0 )
+	if( totalDmg >= 0 )
 	{
-		return damage;
+		return totalDmg;
 	}
 	else
 	{
-		damage = 0;
+		totalDmg = 0;
 	}
 
 	const SI16 baseDamage = CalcAttackPower( mChar, true );
@@ -2774,31 +2784,71 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 	if( baseDamage == -1 )  // No damage if weapon breaks
 		return 0;
 
-	damage = ApplyDamageBonuses( PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, baseDamage );
+	CItem *weapon = GetWeapon( mChar );
+	SI16 split[9];                         // Declare the array
+	DamageType( weapon, split );      // Fill it via reference
+	WeatherType types[9] = { PHYSICAL, LIGHT, RAIN, COLD, HEAT, LIGHTNING, POISON, SNOW, STORM };
 
-	if( damage < 1 )
-		return 0;
-
-	damage = ApplyDefenseModifiers( PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, damage, true );
-
-	if( damage <= 0 )
+	for( UI08 i = 0; i < 9; ++i )
 	{
-		damage = RandomNum( 0, 4 );
+		SI16 partDmg = ( baseDamage * split[i] ) / 100;
+		if( partDmg <= 0 )
+		continue;
+
+		SI16 bonus = ApplyDamageBonuses( types[i], mChar, ourTarg, getFightSkill, hitLoc, partDmg );
+		SI16 reduced = ApplyDefenseModifiers( types[i], mChar, ourTarg, getFightSkill, hitLoc, bonus, true );
+
+		totalDmg += std::max(( SI16 ) 0, reduced );
+	}
+
+	if( totalDmg <= 0 )
+	{
+		totalDmg = RandomNum( 0, 4 );
 	}
 
 	// Half remaining damage by 2 if LBR (Pub15) or earlier
 	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR )
 	{
-		damage /= 2;
+		totalDmg /= 2;
 	}
 
 	// Divide damage dealt by NPCs to players by NPCDAMAGERATE value in uox.ini
 	if( mChar->IsNpc() && !ourTarg->IsNpc() )
 	{
-		damage /= cwmWorldState->ServerData()->CombatNpcDamageRate();
+		totalDmg /= cwmWorldState->ServerData()->CombatNpcDamageRate();
 	}
 
-	return damage;
+	return totalDmg;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::DamageType()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Read elemental damage split from a weapon into an output array.
+//|					If the weapon is invalid, fallback to 100% physical damage.
+//|					Supports 9 damage types: PHYSICAL, LIGHT, RAIN, COLD, HEAT,
+//|					LIGHTNING, POISON, SNOW, STORM
+//o------------------------------------------------------------------------------------------------o
+void CHandleCombat::DamageType( CItem *weapon, SI16 ( &splitOut)[9] )
+{
+	if( !ValidateObject( weapon ))
+	{
+		splitOut[0] = 100; // PHYSICAL
+		splitOut[1] = 0;   // LIGHT
+		splitOut[2] = 0;   // RAIN
+		splitOut[3] = 0;   // COLD
+		splitOut[4] = 0;   // HEAT
+		splitOut[5] = 0;   // LIGHTNING
+		splitOut[6] = 0;   // POISON
+		splitOut[7] = 0;   // SNOW
+		splitOut[8] = 0;   // STORM
+		return;
+	}
+
+	for( UI08 i = 0; i < 9; ++i )
+	{
+		splitOut[i] = weapon->GetDamageType( i );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o

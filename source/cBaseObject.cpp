@@ -839,6 +839,14 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Poisoned=" + std::to_string( poisoned ) + newLine;
 	outStream << "Carve=" + std::to_string( GetCarve() ) + newLine;
 	outStream << "Damageable=" << ( IsDamageable() ? "1" : "0" ) << newLine;
+	outStream << "Damagetype=";
+	for( UI08 i = 0; i < 9; ++i )
+	{
+		outStream << std::to_string( GetDamageType( i ));
+		if( i < 8 )
+			outStream << ","; // comma between values, no trailing comma
+	}
+	outStream << newLine;
 
 	outStream << "Defense=";
 	for( UI08 resist = 1; resist < WEATHNUM; ++resist )
@@ -1122,6 +1130,31 @@ void CBaseObject::SetHP( SI16 newValue )
 {
 	hitpoints = newValue;
 	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetDamageType()
+//|	Date		-	10 May, 2025
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Retrieve the damage percentage assigned to a specific elemental index.
+//|					Supports PHYSICAL (0) to STORM (8). Returns 0 if index is out of bounds.
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetDamageType( UI08 index ) const
+{
+	if( index < 9 )
+		return damageType[index];
+	return 0;
+}
+
+void CBaseObject::SetDamageType( UI08 index, SI16 value )
+{
+	if( index < 9 )
+		damageType[index] = value;
+
+	if( CanBeObjType( OT_ITEM ) )
 	{
 		( static_cast<CItem *>( this ))->UpdateRegion();
 	}
@@ -2264,6 +2297,34 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			{
 				SetDamageable( oldstrutil::value<UI08>( data ) == 1 );
 			}
+			else if( UTag == "DAMAGETYPE" )
+			{
+				if( data.find( "," ) != std::string::npos )
+				{
+					UI08 i = 0;
+					for( const auto &val : csecs )
+					{
+						if( i >= 9 )
+							break;
+
+						if( !val.empty() )
+						{
+							auto clean = oldstrutil::trim( oldstrutil::removeTrailing( val, "//" ));
+							SetDamageType( i, static_cast<SI16>( std::stoi( clean, nullptr, 0 )));
+							++i;
+						}
+					}
+				}
+				else
+				{
+					// Single value fallback - 100% physical
+					SetDamageType( 0, static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					for( UI08 i = 1; i < 9; ++i )
+					{
+						SetDamageType( i, 0 );
+					}
+				}
+			}
 			else if( UTag == "DIRECTION" || UTag == "DIR" )
 			{
 				auto temp = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
@@ -3082,6 +3143,10 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetKills( kills );
 	target->SetWipeable( IsWipeable() );
 	target->SetDamageable( IsDamageable() );
+	for( UI08 i = 0; i < 9; ++i )
+	{
+		target->SetDamageType( i, this->GetDamageType( i ) );
+	}
 
     // Don't forget to copy the tags
     target->tags = GetTagMap();
