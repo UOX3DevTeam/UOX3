@@ -4215,6 +4215,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 	// The following loop checks to see if any item is currently equipped (if not a GM)
 	if( !mChar->IsGM() && type != 2 )
+	{
        bool autoUnequipEnabled = cwmWorldState->ServerData()->AutoUnequippedCasting();
 
 		CItem *itemRHand = mChar->GetItemAtLayer( IL_RIGHTHAND );
@@ -4222,7 +4223,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 		auto mCharPack = mChar->GetPackItem();
 
 		// Function to check and possibly unequip an item if it blocks spell casting
-    auto handleItem = [&]( CItem* item, auto itemCheck, bool& blockFlag )
+		auto handleItem = [&]( CItem* item, auto itemCheck, bool& blockFlag )
 		{
 			if( item && itemCheck( item ))
 			{
