@@ -76,7 +76,7 @@ function inRange( pet, objInRange )
 
 function outOfRange( pet, objVanish )
 {
-	if (objVanish.socket == null)
+	if( objVanish.socket == null )
 	{
 		return;
 	}
@@ -88,17 +88,51 @@ function outOfRange( pet, objVanish )
 
 function onCombatStart( pAttacker, pDefender )
 {
-	if( pDefender.GetTag( "isPetDead" ) == true )
-	{
-		var pAttackSock = pAttacker.socket;
-		if( pAttackSock )
-		{
-			pAttackSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language ));// You can not perform beneficial acts on your target.
-		}
-		return false;
-	}
+    // If the target is a dead pet, block combat and reset NPC state
+    if( pDefender.GetTag( "isPetDead" ) == true )
+    {
+        // Handle for player attacker
+        var pAttackSock = pAttacker.socket;
+        if( pAttackSock )
+        {
+            pAttackSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language )); // You can not perform beneficial acts on your target.
+
+        }
+
+		pAttacker.target = null;
+		pAttacker.attacker = null;
+		pAttacker.atWar = false;
+
+		pDefender.target = null;
+		pDefender.attacker = null;
+		pDefender.atWar = false;
+
+        return false; // Block combat
+    }
 
 	return true;
+}
+
+function onAttack(pAttacker, pDefender, hitStatus, hitLoc, damageDealt)
+{
+    // Block attack if defender is a dead pet
+    if( pDefender.GetTag( "isPetDead" ) == true )
+    {
+        // Notify attacker if player
+        var pAttackSock = pAttacker.socket;
+        if( pAttackSock )
+        {
+            pAttackSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language )); // You can not perform beneficial acts on your target.
+        }
+
+		pAttacker.target = null;
+		pAttacker.attacker = null;
+		pAttacker.atWar = false;
+
+		pDefender.target = null;
+		pDefender.attacker = null;
+		pDefender.atWar = false;
+    }
 }
 
 function onSpellTarget( myTarget, pCaster, spellID )
@@ -115,6 +149,14 @@ function onSpellTarget( myTarget, pCaster, spellID )
 			pSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language )); // You can not perform beneficial acts on your target.
 			return 2;
 		}
+
+		pCaster.target = null;
+		pCaster.attacker = null;
+		pCaster.atWar = false;
+
+		myTarget.target = null;
+		myTarget.attacker = null;
+		myTarget.atWar = false;
 	}
 
 	// By default, allow Young player to be target of spells from monsters/npcs
@@ -127,7 +169,7 @@ function onDamage( damaged, pAttacker, damageValue, damageType )
 		return false;
 
 	// If attacker is a pet, use the owner instead
-	if (ValidateObject( pAttacker ) && pAttacker.npc && ValidateObject( pAttacker.owner ) && !pAttacker.owner.npc )
+	if( ValidateObject( pAttacker ) && pAttacker.npc && ValidateObject( pAttacker.owner ) && !pAttacker.owner.npc )
 	{
 		pAttacker = pAttacker.owner;
 	}
@@ -137,7 +179,17 @@ function onDamage( damaged, pAttacker, damageValue, damageType )
 	{
 		var atkSock = ValidateObject( pAttacker ) ? pAttacker.socket : null;
 		if( atkSock )
+		{
 			atkSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language ));// You can not perform beneficial acts on your target.
+		}
+
+		pAttacker.target = null;
+		pAttacker.attacker = null;
+		pAttacker.atWar = false;
+
+		damaged.target = null;
+		damaged.attacker = null;
+		damaged.atWar = false;
 		return false;
 	}
 
