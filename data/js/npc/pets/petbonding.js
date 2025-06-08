@@ -88,16 +88,16 @@ function outOfRange( pet, objVanish )
 
 function onCombatStart( pAttacker, pDefender )
 {
-    // If the target is a dead pet, block combat and reset NPC state
-    if( pDefender.GetTag( "isPetDead" ) == true )
-    {
-        // Handle for player attacker
-        var pAttackSock = pAttacker.socket;
-        if( pAttackSock )
-        {
-            pAttackSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language )); // You can not perform beneficial acts on your target.
+	// If the target is a dead pet, block combat and reset NPC state
+	if( pDefender.GetTag( "isPetDead" ) == true )
+	{
+		// Handle for player attacker
+		var pAttackSock = pAttacker.socket;
+		if( pAttackSock )
+		{
+			pAttackSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language )); // You can not perform beneficial acts on your target.
 
-        }
+		}
 
 		pAttacker.target = null;
 		pAttacker.attacker = null;
@@ -107,23 +107,23 @@ function onCombatStart( pAttacker, pDefender )
 		pDefender.attacker = null;
 		pDefender.atWar = false;
 
-        return false; // Block combat
-    }
+		return false; // Block combat
+	}
 
 	return true;
 }
 
 function onAttack(pAttacker, pDefender, hitStatus, hitLoc, damageDealt)
 {
-    // Block attack if defender is a dead pet
-    if( pDefender.GetTag( "isPetDead" ) == true )
-    {
-        // Notify attacker if player
-        var pAttackSock = pAttacker.socket;
-        if( pAttackSock )
-        {
-            pAttackSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language )); // You can not perform beneficial acts on your target.
-        }
+	// Block attack if defender is a dead pet
+	if( pDefender.GetTag( "isPetDead" ) == true )
+	{
+		// Notify attacker if player
+		var pAttackSock = pAttacker.socket;
+		if( pAttackSock )
+		{
+			pAttackSock.SysMessage( GetDictionaryEntry( 19323, pDropper.socket.language )); // You can not perform beneficial acts on your target.
+		}
 
 		pAttacker.target = null;
 		pAttacker.attacker = null;
@@ -132,7 +132,7 @@ function onAttack(pAttacker, pDefender, hitStatus, hitLoc, damageDealt)
 		pDefender.target = null;
 		pDefender.attacker = null;
 		pDefender.atWar = false;
-    }
+	}
 }
 
 function onSpellTarget( myTarget, pCaster, spellID )
