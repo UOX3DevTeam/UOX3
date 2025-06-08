@@ -3,7 +3,7 @@
 function onUseChecked( pUser, iUsed )
 {
 	var iTime = GetCurrentClock();
-	var lastSpawnTime = iUsed.GetTempTag( "lastSpawnTime" );
+	var lastSpawnTime = parseInt( iUsed.GetTempTag( "lastSpawnTime" ));
 
 	if( lastSpawnTime && (( iTime - lastSpawnTime < 900000 ))) // 15 minutes
 		return;
@@ -12,7 +12,7 @@ function onUseChecked( pUser, iUsed )
 	iUsed.SoundEffect( 0x004a, true );
 
 	// Store a timestamp for when last spawn took place
-	iUsed.SetTempTag( "lastSpawnTime", iTime );
+	iUsed.SetTempTag( "lastSpawnTime", iTime.toString() );
 
 	// Spawn a reward lich lord!
 	var useNpcList = true;

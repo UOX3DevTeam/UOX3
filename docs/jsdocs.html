@@ -3606,7 +3606,7 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSkillCheck( pUser, skillID, lowSkill, highSkill )</em></p>
+							<p><em>function onSkillCheck( pUser, skillID, lowSkill, highSkill, forceResult )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -3625,11 +3625,11 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>Runs just prior to skillcheck. lowSkill is minimum skill requirement for successful use of the skill (as passed into the skill check), while highSkill is the maximum skill the player can reach (as passed into the skill check)</p>
+							<p>Runs just prior to skillcheck. lowSkill is minimum skill requirement for successful use of the skill (as passed into the skill check), while highSkill is the maximum skill the player can reach (as passed into the skill check). forceResult will one of three values: -1 if result of skill check was forced to fail, 0 if a normal skillcheck was performed, and 1 if result of skill check was forced to succeed.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onSkillCheck( pUser, skillID, lowSkill, highSkill )
+<pre><code class="language-javascript">function onSkillCheck( pUser, skillID, lowSkill, highSkill, forceResult )
 {
 	pUser.TextMessage( "A skillcheck is being done for skill with ID " + skillID + "!" );
 	return false;
@@ -4834,10 +4834,10 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 			{
 				socket.SysMessage( "You are too busy to do that." );
 			}
-			else if( socket.GetTimer( 0 ) <= GetCurrentClock() )
+			else if( socket.GetTimer( Timer.TIMEOUT ) <= GetCurrentClock() )
 			{
 				socket.tempObj = iUsed;
-				socket.SetTimer( 0, 5000 );
+				socket.SetTimer( Timer.TIMEOUT, 5000 );
 				onCallback1( socket, targChar );
 			}
 			else
@@ -7933,7 +7933,7 @@ SetSpawnRegionFacetStatus( 13 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns a timestamp for current time</p>
+									<p>Returns a timestamp for current time <em>since server startup</em>. Starts from 0 on every server startup.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -9280,6 +9280,7 @@ myNPC.CastSpell( 30, true );</code></pre>
 									<p><span class="hl">Prototype</span></p>
 									<p><em>bool CheckSkill( skillNum, minSkill, maxSkill )</em></p>
 									<p><em>bool CheckSkill( skillNum, minSkill, maxSkill, isCraftSkill )</em></p>
+									<p><em>bool CheckSkill( skillNum, minSkill, maxSkill, isCraftSkill, forceResult )</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -9287,7 +9288,7 @@ myNPC.CastSpell( 30, true );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>If the optional parameter isCraftSkill is set to true, UOX3 uses an alternate skill check formula that provides a minimum 50% chance of success if player at least meets minimum requirements for crafting an item</p>
+									<p>If the optional parameter isCraftSkill is set to true, UOX3 uses an alternate skill check formula that provides a minimum 50% chance of success if player at least meets minimum requirements for crafting an item. If the optional parameter forceResult is set to -1, the skillcheck result is forced to failure, 0 does nothing, and 1 forces a success.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>

@@ -2021,7 +2021,9 @@ JSBool CBase_SetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 	*rval = INT_TO_JSVAL( 0 ); // Return value is 0 by default, indicating no timer was found or updated
 	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI32 expireTime = BuildTimeValue( JSVAL_TO_INT( argv[1] ) / 1000.0f );
+	jsdouble expireTime_double;
+	JS_ValueToNumber( cx, argv[1], &expireTime_double );
+	TIMERVAL expireTime = BuildTimeValue( static_cast<R64>( expireTime_double ) / 1000.0 );
 	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 
 	SERIAL myObjSerial = myObj->GetSerial();
@@ -3167,7 +3169,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		CChar *mChar = mySock->CurrcharObj();
 		if( ValidateObject( mChar ))
 		{
-			myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0f ));
+			myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 			if( toSend.CanSellItems(( *mChar ), ( *myNPC )))
 			{
 				mySock->Send( &toSend );
@@ -3184,7 +3186,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			return JS_FALSE;
 		}
 
-		myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0f ));
+		myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 		CSocket *mSock = myChar->GetSocket();
 		if( toSend.CanSellItems(( *myChar ), ( *myNPC )))
 		{
@@ -4646,7 +4648,9 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 
 	// 1. Parameter Delay, 2. Parameter Callback
-	UI32 ExpireTime = BuildTimeValue( JSVAL_TO_INT( argv[0] ) / 1000.0f );
+	jsdouble expireTime_double;
+	JS_ValueToNumber( cx, argv[0], &expireTime_double );
+	TIMERVAL ExpireTime = BuildTimeValue( static_cast<R64>( expireTime_double ) / 1000.0 );
 	UI16 TriggerNum = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 
 	CTEffect *Effect = new CTEffect;
@@ -4687,7 +4691,7 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_CheckSkill()
-//|	Prototype	-	bool CheckSkill( skillnum, minskill, maxskill[, isCraftSkill] )
+//|	Prototype	-	bool CheckSkill( skillnum, minskill, maxskill[, isCraftSkill, forceResult] )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Performs a skillcheck for character based on specified skill. Returns true
 //|					if result of skillcheck is between provided minimum and maximum values.
@@ -4697,9 +4701,9 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 3 && argc != 4 )
+	if( argc < 3 || argc > 5 )
 	{
-		ScriptError( cx, "CheckSkill: Invalid number of arguments (takes 3 or 4, skillNum, minSkill, maxSkill and isCraftSkill (optional))" );
+		ScriptError( cx, "CheckSkill: Invalid number of arguments (takes 3 to 5, skillNum, minSkill, maxSkill, isCraftSkill (optional) and forceResult (optional))" );
 		return JS_FALSE;
 	}
 
@@ -4715,11 +4719,16 @@ JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	UI16 minSkill = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 	UI16 maxSkill = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 	bool isCraftSkill = false;
+	SI08 forceResult = 0;
 	if( argc == 4 )
 	{
 		isCraftSkill = JSVAL_TO_BOOLEAN( argv[3] );
 	}
-	*rval = BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill ));
+	if( argc == 5 )
+	{
+		forceResult = static_cast<SI08>( JSVAL_TO_INT( argv[4] ));
+	}
+	*rval = BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill, forceResult ));
 	return JS_TRUE;
 }
 
@@ -5274,7 +5283,7 @@ JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 				newVal = myChar->GetPoisoned();
 			}
 		}
-		myChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R32>( wearOff ) / 1000.0f ));
+		myChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R64>( wearOff ) / 1000.0 ));
 	}
 
 	//myChar->SetPoisonStrength( newVal );
@@ -5337,7 +5346,7 @@ JSBool CChar_SetInvisible( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( argc == 2 )
 	{
 		UI32 TimeOut = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
-		myChar->SetTimer( tCHAR_INVIS, BuildTimeValue( static_cast<R32>( TimeOut ) / 1000.0f ));
+		myChar->SetTimer( tCHAR_INVIS, BuildTimeValue( static_cast<R64>( TimeOut ) / 1000.0 ));
 	}
 	return JS_TRUE;
 }
@@ -8019,13 +8028,14 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		return JS_FALSE;
 	}
 	JSEncapsulate encaps( cx, &( argv[0] ));
-	JSEncapsulate encaps2( cx, &( argv[1] ));
 	JSEncapsulate myClass( cx, obj );
 
-	R32 timerVal = encaps2.toFloat();
-	if( timerVal != 0 )
+	jsdouble timerVal_double;
+	JS_ValueToNumber( cx, argv[1], &timerVal_double );
+	TIMERVAL timerVal = 0;
+	if( timerVal_double != 0 )
 	{
-		timerVal = BuildTimeValue( timerVal / 1000.0f );
+		timerVal = BuildTimeValue( static_cast<R64>( timerVal_double ) / 1000.0 );
 	}
 	if( myClass.ClassName() == "UOXChar" )
 	{
@@ -8036,7 +8046,7 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 			return JS_FALSE;
 		}
 
-		cMove->SetTimer( static_cast<cC_TID>( encaps.toInt() ), static_cast<TIMERVAL>( timerVal ));
+		cMove->SetTimer( static_cast<cC_TID>( encaps.toInt() ), timerVal );
 	}
 	else if( myClass.ClassName() == "UOXSocket" )
 	{
@@ -10854,7 +10864,7 @@ JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 		ScriptError( cx, "(CChar_Heal): Operating on an invalid Character" );
 		return JS_TRUE;
 	}
-	JSEncapsulate Heal( cx, &( argv[0] ));
+	SI16 healVal = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 
 	if( argc == 2 )
 	{
@@ -10884,7 +10894,7 @@ JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
-	mChar->Heal( static_cast<SI16>( Heal.toInt() ), healer );
+	mChar->Heal( healVal, healer );
 
 	// Active script-context might have been lost, so restore it...
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))

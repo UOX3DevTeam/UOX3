@@ -3741,6 +3741,15 @@
 8213=Secção ID do objecto do DFN originado de
 8214=O artigo pode ser roubado? 0 = não pode ser roubado, 1 = pode ser roubado, 2 = pode ser roubado raramente
 8215=Alvo inválido. Selecione um item ou NPC válido
+8251=A limpar NPCs...
+8252=Limpos %i NPCs
+8253=Selecione o NPC para mover remotamente usando xrun:
+8254=Selecione o NPC para mover remotamente usando xwalk:
+8255=Selecione o NPC para virar remotamente usando xturn:
+8256=Selecione o destino do movimento (%s):
+8257=Tem de selecionar um NPC!
+8258=Você faz um curativo e estanca o sangramento
+8259=As feridas sangrentas sararam, você não está mais sangrando!
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Número de conta associado ao jogador. Controlado por servidor (Read-Only)
 8301=NPC Tipo de IA

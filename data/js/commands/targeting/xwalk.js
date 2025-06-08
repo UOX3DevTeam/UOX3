@@ -28,7 +28,7 @@ function command_XWALK( socket, cmdString )
 	{
 		socket.ignoreDoors = true;
 	}
-	pUser.CustomTarget( 0, GetDictionaryEntry( 8243, socket.language )); // Select NPC to move remotely using xwalk:
+	pUser.CustomTarget( 0, GetDictionaryEntry( 8254, socket.language )); // Select NPC to move remotely using xwalk:
 }
 
 function command_XRUN( socket, cmdString )
@@ -55,7 +55,7 @@ function command_XTURN( socket, cmdString )
 {
 	var pUser = socket.currentChar;
 	socket.xText = "turn";
-	pUser.CustomTarget( 0, GetDictionaryEntry( 8244, socket.language )); // Select NPC to turn remotely using xturn:
+	pUser.CustomTarget( 0, GetDictionaryEntry( 8255, socket.language )); // Select NPC to turn remotely using xturn:
 }
 
 function onCallback0( socket, myTarget )
@@ -64,12 +64,12 @@ function onCallback0( socket, myTarget )
 	if( !socket.GetWord( 1 ) && ValidateObject( myTarget ) && myTarget.isChar )
 	{
 		socket.tempObj = myTarget;
-  		var targMsg = GetDictionaryEntry( 8245, socket.language ); // Select movement (%s) destination:
+  		var targMsg = GetDictionaryEntry( 8256, socket.language ); // Select movement (%s) destination:
 		pUser.CustomTarget( 1, targMsg.replace( /%s/gi, socket.xText ));
 	}
 	else
 	{
-		pUser.SysMessage( GetDictionaryEntry( 8246, socket.language )); // You must target an NPC!
+		pUser.SysMessage( GetDictionaryEntry( 8257, socket.language )); // You must target an NPC!
 	}
 }
 
@@ -110,7 +110,7 @@ function onCallback1( socket, myTarget )
 				}
 			}
 
-  			var targMsg = GetDictionaryEntry( 8245, socket.language ); // Select movement (%s) destination:
+  			var targMsg = GetDictionaryEntry( 8256, socket.language ); // Select movement (%s) destination:
 			pUser.CustomTarget( 1, targMsg.replace( /%s/gi, socket.xText ));
 		}
 	}

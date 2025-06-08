@@ -641,7 +641,7 @@ bool CSpeechQueue::InternalPoll( void )
 	{
 		toCheck = ( *slIter );
 
-		if( toCheck->At() == -1 || static_cast<UI32>( toCheck->At() ) <= cwmWorldState->GetUICurrentTime() )
+		if( toCheck->At() == -1 || toCheck->At() <= cwmWorldState->GetUICurrentTime() )
 		{
 			retVal = true;
 			SayIt(( *toCheck ));

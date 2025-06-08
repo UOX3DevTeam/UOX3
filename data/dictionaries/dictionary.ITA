@@ -3741,6 +3741,15 @@
 8213=Identità della sezione da cui proviene l'oggetto DFN
 8214=L'oggetto è rubabile? 0 = non rubabile, 1 = rubabile, 2 = rubabile raramente
 8215=Destinazione non valida. Seleziona un oggetto o NPC valido
+8251=Cancellazione NPC...
+8252=NPC cancellati: %i
+8253=Seleziona NPC da spostare a distanza usando xrun:
+8254=Seleziona NPC da spostare a distanza usando xwalk:
+8255=Seleziona NPC da girare a distanza usando xturn:
+8256=Seleziona destinazione movimento (%s):
+8257=Devi selezionare un NPC!
+8258=Hai bendato la ferita e fermato l'emorragia
+8259=Le ferite sanguinanti sono guarite, non stai più sanguinando!
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numero di account associato al giocatore. Controllato dal server (Solo lettura)
 8301=Tipo di IA del PNG

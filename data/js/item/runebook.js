@@ -25,7 +25,7 @@ function onUseChecked( pUser, runeBook )
 	var pSocket = pUser.socket;
 
 	var iTime = GetCurrentClock();
-	var NextUse = runeBook.GetTag( "useDelayed" );
+	var NextUse = runeBook.GetTempTag( "useDelayed" );
 	var Delay = 7000;
 
 	if( ( iTime - NextUse ) < Delay )
@@ -504,8 +504,7 @@ function onGumpPress( pSocket, myButton, gumpData )
 				pSocket.tempInt2 = ( myButton - 30 );
 				runeBook.SetTag( "inUse", null );
 				runeBook.SetTag( "userSerial", null );
-				var iTime = GetCurrentClock();
-				runeBook.SetTag( "useDelayed", iTime.toString() );
+				runeBook.SetTempTag( "useDelayed", GetCurrentClock().toString() );
 				CastSpell( pSocket, pUser, 32, false );
 			}
 			else
@@ -602,8 +601,7 @@ function onGumpPress( pSocket, myButton, gumpData )
 				pSocket.tempInt2 = ( myButton - 120 );
 				runeBook.SetTag( "inUse", null );
 				runeBook.SetTag( "userSerial", null );
-				var iTime = GetCurrentClock();
-				runeBook.SetTag( "useDelayed", iTime.toString() );
+				runeBook.SetTempTag( "useDelayed", GetCurrentClock().toString() );
 				CastSpell( pSocket, pUser, 32, true );
 			}
 			else
@@ -634,8 +632,7 @@ function onGumpPress( pSocket, myButton, gumpData )
 				pSocket.tempInt2 = ( myButton - 140 );
 				runeBook.SetTag( "inUse", null );
 				runeBook.SetTag( "userSerial", null );
-				var iTime = GetCurrentClock();
-				runeBook.SetTag( "useDelayed", iTime.toString() );
+				runeBook.SetTempTag( "useDelayed", GetCurrentClock().toString() );
 				CastSpell( pSocket, pUser, 52, true );
 			}
 			else

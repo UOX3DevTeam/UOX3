@@ -20,7 +20,7 @@ function onLogin( socket, pChar )
 
 	// Store login timestamp (in minutes) in temp tag
 	var loginTime = Math.round( GetCurrentClock() / 1000 / 60 );
-	pChar.SetTempTag( "loginTime", loginTime );
+	pChar.SetTempTag( "loginTime", loginTime.toString() );
 
 	// Attach OnFacetChange to characters logging into the shard
 	if( !pChar.HasScriptTrigger( 2508 ))
@@ -63,7 +63,7 @@ function onLogin( socket, pChar )
 
 function onLogout( pSock, pChar )
 {
-	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - pChar.GetTempTag( "loginTime" );
+	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - parseInt( pChar.GetTempTag( "loginTime" ));
 	pChar.playTime += minSinceLogin;
 	pChar.account.totalPlayTime += minSinceLogin;
 
@@ -221,4 +221,18 @@ function onDeath( pDead, iCorpse )
 		return false;
 
 	return TriggerEvent( 5045, "onDeath", pDead, iCorpse );
+}
+
+// Triggers based on bandage macro in client
+function onUseBandageMacro( pSock, targChar, bandageItem )
+{
+	if( pSock != null && ValidateObject( targChar ) && ValidateObject( bandageItem ) && bandageItem.amount >= 1 )
+	{
+		var pUser = pSock.currentChar;
+		if( ValidateObject( pUser ))
+		{
+			TriggerEvent( 4000, "onUseCheckedTriggered", pUser, targChar, bandageItem );
+		}
+	}
+	return true;
 }

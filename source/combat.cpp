@@ -3137,7 +3137,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 						ourTarg->SetPoisoned( poisonStrength );
 
 						// Set time until next time poison "ticks"
-						ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue( static_cast<R32>( GetPoisonTickTime( poisonStrength ))));
+						ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue( static_cast<R64>( GetPoisonTickTime( poisonStrength ))));
 
 						// Set time until poison wears off completely
 						ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * GetPoisonDuration( poisonStrength ))); //wear off starts after poison takes effect
@@ -3728,7 +3728,7 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 
 	if( mChar->IsNpc() && mChar->GetNpcAiType() == AI_GUARD )
 	{
-		mChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 20 ));
+		mChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 20.0 ));
 		mChar->SetNpcWander( WT_FREE );
 		if( mChar->GetMounted() )
 		{
@@ -3843,7 +3843,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 	}
 
 	bool combatHandled = false;
-	if( mChar.GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+	if( mChar.GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		bool validTarg = false;
 		if( !mChar.IsDead() && ValidateObject( ourTarg ) && !ourTarg->IsFree() && ( ourTarg->IsNpc() || IsOnline(( *ourTarg ))))
@@ -4001,7 +4001,7 @@ auto  CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, 
 			{
 				getGuard->SetTimer( tNPC_MOVETIME, BuildTimeValue( getGuard->GetWalkingSpeed() ));
 			}
-			getGuard->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25 ));
+			getGuard->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25.0 ));
 
 			Effects->PlaySound( getGuard, 0x01FE );
 			Effects->PlayStaticAnimation( getGuard, 0x372A, 0x09, 0x06 );
