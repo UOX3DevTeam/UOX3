@@ -229,7 +229,7 @@ function onReleasePet( pUser, pet )
 	return true;
 }
 
-function onDropItemOnNpc(pDropper, pPet, iFood)
+function onDropItemOnNpc( pDropper, pPet, iFood )
 {
 	if( pPet.GetTag( "isPetDead" ) == true )
 	{
