@@ -40,7 +40,7 @@ function onAISliver( npc )
 
 			player.SetTempTag( "vetGumpOpen", true );
 			player.SetTempTag( "vetGumpLastShown_" + npc.serial, now.toString() );
-			showVetResurrectGump( player.socket, npc );
+			VetResurrectGump( player.socket, npc );
 		}
 	}
 }
@@ -52,7 +52,7 @@ function GetDistance( char1, char2 )
 	return Math.max( dx, dy ); // This matches how UO treats distance (chebyshev metric)
 }
 
-function showVetResurrectGump( socket )
+function VetResurrectGump( socket )
 {
 	var pUser = socket.currentChar;
 	if( !ValidateObject( pUser ))
@@ -93,9 +93,9 @@ function showVetResurrectGump( socket )
 	gump.AddTiledGump( 15, 15, 365, 370, 0xA40 );
 
 	// Text
-	gump.AddXMFHTMLGumpColor( 30, 20, 355, 35, 1113193, false, false, 0xFFFFFF );
-	gump.AddXMFHTMLGumpColor( 30, 72, 345, 40, 1113284, false, false, 0x1DB2D );
-	gump.AddXMFHTMLGumpColor( 20, 280, 345, 40, 1113286, false, false, 0x1DB2D );
+	gump.AddXMFHTMLGumpColor( 30, 20, 355, 35, 1113193, false, false, 0xFFFFFF );//Ah, thine pet seems to be in dire condition! I can help thee, but must charge a small fee...
+	gump.AddXMFHTMLGumpColor( 30, 72, 345, 40, 1113284, false, false, 0x1DB2D );//Please select the pet you wish to resurrect:
+	gump.AddXMFHTMLGumpColor( 20, 280, 345, 40, 1113286, false, false, 0x1DB2D );//<CENTER>Your pet will suffer 0.2 points of skill-loss if resurrected in this manner.</CENTER>
 
 	// Horizontal lines
 	gump.AddTiledGump( 95, 62, 200, 1, 0x23C5 );
@@ -144,10 +144,12 @@ function onGumpPress( pSock, pButton, gumpData )
 		pUser.SetTempTag( "vetGumpOpen", null );
 		return;
 	}
+
 	var selectedSerial = gumpData.getButton( 0 );
 	var serial = CalcCharFromSer( serialPet );
 	var cost = GetResFee( selectedSerial );
 	var goldInPack = pUser.ResourceCount( 0x0EED, 0 );
+
 	if( goldInPack < cost )
 	{
 		pSock.SysMessage( "You do not have enough gold on you to pay the fee." );
@@ -157,17 +159,45 @@ function onGumpPress( pSock, pButton, gumpData )
 	}
 
 	pUser.UseResource( cost, 0x0EED, 0 );
-	onPetResurrect( pSock, serial );
+	PetResurrect( pSock, serial );
 	pSock.SysMessage( cost + " gold has been withdrawn from your backpack" );
 	pSock.SysMessage( "Your pet has been resurrected." );
-	pUser.SetTempTag("vetGumpOpen", null );
+	pUser.SetTempTag( "vetGumpOpen", null );
 	pUser.SetTempTag( "serialPet", null )
 }
 
-function onPetResurrect( socket, deadPet )
+function PetResurrect( socket, deadPet )
 {
+	var skillList = [
+	"alchemy", "anatomy", "animallore", "itemid", "armslore", "parrying",
+	"begging", "blacksmithing", "bowcraft", "peacemaking", "camping",
+	"carpentry", "cartography", "cooking", "detectinghidden", "enticement",
+	"evaluatingintel", "healing", "fishing", "forensics", "herding",
+	"hiding", "provocation", "inscription", "lockpicking", "magery",
+	"magicresistance", "tactics", "snooping", "musicianship", "poisoning",
+	"archery", "spiritspeak", "stealing", "tailoring", "taming", "tasteid",
+	"tinkering", "tracking", "veterinary", "swordsmanship", "macefighting",
+	"fencing", "wrestling", "lumberjacking", "mining", "meditation",
+	"stealth", "removetrap", "necromancy", "focus", "chivalry", "bushido",
+	"ninjitsu", "spellweaving", "imbuing", "mysticism", "throwing"
+	];
+
 	var petsAI = deadPet.GetTag( "PetsAI" );
 	var petsHue = deadPet.GetTag( "PetsHue" );
+
+	// Apply skill loss: lose 0.2 (2 points on UOX3 scale) per skill
+	for( var i = 0; i < skillList.length; ++i )
+	{
+		var skillName = skillList[i];
+		var curSkill = deadPet.baseskills[skillName];
+		if( typeof curSkill == "number" && curSkill > 0 )
+		{
+			var newSkill = curSkill - 2;
+			if( newSkill < 0 )
+				newSkill = 0;
+			deadPet.baseskills[skillName] = newSkill;
+		}
+	}
 
 	TriggerEvent( 3108, "SendNpcGhostMode", socket, 0, deadPet.serial, 0  );
 	deadPet.aitype = petsAI;
@@ -184,17 +214,25 @@ function GetResFee( pet )
 	var skill = pet.skillToTame;
 
 	if( skill == null || skill <= 0 )
+	{
 		skill = 0;
+	}
 	else
+	{
 		skill = skill / 10;
+	}
 
 	var fee = 100 + Math.pow( 1.1041, skill );
 	fee = Math.floor( fee );
 
 	if( fee > 30000 )
+	{
 		fee = 30000;
+	}
 	else if( fee < 100 )
+	{
 		fee = 100;
+	}
 
 	return fee;
 }
