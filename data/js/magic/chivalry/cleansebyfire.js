@@ -115,6 +115,7 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 		mChar.stamina -= mSpell.stamina;
 		mChar.tithing -= mSpell.tithing;
 	}
+
 	if( !mChar.npc && spellType == 0 ) 
 	{
 		TriggerEvent( 6004, "DeleteReagents", mChar, mSpell );

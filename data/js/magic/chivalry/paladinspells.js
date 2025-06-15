@@ -8,7 +8,7 @@ function SpellRegistration()
 	//RegisterSpell( 206, true );
 	RegisterSpell( 207, true );
 	RegisterSpell( 208, true );
-	//RegisterSpell( 209, true );
+	RegisterSpell( 209, true );
 	RegisterSpell( 210, true );
 }
 
@@ -322,7 +322,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		//enemy of one
 		case 207: triggerNum = 6107; break;// Holy Light
 		case 208: triggerNum = 6108; break;// Noble Scrifice
-		//remove curses
+		case 209: triggerNum = 6109; break;// remove curse
 		case 210: triggerNum = 6110; break;// Sacred Journey
 	}
 
