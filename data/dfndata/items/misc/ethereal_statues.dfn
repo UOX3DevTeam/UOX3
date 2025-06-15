@@ -1,6 +1,7 @@
 [base_ethereal_statuette]
 {
 SCRIPT=5300
+SCRIPT=5303//vet reward tooltips
 NEWBIE
 WEIGHT=100
 }

@@ -2,7 +2,6 @@ const maxControlSlots = GetServerSetting( "MaxControlSlots" );
 // maxFollowers only comes into play if maxControlSlots is set to 0 in UOX.INI
 const maxFollowers = GetServerSetting( "MaxFollowers" );
 const coreShardEra = EraStringToNum(GetServerSetting("CoreShardEra"));
-const VetRewardEnabled = true;
 
 function onUseChecked( pUser, iUsed )
 {
@@ -86,7 +85,6 @@ function onUseChecked( pUser, iUsed )
 	}
 
 	pUser.DoAction( 230 );
-	pUser.SoundEffect( 0x5B4, true );
 	pUser.SetTag( "EtherealMountStatueSerial", iUsed.serial.toString() );
 	pUser.SetTag( "EtherealMountSectionID", iUsed.sectionID );
 	iUsed.SetTempTag( "castDelayed", iTime.toString() );
@@ -216,49 +214,14 @@ function onTimer( pUser, timerID )
 			pUser.controlSlotsUsed = pUser.controlSlotsUsed + 1;
 		}
 
-		etherealStatuette.Delete();
 		pUser.SetTempTag( "statueDelayed", false );
 		pUser.SetTag( "EtherealMountStatueSerial", null );
 		pUser.SetTag( "EtherealMountSectionID", null );
 		pUser.frozen = false;
 		pUser.AddScriptTrigger( 5301 );
-		pUser.SoundEffect( 0x5B5, true );
 		socket.SysMessage( "You summon your ethereal steed." );
+		etherealStatuette.Delete();
 	}
-}
-
-function onTooltip( etherealStatuette )
-{
-	var tooltipText = "";
-	var vetReward = etherealStatuette.GetTag( "vetRewardYear" );
-	var retouchColor = etherealStatuette.GetTag( "retouching" );
-
-	// Handle vetRewardYear
-	if( vetReward && VetRewardEnabled )
-	{
-		var indicator = "th";
-		switch( vetReward )
-		{
-			case 1: indicator = "st"; break;
-			case 2: indicator = "nd"; break;
-			case 3: indicator = "rd"; break;
-		}
-		tooltipText = vetReward + indicator + " Year Veteran Reward";
-	}
-
-	// Handle retouching color
-	if( retouchColor != null && coreShardEra >= EraStringToNum( "aos" ))
-	{
-		if( tooltipText != "" )
-			tooltipText += "\n";
-
-		tooltipText += "Mount Hue: " + retouchColor;
-	}
-
-	if( tooltipText != "" )
-		etherealStatuette.SetTempTag( "tooltipSortOrder", 21 );
-
-	return tooltipText;
 }
 
 function _restorecontext_() {}
