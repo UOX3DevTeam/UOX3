@@ -3309,7 +3309,7 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 
 	JSEncapsulate myClass( cx, obj );
-	UI08 spellId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	SI32 spellId = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
 
 	if( myClass.ClassName() == "UOXChar" )
 	{
@@ -3320,16 +3320,41 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			return JS_FALSE;
 		}
 
-		CItem *myItem = FindItemOfType( myChar, IT_SPELLBOOK );
+		// Find spellbooks
+		CItem *spellBook = FindItemOfType( myChar, IT_SPELLBOOK );
+		CItem *paladinBook = FindItemOfType( myChar, IT_PALADINBOOK );
+		CItem *necroBook = FindItemOfType( myChar, IT_NECROBOOK );
 
-		if( !ValidateObject( myItem ))
+		// If neither book is present, return false
+		if( !ValidateObject( spellBook ) && !ValidateObject( paladinBook ) && !ValidateObject( necroBook ))
 		{
 			*rval = BOOLEAN_TO_JSVAL( JS_FALSE );
 			return JS_TRUE;
 		}
 
-		// Code checks for spell based on index starting at 0, while spells have spellIDs starting from 1
-		if( Magic->HasSpell( myItem, spellId - 1 ))
+		// Determine the active book and offset
+		CItem *activeBook = nullptr;
+		int offset = 0;
+
+		if( spellId >= 101 && spellId <= 117 && ValidateObject( necroBook ))
+		{
+			activeBook = necroBook;
+			offset = 100; // Necro spell offset
+		}
+
+		if( spellId >= 201 && spellId <= 210 && ValidateObject( paladinBook ))
+		{
+			activeBook = paladinBook;
+			offset = 200; // Paladin spell offset
+		}
+		else if( spellId >= 1 && spellId <= 64 && ValidateObject( spellBook ))
+		{
+			activeBook = spellBook;
+			offset = 0; // Regular spell offset
+		}
+
+		// Check if the spell exists in the active book
+		if( activeBook && Magic->HasSpell( activeBook, spellId - offset ))
 		{
 			*rval = BOOLEAN_TO_JSVAL( JS_TRUE );
 		}
@@ -3347,6 +3372,7 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			return JS_FALSE;
 		}
 
+		// Check if the item has the specified spell
 		if( Magic->HasSpell( myItem, spellId ))
 		{
 			*rval = BOOLEAN_TO_JSVAL( JS_TRUE );
@@ -5093,7 +5119,7 @@ JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 
-	SI08 spellCast = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	SI32 spellCast = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
 
 	if( myChar->IsNpc() )
 	{
@@ -6917,7 +6943,7 @@ JSBool CChar_AddSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 	}
 
 	CChar *myChar	= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	UI08 spellNum	= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	SI32 spellNum	= static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
 	CItem *sBook	= FindItemOfType( myChar, IT_SPELLBOOK );
 	if( ValidateObject( sBook ))
 	{
