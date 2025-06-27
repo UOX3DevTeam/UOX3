@@ -393,6 +393,61 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 		}
 	}
 
+	if( !mChar.InRange( ourTarg, 10 ) )
+	{
+		if( mSock != null )
+		{
+			mSock.SysMessage( GetDictionaryEntry( 712, mSock.language )); // You can't cast on someone that far away!
+		}
+		return;
+	}
+
+	if( !mChar.CanSee( ourTarg ))
+		return;
+
+	var attackTarget = false;
+	var targRegion = ourTarg.region;
+	if( mSpell.aggressiveSpell )
+	{
+		if( targRegion.isSafeZone )
+		{
+			if( mSock != null )
+			{
+				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language )); // Hostile actions are not permitted in this safe area.
+			}
+			return;
+		}
+		if( !targRegion.canCastAggressive )
+		{
+			if( mSock != null )
+			{
+				mSock.SysMessage( GetDictionaryEntry( 709, mSock.language )); // You can't cast in town!
+			}
+			return;
+		}
+		if( !ourTarg.vulnerable || ourTarg.aiType == 17 )
+		{
+			if( mSock != null )
+			{
+				mSock.SysMessage( GetDictionaryEntry( 713, mSock.language )); // They are invulnerable merchants!
+			}
+			return;
+		}
+
+		attackTarget = true;
+
+		if( mSpell.reflectable )
+		{
+			if( ourTarg.magicReflect )
+			{
+				ourTarg.magicReflect = false;
+				ourTarg.StaticEffect( 0x373A, 0, 15 );
+				sourceChar 	= ourTarg;
+				ourTarg		= mChar;
+			}
+		}
+	}
+
 	// Cut the casting requirement on scrolls
 	var lowSkill, highSkill;
 	if( spellType == 1 )
@@ -431,56 +486,9 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 		TriggerEvent( 6004, "DeleteReagents", mChar, mSpell );
 	}
 
-	if( !mChar.InRange( ourTarg, 10 ) )
+	if( attackTarget )
 	{
-		if( mSock != null )
-		{
-			mSock.SysMessage( GetDictionaryEntry( 712, mSock.language )); // You can't cast on someone that far away!
-		}
-		return;
-	}
-
-	if( !mChar.CanSee( ourTarg ))
-		return;
-
-	var targRegion = ourTarg.region;
-	if( mSpell.aggressiveSpell )
-	{
-		if( targRegion.isSafeZone )
-		{
-			if( mSock != null )
-			{
-				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language )); // Hostile actions are not permitted in this safe area.
-			}
-			return;
-		}
-		if( !targRegion.canCastAggressive )
-		{
-			if( mSock != null )
-			{
-				mSock.SysMessage( GetDictionaryEntry( 709, mSock.language )); // You can't cast in town!
-			}
-			return;
-		}
-		if( !ourTarg.vulnerable || ourTarg.aiType == 17 )
-		{
-			if( mSock != null )
-			{
-				mSock.SysMessage( GetDictionaryEntry( 713, mSock.language )); // They are invulnerable merchants!
-			}
-			return;
-		}
-
-		if( mSpell.reflectable )
-		{
-			if( ourTarg.magicReflect )
-			{
-				ourTarg.magicReflect = false;
-				ourTarg.StaticEffect( 0x373A, 0, 15 );
-				sourceChar 	= ourTarg;
-				ourTarg		= mChar;
-			}
-		}
+		sourceChar.InitiateCombat( ourTarg );
 	}
 
 	if( spellNum != 5 )

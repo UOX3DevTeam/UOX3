@@ -1402,9 +1402,6 @@ void StartChar( CSocket *mSock, bool onCreate )
 			pllToSend.Level( 0 );
 			mSock->Send( &pllToSend );
 
-			CPWarMode wMode( 0 );
-			mSock->Send( &wMode );
-
 			CItem *nItem = mChar->GetItemAtLayer( IL_PACKITEM );
 			mChar->SetPackItem( nItem );
 
@@ -1517,7 +1514,7 @@ void StartChar( CSocket *mSock, bool onCreate )
 			if( mChar->WorldNumber() > 0 )
 			{
 				// Without this, world will not be properly updated in regular UO clients until they take the first step
-				mChar->Update();
+				mChar->Update( nullptr, false, true, true );
 			}
 
 			// Re-add player to party, if they are in one!
@@ -1649,7 +1646,7 @@ auto MoveItemsToCorpse( CChar &mChar, CItem *iCorpse ) -> void
 			case IL_PACKITEM:
 			{
 				// Only move player's items from backpack to corpse if young system is disabled OR player is not on a young account
-				if( !cwmWorldState->ServerData()->YoungPlayerSystem() || !mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
+				if( mChar.IsNpc() || ( !cwmWorldState->ServerData()->YoungPlayerSystem() || !mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG )))
 				{
 					std::vector<CItem *> moveItems;
 					auto jCont = j->GetContainsList();
@@ -1891,6 +1888,12 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 	else
 	{
 		mChar->Dirty( UT_LOCATION );
+	}
+
+	// Reset skill usage status for all skills
+	for( UI08 i = 0; i < ALLSKILLS; ++i )
+	{
+		mChar->SkillUsed( false, i );
 	}
 
 	// Play death music

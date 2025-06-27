@@ -56,13 +56,13 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	if( cTarget->WorldNumber() != cAttack->WorldNumber() || cTarget->GetInstanceId() != cAttack->GetInstanceId() )
 		return false;
 
-	if( !ObjInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( nullptr, cAttack, cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
-		return false;
-
 	if( !cAttack->GetCanAttack() || cAttack->IsEvading() ) // Is the char allowed to attack?
 		return false;
 
 	if( cAttack->GetNpcAiType() == AI_DUMMY ) // If passive, don't allow attack
+		return false;
+
+	if( !ObjInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( nullptr, cAttack, cTarget->GetX(), cTarget->GetY(), cTarget->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 		return false;
 
 	// If two NPCs try to fight, do some extra checks to make sure they're allowed to (ignore if both are pets)
@@ -296,7 +296,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 						CMultiObj *multiObj = ourChar->GetMultiObj();
 						if( !ValidateObject( multiObj ) || multiObj->GetOwner() == ourChar->GetSerial() )
 						{
-							if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+							if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 							{
 								// Play Resurrect casting animation
 								if( i->GetBodyType() == BT_GARGOYLE	|| cwmWorldState->ServerData()->ForceNewAnimationPacket() )
@@ -334,7 +334,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 						CMultiObj *multiObj = ourChar->GetMultiObj();
 						if( !ValidateObject( multiObj ) || multiObj->GetOwner() == ourChar->GetSerial() )
 						{
-							if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+							if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 							{
 								// Play Resurrect casting animation
 								if( i->GetBodyType() == BT_GARGOYLE	|| cwmWorldState->ServerData()->ForceNewAnimationPacket() )
@@ -431,6 +431,13 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		{
 			// Either attacker or target is in a safe zone where all aggressive actions are forbidden, disallow
 			s->SysMessage( 1799 ); // You are no longer affected by peace!
+			return;
+		}
+
+		// Check if player is within the allowed attack range
+		if( !ObjInRange( ourChar, i, cwmWorldState->ServerData()->CombatMaxRange() ))
+		{
+			s->SysMessage( 2718 ); // Your target is out of range.
 			return;
 		}
 
@@ -589,21 +596,24 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 
 	if( cAttack->CheckAggressorFlag( cTarget->GetSerial() ))
 	{
-		// Send attacker message to all nearby players
-		for( auto &tSock : FindNearbyPlayers( cAttack ))
+		// Send attacker message to all nearby players, if both attacker and target are players, or if attacker is NPC and target is player
+		if(( !cAttack->IsNpc() && !cTarget->IsNpc() ) || ( cAttack->IsNpc() && !cTarget->IsNpc() ))
 		{
-			if( tSock )
+			for( auto &tSock : FindNearbyPlayers( cAttack ))
 			{
-				// Valid socket found
-				CChar *witness = tSock->CurrcharObj();
-				if( ValidateObject( witness ))
+				if( tSock )
 				{
-					// Fetch names of attacker and target
-					std::string attackerName = GetNpcDictName( cAttack, tSock, NRS_SPEECH );
-					std::string targetName = GetNpcDictName( cTarget, tSock, NRS_SPEECH );
+					// Valid socket found
+					CChar *witness = tSock->CurrcharObj();
+					if( ValidateObject( witness ))
+					{
+						// Fetch names of attacker and target
+						std::string attackerName = GetNpcDictName( cAttack, tSock, NRS_SPEECH );
+						std::string targetName = GetNpcDictName( cTarget, tSock, NRS_SPEECH );
 
-					// Send an emote about attacking target to nearby witness
-					cAttack->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking target
+						// Send an emote about attacking target to nearby witness
+						cAttack->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking target
+					}
 				}
 			}
 		}
@@ -2856,7 +2866,19 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	if( !checkDist && mWeapon != nullptr && ValidateObject( mWeapon ) && mWeapon->GetMaxRange() > 1 )
 	{
 		// Check line of sight and Z differences if weapon's max range is higher than 1 tile
-		checkDist = ( ourDist <= mWeapon->GetMaxRange() && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 && LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ( ourTarg->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ));
+		if( ourDist <= mWeapon->GetMaxRange() && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 20 )
+		{
+			if( LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+			{
+				mChar.SetCombatLos( true );
+				checkDist = true;
+			}
+			else
+			{
+				mChar.SetCombatLos( false );
+			}
+		}
+		//checkDist = ( ourDist <= mWeapon->GetMaxRange() && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 && LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ));
 	}
 
 	if( checkDist )
@@ -3031,30 +3053,34 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		}
 		else
 		{
-			PlayHitAnimations( ourTarg );
-
 			// It's a hit!
 			CSocket *targSock = ourTarg->GetSocket();
 
 			Skills->CheckSkill( &mChar, TACTICS, 0, mChar.GetSkillCap( TACTICS ) );
 			Skills->CheckSkill( ourTarg, TACTICS, 0, ourTarg->GetSkillCap( TACTICS ) );
 
-			switch( ourTarg->GetId() )
+			// Play the "get hit" SFX for the target, but only 50% of the time (too spammy otherwise)
+			if( RandomNum( 0, 3 ) == 3 )
 			{
-				case 0x025E:	// elf/human/garg female
-				case 0x0191:
-				case 0x029B:	Effects->PlaySound( ourTarg, RandomNum( 0x014B, 0x014F ));				break;
-				case 0x025D:	// elf/human/garg male
-				case 0x0190:
-				case 0x029A:	Effects->PlaySound( ourTarg, RandomNum( 0x0155, 0x0158 ));				break;
-				default:
+				PlayHitAnimations( ourTarg );
+
+				switch( ourTarg->GetId() )
 				{
-					UI16 toPlay = cwmWorldState->creatures[ourTarg->GetId()].GetSound( SND_DEFEND );
-					if( toPlay != 0x00 )
+					case 0x025E:	// elf/human/garg female
+					case 0x0191:
+					case 0x029B:	Effects->PlaySound( ourTarg, RandomNum( 0x014B, 0x014F ));				break;
+					case 0x025D:	// elf/human/garg male
+					case 0x0190:
+					case 0x029A:	Effects->PlaySound( ourTarg, RandomNum( 0x0155, 0x0158 ));				break;
+					default:
 					{
-						Effects->PlaySound( ourTarg, toPlay );
+						UI16 toPlay = cwmWorldState->creatures[ourTarg->GetId()].GetSound( SND_DEFEND );
+						if( toPlay != 0x00 )
+						{
+							Effects->PlaySound( ourTarg, toPlay );
+						}
+						break;
 					}
-					break;
 				}
 			}
 
@@ -3139,7 +3165,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					[[maybe_unused]] bool retVal = ourTarg->Damage( ourDamage, PHYSICAL, &mChar, true );
 				}
 			}
-			if( cwmWorldState->creatures[mChar.GetId()].IsHuman() )
+			if( cwmWorldState->creatures[mChar.GetId()].IsHuman() || ValidateObject( mWeapon ))
 			{
 				PlayHitSoundEffect( &mChar, mWeapon );
 			}

@@ -414,8 +414,9 @@ private:
 	UI08		alchemyDamageBonusModifier;		//  Modifier used to calculate bonus damage for explosion potions based on alchemy skill
 	UI08		combatWeaponDamageBonusType;	//  Weapon damage bonus type (0 - apply to hidamage, 1 - split between lo and hi, 2 - apply equally to lo and hi
 	SI08		combatArcheryHitBonus;			//  Bonus to hit chance for Archery skill in combat, applied after regular hit chance calculation
-	SI16		combatMaxRange;					//	RANGE?  Range at which combat can actually occur
-	SI16		combatMaxSpellRange;			//	RANGE?  Range at which spells can be cast
+	SI16		combatMaxRange;					//	Maximum range at which combat can be engaged?
+	SI16		combatMaxSpellRange;			//	Maximum range at which spells can be cast in combat
+	SI16		combatMaxNpcAggroRange;			//	Maximum range at which NPCs can aggro targets on their own
 	SI16		combatNpcDamageRate;			//	NPC Damage divisor - PCs sustain less than NPCs.  If a PC, damage is 1/value
 	SI16		combatNpcBaseFleeAt;			//	% of HP where an NPC will flee, if it's not defined for them
 	SI16		combatNpcBaseReattackAt;		//	% of HP where an NPC will resume attacking
@@ -1088,6 +1089,9 @@ public:
 
 	auto		CombatMaxSpellRange( SI16 value ) -> void;
 	SI16		CombatMaxSpellRange() const;
+
+	auto		CombatMaxNpcAggroRange( SI16 value ) -> void;
+	SI16		CombatMaxNpcAggroRange() const;
 
 	auto		CombatAnimalsGuarded( bool value ) -> void;
 	auto		CombatAnimalsGuarded() const -> bool;

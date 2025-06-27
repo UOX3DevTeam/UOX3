@@ -7618,7 +7618,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		tempEntry.sortOrder = 5;
 		FinalizeData( tempEntry, totalStringLen );
 	}
-	else if(( cItem.GetWeight() / 100 ) >= 1 && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT )
+	else if( cItem.GetWeight() != 25500 && ( cItem.GetWeight() / 100 ) >= 1 && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT )
 	{
 		if(( cItem.GetWeight() / 100 ) == 1 )
 		{
@@ -8118,7 +8118,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 	std::string fameTitle = "";
 	if( cwmWorldState->ServerData()->ShowReputationTitleInTooltip() )
 	{
-		if( cwmWorldState->creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() && !mChar.IsDisguised() )
+		if( cwmWorldState->creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() && !mChar.IsDisguised() && !mChar.HideFameKarmaTitle() )
 		{
 			GetFameTitle( &mChar, fameTitle );
 			fameTitle = oldstrutil::trim( fameTitle );
@@ -8371,7 +8371,7 @@ auto CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack,
 	{
 		if( ValidateObject( opItem ))
 		{
-			if( opItem->GetType() == IT_CONTAINER )
+			if( opItem->GetType() == IT_CONTAINER && opItem->GetContainsList()->Num() > 0 )
 			{
 				AddContainer( tReg, spItem, opItem, packetLen );
 			}

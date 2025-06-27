@@ -2458,6 +2458,18 @@
 2585=Se vierte un poco de sidra en el recipiente.
 2586=Se vierte un poco de licor en el recipiente.
 2587=Se sirve un poco de vino en el vaso.
+2588=Estas zanahorias aún no están listas para ser cosechadas.
+2589=No has recogido ninguna zanahoria.
+2590=Has cosechado una zanahoria.
+2591=Estas cebollas aún no están listas para ser cosechadas.
+2592=No has recogido ninguna cebolla.
+2593=Has cosechado una cebolla.
+2594=Este nabo aún no está listo para ser cosechado.
+2595=No has recogido ningún nabo.
+2596=Has cosechado un nabo.
+2597=Esta col aún no está lista para ser cosechada.
+2598=No has recogido ninguna col.
+2599=Has cosechado una col.
 // [2600-2699] Script de administrador de jugadores/PNJ/aparición
 2600=Se ha eliminado el PNJ seleccionado (%s, %i).
 2601=Advertencia: ¡No se ha encontrado ninguna mochila en el personaje!
@@ -2977,6 +2989,7 @@
 3574=un espíritu de cuchilla
 3605=un hombre elfo
 3606=una mujer elfa
+3637=una armadura espectral
 3666=un hombre gárgola
 3667=una mujer gárgola
 3689=Señor del Tiempo
@@ -3302,6 +3315,7 @@
 5156=gitano adivino
 5157=Vagabundo
 5158=trabajador del hierro
+5159=un pájaro tropical
 // [5500-5600] Mensajes de vacaciones
 5500=¿Dónde te gustaría colocar esta decoración?
 5501=La decoración debe colocarse junto a una pared.
@@ -4099,7 +4113,7 @@
 8944=Ese no parece ser un NPC-id válido de los DFN.
 8945=Seleccionar objetivo para estado móvil %i:
 8946=Seleccionar objetivo para establecer como no destruible:
-// [9000-9500] Varios
+// [9000-9499] Varios
 9000=No puedes usar esta habilidad mientras estás congelado.
 9001=¡Este personaje no puede volar!
 9002=Ha sido invitado a unirse a una fiesta, escriba /aceptar o /rechazar para tratar la invitación
@@ -4369,6 +4383,28 @@
 9410=Has aprendido a extraer arena fina. Apunte a las áreas de arena cuando extraiga para buscar arena fina.
 9411=Has aprendido a extraer piedras. Apunte a las montañas cuando extraiga piedras.
 9412=Aquí no hay arena para extraer.
+// [9500-9550] Recolección de recursos diversos
+9500=Esta calabaza aún no está lista para ser recolectada.
+9501=No has conseguido recolectar ninguna calabaza.
+9502=Has recolectado una calabaza.
+9503=Esta calabaza aún no está lista para ser recolectada.
+9504=No has conseguido recoger ninguna calabaza.
+9505=Has recolectado una calabaza.
+9506=Esta calabaza aún no está lista para ser recolectada.
+9507=No has conseguido recoger ninguna calabaza.
+9508=Has recolectado una calabaza.
+9509=Esta sandía aún no está lista para ser recolectada.
+9510=No consigues recoger ninguna sandía.
+9511=Cosechas una sandía.
+9512=Este melón verde aún no está listo para ser cosechado.
+9513=No consigues recoger ningún melón verde.
+9514=Cosechas un melón verde.
+9515=Este melón cantalupo aún no está listo para ser cosechado.
+9516=No consigues recoger ningún melón cantalupo.
+9517=Cosechas un melón cantalupo.
+9518=Este ajo aún no está listo para ser cosechado.
+9519=No consigues recoger ningún ajo.
+9520=Cosechas un ajo.
 // [9800-9899] Editor de generadores
 9800=Editor de objetos de generadores
 9801=Nombre del generador
@@ -4756,6 +4792,7 @@
 11467=brazos de hueso
 11468=piernas de hueso
 11469=armadura de hueso
+11470=sombrero de paja alto
 // 11601 - 11800 Habilidad de cocina
 11601=MENÚ DE COCINA
 11602=Ingredientes

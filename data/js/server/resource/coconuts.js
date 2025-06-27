@@ -4,8 +4,8 @@
 // 5 coconuts ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more coconuts can be picked. Once the timer is over,
 // new coconuts are added.
-var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
-var maxResource = 5; //maximum amount of resources on a given item
+const coconutGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+const maxCoconutResource = 5; //maximum amount of resources on a given item
 
 function onUseChecked( pUser, iUsed )
 {
@@ -20,7 +20,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		iUsed.SetTag( "initialized", 1 ); 	// Marks tree as initialized
 		iUsed.SetTag( "Coconuts", 1 ); 		// If set to 1, there are apples to be picked, if 0 there are no ripe apples
-		iUsed.SetTag( "CoconutCounter", maxResource ); 	// Add 5 apples to the tree initially
+		iUsed.SetTag( "CoconutCounter", maxCoconutResource ); 	// Add 5 apples to the tree initially
 	}
 	var coconuts = iUsed.GetTag( "Coconuts" );
 	var coconutCount = iUsed.GetTag( "CoconutCounter" );
@@ -54,7 +54,7 @@ function onUseChecked( pUser, iUsed )
 		    if( coconutCount == 0 )
 			{
 				iUsed.SetTag( "Coconuts", 0 );
-				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time coconuts respawn
+				iUsed.StartTimer( coconutGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time coconuts respawn
 			}
 		}
 	}
@@ -65,7 +65,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag( "CoconutCounter", maxResource );
+		iUsed.SetTag( "CoconutCounter", maxCoconutResource );
 		iUsed.SetTag( "Coconuts", 1 );
 	}
 }

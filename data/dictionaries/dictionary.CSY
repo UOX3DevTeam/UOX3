@@ -2458,6 +2458,18 @@
 2585=Do nádoby naliješ trochu moštu.
 2586=Nalijte do nádoby trochu alkoholu.
 2587=Nalijete do sklenice trochu vína.
+2588=Tyto mrkve ještě nejsou zralé ke sklizni.
+2589=Nepodařilo se ti sklidit žádnou mrkev.
+2590=Sklidil jsi jednu mrkev.
+2591=Tyto cibule ještě nejsou zralé ke sklizni.
+2592=Nepodařilo se ti sklidit žádnou cibuli.
+2593=Sklidil jsi jednu cibuli.
+2594=Tato řepa ještě není zralá ke sklizni.
+2595=Nepodařilo se ti sklidit žádnou řepu.
+2596=Sklidil jsi řepu.
+2597=Tento zelí ještě není zralé ke sklizni.
+2598=Nepodařilo se ti sklidit žádné zelí.
+2599=Sklidil jsi zelí.
 // [2600-2699] Player/NPC/Spawn Admin Script
 2600=Vybraná NPC (%s, %i) byla odstraněna.
 2601=Upozornění: U postavy nebyl nalezen žádný batoh!
@@ -2975,6 +2987,7 @@
 3574=duch čepele
 3605=elfský muž
 3606=elfka
+3637=spektrální brnění
 3666=chrlič muž
 3667=samice chrliče
 3689=Vládce času
@@ -3300,6 +3313,7 @@
 5156=cikánský věštec
 5157=tulák
 5158=železný dělník
+5159=tropický pták
 // [5500-5600] Holiday Msgs
 5500=Kam chcete umístit tuto dekoraci?
 5501=Dekorace musí být umístěna vedle zdi.
@@ -4097,7 +4111,7 @@
 8944=Nezdá se, že by to bylo platné NPC-id z DFN.
 8945=Zvolte cíl pro pohyblivý status %i:
 8946=Vyberte cíl, který má být nastaven jako nerozložitelný:
-// [9000-9500] Misc
+// [9000-9499] Misc
 9000=Tuto schopnost nemůžete použít, když jste zmrzlí.
 9001=Tato postava nesmí létat!
 9002=Byl jsi pozván do party, zadej /přijmout nebo /odmítnout a vyřiď pozvání.
@@ -4367,6 +4381,28 @@
 9410=Naučili jste se těžit jemný písek. Při těžbě se zaměřte na pískové oblasti a hledejte jemný písek.
 9411=Naučil jste se těžit kameny. Zaměřte se na hory při těžbě, abyste našli kameny.
 9412=Není zde žádný písek k těžbě.
+// [9500-9550] Sběr různých surovin
+9500=Tato tykev ještě není zralá ke sklizni.
+9501=Nepodařilo se ti sklidit žádnou tykev.
+9502=Sklidil jsi jednu tykev.
+9503=Tato dýně ještě není zralá ke sklizni.
+9504=Nepodařilo se ti nasbírat žádné dýně.
+9505=Sklidil jsi jednu dýni.
+9506=Tato tykev ještě není zralá ke sklizni.
+9507=Nepodařilo se ti nasbírat žádné tykve.
+9508=Sklidil jsi jednu tykev.
+9509=Tento meloun ještě není zralý ke sklizni.
+9510=Nepodařilo se ti utrhnout žádný meloun.
+9511=Sklidil jsi meloun.
+9512=Tento meloun ještě není zralý ke sklizni.
+9513=Nepodařilo se ti utrhnout žádný meloun.
+9514=Sklidil jsi meloun.
+9515=Tento meloun ještě není zralý ke sklizni.
+9516=Nepodařilo se ti utrhnout žádný meloun.
+9517=Sklidil jsi meloun.
+9518=Tento česnek ještě není zralý ke sklizni.
+9519=Nepodařilo se ti utrhnout žádný česnek.
+9520=Sklidil jsi česnek.
 // [9800-9899] Spawner Editor
 9800=Editor objektů Spawner
 9801=Jméno spouštěče
@@ -4754,6 +4790,7 @@
 11467=kostěné paže
 11468=kostěné legíny
 11469=kostěná zbroj
+11470=vysoký slaměný klobouk
 // 11601 - 11800 Řemeslná dovednost vaření
 11601=VAŘENÍ MENU
 11602=Ingredience

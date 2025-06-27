@@ -21,7 +21,7 @@ function onBoughtFromVendor( pSock, npcShopkeep, iBought, iAmount )
 		return false;
 
 	// Give player a discount for purchased items if member of same guild as shopkeeper
-	if( enableNPCGuildDiscounts && pChar.npcGuild == npcShopkeep.npcGuild )
+	if( enableNPCGuildDiscounts && pChar.npcGuild != 0 && pChar.npcGuild == npcShopkeep.npcGuild )
 	{
 		npcShopkeep.TextMessage( GetDictionaryEntry( 17618, pSock.language )); // As a fellow guild member, you qualify for a discount!
 		var itemCost = iBought.buyvalue * iAmount;
@@ -82,7 +82,7 @@ function onSoldToVendor( pSock, npcShopkeep, iSold, iAmount )
 		{
 			npcShopkeep.TextMessage( GetDictionaryEntry( 17619, pSock.language )); // As a fellow guild member, I can give you a premium price for this!
 			var itemValue = iSold.sellvalue * iAmount;
-			var bonusAmount = Math.round( itemValue * 1.1 );
+			var bonusAmount = Math.round( itemValue * 0.1 );
 			var goldBonus = CreateDFNItem( pSock, pChar, "0x0eed", bonusAmount, "ITEM", true );
 			if( ValidateObject( goldBonus ))
 			{

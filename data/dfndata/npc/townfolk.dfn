@@ -1,5 +1,5 @@
 //[actor]
-//{Note: Not implanted Yet
+//{Note: Not implemented Yet
 //GET=m_actor f_actor
 //}
 
@@ -18,8 +18,13 @@ GET=m_brigand f_brigand
 GET=m_beggar f_beggar
 }
 
+[peasant]
+{
+GET=m_peasant f_peasant
+}
+
 //[cashual]
-//{Note: Not Implanted Yet
+//{Note: Not Implemented Yet
 //GET=m_cashual f_cashual
 //}
 
@@ -49,7 +54,7 @@ GET=m_gambler f_gambler
 }
 
 //[glassblower]
-//{Note: Not Implanted Yet
+//{Note: Not Implemented Yet
 //GET=m_glassblower f_glassblower
 //}
 
@@ -79,7 +84,7 @@ GET=m_judge f_judge
 }
 
 //[laborer]
-//{Note: Not Implanted Yet
+//{Note: Not Implemented Yet
 //GET=m_laborer f_laborer
 //}
 
@@ -89,12 +94,12 @@ GET=m_mayor f_mayor
 }
 
 //[miller]
-//{Note: Not Implanted Yet
+//{Note: Not Implemented Yet
 //GET=m_miller f_miller
 //}
 
 //[minter]
-//{Note: Not Implanted Yet
+//{Note: Not Implemented Yet
 //GET=m_minter f_minter
 //}
 
@@ -124,7 +129,7 @@ GET=m_pirate f_pirate
 }
 
 //[priest]
-//{Note: Not Implanted Yet
+//{Note: Not Implemented Yet
 //GET=m_priest f_priest
 //}
 
@@ -144,7 +149,7 @@ GET=m_sailor f_sailor
 }
 
 //[scholar]
-//{Note: Not Implanted Yet
+//{Note: Not Implemented Yet
 //GET=m_scholar f_scholar
 //}
 
@@ -154,7 +159,7 @@ GET=m_sculptor f_sculptor
 }
 
 //[servant]
-//{Note: Not Implanted Yet
+//{Note: Not Implemented Yet
 //GET=m_servant f_servant
 //}
 

@@ -50,6 +50,11 @@ NAME=#//a dragon
 ID=0x003b
 }
 
+[dragon]
+{
+GET=graydragon reddragon
+}
+
 [graydrake]
 {
 NAME=#//a drake
@@ -95,6 +100,11 @@ SCRIPT=3300
 GET=graydrake
 NAME=#//a drake
 ID=0x003d
+}
+
+[drake]
+{
+GET=graydrake reddrake
 }
 
 [shadowwyrm]

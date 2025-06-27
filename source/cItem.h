@@ -318,7 +318,7 @@ public:
 	auto			UpdateRegion() -> void;
 
 	auto			TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0x005A ) -> void;
-	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) override;
+	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true, bool triggerInRangeEvent = false ) override;
 	virtual void	SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) override;
 	auto			SendPackItemToSocket( CSocket *mSock ) -> void;
 	virtual void	RemoveFromSight( CSocket *mSock = nullptr );

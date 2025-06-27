@@ -156,7 +156,7 @@ auto CItem::GetCont( void ) const -> CBaseObject *
 //o------------------------------------------------------------------------------------------------o
 auto CItem::GetContSerial( void ) const -> SERIAL
 {
-	if( contObj != nullptr )
+	if( ValidateObject( contObj ) && contObj != nullptr )
 		return contObj->GetSerial();
 
 	return INVALIDSERIAL;
@@ -2734,7 +2734,7 @@ auto CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send this item to specified socket or all online people in range
 //o------------------------------------------------------------------------------------------------o
-void CItem::Update( [[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGamePlayer, [[maybe_unused]] bool sendToSelf )
+void CItem::Update( [[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGamePlayer, [[maybe_unused]] bool sendToSelf, [[maybe_unused]] bool triggerInRangeEvent )
 {
 	if( GetType() == IT_TRADEWINDOW )
 		return;
@@ -3000,6 +3000,9 @@ void CItem::RemoveFromSight( CSocket *mSock )
 		else
 		{
 			// Iterate through list of players who have opened the container the item was in
+			if( !ValidateObject( iCont ))
+				return;
+
 			auto itemCont = static_cast<CItem *>( iCont );
 			auto contOpenedByList = itemCont->GetContOpenedByList();
 			for( const auto &oSock : contOpenedByList->collection() )

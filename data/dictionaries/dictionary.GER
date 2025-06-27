@@ -2458,6 +2458,18 @@
 2585=Sie schütten etwas Apfelwein in den Behälter.
 2586=Sie schütten etwas Likör in den Behälter.
 2587=Sie schütten etwas Wein in das Glas.
+2588=Diese Karotten sind noch nicht reif für die Ernte.
+2589=Du hast keine Karotten geerntet.
+2590=Du erntest eine Karotte.
+2591=Diese Zwiebeln sind noch nicht reif für die Ernte.
+2592=Du hast keine Zwiebeln geerntet.
+2593=Du erntest eine Zwiebel.
+2594=Diese Rübe ist noch nicht reif für die Ernte.
+2595=Du kannst keine Rüben ernten.
+2596=Du erntest eine Rübe.
+2597=Dieser Kohl ist noch nicht reif für die Ernte.
+2598=Du kannst keinen Kohl ernten.
+2599=Du erntest einen Kohl.
 // [2600-2699] Player/NPC/Spawn Admin Script
 2600=Ausgewählter NPC (%s, %i) wurde entfernt.
 2601=Warnung: Kein Rucksack am Charakter gefunden!
@@ -2977,6 +2989,7 @@
 3574=ein Klingengeist
 3605=ein männlicher Elf
 3606=Elfe weiblich
+3637=eine spektrale Rüstung
 3666=ein männlicher Gargoyle
 3667=ein Gargoyle weiblich
 3689=Zeitfürst
@@ -3302,6 +3315,7 @@
 5156=die Zigeuner-Wahrsagerin
 5157=der Vagabund
 5158=der Eisenarbeiter
+5159=ein tropischer Vogel
 // [5500-5600] Feiertagsnachrichten
 5500=Wo möchten Sie diese Dekoration platzieren?
 5501=Die Dekoration muss neben einer Wand platziert werden.
@@ -4099,7 +4113,7 @@
 8944=Das scheint keine gültige NPC-ID aus den DFNs zu sein.
 8945=Ziel für beweglichen Status auswählen %i:
 8946=Ziel wählen, das als nicht verfallbar eingestuft werden soll:
-// [9000-9500] Misc
+// [9000-9499] Misc
 9000=Diese Fähigkeit kann nicht verwendet werden, wenn sie eingefroren ist.
 9001=Diesem Charakter ist es nicht erlaubt, zu fliegen!
 9002=Sie wurden eingeladen, einer Gruppe beizutreten, geben Sie /accept oder /decline ein, um die Einladung zu bearbeiten
@@ -4369,6 +4383,28 @@
 9410=Du hast gelernt, wie man feinen Sand abbaut. Zielen Sie beim Abbau auf Sandflächen ab, um nach Feinsand zu suchen.
 9411=Du hast gelernt, Steine abzubauen. Zielen Sie beim Bergbau auf Berge, um Steine zu finden.
 9412=Hier gibt es keinen Sand zum Abbauen.
+// [9500-9550] Verschiedene Ressourcenernte
+9500=Dieser Kürbis ist noch nicht reif für die Ernte.
+9501=Du hast keinen Kürbis gepflückt.
+9502=Du hast einen Kürbis geerntet.
+9503=Dieser Kürbis ist noch nicht reif für die Ernte.
+9504=Du kannst keine Kürbisse pflücken.
+9505=Du erntest einen Kürbis.
+9506=Dieser Kürbis ist noch nicht reif für die Ernte.
+9507=Du kannst keine Kürbisse pflücken.
+9508=Du erntest einen Kürbis.
+9509=Diese Wassermelone ist noch nicht reif für die Ernte.
+9510=Du hast keine Wassermelonen gepflückt.
+9511=Du erntest eine Wassermelone.
+9512=Diese Honigmelone ist noch nicht reif für die Ernte.
+9513=Du hast keine Honigmelonen gepflückt.
+9514=Du erntest eine Honigmelone.
+9515=Diese Cantaloupe-Melone ist noch nicht reif für die Ernte.
+9516=Du kannst keine Cantaloupe-Melonen pflücken.
+9517=Du erntest eine Cantaloupe-Melone.
+9518=Dieser Knoblauch ist noch nicht reif für die Ernte.
+9519=Du kannst keinen Knoblauch pflücken.
+9520=Du erntest eine Knoblauchknolle.
 // [9800-9899] Spawner-Editor
 9800=Spawner-Objekteditor
 9801=Spawner-Name
@@ -4756,6 +4792,7 @@
 11467=Knochenarme
 11468=Knochen-Leggins
 11469=Knochenpanzer
+11470=hoher Strohhut
 // 11601 - 11800 Handwerkliche Fertigkeit des Kochens
 11601=KOCHMENÜ
 11602=Zutaten

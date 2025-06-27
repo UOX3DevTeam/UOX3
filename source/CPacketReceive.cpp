@@ -4628,7 +4628,7 @@ bool CPIPopupMenuRequest::Handle( void )
 		}
 	}
 
-	if( !LineOfSight( tSock, tSock->CurrcharObj(), myObj->GetX(), myObj->GetY(), ( myObj->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+	if( !LineOfSight( tSock, tSock->CurrcharObj(), myObj->GetX(), myObj->GetY(), myObj->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 		return true;
 
 	CPPopupMenu toSend(( *myObj ), ( *tSock ));

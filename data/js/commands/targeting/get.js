@@ -217,6 +217,9 @@ function onCallback0( socket, ourObj )
 	case "SECTIONID":
 		socket.SysMessage( ourObj.sectionID );
 		break;
+	case "SPAWNSERIAL":
+		socket.SysMessage( ourObj.spawnSerial );
+		break;
 	case "SWINGSPEEDINC":
 		socket.SysMessage( ourObj.swingSpeedIncrease );
 		break;

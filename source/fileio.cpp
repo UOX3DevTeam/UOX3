@@ -178,7 +178,7 @@ void LoadSkills( void )
 void LoadSpawnRegions( void )
 {
 	cwmWorldState->spawnRegions.clear();
-	UI16 i = 0;
+	UI16 spawnRegionId = 0;
 	for( Script *spnScp = FileLookup->FirstScript( spawn_def ); !FileLookup->FinishedScripts( spawn_def ); spnScp = FileLookup->NextScript( spawn_def ))
 	{
 		if( spnScp == nullptr )
@@ -193,15 +193,24 @@ void LoadSpawnRegions( void )
 			auto ssecs = oldstrutil::sections( sectionName, " " );
 			if( "REGIONSPAWN" == ssecs[0] ) // Is it a region spawn entry?
 			{
-				i = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
-				if( cwmWorldState->spawnRegions.find( i ) == cwmWorldState->spawnRegions.end() )
+				spawnRegionId = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+				if( cwmWorldState->spawnRegions.find( spawnRegionId ) == cwmWorldState->spawnRegions.end() )
 				{
-					cwmWorldState->spawnRegions[i] = new CSpawnRegion( i );
-					cwmWorldState->spawnRegions[i]->Load( toScan );
+					CSpawnRegion* newSpawnRegion = new CSpawnRegion( spawnRegionId );
+					if( newSpawnRegion->Load( toScan ))
+					{
+						// Valid!
+						cwmWorldState->spawnRegions[spawnRegionId] = newSpawnRegion;
+					}
+					else
+					{
+						// Invalid! Era don't match up
+						delete newSpawnRegion;
+					}
 				}
 				else
 				{
-					Console.Warning( oldstrutil::format( "spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", i ));
+					Console.Warning( oldstrutil::format( "spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", spawnRegionId ));
 				}
 			}
 		}

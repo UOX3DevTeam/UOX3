@@ -441,7 +441,7 @@ void CCharStuff::PostSpawnUpdate( CChar *cCreated )
 	cCreated->SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R64>( hungerRate )));
 
 	UpdateFlag( cCreated );
-	cCreated->Update();
+	cCreated->Update( nullptr, false, true, true );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1597,7 +1597,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_PRIV:
 				if( !isGate )
 				{
-					applyTo->SetPriv( static_cast<UI16>( ndata ));
+					applyTo->SetPriv( static_cast<UI32>( ndata ));
 				}
 				break;
 			case DFNTAG_PARRYING:			skillToSet = PARRYING;					break;
@@ -2053,7 +2053,7 @@ bool CCharStuff::CanControlPet( CChar *mChar, CChar *Npc, bool isRestricted, boo
 			if( chanceToControl == 1000 )
 				return true;
 
-			if( chanceToControl >= RandomNum( 0, 1000 ))
+			if( chanceToControl >= RandomNum( 1, 1000 ))
 			{
 				// Succeeded in controlling pet
 				if( !ignoreLoyaltyChanges )

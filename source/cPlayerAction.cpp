@@ -2449,7 +2449,10 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	std::string skillProwessTitle;
 	std::string fameTitle;
 	GetSkillProwessTitle( pdoll, skillProwessTitle );
-	GetFameTitle( pdoll, fameTitle );
+	if( !pdoll->HideFameKarmaTitle() )
+	{
+		GetFameTitle( pdoll, fameTitle );
+	}
 
 	bool bContinue = false;
 	if( pdoll->IsGM() )

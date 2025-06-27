@@ -79,6 +79,7 @@ const UI32 BIT_DISPELLABLE		=	12; // 0x1000
 const UI32 BIT_TEMPREFLECTED	=	13; // 0x2000
 const UI32 BIT_NONEEDREAGS		=	14; // 0x4000
 const UI32 BIT_PERMREFLECTED	=	15; // 0x8000
+const UI32 BIT_FAMEKARMATITLE	=	16; // 0x10000
 
 // Character Bools
 const UI32 BIT_UNICODE			=	1;
@@ -116,10 +117,12 @@ const UI32 BIT_HIRELING			=	32;
 const UI32 BIT_ISPASSIVE		=	33;
 const UI32 BIT_HASSTOLEN		=	34;
 const UI32 BIT_KARMALOCK		=	35;
+const UI32 BIT_ISCLIMBING		=	36;
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
 const UI32 BIT_AWAKE			=   2;
+const UI32 BIT_COMBATLOS		=	3;
 
 // Player defaults
 
@@ -324,10 +327,20 @@ npcGuild( DEFCHAR_NPCGUILD )
 	bools.set( BIT_CANATTACK, true );
 	//SetKarmaLock( false );
 	bools.set( BIT_KARMALOCK, false );
+	bools.set( BIT_ISCLIMBING, false );
 	//SetBrkPeaceChanceGain( 0 );
 	brkPeaceChanceGain = 0;
 	//SetBrkPeaceChance( 0 );
 	brkPeaceChance = 0;
+
+	// Initialize the hunger rate of the new character, default to global setting
+	auto hungerRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE );
+	if( Races->DoesHunger( GetRace() ))
+	{
+		// Override with setting from race, if applicable
+		hungerRate	 = Races->GetHungerRate( GetRace() );
+	}
+	SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -617,7 +630,7 @@ void CChar::DoHunger( CSocket *mSock )
 					// Make pet more hungry
 					DecHunger();
 				}
-				else if( GetLoyalty() == 0 && static_cast<UI08>(RandomNum( 0, 100 )) <= GetTamedHungerWildChance() )
+				else if( GetLoyalty() == 0 && static_cast<UI08>(RandomNum( 1, 100 )) <= GetTamedHungerWildChance() )
 				{
 					// Make pet go wild from hunger, but only if loyalty is zero
 					CChar *owner = GetOwnerObj();
@@ -1114,6 +1127,11 @@ bool CChar::IsAtWar( void ) const
 void CChar::SetWar( bool newValue )
 {
 	bools.set( BIT_ATWAR, newValue );
+	if( GetSocket() != nullptr )
+	{
+		CPWarMode wMode( newValue ? 1 : 0 );
+		GetSocket()->Send( &wMode );
+	}
 	UpdateRegion();
 
 	if( !IsNpc() )
@@ -1470,6 +1488,21 @@ bool CChar::InBuilding( void )
 void CChar::SetInBuilding( bool newValue )
 {
 	bools.set( BIT_INBUILDING, newValue );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::IsClimbing()
+//|					CChar::IsClimbing()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the character is currently climbing (a ladder)
+//o------------------------------------------------------------------------------------------------o
+bool CChar::IsClimbing( void ) const
+{
+	return bools.test( BIT_ISCLIMBING );
+}
+void CChar::IsClimbing( bool newValue )
+{
+	bools.set( BIT_ISCLIMBING, newValue );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1979,11 +2012,11 @@ void CChar::SetSpellCast( SI08 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's special privileges
 //o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetPriv( void ) const
+UI32 CChar::GetPriv( void ) const
 {
-	return static_cast<UI16>( priv.to_ulong() );
+	return static_cast<UI32>( priv.to_ulong() );
 }
-void CChar::SetPriv( UI16 newValue )
+void CChar::SetPriv( UI32 newValue )
 {
 	priv = newValue;
 	UpdateRegion();
@@ -2352,6 +2385,21 @@ bool CChar::NoNeedReags( void ) const
 void CChar::SetNoNeedReags( bool newValue )
 {
 	priv.set( BIT_NONEEDREAGS, newValue );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::HideFameKarmaTitle()
+//|					CChar::HideFameKarmaTitle()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Checks/Sets whether fame/karma titles should show for character
+//o------------------------------------------------------------------------------------------------o
+bool CChar::HideFameKarmaTitle( void ) const
+{
+	return priv.test( BIT_FAMEKARMATITLE );
+}
+void CChar::HideFameKarmaTitle( bool newValue )
+{
+	priv.set( BIT_FAMEKARMATITLE, newValue );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2791,7 +2839,7 @@ auto CChar::Teleport() -> void
 {
 	CSocket *mSock = GetSocket();
 	RemoveFromSight();
-	Update( nullptr, true );
+	Update( nullptr, true, true, false );
 	if( mSock != nullptr )
 	{
 		UI16 visrange = mSock->Range() + Races->VisRange( GetRace() );
@@ -2887,7 +2935,7 @@ void CChar::ExposeToView( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends update to all those in range
 //o------------------------------------------------------------------------------------------------o
-void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
+void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf, bool triggerInRangeEvent )
 {
 	if( mSock != nullptr )
 	{
@@ -2904,6 +2952,12 @@ void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 					SendToSocket( tSock, drawGamePlayer );
 				}
 				SendToSocket( tSock, drawGamePlayer );
+
+				if( triggerInRangeEvent && tSock->CurrcharObj() != this )
+				{
+					Movement->DoJSInRange( this, tSock->CurrcharObj() );
+					Movement->DoJSInRange( tSock->CurrcharObj(), this );
+				}
 			}
 		}
 	}
@@ -2981,11 +3035,15 @@ bool CChar::WearItem( CItem *toWear )
 	ItemLayers tLayer = toWear->GetLayer();
 	if( tLayer != IL_NONE )	// Layer == 0 is a special case, for things like trade windows and such
 	{
-		if( ValidateObject( GetItemAtLayer( tLayer )))
+		auto itemAtLayer = GetItemAtLayer( tLayer );
+		if( ValidateObject( itemAtLayer ))
 		{
 #if defined( UOX_DEBUG_MODE )
-			std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
-			Console.Warning( oldstrutil::format( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section [%s]) - another item (%s) is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial, GetSectionId().c_str(), GetItemAtLayer( tLayer )->GetName().c_str() ));
+			if( itemAtLayer->GetSectionId() != toWear->GetSectionId() )
+			{
+				std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
+				Console.Warning( oldstrutil::format( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section [%s]) - another item (%s) is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial, GetSectionId().c_str(), itemAtLayer->GetName().c_str() ));
+			}
 #endif
 			rValue = false;
 		}
@@ -3001,7 +3059,7 @@ bool CChar::WearItem( CItem *toWear )
 			IncStaminaRegenBonus( itemLayers[tLayer]->GetStaminaRegenBonus() );
 			IncManaRegenBonus( itemLayers[tLayer]->GetManaRegenBonus() );
 
-      IncSwingSpeedIncrease( itemLayers[tLayer]->GetSwingSpeedIncrease() );
+			IncSwingSpeedIncrease( itemLayers[tLayer]->GetSwingSpeedIncrease() );
 
 			IncHealthLeech( itemLayers[tLayer]->GetHealthLeech() );
 			IncStaminaLeech( itemLayers[tLayer]->GetStaminaLeech() );
@@ -6322,6 +6380,30 @@ void CChar::SetStabled( bool newValue )
 	{
 		mNPC->boolFlags.set( BIT_STABLED, newValue );
 		UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetCombatLos()
+//|					CChar::HasCombatLos()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets whether character currently has Line-of-Sight to target in combat
+//o------------------------------------------------------------------------------------------------o
+bool CChar::GetCombatLos( void ) const
+{
+	bool rVal = false;
+	if( IsValidNPC() )
+	{
+		rVal = mNPC->boolFlags.test( BIT_COMBATLOS );
+	}
+
+	return rVal;
+}
+void CChar::SetCombatLos( bool newValue )
+{
+	if( IsValidNPC() )
+	{
+		mNPC->boolFlags.set( BIT_COMBATLOS, newValue );
 	}
 }
 

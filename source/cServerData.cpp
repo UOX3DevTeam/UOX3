@@ -399,7 +399,8 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"GARGOYLEMANAREGENBONUS"s, 376},
 	{"HUMANMAXWEIGHTBONUS"s, 377},
 	{"ELFMAXWEIGHTBONUS"s, 378},
-	{"GARGOYLEMAXWEIGHTBONUS"s, 379}
+	{"GARGOYLEMAXWEIGHTBONUS"s, 379},
+	{"MAXNPCAGGRORANGE"s, 380}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -660,6 +661,7 @@ auto CServerData::ResetDefaults() -> void
 	KarmaLocking( true );
 	CombatMaxRange( 10 );
 	CombatMaxSpellRange( 10 );
+	CombatMaxNpcAggroRange( 10 );
 
 	// load defaults values
 	SystemTimer( tSERVER_SHOPSPAWN, 300 );
@@ -1012,14 +1014,14 @@ auto CServerData::ResetDefaults() -> void
 	// Disable spawn regions for all facets by default
 	SetSpawnRegionsFacetStatus( 0 );
 
-    // Enable Felucca by default
-    SetMoongateFacetStatus( 0, true );
+	// Enable Felucca by default
+	SetMoongateFacetStatus( 0, true );
 
-    // Enable Trammel by default
-    SetMoongateFacetStatus( 1, true );
+	// Enable Trammel by default
+	SetMoongateFacetStatus( 1, true );
 
-    // Enable Ilshenar by default
-    SetMoongateFacetStatus( 2, true );
+	// Enable Ilshenar by default
+	SetMoongateFacetStatus( 2, true );
 
 	// Set no assistant features as disabled by default
 	SetDisabledAssistantFeature( AF_ALL, false );
@@ -4536,6 +4538,20 @@ auto CServerData::CombatMaxSpellRange( SI16 value ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::CombatMaxNpcAggroRange()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the maximum range at which NPCs can aggro targets on their own
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::CombatMaxNpcAggroRange() const -> SI16
+{
+	return combatMaxNpcAggroRange;
+}
+auto CServerData::CombatMaxNpcAggroRange( SI16 value ) -> void
+{
+	combatMaxNpcAggroRange = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatAnimalsGuarded()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether animals are under the protection of town guards or not
@@ -5596,6 +5612,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << '\n' << "[combat]" << '\n' << "{" << '\n';
 		ofsOutput << "MAXRANGE=" << CombatMaxRange() << '\n';
 		ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << '\n';
+		ofsOutput << "MAXNPCAGGRORANGE=" << CombatMaxNpcAggroRange() << '\n';
 		ofsOutput << "DISPLAYHITMSG=" << ( CombatDisplayHitMessage() ? 1 : 0 ) << '\n';
 		ofsOutput << "DISPLAYDAMAGENUMBERS=" << ( CombatDisplayDamageNumbers() ? 1 : 0 ) << '\n';
 		ofsOutput << "MONSTERSVSANIMALS=" << ( CombatMonstersVsAnimals() ? 1 : 0 ) << '\n';
@@ -7185,6 +7202,9 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 379:	// GARGOYLEMAXWEIGHTBONUS
 			GargoyleMaxWeightBonus( std::stoi( value, nullptr, 0 ));
+			break;
+		case 380:	 // MAXNPCAGGRORANGE
+			CombatMaxNpcAggroRange( static_cast<SI16>( std::stoi( value, nullptr, 0 )));
 			break;
 		default:
 			rValue = false;

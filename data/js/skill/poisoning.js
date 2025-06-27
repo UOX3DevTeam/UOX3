@@ -46,13 +46,16 @@ function onCallback1( pSock, ourObj )
 		var ourHiDmg 	= ourObj.hidamage;
 		var ourID		= ourObj.id;
 
+		var weaponType = TriggerEvent( 2500, "GetWeaponType", pUser, null );
+		var weaponCombatSkill = TriggerEvent( 2500, "GetCombatSkill", weaponType );
 		if( ourLoDmg == 0 && ourHiDmg == 0 && ourObj.type != 14 )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 1648, pLanguage )); // You can only poison weapons and food
 		}
-		else if(( ourID >= 0x0F4F && ourID <= 0x0F50 ) || ( ourID >= 0x13B1 && ourID <= 0x13B2 ) || ( ourID >= 0x13FC && ourID <= 0x13FD ))
+		else if( weaponCombatSkill != "SWORDSMANSHIP" && weaponCombatSkill != "FENCING" && weaponType != "BLOWGUNS" )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 1647, pLanguage )); // Bows cannot be poisoned
+			// TODO: Beyond ~Publish 46, only weapons that possess the Infectious Strike move can be poisoned
+			pSock.SysMessage( "You cannot poison that! You can only poison bladed or piercing weapons, food or drink." );
 		}
 		else
 		{
@@ -76,11 +79,20 @@ function onCallback1( pSock, ourObj )
 					return;
 				}
 				ourObj.poison = pPotion.morez;
+				ourObj.poisonCharges = 18 - ( pPotion.morez * 2 );
 				pSock.SysMessage( GetDictionaryEntry( 919, pLanguage )); // You successfully poison that item.
 			}
 			else
 			{
 				pSock.SysMessage( GetDictionaryEntry( 1649, pLanguage )); // You fail to apply the poison.
+
+				// 5% chance to poison self on failure, with a dosage lower than the poison used
+				if( pUser.skills.poisoning < 800 && RandomNumber( 1, 20 ) == 1 )
+				{
+					// You make a grave mistake while applying the poison.
+					pSock.SysMessage( GetDictionaryEntry( 1352, socket.language )); //You poisoned yourself! *sigh*
+					pUser.SetPoisoned( Math.max( 1, ourObj.poison - 1 ), 180 * 1000 );
+				}
 			}
 
 			pUser.SoundEffect( 0x0247, true );

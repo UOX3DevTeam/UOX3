@@ -136,10 +136,22 @@ struct SEGumpData_st
 	std::vector<SI16>			nIDs;
 };
 
+// A simple struct to pass error details from the JS Error Reporter
+// back to the main C++ thread.
+struct JSErrorInfo
+{
+	std::string message;
+	std::string filename;
+	std::string lineSource;
+	std::string tokenPointer;
+	uintN lineNum = 0;
+};
+
 class cScript
 {
 private:
 
+	//JSErrorInfo			errorInfo;
 	JSScript *			targScript;
 	JSContext *			targContext;
 	JSObject *			targObject;

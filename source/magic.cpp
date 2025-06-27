@@ -167,10 +167,22 @@ bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, 
 	CItem *i = nullptr;
 	UI08 worldNumber = caster->WorldNumber();
 	UI16 instanceId = caster->GetInstanceId();
-	for( UI08 j = 0; j < 5; ++j )		// how about we make this 5, huh?  missing part of the field
+	for( UI08 j = 0; j < 5; ++j )
 	{
 		if( id != 0x0080 || ( id == 0x0080 && !Movement->CheckForCharacterAtXYZ( caster, fx[j], fy[j], z )))
 		{
+			// Don't allow field spells to be placed on top of blocking dynamic/static items
+			if( Map->DoesDynamicBlock( fx[j], fy[j], z, worldNumber, instanceId, false, false, false, true ))
+				continue;
+
+			if( Map->DoesStaticBlock( fx[j], fy[j], z, worldNumber, false ))
+				continue;
+
+			// Don't allow field spells cast outside a house to appear inside the house
+			CMultiObj *mMulti = FindMulti( fx[j], fy[j], z, worldNumber, instanceId );
+			if( ValidateObject( mMulti ) && mMulti != caster->GetMultiObj() )
+				continue;
+
 			i = Items->CreateItem( nullptr, caster, id, 1, 0, OT_ITEM );
 			if( i != nullptr )
 			{
@@ -1205,7 +1217,7 @@ bool splDispelField( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpel
 	CItem *i = CalcItemObjFromSer( sock->GetDWord( 7 ));
 	if( ValidateObject( i ))
 	{
-		if( LineOfSight( sock, caster, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
+		if( LineOfSight( sock, caster, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
 		{
 			if( i->IsDecayable() && i->IsDispellable() )
 			{
@@ -1483,7 +1495,7 @@ bool splDispel( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[may
 			}
 
 			UI16 dispelChance = std::max( static_cast<UI16>( 950 ), ( static_cast<UI16>( std::max( 0.0, static_cast<double>( std::ceil( static_cast<double>( 500 - ( targetResist - casterMagery )) / 1.5 ))))));
-			if( dispelChance > RandomNum( 0, 1000 ))
+			if( dispelChance > RandomNum( 1, 1000 ))
 			{
 				// Dispel succeeded!
 				if( Magic->spells[41].Effect() != INVALIDID )
@@ -1751,7 +1763,7 @@ bool splParalyzeField( [[maybe_unused]] CSocket *sock, CChar *caster, UI08 field
 //o------------------------------------------------------------------------------------------------o
 auto splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, [[maybe_unused]] SI08 curSpell ) -> bool
 {
-	if( LineOfSight( sock, caster, x, y, ( z + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
+	if( LineOfSight( sock, caster, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
 	{
 		UI16 j = caster->GetSkill( MAGERY );
 		SI32 revealRange = ((( j - 261 ) * ( 15 )) / 739 ) + 5;
@@ -2054,7 +2066,7 @@ void MassDispelStub( CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpel
 			}
 
 			UI16 dispelChance = static_cast<UI16>( std::max( static_cast<UI16>( 950 ),  static_cast<UI16>( std::ceil(( 500 - ( targetResist - casterMagery )) / 1.5 ))));
-			if( dispelChance > RandomNum( 0, 1000 ))
+			if( dispelChance > RandomNum( 1, 1000 ))
 			{
 				// Dispel succeeded!
 				if( Magic->spells[41].Effect() != INVALIDID )
@@ -2185,7 +2197,7 @@ auto AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 					if( tempChar->GetX() >= x1 && tempChar->GetX() <= x2 && tempChar->GetY() >= y1 && tempChar->GetY() <= y2 &&
 					   tempChar->GetZ() >= z1 && tempChar->GetZ() <= z2 && ( IsOnline(( *tempChar )) || tempChar->IsNpc() )) 
 					  {
-						if( tempChar == caster || LineOfSight( sock, caster, tempChar->GetX(), tempChar->GetY(), ( tempChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false  ) || caster->IsGM() )
+						if( tempChar == caster || LineOfSight( sock, caster, tempChar->GetX(), tempChar->GetY(), tempChar->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false  ) || caster->IsGM() )
 						{
 							//Store target candidates in targetList
 							targetList.push_back( tempChar );
@@ -4370,6 +4382,71 @@ UI08 CMagic::GetFieldDir( CChar *s, SI16 x, SI16 y )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CMagic::ConsumeSpellResources()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles mana/health/stamina and reagent consumption for spellcasting
+//o------------------------------------------------------------------------------------------------o
+void CMagic::ConsumeSpellResources( CSocket *s, CChar *caster, SI08 curSpell )
+{
+	// Consume mana/health/stamina for the spellcast attempt, if 
+	// caster is an NPC or spelltype is spellbook or scrolls
+	bool validSocket = ( s != nullptr );
+	if( caster->IsNpc() || ( validSocket && ( s->CurrentSpellType() != 2 )))
+	{
+		SubtractMana( caster, spells[curSpell].Mana() );
+		if( spells[curSpell].Health() > 0 )
+		{
+			SubtractHealth( caster, spells[curSpell].Health(), curSpell );
+		}
+		SubtractStamina( caster, spells[curSpell].Stamina() );
+	}
+
+	// Consume reagents for the spellcast attempt
+	if( validSocket && s->CurrentSpellType() == 0 && !caster->IsNpc() )
+	{
+		DelReagents( caster, spells[curSpell].Reagants() );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CMagic::CheckMagicSkill()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles skill checks for spellcasting
+//o------------------------------------------------------------------------------------------------o
+bool CMagic::CheckMagicSkill( CSocket *s, CChar *caster, SI08 curSpell )
+{
+	bool validSocket = ( s != nullptr );
+	SI16 lowSkill = 0, highSkill = 0;
+	if( validSocket && s->CurrentSpellType() == 1 && cwmWorldState->ServerData()->CutScrollRequirementStatus() ) // only if enabled
+	{
+		lowSkill	= spells[curSpell].ScrollLow();
+		highSkill	= spells[curSpell].ScrollHigh();
+	}
+	else
+	{
+		lowSkill	= spells[curSpell].LowSkill();
+		highSkill	= spells[curSpell].HighSkill();
+	}
+
+	// Do the skill check, and fizzle if player fails
+	if( !caster->IsNpc() && !caster->IsGM() && ( !Skills->CheckSkill( caster, MAGERY, lowSkill, highSkill )))
+	{
+		if( validSocket )
+		{
+			SpellFail( s );
+		}
+		caster->StopSpell();
+		return false;
+	}
+	else if( caster->IsNpc() )
+	{
+		// Run a skillcheck for NPC to give them a chance to gain skill - if that option is enabled in ini
+		Skills->CheckSkill( caster, MAGERY, lowSkill, highSkill );
+	}
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMagic::CastSpell()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles a character's attempt to cast spells
@@ -4498,53 +4575,6 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 		caster->TextMessage( nullptr, temp, TALK, false );
 	}
 
-	// Consume mana/health/stamina for the spellcast attempt, if 
-	// caster is an NPC or spelltype is spellbook or scrolls
-	if( caster->IsNpc() || ( validSocket && ( s->CurrentSpellType() != 2 )))
-	{
-		SubtractMana( caster, spells[curSpell].Mana() );
-		if( spells[curSpell].Health() > 0 )
-		{
-			SubtractHealth( caster, spells[curSpell].Health(), curSpell );
-		}
-		SubtractStamina( caster, spells[curSpell].Stamina() );
-	}
-
-	// Consume reagents for the spellcast attempt
-	if( validSocket && s->CurrentSpellType() == 0 && !caster->IsNpc() )
-	{
-		DelReagents( caster, spells[curSpell].Reagants() );
-	}
-
-	// Cut the casting requirement on scrolls
-	SI16 lowSkill = 0, highSkill = 0;
-	if( validSocket && s->CurrentSpellType() == 1 && cwmWorldState->ServerData()->CutScrollRequirementStatus() ) // only if enabled
-	{
-		lowSkill	= spells[curSpell].ScrollLow();
-		highSkill	= spells[curSpell].ScrollHigh();
-	}
-	else
-	{
-		lowSkill	= spells[curSpell].LowSkill();
-		highSkill	= spells[curSpell].HighSkill();
-	}
-
-	// Do the skill check, and fizzle if player fails
-	if( !caster->IsNpc() && !caster->IsGM() && ( !Skills->CheckSkill( caster, MAGERY, lowSkill, highSkill )))
-	{
-		if( validSocket )
-		{
-			SpellFail( s );
-		}
-		caster->StopSpell();
-		return;
-	}
-	else if( caster->IsNpc() )
-	{
-		// Run a skillcheck for NPC to give them a chance to gain skill - if that option is enabled in ini
-		Skills->CheckSkill( caster, MAGERY, lowSkill, highSkill );
-	}
-
 	if( curSpell > 63 && static_cast<UI32>(curSpell) <= spellCount && spellCount <= 70 )
 	{
 		LogSpell( Dictionary->GetEntry( magic_table[curSpell].spell_name ), caster, nullptr, "(Succeeded)");
@@ -4577,9 +4607,6 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 				{
 					if(( i->GetType() == IT_RECALLRUNE || (( curSpell == 32 || curSpell == 52 ) && i->GetType() == IT_RUNEBOOK )) || ( curSpell != 45 && i->GetType() == IT_KEY && cwmWorldState->ServerData()->TravelSpellsFromBoatKeys() ))
 					{
-						PlaySound( src, curSpell );
-						DoMoveEffect( curSpell, i, src );
-						DoStaticEffect( src, curSpell );
 						switch( curSpell )
 						{
 							case 32: //////////// (32) RECALL ////////////////
@@ -4630,6 +4657,16 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 									}
 								}
 
+								// Let's do all these as the final step after everything else has been cleared
+								ConsumeSpellResources( s, caster, curSpell );
+								if( !CheckMagicSkill( s, caster, curSpell ))
+								{
+									return;
+								}
+								PlaySound( src, curSpell );
+								DoMoveEffect( curSpell, i, src );
+								DoStaticEffect( src, curSpell );
+
 								(*(( MAGIC_ITEMFUNC )magic_table[curSpell-1].mag_extra ))( s, caster, i, curSpell );
 								break;
 							}
@@ -4678,8 +4715,9 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 					}
 					return;
 				}
-				if( LineOfSight( s, caster, c->GetX(), c->GetY(), ( c->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
+				if( LineOfSight( s, caster, c->GetX(), c->GetY(), c->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
 				{
+					bool attackTarget = false;
 					if( spells[curSpell].AggressiveSpell() )
 					{
 						if( c->GetRegion()->IsSafeZone() )
@@ -4708,34 +4746,10 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 							}
 							return;
 						}
-						Combat->AttackTarget( caster, c );
-					}
-					if( spells[curSpell].SpellReflectable() )
-					{
-						if( CheckMagicReflect( c ))
-						{
-							src = c;
-							c = caster;
-						}
+						attackTarget = true;
 					}
 
-					// Don't play sound and effects for these direct damagespells - it's handled
-					// in effect.cpp after their damage delay timer has expired. Dispel is also a special case
-					if( curSpell != 5 && curSpell != 12 && curSpell != 18 && curSpell != 30 && curSpell != 41
-						&& curSpell != 42 && curSpell != 43 && curSpell != 49 && curSpell != 51 && curSpell != 55 )
-					{
-						if( caster->IsNpc() )
-						{
-							PlaySound( c, curSpell );
-						}
-						else
-						{
-							PlaySound( src, curSpell );
-						}
-
-						DoMoveEffect( curSpell, c, src );
-						DoStaticEffect( c, curSpell );
-					}
+					UI08 spellType = 0;
 					switch( curSpell )
 					{
 						case 1:  // Clumsy
@@ -4811,7 +4825,7 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 							}
 
 							// All ok, continue casting spell
-							(*(( MAGIC_CHARFUNC )magic_table[curSpell-1].mag_extra ))( caster, c, src, curSpell );
+							spellType = 1;
 							break;
 						}
 						case 46:	// Mass cure
@@ -4862,12 +4876,62 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 									}
 								}
 							}
-							(*(( MAGIC_TESTFUNC )magic_table[curSpell-1].mag_extra ))( s, caster, c, src, curSpell );
+							spellType = 2;
 							break;
 						}
 						default:
 							Console.Error( oldstrutil::format( " Unknown CharacterTarget spell %i, magic.cpp", curSpell ));
 							break;
+					}
+
+					if( spellType != 0 )
+					{
+						// Let's do all these as the final step after everything else has been cleared
+						ConsumeSpellResources( s, caster, curSpell );
+						if( !CheckMagicSkill( s, caster, curSpell ))
+						{
+							return;
+						}
+						if( attackTarget )
+						{
+							Combat->AttackTarget( caster, c );
+						}
+
+						if( spells[curSpell].SpellReflectable() )
+						{
+							if( CheckMagicReflect( c ))
+							{
+								src = c;
+								c = caster;
+							}
+						}
+
+						// Don't play sound and effects for these direct damagespells - it's handled
+						// in effect.cpp after their damage delay timer has expired. Dispel is also a special case
+						if( curSpell != 5 && curSpell != 12 && curSpell != 18 && curSpell != 30 && curSpell != 41
+							&& curSpell != 42 && curSpell != 43 && curSpell != 49 && curSpell != 51 && curSpell != 55 )
+						{
+							if( caster->IsNpc() )
+							{
+								PlaySound( c, curSpell );
+							}
+							else
+							{
+								PlaySound( src, curSpell );
+							}
+
+							DoMoveEffect( curSpell, c, src );
+							DoStaticEffect( c, curSpell );
+						}
+
+						if( spellType == 1 )
+						{
+							(*(( MAGIC_CHARFUNC )magic_table[curSpell-1].mag_extra ))( caster, c, src, curSpell );
+						}
+						else
+						{
+							(*(( MAGIC_TESTFUNC )magic_table[curSpell-1].mag_extra ))( s, caster, c, src, curSpell );
+						}
 					}
 				}
 				else if( validSocket )
@@ -4884,7 +4948,7 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 		{
 			SI16 x = 0;
 			SI16 y = 0;
-			SI08 z=0;
+			SI08 z = 0;
 			CBaseObject *getTarg = nullptr;
 			if( !caster->IsNpc() )
 			{
@@ -4964,10 +5028,15 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 				return;
 			}
 
-			if( LineOfSight( s, caster, x, y, ( z + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+			if( LineOfSight( s, caster, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 			{
 				if( spells[curSpell].FieldSpell() )
 				{
+					ConsumeSpellResources( s, caster, curSpell );
+					if( !CheckMagicSkill( s, caster, curSpell ))
+					{
+						return;
+					}
 					UI08 j = GetFieldDir( caster, x, y );
 					PlaySound( src, curSpell );
 					DoStaticEffect( src, curSpell );
@@ -4975,11 +5044,6 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 				}
 				else if( spells[curSpell].RequireNoTarget() )
 				{
-					if( curSpell != 48 )
-					{
-						PlaySound( src, curSpell );
-						DoStaticEffect( src, curSpell );
-					}
 					switch( curSpell )
 					{
 						case 2: //create food
@@ -5001,6 +5065,16 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 						case 64:// Summon water Elemental
 						case 65:// Summon Hero
 						case 58:// Energy Vortex
+							ConsumeSpellResources( s, caster, curSpell );
+							if( !CheckMagicSkill( s, caster, curSpell ))
+							{
+								return;
+							}
+							if( curSpell != 48 )
+							{
+								PlaySound( src, curSpell );
+								DoStaticEffect( src, curSpell );
+							}
 							(*(( MAGIC_LOCFUNC )magic_table[curSpell-1].mag_extra ))( s, caster, x, y, z, curSpell );
 							break;
 						default:
@@ -5045,6 +5119,11 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 					case 19:	// Magic Lock
 					case 23:	// Magic Unlock
 					case 21:	// Telekinesis
+						ConsumeSpellResources( s, caster, curSpell );
+						if( !CheckMagicSkill( s, caster, curSpell ))
+						{
+							return;
+						}
 						(*(( MAGIC_ITEMFUNC )magic_table[curSpell-1].mag_extra))( s, caster, i, curSpell );
 						break;
 					default:
@@ -5066,6 +5145,11 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 	else if( spells[curSpell].RequireNoTarget() )
 	{
 		// non targetted spells
+		ConsumeSpellResources( s, caster, curSpell );
+		if( !CheckMagicSkill( s, caster, curSpell ))
+		{
+			return;
+		}
 		PlaySound( src, curSpell );
 		DoStaticEffect( src, curSpell );
 		switch( curSpell )

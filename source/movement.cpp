@@ -839,8 +839,7 @@ auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblo
 						{
 							Console.Error( "Walking() - Bad length in multi file. Avoiding stall" );
 							auto map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
-
-							if( map1.CheckFlag( TF_WET )) // is it water?
+							if( map1.terrainInfo != nullptr && map1.CheckFlag( TF_WET )) // is it water?
 							{
 								tItem->SetId( 0x4001 );
 							}
@@ -858,6 +857,7 @@ auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblo
 								{
 									auto tile = Tile_st( TileType_t::dyn );
 									tile.artInfo = &Map->SeekTile( multi.tileId );
+									tile.tileId = multi.tileId;
 									tile.altitude = multi.altitude + tItem->GetZ();
 									xyblock.push_back( tile );
 									++xycount;
@@ -1097,7 +1097,7 @@ auto CMovement::OutputShoveMessage( CChar *c, CSocket *mSock ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Trigger InRange JS event
 //o------------------------------------------------------------------------------------------------o
-void DoJSInRange( CBaseObject *mObj, CBaseObject *objInRange )
+void CMovement::DoJSInRange( CBaseObject *mObj, CBaseObject *objInRange )
 {
 	std::vector<UI16> scriptTriggers = mObj->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
@@ -1115,7 +1115,7 @@ void DoJSInRange( CBaseObject *mObj, CBaseObject *objInRange )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Trigger OutOfRange JS event
 //o------------------------------------------------------------------------------------------------o
-void DoJSOutOfRange( CBaseObject *mObj, CBaseObject *objOutOfRange )
+void CMovement::DoJSOutOfRange( CBaseObject *mObj, CBaseObject *objOutOfRange )
 {
 	std::vector<UI16> scriptTriggers = mObj->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
@@ -1156,8 +1156,8 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 			{
 				tItem->SendToSocket( mSock );
 			}
-			DoJSInRange( mChar, tItem );
-			DoJSInRange( tItem, mChar );
+			Movement->DoJSInRange( mChar, tItem );
+			Movement->DoJSInRange( tItem, mChar );
 			return true;
 		}
 		else if( dOld == ( visibleRange + 1 ) && dNew > ( visibleRange + 1 )) // Just went out of range
@@ -1175,8 +1175,8 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 					mSock->GetContsOpenedList()->Remove( tItem );
 				}
 			}
-			DoJSOutOfRange( mChar, tItem );
-			DoJSOutOfRange( tItem, mChar );
+			Movement->DoJSOutOfRange( mChar, tItem );
+			Movement->DoJSOutOfRange( tItem, mChar );
 			return true;
 		}
 	}
@@ -1196,8 +1196,8 @@ bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 		{
 			tChar->SendToSocket( mSock );
 		}
-		DoJSInRange( mChar, tChar );
-		DoJSInRange( tChar, mChar );
+		Movement->DoJSInRange( mChar, tChar );
+		Movement->DoJSInRange( tChar, mChar );
 		return true;
 	}
 	if( dOld == ( visibleRange + 1 ) && dNew > ( visibleRange + 1 )) // Just went out of range
@@ -1206,8 +1206,8 @@ bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 		{
 			tChar->RemoveFromSight( mSock );
 		}
-		DoJSOutOfRange( mChar, tChar );
-		DoJSOutOfRange( tChar, mChar );
+		Movement->DoJSOutOfRange( mChar, tChar );
+		Movement->DoJSOutOfRange( tChar, mChar );
 		return true;
 	}
 	return false;
@@ -1418,7 +1418,7 @@ void CMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 
 			// Determine if character is moving within the moveDetectRange limit
 			inMoveDetectRange = ( std::abs( tItem->GetX() - newx ) <= moveDetectRange && std::abs( tItem->GetY() - newy ) <= moveDetectRange 
-				&& std::abs( mChar->GetZ() - tItem->GetZ() ) <= 5 );
+				&& std::abs( mChar->GetZ() - tItem->GetZ() ) <= 10 );
 
 			if( EffRange || inMoveDetectRange )
 			{
@@ -2333,13 +2333,14 @@ void CMovement::NpcMovement( CChar& mChar )
 
 				// NPC is using a ranged weapon, and is within range to shoot at the target
 				CItem *equippedWeapon = Combat->GetWeapon( &mChar );
+				bool combatLos = mChar.GetCombatLos();
 				if( charDir < 8 
 					&& ( charDist <= 1 
 						|| (( Combat->GetCombatSkill( equippedWeapon ) == ARCHERY || Combat->GetCombatSkill( equippedWeapon ) == THROWING ) && charDist <= equippedWeapon->GetMaxRange() )
 						|| (( mChar.GetNpcAiType() == AI_CASTER || mChar.GetNpcAiType() == AI_EVIL_CASTER ) && ( charDist <= cwmWorldState->ServerData()->CombatMaxSpellRange() && mChar.GetMana() >= 10 ))))
 				{
-					bool los = LineOfSight( nullptr, &mChar, l->GetX(), l->GetY(), ( l->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
-					if( los )
+					bool los = ( charDist > 1 ? ( !combatLos ? LineOfSight( nullptr, &mChar, l->GetX(), l->GetY(), l->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) : true ) : true );
+					if( los && std::abs( mChar.GetZ() - l->GetZ() ) < 20)
 					{
 						// Turn towards target
 						if( charDir != mChar.GetDir() )
@@ -2353,7 +2354,7 @@ void CMovement::NpcMovement( CChar& mChar )
 						mChar.SetOldTargLocY( 0 );
 						return;
 					}
-					else if(( !los && charDist <= 1 ) || ( !los && mChar.GetZ() - l->GetZ() >= 20 ))
+					else if(( !los && charDist <= 1 ) || ( !los && std::abs( mChar.GetZ() - l->GetZ() ) >= 20 ))
 					{
 						// We're right next to target, but still have no LoS - or height difference is too large
 						mChar.FlushPath();
@@ -2991,6 +2992,8 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber, instanceId, ignoreDoors );
 
 	auto map	= Map->SeekMap( x, y, c->WorldNumber() );
+	if( map.terrainInfo == nullptr )
+		return ILLEGAL_Z;
 
 	// Does landtile in target location block movement?
 	landBlock = map.CheckFlag( TF_BLOCKING );
@@ -3045,6 +3048,11 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 	{
 		if(( !tile.CheckFlag( TF_BLOCKING ) && tile.CheckFlag( TF_SURFACE ) && !waterWalk ) || ( waterWalk && tile.CheckFlag( TF_WET )))
 		{
+			if(( tile.tileId == 0x08a5 || tile.tileId == 0x08a6 ) && oldz < checkTop )
+			{
+				c->IsClimbing( true  );
+			}
+
 			SI08 itemz = tile.altitude; // Object's current Z position
 			SI08 itemTop = itemz;
 			SI08 potentialNewZ = tile.top(); // Character's potential new Z position on top of object
@@ -3052,9 +3060,17 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 
 			if( moveIsOk )
 			{
-				SI08 cmp = std::abs( potentialNewZ - c->GetZ() ) - std::abs( newz - c->GetZ() );
-				if( cmp > 0 || ( cmp == 0 && potentialNewZ > newz ))
-					continue;
+				if( c->IsClimbing() )
+				{
+					checkTop = oldz + charHeight;
+					testTop = checkTop;
+				}
+				else
+				{
+					SI08 cmp = std::abs( potentialNewZ - c->GetZ() ) - std::abs( newz - c->GetZ() );
+					if( cmp > 0 || ( cmp == 0 && potentialNewZ > newz ))
+						continue;
+				}
 			}
 
 			if( potentialNewZ + charHeight > testTop )
@@ -3068,7 +3084,7 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 			}
 
 			// Check if the character can step up onto the item at target location
-			if( stepTop >= itemTop )
+			if( stepTop >= itemTop || c->IsClimbing() )
 			{
 				SI08 landCheck = itemz;
 
@@ -3092,6 +3108,14 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 					moveIsOk = true;
 				}
 			}
+		}
+	}
+
+	if( moveIsOk )
+	{
+		if( oldz >= newz )
+		{
+			c->IsClimbing( false );
 		}
 	}
 
@@ -3141,7 +3165,7 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 //o------------------------------------------------------------------------------------------------o
 bool CMovement::CalcMove( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir)
 {
-	if( x < 0 || x > 7144 || y < 0 || y > 4096 )
+	if( x < 0 || x > 7168 || y < 0 || y > 4096 )
 	{
 		Console.Warning( oldstrutil::format( "NPC/Player (%s) from Spawn Region %i trying to walk in invalid area of map at %i %i %i %i!", c->GetName().c_str(), c->GetSpawn(), x, y, z, c->WorldNumber() ));
 		return false;
@@ -3759,5 +3783,55 @@ auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
 		}
 		mChar->SetTarg( nullptr );
 		mChar->SetWar( false );
+
+		// Check if OnCombatEnd event exists.
+		std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				//Check if ourTarg validates as another character. If not, don't use
+				if( !ValidateObject( mTarget ))
+				{
+					mTarget = nullptr;
+				}
+
+				// -1 == event doesn't exist, or returned -1
+				// 0 == script returned false, 0, or nothing - don't execute hard code
+				// 1 == script returned true or 1
+				if( toExecute->OnCombatEnd( mChar, mTarget ) == 0 )	// if it exists and we don't want hard code, return
+				{
+					return;
+				}
+			}
+		}
+
+		// Do the same for the opposite party in combat
+		if( ValidateObject( mTarget ))
+		{
+			scriptTriggers.clear();
+			scriptTriggers = mTarget->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					//Check if mTarget validates as another character. If not, don't use
+					if( !ValidateObject( mTarget ))
+					{
+						mTarget = nullptr;
+					}
+
+					// -1 == event doesn't exist, or returned -1
+					// 0 == script returned false, 0, or nothing - don't execute hard code
+					// 1 == script returned true or 1
+					if( toExecute->OnCombatEnd( mTarget, mChar ) == 0 )	// if it exists and we don't want hard code, return
+					{
+						return;
+					}
+				}
+			}
+		}
 	}
 }

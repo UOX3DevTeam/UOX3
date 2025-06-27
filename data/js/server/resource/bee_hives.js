@@ -4,8 +4,8 @@
 // When a (dynamic) bee-hive is double-clicked, there are a number of possible results.
 // The user may or may not manage to harvest wax or honey, and he/she may or may not
 // manage to avoid being stung by bees =)
-var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
-var maxResource = 5; //maximum amount of resources on a given item
+const honeyGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+const maxHoneyResource = 5; //maximum amount of resources on a given item
 
 function onUseChecked( pUser, iUsed )
 {
@@ -20,7 +20,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		iUsed.SetTag( "initialized", 1 ); 	// Marks hive as initialized
 		iUsed.SetTag( "Honey", 1 ); 			// If set to 1, there is honey to be harvested, if 0 there is no honey ready for harvesting
-		iUsed.SetTag( "HoneyCounter", maxResource ); 	// Add 5 honey to the hive initially
+		iUsed.SetTag( "HoneyCounter", maxHoneyResource ); 	// Add 5 honey to the hive initially
 	}
 
 	var honey = iUsed.GetTag( "Honey" );
@@ -83,7 +83,7 @@ function onUseChecked( pUser, iUsed )
 		if( honeyCount == 0 )
 		{
 			iUsed.SetTag( "Honey", 0 );
-			iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay until next time honey respawn
+			iUsed.StartTimer( honeyGrowthDelay, 1, true ); // Puts in a delay until next time honey respawn
 		}
 	}
 	return false;
@@ -94,7 +94,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag( "HoneyCounter", maxResource );
+		iUsed.SetTag( "HoneyCounter", maxHoneyResource );
 		iUsed.SetTag( "Honey", 1 );
 	}
 }

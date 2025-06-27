@@ -783,7 +783,7 @@ void Command_RegSpawn( CSocket *s )
 
 		if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 		{
-			const TIMERVAL s_t						= GetClock();
+			const TIMERVAL s_t = GetClock();
 			std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&itemsSpawned, &npcsSpawned]( std::pair<UI16, CSpawnRegion *> entry )
 			{
 				if( entry.second )
@@ -801,6 +801,36 @@ void Command_RegSpawn( CSocket *s )
 			}
 			const TIMERVAL e_t = GetClock();
 			Console.Print( oldstrutil::format( "RegionSpawn cycle completed in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
+		}
+		else if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "MAX" )
+		{
+			// Force respawn all spawn regions to max
+			const TIMERVAL s_t = GetClock();
+			std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&itemsSpawned, &npcsSpawned]( std::pair<UI16, CSpawnRegion *> entry )
+			{
+				auto maxTries = 1000;
+				auto numTries = 0;
+				if( entry.second )
+				{
+					while( numTries < maxTries
+						&& ( entry.second->GetCurrentCharAmt() < entry.second->GetMaxCharSpawn()
+						|| entry.second->GetCurrentItemAmt() < entry.second->GetMaxItemSpawn() ))
+					{
+						entry.second->DoRegionSpawn( itemsSpawned, npcsSpawned );
+						numTries++;
+					}
+				}
+			});
+			if( itemsSpawned || npcsSpawned )
+			{
+				s->SysMessage( 9021, itemsSpawned, npcsSpawned, cwmWorldState->spawnRegions.size() ); // Spawned %u items and %u npcs in %u SpawnRegions
+			}
+			else
+			{
+				s->SysMessage( 9022, cwmWorldState->spawnRegions.size() ); // Failed to spawn any new items or npcs in %u SpawnRegions
+			}
+			const TIMERVAL e_t = GetClock();
+			Console.Print( oldstrutil::format( "Maximum RegionSpawn cycles completed in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 		}
 		else
 		{

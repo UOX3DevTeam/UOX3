@@ -260,6 +260,8 @@ auto main( SI32 argc, char *argv[] ) ->int
 	const std::chrono::milliseconds evaluationInterval = std::chrono::milliseconds( cwmWorldState->ServerData()->APSInterval() );
 	std::chrono::time_point<std::chrono::system_clock> nextEvaluationTime = std::chrono::system_clock::now() + evaluationInterval;
 
+	bool isApsActive = false;
+
 	// Core server loop
 	while( cwmWorldState->GetKeepRun() )
 	{
@@ -378,6 +380,12 @@ auto main( SI32 argc, char *argv[] ) ->int
 					apsDelay = apsDelay + apsDelayStep;
 #if defined( UOX_DEBUG_MODE )
 					Console << "Performance below threshold! Increasing adaptive performance timer: " << apsDelay.count() << "ms" << "\n";
+#else
+					if( !isApsActive )
+					{
+						isApsActive = true;
+						Console << "Performance below threshold. Adaptive Performance System enabled.\n";
+					}
 #endif
 				}
 				// If performance is below, but increasing, wait and see before reacting
@@ -391,6 +399,12 @@ auto main( SI32 argc, char *argv[] ) ->int
 					apsDelay = apsDelay - apsDelayStep;
 #if defined( UOX_DEBUG_MODE )
 					Console << "Performance exceeds threshold. Decreasing adaptive performance timer: " << apsDelay.count() << "ms" << "\n";
+#else
+					if( apsDelay.count() == 0 )
+					{
+						Console << "Performance above threshold. Adaptive Performance System disabled.\n";
+						isApsActive = false;
+					}
 #endif
 				}
 			}
@@ -2698,7 +2712,11 @@ auto CWorldMain::CheckAutoTimers() -> void
 			}
 		}
 		const TIMERVAL e_t = GetClock();
-		Console.Print( oldstrutil::format( "Regionspawn cycle completed in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
+		UI32 totalSpawnTime = e_t - s_t;
+		if( totalSpawnTime > 1 )
+		{
+			Console.Print( oldstrutil::format( "Regionspawn cycle completed in %.02fsec\n", static_cast<R32>( totalSpawnTime ) / 1000.0f ));
+		}
 
 		// Adaptive spawn region check timer. The closer spawn regions as a whole are to being at their defined max capacity,
 		// the less frequently UOX3 will check spawn regions again. Similarly, the more room there is to spawn additional

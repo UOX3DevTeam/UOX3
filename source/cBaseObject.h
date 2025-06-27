@@ -351,7 +351,7 @@ public:
 	SI16					GetCarve( void ) const;
 	void					SetCarve( SI16 newValue );
 
-	virtual	void			Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) = 0;
+	virtual	void			Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true, bool triggerInRangeEvent = false ) = 0;
 	virtual	void			SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) = 0;
 	virtual	void			Dirty( UpdateTypes updateType );
 	void					RemoveFromRefreshQueue( void );

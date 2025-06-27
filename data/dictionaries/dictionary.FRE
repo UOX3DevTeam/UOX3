@@ -2622,6 +2622,18 @@
 2585=Versez du cidre dans le récipient.
 2586=Tu verses de la liqueur dans le récipient.
 2587=Vous versez du vin dans le verre.
+2588=Ces carottes ne sont pas encore prêtes à être récoltées.
+2589=Vous ne parvenez pas à cueillir de carottes.
+2590=Vous récoltez une carotte.
+2591=Ces oignons ne sont pas encore prêts à être récoltés.
+2592=Vous ne parvenez pas à cueillir d'oignons.
+2593=Vous récoltez un oignon.
+2594=Ce navet n'est pas encore prêt à être récolté.
+2595=Vous ne parvenez pas à cueillir de navets.
+2596=Vous récoltez un navet.
+2597=Ce chou n'est pas encore prêt à être récolté.
+2598=Vous ne parvenez pas à cueillir de choux.
+2599=Vous récoltez un chou.
 // [2600-2699] Player/NPC/Spawn Admin Script
 2600=Le PNJ choisi (%s, %i) a été supprimé.
 2601=Avertissement : Aucun sac à dos n'a été trouvé sur le personnage !
@@ -3141,6 +3153,7 @@
 3574=un esprit des lames
 3605=un elfe mâle
 3606=un elfe femelle
+3637=une armure spectrale
 3666=une gargouille mâle
 3667=une gargouille femelle
 3689=Seigneur du temps
@@ -3466,6 +3479,7 @@
 5156=la diseuse de bonne aventure gitane
 5157=le Vagabond
 5158=Le travailleur du fer
+5159=un oiseau tropical
 // [5500-5600] Messages de vacances
 5500=Où souhaitez-vous placer cette décoration ?
 5501=La décoration doit être placée à côté d'un mur.
@@ -4263,7 +4277,7 @@
 8944=Cela ne semble pas être un identifiant de PNJ valide dans les DFNs.
 8945=Sélectionner la cible pour le statut mobile %i :
 8946=Sélectionner la cible à définir comme non destructible :
-// [9000-9500] Misc
+// [9000-9499] Misc
 9000=Vous ne pouvez pas utiliser cette capacité lorsque vous êtes gelé.
 9001=Ce personnage n'est pas autorisé à voler !
 9002=On vous a invité à rejoindre un groupe, tapez /accept ou /decline pour traiter l'invitation.
@@ -4525,6 +4539,28 @@
 9410=Vous avez appris à extraire du sable fin. Ciblez les zones de sable lors de l’exploitation minière pour rechercher du sable fin.
 9411=Vous avez appris à extraire des pierres. Ciblez les montagnes lors de l’exploitation minière pour trouver des pierres.
 9412=Il n'y a pas de sable ici à exploiter.
+// [9500-9550] Récolte de ressources diverses
+9500=Cette courge n'est pas encore mûre pour être récoltée.
+9501=Vous ne parvenez pas à cueillir de courges.
+9502=Vous récoltez une courge.
+9503=Cette citrouille n'est pas encore mûre pour être récoltée.
+9504=Vous n'avez récolté aucune citrouille.
+9505=Vous récoltez une citrouille.
+9506=Cette courge n'est pas encore prête à être récoltée.
+9507=Vous n'avez récolté aucune courge.
+9508=Vous récoltez une courge.
+9509=Cette pastèque n'est pas encore prête à être récoltée.
+9510=Vous ne parvenez pas à cueillir de pastèques.
+9511=Vous récoltez une pastèque.
+9512=Ce melon miel n'est pas encore prêt à être récolté.
+9513=Vous ne parvenez pas à cueillir de melons miel.
+9514=Vous récoltez un melon miel.
+9515=Ce cantaloup n'est pas encore prêt à être récolté.
+9516=Vous ne parvenez pas à cueillir de cantaloup.
+9517=Vous récoltez un cantaloup.
+9518=Cet ail n'est pas encore prêt à être récolté.
+9519=Vous ne parvenez pas à cueillir d'ail.
+9520=Vous récoltez un ail.
 // [9800-9899] Éditeur de générateurs
 9800=Éditeur d'objets de générateurs
 9801=Nom du générateur
@@ -4911,7 +4947,8 @@
 11466=gants en os
 11467=bras en os
 11468=jambes en os
-11469= armure en os
+11469=armure en os
+11470=chapeau haut de forme
 // 11601 - 11800 Compétence d'artisanat de cuisine
 11601=MENU DE CUISINE
 11602=Ingrédients

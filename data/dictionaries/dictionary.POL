@@ -2458,6 +2458,18 @@
 2585=Wlewasz trochę cydru do pojemnika.
 2586=Wlejesz trochę likieru do pojemnika.
 2587=Wlewasz trochę wina do kieliszka.
+2588=Te marchewki nie są jeszcze gotowe do zbioru.
+2589=Nie udało ci się zebrać żadnej marchewki.
+2590=Zebrałeś jedną marchewkę.
+2591=Te cebule nie są jeszcze gotowe do zbioru.
+2592=Nie udało ci się zebrać żadnej cebuli.
+2593=Zebrałeś jedną cebulę.
+2594=Ta rzepa nie jest jeszcze gotowa do zbioru.
+2595=Nie udało ci się zebrać żadnej rzepy.
+2596=Zebrałeś jedną rzepę.
+2597=Ta kapusta nie jest jeszcze gotowa do zbioru.
+2598=Nie udało ci się zebrać żadnej kapusty.
+2599=Zebrałeś jedną kapustę.
 // [2600-2699] Skrypt administratora gracza/NPC/spawnu
 2600=Wybrany NPC (%s, %i) został usunięty.
 2601=Ostrzeżenie: nie znaleziono plecaka postaci!
@@ -2977,6 +2989,7 @@
 3574=duch ostrza
 3605=elf płci męskiej
 3606=elfka
+3637=spektralna zbroja
 3666=mężczyzna gargulca
 3667=kobieta gargulec
 3689=Lord Czasu
@@ -3295,13 +3308,14 @@
 5149=egzekutor
 5150=plamisty skorpion
 5151=dragoń chaosu
-5152= elitarny smok chaosu
+5152=elitarny smok chaosu
 5153=cygańska dziewica
 5154=cygański treser zwierząt
 5155=cygański bankier
 5156=cygański wróżbita
 5157=Włóczęga
 5158=Żelazny robotnik
+5159=tropikalny ptak
 // [5500-5600] Wiadomości świąteczne
 5500=Gdzie chcesz umieścić tę dekorację?
 5501=Dekoracja musi być umieszczona obok ściany.
@@ -4099,7 +4113,7 @@
 8944=To nie wydaje się być prawidłowym NPC-id z DFNs.
 8945=Wybierz cel dla ruchomego statusu %i:
 8946=Wybierz cel do ustawienia jako nierozkładalny:
-// [9000-9500] Różne
+// [9000-9499] Różne
 9000=Nie możesz użyć tej umiejętności będąc zamrożonym.
 9001=Ta postać nie może latać!
 9002=Zostałeś zaproszony do przyłączenia się do partii, wpisz /accept lub /decline aby odpowiedzieć na zaproszenie.
@@ -4369,6 +4383,28 @@
 9410=Nauczyłeś się wydobywać drobny piasek. Podczas wydobywania celuj w obszary piaszczyste w poszukiwaniu drobnego piasku.
 9411=Nauczyłeś się wydobywać kamienie. Podczas wydobywania celuj w góry, aby znaleźć kamienie.
 9412=Nie ma tu piasku do wydobycia.
+// [9500-9550] Zbiór różnych zasobów
+9500=Ta tykwa nie jest jeszcze gotowa do zbioru.
+9501=Nie udało ci się zebrać żadnej tykwy.
+9502=Zebrałeś tykwę.
+9503=Ta dynia nie jest jeszcze gotowa do zbioru.
+9504=Nie udało ci się zebrać żadnej dyni.
+9505=Zebrałeś dynię.
+9506=Ta dynia nie jest jeszcze gotowa do zbioru.
+9507=Nie udało ci się zebrać żadnej dyni.
+9508=Zebrałeś dynię.
+9509=Ten arbuz nie jest jeszcze gotowy do zbioru.
+9510=Nie udało ci się zebrać żadnych arbuzów.
+9511=Zebrałeś arbuza.
+9512=Ten melon miodowy nie jest jeszcze gotowy do zbioru.
+9513=Nie udało ci się zebrać żadnych melonów miodowych.
+9514=Zebrałeś melona miodowego.
+9515=Ten kantalupa nie jest jeszcze gotowa do zbioru.
+9516=Nie udało ci się zebrać żadnego kantalupa.
+9517=Zebrałeś kantalupę.
+9518=Ten czosnek nie jest jeszcze gotowy do zbioru.
+9519=Nie udało ci się zebrać żadnego czosnku.
+9520=Zebrałeś czosnek.
 // [9800-9899] Edytor spawnera
 9800=Edytor obiektów spawnera
 9801=Nazwa spawnera
@@ -4755,6 +4791,7 @@
 11467=kościane ramiona
 11468=kostne legginsy
 11469=zbroja kościana
+11470=wysoki słomkowy kapelusz
 // 11601 - 11800 Gotowanie Umiejętność rzemieślnicza
 11601=MENU GOTOWANIA
 11602=Składniki

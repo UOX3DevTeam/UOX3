@@ -61,9 +61,43 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 			return false;
 		}
 
-		if( ObjInRange( &mChar, cTarget, cwmWorldState->ServerData()->CombatMaxRange() ))
+		if( ObjInRange( &mChar, cTarget, cwmWorldState->ServerData()->CombatMaxNpcAggroRange() ))
 		{
-			if( LineOfSight( nullptr, (&mChar), cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+			if( mChar.IsNpc() && cTarget->IsNpc() && !ValidateObject( mChar.GetOwnerObj() ) && !ValidateObject( cTarget->GetOwnerObj() ))
+			{
+				if( mChar.GetRace() == cTarget->GetRace() )
+				{
+					// Not a valid target if belonging to same race
+					return false;
+				}
+
+				// Not a valid target if both are human and both have same NPC Flag (evil, innocent, neutral)
+				if( cwmWorldState->creatures[mChar.GetId()].IsHuman() && cwmWorldState->creatures[cTarget->GetId()].IsHuman() )
+				{
+					if( mChar.GetNPCFlag() == cTarget->GetNPCFlag() )
+					{
+						return false;
+					}
+				}
+
+				if( std::abs( mChar.GetZ() - cTarget->GetZ() ) >= 20 )
+				{
+					// Unless BOTH NPCs are using ranged weapons, don't let the NPCs fight if they're on different floors.
+					// Most likely, they can't reach each other
+					CItem *mWeapon = Combat->GetWeapon( &mChar );
+					CItem *cWeapon = Combat->GetWeapon( cTarget );
+					auto mCombatSkill = Combat->GetCombatSkill( mWeapon );
+					auto cCombatSkill = Combat->GetCombatSkill( cWeapon );
+					const UI16 charDist	= GetDist( &mChar, cTarget );
+					if((( mCombatSkill != ARCHERY && mCombatSkill != THROWING ) || charDist > mWeapon->GetMaxRange() )
+						|| (( cCombatSkill != ARCHERY && cCombatSkill != THROWING ) || charDist > cWeapon->GetMaxRange() ))
+					{
+						return false;
+					}
+				}
+			}
+
+			if( LineOfSight( nullptr, (&mChar), cTarget->GetX(), cTarget->GetY(), cTarget->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 			{
 				// Young players are not valid targets for NPCs outside of dungeons
 				if( cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.IsNpc() && !cTarget->IsNpc() && IsOnline(( *cTarget )) && cTarget->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && !cTarget->GetRegion()->IsDungeon() )
@@ -228,7 +262,7 @@ void HandleHealerAI( CChar& mChar )
 		CMultiObj *multiObj = realChar->GetMultiObj();
 		if( realChar->IsDead() && ( !ValidateObject( multiObj ) || multiObj->GetOwner() == realChar->GetSerial() ))
 		{
-			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), ( mChar.GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), mChar.GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 			{
 				if( realChar->IsMurderer() )
 				{
@@ -297,7 +331,7 @@ void HandleEvilHealerAI( CChar& mChar )
 		CMultiObj *multiObj = realChar->GetMultiObj();
 		if( realChar->IsDead() && ( !ValidateObject( multiObj ) || multiObj->GetOwner() == realChar->GetSerial() ))
 		{
-			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), ( mChar.GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), mChar.GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 			{
 				if( realChar->IsMurderer() )
 				{

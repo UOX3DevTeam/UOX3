@@ -1,3 +1,120 @@
+27/06/2025 - Xuri (0.99.6c)
+	Fixed an issue with an internal movement check that prevented characters from moving in valid map areas in Felucca/Trammel from X 6144 to X 7168
+	Fixed an issue where .instanceID property was misspelled in 'xgo GM command script, causing characters to be teleported to an out of bounds area where they would no longer be saved (js/commands/targeting/x.js)
+	Added some additional error-checking to .Teleport()/.SetLocation() JS Method to prevent script-accidents from sending characters out of bounds.
+	Updated Poisoning skill to add poison-charges to weapons being poisoned. Charges are consumed when applying poison in combat (js/skill/poisoning.js)
+	Updated combat code to consume poison-charges if a poisoned weapon is used to poison an opponent
+	Updated shoplists for Blacksmiths and Weaponsmiths - they now buy/sell longswords (dfndata/items/shoplist.dfn)
+	Updated MageShopping shoplist for mage vendors - they now buy/sell mass curse scrolls (dfndata/items/shoplist.dfn)
+	Added new Spawn Region DFN tag that can specify which era or eras of UO (Multiple comma-separated entries supported) a given spawn region is valid for. Spawn region not valid for core shard era will be ignored. Syntax:
+		ERAS=UO,T2A,UOR,LBR,AOS,SE,ML,SA,HS,TOL
+	Added new Spawn Region DFN tag that allows using another spawn region as a "parent". All properties of this parent will be inherited except for these, which are ignored: ERAS, NPCLIST, ITEMLIST, NPC and ITEM. Syntax for new tag:
+		GET=# // Inherit a specified spawn region
+	Added spawn region for animal trainer vendor in Vesper stable
+	Added spawn region for fur trader/tanner vendors in The Best Hides of Britain
+	Added spawn region for spinner vendor in The Lord's Clothier's and The Right Fit shops in Britain
+	Added spawn region for tanner NPC to Nujel'm Tannery (and fixed leatherworker spawn region for same area)
+	Added spawn regions for banker NPCs in East Bank of Britain, First Bank of Moonglow, Jhelom Bank and Jeweler, Bank of Skara Brae
+	Added spawn regions for stables, tailor and blacksmith inside Castle British
+	Added spawn regions for mage shops, mage guilds and farm houses in Moonglow
+	Added spawn regions for misc vendors and townfolk in multiple cities
+	Added spawn regions for Fire Island
+	Updated spawn regions for Dagger Isle/Ice Island
+	Added spawn regions for forests and jungles in southern Britannia and on various islands including Bucc's Den, Moonglow, Serpent's Hold, and misc unpopulated islands
+	Added spawn regions for area east of Skara Brae, around Hedge Maze and south of Britain
+	Added spawn regions for wandering healers outside every dungeon entrance in Britannia and Lost Lands
+	Re-integrated ocean spawn regions for ocean creatures (dolphin, walrus, water elemental, sea serpent) from the original community-based spawn file
+	Added reagent spawns in overworld spawn regions in Britannia/Lost Lands
+	Added special reagent spawns in swamp areas
+	Added additional overworld spawn regions in Britannia/Lost Lands
+	Added spawn regions for Khaldun dungeon that spawn some new and some old NPCs:
+		Old: Zombies, skeletons, skeletal mages, skeletal knights, ancient liches
+		New: Cursed (and named) NPCs, shadowfiends, zealots of khaldun (knights/summoners), tentacles of the harrower
+	Updated size and positions of some existing overworld spawn regions
+	Fixed incorrect spawn region size for small island south of Trinsic
+	Added switch/door puzzle functionality in Khaldun dungeon using new switch/door combo script (js/item/dungeons/switch_door_combo.js)
+	Added "smart objects" in Khaldun dungeon that activate when you come close enough (js/item/dungeons/smart_activate_item.js)
+	Added teleport locations within Khaldun dungeon (js/teleport.scp)
+	Added custom AIs to existing NPC spawning in Khaldun dungeon:
+		Ancient Lich (summons other undead, and can turn into one of them for disguise)
+	Added DFN entries for new NPCs spawning in Khaldun dungeon, some with custom AIs:
+		[tentacles_of_the_harrower] -> Tentacles of the Harrower (life steal)
+		[shadowfiend] -> Shadowfiends (seek out and reveal hidden players)
+		[zealot_knight]/[zealot_summoner] -> Zealots of Khaldun (turn into undead on death, male/female variants)
+		[cursed] -> Cursed (male/female variants)
+		[spectralarmor] -> Spectral Armor
+	Added DFN entries for new (named) NPCs spawning in Khaldun dungeon:
+		[lysander_gathenwale] -> Lysander Gathenwale
+		[grimmoch_drummel] -> Grimmoch Drummel
+		[morg_bergen] -> Morg Bergen
+		[tavara_sewel] -> Tavara Sewel
+	Added new NPC DFN entries:
+		[leatherworker] -> alias for male/female leatherworker vendors
+		[mapmaker] -> alias for male/female mapmaker vendors
+	Added new Race DFN entries:
+		[RACE 29] -> Cursed (enemies of RACE 30)
+		[RACE 30] -> Zealots (enemies of RACE 29)
+	Added new book DFN entries for Khaldun journals of Lysander, Tavara and Grimmoch - available as loot from the respective NPCs (dfndata/misc/books.dfn and dfndata/items/misc/books.dfn)
+	Added 25% chance for hit-animations and hit-SFX to play for targets in combat, instead of playing every time - can get very spammy
+	Monsters with actual weapons equipped (like Ophidian Enforcer with Halberd/Bardiche) will now get appropriate combat SFX for hitting with that weapon
+	Updated Healing skill to base cure/resurrection skill requirements on the calculated skill, rather than base skill (js/skill/healing.js)
+	Fixed an issue where healing with bandages and dying in the process would not properly reset the healing-related tags and skills used
+	Updated healing script to show a resurrection confirmation menu for players targeted with bandages for resurrect (js/skill/healing.js)
+	All skill usage states now reset on death, to prevent cases of players being "busy" while trying to use skills that got stuck due to script bugs.
+	The 'regspawn GM command now supports a new parameter called "max". Updated command syntax:
+		'regspawn # // perform a single respawn cycle in a specific spawn region
+		'regspawn all // perform a single respawn cycle across all spawn regions
+		'regspawn max // respawn ALL spawn regions to MAX capacity in one go
+	Added new UOX.INI setting that determines the maximum range at which NPCs can initiate attacks on players/NPCs (the old MAXRANGE=10 setting now instead defines max range at which players can initiate attacks on players/NPCs):
+		MAXNPCAGGRORANGE=10
+	Optimized performance by significantly reducing the number of line-of-sight checks performed by characters, especially in combat scenarios, or when evaluating potential targets for NPC AIs. The amount of checks done is also affected by the new ini setting for max aggro range.
+	Fixed an issue where both NPC and player characters would instantly drop one hunger level (from 6 to 5) upon creation since hungerrate was not initialized until after first hunger-event
+	Updated character priv property from UI16 to UI32, and added a new flag that determines if fame/karma title is hidden for character:
+		HIDEFAMEKARMATITLE (0x10000)
+	NPCs will no longer aggro other NPCs if the Z difference between them is greater or equal to 20 (i.e. they're on different floors), unless both are using ranged weapons and both are in range
+	Fixed an issue where players could get discounts from shopkeepers even though neither player nor shopkeeper were members of a NPC guild (js/npc/ai/shopkeeper.js)
+	Fixed an issue where the "premium" a player would get when selling items to a shopkeeper in the same NPC guild as them would be 110% extra on top of the item's value, instead of the intended 10% (js/npc/ai/shopkeeper.js) (Thanks, cobrag0318!)
+	Added missing tall straw hat to tailoring crafting scripts (Thanks, Dragon Slayer!)
+	Improved error reporting during compilation of individual scripts being reloaded - will now show more context and line number
+	onCombatEnd JS Event now also triggers when NPCs ignore their target and/or evade during combat
+	Updated 'decorate command to support saving/loading custom tags on items for world templates. These are stored after a @ symbol in the world template, each custom tag separated by a | symbol, and with each custom tag saved using this syntax: key$type$value
+	Updated resource-harvesting scripts to use script-specific global (const) variables, to avoid interference between different scripts (js/server/resource/*)
+	Added new resource-harvesting scripts and added spawn regions for these in fields on farms all over Britannia/Lost Lands
+		cabbages (js/server/resource/cabbages.js)
+		canteloupes (js/server/resource/canteloupes.js)
+		carrots (js/server/resource/carrots.js)
+		garlic (js/server/resource/garlic.js)
+		gourds (js/server/resource/gourds.js)
+		honeydew melons (js/server/resource/honeydewmelon.js)
+		onions (js/server/resource/onions.js)
+		pumpkins (js/server/resource/pumpkins.js)
+		squashes (js/server/resource/squashes.js)
+		turnips (js/server/resource/turnips.js)
+		watermelons (js/server/resource/watermelon.js)
+	Updated CSpawnRegion::FindItemSpotToSpawn() function in cSpawnRegion.cpp to prevent duplicate spawning of exact same item in exact same location
+	Updated sectionid of all potion and scroll aliases to match main item, so they'll get correctly picked up by NPC shopkeepers (dfndata/items/magic/potions.dfn and scrolls.dfn)
+	Specified sectionid for backpacks, so it also gets applied to packs added using the alias [backpack] (dfndata/items/misc/provisions.dfn)
+	Fixed a code issue that prevented players from selling empty containers to NPC shopkeepers willing to buy such containers
+	Fixed an issue where field-spells (wall of stone, poison field, etc) would ignore dynamic/static items that should block these
+	Fixed an issue where field-spells could be cast into houses from the outside by standing next to a wall and targeting self
+	Fixed a War/Peace-mode desync between client and server by having server always notify client (using war-toggle packet) when the "at war" flag is toggled for player character
+	Fixed an issue with hiding skill that wouldn't allow player to hide after having acquired self as target in combat (through spellcasting, for instance) (Thanks, Dragon Slayer!)
+	Fixed an issue where mana/reagents were consumed and skillcheck performed before all spellcast-validations had succeeded, resulting in the occasional loss of reagents/mana when spellcasting was disallowed (code and js/magic/clumsy.js and level1targ.js)
+	Fixed an issue with lack of criminal-flagging for casting of hostile spells scripted in JS (clumsy, magic arrow, feeblemind) vs blue targets (js/magic/clumsy.js and level1targ.js)
+	Fixed some issues with Line-of-Sight checking code that returned incorrect results, which amongst other things affected spellcasting in areas with uneven terrain
+	Fixed some issues with movement code and climbing of ladders, in particular the rope ladder in the 2-story log cabin. Code now sets a "is climbing" flag when character steps onto a rope ladder, and uses that to help resolve some edge cases, and then unsets it when they step off.
+	Renamed section headers of some map-items in DFNs from "locationname" to "locationnamemap" for clarity (example: "britain" to "britainmap")
+	Fixed broken "map wrapping" when sailing to edges of map in Felucca or Trammel
+	Fixed a server crash related to attempts at reading data from invalid map tiles
+	Updated 'rremove repeated command to automatically release/unsecure locked down/secure items before removing them (js/commands/custom/repeatingcmds.js)
+	Added GM commands to force a temporary weather change until next time weather updates automatically (js/commands/custom/misc-cmd.js):
+		'rain
+		'snow
+		'clearweather
+	Updated 'settag and 'settemptag GM commands to support string-values with commas (js/commands/custom/misc_cmd.js)
+	Updated 'where GM command to also show region ID in addition to coordinates and region-name (js/commands/where.js)
+	Fixed an issue with potion usage (js/item/potion.js) where both hands needed to be free instead of just one (thanks, cobrag0318!)
+
 02/06/2025 - Xuri
 	Fixed an issue where UOX3 would not save/lead the pauseTime of effects correctly, causing JS-timers and tempeffect timers in general to break on server restart. Manual fix for already affected effects: open effects.wcs and set all pauseTime values with ridiculously high values to 0, then save file.
 

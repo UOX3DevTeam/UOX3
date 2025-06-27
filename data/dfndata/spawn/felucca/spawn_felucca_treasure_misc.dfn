@@ -1,5 +1,5 @@
 // spawn_felucca_treasure_misc.dfn
-// [3000-3100]
+// [3000-3099]
 
 [REGIONSPAWN 3000]
 {
@@ -145,7 +145,7 @@ MAXTIME=20
 CALL=1
 }
 
-[REGIONSPAWN 3100]
+[REGIONSPAWN 3090]
 {
 NAME=Trinsic Bank 1-3
 ITEMLIST=dungeon_treasure_3-4
@@ -160,5 +160,3 @@ MINTIME=25
 MAXTIME=30
 CALL=1
 }
-
-EOF

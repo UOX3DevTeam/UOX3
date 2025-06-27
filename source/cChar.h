@@ -226,7 +226,7 @@ protected:
   	RACEID  	raceGate;		// Race gate that has been used
   	UI08    	step;			// 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
 
-	std::bitset<16>		priv;
+	std::bitset<17>		priv;
 
 	std::string	guildTitle;		// Title Guildmaster granted player						(DasRaetsel)
 
@@ -360,6 +360,10 @@ public:
 
 	void		SetStabled( bool newValue );
 	bool		GetStabled( void ) const;
+
+	void		SetCombatLos( bool newValue );
+	bool		GetCombatLos( void ) const;
+
 	void		SetFlying( bool newValue );
 	bool		IsFlying( void ) const;
 
@@ -432,6 +436,7 @@ public:
 	void		SetCasting( bool newValue );
 	void		SetJSCasting( bool newValue );
 	void		SetInBuilding( bool newValue );
+	void		IsClimbing( bool newValue );
 
 	void		SetTownVote( UI32 newValue );
 	void		SetGuildFealty( UI32 newValue );
@@ -494,7 +499,7 @@ public:
 	SI08		GetSpellCast( void ) const;
 	void		SetSpellCast( SI08 newValue );
 
-	UI16		GetPriv( void ) const;
+	UI32		GetPriv( void ) const;
 	SI08		GetTownPriv( void ) const;
 	bool		IsGM( void ) const;
 	bool		CanBroadcast( void ) const;
@@ -512,6 +517,7 @@ public:
 	bool		IsTempReflected( void ) const;
 	bool		IsPermReflected( void ) const;
 	bool		NoNeedReags( void ) const;
+	bool		HideFameKarmaTitle( void ) const;
 
 	void		SetGM( bool newValue );
 	void		SetBroadcast( bool newValue );
@@ -529,8 +535,9 @@ public:
 	void		SetTempReflected( bool newValue );
 	void		SetPermReflected( bool newValue );
 	void		SetNoNeedReags( bool newValue );
+	void		HideFameKarmaTitle( bool newValue );
 
-	void		SetPriv( UI16 newValue );
+	void		SetPriv( UI32 newValue );
 	void		SetTownpriv( SI08 newValue );
 
 	UI16		GetBaseSkill( UI08 skillToGet ) const;
@@ -566,7 +573,7 @@ public:
 	void			SendWornItems( CSocket *s );
 	void			Teleport( void );
 	void			ExposeToView( void );
-	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) override;
+	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true, bool triggerInRangeEvent = false ) override;
 	virtual void	SendToSocket( CSocket *s, bool drawGamePlayer = false ) override;
 
 	CItem *			GetItemAtLayer( ItemLayers Layer );
@@ -657,6 +664,7 @@ public:
 
 	bool			InDungeon( void );
 	bool			InBuilding( void );
+	bool			IsClimbing( void ) const;
 
 	void			TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool spamTimer );
 	void			TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spamTimer, ... );

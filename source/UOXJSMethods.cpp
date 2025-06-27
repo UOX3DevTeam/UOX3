@@ -2820,7 +2820,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				return JS_TRUE;
 			}
 			ScriptError( cx, "For Items you need at least one parameter for Teleport" );
-			break;
+			return JS_FALSE;
 
 			// Parameters as a string
 		case 1:
@@ -2833,7 +2833,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 					if( !ValidateObject( toGoTo ))
 					{
 						ScriptError( cx, "No object associated with this object" );
-						break;
+						return JS_FALSE;
 					}
 
 					x		= toGoTo->GetX();
@@ -2855,7 +2855,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				else
 				{
 					ScriptError( cx, "Invalid class of object" );
-					break;
+					return JS_FALSE;
 				}
 			}
 			else if( JSVAL_IS_INT( argv[0] ))
@@ -2873,6 +2873,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 			else	// Needs to be implemented
 			{
 				ScriptError( cx, "Text-styled Parameters may be added later" );
+				return JS_FALSE;
 			}
 			break;
 
@@ -2883,6 +2884,11 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 			}
+			else
+			{
+				ScriptError( cx, "Invalid argument values passed to Teleport/SetLocation, expected x, y. Aborting!" );
+				return JS_FALSE;
+			}
 			break;
 
 			// x,y,z
@@ -2892,6 +2898,11 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+			}
+			else
+			{
+				ScriptError( cx, "Invalid argument values passed to Teleport/SetLocation, expected x, y, z. Aborting!" );
+				return JS_FALSE;
 			}
 			break;
 
@@ -2904,6 +2915,11 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				z		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
 				world	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
 			}
+			else
+			{
+				ScriptError( cx, "Invalid argument values passed to Teleport/SetLocation, expected x, y, z, world. Aborting!" );
+				return JS_FALSE;
+			}
 			break;
 
 			// x,y,z,world,instanceId
@@ -2915,6 +2931,11 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
 				world = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
 				instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+			}
+			else
+			{
+				ScriptError( cx, "Invalid argument values passed to Teleport/SetLocation, expected x, y, z, world, instanceID. Aborting!" );
+				return JS_FALSE;
 			}
 			break;
 
@@ -2973,7 +2994,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 			SendMapChange( world, mySock );
 
 			// Extra update needed for regular UO client
-			myChar->Update();
+			myChar->Update( nullptr, false, true, true );
 		}
 		else
 		{

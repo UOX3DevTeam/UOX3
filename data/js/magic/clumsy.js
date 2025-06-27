@@ -3,106 +3,61 @@ function SpellRegistration()
 	RegisterSpell( 1, true );	// say, clumsy, same as in the spells.dfn file
 }
 
-function onSpellCast( mSock, mChar, directCast, spellNum )
+function SpellTimerCheck( mChar, mSock )
 {
-	// Are we already casting?
 	if( mChar.GetTimer( Timer.SPELLTIME ) != 0 )
 	{
 		if( mChar.isCasting )
 		{
-			if( mSock != null )
+			if( mSock )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 762, mSock.language )); // You are already casting a spell.
 			}
-			return true;
+			return false;
 		}
 		else if( mChar.GetTimer( Timer.SPELLTIME ) > GetCurrentClock() )
 		{
-			if( mSock != null )
+			if( mSock )
 			{
 				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language )); // You must wait a little while before casting
 			}
-			return true;
+			return false;
 		}
 	}
+	return true;
+}
 
-	var mSpell	= Spells[spellNum];
-	var spellType = 0
-
-	// Fetch spelltype; 0 = normal spell, 1 = scroll, 2 = wand
-	if( mSock != null )
-	{
-		spellType = mSock.currentSpellType;
-	}
-
-	mChar.spellCast = spellNum;
-
+function JailTimerCheck( mChar, mSock )
+{
 	if( mChar.isJailed && mChar.commandlevel < 2 )
 	{
-		if( mSock != null )
-		{
-			mSock.SysMessage( GetDictionaryEntry( 704, mSock.language )); // You are in jail and cannot cast spells!
-		}
+		mSock.SysMessage( GetDictionaryEntry( 704, mSock.language )); // You are in jail and cannot cast spells!
 		mChar.SetTimer( Timer.SPELLTIME, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
-		return true;
+		return false;
 	}
+	return true;
+}
 
-	// Region checks
-	var ourRegion = mChar.region;
-	if( mSpell.aggressiveSpell )
-	{
-		if( ourRegion.isSafeZone )
-		{
-			if( mSock != null )
-			{
-				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language )); // Hostile actions are not permitted in this safe area.
-			}
-			mChar.SetTimer( Timer.SPELLTIME, 0 );
-			mChar.isCasting = false;
-			mChar.spellCast = -1;
-			return true;
-		}
-
-		if( !ourRegion.canCastAggressive )
-		{
-			if( mSock != null )
-			{
-				mSock.SysMessage( GetDictionaryEntry( 706, mSock.language )); // This is not allowed in town.
-			}
-			mChar.SetTimer( Timer.SPELLTIME, 0 );
-			mChar.isCasting = false;
-			mChar.spellCast = -1;
-			return true;
-		}
-	}
-
+function SpellEnableCheck( mChar, mSock, mSpell )
+{
 	if( !mSpell.enabled )
 	{
-		if( mSock != null )
+		if( mSock )
 		{
 			mSock.SysMessage( GetDictionaryEntry( 707, mSock.language )); // That spell is currently not enabled.
 		}
 		mChar.SetTimer( Timer.SPELLTIME, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
-		return true;
+		return false;
 	}
+	return true;
+}
 
-	// Cut the casting requirement on scrolls
-	var lowSkill, highSkill;
-	if( spellType == 1 )
-	{
-		lowSkill	= mSpell.scrollLow;
-		highSkill	= mSpell.scrollHigh;
-	}
-	else
-	{
-		lowSkill	= mSpell.lowSkill;
-		highSkill	= mSpell.highSkill;
-	}
-
+function ItemInHandCheck( mChar, mSock, spellType )
+{
 	// The following loop checks to see if any item is currently equipped (if not a GM)
 	if( mChar.commandlevel < 2 )
 	{
@@ -134,10 +89,80 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 					mChar.isCasting = false;
 					mChar.spellCast = -1;
 				}
-				return true;
+				return false;
 			}
 		}
 	}
+	return true;
+}
+
+function onSpellCast( mSock, mChar, directCast, spellNum )
+{
+	// Are we recovering from another spell that was just cast
+	if( mChar.GetTimer( Timer.SPELLRECOVERYTIME ) != 0 )
+	{
+		if( mChar.GetTimer( Timer.SPELLRECOVERYTIME ) > GetCurrentClock() )
+		{
+			if( mSock != null )
+			{
+				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language )); // You must wait a little while before casting
+			}
+			return true;
+		}
+	}
+
+	// Are we already casting?
+	if( !SpellTimerCheck( mChar, mSock ))
+		return true;
+
+	var mSpell	= Spells[spellNum];
+	var spellType = 0
+
+	// Fetch spelltype; 0 = normal spell, 1 = scroll, 2 = wand
+	if( mSock != null )
+	{
+		spellType = mSock.currentSpellType;
+	}
+
+	mChar.spellCast = spellNum;
+
+	if( !JailTimerCheck( mChar, mSock ))
+		return true;
+
+	// Region checks
+	var ourRegion = mChar.region;
+	if( mSpell.aggressiveSpell )
+	{
+		if( ourRegion.isSafeZone )
+		{
+			if( mSock != null )
+			{
+				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language )); // Hostile actions are not permitted in this safe area.
+			}
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
+			mChar.isCasting = false;
+			mChar.spellCast = -1;
+			return true;
+		}
+
+		if( !ourRegion.canCastAggressive )
+		{
+			if( mSock != null )
+			{
+				mSock.SysMessage( GetDictionaryEntry( 706, mSock.language )); // This is not allowed in town.
+			}
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
+			mChar.isCasting = false;
+			mChar.spellCast = -1;
+			return true;
+		}
+	}
+
+	if( !SpellEnableCheck( mChar, mSock, mSpell ))
+		return true;
+
+	if( !ItemInHandCheck( mChar, mSock, spellType ))
+		return true;
 
 	if( mChar.visible == 1 || mChar.visible == 2 )
 	{
@@ -151,16 +176,6 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 	if( mChar.commandlevel < 2  )
 	{
-		//Check for enough reagents
-		// type == 0 -> SpellBook
-		if( spellType == 0 && !TriggerEvent( 6004, "CheckReagents", mChar, mSpell))
-		{
-			mChar.SetTimer( Timer.SPELLTIME, 0 );
-			mChar.isCasting = false;
-			mChar.spellCast = -1;
-			return true;
-		}
-
 		// type == 2 - Wands
 		if( spellType != 2 )
 		{
@@ -200,24 +215,6 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		}
 	}
 
-	if(( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill )))
-	{
-		if( mChar.isHuman )
-		{
-			mChar.TextMessage( mSpell.mantra );
-		}
-
-		if( spellType == 0 )
-		{
-			TriggerEvent( 6004, "DeleteReagents", mChar, mSpell );
-			mChar.SpellFail();
-			mChar.SetTimer( Timer.SPELLTIME, 0 );
-			mChar.isCasting = false;
-			mChar.spellCast = -1;
-			return true;
-		}
-	}
-
 	mChar.nextAct = 75;		// why 75?
 
 	var delay = mSpell.delay;
@@ -244,17 +241,22 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		}
 	}
 
-	var tempString;
-	if( mSpell.fieldSpell && mChar.skills.magery > 600 )
+	// Only human casters will say the spellcasting mantras
+	if( mChar.isHuman )
 	{
-		tempString = "Vas " + mSpell.mantra;
-	}
-	else
-	{
-		tempString = mSpell.mantra;
+		var tempString;
+		if( mSpell.fieldSpell && mChar.skills.magery > 600 )
+		{
+			tempString = "Vas " + mSpell.mantra;
+		}
+		else
+		{
+			tempString = mSpell.mantra;
+		}
+
+		mChar.TextMessage( tempString );
 	}
 
-	mChar.TextMessage( tempString );
 	mChar.isCasting = true;
 
 	mChar.StartTimer( delay * 1000, spellNum, true );
@@ -307,6 +309,14 @@ function onCallback0( mSock, ourTarg )
 
 		onSpellSuccess( mSock, mChar, ourTarg );
 	}
+	else
+	{
+		mChar.SetTimer( Timer.SPELLTIME, 0 );
+		mChar.isCasting = false;
+		mChar.spellCast = -1;
+		mChar.frozen = false;
+		mChar.Refresh();
+	}
 }
 
 function onSpellSuccess( mSock, mChar, ourTarg )
@@ -315,6 +325,18 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 		return;
 
 	var spellNum	= mChar.spellCast;
+	if( spellNum == -1 )
+	{
+		if( spellID != -1 )
+		{
+			spellNum = spellID;
+		}
+		else
+		{
+			return;
+		}
+	}
+
 	var mSpell		= Spells[spellNum];
 	var spellType	= 0;
 	var sourceChar	= mChar;
@@ -327,15 +349,18 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	mChar.SetTimer( Timer.SPELLTIME, 0 );
 	mChar.spellCast = -1;
 
-	if( mChar.npc || spellType != 2 )
+	// If player commandlevel is below GM-level, check for reagents
+	if( mSock != null && mChar.commandlevel < 2  )
 	{
-		mChar.mana 		= mChar.mana - mSpell.mana;
-		mChar.health 	= mChar.health - mSpell.health;
-		mChar.stamina	= mChar.stamina - mSpell.stamina;
-	}
-	if( !mChar.npc && spellType == 0 )
-	{
-		TriggerEvent( 6004, "DeleteReagents", mChar, mSpell );
+		//Check for enough reagents
+		// type == 0 -> SpellBook
+		if( spellType == 0 && !TriggerEvent( 6004, "CheckReagents", mChar, mSpell))
+		{
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
+			mChar.isCasting = false;
+			mChar.spellCast = -1;
+			return;
+		}
 	}
 
 	if( !mChar.InRange( ourTarg, 10 ))
@@ -348,10 +373,9 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	}
 
 	if( !mChar.CanSee( ourTarg ))
-	{
 		return;
-	}
 
+	var attackTarget = false;
 	var targRegion = ourTarg.region;
 	if( mSpell.aggressiveSpell )
 	{
@@ -380,6 +404,8 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 			return;
 		}
 
+		attackTarget = true;
+
 		if( mSpell.reflectable )
 		{
 			if( ourTarg.magicReflect )
@@ -390,6 +416,49 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 				ourTarg		= mChar;
 			}
 		}
+	}
+
+	// Cut the casting requirement on scrolls
+	var lowSkill, highSkill;
+	if( spellType == 1 )
+	{
+		lowSkill	= mSpell.scrollLow;
+		highSkill	= mSpell.scrollHigh;
+	}
+	else
+	{
+		lowSkill	= mSpell.lowSkill;
+		highSkill	= mSpell.highSkill;
+	}
+
+	// Do skillcheck
+	if(( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill )))
+	{
+		if( spellType == 0 )
+		{
+			TriggerEvent( 6004, "DeleteReagents", mChar, mSpell );
+			mChar.SpellFail();
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
+			mChar.isCasting = false;
+			mChar.spellCast = -1;
+			return;
+		}
+	}
+
+	if( mChar.npc || spellType != 2 )
+	{
+		mChar.mana 		= mChar.mana - mSpell.mana;
+		mChar.health 	= mChar.health - mSpell.health;
+		mChar.stamina	= mChar.stamina - mSpell.stamina;
+	}
+	if( !mChar.npc && spellType == 0 )
+	{
+		TriggerEvent( 6004, "DeleteReagents", mChar, mSpell );
+	}
+
+	if( attackTarget )
+	{
+		sourceChar.InitiateCombat( ourTarg );
 	}
 
 	if( sourceChar.npc )

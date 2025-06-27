@@ -382,46 +382,49 @@ function onCallback7( pSock, myTarget )
 				}
 
 				// Reset hair/beard style/colour if item being removed is hair or beard on a character
-				var packOwner = GetPackOwner( myTarget, 0 );
-				if( packOwner != null && packOwner.isChar )
+				if( myTarget.isItem )
 				{
-					if( myTarget.layer == 0x0b ) // Hair
+					var packOwner = GetPackOwner( myTarget, 0 );
+					if( packOwner != null && packOwner.isChar )
 					{
-						packOwner.hairStyle = 0;
-						packOwner.hairColour = 0;
-					}
-					else if( myTarget.layer == 0x10 ) // Beard
-					{
-						packOwner.beardStyle = 0;
-						packOwner.beardColour = 0;
-					}
-				}				
-
-				// If item being removed was locked down in a multi, release item from multi to update lockdown count properly
-				var iMulti = myTarget.multi;
-				if( ValidateObject( iMulti ))
-				{
-					if( iMulti.IsSecureContainer( myTarget ))
-					{
-						// Targeted item is a secure container
-						iMulti.UnsecureContainer( myTarget );
-					}
-					else
-					{
-						// Release the targeted item before deleting it
-						iMulti.ReleaseItem( myTarget );
-					}
-
-					if( myTarget.type == 1 )
-					{
-						// Loop through any items in container and release them
-						var tempItem;
-						for( tempItem = myTarget.FirstItem(); !myTarget.FinishedItems(); tempItem = myTarget.NextItem() )
+						if( myTarget.layer == 0x0b ) // Hair
 						{
-							if( !ValidateObject( tempItem ))
-								continue;
+							packOwner.hairStyle = 0;
+							packOwner.hairColour = 0;
+						}
+						else if( myTarget.layer == 0x10 ) // Beard
+						{
+							packOwner.beardStyle = 0;
+							packOwner.beardColour = 0;
+						}
+					}
 
-							iMulti.ReleaseItem( tempItem );
+					// If item being removed was locked down in a multi, release item from multi to update lockdown count properly
+					var iMulti = myTarget.multi;
+					if( ValidateObject( iMulti ))
+					{
+						if( iMulti.IsSecureContainer( myTarget ))
+						{
+							// Targeted item is a secure container
+							iMulti.UnsecureContainer( myTarget );
+						}
+						else
+						{
+							// Release the targeted item before deleting it
+							iMulti.ReleaseItem( myTarget );
+						}
+
+						if( myTarget.type == 1 )
+						{
+							// Loop through any items in container and release them
+							var tempItem;
+							for( tempItem = myTarget.FirstItem(); !myTarget.FinishedItems(); tempItem = myTarget.NextItem() )
+							{
+								if( !ValidateObject( tempItem ))
+									continue;
+
+								iMulti.ReleaseItem( tempItem );
+							}
 						}
 					}
 				}

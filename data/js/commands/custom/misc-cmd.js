@@ -61,6 +61,9 @@ function CommandRegistration()
 	RegisterCommand( "listfollowers", 2, true ); // Spit out a list of all followers of target
 	RegisterCommand( "resetskillcaps", 3, true ); // Fix corrupted player skill caps
 	RegisterCommand( "resetskillusage", 3, true ); // Fix stuck skill usage for all players
+	RegisterCommand( "rain", 3, true ); // Make it rain in the current region
+	RegisterCommand( "snow", 3, true ); // Make it snow in the current region
+	RegisterCommand( "clearweather", 3, true ); // Clear up weather effect
 }
 
 function command_RENAME( pSock, execString )
@@ -173,7 +176,20 @@ function command_ADDPACK( pSock, execString )
 function command_SETTAG( pSock, execString )
 {
 	var pUser = pSock.currentChar;
-	var Word = execString.split( "," );
+	var Word = [];
+	if( execString != null )
+	{
+		var firstCommaIndex = execString.indexOf( ',' );
+		if( firstCommaIndex != -1 )
+		{
+			// Fetch everything _before_ the first comma
+			Word[0] = execString.substring( 0, firstCommaIndex );
+
+			// Fetch everything _after_ the first comma
+			Word[1] = execString.substring( firstCommaIndex + 1 );
+		}
+	}
+
 	if(( execString == "" || execString == null ) || ( Word[0] == null || Word[0] == "" || Word[0] == " " || Word[1] == "" || Word[1] == null ))
 	{
 		pUser.SysMessage( GetDictionaryEntry( 8862, pSock.language )); // You need to specify a tag and a value for the tag, seperated by a comma.
@@ -203,7 +219,20 @@ function command_GETTAG( pSock, execString )
 function command_SETTEMPTAG( pSock, execString )
 {
 	var pUser = pSock.currentChar;
-	var Word = execString.split( "," );
+	var Word = [];
+	if( execString != null )
+	{
+		var firstCommaIndex = execString.indexOf( ',' );
+		if( firstCommaIndex != -1 )
+		{
+			// Fetch everything _before_ the first comma
+			Word[0] = execString.substring( 0, firstCommaIndex );
+
+			// Fetch everything _after_ the first comma
+			Word[1] = execString.substring( firstCommaIndex + 1 );
+		}
+	}
+
 	if(( execString == "" || execString == null ) || ( Word[0] == null || Word[0] == "" || Word[0] == " " || Word[1] == "" || Word[1] == null ))
 	{
 		pUser.SysMessage( GetDictionaryEntry( 8862, pSock.language )); // You need to specify a tag and a value for the tag, seperated by a comma.
@@ -1438,6 +1467,30 @@ function onIterate( toCheck )
 		return true;
 	}
 	return false;
+}
+
+// Override weather for current region and make it RAIN
+function command_RAIN( pSock, execString )
+{
+	var mRegion = pSock.currentChar.region;
+	mRegion.weather = 9;
+	pSock.SysMessage( "Weather override (RAIN) enabled for current region (" + mRegion.name + ")" );
+}
+
+// Override weather for current region and make it SNOW
+function command_SNOW( pSock, execString )
+{
+	var mRegion = pSock.currentChar.region;
+	mRegion.weather = 10;
+	pSock.SysMessage( "Weather override (SNOW) enabled for current region (" + mRegion.name + ")" );
+}
+
+// Clear up any override weather-effects in current region
+function command_CLEARWEATHER( pSock, execString )
+{
+	var mRegion = pSock.currentChar.region;
+	mRegion.weather = 0;
+	pSock.SysMessage( "Weather override disabled for current region (" + mRegion.name + ")" );
 }
 
 function _restorecontext_() {}

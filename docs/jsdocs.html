@@ -1872,7 +1872,7 @@ function onDispel( objDispelled, objType )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
-							<p>Adding custom behaviour when dropping items on other items</p>
+							<p>Adding custom behaviour when dropping items <strong>on/inside containers</strong></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
@@ -1887,12 +1887,16 @@ function onDispel( objDispelled, objType )
 							</ul>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>iDroppedOn can only be items that are recognized by the client as containers, via the tiledata "container" flag in the client data. The client will not register attempts to drop items on non-container items, and it's not enough to set a container type on an item in UOX3 to overcome this. Modifications to client tiledata is required in order to make client recognize items as potential containers.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 {
 	if( iDropped.id == 0x1f14 ) //If the item being dropped is a recall rune
 	{
-		if( iDroppedOn.id == 0x0efa ) //If the item being dropped on is a spellbook
+		if( iDroppedOn.id == 0x0efa ) //If the item being dropped on is a spellbook - which is a container
 		{
 			cDropper.TextMessage("I am dropping "+iDropped.name+" on a "+iDroppedOn.name );
 			return true;
@@ -10902,8 +10906,8 @@ myNPC.Wander( 5600, 1204, 10 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">console.Log( "Logging a custom message to default logfile!" );
-console.Log( "Logging a custom message to a specific logfile!", "myCustomLogFile.log" );
+									<pre><code class="language-javascript">Console.Log( "Logging a custom message to default logfile!" );
+Console.Log( "Logging a custom message to a specific logfile!", "myCustomLogFile.log" );
 </code></pre>
 								</div>
 							</div>
@@ -12222,7 +12226,7 @@ myGump.AddPicInPic( 10, 10, 0x03de, 0, 0, 30, 30 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myGump.send( mySock );</code></pre>
+									<pre><code class="language-javascript">myGump.Send( mySock );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -14840,6 +14844,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.frozen</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether character is frozen on the spot, unable to move</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.hideFameKarmaTitle</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Get/Set whether fame/karma titles should show for character</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.hireling</span> <strong>(bool, <em>true/false</em>)</strong><br>

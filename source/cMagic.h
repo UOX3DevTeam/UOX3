@@ -22,6 +22,8 @@ public:
 	void DoStaticEffect( CChar *source, SI32 num );
 	void PlaySound( CChar *source, SI32 num );
 	void DelReagents( CChar *s, Reag_st reags );
+	void ConsumeSpellResources( CSocket *s, CChar *caster, SI08 curSpell );
+	bool CheckMagicSkill( CSocket *s, CChar *caster, SI08 curSpell );
 	void CastSpell( CSocket *s, CChar *caster );	// changed for NPC casting
 	bool CheckResist( CChar *attacker, CChar *defender, SI32 circle );
 	bool CheckResist( SI16 resistDifficulty, CChar *defender, SI32 circle );

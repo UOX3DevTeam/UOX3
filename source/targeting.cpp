@@ -645,11 +645,19 @@ void InfoTarget( CSocket *s )
 		// manually calculating the ID's if it's a maptype
 		auto map1 = Map->SeekMap( x, y, worldNumber );
 		CGumpDisplay mapStat( s, 300, 300 );
-		mapStat.SetTitle( "Map Tile" );
-		mapStat.AddData( "Tilenum", map1.tileId, 5 );
-		mapStat.AddData( "Flags", map1.terrainInfo->FlagsNum(), 1 );
-		mapStat.AddData( "Name", map1.name() );
-		mapStat.Send( 4, false, INVALIDSERIAL );
+		if( map1.terrainInfo != nullptr )
+		{
+			mapStat.SetTitle( "Map Tile" );
+			mapStat.AddData( "Tilenum", map1.tileId, 5 );
+			mapStat.AddData( "Flags", map1.terrainInfo->FlagsNum(), 1 );
+			mapStat.AddData( "Name", map1.name() );
+			mapStat.Send( 4, false, INVALIDSERIAL );
+		}
+		else
+		{
+			mapStat.SetTitle( "Invalid Map Tile" );
+			mapStat.Send( 4, false, INVALIDSERIAL );
+		}
 	}
 	else
 	{
@@ -1464,7 +1472,7 @@ void NpcResurrectTarget( CChar *i )
 				beardItem->SetCont( i );
 			}
 
-			i->SetHP( i->GetMaxHP() / 10 );
+			i->SetHP( std::max( 1, ( i->GetMaxHP() / 10 )));
 			i->SetStamina( i->GetMaxStam() / 10 );
 			i->SetMana( i->GetMaxMana() / 10 );
 			i->SetAttacker( nullptr );

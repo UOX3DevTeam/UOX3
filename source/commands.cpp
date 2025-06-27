@@ -404,7 +404,7 @@ void CCommands::Load( void )
 						}
 						else if( UTag == "DEFAULTPRIV" )
 						{
-							ourClear->defaultPriv = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+							ourClear->defaultPriv = static_cast<UI32>( std::stoul( data, nullptr, 0 ));
 						}
 						else if( UTag == "BODYID" )
 						{
