@@ -94,6 +94,7 @@ const UI16			DEFITEM_REGIONNUM 		= 255;
 const UI16			DEFITEM_TEMPLASTTRADED	= 0;
 const SI08			DEFITEM_STEALABLE	 	= 1;
 const SI16			DEFITEM_ARTIFACTRARITY = 0;
+const UI16			DEFITEM_POISONCHARGES = 0;
 
 const SI16			DEFITEM_DURABLITITYHPBONUS = 0;
 
@@ -113,7 +114,8 @@ spd( DEFITEM_SPEED ), maxHp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
 creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
 maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM ), 
-tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), artifactRarity( DEFITEM_ARTIFACTRARITY ), lowerStatReq( DEFITEM_LOWERSTATREQ ), durabilityHpBonus( DEFITEM_DURABLITITYHPBONUS )
+tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), artifactRarity( DEFITEM_ARTIFACTRARITY ), lowerStatReq( DEFITEM_LOWERSTATREQ ), 
+durabilityHpBonus( DEFITEM_DURABLITITYHPBONUS ), poisonCharges( DEFITEM_POISONCHARGES )
 {
 	spells[0]	= spells[1] = spells[2] = 0;
 	value[0]	= value[1] = value[2] = 0;
@@ -1749,6 +1751,7 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetUsesLeft( GetUsesLeft() );
 	target->SetLowerStatReq( GetLowerStatReq() );
 	target->SetStealable( GetStealable() );
+	target->SetPoisonCharges( GetPoisonCharges() );
 
 	// Set damage types on new item
 	for( SI32 i = 0; i < WEATHNUM; ++i )
@@ -1851,6 +1854,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 		+ std::to_string( static_cast<SI16>( GetWeatherDamage( SNOW ) ? 1 : 0 )) + "," + std::to_string( static_cast<SI16>( GetWeatherDamage( LIGHTNING ) ? 1 : 0 )) + newLine;
 	outStream << "EntryMadeFrom=" + std::to_string( EntryMadeFrom() ) + newLine;
 	outStream << "Stealable=" + std::to_string( GetStealable() ) + newLine;
+	outStream << "PoisonCharges" + std::to_string( GetPoisonCharges() ) + newLine;
 
 	return true;
 }
@@ -2554,6 +2558,22 @@ auto CItem::SetStealable( UI08 newValue ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetPoisonCharges()
+//|					CItem::SetPoisonCharges()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets property that determines amount of poison charges available on item
+//o------------------------------------------------------------------------------------------------o
+auto CItem::GetPoisonCharges() const -> UI16
+{
+	return poisonCharges;
+}
+auto CItem::SetPoisonCharges( UI16 newValue ) -> void
+{
+	poisonCharges = newValue;
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::EntryMadeFrom()
 //|	Date		-	13 September, 2001
 //o------------------------------------------------------------------------------------------------o
@@ -2771,6 +2791,7 @@ void CItem::Update( [[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawG
 		CChar *charCont = static_cast<CChar *>( iCont );
 		if( charCont != nullptr )
 		{
+			RemoveFromSight( mSock ); // Remove from sight first, otherwise client won't pick up on update for equipped item
 			CPWornItem toWear = ( *this );
 			auto nearbyChar = FindNearbyPlayers( charCont );
 			for( auto &tSock : nearbyChar )

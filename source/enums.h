@@ -437,9 +437,10 @@ enum DEFINITIONCATEGORIES
 enum CommandLevels
 {
 	CL_PLAYER = 0,
-	CL_CNS,
-	CL_GM,
-	CL_ADMIN
+	CL_CNS = 4,
+	CL_SEER = 6,
+	CL_GM = 8,
+	CL_ADMIN = 10
 };
 
 enum AITypes

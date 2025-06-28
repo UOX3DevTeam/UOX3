@@ -1,9 +1,9 @@
 function CommandRegistration()
 {
-	RegisterCommand( "cnsyell", 1, true );
-	RegisterCommand( "gmyell", 2, true );
-	RegisterCommand( "adminyell", 3, true );
-	RegisterCommand( "yell", 2, true );
+	RegisterCommand( "cnsyell", 4, true );
+	RegisterCommand( "gmyell", 8, true );
+	RegisterCommand( "adminyell", 10, true );
+	RegisterCommand( "yell", 8, true );
 }
 
 // Yell so all Counselors can hear it

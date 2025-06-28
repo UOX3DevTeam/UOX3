@@ -2013,21 +2013,35 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 					oldTargY = mChar.GetOldTargLocY();
 
 					// Calculate direction from NPC towards player
-					const UI08 directionToPlayer = Movement->Direction(mChar.GetX(), mChar.GetY(), kChar->GetX(), kChar->GetY());
+					const UI08 dirToTarget = Movement->Direction( mChar.GetX(), mChar.GetY(), kChar->GetX(), kChar->GetY() );
 
 					// Get NPC's current direction
 					const UI08 npcDir = mChar.GetDir();
 
 					// Determine if NPC is already heading generally toward player (direct or adjacent directions)
-					const bool isHeadingTowardsPlayer = (npcDir == directionToPlayer ||
-						npcDir == (directionToPlayer + 1) % 8 ||
-						npcDir == (directionToPlayer + 7) % 8);
+					const bool isHeadingTowardsPlayer = ( npcDir == dirToTarget ||
+						npcDir == ( dirToTarget + 1 ) % 8 ||
+						npcDir == ( dirToTarget + 7 ) % 8 );
 
-					// Only recalculate path if out of steps to follow, or if player's position has updated and NPC is not
-					// already heading in that general direction
-					if( !mChar.StillGotDirs() || 
-						(( oldTargX != kChar->GetX() || oldTargY != kChar->GetY() ) && RandomNum( 0, 10 ) >= 6 &&
-							!isHeadingTowardsPlayer ))
+					// See (approximately) how far the target has moved from oldTargX/oldTargY
+					const R64 targMoveDist = GetApproxDist( Point3_st( static_cast<UI16>( oldTargX ), static_cast<UI16>( oldTargY ), 0 ), 
+													Point3_st( static_cast<UI16>( kChar->GetX() ), static_cast<UI16>( kChar->GetY() ), 0 ));
+
+					const R64 targMoveWeight = 2.5; // For each tile the target has moved from oldTargX/oldTargY, increase weight by this
+					const R64 wrongHeadingPenalty = 20.0; // If NPC is heading in wrong direction, add a penalty weight
+					const R64 timeSincePathCalcWeight = 1.0; // Every second since we path, add points to weight
+					const R64 pathRecalcThreshold = 30.0; // Weight threshold for triggering a path recalculation
+					R64 pathRecalcUrgency = 0.0; // Keep track of total weight for comparison with threshold
+
+					// Determine urgency to recalculate path to target location
+					pathRecalcUrgency += static_cast<R64>( targMoveDist * targMoveWeight );
+					pathRecalcUrgency += static_cast<R64>( isHeadingTowardsPlayer ? 0 : wrongHeadingPenalty );
+					R64 timeSinceLastPath = ( cwmWorldState->GetUICurrentTime() - mChar.GetLastPathCalc() ) / 1000.0;
+					pathRecalcUrgency += static_cast<R64>( timeSinceLastPath * timeSincePathCalcWeight );
+					pathRecalcUrgency *= static_cast<R64>( RandomNum( 8, 12 ) / 10.0 ); // Random jitter to add variation around edge cases
+
+					// Only recalculate path if out of steps to follow, or if urgency to recalculate has suprassed the threshold
+					if( !mChar.StillGotDirs() || pathRecalcUrgency > pathRecalcThreshold )
 					{
 						if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 						{
@@ -2129,13 +2143,14 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 				if( ValidateObject( kChar ) && (( mChar.WorldNumber() == kChar->WorldNumber() && mChar.GetInstanceId() == kChar->GetInstanceId() )))
 				{
 					// Target exists, and is in same world/instance
-					auto distToTarg = GetDist( &mChar, kChar );
+					// Let's get a (fast) approximate distance
+					auto distToTarg = static_cast<UI16>( GetApproxDist( &mChar, kChar ));
 					if( distToTarg < P_PF_MFD )
 					{
 						// Target is within minimum flee distance - flee!
 						// calculate a x,y to flee towards
 						targInRange = true;
-						const UI16 mydist	= P_PF_MFD - GetDist( &mChar, kChar ) + 1;
+						const UI16 mydist	= P_PF_MFD - distToTarg + 1;
 						j					= Direction( &mChar, kChar->GetX(), kChar->GetY() );
 						SI16 myx			= GetXfromDir( j, mChar.GetX() );
 						SI16 myy			= GetYfromDir( j, mChar.GetY() );
@@ -2434,22 +2449,38 @@ void CMovement::NpcMovement( CChar& mChar )
 					}
 
 					// Calculate direction from NPC towards player
-					const UI08 directionToTarget = Movement->Direction( mChar.GetX(), mChar.GetY(), targX, targY );
+					const UI08 dirToTarget = Movement->Direction( mChar.GetX(), mChar.GetY(), targX, targY );
 
 					// Get NPC's current direction
 					const UI08 npcDir = mChar.GetDir();
 
 					// Determine if NPC is already heading generally toward player (direct or adjacent directions)
-					const bool isHeadingTowardsTarget = ( npcDir == directionToTarget ||
-						npcDir == ( directionToTarget + 1 ) % 8 ||
-						npcDir == ( directionToTarget + 7 ) % 8 );
+					const bool isHeadingTowardsPlayer = (npcDir == dirToTarget ||
+						npcDir == (dirToTarget + 1) % 8 ||
+						npcDir == (dirToTarget + 7) % 8);
 
-					// Only recalculate path if out of steps to follow, or if target's position has updated and NPC is not
-					// already heading in that general direction
-					if( !mChar.StillGotDirs() || 
-						(( oldTargX != targX || oldTargY != targY ) && RandomNum( 0, 10 ) >= 6 &&
-							!isHeadingTowardsTarget ))
+					// See (approximately) how far the target has moved from oldTargX/oldTargY
+					const R64 targMoveDist = GetApproxDist( Point3_st( static_cast<UI16>( oldTargX ), static_cast<UI16>( oldTargY ), 0 ), 
+													Point3_st( static_cast<UI16>( targX ), static_cast<UI16>( targY ), 0 ));
+
+					const R64 targMoveWeight = 2.5; // For each tile the target has moved from oldTargX/oldTargY, increase weight by this
+					const R64 wrongHeadingPenalty = 20.0; // If NPC is heading in wrong direction, add a penalty weight
+					const R64 timeSincePathCalcWeight = 1.0; // Every second since we path, add points to weight
+					const R64 pathRecalcThreshold = 30.0; // Weight threshold for triggering a path recalculation
+					R64 pathRecalcUrgency = 0.0; // Keep track of total weight for comparison with threshold
+
+					// Determine urgency to recalculate path to target location
+					pathRecalcUrgency += static_cast<R64>( targMoveDist * targMoveWeight );
+					pathRecalcUrgency += static_cast<R64>( isHeadingTowardsPlayer ? 0 : wrongHeadingPenalty );
+					R64 timeSinceLastPath = ( cwmWorldState->GetUICurrentTime() - mChar.GetLastPathCalc() ) / 1000.0;
+					pathRecalcUrgency += static_cast<R64>( timeSinceLastPath * timeSincePathCalcWeight );
+					pathRecalcUrgency *= static_cast<R64>( RandomNum( 8, 12 ) / 10.0 ); // Random jitter to add variation around edge cases
+
+					// Only recalculate path if out of steps to follow, or if urgency to recalculate has suprassed the threshold
+					if( !mChar.StillGotDirs() || pathRecalcUrgency > pathRecalcThreshold )
 					{
+						mChar.FlushPath(); // Flush out old path
+
 						bool waterWalk = cwmWorldState->creatures[mChar.GetId()].IsWater();
 						bool allowPartial = waterWalk ? true : false; // Allow partial here, since we try a "pseudo partial" further down anyway!
 						if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY(), canRun, allowPartial ))
@@ -2576,7 +2607,7 @@ void CMovement::NpcMovement( CChar& mChar )
 				}
 				else
 				{
-					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() / 1.5f )); // Increase follow speed so NPC pets/escorts can keep up with players
+					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() / 1.5 )); // Increase follow speed so NPC pets/escorts can keep up with players
 				}
 			}
 			else if( npcWanderType != WT_FLEE && npcWanderType != WT_SCARED )
@@ -2623,12 +2654,13 @@ void CMovement::NpcMovement( CChar& mChar )
 		// Play some idle/fidgeting animation instead - if character is not busy doing something else
 		auto npcWander = mChar.GetNpcWander();
 		if( !mChar.IsAtWar() && !ValidateObject( mChar.GetTarg() ) && npcWander != WT_FLEE && npcWander != WT_SCARED && npcWander != WT_FROZEN && npcWander != WT_PATHFIND &&
-			( npcWander != WT_FOLLOW || ( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) > static_cast<TIMERVAL>( 3000 )))
+			(( npcWander != WT_FOLLOW && ( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) > static_cast<TIMERVAL>( 3000 )) ||
+			( npcWander == WT_FOLLOW && ( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) > static_cast<TIMERVAL>( 6000 ))))
 		{
 			if( mChar.GetTimer( tNPC_IDLEANIMTIME ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 3.0 ));
-				mChar.SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( RandomNum( 5, 20 )));
+				mChar.SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( static_cast<R64>( RandomNum( 5, 20 ))));
 
 				if( mChar.GetBodyType() == BT_GARGOYLE || cwmWorldState->ServerData()->ForceNewAnimationPacket() )
 				{

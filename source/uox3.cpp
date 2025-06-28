@@ -159,7 +159,7 @@ void		RestockNPC( CChar& i, bool stockAll );
 void		ClearTrades( void );
 void		SysBroadcast( const std::string& txt );
 void		MoveBoat( UI08 dir, CBoatObj *boat );
-bool		DecayItem( CItem& toDecay, const UI32 nextDecayItems, const UI32 nextDecayItemsInHouses );
+bool		DecayItem( CItem& toDecay, const TIMERVAL nextDecayItems, const TIMERVAL nextDecayItemsInHouses );
 void		CheckAI( CChar& mChar );
 //o------------------------------------------------------------------------------------------------o
 // Internal Pre-Declares
@@ -2245,7 +2245,7 @@ auto CheckNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check item decay, spawn timers and boat movement in a given region
 //o------------------------------------------------------------------------------------------------o
-auto CheckItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 nextDecayItemsInHouses, bool doWeather )
+auto CheckItem( CMapRegion *toCheck, bool checkItems, TIMERVAL nextDecayItems, TIMERVAL nextDecayItemsInHouses, bool doWeather )
 {
 	auto regItems = toCheck->GetItemList();
 	auto collection = regItems->collection();
@@ -2721,7 +2721,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 		// Adaptive spawn region check timer. The closer spawn regions as a whole are to being at their defined max capacity,
 		// the less frequently UOX3 will check spawn regions again. Similarly, the more room there is to spawn additional
 		// stuff, the more frequently UOX3 will check spawn regions
-		auto checkSpawnRegionSpeed = static_cast<R32>( serverData->CheckSpawnRegionSpeed() );
+		auto checkSpawnRegionSpeed = static_cast<R64>( serverData->CheckSpawnRegionSpeed() );
 		UI16 itemSpawnCompletionRatio = ( maxItemsSpawned > 0 ? (( totalItemsSpawned * 100.0 ) / maxItemsSpawned ) : 100 );
 		UI16 npcSpawnCompletionRatio = ( maxNpcsSpawned > 0 ? (( totalNpcsSpawned * 100.0 ) / maxNpcsSpawned ) : 100 );
 		
@@ -2802,7 +2802,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 			Weather->NewHour();
 		}
 
-		SetUOTickCount( BuildTimeValue( serverData->ServerSecondsPerUOMinute() ));
+		SetUOTickCount( BuildTimeValue( static_cast<R64>( serverData->ServerSecondsPerUOMinute() )));
 	}
 
 	if( GetTimer( tWORLD_LIGHTTIME ) <= GetUICurrentTime() )
@@ -2823,7 +2823,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 	if( GetTimer( tWORLD_NEXTFIELDEFFECT ) <= GetUICurrentTime() )
 	{
 		checkFieldEffects = true;
-		SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ));
+		SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5 ));
 	}
 	std::set<CMapRegion *> regionList;
 	{

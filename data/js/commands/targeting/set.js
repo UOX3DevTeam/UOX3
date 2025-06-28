@@ -2,8 +2,8 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "set", 2, true );
-	RegisterCommand( "setpoisoned", 2, true );
+	RegisterCommand( "set", 8, true );
+	RegisterCommand( "setpoisoned", 8, true );
 }
 
 function command_SET( socket, cmdString )

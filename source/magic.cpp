@@ -618,7 +618,7 @@ bool splPoison( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[may
 	target->SetPoisoned( poisonStrength );
 
 	// Set time until poison wears off completely
-	target->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( GetPoisonDuration( poisonStrength )));
+	target->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R64>( GetPoisonDuration( poisonStrength ))));
 
 	// Handle criminal flagging
 	if( ValidateObject( caster ) && target->IsInnocent() )
@@ -3594,7 +3594,7 @@ void CMagic::PoisonDamage( CChar *p, SI32 poison )
 		p->SetPoisoned( poison );
 
 		// Set time until poison wears off completely
-		p->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( GetPoisonDuration( poison )));
+		p->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R64>( GetPoisonDuration( poison ))));
 	}
 }
 
@@ -4291,7 +4291,7 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 			mChar->Dirty( UT_UPDATE );
 		}
 	}
-	else if( type == 0 && mChar->GetCommandLevel() < 2 ) // if they are a gm they don't have a delay :-)
+	else if( type == 0 && mChar->GetCommandLevel() < CL_GM ) // if they are a gm they don't have a delay :-)
 	{
 		mChar->SetTimer( tCHAR_SPELLTIME, BuildTimeValue( static_cast<R64>( curSpellCasting.Delay() )));
 		if( !cwmWorldState->ServerData()->CastSpellsWhileMoving() )
@@ -5256,11 +5256,11 @@ void CMagic::LoadScript( void )
 							case 'D':
 								if( UTag == "DAMAGEDELAY" )
 								{
-									spells[i].DamageDelay( static_cast<R32>( std::stof( data )));
+									spells[i].DamageDelay( static_cast<R64>( std::stod( data )));
 								}
 								else if( UTag == "DELAY" )
 								{
-									spells[i].Delay( static_cast<R32>( std::stof( data )));
+									spells[i].Delay( static_cast<R64>( std::stod( data )));
 								}
 								else if( UTag == "DAEMONBLOOD" )
 								{
@@ -5368,7 +5368,7 @@ void CMagic::LoadScript( void )
 							case 'R':
 								if( UTag == "RECOVERYDELAY" )
 								{
-									spells[i].RecoveryDelay( static_cast<R32>( std::stof( data )));
+									spells[i].RecoveryDelay( static_cast<R64>( std::stod( data )));
 								}
 								break;
 							case 'S':

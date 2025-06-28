@@ -36,13 +36,16 @@
 //	BIT_DISPELLABLE		=	0x1000;
 //	BIT_PERMREFLECTED	=	0x2000;
 //	BIT_NONEEDREAGS		=	0x4000;
+//	BIT_PERMREFLECTED	=	0x8000;
+//	BIT_HIDEFAMEKARMATITLE	=	0x10000;
 //*****************************************************************
 
 [COMMANDLEVELS]
 {
-ADMIN=5
-GM=2
-CNS=1
+ADMIN=10
+GM=8
+SEER=6
+CNS=4
 PLAYER=0
 }
 
@@ -66,6 +69,18 @@ DEFAULTPRIV=0x686F	// default privs assigned (hex)
 BODYID=0x03DB		// default body ID assigned, value of 0x0 == no change
 ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
 BODYCOLOUR=0x8021	// colour of body person turns
+STRIPITEMS			// Strip off equipped items and place them in backpack
+STRIPHAIR			// Strips off hair & beard
+}
+
+[SEER]
+{
+TITLE=Seer
+NICKCOLOUR=0x0000	// colour of person's nick (hex), value of 0x0 == no change
+DEFAULTPRIV=0x0094	// default privs assigned (hex)
+BODYID=0x03DB		// default body ID assigned, value of 0x0 == no change
+ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
+BODYCOLOUR=0x8048	// colour of body person turns
 STRIPITEMS			// Strip off equipped items and place them in backpack
 STRIPHAIR			// Strips off hair & beard
 }
@@ -96,36 +111,36 @@ BODYCOLOUR=0x83ea	// colour of body person turns
 //Players
 WHO=			0
 //Counselors
-CQ=			1
-DYE=                    1
-HOWTO=			1
-WSTATS=			1
+CQ=				5
+DYE=			5
+HOWTO=			5
+WSTATS=			5
 
 //GM's
-ANNOUNCE=		2
-COMMAND=		2
-GCOLLECT=		2
-GMMENU=			2
-GMS=			2
-GUARDS=			2
-GQ=			2
-LOADDEFAULTS=		2
-MEMSTATS=		2
-MINECHECK=		2
-PDUMP=			2
-REGSPAWN=		2
-RESPAWN=		2
-RESTOCK=		2
-SAVE=			2
-SETPOST=		2
-SETSHOPRESTOCKRATE=	2
-SETTIME=		2
-SHOWIDS=		2
-SHOWSKILLS=		2
-SHUTDOWN=		2
-SPAWNKILL=		2
-TELL=			2
-TILE=			2
+ANNOUNCE=		9
+COMMAND=		9
+GCOLLECT=		9
+GMMENU=			9
+GMS=			9
+GUARDS=			9
+GQ=				9
+LOADDEFAULTS=	9
+MEMSTATS=		9
+MINECHECK=		9
+PDUMP=			9
+REGSPAWN=		9
+RESPAWN=		9
+RESTOCK=		9
+SAVE=			9
+SETPOST=		9
+SETSHOPRESTOCKRATE=	9
+SETTIME=		9
+SHOWIDS=		9
+SHOWSKILLS=		9
+SHUTDOWN=		9
+SPAWNKILL=		9
+TELL=			9
+TILE=			9
 }
 
 EOF

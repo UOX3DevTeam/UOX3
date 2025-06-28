@@ -779,6 +779,7 @@ void CPICreateCharacter::NewbieItems( CChar *mChar )
 	}
 }
 
+void MakeStatusTarget( CSocket *sock, CChar *optionalTargChar = nullptr, const std::string cmdLvlString = "" );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPICreateCharacter::Handle( void )
 //o------------------------------------------------------------------------------------------------o
@@ -821,13 +822,6 @@ bool CPICreateCharacter::Handle( void )
 			SetNewCharGenderAndRace( mChar );
 
 			mChar->SetPriv( cwmWorldState->ServerData()->ServerStartPrivs() );
-
-			CAccountBlock_st& actbTemp2 = mChar->GetAccount();
-			if( actbTemp2.wAccountIndex != AB_INVALID_ID && actbTemp2.wFlags.test( AB_FLAGS_GM ))
-			{
-				mChar->SetPriv( 0xFF );
-				mChar->SetCommandLevel( CL_GM );
-			}
 
 			if( tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D )
 			{
@@ -919,6 +913,29 @@ bool CPICreateCharacter::Handle( void )
 			SetNewCharSkillsStats( mChar );
 
 			NewbieItems( mChar );
+
+			CAccountBlock_st& actbTemp2 = mChar->GetAccount();
+			if( actbTemp2.wAccountIndex != AB_INVALID_ID )
+			{
+				if( actbTemp2.wFlags.test( AB_FLAGS_GM ))
+				{
+					mChar->SetPriv( 0xFF );
+					mChar->SetCommandLevel( CL_GM );
+				}
+				else if( actbTemp2.wFlags.test( AB_FLAGS_SEER ))
+				{
+
+					MakeStatusTarget( tSock, mChar, "SEER" );
+					mChar->SetPriv( 0x4F );
+					mChar->SetCommandLevel( CL_SEER );
+				}
+				else if( actbTemp2.wFlags.test( AB_FLAGS_COUNSELOR ))
+				{
+					MakeStatusTarget( tSock, mChar, "CNS" );
+					mChar->SetPriv( 0x38);
+					mChar->SetCommandLevel( CL_CNS );
+				}
+			}
 
 			// Added for my client - Krrios
 			if( pattern3 == 0xFF ) // Signal that this is not the standard client

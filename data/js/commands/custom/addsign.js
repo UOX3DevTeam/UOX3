@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "addsign", 2, true );
+	RegisterCommand( "addsign", 8, true );
 }
 
 function command_ADDSIGN( socket, cmdString )

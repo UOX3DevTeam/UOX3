@@ -121,7 +121,7 @@ const templateSystemVer = 3;
 
 function CommandRegistration()
 {
-	RegisterCommand( "decorate", 5, true ); // Admin only command
+	RegisterCommand( "decorate", 10, true ); // Admin only command
 }
 
 function command_DECORATE( socket, cmdString )

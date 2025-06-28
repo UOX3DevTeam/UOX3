@@ -6,9 +6,9 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "xwalk", 2, true );
-	RegisterCommand( "xrun", 2, true );
-	RegisterCommand( "xturn", 2, true );
+	RegisterCommand( "xwalk", 8, true );
+	RegisterCommand( "xrun", 8, true );
+	RegisterCommand( "xturn", 8, true );
 }
 
 function command_XWALK( socket, cmdString )

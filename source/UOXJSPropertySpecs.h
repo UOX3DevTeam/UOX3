@@ -513,6 +513,7 @@ inline JSPropertySpec CItemProps[] =
 	{ "rank",			CIP_RANK,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "creator",		CIP_CREATOR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "poison",			CIP_POISON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "poisonCharges",	CIP_POISONCHARGES,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "dir",			CIP_DIR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "wipable",		CIP_WIPABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "buyvalue",		CIP_BUYVALUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },

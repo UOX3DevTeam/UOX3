@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "get", 2, true );
+	RegisterCommand( "get", 8, true );
 }
 
 function command_GET( socket, cmdString )

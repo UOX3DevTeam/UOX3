@@ -1096,24 +1096,38 @@ SI16 CHandleCombat::CalcAttackPower( CChar *p, bool doDamage )
 				getDamage += RandomNum( weapon->GetLoDamage(), weapon->GetHiDamage() );
 			}
 
+			// Apply damage to (player's) weapon based on corrosion level, if this system is enabled
+			CSocket *mSock = p->GetSocket();
+			if( cwmWorldState->ServerData()->PoisonCorrosionSystem() )
+			{
+				TAGMAPOBJECT localObject = weapon->GetTag( "corrosionLevel" );
+				if( localObject.m_IntValue > 0 )
+				{
+					// Weapon has corrosion damage, apply durability loss equal to corrosion level!
+					weapon->SetHP( weapon->GetHP() - static_cast<SI16>( localObject.m_IntValue ));
+				}
+			}
+
 			// Chance to apply damage to (player's) weapon based on ini setting
 			if( doDamage && !p->IsNpc() && ( cwmWorldState->ServerData()->CombatWeaponDamageChance() >= RandomNum( 1, 100 )))
 			{
-				SI08 weaponDamage = 0;
-				UI08 weaponDamageMin = 0;
-				UI08 weaponDamageMax = 0;
+				if( weapon->GetHP() > 0 )
+				{
+					SI08 weaponDamage = 0;
+					UI08 weaponDamageMin = 0;
+					UI08 weaponDamageMax = 0;
 
-				// Fetch minimum and maximum weapon damage from ini
-				weaponDamageMin = cwmWorldState->ServerData()->CombatWeaponDamageMin();
-				weaponDamageMax = cwmWorldState->ServerData()->CombatWeaponDamageMax();
+					// Fetch minimum and maximum weapon damage from ini
+					weaponDamageMin = cwmWorldState->ServerData()->CombatWeaponDamageMin();
+					weaponDamageMax = cwmWorldState->ServerData()->CombatWeaponDamageMax();
 
-				weaponDamage -= static_cast<UI08>( RandomNum( static_cast<UI16>( weaponDamageMin ), static_cast<UI16>( weaponDamageMax )));
-				weapon->IncHP( weaponDamage );
+					weaponDamage -= static_cast<UI08>( RandomNum( static_cast<UI16>( weaponDamageMin ), static_cast<UI16>( weaponDamageMax )));
+					weapon->IncHP( weaponDamage );
+				}
 
 				// If weapon hp has reached 0, destroy it
 				if( weapon->GetHP() <= 0 )
 				{
-					CSocket *mSock = p->GetSocket();
 					if( mSock != nullptr )
 					{
 						std::string name;
@@ -2878,7 +2892,6 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				mChar.SetCombatLos( false );
 			}
 		}
-		//checkDist = ( ourDist <= mWeapon->GetMaxRange() && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 && LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ));
 	}
 
 	if( checkDist )
@@ -2907,7 +2920,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		if( getFightSkill == ARCHERY && mWeapon != nullptr )
 		{
 			// If amount of time since character last moved is less than the minimum delay for shooting after coming to a halt, return
-			if(( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) < static_cast<UI32>( cwmWorldState->ServerData()->CombatArcheryShootDelay() * 1000 ))
+			if(( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) < static_cast<TIMERVAL>( cwmWorldState->ServerData()->CombatArcheryShootDelay() * 1000 ))
 				return false;
 
 			UI16 ammoId = mWeapon->GetAmmoId();
@@ -3087,7 +3100,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			UI08 poisonStrength = mChar.GetPoisonStrength();
 			if( poisonStrength && ourTarg->GetPoisoned() < poisonStrength )
 			{
-				if((( getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP ) && !RandomNum( 0, 2 )) || mChar.IsNpc() )
+				if( mChar.IsNpc() || mChar.GetSkill( POISONING ) / 4 >= RandomNum( 1, 1000 ))
 				{
 					auto doPoison = true;
 					if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && !ourTarg->IsNpc() && ourTarg->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
@@ -3098,8 +3111,23 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 							targSock->SysMessage( 18735 ); // You would have been poisoned, were you not new to the land of Britannia. Be careful in the future.
 						}
 					}
-					else if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && !mChar.IsNpc() && mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
+					else if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
 					{
+						// Don't allow young players to poison others
+						doPoison = false;
+						if( mSock != nullptr )
+						{
+							ourTarg->TextMessage( mSock, 18738, TALK, false ); // * The poison seems to have no effect. *
+						}
+					}
+					else if( mChar.GetResist( POISON ) >= 100 || static_cast<R32>( mChar.GetResist( POISON ) / 20.0 ) > static_cast<R32>( poisonStrength ))
+					{
+						// Based on poison resistance, characters can be immune to specific levels of poison
+						// >= 100, immune to everything (including Lethal)
+						// > 80, immune to Lesser -> Deadly
+						// > 60, immune to Lesser -> Strong
+						// > 40, immune to Lesser -> Normal
+						// > 20, immune to Lesser
 						doPoison = false;
 						if( mSock != nullptr )
 						{
@@ -3121,6 +3149,59 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 						if( targSock != nullptr )
 						{
 							targSock->SysMessage( 282 ); // You have been poisoned!
+						}
+
+						if( mSock != nullptr )
+						{
+							mSock->SysMessage( 6311 ); // You have poisoned your target!
+						}
+
+						// Reduce poison charges on weapon, if any
+						if( ValidateObject( mWeapon ) && mWeapon->GetPoisoned() )
+						{
+							auto poisonCharges = mWeapon->GetPoisonCharges();
+							if( poisonCharges > 0 )
+							{
+								mWeapon->SetPoisonCharges( mWeapon->GetPoisonCharges() - 1 );
+
+								if( cwmWorldState->ServerData()->PoisonCorrosionSystem() )
+								{
+									auto mPoisonSkill = mChar.GetSkill( POISONING );
+
+									// Reduce effective poison strength by 1 if above 50.0 poisoning
+									// Reduce effective poison strength by 2 if above 99.0 poisoning
+									SI08 effectivePoisonStrength = ( mPoisonSkill > 990 ? poisonStrength - 2 : ( mPoisonSkill > 500 ? poisonStrength - 1 : poisonStrength ));
+									effectivePoisonStrength = std::max( static_cast<SI08>( 1 ), std::min( static_cast<SI08>( 5 ), effectivePoisonStrength ));
+
+									// Roll against chance per poison strength level to see if corrosion occurs
+									const int baseCorrosionChance[] = { 5, 10, 20, 30, 40 };
+									if( RandomNum( 1, 100 ) <= baseCorrosionChance[effectivePoisonStrength - 1] )
+									{
+										// Read current corrosion level on weapon
+										TAGMAPOBJECT localObject = mWeapon->GetTag( "corrosionLevel" );
+										localObject.m_IntValue++;
+
+										// Store updated corrosion level
+										mWeapon->SetTag( "corrosionLevel", localObject );
+
+										if( mSock != nullptr )
+										{
+											mSock->SysMessage( 6316 ); // Blood mixes with poison and begins to corrode your weapon.
+										}
+									}
+								}
+							}
+
+							if( poisonCharges == 0 )
+							{
+								// Weapon is no longer poisoned, undo effect on character
+								mWeapon->SetPoisoned( 0 );
+								mChar.SetPoisonStrength( 0 );
+								if( mSock != nullptr )
+								{
+									mSock->SysMessage( 6318 ); // The poison on your weapon seems to have worn off.
+								}
+							}
 						}
 					}
 				}
@@ -3547,7 +3628,7 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate delay between attacks in combat
 //o------------------------------------------------------------------------------------------------o
-R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
+R64 CHandleCombat::GetCombatTimeout( CChar *mChar )
 {
 	SI16 statOffset = 0;
 	if( cwmWorldState->ServerData()->CombatAttackSpeedFromStamina() )
@@ -3614,13 +3695,13 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 		}
 	}
 
-	R32 globalAttackSpeed = cwmWorldState->ServerData()->GlobalAttackSpeed(); //Defaults to 1.0
+	R64 globalAttackSpeed = cwmWorldState->ServerData()->GlobalAttackSpeed(); //Defaults to 1.0
 
-	R32 speedFactor = 1 + speedBonus / 10.0f;
+	R64 speedFactor = 1 + speedBonus / 10.0;
 
 	// Prevent zero or negative multipliers
-	if( speedFactor < 0.1f )
-		speedFactor = 0.1f;
+	if( speedFactor < 0.1 )
+		speedFactor = 0.1;
 
 
 	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR )

@@ -1844,10 +1844,11 @@ void MakeTownAlly( CSocket *s )
 //|	Purpose		-	Change privileges of targeted character to specified command level
 //|					as defined in the COMMANDSLEVEL section of dfndata/commands/commands.dfn
 //o------------------------------------------------------------------------------------------------o
-void MakeStatusTarget( CSocket *sock )
+void MakeStatusTarget( CSocket *sock, CChar *optionalTargChar = nullptr, const std::string cmdLvlString = "" )
 {
 	VALIDATESOCKET( sock );
-	CChar *targetChar = CalcCharObjFromSer( sock->GetDWord( 7 ));
+
+	CChar *targetChar = !ValidateObject( optionalTargChar ) ? CalcCharObjFromSer( sock->GetDWord( 7 )) : optionalTargChar;
 	if( !ValidateObject( targetChar ))
 	{
 		sock->SysMessage( 1110 ); // No such character exists!
@@ -1859,7 +1860,7 @@ void MakeStatusTarget( CSocket *sock )
 		return;
 	}
 	UI08 origCommand			= targetChar->GetCommandLevel();
-	CommandLevel_st *targLevel	= Commands->GetClearance( sock->XText() );
+	CommandLevel_st *targLevel	= Commands->GetClearance( cmdLvlString.empty() ? sock->XText() : cmdLvlString );
 	CommandLevel_st *origLevel	= Commands->GetClearance( origCommand );
 
 	if( targLevel == nullptr )
@@ -1871,10 +1872,13 @@ void MakeStatusTarget( CSocket *sock )
 	//char temp[1024], temp2[1024];
 
 	UI08 targetCommand = targLevel->commandLevel;
-	auto temp = oldstrutil::format( "account%i.log", mChar->GetAccount().wAccountIndex );
-	auto temp2 = oldstrutil::format( "%s has made %s a %s.\n", mChar->GetName().c_str(), targetChar->GetName().c_str(), targLevel->name.c_str() );
-
-	Console.Log( temp2, temp );
+	if( cmdLvlString.empty() )
+	{
+		auto temp = oldstrutil::format( "account%i.log", mChar->GetAccount().wAccountIndex );
+		auto temp2 = oldstrutil::format( "%s has made %s a %s.\n", mChar->GetName().c_str(), targetChar->GetName().c_str(), targLevel->name.c_str() );
+		
+		Console.Log( temp2, temp );
+	}
 
 	DismountCreature( targetChar );
 
@@ -1934,7 +1938,7 @@ void MakeStatusTarget( CSocket *sock )
 	}
 	if( targetCommand != 0 && targetCommand != origCommand )
 	{
-		targetChar->SetName( oldstrutil::trim(oldstrutil::format("%s %s", targLevel->title.c_str(), oldstrutil::trim(playerName).c_str() )) );
+		targetChar->SetName( oldstrutil::trim( oldstrutil::format( "%s %s", targLevel->title.c_str(), oldstrutil::trim( playerName ).c_str() )));
 	}
 	else if( origCommand != 0 )
 	{

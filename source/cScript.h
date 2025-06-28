@@ -11,6 +11,8 @@ enum ScriptEvent
 	seOnCreateTile,
 	seOnCreatePlayer,		//	*	Done for PCs on global script
 	seOnCommand,
+	seOnProfileRequest,		//	**
+	seOnProfileUpdate,		//	**
 	seOnDelete,				//	**
 	seOnSpeech,				//	*	Missing item response at the moment
 	seInRange,				//	*	Missing character in range
@@ -151,7 +153,6 @@ class cScript
 {
 private:
 
-	//JSErrorInfo			errorInfo;
 	JSScript *			targScript;
 	JSContext *			targContext;
 	JSObject *			targObject;
@@ -211,6 +212,8 @@ public:
 	SI08		OnDispel( CBaseObject *dispelled );
 	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );
+	SI08		OnProfileUpdate( CSocket *mSock, std::string profileText );
+	std::string		OnProfileRequest( CSocket *mSock, CChar *profileOwner );
 	std::string		OnTooltip( CBaseObject *myObj, CSocket *pSocket );
 	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI08 requestSource );
 	bool        OnAttack( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageDealt );

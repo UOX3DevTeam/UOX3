@@ -120,7 +120,7 @@ CALL=5
 [REGIONSPAWN 5507]
 {
 NAME=Jhelom Cemetary 1
-NPCLIST=weakundead
+NPCLIST=weakundeadlist
 MAXNPCS=3
 ITEMLIST=12
 MAXITEMS=1
@@ -137,7 +137,7 @@ CALL=5
 [REGIONSPAWN 5508]
 {
 NAME=Jhelom Cemetary 2
-NPCLIST=weakundead
+NPCLIST=weakundeadlist
 MAXNPCS=5
 ITEMLIST=12
 MAXITEMS=2
@@ -154,7 +154,7 @@ CALL=5
 [REGIONSPAWN 5509]
 {
 NAME=Jhelom Cemetary 3
-NPCLIST=weakundead
+NPCLIST=weakundeadlist
 MAXNPCS=3
 ITEMLIST=12
 MAXITEMS=1

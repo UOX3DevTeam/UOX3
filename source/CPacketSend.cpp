@@ -7745,6 +7745,38 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
+			if( cItem.GetPoisoned() > 0 )
+			{
+				auto itemCont = cItem.GetCont();
+				if( cItem.GetHiDamage() == 0 || ( ValidateObject( itemCont ) && itemCont->CanBeObjType( OT_CHAR ) && tSock->CurrcharObj() == static_cast<CChar *>( itemCont )))
+				{
+					switch( cItem.GetPoisoned() )
+					{
+						case 1: // Lesser Poison
+							tempEntry.stringNum = 1062412; // lesser poison charges: ~1_val~
+							break;
+						case 2: // Poison
+							tempEntry.stringNum = 1062413; // poison charges: ~1_val~
+							break;
+						case 3: // Greater Poison
+							tempEntry.stringNum = 1062414; // greater poison charges: ~1_val~
+							break;
+						case 4: // Deadly Poison
+							tempEntry.stringNum = 1062415; // deadly poison charges: ~1_val~
+							break;
+						case 5: // Lethal Poison
+							tempEntry.stringNum = 1062416; // lethal poison charges: ~1_val~
+							break;
+						default:
+							break;
+					}
+
+					tempEntry.ourText = oldstrutil::number( cItem.GetPoisonCharges() );
+					tempEntry.sortOrder = 107;
+					FinalizeData( tempEntry, totalStringLen );
+				}
+			}
+
 			if( cItem.GetHiDamage() > 0 )
 			{
 				if( cItem.GetLayer() == IL_RIGHTHAND )

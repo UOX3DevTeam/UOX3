@@ -1,3 +1,27 @@
+28/06/2025 - Xuri (0.99.6d)
+	Cleaned up an issue with last commit where wrong npclists were used in some spawn regions
+	Made a few additional adjustments to the new spawn regions in Lost Lands/New Haven
+	Included more changes related to poison updates that should've been in previous commit (like the complete UOX.INI support for POISONCORROSIONSYSTEM setting)
+	Adjusted region setup for New Haven to set the individual "building" regions within as a sub-region of the main town (regions.dfn)
+	Fixed an issue where the displayed HP of an equipped item would not update correctly
+	Further updates to convert timers 32-bit to 64-bit. This affects and addresses some potential issues with: Character creation/NPC guild-join timestamps, NPC movement, combat timers, idle timeouts, item decay, spellcasting
+	Added support for new JS Events that can trigger from global script, and can be used to store persistent custom entries in players' paperdoll profiles:
+		onProfileRequest( socket, profileOwnerChar ) - Triggers when client requests data for a paperdoll profile
+		onProfileUpdate( socket, updatedText ) - Triggers when client sends updated data from paperdoll profile
+	Added two new helper functions in code that allows faster (but very slightly less accurate) distance checks between two points: 	GetApproxDist( Point3_st a, Point3_st b )
+		GetApproxDist( CBaseObject *a, CBaseObject *b )
+	Improved pathfinding for NPCs attempting to follow another character, by adopting a system of weighted variables to help the NPC determine when to recalculate the path vs when to stick with the old, combined with faster distance checks via GetApproxDist(). The end result of this is faster, smarter and more responsive NPC followers and NPC opponents in combat. The variables influencing this include: how far the target has moved from last pathfind target location, whether NPC is heading in the overall right direction or not, time since last path calculation and some small randomization to avoid edge case jitters.
+	Updated default command levels in commands.dfn, code and scripts to support the Seer role and make space for some custom roles. These are the new defaults as listed in commands.dfn, which should not be changed as they are linked to specific enums in code. Do take note that this might invalidate command levels for existing GMs/Seers/Counselors, who might need another round of 'make gm/seer/cns from an admin:
+		ADMIN - command level 10
+		GM - command level 9
+		SEER - command level 7
+		CNS - command level 4
+		PLAYER - command level 0
+	Updated how UOX3 makes use of the account-level flags 0x2000 (Seer) and 0x4000 (Counselor). If either of these flags are set on an account, all new characters created on the accounts will automatically receive the relevant command privileges.
+	Fixed an issue with 'wholist command that prevented admin characters from seeing characters with lower privilege levels in the list (js/commands/wholist.js)
+	Fixed an issue with hiding/GM hide that prevented admin characters from seeing hidden characters with lower privilege levels in the world
+	UOX3 now includes the cross-platform, header-only utf8cpp library found at https://github.com/nemtrif/utfcpp and freely available under Boost Software License v1.0. The immediate use-case for this is in code right now is to better handle strings related to custom paperdoll profiles, but will also look to make more heavy use of this in future updates
+
 27/06/2025 - Xuri (0.99.6c)
 	Fixed an issue with an internal movement check that prevented characters from moving in valid map areas in Felucca/Trammel from X 6144 to X 7168
 	Fixed an issue where .instanceID property was misspelled in 'xgo GM command script, causing characters to be teleported to an out of bounds area where they would no longer be saved (js/commands/targeting/x.js)
@@ -114,6 +138,15 @@
 	Updated 'settag and 'settemptag GM commands to support string-values with commas (js/commands/custom/misc_cmd.js)
 	Updated 'where GM command to also show region ID in addition to coordinates and region-name (js/commands/where.js)
 	Fixed an issue with potion usage (js/item/potion.js) where both hands needed to be free instead of just one (thanks, cobrag0318!)
+	Applying poison to weapons will now set those weapons up with a set number of poison charges, which will be consumed when the weapon is used to apply poison in combat (code + js/skill/poisoning.js)
+	The level of poison and amount of poison charges applied to a weapon are now visible to the person holding the weapon
+	Added new JS Item property:
+		.poisonCharges // the amount of poison charges remaining on the weapon
+	Added new UOX.INI setting, enabled by default:
+		POISONCORROSIONSYSTEM=0/1 // enables or disables the corrosion system for poison
+	Applying poison to weapons will now cause them to corrode if corrosion system is enabled in uox.ini, which causes the weapon's HP to drop when used in combat. Corrosion can be cleaned up with oil cloths (code + js/skill/poisoning.js)
+	Fixed an issue with item decay timers not working correctly after upgrade from 32-bit to 64-bit timers
+	Characters can now resist specific levels of poison being applied to them depending on their poison resistance stat
 
 02/06/2025 - Xuri
 	Fixed an issue where UOX3 would not save/lead the pauseTime of effects correctly, causing JS-timers and tempeffect timers in general to break on server restart. Manual fix for already affected effects: open effects.wcs and set all pauseTime values with ridiculously high values to 0, then save file.
@@ -271,7 +304,6 @@
 	Reloading Spawn Regions via 'reloadspawnregions JS command will now do a full reload from the DFN files (previously needed manual DFN reload before spawn region reload)
 	Reloading DFNs via 'reloaddfns JS command will now also reload creatures.dfn, titles.dfn, location.dfn
 	Reloading ALL via 'reloadall JS command will now also reload teleport.scp, creatures.dfn, titles.dfn, location.dfn
-
 
 23/04/2025 - Xuri
 	Fixed an issue where onUseUnchecked JS event in envoked scripts (via object ID or type) would never trigger because hard-coded checks would run before envoking script

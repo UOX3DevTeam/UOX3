@@ -29,7 +29,7 @@ function SpellTimerCheck( mChar, mSock )
 
 function JailTimerCheck( mChar, mSock )
 {
-	if( mChar.isJailed && mChar.commandlevel < 2 )
+	if( mChar.isJailed && mChar.commandlevel < GetCommandLevelVal( "CNS" ))
 	{
 		mSock.SysMessage( GetDictionaryEntry( 704, mSock.language )); // You are in jail and cannot cast spells!
 		mChar.SetTimer( Timer.SPELLTIME, 0 );
@@ -59,7 +59,7 @@ function SpellEnableCheck( mChar, mSock, mSpell )
 function ItemInHandCheck( mChar, mSock, spellType )
 {
 	// The following loop checks to see if any item is currently equipped (if not a GM)
-	if( mChar.commandlevel < 2 )
+	if( mChar.commandlevel < GetCommandLevelVal( "CNS" ))
 	{
 		if( spellType != 2 )
 		{
@@ -174,7 +174,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		mChar.BreakConcentration( mSock );
 	}
 
-	if( mChar.commandlevel < 2  )
+	if( mChar.commandlevel < GetCommandLevelVal( "CNS" ))
 	{
 		// type == 2 - Wands
 		if( spellType != 2 )
@@ -218,7 +218,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	mChar.nextAct = 75;		// why 75?
 
 	var delay = mSpell.delay;
-	if( spellType == 0 && mChar.commandlevel < 2 ) // if they are a gm they don't have a delay :-)
+	if( spellType == 0 && mChar.commandlevel < GetCommandLevelVal( "CNS" )) // if they are a gm they don't have a delay :-)
 	{
 		mChar.SetTimer( Timer.SPELLTIME, delay * 1000 );
 		if( !GetServerSetting( "CastSpellsWhileMOving" ))
@@ -350,7 +350,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	mChar.spellCast = -1;
 
 	// If player commandlevel is below GM-level, check for reagents
-	if( mSock != null && mChar.commandlevel < 2  )
+	if( mSock != null && mChar.commandlevel < GetCommandLevelVal( "CNS" ))
 	{
 		//Check for enough reagents
 		// type == 0 -> SpellBook
@@ -432,7 +432,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	}
 
 	// Do skillcheck
-	if(( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill )))
+	if(( mChar.commandlevel < GetCommandLevelVal( "CNS" )) && ( !mChar.CheckSkill( 25, lowSkill, highSkill )))
 	{
 		if( spellType == 0 )
 		{

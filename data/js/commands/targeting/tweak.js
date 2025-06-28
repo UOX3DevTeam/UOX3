@@ -448,8 +448,8 @@ const accountPropCount = 26;
 
 function CommandRegistration()
 {
-	RegisterCommand( "tweak", 2, true );
-	RegisterCommand( "props", 2, true ); // alias
+	RegisterCommand( "tweak", 8, true );
+	RegisterCommand( "props", 8, true ); // alias
 }
 
 function command_TWEAK( pSocket, cmdString )
@@ -6400,7 +6400,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 			}
 			else
 			{
-				if( pButton == charProp.isGM && pSocket.currentChar.commandlevel < 5 )
+				if( pButton == charProp.isGM && pSocket.currentChar.commandlevel < GetCommandLevelVal( "ADMIN" ))
 				{
 					pSocket.SysMessage( GetDictionaryEntry( 8817, pSocket.language )); // Only Admins can modify someone's GM status!
 				}

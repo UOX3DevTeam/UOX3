@@ -1121,6 +1121,8 @@ SI16 CBaseObject::GetHP( void ) const
 void CBaseObject::SetHP( SI16 newValue )
 {
 	hitpoints = newValue;
+
+	Dirty( UT_UPDATE );
 	if( CanBeObjType( OT_ITEM ))
 	{
 		( static_cast<CItem *>( this ))->UpdateRegion();

@@ -1,7 +1,7 @@
 // Reports the command user's current in-game coordinates and region name
 function CommandRegistration()
 {
-	RegisterCommand( "where", 1, true );
+	RegisterCommand( "where", 4, true );
 }
 
 function command_WHERE( socket, cmdString )

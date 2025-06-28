@@ -3349,7 +3349,7 @@ CALL=3
 [REGIONSPAWN 5875]
 {
 NAME=Britannia Southern Jungle Undead 1
-NPCLIST=weakundead
+NPCLIST=weakundeadlist
 MAXNPCS=6
 ITEMLIST=12
 MAXITEMS=2
@@ -3366,7 +3366,7 @@ CALL=2
 [REGIONSPAWN 5876]
 {
 NAME=Britannia Southern Jungle Undead 2
-NPCLIST=weakundead
+NPCLIST=weakundeadlist
 MAXNPCS=8
 ITEMLIST=12
 MAXITEMS=3
@@ -3383,7 +3383,7 @@ CALL=2
 [REGIONSPAWN 5877]
 {
 NAME=Britannia Southern Jungle Undead 3
-NPCLIST=weakundead
+NPCLIST=weakundeadlist
 MAXNPCS=8
 ITEMLIST=12
 MAXITEMS=3
@@ -3400,7 +3400,7 @@ CALL=2
 [REGIONSPAWN 5878]
 {
 NAME=Britannia Southern Jungle Undead 4
-NPCLIST=weakundead
+NPCLIST=weakundeadlist
 MAXNPCS=8
 ITEMLIST=12
 MAXITEMS=3
@@ -3417,7 +3417,7 @@ CALL=2
 [REGIONSPAWN 5879]
 {
 NAME=Britannia Southern Jungle Undead 5
-NPCLIST=weakundead
+NPCLIST=weakundeadlist
 MAXNPCS=10
 ITEMLIST=12
 MAXITEMS=4
@@ -3434,7 +3434,7 @@ CALL=2
 [REGIONSPAWN 5880]
 {
 NAME=Britannia Southern Jungle Undead 6
-NPCLIST=weakundead
+NPCLIST=weakundeadlist
 MAXNPCS=6
 ITEMLIST=12
 MAXITEMS=3

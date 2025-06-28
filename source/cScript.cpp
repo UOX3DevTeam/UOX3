@@ -180,6 +180,7 @@ static JSFunctionSpec my_functions[] =
 	{ "GetCharacterCount",			SE_GetCharacterCount,		0, 0, 0 },
 	{ "GetServerVersionString",		SE_GetServerVersionString,	0, 0, 0 },
 	{ "EraStringToNum",				SE_EraStringToNum,			1, 0, 0 },
+	{ "GetCommandLevelVal",			SE_GetCommandLevelVal,		1, 0, 0 },
 
 	{ "BASEITEMSERIAL",				SE_BASEITEMSERIAL,			0, 0, 0 },
 	{ "INVALIDSERIAL",				SE_INVALIDSERIAL,			0, 0, 0 },
@@ -315,13 +316,6 @@ SI32 TryParseJSVal( jsval toParse )
 	{
 		return -1;
 	}
-}
-
-// A temporary, diagnostic-only error reporter.
-void DiagnosticCanaryReporter(JSContext *cx, const char *message, JSErrorReport *report)
-{
-	// Its only job is to print a very clear, unique message.
-	Console.Error(">>> DIAGNOSTIC CANARY: The error reporter was successfully called! <<<");
 }
 
 cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( rT )
@@ -3600,6 +3594,80 @@ SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 	}
 
 	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnProfileRequest()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers in global script on requests for paperdoll profiles of other players
+//o------------------------------------------------------------------------------------------------o
+std::string cScript::OnProfileRequest( CSocket *mSock, CChar *profileOwner )
+{
+	if( mSock  == nullptr || !ValidateObject( profileOwner ))
+		return "";
+
+	if( !ExistAndVerify( seOnProfileRequest, "onProfileRequest" ))
+		return "";
+
+	jsval params[2], rval;
+	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	JSObject *profOwnerObj	= JSEngine->AcquireObject( IUE_CHAR, profileOwner, runTime );
+	
+	params[0]	= OBJECT_TO_JSVAL( myObj );
+	params[1]	= STRING_TO_JSVAL( profOwnerObj );
+	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onProfileRequest", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnProfileRequest, false );
+	}
+
+	if( rval < 0 )
+	{
+		Console.Error( "Handled exception in cScript.cpp OnProfileRequest() - invalid return value/error encountered!" );
+		return "";
+	}
+
+	try
+	{
+		JSString *str = JS_ValueToString( targContext, rval );
+		std::string returnString = JS_GetStringBytes( str );
+
+		return returnString;
+	}
+	catch( ... )
+	{
+		Console.Error( "Handled exception in cScript.cpp OnProfileRequest()" );
+		return "";
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnProfileUpdate()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers in global script on attempts to update paperdoll profile text
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnProfileUpdate( CSocket *mSock, std::string profileText )
+{
+	if( mSock == nullptr || profileText.empty() )
+		return false;
+
+	if( !ExistAndVerify( seOnProfileUpdate, "onProfileUpdate" ))
+		return false;
+
+	jsval params[2], rval;
+	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	JSString *strProfileText = nullptr;
+	strProfileText = JS_NewStringCopyZ( targContext, profileText.c_str() );
+
+	params[0]	= OBJECT_TO_JSVAL( myObj );
+	params[1]	= STRING_TO_JSVAL( strProfileText );
+	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onProfileUpdate", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnProfileUpdate, false );
+	}
+
+	return ( retVal == JS_TRUE );
 }
 
 //o------------------------------------------------------------------------------------------------o
