@@ -327,6 +327,9 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "NEWBIE":
 		socket.SysMessage( ourItem.isNewbie );
 		break;
+	case "POISONCHARGES":
+		socket.SysMessage( ourItem.poisonCharges );
+		break;
 	case "DIVINELOCK":
 		socket.SysMessage( ourItem.divinelock );
 		break;
@@ -604,6 +607,9 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "NPCAI":
 		socket.SysMessage( ourChar.aitype );
+		break;
+	case "POISONSTRENGTH":
+		socket.SysMessage( ourChar.poisonStrength );
 		break;
 	case "VULNERABLE":
 		socket.SysMessage( ourChar.vulnerable );

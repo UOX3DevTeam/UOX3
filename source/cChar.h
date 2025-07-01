@@ -141,7 +141,7 @@ private:
 		SERIAL		playerCallNum;  // Players call number in GM or Counsellor requestQueue
 		SERIAL		trackingTarget; // Tracking target ID
 		UI08		squelched;      // Squelching
-		UI08		commandLevel;   // 0 = player, 1 = counselor, 9 = GM, 10 = Admin
+		UI08		commandLevel;   // 0 = Player, 4 = Counselor, 6 = Seer, 8 = GM, 10 = Admin
 		UI08		postType;
 		UI16		hairStyle;
 		UI16		beardStyle;

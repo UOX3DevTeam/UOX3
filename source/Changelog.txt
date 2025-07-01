@@ -1,3 +1,31 @@
+02/07/2025 - Xuri
+	Updated UOX3 & JS documentation
+	Added new JS command: 'seeryell [text] // broadcast message to all with seer privs or higher privs
+	Added new privilege flag for characters:
+		0x20000 - Seer (Character is a Seer)
+	Fixed an issue where Young players could not direct hirelings to attack valid targets (js/npc/ai/hireling.js)
+	When buying items from NPC shopkeepers worth more than the BUYTHRESHOLD in uox.ini, the player's backpack is first checked for the required amount of gold, before their bankbox is checked. A new message is displayed about any gold withdrawn from player's bank.
+	When selling items to NPC shopkeepers that are worth more than the BUYTHRESHOLD in uox.ini, the gold is now deposited directly into the player's bankbox, instead of to their backpack. A new message is displayed about any gold deposited to the player's bank.
+	Fixed an issue with Shopkeeper AI (js/npc/ai/shopkeeper.js) where the NPC would incorrectly assume player was member of the same NPC guild as them, and provide them with an unwarranted bonus to trade prices as a result
+	Fixed an issue that prevented players from being able to apply poison to weapons (js/skill/poisoning.js)
+	Fixed incorrect NPC spawn entry in Khaldun spawn region DFNs: spectralarmour -> spectralarmor
+	Added entries for Orc Caves/Khaldun to GM travel menu (dfndata/items/travelmenu.dfn and travelmenu.bulk.dfn)
+	Fixed an issue that sometimes prevented admin characters from seeing offline GMs
+	Added support for reading SKILLCAPSINGLE ini setting with GetServerSetting() JS function
+	Fixed issue where animal trainers would give players a random ostard when buying a desert ostard (js/npc/pets/static_ostard.js and dfndata/items/misc/mount-statues.dfn)
+	Added DFN entries for additional ostard-mount-statues (not sold by animal trainer) that can give user a random ostard, forest ostard or frenzied ostard respectively (dfndata/items/misc/mount-statues.dfn)
+	Player pets are no longer safe from being attacked from monsters. This also addresses an issue with tamed pets being able to freely attack monsters if player gets the monster's attention first and then kites the monster around while pet kills it. Now monster will properly re-focus to nearest attacker (including pets) if original target is too far away
+	Fixed incorrect command-levels for GMs for hard-coded commands listed in commands.dfn
+	Added support for specifying minEra,maxEra value pair for teleport locations in js/teleport.scp. These can be used to define the minimum and maximum era a given teleport entry should be active for. The values for these default to -1, unless otherwise specified. Updated teleport entry format:
+		sourceX, sourceY, sourceZ, targX, targY, targZ, [sourceWorld, targWorld[, minEra, maxEra]]
+	Updated teleport entries for Yew <-> Heartwood to only be active for ML era shards and above (js/teleport.scp)
+	Updated regions for Moonglow and Skara Brae to properly cover dock areas (dfndata/regions/regions.dfn)
+	Added missing dictionary entries related to poison/corrosion update
+	Added some missing details for poisoning skill (js/skill/poisoning.js) and arms lore skill (js/skill/armslore.js)
+	Added missing details for 'tweak (js/commands/targeting/tweak.js), 'get and 'set (js/commands/targeting/get.js and set.js) commands related to poison charges and poison strength on items
+	Updated poison strength of poison elementals [poisonele] from 4 to 5 (dfndata/npc/elementals.dfn)
+	Fixed an issue with Spawner Object Editor where state of "Use Spawnlist" checkbox would not be read correctly if no "Spawner Type" radio buttons were selected (js/server/misc/spawner_editor.js)
+
 28/06/2025 - Xuri (0.99.6d)
 	Cleaned up an issue with last commit where wrong npclists were used in some spawn regions
 	Made a few additional adjustments to the new spawn regions in Lost Lands/New Haven
@@ -8,7 +36,8 @@
 	Added support for new JS Events that can trigger from global script, and can be used to store persistent custom entries in players' paperdoll profiles:
 		onProfileRequest( socket, profileOwnerChar ) - Triggers when client requests data for a paperdoll profile
 		onProfileUpdate( socket, updatedText ) - Triggers when client sends updated data from paperdoll profile
-	Added two new helper functions in code that allows faster (but very slightly less accurate) distance checks between two points: 	GetApproxDist( Point3_st a, Point3_st b )
+	Added two new helper functions in code that allows faster (but very slightly less accurate) distance checks between two points:
+		GetApproxDist( Point3_st a, Point3_st b )
 		GetApproxDist( CBaseObject *a, CBaseObject *b )
 	Improved pathfinding for NPCs attempting to follow another character, by adopting a system of weighted variables to help the NPC determine when to recalculate the path vs when to stick with the old, combined with faster distance checks via GetApproxDist(). The end result of this is faster, smarter and more responsive NPC followers and NPC opponents in combat. The variables influencing this include: how far the target has moved from last pathfind target location, whether NPC is heading in the overall right direction or not, time since last path calculation and some small randomization to avoid edge case jitters.
 	Updated default command levels in commands.dfn, code and scripts to support the Seer role and make space for some custom roles. These are the new defaults as listed in commands.dfn, which should not be changed as they are linked to specific enums in code. Do take note that this might invalidate command levels for existing GMs/Seers/Counselors, who might need another round of 'make gm/seer/cns from an admin:

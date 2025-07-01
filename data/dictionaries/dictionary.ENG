@@ -1520,13 +1520,13 @@
 1513=is somewhat badly damaged.
 1514=is flimsy and not trustworthy.
 1515=is falling apart.
-1516= would be extraordinarily deadly.
-1517= would be a superior weapon.
-1518= would inflict quite a lot of damage and pain.
-1519= would probably hurt your opponent a fair amount.
-1520= would do some damage.
-1521= would do minimal damage.
-1522= might scratch your opponent slightly.
+1516=Would be extraordinarily deadly,
+1517=Would be a superior weapon,
+1518=Would inflict quite a lot of damage and pain,
+1519=Would probably hurt your opponent a fair amount,
+1520=Would do some damage,
+1521=Would do minimal damage,
+1522=Might scratch your opponent slightly,
 1523= and is very fast.
 1524= and is fast.
 1525= and is slow.
@@ -3502,6 +3502,20 @@
 6302=You have already learned this information.
 6303=You have learned to make items from glass.  You will need to find miners to mine fine sand for you to make these items.
 6304=You must have a free hand to drink a potion.
+6310=You cannot poison that! You can only poison bladed or piercing weapons, food or drink.
+6311=You have poisoned your target!
+6312=The poison seems to have worn off.
+6313=You cannot poison that! You can only poison one-handed bladed or one-handed piercing weapons, food or drink.
+6314=You cannot poison that! You can only poison infectious weapons and food.
+6315=You make a grave mistake while applying the poison.
+6316=Blood mixes with poison and begins to corrode your weapon.
+6317=You have cleaned the item.
+6318=The poison on your weapon seems to have worn off.
+6319=It looks like acid is dripping from what is left of the blade.
+6320=It looks as if a substance is eating away pieces of the blade.
+6321=It looks as if this blade is covered with an acidic substance.
+6322=It looks like this blade has a corrosive element on it.
+6323=It looks like this blade has a light corrosive element on it.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -3764,6 +3778,7 @@
 8257=You must target an NPC!
 8258=You bind the wound and stop the bleeding
 8259=The bleeding wounds have healed, you are no longer bleeding!
+8260=Amount of poison charges on item
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Account number associated with player. Controlled by server (Read-Only)
 8301=NPC AI Type

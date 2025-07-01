@@ -425,6 +425,10 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		ourItem.isNewbie = ( nVal == 1 );
 		okMsg( socket );
 		break;
+	case "POISONCHARGES":
+		ourItem.poisonCharges = nVal;
+		okMsg( socket );
+		break;
 	case "DIVINELOCK":
 		ourItem.divinelock = ( nVal == 1 );
 		okMsg( socket );
@@ -722,6 +726,10 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		break;
 	case "NPCAI":
 		ourChar.aitype = nVal;
+		okMsg( socket );
+		break;
+	case "POISONSTRENGTH":
+		ourChar.poisonStrength = Math.max( 0, Math.min( 4, nVal ));
 		okMsg( socket );
 		break;
 	case "NPCGUILD":

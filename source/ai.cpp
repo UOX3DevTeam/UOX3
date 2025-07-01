@@ -63,9 +63,10 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 
 		if( ObjInRange( &mChar, cTarget, cwmWorldState->ServerData()->CombatMaxNpcAggroRange() ))
 		{
-			if( mChar.IsNpc() && cTarget->IsNpc() && !ValidateObject( mChar.GetOwnerObj() ) && !ValidateObject( cTarget->GetOwnerObj() ))
+			//if( mChar.IsNpc() && cTarget->IsNpc() && !ValidateObject( mChar.GetOwnerObj() ) && !ValidateObject( cTarget->GetOwnerObj() ))
+			if( mChar.IsNpc() && cTarget->IsNpc() && !ValidateObject( mChar.GetOwnerObj() ))
 			{
-				if( mChar.GetRace() == cTarget->GetRace() )
+				if( mChar.GetRace() == cTarget->GetRace() && !ValidateObject( cTarget->GetOwnerObj() ))
 				{
 					// Not a valid target if belonging to same race
 					return false;
@@ -389,7 +390,7 @@ auto HandleEvilAI( CChar& mChar ) -> void
 		}
 		for( const auto &tempChar : regChars->collection() )
 		{
-			if( IsValidAttackTarget( mChar, tempChar ) && !CheckForValidOwner( mChar, tempChar ))
+			if( IsValidAttackTarget( mChar, tempChar ) ) // && !CheckForValidOwner( mChar, tempChar ))
 			{
 				// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
 				// This event will override target selection entirely
@@ -482,7 +483,7 @@ auto HandleChaoticAI( CChar& mChar ) -> void
 		}
 		for( const auto &tempChar : regChars->collection() )
 		{
-			if( IsValidAttackTarget( mChar, tempChar ) && !CheckForValidOwner( mChar, tempChar ))
+			if( IsValidAttackTarget( mChar, tempChar )) // && !CheckForValidOwner( mChar, tempChar ))
 			{
 				// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
 				// This event will override target selection entirely

@@ -2732,7 +2732,7 @@ auto CChar::RemoveAllObjectsFromSight( CSocket *mSock ) -> void
 						
 				if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
 					( IsOnline(( *tempChar )) || tempChar->IsNpc() ||
-					( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() )))
+					(( IsGM() || GetAccount().wAccountIndex == 0 ) && cwmWorldState->ServerData()->ShowOfflinePCs() )))
 				{
 					mSock->Send( &charToSend );
 				}
@@ -2891,7 +2891,7 @@ auto CChar::Teleport() -> void
 				auto tempY = tempChar->GetY();
 				if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
 					( IsOnline(( *tempChar )) || tempChar->IsNpc() ||
-					( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() )))
+					(( IsGM() || GetAccount().wAccountIndex == 0 ) && cwmWorldState->ServerData()->ShowOfflinePCs() )))
 				{
 					tempChar->SendToSocket( mSock );
 				}

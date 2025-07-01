@@ -68,17 +68,27 @@ function onSoldToVendor( pSock, npcShopkeep, iSold, iAmount )
 	{
 		// Young players can sell vendor-bought non-pileable items back to vendors for the full price
 		var goldDiff = iSold.buyvalue - iSold.sellvalue;
-		var moreGold = CreateDFNItem( pSock, pChar, "0x0eed", goldDiff, "ITEM", true );
+		var moreGold = CreateDFNItem( null, pChar, "0x0eed", goldDiff, "ITEM", false );
 		if( ValidateObject( moreGold ))
 		{
 			npcShopkeep.TextMessage( GetDictionaryEntry( 18739, pSock.language ), false, 0x3b2, 0, pChar.serial ); // As a Young player, you are refunded the full value of store-bought non-stackable items
+			var bankBox = pChar.FindItemLayer( 29 );
+			if( moreGold.amount >= GetServerSetting( "BANKBUYTHRESHOLD" ) && ValidateObject( bankBox ))
+			{
+				moreGold.container = bankBox;
+				pSock.SysMessage( GetDictionaryEntry( 2703, pSock.language ) + " " + moreGold.amount ); // Gold was deposited in your account:
+			}
+			else
+			{
+				moreGold.container = pChar.pack;
+			}
 			moreGold.PlaceInPack( true );
 		}
 	}
 	else
 	{
 		// Give player a 10% bonus for items sold to shopkeeper if member of the same guild
-		if( enableNPCGuildPremiums && pChar.npcGuild == npcShopkeep.npcGuild )
+		if( enableNPCGuildPremiums && pChar.npcGuild != 0 && pChar.npcGuild == npcShopkeep.npcGuild )
 		{
 			npcShopkeep.TextMessage( GetDictionaryEntry( 17619, pSock.language )); // As a fellow guild member, I can give you a premium price for this!
 			var itemValue = iSold.sellvalue * iAmount;

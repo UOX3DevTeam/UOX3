@@ -112,7 +112,11 @@ auto HandleTeleporters( CChar *s ) -> void
 	if( !ValidateObject( s ))
 		return;
 
-	UI08 charWorld = s->WorldNumber();
+	auto coreShardEra = cwmWorldState->ServerData()->ExpansionCoreShardEra();
+	SI08 charWorld = static_cast<SI08>( s->WorldNumber() );
+	UI16 charX = s->GetX();
+	UI16 charY = s->GetY();
+	auto charLocation = s->GetLocation();
 	CTeleLocationEntry *getTeleLoc = nullptr;
 	bool isOnTeleporter;
 	for( size_t i = 0; i < cwmWorldState->teleLocs.size(); ++i )
@@ -121,61 +125,67 @@ auto HandleTeleporters( CChar *s ) -> void
 		getTeleLoc		= &cwmWorldState->teleLocs[i];
 		if( getTeleLoc )
 		{
-			if(( getTeleLoc->SourceWorld() == 0xFF && charWorld <= 1 ) || getTeleLoc->SourceWorld() == charWorld )
+			if(( getTeleLoc->SourceWorld() == -1 && charWorld <= 1 ) || getTeleLoc->SourceWorld() == charWorld )
 			{
-				// Check if character is on the teleporter location
-				if( getTeleLoc->SourceLocation().z != ILLEGAL_Z )
+				// Also perform era-specific checks on the teleport locations, if those have been defined
+				auto minEra = getTeleLoc->MinEra();
+				auto maxEra = getTeleLoc->MaxEra();
+				if(( minEra == -1 || coreShardEra >= minEra ) && ( maxEra == -1 || coreShardEra <= maxEra ))
 				{
-					isOnTeleporter = ( getTeleLoc->SourceLocation() == s->GetLocation() );
-				}
-				else
-				{
-					isOnTeleporter = ( getTeleLoc->SourceLocation().x == s->GetX() && getTeleLoc->SourceLocation().y == s->GetY() );
-				}
-
-				if( isOnTeleporter )
-				{
-					// If they are, whisk them away to the target destination
-					UI08 targetWorld = 0;
-					if( getTeleLoc->SourceWorld() == 0xFF )
+					// Check if character is on the teleporter location
+					if( getTeleLoc->SourceLocation().z != ILLEGAL_Z )
 					{
-						targetWorld = s->WorldNumber();
+						isOnTeleporter = ( getTeleLoc->SourceLocation() == charLocation );
 					}
 					else
 					{
-						targetWorld = getTeleLoc->TargetWorld();
+						isOnTeleporter = ( getTeleLoc->SourceLocation().x == charX && getTeleLoc->SourceLocation().y == charY );
 					}
-					
-					s->SetLocation( static_cast<SI16>( getTeleLoc->TargetLocation().x ), static_cast<SI16>( getTeleLoc->TargetLocation().y ), static_cast<UI08>( getTeleLoc->TargetLocation().z ), targetWorld, s->GetInstanceId() );
-					if( !s->IsNpc() )
+
+					if( isOnTeleporter )
 					{
-						if( targetWorld != charWorld )
+						// If they are, whisk them away to the target destination
+						SI08 targetWorld = 0;
+						if( getTeleLoc->SourceWorld() == -1 )
 						{
-							SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
+							targetWorld = charWorld;
 						}
-						
-						// Teleport player's followers as well
-						auto myFollowers = s->GetFollowerList();
-						for( const auto &myFollower : myFollowers->collection() )
+						else
 						{
-							if( ValidateObject( myFollower ))
+							targetWorld = getTeleLoc->TargetWorld();
+						}
+
+						s->SetLocation( static_cast<SI16>( getTeleLoc->TargetLocation().x ), static_cast<SI16>( getTeleLoc->TargetLocation().y ), static_cast<UI08>( getTeleLoc->TargetLocation().z ), static_cast<UI08>( targetWorld ), s->GetInstanceId() );
+						if( !s->IsNpc() )
+						{
+							if( targetWorld != -1 && targetWorld != charWorld )
 							{
-								if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == s )
+								SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
+							}
+
+							// Teleport player's followers as well
+							auto myFollowers = s->GetFollowerList();
+							for( const auto &myFollower : myFollowers->collection() )
+							{
+								if( ValidateObject( myFollower ))
 								{
-									// Teleport followers along with player if they're following the player and within range 
-									if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( s, myFollower, DIST_SAMESCREEN ))
+									if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == s )
 									{
-										myFollower->SetLocation( s );
+										// Teleport followers along with player if they're following the player and within range 
+										if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( s, myFollower, DIST_SAMESCREEN ))
+										{
+											myFollower->SetLocation( s );
+										}
 									}
 								}
 							}
 						}
+						break;
 					}
-					break;
-				}
-				else if( s->GetX() < getTeleLoc->SourceLocation().x )
-				{
-					break;
+					else if( charX < getTeleLoc->SourceLocation().x )
+					{
+						break;
+					}
 				}
 			}
 		}
@@ -1378,7 +1388,7 @@ void CMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				if( ValidateObject( tempChar ) && tempChar->GetInstanceId() == instanceId )
 				{
 					// Character Send Stuff
-					if( tempChar->IsNpc() || IsOnline(( *tempChar )) || ( isGM && cwmWorldState->ServerData()->ShowOfflinePCs() ))
+					if( tempChar->IsNpc() || IsOnline(( *tempChar )) || (( isGM || mChar->GetAccount().wAccountIndex == 0 ) && cwmWorldState->ServerData()->ShowOfflinePCs() ))
 					{
 						dxNew = static_cast<UI16>( abs( tempChar->GetX() - newx ));
 						dyNew = static_cast<UI16>( abs( tempChar->GetY() - newy ));

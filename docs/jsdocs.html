@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 23. April, 2025</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6b</small></p>
+	<p style="margin:0"><small>Last Updated: 29. June, 2025</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6d</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -55,6 +55,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>June 29th, 2025</h4>
+						<ul>
+							<li>Added details for new JS Events: onProfileRequest, onProfileUpdate</li>
+						</ul>
 						<h4>April 27th, 2025</h4>
 						<ul>
 							<li>Added details for new JS Events: onBoatTurn
@@ -3191,6 +3195,71 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 
 	//Use return false to disallow the pickup and bounce item
 	//return false;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnProfileRequest" id="eventOnProfileRequest"><span>onProfileRequest</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onProfileRequest( socket, profileOwnerChar )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To control what text is shown from the paperdoll profile of profileOwnerChar to the requesting client (socket)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When client (socket) requests data for a paperdoll profile (belonging to profileOwnerChar). Any text returned from the event will be sent to the client.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return ""</strong> to not show anything</li>
+								<li><strong>return someString</strong> to display the contents of someString to the client</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onProfileRequest( socket, profileOwnerChar )
+{
+	return "This is an example of some text displayed in a paperdoll profile";
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnProfileUpdate" id="eventOnProfileUpdate"><span>onProfileUpdate</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onProfileUpdate( socket, updatedProfileText )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To retrieve updates to a player's paperdoll profile, which could then (for instance) be stored in a persistent file on the server.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When client sends updated data from the paperdoll profile (i.e. paperdoll profile is closed after changing it)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<p>No return values supported</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onProfileUpdate( socket, updatedProfileText )
+{
+	socket.currentChar.TextMessage( "Updated Profile Text:" + updatedProfileText );
 }</code></pre></p>
 						</div>
 					</div>
@@ -15083,6 +15152,8 @@ myObject.propertyName = newValue;
 								<li>0x2000 - TempReflected (Character has a temporary magic reflection spell active)</li>
 								<li>0x4000 - NoNeedReags (Character doesn't need reagents to cast spells)</li>
 								<li>0x8000 - PermReflected (Character has a permanent magic reflection spell active)</li>
+								<li>0x10000 - HideFameKarmaTitle (No fame/karma titles shown for character)</li>
+								<li>0x20000 - Seer (Character is a Seer)</li>
 							</ul></p>
 						</div>
 						<div class="settingsDiv">
@@ -16090,6 +16161,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.poison</span> <strong>(int)</strong><br>
 							Get/Set poison strength applied to item such as weapons and food (from 1 to 4, where 1 = Weak poison, 4 = Deadly poison)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.poisonCharges</span> <strong>(int, <em>0 - 255</em>)</strong><br>
+							Get/Set amount of poison charges on a poisoned item</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.rank</span> <strong>(int, <em>1-10</em>)</strong><br>

@@ -522,8 +522,8 @@ CALL=1
 
 [REGIONSPAWN 4289]
 {
-NAME=Khaldun - Spectral Armour 1
-NPC=spectralarmour
+NAME=Khaldun - Spectral Armor 1
+NPC=spectralarmor
 MAXNPCS=2
 X1=5455
 Y1=1379
@@ -538,8 +538,8 @@ CALL=1
 [REGIONSPAWN 4290]
 {
 GET=4288
-NAME=Khaldun - Spectral Armour 2
-NPC=spectralarmour
+NAME=Khaldun - Spectral Armor 2
+NPC=spectralarmor
 MAXNPCS=1
 }
 

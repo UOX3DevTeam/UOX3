@@ -422,10 +422,18 @@ void LoadTeleportLocations( void )
 
 							if( sectCount >= 7 )
 							{
-								toAdd.SourceWorld(  static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0 )));
+								toAdd.SourceWorld(  static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0 )));
 								if( sectCount >= 8 )
 								{
-									toAdd.TargetWorld(  static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[7], "//" )), nullptr, 0 )));
+									toAdd.TargetWorld(  static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[7], "//" )), nullptr, 0 )));
+									if( sectCount >= 9 )
+									{
+										toAdd.MinEra( static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[8], "//" )), nullptr, 0 )));
+										if( sectCount >= 10 )
+										{
+											toAdd.MaxEra( static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[9], "//" )), nullptr, 0 )));
+										}
+									}
 								}
 							}
 							cwmWorldState->teleLocs.push_back( toAdd );

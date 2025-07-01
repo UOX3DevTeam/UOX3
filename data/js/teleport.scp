@@ -5,12 +5,13 @@
 // ;
 // ;    Format:
 // ;          From      To   Optional
-// ;        X,Y,Z(or ALL), X,Y,Z  [,World,World]
+// ;        X,Y,Z(or ALL), X,Y,Z  [,World,World[,minEra,maxEra]]
 // ;
 // ; Note:  Entries without world-coordinates will work in _all_ worlds!!!1one
 // ;        Entries marked with  have been verified as working
 // ;        Entries marked with ???? need to be verified by someone who knows the location
 // ;        Entries with _mg_ in the description are moongate locations. Comment out if you plan to use actual moongates
+// ;		minEra/maxEra values correspond to coreShardEra values ranging from 1 (uo) to 11 (tol). A value of -1 means teleporter works for all eras
 
 [TELEPORT ENTRIES]
 {
@@ -230,8 +231,8 @@ ENTRY=5757,     2908,   All,     5789,   1416,   39         //  [Desert_to_Fire_
 ENTRY=5757,     2909,   All,     5789,   1417,   38         //  [Desert_to_Fire_Dungeon]
 
 // Felucca/Trammel - Heartwood
-ENTRY=535,      992,    All,    6984,   338,    0           //  [World_to_Heartwood]
-ENTRY=6984,     338,    All,    535,    992,    0           //  [Heartwood_to_World]
+ENTRY=535,      992,    All,    6984,   338,    0,    -1,-1,    8, -1  //  [World_to_Heartwood]
+ENTRY=6984,     338,    All,    535,    992,    0,    -1,-1,    8, -1  //  [Heartwood_to_World]
 
 // Felucca/Trammel - Hedge Maze
 ENTRY=1145,     2228,   All,    1142,   2228,   20          //  [Hedge_secret_basement_in]
