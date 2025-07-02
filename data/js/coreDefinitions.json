@@ -3054,6 +3054,36 @@
       ]
     },
     {
+      "name": "SpawnItem",
+      "extends": "Item",
+      "properties": [
+        {
+          "name": "spawnsection",
+          "cppID": "CIP_SPAWNSECTION",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "sectionalist",
+          "cppID": "CIP_SECTIONALIST",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "mininterval",
+          "cppID": "CIP_MININTERVAL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxinterval",
+          "cppID": "CIP_MAXINTERVAL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        }
+      ]
+    },
+    {
       "name": "Socket",
       "cppName": "UOXSocket_class",
       "properties": [
@@ -4014,7 +4044,154 @@
     },
     {
       "name": "Multi",
-      "extends": "Item"
+      "extends": "Item",
+      "properties": [
+        {
+          "name": "lockdowns",
+          "cppID": "CIP_LOCKDDOWNS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "readOnly": true,
+          "type": "number"
+        },
+        {
+          "name": "maxLockdowns",
+          "cppID": "CIP_MAXLOCKDOWNS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "trashContainers",
+          "cppID": "CIP_TRASHCONTAINERS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxTrashContainers",
+          "cppID": "CIP_MAXTRASHCONTAINERS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "secureContainers",
+          "cppID": "CIP_SECURECONTAINERS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxSecureContainers",
+          "cppID": "CIP_MAXSECURECONTAINERS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "friends",
+          "cppID": "CIP_FRIENDS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxFriends",
+          "cppID": "CIP_MAXFRIENDS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "guests",
+          "cppID": "CIP_GUESTS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxGuests",
+          "cppID": "CIP_MAXGUESTS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "owners",
+          "cppID": "CIP_OWNERS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxOwners",
+          "cppID": "CIP_MAXOWNERS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "bans",
+          "cppID": "CIP_BANS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxBans",
+          "cppID": "CIP_MAXBANS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "vendors",
+          "cppID": "CIP_VENDORS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxVendors",
+          "cppID": "CIP_MAXVENDORS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "deed",
+          "cppID": "CIP_DEED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "isPublic",
+          "cppID": "CIP_ISPUBLIC",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "buildTimestamp",
+          "cppID": "CIP_BUILDTIMESTAMP",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "tradeTimestamp",
+          "cppID": "CIP_TRADETIMESTAMP",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "banX",
+          "cppID": "CIP_BANX",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "banY",
+          "cppID": "CIP_BANY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "tithing",
+          "cppID": "CIP_TITHING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "moveType",
+          "cppID": "CIP_MOVETYPE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        }
+      ]
     },
     {
       "name": "Boat",
