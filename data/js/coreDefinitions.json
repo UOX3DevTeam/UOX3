@@ -1778,7 +1778,7 @@
         {
           "name": "origin",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": "number"
+          "type": "string"
         },
         {
           "name": "owner",
@@ -1793,12 +1793,12 @@
         {
           "name": "race",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": "number"
+          "type": "RaceOrNull"
         },
         {
           "name": "region",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": "TownRegion"
+          "type": "TownRegionOrNull"
         },
         {
           "name": "scripttrigger",
@@ -2472,6 +2472,9 @@
       "aka": "uox_class"
     },
     {
+      "name": "Race"
+    },
+    {
       "name": "CharOrItem",
       "definition": "Character | Item"
     },
@@ -2487,7 +2490,568 @@
     {
       "name": "Item",
       "extends": "BaseObject",
-      "aka": "UOXItem_class"
+      "aka": "UOXItem_class",
+      "properties": [
+        {
+          "name": "amount",
+          "cppName": "CIP_AMOUNT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "container",
+          "cppName": "CIP_CONTAINER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "BaseOrNull"
+        },
+        {
+          "name": "type",
+          "cppName": "CIP_TYPE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "more",
+          "cppName": "CIP_MORE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "more0",
+          "cppName": "CIP_MORE0",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "more1",
+          "cppName": "CIP_MORE1",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "more2",
+          "cppName": "CIP_MORE2",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "morex",
+          "cppName": "CIP_MOREX",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "morey",
+          "cppName": "CIP_MOREY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "morez",
+          "cppName": "CIP_MOREZ",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "movable",
+          "cppName": "CIP_MOVABLE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "att",
+          "cppName": "CIP_ATT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "layer",
+          "cppName": "CIP_LAYER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "itemsinside",
+          "cppName": "CIP_ITEMSINSIDE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "totalItemCount",
+          "cppName": "CIP_TOTALITEMCOUNT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "decayable",
+          "cppName": "CIP_DECAYABLE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "decaytime",
+          "cppName": "CIP_DECAYTIME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "lodamage",
+          "cppName": "CIP_LODAMAGE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "ac",
+          "cppName": "CIP_AC",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "def",
+          "cppName": "CIP_DEF",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "resistCold",
+          "cppName": "CIP_RESISTCOLD",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "resistHeat",
+          "cppName": "CIP_RESISTHEAT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "resistLight",
+          "cppName": "CIP_RESISTLIGHT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "resistLightning",
+          "cppName": "CIP_RESISTLIGHTNING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "resistPoison",
+          "cppName": "CIP_RESISTPOISON",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "resistRain",
+          "cppName": "CIP_RESISTRAIN",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "resistSnow",
+          "cppName": "CIP_RESISTSNOW",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "damageHeat",
+          "cppName": "CIP_DAMAGEHEAT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "damageCold",
+          "cppName": "CIP_DAMAGECOLD",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "damageLight",
+          "cppName": "CIP_DAMAGELIGHT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "damageLightning",
+          "cppName": "CIP_DAMAGELIGHTNING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "damagePoison",
+          "cppName": "CIP_DAMAGEPOISON",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "damageRain",
+          "cppName": "CIP_DAMAGERAIN",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "damageSnow",
+          "cppName": "CIP_DAMAGESNOW",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "lowerStateReq",
+          "cppName": "CIP_LOWERSTATREQ",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "name2",
+          "cppName": "CIP_NAME2",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "maxUses",
+          "cppName": "CIP_MAXUSES",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "usesLeft",
+          "cppName": "CIP_USESLEFT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "rank",
+          "cppName": "CIP_RANK",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "creator",
+          "cppName": "CIP_CREATOR",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "dir",
+          "cppName": "CIP_DIR",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "wipable",
+          "cppName": "CIP_WIPABLE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "buyvalue",
+          "cppName": "CIP_BUYVALUE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "sellvalue",
+          "cppName": "CIP_SELLVALUE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "vendorPrice",
+          "cppName": "CIP_VENDORPRICE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "restock",
+          "cppName": "CIP_RESTOCK",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "good",
+          "cppName": "CIP_GOOD",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "divinelock",
+          "cppName": "CIP_DIVINELOCK",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "baseWeight",
+          "cppName": "CIP_BASEWEIGHT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "weightMax",
+          "cppName": "CIP_WEIGHTMAX",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxItems",
+          "cppName": "CIP_MAXITEMS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "corpse",
+          "cppName": "CIP_CORPSE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "desc",
+          "cppName": "CIP_DESC",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "event",
+          "cppName": "CIP_EVENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "tempLastTraded",
+          "cppName": "CIP_TEMPLASTTRADED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "tempTimer",
+          "cppName": "CIP_TEMPTIMER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "shouldSave",
+          "cppName": "CIP_SHOULDSAVE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isNewbie",
+          "cppName": "CIP_ISNEWBIE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "madeWith",
+          "cppName": "CIP_MADEWITH",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "entryMadeFrom",
+          "cppName": "CIP_ENTRYMADEFROM",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "isPileable",
+          "cppName": "CIP_ISPILEABLE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isMarkedByMaker",
+          "cppName": "CIP_ISMARKEDBYMAKER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isDyeable",
+          "cppName": "CIP_ISDYEABLE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isDamageable",
+          "cppName": "CIP_ISDAMAGEABLE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isWipeable",
+          "cppName": "CIP_ISWIPEABLE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isDoorOpen",
+          "cppName": "CIP_ISDOOROPEN",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isFieldSpell",
+          "cppName": "CIP_ISFIELDSPELL",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "isLockedDown",
+          "cppName": "CIP_ISLOCKEDDOWN",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "isShieldType",
+          "cppName": "CIP_ISSHIELDTYPE",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "isMetalType",
+          "cppName": "CIP_ISMETALTYPE",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "isLeatherType",
+          "cppName": "CIP_ISLEATHERTYPE",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "canBeLockedDown",
+          "cppName": "CIP_CANBELOCKEDDOWN",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "isContType",
+          "cppName": "CIP_ISCONTTYPE",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        {
+          "name": "carveSection",
+          "cppName": "CIP_CARVESECTION",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "ammoID",
+          "cppName": "CIP_AMMOID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "ammoHue",
+          "cppName": "CIP_AMMOHUE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "ammoFX",
+          "cppName": "CIP_AMMOFX",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "ammoFXHue",
+          "cppName": "CIP_AMMOFXHUE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "ammoFXRender",
+          "cppName": "CIP_AMMOFXRENDER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "speed",
+          "cppName": "CIP_SPEED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "healthLeech",
+          "cppName": "CIP_HEALTHLEECH",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "staminaLeech",
+          "cppName": "CIP_STAMINALEECH",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "manaLeech",
+          "cppName": "CIP_MANALEECH",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "healthBonus",
+          "cppName": "CIP_HEALTHBONUS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "staminaBonus",
+          "cppName": "CIP_STAMINABONUS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "manaBonus",
+          "cppName": "CIP_MANABONUS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "artifactRarity",
+          "cppName": "CIP_ARTIFACTRARITY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "durabilityHpBonus",
+          "cppName": "CIP_DURABILITYHPBONUS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "maxRange",
+          "cppName": "CIP_MAXRANGE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "baseRange",
+          "cppName": "CIP_BASERANGE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "isItemHeld",
+          "cppName": "CIP_ISITEMHELD",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "stealable",
+          "cppName": "CIP_STEALABLE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        }
+      ]
     },
     {
       "name": "Socket",
@@ -3457,6 +4021,10 @@
       "extends": "Multi"
     },
     {
+      "name": "BaseOrNull",
+      "definition": "BaseObject | null | undefined"
+    },
+    {
       "name": "CharOrNull",
       "definition": "Character | null | undefined"
     },
@@ -3475,6 +4043,14 @@
     {
       "name": "ItemOrSerial",
       "definition": "Item | number"
+    },
+    {
+      "name": "RaceOrNull",
+      "definition": "Race | null | undefined"
+    },
+    {
+      "name": "TownRegionOrNull",
+      "definition": "TownRegion | null | undefined"
     },
     {
       "name": "ClientFeature",
