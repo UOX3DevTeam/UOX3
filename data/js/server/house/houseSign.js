@@ -659,6 +659,24 @@ function HouseGuestGump( pUser )
 // Gump displayed to house owners
 function HouseOwnerGump( pUser )
 {
+
+	var decayStages = {
+	1: "Like New",
+	2: "Slightly Worn",
+	3: "Somewhat Worn",
+	4: "Fairly Worn",
+	5: "Greatly Worn",
+	6: "In Danger of Collapsing"
+	};
+
+	var decayStageText = "";
+	if( ValidateObject( iSign ) && iSign.multi )
+	{
+		var stage = parseInt( iSign.multi.GetTag( "decayStage" ), 10 );
+		if( stage > 0 && decayStages[stage] )
+			decayStageText = "Condition: <BASEFONT COLOR=#FF0000>" + decayStages[stage] + "</BASEFONT>";
+	}
+
 	var pLanguage = pUser.socket.language;
 	var houseOwnerGump = new Gump;
 	// Page 0 - Shared with all other pages
@@ -684,6 +702,10 @@ function HouseOwnerGump( pUser )
 	// Page 1 - Information
 	houseOwnerGump.AddPage( 1 );
 	houseOwnerGump.AddHTMLGump( 35, 145, 350,  20, 0, 0, GetDictionaryEntry( 2800, pLanguage ) + " " + houseOwner ); // House Owner: Owner name
+
+	if( decayStageText != "" )
+		houseOwnerGump.AddHTMLGump( 35, 183, 350, 20, 0, 0, decayStageText ); // Decay Condition
+
 	if( !houseIsPublic )
 	{
 		// This house is // private

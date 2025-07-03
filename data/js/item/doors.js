@@ -190,6 +190,13 @@ function onUseChecked( pUser, iUsed )
 				pUser.TextMessage( GetDictionaryEntry( 405, socket.language ), false, 0x047e ); // Using your key, you quickly unlock and open the door.  You hastily relock it.
 			}
 		}
+
+		// Refresh house decay timer if the door is opened
+		if( iUsed.multi && ( !iUsed.multi.GetTag( "InDanger" )))
+		{
+			iUsed.multi.KillTimers();
+			iUsed.multi.StartTimer( 1800000, 1, true );
+		}
 	}
 
 	// The below block of code allows "linked" double-doors

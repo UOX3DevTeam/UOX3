@@ -21,6 +21,8 @@ const keylessGuestAccess = GetServerSetting( "KeylessGuestAccess" );
 const keylessFriendAccess = GetServerSetting( "KeylessFriendAccess" );
 const keylessCoOwnerAccess = GetServerSetting( "KeylessCoOwnerAccess" );
 
+const DecayEnabled = true;//Enables House Decay
+
 function onHouseCommand( pSocket, iMulti, cmdID )
 {
 	if( ValidateObject( iMulti ) && !iMulti.IsBoat() && iMulti.IsInMulti( pSocket.currentChar ))
@@ -70,6 +72,14 @@ function onHouseCommand( pSocket, iMulti, cmdID )
 // Also handle updating visitor counter for public houses
 function onEntrance( iMulti, charEntering, objType )
 {
+	//Start Decay timer if decay is enabled or init is not true.
+	if( !iMulti.GetTag( "init" ) || DecayEnabled )
+	{
+		iMulti.StartTimer( 1800000, 1, true );//approx. 30 minutes
+		iMulti.SetTag( "decayStage", 1 );
+		iMulti.SetTag( "init", true );
+	}
+
 	// First do some standard validation checking to make sure both house
 	// and visiting character are actually valid objects
 	if( !ValidateObject( iMulti ))
@@ -189,6 +199,144 @@ function onMultiLogout( iMulti, cPlayer )
 	// Default to booting player from house on logout, and disallowing safe logout
 	PreventMultiAccess( iMulti, cPlayer, 2, 0 );
 	return false;
+}
+
+// Timer to Start House Decay
+function onTimer( iMulti, timerID )
+{
+	if( !ValidateObject( iMulti ))
+		return;
+
+	// Central decay toggle check
+	if( !DecayEnabled )
+	{
+		iMulti.KillTimers(); // Cancel decay loop if disabled
+		return;
+	}
+
+	var choseDays = Math.random() < 0.5 ? 172800000 : 259200000;// Random 2 to 3 days timer.
+	switch( timerID )
+	{
+		case 1:
+			iMulti.StartTimer( 1800000, 2, true );//approx. 30 minutes
+			iMulti.SetTag( "decayStage", timerID );
+			break;//Like New
+		case 2:
+			iMulti.StartTimer( choseDays, 3, true );//2 to 3 days
+			iMulti.SetTag( "decayStage", timerID );
+			break;//Slightly Worn
+		case 3:
+			iMulti.StartTimer( choseDays, 4, true );//2 to 3 days
+			iMulti.SetTag( "decayStage", timerID );
+			break;//Somewhat Worn
+		case 4:
+			iMulti.StartTimer( choseDays, 5, true );//2 to 3 days
+			iMulti.SetTag( "decayStage", timerID );
+			break;//Fairly Worn
+		case 5:
+			iMulti.StartTimer( choseDays, 6, true );//2 to 3 days
+			iMulti.SetTag( "decayStage", timerID );
+
+			var owner = iMulti.owner;
+			if( ValidateObject( owner ))
+				owner.SysMessage( "Your house is in danger of collapsing!" );
+			break;//Greatly Worn
+		case 6:
+			iMulti.StartTimer( 64800000, 7, true );//18 hours left.
+			iMulti.SetTag( "decayStage", timerID );
+			iMulti.SetTag( "InDanger", true );// Can not be refreshed.
+			break;// In Danger of Collapsing
+		case 7:
+			HouseDecay(iMulti ); // House has Decayed.
+			break;
+		default:
+			Console.Warning( "House Decay Timer Broken" );
+			break;
+	}
+}
+
+// House Decay - Trigger
+function HouseDecay(iMulti )
+{
+	if ( !ValidateObject( iMulti ))
+	{
+		return;
+	}
+
+	// Delete any Player Vendors in House
+	var charInHouse;
+	for ( charInHouse = iMulti.FirstChar(); !iMulti.FinishedChars(); charInHouse = iMulti.NextChar() ) 
+	{
+		if ( !ValidateObject( charInHouse ))
+			continue;
+
+		if ( !ValidateObject( charInHouse.multi ))
+			continue;
+
+		if ( charInHouse.aitype == 17 ) // player vendor AI
+		{
+			charInHouse.Delete();
+		}
+		else 
+		{
+			// Eject character from house
+			TriggerEvent( 15002, "EjectPlayerActual", iMulti, charInHouse );
+		}
+	}
+
+	// Kill all the keys related to the house - they are of no use any more
+	//iMulti.KillKeys(); I dont think house keys would delete whena house decayed.
+
+	// Release lockdown on any items left in the house, move them to ground level
+	// Also remove any trash barrels
+	var itemInHouse;
+	for ( itemInHouse = iMulti.FirstItem(); !iMulti.FinishedItems(); itemInHouse = iMulti.NextItem() )
+	{
+		if ( !ValidateObject( itemInHouse ) )
+			continue;
+
+		if ( !ValidateObject(itemInHouse.multi ) )
+			continue;
+
+		// Don't touch doors, or signs
+		if ( itemInHouse.type == 203 || itemInHouse.type == 13 || itemInHouse.type == 12 )
+			continue;
+
+		if ( itemInHouse.type == 87) // trash container
+		{
+			if ( iMulti.IsSecureContainer( itemInHouse ))
+			{
+				iMulti.UnsecureContainer( itemInHouse );
+			}
+			iMulti.RemoveTrashCont( itemInHouse );
+			itemInHouse.Delete();
+		}
+		else if( itemInHouse.movable == 2 || itemInHouse.GetTag( "deed" )) // items placed as part of the house itself like forge/anvil in smithy or the addon deed
+		{
+			itemInHouse.Delete();
+		}
+		else if ( itemInHouse.isLockedDown )
+		{
+			if ( iMulti.IsSecureContainer( itemInHouse ))
+			{
+				iMulti.UnsecureContainer( itemInHouse );
+			}
+			iMulti.ReleaseItem( itemInHouse );
+
+			// Drop all items contained in house to ground level so they're not stuck in the middle of the air!
+			var groundZ = GetMapElevation( itemInHouse.x, itemInHouse.y, pSocket.currentChar.worldnumber );
+			itemInHouse.Teleport( itemInHouse.x, itemInHouse.y, groundZ );
+		}
+	}
+
+	// Remove file that keeps track of visitors to house, if any exists
+	//TriggerEvent( 15000, "RemoveTrackingFile", iMulti );
+	var fileName = "house" + ( iMulti.serial ).toString() + ".jsdata";
+	var folderName = "houseVisits";
+	DeleteFile( fileName, folderName );
+
+	// Finally, delete the house!
+	iMulti.Delete();
 }
 
 function PreventMultiAccess( iMulti, charEntering, ejectReason, dictEntry )
