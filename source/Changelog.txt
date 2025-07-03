@@ -9,6 +9,7 @@
 	Added third optional parameter to Character JS Method .SetPoisoned() that can be used to specify source char of applied poison. New syntax:
 		.SetPoisoned( poisonLevel, wearOffTime[, poisonSourceChar ])
 	Updated calculations of magic and/or poison resistance to also include magic and/or poison resistance from races
+	Excluded player pets from MONSTERSVSANIMALS/ANIMALATTACKCHANCE ini settings; player pets are now always valid targets in combat for NPCs (unless player is a Young character)
 
 02/07/2025 - Xuri
 	Updated UOX3 & JS documentation

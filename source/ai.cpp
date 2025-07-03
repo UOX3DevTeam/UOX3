@@ -101,7 +101,7 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 			if( LineOfSight( nullptr, (&mChar), cTarget->GetX(), cTarget->GetY(), cTarget->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 			{
 				// Young players are not valid targets for NPCs outside of dungeons
-				if( cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.IsNpc() && !cTarget->IsNpc() && IsOnline(( *cTarget )) && cTarget->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && !cTarget->GetRegion()->IsDungeon() )
+				if( cTarget->GetTarg() != &mChar && cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.IsNpc() && !cTarget->IsNpc() && IsOnline(( *cTarget )) && cTarget->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && !cTarget->GetRegion()->IsDungeon() )
 				{
 					// Only display message to player if an actual hostile NPC would be considering them as a target
 					auto aiType = mChar.GetNpcAiType();
@@ -113,6 +113,11 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 							cTarget->GetSocket()->SysMessage( 18734 ); // A monster looks at you menacingly but does not attack.  You would be under attack now if not for your status as a new citizen of Britannia.
 						}
 					}
+					return false;
+				}
+				else if( cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.IsNpc() && cTarget->IsNpc() && ValidateObject( cTarget->GetOwnerObj() ) && cTarget->GetOwnerObj()->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && !cTarget->GetRegion()->IsDungeon() )
+				{
+					// Don't attack pets of Young Characters outside of dungeons
 					return false;
 				}
 
@@ -423,7 +428,8 @@ auto HandleEvilAI( CChar& mChar ) -> void
 
 				if( tempChar->GetNpcAiType() != AI_HEALER_G )
 				{
-					if( cwmWorldState->creatures[tempChar->GetId()].IsAnimal() )
+					// Special consideration for non-pet animal targets
+					if( cwmWorldState->creatures[tempChar->GetId()].IsAnimal() && !ValidateObject( tempChar->GetOwnerObj() ))
 					{
 						if( !cwmWorldState->ServerData()->CombatMonstersVsAnimals() )
 						{

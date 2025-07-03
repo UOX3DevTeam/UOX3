@@ -1034,6 +1034,10 @@ void AttackTarget( CSocket *s )
 			{
 				myPet->FlushPath();
 				Combat->AttackTarget( myPet, target );
+				if( mChar->GetTarg() != target )
+				{
+					Combat->AttackTarget( mChar, target );
+				}
 				if( target->IsInnocent() && target != myPet->GetOwnerObj() )
 				{
 					if( WillResultInCriminal( mChar, target ))
@@ -1073,6 +1077,7 @@ void AttackTarget( CSocket *s )
 
 		mPet->FlushPath();
 		Combat->AttackTarget( mPet, target );
+		Combat->AttackTarget( mChar, target );
 		if( target->IsInnocent() && target != mChar )
 		{
 			if( WillResultInCriminal( mChar, target ))
