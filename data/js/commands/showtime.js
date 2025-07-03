@@ -1,6 +1,6 @@
 function CommandRegistration()
 {
-	RegisterCommand( "showtime", 1, true );
+	RegisterCommand( "showtime", 4, true );
 }
 
 function command_SHOWTIME( socket, cmdString )

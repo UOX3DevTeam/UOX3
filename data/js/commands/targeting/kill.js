@@ -2,11 +2,11 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "kill", 2, true );
-	RegisterCommand( "resurrect", 2, true );
-	RegisterCommand( "res", 2, true );
-	RegisterCommand( "shavehair", 2, true );
-	RegisterCommand( "shavebeard", 2, true );
+	RegisterCommand( "kill", 8, true );
+	RegisterCommand( "resurrect", 8, true );
+	RegisterCommand( "res", 8, true );
+	RegisterCommand( "shavehair", 8, true );
+	RegisterCommand( "shavebeard", 8, true );
 }
 
 function command_KILL( socket, cmdString )

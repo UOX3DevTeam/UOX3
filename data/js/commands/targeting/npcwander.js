@@ -2,9 +2,9 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "follow", 1, true );
-	RegisterCommand( "npcrect", 2, true );
-	RegisterCommand( "npccircle", 2, true );
+	RegisterCommand( "follow", 4, true );
+	RegisterCommand( "npcrect", 8, true );
+	RegisterCommand( "npccircle", 8, true );
 }
 
 function command_FOLLOW( socket, cmdString )

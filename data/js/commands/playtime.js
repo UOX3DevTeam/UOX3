@@ -17,7 +17,7 @@ function command_PLAYTIME( socket, cmdString )
 	var totalPlayTime = pChar.account.totalPlayTime;
 
 	// Add playtime since last login, which won't get added to char/account until next logout/disconnect
-	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - pChar.GetTempTag( "loginTime" );
+	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - parseInt( pChar.GetTempTag( "loginTime" ));
 	playTime += minSinceLogin;
 	totalPlayTime += minSinceLogin;
 

@@ -10,21 +10,21 @@ const ReqNum = "You need to enter a numerical value with this command!";
 
 function CommandRegistration()
 {
-	RegisterCommand( "rincx", 2, true ); // USE 'RINCX <value> - increases X value of multiple targets by <value>
-	RegisterCommand( "rincy", 2, true ); // USE 'RINCY <value> - increases Y value of multiple targets by <value>
-	RegisterCommand( "rincz", 2, true ); // Use 'RINCZ <value> - increases Z value of multiple targets by <value>
-	RegisterCommand( "rtype", 2, true ); // Use 'RTYPE <type> - sets multiple targeted objects to TYPE <type>
-	RegisterCommand( "rdye", 2, true ); // Use 'RDYE <hex-id> - dyes multiple targeted objects with colour <hex-id>
-	RegisterCommand( "radd", 2, true ); // Use 'RADD <hex-id> - adds item <hex-id> at multiple targeted locations
-	RegisterCommand( "rremove", 2, true ); // Use 'RREMOVE - Removes multiple targeted items.
-	RegisterCommand( "m", 2, true ); // Use 'm delete - Removes multiple targeted items.
-	RegisterCommand( "radditem", 2, true ); // Use 'RADDITEM <item-id from dfns>
-	RegisterCommand( "rtele", 2, true ); //Use 'RTELE <target teleport location>
-	RegisterCommand( "raddnpc", 2, true ); //Use 'RADDNPC <id from DFNs> - Adds specified NPC at multiple targeted locations
-	RegisterCommand( "raddspawner", 2, true ); //Use 'RADDSPAWNER <id from DFNs> - Adds specified Spawner at multiple targeted locations
-	RegisterCommand( "rincid", 2, true ); // Use 'RINCID <value> - repeatedly increase/decrease ID of target by <value>
-	RegisterCommand( "rmovable", 2, true ); // Use 'RMOVABLE <value> - repeatedly set movable status of target item to <value>
-	RegisterCommand( "rnodecay", 2, true ); // Use 'RNODECAY - repeatedly set decayable status of target item to false
+	RegisterCommand( "rincx", 8, true ); // USE 'RINCX <value> - increases X value of multiple targets by <value>
+	RegisterCommand( "rincy", 8, true ); // USE 'RINCY <value> - increases Y value of multiple targets by <value>
+	RegisterCommand( "rincz", 8, true ); // Use 'RINCZ <value> - increases Z value of multiple targets by <value>
+	RegisterCommand( "rtype", 8, true ); // Use 'RTYPE <type> - sets multiple targeted objects to TYPE <type>
+	RegisterCommand( "rdye", 8, true ); // Use 'RDYE <hex-id> - dyes multiple targeted objects with colour <hex-id>
+	RegisterCommand( "radd", 8, true ); // Use 'RADD <hex-id> - adds item <hex-id> at multiple targeted locations
+	RegisterCommand( "rremove", 8, true ); // Use 'RREMOVE - Removes multiple targeted items.
+	RegisterCommand( "m", 8, true ); // Use 'm delete - Removes multiple targeted items.
+	RegisterCommand( "radditem", 8, true ); // Use 'RADDITEM <item-id from dfns>
+	RegisterCommand( "rtele", 8, true ); //Use 'RTELE <target teleport location>
+	RegisterCommand( "raddnpc", 8, true ); //Use 'RADDNPC <id from DFNs> - Adds specified NPC at multiple targeted locations
+	RegisterCommand( "raddspawner", 8, true ); //Use 'RADDSPAWNER <id from DFNs> - Adds specified Spawner at multiple targeted locations
+	RegisterCommand( "rincid", 8, true ); // Use 'RINCID <value> - repeatedly increase/decrease ID of target by <value>
+	RegisterCommand( "rmovable", 8, true ); // Use 'RMOVABLE <value> - repeatedly set movable status of target item to <value>
+	RegisterCommand( "rnodecay", 8, true ); // Use 'RNODECAY - repeatedly set decayable status of target item to false
 }
 
 //Repeated Command: INCX <value>
@@ -382,46 +382,49 @@ function onCallback7( pSock, myTarget )
 				}
 
 				// Reset hair/beard style/colour if item being removed is hair or beard on a character
-				var packOwner = GetPackOwner( myTarget, 0 );
-				if( packOwner != null && packOwner.isChar )
+				if( myTarget.isItem )
 				{
-					if( myTarget.layer == 0x0b ) // Hair
+					var packOwner = GetPackOwner( myTarget, 0 );
+					if( packOwner != null && packOwner.isChar )
 					{
-						packOwner.hairStyle = 0;
-						packOwner.hairColour = 0;
-					}
-					else if( myTarget.layer == 0x10 ) // Beard
-					{
-						packOwner.beardStyle = 0;
-						packOwner.beardColour = 0;
-					}
-				}				
-
-				// If item being removed was locked down in a multi, release item from multi to update lockdown count properly
-				var iMulti = myTarget.multi;
-				if( ValidateObject( iMulti ))
-				{
-					if( iMulti.IsSecureContainer( myTarget ))
-					{
-						// Targeted item is a secure container
-						iMulti.UnsecureContainer( myTarget );
-					}
-					else
-					{
-						// Release the targeted item before deleting it
-						iMulti.ReleaseItem( myTarget );
-					}
-
-					if( myTarget.type == 1 )
-					{
-						// Loop through any items in container and release them
-						var tempItem;
-						for( tempItem = myTarget.FirstItem(); !myTarget.FinishedItems(); tempItem = myTarget.NextItem() )
+						if( myTarget.layer == 0x0b ) // Hair
 						{
-							if( !ValidateObject( tempItem ))
-								continue;
+							packOwner.hairStyle = 0;
+							packOwner.hairColour = 0;
+						}
+						else if( myTarget.layer == 0x10 ) // Beard
+						{
+							packOwner.beardStyle = 0;
+							packOwner.beardColour = 0;
+						}
+					}
 
-							iMulti.ReleaseItem( tempItem );
+					// If item being removed was locked down in a multi, release item from multi to update lockdown count properly
+					var iMulti = myTarget.multi;
+					if( ValidateObject( iMulti ))
+					{
+						if( iMulti.IsSecureContainer( myTarget ))
+						{
+							// Targeted item is a secure container
+							iMulti.UnsecureContainer( myTarget );
+						}
+						else
+						{
+							// Release the targeted item before deleting it
+							iMulti.ReleaseItem( myTarget );
+						}
+
+						if( myTarget.type == 1 )
+						{
+							// Loop through any items in container and release them
+							var tempItem;
+							for( tempItem = myTarget.FirstItem(); !myTarget.FinishedItems(); tempItem = myTarget.NextItem() )
+							{
+								if( !ValidateObject( tempItem ))
+									continue;
+
+								iMulti.ReleaseItem( tempItem );
+							}
 						}
 					}
 				}

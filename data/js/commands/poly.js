@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "poly", 2, true );
+	RegisterCommand( "poly", 8, true );
 }
 
 function command_POLY( socket, cmdString )

@@ -1,7 +1,7 @@
 // This command lets GMs pick up and move even items that are marked as non-movable
 function CommandRegistration()
 {
-	RegisterCommand( "allmove", 2, true );
+	RegisterCommand( "allmove", 8, true );
 }
 
 function command_ALLMOVE( socket, cmdString )

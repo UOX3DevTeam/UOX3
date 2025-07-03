@@ -49,7 +49,7 @@ function GetWeaponType( mChar, itemID )
 	var weaponType;
 
 	// If a valid character was passed in, try to find what weapon (if any) they have equipped
-	if( ValidateObject( mChar ))
+	if( ValidateObject( mChar ) && itemID == null )
 	{
 		// Check first layer1 then layer2 for equipped weapons on character
 		var tempItem = mChar.FindItemLayer( 1 );
@@ -60,10 +60,6 @@ function GetWeaponType( mChar, itemID )
 		if( tempItem != null )
 		{
 			itemID = tempItem.id;
-		}
-		else
-		{
-			itemID = null;
 		}
 	}
 
@@ -431,5 +427,5 @@ function GetCombatSkill( weaponType )
 			combatSkill = "WRESTLING"; break;
 	}
 
-	return weaponType;
+	return combatSkill;
 }

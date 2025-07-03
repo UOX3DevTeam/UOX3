@@ -5,8 +5,8 @@
 // and until it's up no more grapes can be picked. Once the timer is over,
 // new grapes are added. The apperance of the tree indicates whether or
 // not there are any grapes left to pick.
-var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
-var maxResource = 5; //maximum amount of resources on a given item
+const grapeGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+const maxGrapeResource = 5; //maximum amount of resources on a given item
 
 function onUseChecked( pUser, iUsed )
 {
@@ -21,7 +21,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		iUsed.SetTag( "initialized", 1 ); 	// Marks tree as initialized
 		iUsed.SetTag( "Grapes",1 ); 		// If set to 1, there are grapes to be picked, if 0 there are no ripe grapes
-		iUsed.SetTag( "GrapeCounter", maxResource ); 	// Add 5 grapes to the tree initially
+		iUsed.SetTag( "GrapeCounter", maxGrapeResource ); 	// Add 5 grapes to the tree initially
 	}
 	var grapes = iUsed.GetTag( "Grapes" );
 	var grapeCount = iUsed.GetTag( "GrapeCounter" );
@@ -54,7 +54,7 @@ function onUseChecked( pUser, iUsed )
 	    	if( grapeCount == 0 )
 			{
 				iUsed.SetTag( "Grapes", 0 );
-				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time grapes respawn
+				iUsed.StartTimer( grapeGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time grapes respawn
 			}
 		}
 	}
@@ -65,7 +65,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag( "GrapeCounter", maxResource );
+		iUsed.SetTag( "GrapeCounter", maxGrapeResource );
 		iUsed.SetTag( "Grapes", 1 );
 	}
 }

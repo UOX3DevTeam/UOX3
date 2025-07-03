@@ -53,7 +53,7 @@ function spawnerGump( socket, pUser, iUsed )
 	// Spawnlist?
 	spawner.AddHTMLGump( 285, 155, 55, 44, false, false, "<center><basefont color=#ffffff>Use<br>" + GetDictionaryEntry( 9809, socket.language ) + "</basefont></center>" );// Spawnlist
 	spawner.AddToolTip( spawnEditorTooltipClilocID, socket, GetDictionaryEntry( 9810, socket.language ));// If checked, spawner uses spawnlist instead of spawn section
-	spawner.AddCheckbox( 250, 160, 2472, 2153, ( iUsed.sectionalist == true ? 1 : 0 ), 1 );
+	spawner.AddCheckbox( 250, 160, 2472, 2153, ( iUsed.sectionalist == true ? 1 : 0 ), 4 );
 
 	// Amount
 	spawner.AddHTMLGump( 35, 205, 120, 22, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9811, socket.language ) + ":</basefont>" );// Amount
@@ -151,6 +151,9 @@ function onGumpPress( socket, pButton, gumpData )
 						iUsed.type = 125;
 						spawnRadius = 0;
 					}
+					break;
+				case 4: // This is actually our checkbox, if no radio buttons are selected!
+					checkBtnSpawnlist = 4; // Put the value into the "checkbox" variable!
 					break;
 				default:
 					break;

@@ -428,27 +428,53 @@
 0x0d22=2007
 0x0d23=2007
 0x0d24=2007
-// Pick wheat
-0x0c55=2008
-0x0c56=2008
-0x0c57=2008
+
+// Pick wheat (fully grown)
 0x0c58=2008
-0x0c59=2008
 0x0c5a=2008
 0x0c5b=2008
 
-// pick cotton
+// pick cotton (fully grown)
 0x0c4f=2009
 0x0c50=2009
-0x0c51=2009
-0x0c52=2009
-0x0c53=2009
-0x0c54=2009
 
-// pick flax
-0x1a99=2010
-0x1a9a=2010
+// pick flax (fully grown)
 0x1a9b=2010
+
+// pick carrots (fully grown)
+0x0c76=2013
+
+// pick onions (fully grown)
+0x0c6f=2014
+
+// pick turnips (fully grown)
+0x0c63=2015
+
+// pick cabbages (fully grown)
+0x0c7b=2016
+0x0c7c=2016
+
+// pick gourds (fully grown)
+0x0c66=2017
+0x0c67=2017
+
+// pick pumpkins (fully grown)
+0x0c6a=2018
+0x0c6b=2018
+
+// pick squashes (fully grown)
+0x0c72=2019
+0x0c73=2019
+
+// pick watermelons (fully grown)
+0x0c5c=2020
+
+// pick honeydew melon (fully grown)
+0x0c74=2021
+
+// pick garlic (fully grown)
+0x18e1=2022
+
 // harvesting and picking fruits end
 // ----------------------------------
 // ----------------------------

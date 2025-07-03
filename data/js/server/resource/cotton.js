@@ -2,7 +2,10 @@
 // 20/02/2006 Xuri; xuri@uox3.org
 // When a (dynamic) cotton plant is double-clicked, it may yield some cotton.
 // Then a timer will start, and no more cotton can be picked until it runs out.
-var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+const cottonGrowthDelay = 120000; // Delay in milliseconds before resource regrowth kicks in
+const cottonGrowthIntervalMin = 30000; // Min delay in milliseconds between each growth phase
+const cottonGrowthIntervalMax = 90000; // Max delay in milliseconds between each growth phase
+const cottonResourceDecay = 3600; // Time (in seconds) it takes for resource to decay, allowing another to spawn in its place if spawned using spawn regions. 0 to disable decay
 
 function onUseChecked( pUser, iUsed )
 {
@@ -35,8 +38,15 @@ function onUseChecked( pUser, iUsed )
 	 	{
 			pUser.SysMessage( GetDictionaryEntry( 2525, pUser.socket.language )); // You harvest some cotton.
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0df9", 1, "ITEM", true );
+			if( cottonResourceDecay > 0 )
+			{
+				iUsed.decayable = true;
+				iUsed.decaytime = cottonResourceDecay;
+			}
+			iUsed.id = RandomNumber( 0, 1 ) ? 0x0c51 : 0x0c52;
+			iUsed.name = "cotton seedling";
 			iUsed.SetTag( "Cotton", 0 );
-			iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 60 seconds until next time more cotton respawns
+			iUsed.StartTimer( cottonGrowthDelay, 1, true ); // Puts in a delay of 60 seconds until next time more cotton respawns
 		}
 	}
 	return false;
@@ -44,8 +54,14 @@ function onUseChecked( pUser, iUsed )
 
 function onTimer( iUsed, timerID )
 {
-	if( timerID == 1 )
+	if( timerID == 1 ) // Starts phase 1 of cottong growth
 	{
+		iUsed.StartTimer( RandomNumber( cottonGrowthIntervalMin, cottonGrowthIntervalMax ), 2, true );
+	}
+	if( timerID == 2 ) // Cotton growth finished!
+	{
+		iUsed.id = RandomNumber( 0, 1 ) ? 0x0c4f : 0x0c50;
+		iUsed.name = "cotton";
 		iUsed.SetTag( "Cotton", 1 );
 	}
 }

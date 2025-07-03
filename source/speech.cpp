@@ -314,8 +314,6 @@ bool CPITalkRequest::Handle( void )
 			if( !mChar->IsAtWar() )
 			{
 				mChar->SetWar( true );
-				CPWarMode wMode( 1 );
-				tSock->Send( &wMode );
 			}
 		}
 
@@ -442,7 +440,7 @@ bool CPITalkRequest::Handle( void )
 				if( mChar != tChar )
 				{
 					// Line of Sight check!
-					if( !tChar->IsGM() && !LineOfSight( mChar->GetSocket(), tChar, mChar->GetX(), mChar->GetY(), mChar->GetZ() + 15, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, 0, false ))
+					if( !tChar->IsGM() && !LineOfSight( mChar->GetSocket(), tChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, 0, false ))
 						continue;
 
 					if( mChar->IsDead() && tChar->GetCommandLevel() < CL_CNS && tSock->GetTimer( tPC_SPIRITSPEAK ) == 0 ) // GM/Counselors can see ghosts talking always Seers?
@@ -641,7 +639,7 @@ bool CSpeechQueue::InternalPoll( void )
 	{
 		toCheck = ( *slIter );
 
-		if( toCheck->At() == -1 || static_cast<UI32>( toCheck->At() ) <= cwmWorldState->GetUICurrentTime() )
+		if( toCheck->At() == -1 || toCheck->At() <= cwmWorldState->GetUICurrentTime() )
 		{
 			retVal = true;
 			SayIt(( *toCheck ));

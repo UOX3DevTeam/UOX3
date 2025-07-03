@@ -7618,7 +7618,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		tempEntry.sortOrder = 5;
 		FinalizeData( tempEntry, totalStringLen );
 	}
-	else if(( cItem.GetWeight() / 100 ) >= 1 && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT )
+	else if( cItem.GetWeight() != 25500 && ( cItem.GetWeight() / 100 ) >= 1 && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT )
 	{
 		if(( cItem.GetWeight() / 100 ) == 1 )
 		{
@@ -7743,6 +7743,38 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				}
 				tempEntry.sortOrder = 105;
 				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetPoisoned() > 0 && cItem.GetPoisonCharges() > 0 )
+			{
+				auto itemCont = cItem.GetCont();
+				if( cItem.GetHiDamage() == 0 || ( ValidateObject( itemCont ) && (( itemCont->CanBeObjType( OT_ITEM ) && FindRootContainer( static_cast<CItem *>( itemCont )) == tSock->CurrcharObj()->GetPackItem() ) || ( itemCont->CanBeObjType( OT_CHAR ) && tSock->CurrcharObj() == static_cast<CChar *>( itemCont )))))
+				{
+					switch( cItem.GetPoisoned() )
+					{
+						case 1: // Lesser Poison
+							tempEntry.stringNum = 1062412; // lesser poison charges: ~1_val~
+							break;
+						case 2: // Poison
+							tempEntry.stringNum = 1062413; // poison charges: ~1_val~
+							break;
+						case 3: // Greater Poison
+							tempEntry.stringNum = 1062414; // greater poison charges: ~1_val~
+							break;
+						case 4: // Deadly Poison
+							tempEntry.stringNum = 1062415; // deadly poison charges: ~1_val~
+							break;
+						case 5: // Lethal Poison
+							tempEntry.stringNum = 1062416; // lethal poison charges: ~1_val~
+							break;
+						default:
+							break;
+					}
+
+					tempEntry.ourText = oldstrutil::number( cItem.GetPoisonCharges() );
+					tempEntry.sortOrder = 107;
+					FinalizeData( tempEntry, totalStringLen );
+				}
 			}
 
 			if( cItem.GetHiDamage() > 0 )
@@ -8118,7 +8150,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 	std::string fameTitle = "";
 	if( cwmWorldState->ServerData()->ShowReputationTitleInTooltip() )
 	{
-		if( cwmWorldState->creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() && !mChar.IsDisguised() )
+		if( cwmWorldState->creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() && !mChar.IsDisguised() && !mChar.HideFameKarmaTitle() )
 		{
 			GetFameTitle( &mChar, fameTitle );
 			fameTitle = oldstrutil::trim( fameTitle );
@@ -8371,7 +8403,7 @@ auto CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack,
 	{
 		if( ValidateObject( opItem ))
 		{
-			if( opItem->GetType() == IT_CONTAINER )
+			if( opItem->GetType() == IT_CONTAINER && opItem->GetContainsList()->Num() > 0 )
 			{
 				AddContainer( tReg, spItem, opItem, packetLen );
 			}
@@ -9163,7 +9195,7 @@ void CPPopupMenu::CopyData( CBaseObject& toCopy, CSocket &tSock )
 	{
 		if( toCopyChar->GetNpcWander() != WT_PATHFIND && toCopyChar->GetNpcWander() != WT_FOLLOW && toCopyChar->GetNpcWander() != WT_FLEE )
 		{
-			toCopyChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 3 ));
+			toCopyChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 3.0 ));
 		}
 	}
 	else

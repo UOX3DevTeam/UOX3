@@ -521,4 +521,10 @@ f_thief_guildmaster
 10|stonegargoyle
 }
 
+[NPCLIST buccsden_town]
+{
+75|rat
+25|sailor
+}
+
 EOF

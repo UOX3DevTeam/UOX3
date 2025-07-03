@@ -1,7 +1,7 @@
 // Reports the command user's current in-game coordinates and region name
 function CommandRegistration()
 {
-	RegisterCommand( "where", 1, true );
+	RegisterCommand( "where", 4, true );
 }
 
 function command_WHERE( socket, cmdString )
@@ -13,7 +13,7 @@ function command_WHERE( socket, cmdString )
 		if( mRegion && mRegion.name )
 		{
 			var tempMsg = GetDictionaryEntry( 8000, socket.language ); // You are at: %s
-			socket.SysMessage( tempMsg.replace( /%s/gi, mRegion.name ));
+			socket.SysMessage( tempMsg.replace( /%s/gi, mRegion.name ) + " (" + mRegion.id + ")" );
 		}
 		else
 		{

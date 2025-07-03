@@ -734,7 +734,7 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 									spawnReg->SetY1( locations[locations.size() - 1].y1 );
 									spawnReg->SetX2( locations[locations.size() - 1].x2 );
 									spawnReg->SetY2( locations[locations.size() - 1].y2 );
-									spawnReg->Load( predefSpawn );
+									[[maybe_unused]] auto spawnRegResult = spawnReg->Load( predefSpawn );
 								}
 								break;
 							}

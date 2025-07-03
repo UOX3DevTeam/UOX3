@@ -44,6 +44,8 @@ UI16	GetDist( Point3_st a, Point3_st b );
 UI16	GetOldDist( CBaseObject *a, CBaseObject *b );
 UI16	GetDist3D( CBaseObject *a, CBaseObject *b );
 UI16	GetDist3D( Point3_st a, Point3_st b );
+R32		GetApproxDist( Point3_st a, Point3_st b );
+R32		GetApproxDist( CBaseObject *a, CBaseObject *b );
 auto	FindPlayersInVisrange( CBaseObject *myObj ) -> std::vector<CSocket *>;
 auto	FindPlayersInOldVisrange( CBaseObject *myObj ) -> std::vector<CSocket *>;
 auto	FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance ) -> std::vector<CSocket *>;
@@ -140,12 +142,12 @@ void	CallGuards( CChar *mChar );
 //o------------------------------------------------------------------------------------------------o
 // Time Functions
 //o------------------------------------------------------------------------------------------------o
-inline TIMERVAL BuildTimeValue( R32 timeFromNow )
+inline TIMERVAL BuildTimeValue( R64 timeFromNow )
 {
-	return static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + static_cast<TIMERVAL>( std::round(( static_cast<R32>( 1000 ) * timeFromNow ))));
+	return static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + static_cast<TIMERVAL>( std::round( 1000 * timeFromNow )));
 }
 
-UI32	GetClock( void );
+TIMERVAL	GetClock( void );
 inline char *	RealTime( char *time_str )
 {
 	auto timet = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );

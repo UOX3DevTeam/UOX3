@@ -350,14 +350,14 @@ function ClaimPet( pUser, petNum, stableMaster )
 					}
 
 					var totalStabledPets = parseInt( pUser.GetTag( "totalStabledPets" ));
-					var stableTimeAt = petObj.GetTag( "stableTimeAt" );
+					var stableTimeAt = parseInt( petObj.GetTag( "stableTimeAt" ));
 					var maxStableTime = maxStableDays * 86402350; // 86402350 should be approx 24 hours
 					var strokeOfLuck = RandomNumber( 1, 10 );
 
 					// If the time passed since pet was stabled is less than the maximum time allowed,
 					// or if the player has a stroke of luck even though time has passed max...
 					// ...then let him claim the pet
-					if(( GetCurrentClock() - stableTimeAt < maxStableTime ) || maxStableTime == 0 )
+					if(( Date.now() - stableTimeAt < maxStableTime ) || maxStableTime == 0 )
 					{
 						//Let's release the pet
 						ReleasePet( petObj, petNum, stableMaster, pUser, true );
@@ -538,7 +538,7 @@ function StablePet( pUser, ourObj, slotNum, stableMaster )
 	{
 		// Both the player and the targeted pet exists, so.. let's stable it!
 		pUser.SetTag( "stabledPet" + slotNum, ourObj.serial );
-		ourObj.SetTag( "stableTimeAt", GetCurrentClock() );
+		ourObj.SetTag( "stableTimeAt", Date.now().toString() );
 		ourObj.stabled = 1;
 		ourObj.visible = 3;
 		ourObj.wandertype = 0;
