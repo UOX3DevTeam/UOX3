@@ -1709,7 +1709,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 				if( mChar.GetTimer( tCHAR_POISONWEAROFF ) > cwmWorldState->GetUICurrentTime() )
 				{
 					std::string mCharName = GetNpcDictName( &mChar, nullptr, NRS_SPEECH );
-
+					auto poisonedBy = CalcCharObjFromSer( mChar.GetPoisonedBy() );
 					switch( mChar.GetPoisoned() )
 					{
 						case 1: // Lesser Poison
@@ -1722,7 +1722,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 3, 6 ); // 3% to 6% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>(( mChar.GetHP() * poisonDmgPercent ) / 100 );
-							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 3 ), poisonDmg ), POISON ); // Minimum 3 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 3 ), poisonDmg ), POISON, poisonedBy ); // Minimum 3 damage per tick
 							break;
 						}
 						case 2: // Normal Poison
@@ -1735,7 +1735,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 4, 8 ); // 4% to 8% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>(( mChar.GetHP() * poisonDmgPercent ) / 100 );
-							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 5 ), poisonDmg ), POISON ); // Minimum 5 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 5 ), poisonDmg ), POISON, poisonedBy ); // Minimum 5 damage per tick
 							break;
 						}
 						case 3: // Greater Poison
@@ -1748,7 +1748,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 8, 12 ); // 8% to 12% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>(( mChar.GetHP() * poisonDmgPercent ) / 100 );
-							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 8 ), poisonDmg ), POISON ); // Minimum 8 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 8 ), poisonDmg ), POISON, poisonedBy ); // Minimum 8 damage per tick
 							break;
 						}
 						case 4: // Deadly Poison
@@ -1761,7 +1761,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 12, 25 ); // 12% to 25% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>(( mChar.GetHP() * poisonDmgPercent ) / 100 );
-							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 14 ), poisonDmg ), POISON ); // Minimum 14 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 14 ), poisonDmg ), POISON, poisonedBy ); // Minimum 14 damage per tick
 							break;
 						}
 						case 5: // Lethal Poison - Used by monsters only
@@ -1774,12 +1774,13 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 25, 50 ); // 25% to 50% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>(( mChar.GetHP() * poisonDmgPercent ) / 100 );
-							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 17 ), poisonDmg ), POISON ); // Minimum 14 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 17 ), poisonDmg ), POISON, poisonedBy ); // Minimum 14 damage per tick
 							break;
 						}
 						default:
 							Console.Error( " Fallout of switch statement without default. uox3.cpp, GenericCheck(), mChar.GetPoisoned() not within valid range." );
 							mChar.SetPoisoned( 0 );
+							mChar.SetPoisonedBy( INVALIDSERIAL );
 							break;
 					}
 					if( mChar.GetHP() < 1 && !mChar.IsDead() )
@@ -1815,6 +1816,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			if( mChar.GetPoisoned() > 0 )
 			{
 				mChar.SetPoisoned( 0 );
+				mChar.SetPoisonedBy( INVALIDSERIAL );
 				if( mSock != nullptr )
 				{
 					mSock->SysMessage( 1245 ); // The poison has worn off.
@@ -3769,6 +3771,9 @@ auto GetPoisonDuration( UI08 poisonStrength ) ->TIMERVAL
 			break;
 		case 5: // Lethal poison - 13 to 17 pulses, 5 second frequency
 			poisonDuration = RandomNum( 13, 17 ) * 5;
+			break;
+		default:
+			poisonDuration = 10; // Fallback
 			break;
 	}
 	return poisonDuration;

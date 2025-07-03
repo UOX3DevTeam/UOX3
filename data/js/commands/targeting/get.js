@@ -121,6 +121,9 @@ function onCallback0( socket, ourObj )
 	case "POISON":
 		socket.SysMessage( ourObj.poison );
 		break;
+	case "POISONEDBY":
+		socket.SysMessage( ourObj.poisonedBy );
+		break;
 	case "X":
 		socket.SysMessage( ourObj.x );
 		break;

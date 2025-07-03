@@ -1134,6 +1134,11 @@ SI16 CHandleCombat::CalcAttackPower( CChar *p, bool doDamage )
 						GetTileName(( *weapon ), name );
 						mSock->SysMessage( 311, name.c_str() ); // Your %s has been destroyed.
 					}
+					if( weapon->GetPoisoned() > 0 )
+					{
+						// Undo poison-strength on character
+						p->SetPoisonStrength( std::max( 0, p->GetPoisonStrength() - weapon->GetPoisoned() ));
+					}
 					weapon->Delete();
 				}
 			}
@@ -3120,7 +3125,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 							ourTarg->TextMessage( mSock, 18738, TALK, false ); // * The poison seems to have no effect. *
 						}
 					}
-					else if( mChar.GetResist( POISON ) >= 100 || static_cast<R32>( mChar.GetResist( POISON ) / 20.0 ) > static_cast<R32>( poisonStrength ))
+					else if( ourTarg->GetResist( POISON ) >= 100 || static_cast<R32>( ourTarg->GetResist( POISON ) / 20.0 ) > static_cast<R32>( poisonStrength ))
 					{
 						// Based on poison resistance, characters can be immune to specific levels of poison
 						// >= 100, immune to everything (including Lethal)
@@ -3131,7 +3136,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 						doPoison = false;
 						if( mSock != nullptr )
 						{
-							ourTarg->TextMessage( mSock, 18738, TALK, false ); // * The poison seems to have no effect. *
+							mChar.TextMessage( mSock, 18738, TALK, false ); // * The poison seems to have no effect. *
 						}
 					}
 
@@ -3139,6 +3144,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					{
 						// Apply poison on target
 						ourTarg->SetPoisoned( poisonStrength );
+						ourTarg->SetPoisonedBy( mChar.GetSerial() );
 
 						// Set time until next time poison "ticks"
 						ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue( static_cast<R64>( GetPoisonTickTime( poisonStrength ))));
@@ -3196,6 +3202,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 							{
 								// Weapon is no longer poisoned, undo effect on character
 								mWeapon->SetPoisoned( 0 );
+								mWeapon->SetPoisonedBy( INVALIDSERIAL );
 								mChar.SetPoisonStrength( 0 );
 								if( mSock != nullptr )
 								{

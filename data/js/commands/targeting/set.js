@@ -170,6 +170,10 @@ function onCallback0( socket, ourObj )
 		ourObj.poison = nVal;
 		okMsg( socket );
 		break;
+	case "POISONEDBY":
+		ourObj.poisonedBy = nVal;
+		okMsg( socket );
+		break;
 	case "X":
 		ourObj.x = nVal;
 		okMsg( socket );

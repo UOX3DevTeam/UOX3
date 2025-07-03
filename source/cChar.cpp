@@ -3202,6 +3202,7 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 
 		if( itemLayers[Layer]->GetPoisoned() )
 		{
+			SetPoisonStrength( std::max( 0, GetPoisonStrength() - itemLayers[Layer]->GetPoisoned() ));
 			if( itemLayers[Layer]->GetPoisoned() > GetPoisonStrength() )
 			{
 				SetPoisonStrength( 0 );
@@ -5902,6 +5903,18 @@ void CChar::SetStamina( SI16 newValue )
 void CChar::SetPoisoned( UI08 newValue )
 {
 	CBaseObject::SetPoisoned( newValue );
+	Dirty( UT_UPDATE );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetPoisonedBy()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets poisoned state of character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetPoisonedBy( SERIAL newValue )
+{
+	CBaseObject::SetPoisonedBy( newValue );
 	Dirty( UT_UPDATE );
 	UpdateRegion();
 }

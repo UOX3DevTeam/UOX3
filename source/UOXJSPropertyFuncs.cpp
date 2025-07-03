@@ -730,6 +730,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_RANK:			*vp = INT_TO_JSVAL( gPriv->GetRank() );			break;
 			case CIP_CREATOR:		*vp = INT_TO_JSVAL( gPriv->GetCreator() );		break;
 			case CIP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );		break;
+			case CIP_POISONEDBY:	*vp = INT_TO_JSVAL( gPriv->GetPoisonedBy() );	break;
 			case CIP_POISONCHARGES:	*vp = INT_TO_JSVAL( gPriv->GetPoisonCharges() );	break;
 			case CIP_DIR:			*vp = INT_TO_JSVAL( gPriv->GetDir() );			break;
 			case CIP_WIPABLE:		*vp = INT_TO_JSVAL( gPriv->IsWipeable() );		break;
@@ -1398,6 +1399,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_RANK:			gPriv->SetRank( static_cast<SI08>( encaps.toInt() ));		break;
 			case CIP_CREATOR:		gPriv->SetCreator( static_cast<SERIAL>( encaps.toInt() ));	break;
 			case CIP_POISON:		gPriv->SetPoisoned( static_cast<UI08>( encaps.toInt() ));	break;
+			case CIP_POISONEDBY:	gPriv->SetPoisonedBy( static_cast<UI32>( encaps.toInt() ));	break;
 			case CIP_POISONCHARGES:	gPriv->SetPoisonCharges( static_cast<UI16>( encaps.toInt() ));	break;
 			case CIP_DIR:			gPriv->SetDir( static_cast<SI16>( encaps.toInt() ));		break;
 			case CIP_WIPABLE:		gPriv->SetWipeable( encaps.toBool() );						break;
@@ -2040,6 +2042,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_TINTELLIGENCE:	*vp = INT_TO_JSVAL( gPriv->GetIntelligence2() );	break;
 			case CCP_TSTRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength2() );		break;
 			case CCP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );			break;
+			case CCP_POISONEDBY:	*vp = INT_TO_JSVAL( gPriv->GetPoisonedBy() );		break;
 			case CCP_LIGHTLEVEL:	*vp = INT_TO_JSVAL( gPriv->GetFixedLight() );		break;
 			case CCP_VULNERABLE:	*vp = BOOLEAN_TO_JSVAL( !gPriv->IsInvulnerable() );	break;
 			case CCP_HUNGERSTATUS:	*vp = BOOLEAN_TO_JSVAL( gPriv->WillHunger() );		break;
@@ -2660,6 +2663,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_SKILLTOPROV:	gPriv->SetProvoing( encaps.toInt() );			break;
 			case CCP_SKILLTOPEACE:	gPriv->SetPeaceing( encaps.toInt() );			break;
 			case CCP_POISON:		gPriv->SetPoisoned( static_cast<UI08>( encaps.toInt() ));			break;
+			case CCP_POISONEDBY:	gPriv->SetPoisoned( static_cast<UI32>( encaps.toInt() ));			break;
 			case CCP_POISONSTRENGTH:	gPriv->SetPoisonStrength( static_cast<UI08>( encaps.toInt() ));	break;
 			case CCP_ISPOLYMORPHED:	gPriv->IsPolymorphed( encaps.toBool() );		break;
 			case CCP_ISINCOGNITO:	gPriv->IsIncognito( encaps.toBool() );			break;

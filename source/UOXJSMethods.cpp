@@ -5270,7 +5270,7 @@ JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_SetPoisoned()
-//|	Prototype	-	void SetPoisoned( poisonLevel, Length )
+//|	Prototype	-	void SetPoisoned( poisonLevel, length, poisonSourceChar )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies a specified level of poison to the character for a specified amount of
 //|					time (in milliseconds).
@@ -5291,24 +5291,39 @@ JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	SI08 newVal = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	SI08 poisonLevel = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
 
-	if( newVal > 0 && argc > 1 )
+	if( poisonLevel > 0 && argc > 1 )
 	{
 		SI32 wearOff = static_cast<SI32>( JSVAL_TO_INT( argv[1] ));
 
-		if( argc == 2 || ( argc == 3 && JSVAL_TO_BOOLEAN( argv[2] )))
+		if( argc >= 2 )
 		{
-			if( myChar->GetPoisoned() > newVal )
+			if( myChar->GetPoisoned() > poisonLevel )
 			{
-				newVal = myChar->GetPoisoned();
+				poisonLevel = myChar->GetPoisoned();
 			}
 		}
 		myChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R64>( wearOff ) / 1000.0 ));
+
+		if( argc >= 3 )
+		{
+			CChar *poisonSourceChar = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[2] )));
+			if( !ValidateObject( poisonSourceChar ))
+			{
+				ScriptError( cx, "(SetPoisoned) Invalid Object passed as third function parameter" );
+				return JS_FALSE;
+			}
+
+			myChar->SetPoisonedBy( poisonSourceChar->GetSerial() );
+		}
+	}
+	else
+	{
+		myChar->SetPoisonedBy( INVALIDSERIAL );
 	}
 
-	//myChar->SetPoisonStrength( newVal );
-	myChar->SetPoisoned( newVal );
+	myChar->SetPoisoned( poisonLevel );
 	return JS_TRUE;
 }
 

@@ -92,9 +92,9 @@ function onCallback1( pSock, ourObj )
 					return;
 				}
 				ourObj.poison = pPotion.morez;
+				ourObj.poisonedBy = pUser.serial;
 				ourObj.poisonCharges = 18 - ( pPotion.morez * 2 );
 				ourObj.Refresh();
-				pUser.poisonStrength = pPotion.morez;
 				pSock.SysMessage( GetDictionaryEntry( 919, pLanguage )); // You successfully poison that item.
 				pUser.karma -= 20;
 				pSock.SysMessage( GetDictionaryEntry( 1370, pLanguage )); // You have lost some karma.
@@ -107,7 +107,7 @@ function onCallback1( pSock, ourObj )
 				if( pUser.skills.poisoning < 800 && RandomNumber( 1, 20 ) == 1 )
 				{
 					pSock.SysMessage( GetDictionaryEntry( 6315, socket.language )); // You make a grave mistake while applying the poison.
-					pUser.SetPoisoned( Math.max( 1, ourObj.poison - 1 ), 180 * 1000 );
+					pUser.SetPoisoned( Math.max( 1, ourObj.poison - 1 ), 180 * 1000, pUser );
 				}
 			}
 

@@ -87,6 +87,7 @@ const SI16			DEFBASE_DEX2		= 0;
 const SI16			DEFBASE_INT2		= 0;
 const SI32			DEFBASE_FP			= -1;
 const UI08			DEFBASE_POISONED	= 0;
+const SERIAL		DEFBASE_POISONEDBY	= INVALIDSERIAL;
 const SI16			DEFBASE_CARVE		= 0;
 const SI16			DEFBASE_KARMA		= 0;
 const SI16			DEFBASE_FAME		= 0;
@@ -132,7 +133,7 @@ fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion(
 healthRegenBonus( DEFBASE_HEALTHREGENBONUS ), staminaRegenBonus( DEFBASE_STAMREGENBONUS ), manaRegenBonus( DEFBASE_MANAREGENBONUS ), healthBonus( DEFBASE_HEALTHBONUS ),
 staminaBonus( DEFBASE_STAMINABONUS ), manaBonus( DEFBASE_MANABONUS ), hitChance( DEFBASE_HITCHANCE ), defenseChance( DEFBASE_DEFENSECHANCE ), healthLeech( DEFBASE_HEALTHLEECH ), 
 staminaLeech( DEFBASE_STAMINALEECH ), manaLeech( DEFBASE_MANALEECH ), swingSpeedIncrease( DEFBASE_SWINGSPEEDINCREASE ), damageIncrease( DEFBASE_DAMAGEINCREASE ),
-luck( DEFBASE_LUCK ), tithing( DEFBASE_TITHING )
+luck( DEFBASE_LUCK ), tithing( DEFBASE_TITHING ), poisonedBy( DEFBASE_POISONEDBY )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
@@ -837,6 +838,7 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Disabled=" << ( IsDisabled() ? "1" : "0" ) << newLine;
 	outStream << "Damage=" + std::to_string( loDamage ) + "," + std::to_string( hiDamage ) + newLine;
 	outStream << "Poisoned=" + std::to_string( poisoned ) + newLine;
+	outStream << "PoisonedBy=" + std::to_string( poisonedBy ) + newLine;
 	outStream << "Carve=" + std::to_string( GetCarve() ) + newLine;
 	outStream << "Damageable=" << ( IsDamageable() ? "1" : "0" ) << newLine;
 
@@ -2844,6 +2846,26 @@ void CBaseObject::SetPoisoned( UI08 newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetPoisonedBy()
+//|					CBaseObject::SetPoisonedBy()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets serial of character who performed the poisoning
+//o------------------------------------------------------------------------------------------------o
+SERIAL CBaseObject::GetPoisonedBy( void ) const
+{
+	return poisonedBy;
+}
+void CBaseObject::SetPoisonedBy( SERIAL newValue )
+{
+	poisonedBy = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetCarve()
 //|					CBaseObject::SetCarve()
 //o------------------------------------------------------------------------------------------------o
@@ -3073,6 +3095,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetDexterity2( GetDexterity2() );
 	target->SetIntelligence2( GetIntelligence2() );
 	target->SetPoisoned( GetPoisoned() );
+	target->SetPoisonedBy( GetPoisonedBy() );
 	target->SetWeight( GetWeight() );
 	target->SetHitChance( GetHitChance() );
 	target->SetDefenseChance( GetDefenseChance() );

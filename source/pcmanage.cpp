@@ -1761,6 +1761,12 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 			Effects->DeathAction( mChar, iCorpse, fallDirection );
 		}
 
+		// Store information on the corpse about the origins of the poison that was on character when they died
+		if( mChar->GetPoisoned() > 0 )
+		{
+			iCorpse->SetPoisonedBy( mChar->GetPoisonedBy() );
+		}
+
 		// Prevent followers from following ghost of dead player
 		auto mFollowerList = mChar->GetFollowerList();
 		for( const auto &tempChar : mFollowerList->collection() )
@@ -1818,6 +1824,7 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 	mChar->SetFrozen( false );
 	mChar->SetHP( 0 );
 	mChar->SetPoisoned( 0 );
+	mChar->SetPoisonedBy( INVALIDSERIAL );
 	mChar->SetPoisonStrength( 0 );
 
 	// Remove any permagrey flags on the character, but replace with a temporary criminal flag instead

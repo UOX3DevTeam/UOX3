@@ -1021,6 +1021,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 
 					// Apply poison on target
 					targNPC->SetPoisoned( poisonStrength );
+					targNPC->SetPoisonedBy( mChar->GetSerial() );
 
 					// Set time until next time poison "ticks"
 					targNPC->SetTimer( tCHAR_POISONTIME, BuildTimeValue( GetPoisonTickTime( poisonStrength )));

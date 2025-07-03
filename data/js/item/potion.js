@@ -215,7 +215,7 @@ function onUseChecked( pUser, iUsed )
 			case 6:		// Poison Potion
 				if( pUser.poison < iUsed.morez )
 				{
-					pUser.SetPoisoned( iUsed.morez, 180 * 1000 );
+					pUser.SetPoisoned( iUsed.morez, 180 * 1000, pUser );
 				}
 
 				pUser.SoundEffect( 0x0246, true );

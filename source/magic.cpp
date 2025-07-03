@@ -324,6 +324,7 @@ bool splCunning( CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08
 bool splCure( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	target->SetPoisoned( 0 );
+	target->SetPoisonedBy( INVALIDSERIAL );
 	target->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime() );
 	if( target->IsMurderer() )
 	{
@@ -616,6 +617,7 @@ bool splPoison( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[may
 
 	// Apply poison on target
 	target->SetPoisoned( poisonStrength );
+	target->SetPoisonedBy( caster->GetSerial() );
 
 	// Set time until poison wears off completely
 	target->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R64>( GetPoisonDuration( poisonStrength ))));
@@ -884,6 +886,7 @@ bool splWallOfStone( [[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDi
 void ArchCureStub( [[maybe_unused]] CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell, [[maybe_unused]] SI08 targCount )
 {
 	target->SetPoisoned( 0 );
+	target->SetPoisonedBy( INVALIDSERIAL );
 	target->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime() );
 }
 
@@ -3565,7 +3568,7 @@ void CMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType el
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Apply the poison to the character.
 //o------------------------------------------------------------------------------------------------o
-void CMagic::PoisonDamage( CChar *p, SI32 poison )
+void CMagic::PoisonDamage( CChar *p, SI32 poison, CChar *caster )
 {
 	if( p->IsFrozen() )
 	{
@@ -3592,6 +3595,10 @@ void CMagic::PoisonDamage( CChar *p, SI32 poison )
 
 		// Apply poison on target
 		p->SetPoisoned( poison );
+		if( ValidateObject( caster ))
+		{
+			p->SetPoisonedBy( caster->GetSerial() );
+		}
 
 		// Set time until poison wears off completely
 		p->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R64>( GetPoisonDuration( poison ))));
@@ -3682,7 +3689,7 @@ bool CMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 			poisonStrength = CalculateMagicPoisonStrength( caster, mChar, skillVal, false, 5 );
 
 			// Apply poison on character
-			PoisonDamage( mChar, poisonStrength );
+			PoisonDamage( mChar, poisonStrength, caster );
 			Effects->PlaySound( mChar, 520 );
 		}
 		return true;

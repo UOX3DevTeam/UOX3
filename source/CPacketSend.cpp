@@ -7745,10 +7745,10 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-			if( cItem.GetPoisoned() > 0 )
+			if( cItem.GetPoisoned() > 0 && cItem.GetPoisonCharges() > 0 )
 			{
 				auto itemCont = cItem.GetCont();
-				if( cItem.GetHiDamage() == 0 || ( ValidateObject( itemCont ) && itemCont->CanBeObjType( OT_CHAR ) && tSock->CurrcharObj() == static_cast<CChar *>( itemCont )))
+				if( cItem.GetHiDamage() == 0 || ( ValidateObject( itemCont ) && (( itemCont->CanBeObjType( OT_ITEM ) && FindRootContainer( static_cast<CItem *>( itemCont )) == tSock->CurrcharObj()->GetPackItem() ) || ( itemCont->CanBeObjType( OT_CHAR ) && tSock->CurrcharObj() == static_cast<CChar *>( itemCont )))))
 				{
 					switch( cItem.GetPoisoned() )
 					{

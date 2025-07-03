@@ -1713,6 +1713,8 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetPileable( IsPileable() );
 	target->SetMakersMark( IsMarkedByMaker() );
 	target->SetPoisoned( GetPoisoned() );
+	target->SetPoisonedBy( GetPoisonedBy() );
+	target->SetPoisonCharges( GetPoisonCharges() );
 	target->SetRace( GetRace() );
 	target->SetRank( GetRank() );
 	target->SetRestock( GetRestock() );

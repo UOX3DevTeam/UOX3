@@ -100,6 +100,7 @@ protected:
 	std::string			sectionId;
 	std::vector<UI16>	scriptTriggers;
 	UI08				poisoned;
+	SERIAL				poisonedBy;
 	SI16				carve; // Carve.dfn entry
 	SI16				oldLocX;
 	SI16				oldLocY;
@@ -347,6 +348,9 @@ public:
 
 	UI08					GetPoisoned( void ) const;
 	virtual void			SetPoisoned( UI08 newValue );
+
+	SERIAL					GetPoisonedBy( void ) const;
+	virtual void			SetPoisonedBy( SERIAL newValue );
 
 	SI16					GetCarve( void ) const;
 	void					SetCarve( SI16 newValue );

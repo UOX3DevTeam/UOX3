@@ -662,6 +662,7 @@ public:
 	void			ToggleCombat( void );
 
 	virtual void	SetPoisoned( UI08 newValue ) override;
+	virtual void	SetPoisonedBy( SERIAL newValue ) override;
 
 	bool			InDungeon( void );
 	bool			InBuilding( void );

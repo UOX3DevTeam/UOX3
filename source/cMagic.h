@@ -27,7 +27,7 @@ public:
 	void CastSpell( CSocket *s, CChar *caster );	// changed for NPC casting
 	bool CheckResist( CChar *attacker, CChar *defender, SI32 circle );
 	bool CheckResist( SI16 resistDifficulty, CChar *defender, SI32 circle );
-	void PoisonDamage( CChar *p, SI32 posion );
+	void PoisonDamage( CChar *p, SI32 posion, CChar *caster );
 	void CheckFieldEffects( CChar& mChar );
 	bool HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id );
 	bool CheckBook( SI32 circle, SI32 spell, CItem *i );

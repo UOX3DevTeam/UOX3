@@ -1,3 +1,14 @@
+04/07/2025 - Xuri
+	Fixed an issue with poison damage in combat where the poison resist of the attacker was checked instead of that of the defender
+	Fixed an issue where the poison details in tooltip of an item would only be visible when equipped, and not visible when kept in backpack
+	Fixed an issue where if a weapon was destroyed due to corrosion damage, it would not unset the poison strength on the character who wielded it
+	Added new Character/Item property to track the source (serial) of poison applied to an object. This is available as a JS Char/Item property:
+		.poisonedBy // serial of character who applied poison to an object. Set to 0xFFFFFFFF/SE_INVALIDSERIAL() to clear
+	Updated all code and scripts related to setting/unsetting poison effect on objects to also update the .poisonedBy property
+	Serial of character who poisoned a character who died while poisoned is now stored on the corpse
+	Added third optional parameter to Character JS Method .SetPoisoned() that can be used to specify source char of applied poison. New syntax:
+		.SetPoisoned( poisonLevel, wearOffTime[, poisonSourceChar ])
+
 02/07/2025 - Xuri
 	Updated UOX3 & JS documentation
 	Added new JS command: 'seeryell [text] // broadcast message to all with seer privs or higher privs

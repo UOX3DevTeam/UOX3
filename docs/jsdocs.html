@@ -10522,16 +10522,19 @@ var coldResist = pUser.Resist( 4 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void SetPoisoned( poisonLevel, duration )</em></p>
+									<p><em>void SetPoisoned( poisonLevel, duration[, poisonSourceChar] )</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Applies a specified level of poison to a character for a specified amount of time (in milliseconds).</p>
+									<p>Applies a specified level of poison to a character for a specified amount of time (in milliseconds). Optional third parameter can supply source character who applied the poison</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Gives myChar a level 2 poison for 10 seconds.
-myChar.SetPoisoned( 2, 10000 );</code></pre>
+myChar.SetPoisoned( 2, 10000 );
+
+// Applies level 2 poison to myChar with myNPC as source character
+myChar.SetPoisoned( 2, 10000, myNPC ); </code></pre>
 								</div>
 							</div>
 						</div>
@@ -15401,6 +15404,10 @@ myObject.propertyName = newValue;
 							Get/Set character's current poisoned state</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.poisonedBy</span> <strong>(int)</strong><br>
+							Get/Set serial of character who applied poison to character. Set to 0xFFFFFFFF/SE_INVALIDSERIAL() to clear.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.poisonStrength</span> <strong>(int, <em>0 - 5</em>)</strong><br>
 							Get/Set the poison strength of the character, used to poison other characters in combat</p>
 						</div>
@@ -16161,6 +16168,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.poison</span> <strong>(int)</strong><br>
 							Get/Set poison strength applied to item such as weapons and food (from 1 to 4, where 1 = Weak poison, 4 = Deadly poison)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.poisonedBy</span> <strong>(int)</strong><br>
+							Get/Set serial of character who applied poison to item. Set to 0xFFFFFFFF/SE_INVALIDSERIAL() to clear.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.poisonCharges</span> <strong>(int, <em>0 - 255</em>)</strong><br>
