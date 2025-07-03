@@ -1,9 +1,10 @@
 function CommandRegistration()
 {
-	RegisterCommand( "cnsyell", 1, true );
-	RegisterCommand( "gmyell", 2, true );
-	RegisterCommand( "adminyell", 3, true );
-	RegisterCommand( "yell", 2, true );
+	RegisterCommand( "cnsyell", 4, true );
+	RegisterCommand( "seeryell", 6, true );
+	RegisterCommand( "gmyell", 8, true );
+	RegisterCommand( "adminyell", 10, true );
+	RegisterCommand( "yell", 8, true );
 }
 
 // Yell so all Counselors can hear it
@@ -11,7 +12,16 @@ function command_CNSYELL( socket, cmdString )
 {
 	if( cmdString )
 	{
-		Yell( socket, cmdString, 1 );
+		Yell( socket, cmdString, GetCommandLevelVal( "CNS" ));
+	}
+}
+
+// Yell so all Seers can hear it
+function command_GMYELL( socket, cmdString )
+{
+	if( cmdString )
+	{
+		Yell( socket, cmdString, GetCommandLevelVal( "SEER" ));
 	}
 }
 
@@ -20,7 +30,7 @@ function command_GMYELL( socket, cmdString )
 {
 	if( cmdString )
 	{
-		Yell( socket, cmdString, 2 );
+		Yell( socket, cmdString, GetCommandLevelVal( "GM" ));
 	}
 }
 
@@ -29,7 +39,7 @@ function command_ADMINYELL( socket, cmdString )
 {
 	if( cmdString )
 	{
-		Yell( socket, cmdString, 3 );
+		Yell( socket, cmdString, GetCommandLevelVal( "ADMIN" ));
 	}
 }
 

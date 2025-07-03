@@ -3,7 +3,7 @@
 
 [REGIONSPAWN 8500]
 {
-NAME=stables
+NAME=delucia - stables
 NPC=animaltrainer
 MAXNPCS=1
 X1=5291
@@ -18,7 +18,7 @@ CALL=1
 
 [REGIONSPAWN 8501]
 {
-NAME=hut of magics
+NAME=delucia - hut of magics
 NPC=mage
 MAXNPCS=1
 X1=5293
@@ -33,7 +33,7 @@ CALL=1
 
 [REGIONSPAWN 8502]
 {
-NAME=ye olde eleventh bank
+NAME=ydelucia - ye olde eleventh bank
 NPC=banker
 MAXNPCS=2
 X1=5270
@@ -48,7 +48,7 @@ CALL=2
 
 [REGIONSPAWN 8503]
 {
-NAME=tailor
+NAME=delucia - tailor shop
 NPC=tailor
 MAXNPCS=1
 X1=5232
@@ -63,7 +63,7 @@ CALL=1
 
 [REGIONSPAWN 8504]
 {
-NAME=zoots hammer
+NAME=delucia - zoots hammer
 NPC=blacksmith
 MAXNPCS=1
 X1=5223
@@ -78,7 +78,7 @@ CALL=1
 
 [REGIONSPAWN 8505]
 {
-NAME=the supply depot
+NAME=delucia - the supply depot
 NPC=provisioner
 MAXNPCS=1
 X1=5214
@@ -93,7 +93,7 @@ CALL=1
 
 [REGIONSPAWN 8506]
 {
-NAME=the barely inn
+NAME=delucia - the barely inn
 NPC=innkeeper
 MAXNPCS=1
 X1=5195
@@ -108,7 +108,7 @@ CALL=1
 
 [REGIONSPAWN 8507]
 {
-NAME=Healer
+NAME=delucia - Healer
 NPC=healer
 MAXNPCS=1
 X1=5187
@@ -121,4 +121,225 @@ MAXTIME=600
 CALL=1
 }
 
-EOF
+// delucia - the supply depot
+[REGIONSPAWN 8508]
+{
+GET=1505
+NPC=cobbler
+}
+
+// delucia - zoot's hammer
+[REGIONSPAWN 8509]
+{
+GET=1504
+NPC=armourer
+}
+
+// delucia - zoot's hammer
+[REGIONSPAWN 8510]
+{
+GET=1504
+NPC=weaponsmith
+}
+
+// delucia - tailor shop
+[REGIONSPAWN 8511]
+{
+GET=1503
+NPC=weaver
+}
+
+// delucia - tailor shop
+[REGIONSPAWN 8512]
+{
+GET=1503
+NPC=tanner
+}
+
+// delucia - tailor shop
+[REGIONSPAWN 8513]
+{
+GET=1503
+NPC=furtrader
+}
+
+[REGIONSPAWN 8514]
+{
+NAME=delucia - towncrier
+NPC=towncrier
+MAXNPCS=1
+X1=5267
+Y1=3988
+X2=5267
+Y2=3988
+WORLD=1
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+// delucia - hut of magics
+[REGIONSPAWN 8515]
+{
+GET=1501
+NPC=alchemist
+MAXNPCS=1
+}
+
+[REGIONSPAWN 8516]
+{
+NAME=delucia - hut of magics
+NPC=herbalist
+MAXNPCS=1
+X1=5283
+Y1=3978
+X2=5288
+Y2=3983
+WORLD=1
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+// delucia - hut of magics
+[REGIONSPAWN 8517]
+{
+GET=1516
+NPC=alchemist
+}
+
+[REGIONSPAWN 8518]
+{
+NAME=delucia - tower 1st floor
+NPC=fighter
+MAXNPCS=2
+X1=5262
+Y1=3935
+X2=5266
+Y2=3943
+WORLD=1
+MINTIME=28
+MAXTIME=32
+CALL=1
+}
+
+[REGIONSPAWN 8519]
+{
+NAME=delucia - tower 2nd floor
+NPC=fighter
+MAXNPCS=2
+X1=5258
+Y1=3931
+X2=5268
+Y2=3937
+DEFZ=57
+WORLD=1
+MINTIME=28
+MAXTIME=32
+CALL=1
+}
+
+[REGIONSPAWN 8520]
+{
+NAME=delucia - tower outside
+NPC=warrior
+MAXNPCS=2
+X1=5272
+Y1=3940
+X2=5280
+Y2=3940
+WORLD=1
+MINTIME=28
+MAXTIME=32
+CALL=1
+}
+
+[REGIONSPAWN 8530]
+{
+NAME=Delucia Cotton Field 1
+ITEM=cotton_resource
+MAXITEMS=10
+X1=5252
+Y1=4003
+X2=5266
+Y2=4009
+WORLD=1
+MINTIME=30
+MAXTIME=60
+CALL=5
+}
+
+[REGIONSPAWN 8531]
+{
+NAME=Delucia Cotton Field 2
+ITEM=cotton_resource
+MAXITEMS=10
+X1=5252
+Y1=4015
+X2=5266
+Y2=4020
+WORLD=1
+MINTIME=30
+MAXTIME=60
+CALL=5
+}
+
+[REGIONSPAWN 8532]
+{
+NAME=Delucia Cotton Field 3
+ITEM=cotton_resource
+MAXITEMS=10
+X1=5272
+Y1=4003
+X2=5278
+Y2=4020
+WORLD=1
+MINTIME=30
+MAXTIME=60
+CALL=5
+}
+
+[REGIONSPAWN 8533]
+{
+NAME=Delucia Cotton Field 4 (Orc Fort)
+ITEM=cotton_resource
+MAXITEMS=10
+X1=5186
+Y1=3626
+X2=5190
+Y2=3639
+WORLD=1
+MINTIME=30
+MAXTIME=60
+CALL=5
+}
+
+[REGIONSPAWN 8534]
+{
+NAME=Delucia Turnip Field 1 (Orc Fort)
+ITEM=turnip_resource
+MAXITEMS=5
+X1=5203
+Y1=3594
+X2=5207
+Y2=3598
+WORLD=1
+MINTIME=30
+MAXTIME=60
+CALL=5
+}
+
+[REGIONSPAWN 8535]
+{
+NAME=Delucia Carrot Field 1 (Orc Fort)
+ITEM=carrot_resource
+MAXITEMS=5
+X1=5215
+Y1=3597
+X2=5219
+Y2=3599
+WORLD=1
+MINTIME=30
+MAXTIME=60
+CALL=5
+}

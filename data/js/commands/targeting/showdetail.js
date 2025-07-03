@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "showdetail", 1, true );
+	RegisterCommand( "showdetail", 4, true );
 }
 
 function command_SHOWDETAIL( socket, cmdString )

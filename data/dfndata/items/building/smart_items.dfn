@@ -1,0 +1,237 @@
+[base_smart_object]
+{
+get=base_item
+decay=0
+movable=2
+script=4760
+}
+
+[smart_brazier]
+{
+get=0x1f2b
+get=base_smart_object
+id=0x1f2b
+dir=29
+more=0x7 0x0 0x0 0x0
+custominttag=inactiveID 0x1f2b
+custominttag=activeID 0x19bb
+}
+
+[smart_skullcandle]
+{
+get=0x1857
+get=base_smart_object
+id=0x1857
+dir=1
+more=0x4 0x0 0x0 0x0
+custominttag=inactiveID 0x1857
+custominttag=activeID 0x1858
+}
+
+[smart_stonewall_0x01d0]
+{
+get=base_smart_object
+name=stone wall
+id=0x01d0
+more=0x2 0x0 0x0 0x0
+custominttag=inactiveID 0x01d0
+custominttag=activeID 0x1
+}
+
+[smart_cavefloor_0x053b_hidden]
+{
+get=base_smart_object
+name=cave floor
+id=0x0001
+more=0x3 0x0 0x0 0x0
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x053b
+}
+
+[smart_cavefloor_0x053d_hidden]
+{
+get=smart_cavefloor_0x053b_hidden
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x053d
+}
+
+[smart_cavefloor_0x0544_hidden]
+{
+get=smart_cavefloor_0x053b_hidden
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x0544
+}
+
+[smart_cavefloor_0x0545_hidden]
+{
+get=smart_cavefloor_0x053b_hidden
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x0545
+}
+
+[smart_cavefloor_0x0546_hidden]
+{
+get=smart_cavefloor_0x053b_hidden
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x0546
+}
+
+[smart_cavefloor_0x0548_hidden]
+{
+get=smart_cavefloor_0x053b_hidden
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x0548
+}
+
+[smart_cavefloor_0x054a_hidden]
+{
+get=smart_cavefloor_0x053b_hidden
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x054a
+}
+
+[smart_cavefloor_0x054b_hidden]
+{
+get=smart_cavefloor_0x053b_hidden
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x054b
+}
+
+[smart_cavefloor_0x054c_hidden]
+{
+get=smart_cavefloor_0x053b_hidden
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x054c
+}
+
+[smart_stonewall_0x01d0_hidden]
+{
+get=base_smart_object
+name=stone wall
+id=0x0001
+more=0x2 0x0 0x0 0x0
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x1d0
+}
+
+[smart_stonewall_0x01d1_hidden]
+{
+get=smart_stonewall_0x01d0_hidden
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x01d1
+}
+
+[smart_stonearch_0x01e3_hidden]
+{
+get=smart_stonewall_0x01d0_hidden
+name=stone arch
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x01e3
+}
+
+[smart_stonearch_0x01e4_hidden]
+{
+get=smart_stonewall_0x01d0_hidden
+name=stone arch
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x01e4
+}
+
+[smart_stonearch_0x01e5_hidden]
+{
+get=smart_stonewall_0x01d0_hidden
+name=stone arch
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x01e5
+}
+
+[smart_stonewall_0x01e8_hidden]
+{
+get=smart_stonewall_0x01d0_hidden
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x01e8
+}
+
+[smart_stonewall_0x01e9_hidden]
+{
+get=smart_stonewall_0x01d0_hidden
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x01e9
+}
+
+[smart_stonewall_0x01ea_hidden]
+{
+get=smart_stonewall_0x01d0_hidden
+custominttag=inactiveID 0x0001
+custominttag=activeID 0x01ea
+}
+
+[smart_teleporter_0x17dc]
+{
+get=base_smart_object
+name=teleporter
+id=0x17dc
+more=0x2 0x0 0x0 0x0
+custominttag=inactiveID 0x17dc
+custominttag=activeID 0x17ee
+}
+
+[smart_teleporter_0x17ee]
+{
+get=base_smart_object
+name=teleporter
+id=0x17ee
+more=0x2 0x0 0x0 0x0
+custominttag=inactiveID 0x17ee
+custominttag=activeID 0x17dc
+}
+
+[smart_sound_object_0x0102]
+{
+get=base_smart_object
+name=smart sound object
+id=0x0eb2
+visible=3
+more=0x2 0x64 0x0 0x0
+custominttag=inRangeSFX 0x0102
+}
+
+[smart_sound_object_0x00f5]
+{
+get=base_smart_object
+name=smart sound object
+id=0x0eb2
+visible=3
+more=0x2 0x64 0x0 0x0
+custominttag=inRangeSFX 0x00f5
+}
+
+[smart_sound_object_0x0220]
+{
+get=base_smart_object
+name=smart sound object
+id=0x0eb2
+visible=3
+more=0x3 0x64 0x0 0x0
+custominttag=inRangeSFX 0x0220
+}
+
+[smart_sound_object_0x0244]
+{
+get=base_smart_object
+name=smart sound object
+id=0x0eb2
+visible=3
+more=0x3 0x64 0x0 0x0
+custominttag=inRangeSFX 0x0244
+}
+
+[smart_sound_object_0x0014]
+{
+get=base_smart_object
+name=smart sound object
+id=0x0eb2
+visible=3
+more=0x4 0x64 0x0 0x0
+custominttag=inRangeSFX 0x0014
+}

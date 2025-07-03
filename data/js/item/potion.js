@@ -14,7 +14,7 @@ function onUseChecked( pUser, iUsed )
 	var itemRHand = pUser.FindItemLayer( 0x01 );
 	var itemLHand = pUser.FindItemLayer( 0x02 );
 
-	if( reqFreeHands && ( itemRHand != null || itemLHand != null ) ) 
+	if( reqFreeHands && ( itemRHand != null && itemLHand != null ))
 	{
 		socket.SysMessage( GetDictionaryEntry( 6304, socket.language ) );// You must have a free hand to drink a potion.
 		return false;
@@ -215,7 +215,7 @@ function onUseChecked( pUser, iUsed )
 			case 6:		// Poison Potion
 				if( pUser.poison < iUsed.morez )
 				{
-					pUser.SetPoisoned( iUsed.morez, 180 * 1000 );
+					pUser.SetPoisoned( iUsed.morez, 180 * 1000, pUser );
 				}
 
 				pUser.SoundEffect( 0x0246, true );

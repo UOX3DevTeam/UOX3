@@ -512,3 +512,224 @@ value=22 11
 decay=1
 good=32
 }
+
+[base_khaldun_book]
+{
+get=base_item
+name=book
+id=0x0ff1
+weight=100
+type=11
+decay=1
+value=22 11
+}
+
+[base_khaldun_book2]
+{
+get=base_item
+name=book
+id=0x0ff2
+weight=100
+type=11
+decay=1
+value=22 11
+}
+
+[lysanders_notebook_1]
+{
+get=base_khaldun_book
+name=Lysander's Notebook
+more=0x00000026
+}
+
+[lysanders_notebook_2]
+{
+get=base_khaldun_book
+name=Lysander's Notebook
+more=0x00000027
+}
+
+[lysanders_notebook_3]
+{
+get=base_khaldun_book
+name=Lysander's Notebook
+more=0x00000028
+}
+
+[lysanders_notebook_7]
+{
+get=base_khaldun_book
+name=Lysander's Notebook
+more=0x00000029
+}
+
+[lysanders_notebook_8]
+{
+get=base_khaldun_book
+name=Lysander's Notebook
+more=0x0000002a
+}
+
+[lysanders_notebook_11]
+{
+get=base_khaldun_book
+name=Lysander's Notebook
+more=0x0000002b
+}
+
+[tavaras_journal_1]
+{
+get=base_khaldun_book
+name=Journal: Discovery Of The Tomb
+more=0x0000002c
+}
+
+[tavaras_journal_2]
+{
+get=base_khaldun_book
+name=Journal: Discovery Of The Tomb
+more=0x0000002d
+}
+
+[tavaras_journal_3]
+{
+get=base_khaldun_book
+id=0x0ff2
+name=Journal: Discovery Of The Tomb
+more=0x0000002e
+}
+
+[tavaras_journal_6]
+{
+get=base_khaldun_book
+name=Journal: Discovery Of The Tomb
+more=0x0000002f
+}
+
+[tavaras_journal_7]
+{
+get=base_khaldun_book
+id=0x0ff2
+name=Journal: Discovery Of The Tomb
+more=0x00000030
+}
+
+[tavaras_journal_8]
+{
+get=base_khaldun_book
+name=Journal: Discovery Of The Tomb
+more=0x00000031
+}
+
+[tavaras_journal_9]
+{
+get=base_khaldun_book
+name=Journal: Discovery Of The Tomb
+more=0x00000032
+}
+
+[tavaras_journal_11]
+{
+get=base_khaldun_book
+id=0x0ff2
+name=Journal: Discovery Of The Tomb
+more=0x00000033
+}
+
+[tavaras_journal_14]
+{
+get=base_khaldun_book
+name=Journal: Discovery Of The Tomb
+more=0x00000034
+}
+
+[tavaras_journal_16]
+{
+get=base_khaldun_book
+name=Journal: Discovery Of The Tomb
+more=0x00000035
+}
+
+[tavaras_journal_16b]
+{
+get=base_khaldun_book
+name=Journal: Discovery Of The Tomb
+more=0x00000036
+}
+
+[tavaras_journal_17]
+{
+get=base_khaldun_book
+name=Journal: Discovery Of The Tomb
+more=0x00000037
+}
+
+[tavaras_journal_19]
+{
+get=base_khaldun_book
+name=Journal: Discovery Of The Tomb
+more=0x00000038
+}
+
+[grimmoch_journal_1]
+{
+get=base_khaldun_book
+name=The Daily Journal Of Grimmoch Drummel
+more=0x00000039
+}
+
+[grimmoch_journal_2]
+{
+get=base_khaldun_book
+name=The Daily Journal Of Grimmoch Drummel
+more=0x0000003a
+}
+
+[grimmoch_journal_3]
+{
+get=base_khaldun_book
+name=The Daily Journal Of Grimmoch Drummel
+more=0x0000003b
+}
+
+[grimmoch_journal_6]
+{
+get=base_khaldun_book
+name=The Daily Journal Of Grimmoch Drummel
+more=0x0000003c
+}
+
+[grimmoch_journal_7]
+{
+get=base_khaldun_book
+name=The Daily Journal Of Grimmoch Drummel
+more=0x0000003d
+}
+
+[grimmoch_journal_11]
+{
+get=base_khaldun_book
+name=The Daily Journal Of Grimmoch Drummel
+more=0x0000003e
+}
+
+[grimmoch_journal_14]
+{
+get=base_khaldun_book
+name=The Daily Journal Of Grimmoch Drummel
+more=0x0000003f
+}
+
+[grimmoch_journal_17]
+{
+get=base_khaldun_book
+name=The Daily Journal Of Grimmoch Drummel
+more=0x00000040
+}
+
+[grimmoch_journal_23]
+{
+get=base_khaldun_book
+name=The Daily Journal Of Grimmoch Drummel
+more=0x00000041
+}

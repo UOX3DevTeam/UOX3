@@ -4,7 +4,11 @@
 // wheat ripe for picking. When it is harvested it turns into "harvested wheat",
 // and a "growth" process happens, where the wheat goes through various stages
 // like "sprouts", short wheat and finally becomes harvestable tall wheat again.
-var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+const wheatGrowthDelay = 120000; // Delay in milliseconds before resources respawns
+const wheatGrowthIntervalMin = 30000; // Min delay in milliseconds between each growth phase
+const wheatGrowthIntervalMax = 90000; // Max delay in milliseconds between each growth phase
+const wheatWiltingDelay = 300000; // Delay in milliseconds before fully grown wheat wilts
+const wheatResourceDecay = 3600; // Time (in seconds) it takes for resource to decay, allowing another to spawn in its place if spawned using spawn regions. 0 to disable decay
 
 function onUseChecked( pUser, iUsed )
 {
@@ -37,64 +41,37 @@ function onUseChecked( pUser, iUsed )
 		if( loot == 3 || loot == 1 )
 	 	{
 			pUser.SysMessage( GetDictionaryEntry( 2551, pUser.socket.language )); // You harvest some wheat.
-			var itemMade = CreateBlankItem( pUser.socket, pUser, 1, "#", 0x1ebd, 0x0, "ITEM", true );
-			var loot2 = RollDice( 1, 2, 0 );
-			if( loot2 == 1 )
+			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1ebd", 1, "ITEM", true );
+			if( wheatResourceDecay > 0 )
 			{
-				iUsed.id = 0x0daf;
+				iUsed.decayable = true;
+				iUsed.decaytime = wheatResourceDecay;
 			}
-			if( loot2 == 2 )
-			{
-				iUsed.id = 0x0dae;
-			}
+			iUsed.id = RandomNumber( 0, 1 ) ? 0x0daf : 0x0dae;
+			iUsed.name = "wheat stalks";
 			iUsed.SetTag( "Wheat", 0 );
-			iUsed.StartTimer( resourceGrowthDelay, 1, true); // Let's do some timers! Whee!
+			iUsed.StartTimer( wheatGrowthDelay, 1, true ); // Let's do some timers! Whee!
 		}
-		return false;
 	}
 	return false;
 }
 
 function onTimer( iUsed, timerID )
 {
-	if( timerID == 1 ) // Starts faze 1 of wheat growth
+	if( timerID == 1 ) // Starts phase 1 of wheat growth
 	{
-		var sprout = RollDice( 1, 2, 0 );
-		if( sprout == 1 )
-		{
-			iUsed.id = 0x1ebe;
-		}
-		if( sprout == 2 )
-		{
-			iUsed.id = 0x1ebf;
-		}
-		iUsed.StartTimer( 60000, 2, true); 
+		iUsed.id = RandomNumber( 0, 1 ) ? 0x1ebe : 0x1ebf;
+		iUsed.StartTimer( RandomNumber( wheatGrowthIntervalMin, wheatGrowthIntervalMax ), 2, true);
 	}
-	if( timerID == 2 ) // Starts faze 2 of wheat growth
+	if( timerID == 2 ) // Starts phase 2 of wheat growth
 	{
-		var sprout = RollDice( 1, 2, 0 );
-		if( sprout == 1 )
-		{
-			iUsed.id = 0xc55;
-		}
-		if( sprout == 2 )
-		{
-			iUsed.id = 0xc56;
-		}
-		iUsed.StartTimer( 60000, 3, true ); 
+		iUsed.id = RandomNumber( 0, 1 ) ? 0xc55 : 0xc56;
+		iUsed.StartTimer( RandomNumber( wheatGrowthIntervalMin, wheatGrowthIntervalMax ), 3, true );
 	}
-	if( timerID == 3 ) // Starts faze 3 of wheat growth
+	if( timerID == 3 ) // Starts phase 3 of wheat growth
 	{
-		var sprout = RollDice( 1, 2, 0 );
-		if( sprout == 1 )
-		{
-			iUsed.id = 0xc57;
-		}
-		if( sprout == 2 )
-		{
-			iUsed.id = 0xc59;
-		}
-		iUsed.StartTimer( 60000, 4, true ); 
+		iUsed.id = RandomNumber( 0, 1 ) ? 0xc57 : 0xc59;
+		iUsed.StartTimer( RandomNumber( wheatGrowthIntervalMin, wheatGrowthIntervalMax ), 4, true );
 	}
 	if( timerID == 4 ) // Wheat growth finished!
 	{
@@ -106,12 +83,20 @@ function onTimer( iUsed, timerID )
 		if( sprout == 2 )
 		{
 			iUsed.id = 0xc5a;
-	}
+		}
 		if( sprout == 3 )
 		{
 			iUsed.id = 0xc5b;
 		}
+		iUsed.name = "wheat";
 		iUsed.SetTag( "Wheat", 1 );
+		iUsed.StartTimer( Math.round( RandomNumber( wheatWiltingDelay / 2, wheatWiltingDelay * 1.5 )), 5, true );
 	}
-
+	if( timerID == 5 ) // Wheat is wilting
+	{
+		iUsed.id = RandomNumber( 0, 1 ) ? 0x0daf : 0x0dae;
+		iUsed.name = "whithered wheat stalks";
+		iUsed.SetTag( "Wheat", 0 );
+		iUsed.StartTimer( wheatGrowthDelay, 1, true); // Restart the growth process
+	}
 }

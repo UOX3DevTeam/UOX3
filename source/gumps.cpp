@@ -1327,7 +1327,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 					}
 
 					// Additional update required for regular UO client
-					mChar->Update();
+					mChar->Update( nullptr, false, true, true );
 				}
 			}
 			else if( cmd == "GUIINFORMATION" )

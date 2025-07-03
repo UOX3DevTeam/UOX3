@@ -4,7 +4,7 @@ function SkillRegistration()
 }
 
 // Override to 0/1 as desired, by default only enabled for AoS and beyond
-const isProvokeDifficultyBased = ( GetServerSetting( "CoreShardEra" ) == EraStringToNum ( "aos" ));
+const isProvokeDifficultyBased = ( GetServerSetting( "CoreShardEra" ) >= EraStringToNum ( "aos" ));
 const useLoSCheckForProvocation = true;
 
 function onSkill( pUser, objType, skillUsed )

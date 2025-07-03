@@ -2,9 +2,9 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "gate", 1, true );
-	RegisterCommand( "recall", 1, true );
-	RegisterCommand( "mark", 1, true );
+	RegisterCommand( "gate", 4, true );
+	RegisterCommand( "recall", 4, true );
+	RegisterCommand( "mark", 4, true );
 }
 
 function command_GATE( socket, cmdString )

@@ -4,7 +4,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "go", 1, true );
+	RegisterCommand( "go", 4, true );
 }
 
 function command_GO( socket, cmdString )
