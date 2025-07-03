@@ -48,20 +48,40 @@ function onBoughtFromVendor( pSock, Vendor, iBought, numItemsBought )
 
 function onUseChecked( pUser, iUsed )
 {
-	// randomize the ostard given
-	var look = RollDice( 1, 3, 0 );
-	if( look == 1 )
+	var toSpawn = "desertostard";
+	switch( iUsed.morex )
 	{
-		var nSpawned = SpawnNPC( "forestostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
+		case 1: // Random ostard
+		{
+			let rndLook = RollDice( 1, 3, 0 );
+			if( rndLook == 1 )
+			{
+				toSpawn = "desertostard";
+			}
+			else if( rndLook == 2 )
+			{
+				toSpawn = "forestostard";
+			}
+			else
+			{
+				toSpawn = "frenziedostard";
+			}
+			break;
+		}
+		case 2: // Desert ostard
+			toSpawn = "desertostard";
+			break;
+		case 3: // Forest ostard
+			toSpawn = "forestostard";
+			break;
+		case 4: // Frenzied ostard
+			toSpawn = "frenziedostard";
+			break;
+		default:
+			break;
 	}
-	if( look == 2 )
-	{
-		var nSpawned = SpawnNPC( "desertostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
-	}
-	if( look == 3 )
-	{
-		var nSpawned = SpawnNPC( "frenziedostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
-	}
+
+	var nSpawned = SpawnNPC( toSpawn, pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
 	if( nSpawned )
 	{
 		// set owner to the envoker

@@ -2,8 +2,8 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "jail", 1, true );
-	RegisterCommand( "release", 1, true );
+	RegisterCommand( "jail", 4, true );
+	RegisterCommand( "release", 4, true );
 }
 
 function command_JAIL( socket, cmdString )

@@ -2,10 +2,10 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "telestuff", 1, true );
-	RegisterCommand( "move", 1, true );
-	RegisterCommand( "tele", 1, true );
-	RegisterCommand( "teleport", 1, true );
+	RegisterCommand( "telestuff", 4, true );
+	RegisterCommand( "move", 4, true );
+	RegisterCommand( "tele", 4, true );
+	RegisterCommand( "teleport", 4, true );
 }
 
 // Alias of TELESTUFF

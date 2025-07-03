@@ -13,7 +13,8 @@
 const validHealTargets = [ 0x0190,0x0191,0x025d,0x025e,0x029a,0x029b,0x0001,0x0002,0x0007,0x0011,0x0012,
 		0x001e,0x001f,0x0021,0x0023,0x0024,0x0029,0x002a,0x002c,0x002d,0x0035,0x0036,0x004b,0x004c,0x0054,
 		0x0065,0x007b,0x007c,0x007d,0x0080,0x0087,0x008a,0x008c,0x008e,0x008f,0x0095,0x00b5,0x00b6,0x00b8,
-		0x00b9,0x00ba,0x02fc,0x02fd,0x02fe,0x0300,0x0302,0x0303,0x0304,0x0305 ];
+		0x00b9,0x00ba,0x0192,0x0193,0x025f,0x0260,0x02b6,0x02b7,0x02fc,0x02fd,0x02fe,0x0300,0x0302,0x0303,
+		0x0304,0x0305 ];
 
 // Gargoyles (all non-player ones), Corpsers, Dragons, Reapers, Swamp Tentacles, Slimes, Terrathans, Eagles, Birds, Giant Snakes, Spiders, Gorillas,
 // Mongbats, Giant Scorpions, Snakes, Drakes, Frogs, Sea Serpents, Dolphins, Horses, Cats, Alligators, Pigs,
@@ -126,12 +127,12 @@ function onCallback1( socket, ourObj )
 		let maxRange = ( overrideMaxBandageRange ? overrideMaxBandageRange : ( coreShardEra >= EraStringToNum( "se" ) ? 2 : 1 )); // Range increased to 2 with SE expansion
 		if( mChar.InRange( ourObj, maxRange ) && mChar.CanSee( ourObj ) && Math.abs( mChar.z - ourObj.z ) < 4 )
 		{
-			if( ourObj.GetTempTag( "SK_BEINGHEALED" ))
+			if( ourObj.GetTempTag( "isBeingHealed" ))
 			{
-				if( ourObj.GetTempTag( "SK_HEALTIMER" ) < GetCurrentClock() )
+				if( ourObj.GetTempTag( "healingSkillTimer" ) < GetCurrentClock() )
 				{
-					ourObj.SetTempTag( "SK_BEINGHEALED", false );
-					ourObj.SetTempTag( "SK_HEALTIMER", 0 );
+					ourObj.SetTempTag( "isBeingHealed", false );
+					ourObj.SetTempTag( "healingSkillTimer", 0 );
 				}
 				else
 				{
@@ -148,7 +149,7 @@ function onCallback1( socket, ourObj )
 			if( IsTargetHealable( ourObj, false ))
 			{
 				// Target can be healed with Healing skill
-				healSkill = mChar.baseskills.healing;
+				healSkill = mChar.skills.healing;
 				skillNum = 17;
 				buffIcon = 1069;
 				priCliloc = 1002082;
@@ -157,7 +158,7 @@ function onCallback1( socket, ourObj )
 			else if( IsTargetHealable( ourObj, true ) || ( ourObj.tamed && ourObj.owner ))
 			{
 				// Target can be healed with Veterinary skill
-				healSkill = mChar.baseskills.veterinary;
+				healSkill = mChar.skills.veterinary;
 				skillNum = 39;
 				buffIcon = 1101;
 				priCliloc = 1002167;
@@ -183,15 +184,20 @@ function onCallback1( socket, ourObj )
 			}
 			let healTimer = 0;
 			let healTimerID = -1;
-			let anatSkill = mChar.baseskills.anatomy;
-			let loreSkill = mChar.baseskills.animallore;
+			let anatSkill = mChar.skills.anatomy;
+			let loreSkill = mChar.skills.animallore;
 			let triggerBonusCure = false;
 			let affectedByMortalStrike = ourObj.GetTempTag( "blockHeal" );
 			if( ourObj.dead || ourObj.GetTag( "isPetDead" )) // Resurrection
 			{
-				// Resurrection of bonded pet
-				if( ourObj.GetTag( "isBondedPet" ))
+				if( ourObj.region.id == 42 ) // Khaldun, resurrection not allowed
 				{
+					socket.SysMessage( "The veil of death in this area is too strong and resists thy efforts to restore life." );
+					return;
+				}
+        else if( ourObj.GetTag( "isBondedPet" ))
+        {
+				  // Resurrection of bonded pet
 					// Must have at least 80.0 Vet and 80.0 Lore
 					if( healSkill >= 800 && loreSkill >= 800 )
 					{
@@ -232,8 +238,8 @@ function onCallback1( socket, ourObj )
 					{
 						socket.SysMessage( GetDictionaryEntry( 19303, socket.language ));// You are not skilled enough to resurrect that pet.
 						return;
-					}
-				}
+					}          
+        }
 				else
 				{
 					if( healSkill >= 800 && anatSkill >= 800 )
@@ -439,7 +445,16 @@ function onCallback1( socket, ourObj )
 			// Inform the target
 			if( ourObj != mChar && ourObj.socket )
 			{
-				let tempMsg = GetDictionaryEntry( 6016, ourObj.socket.language ); // %s is attempting to heal you.
+				let tempMsg;
+				if( ourObj.dead )
+				{
+					tempMsg = "%s is attempting to resurrect you.";
+				}
+				else
+				{
+					tempMsg = GetDictionaryEntry( 6016, ourObj.socket.language ); // %s is attempting to heal you.
+				}
+
 				ourObj.SysMessage( tempMsg.replace( /%s/gi, mChar.name ));
 			}
 
@@ -519,12 +534,12 @@ function SetSkillInUse( socket, mChar, ourObj, skillNum, healingTime, setVal )
 		{
 			socket.SysMessage( GetDictionaryEntry( 6017, socket.language )); // You begin to apply the bandages.
 		}
-		mChar.SetTempTag( "SK_HEALINGTYPE", skillNum );
+		mChar.SetTempTag( "healingSkillNum", skillNum );
 	}
 	else
 	{
-		mChar.SetTempTag( "SK_HEALINGTYPE", 0 );
-		mChar.SetTempTag( "SK_HEALINGTARG", 0 );
+		mChar.SetTempTag( "healingSkillNum", 0 );
+		mChar.SetTempTag( "healingSkillTarget", 0 );
 	}
 
 	if( skillNum == 17 )		// Healing
@@ -538,11 +553,11 @@ function SetSkillInUse( socket, mChar, ourObj, skillNum, healingTime, setVal )
 
 	if( ValidateObject( ourObj ))
 	{
-		ourObj.SetTempTag( "SK_BEINGHEALED", setVal );
-		ourObj.SetTempTag( "SK_HEALTIMER", healingTime );
+		ourObj.SetTempTag( "isBeingHealed", setVal );
+		ourObj.SetTempTag( "healingSkillTimer", healingTime );
 		if( setVal )
 		{
-			mChar.SetTempTag( "SK_HEALINGTARG", ourObj.serial );
+			mChar.SetTempTag( "healingSkillTarget", ourObj.serial.toString() );
 		}
 	}
 }
@@ -552,8 +567,8 @@ function onTimer( mChar, timerID )
 	if( !ValidateObject( mChar ))
 		return;
 
-	let skillNum = mChar.GetTempTag( "SK_HEALINGTYPE" );
-	let ourObj = CalcCharFromSer( mChar.GetTempTag( "SK_HEALINGTARG" ));
+	let skillNum = mChar.GetTempTag( "healingSkillNum" );
+	let ourObj = CalcCharFromSer( parseInt( mChar.GetTempTag( "healingSkillTarget" )));
 	if( !ValidateObject( ourObj ))
 	{
 		SetSkillInUse( socket, mChar, null, skillNum, 0, false );
@@ -586,6 +601,7 @@ function onTimer( mChar, timerID )
 		if( mChar.dead )
 		{
 			socket.SysMessage( GetDictionaryEntry( 9083, socket.language )); // You were unable to finish your work before you died.
+			SetSkillInUse( socket, mChar, ourObj, skillNum, 0, false );
 			return;
 		}
 
@@ -630,37 +646,60 @@ function onTimer( mChar, timerID )
 					if( chanceToRes >= RandomNumber( 0.0, 1.0 ))
 					{
 						// Arise, and live!
+						mChar.RemoveScriptTrigger( 4014 ); // Remove healing_slip.js script
+						mChar.SetTempTag( "slipCount", null );
+
 						let iMulti = ourObj.multi;
 						if( ValidateObject( iMulti ) && ( !iMulti.IsOnOwnerList( mChar ) && !iMulti.IsOnFriendList( mChar )) &&
 							( !iMulti.IsOnOwnerList( ourObj ) && !iMulti.IsOnFriendList( ourObj )))
 						{
 							// Don't resurrect dead players in multis not owned by either target or healer
 							socket.SysMessage( GetDictionaryEntry( 9087, socket.language )); // Target cannot be resurrected at that location.
-							mChar.RemoveScriptTrigger( 4014 ); // Remove healing_slip.js script
-							mChar.SetTempTag( "slipCount", null );
-							return;
+							break;
 						}
 						else
 						{
-							if ( ourObj.GetTag( "isPetDead" ))
+							if( ourObj.GetTag( "isPetDead" ))
 							{
 								onPetResurrect( socket, ourObj );
 								ourObj.StaticEffect( 0x376A, 10, 16 );
 								ourObj.SoundEffect( 0x214, true );
 								socket.SysMessage( GetDictionaryEntry( 19306, socket.language )); // You successfully resurrected the pet!
 								resResult = 1;
-								mChar.RemoveScriptTrigger( 4014 ); // Remove healing_slip.js script
-								mChar.SetTempTag( "slipCount", null );
+							}
+							else if( coreShardEra >= EraStringToNum( "aos" ))
+							{
+								ourObj.frozen = true;
+								ourObj.SetTempTag( "ResurrectingHealer", mChar.serial.toString() );
+								let resGump = new Gump; // create a new gump
+								resGump.AddPage( 0 );
+
+								resGump.AddBackground( 0, 0, 400, 350, 2600 );
+
+								// Title: <center>Resurrection</center>
+								resGump.AddXMFHTMLGump( 0, 20, 400, 35, 1011022, false, false );
+
+								// It is possible for you to be resurrected now. Do you wish to try?<br>CONTINUE - You chose to try to come back to life now.<br>CANCEL - You prefer to remain a ghost for now.
+								resGump.AddXMFHTMLGump( 50, 55, 300, 140, 1011026, true, true );
+
+								// CANCEL button
+								resGump.AddButton( 200, 227, 4005, 4007, 1, 0, 0 );
+								resGump.AddXMFHTMLGump( 235, 230, 110, 35, 1011012, false, false ); // "CANCEL"
+
+								// CONTINUE button
+								resGump.AddButton( 65, 227, 4005, 4007, 1, 0, 1 );
+								resGump.AddXMFHTMLGump( 100, 230, 110, 35, 1011011, false, false ); // "CONTINUE"
+								resGump.Send( ourObj.socket );
+								resGump.Free();
+								break;
 							}
 							else
 							{
+								resResult = 1;
 								ourObj.Resurrect();
 								ourObj.StaticEffect( 0x376A, 10, 16 );
 								ourObj.SoundEffect( 0x214, true );
 								socket.SysMessage( GetDictionaryEntry( 1272, socket.language )); // You successfully resurrected the patient!
-								resResult = 1;
-								mChar.RemoveScriptTrigger( 4014 ); // Remove healing_slip.js script
-								mChar.SetTempTag( "slipCount", null );
 							}
 						}
 					}
@@ -932,4 +971,36 @@ function onPetResurrect( socket, deadPet )
 	deadPet.atWar = false;
 	deadPet.attacker = null;
 	deadPet.SetTag( "isPetDead", false );
+}
+
+function onGumpPress( socket, pButton, gumpData )
+{
+	var resurrectTarg = socket.currentChar;
+	var healer = CalcCharFromSer( resurrectTarg.GetTempTag( "ResurrectingHealer" ));
+	resurrectTarg.SetTempTag( "ResurrectingHealer", null );
+
+	switch( pButton )
+	{
+		case 0: // Cancel button pressed
+			socket.SysMessage( "You have chosen to remain a ghost for now."); // You have chosen to remain a ghost for now.
+			resurrectTarg.frozen = false;
+			break;
+		case 1: // Continue button pressed
+			resurrectTarg.Resurrect();
+			resurrectTarg.StaticEffect( 0x376A, 10, 16 );
+			resurrectTarg.SoundEffect( 0x214, true );
+			resurrectTarg.frozen = false;
+			if( ValidateObject( healer ))
+			{
+				if( healer.socket != null )
+				{
+					healer.socket.SysMessage( GetDictionaryEntry( 1272, healer.socket.language )); // You successfully resurrected the patient!
+				}
+
+				// Run skill checks for healer to give them a chance to gain skill
+				healer.CheckSkill( 17, 800, healer.skillCaps.healing, false, true );
+				healer.CheckSkill( 1, 800, healer.skillCaps.anatomy, false, true );
+			}
+			break;
+	}
 }

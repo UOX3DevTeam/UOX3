@@ -954,7 +954,7 @@ void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 	{
 		if( nearbyNpc->IsShop() || nearbyNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 		{
-			if( !LineOfSight( mSock, mChar, nearbyNpc->GetX(), nearbyNpc->GetY(), ( nearbyNpc->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+			if( !LineOfSight( mSock, mChar, nearbyNpc->GetX(), nearbyNpc->GetY(), nearbyNpc->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 				continue;
 
 			std::string npcName = GetNpcDictName( nearbyNpc, mSock, NRS_SYSTEM );

@@ -50,6 +50,9 @@ public:
 	UI08	Direction( CChar *c, SI16 x, SI16 y );
 	bool	CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz );
 	SI08	CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz, bool justask, bool waterWalk = false, bool ignoreDoors = false );
+	void	DoJSInRange( CBaseObject *mObj, CBaseObject *objInRange );
+	void	DoJSOutOfRange( CBaseObject *mObj, CBaseObject *objInRange );
+
 private:
 	bool	PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI16 curY, SI08 curZ, UI32 parentSer, std::map<UI32, PfNode_st>& openList, std::map<UI32, UI32>& closedList, std::deque<NodeFCost_st>& fCostList, bool ignoreDoors = false );
 	bool	CalcMove( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir );

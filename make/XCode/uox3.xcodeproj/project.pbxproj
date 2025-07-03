@@ -890,6 +890,7 @@
 				USER_HEADER_SEARCH_PATHS = (
 					../../source,
 					../../spidermonkey,
+					../../utf8cpp,
 				);
 				WARNING_CFLAGS = "-Wno-shift-negative-value";
 			};
@@ -910,6 +911,7 @@
 				USER_HEADER_SEARCH_PATHS = (
 					../../source,
 					../../spidermonkey,
+					../../utf8cpp,
 				);
 				WARNING_CFLAGS = "-Wno-shift-negative-value";
 			};

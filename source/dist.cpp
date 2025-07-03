@@ -218,3 +218,37 @@ UI16 GetDist3D( CBaseObject *a, CBaseObject *b )
 	Point3_st difference = a->GetLocation() - b->GetLocation();
 	return static_cast<UI16>( difference.Mag3D() );
 }
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	GetApproxDist()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculates the shortest grid-path distance (Octile) between
+//|				-	two points. Much faster than GetDist() as it avoids sqrt()
+//o------------------------------------------------------------------------------------------------o
+R32 GetApproxDist( Point3_st a, Point3_st b )
+{
+	const R32 dx = fabs( a.x - b.x );
+	const R32 dy = fabs( a.y - b.y );
+
+	// The constant 0.414f (sqrt(2) - 1) is chosen to approximate the cost of diagonal movement.
+	return ( dx > dy ) ? ( dx + 0.414f * dy ) : ( dy + 0.414f * dx );
+}
+
+R32 GetApproxDist( CBaseObject *a, CBaseObject *b )
+{
+	if( !ValidateObject( a ) || !ValidateObject( b ))
+		return static_cast<R32>( DIST_OUTOFRANGE );
+
+	if( a == b )
+		return static_cast<R32>( DIST_SAMETILE );
+
+	if( a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId() )
+		return static_cast<R32>( DIST_OUTOFRANGE );
+
+
+	const R32 dx = fabs( a->GetX() - b->GetX() );
+	const R32 dy = fabs( a->GetY() - b->GetY() );
+
+	// The constant 0.414f (sqrt(2) - 1) is chosen to approximate the cost of diagonal movement.
+	return ( dx > dy ) ? ( dx + 0.414f * dy ) : ( dy + 0.414f * dx );
+}

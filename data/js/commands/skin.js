@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "skin", 2, true );
+	RegisterCommand( "skin", 8, true );
 }
 
 function command_SKIN( socket, cmdString )

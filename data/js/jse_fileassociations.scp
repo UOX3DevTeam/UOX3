@@ -89,6 +89,17 @@
 2010=server/resource/flax.js
 2011=server/resource/bee_hives.js
 2012=server/resource/sheepshearing.js
+2013=server/resource/carrots.js
+2014=server/resource/onions.js
+2015=server/resource/turnips.js
+2016=server/resource/cabbages.js
+2017=server/resource/gourds.js
+2018=server/resource/pumpkins.js
+2019=server/resource/squashes.js
+2020=server/resource/watermelons.js
+2021=server/resource/honeydewmelons.js
+2022=server/resource/canteloupes.js
+2023=server/resource/garlic.js
 //-------------------------------------------
 // Water, milk containers[2100-2199]
 2100=server/resource/pitchers.js
@@ -162,6 +173,9 @@
 3222=npc/ai/monster/yomotsu_warrior.js
 3224=npc/ai/monster/yamandon.js
 3225=npc/ai/monster/raiju.js
+3226=npc/ai/monster/ancient_lich.js
+3227=npc/ai/monster/zealot_of_khaldun.js
+3228=npc/ai/monster/shadowfiend.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -230,6 +244,10 @@
 //-------------------------------------------
 4750=item/dungeons/switch_puzzle_covetous.js
 4751=item/dungeons/deceit_lvl1_brazier.js
+4760=item/dungeons/smart_activate_item.js
+4761=item/dungeons/switch_door_combo.js
+4775=server/regions/khaldun_region.js
+4776=server/regions/khaldun_anti_resurrect.js
 
 //-------------------------------------------
 // Miscellaneous Item Types [5000-5499]

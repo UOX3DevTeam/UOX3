@@ -3,7 +3,7 @@
 
 [REGIONSPAWN 500]
 {
-NAME=Minoc carpenter
+NAME=Minoc - The Oak Throne
 NPC=carpenter
 MAXNPCS=1
 X1=2507
@@ -15,9 +15,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 501]
 {
-NAME=Minoc miner
+NAME=Minoc - The Matewan (miner)
 NPC=miner
 MAXNPCS=1
 X1=2460
@@ -29,9 +30,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 502]
 {
-NAME=Minoc jeweler
+NAME=Minoc - The Matewan (jeweler)
 NPC=jeweler
 MAXNPCS=1
 X1=2453
@@ -43,9 +45,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 503]
 {
-NAME=Minoc tinker
+NAME=Minoc - Gears and Gadgets
 NPC=tinker
 MAXNPCS=1
 X1=2459
@@ -57,9 +60,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 504]
 {
-NAME=Minoc bard
+NAME=Minoc - The Mystical Lute
 NPC=bard
 MAXNPCS=1
 X1=2417
@@ -71,9 +75,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 505]
 {
-NAME=Minoc blacksmith
+NAME=Minoc - The Forgery
 NPC=blacksmith
 MAXNPCS=1
 X1=2467
@@ -85,9 +90,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 506]
 {
-NAME=Minoc armorer
+NAME=Minoc - Warrior's Battle Gear
 NPC=armourer
 MAXNPCS=1
 X1=2532
@@ -99,9 +105,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 507]
 {
-NAME=Minoc healer
+NAME=Minoc - The Healing Hand
 NPC=healer
 MAXNPCS=1
 X1=2571
@@ -113,10 +120,11 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 508]
 {
-NAME=Minoc provisioner
-NPC=provisioner
+NAME=Minoc - Survival Threads
+NPC=tailor
 MAXNPCS=1
 X1=2525
 Y1=546
@@ -127,9 +135,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 509]
 {
-NAME=Minoc leatherworker
+NAME=Minoc - The Stretched Hide
 NPC=leatherworker
 MAXNPCS=1
 X1=2518
@@ -141,9 +150,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 510]
 {
-NAME=Minoc miner
+NAME=Minoc - The Golden Pick Axe
 NPC=miner
 MAXNPCS=1
 X1=2497
@@ -155,9 +165,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 511]
 {
-NAME=Minoc provisioner
+NAME=Minoc - The Old Miner's Supplies
 NPC=provisioner
 MAXNPCS=1
 X1=2449
@@ -169,9 +180,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 512]
 {
-NAME=Minoc butcher
+NAME=Minoc - The Slaughtered Cow
 NPC=butcher
 MAXNPCS=1
 X1=2433
@@ -183,10 +195,11 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 513]
 {
-NAME=Minoc cook
-NPC=cook
+NAME=Minoc - The Barnacle
+NPC=tavernkeeper
 MAXNPCS=1
 X1=2458
 Y1=399
@@ -197,9 +210,10 @@ MINTIME=480
 MAXTIME=600
 CALL=1
 }
+
 [REGIONSPAWN 514]
 {
-NAME=Minoc animal trainer
+NAME=Minoc - Stables
 NPC=animaltrainer
 MAXNPCS=1
 X1=2515
@@ -214,7 +228,7 @@ CALL=1
 
 [REGIONSPAWN 515]
 {
-NAME=Thief Guildmaster
+NAME=Minc - Thief Guildmaster
 NPCLIST=thiefguildmaster
 MAXNPCS=1
 X1=2393
@@ -228,4 +242,378 @@ MAXTIME=600
 CALL=1
 }
 
-EOF
+[REGIONSPAWN 516]
+{
+NAME=Minoc - Gypsy Tent 1
+NPC=gypsy
+MAXNPCS=1
+X1=2506
+Y1=633
+X2=2509
+Y2=640
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 517]
+{
+NAME=Minoc - Gypsy Tent 2
+NPC=gypsy
+MAXNPCS=1
+X1=2524
+Y1=635
+X2=2527
+Y2=641
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 518]
+{
+NAME=Minoc - Gypsy Tent 3
+NPC=gypsy
+MAXNPCS=1
+X1=2541
+Y1=633
+X2=2544
+Y2=640
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 519]
+{
+NAME=Minoc - Gypsy Tent 4
+NPC=gypsy
+MAXNPCS=1
+X1=2514
+Y1=650
+X2=2520
+Y2=659
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 520]
+{
+NAME=Minoc - Gypsy Tent 5
+NPC=gypsy
+MAXNPCS=1
+X1=2530
+Y1=653
+X2=2535
+Y2=660
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 521]
+{
+NAME=Minoc - Gypsy Tent 6
+NPC=gypsy
+MAXNPCS=1
+X1=2546
+Y1=650
+X2=2552
+Y2=659
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 522]
+{
+NAME=Minoc - Gypsy Tent 7
+NPC=gypsy
+MAXNPCS=1
+X1=2527
+Y1=671
+X2=2530
+Y2=678
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 523]
+{
+NAME=Minoc - Gypsy Tent 8
+NPC=gypsy
+MAXNPCS=1
+X1=2543
+Y1=673
+X2=2546
+Y2=679
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 524]
+{
+NAME=Minoc - Warrior's Battle Gear
+NPC=blacksmith
+MAXNPCS=1
+X1=2525
+Y1=573
+X2=2530
+Y2=575
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 525]
+{
+NAME=Minoc - Survival Threads
+NPC=weaver
+MAXNPCS=1
+X1=2527
+Y1=544
+X2=2531
+Y2=548
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 526]
+{
+GET=525
+NAME=Minoc - Survival Threads
+NPC=spinner
+}
+
+[REGIONSPAWN 527]
+{
+NAME=Minoc - The Survival Shop
+NPC=provisioner
+MAXNPCS=1
+X1=2529
+Y1=550
+X2=2532
+Y2=552
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 528]
+{
+GET=527
+NAME=Minoc - The Survival Shop
+NPC=cobbler
+}
+
+[REGIONSPAWN 529]
+{
+NAME=Minoc - Bank of Minoc 1
+NPC=bank
+MAXNPCS=2
+X1=2496
+Y1=552
+X2=2510
+Y2=558
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=2
+}
+
+[REGIONSPAWN 530]
+{
+NAME=Minoc - Bank of Minoc 2
+NPC=bank
+MAXNPCS=1
+X1=2504
+Y1=545
+X2=2510
+Y2=551
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 531]
+{
+NAME=Minoc - Town Crier (South)
+NPC=towncrier
+MAXNPCS=1
+X1=2519
+Y1=558
+X2=2519
+Y2=558
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 532]
+{
+NAME=Minoc - The Oak Throne
+NPC=architect
+MAXNPCS=1
+X1=2507
+Y1=475
+X2=2519
+Y2=477
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 533]
+{
+NAME=Minoc - The New World Order
+NPC=fighter
+MAXNPCS=2
+X1=2480
+Y1=425
+X2=2486
+Y2=434
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 534]
+{
+NAME=Minoc - The Old Miner's Supplies
+NPC=cobbler
+MAXNPCS=1
+X1=2453
+Y1=427
+X2=2461
+Y2=429
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 535]
+{
+NAME=Minoc - The Barnacle
+NPC=waiter
+MAXNPCS=3
+X1=2465
+Y1=397
+X2=2494
+Y2=403
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=3
+}
+
+[REGIONSPAWN 536]
+{
+GET=513
+NAME=Minoc - The Barnacle
+NPC=cook
+}
+
+[REGIONSPAWN 537]
+{
+NAME=Minoc - Docks 1
+NPC=fisher
+MAXNPCS=1
+X1=2508
+Y1=337
+X2=2529
+Y2=348
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 538]
+{
+GET=537
+NAME=Minoc - Docks 2
+NPC=sailor
+}
+
+[REGIONSPAWN 539]
+{
+NAME=Minoc - Town Crier (North)
+NPC=towncrier
+MAXNPCS=1
+X1=2476
+Y1=414
+X2=2476
+Y2=414
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 540]
+{
+GET=515
+NAME=Minoc - All Townfolk
+NPCLIST=alltownfolk
+MAXNPCS=15
+CALL=5
+}
+
+[REGIONSPAWN 541]
+{
+GET=515
+NAME=Minoc - Town Animals
+NPCLIST=britainanimallist
+MAXNPCS=20
+CALL=5
+}
+
+[REGIONSPAWN 542]
+{
+NAME=Minoc - The Stretched Hide
+NPC=tanner
+MAXNPCS=1
+X1=2521
+Y1=520
+X2=2523
+Y2=525
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 543]
+{
+NAME=Minoc - The Stretched Hide
+NPC=furtrader
+MAXNPCS=1
+X1=2521
+Y1=527
+X2=2523
+Y2=532
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}

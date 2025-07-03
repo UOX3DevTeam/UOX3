@@ -3,8 +3,8 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "xteleport", 1, true );
-	RegisterCommand( "xgo", 1, true );
+	RegisterCommand( "xteleport", 4, true );
+	RegisterCommand( "xgo", 4, true );
 }
 
 function command_XTELEPORT( socket, cmdString )
@@ -105,7 +105,7 @@ function onCallback1( socket, ourObj )
 	{
 		// Defaults to same world/instance as GM unless anything else is specified
 		var worldNum = socket.currentChar.worldnumber;
-		var instanceID = socket.currentChar.instanceid;
+		var instanceID = socket.currentChar.instanceID;
 
 		var splitString = socket.xText;
 		if( splitString != null )

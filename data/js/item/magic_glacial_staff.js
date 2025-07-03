@@ -216,8 +216,8 @@ function CheckResist( resistDifficulty, targetChar, spellCircle )
 
 	// Check which is higher between user's normal resist chance and a fallback value
 	// To ensure user always has a chance of resisting, however small their resist skill (except at 0)
-	var defaultChance = targetChar.skills.magicresistance / 5;
-	var resistChance = targetChar.skills.magicresistance - ((( resistDifficulty - 20 ) / 5 ) + ( spellCircle * 5 ));
+	var defaultChance = ( targetChar.skills.magicresistance + ( targetChar.race.magicResistance * 10 )) / 5;
+	var resistChance = ( targetChar.skills.magicresistance + ( targetChar.race.magicResistance * 10 )) - ((( resistDifficulty - 20 ) / 5 ) + ( spellCircle * 5 ));
 	if( defaultChance > resistChance )
 	{
 		resistChance = defaultChance;

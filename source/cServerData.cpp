@@ -400,7 +400,9 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"HUMANMAXWEIGHTBONUS"s, 377},
 	{"ELFMAXWEIGHTBONUS"s, 378},
 	{"GARGOYLEMAXWEIGHTBONUS"s, 379},
-	{"PETBONDINGENABLED"s, 380}
+	{"MAXNPCAGGRORANGE"s, 380},
+	{"POISONCORROSIONSYSTEM"s, 381},
+  {"PETBONDINGENABLED"s, 382}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -516,6 +518,7 @@ constexpr auto BIT_KARMALOCKING						= UI32( 106 );
 constexpr auto BIT_HEALINGAFFECTHEALTHREGEN			= UI32( 107 );
 constexpr auto BIT_HUNGERAFFECTHEALTHREGEN			= UI32( 108 );
 constexpr auto BIT_THIRSTAFFECTSTAMINAREGEN			= UI32( 109 );
+constexpr auto BIT_POISONCORROSIONSYSTEM			= UI32( 110 );
 
 
 // New uox3.ini format lookup
@@ -661,6 +664,7 @@ auto CServerData::ResetDefaults() -> void
 	KarmaLocking( true );
 	CombatMaxRange( 10 );
 	CombatMaxSpellRange( 10 );
+	CombatMaxNpcAggroRange( 10 );
 
 	// load defaults values
 	SystemTimer( tSERVER_SHOPSPAWN, 300 );
@@ -753,6 +757,7 @@ auto CServerData::ResetDefaults() -> void
 	CombatParryDamageMin( 0 );
 	CombatParryDamageMax( 1 );
 	CombatBloodEffectChance( 75 );
+	PoisonCorrosionSystem( true );
 	GlobalAttackSpeed( 1.0 );
 	NPCSpellCastSpeed( 1.0 );
 	FishingStaminaLoss( 2 );
@@ -1014,14 +1019,14 @@ auto CServerData::ResetDefaults() -> void
 	// Disable spawn regions for all facets by default
 	SetSpawnRegionsFacetStatus( 0 );
 
-    // Enable Felucca by default
-    SetMoongateFacetStatus( 0, true );
+	// Enable Felucca by default
+	SetMoongateFacetStatus( 0, true );
 
-    // Enable Trammel by default
-    SetMoongateFacetStatus( 1, true );
+	// Enable Trammel by default
+	SetMoongateFacetStatus( 1, true );
 
-    // Enable Ilshenar by default
-    SetMoongateFacetStatus( 2, true );
+	// Enable Ilshenar by default
+	SetMoongateFacetStatus( 2, true );
 
 	// Set no assistant features as disabled by default
 	SetDisabledAssistantFeature( AF_ALL, false );
@@ -2642,6 +2647,20 @@ auto CServerData::CheckPetControlDifficulty( bool newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::PoisonCorrosionSystem() 
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether poison will corrode weapons and damage their durability
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::PoisonCorrosionSystem( void ) const -> bool
+{
+	return boolVals.test( BIT_POISONCORROSIONSYSTEM );
+}
+auto CServerData::PoisonCorrosionSystem( bool newVal ) -> void
+{
+	boolVals.set( BIT_POISONCORROSIONSYSTEM, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CheckItemsSpeed()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets how often in seconds items are checked for decay and other things
@@ -2847,11 +2866,11 @@ auto CServerData::CombatAttackSpeedFromStamina( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global attack speed in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::GlobalAttackSpeed() const -> float
+auto CServerData::GlobalAttackSpeed() const -> double
 {
 	return globalAttackSpeed;
 }
-auto CServerData::GlobalAttackSpeed( R32 value ) -> void
+auto CServerData::GlobalAttackSpeed( R64 value ) -> void
 {
 	if( value < 0.0 )
 	{
@@ -2868,11 +2887,11 @@ auto CServerData::GlobalAttackSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global NPC spell casting speed
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCSpellCastSpeed() const -> float
+auto CServerData::NPCSpellCastSpeed() const -> double
 {
 	return npcSpellcastSpeed;
 }
-auto CServerData::NPCSpellCastSpeed( R32 value ) -> void
+auto CServerData::NPCSpellCastSpeed( R64 value ) -> void
 {
 	if( value < 0.0 )
 	{
@@ -3823,11 +3842,11 @@ auto CServerData::CombatArcheryHitBonus( SI08 value ) -> void
 //|	Purpose		-	Gets/Sets the delay (in seconds, with decimals) after archers stop moving until
 //|					they can fire a shot in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatArcheryShootDelay() const -> float
+auto CServerData::CombatArcheryShootDelay() const -> double
 {
 	return archeryShootDelay;
 }
-auto CServerData::CombatArcheryShootDelay( R32 value ) -> void
+auto CServerData::CombatArcheryShootDelay( R64 value ) -> void
 {
 	if( value < 0.0 )
 	{
@@ -4552,6 +4571,20 @@ auto CServerData::CombatMaxSpellRange( SI16 value ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::CombatMaxNpcAggroRange()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the maximum range at which NPCs can aggro targets on their own
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::CombatMaxNpcAggroRange() const -> SI16
+{
+	return combatMaxNpcAggroRange;
+}
+auto CServerData::CombatMaxNpcAggroRange( SI16 value ) -> void
+{
+	combatMaxNpcAggroRange = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatAnimalsGuarded()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether animals are under the protection of town guards or not
@@ -4598,11 +4631,11 @@ auto CServerData::CombatNPCBaseReattackAt( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default walking speed for NPCs
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCWalkingSpeed() const -> float
+auto CServerData::NPCWalkingSpeed() const -> double
 {
 	return npcWalkingSpeed;
 }
-auto CServerData::NPCWalkingSpeed( R32 value ) -> void
+auto CServerData::NPCWalkingSpeed( R64 value ) -> void
 {
 	npcWalkingSpeed = value;
 }
@@ -4612,11 +4645,11 @@ auto CServerData::NPCWalkingSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default running speed for NPCs
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCRunningSpeed() const -> float
+auto CServerData::NPCRunningSpeed() const -> double
 {
 	return npcRunningSpeed;
 }
-auto CServerData::NPCRunningSpeed( R32 value ) -> void
+auto CServerData::NPCRunningSpeed( R64 value ) -> void
 {
 	npcRunningSpeed = value;
 }
@@ -4626,11 +4659,11 @@ auto CServerData::NPCRunningSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default speed at which NPCs flee in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCFleeingSpeed() const -> float
+auto CServerData::NPCFleeingSpeed() const -> double
 {
 	return npcFleeingSpeed;
 }
-auto CServerData::NPCFleeingSpeed( R32 value ) -> void
+auto CServerData::NPCFleeingSpeed( R64 value ) -> void
 {
 	npcFleeingSpeed = value;
 }
@@ -4640,11 +4673,11 @@ auto CServerData::NPCFleeingSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default walking speed for mounted NPCs
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCMountedWalkingSpeed() const -> float
+auto CServerData::NPCMountedWalkingSpeed() const -> double
 {
 	return npcMountedWalkingSpeed;
 }
-auto CServerData::NPCMountedWalkingSpeed( R32 value ) -> void
+auto CServerData::NPCMountedWalkingSpeed( R64 value ) -> void
 {
 	npcMountedWalkingSpeed = value;
 }
@@ -4654,11 +4687,11 @@ auto CServerData::NPCMountedWalkingSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default running speed for mounted NPCs
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCMountedRunningSpeed() const -> float
+auto CServerData::NPCMountedRunningSpeed() const -> double
 {
 	return npcMountedRunningSpeed;
 }
-auto CServerData::NPCMountedRunningSpeed( R32 value ) -> void
+auto CServerData::NPCMountedRunningSpeed( R64 value ) -> void
 {
 	npcMountedRunningSpeed = value;
 }
@@ -4668,11 +4701,11 @@ auto CServerData::NPCMountedRunningSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default speed at which mounted NPCs flee in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCMountedFleeingSpeed() const -> float
+auto CServerData::NPCMountedFleeingSpeed() const -> double
 {
 	return npcMountedFleeingSpeed;
 }
-auto CServerData::NPCMountedFleeingSpeed( R32 value ) -> void
+auto CServerData::NPCMountedFleeingSpeed( R64 value ) -> void
 {
 	npcMountedFleeingSpeed = value;
 }
@@ -5613,6 +5646,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << '\n' << "[combat]" << '\n' << "{" << '\n';
 		ofsOutput << "MAXRANGE=" << CombatMaxRange() << '\n';
 		ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << '\n';
+		ofsOutput << "MAXNPCAGGRORANGE=" << CombatMaxNpcAggroRange() << '\n';
 		ofsOutput << "DISPLAYHITMSG=" << ( CombatDisplayHitMessage() ? 1 : 0 ) << '\n';
 		ofsOutput << "DISPLAYDAMAGENUMBERS=" << ( CombatDisplayDamageNumbers() ? 1 : 0 ) << '\n';
 		ofsOutput << "MONSTERSVSANIMALS=" << ( CombatMonstersVsAnimals() ? 1 : 0 ) << '\n';
@@ -5654,6 +5688,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		//ofsOutput << "ENERGYRESISTCAP=" << EnergyResistCap() << '\n';
 		//ofsOutput << "DEFENSECHANCEINCREASECAP=" << DefenseChanceIncreaseCap() << '\n';
 		ofsOutput << "DAMAGEINCREASECAP=" << DamageIncreaseCap() << '\n';
+		ofsOutput << "POISONCORROSIONSYSTEM=" << ( PoisonCorrosionSystem() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
@@ -6542,7 +6577,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			ServerOverloadPackets(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
 			break;
 		case 147:	 // NPCMOVEMENTSPEED
-			NPCWalkingSpeed( std::stof( value ));
+			NPCWalkingSpeed( std::stod( value ));
 			break;
 		case 148:	 // PETHUNGEROFFLINE
 			PetHungerOffline(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
@@ -6563,10 +6598,10 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			LootingIsCrime(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
 			break;
 		case 155:	 // NPCRUNNINGSPEED
-			NPCRunningSpeed( std::stof( value ));
+			NPCRunningSpeed( std::stod( value ));
 			break;
 		case 156:	 // NPCFLEEINGSPEED
-			NPCFleeingSpeed( std::stof( value ));
+			NPCFleeingSpeed( std::stod( value ));
 			break;
 		case 157:	 // BASICTOOLTIPSONLY
 			BasicTooltipsOnly(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
@@ -6656,10 +6691,10 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			CombatArmorDamageMax( static_cast<UI08>( std::stoul( value, nullptr, 0 )));
 			break;
 		case 190:	// GLOBALATTACKSPEED
-			GlobalAttackSpeed( std::stof( value ));
+			GlobalAttackSpeed( std::stod( value ));
 			break;
 		case 191:	// NPCSPELLCASTSPEED
-			NPCSpellCastSpeed( std::stof( value ));
+			NPCSpellCastSpeed( std::stod( value ));
 			break;
 		case 192:	// FISHINGSTAMINALOSS
 			FishingStaminaLoss( std::stof( value ));
@@ -6892,13 +6927,13 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			ServerSpeechLog(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
 			break;
 		case 269:	 // NPCMOUNTEDWALKINGSPEED
-			NPCMountedWalkingSpeed( std::stof( value ));
+			NPCMountedWalkingSpeed( std::stod( value ));
 			break;
 		case 270:	 // NPCMOUNTEDRUNNINGSPEED
-			NPCMountedRunningSpeed( std::stof( value ));
+			NPCMountedRunningSpeed( std::stod( value ));
 			break;
 		case 271:	 // NPCMOUNTEDFLEEINGSPEED
-			NPCMountedFleeingSpeed( std::stof( value ));
+			NPCMountedFleeingSpeed( std::stod( value ));
 			break;
 		case 272:	// CONTEXTMENUS
 			ServerContextMenus(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
@@ -6955,7 +6990,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			SetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS, static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 );
 			break;
 		case 290:	// ARCHERYSHOOTDELAY
-			CombatArcheryShootDelay( std::stof( value ));
+			CombatArcheryShootDelay( std::stod( value ));
 			break;
 		case 291:	 // MAXCLIENTBYTESIN
 			MaxClientBytesIn( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
@@ -7144,7 +7179,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			ManaRegenCap( std::stoi( value, nullptr, 0 ));
 			break;
 		case 353:	// SWINGSPEEDINCREASE
-			SwingSpeedIncreaseCap( std::stof( value ));
+			SwingSpeedIncreaseCap( std::stoi( value, nullptr, 0 ));
 			break;
 		case 354:	 // KARMALOCKING
 			KarmaLocking( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
@@ -7203,7 +7238,13 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 379:	// GARGOYLEMAXWEIGHTBONUS
 			GargoyleMaxWeightBonus( std::stoi( value, nullptr, 0 ));
 			break;
-		case 380:	// PETBONDINGENABLED
+		case 380:	 // MAXNPCAGGRORANGE
+			CombatMaxNpcAggroRange( static_cast<SI16>( std::stoi( value, nullptr, 0 )));
+			break;
+		case 381:	// POISONCORROSIONSYSTEM
+			PoisonCorrosionSystem(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
+			break;
+		case 382:	// PETBONDINGENABLED
 			PetBondingEnabled( std::stoi( value, nullptr, 0 ));
 			break;
 		default:

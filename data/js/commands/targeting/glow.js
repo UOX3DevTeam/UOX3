@@ -2,8 +2,8 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "glow", 2, true );
-	RegisterCommand( "unglow", 2, true );
+	RegisterCommand( "glow", 8, true );
+	RegisterCommand( "unglow", 8, true );
 }
 
 function command_GLOW( socket, cmdString )
