@@ -21,7 +21,8 @@ const keylessGuestAccess = GetServerSetting( "KeylessGuestAccess" );
 const keylessFriendAccess = GetServerSetting( "KeylessFriendAccess" );
 const keylessCoOwnerAccess = GetServerSetting( "KeylessCoOwnerAccess" );
 
-const DecayEnabled = true;//Enables House Decay
+const houseDecayEnabled = true;//Enables House Decay
+const houseItemsDeleteEnabled = true;//Enables House Items Deletion
 
 function onHouseCommand( pSocket, iMulti, cmdID )
 {
@@ -208,7 +209,7 @@ function onTimer( iMulti, timerID )
 		return;
 
 	// Central decay toggle check
-	if( !DecayEnabled )
+	if( !houseDecayEnabled )
 	{
 		iMulti.KillTimers(); // Cancel decay loop if disabled
 		return;
@@ -247,7 +248,7 @@ function onTimer( iMulti, timerID )
 			iMulti.SetTag( "InDanger", true );// Can not be refreshed.
 			break;// In Danger of Collapsing
 		case 7:
-			HouseDecay(iMulti ); // House has Decayed.
+			HouseDecay( iMulti ); // House has Decayed.
 			break;
 		default:
 			Console.Warning( "House Decay Timer Broken" );
@@ -258,22 +259,22 @@ function onTimer( iMulti, timerID )
 // House Decay - Trigger
 function HouseDecay(iMulti )
 {
-	if ( !ValidateObject( iMulti ))
+	if( !ValidateObject( iMulti ))
 	{
 		return;
 	}
 
 	// Delete any Player Vendors in House
 	var charInHouse;
-	for ( charInHouse = iMulti.FirstChar(); !iMulti.FinishedChars(); charInHouse = iMulti.NextChar() ) 
+	for( charInHouse = iMulti.FirstChar(); !iMulti.FinishedChars(); charInHouse = iMulti.NextChar() ) 
 	{
-		if ( !ValidateObject( charInHouse ))
+		if( !ValidateObject( charInHouse ))
 			continue;
 
-		if ( !ValidateObject( charInHouse.multi ))
+		if( !ValidateObject( charInHouse.multi ))
 			continue;
 
-		if ( charInHouse.aitype == 17 ) // player vendor AI
+		if( charInHouse.aitype == 17 ) // player vendor AI
 		{
 			charInHouse.Delete();
 		}
@@ -284,25 +285,22 @@ function HouseDecay(iMulti )
 		}
 	}
 
-	// Kill all the keys related to the house - they are of no use any more
-	//iMulti.KillKeys(); I dont think house keys would delete whena house decayed.
-
 	// Release lockdown on any items left in the house, move them to ground level
 	// Also remove any trash barrels
 	var itemInHouse;
-	for ( itemInHouse = iMulti.FirstItem(); !iMulti.FinishedItems(); itemInHouse = iMulti.NextItem() )
+	for( itemInHouse = iMulti.FirstItem(); !iMulti.FinishedItems(); itemInHouse = iMulti.NextItem() )
 	{
-		if ( !ValidateObject( itemInHouse ) )
+		if( !ValidateObject( itemInHouse ))
 			continue;
 
-		if ( !ValidateObject(itemInHouse.multi ) )
+		if( !ValidateObject(itemInHouse.multi ))
 			continue;
 
 		// Don't touch doors, or signs
-		if ( itemInHouse.type == 203 || itemInHouse.type == 13 || itemInHouse.type == 12 )
+		if( itemInHouse.type == 203 || itemInHouse.type == 13 || itemInHouse.type == 12 )
 			continue;
 
-		if ( itemInHouse.type == 87) // trash container
+		if( itemInHouse.type == 87 ) // trash container
 		{
 			if ( iMulti.IsSecureContainer( itemInHouse ))
 			{
@@ -313,19 +311,44 @@ function HouseDecay(iMulti )
 		}
 		else if( itemInHouse.movable == 2 || itemInHouse.GetTag( "deed" )) // items placed as part of the house itself like forge/anvil in smithy or the addon deed
 		{
-			itemInHouse.Delete();
-		}
-		else if ( itemInHouse.isLockedDown )
-		{
-			if ( iMulti.IsSecureContainer( itemInHouse ))
+			if(	houseItemsDeleteEnabled )
 			{
-				iMulti.UnsecureContainer( itemInHouse );
+				itemInHouse.Delete();
 			}
-			iMulti.ReleaseItem( itemInHouse );
+			else
+			{
+				var addonDeed = itemInHouse.GetTag( "deed" );
+				if( addonDeed )
+				{
+					var newDeed = CreateDFNItem( null, null, addonDeed, 1, "ITEM", false, addonDeed.colour, itemInHouse.worldnumber, itemInHouse.instanceID );
+					if( newDeed )
+					{
+						// Drop all deeds contained in house to ground level so they're not stuck in the middle of the air!
+						var groundZ = GetMapElevation( itemInHouse.x, itemInHouse.y, itemInHouse.worldnumber );
+						newDeed.Teleport( itemInHouse.x, itemInHouse.y, groundZ );
+					}
+				}
+				itemInHouse.Delete();
+			}
+		}
+		else if( itemInHouse.isLockedDown )
+		{
+			if(	houseItemsDeleteEnabled )
+			{
+				itemInHouse.Delete();
+			}
+			else
+			{
+				if( iMulti.IsSecureContainer( itemInHouse ))
+				{
+					iMulti.UnsecureContainer( itemInHouse );
+				}
+				iMulti.ReleaseItem( itemInHouse );
 
-			// Drop all items contained in house to ground level so they're not stuck in the middle of the air!
-			var groundZ = GetMapElevation( itemInHouse.x, itemInHouse.y, pSocket.currentChar.worldnumber );
-			itemInHouse.Teleport( itemInHouse.x, itemInHouse.y, groundZ );
+				// Drop all items contained in house to ground level so they're not stuck in the middle of the air!
+				var groundZ = GetMapElevation( itemInHouse.x, itemInHouse.y, itemInHouse.worldnumber );
+				itemInHouse.Teleport( itemInHouse.x, itemInHouse.y, groundZ );
+			}
 		}
 	}
 
