@@ -30,8 +30,8 @@
 //================================================
 // Felucca Town Spawns
 //================================================
-// spawn_felucca_town_britain.dfn		 	[0-99]
-// spawn_felucca_town_buc_den.dfn		 	[100-199]
+// spawn_felucca_town_britain.dfn		 	[0-149]
+// spawn_felucca_town_buc_den.dfn		 	[150-199]
 // spawn_felucca_town_cove.dfn			 	[200-299]
 // spawn_felucca_town_jhelom.dfn		 	[300-399]
 // spawn_felucca_town_magincia.dfn		 	[400-499]
@@ -63,7 +63,7 @@
 // spawn_felucca_treasure_shame.dfn		 	[2700-2799]
 // spawn_felucca_treasure_wrong.dfn		 	[2800-2899]
 // spawn_felucca_treasure_terathankeep.dfn 	[2900-2999]
-// spawn_felucca_treasure_misc.dfn		 	[3000-3100]
+// spawn_felucca_treasure_misc.dfn		 	[3000-3099]
 //=====================================================
 // Felucca Dungeon Spawns
 //=====================================================

@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "get", 2, true );
+	RegisterCommand( "get", 8, true );
 }
 
 function command_GET( socket, cmdString )
@@ -121,6 +121,9 @@ function onCallback0( socket, ourObj )
 	case "POISON":
 		socket.SysMessage( ourObj.poison );
 		break;
+	case "POISONEDBY":
+		socket.SysMessage( ourObj.poisonedBy );
+		break;
 	case "X":
 		socket.SysMessage( ourObj.x );
 		break;
@@ -216,6 +219,9 @@ function onCallback0( socket, ourObj )
 	}
 	case "SECTIONID":
 		socket.SysMessage( ourObj.sectionID );
+		break;
+	case "SPAWNSERIAL":
+		socket.SysMessage( ourObj.spawnSerial );
 		break;
 	case "SWINGSPEEDINC":
 		socket.SysMessage( ourObj.swingSpeedIncrease );
@@ -323,6 +329,9 @@ function HandleGetItem( socket, ourItem, uKey )
 		break;
 	case "NEWBIE":
 		socket.SysMessage( ourItem.isNewbie );
+		break;
+	case "POISONCHARGES":
+		socket.SysMessage( ourItem.poisonCharges );
 		break;
 	case "DIVINELOCK":
 		socket.SysMessage( ourItem.divinelock );
@@ -601,6 +610,9 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "NPCAI":
 		socket.SysMessage( ourChar.aitype );
+		break;
+	case "POISONSTRENGTH":
+		socket.SysMessage( ourChar.poisonStrength );
 		break;
 	case "VULNERABLE":
 		socket.SysMessage( ourChar.vulnerable );

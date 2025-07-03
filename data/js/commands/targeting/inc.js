@@ -2,10 +2,10 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "incx", 2, true );
-	RegisterCommand( "incy", 2, true );
-	RegisterCommand( "incz", 2, true );
-	RegisterCommand( "incid", 2, true );
+	RegisterCommand( "incx", 8, true );
+	RegisterCommand( "incy", 8, true );
+	RegisterCommand( "incz", 8, true );
+	RegisterCommand( "incid", 8, true );
 }
 
 function command_INCX( socket, cmdString )

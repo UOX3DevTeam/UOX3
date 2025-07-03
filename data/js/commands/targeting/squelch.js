@@ -1,7 +1,7 @@
 function CommandRegistration()
 {
-	RegisterCommand( "mute", 2, true );
-	RegisterCommand( "squelch", 2, true );
+	RegisterCommand( "mute", 8, true );
+	RegisterCommand( "squelch", 8, true );
 }
 
 function command_MUTE( socket, cmdString )
@@ -41,7 +41,7 @@ function onCallback0( socket, ourObj )
 	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj.online )
 	{
 		var ourSock = ourObj.socket;
-		if( ourObj.commandlevel > 0 )
+		if( ourObj.commandlevel >= GetCommandLevelVal( "GM" ))
 		{
 			socket.SysMessage( GetDictionaryEntry( 1042, socket.language ) ); // You cannot squelch GMs.
 		}

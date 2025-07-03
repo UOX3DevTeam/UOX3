@@ -238,6 +238,7 @@ target_include_directories(uox3
 	PUBLIC
 		${PROJECT_SOURCE_DIR}/../../source
 		${PROJECT_SOURCE_DIR}/../../spidermonkey
+		${PROJECT_SOURCE_DIR}/../../utf8cpp
 )
 if (NOT SYSTEM_ZLIB)
 target_include_directories(uox3

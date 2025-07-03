@@ -173,16 +173,26 @@ CANNOTSHOOTTHRU=1
 CANNOTSHOOTTHRU=1
 }
 
-// Missing climbable flag
+// Missing stair right flag
+// Incorrectly set stair back flag
+[TILE 0x0899]
+{
+CLIMBABLEBIT1=1
+CLIMBABLEBIT2=0
+}
+
 [TILE 0x08A5]
 {
-HEIGHT=22
-CLIMBABLEBIT2=1
+HEIGHT=30
 }
 
 [TILE 0x08A6]
 {
-HEIGHT=22
+HEIGHT=30
+}
+
+[TILE 0x2FDE]
+{
 CLIMBABLEBIT2=1
 }
 

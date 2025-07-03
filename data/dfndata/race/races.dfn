@@ -46,7 +46,7 @@
 //*	NAME=abc - Name of the race                                   *
 //*	NOBEARD                                                       *
 //*	NIGHTVIS=# - Default night vision level                       *
-//*	PLAYERRACE=# - Is it a player race                            *
+//*	PLAYERRACE=# - Can player join this race via race gates?      *
 //*	POISONRESISTANCE=#                                            *
 //*	PARENTRACE=#                                                  *
 //*	REQUIREBEARD                                                  *
@@ -306,6 +306,20 @@ PLAYERRACE=1
 NAME=Savage
 PLAYERRACE=1
 RACIALENEMY=22
+}
+
+[RACE 29]
+{
+NAME=Cursed
+PLAYERRACE=1
+RACIALENEMY=30
+}
+
+[RACE 30]
+{
+NAME=Zealots
+PLAYERRACE=1
+RACIALENEMY=29
 }
 
 // Equipment Lists ----------------------------------------------------

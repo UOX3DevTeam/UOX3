@@ -114,6 +114,7 @@ JSBool SE_StringToNum( JSContext *cx, uintN argc, jsval *vp );				// Marked for 
 JSBool SE_NumToString( JSContext *cx, uintN argc, jsval *vp );				// Marked for Deletion
 JSBool SE_NumToHexString( JSContext *cx, uintN argc, jsval *vp );			// Marked for Deletion
 JSBool SE_EraStringToNum( JSContext *cx, uintN argc, jsval *vp );
+JSBool SE_GetCommandLevelVal( JSContext *cx, uintN argc, jsval *vp );
 
 JSBool SE_GetRaceCount( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp );

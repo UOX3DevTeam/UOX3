@@ -1,6 +1,9 @@
 // Decorate command - by Xuri (xuri@uox3.org)
-// v1.6
-// 		1.6 - 13/07/2023
+// v1.7
+//		1.7 - 10/06/2025
+//			Added support for saving/loading custom tags (templateSystemVer 3)
+//
+//		1.6 - 13/07/2023
 //			Adjusted how silent and multiple flags from admin_welcome.js script are detected and used
 //
 //		1.5 - 18/01/2022
@@ -114,11 +117,11 @@ const moongateIDs = [ 0x0dda,0x0ddb,0x0ddc,0x0ddd,0x0dde,0x0f6c,0x0f6d,0x0f6e,0x
 
 // Script ID of this script, used to identify and close some gumps
 const decorate_scriptID = 1059;
-const templateSystemVer = 2;
+const templateSystemVer = 3;
 
 function CommandRegistration()
 {
-	RegisterCommand( "decorate", 5, true ); // Admin only command
+	RegisterCommand( "decorate", 10, true ); // Admin only command
 }
 
 function command_DECORATE( socket, cmdString )
@@ -1023,6 +1026,37 @@ function SaveDecorationToArray( toCheck, arrayRef )
 		newEntry += ( "|" + scriptTriggers[i] );
 	}
 
+	var tagMap = toCheck.GetTagMap();
+	if( tagMap.length > 0 )
+	{
+		// Append custom tag key/value pairs to string, after a @ symbol
+		newEntry += "@";
+	}
+	for( var j = 0; j < tagMap.length; j++ )
+	{
+		if( j > 0 )
+		{
+			// Separate each tagkey/type/val trio by |
+			newEntry += "|";
+		}
+		var tagName = tagMap[j][0];
+		var tagType;
+		switch( tagMap[j][1] )
+		{
+			case 0:
+				tagType = "Int";
+				break;
+			case 1:
+				tagType = "String";
+				break;
+			case 2:
+				tagType = "Bool";
+				break;
+		}
+		var tagValue = tagMap[j][2].toString();
+		newEntry += tagName + "$" + tagType + "$" + tagValue;
+	}
+
 	// Push string with object properties to array, so we can output that to file later
 	arrayRef.push( newEntry );
 }
@@ -1658,7 +1692,14 @@ function DecorateWorld( socket )
 	{
 		// Reset scriptTriggers array for each line
 		scriptTriggers.length = 0;
-		var splitString = decorateArray[i].split( "|" );
+
+		// First split based on @ to get regular properties (left side) and custom tags (right side)
+		// We do this because we don't know how many custom tags an item can have
+		var splitString1 = decorateArray[i].split( "@" );
+
+		// Next, we split the left side (regular properties) based on |
+		//var splitString = decorateArray[i].split( "|" );
+		var splitString = splitString1[0].split( "|" );
 		var splitStringLength = splitString.length;
 		if( splitStringLength == 1 )
 		{
@@ -1732,6 +1773,32 @@ function DecorateWorld( socket )
 					moreZ = parseInt( splitString[j] );
 				else if( j >= 24 )
 					scriptTriggers.push( parseInt( splitString[j] ));
+			}
+		}
+
+		// Handle unknown amount of custom tag key/type/value combos after @ symbol on each line,
+		// each portion of the custom tag separated by a $
+		let customTags = [];
+		if( templateVer >= 2 && splitString1[1] )
+		{
+			var splitStringCustom = splitString1[1].split( "|" );
+			var splitStringCustomLength = splitStringCustom.length;
+
+			for( var k = 0; k < splitStringCustom.length; k++ )
+			{
+				let tagStringArray = splitStringCustom[k].split( "$" );
+				if( tagStringArray.length == 3 )
+				{
+					let tagKey = tagStringArray[0];
+					let tagType = tagStringArray[1]
+					let tagVal = tagStringArray[2];
+
+					// Add to array
+					if( tagKey != "" )
+					{
+						customTags.push( [tagKey, tagType, tagVal] );
+					}
+				}
 			}
 		}
 
@@ -1883,9 +1950,31 @@ function DecorateWorld( socket )
 
 			if( scriptTriggers.length > 0 )
 			{
-				for( var k = 0; k < scriptTriggers.length; k++ )
+				for( var l = 0; l < scriptTriggers.length; l++ )
 				{
-					newItem.AddScriptTrigger( scriptTriggers[k] );
+					newItem.AddScriptTrigger( scriptTriggers[l] );
+				}
+			}
+
+			if( customTags.length > 0 )
+			{
+				for( var m = 0; m < customTags.length; m++ )
+				{
+					let tagKey = customTags[m][0];
+					let tagType = customTags[m][1];
+					let tagVal = customTags[m][2];
+					switch( tagType )
+					{
+						case "Int":
+							tagVal = parseInt( tagVal );
+							break;
+						case "Bool":
+							tagVal = ( customTags[m][2] === 'true' );
+							break;
+						default: // String
+							break;
+					}
+					newItem.SetTag( tagKey, tagVal );
 				}
 			}
 
@@ -1908,6 +1997,10 @@ function onIterate( toCheck )
 {
 	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.container == null && !toCheck.isMulti && !ValidateObject( toCheck.multi ) && toCheck.shouldSave && !toCheck.decayable )
 	{
+		// Don't save items that have been spawned by spawners; save the spawners themselves only
+		//if( toCheck.spawnSerial != -1 )
+		//	return false;
+
 		if(( saveCustom || saveEvent ) && saveAll )
 		{
 			// Only save items that match event type if we're saving event decorations

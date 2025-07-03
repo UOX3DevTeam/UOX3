@@ -2,10 +2,10 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "kick", 2, true );
-	RegisterCommand( "disconnect", 2, true );
-	RegisterCommand( "ban", 2 , true );
-	RegisterCommand( "unban", 2 , true );
+	RegisterCommand( "kick", 8, true );
+	RegisterCommand( "disconnect", 8, true );
+	RegisterCommand( "ban", 8, true );
+	RegisterCommand( "unban", 8, true );
 }
 
 function command_KICK( socket, cmdString )
