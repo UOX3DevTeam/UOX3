@@ -8,6 +8,7 @@
 	Serial of character who poisoned a character who died while poisoned is now stored on the corpse
 	Added third optional parameter to Character JS Method .SetPoisoned() that can be used to specify source char of applied poison. New syntax:
 		.SetPoisoned( poisonLevel, wearOffTime[, poisonSourceChar ])
+	Updated calculations of magic and/or poison resistance to also include magic and/or poison resistance from races
 
 02/07/2025 - Xuri
 	Updated UOX3 & JS documentation

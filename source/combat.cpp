@@ -3125,18 +3125,23 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 							ourTarg->TextMessage( mSock, 18738, TALK, false ); // * The poison seems to have no effect. *
 						}
 					}
-					else if( ourTarg->GetResist( POISON ) >= 100 || static_cast<R32>( ourTarg->GetResist( POISON ) / 20.0 ) > static_cast<R32>( poisonStrength ))
+					else
 					{
-						// Based on poison resistance, characters can be immune to specific levels of poison
-						// >= 100, immune to everything (including Lethal)
-						// > 80, immune to Lesser -> Deadly
-						// > 60, immune to Lesser -> Strong
-						// > 40, immune to Lesser -> Normal
-						// > 20, immune to Lesser
-						doPoison = false;
-						if( mSock != nullptr )
+						// Let's include target's race resistance as well
+						auto racePoisonResist = Races->Race( ourTarg->GetRace() )->PoisonResistance();
+						if( ourTarg->GetResist( POISON ) + static_cast<UI16>( racePoisonResist ) >= 100 || static_cast<R32>(( static_cast<R32>( ourTarg->GetResist( POISON )) + racePoisonResist ) / 20.0 ) > static_cast<R32>( poisonStrength ))
 						{
-							mChar.TextMessage( mSock, 18738, TALK, false ); // * The poison seems to have no effect. *
+							// Based on poison resistance, characters can be immune to specific levels of poison
+							// >= 100, immune to everything (including Lethal)
+							// > 80, immune to Lesser -> Deadly
+							// > 60, immune to Lesser -> Strong
+							// > 40, immune to Lesser -> Normal
+							// > 20, immune to Lesser
+							doPoison = false;
+							if( mSock != nullptr )
+							{
+								mChar.TextMessage( mSock, 18738, TALK, false ); // * The poison seems to have no effect. *
+							}
 						}
 					}
 

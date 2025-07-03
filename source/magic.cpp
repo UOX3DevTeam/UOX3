@@ -1489,12 +1489,12 @@ bool splDispel( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[may
 			// Base chance of dispelling on Dispel caster's Magery skill vs summoner's magicresistance
 			UI16 casterMagery = caster->GetSkill( MAGERY );
 			UI16 targetResist = 0;
-			targetResist = target->GetSkill( MAGICRESISTANCE );
+			targetResist = static_cast<UI16>( target->GetSkill( MAGICRESISTANCE ) + static_cast<UI16>( Races->Race( target->GetRace() )->MagicResistance() ));
 
 			// If creature was summoned, use highest of creature's resist and summoner's resist
 			if( target->GetOwner() != INVALIDSERIAL )
 			{
-				targetResist = std::max( targetResist, target->GetOwnerObj()->GetSkill( MAGICRESISTANCE ));
+				targetResist = std::max( targetResist, static_cast<UI16>( target->GetOwnerObj()->GetSkill( MAGICRESISTANCE ) + static_cast<UI16>( Races->Race( target->GetRace() )->MagicResistance() )));
 			}
 
 			UI16 dispelChance = std::max( static_cast<UI16>( 950 ), ( static_cast<UI16>( std::max( 0.0, static_cast<double>( std::ceil( static_cast<double>( 500 - ( targetResist - casterMagery )) / 1.5 ))))));
@@ -2060,12 +2060,12 @@ void MassDispelStub( CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpel
 			// Base chance of dispelling on Dispel caster's Magery skill vs summoner's magicresistance
 			UI16 casterMagery = caster->GetSkill( MAGERY );
 			UI16 targetResist = 0;
-			targetResist = target->GetSkill( MAGICRESISTANCE );
+			targetResist = static_cast<UI16>( target->GetSkill( MAGICRESISTANCE ) + static_cast<UI16>( Races->Race( target->GetRace() )->MagicResistance() ));
 
 			// If creature was summoned, use highest of creature's resist and summoner's resist
 			if( target->GetOwner() != INVALIDSERIAL )
 			{
-				targetResist = std::max( targetResist, target->GetOwnerObj()->GetSkill( MAGICRESISTANCE ));
+				targetResist = std::max( targetResist, static_cast<UI16>( target->GetOwnerObj()->GetSkill( MAGICRESISTANCE ) + static_cast<UI16>( Races->Race( target->GetRace() )->MagicResistance() )));
 			}
 
 			UI16 dispelChance = static_cast<UI16>( std::max( static_cast<UI16>( 950 ),  static_cast<UI16>( std::ceil(( 500 - ( targetResist - casterMagery )) / 1.5 ))));
@@ -3403,8 +3403,10 @@ bool CMagic::CheckResist( CChar *attacker, CChar *defender, SI32 circle )
 	{
 		// Check what is higher between user's normal resistchance and a fallback value
 		// To ensure user always has a chance of resisting, however small (except at resist-skill 0 )
-		SI16 defaultChance = defender->GetSkill( MAGICRESISTANCE ) / 5;
-		SI16 resistChance = defender->GetSkill( MAGICRESISTANCE ) - ((( attacker->GetSkill( MAGERY ) - 20 ) / 5 ) + ( circle * 5 ));
+		auto defenderMagicResist = defender->GetSkill( MAGICRESISTANCE );
+		auto raceMagicResist = Races->Race( defender->GetRace() )->MagicResistance();
+		SI16 defaultChance = ( defenderMagicResist + static_cast<UI16>( raceMagicResist * 10 )) / 5;
+		SI16 resistChance = ( defenderMagicResist + static_cast<UI16>( raceMagicResist * 10 )) - ((( attacker->GetSkill( MAGERY ) - 20 ) / 5 ) + ( circle * 5 ));
 		if( defaultChance > resistChance )
 		{
 			resistChance = defaultChance;
@@ -3450,8 +3452,10 @@ bool CMagic::CheckResist( SI16 resistDifficulty, CChar *defender, SI32 circle )
 	CSocket *s = nullptr;
 	
 	// Calculate chance of resisting the magic effect based on defender's magic resistance vs the resistDifficulty
-	SI16 defaultChance = defender->GetSkill( MAGICRESISTANCE ) / 5;
-	SI16 resistChance = defender->GetSkill( MAGICRESISTANCE ) - ((( resistDifficulty - 20 ) / 5 ) + ( circle * 5 ));
+	auto defenderMagicResist = defender->GetSkill( MAGICRESISTANCE );
+	auto raceMagicResist = Races->Race( defender->GetRace() )->MagicResistance();
+	SI16 defaultChance = ( defenderMagicResist + static_cast<UI16>( raceMagicResist * 10 )) / 5;
+	SI16 resistChance = ( defenderMagicResist + static_cast<UI16>( raceMagicResist * 10 )) - ((( resistDifficulty - 20 ) / 5 ) + ( circle * 5 ));
 
 	if( defaultChance > resistChance )
 	{
@@ -3494,14 +3498,16 @@ SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 spellDamage, bool sp
 
 	// Add damage bonus/penalty based on attacker's EVALINT vs defender's MAGICRESISTANCE
 	UI16 casterEval = caster->GetSkill( EVALUATINGINTEL ) / 10;
-	UI16 targetResist = target->GetSkill( MAGICRESISTANCE ) / 10;
-	if( targetResist > casterEval )
+
+	auto targetMagicResist = static_cast<UI16>( target->GetSkill( MAGICRESISTANCE ) / 10 );
+	auto raceMagicResist = static_cast<UI16>( Races->Race( target->GetRace() )->MagicResistance() );
+	if( targetMagicResist + raceMagicResist > casterEval )
 	{
-		spellDamage *= ( static_cast<SI16>((( casterEval - targetResist ) / 200.0f )) + 1 );
+		spellDamage *= ( static_cast<SI16>((( casterEval - ( targetMagicResist + raceMagicResist )) / 200.0f )) + 1 );
 	}
 	else
 	{
-		spellDamage *= ( static_cast<SI16>((( casterEval - targetResist ) / 500.0f )) + 1 );
+		spellDamage *= ( static_cast<SI16>((( casterEval - ( targetMagicResist + raceMagicResist )) / 500.0f )) + 1 );
 	}
 
 	// Randomize some more to get broader min/max damage values
