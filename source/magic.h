@@ -110,9 +110,9 @@ private:
 	SI16		mana;
 	SI16		stamina;
 	SI16		health;
-	R32			delay;			// Casting time of spell
-	R32			damageDelay;	// Minimum delay between targeting of a damage spell and the application of damage
-	R32			recoveryDelay;	// Minimum delay between the end of one spellcast and the start of another
+	R64			delay;			// Casting time of spell
+	R64			damageDelay;	// Minimum delay between targeting of a damage spell and the application of damage
+	R64			recoveryDelay;	// Minimum delay between the end of one spellcast and the start of another
 	UI16		action;
 	Reag_st		reags;
 	std::string mantra;
@@ -140,15 +140,15 @@ public:
 	{
 		return action;
 	}
-	R32 Delay( void ) const
+	R64 Delay( void ) const
 	{
 		return delay;
 	}
-	R32 DamageDelay( void ) const
+	R64 DamageDelay( void ) const
 	{
 		return damageDelay;
 	}
-	R32 RecoveryDelay( void ) const
+	R64 RecoveryDelay( void ) const
 	{
 		return recoveryDelay;
 	}
@@ -169,15 +169,15 @@ public:
 	{
 		action = newVal;
 	}
-	void Delay( R32 newVal )
+	void Delay( R64 newVal )
 	{
 		delay = newVal;
 	}
-	void DamageDelay( R32 newVal )
+	void DamageDelay( R64 newVal )
 	{
 		damageDelay = newVal;
 	}
-	void RecoveryDelay( R32 newVal )
+	void RecoveryDelay( R64 newVal )
 	{
 		recoveryDelay = newVal;
 	}

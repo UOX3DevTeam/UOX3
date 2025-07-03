@@ -50,6 +50,7 @@ decay=1
 good=5
 maxitems=125
 dyeable=1
+sectionid=0x09b2
 }
 
 [0x0e75]
@@ -66,6 +67,7 @@ decay=1
 good=5
 maxitems=125
 dyeable=1
+sectionid=0x0e75
 }
 
 [backpack]

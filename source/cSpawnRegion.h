@@ -32,6 +32,7 @@ private:
 	SI08		prefZ;				// Maximum Z influence static and dynamic items can have on spawning.
 	SI08		defZ;				// Definite Z to attempt to spawn object at
 
+	bool		forceSpawn;			// Force spawning character, don't validate location
 	bool		onlyOutside;		// Should Chars, Items only spawn outside of buildings
 	bool		isSpawner;			// Whether the items spawned are spawner objects or not
 	UI16		call;				// # of times that an NPC or Item is spawned from a list
@@ -40,8 +41,8 @@ private:
 
 	GenericList<CChar *>	spawnedChars;
 	GenericList<CItem *>	spawnedItems;
-	std::map<UI32, SI08>	validLandPosCheck;
-	std::map<UI32, SI08>	validWaterPosCheck;
+	std::unordered_map<UI32, SI08>	validLandPosCheck;
+	std::unordered_map<UI32, SI08>	validWaterPosCheck;
 	std::vector<Point3_st>	validLandPos;
 	std::vector<Point3_st>	validWaterPos;
 
@@ -60,7 +61,7 @@ public:
 	CSpawnRegion( UI16 spawnregion );
 	~CSpawnRegion();
 
-	void		Load( CScriptSection *toScan );
+	bool		Load( CScriptSection *toScan, bool isParentSpawnRegion = false );
 	void		DoRegionSpawn( UI32& itemsSpawned, UI32& npcsSpawned );
 
 	const std::string	GetName( void ) const;
@@ -83,6 +84,7 @@ public:
 	UI16		GetCall( void ) const;
 	bool		GetOnlyOutside( void ) const;
 	bool		IsSpawner( void ) const;
+	bool		GetForceSpawn( void ) const;
 	auto		GetNPC( void ) const -> std::vector<std::string>;
 	auto		GetItem( void ) const -> std::vector<std::string>;
 
@@ -104,6 +106,7 @@ public:
 	void		SetCall( UI16 newVal );
 	void		SetOnlyOutside( bool newVal );
 	void		IsSpawner( bool newVal );
+	void		SetForceSpawn( bool newVal );
 	void		SetNPC( const std::string &newVal );
 	void		SetNPCList( std::string newVal );
 	void		SetItem( const std::string &newVal );
@@ -125,7 +128,7 @@ private:
 	auto		RegionSpawnChar() -> CChar *;
 	auto		RegionSpawnItem() -> CItem *;
 
-	bool		FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z );
+	bool		FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, std::string idToSpawn );
 	bool		FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCreature, bool &amphiCreature );
 
 	void		LoadNPCList( const std::string &npcList );

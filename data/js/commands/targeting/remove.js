@@ -2,10 +2,10 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "remove", 2, true );
-	RegisterCommand( "removemulti", 3, true );
-	RegisterCommand( "delete", 2, true );
-	RegisterCommand( "deletechar", 3, true );
+	RegisterCommand( "remove", 8, true );
+	RegisterCommand( "removemulti", 10, true );
+	RegisterCommand( "delete", 8, true );
+	RegisterCommand( "deletechar", 10, true );
 }
 
 function command_REMOVE( socket, cmdString )

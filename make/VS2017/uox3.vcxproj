@@ -103,7 +103,7 @@
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>..\..\spidermonkey\make\VS2017\jscript\Release\;..\..\zlib\make\VS2017\Release;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\spidermonkey;..\..\zlib;$(SourcePath)</SourcePath>
-    <IncludePath>..\..\spidermonkey;..\..\zlib;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\spidermonkey;..\..\zlib;..\..\utf8cpp;$(IncludePath)</IncludePath>
     <TargetName>UOX3</TargetName>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
@@ -112,7 +112,7 @@
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>..\..\zlib\make\VS2017\x64\Release;..\..\spidermonkey\make\VS2017\jscript\x64\Release;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\zlib;..\..\spidermonkey;$(SourcePath)</SourcePath>
-    <IncludePath>..\..\zlib;..\..\spidermonkey;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\zlib;..\..\spidermonkey;..\..\utf8cpp;$(IncludePath)</IncludePath>
     <TargetName>UOX3</TargetName>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
@@ -133,14 +133,14 @@
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>..\..\spidermonkey\make\VS2017\jscript\Debug;..\..\zlib\make\VS2017\Debug;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\spidermonkey;..\..\zlib;$(SourcePath)</SourcePath>
-    <IncludePath>..\..\spidermonkey;..\..\zlib;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\spidermonkey;..\..\zlib;..\..\utf8cpp;$(IncludePath)</IncludePath>
     <TargetName>UOX3_debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>..\..\spidermonkey\make\VS2017\jscript\x64\Debug;..\..\zlib\make\VS2017\x64\Debug;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\spidermonkey;..\..\zlib;$(SourcePath)</SourcePath>
-    <IncludePath>..\..\spidermonkey;..\..\zlib;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\spidermonkey;..\..\zlib;..\..\utf8cpp;$(IncludePath)</IncludePath>
     <TargetName>UOX3_debug</TargetName>
     <OutDir>.\Debug\x64\</OutDir>
     <IntDir>.\Debug\x64\</IntDir>

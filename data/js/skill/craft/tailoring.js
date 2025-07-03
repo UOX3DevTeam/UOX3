@@ -14,7 +14,7 @@ const craftGumpID = 4027;
 
 const myPage = [
 	// Page 1 - Hats
-	[11415, 11416, 11417, 11418, 11419, 11420, 11421, 11422, 11423, 11424, 11425],
+	[11415, 11416, 11417, 11418, 11419, 11420, 11421, 11422, 11423, 11424, 11425, 11470],
 
 	// Page 2 - Shirts and Pants
 	[11426, 11427, 11428, 11429, 11430, 11431, 11432, 11433, 11434, 11435, 11436, 11437, 11438, 11439],
@@ -202,6 +202,8 @@ function onGumpPress( pSock, pButton, gumpData )
 			makeID = 140; timerID = 1; break;
 		case 110: // jester hat
 			makeID = 141; timerID = 1; break;
+		case 111: // tall straw hat
+			makeID = 135; timerID = 1; break;
 		case 200: // doublet
 			makeID = 142; timerID = 2; break;
 		case 201: // shirt
@@ -312,6 +314,8 @@ function onGumpPress( pSock, pButton, gumpData )
 			itemDetailsID = 140; break;
 		case 2110: // jester hat
 			itemDetailsID = 141; break;
+		case 2111: // tall straw hat
+			itemDetailsID = 186; break;
 		case 2200: // doublet
 			itemDetailsID = 142; break;
 		case 2201: // shirt

@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "killall", 2, true );
+	RegisterCommand( "killall", 8, true );
 }
 
 function command_KILLALL( socket, cmdString )

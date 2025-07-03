@@ -1,8 +1,8 @@
 // These commands show item or character properties for targeted objects
 function CommandRegistration()
 {
-	RegisterCommand( "istats", 1, true );
-	RegisterCommand( "cstats", 1, true );
+	RegisterCommand( "istats", 4, true );
+	RegisterCommand( "cstats", 4, true );
 }
 
 function command_ISTATS( socket, cmdString )

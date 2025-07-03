@@ -3,7 +3,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "resend", 1, true );
+	RegisterCommand( "resend", 4, true );
 }
 
 function command_RESEND( socket, cmdString )

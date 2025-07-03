@@ -106,13 +106,14 @@ private:
 		UI16				tamedThirstRate;  // The rate at which thirst decreases when char is tamed
 		UI08				hungerWildChance; // The chance that the char goes wild when hungry
 		UI08				thirstWildChance; // The chance that the char goes wild when thirsty
-		R32					walkingSpeed;
-		R32					runningSpeed;
-		R32					fleeingSpeed;
+		R64					walkingSpeed;
+		R64					runningSpeed;
+		R64					fleeingSpeed;
 		SI08				pathFail;
 		SI08				pathResult;
 		UI16				pathTargX;
 		UI16				pathTargY;
+		TIMERVAL			lastPathCalc;	// Time since last pathfinding calculation
 
 		std::deque<UI08>	pathToFollow;	// let's use a queue of directions to follow
 
@@ -126,9 +127,9 @@ private:
 
 		std::string			foodList;
 
-		R32					mountedWalkingSpeed;
-		R32					mountedRunningSpeed;
-		R32					mountedFleeingSpeed;
+		R64					mountedWalkingSpeed;
+		R64					mountedRunningSpeed;
+		R64					mountedFleeingSpeed;
 	};
 
 	struct PlayerValues_st
@@ -140,7 +141,7 @@ private:
 		SERIAL		playerCallNum;  // Players call number in GM or Counsellor requestQueue
 		SERIAL		trackingTarget; // Tracking target ID
 		UI08		squelched;      // Squelching
-		UI08		commandLevel;   // 0 = player, 1 = counselor, 2 = GM
+		UI08		commandLevel;   // 0 = Player, 4 = Counselor, 6 = Seer, 8 = GM, 10 = Admin
 		UI08		postType;
 		UI16		hairStyle;
 		UI16		beardStyle;
@@ -168,8 +169,8 @@ private:
 		SERIAL		townVote;
 		SI08		townPriv;  //0=non resident (Other privledges added as more functionality added)
 		UI08		controlSlotsUsed; // The total number of control slots currently taken up by followers/pets
-		TIMERVAL		createdOn;	// Timestamp for when player character was created
-		TIMERVAL		npcGuildJoined;	// Timestamp for when player character joined NPC guild (0=never joined)
+		TIMERVAL	createdOn;	// Timestamp for when player character was created
+		TIMERVAL	npcGuildJoined;	// Timestamp for when player character joined NPC guild (0=never joined)
 		UI32		playTime;	// Character's full playtime
 
 		UI08		atrophy[INTELLECT+1];
@@ -226,7 +227,7 @@ protected:
   	RACEID  	raceGate;		// Race gate that has been used
   	UI08    	step;			// 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
 
-	std::bitset<16>		priv;
+	std::bitset<17>		priv;
 
 	std::string	guildTitle;		// Title Guildmaster granted player						(DasRaetsel)
 
@@ -237,8 +238,8 @@ protected:
 
 	UI08		PoisonStrength;
 	BodyType	bodyType;
-	UI32		lastMoveTime;		// Timestamp for when character moved last
-	UI32		lastCombatTime;   // Timestamp for when character combat last
+	TIMERVAL	lastMoveTime;		// Timestamp for when character moved last
+	TIMERVAL	lastCombatTime;   // Timestamp for when character combat last
 	UI16		npcGuild;		// ID of NPC guild character is in (0=no NPC guild)
 
 	SKILLVAL	baseskill[ALLSKILLS]; 	// Base skills without stat modifiers
@@ -360,6 +361,10 @@ public:
 
 	void		SetStabled( bool newValue );
 	bool		GetStabled( void ) const;
+
+	void		SetCombatLos( bool newValue );
+	bool		GetCombatLos( void ) const;
+
 	void		SetFlying( bool newValue );
 	bool		IsFlying( void ) const;
 
@@ -432,6 +437,7 @@ public:
 	void		SetCasting( bool newValue );
 	void		SetJSCasting( bool newValue );
 	void		SetInBuilding( bool newValue );
+	void		IsClimbing( bool newValue );
 
 	void		SetTownVote( UI32 newValue );
 	void		SetGuildFealty( UI32 newValue );
@@ -494,7 +500,7 @@ public:
 	SI08		GetSpellCast( void ) const;
 	void		SetSpellCast( SI08 newValue );
 
-	UI16		GetPriv( void ) const;
+	UI32		GetPriv( void ) const;
 	SI08		GetTownPriv( void ) const;
 	bool		IsGM( void ) const;
 	bool		CanBroadcast( void ) const;
@@ -512,6 +518,7 @@ public:
 	bool		IsTempReflected( void ) const;
 	bool		IsPermReflected( void ) const;
 	bool		NoNeedReags( void ) const;
+	bool		HideFameKarmaTitle( void ) const;
 
 	void		SetGM( bool newValue );
 	void		SetBroadcast( bool newValue );
@@ -529,8 +536,9 @@ public:
 	void		SetTempReflected( bool newValue );
 	void		SetPermReflected( bool newValue );
 	void		SetNoNeedReags( bool newValue );
+	void		HideFameKarmaTitle( bool newValue );
 
-	void		SetPriv( UI16 newValue );
+	void		SetPriv( UI32 newValue );
 	void		SetTownpriv( SI08 newValue );
 
 	UI16		GetBaseSkill( UI08 skillToGet ) const;
@@ -566,7 +574,7 @@ public:
 	void			SendWornItems( CSocket *s );
 	void			Teleport( void );
 	void			ExposeToView( void );
-	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) override;
+	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true, bool triggerInRangeEvent = false ) override;
 	virtual void	SendToSocket( CSocket *s, bool drawGamePlayer = false ) override;
 
 	CItem *			GetItemAtLayer( ItemLayers Layer );
@@ -654,9 +662,11 @@ public:
 	void			ToggleCombat( void );
 
 	virtual void	SetPoisoned( UI08 newValue ) override;
+	virtual void	SetPoisonedBy( SERIAL newValue ) override;
 
 	bool			InDungeon( void );
 	bool			InBuilding( void );
+	bool			IsClimbing( void ) const;
 
 	void			TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool spamTimer );
 	void			TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spamTimer, ... );
@@ -732,6 +742,9 @@ public:
 	SI08		GetPathResult( void ) const;
 	void		SetPathResult( SI08 newValue );
 
+	UI32		GetLastPathCalc( void ) const;
+	void		SetLastPathCalc( UI32 newValue );
+
 	UI16		GetPathTargX( void ) const;
 	void		SetPathTargX( UI16 newValue );
 	UI16		GetPathTargY( void ) const;
@@ -786,23 +799,23 @@ public:
 	cNPC_FLAG	GetNPCFlag( void ) const;
 	void		SetNPCFlag( cNPC_FLAG flagType );
 
-	R32			GetWalkingSpeed( void ) const;
-	void		SetWalkingSpeed( R32 newValue );
+	R64			GetWalkingSpeed( void ) const;
+	void		SetWalkingSpeed( R64 newValue );
 
-	R32			GetRunningSpeed( void ) const;
-	void		SetRunningSpeed( R32 newValue );
+	R64			GetRunningSpeed( void ) const;
+	void		SetRunningSpeed( R64 newValue );
 
-	R32			GetFleeingSpeed( void ) const;
-	void		SetFleeingSpeed( R32 newValue );
+	R64			GetFleeingSpeed( void ) const;
+	void		SetFleeingSpeed( R64 newValue );
 
-	R32			GetMountedWalkingSpeed( void ) const;
-	void		SetMountedWalkingSpeed( R32 newValue );
+	R64			GetMountedWalkingSpeed( void ) const;
+	void		SetMountedWalkingSpeed( R64 newValue );
 
-	R32			GetMountedRunningSpeed( void ) const;
-	void		SetMountedRunningSpeed( R32 newValue );
+	R64			GetMountedRunningSpeed( void ) const;
+	void		SetMountedRunningSpeed( R64 newValue );
 
-	R32			GetMountedFleeingSpeed( void ) const;
-	void		SetMountedFleeingSpeed( R32 newValue );
+	R64			GetMountedFleeingSpeed( void ) const;
+	void		SetMountedFleeingSpeed( R64 newValue );
 
 	// Player Characters
 public:
@@ -840,15 +853,15 @@ public:
 	auto		SetPlayTime( UI32 newValue ) -> void;
 
 	void		SetCreatedOn( TIMERVAL newValue );
-	TIMERVAL		GetCreatedOn( void ) const;
+	TIMERVAL	GetCreatedOn( void ) const;
 
 	void		SetNPCGuildJoined( TIMERVAL newValue );
-	TIMERVAL		GetNPCGuildJoined( void ) const;
+	TIMERVAL	GetNPCGuildJoined( void ) const;
 
-	TIMERVAL		LastMoveTime( void ) const;
+	TIMERVAL	LastMoveTime( void ) const;
 	void		LastMoveTime( TIMERVAL newValue );
 
-	TIMERVAL		GetLastCombatTime() const;
+	TIMERVAL	GetLastCombatTime() const;
 	void		SetLastCombatTime(TIMERVAL newValue);
 
 

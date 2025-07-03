@@ -57,7 +57,7 @@
       <PrecompiledHeaderFile />
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions> /J</AdditionalOptions>
-      <AdditionalIncludeDirectories>..\..\source;..\..\zlib;..\..\spidermonkey</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\source;..\..\zlib;..\..\spidermonkey;..\..\utf8cpp</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -80,7 +80,7 @@
       <PrecompiledHeaderFile />
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions> /J</AdditionalOptions>
-      <AdditionalIncludeDirectories>..\..\source;..\..\zlib;..\..\spidermonkey</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\source;..\..\zlib;..\..\spidermonkey;..\..\utf8cpp</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>

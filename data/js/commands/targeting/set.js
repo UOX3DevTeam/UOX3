@@ -2,8 +2,8 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "set", 2, true );
-	RegisterCommand( "setpoisoned", 2, true );
+	RegisterCommand( "set", 8, true );
+	RegisterCommand( "setpoisoned", 8, true );
 }
 
 function command_SET( socket, cmdString )
@@ -168,6 +168,10 @@ function onCallback0( socket, ourObj )
 		break;
 	case "POISON":
 		ourObj.poison = nVal;
+		okMsg( socket );
+		break;
+	case "POISONEDBY":
+		ourObj.poisonedBy = nVal;
 		okMsg( socket );
 		break;
 	case "X":
@@ -423,6 +427,10 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		break;
 	case "NEWBIE":
 		ourItem.isNewbie = ( nVal == 1 );
+		okMsg( socket );
+		break;
+	case "POISONCHARGES":
+		ourItem.poisonCharges = nVal;
 		okMsg( socket );
 		break;
 	case "DIVINELOCK":
@@ -722,6 +730,10 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		break;
 	case "NPCAI":
 		ourChar.aitype = nVal;
+		okMsg( socket );
+		break;
+	case "POISONSTRENGTH":
+		ourChar.poisonStrength = Math.max( 0, Math.min( 4, nVal ));
 		okMsg( socket );
 		break;
 	case "NPCGUILD":
