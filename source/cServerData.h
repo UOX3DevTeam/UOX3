@@ -212,7 +212,7 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<111>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<114>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
@@ -452,6 +452,10 @@ private:
 	// Houses
 	UI16		maxHousesOwnable;				//	Max amount of houses that a player can own
 	UI16		maxHousesCoOwnable;				//	Max amount of houses that a player can co-own
+	UI32		numMinsDecayStageLikeNew;		//	Time (in mins)
+	UI32		numHrsDecayStageLow;			//	Time (in HRS)
+	UI32		numHrsDecayStageHi;				//	Time (in HRS)
+	UI32		numHrsDecayStageDanger;			//	Time (in HRS)
 
 	// Townstone stuff
 	UI32		numSecsPollOpen;				//	Time (in seconds) for which a town voting poll is open
@@ -912,6 +916,27 @@ public:
 
 	auto		KeylessGuestAccess( bool value ) -> void;
 	auto		KeylessGuestAccess() const -> bool;
+
+	auto		HouseDecay( bool value ) -> void;
+	auto		HouseDecay() const -> bool;
+
+	auto		HouseItemsDeleteOnDecay( bool value ) -> void;
+	auto		HouseItemsDeleteOnDecay() const -> bool;
+
+	auto		HouseGrandFathered( bool value ) -> void;
+	auto		HouseGrandFathered() const -> bool;
+
+	auto		DecayStageLikeNewMins( UI32 value ) -> void;
+	UI32		DecayStageLikeNewMins() const;
+
+	auto		DecayStageLowHrs( UI32 value ) -> void;
+	UI32		DecayStageLowHrs() const;
+
+	auto		DecayStageHiHrs( UI32 value ) -> void;
+	UI32		DecayStageHiHrs() const;
+
+	auto		DecayStageDangerHrs( UI32 value ) -> void;
+	UI32		DecayStageDangerHrs() const;
 
 	auto		MaxHousesOwnable( UI16 value ) -> void;
 	auto		MaxHousesOwnable() const -> UI16;

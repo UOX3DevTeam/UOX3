@@ -5382,6 +5382,27 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 381:	// POISONCORROSIONSYSTEM
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PoisonCorrosionSystem() );
 				break;
+			case 382:	// HOUSEDECAY
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseDecay() );
+				break;
+			case 383:	// HOUSEITEMSDELETEONDECAY
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseItemsDeleteOnDecay() );
+				break;
+			case 384:	// HOUSEGRANDFATHERED
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseGrandFathered() );
+				break;
+			case 385:	// DECAYSTAGELIKENEWMINS
+				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageLikeNewMins() ));
+				break;
+			case 386:	// DECAYSTAGELOWHRS
+				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageLowHrs() ));
+				break;
+			case 387:	// DECAYSTAGEHIHRS
+				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageHiHrs() ));
+				break;
+			case 388:	// DECAYSTAGEDANAGERHRS
+				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageDangerHrs() ));
+				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;
