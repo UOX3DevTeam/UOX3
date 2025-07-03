@@ -23,6 +23,7 @@ const keylessCoOwnerAccess = GetServerSetting( "KeylessCoOwnerAccess" );
 
 const houseDecayEnabled = true;//Enables House Decay
 const houseItemsDeleteEnabled = true;//Enables House Items Deletion
+const allowGrandfathered = true; // Allows houses to be marked as Grandfathered, preventing decay
 
 function onHouseCommand( pSocket, iMulti, cmdID )
 {
@@ -74,7 +75,7 @@ function onHouseCommand( pSocket, iMulti, cmdID )
 function onEntrance( iMulti, charEntering, objType )
 {
 	//Start Decay timer if decay is enabled or init is not true.
-	if( !iMulti.GetTag( "init" ) || DecayEnabled )
+	if( !iMulti.GetTag( "init" ))
 	{
 		iMulti.StartTimer( 1800000, 1, true );//approx. 30 minutes
 		iMulti.SetTag( "decayStage", 1 );
@@ -212,6 +213,13 @@ function onTimer( iMulti, timerID )
 	if( !houseDecayEnabled )
 	{
 		iMulti.KillTimers(); // Cancel decay loop if disabled
+		return;
+	}
+
+	//Skip decay if this house is marked Grandfathered
+	if( allowGrandfathered && iMulti.GetTag( "Grandfathered" ))
+	{
+		iMulti.KillTimers();
 		return;
 	}
 
