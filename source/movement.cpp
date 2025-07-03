@@ -112,7 +112,11 @@ auto HandleTeleporters( CChar *s ) -> void
 	if( !ValidateObject( s ))
 		return;
 
-	UI08 charWorld = s->WorldNumber();
+	auto coreShardEra = cwmWorldState->ServerData()->ExpansionCoreShardEra();
+	SI08 charWorld = static_cast<SI08>( s->WorldNumber() );
+	UI16 charX = s->GetX();
+	UI16 charY = s->GetY();
+	auto charLocation = s->GetLocation();
 	CTeleLocationEntry *getTeleLoc = nullptr;
 	bool isOnTeleporter;
 	for( size_t i = 0; i < cwmWorldState->teleLocs.size(); ++i )
@@ -121,61 +125,67 @@ auto HandleTeleporters( CChar *s ) -> void
 		getTeleLoc		= &cwmWorldState->teleLocs[i];
 		if( getTeleLoc )
 		{
-			if(( getTeleLoc->SourceWorld() == 0xFF && charWorld <= 1 ) || getTeleLoc->SourceWorld() == charWorld )
+			if(( getTeleLoc->SourceWorld() == -1 && charWorld <= 1 ) || getTeleLoc->SourceWorld() == charWorld )
 			{
-				// Check if character is on the teleporter location
-				if( getTeleLoc->SourceLocation().z != ILLEGAL_Z )
+				// Also perform era-specific checks on the teleport locations, if those have been defined
+				auto minEra = getTeleLoc->MinEra();
+				auto maxEra = getTeleLoc->MaxEra();
+				if(( minEra == -1 || coreShardEra >= minEra ) && ( maxEra == -1 || coreShardEra <= maxEra ))
 				{
-					isOnTeleporter = ( getTeleLoc->SourceLocation() == s->GetLocation() );
-				}
-				else
-				{
-					isOnTeleporter = ( getTeleLoc->SourceLocation().x == s->GetX() && getTeleLoc->SourceLocation().y == s->GetY() );
-				}
-
-				if( isOnTeleporter )
-				{
-					// If they are, whisk them away to the target destination
-					UI08 targetWorld = 0;
-					if( getTeleLoc->SourceWorld() == 0xFF )
+					// Check if character is on the teleporter location
+					if( getTeleLoc->SourceLocation().z != ILLEGAL_Z )
 					{
-						targetWorld = s->WorldNumber();
+						isOnTeleporter = ( getTeleLoc->SourceLocation() == charLocation );
 					}
 					else
 					{
-						targetWorld = getTeleLoc->TargetWorld();
+						isOnTeleporter = ( getTeleLoc->SourceLocation().x == charX && getTeleLoc->SourceLocation().y == charY );
 					}
-					
-					s->SetLocation( static_cast<SI16>( getTeleLoc->TargetLocation().x ), static_cast<SI16>( getTeleLoc->TargetLocation().y ), static_cast<UI08>( getTeleLoc->TargetLocation().z ), targetWorld, s->GetInstanceId() );
-					if( !s->IsNpc() )
+
+					if( isOnTeleporter )
 					{
-						if( targetWorld != charWorld )
+						// If they are, whisk them away to the target destination
+						SI08 targetWorld = 0;
+						if( getTeleLoc->SourceWorld() == -1 )
 						{
-							SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
+							targetWorld = charWorld;
 						}
-						
-						// Teleport player's followers as well
-						auto myFollowers = s->GetFollowerList();
-						for( const auto &myFollower : myFollowers->collection() )
+						else
 						{
-							if( ValidateObject( myFollower ))
+							targetWorld = getTeleLoc->TargetWorld();
+						}
+
+						s->SetLocation( static_cast<SI16>( getTeleLoc->TargetLocation().x ), static_cast<SI16>( getTeleLoc->TargetLocation().y ), static_cast<UI08>( getTeleLoc->TargetLocation().z ), static_cast<UI08>( targetWorld ), s->GetInstanceId() );
+						if( !s->IsNpc() )
+						{
+							if( targetWorld != -1 && targetWorld != charWorld )
 							{
-								if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == s )
+								SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
+							}
+
+							// Teleport player's followers as well
+							auto myFollowers = s->GetFollowerList();
+							for( const auto &myFollower : myFollowers->collection() )
+							{
+								if( ValidateObject( myFollower ))
 								{
-									// Teleport followers along with player if they're following the player and within range 
-									if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( s, myFollower, DIST_SAMESCREEN ))
+									if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == s )
 									{
-										myFollower->SetLocation( s );
+										// Teleport followers along with player if they're following the player and within range 
+										if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( s, myFollower, DIST_SAMESCREEN ))
+										{
+											myFollower->SetLocation( s );
+										}
 									}
 								}
 							}
 						}
+						break;
 					}
-					break;
-				}
-				else if( s->GetX() < getTeleLoc->SourceLocation().x )
-				{
-					break;
+					else if( charX < getTeleLoc->SourceLocation().x )
+					{
+						break;
+					}
 				}
 			}
 		}
@@ -839,8 +849,7 @@ auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblo
 						{
 							Console.Error( "Walking() - Bad length in multi file. Avoiding stall" );
 							auto map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
-
-							if( map1.CheckFlag( TF_WET )) // is it water?
+							if( map1.terrainInfo != nullptr && map1.CheckFlag( TF_WET )) // is it water?
 							{
 								tItem->SetId( 0x4001 );
 							}
@@ -858,6 +867,7 @@ auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblo
 								{
 									auto tile = Tile_st( TileType_t::dyn );
 									tile.artInfo = &Map->SeekTile( multi.tileId );
+									tile.tileId = multi.tileId;
 									tile.altitude = multi.altitude + tItem->GetZ();
 									xyblock.push_back( tile );
 									++xycount;
@@ -1097,7 +1107,7 @@ auto CMovement::OutputShoveMessage( CChar *c, CSocket *mSock ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Trigger InRange JS event
 //o------------------------------------------------------------------------------------------------o
-void DoJSInRange( CBaseObject *mObj, CBaseObject *objInRange )
+void CMovement::DoJSInRange( CBaseObject *mObj, CBaseObject *objInRange )
 {
 	std::vector<UI16> scriptTriggers = mObj->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
@@ -1115,7 +1125,7 @@ void DoJSInRange( CBaseObject *mObj, CBaseObject *objInRange )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Trigger OutOfRange JS event
 //o------------------------------------------------------------------------------------------------o
-void DoJSOutOfRange( CBaseObject *mObj, CBaseObject *objOutOfRange )
+void CMovement::DoJSOutOfRange( CBaseObject *mObj, CBaseObject *objOutOfRange )
 {
 	std::vector<UI16> scriptTriggers = mObj->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
@@ -1156,8 +1166,8 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 			{
 				tItem->SendToSocket( mSock );
 			}
-			DoJSInRange( mChar, tItem );
-			DoJSInRange( tItem, mChar );
+			Movement->DoJSInRange( mChar, tItem );
+			Movement->DoJSInRange( tItem, mChar );
 			return true;
 		}
 		else if( dOld == ( visibleRange + 1 ) && dNew > ( visibleRange + 1 )) // Just went out of range
@@ -1175,8 +1185,8 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 					mSock->GetContsOpenedList()->Remove( tItem );
 				}
 			}
-			DoJSOutOfRange( mChar, tItem );
-			DoJSOutOfRange( tItem, mChar );
+			Movement->DoJSOutOfRange( mChar, tItem );
+			Movement->DoJSOutOfRange( tItem, mChar );
 			return true;
 		}
 	}
@@ -1196,8 +1206,8 @@ bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 		{
 			tChar->SendToSocket( mSock );
 		}
-		DoJSInRange( mChar, tChar );
-		DoJSInRange( tChar, mChar );
+		Movement->DoJSInRange( mChar, tChar );
+		Movement->DoJSInRange( tChar, mChar );
 		return true;
 	}
 	if( dOld == ( visibleRange + 1 ) && dNew > ( visibleRange + 1 )) // Just went out of range
@@ -1206,8 +1216,8 @@ bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 		{
 			tChar->RemoveFromSight( mSock );
 		}
-		DoJSOutOfRange( mChar, tChar );
-		DoJSOutOfRange( tChar, mChar );
+		Movement->DoJSOutOfRange( mChar, tChar );
+		Movement->DoJSOutOfRange( tChar, mChar );
 		return true;
 	}
 	return false;
@@ -1378,7 +1388,7 @@ void CMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				if( ValidateObject( tempChar ) && tempChar->GetInstanceId() == instanceId )
 				{
 					// Character Send Stuff
-					if( tempChar->IsNpc() || IsOnline(( *tempChar )) || ( isGM && cwmWorldState->ServerData()->ShowOfflinePCs() ))
+					if( tempChar->IsNpc() || IsOnline(( *tempChar )) || (( isGM || mChar->GetAccount().wAccountIndex == 0 ) && cwmWorldState->ServerData()->ShowOfflinePCs() ))
 					{
 						dxNew = static_cast<UI16>( abs( tempChar->GetX() - newx ));
 						dyNew = static_cast<UI16>( abs( tempChar->GetY() - newy ));
@@ -1418,7 +1428,7 @@ void CMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 
 			// Determine if character is moving within the moveDetectRange limit
 			inMoveDetectRange = ( std::abs( tItem->GetX() - newx ) <= moveDetectRange && std::abs( tItem->GetY() - newy ) <= moveDetectRange 
-				&& std::abs( mChar->GetZ() - tItem->GetZ() ) <= 5 );
+				&& std::abs( mChar->GetZ() - tItem->GetZ() ) <= 10 );
 
 			if( EffRange || inMoveDetectRange )
 			{
@@ -2013,21 +2023,35 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 					oldTargY = mChar.GetOldTargLocY();
 
 					// Calculate direction from NPC towards player
-					const UI08 directionToPlayer = Movement->Direction(mChar.GetX(), mChar.GetY(), kChar->GetX(), kChar->GetY());
+					const UI08 dirToTarget = Movement->Direction( mChar.GetX(), mChar.GetY(), kChar->GetX(), kChar->GetY() );
 
 					// Get NPC's current direction
 					const UI08 npcDir = mChar.GetDir();
 
 					// Determine if NPC is already heading generally toward player (direct or adjacent directions)
-					const bool isHeadingTowardsPlayer = (npcDir == directionToPlayer ||
-						npcDir == (directionToPlayer + 1) % 8 ||
-						npcDir == (directionToPlayer + 7) % 8);
+					const bool isHeadingTowardsPlayer = ( npcDir == dirToTarget ||
+						npcDir == ( dirToTarget + 1 ) % 8 ||
+						npcDir == ( dirToTarget + 7 ) % 8 );
 
-					// Only recalculate path if out of steps to follow, or if player's position has updated and NPC is not
-					// already heading in that general direction
-					if( !mChar.StillGotDirs() || 
-						(( oldTargX != kChar->GetX() || oldTargY != kChar->GetY() ) && RandomNum( 0, 10 ) >= 6 &&
-							!isHeadingTowardsPlayer ))
+					// See (approximately) how far the target has moved from oldTargX/oldTargY
+					const R64 targMoveDist = GetApproxDist( Point3_st( static_cast<UI16>( oldTargX ), static_cast<UI16>( oldTargY ), 0 ), 
+													Point3_st( static_cast<UI16>( kChar->GetX() ), static_cast<UI16>( kChar->GetY() ), 0 ));
+
+					const R64 targMoveWeight = 2.5; // For each tile the target has moved from oldTargX/oldTargY, increase weight by this
+					const R64 wrongHeadingPenalty = 20.0; // If NPC is heading in wrong direction, add a penalty weight
+					const R64 timeSincePathCalcWeight = 1.0; // Every second since we path, add points to weight
+					const R64 pathRecalcThreshold = 30.0; // Weight threshold for triggering a path recalculation
+					R64 pathRecalcUrgency = 0.0; // Keep track of total weight for comparison with threshold
+
+					// Determine urgency to recalculate path to target location
+					pathRecalcUrgency += static_cast<R64>( targMoveDist * targMoveWeight );
+					pathRecalcUrgency += static_cast<R64>( isHeadingTowardsPlayer ? 0 : wrongHeadingPenalty );
+					R64 timeSinceLastPath = ( cwmWorldState->GetUICurrentTime() - mChar.GetLastPathCalc() ) / 1000.0;
+					pathRecalcUrgency += static_cast<R64>( timeSinceLastPath * timeSincePathCalcWeight );
+					pathRecalcUrgency *= static_cast<R64>( RandomNum( 8, 12 ) / 10.0 ); // Random jitter to add variation around edge cases
+
+					// Only recalculate path if out of steps to follow, or if urgency to recalculate has suprassed the threshold
+					if( !mChar.StillGotDirs() || pathRecalcUrgency > pathRecalcThreshold )
 					{
 						if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 						{
@@ -2129,13 +2153,14 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 				if( ValidateObject( kChar ) && (( mChar.WorldNumber() == kChar->WorldNumber() && mChar.GetInstanceId() == kChar->GetInstanceId() )))
 				{
 					// Target exists, and is in same world/instance
-					auto distToTarg = GetDist( &mChar, kChar );
+					// Let's get a (fast) approximate distance
+					auto distToTarg = static_cast<UI16>( GetApproxDist( &mChar, kChar ));
 					if( distToTarg < P_PF_MFD )
 					{
 						// Target is within minimum flee distance - flee!
 						// calculate a x,y to flee towards
 						targInRange = true;
-						const UI16 mydist	= P_PF_MFD - GetDist( &mChar, kChar ) + 1;
+						const UI16 mydist	= P_PF_MFD - distToTarg + 1;
 						j					= Direction( &mChar, kChar->GetX(), kChar->GetY() );
 						SI16 myx			= GetXfromDir( j, mChar.GetX() );
 						SI16 myy			= GetYfromDir( j, mChar.GetY() );
@@ -2333,13 +2358,14 @@ void CMovement::NpcMovement( CChar& mChar )
 
 				// NPC is using a ranged weapon, and is within range to shoot at the target
 				CItem *equippedWeapon = Combat->GetWeapon( &mChar );
+				bool combatLos = mChar.GetCombatLos();
 				if( charDir < 8 
 					&& ( charDist <= 1 
 						|| (( Combat->GetCombatSkill( equippedWeapon ) == ARCHERY || Combat->GetCombatSkill( equippedWeapon ) == THROWING ) && charDist <= equippedWeapon->GetMaxRange() )
 						|| (( mChar.GetNpcAiType() == AI_CASTER || mChar.GetNpcAiType() == AI_EVIL_CASTER ) && ( charDist <= cwmWorldState->ServerData()->CombatMaxSpellRange() && mChar.GetMana() >= 10 ))))
 				{
-					bool los = LineOfSight( nullptr, &mChar, l->GetX(), l->GetY(), ( l->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
-					if( los )
+					bool los = ( charDist > 1 ? ( !combatLos ? LineOfSight( nullptr, &mChar, l->GetX(), l->GetY(), l->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) : true ) : true );
+					if( los && std::abs( mChar.GetZ() - l->GetZ() ) < 20)
 					{
 						// Turn towards target
 						if( charDir != mChar.GetDir() )
@@ -2353,7 +2379,7 @@ void CMovement::NpcMovement( CChar& mChar )
 						mChar.SetOldTargLocY( 0 );
 						return;
 					}
-					else if(( !los && charDist <= 1 ) || ( !los && mChar.GetZ() - l->GetZ() >= 20 ))
+					else if(( !los && charDist <= 1 ) || ( !los && std::abs( mChar.GetZ() - l->GetZ() ) >= 20 ))
 					{
 						// We're right next to target, but still have no LoS - or height difference is too large
 						mChar.FlushPath();
@@ -2433,22 +2459,38 @@ void CMovement::NpcMovement( CChar& mChar )
 					}
 
 					// Calculate direction from NPC towards player
-					const UI08 directionToTarget = Movement->Direction( mChar.GetX(), mChar.GetY(), targX, targY );
+					const UI08 dirToTarget = Movement->Direction( mChar.GetX(), mChar.GetY(), targX, targY );
 
 					// Get NPC's current direction
 					const UI08 npcDir = mChar.GetDir();
 
 					// Determine if NPC is already heading generally toward player (direct or adjacent directions)
-					const bool isHeadingTowardsTarget = ( npcDir == directionToTarget ||
-						npcDir == ( directionToTarget + 1 ) % 8 ||
-						npcDir == ( directionToTarget + 7 ) % 8 );
+					const bool isHeadingTowardsPlayer = (npcDir == dirToTarget ||
+						npcDir == (dirToTarget + 1) % 8 ||
+						npcDir == (dirToTarget + 7) % 8);
 
-					// Only recalculate path if out of steps to follow, or if target's position has updated and NPC is not
-					// already heading in that general direction
-					if( !mChar.StillGotDirs() || 
-						(( oldTargX != targX || oldTargY != targY ) && RandomNum( 0, 10 ) >= 6 &&
-							!isHeadingTowardsTarget ))
+					// See (approximately) how far the target has moved from oldTargX/oldTargY
+					const R64 targMoveDist = GetApproxDist( Point3_st( static_cast<UI16>( oldTargX ), static_cast<UI16>( oldTargY ), 0 ), 
+													Point3_st( static_cast<UI16>( targX ), static_cast<UI16>( targY ), 0 ));
+
+					const R64 targMoveWeight = 2.5; // For each tile the target has moved from oldTargX/oldTargY, increase weight by this
+					const R64 wrongHeadingPenalty = 20.0; // If NPC is heading in wrong direction, add a penalty weight
+					const R64 timeSincePathCalcWeight = 1.0; // Every second since we path, add points to weight
+					const R64 pathRecalcThreshold = 30.0; // Weight threshold for triggering a path recalculation
+					R64 pathRecalcUrgency = 0.0; // Keep track of total weight for comparison with threshold
+
+					// Determine urgency to recalculate path to target location
+					pathRecalcUrgency += static_cast<R64>( targMoveDist * targMoveWeight );
+					pathRecalcUrgency += static_cast<R64>( isHeadingTowardsPlayer ? 0 : wrongHeadingPenalty );
+					R64 timeSinceLastPath = ( cwmWorldState->GetUICurrentTime() - mChar.GetLastPathCalc() ) / 1000.0;
+					pathRecalcUrgency += static_cast<R64>( timeSinceLastPath * timeSincePathCalcWeight );
+					pathRecalcUrgency *= static_cast<R64>( RandomNum( 8, 12 ) / 10.0 ); // Random jitter to add variation around edge cases
+
+					// Only recalculate path if out of steps to follow, or if urgency to recalculate has suprassed the threshold
+					if( !mChar.StillGotDirs() || pathRecalcUrgency > pathRecalcThreshold )
 					{
+						mChar.FlushPath(); // Flush out old path
+
 						bool waterWalk = cwmWorldState->creatures[mChar.GetId()].IsWater();
 						bool allowPartial = waterWalk ? true : false; // Allow partial here, since we try a "pseudo partial" further down anyway!
 						if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY(), canRun, allowPartial ))
@@ -2575,7 +2617,7 @@ void CMovement::NpcMovement( CChar& mChar )
 				}
 				else
 				{
-					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() / 1.5f )); // Increase follow speed so NPC pets/escorts can keep up with players
+					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() / 1.5 )); // Increase follow speed so NPC pets/escorts can keep up with players
 				}
 			}
 			else if( npcWanderType != WT_FLEE && npcWanderType != WT_SCARED )
@@ -2622,12 +2664,13 @@ void CMovement::NpcMovement( CChar& mChar )
 		// Play some idle/fidgeting animation instead - if character is not busy doing something else
 		auto npcWander = mChar.GetNpcWander();
 		if( !mChar.IsAtWar() && !ValidateObject( mChar.GetTarg() ) && npcWander != WT_FLEE && npcWander != WT_SCARED && npcWander != WT_FROZEN && npcWander != WT_PATHFIND &&
-			( npcWander != WT_FOLLOW || ( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) > static_cast<TIMERVAL>( 3000 )))
+			(( npcWander != WT_FOLLOW && ( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) > static_cast<TIMERVAL>( 3000 )) ||
+			( npcWander == WT_FOLLOW && ( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) > static_cast<TIMERVAL>( 6000 ))))
 		{
 			if( mChar.GetTimer( tNPC_IDLEANIMTIME ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 3.0 ));
-				mChar.SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( RandomNum( 5, 20 )));
+				mChar.SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( static_cast<R64>( RandomNum( 5, 20 ))));
 
 				if( mChar.GetBodyType() == BT_GARGOYLE || cwmWorldState->ServerData()->ForceNewAnimationPacket() )
 				{
@@ -2991,6 +3034,8 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber, instanceId, ignoreDoors );
 
 	auto map	= Map->SeekMap( x, y, c->WorldNumber() );
+	if( map.terrainInfo == nullptr )
+		return ILLEGAL_Z;
 
 	// Does landtile in target location block movement?
 	landBlock = map.CheckFlag( TF_BLOCKING );
@@ -3045,6 +3090,11 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 	{
 		if(( !tile.CheckFlag( TF_BLOCKING ) && tile.CheckFlag( TF_SURFACE ) && !waterWalk ) || ( waterWalk && tile.CheckFlag( TF_WET )))
 		{
+			if(( tile.tileId == 0x08a5 || tile.tileId == 0x08a6 ) && oldz < checkTop )
+			{
+				c->IsClimbing( true  );
+			}
+
 			SI08 itemz = tile.altitude; // Object's current Z position
 			SI08 itemTop = itemz;
 			SI08 potentialNewZ = tile.top(); // Character's potential new Z position on top of object
@@ -3052,9 +3102,17 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 
 			if( moveIsOk )
 			{
-				SI08 cmp = std::abs( potentialNewZ - c->GetZ() ) - std::abs( newz - c->GetZ() );
-				if( cmp > 0 || ( cmp == 0 && potentialNewZ > newz ))
-					continue;
+				if( c->IsClimbing() )
+				{
+					checkTop = oldz + charHeight;
+					testTop = checkTop;
+				}
+				else
+				{
+					SI08 cmp = std::abs( potentialNewZ - c->GetZ() ) - std::abs( newz - c->GetZ() );
+					if( cmp > 0 || ( cmp == 0 && potentialNewZ > newz ))
+						continue;
+				}
 			}
 
 			if( potentialNewZ + charHeight > testTop )
@@ -3068,7 +3126,7 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 			}
 
 			// Check if the character can step up onto the item at target location
-			if( stepTop >= itemTop )
+			if( stepTop >= itemTop || c->IsClimbing() )
 			{
 				SI08 landCheck = itemz;
 
@@ -3092,6 +3150,14 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 					moveIsOk = true;
 				}
 			}
+		}
+	}
+
+	if( moveIsOk )
+	{
+		if( oldz >= newz )
+		{
+			c->IsClimbing( false );
 		}
 	}
 
@@ -3141,7 +3207,7 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 //o------------------------------------------------------------------------------------------------o
 bool CMovement::CalcMove( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir)
 {
-	if( x < 0 || x > 7144 || y < 0 || y > 4096 )
+	if( x < 0 || x > 7168 || y < 0 || y > 4096 )
 	{
 		Console.Warning( oldstrutil::format( "NPC/Player (%s) from Spawn Region %i trying to walk in invalid area of map at %i %i %i %i!", c->GetName().c_str(), c->GetSpawn(), x, y, z, c->WorldNumber() ));
 		return false;
@@ -3759,5 +3825,55 @@ auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
 		}
 		mChar->SetTarg( nullptr );
 		mChar->SetWar( false );
+
+		// Check if OnCombatEnd event exists.
+		std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				//Check if ourTarg validates as another character. If not, don't use
+				if( !ValidateObject( mTarget ))
+				{
+					mTarget = nullptr;
+				}
+
+				// -1 == event doesn't exist, or returned -1
+				// 0 == script returned false, 0, or nothing - don't execute hard code
+				// 1 == script returned true or 1
+				if( toExecute->OnCombatEnd( mChar, mTarget ) == 0 )	// if it exists and we don't want hard code, return
+				{
+					return;
+				}
+			}
+		}
+
+		// Do the same for the opposite party in combat
+		if( ValidateObject( mTarget ))
+		{
+			scriptTriggers.clear();
+			scriptTriggers = mTarget->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					//Check if mTarget validates as another character. If not, don't use
+					if( !ValidateObject( mTarget ))
+					{
+						mTarget = nullptr;
+					}
+
+					// -1 == event doesn't exist, or returned -1
+					// 0 == script returned false, 0, or nothing - don't execute hard code
+					// 1 == script returned true or 1
+					if( toExecute->OnCombatEnd( mTarget, mChar ) == 0 )	// if it exists and we don't want hard code, return
+					{
+						return;
+					}
+				}
+			}
+		}
 	}
 }

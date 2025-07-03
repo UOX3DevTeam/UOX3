@@ -20,7 +20,7 @@ function DealAreaDamage( srcObj, trgChar )
 		var drainSFX = 0;
 		var drainFXLength = 0;
 
-		switch( trgChar.sectionID )
+		switch( srcObj.sectionID )
 		{
 			case "succubus": // Succubus
 				hpDrain = RandomNumber( 5, 10 );
@@ -32,6 +32,14 @@ function DealAreaDamage( srcObj, trgChar )
 				drianFXLength = 0x0f;
 				drainFXHue = 0x496;
 				drainSFX = 0x231;
+				break;
+			case "tentacles_of_the_harrower": // Tentacles of the Harrower
+				hpDrain = RandomNumber( 14, 30 );
+
+				drainFX = 0x374a;
+				drianFXLength = 0x0f;
+				drainFXHue = 0x455;
+				drainSFX = 0x1F1;
 				break;
 			default:
 				return false;

@@ -17,50 +17,53 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "rename", 2, true ); //Lets GMs rename items/characters.
+	RegisterCommand( "rename", 8, true ); //Lets GMs rename items/characters.
 	RegisterCommand( "refresh", 0, true ); //Lets players refresh their screen to resend items/chars that have vanished from view.
-	RegisterCommand( "freeze", 2, true ); //Will "freeze" any targeted char, and will make any targeted item immovable (i.e. locked down by GM)
-	RegisterCommand( "unfreeze", 2, true ); //Will "unfreeze" any targeted char, and will make any targeted item movable if previously immovable
+	RegisterCommand( "freeze", 8, true ); //Will "freeze" any targeted char, and will make any targeted item immovable (i.e. locked down by GM)
+	RegisterCommand( "unfreeze", 8, true ); //Will "unfreeze" any targeted char, and will make any targeted item movable if previously immovable
 	RegisterCommand( "browse", 0, true ); //WIll let users open a webpage in their default browser from within the UO client. BROWSE <url>
-	RegisterCommand( "invul", 2, true ); //Will make the targeted character invulnerable or not, depending on the argument provided (true/false, 1/0)
-	RegisterCommand( "immortal", 2, true ); //Will make the targeted character invulnerable
-	RegisterCommand( "noinvul", 2, true ); //Will make the targeted character vulnerable
-	RegisterCommand( "mortal", 2, true ); //Will make the targeted character vulnerable
-	RegisterCommand( "addpack", 2, true ); //Will add a backpack to the targeted character, if it has none. Will add specified item-id(addpack <item-id> or hex id (addpack hex <hexid>) to backpack.
-	RegisterCommand( "settag", 2, true ); //used to specify a value for a specified tag on a targeted object
-	RegisterCommand( "gettag", 2, true ); //Used to retrieve the value of a specified tag from a targeted object
-	RegisterCommand( "settemptag", 2, true ); //used to specify a value for a specified tag on a targeted object
-	RegisterCommand( "gettemptag", 2, true ); //Used to retrieve the value of a specified tag from a targeted object
-	RegisterCommand( "nodecay", 2, true ); //Will turn off decay for the targeted item.
-	RegisterCommand( "decay", 2, true ); //Will turn on decay for the targeted item.
-	RegisterCommand( "xsay", 2, true ); //Targeted charcter or item will say specified text out loud
-	RegisterCommand( "linkdoors", 2, true ); //Link two doors together so that if one is opened, both will open.
-	RegisterCommand( "unlinkdoors", 2, true ); //Unlinks two doors (use command on both!)
-	RegisterCommand( "setammoeffect", 2, true ); //Set ammoeffect on a bow
-	RegisterCommand( "setammotype", 2, true ); //Set ammotype on a bow
-	RegisterCommand( "getammoeffect", 2, true );
-	RegisterCommand( "getammotype", 2, true );
-	RegisterCommand( "undress", 2, true ); //Character will completely undress all equipped items
-	RegisterCommand( "regioninfo", 2, true ); // Get information on current region player is in
-	RegisterCommand( "xregioninfo", 2, true ); // Get information on current region a target character is in
-	RegisterCommand( "cont", 2, true ); //Targeted item will be made a container, set to nondecay and movable 2
-	RegisterCommand( "endfight", 2, true ); //Targeted character (and character being fought) will stop fighting
-	RegisterCommand( "getmulti", 2, true ); //Get multiObject for targeted item
-	RegisterCommand( "finditem", 2, true ); //Find item at layer
-	RegisterCommand( "movespeed", 2, true ); //Set movement speed of target player
-	RegisterCommand( "welcome", 2, true ); // Display UOX3 welcome gump for admin
-	RegisterCommand( "getjstimer", 2, true ); // Get time remaining for specified timer ID on targeted object
-	RegisterCommand( "setjstimer", 2, true ); // Set time remaining for specified timer ID on targeted object
-	RegisterCommand( "killjstimer", 2, true ); // Kill timer with specified timer ID on targeted object
-	RegisterCommand( "addhouse", 2, true ); // Add a multi by its house ID in houses.dfn
-	RegisterCommand( "addmulti", 2, true ); // Add a multi by its raw multi ID
-	RegisterCommand( "useitem", 2, true ); // Use a target item as if it was double-clicked
-	RegisterCommand( "gettagmap", 2, true ); // Spit out a list of all custom tags on object
-	RegisterCommand( "gettemptagmap", 2, true ); // Spit out a list of all custom tags on object
-	RegisterCommand( "listpets", 2, true ); // Spit out a list of all pets owned by target
-	RegisterCommand( "listfollowers", 2, true ); // Spit out a list of all followers of target
-	RegisterCommand( "resetskillcaps", 3, true ); // Fix corrupted player skill caps
-	RegisterCommand( "resetskillusage", 3, true ); // Fix stuck skill usage for all players
+	RegisterCommand( "invul", 8, true ); //Will make the targeted character invulnerable or not, depending on the argument provided (true/false, 1/0)
+	RegisterCommand( "immortal", 8, true ); //Will make the targeted character invulnerable
+	RegisterCommand( "noinvul", 8, true ); //Will make the targeted character vulnerable
+	RegisterCommand( "mortal", 8, true ); //Will make the targeted character vulnerable
+	RegisterCommand( "addpack", 8, true ); //Will add a backpack to the targeted character, if it has none. Will add specified item-id(addpack <item-id> or hex id (addpack hex <hexid>) to backpack.
+	RegisterCommand( "settag", 8, true ); //used to specify a value for a specified tag on a targeted object
+	RegisterCommand( "gettag", 8, true ); //Used to retrieve the value of a specified tag from a targeted object
+	RegisterCommand( "settemptag", 8, true ); //used to specify a value for a specified tag on a targeted object
+	RegisterCommand( "gettemptag", 8, true ); //Used to retrieve the value of a specified tag from a targeted object
+	RegisterCommand( "nodecay", 8, true ); //Will turn off decay for the targeted item.
+	RegisterCommand( "decay", 8, true ); //Will turn on decay for the targeted item.
+	RegisterCommand( "xsay", 8, true ); //Targeted charcter or item will say specified text out loud
+	RegisterCommand( "linkdoors", 8, true ); //Link two doors together so that if one is opened, both will open.
+	RegisterCommand( "unlinkdoors", 8, true ); //Unlinks two doors (use command on both!)
+	RegisterCommand( "setammoeffect", 8, true ); //Set ammoeffect on a bow
+	RegisterCommand( "setammotype", 8, true ); //Set ammotype on a bow
+	RegisterCommand( "getammoeffect", 8, true );
+	RegisterCommand( "getammotype", 8, true );
+	RegisterCommand( "undress", 8, true ); //Character will completely undress all equipped items
+	RegisterCommand( "regioninfo", 8, true ); // Get information on current region player is in
+	RegisterCommand( "xregioninfo", 8, true ); // Get information on current region a target character is in
+	RegisterCommand( "cont", 8, true ); //Targeted item will be made a container, set to nondecay and movable 2
+	RegisterCommand( "endfight", 8, true ); //Targeted character (and character being fought) will stop fighting
+	RegisterCommand( "getmulti", 8, true ); //Get multiObject for targeted item
+	RegisterCommand( "finditem", 8, true ); //Find item at layer
+	RegisterCommand( "movespeed", 8, true ); //Set movement speed of target player
+	RegisterCommand( "welcome", 8, true ); // Display UOX3 welcome gump for admin
+	RegisterCommand( "getjstimer", 8, true ); // Get time remaining for specified timer ID on targeted object
+	RegisterCommand( "setjstimer", 8, true ); // Set time remaining for specified timer ID on targeted object
+	RegisterCommand( "killjstimer", 8, true ); // Kill timer with specified timer ID on targeted object
+	RegisterCommand( "addhouse", 8, true ); // Add a multi by its house ID in houses.dfn
+	RegisterCommand( "addmulti", 8, true ); // Add a multi by its raw multi ID
+	RegisterCommand( "useitem", 8, true ); // Use a target item as if it was double-clicked
+	RegisterCommand( "gettagmap", 8, true ); // Spit out a list of all custom tags on object
+	RegisterCommand( "gettemptagmap", 8, true ); // Spit out a list of all custom tags on object
+	RegisterCommand( "listpets", 8, true ); // Spit out a list of all pets owned by target
+	RegisterCommand( "listfollowers", 8, true ); // Spit out a list of all followers of target
+	RegisterCommand( "resetskillcaps", 10, true ); // Fix corrupted player skill caps
+	RegisterCommand( "resetskillusage", 10, true ); // Fix stuck skill usage for all players
+	RegisterCommand( "rain", 10, true ); // Make it rain in the current region
+	RegisterCommand( "snow", 10, true ); // Make it snow in the current region
+	RegisterCommand( "clearweather", 10, true ); // Clear up weather effect
 }
 
 function command_RENAME( pSock, execString )
@@ -173,7 +176,20 @@ function command_ADDPACK( pSock, execString )
 function command_SETTAG( pSock, execString )
 {
 	var pUser = pSock.currentChar;
-	var Word = execString.split( "," );
+	var Word = [];
+	if( execString != null )
+	{
+		var firstCommaIndex = execString.indexOf( ',' );
+		if( firstCommaIndex != -1 )
+		{
+			// Fetch everything _before_ the first comma
+			Word[0] = execString.substring( 0, firstCommaIndex );
+
+			// Fetch everything _after_ the first comma
+			Word[1] = execString.substring( firstCommaIndex + 1 );
+		}
+	}
+
 	if(( execString == "" || execString == null ) || ( Word[0] == null || Word[0] == "" || Word[0] == " " || Word[1] == "" || Word[1] == null ))
 	{
 		pUser.SysMessage( GetDictionaryEntry( 8862, pSock.language )); // You need to specify a tag and a value for the tag, seperated by a comma.
@@ -203,7 +219,20 @@ function command_GETTAG( pSock, execString )
 function command_SETTEMPTAG( pSock, execString )
 {
 	var pUser = pSock.currentChar;
-	var Word = execString.split( "," );
+	var Word = [];
+	if( execString != null )
+	{
+		var firstCommaIndex = execString.indexOf( ',' );
+		if( firstCommaIndex != -1 )
+		{
+			// Fetch everything _before_ the first comma
+			Word[0] = execString.substring( 0, firstCommaIndex );
+
+			// Fetch everything _after_ the first comma
+			Word[1] = execString.substring( firstCommaIndex + 1 );
+		}
+	}
+
 	if(( execString == "" || execString == null ) || ( Word[0] == null || Word[0] == "" || Word[0] == " " || Word[1] == "" || Word[1] == null ))
 	{
 		pUser.SysMessage( GetDictionaryEntry( 8862, pSock.language )); // You need to specify a tag and a value for the tag, seperated by a comma.
@@ -1438,6 +1467,30 @@ function onIterate( toCheck )
 		return true;
 	}
 	return false;
+}
+
+// Override weather for current region and make it RAIN
+function command_RAIN( pSock, execString )
+{
+	var mRegion = pSock.currentChar.region;
+	mRegion.weather = 9;
+	pSock.SysMessage( "Weather override (RAIN) enabled for current region (" + mRegion.name + ")" );
+}
+
+// Override weather for current region and make it SNOW
+function command_SNOW( pSock, execString )
+{
+	var mRegion = pSock.currentChar.region;
+	mRegion.weather = 10;
+	pSock.SysMessage( "Weather override (SNOW) enabled for current region (" + mRegion.name + ")" );
+}
+
+// Clear up any override weather-effects in current region
+function command_CLEARWEATHER( pSock, execString )
+{
+	var mRegion = pSock.currentChar.region;
+	mRegion.weather = 0;
+	pSock.SysMessage( "Weather override disabled for current region (" + mRegion.name + ")" );
 }
 
 function _restorecontext_() {}

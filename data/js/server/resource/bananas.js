@@ -4,8 +4,8 @@
 // 5 bananas ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more bananas can be picked. Once the timer is over,
 // new bananas are added.
-var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
-var maxResource = 5; //maximum amount of resources on a given item
+const bananaGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+const maxBananaResource = 5; //maximum amount of resources on a given item
 
 function onUseChecked( pUser, iUsed )
 {
@@ -20,7 +20,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		iUsed.SetTag( "initialized", 1 ); 	// Marks tree as initialized
 		iUsed.SetTag( "Bananas", 1 ); 		// If set to 1, there are bananas to be picked, if 0 there are no ripe bananas
-		iUsed.SetTag( "BananaCounter", maxResource ); 	// Add 5 bananas to the tree initially
+		iUsed.SetTag( "BananaCounter", maxBananaResource ); 	// Add 5 bananas to the tree initially
 	}
 	var bananas = iUsed.GetTag("Bananas");
 	var bananaCount = iUsed.GetTag("BananaCounter");
@@ -54,7 +54,7 @@ function onUseChecked( pUser, iUsed )
 		    if( bananaCount == 0 )
 			{
 				iUsed.SetTag( "Bananas", 0 );
-				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time bananas respawn
+				iUsed.StartTimer( bananaGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time bananas respawn
 			}
 		}
 	}
@@ -65,7 +65,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag( "BananaCounter", maxResource );
+		iUsed.SetTag( "BananaCounter", maxBananaResource );
 		iUsed.SetTag( "Bananas", 1 );
 	}
 }

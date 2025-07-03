@@ -2,10 +2,10 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "wholist", 2, true );
-	RegisterCommand( "forcewho", 2, true ); // shortcut to 'wholist force
-	RegisterCommand( "playeradmin", 2, true ); // alias, to match up with npcadmin/spawnadmin commands
-	RegisterCommand( "npcadmin", 2, true ); // display all NPCs instead of players
+	RegisterCommand( "wholist", 8, true );
+	RegisterCommand( "forcewho", 8, true ); // shortcut to 'wholist force
+	RegisterCommand( "playeradmin", 8, true ); // alias, to match up with npcadmin/spawnadmin commands
+	RegisterCommand( "npcadmin", 8, true ); // display all NPCs instead of players
 }
 
 var adminPlayerList = [];
@@ -115,7 +115,7 @@ function onIterate( toCheck, socket )
 			adminNpcList.push( toCheck );
 			return true;
 		}
-		else if( !toCheck.npc && ( toCheck == socket.currentChar || toCheck.commandlevel < socket.currentChar.commandlevel ))
+		else if( !toCheck.npc && ( toCheck == socket.currentChar || ( toCheck.commandlevel < socket.currentChar.commandlevel || !toCheck.IsGM )))
 		{
 			if( socket.tempInt2 == 0 || ( socket.tempInt2 == 1 && toCheck.socket ) || ( socket.tempInt2 == -1 && !toCheck.socket ))
 			{

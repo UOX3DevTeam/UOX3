@@ -2,8 +2,8 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "movetobag", 2, true );
-	RegisterCommand( "bringtopack", 2, true );
+	RegisterCommand( "movetobag", 8, true );
+	RegisterCommand( "bringtopack", 8, true );
 }
 
 function command_MOVETOBAG( socket, cmdString )

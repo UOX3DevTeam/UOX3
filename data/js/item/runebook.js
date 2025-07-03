@@ -25,7 +25,7 @@ function onUseChecked( pUser, runeBook )
 	var pSocket = pUser.socket;
 
 	var iTime = GetCurrentClock();
-	var NextUse = runeBook.GetTempTag( "useDelayed" );
+	var NextUse = parseInt( runeBook.GetTag( "useDelayed" ));
 	var Delay = 7000;
 
 	if( ( iTime - NextUse ) < Delay )

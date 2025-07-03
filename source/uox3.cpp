@@ -159,7 +159,7 @@ void		RestockNPC( CChar& i, bool stockAll );
 void		ClearTrades( void );
 void		SysBroadcast( const std::string& txt );
 void		MoveBoat( UI08 dir, CBoatObj *boat );
-bool		DecayItem( CItem& toDecay, const UI32 nextDecayItems, const UI32 nextDecayItemsInHouses );
+bool		DecayItem( CItem& toDecay, const TIMERVAL nextDecayItems, const TIMERVAL nextDecayItemsInHouses );
 void		CheckAI( CChar& mChar );
 //o------------------------------------------------------------------------------------------------o
 // Internal Pre-Declares
@@ -259,6 +259,8 @@ auto main( SI32 argc, char *argv[] ) ->int
 	// Set the interval for APS evaluation and adjustment, and set initial timestamp for first evaluation
 	const std::chrono::milliseconds evaluationInterval = std::chrono::milliseconds( cwmWorldState->ServerData()->APSInterval() );
 	std::chrono::time_point<std::chrono::system_clock> nextEvaluationTime = std::chrono::system_clock::now() + evaluationInterval;
+
+	bool isApsActive = false;
 
 	// Core server loop
 	while( cwmWorldState->GetKeepRun() )
@@ -378,6 +380,12 @@ auto main( SI32 argc, char *argv[] ) ->int
 					apsDelay = apsDelay + apsDelayStep;
 #if defined( UOX_DEBUG_MODE )
 					Console << "Performance below threshold! Increasing adaptive performance timer: " << apsDelay.count() << "ms" << "\n";
+#else
+					if( !isApsActive )
+					{
+						isApsActive = true;
+						Console << "Performance below threshold. Adaptive Performance System enabled.\n";
+					}
 #endif
 				}
 				// If performance is below, but increasing, wait and see before reacting
@@ -391,6 +399,12 @@ auto main( SI32 argc, char *argv[] ) ->int
 					apsDelay = apsDelay - apsDelayStep;
 #if defined( UOX_DEBUG_MODE )
 					Console << "Performance exceeds threshold. Decreasing adaptive performance timer: " << apsDelay.count() << "ms" << "\n";
+#else
+					if( apsDelay.count() == 0 )
+					{
+						Console << "Performance above threshold. Adaptive Performance System disabled.\n";
+						isApsActive = false;
+					}
 #endif
 				}
 			}
@@ -1695,7 +1709,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 				if( mChar.GetTimer( tCHAR_POISONWEAROFF ) > cwmWorldState->GetUICurrentTime() )
 				{
 					std::string mCharName = GetNpcDictName( &mChar, nullptr, NRS_SPEECH );
-
+					auto poisonedBy = CalcCharObjFromSer( mChar.GetPoisonedBy() );
 					switch( mChar.GetPoisoned() )
 					{
 						case 1: // Lesser Poison
@@ -1708,7 +1722,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 3, 6 ); // 3% to 6% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>(( mChar.GetHP() * poisonDmgPercent ) / 100 );
-							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 3 ), poisonDmg ), POISON ); // Minimum 3 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 3 ), poisonDmg ), POISON, poisonedBy ); // Minimum 3 damage per tick
 							break;
 						}
 						case 2: // Normal Poison
@@ -1721,7 +1735,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 4, 8 ); // 4% to 8% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>(( mChar.GetHP() * poisonDmgPercent ) / 100 );
-							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 5 ), poisonDmg ), POISON ); // Minimum 5 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 5 ), poisonDmg ), POISON, poisonedBy ); // Minimum 5 damage per tick
 							break;
 						}
 						case 3: // Greater Poison
@@ -1734,7 +1748,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 8, 12 ); // 8% to 12% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>(( mChar.GetHP() * poisonDmgPercent ) / 100 );
-							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 8 ), poisonDmg ), POISON ); // Minimum 8 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 8 ), poisonDmg ), POISON, poisonedBy ); // Minimum 8 damage per tick
 							break;
 						}
 						case 4: // Deadly Poison
@@ -1747,7 +1761,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 12, 25 ); // 12% to 25% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>(( mChar.GetHP() * poisonDmgPercent ) / 100 );
-							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 14 ), poisonDmg ), POISON ); // Minimum 14 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 14 ), poisonDmg ), POISON, poisonedBy ); // Minimum 14 damage per tick
 							break;
 						}
 						case 5: // Lethal Poison - Used by monsters only
@@ -1760,12 +1774,13 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 25, 50 ); // 25% to 50% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>(( mChar.GetHP() * poisonDmgPercent ) / 100 );
-							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 17 ), poisonDmg ), POISON ); // Minimum 14 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max( static_cast<SI16>( 17 ), poisonDmg ), POISON, poisonedBy ); // Minimum 14 damage per tick
 							break;
 						}
 						default:
 							Console.Error( " Fallout of switch statement without default. uox3.cpp, GenericCheck(), mChar.GetPoisoned() not within valid range." );
 							mChar.SetPoisoned( 0 );
+							mChar.SetPoisonedBy( INVALIDSERIAL );
 							break;
 					}
 					if( mChar.GetHP() < 1 && !mChar.IsDead() )
@@ -1801,6 +1816,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			if( mChar.GetPoisoned() > 0 )
 			{
 				mChar.SetPoisoned( 0 );
+				mChar.SetPoisonedBy( INVALIDSERIAL );
 				if( mSock != nullptr )
 				{
 					mSock->SysMessage( 1245 ); // The poison has worn off.
@@ -2231,7 +2247,7 @@ auto CheckNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check item decay, spawn timers and boat movement in a given region
 //o------------------------------------------------------------------------------------------------o
-auto CheckItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 nextDecayItemsInHouses, bool doWeather )
+auto CheckItem( CMapRegion *toCheck, bool checkItems, TIMERVAL nextDecayItems, TIMERVAL nextDecayItemsInHouses, bool doWeather )
 {
 	auto regItems = toCheck->GetItemList();
 	auto collection = regItems->collection();
@@ -2698,12 +2714,16 @@ auto CWorldMain::CheckAutoTimers() -> void
 			}
 		}
 		const TIMERVAL e_t = GetClock();
-		Console.Print( oldstrutil::format( "Regionspawn cycle completed in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
+		UI32 totalSpawnTime = e_t - s_t;
+		if( totalSpawnTime > 1 )
+		{
+			Console.Print( oldstrutil::format( "Regionspawn cycle completed in %.02fsec\n", static_cast<R32>( totalSpawnTime ) / 1000.0f ));
+		}
 
 		// Adaptive spawn region check timer. The closer spawn regions as a whole are to being at their defined max capacity,
 		// the less frequently UOX3 will check spawn regions again. Similarly, the more room there is to spawn additional
 		// stuff, the more frequently UOX3 will check spawn regions
-		auto checkSpawnRegionSpeed = static_cast<R32>( serverData->CheckSpawnRegionSpeed() );
+		auto checkSpawnRegionSpeed = static_cast<R64>( serverData->CheckSpawnRegionSpeed() );
 		UI16 itemSpawnCompletionRatio = ( maxItemsSpawned > 0 ? (( totalItemsSpawned * 100.0 ) / maxItemsSpawned ) : 100 );
 		UI16 npcSpawnCompletionRatio = ( maxNpcsSpawned > 0 ? (( totalNpcsSpawned * 100.0 ) / maxNpcsSpawned ) : 100 );
 		
@@ -2784,7 +2804,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 			Weather->NewHour();
 		}
 
-		SetUOTickCount( BuildTimeValue( serverData->ServerSecondsPerUOMinute() ));
+		SetUOTickCount( BuildTimeValue( static_cast<R64>( serverData->ServerSecondsPerUOMinute() )));
 	}
 
 	if( GetTimer( tWORLD_LIGHTTIME ) <= GetUICurrentTime() )
@@ -2805,7 +2825,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 	if( GetTimer( tWORLD_NEXTFIELDEFFECT ) <= GetUICurrentTime() )
 	{
 		checkFieldEffects = true;
-		SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ));
+		SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5 ));
 	}
 	std::set<CMapRegion *> regionList;
 	{
@@ -3751,6 +3771,9 @@ auto GetPoisonDuration( UI08 poisonStrength ) ->TIMERVAL
 			break;
 		case 5: // Lethal poison - 13 to 17 pulses, 5 second frequency
 			poisonDuration = RandomNum( 13, 17 ) * 5;
+			break;
+		default:
+			poisonDuration = 10; // Fallback
 			break;
 	}
 	return poisonDuration;

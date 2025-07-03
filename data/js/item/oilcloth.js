@@ -31,17 +31,18 @@ function onCallback0( pSock, myTarget )
 		}
 		else
 		{
-			if( myTarget.poison > 0 )
+			let itemPoisonLvl = myTarget.poison;
+			if( itemPoisonLvl > 0 )
 			{
-				if( myTarget.poison > 2 )
+				if( itemPoisonLvl > 2 )
 				{
-					myTarget.poison -= 2;
+					itemPoisonLvl -= 2;
 				}
 				else
 				{
-					myTarget.poison = 0;
+					itemPoisonLvl = 0;
 				}
-				if( myTarget.poison == 0 )
+				if( itemPoisonLvl == 0 )
 				{
 					pSock.SysMessage( GetDictionaryEntry( 2752, pSock.language )); // You carefully wipe the item clean of poison.
 				}
@@ -49,6 +50,12 @@ function onCallback0( pSock, myTarget )
 				{
 					pSock.SysMessage( GetDictionaryEntry( 2753, pSock.language )); // You carefully wipe the item, but some poison still lingers.
 				}
+				pUser.UseResource( 1, 0x175d, 0x07d1 );
+			}
+			else if( myTarget.GetTag( "corrosionLevel" ) > 0 )
+			{
+				myTarget.SetTag( "corrosionLevel", null );
+				pSock.SysMessage( GetDictionaryEntry( 6317, pSock.language )); // You have cleaned the item.
 				pUser.UseResource( 1, 0x175d, 0x07d1 );
 			}
 			else
