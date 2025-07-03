@@ -195,9 +195,9 @@ function onCallback1( socket, ourObj )
 					socket.SysMessage( "The veil of death in this area is too strong and resists thy efforts to restore life." );
 					return;
 				}
-        else if( ourObj.GetTag( "isBondedPet" ))
-        {
-				  // Resurrection of bonded pet
+				else if( ourObj.GetTag( "isBondedPet" ))
+				{
+					// Resurrection of bonded pet
 					// Must have at least 80.0 Vet and 80.0 Lore
 					if( healSkill >= 800 && loreSkill >= 800 )
 					{
@@ -239,7 +239,7 @@ function onCallback1( socket, ourObj )
 						socket.SysMessage( GetDictionaryEntry( 19303, socket.language ));// You are not skilled enough to resurrect that pet.
 						return;
 					}          
-        }
+				}
 				else
 				{
 					if( healSkill >= 800 && anatSkill >= 800 )
