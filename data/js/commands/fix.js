@@ -1,7 +1,7 @@
 // Attempts to "fix" the Z position of a character stuck in the ground
 function CommandRegistration()
 {
-	RegisterCommand( "fix", 1, true );
+	RegisterCommand( "fix", 4, true );
 }
 
 function command_FIX( socket, cmdString )

@@ -1,7 +1,7 @@
 // spawn_felucca_town_buc_den.dfn
-// [100-199]
+// [150-199]
 
-[REGIONSPAWN 100]
+[REGIONSPAWN 150]
 {
 NAME=Buccaneer's Den Leatherworks
 NPC=leatherworker
@@ -16,7 +16,7 @@ MAXTIME=600
 CALL=1
 }
 
-[REGIONSPAWN 101]
+[REGIONSPAWN 151]
 {
 NAME=Healer Of Buccaneers Den
 NPC=healer
@@ -31,7 +31,7 @@ MAXTIME=600
 CALL=1
 }
 
-[REGIONSPAWN 102]
+[REGIONSPAWN 152]
 {
 NAME=The Peg Leg Inn
 NPC=innkeeper
@@ -46,7 +46,7 @@ MAXTIME=600
 CALL=1
 }
 
-[REGIONSPAWN 103]
+[REGIONSPAWN 153]
 {
 NAME=Cutlass Smithing
 NPC=blacksmith
@@ -61,7 +61,7 @@ MAXTIME=600
 CALL=1
 }
 
-[REGIONSPAWN 104]
+[REGIONSPAWN 154]
 {
 NAME=Voilente Woodworks
 NPC=carpenter
@@ -76,7 +76,7 @@ MAXTIME=600
 CALL=1
 }
 
-[REGIONSPAWN 105]
+[REGIONSPAWN 155]
 {
 NAME=Pirates Den
 NPC=pirate
@@ -91,7 +91,7 @@ MAXTIME=600
 CALL=1
 }
 
-[REGIONSPAWN 106]
+[REGIONSPAWN 156]
 {
 NAME=Pirates Den
 NPC=pirate
@@ -106,7 +106,7 @@ MAXTIME=600
 CALL=1
 }
 
-[REGIONSPAWN 107]
+[REGIONSPAWN 157]
 {
 NAME=The Pirates Plunder
 NPC=tavernkeeper
@@ -121,14 +121,14 @@ MAXTIME=600
 CALL=1
 }
 
-[REGIONSPAWN 108]
+[REGIONSPAWN 158]
 {
 NAME=The Pirate's Provision
 NPC=provisioner
 MAXNPCS=1
 X1=2731
-Y1=2251
-X2=2735
+Y1=2250
+X2=2742
 Y2=2254
 WORLD=0
 MINTIME=480
@@ -136,7 +136,7 @@ MAXTIME=600
 CALL=1
 }
 
-[REGIONSPAWN 109]
+[REGIONSPAWN 159]
 {
 NAME=Buc Den Bank
 NPC=banker
@@ -151,7 +151,7 @@ MAXTIME=600
 CALL=1
 }
 
-[REGIONSPAWN 110]
+[REGIONSPAWN 160]
 {
 NAME=The Pirates Plunder
 NPC=waiter
@@ -166,7 +166,7 @@ MAXTIME=600
 CALL=1
 }
 
-[REGIONSPAWN 111]
+[REGIONSPAWN 161]
 {
 NAME=Thief Guildmaster
 NPCLIST=thiefguildmaster
@@ -182,4 +182,54 @@ MAXTIME=600
 CALL=1
 }
 
-EOF
+[REGIONSPAWN 162]
+{
+GET=150
+NAME=Buccaneer's Den Leatherworks
+NPC=tanner
+}
+
+[REGIONSPAWN 163]
+{
+GET=150
+NAME=Buccaneer's Den Leatherworks
+NPC=furtrader
+}
+
+[REGIONSPAWN 164]
+{
+GET=158
+NAME=The Pirate's Provision
+NPC=cobbler
+}
+
+[REGIONSPAWN 165]
+{
+GET=158
+NAME=The Pirate's Provision
+NPC=mapmaker
+}
+
+[REGIONSPAWN 166]
+{
+GET=158
+NAME=The Pirate's Provision
+NPC=shipwright
+}
+
+// Rats, sailors
+[REGIONSPAWN 167]
+{
+NAME=Bucc's Den Town
+NPCLIST=buccsden_town
+MAXNPCS=10
+X1=2622
+Y1=2070
+X2=2764
+Y2=2266
+WORLD=0
+ONLYOUTSIDE=1
+MINTIME=30
+MAXTIME=60
+CALL=3
+}

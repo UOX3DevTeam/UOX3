@@ -2,7 +2,11 @@
 // 20/02/2006 Xuri; xuri@uox3.org
 // When a (dynamic) flax plant is double-clicked, it may yield some flax.
 // Then a timer will start, and no more flax can be picked until it runs out.
-var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+const flaxGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+const flaxGrowthIntervalMin = 30000; // Min delay in milliseconds between each growth phase
+const flaxGrowthIntervalMax = 90000; // Max delay in milliseconds between each growth phase
+const flaxWiltingDelay = 300000; // Delay in milliseconds before fully grown flax wilts
+const flaxResourceDecay = 3600; // Time (in seconds) it takes for resource to decay, allowing another to spawn in its place if spawned using spawn regions. 0 to disable decay
 
 function onUseChecked( pUser, iUsed )
 {
@@ -35,8 +39,15 @@ function onUseChecked( pUser, iUsed )
 	 	{
 			pUser.SysMessage( GetDictionaryEntry( 2533, pUser.socket.language )); // You harvest some flax.
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1a9c", 1, "ITEM", true );
+			if( flaxResourceDecay > 0 )
+			{
+				iUsed.decayable = true;
+				iUsed.decaytime = flaxResourceDecay;
+			}
+			iUsed.id = 0x0cb0;
+			iUsed.name = "flax stalk";
 			iUsed.SetTag( "Flax", 0 );
-			iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time more flax respawns
+			iUsed.StartTimer( flaxGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time more flax respawns
 		}
 	}
 	return false;
@@ -44,8 +55,28 @@ function onUseChecked( pUser, iUsed )
 
 function onTimer( iUsed, timerID )
 {
-	if( timerID == 1 )
+	if( timerID == 1 ) // Starts phase 1 of flax growth
 	{
+		iUsed.id = 0x1a99;
+		iUsed.StartTimer( RandomNumber( flaxGrowthIntervalMin, flaxGrowthIntervalMax ), 2, true);
+	}
+	if( timerID == 2 ) // Starts phase 2 of flax growth
+	{
+		iUsed.id = 0x1a9a;
+		iUsed.StartTimer( RandomNumber( flaxGrowthIntervalMin, flaxGrowthIntervalMax ), 3, true );
+	}
+	if( timerID == 3 ) // Flax growth finished!
+	{
+		iUsed.id = 0x1a9b;
+		iUsed.name = "flax";
 		iUsed.SetTag( "Flax", 1 );
+		iUsed.StartTimer( RandomNumber( flaxGrowthIntervalMin, flaxGrowthIntervalMax ), 4, true );
+	}
+	if( timerID == 4 ) // Flax is wilting
+	{
+		iUsed.id = 0x0cb0;
+		iUsed.name = "whithered flax stalk";
+		iUsed.SetTag( "Flax", 0 );
+		iUsed.StartTimer( flaxGrowthDelay, 1, true); // Restart the growth process
 	}
 }

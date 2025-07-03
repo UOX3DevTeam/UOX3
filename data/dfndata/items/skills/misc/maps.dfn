@@ -1,323 +1,294 @@
+[base_map]
+{
+get=0x14ec
+name=map
+id=0x14ec
+}
+
 [smallworldmap]
 {
-get=base_item
+get=base_map
 name=small world map
-id=0x14EC
-SCRIPT=5403
+script=5403
 custominttag=Map 1
 }
 
 [largeworldmap]
 {
-get=base_item
+get=base_map
 name=large world map
-id=0x14EC
-SCRIPT=5403
+script=5403
 custominttag=Map 2
 }
 
 [britainmap]
 {
-get=base_item
-name=a britain map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=britain map
+script=5403
 custominttag=Map 3
 }
 
-[britaintoskarabrae]
+[britaintoskarabraemap]
 {
-get=base_item
-name=a britain to skara brae map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=britain to skara brae map
+script=5403
 custominttag=Map 4
 }
 
-[britaintotrinsic]
+[britaintotrinsicmap]
 {
-get=base_item
-name=a britain to trinsic map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=britain to trinsic map
+script=5403
 custominttag=Map 5
 }
 
-[bucsden]
+[bucsdenmap]
 {
-get=base_item
-name=a buc den map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=bucs den map
+script=5403
 custominttag=Map 6
 }
 
-[bucsdentomagincia]
+[bucsdentomaginciamap]
 {
-get=base_item
-name=a bucs den to magincia map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=bucs den to magincia map
+script=5403
 custominttag=Map 7
 }
 
-[bucsdentoocllo]
+[bucsdentoocllomap]
 {
-get=base_item
-name=a bucs den to ocllo map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=bucs den to ocllo map
+script=5403
 custominttag=Map 8
 }
 
-[jhelom]
+[jhelommap]
 {
-get=base_item
-name=a jhelom map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=jhelom map
+script=5403
 custominttag=Map 9
 }
 
-[magincia]
+[maginciamap]
 {
-get=base_item
-name=a magincia map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=magincia map
+script=5403
 custominttag=Map 10
 }
 
-[maginciatoocllo]
+[maginciatoocllomap]
 {
-get=base_item
-name=a magincia to ocllo map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=magincia to ocllo map
+script=5403
 custominttag=Map 11
 }
 
-[minoc]
+[minocmap]
 {
-get=base_item
-name=a minoc map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=minoc map
+script=5403
 custominttag=Map 12
 }
 
-[minoctoyew]
+[minoctoyewmap]
 {
-get=base_item
-name=a minoc to yew map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=minoc to yew map
+script=5403
 custominttag=Map 13
 }
 
-[minoctovesper]
+[minoctovespermap]
 {
-get=base_item
-name=a minoc to vesper map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=minoc to vesper map
+script=5403
 custominttag=Map 14
 }
 
-[moonglow]
+[moonglowmap]
 {
-get=base_item
-name=a moonglow map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=moonglow map
+script=5403
 custominttag=Map 15
 }
 
-[moonglowtonujelm]
+[moonglowtonujelmmap]
 {
-get=base_item
-name=a moonglow to nujelm map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=moonglow to nujelm map
+script=5403
 custominttag=Map 16
 }
 
-[nujelm]
+[nujelmmap]
 {
-get=base_item
-name=a nujelm map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=nujelm map
+script=5403
 custominttag=Map 17
 }
 
-[nujelmtomagincia]
+[nujelmtomaginciamap]
 {
-get=base_item
-name=a nujelm to magincia map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=nujelm to magincia map
+script=5403
 custominttag=Map 18
 }
 
-[occlo]
+[occlomap]
 {
-get=base_item
-name=a occlo map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=occlo map
+script=5403
 custominttag=Map 19
 }
 
-[serpentshold]
+[serpentsholdmap]
 {
-get=base_item
-name=a serpents hold map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=serpents hold map
+script=5403
 custominttag=Map 20
 }
 
-[serpentsholdtoocllo]
+[serpentsholdtoocllomap]
 {
-get=base_item
-name=a serpents hold to ocllo map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=serpents hold to ocllo map
+script=5403
 custominttag=Map 21
 }
 
-[skarabrae]
+[skarabraemap]
 {
-get=base_item
-name=a skara brae map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=skara brae map
+script=5403
 custominttag=Map 22
 }
 
-[trinsic]
+[trinsicmap]
 {
-get=base_item
-name=a trinsic map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=trinsic map
+script=5403
 custominttag=Map 23
 }
 
-[trinsictobucsden]
+[trinsictobucsdenmap]
 {
-get=base_item
-name=a trinsic to bucs den map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=trinsic to bucs den map
+script=5403
 custominttag=Map 24
 }
 
-[trinsictojhelom]
+[trinsictojhelommap]
 {
-get=base_item
-name=a trinsic to jhelom map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=trinsic to jhelom map
+script=5403
 custominttag=Map 25
 }
 
-[vesper]
+[vespermap]
 {
-get=base_item
-name=a vesper map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=vesper map
+script=5403
 custominttag=Map 26
 }
 
-[vespertonujelm]
+[vespertonujelmmap]
 {
-get=base_item
-name=a vesper to nujelm map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=vesper to nujelm map
+script=5403
 custominttag=Map 27
 }
 
-[yew]
+[yewmap]
 {
-get=base_item
-name=a yew map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=yew map
+script=5403
 custominttag=Map 28
 }
 
-[yewtobritain]
+[yewtobritainmap]
 {
-get=base_item
-name=a yew to britain map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=yew to britain map
+script=5403
 custominttag=Map 29
 }
 
-[Tokuno]
+[tokunomap]
 {
-get=base_item
-name=a Tokunomap
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=tokunomap
+script=5403
 custominttag=Map 30
 }
 
-[Malas]
+[malasmap]
 {
-get=base_item
-name=a Malas map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=malas map
+script=5403
 custominttag=Map 31
 }
 
-[Ilshenar]
+[ilshenarmap]
 {
-get=base_item
-name=a Ilshenar map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=ilshenar map
+script=5403
 custominttag=Map 32
 }
 
-[TerMur]
+[termurmap]
 {
-get=base_item
-name=a TerMur map
-id=0x14EC
-SCRIPT=5403
+get=base_map
+name=termur map
+script=5403
 custominttag=Map 33
 }
 
 [craftedlocalmap]
 {
-get=base_item
-name=a local map
-id=0x14EC
-SCRIPT=5404
+get=base_map
+name=local map
+script=5404
 custominttag=Map 50
 }
 
 [craftedcitymap]
 {
-get=base_item
-name=a city map
-id=0x14EC
-SCRIPT=5404
+get=base_map
+name=city map
+script=5404
 custominttag=Map 50
 }
 
 [craftedseachart]
 {
-get=base_item
-name=a sea chart
-id=0x14EC
-SCRIPT=5404
+get=base_map
+name=sea chart
+script=5404
 custominttag=Map 50
 }

@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "dupe", 2, true );
+	RegisterCommand( "dupe", 8, true );
 }
 
 function command_DUPE( socket, cmdString )

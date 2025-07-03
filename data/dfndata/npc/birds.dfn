@@ -45,6 +45,12 @@ DEF=1
 RACE=4
 }
 
+[tropicalbird]
+{
+GET=bird
+NAME=5159//a tropical bird
+}
+
 [crow]
 {
 GET=raven

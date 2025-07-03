@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "secondsperuominute", 2, true );
+	RegisterCommand( "secondsperuominute", 8, true );
 }
 
 function command_SECONDSPERUOMINUTE( socket, cmdString )

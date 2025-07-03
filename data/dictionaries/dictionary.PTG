@@ -1520,13 +1520,13 @@
 1513=está um pouco danificado.
 1514=é frágil e não é digno de confiança.
 1515=está a cair aos bocados.
-1516= seria extraordinariamente mortal.
-1517= seria uma arma superior.
-1518= poderia infligir bastantes danos e dores.
-1519= poderia provavelmente ferir o seu oponente numa quantidade justa.
-1520= poderia causar algum dano.
-1521= poderia causar o mínimo dano.
-1522= poderia arranhar ligeiramente o seu oponente.
+1516=Seria extraordinariamente mortal,
+1517=Seria uma arma superior,
+1518=Poderia infligir bastantes danos e dores,
+1519=Poderia provavelmente ferir o seu oponente numa quantidade justa,
+1520=Poderia causar algum dano,
+1521=Poderia causar o mínimo dano,
+1522=Poderia arranhar ligeiramente o seu oponente,
 1523= e é muito rápido.
 1524= e é muito rápido.
 1525= e é lento.
@@ -2458,6 +2458,18 @@
 2585=Deita-se um pouco de cidra no recipiente.
 2586=Deita-se um pouco de licor para dentro do recipiente.
 2587=Deita-se um pouco de vinho no copo.
+2588=Estas cenouras ainda não estão prontas para serem colhidas.
+2589=Não conseguiu colher nenhuma cenoura.
+2590=Colheu uma cenoura.
+2591=Estas cebolas ainda não estão prontas para serem colhidas.
+2592=Não conseguiu colher nenhuma cebola.
+2593=Colheu uma cebola.
+2594=Este nabo ainda não está pronto para ser colhido.
+2595=Não consegues colher nenhum nabo.
+2596=Colhes um nabo.
+2597=Este repolho ainda não está pronto para ser colhido.
+2598=Não consegues colher nenhum repolho.
+2599=Colhes um repolho.
 // [2600-2699] Script de administrador de jogador/NPC/spawn
 2600=O NPC escolhido (%s, %i) foi removido.
 2601=Aviso: Não foi encontrada nenhuma mochila no personagem!
@@ -2977,6 +2989,7 @@
 3574=um espírito de lâmina
 3605=um elfo macho
 3606=uma duende fêmea
+3637=uma armadura espectral
 3666=um macho gárgula
 3667=uma mulher gárgula
 3689=Tempo Senhor
@@ -3302,6 +3315,7 @@
 5156=A Cigana Adivinhadora
 5157=O Vagabundo
 5158=O Trabalhador de Ferro
+5159=um pássaro tropical
 // [5500-5600] Mensagens de feriado
 5500=Onde você gostaria de colocar esta decoração?
 5501=A decoração deve ser colocada junto a uma parede.
@@ -3488,6 +3502,20 @@
 6302=Você já aprendeu esta informação.
 6303=Você aprendeu a fazer itens de vidro. Você precisará encontrar mineiros para extrair areia fina para fazer esses itens.
 6304=Você deve ter a mão livre para beber uma poção.
+6310=Não podes envenenar isso! Só podes envenenar armas brancas ou perfurantes, comida ou bebida.
+6311=Envenenaste o teu alvo!
+6312=O veneno parece ter perdido o efeito.
+6313=Não podes envenenar isso! Só podes envenenar armas brancas de uma mão ou perfurantes de uma mão, comida ou bebida.
+6314=Não podes envenenar isso! Só podes envenenar armas infecciosas e comida.
+6315=Cometes um erro grave ao aplicar o veneno.
+6316=O sangue mistura-se com o veneno e começa a corroer a tua arma.
+6317=Limparam o item.
+6318=O veneno na tua arma parece ter perdido o efeito.
+6319=Parece que há ácido a pingar do que resta da lâmina.
+6320=Parece que uma substância está a corroer pedaços da lâmina.
+6321=Parece que esta lâmina está coberta por uma substância ácida.
+6322=Parece que esta lâmina tem um elemento corrosivo.
+6323=Parece que esta lâmina tem um elemento corrosivo leve.
 // [7000-7499] AI Scripts
 7000=Tu és um criminoso e não podes aceder à tua caixa bancária.
 7001=Que artigo deseja depositar na sua caixa bancária?
@@ -4099,7 +4127,7 @@
 8944=Não parece ser um NPC-id válido das DFNs.
 8945=Selecionar o alvo para o estado móvel %i:
 8946=Selecionar alvo a definir como não deteriorável:
-// [9000-9500] Misc
+// [9000-9499] Misc
 9000=Não se pode usar esta capacidade enquanto estiver congelado.
 9001=Não é permitido voar com este carácter!
 9002=Foi convidado a participar numa festa, digite /aceitar ou /declinar para lidar com o convite
@@ -4369,6 +4397,28 @@
 9410=Você aprendeu como extrair areia fina. Procure áreas de areia durante a mineração para procurar areia fina.
 9411=Você aprendeu a minerar pedras. Mire nas montanhas ao minerar para encontrar pedras.
 9412=Não há areia aqui para minerar.
+// [9500-9550] Colheita de recursos diversos
+9500=Esta cabaça ainda não está pronta para ser colhida.
+9501=Não conseguiu colher nenhuma cabaça.
+9502=Colheu uma cabaça.
+9503=Esta abóbora ainda não está pronta para ser colhida.
+9504=Não conseguiu colher nenhuma abóbora.
+9505=Colheu uma abóbora.
+9506=Esta abóbora ainda não está pronta para ser colhida.
+9507=Não conseguiu colher nenhuma abóbora.
+9508=Colheu uma abóbora.
+9509=Esta melancia ainda não está pronta para ser colhida.
+9510=Não consegues colher nenhuma melancia.
+9511=Colhes uma melancia.
+9512=Este melão ainda não está pronto para ser colhido.
+9513=Não consegues colher nenhum melão.
+9514=Colhes um melão.
+9515=Este melão ainda não está pronto para ser colhido.
+9516=Não consegues colher nenhum melão.
+9517=Colhes um melão.
+9518=Este alho ainda não está pronto para ser colhido.
+9519=Não consegues colher nenhum alho.
+9520=Colhes um alho.
 // [9800-9899] Editor do Spawner
 9800=Editor de Objetos do Spawner
 9801=Nome do Spawner
@@ -4756,6 +4806,7 @@
 11467=braços ósseos
 11468=leggings de osso
 11469=blindagem óssea
+11470=chapéu alto de palha
 // 11601 - 11800 Habilidade de Cozinhar Artesanato
 11601=MENU DE COZEDURA
 11602=Ingredientes

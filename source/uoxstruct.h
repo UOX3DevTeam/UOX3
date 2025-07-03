@@ -306,11 +306,13 @@ class CTeleLocationEntry
 {
 private:
 	Point3_st	src;
-	UI08	srcWorld;
+	SI08	srcWorld;
 	Point3_st	trg;
-	UI08	trgWorld;
+	SI08	trgWorld;
+	SI08	minEra;
+	SI08	maxEra;
 public:
-	CTeleLocationEntry() : srcWorld( 0xFF ), trgWorld( 0 )
+	CTeleLocationEntry() : srcWorld( 0xFF ), trgWorld( 0 ), minEra( -1 ), maxEra( -1 )
 	{
 		src.Assign( 0, 0, ILLEGAL_Z );
 		trg.Assign( 0, 0, ILLEGAL_Z );
@@ -323,11 +325,11 @@ public:
 	{
 		src.Assign( x, y, z );
 	}
-	UI08 SourceWorld( void ) const
+	SI08 SourceWorld( void ) const
 	{
 		return srcWorld;
 	}
-	void SourceWorld( UI08 newVal )
+	void SourceWorld( SI08 newVal )
 	{
 		srcWorld = newVal;
 	}
@@ -339,13 +341,29 @@ public:
 	{
 		trg.Assign( x, y, z );
 	}
-	UI08 TargetWorld( void ) const
+	SI08 TargetWorld( void ) const
 	{
 		return trgWorld;
 	}
-	void TargetWorld( UI08 newVal )
+	void TargetWorld( SI08 newVal )
 	{
 		trgWorld = newVal;
+	}
+	SI08 MinEra( void ) const
+	{
+		return minEra;
+	}
+	void MinEra( SI08 newVal )
+	{
+		minEra = newVal;
+	}
+	SI08 MaxEra( void ) const
+	{
+		return maxEra;
+	}
+	void MaxEra( SI08 newVal )
+	{
+		maxEra = newVal;
 	}
 };
 

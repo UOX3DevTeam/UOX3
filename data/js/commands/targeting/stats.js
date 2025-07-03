@@ -2,11 +2,11 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "fullstats", 2, true );
-	RegisterCommand( "heal", 1, true );
-	RegisterCommand( "cure", 1, true );
-	RegisterCommand( "stamina", 1, true );
-	RegisterCommand( "mana", 1, true );
+	RegisterCommand( "fullstats", 8, true );
+	RegisterCommand( "heal", 4, true );
+	RegisterCommand( "cure", 4, true );
+	RegisterCommand( "stamina", 4, true );
+	RegisterCommand( "mana", 4, true );
 }
 
 function command_FULLSTATS( socket, cmdString )

@@ -2,10 +2,10 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "getscptrig", 2, true );
-	RegisterCommand( "setscptrig", 2, true );
-	RegisterCommand( "addscptrig", 2, true );
-	RegisterCommand( "removescptrig", 2, true );
+	RegisterCommand( "getscptrig", 8, true );
+	RegisterCommand( "setscptrig", 8, true );
+	RegisterCommand( "addscptrig", 8, true );
+	RegisterCommand( "removescptrig", 8, true );
 }
 
 function command_GETSCPTRIG( socket, cmdString )

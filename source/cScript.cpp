@@ -180,6 +180,7 @@ static JSFunctionSpec my_functions[] =
 	{ "GetCharacterCount",			SE_GetCharacterCount,		0, 0, 0 },
 	{ "GetServerVersionString",		SE_GetServerVersionString,	0, 0, 0 },
 	{ "EraStringToNum",				SE_EraStringToNum,			1, 0, 0 },
+	{ "GetCommandLevelVal",			SE_GetCommandLevelVal,		1, 0, 0 },
 
 	{ "BASEITEMSERIAL",				SE_BASEITEMSERIAL,			0, 0, 0 },
 	{ "INVALIDSERIAL",				SE_INVALIDSERIAL,			0, 0, 0 },
@@ -191,18 +192,50 @@ static JSFunctionSpec my_functions[] =
 
 void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *report )
 {
-	UI16 scriptNum = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
-	// If we're loading the world then do NOT print out anything!
-	Console.Error( oldstrutil::format( "JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
-	if( report == nullptr || report->filename == nullptr )
+	JSErrorInfo* errorInfo = ( JSErrorInfo *)JS_GetContextPrivate( cx );
+	if( errorInfo != nullptr )
 	{
-		Console.Error( "No detailed data" );
-		return;
+		// Silently populate errorInfo for cScript constructor during compilation
+		if( report == nullptr || report->filename == nullptr )
+		{
+			errorInfo->message = "No detailed data";
+			return;
+		}
+
+		if( report->linebuf != nullptr  )
+		{
+			errorInfo->lineSource = report->linebuf;
+		}
+		if( report->tokenptr != nullptr )
+		{
+			errorInfo->tokenPointer = report->tokenptr;
+		}
+
+		errorInfo->message  = message;
+		errorInfo->filename = report->filename;
+		errorInfo->lineNum  = report->lineno;
 	}
-	Console.Error( oldstrutil::format( "Filename: %s\n| Line Number: %i", report->filename, report->lineno ));
-	if( report->linebuf != nullptr || report->tokenptr != nullptr )
+	else
 	{
-		Console.Error( oldstrutil::format( "Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
+		// Output errors directly here, triggered by runtime execution of scripts
+		UI16 scriptNum = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+		Console.Error( oldstrutil::format( "JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
+		if( report == nullptr || report->filename == nullptr )
+		{
+			Console.Error( "No detailed data" );
+			return;
+		}
+
+		Console.Error( oldstrutil::format( "Filename: %s", report->filename ));
+		Console.Error( oldstrutil::format( "Line Number: %i", report->lineno ));
+		if( report->linebuf != nullptr )
+		{
+			Console.Error( oldstrutil::format( "Erroneous Line: %s", oldstrutil::trim( report->linebuf ).c_str() ));
+		}
+		if( report->tokenptr != nullptr )
+		{
+			Console.Error( oldstrutil::format( "Token Ptr: %s", report->tokenptr ));
+		}
 	}
 }
 
@@ -311,11 +344,87 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 
 	//JS_InitStandardClasses( targContext, targObject );
 	JS_DefineFunctions( targContext, targObject, my_functions );
+
+	// Let's fetch some error details when we compile the script
+	JSErrorInfo errorDetails;
+	JS_SetContextPrivate( targContext, &errorDetails );
 	targScript = JS_CompileFile( targContext, targObject, targFile.c_str() );
+	JS_SetContextPrivate( targContext, nullptr );
+
 	if( targScript == nullptr )
 	{
-		throw std::runtime_error( "Compilation failed" );
+		std::string errorMessage, errorFile, errorLineStr, tokenPtrLine;
+		uint32 errorLine = 0;
+		UI16 scriptNum = 0xFFFF; // Script Number is unknown at this stage
+		if( !errorDetails.message.empty() )
+		{
+			// Triggered during compilation of scripts at startup, or upon full reload of script engine at runtime
+			errorMessage = errorDetails.message;
+			errorFile = errorDetails.filename;
+			errorLine = errorDetails.lineNum;
+			errorLineStr = errorDetails.lineSource;
+			tokenPtrLine = errorDetails.tokenPointer;
+		}
+		else
+		{
+			// Triggered when reloading individual scripts at runtime
+			jsval pendingException;
+			if( JS_GetPendingException( targContext, &pendingException ) == JS_TRUE )
+			{
+				if( JSVAL_IS_OBJECT( pendingException ) && !JSVAL_IS_NULL( pendingException ))
+				{
+					JSObject *errObj = JSVAL_TO_OBJECT( pendingException );
+
+					// Get error message from pending exception
+					jsval messageVal;
+					if( JS_GetProperty( targContext, errObj, "message", &messageVal ) == JS_TRUE )
+					{
+						JSString *tempStr = JS_ValueToString( targContext, messageVal );
+						if( tempStr )
+						{
+							errorMessage = JS_GetStringBytes( tempStr );
+						}
+					}
+
+					// Get line number from pending exception
+					jsval lineVal;
+					if( JS_GetProperty( targContext, errObj, "lineNumber", &lineVal ) == JS_TRUE )
+					{
+						JS_ValueToECMAUint32( targContext, lineVal, &errorLine );
+					}
+
+					// Get filename from pending exception
+					jsval fileVal;
+					if( JS_GetProperty( targContext, errObj, "fileName", &fileVal ) == JS_TRUE )
+					{
+						JSString *tempStr = JS_ValueToString( targContext, fileVal );
+						if( tempStr )
+						{
+							errorFile = JS_GetStringBytes( tempStr );
+						}
+					}
+				}
+
+				JS_ClearPendingException( targContext );
+			}
+		}
+
+		// Spit out the distinct parts of the error message line by line
+		Console.Error( oldstrutil::format( "JS script failure: Script Number (%u) Message (%s)", scriptNum, errorMessage.c_str() ));
+		Console.Error( oldstrutil::format( "Filename: %s", errorFile.c_str() ));
+		Console.Error( oldstrutil::format( "Line Number: %i", errorLine ));
+		if( !errorLineStr.empty() )
+		{
+			Console.Error( oldstrutil::format( "Erroneous Line: %s", oldstrutil::trim( errorLineStr ).c_str() ));
+		}
+		if( !tokenPtrLine.empty() )
+		{
+			Console.Error( oldstrutil::format( "Token Ptr: %s", tokenPtrLine.c_str() ));
+		}
+
+		throw std::runtime_error( "Error during JS Compilation" );
 	}
+
 	jsval rval;
 	JSBool ok = JS_ExecuteScript( targContext, targObject, targScript, &rval );
 	if( ok != JS_TRUE )
@@ -351,6 +460,7 @@ cScript::~cScript()
 		targScript = nullptr;
 	}
 	Cleanup();
+
 	//JS_GC( targContext );
 	//	if( targContext != nullptr )
 	//		JS_DestroyContext( targContext );
@@ -3484,6 +3594,80 @@ SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 	}
 
 	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnProfileRequest()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers in global script on requests for paperdoll profiles of other players
+//o------------------------------------------------------------------------------------------------o
+std::string cScript::OnProfileRequest( CSocket *mSock, CChar *profileOwner )
+{
+	if( mSock  == nullptr || !ValidateObject( profileOwner ))
+		return "";
+
+	if( !ExistAndVerify( seOnProfileRequest, "onProfileRequest" ))
+		return "";
+
+	jsval params[2], rval;
+	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	JSObject *profOwnerObj	= JSEngine->AcquireObject( IUE_CHAR, profileOwner, runTime );
+	
+	params[0]	= OBJECT_TO_JSVAL( myObj );
+	params[1]	= STRING_TO_JSVAL( profOwnerObj );
+	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onProfileRequest", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnProfileRequest, false );
+	}
+
+	if( rval < 0 )
+	{
+		Console.Error( "Handled exception in cScript.cpp OnProfileRequest() - invalid return value/error encountered!" );
+		return "";
+	}
+
+	try
+	{
+		JSString *str = JS_ValueToString( targContext, rval );
+		std::string returnString = JS_GetStringBytes( str );
+
+		return returnString;
+	}
+	catch( ... )
+	{
+		Console.Error( "Handled exception in cScript.cpp OnProfileRequest()" );
+		return "";
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnProfileUpdate()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers in global script on attempts to update paperdoll profile text
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnProfileUpdate( CSocket *mSock, std::string profileText )
+{
+	if( mSock == nullptr || profileText.empty() )
+		return false;
+
+	if( !ExistAndVerify( seOnProfileUpdate, "onProfileUpdate" ))
+		return false;
+
+	jsval params[2], rval;
+	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	JSString *strProfileText = nullptr;
+	strProfileText = JS_NewStringCopyZ( targContext, profileText.c_str() );
+
+	params[0]	= OBJECT_TO_JSVAL( myObj );
+	params[1]	= STRING_TO_JSVAL( strProfileText );
+	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onProfileUpdate", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnProfileUpdate, false );
+	}
+
+	return ( retVal == JS_TRUE );
 }
 
 //o------------------------------------------------------------------------------------------------o

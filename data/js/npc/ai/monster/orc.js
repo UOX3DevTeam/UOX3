@@ -10,20 +10,20 @@ function onAICombatTarget( pChar, pTarget )
 
 	// Don't allow if target has AI_HEALER_G, or is an animal and monsters vs animals is disabled
 	if( pTarget.aitype == 1
-		|| ( pTarget.isAnimal && ( !monstersVsAnimals || animalAttackChance < RandomNumber( 1, 1000 ))))
+		|| ( pTarget.isAnimal && !ValidateObject( pTarget.owner ) && ( !monstersVsAnimals || animalAttackChance < RandomNumber( 1, 1000 ))))
 		return false;
 
 	// 1% chance to turn on own race
-	if( pChar.race.id == pTarget.race.id && RandomNumber( 1, 100 ) > 1 )
+	if( !ValidateObject( pTarget.owner ) && pChar.race.id == pTarget.race.id && RandomNumber( 1, 100 ) > 1 )
 		return false;
 
 	// Don't attack racial allies
 	var raceCompare = RaceCompareByRace( pChar.race.id, pTarget.race.id );
-	if( raceCompare >= 1 )
+	if( !ValidateObject( pTarget.owner ) && raceCompare >= 1 )
 		return false;
 
 	// Don't attack other monsters, unless racial enemies
-	if(( pChar.aitype == 2 || pChar.aitype == 11 ) && ( pTarget.aitype == 2 || pTarget.aitype == 11 ) && raceCompare >= 0 )
+	if( !ValidateObject( pTarget.owner ) && (( pChar.aitype == 2 || pChar.aitype == 11 ) && ( pTarget.aitype == 2 || pTarget.aitype == 11 ) && raceCompare >= 0 ))
 		return false;
 
 	// See if pTarget is wearing an orcish kin mask

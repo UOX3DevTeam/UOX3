@@ -40,7 +40,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
     // Start the spellcast cooldown timer, which determines next time they can cast a spell
     var delay = mSpell.delay * 100;
-    if( spellType == 0 && mChar.commandlevel < 2 ) // if they are a gm they don't have a delay :-)
+    if( spellType == 0 && mChar.commandlevel < GetCommandLevelVal( "CNS" )) // if they are a counslor or higher they don't have a delay :-)
     {
         mChar.SetTimer( Timer.SPELLTIME, delay );
         mChar.frozen = true;
