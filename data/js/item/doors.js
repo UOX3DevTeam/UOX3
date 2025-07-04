@@ -194,8 +194,11 @@ function onUseChecked( pUser, iUsed )
 		// Refresh house decay timer if the door is opened
 		if( iUsed.multi && ( !iUsed.multi.GetTag( "InDanger" )))
 		{
+			const decayStageLikeNewMins = GetServerSetting( "DecayStageLikeNewMins" );
+			const decayLikeNewMS = decayStageLikeNewMins * 60 * 1000;
+
 			iUsed.multi.KillTimers();
-			iUsed.multi.StartTimer( 1800000, 1, true );
+			iUsed.multi.StartTimer( decayLikeNewMS, 1, 15000 );
 		}
 	}
 

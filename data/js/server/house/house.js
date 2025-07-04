@@ -21,9 +21,19 @@ const keylessGuestAccess = GetServerSetting( "KeylessGuestAccess" );
 const keylessFriendAccess = GetServerSetting( "KeylessFriendAccess" );
 const keylessCoOwnerAccess = GetServerSetting( "KeylessCoOwnerAccess" );
 
-const houseDecayEnabled = true;//Enables House Decay
-const houseItemsDeleteEnabled = true;//Enables House Items Deletion
-const allowGrandfathered = true; // Allows houses to be marked as Grandfathered, preventing decay
+const houseDecay = GetServerSetting( "HouseDecay" );
+const houseItemsDeleteOnDecay = GetServerSetting( "HouseItemsDeleteOnDecay" );
+const houseGrandFathered = GetServerSetting( "HouseGrandfathered" );
+
+const decayStageLikeNewMins = GetServerSetting( "DecayStageLikeNewMins" );
+const decayStageLowhrs = GetServerSetting( "DecayStageLowHrs" );
+const decayStageHihrs = GetServerSetting( "DecayStageHiHrs" );
+const decayStageDangerHrs = GetServerSetting( "DecayStageDangerHrs" );
+
+const decayLikeNewMS = decayStageLikeNewMins * 60 * 1000;
+const decayLowMS = decayStageLowhrs * 60 * 60 * 1000;
+const decayHiMS = decayStageHihrs * 60 * 60 * 1000;
+const decayDangerMS = decayStageDangerHrs * 60 * 60 * 1000;
 
 function onHouseCommand( pSocket, iMulti, cmdID )
 {
@@ -77,7 +87,7 @@ function onEntrance( iMulti, charEntering, objType )
 	//Start Decay timer if decay is enabled or init is not true.
 	if( !iMulti.GetTag( "init" ))
 	{
-		iMulti.StartTimer( 1800000, 1, true );//approx. 30 minutes
+		iMulti.StartTimer( decayLikeNewMS, 1, 15000 );//approx. 30 minutes
 		iMulti.SetTag( "decayStage", 1 );
 		iMulti.SetTag( "init", true );
 	}
@@ -216,40 +226,40 @@ function onTimer( iMulti, timerID )
 		return;
 
 	// Central decay toggle check
-	if( !houseDecayEnabled )
+	if( houseDecay != 1)
 	{
 		iMulti.KillTimers(); // Cancel decay loop if disabled
 		return;
 	}
 
-	//Skip decay if this house is marked Grandfathered
-	if( allowGrandfathered && iMulti.GetTag( "Grandfathered" ))
+	//Skip decay if this house is marked Grandfathered and its turned on
+	if( houseGrandFathered == 1 && iMulti.GetTag( "Grandfathered" ))
 	{
 		iMulti.KillTimers();
 		return;
 	}
 
-	var choseDays = Math.random() < 0.5 ? 172800000 : 259200000;// Random 2 to 3 days timer.
+	var choseDays = Math.random() < 0.5 ? decayLowMS : decayHiMS;// Random 2 to 3 days timer.
 	switch( timerID )
 	{
 		case 1:
-			iMulti.StartTimer( 1800000, 2, true );//approx. 30 minutes
+			iMulti.StartTimer( decayLikeNewMS, 2, 15000 );//approx. 30 minutes
 			iMulti.SetTag( "decayStage", timerID );
 			break;//Like New
 		case 2:
-			iMulti.StartTimer( choseDays, 3, true );//2 to 3 days
+			iMulti.StartTimer( choseDays, 3, 15000 );//2 to 3 days
 			iMulti.SetTag( "decayStage", timerID );
 			break;//Slightly Worn
 		case 3:
-			iMulti.StartTimer( choseDays, 4, true );//2 to 3 days
+			iMulti.StartTimer( choseDays, 4, 15000 );//2 to 3 days
 			iMulti.SetTag( "decayStage", timerID );
 			break;//Somewhat Worn
 		case 4:
-			iMulti.StartTimer( choseDays, 5, true );//2 to 3 days
+			iMulti.StartTimer( choseDays, 5, 15000 );//2 to 3 days
 			iMulti.SetTag( "decayStage", timerID );
 			break;//Fairly Worn
 		case 5:
-			iMulti.StartTimer( choseDays, 6, true );//2 to 3 days
+			iMulti.StartTimer( choseDays, 6, 15000 );//2 to 3 days
 			iMulti.SetTag( "decayStage", timerID );
 
 			var owner = iMulti.owner;
@@ -257,7 +267,7 @@ function onTimer( iMulti, timerID )
 				owner.SysMessage( "Your house is in danger of collapsing!" );
 			break;//Greatly Worn
 		case 6:
-			iMulti.StartTimer( 64800000, 7, true );//18 hours left.
+			iMulti.StartTimer( decayDangerMS, 7, 15000 );//18 hours left.
 			iMulti.SetTag( "decayStage", timerID );
 			iMulti.SetTag( "InDanger", true );// Can not be refreshed.
 			break;// In Danger of Collapsing
@@ -325,7 +335,7 @@ function HouseDecay(iMulti )
 		}
 		else if( itemInHouse.movable == 2 || itemInHouse.GetTag( "deed" )) // items placed as part of the house itself like forge/anvil in smithy or the addon deed
 		{
-			if(	houseItemsDeleteEnabled )
+			if(	houseItemsDeleteOnDecay == 1)
 			{
 				itemInHouse.Delete();
 			}
@@ -347,7 +357,7 @@ function HouseDecay(iMulti )
 		}
 		else if( itemInHouse.isLockedDown )
 		{
-			if(	houseItemsDeleteEnabled )
+			if(	houseItemsDeleteOnDecay == 1)
 			{
 				itemInHouse.Delete();
 			}

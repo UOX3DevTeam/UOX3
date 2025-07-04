@@ -5400,7 +5400,7 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 387:	// DECAYSTAGEHIHRS
 				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageHiHrs() ));
 				break;
-			case 388:	// DECAYSTAGEDANAGERHRS
+			case 388:	// DECAYSTAGEDANGERHRS
 				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageDangerHrs() ));
 				break;
 			default:

@@ -408,7 +408,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"DECAYSTAGELIKENEWMINS"s, 385},
 	{"DECAYSTAGELOWHRS"s, 386},
 	{"DECAYSTAGEHIHRS"s, 387},
-	{"DECAYSTAGEDANAGERHRS"s, 388}
+	{"DECAYSTAGEDANGERHRS"s, 388}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -5850,7 +5850,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "DECAYSTAGELIKENEWMINS=" << DecayStageLikeNewMins() << '\n';
 		ofsOutput << "DECAYSTAGELOWHRS=" << DecayStageLowHrs() << '\n';
 		ofsOutput << "DECAYSTAGEHIHRS=" << DecayStageHiHrs() << '\n';
-		ofsOutput << "DECAYSTAGEDANAGERHRS=" << DecayStageDangerHrs() << '\n';
+		ofsOutput << "DECAYSTAGEDANGERHRS=" << DecayStageDangerHrs() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[bulk order deeds]" << '\n' << "{" << '\n';
@@ -7367,7 +7367,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 387:	// DECAYSTAGEHIHRS
 			DecayStageHiHrs( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
 			break;
-		case 388:	// DECAYSTAGEDANAGERHRS
+		case 388:	// DECAYSTAGEDANGERHRS
 			DecayStageDangerHrs( static_cast<UI32>( std::stoul( value, nullptr, 0 )));
 			break;
 		default:
