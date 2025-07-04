@@ -23,7 +23,7 @@ const keylessCoOwnerAccess = GetServerSetting( "KeylessCoOwnerAccess" );
 
 const houseDecay = GetServerSetting( "HouseDecay" );
 const houseItemsDeleteOnDecay = GetServerSetting( "HouseItemsDeleteOnDecay" );
-const houseGrandFathered = GetServerSetting( "HouseGrandfathered" );
+const houseGrandFatheredSystem = GetServerSetting( "HouseGrandfatheredSystem" );
 
 const decayStageLikeNewMins = GetServerSetting( "DecayStageLikeNewMins" );
 const decayStageLowhrs = GetServerSetting( "DecayStageLowHrs" );
@@ -233,7 +233,7 @@ function onTimer( iMulti, timerID )
 	}
 
 	//Skip decay if this house is marked Grandfathered and its turned on
-	if( houseGrandFathered == 1 && iMulti.GetTag( "Grandfathered" ))
+	if( houseGrandFatheredSystem == 1 && iMulti.GetTag( "Grandfathered" ))
 	{
 		iMulti.KillTimers();
 		return;

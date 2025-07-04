@@ -5388,8 +5388,8 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 383:	// HOUSEITEMSDELETEONDECAY
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseItemsDeleteOnDecay() );
 				break;
-			case 384:	// HOUSEGRANDFATHERED
-				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseGrandFathered() );
+			case 384:	// HOUSEGRANDFATHERSYSTEM
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseGrandFatheredSystem() );
 				break;
 			case 385:	// DECAYSTAGELIKENEWMINS
 				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageLikeNewMins() ));

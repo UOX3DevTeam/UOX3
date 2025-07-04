@@ -404,7 +404,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"POISONCORROSIONSYSTEM"s, 381},
 	{"HOUSEDECAY"s, 382},
 	{"HOUSEITEMSDELETEONDECAY"s, 383},
-	{"HOUSEGRANDFATHERED"s, 384},
+	{"HOUSEGRANDFATHERSYSTEM"s, 384},
 	{"DECAYSTAGELIKENEWMINS"s, 385},
 	{"DECAYSTAGELOWHRS"s, 386},
 	{"DECAYSTAGEHIHRS"s, 387},
@@ -996,7 +996,7 @@ auto CServerData::ResetDefaults() -> void
 	KeylessGuestAccess( false );
 	HouseDecay( false );
 	HouseItemsDeleteOnDecay( false );
-	HouseGrandFathered( false );
+	HouseGrandFatheredSystem( false );
 	DecayStageLikeNewMins( 30 );
 	DecayStageLowHrs( 48 );
 	DecayStageHiHrs( 72 );
@@ -3731,11 +3731,11 @@ auto CServerData::HouseItemsDeleteOnDecay( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether houses are grandfathered (i.e. not subject to decay)
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::HouseGrandFathered() const -> bool
+auto CServerData::HouseGrandFatheredSystem() const -> bool
 {
 	return boolVals.test( BIT_HOUSEGRANDFATHERED );
 }
-auto CServerData::HouseGrandFathered( bool newVal ) -> void
+auto CServerData::HouseGrandFatheredSystem( bool newVal ) -> void
 {
 	boolVals.set( BIT_HOUSEGRANDFATHERED, newVal );
 }
@@ -5846,7 +5846,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "KEYLESSGUESTACCESS=" << ( KeylessGuestAccess() ? 1 : 0 ) << '\n';
 		ofsOutput << "HOUSEDECAY=" << ( HouseDecay() ? 1 : 0 ) << '\n';
 		ofsOutput << "HOUSEITEMSDELETEONDECAY=" << ( HouseItemsDeleteOnDecay() ? 1 : 0 ) << '\n';
-		ofsOutput << "HOUSEGRANDFATHERED=" << ( HouseGrandFathered() ? 1 : 0 ) << '\n';
+		ofsOutput << "HOUSEGRANDFATHERSYSTEM=" << ( HouseGrandFatheredSystem() ? 1 : 0 ) << '\n';
 		ofsOutput << "DECAYSTAGELIKENEWMINS=" << DecayStageLikeNewMins() << '\n';
 		ofsOutput << "DECAYSTAGELOWHRS=" << DecayStageLowHrs() << '\n';
 		ofsOutput << "DECAYSTAGEHIHRS=" << DecayStageHiHrs() << '\n';
@@ -7355,8 +7355,8 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 383:	// HOUSEITEMSDELETEONDECAY
 			HouseItemsDeleteOnDecay( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;
-		case 384:	// HOUSEGRANDFATHERED
-			HouseGrandFathered( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+		case 384:	// HOUSEGRANDFATHERSYSTEM
+			HouseGrandFatheredSystem( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;
 		case 385:	// DECAYSTAGELIKENEWMINS
 			DecayStageLikeNewMins( static_cast<UI32>( std::stoul( value, nullptr, 0 )));

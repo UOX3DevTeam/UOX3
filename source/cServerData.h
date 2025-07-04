@@ -923,8 +923,8 @@ public:
 	auto		HouseItemsDeleteOnDecay( bool value ) -> void;
 	auto		HouseItemsDeleteOnDecay() const -> bool;
 
-	auto		HouseGrandFathered( bool value ) -> void;
-	auto		HouseGrandFathered() const -> bool;
+	auto		HouseGrandFatheredSystem( bool value ) -> void;
+	auto		HouseGrandFatheredSystem() const -> bool;
 
 	auto		DecayStageLikeNewMins( UI32 value ) -> void;
 	UI32		DecayStageLikeNewMins() const;
