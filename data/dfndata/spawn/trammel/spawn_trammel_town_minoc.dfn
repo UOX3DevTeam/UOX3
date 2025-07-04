@@ -618,7 +618,7 @@ MAXTIME=600
 CALL=1
 }
 
-[REGIONSPAWN 544]
+[REGIONSPAWN 7544]
 {
 NAME=Minoc - Stables
 NPC=veterinarian

@@ -758,7 +758,7 @@ MAXTIME=90
 CALL=1
 }
 
-[REGIONSPAWN 1155]
+[REGIONSPAWN 8154]
 {
 NAME=Trinsic animal trainer
 NPC=veterinarian
