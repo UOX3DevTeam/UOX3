@@ -153,9 +153,9 @@ Arachnids
 NPC=dreadspider
 0x25c5=Frost Spider
 NPC=frostspider
-0x26c6=Giant Spider
+0x20fd=Giant Spider
 NPC=spider
-0x26c4=Giant Black Widow
+0x25c4=Giant Black Widow
 NPC=giantblackwidow
 0x25c9=Terathan Drone
 NPC=teradrone
