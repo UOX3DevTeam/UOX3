@@ -11357,11 +11357,7 @@ JSBool CBase_HasScriptTrigger( JSContext *cx, uintN argc, jsval *vp )
 	}
 
 	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	if( scriptId > 0 && myObj->HasScriptTrigger( scriptId ))
-	{
-		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ) );
-	}
-
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( scriptId > 0 && myObj->HasScriptTrigger( scriptId ) ) );
 	return JS_TRUE;
 }
 
