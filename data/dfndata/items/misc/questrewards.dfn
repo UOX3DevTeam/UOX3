@@ -1,0 +1,102 @@
+[minerssatchel]
+{
+get=0x0e76
+name=Craftsman's Satchel
+colorlist=300
+packitem=pickaxe
+packitem=pickaxe
+sectionid=minerssatchel
+}
+
+[oldring]
+{
+get=0x108a
+name=an old ring
+sectionid=oldring
+}
+
+[oldnecklace]
+{
+get=0x1088
+name=an old necklace
+sectionid=oldnecklace
+}
+
+[chefssatchel]
+{
+get=0x0e75
+name=Craftsman's Satchel
+colorlist=300
+packitem=0x1039//sackofflour
+packitem=0x097f//skillet
+sectionid=chefssatchel
+}
+
+[lumberjackssatchel]
+{
+get=0x0e75
+name=Craftsman's Satchel
+colorlist=300
+packitem=0x0eed,15
+packitem=hatchet
+sectionid=lumberjackssatchel
+}
+
+[smithssatchel]
+{
+get=0x0e75
+name=Craftsman's Satchel
+colorlist=300
+packitem=0x1bef,10//ironingot
+packitem=0x13E3//smithhammer
+sectionid=smithssatchel
+}
+
+[tinkerssatchel]
+{
+get=0x0e75
+name=Craftsman's Satchel
+colorlist=300
+packitem=0x1EBC
+packitem=ranomdtinkerssatchel
+sectionid=tinkerssatchel
+}
+
+[jacobspickaxe]
+{
+get=base_item
+name=jacob's pickaxe
+id=0x0e85
+newbie
+weight=1100
+value=34 17
+layer=2
+lodamage=1
+hidamage=15
+hp=35 45
+spd=35
+str=25
+restock=10
+decay=1
+good=57
+maxuses=20
+usesleft=20
+custominttag=skillBonusID 45
+custominttag=skillBonusVal 100
+script=2200// uses left tooltip
+script=4050// mining.js
+script=5063//jacobspickaxe.js
+script=5043//skill_boosting_equipment.js
+sectionid=jacobspickaxe
+}
+
+[claspofconcentration]
+{
+get=silverbracelet
+name=Clasp of Concentration
+newbie
+staminaregen=2
+manaregen=1
+elementresist=5 5 0 0
+sectionid=claspofconcentration
+}

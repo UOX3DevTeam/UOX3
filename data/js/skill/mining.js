@@ -615,6 +615,7 @@ function MakeOre( socket, mChar )
 				if( ValidateObject( oreItem ))
 				{
 					oreItem.name = oreName;
+					oreItem.sectionID = "ore";
 					if( oreData[6] != 0 )
 					{
 						oreItem.AddScriptTrigger( oreData[6] ); // oreData[6] is scriptID

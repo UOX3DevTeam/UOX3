@@ -1,0 +1,253 @@
+//-==========================================================-
+//-=                                                        =-
+//-=             Ultima Offline eXperiment 3                =-
+//-=            Script name: questgivers.dfn                =-
+//-=                Date: Dec 24st 2024                     =-
+//-=                                                        =-
+//-==========================================================-
+
+[mugg]
+{
+GET=basehuman
+NAME=Mugg the Miner
+TITLE=Quest Giver
+ID=0x0190
+PRIV=4
+SKIN=0x840A
+EQUIPITEM=0x2047//afro
+EQUIPITEM=pickaxe
+EQUIPITEM=boots
+COLOR=0x901
+EQUIPITEM=shortpants
+COLOR=0x3B2
+EQUIPITEM=shirt
+COLOR=0x22B
+EQUIPITEM=skullcap
+COLOR=0x177
+EQUIPITEM=halfapron
+COLOR=0x5F1
+EQUIPITEM=0x1414//plategloves
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802//questconversation.js
+SCRIPT=3001//speech_monster.js
+CUSTOMINTTAG=QuestID 1//More ore Please
+}
+
+[clairesse]
+{
+GET=basehuman
+NAME=Clairesse the Servant
+TITLE=Quest Giver
+ID=0x0191
+PRIV=4
+SKIN=0x840B
+EQUIPITEM=0x203D//pony tail
+COLOR=0x458
+EQUIPITEM=plaindress
+COLOR=0x3C9
+EQUIPITEM=shoes
+COLOR=0x740
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 2//Stitch In Time
+}
+
+[asandos]
+{
+GET=basehuman
+NAME=Asandos the Chef
+TITLE=Quest Giver
+ID=0x0190
+PRIV=4
+SKIN=0x83FF
+EQUIPITEM=0x2044//mohawk
+COLOR=0x1
+EQUIPITEM=boots
+COLOR=0x901
+EQUIPITEM=shortpants
+EQUIPITEM=shirt
+EQUIPITEM=cap
+EQUIPITEM=halfapron
+COLOR=0x28
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 3//Bakers Dozen
+}
+
+[hargrove]
+{
+GET=basehuman
+NAME=Hargrove the Lumberjack
+TITLE=Quest Giver
+ID=0x0190
+PRIV=4
+SKIN=0x83FF
+EQUIPITEM=0x203C//long hair
+EQUIPITEM=boots
+COLOR=0x901
+EQUIPITEM=shirt
+COLOR=0x288
+EQUIPITEM=bandana
+COLOR=0x20
+EQUIPITEM=battleaxe
+EQUIPITEM=studdedleggings
+EQUIPITEM=0x1414//plategloves
+COLOR=0x21E
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 4//Chop Chop On The Double
+}
+
+[gervis]
+{
+GET=basehuman
+NAME=Gervis the Blacksmith Trainer
+TITLE=Quest Giver
+ID=0x0190
+PRIV=4
+SKIN=0x83F5
+EQUIPITEM=0x203B//Short Hair
+COLOR=0x5EC
+EQUIPITEM=boots
+COLOR=0x3B2
+EQUIPITEM=shortpants
+COLOR=0x1BB
+EQUIPITEM=shirt
+COLOR=0x71F
+EQUIPITEM=fullapron
+COLOR=0x3B2
+EQUIPITEM=0x13E3//smith hammer
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 5//Battered Bucklers
+}
+
+[nibbet]
+{
+GET=basehuman
+NAME=Nibbet the Tinker
+TITLE=Quest Giver
+ID=0x0190
+PRIV=4
+SKIN=0x840C
+EQUIPITEM=0x2044//Mohawk
+COLOR=0x1
+EQUIPITEM=boots
+COLOR=0x591
+EQUIPITEM=shortpants
+COLOR=0xF8
+EQUIPITEM=shirt
+COLOR=0x2D
+EQUIPITEM=fullapron
+COLOR=0x288
+EQUIPITEM=0x1414//plategloves
+COLOR=0x21E
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 6//A clockwork puzzle
+}
+
+[jacob]
+{
+GET=basehuman
+NAME=Jacob Waltzt the Miner Instructor
+TITLE=Quest Giver
+ID=0x0190
+PRIV=4
+SKIN=0x83F5
+EQUIPITEM=0x203B//Short Hair
+COLOR=0x5EC
+EQUIPITEM=widebrimhat
+COLOR=0x966
+EQUIPITEM=boots
+EQUIPITEM=shortpants
+COLOR=0x370
+EQUIPITEM=shirt
+COLOR=0x966
+EQUIPITEM=halfapron
+COLOR=0x1BB
+EQUIPITEM=pickaxe
+STR=100 100
+DEX=100 100
+INT=25 25
+BLACKSMITHING=650 880
+SWORDSMANSHIP=680 680
+TACTICS=680 680
+ARMSLORE=640 1000
+MAGERY=640 1000
+MINING=650 880
+TINKERING=640 1000
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 7//The Delucian’s Lost Mine
+}
+
+[sarsmea]
+{
+GET=basehuman
+NAME=Sarsmea Smythe the Focus Instructor
+TITLE=Quest Giver
+ID=0x0191
+PRIV=4
+SKIN=0x83F5
+EQUIPITEM=0x203B//Short Hair
+COLOR=0x5EC
+EQUIPITEM=leatherleggings
+EQUIPITEM=ThighBoots
+EQUIPITEM=leatherarmor
+EQUIPITEM=studdedgloves
+EQUIPITEM=leatherninjabelt
+EQUIPITEM=studdedgorget
+EQUIPITEM=platemailjingasa
+STR=100 100
+DEX=100 100
+INT=25 25
+ANATOMY=1200 1200
+PARRYING=1200 1200
+HEALING=1200 1200
+TACTICS=1200 1200
+SWORDSMANSHIP=1200 1200
+FOCUS=1200 1200
+SCRIPT=5802
+CUSTOMINTTAG=QuestID 8//The Inner Warrior
+}
+
+[nail]
+{//example quest npc
+GET=basehuman
+NAME=Nail
+TITLE=the reciever
+ID=0x0190
+PRIV=4
+SKIN=0x840A
+EQUIPITEM=0x2047//afro
+EQUIPITEM=pickaxe
+EQUIPITEM=boots
+COLOR=0x901
+EQUIPITEM=shortpants
+COLOR=0x3B2
+EQUIPITEM=shirt
+COLOR=0x22B
+EQUIPITEM=skullcap
+COLOR=0x177
+EQUIPITEM=halfapron
+COLOR=0x5F1
+EQUIPITEM=0x1414//plategloves
+STR=100 100
+DEX=100 100
+INT=25 25
+SCRIPT=5802//conversation gump
+CUSTOMINTTAG=QuestID 1//collect fruit quest
+CUSTOMINTTAG=DeliveryQuestID 10//waiting for package
+}

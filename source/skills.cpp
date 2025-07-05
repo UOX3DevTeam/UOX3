@@ -692,6 +692,7 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
 
 	SKILLVAL amtToGain			= 1;
+
 	if( skAmt > 0 )
 	{
 		amtToGain = skAmt;
@@ -732,6 +733,7 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+
 				if( toExecute != nullptr )
 				{
 					toExecute->OnSkillChange( c, sk, amtToGain );
@@ -858,6 +860,7 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+        
 				if( toExecute != nullptr )
 				{
 					toExecute->OnSkillChange( c, sk, amtToGain );
