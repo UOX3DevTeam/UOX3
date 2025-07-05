@@ -883,7 +883,7 @@ auto CServerData::ResetDefaults() -> void
 	MaxControlSlots( 0 ); // Default to 0, which is equal to off
 	MaxFollowers( 5 );
 	MaxPetOwners( 10 );
-	PetBondingEnabled( true );
+	PetBondingEnabled( false );
 	ToolUseLimit( true );
 	ToolUseBreak( true );
 	ItemRepairDurabilityLoss( true );
