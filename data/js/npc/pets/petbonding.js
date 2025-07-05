@@ -1,4 +1,6 @@
-const feedEnabled = false; // Enable/disable pet bonding by feeding.
+// Enables pet bonding through feeding. When true, pets must be fed after taming to start the 
+// 7-day bonding countdown. Without feeding, bonding will not begin.
+const enablePetBondingViaFood = true;
 
 function onDeathBlow( killedPet, petKiller )
 {
@@ -237,7 +239,7 @@ function onDropItemOnNpc( pDropper, pPet, iFood )
 		return 0;
 	}
 
-	if( feedEnabled && !pPet.GetTag( "bondingStarted" ))
+	if( enablePetBondingViaFood && !pPet.GetTag( "bondingStarted" ))
 	{
 		StartBonding( pDropper, pPet );
 	}
@@ -247,7 +249,7 @@ function onDropItemOnNpc( pDropper, pPet, iFood )
 
 function StartBonding( pUser, pPet )
 {
-	if( !feedEnabled )
+	if( !enablePetBondingViaFood )
 	{
 		return;
 	}

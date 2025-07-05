@@ -5383,7 +5383,7 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PoisonCorrosionSystem() );
 				break;
 			case 382:	// PETBONDINGENABLED
-				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->PetBondingEnabled() ));
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PetBondingEnabled() );
 				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );

@@ -402,7 +402,7 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"GARGOYLEMAXWEIGHTBONUS"s, 379},
 	{"MAXNPCAGGRORANGE"s, 380},
 	{"POISONCORROSIONSYSTEM"s, 381},
-  {"PETBONDINGENABLED"s, 382}
+	{"PETBONDINGENABLED"s, 382}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -883,7 +883,7 @@ auto CServerData::ResetDefaults() -> void
 	MaxControlSlots( 0 ); // Default to 0, which is equal to off
 	MaxFollowers( 5 );
 	MaxPetOwners( 10 );
-	PetBondingEnabled( 0 );
+	PetBondingEnabled( true );
 	ToolUseLimit( true );
 	ToolUseBreak( true );
 	ItemRepairDurabilityLoss( true );
@@ -7245,7 +7245,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			PoisonCorrosionSystem(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
 			break;
 		case 382:	// PETBONDINGENABLED
-			PetBondingEnabled( std::stoi( value, nullptr, 0 ));
+			PetBondingEnabled(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
 			break;
 		default:
 			rValue = false;
