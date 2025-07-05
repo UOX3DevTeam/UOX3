@@ -119,14 +119,22 @@ function onUseChecked( pUser, iUsed )
 	    iUsed.KillTimers();
 
 		//Start a timer so the dummy doesn't swing forever
-		iUsed.StartTimer( 3000, 1, true );
+		iUsed.StartTimer( 3000, 1, 5005 );
 	}
 	else
 	{
-		//Safety measure in case timer ever breaks and dummy never stops swinging
-		safetyMeasure( iUsed );
+		if( iUsed.GetJSTimer( 1, 5005 ) - GetCurrentClock() < 0 )
+		{
+			// Timer isn't working correctly, stop the dummy!
+			stopDummy( iUsed );
+		}
+		else
+		{
+			//Safety measure in case timer ever breaks and dummy never stops swinging
+			safetyMeasure( iUsed );
 
-		pUser.SysMessage( GetDictionaryEntry( 483, pSock.language )); //You must wait for it to stop swinging!
+			pUser.SysMessage( GetDictionaryEntry( 483, pSock.language )); //You must wait for it to stop swinging!
+		}
 	}
 	return false;
 }
@@ -158,7 +166,7 @@ function onTimer( iUsed, timerID )
 
 		if( iUsed.isDamageable )
 		{
-			iUsed.StartTimer( 4000, 2, true );
+			iUsed.StartTimer( 4000, 2, 5005 );
 		}
 	}
 	if( timerID == 2 && iUsed.isDamageable )
@@ -182,3 +190,5 @@ function stopDummy( iUsed )
 		iUsed.SetTag( "failedToUse", 0 ); 	//reset values on dummy
 	}
 }
+
+function restorecontext() {}

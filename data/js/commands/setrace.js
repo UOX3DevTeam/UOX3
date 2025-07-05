@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "setrace", 2, true );
+	RegisterCommand( "setrace", 8, true );
 }
 
 function command_SETRACE( socket, cmdString )

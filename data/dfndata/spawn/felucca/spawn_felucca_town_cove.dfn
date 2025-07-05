@@ -3,8 +3,8 @@
 
 [REGIONSPAWN 200]
 {
-NAME=Farmers Market
-NPC=provisioner
+NAME=Cove - Farmers Market
+NPC=farmer
 MAXNPCS=1
 X1=2213
 Y1=1192
@@ -48,7 +48,7 @@ CALL=1
 
 [REGIONSPAWN 203]
 {
-NAME=The Healing Hand
+NAME=Cove - The Healing Hand
 NPC=healer
 MAXNPCS=1
 X1=2240
@@ -63,7 +63,7 @@ CALL=1
 
 [REGIONSPAWN 204]
 {
-NAME=The Warrior's Supplies
+NAME=Cove - The Warrior's Supplies
 NPC=armourer
 MAXNPCS=1
 X1=2210
@@ -78,7 +78,7 @@ CALL=1
 
 [REGIONSPAWN 205]
 {
-NAME=The Warrior's Supplies
+NAME=Cove - The Warrior's Supplies
 NPC=bowyer
 MAXNPCS=1
 X1=2214
@@ -93,7 +93,7 @@ CALL=1
 
 [REGIONSPAWN 206]
 {
-NAME=Bank Of Cove
+NAME=Cove - Bank Of Cove
 NPC=banker
 MAXNPCS=1
 X1=2226
@@ -123,7 +123,7 @@ CALL=1
 
 [REGIONSPAWN 208]
 {
-NAME=Thief Guildmaster
+NAME=Cove - Thief Guildmaster
 NPCLIST=thiefguildmaster
 MAXNPCS=1
 X1=2213
@@ -137,4 +137,116 @@ MAXTIME=600
 CALL=1
 }
 
-EOF
+[REGIONSPAWN 209]
+{
+NAME=Cove - Docks
+NPC=fisher
+MAXNPCS=1
+X1=2248
+Y1=1185
+X2=2263
+Y2=1192
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 210]
+{
+GET=209
+NAME=Cove - Docks
+NPC=sailor
+}
+
+[REGIONSPAWN 211]
+{
+NAME=Cove - Farmers Market
+NPC=provisioner
+MAXNPCS=1
+X1=2215
+Y1=1187
+X2=2217
+Y2=1190
+WORLD=0
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+[REGIONSPAWN 212]
+{
+GET=211
+NAME=Cove - Farmers Market
+NPC=cobbler
+}
+
+[REGIONSPAWN 213]
+{
+GET=200
+NAME=Cove - Farmers Market
+NPC=butcher
+}
+
+[REGIONSPAWN 214]
+{
+GET=208
+NAME=Cove - Poor Folk
+NPCLIST=poorfolk
+MAXNPCS=7
+CALL=3
+}
+
+[REGIONSPAWN 215]
+{
+GET=208
+NAME=Cove - Poor Folk
+NPCLIST=britainanimallist
+MAXNPCS=10
+CALL=3
+}
+
+[REGIONSPAWN 220]
+{
+NAME=Cove Cotton Field 1
+ITEM=cotton_resource
+MAXITEMS=20
+X1=2217
+Y1=1145
+X2=2224
+Y2=1158
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=5
+}
+
+[REGIONSPAWN 221]
+{
+NAME=Cove Turnip Field 1
+ITEM=turnip_resource
+MAXITEMS=10
+X1=2225
+Y1=1145
+X2=2230
+Y2=1151
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=5
+}
+
+[REGIONSPAWN 222]
+{
+NAME=Cove Carrot Field 1
+ITEM=carrot_resource
+MAXITEMS=10
+X1=2225
+Y1=1152
+X2=2230
+Y2=1158
+WORLD=0
+MINTIME=30
+MAXTIME=60
+CALL=3
+}

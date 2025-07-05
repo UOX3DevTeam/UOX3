@@ -44,6 +44,8 @@ UI16	GetDist( Point3_st a, Point3_st b );
 UI16	GetOldDist( CBaseObject *a, CBaseObject *b );
 UI16	GetDist3D( CBaseObject *a, CBaseObject *b );
 UI16	GetDist3D( Point3_st a, Point3_st b );
+R32		GetApproxDist( Point3_st a, Point3_st b );
+R32		GetApproxDist( CBaseObject *a, CBaseObject *b );
 auto	FindPlayersInVisrange( CBaseObject *myObj ) -> std::vector<CSocket *>;
 auto	FindPlayersInOldVisrange( CBaseObject *myObj ) -> std::vector<CSocket *>;
 auto	FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance ) -> std::vector<CSocket *>;

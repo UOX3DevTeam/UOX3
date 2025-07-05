@@ -41,3 +41,14 @@ movable=2
 visible=2
 script=5503
 }
+
+[generic_orc_camp]
+{
+get=base_item
+name=orc camp
+id=0x13ab
+morex=0x1f6d
+movable=2
+visible=2
+script=5501
+}

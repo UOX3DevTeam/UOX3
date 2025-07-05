@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "spawnadmin", 2, true );
+	RegisterCommand( "spawnadmin", 8, true );
 }
 
 var spawnerList = [];

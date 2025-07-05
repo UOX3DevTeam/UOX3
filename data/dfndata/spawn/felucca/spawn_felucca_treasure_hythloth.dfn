@@ -1,4 +1,4 @@
-// spawn_felucca_treasure_hythloth.dfn
+ spawn_felucca_treasure_hythloth.dfn
 // [2400-2499]
 
 [REGIONSPAWN 2600]
@@ -402,5 +402,3 @@ MINTIME=20
 MAXTIME=25
 CALL=1
 }
-
-EOF

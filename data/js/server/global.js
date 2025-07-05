@@ -14,19 +14,31 @@ function onLogin( socket, pChar )
 		{
 			// Admin has either not seen or reacted to welcome gump yet
 			TriggerEvent( 1, "DisplayAdminWelcomeGump", socket, pChar );
-			return;
+		}
+	}
+
+	// If it's first time player logs in with this character since server startup,
+	// or in at least 6 hours, give them a small boost to hunger level to avoid
+	// instant starving/hunger on login
+	let currentClock = GetCurrentClock();
+	if( pChar.hunger == 0 )
+	{
+		let oldLoginTime = pChar.GetTempTag( "loginTime" );
+		if( oldLoginTime == 0 || ( currentClock / 1000 / 60 ) - oldLoginTime > 360 )
+		{
+			pChar.hunger = 1;
 		}
 	}
 
 	// Store login timestamp (in minutes) in temp tag
-	var loginTime = Math.round( GetCurrentClock() / 1000 / 60 );
-	pChar.SetTempTag( "loginTime", loginTime.toString() );
+	var loginTime = Math.round( currentClock / 1000 / 60 );
+	pChar.SetTempTag( "loginTime", loginTime );
 
 	// Attach OnFacetChange to characters logging into the shard
 	if( !pChar.HasScriptTrigger( 2508 ))
-    {
-        pChar.AddScriptTrigger( 2508 );
-    }
+	{
+		pChar.AddScriptTrigger( 2508 );
+	}
 
 	// Attach OnQuest Toggle
 	if(!pChar.HasScriptTrigger( 5805 ))
@@ -35,15 +47,15 @@ function onLogin( socket, pChar )
 	}
 
 	if( youngPlayerSystem && pChar.account.isYoung )
-    {
-  		// Attach "Young" player script, if the account is young and does not have script
+	{
+		// Attach "Young" player script, if the account is young and does not have script
 		if( !pChar.HasScriptTrigger( 8001 ))
 		{
 			pChar.AddScriptTrigger( 8001 );
 		}
 
-    	// Check if "Young" player still meets requirement for being considered young
-    	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
+		// Check if "Young" player still meets requirement for being considered young
+		TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
 	}
 	else if( !youngPlayerSystem )
 	{

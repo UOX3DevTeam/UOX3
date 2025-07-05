@@ -1520,13 +1520,13 @@
 1513=is somewhat badly damaged.
 1514=is flimsy and not trustworthy.
 1515=is falling apart.
-1516= would be extraordinarily deadly.
-1517= would be a superior weapon.
-1518= would inflict quite a lot of damage and pain.
-1519= would probably hurt your opponent a fair amount.
-1520= would do some damage.
-1521= would do minimal damage.
-1522= might scratch your opponent slightly.
+1516=Would be extraordinarily deadly,
+1517=Would be a superior weapon,
+1518=Would inflict quite a lot of damage and pain,
+1519=Would probably hurt your opponent a fair amount,
+1520=Would do some damage,
+1521=Would do minimal damage,
+1522=Might scratch your opponent slightly,
 1523= and is very fast.
 1524= and is fast.
 1525= and is slow.
@@ -2458,6 +2458,18 @@
 2585=You pour some cider into the container.
 2586=You pour some liquor into the container.
 2587=You pour some wine into the glass.
+2588=These carrots are not ready for harvesting yet.
+2589=You fail to pick any carrots.
+2590=You harvest a carrot.
+2591=These onions are not ready for harvesting yet.
+2592=You fail to pick any onions.
+2593=You harvest an onion.
+2594=This turnip is not ready for harvesting yet.
+2595=You fail to pick any turnips.
+2596=You harvest a turnip.
+2597=This cabbage is not ready for harvesting yet.
+2598=You fail to pick any cabbages.
+2599=You harvest a cabbage.
 // [2600-2699] Player/NPC/Spawn Admin Script
 2600=Chosen NPC (%s, %i) has been removed.
 2601=Warning: No backpack found on character!
@@ -2977,6 +2989,7 @@
 3574=a blade spirit
 3605=an elf male
 3606=an elf female
+3637=a spectral armor
 3666=a gargoyle male
 3667=a gargoyle female
 3689=Time Lord
@@ -3302,6 +3315,7 @@
 5156=the Gypsy Fortune Teller
 5157=the Vagabond
 5158=the Iron Worker
+5159=a tropical bird
 // [5500-5600] Holiday Msgs
 5500=Where would you like to place this decoration?
 5501=The decoration must be placed next to a wall.
@@ -3488,6 +3502,20 @@
 6302=You have already learned this information.
 6303=You have learned to make items from glass.  You will need to find miners to mine fine sand for you to make these items.
 6304=You must have a free hand to drink a potion.
+6310=You cannot poison that! You can only poison bladed or piercing weapons, food or drink.
+6311=You have poisoned your target!
+6312=The poison seems to have worn off.
+6313=You cannot poison that! You can only poison one-handed bladed or one-handed piercing weapons, food or drink.
+6314=You cannot poison that! You can only poison infectious weapons and food.
+6315=You make a grave mistake while applying the poison.
+6316=Blood mixes with poison and begins to corrode your weapon.
+6317=You have cleaned the item.
+6318=The poison on your weapon seems to have worn off.
+6319=It looks like acid is dripping from what is left of the blade.
+6320=It looks as if a substance is eating away pieces of the blade.
+6321=It looks as if this blade is covered with an acidic substance.
+6322=It looks like this blade has a corrosive element on it.
+6323=It looks like this blade has a light corrosive element on it.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -3750,6 +3778,7 @@
 8257=You must target an NPC!
 8258=You bind the wound and stop the bleeding
 8259=The bleeding wounds have healed, you are no longer bleeding!
+8260=Amount of poison charges on item
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Account number associated with player. Controlled by server (Read-Only)
 8301=NPC AI Type
@@ -4099,7 +4128,7 @@
 8944=That doesn't seem to be a valid NPC-id from the DFNs.
 8945=Select target for movable status %i:
 8946=Select target to set as non-decayable:
-// [9000-9500] Misc
+// [9000-9499] Misc
 9000=You cannot use this ability while frozen.
 9001=This character is not allowed to fly!
 9002=You have been invited to join a party, type /accept or /decline to deal with the invitation
@@ -4369,6 +4398,28 @@
 9410=You have learned how to mine fine sand. Target sand areas when mining to look for fine sand.
 9411=You have learned to mine for stones. Target mountains when mining to find stones.
 9412=There is no sand here to mine.
+// [9500-9550] Misc Resource Harvesting
+9500=This gourd is not ready for harvesting yet.
+9501=You fail to pick any gourds.
+9502=You harvest a gourd.
+9503=This pumpkin is not ready for harvesting yet.
+9504=You fail to pick any pumpkins.
+9505=You harvest a pumpkin.
+9506=This squash is not ready for harvesting yet.
+9507=You fail to pick any squashes.
+9508=You harvest a squash.
+9509=This watermelon is not ready for harvesting yet.
+9510=You fail to pick any watermelons.
+9511=You harvest a watermelon.
+9512=This honeydew melon is not ready for harvesting yet.
+9513=You fail to pick any honeydew melons.
+9514=You harvest a honeydew melon.
+9515=This canteloupe is not ready for harvesting yet.
+9516=You fail to pick any canteloupe.
+9517=You harvest a canteloupe.
+9518=This garlic is not ready for harvesting yet.
+9519=You fail to pick any garlic.
+9520=You harvest a garlic.
 // [9800-9899] Spawner Editor
 9800=Spawner Object Editor
 9801=Spawner Name
@@ -4756,6 +4807,7 @@
 11467=bone arms
 11468=bone leggings
 11469=bone armor
+11470=tall straw hat
 // 11601 - 11800 Cooking Crafting Skill
 11601=COOKING MENU
 11602=Ingredients
@@ -5278,12 +5330,12 @@
 18708=As a Young player, you cannot harm other players, or their followers.
 18709=You cannot harm Young players, or their followers.
 18710=You have died.
-18711=As a ghost you cannot interact with the world. You cannot touch items nor can you use them.
-18712=You can pass through doors as though they do not exist.  However, you cannot pass through walls.
-18713=Since you are a new player, any items you had on your person at the time of your death will be in your backpack upon resurrection.
-18714=To be resurrected you must find a healer in town or wandering in the wilderness.  Some powerful players may also be able to resurrect you.
-18715=While you are still in young status, you will be transported to the nearest healer (along with your items) at the time of your death.
-18716=To rejoin the world of the living simply walk near one of the NPC healers, and they will resurrect you as long as you are not marked as a criminal.
+18711=As a ghost you <BASEFONT COLOR=orange>cannot interact</BASEFONT> with the world. You cannot touch items nor can you use them.
+18712=You <BASEFONT COLOR=orange>can pass through doors</BASEFONT> as though they do not exist.  However, you cannot pass through walls.
+18713=Since you are a new player, any items you had on your person at the time of your death <BASEFONT COLOR=orange>will be in your backpack</BASEFONT> upon resurrection.
+18714=To be resurrected <BASEFONT COLOR=orange>you must find a healer</BASEFONT> in town or wandering in the wilderness.  Some powerful players may also be able to resurrect you.
+18715=While you are still in young status, you <BASEFONT COLOR=orange>will be transported to the nearest healer</BASEFONT> (along with your items) at the time of your death.
+18716=To rejoin the world of the living <BASEFONT COLOR=orange>simply walk near one of the NPC healers</BASEFONT>, and they will resurrect you as long as you are not marked as a criminal.
 18717=Warning: monsters may attack you on sight down here in the dungeons!
 18718=OKAY
 18719=Renouncing 'Young Player' Status

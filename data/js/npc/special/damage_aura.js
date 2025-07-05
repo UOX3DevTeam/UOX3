@@ -49,7 +49,7 @@ function DealAreaDamage( srcObj, trgChar )
 
 		// Apply poison, if applicable
 		if( auraProps.poisonLvl > 0 )
-			trgChar.SetPoisoned( auraProps.poisonLvl, auraProps.poisonTime );
+			trgChar.SetPoisoned( auraProps.poisonLvl, auraProps.poisonTime, srcObj );
 
 		// Apply damage, if applicable
 		if( auraProps.maxDmg > 0 )

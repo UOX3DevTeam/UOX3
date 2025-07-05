@@ -243,8 +243,8 @@ function CheckTargetResist( resistDifficulty, mDefender, spellCircle )
 	if( ValidateObject( mDefender ) )
 	{
 		var resistResult = mDefender.CheckSkill( 26, 80 * spellCircle, 800 + ( 80 * spellCircle ));
-		var defaultChance = mDefender.skills.magicresistance / 5;
-		var resistChance = mDefender.skills.magicresistance - ((( resistDifficulty - 20 ) / 5 ) + ( spellCircle * 5 ));
+		var defaultChance = ( mDefender.skills.magicresistance + ( mDefender.race.magicResistance * 10 )) / 5;
+		var resistChance = ( mDefender.skills.magicresistance + ( mDefender.race.magicResistance * 10 )) - ((( resistDifficulty - 20 ) / 5 ) + ( spellCircle * 5 ));
 		if( defaultChance > resistChance )
 		{
 			resistChance = defaultChance;

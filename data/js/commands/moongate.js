@@ -3,8 +3,8 @@ const facetList = [ "felucca", "trammel", "ilshenar", "malas", "tokuno", "termur
 
 function CommandRegistration()
 {
-	RegisterCommand( "enablemoongates", 3, true );
-	RegisterCommand( "disablemoongates", 3, true );
+	RegisterCommand( "enablemoongates", 10, true );
+	RegisterCommand( "disablemoongates", 10, true );
 }
 
 function command_ENABLEMOONGATES( socket, cmdString )
