@@ -1,4 +1,4 @@
-//Script to allow players to instantly bond their tamed pets.
+//Script to allow GMs to instantly bond a pet.
 
 function CommandRegistration()
 {
