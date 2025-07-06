@@ -1,21 +1,43 @@
-function inRange( npc, player )
+const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );
+
+function inRange(npc, player)
 {
-	if( !ValidateObject( player ) || player.isItem || ( player.isChar && ( player.npc || ( !player.online || player.dead ))))
-	   return;
+	if (!petBondingEnabled)
+		return; // Skip if pet bonding is disabled
+
+	if (!ValidateObject(player) || player.isItem || (player.isChar && (player.npc || !player.online || player.dead)))
+		return;
 
 	var serial = player.serial.toString();
-	var spokenListRaw = npc.GetTag( "vetSpokenList" );
-	var spokenList = spokenListRaw.length ? spokenListRaw.split(",") : [];
+	var spokenListRaw = npc.GetTag("vetSpokenList") || "";
+	var spokenList = [];
 
-	// Avoid duplicates
-	if( spokenList.indexOf( serial ) == -1 )
-		spokenList.push( serial );
+	if (spokenListRaw.length > 0 && spokenListRaw != "0")
+		spokenList = spokenListRaw.split(",");
 
-	npc.SetTag( "vetSpokenList", spokenList.join( "," ));
+	var found = false;
+	for (var i = 0; i < spokenList.length; ++i)
+	{
+		if (spokenList[i] == serial)
+		{
+			found = true;
+			break;
+		}
+	}
+
+	if (!found)
+		spokenList.push(serial);
+
+	npc.SetTag("vetSpokenList", spokenList.join(","));
 }
 
 function onAISliver( npc )
 {
+	if( !petBondingEnabled )
+	{
+		return; // Skip if pet bonding is disabled
+	}
+
 	var now = GetCurrentClock();
 	var lastTick = parseInt(npc.GetTag( "vetLastTick" )) || 0;
 	var cooldown = 4000; // milliseconds
