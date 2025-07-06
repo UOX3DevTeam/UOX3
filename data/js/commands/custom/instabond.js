@@ -1,3 +1,5 @@
+//Script to allow players to instantly bond their tamed pets.
+
 function CommandRegistration()
 {
 	RegisterCommand( "instabond", 3, true );

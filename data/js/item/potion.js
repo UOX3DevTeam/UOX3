@@ -397,7 +397,7 @@ function onCallback1( socket, ourObj )
 		return;
 	}
 
-	if( ourObj.GetTag ( "isBondedPet" ))
+	if( ourObj.GetTag( "isBondedPet" ))
 	{
 		socket.SysMessage( GetDictionaryEntry( 19320, socket.language )); // That pet is already bonded to you.
 	}
@@ -407,7 +407,7 @@ function onCallback1( socket, ourObj )
 	}
 	else
 	{
-		ourObj.SetTag ( "isBondedPet", true );
+		ourObj.SetTag( "isBondedPet", true );
 		socket.SysMessage( GetDictionaryEntry( 19308, socket.language )); // Your pet has bonded with you!
 		if( iUsed && iUsed.isItem )
 		{

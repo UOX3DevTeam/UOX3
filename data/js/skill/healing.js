@@ -661,7 +661,7 @@ function onTimer( mChar, timerID )
 						{
 							if( ourObj.GetTag( "isPetDead" ))
 							{
-								onPetResurrect( socket, ourObj );
+								ResurrectBondedPet( socket, ourObj );
 								ourObj.StaticEffect( 0x376A, 10, 16 );
 								ourObj.SoundEffect( 0x214, true );
 								socket.SysMessage( GetDictionaryEntry( 19306, socket.language )); // You successfully resurrected the pet!
@@ -959,7 +959,7 @@ function onTimer( mChar, timerID )
 	}
 }
 
-function onPetResurrect( socket, deadPet )
+function ResurrectBondedPet( socket, deadPet )
 {
 	var petsAI = deadPet.GetTag( "PetAI" );
 	var petsHue = deadPet.GetTag( "PetHue" );

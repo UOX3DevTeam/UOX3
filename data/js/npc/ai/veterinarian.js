@@ -1,26 +1,38 @@
 function inRange( npc, player )
 {
-	if( player.npc )
-		return;
+	if( !ValidateObject( player ) || player.isItem || ( player.isChar && ( player.npc || ( !player.online || player.dead ))))
+	   return;
 
-	var serial = player.serial;
-	var spokenList = [];
+	var serial = player.serial.toString();
+	var spokenListRaw = npc.GetTag( "vetSpokenList" );
+	var spokenList = spokenListRaw.length ? spokenListRaw.split(",") : [];
 
+	// Avoid duplicates
 	if( spokenList.indexOf( serial ) == -1 )
 		spokenList.push( serial );
 
-	npc.SetTag( "vetSpokenList", spokenList.toString() );
+	npc.SetTag( "vetSpokenList", spokenList.join( "," ));
 }
 
 function onAISliver( npc )
 {
-	var spokenListRaw = npc.GetTag( "vetSpokenList" ) || "";
-	var spokenList = spokenListRaw.split(",");
 	var now = GetCurrentClock();
+	var lastTick = parseInt(npc.GetTag( "vetLastTick" )) || 0;
+	var cooldown = 4000; // milliseconds
+
+	if(( now - lastTick ) < cooldown )
+		return; // Skip if cooldown hasn't passed
+
+	var spokenListRaw = npc.GetTag( "vetSpokenList" );
+	var spokenList = spokenListRaw.split( "," );
+
+	npc.SetTag( "vetLastTick", now.toString() ); // Update cooldown tracker
+
+	var cleanedList = [];
 
 	for( var i = 0; i < spokenList.length; ++i )
 	{
-		var rawSer = spokenList[i].replace( /^\s+|\s+$/g, "" ); // remove leading/trailing whitespace
+		var rawSer = spokenList[i].replace( /^\s+|\s+$/g, "" );
 		var serial = parseInt( rawSer, 10 );
 		if( isNaN( serial ))
 			continue;
@@ -29,11 +41,14 @@ function onAISliver( npc )
 		if( !ValidateObject( player ))
 			continue;
 
-		if( GetDistance( npc, player ) <= 6 && player.GetTempTag( "vetGumpOpen" ) != true )
+		// Only keep nearby players in memory
+		if( GetDistance( npc, player) <= 10 )
+			cleanedList.push( serial.toString() );
+
+		if( GetDistance( npc, player ) <= 6 && player.GetTempTag("vetGumpOpen") != true )
 		{
-			// Prevent gump spam: check delay
-			var lastShown = parseInt(player.GetTempTag( "vetGumpLastShown_" + npc.serial ));
-			var cooldown = 10000; // 10 seconds
+			var lastShown = parseInt( player.GetTempTag( "vetGumpLastShown_" + npc.serial )) || 0;
+			var cooldown = 10000;
 
 			if(( now - lastShown ) < cooldown )
 				continue;
@@ -43,6 +58,9 @@ function onAISliver( npc )
 			VetResurrectGump( player.socket, npc );
 		}
 	}
+
+	// Only retain valid, recent, nearby serials
+	npc.SetTag( "vetSpokenList", cleanedList.join( "," ));
 }
 
 function GetDistance( char1, char2 )
@@ -120,15 +138,14 @@ function VetResurrectGump( socket )
 	{
 		var pet = petList[i];
 		var y = 102 + ( i * 35 );
-		var fee = GetResFee( pet.serial );
-		pUser.SetTempTag("serialPet", pet.serial);
-		gump.AddRadio( 30, y, 0x25FF, ( i == 0 ? 1 : 0 ), pet.serial );
+		var fee = GetResFee( pet );
+
+		gump.AddRadio( 30, y, 0x2600, 0, pet.serial );
 		gump.AddText( 70, y + 5, 0x47E, pet.name + "  (" + fee + " gold)" );
 	}
 
 	gump.Send( pUser.socket );
 	gump.Free();
-
 }
 
 function onGumpPress( pSock, pButton, gumpData )
@@ -137,33 +154,35 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( !ValidateObject( pUser ))
 		return;
 
-	var serialPet = parseInt( pUser.GetTempTag( "serialPet" ));
-	if( pButton == 0 )
+	if( pButton == 0 || gumpData == 0)
 	{
-		pUser.SetTempTag( "serialPet", null )
 		pUser.SetTempTag( "vetGumpOpen", null );
 		return;
 	}
 
-	var selectedSerial = gumpData.getButton( 0 );
-	var serial = CalcCharFromSer( serialPet );
-	var cost = GetResFee( selectedSerial );
+	var selectedSerial =  gumpData.getButton( 0 );
+	var petNpc = CalcCharFromSer( selectedSerial );
+	var cost = GetResFee( petNpc );
 	var goldInPack = pUser.ResourceCount( 0x0EED, 0 );
+
+	if( !ValidateObject( petNpc ))
+	{
+		pUser.SetTempTag( "vetGumpOpen", null );
+		return;
+	}
 
 	if( goldInPack < cost )
 	{
 		pSock.SysMessage( "You do not have enough gold on you to pay the fee." );
-		pUser.SetTempTag( "serialPet", null )
 		pUser.SetTempTag( "vetGumpOpen", null );
 		return;
 	}
 
 	pUser.UseResource( cost, 0x0EED, 0 );
-	PetResurrect( pSock, serial );
+	PetResurrect( pSock, petNpc );
 	pSock.SysMessage( cost + " gold has been withdrawn from your backpack" );
 	pSock.SysMessage( "Your pet has been resurrected." );
 	pUser.SetTempTag( "vetGumpOpen", null );
-	pUser.SetTempTag( "serialPet", null )
 }
 
 function PetResurrect( socket, deadPet )
