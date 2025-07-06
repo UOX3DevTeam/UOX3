@@ -115,7 +115,7 @@ function onCombatStart( pAttacker, pDefender )
 	return true;
 }
 
-function onAttack(pAttacker, pDefender, hitStatus, hitLoc, damageDealt)
+function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	// Block attack if defender is a dead pet
 	if( pDefender.GetTag( "isPetDead" ) == true )

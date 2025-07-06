@@ -49,6 +49,12 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 			}
 		}
 
+		TAGMAPOBJECT deadPet = cTarget->GetTag( "isPetDead" );
+		if( deadPet.m_IntValue == 1 )
+		{
+			return false;
+		}
+
 		// Targets on character's combat ignore list are not valid
 		if( mChar.CheckCombatIgnore( cTarget->GetSerial() ))
 		{
