@@ -5563,5 +5563,8 @@
 19327=That pet is already bonded.
 19328=Pet has been instantly bonded!
 19329=Pet bonding is disabled on this server.
+19330=You do not have enough gold on you to pay the fee.
+19331=%i gold has been withdrawn from your backpack.
+19332=Your pet has been resurrected.
 }
 EOF

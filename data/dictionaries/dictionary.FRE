@@ -5716,5 +5716,8 @@
 19327=Ce familier est déjà lié.
 19328=Le lien a été instantanément créé !
 19329=Le lien avec les animaux est désactivé sur ce serveur.
+19330=Vous n'avez pas assez d'or sur vous pour payer les frais.
+19331=%i pièces d'or ont été retirées de votre sac à dos.
+19332=Votre familier a été ressuscité.
 }
 EOF

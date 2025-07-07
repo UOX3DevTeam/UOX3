@@ -5562,5 +5562,8 @@
 19327=Das Haustier ist bereits gebunden.
 19328=Das Haustier wurde sofort gebunden!
 19329=Die Haustierbindung ist auf diesem Server deaktiviert.
+19330=Du hast nicht genug Gold dabei, um die Gebühr zu bezahlen.
+19331=%i Gold wurden aus deinem Rucksack entnommen.
+19332=Dein Haustier wurde wiederbelebt.
 }
 EOF

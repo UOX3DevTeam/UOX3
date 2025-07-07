@@ -1,37 +1,42 @@
 const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );
+const vetGumpCooldown = 4000; // milliseconds
+const scriptID = 3109;
 
-function inRange(npc, player)
+function inRange( npcVet, player )
 {
-	if (!petBondingEnabled)
+	if( !petBondingEnabled )
 		return; // Skip if pet bonding is disabled
 
-	if (!ValidateObject(player) || player.isItem || (player.isChar && (player.npc || !player.online || player.dead)))
+	if( !ValidateObject( player ) || player.isItem || ( player.isChar && ( player.npc || !player.online || player.dead )))
 		return;
 
-	var serial = player.serial.toString();
-	var spokenListRaw = npc.GetTag("vetSpokenList") || "";
-	var spokenList = [];
-
-	if (spokenListRaw.length > 0 && spokenListRaw != "0")
-		spokenList = spokenListRaw.split(",");
-
-	var found = false;
-	for (var i = 0; i < spokenList.length; ++i)
+	var nearbyPlayersList = [];
+	var nearbyPlayersListRaw = npcVet.GetTempTag( "vetNearbyPlayersList" );
+	if( nearbyPlayersListRaw != 0 && nearbyPlayersListRaw.length > 0 )
 	{
-		if (spokenList[i] == serial)
+		nearbyPlayersList = nearbyPlayersListRaw.split( "," );
+	}
+
+	var serial = player.serial.toString();
+	var found = false;
+	for( var i = 0; i < nearbyPlayersList.length; ++i )
+	{
+		if( nearbyPlayersList[i] == serial )
 		{
 			found = true;
 			break;
 		}
 	}
 
-	if (!found)
-		spokenList.push(serial);
+	if( !found )
+	{
+		nearbyPlayersList.push( serial );
+	}
 
-	npc.SetTag("vetSpokenList", spokenList.join(","));
+	npcVet.SetTempTag( "vetNearbyPlayersList", nearbyPlayersList.join( "," ));
 }
 
-function onAISliver( npc )
+function onAISliver( npcVet )
 {
 	if( !petBondingEnabled )
 	{
@@ -39,22 +44,24 @@ function onAISliver( npc )
 	}
 
 	var now = GetCurrentClock();
-	var lastTick = parseInt(npc.GetTag( "vetLastTick" )) || 0;
-	var cooldown = 4000; // milliseconds
+	var lastTick = parseInt( npcVet.GetTempTag( "vetLastTick" ));
+	var cooldown = vetGumpCooldown; // milliseconds
 
 	if(( now - lastTick ) < cooldown )
 		return; // Skip if cooldown hasn't passed
 
-	var spokenListRaw = npc.GetTag( "vetSpokenList" );
-	var spokenList = spokenListRaw.split( "," );
+	npcVet.SetTempTag( "vetLastTick", now.toString() ); // Update cooldown tracker
 
-	npc.SetTag( "vetLastTick", now.toString() ); // Update cooldown tracker
+	var nearbyPlayersListRaw = npcVet.GetTempTag( "vetNearbyPlayersList" );
+	if( nearbyPlayersListRaw == 0 || nearbyPlayersListRaw.length == 0 )
+		return;
 
+	// Iterate over nearby players, see if they have any dead pets
+	var nearbyPlayersList = nearbyPlayersListRaw.split( "," );
 	var cleanedList = [];
-
-	for( var i = 0; i < spokenList.length; ++i )
+	for( var i = 0; i < nearbyPlayersList.length; ++i )
 	{
-		var serial = parseInt( spokenList[i], 10 );
+		var serial = parseInt( nearbyPlayersList[i], 10 );
 		if( isNaN( serial ))
 			continue;
 
@@ -63,52 +70,92 @@ function onAISliver( npc )
 			continue;
 
 		// Only keep nearby players in memory
-		if( npc.InRange( player, 10 ))
-			cleanedList.push( serial.toString() );
-
-		if( npc.InRange( player, 6 ) && player.GetTempTag("vetGumpOpen") != true )
+		if( npcVet.InRange( player, 24 ))
 		{
-			var lastShown = parseInt( player.GetTempTag( "vetGumpLastShown_" + npc.serial )) || 0;
+			cleanedList.push( serial.toString() );
+		}
+
+		// Only show gump if player is within range
+		if( npcVet.InRange( player, 6 ) && player.GetTempTag( "vetGumpOpen" ) != true )
+		{
+			var lastShown = parseInt( player.GetTempTag( "vetGumpLastShown" ));
 			var cooldown = 10000;
 
 			if(( now - lastShown ) < cooldown )
 				continue;
 
-			player.SetTempTag( "vetGumpOpen", true );
-			player.SetTempTag( "vetGumpLastShown_" + npc.serial, now.toString() );
-			VetResurrectGump( player.socket, npc );
+			// Check if player has any dead bonded pets that require resurrection
+			var deadPetList = GetDeadPetList( player );
+
+			// Only open gump if there's a dead pet nearby to resurrect
+			if( deadPetList.length > 0 )
+			{
+				player.SetTempTag( "vetGumpOpen", true );
+				player.SetTempTag( "vetGumpLastShown", now.toString() );
+				VetResurrectGump( player.socket, deadPetList );
+			}
+		}
+		else if( !npcVet.InRange( player, 6 ))
+		{
+			// Force-close resurrection gump if they're out of range
+			player.SetTempTag( "vetGumpOpen", null );
+
+			if( player.socket != null )
+			{
+				let gumpID = scriptID + 0xffff;
+				player.socket.CloseGump( gumpID, 0 );
+			}
 		}
 	}
 
 	// Only retain valid, recent, nearby serials
-	npc.SetTag( "vetSpokenList", cleanedList.join( "," ));
+	npcVet.SetTempTag( "vetNearbyPlayersList", cleanedList.join( "," ));
 }
 
-function VetResurrectGump( socket )
+// Let players re-trigger the resurrection gump by talking to the vet
+function onSpeech( strSaid, pTalking, pTalkingTo )
+{
+	if( !pTalking.npc )
+	{
+		// Reset vet/player's gump cooldown if player has dead pets to resurrect
+		var deadPetList = GetDeadPetList( pTalking );
+		if( deadPetList.length > 0 )
+		{
+			pTalkingTo.SetTempTag( "vetLastTick", null );
+			pTalking.SetTempTag( "vetGumpLastShown", null );
+		}
+	}
+
+	return 0;
+}
+
+function GetDeadPetList( player )
+{
+	var deadPetList = [];
+	var allPets = player.GetPetList();
+
+	// Iterate over list of pets
+	for( var i = 0; i < allPets.length; ++i )
+	{
+		var tempPet = allPets[i];
+		if( !ValidateObject( tempPet ))
+			continue;
+
+		// Only include dead bonded pets that are within short range of the player
+		if( tempPet.GetTag( "isPetDead" ) && player.InRange( tempPet, 6 ))
+		{
+			deadPetList.push( tempPet );
+		}
+	}
+
+	return deadPetList;
+}
+
+function VetResurrectGump( socket, deadPetList )
 {
 	var pUser = socket.currentChar;
 	if( !ValidateObject( pUser ))
 		return;
-
-	var allPets = pUser.GetPetList(); // Get all pets and followers
-	var petList = [];
-
-	for( var i = 0; i < allPets.length; ++i )
-	{
-		var pet = allPets[i];
-		if( !ValidateObject( pet ))
-			continue;
-
-		// Only include dead bonded pets
-		if( pet.GetTag( "isPetDead" ) == true )
-			petList.push( pet );
-	}
-
-	if( petList.length == 0 )
-	{
-		pUser.socket.SysMessage( "You have no dead bonded pets in need of resurrection." );
-		return;
-	}
 
 	var gump = new Gump;
 	gump.AddPage( 0 );
@@ -148,14 +195,14 @@ function VetResurrectGump( socket )
 	gump.AddTiledGump( 0, 0, 1, 397, 0x23C3 );
 
 	// Radio buttons for each pet
-	for( var i = 0; i < petList.length; ++i )
+	for( var i = 0; i < deadPetList.length; ++i )
 	{
-		var pet = petList[i];
+		var deadPet = deadPetList[i];
 		var y = 102 + ( i * 35 );
-		var fee = GetResFee( pet );
+		var resFee = GetResFee( deadPet );
 
-		gump.AddRadio( 30, y, 0x2600, 0, pet.serial );
-		gump.AddText( 70, y + 5, 0x47E, pet.name + "  (" + fee + " gold)" );
+		gump.AddRadio( 30, y, 0x2600, 0, deadPet.serial );
+		gump.AddText( 70, y + 5, 0x47E, deadPet.name + "  (" + resFee + " gold)" );
 	}
 
 	gump.Send( pUser.socket );
@@ -168,15 +215,22 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( !ValidateObject( pUser ))
 		return;
 
-	if( pButton == 0 || gumpData == 0)
+	if( pButton == 0 || gumpData == 0 )
 	{
 		pUser.SetTempTag( "vetGumpOpen", null );
 		return;
 	}
 
 	var selectedSerial =  gumpData.getButton( 0 );
+	if( selectedSerial == -1 )
+	{
+		// No pet was selected in menu
+		pUser.SetTempTag( "vetGumpOpen", null );
+		return;
+	}
+
 	var petNpc = CalcCharFromSer( selectedSerial );
-	var cost = GetResFee( petNpc );
+	var resFee = GetResFee( petNpc );
 	var goldInPack = pUser.ResourceCount( 0x0EED, 0 );
 
 	if( !ValidateObject( petNpc ))
@@ -185,18 +239,27 @@ function onGumpPress( pSock, pButton, gumpData )
 		return;
 	}
 
-	if( goldInPack < cost )
+	if( goldInPack < resFee )
 	{
-		pSock.SysMessage( "You do not have enough gold on you to pay the fee." );
+		pSock.SysMessage( GetDictionaryEntry( 19330, pSock.language )); // You do not have enough gold on you to pay the fee.
 		pUser.SetTempTag( "vetGumpOpen", null );
 		return;
 	}
 
-	pUser.UseResource( cost, 0x0EED, 0 );
+	pUser.UseResource( resFee, 0x0EED, 0 );
 	PetResurrect( pSock, petNpc );
-	pSock.SysMessage( cost + " gold has been withdrawn from your backpack" );
-	pSock.SysMessage( "Your pet has been resurrected." );
+	var tempMsg = GetDictionaryEntry( 19331, pSock.language ); // %i gold has been withdrawn from your backpack.
+	tempMsg = ( tempMsg.replace( /%i/gi, resFee.toString() ));
+	pSock.SysMessage( tempMsg );
+	pSock.SysMessage( GetDictionaryEntry( 19332, pSock.language )); // Your pet has been resurrected.
 	pUser.SetTempTag( "vetGumpOpen", null );
+
+	// Check if player has any additional dead bonded pets that require resurrection
+	var deadPetList = GetDeadPetList( pUser );
+	if( deadPetList.length > 0 )
+	{
+		pUser.SetTempTag( "vetGumpLastShown", null );
+	}
 }
 
 function PetResurrect( socket, deadPet )
@@ -227,12 +290,14 @@ function PetResurrect( socket, deadPet )
 		{
 			var newSkill = curSkill - 2;
 			if( newSkill < 0 )
+			{
 				newSkill = 0;
+			}
 			deadPet.baseskills[skillName] = newSkill;
 		}
 	}
 
-	TriggerEvent( 3108, "SendNpcGhostMode", socket, 0, deadPet.serial, 0  );
+	TriggerEvent( 3108, "SendNpcGhostMode", socket, 0, deadPet.serial, 0 );
 	deadPet.aitype = petsAI;
 	deadPet.colour = petsHue;
 	deadPet.target = null;
@@ -241,31 +306,28 @@ function PetResurrect( socket, deadPet )
 	deadPet.SetTag( "isPetDead", false );
 }
 
-
-function GetResFee( pet )
+function GetResFee( deadPet )
 {
-	var skill = pet.skillToTame;
-
-	if( skill == null || skill <= 0 )
+	var skillToTame = deadPet.skillToTame;
+	if( skillToTame == null || skillToTame <= 0 )
 	{
-		skill = 0;
+		skillToTame = 0;
 	}
 	else
 	{
-		skill = skill / 10;
+		skillToTame = skillToTame / 10;
 	}
 
-	var fee = 100 + Math.pow( 1.1041, skill );
-	fee = Math.floor( fee );
-
-	if( fee > 30000 )
+	var resFee = 100 + Math.pow( 1.1041, skillToTame );
+	resFee = Math.floor( resFee );
+	if( resFee > 30000 )
 	{
-		fee = 30000;
+		resFee = 30000;
 	}
-	else if( fee < 100 )
+	else if( resFee < 100 )
 	{
-		fee = 100;
+		resFee = 100;
 	}
 
-	return fee;
+	return resFee;
 }

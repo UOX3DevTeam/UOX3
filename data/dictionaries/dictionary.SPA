@@ -5561,5 +5561,8 @@
 19327=Esa mascota ya está vinculada.
 19328=¡La mascota ha sido vinculada instantáneamente!
 19329=La vinculación de mascotas está deshabilitada en este servidor.
+19330=No tienes suficiente oro para pagar la tarifa.
+19331=Se ha retirado %i de oro de tu mochila.
+19332=Tu mascota ha resucitado.
 }
 EOF
