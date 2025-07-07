@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "instabond", 3, true );
+	RegisterCommand( "instabond", 10, true );
 }
 
 function command_INSTABOND( socket, cmdString )

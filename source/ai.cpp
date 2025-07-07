@@ -49,6 +49,7 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 			}
 		}
 
+		// Dead (bonded) pets are not valid
 		TAGMAPOBJECT deadPet = cTarget->GetTag( "isPetDead" );
 		if( deadPet.m_IntValue == 1 )
 		{

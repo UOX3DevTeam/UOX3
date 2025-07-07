@@ -54,8 +54,7 @@ function onAISliver( npc )
 
 	for( var i = 0; i < spokenList.length; ++i )
 	{
-		var rawSer = spokenList[i].replace( /^\s+|\s+$/g, "" );
-		var serial = parseInt( rawSer, 10 );
+		var serial = parseInt( spokenList[i], 10 );
 		if( isNaN( serial ))
 			continue;
 
@@ -64,10 +63,10 @@ function onAISliver( npc )
 			continue;
 
 		// Only keep nearby players in memory
-		if( GetDistance( npc, player) <= 10 )
+		if( npc.InRange( player, 10 ))
 			cleanedList.push( serial.toString() );
 
-		if( GetDistance( npc, player ) <= 6 && player.GetTempTag("vetGumpOpen") != true )
+		if( npc.InRange( player, 6 ) && player.GetTempTag("vetGumpOpen") != true )
 		{
 			var lastShown = parseInt( player.GetTempTag( "vetGumpLastShown_" + npc.serial )) || 0;
 			var cooldown = 10000;
@@ -83,13 +82,6 @@ function onAISliver( npc )
 
 	// Only retain valid, recent, nearby serials
 	npc.SetTag( "vetSpokenList", cleanedList.join( "," ));
-}
-
-function GetDistance( char1, char2 )
-{
-	var dx = Math.abs( char1.x - char2.x );
-	var dy = Math.abs( char1.y - char2.y );
-	return Math.max( dx, dy ); // This matches how UO treats distance (chebyshev metric)
 }
 
 function VetResurrectGump( socket )
