@@ -1638,8 +1638,7 @@
   "types": [
     {
       "name": "BaseObject",
-      "properties":
-      [
+      "properties": [
         {
           "name": "color",
           "cppType": "JSPROP_ENUMANDPERM",
@@ -1890,7 +1889,8 @@
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "number"
         }
-      ]
+      ],
+      "methods": []
     },
     {
       "name": "Spell",
@@ -2190,7 +2190,8 @@
           "readOnly": true,
           "type": "number"
         }
-      ]
+      ],
+      "methods": []
     },
     {
       "name": "Skill",
@@ -2253,7 +2254,363 @@
     },
     {
       "name": "CertainSetOf",
-      "properties": []
+      "extends": "Array< number >",
+      "properties": [
+        {
+          "name": "alchemy",
+          "cppID": "ALCHEMY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "anatomy",
+          "cppID": "ANATOMY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "animallore",
+          "cppID": "ANIMALLORE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "itemid",
+          "cppID": "ITEMID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "armslore",
+          "cppID": "ARMSLORE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "parrying",
+          "cppID": "PARRYING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "begging",
+          "cppID": "BEGGING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "blacksmithing",
+          "cppID": "BLACKSMITHING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "bowcraft",
+          "cppID": "BOWCRAFT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "peacemaking",
+          "cppID": "PEACEMAKING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "camping",
+          "cppID": "CAMPING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "carpentry",
+          "cppID": "CARPENTRY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "cartography",
+          "cppID": "CARTOGRAPHY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "cooking",
+          "cppID": "COOKING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "detectinghidden",
+          "cppID": "DETECTINGHIDDEN",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "enticement",
+          "cppID": "ENTICEMENT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "evaluatingintel",
+          "cppID": "EVALUATINGINTEL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "healing",
+          "cppID": "HEALING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "fishing",
+          "cppID": "FISHING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "forensics",
+          "cppID": "FORENSICS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "herding",
+          "cppID": "HERDING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "hiding",
+          "cppID": "HIDING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "provocation",
+          "cppID": "PROVOCATION",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "inscription",
+          "cppID": "INSCRIPTION",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "lockpicking",
+          "cppID": "LOCKPICKING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "magery",
+          "cppID": "MAGERY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "magicresistance",
+          "cppID": "MAGICRESISTANCE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "tactics",
+          "cppID": "TACTICS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "snooping",
+          "cppID": "SNOOPING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "musicianship",
+          "cppID": "MUSICIANSHIP",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "poisoning",
+          "cppID": "POISONING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "archery",
+          "cppID": "ARCHERY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "spiritspeak",
+          "cppID": "SPIRITSPEAK",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "stealing",
+          "cppID": "STEALING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "tailoring",
+          "cppID": "TAILORING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "taming",
+          "cppID": "TAMING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "tasteid",
+          "cppID": "TASTEID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "tinkering",
+          "cppID": "TINKERING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "tracking",
+          "cppID": "TRACKING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "veterinary",
+          "cppID": "VETERINARY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "swordsmanship",
+          "cppID": "SWORDSMANSHIP",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "macefighting",
+          "cppID": "MACEFIGHTING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "fencing",
+          "cppID": "FENCING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "wrestling",
+          "cppID": "WRESTLING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "lumberjacking",
+          "cppID": "LUMBERJACKING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "mining",
+          "cppID": "MINING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "meditation",
+          "cppID": "MEDITATION",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "stealth",
+          "cppID": "STEALTH",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "removetrap",
+          "cppID": "REMOVETRAP",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "necromancy",
+          "cppID": "NECROMANCY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "focus",
+          "cppID": "FOCUS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "chivalry",
+          "cppID": "CHIVALRY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "bushido",
+          "cppID": "BUSHIDO",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "ninjitsu",
+          "cppID": "NINJITSU",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "spellweaving",
+          "cppID": "SPELLWEAVING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "mysticism",
+          "cppID": "MYSTICISM",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "imbuing",
+          "cppID": "IMBUING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "throwing",
+          "cppID": "THROWING",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "allskills",
+          "cppID": "ALLSKILLS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        }
+      ]
     },
     {
       "name": "BaseSkills",
@@ -2501,7 +2858,135 @@
       "aka": "uox_class"
     },
     {
-      "name": "Race"
+      "name": "Race",
+      "aka": "UOXRace_class",
+      "properties": [
+        {
+          "name": "id",
+          "cppID": "CRP_ID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "name",
+          "cppID": "CRP_NAME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "weakToWeather",
+          "cppID": "CRP_WEAKTOWEATHER",
+          "cppType": "JSPROP_ENUMPERMIDX",
+          "type": "",
+          "unused": true
+        },
+        {
+          "name": "requiresBeard",
+          "cppID": "CRP_REQUIRESBEARD",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "requiresNoBeard",
+          "cppID": "CRP_REQUIRESNOBEARD",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isPlayerRace",
+          "cppID": "CRP_ISPLAYERRACE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "genderRestrict",
+          "cppID": "CRP_GENDERRESTRICT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "armourClass",
+          "cppID": "CRP_ARMOURCLASS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "languageSkillMin",
+          "cppID": "CRP_LANGUAGESKILLMIN",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "skillAdjustment",
+          "cppID": "CRP_SKILLADJUSTMENT",
+          "cppType": "JSPROP_ENUMPERMIDX",
+          "type": "",
+          "unused": true
+        },
+        {
+          "name": "poisonResistance",
+          "cppID": "CRP_POISONRESISTANCE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "magicResistance",
+          "cppID": "CRP_MAGICRESISTANCE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "visibleDistance",
+          "cppID": "CRP_VISIBLEDISTANCE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "nightVision",
+          "cppID": "CRP_NIGHTVISION",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        }
+      ],
+      "methods": [
+        {
+          "name": "CanWearArmour",
+          "cppName": "CRace_CanWearArmour",
+          "params": {
+            "num": 1,
+            "list": [ { "name": "item", "type": "Item", "required": true } ]
+          },
+          "returns": "boolean"
+        },
+        {
+          "name": "IsValidHairColour",
+          "cppName": "CRace_IsValidHairColour",
+          "params": {
+            "num": 1,
+            "list": [ { "name": "colour", "type": "number", "required": true } ]
+          },
+          "returns": "boolean"
+        },
+        {
+          "name": "IsValidSkinColour",
+          "cppName": "CRace_IsValidSkinColour",
+          "params": {
+            "num": 1,
+            "list": [ { "name": "colour", "type": "number", "required": true } ]
+          },
+          "returns": "boolean"
+        },
+        {
+          "name": "IsValidBeardColour",
+          "cppName": "CRace_IsValidBeardColour",
+          "params": {
+            "num": 1,
+            "list": [ { "name": "colour", "type": "number", "required": true } ]
+          },
+          "returns": "boolean"
+        }
+      ]
     },
     {
       "name": "CharOrItem",
@@ -3440,7 +3925,8 @@
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "boolean"
         }
-      ]
+      ],
+      "methods": []
     },
     {
       "name": "Item",
@@ -4006,7 +4492,8 @@
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "number"
         }
-      ]
+      ],
+      "methods": []
     },
     {
       "name": "SpawnItem",
@@ -5004,7 +5491,7 @@
             ]
           },
           "returns": "boolean"
-        },
+        }
       ]
     },
     {
@@ -5211,7 +5698,8 @@
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "number"
         }
-      ]
+      ],
+      "methods": []
     },
     {
       "name": "Boat",
@@ -5288,9 +5776,28 @@
           "cppID": "CGP_WEBPAGE",
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "string"
-        },
+        }
       ],
-      "methods": []
+      "methods": [
+        {
+          "name": "AcceptRecruit",
+          "cppName": "CGuild_AcceptRecruit",
+          "params": {
+            "num": 1,
+            "list": [ { "name": "recruit", "type": "Character", "required": true } ]
+          },
+          "returns": "void"
+        },
+        {
+          "name": "IsAtPeace",
+          "cppName": "CGuild_IsAtPeace",
+          "params": {
+            "num": 0,
+            "list": []
+          },
+          "returns": "boolean"
+        }
+      ]
     },
     {
       "name": "BaseOrNull",
