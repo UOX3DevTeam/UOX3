@@ -2254,10 +2254,30 @@
     {
       "name": "CertainSetOf",
       "properties": []
-    }
+    },
     {
       "name": "BaseSkills",
       "aka": "UOXBaseSkills",
+      "extends": "CertainSetOf"
+    },
+    {
+      "name": "Skills",
+      "aka": "UOXSkills",
+      "extends": "CertainSetOf"
+    },
+    {
+      "name": "SkillsUsed",
+      "aka": "UOXSkillsUsed",
+      "extends": "CertainSetOf"
+    },
+    {
+      "name": "SkillsLock",
+      "aka": "UOXSkillsLock",
+      "extends": "CertainSetOf"
+    },
+    {
+      "name": "SkillsCap",
+      "aka": "UOXSkillsCap",
       "extends": "CertainSetOf"
     },
     {
@@ -2566,859 +2586,859 @@
           "name": "beardColor",
           "cppName": "CCP_BEARDCOLOUR",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "beardColour",
           "cppName": "CCP_BEARDCOLOUR",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "beardStyle",
           "cppName": "CCP_BEARDSTYLE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "brkPeaceChance",
           "cppName": "CCP_BRKPEACE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "canAttack",
           "cppName": "CCP_CANATTACK",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "canBroadcast",
           "cppName": "CCP_CANBROADCAST",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "canRun",
           "cppName": "CCP_CANRUN",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "canSnoop",
           "cppName": "CCP_CANSNOOP",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "cell",
           "cppName": "CCP_CELL",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "commandlevel",
           "cppName": "CCP_COMMANDLEVEL",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "controlSlots",
           "cppName": "CCP_CONTROLSLOTS",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "controlSlotsUsed",
           "cppName": "CCP_CONTROLSLOTSUSED",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "createdOn",
           "cppName": "CCP_CREATEDON",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "criminal",
           "cppName": "CCP_CRIMINAL",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "dead",
           "cppName": "CCP_DEAD",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "deaths",
           "cppName": "CCP_DEATHS",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "direction",
           "cppName": "CCP_DIRECTION",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "emoteColour",
           "cppName": "CCP_EMOTECOLOUR",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "fame",
           "cppName": "CCP_FAME",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "flag",
           "cppName": "CCP_FLAG",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "fleeAt",
           "cppName": "CCP_FLEEAT",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "followerCount",
           "cppName": "CCP_FOLLOWERCOUNT",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "fontType",
           "cppName": "CCP_FONTTYPE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "foodList",
           "cppName": "CCP_FOODLIST",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "string"
         },
         {
           "name": "frozen",
           "cppName": "CCP_FROZEN",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "fx1",
           "cppName": "CCP_FX1",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "fx2",
           "cppName": "CCP_FX2",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "fy1",
           "cppName": "CCP_FY1",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "fy2",
           "cppName": "CCP_FY2",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "fz",
           "cppName": "CCP_FZ",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "gender",
           "cppName": "CCP_GENDER",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "guarding",
           "cppName": "CCP_GUARDING",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "BaseOrNull"
         },
         {
           "name": "guild",
           "cppName": "CCP_GUILD",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "GuildOrNull"
         },
         {
           "name": "guildTitle",
           "cppName": "CCP_GUILDTITLE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "string"
         },
         {
           "name": "hairColor",
           "cppName": "CCP_HAIRCOLOUR",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "hairColour",
           "cppName": "CCP_HAIRCOLOUR",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "hairStyle",
           "cppName": "CCP_HAIRSTYLE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "hasStolen",
           "cppName": "CCP_HASSTOLEN",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "hireling",
           "cppName": "CCP_HIRELING",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "houseicons",
           "cppName": "CCP_HOUSEICONS",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "housesCoOwned",
           "cppName": "CCP_HOUSESCOOWNED",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "housesOwned",
           "cppName": "CCP_HOUSESOWNED",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "hunger",
           "cppName": "CCP_HUNGER",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "hungerRate",
           "cppName": "CCP_HUNGERRATE",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "hungerWildChance",
           "cppName": "CCP_HUNGERWILDCHANCE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "innocent",
           "cppName": "CCP_INNOCENT",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isAnimal",
           "cppName": "CCP_ISANIMAL",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isAwake",
           "cppName": "CCP_AWAKE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isCasting",
           "cppName": "CCP_ISCASTING",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isCounselor",
           "cppName": "CCP_ISCOUNSELOR",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isDisguised",
           "cppName": "CCP_ISDISGUISED",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isFlying",
           "cppName": "CCP_ISFLYING",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isGM",
           "cppName": "CCP_ISGM",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isGMPageable",
           "cppName": "CCP_ISGMPAGEABLE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isHuman",
           "cppName": "CCP_ISHUMAN",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isIncognito",
           "cppName": "CCP_ISINCOGNITO",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isJailed",
           "cppName": "CCP_ISJAILED",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isMeditating",
           "cppName": "CCP_ISMEDITATING",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isonhorse",
           "cppName": "CCP_ISONHORSE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isPolymorphed",
           "cppName": "CCP_ISPOLYMORPHED",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isRunning",
           "cppName": "CCP_ISRUNNING",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isShop",
           "cppName": "CCP_ISSHOP",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "isUsingPotion",
           "cppName": "CCP_USINGPOTION",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "karma",
           "cppName": "CCP_KARMA",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "karmaLock",
           "cppName": "CCP_KARMALOCK",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "lastOn",
           "cppName": "CCP_LASTON",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "string"
         },
         {
           "name": "lastOnSecs",
           "cppName": "CCP_LASTONSECS",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "lightlevel",
           "cppName": "CCP_LIGHTLEVEL",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "loyalty",
           "cppName": "CCP_LOYALTY",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "loyaltyRate",
           "cppName": "CCP_LOYALTYRATE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "magicReflect",
           "cppName": "CCP_MAGICREFLECT",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "mana",
           "cppName": "CCP_MANA",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "maxLoyalty",
           "cppName": "CCP_MAXLOYALTY",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "maxmana",
           "cppName": "CCP_MAXMANA",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "maxstamina",
           "cppName": "CCP_MAXSTAMINA",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "mounted",
           "cppName": "CCP_MOUNTED",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "murdercount",
           "cppName": "CCP_MURDERCOUNT",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "murderer",
           "cppName": "CCP_MURDERER",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "neutral",
           "cppName": "CCP_NEUTRAL",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "nextAct",
           "cppName": "CCP_NEXTACT",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "noNeedMana",
           "cppName": "CCP_NONEEDMANA",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "noNeedReags",
           "cppName": "CCP_NONEEDREAGS",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "noSkillTitles",
           "cppName": "CCP_NOSKILLTITLES",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "npc",
           "cppName": "CCP_NPC",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "npcFlag",
           "cppName": "CCP_NPCFLAG",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "npcGuild",
           "cppName": "CCP_NPCGUILD",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "oldWandertype",
           "cppName": "CCP_OLDWANDERTYPE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "online",
           "cppName": "CCP_ONLINE",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "orgID",
           "cppName": "CCP_ORGID",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "orgSkin",
           "cppName": "CCP_ORGSKIN",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "origName",
           "cppName": "CCP_ORIGNAME",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "string"
         },
         {
           "name": "orneriness",
           "cppName": "CCP_ORNERINESS",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "ownedItemsCount",
           "cppName": "CCP_OWNEDITEMSCOUNT",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "ownerCount",
           "cppName": "CCP_OWNERCOUNT",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "pack",
           "cppName": "CCP_CHARPACK",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "ItemOrNull"
         },
         {
           "name": "party",
           "cppName": "CCP_PARTY",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "PartyOrNull"
         },
         {
           "name": "partyLootable",
           "cppName": "CCP_PARTYLOOTABLE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "pathTargX",
           "cppName": "CCP_PATHTARGX",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "pathTargY",
           "cppName": "CCP_PATHTARGY",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "permanentMagicReflect",
           "cppName": "CCP_PERMMAGICREFLECT",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "petCount",
           "cppName": "CCP_PETCOUNT",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "playTime",
           "cppName": "CCP_PLAYTIME",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "poisonStrength",
           "cppName": "CCP_POISONSTRENGTH",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "priv",
           "cppName": "CCP_PRIV",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "raceGate",
           "cppName": "CCP_RACEGATE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "reAttackAt",
           "cppName": "CCP_REATTACKAT",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "sayColour",
           "cppName": "CCP_SAYCOLOUR",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "setPeace",
           "cppName": "CCP_SETPEACE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "singClickSer",
           "cppName": "CCP_SINGCLICKSER",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "skillCaps",
           "cppName": "CCP_SKILLCAP",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "SkillsCap"
         },
         {
           "name": "skillLock",
           "cppName": "CCP_SKILLLOCK",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "SkillsLock"
         },
         {
           "name": "skills",
           "cppName": "CCP_SKILLS",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "Skills"
         },
         {
           "name": "skillsused",
           "cppName": "CCP_SKILLUSE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "SkillsUsed"
         },
         {
           "name": "skillToPeace",
           "cppName": "CCP_SKILLTOPEACE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "skillToProv",
           "cppName": "CCP_SKILLTOPROV",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "skillToTame",
           "cppName": "CCP_SKILLTOTAME",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "socket",
           "cppName": "CCP_SOCKET",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "SocketOrNull"
         },
         {
           "name": "spattack",
           "cppName": "CCP_SPATTACK",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "spdelay",
           "cppName": "CCP_SPDELAY",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "spellCast",
           "cppName": "CCP_SPELLCAST",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "split",
           "cppName": "CCP_SPLIT",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "splitchance",
           "cppName": "CCP_SPLITCHANCE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "squelch",
           "cppName": "CCP_SQUELCH",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "stabled",
           "cppName": "CCP_STABLED",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "stamina",
           "cppName": "CCP_STAMINA",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "stealth",
           "cppName": "CCP_STEALTH",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "tamed",
           "cppName": "CCP_TAMED",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "tamedHungerRate",
           "cppName": "CCP_TAMEDHUNGERRATE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "tamedThirstRate",
           "cppName": "CCP_TAMEDTHIRSTRATE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "target",
           "cppName": "CCP_TARGET",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "CharOrNull"
         },
         {
           "name": "tempdex",
           "cppName": "CCP_TDEXTERITY",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "tempint",
           "cppName": "CCP_TINTELLIGENCE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "tempstr",
           "cppName": "CCP_TSTRENGTH",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "thirst",
           "cppName": "CCP_THIRST",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "thirstRate",
           "cppName": "CCP_THIRSTRATE",
           "cppType": "JSPROP_ENUMPERMRO",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "thirstWildChance",
           "cppName": "CCP_THIRSTWILDCHANCE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "town",
           "cppName": "CCP_TOWN",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "TownRegionOrNull"
         },
         {
           "name": "townPriv",
           "cppName": "CCP_TOWNPRIV",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "trainer",
           "cppName": "CCP_TRAINER",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "vulnerable",
           "cppName": "CCP_VULNERABLE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "wandertype",
           "cppName": "CCP_WANDERTYPE",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "number"
         },
         {
           "name": "willhunger",
           "cppName": "CCP_HUNGERSTATUS",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         },
         {
           "name": "willthirst",
           "cppName": "CCP_THIRSTSTATUS",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": ""
+          "type": "boolean"
         }
       ]
     },
@@ -4893,6 +4913,15 @@
       ]
     },
     {
+      "name": "GuildTypes",
+      "values": [
+        { "label": "GT_STANDARD", "value": 0 },
+        { "label": "GT_ORDER"                },
+        { "label": "GT_CHAOS"                },
+        { "label": "GT_UNKNOWN"              }
+      ]
+    },
+    {
       "name": "VisibleTypes",
       "values": [
         { "label": "VT_VISIBLE", "value": 0, "comment": "Visible to All" },
@@ -4920,7 +4949,63 @@
       ]
     },
     {
-      "name": "Party"
+      "name": "Party",
+      "aka": "UOXParty_class",
+      "properties": [
+        {
+          "name": "leader",
+          "cppID": "CPARTYP_LEADER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "CharOrNull"
+        },
+        {
+          "name": "memberCount",
+          "cppID": "CPARTYP_MEMBERCOUNT",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "number"
+        },
+        {
+          "name": "isNPC",
+          "cppID": "CPARTYP_ISNPC",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        }
+      ],
+      "methods": [
+        {
+          "name": "GetMember",
+          "cppName": "CParty_GetMember",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "index", "type": "number", "required": true }
+            ]
+          },
+          "returns": "CharOrNull"
+        },
+        {
+          "name": "Add",
+          "cppName": "CParty_Add",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "toAdd", "type": "Character", "required": true }
+            ]
+          },
+          "returns": "boolean"
+        },
+        {
+          "name": "Remove",
+          "cppName": "CParty_Remove",
+          "params": {
+            "num": 1,
+            "list": [
+              { "name": "toRemove", "type": "Character", "required": true }
+            ]
+          },
+          "returns": "boolean"
+        },
+      ]
     },
     {
       "name": "TownRegion",
@@ -5133,6 +5218,81 @@
       "extends": "Multi"
     },
     {
+      "name": "Guild",
+      "aka": "UOXGuild_class",
+      "properties": [
+        {
+          "name": "name",
+          "cppID": "CGP_NAME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "type",
+          "cppID": "CGP_TYPE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "GuildTypes"
+        },
+        {
+          "name": "master",
+          "cppID": "CGP_MASTER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "CharOrNull"
+        },
+        {
+          "name": "stone",
+          "cppID": "CGP_STONE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "ItemOrNull"
+        },
+        {
+          "name": "numMembers",
+          "cppID": "CGP_NUMMEMBERS",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "number"
+        },
+        {
+          "name": "numRecruits",
+          "cppID": "CGP_NUMRECRUITS",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "number"
+        },
+        {
+          "name": "members",
+          "cppID": "CGP_MEMBERS",
+          "cppType": "JSPROP_ENUMPERMIDX",
+          "unused": true,
+          "type": "Character[]"
+        },
+        {
+          "name": "recruits",
+          "cppID": "CGP_RECRUITS",
+          "cppType": "JSPROP_ENUMPERMIDX",
+          "unused": true,
+          "type": "Character[]"
+        },
+        {
+          "name": "charter",
+          "cppID": "CGP_CHARTER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "abbreviation",
+          "cppID": "CGP_ABBREVIATION",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "webPage",
+          "cppID": "CGP_WEBPAGE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+      ],
+      "methods": []
+    },
+    {
       "name": "BaseOrNull",
       "definition": "BaseObject | null | undefined"
     },
@@ -5163,6 +5323,14 @@
     {
       "name": "TownRegionOrNull",
       "definition": "TownRegion | null | undefined"
+    },
+    {
+      "name": "GuildOrNull",
+      "definition": "Guild | null | undefined"
+    },
+    {
+      "name": "PartyOrNull",
+      "definition": "Party | null | undefined"
     },
     {
       "name": "ClientFeature",
@@ -5252,7 +5420,7 @@
           "name": "path",
           "cppID": "CACCOUNT_PATH",
           "cppType": "JSPROP_ENUMANDPERM",
-          "type": "",
+          "type": "string",
           "unused": true,
           "readOnly": true
         },
