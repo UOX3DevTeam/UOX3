@@ -5563,7 +5563,12 @@
 19330=Nemáte u sebe dostatek zlata k zaplacení poplatku.
 19331=Z vašeho batohu bylo vybráno %i zlata.
 19332=Váš mazlíček byl vzkříšen.
-19333=[Zkrocený]
-19334=[Sjednocený]
+19333=[Krotký]
+19334=[Svázaný]
+19335=svázaný
+19336=krotký
+19337=nezranitelný
+19338=zmrazený
+19339=střežený
 }
 EOF

@@ -5564,6 +5564,11 @@
 19331=Z twojego plecaka pobrano %i złota.
 19332=Twój pupil został wskrzeszony.
 19333=[Oswojony]
-19334=[Zjednoczony]
+19334=[Związany]
+19335=związany
+19336=oswojony
+19337=niezniszczalny
+19338=zamrożony
+19339=strzeżony
 }
 EOF

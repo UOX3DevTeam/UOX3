@@ -5565,7 +5565,12 @@
 19330=Du hast nicht genug Gold dabei, um die Gebühr zu bezahlen.
 19331=%i Gold wurden aus deinem Rucksack entnommen.
 19332=Dein Haustier wurde wiederbelebt.
-19333=[Zähmbar]
-19334=[Vereint]
+19333=[Zahm]
+19334=[Gebunded]
+19335=gebunden
+19336=zahm
+19337=unverwundbar
+19338=eingefroren
+19339=bewacht
 }
 EOF

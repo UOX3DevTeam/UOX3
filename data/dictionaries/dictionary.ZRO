@@ -5568,5 +5568,10 @@
 19332=Your pet has been resurrected.
 19333=[Tame]
 19334=[Bonded]
+19335=(bonded)
+19336=(tame)
+19337=(invulnerable)
+19338=(frozen)
+19339=(guarded)
 }
 EOF

@@ -2194,10 +2194,12 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 			TAGMAPOBJECT petBond = i->GetTag( "isBondedPet" );
 			if( petBond.m_IntValue == 1  )
 			{
-				charName += " (bonded) ";
+				charName += " " + Dictionary->GetEntry( 19335, Language() ); //  (bonded)
 			}
 			else
-				charName += " (tame) ";
+			{
+				charName += " " + Dictionary->GetEntry( 19336, Language() ); //  (tame)
+			}
 		}
 
 		// Show NPC title over their head?
@@ -2211,15 +2213,15 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	// Show (invulnerable) tags over the heads of invulnerable characters?
 	if( i->IsInvulnerable() && cwmWorldState->ServerData()->ShowInvulnerableTagOverhead() )
 	{
-		charName += " (invulnerable)";
+		charName += " " + Dictionary->GetEntry( 19337, Language() ); //  (invulnerable)
 	}
 	if( i->IsFrozen() )
 	{
-		charName += " (frozen) ";
+		charName += " " + Dictionary->GetEntry( 19338, Language() ); //  (frozen)
 	}
 	if( i->IsGuarded() )
 	{
-		charName += " (guarded)";
+		charName += " " + Dictionary->GetEntry( 19339, Language() ); //  (guarded)
 	}
 	if( i->GetGuildNumber() != -1 && !i->IsIncognito() && !i->IsDisguised() )
 	{

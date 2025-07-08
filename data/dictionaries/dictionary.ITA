@@ -5565,6 +5565,11 @@
 19331=%i oro sono stati prelevati dal tuo zaino.
 19332=Il tuo animale domestico è stato resuscitato.
 19333=[Addomesticato]
-19334=[Unito]
+19334=[Legato]
+19335=legato
+19336=addomesticato
+19337=invulnerabile
+19338=congelato
+19339=sorvegliato
 }
 EOF

@@ -5566,6 +5566,11 @@
 19331=%i ouro foi retirado da sua mochila.
 19332=A sua mascote foi ressuscitada.
 19333=[Domesticado]
-19334=[Unido]
+19334=[Ligado]
+19335=ligado
+19336=domesticado
+19337=invulnerável
+19338=congelado
+19339=protegido
 }
 EOF
