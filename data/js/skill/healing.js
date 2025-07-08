@@ -961,6 +961,16 @@ function onTimer( mChar, timerID )
 
 function ResurrectBondedPet( socket, deadPet )
 {
+	var now = GetCurrentClock();
+	var deathTime = parseInt( deadPet.GetTempTag( "deathTime" )) || 0;
+	var waitTime = 10 * 60 * 1000; // 10 minutes in ms
+
+	if(( now - deathTime ) < waitTime)
+	{
+		socket.SysMessage( "That creature’s spirit lacks cohesion. Try again in a few minutes." );
+		return;
+	}
+
 	var petsAI = deadPet.GetTag( "PetAI" );
 	var petsHue = deadPet.GetTag( "PetHue" );
 
