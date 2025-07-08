@@ -37,6 +37,7 @@ function onCallback0( socket, ourObj )
 		ourObj.SetTag( "bondingStarted", null );
 		ourObj.SetTag( "bondingPlayer", null );
 		ourObj.SetTag( "isBondedPet", true );
+		ourObj.AddScriptTrigger( 3107 );//Add bonding script trigger
 		ourObj.Refresh();
 
 		socket.SysMessage( GetDictionaryEntry( 19328, socket.language ));//Pet has been instantly bonded!
