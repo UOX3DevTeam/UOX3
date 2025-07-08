@@ -26,7 +26,12 @@ function onUseChecked( pUser, iUsed )
 			var iPoison = iUsed.poison;
 			if( iPoison && pUser.poison < iPoison )
 			{
-				pUser.SetPoisoned( iPoison, GetServerSetting( "POISONTIMER" ) * 1000 );
+				let poisoner = null;
+				if( iUsed.poisonedBy != SE_INVALIDSERIAL() )
+				{
+					poisoner = CalcCharFromSer( iUsed.poisonedBy );
+				}
+				pUser.SetPoisoned( iPoison, GetServerSetting( "POISONTIMER" ) * 1000, ValidateObject( poisoner ) ? poisoner : null );
 				socket.SysMessage( GetDictionaryEntry(( 416 + RandomNumber( 0, 2 )), socket.language )); //You feel disoriented and nauseous.
 				pUser.SoundEffect( 0x0246, true );
 			}

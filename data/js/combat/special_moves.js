@@ -270,7 +270,7 @@ function CheckMana( pUser, abilityID )
 {
 	var pSock = pUser.socket;
 	var abilitieMana = getAbilityManaTable();
-	var NextUse = pUser.GetTempTag( "doubleMana" );
+	var NextUse = parseInt( pUser.GetTempTag( "doubleMana" ));
 	var iTime = GetCurrentClock();
 	var Delay = 3000; // If ability is performed within 3 seconds of the last ability, it will then cost double mana
 	var requiredMana = abilitieMana[abilityID].manaAmount;
@@ -301,7 +301,7 @@ function CheckMana( pUser, abilityID )
 function DeductMana(  pUser, abilityID )
 {
 	var abilitieMana = getAbilityManaTable();
-	var NextUse = pUser.GetTempTag( "doubleMana" );
+	var NextUse = parseInt( pUser.GetTempTag( "doubleMana" ));
 	var iTime = GetCurrentClock();
 	var Delay = 3000; // If ability is performed within 3 seconds of the last ability, it will then cost double mana
 	var requiredMana = abilitieMana[abilityID].manaAmount;

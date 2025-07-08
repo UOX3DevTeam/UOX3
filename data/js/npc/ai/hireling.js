@@ -115,7 +115,7 @@ function onSpeech( pSpeech, pChar, hireling )
 
 	// If the hire time has expired, reset hireling
 	var hireExpire = parseInt( hireling.GetTag( "hireExpire" ));
-	if( hireExpire < GetCurrentClock() && hireling.GetTag( "hired" ) && !hireling.GetTag( "gracePeriodActive" ))
+	if( hireExpire < Date.now() && hireling.GetTag( "hired" ) && !hireling.GetTag( "gracePeriodActive" ))
 	{
 		if( ValidateObject( hirelingOwner ) && hirelingOwner.online )
 		{
@@ -356,12 +356,12 @@ function onSpeech( pSpeech, pChar, hireling )
 					// TODO - this should be based on loyalty? Or status of payment?
 					if( hireExpire )
 					{
-						if( hireExpire > GetCurrentClock() )
+						if( hireExpire > Date.now() )
 						{
 							if( hireling.isHuman )
 							{
 								var tempMsg = GetDictionaryEntry( 2337, cliLang ); // I will continue working for thee for an additional %i hours.
-								hireling.TextMessage( tempMsg.replace( /%i/gi, Math.round(( hireExpire - GetCurrentClock() ) / 60 / 1000 )));
+								hireling.TextMessage( tempMsg.replace( /%i/gi, Math.round(( hireExpire - Date.now() ) / 60 / 1000 )));
 								pSock.SysMessage( GetDictionaryEntry( 2338, cliLang )); // Extra gold in a hireling's pack will be used to extend the contract once it expires.
 							}
 						}
@@ -706,7 +706,7 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 		}
 
 		var totalTimeHired = Math.round( secPerUODay * daysToHire * 1000 );
-		var hireExpire = GetCurrentClock() + totalTimeHired;
+		var hireExpire = Date.now() + totalTimeHired;
 		if( hireling.isHuman )
 		{
 			var tempMsg = GetDictionaryEntry( 2348, pChar.socket.language ); // I thank thee for paying me. I will work for thee for %i days.
@@ -837,8 +837,8 @@ function onTimer( hireling, timerID )
 			}
 
 			var totalTimeHired = Math.round( secPerUODay * daysToHire * 1000 );
-			var hireExpire = GetCurrentClock() + totalTimeHired;
-			hireling.SetTag( "hireExpire", hireExpire );
+			var hireExpire = Date.now() + totalTimeHired;
+			hireling.SetTag( "hireExpire", hireExpire.toString() );
 			hireling.StartTimer( secPerUODay, 1, true );
 
 			// Consume more gold!
@@ -1266,7 +1266,7 @@ function AttackTarget( socket, pChar, myTarget, allAttack )
 				return;
 			}
 
-			if( hireling.owner == pChar && pChar.account.isYoung )
+			if(( !myTarget.npc || ValidateObject( myTarget.owner )) && hireling.owner == pChar && pChar.account.isYoung )
 			{
 				socket.SysMessage( GetDictionaryEntry( 18708, socket.language )); // As a Young player, you cannot harm other players, or their followers.
 				return;
@@ -1303,6 +1303,10 @@ function AttackTarget( socket, pChar, myTarget, allAttack )
 
 						if( tempFollower.InitiateCombat( myTarget ))
 						{
+							if( pChar.target != myTarget )
+							{
+								pChar.InitiateCombat( myTarget );
+							}
 							if( WillResultInCriminal( pChar, myTarget ))
 							{
 								tempFollower.criminal = true;
@@ -1321,6 +1325,10 @@ function AttackTarget( socket, pChar, myTarget, allAttack )
 
 			if( hireling.InitiateCombat( myTarget ))
 			{
+				if( pChar.target != myTarget )
+				{
+					pChar.InitiateCombat( myTarget );
+				}
 				if( WillResultInCriminal( pChar, myTarget ))
 				{
 					hireling.criminal = true;

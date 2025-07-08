@@ -2021,7 +2021,9 @@ JSBool CBase_SetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 	*rval = INT_TO_JSVAL( 0 ); // Return value is 0 by default, indicating no timer was found or updated
 	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI32 expireTime = BuildTimeValue( JSVAL_TO_INT( argv[1] ) / 1000.0f );
+	jsdouble expireTime_double;
+	JS_ValueToNumber( cx, argv[1], &expireTime_double );
+	TIMERVAL expireTime = BuildTimeValue( static_cast<R64>( expireTime_double ) / 1000.0 );
 	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 
 	SERIAL myObjSerial = myObj->GetSerial();
@@ -2571,7 +2573,7 @@ JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 	}
 
 	// Reset idle anim timer so it doesn't interrupt the DoAction anim
-	myChar->SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( RandomNum( 5, 20 )));
+	myChar->SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( static_cast<R64>( RandomNum( 5, 20 ))));
 
 	// Play the requested animation
 	if( myChar->GetBodyType() == BT_GARGOYLE || targSubAction != -1 )
@@ -2818,7 +2820,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				return JS_TRUE;
 			}
 			ScriptError( cx, "For Items you need at least one parameter for Teleport" );
-			break;
+			return JS_FALSE;
 
 			// Parameters as a string
 		case 1:
@@ -2831,7 +2833,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 					if( !ValidateObject( toGoTo ))
 					{
 						ScriptError( cx, "No object associated with this object" );
-						break;
+						return JS_FALSE;
 					}
 
 					x		= toGoTo->GetX();
@@ -2853,7 +2855,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				else
 				{
 					ScriptError( cx, "Invalid class of object" );
-					break;
+					return JS_FALSE;
 				}
 			}
 			else if( JSVAL_IS_INT( argv[0] ))
@@ -2871,6 +2873,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 			else	// Needs to be implemented
 			{
 				ScriptError( cx, "Text-styled Parameters may be added later" );
+				return JS_FALSE;
 			}
 			break;
 
@@ -2881,6 +2884,11 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 			}
+			else
+			{
+				ScriptError( cx, "Invalid argument values passed to Teleport/SetLocation, expected x, y. Aborting!" );
+				return JS_FALSE;
+			}
 			break;
 
 			// x,y,z
@@ -2890,6 +2898,11 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+			}
+			else
+			{
+				ScriptError( cx, "Invalid argument values passed to Teleport/SetLocation, expected x, y, z. Aborting!" );
+				return JS_FALSE;
 			}
 			break;
 
@@ -2902,6 +2915,11 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				z		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
 				world	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
 			}
+			else
+			{
+				ScriptError( cx, "Invalid argument values passed to Teleport/SetLocation, expected x, y, z, world. Aborting!" );
+				return JS_FALSE;
+			}
 			break;
 
 			// x,y,z,world,instanceId
@@ -2913,6 +2931,11 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
 				world = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
 				instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+			}
+			else
+			{
+				ScriptError( cx, "Invalid argument values passed to Teleport/SetLocation, expected x, y, z, world, instanceID. Aborting!" );
+				return JS_FALSE;
 			}
 			break;
 
@@ -2971,7 +2994,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 			SendMapChange( world, mySock );
 
 			// Extra update needed for regular UO client
-			myChar->Update();
+			myChar->Update( nullptr, false, true, true );
 		}
 		else
 		{
@@ -3167,7 +3190,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		CChar *mChar = mySock->CurrcharObj();
 		if( ValidateObject( mChar ))
 		{
-			myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0f ));
+			myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 			if( toSend.CanSellItems(( *mChar ), ( *myNPC )))
 			{
 				mySock->Send( &toSend );
@@ -3184,7 +3207,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			return JS_FALSE;
 		}
 
-		myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0f ));
+		myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 		CSocket *mSock = myChar->GetSocket();
 		if( toSend.CanSellItems(( *myChar ), ( *myNPC )))
 		{
@@ -4646,7 +4669,9 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 
 	// 1. Parameter Delay, 2. Parameter Callback
-	UI32 ExpireTime = BuildTimeValue( JSVAL_TO_INT( argv[0] ) / 1000.0f );
+	jsdouble expireTime_double;
+	JS_ValueToNumber( cx, argv[0], &expireTime_double );
+	TIMERVAL ExpireTime = BuildTimeValue( static_cast<R64>( expireTime_double ) / 1000.0 );
 	UI16 TriggerNum = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 
 	CTEffect *Effect = new CTEffect;
@@ -5245,7 +5270,7 @@ JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_SetPoisoned()
-//|	Prototype	-	void SetPoisoned( poisonLevel, Length )
+//|	Prototype	-	void SetPoisoned( poisonLevel, length, poisonSourceChar )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies a specified level of poison to the character for a specified amount of
 //|					time (in milliseconds).
@@ -5266,24 +5291,39 @@ JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	SI08 newVal = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	SI08 poisonLevel = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
 
-	if( newVal > 0 && argc > 1 )
+	if( poisonLevel > 0 && argc > 1 )
 	{
 		SI32 wearOff = static_cast<SI32>( JSVAL_TO_INT( argv[1] ));
 
-		if( argc == 2 || ( argc == 3 && JSVAL_TO_BOOLEAN( argv[2] )))
+		if( argc >= 2 )
 		{
-			if( myChar->GetPoisoned() > newVal )
+			if( myChar->GetPoisoned() > poisonLevel )
 			{
-				newVal = myChar->GetPoisoned();
+				poisonLevel = myChar->GetPoisoned();
 			}
 		}
-		myChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R32>( wearOff ) / 1000.0f ));
+		myChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R64>( wearOff ) / 1000.0 ));
+
+		if( argc >= 3 )
+		{
+			CChar *poisonSourceChar = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[2] )));
+			if( !ValidateObject( poisonSourceChar ))
+			{
+				ScriptError( cx, "(SetPoisoned) Invalid Object passed as third function parameter" );
+				return JS_FALSE;
+			}
+
+			myChar->SetPoisonedBy( poisonSourceChar->GetSerial() );
+		}
+	}
+	else
+	{
+		myChar->SetPoisonedBy( INVALIDSERIAL );
 	}
 
-	//myChar->SetPoisonStrength( newVal );
-	myChar->SetPoisoned( newVal );
+	myChar->SetPoisoned( poisonLevel );
 	return JS_TRUE;
 }
 
@@ -5342,7 +5382,7 @@ JSBool CChar_SetInvisible( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( argc == 2 )
 	{
 		UI32 TimeOut = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
-		myChar->SetTimer( tCHAR_INVIS, BuildTimeValue( static_cast<R32>( TimeOut ) / 1000.0f ));
+		myChar->SetTimer( tCHAR_INVIS, BuildTimeValue( static_cast<R64>( TimeOut ) / 1000.0 ));
 	}
 	return JS_TRUE;
 }
@@ -8024,13 +8064,14 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		return JS_FALSE;
 	}
 	JSEncapsulate encaps( cx, &( argv[0] ));
-	JSEncapsulate encaps2( cx, &( argv[1] ));
 	JSEncapsulate myClass( cx, obj );
 
-	R32 timerVal = encaps2.toFloat();
-	if( timerVal != 0 )
+	jsdouble timerVal_double;
+	JS_ValueToNumber( cx, argv[1], &timerVal_double );
+	TIMERVAL timerVal = 0;
+	if( timerVal_double != 0 )
 	{
-		timerVal = BuildTimeValue( timerVal / 1000.0f );
+		timerVal = BuildTimeValue( static_cast<R64>( timerVal_double ) / 1000.0 );
 	}
 	if( myClass.ClassName() == "UOXChar" )
 	{
@@ -8041,7 +8082,7 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 			return JS_FALSE;
 		}
 
-		cMove->SetTimer( static_cast<cC_TID>( encaps.toInt() ), static_cast<TIMERVAL>( timerVal ));
+		cMove->SetTimer( static_cast<cC_TID>( encaps.toInt() ), timerVal );
 	}
 	else if( myClass.ClassName() == "UOXSocket" )
 	{

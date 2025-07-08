@@ -542,7 +542,7 @@ function CheckGeneralStealingRules( pSock, pThief, thiefTarget )
 		}
 
 		// Don't allow stealing from someone with higher command level access than you
-		if( pThief.commandlevel < thiefTarget.commandlevel )
+		if( thiefTarget.commandlevel >= GetCommandLevelVal( "CNS" ) && pThief.commandlevel < thiefTarget.commandlevel )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 878, pSock.language )); // You can't steal from gods.
 			return;
@@ -744,7 +744,7 @@ function DoStealing( pSock, itemOwner, itemToSteal, randomItem )
 	if( protectTradedItems )
 	{
 		// Check timestamp for when item was last traded
-		if( itemToSteal.tempLastTraded > 0 && Math.floor( GetCurrentClock() / 1000 ) - itemToSteal.tempLastTraded < protectTradedItemsDuration )
+		if( itemToSteal.tempLastTraded > 0 && Math.floor(( GetCurrentClock() - itemToSteal.tempLastTraded ) / 1000 ) < protectTradedItemsDuration )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 9212, pSock.language )); // That item is temporarily protected from theft
 			return;
@@ -1083,7 +1083,7 @@ function DoStealing( pSock, itemOwner, itemToSteal, randomItem )
 				itemStolen.PlaceInPack();
 
 				// Store a temporary timestamp for when item was stolen
-				itemStolen.SetTempTag( "stolenAtTime", Math.floor( GetCurrentClock() / 1000 ));
+				itemStolen.SetTempTag( "stolenAtTime", GetCurrentClock().toString() );
 
 				// Store a reference to the original owner, and timestamp for when item was stolen
 				if( ValidateObject( itemOwner ))

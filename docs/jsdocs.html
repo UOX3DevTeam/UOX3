@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 23. April, 2025</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6b</small></p>
+	<p style="margin:0"><small>Last Updated: 29. June, 2025</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6d</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -55,6 +55,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>June 29th, 2025</h4>
+						<ul>
+							<li>Added details for new JS Events: onProfileRequest, onProfileUpdate</li>
+						</ul>
 						<h4>April 27th, 2025</h4>
 						<ul>
 							<li>Added details for new JS Events: onBoatTurn
@@ -1872,7 +1876,7 @@ function onDispel( objDispelled, objType )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
-							<p>Adding custom behaviour when dropping items on other items</p>
+							<p>Adding custom behaviour when dropping items <strong>on/inside containers</strong></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
@@ -1887,12 +1891,16 @@ function onDispel( objDispelled, objType )
 							</ul>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>iDroppedOn can only be items that are recognized by the client as containers, via the tiledata "container" flag in the client data. The client will not register attempts to drop items on non-container items, and it's not enough to set a container type on an item in UOX3 to overcome this. Modifications to client tiledata is required in order to make client recognize items as potential containers.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 {
 	if( iDropped.id == 0x1f14 ) //If the item being dropped is a recall rune
 	{
-		if( iDroppedOn.id == 0x0efa ) //If the item being dropped on is a spellbook
+		if( iDroppedOn.id == 0x0efa ) //If the item being dropped on is a spellbook - which is a container
 		{
 			cDropper.TextMessage("I am dropping "+iDropped.name+" on a "+iDroppedOn.name );
 			return true;
@@ -3187,6 +3195,71 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 
 	//Use return false to disallow the pickup and bounce item
 	//return false;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnProfileRequest" id="eventOnProfileRequest"><span>onProfileRequest</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onProfileRequest( socket, profileOwnerChar )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To control what text is shown from the paperdoll profile of profileOwnerChar to the requesting client (socket)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When client (socket) requests data for a paperdoll profile (belonging to profileOwnerChar). Any text returned from the event will be sent to the client.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return ""</strong> to not show anything</li>
+								<li><strong>return someString</strong> to display the contents of someString to the client</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onProfileRequest( socket, profileOwnerChar )
+{
+	return "This is an example of some text displayed in a paperdoll profile";
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnProfileUpdate" id="eventOnProfileUpdate"><span>onProfileUpdate</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onProfileUpdate( socket, updatedProfileText )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To retrieve updates to a player's paperdoll profile, which could then (for instance) be stored in a persistent file on the server.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When client sends updated data from the paperdoll profile (i.e. paperdoll profile is closed after changing it)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<p>No return values supported</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onProfileUpdate( socket, updatedProfileText )
+{
+	socket.currentChar.TextMessage( "Updated Profile Text:" + updatedProfileText );
 }</code></pre></p>
 						</div>
 					</div>
@@ -4667,7 +4740,7 @@ function onTooltip( myObj, pSocket )
 			<!-- </li> -->
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#eventOnTooltip" id="eventOnTooltip"><span>onTooltip</span></a>
+				<a class="cd-faq__trigger" href="#eventOnTooltip" id="eventOnTooltip"><span>onTurnBoat</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
 						<div class="settingsDiv">
@@ -4834,10 +4907,10 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 			{
 				socket.SysMessage( "You are too busy to do that." );
 			}
-			else if( socket.GetTimer( 0 ) <= GetCurrentClock() )
+			else if( socket.GetTimer( Timer.TIMEOUT ) <= GetCurrentClock() )
 			{
 				socket.tempObj = iUsed;
-				socket.SetTimer( 0, 5000 );
+				socket.SetTimer( Timer.TIMEOUT, 5000 );
 				onCallback1( socket, targChar );
 			}
 			else
@@ -4986,7 +5059,7 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
-							<p>To allow reactions for characters/items when weather changes</p>
+							<p>To allow reactions for when players enter/exit war mode</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
@@ -7933,7 +8006,7 @@ SetSpawnRegionFacetStatus( 13 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns a timestamp for current time</p>
+									<p>Returns a timestamp for current time <em>since server startup</em>. Starts from 0 on every server startup.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -10449,16 +10522,19 @@ var coldResist = pUser.Resist( 4 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void SetPoisoned( poisonLevel, duration )</em></p>
+									<p><em>void SetPoisoned( poisonLevel, duration[, poisonSourceChar] )</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Applies a specified level of poison to a character for a specified amount of time (in milliseconds).</p>
+									<p>Applies a specified level of poison to a character for a specified amount of time (in milliseconds). Optional third parameter can supply source character who applied the poison</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Gives myChar a level 2 poison for 10 seconds.
-myChar.SetPoisoned( 2, 10000 );</code></pre>
+myChar.SetPoisoned( 2, 10000 );
+
+// Applies level 2 poison to myChar with myNPC as source character
+myChar.SetPoisoned( 2, 10000, myNPC ); </code></pre>
 								</div>
 							</div>
 						</div>
@@ -10902,8 +10978,8 @@ myNPC.Wander( 5600, 1204, 10 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">console.Log( "Logging a custom message to default logfile!" );
-console.Log( "Logging a custom message to a specific logfile!", "myCustomLogFile.log" );
+									<pre><code class="language-javascript">Console.Log( "Logging a custom message to default logfile!" );
+Console.Log( "Logging a custom message to a specific logfile!", "myCustomLogFile.log" );
 </code></pre>
 								</div>
 							</div>
@@ -12222,7 +12298,7 @@ myGump.AddPicInPic( 10, 10, 0x03de, 0, 0, 30, 30 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myGump.send( mySock );</code></pre>
+									<pre><code class="language-javascript">myGump.Send( mySock );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -14842,6 +14918,10 @@ myObject.propertyName = newValue;
 							Get/Set whether character is frozen on the spot, unable to move</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.hideFameKarmaTitle</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Get/Set whether fame/karma titles should show for character</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.hireling</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether NPC can be hired as a hireling</p>
 						</div>
@@ -15075,6 +15155,8 @@ myObject.propertyName = newValue;
 								<li>0x2000 - TempReflected (Character has a temporary magic reflection spell active)</li>
 								<li>0x4000 - NoNeedReags (Character doesn't need reagents to cast spells)</li>
 								<li>0x8000 - PermReflected (Character has a permanent magic reflection spell active)</li>
+								<li>0x10000 - HideFameKarmaTitle (No fame/karma titles shown for character)</li>
+								<li>0x20000 - Seer (Character is a Seer)</li>
 							</ul></p>
 						</div>
 						<div class="settingsDiv">
@@ -15320,6 +15402,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.poison</span> <strong>(int, <em>0 - 5</em>)</strong><br>
 							Get/Set character's current poisoned state</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.poisonedBy</span> <strong>(int)</strong><br>
+							Get/Set serial of character who applied poison to character. Set to 0xFFFFFFFF/SE_INVALIDSERIAL() to clear.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.poisonStrength</span> <strong>(int, <em>0 - 5</em>)</strong><br>
@@ -16082,6 +16168,14 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.poison</span> <strong>(int)</strong><br>
 							Get/Set poison strength applied to item such as weapons and food (from 1 to 4, where 1 = Weak poison, 4 = Deadly poison)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.poisonedBy</span> <strong>(int)</strong><br>
+							Get/Set serial of character who applied poison to item. Set to 0xFFFFFFFF/SE_INVALIDSERIAL() to clear.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.poisonCharges</span> <strong>(int, <em>0 - 255</em>)</strong><br>
+							Get/Set amount of poison charges on a poisoned item</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.rank</span> <strong>(int, <em>1-10</em>)</strong><br>

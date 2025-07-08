@@ -2,9 +2,9 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "sfx", 2, true );
-	RegisterCommand( "music", 2, true );
-	RegisterCommand( "midi", 2, true ); // Alias for music command
+	RegisterCommand( "sfx", 8, true );
+	RegisterCommand( "music", 8, true );
+	RegisterCommand( "midi", 8, true ); // Alias for music command
 }
 
 function command_SFX( socket, cmdString )

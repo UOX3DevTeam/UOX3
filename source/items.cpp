@@ -1354,7 +1354,7 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cause items to decay when left on the ground
 //o------------------------------------------------------------------------------------------------o
-auto DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsInHouses ) -> bool
+auto DecayItem( CItem& toDecay, const TIMERVAL nextDecayItems, const TIMERVAL nextDecayItemsInHouses ) -> bool
 {
 	if( toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay() )
 	{

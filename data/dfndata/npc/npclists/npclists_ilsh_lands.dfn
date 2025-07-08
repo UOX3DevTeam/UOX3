@@ -161,7 +161,7 @@
 10|corpser
 10|lizardman
 6|poisonele
-5|plaguebeast
+//5|plaguebeast
 }
 
 [NPCLIST ilshenar_npclist_14]
@@ -175,7 +175,7 @@
 10|lizardman
 10|bogthing
 6|poisonele
-5|plaguebeast
+//5|plaguebeast
 }
 
 [NPCLIST ilshenar_npclist_16]
@@ -187,7 +187,7 @@
 12|alligator
 10|corpser
 10|lizardman
-5|plaguebeast
+//5|plaguebeast
 }
 
 [NPCLIST ilshenar_npclist_17]

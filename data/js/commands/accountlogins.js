@@ -1,6 +1,6 @@
 function CommandRegistration()
 {
-	RegisterCommand( "acctlogins", 2, true );
+	RegisterCommand( "acctlogins", 8, true );
 }
 
 function command_ACCTLOGINS( socket, cmdString )

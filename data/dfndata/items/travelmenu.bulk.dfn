@@ -500,6 +500,36 @@ GOPLACE=269
 ITEMMENU=6002
 }
 
+[ITEMMENU 6032]
+{
+Orc Caves Felucca
+0x0BD1=Orc Caves Outside
+GOPLACE=280
+0x0BD1=Orc Caves Level 1
+GOPLACE=281
+0x0BD1=Orc Caves Level 2
+GOPLACE=282
+0x0BD1=Orc Caves Level 3
+GOPLACE=283
+<=Previous Menu
+ITEMMENU=6002
+}
+
+[ITEMMENU 6033]
+{
+Khaldun Felucca
+0x0BD1=Khaldun Outside 1
+GOPLACE=285
+0x0BD1=Khaldun Outside 2
+GOPLACE=286
+0x0BD1=Khaldun Inside 1 NW
+GOPLACE=287
+0x0BD1=Khaldun Inside 2 NE
+GOPLACE=288
+<=Previous Menu
+ITEMMENU=6002
+}
+
 // Towns Trammel
 [ITEMMENU 6105]
 {
@@ -1000,6 +1030,21 @@ GOPLACE=268,1
 GOPLACE=269,1
 <=Previous Menu
 ITEMMENU=6102
+}
+
+[ITEMMENU 6132]
+{
+Orc Caves Trammel
+0x0BD1=Orc Caves Outside
+GOPLACE=280,1
+0x0BD1=Orc Caves Level 1
+GOPLACE=281,1
+0x0BD1=Orc Caves Level 2
+GOPLACE=282,1
+0x0BD1=Orc Caves Level 3
+GOPLACE=283,1
+<=Previous Menu
+ITEMMENU=6002
 }
 
 [ITEMMENU 6200]
