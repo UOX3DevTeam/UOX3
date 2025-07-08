@@ -278,6 +278,16 @@ function PetResurrect( socket, deadPet )
 	"ninjitsu", "spellweaving", "imbuing", "mysticism", "throwing"
 	];
 
+	var now = GetCurrentClock();
+	var deathTime = parseInt( deadPet.GetTempTag( "deathTime" )) || 0;
+	var waitTime = 10 * 60 * 1000; // 10 minutes in ms
+
+	if(( now - deathTime ) < waitTime)
+	{
+		socket.SysMessage( "That creature’s spirit lacks cohesion. Try again in a few minutes." );
+		return;
+	}
+
 	var petsAI = deadPet.GetTag( "PetsAI" );
 	var petsHue = deadPet.GetTag( "PetsHue" );
 
@@ -304,6 +314,7 @@ function PetResurrect( socket, deadPet )
 	deadPet.atWar = false;
 	deadPet.attacker = null;
 	deadPet.SetTag( "isPetDead", false );
+	deadPet.SetTempTag( "deathTime", null ); // Optional cleanup
 }
 
 function GetResFee( deadPet )
