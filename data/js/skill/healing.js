@@ -975,6 +975,8 @@ function ResurrectBondedPet( socket, deadPet )
 	var petsHue = deadPet.GetTag( "PetHue" );
 
 	TriggerEvent( 3108, "SendNpcGhostMode", socket, 0, deadPet.serial, 0  );
+	deadPet.StaticEffect( 0x376A, 10, 16 );
+	deadPet.SoundEffect( 0x214, true );
 	deadPet.aitype = petsAI;
 	deadPet.colour = petsHue;
 	deadPet.target = null;
