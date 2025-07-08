@@ -288,8 +288,8 @@ function PetResurrect( socket, deadPet )
 	"ninjitsu", "spellweaving", "imbuing", "mysticism", "throwing"
 	];
 
-	var petsAI = deadPet.GetTag( "PetsAI" );
-	var petsHue = deadPet.GetTag( "PetsHue" );
+	var petsAI = deadPet.GetTag( "PetAI" );
+	var petsHue = deadPet.GetTag( "PetHue" );
 
 	// Apply skill loss: lose 0.2 (2 points on UOX3 scale) per skill
 	for( var i = 0; i < skillList.length; ++i )
