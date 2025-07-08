@@ -5534,7 +5534,7 @@
 19234=Your confusion has passed, you may now arm a weapon!
 19235=You are no longer mortally wounded.
 19236=The bleeding wounds have healed, you are no longer bleeding!
-// [19301-19330] Bonded and Dead pet
+// [19301-19340] Bonded and Dead pet
 19301=You may not trade a dead pet.
 19302=The dead pet cannot attack.
 19303=You are not skilled enough to resurrect that pet.
@@ -5574,5 +5574,6 @@
 19337=(invulnerable)
 19338=(frozen)
 19339=(guarded)
+19340=That creature’s spirit lacks cohesion. Try again in a few minutes.
 }
 EOF

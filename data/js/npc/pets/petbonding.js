@@ -25,7 +25,7 @@ function onDeathBlow( killedPet, petKiller )
 		killedPet.SetTag( "PetHue", killedPet.colour.toString() );
 		killedPet.SetTag( "isPetDead", true );
 		killedPet.SetTag( "playTimeAtDeath", petOwner.playTime ); // store current playtime
-		killedPet.SetTempTag( "deathTime", GetCurrentClock().toString() );
+		killedPet.SetTempTag( "bondedPetDeathTime", GetCurrentClock().toString() );
 		killedPet.colour = 0x3e6;
 		killedPet.aitype = 0;
 		killedPet.health = 1;

@@ -246,6 +246,16 @@ function onGumpPress( pSock, pButton, gumpData )
 		return;
 	}
 
+	var now = GetCurrentClock();
+	var deathTime = parseInt( petNpc.GetTempTag( "bondedPetDeathTime" )) || 0;
+	var waitTime = 10 * 60 * 1000; // 10 minutes in ms
+
+	if(( now - deathTime ) < waitTime)
+	{
+		pSock.SysMessage( GetDictionaryEntry( 19340, pSock.language )); // That creature’s spirit lacks cohesion. Try again in a few minutes.
+		return;
+	}
+
 	pUser.UseResource( resFee, 0x0EED, 0 );
 	PetResurrect( pSock, petNpc );
 	var tempMsg = GetDictionaryEntry( 19331, pSock.language ); // %i gold has been withdrawn from your backpack.
@@ -277,16 +287,6 @@ function PetResurrect( socket, deadPet )
 	"stealth", "removetrap", "necromancy", "focus", "chivalry", "bushido",
 	"ninjitsu", "spellweaving", "imbuing", "mysticism", "throwing"
 	];
-
-	var now = GetCurrentClock();
-	var deathTime = parseInt( deadPet.GetTempTag( "deathTime" )) || 0;
-	var waitTime = 10 * 60 * 1000; // 10 minutes in ms
-
-	if(( now - deathTime ) < waitTime)
-	{
-		socket.SysMessage( "That creature’s spirit lacks cohesion. Try again in a few minutes." );
-		return;
-	}
 
 	var petsAI = deadPet.GetTag( "PetsAI" );
 	var petsHue = deadPet.GetTag( "PetsHue" );

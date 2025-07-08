@@ -661,6 +661,16 @@ function onTimer( mChar, timerID )
 						{
 							if( ourObj.GetTag( "isPetDead" ))
 							{
+								var now = GetCurrentClock();
+								var deathTime = parseInt( ourObj.GetTempTag( "bondedPetDeathTime" )) || 0;
+								var waitTime = 10 * 60 * 1000; // 10 minutes in ms
+
+								if(( now - deathTime ) < waitTime)
+								{
+									socket.SysMessage( GetDictionaryEntry( 19340, pSock.language )); // That creature’s spirit lacks cohesion. Try again in a few minutes.
+									return;
+								}
+
 								ResurrectBondedPet( socket, ourObj );
 								ourObj.StaticEffect( 0x376A, 10, 16 );
 								ourObj.SoundEffect( 0x214, true );
@@ -961,16 +971,6 @@ function onTimer( mChar, timerID )
 
 function ResurrectBondedPet( socket, deadPet )
 {
-	var now = GetCurrentClock();
-	var deathTime = parseInt( deadPet.GetTempTag( "deathTime" )) || 0;
-	var waitTime = 10 * 60 * 1000; // 10 minutes in ms
-
-	if(( now - deathTime ) < waitTime)
-	{
-		socket.SysMessage( "That creature’s spirit lacks cohesion. Try again in a few minutes." );
-		return;
-	}
-
 	var petsAI = deadPet.GetTag( "PetAI" );
 	var petsHue = deadPet.GetTag( "PetHue" );
 
