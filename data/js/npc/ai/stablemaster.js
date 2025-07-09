@@ -443,7 +443,7 @@ function onCallback0( pSock, ourObj )
 		{
 			pUser.SysMessage( GetDictionaryEntry( 2114, pSock.language )); // You are out of range from the stableMaster.
 		}
-		else if( !ourObj.tamed || ourObj.isHuman )
+		else if( !ourObj.tamed || ourObj.isHuman || ourObj.GetTag( "isPetDead" ) == true )
 		{
 			stableMaster.TextMessage( GetDictionaryEntry( 2389, pSock.language )); // You can't stable that!
 		}

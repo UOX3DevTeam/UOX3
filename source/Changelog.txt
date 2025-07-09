@@ -1,3 +1,14 @@
+09/07/2025 - Xuri
+	Added [Tame] and [Bonded] to character tooltips of tame/bonded animals and updated Dictionary files
+	Updated .AddRadio() and .AddCheckbox() Gump Methods to support 32-bit unsigned int for the buttonID
+
+05/07/2025 - Dragon Slayer
+	Updated Addmenu with all the missing npcs (Ratmen/lizardman/Se Npcs/Vet)
+	Fixed PoisonedBy missing on world save tags.
+	Fixed Spiders Icons in Addmenu.
+	Added Vet Spawns thru out the worlds.
+	Fixed Sound on Shadow fiend ( creatures.dfn )
+
 04/07/2025 - Xuri
 	Fixed an issue with poison damage in combat where the poison resist of the attacker was checked instead of that of the defender
 	Fixed an issue where the poison details in tooltip of an item would only be visible when equipped, and not visible when kept in backpack
@@ -208,6 +219,17 @@
 	Bump the types for the timer from the uint32_t to uint64_t and encapsulate behind a TVAL type definition.
 		According to the C++ reference, chrono should support at least 45 bits of accuracy for milliseconds.
 		This gives a 1115 year wraparound.
+    
+18/05/2025 - Dragon Slayer
+	Added support for pet bonding system similar to OSI mechanics
+		Pets now track bonding status using 'isBondedPet' tag
+		Bonding begins when player tames a tameable pet that meets taming skill requirements,
+		Pets become bonded after 7 days (604800000 ms) of loyalty to their owner,
+		Bonded pets no longer delete on death, but enter ghost state,
+		Added packet 'SendNpcGhostMode( pSock, unknownFlag, serial, ghostFlag )' to trigger bonded ghost appearance,
+	New JS event hook: onReleasePet( pTamer, pPet )
+		Triggered when a player releases a controlled pet,
+		Can be used to reset bonded status or perform cleanup.
 
 14/05/2025 - Xuri
 	Fixed an issue where integer division and rounding of values could lead to skill gains not being visible to player

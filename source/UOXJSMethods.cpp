@@ -570,7 +570,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	UI16 gImage = 0;
 	UI16 gImageChk = 0;
 	SI16 initState = 0;
-	SI16 relay = 0;
+	UI32 relay = 0;
 
 	if( argc == 5 )
 	{
@@ -579,7 +579,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 		gImageChk	= gImage + 1;
 		initState	= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-		relay		= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
+		relay		= static_cast<UI32>( JSVAL_TO_INT( argv[4] ));
 	}
 	else
 	{
@@ -588,7 +588,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 		gImageChk	= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
 		initState	= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-		relay		= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
+		relay		= static_cast<UI32>( JSVAL_TO_INT( argv[5] ));
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -599,7 +599,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "checkbox %i %i %u %u %i %i", tL, tR, gImage, gImageChk, initState, relay ));
+	gList->one->push_back( oldstrutil::format( "checkbox %i %i %u %u %i %u", tL, tR, gImage, gImageChk, initState, relay ));
 
 	return JS_TRUE;
 }
@@ -1373,7 +1373,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 	UI16 gImage = 0;
 	UI16 gImageChk = 0;
 	SI16 initialState = 0;
-	SI16 relay = 0;
+	UI32 relay = 0;
 
 	if( argc == 5 )
 	{
@@ -1382,7 +1382,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		gImage			= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 		gImageChk		= gImage + 1;
 		initialState	= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-		relay			= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
+		relay			= static_cast<UI32>( JSVAL_TO_INT( argv[4] ));
 	}
 	else
 	{
@@ -1391,7 +1391,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		gImage			= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 		gImageChk		= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
 		initialState	= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-		relay			= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
+		relay			= static_cast<UI32>( JSVAL_TO_INT( argv[5] ));
 	}
 
 
@@ -1402,7 +1402,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "radio %i %i %u %u %i %i", tL, tR, gImage, gImageChk, initialState, relay ));
+	gList->one->push_back( oldstrutil::format( "radio %i %i %u %u %i %u", tL, tR, gImage, gImageChk, initialState, relay ));
 
 	return JS_TRUE;
 }
