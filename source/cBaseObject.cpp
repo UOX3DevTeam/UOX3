@@ -2478,6 +2478,10 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			{
 				poisoned = oldstrutil::value<UI08>( data );
 			}
+			else if( UTag == "POISONEDBY" )
+			{
+				poisonedBy = oldstrutil::value<UI32>( data );
+			}
 			else
 			{
 				rValue = false;

@@ -576,6 +576,8 @@ public:
 	SI16		MaxStealthMovement() const;
 	auto		MaxStaminaMovement( SI16 value ) -> void;
 	SI16		MaxStaminaMovement() const;
+	auto		PetBondingEnabled( bool setting ) -> void;
+	auto		PetBondingEnabled() const -> bool;
 	auto		SystemTimer( cSD_TID timerId, UI16 value ) -> void;
 	auto		SystemTimer( cSD_TID timerId ) const -> UI16;
 	TIMERVAL	BuildSystemTimeValue( cSD_TID timerId ) const;
