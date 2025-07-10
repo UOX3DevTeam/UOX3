@@ -326,7 +326,7 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 		needsChecking[i].set();
 	}
 
-	targContext = JSEngine->GetContext( runTime ); //JS_NewContext( JSEngine->GetRuntime( runTime ), 0x2000 );
+	targContext = JSEngine->GetContext( runTime );
 	if( targContext == nullptr )
 		return;
 
@@ -335,7 +335,6 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 		return;
 
 	JS_LockGCThing( targContext, targObject );
-	//JS_AddRoot( targContext, &targObject );
 
 	// Moved here so it reports errors during script-startup too
 	JS_SetErrorReporter( targContext, UOX3ErrorReporter );
@@ -3645,7 +3644,7 @@ std::string cScript::OnProfileRequest( CSocket *mSock, CChar *profileOwner )
 	JSObject *profOwnerObj	= JSEngine->AcquireObject( IUE_CHAR, profileOwner, runTime );
 	
 	params[0]	= OBJECT_TO_JSVAL( myObj );
-	params[1]	= STRING_TO_JSVAL( profOwnerObj );
+	params[1]	= OBJECT_TO_JSVAL( profOwnerObj );
 	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onProfileRequest", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{

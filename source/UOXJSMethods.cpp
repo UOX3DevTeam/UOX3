@@ -452,7 +452,7 @@ JSBool CGumpData_GetEdit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getEdit) Invalid Number of Arguments %d, needs: 1 ", argc );
-		*rval = STRING_TO_JSVAL( "" );
+		*rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, ""));
 		return JS_TRUE;
 	}
 
@@ -461,7 +461,7 @@ JSBool CGumpData_GetEdit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( myItem == nullptr  )
 	{
 		ScriptError( cx, "(DataGump-getEdit) Invalid object assigned" );
-		*rval = STRING_TO_JSVAL( "" );
+		*rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, ""));
 		return JS_TRUE;
 	}
 
@@ -473,7 +473,7 @@ JSBool CGumpData_GetEdit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 	else
 	{
-		*rval = STRING_TO_JSVAL( "" );
+		*rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, ""));
 	}
 	return JS_TRUE;
 }
