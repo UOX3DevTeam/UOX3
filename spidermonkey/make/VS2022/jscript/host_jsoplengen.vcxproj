@@ -86,8 +86,8 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>pushD $(OutDir)
-host_jsoplengen $(SolutionDir)../../spidermonkey/jsautooplen.h
+      <Command>pushD "$(OutDir)"
+host_jsoplengen "$(SolutionDir)../../spidermonkey/jsautooplen.h"
 popD</Command>
       <Message>Generating jsautooplen.h</Message>
     </PostBuildEvent>
@@ -127,8 +127,8 @@ popD</Command>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>pushD $(OutDir)
-host_jsoplengen $(SolutionDir)../../spidermonkey/jsautooplen.h
+      <Command>pushD "$(OutDir)"
+host_jsoplengen "$(SolutionDir)../../spidermonkey/jsautooplen.h"
 popD</Command>
     </PostBuildEvent>
     <PostBuildEvent>

@@ -86,8 +86,8 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>pushD $(OutDir)
-jscpucfg &gt; $(SolutionDir)../../spidermonkey/jsautocfg.h
+      <Command>pushD "$(OutDir)"
+jscpucfg &gt; "$(SolutionDir)../../spidermonkey/jsautocfg.h"
 popD</Command>
     </PostBuildEvent>
     <PostBuildEvent>
@@ -128,8 +128,8 @@ popD</Command>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>pushD $(OutDir)
-jscpucfg &gt; $(SolutionDir)../../spidermonkey/jsautocfg.h
+      <Command>pushD "$(OutDir)"
+jscpucfg &gt; "$(SolutionDir)../../spidermonkey/jsautocfg.h"
 popD</Command>
       <Message>Generating jsautocfg.h</Message>
     </PostBuildEvent>

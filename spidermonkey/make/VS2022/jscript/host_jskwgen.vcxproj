@@ -93,8 +93,8 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>pushD $(OutDir)
-host_jskwgen $(SolutionDir)../../spidermonkey/jsautokw.h
+      <Command>pushD "$(OutDir)"
+host_jskwgen "$(SolutionDir)../../spidermonkey/jsautokw.h"
 popD</Command>
     </PostBuildEvent>
     <PostBuildEvent>
@@ -138,8 +138,8 @@ popD</Command>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>pushD $(OutDir)
-host_jskwgen $(SolutionDir)../../spidermonkey/jsautokw.h
+      <Command>pushD "$(OutDir)"
+host_jskwgen "$(SolutionDir)../../spidermonkey/jsautokw.h"
 popD</Command>
     </PostBuildEvent>
     <PostBuildEvent>
