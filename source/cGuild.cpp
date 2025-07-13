@@ -9,6 +9,7 @@
 #include "CJSEngine.h"
 #include "StringUtility.hpp"
 #include "osunique.hpp"
+#include <algorithm>
 #ifndef va_start
 #include <cstdarg>
 #endif
@@ -976,6 +977,30 @@ CGuild *CGuildCollection::Guild( GUILDID num ) const
 CGuild *CGuildCollection::operator[]( GUILDID num )
 {
 	return Guild( num );
+}
+
+GUILDID CGuildCollection::FindGuildId( const CGuild* targetGuild )
+{
+    if( targetGuild == nullptr )
+    {
+        return -1;
+    }
+
+    // Use std::find_if to search the map
+    auto it = std::find_if( gList.begin(), gList.end(),
+                           [targetGuild]( const auto& pair ) {
+                               return pair.second == targetGuild;
+                           });
+
+    // Check if find_if found an element
+    if( it != gList.end() )
+    {
+        return it->first; // Return the key (GUILDID)
+    }
+    else
+    {
+        return -1;
+    }
 }
 
 //o------------------------------------------------------------------------------------------------o

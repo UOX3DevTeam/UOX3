@@ -92,6 +92,7 @@ JSBool SE_GetItem( JSContext *cx, uintN argc, jsval *vp );					//										***
 JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp );				//										***
 
 JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp );		//										**
+JSBool SE_CreateNewGuild( JSContext *cx, uintN argc, jsval *vp );		//										**
 
 JSBool SE_PossessTown( JSContext *cx, uintN argc, jsval *vp );				//										***
 

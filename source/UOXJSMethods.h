@@ -139,6 +139,7 @@ JSBool CChar_AddFollower( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_RemoveFollower( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_HasBeenOwner( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_CalculateControlChance( JSContext *cx, uintN argc, jsval *vp );
+JSBool CChar_CheckGuild( JSContext *cx, uintN argc, jsval *vp );
 
 // Item Methods
 JSBool CItem_OpenPlank( JSContext *cx, uintN argc, jsval *vp );
@@ -262,6 +263,14 @@ JSBool CSocket_Page( JSContext *cx, uintN argc, jsval *vp );
 // Guild Methods
 JSBool CGuild_AcceptRecruit( JSContext *cx, uintN argc, jsval *vp );
 JSBool CGuild_IsAtPeace( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_NewMember( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_NewRecruit( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_RemoveRecruit( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_RemoveMember( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_RecruitToMember( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_GuildIsAtWar( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_GuildIsAlly( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_GuildIsNeutral( JSContext *cx, uintN argc, jsval *vp );
 
 // Misc
 JSBool CMisc_SoundEffect( JSContext *cx, uintN argc, jsval *vp );
@@ -489,6 +498,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0 },
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0 },
 	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0 },
+	{ "CheckGuild",			CChar_CheckGuild,			1, 0 },
 	{ "ReverseTempEffect",	CBase_ReverseTempEffect,		1, 0 },
 	{ "PauseTempEffect",	CBase_PauseTempEffect,		1, 0 },
 	{ "ResumeTempEffect",	CBase_ResumeTempEffect,		1, 0 },
@@ -652,6 +662,14 @@ inline JSFunctionSpec CGuild_Methods[] =
 {
 	{ "AcceptRecruit",		CGuild_AcceptRecruit,		1, 0 },
 	{ "IsAtPeace",			CGuild_IsAtPeace,			0, 0 },
+	{ "NewMember",			CGuild_NewMember,			1, 0 },
+	{ "NewRecruit",			CGuild_NewRecruit,			1, 0 },
+	{ "RemoveRecruit",		CGuild_RemoveRecruit,		1, 0 },
+	{ "RemoveMember",		CGuild_RemoveMember,		1, 0 },
+	{ "RecruitToMember",	CGuild_RecruitToMember,		1, 0 },
+	{ "GuildIsAtWar",		CGuild_GuildIsAtWar,		1, 0 },
+	{ "GuildIsAlly",		CGuild_GuildIsAlly,			1, 0 },
+	{ "GuildIsNeutral",		CGuild_GuildIsNeutral,		1, 0 },
 	JS_FS_END
 };
 
