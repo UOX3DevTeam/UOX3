@@ -1,6 +1,6 @@
 // This script triggers for items right after they've been crafted
 const scriptID = 4033;
-
+// wowww
 // If enabled, runic hammers received from BOD rewards can be used to add the equivalent of
 // magic properties to weapons (UOR/LBR) and/or armors (AoS and beyond)
 const runicHammersEnabled = true;
