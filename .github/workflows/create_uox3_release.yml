@@ -199,8 +199,6 @@ jobs:
           draft: true
           files: ${{ github.workspace }}/release_assets/*
 
-      - name: Checkout
-        uses: actions/checkout@v4
       - name: GitHub Releases to Discord
         uses: SethCohen/github-releases-to-discord@v1.19.0
         with:
