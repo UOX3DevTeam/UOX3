@@ -13,6 +13,7 @@ const ingotDelay = 200;				// Timer for the gump to reappear after selecting a i
 const repairDelay = 200;			// Timer for the gump to reappear after repairing an item
 const craftGumpID = 4027;
 const itemDetailsScriptID = 4026;
+const youNeverSawThis = false;
 
  // If enabled, players can craft coloured variants of weapons, though unless the craftItems array
  // is updated with specific create entries for the coloured weapon variants, they'll just be
