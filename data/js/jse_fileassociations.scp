@@ -176,6 +176,11 @@
 3226=npc/ai/monster/ancient_lich.js
 3227=npc/ai/monster/zealot_of_khaldun.js
 3228=npc/ai/monster/shadowfiend.js
+3229=npc/ai/monster/semidar.js
+3230=npc/ai/monster/barracoon.js
+3231=npc/ai/monster/lord_oaks.js
+3232=npc/ai/monster/silvani.js
+3233=npc/ai/monster/rikktor.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -367,6 +372,14 @@
 7001=combat/special_moves.js
 7002=combat/blockequip.js
 7003=combat/leechstats.js
+
+//-------------------------------------------
+// Champion System [7500-7600]
+//-------------------------------------------
+7500=item/champion_system/champion_spawn_alter.js
+7501=item/champion_system/champion_spawn_monster.js
+7502=item/champion_system/champion_spawn_deed.js
+7503=item/champion_system/champion_spawn_data.js
 
 //-------------------------------------------
 // Misc Player Scripts [8000-8499]

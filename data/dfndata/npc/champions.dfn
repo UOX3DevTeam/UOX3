@@ -1,3 +1,175 @@
+// Base champions with shared DFN tags
+[base_champions]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+FLAG=EVIL
+}
+
+//barracoon - Base NPC with shared DFN tags
+[base_barracoon]
+{
+GET=base_champions
+NAME=barracoon
+TITLE=5012//the Piper
+ID=0x0190
+EQUIPITEM=listobject13
+HAIRCOLOR=15
+EQUIPITEM=0x1539
+COLOR=0x015f
+EQUIPITEM=0x1efd
+COLOR=0x0239
+EQUIPITEM=0x171c
+COLOR=0x020a
+EQUIPITEM=0x170b
+COLOR=0x034a
+EQUIPITEM=0x1515
+COLOR=0x01a5
+SKIN=0x83EA
+NPCAI=2
+RUNS
+FLEEAT=0
+REATTACKAT=1
+ORIGIN=lbr
+SCRIPT=3230//baarcoon.js
+}
+
+[barracoon]
+{
+GETUO=barracoon_lbr
+GETT2A=barracoon_lbr
+GETUOR=barracoon_lbr
+GETTD=barracoon_lbr
+GETLBR=barracoon_lbr
+GETAOS=barracoon_aos
+GETSE=barracoon_aos
+GETML=barracoon_aos
+GETSA=barracoon_aos
+GETHS=barracoon_aos
+GETTOL=barracoon_aos
+}
+
+//lord oaks - Base NPC with shared DFN tags
+[base_lordoaks]
+{
+GET=base_champions
+NAME=5007//Lord Oaks
+ID=0x00af
+NPCAI=2
+RUNS
+FLEEAT=0
+REATTACKAT=1
+ORIGIN=lbr
+}
+
+[lordoaks]
+{
+GETUO=lordoaks_lbr
+GETT2A=lordoaks_lbr
+GETUOR=lordoaks_lbr
+GETTD=lordoaks_lbr
+GETLBR=lordoaks_lbr
+GETAOS=lordoaks_aos
+GETSE=lordoaks_aos
+GETML=lordoaks_aos
+GETSA=lordoaks_aos
+GETHS=lordoaks_aos
+GETTOL=lordoaks_aos
+}
+
+//rikktor - Base NPC with shared DFN tags
+[base_rikktor]
+{
+GET=base_champions
+NAME=Rikktor
+ID=0xac
+NPCAI=2
+FLEEAT=0
+REATTACKAT=1
+ORIGIN=lbr
+CARVE=101
+}
+
+[silvani]
+{
+GETUO=rikktor_lbr
+GETT2A=rikktor_lbr
+GETUOR=rikktor_lbr
+GETTD=rikktor_lbr
+GETLBR=rikktor_lbr
+GETAOS=rikktor_aos
+GETSE=rikktor_aos
+GETML=rikktor_aos
+GETSA=rikktor_aos
+GETHS=rikktor_aos
+GETTOL=rikktor_aos
+}
+
+//semidar - Base NPC with shared DFN tags
+[base_semidar]
+{
+GET=base_champions
+NAME=#//Semidar
+ID=0xae
+NPCAI=2
+RUNS
+FLEEAT=0
+REATTACKAT=1
+ORIGIN=lbr
+SPATTACK=8
+SPADELAY=4
+SCRIPT=3229// semidar reflect attack
+SCRIPT=3508// life_drain_aura
+}
+
+[semidar]
+{
+GETUO=semidar_lbr
+GETT2A=semidar_lbr
+GETUOR=semidar_lbr
+GETTD=semidar_lbr
+GETLBR=semidar_lbr
+GETAOS=semidar_aos
+GETSE=semidar_aos
+GETML=semidar_aos
+GETSA=semidar_aos
+GETHS=semidar_aos
+GETTOL=semidar_aos
+}
+
+//silvani - Base NPC with shared DFN tags
+[base_silvani]
+{
+GET=base_champions
+NAME=silvani
+ID=0xb0
+NPCAI=2
+RUNS
+FLEEAT=0
+REATTACKAT=1
+ORIGIN=lbr
+SPATTACK=8
+SPADELAY=5
+SCRIPT=3232// silvani.js
+}
+
+[silvani]
+{
+GETUO=silvani_lbr
+GETT2A=silvani_lbr
+GETUOR=silvani_lbr
+GETTD=silvani_lbr
+GETLBR=silvani_lbr
+GETAOS=silvani_aos
+GETSE=silvani_aos
+GETML=silvani_aos
+GETSA=silvani_aos
+GETHS=silvani_aos
+GETTOL=silvani_aos
+}
+
 [paroxysmus]
 {
 NAME=#//Chief Paroxysmus
@@ -91,47 +263,6 @@ RACE=18
 RUNS
 FLAG=NEUTRAL
 ORIGIN=aos
-}
-
-[barracoon]
-{
-NAME=Barracoon
-TITLE=5012//the Piper
-ID=0x0190
-SKIN=0x83EA
-DIRECTION=RND
-EQUIPITEM=listobject13
-HAIRCOLOR=15
-BACKPACK
-HAIR
-EQUIPITEM=0x1539
-COLOR=0x015f
-EQUIPITEM=0x1efd
-COLOR=0x0239
-EQUIPITEM=0x171c
-COLOR=0x020a
-EQUIPITEM=0x170b
-COLOR=0x034a
-EQUIPITEM=0x1515
-COLOR=0x01a5
-GOLD=4000 6000
-STR=305 425
-DEX=72 150
-INT=505 750
-HPMAX=4200
-KARMA=-22500
-FAME=22500
-MAGICRESISTANCE=1000
-TACTICS=976 1000
-WRESTLING=976 1000
-DAMAGE=51 72
-DEF=20
-NPCAI=2
-NPCWANDER=4
-FX2=10
-RUNS
-FLAG=NEUTRAL
-ORIGIN=td
 }
 
 [darkfather]
@@ -307,38 +438,6 @@ FLAG=NEUTRAL
 ORIGIN=ml
 }
 
-[lordoaks]
-{
-NAME=5007//Lord Oaks
-ID=0x00af
-DIRECTION=RND
-BACKPACK
-GOLD=3500 6000
-STR=403 850
-DEX=101 150
-INT=503 800
-HPMAX=3000
-KARMA=22500
-FAME=22500
-MAGICRESISTANCE=1005 1500
-TACTICS=1000
-WRESTLING=1000
-MAGERY=1200
-ANATOMY=751 1000
-EVALUATINGINTEL=1201 1300
-MEDITATION=1201 1300
-SPATTACK=8
-SPADELAY=5
-DAMAGE=46 68
-DEF=20
-NPCAI=2
-NPCWANDER=4
-FX2=10
-RUNS
-FLAG=NEUTRAL
-ORIGIN=td
-}
-
 [mephitis]
 {
 NAME=Mephitis
@@ -433,64 +532,6 @@ FLAG=NEUTRAL
 ORIGIN=aos
 }
 
-[rikktor]
-{
-NAME=Rikktor
-ID=0xac
-DIRECTION=RND
-BACKPACK
-GOLD=4000 5000
-STR=701 900
-DEX=201 350
-INT=51 100
-HPMAX=3000
-KARMA=-22500
-FAME=22500
-MAGICRESISTANCE=1402 1600
-TACTICS=1000
-WRESTLING=800 1000
-ANATOMY=1000
-DAMAGE=61 102
-DEF=20
-NPCAI=2
-NPCWANDER=4
-FX2=10
-RUNS
-FLAG=NEUTRAL
-ORIGIN=td
-}
-
-[semidar]
-{
-NAME=Semidar
-ID=0xae
-DIRECTION=RND
-BACKPACK
-GOLD=6000 6500
-STR=502 600
-DEX=102 200
-INT=601 750
-HPMAX=1500
-KARMA=-24000
-FAME=24000
-MAGICRESISTANCE=1202 1400
-TACTICS=901 1050
-WRESTLING=901 1050
-MAGERY=900 1050
-EVALUATINGINTEL=951 1000
-MEDITATION=951 1000
-SPATTACK=8
-SPADELAY=5
-DAMAGE=48 72
-DEF=20
-NPCAI=2
-NPCWANDER=4
-FX2=10
-RUNS
-FLAG=NEUTRAL
-ORIGIN=td
-}
-
 [serado]
 {
 NAME=Serado
@@ -580,37 +621,6 @@ FX2=10
 RUNS
 FLAG=NEUTRAL
 ORIGIN=ml
-}
-
-[silvani]
-{
-NAME=Silvani
-ID=0xb0
-DIRECTION=RND
-BACKPACK
-GOLD=2000 3000
-STR=253 400
-DEX=157 850
-INT=503 800
-HPMAX=600
-KARMA=20000
-FAME=20000
-MAGICRESISTANCE=1005 1500
-TACTICS=976 1000
-WRESTLING=976 1000
-MAGERY=976 1075
-EVALUATINGINTEL=1000
-MEDITATION=1000
-SPATTACK=8
-SPADELAY=5
-DAMAGE=52 78
-DEF=20
-NPCAI=2
-NPCWANDER=4
-FX2=10
-RUNS
-FLAG=NEUTRAL
-ORIGIN=td
 }
 
 [theharrower]
