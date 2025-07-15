@@ -1,16 +1,3 @@
-15/07/2025 - Xoduz (#387)
-    [ADD] Added a new entry to the changelog
-    [FIX] Fixed a bug with an error that wasn't working right
-    [FIX] Fixed a fix for a bug that caused an error to throw an assert
-    Oops I forgot to prepend this line with anything
-
-15/07/2025 - Xoduz (#386)
-    [ADD] Added new awesome script that can do the following
-        Can cure hairloss
-        Can prevent aging
-    [UPD] Updated banker script with some nonsense change for testing purposes
-    [FIX] Fixed a server crash
-
 09/07/2025 - Xuri
 	Added [Tame] and [Bonded] to character tooltips of tame/bonded animals and updated Dictionary files
 	Updated .AddRadio() and .AddCheckbox() Gump Methods to support 32-bit unsigned int for the buttonID
