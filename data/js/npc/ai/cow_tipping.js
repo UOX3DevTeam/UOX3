@@ -1,5 +1,5 @@
 // Cow-Tipping!
-// NO TIPPING! Pay your cows living wages
+// NO TIPPING! Pay your cows living wages. MOAR MONIES
 function onCharDoubleClick( pUser, targChar )
 {
 	var rndValue = RandomNumber( 0, 100 );
