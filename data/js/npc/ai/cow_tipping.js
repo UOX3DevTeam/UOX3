@@ -1,5 +1,5 @@
 // Cow-Tipping!
-
+// NO TIPPING! Pay your cows living wages
 function onCharDoubleClick( pUser, targChar )
 {
 	var rndValue = RandomNumber( 0, 100 );
