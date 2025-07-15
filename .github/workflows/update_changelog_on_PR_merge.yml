@@ -36,6 +36,6 @@ jobs:
       - name: Commit and push changelog
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "docs: Update Changelog.txt"
           branch: ${{ github.event.pull_request.base.ref }}
           commit_message: "docs(changelog): Update Changelog.txt from PR #${{ github.event.pull_request.number }}"
+          file_pattern: "source/Changelog.txt"
