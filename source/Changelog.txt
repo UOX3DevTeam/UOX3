@@ -1,3 +1,10 @@
+15/07/2025 - Xoduz (#392)
+    [ADD] Added something
+    [ADD] Added something with a sub-point
+        This is the sub-point
+    [FIX] Fixed something broken
+    Something something
+
 15/07/2025 - Xoduz (#391)
     [ADD] Added dummy message
     [FIX] Fixed incorrect dummy message
