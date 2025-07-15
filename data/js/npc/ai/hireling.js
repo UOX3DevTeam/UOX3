@@ -1,5 +1,5 @@
 // Hirelings, by Xuri (xuri@uox3.org)
-// Version: 1.1
+// Version: 1.1234234234
 // Last Updated: September 10th 2022
 //
 // For context menu support, hireling needs to be setup with a HIRELING tag in the DFNs
