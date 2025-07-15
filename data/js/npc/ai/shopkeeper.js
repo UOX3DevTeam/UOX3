@@ -1,6 +1,6 @@
 // This script handles special interactions between players and shopkeepers
 // that take place when players attempt (and/or succeed) at trading with these
-
+// haha
 // If enabled, guild members get a -10% discount for items they buy from shopkeepers in the guild
 const enableNPCGuildDiscounts = GetServerSetting( "EnableNPCGuildDiscounts" );
 
