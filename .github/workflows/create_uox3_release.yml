@@ -143,8 +143,14 @@ jobs:
     - name: Build Binary
       run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
 
+    - name: "[Debug] List workspace before install"
+      run: ls -R ${{ github.workspace }}
+
     - name: Create Package using CMake Install
       run: cmake --install ${{ github.workspace }}/build --prefix ${{ github.workspace }}/release_package
+
+    - name: "[Debug] List workspace after install"
+      run: ls -R ${{ github.workspace }}
 
     - name: Archive Release Package (Linux/macOS)
       if: runner.os!= 'Windows'
