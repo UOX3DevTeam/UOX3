@@ -13,6 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
+          ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 0
 
       - name: Append to Changelog
@@ -36,4 +37,5 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "docs: Update Changelog.txt"
-          file_pattern: "source/Changelog.txt"
+          branch: ${{ github.event.pull_request.base.ref }}
+          commit_message: "docs(changelog): Update Changelog.txt from PR #${{ github.event.pull_request.number }}"
