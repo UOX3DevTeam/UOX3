@@ -10,10 +10,9 @@ jobs:
     if: github.event.release.draft == true
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
       - name: Post GitHub Release Candidates to Discord
         uses: SethCohen/github-releases-to-discord@v1.15.0
         with:

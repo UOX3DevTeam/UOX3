@@ -9,8 +9,8 @@ jobs:
   github-releases-to-discord:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
           fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
       - name: GitHub Releases to Discord
         uses: SethCohen/github-releases-to-discord@v1
