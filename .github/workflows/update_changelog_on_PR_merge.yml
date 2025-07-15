@@ -16,22 +16,32 @@ jobs:
           ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 0
 
-      - name: Append to Changelog
+      - name: Prepend to Changelog
         env:
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           PR_BODY: ${{ github.event.pull_request.body }}
           MERGED_AT: ${{ github.event.pull_request.merged_at }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           TIMESTAMP=$(date -d "$MERGED_AT" +'%d/%m/%Y')
 
           # Convert markdown-style list items into indented changelog lines
           FORMATTED_BODY=$(echo "$PR_BODY" | sed 's/^[[:space:]]\{2,\}- /        /; s/^- /    /')
 
-          {
-            echo "${TIMESTAMP} - ${PR_AUTHOR} (#${{ github.event.pull_request.number }})"
-            echo "$FORMATTED_BODY"
-            echo
-          } >> source/Changelog.txt
+          # Create the new entry content in a variable
+          NEW_ENTRY=$(cat <<EOF
+          ${TIMESTAMP} - ${PR_AUTHOR} (#${PR_NUMBER})
+          $FORMATTED_BODY
+          EOF
+          )
+
+          # If the changelog exists, prepend the new entry with a separating newline.
+          # Otherwise, just create the file with the new entry.
+          if [ -f "source/Changelog.txt" ]; then
+            echo -e "$NEW_ENTRY\n" | cat - source/Changelog.txt > temp_changelog.txt && mv temp_changelog.txt source/Changelog.txt
+          else
+            echo -e "$NEW_ENTRY" > source/Changelog.txt
+          fi
 
       - name: Commit and push changelog
         uses: stefanzweifel/git-auto-commit-action@v4
