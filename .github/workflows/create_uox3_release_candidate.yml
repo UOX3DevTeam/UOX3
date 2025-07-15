@@ -198,3 +198,14 @@ jobs:
           body_path: "${{ github.workspace }}/${{ env.NOTES_FILE }}"
           draft: true
           files: ${{ github.workspace }}/release_assets/*
+
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Post GitHub Release Candidates to Discord
+        uses: SethCohen/github-releases-to-discord@v1.19.0
+        with:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          color: "15277667"
+          username: "RC Changelog"
+          avatar_url: "https://cdn.discordapp.com/avatars/487431320314576937/bd64361e4ba6313d561d54e78c9e7171.png"
+          footer_title: "Changelog"
