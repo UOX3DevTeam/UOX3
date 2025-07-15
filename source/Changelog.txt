@@ -1,3 +1,11 @@
+15/07/2025 - Xoduz (#390)
+    [ADD] Something wonderful has happened, your UOX3 IS ALIVE
+    [ADD] Guru Meditation Error
+        Now comes in brand new colors
+    [FIX] Fixed some broken assumptions and incorrect conclusions
+    [FIX] Bugs are now no longer tolerated
+    This has no prefix! Which means it's probably gonna end up in the MISC category
+
 15/07/2025 - Xoduz (#389)
     [ADD] Added a new entry to the changelog
     [FIX] Fixed a bug with an error that wasn't working right
