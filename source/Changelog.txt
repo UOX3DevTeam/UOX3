@@ -13637,11 +13637,3 @@ Changed:
 
 	* readme.txt:
 	creation
-
-15/07/2025 - Xoduz (#385)
-    [ADD] Added new awesome script that can do the following
-        Can cure hairloss
-        Can prevent aging
-    [UPD] Updated banker script with some nonsense change for testing purposes
-    [FIX] Fixed a server crash
-
