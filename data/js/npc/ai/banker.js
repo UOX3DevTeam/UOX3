@@ -2,6 +2,7 @@
 //	Responds to bank-commands:
 // 	BANK, BALANCE/STATEMENT, CHECK, WITHDRAW # and DEPOSIT # or DEPOSIT without arguments to get target cursor
 // TEMP TEST CHANGE
+// ANOTHER TEST
 
 // The maximum amount of items depositable in a bank box
 var maxBankItemAmt = 125;
