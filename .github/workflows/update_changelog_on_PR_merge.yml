@@ -1,0 +1,39 @@
+name: Update Changelog on PR Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  update-changelog:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Append to Changelog
+        env:
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          MERGED_AT: ${{ github.event.pull_request.merged_at }}
+        run: |
+          TIMESTAMP=$(date -d "$MERGED_AT" +'%d/%m/%Y')
+
+          # Convert markdown-style list items into indented changelog lines
+          FORMATTED_BODY=$(echo "$PR_BODY" | sed 's/^[[:space:]]\{2,\}- /        /; s/^- /    /')
+
+          {
+            echo "${TIMESTAMP} - ${PR_AUTHOR} (#${{ github.event.pull_request.number }})"
+            echo "$FORMATTED_BODY"
+            echo
+          } >> source/Changelog.txt
+
+      - name: Commit and push changelog
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "docs: Update Changelog.txt"
+          file_pattern: "source/Changelog.txt"

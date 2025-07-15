@@ -1,0 +1,195 @@
+name: Create UOX3 Release
+
+on:
+  push:
+    tags:
+      - 'v*-release' # Triggers on tags ending with '-release' like v1.0-release
+      on:
+
+env:
+  BUILD_TYPE: Release
+  NOTES_FILE: release_notes.md
+
+jobs:
+  prepare_release:
+    name: Prepare Release Notes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      #- name: Get previous tag
+      #  id: previoustag
+      #  uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      - name: Get Previous Release Tag # UPDATED: This step is now a custom script
+        id: previoustag
+        run: |
+          # Get the list of all tags ending in '-release', sorted by creation date (newest first)
+          RELEASE_TAGS=$(git tag --sort=-creatordate --list 'v*-release')
+          
+          # The previous release tag is the second one in the list. The first is the one that triggered this workflow.
+          PREVIOUS_TAG=$(echo "$RELEASE_TAGS" | sed -n '2p')
+          
+          echo "Current release tag: $(echo "$RELEASE_TAGS" | sed -n '1p')"
+          echo "Previous release tag found: $PREVIOUS_TAG"
+          
+          echo "tag=${PREVIOUS_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Generate Release Notes from Changelog
+        id: changelog
+        run: |
+          # Use git diff to reliably get only the new lines added since the last tag
+          CHANGELOG_CONTENT=$(git diff ${{ steps.previoustag.outputs.tag }}..HEAD -- source/Changelog.txt | grep '^\+' | sed 's/^\+//')
+
+          if [ -z "$CHANGELOG_CONTENT" ]; then
+            echo "No changelog entries found since last tag. Skipping."
+            # Create an empty notes file so the next job doesn't fail
+            touch ${{ env.NOTES_FILE }}
+            exit 0
+          fi
+
+          # Initialize variables
+          ADDED=""
+          FIXED=""
+          UPDATED=""
+          MISC=""
+          LAST_VAR=""
+          LAST_PR_NUMBER=""
+
+          # Use a stateful loop for robust parsing
+          while IFS= read -r line; do
+            # Skip empty lines
+            [[ -z "${line// }" ]] && continue
+
+            # Check for a header line and extract the PR number for the upcoming block
+            if [[ "$line" =~ ^[0-9]{2}/[0-9]{2}/[0-9]{4} ]]; then
+              if [[ "$line" =~ \(\#([0-9]+)\) ]]; then
+                LAST_PR_NUMBER="${BASH_REMATCH[1]}"
+              else
+                LAST_PR_NUMBER=""
+              fi
+              continue # Header line is processed, move to the next line
+            fi
+
+            # Handle sub-points (which do not get a link)
+            if echo "$line" | grep -q '^[[:space:]]\{6,\}'; then
+              FORMATTED_LINE=$(echo "$line" | sed 's/^[[:space:]]*/  - /')
+              case "$LAST_VAR" in
+                "ADDED") ADDED+="$FORMATTED_LINE\n";;
+                "FIXED") FIXED+="$FORMATTED_LINE\n";;
+                "UPDATED") UPDATED+="$FORMATTED_LINE\n";;
+                "MISC") MISC+="$FORMATTED_LINE\n";;
+              esac
+            # Handle main points (which get a link)
+            else
+              PR_LINK=""
+              if [ -n "$LAST_PR_NUMBER" ]; then
+                PR_LINK=" ([#${LAST_PR_NUMBER}](${{ github.server_url }}/${{ github.repository }}/pull/${LAST_PR_NUMBER}))"
+              fi
+
+              if echo "$line" | grep -q "\[ADD\]"; then
+                FORMATTED_LINE=$(echo "$line" | sed 's/.*\[ADD\] */- /')
+                ADDED+="${FORMATTED_LINE}${PR_LINK}\n"
+                LAST_VAR="ADDED"
+              elif echo "$line" | grep -q "\[FIX\]"; then
+                FORMATTED_LINE=$(echo "$line" | sed 's/.*\[FIX\] */- /')
+                FIXED+="${FORMATTED_LINE}${PR_LINK}\n"
+                LAST_VAR="FIXED"
+              elif echo "$line" | grep -q "\[UPD\]"; then
+                FORMATTED_LINE=$(echo "$line" | sed 's/.*\[UPD\] */- /')
+                UPDATED+="${FORMATTED_LINE}${PR_LINK}\n"
+                LAST_VAR="UPDATED"
+              elif echo "$line" | grep -q '^[[:space:]]'; then
+                FORMATTED_LINE=$(echo "$line" | sed 's/^[[:space:]]*/- /')
+                MISC+="${FORMATTED_LINE}${PR_LINK}\n"
+                LAST_VAR="MISC"
+              fi
+            fi
+          done <<< "$CHANGELOG_CONTENT"
+
+          # Assemble the final notes
+          RELEASE_NOTES=""
+          [ -n "$ADDED" ] && RELEASE_NOTES+=$'## 🚀 Added\n'"$ADDED"$'\n'
+          [ -n "$FIXED" ] && RELEASE_NOTES+=$'## 🐛 Fixed\n'"$FIXED"$'\n'
+          [ -n "$UPDATED" ] && RELEASE_NOTES+=$'## 🔄 Updated\n'"$UPDATED"$'\n'
+          [ -n "$MISC" ] && RELEASE_NOTES+=$'## ✨ Miscellaneous\n'"$MISC"$'\n'
+          
+          # Write the generated notes to the file specified by the NOTES_FILE env var
+          echo -e "$RELEASE_NOTES" > ${{ env.NOTES_FILE }}
+
+      - name: Upload Release Notes Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes-artifact
+          path: ${{ env.NOTES_FILE }}
+
+  build_and_package:
+    name: Build and Package for ${{ matrix.os }}
+    needs: prepare_release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configure CMake
+      run: cmake make/cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+    - name: Build Binary
+      run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
+
+    - name: Create Package using CMake Install
+      run: cmake --install ${{ github.workspace }}/build --prefix ${{ github.workspace }}/release_package
+
+    - name: Archive Release Package (Linux/macOS)
+      if: runner.os!= 'Windows'
+      run: |
+        tar -czvf uox3-${{ github.ref_name }}-${{ runner.os }}.tar.gz -C ${{ github.workspace }}/release_package .
+
+    - name: Archive Release Package (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        Compress-Archive -Path ${{ github.workspace }}/release_package/* -DestinationPath uox3-${{ github.ref_name }}-${{ runner.os }}.zip
+
+    - name: Upload Release Asset
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-assets-${{ runner.os }}
+        path: |
+          *.tar.gz
+          *.zip
+
+  create_release:
+    name: Create GitHub Release
+    needs: build_and_package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all release assets
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ github.workspace }}/release_assets
+          pattern: release-assets-*
+          merge-multiple: true
+
+      - name: Download Release Notes
+        uses: actions/download-artifact@v4
+        with:
+          name: release-notes-artifact
+          path: ${{ github.workspace }}/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "Release ${{ github.ref_name }}"
+          body_path: "${{ github.workspace }}/${{ env.NOTES_FILE }}"
+          draft: true
+          files: ${{ github.workspace }}/release_assets/*
