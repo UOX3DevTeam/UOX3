@@ -1,3 +1,9 @@
+16/07/2025 - Xoduz (#394)
+    [ADD] Added something more
+    [FIX] Fixed something:
+        This thing was fixed
+        This other thing was also fixed as part of that process
+
 16/07/2025 - Xoduz (#393)
     [ADD] Added 42 different types of candy to the game, but they are all cola-flavoured
     [ADD] Added new line of text in the changelog
