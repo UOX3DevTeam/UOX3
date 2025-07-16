@@ -199,12 +199,33 @@ jobs:
           draft: true
           files: ${{ github.workspace }}/release_assets/*
 
-      - name: Post GitHub Release Candidates to Discord
-        uses: SethCohen/github-releases-to-discord@v1
+      # - name: Post GitHub Release Candidates to Discord
+      #  uses: SethCohen/github-releases-to-discord@v1
+      #  with:
+      #    webhook_url: ${{ secrets.WEBHOOK_URL }}
+      #    content: "$(cat ${{ env.NOTES_FILE }})"
+      #    color: "15277667"
+      #    username: "RC Changelog"
+      #    avatar_url: "https://cdn.discordapp.com/avatars/487431320314576937/bd64361e4ba6313d561d54e78c9e7171.png"
+      #    footer_title: "Changelog"
+
+      - name: Read release notes file for Discord
+        id: read_notes
+        if: steps.create_draft_release.outputs.id != ''
+        run: |
+          notes=$(cat ${{ env.NOTES_FILE }})
+          echo "notes<<EOF" >> $GITHUB_ENV
+          echo "$notes" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Post RC Info to Discord
+        if: steps.create_draft_release.outputs.id != ''
+        uses: SethCohen/github-releases-to-discord@v1.15.0
         with:
           webhook_url: ${{ secrets.WEBHOOK_URL }}
-          content: "$(cat ${{ env.NOTES_FILE }})"
-          color: "15277667"
-          username: "RC Changelog"
+          color: "15277667" # Yellow
+          username: "RC Bot"
           avatar_url: "https://cdn.discordapp.com/avatars/487431320314576937/bd64361e4ba6313d561d54e78c9e7171.png"
-          footer_title: "Changelog"
+          url: ${{ steps.create_draft_release.outputs.html_url }}
+          title: "Release Candidate ${{ github.ref_name }}"
+          content: "${{ env.notes }}"
