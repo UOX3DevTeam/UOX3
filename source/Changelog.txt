@@ -1,3 +1,10 @@
+16/07/2025 - Xoduz (#393)
+    [ADD] Added 42 different types of candy to the game, but they are all cola-flavoured
+    [ADD] Added new line of text in the changelog
+        This is not the new line, the previous line was the new line
+    [FIX] Fixed an issue with health-insurance for undead NPCs
+    Not sure what else to write here
+
 15/07/2025 - Xoduz (#392)
     [ADD] Added something
     [ADD] Added something with a sub-point
