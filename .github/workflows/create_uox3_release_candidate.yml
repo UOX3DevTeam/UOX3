@@ -211,7 +211,6 @@ jobs:
 
       - name: Read release notes file for Discord
         id: read_notes
-        if: steps.create_draft_release.outputs.id != ''
         run: |
           notes=$(cat ${{ env.NOTES_FILE }})
           echo "notes<<EOF" >> $GITHUB_ENV
@@ -219,7 +218,6 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: Post RC Info to Discord
-        if: steps.create_draft_release.outputs.id != ''
         uses: SethCohen/github-releases-to-discord@v1.15.0
         with:
           webhook_url: ${{ secrets.WEBHOOK_URL }}
