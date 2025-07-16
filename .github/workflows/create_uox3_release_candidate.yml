@@ -177,6 +177,9 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Download all release assets
         uses: actions/download-artifact@v4
         with:
@@ -224,6 +227,7 @@ jobs:
           color: "15277667" # Yellow
           username: "RC Bot"
           avatar_url: "https://cdn.discordapp.com/avatars/487431320314576937/bd64361e4ba6313d561d54e78c9e7171.png"
-          url: ${{ steps.create_draft_release.outputs.html_url }}
-          title: "Release Candidate ${{ github.ref_name }}"
-          content: "${{ env.notes }}"
+          content: |
+            **Release Candidate ${{ github.ref_name }}** is now available for testing!
+
+            ${{ env.notes }}
