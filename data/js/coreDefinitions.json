@@ -2846,6 +2846,111 @@
       ]
     },
     {
+      "name": "ResourceAmount",
+      "definition": "[number, number, number[]]"
+    },
+    {
+      "name": "ResourceSkill",
+      "definition": "[number, number, number]"
+    },
+    {
+      "name": "CreateEntry",
+      "aka": "UOXCreateEntry",
+      "properties": [
+        {
+          "name": "id",
+          "cppID": "CMAKE_ID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "name",
+          "cppID": "CMAKE_NAME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string",
+          "readOnly": true
+        },
+        {
+          "name": "addItem",
+          "cppID": "CMAKE_ADDITEM",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string",
+          "readOnly": true
+        },
+        {
+          "name": "colour",
+          "cppID": "CMAKE_COLOUR",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "sound",
+          "cppID": "CMAKE_SOUND",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "minRank",
+          "cppID": "CMAKE_MINRANK",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "maxRank",
+          "cppID": "CMAKE_MAXRANK",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "delay",
+          "cppID": "CMAKE_DELAY",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "spell",
+          "cppID": "CMAKE_SPELL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "resources",
+          "cppID": "CMAKE_RESOURCES",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "ResourceAmount[]",
+          "readOnly": true
+        },
+        {
+          "name": "skills",
+          "cppID": "CMAKE_SKILLS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "ResourceSkill[]",
+          "readOnly": true
+        },
+        {
+          "name": "avgMinSkill",
+          "cppID": "CMAKE_AVGMINSKILL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "avgMaxSkill",
+          "cppID": "CMAKE_AVGMAXSKILL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number",
+          "readOnly": true
+        }
+      ]
+    },
+    {
       "name": "CreateEntries",
       "aka": "UOXCreateEntries"
     },
