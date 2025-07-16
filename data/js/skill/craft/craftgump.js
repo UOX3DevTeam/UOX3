@@ -12,7 +12,7 @@ const Tinkering = 4032;
 const Cooking = 4034;
 const Cartography = 4035;
 const Glassblowing = 4036;
-// uhawahha
+// uhawahhafwfewef
  // If enabled, players can craft coloured variants of weapons using Blacksmithing skill, though
  // unless the craftItems array in blacksmithing.js is updated with specific create entries for the
  // coloured weapon variants, they'll just be regular weapons with ore colour applied
