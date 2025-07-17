@@ -5727,5 +5727,8 @@
 19338=gelé
 19339=gardé
 19340=L'esprit de cette créature manque de cohésion. Réessayez dans quelques minutes.
+19341=Vous connaissez déjà cette recette.
+19342=Vous avez appris une nouvelle recette : %i
+19343=Vous devez apprendre cette recette à partir d'un parchemin.
 }
 EOF

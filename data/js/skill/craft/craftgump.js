@@ -285,8 +285,8 @@ function CraftingGumpMenu( myGump, socket )
 		if( !allowColouredWeapons && craftingSkillUsed == 5 && pUser.GetTempTag( "resourceHue" ) > 0 && i > 2 )
 			continue;
 
-		//myGump.AddButton( 15, 60, 0xfa5, 0, 4, 0 );
-		//myGump.AddXMFHTMLGumpColor( 50, 63, 150, 18, 1044014, false, false, LabelColor ); // LAST TEN
+		myGump.AddButton( 15, 60, 0xfa5, 1, 0, 11000 );
+		myGump.AddXMFHTMLGumpColor( 50, 63, 150, 18, 1044014, false, false, LabelColor ); // LAST TEN
 		myGump.AddButton( 15, 80 + ( i * 20 ), 4005, 4007, 1, 0, 1 + i );
 		myGump.AddText( 50, 80 + ( i * 20 ), textHue, GetDictionaryEntry( grouplist[i], socket.language ));
 	}

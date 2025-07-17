@@ -312,3 +312,24 @@ amount=1
 decay=1
 origin=lbr
 }
+
+[recipescroll]
+{ 
+get=base_item
+name=recipe scroll
+id=0x2831
+weight=100
+pileable=1
+amount=1
+decay=1
+script=5061//recipe scroll
+origin=ml
+custominttag=recipeID 0|0
+}
+
+[platemailarmor]
+{//Example of recipe
+get=recipescroll
+custominttag=recipeID 18
+customstringtag=recipeName platemail (tunic)
+}

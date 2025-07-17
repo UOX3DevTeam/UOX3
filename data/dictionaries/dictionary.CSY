@@ -5571,5 +5571,8 @@
 19338=zmrazený
 19339=střežený
 19340=Duch toho tvora postrádá soudržnost. Zkuste to znovu za pár minut.
+19341=Tento recept už znáte.
+19342=Naučili jste se nový recept: %i
+19343=Musíte se ho naučit ze svitku.
 }
 EOF

@@ -1,77 +1,271 @@
-const textHue = 0x480;				// Color of the text.
-const scriptID = 4030;				// Use this to tell the gump what script to close.
-const gumpDelay = 2000;				// Timer for the gump to reapear after crafting.
-const repairDelay = 200;			// Timer for the gump to reapear after selecting a resource.
-const itemDetailsScriptID = 4026;
-const craftGumpID = 4027;
+const textHue = 0x480;					// Color hue for all text in the crafting gump
+const scriptID = 4030;					// Script ID used to identify and close this gump
+const gumpDelay = 2000;					// Delay (ms) before gump reappears after crafting
+const repairDelay = 200;				// Delay (ms) before gump reappears after selecting a resource
+const itemDetailsScriptID = 4026;		// Script ID used to show item detail tooltips
+const craftGumpID = 4027;				// TriggerEvent ID used to build the crafting gump UI
+const itemsPerPage = 10;				// Number of craftable items shown per gump subpage
+const displayUnlearnedRecipes = true;	// Show recipes player hasn’t learned
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//  The section below is the tables for each page.
-//  All you have to do is add the item to your dictionary 
-//  and then list the dictionary number in the right page and it will
-//  add it to the crafting gump.
-///////////////////////////////////////////////////////////////////////////////////////////
+// UOX3 Tailoring CraftingMap Configuration
+//
+// Description:
+// This file defines the `CraftingMap` used to populate the tailoring crafting gump in UOX3.
+// Each entry links a craftable item (defined in `create/tailoring.dfn`) to its display name,
+// gump page, and crafting behavior. This setup powers the dynamic UI for tailoring.
+//
+// Data Sources:
+// - `makeID` refers to the unique item ID defined in `create/tailoring.dfn`.
+// - `dictID` refers to a localized string entry defined in `dictionaries/dictionary.eng`.
+// - `customName` is an optional hardcoded string that overrides dictionary text if present.
+// - `recipeID` is an optional ID that locks the item behind a learned recipe.
+//
+// Entry Format:
+//   makeID: {
+//     dictID: <dictionaryID>,       // (Optional) Used for localized names via dictionary.eng
+//     customName: "<item name>",    // (Optional) Overrides dictionary name if present
+//     page: <pageNumber>,           // Gump page to display item on
+//     timerID: <timerID>,           // Timer used to re-show gump after crafting
+//     recipeID: <recipeID>          // (Optional) Requires the player to learn the recipe before crafting
+//   }
+//
+// Display Logic:
+// - If `customName` is present, it is used directly in the crafting gump.
+// - If `dictID` is present (and `customName` is not), `GetDictionaryEntry()` is used.
+// - If both are missing, the gump will show a fallback like `[Unnamed Item: ####]`.
+// - The `page` field determines which category tab the item appears under.
+// - If `recipeID` is present and the player has not learned it, the item will either be:
+//     - Hidden entirely (default behavior), or
+//     - Displayed but uncraftable, depending on `displayUnlearnedRecipes` setting.
+//
+// Example Entries:
+//
+// // Standard item using dictionary ID for localization
+// 130: { dictID: 11415, page: 1, timerID: 1 },
+//
+// // Custom item with hardcoded display name, no dictionary entry required
+// 999: { customName: "harrys sword", page: 1, timerID: 1 },
+//
+// // Recipe-locked item (only craftable if recipe is learned)
+// – 185: { dictID: 11469, page: 8, timerID: 8, recipeID: 185 },
+//
+// Organization:
+// - Items are grouped by `page` value (e.g., Hats, Armor, etc.).
+// - The crafting gump dynamically builds its layout from this CraftingMap.
+// - This system supports localized, custom, hybrid, and recipe-locked crafting menus.
+//
+//////////////////////////////////////////////////////////////////////////////////////////
 
-const myPage = [
-	// Page 1 - Hats
-	[11415, 11416, 11417, 11418, 11419, 11420, 11421, 11422, 11423, 11424, 11425, 11470],
+const CraftingMap = {
+	// Hats (Page 1)
+	130: { dictID: 11415, page: 1, timerID: 1 },
+	131: { dictID: 11416, page: 1, timerID: 1 },
+	132: { dictID: 11417, page: 1, timerID: 1 },
+	134: { dictID: 11418, page: 1, timerID: 1 },
+	133: { dictID: 11419, page: 1, timerID: 1 },
+	136: { dictID: 11420, page: 1, timerID: 1 },
+	137: { dictID: 11421, page: 1, timerID: 1 },
+	138: { dictID: 11422, page: 1, timerID: 1 },
+	139: { dictID: 11423, page: 1, timerID: 1 },
+	140: { dictID: 11424, page: 1, timerID: 1 },
+	141: { dictID: 11425, page: 1, timerID: 1 },
+	135: { dictID: 11470, page: 1, timerID: 1 },
 
-	// Page 2 - Shirts and Pants
-	[11426, 11427, 11428, 11429, 11430, 11431, 11432, 11433, 11434, 11435, 11436, 11437, 11438, 11439],
+	// Shirts & Pants (Page 2)
+	142: { dictID: 11426, page: 2, timerID: 2 },
+	143: { dictID: 11427, page: 2, timerID: 2 },
+	144: { dictID: 11428, page: 2, timerID: 2 },
+	145: { dictID: 11429, page: 2, timerID: 2 },
+	146: { dictID: 11430, page: 2, timerID: 2 },
+	147: { dictID: 11431, page: 2, timerID: 2 },
+	148: { dictID: 11432, page: 2, timerID: 2 },
+	149: { dictID: 11433, page: 2, timerID: 2 },
+	150: { dictID: 11434, page: 2, timerID: 2 },
+	151: { dictID: 11435, page: 2, timerID: 2 },
+	180: { dictID: 11436, page: 2, timerID: 2 },
+	152: { dictID: 11437, page: 2, timerID: 2 },
+	153: { dictID: 11438, page: 2, timerID: 2 },
+	154: { dictID: 11439, page: 2, timerID: 2 },
 
-	// Page 3 - Miscellaneous
-	[11440, 11441, 11442, 11443],
+	// Misc (Page 3)
+	155: { dictID: 11440, page: 3, timerID: 3 },
+	156: { dictID: 11441, page: 3, timerID: 3 },
+	157: { dictID: 11442, page: 3, timerID: 3 },
+	158: { dictID: 11443, page: 3, timerID: 3 },
 
-	// Page 4 - Footwear
-	[11444, 11445,  11446, 11447],
+	// Footwear (Page 4)
+	159: { dictID: 11444, page: 4, timerID: 4 },
+	160: { dictID: 11445, page: 4, timerID: 4 },
+	161: { dictID: 11446, page: 4, timerID: 4 },
+	162: { dictID: 11447, page: 4, timerID: 4 },
 
-	// Page 5 - Leather Armor
-	[11448, 11449, 11450, 11451, 11452, 11453],
+	// Leather Armor (Page 5)
+	163: { dictID: 11448, page: 5, timerID: 5 },
+	164: { dictID: 11449, page: 5, timerID: 5 },
+	165: { dictID: 11450, page: 5, timerID: 5 },
+	166: { dictID: 11451, page: 5, timerID: 5 },
+	167: { dictID: 11452, page: 5, timerID: 5 },
+	168: { dictID: 11453, page: 5, timerID: 5 },
 
-	// Page 6 - Studded Armor
-	[11454, 11455, 11456, 11457, 11458],
+	// Studded Armor (Page 6)
+	169: { dictID: 11454, page: 6, timerID: 6 },
+	170: { dictID: 11455, page: 6, timerID: 6 },
+	171: { dictID: 11456, page: 6, timerID: 6 },
+	172: { dictID: 11457, page: 6, timerID: 6 },
+	173: { dictID: 11458, page: 6, timerID: 6 },
 
-	// Page 7 - Female Armor
-	[11459, 11460, 11461, 11462, 11463, 11464],
+	// Female Armor (Page 7)
+	174: { dictID: 11459, page: 7, timerID: 7 },
+	175: { dictID: 11460, page: 7, timerID: 7 },
+	176: { dictID: 11461, page: 7, timerID: 7 },
+	177: { dictID: 11462, page: 7 , timerID: 7},
+	178: { dictID: 11463, page: 7, timerID: 7 },
+	179: { dictID: 11464, page: 7, timerID: 7 },
 
-	// Page 8 - Bone Armor
-	[11465, 11466, 11467, 11468, 11469]
-];
+	// Bone Armor (Page 8)
+	181: { dictID: 11465, page: 8, timerID: 8 },
+	182: { dictID: 11466, page: 8, timerID: 8 },
+	183: { dictID: 11467, page: 8, timerID: 8 },
+	184: { dictID: 11468, page: 8, timerID: 8 },
+	185: { dictID: 11469, page: 8, timerID: 8 }
+};
 
 function PageX( socket, pUser, pageNum )
 {
-	// Pages 1 - 8
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", pageNum );
-	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
+	let subPage = pUser.GetTempTag( "subPage" ) || 1;
 
-	for( var i = 0; i < myPage[pageNum - 1].length; i++ )
+	// Build pages dynamically from CraftingMap
+	let myPage = [];
+	let dictToMakeID = {}; // local reverse map
+
+	for( let makeID in CraftingMap ) 
 	{
-		var index = i % 10;
-		if( index == 0 )
+		let data = CraftingMap[makeID];
+		let page = data.page;
+		if( !myPage[page - 1] )
+			myPage[page - 1] = [];
+
+		let needsRecipe = data.recipeID;
+		let showAll = displayUnlearnedRecipes;
+
+		if( !needsRecipe || showAll || HasLearnedRecipe( pUser, needsRecipe ) )
 		{
-			if( i > 0 )
-			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" );// NEXT PAGE
-			}
-
-			myGump.AddPage(( i / 10) + 1 );
-
-			if( i > 0 )
-			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" );// PREV PAGE
-			}
+			myPage[page - 1].push( data.dictID );
 		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, ( 100 * pageNum ) + i );
 
-		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage[pageNum - 1][i], socket.language ));
-
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, ( 2000 + ( 100 * pageNum )) + i );
+		dictToMakeID[data.dictID] = parseInt( makeID );
 	}
-	myGump.Send( socket );
-	myGump.Free();
+
+	let pageItems;
+
+	if( pageNum == 999 )
+	{
+		let lastTenRaw = pUser.GetTag( "LastTenTailoring" ) || "";
+		let split = lastTenRaw.split( "," );
+		pageItems = [];
+
+		for( var i = 0; i < split.length; i++ )
+		{
+			let val = parseInt(split[i]);
+			if( !isNaN( val ))
+				pageItems.push( val );
+		}
+	}
+	else
+	{
+		if( pageNum < 1 || pageNum > myPage.length )
+			pageNum = 1;
+
+		pageItems = myPage[pageNum - 1];
+	}
+
+	let totalSubPages = Math.ceil( pageItems.length / itemsPerPage );
+
+	if( subPage < 1 )
+		subPage = 1;
+	if( subPage > totalSubPages )
+		subPage = totalSubPages;
+
+	pUser.SetTempTag( "page", pageNum );
+	pUser.SetTempTag( "subPage", subPage );
+
+	let startIndex = ( subPage - 1 ) * itemsPerPage;
+	let endIndex = Math.min( startIndex + itemsPerPage, pageItems.length );
+
+	if( startIndex >= pageItems.length ) 
+	{
+		subPage = 1;
+		startIndex = 0;
+		endIndex = Math.min( itemsPerPage, pageItems.length );
+		pUser.SetTempTag( "subPage", subPage );
+	}
+
+	let tailoringMenu = new Gump;
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", tailoringMenu, socket );
+	tailoringMenu.AddPage( 1 );
+
+	for( let i = startIndex; i < endIndex; i++)
+	{
+		let index = i - startIndex;
+		let makeID, entryID, entryText, buttonID;
+
+		if( pageNum == 999 )
+		{
+			makeID = pageItems[i];
+		}
+		else
+		{
+			entryID = pageItems[i];
+			makeID = dictToMakeID[entryID];
+		}
+
+	let data = CraftingMap[makeID];
+
+	if( !data )
+	{
+		entryText = "[Missing MakeID: " + makeID + "]";
+		buttonID = makeID;
+	}
+	else
+	{
+		buttonID = makeID;
+
+		if( data.customName )
+		{
+			entryText = data.customName;
+		}
+		else if( data.dictID )
+		{
+			entryText = GetDictionaryEntry( data.dictID, socket.language );
+			if( !entryText || entryText === "" )
+				entryText = "[Missing EntryID: " + data.dictID + "]";
+		}
+		else
+		{
+			entryText = "[Unnamed Item: " + makeID + "]";
+		}
+	}
+
+	tailoringMenu.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, buttonID );
+	tailoringMenu.AddText( 255, 60 + ( index * 20 ), textHue, entryText );
+	tailoringMenu.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2000 + buttonID );
+}
+
+	if( subPage > 1 )
+	{
+		tailoringMenu.AddButton( 220, 260, 4014, 4015, 1, 0, 8000 + ( subPage - 1 ));
+		tailoringMenu.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry(10101, socket.language ) + "</basefont>" );
+	}
+
+	if( subPage < totalSubPages )
+	{
+		tailoringMenu.AddButton( 370, 260, 4005, 4007, 1, 0, 9000 + ( subPage + 1 ));
+		tailoringMenu.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry(10100, socket.language ) + "</basefont>" );
+	}
+
+	tailoringMenu.Send( socket );
+	tailoringMenu.Free();
 }
 
 function onTimer( pUser, timerID )
@@ -79,373 +273,190 @@ function onTimer( pUser, timerID )
 	if( !ValidateObject( pUser ))
 		return;
 
-	var socket = pUser.socket;
+	let socket = pUser.socket;
 
-	switch( timerID )
+	if( timerID >= 1 && timerID <= 8 )
 	{
-		case 1: // Page 1
-		case 2: // Page 2
-		case 3: // Page 3
-		case 4: // Page 4
-		case 5: // Page 5
-		case 6: // Page 6
-		case 7: // Page 7
-		case 8: // Page 8
-			PageX( socket, pUser, timerID );
-			break;
-		default:
-			break;
+		PageX( socket, pUser, timerID ); // Pages 1–8
+	}
+	else if ( timerID == 999 )
+	{
+		PageX(socket, pUser, 999); // Last Ten
 	}
 }
 
-function onGumpPress( pSock, pButton, gumpData )
+function onGumpPress( socket, pButton, gumpData )
 {
-	var pUser = pSock.currentChar;
+	var pUser = socket.currentChar;
+	var usedMakeLast = false;
 
-	// Don't continue if character is invalid, or worse... dead!
 	if( !ValidateObject( pUser ) || pUser.dead )
 		return;
 
-	// Don't continue if player no longer has access to the crafting tool
-	var bItem = pSock.tempObj;
+	var bItem = socket.tempObj;
 	if( !ValidateObject( bItem ) || !pUser.InRange( bItem, 3 ))
 	{
-		pSock.SysMessage( GetDictionaryEntry( 461, pSock.language )); // You are too far away.
+		socket.SysMessage( GetDictionaryEntry( 461, socket.language ));
 		return;
 	}
 
 	if( bItem.movable == 3 )
 	{
-		pSock.SysMessage( GetDictionaryEntry( 6031, pSock.language )); // Locked down resources cannot be used!
+		socket.SysMessage( GetDictionaryEntry( 6031, socket.language ));
 		return;
 	}
 
-	var iPackOwner = GetPackOwner( bItem, 0 );
-	if( ValidateObject( iPackOwner )) // Is the item in a backpack?
+	var iPackOwner = GetPackOwner(bItem, 0);
+	if( ValidateObject( iPackOwner ))
 	{
-		if( iPackOwner.serial != pUser.serial ) // And if so does the pack belong to the user?
+		if( iPackOwner.serial != pUser.serial )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language )); // That resource is in someone else's backpack!
+			socket.SysMessage(GetDictionaryEntry( 6032, socket.language ));
 			return;
 		}
 	}
 	else
 	{
-		pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language )); // This has to be in your backpack before you can use it.
+		socket.SysMessage(GetDictionaryEntry( 6022, socket.language ));
 		return;
 	}
 
-	var gumpID = scriptID + 0xffff;
+	if( pButton >= 8001 && pButton < 9000 )
+	{
+		let subPage = pButton - 8000;
+		let pageNum = pUser.GetTempTag( "page" ) || 1;
+		pUser.SetTempTag( "subPage", subPage );
+		PageX(socket, pUser, pageNum);
+		return;
+	}
+
+	if( pButton >= 9001 && pButton < 10000 )
+	{
+		let subPage = pButton - 9000;
+		let pageNum = pUser.GetTempTag( "page" ) || 1;
+		pUser.SetTempTag("subPage", subPage);
+		PageX( socket, pUser, pageNum );
+		return;
+	}
+
+	if( pButton >= 1 && pButton <= 8 )
+	{
+		pUser.SetTempTag( "page", pButton );
+		pUser.SetTempTag( "subPage", 1 );
+		PageX( socket, pUser, pButton );
+		return;
+	}
+
+	if( pButton == 11000 )
+	{
+		pUser.SetTempTag( "page", 999 );
+		pUser.SetTempTag( "subPage", 1 );
+		PageX(socket, pUser, 999);
+		return;
+	}
+
 	var makeID = 0;
-	var itemDetailsID = 0;
 	var timerID = 0;
 
-	// If button pressed is one of the crafting buttons (or "make last"), check that anvil was found
+	// Handle "Make Last"
 	if(( pButton >= 100 && pButton <= 804 ) || pButton == 5000 )
 	{
 		if( pButton == 5000 )
 		{
-			// Make Last button
 			pButton = pUser.GetTempTag( "MAKELAST" );
+			usedMakeLast = true;
 		}
 		else
 		{
-			// Update Make Last entry
 			pUser.SetTempTag( "MAKELAST", pButton );
 		}
 	}
 
-	switch( pButton )
+	// If it's a craft button (found in map)
+	if( CraftingMap[pButton] != undefined )
 	{
-		case 0: // Abort and do nothing
-			pUser.SetTempTag( "MAKELAST", null );
-			pUser.SetTempTag( "CRAFT", null )
-			pSock.CloseGump( gumpID, 0 );
-			break;
-		case 1: // Page 1
-		case 2: // Page 2
-		case 3: // Page 3
-		case 4: // Page 4
-		case 5: // Page 5
-		case 6: // Page 6
-		case 7: // Page 7
-		case 8: // Page 8
-			pSock.CloseGump( gumpID, 0 );
-			PageX( pSock, pUser, pButton );
-			break;
-/*		case 51: // Repair Item
-			var targMsg = GetDictionaryEntry( 485, pSock.language ); //
-			pSock.CustomTarget( 2, targMsg );
-			break;*/
-		case 52: // Unravel Item
-			UnravelTarget( pSock );
-			break;
-		case 100: // skullcap
-			makeID = 130; timerID = 1; break;
-		case 101: // bandana
-			makeID = 131; timerID = 1; break;
-		case 102: // floppy hat
-			makeID = 132; timerID = 1; break;
-		case 103: // cap
-			makeID = 134; timerID = 1; break;
-		case 104: // wide-brim hat
-			makeID = 133; timerID = 1; break;
-		case 105: // straw hat
-			makeID = 136; timerID = 1; break;
-		case 106: // wizard's hat
-			makeID = 137; timerID = 1; break;
-		case 107: // bonnet
-			makeID = 138; timerID = 1; break;
-		case 108: // feather hat
-			makeID = 139; timerID = 1; break;
-		case 109: // tricorne hat
-			makeID = 140; timerID = 1; break;
-		case 110: // jester hat
-			makeID = 141; timerID = 1; break;
-		case 111: // tall straw hat
-			makeID = 135; timerID = 1; break;
-		case 200: // doublet
-			makeID = 142; timerID = 2; break;
-		case 201: // shirt
-			makeID = 143; timerID = 2; break;
-		case 202: // fancy shirt
-			makeID = 144; timerID = 2; break;
-		case 203: // tunic
-			makeID = 145; timerID = 2; break;
-		case 204: // surcoat
-			makeID = 146; timerID = 2; break;
-		case 205: // plain dress
-			makeID = 147; timerID = 2; break;
-		case 206: // fancy dress
-			makeID = 148; timerID = 2; break;
-		case 207: // cloak
-			makeID = 149; timerID = 2; break;
-		case 208: // robe
-			makeID = 150; timerID = 2; break;
-		case 209: // jester suit
-			makeID = 151; timerID = 2; break;
-		case 210: // short pants
-			makeID = 180; timerID = 2; break;
-		case 211: // long pants
-			makeID = 152; timerID = 2; break;
-		case 212: // kilt
-			makeID = 153; timerID = 2; break;
-		case 213: // skirt
-			makeID = 154; timerID = 2; break;
-		case 300: // body sash
-			makeID = 155; timerID = 3; break;
-		case 301: // half apron
-			makeID = 156; timerID = 3; break;
-		case 302: // full apron
-			makeID = 157; timerID = 3; break;
-		case 303: // oil cloth
-			makeID = 158; timerID = 3; break;
-		case 400: // sandals
-			makeID = 159; timerID = 4; break;
-		case 401: // shoes
-			makeID = 160; timerID = 4; break;
-		case 402: // boots
-			makeID = 161; timerID = 4; break;
-		case 403: // thigh boots
-			makeID = 162; timerID = 4; break;
-		case 500: // leather gorget
-			makeID = 163; timerID = 5; break;
-		case 501: // leather cap
-			makeID = 164; timerID = 5; break;
-		case 502: // leather gloves
-			makeID = 165; timerID = 5; break;
-		case 503: // leather sleeves
-			makeID = 166; timerID = 5; break;
-		case 504: // leather legging
-			makeID = 167; timerID = 5; break;
-		case 505: // leather tunic
-			makeID = 168; timerID = 5; break;
-		case 600: // studded gorget
-			makeID = 169; timerID = 6; break;
-		case 601: // studded gloves
-			makeID = 170; timerID = 6; break;
-		case 602: // studded sleeves
-			makeID = 171; timerID = 6; break;
-		case 603: // studded leggings
-			makeID = 172; timerID = 6; break;
-		case 604: // studded tunic
-			makeID = 173; timerID = 6; break;
-		case 700: // leather shorts
-			makeID = 174; timerID = 7; break;
-		case 701: // leather skirts
-			makeID = 175; timerID = 7; break;
-		case 802: // leather bustier
-			makeID = 176; timerID = 7; break;
-		case 703: // studded bustier
-			makeID = 177; timerID = 7; break;
-		case 704: // female leather armor
-			makeID = 178; timerID = 7; break;
-		case 705: // studded armor
-			makeID = 179; timerID = 7; break;
-		case 800: // bone helmet
-			makeID = 181; timerID = 8; break;
-		case 901: // bone gloves
-			makeID = 182; timerID = 9; break;
-		case 802: // bone arms
-			makeID = 183; timerID = 8; break;
-		case 803: // bone leggings
-			makeID = 184; timerID = 8; break;
-		case 804: // bone armor
-			makeID = 185; timerID = 8; break;
-		case 2100: // skullcap
-			itemDetailsID = 130; break;
-		case 2101: // bandana
-			itemDetailsID = 131; break;
-		case 2102: // floppy hat
-			itemDetailsID = 132; break;
-		case 2103: // cap
-			itemDetailsID = 134; break;
-		case 2104: // wide-brim hat
-			itemDetailsID = 133; break;
-		case 2105: // straw hat
-			itemDetailsID = 136; break;
-		case 2106: // wizard's hat
-			itemDetailsID = 137; break;
-		case 2107: // bonnet
-			itemDetailsID = 138; break;
-		case 2108: // feather hat
-			itemDetailsID = 139; break;
-		case 2109: // tricorne hat
-			itemDetailsID = 140; break;
-		case 2110: // jester hat
-			itemDetailsID = 141; break;
-		case 2111: // tall straw hat
-			itemDetailsID = 186; break;
-		case 2200: // doublet
-			itemDetailsID = 142; break;
-		case 2201: // shirt
-			itemDetailsID = 143; break;
-		case 2202: // fancy shirt
-			itemDetailsID = 144; break;
-		case 2203: // tunic
-			itemDetailsID = 145; break;
-		case 2204: // surcoat
-			itemDetailsID = 146; break;
-		case 2205: // plain dress
-			itemDetailsID = 147; break;
-		case 2206: // fancy dress
-			itemDetailsID = 148; break;
-		case 2207: // cloak
-			itemDetailsID = 149; break;
-		case 2208: // robe
-			itemDetailsID = 150; break;
-		case 2209: // jester suit
-			itemDetailsID = 151; break;
-		case 2210: // short pants
-			itemDetailsID = 180; break;
-		case 2211: // long pants
-			itemDetailsID = 152; break;
-		case 2212: // kilt
-			itemDetailsID = 153; break;
-		case 2213: // skirt
-			itemDetailsID = 154; break;
-		case 2300: // body sash
-			itemDetailsID = 155; break;
-		case 2301: // half apron
-			itemDetailsID = 156; break;
-		case 2302: // full apron
-			itemDetailsID = 157; break;
-		case 2303: // oil cloth
-			itemDetailsID = 158; break;
-		case 2400: // sandals
-			itemDetailsID = 159; break;
-		case 2401: // shoes
-			itemDetailsID = 160; break;
-		case 2402: // boots
-			itemDetailsID = 161; break;
-		case 2403: // thigh boots
-			itemDetailsID = 162; break;
-		case 2500: // leather gorget
-			itemDetailsID = 163; break;
-		case 2501: // leather cap
-			itemDetailsID = 164; break;
-		case 2502: // leather gloves
-			itemDetailsID = 165; break;
-		case 2503: // leather sleeves
-			itemDetailsID = 166; break;
-		case 2504: // leather legging
-			itemDetailsID = 167; break;
-		case 2505: // leather tunic
-			itemDetailsID = 168; break;
-		case 2600: // studded gorget
-			itemDetailsID = 169; break;
-		case 2601: // studded gloves
-			itemDetailsID = 170; break;
-		case 2602: // studded sleeves
-			itemDetailsID = 171; break;
-		case 2603: // studded leggings
-			itemDetailsID = 172; break;
-		case 2604: // studded tunic
-			itemDetailsID = 173; break;
-		case 2700: // leather shorts
-			itemDetailsID = 174; break;
-		case 2701: // leather skirts
-			itemDetailsID = 175; break;
-		case 2702: // leather bustier
-			itemDetailsID = 176; break;
-		case 2703: // studded bustier
-			itemDetailsID = 177; break;
-		case 2704: // female leather armor
-			itemDetailsID = 178; break;
-		case 2705: // studded armor
-			itemDetailsID = 179; break;
-		case 2800: // bone helmet
-			itemDetailsID = 181; break;
-		case 2801: // bone gloves
-			itemDetailsID = 182; break;
-		case 2802: // bone arms
-			itemDetailsID = 183; break;
-		case 2803: // bone leggings
-			itemDetailsID = 184; break;
-		case 2804: // bone armor
-			itemDetailsID = 185; break;
-		default:
-			break;
-	}
+		makeID = pButton;
+		timerID = CraftingMap[makeID].timerID || 1;
 
-	if( makeID != 0 )
-	{
-		if( makeID >= 100 && makeID <= 158 )
+		let materialHue = pUser.GetTempTag( "LastResourceColor" );
+		if(( makeID >= 100 && makeID <= 158 ) || makeID == 180 )
 		{
-			// These items require cloth resources. Ask player which material to use!
-			pUser.SetTempTag( "makeID", makeID );
-			pUser.SetTempTag( "timerID", timerID );
-			pSock.CustomTarget( 1, GetDictionaryEntry( 444, pSock.language )); // Select material to use.
-			//var undyedRes = pUser.ResourceCount( 0x1767, 0 );
-			//var totalRes = pUser.ResourceCount( 0x1767, -1 );
+			if( usedMakeLast && materialHue != null )
+			{
+				// Check if recipe required and not known
+				let data = CraftingMap[makeID];
+				if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
+				{
+					socket.SysMessage("You must learn that recipe from a scroll.");
+					return;
+				}
+				MakeItem( socket, pUser, makeID, materialHue );
+				AddToLastTen( pUser, makeID );
+				pUser.StartTimer( gumpDelay, timerID, 4030 );
+			}
+			else
+			{
+				pUser.SetTempTag( "makeID", makeID );
+				pUser.SetTempTag( "timerID", timerID );
+				socket.CustomTarget(1, GetDictionaryEntry( 444, socket.language ));
+			}
 		}
 		else
 		{
-			// Items that require leather as resource
-			MakeItem( pSock, pUser, makeID );
+			// Check if recipe required and not known
+			let data = CraftingMap[makeID];
+			if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
+			{
+				socket.SysMessage("You must learn that recipe from a scroll.");
+				return;
+			}
+			MakeItem( socket, pUser, makeID );
+			AddToLastTen( pUser, makeID );
 			if( GetServerSetting( "ToolUseLimit" ))
 			{
 				bItem.usesLeft -= 1;
 				if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
 				{
 					bItem.Delete();
-					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
-					// Play sound effect of tool breaking
+					socket.SysMessage( GetDictionaryEntry( 10202, socket.language ));
 				}
-			}			
-			pUser.StartTimer( gumpDelay, timerID, true );
+			}
+			pUser.StartTimer( gumpDelay, timerID, 4030 );
 		}
+		return;
 	}
-	else if( itemDetailsID != 0 )
+
+	// If it's a detail button (2000+ button ID pattern)
+	if( pButton >= 2000 && pButton <= 3000 )
 	{
-		pUser.SetTempTag( "ITEMDETAILS", itemDetailsID );
-		TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
+		let makeID = pButton - 2000;
+		if( CraftingMap[makeID] )
+		{
+			pUser.SetTempTag( "ITEMDETAILS", makeID );
+			TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
+		}
+		return;
+	}
+
+	if( pButton == 0 ) // Exit/Close
+	{
+		let gumpID = scriptID + 0xffff;
+		pUser.SetTempTag( "MAKELAST", null );
+		pUser.SetTempTag( "CRAFT", null );
+		socket.CloseGump( gumpID, 0 );
+		return;
+	}
+
+	if( pButton == 52 ) // Unravel Item
+	{
+		UnravelTarget( socket );
+		return;
 	}
 }
 
-function onCallback1( pSock, ourObj )
+function onCallback1( socket, ourObj )
 {
-	var pUser = pSock.currentChar;
+	var pUser = socket.currentChar;
 	if( !ValidateObject( pUser ))
 		return;
 
@@ -455,54 +466,66 @@ function onCallback1( pSock, ourObj )
 	pUser.SetTempTag( "makeID", null );
 	pUser.SetTempTag( "timerID", null );
 
-	var bItem = pSock.tempObj;
+	var bItem = socket.tempObj;
 	if( ValidateObject( bItem ))
 	{
-	if( ValidateObject( ourObj ) && ourObj.isItem )
-	{
+		if( ValidateObject( ourObj ) && ourObj.isItem )
+		{
 			// Make sure targeted item is in player's backpack
 			var iPackOwner = GetPackOwner( ourObj, 0 );
 			if( ValidateObject( iPackOwner )) // Is the item in a backpack?
 			{
 				if( iPackOwner.serial != pUser.serial ) // And if so does the pack belong to the user?
 				{
-					pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language )); // That resource is in someone else's backpack!
+					socket.SysMessage( GetDictionaryEntry( 6032, socket.language )); // That resource is in someone else's backpack!
 					return;
 				}
 			}
 			else
 			{
-				pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language )); // This has to be in your backpack before you can use it.
+				socket.SysMessage( GetDictionaryEntry( 6022, socket.language )); // This has to be in your backpack before you can use it.
 				return;
 			}
 
-		// Pass in the colour of the desired material to use for crafting
-		MakeItem( pSock, pUser, makeID, ourObj.colour );
-		if( GetServerSetting( "ToolUseLimit" ))
-		{
-			bItem.usesLeft -= 1;
-			if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
+			//Cache cloth color for future "Make Last"
+			pUser.SetTempTag( "LastResourceColor", ourObj.colour );
+
+			// Check if recipe required and not known
+			let data = CraftingMap[makeID];
+			if( data.recipeID && !TriggerEvent( 4022, "NeedRecipe", pUser, data.recipeID ))
 			{
-				bItem.Delete();
-				pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
-				// Play sound effect of tool breaking
+				socket.SysMessage("You must learn that recipe from a scroll.");
+				return;
 			}
-		}		
-		pUser.StartTimer( gumpDelay, timerID, true );
+
+			// Pass in the colour of the desired material to use for crafting
+			MakeItem( socket, pUser, makeID, ourObj.colour );
+			AddToLastTen( pUser, makeID );
+			if( GetServerSetting( "ToolUseLimit" ))
+			{
+				bItem.usesLeft -= 1;
+				if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
+				{
+					bItem.Delete();
+					socket.SysMessage( GetDictionaryEntry( 10202, socket.language )); // You have worn out your tool!
+					// Play sound effect of tool breaking
+				}
+			}
+			pUser.StartTimer( gumpDelay, timerID, 4030 );
 		}
 	}
 }
 
-function UnravelTarget( pSock )
+function UnravelTarget( socket )
 {
-	pSock.CustomTarget( 2, GetDictionaryEntry( 10295, pSock.language )); // What item would you like to unravel?
+	socket.CustomTarget( 2, GetDictionaryEntry( 10295, socket.language )); // What item would you like to unravel?
 }
 
 // Clothes and leather armor can be unravelled back into cloth and leather
-function onCallback2( pSock, ourObj )
+function onCallback2( socket, ourObj )
 {
 	// Unravel item, get cloth/leather in return
-	var mChar = pSock.currentChar;
+	var mChar = socket.currentChar;
 
 	if( !ValidateObject( ourObj ) || !ourObj.isItem )
 	{
@@ -537,9 +560,9 @@ function onCallback2( pSock, ourObj )
 	{
 		if( createEntry.avgMinSkill > mChar.skills.tailoring )
 		{
-			pSock.CloseGump( gumpID, 0 );
+			socket.CloseGump( gumpID, 0 );
 			mChar.SetTempTag( "prevActionResult", "NOUNRAVELSKILL" );
-			mChar.StartTimer( gumpDelay, 1, true );
+			mChar.StartTimer( gumpDelay, 1, 4030 );
 			return;
 		}
 
@@ -621,7 +644,7 @@ function onCallback2( pSock, ourObj )
 	{
 		// Targeted object is not an item that can be unravelled
 		mChar.SetTempTag( "prevActionResult", "CANTUNRAVEL" );
-		mChar.StartTimer( repairDelay, 1, true );
+		mChar.StartTimer( repairDelay, 1, 4030 );
 		return;
 	}
 
@@ -645,9 +668,52 @@ function onCallback2( pSock, ourObj )
 		default:
 			break;
 	}
-	var newResource = CreateDFNItem( pSock, mChar, itemToAdd, resourceAmount, "ITEM", true );
+	var newResource = CreateDFNItem( socket, mChar, itemToAdd, resourceAmount, "ITEM", true, resourceColor );
 
 	mChar.SetTempTag( "resourceFromUnravelling", resourceAmount );
 	mChar.SetTempTag( "prevActionResult", "UNRAVELSUCCESS" );
-	mChar.StartTimer( gumpDelay, 1, true );
+	mChar.StartTimer( gumpDelay, 1, 4030 );
+}
+
+function AddToLastTen( pUser, makeID )
+{
+	// Append makeID to last ten list
+	var raw = pUser.GetTag( "LastTenTailoring" ) || "";
+	var list = raw.split( "," );
+
+	// Remove if already in list
+	for( var i = 0; i < list.length; i++ )
+	{
+		if( parseInt( list[i]) == makeID )
+		{
+			list.splice(i, 1);
+			break;
+		}
+	}
+
+	// Add to front (no unshift in SpiderMonkey 1.8)
+	var newList = [makeID];
+	for( var i = 0; i < list.length && newList.length < 10; i++ )
+	{
+		var entry = parseInt( list[i] );
+		if( !isNaN( entry ) && entry > 0 )
+			newList.push( entry );
+	}
+
+	pUser.SetTag( "LastTenTailoring", newList.join( "," ));
+}
+
+function HasLearnedRecipe( pUser, recipeID )
+{
+	var myData = TriggerEvent( 4022, "ReadRecipeID", pUser );
+	if( !myData || myData.length == 0)
+		return false;
+
+	for( let i = 0; i < myData.length; i++ )
+	{
+		let data = myData[i].split( "," );
+		if( data[0] == recipeID )
+			return true;
+	}
+	return false;
 }
