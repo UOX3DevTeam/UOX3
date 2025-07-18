@@ -193,5 +193,5 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: "Release ${{ github.ref_name }}"
           body_path: "${{ github.workspace }}/${{ env.NOTES_FILE }}"
-          draft: true
+          # draft: true
           files: ${{ github.workspace }}/release_assets/*
