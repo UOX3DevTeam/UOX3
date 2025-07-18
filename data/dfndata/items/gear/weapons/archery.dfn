@@ -20,6 +20,7 @@ maxrange=8
 // Crossbow - N/S
 [0x0f4f]
 {
+gett2a=0x0f4f_t2a
 getlbr=0x0f4f_lbr
 getaos=0x0f4f_aos
 gettol=0x0f4f_tol
@@ -58,6 +59,7 @@ maxrange=8
 // Heavy Crossbow - E/W
 [0x13fc]
 {
+gett2a=0x13fc_t2a
 getlbr=0x13fc_lbr
 getaos=0x13fc_aos
 gettol=0x13fc_tol
@@ -96,6 +98,7 @@ maxrange=10
 // Bow - N/S
 [0x13b1]
 {
+gett2a=0x13b1_t2a
 getlbr=0x13b1_lbr
 getaos=0x13b1_aos
 gettol=0x13b1_tol
@@ -138,6 +141,7 @@ origin=aos
 // Composite Bow - E/W
 [0x26c2]
 {
+gett2a=0x26c2_t2a
 getlbr=0x26c2_lbr
 getaos=0x26c2_aos
 gettol=0x26c2_tol
@@ -178,6 +182,7 @@ origin=aos
 // Repeating Crossbow - E/W
 [0x26c3]
 {
+gett2a=0x26c3_t2a
 getlbr=0x26c3_lbr
 getaos=0x26c3_aos
 gettol=0x26c3_tol
@@ -220,6 +225,7 @@ origin=se
 // Yumi - E/W
 [0x27a5]
 {
+gett2a=0x27a5_t2a
 getlbr=0x27a5_lbr
 getaos=0x27a5_aos
 gettol=0x27a5_tol
@@ -262,6 +268,7 @@ origin=ml
 // Elven Composite Longbow - E/W
 [0x2d1e]
 {
+gett2a=0x2d1e_t2a
 getlbr=0x2d1e_lbr
 getaos=0x2d1e_aos
 gettol=0x2d1e_tol
@@ -301,6 +308,7 @@ origin=ml
 // Magical Shortbow - E/W
 [0x2d2b]
 {
+gett2a=0x2d2b_t2a
 getlbr=0x2d2b_lbr
 getaos=0x2d2b_aos
 gettol=0x2d2b_tol

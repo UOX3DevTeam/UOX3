@@ -19,6 +19,7 @@ erbonus=4 3 4 1
 // Verite Ringmail Gloves - N/S
 [0x13eb-ve]
 {
+gett2a=0x13eb_t2a
 getlbr=0x13eb_lbr
 getaos=0x13eb_aos
 gettol=0x13eb_tol
@@ -44,6 +45,7 @@ get=0x13eb-ve 0x13f2-ve
 // Verite Ringmail Tunic - N/S
 [0x13ec-ve]
 {
+gett2a=0x13ec_t2a
 getlbr=0x13ec_lbr
 getaos=0x13ec_aos
 gettol=0x13ec_tol
@@ -69,6 +71,7 @@ get=0x13ec-ve 0x13ed-ve
 // Verite Ringmail Sleeves - N/S
 [0x13ee-ve]
 {
+gett2a=0x13ee_t2a
 getlbr=0x13ee_lbr
 getaos=0x13ee_aos
 gettol=0x13ee_tol
@@ -94,6 +97,7 @@ get=0x13ee-ve 0x13ef-ve
 // Verite Ringmail Leggings - N/S
 [0x13f0-ve]
 {
+gett2a=0x13f0_t2a
 getlbr=0x13f0_lbr
 getaos=0x13f0_aos
 gettol=0x13f0_tol
@@ -121,6 +125,7 @@ get=0x13f0-ve 0x13f1-ve
 // Verite Chainmail Coif - N/S
 [0x13bb-ve]
 {
+gett2a=0x13bb_t2a
 getlbr=0x13bb_lbr
 getaos=0x13bb_aos
 gettol=0x13bb_tol
@@ -146,6 +151,7 @@ get=0x13bb 0x13c0
 // Verite Chainmail Leggings - N/S
 [0x13be-ve]
 {
+gett2a=0x13be_t2a
 getlbr=0x13be_lbr
 getaos=0x13be_aos
 gettol=0x13be_tol
@@ -171,6 +177,7 @@ get=0x13be-ve 0x13c3-ve
 // Verite Chainmail Tunic - N/S
 [0x13bf-ve]
 {
+gett2a=0x13bf_t2a
 getlbr=0x13bf_lbr
 getaos=0x13bf_aos
 gettol=0x13bf_tol
@@ -196,6 +203,7 @@ get=0x13bf-ve 0x13c4-ve
 // Verite Female Plate - N/S
 [0x1c04-ve]
 {
+gett2a=0x1c04_t2a
 getlbr=0x1c04_lbr
 getaos=0x1c04_aos
 gettol=0x1c04_tol
@@ -223,6 +231,7 @@ get=0x1c04-ve 0x1c05-ve
 // Verite Platemail Arms - E/W
 [0x1410-ve]
 {
+gett2a=0x1410_t2a
 getlbr=0x1410_lbr
 getaos=0x1410_aos
 gettol=0x1410_tol
@@ -248,6 +257,7 @@ get=0x1410-ve 0x1417-ve
 // Verite Platemail Leggings - N/S
 [0x1411-ve]
 {
+gett2a=0x1411_t2a
 getlbr=0x1411_lbr
 getaos=0x1411_aos
 gettol=0x1411_tol
@@ -273,6 +283,7 @@ get=0x1411-ve 0x141a-ve
 // Verite Platemail Gorget
 [0x1413-ve]
 {
+gett2a=0x1413_t2a
 getlbr=0x1413_lbr
 getaos=0x1413_aos
 gettol=0x1413_tol
@@ -291,6 +302,7 @@ get=0x1413-ve
 // Verite Platemail Gloves - N/S
 [0x1414-ve]
 {
+gett2a=0x1414_t2a
 getlbr=0x1414_lbr
 getaos=0x1414_aos
 gettol=0x1414_tol
@@ -316,6 +328,7 @@ get=0x1414-ve 0x1418-ve
 // Verite Platemail Chest - N/S
 [0x1415-ve]
 {
+gett2a=0x1415_t2a
 getlbr=0x1415_lbr
 getaos=0x1415_aos
 gettol=0x1415_tol
@@ -343,6 +356,7 @@ get=0x1415-ve 0x1416-ve
 // Verite Heavy Platemail Jingasa - A
 [0x2777-ve]
 {
+gett2a=0x2777_t2a
 getlbr=0x2777_lbr
 getaos=0x2777_aos
 gettol=0x2777_tol
@@ -368,6 +382,7 @@ get=0x2777-ve 0x27c2-ve
 // Verite Decorative Platemail Kabuto - A
 [0x2778-ve]
 {
+gett2a=0x2778_t2a
 getlbr=0x2778_lbr
 getaos=0x2778_aos
 gettol=0x2778_tol
@@ -393,6 +408,7 @@ get=0x2778-ve 0x27c3-ve
 // Verite Platemail Do - A
 [0x277d-ve]
 {
+gett2a=0x277d_t2a
 getlbr=0x277d_lbr
 getaos=0x277d_aos
 gettol=0x277d_tol
@@ -418,6 +434,7 @@ get=0x277d-ve 0x27c8-ve
 // Verite Platemail Hiro Sode - A
 [0x2780-ve]
 {
+gett2a=0x2780_t2a
 getlbr=0x2780_lbr
 getaos=0x2780_aos
 gettol=0x2780_tol
@@ -443,6 +460,7 @@ get=0x2780-ve 0x27cb-ve
 // Verite Platemail Jingasa - A
 [0x2781-ve]
 {
+gett2a=0x2781_t2a
 getlbr=0x2781_lbr
 getaos=0x2781_aos
 gettol=0x2781_tol
@@ -468,6 +486,7 @@ get=0x2781-ve 0x27cc-ve
 // Verite Small Platemail Jingasa - A
 [0x2784-ve]
 {
+gett2a=0x2784_t2a
 getlbr=0x2784_lbr
 getaos=0x2784_aos
 gettol=0x2784_tol
@@ -493,6 +512,7 @@ get=0x2784-ve 0x27cf-ve
 // Verite Platemail Battle Kabuto - A
 [0x2785-ve]
 {
+gett2a=0x2785_t2a
 getlbr=0x2785_lbr
 getaos=0x2785_aos
 gettol=0x2785_tol
@@ -518,6 +538,7 @@ get=0x2785-ve 0x27d0-ve
 // Verite Platemail Suneate - A
 [0x2788-ve]
 {
+gett2a=0x2788_t2a
 getlbr=0x2788_lbr
 getaos=0x2788_aos
 gettol=0x2788_tol
@@ -543,6 +564,7 @@ get=0x2788-ve 0x27d3-ve
 // Verite Platemail Kabuto - A
 [0x2789-ve]
 {
+gett2a=0x2789_t2a
 getlbr=0x2789_lbr
 getaos=0x2789_aos
 gettol=0x2789_tol
@@ -568,6 +590,7 @@ get=0x2789-ve 0x27d4-ve
 // Verite Kabuto - A
 [0x236c-ve]
 {
+gett2a=0x236c_t2a
 getlbr=0x236c_lbr
 getaos=0x236c_aos
 gettol=0x236c_tol
@@ -593,6 +616,7 @@ get=0x236c-ve 0x236d-ve
 // Verite Platemail Haidate - A
 [0x278d-ve]
 {
+gett2a=0x278d_t2a
 getlbr=0x278d_lbr
 getaos=0x278d_aos
 gettol=0x278d_tol
@@ -618,6 +642,7 @@ get=0x278d-ve 0x27d8-ve
 // Verite Platemail Hatsuburi - A
 [0x2775-ve]
 {
+gett2a=0x2775_t2a
 getlbr=0x2775_lbr
 getaos=0x2775_aos
 gettol=0x2775_tol
@@ -643,6 +668,7 @@ get=0x2775-ve 0x27c0-ve
 // Verite Chainmail Hatsuburi - A
 [0x2774-ve]
 {
+gett2a=0x2774_t2a
 getlbr=0x2774_lbr
 getaos=0x2774_aos
 gettol=0x2774_tol
@@ -668,6 +694,7 @@ get=0x2774-ve 0x27bf-ve
 // Verite Platemail Mempo - E/W
 [0x2779-ve]
 {
+gett2a=0x2779_t2a
 getlbr=0x2779_lbr
 getaos=0x2779_aos
 gettol=0x2779_tol
@@ -695,6 +722,7 @@ get=0x2779-ve 0x27c4-ve
 // Verite Close Helm - E/W
 [0x1408-ve]
 {
+gett2a=0x1408_t2a
 getlbr=0x1408_lbr
 getaos=0x1408_aos
 gettol=0x1408_tol
@@ -720,6 +748,7 @@ get=0x1408-ve 0x1409-ve
 // Verite Helmet - E/W
 [0x140a-ve]
 {
+gett2a=0x140a_t2a
 getlbr=0x140a_lbr
 getaos=0x140a_aos
 gettol=0x140a_tol
@@ -745,6 +774,7 @@ get=0x140a-ve 0x140b-ve
 // Verite Bascinet - E/W
 [0x140c-ve]
 {
+gett2a=0x140c_t2a
 getlbr=0x140c_lbr
 getaos=0x140c_aos
 gettol=0x140c_tol
@@ -770,6 +800,7 @@ get=0x140c-ve 0x140d-ve
 // Verite Norse Helm - E/W
 [0x140e-ve]
 {
+gett2a=0x140e_t2a
 getlbr=0x140e_lbr
 getaos=0x140e_aos
 gettol=0x140e_tol
@@ -795,6 +826,7 @@ get=0x140e-ve 0x140f-ve
 // Verite Plate Helm - N/S
 [0x1412-ve]
 {
+gett2a=0x1412_t2a
 getlbr=0x1412_lbr
 getaos=0x1412_aos
 gettol=0x1412_tol
@@ -822,6 +854,7 @@ get=0x1412-ve 0x1419-ve
 // Verite Verite Shield
 [0x1b72-ve]
 {
+gett2a=0x1b72_t2a
 getlbr=0x1b72_lbr
 getaos=0x1b72_aos
 gettol=0x1b72_tol
@@ -840,6 +873,7 @@ get=0x1b72-ve
 // Verite Buckler
 [0x1b73-ve]
 {
+gett2a=0x1b73_t2a
 getlbr=0x1b73_lbr
 getaos=0x1b73_aos
 gettol=0x1b73_tol
@@ -858,6 +892,7 @@ get=0x1b73-ve
 // Verite Kite Shield (Metal) - N/S
 [0x1b74-ve]
 {
+gett2a=0x1b74_t2a
 getlbr=0x1b74_lbr
 getaos=0x1b74_aos
 gettol=0x1b74_tol
@@ -870,6 +905,7 @@ sectionid=0x1b74-ve
 // Verite Heater Shield - N/S
 [0x1b76-ve]
 {
+gett2a=0x1b76_t2a
 getlbr=0x1b76_lbr
 getaos=0x1b76_aos
 gettol=0x1b76_tol
@@ -882,6 +918,7 @@ sectionid=0x1b76-ve
 // Verite Kite Shield (Wood) - N/S
 [0x1b78-ve]
 {
+gett2a=0x1b78_t2a
 getlbr=0x1b78_lbr
 getaos=0x1b78_aos
 gettol=0x1b78_tol
@@ -907,6 +944,7 @@ get=0x1b78-ve 0x1b79-ve
 // AgapiteWooden Shield
 [0x1b7a-ve]
 {
+gett2a=0x1b7a_t2a
 getlbr=0x1b7a_lbr
 getaos=0x1b7a_aos
 gettol=0x1b7a_tol
@@ -925,6 +963,7 @@ get=0x1b7a-ve
 // Verite Metal Shield
 [0x1b7b-ve]
 {
+gett2a=0x1b7b_t2a
 getlbr=0x1b7b_lbr
 getaos=0x1b7b_aos
 gettol=0x1b7b_tol
@@ -943,6 +982,7 @@ get=0x1b7b-ve
 // Verite Chaos Shield
 [0x1bc3-ve]
 {
+gett2a=0x1bc3_t2a
 getlbr=0x1bc3_lbr
 getaos=0x1bc3_aos
 gettol=0x1bc3_tol
@@ -961,6 +1001,7 @@ get=0x1bc3-ve
 // Verite Order Shield - N/S
 [0x1bc4-ve]
 {
+gett2a=0x1bc4_t2a
 getlbr=0x1bc4_lbr
 getaos=0x1bc4_aos
 gettol=0x1bc4_tol

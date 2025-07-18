@@ -187,11 +187,11 @@ void CWorldMain::SetLoaded( bool newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets current time
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetUICurrentTime( void ) const
+TIMERVAL CWorldMain::GetUICurrentTime( void ) const
 {
 	return uiCurrentTime;
 }
-void CWorldMain::SetUICurrentTime( UI32 newVal )
+void CWorldMain::SetUICurrentTime( TIMERVAL newVal )
 {
 	uiCurrentTime = newVal;
 }
@@ -203,29 +203,13 @@ void CWorldMain::SetUICurrentTime( UI32 newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets UO Minutes
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetUOTickCount( void ) const
+TIMERVAL CWorldMain::GetUOTickCount( void ) const
 {
 	return uoTickCount;
 }
-void CWorldMain::SetUOTickCount( UI32 newVal )
+void CWorldMain::SetUOTickCount( TIMERVAL newVal )
 {
 	uoTickCount = newVal;
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CWorldMain::GetOverflow()
-//|					CWorldMain::SetOverflow()
-//|	Date		-	3/12/2003
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether we overflowed the time
-//o------------------------------------------------------------------------------------------------o
-bool CWorldMain::GetOverflow( void ) const
-{
-	return overflow;
-}
-void CWorldMain::SetOverflow( bool newVal )
-{
-	overflow = newVal;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -235,11 +219,11 @@ void CWorldMain::SetOverflow( bool newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time when server started up
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetStartTime( void ) const
+TIMERVAL CWorldMain::GetStartTime( void ) const
 {
 	return startTime;
 }
-void CWorldMain::SetStartTime( UI32 newVal )
+void CWorldMain::SetStartTime( TIMERVAL newVal )
 {
 	startTime = newVal;
 }
@@ -251,11 +235,11 @@ void CWorldMain::SetStartTime( UI32 newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time when server will shutdown
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetEndTime( void ) const
+TIMERVAL CWorldMain::GetEndTime( void ) const
 {
 	return endTime;
 }
-void CWorldMain::SetEndTime( UI32 newVal )
+void CWorldMain::SetEndTime( TIMERVAL newVal )
 {
 	endTime = newVal;
 }
@@ -267,11 +251,11 @@ void CWorldMain::SetEndTime( UI32 newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets end time
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetLClock( void ) const
+TIMERVAL CWorldMain::GetLClock( void ) const
 {
 	return lClock;
 }
-void CWorldMain::SetLClock( UI32 newVal )
+void CWorldMain::SetLClock( TIMERVAL newVal )
 {
 	lClock = newVal;
 }
@@ -283,11 +267,11 @@ void CWorldMain::SetLClock( UI32 newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for next auto worldsave
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetNewTime( void ) const
+TIMERVAL CWorldMain::GetNewTime( void ) const
 {
 	return newTime;
 }
-void CWorldMain::SetNewTime( UI32 newVal )
+void CWorldMain::SetNewTime( TIMERVAL newVal )
 {
 	newTime = newVal;
 }
@@ -299,11 +283,11 @@ void CWorldMain::SetNewTime( UI32 newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time of last auto worldsave
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetOldTime( void ) const
+TIMERVAL CWorldMain::GetOldTime( void ) const
 {
 	return oldTime;
 }
-void CWorldMain::SetOldTime( UI32 newVal )
+void CWorldMain::SetOldTime( TIMERVAL newVal )
 {
 	oldTime = newVal;
 }
@@ -394,7 +378,6 @@ void CWorldMain::SetReloadingScripts( bool newVal )
 //o------------------------------------------------------------------------------------------------o
 void CWorldMain::CheckTimers( void )
 {
-	SetOverflow(( GetLClock() > GetUICurrentTime() ));
 	if( GetEndTime() )
 	{
 		if( GetEndTime() <= GetUICurrentTime() )
@@ -411,11 +394,11 @@ void CWorldMain::CheckTimers( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for next auto IP update
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetNewIPTime( void ) const
+TIMERVAL CWorldMain::GetNewIPTime( void ) const
 {
 	return newIPtime;
 }
-void CWorldMain::SetNewIPTime( UI32 newVal )
+void CWorldMain::SetNewIPTime( TIMERVAL newVal )
 {
 	newIPtime = newVal;
 }
@@ -426,11 +409,11 @@ void CWorldMain::SetNewIPTime( UI32 newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time of last auto IP update
 //o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetOldIPTime( void ) const
+TIMERVAL CWorldMain::GetOldIPTime( void ) const
 {
 	return oldIPtime;
 }
-void CWorldMain::SetOldIPTime( UI32 newVal )
+void CWorldMain::SetOldIPTime( TIMERVAL newVal )
 {
 	oldIPtime = newVal;
 }

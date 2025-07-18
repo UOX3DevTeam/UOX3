@@ -26,22 +26,18 @@ decay=1
 good=56
 maxuses=75
 usesleft=25
+script=815
 script=2200// uses left tooltip
 }
 
 [0x0fbf]
 {
-Get=base_item
-name=pen and ink
-id=0x0fbf
-weight=100
-value=6 3
-restock=20
-decay=1
-good=56
-maxuses=75
-usesleft=25
-script=2200// uses left tooltip
+Get=0x0fc0
+}
+
+[penandink]
+{
+Get=0x0fc0 0x0fbf
 }
 
 [0x14F0]

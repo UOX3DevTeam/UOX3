@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "get", 2, true );
+	RegisterCommand( "get", 8, true );
 }
 
 function command_GET( socket, cmdString )
@@ -47,6 +47,15 @@ function onCallback0( socket, ourObj )
 	case "INTELLIGENCE":
 		socket.SysMessage( ourObj.intelligence );
 		break;
+	case "HITCHANCE":
+		socket.SysMessage( ourObj.hitChance );
+		break;
+	case "DEFENSECHANCE":
+		socket.SysMessage( ourObj.defenseChance );
+		break;
+	case "DAMAGEINCREASE":
+		socket.SysMessage( ourObj.damageIncrease );
+		break;
 	case "FAME":
 		socket.SysMessage( ourObj.fame );
 		break;
@@ -84,6 +93,15 @@ function onCallback0( socket, ourObj )
 	case "MULTI":
 		socket.SysMessage( ourObj.multi );
 		break;
+	case "HEALTHREGENBONUS":
+		socket.SysMessage( ourObj.healthRegenBonus );
+		break;
+	case "STAMINAREGENBONUS":
+		socket.SysMessage( ourObj.staminaRegenBonus );
+		break;
+	case "MANAREGENBONUS":
+		socket.SysMessage( ourObj.manaRegenBonus );
+		break;
 	case "OWNER":
 		if( ourObj.owner )
 		{
@@ -103,6 +121,9 @@ function onCallback0( socket, ourObj )
 	case "POISON":
 		socket.SysMessage( ourObj.poison );
 		break;
+	case "POISONEDBY":
+		socket.SysMessage( ourObj.poisonedBy );
+		break;
 	case "X":
 		socket.SysMessage( ourObj.x );
 		break;
@@ -120,6 +141,9 @@ function onCallback0( socket, ourObj )
 	case "TEMPDEX":
 	case "TEMPDEXTERITY":
 		socket.SysMessage( ourObj.tempdex );
+		break;
+	case "TITHING":
+		socket.SysMessage( ourObj.tithing );
 		break;
 	case "WIPABLE":
 	case "WIPEABLE":
@@ -144,8 +168,35 @@ function onCallback0( socket, ourObj )
 	case "DAMAGEABLE":
 		socket.SysMessage( ourObj.isDamageable );
 		break;
+	case "LUCK":
+		socket.SysMessage( ourObj.luck );
+		break;
 	case "REGION":
 		socket.SysMessage( ourObj.region.id + " ( " + ourObj.region.name + ")" );
+		break;
+	case "DEF":
+	case "ARMOUR":
+	case "ARMOR":
+	case "RESISTARMOR":
+		socket.SysMessage( ourObj.Resist( 1 ));
+		break;
+	case "RESISTLIGHT":
+		socket.SysMessage( ourObj.Resist( 2 ));
+		break;
+	case "RESISTWATER":
+		socket.SysMessage( ourObj.Resist( 3 ));
+		break;
+	case "RESISTCOLD":
+		socket.SysMessage( ourObj.Resist( 4 ));
+		break;
+	case "RESISTFIRE":
+		socket.SysMessage( ourObj.Resist( 5 ));
+		break;
+	case "RESISTENERGY":
+		socket.SysMessage( ourObj.Resist( 6 ));
+		break;
+	case "RESISTPOISON":
+		socket.SysMessage( ourObj.Resist( 7 ));
 		break;
 	case "SCRIPTTRIGGER":
 	{
@@ -168,6 +219,12 @@ function onCallback0( socket, ourObj )
 	}
 	case "SECTIONID":
 		socket.SysMessage( ourObj.sectionID );
+		break;
+	case "SPAWNSERIAL":
+		socket.SysMessage( ourObj.spawnSerial );
+		break;
+	case "SWINGSPEEDINC":
+		socket.SysMessage( ourObj.swingSpeedIncrease );
 		break;
 	case "SHOULDSAVE":
 		socket.SysMessage( ourObj.shouldSave );
@@ -194,6 +251,9 @@ function HandleGetItem( socket, ourItem, uKey )
 {
 	switch( uKey )
 	{
+	case "ARTIFACTRARITY":
+		socket.SysMessage( ourItem.artifactRarity );
+		break;
 	case "ID":
 		var ourID = ( ourItem.id ).toString( 16 );
 		while( ourID.length < 4 )
@@ -270,6 +330,9 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "NEWBIE":
 		socket.SysMessage( ourItem.isNewbie );
 		break;
+	case "POISONCHARGES":
+		socket.SysMessage( ourItem.poisonCharges );
+		break;
 	case "DIVINELOCK":
 		socket.SysMessage( ourItem.divinelock );
 		break;
@@ -294,8 +357,35 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "DESC":
 		socket.SysMessage( ourItem.desc );
 		break;
-	case "DEF":
-		socket.SysMessage( ourItem.Resist( 1 ));
+	case "LOWERSTATREQ":
+		socket.SysMessage( ourItem.lowerStatReq );
+		break;
+	case "HEALTHLEECH":
+		socket.SysMessage( ourItem.healthLeech );
+		break;
+	case "HEALTHBONUS":
+		socket.SysMessage( ourItem.healthBonus );
+		break;
+	case "MANALEECH":
+		socket.SysMessage( ourItem.manaLeech );
+		break;
+	case "MANABONUS":
+		socket.SysMessage( ourItem.manaBonus );
+		break;
+	case "STAMINALEECH":
+		socket.SysMessage( ourItem.staminaLeech );
+		break;
+	case "STAMINABONUS":
+		socket.SysMessage( ourItem.staminaBonus );
+		break;
+	case "KARMALOCK":
+		socket.SysMessage( ourItem.karmaLock );
+		break;
+	case "ARTIFACTRARITY":
+		socket.SysMessage( ourItem.artifactRarity);
+		break;
+	case "DURABILITYHPBONUS":
+		socket.SysMessage( ourItem.durabilityHpBonus );
 		break;
 	case "ARMORCLASS":
 	case "ARMOURCLASS":
@@ -521,6 +611,9 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "NPCAI":
 		socket.SysMessage( ourChar.aitype );
 		break;
+	case "POISONSTRENGTH":
+		socket.SysMessage( ourChar.poisonStrength );
+		break;
 	case "VULNERABLE":
 		socket.SysMessage( ourChar.vulnerable );
 		break;
@@ -574,10 +667,6 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "VISIBLE":
 		socket.SysMessage( ourChar.visible );
 		break;
-	case "ARMOUR":
-	case "ARMOR":
-		socket.SysMessage( ourChar.Resist( 1 ));
-		break;
 	case "MAXHP":
 		socket.SysMessage( ourChar.maxhp );
 		break;
@@ -586,6 +675,9 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "MAXSTAMINA":
 		socket.SysMessage( ourChar.maxstamina );
+		break;
+	case "STAMINA":
+		socket.SysMessage( ourChar.stamina );
 		break;
 	case "HUNGER":
 		socket.SysMessage( ourChar.hunger );

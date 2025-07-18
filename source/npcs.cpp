@@ -258,7 +258,15 @@ auto CCharStuff::NpcListLookup( const std::string &npclist ) -> std::string
 		}
 
 		auto npcSection = ( csecs.size() > 1 ? csecs[1] : csecs[0] );
-		npcListVector.emplace_back( npcSection, sectionWeight );
+		auto npcData = npcList->GrabData();
+		if( !npcData.empty() )
+		{
+			npcListVector.emplace_back( npcSection + "=" + npcData, sectionWeight );
+		}
+		else
+		{
+			npcListVector.emplace_back( npcSection, sectionWeight );
+		}
 	}
 
 	auto chosenNpcSection = ChooseNpcToCreate( npcListVector );
@@ -269,7 +277,7 @@ auto CCharStuff::NpcListLookup( const std::string &npclist ) -> std::string
 	if( oldstrutil::upper( csecs[0] ) == "NPCLIST" )
 	{
 		// Chosen entry contained another NPCLIST! Let's dive back into it...
-		chosenNpcSection = NpcListLookup( chosenNpcSection );
+		chosenNpcSection = NpcListLookup( csecs[1] );
 	}
 
 	return chosenNpcSection;
@@ -308,7 +316,15 @@ auto CCharStuff::CreateRandomNPC( const std::string &npclist ) -> CChar *
 		}
 
 		auto npcSection = ( csecs.size() > 1 ? csecs[1] : csecs[0] );
-		npcListVector.emplace_back( npcSection, sectionWeight );
+		auto npcData = npcList->GrabData();
+		if( !npcData.empty() )
+		{
+			npcListVector.emplace_back( npcSection + "=" + npcData, sectionWeight );
+		}
+		else
+		{
+			npcListVector.emplace_back( npcSection, sectionWeight );
+		}
 	}
 
 	auto chosenNpcSection = ChooseNpcToCreate( npcListVector );
@@ -320,7 +336,7 @@ auto CCharStuff::CreateRandomNPC( const std::string &npclist ) -> CChar *
 	if( oldstrutil::upper( csecs[0] ) == "NPCLIST" )
 	{
 		// Chosen entry contained another NPCLIST! Let's dive back into it...
-		cCreated = CreateRandomNPC( npcList->GrabData() );
+		cCreated = CreateRandomNPC( csecs[1] );
 	}
 	else
 	{
@@ -422,10 +438,10 @@ void CCharStuff::PostSpawnUpdate( CChar *cCreated )
 
 	// Set hunger timer so NPC's hunger level doesn't instantly drop after spawning
 	auto hungerRate	 = Races->GetHungerRate( cCreated->GetRace() );
-	cCreated->SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
+	cCreated->SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R64>( hungerRate )));
 
 	UpdateFlag( cCreated );
-	cCreated->Update();
+	cCreated->Update( nullptr, false, true, true );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -740,13 +756,14 @@ auto CCharStuff::LoadShopList( const std::string& list, CChar *c ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets a character with a random name from NPC namelists in namelists.dfn
 //o------------------------------------------------------------------------------------------------o
-void SetRandomName( CChar *s, const std::string& namelist )
+void SetRandomName( CBaseObject *s, const std::string& namelist )
 {
 	std::string sect	= std::string( "RANDOMNAME " ) + namelist;
 	sect				= oldstrutil::trim( oldstrutil::removeTrailing( sect, "//" ));
 	std::string tempName;
+	auto cat		= s->CanBeObjType(OT_CHAR) ? npc_def : items_def;
 
-	CScriptSection *RandomName = FileLookup->FindEntry( sect, npc_def );
+	CScriptSection *RandomName = FileLookup->FindEntry( sect, cat );
 	if( RandomName == nullptr )
 	{
 		tempName = std::string( "Error Namelist " ) + namelist + std::string( " Not Found" );
@@ -883,6 +900,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 					Console.Warning( oldstrutil::format( "Invalid data found in ATT/DAMAGE tag inside NPC script [%s]", sectionId.c_str() ));
 				}
 				break;
+			case DFNTAG_DAMAGEINCREASE:	applyTo->SetDamageIncrease( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_AWAKE:
 				if( !isGate )
 				{
@@ -1148,10 +1166,10 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				}
 				break;
 			case DFNTAG_FLEEINGSPEED:
-				applyTo->SetFleeingSpeed( std::stof( cdata ));
+				applyTo->SetFleeingSpeed( std::stod( cdata ));
 				break;
 			case DFNTAG_FLEEINGSPEEDMOUNTED:
-				applyTo->SetMountedFleeingSpeed( std::stof( cdata ));
+				applyTo->SetMountedFleeingSpeed( std::stod( cdata ));
 				break;
 			case DFNTAG_FLAG:
 				if( !isGate )
@@ -1485,10 +1503,12 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				break;
 			case DFNTAG_LOCKPICKING:		skillToSet = LOCKPICKING;				break;
 			case DFNTAG_LODAMAGE:			applyTo->SetLoDamage( static_cast<SI16>( ndata ));	break;
+			case DFNTAG_LUCK:				applyTo->SetLuck( static_cast<SI16>( ndata ));			break;
 			case DFNTAG_LUMBERJACKING:		skillToSet = LUMBERJACKING;				break;
 			case DFNTAG_LOYALTY:
 				applyTo->SetLoyalty( static_cast<UI16>( ndata ));
 				break;
+			case DFNTAG_TITHING:			applyTo->SetTithing( static_cast<UI32>( ndata )); break;
 			case DFNTAG_MACEFIGHTING:		skillToSet = MACEFIGHTING;				break;
 			case DFNTAG_MAGERY:				skillToSet = MAGERY;					break;
 			case DFNTAG_MAGICRESISTANCE:	skillToSet = MAGICRESISTANCE;			break;
@@ -1540,6 +1560,8 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_NAMELIST:			SetRandomName( applyTo, cdata );		break;
 			case DFNTAG_NECROMANCY:			skillToSet = NECROMANCY;				break;
 			case DFNTAG_NINJITSU:			skillToSet = NINJITSU;					break;
+			case DFNTAG_HITCHANCE:			applyTo->SetHitChance( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_DEFENSECHANCE:		applyTo->SetDefenseChance( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_NPCWANDER:
 				if( !isGate )
 				{
@@ -1575,13 +1597,14 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_PRIV:
 				if( !isGate )
 				{
-					applyTo->SetPriv( static_cast<UI16>( ndata ));
+					applyTo->SetPriv( static_cast<UI32>( ndata ));
 				}
 				break;
 			case DFNTAG_PARRYING:			skillToSet = PARRYING;					break;
 			case DFNTAG_PEACEMAKING:		skillToSet = PEACEMAKING;				break;
 			case DFNTAG_PROVOCATION:		skillToSet = PROVOCATION;				break;
 			case DFNTAG_POISONING:			skillToSet = POISONING;					break;
+			case DFNTAG_SWINGSPEEDINCREASE:	applyTo->SetSwingSpeedIncrease( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_RESISTFIRE:
 				if( ndata >= 0 )
 				{
@@ -1683,6 +1706,9 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				}
 				break;
 			case DFNTAG_REMOVETRAP:			skillToSet = REMOVETRAP;				break;
+			case DFNTAG_HEALTHREGENBONUS:	applyTo->SetHealthRegenBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_STAMINAREGENBONUS:	applyTo->SetStaminaRegenBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_MANAREGENBONUS:		applyTo->SetManaRegenBonus( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_RACE:				applyTo->SetRace( static_cast<UI16>( ndata ));		break;
 			case DFNTAG_RUNS:
 				if( !isGate )
@@ -1691,10 +1717,10 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				}
 				break;
 			case DFNTAG_RUNNINGSPEED:
-				applyTo->SetRunningSpeed( std::stof( cdata ));
+				applyTo->SetRunningSpeed( std::stod( cdata ));
 				break;
 			case DFNTAG_RUNNINGSPEEDMOUNTED:
-				applyTo->SetMountedRunningSpeed( std::stof( cdata ));
+				applyTo->SetMountedRunningSpeed( std::stod( cdata ));
 				break;
 			case DFNTAG_SECTIONID:			applyTo->SetSectionId( cdata );							break;
 			case DFNTAG_SKIN:				applyTo->SetSkin( static_cast<UI16>( ndata ));		break;
@@ -1913,10 +1939,10 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				}
 				break;
 			case DFNTAG_WALKINGSPEED:
-				applyTo->SetWalkingSpeed( std::stof( cdata ));
+				applyTo->SetWalkingSpeed( std::stod( cdata ));
 				break;
 			case DFNTAG_WALKINGSPEEDMOUNTED:
-				applyTo->SetMountedWalkingSpeed( std::stof( cdata ));
+				applyTo->SetMountedWalkingSpeed( std::stod( cdata ));
 				break;
 			case DFNTAG_TACTICS:			skillToSet = TACTICS;					break;
 			case DFNTAG_TAILORING:			skillToSet = TAILORING;					break;
@@ -2027,7 +2053,7 @@ bool CCharStuff::CanControlPet( CChar *mChar, CChar *Npc, bool isRestricted, boo
 			if( chanceToControl == 1000 )
 				return true;
 
-			if( chanceToControl >= RandomNum( 0, 1000 ))
+			if( chanceToControl >= RandomNum( 1, 1000 ))
 			{
 				// Succeeded in controlling pet
 				if( !ignoreLoyaltyChanges )
@@ -2100,6 +2126,15 @@ void CCharStuff::FinalizeTransfer( CChar *petChar, CChar *srcChar, CChar *targCh
 	// Update control slots used for both old and new owners
 	srcChar->SetControlSlotsUsed( std::max(0, srcChar->GetControlSlotsUsed() - petChar->GetControlSlots() ));
 	targChar->SetControlSlotsUsed( std::clamp( targChar->GetControlSlotsUsed() + petChar->GetControlSlots(), 0, 255 ));
+
+	// Remove Pet Bonding if its Bonded
+	TAGMAPOBJECT petBond = petChar->GetTag( "isBondedPet" );
+	if( petBond.m_IntValue == 1  )
+	{
+		petBond.m_IntValue = 0;
+		petChar->SetTag( "isBondedPet", petBond );
+		petChar->RemoveScriptTrigger( 3107 );// petbonding.js
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2150,6 +2185,15 @@ void CCharStuff::ReleasePet( CChar *pet )
 			break;
 		default:
 			break;
+	}
+
+	// Remove Bonding if its Bonded
+	TAGMAPOBJECT petBond = pet->GetTag( "isBondedPet" );
+	if( petBond.m_IntValue == 1  )
+	{
+		petBond.m_IntValue = 0;
+		pet->SetTag( "isBondedPet", petBond );
+		pet->RemoveScriptTrigger( 3107 );// petbonding.js
 	}
 }
 
@@ -2308,6 +2352,7 @@ void Karma( CChar *nCharId, CChar *nKilledId, const SI16 nKarma )
 	SI16 nChange	= 0;
 	bool nEffect	= false;
 	SI16 nCurKarma	= nCharId->GetKarma();
+
 	if( nCurKarma > 10000 )
 	{
 		nCharId->SetKarma( 10000 );
@@ -2319,18 +2364,37 @@ void Karma( CChar *nCharId, CChar *nKilledId, const SI16 nKarma )
 		nCurKarma = -10000;
 	}
 
+	// Block positive karma gain if karma is locked and the player is not young
+	if( nCharId->GetKarmaLock() && nKarma > 0  && cwmWorldState->ServerData()->KarmaLocking() && ( !cwmWorldState->ServerData()->YoungPlayerSystem() || !nCharId->GetAccount().wFlags.test( AB_FLAGS_YOUNG )))
+	{
+		return;
+	}
+
 	if( nCurKarma < nKarma && nKarma > 0 )
 	{
 		nChange = (( nKarma - nCurKarma ) / 75 );
 		nCharId->SetKarma( static_cast<SI16>( nCurKarma + nChange ));
 		nEffect = true;
 	}
+
 	if( nCurKarma > nKarma && ( !ValidateObject( nKilledId ) || nKilledId->GetKarma() > 0 ))
 	{
 		nChange = (( nCurKarma - nKarma ) / 50 );
 		nCharId->SetKarma( static_cast<SI16>( nCurKarma - nChange ));
 		nEffect = false;
 	}
+
+	// If karma goes negative, lock it (do not lock young if the young system is active)
+	if( nCharId->GetKarma() < 0 && !nCharId->GetKarmaLock() && cwmWorldState->ServerData()->KarmaLocking() && ( !cwmWorldState->ServerData()->YoungPlayerSystem() || !nCharId->GetAccount().wFlags.test( AB_FLAGS_YOUNG )))
+    {
+		nCharId->SetKarmaLock(true);
+		CSocket *mSock = nCharId->GetSocket();
+		if( mSock )
+		{
+			mSock->SysMessage( 5751 ); // Karma is locked.  A mantra spoken at a shrine will unlock it again.
+		}
+	}
+
 	if( nChange == 0 )	// NPCs CAN gain/lose karma
 	{
 		return;

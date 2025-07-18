@@ -6,14 +6,25 @@ const alchemyBonusModifier = parseInt( GetServerSetting( "AlchemyBonusModifier" 
 
 // Other settings
 const randomizePotionCountdown = false; // If true, add/remove +1/-1 seconds to explosion potion countdowns
+const reqFreeHands = true;
 
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
-	if ( pUser.visible == 1 || pUser.visible == 2 )
+	var itemRHand = pUser.FindItemLayer( 0x01 );
+	var itemLHand = pUser.FindItemLayer( 0x02 );
+
+	if( reqFreeHands && ( itemRHand != null && itemLHand != null ))
+	{
+		socket.SysMessage( GetDictionaryEntry( 6304, socket.language ) );// You must have a free hand to drink a potion.
+		return false;
+	}
+
+	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
 	}
+
 	if( socket && iUsed && iUsed.isItem )
 	{
 		if( pUser.isUsingPotion )
@@ -161,7 +172,7 @@ function onUseChecked( pUser, iUsed )
 			case 4:		// Heal Potion
 				if( pUser.health < pUser.maxhp )
 				{
-					if( pUser.poison > 0 )
+					if( pUser.poison > 0 || pUser.GetTempTag( "blockHeal" ) == true )
 					{
 						pUser.SysMessage( GetDictionaryEntry( 9058, socket.language )); // You can not heal yourself in your current state.
 						return;
@@ -204,7 +215,7 @@ function onUseChecked( pUser, iUsed )
 			case 6:		// Poison Potion
 				if( pUser.poison < iUsed.morez )
 				{
-					pUser.SetPoisoned( iUsed.morez, 180 * 1000 );
+					pUser.SetPoisoned( iUsed.morez, 180 * 1000, pUser );
 				}
 
 				pUser.SoundEffect( 0x0246, true );
@@ -267,12 +278,27 @@ function onUseChecked( pUser, iUsed )
 				pUser.isUsingPotion = true;
 				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
+			case 10:		// Pet Bonding Potion
+				switch( iUsed.morez )
+				{
+					case 1:
+						socket.tempObj = iUsed;
+						socket.CustomTarget( 1, GetDictionaryEntry( 19318, socket.language )); //"Target the pet you wish to bond with. Press ESC to cancel. This item is consumed on successful use, so choose wisely!"
+						break;
+					default:
+						break;
+				}
+				pUser.StaticEffect( 0x376A, 0x09, 0x06 );
+				pUser.SoundEffect( 0x01E7, true );
+				pUser.isUsingPotion = true;
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
+				break;
 			default:
 				break;
 		}
 
 		// For potions other than explosion potions, consume potion upon use
-		if( iUsed.morey != 3 )
+		if( iUsed.morey != 3 && iUsed.morey != 10)
 		{
 			pUser.SoundEffect( 0x0030, true );
 			if( pUser.id > 0x0189 && !pUser.isonhorse )
@@ -329,9 +355,10 @@ function onCallback0( socket, ourObj )
 			var x = socket.GetWord( 11 );
 			var y = socket.GetWord( 13 );
 			var z = socket.GetSByte( 16 );
+			var StrangeByte = socket.GetWord(1);
 
 			// If connected with a client lower than v7.0.9, manually add height of targeted tile
-			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+			if ((StrangeByte == 0 && ourObj.isItem) || (socket.clientMajorVer <= 7 && socket.clientSubVer < 9))
 			{
 				z += GetTileHeight( socket.GetWord( 17 ));
 			}
@@ -356,6 +383,50 @@ function onCallback0( socket, ourObj )
 
 		// Play moving effect of potion being thrown to potion's target location
 		DoMovingEffect( mChar, iUsed, 0x0F0D, 5, 0, false, 0, 0 );
+	}
+}
+
+function onCallback1( socket, ourObj )
+{
+	var mChar = socket.currentChar;
+	var iUsed = socket.tempObj;
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+	{
+		socket.SysMessage( GetDictionaryEntry( 19319, socket.language )); // Pet bonding canceled.
+		return;
+	}
+
+	if( ourObj.GetTag( "isBondedPet" ))
+	{
+		socket.SysMessage( GetDictionaryEntry( 19320, socket.language )); // That pet is already bonded to you.
+	}
+	else if( ourObj.owner != mChar )
+	{
+		socket.SysMessage( GetDictionaryEntry( 19321, socket.language )); // This is not your pet!
+	}
+	else
+	{
+		ourObj.SetTag( "isBondedPet", true );
+		socket.SysMessage( GetDictionaryEntry( 19308, socket.language )); // Your pet has bonded with you!
+		if( iUsed && iUsed.isItem )
+		{
+			if( iUsed.amount > 1 )
+			{
+				iUsed.amount--;
+			}
+			else
+			{
+				iUsed.Delete();
+			}
+		}
+
+		// Create empty bottle
+		var eBottle = CreateDFNItem( socket, mChar, "0x0F0E", 1, "ITEM", true );
+		if( eBottle && eBottle.isItem )
+		{
+			eBottle.decay = true;
+		}
 	}
 }
 
@@ -427,7 +498,7 @@ function ApplyExplosionDamage( timerObj, targetChar )
 			return;
 
 		// Don't damage Young players
-		if( GetServerSetting( "YoungPlayerStatus" ))
+		if( GetServerSetting( "YoungPlayerSystem" ))
 		{
 			// Don't damage a Young player, or a Young player's pets
 			if(( !targetChar.npc && targetChar.account.isYoung )

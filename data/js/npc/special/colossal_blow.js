@@ -1,5 +1,5 @@
 // Handle Colossal Blow special ability - a stunning attack that applies a peacemaking effect
-function onAttack( pAttacker, pDefender )
+function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
 	// Don't perform scolossal blow if attacker is invalid or dead
 	if( !ValidateObject( pAttacker ) || pAttacker.dead )

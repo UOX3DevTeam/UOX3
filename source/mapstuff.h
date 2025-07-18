@@ -167,7 +167,7 @@ public:
 	// height functions
 	auto StaticTop( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::int8_t maxZ ) -> std::int8_t;
 	auto DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, std::int8_t maxZ ) -> std::int8_t;
-	auto MapElevation( std::int16_t x, std::int16_t y, std::uint8_t worldNumber ) -> std::int8_t;
+	auto MapElevation( std::int16_t x, std::int16_t y, std::uint8_t worldNumber, bool ignoreVoid = false ) -> std::int8_t;
 	auto TileHeight( std::uint16_t tileNum ) -> std::int8_t;
 	auto Height( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId ) -> std::int8_t;
 	auto InBuilding( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId ) -> bool;

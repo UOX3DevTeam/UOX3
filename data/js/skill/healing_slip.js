@@ -1,6 +1,5 @@
 const healSlipScriptID = 4014; // script ID assigned to this script in jse_fileassociations.scp
-const slipOnPlayerDamage = 19;
-const slipOnNPCDamage = 26;
+const coreShardEra = GetServerSetting( "CoreShardEra" );
 
 // For registering "slips" when attempting to heal someone with bandages
 function onDamage( damaged, attacker, damageValue, damageType )
@@ -12,15 +11,41 @@ function onDamage( damaged, attacker, damageValue, damageType )
 		damaged.RemoveScriptTrigger( healSlipScriptID );
 	}
 
-	// Only have player "slip up" at healing for high damage numbers
-	if( !ValidateObject( attacker ) ||
-		( damageValue >= slipOnNPCDamage && attacker.npc && !attacker.isHuman ) ||
-		( damageValue >= slipOnPlayerDamage && !attacker.npc ))
+	if( damageType != 7 ) // poison
 	{
-		damaged.SetTempTag( "slipCount", damaged.GetTempTag( "slipCount" ) + 1 );
-		if( damaged.socket )
+		var slipOnPlayerDamage = 0;
+		var slipOnNPCDamage = 0;
+		if( coreShardEra >= EraStringToNum( "hs" ))
 		{
-			damaged.socket.SysMessage( GetDictionaryEntry( 9088, damaged.socket.language )); // Your fingers slip!
+			// With Publish 71 for HS, threshold for slipping now scales by dexterity
+			slipOnPlayerDamage = 19 + Math.round( damaged.dexterity / 12 );
+			slipOnNPCDamage = 26 + Math.round( damaged.dexterity / 12 );
+		}
+		else if( coreShardEra >= EraStringToNum( "se" ))
+		{
+			// With Publish 21 for SE, threshold was raised to 26 hp for both PvP/PvE
+			// With Publish 25 for SE, threshold reduced from 26 to 19 for PvP only
+			slipOnPlayerDamage = 19;
+			slipOnNPCDamage = 26;
+		}
+		else
+		{
+			// Very low threshold for fingers slipping during bandaging in AoS? era and below
+			// Possibly supposed to be 0, no real values to be found
+			slipOnPlayerDamage = 2;
+			slipOnNPCDamage = 5;
+		}
+
+		// Only have player "slip up" at healing for high damage numbers
+		if( !ValidateObject( attacker ) ||
+			( damageValue >= slipOnNPCDamage && attacker.npc && !attacker.isHuman ) ||
+			( damageValue >= slipOnPlayerDamage && !attacker.npc ))
+		{
+			damaged.SetTempTag( "slipCount", damaged.GetTempTag( "slipCount" ) + 1 );
+			if( damaged.socket )
+			{
+				damaged.socket.SysMessage( GetDictionaryEntry( 9088, damaged.socket.language )); // Your fingers slip!
+			}
 		}
 	}
 	return true;

@@ -455,7 +455,7 @@ void CNetworkStuff::LogOut( CSocket *s )
 		{
 			actbAccount.dwInGame = INVALIDSERIAL;
 		}
-		p->SetTimer( tPC_LOGOUT, 0 );
+		p->SetTimer( tPC_LOGOUT, 1 );
 		s->ClearTimers();
 	}
 	else
@@ -791,7 +791,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 		SI32 count = mSock->Receive( 4 );
 		if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
 		{
-			SI32 ho, mi, se, total;
+			SI64 ho, mi, se, total;
 			total = ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
 			ho = total / 3600;
 			total -= ho * 3600;
@@ -913,7 +913,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 
 						if( ourChar->GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() )
 						{
-							ourChar->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( 1 ));
+							ourChar->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( 1.0 ));
 						}
 						else
 						{
@@ -1077,7 +1077,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 					case 0xB6: // T2A Popuphelp request
 						mSock->Receive( 9 );
 						break;
-					case 0xB8: // T2A Profile request
+					/*case 0xB8: // T2A Profile request
 						mSock->Receive( 3 );
 						mSock->Receive( mSock->GetWord( 1 ));		// this is how it's really done
 
@@ -1148,7 +1148,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 								mSock->FlushBuffer();
 							}
 						}
-						break;
+						break;*/
 					case 0xBB:
 						//	Ultima Messenger (9 bytes)
 						//	BYTE cmd

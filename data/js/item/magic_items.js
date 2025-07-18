@@ -559,7 +559,7 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 		// Loop through all the properties for our new magic item and copy them over to the placeholder item
 		for( var itemProp in rndWeapon )
 		{
-			if( itemProp != null && itemProp != "serial" && itemProp != "scripttrigger" && itemProp != "scriptTriggers" )
+			if( itemProp != null && itemProp != "serial" && itemProp != "scripttrigger" && itemProp != "scriptTriggers" && itemProp != "att" )
 			{
 				if( typeof( rndWeapon[itemProp] ) != "undefined" && rndWeapon[itemProp] != null )
 				{

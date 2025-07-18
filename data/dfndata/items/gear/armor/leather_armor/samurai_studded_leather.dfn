@@ -1,6 +1,7 @@
 // Studded Do - E/W
 [0x277c]
 {
+gett2a=0x277c_t2a
 getlbr=0x277c_lbr
 getaos=0x277c_aos
 gettol=0x277c_tol
@@ -23,6 +24,7 @@ get=0x277c 0x27c7
 // Studded Hiro Sode - E/W
 [0x277f]
 {
+gett2a=0x277f_t2a
 getlbr=0x277f_lbr
 getaos=0x277f_aos
 gettol=0x277f_tol
@@ -45,6 +47,7 @@ get=0x277f 0x27ca
 // Studded Suneate - E/W
 [0x2787]
 {
+gett2a=0x2787_t2a
 getlbr=0x2787_lbr
 getaos=0x2787_aos
 gettol=0x2787_tol
@@ -67,6 +70,7 @@ get=0x2787 0x27d2
 // Studded Haidate - N/S
 [0x278b]
 {
+gett2a=0x278b_t2a
 getlbr=0x278b_lbr
 getaos=0x278b_aos
 gettol=0x278b_tol
@@ -89,6 +93,7 @@ get=0x278b 0x27d6
 // Studded Mempo - N/S
 [0x279d]
 {
+gett2a=0x279d_t2a
 getlbr=0x279d_lbr
 getaos=0x279d_aos
 gettol=0x279d_tol

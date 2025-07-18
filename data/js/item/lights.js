@@ -402,6 +402,99 @@ function onUseChecked( pUser, iUsed )
 			iUsed.dir = 99;
 			iUsed.id = 0x4C42;
 			break;
+		//Halloween pumpkins
+		case 0xA396: //unlit Octopus
+		case 0xA39A: //unlit tall tree
+		case 0xA39E: //unlit fairy
+		case 0xA165: //unlit Skull
+		case 0xA169: //unlit Tongue
+		case 0xA16D: //unlit Twoface
+		case 0xA139: //unlit Green Bat
+		case 0xA13D: //unlit Green Cat
+		case 0xA141: //unlit Green Devil 
+		case 0xA145: //unlit Green Ghost
+		case 0xA149: //unlit Green Anhk
+		case 0xA14D: //unlit Green Owl
+		case 0xA151: //unlit Green Skull
+		case 0xA155: //unlit Green Spider
+		case 0xA159: //unlit Green Swirl
+		case 0xA15D: //unlit Green UO
+		case 0xA161: //unlit Green Witch
+		case 0xA198: //unlit Huge Dragon
+		case 0x9F23: //unlit Rose
+		case 0x9F27: //unlit OWl
+		case 0x9D23: //unlit Gord Witch
+		case 0x9D27: //unlit Gord Zombie
+		case 0x9935: //unlit Tall UO
+		case 0x9939: //unlit Tall Ankh
+		case 0x993D: //unlit Tall Spider
+		case 0x9941: //unlit Tall Bat
+		case 0x9945: //unlit Tall Skull
+		case 0x9949: //unlit Tall Daemon
+		case 0x994D: //unlit Tall Spirit
+		case 0x9951: //unlit Tall Scalele
+		case 0x9BD5: //unlit Tall Rose
+		case 0xA5E0: //unlit wolf howling
+		case 0xA5E4: //unlit welcome
+		case 0xA779: //unlit medusa right
+		case 0xA77D: //unlit medusa left
+		case 0xA781: //unlit deamon right
+		case 0xA785: //unlit deamon left
+			soundObject.SoundEffect(0x03BE, allHearSound);
+			lightDir = 1;
+			iUsed.id++;
+			break;
+		case 0xA397: //lit Octopus
+		case 0xA39B: //lit tall tree
+		case 0xA39F: //lit fairy
+		case 0xA166: //lit Skull
+		case 0xA16A: //lit Tongue
+		case 0xA16E: //lit Twoface
+		case 0xA13A: //lit Green Bat
+		case 0xA13E: //lit Green Cat
+		case 0xA142: //lit Green Devil 
+		case 0xA146: //lit Green Ghost
+		case 0xA14A: //lit Green Anhk
+		case 0xA14E: //lit Green Owl
+		case 0xA152: //lit Green Skull
+		case 0xA156: //lit Green Spider
+		case 0xA15A: //lit Green Swirl
+		case 0xA15E: //lit Green UO
+		case 0xA162: //lit Green Witch
+		case 0xA199: //lit Huge Dragon
+		case 0x9F24: //lit Rose
+		case 0x9F28: //lit OWl
+		case 0x9D24: //lit Gord Witch
+		case 0x9D28: //lit Gord Zombie
+		case 0x9936: //lit Tall UO
+		case 0x993A: //lit Tall Ankh
+		case 0x993E: //lit Tall Spider
+		case 0x9942: //lit Tall Bat
+		case 0x9946: //lit Tall Skull
+		case 0x994A: //lit Tall Daemon
+		case 0x994E: //lit Tall Spirit
+		case 0x9952: //lit Tall Scalele
+		case 0x9BD6: //lit Tall Rose
+		case 0xA5E1: //lit wolf howling
+		case 0xA5E5: //lit welcome
+		case 0xA77A: //lit medusa right
+		case 0xA77E: //lit medusa left
+		case 0xA782: //lit deamon right
+		case 0xA786: //lit deamon left
+			soundObject.SoundEffect(0x0047, allHearSound);
+			lightDir = 99;
+			iUsed.id--;
+			break;
+		case 0x9934: //unlit Tall Witch
+			soundObject.SoundEffect(0x03BE, allHearSound);
+			lightDir = 1;
+			iUsed.id = 0x9931;
+			break;
+		case 0x9931: //lit Tall Witch
+			soundObject.SoundEffect(0x0047, allHearSound);
+			lightDir = 1;
+			iUsed.id = 0x9934;
+			break;
 	}
 
 	// If lightDir value is set, we're trying to turn ON a light source

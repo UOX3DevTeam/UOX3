@@ -6,7 +6,7 @@
 // Runebooks can either be crafted via the Inscription skill, or added by GMs using this command:
 // 'add item runebook
 
-var maxCharges = 10;		// Default maximum amount of charges a runebook can hold
+var maxCharges = 16;		// Default maximum amount of charges a runebook can hold
 const showCoords = true; 	// Show regular coordinates in tooltip above latitude/longitude values
 const scriptID = 5029;		// Script ID assigned to this script in jse_fileassociations.scp
 const useDelay = 7000; 		// 7 seconds between each time a runebook can be used
@@ -24,7 +24,11 @@ function onUseChecked( pUser, runeBook )
 	// get users socket
 	var pSocket = pUser.socket;
 
-	if( runeBook.GetTag( "useDelayed" ))
+	var iTime = GetCurrentClock();
+	var NextUse = parseInt( runeBook.GetTag( "useDelayed" ));
+	var Delay = 7000;
+
+	if( ( iTime - NextUse ) < Delay )
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 9250, pSocket.language )); // This book needs time to recharge.
 		return false;
@@ -500,8 +504,7 @@ function onGumpPress( pSocket, myButton, gumpData )
 				pSocket.tempInt2 = ( myButton - 30 );
 				runeBook.SetTag( "inUse", null );
 				runeBook.SetTag( "userSerial", null );
-				runeBook.SetTag( "useDelayed", true );
-				runeBook.StartTimer( useDelay, 100, true );
+				runeBook.SetTempTag( "useDelayed", GetCurrentClock().toString() );
 				CastSpell( pSocket, pUser, 32, false );
 			}
 			else
@@ -598,8 +601,7 @@ function onGumpPress( pSocket, myButton, gumpData )
 				pSocket.tempInt2 = ( myButton - 120 );
 				runeBook.SetTag( "inUse", null );
 				runeBook.SetTag( "userSerial", null );
-				runeBook.SetTag( "useDelayed", true );
-				runeBook.StartTimer( useDelay, 100, true );
+				runeBook.SetTempTag( "useDelayed", GetCurrentClock().toString() );
 				CastSpell( pSocket, pUser, 32, true );
 			}
 			else
@@ -630,8 +632,7 @@ function onGumpPress( pSocket, myButton, gumpData )
 				pSocket.tempInt2 = ( myButton - 140 );
 				runeBook.SetTag( "inUse", null );
 				runeBook.SetTag( "userSerial", null );
-				runeBook.SetTag( "useDelayed", true );
-				runeBook.StartTimer( useDelay, 100, true );
+				runeBook.SetTempTag( "useDelayed", GetCurrentClock().toString() );
 				CastSpell( pSocket, pUser, 52, true );
 			}
 			else
@@ -644,6 +645,20 @@ function onGumpPress( pSocket, myButton, gumpData )
 
 function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 {
+	var runeBook = pSocket.tempObj2;
+	var runeNum = pSocket.tempInt2;
+	var runeData = runeBook.GetTag( "rune" + runeNum + "Data" );
+	var splitData = runeData.split( "," );
+	var targLocX = parseInt(splitData[2]);
+	var targLocY = parseInt(splitData[3]);
+	var targWorld = parseInt(splitData[5]);
+	var targInstanceID = 0;
+
+	if( splitData[6] )
+	{
+		targInstanceID = parseInt(splitData[6]);
+	}
+
 	// Are we already casting?
 	if( pUser.GetTimer( Timer.SPELLTIME ) != 0 )
 	{
@@ -663,6 +678,12 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 	if( pUser.isJailed )
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 704, pSocket.language ));
+		return;
+	}
+
+	//Checks if they can travell in the region.
+	if( TriggerEvent( 6002, "CheckTravelRestrictions", pUser, spellNum, targLocX, targLocY, targWorld, targInstanceID ))
+	{
 		return;
 	}
 
@@ -690,14 +711,14 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 	// Is the player casting recall holding any objects?
 	var itemRHand = pUser.FindItemLayer( 0x01 );
 	var itemLHand = pUser.FindItemLayer( 0x02 );
-	if( ValidateObject( itemLHand ) || ( ValidateObject( itemRHand ) && itemRHand.type != 9 ))	// Spellbook
+	if( ValidateObject( itemLHand ) && itemLHand.type != 119 || ( ValidateObject( itemRHand ) && ( itemRHand.type != 9 || itemRHand.type != 119 )))    // Spellbook //spell channeling
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 708, pSocket.language )); // You cannot cast with a weapon equipped.
 		return;
 	}
 
 	// Does player have enough reagents to cast the spell?
-	if( checkReagentReq && !CheckReagents( pUser, mSpell ))
+	if( checkReagentReq && !TriggerEvent( 6004, "CheckReagents", pUser, mSpell))
 		return;
 
 	// Make sure player has enough of the required stats to cast the spell
@@ -764,7 +785,7 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 		pUser.TextMessage( mSpell.mantra );
 		if( checkReagentReq )
 		{
-			DeleteReagents( pUser, mSpell );
+			TriggerEvent( 6004, "DeleteReagents", pUser, mSpell );
 		}
 		pUser.SpellFail();
 		pUser.isCasting = false;
@@ -782,7 +803,7 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 	// Delete reagents if needed
 	if( checkReagentReq )
 	{
-		DeleteReagents( pUser, mSpell );
+		TriggerEvent( 6004, "DeleteReagents", pUser, mSpell );
 	}
 
 	pUser.TextMessage( mSpell.mantra );
@@ -791,76 +812,8 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 	pUser.StartTimer( delay, spellNum, true );
 }
 
-function CheckReagents( pUser, mSpell )
-{
-	var failedCheck = 0;
-	if( mSpell.ash > 0 && pUser.ResourceCount( 0x0F8C ) < mSpell.ash )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.drake > 0 && pUser.ResourceCount( 0x0F86 ) < mSpell.drake )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.garlic > 0 && pUser.ResourceCount( 0x0F84 ) < mSpell.garlic )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.ginseng > 0 && pUser.ResourceCount( 0x0F85 ) < mSpell.ginseng )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.moss > 0 && pUser.ResourceCount( 0x0F7B ) < mSpell.moss )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.pearl > 0 && pUser.ResourceCount( 0x0F7A ) < mSpell.pearl )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.shade > 0 && pUser.ResourceCount( 0x0F88 ) < mSpell.shade )
-	{
-		failedCheck = 1;
-	}
-	if( mSpell.silk > 0 && pUser.ResourceCount( 0x0F8D ) < mSpell.silk )
-	{
-		failedCheck = 1;
-	}
-	if( failedCheck == 1 )
-	{
-		if( pUser.socket != null )
-		{
-			pUser.socket.SysMessage( GetDictionaryEntry( 702, pUser.socket.language )); // You do not have enough reagents to cast that spell.
-		}
-		return false;
-	}
-	else
-	{
-		return true;
-	}
-}
-
-function DeleteReagents( pUser, mSpell )
-{
-	pUser.UseResource( mSpell.pearl, 0x0F7A );
-	pUser.UseResource( mSpell.moss, 0x0F7B );
-	pUser.UseResource( mSpell.garlic, 0x0F84 );
-	pUser.UseResource( mSpell.ginseng, 0x0F85 );
-	pUser.UseResource( mSpell.drake, 0x0F86 );
-	pUser.UseResource( mSpell.shade, 0x0F88 );
-	pUser.UseResource( mSpell.ash, 0x0F8C );
-	pUser.UseResource( mSpell.silk, 0x0F8D );
-}
-
 function onTimer( timerObj, timerID )
 {
-	if( timerID == 100 )
-	{
-		if( ValidateObject( timerObj ) && timerObj.isItem )
-		{
-			timerObj.SetTag( "useDelayed", null );
-		}
-	}
 	var pSocket = timerObj.socket;
 	if( !pSocket )
 		return;
@@ -909,21 +862,7 @@ function onTimer( timerObj, timerID )
 	// Handle effect of spell
 	if( spellNum == 32 ) // Recall spell
 	{
-		// Teleport player's followers
-		var followerList = timerObj.GetFollowerList();
-		for( var i = 0; i < followerList.length; i++ )
-		{
-			var tempFollower = followerList[i];
-			// Only teleport player's pets if they are set to follow
-			if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( timerObj, 24 ))
-			{
-				tempFollower.Teleport( targLocX, targLocY, targLocZ, targWorld, targInstanceID );
-				tempFollower.Follow( timerObj );
-			}
-		}
-
-		// Teleport player
-		timerObj.Teleport( targLocX, targLocY, targLocZ, targWorld, targInstanceID );
+		TriggerEvent( 6003, "TeleportHelper", timerObj, targLocX, targLocY, targLocZ, targWorld, targInstanceID, true )
 	}
 	else
 	{
@@ -1185,3 +1124,5 @@ function GetMapCoordinates( xCoord, yCoord, worldNum )
 
 	return resultArray;
 }
+
+function _restorecontext_() {}

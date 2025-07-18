@@ -86,6 +86,7 @@ damage=8 36
 hp=31 110
 spd=31
 str=40
+script=5050//weapon_abilties.js
 }
 
 // Maul - LBR stats (default)
@@ -141,6 +142,7 @@ damage=6 23
 hp=55 60
 spd=54
 str=25
+script=5050//weapon_abilties.js
 }
 
 // Tetsubo - LBR stats (default)
@@ -153,6 +155,7 @@ damage=7 27
 hp=60 65
 spd=43
 str=25
+script=5050//weapon_abilties.js
 }
 
 // Nunchaku - LBR stats (default)
@@ -165,6 +168,7 @@ damage=7 27
 hp=40 55
 spd=43
 str=15
+script=5050//weapon_abilties.js
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -219,6 +223,7 @@ spd=31
 str=40
 value=27 13
 weight=1000
+script=5050//weapon_abilties.js
 }
 
 // Gargish Tessen - LBR stats (default)
@@ -231,6 +236,7 @@ spd=54
 str=25
 value=124 68
 weight=500
+script=5050//weapon_abilties.js
 }
 
 //------------------------------------------------------------------------------------------------//

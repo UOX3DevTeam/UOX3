@@ -20,6 +20,7 @@ movable=1
 // Large Battle Axe - E/W
 [0x13fa]
 {
+gett2a=0x13fa_t2a
 getlbr=0x13fa_lbr
 getaos=0x13fa_aos
 gettol=0x13fa_tol
@@ -56,6 +57,7 @@ movable=1
 // Two Handed Axe - E/W
 [0x1442]
 {
+gett2a=0x1442_t2a
 getlbr=0x1442_lbr
 getaos=0x1442_aos
 gettol=0x1442_tol
@@ -92,6 +94,7 @@ movable=1
 // Hatchet - N/S
 [0x0f43]
 {
+gett2a=0x0f43_t2a
 getlbr=0x0f43_lbr
 getaos=0x0f43_aos
 gettol=0x0f43_tol
@@ -128,6 +131,7 @@ movable=1
 // Executioner's Axe - N/S
 [0x0f45]
 {
+gett2a=0x0f45_t2a
 getlbr=0x0f45_lbr
 getaos=0x0f45_aos
 gettol=0x0f45_tol
@@ -164,6 +168,7 @@ movable=1
 // Battle Axe - N/S
 [0x0f47]
 {
+gett2a=0x0f47_t2a
 getlbr=0x0f47_lbr
 getaos=0x0f47_aos
 gettol=0x0f47_tol
@@ -200,6 +205,7 @@ movable=1
 // Axe - N/S
 [0x0f49]
 {
+gett2a=0x0f49_t2a
 getlbr=0x0f49_lbr
 getaos=0x0f49_aos
 gettol=0x0f49_tol
@@ -236,6 +242,7 @@ movable=1
 // Double Axe - N/S
 [0x0f4b]
 {
+gett2a=0x0f4b_t2a
 getlbr=0x0f4b_lbr
 getaos=0x0f4b_aos
 gettol=0x0f4b_tol
@@ -276,6 +283,7 @@ type=216
 // Ornate Axe - N/S
 [0x2d28]
 {
+gett2a=0x2d28_t2a
 getlbr=0x2d28_lbr
 getaos=0x2d28_aos
 gettol=0x2d28_tol
@@ -316,6 +324,7 @@ type=216
 // Gargish Battle Axe - N/S
 [0x48b0]
 {
+gett2a=0x48b0_t2a
 getlbr=0x48b0_lbr
 getaos=0x48b0_aos
 gettol=0x48b0_tol
@@ -352,6 +361,7 @@ restock=10
 // Dual Short Axes - N/S
 [0x08fd]
 {
+gett2a=0x08fd_t2a
 getlbr=0x08fd_lbr
 getaos=0x08fd_aos
 gettol=0x08fd_tol
@@ -388,6 +398,7 @@ restock=10
 // Gargish Axe - N/S
 [0x48b2]
 {
+gett2a=0x48b2_t2a
 getlbr=0x48b2_lbr
 getaos=0x48b2_aos
 gettol=0x48b2_tol

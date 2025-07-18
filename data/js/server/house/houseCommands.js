@@ -1522,8 +1522,17 @@ function DemolishHouse( pSocket, iMulti )
 					iMulti.RemoveTrashCont( itemInHouse );
 					itemInHouse.Delete();
 				}
-				else if( itemInHouse.movable == 2 ) // items placed as part of the house itself like forge/anvil in smithy
+				else if( itemInHouse.movable == 2 || itemInHouse.GetTag( "deed" )) // items placed as part of the house itself like forge/anvil in smithy or the addon deed
 				{
+					var addonDeed = itemInHouse.GetTag( "deed" );
+					if( addonDeed )
+					{
+						var newDeed = CreateDFNItem( pSocket, pSocket.currentChar, addonDeed, 1, "ITEM", true );
+						if( newDeed )
+						{
+							pSocket.SysMessage( GetDictionaryEntry( 1970, pSocket.language )); // A deed for the house add-on has been placed in your backpack.
+						}
+					}
 					itemInHouse.Delete();
 				}
 				else if( itemInHouse.isLockedDown )

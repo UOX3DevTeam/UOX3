@@ -492,6 +492,30 @@ public:
 	virtual bool	Handle( void ) override;
 };
 
+class CPIProfileRequest : public CPInputBuffer
+{
+protected:
+	UI32			id;
+	UI08			mode;
+	UI32			serial;
+	std::string		profileText;
+
+public:
+	virtual			~CPIProfileRequest()
+	{
+	}
+	CPIProfileRequest();
+	CPIProfileRequest( CSocket *s );
+	virtual void	Receive( void ) override;
+	virtual bool	Handle( void ) override;
+
+	UI32				ID( void ) const;
+	UI08				Mode( void ) const;
+	UI32				Serial( void ) const;
+	const std::string	ProfileText( void ) const;
+	//virtual void		Log( std::ostream &outStream, bool fullHeader = true ) override;
+};
+
 class CPIGumpChoice : public CPInputBuffer
 {
 public:
@@ -881,7 +905,7 @@ class CPIPopupMenuSelect : public CPInputBuffer
 {
 protected:
 	UI16			popupEntry;
-	CChar *			targChar;
+	CBaseObject *	targObj;
 public:
 	virtual			~CPIPopupMenuSelect()
 	{

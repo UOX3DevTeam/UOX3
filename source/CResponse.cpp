@@ -470,7 +470,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 			if( cwmWorldState->creatures[nearbyNpc->GetId()].IsHuman() )
 			{
 				// Stop the NPC from moving for a minute while talking with the player
-				nearbyNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
+				nearbyNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 				mSock->TempObj( nullptr ); //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
 				SI16 skill = -1;
 
@@ -783,6 +783,18 @@ bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *petNpc )
 	{
 		if( Npcs->CanControlPet( mChar, petNpc, true, false ))
 		{
+			std::vector<UI16> scriptTriggers = petNpc->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute )
+				{
+					SI08 retStatus = toExecute->OnReleasePet( mChar, petNpc );
+					if( retStatus == 0 )
+						return false;
+				}
+			}
+
 			// Reduce player's control slot usage by the amount of control slots taken up by the pet
 			mChar->SetControlSlotsUsed( std::max( 0, mChar->GetControlSlotsUsed() - petNpc->GetControlSlots() ));
 
@@ -842,6 +854,12 @@ bool CPetAttackResponse::Handle( CSocket *mSock, CChar *mChar, CChar *petNpc )
 	std::string npcName = GetNpcDictName( petNpc, mSock, NRS_SYSTEM );
 	if( saidAll || FindString( ourText, oldstrutil::upper( npcName )))
 	{
+		TAGMAPOBJECT deadPet = petNpc->GetTag( "isPetDead" );
+		if( deadPet.m_IntValue == 1 )
+		{
+			mSock->SysMessage( 19302 );// The dead pet cannot attack.
+			return true;
+		}
 		if( Npcs->CanControlPet( mChar, petNpc, false, true ))
 		{
 			Npcs->StopPetGuarding( petNpc );
@@ -936,7 +954,7 @@ void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 	{
 		if( nearbyNpc->IsShop() || nearbyNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 		{
-			if( !LineOfSight( mSock, mChar, nearbyNpc->GetX(), nearbyNpc->GetY(), ( nearbyNpc->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+			if( !LineOfSight( mSock, mChar, nearbyNpc->GetX(), nearbyNpc->GetY(), nearbyNpc->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 				continue;
 
 			std::string npcName = GetNpcDictName( nearbyNpc, mSock, NRS_SYSTEM );
@@ -959,7 +977,7 @@ CVendorBuyResponse::CVendorBuyResponse( bool vendVal, const std::string &text ) 
 //o------------------------------------------------------------------------------------------------o
 bool CVendorBuyResponse::Handle( CSocket *mSock, [[maybe_unused]] CChar *mChar, CChar *vendorNpc )
 {
-	vendorNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
+	vendorNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 	if( vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 	{
 		mSock->TempObj( vendorNpc );
@@ -1000,7 +1018,7 @@ bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *vendorNpc
 		}
 	}
 
-	vendorNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
+	vendorNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0 ));
 	CPSellList toSend;
 	if( toSend.CanSellItems(( *mChar ), ( *vendorNpc )))
 	{
@@ -1248,7 +1266,7 @@ void CBoatMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 	}
 	else
 	{
-		mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->CheckBoatSpeed() )));
+		mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( cwmWorldState->ServerData()->CheckBoatSpeed() ));
 	}
 
 	CBoatObj *boat = GetBoat( mSock );

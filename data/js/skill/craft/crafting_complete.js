@@ -31,7 +31,7 @@ function onMakeItem( pSock, pCrafter, itemCrafted, craftEntryID )
 	// Apply special effect based on item crafted
 	if( ValidateObject( itemCrafted ))
 	{
-		// Jewelry, furniture, potions
+		// Jewelry, furniture, potions, maps
 		switch( craftEntryID )
 		{
 			case 239: // necklace
@@ -105,6 +105,12 @@ function onMakeItem( pSock, pCrafter, itemCrafted, craftEntryID )
 				itemCrafted.name2 = "#";
 				ClearTagsAndScript( pCrafter );
 				return;
+			case 2000: // local map
+			case 2001: // city map
+			case 2002: // sea chart
+				CraftedMapCoords( pSock, itemCrafted );
+				ClearTagsAndScript( pCrafter );
+				return;
 			case 0: // Failed to craft item
 			default:
 				break;
@@ -145,6 +151,47 @@ function onMakeItem( pSock, pCrafter, itemCrafted, craftEntryID )
 	}
 
 	ClearTagsAndScript( pCrafter );
+}
+
+function CraftedMapCoords( socket, mapItem )
+{
+	var pUser = socket.currentChar;
+	var skillValue = ( pUser.baseskills.cartography / 10 ).toFixed(1);
+	// Define the minimum and maximum distances
+	if( mapItem.sectionID == "craftedlocalmap" ) 
+	{
+		var minDist = 32;
+	}
+	else if( mapItem.sectionID == "craftedcitymap" )
+	{
+		var minDist = 64;
+	}
+	else {
+		var minDist = 92;
+	}
+	var maxDist = 200;
+	// Linear interpolation for distance based on skill
+	var dist = Math.round(minDist + (maxDist - minDist) * (skillValue / 100));
+	if( mapItem.sectionID == "craftedlocalmap" ) 
+	{
+		var size = 200;
+	}
+	else if( mapItem.sectionID == "craftedcitymap" )
+	{
+		var size = 300;
+	}
+	else
+	{
+		// Define the minimum and maximum sizes
+		var minSize = 300;
+		var maxSize = 400;
+		// Linear interpolation for size based on skill
+		var size = Math.round( minSize + ( maxSize - minSize ) * ( skillValue / 100 ));
+	}
+	mapItem.SetTag( "dimensions", size + "," + size );																						// saves information for the map to be reopened
+	mapItem.SetTag( "boundingbox", ( pUser.x - dist ) + "," + ( pUser.y - dist ) + "," + ( pUser.x + dist ) + "," + ( pUser.y + dist ));	// saves information for the map to be reopened
+	mapItem.SetTag( "Drawn", 1 );
+	ClearTagsAndScript(pUser);
 }
 
 function ApplyExceptionalArmorBonuses( pCrafter, itemCrafted, coreShardEraValue )

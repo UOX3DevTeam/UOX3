@@ -11,6 +11,7 @@ orclord
 npclist=allettin
 }
 
+// Yew Peninsula 1
 [NPCLIST location_1_medium]
 {
 npclist=OrcParty
@@ -25,15 +26,14 @@ waterele
 gazer
 gargoyle
 npclist=tamewoods
-npclist=randomwhealer
 }
 
+// Yew Peninsula 2
 [NPCLIST location_2_heavy]
 {
 hind
 hart
 }
-
 [NPCLIST location_2_medium]
 {
 npclist=weakorc
@@ -45,47 +45,41 @@ npclist=allratmen
 npclist=alllizardmen
 direwolf
 }
-
 [NPCLIST location_2_light]
 {
 airele
 gargoyle
 }
 
+// Yew Catacombs
 [NPCLIST location_3_light]
 {
-zombie
-skeleton
-boneaxeman
-ghoul
-lich
-zombie
-skeleton
-boneaxeman
-ghoul
-lichlord
-zombie
-skeleton
-boneaxeman
-ghoul
+22|skeleton
+22|zombie
+22|boneaxeman
+22|ghoul
+8|lich
+4|lichlord
 }
 
+// Yew Forest East/South
 [NPCLIST location_4_medium]
 {
-npclist=OrcParty
-npclist=alltroll
-ogre
-npclist=alllizardmen
-giantspider
-zombie
-skeleton
-ghoul
-corpser
-reaper
-wisp
-airele
-gazer
-gargoyle
+30|npclist=OrcParty
+24|npclist=alltroll
+24|npclist=alllizardmen
+24|ogre
+12|giantspider
+8|zombie
+8|skeleton
+8|ghoul
+4|corpser
+4|reaper
+4|wisp
+2|airele
+2|gazer
+2|gargoyle
+2|wilderness
 }
 
 [NPCLIST location_5_light]
@@ -95,6 +89,7 @@ boneaxeman
 zombie
 }
 
+// Yew Farmlands
 [NPCLIST location_6_medium]
 {
 hind
@@ -108,6 +103,7 @@ npclist=allbirdlist
 npclist=allbearlist
 }
 
+// Yew Forest SW
 [NPCLIST location_7_medium]
 {
 npclist=OrcParty
@@ -123,12 +119,15 @@ direwolf
 npclist=tamewoods
 }
 
+// Yew Orc Fort
 [NPCLIST location_8_medium]
 {
-npclist=weakorc
-npclist=allettin
+75|npclist=weakorc
+20|npclist=strongorc
+5|npclist=allettin
 }
 
+// Shame Forest Entrance
 [NPCLIST location_9_heavy]
 {
 npclist=OrcParty
@@ -138,7 +137,6 @@ waterele
 gargoyle
 gazer
 }
-
 [NPCLIST location_9_medium]
 {
 harpy
@@ -150,31 +148,38 @@ direwolf
 npclist=tamewoods
 }
 
+// Yew Forest Ruins South
 [NPCLIST location_10_light]
 {
-lich
-npclist=allettin
-npclist=alltroll
-npclist=alllizardmen
+30|npclist=allettin
+30|npclist=alltroll
+30|npclist=alllizardmen
+10|lich
 }
 
+// Rat Valley - Orcs/Ratmen/Goats
 [NPCLIST location_11_heavy]
 {
+33|npclist=weakorc
+33|npclist=weakratmen
+22|goat
+11|npclist=strongorc
 //orccamps
 //ratmancamps
-goat
 }
 
+// Rat Valley - Others
 [NPCLIST location_11_medium]
 {
-npclist=allettin
-npclist=alltroll
-ogre
-gazer
-headless
-harpy
+23|npclist=ettinogre
+22|npclist=alltroll
+15|sewerrat
+15|harpy
+15|headless
+10|gazer
 }
 
+// Skara Yew Brigand Forest
 [NPCLIST location_12_medium]
 {
 npclist=brigand
@@ -184,33 +189,29 @@ spectre
 npclist=weakorc
 giantspider
 }
-
 [NPCLIST location_12_light]
 {
 npclist=allettin
 ogre
 }
 
+// Skara Forest North
 [NPCLIST location_13_heavy]
 {
-npclist=tamewoods
-npclist=randomwhealer
-npclist=allbirdlist
-npclist=allbearlist
+60|npclist=tamewoods
+40|npclist=allbearlist
 }
-
 [NPCLIST location_13_medium]
 {
-npclist=weakorc
-ghoul
-headless
-zombie
-npclist=alllizardmen
-npclist=allratmen
-wisp
-giantspider
+22|npclist=weakorc
+22|npclist=alllizardmen
+22|npclist=allratmen
+5|ghoul
+5|headless
+5|zombie
+5|giantspider
+12|wisp
 }
-
 [NPCLIST location_13_light]
 {
 npclist=allettin
@@ -235,11 +236,11 @@ boneaxeman
 
 [NPCLIST location_15_heavy]
 {
-npclist=tamewoods
-npclist=allbirdlist
-npclist=allbearlist
+60|npclist=tamewoods
+40|npclist=allbearlist
 }
 
+// Hedge Maze Forest North
 [NPCLIST location_16_light]
 {
 npclist=weakorc
@@ -249,15 +250,14 @@ mongbat
 giantspider
 wisp
 npclist=tamewoods
-npclist=allbirdlist
 npclist=allbearlist
 }
 
+// Hedge Maze Center
 [NPCLIST location_17_light]
 {
-npclist=tamewoods
-npclist=allbirdlist
-npclist=allbearlist
+45|npclist=tamewoods
+30|npclist=allbearlist
 }
 
 [NPCLIST location_18_light]
@@ -273,7 +273,6 @@ giantserpent
 [NPCLIST location_19_medium]
 {
 npclist=tamewoods
-npclist=allbirdlist
 npclist=allbearlist
 }
 
@@ -329,7 +328,6 @@ npclist=weakorc
 ghoul
 wisp
 npclist=tamewoods
-npclist=allbirdlist
 npclist=allbearlist
 }
 
@@ -351,7 +349,6 @@ npclist=alltroll
 npclist=allettin
 mongbat
 npclist=tamewoods
-npclist=allbirdlist
 npclist=allbearlist
 }
 
@@ -371,13 +368,12 @@ boneaxeman
 ghoul
 }
 
+// Britain GY Forest
 [NPCLIST location_26_heavy]
 {
 npclist=tamewoods
-npclist=allbirdlist
 npclist=allbearlist
 }
-
 [NPCLIST location_26_medium]
 {
 npclist=alllizardmen
@@ -387,20 +383,20 @@ npclist=allratmen
 npclist=alltroll
 }
 
+// Despise Outside - Trolls
 [NPCLIST location_27_light]
 {
 npclist=alltroll
 }
 
+// Britain Forest North
 [NPCLIST location_28_heavy]
 {
 npclist=tamewoods
-npclist=allbirdlist
 npclist=allbearlist
 npclist=weakorc
 mongbat
 }
-
 [NPCLIST location_28_medium]
 {
 npclist=allettin
@@ -412,13 +408,13 @@ corpser
 skeleton
 boneaxeman
 }
-
 [NPCLIST location_28_light]
 {
 gargoyle
 gazer
 }
 
+// Britain Peninsula East
 [NPCLIST location_29_heavy]
 {
 gargoyle
@@ -429,7 +425,6 @@ ogre
 npclist=weakorc
 gazer
 npclist=tamewoods
-npclist=allbirdlist
 npclist=allbearlist
 }
 
@@ -470,7 +465,6 @@ direwolf
 npclist=alllizardmen
 harpy
 npclist=tamewoods
-npclist=allbirdlist
 npclist=allbearlist
 }
 
@@ -479,7 +473,6 @@ npclist=allbearlist
 npclist=allettin
 npclist=alltroll
 npclist=tamewoods
-npclist=allbirdlist
 npclist=allbearlist
 }
 
@@ -491,7 +484,6 @@ npclist=allettin
 npclist=alltroll
 gargoyle
 npclist=tamewoods
-npclist=allbirdlist
 npclist=allbearlist
 }
 
@@ -501,10 +493,10 @@ npclist=weakorc
 npclist=allettin
 airele
 npclist=tamewoods
-npclist=allbirdlist
 npclist=allbearlist
 }
 
+// Minoc Coast NW
 [NPCLIST location_37_heavy]
 {
 harpy
@@ -519,17 +511,15 @@ npclist=alllizardmen
 headless
 wisp
 npclist=tamewoods
-npclist=allbirdlist
 npclist=allbearlist
 }
 
+// Minoc - High Steppes
 [NPCLIST location_38_heavy]
 {
 npclist=tamewoods
-npclist=allbirdlist
 npclist=allbearlist
 }
-
 [NPCLIST location_38_medium]
 {
 npclist=weakorc
@@ -542,6 +532,7 @@ ogre
 wisp
 }
 
+// Shrine of Sacrifice Forests
 [NPCLIST location_39_medium]
 {
 npclist=weakorc
@@ -551,6 +542,7 @@ ogre
 npclist=alllizardmen
 }
 
+// Vesper Forest East
 [NPCLIST location_40_light]
 {
 airele
@@ -562,20 +554,16 @@ ogre
 npclist=alllizardmen
 }
 
-[NPCLIST location_41_light]
+[NPCLIST vesper_graveyard]
 {
-skeleton
-ghoul
-boneaxeman
-zombie
-ghoul
-zombie
-lich
-zombie
-skeleton
-boneaxeman
+30|zombie
+20|skeleton
+20|ghoul
+20|boneaxeman
+10|lich
 }
 
+// Minoc Forest SW
 [NPCLIST location_42_medium]
 {
 npclist=alltroll
@@ -588,31 +576,29 @@ skeleton
 ghoul
 }
 
+// Cove/Vesper/Minoc Forests
 [NPCLIST location_43_medium]
 {
-npclist=tamewoods
-npclist=allbirdlist
-npclist=allbearlist
+50|npclist=tamewoods
+30|npclist=allbearlist
+20|npclist=weakoverworld
 }
 
-[NPCLIST location_44_medium]
+[NPCLIST cove_cemetary]
 {
-skeleton
-ghoul
-boneaxeman
-zombie
-ghoul
-zombie
-lich
-zombie
-skeleton
-boneaxeman
+30|zombie
+20|skeleton
+20|ghoul
+20|boneaxeman
+10|lich
 }
 
+// Cove Orc Fort
 [NPCLIST location_45_heavy]
 {
-7|npclist=weakorc
-npclist=allettin
+75|npclist=weakorc
+20|npclist=strongorc
+5|npclist=allettin
 }
 
 [NPCLIST location_46_light]
@@ -642,29 +628,9 @@ mongbat
 
 [NPCLIST location_48_light]
 {
-firele
+fireele
 drake
 dragon
-}
-
-[NPCLIST location_49_light]
-{
-npclist=weakorc
-}
-
-[NPCLIST location_50_light]
-{
-orcmage
-}
-
-[NPCLIST location_51_heavy]
-{
-hind
-}
-
-[NPCLIST location_52_heavy]
-{
-timberwolf
 }
 
 [NPCLIST location_53_medium]
@@ -680,12 +646,113 @@ ghoul
 lich
 }
 
-[NPCLIST location_54_medium]
+[NPCLIST dagger_isle]
 {
-polarbear
-whitewolf
-snowleapard
-walruse
+25|whitewolf
+25|snowleapard
+21|polarbear
+16|walrus
+7|frosttroll
+3|snowele
+3|iceserpent
+}
+
+[NPCLIST dagger_isle_extended]
+{
+25|whitewolf
+23|snowleapard
+20|polarbear
+13|walrus
+8|npclist=weakorc
+5|frosttroll
+3|snowele
+3|iceserpent
+}
+
+[NPCLIST generic_lowrisk_forest]
+{
+50|npclist=wilderness
+20|harpy
+15|mongbat
+10|skeleton
+5|corpser
+}
+
+[NPCLIST generic_midrisk_forest]
+{
+40|npclist=wilderness
+20|harpy
+15|allettin
+10|giantspider
+10|weakorcs
+5|airele
+}
+
+[NPCLIST bloody_plains]
+{
+50|npclist=weakundeadlist
+30|npclist=allghostslist
+20|npclist=ruralwoods
+}
+
+[NPCLIST windemere_woods]
+{
+npclist=allbirdlist
+npclist=allbearlist
+npclist=ruralwoods
+npclist=alltroll
+cougar
+horse
+llama
+mountaingoat
+panther
+corpser
+giantspider
+headless
+mongbat
+ogre
+reaper
+sewerrat
+snake
+}
+
+[NPCLIST hedge_maze_forest]
+{
+60|npclist=wilderness
+17|mongbat
+10|headless
+8|harpy
+3|npclist=alltroll
+2|npclist=ogre
+}
+
+[NPCLIST deep_forest]
+{
+45|npclist=wilderness
+10|harpy
+10|npclist=alltroll
+8|giantspider
+8|ettin
+7|mongbat
+6|npclist=ogre
+4|headless
+2|gazer
+}
+
+[NPCLIST britannia_sw_swamp_lbr]
+{
+18|alligator
+15|bogling
+14|gianttoad
+12|bogthing
+11|mongbat
+10|snake
+9|acidele
+9|giantrat
+8|sewerrat
+//7|plaguebeast
+6|swamptentacle
+//4|plaguebeastlord
 }
 
 EOF

@@ -413,11 +413,11 @@ void CSocket::ForceOffline( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time point at which the char times out
 //o------------------------------------------------------------------------------------------------o
-SI32 CSocket::IdleTimeout( void ) const
+TIMERVAL CSocket::IdleTimeout( void ) const
 {
 	return idleTimeout;
 }
-void CSocket::IdleTimeout( SI32 newValue )
+void CSocket::IdleTimeout( TIMERVAL newValue )
 {
 	idleTimeout = newValue;
 	wasIdleWarned = false;
@@ -471,11 +471,11 @@ void CSocket::SkillDelayMsgShown( bool value )
 //|	Purpose		-	Gets/Sets the time point at which the player gets kicked if assistant tool
 //|					has not responded to request to negotiate for features
 //o------------------------------------------------------------------------------------------------o
-SI32 CSocket::NegotiateTimeout( void ) const
+TIMERVAL CSocket::NegotiateTimeout( void ) const
 {
 	return negotiateTimeout;
 }
-void CSocket::NegotiateTimeout( SI32 newValue )
+void CSocket::NegotiateTimeout( TIMERVAL newValue )
 {
 	negotiateTimeout = newValue;
 }
@@ -1060,8 +1060,8 @@ SI32 CSocket::Receive( SI32 x, bool doLog )
 {
 	SI32 count			= 0;
 	UI08 recvAttempts	= 0;
-	UI32 curTime		= GetClock();
-	UI32 nexTime		= curTime;
+	TIMERVAL curTime		= GetClock();
+	TIMERVAL nexTime		= curTime;
 	do
 	{
 		count = static_cast<int>( recv( static_cast<UOXSOCKET>( cliSocket ), ( char * )&buffer[inlength], x - inlength, 0 ));
@@ -1863,6 +1863,7 @@ void CSocket::SysMessage( const std::string txt, ... )
 
 	va_start( argptr, txt );
 	auto msg = oldstrutil::format( txt, argptr );
+	va_end( argptr ); // va_end in same function as va_start
 	if( msg.size() > 512 )
 	{
 		msg = msg.substr( 0, 512 );
@@ -1964,6 +1965,7 @@ void CSocket::SysMessage( SI32 dictEntry, ... )
 
 	va_start( argptr, dictEntry );
 	auto msg = oldstrutil::format( txt, argptr );
+	va_end( argptr ); // va_end in same function as va_start
 	if( msg.size() > 512 )
 	{
 		msg = msg.substr( 0, 512 );
@@ -2015,8 +2017,8 @@ void CSocket::ObjMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, 
 
 	va_list argptr;
 	va_start( argptr, Colour );
-
 	ObjMessage( oldstrutil::format( txt, argptr ).c_str(), getObj, secsFromNow, Colour );
+	va_end( argptr ); // va_end in same function as va_start
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2189,7 +2191,15 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	{
 		if( i->IsTamed() && ValidateObject( i->GetOwnerObj() ) && !cwmWorldState->creatures[i->GetId()].IsHuman() )
 		{
-			charName += " (tame) ";
+			TAGMAPOBJECT petBond = i->GetTag( "isBondedPet" );
+			if( petBond.m_IntValue == 1  )
+			{
+				charName += " " + Dictionary->GetEntry( 19335, Language() ); //  (bonded)
+			}
+			else
+			{
+				charName += " " + Dictionary->GetEntry( 19336, Language() ); //  (tame)
+			}
 		}
 
 		// Show NPC title over their head?
@@ -2203,15 +2213,15 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	// Show (invulnerable) tags over the heads of invulnerable characters?
 	if( i->IsInvulnerable() && cwmWorldState->ServerData()->ShowInvulnerableTagOverhead() )
 	{
-		charName += " (invulnerable)";
+		charName += " " + Dictionary->GetEntry( 19337, Language() ); //  (invulnerable)
 	}
 	if( i->IsFrozen() )
 	{
-		charName += " (frozen) ";
+		charName += " " + Dictionary->GetEntry( 19338, Language() ); //  (frozen)
 	}
 	if( i->IsGuarded() )
 	{
-		charName += " (guarded)";
+		charName += " " + Dictionary->GetEntry( 19339, Language() ); //  (guarded)
 	}
 	if( i->GetGuildNumber() != -1 && !i->IsIncognito() && !i->IsDisguised() )
 	{
@@ -2357,6 +2367,7 @@ void CSocket::SendTargetCursor( UI08 targType, UI08 targId, UI08 cursorType, SI3
 	va_list argptr;
 	va_start( argptr, dictEntry );
 	auto msg = oldstrutil::format( txt, argptr );
+	va_end( argptr ); // va_end in same function as va_start
 	if( msg.size() > 512 )
 	{
 		msg = msg.substr( 0, 512 );
@@ -2505,7 +2516,7 @@ void CSocket::StatWindow( CBaseObject *targObj, bool updateParty )
 		if( !targChar->IsNpc() && mChar == targChar )
 		{
 			toSend.Gold( GetItemAmount( targChar, 0x0EED ));
-			toSend.AC( Combat->CalcDef( targChar, 0, false ));
+			toSend.AC( Combat->CalcDef( targChar, 0, false, PHYSICAL, false, true ));
 		}
 
 		Send( &toSend );

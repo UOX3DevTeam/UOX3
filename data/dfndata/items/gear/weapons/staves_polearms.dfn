@@ -21,6 +21,7 @@ script=4015// herding skill
 // Crook - E/W
 [0x13f4]
 {
+gett2a=0x13f4_t2a
 getlbr=0x13f4_lbr
 getaos=0x13f4_aos
 gettol=0x13f4_tol
@@ -60,6 +61,7 @@ script=4015// herding skill
 // Shepherd's Crook - E/W
 [0x0e81]
 {
+gett2a=0x0e81_t2a
 getlbr=0x0e81_lbr
 getaos=0x0e81_aos
 gettol=0x0e81_tol
@@ -95,6 +97,7 @@ restock=10
 // Gnarled Staff - N/S
 [0x13f8]
 {
+gett2a=0x13f8_t2a
 getlbr=0x13f8_lbr
 getaos=0x13f8_aos
 gettol=0x13f8_tol
@@ -130,6 +133,7 @@ restock=10
 // Black Staff - E/W
 [0x0df0]
 {
+gett2a=0x0df0_t2a
 getlbr=0x0df0_lbr
 getaos=0x0df0_aos
 gettol=0x0df0_tol
@@ -165,6 +169,7 @@ restock=10
 // Quarter Staff - N/S
 [0x0e89]
 {
+gett2a=0x0e89_t2a
 getlbr=0x0e89_lbr
 getaos=0x0e89_aos
 gettol=0x0e89_tol
@@ -200,6 +205,7 @@ restock=10
 // Halberd - E/W
 [0x143e]
 {
+gett2a=0x143e_t2a
 getlbr=0x143e_lbr
 getaos=0x143e_aos
 gettol=0x143e_tol
@@ -254,6 +260,7 @@ restock=10
 // Bardiche - N/S
 [0x0f4d]
 {
+gett2a=0x0f4d_t2a
 getlbr=0x0f4d_lbr
 getaos=0x0f4d_aos
 gettol=0x0f4d_tol
@@ -293,6 +300,7 @@ restock=10
 // Scythe - E/W
 [0x26ba]
 {
+gett2a=0x26ba_t2a
 getlbr=0x26ba_lbr
 getaos=0x26ba_aos
 gettol=0x26ba_tol
@@ -329,6 +337,7 @@ restock=10
 // Bladed Staff - E/W
 [0x26bd]
 {
+gett2a=0x26bd_t2a
 getlbr=0x26bd_lbr
 getaos=0x26bd_aos
 gettol=0x26bd_tol
@@ -365,6 +374,7 @@ restock=10
 // Double Bladed Staff - E/W
 [0x26bf]
 {
+gett2a=0x26bf_t2a
 getlbr=0x26bf_lbr
 getaos=0x26bf_aos
 gettol=0x26bf_tol
@@ -404,6 +414,7 @@ restock=10
 // Wild Staff - N/S
 [0x2d25]
 {
+gett2a=0x2d25_t2a
 getlbr=0x2d25_lbr
 getaos=0x2d25_aos
 gettol=0x2d25_tol
@@ -443,6 +454,7 @@ restock=10
 // Gargish Bardiche - N/W
 [0x48b4]
 {
+gett2a=0x48b4_t2a
 getlbr=0x48b4_lbr
 getaos=0x48b4_aos
 gettol=0x48b4_tol
@@ -479,6 +491,7 @@ restock=10
 // Gargish Scythe - N/S
 [0x48c4]
 {
+gett2a=0x48c4_t2a
 getlbr=0x48c4_lbr
 getaos=0x48c4_aos
 gettol=0x48c4_tol
@@ -515,6 +528,7 @@ restock=10
 // Serpentstone Staff - N/S
 [0x0906]
 {
+gett2a=0x0906_t2a
 getlbr=0x0906_lbr
 getaos=0x0906_aos
 gettol=0x0906_tol
@@ -551,6 +565,7 @@ restock=10
 // Gargish Gnarled Staff - N/S
 [0x48b8]
 {
+gett2a=0x48b8_t2a
 getlbr=0x48b8_lbr
 getaos=0x48b8_aos
 gettol=0x48b8_tol
@@ -587,6 +602,7 @@ restock=10
 // Glass Staff - N/S
 [0x0905]
 {
+gett2a=0x0905_t2a
 getlbr=0x0905_lbr
 getaos=0x0905_aos
 gettol=0x0905_tol

@@ -523,6 +523,22 @@ public:
 	virtual void	DamageMax( UI16 value );
 	virtual void	DamageMin( UI16 value );
 	virtual void	TithingPoints( UI32 value );
+    // Extended-6 (UOKR+) Stat Methods
+	virtual void	PhysicalResistCap( UI16 value );
+	virtual void	FireResistCap( UI16 value );
+	virtual void	ColdResistCap( UI16 value );
+	virtual void	PoisonResistCap( UI16 value );
+	virtual void	EnergyResistCap( UI16 value );
+	virtual void	HitChanceIncrease( UI16 value );
+	virtual void	SwingSpeedIncrease( UI16 value );
+	virtual void	DamageChanceIncrease( UI16 value );
+	virtual void	LowerReagentCost( UI16 value );
+	virtual void    DefenseChanceIncrease( UI16 value );
+	virtual void    DefenseChanceIncreaseCap( UI16 value );
+	virtual void    SpellDamageIncrease( UI16 value );
+	virtual void    FasterCastRecovery( UI16 value );
+	virtual void    FasterCasting( UI16 value );
+	virtual void    LowerManaCost( UI16 value );
 };
 
 class CPIdleWarning : public CPUOXBuffer
@@ -1387,6 +1403,12 @@ protected:
 		std::string ourText;
 		UI32 stringNum;
 		size_t stringLen;
+		SI16 sortOrder = DEFAULT_TOOLTIP_SORT; // default, if nothing else is specified
+
+		// Overload the less-than operator for sorting
+		bool operator<( const ToolTipEntry_st& other ) const {
+			return sortOrder < other.sortOrder;
+		}
 	};
 	std::vector<ToolTipEntry_st> ourEntries;
 
@@ -1539,11 +1561,11 @@ protected:
 	virtual void	InternalReset( void ) override;
 public:
 	CPPopupMenu();
-	CPPopupMenu( CChar&, CSocket& );
+	CPPopupMenu( CBaseObject&, CSocket& );
 	virtual			~CPPopupMenu()
 	{
 	}
-	virtual void	CopyData( CChar&, CSocket& );
+	virtual void	CopyData( CBaseObject&, CSocket& );
 };
 
 class CPClilocMessage : public CPUOXBuffer

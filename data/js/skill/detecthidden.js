@@ -67,7 +67,7 @@ function DetectHiddenLoop( srcChar, trgChar, pSock )
 				checkSkill = RandomNumber( chanceToDetect, hidingSkill );
 			}
 
-			if( srcChar.CheckSkill( 14, checkSkill, 1000 ))
+			if( srcChar.CheckSkill( 14, checkSkill, srcChar.skillCaps.detectinghidden ))
 			{
 				trgChar.visible = 0;
 				trgChar.stealth = -1;

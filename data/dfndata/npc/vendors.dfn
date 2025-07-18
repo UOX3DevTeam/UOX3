@@ -123,9 +123,19 @@ GET=m_ironworker f_ironworker
 GET=m_jeweler f_jeweler
 }
 
+[leatherworker]
+{
+GET=m_leatherworker f_leatherworker
+}
+
 [mage]
 {
 GET=m_mage f_mage
+}
+
+[mapmaker]
+{
+GET=m_mapmaker f_mapmaker
 }
 
 [miner]
@@ -146,6 +156,11 @@ GET=m_scribe f_scribe
 [shipwright]
 {
 GET=m_shipwright f_shipwright
+}
+
+[spinner]
+{
+GET=m_spinner f_spinner
 }
 
 [tailor]
@@ -173,10 +188,10 @@ GET=m_tinker f_tinker
 GET=m_vagabond f_vagabond
 }
 
-//[vet]
-//{Note: Not implanted Yet
-//GET=m_vet f_vet
-//}
+[veterinarian]
+{
+GET=m_veterinarian f_veterinarian
+}
 
 [waiter]
 {

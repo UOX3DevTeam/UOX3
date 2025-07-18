@@ -49,6 +49,13 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 			}
 		}
 
+		// Dead (bonded) pets are not valid
+		TAGMAPOBJECT deadPet = cTarget->GetTag( "isPetDead" );
+		if( deadPet.m_IntValue == 1 )
+		{
+			return false;
+		}
+
 		// Targets on character's combat ignore list are not valid
 		if( mChar.CheckCombatIgnore( cTarget->GetSerial() ))
 		{
@@ -61,18 +68,63 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 			return false;
 		}
 
-		if( ObjInRange( &mChar, cTarget, cwmWorldState->ServerData()->CombatMaxRange() ))
+		if( ObjInRange( &mChar, cTarget, cwmWorldState->ServerData()->CombatMaxNpcAggroRange() ))
 		{
-			if( LineOfSight( nullptr, (&mChar), cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+			//if( mChar.IsNpc() && cTarget->IsNpc() && !ValidateObject( mChar.GetOwnerObj() ) && !ValidateObject( cTarget->GetOwnerObj() ))
+			if( mChar.IsNpc() && cTarget->IsNpc() && !ValidateObject( mChar.GetOwnerObj() ))
+			{
+				if( mChar.GetRace() == cTarget->GetRace() && !ValidateObject( cTarget->GetOwnerObj() ))
+				{
+					// Not a valid target if belonging to same race
+					return false;
+				}
+
+				// Not a valid target if both are human and both have same NPC Flag (evil, innocent, neutral)
+				if( cwmWorldState->creatures[mChar.GetId()].IsHuman() && cwmWorldState->creatures[cTarget->GetId()].IsHuman() )
+				{
+					if( mChar.GetNPCFlag() == cTarget->GetNPCFlag() )
+					{
+						return false;
+					}
+				}
+
+				if( std::abs( mChar.GetZ() - cTarget->GetZ() ) >= 20 )
+				{
+					// Unless BOTH NPCs are using ranged weapons, don't let the NPCs fight if they're on different floors.
+					// Most likely, they can't reach each other
+					CItem *mWeapon = Combat->GetWeapon( &mChar );
+					CItem *cWeapon = Combat->GetWeapon( cTarget );
+					auto mCombatSkill = Combat->GetCombatSkill( mWeapon );
+					auto cCombatSkill = Combat->GetCombatSkill( cWeapon );
+					const UI16 charDist	= GetDist( &mChar, cTarget );
+					if((( mCombatSkill != ARCHERY && mCombatSkill != THROWING ) || charDist > mWeapon->GetMaxRange() )
+						|| (( cCombatSkill != ARCHERY && cCombatSkill != THROWING ) || charDist > cWeapon->GetMaxRange() ))
+					{
+						return false;
+					}
+				}
+			}
+
+			if( LineOfSight( nullptr, (&mChar), cTarget->GetX(), cTarget->GetY(), cTarget->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 			{
 				// Young players are not valid targets for NPCs outside of dungeons
-				if( cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.IsNpc() && !cTarget->IsNpc() && IsOnline(( *cTarget )) && cTarget->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && !cTarget->GetRegion()->IsDungeon() )
+				if( cTarget->GetTarg() != &mChar && cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.IsNpc() && !cTarget->IsNpc() && IsOnline(( *cTarget )) && cTarget->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && !cTarget->GetRegion()->IsDungeon() )
 				{
-					if( cTarget->GetSocket() && ( cTarget->GetTimer( tCHAR_YOUNGMESSAGE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
+					// Only display message to player if an actual hostile NPC would be considering them as a target
+					auto aiType = mChar.GetNpcAiType();
+					if( aiType == AI_EVIL || aiType == AI_ANIMAL || aiType == AI_EVIL_CASTER || aiType == AI_CHAOTIC )
 					{
-						cTarget->SetTimer( tCHAR_YOUNGMESSAGE, BuildTimeValue( static_cast<R32>( 120 ))); // Only send them the warning message once couple of minutes
-						cTarget->GetSocket()->SysMessage( 18734 ); // A monster looks at you menacingly but does not attack.  You would be under attack now if not for your status as a new citizen of Britannia.
+						if( cTarget->GetSocket() && cTarget->GetTimer( tCHAR_YOUNGMESSAGE ) <= cwmWorldState->GetUICurrentTime() )
+						{
+							cTarget->SetTimer( tCHAR_YOUNGMESSAGE, BuildTimeValue( 120.0 )); // Only send them the warning message once couple of minutes
+							cTarget->GetSocket()->SysMessage( 18734 ); // A monster looks at you menacingly but does not attack.  You would be under attack now if not for your status as a new citizen of Britannia.
+						}
 					}
+					return false;
+				}
+				else if( cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.IsNpc() && cTarget->IsNpc() && ValidateObject( cTarget->GetOwnerObj() ) && cTarget->GetOwnerObj()->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && !cTarget->GetRegion()->IsDungeon() )
+				{
+					// Don't attack pets of Young Characters outside of dungeons
 					return false;
 				}
 
@@ -223,7 +275,7 @@ void HandleHealerAI( CChar& mChar )
 		CMultiObj *multiObj = realChar->GetMultiObj();
 		if( realChar->IsDead() && ( !ValidateObject( multiObj ) || multiObj->GetOwner() == realChar->GetSerial() ))
 		{
-			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), ( mChar.GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), mChar.GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 			{
 				if( realChar->IsMurderer() )
 				{
@@ -257,10 +309,10 @@ void HandleHealerAI( CChar& mChar )
 		else if( realChar->GetHP() < realChar->GetMaxHP() && cwmWorldState->ServerData()->YoungPlayerSystem() && realChar->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
 		{
 			// Heal young players every X minutes
-			if( realChar->GetTimer( tCHAR_YOUNGHEAL ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			if( realChar->GetTimer( tCHAR_YOUNGHEAL ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				mChar.RemoveFromCombatIgnore( realChar->GetSerial() );
-				realChar->SetTimer( tCHAR_YOUNGHEAL, BuildTimeValue( static_cast<R32>( 300 ))); // Only heal young player max once every 5 minutes
+				realChar->SetTimer( tCHAR_YOUNGHEAL, BuildTimeValue( 300.0 )); // Only heal young player max once every 5 minutes
 				mChar.TextMessage( nullptr, 18731, TALK, false ); // You look like you need some healing my child.
 				Effects->PlayStaticAnimation( realChar, 0x376A, 0x09, 0x06 );
 				realChar->SetHP( realChar->GetMaxHP() );
@@ -292,7 +344,7 @@ void HandleEvilHealerAI( CChar& mChar )
 		CMultiObj *multiObj = realChar->GetMultiObj();
 		if( realChar->IsDead() && ( !ValidateObject( multiObj ) || multiObj->GetOwner() == realChar->GetSerial() ))
 		{
-			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), ( mChar.GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), mChar.GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 			{
 				if( realChar->IsMurderer() )
 				{
@@ -350,7 +402,7 @@ auto HandleEvilAI( CChar& mChar ) -> void
 		}
 		for( const auto &tempChar : regChars->collection() )
 		{
-			if( IsValidAttackTarget( mChar, tempChar ) && !CheckForValidOwner( mChar, tempChar ))
+			if( IsValidAttackTarget( mChar, tempChar ) ) // && !CheckForValidOwner( mChar, tempChar ))
 			{
 				// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
 				// This event will override target selection entirely
@@ -383,7 +435,8 @@ auto HandleEvilAI( CChar& mChar ) -> void
 
 				if( tempChar->GetNpcAiType() != AI_HEALER_G )
 				{
-					if( cwmWorldState->creatures[tempChar->GetId()].IsAnimal() )
+					// Special consideration for non-pet animal targets
+					if( cwmWorldState->creatures[tempChar->GetId()].IsAnimal() && !ValidateObject( tempChar->GetOwnerObj() ))
 					{
 						if( !cwmWorldState->ServerData()->CombatMonstersVsAnimals() )
 						{
@@ -443,7 +496,7 @@ auto HandleChaoticAI( CChar& mChar ) -> void
 		}
 		for( const auto &tempChar : regChars->collection() )
 		{
-			if( IsValidAttackTarget( mChar, tempChar ) && !CheckForValidOwner( mChar, tempChar ))
+			if( IsValidAttackTarget( mChar, tempChar )) // && !CheckForValidOwner( mChar, tempChar ))
 			{
 				// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
 				// This event will override target selection entirely

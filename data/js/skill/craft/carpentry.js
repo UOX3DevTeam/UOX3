@@ -142,7 +142,7 @@ function onCallback2( pSock, ourObj )
 					mChar.StartTimer( repairDelay, 1, true );
 					return;
 				}
-				var maxDifficulty = Math.min( repairDifficulty + 250, 1000 );
+				var maxDifficulty = Math.min( repairDifficulty + 250, mChar.skillCaps.carpentry );
 
 				// Allow repair if random number between min and base difficulty is under player's skill
 				if( RandomNumber( minDifficulty, 1000 ) < ( Math.max( repairSkill + skillBonus, 999 )))

@@ -75,7 +75,7 @@ function onUseChecked( pUser, iSwitch )
 			if( isNextSwitch && iSwitch.id == 0x1091 )
 			{
 				var iTime = GetCurrentClock();
-				var lastSpawnTime = iSwitch.GetTempTag( "lastSpawnTime" );
+				var lastSpawnTime = parseInt( iSwitch.GetTempTag( "lastSpawnTime" ));
 
 				if( lastSpawnTime && (( iTime - lastSpawnTime < 60000 )))
 				{
@@ -85,7 +85,7 @@ function onUseChecked( pUser, iSwitch )
 				}
 
 				// Store a timestamp for when last spawn took place
-				iSwitch.SetTempTag( "lastSpawnTime", iTime );
+				iSwitch.SetTempTag( "lastSpawnTime", iTime.toString() );
 
 				// Reset this switch
 				isNextSwitch = 0;

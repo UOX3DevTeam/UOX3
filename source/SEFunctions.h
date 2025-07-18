@@ -47,6 +47,9 @@ SEngineFunc SE_CalcCharFromSer;		//											***
 SEngineFunc SE_CalcItemFromSer;		//											***
 SEngineFunc SE_CalcMultiFromSer;	//											***
 
+SEngineFunc SE_CheckTimeSinceLastCombat;
+SEngineFunc SE_CheckInstaLog;
+
 SEngineFunc SE_MakeItem;			//											***
 
 SEngineFunc SE_CommandLevelReq;		//											*
@@ -113,6 +116,7 @@ SEngineFunc SE_StringToNum;				// Marked for Deletion
 SEngineFunc SE_NumToString;				// Marked for Deletion
 SEngineFunc SE_NumToHexString;			// Marked for Deletion
 SEngineFunc SE_EraStringToNum;
+SEngineFunc SE_GetCommandLevelVal;
 
 SEngineFunc SE_GetRaceCount;
 SEngineFunc SE_AreaCharacterFunction;
@@ -130,6 +134,8 @@ SEngineFunc SE_WorldDarkLevel;
 SEngineFunc SE_WorldDungeonLevel;
 SEngineFunc SE_GetSpawnRegionFacetStatus;
 SEngineFunc SE_SetSpawnRegionFacetStatus;
+SEngineFunc SE_GetMoongateFacetStatus;
+SEngineFunc SE_SetMoongateFacetStatus;
 SEngineFunc SE_GetSocketFromIndex;
 SEngineFunc SE_ResourceArea;
 SEngineFunc SE_ResourceAmount;
@@ -138,6 +144,7 @@ SEngineFunc SE_ResourceRegion;
 SEngineFunc SE_Moon;
 
 SEngineFunc SE_GetTownRegion;
+SEngineFunc SE_GetTownRegionFromXY;
 SEngineFunc SE_GetSpawnRegion;
 SEngineFunc SE_GetSpawnRegionCount;
 

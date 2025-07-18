@@ -1,3 +1,16 @@
+// Base elementals with shared DFN tags
+[base_elemental]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+NPCAI=2
+FLAG=NEUTRAL
+}
+
+//------------------------------------------------------------------------------------------------//
+
 [airele]
 {
 NAME=#//an air elemental
@@ -9,6 +22,7 @@ GOLD=200 300
 LOOT=lowlevelscrolls
 LOOT=midlevelscrolls
 LOOT=randompotions,2
+LOOT=TreasureMapLvl2Loot
 STR=126 155
 DEX=166 185
 INT=101 105
@@ -41,6 +55,7 @@ DIRECTION=RND
 BACKPACK
 GOLD=200 350
 LOOT=eartheleLoot,5
+LOOT=TreasureMapLvl1Loot
 STR=126 155
 DEX=166 185
 INT=71 95
@@ -70,6 +85,7 @@ DIRECTION=RND
 BACKPACK
 GOLD=150 300
 LOOT=randomgems,4
+LOOT=TreasureMapLvl2Loot
 PACKITEM=0x0f8c,8
 STR=126 155
 DEX=166 185
@@ -105,6 +121,7 @@ BACKPACK
 GOLD=200 250
 LOOT=randomreagents,4
 LOOT=randompotions,2
+LOOT=TreasureMapLvl2Loot
 STR=126 155
 DEX=66 85
 INT=101 125
@@ -139,6 +156,7 @@ GOLD=1100 1400
 LOOT=lowlevelscrolls,4
 LOOT=midlevelscrolls,2
 LOOT=randomgems,10
+LOOT=TreasureMapLvl5Loot
 PACKITEM=0x0f7d,2
 STR=526 615
 DEX=66 85
@@ -175,6 +193,7 @@ DIRECTION=RND
 BACKPACK
 GOLD=800 1100
 LOOT=randomgems,10
+LOOT=TreasureMapLvl5Loot
 STR=426 515
 DEX=166 185
 INT=361 435
@@ -194,7 +213,7 @@ DEF=35
 NPCAI=2
 NPCWANDER=4
 FX2=20
-POISONSTRENGTH=4
+POISONSTRENGTH=5
 TOPROV=1051
 TOPEACE=1051 5
 RACE=18
@@ -246,6 +265,8 @@ DIRECTION=RND
 BACKPACK
 GOLD=200 250
 LOOT=snoweleLoot,5
+LOOT=TreasureMapLvl2Loot
+LOOT=TreasureMapLvl3Loot
 STR=326 355
 DEX=166 185
 INT=71 95
@@ -344,6 +365,7 @@ DIRECTION=RND
 BACKPACK
 GOLD=300 600
 LOOT=randomgems,3
+LOOT=TreasureMapLvl1Loot
 STR=226 255
 DEX=126 145
 INT=71 92
@@ -377,6 +399,7 @@ DIRECTION=RND
 BACKPACK
 GOLD=300 600
 LOOT=randomgems,4
+LOOT=TreasureMapLvl1Loot
 STR=226 255
 DEX=126 145
 INT=71 92
@@ -410,6 +433,7 @@ DIRECTION=RND
 BACKPACK
 GOLD=300 600
 LOOT=randomgems,5
+LOOT=TreasureMapLvl1Loot
 STR=226 255
 DEX=126 145
 INT=71 92
@@ -444,6 +468,7 @@ DIRECTION=RND
 BACKPACK
 GOLD=300 600
 LOOT=randomgems,6
+LOOT=TreasureMapLvl1Loot
 STR=226 255
 DEX=126 145
 INT=71 92
@@ -477,6 +502,7 @@ DIRECTION=RND
 BACKPACK
 GOLD=300 600
 LOOT=randomgems,7
+LOOT=TreasureMapLvl1Loot
 STR=226 255
 DEX=126 145
 INT=71 92
@@ -509,6 +535,7 @@ DIRECTION=RND
 BACKPACK
 GOLD=300 600
 LOOT=randomgems,8
+LOOT=TreasureMapLvl1Loot
 STR=226 255
 DEX=126 145
 INT=71 92
@@ -541,6 +568,7 @@ DIRECTION=RND
 BACKPACK
 GOLD=300 600
 LOOT=randomgems,9
+LOOT=TreasureMapLvl1Loot
 STR=226 255
 DEX=126 145
 INT=71 92
@@ -573,6 +601,7 @@ DIRECTION=RND
 BACKPACK
 GOLD=450 650
 LOOT=randomgems,10
+LOOT=TreasureMapLvl1Loot
 STR=226 255
 DEX=126 145
 INT=71 92
@@ -622,4 +651,29 @@ TOPEACE=753 5
 WALKINGSPEED=0.35
 FLEEAT=-1
 FLAG=NEUTRAL
+}
+
+// RaiJu - Base NPC with shared DFN tags
+[base_raiju]
+{
+GET=base_elemental
+NAME=#//a Rai-Ju
+ID=0x0xc7
+SCRIPT=3225
+ORIGIN=se
+}
+
+[raiju]
+{
+GETUO=raiju_se
+GETT2A=raiju_se
+GETUOR=raiju_se
+GETTD=raiju_se
+GETLBR=raiju_se
+GETAOS=raiju_se
+GETSE=raiju_se
+GETML=raiju_se
+GETSA=raiju_se
+GETHS=raiju_se
+GETTOL=raiju_se
 }

@@ -11,6 +11,10 @@ NPC=gianttoad
 NPC=scorpion
 0x2123=Sewer Rat
 NPC=sewerrat
+0x422F=phoenix
+NPC=phoenix
+0x2763=bakekitsune
+NPC=bakekitsune
 <=Previous Menu
 ITEMMENU=5001
 }
@@ -96,6 +100,10 @@ NPC=whitewolf
 NPC=squirrel
 0x2d98=Ferret
 NPC=ferret
+0x2764=crane
+NPC=crane
+0x2768=gaman
+NPC=gaman
 <=Previous Menu
 ITEMMENU=5001
 }
@@ -145,9 +153,9 @@ Arachnids
 NPC=dreadspider
 0x25c5=Frost Spider
 NPC=frostspider
-0x26c6=Giant Spider
+0x20fd=Giant Spider
 NPC=spider
-0x26c4=Giant Black Widow
+0x25c4=Giant Black Widow
 NPC=giantblackwidow
 0x25c9=Terathan Drone
 NPC=teradrone
@@ -186,6 +194,8 @@ NPC=moloch
 NPC=chaosdaemon
 0x259f=Shadow Fiend
 NPC=shadowfiend
+0x276d=oni
+NPC=oni
 <=Previous Menu
 ITEMMENU=5002
 }
@@ -256,6 +266,8 @@ NPC=shadowironele
 NPC=valoriteele
 0x20d7=Verite Elemental
 NPC=veriteele
+0x20d7=raiju
+NPC=raiju
 <=Previous Menu
 ITEMMENU=5002
 }
@@ -343,6 +355,32 @@ NPC=meerwarrior
 NPC=meereternal
 0x0305=a meer captain
 NPC=meercaptain
+0x20de=a lizardman
+NPC=lizardman
+0x20de=a spear lizardman
+NPC=spearlizardman
+0x20de=a mace lizardman
+NPC=macelizardman
+0x20e3=a ratman
+NPC=ratman
+0x20e3=a mace ratman
+NPC=maceratman
+0x20e3=a sword ratman
+NPC=swordratman
+0x20e3=a mage ratman
+NPC=ratmanmage
+0x20e3=a archer ratman
+NPC=ratmanarcher
+0x276b=a kappa
+NPC=kappa
+0x2772=a yomotsu elder
+NPC=yomotsuelder
+0x2773=a yomotsu priest
+NPC=yomotsupriest
+0x281b=a yomotsu warrior
+NPC=yomotsuwarrior
+0x2767=a fan dancer
+NPC=fandancer
 <=Previous Menu
 ITEMMENU=5002
 }
@@ -460,7 +498,9 @@ NPC=etherealswampdragon
 0x281c=Fire Beetle
 NPC=firebeetle
 0x276a=hiryu
-NPC=giantbeetle
+NPC=hiryu
+0x276a=lesser hiryu
+NPC=lesserhiryu
 0x2d95=Reptalon
 NPC=reptalon
 0x2d96=Cu Sidhe
@@ -502,10 +542,16 @@ NPC=ophapprentice
 NPC=ophshaman
 0x25ac=Ophidian Matriarch
 NPC=ophmatriarch
+0x25ac=an ophidian justicar
+NPC=ophjusticar
+0x25ac=an ophidian zealot
+NPC=ophzealot
 0x25c2=Silver Serpent
 NPC=silverserpent
 0x20fc=Snake
 NPC=snake
+0x2771=a yamandon
+NPC=yamandon
 <=Previous Menu
 ITEMMENU=5002
 }
@@ -543,6 +589,12 @@ NPC=mummy
 NPC=rottingcorpse
 0x2591=a Ghoul
 NPC=ghoul
+0x25c7=a spectral armor
+NPC=spectralarmor
+0x276c=lady of the snow
+NPC=ladyofthesnow
+0x276e=revenant lion
+NPC=revenantlion
 <=Previous Menu
 ITEMMENU=5002
 }
@@ -680,6 +732,8 @@ NPC=f_waitress
 NPC=f_weaponsmith
 0x2107=Weaver
 NPC=f_weaver
+0x2107=Veterinarian
+NPC=f_veterinarian
 <=Previous Menu
 ITEMMENU=5003
 }
@@ -816,6 +870,8 @@ NPC=m_waiter
 NPC=m_weaponsmith
 0x2106=Weaver
 NPC=m_weaver
+0x2106=Veterinarian
+NPC=m_veterinarian
 <=Previous Menu
 ITEMMENU=5003
 }
@@ -872,3 +928,47 @@ NPC=travesty
 <=Previous Menu
 ITEMMENU=5002
 }
+
+[ITEMMENU 5024]
+{
+Holiday Creatures
+<=Halloween
+ITEMMENU=5025
+<=Christmas
+ITEMMENU=5026
+<=Previous Menu
+ITEMMENU=5002
+}
+
+[ITEMMENU 5025]
+{
+Halloween
+0x4de=Grimm
+NPC=killerpumpkin
+0x0003=Halloween Zombie
+NPC=halloweenzombie
+0x001a=Halloween Wraith
+NPC=halloweenwraith
+0x001a=Halloween Shade
+NPC=halloweenshade
+0x0032=Halloween Skeleton
+NPC=halloweenskeleton
+0x0038=Halloween Bone Axeman
+NPC=halloweenboneaxeman
+<=Previous Menu
+ITEMMENU=5024
+}
+
+[ITEMMENU 5026]
+{
+Christmas
+0x002f=a winter reaper
+NPC=winterreaper
+0x05CC=Krampus
+NPC=krampus
+0x05CD=Minion
+NPC=krampus_minion
+<=Previous Menu
+ITEMMENU=5024
+}
+

@@ -5,6 +5,7 @@
 //
 
 #include "StringUtility.hpp"
+#include <cstdint>
 #include <cctype>
 #include <regex>
 #include <locale>
@@ -175,6 +176,7 @@ namespace oldstrutil
 				test = test.substr( 0, maxsize );
 			}
 		}
+		va_end( argptr ); // va_end in same function
 		return test;
 	}
 
@@ -197,7 +199,9 @@ namespace oldstrutil
 	{
 		std::va_list argptr;
 		va_start( argptr, fmtstring );
-		return oldstrutil::format( fmtstring, argptr );
+		std::string result = oldstrutil::format( fmtstring, argptr );
+		va_end( argptr ); // va_end in same function
+		return result;
 	}
 
 	//++++++++++++++++++++++++++++++++++++++
@@ -207,7 +211,6 @@ namespace oldstrutil
 		char msg[buffersize];
 		std::memset( msg, 0, buffersize );
 		std::vsnprintf( msg, buffersize, fmtstring.c_str(), list );
-		va_end( list );
 		return std::string( msg );
 	}
 

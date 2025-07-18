@@ -86,12 +86,12 @@ function onCallback0( pSocket, myTarget )
   		return;
 	}
 
-	if( pUser.CheckSkill( 34, 0, 1000 ))
+	if( pUser.CheckSkill( 34, 0, pUser.skillCaps.tailoring ))
 	{
 		pUser.UseResource( 1, iUsed.id ); 	// remove some wool
 		pUser.SoundEffect( 0x021A, true );
 		myTarget.id++;
-		myTarget.StartTimer( 2000, 0, true );
+		myTarget.StartTimer( 2000, 0, 134 );
 		var itemMade = CreateDFNItem( pSocket, pUser, "0x0e1e", 3, "ITEM", true ); // makes some balls of yarn
 		pSocket.SysMessage( GetDictionaryEntry( 6046, pSocket.language )); // You spin some balls of yarn, and put them in your backpack.
 	}

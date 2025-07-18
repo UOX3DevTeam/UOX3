@@ -21,15 +21,25 @@ CMapHandler *MapRegion;
 //o------------------------------------------------------------------------------------------------o
 SI32 FileSize( std::string filename )
 {
+	std::error_code ec;
 	SI32 retVal = 0;
 
-	try
-	{
-		retVal = static_cast<SI32>( std::filesystem::file_size( filename ));
-	}
-	catch( ... )
+	std::uintmax_t size = std::filesystem::file_size( filename, ec );
+	if( ec )
 	{
 		retVal = 0;
+	}
+	else
+	{
+		constexpr std::uintmax_t max_si32 = static_cast<std::uintmax_t>( std::numeric_limits<SI32>::max() );
+		if( size > max_si32 )
+		{
+			retVal = 0;
+		}
+		else
+		{
+			retVal = static_cast<SI32>( size );
+		}
 	}
 
 	return retVal;
@@ -364,8 +374,8 @@ void CMapWorld::LoadResources( UI08 worldNum )
 {
 	mapResources = std::vector<MapResource_st>( mapResources.size(), 
 		MapResource_st( cwmWorldState->ServerData()->ResOre(), cwmWorldState->ServerData()->ResLogs(), 
-			cwmWorldState->ServerData()->ResFish(), BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResOreTime() )), 
-			BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResLogTime() )), BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResFishTime() ))));
+			cwmWorldState->ServerData()->ResFish(), BuildTimeValue( static_cast<R64>( cwmWorldState->ServerData()->ResOreTime() )), 
+			BuildTimeValue( static_cast<R64>( cwmWorldState->ServerData()->ResLogTime() )), BuildTimeValue( static_cast<R64>( cwmWorldState->ServerData()->ResFishTime() ))));
 
 	auto resourceFile = std::filesystem::path( cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + oldstrutil::number( worldNum ) + "].bin"s );
 
@@ -787,7 +797,7 @@ void CMapHandler::Save( void )
 	onePercent /= 100.0f;
 	const char blockDiscriminator[] = "\n\n---REGION---\n\n";
 	UI32 count						= 0;
-	const UI32 s_t						= GetClock();
+	const TIMERVAL s_t						= GetClock();
 
 	Console << "Saving Character and Item Map Region data...   ";
 	Console.TurnYellow();
@@ -897,7 +907,7 @@ void CMapHandler::Save( void )
 	Console << "\b\b\b\b";
 	Console.PrintDone();
 
-	const UI32 e_t = GetClock();
+	const TIMERVAL e_t = GetClock();
 	Console.Print( oldstrutil::format( "World saved in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 
 	i = 0;
@@ -934,7 +944,7 @@ void CMapHandler::Load( void )
 	std::ifstream readDestination;
 	Console.TurnYellow();
 	Console << "0%";
-	UI32 s_t				= GetClock();
+	TIMERVAL s_t				= GetClock();
 	std::string basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
 	std::string filename;
 
@@ -1015,7 +1025,7 @@ void CMapHandler::Load( void )
 	ObjectFactory::GetSingleton().IterateOver( OT_CHAR, b, nullptr, &PostLoadFunctor );
 	houseDestination.close();
 
-	UI32 e_t	= GetClock();
+	TIMERVAL e_t	= GetClock();
 	Console.Print( oldstrutil::format( "ASCII world loaded in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 
 	UI08 i		= 0;

@@ -216,6 +216,10 @@ function onCallback1( socket, ourObj )
 						addonParent.Delete();
 					}
 				}
+				else if( ourObj.GetTag( "HolidayAddon" )) 
+				{
+					TriggerEvent( 5609, "ReDeedAddon", mChar, ourObj );
+				}
 				else if( tileID >= 0x1BD7 && tileID <= 0x1BE2 )	// Bowcraft
 				{
 					BowCraft( socket, mChar, ourObj, tileID );
@@ -328,7 +332,7 @@ function onTimer( mChar, timerID )
 
 				if( mResource.logAmount > 0 )
 				{
-					if( mChar.CheckSkill( 44, 0, 1000 ))
+					if( mChar.CheckSkill( 44, 0, mChar.skillCaps.lumberjacking ))
 					{
 						mResource.logAmount = mResource.logAmount-1;
 						CreateDFNItem( socket, mChar, "0x1BE0", 10, "ITEM", true );

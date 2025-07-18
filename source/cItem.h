@@ -48,6 +48,13 @@ protected:
 	UI16			entryMadeFrom;
 	SERIAL			creator;		// Store the serial of the player made this item
 	SI08			gridLoc;
+	SI16			artifactRarity;
+	UI16			poisonCharges;	// Amount of poison charges for poisoned item
+
+	SI16			durabilityHpBonus;
+
+	SI16			lowerStatReq;
+
 	SI32			weightMax;		// Maximum weight a container can hold
 	SI32			baseWeight;		// Base weight of item. Applied when item is created for the first time, based on weight. Primarily used to determine base weight of containers
 	UI16			maxItems;		// Maximum amount of items a container can hold
@@ -110,8 +117,20 @@ public:
 	auto			GetGridLocation() const -> SI08;
 	auto			SetGridLocation( SI08 newLoc ) -> void;
 
+	SI16			GetArtifactRarity(void) const;
+	void			SetArtifactRarity(SI16 newValue);
+
+	SI16			GetDurabilityHpBonus(void) const;
+	void			SetDurabilityHpBonus(SI16 newValue);
+
+	SI16			GetLowerStatReq( void ) const;
+	void			SetLowerStatReq( SI16 newValue );
+
 	auto			GetStealable() const -> UI08;
 	auto			SetStealable( UI08 newValue ) -> void;
+
+	auto			GetPoisonCharges() const -> UI16;
+	auto			SetPoisonCharges( UI16 newValue ) -> void;
 
 	auto			IsDoorOpen() const -> bool;
 	auto			IsPileable() const -> bool;
@@ -229,6 +248,8 @@ public:
 	auto			GetArmourClass() const -> ARMORCLASS;
 	auto			SetArmourClass( ARMORCLASS newValue ) -> void;
 
+	auto			GetNonMedableArmorRating() const -> R64;
+
 	auto			GetRank() const -> SI08;
 	auto			SetRank( SI08 newValue ) -> void;
 
@@ -301,7 +322,7 @@ public:
 	auto			UpdateRegion() -> void;
 
 	auto			TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0x005A ) -> void;
-	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) override;
+	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true, bool triggerInRangeEvent = false ) override;
 	virtual void	SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) override;
 	auto			SendPackItemToSocket( CSocket *mSock ) -> void;
 	virtual void	RemoveFromSight( CSocket *mSock = nullptr );

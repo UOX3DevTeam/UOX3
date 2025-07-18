@@ -38,7 +38,7 @@ function SnoopAttempt( snoopTarget, targCont, pUser )
 
 	// Always allow those with higher commandlevel to snoop the packs of those with lower commandlevel
 	var minDifficulty = 0;
-	if( pUser.commandlevel <= snoopTarget.commandlevel )
+	if( pUser.commandlevel < GetCommandLevelVal( "CNS" ))
 	{
 		if( !GeneralSnoopingChecks( pUser, snoopTarget, pSock, targSock, targCont ))
 		{
@@ -67,7 +67,7 @@ function SnoopAttempt( snoopTarget, targCont, pUser )
 	}
 
 	var targScriptTriggers = snoopTarget.scriptTriggers;
-	if( pUser.commandlevel > snoopTarget.commandlevel || pUser.CheckSkill( 28, minDifficulty, 1000 ))
+	if(( pUser.commandlevel >= GetCommandLevelVal( "CNS" ) && pUser.commandlevel > snoopTarget.commandlevel ) || pUser.CheckSkill( 28, minDifficulty, pUser.skillCaps.snooping ))
 	{
 		// Successful snoop!
 		// Open targCont for player
@@ -222,7 +222,7 @@ function SnoopAttempt( snoopTarget, targCont, pUser )
 
 function GeneralSnoopingChecks( pUser, snoopTarget, pSock, targSock, targCont )
 {
-	if( snoopTarget.commandlevel > pUser.commandlevel )
+	if( snoopTarget.commandlevel >= GetCommandLevelVal( "CNS" ) && snoopTarget.commandlevel > pUser.commandlevel )
 	{
 		pSock.SysMessage( GetDictionaryEntry( 991, pSock.language )); // You failed to peek into that container.
 		// This message is too annoying... players can pester GMs ;)

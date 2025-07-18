@@ -33,7 +33,7 @@ function onCallback0( pSock, ourObj )
 			var ourOwner = GetPackOwner( ourObj, 0 );
 			if( ourOwner && ourOwner.isChar && ourOwner.serial == pUser.serial )
 			{
-				if( !pUser.CheckSkill( 4, 0, 1000 ))
+				if( !pUser.CheckSkill( 4, 0, pUser.skillCaps.armslore ))
 				{
 					pSock.SysMessage( GetDictionaryEntry( 1504, pLanguage )); // You are not certain...
 				}
@@ -61,20 +61,51 @@ function onCallback0( pSock, ourObj )
 					if( ourHiDmg )
 					{
 						var dmgString = "";
-						if( pUser.skills.armslore > 750 && ourObj.poison > 0 )
+						if( pUser.skills.armslore > 750 )
 						{
-							var pString;
-							offset = ourObj.poison;
-							if( offset > 0 && offset < 5 )
+							// Poison
+							if( ourObj.poison > 0 )
 							{
-								pString = GetDictionaryEntry( 1455 + offset, pLanguage );
+								var pString;
+								offset = ourObj.poison;
+								if( offset > 0 && offset < 5 )
+								{
+									pString = GetDictionaryEntry( 1455 + offset, pLanguage );
+								}
+								else
+								{
+									pString = GetDictionaryEntry( 1459, pLanguage ); // glistens with very deadly poison.
+								}
+								dmgString = pString;
 							}
-							else
+
+							// Corrosion
+							let corrosionLevel = ourObj.GetTag( "corrosionLevel" );
+							if( corrosionLevel > 0 )
 							{
-								pString = GetDictionaryEntry( 1459, pLanguage ); // glistens with very deadly poison.
+								if( corrosionLevel >= 5 )
+								{
+									dmgString += " " + GetDictionaryEntry( 6319, pLanguage ); // It looks like acid is dripping from what is left of the blade.
+								}
+								else if( corrosionLevel == 4 )
+								{
+									dmgString += " " + GetDictionaryEntry( 6320, pLanguage ); // It looks as if a substance is eating away pieces of the blade.
+								}
+								else if( corrosionLevel == 3 )
+								{
+									dmgString += " " + GetDictionaryEntry( 6321, pLanguage ); // It looks as if this blade is covered with an acidic substance.
+								}
+								else if( corrosionLevel == 2 )
+								{
+									dmgString += " " + GetDictionaryEntry( 6322, pLanguage ); // It looks like this blade has a corrosive element on it.
+								}
+								else
+								{
+									dmgString += " " + GetDictionaryEntry( 6323, pLanguage ); // It looks like this blade has a light corrosive element on it.
+								}
 							}
-							dmgString = pString;
 						}
+
 						// HiDamage + LoDamage / 10 ( 0-9 = 0, 10-19 = 1, ect )
 						offset = parseInt(( ourHiDmg + ourLoDmg) / 10 );
 						if( offset <= 5 )
@@ -83,7 +114,7 @@ function onCallback0( pSock, ourObj )
 						}
 						else
 						{
-							dmgString = dmgString + " " + GetDictionaryEntry( 1516, pLanguage ); // would be extraordinarily deadly.
+							dmgString = dmgString + " " + GetDictionaryEntry( 1516, pLanguage ); // Would be extraordinarily deadly.
 						}
 
 						if( pUser.skills.armslore > 250 )

@@ -30,12 +30,12 @@ cHTMLTemplate::~cHTMLTemplate()
 
 std::string GetUptime( void )
 {
-	UI32 total	= (cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
-	UI32 ho		= total / 3600;
+	UI64 total	= (cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
+	UI64 ho		= total / 3600;
 	total		-= ho * 3600;
-	UI32 mi		= total / 60;
+	UI64 mi		= total / 60;
 	total		-= mi * 60;
-	UI32 se		= total;
+	UI64 se		= total;
 	total		= 0;
 	std::string builtString = "";
 	if( ho < 10 )
@@ -594,7 +594,7 @@ void cHTMLTemplate::Poll( void )
 	if( scheduledUpdate < cwmWorldState->GetUICurrentTime() || !cwmWorldState->GetKeepRun() )
 	{
 		Process();
-		scheduledUpdate = BuildTimeValue( static_cast<R32>( updateTimer ));
+		scheduledUpdate = BuildTimeValue( updateTimer );
 	}
 }
 
@@ -660,7 +660,7 @@ void cHTMLTemplate::Load( CScriptSection *found )
 
 		if( UTag == "UPDATE" )
 		{
-			updateTimer = static_cast<UI32>( std::stoul( data, nullptr, 0 ));
+			updateTimer = static_cast<TIMERVAL>( std::stoull( data, nullptr, 0 ));
 		}
 		else if( UTag == "TYPE" )
 		{
@@ -868,7 +868,7 @@ std::string cHTMLTemplate::GetInput( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the next scheduled Update time
 //o------------------------------------------------------------------------------------------------o
-UI32 cHTMLTemplate::GetScheduledUpdate( void ) const
+TIMERVAL cHTMLTemplate::GetScheduledUpdate( void ) const
 {
 	return scheduledUpdate;
 }
@@ -878,7 +878,7 @@ UI32 cHTMLTemplate::GetScheduledUpdate( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Update timer
 //o------------------------------------------------------------------------------------------------o
-UI32 cHTMLTemplate::GetUpdateTimer( void ) const
+TIMERVAL cHTMLTemplate::GetUpdateTimer( void ) const
 {
 	return updateTimer;
 }

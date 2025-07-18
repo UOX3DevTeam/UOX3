@@ -3,7 +3,7 @@
 
 [REGIONSPAWN 8600]
 {
-NAME=The Just Inn
+NAME=Papua - The Just Inn
 NPC=innkeeper
 MAXNPCS=1
 X1=5762
@@ -19,7 +19,7 @@ CALL=1
 
 [REGIONSPAWN 8601]
 {
-NAME=Strange Rocks
+NAME=Papua - Strange Rocks
 NPC=jeweler
 MAXNPCS=1
 X1=5654
@@ -35,7 +35,7 @@ CALL=1
 
 [REGIONSPAWN 8602]
 {
-NAME=ye olde loan and savings
+NAME=Papua - Ye Olde Loan and Savings
 NPC=banker
 MAXNPCS=3
 X1=5660
@@ -51,7 +51,7 @@ CALL=1
 
 [REGIONSPAWN 8603]
 {
-NAME=the carpentry house
+NAME=Papua - The Carpentry House
 NPC=carpenter
 MAXNPCS=1
 X1=5689
@@ -67,7 +67,7 @@ CALL=1
 
 [REGIONSPAWN 8604]
 {
-NAME=the reagent shop
+NAME=Papua - The Reagent Shop
 NPC=herbalist
 MAXNPCS=1
 X1=5713
@@ -83,7 +83,7 @@ CALL=1
 
 [REGIONSPAWN 8605]
 {
-NAME=tricks of the trade
+NAME=Papua - Tricks of the Trade
 NPC=mage
 MAXNPCS=2
 X1=5725
@@ -99,7 +99,7 @@ CALL=2
 
 [REGIONSPAWN 8606]
 {
-NAME=natures best baked goods
+NAME=Papua - Natures Best Baked Goods
 NPC=baker
 MAXNPCS=2
 X1=5744
@@ -115,7 +115,7 @@ CALL=2
 
 [REGIONSPAWN 8607]
 {
-NAME=the healing hand
+NAME=Papua - The Healing Hand
 NPC=healer
 MAXNPCS=1
 X1=5734
@@ -131,7 +131,7 @@ CALL=1
 
 [REGIONSPAWN 8608]
 {
-NAME=tinkers paradise
+NAME=Papua - Tinkers Paradise
 NPC=tinker
 MAXNPCS=1
 X1=5724
@@ -147,14 +147,14 @@ CALL=1
 
 [REGIONSPAWN 8609]
 {
-NAME=adventure outfitters
+NAME=Papua - Adventure Outfitters
 NPC=provisioner
 MAXNPCS=1
 X1=5734
 Y1=3258
 X2=5737
 Y2=3269
-DEFZ=14
+DEFZ=15
 WORLD=1
 MINTIME=480
 MAXTIME=600
@@ -163,14 +163,14 @@ CALL=1
 
 [REGIONSPAWN 8610]
 {
-NAME=tailors
+NAME=Papua - Tailors
 NPC=tailor
 MAXNPCS=1
 X1=5751
 Y1=3269
 X2=5754
 Y2=3273
-PREFZ=15
+DEFZ=15
 WORLD=1
 MINTIME=480
 MAXTIME=600
@@ -179,14 +179,14 @@ CALL=1
 
 [REGIONSPAWN 8611]
 {
-NAME=pier 39
+NAME=Papua - Pier 39
 NPC=shipwright
 MAXNPCS=1
 X1=5797
 Y1=3265
 X2=5801
 Y2=3275
-PREFZ=12
+DEFZ=12
 WORLD=1
 MINTIME=480
 MAXTIME=600
@@ -195,7 +195,7 @@ CALL=1
 
 [REGIONSPAWN 8612]
 {
-NAME=the revenge shoppe
+NAME=Papua - The Revenge Shoppe
 NPC=weaponsmith
 MAXNPCS=1
 X1=5795
@@ -211,7 +211,7 @@ CALL=1
 
 [REGIONSPAWN 8613]
 {
-NAME=the revenge shoppe
+NAME=Papua - The Revenge Shoppe
 NPC=blacksmith
 MAXNPCS=1
 X1=5795
@@ -227,7 +227,7 @@ CALL=1
 
 [REGIONSPAWN 8614]
 {
-NAME=the revenge shoppe
+NAME=Papua - The Revenge Shoppe
 NPC=armourer
 MAXNPCS=1
 X1=5795
@@ -243,14 +243,14 @@ CALL=1
 
 [REGIONSPAWN 8615]
 {
-NAME=the southside butchery
+NAME=Papua - The Southside Butchery
 NPC=butcher
 MAXNPCS=1
 X1=5696
 Y1=3280
 X2=5700
 Y2=3285
-DEFZ=14
+DEFZ=15
 WORLD=1
 MINTIME=480
 MAXTIME=600
@@ -259,7 +259,7 @@ CALL=1
 
 [REGIONSPAWN 8616]
 {
-NAME=southside stables
+NAME=Papua - Southside Stables 1
 NPC=animaltrainer
 MAXNPCS=1
 X1=5667
@@ -275,7 +275,7 @@ CALL=1
 
 [REGIONSPAWN 8617]
 {
-NAME=docks
+NAME=Papua - Docks
 NPC=fisher
 MAXNPCS=2
 X1=5821
@@ -289,4 +289,78 @@ MAXTIME=600
 CALL=1
 }
 
-EOF
+[REGIONSPAWN 8618]
+{
+NAME=Papua - Southside Stables 2
+NPC=animaltrainer
+MAXNPCS=1
+X1=5678
+Y1=3287
+X2=5683
+Y2=3300
+DEFZ=12
+WORLD=1
+MINTIME=480
+MAXTIME=600
+CALL=1
+}
+
+// Papua - Adventure Outfitters
+[REGIONSPAWN 8619]
+{
+GET=1609
+NPC=cobbler
+}
+
+// Papua - Tailor
+[REGIONSPAWN 8620]
+{
+GET=1610
+NPC=weaver
+}
+
+// Papua - Pier 39
+[REGIONSPAWN 8621]
+{
+GET=1611
+NPC=mapmaker
+MAXNPCS=2
+}
+
+// Papua - Docks
+[REGIONSPAWN 8622]
+{
+GET=1617
+NPC=sailor
+}
+
+// Papua - Tricks of the Trade
+[REGIONSPAWN 8623]
+{
+GET=1605
+NPC=alchemist
+MAXNPCS=1
+}
+
+// Papua - Tricks of the Trade
+[REGIONSPAWN 8624]
+{
+GET=1605
+NPC=herbalist
+MAXNPCS=1
+}
+
+// Papua - Natures Best Baked Goods
+[REGIONSPAWN 8625]
+{
+GET=1606
+NPC=miller
+MAXNPCS=1
+}
+
+// Papua - The Carpentry House
+[REGIONSPAWN 8626]
+{
+GET=1603
+NPC=architect
+}

@@ -1,0 +1,14 @@
+[FirstAidBelt]
+{
+get=base_clothing
+name=First Aid Belt
+id=0xA1F6
+type=1
+weight=100
+weightmax=40000
+maxitems=10000
+layer=0x12
+script=5049
+custominttag=healingBonus 15
+origin=tol
+}

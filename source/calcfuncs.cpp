@@ -92,7 +92,7 @@ CTownRegion *CalcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId
 	const RegLocs_st *getLoc = nullptr;
 	for( auto &[townId, myReg] : cwmWorldState->townRegions )
 	{
-		if( myReg != nullptr && myReg->WorldNumber() == worldNumber && myReg->GetInstanceId() == instanceId )
+		if( myReg != nullptr && !myReg->IsDisabled() && myReg->WorldNumber() == worldNumber && myReg->GetInstanceId() == instanceId )
 		{
 			for( size_t j = 0; j < myReg->GetNumLocations(); ++j )
 			{

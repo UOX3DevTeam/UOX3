@@ -2,6 +2,9 @@
 // Supported Events trigger for every character/item, use with care
 function onLogin( socket, pChar )
 {
+	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
+
 	// Display Admin Welcome Gump for characters on admin account, until a choice has been made
 	if( pChar.accountNum == 0 )
 	{
@@ -11,44 +14,92 @@ function onLogin( socket, pChar )
 		{
 			// Admin has either not seen or reacted to welcome gump yet
 			TriggerEvent( 1, "DisplayAdminWelcomeGump", socket, pChar );
-			return;
+		}
+	}
+
+	// If it's first time player logs in with this character since server startup,
+	// or in at least 6 hours, give them a small boost to hunger level to avoid
+	// instant starving/hunger on login
+	let currentClock = GetCurrentClock();
+	if( pChar.hunger == 0 )
+	{
+		let oldLoginTime = pChar.GetTempTag( "loginTime" );
+		if( oldLoginTime == 0 || ( currentClock / 1000 / 60 ) - oldLoginTime > 360 )
+		{
+			pChar.hunger = 1;
 		}
 	}
 
 	// Store login timestamp (in minutes) in temp tag
-	var loginTime = Math.round( GetCurrentClock() / 1000 / 60 );
+	var loginTime = Math.round( currentClock / 1000 / 60 );
 	pChar.SetTempTag( "loginTime", loginTime );
 
 	// Attach OnFacetChange to characters logging into the shard
 	if( !pChar.HasScriptTrigger( 2508 ))
-    {
-        pChar.AddScriptTrigger( 2508 );
-    }
+	{
+		pChar.AddScriptTrigger( 2508 );
+	}
 
-    if( pChar.account.isYoung )
-    {
-  		// Attach "Young" player script, if the account is young and does not have script
+	if( youngPlayerSystem && pChar.account.isYoung )
+	{
+		// Attach "Young" player script, if the account is young and does not have script
 		if( !pChar.HasScriptTrigger( 8001 ))
 		{
 			pChar.AddScriptTrigger( 8001 );
 		}
 
-    	// Check if "Young" player still meets requirement for being considered young
-    	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
-    }
+		// Check if "Young" player still meets requirement for being considered young
+		TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
+	}
+	else if( !youngPlayerSystem )
+	{
+		// Remove young player script if system is inactive
+		pChar.RemoveScriptTrigger( 8001 );
+	}
+
+	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))// Attach the special moves Book
+	{
+		pChar.AddScriptTrigger( 7001 );
+	}
+
+	// Re-adds Buff for disguise kit if player still has time left.
+	var disguiseKitTime = pChar.GetJSTimer( 1, 5023 );
+	if( disguiseKitTime > 0 )
+	{
+		var currentTime = GetCurrentClock();
+		var timeLeft = Math.round(( disguiseKitTime - currentTime ) / 1000 );
+		TriggerEvent( 2204, "RemoveBuff", pChar, 1033 );
+		TriggerEvent( 2204, "AddBuff", pChar, 1033, 1075821, 1075820, timeLeft, "" );
+	}
 }
 
 function onLogout( pSock, pChar )
 {
-	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - pChar.GetTempTag( "loginTime" );
+	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - parseInt( pChar.GetTempTag( "loginTime" ));
 	pChar.playTime += minSinceLogin;
 	pChar.account.totalPlayTime += minSinceLogin;
+
+	//Used to remove the candy timer in items/candy.js
+	pChar.KillJSTimer( 0, 5601 );
+	pChar.SetTempTag( "toothach", null );
+	pChar.SetTempTag( "Acidity", null );
+
+	//Treasure Hunting Kill Event.
+	var dirtItem = CalcItemFromSer( parseInt( pChar.GetTempTag( "dirtMadeSer" )));
+	if( ValidateObject( dirtItem ))
+	{
+		TriggerEvent( 5405, "KillTreasureEvent", dirtItem, pChar );
+		return;
+	}
 }
 
 function onCreatePlayer( pChar )
 {
+	const coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" ));
+	const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
+
 	// If player character is created on a Young account, give them Young-specific items
-	if( pChar.account.isYoung )
+	if( youngPlayerSystem && pChar.account.isYoung )
 	{
 		// Attach "Young" player script, if the account is young and does not have script
 		if( !pChar.HasScriptTrigger( 8001 ))
@@ -57,6 +108,12 @@ function onCreatePlayer( pChar )
 		}
 
 		TriggerEvent( 8001, "GiveYoungPlayerItems", pChar.socket, pChar );
+	}
+
+	//Attach the special moves Book
+	if( coreShardEra >= EraStringToNum( "aos" ) && ( !pChar.npc && !pChar.HasScriptTrigger( 7001 )))
+	{
+		pChar.AddScriptTrigger( 7001 );
 	}
 }
 
@@ -176,4 +233,18 @@ function onDeath( pDead, iCorpse )
 		return false;
 
 	return TriggerEvent( 5045, "onDeath", pDead, iCorpse );
+}
+
+// Triggers based on bandage macro in client
+function onUseBandageMacro( pSock, targChar, bandageItem )
+{
+	if( pSock != null && ValidateObject( targChar ) && ValidateObject( bandageItem ) && bandageItem.amount >= 1 )
+	{
+		var pUser = pSock.currentChar;
+		if( ValidateObject( pUser ))
+		{
+			TriggerEvent( 4000, "onUseCheckedTriggered", pUser, targChar, bandageItem );
+		}
+	}
+	return true;
 }

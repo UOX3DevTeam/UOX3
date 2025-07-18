@@ -6,7 +6,7 @@ function onUseChecked( pUser, iUsed )
 		var pOwner = GetPackOwner( iUsed, 0 );
 		if( pOwner && pOwner.serial == pUser.serial )
 		{
-			if( !pUser.CheckSkill( 37, 0, 1000 ))
+			if( !pUser.CheckSkill( 37, 0, pUser.skillCaps.tinkering ))
 			{
 				pSock.SysMessage( GetDictionaryEntry( 481, pSock.language )); // You fail to create the sextant.
 			}

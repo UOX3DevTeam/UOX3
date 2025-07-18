@@ -5,8 +5,8 @@
 // and until it's up no more dates can be picked. Once the timer is over,
 // new dates are added. The apperance of the tree indicates whether or
 // not there are any dates left to pick.
-var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
-var maxResource = 5; //maximum amount of resources on a given item
+const dateGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+const maxDateResource = 5; //maximum amount of resources on a given item
 
 function onUseChecked( pUser, iUsed )
 {
@@ -21,7 +21,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		iUsed.SetTag( "initialized",1 ); 	// Marks tree as initialized
 		iUsed.SetTag( "Dates", 1 ); 		// If set to 1, there are dates to be picked, if 0 there are no ripe dates
-		iUsed.SetTag( "DateCounter", maxResource ); 	// Add 5 dates to the tree initially
+		iUsed.SetTag( "DateCounter", maxDateResource ); 	// Add 5 dates to the tree initially
 	}
 	var dates = iUsed.GetTag( "Dates" );
 	var dateCount = iUsed.GetTag( "DateCounter" );
@@ -63,7 +63,7 @@ function onUseChecked( pUser, iUsed )
 					iUsed.id = 0x0d99; 
 				}
 				iUsed.SetTag( "Dates", 0 );
-				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time dates respawn
+				iUsed.StartTimer( dateGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time dates respawn
 			}
 		}
 	}
@@ -74,7 +74,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag( "DateCounter", maxResource );
+		iUsed.SetTag( "DateCounter", maxDateResource );
 		iUsed.SetTag( "Dates", 1);
 		if( iUsed.id == 0x0d95 )
 		{

@@ -515,6 +515,15 @@
 0x0f8d
 }
 
+[LOOTLIST necroreagents]
+{
+pigiron
+noxcrystal
+daemonblood
+gravedust
+batwing
+}
+
 [LOOTLIST lesserpotions]
 {
 0x0f0e
@@ -939,4 +948,117 @@
 {
 900|blank
 100|0x26AC
+}
+
+// Halloween Loot
+[LOOTLIST HalloweenLoot]
+{
+500|TwilightLantern
+400|blank
+100|HalloweenGhoulStatue
+}
+
+// Grimm Pumpkin Looot
+[LOOTLIST GrimPumpkinLoot]
+{
+500|PumpkinCarvingKit
+500|PumpkinCarvingKitEast
+500|CarvablePumpkin
+500|tallrottenpumpkin
+500|CarvableGord
+100|PaintedPorcelainMask
+100|PaintedEvilJesterMask
+100|PaintedPlagueMask
+100|PaintedDaemonMask
+100|PaintedEvilClownMask
+}
+
+// Treasure Map Level 0
+[LOOTLIST TreasureMapLvl0Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl0
+}
+
+// Treasure Map Level 1
+[LOOTLIST TreasureMapLvl1Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl1
+}
+
+// Treasure Map Level 2
+[LOOTLIST TreasureMapLvl2Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl2
+}
+
+// Treasure Map Level 3
+[LOOTLIST TreasureMapLvl3Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl3
+}
+
+// Treasure Map Level 4
+[LOOTLIST TreasureMapLvl4Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl4
+}
+
+// Treasure Map Level 5
+[LOOTLIST TreasureMapLvl5Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl5
+}
+
+// Treasure Map Level 6
+[LOOTLIST TreasureMapLvl6Loot]
+{//approximately 1%
+990|blank
+10|treasuremaplvl6
+}
+
+// Random journals from Khaldun
+[LOOTLIST lysanders_journals]
+{
+lysanders_notebook_1
+lysanders_notebook_2
+lysanders_notebook_3
+lysanders_notebook_7
+lysanders_notebook_8
+lysanders_notebook_11
+}
+
+[LOOTLIST tavaras_journals]
+{
+tavaras_journal_1
+tavaras_journal_2
+tavaras_journal_3
+tavaras_journal_6
+tavaras_journal_7
+tavaras_journal_8
+tavaras_journal_9
+tavaras_journal_11
+tavaras_journal_14
+tavaras_journal_16
+tavaras_journal_16b
+tavaras_journal_17
+tavaras_journal_19
+}
+
+[LOOTLIST grimmochs_journals]
+{
+grimmoch_journal_1
+grimmoch_journal_2
+grimmoch_journal_3
+grimmoch_journal_6
+grimmoch_journal_7
+grimmoch_journal_11
+grimmoch_journal_14
+grimmoch_journal_17
+grimmoch_journal_23
 }

@@ -18,6 +18,7 @@ using namespace std::string_literals;
 cItem *Items = nullptr;
 
 ItemTypes FindItemTypeFromTag( const std::string& strToFind );
+void SetRandomName( CBaseObject *s, const std::string& namelist );
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const std::string &cdata )
@@ -80,6 +81,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 		auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
 		switch( tag )
 		{
+			case DFNTAG_ARTIFACTRARITY:	applyTo->SetArtifactRarity( static_cast<SI16>( ndata ));	break;
 			case DFNTAG_AMMO:
 				applyTo->SetAmmoId( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
 				if( ssecs.size() > 1 )
@@ -116,6 +118,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					Console.Warning( oldstrutil::format( "Invalid data found in AMOUNT tag inside item script [%s]", sectionId.c_str() ));
 				}
 				break;
+			case DFNTAG_DURABILITYHPBONUS:	applyTo->SetDurabilityHpBonus( static_cast<SI16>( ndata ));	break;
 			case DFNTAG_DAMAGE:
 			case DFNTAG_ATT:
 				if( ndata >= 0 )
@@ -136,8 +139,15 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					Console.Warning( oldstrutil::format( "Invalid data found in ATT/DAMAGE tag inside item script [%s]", sectionId.c_str() ));
 				}
 				break;
+			case DFNTAG_DAMAGEINCREASE:	applyTo->SetDamageIncrease( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_AC:				applyTo->SetArmourClass( static_cast<UI08>( ndata ));	break;
+			case DFNTAG_HEALTHLEECH:	applyTo->SetHealthLeech( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_STAMINALEECH:	applyTo->SetStaminaLeech( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_MANALEECH:		applyTo->SetManaLeech( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_BASERANGE:		applyTo->SetBaseRange( static_cast<UI08>( ndata ));		break;
+			case DFNTAG_HEALTHBONUS:		applyTo->SetHealthBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_STAMINABONUS:		applyTo->SetStaminaBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_MANABONUS:		applyTo->SetManaBonus( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_CREATOR:		applyTo->SetCreator( ndata );							break;
 			case DFNTAG_COLOUR:			applyTo->SetColour( static_cast<UI16>( ndata ));		break;
 			case DFNTAG_COLOURLIST:		applyTo->SetColour( AddRandomColor( cdata ));			break;
@@ -228,6 +238,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_DISPELLABLE:	applyTo->SetDispellable( true );			break;
 			case DFNTAG_DISABLED:		applyTo->SetDisabled( ndata != 0 );			break;
 			case DFNTAG_DOORFLAG:		break;
+			case DFNTAG_DEFENSECHANCE:	applyTo->SetDefenseChance( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_GOOD:			applyTo->SetGood( static_cast<SI16>( ndata ));			break;
 			case DFNTAG_GLOW:			applyTo->SetGlow( ndata );								break;
 			case DFNTAG_GLOWBC:			applyTo->SetGlowColour( static_cast<UI16>( ndata ));	break;
@@ -337,6 +348,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				break;
 			case DFNTAG_HIDAMAGE:		applyTo->SetHiDamage( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_HITCHANCE:	applyTo->SetHitChance( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_HEAT:			applyTo->SetWeatherDamage( HEAT, ndata != 0 );			break;
 			case DFNTAG_ID:				// applyTo->SetId( static_cast<UI16>( ndata ));				break;
 				if( ssecs.size() == 1 )
@@ -355,6 +367,8 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_LAYER:			applyTo->SetLayer( static_cast<ItemLayers>( ndata ));	break;
 			case DFNTAG_LIGHT:			applyTo->SetWeatherDamage( LIGHT, ndata != 0 );			break;
 			case DFNTAG_LIGHTNING:		applyTo->SetWeatherDamage( LIGHTNING, ndata != 0 );		break;
+			case DFNTAG_LOWERSTATREQ:	applyTo->SetLowerStatReq( static_cast<SI16>( ndata ));	break;
+			case DFNTAG_LUCK:			applyTo->SetLuck( static_cast<SI16>( ndata ));			break;
 			case DFNTAG_MAXHP:			applyTo->SetMaxHP( static_cast<UI16>( ndata ));			break;
 			case DFNTAG_MAXITEMS:		applyTo->SetMaxItems( static_cast<UI16>( ndata ));		break;
 			case DFNTAG_MAXRANGE:		applyTo->SetMaxRange( static_cast<UI08>( ndata ));		break;
@@ -453,6 +467,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				break;
 			case DFNTAG_NAME:			applyTo->SetName( cdata );								break;
 			case DFNTAG_NAME2:			applyTo->SetName2( cdata );								break;
+			case DFNTAG_NAMELIST:		SetRandomName( applyTo, cdata );						break;
 			case DFNTAG_NEWBIE:			applyTo->SetNewbie( true );								break;
 			case DFNTAG_OFFSPELL:		applyTo->SetOffSpell( static_cast<SI08>( ndata ));		break;
 			case DFNTAG_ORIGIN:			applyTo->SetOrigin( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->EraStringToEnum( cdata )));		break;
@@ -467,6 +482,9 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetRank( 10 );
 				}
 				break;
+			case DFNTAG_HEALTHREGENBONUS:	applyTo->SetHealthRegenBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_STAMINAREGENBONUS:	applyTo->SetStaminaRegenBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_MANAREGENBONUS:		applyTo->SetManaRegenBonus( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_RACE:			applyTo->SetRace( static_cast<UI16>( ndata ));			break;
 			case DFNTAG_RESISTFIRE:
 				if( ndata >= 0 )
@@ -546,6 +564,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_RAIN:			applyTo->SetWeatherDamage( RAIN, ndata != 0 );			break;
 			case DFNTAG_SECTIONID:		applyTo->SetSectionId( cdata );							break;
 			case DFNTAG_SK_MADE:		applyTo->SetMadeWith( static_cast<SI08>( ndata ));		break;
+			case DFNTAG_SWINGSPEEDINCREASE:	applyTo->SetSwingSpeedIncrease( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_SPD:			applyTo->SetSpeed( static_cast<UI08>( ndata ));			break;
 			case DFNTAG_STRENGTH:		applyTo->SetStrength( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_STRADD:			applyTo->SetStrength2( static_cast<SI16>( ndata ));		break;
@@ -576,6 +595,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetType( iType );
 				}
 				break;
+			case DFNTAG_TITHING:		applyTo->SetTithing( static_cast<UI32>( ndata ));		break;
 			case DFNTAG_USESLEFT:		applyTo->SetUsesLeft( static_cast<UI16>( ndata ));			break;
 			case DFNTAG_VISIBLE:		applyTo->SetVisible( static_cast<VisibleTypes>( ndata ));	break;
 			case DFNTAG_VALUE:
@@ -1191,10 +1211,34 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 			Console.Error( "Trying to apply an item section failed" );
 		}
 
+		// If the durabilityhpbonus tag is on the item, it will add to its Durability (aka Health).
+		auto durabilityHpBonus = iCreated->GetDurabilityHpBonus();
+
 		// If maxHP has not been defined for a new item, set it to the same value as HP
-		if( !iCreated->GetMaxHP() && iCreated->GetHP() )
+		if (!iCreated->GetMaxHP() && iCreated->GetHP())
 		{
-			iCreated->SetMaxHP( iCreated->GetHP() );
+			iCreated->SetMaxHP(iCreated->GetHP());
+		}
+
+		if( durabilityHpBonus > 0 )
+		{
+			// Calculate percentage increase
+			auto baseHP = iCreated->GetHP();
+			auto baseMaxHP = iCreated->GetMaxHP();
+
+			// If maxHP has not been defined, default it to HP
+			if( baseMaxHP == 0 && baseHP > 0 )
+			{
+				baseMaxHP = baseHP;
+				iCreated->SetMaxHP( baseMaxHP );
+			}
+
+			// Apply the percentage bonus to HP and MaxHP
+			auto hpBonus = static_cast<int>( baseHP * ( durabilityHpBonus / 100.0 ));
+			auto maxHpBonus = static_cast<int>( baseMaxHP * ( durabilityHpBonus / 100.0 ));
+
+			iCreated->SetHP( baseHP + hpBonus );
+			iCreated->SetMaxHP( baseMaxHP + maxHpBonus );
 		}
 
 		// If maxUses is higher than usesLeft for a new item, randomize the amount of usesLeft the item should have!
@@ -1310,7 +1354,7 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cause items to decay when left on the ground
 //o------------------------------------------------------------------------------------------------o
-auto DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsInHouses ) -> bool
+auto DecayItem( CItem& toDecay, const TIMERVAL nextDecayItems, const TIMERVAL nextDecayItemsInHouses ) -> bool
 {
 	if( toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay() )
 	{
@@ -1340,7 +1384,8 @@ auto DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsIn
 
 	if( toDecay.IsContType() )
 	{
-		if( !isCorpse || ValidateObject(toDecay.GetOwnerObj() ) || !cwmWorldState->ServerData()->CorpseLootDecay() )
+		if( isCorpse && (( ValidateObject( toDecay.GetOwnerObj() ) && !cwmWorldState->ServerData()->PlayerCorpseLootDecay() )  // Player corpse
+			|| ( !ValidateObject( toDecay.GetOwnerObj() ) && !cwmWorldState->ServerData()->NpcCorpseLootDecay() ))) // NPC corpse
 		{
 			std::vector<CItem *> corpseItems;
 			auto iCont = toDecay.GetContainsList();
@@ -1400,6 +1445,7 @@ PackTypes cItem::GetPackType( CItem *i )
 		case 0x0E75:	// backpack
 		case 0x0E79:	// pouch
 		case 0x09B0:	// pouch
+		case 0xA1F6:	// First Aid Belt
 			packType = PT_PACK;
 			break;
 		case 0x0E76:	// leather bag
@@ -1515,6 +1561,12 @@ PackTypes cItem::GetPackType( CItem *i )
 			{
 				packType = PT_PACK2;
 			}
+			break;
+		case 0x2bd9:
+		case 0x2BDA:
+		case 0x2BDB:
+		case 0x2BDC:
+			packType = PT_STOCKING;
 			break;
 		case 0x232A:	// giftbox
 		case 0x232B:	// giftbox
@@ -1810,7 +1862,8 @@ void cItem::CheckEquipment( CChar *p )
 		{
 			if( ValidateObject( i ))
 			{
-				if( i->GetStrength() > StrengthToCompare )//if strength required > character's strength
+				const SI16 scaledStrength = ( i->GetStrength() * ( 100 - i->GetLowerStatReq() )) / 100;
+				if( scaledStrength > StrengthToCompare )//if strength required > character's strength
 				{
 					itemsToUnequip.push_back( i );
 				}

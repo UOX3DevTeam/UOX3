@@ -251,6 +251,21 @@ inline JSClass UOXSkillsLock_class =
 	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
+inline JSClass UOXSkillsCap_class =
+{
+    "UOXSkillsCap",
+    JSCLASS_HAS_PRIVATE,
+    JS_PropertyStub,
+    JS_PropertyStub,
+    CSkillsProps_getProperty,
+    CSkillsProps_setProperty,
+    JS_EnumerateStub,
+    JS_ResolveStub,
+    JS_ConvertStub,
+    JS_FinalizeStub,
+    JSCLASS_NO_OPTIONAL_MEMBERS
+};
+
 inline JSClass UOXRace_class =
 {
 	"UOXRace",

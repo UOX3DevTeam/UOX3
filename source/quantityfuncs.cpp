@@ -49,7 +49,7 @@ UI32 GetTotalItemCount( CItem *objCont )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item in a pack
 //o------------------------------------------------------------------------------------------------o
-auto GetSubItemAmount( CItem *p, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "" ) -> UI32
+auto GetSubItemAmount( CItem* p, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck, bool moreCheck, std::string sectionId ) -> UI32 
 {
 	UI32 total = 0;
 	auto pCont = p->GetContainsList();
@@ -64,7 +64,7 @@ auto GetSubItemAmount( CItem *p, UI16 realId, UI16 realColour, UI32 realMoreVal,
 			else if( i->GetId() == realId 
 				&& ( !colorCheck || ( colorCheck && i->GetColour() == realColour )) 
 				&& ( !moreCheck || ( moreCheck && i->GetTempVar( CITV_MORE ) == realMoreVal ))
-				&& ( sectionId == "" || sectionId == i->GetSectionId() ))
+				&& ( sectionId == "" || oldstrutil::lower( sectionId ) == oldstrutil::lower( i->GetSectionId() )))
 			{
 				if( i->GetUsesLeft() > 0 )
 				{
@@ -121,7 +121,7 @@ auto DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realId, UI16 realColour, U
 		else if( i->GetId() == realId 
 			&& ( !colorCheck || ( colorCheck && i->GetColour() == realColour ))
 			&& ( !moreCheck || ( moreCheck && i->GetTempVar( CITV_MORE ) == realMoreVal ))
-			&& ( sectionId == "" || sectionId == i->GetSectionId() ))
+			&& ( sectionId == "" || oldstrutil::lower( sectionId ) == oldstrutil::lower( i->GetSectionId() )))
 		{
 			UI16 usesLeft = i->GetUsesLeft();
 			if( usesLeft > 0 )

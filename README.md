@@ -1,13 +1,13 @@
 # UOX3
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) [![Coverity Scan Build Status](https://scan.coverity.com/projects/23322/badge.svg)](https://scan.coverity.com/projects/ultima-offline-experiment-3)
 
-**master** ![Windows x86 Build](https://github.com/UOX3DevTeam/UOX3/workflows/Windows%20x86%20Build/badge.svg?branch=master) ![Windows x64 Build](https://github.com/UOX3DevTeam/UOX3/workflows/Windows%20x64%20Build/badge.svg?branch=master) ![Linux x64 Build](https://github.com/UOX3DevTeam/UOX3/workflows/Linux%20x64%20Build/badge.svg?branch=master)
+**master** ![Windows Build](https://github.com/UOX3DevTeam/UOX3/actions/workflows/UOX3Build.yml/badge.svg?branch=master&job=build+(windows-latest)) ![Linux Build](https://github.com/UOX3DevTeam/UOX3/actions/workflows/UOX3Build.yml/badge.svg?branch=master&job=build+(ubuntu-latest)) ![macOS Build](https://github.com/UOX3DevTeam/UOX3/actions/workflows/UOX3Build.yml/badge.svg?branch=master&job=build+(macos-latest))
 
-**develop** ![Windows x86 Build - develop](https://github.com/UOX3DevTeam/UOX3/workflows/Windows%20x86%20Build/badge.svg?branch=develop) ![Windows x64 Build - develop](https://github.com/UOX3DevTeam/UOX3/workflows/Windows%20x64%20Build/badge.svg?branch=develop) ![Windows x64 Build - develop](https://github.com/UOX3DevTeam/UOX3/workflows/Linux%20x64%20Build/badge.svg?branch=develop)
+**develop** ![Windows Build](https://github.com/UOX3DevTeam/UOX3/actions/workflows/UOX3Build.yml/badge.svg?branch=develop&job=build+(windows-latest)) ![Linux Build](https://github.com/UOX3DevTeam/UOX3/actions/workflows/UOX3Build.yml/badge.svg?branch=develop&job=build+(ubuntu-latest)) ![macOS Build](https://github.com/UOX3DevTeam/UOX3/actions/workflows/UOX3Build.yml/badge.svg?branch=develop&job=build+(macos-latest))
 
-**Ultima Offline eXperiment 3** - the original open source Ultima Online server emulator, allowing people to run their own, custom UO shards since 1997. Comes with cross-platform 64-bit support for **Windows**, **Linux**, **macOS**, and **FreeBSD**. News, releases, forums, additional documentation and more can be found at https://www.uox3.org
+**Ultima Offline eXperiment 3** - the original open source Ultima Online server emulator, allowing people to run their own, custom UO shards since 1997. Comes with cross-platform 64-bit support for **Windows**, **Linux**, **macOS**, and **FreeBSD**. Grab the latest version from the [Releases](https://github.com/UOX3DevTeam/UOX3/releases) page, while news, more details on releases, forums, additional documentation and more can be found at https://www.uox3.org
 
-Supported UO Client versions: **~4.0.0p** to at least **~7.0.98.1** (with encryption removed by [ClassicUO](https://www.classicuo.eu), [Razor](https://github.com/msturgill/razor/releases) or similar tools). For additional details on UO client compatibility, check https://www.uox3.org/forums/viewtopic.php?f=1&t=2289
+Supported UO Client versions: **~4.0.0p** to at least **~7.0.109.0** (with encryption removed by [ClassicUO](https://www.classicuo.eu), [Razor](https://github.com/msturgill/razor/releases) or similar tools). For additional details on UO client compatibility, check https://www.uox3.org/forums/viewtopic.php?f=1&t=2289
 
 UOX3 relies on **SpiderMonkey v1.8.0-RC1** for its JS-based scripting engine, and on **zlib-1.2.11** for data compression matters, and comes bundled with specific, compatible versions of these.
 
@@ -58,7 +58,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 <details>
   <summary>(Optional) Checking out Other Branches</summary>
 
-  > If you'd rather grab another branch of the git repository, like the **develop** branch where most updates get pushed first before being merged into the master branch, you can use the following command *after* completing the previous step:
+  > If you'd rather grab another branch of the git repository, like the **develop** branch where most updates get pushed first before being merged into the master branch, you can use the following command *after* completing the previous step, and *after* navigating into the directory created for the UOX3 repository:
     `git checkout develop`
 
   > GitHub Desktop users can change the active branch via the *Current Branch* dropdown menu in GitHub Desktop.

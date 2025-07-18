@@ -428,10 +428,10 @@ bool CPIGetItem::Handle( void )
 	if( !ourChar->AllMove() && ( i->GetMovable() == 2 || i->IsLockedDown() ||
 								( tile.Weight() == 255 && i->GetMovable() != 1 )))
 	{
-		if( ourChar->GetCommandLevel() < 2 || tSock->PickupSpot() != PL_OWNPACK )
+		if( ourChar->GetCommandLevel() < CL_GM || tSock->PickupSpot() != PL_OWNPACK )
 		{
 			tSock->SysMessage( 9064 ); // You cannot pick that up.
-			if( ourChar->GetCommandLevel() >= 2 )
+			if( ourChar->GetCommandLevel() >= CL_GM )
 			{
 				tSock->SysMessage( 9099 ); // Tip: Try 'ALLMOVE ON command or modify item's movable property with 'TWEAK command!
 			}
@@ -698,15 +698,19 @@ bool CPIEquipItem::Handle( void )
 	if( k == ourChar )
 	{
 		bool canWear = false;
-		if( i->GetStrength() > k->GetStrength() )
+		const SI16 scaledStrength = ( i->GetStrength() * ( 100 - i->GetLowerStatReq() )) / 100;
+		const SI16 scaledDexterity = ( i->GetDexterity() * ( 100 - i->GetLowerStatReq() )) / 100;
+		const SI16 scaledIntelligence = ( i->GetIntelligence() * ( 100 - i->GetLowerStatReq() )) / 100;
+
+		if( scaledStrength > k->GetStrength() )
 		{
 			tSock->SysMessage( 1188 ); // You are not strong enough to use that. (NOTE: Should these messages use color 0x096a to stand out and replicate hard coded client message?)
 		}
-		else if( i->GetDexterity() > k->GetDexterity() )
+		else if( scaledDexterity > k->GetDexterity() )
 		{
 			tSock->SysMessage( 1189 ); // You are not agile enough to use that.
 		}
-		else if( i->GetIntelligence() > k->GetIntelligence() )
+		else if( scaledIntelligence > k->GetIntelligence() )
 		{
 			tSock->SysMessage( 1190 ); // You are not smart enough to use that.
 		}
@@ -1017,9 +1021,10 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 
 					// Apply poison on target
 					targNPC->SetPoisoned( poisonStrength );
+					targNPC->SetPoisonedBy( mChar->GetSerial() );
 
 					// Set time until next time poison "ticks"
-					targNPC->SetTimer( tCHAR_POISONTIME, BuildTimeValue( static_cast<R32>( GetPoisonTickTime( poisonStrength ))));
+					targNPC->SetTimer( tCHAR_POISONTIME, BuildTimeValue( GetPoisonTickTime( poisonStrength )));
 
 					// Set time until poison wears off completely
 					targNPC->SetTimer( tCHAR_POISONWEAROFF, targNPC->GetTimer( tCHAR_POISONTIME ) + ( 1000 * GetPoisonDuration( poisonStrength ))); //wear off starts after poison takes effect
@@ -1298,7 +1303,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
 								( tile.Weight() == 255 && i->GetMovable() != 1 )))
 	{
-		if( nChar->GetCommandLevel() < 2 || mSock->PickupSpot() != PL_OWNPACK )
+		if( nChar->GetCommandLevel() < CL_GM || mSock->PickupSpot() != PL_OWNPACK )
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			{
@@ -1349,7 +1354,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 			if( newZ > ( nChar->GetZ() + ( 20 - tile.Height() )))
 			{
 				// Item is too tall - can't drop it this high up
-				if( nChar->GetCommandLevel() >= 2 || nChar->IsGM() )
+				if( nChar->GetCommandLevel() >= CL_SEER || nChar->IsGM() )
 				{
 					// GM override
 					mSock->SysMessage( 91 ); // Item placement rule overruled by GM privileges - Z too high for normal players!
@@ -1369,7 +1374,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		else if( newZ + tile.Height() > z + tile.Height() )
 		{
 			// Item is too tall - can't drop it this high up
-			if( nChar->GetCommandLevel() >= 2 || nChar->IsGM() )
+			if( nChar->GetCommandLevel() >= CL_SEER || nChar->IsGM() )
 			{
 				// GM override
 				mSock->SysMessage( 91 ); // Item placement rule overruled by GM privileges - Z too high for normal players!
@@ -1754,7 +1759,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 		}
 		else if( contOwner->IsNpc() && contOwner->GetNpcAiType() == AI_PLAYERVENDOR )
 		{
-			if( contOwner->GetOwnerObj() == &mChar || mChar.GetCommandLevel() > CL_PLAYER )
+			if( contOwner->GetOwnerObj() == &mChar || mChar.GetCommandLevel() >= CL_GM )
 			{
 				// Clear old values, if item have 'em
 				iDropped.SetDesc( "" );
@@ -1949,7 +1954,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 	if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
 								( tile.Weight() == 255 && nItem->GetMovable() != 1 )))
 	{
-		if( mChar->GetCommandLevel() < 2 || mSock->PickupSpot() != PL_OWNPACK )
+		if( mChar->GetCommandLevel() < CL_GM || mSock->PickupSpot() != PL_OWNPACK )
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			{
@@ -2050,7 +2055,7 @@ bool CPIDropItem::Handle( void )
 	// Display overloaded message if character is overloaded as a result of the above
 	if( Weight->IsOverloaded( ourChar ))
 	{
-		SI32 maxWeight = ourChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
+		SI32 maxWeight = ourChar->GetWeightMax();
 		SI32 currentWeight = ourChar->GetWeight() / 100;
 		tSock->SysMessage( 1784, currentWeight, maxWeight ); //You are overloaded. Current / Max: %i / %i
 	}
@@ -2445,7 +2450,10 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	std::string skillProwessTitle;
 	std::string fameTitle;
 	GetSkillProwessTitle( pdoll, skillProwessTitle );
-	GetFameTitle( pdoll, fameTitle );
+	if( !pdoll->HideFameKarmaTitle() )
+	{
+		GetFameTitle( pdoll, fameTitle );
+	}
 
 	bool bContinue = false;
 	if( pdoll->IsGM() )
@@ -2853,6 +2861,8 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				}
 			}
 			return true;
+		case IT_SPELLCHANNELING: //  Spell Channeling
+			return true;
 		case IT_MAP: // Map
 		{
 			CPMapMessage m1;
@@ -2985,7 +2995,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 
 						// Start a timer to auto-close the plank
 						mSock->SysMessage( 9144 ); // You open the plank, though it's still locked.
-						iUsed->SetTempTimer( BuildTimeValue( static_cast<R32>( 5 )));
+						iUsed->SetTempTimer( BuildTimeValue( 5.0 ));
 					}
 					else
 					{
@@ -3389,6 +3399,8 @@ void InitTagToItemType( void )
 	tagToItemType["CLOCK"]					= IT_CLOCK;
 	tagToItemType["SEXTANT"]				= IT_SEXTANT;
 	tagToItemType["HAIRDYE"]				= IT_HAIRDYE;
+	tagToItemType["SPELLCHANNELING"]		= IT_SPELLCHANNELING;
+	tagToItemType["SHIELD"]					= IT_SHIELD;
 }
 
 ItemTypes FindItemTypeFromTag( const std::string &strToFind )
@@ -3518,7 +3530,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 	}
 	if( ourChar->GetCommandLevel() < CL_CNS )
 	{
-		if(( tSock->GetTimer( tPC_OBJDELAY ) >= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
+		if( tSock->GetTimer( tPC_OBJDELAY ) >= cwmWorldState->GetUICurrentTime() )
 		{
 			if( !tSock->ObjDelayMsgShown() )
 			{
@@ -3674,6 +3686,34 @@ bool CPIDblClick::Handle( void )
 		}
 	}
 
+	// If no scripts were found, or if no script contained onUseUnchecked events, proceed with envoke stuff
+	if( scriptTriggers.size() == 0 || !scriptExecuted )
+	{
+		UI16 itemId	= iUsed->GetId();
+		cScript *toExecute = nullptr;
+		UI16 envTrig = 0;
+
+		if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>( iType )))
+		{
+			// Get script to run by item type
+			envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>( iType ));
+			toExecute = JSMapping->GetScript( envTrig );
+		}
+		else if( JSMapping->GetEnvokeById()->Check( itemId ))
+		{
+			// Get script to run by item ID
+			envTrig = JSMapping->GetEnvokeById()->GetScript( itemId );
+			toExecute = JSMapping->GetScript( envTrig );
+		}
+
+		// Check for the onUse events in envoke scripts!
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnUseUnChecked( ourChar, iUsed ) == 0 )
+				return true;
+		}
+	}
+
 	bool itemUsageCheckComplete = false;
 	// Then loop through all scripts again, checking for OnUseChecked event - but first run item usage check
 	// once to make sure player can actually use item!
@@ -3739,9 +3779,6 @@ bool CPIDblClick::Handle( void )
 		// Check for the onUse events in envoke scripts!
 		if( toExecute != nullptr )
 		{
-			if( toExecute->OnUseUnChecked( ourChar, iUsed ) == 0 )
-				return true;
-
 			if( toExecute->OnUseChecked( ourChar, iUsed ) == 0 )
 				return true;
 		}

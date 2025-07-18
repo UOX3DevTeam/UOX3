@@ -1520,13 +1520,13 @@
 1513=is somewhat badly damaged.
 1514=is flimsy and not trustworthy.
 1515=is falling apart.
-1516= would be extraordinarily deadly.
-1517= would be a superior weapon.
-1518= would inflict quite a lot of damage and pain.
-1519= would probably hurt your opponent a fair amount.
-1520= would do some damage.
-1521= would do minimal damage.
-1522= might scratch your opponent slightly.
+1516=Would be extraordinarily deadly,
+1517=Would be a superior weapon,
+1518=Would inflict quite a lot of damage and pain,
+1519=Would probably hurt your opponent a fair amount,
+1520=Would do some damage,
+1521=Would do minimal damage,
+1522=Might scratch your opponent slightly,
 1523= and is very fast.
 1524= and is fast.
 1525= and is slow.
@@ -1677,6 +1677,7 @@
 1663=My little son Timmy requires an operation have ye some gold to help d'cause?
 1664=My wife is pregnant with our 7th child, have some pity in the form of some gold for a desperate man.
 // End begging text
+1669=Cannot see target!
 1670=You cannot disguise yourself while wearing body paint
 1671=You cannot polymorph while wearing body paint
 1672=You cannot use incognito while wearing body paint
@@ -2457,6 +2458,59 @@
 2585=You pour some cider into the container.
 2586=You pour some liquor into the container.
 2587=You pour some wine into the glass.
+2588=These carrots are not ready for harvesting yet.
+2589=You fail to pick any carrots.
+2590=You harvest a carrot.
+2591=These onions are not ready for harvesting yet.
+2592=You fail to pick any onions.
+2593=You harvest an onion.
+2594=This turnip is not ready for harvesting yet.
+2595=You fail to pick any turnips.
+2596=You harvest a turnip.
+2597=This cabbage is not ready for harvesting yet.
+2598=You fail to pick any cabbages.
+2599=You harvest a cabbage.
+// [2600-2699] Player/NPC/Spawn Admin Script
+2600=Chosen NPC (%s, %i) has been removed.
+2601=Warning: No backpack found on character!
+2602=Warning: No bank box found for character!
+2603=Too far away to inspect paperdoll (current range: %i)
+2604=NPC Removal
+2605=<BASEFONT color=#EECD8B>Please confirm removal of:</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>There is no undo button.</BASEFONT>
+2607=Filter for names starting with '%s'
+2608=Manage Players - %s
+2609=Manage NPCs
+2610=All
+2611=Online
+2612=Offline
+2613=Tweak character:<br>serial: %s<br>Last On: %w
+2614=Teleport to character
+2615=Get character
+2616=Inspect character
+2617=Jail/Release character
+2618=Kick player
+2619=Ban player
+2620=Remove NPC
+2621=No entries found!
+2622=Page %i / %u
+2623=Apply Filter
+2624=Filter for Online Players
+2625=Filter for Offline Players
+2626=Sort by Last On (%s)
+2627=Ascending
+2628=Descending
+2629=Found %i player characters in %u milliseconds.
+2630=Found %i NPCs in %u milliseconds.
+2631=Found %i item-based spawners in %u milliseconds.
+2632=Manage Spawn Objects
+2633=Tweak Spawn Object:<br>serial: %s<br>spawn-section: %w<br>Amount: %i<br>In region: (%u) %z
+2634=Teleport to Spawn Object
+2635=Open Spawn Object Editor
+2636=Remove Spawn Object
+2637=Filter for NPC Spawners
+2638=Filter for Item Spawners
+2639=Sort by Spawn Count (%s)
 // [2700-2799] Misc scripts
 2700=Only the house owner can rotate furniture.
 2701=That does not appear to work.
@@ -2554,6 +2608,8 @@
 2794=for %i gold
 2795=You scrounge some gems from the wreckage.
 2796=* Your body convulses from electric shock *
+2797=You can't use this while flying!
+2798=You have been grounded.
 // [2800-2999] House script
 2800=House Owner:
 2801=CO-OWNERS
@@ -2933,6 +2989,7 @@
 3574=a blade spirit
 3605=an elf male
 3606=an elf female
+3637=a spectral armor
 3666=a gargoyle male
 3667=a gargoyle female
 3689=Time Lord
@@ -3252,6 +3309,65 @@
 5150=a speckled scorpion
 5151=a chaos dragoon
 5152=a chaos dragoon elite
+5153=the Gypsy Maiden
+5154=the Gypsy Animal Trainer
+5155=the Gypsy Banker
+5156=the Gypsy Fortune Teller
+5157=the Vagabond
+5158=the Iron Worker
+5159=a tropical bird
+// [5500-5600] Holiday Msgs
+5500=Where would you like to place this decoration?
+5501=The decoration must be placed next to a wall.
+5502=That location is not in your house.
+5503=The extreme pain in your teeth subsides.
+5504=You feel as if you could eat as much as you wanted!
+5506=Do you wish to re - deed this decoration ?
+5507=Error Report to GM
+5508=You have just been hit by a snowball!
+5509=You throw the snowball and hit the target!
+5510=You can only throw a snowball at something that can throw one back.
+5511=The snow is not ready to be packed yet.  Keep trying.
+5512=You carefully pack the snow into a ball...
+// [5700-5750] Treasure Map and Map Msgs
+5700=It appears to be blank.
+5701=This treasure hunt has already been completed.
+5702=The treasure is marked by the red pin. Grab a shovel and go dig it up!
+5703=You decoded the map!
+5704=tattered treasure map
+5705=You cannot decode this map yet!
+5706=You are already digging treasure.
+5707=Where do you wish to dig?
+5708=You stop digging because something is directly on top of the treasure chest
+5709=You did not decode this map and have no clue where to look for the treasure.
+5710=The treasure for this map has already been found.
+5711=You dig and dig, but do not find any treasure
+5712=You dig and dig, but no treasure seems to be here
+5713=The chest refuses to be filled with any more treasure.
+5714=plainly drawn treasure map
+5715=expertly drawn treasure map
+5716=adeptly drawn treasure map
+5717=cleverly drawn treasure map
+5718=deviously drawn treasure map
+5719=You cannot move around while digging up treasure. You will need to start digging anew.
+5720=Try looking for the treasure chest more to the
+5721=You can't dig for treasure there!
+5722=coordinates %s
+5723=Completed
+// [5751-5765]  Karma Locking and Shrine
+5751=Karma is locked.  A mantra spoken at a shrine will unlock it again.
+5752=Your karma has been locked. Your karma can no longer be raised.
+5753=Your karma has been unlocked. Your karma can be raised again.
+5754=Lock Karma
+5755=Unlock Karma
+5756=Resurect
+5757=Tithe Gold
+5758=You have decided to tithe no gold to the shrine.
+5759=You do not have enough gold to tithe that amount!
+5760=You tithe gold to the shrine as a sign of devotion.
+5761=It is possible for you to be resurrected here at this Shrine. Do you wish to try?<br>CONTINUE - You chose to try to come back to life now.<br>CANCEL - You prefer to remain a ghost for now.
+5762=It is possible for you to be resurrected here at this shrine of the Virtues. Do you wish to try?<br>CONTINUE - You chose to try to come back to life now.<br>CANCEL - You prefer to remain a ghost for now.
+5763=<center>Resurrection</center>
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.
@@ -3379,8 +3495,27 @@
 6276=You don't have the cooking skill to create the body paint.
 6277=Resource ID not found in list of resources used to craft item.
 6278=You have to use your taste identification skill to know more about this potion.
-6279=Skill check success guaranteed due to elevated command level!
+6279=Tip: Skill check success guaranteed due to elevated command level!
 6280=Spellcast delay ignored due to elevated command level!
+6300=You havent learned glassblowing.
+6301=Only a Grandmaster Alchemist can learn from this book.
+6302=You have already learned this information.
+6303=You have learned to make items from glass.  You will need to find miners to mine fine sand for you to make these items.
+6304=You must have a free hand to drink a potion.
+6310=You cannot poison that! You can only poison bladed or piercing weapons, food or drink.
+6311=You have poisoned your target!
+6312=The poison seems to have worn off.
+6313=You cannot poison that! You can only poison one-handed bladed or one-handed piercing weapons, food or drink.
+6314=You cannot poison that! You can only poison infectious weapons and food.
+6315=You make a grave mistake while applying the poison.
+6316=Blood mixes with poison and begins to corrode your weapon.
+6317=You have cleaned the item.
+6318=The poison on your weapon seems to have worn off.
+6319=It looks like acid is dripping from what is left of the blade.
+6320=It looks as if a substance is eating away pieces of the blade.
+6321=It looks as if this blade is covered with an acidic substance.
+6322=It looks like this blade has a corrosive element on it.
+6323=It looks like this blade has a light corrosive element on it.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -3633,6 +3768,16 @@
 8212=Valid command syntax for repeating adding objects: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 8213=Section ID from DFNs object originated from
 8214=Is item stealable? 0 = not stealable, 1 = stealable, 2 = stealable rare
+8215=Invalid target. Please select a valid item or NPC
+8251=Wiping NPCs...
+8252=Wiped %i NPCs
+8253=Select NPC to move remotely using xrun:
+8254=Select NPC to move remotely using xwalk:
+8255=Select NPC to turn remotely using xturn:
+8256=Select movement (%s) destination:
+8257=You must target an NPC!
+8258=You bind the wound and stop the bleeding
+8259=The bleeding wounds have healed, you are no longer bleeding!
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Account number associated with player. Controlled by server (Read-Only)
 8301=NPC AI Type
@@ -3982,7 +4127,7 @@
 8944=That doesn't seem to be a valid NPC-id from the DFNs.
 8945=Select target for movable status %i:
 8946=Select target to set as non-decayable:
-// [9000-9500] Misc
+// [9000-9499] Misc
 9000=You cannot use this ability while frozen.
 9001=This character is not allowed to fly!
 9002=You have been invited to join a party, type /accept or /decline to deal with the invitation
@@ -4244,6 +4389,69 @@
 9402=[Unidentified]
 9403=uses remaining: %i
 9404= with %d charges
+9405=You dig for a while but fail to find any of sufficient quality for glassblowing.
+9406=You carefully extract some workable stone from the ore vein!
+9407=You carefully dig up sand of sufficient quality for glassblowing.
+9408=Only a Grandmaster Miner can learn from this book.
+9409=You have already learned this information.
+9410=You have learned how to mine fine sand. Target sand areas when mining to look for fine sand.
+9411=You have learned to mine for stones. Target mountains when mining to find stones.
+9412=There is no sand here to mine.
+// [9500-9550] Misc Resource Harvesting
+9500=This gourd is not ready for harvesting yet.
+9501=You fail to pick any gourds.
+9502=You harvest a gourd.
+9503=This pumpkin is not ready for harvesting yet.
+9504=You fail to pick any pumpkins.
+9505=You harvest a pumpkin.
+9506=This squash is not ready for harvesting yet.
+9507=You fail to pick any squashes.
+9508=You harvest a squash.
+9509=This watermelon is not ready for harvesting yet.
+9510=You fail to pick any watermelons.
+9511=You harvest a watermelon.
+9512=This honeydew melon is not ready for harvesting yet.
+9513=You fail to pick any honeydew melons.
+9514=You harvest a honeydew melon.
+9515=This canteloupe is not ready for harvesting yet.
+9516=You fail to pick any canteloupe.
+9517=You harvest a canteloupe.
+9518=This garlic is not ready for harvesting yet.
+9519=You fail to pick any garlic.
+9520=You harvest a garlic.
+// [9800-9899] Spawner Editor
+9800=Spawner Object Editor
+9801=Spawner Name
+9802=Spawner Type
+9803=Item
+9804=Npc
+9805=Area
+9806=Escort
+9807=Spawn Section/List
+9808=Section ID or NPClist to spawn from DFNs
+9809=Spawnlist
+9810=If checked, spawner uses spawnlist instead of spawn section
+9811=Amount
+9812=Maximum amount to respawn
+9813=Min Time
+9814=Minimum time in min to respawn
+9815=Max Time
+9816=Maximum time in min to respawn
+9817=Radius (Area)
+9818=Radius to spawn NPCs in (Area-spawner only!)
+9819=Apply Changes
+9820=Changed Spawner Type to Item (61), amount reset to 1.
+9821=Changed Spawner Type to NPC (62).
+9822=Changed Spawner Type to Area (69), spawn radius updated (defaults to 1)
+9823=Changed Spawner Type to Escort (125).
+9824=Spawn Section updated to %s
+9825=Min Time updated to %i
+9826=Max Time updated to %i
+9827=Amount updated to %i
+9828=Spawn Radius updated to %i
+9829=Spawner name updated to %s
+9830=No longer using spawn list - assuming spawn section now refers to individual NPC definition.
+9831=Now using spawn list - assuming spawn section now refers to an NPC list.
 // [9900 - 10000] Door and Sign Commands
 9916=Page
 9917=Next
@@ -4598,6 +4806,7 @@
 11467=bone arms
 11468=bone leggings
 11469=bone armor
+11470=tall straw hat
 // 11601 - 11800 Cooking Crafting Skill
 11601=COOKING MENU
 11602=Ingredients
@@ -4620,7 +4829,6 @@
 11619=bread loaf
 11620=pan of cookies
 11621=cake
-11622=muffins
 11622=baked quiche
 11623=baked meat pie
 11624=sausage pizza
@@ -4656,6 +4864,7 @@
 11654=You must be near a heat source to cook food.
 11655=You must be near a mill to create flour.
 11656=You must be near an oven to bake food.
+11657=muffins
 // 11801 - 12000 Tinkering Crafting Skill
 // Page 1 - Wooden Items
 11801=Axle
@@ -4764,6 +4973,33 @@
 12007=That's not a gem resource!
 12008=Select material to use:
 12009=You added a lock and key to the container!
+// 13000 - 13500 Cartography Crafting Skill
+13000=Cartography Menu
+13001=Maps
+13002=BLANK SCROLL
+13003=MAP
+13004=Blank Scrolls or Maps
+13100=Local Map
+13101=City Map
+13102=Sea Chart
+13103=World Map
+// 13501 - 14000 Glassblowing Crafting Skill
+13501=Glassblowing Menu
+13502=Miscellaneous
+13503=Glass Weapons
+13504=SAND
+13600=empty bottle
+13601=flask (small)
+13602=flask (medium)
+13603=flask (curved)
+13604=flask (large #1)
+13605=flask (large #2)
+13606=flask (bubbling blue)
+13607=flask (bubbling purple)
+13608=flask (bubbling red)
+13609=empty vials
+13610=full vials
+13611=spinning hourglass
 // 15000 Skills
 15000=Alchemy
 15001=Anatomy
@@ -4826,6 +5062,10 @@
 15058=Strength
 15059=Dexterity
 15060=Intelligence
+//15990 Travel Restrictions
+15990=You are not allowed to travel there.
+15991=You cannot teleport from here to the destination.
+15991=You can not mark a rune here.
 // 17000 - Shard Help Menu
 17000=Help Menu
 17001=General Gameplay Questions
@@ -5017,6 +5257,13 @@
 17619=As a fellow guild member, I can give you a premium price for this!
 17620=That's not enough to cover the guild membership fee, sorry.
 17621=Time since joining guild: %i minutes.
+// [17701-17710] Weapon Abiltiies
+17701=You receive a paralyzing blow!
+17702=You deliver a paralyzing blow!
+17703=You receive a crushing blow!
+17704=You deliver a crushing blow!
+17705=You receive a concussion blow!
+17706=You deliver a concussion blow!
 // Disguise Kit
 18000=Vandyke
 18001=Mustache
@@ -5082,12 +5329,12 @@
 18708=As a Young player, you cannot harm other players, or their followers.
 18709=You cannot harm Young players, or their followers.
 18710=You have died.
-18711=As a ghost you cannot interact with the world. You cannot touch items nor can you use them.
-18712=You can pass through doors as though they do not exist.  However, you cannot pass through walls.
-18713=Since you are a new player, any items you had on your person at the time of your death will be in your backpack upon resurrection.
-18714=To be resurrected you must find a healer in town or wandering in the wilderness.  Some powerful players may also be able to resurrect you.
-18715=While you are still in young status, you will be transported to the nearest healer (along with your items) at the time of your death.
-18716=To rejoin the world of the living simply walk near one of the NPC healers, and they will resurrect you as long as you are not marked as a criminal.
+18711=As a ghost you <BASEFONT COLOR=orange>cannot interact</BASEFONT> with the world. You cannot touch items nor can you use them.
+18712=You <BASEFONT COLOR=orange>can pass through doors</BASEFONT> as though they do not exist.  However, you cannot pass through walls.
+18713=Since you are a new player, any items you had on your person at the time of your death <BASEFONT COLOR=orange>will be in your backpack</BASEFONT> upon resurrection.
+18714=To be resurrected <BASEFONT COLOR=orange>you must find a healer</BASEFONT> in town or wandering in the wilderness.  Some powerful players may also be able to resurrect you.
+18715=While you are still in young status, you <BASEFONT COLOR=orange>will be transported to the nearest healer</BASEFONT> (along with your items) at the time of your death.
+18716=To rejoin the world of the living <BASEFONT COLOR=orange>simply walk near one of the NPC healers</BASEFONT>, and they will resurrect you as long as you are not marked as a criminal.
 18717=Warning: monsters may attack you on sight down here in the dungeons!
 18718=OKAY
 18719=Renouncing 'Young Player' Status
@@ -5143,5 +5390,188 @@
 18769=The dyes and dye tub have been placed in your backpack.
 18770=This is half a prize ticket! Double-click this ticket and target any other ticket marked NEW PLAYER and get a prize! This ticket will only work for YOU, so don’t give it away!
 18771=A full set of ranger armor.
+// [18800-19000] AOS properties
+18800=%i% Bandage Healing Bonus
+// Clothing Bless Deed
+19001=Select the item of clothing that you want to bless.
+19002=The item has been blessed.
+19003=You can only bless clothing with this deed!
+19004=Items must be equipped or in your backpack to bless them.
+// [19005-19033] Crystal Ball Msgs
+19005=Tis most certain.
+19006=Aye, venily.
+19007=**fizzles**
+19008=Count on it not
+19009=Concentrate and ask again.
+19010=Beyond the slightest doubt.
+19011=Unable to foresee.
+19012=Eat at the Blue Boar!
+19013=Why art thou asking me?
+19014=The very ground shall crumble before a thing
+19015="Twas not clear.
+19016=With Virtue, it shall be.
+19017=**shimmers, crackles and fades**
+19018=Only a fool would ask such.
+19019=If I say, "yea", wilt thou leave?
+19020=A plague on thee if thou doth ask again.
+19021=Tis no surpise
+19022=Xuri Will Banish thee for not listening.
+19023=Truth is tough. It will not break.
+19024=Keep from me the divinity of Yes and No.
+19025=Who then is going to say Nay?
+19026=Tis no good arguing with the inevitable.
+19027=Mondain himself could not make me say yes!
+19028=Nothing left, nothing at all, nothing, nothing.
+19029=Best not to tell thee.
+19030=I say UOX3 is best emulator in history.
+19031=Aye.
+19032=Nay.
+19033=Very doubtful.
+19034=Mine sources say nay.
+// [19050-19065] Crystal Pet Summoning Ball
+19050=Target your pet that you wish to link to this Crystal Ball of Pet Summoning.
+19051=You may only link your own pets to a Crystal Ball of Pet Summoning.
+19052=The Crystal Ball darkens. It must be charged before it can be used again.
+19053=Your pet is now linked to this Crystal Ball of Pet Summoning.
+19054=Only pets can be linked to this Crystal Ball of Pet Summoning.
+19055=The Crystal Ball darkens. It must be charged before it can be used again.
+19056=The Crystal Ball fills with a yellow mist. Why would you summon your pet while riding it?
+19057=The Crystal Ball fills with a blue mist. Your pet is not responding to the summons.
+19058=The Crystal Ball fills with a grey mist. You are not the owner of the pet you are attempting to summon.
+19059=You must wait a few seconds before you can summon your pet.
+19060=The Crystal Ball fills with a green mist. Your pet has been summoned.
+19061=linked pet:
+19062=This crystal ball is no longer linked to a pet.
+19063=The new name of the pet is: %s
+19064=That does not seem to be a valid pet.
+// [19070-19080] Bag of Sending
+19070=The bag of sending must be in your backpack.
+19071=Error: No valid bankbox found! Please contact a GM for assistance.
+19072=You may only send items from your backpack to your bank box.
+19073=You cannot send a container through the bag of sending.
+19074=Your bank box is full.
+19075=You don't have enough charges to send that much weight
+19076=The item was placed in your bank box.
+19077=The bag of sending rejects that item.
+// [19081-19090] Powder of Translocation
+19081=This item cannot absorb any more powder of translocation.
+19082=This item has been oversaturated with powder of translocation and can no longer be recharged.
+19083= glows with green energy and absorbs magical power from the powder.
+19084=Powder of translocation has no effect on this item.
+// [19100-19005] Elixir Conversion
+19100=You've successfully converted the metal.
+19101=You can only convert five hundred ingots at a time.
+19102=The item must be in your backpack to be exchanged.
+// [19110-19200] Plant Growing
+19110=You must have the item in your backpack or locked down in order to use it.
+19111=You need to plant a seed in the bowl first
+19112=You prune the plant. This plant will no longer produce resources or seeds, but will require no upkeep.
+19113=You cannot gather pollen from a mutated plant!
+19114=Too early to gather pollen
+19115=You cannot gather pollen from an unhealthy plant!
+19116=Target the plant you wish to cross-pollinate to.
+19117=You can only pollinate other specially grown plants!
+19118=This plant is not in the flowering stage. You cannot pollinate it!
+19119=You cannot pollinate an unhealthy plant!
+19120=You cannot cross-pollinate with a mutated plant!
+19121=This plant has already been pollinated!
+19122=You pollinate the plant with its own pollen.
+19123=You successfully cross - pollinate the plant.
+19124=This plant has no seeds to gather!
+19125=You gather seeds from the plant.
+19126=You can't add water to this plant.
+19127=You soften the dirt with water.
+19128=You can't use that on a plant!
+19129=You don't have any strong potions of that type in your pack.
+19130=You should only pour potions on a plant or seed!
+19131=The plant is already soaked with this type of potion!
+19132=You must have the object in your backpack to use it.
+19133=Choose a patch of dirt to scoop up.
+19134=You need more dirt to fill a plant bowl!
+19135=You fill the bowl with fresh dirt.
+19136=You'll want to gather fresh dirt in order to raise a healthy plant!
+19137=Choose a bowl of dirt to plant this seed in.
+19138=You must use a seed on some prepared soil!
+19139=This bowl of dirt already has a seed %s in it!
+19140=The dirt needs to be softened first.
+19141=You plant the seed in the bowl of dirt.
+19142=You must use a seed on a bowl of dirt!
+// [19201-19300] Special Moves
+19201=You need %i weapon skill to perform that attack
+19202=You need %i mana to perform that attack
+19203=Your attack penetrates their armor!
+19204=The blow penetrated your armor!
+19205=Your target is bleeding!
+19206=You are bleeding!
+19207=You are bleeding profusely
+19208=%i is bleeding profusely
+19209=You have delivered a concussion!
+19210=You feel disoriented!
+19211=You have delivered a crushing blow!
+19212=You take extra damage from the crushing attack!
+19213=You cannot disarm your opponent.
+19214=Your target is already unarmed!
+19215=You disarm their weapon!
+19216=Your weapon has been disarmed!
+19217=You cannot perform that attack while mounted or flying!
+19218=This attack only works on mounted or flying targets
+19219=The force of your attack has dislodged them from their mount!
+19220=You have been knocked off of your mount by %i !
+19221=Your weapon must have a dose of poison to perform an infectious strike!
+19222=Your precise strike has increased the level of the poison by 1
+19223=The poison seems extra effective!
+19224=You have poisoned your target : %i
+19225=%i : poisoned you!
+19226=You deliver a mortal wound!
+19227=You have been mortally wounded!
+19228=Your target resists paralysis.
+19229=You resist paralysis.
+19230=The attack has temporarily paralyzed you!
+19231=You lack the required stealth to perform that attack
+19232=You strike and hide in the shadows!
+19233=You are dazed by the attack and your attacker vanishes!
+19234=Your confusion has passed, you may now arm a weapon!
+19235=You are no longer mortally wounded.
+19236=The bleeding wounds have healed, you are no longer bleeding!
+// [19301-19330] Bonded and Dead pet
+19301=You may not trade a dead pet.
+19302=The dead pet cannot attack.
+19303=You are not skilled enough to resurrect that pet.
+19304=Only pets bonded with their owner can be resurrected.
+19306=You successfully resurrected the pet!
+19307=Thou can only resurrect pets that are bonded with their owner.
+19308=Your pet has bonded with you!
+19309=Your pet is dead and will not respond to that command.
+19310=You break the bond with your pet.
+19311=Are you sure you want to break the bond with your pet?
+19311=Releasing a ghost pet will destroy it, with no chance of recovery. Do you wish to continue?
+19312=The pet's owner must be nearby to attempt resurrection.
+19313=Your pet cannot form a bond with you until your animal taming ability has risen.
+19314=Your pet cannot form a bond with you until your bushido ability has risen.
+19315=Only pets bonded with their owner can be resurrected.
+19316=The animal must be in the same house as you to be resurrected.
+19317=The pet's owner must be inside this house before you can revive this creature.
+19318=Target the pet you wish to bond with. Press ESC to cancel. This item is consumed on successful use, so choose wisely!
+19319=Pet bonding canceled.
+19320=That pet is already bonded to you.
+19321=This is not your pet!
+19322=Are you sure you want to release your pet? Summoned Pets will vanish permanently!
+19323=You can not perform beneficial acts on your target.
+19324=Select a pet to instantly bond.
+19325=Invalid target.
+19326=That creature must be tamed before it can be bonded.
+19327=That pet is already bonded.
+19328=Pet has been instantly bonded!
+19329=Pet bonding is disabled on this server.
+19330=You do not have enough gold on you to pay the fee.
+19331=%i gold has been withdrawn from your backpack.
+19332=Your pet has been resurrected.
+19333=[Tame]
+19334=[Bonded]
+19335=(bonded)
+19336=(tame)
+19337=(invulnerable)
+19338=(frozen)
+19339=(guarded)
 }
 EOF

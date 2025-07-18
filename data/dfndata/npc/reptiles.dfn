@@ -1,3 +1,16 @@
+// Base elementals with shared DFN tags
+[base_reptiles]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+NPCAI=2
+FLAG=NEUTRAL
+}
+
+//------------------------------------------------------------------------------------------------//
+
 [alligator]
 {
 NAME=#//an alligator
@@ -252,6 +265,7 @@ GOLD=50 150
 LOOT=randompotions,3
 LOOT=randomgems,3
 EQUIPITEM=listobject150
+LOOT=TreasureMapLvl1Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=150 320
@@ -289,6 +303,7 @@ GOLD=50 150
 LOOT=randompotions,4
 LOOT=randomgems,4
 EQUIPITEM=listobject150
+LOOT=TreasureMapLvl1Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=160 340
@@ -326,6 +341,7 @@ GOLD=200 300
 LOOT=randompotions,5
 LOOT=randomgems,5
 EQUIPITEM=listobject150
+LOOT=TreasureMapLvl3Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=417 595
@@ -367,6 +383,7 @@ LOOT=randompotions,5
 LOOT=randomgems,5
 LOOT=midlevelscrolls,5
 EQUIPITEM=listobject150
+LOOT=TreasureMapLvl3Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=420 600
@@ -407,6 +424,7 @@ LOOT=randompotions
 LOOT=randomreagents,5
 LOOT=lowlevelscrolls
 LOOT=midlevelscrolls
+LOOT=TreasureMapLvl2Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=181 205
@@ -447,6 +465,7 @@ LOOT=randompotions,2
 LOOT=randomreagents,10
 LOOT=lowlevelscrolls,2
 LOOT=midlevelscrolls,2
+LOOT=TreasureMapLvl2Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=281 305
@@ -486,6 +505,7 @@ GOLD=200 250
 LOOT=midlevelscrolls,4
 LOOT=randomgems,4
 LOOT=randompotions,4
+LOOT=TreasureMapLvl4Loot
 SAYCOLOR=0x0026
 EMOTECOLOR=0x0026
 STR=416 505
@@ -663,4 +683,23 @@ CARVE=45
 RACE=5
 FLAG=NEUTRAL
 CONTROLSLOTS=1
+}
+
+// yamandon - Base NPC with shared DFN tags
+[base_yamandon]
+{
+GET=base_reptiles
+NAME=#//a yamandon
+ID=0x0f9
+SCRIPT=3224
+ORIGIN=se
+}
+
+[yamandon]
+{
+GETT2A=yamandon_se
+GETLBR=yamandon_se
+GETAOS=yamandon_se
+GETSE=yamandon_se
+GETTOL=yamandon_se
 }

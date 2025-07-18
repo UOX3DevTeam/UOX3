@@ -124,6 +124,7 @@ damage=6 44
 hp=36 50
 spd=22
 str=70
+script=5050//weapon_abilties.js
 }
 
 // Samurai Empire
@@ -138,6 +139,7 @@ damage=5 35
 hp=31 95
 spd=31
 str=35
+script=5050//weapon_abilties.js
 }
 
 // Wakizashi - LBR stats (default)
@@ -174,6 +176,7 @@ damage=4 29
 hp=45 70
 spd=39
 str=35
+script=5050//weapon_abilties.js
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -214,6 +217,7 @@ spd=36
 str=25
 value=49 25
 weight=700
+script=5050//weapon_abilties.js
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -325,6 +329,7 @@ spd=39
 str=35
 value=74 41
 weight=800
+script=5050//weapon_abilties.js
 }
 
 //------------------------------------------------------------------------------------------------//

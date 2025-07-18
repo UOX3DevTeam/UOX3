@@ -14,6 +14,7 @@ damage=2 36
 hp=31 80
 spd=46
 str=30
+script=5050//weapon_abilties.js
 }
 
 // Tribal Spear - LBR stats (default)
@@ -26,6 +27,7 @@ damage=4 40
 hp=31 80
 spd=46
 str=30
+script=5050//weapon_abilties.js
 }
 
 // Kryss - LBR stats (default)
@@ -74,6 +76,7 @@ damage=4 16
 hp=31 60
 spd=45
 str=15
+script=5050//weapon_abilties.js
 }
 
 // Age of Shadows
@@ -88,6 +91,7 @@ damage=4 28
 hp=31 110
 spd=37
 str=20
+script=5050//weapon_abilties.js
 }
 
 // Lance - LBR stats (default)
@@ -114,6 +118,7 @@ damage=4 32
 hp=90 95
 spd=32
 str=30
+script=5050//weapon_abilties.js
 }
 
 // Tekagi - LBR stats (default)
@@ -138,6 +143,7 @@ damage=3 22
 hp=35 60
 spd=56
 str=10
+script=5050//weapon_abilties.js
 }
 
 // Sai - LBR stats (default)
@@ -150,6 +156,7 @@ damage=3 22
 hp=55 60
 spd=56
 str=10
+script=5050//weapon_abilties.js
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -165,6 +172,7 @@ damage=3 22
 hp=30 60
 spd=50
 str=10
+script=5050//weapon_abilties.js
 }
 
 // Elven Spellblade - LBR stats (default)
@@ -252,6 +260,7 @@ damage=4 28
 hp=31 110
 spd=37
 str=20
+script=5050//weapon_abilties.js
 }
 
 // Dual Pointed Spear - LBR stats (default)
@@ -264,6 +273,7 @@ damage=3 23
 hp=31 80
 spd=50
 str=20
+script=5050//weapon_abilties.js
 }
 
 // Gargish Tekagi - LBR stats (default)
@@ -276,6 +286,7 @@ damage=3 22
 hp=35 60
 spd=56
 str=5
+script=5050//weapon_abilties.js
 }
 
 //------------------------------------------------------------------------------------------------//

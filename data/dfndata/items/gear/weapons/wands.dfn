@@ -8,11 +8,14 @@ layer=1
 restock=5
 decay=1
 good=27
+maxuses=75
+usesleft=25
 }
 
 // Wand
 [0x0df2]
 {
+gett2a=0x0df2_t2a
 getlbr=0x0df2_lbr
 getaos=0x0df2_aos
 gettol=0x0df2_tol

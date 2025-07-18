@@ -1,3 +1,16 @@
+// Base daemons with shared DFN tags
+[base_daemons]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+NPCAI=2
+FLAG=NEUTRAL
+}
+
+//------------------------------------------------------------------------------------------------//
+
 [balron]
 {
 NAME=#//a balron
@@ -10,6 +23,7 @@ GOLD=800 1200
 LOOT=midlevelscrolls,5
 LOOT=highlevelscrolls,3
 LOOT=reagents,20
+LOOT=TreasureMapLvl5Loot
 STR=1000 1200
 DEX=175 255
 INT=151 250
@@ -54,6 +68,7 @@ PACKITEM=0x13ba
 LOOT=midlevelscrolls,2
 LOOT=highlevelscrolls
 LOOT=randomgems,5
+LOOT=TreasureMapLvl4Loot
 STR=476 505
 DEX=76 95
 INT=301 325
@@ -105,6 +120,7 @@ DIRECTION=RND
 BACKPACK
 GOLD=700 900
 LOOT=midlevelscrolls,4
+LOOT=TreasureMapLvl4Loot
 STR=376 405
 DEX=176 195
 INT=201 225
@@ -335,9 +351,11 @@ ORIGIN=aos
 
 [shadowfiend]
 {
+GET=base_daemons
 NAME=#//a shadow fiend
 ID=0x00a8
 DIRECTION=RND
+GOLD=0 50
 STR=46 55
 DEX=121 130
 INT=46 55
@@ -358,4 +376,29 @@ RUNS
 RACE=10
 FLAG=NEUTRAL
 ORIGIN=uor
+SCRIPT=3228//shadowfiend.js
+}
+
+//oni - Base NPC with shared DFN tags
+[base_oni]
+{
+GET=base_daemons
+NAME=#//oni
+ID=0x0f1
+ORIGIN=se
+}
+
+[oni]
+{
+GETUO=oni_se
+GETT2A=oni_se
+GETUOR=oni_se
+GETTD=oni_se
+GETLBR=oni_se
+GETAOS=oni_se
+GETSE=oni_se
+GETML=oni_se
+GETSA=oni_se
+GETHS=oni_se
+GETTOL=oni_se
 }

@@ -7,7 +7,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "rndtile", 2, true );
+	RegisterCommand( "rndtile", 8, true );
 }
 
 function command_RNDTILE( pSock, cmdString )

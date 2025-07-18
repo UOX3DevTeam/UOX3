@@ -3,9 +3,9 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "buy", 1, true );
-	RegisterCommand( "sell", 1, true );
-	RegisterCommand( "removeshop", 2, true );
+	RegisterCommand( "buy", 4, true );
+	RegisterCommand( "sell", 4, true );
+	RegisterCommand( "removeshop", 8, true );
 }
 
 function command_BUY( socket, cmdString )

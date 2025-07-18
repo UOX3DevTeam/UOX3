@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="Documentation for UOX3's scripting engine, based on SpiderMonkey 1.7">
+	<meta name="description" content="Documentation for UOX3's scripting engine, based on SpiderMonkey 1.8">
 	<script>document.getElementsByTagName("html")[0].className += " js";</script>
 	<link rel="stylesheet" href="assets/css/style.css" deferred>
 	<link rel="stylesheet" href="assets/css/all.css" deferred>
@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 14. October, 2023</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6</small></p>
+	<p style="margin:0"><small>Last Updated: 19. July, 2025</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -55,6 +55,26 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>June 29th, 2025</h4>
+						<ul>
+							<li>Added details for new JS Events: onProfileRequest, onProfileUpdate</li>
+						</ul>
+						<h4>April 27th, 2025</h4>
+						<ul>
+							<li>Added details for new JS Events: onBoatTurn
+							<li>Added details for new JS Methods: TurnBoat, GetTiller</li>
+						</ul>
+						<h4>April 23rd, 2025</h4>
+						<ul>
+							<li>Added details for new JS Methods: AddSkill</li>
+							<li>Updated details for JS Method: Refresh</li>
+							<li>Updated details for JS Function: IterateOver</li>
+							<li>Updated details for JS Event: onIterate</li>
+						</ul>
+						<h4>October 27th, 2023</h4>
+						<ul>
+							<li>Updated details for JS Function: SetRandomName</li>
+						</ul>
 						<h4>October 14th, 2023</h4>
 						<ul>
 							<li>Added details for new JS Function: DoesCharacterBlock</li>
@@ -123,7 +143,7 @@
 					<input type="checkbox" id="spoiler_faq_language"/>
 					<label for="spoiler_faq_language">What language is UOX3's JavaScript Engine based on? <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>UOX3's JavaScript Engine is based on an embedded version of SpiderMonkey 1.7. This provides a similar feature-set to JavaScript 1.7 or ECMAScript 5, minus any web/browser-specific stuff.</p>
+						<p>UOX3's JavaScript Engine is based on an embedded version of SpiderMonkey 1.8. This provides a similar feature-set to JavaScript 1.8 or ECMAScript 5, minus any web/browser-specific stuff.</p>
 					</div>
 					<input type="checkbox" id="spoiler_faq_global_vars"/>
 					<label for="spoiler_faq_global_vars">Are global variables unique per script? <i class="fas fa-angle-down"></i></label>
@@ -427,7 +447,7 @@ function onAISliver( aiChar )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onAttack( pAttacker, pDefender )</em></p>
+							<p><em>function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -439,14 +459,20 @@ function onAISliver( aiChar )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>After pAttacker's script has been triggered, pDefender's onDefense event also triggers. Note that these events run <em>in addition</em> to hard-coded combat (and/or other combat events), after everything else is done, and do not replace these.</p>
+							<p>After pAttacker's script has been triggered, pDefender's onDefense event also triggers. Note that these events run <em>in addition</em> to hard-coded combat (and/or other combat events), after everything else is done, and do not replace these. hitStatus will be false if attack missed.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onAttack( pAttacker, pDefender )
+<pre><code class="language-javascript">function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {
-	pAttacker.TextMessage( "Who lives in that castle?" );
-	pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    if( hitStatus )
+    {
+	    pAttacker.TextMessage( "Hah! I hit my target for " + damageDealt + "damage" );
+    }
+    else
+    {
+	    pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    }
 }</code></pre></p>
 						</div>
 					</div>
@@ -527,6 +553,45 @@ function onAISliver( aiChar )
 	var pUser = pSock.currentChar;
 	pUser.TextMessage( "I am buying " + iAmount + " item(s) ("+iBought.name+") from a vendor!" );
 	npcVendor.TextMessage( "I am selling an item!" );
+	return true;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnBoatTurn" id="eventOnBoatTurn"><span>onBoatTurn</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onBoatTurn( iBoat, oldDir, newDir, iTiller )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow reacting to boat being turned</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Runs on boat item after boat has successfully turned</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>oldDir refers to previous direction boat was pointing in, while newDir refers to the new updated direction.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> allows other scripts with same event from running, if any</li>
+								<li><strong>return true</strong> prevents other scripts with same event from running, if any</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onBoatTurn( iBoat, oldDir, newDir, iTiller )
+{
+	iTiller.TextMessage( "Yarr, capt'n! She's come about!")
 	return true;
 }</code></pre></p>
 						</div>
@@ -1009,6 +1074,122 @@ function onCommand( mySock, cmdString )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnContextMenuRequest" id="eventOnContextMenuRequest"><span>onContextMenuRequest</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onContextMenuRequest( socket, targObj )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow reactions to player attempts at opening context menus for chars/items</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When a player attempts to trigger context menu on items or characters, script activates on said item/character</p>
+							<p>Usable in Global script? <span class="hl">Yes</span></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> to override and prevent hard-coded context menus from showing</li>
+								<li><strong>return true</strong> to let code handle context menu instead</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onContextMenuRequest( socket, targObj )
+{
+    // handle your own packet with context menu here
+    var pUser = socket.currentChar;
+    var offset = 12;
+    var numEntries = 1; // Increase with number of Entries
+
+    // Prepare packet
+    var toSend = new Packet();
+    var packetLen = ( 12 + ( numEntries * 8 ));
+    toSend.ReserveSize( packetLen );
+    toSend.WriteByte( 0, 0xBF );
+    toSend.WriteShort( 1, packetLen  );
+    toSend.WriteShort( 3, 0x14 ); // subCmd
+    toSend.WriteShort( 5, 0x0001 ); // 0x0001 for 2D client, 0x0002 for KR (maybe this needs to be 0x0002?)
+    toSend.WriteLong( 7, targObj.serial );
+    toSend.WriteByte( 11, numEntries ); // Number of entries
+
+    // Context Menu Entry 1 - Open Paperdoll Context menu
+    toSend.WriteShort( offset, 0x000a );    // Unique ID
+    toSend.WriteShort( offset += 2, 6123);
+    toSend.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+    toSend.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+
+    offset += 2; // for each additional entry
+
+    // Context Menu Entry 2 - Unlink pet
+    toSend.WriteShort( offset, 0x000b );    // Unique ID
+    toSend.WriteShort( offset += 2, 6182 );
+    toSend.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+    toSend.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+
+    //Send packet
+    socket.Send( toSend );
+    toSend.Free();
+
+	return false;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnContextMenuSelect" id="eventOnContextMenuSelect"><span>onContextMenuSelect</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onContextMenuSelect( socket, targObj, popupEntry )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow custom handling of context menu selection for chars/items</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When a player selects a popup from a context menu on an item/character, script activates on said item/character</p>
+							<p>Usable in Global script? <span class="hl">Yes</span></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> to override and prevent hard-coded context menu selection handling</li>
+								<li><strong>return true</strong> to let code handle context menu selection handling</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onContextMenuSelect( socket, targObj, popupEntry )
+{
+    switch( popupEntry )
+    {
+    	case 0x000A: // Open Paperdoll
+    		// Show custom paperdoll?
+    		break;
+    	case 0x000B: // Unlink Pet
+    		// Handle unlinking of pet here
+    		break;
+    	default:
+    		break;
+    }
+
+	return false;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnContRemoveItem" id="eventOnContRemoveItem"><span>onContRemoveItem</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -1429,7 +1610,7 @@ function onTimer( timerObj, timerID )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onDefense( pAttacker, pDefender )</em></p>
+							<p><em>function onDefense( pAttacker, pDefender, hitStatus, hitLoc, damageReceived  )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -1441,14 +1622,20 @@ function onTimer( timerObj, timerID )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>The event runs at the end of each hard-coded combat "round"</p>
+                            <p>The event runs at the end of each hard-coded combat "round". hitStatus will be false if attack missed.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onDefense( pAttacker, pDefender )
+<pre><code class="language-javascript">function onDefense( pAttacker, pDefender, hitStatus, hitLoc, damageReceived  )
 {
-	pAttacker.TextMessage( "Who lives in that castle?" );
-	pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    if( hitStatus )
+    {
+	    pAttacker.TextMessage( "Hah! I hit my target for " + damageReceived + "damage" );
+    }
+    else
+    {
+	    pDefender.TextMessage( "Help! Help! I'm being repressed!" );
+    }
 }</code></pre></p>
 						</div>
 					</div>
@@ -1484,6 +1671,70 @@ function onTimer( timerObj, timerID )
 {
 	if( objType == 0 )
 		Console.Print( objDestroyed.name + " has been deleted from the world.\n" );
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnDismount" id="eventOnDismount"><span>onDismount</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onDismount( pUser, npcMount )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Allows triggering effects upon dismounting.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When pUser dismounts npcMount, npcMount's script is activated</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>This runs after a successful dismount. No return values supported.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Randomly change color of mount while riding it, stop the show when dismounting
+function onCharDoubleClick( pUser, targChar )
+{
+	// Store player's serial as a string in a tag on mount, and start a timer
+	targChar.SetTag( "mountedBy", pUser.serial.toString() );
+	targChar.StartTimer( 1000, 1, 19701 );
+	return true;
+}
+
+function onDismount( pUser, npcMount )
+{
+	// Dismounting, so let's stop the disco effect
+	npcMount.KillJSTimer( 1, 19701 );
+
+	// Clear the tag we set earlier
+	npcMount.SetTag( "mountedBy", null );
+}
+
+function onTimer( npcMount, timerID )
+{
+	// Apply random color to mount
+	npcMount.skin = RandomNumber( 0, 2000 );
+
+	 // Find who is riding the mount
+	var pUser = CalcCharFromSer( parseInt( npcMount.GetTag( "mountedBy" )));
+	if( ValidateObject( pUser ))
+	{
+		// Find the "mount item" equipped on character
+		var mountItem  = pUser.FindItemLayer( 0x19 );
+
+		// Apply same color to mount item as mount has
+		mountItem.color = npcMount.skin;
+	}
+
+	 // Restart timer
+	npcMount.StartTimer( 1000, 1, 19701 );
 }</code></pre></p>
 						</div>
 					</div>
@@ -1572,36 +1823,44 @@ function onDispel( objDispelled, objType )
 							</ul>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
+							<p>
+								<span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDrop( iDropped, pDropper )
 {
 	var pSock = pDropper.socket;
 
-	//Lets fetch the serial of the target-location
-	var temp1 = pSock.GetByte( 10 );
-	var temp2 = pSock.GetByte( 11 );
-	var temp3 = pSock.GetByte( 12 );
-	var temp4 = pSock.GetByte( 13 );
+	// Client version 6.0.1.7+ has an additional byte before serial of target container
+	// Will contain a value for backpack grid index item was dropped in when using clients that support grid containers
+	// Will contain a value of -1 in regular 2D UO client and 0 in ClassicUO
+	var serOffset = (pSock.clientMajorVer > 6 || ( pSock.clientMajorVer == 6 && pSock.clientSubVer >= 1 && pSock.clientLetterVer >= 7)) ? 11 : 10;
+	targSer1 = pSock.GetByte( serOffset + 0 ); // 0 = dropped on character, 0xFF = ground/item
+	targSer2 = pSock.GetByte( serOffset + 1 );
+	targSer3 = pSock.GetByte( serOffset + 2 );
+	targSer4 = pSock.GetByte( serOffset + 3 )
 
-	//Check the value of Byte 10 to determine if the target is ground, character or container
-	if( temp1 == 0 ) //Target is a character
+	if( targSer1 == 0 ) // Target is a character
 	{
-		var targetChar = CalcCharFromSer( temp1, temp2, temp3, temp4 )
-		pDropper.TextMessage( "I've dropped this item on a character named "+targetChar.name+", let's bounce it back." );
-		return false;
+		var targetChar = CalcCharFromSer( targSer1, targSer2, targSer3, targSer4 )
+		if( ValidateObject( targetChar ))
+		{
+			pDropper.TextMessage( "I've dropped this item on a character, deny if not my own character!!" );
+			if( targetChar.serial != pDropper.serial )
+			{
+				pDropper.TextMessage( "DENIED!" );
+				return false;
+			}
+		}
 	}
-	if( temp1 == 0xFF ) //Target is ground or another item
+	else if( targSer1 == 0xFF ) // Target is ground or another non-container item
 	{
-		pDropper.TextMessage( "I've dropped this item on the ground or on another item." );
-		return true;
+		pDropper.TextMessage( "I've dropped this item on the ground or on another item, let's approve!" );
 	}
-	if( temp1 <= 0x40 ) //Target is a container
-	{
-		var targetItem = CalcItemFromItem( temp1, temp2, temp3, temp4 );
-		pDropper.TextMessage( "I've dropped this item in/on a container with ID "+targetItem.id+"." );
-		return true;
-	}
-}</code></pre></p>
+
+	// Default to allow dropping, let code handle it!
+	return true;
+}
+</code></pre>
+							</p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -1617,7 +1876,7 @@ function onDispel( objDispelled, objType )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
-							<p>Adding custom behaviour when dropping items on other items</p>
+							<p>Adding custom behaviour when dropping items <strong>on/inside containers</strong></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
@@ -1632,12 +1891,16 @@ function onDispel( objDispelled, objType )
 							</ul>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>iDroppedOn can only be items that are recognized by the client as containers, via the tiledata "container" flag in the client data. The client will not register attempts to drop items on non-container items, and it's not enough to set a container type on an item in UOX3 to overcome this. Modifications to client tiledata is required in order to make client recognize items as potential containers.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
 {
 	if( iDropped.id == 0x1f14 ) //If the item being dropped is a recall rune
 	{
-		if( iDroppedOn.id == 0x0efa ) //If the item being dropped on is a spellbook
+		if( iDroppedOn.id == 0x0efa ) //If the item being dropped on is a spellbook - which is a container
 		{
 			cDropper.TextMessage("I am dropping "+iDropped.name+" on a "+iDroppedOn.name );
 			return true;
@@ -1648,6 +1911,23 @@ function onDispel( objDispelled, objType )
 		cDropper.TextMessage( "Generic error message!" );
 		return false;
 	}
+}
+
+function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
+{
+    if( !ValidateObject( iDroppedOn ))
+        return false;
+
+    pDropper.TextMessage( "I've dropped this item in/on a container, deny if it's not my main pack!" );
+    var iPack = pDropper.pack;
+    if( !ValidateObject( iPack ) || iPack.serial != iDroppedOn.serial )
+    {
+        pDropper.TextMessage( "DENIED!" );
+        return false;
+    }
+
+    // Default to allow dropping, let code handle it!
+    return true;
 }</code></pre></p>
 						</div>
 					</div>
@@ -2303,7 +2583,7 @@ function onEnterRegion( pEntering, regionEntered )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onIterate( object )</em></p>
+							<p><em>function onIterate( object[, socket] )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -2322,11 +2602,12 @@ function onEnterRegion( pEntering, regionEntered )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>The IterateOver() function will return a count of all objects that onIterate returned true for.</p>
+							<p>The IterateOver() function will return a count of all objects that onIterate returned true for. It also supports an optional socket parameter, which can be passed in via the IterateOver Function.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function doStuff( socket, pUser )
+<pre><code class="language-javascript">// Example without socket parameter
+function KillNPCs( socket, pUser )
 {
 	socket.SysMessage( "Killing all NPCs (including invulnerable ones!)" );
 	var numKilled = IterateOver( "CHARACTER" );
@@ -2341,7 +2622,26 @@ function onIterate( charCheck )
 		return true;
 	}
 	return false;
-}</code></pre></p>
+}
+
+// Example with the optional socket parameter:
+function KillAllMurderers( socket, pUser )
+{
+	var numKilled = IterateOver( "CHARACTER", socket );
+	pUser.TextMessage( "I killed " + numKilled + " murderers!" );
+}
+
+function onIterate( charCheck, socket )
+{
+	if( ValidateObject( charCheck ) && !charCheck.npc && charCheck.murderer )
+	{
+		socket.SysMessage( "Found a murderer by the name of " + charCheck.name + "! Killing..." );
+		charCheck.Kill();
+		return true;
+	}
+	return false;
+}
+</code></pre></p>
 						</div>
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -2902,6 +3202,71 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnProfileRequest" id="eventOnProfileRequest"><span>onProfileRequest</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onProfileRequest( socket, profileOwnerChar )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To control what text is shown from the paperdoll profile of profileOwnerChar to the requesting client (socket)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When client (socket) requests data for a paperdoll profile (belonging to profileOwnerChar). Any text returned from the event will be sent to the client.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return ""</strong> to not show anything</li>
+								<li><strong>return someString</strong> to display the contents of someString to the client</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onProfileRequest( socket, profileOwnerChar )
+{
+	return "This is an example of some text displayed in a paperdoll profile";
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnProfileUpdate" id="eventOnProfileUpdate"><span>onProfileUpdate</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onProfileUpdate( socket, updatedProfileText )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To retrieve updates to a player's paperdoll profile, which could then (for instance) be stored in a persistent file on the server.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When client sends updated data from the paperdoll profile (i.e. paperdoll profile is closed after changing it)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<p>No return values supported</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onProfileUpdate( socket, updatedProfileText )
+{
+	socket.currentChar.TextMessage( "Updated Profile Text:" + updatedProfileText );
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnQuestGump" id="eventOnQuestGump"><span>onQuestGump</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -2929,6 +3294,43 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 <pre><code class="language-javascript">function onQuestGump( pUser )
 {
 	pUser.TextMessage( "I pressed the Quest button in paperdoll!" );
+	return true;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+					<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnReleasePet" id="eventOnReleasePet"><span>onReleasePet</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onReleasePet( player, pet )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Lets script authors override or block the release of a pet by a player. Return <code>false</code> to prevent the release and handle it through script (e.g., open a confirmation gump), or <code>true</code> to allow the default UOX3 behavior.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When a player attempts to release a pet using the “release” context menu or other command.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>The pet must be valid and under the control of the player. Script can check bonded status, or open a custom UI to confirm release. Be sure to <strong>return true or false explicitly</strong>; omitting a return will default to false (blocking release).</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onReleasePet( player, pet )
+{
+	if( pet.GetTag("isBondedPet") == 1 )
+	{
+		player.SysMessage("You cannot release a bonded pet!");
+		return false;
+	}
 	return true;
 }</code></pre></p>
 						</div>
@@ -3314,7 +3716,7 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSkillCheck( pUser, skillID, lowSkill, highSkill )</em></p>
+							<p><em>function onSkillCheck( pUser, skillID, lowSkill, highSkill, forceResult )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -3333,11 +3735,11 @@ function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>Runs just prior to skillcheck. lowSkill is minimum skill requirement for successful use of the skill (as passed into the skill check), while highSkill is the maximum skill the player can reach (as passed into the skill check)</p>
+							<p>Runs just prior to skillcheck. lowSkill is minimum skill requirement for successful use of the skill (as passed into the skill check), while highSkill is the maximum skill the player can reach (as passed into the skill check). forceResult will one of three values: -1 if result of skill check was forced to fail, 0 if a normal skillcheck was performed, and 1 if result of skill check was forced to succeed.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onSkillCheck( pUser, skillID, lowSkill, highSkill )
+<pre><code class="language-javascript">function onSkillCheck( pUser, skillID, lowSkill, highSkill, forceResult )
 {
 	pUser.TextMessage( "A skillcheck is being done for skill with ID " + skillID + "!" );
 	return false;
@@ -3898,7 +4300,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSpellTargetSelect( pCaster, myTarget, spellID )</em></p>
+							<p><em>function onSpellTargetSelect( myTarget, pCaster, spellID )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -3923,7 +4325,7 @@ function onSpellTarget( myTarget, pCaster, spellID )
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Script attached to an NPC that's immune to magic, where event returns 2 to reject spell being cast
-function onSpellTargetSelect( pCaster, myTarget, spellID )
+function onSpellTargetSelect( myTarget, pCaster, spellID )
 {
 	var socket = pCaster.socket;
 	if( socket != null )
@@ -4375,6 +4777,49 @@ function onTooltip( myObj, pSocket )
 			<!-- </li> -->
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnTooltip" id="eventOnTooltip"><span>onTurnBoat</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onTurnBoat( iBoat, oldDir, newDir, iTiller )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow reactions in script after a boat has successfully turned</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Triggers for boat objects after boat has successfully turned. oldDir is old direction, newDir is new direction after turning, iTiller is tillerman reference.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> or nothing to prevent other scripts from triggering same event</li>
+								<li><strong>return true</strong> to allow other scripts from triggering same event</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Make Tillerman respond after boat has turned
+function onTurnBoat( iBoat, oldDir, newDir, iTiller )
+{
+	if( oldDir != newDir )
+	{
+		iTiller.TextMessage( "Everything's different now!" );
+	}
+	else
+	{
+		iTiller.TextMessage( "Nothing ever changes." );
+	}
+	return true;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnUnequip" id="eventOnUnequip"><span>onUnEquip</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -4499,10 +4944,10 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 			{
 				socket.SysMessage( "You are too busy to do that." );
 			}
-			else if( socket.GetTimer( 0 ) <= GetCurrentClock() )
+			else if( socket.GetTimer( Timer.TIMEOUT ) <= GetCurrentClock() )
 			{
 				socket.tempObj = iUsed;
-				socket.SetTimer( 0, 5000 );
+				socket.SetTimer( Timer.TIMEOUT, 5000 );
 				onCallback1( socket, targChar );
 			}
 			else
@@ -4651,7 +5096,7 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
-							<p>To allow reactions for characters/items when weather changes</p>
+							<p>To allow reactions for when players enter/exit war mode</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
@@ -4891,6 +5336,33 @@ function myAreaFunc( srcChar, trgChar, pSock )
 							</div>
 						</div>
 					</div>
+
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_function_combat_CheckTimeSinceLastCombat"/>
+                            <label for="spoiler_function_combat_CheckTimeSinceLastCombat">CheckTimeSinceLastCombat <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>CheckTimeSinceLastCombat( pUser, 120 );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Checks if a character has engaged in combat within a specified time frame (in seconds).</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">// Check if the player has been in combat within the last 120 seconds (2 minutes)
+if( CheckTimeSinceLastCombat( pUser, 120 ))
+{
+  pUser.SysMessage( "You must wait two minutes after engaging in combat before you can use this item." );
+}
+else
+{
+	pUser.SysMessage( "You are free to use the item." );
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
 
 					</div>
 				</div> <!-- cd-faq__content -->
@@ -5432,6 +5904,35 @@ function myAreaFunc( srcChar, trgItem, pSock )
 							</div>
 						</div>
 
+                        						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_CheckInstaLog"/>
+							<label for="spoiler_function_misc_CheckInstaLog">CheckInstaLog <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>JSBool CheckInstaLog( x, y, world, instanceID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks if a specific location ( x, y, world, instanceID ) is within an instant logout zone.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Check if the player is in an instant logout zone
+var isInstaLog = CheckInstaLog(targX, targY, worldNumber, instanceID);
+
+if( isInstaLog )
+{
+	// Handle instant logout
+}
+else
+{
+	// Handle other logout scenarios
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
 						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_function_item_CalcTargetedItem"/>
 							<label for="spoiler_function_item_CalcTargetedItem">CalcTargetedItem <i class="fas fa-angle-down"></i></label>
@@ -5643,8 +6144,8 @@ var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>ITEM FindRootContainer( iObj );</em></p>
-									<p><em>ITEM FindRootContainer( iObjSerial );</em></p>
+									<p><em>ITEM FindRootContainer( iObj, type );</em></p>
+									<p><em>ITEM FindRootContainer( iObjSerial, type );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -5654,8 +6155,8 @@ var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9
 									<p><span class="hl">Notes</span></p>
 									<p>Parameters:
 										<ul>
-											<li>iObj - item to find root container for</li>
-											<li>iObjSerial - item serial to find root container for</li>
+											<li>iObj/iObjSerial - item or item serial to find root container for</li>
+											<li>type - indicate type of lookup; 0 = item, 1 = item serial</li>
 										</ul>
 									</p>
 								</div>
@@ -5663,7 +6164,7 @@ var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">function onUseChecked( pUser, iUsed )
 {
-	var rootContainer = FindRootContainer( iUsed );
+	var rootContainer = FindRootContainer( iUsed, 0 );
 	if( ValidateObject( rootContainer ))
 		pUser.TextMessage( "The item is in a container! The root container's name is " + rootContainer.name );
 	else
@@ -6560,7 +7061,7 @@ var socket = GetSocketFromIndex( 0 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>int IterateOver( objectType );</em></p>
+									<p><em>int IterateOver( objectType[, socket] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -6568,7 +7069,7 @@ var socket = GetSocketFromIndex( 0 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>For every object it comes across, the iterator will call a function <strong>onIterate( object )</strong> in the same script. Supported object types: "BASEOBJ", "CHARACTER", "ITEM", "SPAWNER", "MULTI", "BOAT"</p>
+									<p>For every object it comes across, the iterator will call a function <strong>onIterate( object[, socket] )</strong> in the same script. Supported object types: "BASEOBJ", "CHARACTER", "ITEM", "SPAWNER", "MULTI", "BOAT". If the optional socket parameter is included in IterateOver, it will be passed to the onIterate event.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -7542,7 +8043,7 @@ SetSpawnRegionFacetStatus( 13 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns a timestamp for current time</p>
+									<p>Returns a timestamp for current time <em>since server startup</em>. Starts from 0 on every server startup.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -7843,7 +8344,7 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 		return false;
 	}</code></pre>
 
-	<pre><code class="language-javascript">// Looping through all items in character's backpack upon clicking an item with script attached
+    <pre><code class="language-javascript">// Looping through all items in character's backpack upon clicking an item with script attached
 	function onUseChecked( pUser, iUsed )
 	{
 		var mItem;
@@ -7857,7 +8358,7 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 		return false;
 	}</code></pre>
 
-	<pre><code class="language-javascript">// Looping through all items in a container upon using a container with script attached
+    <pre><code class="language-javascript">// Looping through all items in a container upon using a container with script attached
 	function onUseChecked( pUser, iUsed )
 	{
 		var mItem;
@@ -7976,6 +8477,35 @@ myDoor.KillJSTimer( 0, 4500 );
 
 	// Spit out a system message with the value of "myTag" tag on myObject
 	pUser.SysMessage( "Value of persistent tag myTag on object: " + myObject.GetTag( "myTag" ));</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_GetTempEffect"/>
+							<label for="spoiler_method_baseObj_GetTempEffect">GetTempEffect <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetTempEffect( tempEffectID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns timestamp for when temp effect with specified ID expires, or 0 if it doesn't exist/has already expired</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">// Fetch timestamp for when paralysis temp effect expires
+var expireTime = myChar.GetTempEffect( 1 );
+if( expireTime > 0 )
+{
+	myChar.TextMessage( "Paralysis expires in " + ( expireTime - GetCurrentClock() ) + " seconds!" );
+}
+</code></pre>
 								</div>
 							</div>
 						</div>
@@ -8122,21 +8652,67 @@ myObject.KillTimers( 1 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_pauseresumeJsTimer"/>
+							<label for="spoiler_method_baseObj_pauseresumeJsTimer">PauseJSTimer/ResumeJSTimer <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void PauseJSTimer( timerID, scriptID )</em></p>
+									<p><em>void ResumeJSTimer( timerID, scriptID )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Pauses or resumes JS Timer on character/item based on provided timerID and scriptID</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myChar.StartTimer( 5000, 1, [scriptID] );
+myChar.PauseJSTimer( 1, [scriptID] );
+myChar.ResumeJSTimer( 1, [scriptID] );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_pauseresumeTempEffect"/>
+							<label for="spoiler_method_baseObj_pauseresumeTempEffect">PauseTempEffect/ResumeTempEffect <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void PauseTempEffect( tempEffectID )</em></p>
+									<p><em>void ResumeTempEffect( tempEffectID )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Pauses or resumes Temp Effect on character/item based on provided tempEffectID</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myChar.PauseTempEffect( 1 ); // Pause paralysis effect. Character remains paralysed
+myChar.ResumeTempEffect( 1 ); // Paralysis effect timer continues where it left off</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_baseObj_Refresh"/>
 							<label for="spoiler_method_baseObj_Refresh">Refresh <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void Refresh();</em></p>
+									<p><em>void Refresh( [socket] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Causes the Character/Item to be refreshed for nearby sockets in range to see it</p>
+									<p>Causes the Character/Item to be refreshed for nearby sockets in range to see it. If a specific socket is specified, object will be refreshed only for that socket.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Refreshes myObj by sending it to all nearby sockets
-myObj.Refresh();</code></pre>
+myObj.Refresh();
+
+// Refreshes myObj for a specific socket/player only
+myObj.Refresh( mySocket );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -8184,6 +8760,44 @@ spellbookItem.RemoveSpell( 0 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_ResourceCount"/>
+							<label for="spoiler_method_baseObj_ResourceCount">ResourceCount <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int ResourceCount( realItemID );</em></p>
+									<p><em>int ResourceCount( realItemID, colour );</em></p>
+									<p><em>int ResourceCount( realItemID, colour, moreVal );</em></p>
+									<p><em>int ResourceCount( realItemID, colour, moreVal, sectionID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns the amount of items with specified ID realItemID, colour (optional) and MORE value (optional), SectionID (optional) from character's or Items packs</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>A colour value of -1 will make UOX3 count ANY item of the specified realItemID regardless of colour. If moreVal is specified, UOX3 will only count items with a matching MORE value.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">
+    // Count all items in character's or item's packs with specified ID (0x1bf2) and colour (0)
+    var iCount = myChar.ResourceCount( 0x1bf2, 0 );
+
+    // Count all items in character's or item's packs with specified ID (0x1bf2), of ANY colour
+    var iCount = myChar.ResourceCount( 0x1bf2, -1 );
+
+    // Count all items in character's or item's packs with specified ID (0x1bf2), colour (0x0482) and MORE value (1)
+    var iCount = myChar.ResourceCount( 0x1bf2, 0x0482, 1 );
+
+    // Count all items in character's or item's packs with specified ID (0x1bf2), colour (0x0482) and MORE value (1) and sectionID ("0x1bf2")
+    var iCount = myChar.ResourceCount( 0x1bf2, 0x0482, 1, "0x1bf2");
+</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_baseObj_Resist"/>
 							<label for="spoiler_method_baseObj_Resist">Resist <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -8217,6 +8831,36 @@ mItem.Resist( 1, 25 );
 
 // Get the armor value of an item:
 value = mItem.Resist( 1 );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_ReverseTempEffect"/>
+							<label for="spoiler_method_baseObj_ReverseTempEffect">ReverseTempEffect <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int ReverseTempEffect( tempEffectID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Force revert a temp effect on item or character based on specified temp effect ID</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">// Force revert paralysis effect on character
+var expireTime = myChar.GetTempEffect( 1 );
+if( expireTime > 0 )
+{
+	myChar.ReverseEffect( 1 );
+	myChar.TextMessage( "I'm free!" );
+}
+</code></pre>
 								</div>
 							</div>
 						</div>
@@ -8369,14 +9013,14 @@ myObj.Teleport( iUsed );
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>The function has 5 extra optional arguments (if including an optional parameter, make sure to also include the preceding argument):
-										<ul>
-											<li>allHear (broadcast true/false)</li>
-											<li>txtHue (colour of the text sent to the client)</li>
-											<li>speechTarget (intended target of message. 0 = only visible to sender and receiver, 1 = visible to all players in range, 2 = visible to all NPCs and players in range, 3 = visible to all PCs everywhere + NPCs in range, 4 = visible to all PCs everywhere (broadcast), 5 = only visible to receiver)</li>
-											<li>speechTargetSerial (serial of the receiver of the message, used if speechTarget is 0 or 5)</li>
-											<li>speechFontType (type of font to use. Defaults to normal. 0 = bold, 1 = normal with shadow, 2 = bold with shadow, 3 = normal, 4 = gothic, 5 = italic, 6 = small and dark, 7 = colourful, 8 = runic (only works with CAPS), 9 = small and light)</li>
-										</ul></p>
+									<p>The function has 5 extra optional arguments (if including an optional parameter, make sure to also include the preceding argument):</p>
+									<ul>
+										<li>allHear (broadcast true/false)</li>
+										<li>txtHue (colour of the text sent to the client)</li>
+										<li>speechTarget (intended target of message. 0 = only visible to sender and receiver, 1 = visible to all players in range, 2 = visible to all NPCs and players in range, 3 = visible to all PCs everywhere + NPCs in range, 4 = visible to all PCs everywhere (broadcast), 5 = only visible to receiver)</li>
+										<li>speechTargetSerial (serial of the receiver of the message, used if speechTarget is 0 or 5)</li>
+										<li>speechFontType (type of font to use. Defaults to normal. 0 = bold, 1 = normal with shadow, 2 = bold with shadow, 3 = normal, 4 = gothic, 5 = italic, 6 = small and dark, 7 = colourful, 8 = runic (only works with CAPS), 9 = small and light)</li>
+									</ul>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -8385,6 +9029,43 @@ myChar.TextMessage( "Public, ice-coloured message sent to everyone as if I said 
 myChar.TextMessage( "Private, ice-coloured message just for me!", false, 0x0480 );
 myItem.TextMessage( "This is a private message from an item to a character!", false, 0, 0, myChar.serial );
 myItem.TextMessage( "THIS IS A MESSAGE IN RUNIC LETTERS VISIBLE TO ALL", true, 0, 3, null, 8 );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_UseResource"/>
+							<label for="spoiler_method_baseObj_UseResource">UseResource <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int UseResource( amount, itemID );</em></p>
+									<p><em>int UseResource( amount, itemID, colour );</em></p>
+									<p><em>int UseResource( amount, itemID, colour, moreVal );</em></p>
+									<p><em>int UseResource( amount, itemID, colour, moreVal, sectionID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Removes amount of items with specified itemID, colour (optional) and MORE value (optional) from character's or items Packs, and returns amount deleted</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>If an item of the specified resource is found with .usesLeft property higher than 1, the appropriate amount of uses is extracted from said item before eventually deleting the resource item itself.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">
+	// Use resource of specific ID, with specific color (0)
+	myChar.UseResource( 5, 0x1bf2, 0 );
+
+	// Use resource of specific ID, and colour
+	myChar.UseResource( 5, 0x1bf2, 0x0482 );
+
+	// Use resource of specific ID, colour and MORE value
+	myChar.UseResource( 5, 0x1bf2, 0x0482, 1 );
+
+	// Use resource of specific ID, colour and MORE value and sectionID
+	myChar.UseResource( 5, 0x1bf2, 0x0482, 1, "0x1bf2" );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -8403,12 +9084,14 @@ myItem.TextMessage( "THIS IS A MESSAGE IN RUNIC LETTERS VISIBLE TO ALL", true, 0
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>Can be used with any character, as well as with items/multis with damageable flag enabled. Supported stat types:
+									<p>
+										Can be used with any character, as well as with items/multis with damageable flag enabled. Supported stat types:
 										<ul>
 											<li>0 - Health (Characters and Items</li>
 											<li>1 - Mana (Characters only)</li>
 											<li>2 - Stamina (Characters only)</li>
-										</ul></p>
+										</ul>
+									</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -8486,6 +9169,25 @@ myChar.UpdateStats( 2 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">pUser.AddPermaGreyFlag( otherChar );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_addSkill"/>
+							<label for="spoiler_method_char_addSkill">AddSkill <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void AddSkill( skillID, skillAmt, triggerEvents [true/false] )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Grant skill points to a character without triggering skillchange JS events. Useful if adding skill points from within a skillchange event, to avoid infinite loops!</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myChar.AddSkill( 0, 10, false ); // Adds 1.0 skillpoints to skill with ID 0 (Alchemy) without triggering skill change JS events</code></pre>
 								</div>
 							</div>
 						</div>
@@ -8688,6 +9390,7 @@ myNPC.CastSpell( 30, true );</code></pre>
 									<p><span class="hl">Prototype</span></p>
 									<p><em>bool CheckSkill( skillNum, minSkill, maxSkill )</em></p>
 									<p><em>bool CheckSkill( skillNum, minSkill, maxSkill, isCraftSkill )</em></p>
+									<p><em>bool CheckSkill( skillNum, minSkill, maxSkill, isCraftSkill, forceResult )</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -8695,7 +9398,7 @@ myNPC.CastSpell( 30, true );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>If the optional parameter isCraftSkill is set to true, UOX3 uses an alternate skill check formula that provides a minimum 50% chance of success if player at least meets minimum requirements for crafting an item</p>
+									<p>If the optional parameter isCraftSkill is set to true, UOX3 uses an alternate skill check formula that provides a minimum 50% chance of success if player at least meets minimum requirements for crafting an item. If the optional parameter forceResult is set to -1, the skillcheck result is forced to failure, 0 does nothing, and 1 forces a success.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -8834,11 +9537,11 @@ myChar.Damage( 15, 6, attackerChar, true );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>int Defense( hitLoc, damageType, doArmorDamage )</em></p>
+									<p><em>int Defense( hitLoc, damageType, doArmorDamage[, ignoreMedable, includeShield] )</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns the defense value against damageType of the armor item at the location hitLoc and does armor damage if needed</p>
+									<p>Returns the defense value against damageType of the armor item at the location hitLoc and does armor damage if needed, and can also exclude medable armor (optional) and include shield defense value (optional)</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
@@ -8848,7 +9551,10 @@ myChar.Damage( 15, 6, attackerChar, true );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Get the defense value of the head armor against Physical damage and damage the armor:
-value = mChar.Defense( 3, 1, true);</code></pre>
+value = mChar.Defense( 3, 1, true);
+
+// Get the total physical defense value for character, excluding medable armor, including shield
+value = mChar.Defense( 0, 1, false, false, true );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -9246,7 +9952,7 @@ myChar.TextMessage(( myTarget.GetTimer( Timer.CRIMFLAG ) - GetCurrentClock() ).t
 
 // Set time from now in milliseconds that criminal flag will last, after making character a criminal
 myChar.criminal = true;
-myChar.SetTimer( timer.CRIMFLAG, 3000 );</code></pre>
+myChar.SetTimer( Timer.CRIMFLAG, 3000 );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -9748,38 +10454,6 @@ var coldResist = pUser.Resist( 4 );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_char_ResourceCount"/>
-							<label for="spoiler_method_char_ResourceCount">ResourceCount <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>int ResourceCount( realItemID );</em></p>
-									<p><em>int ResourceCount( realItemID, colour );</em></p>
-									<p><em>int ResourceCount( realItemID, colour, moreVal );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Returns the amount of items with specified ID realItemID, colour (optional) and MORE value (optional) from character's backpack</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>A colour value of -1 will make UOX3 count ANY item of the specified realItemID regardless of colour. If moreVal is specified, UOX3 will only count items with a matching MORE value.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Count all items in character's backpack with specified ID (0x1bf2) and colour (0)
-var iCount = myChar.ResourceCount( 0x1bf2, 0 );
-
-// Count all items in character's backpack with specified ID (0x1bf2), of ANY colour
-var iCount = myChar.ResourceCount( 0x1bf2, -1 );
-
-// Count all items in character's backpack with specified ID (0x1bf2), colour (0x0482) and MORE value (1)
-var iCount = myChar.ResourceCount( 0x1bf2, 0x0482, 1 );</code></pre>
-								</div>
-							</div>
-						</div>
-
-						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_char_Resurrect"/>
 							<label for="spoiler_method_char_Resurrect">Resurrect <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -9804,12 +10478,23 @@ var iCount = myChar.ResourceCount( 0x1bf2, 0x0482, 1 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void RunTo( object, maxSteps );</em></p>
-									<p><em>void RunTo( x, y, maxSteps );</em></p>
+									<p><em>void RunTo( object, maxSteps[, allowPartial, ignoreDoors] );</em></p>
+									<p><em>void RunTo( x, y, maxSteps[, allowPartial, ignoreDoors] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Makes the (NPC only) character run to a specific object/location, halting if it takes too many steps.</p>
+									<p>Makes the (NPC only) character run to a specific object/location, if a successful path can be calculated by pathfinding code.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Supported parameters:</p>
+									<ul>
+										<li><strong>object</strong> - Dynamic object to pathfind to</li>
+										<li><strong>x, y</strong> - Alternative to object, location to pathfind to</li>
+										<li><strong>maxSteps</strong> - Max steps to use in pathfinding calculation to find a valid path</li>
+										<li><strong>allowPartial</strong> - Optional, if true will allow partial pathfinding that will calculate a path near to desired location, if actual location is blocked</li>
+										<li><strong>ignoreDoors</strong> - Pathfinding will calculate a path as if doors are not there. Up to script/custom NPC AIs to open the doors to get them through and continue on their way (using onPathFindEnd, for instance)</li>
+									</ul>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -9874,16 +10559,19 @@ var iCount = myChar.ResourceCount( 0x1bf2, 0x0482, 1 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void SetPoisoned( poisonLevel, duration )</em></p>
+									<p><em>void SetPoisoned( poisonLevel, duration[, poisonSourceChar] )</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Applies a specified level of poison to a character for a specified amount of time (in milliseconds).</p>
+									<p>Applies a specified level of poison to a character for a specified amount of time (in milliseconds). Optional third parameter can supply source character who applied the poison</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Gives myChar a level 2 poison for 10 seconds.
-myChar.SetPoisoned( 2, 10000 );</code></pre>
+myChar.SetPoisoned( 2, 10000 );
+
+// Applies level 2 poison to myChar with myNPC as source character
+myChar.SetPoisoned( 2, 10000, myNPC ); </code></pre>
 								</div>
 							</div>
 						</div>
@@ -9898,18 +10586,37 @@ myChar.SetPoisoned( 2, 10000 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Applies a random name from a specified namelist to character.</p>
+									<p>Applies a random name from a specified namelist to character/item.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>Trivia: Int values were originally used for namelist IDs in dfndata/npc/namelists.dfn, and those still persist, but they are actually strings, and any string can be used as a namelist ID. Doesn't have to be a number!</p>
+									<p>Trivia: Int values were originally used for namelist IDs in dfndata/npc/namelists.dfn or dfndata/items/namelists.dfn, and those still persist, but they are actually strings, and any string can be used as a namelist ID. Doesn't have to be a number!</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myChar.SetRandomName( "19" ); // Apply random name from Savage Warriors namelist</code></pre>
+									<pre><code class="language-javascript">myChar/myItem.SetRandomName( "19" ); // Apply random name from Savage Warriors namelist or can get random name from items namelist depending on how its used.</code></pre>
 								</div>
 							</div>
 						</div>
+                        
+                        <div class="spoilerWrapper">
+                            <input type="checkbox" id="spoiler_method_char_SetRandomColor"/>
+                            <label for="spoiler_method_char_SetRandomColor">SetRandomColor <i class="fas fa-angle-down"></i></label>
+                            <div class="spoiler">
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Prototype</span></p>
+                                    <p><em>void SetRandomColor( colorListID );</em></p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Purpose</span></p>
+                                    <p>Applies a random color from a specified colorlist to character/item.</p>
+                                </div>
+                                <div class="settingsDiv">
+                                    <p><span class="hl">Example of usage</span></p>
+                                    <pre><code class="language-javascript">myChar/myItem.SetRandomColor( "1" ); // Apply random color from Savage Warriors skin or can get random color from items colorlist depending on how its used.</code></pre>
+                                </div>
+                            </div>
+                        </div>
 
 						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_char_SetSkillByName"/>
@@ -10128,53 +10835,32 @@ myNPC.TurnToward( myObject.x, myObject.y );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_char_UseResource"/>
-							<label for="spoiler_method_char_UseResource">UseResource <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>int UseResource( amount, itemID );</em></p>
-									<p><em>int UseResource( amount, itemID, colour );</em></p>
-									<p><em>int UseResource( amount, itemID, colour, moreVal );</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Removes amount of items with specified itemID, colour (optional) and MORE value (optional) from character's backpack, and returns amount deleted</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Notes</span></p>
-									<p>If an item of the specified resource is found with .usesLeft property higher than 1, the appropriate amount of uses is extracted from said item before eventually deleting the resource item itself.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Use resource of specific ID, with specific color (0)
-myChar.UseResource( 5, 0x1bf2, 0 );
-
-// Use resource of specific ID, and colour
-myChar.UseResource( 5, 0x1bf2, 0x0482 );
-
-// Use resource of specific ID, colour and MORE value
-myChar.UseResource( 5, 0x1bf2, 0x0482, 1 );</code></pre>
-								</div>
-							</div>
-						</div>
-
-						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_char_WalkTo"/>
 							<label for="spoiler_method_char_WalkTo">WalkTo <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void WalkTo( object, maxSteps );</em></p>
-									<p><em>void WalkTo( x, y, maxSteps );</em></p>
+									<p><em>void WalkTo( object, maxSteps[, allowPartial, ignoreDoors] );</em></p>
+									<p><em>void WalkTo( x, y, maxSteps[, allowPartial, ignoreDoors] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Makes the (NPC only) character walk to a specific object/location, halting if it takes too many steps.</p>
+									<p>Makes the (NPC only) character walk to a specific object/location, if a successful path can be calculated by pathfinding code.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Supported parameters:</p>
+									<ul>
+										<li><strong>object</strong> - Dynamic object to pathfind to</li>
+										<li><strong>x, y</strong> - Alternative to object, location to pathfind to</li>
+										<li><strong>maxSteps</strong> - Max steps to use in pathfinding calculation to find a valid path</li>
+										<li><strong>allowPartial</strong> - Optional, if true will allow partial pathfinding that will calculate a path near to desired location, if actual location is blocked</li>
+										<li><strong>ignoreDoors</strong> - Pathfinding will calculate a path as if doors are not there. Up to script/custom NPC AIs to open the doors to get them through and continue on their way (using onPathFindEnd, for instance)</li>
+									</ul>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myNPC.WalkTo( pUser, 10 );</code></pre>
+									<pre><code class="language-javascript">myNPC.WalkTo( pUser, 20 );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -10329,8 +11015,8 @@ myNPC.Wander( 5600, 1204, 10 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">console.Log( "Logging a custom message to default logfile!" );
-console.Log( "Logging a custom message to a specific logfile!", "myCustomLogFile.log" );
+									<pre><code class="language-javascript">Console.Log( "Logging a custom message to default logfile!" );
+Console.Log( "Logging a custom message to a specific logfile!", "myCustomLogFile.log" );
 </code></pre>
 								</div>
 							</div>
@@ -11162,7 +11848,7 @@ if( myGuild.IsAtPeace() )
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Notes</span></p>
-								<p>background and scrollbar either <strong>false</strong> or <strong>true</strong>, for respectively off/on. HTMLText is the text in the gump, can use HTML here. Supported tags: &lt;B&gt;&lt;/B&gt; &lt;BIG&gt;&lt;/BIG&gt; &lt;SMALL&gt;&lt;/SMALL&gt; &lt;EM&gt;&lt;/EM&gt; &lt;I&gt;&lt;/I&gt; &lt;U&gt;&lt;/U&gt;
+								<p>background and scrollbar either <strong>false</strong> or <strong>true</strong>, for respectively off/on. HTMLText is the text in the gump, can use HTML here. Supported tags: &lt;BODYBGCOLOR=[color name]|[#colorid]&gt;&lt;/BODYBGCOLOR&gt; &lt;B&gt;&lt;/B&gt; &lt;BIG&gt;&lt;/BIG&gt; &lt;SMALL&gt;&lt;/SMALL&gt; &lt;EM&gt;&lt;/EM&gt; &lt;I&gt;&lt;/I&gt; &lt;U&gt;&lt;/U&gt;
 &lt;H1&gt;&lt;/H1&gt; &lt;H2&gt;&lt;/H2&gt; &lt;H3&gt;&lt;/H3&gt; &lt;H4&gt;&lt;/H4&gt; &lt;H5&gt;&lt;/H5&gt; &lt;H6&gt;&lt;/H6&gt; &lt;a href=\&quot;\&quot;&gt;&lt;/a&gt;
 &lt;div align=\&quot;right\&quot;&gt;&lt;div align=\&quot;left\&quot;&gt;&lt;/DIV&gt; &lt;left&gt;&lt;/left&gt; &lt;P&gt; &lt;CENTER&gt;&lt;/CENTER&gt; &lt;BR&gt;&lt;/BR&gt; &lt;BASEFONT color=#ffffff size=1-7&gt;&lt;/BASEFONT&gt;</p>
 							</div>
@@ -11649,7 +12335,7 @@ myGump.AddPicInPic( 10, 10, 0x03de, 0, 0, 30, 30 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myGump.send( mySock );</code></pre>
+									<pre><code class="language-javascript">myGump.Send( mySock );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -11790,7 +12476,7 @@ for( var i = 0; i < numCheckedBoxes; i++ )
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Gets data input from TextEntr(y/ies) in JS Gump</p>
+									<p>Gets data input from TextEntr(y/ies) in JS Gump. First input will have editIndex 0, second will have editIndex 1, etc.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -12392,6 +13078,25 @@ var cornerY = parseInt(multiCornerCoords[1]);</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_GetTiller"/>
+							<label for="spoiler_method_multi_GetTiller">GetTiller <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>item GetTiller();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Fetches reference to boat's Tillerman</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var iTiller = myBoat.GetTiller();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_multi_IsInMulti"/>
 							<label for="spoiler_method_multi_IsInMulti">IsInMulti <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -12426,17 +13131,17 @@ if( ValidateObject( iMulti ))
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>bool IsMulti();</em></p>
+									<p><em>bool IsBoat();</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns true if an Item is actually a Multi</p>
+									<p>Returns true if an Item is actually a Boat. Note that a Boat is also a Multi!</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">if( iToCheck.IsMulti() )
+									<pre><code class="language-javascript">if( iToCheck.IsBoat() )
 {
-	pUser.TextMessage( "Yep, it's definitely a multi." );
+	pUser.TextMessage( "Yep, it's definitely a boat." );
 }</code></pre>
 								</div>
 							</div>
@@ -12599,6 +13304,36 @@ if( iSecure )
 {
 	pChar.TextMessage( "Container is secure!" );
 }</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_multi_TurnBoat"/>
+							<label for="spoiler_method_multi_TurnBoat">TurnBoat <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool TurnBoat( turnDirection );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Turns boat in specified direction, relative to it's current direction</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>turnDirection can be 0 (go straight), 1 (turn left 90 degrees), 2 (turn right 90 degrees) or 3 (flip boat 180 degrees)</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">myBoat.TurnBoat( 0 ); // Do nothing
+
+myBoat.TurnBoat( 1 ); // Turn 90 degrees left
+
+myBoat.TurnBoat( 2 ); // Turn 90 degrees right
+
+myBoat.TurnBoat( 3 ); // Flip boat around 180 degrees
+</code></pre>
 								</div>
 							</div>
 						</div>
@@ -13634,8 +14369,8 @@ Timer.SOCK_TRAFFICWARDEN 	// Time until next time traffic warden resets</code></
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 										<pre><code class="language-javascript">// Get timestamp for when player can next use an object, and spit out remaining time in milliseconds
-var objectDelayTimestamp = myChar.GetTimer( Timer.SOCK_OBJDELAY );
-myChar.TextMessage(( myTarget.GetTimer( Timer.SOCK_OBJDELAY ) - GetCurrentClock() ).toString() );
+var objectDelayTimestamp = mySock.GetTimer( Timer.SOCK_OBJDELAY );
+myChar.TextMessage(( objectDelayTimestamp - GetCurrentClock() ).toString() );
 
 // Set time from now in milliseconds until next time player can use another item
 mySock.SetTimer( timer.SOCK_OBJDELAY, 3000 );</code></pre>
@@ -13677,25 +14412,6 @@ mySock.SetTimer( timer.SOCK_OBJDELAY, 3000 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<p><strong>See FirstTriggerWord() Method</strong></p>
-								</div>
-							</div>
-						</div>
-
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_socket_openContainer"/>
-							<label for="spoiler_method_socket_openContainer">OpenContainer <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>void OpenContainer( iCont )</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Opens the specified container (iCont) for the specified socket</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">socket.OpenContainer( iCont );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -14239,6 +14955,10 @@ myObject.propertyName = newValue;
 							Get/Set whether character is frozen on the spot, unable to move</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.hideFameKarmaTitle</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Get/Set whether fame/karma titles should show for character</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.hireling</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether NPC can be hired as a hireling</p>
 						</div>
@@ -14472,6 +15192,8 @@ myObject.propertyName = newValue;
 								<li>0x2000 - TempReflected (Character has a temporary magic reflection spell active)</li>
 								<li>0x4000 - NoNeedReags (Character doesn't need reagents to cast spells)</li>
 								<li>0x8000 - PermReflected (Character has a permanent magic reflection spell active)</li>
+								<li>0x10000 - HideFameKarmaTitle (No fame/karma titles shown for character)</li>
+								<li>0x20000 - Seer (Character is a Seer)</li>
 							</ul></p>
 						</div>
 						<div class="settingsDiv">
@@ -14579,6 +15301,10 @@ myObject.propertyName = newValue;
 							Get/Set character's current health/hitpoints (cannot exceed value of maxhp property)</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.healthRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set character's inherent health regeneration bonus, which affects passive health regeneration. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.hidamage</span> <strong>(int, <em>0 - 32767</em>)</strong><br>
 							Get/Set highest damage character can deal in combat with wrestling/unarmed attacks (randomized between lodamage and hidamage)</p>
 						</div>
@@ -14615,6 +15341,10 @@ myObject.propertyName = newValue;
 							Get/Set character's current karma level</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.lastOnSecs</span> <strong>(int, <em>0 - 65535</em>)</strong><br>
+							Gets timestamp (in seconds since Unix epoch) for when player was last online (Read-Only)</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.lightlevel</span> <strong>(int, <em>0 - 255</em>)</strong><br>
 							Get/Set character's fixed light level. Use value of 255 to disable fixed light level and start using global lightlevel again.</p>
 						</div>
@@ -14633,6 +15363,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.mana</span> <strong>(int, <em>0 - 32767</em>)</strong><br>
 							Get/Set character's current mana</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.manaRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set character's inherent mana regeneration bonus, which affects passive mana regeneration. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.maxhp</span> <strong>(int, <em>0 - 65535</em>)</strong><br>
@@ -14687,6 +15421,14 @@ myObject.propertyName = newValue;
 							Get the total number of owners a pet/follower has had (Read-Only)</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.pathTargX</span> <strong>(int, <em>0 - 7168</em>)</strong><br>
+							Current NPC pathfinding target, X coordinate</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.pathTargY</span> <strong>(int, <em>0 - 4096</em>)</strong><br>
+							Current NPC pathfinding target, Y coordinate</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.petCount</span> <strong>(int, <em>0 - 65535</em>)</strong><br>
 							Get number of pets owned by character (Read-Only)</p>
 						</div>
@@ -14697,6 +15439,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.poison</span> <strong>(int, <em>0 - 5</em>)</strong><br>
 							Get/Set character's current poisoned state</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.poisonedBy</span> <strong>(int)</strong><br>
+							Get/Set serial of character who applied poison to character. Set to 0xFFFFFFFF/SE_INVALIDSERIAL() to clear.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.poisonStrength</span> <strong>(int, <em>0 - 5</em>)</strong><br>
@@ -14757,6 +15503,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.stamina</span> <strong>(int, <em>0 - 32737</em>)</strong><br>
 							Get/Set the character's current stamina</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.staminaRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set character's inherent stamina regeneration bonus, which affects passive stamina regeneration. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.stealth</span> <strong>(int, <em>0 - 127</em>)</strong><br>
@@ -14889,6 +15639,10 @@ myObject.propertyName = newValue;
 							Get JS Object reference for skills that can be used to get/set whether individual skills are in use (???) (Read-Only)</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.skillCaps</span> <strong>(object)</strong><br>
+							Get JS Object reference for skills Cap that can be used to get/set the value of individual skills Cap using a syntax like .skillCaps.alchemy = [0 - 1000] (1000 = 100.0 skillpoints) (Read-Only)</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.socket</span> <strong>(object)</strong><br>
 							Get JS Object reference for socket associated with player character (Read-Only)</p>
 						</div>
@@ -14909,6 +15663,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.guildTitle</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
 							Get/Set guild title of character that belongs to a guild</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.lastOn</span> <strong>(text)</strong><br>
+							Gets text-formatted timestamp for when player was last online (Read-Only)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.name</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
@@ -15381,6 +16139,10 @@ myObject.propertyName = newValue;
 							Get/Set the current amount of hitpoints of the item</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.healthRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set amount of bonus health regen points character will gain while equipping item. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.hidamage</span> <strong>(int)</strong><br>
 							Get/Set the maximum amount of damage the item can deal, if it's a weapon</p>
 						</div>
@@ -15403,6 +16165,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.madeWith</span> <strong>(int)</strong><br>
 							Get/Set ID of primary skill used to craft item</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.manaRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set amount of bonus mana regen points character will gain while equipping item. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.maxhp</span> <strong>(int)</strong><br>
@@ -15439,6 +16205,14 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.poison</span> <strong>(int)</strong><br>
 							Get/Set poison strength applied to item such as weapons and food (from 1 to 4, where 1 = Weak poison, 4 = Deadly poison)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.poisonedBy</span> <strong>(int)</strong><br>
+							Get/Set serial of character who applied poison to item. Set to 0xFFFFFFFF/SE_INVALIDSERIAL() to clear.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.poisonCharges</span> <strong>(int, <em>0 - 255</em>)</strong><br>
+							Get/Set amount of poison charges on a poisoned item</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.rank</span> <strong>(int, <em>1-10</em>)</strong><br>
@@ -15491,6 +16265,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.speed</span> <strong>(int)</strong><br>
 							Get/Set the speed of the item, primarily used for weapons to determine how fast/how often the character wielding the weapon can attack in combat</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.staminaRegenBonus</span> <strong>(int, <em>-32768 - 32767</em>)</strong><br>
+							Get/Set amount of bonus stamina regen points character will gain while equipping item. See <a href="index.html#statRegeneration" title="UOX3 Docs - Stat Regeneration">Stat Regeneration</a> in UOX3 Docs for more details.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.strength</span> <strong>(int)</strong><br>
@@ -15674,6 +16452,42 @@ myObject.propertyName = newValue;
 							Get/Set the max number of player vendors allowed in a multi</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.moveType</span> <strong>(int, <em>-1 - 24</em>)</strong><br>
+							Get/Set the active movement type for Boats, which UOX3 will apply to said boat during each boat update until another movement type is set (or boat is forced to stop).</p>
+							<input type="checkbox" id="spoiler_multi_movetype"/>
+							<label for="spoiler_multi_movetype">Supported Move Types <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<ul>
+									<li><span class="hl">-1</span> // Anchored, unable to move</li>
+									<li><span class="hl">0</span> // Stop, don't move</li>
+									<li><span class="hl">1</span> // Move forward</li>
+									<li><span class="hl">2</span> // Move backward</li>
+									<li><span class="hl">3</span> // Move left</li>
+									<li><span class="hl">4</span> // Move right</li>
+									<li><span class="hl">5</span> // Move forward left</li>
+									<li><span class="hl">6</span> // Move forward right</li>
+									<li><span class="hl">7</span> // Move backward left</li>
+									<li><span class="hl">8</span> // Move backward right</li>
+									<li><span class="hl">9</span> // Move left slowly</li>
+									<li><span class="hl">10</span> // Move right slowly</li>
+									<li><span class="hl">11</span> // Move forward slowly</li>
+									<li><span class="hl">12</span> // Move backward slowly</li>
+									<li><span class="hl">13</span> // Move forward left slowly</li>
+									<li><span class="hl">14</span> // Move forward right slowly</li>
+									<li><span class="hl">15</span> // Move backward right slowly</li>
+									<li><span class="hl">16</span> // Move backward left slowly</li>
+									<li><span class="hl">17</span> // Move left once</li>
+									<li><span class="hl">18</span> // Move right once</li>
+									<li><span class="hl">19</span> // Move forward once</li>
+									<li><span class="hl">20</span> // Move backward once</li>
+									<li><span class="hl">21</span> // Move forward left once</li>
+									<li><span class="hl">22</span> // Move forward right once</li>
+									<li><span class="hl">23</span> // Move backward left once</li>
+									<li><span class="hl">24</span> // Move backward right once</li>
+								</ul>
+							</div>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.owners</span> <strong>(int)</strong><br>
 							Get the number of owners in a multi's owner list (Read-Only)</p>
 						</div>
@@ -15819,6 +16633,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.isDungeon</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether region is considered a dungeon. Primarily used for light level stuff, and to determine if houses can be placed in a region (houses cannot be placed in dungeons)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.isDisabled</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Get/Set whether region is disabled. If disabled, UOX3 will ignore it.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.isGuarded</span> <strong>(bool, <em>true/false</em>)</strong><br>
@@ -17089,7 +17907,7 @@ function findNearbyItems( pUser, trgItem, pSock )
 	<div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>UOX3 JSE Docs by Geir Ove Alnes @ Copyright 2022-2023</small></p>
+	<p><small>UOX3 JSE Docs by Xuri @ Copyright 2022-2025</small></p>
 	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" rel="noopener" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
 </div>
 <script defer>

@@ -1520,13 +1520,13 @@
 1513=je poněkud poškozený.
 1514=je chatrný a nedůvěryhodný.
 1515=rozpadá se.
-1516= byl by mimořádně smrtící.
-1517= byla by to vynikající zbraň.
-1518= způsobil by poměrně velké škody a bolest.
-1519= Pravděpodobně by protivníkovi dost ublížil.
-1520= způsobilo by určité poškození.
-1521= způsobilo by minimální poškození.
-1522= mohl by protivníka mírně poškrábat.
+1516=Byl by mimořádně smrtící,
+1517=Byla by to vynikající zbraň,
+1518=Způsobil by poměrně velké škody a bolest,
+1519=Pravděpodobně by protivníkovi dost ublížil,
+1520=Způsobilo by určité poškození,
+1521=Způsobilo by minimální poškození,
+1522=Mohl by protivníka mírně poškrábat,
 1523= a je velmi rychlý.
 1524= a je rychlý.
 1525= a je pomalý.
@@ -1677,6 +1677,7 @@
 1663=Můj synáček Timmy potřebuje operaci, máte nějaké zlaťáky na pomoc?
 1664=Moje žena čeká naše sedmé dítě, have some litty in the form of some gold for a desperate man.
 // End begging text
+1669=Cíl není vidět!
 1670=Nemůžeš se maskovat, když máš na sobě barvu na tělo
 1671=Nemůžete se polymorfovat, když máte na sobě barvu na tělo
 1672=Nemůžete použít inkognito, když máte na sobě body paint.
@@ -2457,6 +2458,57 @@
 2585=Do nádoby naliješ trochu moštu.
 2586=Nalijte do nádoby trochu alkoholu.
 2587=Nalijete do sklenice trochu vína.
+2588=Tyto mrkve ještě nejsou zralé ke sklizni.
+2589=Nepodařilo se ti sklidit žádnou mrkev.
+2590=Sklidil jsi jednu mrkev.
+2591=Tyto cibule ještě nejsou zralé ke sklizni.
+2592=Nepodařilo se ti sklidit žádnou cibuli.
+2593=Sklidil jsi jednu cibuli.
+2594=Tato řepa ještě není zralá ke sklizni.
+2595=Nepodařilo se ti sklidit žádnou řepu.
+2596=Sklidil jsi řepu.
+2597=Tento zelí ještě není zralé ke sklizni.
+2598=Nepodařilo se ti sklidit žádné zelí.
+2599=Sklidil jsi zelí.
+// [2600-2699] Player/NPC/Spawn Admin Script
+2600=Vybraná NPC (%s, %i) byla odstraněna.
+2601=Upozornění: U postavy nebyl nalezen žádný batoh!
+2602=Upozornění: Pro postavu nebyla nalezena žádná bankovní schránka!
+2603=Příliš daleko na to, aby bylo možné zkontrolovat paperdoll (aktuální rozsah: %i)
+2604=Odstranění NPC
+2605=<BASEFONT color=#EECD8B>Prosím, potvrďte odstranění:</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>Není zde žádné tlačítko pro vrácení zpět. </BASEFONT>
+2607=Filtr pro jména začínající na '%s'
+2608=Správa hráčů - %s
+2609=Správa NPC
+2610=Všechny
+2611=Online
+2612=Offline
+2613=Správa postavy:<br>seriál: %s<br>Poslední zap: 2614=Teleport k postavě
+2615=Získat postavu
+2616=Prohlédnout postavu
+2617=Uvěznit/propustit postavu
+2618=Vykopnout hráče
+2619=Zakázat hráče
+2620=Odstranit NPC
+2621=Nenašly se žádné záznamy!
+2622=Stránka %i / %u
+2623=Použít filtr
+2624=Filtr pro online hráče
+2625=Filtr pro offline hráče
+2626=Sortovat podle Last On (%s)
+2627=Vzestupně
+2628=Sestupně
+2629=Nalezeno %i postav hráčů za %u milisekund.
+2630=Nalezeno %i NPC za %u milisekund.
+2631=Nalezeno %i spawnerů založených na předmětech za %u milisekund.
+2632=Správa spawnovacích objektů
+2633=Spravování spawnovacích objektů:<br>seriál: %s<br>spawn-sekce: %w<br>Množství: 2634=Teleport do Spawn Object
+2635=Otevřít editor Spawn Object
+2636=Odstranit Spawn Object
+2637=Filtr pro NPC Spawnery
+2638=Filtr pro Item Spawnery
+2639=Sortovat podle počtu Spawnů (%s)
 // [2700-2799] Misc scripts
 2700=Nábytek může otáčet pouze majitel domu.
 2701=Toto zřejmě nefunguje.
@@ -2554,6 +2606,8 @@
 2794=pro %i zlato
 2795=Z trosek vylovíš nějaké drahokamy.
 2796=* Tvé tělo se zmítá v křečích z elektrického šoku *
+2797=Toto nemůžete použít při létání!
+2798=Byli jste uzemněni.
 // [2800-2999] House script
 2800=Vlastník domu:
 2801=VLASTNÍCI DOMU
@@ -2933,6 +2987,7 @@
 3574=duch čepele
 3605=elfský muž
 3606=elfka
+3637=spektrální brnění
 3666=chrlič muž
 3667=samice chrliče
 3689=Vládce času
@@ -3258,6 +3313,59 @@
 5156=cikánský věštec
 5157=tulák
 5158=železný dělník
+5159=tropický pták
+// [5500-5600] Holiday Msgs
+5500=Kam chcete umístit tuto dekoraci?
+5501=Dekorace musí být umístěna vedle zdi.
+5502=Toto umístění není ve vašem domě.
+5503=Extrémní bolest zubů ustupuje.
+5504=Máte pocit, jako byste mohli jíst, kolik chcete!
+5506=Přejete si předělat tuto dekoraci?
+5507=Hlášení o chybě GM
+5508=Právě vás zasáhla sněhová koule!
+5509=Házíte sněhovou kouli a zasáhnete cíl!
+5510=Můžete házet sněhovou kouli pouze na něco, co ji může hodit zpět.
+5511=Sníh ještě není připraven k zabalení. Zkoušej to dál.
+5512=Opatrně balíte sníh do koule...
+// [5700-5750] Treasure Map and Map Msgs
+5700=Zdá se, že je prázdné.
+5701=Tato honba za pokladem již byla dokončena.
+5702=Poklad je označen červeným špendlíkem. Popadni lopatu a běž to vykopat!
+5703=Dekódovali jste mapu!
+5704=otrhaná mapa pokladu
+5705=Zatím nemůžete dekódovat tuto mapu!
+5706=Už kopete poklad.
+5707=Kde chcete kopat?
+5708=Přestanete kopat, protože něco je přímo na vrcholu truhly s pokladem
+5709=Nedekódovali jste tuto mapu a nemáte ponětí, kde hledat poklad.
+5710=Poklad pro tuto mapu již byl nalezen.
+5711=Kopete a kopete, ale nenajdete žádný poklad
+5712=Kopete a kopete, ale zdá se, že zde žádný poklad není
+5713=truhla odmítá být naplněna dalším pokladem.
+5714=jasně nakreslená mapa pokladu
+5715=odborně nakreslená mapa pokladu
+5716=skvěle nakreslená mapa pokladu
+5717=chytře nakreslená mapa pokladu
+5718=Šikovně nakreslená mapa pokladu
+5719=Při vykopávání pokladu se nemůžete pohybovat. Budete muset začít kopat znovu.
+5720=Zkuste hledat truhlu s pokladem více
+5721=Tam nemůžete kopat poklad!
+5722=souřadnice %s
+5723=Dokončeno
+// [5751-5765] Zamykání karmy a svatyně
+5751=Karma je uzamčena. Mantra vyslovená ve svatyni ji znovu odemkne.
+5752=Vaše karma byla uzamčena. Vaši karmu již nelze zvýšit.
+5753=Vaše karma byla odemčena. Vaše karma může být znovu zvýšena.
+5754=Uzamknout karmu
+5755=Odemknout karmu
+5756=Obnovit
+5757=Desátkové zlato
+5758=Rozhodli jste se nedat do svatyně žádné zlato.
+5759=Nemáte dostatek zlata na desátek této částky!
+5760=Dáváte desátek ze zlata do svatyně na znamení oddanosti.
+5761=Je možné, že budete vzkříšeni zde v této svatyni. Přejete si to zkusit?<br>POKRAČOVAT – Rozhodli jste se, že se nyní pokusíte vrátit k životu.<br>ZRUŠIT – Prozatím raději zůstanete duchem.
+5762=Je možné, že budete vzkříšeni zde v této svatyni ctností. Přejete si to zkusit?<br>POKRAČOVAT – Rozhodli jste se, že se nyní pokusíte vrátit k životu.<br>ZRUŠIT – Prozatím raději zůstanete duchem.
+5763=<center>Vzkříšení</center>
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.
@@ -3385,8 +3493,27 @@
 6276=Nemáš dovednost vaření, abys mohl vytvořit barvu na tělo.
 6277=Identifikační číslo suroviny nebylo nalezeno v seznamu surovin použitých k výrobě předmětu.
 6278=Chceš-li se o tomto lektvaru dozvědět více, musíš použít dovednost rozpoznávání chutí.
-6279=Úspěch kontroly dovednosti zaručen kvůli zvýšené úrovni příkazu!
+6279=Tip: Úspěch kontroly dovednosti zaručen kvůli zvýšené úrovni příkazu!
 6280=Zpoždění seslání kouzla ignorováno kvůli zvýšené úrovni příkazu!
+6300=Nenaučil jste se foukání skla.
+6301=Z této knihy se může učit pouze velmistr alchymista.
+6302=Tyto informace jste se již dozvěděli.
+6303=Naučili jste se vyrábět předměty ze skla. K výrobě těchto předmětů budete muset najít horníky, kteří budou těžit jemný písek.
+6304=Musíte mít volnou ruku, abyste mohli pít lektvar.
+6310=To nemůžeš otrávit! Můžeš otrávit pouze zbraně s čepelí nebo bodné zbraně, jídlo nebo pití.
+6311=Otrávil jsi svůj cíl!
+6312=Jed se zdá být neúčinný.
+6313=To nemůžeš otrávit! Můžeš otrávit pouze jednoruční zbraně s čepelí nebo jednoruční bodné zbraně, jídlo nebo pití.
+6314=To nemůžeš otrávit! Otrávit můžeš pouze infekční zbraně a jídlo.
+6315=Při nanášení jedu jsi udělal vážnou chybu.
+6316=Krev se smíchala s jedem a začala korodovat tvou zbraň.
+6317=Očistil jsi předmět.
+6318=Zdá se, že jed na tvé zbrani přestal působit.
+6319=Z toho, co zbylo z čepele, kapala kyselina.
+6320=Vypadá to, jako by nějaká látka rozežírala čepel.
+6321=Vypadá to, jako by byla čepel pokryta kyselou látkou.
+6322=Vypadá to, jako by na čepeli byla korozivní látka.
+6323=Vypadá to, jako by na čepeli byla slabě korozivní látka.
 // [7000-7499] AI Scripts
 7000=Jsi zločinec a nemáš přístup ke své bankovní schránce.
 7001=Který předmět si přeješ uložit do své bankovní schránky?
@@ -3639,6 +3766,16 @@
 8212=Neplatná syntaxe příkazu pro opakované přidávání objektů: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 8213=ID sekce z DFNs objekt pochází z
 8214=Dá se předmět ukrást? 0 = nelze ukrást, 1 = lze ukrást, 2 = lze ukrást vzácně
+8215=Neplatný cíl. Vyberte platnou položku nebo NPC
+8251=Vymazání NPC...
+8252=Vymazáno %i NPC
+8253=Vyberte NPC, které chcete přesunout na dálku pomocí xrun:
+8254=Vyberte NPC, které chcete přesunout na dálku pomocí xwalk:
+8255=Vyberte NPC, které chcete otočit na dálku pomocí xturn:
+8256=Vyberte cíl pohybu (%s):
+8257=Musíte vybrat NPC!
+8258=Ošetřil jsi ránu a zastavil krvácení
+8259=Krvácející rány se zahojily, už nekrvácíš!
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Číslo účtu přidružené k hráči. Řízeno serverem (pouze pro čtení)
 8301=Typ umělé inteligence NPC
@@ -3988,7 +4125,7 @@
 8944=Nezdá se, že by to bylo platné NPC-id z DFN.
 8945=Zvolte cíl pro pohyblivý status %i:
 8946=Vyberte cíl, který má být nastaven jako nerozložitelný:
-// [9000-9500] Misc
+// [9000-9499] Misc
 9000=Tuto schopnost nemůžete použít, když jste zmrzlí.
 9001=Tato postava nesmí létat!
 9002=Byl jsi pozván do party, zadej /přijmout nebo /odmítnout a vyřiď pozvání.
@@ -4250,6 +4387,69 @@
 9402=[Neidentifikováno]
 9403=Zbývající použití: %i
 9404= s %d náloží
+9405=Chvíli kopete, ale nenajdete nic v dostatečné kvalitě pro foukání skla.
+9406=Opatrně vytěžíte z rudné žíly nějaký zpracovatelný kámen!
+9407=Opatrně vykopáváte písek dostatečné kvality pro foukání skla.
+9408=Z této knihy se může učit pouze velmistr horník.
+9409=Tyto informace jste se již dozvěděli.
+9410=Naučili jste se těžit jemný písek. Při těžbě se zaměřte na pískové oblasti a hledejte jemný písek.
+9411=Naučil jste se těžit kameny. Zaměřte se na hory při těžbě, abyste našli kameny.
+9412=Není zde žádný písek k těžbě.
+// [9500-9550] Sběr různých surovin
+9500=Tato tykev ještě není zralá ke sklizni.
+9501=Nepodařilo se ti sklidit žádnou tykev.
+9502=Sklidil jsi jednu tykev.
+9503=Tato dýně ještě není zralá ke sklizni.
+9504=Nepodařilo se ti nasbírat žádné dýně.
+9505=Sklidil jsi jednu dýni.
+9506=Tato tykev ještě není zralá ke sklizni.
+9507=Nepodařilo se ti nasbírat žádné tykve.
+9508=Sklidil jsi jednu tykev.
+9509=Tento meloun ještě není zralý ke sklizni.
+9510=Nepodařilo se ti utrhnout žádný meloun.
+9511=Sklidil jsi meloun.
+9512=Tento meloun ještě není zralý ke sklizni.
+9513=Nepodařilo se ti utrhnout žádný meloun.
+9514=Sklidil jsi meloun.
+9515=Tento meloun ještě není zralý ke sklizni.
+9516=Nepodařilo se ti utrhnout žádný meloun.
+9517=Sklidil jsi meloun.
+9518=Tento česnek ještě není zralý ke sklizni.
+9519=Nepodařilo se ti utrhnout žádný česnek.
+9520=Sklidil jsi česnek.
+// [9800-9899] Spawner Editor
+9800=Editor objektů Spawner
+9801=Jméno spouštěče
+9802=Typ spawner
+9803 = Položka
+9804 = Npc
+9805 = Oblast
+9806 = Doprovod
+9807=Založit sekci/seznam
+9808=ID sekce nebo seznam NPC k vytvoření z DFN
+9809 = Seznam
+9810=Je-li zaškrtnuto, spawner použije spawnlist místo spawn sekce
+9811 = Částka
+9812=Maximální množství pro znovuzrození
+9813 = Min. čas
+9814=Minimální doba v minutách do znovuzrození
+9815 = Maximální čas
+9816=Maximální čas v minutách do znovuzrození
+9817 = Rádius (plocha)
+9818=Poloměr pro spawnování NPC v (pouze oblastní spawner!)
+9819=Použít změny
+9820=Typ spawnera byl změněn na položku (61), částka byla resetována na 1.
+9821=Změněn typ spawneru na NPC (62).
+9822=Změněn typ rozmnožovače na oblast (69), poloměr rozmnožování aktualizován (výchozí hodnota je 1)
+9823=Změněn typ spawnera na doprovod (125).
+9824=Sekce spawn aktualizována na %s
+9825=Minimální čas aktualizován na %i
+9826=Maximální čas aktualizován na %i
+9827=Částka aktualizována na %i
+9828=Poloměr spawnování aktualizován na %i
+9829=Jméno spawneru aktualizováno na %s
+9830=Již nepoužívá spawn list - za předpokladu, že sekce spawn nyní odkazuje na individuální definici NPC.
+9831=Nyní používám spawn list - za předpokladu, že sekce spawn nyní odkazuje na seznam NPC.
 // [9900 - 10000] Příkazy pro dveře a značky
 9916=Strana
 9917=Další
@@ -4604,6 +4804,7 @@
 11467=kostěné paže
 11468=kostěné legíny
 11469=kostěná zbroj
+11470=vysoký slaměný klobouk
 // 11601 - 11800 Řemeslná dovednost vaření
 11601=VAŘENÍ MENU
 11602=Ingredience
@@ -4626,7 +4827,6 @@
 11619=chlebový bochník
 11620=pánev sušenek
 11621=koláč
-11622=muffiny
 11622=pečený quiche
 11623=pečený masový koláč
 11624=pizza s uzeninou
@@ -4662,6 +4862,7 @@
 11654=Pro přípravu jídla musíte být v blízkosti zdroje tepla.
 11655=Musíte být v blízkosti mlýna, abyste mohli vyrábět mouku.
 11656=Musíte být v blízkosti pece, abyste mohli péct jídlo.
+11657=muffiny
 // 11801 - 12000 Dovednost řemeslné výroby
 // Strana 1 - Dřevěné předměty
 11801=Náprava
@@ -4770,6 +4971,33 @@
 12007=To není zdroj drahokamů!
 12008=Vyberte materiál, který chcete použít:
 12009=Přidal jsi do nádoby zámek a klíč!
+// 13000 - 13500 Dovednost Kartografie
+13000=Nabídka kartografie
+13001=Mapy
+13002=PRÁZDNÝ SVITEK
+13003=MAPA
+13004=Prázdné svitky nebo mapy
+13100=Lokßlnφ mapa
+13101=Mapa města
+13102=Mořská mapa
+13103=Mapa světa
+// 13501 - 14000 Dovednost foukání skla
+13501=Nabídka foukání skla
+13502=Různé
+13503=Skleněné zbraně
+13504 = PÍSEK
+13600=prázdná láhev
+13601 = baňka (malá)
+13602 = baňka (střední)
+13603 = baňka (zakřivená)
+13604 = baňka (velká #1)
+13605 = baňka (velká #2)
+13606 = baňka (bublá modře)
+13607 = baňka (bublající fialová)
+13608 = baňka (bublá červeně)
+13609=prázdné lahvičky
+13610=plné lahvičky
+13611=točící se přesýpací hodiny
 // 15000 Dovednosti
 15000=Alchymie
 15001=Anatomie
@@ -4832,6 +5060,9 @@
 15058=Síla
 15059=Hbitost
 15060=Inteligence
+15990=Nemáte povoleno tam cestovat.
+15991=Nemůžete se odtud teleportovat do cíle.
+15991=Nemůžete zde označit runu.
 // 17000 - Nabídka nápovědy pro střepy
 17000=Nabídka nápovědy
 17001=Obecné otázky ke hře
@@ -5023,6 +5254,13 @@
 17619=Jako kolegovi z cechu vám mohu poskytnout prémiovou cenu za toto!
 17620=To nestačí na pokrytí členského poplatku cechu, omlouvám se.
 17621=Čas od vstupu do cechu: %i minut.
+// [17701-17710] Zbraňové schopnosti
+17701=Dostanete paralyzující ránu!
+17702=Zasadíte paralyzující ránu!
+17703=Dostanete drtivou ránu!
+17704=Zasadíte zdrcující ránu!
+17705=Dostanete otřes mozku!
+17706=Dáváte otřes mozku!
 // Převlékací souprava
 18000=Vandyke
 18001=Vousy
@@ -5149,5 +5387,189 @@
 18769=Barviva a kádinka s barvivy byly umístěny do tvého batohu.
 18770=Toto je polovina výherního lístku! Dvakrát klikni na tento tip a zaměř jakýkoli jiný tip označený jako NOVÝ HRÁČ a získej výhru! Tento los bude fungovat pouze pro TEBE, takže ho nikomu nedávej!
 18771=Plná sada rangerské zbroje.
+// [18800-19000] Vlastnosti AOS
+18800=%i% Bonus za hojení obvazů
+// Clothing Bless Deed
+19001=Vyberte oděv, který chcete požehnat.
+19002=Položka byla požehnána.
+19003=Tímto úkonem můžete žehnat pouze oblečení!
+19004=Předměty musí být vybaveny nebo musí být v batohu, abyste je mohli požehnat.
+// [19005-19033] Crystal Ball Msgs
+19005=To je zcela jisté.
+19006=Ano, venily.
+19007=**fizzle**
+19008=Počítejte s tím, že ne
+19009=Soustřeďte se a zeptejte se znovu.
+19010=Nad sebemenší pochybnost.
+19011=Nelze předvídat.
+19012=Jezte u Modrého kance!
+19013=Proč se mě ptáš?
+19014=Samotná půda se před věcí rozpadne
+19015="Nebylo to jasné.
+19016=S Ctností to tak bude.
+19017=**třpytí se, praská a bledne**
+19018=Jenom blázen by se tak zeptal.
+19019=Když řeknu "ano", odejdeš?
+19020=Mor na tebe, pokud se znovu zeptáš.
+19021=Není to žádné překvapení
+19022=Xuri tě vyžene za to, že neposloucháš.
+19023=Pravda je tvrdá. Nezlomí se.
+19024=Zachovejte přede mnou božskost Ano a Ne.
+19025=Kdo potom řekne Ne?
+19026=Není dobré hádat se s nevyhnutelným.
+19027=Mondain sám mě nemohl přimět říct ano!
+19028=Nic nezbylo, vůbec nic, nic, nic.
+19029=Nejlepší je ti to neříkat.
+19030=Říkám, že UOX3 je nejlepší emulátor v historii.
+19031 = Ano.
+19032 = Ne.
+19033=Velmi pochybné.
+19034=Důlní zdroje říkají ne.
+// [19050-19065] Crystal Pet Summoning Ball
+19050=Zacilte na svého mazlíčka, kterého si přejete propojit s touto Křišťálovou koulí Pet Summoning.
+19051=Můžete propojit pouze své vlastní mazlíčky s Křišťálovou koulí Pet Summoning.
+19052=Křišťálová koule ztmavne. Před dalším použitím se musí nabít.
+19053=Váš mazlíček je nyní spojen s touto Křišťálovou koulí Pet Summoning.
+19054=K této Crystal Ball of Pet Summoning lze připojit pouze domácí mazlíčky.
+19055=Křišťálová koule tmavne. Před dalším použitím se musí nabít.
+19056=Křišťálová koule se plní žlutou mlhou. Proč byste přivolávali svého mazlíčka při jízdě na něm?
+19057=Křišťálová koule se plní modrou mlhou. Váš mazlíček nereaguje na přivolání.
+19058=Křišťálová koule se plní šedou mlhou. Nejste vlastníkem zvířete, kterého se pokoušíte přivolat.
+19059=Musíte počkat několik sekund, než budete moci přivolat svého mazlíčka.
+19060=Křišťálová koule se plní zelenou mlhou. Váš mazlíček byl přivolán.
+19061=připojený mazlíček:
+19062=Tato křišťálová koule již není spojena s domácím mazlíčkem.
+19063=Nové jméno mazlíčka je: %s
+19064=To se nezdá být platným mazlíčkem.
+// [19070-19080] Bag of Sending
+19070=Taška pro odeslání musí být ve vašem batohu.
+19071=Chyba: Nebyla nalezena žádná platná bankovní schránka! Požádejte o pomoc GM.
+19072=Položky z batohu můžete posílat pouze do vaší bankovní schránky.
+19073=Nemůžete poslat kontejner přes pytel odesílání.
+19074=Vaše bankovní schránka je plná.
+19075=Nemáte dostatek poplatků k odeslání takové hmotnosti
+19076=Položka byla umístěna do vaší bankovní schránky.
+19077=Sáček s odesláním tuto položku odmítá.
+// [19081-19090] Powder of Translocation
+19081=Tato položka nemůže absorbovat žádný další prášek translokace.
+19082=Tato položka byla přesycena práškem translokace a již ji nelze dobíjet.
+19083= září zelenou energií a absorbuje magickou sílu z prášku.
+19084=Translokační prášek nemá na tuto položku žádný vliv.
+// [19100-19005] Přeměna elixíru
+19100=Úspěšně jste převedli kov.
+19101=Najednou můžete převést pouze pět set ingotů.
+19102=Pro výměnu musí být položka ve vašem batohu.
+// [19110-19200] Pěstování rostlin
+19110=Abyste mohli položku použít, musíte ji mít v batohu nebo uzamčenou.
+19111=Nejprve musíte do misky zasadit semínko
+19112=Prořezáváte rostlinu. Tato rostlina již nebude produkovat zdroje ani semena, ale nebude vyžadovat žádnou údržbu.
+19113=Nemůžete sbírat pyl z mutované rostliny!
+19114=Příliš brzy na sběr pylu
+19115=Nemůžete sbírat pyl z nezdravé rostliny!
+19116=Zaměřte se na rostlinu, kterou chcete křížově opylit.
+19117=Můžete opylovat pouze jiné speciálně pěstované rostliny!
+19118=Tato rostlina není ve fázi květu. Nemůžete to opylit!
+19119=Nemůžete opylit nezdravou rostlinu!
+19120=Nemůžete křížově opylovat mutovanou rostlinou!
+19121=Tato rostlina již byla opylena!
+19122=Opylujete rostlinu vlastním pylem.
+19123=Úspěšně jste zkřížili - opylovali rostlinu.
+19124=Tato rostlina nemá semena ke sběru!
+19125=Sbíráte semena z rostliny.
+19126=Do této rostliny nemůžete přidat vodu.
+19127=Změkčíte špínu vodou.
+19128=To ​​nemůžete použít na rostlinu!
+19129=Ve svém balíčku nemáte žádné silné lektvary tohoto typu.
+19130=Lektvary byste měli nalít pouze na rostlinu nebo semeno!
+19131=Rostlina je tímto typem lektvaru již nasáklá!
+19132=Abyste jej mohli použít, musíte mít předmět v batohu.
+19133=Vyberte kousek špíny, který chcete nabrat.
+19134=Potřebujete více nečistot k naplnění misky na rostliny!
+19135=Naplňte misku čerstvou špínou.
+19136=Budete chtít nasbírat čerstvou špínu, abyste vypěstovali zdravou rostlinu!
+19137=Vyberte misku s hlínou, do které zasadíte toto semínko.
+19138=Musíte použít semeno na připravenou půdu!
+19139=Tato miska s nečistotami již obsahuje semínko %s!
+19140=Nejprve je třeba změkčit nečistoty.
+19141=Zasadíte semeno do misky s hlínou.
+19142=Musíte použít semínko na misku s nečistotami!
+// [19201-19300] Speciální pohyby
+19201=K provedení tohoto útoku potřebujete %i zbraň
+19202=K provedení tohoto útoku potřebujete %i many
+19203=Váš útok proniká jejich pancířem!
+19204=Úder pronikl do vašeho brnění!
+19205=Váš cíl krvácí!
+19206=Ty krvácíš!
+19207=Hodně krvácíte
+19208=%i silně krvácí
+19209=Máte otřes mozku!
+19210=Cítíte se dezorientovaný!
+19211=Zasadil jsi zdrcující ránu!
+19212=Zdrcujícím útokem dostáváte další poškození!
+19213=Nemůžete odzbrojit svého protivníka.
+19214=Váš cíl již není ozbrojen!
+19215=Odzbrojte svou zbraň!
+19216=Vaše zbraň byla odzbrojena!
+19217=Nemůžete provést tento útok během jízdy nebo letu!
+19218=Tento útok funguje pouze na namontované nebo létající cíle
+19219=Síla vašeho útoku je vytlačila z jejich koně!
+19220=Byli jste sraženi z vašeho koně %i!
+19221=Vaše zbraň musí mít dávku jedu, aby mohla provést infekční útok!
+19222=Váš přesný zásah zvýšil úroveň jedu o 1
+19223=Jed se zdá být extra účinný!
+19224=Otrávili jste svůj cíl: %i
+19225=%i : otrávil tě!
+19226=Zasadil jsi smrtelnou ránu!
+19227=Byl jsi smrtelně zraněn!
+19228=Váš cíl odolává paralýze.
+19229=Odporujete paralýze.
+19230=Útok vás dočasně paralyzoval!
+19231=Chybí vám požadované utajení k provedení tohoto útoku
+19232=Úder a schováš se ve stínu!
+19233=Jste omráčeni útokem a váš útočník zmizí!
+19234=Váš zmatek pominul, nyní můžete vyzbrojit zbraň!
+19235=Už nejsi smrtelně zraněný.
+19236=Krvácející rány se zahojily, už nekrvácíte!
+// [19301-19330] Poutaný a mrtvý mazlíček
+19301=Mrtvého mazlíčka nelze vyměnit.
+19302=Mrtvý mazlíček nemůže útočit.
+19303=Nejste dostatečně zkušení, abyste tohoto mazlíčka vzkřísili.
+19304=Vzkřísit lze pouze mazlíčky, kteří jsou poutáni se svým majitelem.
+19306=Malíčka jste úspěšně vzkřísili!
+19307=Můžete vzkřísit pouze mazlíčky, kteří jsou poutáni se svým majitelem.
+19308=Váš mazlíček se s vámi poutal!
+19309=Váš mazlíček je mrtvý a na tento příkaz nereaguje.
+19310=Přerušíte pouto se svým mazlíčkem.
+19311=Jste si jisti, že chcete přerušit pouto se svým mazlíčkem?
+19311=Vypuštění ducha mazlíčka ho zničí bez šance na uzdravení. Chcete pokračovat?
+19312=Majitel mazlíčka musí být poblíž, aby se mohl pokusit o vzkříšení.
+19313=Váš mazlíček si s vámi nemůže vytvořit pouto, dokud se nezvýší vaše schopnost ochočování zvířat.
+19314=Váš mazlíček si s vámi nemůže vytvořit pouto, dokud se nezvýší vaše schopnost bushido.
+19315=Vzkřísit lze pouze mazlíčky, kteří jsou s majitelem spojeni.
+19316=Zvíře musí být ve stejném domě jako vy, aby mohlo být vzkříšeno.
+19317=Majitel mazlíčka musí být uvnitř tohoto domu, než budete moci tohoto tvora oživit.
+19318=Zaměřte se na mazlíčka, se kterým se chcete spojit. Stiskněte ESC pro zrušení. Tato položka se při úspěšném použití spotřebuje, proto si vybírejte moudře!
+19319=Spojení s mazlíčkem zrušeno.
+19320=Tento mazlíček je s vámi již spojen.
+19321=Toto není váš mazlíček!
+19322=Jste si jisti, že chcete svého mazlíčka uvolnit? Přivolaní mazlíčci zmizí trvale!
+19323=Na svém cíli nemůžete provádět užitečné činy.
+19324=Vyberte mazlíčka pro okamžité spojení.
+19325=Neplatný cíl.
+19326=Tento tvor musí být před spojením ochočen.
+19327=Tento mazlíček je již spojen.
+19328=Malíček byl okamžitě spojen!
+19329=Připojování domácích mazlíčků je na tomto serveru zakázáno.
+19330=Nemáte u sebe dostatek zlata k zaplacení poplatku.
+19331=Z vašeho batohu bylo vybráno %i zlata.
+19332=Váš mazlíček byl vzkříšen.
+19333=[Krotký]
+19334=[Svázaný]
+19335=svázaný
+19336=krotký
+19337=nezranitelný
+19338=zmrazený
+19339=střežený
+19340=Duch toho tvora postrádá soudržnost. Zkuste to znovu za pár minut.
 }
 EOF
