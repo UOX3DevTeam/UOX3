@@ -1,3 +1,6 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
+
 function SendMapDetails( socket, map, Width, Height, xtop, ytop, xbottom, ybottom )
 {
 	var pUser = socket.currentChar;
@@ -59,7 +62,8 @@ Action Flag command
 6: Toggle Edit Map (Client)
 7: Reply From Server to Action 6*/
 
-function onPacketReceive(pSocket, packetNum, subcommand )
+/** @type {(pSocket: Socket, packetNum: number) => void} */
+function onPacketReceive( pSocket, packetNum )
 {
 	var pUser = pSocket.currentChar;
 

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Handler for CUO WebIdentity Packet
 //	https://github.com/ClassicUO/packets
 //	https://github.com/ClassicUO/packets/blob/main/WebIdentity.ksy
@@ -13,7 +15,8 @@ function PacketRegistration()
 	RegisterPacket( 0xa4, 0x0 ); // Overrides 0xA4 SystemInfo packet
 }
 
-function onPacketReceive( pSocket, packetNum, subCommand )
+/** @type {(pSocket: Socket, packetNum: number) => void} */
+function onPacketReceive( pSocket, packetNum )
 {
 	var cmd = pSocket.GetByte( 0 );
 	if( cmd != packetNum )
