@@ -274,3 +274,24 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/../../spidermonkey/make/cmake subproject/
 if (NOT SYSTEM_ZLIB)
 add_subdirectory(${PROJECT_SOURCE_DIR}/../../zlib/make/cmake subproject/zlib)
 endif(NOT SYSTEM_ZLIB)
+
+# =========================================================================
+# Installation Rules for creating release packages
+# =========================================================================
+
+# 1. Installs the executable into the 'UOX3' folder.
+install(TARGETS uox3
+    RUNTIME DESTINATION UOX3
+)
+
+# 2. Installs the 'docs' directory itself (NO TRAILING SLASH).
+#    Result: UOX3/docs/
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/../../docs
+    DESTINATION UOX3
+)
+
+# 3. Installs the contents of the 'data' directory (WITH TRAILING SLASH).
+#    Result: UOX3/scripts/, UOX3/dfndata/, etc.
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/../../data/
+    DESTINATION UOX3
+)
