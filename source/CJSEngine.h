@@ -59,7 +59,6 @@ private:
 	JSObject * consoleObj;
 	JSObject * createEntriesObj;
 	JSObject * timerObj;
-	JSObject * scriptObj;
 	JSRuntime * jsRuntime;
 	JSContext * jsContext;
 	JSObject * jsGlobal;
@@ -85,6 +84,7 @@ public:
 
 	JSObject *	AcquireObject( IUEEntries iType, void *index );
 	void		ReleaseObject( IUEEntries IType, void *index );
+
 };
 
 class CJSEngine

@@ -31,7 +31,7 @@ cWeatherAb *Weather = nullptr;
 //			PeriodicUpdate for CWeather also updates light level
 //			cWeatherAb simplified to access CWeather containers
 //			Replaced a new'd array with a vector of CWeather
-
+// this si cool weather
 
 CWeather::CWeather()
 {
