@@ -143,6 +143,9 @@
 // pets from pet static end
 3105=npc/ai/stablemaster.js
 3106=npc/pets/mount_restrictions.js
+3107=npc/pets/petbonding.js
+3108=server/network/0xbf_sendnpcghostmode.js
+3109=npc/ai/veterinarian.js
 // ------------------------
 
 // AI-Stuff
@@ -459,6 +462,7 @@
 1063=commands/moongate.js
 1064=commands/spawnadmin.js
 1065=commands/targeting/xwalk.js
+1066=commands/custom/instabond.js
 }
 
 //-------------------------------------------

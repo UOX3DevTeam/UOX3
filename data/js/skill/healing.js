@@ -185,40 +185,89 @@ function onCallback1( socket, ourObj )
 			let healTimer = 0;
 			let healTimerID = -1;
 			let anatSkill = mChar.skills.anatomy;
+			let loreSkill = mChar.skills.animallore;
 			let triggerBonusCure = false;
 			let affectedByMortalStrike = ourObj.GetTempTag( "blockHeal" );
-			if( ourObj.dead ) // Resurrection
+			if( ourObj.dead || ourObj.GetTag( "isPetDead" )) // Resurrection
 			{
 				if( ourObj.region.id == 42 ) // Khaldun, resurrection not allowed
 				{
 					socket.SysMessage( "The veil of death in this area is too strong and resists thy efforts to restore life." );
 					return;
 				}
-				else if( healSkill >= 800 && anatSkill >= 800 )
+				else if( ourObj.GetTag( "isBondedPet" ))
 				{
-					// Resurrecting takes between 8 - 10 seconds depending on dexterity
-					if( coreShardEra >= EraStringToNum( "uor" ))
+					// Resurrection of bonded pet
+					// Must have at least 80.0 Vet and 80.0 Lore
+					if( healSkill >= 800 && loreSkill >= 800 )
 					{
-						// UOR introduced dexterity as a modifier for healing timer
-						healTimer = 10000 - (( mChar.dexterity / 50 ) * 1000 );
-					}
-					else// if( coreShardEra >= EraStringToNum( "t2a" ))
-					{
-						// T2A (Publish May 25, 1999), resurrecting "now" takes 10 seconds flat
-						healTimer = 10000;
-					}
-					/*else
-					{
-						// Did original UO have a different resurrect timer than T2A?
-						// ???
-					}*/
+						let isOwner = ourObj.owner;
+						let isFriend = false;
+						let friendList = ourObj.GetFriendList();
 
-					healTimerID = 0; // Resurrect
+						for( let i = 0; i < friendList.length; i++ )
+						{
+							if( ValidateObject( friendList[i] ) && friendList[i] == mChar )
+							{
+								isFriend = true;
+								break;
+							}
+						}
+						if( isOwner || isFriend )
+						{
+							// Resurrecting takes between 8 - 10 seconds depending on dexterity
+							if( coreShardEra >= EraStringToNum( "uor" ))
+							{
+								// UOR introduced dexterity as a modifier for healing timer
+								healTimer = 10000 - (( mChar.dexterity / 50 ) * 1000 );
+							}
+							else// if( coreShardEra >= EraStringToNum( "t2a" ))
+							{
+								// T2A (Publish May 25, 1999), resurrecting "now" takes 10 seconds flat
+								healTimer = 10000;
+							}	
+
+							healTimerID = 0; // Resurrect
+						}
+						else
+						{
+							socket.SysMessage( GetDictionaryEntry( 19304, socket.language ));// Only pets bonded with their owner can be resurrected..
+						}
+					}
+					else
+					{
+						socket.SysMessage( GetDictionaryEntry( 19303, socket.language ));// You are not skilled enough to resurrect that pet.
+						return;
+					}          
 				}
 				else
 				{
-					socket.SysMessage( GetDictionaryEntry( 1493, socket.language )); // You are not skilled enough to resurrect.
-					return;
+					if( healSkill >= 800 && anatSkill >= 800 )
+					{
+						// Resurrecting takes between 8 - 10 seconds depending on dexterity
+						if( coreShardEra >= EraStringToNum( "uor" ))
+						{
+							// UOR introduced dexterity as a modifier for healing timer
+							healTimer = 10000 - (( mChar.dexterity / 50 ) * 1000 );
+						}
+						else// if( coreShardEra >= EraStringToNum( "t2a" ))
+						{
+							// T2A (Publish May 25, 1999), resurrecting "now" takes 10 seconds flat
+							healTimer = 10000;
+						}
+						/*else
+						{
+							// Did original UO have a different resurrect timer than T2A?
+							// ???
+						}*/
+
+						healTimerID = 0; // Resurrect
+					}
+					else
+					{
+						socket.SysMessage( GetDictionaryEntry( 1493, socket.language )); // You are not skilled enough to resurrect.
+						return;
+					}
 				}
 			}
 			else if( ourObj.poison > 0 || ourObj.GetTempTag( "doBleed" ))	// Cure Poison/Bleed
@@ -576,7 +625,7 @@ function onTimer( mChar, timerID )
 			switch ( timerID )
 			{
 				case 0:	// Resurrect
-					if( !ourObj.dead )
+					if( !ourObj.dead && !ourObj.GetTag( "isPetDead" ) )
 					{
 						socket.SysMessage( GetDictionaryEntry( 9085, socket.language )); // The target is not dead.
 						break;
@@ -610,8 +659,25 @@ function onTimer( mChar, timerID )
 						}
 						else
 						{
+							if( ourObj.GetTag( "isPetDead" ))
+							{
+								var now = GetCurrentClock();
+								var deathTime = parseInt( ourObj.GetTempTag( "bondedPetDeathTime" )) || 0;
+								var waitTime = 10 * 60 * 1000; // 10 minutes in ms
 
-							if( coreShardEra >= EraStringToNum( "aos" ))
+								if(( now - deathTime ) < waitTime)
+								{
+									socket.SysMessage( GetDictionaryEntry( 19340, pSock.language )); // That creature’s spirit lacks cohesion. Try again in a few minutes.
+									return;
+								}
+
+								ResurrectBondedPet( socket, ourObj );
+								ourObj.StaticEffect( 0x376A, 10, 16 );
+								ourObj.SoundEffect( 0x214, true );
+								socket.SysMessage( GetDictionaryEntry( 19306, socket.language )); // You successfully resurrected the pet!
+								resResult = 1;
+							}
+							else if( coreShardEra >= EraStringToNum( "aos" ))
 							{
 								ourObj.frozen = true;
 								ourObj.SetTempTag( "ResurrectingHealer", mChar.serial.toString() );
@@ -901,6 +967,22 @@ function onTimer( mChar, timerID )
 	{
 		SetSkillInUse( socket, mChar, ourObj, skillNum, 0, false );
 	}
+}
+
+function ResurrectBondedPet( socket, deadPet )
+{
+	var petsAI = deadPet.GetTag( "PetAI" );
+	var petsHue = deadPet.GetTag( "PetHue" );
+
+	TriggerEvent( 3108, "SendNpcGhostMode", socket, 0, deadPet.serial, 0  );
+	deadPet.StaticEffect( 0x376A, 10, 16 );
+	deadPet.SoundEffect( 0x214, true );
+	deadPet.aitype = petsAI;
+	deadPet.colour = petsHue;
+	deadPet.target = null;
+	deadPet.atWar = false;
+	deadPet.attacker = null;
+	deadPet.SetTag( "isPetDead", false );
 }
 
 function onGumpPress( socket, pButton, gumpData )
