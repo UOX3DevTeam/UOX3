@@ -13,6 +13,8 @@ function onDeathBlow( pKilled, pKiller )
 		{
 			RewardTopDamagers( pKilled, altar );
 		}
+		// Delay restart in 30 mins (1800000ms)
+		altar.StartTimer( 1800000, 12, 7500 ); // Timer ID 12 = Auto-Restart
 
 		TriggerEvent( 7500, "DelayedGoldExplosion", altar );
 		return true;
@@ -50,6 +52,10 @@ function onDeathBlow( pKilled, pKiller )
 		if( redSkulls >= 16 )
 		{
 			altar.KillJSTimer( 1, 7500 );
+			// Clear everything for boss fight
+			altar.KillJSTimer( 1, 7500 );
+			TriggerEvent( 7500, "RemoveRedSkulls", altar );
+
 			TriggerEvent( 7500, "SummonBoss", altar );
 		}
 		else
@@ -142,11 +148,11 @@ function RewardTopDamagers( pKilled, altar )
 	for( let i = 0; i < entries.length; ++i )
 	{
 		let entry = entries[i].split(":");
-		if (entry.length != 2)
+		if( entry.length != 2)
 			continue;
 
-		let serial = parseInt(entry[0]);
-		let damage = parseInt(entry[1]);
+		let serial = parseInt( entry[0] );
+		let damage = parseInt( entry[1] );
 		if( isNaN( serial ) || isNaN( damage ))
 			continue;
 
@@ -169,8 +175,8 @@ function RewardTopDamagers( pKilled, altar )
 			top5.length = 5;
 	}
 
-	let champType = altar.GetTag("championType") || "Unknown";
-	let spawnData = TriggerEvent(7502, "ChampionSpawnData", champType);
+	let champType = altar.GetTag( "championType" ) || 0;
+	let spawnData = TriggerEvent( 7502, "ChampionSpawnData", champType );
 	let rewards = spawnData.rewards || [];
 
 	// Announce and reward
@@ -194,9 +200,9 @@ function RewardTopDamagers( pKilled, altar )
 			{
 				player.SysMessage( "You were among the top 5 damagers! (" + damage + " damage)" );
 				// Give reward item
-				if (rewards.length > 0)
+				if( rewards.length > 0 )
 				{
-					let randIndex = RandomNumber(0, rewards.length - 1);
+					let randIndex = RandomNumber( 0, rewards.length - 1 );
 					let rewardSection = rewards[randIndex];
 					CreateDFNItem( player.socket, player, rewardSection, 1, "ITEM", true );
 				}

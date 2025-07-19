@@ -3,10 +3,32 @@ var spawnEditorTooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042
 const rankBreaks = [2, 3, 4]; // Level Rank mapping breakpoints
 const maxKillsByRank = [256, 128, 64, 32]; // Max kills per rank
 const radiusMods = [1.0, 0.75, 0.5, 0.25]; // Radius scaling per rank
-const baseSpawnRadius = 25; // Max radius at rank 0
+const baseSpawnRadius = 30; // Max radius at rank 0
 //Gold shower settings
 const piles = 50; // Number of gold piles to spawn
 const range = 25; // Range around the altar to spawn gold piles
+const ChampionIDToName = {
+	1: "Abyss",
+	2: "Arachnid",
+	3: "Cold",
+	4: "Forest",
+	5: "Unholy",
+	6: "Vermin"
+};
+
+const ChampionNameToID = {
+	"Abyss": 1,
+	"Arachnid": 2,
+	"Cold": 3,
+	"Forest": 4,
+	"Unholy": 5,
+	"Vermin": 6
+};
+
+function onCreateDFN( objMade, objType )
+{
+	objMade.StartTimer( 5000, 13, 7500 );
+}
 
 function onUseChecked( pUser, altar )
 {
@@ -29,29 +51,54 @@ function StartChampionWave( altar, stage )
 	if( spawnCount >= maxSpawn )
 		return;
 
-	let spawnAmount  = maxSpawn - spawnCount;
+	let spawnAmount = maxSpawn - spawnCount;
+	let triesPerSpawn = 50; // How many times to retry finding valid ground
 
-	for( let i = 0; i < spawnAmount ; ++i )
+	for( let i = 0; i < spawnAmount; ++i )
 	{
-		let x = altar.x + RandomNumber( -radius, radius );
-		let y = altar.y + RandomNumber( -radius, radius );
-		let z = altar.z;
+		let validSpotFound = false;
+		let x = 0, y = 0, z = 0;
 
-		let champType = altar.GetTag( "championType" ) || "Unknown";
-		if( champType == "Unknown" )
+		for( let t = 0; t < triesPerSpawn && !validSpotFound; ++t )
 		{
-			return;
+			x = altar.x + RandomNumber( -radius, radius );
+			y = altar.y + RandomNumber( -radius, radius);
+			z = GetMapElevation( x, y, altar.worldNumber ); // Use actual terrain Z
+
+			let mapBlocked    = DoesMapBlock( x, y, z, altar.worldNumber, false, false, true, false );
+			let staticBlocked = DoesStaticBlock( x, y, z, altar.worldNumber, false );
+			let dynBlocked    = DoesDynamicBlock( x, y, z, altar.worldNumber, altar.instanceID, false, false, false, false );
+			let isWet         = CheckStaticFlag(x, y, z, altar.worldNumber, 7 ); // TF_WET
+			let staticStand   = CheckStaticFlag( x, y, z, altar.worldNumber, 20 );  // TF_MAP
+
+			if (!mapBlocked && !staticBlocked && !dynBlocked && !isWet && !staticStand)
+			{
+				validSpotFound = true;
+			}
 		}
-		let spawnData = TriggerEvent( 7503, "ChampionSpawnData", champType );
+
+		if( !validSpotFound )
+		{
+			continue;
+		}
+
+		let champID = parseInt( altar.GetTag( "championType" )) || 0;
+		if( !champID )
+			return;
+
+		let spawnData = TriggerEvent( 7503, "ChampionSpawnData", champID );
+		if( !spawnData )
+			return;
+
 		let npcList = spawnData.levels[stage - 1];
-		let chosenType = npcList[RandomNumber(0, npcList.length - 1)];
+		let chosenType = npcList[RandomNumber( 0, npcList.length - 1 )];
 
 		let npc = SpawnNPC( chosenType, x, y, z, altar.worldNumber, altar.instanceID, false );
 
 		if( ValidateObject( npc ))
 		{
 			npc.SetTag( "championSpawnID", altar.serial.toString() );
-			npc.AddScriptTrigger( 7501 ); // champion_spawn_monsters.js
+			npc.AddScriptTrigger( 7501 );
 			npc.Wander( x, y, 10 );
 		}
 	}
@@ -59,7 +106,7 @@ function StartChampionWave( altar, stage )
 
 function ChampionSpawnNpc( alter, spawn, socket )
 {
-	if( spawn.GetTag("championSpawnID") == alter.serial.toString() )
+	if( spawn.GetTag( "championSpawnID" ) == alter.serial.toString() )
 	{
 		return true;
 	}
@@ -70,12 +117,12 @@ function SummonBoss( altar )
 	if( !ValidateObject( altar ))
 		return;
 
-	let champType = altar.GetTag( "championType" ) || "Unknown";
-	if( champType == "Unknown" )
+	let champID = altar.GetTag( "championType" ) || 0;
+	if( isNaN( champID ))
 	{
 		return;
 	}
-	let spawnData = TriggerEvent( 7502, "ChampionSpawnData", champType );
+	let spawnData = TriggerEvent( 7502, "ChampionSpawnData", champID );
 	let bossID = spawnData.boss;
 
 	// Spawn boss in the center of the platform
@@ -155,8 +202,6 @@ function onTimer( altar, timerID )
 				let data = GetSpawnRankData( stage );
 				let threshold = data.maxKills;
 
-				DecayChampionProgressIfEmpty( altar );
-
 				if( kills < threshold )
 					StartChampionWave( altar, stage );
 
@@ -166,6 +211,77 @@ function onTimer( altar, timerID )
 		case 2:
 			ChampionGoldExplosion( altar );
 			break;
+		case 10:
+			DecayChampionProgressIfEmpty( altar );
+			altar.StartTimer( 600000, 10, 7500 );
+			break;
+		case 12: // Auto-Restart Champion Spawn
+			{
+				// Reset state
+				altar.SetTag( "spawnActive", 1 );
+				altar.SetTag( "killCount", 0 );
+				altar.SetTag( "spawnStage", 1 );
+				altar.SetTag( "redSkullCount", 1 );
+				altar.SetTag( "whiteSkullCount", 0 );
+
+				// Visuals
+				PlaceRedSkulls( altar, 1 );
+				PlaceWhiteSkulls( altar, 0, 1 );
+
+				// Start wave and timers
+				StartChampionWave( altar, 1 );
+				altar.StartTimer( 30000, 1, 7500 );
+				altar.StartTimer( 600000, 10, 7500 );
+				break;
+			}
+		case 13: // Champion Spawn with OnCreateDFN
+			{
+				if(altar.x == 5178 && altar.y == 708 )
+				{
+					altar.SetTag("championType", 5); // Unholy
+				}
+				else if(altar.x == 5557 && altar.y == 824 )
+				{
+					altar.SetTag("championType", 6); //Vermin
+				}
+				else if(altar.x == 5259 && altar.y == 837 )
+				{
+					altar.SetTag("championType", 3);//Cold
+				}
+				else if(altar.x == 5814 && altar.y == 1350 )
+				{
+					altar.SetTag("championType", 1);//Abyss
+				}
+				else if(altar.x == 5190 && altar.y == 1605 )
+				{
+					altar.SetTag("championType", 2);//Arachnid
+				}
+				else if(altar.x == 5559 && altar.y == 3757 )
+				{
+					altar.SetTag("championType", 4);//Forest
+				}
+				else
+				{
+					return;
+				}
+
+				// Reset state
+				altar.SetTag( "spawnActive", 1 );
+				altar.SetTag( "killCount", 0 );
+				altar.SetTag( "spawnStage", 1 );
+				altar.SetTag( "redSkullCount", 1 );
+				altar.SetTag( "whiteSkullCount", 0 );
+
+				// Visuals
+				PlaceRedSkulls( altar, 1 );
+				PlaceWhiteSkulls( altar, 0, 1 );
+
+				// Start wave and timers
+				StartChampionWave( altar, 1 );
+				altar.StartTimer( 30000, 1, 7500 );
+				altar.StartTimer( 600000, 10, 7500 );
+				break;
+			}
 	}
 }
 
@@ -418,19 +534,24 @@ function ChampionMenu( socket, altar )
 	// Champion Type
 	champalter.AddHTMLGump( 20, 68, 140, 22, false, false, "<basefont color=#ffffff>Champion Type:</basefont>" );
 	const championTypes = ["Abyss", "Arachnid", "Cold", "Forest", "Unholy", "Vermin"];
-	let currentType = altar.GetTag( "championType" ) ||"";
+	let currentID = parseInt( altar.GetTag( "championType" )) || 0;
+
 	let champY = 100;
 	const columnsPerRow = 3;
-	champalter.AddGroup(2); // Radio group 2 (avoid clashing with spawner group 1)
-	for( let i = 0; i < championTypes.length; ++i )
+
+	champalter.AddGroup(2); // Radio group 2 (avoid clashing)
+	for (let i = 0; i < championTypes.length; ++i)
 	{
-		let label = "<basefont color=#00ff00><big>" + championTypes[i] + "</big></basefont>";
-		let isSelected = ( currentType == championTypes[i] ) ? 1 : 0;
+		let name = championTypes[i];
+		let id = ChampionNameToID[name];
+		let label = "<basefont color=#00ff00><big>" + name + "</big></basefont>";
+		let isSelected = ( currentID == id ) ? 1 : 0;
+
 		let x = 20 + ( i % columnsPerRow ) * 100;
 		let y = champY + Math.floor( i / columnsPerRow ) * 30;
 
-		champalter.AddHTMLGump(x + 35, y, 100, 22, false, false, label);
-		champalter.AddRadio(x, y, 2472, 2153, isSelected, i);
+		champalter.AddHTMLGump( x + 35, y, 100, 22, false, false, label );
+		champalter.AddRadio( x, y, 2472, 2153, isSelected, id );
 	}
 	champalter.EndGroup();
 
@@ -450,7 +571,7 @@ function ChampionMenu( socket, altar )
 	// Apply Changes!
 	champalter.AddButton( 300, 230, 2122, 2124, 1, 0, 1 );
 	// Enable  and Disable Champion Spawn
-	if( altar.GetTag( "spawnActive" ) == true )
+	if( altar.GetTag( "spawnActive" ) == 1 )
 	{
 		champalter.AddButton( 230, 265, 4005, 4007, 1, 0, 3 );
 		champalter.AddHTMLGump( 265, 267, 140, 22, false, false, "<basefont color=#ffffff>Disable Champion</basefont>" );
@@ -489,17 +610,10 @@ function onGumpPress( socket, pButton, gumpData )
 		case 0: // Close gump, no changes
 			break;
 		case 1:
-			// Handle Spawner Type Radiobuttons
-			switch( radiobtnGroup1 ) // or whatever variable name you store it as
+			// This assumes radiobtnGroup1 now returns the actual numeric ID (1–6)
+			if (ChampionIDToName.hasOwnProperty(radiobtnGroup1))
 			{
-				case 0: altar.SetTag( "championType", "Abyss" ); break;
-				case 1: altar.SetTag( "championType", "Arachnid" ); break;
-				case 2: altar.SetTag( "championType", "Cold" ); break;
-				case 3: altar.SetTag( "championType", "Forest" ); break;
-				case 4: altar.SetTag( "championType", "Unholy" ); break;
-				case 5: altar.SetTag( "championType", "Vermin" ); break;
-				case 8: checkBtnSpawnlist = 8; // Put the value into the "checkbox" variable! break;
-				default: break;
+				altar.SetTag("championType", radiobtnGroup1);
 			}
 
 			// Update spawner properties
@@ -548,13 +662,13 @@ function onGumpPress( socket, pButton, gumpData )
 				pUser.SysMessage( "This spawn is already active!" );
 				break;
 			}
-			let type = altar.GetTag( "championType" ) || "Unknown";
-			if( type == "Unknown" )
+			let type = altar.GetTag( "championType" ) || 0;
+			if( type == 0 )
 			{
 				pUser.SysMessage( "Please set the champion type first." );
 				return;
 			}
-			altar.SetTag( "spawnActive", true );
+			altar.SetTag( "spawnActive", 1 );
 			altar.SetTag( "killCount", 0 );
 			altar.SetTag( "spawnStage", 1 );
 			altar.SetTag( "redSkullCount", 1 );
@@ -563,23 +677,25 @@ function onGumpPress( socket, pButton, gumpData )
 			PlaceWhiteSkulls( altar, 0, 1 );
 			StartChampionWave( altar, 1 );
 			altar.StartTimer( 30000, 1, 7500 );
+			altar.StartTimer( 600000, 10, 7500); // Decay timer
 			ChampionMenu( socket, altar );
 			altar.Refresh();
 			break;
 		}
 		case 3:// Turn Off
 		{
-			if( altar.GetTag( "spawnActive") != true )
+			if( altar.GetTag( "spawnActive") != 1 )
 			{
 				pUser.SysMessage( "The spawn is already inactive." );
 				break;
 			}
-			altar.SetTag( "spawnActive", false );
+			altar.SetTag( "spawnActive", 0 );
 			altar.SetTag( "killCount", 0 );
 			altar.SetTag( "whiteSkullCount", 0 );
 			altar.SetTag( "redSkullCount", 0 );
 			altar.SetTag( "spawnStage", 1 );
 			altar.KillJSTimer( 1, 7500 );
+			altar.KillJSTimer( 10, 7500 );
 			TriggerEvent( 7500, "RemoveRedSkulls", altar );
 			TriggerEvent( 7500, "RemoveWhiteSkulls", altar );
 			AreaCharacterFunction( "RemoveSpawn", pUser, 80, socket );
@@ -597,8 +713,8 @@ function onTooltip( altar, pSocket )
 	if( !ValidateObject( altar ))
 		return "";
 
-	let type = altar.GetTag( "championType" ) || "Unknown";
-	let active = altar.GetTag( "spawnActive" ) == true ? "Yes" : "No";
+	let type = altar.GetTag( "championType" ) || 0;
+	let active = altar.GetTag( "spawnActive" ) == 1 ? "Yes" : "No";
 	let stage = altar.GetTag( "spawnStage" ) || 1;
 	let redSkulls = parseInt( altar.GetTag( "redSkullCount" )) || 0;
 	let whiteSkulls = parseInt( altar.GetTag( "whiteSkullCount" )) || 0;

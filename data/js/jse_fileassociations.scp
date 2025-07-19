@@ -471,6 +471,7 @@
 1064=commands/spawnadmin.js
 1065=commands/targeting/xwalk.js
 1066=commands/custom/instabond.js
+1067=item/champion_system/champion_spawn_cmd.js
 }
 
 //-------------------------------------------
