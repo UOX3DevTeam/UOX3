@@ -79,7 +79,7 @@ CALL=1
 [REGIONSPAWN 5]
 {
 NAME=Britannia Animal Care
-NPC=animaltrainer
+NPC=veterinarian
 MAXNPCS=1
 X1=1508
 Y1=1565

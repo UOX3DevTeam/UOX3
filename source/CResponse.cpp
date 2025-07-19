@@ -783,6 +783,18 @@ bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *petNpc )
 	{
 		if( Npcs->CanControlPet( mChar, petNpc, true, false ))
 		{
+			std::vector<UI16> scriptTriggers = petNpc->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute )
+				{
+					SI08 retStatus = toExecute->OnReleasePet( mChar, petNpc );
+					if( retStatus == 0 )
+						return false;
+				}
+			}
+
 			// Reduce player's control slot usage by the amount of control slots taken up by the pet
 			mChar->SetControlSlotsUsed( std::max( 0, mChar->GetControlSlotsUsed() - petNpc->GetControlSlots() ));
 
@@ -842,6 +854,12 @@ bool CPetAttackResponse::Handle( CSocket *mSock, CChar *mChar, CChar *petNpc )
 	std::string npcName = GetNpcDictName( petNpc, mSock, NRS_SYSTEM );
 	if( saidAll || FindString( ourText, oldstrutil::upper( npcName )))
 	{
+		TAGMAPOBJECT deadPet = petNpc->GetTag( "isPetDead" );
+		if( deadPet.m_IntValue == 1 )
+		{
+			mSock->SysMessage( 19302 );// The dead pet cannot attack.
+			return true;
+		}
 		if( Npcs->CanControlPet( mChar, petNpc, false, true ))
 		{
 			Npcs->StopPetGuarding( petNpc );
