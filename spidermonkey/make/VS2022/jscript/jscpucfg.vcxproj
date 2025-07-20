@@ -58,7 +58,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;</PreprocessorDefinitions>
@@ -86,8 +86,8 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>pushD $(OutDir)
-jscpucfg &gt; $(SolutionDir)../../spidermonkey/jsautocfg.h
+      <Command>pushD "$(OutDir)"
+jscpucfg &gt; "$(ProjectDir)jsautocfg.h"
 popD</Command>
     </PostBuildEvent>
     <PostBuildEvent>
@@ -101,7 +101,7 @@ popD</Command>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;</PreprocessorDefinitions>
@@ -128,8 +128,8 @@ popD</Command>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>pushD $(OutDir)
-jscpucfg &gt; $(SolutionDir)../../spidermonkey/jsautocfg.h
+      <Command>pushD "$(OutDir)"
+jscpucfg &gt; "$(ProjectDir)jsautocfg.h"
 popD</Command>
       <Message>Generating jsautocfg.h</Message>
     </PostBuildEvent>

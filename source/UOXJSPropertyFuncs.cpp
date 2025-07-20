@@ -110,7 +110,7 @@ UI16 getScriptID( JSContext *cx, jsid id, JSPrototypes section )
 		propID = GetPropByName( section, chars );
 		if( propID == 0xFFFF )
 		{
-			Console.Warning( oldstrutil::format( "String property '%s' found on object type %d in script %d", chars, section, JSMapping->currentActive()->GetScriptID() ) );
+			Console.Log( oldstrutil::format( "String property '%s' found on object type %d in script %d", chars, section, JSMapping->currentActive()->GetScriptID() ), "warning.log");
 		}
 		js_free( chars );
 	}
@@ -1680,7 +1680,7 @@ JSBool CItemProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool str
 	{
 		auto str = JSID_TO_STRING( id );
 		char* chars = JS_EncodeString(cx, str);
-		Console.Warning( oldstrutil::format( "String property '%s' found on item with serial %d in script %d", chars, gPriv->GetSerial(), JSMapping->currentActive()->GetScriptID() ) );
+		Console.Log( oldstrutil::format( "String property '%s' found on item with serial %d in script %d", chars, gPriv->GetSerial(), JSMapping->currentActive()->GetScriptID() ), "warning.log" );
 		js_free(chars);
 	}
 

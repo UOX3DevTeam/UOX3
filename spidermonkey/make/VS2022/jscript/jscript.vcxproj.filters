@@ -141,9 +141,6 @@
     <ClCompile Include="..\..\..\json.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\jsoplengen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\jsgcchunk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
