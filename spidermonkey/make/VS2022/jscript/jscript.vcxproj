@@ -94,7 +94,7 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(ProjectDir)/../../../assembler;$(ProjectDir)/../../../nanojit;$(ProjectDir)/../../../tracejit;$(ProjectDir)/../../../yarr;$(ProjectDir)/../../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)/../../../assembler;$(ProjectDir)/../../../nanojit;$(ProjectDir)/../../../tracejit;$(ProjectDir)/../../../yarr;$(ProjectDir)/../../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -121,7 +121,7 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(ProjectDir)/../../../assembler;$(ProjectDir)/../../../nanojit;$(ProjectDir)/../../../tracejit;$(ProjectDir)/../../../yarr;$(ProjectDir)/../../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)/../../../assembler;$(ProjectDir)/../../../nanojit;$(ProjectDir)/../../../tracejit;$(ProjectDir)/../../../yarr;$(ProjectDir)/../../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
