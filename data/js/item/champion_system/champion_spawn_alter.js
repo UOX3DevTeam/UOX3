@@ -430,8 +430,10 @@ function PlaceRedSkulls( altar, stage )
 		skull.z = pos.z;
 		skull.movable = 2;
 		skull.dir = 2;
+		skull.decayable = false;
 		skull.SetTag( "redSkull", true );
 	}
+	altar.Refresh();
 }
 
 function PlaceWhiteSkulls( altar, killCount, stage )
@@ -448,12 +450,14 @@ function PlaceWhiteSkulls( altar, killCount, stage )
 		let skull = CreateDFNItem( null, null, "0x1854", 1, "ITEM", false, 0, altar.worldnumber, altar.instanceID );
 		skull.x = pos.x;
 		skull.y = pos.y;
-		skull.z = pos.z;
+		skull.z = pos.z + 3;
 		skull.movable = 2;
 		skull.dir = 1;
+		skull.decayable = false;
 		skull.SetTag( "whiteSkull", true );
 		altar.SetTag( "whiteSkullCount", skullCount );
 	}
+	altar.Refresh();
 }
 
 function DelayedGoldExplosion(altar)
