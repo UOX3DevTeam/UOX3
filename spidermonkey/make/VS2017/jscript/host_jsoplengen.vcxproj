@@ -14,23 +14,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{095B1133-901D-38B8-B104-265038A14876}</ProjectGuid>
+    <ProjectGuid>{6CF54EC7-77AB-31B6-B645-B174DDE88943}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
-    <ProjectName>jscpucfg</ProjectName>
+    <ProjectName>host_jsoplengen</ProjectName>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -39,12 +39,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
     <TargetName>$(ProjectName)</TargetName>
@@ -62,6 +62,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;</PreprocessorDefinitions>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;</PreprocessorDefinitions>
@@ -87,11 +88,9 @@
     </ProjectReference>
     <PostBuildEvent>
       <Command>pushD "$(OutDir)"
-jscpucfg &gt; "$(ProjectDir)jsautocfg.h"
+host_jsoplengen "$(ProjectDir)jsautooplen.h"
 popD</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Generating jsautocfg.h</Message>
+      <Message>Generating jsautooplen.h</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -122,6 +121,7 @@ popD</Command>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -129,13 +129,17 @@ popD</Command>
     </ProjectReference>
     <PostBuildEvent>
       <Command>pushD "$(OutDir)"
-jscpucfg &gt; "$(ProjectDir)jsautocfg.h"
+host_jsoplengen "$(ProjectDir)jsautooplen.h"
 popD</Command>
-      <Message>Generating jsautocfg.h</Message>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Generating jsautooplen.h</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\jscpucfg.cpp" />
+    <ClCompile Include="..\..\..\jsoplengen.cpp" />
+    <ClInclude Include="..\..\..\jsversion.h" />
+    <None Include="..\..\..\jsopcode.tbl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
