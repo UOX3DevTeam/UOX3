@@ -4,7 +4,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "houseicons", 2, true );
+	RegisterCommand( "houseicons", 8, true );
 }
 
 function command_HOUSEICONS( socket, cmdString )

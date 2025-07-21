@@ -437,9 +437,10 @@ enum DEFINITIONCATEGORIES
 enum CommandLevels
 {
 	CL_PLAYER = 0,
-	CL_CNS,
-	CL_GM,
-	CL_ADMIN
+	CL_CNS = 4,
+	CL_SEER = 6,
+	CL_GM = 8,
+	CL_ADMIN = 10
 };
 
 enum AITypes
@@ -527,7 +528,7 @@ enum ItemTypes
 	IT_UNMORPHOBJECT		= 102,
 	IT_DRINK				= 105,
 	IT_STANDINGHARP			= 106,
-  IT_SHIELD				= 107,
+	IT_SHIELD				= 107,
 	IT_ZEROKILLSGATE		= 111,
 	IT_PLANK				= 117,
 	IT_FIREWORKSWAND		= 118,

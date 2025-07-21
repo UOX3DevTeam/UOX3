@@ -2,11 +2,11 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "add", 2, true );
-	RegisterCommand( "itemmenu", 2, true );
-	RegisterCommand( "addx", 2, true );
-	RegisterCommand( "addxitem", 2, true );
-	RegisterCommand( "addxspawner", 2, true );
+	RegisterCommand( "add", 8, true );
+	RegisterCommand( "itemmenu", 8, true );
+	RegisterCommand( "addx", 8, true );
+	RegisterCommand( "addxitem", 8, true );
+	RegisterCommand( "addxspawner", 8, true );
 }
 
 function command_ADD( socket, cmdString )

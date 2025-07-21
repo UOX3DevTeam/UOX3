@@ -4,7 +4,7 @@
 [REGIONSPAWN 15531]
 {
 NAME=Moonglow zoo bear
-NPC=polarbear
+NPC=blackbear
 MAXNPCS=1
 X1=4525
 Y1=1383
@@ -15,10 +15,11 @@ MINTIME=58
 MAXTIME=60
 CALL=1
 }
+
 [REGIONSPAWN 15532]
 {
 NAME=Moonglow zoo bear
-NPC=blackbear
+NPC=polarbear
 MAXNPCS=1
 X1=4506
 Y1=1390
@@ -29,6 +30,7 @@ MINTIME=58
 MAXTIME=60
 CALL=1
 }
+
 [REGIONSPAWN 15533]
 {
 NAME=Moonglow zoo grey wolf
@@ -43,6 +45,7 @@ MINTIME=58
 MAXTIME=60
 CALL=1
 }
+
 [REGIONSPAWN 15534]
 {
 NAME=Moonglow zoo cougar
@@ -57,6 +60,7 @@ MINTIME=58
 MAXTIME=60
 CALL=1
 }
+
 [REGIONSPAWN 15534]
 {
 NAME=Moonglow zoo gorilla
@@ -71,6 +75,7 @@ MINTIME=58
 MAXTIME=60
 CALL=1
 }
+
 [REGIONSPAWN 15535]
 {
 NAME=Moonglow zoo birds
@@ -85,6 +90,7 @@ MINTIME=58
 MAXTIME=60
 CALL=3
 }
+
 [REGIONSPAWN 15536]
 {
 NAME=Moonglow zoo alligator
@@ -100,4 +106,32 @@ MAXTIME=60
 CALL=1
 }
 
-EOF
+[REGIONSPAWN 15537]
+{
+NAME=Moonglow zoo scorpion
+NPC=scorpion
+MAXNPCS=2
+X1=4527
+Y1=1354
+X2=4535
+Y2=1373
+WORLD=1
+MINTIME=58
+MAXTIME=60
+CALL=1
+}
+
+[REGIONSPAWN 15538]
+{
+NAME=Moonglow zoo hart
+NPC=hart
+MAXNPCS=2
+X1=4527
+Y1=1354
+X2=4535
+Y2=1373
+WORLD=1
+MINTIME=58
+MAXTIME=60
+CALL=1
+}

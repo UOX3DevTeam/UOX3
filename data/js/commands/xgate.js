@@ -1,7 +1,7 @@
 // This command opens a gate to a specific location
 function CommandRegistration()
 {
-	RegisterCommand( "xgate", 1, true );
+	RegisterCommand( "xgate", 4, true );
 }
 
 function command_XGATE( socket, cmdString )

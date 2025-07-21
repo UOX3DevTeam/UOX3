@@ -7,6 +7,8 @@ var maxControlSlots = GetServerSetting( "MaxControlSlots" );
 // maxFollowers only comes into play if maxControlSlots is set to 0 in UOX.INI
 var maxFollowers = GetServerSetting( "MaxFollowers" );
 
+const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );
+
 // Runs before purchase is validated by server
 function onBuyFromVendor( pSock, vendor, iBought, numItemsBought )
 {
@@ -64,6 +66,12 @@ function onUseChecked( pUser, iUsed )
 
 		// make pet follow owner by default
 		nSpawned.Follow( pUser );
+		
+		if( petBondingEnabled > 0 )
+		{
+			nSpawned.AddScriptTrigger( 3107 );//Add bonding script trigger
+			TriggerEvent( 3107, "StartBonding", pUser, nSpawned  );
+		}
 
 		// make a sound
 		pUser.SoundEffect( 0x0215, true );

@@ -3,8 +3,8 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "wipe", 3, true );
-	RegisterCommand( "iwipe", 3, true );
+	RegisterCommand( "wipe", 10, true );
+	RegisterCommand( "iwipe", 10, true );
 }
 
 function command_WIPE( socket, cmdString )

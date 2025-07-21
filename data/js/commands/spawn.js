@@ -3,8 +3,8 @@ const facetList = [ "felucca", "trammel", "ilshenar", "malas", "tokuno", "termur
 
 function CommandRegistration()
 {
-	RegisterCommand( "enablespawns", 3, true );
-	RegisterCommand( "disablespawns", 3, true );
+	RegisterCommand( "enablespawns", 10, true );
+	RegisterCommand( "disablespawns", 10, true );
 }
 
 function command_ENABLESPAWNS( socket, cmdString )

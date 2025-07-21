@@ -51,7 +51,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	mChar.spellCast = spellNum;
 
 	// Disallow spellcasting if character is in jail
-	if( mChar.isJailed && mChar.commandlevel < 2 )
+	if( mChar.isJailed && mChar.commandlevel < GetCommandLevelVal( "CNS" ))
 	{
 		if( mSock != null )
 		{
@@ -77,7 +77,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	}
 
 	// The following loop checks to see if any item is currently equipped (if not a GM)
-	if( mChar.commandlevel < 2 )
+	if( mChar.commandlevel < GetCommandLevelVal( "CNS" ))
 	{
 		if( spellType != 2 )
 		{
@@ -125,7 +125,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	}
 
 	// If player commandlevel is below GM-level, check for reagents
-	if( mChar.commandlevel < 2  )
+	if( mChar.commandlevel < GetCommandLevelVal( "CNS" ))
 	{
 		//Check for enough reagents
 		// type == 0 -> SpellBook
@@ -180,7 +180,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 	var delay = mSpell.delay;
 
-	if( spellType == 0 && mChar.commandlevel < 2 ) // if they are a gm they don't have a delay :-)
+	if( spellType == 0 && mChar.commandlevel < GetCommandLevelVal( "CNS" )) // if they are a gm they don't have a delay :-)
 	{
 		mChar.SetTimer( Timer.SPELLTIME, delay * 1000 );
 		if( !GetServerSetting( "CastSpellsWhileMoving" ))
@@ -259,7 +259,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	mChar.spellCast = -1;
 
 	// If player commandlevel is below GM-level, check for reagents
-	if( mSock != null && mChar.commandlevel < 2  )
+	if( mSock != null && mChar.commandlevel < GetCommandLevelVal( "CNS" ))
 	{
 		//Check for enough reagents
 		// type == 0 -> SpellBook
@@ -286,7 +286,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	}
 
 	// Check magery skill for non-GM characters
-	if(( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill )))
+	if(( mChar.commandlevel < GetCommandLevelVal( "CNS" )) && ( !mChar.CheckSkill( 25, lowSkill, highSkill )))
 	{
 		// Only remove reagents for normal spells
 		if( spellType == 0 )
