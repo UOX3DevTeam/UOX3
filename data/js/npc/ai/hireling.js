@@ -1266,7 +1266,7 @@ function AttackTarget( socket, pChar, myTarget, allAttack )
 				return;
 			}
 
-			if( hireling.owner == pChar && pChar.account.isYoung )
+			if(( !myTarget.npc || ValidateObject( myTarget.owner )) && hireling.owner == pChar && pChar.account.isYoung )
 			{
 				socket.SysMessage( GetDictionaryEntry( 18708, socket.language )); // As a Young player, you cannot harm other players, or their followers.
 				return;
@@ -1303,6 +1303,10 @@ function AttackTarget( socket, pChar, myTarget, allAttack )
 
 						if( tempFollower.InitiateCombat( myTarget ))
 						{
+							if( pChar.target != myTarget )
+							{
+								pChar.InitiateCombat( myTarget );
+							}
 							if( WillResultInCriminal( pChar, myTarget ))
 							{
 								tempFollower.criminal = true;
@@ -1321,6 +1325,10 @@ function AttackTarget( socket, pChar, myTarget, allAttack )
 
 			if( hireling.InitiateCombat( myTarget ))
 			{
+				if( pChar.target != myTarget )
+				{
+					pChar.InitiateCombat( myTarget );
+				}
 				if( WillResultInCriminal( pChar, myTarget ))
 				{
 					hireling.criminal = true;

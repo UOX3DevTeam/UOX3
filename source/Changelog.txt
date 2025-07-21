@@ -1,5 +1,215 @@
+19/07/2025 - Xuri (0.99.7)
+	Bumped up version number
+	Added workflow file (github-releases-to-discord.yml) that will publish UOX3 GitHub releases to Discord
+	Updated UOX3Build.yml workflow file to ignore pushes with "-release" version tags
+	Updated CMakeLists.txt to include installation rules for creating release packages
+	Updated readme.md with some up-to-date details and fix for broken build-status badges
+
+09/07/2025 - Xuri
+	Added [Tame] and [Bonded] to character tooltips of tame/bonded animals and updated Dictionary files
+	Updated .AddRadio() and .AddCheckbox() Gump Methods to support 32-bit unsigned int for the buttonID
+
+05/07/2025 - Dragon Slayer
+	Updated Addmenu with all the missing npcs (Ratmen/lizardman/Se Npcs/Vet)
+	Fixed PoisonedBy missing on world save tags.
+	Fixed Spiders Icons in Addmenu.
+	Added Vet Spawns thru out the worlds.
+	Fixed Sound on Shadow fiend ( creatures.dfn )
+
+04/07/2025 - Xuri
+	Fixed an issue with poison damage in combat where the poison resist of the attacker was checked instead of that of the defender
+	Fixed an issue where the poison details in tooltip of an item would only be visible when equipped, and not visible when kept in backpack
+	Fixed an issue where if a weapon was destroyed due to corrosion damage, it would not unset the poison strength on the character who wielded it
+	Added new Character/Item property to track the source (serial) of poison applied to an object. This is available as a JS Char/Item property:
+		.poisonedBy // serial of character who applied poison to an object. Set to 0xFFFFFFFF/SE_INVALIDSERIAL() to clear
+	Updated all code and scripts related to setting/unsetting poison effect on objects to also update the .poisonedBy property
+	Serial of character who poisoned a character who died while poisoned is now stored on the corpse
+	Added third optional parameter to Character JS Method .SetPoisoned() that can be used to specify source char of applied poison. New syntax:
+		.SetPoisoned( poisonLevel, wearOffTime[, poisonSourceChar ])
+	Updated calculations of magic and/or poison resistance to also include magic and/or poison resistance from races
+	Excluded player pets from MONSTERSVSANIMALS/ANIMALATTACKCHANCE ini settings; player pets are now always valid targets in combat for NPCs (unless player is a Young character)
+
+02/07/2025 - Xuri
+	Updated UOX3 & JS documentation
+	Added new JS command: 'seeryell [text] // broadcast message to all with seer privs or higher privs
+	Added new privilege flag for characters:
+		0x20000 - Seer (Character is a Seer)
+	Fixed an issue where Young players could not direct hirelings to attack valid targets (js/npc/ai/hireling.js)
+	When buying items from NPC shopkeepers worth more than the BUYTHRESHOLD in uox.ini, the player's backpack is first checked for the required amount of gold, before their bankbox is checked. A new message is displayed about any gold withdrawn from player's bank.
+	When selling items to NPC shopkeepers that are worth more than the BUYTHRESHOLD in uox.ini, the gold is now deposited directly into the player's bankbox, instead of to their backpack. A new message is displayed about any gold deposited to the player's bank.
+	Fixed an issue with Shopkeeper AI (js/npc/ai/shopkeeper.js) where the NPC would incorrectly assume player was member of the same NPC guild as them, and provide them with an unwarranted bonus to trade prices as a result
+	Fixed an issue that prevented players from being able to apply poison to weapons (js/skill/poisoning.js)
+	Fixed incorrect NPC spawn entry in Khaldun spawn region DFNs: spectralarmour -> spectralarmor
+	Added entries for Orc Caves/Khaldun to GM travel menu (dfndata/items/travelmenu.dfn and travelmenu.bulk.dfn)
+	Fixed an issue that sometimes prevented admin characters from seeing offline GMs
+	Added support for reading SKILLCAPSINGLE ini setting with GetServerSetting() JS function
+	Fixed issue where animal trainers would give players a random ostard when buying a desert ostard (js/npc/pets/static_ostard.js and dfndata/items/misc/mount-statues.dfn)
+	Added DFN entries for additional ostard-mount-statues (not sold by animal trainer) that can give user a random ostard, forest ostard or frenzied ostard respectively (dfndata/items/misc/mount-statues.dfn)
+	Player pets are no longer safe from being attacked from monsters. This also addresses an issue with tamed pets being able to freely attack monsters if player gets the monster's attention first and then kites the monster around while pet kills it. Now monster will properly re-focus to nearest attacker (including pets) if original target is too far away
+	Fixed incorrect command-levels for GMs for hard-coded commands listed in commands.dfn
+	Added support for specifying minEra,maxEra value pair for teleport locations in js/teleport.scp. These can be used to define the minimum and maximum era a given teleport entry should be active for. The values for these default to -1, unless otherwise specified. Updated teleport entry format:
+		sourceX, sourceY, sourceZ, targX, targY, targZ, [sourceWorld, targWorld[, minEra, maxEra]]
+	Updated teleport entries for Yew <-> Heartwood to only be active for ML era shards and above (js/teleport.scp)
+	Updated regions for Moonglow and Skara Brae to properly cover dock areas (dfndata/regions/regions.dfn)
+	Added missing dictionary entries related to poison/corrosion update
+	Added some missing details for poisoning skill (js/skill/poisoning.js) and arms lore skill (js/skill/armslore.js)
+	Added missing details for 'tweak (js/commands/targeting/tweak.js), 'get and 'set (js/commands/targeting/get.js and set.js) commands related to poison charges and poison strength on items
+	Updated poison strength of poison elementals [poisonele] from 4 to 5 (dfndata/npc/elementals.dfn)
+	Fixed an issue with Spawner Object Editor where state of "Use Spawnlist" checkbox would not be read correctly if no "Spawner Type" radio buttons were selected (js/server/misc/spawner_editor.js)
+
+28/06/2025 - Xuri (0.99.6d)
+	Cleaned up an issue with last commit where wrong npclists were used in some spawn regions
+	Made a few additional adjustments to the new spawn regions in Lost Lands/New Haven
+	Included more changes related to poison updates that should've been in previous commit (like the complete UOX.INI support for POISONCORROSIONSYSTEM setting)
+	Adjusted region setup for New Haven to set the individual "building" regions within as a sub-region of the main town (regions.dfn)
+	Fixed an issue where the displayed HP of an equipped item would not update correctly
+	Further updates to convert timers 32-bit to 64-bit. This affects and addresses some potential issues with: Character creation/NPC guild-join timestamps, NPC movement, combat timers, idle timeouts, item decay, spellcasting
+	Added support for new JS Events that can trigger from global script, and can be used to store persistent custom entries in players' paperdoll profiles:
+		onProfileRequest( socket, profileOwnerChar ) - Triggers when client requests data for a paperdoll profile
+		onProfileUpdate( socket, updatedText ) - Triggers when client sends updated data from paperdoll profile
+	Added two new helper functions in code that allows faster (but very slightly less accurate) distance checks between two points:
+		GetApproxDist( Point3_st a, Point3_st b )
+		GetApproxDist( CBaseObject *a, CBaseObject *b )
+	Improved pathfinding for NPCs attempting to follow another character, by adopting a system of weighted variables to help the NPC determine when to recalculate the path vs when to stick with the old, combined with faster distance checks via GetApproxDist(). The end result of this is faster, smarter and more responsive NPC followers and NPC opponents in combat. The variables influencing this include: how far the target has moved from last pathfind target location, whether NPC is heading in the overall right direction or not, time since last path calculation and some small randomization to avoid edge case jitters.
+	Updated default command levels in commands.dfn, code and scripts to support the Seer role and make space for some custom roles. These are the new defaults as listed in commands.dfn, which should not be changed as they are linked to specific enums in code. Do take note that this might invalidate command levels for existing GMs/Seers/Counselors, who might need another round of 'make gm/seer/cns from an admin:
+		ADMIN - command level 10
+		GM - command level 9
+		SEER - command level 7
+		CNS - command level 4
+		PLAYER - command level 0
+	Updated how UOX3 makes use of the account-level flags 0x2000 (Seer) and 0x4000 (Counselor). If either of these flags are set on an account, all new characters created on the accounts will automatically receive the relevant command privileges.
+	Fixed an issue with 'wholist command that prevented admin characters from seeing characters with lower privilege levels in the list (js/commands/wholist.js)
+	Fixed an issue with hiding/GM hide that prevented admin characters from seeing hidden characters with lower privilege levels in the world
+	UOX3 now includes the cross-platform, header-only utf8cpp library found at https://github.com/nemtrif/utfcpp and freely available under Boost Software License v1.0. The immediate use-case for this is in code right now is to better handle strings related to custom paperdoll profiles, but will also look to make more heavy use of this in future updates
+
+27/06/2025 - Xuri (0.99.6c)
+	Fixed an issue with an internal movement check that prevented characters from moving in valid map areas in Felucca/Trammel from X 6144 to X 7168
+	Fixed an issue where .instanceID property was misspelled in 'xgo GM command script, causing characters to be teleported to an out of bounds area where they would no longer be saved (js/commands/targeting/x.js)
+	Added some additional error-checking to .Teleport()/.SetLocation() JS Method to prevent script-accidents from sending characters out of bounds.
+	Updated Poisoning skill to add poison-charges to weapons being poisoned. Charges are consumed when applying poison in combat (js/skill/poisoning.js)
+	Updated combat code to consume poison-charges if a poisoned weapon is used to poison an opponent
+	Updated shoplists for Blacksmiths and Weaponsmiths - they now buy/sell longswords (dfndata/items/shoplist.dfn)
+	Updated MageShopping shoplist for mage vendors - they now buy/sell mass curse scrolls (dfndata/items/shoplist.dfn)
+	Added new Spawn Region DFN tag that can specify which era or eras of UO (Multiple comma-separated entries supported) a given spawn region is valid for. Spawn region not valid for core shard era will be ignored. Syntax:
+		ERAS=UO,T2A,UOR,LBR,AOS,SE,ML,SA,HS,TOL
+	Added new Spawn Region DFN tag that allows using another spawn region as a "parent". All properties of this parent will be inherited except for these, which are ignored: ERAS, NPCLIST, ITEMLIST, NPC and ITEM. Syntax for new tag:
+		GET=# // Inherit a specified spawn region
+	Added spawn region for animal trainer vendor in Vesper stable
+	Added spawn region for fur trader/tanner vendors in The Best Hides of Britain
+	Added spawn region for spinner vendor in The Lord's Clothier's and The Right Fit shops in Britain
+	Added spawn region for tanner NPC to Nujel'm Tannery (and fixed leatherworker spawn region for same area)
+	Added spawn regions for banker NPCs in East Bank of Britain, First Bank of Moonglow, Jhelom Bank and Jeweler, Bank of Skara Brae
+	Added spawn regions for stables, tailor and blacksmith inside Castle British
+	Added spawn regions for mage shops, mage guilds and farm houses in Moonglow
+	Added spawn regions for misc vendors and townfolk in multiple cities
+	Added spawn regions for Fire Island
+	Updated spawn regions for Dagger Isle/Ice Island
+	Added spawn regions for forests and jungles in southern Britannia and on various islands including Bucc's Den, Moonglow, Serpent's Hold, and misc unpopulated islands
+	Added spawn regions for area east of Skara Brae, around Hedge Maze and south of Britain
+	Added spawn regions for wandering healers outside every dungeon entrance in Britannia and Lost Lands
+	Re-integrated ocean spawn regions for ocean creatures (dolphin, walrus, water elemental, sea serpent) from the original community-based spawn file
+	Added reagent spawns in overworld spawn regions in Britannia/Lost Lands
+	Added special reagent spawns in swamp areas
+	Added additional overworld spawn regions in Britannia/Lost Lands
+	Added spawn regions for Khaldun dungeon that spawn some new and some old NPCs:
+		Old: Zombies, skeletons, skeletal mages, skeletal knights, ancient liches
+		New: Cursed (and named) NPCs, shadowfiends, zealots of khaldun (knights/summoners), tentacles of the harrower
+	Updated size and positions of some existing overworld spawn regions
+	Fixed incorrect spawn region size for small island south of Trinsic
+	Added switch/door puzzle functionality in Khaldun dungeon using new switch/door combo script (js/item/dungeons/switch_door_combo.js)
+	Added "smart objects" in Khaldun dungeon that activate when you come close enough (js/item/dungeons/smart_activate_item.js)
+	Added teleport locations within Khaldun dungeon (js/teleport.scp)
+	Added custom AIs to existing NPC spawning in Khaldun dungeon:
+		Ancient Lich (summons other undead, and can turn into one of them for disguise)
+	Added DFN entries for new NPCs spawning in Khaldun dungeon, some with custom AIs:
+		[tentacles_of_the_harrower] -> Tentacles of the Harrower (life steal)
+		[shadowfiend] -> Shadowfiends (seek out and reveal hidden players)
+		[zealot_knight]/[zealot_summoner] -> Zealots of Khaldun (turn into undead on death, male/female variants)
+		[cursed] -> Cursed (male/female variants)
+		[spectralarmor] -> Spectral Armor
+	Added DFN entries for new (named) NPCs spawning in Khaldun dungeon:
+		[lysander_gathenwale] -> Lysander Gathenwale
+		[grimmoch_drummel] -> Grimmoch Drummel
+		[morg_bergen] -> Morg Bergen
+		[tavara_sewel] -> Tavara Sewel
+	Added new NPC DFN entries:
+		[leatherworker] -> alias for male/female leatherworker vendors
+		[mapmaker] -> alias for male/female mapmaker vendors
+	Added new Race DFN entries:
+		[RACE 29] -> Cursed (enemies of RACE 30)
+		[RACE 30] -> Zealots (enemies of RACE 29)
+	Added new book DFN entries for Khaldun journals of Lysander, Tavara and Grimmoch - available as loot from the respective NPCs (dfndata/misc/books.dfn and dfndata/items/misc/books.dfn)
+	Added 25% chance for hit-animations and hit-SFX to play for targets in combat, instead of playing every time - can get very spammy
+	Monsters with actual weapons equipped (like Ophidian Enforcer with Halberd/Bardiche) will now get appropriate combat SFX for hitting with that weapon
+	Updated Healing skill to base cure/resurrection skill requirements on the calculated skill, rather than base skill (js/skill/healing.js)
+	Fixed an issue where healing with bandages and dying in the process would not properly reset the healing-related tags and skills used
+	Updated healing script to show a resurrection confirmation menu for players targeted with bandages for resurrect (js/skill/healing.js)
+	All skill usage states now reset on death, to prevent cases of players being "busy" while trying to use skills that got stuck due to script bugs.
+	The 'regspawn GM command now supports a new parameter called "max". Updated command syntax:
+		'regspawn # // perform a single respawn cycle in a specific spawn region
+		'regspawn all // perform a single respawn cycle across all spawn regions
+		'regspawn max // respawn ALL spawn regions to MAX capacity in one go
+	Added new UOX.INI setting that determines the maximum range at which NPCs can initiate attacks on players/NPCs (the old MAXRANGE=10 setting now instead defines max range at which players can initiate attacks on players/NPCs):
+		MAXNPCAGGRORANGE=10
+	Optimized performance by significantly reducing the number of line-of-sight checks performed by characters, especially in combat scenarios, or when evaluating potential targets for NPC AIs. The amount of checks done is also affected by the new ini setting for max aggro range.
+	Fixed an issue where both NPC and player characters would instantly drop one hunger level (from 6 to 5) upon creation since hungerrate was not initialized until after first hunger-event
+	Updated character priv property from UI16 to UI32, and added a new flag that determines if fame/karma title is hidden for character:
+		HIDEFAMEKARMATITLE (0x10000)
+	NPCs will no longer aggro other NPCs if the Z difference between them is greater or equal to 20 (i.e. they're on different floors), unless both are using ranged weapons and both are in range
+	Fixed an issue where players could get discounts from shopkeepers even though neither player nor shopkeeper were members of a NPC guild (js/npc/ai/shopkeeper.js)
+	Fixed an issue where the "premium" a player would get when selling items to a shopkeeper in the same NPC guild as them would be 110% extra on top of the item's value, instead of the intended 10% (js/npc/ai/shopkeeper.js) (Thanks, cobrag0318!)
+	Added missing tall straw hat to tailoring crafting scripts (Thanks, Dragon Slayer!)
+	Improved error reporting during compilation of individual scripts being reloaded - will now show more context and line number
+	onCombatEnd JS Event now also triggers when NPCs ignore their target and/or evade during combat
+	Updated 'decorate command to support saving/loading custom tags on items for world templates. These are stored after a @ symbol in the world template, each custom tag separated by a | symbol, and with each custom tag saved using this syntax: key$type$value
+	Updated resource-harvesting scripts to use script-specific global (const) variables, to avoid interference between different scripts (js/server/resource/*)
+	Added new resource-harvesting scripts and added spawn regions for these in fields on farms all over Britannia/Lost Lands
+		cabbages (js/server/resource/cabbages.js)
+		canteloupes (js/server/resource/canteloupes.js)
+		carrots (js/server/resource/carrots.js)
+		garlic (js/server/resource/garlic.js)
+		gourds (js/server/resource/gourds.js)
+		honeydew melons (js/server/resource/honeydewmelon.js)
+		onions (js/server/resource/onions.js)
+		pumpkins (js/server/resource/pumpkins.js)
+		squashes (js/server/resource/squashes.js)
+		turnips (js/server/resource/turnips.js)
+		watermelons (js/server/resource/watermelon.js)
+	Updated CSpawnRegion::FindItemSpotToSpawn() function in cSpawnRegion.cpp to prevent duplicate spawning of exact same item in exact same location
+	Updated sectionid of all potion and scroll aliases to match main item, so they'll get correctly picked up by NPC shopkeepers (dfndata/items/magic/potions.dfn and scrolls.dfn)
+	Specified sectionid for backpacks, so it also gets applied to packs added using the alias [backpack] (dfndata/items/misc/provisions.dfn)
+	Fixed a code issue that prevented players from selling empty containers to NPC shopkeepers willing to buy such containers
+	Fixed an issue where field-spells (wall of stone, poison field, etc) would ignore dynamic/static items that should block these
+	Fixed an issue where field-spells could be cast into houses from the outside by standing next to a wall and targeting self
+	Fixed a War/Peace-mode desync between client and server by having server always notify client (using war-toggle packet) when the "at war" flag is toggled for player character
+	Fixed an issue with hiding skill that wouldn't allow player to hide after having acquired self as target in combat (through spellcasting, for instance) (Thanks, Dragon Slayer!)
+	Fixed an issue where mana/reagents were consumed and skillcheck performed before all spellcast-validations had succeeded, resulting in the occasional loss of reagents/mana when spellcasting was disallowed (code and js/magic/clumsy.js and level1targ.js)
+	Fixed an issue with lack of criminal-flagging for casting of hostile spells scripted in JS (clumsy, magic arrow, feeblemind) vs blue targets (js/magic/clumsy.js and level1targ.js)
+	Fixed some issues with Line-of-Sight checking code that returned incorrect results, which amongst other things affected spellcasting in areas with uneven terrain
+	Fixed some issues with movement code and climbing of ladders, in particular the rope ladder in the 2-story log cabin. Code now sets a "is climbing" flag when character steps onto a rope ladder, and uses that to help resolve some edge cases, and then unsets it when they step off.
+	Renamed section headers of some map-items in DFNs from "locationname" to "locationnamemap" for clarity (example: "britain" to "britainmap")
+	Fixed broken "map wrapping" when sailing to edges of map in Felucca or Trammel
+	Fixed a server crash related to attempts at reading data from invalid map tiles
+	Updated 'rremove repeated command to automatically release/unsecure locked down/secure items before removing them (js/commands/custom/repeatingcmds.js)
+	Added GM commands to force a temporary weather change until next time weather updates automatically (js/commands/custom/misc-cmd.js):
+		'rain
+		'snow
+		'clearweather
+	Updated 'settag and 'settemptag GM commands to support string-values with commas (js/commands/custom/misc_cmd.js)
+	Updated 'where GM command to also show region ID in addition to coordinates and region-name (js/commands/where.js)
+	Fixed an issue with potion usage (js/item/potion.js) where both hands needed to be free instead of just one (thanks, cobrag0318!)
+	Applying poison to weapons will now set those weapons up with a set number of poison charges, which will be consumed when the weapon is used to apply poison in combat (code + js/skill/poisoning.js)
+	The level of poison and amount of poison charges applied to a weapon are now visible to the person holding the weapon
+	Added new JS Item property:
+		.poisonCharges // the amount of poison charges remaining on the weapon
+	Added new UOX.INI setting, enabled by default:
+		POISONCORROSIONSYSTEM=0/1 // enables or disables the corrosion system for poison
+	Applying poison to weapons will now cause them to corrode if corrosion system is enabled in uox.ini, which causes the weapon's HP to drop when used in combat. Corrosion can be cleaned up with oil cloths (code + js/skill/poisoning.js)
+	Fixed an issue with item decay timers not working correctly after upgrade from 32-bit to 64-bit timers
+	Characters can now resist specific levels of poison being applied to them depending on their poison resistance stat
+
 02/06/2025 - Xuri
-	Fixed an issue where UOX3 would not save/lead the pauseTime of effects correctly, causing JS-timers and tempeffect timers in general to break on server restart. Manual fix for already affected effects: open effects.wcs and set all pauseTime values with ridiculously high values to 0, then save file.
+	Fixed an issue where UOX3 would not save/load the pauseTime of effects correctly, causing JS-timers and tempeffect timers in general to break on server restart. Manual fix for already affected effects: open effects.wcs and set all pauseTime values with ridiculously high values to 0, then save file.
 
 31/05/2025 - Xuri
 	Got rid of the Overflow() function, which no longer serves a purpose after timers have been upgraded from uint32_t to uint64_t
@@ -16,6 +226,17 @@
 	Bump the types for the timer from the uint32_t to uint64_t and encapsulate behind a TVAL type definition.
 		According to the C++ reference, chrono should support at least 45 bits of accuracy for milliseconds.
 		This gives a 1115 year wraparound.
+
+18/05/2025 - Dragon Slayer
+	Added support for pet bonding system similar to OSI mechanics
+		Pets now track bonding status using 'isBondedPet' tag
+		Bonding begins when player tames a tameable pet that meets taming skill requirements,
+		Pets become bonded after 7 days (604800000 ms) of loyalty to their owner,
+		Bonded pets no longer delete on death, but enter ghost state,
+		Added packet 'SendNpcGhostMode( pSock, unknownFlag, serial, ghostFlag )' to trigger bonded ghost appearance,
+	New JS event hook: onReleasePet( pTamer, pPet )
+		Triggered when a player releases a controlled pet,
+		Can be used to reset bonded status or perform cleanup.
 
 14/05/2025 - Xuri
 	Fixed an issue where integer division and rounding of values could lead to skill gains not being visible to player
@@ -155,7 +376,6 @@
 	Reloading DFNs via 'reloaddfns JS command will now also reload creatures.dfn, titles.dfn, location.dfn
 	Reloading ALL via 'reloadall JS command will now also reload teleport.scp, creatures.dfn, titles.dfn, location.dfn
 
-
 23/04/2025 - Xuri
 	Fixed an issue where onUseUnchecked JS event in envoked scripts (via object ID or type) would never trigger because hard-coded checks would run before envoking script
 	Added function _restorecontext_() {} to archerybutte.js script (Thanks, DS)
@@ -197,7 +417,7 @@
 	Tooltip entries for Characters/Items now have a sorting order associated with them, defined in code via a "sortOrder" parameter in the ToolTipEntry
 	For custom tooltips in scripts, sort order can be set via the temporary tag. Example:
 		iUsed.SetTempTag( "tooltipSortOrder", 1 ); // sort tooltip after name (sortOrder 0), but before maker's mark (sortOrder 5).
-	This information and a list of the default hard-coded sort order can also be found in the updated UOX3 Documentation, under Features > Object Tooltips
+	Information on sorting of Character/Item tooltips and a list of the default hard-coded sort order can be found in the updated UOX3 Documentation, under Features > Object Tooltips
 
 20/04/2025 - Dragon Slayer/Xuri
 	Updated code calculating passive health, stamina and mana regeneration for characters, based on new UOX.INI settings and bonuses from characters/items/races
@@ -243,51 +463,50 @@
 	Added new Getters/Setters for CRace class to retrieve ID of a specific Race object
 	Updated JS property .id for Race JS Object to return new race ID instead of iterating through list of races to compare race object and return index
 	Reloading DFNs now also reloads Races
-	
+
 22/03/2025 - Dragon Slayer
-	Added - lesser hiryu mount, lady of the snow, fan dancer, oni, crane, gaman, revenant lion from UO SE.
+	Added new NPC definitions for lesser hiryu mount, lady of the snow, fan dancer, oni, crane, gaman, revenant lion from UO SE.
 
 15/03/2025 - Dragon Slayer
 	Fixed an issue where timestamps for system timers could be set in the past due to float-to-UI32 casting precision loss. ( Thanks Xuri )
 
 09/03/2025 - Dragon Slayer
-	Added new DFN tags for Magic:
-	BATWING, DAEMONBLOOD, GRAVEDUST, NOXCRYSTAL, PIGIRON
-	These are also available as JS Engine object propertie: .batwing, .daemonBlood, .graveDust, .noxCrystal, .pigIron
+	Added new DFN tags for Spells:
+		BATWING, DAEMONBLOOD, GRAVEDUST, NOXCRYSTAL, PIGIRON
+		These are also available as JS Engine object properties for spells: .batwing, .daemonBlood, .graveDust, .noxCrystal, .pigIron
 
 08/03/2025 - Dragon Slayer
-	Added new DFN tags for Items:
-	LUCK=# // Luck stacks across all items that a character has equipped to make up their Luck score for better AOS Magic Loot. Currently no AOS Magic Loot system in place.
-	These is also available as JS Engine object propertie: .luck
-  
+	Added new DFN tag for Items:
+		LUCK=# // Luck stacks across all items that a character has equipped to make up their Luck score for better AOS Magic Loot. Currently no AOS Magic Loot system in place.
+		These is also available as JS Engine object property: .luck
+
 07/03/2025 - Dragon Slayer
-	Added new DFN tags for Magic:
-	TITHING=# // This Make it so spells require tithing to cast.
-	I also Added new property to Players for tithing so it shows up in status bar and also says the amount of tithing the char set/get.
-	These are also available as JS Engine object propertie: .tithing for players/magic
+	Added new DFN tag for Spells:
+		TITHING=# // This makes it so spells require tithing to cast.
+		Also added new property to Players for tithing so it shows up in status bar and also says the amount of tithing the char set/get.
+		These are also available as JS Engine object property for players/spells: .tithing
 
 02/03/2025 - Dragon Slayer
 	Renamed spawnergump.js to spawner_editor.js.
 	Added spawner_editor.js text to dictionaries.
 	Various enhancements to spawner editor gump, including support for another spawner type - area spawner (type 69)
 
-
 27/02/2025 - Dragon Slayer
 	Updated JS Gump Methods .AddButton() and .AddButtonTileArt() to support larger values for buttonId and tileId parameters. (Thanks Xuri)
 	Updated formatting of several gump command strings from JS Methods to ensure unsigned integers are correctly converted to string. (Thanks Xuri)
 
 23/02/2025 - Dragon Slayer
-	Added new DFN tags for Items/Npcs:
-	DAMAGEINCREASE=# // This adds extra damage percent to the total base damage.
-	These are also available as JS Engine object propertie: .damageIncrease
-	Added New INI settings: DAMAGEINCREASECAP, Set the default cap of percent the char/item an increase.
+	Added new DFN tag for Items/Npcs:
+		DAMAGEINCREASE=# // This adds extra damage percent to the total base damage.
+		This is also available as JS Engine object property: .damageIncrease
+	Added New INI settings: DAMAGEINCREASECAP, Set the default cap in percent the damage of a char/item can increase.
 
 22/02/2025 - Dragon Slayer
 	Added UOKr Extended Status bar gump packets.
-	Added New INI settings: PHYSICALRESISTCAP, FIRERESISTCAP, COLDRESISTCAP, POISONRESISTCAP, ENGERYRESISTCAP, DEFENSECHANCEINCREASECAP. Set he default cap for ch resist  defense chance increase.
+	Added New INI settings: PHYSICALRESISTCAP, FIRERESISTCAP, COLDRESISTCAP, POISONRESISTCAP, ENGERYRESISTCAP, DEFENSECHANCEINCREASECAP. Set the default caps for resists and defense chance increase.
 
 21/02/2025 - Dragon Slayer
-	Added new save/load tags: ExtPropCombat, ExtPropDefense,ExtPropStats, ExtPropMisc, ExtPropCommon. for the AOS Properties that are being added.
+	Added new save/load tags: ExtPropCombat, ExtPropDefense,ExtPropStats, ExtPropMisc, ExtPropCommon for the AOS properties that are being added.
 
 16/02/2025 - Dragon Slayer
 	Characters will now play an impact-animation when they get hit in combat.
@@ -295,56 +514,57 @@
 	Increased animation speed of missiles fired by ranged attacks - they now arrive at their target faster!
 
 15/02/2025 - Dragon Slayer
-	Added .skillCaps to the documentation and implemented it in the code to allow getting and setting individual skill caps.
+	Added new JS Character property .skillCaps that allows getting/setting individual skill caps per character
+	Updated JS Documentation with details on JS Character property .skillCaps
 	Introduced a default INI setting (SKILLCAPSINGLE) with a skill cap of 1000.
+	Updated skill-checks across source and scripts to refer to relevant skill caps where appropriate
 
 14/02/2025 - Dragon Slayer
-	Added Missing commands to get/set for all the new aos properties that as added plus a missing stamina command.
-	Fixed Miss spelling in documents at Get/SetTimer. (Thanks Xuri)
+	Updated get/set commands (js/commands/targeting/get.js and set.js) to support all the new AOS properties that have been added
+	Fixed misspelling in JS Documentation for GetTimer/SetTimer. (Thanks Xuri)
 
 08/02/2025 - Dragon Slayer
-	Updated Item DFN Documents with: artifactrarity, durabilityhpbonus, defensechance, event, healthleech, healthbonus, hitchance, lowerstatreq, manaleech, manabonus, maxitems, maxrange, maxuses, more0, more1, more2, resistfire, resistcold, resistlighting, resistpoison, swingspeedincrease, stealable, staminaleech, staminabonus, usesleft
+	Updated UOX3 Docs with details on Item DFN tags: artifactrarity, durabilityhpbonus, defensechance, event, healthleech, healthbonus, hitchance, lowerstatreq, manaleech, manabonus, maxitems, maxrange, maxuses, more0, more1, more2, resistfire, resistcold, resistlighting, resistpoison, swingspeedincrease, stealable, staminaleech, staminabonus, usesleft
 
 06/02/2025 - Dragon Slayer
-	Added .GetTempEffect js method, Get timer of specified temp effect for object, or 0 if it doesn't exist. ( Thanks Xuri )
-	Added .ReverseTempEffect js method, Force the reversion of a Temp Effect on item or character based on specified temp effect ID. ( Thanks Xuri )
+	Added new JS Character/Item Method for fetching the remaining time of a specific temp-effect, or 0 if effect does not exist on object (Thanks Xuri)
+		.GetTempEffect( tempEffectId )
+	Added new JS Character/Item Method for force-reverting specific temp-effects on object based on specified temp-effect ID (Thanks Xuri)
+		.ReverseTempEffect( tempEffectId )
 
 01/02/2025 - Dragon Slayer
 	Fixed an issue where UOX3 would unnecessarily update a given player's status window repeatedly multiple times per server cycle (Thanks Xuri)
-	Fixed Young Status Not removing off characters. (Thanks Xuri)
-	Fixed Wrong Order DFN Tags in ssection.h (Thanks Xuri)
+	Fixed Young Status not being properly removed from characters (Thanks Xuri)
+	Fixed wrong order of DFN tags in DFNTAG enum in ssection.h (Thanks Xuri)
 
 30/1/2025 - Dragon Slayer
-	Updated ResourceCount can be used for both characters and items. (Thanks Xuri)
-	Updated documents for resourcecount and useresource to reflex what code shows.
+	Updated JS Method .ResourceCount() to be usable for both characters and items (Thanks Xuri)
+	Updated documentation for JS Methods .ResourceCount() and .UseResource() to reflect what code shows.
 
 22/01/2025 - Dragon Slayer
-	Added New Haven for trammel. (Regions.dfn)
-	Added New Haven Music. (Regions.dfn)
-	Added new player quest training areas. (Regions.dfn)
-	Fixed Britains music. (Regions.dfn)
-	marked old regions file as old because contains old haven.
+	Added region definitions for New Haven in Trammel, with new player quest training areas, appropriate music for New Haven, etc. (regions.dfn)
+	Moved Old Haven region to dfndata/regions/regions_old_haven_only.bak
+	Updated music in Britain's regions (regions.dfn)
 
 22/01/2025 - Dragon Slayer
 	Fixed an issue that prevented onUnequip JS event from triggering on items being unequipped
 	Minor cleanup of skill_boosting_equipment.js script
 
 21/01/2025 - Dragon Slayer
-	Fixed damage dealt in combat was incorrectly modified while applying defense modifiers. (combat.cpp)
+	Fixed damage dealt in combat being incorrectly modified while applying defense modifiers. (combat.cpp)
 
 15/12/2024 - Dragon Slayer
-	Added Ressurrect Penalty Script (js/player/death/resurrectpenalty.js) that controls any type of penalty you want on the char after resurrecting via shrines
+	Added Resurrect Penalty Script (js/player/death/resurrectpenalty.js) that controls any type of penalty you want on the char after resurrecting via shrines
 
 8/12/2024 - Dragon Slayer
-	Added Karma Locking LBR Feature.
-		added js propertie .karmaLock
+	Added Karma Locking LBR Feature, which can be enabled/disabled for individual characters via JS Character property .karmaLock, or globally via new UOX.INI setting:
 		KARMALOCKING=1/0 // If 1 the system is enabled will lock karma if player goes negative.
 
 07/12/2024 - Dragon Slayer
 	Updated the packet 0xf1 to reflect the current CUO Web Ping while maintaining backward compatibility with older ping statuses. (0xf1_freeshardServerPoll.js) (Thanks Karasho and Xuri)
 
 20/11/2024 - Dragon Slayer
-	Added SE NPCs AI to he following, Bake kitsune, kappa, raiju, yamandon, yomotsu_warrior.
+	Added SE NPCs AI to the following NPCs: Bake kitsune, kappa, raiju, yamandon, yomotsu_warrior.
 	Added new NPCs to dfndata/npc/agressiveanimals.dfn: bakekitsune_se (available for SE era only)
 	Added new NPCs to dfndata/npc/elementals.dfn: raiju_se (available for SE era only)
 	Added new NPCs to dfndata/npc/humanoids.dfn: yomotsu_warrior_se, yomotsu_elder_se, yomotsu_priest_se, kappa_se (available for SE era only)
@@ -353,30 +573,33 @@
 31/10/2024 - Dragon Slayer
 	Fixed Z calculation in some scripts when targeting dynamic items. (Thanks Xuri)
 
-27/10/2024 -Dragon Slayer
-	Corrected a misspelling of IsBoat in magic.js.
+27/10/2024 - Dragon Slayer
+	Corrected a misspelling of IsBoat in js/commands/targeting/magic.js
 	Added support for iterating through items in boats using FirstItem(), NextItem() and FinishedItems() methods
 
 20/10/2024 - Dragon Slayer
-	Added SetRandomColor("#") to js functions. (Thanks, Xuri)
+	Added new JS Character/Item Method that can apply a random color from a specific colorlist (Thanks, Xuri):
+		.SetRandomColor( "#" )
 
 14/10/2024 - Dragon Slayer
-    	Added CheckTimeSinceLastCombat that records the time when combat starts as a timestamp(SEFunctions.cpp).
+	Added new JS Function that checks if a character has engaged in combat within a given time span:
+		CheckTimeSinceLastCombat( mChar, timeInSeconds )
 
 14/10/2024 - Dragon Slayer
-    Added the CheckInstaLog JS function to allow checking if a specific location is within an instant logout zone (SEFunctions.cpp). (thanks, Xuri)
+	Added new JS Function that checks if a specific location is within an instant logout zone (thanks, Xuri):
+		CheckInstaLog( x, y, worldnumber, instanceId )
 
 12/10/2024 - Dragon Slayer
-	Added Mini-House Addons from AOS Expansion.
+	Added Mini-House Addons from AOS Expansion (dfndata/items/deeds/minihouseaddon_deeds.dfn
 
 11/10/2024 - Dragon Slayer
-	Added ML House Addons.
+	Added ML House Addons (dfndata/items/deeds/houseaddon_deeds_ml.dfn)
 
 10/09/2024 - Dragon Slayer
 	Added base functionality for Khaldun Puzzle Chests, which can be unlocked by solving a puzzle, with bonus hints for the solution given based on player's lockpicking skill
 
 13/08/2024 - Dragon Slayer/Xuri
-	The onAttack/onDefense JS Events have been updated with three new parameters 	(hitStatus, hitLocation, damage) and will now also trigger when attacks miss.
+	The onAttack/onDefense JS Events have been updated with three new parameters (hitStatus, hitLocation, damage) and will now also trigger when attacks miss.
 
 12/08/2024 - Dragon Slayer
 	Fixed an issue where Imbuing and Mysticism skills were listed in wrong order in skills.dfn and enums.h
@@ -393,79 +616,78 @@
 	Added fallback in 'add menu for older clients that don't support buttontileart (Thanks Xuri)(gumps.cpp)
 
 07/07/2024 - Dragon Slayer
-	Added Requirement to drink potion hand has to be free, This can be disabled within the potion.js file by switching the reqfreehand to false. (js potion).
+	Added requirement to drink potions where hand has to be free. This can be disabled within the potion.js file by switching the reqFreeHands to false. (js/item/potion.js)
 
 04/07/2024 - Dragon Slayer
 	Fixed Cleaver ID missing in the jse_objectassociations.scp for carving corpses
 
 18/06/2024 - Dragon Slayer
-	Added three new DFN tags for Items:
+	Added three new AOS Item Properties available as DFN tags:
 		HEALTHLEECH=# 	// It gives an attacker the ability to leech health from his opponent every time he successfully delivers a hit adds it to himself.
 		STAMINALEECH=# 	// It gives an attacker the ability to leech Stamina from his opponent every time he successfully delivers a hit adds it to himself.
 		MANALEECH=# 	// It gives an attacker the ability to leech Mana from his opponent every time he successfully delivers a hit adds it to himself.
-	These are also available as JS Engine object properties: .healthLeech, .staminaLeech and .manaLeech
-	Added leechstats.js file that controls the combat for the properties. (script 7003)
-	To add this script to a weapon only. add in SCRIPT=7003, HEALTHLEECH=# or STAMINALEECH=# or MANALEECH=# it can also be all three on the weapon.
+		These are also available as JS Engine object properties: .healthLeech, .staminaLeech and .manaLeech
+	Added js/combat/leechstats.js file that controls combat application of health/stamina/mana-leech properties
+		To add this script to a weapon, add this to its DFN entry: SCRIPT=7003, HEALTHLEECH=# or STAMINALEECH=# or MANALEECH=# it can also be all three on the weapon.
 
 16/06/2024 - Dragon Slayer/Xuri
-	Added new DFN tags for Items and Chars:
-		SPEEDINCREASE=# 		// item and char property that increases base weapon swing speed by the specified percentage
-	These are also available as JS Engine object properties: .speedIncrease
-	Added INI Settings:
-		SWINGSPEEDINCREASECAP=#  	// Max cap for for swing speed increase a char can have.
+	Added new AOS Property for Items and Chars, available as DFN tag:
+		SPEEDINCREASE=# // item and char property that increases base weapon swing speed by the specified percentage
+		This is also available as JS Engine object property: .speedIncrease
+	Added INI Setting:
+		SWINGSPEEDINCREASECAP=# // Max cap for for swing speed increase a char can have.
 	Combat code updated with era-specific weapon swing speed calculations for different eras (LBR or earlier/AoS/ML onwards).
-        Note that speeds are still defined with flat values in DFNs regardless of era, but for ML and beyond speed
- 	will be displayed as swing delay in seconds in item tooltip.
+		Note that speeds are still defined with flat values in DFNs regardless of era, but for ML and beyond speed will be displayed as swing delay in seconds in item tooltip.
 
 14/06/2024 - Dragon Slayer
-	Added two new DFN tags for Items:
-		HITCHANCE=# 		// Increases the player's chance to hit a target with wrestling, melee and ranged weapons.
-		DEFENSECHANCE=# 	// Increases the wearer's chance that his opponents' swings (or arrows/bolts) will miss.
-	These are also available as JS Engine object properties: .hitChance, .defenseChance
+	Added two new AOS Item Properties available via these Item DFN tags:
+		HITCHANCE=# 	// Increases the player's chance to hit a target with wrestling, melee and ranged weapons.
+		DEFENSECHANCE=# // Increases the wearer's chance that his opponents' swings (or arrows/bolts) will miss.
+		These are also available as JS Engine object properties: .hitChance, .defenseChance
 
 13/06/2024 - Dragon Slayer
-	Added three More AOS Props
-	-HEALTHBONUS=#
-	-MANABONUS=#
-	-STAMINABONUS=#
-	Add this properties to any weapon/armor/jewlery will give the player more hp/mana/stam why its equiped. depending on number you add with it
-	These are also available as JS Engine object properties: .healthBonus, .staminaBonus, .manaBonus
+	Added three more AOS Item Properties available via these Item DFN tags:
+		HEALTHBONUS=#
+		MANABONUS=#
+		STAMINABONUS=#
+		Add these properties to any weapon/armor/jewlery to give the player more hp/mana/stam while equipped, based on number you add with it
+		These are also available as JS Engine object properties: .healthBonus, .staminaBonus, .manaBonus
 
 06/06/2024 - Dragon Slayer
-	Fixed Accepting bods, When the expansion is to to lbr or later.
+	Fixed issue that prevented NPC shopkeepers from accepting BODs with core shard eras set to AoS or later
 
 29/05/2024 - Dragon Slayer
 	House add-on deeds are now returned when an add-on is present in the house on demolish.
 
 27/05/2024 - Dragon Slayer
-	Added Missing Wand ID's to combat weapon type in core and in js.
+	Added Missing Wand IDs to combat weapon type in core and in js.
 
 25/05/2024 - Dragon Slayer
 	Added special_moves.js There is 12 special aos moves you can find on uoguide.com.
-	Added blockequip.js This script is used to block reqeuiping weapons.
-	Thanks to Xuri for making unequipattemp work for chars and not just items.
-	Added OnCombatHit
-		-Triggers for character with event attached when someone has taken damage.
+	Added js/combat/blockequip.js script that can block players from instantly reequipping weapons if Disarmed
+	Thanks to Xuri for making onUnequipAttempt JS Event work for chars and not just items.
+	Added onCombatHit JS Event that triggers for character with event attached when someone has taken damage.
 
 13/05/2024 - Dragon Slayer
-	Added New Shield Type 107 so shield ID's no longer have to be in hard code for shields to work properly
+	Added New Shield Type 107 so shield IDs no longer have to be in hard code for shields to work properly
 
 11/05/2024 - Dragon Slayer/Xuri/Maarc
-	Added Support for new AOS property tag.
-	-DURABILITYHPBONUS = # - Add durability (aka Health) at percentage multiplier to hp.
-	 .durabilityhpbonus (js)
+	Added Support for new AOS property tag for items that adds durability bonus as percentage multiplier to item HP:
+		DURABILITYHPBONUS=# (DFN)
+		.durabilityhpbonus (JS)
 
 11/05/2024 - Dragon Slayer
 	Updated 'get command (js/commands/targeting/get.js) to use correct object reference when getting resist values for items, and added support for getting resist values for chars
 
 09/05/2024 - Dragon Slayer
 	Added ArtifactRarity AOS Property for items
-	-ARTIFACTRARITY=#
-	-Artifact Rarity is an item property that is visible on some artifacts and meant to give players an idea of how rare the item is. Items with rarity 1 are supposed to be common while rarity 12 are extremely scarce.
+		ARTIFACTRARITY=# (DFN)
+		.artifactRarity (JS)
+		Artifact Rarity is an item property that is visible on some artifacts and meant to give players an idea of how rare the item is. Items with rarity 1 are supposed to be common while rarity 12 are extremely scarce.
 
 05/05/2024 - Dragon Slayer
-	Added Spawner Gump and attached to the base_spawner, just another option for making editing spawners without using commands. (js spawnergump)
-	-Just double click any spawner you create from the addmenu or add from spawners.dfn file, gump will appear if you create a spawner with commands you would have to attach the script directly to it.
+	Added Spawner Gump script (js/server/misc/spawner_editor.js) and attached it to [base_spawner] item definition, just another option for making editing spawners without using commands.
+		Just double click any spawner created from the addmenu or added from spawners.dfn file, and gump will appear. If creating a spawner with commands the script needs to be attached to the spawner manually.
 
 01/05/2024 - Dragon Slayer/Xuri
 	Fixed AutoUnequipAttempt function in clumsy.js, createfood.js level1target.js, will no longer fail on casting and return to hardcode.
@@ -473,8 +695,8 @@
 	Fixed many places missing proper null checks and refresh checks in magic js scripts.
 
 30/04/2024 - Dragon Slayer/Xuri/Maarc
-	Added Support for new AOS property tag.
-	-LOWERSTATREQ - Lowers the strength requirements to wear an object.
+	Added Support for new AOS property tag:
+		LOWERSTATREQ - Lowers the strength requirements to wear an object.
 
 27/04/2024 - Dragon Slayer/Xuri
 	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.
@@ -483,41 +705,40 @@
 		LOOTDECAYSWITHNPCCORPSE=1/0  // If 1, items on NPC corpses decay along with the corpse, if 0 they drop to the ground
 
 20/04/2024 - Dragon Slayer/Xuri
-	Fixed misspeling in shopkeepers ai (js shopkeeper)
+	Fixed misspelling in shopkeepers AI (js/npc/ai/shopkeeper.js)
 	Added shopkeeper AI script to basevendor definition to support bonuses/penalties for guild members
 	Introduced a new INI setting, AutoUnequippedCasting, enhancing customization and control for users.
 
 18/04/2024 - Dragon Slayer
-	Added Focus Skill to Stam Regain and Mana Regan.
+	Added AoS-specific Focus skill bonus to Stamina/Mana-regen code in uox3.cpp
 
 15/04/2024 - Dragon Slayer
-	Fixed Dupe command message when targeting something other then a item or npc. (js dupe)
+	Fixed Dupe command message when targeting something other then a item or npc. (js/commands/targeting/dupe.js)
 
 06/04/2024 - Dragon Slayer
 	Fixed Runebook Cooldown:
-		The Runebook now uses GetCurrentClock() instead of a timer, ensuring accurate 	checks for a 7-second delay using the system clock of the server. (js runebook)
+		The Runebook now uses GetCurrentClock() instead of a timer, ensuring accurate checks for a 7-second delay using the system clock of the server. (js/item/runebook.js)
 	Teleport Helper Name Correction:
-		The incorrect name in jse_fileassociations for the Teleport Helper has been fixed. (scp jse_fileassociations)
-	Updated Bola to use GetCurrentClock() instead of a timer for delay. (js bola.js)
-	Added checks for flying and grounded states related to the Bola. (js bola.js)
-	Introduced two new dictionary messages for flying and grounded states in all supported languages. (dictionary)
-	Added a Bola definition tag (dfn) to relevant files for in-game use with the command 'add item bola' (dfn)
-	Updated Ball of pet Summoning to use GetCurrentClock() instead of a timer for delay. (js ballofpetsummoning)
-	Fixed miss spelled socket onspeechinput function in ball of pet summoning. (js ballofpetsummoning)
-	Added Item refresh So stats update correctly on use. (js ballofpetsummoning)
-	Fixed teleport_helper.js had wrong inrange object. (js teleport_helper)
+		The incorrect name in jse_fileassociations.scp for the Teleport Helper has been fixed.
+	Updated Bola to use GetCurrentClock() instead of a timer for delay (js/item/bola.js)
+	Added checks for flying and grounded states related to the Bola (js/item/bola.js)
+	Introduced two new dictionary messages for flying and grounded states in all supported languages.
+	Added Bola missile weapon alias for in-game use with the command 'add item bola (dfndata/items/gear/weapons/missile_weapons.dfn)
+	Updated Ball of pet Summoning to use GetCurrentClock() instead of a timer for delay (js/item/ballofpetsummoning.js)
+	Fixed misspelled socket variable in onSpeechInput function in ball of pet summoning script (js/item/ballofpetsummoning.js)
+	Added Item refresh so stats update correctly on use (js/item/ballofpetsummoning.js)
+	Fixed incorrect object in parameter for .InRange() function in js/magic/helper/teleport_helper.js
 
 30/03/2024 - Dragon Slayer/Xuri
-	Fixed a bug where crafted items were not selling properly. Now, players can 	successfully sell their crafted gear at vendors.
-	Added origin information (dfn)
-	Included the missing scriptID for glassblowing (jse_association.scp)
-	Fixed the Charges_Left_tooltip tag issue (charges_left_tooltip.js)
-
-	Animal Lore Skill (animallore.js)
-	 - Fixed skills display on gump when systems are enabled or disabled
-	 - Corrected names to be in camelCase
-	 - Ensured proper display of Foodlist on NPCs
-	 - Adjusted starting skill check to 1000 (from 1100)
+	Fixed a bug where crafted items were not selling properly. Now, players can successfully sell their crafted gear at vendors.
+	Added origin property for some LBR-era item definitions
+	Included the missing scriptID for glassblowing (js/jse_fileassociation.scp)
+	Fixed the Charges_Left_tooltip tag issue (js/server/misc/charges_left_tooltip.js)
+	Updated Animal Lore Skill (animallore.js)
+		Fixed skills display on gump when systems are enabled or disabled
+		Corrected names to be in camelCase
+		Ensured proper display of Foodlist on NPCs
+		Adjusted starting skill check to 1000 (from 1100)
 
 22/03/2024 - Dragon Slayer/Xuri
 	Leading/trailing whitespace is now trimmed from account names during login.
@@ -530,71 +751,71 @@
 		resistarmor, resistlight, resistwater, resistcold, resistfire, resistenergy, resistpoison
 
 20/12/2023 - Dragon Slayer
-	Added Elixiers of Ingot Conversions (js ElixierOfIngots)
+	Added Elixiers of Ingot Conversions (js/item/elixirofingots.js)
 
 19/12/2023 - Dragon Slayer
-	Added Powder of translocation. (js powderoftranslocation)
+	Added Powder of translocation (js/item/powderoftranslocation.js)
 
 17/12/2023 - Dragon Slayer
-	Added OnContextMenuRequest and OnContextMenuSelect. (Thanks Xuri)
+	Added new JS Events: onContextMenuRequest and onContextMenuSelect. (Thanks Xuri)
 
 16/12/2023 - Dragon Slayer
-	Added Crystal ball that says random msgs. (js crystalball)
-        Added Crystal Ball of Pet Summoning. (js ballofpetsummoning)
+	Added Crystal ball that says random msgs (js/item/crystalball.js)
+	Added Crystal Ball of Pet Summoning (js/item/ballofpetsummoning.js)
 
 10/12/2023 - Dragon Slayer
-	Implemented Check_travel_restriction, Check_teleport, and Check_regeants in magic/helpers (js).
-	Added GetTownRegionXY (Thanks Xuri).
+	Implemented helper functions for magic in js/magic/helper/check_travel_restriction.js and check_regeants.js
+	Added new JS Function GetTownRegionFromXY() that returns region associated with location (Thanks Xuri).
 	Enhanced Runebook functionality with triggerevent for the new js files.
 	Updated Moongate.js to incorporate the new check teleport logic.
-	Optimized clumsy.js to utilize the new reagents.js.
+	Optimized clumsy.js to utilize the new reagent checking helper function
 
 3/12/2023 - Dragon Slayer
-	Fixed Magic Weapons setting damage correctly when they are generated.(js Magic_Items)
+	Fixed Magic Weapons setting damage correctly when they are generated (js/item/magic_items.js)
 
 30/11/2023 - Dragon Slayer
 	Added support for new DFN tag in spawn regions that allows defining one or more exclusion areas per spawn region to prevent spawning of objects within said regions:
-   	 EXCLUDEAREA=x1,y1,x2,y2   // Area within defined boundary will be excluded as valid spawn area (Special, Thanks to Xuri)
-  	Added new UOX.INI setting to control for which facets public moongate travel is available (defaults to Felucca, Trammel and Ilshenar):
-        MOONGATEFACETS=#    // # is a bitmask that determines which facets to allow public moongate travel to. Supported values:
-            0 = No facets enabled (default)
-            1 = Felucca
-            2 = Trammel
-            4 = Ilshenar
-            8 = Malas
-            16 = Tokuno
-            32 = Ter Mur
-                Examples: A value of 1 = only Felucca is enabled, value of 3 = Felucca + Trammel, 10 = Malas + Ilshenar, 63 = all facets enabled, etc.
-   	 Added new Admin commands to enable/disable public moongate travel in specific facets:
-       	   'enablemoongates <facetNum/facetName>
-           'disablemoongates <facetNum/facetName>
+	 EXCLUDEAREA=x1,y1,x2,y2   // Area within defined boundary will be excluded as valid spawn area (Special, Thanks to Xuri)
+	Added new UOX.INI setting to control for which facets public moongate travel is available (defaults to Felucca, Trammel and Ilshenar):
+		MOONGATEFACETS=#    // # is a bitmask that determines which facets to allow public moongate travel to. Supported values:
+			0 = No facets enabled (default)
+			1 = Felucca
+			2 = Trammel
+			4 = Ilshenar
+			8 = Malas
+			16 = Tokuno
+			32 = Ter Mur
+				Examples: A value of 1 = only Felucca is enabled, value of 3 = Felucca + Trammel, 10 = Malas + Ilshenar, 63 = all facets enabled, etc.
+	Added new Admin commands to enable/disable public moongate travel in specific facets:
+		'enablemoongates <facetNum/facetName>
+		'disablemoongates <facetNum/facetName>
 
 28/11/2023 - Dragon Slayer
 	Adjusted the Default values for MaxClientBytesIn and MaxClientBytesOut by double.
-  
+
 26/11/2023 - Dragon Slayer
-	Added Glassblowing Crafting System:
-	- Introducing a new crafting menu for glassblowing, allowing players to create unique glass items.
-	- New crafting tools, including a glassblowing pipe and glass items.
-    
+	Added Glassblowing Crafting System (js/skill/craft/glassblowing.js)
+		Introducing a new crafting menu for glassblowing, allowing players to create unique glass items.
+		New crafting tools, including a glassblowing pipe and glass items.
+
 26/11/2023 - Dragon Slayer
 	Fixed a potential server crash issue related to keeping track of which players have opened which containers (Xuri)
 	Resolved an issue with validation in treasuredigging.js, thanks to the efforts of (Xuri)
 	Welcomed the addition of treasuredirt.js, featuring the exhilarating killtreasureevent functionality.
 	Enhanced the precision of the treasure dig timer, bringing it more in line with the standards of Uo Live Servers.
-  
+
 21/11/2023 - Danny S.
-    Renamed bod_rewards.dfn to bod_rewards_blacksmith.dfn.
-    Added bod_rewards_tailor.dfn with the following items:
-        clothing_bless_deed
-        base_runic_sewing_kit
-        spined_runic_sewing_kit*
-        horned_runic_sewing_kit*
-        barbed_runic_sewing_kit*
-            *Currently function as normal sewing kits
-    Added GOOD DFN tag to item JS Objects. (UOXJSPropertyFuncs.cpp)
-    Added script for handling clothing bless deed usage. (clothing_bless_deed.js)
-    Enabled clothing bless deeds and runic sewing kits as tailoring BOD rewards. (vendor_bdo_dispenser.js)
+	Renamed bod_rewards.dfn to bod_rewards_blacksmith.dfn.
+	Added bod_rewards_tailor.dfn with the following items:
+		clothing_bless_deed
+		base_runic_sewing_kit
+		spined_runic_sewing_kit*
+		horned_runic_sewing_kit*
+		barbed_runic_sewing_kit*
+			*Currently function as normal sewing kits
+	Added GOOD DFN tag to item JS Objects. (UOXJSPropertyFuncs.cpp)
+	Added script for handling clothing bless deed usage. (js/item/clothing_bless_deed.js)
+	Enabled clothing bless deeds and runic sewing kits as tailoring BOD rewards (js/npc/vendor_bdo_dispenser.js)
 
 19/11/2023 - Dragon Slayer
 	Fixed an issue where players qualifying for instant logout would not immediately vanish from view upon logout (Xuri)
@@ -603,16 +824,16 @@
 	Enhance the calculation of the average 'z' for movement.
 
 15/11/2023 - Dragon Slayer
-	Added Christmas Items from differant years. (dfn christmas)
-	Added Christmas Npcs from differant years. (dfn christmascreatures)
+	Added Christmas Items from different years (dfndata/items/christmas.dfn)
+	Added Christmas Npcs from different years (dfndata/npc/christmascreatures.dfn)
 	Moved Halloween and christmas js files into a folder called holidays
-	Added Holiday Potted Plant Gump		(js holidaypottedplant)
-	Updated Candy js file with new msgs and toothachs (js candy)
-	Added Addon Deed Gump js It will display a gump with the addon in it to place. (js addondeedgump)
-	Added ReDeed Addon Gump js for redeeding new addons VIA Gump. (js redeedaddon)
-	Added snowpile js Now you can smash your enemys face with snow. (js snowpile)
-	Updated axe.js with new redeed gump. (js axe)
-	Added Paralyzing Blow, Crushing Blow, and Concussion Blow.  (js weapon_abilities)
+	Added Holiday Potted Plant Gump (js/item/holidays/holidaypottedplant.js)
+	Updated Candy js file with new msgs and toothachs (js/item/holidays/candy.js)
+	Added Addon Deed Gump js It will display a gump with the addon in it to place (js/item/holidays/addondeedgump.js)
+	Added ReDeed Addon Gump js for redeeding new addons VIA Gump (js/item/holidays/redeedaddon.js)
+	Added snowpile js Now you can smash your enemys face with snow (js/item/holidays/snowpile.js)
+	Updated axe.js with new redeed gump (js/item/axe.js)
+	Added Paralyzing Blow, Crushing Blow, and Concussion Blow (js/item/equip_effects/weapon_abilities.js)
 
 14/11/2023 - Warden
 	Fixed crafting rank sytem modifiers.
@@ -624,70 +845,70 @@
 	Fixed an issue in which the timer callback for spinning wool, flax, and thread lost context, causing the spinning wheel to spin endlessly.
 
 13/11/2023 - Dragon Slayer
-      Added treasure hunting system; NPCs can now drop level 1-5 treasure maps which players can decode and dig up for epic loot.
+	  Added treasure hunting system; NPCs can now drop level 1-5 treasure maps which players can decode and dig up for epic loot.
 
 11/11/2023 - Danny S.
-    Implemented tailoring BODs.
-        Blacksmiths, armorers, weaponsmiths, and ironworkers have had their bodType custom tag value changed to 1. (malevendors.dfn, femalevendors.dfn)
-        Tailors are now associated to the vendor_bdo_dispenser.js script and have a bodType custom tag with a value of 2. (malevendors.dfn, femalevendors.dfn)
-        A new custom tag, bodSubtype, has been added with different values depending on the vendor DFN (malevendors.dfn, femalevendors.dfn):
-            Weaponsmith - 1
-            Armorer - 2
-            Blacksmith - 3
-            Ironworker - 3
-            Tailor - 1
-        The item DFN smallbod has been renamed to smallbod_blacksmith and it has a new bodType custom tag with a value of 1. (misc_deeds.dfn)
-        Added a new item DFN, smallbod_tailor, having a bodType custom tag with a value of 2. (misc_deeds.dfn)
-        The smallbod script has been updated to handle creation and initialization of either type of BOD. (smallbod.js)
-        The vendor BOD script has been updated to handle interactions for either type of BOD. (vendor_bdo_dispenser.js)
-    Fixed an issue making it impossible for BODs to require exceptional items. (vendor_bdo_dispenser.js)
-    Fixed an issue where the BOD reward dispensing cooldown timer was not actually being set. (vendor bdo_dispenser.js)
-    Fixed an issue where the vendor BOD script's onSpeech callback would trigger to completion for all BOD dispensing NPCs within the player's radius. (vendor_bdo_dispenser.js)
-    Removed AOS era BOD reward items, as the item DFNs do not yet exist. (vendor_bdo_dispenser.js)
-    Removed maximum reward penalty for small BODs, as large BODs do not yet exist. (vendor_bdo_dispenser.js)
+	Implemented tailoring BODs.
+		Blacksmiths, armorers, weaponsmiths, and ironworkers have had their bodType custom tag value changed to 1. (malevendors.dfn, femalevendors.dfn)
+		Tailors are now associated to the vendor_bdo_dispenser.js script and have a bodType custom tag with a value of 2. (malevendors.dfn, femalevendors.dfn)
+		A new custom tag, bodSubtype, has been added with different values depending on the vendor DFN (malevendors.dfn, femalevendors.dfn):
+			Weaponsmith - 1
+			Armorer - 2
+			Blacksmith - 3
+			Ironworker - 3
+			Tailor - 1
+		The item DFN smallbod has been renamed to smallbod_blacksmith and it has a new bodType custom tag with a value of 1. (misc_deeds.dfn)
+		Added a new item DFN, smallbod_tailor, having a bodType custom tag with a value of 2. (misc_deeds.dfn)
+		The smallbod script has been updated to handle creation and initialization of either type of BOD. (smallbod.js)
+		The vendor BOD script has been updated to handle interactions for either type of BOD. (vendor_bdo_dispenser.js)
+	Fixed an issue making it impossible for BODs to require exceptional items. (vendor_bdo_dispenser.js)
+	Fixed an issue where the BOD reward dispensing cooldown timer was not actually being set. (vendor bdo_dispenser.js)
+	Fixed an issue where the vendor BOD script's onSpeech callback would trigger to completion for all BOD dispensing NPCs within the player's radius. (vendor_bdo_dispenser.js)
+	Removed AOS era BOD reward items, as the item DFNs do not yet exist. (vendor_bdo_dispenser.js)
+	Removed maximum reward penalty for small BODs, as large BODs do not yet exist. (vendor_bdo_dispenser.js)
 
 10/11/2023 - Danny S.
-    Fixed an issue in the vendor BOD script that prevented vendors from accepting BODs. (vendor_bdo_dispenser.js)
-    Fixed an issue in the vendor BOD script that caused an error to be thrown when attempting to dispense a sturdy shovel reward. (vendor_bdo_dispenser.js)
-    Changed skill boosting equipment script to modify effective skills instead of base skills. (skill_boosting_equipment.js)
-    Fixed an issue in the BOD item GUMP that prevented adding multiple items in a row. (smallbod.js)
-    Changed the BOD item GUMP to no longer close in between clicking "Combine..." and targeting an item. (smallbod.js)
-    Changed the BOD item targeting cursor to automatically stop targeting after the BOD's item requirements are met. (smallbod.js)
-    Fixed an issue where an error would be thrown when clicking empty space with a BOD item targeting cursor. (smallbod.js)
+	Fixed an issue in the vendor BOD script that prevented vendors from accepting BODs. (vendor_bdo_dispenser.js)
+	Fixed an issue in the vendor BOD script that caused an error to be thrown when attempting to dispense a sturdy shovel reward. (vendor_bdo_dispenser.js)
+	Changed skill boosting equipment script to modify effective skills instead of base skills. (skill_boosting_equipment.js)
+	Fixed an issue in the BOD item GUMP that prevented adding multiple items in a row. (smallbod.js)
+	Changed the BOD item GUMP to no longer close in between clicking "Combine..." and targeting an item. (smallbod.js)
+	Changed the BOD item targeting cursor to automatically stop targeting after the BOD's item requirements are met. (smallbod.js)
+	Fixed an issue where an error would be thrown when clicking empty space with a BOD item targeting cursor. (smallbod.js)
 
 10/11/2023 - Dragon Slayer
 	Added IDs for stocking items to cItem::GetPackType() in items.cpp, so they can be used as containers
 
 09/11/2023 - Dragon Slayer, Xuri
-	Fixed Smelting items with 0 hp (js blacksmithing)
-	Fixed Unraveling items with 0 hp (js tailoring)
-	Added Tongs, Scissors, Tinkering Tools to material types (js material_types)
+	Fixed Smelting items with 0 hp (js/skill/craft/blacksmithing.js)
+	Fixed Unraveling items with 0 hp (js/skill/craft/tailoring.js)
+	Added Tongs, Scissors, Tinkering Tools to material types (js/server/data/material_types.js)
 	Updated ApplyRank to set hp,maxhp and maxuses to 1. (cpp skills)
 
 29/10/2023 - Dragon Slayer, Xuri
-	Added DFN entries for first aid belt. (dfn item/gear/clothing/ej_clothing)
-	Added First Aid Belt ID to backpack type. (cpp items)
-	Added bandage healing bonus to healing. (js  healing)
-	Added JS script bandagehealingbonus (js items/equip_effect/bandagehealingbonus)
+	Added DFN entry for first aid belt. (dfndata/item/gear/tol_clothing.dfn)
+	Added First Aid Belt ID to backpack type. (items.cpp)
+	Added bandage healing bonus to healing skill. (js/skill/healing.js)
+	Added tooltip JS script to show bandage healing bonus (js/item/equip_effects/bandagehealingbonus.js)
 
 28/10/2023 - Dragon Slayer (0.99.6a)
 	Added DFN entries for hallow pumpkins, jack o lanterns and halloween decorations. (dfn item/misc/halloween)
 	Added DFN entrie for killerpumpkin in daemons.dfn. (dfn daemons)
-	Added JS script for pumpkins. (js items/pumpkins)
-	Added JS script for candy. (js items/candy)
-	Added JS script for jack o lanterns. (js items/jackolanterns)
-	Added JS script for head on spike. (js items/headonspike)
-	Added JS script for pumpkin carving kit. (js items/pumpkincarvingkit)
-	Updated JS script for lights.js with halloween pumpkins. (js lights)
-	Updated SCP jse_objectassociations.scp with pumpkin ids.
-	Fixed an issue in runebook.js missing function _restorecontext_ {}. (js runebook)
-	Fixed an issue in potion.js miss spelled server setting YoungPlayerStatus to YoungPlayerSystem. (js potion)
-	Updated	Warning log for movement.cpp to include World Number and also changed it to read out like this NPC/Player. (cpp movement.cpp)
+	Added JS script for pumpkins: js/item/holidays/pumpkins.js
+	Added JS script for candy: js/item/holidays/candy.js
+	Added JS script for jack o lanterns: js/item/holidays/jackolanterns.js
+	Added JS script for head on spike: js/item/holidays/headonspike.js
+	Added JS script for pumpkin carving kit: js/item/holidays/pumpkincarvingkit.js
+	Updated js/item/lights.js with halloween pumpkins
+	Updated jse_objectassociations.scp with pumpkin ids
+	Fixed an issue in js/item/runebook.js missing function _restorecontext_ {}.
+	Fixed an issue in js/item/potion.js misspelled server setting YoungPlayerStatus to YoungPlayerSystem.
+	Updated	Warning log for movement.cpp to include World Number and also changed it to read out like this NPC/Player
 	Move SetRandomName from Char to Base. (strattond/Maarc)
 	Add NAMELIST tag support for items. (strattond/Maarc)
 	Update JS function to allow SetRandomName for an item. (strattond/Maarc)
-	Updated DFN Addmenus with new Halloween items Under Misc/Holidays. (dfn itemmenu and itemmenu.bulk)
-	Added Halloween Event Decoration file. (jsdata event_halloween)
+	Updated DFN Addmenus with new Halloween items Under Misc/Holidays. (dfndata/items/itemMenu.dfn and itemMenu.bulk.dfn)
+	Added Halloween Event Decoration file (js/jsdata/worldtemplates/event_halloween.jsdata)
 
 14/10/2023 - Xuri (0.99.6)
 	Updated version number :)
@@ -2221,7 +2442,7 @@
 			return false - skill gain/loss is not allowed, and server will prevent the skill update, but will not block additional scripts with same event from running
 		onSkillChange will now run as long as onSkillGain or onSkillLoss events return true, and if those events are not defined
 	Updated JS Docs
-	
+
 12/10/2021 - Dragon Slayer
 	Healing someone with bandages now unhides player
 	Updated calculations for duration it takes to heal self/another target, and for the amount of health healed
@@ -3053,13 +3274,13 @@
 	Updated UOX3 documentation to reflect recent changes to IP handling/config, addition of 'decorate command and world templates, updated instructions for building from source
 	Added missing world template file (js/jsdata/worldtemplates/felucca_containers.jsdata)
 	Fixed an issue with how UOX3 lists out IP addresses it's actively listening to (punt)
-	
+
 12/06/2021 - punt
 	Following changes made to ensure compatable with some of my other projects
 		Switched over to ConfigOS.h from Config.h
 		UOX_PLATFORM to PLATFORM (and the corresponding platform types)
 	Replaced NULL with nullptr
-	
+
 12/06/2021 - Xuri
 	Some minor cleanup in a few DFN files. Affected files:
 		dfndata/creatures/creatures.dfn
@@ -3576,15 +3797,15 @@
 		ALCHEMYBONUSMODIFIER=5 	// bonusDamage = alchemySkill / alchemyBonusModifier
 	Exposed speechType as an additional 7th optional parameter for the JS TextMessage function, and the other optional parameters (speechTarget, speechTargetSerial, speechFontType) can now be supplied as -1 if one just want to use the default values. Supported speechTypes:
 		TALK			= 0,	// normal system message
-	    PROMPT			= 1,	// Display as system prompt
-	    EMOTE			= 2,	// : text
-	    SAY				= 3,	// character speaking
-	    OBJ				= 4,	// at object
-	    NOTHING			= 5,	// does not display
-	    SYSTEM			= 6,	// text labelling an item
-	    NOSCROLL		= 7,	// status msg, does not scroll
-	    WHISPER			= 8,	// only those close can here
-	    YELL			= 9,	// can be heard 2 screens away
+		PROMPT			= 1,	// Display as system prompt
+		EMOTE			= 2,	// : text
+		SAY				= 3,	// character speaking
+		OBJ				= 4,	// at object
+		NOTHING			= 5,	// does not display
+		SYSTEM			= 6,	// text labelling an item
+		NOSCROLL		= 7,	// status msg, does not scroll
+		WHISPER			= 8,	// only those close can here
+		YELL			= 9,	// can be heard 2 screens away
 
 24/03/2021 - Xuri
 	Custom tags can now be set for multis in dfndata/house/house.dfn via the DFN tags CUSTOMSTRINGTAG and CUSTOMINTTAG, which can be read later for a placed multi via JS Item method GetTag( tagName ). Syntax is identical to custom tags in Item/NPC definitions:
@@ -3975,16 +4196,16 @@
 			5 - Only visible for the receiver of the message
 		speechTargetSerial - The serial of the receiver of the message, used if speechTarget is 0 or 5
 		speechFontType - The type of font to display the text in. Defaults to normal.
-		    0 - Bold
-		    1 - Normal with shadow
-		    2 - Bold with shadow
-		    3 - Normal
-		    4 - Gothic
-		    5 - Italic
-		    6 - Small, dark
-		    7 - Colourful
-		    8 - Runic (only works with CAPS)
-		    9 - Small, light
+			0 - Bold
+			1 - Normal with shadow
+			2 - Bold with shadow
+			3 - Normal
+			4 - Gothic
+			5 - Italic
+			6 - Small, dark
+			7 - Colourful
+			8 - Runic (only works with CAPS)
+			9 - Small, light
 	Added timestamp to worldsaves in console, to make it easier to see when a particular world-save was done
 	Added info about compiler/environment displayed at the top of the UOX3 console during startup
 	Updated dictionary files with new messages primarily related to housing
@@ -4845,7 +5066,7 @@
 5/11/2009 - Xuri
 	Fixed client/server synch-issue with boats by changing prSend( 1 ) to prSend( 0 ) in boat movement code (Jediman)
 	Added stablemaster JS-script and assigned it to the animal-trainer vendors (Xuri)
- 		Available commands: claim (list|pet-name), stable
+		Available commands: claim (list|pet-name), stable
 	Added missing Meteor Storm Scroll to DFNDATA/ITEMS/MAGIC/scrolls.dfn (Ghostwolf)
 	Added a new DFN (DFNDATA\NPC\lbrraces.dfn) with Meer and Juka NPCs  (Ghostwolf)
 	Added Meer and Juka races to races.dfn (Ghostwolf)
@@ -6010,7 +6231,7 @@ Oct 12, 2008 - Maarc
 3/04/2006 - grimson
 	Added a new ini setting:
 	COMBATARCHERRANGE=#  This defines the range at which archers stop charging
-			     the target in combat. (Default is 7)
+				 the target in combat. (Default is 7)
 
 3/03/2006 - grimson
 	Removed the IsSurface check of dynamic tiles from cMapStuff::CanMonsterMoveHere(),
@@ -6107,8 +6328,8 @@ Oct 12, 2008 - Maarc
 2/25/2006 - grimson (0.98-3.4o [3.5 BETA])
 	Added another new JS property for chars:
 		.setPeace=#  This handle the whole peacemaking effect, it will stop the char from attacking
-			     and prevent him from attacking again until the given time is over or he got
-			     enough damage.
+				 and prevent him from attacking again until the given time is over or he got
+				 enough damage.
 	Updated the peacemaking.js to use the new property and to prevent peacemaking from affecting the
 	char using it.
 	Output a sysmessage to PCs informing them of the end of the peace effect. (Dictionarys again)
@@ -6269,8 +6490,8 @@ Oct 12, 2008 - Maarc
 
 		There is also another new DFN tag:
 			WILLHUNGER=# if this is set to 0 the NPC will not suffer from any type of hunger.
-				     Note: You can also change that value for specific chars by using
-				     the already existing .willhunger JS property.
+					 Note: You can also change that value for specific chars by using
+					 the already existing .willhunger JS property.
 	DFN Changes:
 		Added the HUNGER=#,# description to the header of races.dfn.
 		Added the TAMEDHUNGER tag to mounts.dfn with a hunger rate of 600 and a chance to become
@@ -7178,13 +7399,13 @@ August 17 2005 - Maarc
 	Changed the hardcoded default starting location from 1000, 1000, 0 to 1495, 1629, 10 - which is the Sweet Dreams Inn in Britain.
 
 6/9/2005 - giwo
-   	Fixed a bug causing items not to be able to be picked up
+	Fixed a bug causing items not to be able to be picked up
 
 6/8/2005 - Xuri
-   	Adjusted NPCSpeed from 1.0 to 0.7 to increase their speed.
+	Adjusted NPCSpeed from 1.0 to 0.7 to increase their speed.
 
 6/7/2005 - Grimson
-   	Fix in void CSpawnRegion::doRegionSpawn() to spawn the correct number of NPCs as per defined in spawn.dfn
+	Fix in void CSpawnRegion::doRegionSpawn() to spawn the correct number of NPCs as per defined in spawn.dfn
 
 4/22/2005 - giwo (0.98-2.8h)
 	Fixed an issue breaking teleport locations in Debug mode.
@@ -8729,10 +8950,10 @@ Oct 04 2003 - giwo
 	PLAYER           :
 	GUILD            :
 	GMSTATUS         :
-        OFFLINE          :
+		OFFLINE          :
 
 	NOTE: The format and extention of the template files has changed slightly
-	      Here is a complete default templates example (Filename: default_templates.dfn).
+		  Here is a complete default templates example (Filename: default_templates.dfn).
 
 	//o-------------------------------------------------------o
 	//| QUick note: TYPE must always be the first tag found in

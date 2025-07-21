@@ -11,6 +11,8 @@ enum ScriptEvent
 	seOnCreateTile,
 	seOnCreatePlayer,		//	*	Done for PCs on global script
 	seOnCommand,
+	seOnProfileRequest,		//	**
+	seOnProfileUpdate,		//	**
 	seOnDelete,				//	**
 	seOnSpeech,				//	*	Missing item response at the moment
 	seInRange,				//	*	Missing character in range
@@ -120,7 +122,8 @@ enum ScriptEvent
 	seOnContextMenuSelect,
 	seOnWarModeToggle,
 	seOnSpecialMove,
-	seOnFacetChange
+	seOnFacetChange,
+	seOnReleasePet
 };
 
 struct SEGump_st
@@ -134,6 +137,17 @@ struct SEGumpData_st
 	std::vector<std::string>	sEdits;
 	std::vector<SI32>			nButtons;
 	std::vector<SI16>			nIDs;
+};
+
+// A simple struct to pass error details from the JS Error Reporter
+// back to the main C++ thread.
+struct JSErrorInfo
+{
+	std::string message;
+	std::string filename;
+	std::string lineSource;
+	std::string tokenPointer;
+	uintN lineNum = 0;
 };
 
 class cScript
@@ -199,6 +213,8 @@ public:
 	SI08		OnDispel( CBaseObject *dispelled );
 	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );
+	SI08		OnProfileUpdate( CSocket *mSock, std::string profileText );
+	std::string		OnProfileRequest( CSocket *mSock, CChar *profileOwner );
 	std::string		OnTooltip( CBaseObject *myObj, CSocket *pSocket );
 	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI08 requestSource );
 	bool        OnAttack( CChar *attacker, CChar *defender, bool hitStatus, SI08 hitLoc, UI16 damageDealt );
@@ -299,6 +315,7 @@ public:
 	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSold );
 	SI08		OnHouseCommand( CSocket *targSock, CMultiObj *multiObj, UI08 targId );
 	SI08		OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryId );
+	SI08		OnReleasePet( CChar *owner, CChar *pet );
 
 	//	Critical handler type stuff
 	bool		IsFiring( void );

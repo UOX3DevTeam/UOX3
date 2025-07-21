@@ -204,5 +204,7 @@ The contributors are listed roughly in the order their contributions were made i
 * Tuan H. Truong (tuanhtrng)
 * Azzerhoden Razeri
 * Lloyd Dilley (ldilley)
+* Daniel Shoun (i vomit kittens)
+* warden
 
 For a more detailed list that also includes a rough time-frame for when someone first contributed to the project and the manner in which they contributed - see the [UOX3 Hall of Fame](https://www.uox3.org/docs/index.html#uox3HallOfFame) in the UOX3 docs

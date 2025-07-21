@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 23. April, 2025</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6b</small></p>
+	<p style="margin:0"><small>Last Updated: 19. July, 2025</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7</small></p>
 </div>
 
 <div id="filterMainDocs" contenteditable="true" placeholder="(Search...)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px; margin-top: 5px;"></div>
@@ -60,6 +60,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>June 29th, 2025</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on additional settings: POISONCORROSIONSYSTEM</li>
+						</ul>
 						<h4>April 23nd, 2025</h4>
 						<ul>
 							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on additional settings: HUMANMAXWEIGHTBONUS, ELFMAXWEIGHTBONUS, GARGOYLEMAXWEIGHTBONUS</li>
@@ -2176,11 +2180,15 @@ packitem=0x0f8d,30
 					<div class="spoiler">
 						<div class="settingsDiv">
 							<p><span class="hl">MAXRANGE</span><strong>=10</strong><br>
-							Maximum range (in tiles) at which combat can occur.</p>
+							Maximum range (in tiles) at which players can initiate attacks on players/NPCs.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">SPELLMAXRANGE</span><strong>=10</strong><br>
 							Maximum range (in tiles) at which spells can be cast.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">MAXNPCAGGRORANGE</span><strong>=7</strong><br>
+							Maximum range (in tiles) at which NPCs can initiate attacks on players/NPCs.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">DISPLAYHITMSG</span><strong>=1</strong><br>
@@ -2338,6 +2346,10 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">DAMAGEINCREASECAP</span><strong>=45</strong><br>
 							Sets cap for damage increase (AoS) property players can get from items.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">POISONCORROSIONSYSTEM</span><strong>=1</strong><br>
+							If enabled, poisoned weapons have a chance of corroding when used to poison someone in combat. Weapons with corrosion will drop durability when used in combat. The higher the corrosion, the higher the durability loss. Defaults to 1</p>
 						</div>
 					</div>
 
@@ -2873,13 +2885,21 @@ packitem=0x0f8d,30
 							<p>Command: <span class="hl">'cleanup</span></p>
 						</div>
 
+						<input type="checkbox" id="spoiler_cmd_clearweather">
+						<label for="spoiler_cmd_clearweather">clearweather <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Forces a temporary weather change in the current region, which lasts until the next time the weather updates automatically.</p>
+							<p>Command: <span class="hl">'clearweather</span><br>
+							Parameters: <span class="hl"><em>(nothing)</em></span></p>
+						</div>
+
 						<input type="checkbox" id="spoiler_cmd_cnsyell">
-						<label for="spoiler_cmd_cnsyell">cnsYell <i class="fas fa-angle-down"></i></label>
+						<label for="spoiler_cmd_cnsyell">cnsyell <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
 							<p>Counselor Yell - Announces a message to all with Counselor privileges or above.</p>
-							<p>Command: <span class="hl">'cnsYell</span><br>
+							<p>Command: <span class="hl">'cnsyell</span><br>
 							Parameters: <span class="hl"><em>(text)</em></span></p>
-							<p>Example: <strong>'cnsYell Everyone meet up at Counselor HQ in 10 minutes!</strong></p>
+							<p>Example: <strong>'cnsyell All Counselors meet up at Counselor HQ in 10 minutes!</strong></p>
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_command">
@@ -3214,10 +3234,10 @@ packitem=0x0f8d,30
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_gmyell">
-						<label for="spoiler_cmd_gmyell">gmYell <i class="fas fa-angle-down"></i></label>
+						<label for="spoiler_cmd_gmyell">gmyell <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
 							<p>Broadcasts message to all online GMs.</p>
-							<p>Command: <span class="hl">'gmYell</span><br>
+							<p>Command: <span class="hl">'gmyell</span><br>
 							Parameters: <span class="hl"><em>(text)</em></span></p>
 						</div>
 
@@ -3618,6 +3638,14 @@ packitem=0x0f8d,30
 							Parameters: <span class="hl"><em>(s) (multiple target locations)</em></span></p>
 						</div>
 
+						<input type="checkbox" id="spoiler_cmd_rain">
+						<label for="spoiler_cmd_rain">rain <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Forces a temporary weather change in the current region, which lasts until the next time the weather updates automatically.</p>
+							<p>Command: <span class="hl">'rain</span><br>
+							Parameters: <span class="hl"><em>(nothing)</em></span></p>
+						</div>
+
 						<input type="checkbox" id="spoiler_cmd_rdye">
 						<label for="spoiler_cmd_rdye">rDye <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
@@ -3653,9 +3681,9 @@ packitem=0x0f8d,30
 						<input type="checkbox" id="spoiler_cmd_regspawn">
 						<label for="spoiler_cmd_regspawn">regSpawn <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Forces either ALL or specified spawnregions to spawn new objects.</p>
+							<p>Execute a respawn cycle in either all ("all" param) or specific (spawn region ID param) spawn regions. Alternatively, the "max" parameter will instead respawn ALL spawn regions to MAX capacity in one go.</p>
 							<p>Command: <span class="hl">'regSpawn</span><br>
-							Parameters: <span class="hl"><em>(d)</em></span> / <span class="hl"><em>all</em></span></p>
+							Parameters: <span class="hl"><em>(d)</em></span> / <span class="hl"><em>all</em></span> / <span class="hl"><em>max</em></span></p>
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_release">
@@ -3816,6 +3844,15 @@ packitem=0x0f8d,30
 							<p>Sets the number of real-world minutes that pass for each UO minute.</p>
 							<p>Command: <span class="hl">'secondsPerUoMinute</span><br>
 							Parameters: <span class="hl"><em>(d)</em></span></p>
+						</div>
+
+						<input type="checkbox" id="spoiler_cmd_seeryell">
+						<label for="spoiler_cmd_seeryell">seeryell <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Seer Yell - Announces a message to all with Seer privileges or above.</p>
+							<p>Command: <span class="hl">'seeryell</span><br>
+							Parameters: <span class="hl"><em>(text)</em></span></p>
+							<p>Example: <strong>'seeryell All Seers meet up at Seer HQ in 10 minutes!</strong></p>
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_sell">
@@ -4068,6 +4105,14 @@ packitem=0x0f8d,30
 							<p>Changes the hue of your character's skin to specified color.</p>
 							<p>Command: <span class="hl">'skin</span><br>
 							Parameters: <span class="hl"><em>(d)</em></span> / <span class="hl"><em>(h)</em></span></p>
+						</div>
+
+						<input type="checkbox" id="spoiler_cmd_snow">
+						<label for="spoiler_cmd_snow">snow <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Forces a temporary weather change in the current region, which lasts until the next time the weather updates automatically.</p>
+							<p>Command: <span class="hl">'snow</span><br>
+							Parameters: <span class="hl"><em>(nothing)</em></span></p>
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_spawnkill">
@@ -5553,7 +5598,8 @@ packitem=0x0f8d,30
 						<span class="hlBlue">0x1000</span> - Dispellable (Character can be dispelled by the Dispel spell)<br>
 						<span class="hlBlue">0x2000</span> - TempReflected (Character has a temporary magic reflection spell active)<br>
 						<span class="hl">0x4000</span> - NoNeedReags (Character doesn't need reagents to cast spells)<br>
-						<span class="hlBlue">0x8000</span> - PermReflected (Character has a permanent magic reflection spell active)</p>
+						<span class="hlBlue">0x8000</span> - PermReflected (Character has a permanent magic reflection spell active)<br>
+						<span class="hlBlue">0x10000</span> - HideFameKarmaTitle (Hide character's Fame/Karma title)</p>
 						<p></p>
 					</div>
 					<p>Priv flags can be pre-defined for NPCs via the PRIV=# DFN tag, or can be get/set dynamically via the Character JS property .priv in JS scripts.</p>
@@ -7026,21 +7072,24 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 					<p><strong>Fixed teleport locations</strong> can be setup via <strong>UOX3/js/teleport.scp</strong> using the following format:</p>
 					<p><pre>
 		<em>From 			To 		Optional</em>
-		<strong>X,Y,Z(or ALL), 	X,Y,Z  	[,World,World]</strong></pre>
+		<strong>X,Y,Z(or ALL), 	X,Y,Z  	[,World,World[,minEra,maxEra]]</strong></pre>
 					</p>
 					<p>Example:<br>
 					<pre>
 		<strong>[TELEPORT ENTRIES]
 		{</strong>
 		<span class="hl">ENTRY=3,        128,    All,    257,    784,    64,     3,4 //  [Yomotsu_Mines_Exit]</span>
-		<span class="hl">ENTRY=3,        1267,   All,    666,    928,    -80,    2,2 //  [Ankh_Dunegon_Exit]</span>
+		<span class="hl">ENTRY=3,        1267,   All,    666,    928,    -80,    2,2 //  [Ankh_Dunegon_Exit]</span><br>...
+		<span class="hl">ENTRY=535,      992,    All,    6984,   338,    0,     -1,-1,    8, -1  //  [World_to_Heartwood]</span>
+		<span class="hl">ENTRY=6984,     338,    All,    535,    992,    0,     -1,-1,    8, -1  //  [Heartwood_to_World]</span>
 		<strong>}</strong></pre>
 					</p>
 
 					<p>Notes:
 					<ul>
-						<li>Entries without world-coordinates will work in _all_ worlds!!!1one.Entries marked with  have been verified as working</li>
-						<li>Entries marked with ???? need to be verified by someone who knows the location</li>
+						<li>Entries without world-coordinates (or with values set to -1) will work in _all_ worlds.</li>
+						<li>Entries without minEra,maxEra value pairs will work for shards with any CORESHARDERA setting</li>
+						<li>Entries with minEra,maxEra value pairs will work for shards with CORESHARDERA setting higher than min and lower than max. Either min/max can be ignored by setting the value to -1</li>
 						<li>Entries with _mg_ in the description are moongate locations. Comment out if you plan to use actual moongates</li>
 					</ul></p>
 				  </div>
@@ -11832,7 +11881,7 @@ function commandTitle()
 							</div>
 						</div>
 						<input type="checkbox" id="spoiler_history_UOX3_timeline_099_era"/>
-						<label for="spoiler_history_UOX3_timeline_099_era">0.99 Versions (2012 - 2021) <i class="fas fa-angle-down"></i></label>
+						<label for="spoiler_history_UOX3_timeline_099_era">0.99 Versions (2012 - 2025) <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
 							<h4>March, 2012</h4>
 							<input type="checkbox" id="spoiler_history_UOX3_099"/>
@@ -11963,6 +12012,16 @@ function commandTitle()
 								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 								<p><strong>Contributors:</strong> Xuri, Dragon Slayer, punt, ldilley, Maarc, with additional thanks to Azzerhoden Razeri, Hughesbuddy and Humility</p>
 								<p><strong>Fun Facts:</strong> Adaptive Performance System! Bulk Order Deeds! Young Player System! Stealing revamp! PvP Ruleset! Minor SpiderMonkey Upgrade to 1.8.0-RC1! Admins/GMs no longer dispellable!</p>
+							</div>
+
+							<h4>July, 2025</h4>
+							<input type="checkbox" id="spoiler_history_UOX3_099_7"/>
+							<label for="spoiler_history_UOX3_099_7">UOX3 v0.99.7 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 19 July, 2025</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Dragon Slayer, i vomit kittens, warden, Xuri, Maarc, Sydius</p>
+								<p><strong>Fun Facts:</strong> Lots of gameplay fixes! Cartography skill! Misc AoS item properties! Combat special moves! Custom object tooltip sorting! Pathfinding revamp! 64-bit timers! Pet Bonding!</p>
 							</div>
 						</div>
 					</div>
@@ -12171,6 +12230,7 @@ function commandTitle()
 							<p><span class="hl">Mr_Fixit</span><br> Daniel Storjordet, Programmer, Tool Programmer, 0.95.01 Build 1, UOGateway</p>
 							<p><span class="hl">JoeMC</span><br> Programmer, 0.95.01 Build 1</p>
 							<p><span class="hl">Spud</span><br> Programmer, 05/08/2001</p>
+							<p><span class="hl">Allmight</span><br> Mans Sjoberg, Documentation/Programmer, ~November 1998/August 2001</p>
 							<p><span class="hl">Shadowlord</span><br> Programmer, 01/11/2001</p>
 							<p><span class="hl">Krrios</span><br> Zachary Torkelson, Programmer, 05/11/2001, creator of KUOC - Krrios UO Client, ModifyUO and RunUO</p>
 							<p><span class="hl">Bel-CMC</span><br> Programmer, 12/11/2001</p>
@@ -12247,6 +12307,12 @@ function commandTitle()
 							<p><span class="hl">Shudderz</span><br> Programmer, 19/03/2012, 0.99</p>
 						</div>
 
+						<input type="checkbox" id="spoiler_history_halloffame_2018"/>
+						<label for="spoiler_history_halloffame_2018"><h3>2018</h3> <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p><span class="hl">Kitiara</span><br> Programmer/Scripter, 22/09/2018</p>
+						</div>
+
 						<input type="checkbox" id="spoiler_history_halloffame_2020"/>
 						<label for="spoiler_history_halloffame_2020"><h3>2020</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
@@ -12258,6 +12324,13 @@ function commandTitle()
 						<div class="spoiler">
 							<p><span class="hl">Azzerhoden Razeri</span><br> Scripter, 24/10/2022</p>
 							<p><span class="hl">ldilley</span><br> Lloyd Dilley, Programmer, 24/10/2022</p>
+						</div>
+
+						<input type="checkbox" id="spoiler_history_halloffame_2023"/>
+						<label for="spoiler_history_halloffame_2023"><h3>2023</h3> <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p><span class="hl">i vomit kittens</span><br> Daniel Shoun, Scripter, 10/11/2023</p>
+							<p><span class="hl">warden</span><br> Scripter/Programmer, 14/11/2023</p>
 						</div>
 
 						<input type="checkbox" id="spoiler_history_halloffame_tools"/>
@@ -12284,7 +12357,6 @@ function commandTitle()
 						<input type="checkbox" id="spoiler_history_halloffame_toplace"/>
 						<label for="spoiler_history_halloffame_toplace"><h3>To Place in Timeline</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p><span class="hl">Allmight</span><br> Mans Sjoberg, Documentation, ~November 1998</p>
 							<p><span class="hl">TeHb</span><br> Scripter, ~November 2002</p>
 							<p><span class="hl">Tim</span><br> ???</p>
 						</div>
@@ -12293,7 +12365,7 @@ function commandTitle()
 						<label for="spoiler_history_halloffame_active"><h3>Active Contributors</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
 							<p>Contributors active within last year (as of April 2025):</p>
-							<p><span class="hl">Xuri, Dragon Slayer, Maarc</span><br></p>
+							<p><span class="hl">Xuri, Dragon Slayer, Maarc, Sydius</span><br></p>
 						</div>
 					</div>
 				  </div>

@@ -41,6 +41,7 @@ id=0x1F2F
 [createfoodscroll]
 {
 get=0x1F2F
+sectionid=0x1f2f
 }
 
 [0x1f30]
@@ -53,6 +54,7 @@ id=0x1F30
 [feeblemindscroll]
 {
 get=0x1F30
+sectionid=0x1F30
 }
 
 [0x1f31]
@@ -65,6 +67,7 @@ id=0x1F31
 [healscroll]
 {
 get=0x1F31
+sectionid=0x1f31
 }
 
 [0x1F32]
@@ -77,6 +80,7 @@ id=0x1F32
 [magicarrowscroll]
 {
 get=0x1F32
+sectionid=0x1F32
 }
 
 [0x1F33]
@@ -89,6 +93,7 @@ id=0x1F33
 [nightsightscroll]
 {
 get=0x1F33
+sectionid=0x1F33
 }
 
 [0x1F2D]
@@ -101,6 +106,7 @@ id=0x1F2D
 [reactivearmorscroll]
 {
 get=0x1F2d
+sectionid=0x1F2d
 }
 
 [0x1F34]
@@ -113,6 +119,7 @@ id=0x1F34
 [weakenscroll]
 {
 get=0x1F34
+sectionid=0x1F34
 }
  
 //Scroll (Second Circle)
@@ -132,6 +139,7 @@ id=0x1F35
 [agilityscroll]
 {
 get=0x1F35
+sectionid=0x1F35
 }
 
 [0x1F36]
@@ -144,6 +152,7 @@ id=0x1F36
 [cunningscroll]
 {
 get=0x1F36
+sectionid=0x1F36
 }
 
 [0x1F37]
@@ -156,6 +165,7 @@ id=0x1F37
 [curescroll]
 {
 get=0x1F37
+sectionid=0x1F37
 }
 
 [0x1F38]
@@ -168,6 +178,7 @@ id=0x1F38
 [harmscroll]
 {
 get=0x1F38
+sectionid=0x1F38
 }
 
 [0x1F39]
@@ -180,6 +191,7 @@ id=0x1F39
 [magictrapscroll]
 {
 get=0x1F39
+sectionid=0x1F39
 }
 
 [0x1F3A]
@@ -192,6 +204,7 @@ id=0x1F3A
 [magicuntrapscroll]
 {
 get=0x1F3A
+sectionid=0x1F3A
 }
 
 [0x1F3B]
@@ -204,6 +217,7 @@ id=0x1F3B
 [protctionscroll]
 {
 get=0x1F3B
+sectionid=0x1F3B
 }
 
 [0x1F3C]
@@ -216,6 +230,7 @@ id=0x1F3C
 [strengthscroll]
 {
 get=0x1F3C
+sectionid=0x1F3C
 }
 
 //Scroll (Third Circle)
@@ -235,6 +250,7 @@ id=0x1F3D
 [blessscroll]
 {
 get=0x1F3D
+sectionid=0x1F3D
 }
 
 [0x1F3E]
@@ -247,6 +263,7 @@ id=0x1F3E
 [fireballscroll]
 {
 get=0x1F3E
+sectionid=0x1F3E
 }
 
 [0x1F3F]
@@ -259,6 +276,7 @@ id=0x1F3F
 [magiclockscroll]
 {
 get=0x1F3F
+sectionid=0x1F3F
 }
 
 [0x1F40]
@@ -271,6 +289,7 @@ id=0x1F40
 [poisonscroll]
 {
 get=0x1F40
+sectionid=0x1F40
 }
 
 [0x1F41]
@@ -283,6 +302,7 @@ id=0x1F41
 [telekinisisscroll]
 {
 get=0x1F41
+sectionid=0x1F41
 }
 
 [0x1F42]
@@ -295,6 +315,7 @@ id=0x1F42
 [teleportscroll]
 {
 get=0x1F42
+sectionid=0x1F42
 }
 
 [0x1F43]
@@ -307,6 +328,7 @@ id=0x1F43
 [unlockscroll]
 {
 get=0x1F43
+sectionid=0x1F43
 }
 
 [0x1F44]
@@ -319,6 +341,7 @@ id=0x1F44
 [wallofstonescroll]
 {
 get=0x1F44
+sectionid=0x1F44
 }
 
 //Scroll (Fourth Circle)
@@ -338,6 +361,7 @@ id=0x1F45
 [archcurescroll]
 {
 get=0x1F45
+sectionid=0x1F45
 }
 
 [0x1F46]
@@ -350,6 +374,7 @@ id=0x1F46
 [archprotectionscroll]
 {
 get=0x1F46
+sectionid=0x1F46
 }
 
 [0x1F47]
@@ -362,6 +387,7 @@ id=0x1F47
 [cursescroll]
 {
 get=0x1F47
+sectionid=0x1F47
 }
 
 [0x1F48]
@@ -374,6 +400,7 @@ id=0x1F48
 [firefieldscroll]
 {
 get=0x1F48
+sectionid=0x1F48
 }
 
 [0x1F49]
@@ -386,6 +413,7 @@ id=0x1F49
 [greaterhealscroll]
 {
 get=0x1F49
+sectionid=0x1F49
 }
 
 [0x1F4A]
@@ -398,6 +426,7 @@ id=0x1F4A
 [lightningscroll]
 {
 get=0x1F4A
+sectionid=0x1F4A
 }
 
 [0x1F4B]
@@ -410,6 +439,7 @@ id=0x1F4B
 [manadrainscroll]
 {
 get=0x1F4B
+sectionid=0x1F4B
 }
 
 [0x1F4C]
@@ -422,6 +452,7 @@ id=0x1F4C
 [recallscroll]
 {
 get=0x1F4C
+sectionid=0x1F4C
 }
  
 //Scroll (Fifth Circle) 52
@@ -441,6 +472,7 @@ id=0x1F4D
 [bladespiritscroll]
 {
 get=0x1F4D
+sectionid=0x1F4D
 }
 
 [0x1F4E]
@@ -453,6 +485,7 @@ id=0x1F4E
 [dispelfieldscroll]
 {
 get=0x1F4E
+sectionid=0x1F4E
 }
 
 [0x1F4F]
@@ -465,6 +498,7 @@ id=0x1F4F
 [incognitoscroll]
 {
 get=0x1F4F
+sectionid=0x1F4F
 }
 
 [0x1F50]
@@ -477,6 +511,7 @@ id=0x1F50
 [magicreflectionscroll]
 {
 get=0x1F50
+sectionid=0x1F50
 }
 
 [0x1F51]
@@ -489,6 +524,7 @@ id=0x1F51
 [mindblastscroll]
 {
 get=0x1F51
+sectionid=0x1F51
 }
 
 [0x1F52]
@@ -501,6 +537,7 @@ id=0x1F52
 [paralyzescroll]
 {
 get=0x1F52
+sectionid=0x1F52
 }
 
 [0x1F53]
@@ -513,6 +550,7 @@ id=0x1F53
 [poisonfieldscroll]
 {
 get=0x1F53
+sectionid=0x1F53
 }
 
 [0x1F54]
@@ -525,6 +563,7 @@ id=0x1F54
 [summoncreaturescroll]
 {
 get=0x1F54
+sectionid=0x1F54
 }
 
 //Scroll (Sixth Circle)
@@ -544,6 +583,7 @@ id=0x1F55
 [dispelscroll]
 {
 get=0x1F55
+sectionid=0x1F55
 }
 
 [0x1F56]
@@ -556,6 +596,7 @@ id=0x1F56
 [energyboltscroll]
 {
 get=0x1F56
+sectionid=0x1F56
 }
 
 [0x1F57]
@@ -568,6 +609,7 @@ id=0x1F57
 [explosionscroll]
 {
 get=0x1F57
+sectionid=0x1F57
 }
 
 [0x1F58]
@@ -580,6 +622,7 @@ id=0x1F58
 [invisibilityscroll]
 {
 get=0x1F58
+sectionid=0x1F58
 }
 
 [0x1F59]
@@ -592,6 +635,7 @@ id=0x1F59
 [markscroll]
 {
 get=0x1F59
+sectionid=0x1F59
 }
 
 [0x1F5A]
@@ -604,6 +648,7 @@ id=0x1F5A
 [masscursescroll]
 {
 get=0x1F5A
+sectionid=0x1F5A
 }
 
 [0x1F5B]
@@ -616,6 +661,7 @@ id=0x1F5B
 [paralyzefieldscroll]
 {
 get=0x1F5B
+sectionid=0x1F5B
 }
 
 [0x1F5C]
@@ -628,6 +674,7 @@ id=0x1F5C
 [revealscroll]
 {
 get=0x1F5C
+sectionid=0x1F5C
 }
 
 //Scroll (Seventh Circle)
@@ -647,6 +694,7 @@ id=0x1F5D
 [chainlightningscroll]
 {
 get=0x1F5D
+sectionid=0x1F5D
 }
 
 [0x1F5E]
@@ -659,6 +707,7 @@ id=0x1F5E
 [energygfieldscroll]
 {
 get=0x1F5E
+sectionid=0x1F5E
 }
 
 [0x1F5F]
@@ -671,6 +720,7 @@ id=0x1F5F
 [flamestrikescroll]
 {
 get=0x1F5F
+sectionid=0x1F5F
 }
 
 [0x1F60]
@@ -683,6 +733,7 @@ id=0x1F60
 [gatetravelscroll]
 {
 get=0x1F60
+sectionid=0x1F60
 }
 
 [0x1F61]
@@ -695,6 +746,7 @@ id=0x1F61
 [manavampirescroll]
 {
 get=0x1F61
+sectionid=0x1F61
 }
 
 [0x1F62]
@@ -707,6 +759,7 @@ id=0x1F62
 [massdispelscroll]
 {
 get=0x1F62
+sectionid=0x1F62
 }
 
 [0x1F63]
@@ -719,6 +772,7 @@ id=0x1F63
 [meteorstormscroll]
 {
 get=0x1F63
+sectionid=0x1F63
 }
 
 [0x1F64]
@@ -731,6 +785,7 @@ id=0x1F64
 [polymorphscroll]
 {
 get=0x1F64
+sectionid=0x1F64
 }
 
 //Scroll (Eighth Circle) 
@@ -750,6 +805,7 @@ id=0x1F65
 [earthquakescroll]
 {
 get=0x1F65
+sectionid=0x1F65
 }
 
 [0x1F66]
@@ -762,6 +818,7 @@ id=0x1F66
 [energyvortexscroll]
 {
 get=0x1F66
+sectionid=0x1F66
 }
 
 [0x1F67]
@@ -774,6 +831,7 @@ id=0x1F67
 [resurrectionscroll]
 {
 get=0x1F67
+sectionid=0x1F67
 }
 
 [0x1F68]
@@ -786,6 +844,7 @@ id=0x1F68
 [summonairelementalscroll]
 {
 get=0x1F68
+sectionid=0x1F68
 }
 
 [0x1F69]
@@ -798,6 +857,7 @@ id=0x1F69
 [summondaemonscroll]
 {
 get=0x1F69
+sectionid=0x1F69
 }
 
 [0x1F6A]
@@ -810,6 +870,7 @@ id=0x1F6A
 [summonearthelementalscroll]
 {
 get=0x1F6A
+sectionid=0x1F6A
 }
 
 [0x1F6B]
@@ -822,6 +883,7 @@ id=0x1F6B
 [summonfireelementalscroll]
 {
 get=0x1F6B
+sectionid=0x1F6B
 }
 
 [0x1F6C]
@@ -834,6 +896,7 @@ id=0x1F6C
 [summonwaterelementalscroll]
 {
 get=0x1F6C
+sectionid=0x1F6c
 }
 
 // GM Related
@@ -850,6 +913,7 @@ decay=1
 [allspellscroll]
 {
 get=0x1f6d
+sectionid=0x1f6d
 }
 
 // Scroll (necromancer)

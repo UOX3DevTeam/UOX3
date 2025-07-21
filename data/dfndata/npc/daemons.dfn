@@ -351,9 +351,11 @@ ORIGIN=aos
 
 [shadowfiend]
 {
+GET=base_daemons
 NAME=#//a shadow fiend
 ID=0x00a8
 DIRECTION=RND
+GOLD=0 50
 STR=46 55
 DEX=121 130
 INT=46 55
@@ -374,6 +376,7 @@ RUNS
 RACE=10
 FLAG=NEUTRAL
 ORIGIN=uor
+SCRIPT=3228//shadowfiend.js
 }
 
 //oni - Base NPC with shared DFN tags

@@ -2231,7 +2231,14 @@ JSBool SE_GetTileIdAtMapCoord( [[maybe_unused]] JSContext *cx, [[maybe_unused]] 
 	UI16 yLoc		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 	UI08 wrldNumber	= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
 	auto mMap		= Map->SeekMap( xLoc, yLoc, wrldNumber );
-	*rval			= INT_TO_JSVAL( mMap.tileId );
+	if( mMap.terrainInfo != nullptr )
+	{
+		*rval = INT_TO_JSVAL( mMap.tileId );
+	}
+	else
+	{
+		*rval = JSVAL_NULL;
+	}
 	return JS_TRUE;
 }
 
@@ -2610,8 +2617,10 @@ JSBool SE_Yell( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval
 	{
 		case CL_PLAYER:			yellTo = " (GLOBAL YELL): ";	break;
 		case CL_CNS:			yellTo = " (CNS YELL): ";		break;
+		case CL_SEER:			yellTo = " (SEER YELL): ";		break;
 		case CL_GM:				yellTo = " (GM YELL): ";		break;
 		case CL_ADMIN:			yellTo = " (ADMIN YELL): ";		break;
+		default:				yellTo = " (GLOBAL YELL): ";	break;
 	}
 
 	std::string tmpString = GetNpcDictName( myChar, mySock, NRS_SPEECH ) + yellTo + textToYell;
@@ -2733,6 +2742,7 @@ JSBool SE_Reload( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj
 			Magic->LoadScript();
 			LoadCreatures();
 			LoadCustomTitle();
+			Commands->Load();
 			LoadSkills();
 			Races->Load();
 			LoadPlaces();
@@ -4108,6 +4118,58 @@ JSBool SE_EraStringToNum( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_GetCommandLevelVal()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Converts an UO era string to an int value for easier comparison in JavaScripts
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_GetCommandLevelVal( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	*rval = reinterpret_cast<long>(nullptr);
+
+	if( argc != 1 )
+	{
+		ScriptError( cx, "GetCommandLevelVal: Invalid number of arguments (takes 1 - commandlevel ID ('PLAYER'/'CNS'/'GM'/'ADMIN'))" );
+		return JS_FALSE;
+	}
+
+	std::string cmdLvlString = oldstrutil::upper( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
+	if( !cmdLvlString.empty() )
+	{
+		if( cmdLvlString == "PLAYER" )
+		{
+			*rval = INT_TO_JSVAL( CL_PLAYER );
+		}
+		else if( cmdLvlString == "CNS" )
+		{
+			*rval = INT_TO_JSVAL( CL_CNS );
+		}
+		else if( cmdLvlString == "SEER" )
+		{
+			*rval = INT_TO_JSVAL( CL_SEER );
+		}
+		else if( cmdLvlString == "GM" )
+		{
+			*rval = INT_TO_JSVAL( CL_GM );
+		}
+		else if( cmdLvlString == "ADMIN" )
+		{
+			*rval = INT_TO_JSVAL( CL_ADMIN );
+		}
+		else
+		{
+			ScriptError( cx, "GetCommandLevelVal: Provided argument not valid commandlevel ID ('PLAYER'/'CNS'/'GM'/'ADMIN')" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		ScriptError( cx, "GetCommandLevelVal: Provided argument contained no valid string data" );
+		return JS_FALSE;
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_GetServerSetting()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets value of specified server setting
@@ -4518,8 +4580,9 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ).c_str() );
 				*rval = STRING_TO_JSVAL( tString );
 				break;
-			//case 127:	 // SERVERLIST
-				//break;
+			case 127:	 // SKILLCAPSINGLE
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ServerSkillCapStatus() ));
+				break;
 			case 128:	 // PORT
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ServerPort() ));
 				break;
@@ -4579,7 +4642,7 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerOverloadPackets() );
 				break;
 			case 147:	 // NPCMOVEMENTSPEED
-				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->NPCWalkingSpeed() ));
+				*rval = INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCWalkingSpeed() ));
 				break;
 			case 148:	 // PETHUNGEROFFLINE
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PetHungerOffline() );
@@ -4600,10 +4663,10 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->LootingIsCrime() );
 				break;
 			case 155:	 // NPCRUNNINGSPEED
-				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->NPCRunningSpeed() ));
+				*rval = INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCRunningSpeed() ));
 				break;
 			case 156:	 // NPCFLEEINGSPEED
-				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->NPCFleeingSpeed() ));
+				*rval = INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCFleeingSpeed() ));
 				break;
 			case 157:	 // BASICTOOLTIPSONLY
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->BasicTooltipsOnly() );
@@ -4693,10 +4756,10 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->CombatArmorDamageMax() ));
 				break;
 			case 190:	// GLOBALATTACKSPEED
-				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->GlobalAttackSpeed() ));
+				*rval = INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->GlobalAttackSpeed() ));
 				break;
 			case 191:	// NPCSPELLCASTSPEED
-				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->NPCSpellCastSpeed() ));
+				*rval = INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCSpellCastSpeed() ));
 				break;
 			case 192:	// FISHINGSTAMINALOSS
 				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->FishingStaminaLoss() ));
@@ -4966,13 +5029,13 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerSpeechLog() );
 				break;
 			case 269:	 // NPCMOUNTEDWALKINGSPEED
-				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->NPCMountedWalkingSpeed() ));
+				*rval = INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCMountedWalkingSpeed() ));
 				break;
 			case 270:	 // NPCMOUNTEDRUNNINGSPEED
-				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->NPCMountedRunningSpeed() ));
+				*rval = INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCMountedRunningSpeed() ));
 				break;
 			case 271:	 // NPCMOUNTEDFLEEINGSPEED
-				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->NPCMountedFleeingSpeed() ));
+				*rval = INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->NPCMountedFleeingSpeed() ));
 				break;
 			case 272:	 // CONTEXTMENUS
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerContextMenus() );
@@ -5029,7 +5092,7 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS ));
 				break;
 			case 290:	// ARCHERYSHOOTDELAY
-				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->CombatArcheryShootDelay() ));
+				*rval = INT_TO_JSVAL( static_cast<R64>( cwmWorldState->ServerData()->CombatArcheryShootDelay() ));
 				break;
 			case 291:	 // MAXCLIENTBYTESIN
 				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->MaxClientBytesIn() ));
@@ -5312,6 +5375,15 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				break;
 			case 379:	// GARGOYLEMAXWEIGHTBONUS
 				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->GargoyleMaxWeightBonus() ));
+				break;
+			case 380:	// MAXNPCAGGRORANGE
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->CombatMaxNpcAggroRange() ));
+				break;
+			case 381:	// POISONCORROSIONSYSTEM
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PoisonCorrosionSystem() );
+				break;
+			case 382:	// PETBONDINGENABLED
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PetBondingEnabled() );
 				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );

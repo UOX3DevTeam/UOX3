@@ -542,7 +542,7 @@ function CheckGeneralStealingRules( pSock, pThief, thiefTarget )
 		}
 
 		// Don't allow stealing from someone with higher command level access than you
-		if( pThief.commandlevel < thiefTarget.commandlevel )
+		if( thiefTarget.commandlevel >= GetCommandLevelVal( "CNS" ) && pThief.commandlevel < thiefTarget.commandlevel )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 878, pSock.language )); // You can't steal from gods.
 			return;

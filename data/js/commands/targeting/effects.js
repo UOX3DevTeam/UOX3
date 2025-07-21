@@ -1,8 +1,8 @@
 function CommandRegistration()
 {
-	RegisterCommand( "action", 2, true ); // Play an action on GM's character
-	RegisterCommand( "bolt", 2, true ); // Play a bolt effect on target character
-	RegisterCommand( "npcaction", 2, true ); // Play an action on targeted NPC (or player) character
+	RegisterCommand( "action", 8, true ); // Play an action on GM's character
+	RegisterCommand( "bolt", 8, true ); // Play a bolt effect on target character
+	RegisterCommand( "npcaction", 8, true ); // Play an action on targeted NPC (or player) character
 }
 
 function command_ACTION( socket, cmdString )

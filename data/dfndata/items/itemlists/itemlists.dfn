@@ -867,6 +867,14 @@ blank
 0x0f8d-10
 }
 
+// Reagents found in swamps (BM, MR, NS)
+[ITEMLIST swampreagents]
+{
+0x0f7b
+0x0f86
+0x0f88
+}
+
 // Scrolls from first four circles
 [ITEMLIST 100]
 {

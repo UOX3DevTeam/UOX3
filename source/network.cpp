@@ -1098,7 +1098,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 					case 0xB6: // T2A Popuphelp request
 						mSock->Receive( 9 );
 						break;
-					case 0xB8: // T2A Profile request
+					/*case 0xB8: // T2A Profile request
 						mSock->Receive( 3 );
 						mSock->Receive( mSock->GetWord( 1 ));		// this is how it's really done
 
@@ -1169,7 +1169,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 								mSock->FlushBuffer();
 							}
 						}
-						break;
+						break;*/
 					case 0xBB:
 						//	Ultima Messenger (9 bytes)
 						//	BYTE cmd

@@ -570,7 +570,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	UI16 gImage = 0;
 	UI16 gImageChk = 0;
 	SI16 initState = 0;
-	SI16 relay = 0;
+	UI32 relay = 0;
 
 	if( argc == 5 )
 	{
@@ -579,7 +579,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 		gImageChk	= gImage + 1;
 		initState	= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-		relay		= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
+		relay		= static_cast<UI32>( JSVAL_TO_INT( argv[4] ));
 	}
 	else
 	{
@@ -588,7 +588,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 		gImageChk	= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
 		initState	= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-		relay		= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
+		relay		= static_cast<UI32>( JSVAL_TO_INT( argv[5] ));
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -599,7 +599,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "checkbox %i %i %u %u %i %i", tL, tR, gImage, gImageChk, initState, relay ));
+	gList->one->push_back( oldstrutil::format( "checkbox %i %i %u %u %i %u", tL, tR, gImage, gImageChk, initState, relay ));
 
 	return JS_TRUE;
 }
@@ -1373,7 +1373,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 	UI16 gImage = 0;
 	UI16 gImageChk = 0;
 	SI16 initialState = 0;
-	SI16 relay = 0;
+	UI32 relay = 0;
 
 	if( argc == 5 )
 	{
@@ -1382,7 +1382,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		gImage			= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 		gImageChk		= gImage + 1;
 		initialState	= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-		relay			= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
+		relay			= static_cast<UI32>( JSVAL_TO_INT( argv[4] ));
 	}
 	else
 	{
@@ -1391,7 +1391,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		gImage			= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
 		gImageChk		= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
 		initialState	= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-		relay			= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
+		relay			= static_cast<UI32>( JSVAL_TO_INT( argv[5] ));
 	}
 
 
@@ -1402,7 +1402,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "radio %i %i %u %u %i %i", tL, tR, gImage, gImageChk, initialState, relay ));
+	gList->one->push_back( oldstrutil::format( "radio %i %i %u %u %i %u", tL, tR, gImage, gImageChk, initialState, relay ));
 
 	return JS_TRUE;
 }
@@ -2573,7 +2573,7 @@ JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 	}
 
 	// Reset idle anim timer so it doesn't interrupt the DoAction anim
-	myChar->SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( RandomNum( 5, 20 )));
+	myChar->SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( static_cast<R64>( RandomNum( 5, 20 ))));
 
 	// Play the requested animation
 	if( myChar->GetBodyType() == BT_GARGOYLE || targSubAction != -1 )
@@ -2820,7 +2820,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				return JS_TRUE;
 			}
 			ScriptError( cx, "For Items you need at least one parameter for Teleport" );
-			break;
+			return JS_FALSE;
 
 			// Parameters as a string
 		case 1:
@@ -2833,7 +2833,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 					if( !ValidateObject( toGoTo ))
 					{
 						ScriptError( cx, "No object associated with this object" );
-						break;
+						return JS_FALSE;
 					}
 
 					x		= toGoTo->GetX();
@@ -2855,7 +2855,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				else
 				{
 					ScriptError( cx, "Invalid class of object" );
-					break;
+					return JS_FALSE;
 				}
 			}
 			else if( JSVAL_IS_INT( argv[0] ))
@@ -2873,6 +2873,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 			else	// Needs to be implemented
 			{
 				ScriptError( cx, "Text-styled Parameters may be added later" );
+				return JS_FALSE;
 			}
 			break;
 
@@ -2883,6 +2884,11 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 			}
+			else
+			{
+				ScriptError( cx, "Invalid argument values passed to Teleport/SetLocation, expected x, y. Aborting!" );
+				return JS_FALSE;
+			}
 			break;
 
 			// x,y,z
@@ -2892,6 +2898,11 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+			}
+			else
+			{
+				ScriptError( cx, "Invalid argument values passed to Teleport/SetLocation, expected x, y, z. Aborting!" );
+				return JS_FALSE;
 			}
 			break;
 
@@ -2904,6 +2915,11 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				z		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
 				world	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
 			}
+			else
+			{
+				ScriptError( cx, "Invalid argument values passed to Teleport/SetLocation, expected x, y, z, world. Aborting!" );
+				return JS_FALSE;
+			}
 			break;
 
 			// x,y,z,world,instanceId
@@ -2915,6 +2931,11 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
 				world = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
 				instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+			}
+			else
+			{
+				ScriptError( cx, "Invalid argument values passed to Teleport/SetLocation, expected x, y, z, world, instanceID. Aborting!" );
+				return JS_FALSE;
 			}
 			break;
 
@@ -2973,7 +2994,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 			SendMapChange( world, mySock );
 
 			// Extra update needed for regular UO client
-			myChar->Update();
+			myChar->Update( nullptr, false, true, true );
 		}
 		else
 		{
@@ -5275,7 +5296,7 @@ JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_SetPoisoned()
-//|	Prototype	-	void SetPoisoned( poisonLevel, Length )
+//|	Prototype	-	void SetPoisoned( poisonLevel, length, poisonSourceChar )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies a specified level of poison to the character for a specified amount of
 //|					time (in milliseconds).
@@ -5296,24 +5317,39 @@ JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	SI08 newVal = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	SI08 poisonLevel = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
 
-	if( newVal > 0 && argc > 1 )
+	if( poisonLevel > 0 && argc > 1 )
 	{
 		SI32 wearOff = static_cast<SI32>( JSVAL_TO_INT( argv[1] ));
 
-		if( argc == 2 || ( argc == 3 && JSVAL_TO_BOOLEAN( argv[2] )))
+		if( argc >= 2 )
 		{
-			if( myChar->GetPoisoned() > newVal )
+			if( myChar->GetPoisoned() > poisonLevel )
 			{
-				newVal = myChar->GetPoisoned();
+				poisonLevel = myChar->GetPoisoned();
 			}
 		}
 		myChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( static_cast<R64>( wearOff ) / 1000.0 ));
+
+		if( argc >= 3 )
+		{
+			CChar *poisonSourceChar = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[2] )));
+			if( !ValidateObject( poisonSourceChar ))
+			{
+				ScriptError( cx, "(SetPoisoned) Invalid Object passed as third function parameter" );
+				return JS_FALSE;
+			}
+
+			myChar->SetPoisonedBy( poisonSourceChar->GetSerial() );
+		}
+	}
+	else
+	{
+		myChar->SetPoisonedBy( INVALIDSERIAL );
 	}
 
-	//myChar->SetPoisonStrength( newVal );
-	myChar->SetPoisoned( newVal );
+	myChar->SetPoisoned( poisonLevel );
 	return JS_TRUE;
 }
 

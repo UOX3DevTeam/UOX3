@@ -414,7 +414,7 @@ bool InMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		length = 0;
 
 		auto map1 = Map->SeekMap( m->GetX(), m->GetY(), m->WorldNumber() );
-		if( map1.CheckFlag( TF_WET )) // is it water?
+		if( map1.terrainInfo != nullptr && map1.CheckFlag( TF_WET )) // is it water?
 		{
 			// NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
 			// So either: 1) Let the user fix it in the worldfile once its saved

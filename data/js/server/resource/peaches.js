@@ -5,8 +5,8 @@
 // and until it's up no more peaches can be picked. Once the timer is over,
 // new peaches are added. The apperance of the tree indicates whether or
 // not there are any peaches left to pick.
-var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
-var maxResource = 5; //maximum amount of resources on a given item
+const peachGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+const maxPeachResource = 5; //maximum amount of resources on a given item
 
 function onUseChecked( pUser, iUsed )
 {
@@ -21,7 +21,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		iUsed.SetTag( "initialized", 1 ); 	// Marks tree as initialized
 		iUsed.SetTag( "Peaches", 1 ); 		// If set to 1, there are peaches to be picked, if 0 there are no ripe peaches
-		iUsed.SetTag( "PeachCounter", maxResource ); 	// Add 5 peaches to the tree initially
+		iUsed.SetTag( "PeachCounter", maxPeachResource ); 	// Add 5 peaches to the tree initially
 	}
 	var peaches = iUsed.GetTag( "Peaches" );
 	var peachCount = iUsed.GetTag( "PeachCounter" );
@@ -63,7 +63,7 @@ function onUseChecked( pUser, iUsed )
 					iUsed.id = 0x0da1; 
 				}
 				iUsed.SetTag( "Peaches", 0 );
-				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time peaches respawn
+				iUsed.StartTimer( peachGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time peaches respawn
 			}
 		}
 	}
@@ -74,7 +74,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag( "PeachCounter", maxResource );
+		iUsed.SetTag( "PeachCounter", maxPeachResource );
 		iUsed.SetTag( "Peaches", 1 );
 		if( iUsed.id == 0x0d9d )
 		{

@@ -925,6 +925,11 @@ function ItemDetailGump( pUser )
 			HARVEST = [10007, 10008];
 			mainSkill = parseInt( pUser.skills.tailoring );
 			break;
+		case 186:
+			createEntry = CreateEntries[135];
+			HARVEST = [10016];
+			mainSkill = parseInt( pUser.skills.tailoring );
+			break;
 		// Start Fletching
 		case 190:
 			createEntry = CreateEntries[190];

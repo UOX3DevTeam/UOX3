@@ -12,7 +12,7 @@ struct CommandLevel_st
 	std::string			name;			// name of level
 	std::string			title;			// Title of level, displayed in front of name
 	UI08				commandLevel;	// upper limit of level
-	UI16				defaultPriv;	// default privs associated with it
+	UI32				defaultPriv;	// default privs associated with it
 	UI16				nickColour;		// colour of a person's name
 	UI16				allSkillVals;	// if 0, skills left same, if not, all skills set to this value
 	UI16				targBody;		// target body value

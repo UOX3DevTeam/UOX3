@@ -162,14 +162,12 @@ giantspider
 snake
 silverserpent
 chicken
-dog
 rabbit
 jackrabbit
 sheep
 panther
 cow
 goat
-cat
 wisp
 rat
 forestostard
@@ -225,16 +223,15 @@ cougar
 
 [NPCLIST junglelist]
 {
-wisp
-giantspider
-snake
-panther
-npclist=allbirdlist
-gorilla
-corpser
-reaper
-giantserpent
-npclist=weakterathans
+20|gorilla
+17|panther
+15|snake
+11|tropicalbird
+10|giantserpent
+9|mongbat
+8|alligator
+5|corpser
+5|wisp
 }
 
 [NPCLIST mountainlist]
@@ -256,11 +253,18 @@ ogre
 npclist=alltroll
 }
 
+[NPCLIST beachlist]
+{
+corpser
+alligator
+}
+
 [NPCLIST oceanlist]
 {
 dolphin
 walrus
 waterele
+seaserpent
 }
 
 [NPCLIST swamplist]
@@ -342,11 +346,17 @@ macelizardman
 
 [NPCLIST allratmenlist]
 {
-ratman
-ratmanarcher
-swordratman
-maceratman
-ratmanmage
+40|ratman
+20|swordratman
+15|maceratman
+15|ratmanarcher
+10|ratmanmage
+}
+
+[NPCLIST savageswamp]
+{
+70|savagewarrior
+30|savageshaman
 }
 
 [NPCLIST alldragonlist]
@@ -421,6 +431,16 @@ npclist=allorc
 npclist=animallist
 }
 
+[NPCLIST weakoverworld]
+{
+34|giantrat
+30|slime
+17|mongbat
+10|headless
+6|skeleton
+3|jwilson
+}
+
 [NPCLIST barnlist]
 {
 bull
@@ -489,7 +509,6 @@ gorilla
 corpser
 reaper
 giantserpent
-npclist=weakterathans
 }
 
 [NPCLIST livestocklist]
@@ -600,6 +619,18 @@ ophmatriarch
 ophavenger
 }
 
+[NPCLIST mostlyweakophidians]
+{
+80|npclist=weakophidians
+20|npclist=strongophidians
+}
+
+[NPCLIST mostlystrongophidians]
+{
+80|npclist=strongophidians
+20|npclist=weakophidians
+}
+
 [NPCLIST allorc]
 {
 npclist=weakorc
@@ -677,6 +708,13 @@ macelizardman
 spearlizardman
 }
 
+[NPCLIST weakratmen]
+{
+ratman
+maceratman
+swordratman
+}
+
 [NPCLIST allratmen]
 {
 ratman
@@ -715,56 +753,67 @@ teradrone
 terawarrior
 }
 
+[NPCLIST mostlyweakterathans]
+{
+75|npclist=weakterathans
+25|npclist=strongterathans
+}
+
+[NPCLIST mostlystrongterathans]
+{
+75|npclist=strongterathans
+25|npclist=weakterathans
+}
+
 [NPCLIST tamewoods]
 {
-npclist=allbirdlist
-blackbear
-brownbear
-boar
-goat
-graywolf
-hart
-hind
-jackrabbit
-rabbit
-timberwolf
+13|npclist=allbirdlist
+11|rabbit
+11|goat
+10|boar
+10|hart
+10|graywolf
+9|hind
+9|jackrabbit
+7|blackbear
+5|brownbear
+5|timberwolf
 }
 
 [NPCLIST ruralwoods]
 {
-npclist=allbirdlist
-boar
-bull
-cat
-chicken
-cow
-dog
-goat
-graywolf
-hart
-hind
-jackrabbit
-pig
-sheep
-rabbit
-rat
-timberwolf
+12|npclist=allbirdlist
+12|boar
+11|bull
+9|chicken
+9|hart
+8|cow
+7|hind
+6|goat
+5|jackrabbit
+5|pig
+4|sheep
+4|rabbit
+3|graywolf
+3|rat
+2|timberwolf
 }
 
 [NPCLIST wilderness]
 {
-npclist=allbirdlist
-npclist=allbearlist
-boar
-cougar
-goat
-graywolf
-hart
-hind
-jackrabbit
-mountaingoat
-rabbit
-timberwolf
+25|npclist=allbirdlist
+20|hart
+18|hind
+17|boar
+16|graywolf
+15|npclist=allbearlist
+13|cougar
+11|goat
+10|rabbit
+8|timberwolf
+6|wisp
+4|mountaingoat
+3|jackrabbit
 }
 
 [NPCLIST allbirdlist]
@@ -829,4 +878,10 @@ halloweenwraith
 halloweenshade
 halloweenskeleton
 halloweenboneaxeman
+}
+
+[NPCLIST randomrabbit]
+{
+rabbit
+jackrabbit
 }
