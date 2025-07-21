@@ -8203,6 +8203,28 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 		}
 	}
 
+	// Is character tame/bonded?
+	if( mChar.IsNpc() && mChar.IsTamed() && !cwmWorldState->creatures[mChar.GetId()].IsHuman() )
+	{
+		TAGMAPOBJECT petBond = mChar.GetTag( "isBondedPet" );
+		if( petBond.m_IntValue == 1 )
+		{
+			// Bonded
+			tempEntry.stringNum = 1042971; // ~1_NOTHING~
+			tempEntry.ourText = oldstrutil::format( "%s", Dictionary->GetEntry( 19334, tSock->Language() ).c_str() ); // [Bonded]
+			tempEntry.sortOrder = 12;
+			FinalizeData( tempEntry, totalStringLen );
+		}
+		else
+		{
+			// Tame
+			tempEntry.stringNum = 1042971; // ~1_NOTHING~
+			tempEntry.ourText = oldstrutil::format( "%s", Dictionary->GetEntry( 19333, tSock->Language() ).c_str() ); // [Tame]
+			tempEntry.sortOrder = 12;
+			FinalizeData( tempEntry, totalStringLen );
+		}
+	}
+
 	// Is character Guarded?
 	if( mChar.IsGuarded() )
 	{
