@@ -1694,12 +1694,13 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
 
-	if( JSID_IS_INT( id ))
+	UI16 propID = getScriptID( cx, id, JSP_CHAR );
+	if( propID != 0xFFFF )
 	{
 		CItem *TempItem			= nullptr;
 		JSObject *TempObject	= nullptr;
 		JSString *tString = nullptr;
-		switch( JSID_TO_INT( id ))
+		switch( propID )
 		{
 			case CCP_ACCOUNTNUM:	*vp = INT_TO_JSVAL( gPriv->GetAccountNum() );	break;
 			case CCP_ACCOUNT:
