@@ -90,9 +90,6 @@ function onLogout( pSock, pChar )
 	pChar.SetTempTag( "toothach", null );
 	pChar.SetTempTag( "Acidity", null );
 
-	// Used to remove the tracking gump timer
-	pChar.KillJSTimer(1, 5803);
-
 	//Treasure Hunting Kill Event.
 	var dirtItem = CalcItemFromSer( parseInt( pChar.GetTempTag( "dirtMadeSer" )));
 	if( ValidateObject( dirtItem ))
