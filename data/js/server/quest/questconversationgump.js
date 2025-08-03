@@ -101,7 +101,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	var pUser = pSock.currentChar;
 	var questNpc = CalcCharFromSer( parseInt( pUser.GetTag( "questNpcSerial" )));
 	var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
-	var playerQuestID = resolvePlayerQuestID( pUser, initialQuestID );
+	var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
 	var quest = TriggerEvent( 5801, "QuestList", playerQuestID );
 
 	switch ( pButton ) 
