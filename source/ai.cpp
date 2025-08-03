@@ -614,8 +614,8 @@ auto HandleAnimalAI( CChar& mChar ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto HandleAnimalScaredAI( CChar& mChar ) -> void
 {
-	// Do nothing if NPC is already running scared and has a valid target
-	if( mChar.GetNpcWander() == WT_SCARED && ValidateObject( mChar.GetTarg() ))
+	// Do nothing if NPC is a summon, or is already running scared and has a valid target
+	if( mChar.IsDispellable() || ( mChar.GetNpcWander() == WT_SCARED && ValidateObject( mChar.GetTarg() )))
 		return;
 
 	// Fetch scriptTriggers attached to mChar
