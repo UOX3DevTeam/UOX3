@@ -1086,26 +1086,26 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI
 //|	Purpose		-	Triggers for character with event attached and he click the contest
 //|					option toggle quest item.
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::onQuestToggle(CChar* toggler, CItem *iUsing)
+SI08 cScript::onQuestToggle( CChar* toggler, CItem *iUsing )
 {
 	const SI08 RV_NOFUNC = -1;
-    if (!ValidateObject(toggler) || !ValidateObject(iUsing))
+    if( !ValidateObject( toggler) || !ValidateObject( iUsing ))
 		return RV_NOFUNC;
 
-    if (!ExistAndVerify(seOnQuestToggle, "onQuestToggle"))
+    if( !ExistAndVerify( seOnQuestToggle, "onQuestToggle" ))
 		return RV_NOFUNC;
 
     jsval rval, params[2];
-    JSObject* togglerObj = JSEngine->AcquireObject(IUE_CHAR, toggler, runTime);
+    JSObject* togglerObj = JSEngine->AcquireObject( IUE_CHAR, toggler, runTime );
     JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, iUsing, runTime );
 
-    params[0] = OBJECT_TO_JSVAL(togglerObj);
+    params[0] = OBJECT_TO_JSVAL( togglerObj );
     params[1] = OBJECT_TO_JSVAL( itemObj );
 
-    JSBool retVal = JS_CallFunctionName(targContext, targObject, "onQuestToggle", 2, params, &rval);
-    if (retVal == JS_FALSE)
+    JSBool retVal = JS_CallFunctionName( targContext, targObject, "onQuestToggle", 2, params, &rval );
+    if( retVal == JS_FALSE )
     {
-        SetEventExists(seOnQuestToggle, false);
+        SetEventExists( seOnQuestToggle, false );
     }
 
     return TryParseJSVal( rval );
