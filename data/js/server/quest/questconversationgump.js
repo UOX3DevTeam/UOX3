@@ -1,5 +1,3 @@
-const DebugMessages = false;// Enable debug messages
-
 function QuestConversationGump( pUser, npcTarget, questID )
 {
 	var socket = pUser.socket;
@@ -128,7 +126,7 @@ function onGumpPress( pSock, pButton, gumpData )
 					return;
 				}
 
-				var turnInSuccess = processQuestTurnIn( pUser, playerQuestID ); // Handle item turn-in
+				var turnInSuccess = ProcessQuestTurnIn( pUser, playerQuestID ); // Handle item turn-in
 				if( turnInSuccess )
 				{
 					TriggerEvent( 5800, "CompleteQuest", pUser, playerQuestID ); // Complete the quest
@@ -142,7 +140,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 		case 4: // Resign Quest
 			ResignQuest( pUser, playerQuestID );
-			manageQuestItems( pUser, playerQuestID, false );
+			ManageQuestItems( pUser, playerQuestID, false );
 			pUser.SoundEffect( 0x5B3, true );
 			break;
 			default:break
@@ -196,7 +194,7 @@ function ResignQuest( player, questID )
 	return true;
 }
 
-function manageQuestItems( player, questID, mark )
+function ManageQuestItems( player, questID, mark )
 {
 	var socket = player.socket;
 	var pack = player.pack; // Get the player's backpack
@@ -231,7 +229,8 @@ function manageQuestItems( player, questID, mark )
 				var targetItem = quest.targetItems[i];
 
 				// Check if the item matches the quest requirement
-				if( String( currentItem.sectionID ) == String( targetItem.sectionID ))
+				var questSectionID = targetItem.GetTag("QuestSectionID") || targetItem.sectionID;
+				if( String( currentItem.sectionID ) == String( targetItem.sectionID ) || ( currentItem.sectionID == questSectionID ))
 				{
 					if( mark )
 					{
@@ -243,6 +242,7 @@ function manageQuestItems( player, questID, mark )
 							currentItem.isNewbie = true;
 							currentItem.isDyeable = false;
 							currentItem.SetTag( "QuestItem", true );
+							currentItem.SetTag( "QuestSectionID", targetItem.sectionID );
 							currentItem.AddScriptTrigger( 5806 ); // Quest Item script trigger
 							socket.SysMessage( "Marked item as a quest item: " + targetItem.name );
 						}
@@ -253,10 +253,18 @@ function manageQuestItems( player, questID, mark )
 						if( currentItem.GetTag( "QuestItem" ))
 						{
 							var questItemColor = currentItem.GetTag( "saveColor" );
-							currentItem.color = questItemColor;
+							if( questItemColor != null && !isNaN(parseInt(questItemColor)) )
+							{
+								currentItem.color = parseInt( questItemColor );
+							}
+							else
+							{
+								currentItem.color = 0; // fallback to default color (non-dyed)
+							}
 							currentItem.isNewbie = false;
 							currentItem.isDyeable = true;
 							currentItem.SetTag( "QuestItem", null );
+							currentItem.SetTag( "QuestSectionID", null );
 							currentItem.RemoveScriptTrigger( 5806 ); // Quest Item script trigger
 							socket.SysMessage( "Unmarked item as a quest item: " + targetItem.name );
 						}
@@ -445,7 +453,7 @@ function GetQuestRewards( quest )
 	return rewards;
 }
 
-function processQuestTurnIn( player, questID )
+function ProcessQuestTurnIn( player, questID )
 {
 	var socket = player.socket;
 	// Fetch the quest details
@@ -515,7 +523,7 @@ function processQuestTurnIn( player, questID )
 		}
 
 		// Fetch quest items from the player's backpack
-		var questItems = findQuestItems(player, questID);
+		var questItems = FindQuestItems(player, questID);
 		var requiredItems = []; // Clone target items manually
 
 		for( var i = 0; i < quest.targetItems.length; i++ )
@@ -573,7 +581,7 @@ function processQuestTurnIn( player, questID )
 		}
 
 		// Find the delivery item in the backpack
-		var deliveryItems = findQuestItems( player, questID );
+		var deliveryItems = FindQuestItems( player, questID );
 		var foundItem = false;
 
 		for( var i = 0; i < deliveryItems.length; i++ )
@@ -609,7 +617,7 @@ function processQuestTurnIn( player, questID )
 	return false;
 }
 
-function findQuestItems( player, questID )
+function FindQuestItems( player, questID )
 {
 	var socket = player.socket;
 	var questItems = [];
@@ -694,7 +702,7 @@ function QuestNpcInterAction( pUser, questNpc )
 	{
 		if( TriggerEvent( 5800, "CheckQuest", pUser, deliveryQuestID ))
 		{ // Validate quest eligibility
-			processDeliveryQuest( pUser, questNpc, deliveryQuestID );
+			ProcessDeliveryQuest( pUser, questNpc, deliveryQuestID );
 		}
 		else
 		{
@@ -715,7 +723,7 @@ function QuestNpcInterAction( pUser, questNpc )
 	}
 
 	// Resolve the player's current quest ID in the chain
-	var playerQuestID = resolvePlayerQuestID( pUser, initialQuestID );
+	var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
 
 	if( !playerQuestID )
 	{
@@ -727,18 +735,9 @@ function QuestNpcInterAction( pUser, questNpc )
 	// Check if the quest is already completed
 	var archivedQuests = TriggerEvent( 5800, "ReadArchivedQuests", pUser );
 
-	if( DebugMessages ) 
-	{
-		socket.SysMessage( "Archived quests loaded: " + archivedQuests.length );
-	}
-
 	for( var i = 0; i < archivedQuests.length; i++ )
 	{
 		var archivedQuestID = parseInt( archivedQuests[i], 10 ); // Ensure it's treated as an integer
-		if( DebugMessages )
-		{
-			socket.SysMessage( "Checking archived quest: " + archivedQuestID );
-		}
 		if( archivedQuestID == playerQuestID ) // Compare consistently
 		{
 			targObj.TurnToward( pUser );
@@ -767,7 +766,7 @@ function QuestNpcInterAction( pUser, questNpc )
 	return;
 }
 
-function processDeliveryQuest( player, questNpc, deliveryQuestID )
+function ProcessDeliveryQuest( player, questNpc, deliveryQuestID )
 {
 	var socket = player.socket;
 	// Fetch the quest details
@@ -787,7 +786,7 @@ function processDeliveryQuest( player, questNpc, deliveryQuestID )
 
 	// Check if the player has the required item
 	var requiredItem = quest.deliveryItem;
-	var questItems = findQuestItems( player, deliveryQuestID );
+	var questItems = FindQuestItems( player, deliveryQuestID );
 	var itemDelivered = false;
 
 	for( var i = 0; i < questItems.length; i++ )
@@ -845,7 +844,7 @@ function processDeliveryQuest( player, questNpc, deliveryQuestID )
 	return true;
 }
 
-function resolvePlayerQuestID( player, initialQuestID )
+function ResolvePlayerQuestID( player, initialQuestID )
 {
 	var archivedQuests = TriggerEvent( 5800, "ReadArchivedQuests", player );
 
@@ -986,7 +985,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 		case 0x000B: // Cancel Quest (Optional)
 			{
 				var initialQuestID = parseInt( targObj.GetTag( "QuestID" ), 10 );
-				var playerQuestID = resolvePlayerQuestID( pUser, initialQuestID );
+				var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
 				var quest = TriggerEvent( 5801, "QuestList", playerQuestID );
 				targObj.TextMessage( quest.refuse );
 				pUser.SoundEffect(  0x5B4, true  );

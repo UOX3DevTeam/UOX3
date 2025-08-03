@@ -183,7 +183,7 @@ function onTimer( timerObj, timerID )
 		{
 			var quest = TriggerEvent( 5801, "QuestList", questEntry.questID );
 
-			TriggerEvent( 5802, "manageQuestItems", player, questEntry.questID, false );
+			TriggerEvent( 5802, "ManageQuestItems", player, questEntry.questID, false );
 
 			if( quest.type == "skillgain" ) 
 			{
