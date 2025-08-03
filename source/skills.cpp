@@ -858,7 +858,6 @@ void CSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-
 				if( toExecute != nullptr )
 				{
 					toExecute->OnSkillChange( c, sk, amtToGain );
