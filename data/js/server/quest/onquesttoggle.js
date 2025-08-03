@@ -16,7 +16,7 @@ function onCallback1( socket, iTarget )
 {
 	var pUser = socket.currentChar;
 
-	if( !iTarget || !iTarget.isItem )
+	if( !ValidateObject(iTarget) || !iTarget.isItem )
 	{
 		socket.SysMessage( GetDictionaryEntry( 711, socket.language ));//"That is not a valid item."
 		return;
@@ -33,12 +33,12 @@ function onCallback1( socket, iTarget )
 	if( !iTarget.GetTag( "QuestItem" ))
 	{
 		// Notify collection
-		TriggerEvent( 5800, "onItemCollected", pUser, iTarget, false ); // Toggle on
+		TriggerEvent( 5800, "ItemCollected", pUser, iTarget, false ); // Toggle on
 	}
 	else
 	{
 		// Notify uncollection
-		TriggerEvent( 5800, "onItemCollected", pUser, iTarget, true ); // Toggle off
+		TriggerEvent( 5800, "ItemCollected", pUser, iTarget, true ); // Toggle off
 	}
 
 	//repeat the targetting

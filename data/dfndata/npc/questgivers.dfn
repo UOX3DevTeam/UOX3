@@ -31,7 +31,6 @@ STR=100 100
 DEX=100 100
 INT=25 25
 SCRIPT=5802//questconversation.js
-SCRIPT=3001//speech_monster.js
 CUSTOMINTTAG=QuestID 1//More ore Please
 }
 

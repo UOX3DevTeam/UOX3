@@ -1,18 +1,7 @@
 // Script attached to quest items
 function onEquipAttempt( pEquipper, iEquipped )
 {
-	var pSock = pEquipper.socket;
-	if( iEquipped.GetTag( "QuestItem" ))
-	{
-		pSock.SysMessage( GetDictionaryEntry( 19630, pSock.language )); // This item cannot be equipped as it is a quest item.
-		//iEquipped.SetTag( "QuestItem", null );
-		//iEquipped.RemoveScriptTrigger( 5810 );
-		//var questItemColor = iEquipped.GetTag( "saveColor" );
-		//iEquipped.color = questItemColor;
-		//pSock.SysMessage( "You removed Quest Item status from the item." );
-		return false; // Prevent equipping
-	}
-	return true;
+	TriggerEvent( 5800, "EquipAttempt", pEquipper, iEquipped );
 }
 
 function onDrop( iDropped, pDropper )
