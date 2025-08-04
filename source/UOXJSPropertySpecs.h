@@ -417,6 +417,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "orgID",			CCP_ORGID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "orgSkin",		CCP_ORGSKIN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isAnimal",		CCP_ISANIMAL,		JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "isPackAnimal",	CCP_ISPACKANIMAL,	JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "isHuman",		CCP_ISHUMAN,		JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "isShop",			CCP_ISSHOP,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "maxLoyalty",		CCP_MAXLOYALTY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
