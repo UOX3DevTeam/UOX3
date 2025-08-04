@@ -44,9 +44,7 @@
 #ifndef jsexn_h___
 #define jsexn_h___
 
-JS_BEGIN_EXTERN_C
-
-extern JSClass js_ErrorClass;
+extern js::Class js_ErrorClass;
 
 /*
  * Initialize the exception constructor/prototype hierarchy.
@@ -60,10 +58,11 @@ js_InitExceptionClasses(JSContext *cx, JSObject *obj);
  * set it as the pending exception, and set the JSREPORT_EXCEPTION flag on the
  * error report.  Exception-aware host error reporters should probably ignore
  * error reports so flagged.  Returns JS_TRUE if an associated exception is
- * found and set, JS_FALSE otherwise..
+ * found and set, JS_FALSE otherwise.
  */
 extern JSBool
-js_ErrorToException(JSContext *cx, const char *message, JSErrorReport *reportp);
+js_ErrorToException(JSContext *cx, const char *message, JSErrorReport *reportp,
+                    JSErrorCallback callback, void *userRef);
 
 /*
  * Called if a JS API call to js_Execute or js_InternalCall fails; calls the
@@ -90,7 +89,5 @@ js_ErrorFromException(JSContext *cx, jsval exn);
 extern const JSErrorFormatString *
 js_GetLocalizedErrorMessage(JSContext* cx, void *userRef, const char *locale,
                             const uintN errorNumber);
-
-JS_END_EXTERN_C
 
 #endif /* jsexn_h___ */

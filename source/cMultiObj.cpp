@@ -1095,7 +1095,7 @@ bool CMultiObj::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "BUILDTIME" )
 				{
-					time_t buildTime = static_cast<UI64>( std::stoll( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
+					time_t buildTime = static_cast<time_t>( std::stoll( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
 					if( buildTime > 0 )
 					{
 						SetBuildTimestamp( buildTime );
@@ -1223,7 +1223,7 @@ bool CMultiObj::HandleLine( std::string &UTag, std::string &data )
 			case 'T':
 				if( UTag == "TRADETIME" )
 				{
-					time_t tradeTime = static_cast<UI64>( std::stoll( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
+					time_t tradeTime = static_cast<time_t>( std::stoll( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
 					if( tradeTime > 0 )
 					{
 						SetTradeTimestamp( tradeTime );
