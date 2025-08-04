@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 19. July, 2025</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7</small></p>
+	<p style="margin:0"><small>Last Updated: 5. August, 2025</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.7b</small></p>
 </div>
 
 <div id="filterMainDocs" contenteditable="true" placeholder="(Search...)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px; margin-top: 5px;"></div>
@@ -5169,6 +5169,7 @@ packitem=0x0f8d,30
 							<li><strong>Linux</strong> (Debian-based) - Run <span class="hl">sudo apt install build-essential cmake</span> in a Terminal: (or use your Linux distro's package manager)</li>
 							<li><strong>FreeBSD</strong> - Run <span class="hl">pkg install cmake</span> in a Terminal. Alternatively, build cmake via ports if desired.</li>
 							<li><strong>macOS</strong> - Download <a href="https://apps.apple.com/us/app/xcode/id497799835?mt=12" title="XCode" target="_blank">Xcode</a> (for building with an IDE) via the App Store, and/or <a href="https://cmake.org/download/" title="CMake" target="_blank">CMake</a> (for command-line builds)</li>
+							<li><strong>Docker/Podman</strong> - Ensure that it is downloaded and installed (Windows) or installed from your package manager</li>
 					</div>
 					<input type="checkbox" id="spoiler_install_git">
 					<label for="spoiler_install_git">Install <strong>Git</strong> <i class="fas fa-angle-down"></i></label>
@@ -5180,7 +5181,7 @@ packitem=0x0f8d,30
 					</div>
 
 					<h4>Step 2: Clone the UOX3 Git Repository</h4>
-					<em>Next up, clone the UOX3 git repository, which also includes the latest verified compatible version of SpiderMonkey (v1.8.0-RC1) and a minimal set of files required to compile zlib-1.2.11.</em>
+					<em>Next up, clone the UOX3 git repository, which also includes the latest verified compatible version of SpiderMonkey (v1.8.5) and a minimal set of files required to compile zlib-1.2.11.</em>
 					<input type="checkbox" id="spoiler_clone_with_github_desktop">
 					<label for="spoiler_clone_with_github_desktop">Using <strong>GitHub Desktop (Windows/macOS) </strong> <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -5205,10 +5206,10 @@ packitem=0x0f8d,30
 					<h4>Step 3: Compile UOX3</h4>
 					<em>Finally, compile UOX3 using the build environment you setup in Step 1.</em>
 					<input type="checkbox" id="spoiler_compile_with_vs2022_xcode_automake">
-					<label for="spoiler_compile_with_vs2022_xcode_automake"><strong>Visual Studio 2022</strong> (Windows), <strong>automake.sh</strong> (Linux/FreeBSD), <strong>XCode</strong> (macOS) <i class="fas fa-angle-down"></i></label>
+					<label for="spoiler_compile_with_vs2022_xcode_automake"><strong>Visual Studio 2017/2022</strong> (Windows), <strong>automake.sh</strong> (Linux/FreeBSD), <strong>XCode</strong> (macOS) <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 					<ul style="margin-left: 15px">
-						<li><strong>Visual Studio 2022</strong> - (Windows) Open <em>UOX3\make\VS2022\uox3.sln</em> (VS2022), choose Release/Debug from dropdown menu, and hit Build -> Build UOX3</li>
+						<li><strong>Visual Studio 2017/2022</strong> - (Windows) Open <em>UOX3\make\VS20XX\uox3.sln</em>, choose Release/Debug from dropdown menu, and hit Build -> Build UOX3</li>
 						<li><strong>automake.sh</strong> - (Linux/FreeBSD) Run <span class="hl">./automake.sh</span> in a Terminal, from the root of the cloned UOX3 repository. This compiles UOX3 with CMake, but in one command only. Use optional argument <span class="hl">-b debug</span> to create debug build, and/or <span class="hl">-o clean</span> to do a clean build.</li>
 						<li><strong>XCode</strong> - (macOS) Open <em>UOX3/make/XCode/uox3/uox3.xcworkspace</em>, select Build</li>
 					</ul>
@@ -5259,37 +5260,10 @@ packitem=0x0f8d,30
 						</div>
 					</div>
 
-					<input type="checkbox" id="spoiler_compile_with_vs2017">
-					<label for="spoiler_compile_with_vs2017"><strong>Visual Studio 2017</strong> (Windows) <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p>When using VS2017, static libraries of the dependency projects (SpiderMonkey and zlib) need to be compiled prior to the UOX3 project. However, after those sub-projects have been compiled once, they never need to be compiled again, and from that point on only the build instructions for UOX3 itself applies:</p>
-
-						<h4>SpiderMonkey</h4>
-						<ol style="margin-left: 15px">
-							<li>Navigate to the <em>UOX3\spidermonkey\make\VS2017\jscript</em> folder and open <strong>jscript.sln</strong> in VS2017.</li>
-							<li>Make sure you have <strong>jscript</strong> selected in the Solution Explorer, then select <strong>Release</strong> and <strong>x64</strong> (64-bit) in the Solution Configuration/Platform dropdown menus</li>
-							<li>Click <strong>Build > Build jscript</strong> from the menu.</li>
-							<li>Visual Studio will compile SpiderMonkey and create a <em>spidermonkey\make\VS2017\jscript\x64\Release</em> (64-bit) folder with the compiled <strong>jscript.lib</strong> library file contained within. No further actions are necessary here, so you can close the SpiderMonkey VS Solution.</li>
-						</ol>
-						<h4>zlib</h4>
-						<ol style="margin-left: 15px">
-							<li>Navigate to the <em>UOX3\zlib\make\VS2017</em> folder and open <strong>zlib.sln</strong> in VS2017.</li>
-							<li>Select <strong>Release</strong> and <strong>x64</strong> (64-bit) in the Solution Configuration/Platform dropdown menus</li>
-							<li>Click <strong>Build > Build zlib-static</strong> from the menu.</li>
-							<li>Visual Studio will compile zlib and create a <em>zlib\x64\Release</em> (64-bit) folder with the compiled <strong>zlib-static.lib</strong> library file contained within. No further actions are necessary here, so you can close the zlib VS Solution.</li>
-						</ol>
-						<h4>UOX3</h4>
-						<ol style="margin-left: 15px">
-							<li>Navigate to the <em>UOX3\make\VS2017</em> folder and open <strong>uox3.sln</strong> in VS2017.</li>
-							<li>Make sure you have <strong>UOX3</strong> selected in the Solution Explorer, then select <strong>Release</strong> and <strong>x64</strong> (64-bit) in the Solution Configuration/Platform dropdown menus, or via Build -> Configuration Manager.</li>
-							<li>Select <strong>Build -> Build UOX3</strong> to start compiling UOX3. When done, you'll find <strong>UOX3.exe</strong> in <em>UOX3\make\VS2017\Release\x64</em>.</li>
-						</ol>
-					</div>
-
 					<h4>UOX3 Compiled! Now what?</h4>
 					<p><em>Once done compiling, you can copy the compiled UOX3 binary/executable to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory. Where you'll find the compiled UOX3 binary/executable depends on your platform and build method. Examples:</em></p>
 					<ul style="margin-left: 15px">
-						<li><strong>Windows</strong> - (VS2022) Compiled UOX3.exe can be found in <strong>UOX3/make/VS2022/x64/Release</strong></li>
+						<li><strong>Windows</strong> - (VS2017/VS2022) Compiled UOX3.exe can be found in <strong>UOX3/make/VS20XX/x64/Release</strong></li>
 						<li><strong>Linux/FreeBSD</strong> - (automake.sh) Compiled uox3 binary can be found in <strong>root UOX3 repository</strong></li>
 						<li><strong>macOS</strong> - (XCode) Compiled uox3 binary can be found in <strong>UOX3\make\XCode\Build\Products\Release</strong></li>
 						<li><strong>Either Platform</strong> - (CMake, manual) Compiled uox3 binary can be found in <strong>UOX3\make\cmake\build</strong>
@@ -9160,7 +9134,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 				<a class="cd-faq__trigger" href="#jsIntro" id="jsIntro"><span>Introduction to JS Engine in UOX3</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>UOX3's scripting engine is based on an embedded C++ implementation of JavaScript called <strong>SpiderMonkey</strong> (<a href="https://udn.realityripple.com/docs/Mozilla/Projects/SpiderMonkey/Releases/1.8" target="_blank" title="SpiderMonkey 1.8.0-RC1 Change Log">v1.8.0</a>). It allows UOX3 to load, read and interpret JavaScript files containing JS events, methods, functions, objects and properties written specifically for UOX3 in order to expose the inner workings of the server to prospective shard admins and script writers.</p>
+					<p>UOX3's scripting engine is based on an embedded C++ implementation of JavaScript called <strong>SpiderMonkey</strong> (<a href="https://udn.realityripple.com/docs/Mozilla/Projects/SpiderMonkey/Releases/1.8.5" target="_blank" title="SpiderMonkey 1.8.5 Release Notes">v1.8.5</a>). It allows UOX3 to load, read and interpret JavaScript files containing JS events, methods, functions, objects and properties written specifically for UOX3 in order to expose the inner workings of the server to prospective shard admins and script writers.</p>
 					<p>UOX3's JavaScripts can be reloaded dynamically without restarting the server, making it very easy to iterate on new features or modify existing ones.</p>
 					<p>Example of a simple JavaScript in UOX3, used with the Dice and Cup object to allow players to roll a dice and have the number displayed for others to see:<br>
 <pre><code class="language-javascript">// The onUseChecked event triggers when the player double-clicks an item
@@ -9257,7 +9231,7 @@ function commandTitle()
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<p>The <a href="jsdocs.html">UOX3 JSE Documentation</a> covers all the UOX3-specific events, triggers, methods, functions and properties available to script writers. You can also find some tutorials and/or tips for achieving specific things with UOX3's scripting engine in this document!</p>
-					<p>UOX3 contains an embedded scripting engine based on <a href="https://udn.realityripple.com/docs/Mozilla/Projects/SpiderMonkey/Releases/1.8" target="_blank" title="SpiderMonkey 1.8.0-RC1 Change Log">SpiderMonkey v1.8.0-RC1</a>, which offers an equivalent JavaScript feature set to <a href="https://web.archive.org/web/20120612114822/https://developer.mozilla.org/en/New_in_JavaScript_1.8" target="_blank" title="developer.mozilla.com - New in JavaScript 1.8">JavaScript 1.8</a>, though certain features (especially browser-specific ones) might not be fully supported.</p>
+					<p>UOX3 contains an embedded scripting engine based on <a href="https://udn.realityripple.com/docs/Mozilla/Projects/SpiderMonkey/Releases/1.8.5" target="_blank" title="SpiderMonkey 1.8.5 Release Notes">SpiderMonkey v1.8.5</a>, which offers an equivalent JavaScript feature set to <a href="https://udn.realityripple.com/docs/Archive/Web/JavaScript/New_in_JavaScript/1.8.5" target="_blank" title="New in JavaScript 1.8.5">JavaScript 1.8</a>, though certain features (especially browser-specific ones) might not be fully supported.</p>
 					<p>For additional help with or discussion around any of these, don't hesitate to make use of the <a href="https://www.uox3.org/forums/" target="_blank" title="UOX3 Community Forums">UOX3.org forums</a> or the <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 Discord chat</a>!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
