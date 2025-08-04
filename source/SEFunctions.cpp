@@ -5611,25 +5611,25 @@ JSBool SE_GetServerSetting( JSContext *cx, uintN argc, jsval *vp )
 				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PetBondingEnabled() ) );
 				break;
 			case 383:	// HOUSEITEMSDELETEONDECAY
-				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseItemsDeleteOnDecay() );
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseItemsDeleteOnDecay() ) );
 				break;
 			case 384:	// HOUSEGRANDFATHERSYSTEM
-				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseGrandFatheredSystem() );
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseGrandFatheredSystem() ) );
 				break;
 			case 385:	// DECAYSTAGELIKENEWMINS
-				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageLikeNewMins() ));
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageLikeNewMins() ) ) );
 				break;
 			case 386:	// DECAYSTAGELOWHRS
-				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageLowHrs() ));
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageLowHrs() ) ) );
 				break;
 			case 387:	// DECAYSTAGEHIHRS
-				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageHiHrs() ));
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageHiHrs() ) ) );
 				break;
 			case 388:	// DECAYSTAGEDANGERHRS
-				*rval = INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageDangerHrs() ));
+				JS_SET_RVAL( cx, vp, INT_TO_JSVAL( static_cast<UI32>( cwmWorldState->ServerData()->DecayStageDangerHrs() ) ) );
 				break;
 			case 389:	// HOUSEDECAY
-				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseDecay() );
+				JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HouseDecay() ) );
 				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
