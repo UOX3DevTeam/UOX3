@@ -9,6 +9,7 @@
 #include "CJSEngine.h"
 #include "StringUtility.hpp"
 #include "osunique.hpp"
+#include <algorithm>
 #ifndef va_start
 #include <cstdarg>
 #endif
@@ -978,6 +979,30 @@ CGuild *CGuildCollection::operator[]( GUILDID num )
 	return Guild( num );
 }
 
+GUILDID CGuildCollection::FindGuildId( const CGuild* targetGuild )
+{
+    if( targetGuild == nullptr )
+    {
+        return -1;
+    }
+
+    // Use std::find_if to search the map
+    auto it = std::find_if( gList.begin(), gList.end(),
+                           [targetGuild]( const auto& pair ) {
+                               return pair.second == targetGuild;
+                           });
+
+    // Check if find_if found an element
+    if( it != gList.end() )
+    {
+        return it->first; // Return the key (GUILDID)
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuildCollection::Save()
 //o------------------------------------------------------------------------------------------------o
@@ -1158,7 +1183,14 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			if( mChar->GetSerial() == gMaster || mChar->IsGM() )	// Guildmaster Access?
 			{
 				++numButtons;
-				toSend.addText( oldstrutil::format( Dictionary->GetEntry( 113, sLang ), gMstr->GetGuildTitle().c_str() ));
+				if( ValidateObject( gMstr))
+				{
+					toSend.addText( oldstrutil::format( Dictionary->GetEntry( 113, sLang ), gMstr->GetGuildTitle().c_str() ));
+				}
+				else
+				{
+					toSend.addText( oldstrutil::format( Dictionary->GetEntry( 17622, sLang ), gMstr->GetGuildTitle().c_str() )); // This guild has no Guild Master.
+				}
 			}
 			break;
 		case BasePage + 2:	numButtons = 16;		// Guildmaster menu
