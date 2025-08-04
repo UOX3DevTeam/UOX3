@@ -1288,6 +1288,35 @@ SI08 cScript::OnQuestGump( CChar *mChar )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnGuildButton()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for character who activate Guild button in paperdoll
+//|					Return true to prevent additional onGuildButton events from triggering
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnGuildButton( CChar *mChar )
+{
+	if( !ValidateObject( mChar ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnGuildButton, "onGuildButton" ))
+		return RV_NOFUNC;
+
+	jsval rval, params[1];
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	JSBool retVal = InvokeEvent( "onGuildButton", 1, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnGuildButton, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnHelpButton()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character who activate Help button in paperdoll

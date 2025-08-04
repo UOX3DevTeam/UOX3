@@ -9394,29 +9394,6 @@ myNPC.CastSpell( 30, true );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_char_CheckGuild"/>
-							<label for="spoiler_method_char_CheckGuild">CheckGuild <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>bool CheckGuild();</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>Returns true if the character is currently a member of any guild.</p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-<pre><code class="language-javascript">if( pUser.CheckGuild() )
-{
-	pUser.SysMessage("You are already in a guild.");
-	return;
-}</code></pre>
-								</div>
-							</div>
-						</div>
-
-						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_char_CheckPermaGreyFlag"/>
 							<label for="spoiler_method_char_CheckPermaGreyFlag">CheckPermaGreyFlag <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -11691,14 +11668,13 @@ if( myGuild.IsAtPeace() )
 							</div>
 						</div>
 
-						<!-- NewMember -->
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_guild_NewMember"/>
-							<label for="spoiler_method_guild_NewMember">NewMember <i class="fas fa-angle-down"></i></label>
+							<input type="checkbox" id="spoiler_method_guild_AddMember"/>
+							<label for="spoiler_method_guild_AddMember">AddMember <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void NewMember( [trgChar] );</em></p>
+									<p><em>void AddMember( trgChar );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -11706,24 +11682,28 @@ if( myGuild.IsAtPeace() )
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>If no character is provided, the parent object will be used (expected to be a CChar).</p>
+									<p>N/A</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-<pre><code class="language-javascript">var myGuild = myChar.guild;
-myGuild.NewMember( pChar );</code></pre>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	// Add pChar as a member in myChar's guild
+	myGuild.AddMember( pChar );
+}</code></pre>
 								</div>
 							</div>
 						</div>
 
-						<!-- NewRecruit -->
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_guild_NewRecruit"/>
-							<label for="spoiler_method_guild_NewRecruit">NewRecruit <i class="fas fa-angle-down"></i></label>
+							<input type="checkbox" id="spoiler_method_guild_AddRecruit"/>
+							<label for="spoiler_method_guild_AddRecruit">AddRecruit <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void NewRecruit( [trgChar] );</em></p>
+									<p><em>void AddRecruit( trgChar );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -11731,24 +11711,28 @@ myGuild.NewMember( pChar );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>If no character is provided, the parent object will be used (expected to be a CChar).</p>
+									<p>N/A</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-<pre><code class="language-javascript">var myGuild = myChar.guild;
-myGuild.NewRecruit( pChar );</code></pre>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	// Add pChar as recruit in myChar's guild
+	myGuild.AddRecruit( pChar );
+}</code></pre>
 								</div>
 							</div>
 						</div>
 
-						<!-- RemoveRecruit -->
 						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_guild_RemoveRecruit"/>
 							<label for="spoiler_method_guild_RemoveRecruit">RemoveRecruit <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void RemoveRecruit( [trgChar] );</em></p>
+									<p><em>void RemoveRecruit( trgChar );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -11756,12 +11740,17 @@ myGuild.NewRecruit( pChar );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>If no character is provided, the parent object will be used (expected to be a CChar).</p>
+									<p>N/A</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-<pre><code class="language-javascript">var myGuild = myChar.guild;
-myGuild.RemoveRecruit( pChar );</code></pre>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	// Remove myChar as recruit of guild
+	myGuild.RemoveRecruit( myChar );
+}</code></pre>
 								</div>
 							</div>
 						</div>
@@ -11773,7 +11762,7 @@ myGuild.RemoveRecruit( pChar );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void RemoveMember( [trgChar] );</em></p>
+									<p><em>void RemoveMember( trgChar );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -11781,24 +11770,28 @@ myGuild.RemoveRecruit( pChar );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>If no character is provided, the parent object will be used (expected to be a CChar).</p>
+									<p>N?A</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-<pre><code class="language-javascript">var myGuild = myChar.guild;
-myGuild.RemoveMember( pChar );</code></pre>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	// Remove myChar as member of guild
+	myGuild.RemoveMember( myChar );
+}</code></pre>
 								</div>
 							</div>
 						</div>
 
-						<!-- RecruitToMember -->
 						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_guild_RecruitToMember"/>
 							<label for="spoiler_method_guild_RecruitToMember">RecruitToMember <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void RecruitToMember( [trgChar] );</em></p>
+									<p><em>void RecruitToMember( trgChar );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -11806,24 +11799,28 @@ myGuild.RemoveMember( pChar );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>If no character is provided, the parent object will be used (expected to be a CChar).</p>
+									<p>N/A</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-<pre><code class="language-javascript">var myGuild = myChar.guild;
-myGuild.RecruitToMember( pChar );</code></pre>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	// Promote myChar from recruit to member
+	myGuild.RecruitToMember( myChar );
+}</code></pre>
 								</div>
 							</div>
 						</div>
 
-						<!-- GuildIsAtWar -->
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_guild_GuildIsAtWar"/>
-							<label for="spoiler_method_guild_GuildIsAtWar">GuildIsAtWar <i class="fas fa-angle-down"></i></label>
+							<input type="checkbox" id="spoiler_method_guild_IsAtWar"/>
+							<label for="spoiler_method_guild_IsAtWar">IsAtWar <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>bool GuildIsAtWar( targetGuild );</em></p>
+									<p><em>bool IsAtWar( targetGuild );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -11835,20 +11832,26 @@ myGuild.RecruitToMember( pChar );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-<pre><code class="language-javascript">if( myGuild.GuildIsAtWar( targetGuild ) )
-	myChar.SysMessage("You're at war!");</code></pre>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	if( myGuild.IsAtWar( targetGuild ))
+	{
+		myChar.SysMessage( "Your guilds are at war!" );
+	}
+}</code></pre>
 								</div>
 							</div>
 						</div>
 
-						<!-- GuildIsAlly -->
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_guild_GuildIsAlly"/>
-							<label for="spoiler_method_guild_GuildIsAlly">GuildIsAlly <i class="fas fa-angle-down"></i></label>
+							<input type="checkbox" id="spoiler_method_guild_IsAlly"/>
+							<label for="spoiler_method_guild_IsAlly">IsAlly <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>bool GuildIsAlly( targetGuild );</em></p>
+									<p><em>bool IsAlly( targetGuild );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -11860,20 +11863,26 @@ myGuild.RecruitToMember( pChar );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-<pre><code class="language-javascript">if( myGuild.GuildIsAlly( targetGuild ) )
-	myChar.SysMessage("They are allies.");</code></pre>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	if( myGuild.IsAlly( targetGuild ))
+	{
+		myChar.SysMessage( "Your guilds are allies!" );
+	}
+}</code></pre>
 								</div>
 							</div>
 						</div>
 
-						<!-- GuildIsNeutral -->
 						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_guild_GuildIsNeutral"/>
-							<label for="spoiler_method_guild_GuildIsNeutral">GuildIsNeutral <i class="fas fa-angle-down"></i></label>
+							<input type="checkbox" id="spoiler_method_guild_IsNeutral"/>
+							<label for="spoiler_method_guild_IsNeutral">IsNeutral <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>bool GuildIsNeutral( targetGuild );</em></p>
+									<p><em>bool IsNeutral( targetGuild );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -11885,8 +11894,15 @@ myGuild.RecruitToMember( pChar );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-<pre><code class="language-javascript">if( myGuild.GuildIsNeutral( targetGuild ) )
-	myChar.SysMessage("Neutral standing.");</code></pre>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	if( myGuild.IsNeutral( targetGuild ))
+	{
+		myChar.SysMessage( "Your guilds have a neutral standing." );
+	}
+}</code></pre>
 								</div>
 							</div>
 						</div>

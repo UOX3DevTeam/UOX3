@@ -1183,7 +1183,14 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			if( mChar->GetSerial() == gMaster || mChar->IsGM() )	// Guildmaster Access?
 			{
 				++numButtons;
-				toSend.addText( oldstrutil::format( Dictionary->GetEntry( 113, sLang ), gMstr->GetGuildTitle().c_str() ));
+				if( ValidateObject( gMstr))
+				{
+					toSend.addText( oldstrutil::format( Dictionary->GetEntry( 113, sLang ), gMstr->GetGuildTitle().c_str() ));
+				}
+				else
+				{
+					toSend.addText( oldstrutil::format( Dictionary->GetEntry( 17622, sLang ), gMstr->GetGuildTitle().c_str() )); // This guild has no Guild Master.
+				}
 			}
 			break;
 		case BasePage + 2:	numButtons = 16;		// Guildmaster menu

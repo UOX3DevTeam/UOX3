@@ -1843,26 +1843,17 @@ JSBool SE_CreateNewGuild( JSContext* cx, uintN argc, jsval* vp )
 	if( jsThis == nullptr )
 		return JS_FALSE;
 
-	CChar* myChar = static_cast<CChar*>(JS_GetPrivate(cx, jsThis));
-	if( myChar == nullptr )
-	{
-		ScriptError(cx, "(CreateNewGuild) Invalid character context");
-		JS_SET_RVAL(cx, vp, JSVAL_NULL);
-		return JS_TRUE;
-	}
-
 	GUILDID tempGuildId = GuildSys->NewGuild();
-	CGuild* newGuild = GuildSys->Guild(tempGuildId);
+	CGuild* newGuild = GuildSys->Guild( tempGuildId );
 
 	if( newGuild != nullptr )
 	{
-		myChar->SetGuildNumber(tempGuildId);
-		JSObject* jsGuildObj = JSEngine->AcquireObject(IUE_GUILD, newGuild, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
-		JS_SET_RVAL(cx, vp, OBJECT_TO_JSVAL(jsGuildObj));
+		JSObject* jsGuildObj = JSEngine->AcquireObject( IUE_GUILD, newGuild, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsGuildObj ));
 	}
 	else
 	{
-		JS_SET_RVAL(cx, vp, JSVAL_NULL);
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
 	}
 
 	return JS_TRUE;
