@@ -3336,7 +3336,16 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 		outStream << "MAXSTAM=" + std::to_string( maxStam ) + newLine;
 	}
 	outStream << "Town=" + std::to_string( GetTown() ) + newLine;
-	outStream << "SummonTimer=" + std::to_string( GetTimer( tNPC_SUMMONTIME )) + newLine;
+	TIMERVAL sTime = GetTimer( tNPC_SUMMONTIME );
+	outStream << "SummonTimer=";
+	if( sTime == 0 || sTime < cwmWorldState->GetUICurrentTime() )
+	{
+		outStream << std::to_string( 0 ) + newLine;
+	}
+	else
+	{
+		outStream << std::to_string( sTime - cwmWorldState->GetUICurrentTime() ) + newLine;
+	}
 	outStream << "MayLevitate=" + std::to_string(( MayLevitate() ? 1 : 0 )) + newLine;
 	outStream << "Stealth=" + std::to_string( GetStealth() ) + newLine;
 	outStream << "Reserved=" + std::to_string( GetCell() ) + newLine;
@@ -4785,7 +4794,8 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "MURDERTIMER" )
 				{
-					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					auto murderDecayTime = static_cast<TIMERVAL>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
+					SetTimer( tCHAR_MURDERRATE, murderDecayTime > 0 ? murderDecayTime + cwmWorldState->GetUICurrentTime() : 0 );
 					rValue = true;
 				}
 				else if( UTag == "MAXHP" )
@@ -4846,7 +4856,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "NPCGUILDJOINED" )
 				{
-					SetNPCGuildJoined( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					SetNPCGuildJoined( static_cast<UI64>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -4920,7 +4930,8 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "PEACETIMER" )
 				{
-					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					auto peaceTimer = static_cast<TIMERVAL>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
+					SetTimer( tCHAR_PEACETIMER, peaceTimer > 0 ? peaceTimer + cwmWorldState->GetUICurrentTime() : 0 );
 					rValue = true;
 				}
 				else if( UTag == "PLAYTIME" )
@@ -5009,7 +5020,8 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "SUMMONTIMER" )
 				{
-					SetTimer( tNPC_SUMMONTIME, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					auto summonTimer = static_cast<TIMERVAL>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
+					SetTimer( tNPC_SUMMONTIME, summonTimer > 0 ? summonTimer + cwmWorldState->GetUICurrentTime() : 0 );
 					rValue = true;
 				}
 				else if( UTag == "SAY" )
