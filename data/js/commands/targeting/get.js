@@ -531,6 +531,22 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "FOLLOWERCOUNT":
 		socket.SysMessage( ourChar.followerCount );
 		break;
+	case "GUILD":
+		{
+			let ourGuild = ourChar.guild;
+			if( ourGuild != null )
+			{
+				socket.SysMessage( ourChar.guild.name );
+			}
+			else
+			{
+				socket.SysMessage( "Character does not currently belong in a guild." );
+			}
+		}
+		break;
+	case "GUILDNUMBER":
+		socket.SysMessage( ourChar.guildNumber );
+		break;
 	case "MAXLOYALTY":
 		socket.SysMessage( ourChar.maxLoyalty );
 		break;
