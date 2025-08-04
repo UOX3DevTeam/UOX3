@@ -1098,7 +1098,7 @@ SI08 cScript::onQuestToggle( CChar* toggler, CItem *iUsing )
     params[0] = OBJECT_TO_JSVAL( togglerObj );
     params[1] = OBJECT_TO_JSVAL( itemObj );
 
-    JSBool retVal = JS_CallFunctionName( targContext, targObject, "onQuestToggle", 2, params, &rval );
+	JSBool retVal = InvokeEvent( "onQuestToggle", 2, params, &rval );
     if( retVal == JS_FALSE )
     {
         SetEventExists( seOnQuestToggle, false );

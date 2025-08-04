@@ -9284,7 +9284,8 @@ void CPPopupMenu::CopyData( CBaseObject& toCopy, CSocket &tSock )
 			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
 		}
 	}
-
+	
+	// Toggle Quest Item On/Off
 	if( toCopyChar->GetQuestType() != QT_ESCORTQUEST && (( toCopy.GetSerial() == tSock.CurrcharObj()->GetSerial() 
 		|| toCopy.GetId() == 0x0123 || toCopy.GetId() == 0x0124 || toCopy.GetId() == 0x0317 ) && ValidateObject( toCopyChar->GetPackItem() )))
 	{

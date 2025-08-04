@@ -5413,7 +5413,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			}
 			break;
 		case 0x010A:	// Quest Toggle
-			if( mChar->GetCommandLevel() >= CL_CNS || cwmWorldState->creatures[targChar->GetId()].IsHuman())	// Only Humans
+			if( mChar->GetCommandLevel() >= CL_ADMIN || cwmWorldState->creatures[targChar->GetId()].IsHuman())	// Only Humans
 			{
 				if( mChar->IsDead() )
 				{
