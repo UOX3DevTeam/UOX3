@@ -1832,6 +1832,34 @@ JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_CreateNewGuild()
+//|	Prototype	-	object CreateNewGuild()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a new guild, assigns it to the calling character, and returns the guild object
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_CreateNewGuild( JSContext* cx, uintN argc, jsval* vp )
+{
+	JSObject* jsThis = JS_THIS_OBJECT( cx, vp );
+	if( jsThis == nullptr )
+		return JS_FALSE;
+
+	GUILDID tempGuildId = GuildSys->NewGuild();
+	CGuild* newGuild = GuildSys->Guild( tempGuildId );
+
+	if( newGuild != nullptr )
+	{
+		JSObject* jsGuildObj = JSEngine->AcquireObject( IUE_GUILD, newGuild, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		JS_SET_RVAL( cx, vp, OBJECT_TO_JSVAL( jsGuildObj ));
+	}
+	else
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_NULL );
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_PossessTown()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Source town takes control over target town

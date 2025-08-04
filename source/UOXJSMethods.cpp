@@ -4292,6 +4292,361 @@ JSBool CGuild_IsAtPeace( JSContext *cx, uintN argc, jsval *vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	AddMember()
+//|	Prototype	-	void AddMember( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds a character to the guild as a full member (removes from recruits if needed)
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_AddMember( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "AddMember: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+
+	// let's setup our default return value here
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "AddMember: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toAdd( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "AddGuildMember: Invalid character to add" );
+			return JS_FALSE;
+		}
+
+		myGuild->NewMember( *trgChar );
+		GUILDID guildId = GuildSys->FindGuildId( myGuild );
+		trgChar->SetGuildNumber( guildId );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CGuild_AddRecruit()
+//|	Prototype	-	void AddRecruit( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds a character to the guild as a recruit (removes from member list if needed)
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_AddRecruit( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "AddRecruit: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+
+	// let's setup our default return value here
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "AddRecruit: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toAdd( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "AddRecruit: Invalid character to add" );
+			return JS_FALSE;
+		}
+
+		myGuild->NewRecruit( *trgChar );
+		GUILDID guildId = GuildSys->FindGuildId( myGuild );
+		trgChar->SetGuildNumber( guildId );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CGuild_RemoveRecruit()
+//|	Prototype	-	void RemoveRecruit( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes a character from the guild's recruit list
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_RemoveRecruit( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "RemoveRecruit: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+
+	// let's setup our default return value here
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "RemoveRecruit: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toAdd( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "RemoveRecruit: Invalid character to add" );
+			return JS_FALSE;
+		}
+
+		myGuild->RemoveRecruit( *trgChar );
+		trgChar->SetGuildNumber( -1 );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CGuild_RemoveMember()
+//|	Prototype	-	void RemoveMember( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes a character from the guild's member list
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_RemoveMember( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "RemoveMember: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+
+	// let's setup our default return value here
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "RemoveMember: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toAdd( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "RemoveMember: Invalid character to add" );
+			return JS_FALSE;
+		}
+
+		myGuild->RemoveMember( *trgChar );
+		trgChar->SetGuildNumber( -1 );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CGuild_RecruitToMember()
+//|	Prototype	-	void RecruitToMember( trgChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Moves a character from recruit list to member list in the guild
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_RecruitToMember( JSContext *cx, uintN argc, jsval *vp )
+{
+	jsval *argv = JS_ARGV( cx, vp );
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	if( argc != 1 )
+	{
+		ScriptError( cx, "RecruitToMember: Invalid number of arguments (requires 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+
+	// let's setup our default return value here
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( false ) );
+
+	if( myClass.ClassName() == "UOXGuild" )
+	{
+		CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+		if( myGuild == nullptr )
+		{
+			ScriptError( cx, "RecruitToMember: Invalid guild" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toAdd( cx, &( argv[0] ));
+		CChar *trgChar = static_cast<CChar *>( toAdd.toObject() );
+		if( !ValidateObject( trgChar ))
+		{
+			ScriptError( cx, "RecruitToMember: Invalid character to add" );
+			return JS_FALSE;
+		}
+
+		myGuild->RecruitToMember( *trgChar );
+		JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( true ));
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CGuild_IsAtWar()
+//|	Prototype	-	bool IsAtWar( targetGuild )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if this guild considers the target guild to be an enemy (at war)
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_IsAtWar( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "IsAtWar: Invalid Parameter Count: %d", argc );
+		return JS_FALSE;
+	}
+
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CGuild* myGuild = static_cast<CGuild*>(JS_GetPrivate( cx, obj ));
+	if( myGuild == nullptr )
+	{
+		ScriptError(cx, "IsAtWar: Invalid Object assigned");
+		return JS_FALSE;
+	}
+
+	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* otherObj = JSVAL_TO_OBJECT( argv[0] );
+	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
+	if( otherGuild == nullptr )
+	{
+		ScriptError( cx, "IsAtWar: Invalid target Guild object" );
+		return JS_FALSE;
+	}
+
+	GUILDID otherID = GuildSys->FindGuildId( otherGuild ); // Assuming Guilds is your CGuildCollection instance
+	if( otherID == -1 )
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+
+	bool result = myGuild->IsAtWar( otherID );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	 CGuild_IsAlly()
+//| Prototype	-	 bool IsAlly( targetGuild )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	 Checks if this guild considers the target guild an ally
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_IsAlly( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "IsAlly: Invalid Parameter Count: %d", argc );
+		return JS_FALSE;
+	}
+
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+	if( myGuild == nullptr )
+	{
+		ScriptError( cx, "IsAlly: Invalid Guild object" );
+		return JS_FALSE;
+	}
+
+	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* otherObj = JSVAL_TO_OBJECT( argv[0] );
+	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
+	if( otherGuild == nullptr )
+	{
+		ScriptError( cx, "IsAlly: Invalid target Guild object" );
+		return JS_FALSE;
+	}
+
+	GUILDID otherID = GuildSys->FindGuildId( otherGuild );
+	if( otherID == -1 )
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+
+	bool result = myGuild->IsAlly( otherID );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	 CGuild_IsNeutral()
+//| Prototype	-	 bool IsNeutral( targetGuild )
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	 Checks if this guild considers the target guild neutral
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_IsNeutral( JSContext *cx, uintN argc, jsval *vp )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "IsNeutral: Invalid Parameter Count: %d", argc );
+		return JS_FALSE;
+	}
+
+	JSObject* obj = JS_THIS_OBJECT( cx, vp );
+	CGuild* myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+	if( myGuild == nullptr )
+	{
+		ScriptError( cx, "IsNeutral: Invalid Guild object" );
+		return JS_FALSE;
+	}
+
+	jsval* argv = JS_ARGV( cx, vp );
+	JSObject* otherObj = JSVAL_TO_OBJECT(argv[0] );
+	CGuild* otherGuild = static_cast<CGuild*>( JS_GetPrivate( cx, otherObj ));
+	if( otherGuild == nullptr )
+	{
+		ScriptError( cx, "IsNeutral: Invalid target Guild object" );
+		return JS_FALSE;
+	}
+
+	GUILDID otherID = GuildSys->FindGuildId( otherGuild );
+	if( otherID == -1 )
+	{
+		JS_SET_RVAL( cx, vp, JSVAL_FALSE );
+		return JS_TRUE;
+	}
+
+	bool result = myGuild->IsNeutral( otherID );
+	JS_SET_RVAL( cx, vp, BOOLEAN_TO_JSVAL( result ));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_ResourceCount()
 //|	Prototype	-	int ResourceCount( realId, colour )
 //|					int ResourceCount( realId, colour, moreVal )

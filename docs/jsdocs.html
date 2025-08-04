@@ -5842,6 +5842,39 @@ if( pUserGuild && pCharGuild && CompareGuildByGuild( pUserGuild, pCharGuild ) ==
 							</div>
 						</div>
 
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_guild_CreateNewGuild"/>
+							<label for="spoiler_function_guild_CreateNewGuild">CreateNewGuild <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>object CreateNewGuild();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Creates a new guild and assigns the calling character to it. Returns the JS Guild object.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										The character calling this function (via script) will automatically become a member of the new guild.<br/>
+										Use returned object to customize the guild's name, abbreviation, etc.
+									</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">var newGuild = CreateNewGuild();
+if( newGuild )
+{
+	newGuild.name = "The Taming Order";
+	newGuild.abbreviation = "TTO";
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+
+
 					</div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -11634,6 +11667,246 @@ if( myGuild.IsAtPeace() )
 								</div>
 							</div>
 						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_AddMember"/>
+							<label for="spoiler_method_guild_AddMember">AddMember <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void AddMember( trgChar );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Adds a character to the guild as a full member (removes from recruits if needed)</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>N/A</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	// Add pChar as a member in myChar's guild
+	myGuild.AddMember( pChar );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_AddRecruit"/>
+							<label for="spoiler_method_guild_AddRecruit">AddRecruit <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void AddRecruit( trgChar );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Adds a character to the guild as a recruit (removes from member list if needed)</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>N/A</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	// Add pChar as recruit in myChar's guild
+	myGuild.AddRecruit( pChar );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_RemoveRecruit"/>
+							<label for="spoiler_method_guild_RemoveRecruit">RemoveRecruit <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void RemoveRecruit( trgChar );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Removes a character from the guild's recruit list</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>N/A</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	// Remove myChar as recruit of guild
+	myGuild.RemoveRecruit( myChar );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<!-- RemoveMember -->
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_RemoveMember"/>
+							<label for="spoiler_method_guild_RemoveMember">RemoveMember <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void RemoveMember( trgChar );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Removes a character from the guild's member list</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>N?A</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	// Remove myChar as member of guild
+	myGuild.RemoveMember( myChar );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_RecruitToMember"/>
+							<label for="spoiler_method_guild_RecruitToMember">RecruitToMember <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void RecruitToMember( trgChar );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Moves a character from recruit list to member list in the guild</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>N/A</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	// Promote myChar from recruit to member
+	myGuild.RecruitToMember( myChar );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_IsAtWar"/>
+							<label for="spoiler_method_guild_IsAtWar">IsAtWar <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool IsAtWar( targetGuild );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks if this guild considers the target guild to be an enemy (at war)</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Returns true if the relation to the target guild is set to WAR.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	if( myGuild.IsAtWar( targetGuild ))
+	{
+		myChar.SysMessage( "Your guilds are at war!" );
+	}
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_IsAlly"/>
+							<label for="spoiler_method_guild_IsAlly">IsAlly <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool IsAlly( targetGuild );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks if this guild considers the target guild an ally</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Returns true if the relation to the target guild is set to ALLY.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	if( myGuild.IsAlly( targetGuild ))
+	{
+		myChar.SysMessage( "Your guilds are allies!" );
+	}
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_IsNeutral"/>
+							<label for="spoiler_method_guild_IsNeutral">IsNeutral <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool IsNeutral( targetGuild );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks if this guild considers the target guild neutral</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Returns true if the relation to the target guild is set to NEUTRAL.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+<pre><code class="language-javascript">// Fetch myChar's guild
+var myGuild = myChar.guild;
+if( myGuild != null )
+{
+	if( myGuild.IsNeutral( targetGuild ))
+	{
+		myChar.SysMessage( "Your guilds have a neutral standing." );
+	}
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
 
 					</div>
 				</div> <!-- cd-faq__content -->
