@@ -117,6 +117,7 @@ enum ScriptEvent
 	seOnCarveCorpse,
 	seOnDyeTarget,
 	seOnQuestGump,
+	seOnGuildButton,
 	seOnHelpButton,
 	seOnContextMenuRequest,
 	seOnContextMenuSelect,
@@ -283,6 +284,7 @@ public:
 	SI08		OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonId );
 	SI08		OnScrollingGumpPress( CSocket *tSock, UI16 gumpId, UI16 buttonId );
 	SI08		OnQuestGump( CChar *mChar );
+	SI08		OnGuildButton( CChar *mChar );
 	SI08		OnHelpButton( CChar *mChar );
 	SI08		OnContextMenuRequest( CSocket *tSock, CBaseObject *baseObj );
 	SI08		OnContextMenuSelect( CSocket *tSock, CBaseObject *baseObj, UI16 popupEntry );

@@ -209,6 +209,7 @@ enum CSpawnRegion_Properties
 enum CGuild_Properties
 {
 	CGP_NAME = 0,
+	CGP_ID,
 	CGP_TYPE,
 	CGP_MASTER,
 	CGP_STONE,
@@ -289,6 +290,7 @@ enum CC_Properties
 	CCP_REGION,
 	CCP_TOWN,
 	CCP_GUILD,
+	CCP_GUILDNUMBER,
 	CCP_SKILLUSE,
 	CCP_BASESKILLS,
 	CCP_SOCKET,

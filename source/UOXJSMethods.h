@@ -262,6 +262,14 @@ JSBool CSocket_Page( JSContext *cx, uintN argc, jsval *vp );
 // Guild Methods
 JSBool CGuild_AcceptRecruit( JSContext *cx, uintN argc, jsval *vp );
 JSBool CGuild_IsAtPeace( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_AddMember( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_AddRecruit( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_RemoveRecruit( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_RemoveMember( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_RecruitToMember( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_IsAtWar( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_IsAlly( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_IsNeutral( JSContext *cx, uintN argc, jsval *vp );
 
 // Misc
 JSBool CMisc_SoundEffect( JSContext *cx, uintN argc, jsval *vp );
@@ -652,6 +660,14 @@ inline JSFunctionSpec CGuild_Methods[] =
 {
 	{ "AcceptRecruit",		CGuild_AcceptRecruit,		1, 0 },
 	{ "IsAtPeace",			CGuild_IsAtPeace,			0, 0 },
+	{ "AddMember",			CGuild_AddMember,			1, 0 },
+	{ "AddRecruit",			CGuild_AddRecruit,			1, 0 },
+	{ "RemoveRecruit",		CGuild_RemoveRecruit,		1, 0 },
+	{ "RemoveMember",		CGuild_RemoveMember,		1, 0 },
+	{ "RecruitToMember",	CGuild_RecruitToMember,		1, 0 },
+	{ "IsAtWar",			CGuild_IsAtWar,				1, 0 },
+	{ "IsAlly",				CGuild_IsAlly,				1, 0 },
+	{ "IsNeutral",			CGuild_IsNeutral,			1, 0 },
 	JS_FS_END
 };
 

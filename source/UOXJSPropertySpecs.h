@@ -217,6 +217,7 @@ inline JSPropertySpec CSpawnRegionProperties[] =
 inline JSPropertySpec CGuildProperties[] =
 {
 	{ "name",			CGP_NAME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "id",				CGP_ID,				JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "type",			CGP_TYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "master",			CGP_MASTER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "stone",			CGP_STONE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -304,6 +305,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "region",			CCP_REGION,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "town",			CCP_TOWN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "guild",			CCP_GUILD,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "guildNumber",	CCP_GUILDNUMBER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "baseskills",		CCP_BASESKILLS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "skillsused",		CCP_SKILLUSE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "socket",			CCP_SOCKET,			JSPROP_ENUMANDPERM, nullptr, nullptr },

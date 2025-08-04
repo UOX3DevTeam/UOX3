@@ -2035,6 +2035,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval
 				}
 				break;
 			}
+			case CCP_GUILDNUMBER: *vp = INT_TO_JSVAL( gPriv->GetGuildNumber() );		break;
 			case CCP_SOCKET:
 			{ // So we can declare the variables here
 				CSocket *tSock = gPriv->GetSocket();
@@ -2596,6 +2597,7 @@ JSBool CCharacterProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBoo
 					}
 				}
 				break;
+			case CCP_GUILDNUMBER: gPriv->SetGuildNumber( static_cast<SI16>( encaps.toInt() ));	break;
 			case CCP_OLDWANDERTYPE: gPriv->SetOldNpcWander( static_cast<SI08>( encaps.toInt() )); 		break;
 			case CCP_WANDERTYPE: 	gPriv->SetNpcWander( static_cast<SI08>( encaps.toInt() ), true );	break;
 			case CCP_FX1:			gPriv->SetFx( static_cast<SI16>( encaps.toInt() ), 0 );	break;
@@ -3117,6 +3119,12 @@ JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsid id, jsval *vp
 				tString = JS_NewStringCopyZ( cx, gPriv->Name().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
+			case CGP_ID:
+			{
+				GUILDID guildId = GuildSys->FindGuildId( gPriv );
+				*vp = INT_TO_JSVAL( guildId );
+				break;
+			}
 			case CGP_TYPE:			*vp = INT_TO_JSVAL( gPriv->Type() );		break;
 			case CGP_MASTER:
 				CChar *gMaster;
@@ -3182,6 +3190,8 @@ JSBool CGuildProps_setProperty( JSContext* cx, JSObject* obj, jsid id, JSBool st
 		switch( propID )
 		{
 			case CGP_NAME:				gPriv->Name( encaps.toString() );						break;
+			case CGP_ID:
+				break;
 			case CGP_TYPE:				gPriv->Type( static_cast<GuildType>( encaps.toInt() ));	break;
 			case CGP_MASTER:
 				if( *vp != JSVAL_NULL )
