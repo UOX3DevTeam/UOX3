@@ -138,7 +138,7 @@ void CCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkS
 			if( toExecute != nullptr )
 			{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
-				Console.Print( oldstrutil::format( "Executing JS command %s\n", command.c_str() ));
+				Console.Print( oldstrutil::format( "Executing JS command %s in script %d\n", command.c_str(), toFind->second.scriptId ) );
 #endif
 				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ));
 			}

@@ -157,6 +157,8 @@ private:
 	JSScript *			targScript;
 	JSContext *			targContext;
 	JSObject *			targObject;
+	JSObject *			scriptObj;
+	UI16						scriptID;
 
 	bool				isFiring;
 	UI08				runTime;
@@ -172,6 +174,7 @@ private:
 	std::vector<SEGump_st *>		gumpDisplays;
 
 	void		Cleanup( void );
+	JSBool	InvokeEvent( const char* name, uintN argc, jsval* argv, jsval* rval );
 
 public:
 	void		CollectGarbage( void );
@@ -179,15 +182,16 @@ public:
 	size_t		NewGumpList( void );
 	SEGump_st *	GetGumpList( SI32 index );
 	void		RemoveGumpList( SI32 index );
-	void		SendGumpList( SI32 index, CSocket *toSendTo );
 
 	void		HandleGumpPress( CPIGumpMenuSelect *packet );
 	void		HandleGumpInput( CPIGumpInput *pressing );
 
-	cScript( std::string targFile, UI08 runTime );
+	cScript( std::string targFile, UI08 runTime, UI16 scrID );
 	~cScript();
 
 	JSObject *	Object( void ) const;	// returns object pointer
+
+	UI16		GetScriptID( void ) const;
 
 
 	//|	Modification	-	08162003 - Added these event to handle any script initialization and clean up as the server starts, and is shut down
@@ -198,7 +202,7 @@ public:
 	bool		OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock );
 	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
-	bool		DoesEventExist( char *eventToFind );
+	bool		DoesEventExist( const char *eventToFind );
 	SI08		OnCommand( CSocket *mSock, std::string command );
 	bool		OnDelete( CBaseObject *thingDestroyed );
 	SI08		OnSpeech( const char *speech, CChar *personTalking, CBaseObject *talkingTo );
@@ -286,7 +290,7 @@ public:
 	SI08		OnSpecialMove( CChar *mChar, UI08 abilityId );
 	SI08		OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet );
 
-	bool		AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
+	bool		AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
 	bool		CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams, jsval *eventRetVal );
 
 	bool		ScriptRegistration( std::string scriptType );
