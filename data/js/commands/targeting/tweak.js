@@ -1751,8 +1751,26 @@ function HandleCharTarget( pSocket, myTarget )
 				charValue 			= ( myTarget.gender ).toString();
 				break;
 			case charProp.guild:
-				charLabelTooltip 	= GetDictionaryEntry( 8328, pSocket.language ); // Player guild character belongs to, if any
-				charValue 			= ( myTarget.guild != null ? ( myTarget.guild.name + " (Guildstone: " + ( myTarget.guild.stone != null && myTarget.guild.stone.serial ) + " )" ) : "Not in Guild" );
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8328, pSocket.language ); // Player guild character belongs to, if any
+					charValue = "NOT IN GUILD";
+					let guild = myTarget.guild;
+					if( guild != null )
+					{
+						var guildName = guild.name;
+						if( guildName != "" )
+						{
+							charValue = guildName;
+							var guildStone = guild.stone;
+							if( guildStone != null )
+							{
+								var guildSerial = guildStone.serial;
+								charValue += " (Guildstone: " + guildStone.serial + ")";
+							}
+						}
+					}
+					//charValue 			= ( myTarget.guild != null ? ( myTarget.guild.name + " (Guildstone: " + ( myTarget.guild.stone != null && myTarget.guild.stone.serial ) + " )" ) : "Not in Guild" );
+				}
 				break;
 			case charProp.guildTitle:
 				charLabelTooltip 	= GetDictionaryEntry( 8329, pSocket.language ); // Guild title of character

@@ -1,3 +1,9 @@
+21/07/2025 - Xoduz (#399)
+    [FIX] Fixed an issue where animal trainer shoplist was referring to an incorrect sectionID for desert ostards
+    [FIX] Restored support for VS2017
+    [UPD] Updated VS solutions/projects to once again build and link Spidermonkey using a static library instead of producing a DLL
+    [UPD] Turned console warning about string properties into a log-action that writes directly to warning.log instead
+
 19/07/2025 - Xuri (0.99.7)
 	Bumped up version number
 	Added workflow file (github-releases-to-discord.yml) that will publish UOX3 GitHub releases to Discord
