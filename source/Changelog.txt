@@ -1,3 +1,35 @@
+05/08/2025 - Dragon Slayer (#403)
+	[FIX] Fixed an issue with Bulk Order Deeds where the gump would remain open after accepting/declining a BOD offer
+
+05/08/2025 - Dragon Slayer (#400)
+	[UPD] Updated the Layer on plain dress and fancy dress from 0x11 to 0x16 robe layer.
+
+05/08/2025 - Dragon Slayer (#362)
+	[ADD] Integrated FindGuildId( const CGuild* ) in guild relation functions for better JS mapping (Thanks to Xuri for the base implementation)
+	[ADD] Added new JS Function:
+		CreateNewGuild() // Returns the guild object for further setup
+	[ADD] Added new Guild JS Methods: .AddMember( targChar ), .AddRecruit( targChar ), .RemoveRecruit( targChar ), .RemoveMember( targChar ), .RecruitToMember( targChar ), .IsAtWar( targetGuild ), .IsAlly( targetGuild ), IsNeutral( targetGuild )
+	[ADD] Added documentation entries for all new guild/character functions and methods
+	[ADD] New JS Event that triggers when GUILD button in paperdoll is pressed:
+	onGuildButton( mChar ) (Xuri)
+	[ADD] Added new Guild JS Property: .id (guild number) (Xuri)
+	[ADD] Added new Character JS Property: .guildNumber (Xuri)
+	[UPD] Updated Guild JS Methods (Xuri)
+	[UPD] 'get command can now be used to fetch guild information for characters. Example: 'get guild / 'get guildnumber (Xuri)
+	[UPD] Updated 'add item sectionID command to support optional amount. New syntax: 'add item sectionID amount (Xuri)
+	[FIX] Fixed an issue with 'wholist command where characters with serials in the millions would not show up in the list (Xuri)
+
+05/08/2025 - Maarc (#360)
+	[UPD] Migrate SpiderMonkey to the geck20b12_2011022218 release branch giving JavaScript 1.8.5 compatibility
+	[FIX] Remove need for running restore functions for script context
+	[UPD] Updated documentation, readme.md, version number
+
+21/07/2025 - Xoduz (#399)
+	[FIX] Fixed an issue where animal trainer shoplist was referring to an incorrect sectionID for desert ostards
+	[FIX] Restored support for VS2017
+	[UPD] Updated VS solutions/projects to once again build and link Spidermonkey using a static library instead of producing a DLL
+	[UPD] Turned console warning about string properties into a log-action that writes directly to warning.log instead
+
 19/07/2025 - Xuri (0.99.7)
 	Bumped up version number
 	Added workflow file (github-releases-to-discord.yml) that will publish UOX3 GitHub releases to Discord

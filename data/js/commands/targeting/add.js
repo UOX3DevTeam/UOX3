@@ -16,6 +16,7 @@ function command_ADD( socket, cmdString )
 		var stringID = "";
 		var splitString = cmdString.split( " " );
 		socket.tempInt2 = 0;
+		socket.addAmount = 1; // default amount
 		switch( splitString[0].toUpperCase() )
 		{
 			case "NPCLIST":
@@ -32,6 +33,15 @@ function command_ADD( socket, cmdString )
 				if( splitString[1] )
 				{
 					// .add item itemID
+					if( splitString[2] ) // Check for optional amount
+					{
+						// .add item itemID amount
+						let amount = parseInt( splitString[2] );
+						if( !isNaN( amount ) && amount > 0 )
+						{
+							socket.addAmount = amount;
+						}
+					}
 					socket.xText = splitString[1];
 					socket.CustomTarget( 2, GetDictionaryEntry( 8069, socket.language ) + " " + splitString[1] ); // Select location for scripted item:
 				}
@@ -227,6 +237,14 @@ function onCallback2( socket, ourObj )
 	{
 		var iSection = socket.xText;
 		socket.xText = null;
+
+		// Get amount to add
+		var itemAmount = socket.addAmount;
+		if( itemAmount == null || itemAmount < 1 )
+		{
+			itemAmount = 1;
+		}
+
 		var StrangeByte = socket.GetWord( 1 );
 		if( StrangeByte == 0 && ourObj.isChar  )
 		{
@@ -234,7 +252,7 @@ function onCallback2( socket, ourObj )
 			var backpack = ourObj.FindItemLayer( 21 );
 			if( backpack != null )
 			{
-				var newItem = CreateDFNItem( socket, ourObj, iSection, 1, "ITEM", true );
+				var newItem = CreateDFNItem( socket, ourObj, iSection, itemAmount, "ITEM", true );
 			}
 			else
 			{
@@ -244,7 +262,7 @@ function onCallback2( socket, ourObj )
 		else if( StrangeByte == 0 && ourObj.isItem && ourObj.type == 1 )
 		{
 			// If target is an item, and a container, add item to the container
-			var newItem = CreateDFNItem( socket, ourObj, iSection, 1, "ITEM", false );
+			var newItem = CreateDFNItem( socket, ourObj, iSection, itemAmount, "ITEM", false );
 			if( ValidateObject( newItem ))
 			{
 				newItem.container = ourObj;
@@ -263,7 +281,7 @@ function onCallback2( socket, ourObj )
 				z += GetTileHeight( socket.GetWord( 17 ));
 			}
 
-			var newItem = CreateDFNItem( socket, mChar, iSection, 1, "ITEM", false );
+			var newItem = CreateDFNItem( socket, mChar, iSection, itemAmount, "ITEM", false );
 			if( newItem )
 			{
 				newItem.SetLocation( x, y, z );

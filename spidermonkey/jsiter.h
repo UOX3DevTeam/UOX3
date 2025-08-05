@@ -43,14 +43,95 @@
 /*
  * JavaScript iterators.
  */
+#include "jscntxt.h"
 #include "jsprvtd.h"
 #include "jspubtd.h"
+#include "jsversion.h"
 
-JS_BEGIN_EXTERN_C
-
+/*
+ * NB: these flag bits are encoded into the bytecode stream in the immediate
+ * operand of JSOP_ITER, so don't change them without advancing jsxdrapi.h's
+ * JSXDR_BYTECODE_VERSION.
+ */
 #define JSITER_ENUMERATE  0x1   /* for-in compatible hidden default iterator */
 #define JSITER_FOREACH    0x2   /* return [key, value] pair rather than key */
 #define JSITER_KEYVALUE   0x4   /* destructuring for-in wants [key, value] */
+#define JSITER_OWNONLY    0x8   /* iterate over obj's own properties only */
+#define JSITER_HIDDEN     0x10  /* also enumerate non-enumerable properties */
+
+/*
+ * For cacheable native iterators, whether the iterator is currently active.
+ * Not serialized by XDR.
+ */
+#define JSITER_ACTIVE       0x1000
+#define JSITER_UNREUSABLE   0x2000
+
+namespace js {
+
+struct NativeIterator {
+    JSObject  *obj;
+    jsid      *props_array;
+    jsid      *props_cursor;
+    jsid      *props_end;
+    uint32    *shapes_array;
+    uint32    shapes_length;
+    uint32    shapes_key;
+    uint32    flags;
+    JSObject  *next;  /* Forms cx->enumerators list, garbage otherwise. */
+
+    bool isKeyIter() const { return (flags & JSITER_FOREACH) == 0; }
+
+    inline jsid *begin() const {
+        return props_array;
+    }
+
+    inline jsid *end() const {
+        return props_end;
+    }
+
+    size_t numKeys() const {
+        return end() - begin();
+    }
+
+    jsid *current() const {
+        JS_ASSERT(props_cursor < props_end);
+        return props_cursor;
+    }
+
+    void incCursor() {
+        props_cursor = props_cursor + 1;
+    }
+
+    static NativeIterator *allocateIterator(JSContext *cx, uint32 slength,
+                                            const js::AutoIdVector &props);
+    void init(JSObject *obj, uintN flags, uint32 slength, uint32 key);
+
+    void mark(JSTracer *trc);
+};
+
+bool
+VectorToIdArray(JSContext *cx, js::AutoIdVector &props, JSIdArray **idap);
+
+JS_FRIEND_API(bool)
+GetPropertyNames(JSContext *cx, JSObject *obj, uintN flags, js::AutoIdVector *props);
+
+bool
+GetIterator(JSContext *cx, JSObject *obj, uintN flags, js::Value *vp);
+
+bool
+VectorToKeyIterator(JSContext *cx, JSObject *obj, uintN flags, js::AutoIdVector &props, js::Value *vp);
+
+bool
+VectorToValueIterator(JSContext *cx, JSObject *obj, uintN flags, js::AutoIdVector &props, js::Value *vp);
+
+/*
+ * Creates either a key or value iterator, depending on flags. For a value
+ * iterator, performs value-lookup to convert the given list of jsids.
+ */
+bool
+EnumeratedIdVectorToIterator(JSContext *cx, JSObject *obj, uintN flags, js::AutoIdVector &props, js::Value *vp);
+
+}
 
 /*
  * Convert the value stored in *vp to its iteration object. The flags should
@@ -59,23 +140,27 @@ JS_BEGIN_EXTERN_C
  * iterator will never be exposed to scripts.
  */
 extern JS_FRIEND_API(JSBool)
-js_ValueToIterator(JSContext *cx, uintN flags, jsval *vp);
+js_ValueToIterator(JSContext *cx, uintN flags, js::Value *vp);
 
 extern JS_FRIEND_API(JSBool)
-js_CloseIterator(JSContext *cx, jsval v);
+js_CloseIterator(JSContext *cx, JSObject *iterObj);
+
+bool
+js_SuppressDeletedProperty(JSContext *cx, JSObject *obj, jsid id);
+
+bool
+js_SuppressDeletedIndexProperties(JSContext *cx, JSObject *obj, jsint begin, jsint end);
 
 /*
- * Given iterobj, call iterobj.next().  If the iterator stopped, set *rval to
- * JSVAL_HOLE. Otherwise set it to the result of the next call.
+ * IteratorMore() indicates whether another value is available. It might
+ * internally call iterobj.next() and then cache the value until its
+ * picked up by IteratorNext(). The value is cached in the current context.
  */
-extern JS_FRIEND_API(JSBool)
-js_CallIteratorNext(JSContext *cx, JSObject *iterobj, jsval *rval);
+extern JSBool
+js_IteratorMore(JSContext *cx, JSObject *iterobj, js::Value *rval);
 
-/*
- * Close iterobj, whose class must be js_IteratorClass.
- */
-extern void
-js_CloseNativeIterator(JSContext *cx, JSObject *iterobj);
+extern JSBool
+js_IteratorNext(JSContext *cx, JSObject *iterobj, js::Value *rval);
 
 extern JSBool
 js_ThrowStopIteration(JSContext *cx);
@@ -96,27 +181,68 @@ typedef enum JSGeneratorState {
 struct JSGenerator {
     JSObject            *obj;
     JSGeneratorState    state;
-    JSStackFrame        frame;
-    JSFrameRegs         savedRegs;
-    JSArena             arena;
-    jsval               stack[1];
+    JSFrameRegs         regs;
+    JSObject            *enumerators;
+    JSStackFrame        *floating;
+    js::Value           floatingStack[1];
+
+    JSStackFrame *floatingFrame() {
+        return floating;
+    }
+
+    JSStackFrame *liveFrame() {
+        JS_ASSERT((state == JSGEN_RUNNING || state == JSGEN_CLOSING) ==
+                  (regs.fp != floatingFrame()));
+        return regs.fp;
+    }
 };
 
-#define FRAME_TO_GENERATOR(fp) \
-    ((JSGenerator *) ((uint8 *)(fp) - offsetof(JSGenerator, frame)))
-
 extern JSObject *
-js_NewGenerator(JSContext *cx, JSStackFrame *fp);
+js_NewGenerator(JSContext *cx);
+
+/*
+ * Generator stack frames do not have stable pointers since they get copied to
+ * and from the generator object and the stack (see SendToGenerator). This is a
+ * problem for Block and With objects, which need to store a pointer to the
+ * enclosing stack frame. The solution is for Block and With objects to store
+ * a pointer to the "floating" stack frame stored in the generator object,
+ * since it is stable, and maintain, in the generator object, a pointer to the
+ * "live" stack frame (either a copy on the stack or the floating frame). Thus,
+ * Block and With objects must "normalize" to and from the floating/live frames
+ * in the case of generators using the following functions.
+ */
+inline JSStackFrame *
+js_FloatingFrameIfGenerator(JSContext *cx, JSStackFrame *fp)
+{
+    JS_ASSERT(cx->stack().contains(fp));
+    if (JS_UNLIKELY(fp->isGeneratorFrame()))
+        return cx->generatorFor(fp)->floatingFrame();
+    return fp;
+}
+
+/* Given a floating frame, given the JSGenerator containing it. */
+extern JSGenerator *
+js_FloatingFrameToGenerator(JSStackFrame *fp);
+
+inline JSStackFrame *
+js_LiveFrameIfGenerator(JSStackFrame *fp)
+{
+    return fp->isGeneratorFrame() ? js_FloatingFrameToGenerator(fp)->liveFrame() : fp;
+}
 
 #endif
 
-extern JSClass          js_GeneratorClass;
-extern JSClass          js_IteratorClass;
-extern JSClass          js_StopIterationClass;
+extern js::Class js_GeneratorClass;
+extern js::Class js_IteratorClass;
+extern js::Class js_StopIterationClass;
+
+static inline bool
+js_ValueIsStopIteration(const js::Value &v)
+{
+    return v.isObject() && v.toObject().getClass() == &js_StopIterationClass;
+}
 
 extern JSObject *
 js_InitIteratorClasses(JSContext *cx, JSObject *obj);
-
-JS_END_EXTERN_C
 
 #endif /* jsiter_h___ */
