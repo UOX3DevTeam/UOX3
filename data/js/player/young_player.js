@@ -147,7 +147,7 @@ function CheckYoungStatus( pSock, pChar, fromLogin )
 	{
 		RevokeYoungStatus( pSock, pChar, revokeReason );
 	}
-	else if( fromLogin )
+	else if( pAccount.totalPlayTime > 0 && fromLogin )
 	{
 		pSock.SysMessage( GetDictionaryEntry( 18701, pSock.language), hoursAsYoungLeft, ( hoursAsYoungLeft > 1 ? "s" : "" )); // You will enjoy the benefits and relatively safe status of a young player for %i more hour%s
 	}

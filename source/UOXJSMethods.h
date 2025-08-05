@@ -76,6 +76,7 @@ JSBool CChar_OpenBank( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_DirectionTo( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_TurnToward( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_CheckSkill( JSContext *cx, uintN argc, jsval *vp );
+JSBool CChar_AddSkill( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_FindItemLayer( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_SpeechInput( JSContext *cx, uintN argc, jsval *vp );
 JSBool CChar_CastSpell( JSContext *cx, uintN argc, jsval *vp );
@@ -192,7 +193,11 @@ JSBool CBase_Refresh( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBase_SetRandomName( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBase_SetRandomColor( JSContext *cx, uintN argc, jsval *vp );
 JSBool CBase_GetTempEffect( JSContext *cx, uintN argc, jsval *vp );
-JSBool CBase_ReverseEffect( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBase_ReverseTempEffect( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBase_PauseTempEffect( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBase_ResumeTempEffect( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBase_PauseJSTimer( JSContext *cx, uintN argc, jsval *vp );
+JSBool CBase_ResumeJSTimer( JSContext *cx, uintN argc, jsval *vp );
 
 // Multi Methods
 JSBool CMulti_GetMultiCorner( JSContext *cx, uintN argc, jsval *vp );
@@ -226,6 +231,8 @@ JSBool CMulti_ClearOwnerList( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_FirstChar( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_NextChar( JSContext *cx, uintN argc, jsval *vp );
 JSBool CMulti_FinishedChars( JSContext *cx, uintN argc, jsval *vp );
+JSBool CMulti_TurnBoat( JSContext *cx, uintN argc, jsval *vp );
+JSBool CMulti_GetTiller( JSContext *cx, uintN argc, jsval *vp );
 
 // Socket Methods
 JSBool CSocket_Disconnect( JSContext *cx, uintN argc, jsval *vp );
@@ -255,6 +262,14 @@ JSBool CSocket_Page( JSContext *cx, uintN argc, jsval *vp );
 // Guild Methods
 JSBool CGuild_AcceptRecruit( JSContext *cx, uintN argc, jsval *vp );
 JSBool CGuild_IsAtPeace( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_AddMember( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_AddRecruit( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_RemoveRecruit( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_RemoveMember( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_RecruitToMember( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_IsAtWar( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_IsAlly( JSContext *cx, uintN argc, jsval *vp );
+JSBool CGuild_IsNeutral( JSContext *cx, uintN argc, jsval *vp );
 
 // Misc
 JSBool CMisc_SoundEffect( JSContext *cx, uintN argc, jsval *vp );
@@ -365,6 +380,8 @@ inline JSFunctionSpec CGump_Methods[] =
 
 inline JSFunctionSpec CChar_Methods[] =
 {
+	{ "AddSkill",			CChar_AddSkill,			3, 0 },
+	{ "SpeechInput",		CChar_SpeechInput,		1, 0 },
 	{ "KillTimers",			CBase_KillTimers,		1, 0 },
 	{ "GetJSTimer",			CBase_GetJSTimer,		2, 0 },
 	{ "SetJSTimer",			CBase_SetJSTimer,		3, 0 },
@@ -480,7 +497,11 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0 },
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0 },
 	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0 },
-	{ "ReverseTempEffect",	CBase_ReverseEffect,		1, 0 },
+	{ "ReverseTempEffect",	CBase_ReverseTempEffect,		1, 0 },
+	{ "PauseTempEffect",	CBase_PauseTempEffect,		1, 0 },
+	{ "ResumeTempEffect",	CBase_ResumeTempEffect,		1, 0 },
+	{ "PauseJSTimer",	CBase_PauseJSTimer,		1, 0 },
+	{ "ResumeJSTimer",	CBase_ResumeJSTimer,		1, 0 },
 	JS_FS_END
 };
 
@@ -569,11 +590,19 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "NextChar",			CMulti_NextChar,			1, 0 },
 	{ "FinishedChars",		CMulti_FinishedChars,		1, 0 },
 
+	{ "TurnBoat",			CMulti_TurnBoat,			1, 0 },
+	{ "GetTiller",			CMulti_GetTiller,			0, 0 },
+
+	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0 },
 	{ "SetRandomName",		CBase_SetRandomName,		1, 0 },
 	{ "SetRandomColor",		CBase_SetRandomColor,		1, 0 },
 	{ "GetTempEffect",		CBase_GetTempEffect,		1, 0 },
-	{ "ReverseTempEffect",	CBase_ReverseEffect,		1, 0 },
+	{ "ReverseTempEffect",	CBase_ReverseTempEffect,		1, 0 },
+	{ "PauseTempEffect",	CBase_PauseTempEffect,		1, 0 },
+	{ "ResumeTempEffect",	CBase_ResumeTempEffect,		1, 0 },
+	{ "PauseJSTimer",	CBase_PauseJSTimer,		1, 0 },
+	{ "ResumeJSTimer",	CBase_ResumeJSTimer,		1, 0 },
 	{ nullptr,				nullptr,					0, 0 }
 };
 
@@ -631,6 +660,14 @@ inline JSFunctionSpec CGuild_Methods[] =
 {
 	{ "AcceptRecruit",		CGuild_AcceptRecruit,		1, 0 },
 	{ "IsAtPeace",			CGuild_IsAtPeace,			0, 0 },
+	{ "AddMember",			CGuild_AddMember,			1, 0 },
+	{ "AddRecruit",			CGuild_AddRecruit,			1, 0 },
+	{ "RemoveRecruit",		CGuild_RemoveRecruit,		1, 0 },
+	{ "RemoveMember",		CGuild_RemoveMember,		1, 0 },
+	{ "RecruitToMember",	CGuild_RecruitToMember,		1, 0 },
+	{ "IsAtWar",			CGuild_IsAtWar,				1, 0 },
+	{ "IsAlly",				CGuild_IsAlly,				1, 0 },
+	{ "IsNeutral",			CGuild_IsNeutral,			1, 0 },
 	JS_FS_END
 };
 

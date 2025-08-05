@@ -226,5 +226,15 @@ SCRIPT=3220// bakekitsune.js
 
 [bakekitsune]
 {
+GETUO=bakekitsune_se
+GETT2A=bakekitsune_se
+GETUOR=bakekitsune_se
+GETTD=bakekitsune_se
+GETLBR=bakekitsune_se
+GETAOS=bakekitsune_se
 GETSE=bakekitsune_se
+GETML=bakekitsune_se
+GETSA=bakekitsune_se
+GETHS=bakekitsune_se
+GETTOL=bakekitsune_se
 }

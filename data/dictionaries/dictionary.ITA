@@ -1520,13 +1520,13 @@
 1513=è alquanto danneggiato.
 1514=è inconsistente e non affidabile.
 1515=cade a pezzi.
-1516= sarebbe straordinariamente mortale.
-1517= sarebbe un'arma superiore.
-1518= farebbe un bel po' di danni e dolore.
-1519= probabilmente il tuo avversario ne soffrirebbe abbastanza.
-1520= farebbe qualche danno.
-1521= sarebbe un danno minimo.
-1522= potrebbe graffiare leggermente l'avversario.
+1516=Sarebbe straordinariamente mortale,
+1517=Sarebbe un'arma superiore,
+1518=Farebbe un bel po' di danni e dolore,
+1519=Probabilmente il tuo avversario ne soffrirebbe abbastanza,
+1520=Farebbe qualche danno,
+1521=Sarebbe un danno minimo,
+1522=Potrebbe graffiare leggermente l'avversario,
 1523= ed è molto veloce.
 1524= e è veloce.
 1525= ed è lento.
@@ -1677,6 +1677,7 @@
 1663=Il mio piccolo figlio Timmy ha bisogno di un'operazione, avete dell'oro per aiutare la causa?
 1664=Mia moglie è incinta del nostro settimo figlio, abbiate un po' di pietà sotto forma di oro per un uomo disperato.
 // End begging text
+1669=Impossibile vedere il bersaglio!
 1670=Non ci si può camuffare indossando la vernice per il corpo.
 1671=Non si può polimorfizzare mentre si indossa la pittura del corpo
 1672=Non si può usare l'incognito mentre si indossa la vernice per il corpo.
@@ -2457,6 +2458,59 @@
 2585=Si versa un po' di sidro nel contenitore.
 2586=Si versa del liquore nel contenitore.
 2587=Si versa del vino nel bicchiere.
+2588=Queste carote non sono ancora pronte per essere raccolte.
+2589=Non riesci a raccogliere nessuna carota.
+2590=Raccogli una carota.
+2591=Queste cipolle non sono ancora pronte per essere raccolte.
+2592=Non riesci a raccogliere nessuna cipolla.
+2593=Raccogli una cipolla.
+2594=Questa rapa non è ancora pronta per essere raccolta.
+2595=Non riesci a raccogliere nessuna rapa.
+2596=Raccogli una rapa.
+2597=Questo cavolo non è ancora pronto per essere raccolto.
+2598=Non riesci a raccogliere nessun cavolo.
+2599=Raccogli un cavolo.
+// [2600-2699] Player/NPC/Spawn Admin Script
+2600=NPC selezionato (%s, %i) è stato rimosso.
+2601=Avviso: nessun zaino trovato sul personaggio!
+2602=Avviso: nessuna cassetta di sicurezza trovata per il personaggio!
+2603=Troppo lontano per ispezionare il paperdoll (distanza attuale: %i)
+2604=Rimozione NPC
+2605=<BASEFONT color=#EECD8B>Conferma la rimozione di:</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>Non è disponibile il pulsante Annulla.
+2607=Filtra i nomi che iniziano con '%s'
+2608=Gestisci giocatori - %s
+2609=Gestisci NPC
+2610=Tutti
+2611=Online
+2612=Offline
+2613=Modifica personaggio:<br>seriale: %s<br>Ultimo accesso: %w
+2614=Teleportati al personaggio
+2615=Ottieni personaggio
+2616=Ispeziona personaggio
+2617=Imprigiona/Libera personaggio
+2618=Caccia giocatore
+2619=Banna giocatore
+2620=Rimuovi NPC
+2621=Nessuna voce trovata!
+2622=Pagina %i / %u
+2623=Applica filtro
+2624=Filtra per giocatori online
+2625=Filtra per giocatori offline
+2626=Ordina per ultimo accesso (%s)
+2627=Crescente
+2628=Decrescente
+2629=Trovati %i personaggi giocatore in %u millisecondi.
+2630=Trovati %i NPC in %u millisecondi.
+2631=Trovati %i spawn basati su oggetti in %u millisecondi.
+2632=Gestisci oggetti spawn
+2633=Modifica oggetto spawn:<br>seriale: %s<br>sezione spawn: %w<br>Quantità: %i<br>Nella regione: (%u) %z
+2634=Teletrasportati all'oggetto spawn
+2635=Apri editor oggetti spawn
+2636=Rimuovi oggetto spawn
+2637=Filtra per generatori NPC
+2638=Filtra per generatori oggetti
+2639=Ordina per numero di spawn (%s)
 // [2700-2799] Misc Scripts
 2700=Solo il proprietario della casa può ruotare i mobili.
 2701=Questo non sembra funzionare.
@@ -2935,6 +2989,7 @@
 3574=uno spirito di lama
 3605=un maschio elfo
 3606=una femmina di elfo
+3637=un'armatura spettrale
 3666=un maschio gargoyle
 3667=una femmina di gargoyle
 3689=Signore del tempo
@@ -3260,6 +3315,7 @@
 5156=il Cartomante Zingaro
 5157=il Vagabondo
 5158=il Lavoratore del Ferro
+5159=un uccello tropicale
 // [5500-5600] Messaggi festivi
 5500=Dove vorresti posizionare questa decorazione?
 5501=La decorazione deve essere posizionata vicino ad un muro.
@@ -3439,13 +3495,27 @@
 6276=Non hai l'abilità di cucinare per creare la pittura per il corpo.
 6277=Identità della risorsa non trovata nell'elenco delle risorse utilizzate per creare l'oggetto.
 6278=Per saperne di più su questa pozione devi usare l'abilità di identificazione dei gusti.
-6279=Il successo del controllo dell'abilità è garantito grazie al livello di comando elevato!
+6279=Suggerimento: Il successo del controllo dell'abilità è garantito grazie al livello di comando elevato!
 6280=Tardo di incantesimo ignorato a causa dell'elevato livello di comando!
 6300=Non hai imparato a soffiare il vetro.
 6301=Solo un Grande Maestro Alchimista può imparare da questo libro.
 6302=Hai già appreso questa informazione.
 6303=Hai imparato a creare oggetti in vetro. Dovrai trovare minatori che estraggano sabbia fine per poter realizzare questi oggetti.
 6304=Devi avere una mano libera per bere una pozione.
+6310=Non puoi avvelenarlo! Puoi avvelenare solo armi da taglio o da punta, cibo o bevande.
+6311=Hai avvelenato il tuo bersaglio!
+6312=Il veleno sembra aver perso effetto.
+6313=Non puoi avvelenarlo! Puoi avvelenare solo armi da taglio o da punta a una mano, cibo o bevande.
+6314=Non puoi avvelenarlo! Puoi avvelenare solo armi infette e cibo.
+6315=Commetti un grave errore mentre applichi il veleno.
+6316=Il sangue si mescola al veleno e inizia a corrodere la tua arma.
+6317=Hai pulito l'oggetto.
+6318=Il veleno sulla tua arma sembra aver perso il suo effetto.
+6319=Sembra che dall'arma goccioli dell'acido.
+6320=Sembra che una sostanza stia corrodendo la lama.
+6321=Sembra che questa lama sia ricoperta da una sostanza acida.
+6322=Sembra che questa lama contenga un elemento corrosivo.
+6323=Sembra che questa lama contenga un leggero elemento corrosivo.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
@@ -3699,6 +3769,15 @@
 8213=Identità della sezione da cui proviene l'oggetto DFN
 8214=L'oggetto è rubabile? 0 = non rubabile, 1 = rubabile, 2 = rubabile raramente
 8215=Destinazione non valida. Seleziona un oggetto o NPC valido
+8251=Cancellazione NPC...
+8252=NPC cancellati: %i
+8253=Seleziona NPC da spostare a distanza usando xrun:
+8254=Seleziona NPC da spostare a distanza usando xwalk:
+8255=Seleziona NPC da girare a distanza usando xturn:
+8256=Seleziona destinazione movimento (%s):
+8257=Devi selezionare un NPC!
+8258=Hai bendato la ferita e fermato l'emorragia
+8259=Le ferite sanguinanti sono guarite, non stai più sanguinando!
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numero di account associato al giocatore. Controllato dal server (Solo lettura)
 8301=Tipo di IA del PNG
@@ -4048,7 +4127,7 @@
 8944=Questo non sembra essere un NPC-id valido dai DFN.
 8945=Seleziona il bersaglio per lo stato mobile %i:
 8946=Seleziona il bersaglio da impostare come non decadibile:
-// [9000-9500] Misc
+// [9000-9499] Misc
 9000=Non puoi usare questa abilità mentre sei congelato.
 9001=Questo personaggio non può volare!
 9002=Sei stato invitato ad unirsi ad una festa, digita /accept o /decline per gestire l'invito
@@ -4318,6 +4397,28 @@
 9410=Hai imparato come estrarre la sabbia fine. Punta alle aree sabbiose durante l'estrazione per cercare sabbia fine.
 9411=Hai imparato a estrarre le pietre. Prendi di mira le montagne quando estrai per trovare pietre.
 9412=Qui non c'è sabbia da estrarre.
+// [9500-9550] Raccolta di risorse varie
+9500=Questa zucca non è ancora pronta per essere raccolta.
+9501=Non sei riuscito a raccogliere nessuna zucca.
+9502=Hai raccolto una zucca.
+9503=Questa zucca non è ancora pronta per essere raccolta.
+9504=Non sei riuscito a raccogliere nessuna zucca.
+9505=Hai raccolto una zucca.
+9506=Questa zucca non è ancora pronta per essere raccolta.
+9507=Non sei riuscito a raccogliere nessuna zucca.
+9508=Hai raccolto una zucca.
+9509=Questo cocomero non è ancora pronto per essere raccolto.
+9510=Non riesci a raccogliere nessun cocomero.
+9511=Raccogli un cocomero.
+9512=Questo melone non è ancora pronto per essere raccolto.
+9513=Non riesci a raccogliere nessun melone.
+9514=Raccogli un melone.
+9515=Questo melone non è ancora pronto per essere raccolto.
+9516=Non riesci a raccogliere alcun melone cantalupo.
+9517=Raccogli un melone cantalupo.
+9518=Questo aglio non è ancora pronto per essere raccolto.
+9519=Non riesci a raccogliere alcun aglio.
+9520=Raccogli un aglio.
 // [9800-9899] Spawner Editor
 9800=Spawner Object Editor
 9801=Spawner Name
@@ -4705,6 +4806,7 @@
 11467=braccia d'osso
 11468=gambe d'osso
 11469=armatura di ossa
+11470=cappello di paglia alto
 // 11601 - 11800 Abilità di cucina
 11601=MENÙ CUCINA
 11602=Ingredienti
@@ -5154,6 +5256,7 @@
 17619=Come membro della gilda, posso offrirti un prezzo maggiorato per questo!
 17620=Non è abbastanza per coprire la quota di iscrizione alla gilda, mi dispiace.
 17621=Tempo trascorso dall'ingresso in gilda: %i minuti.
+17622=Questa gilda non ha un Maestro di Gilda.
 // [17701-17710] Abilità delle armi
 17701=Ricevi un colpo paralizzante!
 17702=Sferri un colpo paralizzante!
@@ -5430,5 +5533,45 @@
 19234=La tua confusione è passata, ora puoi armare un'arma!
 19235=Non sei più ferito a morte.
 19236=Le ferite sanguinanti sono guarite, non stai più sanguinando!
+// [19301-19330] Animale domestico legato e morto
+19301=Non puoi scambiare un animale domestico morto.
+19302=L'animale domestico morto non può attaccare.
+19303=Non sei abbastanza abile da resuscitare quell'animale.
+19304=Solo gli animali domestici legati al loro proprietario possono essere resuscitati.
+19306=Hai resuscitato con successo l'animale!
+19307=Puoi resuscitare solo gli animali domestici legati al loro proprietario.
+19308=Il tuo animale domestico si è legato a te!
+19309=Il tuo animale domestico è morto e non risponderà a quel comando.
+19310=Hai interrotto il legame con il tuo animale domestico.
+19311=Sei sicuro di voler interrompere il legame con il tuo animale domestico?
+19311=Liberare un animale domestico fantasma lo distruggerà, senza possibilità di recupero. Vuoi continuare?
+19312=Il proprietario dell'animale domestico deve essere nelle vicinanze per tentare la resurrezione.
+19313=Il tuo animale domestico non può creare un legame con te finché la tua capacità di addomesticamento non è aumentata.
+19314=Il tuo animale domestico non può creare un legame con te finché la tua capacità di bushido non è aumentata.
+19315=Solo gli animali domestici legati al loro proprietario possono essere resuscitati.
+19316=L'animale deve trovarsi nella stessa casa in cui si trova per essere resuscitato.
+19317=Il proprietario dell'animale domestico deve essere all'interno di questa casa prima di poter rianimare questa creatura.
+19318=Scegli l'animale domestico con cui desideri creare un legame. Premi ESC per annullare. Questo oggetto si consuma con l'uso riuscito, quindi scegli con saggezza!
+19319=Legame con l'animale domestico annullato.
+19320=Quell'animale domestico è già legato a te. 19321=Questo non è il tuo animale domestico!
+19322=Sei sicuro di voler liberare il tuo animale domestico? Gli animali domestici evocati spariranno definitivamente!
+19323=Non puoi compiere azioni benefiche sul tuo bersaglio.
+19324=Seleziona un animale domestico per creare un legame immediato.
+19325=Obiettivo non valido.
+19326=Quella creatura deve essere addomesticata prima di poter essere creata.
+19327=Quell'animale domestico è già creato.
+19328=L'animale domestico è stato creato un legame immediato!
+19329=Il legame con gli animali domestici è disabilitato su questo server.
+19330=Non hai abbastanza oro con te per pagare la tassa.
+19331=%i oro sono stati prelevati dal tuo zaino.
+19332=Il tuo animale domestico è stato resuscitato.
+19333=[Addomesticato]
+19334=[Legato]
+19335=legato
+19336=addomesticato
+19337=invulnerabile
+19338=congelato
+19339=sorvegliato
+19340=Lo spirito di quella creatura manca di coesione. Riprova tra qualche minuto.
 }
 EOF

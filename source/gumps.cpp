@@ -1327,7 +1327,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 					}
 
 					// Additional update required for regular UO client
-					mChar->Update();
+					mChar->Update( nullptr, false, true, true );
 				}
 			}
 			else if( cmd == "GUIINFORMATION" )
@@ -1869,7 +1869,7 @@ bool CPIGumpMenuSelect::Handle( void )
 
 	BuildTextLocations();
 
-	if( buttonId > 10000 && buttonId < 20000 )
+	if( gumpId < 0xFFFF && ( buttonId > 10000 && buttonId < 20000 ))
 	{
 		BuildGumpFromScripts( tSock, static_cast<UI16>( buttonId - 10000 ));
 		return true;

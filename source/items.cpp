@@ -482,6 +482,9 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetRank( 10 );
 				}
 				break;
+			case DFNTAG_HEALTHREGENBONUS:	applyTo->SetHealthRegenBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_STAMINAREGENBONUS:	applyTo->SetStaminaRegenBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_MANAREGENBONUS:		applyTo->SetManaRegenBonus( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_RACE:			applyTo->SetRace( static_cast<UI16>( ndata ));			break;
 			case DFNTAG_RESISTFIRE:
 				if( ndata >= 0 )
@@ -1351,7 +1354,7 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cause items to decay when left on the ground
 //o------------------------------------------------------------------------------------------------o
-auto DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsInHouses ) -> bool
+auto DecayItem( CItem& toDecay, const TIMERVAL nextDecayItems, const TIMERVAL nextDecayItemsInHouses ) -> bool
 {
 	if( toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay() )
 	{

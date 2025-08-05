@@ -49,6 +49,7 @@ protected:
 	SERIAL			creator;		// Store the serial of the player made this item
 	SI08			gridLoc;
 	SI16			artifactRarity;
+	UI16			poisonCharges;	// Amount of poison charges for poisoned item
 
 	SI16			durabilityHpBonus;
 
@@ -127,6 +128,9 @@ public:
 
 	auto			GetStealable() const -> UI08;
 	auto			SetStealable( UI08 newValue ) -> void;
+
+	auto			GetPoisonCharges() const -> UI16;
+	auto			SetPoisonCharges( UI16 newValue ) -> void;
 
 	auto			IsDoorOpen() const -> bool;
 	auto			IsPileable() const -> bool;
@@ -244,6 +248,8 @@ public:
 	auto			GetArmourClass() const -> ARMORCLASS;
 	auto			SetArmourClass( ARMORCLASS newValue ) -> void;
 
+	auto			GetNonMedableArmorRating() const -> R64;
+
 	auto			GetRank() const -> SI08;
 	auto			SetRank( SI08 newValue ) -> void;
 
@@ -316,7 +322,7 @@ public:
 	auto			UpdateRegion() -> void;
 
 	auto			TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0x005A ) -> void;
-	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) override;
+	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true, bool triggerInRangeEvent = false ) override;
 	virtual void	SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) override;
 	auto			SendPackItemToSocket( CSocket *mSock ) -> void;
 	virtual void	RemoveFromSight( CSocket *mSock = nullptr );

@@ -72,8 +72,8 @@ function onPacketReceive(pSocket, packetNum, subcommand )
 	var subCmd = pSocket.GetByte( 5 ); // Fetch subCmd
 
 	var mapItem = CalcItemFromSer( pSocket.GetDWord( 1 ));
-    if( !ValidateObject( mapItem )) // not a valid map item?
-        return;
+	if( !ValidateObject( mapItem )) // not a valid map item?
+		return;
 
 	var maxPins = 50;
 	var pins = [];
@@ -95,11 +95,11 @@ function onPacketReceive(pSocket, packetNum, subcommand )
 			var piny = pSocket.GetSWord( 9 );
 
 			if( pins.length >= maxPins )
-            {
-                pSocket.SysMessage( "Max number of pins reached!" );
-                SendMapEditable( pSocket, mapItem, false );
-                return;
-            }
+			{
+				pSocket.SysMessage( "Max number of pins reached!" );
+				SendMapEditable( pSocket, mapItem, false );
+				return;
+			}
 
 			var pin = pinx + "," + piny;
 
@@ -112,6 +112,7 @@ function onPacketReceive(pSocket, packetNum, subcommand )
 		case 2:// [UNUSED - not sent by client] Append to list of pins
 			/*var pinx = pSocket.GetSWord( 7 );
 			var piny = pSocket.GetSWord( 9 );
+
 			mapItem.SetTag("pins", pinx + "," + piny);*/
 			break;
 		case 3:// [UNUSED - not sent by client] Change pin

@@ -1,3 +1,20 @@
+// Base undead with shared DFN tags
+[base_undead]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCAI=2
+FLAG=NEUTRAL
+RACE=11
+}
+
+//------------------------------------------------------------------------------------------------//
+
 [zombie]
 {
 NAME=#//a zombie
@@ -64,7 +81,7 @@ WRESTLING=750 1000
 DAMAGE=12 30
 DEF=30
 SPATTACK=8
-SPADELAY=5
+SPADELAY=3
 NPCWANDER=4
 FX1=-1
 FY1=-1
@@ -74,9 +91,11 @@ NPCAI=11
 TOPROV=1359
 TOPEACE=1359 5
 FLEEAT=-1
+RUNS
 RACE=11
 FLAG=EVIL
 SCRIPT=3300
+SCRIPT=3226//ancient_lich.js
 }
 
 [lichlord]
@@ -478,4 +497,85 @@ get=wraith
 NAME=#//a ghoul
 ID=0x0099
 SKIN=0x0
+}
+
+[spectralarmor]
+{
+GET=base_undead
+NAME=#//a spectral armor
+ID=0x027d
+SKIN=0x8026
+GOLD=50 150
+LOOT=randomgems,4
+EQUIPITEM=buckler
+COLOR=0x0835
+EQUIPITEM=chainmailcoif
+COLOR=0x0835
+EQUIPITEM=platemailgloves
+COLOR=0x0835
+STR=101 110
+DEX=101 110
+INT=101 110
+HPMAX=296 335
+STAMMAX=191 200
+KARMA=-4000
+FAME=4000
+MAGICRESISTANCE=900 1000
+PARRYING=900 1000
+TACTICS=900 1000
+WRESTLING=750 1000
+DAMAGE=4 28
+DEF=20
+TOPROV=1359
+TOPEACE=1359 5
+FLAG=EVIL
+FLEEAT=-1
+}
+
+//lady of the snow - Base NPC with shared DFN tags
+[base_lady_of_the_snow]
+{
+GET=base_undead
+NAME=#//lady of the snow
+ID=0x0fc
+ORIGIN=se
+}
+
+[ladyofthesnow]
+{
+GETUO=ladyofthesnow_se
+GETT2A=ladyofthesnow_se
+GETUOR=ladyofthesnow_se
+GETTD=ladyofthesnow_se
+GETLBR=ladyofthesnow_se
+GETAOS=ladyofthesnow_se
+GETSE=ladyofthesnow_se
+GETML=ladyofthesnow_se
+GETSA=ladyofthesnow_se
+GETHS=ladyofthesnow_se
+GETTOL=ladyofthesnow_se
+}
+
+//revenant lion - Base NPC with shared DFN tags
+[base_revenant_lion]
+{
+GET=base_undead
+NAME=#//revenant lion
+ID=0x0fb
+ORIGIN=se
+}
+
+[revenantlion]
+{
+GETUO=revenant_lion_se
+GETT2A=revenant_lion_se
+GETUOR=revenant_lion_se
+GETTD=revenant_lion_se
+GETLBR=revenant_lion_se
+GETAOS=revenant_lion_se
+GETSE=revenant_lion_se
+GETML=revenant_lion_se
+GETSA=revenant_lion_se
+GETHS=revenant_lion_se
+GETTOL=revenant_lion_se
 }

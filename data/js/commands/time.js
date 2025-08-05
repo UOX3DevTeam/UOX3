@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "time", 1, true );
+	RegisterCommand( "time", 4, true );
 }
 
 function command_TIME( socket, cmdString )

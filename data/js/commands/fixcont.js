@@ -7,7 +7,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "fixcont", 3, true );
+	RegisterCommand( "fixcont", 10, true );
 }
 
 function command_FIXCONT( socket, cmdString )

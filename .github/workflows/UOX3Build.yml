@@ -14,6 +14,8 @@ on:
       - '**.sln'
       - '**.vcxproj'
       - '**.xcodeproj'
+    tags-ignore:
+      - 'v*-release' # This will ignore all version tags ending with '-release' like v1.0-release
 
   pull_request:
     paths-ignore:

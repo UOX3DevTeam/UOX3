@@ -103,18 +103,18 @@ private:
 	bool		hasLoaded;
 
 	// Time Functions
-	UI32		uoTickCount;
-	UI32		startTime, endTime, lClock;
+	TIMERVAL		uoTickCount;
+	TIMERVAL		startTime, endTime, lClock;
 	bool		overflow;
-	UI32		uiCurrentTime;
+	TIMERVAL		uiCurrentTime;
 
 	// Worldsave
-	UI32		oldTime, newTime;
+	TIMERVAL		oldTime, newTime;
 	bool		autoSaved;
 	SaveStatus	worldSaveProgress;
 
 	// IP Update
-	UI32		oldIPtime, newIPtime;
+	TIMERVAL		oldIPtime, newIPtime;
 	bool		ipUpdated;
 
 	// Misc
@@ -165,34 +165,32 @@ public:
 	bool		GetLoaded( void ) const;
 
 	// Time Functions
-	void		SetUICurrentTime( UI32 newVal );
-	UI32		GetUICurrentTime( void ) const;
-	void		SetUOTickCount( UI32 newVal );
-	UI32		GetUOTickCount( void ) const;
-	void		SetOverflow( bool newVal );
-	bool		GetOverflow( void ) const;
-	void		SetStartTime( UI32 newVal );
-	UI32		GetStartTime( void ) const;
-	void		SetEndTime( UI32 newVal );
-	UI32		GetEndTime( void ) const;
-	void		SetLClock( UI32 newVal );
-	UI32		GetLClock( void ) const;
+	void		SetUICurrentTime( TIMERVAL newVal );
+	TIMERVAL	GetUICurrentTime( void ) const;
+	void		SetUOTickCount( TIMERVAL newVal );
+	TIMERVAL	GetUOTickCount( void ) const;
+	void		SetStartTime( TIMERVAL newVal );
+	TIMERVAL	GetStartTime( void ) const;
+	void		SetEndTime( TIMERVAL newVal );
+	TIMERVAL	GetEndTime( void ) const;
+	void		SetLClock( TIMERVAL newVal );
+	TIMERVAL	GetLClock( void ) const;
 
 	// Worldsave
-	void		SetNewTime( UI32 newVal );
-	UI32		GetNewTime( void ) const;
-	void		SetOldTime( UI32 newVal );
-	UI32		GetOldTime( void ) const;
+	void		SetNewTime( TIMERVAL newVal );
+	TIMERVAL	GetNewTime( void ) const;
+	void		SetOldTime( TIMERVAL newVal );
+	TIMERVAL	GetOldTime( void ) const;
 	void		SetAutoSaved( bool newVal );
 	bool		GetAutoSaved( void ) const;
 	void		SetWorldSaveProgress( SaveStatus newVal );
 	SaveStatus	GetWorldSaveProgress( void ) const;
 
 	// IP update
-	UI32		GetNewIPTime( void ) const;
-	void		SetNewIPTime( UI32 newVal );
-	UI32		GetOldIPTime( void ) const;
-	void		SetOldIPTime( UI32 newVal );
+	TIMERVAL	GetNewIPTime( void ) const;
+	void		SetNewIPTime( TIMERVAL newVal );
+	TIMERVAL	GetOldIPTime( void ) const;
+	void		SetOldIPTime( TIMERVAL newVal );
 	void		SetIPUpdated( bool newVal );
 	bool		GetIPUpdated( void ) const;
 

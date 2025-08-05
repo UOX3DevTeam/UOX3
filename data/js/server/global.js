@@ -14,30 +14,42 @@ function onLogin( socket, pChar )
 		{
 			// Admin has either not seen or reacted to welcome gump yet
 			TriggerEvent( 1, "DisplayAdminWelcomeGump", socket, pChar );
-			return;
+		}
+	}
+
+	// If it's first time player logs in with this character since server startup,
+	// or in at least 6 hours, give them a small boost to hunger level to avoid
+	// instant starving/hunger on login
+	let currentClock = GetCurrentClock();
+	if( pChar.hunger == 0 )
+	{
+		let oldLoginTime = pChar.GetTempTag( "loginTime" );
+		if( oldLoginTime == 0 || ( currentClock / 1000 / 60 ) - oldLoginTime > 360 )
+		{
+			pChar.hunger = 1;
 		}
 	}
 
 	// Store login timestamp (in minutes) in temp tag
-	var loginTime = Math.round( GetCurrentClock() / 1000 / 60 );
+	var loginTime = Math.round( currentClock / 1000 / 60 );
 	pChar.SetTempTag( "loginTime", loginTime );
 
 	// Attach OnFacetChange to characters logging into the shard
 	if( !pChar.HasScriptTrigger( 2508 ))
-    {
-        pChar.AddScriptTrigger( 2508 );
-    }
+	{
+		pChar.AddScriptTrigger( 2508 );
+	}
 
 	if( youngPlayerSystem && pChar.account.isYoung )
-    {
-  		// Attach "Young" player script, if the account is young and does not have script
+	{
+		// Attach "Young" player script, if the account is young and does not have script
 		if( !pChar.HasScriptTrigger( 8001 ))
 		{
 			pChar.AddScriptTrigger( 8001 );
 		}
 
-    	// Check if "Young" player still meets requirement for being considered young
-    	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
+		// Check if "Young" player still meets requirement for being considered young
+		TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
 	}
 	else if( !youngPlayerSystem )
 	{
@@ -51,11 +63,11 @@ function onLogin( socket, pChar )
 	}
 
 	// Re-adds Buff for disguise kit if player still has time left.
-	var currentTime = GetCurrentClock();
 	var disguiseKitTime = pChar.GetJSTimer( 1, 5023 );
-	var timeLeft = Math.round(( disguiseKitTime - currentTime ) / 1000 );
 	if( disguiseKitTime > 0 )
 	{
+		var currentTime = GetCurrentClock();
+		var timeLeft = Math.round(( disguiseKitTime - currentTime ) / 1000 );
 		TriggerEvent( 2204, "RemoveBuff", pChar, 1033 );
 		TriggerEvent( 2204, "AddBuff", pChar, 1033, 1075821, 1075820, timeLeft, "" );
 	}
@@ -63,7 +75,7 @@ function onLogin( socket, pChar )
 
 function onLogout( pSock, pChar )
 {
-	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - pChar.GetTempTag( "loginTime" );
+	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - parseInt( pChar.GetTempTag( "loginTime" ));
 	pChar.playTime += minSinceLogin;
 	pChar.account.totalPlayTime += minSinceLogin;
 
@@ -221,4 +233,18 @@ function onDeath( pDead, iCorpse )
 		return false;
 
 	return TriggerEvent( 5045, "onDeath", pDead, iCorpse );
+}
+
+// Triggers based on bandage macro in client
+function onUseBandageMacro( pSock, targChar, bandageItem )
+{
+	if( pSock != null && ValidateObject( targChar ) && ValidateObject( bandageItem ) && bandageItem.amount >= 1 )
+	{
+		var pUser = pSock.currentChar;
+		if( ValidateObject( pUser ))
+		{
+			TriggerEvent( 4000, "onUseCheckedTriggered", pUser, targChar, bandageItem );
+		}
+	}
+	return true;
 }

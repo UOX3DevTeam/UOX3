@@ -94,6 +94,7 @@ const UI16			DEFITEM_REGIONNUM 		= 255;
 const UI16			DEFITEM_TEMPLASTTRADED	= 0;
 const SI08			DEFITEM_STEALABLE	 	= 1;
 const SI16			DEFITEM_ARTIFACTRARITY = 0;
+const UI16			DEFITEM_POISONCHARGES = 0;
 
 const SI16			DEFITEM_DURABLITITYHPBONUS = 0;
 
@@ -113,7 +114,8 @@ spd( DEFITEM_SPEED ), maxHp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
 creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
 maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM ), 
-tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), artifactRarity( DEFITEM_ARTIFACTRARITY ), lowerStatReq( DEFITEM_LOWERSTATREQ ), durabilityHpBonus( DEFITEM_DURABLITITYHPBONUS )
+tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE ), artifactRarity( DEFITEM_ARTIFACTRARITY ), lowerStatReq( DEFITEM_LOWERSTATREQ ), 
+durabilityHpBonus( DEFITEM_DURABLITITYHPBONUS ), poisonCharges( DEFITEM_POISONCHARGES )
 {
 	spells[0]	= spells[1] = spells[2] = 0;
 	value[0]	= value[1] = value[2] = 0;
@@ -156,7 +158,7 @@ auto CItem::GetCont( void ) const -> CBaseObject *
 //o------------------------------------------------------------------------------------------------o
 auto CItem::GetContSerial( void ) const -> SERIAL
 {
-	if( contObj != nullptr )
+	if( ValidateObject( contObj ) && contObj != nullptr )
 		return contObj->GetSerial();
 
 	return INVALIDSERIAL;
@@ -359,8 +361,8 @@ auto CItem::SetCont( CBaseObject *newCont, bool removeFromView ) -> bool
 						RemoveFromSight();
 					}
 
-					//itemHolder->GetContainsList()->Add( this );
-					itemHolder->GetContainsList()->AddInFront( this );
+					itemHolder->GetContainsList()->Add( this );
+					//itemHolder->GetContainsList()->AddInFront( this );
 
 					// Set new save flag on item based on save flag of new container
 					ShouldSave( itemHolder->ShouldSave() );
@@ -1174,6 +1176,30 @@ auto CItem::SetArmourClass( ARMORCLASS newValue ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetNonMedableArmourRating()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns physical resist value of armor, if it's non-medable/not a mage armor
+//o------------------------------------------------------------------------------------------------o
+auto CItem::GetNonMedableArmorRating() const -> R64
+{
+	auto rVal = 0;
+	// Check for mage armor property here, return 0 if found
+	// Mage armor is defined using the second part of the MORE property. If it's 1, it's a mage armor!
+	// Allows for meditation in armor pieces that are usually non-medable
+	if( GetTempVar( CITV_MORE, 2 ) == 1 )
+		return rVal;
+
+	// Return physical resist value if armor is not medable
+	// Medable armor is defined using the first part of the MORE property. If it's 1, it's medable!
+	if( GetTempVar( CITV_MORE, 1 ) == 0 )
+	{
+		rVal = this->GetResist( PHYSICAL );
+	}
+	
+	return rVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetRank()
 //|					CItem::SetRank()
 //o------------------------------------------------------------------------------------------------o
@@ -1687,6 +1713,8 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetPileable( IsPileable() );
 	target->SetMakersMark( IsMarkedByMaker() );
 	target->SetPoisoned( GetPoisoned() );
+	target->SetPoisonedBy( GetPoisonedBy() );
+	target->SetPoisonCharges( GetPoisonCharges() );
 	target->SetRace( GetRace() );
 	target->SetRank( GetRank() );
 	target->SetRestock( GetRestock() );
@@ -1725,6 +1753,7 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetUsesLeft( GetUsesLeft() );
 	target->SetLowerStatReq( GetLowerStatReq() );
 	target->SetStealable( GetStealable() );
+	target->SetPoisonCharges( GetPoisonCharges() );
 
 	// Set damage types on new item
 	for( SI32 i = 0; i < WEATHNUM; ++i )
@@ -1734,6 +1763,10 @@ auto CItem::CopyData( CItem *target ) -> void
 
 	// Add any script triggers present on object to the new object
 	target->scriptTriggers = GetScriptTriggers();
+
+	// Don't forget to copy the tags
+	target->tags = GetTagMap();
+	target->tempTags = GetTempTagMap();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1823,6 +1856,7 @@ bool CItem::DumpBody( std::ostream &outStream ) const
 		+ std::to_string( static_cast<SI16>( GetWeatherDamage( SNOW ) ? 1 : 0 )) + "," + std::to_string( static_cast<SI16>( GetWeatherDamage( LIGHTNING ) ? 1 : 0 )) + newLine;
 	outStream << "EntryMadeFrom=" + std::to_string( EntryMadeFrom() ) + newLine;
 	outStream << "Stealable=" + std::to_string( GetStealable() ) + newLine;
+	outStream << "PoisonCharges" + std::to_string( GetPoisonCharges() ) + newLine;
 
 	return true;
 }
@@ -1897,7 +1931,20 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "CREATOR" || UTag == "CREATER" )
 				{
-					SetCreator( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					auto dataVal = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+					if( !dataVal.empty() ) // Fixes incompatibility with really old UOX3 world saves, where "creater" tags were blank
+					{
+						try
+						{
+							auto numVal = std::stoul( dataVal, nullptr, 0 );
+							SetCreator( static_cast<UI32>( numVal ));
+						}
+						catch(...)
+						{
+
+						}
+						//SetCreator( static_cast<UI32>( std::stoul( dataVal, nullptr, 0 )));
+					}
 					rValue = true;
 				}
 				else if( UTag == "CORPSE" )
@@ -2513,6 +2560,22 @@ auto CItem::SetStealable( UI08 newValue ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetPoisonCharges()
+//|					CItem::SetPoisonCharges()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets property that determines amount of poison charges available on item
+//o------------------------------------------------------------------------------------------------o
+auto CItem::GetPoisonCharges() const -> UI16
+{
+	return poisonCharges;
+}
+auto CItem::SetPoisonCharges( UI16 newValue ) -> void
+{
+	poisonCharges = newValue;
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::EntryMadeFrom()
 //|	Date		-	13 September, 2001
 //o------------------------------------------------------------------------------------------------o
@@ -2693,7 +2756,7 @@ auto CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send this item to specified socket or all online people in range
 //o------------------------------------------------------------------------------------------------o
-void CItem::Update( [[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGamePlayer, [[maybe_unused]] bool sendToSelf )
+void CItem::Update( [[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGamePlayer, [[maybe_unused]] bool sendToSelf, [[maybe_unused]] bool triggerInRangeEvent )
 {
 	if( GetType() == IT_TRADEWINDOW )
 		return;
@@ -2730,6 +2793,7 @@ void CItem::Update( [[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawG
 		CChar *charCont = static_cast<CChar *>( iCont );
 		if( charCont != nullptr )
 		{
+			RemoveFromSight( mSock ); // Remove from sight first, otherwise client won't pick up on update for equipped item
 			CPWornItem toWear = ( *this );
 			auto nearbyChar = FindNearbyPlayers( charCont );
 			for( auto &tSock : nearbyChar )
@@ -2959,6 +3023,9 @@ void CItem::RemoveFromSight( CSocket *mSock )
 		else
 		{
 			// Iterate through list of players who have opened the container the item was in
+			if( !ValidateObject( iCont ))
+				return;
+
 			auto itemCont = static_cast<CItem *>( iCont );
 			auto contOpenedByList = itemCont->GetContOpenedByList();
 			for( const auto &oSock : contOpenedByList->collection() )

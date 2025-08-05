@@ -140,7 +140,31 @@ get=0x0e40 0x0e41
 get=base_item
 name=metal chest
 id=0x0e41
+color=0x89E
 movable=2
 script=5061
 origin=uor
+}
+
+[puzzlechest-ns]
+{
+get=base_item
+name=metal chest
+id=0x0e40
+color=0x89E
+movable=2
+script=5061
+origin=uor
+}
+
+[puzzlestrongbox]
+{
+get=puzzlechest
+id=0x09a8
+}
+
+[puzzlestrongbox-ns]
+{
+get=puzzlechest
+id=0x0e80
 }

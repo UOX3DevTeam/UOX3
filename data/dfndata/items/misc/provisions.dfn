@@ -22,6 +22,17 @@ restock=20
 decay=1
 }
 
+[0x14ec]
+{
+get=base_item
+name=blank map
+id=0x14ec
+weight=100
+value=75 37
+restock=20
+decay=1
+}
+
 [oilcloth]
 {
 get=base_item

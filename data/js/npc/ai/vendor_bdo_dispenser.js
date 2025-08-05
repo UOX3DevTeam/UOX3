@@ -173,6 +173,60 @@ const BlacksmithRewardTiersToItems = [
 	{ items: [{ itemName: "valorite_runic_hammer" }] }
 ];
 
+const BlacksmithRewardTiersToItemsAoS = [
+	{
+		items: [
+			{ itemName: "sturdy_pickaxe", props: [["maxUses", 200], ["usesLeft", 200]] },
+			{ itemName: "sturdy_shovel", props: [["maxUses", 200], ["usesLeft", 200]] },
+			{ itemName: "sturdy_pickaxe", props: [["maxUses", 150], ["usesLeft", 150]] },
+			{ itemName: "sturdy_shovel", props: [["maxUses", 150], ["usesLeft", 150]] },
+		],
+		selectType: "random",
+	},
+	{ items: [{ itemName: "mining_gloves_1" }] },
+	{
+		items: [
+			{ itemName: "gargoyles_pickaxe", props: [["maxUses", 200], ["usesLeft", 200]] },
+			{ itemName: "prospectors_tool", props: [["maxUses", 200], ["usesLeft", 200]] },
+			{ itemName: "gargoyles_pickaxe", props: [["maxUses", 150], ["usesLeft", 150]] },
+			{ itemName: "prospectors_tool", props: [["maxUses", 150], ["usesLeft", 150]] },
+		],
+		selectType: "random",
+	},
+	{ items: [{ itemName: "mining_gloves_3" }] },
+	{ items: [{ itemName: "powder_of_temperament" }] },
+	{ items: [{ itemName: "mining_gloves_5" }] },
+	{ items: [{ itemName: "dull_copper_runic_hammer" }] },
+	{ items: [{ itemName: "shadow_iron_runic_hammer" }] },
+	{ items: [{ itemName: "power_scroll_smith_5" }] },
+	{ items: [{ itemName: "copper_runic_hammer" }] },
+	{
+		items: [
+			{ itemName: "dc_anvil_deed" },
+			{ itemName: "si_anvil_deed" },
+			{ itemName: "c_anvil_deed" },
+			{ itemName: "b_anvil_deed" },
+			{ itemName: "g_anvil_deed" },
+			{ itemName: "a_anvil_deed" },
+			{ itemName: "ve_anvil_deed" },
+			{ itemName: "va_anvil_deed" }
+		],
+		selectType: "weighted"
+	},
+	{ items: [{ itemName: "power_scroll_smith_10" }] },
+	{ items: [{ itemName: "bronze_runic_hammer" }] },
+	{ items: [{ itemName: "ancient_smithy_hammer_10" }] },
+	{ items: [{ itemName: "power_scroll_smith_15" }] },
+	{ items: [{ itemName: "ancient_smithy_hammer_15" }] },
+	{ items: [{ itemName: "power_scroll_smith_20" }] },
+	{ items: [{ itemName: "gold_runic_hammer" }] },
+	{ items: [{ itemName: "ancient_smithy_hammer_30" }] },
+	{ items: [{ itemName: "agapite_runic_hammer" }] },
+	{ items: [{ itemName: "ancient_smithy_hammer_60" }] },
+	{ items: [{ itemName: "verite_runic_hammer" }] },
+	{ items: [{ itemName: "valorite_runic_hammer" }] }
+];
+
 // See comment above BlacksmithRewardTiersToItems for explanation of object properties.
 const TailorRewardTiersToItems = [
 	{
@@ -241,6 +295,11 @@ const BODTypesToRewards = {
 	2: TailorRewardTiersToItems
 };
 
+const BODTypesToRewardsAoS = {
+	1: BlacksmithRewardTiersToItemsAoS,
+	2: TailorRewardTiersToItems
+};
+
 function onSoldToVendor( pSock, npcVendor, iSold )
 {
 	var pUser = pSock.currentChar;
@@ -302,7 +361,7 @@ function onSpeech( myString, pUser, myNPC )
 			{
 				if( CheckBodTimers( pUser, myNPC.GetTag( "bodType" ) ))
 				{
-					if( EraStringToNum( GetServerSetting( "CoreShardEra" )) >= EraStringToNum( "lbr" ))
+					if( EraStringToNum( GetServerSetting( "CoreShardEra" )) <= EraStringToNum( "lbr" ))
 					{
 						myNPC.SetTimer( Timer.MOVETIME, 1000 ); // Pause NPC in their tracks for a second
 						myNPC.TurnToward( pUser );
@@ -609,6 +668,12 @@ function onDropItemOnNpc( pDropper, npcDroppedOn, iDropped )
 	if( socket == null )
 		return false;
 
+	// Return true allows code/other scripts to handle "gold drop" on this NPC
+	if( iDropped.id == 0x0eed )
+	{
+		return true;
+	}
+
 	var amountMax 	  = iDropped.GetTag( "amountMax" ); 	 // amount you have to make of the item
 	var amountCur 	  = iDropped.GetTag( "amountCur" ); 	 // amount you have combined
 	var iBodType 	  = iDropped.GetTag( "bodType" ); 	     // BOD type of the BOD itself
@@ -727,7 +792,8 @@ function DispenseBODRewards( pDropper, npcDroppedOn, iDropped )
 	var avgBodItemQuality = Math.round( iDropped.GetTag( "qualityValue" ) / iDropped.GetTag( "amountCur" ));
 	var weightVal = ( 4 - (( avgBodItemQuality / 10 ) * 3.0 ));
 
-	const rewards = BODTypesToRewards[iDropped.GetTag( "bodType" )];
+	var coreShardEra = EraStringToNum( GetServerSetting( "CoreShardEra" )); // <= EraStringToNum( "lbr" ))
+	const rewards = ( coreShardEra <= EraStringToNum( "lbr" ) ? BODTypesToRewards[iDropped.GetTag( "bodType" )] : BODTypesToRewardsAoS[iDropped.GetTag( "bodType" )] );
 
 	// Get modifiers to min / max rewards based on properties of the BOD itself
 	var minMaxMod = MinMaxRewardModifiers( iDropped, iDropped.GetTag( "bodType" ), rewards.length);

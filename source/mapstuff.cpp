@@ -569,7 +569,7 @@ auto CMulHandler::MultiTile( CItem *i, std::int16_t x, std::int16_t y, std::int8
 	{
 		Console << "CMulHandler::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
 		auto map1 = Map->SeekMap( i->GetX(), i->GetY(), i->WorldNumber() );
-		if( map1.CheckFlag( TF_WET )) // is it water?
+		if( map1.terrainInfo != nullptr && map1.CheckFlag( TF_WET )) // is it water?
 		{
 			i->SetId( 0x4001 );
 		}
@@ -676,7 +676,7 @@ auto CMulHandler::DoesStaticBlock( std::int16_t x, std::int16_t y, std::int8_t z
 		auto elev = static_cast<SI08>( tile.altitude + tile.artInfo->ClimbHeight() );
 		if( checkWater )
 		{
-			if( elev >= z && tile.altitude <= z && ( tile.CheckFlag( TF_BLOCKING ) || tile.CheckFlag( TF_WET )))
+			if( elev >= z && tile.altitude <= z && ( tile.CheckFlag( TF_BLOCKING ) || tile.CheckFlag( TF_WET ) || tile.CheckFlag( TF_ROOF )))
 			{
 				rValue = true;
 				break;
@@ -684,7 +684,7 @@ auto CMulHandler::DoesStaticBlock( std::int16_t x, std::int16_t y, std::int8_t z
 		}
 		else
 		{
-			if( elev >= z && tile.altitude <= z && ( tile.CheckFlag( TF_BLOCKING ) && !tile.CheckFlag( TF_WET )))
+			if( elev >= z && tile.altitude <= z && ( tile.CheckFlag( TF_BLOCKING ) && !tile.CheckFlag( TF_WET ) || tile.CheckFlag( TF_ROOF )))
 			{
 				rValue = true;
 				break;
@@ -714,6 +714,7 @@ auto CMulHandler::DoesDynamicBlock( std::int16_t x, std::int16_t y, std::int8_t 
 		if( dtItem->GetVisible() == 1 || dtItem->GetVisible() == 3 )
 			return false;
 
+		auto dtItemZ = dtItem->GetZ();
 		rValue = false;
 		const UI16 dt = dtItem->GetId();
 		if( IsValidTile( dt ) && dt != 0 )
@@ -728,7 +729,8 @@ auto CMulHandler::DoesDynamicBlock( std::int16_t x, std::int16_t y, std::int8_t 
 			}
 			else
 			{
-				if( tile.CheckFlag( TF_ROOF ) || tile.CheckFlag( TF_BLOCKING ) || ( checkWater && tile.CheckFlag( TF_WET )) /*|| !tile.CheckFlag( TF_SURFACE ) */ )
+				auto elev = static_cast<SI08>( dtItemZ + tile.ClimbHeight() );
+				if( elev >= z && dtItemZ <= z && ( tile.CheckFlag( TF_ROOF ) || tile.CheckFlag( TF_BLOCKING ) || ( checkWater && tile.CheckFlag( TF_WET ))) /*|| !tile.CheckFlag( TF_SURFACE ) */ )
 				{
 					rValue = true;
 				}
@@ -748,6 +750,9 @@ auto CMulHandler::DoesMapBlock( std::int16_t x, std::int16_t y, std::int8_t z, s
 	if( checkWater || waterWalk )
 	{
 		const auto &map = SeekMap( x, y, worldNumber );
+		if( map.terrainInfo == nullptr )
+			return true;
+
 		if(( checkMultiPlacement && map.altitude == z ) || ( !checkMultiPlacement && map.altitude >= z && map.altitude - z < 16 ))
 		{
 			if( z == ILLEGAL_Z )
@@ -1004,7 +1009,7 @@ auto CMulHandler::DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t 
 			auto regItems = MapArea->GetItemList();
 			for( const auto tempItem : regItems->collection() )
 			{
-				if( ValidateObject( tempItem ) || tempItem->GetInstanceId() != instanceId )
+				if( ValidateObject( tempItem ) && tempItem->GetInstanceId() == instanceId )
 				{
 					if( tempItem->GetId( 1 ) >= 0x40 && tempItem->CanBeObjType( OT_MULTI ))
 					{
@@ -1033,13 +1038,13 @@ auto CMulHandler::DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t 
 //o------------------------------------------------------------------------------------------------o
 auto CMulHandler::MapElevation( std::int16_t x, std::int16_t y, std::uint8_t worldNumber, bool ignoreVoid ) -> std::int8_t
 {
-    const auto &map = SeekMap( x, y, worldNumber );
-    // make sure nothing can move into black areas
-    if( !ignoreVoid && map.isVoid() )
-    {
-        return ILLEGAL_Z;
-    }
-    return map.altitude;
+	const auto &map = SeekMap( x, y, worldNumber );
+	// make sure nothing can move into black areas
+	if( map.artInfo == nullptr || ( !ignoreVoid && map.isVoid() ))
+	{
+		return ILLEGAL_Z;
+	}
+	return map.altitude;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1065,7 +1070,7 @@ auto CMulHandler::Height( std::int16_t x, std::int16_t y, std::int8_t z, std::ui
 		return dynZ;
 
 	auto staticZ = StaticTop( x, y, z, worldNumber, MAX_Z_STEP );
-	if( ILLEGAL_Z != staticZ )
+	if( ILLEGAL_Z != staticZ && abs( staticZ - z ) <= MAX_Z_STEP )
 		return staticZ;
 
 	return MapElevation( x, y, worldNumber );

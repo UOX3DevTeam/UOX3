@@ -1340,6 +1340,70 @@ Y=1315
 Z=1
 }
 
+[LOCATION 280]
+{
+// Orc Caves - Outside
+X=1017
+Y=1433
+Z=0
+}
+
+[LOCATION 281]
+{
+// Orc Caves - Level 1
+X=5137
+Y=2013
+Z=0
+}
+
+[LOCATION 282]
+{
+// Orc Caves - Level 2
+X=5332
+Y=1374
+Z=0
+}
+
+[LOCATION 283]
+{
+// Orc Caves - Level 3
+X=5273
+Y=2033
+Z=0
+}
+
+[LOCATION 285]
+{
+// Khaldun - Outside 1
+X=5881
+Y=3819
+Z=2
+}
+
+[LOCATION 286]
+{
+// Khaldun - Outside 2
+X=6012
+Y=3779
+Z=19
+}
+
+[LOCATION 287]
+{
+// Khaldun - Inside 1 NW
+X=5397
+Y=1294
+Z=0
+}
+
+[LOCATION 288]
+{
+// Khaldun - Inside 2 NE
+X=5571
+Y=1303
+Z=0
+}
+
 [LOCATION 300]
 {
 // Hythloth Firepit

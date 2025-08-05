@@ -400,7 +400,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 			if( sz == ILLEGAL_Z ) //map tile
 			{
 				auto map = Map->SeekMap( x, y, worldNumber );
-				if( map.altitude >= cz && !map.CheckFlag( TF_WET ) && map.name() != "water" )//only tiles on/above the water
+				if( map.terrainInfo == nullptr || ( map.altitude >= cz && !map.CheckFlag( TF_WET ) && map.name() != "water" ))//only tiles on/above the water
 					return true;
 			}
 			else
@@ -637,25 +637,25 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 		if(( x + tx ) <= 50 && tx < 0 )
 		{
 			// Sailing west
-			tx = 5050;
+			tx = 4970;
 			teleportBoat = true;
 		}
-		else if(( x + tx ) >= 5050 && tx > 0 )
+		else if(( x + tx ) >= 5030 && tx > 0 )
 		{
 			// Sailing east
-			tx = -5050;
+			tx = -4970;
 			teleportBoat = true;
 		}
-		else if(( y + ty ) <= 100 && ty < 0 )
+		else if(( y + ty ) <= 15 && ty < 0 )
 		{
 			// Sailing north
-			ty = 3896;
+			ty = 4020;
 			teleportBoat = true;
 		}
-		else if(( y + ty ) >= 3996 && ty > 0 )
+		else if(( y + ty ) >= 4060 && ty > 0 )
 		{
 			// Sailing south
-			ty = -3896;
+			ty = -4040;
 			teleportBoat = true;
 		}
 	}
@@ -908,7 +908,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 		auto toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute )
 		{
-			if( toExecute->OnBoatTurn( b, olddir, b->GetDir() ) == 1 )
+			if( toExecute->OnBoatTurn( b, olddir, b->GetDir(), tiller ) == 1 )
 			{
 				// A script with the event returned true; prevent other scripts from running
 				break;

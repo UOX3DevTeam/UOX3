@@ -1520,13 +1520,13 @@
 1513=está algo dañado.
 1514=es endeble y no es de fiar.
 1515=se desmorona.
-1516= sería extraordinariamente mortal.
-1517= sería un arma superior.
-1518= infligiría bastante daño y dolor.
-1519= probablemente perjudicaría bastante a tu oponente.
-1520= haría algo de daño.
-1521= haría un daño mínimo.
-1522= podría rayar ligeramente a su oponente.
+1516=Sería extraordinariamente mortal,
+1517=Sería un arma superior,
+1518=Infligiría bastante daño y dolor,
+1519=Probablemente perjudicaría bastante a tu oponente,
+1520=Haría algo de daño,
+1521=Haría un daño mínimo,
+1522=Podría rayar ligeramente a su oponente,
 1523= y es muy rápido.
 1524= y es rápido.
 1525= y es lento.
@@ -1677,6 +1677,7 @@
 1663=Mi pequeño hijo Timmy necesita una operación, ¿tenéis algo de oro para ayudar a la causa?
 1664=Mi mujer está embarazada de nuestro séptimo hijo, tenga un poco de piedad en forma de oro para un hombre desesperado.
 // Fin del texto inicial
+1669=¡No se ve el objetivo!
 1670=No puedes disfrazarte mientras llevas pintura corporal
 1671=No puedes polimorfar mientras llevas pintura corporal
 1672=No puedes usar el incógnito mientras llevas pintura corporal
@@ -2457,6 +2458,59 @@
 2585=Se vierte un poco de sidra en el recipiente.
 2586=Se vierte un poco de licor en el recipiente.
 2587=Se sirve un poco de vino en el vaso.
+2588=Estas zanahorias aún no están listas para ser cosechadas.
+2589=No has recogido ninguna zanahoria.
+2590=Has cosechado una zanahoria.
+2591=Estas cebollas aún no están listas para ser cosechadas.
+2592=No has recogido ninguna cebolla.
+2593=Has cosechado una cebolla.
+2594=Este nabo aún no está listo para ser cosechado.
+2595=No has recogido ningún nabo.
+2596=Has cosechado un nabo.
+2597=Esta col aún no está lista para ser cosechada.
+2598=No has recogido ninguna col.
+2599=Has cosechado una col.
+// [2600-2699] Script de administrador de jugadores/PNJ/aparición
+2600=Se ha eliminado el PNJ seleccionado (%s, %i).
+2601=Advertencia: ¡No se ha encontrado ninguna mochila en el personaje!
+2602=Advertencia: ¡No se ha encontrado ninguna caja de banco para el personaje!
+2603=Demasiado lejos para inspeccionar el muñeco de papel (alcance actual: %i)
+2604=Eliminación de NPC
+2605=<BASEFONT color=#EECD8B>Confirma la eliminación de:</BASEFONT><br><BASEFONT color=#FFFFFF>%s (%w)</BASEFONT>
+2606=<BASEFONT color=#FF240C>No hay botón para deshacer.
+2607=Filtrar nombres que empiezan por «%s»
+2608=Gestionar jugadores - %s
+2609=Gestionar NPC
+2610=Todos
+2611=En línea
+2612=Fuera de línea
+2613=Modificar personaje:<br>serial: %s<br>Última conexión: %w
+2614=Teletransportarse al personaje
+2615=Obtener personaje
+2616=Inspeccionar personaje
+2617=Encarcelar/Liberar personaje
+2618=Expulsar jugador
+2619=Prohibir jugador
+2620=Eliminar NPC
+2621=¡No se han encontrado entradas!
+2622=Página %i / %u
+2623=Aplicar filtro
+2624=Filtrar por jugadores en línea
+2625=Filtrar por jugadores desconectados
+2626=Ordenar por última conexión (%s)
+2627=Ascendente
+2628=Descendente
+2629=Se han encontrado %i personajes de jugador en %u milisegundos.
+2630=Se han encontrado %i NPC en %u milisegundos.
+2631=Se han encontrado %i generadores basados en objetos en %u milisegundos.
+2632=Gestionar objetos de aparición
+2633=Ajustar objeto de aparición:<br>serial: %s<br>sección de aparición: %w<br>Cantidad: %i<br>En región: (%u) %z
+2634=Teletransportarse al objeto de aparición
+2635=Abrir editor de objetos de aparición
+2636=Eliminar objeto de aparición
+2637=Filtrar generadores de NPC
+2638=Filtrar generadores de objetos
+2639=Ordenar por número de apariciones (%s)
 // [2700-2799] Guiones varios
 2700=Sólo el propietario de la casa puede rotar los muebles.
 2701=Eso no parece funcionar.
@@ -2935,6 +2989,7 @@
 3574=un espíritu de cuchilla
 3605=un hombre elfo
 3606=una mujer elfa
+3637=una armadura espectral
 3666=un hombre gárgola
 3667=una mujer gárgola
 3689=Señor del Tiempo
@@ -3260,6 +3315,7 @@
 5156=gitano adivino
 5157=Vagabundo
 5158=trabajador del hierro
+5159=un pájaro tropical
 // [5500-5600] Mensajes de vacaciones
 5500=¿Dónde te gustaría colocar esta decoración?
 5501=La decoración debe colocarse junto a una pared.
@@ -3439,13 +3495,27 @@
 6276=No tienes la habilidad de cocinar para crear la pintura corporal.
 6277=El ID del recurso no se encuentra en la lista de recursos utilizados para elaborar el artículo.
 6278=Tienes que usar tu habilidad de identificación de sabores para saber más sobre esta poción.
-6279=¡Exito de la comprobación de habilidad garantizado debido al elevado nivel de mando!
+6279=Consejo: ¡Exito de la comprobación de habilidad garantizado debido al elevado nivel de mando!
 6280=¡Retraso de lanzamiento ignorado debido al elevado nivel de mando!
 6300=No has aprendido a soplar vidrio.
 6301=Sólo un Gran Maestro Alquimista puede aprender de este libro.
 6302=Ya has aprendido esta información.
 6303=Has aprendido a fabricar objetos de vidrio. Necesitará encontrar mineros que extraigan arena fina para poder fabricar estos artículos.
 6304=Debes tener las manos libres para beber una poción.
+6310=¡No puedes envenenar eso! Solo puedes envenenar armas blancas o punzantes, comida o bebida.
+6311=¡Has envenenado a tu objetivo!
+6312=Parece que el veneno ha perdido su efecto.
+6313=¡No puedes envenenar eso! Solo puedes envenenar armas blancas o punzantes de una mano, comida o bebida.
+6314=¡No puedes envenenar eso! Solo puedes envenenar armas infecciosas y comida.
+6315=Cometes un grave error al aplicar el veneno.
+6316=La sangre se mezcla con el veneno y comienza a corroer tu arma.
+6317=Has limpiado el objeto.
+6318=El veneno de tu arma parece haber perdido su efecto.
+6319=Parece que gotea ácido de lo que queda de la hoja.
+6320=Parece que una sustancia está corroyendo partes de la hoja.
+6321=Parece que esta hoja está cubierta de una sustancia ácida.
+6322=Parece que esta hoja tiene un elemento corrosivo.
+6323=Parece que esta hoja tiene un ligero elemento corrosivo.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
@@ -3699,6 +3769,15 @@
 8213=Identificación de la sección de DFNs de la que procede el objeto
 8214=¿Se puede robar el objeto? 0 = no robable, 1 = robable, 2 = robable raro
 8215=Alvo inválido. Selecione um item ou NPC válido
+8251=Borrar NPC...
+8252=Se han borrado %i NPC
+8253=Selecciona un NPC para moverlo a distancia con xrun:
+8254=Selecciona un NPC para moverlo a distancia con xwalk:
+8255=Selecciona un NPC para girarlo a distancia con xturn:
+8256=Selecciona el destino del movimiento (%s):
+8257=¡Debes seleccionar un NPC!
+8258=Vendas la herida y detienes la hemorragia.
+8259=Las heridas sangrantes se han curado, ¡ya no sangras!
 // [8300-8499] Menú de ajustes - Descripciones de las propiedades de los personajes
 8300=Número de cuenta asociado al jugador. Controlado por el servidor (sólo lectura)
 8301=Tipo de IA del PNJ
@@ -4048,7 +4127,7 @@
 8944=Ese no parece ser un NPC-id válido de los DFN.
 8945=Seleccionar objetivo para estado móvil %i:
 8946=Seleccionar objetivo para establecer como no destruible:
-// [9000-9500] Varios
+// [9000-9499] Varios
 9000=No puedes usar esta habilidad mientras estás congelado.
 9001=¡Este personaje no puede volar!
 9002=Ha sido invitado a unirse a una fiesta, escriba /aceptar o /rechazar para tratar la invitación
@@ -4318,6 +4397,28 @@
 9410=Has aprendido a extraer arena fina. Apunte a las áreas de arena cuando extraiga para buscar arena fina.
 9411=Has aprendido a extraer piedras. Apunte a las montañas cuando extraiga piedras.
 9412=Aquí no hay arena para extraer.
+// [9500-9550] Recolección de recursos diversos
+9500=Esta calabaza aún no está lista para ser recolectada.
+9501=No has conseguido recolectar ninguna calabaza.
+9502=Has recolectado una calabaza.
+9503=Esta calabaza aún no está lista para ser recolectada.
+9504=No has conseguido recoger ninguna calabaza.
+9505=Has recolectado una calabaza.
+9506=Esta calabaza aún no está lista para ser recolectada.
+9507=No has conseguido recoger ninguna calabaza.
+9508=Has recolectado una calabaza.
+9509=Esta sandía aún no está lista para ser recolectada.
+9510=No consigues recoger ninguna sandía.
+9511=Cosechas una sandía.
+9512=Este melón verde aún no está listo para ser cosechado.
+9513=No consigues recoger ningún melón verde.
+9514=Cosechas un melón verde.
+9515=Este melón cantalupo aún no está listo para ser cosechado.
+9516=No consigues recoger ningún melón cantalupo.
+9517=Cosechas un melón cantalupo.
+9518=Este ajo aún no está listo para ser cosechado.
+9519=No consigues recoger ningún ajo.
+9520=Cosechas un ajo.
 // [9800-9899] Editor de generadores
 9800=Editor de objetos de generadores
 9801=Nombre del generador
@@ -4705,6 +4806,7 @@
 11467=brazos de hueso
 11468=piernas de hueso
 11469=armadura de hueso
+11470=sombrero de paja alto
 // 11601 - 11800 Habilidad de cocina
 11601=MENÚ DE COCINA
 11602=Ingredientes
@@ -5154,6 +5256,7 @@
 17619=¡Como miembro del gremio, puedo ofrecerte un precio especial por esto!
 17620=No es suficiente para cubrir la cuota de miembro del gremio, lo siento.
 17621=Tiempo desde que se unió al gremio: %i minutos.
+17622=Este gremio no tiene maestro de gremio.
 // [17701-17710] Habilidades de armas
 17701=¡Recibes un golpe paralizante!
 17702=¡Das un golpe paralizante!
@@ -5430,5 +5533,45 @@
 19234=¡Tu confusión ha pasado, ahora puedes armar un arma!
 19235=Ya no estás herido de muerte.
 19236=Las heridas sangrantes han sanado, ¡ya no sangras!
+// [19301-19330] Mascota vinculada y muerta
+19301=No puedes intercambiar una mascota muerta.
+19302=La mascota muerta no puede atacar.
+19303=No tienes la habilidad suficiente para resucitar a esa mascota.
+19304=Solo las mascotas vinculadas con su dueño pueden ser resucitadas.
+19306=¡Has resucitado a la mascota con éxito!
+19307=Solo puedes resucitar mascotas vinculadas con su dueño.
+19308=¡Tu mascota se ha vinculado contigo!
+19309=Tu mascota está muerta y no responderá a esa orden.
+19310=Rompiste el vínculo con tu mascota.
+19311=¿Estás seguro de que quieres romper el vínculo con tu mascota?
+19311=Liberar una mascota fantasma la destruirá, sin posibilidad de recuperación. ¿Deseas continuar?
+19312=El dueño de la mascota debe estar cerca para intentar la resurrección.
+19313=Tu mascota no puede formar un vínculo contigo hasta que tu habilidad de domesticación de animales haya aumentado.
+19314=Tu mascota no puede formar un vínculo contigo hasta que tu habilidad de bushido haya aumentado.
+19315=Solo las mascotas vinculadas con su dueño pueden resucitar.
+19316=El animal debe estar en la misma casa que tú para resucitar.
+19317=El dueño de la mascota debe estar dentro de esta casa para que puedas revivir a esta criatura.
+19318=Selecciona la mascota con la que deseas vincularte. Pulsa ESC para cancelar. Este objeto se consume al usarlo con éxito, ¡así que elige con cuidado!
+19319=Vínculo con la mascota cancelado.
+19320=Esa mascota ya está vinculada contigo. 19321=¡Esta no es tu mascota!
+19322=¿Seguro que quieres liberar a tu mascota? ¡Las mascotas invocadas desaparecerán permanentemente!
+19323=No puedes realizar acciones beneficiosas en tu objetivo.
+19324=Selecciona una mascota para vincularla instantáneamente.
+19325=Objetivo no válido.
+19326=Esa criatura debe ser domesticada antes de vincularla.
+19327=Esa mascota ya está vinculada.
+19328=¡La mascota ha sido vinculada instantáneamente!
+19329=La vinculación de mascotas está deshabilitada en este servidor.
+19330=No tienes suficiente oro para pagar la tarifa.
+19331=Se ha retirado %i de oro de tu mochila.
+19332=Tu mascota ha resucitado.
+19333=[Domesticado]
+19334=[Unido]
+19335=unido
+19336=domesticado
+19337=invulnerable
+19338=congelado
+19339=vigilado
+19340=El espíritu de esa criatura carece de cohesión. Inténtalo de nuevo en unos minutos.
 }
 EOF

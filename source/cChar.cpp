@@ -79,6 +79,8 @@ const UI32 BIT_DISPELLABLE		=	12; // 0x1000
 const UI32 BIT_TEMPREFLECTED	=	13; // 0x2000
 const UI32 BIT_NONEEDREAGS		=	14; // 0x4000
 const UI32 BIT_PERMREFLECTED	=	15; // 0x8000
+const UI32 BIT_HIDEFAMEKARMATITLE	=	16; // 0x10000
+const UI32 BIT_SEER				= 17; // 0x20000
 
 // Character Bools
 const UI32 BIT_UNICODE			=	1;
@@ -116,10 +118,12 @@ const UI32 BIT_HIRELING			=	32;
 const UI32 BIT_ISPASSIVE		=	33;
 const UI32 BIT_HASSTOLEN		=	34;
 const UI32 BIT_KARMALOCK		=	35;
+const UI32 BIT_ISCLIMBING		=	36;
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
 const UI32 BIT_AWAKE			=   2;
+const UI32 BIT_COMBATLOS		=	3;
 
 // Player defaults
 
@@ -144,7 +148,7 @@ const UI16			DEFPLAYER_DEATHS			= 0;
 const SERIAL		DEFPLAYER_TOWNVOTE 			= INVALIDSERIAL;
 const SI08			DEFPLAYER_TOWNPRIV 			= 0;
 const UI16			DEFPLAYER_CONTROLSLOTSUSED	= 0;
-const UI32			DEFPLAYER_CREATEDON			= 0;
+const TIMERVAL		DEFPLAYER_CREATEDON			= 0;
 const UI32			DEFPLAYER_NPCGUILDJOINED	= 0;
 const UI32			DEFPLAYER_PLAYTIME			= 0;
 
@@ -197,7 +201,7 @@ const UI16			DEFNPC_TAMEDHUNGERRATE		= 0;
 const UI16			DEFNPC_TAMEDTHIRSTRATE      = 0;
 const UI08			DEFNPC_HUNGERWILDCHANCE		= 0;
 const UI08			DEFNPC_THIRSTWILDCHANCE     = 0;
-const R32			DEFNPC_MOVEMENTSPEED		= -1;
+const R64			DEFNPC_MOVEMENTSPEED		= -1.0;
 const SI08			DEFNPC_PATHFAIL				= -1;
 const UI16			DEFNPC_CONTROLSLOTS			= 0;
 const UI16			DEFNPC_MAXLOYALTY			= 100;
@@ -257,7 +261,8 @@ const UI08			DEFCHAR_RUNNING				= 0;
 const RACEID		DEFCHAR_RACEGATE 			= INVALIDID;
 const UI08			DEFCHAR_STEP				= 1;
 const UI16			DEFCHAR_PRIV				= 0;
-const UI32			DEFCHAR_LASTMOVETIME		= 0;
+const TIMERVAL		DEFCHAR_LASTMOVETIME		= 0;
+const TIMERVAL		DEFCHAR_LASTCOMBATTIME		= 0;
 //const UI16			DEFCHAR_NOMOVE 				= 0;
 //const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
@@ -279,7 +284,7 @@ targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), th
 advObj( DEFCHAR_ADVOBJ ), guildFealty( DEFCHAR_GUILDFEALTY ), guildNumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ),
 spellCast( DEFCHAR_SPELLCAST ), nextAct( DEFCHAR_NEXTACTION ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ),
 raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH ), bodyType( DEFCHAR_BODYTYPE ), lastMoveTime( DEFCHAR_LASTMOVETIME ),
-npcGuild( DEFCHAR_NPCGUILD )
+lastCombatTime( DEFCHAR_LASTCOMBATTIME ), npcGuild( DEFCHAR_NPCGUILD )
 {
 	ownedItems.clear();
 	itemLayers.clear();
@@ -289,12 +294,14 @@ npcGuild( DEFCHAR_NPCGUILD )
 	objType		= OT_CHAR;
 	name		= "Mr. noname";
 	sectionId	= "UNKNOWN";
+	guildTitle	= "Member";
 
 	memset( &regen[0],			0, sizeof( TIMERVAL )	* 3 );
 	memset( &weathDamage[0],	0, sizeof( TIMERVAL )	* WEATHNUM );
 	memset( &charTimers[0],		0, sizeof( TIMERVAL )	* tCHAR_COUNT );
 	memset( &baseskill[0],		0, sizeof( SKILLVAL )	* ALLSKILLS );
 	memset( &skill[0],			0, sizeof( SKILLVAL )	* ( INTELLECT + 1 ));
+	memset( &skillCap[0],		0, sizeof( SKILLVAL )	* ( INTELLECT + 1 ));
 
 	//SetCanTrain( true );
 	bools.set( BIT_TRAIN, true );
@@ -323,10 +330,20 @@ npcGuild( DEFCHAR_NPCGUILD )
 	bools.set( BIT_CANATTACK, true );
 	//SetKarmaLock( false );
 	bools.set( BIT_KARMALOCK, false );
+	bools.set( BIT_ISCLIMBING, false );
 	//SetBrkPeaceChanceGain( 0 );
 	brkPeaceChanceGain = 0;
 	//SetBrkPeaceChance( 0 );
 	brkPeaceChance = 0;
+
+	// Initialize the hunger rate of the new character, default to global setting
+	auto hungerRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE );
+	if( Races->DoesHunger( GetRace() ))
+	{
+		// Override with setting from race, if applicable
+		hungerRate	 = Races->GetHungerRate( GetRace() );
+	}
+	SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -422,6 +439,27 @@ void CChar::SetPathResult( SI08 newValue )
 	if( IsValidNPC() )
 	{
 		mNPC->pathResult = newValue;
+		SetLastPathCalc( cwmWorldState->GetUICurrentTime() );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetLastPathCalc()
+//|					CChar::SetLastPathCalc()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get/Set the end result of pathfinding, to pass on to onPathfindEnd event
+//o------------------------------------------------------------------------------------------------o
+UI32 CChar::GetLastPathCalc( void ) const
+{
+	UI32 rVal = DEFNPC_PATHFAIL;
+	rVal = mNPC->lastPathCalc;
+	return rVal;
+}
+void CChar::SetLastPathCalc( UI32 newValue )
+{
+	if( IsValidNPC() )
+	{
+		mNPC->lastPathCalc = cwmWorldState->GetUICurrentTime();
 	}
 }
 
@@ -477,7 +515,7 @@ SI08 CChar::GetHunger( void ) const
 }
 bool CChar::SetHunger( SI08 newValue )
 {
-	if( IsValidNPC() )
+	if( IsValidPlayer() || IsValidNPC() )
 	{
 		std::vector<UI16> scriptTriggers = GetScriptTriggers();
 		for( auto i : scriptTriggers )
@@ -519,9 +557,9 @@ void CChar::DoHunger( CSocket *mSock )
 		SI16 hungerDamage;
 		if( !IsNpc() && mSock != nullptr )	// Do Hunger for player chars
 		{
-			if( WillHunger() && GetCommandLevel() == CL_PLAYER  )
+			if( WillHunger() && GetCommandLevel() < CL_CNS )
 			{
-				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					if( Races->DoesHunger( GetRace() )) // prefer the hunger settings frome the race
 					{
@@ -563,7 +601,7 @@ void CChar::DoHunger( CSocket *mSock )
 							}
 						}
 					}
-					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
+					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R64>( hungerRate )));
 				}
 			}
 		}
@@ -573,7 +611,7 @@ void CChar::DoHunger( CSocket *mSock )
 			if( !WillHunger() || GetMounted() || GetStabled() )
 				return;
 
-			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				hungerRate	 = Races->GetHungerRate( GetRace() );
 				hungerDamage = Races->GetHungerDamage( GetRace() );
@@ -586,13 +624,14 @@ void CChar::DoHunger( CSocket *mSock )
 				{
 					[[maybe_unused]] bool retVal = Damage( hungerDamage, PHYSICAL );
 				}
-				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
+				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R64>( hungerRate )));
 			}
 		}
 		else if( IsTamed() && GetTamedHungerRate() > 0 )
 		{
+			TAGMAPOBJECT deadPet = GetTag( "isPetDead" );
 			// Handle hunger for pets
-			if( !WillHunger() || GetMounted() || GetStabled() )
+			if( !WillHunger() || GetMounted() || GetStabled() || deadPet.m_IntValue == 1 )
 				return;
 
 			// Pets don't hunger if owner is offline
@@ -606,7 +645,7 @@ void CChar::DoHunger( CSocket *mSock )
 					return;
 			}
 
-			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				// Get hungerrate for tamed creatures
 				hungerRate = GetTamedHungerRate();
@@ -616,7 +655,7 @@ void CChar::DoHunger( CSocket *mSock )
 					// Make pet more hungry
 					DecHunger();
 				}
-				else if( GetLoyalty() == 0 && static_cast<UI08>(RandomNum( 0, 100 )) <= GetTamedHungerWildChance() )
+				else if( GetLoyalty() == 0 && static_cast<UI08>(RandomNum( 1, 100 )) <= GetTamedHungerWildChance() )
 				{
 					// Make pet go wild from hunger, but only if loyalty is zero
 					CChar *owner = GetOwnerObj();
@@ -636,7 +675,7 @@ void CChar::DoHunger( CSocket *mSock )
 				}
 
 				// Set timer for next time pet should grow more hungry
-				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
+				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R64>( hungerRate )));
 			}
 		}
 	}
@@ -655,7 +694,7 @@ SI08 CChar::GetThirst( void ) const
 
 bool CChar::SetThirst( SI08 newValue )
 {
-	if( IsValidNPC() )
+	if( IsValidPlayer() || IsValidNPC() )
 	{
 		std::vector<UI16> scriptTriggers = GetScriptTriggers();
 		for( auto i : scriptTriggers )
@@ -697,9 +736,9 @@ void CChar::DoThirst( CSocket* mSock )
 		SI16 thirstDrain;
 		if( !IsNpc() && mSock != nullptr )  // Do Thirst for player chars
 		{
-			if( WillThirst() && GetCommandLevel() == CL_PLAYER )
+			if( WillThirst() && GetCommandLevel() < CL_CNS )
 			{
-				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					if( Races->DoesThirst( GetRace() )) // prefer the thirst settings frome the race
 					{
@@ -739,7 +778,7 @@ void CChar::DoThirst( CSocket* mSock )
 							mSock->SysMessage( 2052 ); // You have no stamina because of dehydration.
 						}
 					}
-					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R32>( thirstRate )));
+					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R64>( thirstRate )));
 				}
 			}
 		}
@@ -747,7 +786,7 @@ void CChar::DoThirst( CSocket* mSock )
 		{
 			if( WillThirst() && !GetMounted() && !GetStabled() )
 			{
-				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					thirstRate = Races->GetThirstRate( GetRace() );
 					thirstDrain = Races->GetThirstDrain( GetRace() );
@@ -760,7 +799,7 @@ void CChar::DoThirst( CSocket* mSock )
 					{
 						SetStamina( std::max( static_cast<SI16>( 1 ), static_cast<SI16>( GetStamina() - thirstDrain )));
 					}
-					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R32>( thirstRate )));
+					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R64>( thirstRate )));
 				}
 			}
 		}
@@ -778,7 +817,7 @@ void CChar::DoThirst( CSocket* mSock )
 						return;
 				}
 
-				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					thirstRate = GetTamedThirstRate();
 
@@ -791,7 +830,7 @@ void CChar::DoThirst( CSocket* mSock )
 						SetOwner( nullptr );
 						SetThirst( 6 );
 					}
-					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R32>( thirstRate )));
+					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R64>( thirstRate )));
 				}
 			}
 		}
@@ -1113,6 +1152,11 @@ bool CChar::IsAtWar( void ) const
 void CChar::SetWar( bool newValue )
 {
 	bools.set( BIT_ATWAR, newValue );
+	if( GetSocket() != nullptr )
+	{
+		CPWarMode wMode( newValue ? 1 : 0 );
+		GetSocket()->Send( &wMode );
+	}
 	UpdateRegion();
 
 	if( !IsNpc() )
@@ -1469,6 +1513,21 @@ bool CChar::InBuilding( void )
 void CChar::SetInBuilding( bool newValue )
 {
 	bools.set( BIT_INBUILDING, newValue );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::IsClimbing()
+//|					CChar::IsClimbing()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the character is currently climbing (a ladder)
+//o------------------------------------------------------------------------------------------------o
+bool CChar::IsClimbing( void ) const
+{
+	return bools.test( BIT_ISCLIMBING );
+}
+void CChar::IsClimbing( bool newValue )
+{
+	bools.set( BIT_ISCLIMBING, newValue );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1978,11 +2037,11 @@ void CChar::SetSpellCast( SI08 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's special privileges
 //o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetPriv( void ) const
+UI32 CChar::GetPriv( void ) const
 {
-	return static_cast<UI16>( priv.to_ulong() );
+	return static_cast<UI32>( priv.to_ulong() );
 }
-void CChar::SetPriv( UI16 newValue )
+void CChar::SetPriv( UI32 newValue )
 {
 	priv = newValue;
 	UpdateRegion();
@@ -2354,6 +2413,21 @@ void CChar::SetNoNeedReags( bool newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::HideFameKarmaTitle()
+//|					CChar::HideFameKarmaTitle()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Checks/Sets whether fame/karma titles should show for character
+//o------------------------------------------------------------------------------------------------o
+bool CChar::HideFameKarmaTitle( void ) const
+{
+	return priv.test( BIT_HIDEFAMEKARMATITLE );
+}
+void CChar::HideFameKarmaTitle( bool newValue )
+{
+	priv.set( BIT_HIDEFAMEKARMATITLE, newValue );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::Dupe()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Duplicate character - used for splitting NPCs when hit in combat
@@ -2536,6 +2610,10 @@ void CChar::CopyData( CChar *target )
 
 	// Add any script triggers present on object to the new object
 	target->scriptTriggers = GetScriptTriggers();
+
+	// Don't forget to copy the tags
+	target->tags = GetTagMap();
+	target->tempTags = GetTempTagMap();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2656,7 +2734,7 @@ auto CChar::RemoveAllObjectsFromSight( CSocket *mSock ) -> void
 						
 				if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
 					( IsOnline(( *tempChar )) || tempChar->IsNpc() ||
-					( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() )))
+					(( IsGM() || GetAccount().wAccountIndex == 0 ) && cwmWorldState->ServerData()->ShowOfflinePCs() )))
 				{
 					mSock->Send( &charToSend );
 				}
@@ -2731,11 +2809,11 @@ void CChar::SendToSocket( CSocket *s, bool drawGamePlayer )
 
 			SendWornItems( s );
 		}
-		else if( GetVisible() == VT_GHOSTHIDDEN && !mCharObj->IsDead() && GetCommandLevel() >= mCharObj->GetCommandLevel() )
+		else if( GetVisible() == VT_GHOSTHIDDEN && mCharObj->GetAccount().wAccountIndex != 0 && !mCharObj->IsDead() && GetCommandLevel() >= mCharObj->GetCommandLevel() )
 		{
 			return;
 		}
-		else if( mCharObj != this && GetCommandLevel() >= mCharObj->GetCommandLevel() 
+		else if( mCharObj != this && mCharObj->GetAccount().wAccountIndex != 0 && GetCommandLevel() >= mCharObj->GetCommandLevel() 
 			&& (( GetVisible() != VT_VISIBLE && GetVisible() != VT_GHOSTHIDDEN ) || ( !IsNpc() && !IsOnline(( *this )))))
 		{
 			return;
@@ -2786,7 +2864,7 @@ auto CChar::Teleport() -> void
 {
 	CSocket *mSock = GetSocket();
 	RemoveFromSight();
-	Update( nullptr, true );
+	Update( nullptr, true, true, false );
 	if( mSock != nullptr )
 	{
 		UI16 visrange = mSock->Range() + Races->VisRange( GetRace() );
@@ -2815,7 +2893,7 @@ auto CChar::Teleport() -> void
 				auto tempY = tempChar->GetY();
 				if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
 					( IsOnline(( *tempChar )) || tempChar->IsNpc() ||
-					( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() )))
+					(( IsGM() || GetAccount().wAccountIndex == 0 ) && cwmWorldState->ServerData()->ShowOfflinePCs() )))
 				{
 					tempChar->SendToSocket( mSock );
 				}
@@ -2882,7 +2960,7 @@ void CChar::ExposeToView( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends update to all those in range
 //o------------------------------------------------------------------------------------------------o
-void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
+void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf, bool triggerInRangeEvent )
 {
 	if( mSock != nullptr )
 	{
@@ -2899,6 +2977,12 @@ void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 					SendToSocket( tSock, drawGamePlayer );
 				}
 				SendToSocket( tSock, drawGamePlayer );
+
+				if( triggerInRangeEvent && tSock->CurrcharObj() != this )
+				{
+					Movement->DoJSInRange( this, tSock->CurrcharObj() );
+					Movement->DoJSInRange( tSock->CurrcharObj(), this );
+				}
 			}
 		}
 	}
@@ -2921,6 +3005,7 @@ CItem *CChar::GetItemAtLayer( ItemLayers Layer )
 	return rVal;
 }
 
+void Bounce( CSocket *bouncer, CItem *bouncing, UI08 mode = 5 );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar::WearItem()
 //|	Date		-	13 March 2001
@@ -2928,7 +3013,6 @@ CItem *CChar::GetItemAtLayer( ItemLayers Layer )
 //|	Purpose		-	Wears the item toWear and adjusts the stats if any are
 //|					required to change.  Returns true if successfully equipped
 //o------------------------------------------------------------------------------------------------o
-void Bounce( CSocket *bouncer, CItem *bouncing, UI08 mode = 5 );
 bool CChar::WearItem( CItem *toWear )
 {
 	// Run event prior to equipping item, allowing script to prevent equip
@@ -2941,6 +3025,11 @@ bool CChar::WearItem( CItem *toWear )
 			// If script returns false, prevent item from being equipped
 			if( tScript->OnEquipAttempt( this, toWear ) == 0 )
 			{
+				CSocket *mSock = this->GetSocket();
+				if( mSock != nullptr )
+				{
+					Bounce( mSock, toWear );
+				}
 				return false;
 			}
 		}
@@ -2971,11 +3060,15 @@ bool CChar::WearItem( CItem *toWear )
 	ItemLayers tLayer = toWear->GetLayer();
 	if( tLayer != IL_NONE )	// Layer == 0 is a special case, for things like trade windows and such
 	{
-		if( ValidateObject( GetItemAtLayer( tLayer )))
+		auto itemAtLayer = GetItemAtLayer( tLayer );
+		if( ValidateObject( itemAtLayer ))
 		{
 #if defined( UOX_DEBUG_MODE )
-			std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
-			Console.Warning( oldstrutil::format( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section [%s]) - another item (%s) is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial, GetSectionId().c_str(), GetItemAtLayer( tLayer )->GetName().c_str() ));
+			if( itemAtLayer->GetSectionId() != toWear->GetSectionId() )
+			{
+				std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
+				Console.Warning( oldstrutil::format( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section [%s]) - another item (%s) is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial, GetSectionId().c_str(), itemAtLayer->GetName().c_str() ));
+			}
 #endif
 			rValue = false;
 		}
@@ -2986,6 +3079,10 @@ bool CChar::WearItem( CItem *toWear )
 			IncStrength2( itemLayers[tLayer]->GetStrength2() );
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
+
+			IncHealthRegenBonus( itemLayers[tLayer]->GetHealthRegenBonus() );
+			IncStaminaRegenBonus( itemLayers[tLayer]->GetStaminaRegenBonus() );
+			IncManaRegenBonus( itemLayers[tLayer]->GetManaRegenBonus() );
 
 			IncSwingSpeedIncrease( itemLayers[tLayer]->GetSwingSpeedIncrease() );
 
@@ -3010,7 +3107,7 @@ bool CChar::WearItem( CItem *toWear )
 			{
 				if( itemLayers[tLayer]->GetPoisoned() )
 				{
-					SetPoisoned( GetPoisoned() + itemLayers[tLayer]->GetPoisoned() );	// should be +, not -
+					SetPoisonStrength( GetPoisonStrength() + itemLayers[tLayer]->GetPoisoned() );	// should be +, not -
 				}
 
 				std::vector<UI16> scriptTriggers = toWear->GetScriptTriggers();
@@ -3082,6 +3179,10 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
 
+		IncHealthRegenBonus( -itemLayers[Layer]->GetHealthRegenBonus() );
+		IncStaminaRegenBonus( -itemLayers[Layer]->GetStaminaRegenBonus() );
+		IncManaRegenBonus( -itemLayers[Layer]->GetManaRegenBonus() );
+
 		IncSwingSpeedIncrease( -itemLayers[Layer]->GetSwingSpeedIncrease() );
 
 		IncHealthLeech( -itemLayers[Layer]->GetHealthLeech() );
@@ -3103,13 +3204,14 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 
 		if( itemLayers[Layer]->GetPoisoned() )
 		{
-			if( itemLayers[Layer]->GetPoisoned() > GetPoisoned() )
+			SetPoisonStrength( std::max( 0, GetPoisonStrength() - itemLayers[Layer]->GetPoisoned() ));
+			if( itemLayers[Layer]->GetPoisoned() > GetPoisonStrength() )
 			{
-				SetPoisoned( 0 );
+				SetPoisonStrength( 0 );
 			}
 			else
 			{
-				SetPoisoned( GetPoisoned() - itemLayers[Layer]->GetPoisoned() );
+				SetPoisonStrength( GetPoisonStrength() - itemLayers[Layer]->GetPoisoned() );
 			}
 		}
 
@@ -3234,7 +3336,16 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 		outStream << "MAXSTAM=" + std::to_string( maxStam ) + newLine;
 	}
 	outStream << "Town=" + std::to_string( GetTown() ) + newLine;
-	outStream << "SummonTimer=" + std::to_string( GetTimer( tNPC_SUMMONTIME )) + newLine;
+	TIMERVAL sTime = GetTimer( tNPC_SUMMONTIME );
+	outStream << "SummonTimer=";
+	if( sTime == 0 || sTime < cwmWorldState->GetUICurrentTime() )
+	{
+		outStream << std::to_string( 0 ) + newLine;
+	}
+	else
+	{
+		outStream << std::to_string( sTime - cwmWorldState->GetUICurrentTime() ) + newLine;
+	}
 	outStream << "MayLevitate=" + std::to_string(( MayLevitate() ? 1 : 0 )) + newLine;
 	outStream << "Stealth=" + std::to_string( GetStealth() ) + newLine;
 	outStream << "Reserved=" + std::to_string( GetCell() ) + newLine;
@@ -4570,12 +4681,12 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "FLEEINGSPEED" )
 				{
-					SetFleeingSpeed( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					SetFleeingSpeed( static_cast<R64>( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				else if( UTag == "FLEEINGSPEEDMOUNTED" )
 				{
-					SetMountedFleeingSpeed( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					SetMountedFleeingSpeed( static_cast<R64>( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				break;
@@ -4683,7 +4794,8 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "MURDERTIMER" )
 				{
-					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ))))));
+					auto murderDecayTime = static_cast<TIMERVAL>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
+					SetTimer( tCHAR_MURDERRATE, murderDecayTime > 0 ? murderDecayTime + cwmWorldState->GetUICurrentTime() : 0 );
 					rValue = true;
 				}
 				else if( UTag == "MAXHP" )
@@ -4744,7 +4856,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "NPCGUILDJOINED" )
 				{
-					SetNPCGuildJoined( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					SetNPCGuildJoined( static_cast<UI64>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -4818,7 +4930,8 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "PEACETIMER" )
 				{
-					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ))))));
+					auto peaceTimer = static_cast<TIMERVAL>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
+					SetTimer( tCHAR_PEACETIMER, peaceTimer > 0 ? peaceTimer + cwmWorldState->GetUICurrentTime() : 0 );
 					rValue = true;
 				}
 				else if( UTag == "PLAYTIME" )
@@ -4877,12 +4990,12 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "RUNNINGSPEED" )
 				{
-					SetRunningSpeed( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					SetRunningSpeed( static_cast<R64>( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				else if( UTag == "RUNNINGSPEEDMOUNTED" )
 				{
-					SetMountedRunningSpeed( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					SetMountedRunningSpeed( static_cast<R64>( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				break;
@@ -4907,7 +5020,8 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "SUMMONTIMER" )
 				{
-					SetTimer( tNPC_SUMMONTIME, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					auto summonTimer = static_cast<TIMERVAL>( std::stoull( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ));
+					SetTimer( tNPC_SUMMONTIME, summonTimer > 0 ? summonTimer + cwmWorldState->GetUICurrentTime() : 0 );
 					rValue = true;
 				}
 				else if( UTag == "SAY" )
@@ -5051,12 +5165,12 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "WALKINGSPEED" )
 				{
-					SetWalkingSpeed( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					SetWalkingSpeed( static_cast<R64>( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				else if( UTag == "WALKINGSPEEDMOUNTED" )
 				{
-					SetMountedWalkingSpeed( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
+					SetMountedWalkingSpeed( static_cast<R64>( std::stod( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rValue = true;
 				}
 				break;
@@ -5142,10 +5256,106 @@ bool CChar::LoadRemnants( void )
 			if( !IsNpc() )
 			{
 				Accounts->AddCharacter( GetAccountNum(), this );	// account ID, and account object.
+
+#if defined( UOX_DEBUG_MODE )
+				// Sanity-check lastOn vs lastOnSecs for player characters
+				ValidateLastOn();
+#endif
 			}
 		}
 	}
 	return rValue;
+}
+
+void CChar::ValidateLastOn()
+{
+	if( !GetLastOn().empty() )
+	{
+		const std::string currentLastOnString = GetLastOn();
+		UI32 currentLastOnSecs = GetLastOnSecs();
+		time_t currentTime = time( nullptr );
+		const time_t futureThreshold = currentTime + 93600; // ~26 hours buffer to account for timezone variance - we don't want any time travellers
+
+		bool requiresUpdateFromStr = false;
+		std::string updateReason = "";
+
+		// First, check if we actually need to update anything
+		if( currentLastOnSecs == 0 )
+		{
+			requiresUpdateFromStr = true;
+			updateReason = "LastOnSecs was 0";
+		}
+		else if( currentLastOnSecs > futureThreshold )
+		{
+			requiresUpdateFromStr = true;
+			updateReason = "LastOnSecs > future threshold (" + std::to_string( currentLastOnSecs ) + ")";
+		}
+		else
+		{
+			// LastOnSecs is > 0 and not unreasonably far into the future - let's validate
+			char checkBuffer[100];
+			const time_t secsToCheck = static_cast<time_t>( currentLastOnSecs );
+			char *resultPtr = mctime( checkBuffer, sizeof( checkBuffer ), &secsToCheck );
+			if( resultPtr != nullptr && checkBuffer[0] != '\0' )
+			{
+				// Trim whitespace from output
+				std::string tempStringFromBuffer = checkBuffer;
+				std::string currentSecsAsString = oldstrutil::trim( tempStringFromBuffer );
+
+				if( currentLastOnString != currentSecsAsString )
+				{
+					requiresUpdateFromStr = true;
+					updateReason = "Mismatch between string and mctime LastOnSecs ('" + currentSecsAsString + "')";
+				}
+				else
+				{
+					// Strings match! Existing LastOnSecs is validated and consistent. Do nothing.
+					requiresUpdateFromStr = false;
+				}
+			}
+			else // mctime call failed or returned empty string
+			{
+				Console.Warning( oldstrutil::format( "mctime failed during validation for char %u, ts %u. Cannot validate, no update.", GetSerial(), currentLastOnSecs ));
+				requiresUpdateFromStr = false; // Can't validate, don't update
+			}
+		}
+
+		if( requiresUpdateFromStr )
+		{
+			// Parsing logic using std::get_time and mktime remains the same
+			std::tm timeStructParse = {};
+			std::stringstream ssParse( currentLastOnString );
+			const std::locale c_localeParse( "C" );
+			[[maybe_unused]] std::locale prevLocaleParse = ssParse.imbue( c_localeParse );
+			std::string formatParse = "%a %b %d %H:%M:%S %Y";
+			ssParse >> std::get_time( &timeStructParse, formatParse.c_str() );
+			if( !ssParse.fail() )
+			{
+				timeStructParse.tm_isdst = -1;
+				time_t parsedTimestamp = mktime( &timeStructParse );
+				if( parsedTimestamp != -1 && parsedTimestamp <= futureThreshold )
+				{
+					SetLastOnSecs( static_cast<UI32>( parsedTimestamp ));
+					Console.Log( oldstrutil::format( "Updating LastOnSecs for char %u to %u based on lastOn. Reason: %s. Parsing: '%s'",
+						GetSerial(), GetLastOnSecs(), updateReason.c_str(), currentLastOnString.c_str() ));
+				}
+				else if( parsedTimestamp == -1 )
+				{
+					Console.Warning( oldstrutil::format( "mktime failed for char %u after parsing: %s", GetSerial(), currentLastOnString.c_str() ));
+				}
+				else
+				{
+					// parsedTimestamp > futureThreshold
+					Console.Warning( oldstrutil::format( "Parsed timestamp for char %u ALSO future date (%lld). Skipping update.", GetSerial(), static_cast<long long>( parsedTimestamp )));
+				}
+			}
+			else
+			{
+				// get_time failed
+				Console.Warning( oldstrutil::format( "std::get_time failed to parse char %u, LastOn string: '%s'", GetSerial(), currentLastOnString.c_str() ));
+			}
+		}
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5200,8 +5410,7 @@ void CChar::PostLoadProcessing( void )
 		SetPackItem( nullptr );
 	}
 
-	SI32 maxWeight = GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
-	if( GetWeight() <= 0 || GetWeight() > MAX_WEIGHT || GetWeight() > maxWeight )
+	if( GetWeight() <= 0 || GetWeight() > MAX_WEIGHT || GetWeight() > GetWeightMax() )
 	{
 		SetWeight( Weight->CalcCharWeight( this ));
 	}
@@ -5259,7 +5468,7 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 		{
 			if( GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
 			{
-				SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 10 ));
+				SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 10.0 ));
 				canSpeak = true;
 			}
 		}
@@ -5394,6 +5603,7 @@ void CChar::TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spa
 		va_list argptr;
 		va_start( argptr, spamTimer );
 		auto msg = oldstrutil::format( txt, argptr );
+		va_end( argptr ); // va_end in same function as va_start
 		if( msg.size() > 512 )
 		{
 			msg = msg.substr( 0, 512 );
@@ -5712,6 +5922,18 @@ void CChar::SetPoisoned( UI08 newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::SetPoisonedBy()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Sets poisoned state of character
+//o------------------------------------------------------------------------------------------------o
+void CChar::SetPoisonedBy( SERIAL newValue )
+{
+	CBaseObject::SetPoisonedBy( newValue );
+	Dirty( UT_UPDATE );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::SetStrength2()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets bonus strength stat for character
@@ -5985,11 +6207,11 @@ void CChar::SetRobe( SERIAL newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp for when player last moved
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::LastMoveTime( void ) const
+TIMERVAL CChar::LastMoveTime( void ) const
 {
 	return lastMoveTime;
 }
-void CChar::LastMoveTime( UI32 newValue )
+void CChar::LastMoveTime( TIMERVAL newValue )
 {
 	lastMoveTime = newValue;
 }
@@ -6000,11 +6222,11 @@ void CChar::LastMoveTime( UI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp for when player last combat
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetLastCombatTime() const
+TIMERVAL CChar::GetLastCombatTime() const
 {
 	return lastCombatTime;
 }
-void CChar::SetLastCombatTime( UI32 newValue )
+void CChar::SetLastCombatTime( TIMERVAL newValue )
 {
 	lastCombatTime = newValue;
 }
@@ -6070,7 +6292,7 @@ void CChar::SetLastOnSecs( UI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player character was created
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetCreatedOn( void ) const
+TIMERVAL CChar::GetCreatedOn( void ) const
 {
 	UI32 rVal = 0;
 	if( IsValidPlayer() )
@@ -6079,7 +6301,7 @@ UI32 CChar::GetCreatedOn( void ) const
 	}
 	return rVal;
 }
-void CChar::SetCreatedOn( UI32 newValue )
+void CChar::SetCreatedOn( TIMERVAL newValue )
 {
 	if( IsValidPlayer() )
 	{
@@ -6208,6 +6430,30 @@ void CChar::SetStabled( bool newValue )
 	{
 		mNPC->boolFlags.set( BIT_STABLED, newValue );
 		UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetCombatLos()
+//|					CChar::HasCombatLos()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets whether character currently has Line-of-Sight to target in combat
+//o------------------------------------------------------------------------------------------------o
+bool CChar::GetCombatLos( void ) const
+{
+	bool rVal = false;
+	if( IsValidNPC() )
+	{
+		rVal = mNPC->boolFlags.test( BIT_COMBATLOS );
+	}
+
+	return rVal;
+}
+void CChar::SetCombatLos( bool newValue )
+{
+	if( IsValidNPC() )
+	{
+		mNPC->boolFlags.set( BIT_COMBATLOS, newValue );
 	}
 }
 
@@ -7184,14 +7430,14 @@ void CChar::DoLoyaltyUpdate( void )
 	if( !ValidateObject( GetOwnerObj() ))
 		return;
 
-	if( GetTimer( tNPC_LOYALTYTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+	if( GetTimer( tNPC_LOYALTYTIME ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		UI16 loyaltyRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_LOYALTYRATE );
 		if( GetLoyalty() > 0 )
 		{
 			// Reduce loyalty by 1, reset timer
 			SetLoyalty( std::max( 0, GetLoyalty() - 1 ));
-			SetTimer( tNPC_LOYALTYTIME, BuildTimeValue( static_cast<R32>( loyaltyRate )));
+			SetTimer( tNPC_LOYALTYTIME, BuildTimeValue( static_cast<R64>( loyaltyRate )));
 
 			// Provide some feedback to the player, if they're online
 			CSocket *mSock = GetOwnerObj()->GetSocket();
@@ -7469,16 +7715,16 @@ void CChar::SetNPCGuild( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player character joined NPC guild
 //o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetNPCGuildJoined( void ) const
+TIMERVAL CChar::GetNPCGuildJoined( void ) const
 {
-	UI32 rVal = 0;
+	TIMERVAL rVal = 0;
 	if( IsValidPlayer() )
 	{
 		rVal = mPlayer->npcGuildJoined;
 	}
 	return rVal;
 }
-void CChar::SetNPCGuildJoined( UI32 newValue )
+void CChar::SetNPCGuildJoined(TIMERVAL newValue )
 {
 	if( IsValidPlayer() )
 	{
@@ -8333,6 +8579,9 @@ auto CChar::CheckCombatIgnore( SERIAL toCheck ) -> bool
 //o------------------------------------------------------------------------------------------------o
 auto CChar::CombatIgnoreMaintenance() -> void
 {
+	if( mNPC == nullptr )
+		return;
+
 	// Loop through list of ignored targets in combat and add any serials with expired timers to a vector
 	std::vector<SERIAL> serialsToRemove;
 	for( auto it = mNPC->combatIgnore.begin(); it != mNPC->combatIgnore.end(); ++it )
@@ -8658,9 +8907,9 @@ void CChar::SetNPCFlag( cNPC_FLAG flagType )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's walking speed
 //o------------------------------------------------------------------------------------------------o
-R32 CChar::GetWalkingSpeed( void ) const
+R64 CChar::GetWalkingSpeed( void ) const
 {
-	R32 retVal = cwmWorldState->ServerData()->NPCWalkingSpeed();
+	R64 retVal = cwmWorldState->ServerData()->NPCWalkingSpeed();
 
 	if( IsValidNPC() )
 	{
@@ -8675,7 +8924,7 @@ R32 CChar::GetWalkingSpeed( void ) const
 #endif
 	return retVal;
 }
-void CChar::SetWalkingSpeed( R32 newValue )
+void CChar::SetWalkingSpeed( R64 newValue )
 {
 	if( !IsValidNPC() )
 	{
@@ -8696,9 +8945,9 @@ void CChar::SetWalkingSpeed( R32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's running speed
 //o------------------------------------------------------------------------------------------------o
-R32 CChar::GetRunningSpeed( void ) const
+R64 CChar::GetRunningSpeed( void ) const
 {
-	R32 retVal = cwmWorldState->ServerData()->NPCRunningSpeed();
+	R64 retVal = cwmWorldState->ServerData()->NPCRunningSpeed();
 
 	if( IsValidNPC() )
 	{
@@ -8713,7 +8962,7 @@ R32 CChar::GetRunningSpeed( void ) const
 #endif
 	return retVal;
 }
-void CChar::SetRunningSpeed( R32 newValue )
+void CChar::SetRunningSpeed( R64 newValue )
 {
 	if( !IsValidNPC() )
 	{
@@ -8734,9 +8983,9 @@ void CChar::SetRunningSpeed( R32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's fleeing speed
 //o------------------------------------------------------------------------------------------------o
-R32 CChar::GetFleeingSpeed( void ) const
+R64 CChar::GetFleeingSpeed( void ) const
 {
-	R32 retVal = cwmWorldState->ServerData()->NPCFleeingSpeed();
+	R64 retVal = cwmWorldState->ServerData()->NPCFleeingSpeed();
 
 	if( IsValidNPC() )
 	{
@@ -8751,7 +9000,7 @@ R32 CChar::GetFleeingSpeed( void ) const
 #endif
 	return retVal;
 }
-void CChar::SetFleeingSpeed( R32 newValue )
+void CChar::SetFleeingSpeed( R64 newValue )
 {
 	if( !IsValidNPC() )
 	{
@@ -8771,9 +9020,9 @@ void CChar::SetFleeingSpeed( R32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's mounted walking speed
 //o------------------------------------------------------------------------------------------------o
-R32 CChar::GetMountedWalkingSpeed( void ) const
+R64 CChar::GetMountedWalkingSpeed( void ) const
 {
-	R32 retVal = cwmWorldState->ServerData()->NPCMountedWalkingSpeed();
+	R64 retVal = cwmWorldState->ServerData()->NPCMountedWalkingSpeed();
 
 	if( IsValidNPC() )
 	{
@@ -8788,7 +9037,7 @@ R32 CChar::GetMountedWalkingSpeed( void ) const
 #endif
 	return retVal;
 }
-void CChar::SetMountedWalkingSpeed( R32 newValue )
+void CChar::SetMountedWalkingSpeed( R64 newValue )
 {
 	if( !IsValidNPC() )
 	{
@@ -8808,9 +9057,9 @@ void CChar::SetMountedWalkingSpeed( R32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's mounted running speed
 //o------------------------------------------------------------------------------------------------o
-R32 CChar::GetMountedRunningSpeed( void ) const
+R64 CChar::GetMountedRunningSpeed( void ) const
 {
-	R32 retVal = cwmWorldState->ServerData()->NPCMountedRunningSpeed();
+	R64 retVal = cwmWorldState->ServerData()->NPCMountedRunningSpeed();
 
 	if( IsValidNPC() )
 	{
@@ -8825,7 +9074,7 @@ R32 CChar::GetMountedRunningSpeed( void ) const
 #endif
 	return retVal;
 }
-void CChar::SetMountedRunningSpeed( R32 newValue )
+void CChar::SetMountedRunningSpeed( R64 newValue )
 {
 	if( !IsValidNPC() )
 	{
@@ -8845,9 +9094,9 @@ void CChar::SetMountedRunningSpeed( R32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's fleeing speed
 //o------------------------------------------------------------------------------------------------o
-R32 CChar::GetMountedFleeingSpeed( void ) const
+R64 CChar::GetMountedFleeingSpeed( void ) const
 {
-	R32 retVal = cwmWorldState->ServerData()->NPCMountedFleeingSpeed();
+	R64 retVal = cwmWorldState->ServerData()->NPCMountedFleeingSpeed();
 
 	if( IsValidNPC() )
 	{
@@ -8862,7 +9111,7 @@ R32 CChar::GetMountedFleeingSpeed( void ) const
 #endif
 	return retVal;
 }
-void CChar::SetMountedFleeingSpeed( R32 newValue )
+void CChar::SetMountedFleeingSpeed( R64 newValue )
 {
 	if( !IsValidNPC() )
 	{
@@ -9307,6 +9556,17 @@ void CChar::SetWeight( SI32 newVal, [[maybe_unused]] bool doWeightUpdate )
 	Dirty( UT_STATWINDOW );
 	weight = newVal;
 	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::GetWeightMax()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets maximum weight in stones a character can hold
+//o------------------------------------------------------------------------------------------------o
+auto CChar::GetWeightMax() const -> SI32
+{
+	SI16 racialWeightBonus = Races->Race( GetRace() )->MaxWeightBonus();
+	return ( GetStrength() * cwmWorldState->ServerData()->WeightPerStr() ) + 40 + racialWeightBonus;
 }
 
 //o------------------------------------------------------------------------------------------------o

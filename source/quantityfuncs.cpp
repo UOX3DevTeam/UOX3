@@ -64,7 +64,7 @@ auto GetSubItemAmount( CItem* p, UI16 realId, UI16 realColour, UI32 realMoreVal,
 			else if( i->GetId() == realId 
 				&& ( !colorCheck || ( colorCheck && i->GetColour() == realColour )) 
 				&& ( !moreCheck || ( moreCheck && i->GetTempVar( CITV_MORE ) == realMoreVal ))
-				&& ( sectionId == "" || sectionId == i->GetSectionId() ))
+				&& ( sectionId == "" || oldstrutil::lower( sectionId ) == oldstrutil::lower( i->GetSectionId() )))
 			{
 				if( i->GetUsesLeft() > 0 )
 				{
@@ -121,7 +121,7 @@ auto DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realId, UI16 realColour, U
 		else if( i->GetId() == realId 
 			&& ( !colorCheck || ( colorCheck && i->GetColour() == realColour ))
 			&& ( !moreCheck || ( moreCheck && i->GetTempVar( CITV_MORE ) == realMoreVal ))
-			&& ( sectionId == "" || sectionId == i->GetSectionId() ))
+			&& ( sectionId == "" || oldstrutil::lower( sectionId ) == oldstrutil::lower( i->GetSectionId() )))
 		{
 			UI16 usesLeft = i->GetUsesLeft();
 			if( usesLeft > 0 )

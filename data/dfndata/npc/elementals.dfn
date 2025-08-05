@@ -213,7 +213,7 @@ DEF=35
 NPCAI=2
 NPCWANDER=4
 FX2=20
-POISONSTRENGTH=4
+POISONSTRENGTH=5
 TOPROV=1051
 TOPEACE=1051 5
 RACE=18
@@ -665,5 +665,15 @@ ORIGIN=se
 
 [raiju]
 {
+GETUO=raiju_se
+GETT2A=raiju_se
+GETUOR=raiju_se
+GETTD=raiju_se
+GETLBR=raiju_se
+GETAOS=raiju_se
 GETSE=raiju_se
+GETML=raiju_se
+GETSA=raiju_se
+GETHS=raiju_se
+GETTOL=raiju_se
 }

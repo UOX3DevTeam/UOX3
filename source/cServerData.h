@@ -212,7 +212,7 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<107>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<111>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 	std::bitset<64>		moongateFacets;		// Used to determine which facets to enable moongates for, set in UOX>INI
 
@@ -271,6 +271,9 @@ private:
 	UI16		statCap;						//	A cap on the total of a PC's stats
 	SI16		maxStealthMovement;				//	Max number of steps allowed with stealth skill at 100.0
 	SI16		maxStaminaMovement;				//	Max number of steps allowed while running before stamina is reduced
+	UI08		healthRegenMode;				//	Hp regen mode - see HpRegenMode enum for details
+	UI08		staminaRegenMode;				//	Stamina regen mode - see StaminaRegenMode enum for details
+	UI08		manaRegenMode;					//	Mana regen mode - see ManaRegenMode enum for details
 
 	// ServerTimers
 	// array
@@ -298,11 +301,28 @@ private:
 	UI08		expansionWrestlingParry;		// Determines which era ruleset to use for wrestling parry calculations
 	UI08		expansionCombatHitChance;		// Determines which era ruleset to use for calculating melee hit chance
 
+	// Default race bonuses
+	SI16		humanHealthRegenBonus;			//	The default health regen bonus for human race
+	SI16		humanStaminaRegenBonus;			//	The default stamina regen bonus for human race
+	SI16		humanManaRegenBonus;			//	The default mana regen bonus for human race
+	SI16		humanMaxWeightBonus;			//	The default max weight bonus for human race
+	SI16		elfHealthRegenBonus;			//	The default health regen bonus for elf race
+	SI16		elfStaminaRegenBonus;			//	The default stamina regen bonus for elf race
+	SI16		elfManaRegenBonus;				//	The default mana regen bonus for elf race
+	SI16		elfMaxWeightBonus;				//	The default max weight bonus for elf race
+	SI16		gargoyleHealthRegenBonus;		//	The default health regen bonus for gargoyle race
+	SI16		gargoyleStaminaRegenBonus;		//	The default stamina regen bonus for gargoyle race
+	SI16		gargoyleManaRegenBonus;			//	The default mana regen bonus for gargoyle race
+	SI16		gargoyleMaxWeightBonus;			//	The default max weight bonus for gargoyle race
+
 	// Settings
 	SI16		ambientSounds;					//	Ambient sounds - values from 1->10 - higher values indicate sounds occur less often
 	SI16		htmlStatusEnabled;				//	If > 0 then it's enabled - only used at PC char creation - use elsewhere? (was # of seconds between updates)
 	SI16		sellMaxItems;					//	Maximum number of items that can be sold to a vendor
 	SI16		fishingstaminaloss;				//	The amount of stamina lost with each use of fishing skill
+	SI16		healthRegenCap;					//	The Cap for health regen property
+	SI16		staminaRegenCap;				//	The Cap for stamina regen property
+	SI16		manaRegenCap;					//	The Cap for mana regen property
 	UI08		maxControlSlots;				//	The default max amount of pet/follower control slots for each player
 	UI08		maxSafeTeleports;				//	The default max amount of free teleports to safety players get via the help menu per day
 	UI08		maxPetOwners;					//	The default max amount of different owners a pet may have in its lifetime
@@ -318,15 +338,15 @@ private:
 	UI16		petLoyaltyLossOnFailure;		//	The default amount of pet loyalty lost on a failed attempt to use a pet command
 
 	// SpeedUp
-	R32			npcWalkingSpeed;				//	Speed at which walking NPCs move
-	R32			npcRunningSpeed;				//	Speed at which running NPCs move
-	R32			npcFleeingSpeed;				//	Speed at which fleeing NPCs move
-	R32			npcMountedWalkingSpeed;			//	Speed at which (mounted) walking NPCs move
-	R32			npcMountedRunningSpeed;			//	Speed at which (mounted) running NPCs move
-	R32			npcMountedFleeingSpeed;			//	Speed at which (mounted) fleeing NPCs move
-	R32			archeryShootDelay;				//  Attack delay for archers; after coming to a full stop, they need to wait this amount of time before they can fire an arrow. Defaults to 1.0 seconds
-	R32			globalAttackSpeed;				//  Global attack speed that can be tweaked to quickly increase or decrease overall combat speed. Defaults to 1.0
-	R32			npcSpellcastSpeed;				//  For adjusting the overall speed of (or delay between) NPC spell casts. Defaults to 1.0
+	R64			npcWalkingSpeed;				//	Speed at which walking NPCs move
+	R64			npcRunningSpeed;				//	Speed at which running NPCs move
+	R64			npcFleeingSpeed;				//	Speed at which fleeing NPCs move
+	R64			npcMountedWalkingSpeed;			//	Speed at which (mounted) walking NPCs move
+	R64			npcMountedRunningSpeed;			//	Speed at which (mounted) running NPCs move
+	R64			npcMountedFleeingSpeed;			//	Speed at which (mounted) fleeing NPCs move
+	R64			archeryShootDelay;				//  Attack delay for archers; after coming to a full stop, they need to wait this amount of time before they can fire an arrow. Defaults to 1.0 seconds
+	R64			globalAttackSpeed;				//  Global attack speed that can be tweaked to quickly increase or decrease overall combat speed. Defaults to 1.0
+	R64			npcSpellcastSpeed;				//  For adjusting the overall speed of (or delay between) NPC spell casts. Defaults to 1.0
 	R32			globalRestockMultiplier;		//	Global multiplier applied to restock properties of items when loaded from DFNs
 	R32			bodGoldRewardMultiplier;		//	Multiplier that adjusts the amount of Gold rewarded by completing Bulk Order Deeds
 	R32			bodFameRewardMultiplier;		//	Multiplier that adjusts the amount of Fame rewarded by completing Bulk Order Deeds
@@ -394,8 +414,9 @@ private:
 	UI08		alchemyDamageBonusModifier;		//  Modifier used to calculate bonus damage for explosion potions based on alchemy skill
 	UI08		combatWeaponDamageBonusType;	//  Weapon damage bonus type (0 - apply to hidamage, 1 - split between lo and hi, 2 - apply equally to lo and hi
 	SI08		combatArcheryHitBonus;			//  Bonus to hit chance for Archery skill in combat, applied after regular hit chance calculation
-	SI16		combatMaxRange;					//	RANGE?  Range at which combat can actually occur
-	SI16		combatMaxSpellRange;			//	RANGE?  Range at which spells can be cast
+	SI16		combatMaxRange;					//	Maximum range at which combat can be engaged?
+	SI16		combatMaxSpellRange;			//	Maximum range at which spells can be cast in combat
+	SI16		combatMaxNpcAggroRange;			//	Maximum range at which NPCs can aggro targets on their own
 	SI16		combatNpcDamageRate;			//	NPC Damage divisor - PCs sustain less than NPCs.  If a PC, damage is 1/value
 	SI16		combatNpcBaseFleeAt;			//	% of HP where an NPC will flee, if it's not defined for them
 	SI16		combatNpcBaseReattackAt;		//	% of HP where an NPC will resume attacking
@@ -555,6 +576,8 @@ public:
 	SI16		MaxStealthMovement() const;
 	auto		MaxStaminaMovement( SI16 value ) -> void;
 	SI16		MaxStaminaMovement() const;
+	auto		PetBondingEnabled( bool setting ) -> void;
+	auto		PetBondingEnabled() const -> bool;
 	auto		SystemTimer( cSD_TID timerId, UI16 value ) -> void;
 	auto		SystemTimer( cSD_TID timerId ) const -> UI16;
 	TIMERVAL	BuildSystemTimeValue( cSD_TID timerId ) const;
@@ -679,6 +702,9 @@ public:
 	auto		CheckPetControlDifficulty( bool value ) -> void;
 	auto		CheckPetControlDifficulty() const -> bool;
 
+	auto		PoisonCorrosionSystem( bool value ) -> void;
+	auto		PoisonCorrosionSystem() const -> bool;
+
 	auto		NPCTrainingStatus( bool setting ) -> void;
 	auto		NPCTrainingStatus() const -> bool;
 
@@ -694,11 +720,11 @@ public:
 	auto		CheckSpawnRegionSpeed( R64 value ) -> void;
 	R64			CheckSpawnRegionSpeed() const;
 
-	auto		GlobalAttackSpeed( R32 value ) -> void;
-	R32			GlobalAttackSpeed() const;
+	auto		GlobalAttackSpeed( R64 value ) -> void;
+	R64			GlobalAttackSpeed() const;
 
-	auto		NPCSpellCastSpeed( R32 value ) -> void;
-	R32			NPCSpellCastSpeed() const;
+	auto		NPCSpellCastSpeed( R64 value ) -> void;
+	R64			NPCSpellCastSpeed() const;
 
 	auto		GlobalRestockMultiplier( R32 value ) -> void;
 	R32			GlobalRestockMultiplier() const;
@@ -744,6 +770,24 @@ public:
 
 	auto		FishingStaminaLoss( SI16 value ) -> void;
 	SI16		FishingStaminaLoss() const;
+
+	auto		HealthRegenCap( SI16 value ) -> void;
+	SI16		HealthRegenCap() const;
+
+	auto		StaminaRegenCap( SI16 value ) -> void;
+	SI16		StaminaRegenCap() const;
+
+	auto		ManaRegenCap( SI16 value ) -> void;
+	SI16		ManaRegenCap() const;
+
+	auto		HealthRegenMode( UI08 value ) -> void;
+	UI08		HealthRegenMode() const;
+
+	auto		StaminaRegenMode( UI08 value ) -> void;
+	UI08		StaminaRegenMode() const;
+
+	auto		ManaRegenMode( UI08 value ) -> void;
+	UI08		ManaRegenMode() const;
 
 	auto		CombatAttackStamina( SI16 value ) -> void;
 	SI16		CombatAttackStamina() const;
@@ -886,8 +930,8 @@ public:
 	auto		CombatAnimalsAttackChance( UI16 value ) -> void;
 	auto		CombatAnimalsAttackChance() const -> UI16;
 
-	auto		CombatArcheryShootDelay( R32 value ) -> void;
-	R32			CombatArcheryShootDelay() const;
+	auto		CombatArcheryShootDelay( R64 value ) -> void;
+	R64			CombatArcheryShootDelay() const;
 
 	auto		CombatArcheryHitBonus( SI08 value ) -> void;
 	SI08		CombatArcheryHitBonus() const;
@@ -1015,8 +1059,14 @@ public:
 	auto		HungerSystemEnabled( bool value ) -> void;
 	auto		HungerSystemEnabled() const -> bool;
 
+	auto		HungerAffectHealthRegen( bool value ) -> void;
+	auto		HungerAffectHealthRegen() const -> bool;
+
 	auto		ThirstSystemEnabled( bool value ) -> void;
 	auto		ThirstSystemEnabled() const -> bool;
+
+	auto		ThirstAffectStaminaRegen( bool value ) -> void;
+	auto		ThirstAffectStaminaRegen() const -> bool;
 
 	auto		HungerDamage( SI16 value ) -> void;
 	SI16		HungerDamage() const;
@@ -1044,6 +1094,9 @@ public:
 
 	auto		CombatMaxSpellRange( SI16 value ) -> void;
 	SI16		CombatMaxSpellRange() const;
+
+	auto		CombatMaxNpcAggroRange( SI16 value ) -> void;
+	SI16		CombatMaxNpcAggroRange() const;
 
 	auto		CombatAnimalsGuarded( bool value ) -> void;
 	auto		CombatAnimalsGuarded() const -> bool;
@@ -1087,29 +1140,65 @@ public:
 	void		ExpansionCombatHitChance( UI08 value );
 	UI08		ExpansionCombatHitChance() const;
 
+	auto		HumanHealthRegenBonus( SI16 value ) -> void;
+	SI16		HumanHealthRegenBonus() const;
+
+	auto		HumanStaminaRegenBonus( SI16 value ) -> void;
+	SI16		HumanStaminaRegenBonus() const;
+
+	auto		HumanManaRegenBonus( SI16 value ) -> void;
+	SI16		HumanManaRegenBonus() const;
+
+	auto		HumanMaxWeightBonus( SI16 value ) -> void;
+	SI16		HumanMaxWeightBonus() const;
+
+	auto		ElfHealthRegenBonus( SI16 value ) -> void;
+	SI16		ElfHealthRegenBonus() const;
+
+	auto		ElfStaminaRegenBonus( SI16 value ) -> void;
+	SI16		ElfStaminaRegenBonus() const;
+
+	auto		ElfManaRegenBonus( SI16 value ) -> void;
+	SI16		ElfManaRegenBonus() const;
+
+	auto		ElfMaxWeightBonus( SI16 value ) -> void;
+	SI16		ElfMaxWeightBonus() const;
+
+	auto		GargoyleHealthRegenBonus( SI16 value ) -> void;
+	SI16		GargoyleHealthRegenBonus() const;
+
+	auto		GargoyleStaminaRegenBonus( SI16 value ) -> void;
+	SI16		GargoyleStaminaRegenBonus() const;
+
+	auto		GargoyleManaRegenBonus( SI16 value ) -> void;
+	SI16		GargoyleManaRegenBonus() const;
+
+	auto		GargoyleMaxWeightBonus( SI16 value ) -> void;
+	SI16		GargoyleMaxWeightBonus() const;
+
 	auto		CombatNPCBaseReattackAt( SI16 value ) -> void;
 	SI16		CombatNPCBaseReattackAt() const;
 
 	auto		ShootOnAnimalBack( bool setting ) -> void;
 	auto		ShootOnAnimalBack() const -> bool;
 
-	auto		NPCWalkingSpeed( R32 value ) -> void;
-	R32			NPCWalkingSpeed() const;
+	auto		NPCWalkingSpeed( R64 value ) -> void;
+	R64			NPCWalkingSpeed() const;
 
-	auto		NPCRunningSpeed( R32 value ) -> void;
-	R32			NPCRunningSpeed() const;
+	auto		NPCRunningSpeed( R64 value ) -> void;
+	R64			NPCRunningSpeed() const;
 
-	auto		NPCFleeingSpeed( R32 value ) -> void;
-	R32			NPCFleeingSpeed() const;
+	auto		NPCFleeingSpeed( R64 value ) -> void;
+	R64			NPCFleeingSpeed() const;
 
-	auto		NPCMountedWalkingSpeed( R32 value ) -> void;
-	R32			NPCMountedWalkingSpeed() const;
+	auto		NPCMountedWalkingSpeed( R64 value ) -> void;
+	R64			NPCMountedWalkingSpeed() const;
 
-	auto		NPCMountedRunningSpeed( R32 value ) -> void;
-	R32			NPCMountedRunningSpeed() const;
+	auto		NPCMountedRunningSpeed( R64 value ) -> void;
+	R64			NPCMountedRunningSpeed() const;
 
-	auto		NPCMountedFleeingSpeed( R32 value ) -> void;
-	R32			NPCMountedFleeingSpeed() const;
+	auto		NPCMountedFleeingSpeed( R64 value ) -> void;
+	R64			NPCMountedFleeingSpeed() const;
 
 	auto		TitleColour( UI16 value ) -> void;
 	auto		TitleColour() const -> UI16;
@@ -1195,6 +1284,9 @@ public:
 
 	auto		ArmorAffectManaRegen( bool newVal ) -> void;
 	auto		ArmorAffectManaRegen() const -> bool;
+
+	auto		HealingAffectHealthRegen( bool newVal ) -> void;
+	auto		HealingAffectHealthRegen() const -> bool;
 
 	auto		AdvancedPathfinding( bool value ) -> void;
 	auto		AdvancedPathfinding() const -> bool;

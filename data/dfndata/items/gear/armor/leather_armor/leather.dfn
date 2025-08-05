@@ -228,34 +228,34 @@ get=0x1c0a 0x1c0b
 // Necro Sleeves - E/W
 [necro_sleeves]
 {
-get=base_leather_sleeves
+get=0x13c6
 color=0x2C3
 }
 
 // Necro Gloves - E/W
 [necro_gloves]
 {
-get=base_leather_gloves
+get=0x13c6
 color=0x2C3
 }
 
 // Necro Gorget - E/W
 [necro_gorget]
 {
-get=base_leather_gorget
+get=leathergorget
 color=0x2C3
 }
 
 // Necro Leggings - E/W
 [necro_leggings]
 { facing left
-get=base_leather_leggings
+get=0x13cc
 color=0x2C3
 }
 
 // Necro Tunic - E/W
 [necro_tunic]
 {
-get=base_leather_tunic
+get=0x13cc
 color=0x2C3
 }

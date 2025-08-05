@@ -6,6 +6,7 @@
 #include "townregion.h"
 #include "CJSMapping.h"
 #include "cScript.h"
+#include "Dictionary.h"
 
 #include "cServerDefinitions.h"
 
@@ -155,23 +156,21 @@ bool CPIBuyItem::Handle( void )
 		totalGoldCost	+= ( amount[i] * ( bItems[i]->GetBuyValue() ));
 	}
 
-	bool didUseBank = true;
-	bool tryUsingBank = ( totalGoldCost >= static_cast<UI32>( cwmWorldState->ServerData()->BuyThreshold() ));
-	if( tryUsingBank )
+	bool takeGoldFromBank = false;
+
+	// First look for the required gold in player's backpack
+	totalPlayerGold = GetItemAmount( mChar, 0x0EED );
+	if( totalPlayerGold < totalGoldCost )
 	{
-		// Count gold in bank if amount is higher than threshold
-		totalPlayerGold = GetBankCount( mChar, 0x0EED );
+		// Not enough gold in backpack, check bank if amount is over threshold
+		if( totalGoldCost >= static_cast<UI32>( cwmWorldState->ServerData()->BuyThreshold() ))
+		{
+			totalPlayerGold = GetBankCount( mChar, 0x0EED );
+			takeGoldFromBank = true;
+		}
 	}
 
-	if( !tryUsingBank || totalPlayerGold < totalGoldCost )
-	{
-		// Count gold in backpack if amount is NOT higher than threshold,
-		// or if bank doesn't have enough gold
-		totalPlayerGold = GetItemAmount( mChar, 0x0EED );
-		didUseBank = false;
-	}
-
-	if( mChar->IsGM() || (( tryUsingBank && totalPlayerGold >= totalGoldCost ) || ( !tryUsingBank && totalPlayerGold >= totalGoldCost )))
+	if( mChar->IsGM() || ( totalPlayerGold >= totalGoldCost ))
 	{
 		for( i = 0; i < itemTotal; ++i )
 		{
@@ -240,10 +239,11 @@ bool CPIBuyItem::Handle( void )
 			clear = true;
 			if( !mChar->IsGM() )
 			{
-				if( didUseBank )
+				if( takeGoldFromBank )
 				{
 					// Remove total amount of gold spent, from player's bankbox
 					DeleteBankItem( mChar, totalGoldCost, 0x0EED );
+					tSock->SysMessage( oldstrutil::format( Dictionary->GetEntry( 2124, tSock->Language() ), totalGoldCost )); // %i gold has been withdrawn from your bank box.
 				}
 				else
 				{
@@ -420,6 +420,7 @@ bool CPIBuyItem::Handle( void )
 	return true;
 }
 
+UI16 HandleAutoStack( CItem *mItem, CItem *mCont, CSocket *mSock, CChar *mChar );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CPISellItem::Handle()
 //o------------------------------------------------------------------------------------------------o
@@ -535,7 +536,7 @@ bool CPISellItem::Handle( void )
 				{
 					if( ValidateObject( k ))
 					{
-						if(( k->GetId() == j->GetId() || k->GetSectionId() == j->GetSectionId() ) && j->GetType() == k->GetType() )
+						if(( k->GetId() == j->GetId() || oldstrutil::lower( k->GetSectionId() ) == oldstrutil::lower( j->GetSectionId() )) && j->GetType() == k->GetType() )
 						{
 							if( j->GetId() != 0x14f0 || ( j->GetTempVar( CITV_MOREX ) == k->GetTempVar( CITV_MOREX )))
 							{
@@ -620,14 +621,56 @@ bool CPISellItem::Handle( void )
 		}
 
 		Effects->GoldSound( tSock, totgold );
+
+		bool shouldUseBank = false;
+		CItem *bankBox = nullptr;
+		if( totgold >= static_cast<UI32>( cwmWorldState->ServerData()->BuyThreshold() ))
+		{
+			bankBox = mChar->GetItemAtLayer( IL_BANKBOX );
+			if( ValidateObject( bankBox ))
+			{
+				shouldUseBank = true;
+			}
+		}
+
 		while( totgold > MAX_STACK )
 		{
-			Items->CreateScriptItem( tSock, mChar, "0x0EED", MAX_STACK, OT_ITEM, true );
+			auto newGoldPile = Items->CreateScriptItem( nullptr, mChar, "0x0EED", MAX_STACK, OT_ITEM, false );
+			if( shouldUseBank )
+			{
+				newGoldPile->SetCont( bankBox );
+				HandleAutoStack( newGoldPile, bankBox, nullptr, nullptr );
+				tSock->SysMessage( oldstrutil::format( Dictionary->GetEntry( 2703, tSock->Language() ) + " %u", newGoldPile->GetAmount() )); // Gold was deposited in your account:
+			}
+			else
+			{
+				newGoldPile->SetCont( mChar->GetPackItem() );
+				HandleAutoStack( newGoldPile, mChar->GetPackItem(), nullptr, nullptr );
+			}
+			if( ValidateObject( newGoldPile ))
+			{
+				newGoldPile->PlaceInPack();
+			}
 			totgold -= MAX_STACK;
 		}
 		if( totgold > 0 )
 		{
-			Items->CreateScriptItem( tSock, mChar, "0x0EED", totgold, OT_ITEM, true );
+			auto newGoldPile = Items->CreateScriptItem( nullptr, mChar, "0x0EED", totgold, OT_ITEM, false );
+			if( shouldUseBank )
+			{
+				newGoldPile->SetCont( bankBox );
+				HandleAutoStack( newGoldPile, bankBox, nullptr, nullptr );
+				tSock->SysMessage( oldstrutil::format( Dictionary->GetEntry( 2703, tSock->Language() ) + " %u", newGoldPile->GetAmount() )); // Gold was deposited in your account:
+			}
+			else
+			{
+				newGoldPile->SetCont( mChar->GetPackItem() );
+				HandleAutoStack( newGoldPile, mChar->GetPackItem(), nullptr, nullptr );
+			}
+			if( ValidateObject( newGoldPile ))
+			{
+				newGoldPile->PlaceInPack();
+			}
 		}
 	}
 

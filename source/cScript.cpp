@@ -80,6 +80,7 @@ static JSFunctionSpec my_functions[] =
 	{ "UseItem",					SE_UseItem,					2, 0 },
 	{ "TriggerTrap",				SE_TriggerTrap,				2, 0 },
 	{ "CompareGuildByGuild",		SE_CompareGuildByGuild,		2, 0 },
+	{ "CreateNewGuild",				SE_CreateNewGuild,			0, 0 },
 	{ "CommandLevelReq",			SE_CommandLevelReq,			1, 0 },
 	{ "CommandExists",				SE_CommandExists,			1, 0 },
 	{ "FirstCommand",				SE_FirstCommand,			0, 0 },
@@ -182,6 +183,7 @@ static JSFunctionSpec my_functions[] =
 	{ "GetCharacterCount",			SE_GetCharacterCount,		0, 0 },
 	{ "GetServerVersionString",		SE_GetServerVersionString,	0, 0 },
 	{ "EraStringToNum",				SE_EraStringToNum,			1, 0 },
+	{ "GetCommandLevelVal",			SE_GetCommandLevelVal,		1, 0 },
 
 	{ "BASEITEMSERIAL",				SE_BASEITEMSERIAL,			0, 0 },
 	{ "INVALIDSERIAL",				SE_INVALIDSERIAL,			0, 0 },
@@ -193,18 +195,50 @@ static JSFunctionSpec my_functions[] =
 
 void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *report )
 {
-	UI16 scriptNum = JSMapping->currentActive()->GetScriptID();
-	// If we're loading the world then do NOT print out anything!
-	Console.Error( oldstrutil::format( "JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
-	if( report == nullptr || report->filename == nullptr )
+	JSErrorInfo* errorInfo = ( JSErrorInfo *)JS_GetContextPrivate( cx );
+	if( errorInfo != nullptr )
 	{
-		Console.Error( "No detailed data" );
-		return;
+		// Silently populate errorInfo for cScript constructor during compilation
+		if( report == nullptr || report->filename == nullptr )
+		{
+			errorInfo->message = "No detailed data";
+			return;
+		}
+
+		if( report->linebuf != nullptr  )
+		{
+			errorInfo->lineSource = report->linebuf;
+		}
+		if( report->tokenptr != nullptr )
+		{
+			errorInfo->tokenPointer = report->tokenptr;
+		}
+
+		errorInfo->message  = message;
+		errorInfo->filename = report->filename;
+		errorInfo->lineNum  = report->lineno;
 	}
-	Console.Error( oldstrutil::format( "Filename: %s\n| Line Number: %i", report->filename, report->lineno ));
-	if( report->linebuf != nullptr || report->tokenptr != nullptr )
+	else
 	{
-		Console.Error( oldstrutil::format( "Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
+		// Output errors directly here, triggered by runtime execution of scripts
+		UI16 scriptNum = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+		Console.Error( oldstrutil::format( "JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
+		if( report == nullptr || report->filename == nullptr )
+		{
+			Console.Error( "No detailed data" );
+			return;
+		}
+
+		Console.Error( oldstrutil::format( "Filename: %s", report->filename ));
+		Console.Error( oldstrutil::format( "Line Number: %i", report->lineno ));
+		if( report->linebuf != nullptr )
+	{
+			Console.Error( oldstrutil::format( "Erroneous Line: %s", oldstrutil::trim( report->linebuf ).c_str() ));
+	}
+		if( report->tokenptr != nullptr )
+		{
+			Console.Error( oldstrutil::format( "Token Ptr: %s", report->tokenptr ));
+}
 	}
 }
 
@@ -310,11 +344,79 @@ cScript::cScript( std::string targFile, UI08 rT, UI16 scrID ) : isFiring( false 
 	JS_LockGCThing( targContext, scriptObj );
 	JS_SetPrivate( targContext, scriptObj, this );
 
+
+	// Let's fetch some error details when we compile the script
+	JSErrorInfo errorDetails;
+	JS_SetContextPrivate( targContext, &errorDetails );
 	targScript = JS_CompileFile( targContext, targObject, targFile.c_str() );
+	JS_SetContextPrivate( targContext, nullptr );
+
 	if( targScript == nullptr )
 	{
-		throw std::runtime_error( "Compilation failed" );
+		std::string errorMessage, errorFile, errorLineStr, tokenPtrLine;
+		uint32 errorLine = 0;
+		UI16 scriptNum = 0xFFFF; // Script Number is unknown at this stage
+		if( !errorDetails.message.empty() )
+		{
+			// Triggered during compilation of scripts at startup, or upon full reload of script engine at runtime
+			errorMessage = errorDetails.message;
+			errorFile = errorDetails.filename;
+			errorLine = errorDetails.lineNum;
+			errorLineStr = errorDetails.lineSource;
+			tokenPtrLine = errorDetails.tokenPointer;
 	}
+		else
+		{
+			// Triggered when reloading individual scripts at runtime
+			jsval pendingException;
+			if( JS_GetPendingException( targContext, &pendingException ) == JS_TRUE )
+			{
+				if( JSVAL_IS_OBJECT( pendingException ) && !JSVAL_IS_NULL( pendingException ))
+				{
+					JSObject *errObj = JSVAL_TO_OBJECT( pendingException );
+
+					// Get error message from pending exception
+					jsval messageVal;
+					if( JS_GetProperty( targContext, errObj, "message", &messageVal ) == JS_TRUE )
+					{
+						errorMessage = JS_GetStringBytes(targContext, messageVal);
+					}
+
+					// Get line number from pending exception
+					jsval lineVal;
+					if( JS_GetProperty( targContext, errObj, "lineNumber", &lineVal ) == JS_TRUE )
+					{
+						JS_ValueToECMAUint32( targContext, lineVal, &errorLine );
+					}
+
+					// Get filename from pending exception
+					jsval fileVal;
+					if( JS_GetProperty( targContext, errObj, "fileName", &fileVal ) == JS_TRUE )
+					{
+						errorFile = JS_GetStringBytes( targContext, fileVal );
+					}
+				}
+
+				JS_ClearPendingException( targContext );
+			}
+		}
+
+		// Spit out the distinct parts of the error message line by line
+		Console.Error( oldstrutil::format( "JS script failure: Script Number (%u) Message (%s)", scriptNum, errorMessage.c_str() ));
+		Console.Error( oldstrutil::format( "Filename: %s", errorFile.c_str() ));
+		Console.Error( oldstrutil::format( "Line Number: %i", errorLine ));
+		if( !errorLineStr.empty() )
+		{
+			Console.Error( oldstrutil::format( "Erroneous Line: %s", oldstrutil::trim( errorLineStr ).c_str() ));
+		}
+		if( !tokenPtrLine.empty() )
+		{
+			Console.Error( oldstrutil::format( "Token Ptr: %s", tokenPtrLine.c_str() ));
+		}
+
+		throw std::runtime_error( "Error during JS Compilation" );
+	}
+
 	jsval rval;
 	JSBool ok = JS_ExecuteScript( targContext, targObject, targScript, &rval );
 	if( ok != JS_TRUE )
@@ -349,9 +451,11 @@ cScript::~cScript()
 	if( targScript != nullptr )
 	{
 		JS_DestroyScript( targContext, targScript );
+		targScript = nullptr;
 	}
 	Cleanup();
-	JS_GC( targContext );
+
+	//JS_GC( targContext );
 }
 
 bool cScript::IsFiring( void )
@@ -1184,6 +1288,35 @@ SI08 cScript::OnQuestGump( CChar *mChar )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnGuildButton()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for character who activate Guild button in paperdoll
+//|					Return true to prevent additional onGuildButton events from triggering
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnGuildButton( CChar *mChar )
+{
+	if( !ValidateObject( mChar ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnGuildButton, "onGuildButton" ))
+		return RV_NOFUNC;
+
+	jsval rval, params[1];
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	JSBool retVal = InvokeEvent( "onGuildButton", 1, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnGuildButton, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnHelpButton()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character who activate Help button in paperdoll
@@ -1547,6 +1680,37 @@ SI08 cScript::OnDecay( CItem *decaying )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnReleasePet()
+//|	Purpose		-	Script trigger for when a player tries to release a pet
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnReleasePet( CChar *owner, CChar *pet )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( owner ) || !ValidateObject( pet ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnReleasePet, "onReleasePet" ))
+		return RV_NOFUNC;
+
+	jsval params[2], rval;
+	JSObject *ownerObj = JSEngine->AcquireObject( IUE_CHAR, owner, runTime );
+	JSObject *petObj   = JSEngine->AcquireObject( IUE_CHAR, pet, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( ownerObj );
+	params[1] = OBJECT_TO_JSVAL( petObj );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onReleasePet", 2, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnReleasePet, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnLeaving()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when leaving a multi
@@ -1620,7 +1784,7 @@ SI08 cScript::OnMultiLogout( CMultiObj *iMulti, CChar *cPlayer )
 //o------------------------------------------------------------------------------------------------o
 //|    Purpose        -    Triggers for Boat after it has turned successfully
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir )
+SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir, CItem *iTiller )
 {
 	if( !ValidateObject( iBoat ))
 		return RV_NOFUNC;
@@ -1628,15 +1792,17 @@ SI08 cScript::OnBoatTurn( CBoatObj *iBoat, UI08 oldDir, UI08 newDir )
 	if( !ExistAndVerify( seOnBoatTurn, "onBoatTurn" ))
 		return RV_NOFUNC;
 
-	jsval params[3], rval;
+	jsval params[4], rval;
 	JSObject *myBoat = JSEngine->AcquireObject( IUE_ITEM, iBoat, runTime );
+	JSObject *myTiller = JSEngine->AcquireObject( IUE_ITEM, iTiller, runTime );
     
 
 	params[0] = OBJECT_TO_JSVAL( myBoat );
 	params[1] = INT_TO_JSVAL( oldDir );
 	params[2] = INT_TO_JSVAL( newDir );
+	params[3] = OBJECT_TO_JSVAL( myTiller );
 
-	JSBool retVal = InvokeEvent( "onBoatTurn", 3, params, &rval );
+	JSBool retVal = InvokeEvent( "onBoatTurn", 4, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnBoatTurn, false );
@@ -3293,7 +3459,7 @@ SI08 cScript::OnSpellLoss( CItem *book, const UI08 spellNum )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when a skillcheck is performed
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill )
+SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill, SI08 overrideOutcome )
 {
 	if( !ValidateObject( myChar ) || skill > ALLSKILLS )
 		return RV_NOFUNC;
@@ -3301,14 +3467,15 @@ SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 	if( !ExistAndVerify( seOnSkillCheck, "onSkillCheck" ))
 		return RV_NOFUNC;
 
-	jsval params[5], rval;
+	jsval params[6], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( skill );
 	params[2] = INT_TO_JSVAL( lowSkill );
 	params[3] = INT_TO_JSVAL( highSkill );
 	params[4] = BOOLEAN_TO_JSVAL( isCraftSkill );
-	JSBool retVal = InvokeEvent( "onSkillCheck", 5, params, &rval );
+	params[5] = INT_TO_JSVAL( overrideOutcome );
+    JSBool retVal = InvokeEvent( "onSkillCheck", 6, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSkillCheck, false );
@@ -3423,6 +3590,79 @@ SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnProfileRequest()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers in global script on requests for paperdoll profiles of other players
+//o------------------------------------------------------------------------------------------------o
+std::string cScript::OnProfileRequest( CSocket *mSock, CChar *profileOwner )
+{
+	if( mSock  == nullptr || !ValidateObject( profileOwner ))
+		return "";
+
+	if( !ExistAndVerify( seOnProfileRequest, "onProfileRequest" ))
+		return "";
+
+	jsval params[2], rval;
+	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	JSObject *profOwnerObj	= JSEngine->AcquireObject( IUE_CHAR, profileOwner, runTime );
+	
+	params[0]	= OBJECT_TO_JSVAL( myObj );
+	params[1]	= OBJECT_TO_JSVAL( profOwnerObj );
+	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onProfileRequest", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnProfileRequest, false );
+	}
+
+	if( rval < 0 )
+	{
+		Console.Error( "Handled exception in cScript.cpp OnProfileRequest() - invalid return value/error encountered!" );
+		return "";
+	}
+
+	try
+	{
+		std::string returnString = JS_GetStringBytes( targContext, rval );
+
+		return returnString;
+	}
+	catch( ... )
+	{
+		Console.Error( "Handled exception in cScript.cpp OnProfileRequest()" );
+		return "";
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnProfileUpdate()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers in global script on attempts to update paperdoll profile text
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnProfileUpdate( CSocket *mSock, std::string profileText )
+{
+	if( mSock == nullptr || profileText.empty() )
+		return false;
+
+	if( !ExistAndVerify( seOnProfileUpdate, "onProfileUpdate" ))
+		return false;
+
+	jsval params[2], rval;
+	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	JSString *strProfileText = nullptr;
+	strProfileText = JS_NewStringCopyZ( targContext, profileText.c_str() );
+
+	params[0]	= OBJECT_TO_JSVAL( myObj );
+	params[1]	= STRING_TO_JSVAL( strProfileText );
+	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onProfileUpdate", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnProfileUpdate, false );
+	}
+
+	return ( retVal == JS_TRUE );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::ExistAndVerify()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
@@ -3530,7 +3770,7 @@ bool cScript::MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI3
 //|	Purpose		-	Called after IterateOver JS function is used, and iterates over all items or
 //|					characters (as specified) in the game
 //o------------------------------------------------------------------------------------------------o
-bool cScript::OnIterate( CBaseObject *a, UI32 &b )
+bool cScript::OnIterate( CBaseObject *a, UI32 &b, CSocket *mSock )
 {
 	if( !ValidateObject( a ))
 		return true;
@@ -3538,7 +3778,7 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 	if( !ExistAndVerify( seOnIterate, "onIterate" ))
 		return false;
 
-	jsval params[1], rval;
+	jsval params[2], rval;
 
 	JSObject *myObj = nullptr;
 	if( a->GetObjType() == OT_CHAR )
@@ -3550,9 +3790,16 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 		myObj = JSEngine->AcquireObject( IUE_ITEM, a, runTime );
 	}
 
-	params[0] = OBJECT_TO_JSVAL( myObj );
+	JSObject *sockObj = nullptr;
+	if( mSock )
+	{
+		sockObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	}
 
-	JSBool retVal	= InvokeEvent( "onIterate", 1, params, &rval );
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( sockObj );
+
+	JSBool retVal	= InvokeEvent( "onIterate", 2, params, &rval );
 
 	/*	if( ValidateObject( a ))
 	{
@@ -3673,6 +3920,35 @@ SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar )
 	}
 
 	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDismount()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Allows triggering effects upon dismounting a mount
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnDismount( CChar *pChar, CChar *npcMount )
+{
+	if( !ValidateObject( pChar ) || !ValidateObject( npcMount ))
+		return false;
+
+	if( !ExistAndVerify( seOnDismount, "onDismount" ))
+		return false;
+
+	jsval params[2], rval;
+	JSObject *pObj = JSEngine->AcquireObject( IUE_CHAR, pChar, runTime );
+	JSObject *npcObj = JSEngine->AcquireObject( IUE_CHAR, npcMount, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( pObj );
+	params[1] = OBJECT_TO_JSVAL( npcObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDismount", 2, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnDismount, false );
+	}
+
+	return ( retVal == JS_TRUE );
 }
 
 //o------------------------------------------------------------------------------------------------o

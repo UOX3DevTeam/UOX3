@@ -27,8 +27,27 @@ function onUseChecked( pUser, iUsed )
 		}
 	}
 
+	if( !pUser.CanSee( iUsed ))
+		return false;
+
+	if( pUser.DistanceTo( iUsed ) > 4 )
+		return false;
+
+	var seatedPlayers = AreaCharacterFunction( "LookForSittingPlayers", iUsed, 1, null );
+	if( seatedPlayers > 0 )
+		return false;
+
 	// All is well, rotate the furniture!
 	SmartTurn( iUsed );
+	return false;
+}
+
+function LookForSittingPlayers( srcItem, trgChar, pSock )
+{
+	if( ValidateObject( trgChar ) && trgChar.z == srcItem.z && trgChar.worldnumber == srcItem.worldnumber && trgChar.instanceID == srcItem.instanceID )
+	{
+		return true;
+	}
 	return false;
 }
 

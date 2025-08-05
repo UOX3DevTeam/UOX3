@@ -2,7 +2,7 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "get", 2, true );
+	RegisterCommand( "get", 8, true );
 }
 
 function command_GET( socket, cmdString )
@@ -93,6 +93,15 @@ function onCallback0( socket, ourObj )
 	case "MULTI":
 		socket.SysMessage( ourObj.multi );
 		break;
+	case "HEALTHREGENBONUS":
+		socket.SysMessage( ourObj.healthRegenBonus );
+		break;
+	case "STAMINAREGENBONUS":
+		socket.SysMessage( ourObj.staminaRegenBonus );
+		break;
+	case "MANAREGENBONUS":
+		socket.SysMessage( ourObj.manaRegenBonus );
+		break;
 	case "OWNER":
 		if( ourObj.owner )
 		{
@@ -111,6 +120,9 @@ function onCallback0( socket, ourObj )
 		break;
 	case "POISON":
 		socket.SysMessage( ourObj.poison );
+		break;
+	case "POISONEDBY":
+		socket.SysMessage( ourObj.poisonedBy );
 		break;
 	case "X":
 		socket.SysMessage( ourObj.x );
@@ -162,6 +174,30 @@ function onCallback0( socket, ourObj )
 	case "REGION":
 		socket.SysMessage( ourObj.region.id + " ( " + ourObj.region.name + ")" );
 		break;
+	case "DEF":
+	case "ARMOUR":
+	case "ARMOR":
+	case "RESISTARMOR":
+		socket.SysMessage( ourObj.Resist( 1 ));
+		break;
+	case "RESISTLIGHT":
+		socket.SysMessage( ourObj.Resist( 2 ));
+		break;
+	case "RESISTWATER":
+		socket.SysMessage( ourObj.Resist( 3 ));
+		break;
+	case "RESISTCOLD":
+		socket.SysMessage( ourObj.Resist( 4 ));
+		break;
+	case "RESISTFIRE":
+		socket.SysMessage( ourObj.Resist( 5 ));
+		break;
+	case "RESISTENERGY":
+		socket.SysMessage( ourObj.Resist( 6 ));
+		break;
+	case "RESISTPOISON":
+		socket.SysMessage( ourObj.Resist( 7 ));
+		break;
 	case "SCRIPTTRIGGER":
 	{
 		// Get last script trigger in list of triggers on object
@@ -183,6 +219,9 @@ function onCallback0( socket, ourObj )
 	}
 	case "SECTIONID":
 		socket.SysMessage( ourObj.sectionID );
+		break;
+	case "SPAWNSERIAL":
+		socket.SysMessage( ourObj.spawnSerial );
 		break;
 	case "SWINGSPEEDINC":
 		socket.SysMessage( ourObj.swingSpeedIncrease );
@@ -291,6 +330,9 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "NEWBIE":
 		socket.SysMessage( ourItem.isNewbie );
 		break;
+	case "POISONCHARGES":
+		socket.SysMessage( ourItem.poisonCharges );
+		break;
 	case "DIVINELOCK":
 		socket.SysMessage( ourItem.divinelock );
 		break;
@@ -314,28 +356,6 @@ function HandleGetItem( socket, ourItem, uKey )
 		break;
 	case "DESC":
 		socket.SysMessage( ourItem.desc );
-		break;
-	case "DEF":
-	case "RESISTARMOR":
-		socket.SysMessage( ourItem.Resist( 1 ));
-		break;
-	case "RESISTLIGHT":
-		socket.SysMessage( ourItem.Resist( 2 ));
-		break;
-	case "RESISTWATER":
-		socket.SysMessage( ourItem.Resist( 3 ));
-		break;
-	case "RESISTCOLD":
-		socket.SysMessage( ourItem.Resist( 4 ));
-		break;
-	case "RESISTFIRE":
-		socket.SysMessage( ourItem.Resist( 5 ));
-		break;
-	case "RESISTENERGY":
-		socket.SysMessage( ourItem.Resist( 6 ));
-		break;
-	case "RESISTPOISON":
-		socket.SysMessage( ourItem.Resist( 7 ));
 		break;
 	case "LOWERSTATREQ":
 		socket.SysMessage( ourItem.lowerStatReq );
@@ -511,6 +531,22 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "FOLLOWERCOUNT":
 		socket.SysMessage( ourChar.followerCount );
 		break;
+	case "GUILD":
+		{
+			let ourGuild = ourChar.guild;
+			if( ourGuild != null )
+			{
+				socket.SysMessage( ourChar.guild.name );
+			}
+			else
+			{
+				socket.SysMessage( "Character does not currently belong in a guild." );
+			}
+		}
+		break;
+	case "GUILDNUMBER":
+		socket.SysMessage( ourChar.guildNumber );
+		break;
 	case "MAXLOYALTY":
 		socket.SysMessage( ourChar.maxLoyalty );
 		break;
@@ -591,6 +627,9 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "NPCAI":
 		socket.SysMessage( ourChar.aitype );
 		break;
+	case "POISONSTRENGTH":
+		socket.SysMessage( ourChar.poisonStrength );
+		break;
 	case "VULNERABLE":
 		socket.SysMessage( ourChar.vulnerable );
 		break;
@@ -643,29 +682,6 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "VISIBLE":
 		socket.SysMessage( ourChar.visible );
-		break;
-	case "ARMOUR":
-	case "ARMOR":
-	case "RESISTARMOR":
-		socket.SysMessage( ourChar.Resist( 1 ));
-		break;
-	case "RESISTLIGHT":
-		socket.SysMessage( ourChar.Resist( 2 ));
-		break;
-	case "RESISTWATER":
-		socket.SysMessage( ourChar.Resist( 3 ));
-		break;
-	case "RESISTCOLD":
-		socket.SysMessage( ourChar.Resist( 4 ));
-		break;
-	case "RESISTFIRE":
-		socket.SysMessage( ourChar.Resist( 5 ));
-		break;
-	case "RESISTENERGY":
-		socket.SysMessage( ourChar.Resist( 6 ));
-		break;
-	case "RESISTPOISON":
-		socket.SysMessage( ourChar.Resist( 7 ));
 		break;
 	case "MAXHP":
 		socket.SysMessage( ourChar.maxhp );

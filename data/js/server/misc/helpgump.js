@@ -17,6 +17,10 @@ function DisplayHelpMenu( pUser )
 	if( pSock == null )
 		return;
 
+	// Avoid multiple gumps in official UO client
+	var gumpID = this.script_id + 0xffff;
+	pSock.CloseGump( gumpID, 0 );
+
 	var sLanguage = pSock.language;
 
 	// Set up dictionary messages

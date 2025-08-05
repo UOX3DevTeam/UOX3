@@ -56,13 +56,13 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	if( cTarget->WorldNumber() != cAttack->WorldNumber() || cTarget->GetInstanceId() != cAttack->GetInstanceId() )
 		return false;
 
-	if( !ObjInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( nullptr, cAttack, cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
-		return false;
-
 	if( !cAttack->GetCanAttack() || cAttack->IsEvading() ) // Is the char allowed to attack?
 		return false;
 
 	if( cAttack->GetNpcAiType() == AI_DUMMY ) // If passive, don't allow attack
+		return false;
+
+	if( !ObjInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( nullptr, cAttack, cTarget->GetX(), cTarget->GetY(), cTarget->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 		return false;
 
 	// If two NPCs try to fight, do some extra checks to make sure they're allowed to (ignore if both are pets)
@@ -296,7 +296,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 						CMultiObj *multiObj = ourChar->GetMultiObj();
 						if( !ValidateObject( multiObj ) || multiObj->GetOwner() == ourChar->GetSerial() )
 						{
-							if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+							if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 							{
 								// Play Resurrect casting animation
 								if( i->GetBodyType() == BT_GARGOYLE	|| cwmWorldState->ServerData()->ForceNewAnimationPacket() )
@@ -334,7 +334,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 						CMultiObj *multiObj = ourChar->GetMultiObj();
 						if( !ValidateObject( multiObj ) || multiObj->GetOwner() == ourChar->GetSerial() )
 						{
-							if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+							if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 							{
 								// Play Resurrect casting animation
 								if( i->GetBodyType() == BT_GARGOYLE	|| cwmWorldState->ServerData()->ForceNewAnimationPacket() )
@@ -431,6 +431,13 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		{
 			// Either attacker or target is in a safe zone where all aggressive actions are forbidden, disallow
 			s->SysMessage( 1799 ); // You are no longer affected by peace!
+			return;
+		}
+
+		// Check if player is within the allowed attack range
+		if( !ObjInRange( ourChar, i, cwmWorldState->ServerData()->CombatMaxRange() ))
+		{
+			s->SysMessage( 2718 ); // Your target is out of range.
 			return;
 		}
 
@@ -589,21 +596,24 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 
 	if( cAttack->CheckAggressorFlag( cTarget->GetSerial() ))
 	{
-		// Send attacker message to all nearby players
-		for( auto &tSock : FindNearbyPlayers( cAttack ))
+		// Send attacker message to all nearby players, if both attacker and target are players, or if attacker is NPC and target is player
+		if(( !cAttack->IsNpc() && !cTarget->IsNpc() ) || ( cAttack->IsNpc() && !cTarget->IsNpc() ))
 		{
-			if( tSock )
+			for( auto &tSock : FindNearbyPlayers( cAttack ))
 			{
-				// Valid socket found
-				CChar *witness = tSock->CurrcharObj();
-				if( ValidateObject( witness ))
+				if( tSock )
 				{
-					// Fetch names of attacker and target
-					std::string attackerName = GetNpcDictName( cAttack, tSock, NRS_SPEECH );
-					std::string targetName = GetNpcDictName( cTarget, tSock, NRS_SPEECH );
+					// Valid socket found
+					CChar *witness = tSock->CurrcharObj();
+					if( ValidateObject( witness ))
+					{
+						// Fetch names of attacker and target
+						std::string attackerName = GetNpcDictName( cAttack, tSock, NRS_SPEECH );
+						std::string targetName = GetNpcDictName( cTarget, tSock, NRS_SPEECH );
 
-					// Send an emote about attacking target to nearby witness
-					cAttack->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking target
+						// Send an emote about attacking target to nearby witness
+						cAttack->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking target
+					}
 				}
 			}
 		}
@@ -1086,29 +1096,48 @@ SI16 CHandleCombat::CalcAttackPower( CChar *p, bool doDamage )
 				getDamage += RandomNum( weapon->GetLoDamage(), weapon->GetHiDamage() );
 			}
 
+			// Apply damage to (player's) weapon based on corrosion level, if this system is enabled
+			CSocket *mSock = p->GetSocket();
+			if( cwmWorldState->ServerData()->PoisonCorrosionSystem() )
+			{
+				TAGMAPOBJECT localObject = weapon->GetTag( "corrosionLevel" );
+				if( localObject.m_IntValue > 0 )
+				{
+					// Weapon has corrosion damage, apply durability loss equal to corrosion level!
+					weapon->SetHP( weapon->GetHP() - static_cast<SI16>( localObject.m_IntValue ));
+				}
+			}
+
 			// Chance to apply damage to (player's) weapon based on ini setting
 			if( doDamage && !p->IsNpc() && ( cwmWorldState->ServerData()->CombatWeaponDamageChance() >= RandomNum( 1, 100 )))
 			{
-				SI08 weaponDamage = 0;
-				UI08 weaponDamageMin = 0;
-				UI08 weaponDamageMax = 0;
+				if( weapon->GetHP() > 0 )
+				{
+					SI08 weaponDamage = 0;
+					UI08 weaponDamageMin = 0;
+					UI08 weaponDamageMax = 0;
 
-				// Fetch minimum and maximum weapon damage from ini
-				weaponDamageMin = cwmWorldState->ServerData()->CombatWeaponDamageMin();
-				weaponDamageMax = cwmWorldState->ServerData()->CombatWeaponDamageMax();
+					// Fetch minimum and maximum weapon damage from ini
+					weaponDamageMin = cwmWorldState->ServerData()->CombatWeaponDamageMin();
+					weaponDamageMax = cwmWorldState->ServerData()->CombatWeaponDamageMax();
 
-				weaponDamage -= static_cast<UI08>( RandomNum( static_cast<UI16>( weaponDamageMin ), static_cast<UI16>( weaponDamageMax )));
-				weapon->IncHP( weaponDamage );
+					weaponDamage -= static_cast<UI08>( RandomNum( static_cast<UI16>( weaponDamageMin ), static_cast<UI16>( weaponDamageMax )));
+					weapon->IncHP( weaponDamage );
+				}
 
 				// If weapon hp has reached 0, destroy it
 				if( weapon->GetHP() <= 0 )
 				{
-					CSocket *mSock = p->GetSocket();
 					if( mSock != nullptr )
 					{
 						std::string name;
 						GetTileName(( *weapon ), name );
 						mSock->SysMessage( 311, name.c_str() ); // Your %s has been destroyed.
+					}
+					if( weapon->GetPoisoned() > 0 )
+					{
+						// Undo poison-strength on character
+						p->SetPoisonStrength( std::max( 0, p->GetPoisonStrength() - weapon->GetPoisoned() ));
 					}
 					weapon->Delete();
 				}
@@ -1304,11 +1333,19 @@ SI16 CHandleCombat::CalcHighDamage( CChar *p )
 //|	Purpose		-	Checks the defense of checkItem vs the defense of currItem and returns
 //|							the item with the greater Def and its def value
 //o------------------------------------------------------------------------------------------------o
-CItem *CHandleCombat::CheckDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType )
+CItem *CHandleCombat::CheckDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType, bool excludeMedableArmor )
 {
 	if( ValidateObject( checkItem ) && checkItem->GetResist( resistType ) > currDef )
 	{
-		currDef = checkItem->GetResist( resistType );
+		if( excludeMedableArmor )
+		{
+			// Special case to retrieve physical armor value only for non-medable armor
+			currDef = checkItem->GetNonMedableArmorRating();
+		}
+		else
+		{
+			currDef = checkItem->GetResist( resistType );
+		}
 		return checkItem;
 	}
 	return currItem;
@@ -1321,18 +1358,18 @@ CItem *CHandleCombat::CheckDef( CItem *checkItem, CItem *currItem, SI32 &currDef
 //|	Purpose		-	Finds the item covering the location bodyLoc with the greatest AR and
 //|							returns it along with its def value
 //o------------------------------------------------------------------------------------------------o
-CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal, WeatherType resistType )
+CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal, WeatherType resistType, bool excludeMedableArmor, bool includeShield )
 {
 	SI32 armorDef = 0;
 	CItem *currItem = nullptr;
 	switch( bodyLoc )
 	{
 		case 1:		// Torso
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_INNERSHIRT ), currItem, armorDef, resistType );	// Shirt
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_TUNIC ), currItem, armorDef, resistType );		// Torso (Inner - Chest Armor)
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_OUTERSHIRT ), currItem, armorDef, resistType );	// Torso (Middle - Tunic, etc)
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_CLOAK ), currItem, armorDef, resistType );		// Back (Cloak)
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_ROBE ), currItem, armorDef, resistType );		// Torso (Outer - Robe)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_INNERSHIRT ), currItem, armorDef, resistType, excludeMedableArmor );	// Shirt
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_TUNIC ), currItem, armorDef, resistType, excludeMedableArmor );		// Torso (Inner - Chest Armor)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_OUTERSHIRT ), currItem, armorDef, resistType, excludeMedableArmor );	// Torso (Middle - Tunic, etc)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_CLOAK ), currItem, armorDef, resistType, excludeMedableArmor );		// Back (Cloak)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_ROBE ), currItem, armorDef, resistType, excludeMedableArmor );		// Torso (Outer - Robe)
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1342,7 +1379,7 @@ CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 2:		// Arms
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_ARMS ), currItem, armorDef, resistType );	// Arms
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_ARMS ), currItem, armorDef, resistType, excludeMedableArmor );	// Arms
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1352,7 +1389,7 @@ CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 3:		// Head
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_HELM ), currItem, armorDef, resistType );	// Head
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_HELM ), currItem, armorDef, resistType, excludeMedableArmor );	// Head
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1362,11 +1399,11 @@ CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 4:		// Legs
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_FOOTWEAR ), currItem, armorDef, resistType );	// Shoes
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_PANTS ), currItem, armorDef, resistType );	// Pants
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_WAIST ), currItem, armorDef, resistType );	// Waist (Half Apron)
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_OUTERLEGGINGS ), currItem, armorDef, resistType );	// Legs (Outer - Skirt, Kilt)
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_INNERLEGGINGS ), currItem, armorDef, resistType );	// Legs (Inner - Leg Armor)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_FOOTWEAR ), currItem, armorDef, resistType, excludeMedableArmor );	// Shoes
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_PANTS ), currItem, armorDef, resistType, excludeMedableArmor );	// Pants
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_WAIST ), currItem, armorDef, resistType, excludeMedableArmor );	// Waist (Half Apron)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_OUTERLEGGINGS ), currItem, armorDef, resistType, excludeMedableArmor );	// Legs (Outer - Skirt, Kilt)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_INNERLEGGINGS ), currItem, armorDef, resistType, excludeMedableArmor );	// Legs (Inner - Leg Armor)
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1376,7 +1413,7 @@ CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 5:		// Neck
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_NECK ), currItem, armorDef, resistType );	// Neck
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_NECK ), currItem, armorDef, resistType, excludeMedableArmor );	// Neck
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1386,13 +1423,20 @@ CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 6:		// Hands
-			currItem = CheckDef( mChar->GetItemAtLayer( IL_GLOVES ), currItem, armorDef, resistType );	// Gloves
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_GLOVES ), currItem, armorDef, resistType, excludeMedableArmor );	// Gloves
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
 				{
 					armorDef = static_cast<SI32>( 100 * static_cast<R32>( armorDef / 14.5 ));
 				}
+			}
+			break;
+		case 7: // Shield
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_LEFTHAND ), currItem, armorDef, resistType, excludeMedableArmor ); // Shield
+			if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
+			{
+				armorDef = static_cast<SI32>( 100 * ((( static_cast<R64>( mChar->GetSkill( PARRYING ) / 10.0 ) * armorDef ) / 200.0 ) + ( resistType == PHYSICAL ? 1 : 0 )));
 			}
 			break;
 		default:
@@ -1417,7 +1461,7 @@ CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the defense value of a specific location or the entire character based on hitLoc
 //o------------------------------------------------------------------------------------------------o
-UI16 CHandleCombat::CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType resistType )
+UI16 CHandleCombat::CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType resistType, bool excludeMedableArmor, bool includeShield )
 {
 	if( !ValidateObject( mChar ))
 		return 0;
@@ -1431,8 +1475,15 @@ UI16 CHandleCombat::CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 		{
 			for( UI08 getLoc = 1; getLoc < 7; ++getLoc )
 			{
-				GetArmorDef( mChar, total, getLoc, true, resistType );
+				GetArmorDef( mChar, total, getLoc, true, resistType, excludeMedableArmor );
 			}
+
+			// Account for shield as well?
+			if( includeShield )
+			{
+				GetArmorDef( mChar, total, 7, true, resistType, excludeMedableArmor, true );
+			}
+
 			if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
 			{
 				total = ( total / 100 );
@@ -1440,7 +1491,7 @@ UI16 CHandleCombat::CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 		}
 		else
 		{
-			defendItem = GetArmorDef( mChar, total, hitLoc, false, resistType );
+			defendItem = GetArmorDef( mChar, total, hitLoc, false, resistType, excludeMedableArmor, false );
 		}
 
 		// Deal damage to armor on hit, if enabled
@@ -1924,7 +1975,7 @@ SI16 CHandleCombat::AdjustArmorClassDamage( CChar *attacker, CChar *defender, CI
 	if( hitLoc != 0 )
 	{
 		// If hit location system is enabled, check armor class of item at specified hit location
-		defenderItem = GetArmorDef( attacker, bonusDamage, hitLoc, false, PHYSICAL );
+		defenderItem = GetArmorDef( attacker, bonusDamage, hitLoc, false, PHYSICAL, false, false );
 
 		if( ValidateObject( defenderItem ) && attackerWeapon->GetArmourClass() == defenderItem->GetArmourClass() )
 		{
@@ -1938,7 +1989,7 @@ SI16 CHandleCombat::AdjustArmorClassDamage( CChar *attacker, CChar *defender, CI
 		SI32 bonusPotential = 0;
 		for( UI08 getLoc = 1; getLoc < 7; ++getLoc )
 		{
-			defenderItem = GetArmorDef( attacker, bonusPotential, getLoc, false, PHYSICAL );
+			defenderItem = GetArmorDef( attacker, bonusPotential, getLoc, false, PHYSICAL, false, false );
 
 			if( ValidateObject( defenderItem ) && attackerWeapon->GetArmourClass() == defenderItem->GetArmourClass() )
 			{
@@ -2492,7 +2543,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 						}
 
 						// Calculate defense given by armor
-						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
+						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
 
 						// Apply damage to shield from parrying action?
 						if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1, 100 )) // 20% chance by default
@@ -2514,7 +2565,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 						}
 
 						// Calculate defense given by armor
-						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
+						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
 
 						// Apply damage to shield from parrying action?
 						if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1, 100 )) // 20% chance by default
@@ -2552,7 +2603,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					{
 						// Old Pre-AoS (LBR, ~Publish 15) block with shield
 						damage -= HalfRandomNum( shield->GetResist( PHYSICAL ));
-						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
+						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
 
 						// Apply damage to shield from parrying action?
 						if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1, 100 )) // 20% chance by default
@@ -2696,16 +2747,16 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 			// No shield, no weapon parry, no wrestling parry - armor needs to take the brunt of damage!
 			if( damage > 0 && getDef == 0 )
 			{
-				getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
+				getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL, false, false ));
 			}
 			break;
 		}
 		case POISON:		//	POISON Damage
-			damageModifier = ( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType ) / 100 );
+			damageModifier = ( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType, false, false ) / 100 );
 			damage = static_cast<SI16>( std::round(( static_cast<R32>( baseDamage ) - ( static_cast<R32>( baseDamage ) * damageModifier ))));
 			break;
 		default:			//	Elemental damage
-			getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType ));
+			getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType, false, false ));
 			break;
 	}
 
@@ -2834,7 +2885,18 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	if( !checkDist && mWeapon != nullptr && ValidateObject( mWeapon ) && mWeapon->GetMaxRange() > 1 )
 	{
 		// Check line of sight and Z differences if weapon's max range is higher than 1 tile
-		checkDist = ( ourDist <= mWeapon->GetMaxRange() && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 && LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ( ourTarg->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ));
+		if( ourDist <= mWeapon->GetMaxRange() && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 20 )
+		{
+			if( LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
+			{
+				mChar.SetCombatLos( true );
+				checkDist = true;
+			}
+			else
+			{
+				mChar.SetCombatLos( false );
+			}
+		}
 	}
 
 	if( checkDist )
@@ -2863,7 +2925,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		if( getFightSkill == ARCHERY && mWeapon != nullptr )
 		{
 			// If amount of time since character last moved is less than the minimum delay for shooting after coming to a halt, return
-			if(( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) < static_cast<UI32>( cwmWorldState->ServerData()->CombatArcheryShootDelay() * 1000 ))
+			if(( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) < static_cast<TIMERVAL>( cwmWorldState->ServerData()->CombatArcheryShootDelay() * 1000 ))
 				return false;
 
 			UI16 ammoId = mWeapon->GetAmmoId();
@@ -3009,37 +3071,41 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		}
 		else
 		{
-			PlayHitAnimations( ourTarg );
-
 			// It's a hit!
 			CSocket *targSock = ourTarg->GetSocket();
 
 			Skills->CheckSkill( &mChar, TACTICS, 0, mChar.GetSkillCap( TACTICS ) );
 			Skills->CheckSkill( ourTarg, TACTICS, 0, ourTarg->GetSkillCap( TACTICS ) );
 
-			switch( ourTarg->GetId() )
+			// Play the "get hit" SFX for the target, but only 50% of the time (too spammy otherwise)
+			if( RandomNum( 0, 3 ) == 3 )
 			{
-				case 0x025E:	// elf/human/garg female
-				case 0x0191:
-				case 0x029B:	Effects->PlaySound( ourTarg, RandomNum( 0x014B, 0x014F ));				break;
-				case 0x025D:	// elf/human/garg male
-				case 0x0190:
-				case 0x029A:	Effects->PlaySound( ourTarg, RandomNum( 0x0155, 0x0158 ));				break;
-				default:
+				PlayHitAnimations( ourTarg );
+
+				switch( ourTarg->GetId() )
 				{
-					UI16 toPlay = cwmWorldState->creatures[ourTarg->GetId()].GetSound( SND_DEFEND );
-					if( toPlay != 0x00 )
+					case 0x025E:	// elf/human/garg female
+					case 0x0191:
+					case 0x029B:	Effects->PlaySound( ourTarg, RandomNum( 0x014B, 0x014F ));				break;
+					case 0x025D:	// elf/human/garg male
+					case 0x0190:
+					case 0x029A:	Effects->PlaySound( ourTarg, RandomNum( 0x0155, 0x0158 ));				break;
+					default:
 					{
-						Effects->PlaySound( ourTarg, toPlay );
+						UI16 toPlay = cwmWorldState->creatures[ourTarg->GetId()].GetSound( SND_DEFEND );
+						if( toPlay != 0x00 )
+						{
+							Effects->PlaySound( ourTarg, toPlay );
+						}
+						break;
 					}
-					break;
 				}
 			}
 
 			UI08 poisonStrength = mChar.GetPoisonStrength();
 			if( poisonStrength && ourTarg->GetPoisoned() < poisonStrength )
 			{
-				if((( getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP ) && !RandomNum( 0, 2 )) || mChar.IsNpc() )
+				if( mChar.IsNpc() || mChar.GetSkill( POISONING ) / 4 >= RandomNum( 1, 1000 ))
 				{
 					auto doPoison = true;
 					if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && !ourTarg->IsNpc() && ourTarg->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
@@ -3050,12 +3116,32 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 							targSock->SysMessage( 18735 ); // You would have been poisoned, were you not new to the land of Britannia. Be careful in the future.
 						}
 					}
-					else if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && !mChar.IsNpc() && mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
+					else if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
 					{
+						// Don't allow young players to poison others
 						doPoison = false;
 						if( mSock != nullptr )
 						{
 							ourTarg->TextMessage( mSock, 18738, TALK, false ); // * The poison seems to have no effect. *
+						}
+					}
+					else
+					{
+						// Let's include target's race resistance as well
+						auto racePoisonResist = Races->Race( ourTarg->GetRace() )->PoisonResistance();
+						if( ourTarg->GetResist( POISON ) + static_cast<UI16>( racePoisonResist ) >= 100 || static_cast<R32>(( static_cast<R32>( ourTarg->GetResist( POISON )) + racePoisonResist ) / 20.0 ) > static_cast<R32>( poisonStrength ))
+						{
+							// Based on poison resistance, characters can be immune to specific levels of poison
+							// >= 100, immune to everything (including Lethal)
+							// > 80, immune to Lesser -> Deadly
+							// > 60, immune to Lesser -> Strong
+							// > 40, immune to Lesser -> Normal
+							// > 20, immune to Lesser
+							doPoison = false;
+							if( mSock != nullptr )
+							{
+								mChar.TextMessage( mSock, 18738, TALK, false ); // * The poison seems to have no effect. *
+							}
 						}
 					}
 
@@ -3063,9 +3149,10 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					{
 						// Apply poison on target
 						ourTarg->SetPoisoned( poisonStrength );
+						ourTarg->SetPoisonedBy( mChar.GetSerial() );
 
 						// Set time until next time poison "ticks"
-						ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue( static_cast<R32>( GetPoisonTickTime( poisonStrength ))));
+						ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue( static_cast<R64>( GetPoisonTickTime( poisonStrength ))));
 
 						// Set time until poison wears off completely
 						ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * GetPoisonDuration( poisonStrength ))); //wear off starts after poison takes effect
@@ -3073,6 +3160,60 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 						if( targSock != nullptr )
 						{
 							targSock->SysMessage( 282 ); // You have been poisoned!
+						}
+
+						if( mSock != nullptr )
+						{
+							mSock->SysMessage( 6311 ); // You have poisoned your target!
+						}
+
+						// Reduce poison charges on weapon, if any
+						if( ValidateObject( mWeapon ) && mWeapon->GetPoisoned() )
+						{
+							auto poisonCharges = mWeapon->GetPoisonCharges();
+							if( poisonCharges > 0 )
+							{
+								mWeapon->SetPoisonCharges( mWeapon->GetPoisonCharges() - 1 );
+
+								if( cwmWorldState->ServerData()->PoisonCorrosionSystem() )
+								{
+									auto mPoisonSkill = mChar.GetSkill( POISONING );
+
+									// Reduce effective poison strength by 1 if above 50.0 poisoning
+									// Reduce effective poison strength by 2 if above 99.0 poisoning
+									SI08 effectivePoisonStrength = ( mPoisonSkill > 990 ? poisonStrength - 2 : ( mPoisonSkill > 500 ? poisonStrength - 1 : poisonStrength ));
+									effectivePoisonStrength = std::max( static_cast<SI08>( 1 ), std::min( static_cast<SI08>( 5 ), effectivePoisonStrength ));
+
+									// Roll against chance per poison strength level to see if corrosion occurs
+									const int baseCorrosionChance[] = { 5, 10, 20, 30, 40 };
+									if( RandomNum( 1, 100 ) <= baseCorrosionChance[effectivePoisonStrength - 1] )
+									{
+										// Read current corrosion level on weapon
+										TAGMAPOBJECT localObject = mWeapon->GetTag( "corrosionLevel" );
+										localObject.m_IntValue++;
+
+										// Store updated corrosion level
+										mWeapon->SetTag( "corrosionLevel", localObject );
+
+										if( mSock != nullptr )
+										{
+											mSock->SysMessage( 6316 ); // Blood mixes with poison and begins to corrode your weapon.
+										}
+									}
+								}
+							}
+
+							if( poisonCharges == 0 )
+							{
+								// Weapon is no longer poisoned, undo effect on character
+								mWeapon->SetPoisoned( 0 );
+								mWeapon->SetPoisonedBy( INVALIDSERIAL );
+								mChar.SetPoisonStrength( 0 );
+								if( mSock != nullptr )
+								{
+									mSock->SysMessage( 6318 ); // The poison on your weapon seems to have worn off.
+								}
+							}
 						}
 					}
 				}
@@ -3117,7 +3258,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					[[maybe_unused]] bool retVal = ourTarg->Damage( ourDamage, PHYSICAL, &mChar, true );
 				}
 			}
-			if( cwmWorldState->creatures[mChar.GetId()].IsHuman() )
+			if( cwmWorldState->creatures[mChar.GetId()].IsHuman() || ValidateObject( mWeapon ))
 			{
 				PlayHitSoundEffect( &mChar, mWeapon );
 			}
@@ -3499,7 +3640,7 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate delay between attacks in combat
 //o------------------------------------------------------------------------------------------------o
-R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
+R64 CHandleCombat::GetCombatTimeout( CChar *mChar )
 {
 	SI16 statOffset = 0;
 	if( cwmWorldState->ServerData()->CombatAttackSpeedFromStamina() )
@@ -3566,13 +3707,13 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 		}
 	}
 
-	R32 globalAttackSpeed = cwmWorldState->ServerData()->GlobalAttackSpeed(); //Defaults to 1.0
+	R64 globalAttackSpeed = cwmWorldState->ServerData()->GlobalAttackSpeed(); //Defaults to 1.0
 
-	R32 speedFactor = 1 + speedBonus / 10.0f;
+	R64 speedFactor = 1 + speedBonus / 10.0;
 
 	// Prevent zero or negative multipliers
-	if( speedFactor < 0.1f )
-		speedFactor = 0.1f;
+	if( speedFactor < 0.1 )
+		speedFactor = 0.1;
 
 
 	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR )
@@ -3656,7 +3797,7 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 
 	if( mChar->IsNpc() && mChar->GetNpcAiType() == AI_GUARD )
 	{
-		mChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 20 ));
+		mChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 20.0 ));
 		mChar->SetNpcWander( WT_FREE );
 		if( mChar->GetMounted() )
 		{
@@ -3771,7 +3912,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 	}
 
 	bool combatHandled = false;
-	if( mChar.GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+	if( mChar.GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		bool validTarg = false;
 		if( !mChar.IsDead() && ValidateObject( ourTarg ) && !ourTarg->IsFree() && ( ourTarg->IsNpc() || IsOnline(( *ourTarg ))))
@@ -3929,7 +4070,7 @@ auto  CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, 
 			{
 				getGuard->SetTimer( tNPC_MOVETIME, BuildTimeValue( getGuard->GetWalkingSpeed() ));
 			}
-			getGuard->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25 ));
+			getGuard->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25.0 ));
 
 			Effects->PlaySound( getGuard, 0x01FE );
 			Effects->PlayStaticAnimation( getGuard, 0x372A, 0x09, 0x06 );

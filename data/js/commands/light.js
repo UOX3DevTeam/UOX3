@@ -2,9 +2,9 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "brightlight", 2, true );
-	RegisterCommand( "darklight", 2, true );
-	RegisterCommand( "dungeonlight", 2, true );
+	RegisterCommand( "brightlight", 8, true );
+	RegisterCommand( "darklight", 8, true );
+	RegisterCommand( "dungeonlight", 8, true );
 }
 
 function command_BRIGHTLIGHT( socket, cmdString )

@@ -22,6 +22,7 @@ dyeable=1
 decay=1
 good=19
 sectionid=0x170b
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Boots
@@ -51,6 +52,7 @@ dyeable=1
 decay=1
 good=19
 sectionid=0x170d
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 [sandals]
 {
@@ -84,6 +86,7 @@ dyeable=1
 decay=1
 good=19
 sectionid=0x170f
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Shoes
@@ -114,6 +117,7 @@ dyeable=1
 decay=1
 good=19
 sectionid=0x1711
+more=0x1 0x0 0x0 0x0//Medable armor
 }
 
 // Thigh Boots

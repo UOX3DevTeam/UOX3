@@ -2,8 +2,8 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "set", 2, true );
-	RegisterCommand( "setpoisoned", 2, true );
+	RegisterCommand( "set", 8, true );
+	RegisterCommand( "setpoisoned", 8, true );
 }
 
 function command_SET( socket, cmdString )
@@ -110,6 +110,18 @@ function onCallback0( socket, ourObj )
 		ourObj.Resist( 7, nVal );
 		okMsg( socket );
 		break;
+	case "HEALTHREGENBONUS":
+		ourObj.healthRegenBonus = nVal;
+		okMsg( socket );
+		break;
+	case "STAMINAREGENBONUS":
+		ourObj.staminaRegenBonus = nVal;
+		okMsg( socket );
+		break;
+	case "MANAREGENBONUS":
+		ourObj.manaRegenBonus = nVal;
+		okMsg( socket );
+		break;
 	case "HP":
 	case "HEALTH":
 		ourObj.health = nVal;
@@ -156,6 +168,10 @@ function onCallback0( socket, ourObj )
 		break;
 	case "POISON":
 		ourObj.poison = nVal;
+		okMsg( socket );
+		break;
+	case "POISONEDBY":
+		ourObj.poisonedBy = nVal;
 		okMsg( socket );
 		break;
 	case "X":
@@ -413,6 +429,10 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		ourItem.isNewbie = ( nVal == 1 );
 		okMsg( socket );
 		break;
+	case "POISONCHARGES":
+		ourItem.poisonCharges = nVal;
+		okMsg( socket );
+		break;
 	case "DIVINELOCK":
 		ourItem.divinelock = ( nVal == 1 );
 		okMsg( socket );
@@ -508,6 +528,20 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		ourItem.layer = nVal;
 		okMsg( socket );
 		break;
+	case "DAMAGE":
+		var splitValues = socket.xText.split( " " );
+		if( splitValues[2] )
+		{
+			ourItem.lodamage = parseInt( splitValues[1] );
+			ourItem.hidamage = parseInt( splitValues[2] );
+		}
+		else
+		{
+			ourItem.lodamage = parseInt( splitValues[1] );
+			ourItem.hidamage = parseInt( splitValues[1] );
+		}
+		ourItem.Refresh();
+		okMsg( socket );
 	case "LODAMAGE":
 		ourItem.lodamage = nVal;
 		okMsg( socket );
@@ -696,6 +730,10 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		break;
 	case "NPCAI":
 		ourChar.aitype = nVal;
+		okMsg( socket );
+		break;
+	case "POISONSTRENGTH":
+		ourChar.poisonStrength = Math.max( 0, Math.min( 4, nVal ));
 		okMsg( socket );
 		break;
 	case "NPCGUILD":

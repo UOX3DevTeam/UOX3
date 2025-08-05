@@ -1,7 +1,7 @@
 function onUseChecked( pUser, iUsed )
 {
 	var wellPlayed = pUser.CheckSkill( 29, 0, pUser.skillCaps.musicianship );
-	var soundID;
+	var soundID = -1;
 	switch( iUsed.id )
 	{
 		case 0x0E9C:	// Drum
@@ -70,7 +70,13 @@ function onUseChecked( pUser, iUsed )
 		default:
 			return false;
 	}
-	pUser.SoundEffect( soundID, true );
+	if( soundID != -1 )
+	{
+		pUser.SoundEffect( soundID, true );
+
+		// Store last instrument used for use in other barding skills
+		pUser.SetTempTag( "lastInstrument", iUsed.serial.toString() );
+	}
 	return false;
 }
 

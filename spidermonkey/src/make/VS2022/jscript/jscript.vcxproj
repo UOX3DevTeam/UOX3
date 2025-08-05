@@ -41,13 +41,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <CharacterSet>Unicode</CharacterSet>
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <CharacterSet>Unicode</CharacterSet>
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -71,10 +71,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -88,13 +88,13 @@
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_AMD64_;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_WIN32;_WIN64;_WINDOWS;AVMPLUS_64BIT;AVMPLUS_AMD64;AVMPLUS_WIN32;ENABLE_ASSEMBLER=1;ENABLE_JIT=1;ENABLE_METHODJIT=1;ENABLE_MONOIC=1;ENABLE_POLYIC_TYPED_ARRAY=1;ENABLE_POLYIC=1;ENABLE_TRACEJIT=1;EXPORT_JS_API;FEATURE_NANOJIT;HAVE_SNPRINTF;JS_STDDEF_H_HAS_INTPTR_T;JS_TRACER;NANOJIT_ARCH=X64;NO_X11;WIN32;WIN32_LEAN_AND_MEAN;XP_WIN;XP_WIN32;DEBUG</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <SDLCheck>false</SDLCheck>
       <TreatWarningAsError>false</TreatWarningAsError>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(ProjectDir)/../../../assembler;$(ProjectDir)/../../../nanojit;$(ProjectDir)/../../../tracejit;$(ProjectDir)/../../../yarr;$(ProjectDir)/../../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)/../../../assembler;$(ProjectDir)/../../../nanojit;$(ProjectDir)/../../../tracejit;$(ProjectDir)/../../../yarr;$(ProjectDir)/../../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -115,13 +115,13 @@
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);NDEBUG;_AMD64_;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_WIN32;_WIN64;_WINDOWS;AVMPLUS_64BIT;AVMPLUS_AMD64;AVMPLUS_WIN32;ENABLE_ASSEMBLER=1;ENABLE_JIT=1;ENABLE_METHODJIT=1;ENABLE_MONOIC=1;ENABLE_POLYIC_TYPED_ARRAY=1;ENABLE_POLYIC=1;ENABLE_TRACEJIT=1;EXPORT_JS_API;FEATURE_NANOJIT;HAVE_SNPRINTF;JS_STDDEF_H_HAS_INTPTR_T;JS_TRACER;NANOJIT_ARCH=X64;NO_X11;WIN32;WIN32_LEAN_AND_MEAN;XP_WIN;XP_WIN32</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <SDLCheck>false</SDLCheck>
       <TreatWarningAsError>false</TreatWarningAsError>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(ProjectDir)/../../../assembler;$(ProjectDir)/../../../nanojit;$(ProjectDir)/../../../tracejit;$(ProjectDir)/../../../yarr;$(ProjectDir)/../../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)/../../../assembler;$(ProjectDir)/../../../nanojit;$(ProjectDir)/../../../tracejit;$(ProjectDir)/../../../yarr;$(ProjectDir)/../../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
@@ -132,6 +132,9 @@
     <Lib>
       <AdditionalDependencies>winmm.lib</AdditionalDependencies>
     </Lib>
+    <PostBuildEvent>
+      <Command>xcopy /Y /D "$(TargetDir)jscript.pdb" "$(SolutionDir)$(PlatformName)\$(ConfigurationName)\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\assembler\jit\ExecutableAllocator.cpp" />
@@ -171,7 +174,6 @@
     <ClCompile Include="..\..\..\jsobj.cpp" />
     <ClCompile Include="..\..\..\json.cpp" />
     <ClCompile Include="..\..\..\jsopcode.cpp" />
-    <ClCompile Include="..\..\..\jsoplengen.cpp" />
     <ClCompile Include="..\..\..\jsparse.cpp" />
     <ClCompile Include="..\..\..\jsprf.cpp" />
     <ClCompile Include="..\..\..\jsprobes.cpp" />

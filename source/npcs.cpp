@@ -258,7 +258,15 @@ auto CCharStuff::NpcListLookup( const std::string &npclist ) -> std::string
 		}
 
 		auto npcSection = ( csecs.size() > 1 ? csecs[1] : csecs[0] );
-		npcListVector.emplace_back( npcSection, sectionWeight );
+		auto npcData = npcList->GrabData();
+		if( !npcData.empty() )
+		{
+			npcListVector.emplace_back( npcSection + "=" + npcData, sectionWeight );
+		}
+		else
+		{
+			npcListVector.emplace_back( npcSection, sectionWeight );
+		}
 	}
 
 	auto chosenNpcSection = ChooseNpcToCreate( npcListVector );
@@ -269,7 +277,7 @@ auto CCharStuff::NpcListLookup( const std::string &npclist ) -> std::string
 	if( oldstrutil::upper( csecs[0] ) == "NPCLIST" )
 	{
 		// Chosen entry contained another NPCLIST! Let's dive back into it...
-		chosenNpcSection = NpcListLookup( chosenNpcSection );
+		chosenNpcSection = NpcListLookup( csecs[1] );
 	}
 
 	return chosenNpcSection;
@@ -308,7 +316,15 @@ auto CCharStuff::CreateRandomNPC( const std::string &npclist ) -> CChar *
 		}
 
 		auto npcSection = ( csecs.size() > 1 ? csecs[1] : csecs[0] );
-		npcListVector.emplace_back( npcSection, sectionWeight );
+		auto npcData = npcList->GrabData();
+		if( !npcData.empty() )
+		{
+			npcListVector.emplace_back( npcSection + "=" + npcData, sectionWeight );
+		}
+		else
+		{
+			npcListVector.emplace_back( npcSection, sectionWeight );
+		}
 	}
 
 	auto chosenNpcSection = ChooseNpcToCreate( npcListVector );
@@ -320,7 +336,7 @@ auto CCharStuff::CreateRandomNPC( const std::string &npclist ) -> CChar *
 	if( oldstrutil::upper( csecs[0] ) == "NPCLIST" )
 	{
 		// Chosen entry contained another NPCLIST! Let's dive back into it...
-		cCreated = CreateRandomNPC( npcList->GrabData() );
+		cCreated = CreateRandomNPC( csecs[1] );
 	}
 	else
 	{
@@ -422,10 +438,10 @@ void CCharStuff::PostSpawnUpdate( CChar *cCreated )
 
 	// Set hunger timer so NPC's hunger level doesn't instantly drop after spawning
 	auto hungerRate	 = Races->GetHungerRate( cCreated->GetRace() );
-	cCreated->SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
+	cCreated->SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R64>( hungerRate )));
 
 	UpdateFlag( cCreated );
-	cCreated->Update();
+	cCreated->Update( nullptr, false, true, true );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1150,10 +1166,10 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				}
 				break;
 			case DFNTAG_FLEEINGSPEED:
-				applyTo->SetFleeingSpeed( std::stof( cdata ));
+				applyTo->SetFleeingSpeed( std::stod( cdata ));
 				break;
 			case DFNTAG_FLEEINGSPEEDMOUNTED:
-				applyTo->SetMountedFleeingSpeed( std::stof( cdata ));
+				applyTo->SetMountedFleeingSpeed( std::stod( cdata ));
 				break;
 			case DFNTAG_FLAG:
 				if( !isGate )
@@ -1581,7 +1597,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_PRIV:
 				if( !isGate )
 				{
-					applyTo->SetPriv( static_cast<UI16>( ndata ));
+					applyTo->SetPriv( static_cast<UI32>( ndata ));
 				}
 				break;
 			case DFNTAG_PARRYING:			skillToSet = PARRYING;					break;
@@ -1690,6 +1706,9 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				}
 				break;
 			case DFNTAG_REMOVETRAP:			skillToSet = REMOVETRAP;				break;
+			case DFNTAG_HEALTHREGENBONUS:	applyTo->SetHealthRegenBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_STAMINAREGENBONUS:	applyTo->SetStaminaRegenBonus( static_cast<SI16>( ndata ));		break;
+			case DFNTAG_MANAREGENBONUS:		applyTo->SetManaRegenBonus( static_cast<SI16>( ndata ));		break;
 			case DFNTAG_RACE:				applyTo->SetRace( static_cast<UI16>( ndata ));		break;
 			case DFNTAG_RUNS:
 				if( !isGate )
@@ -1698,10 +1717,10 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				}
 				break;
 			case DFNTAG_RUNNINGSPEED:
-				applyTo->SetRunningSpeed( std::stof( cdata ));
+				applyTo->SetRunningSpeed( std::stod( cdata ));
 				break;
 			case DFNTAG_RUNNINGSPEEDMOUNTED:
-				applyTo->SetMountedRunningSpeed( std::stof( cdata ));
+				applyTo->SetMountedRunningSpeed( std::stod( cdata ));
 				break;
 			case DFNTAG_SECTIONID:			applyTo->SetSectionId( cdata );							break;
 			case DFNTAG_SKIN:				applyTo->SetSkin( static_cast<UI16>( ndata ));		break;
@@ -1920,10 +1939,10 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				}
 				break;
 			case DFNTAG_WALKINGSPEED:
-				applyTo->SetWalkingSpeed( std::stof( cdata ));
+				applyTo->SetWalkingSpeed( std::stod( cdata ));
 				break;
 			case DFNTAG_WALKINGSPEEDMOUNTED:
-				applyTo->SetMountedWalkingSpeed( std::stof( cdata ));
+				applyTo->SetMountedWalkingSpeed( std::stod( cdata ));
 				break;
 			case DFNTAG_TACTICS:			skillToSet = TACTICS;					break;
 			case DFNTAG_TAILORING:			skillToSet = TAILORING;					break;
@@ -2034,7 +2053,7 @@ bool CCharStuff::CanControlPet( CChar *mChar, CChar *Npc, bool isRestricted, boo
 			if( chanceToControl == 1000 )
 				return true;
 
-			if( chanceToControl >= RandomNum( 0, 1000 ))
+			if( chanceToControl >= RandomNum( 1, 1000 ))
 			{
 				// Succeeded in controlling pet
 				if( !ignoreLoyaltyChanges )
@@ -2107,6 +2126,15 @@ void CCharStuff::FinalizeTransfer( CChar *petChar, CChar *srcChar, CChar *targCh
 	// Update control slots used for both old and new owners
 	srcChar->SetControlSlotsUsed( std::max(0, srcChar->GetControlSlotsUsed() - petChar->GetControlSlots() ));
 	targChar->SetControlSlotsUsed( std::clamp( targChar->GetControlSlotsUsed() + petChar->GetControlSlots(), 0, 255 ));
+
+	// Remove Pet Bonding if its Bonded
+	TAGMAPOBJECT petBond = petChar->GetTag( "isBondedPet" );
+	if( petBond.m_IntValue == 1  )
+	{
+		petBond.m_IntValue = 0;
+		petChar->SetTag( "isBondedPet", petBond );
+		petChar->RemoveScriptTrigger( 3107 );// petbonding.js
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2157,6 +2185,15 @@ void CCharStuff::ReleasePet( CChar *pet )
 			break;
 		default:
 			break;
+	}
+
+	// Remove Bonding if its Bonded
+	TAGMAPOBJECT petBond = pet->GetTag( "isBondedPet" );
+	if( petBond.m_IntValue == 1  )
+	{
+		petBond.m_IntValue = 0;
+		pet->SetTag( "isBondedPet", petBond );
+		pet->RemoveScriptTrigger( 3107 );// petbonding.js
 	}
 }
 

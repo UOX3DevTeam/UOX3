@@ -2,10 +2,10 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "telestuff", 1, true );
-	RegisterCommand( "move", 1, true );
-	RegisterCommand( "tele", 1, true );
-	RegisterCommand( "teleport", 1, true );
+	RegisterCommand( "telestuff", 4, true );
+	RegisterCommand( "move", 4, true );
+	RegisterCommand( "tele", 4, true );
+	RegisterCommand( "teleport", 4, true );
 }
 
 // Alias of TELESTUFF
@@ -63,7 +63,7 @@ function onCallback1( socket, ourObj )
 			var StrangeByte = socket.GetWord(1);
 
 			// If connected with a client lower than v7.0.9, manually add height of targeted tile
-			if ((StrangeByte == 0 && ourObj.isItem) || (socket.clientMajorVer <= 7 && socket.clientSubVer < 9))
+			if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
 			{
 				z += GetTileHeight( socket.GetWord( 17 ));
 			}
@@ -113,7 +113,7 @@ function onCallback2( socket, ourObj )
 				var StrangeByte = socket.GetWord(1);
 
 				// If connected with a client lower than v7.0.9, manually add height of targeted tile
-				if ((StrangeByte == 0 && ourObj.isItem) || (socket.clientMajorVer <= 7 && socket.clientSubVer < 9))
+				if(( StrangeByte == 0 && ourObj.isItem ) || ( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 ))
 				{
 					targZ += GetTileHeight( socket.GetWord( 17 ));
 				}

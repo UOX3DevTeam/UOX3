@@ -6,7 +6,7 @@ class CTEffect
 private:
 	SERIAL			source;
 	SERIAL			dest;
-	UI32			expiretime;
+	TIMERVAL			expiretime;
 	UI08			num;
 	UI16			more1;
 	UI16			more2;
@@ -14,16 +14,18 @@ private:
 	bool			dispellable;
 	CBaseObject *	objptr;
 	UI16			assocScript;
+	TIMERVAL			pauseTime;
 
 public:
-	CTEffect() : source( INVALIDSERIAL ), dest( INVALIDSERIAL ), expiretime( 0 ), num( 0 ), more1( 0 ), more2( 0 ), more3( 0 ), dispellable( false ), objptr( nullptr ), assocScript( 0xFFFF )
+	CTEffect() : source( INVALIDSERIAL ), dest( INVALIDSERIAL ), expiretime( 0 ), pauseTime( 0 ), num( 0 ), more1( 0 ), more2( 0 ), more3( 0 ), dispellable( false ), objptr( nullptr ), assocScript( 0xFFFF )
 	{
 	}
 
 	UI16	AssocScript( void ) const		{	return assocScript;		}
 	CBaseObject *ObjPtr( void ) const		{	return objptr;			}
 	bool	Dispellable( void ) const		{	return dispellable;		}
-	UI32	ExpireTime( void ) const		{	return expiretime;		}
+	TIMERVAL	ExpireTime( void ) const		{	return expiretime;		}
+	TIMERVAL	PauseTime( void ) const			{	return pauseTime;		}
 	SERIAL	Source( void ) const			{	return source;			}
 	SERIAL	Destination( void ) const		{	return dest;			}
 	UI08	Number( void ) const			{	return num;				}
@@ -33,7 +35,7 @@ public:
 
 	void	Source( SERIAL value )			{	source = value;			}
 	void	Destination( SERIAL value )		{	dest = value;			}
-	void	ExpireTime( UI32 value )		{	expiretime = value;		}
+	void	ExpireTime( TIMERVAL value )		{	expiretime = value;		}
 	void	Number( UI08 value )			{	num = value;			}
 	void	More1( UI16 value )				{	more1 = value;			}
 	void	More2( UI16 value )				{	more2 = value;			}
@@ -41,6 +43,7 @@ public:
 	void	Dispellable( bool value )		{	dispellable = value;	}
 	void	ObjPtr( CBaseObject *value )	{	objptr = value;			}
 	void	AssocScript( UI16 value )		{	assocScript = value;	}
+	void	PauseTime( TIMERVAL value )			{	pauseTime = value;	}
 
 	bool	Save( std::ostream &effectDestination ) const; // saves the current effect
 };

@@ -115,6 +115,7 @@ public:
 	bool				CanCastAggressive( void ) const;
 	bool				IsSafeZone( void ) const;
 	bool				IsDungeon( void ) const;
+	bool				IsDisabled( void ) const;
 	bool				IsSubRegion( void ) const;
 	bool				IsMemberOfTown( CChar *player ) const;
 	bool				IsAlliedTown( UI16 townToCheck ) const;
@@ -129,6 +130,7 @@ public:
 	void				CanCastAggressive( bool value );
 	void				IsSafeZone( bool value );
 	void				IsDungeon( bool value );
+	void				IsDisabled( bool value );
 	void				IsSubRegion( bool value );
 	void				SetName( std::string toSet );
 	void				SetRace( RACEID newRace );

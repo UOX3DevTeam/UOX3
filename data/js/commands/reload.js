@@ -3,18 +3,18 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "reloadaccounts", 3, true );	// reload accounts
-	RegisterCommand( "reloaddefs", 3, true );	// reload all dfns
-	RegisterCommand( "reloadini", 3, true );	// reload uox.ini
-	RegisterCommand( "reloadjsfile", 3, true );	// reload JavaScript file
-	RegisterCommand( "reloadalljs", 3, true ); // reload all JavaScript files
-	RegisterCommand( "reloadregions", 3, true ); // reload regions
-	RegisterCommand( "reloadspawnregions", 3, true ); // reload spawnregions
-	RegisterCommand( "reloadspells", 3, true ); //reload spells
-	RegisterCommand( "reloadcommands", 3, true ); //reload commands
-	RegisterCommand( "reloadhtml", 3, true ); //reload HTML templates
-	RegisterCommand( "reloaddictionaries", 3, true ); //reload dictionaries
-	RegisterCommand( "reloadall", 3, true ); //reload everything
+	RegisterCommand( "reloadaccounts", 10, true );	// reload accounts
+	RegisterCommand( "reloaddefs", 10, true );	// reload all dfns
+	RegisterCommand( "reloadini", 10, true );	// reload uox.ini
+	RegisterCommand( "reloadjsfile", 10, true );	// reload JavaScript file
+	RegisterCommand( "reloadalljs", 10, true ); // reload all JavaScript files
+	RegisterCommand( "reloadregions", 10, true ); // reload regions
+	RegisterCommand( "reloadspawnregions", 10, true ); // reload spawnregions
+	RegisterCommand( "reloadspells", 10, true ); //reload spells
+	RegisterCommand( "reloadcommands", 10, true ); //reload commands
+	RegisterCommand( "reloadhtml", 10, true ); //reload HTML templates
+	RegisterCommand( "reloaddictionaries", 10, true ); //reload dictionaries
+	RegisterCommand( "reloadall", 10, true ); //reload everything
 }
 
 function command_RELOADACCOUNTS( socket, cmdString )

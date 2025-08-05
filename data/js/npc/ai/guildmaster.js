@@ -152,6 +152,7 @@ function onSpeech( strSaid, pChar, npcGuildMaster )
 						dictMsg = dictMsg.replace( /%d/gi, GetDictionaryEntry( npcGuilds[npcGuildMaster.npcGuild][0], pSock.language )); // %d [npc guild name]
 						dictMsg = GetDictionaryEntry( 17602, pSock.language ); // There is a fee in gold coins for joining the guild : %i
 						npcGuildMaster.TextMessage( dictMsg.replace( /%i/gi, joinGuildCost ));
+						pChar.SetTempTag( "guildServiceRequest", "joinGuild" );
 					}
 					trigWordHandled = true;
 					break;
@@ -218,7 +219,7 @@ function onDropItemOnNpc( pChar, npcGuildMaster, iDropped )
 	if( pSock == null )
 		return 0;
 
-	if( iDropped.id == 0x0eed ) // Gold
+	if( iDropped.id == 0x0eed && pChar.GetTempTag( "guildServiceRequest" ) != 0 ) // Gold
 	{
 		if( pChar.npcGuild == npcGuildMaster.npcGuild )
 		{
@@ -235,7 +236,7 @@ function onDropItemOnNpc( pChar, npcGuildMaster, iDropped )
 		{
 			npcGuildMaster.TextMessage( GetDictionaryEntry( 17609, pSock.language )); // Thou must resign from thy other guild first.
 		}
-		else if( CheckJoinGuildRequirements( pSock, pChar, npcGuildMaster ))
+		else if( pChar.GetTempTag( "guildServiceRequest" ) == "joinGuild" && CheckJoinGuildRequirements( pSock, pChar, npcGuildMaster ))
 		{
 			if( iDropped.amount >= joinGuildCost )
 			{
@@ -246,6 +247,7 @@ function onDropItemOnNpc( pChar, npcGuildMaster, iDropped )
 
 				// Get the current timestamp in milliseconds, but round to minutes before storing in character property
 				pChar.npcGuildJoined = Math.floor( Date.now() / ( 60 * 1000 ));
+				pChar.SetTempTag( "guildServiceRequest", null );
 
 				// Subtract the joining fee!
 				if( iDropped.amount > joinGuildCost )

@@ -92,6 +92,7 @@ JSBool SE_GetItem( JSContext *cx, uintN argc, jsval *vp );					//										***
 JSBool SE_FindItem( JSContext *cx, uintN argc, jsval *vp );				//										***
 
 JSBool SE_CompareGuildByGuild( JSContext *cx, uintN argc, jsval *vp );		//										**
+JSBool SE_CreateNewGuild( JSContext *cx, uintN argc, jsval *vp );		//										**
 
 JSBool SE_PossessTown( JSContext *cx, uintN argc, jsval *vp );				//										***
 
@@ -114,6 +115,7 @@ JSBool SE_StringToNum( JSContext *cx, uintN argc, jsval *vp );				// Marked for 
 JSBool SE_NumToString( JSContext *cx, uintN argc, jsval *vp );				// Marked for Deletion
 JSBool SE_NumToHexString( JSContext *cx, uintN argc, jsval *vp );			// Marked for Deletion
 JSBool SE_EraStringToNum( JSContext *cx, uintN argc, jsval *vp );
+JSBool SE_GetCommandLevelVal( JSContext *cx, uintN argc, jsval *vp );
 
 JSBool SE_GetRaceCount( JSContext *cx, uintN argc, jsval *vp );
 JSBool SE_AreaCharacterFunction( JSContext *cx, uintN argc, jsval *vp );

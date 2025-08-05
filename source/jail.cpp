@@ -204,7 +204,7 @@ void CJailCell::WriteData( std::ostream &outStream, size_t cellNumber )
 		{
 			outStream << "[PRISONER]" << '\n' << "{" << '\n';
 			outStream << "CELL=" << cellNumber << '\n';
-			outStream << "SERIAL=" << std::hex << mOccupant->pSerial << '\n';
+			outStream << "SERIAL=0x" << std::hex << mOccupant->pSerial << '\n';
 			outStream << "OLDX=" << std::dec << mOccupant->x << '\n';
 			outStream << "OLDY=" << mOccupant->y << '\n';
 			outStream << "OLDZ=" << static_cast<SI16>( mOccupant->z ) << '\n';
@@ -284,7 +284,14 @@ auto CJailSystem::ReadData() -> void
 			if( !prisonerData )
 				continue;
 
-			JailOccupant_st toPush;
+			// Create new JailOccupant_st on the HEAP for each prisoner record
+			JailOccupant_st *toPush = new JailOccupant_st();
+			if( !toPush )
+			{
+				Console.Error( "Failed to allocate memory for JailOccupant_st during file read." );
+				continue;
+			}
+
 			UI08 cellNumber = 0;
 			for( const auto &sec : prisonerData->collection() )
 			{
@@ -294,54 +301,74 @@ auto CJailSystem::ReadData() -> void
 					auto UTag = oldstrutil::upper( tag );
 					auto data = sec->data;
 					data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-					switch(( UTag.data()[0] ))
+					try
 					{
-						case 'C':
-							if( UTag == "CELL" )
-							{
-								cellNumber = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
-							}
-							break;
-						case 'O':
-							if( UTag == "OLDX" )
-							{
-								toPush.x = static_cast<SI16>( std::stoi( data, nullptr, 0 ));
-							}
-							else if( UTag == "OLDY" )
-							{
-								toPush.y = static_cast<SI16>( std::stoi( data, nullptr, 0 ));
-							}
-							else if( UTag == "OLDZ" )
-							{
-								toPush.z = static_cast<SI08>( std::stoi( data, nullptr, 0 ));
-							}
-							else if( UTag == "WORLD" )
-							{
-								toPush.world = static_cast<SI08>( std::stoi( data, nullptr, 0 ));
-							}
-							break;
-						case 'R':
-							if( UTag == "RELEASE" )
-							{
-								toPush.releaseTime = std::stoi( data, nullptr, 0);
-							}
-							break;
-						case 'S':
-							if( UTag == "SERIAL" )
-							{
-								toPush.pSerial = static_cast<UI32>( std::stoul( data, nullptr, 0 ));
-							}
-							break;
+						switch(( UTag.data()[0] ))
+						{
+							case 'C':
+								if( UTag == "CELL" )
+								{
+									cellNumber = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
+								}
+								break;
+							case 'O':
+								if( UTag == "OLDX" )
+								{
+									toPush->x = static_cast<SI16>( std::stoi( data, nullptr, 0 ));
+								}
+								else if( UTag == "OLDY" )
+								{
+									toPush->y = static_cast<SI16>( std::stoi( data, nullptr, 0 ));
+								}
+								else if( UTag == "OLDZ" )
+								{
+									toPush->z = static_cast<SI08>( std::stoi( data, nullptr, 0 ));
+								}
+								else if( UTag == "WORLD" )
+								{
+									toPush->world = static_cast<SI08>( std::stoi( data, nullptr, 0 ));
+								}
+								break;
+							case 'I':
+								if( UTag == "INSTANCEID" )
+								{
+									toPush->instanceId = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+								}
+								break;
+							case 'R':
+								if( UTag == "RELEASE" )
+								{
+									toPush->releaseTime = std::stoi( data, nullptr, 0);
+								}
+								break;
+							case 'S':
+								if( UTag == "SERIAL" )
+								{
+									toPush->pSerial = oldstrutil::value<UI32>( data, 16 );
+								}
+								break;
+						}
+					}
+					catch ( const std::invalid_argument& ia )
+					{
+						Console.Error( oldstrutil::format( "Invalid value format encountered while loading jails.wsc, skipping entry: %s (%s)", data.c_str(), ia.what() ));
+						continue;
 					}
 				}
 			}
 			if( cellNumber < jails.size() )
 			{
-				jails[cellNumber].AddOccupant( &toPush );
+				jails[cellNumber].AddOccupant( toPush );
+			}
+			else if( !jails.empty() )
+			{
+				jails[RandomNum( static_cast<size_t>( 0 ), jails.size() - 1 )].AddOccupant( toPush );
 			}
 			else
 			{
-				jails[RandomNum( static_cast<size_t>( 0 ), jails.size() - 1 )].AddOccupant( &toPush );
+				// No jails available?
+				Console.Error( oldstrutil::format( "No valid jail available to add occupant with serial %u (cell %u specified)", toPush->pSerial, cellNumber));
+				delete toPush; // Clean up if not added
 			}
 		}
 	}

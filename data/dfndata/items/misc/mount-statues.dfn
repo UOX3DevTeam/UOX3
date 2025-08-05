@@ -20,12 +20,37 @@ restock=10
 {
 get=base_item
 id=0x2135
-name=desert ostard
+name=random ostard
 value=700 350
 script=3101
 good=39
+morex=1
 morez=1
 restock=10
+}
+
+[ostard_statue_desert]
+{
+get=ostard_statue
+id=0x2135
+name=desert ostard
+morex=2
+}
+
+[ostard_statue_forest]
+{
+get=ostard_statue
+id=0x2137
+name=forest ostard
+morex=3
+}
+
+[ostard_statue_frenzied]
+{
+get=ostard_statue
+id=0x2136
+name=frenzied ostard
+morex=4
 }
 
 [llama_statue]

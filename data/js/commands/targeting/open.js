@@ -1,8 +1,8 @@
 // These commands are used to open specific layers on a targeted character
 function CommandRegistration()
 {
-	RegisterCommand( "openbank", 2, true );
-	RegisterCommand( "openlayer", 2, true );
+	RegisterCommand( "openbank", 8, true );
+	RegisterCommand( "openlayer", 8, true );
 }
 
 function command_OPENBANK( socket, cmdString )

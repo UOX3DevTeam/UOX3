@@ -69,6 +69,9 @@ protected:
 	SI16				dexterity;
 	SI16				intelligence;
 	SI16				hitpoints;
+	SI16				healthRegenBonus;
+	SI16				staminaRegenBonus;
+	SI16				manaRegenBonus;
 	SI16				luck;
 	SI16				hitChance;
 	SI16				defenseChance;
@@ -97,6 +100,7 @@ protected:
 	std::string			sectionId;
 	std::vector<UI16>	scriptTriggers;
 	UI08				poisoned;
+	SERIAL				poisonedBy;
 	SI16				carve; // Carve.dfn entry
 	SI16				oldLocX;
 	SI16				oldLocY;
@@ -229,12 +233,19 @@ public:
 	virtual SI16			GetIntelligence( void ) const;
 	SI16					GetHP( void ) const;
 
+	virtual SI16			GetHealthRegenBonus( void ) const;
+	virtual SI16			GetStaminaRegenBonus( void ) const;
+	virtual SI16			GetManaRegenBonus( void ) const;
+
 	virtual void			SetStrength( SI16 newValue );
 	virtual void			SetDexterity( SI16 newValue );
 	virtual void			SetIntelligence( SI16 newValue );
 	virtual void			SetHP( SI16 newValue );
 	void					IncHP( SI16 amtToChange );
 
+	virtual void			SetHealthRegenBonus( SI16 newValue );
+	virtual void			SetStaminaRegenBonus( SI16 newValue );
+	virtual void			SetManaRegenBonus( SI16 newValue );
 	virtual SI16			GetSwingSpeedIncrease( void ) const;
 	virtual void			SetSwingSpeedIncrease( SI16 newValue );
 
@@ -290,6 +301,9 @@ public:
 	void					IncDexterity( SI16 toInc = 1 );
 	void					IncIntelligence( SI16 toInc = 1 );
 
+	void					IncHealthRegenBonus( SI16 toInc = 1 );
+	void					IncStaminaRegenBonus( SI16 toInc = 1 );
+	void					IncManaRegenBonus( SI16 toInc = 1 );
 
 	SI16					GetHealthLeech( void ) const;
 	virtual void			SetHealthLeech( SI16 nVal );
@@ -335,10 +349,13 @@ public:
 	UI08					GetPoisoned( void ) const;
 	virtual void			SetPoisoned( UI08 newValue );
 
+	SERIAL					GetPoisonedBy( void ) const;
+	virtual void			SetPoisonedBy( SERIAL newValue );
+
 	SI16					GetCarve( void ) const;
 	void					SetCarve( SI16 newValue );
 
-	virtual	void			Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) = 0;
+	virtual	void			Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true, bool triggerInRangeEvent = false ) = 0;
 	virtual	void			SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) = 0;
 	virtual	void			Dirty( UpdateTypes updateType );
 	void					RemoveFromRefreshQueue( void );
