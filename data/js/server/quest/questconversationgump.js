@@ -161,7 +161,7 @@ function ResignQuest( player, questID )
 		var questEntry = questProgressArray[i];
 
 		// Skip the quest that needs to be resigned, effectively removing it
-		if (questEntry.questID == questID && questEntry.serial == player.serial)
+		if( questEntry.questID == questID && questEntry.serial == player.serial )
 		{
 			questFound = true;
 
@@ -253,7 +253,7 @@ function ManageQuestItems( player, questID, mark )
 						if( currentItem.GetTag( "QuestItem" ))
 						{
 							var questItemColor = currentItem.GetTag( "saveColor" );
-							if( questItemColor != null && !isNaN(parseInt(questItemColor)) )
+							if( questItemColor != null && !isNaN( parseInt( questItemColor )))
 							{
 								currentItem.color = parseInt( questItemColor );
 							}
@@ -295,7 +295,7 @@ function ManageQuestItems( player, questID, mark )
 				else
 				{
 					// If resigning, delete the delivery item
-					currentItem.Delete(  );
+					currentItem.Delete();
 					socket.SysMessage( "Deleted delivery item: " + quest.deliveryItem.name );
 				}
 			}
@@ -606,7 +606,7 @@ function ProcessQuestTurnIn( player, questID )
 
 		if( !foundItem )
 		{
-			socket.SysMessage( GetDictionaryEntry( 19610, socket.language ));//You don't have the required item to deliver.
+			socket.SysMessage( GetDictionaryEntry( 19610, socket.language ));// You don't have the required item to deliver.
 			return false;
 		}
 
@@ -674,7 +674,7 @@ function FindQuestItems( player, questID )
 function onCharDoubleClick( pUser, questNpc ) 
 {
 	QuestNpcInterAction( pUser, questNpc );
-	return false;
+	return true;
 }
 
 function QuestNpcInterAction( pUser, questNpc )
@@ -697,10 +697,10 @@ function QuestNpcInterAction( pUser, questNpc )
 	}
 
 	// Check if the NPC is a delivery recipient
-	var deliveryQuestID = parseInt( questNpc.GetTag( "DeliveryQuestID" ), 10 );
+	var deliveryQuestID = parseInt( questNpc.GetTag( "DeliveryQuestID" ));
 	if( deliveryQuestID )
 	{
-		if( TriggerEvent( 5800, "CheckQuest", pUser, deliveryQuestID ))
+		if( TriggerEvent( 5800, "CheckQuest", pUser, deliveryQuestID, "check" ))
 		{ // Validate quest eligibility
 			ProcessDeliveryQuest( pUser, questNpc, deliveryQuestID );
 		}
@@ -788,7 +788,6 @@ function ProcessDeliveryQuest( player, questNpc, deliveryQuestID )
 	var requiredItem = quest.deliveryItem;
 	var questItems = FindQuestItems( player, deliveryQuestID );
 	var itemDelivered = false;
-
 	for( var i = 0; i < questItems.length; i++ )
 	{
 		if( String( questItems[i].sectionID ) == String( requiredItem.sectionID ))
@@ -797,8 +796,8 @@ function ProcessDeliveryQuest( player, questNpc, deliveryQuestID )
 			if( questItems[i].amount >= requiredItem.amount )
 			{
 				itemDelivered = true;
-				break;
 			}
+			break;
 		}
 	}
 
@@ -815,6 +814,7 @@ function ProcessDeliveryQuest( player, questNpc, deliveryQuestID )
 		{
 			if( questItems[j].amount > requiredItem.amount )
 			{
+				socket.SysMessage( "2");
 				questItems[j].amount -= requiredItem.amount;
 			}
 			else
@@ -831,9 +831,10 @@ function ProcessDeliveryQuest( player, questNpc, deliveryQuestID )
 	{
 		if( questProgressArray[i].questID == deliveryQuestID )
 		{
+			socket.SysMessage( "3");
 			questProgressArray[i].completed = true;
-			break;
 		}
+		break;
 	}
 
 	TriggerEvent( 5800, "WriteQuestProgress", player, questProgressArray );
@@ -869,13 +870,13 @@ function ResolvePlayerQuestID( player, initialQuestID )
 		{
 			for (var i = 0; i < archivedQuests.length; i++) 
 			{
-				if (archivedQuests[i].questID == questID)
+				if( archivedQuests[i].questID == questID )
 				{
 					var lastCompleted = archivedQuests[i].lastCompleted || 0;
 					var resetTime = quest.resetDailyTime || 24; // Default reset time is 24 hours
-					if ((Date.now() - lastCompleted) < resetTime * 3600 * 1000)
+					if(( Date.now() - lastCompleted) < resetTime * 3600 * 1000 )
 					{
-						questID = parseInt(quest.nextQuestID, 10); // Move to the next quest
+						questID = parseInt( quest.nextQuestID, 10 ); // Move to the next quest
 						continue;
 					}
 				}
@@ -961,7 +962,7 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 		return false;
 	}
 
-	switch ( popupEntry )
+	switch( popupEntry )
 	{
 		case 0x000A: // Quest Conversation
 			{
@@ -981,7 +982,6 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 				QuestNpcInterAction( pUser, targObj );
 			}
 			break;
-
 		case 0x000B: // Cancel Quest (Optional)
 			{
 				var initialQuestID = parseInt( targObj.GetTag( "QuestID" ), 10 );
@@ -991,7 +991,6 @@ function onContextMenuSelect( socket, targObj, popupEntry )
 				pUser.SoundEffect(  0x5B4, true  );
 			}
 			break;
-
 		default:
 			return true; // Let the default context menu handling proceed
 	}

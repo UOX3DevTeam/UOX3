@@ -1,4 +1,4 @@
-const DebugMessages = false;
+//const DebugMessages = false;
 function StartQuest( player, questID )
 {
 	var socket = player.socket;
@@ -49,6 +49,7 @@ function StartQuest( player, questID )
 				package.isNewbie = true;
 				package.SetTag( "QuestItem", true );
 				package.SetTag( "delivery", true );
+				package.SetTag( "QuestSectionID", package.sectionID );
 				package.AddScriptTrigger( 5806 );// Quest Item script trigger
 				player.SysMessage( "You have received a " + quest.deliveryItem.name + " for delivery." );
 			} 
@@ -65,7 +66,7 @@ function StartQuest( player, questID )
 		{
 			initialSkillLevel = player.baseskills[quest.targetSkill]; // Get current skill level
 			player.SetTag( "AcceleratedSkillGain", quest.targetSkill );
-			player.AddScriptTrigger(5811); // Quest skill gain script trigger
+			player.AddScriptTrigger( 5811 ); // Quest skill gain script trigger
 		}
 		else
 		{
@@ -106,8 +107,9 @@ function StartQuest( player, questID )
 	}
 }
 
-function CheckQuest( player, questID )
+function CheckQuest( player, questID, mode)
 {
+	mode = mode || "start"; // default
 	var socket = player.socket;
 	var playerSerial = player.serial; // Use player serial to identify the quest owner
 	// Fetch quest details using the QuestList trigger
@@ -122,14 +124,18 @@ function CheckQuest( player, questID )
 	var questProgressArray = ReadQuestProgress( player );
 	var archivedQuests = ReadArchivedQuests( player );
 
-	// Check if the quest is already in progress
-	// Ensure no duplicate quests for the same player
-	for (var i = 0; i < questProgressArray.length; i++) 
+	// Check if already working on this quest
+	if (mode == "start")
 	{
-		if( questProgressArray[i].questID == questID && questProgressArray[i].serial == playerSerial ) 
+		// Check if the quest is already in progress
+		// Ensure no duplicate quests for the same player
+		for (var i = 0; i < questProgressArray.length; i++) 
 		{
-			socket.SysMessage( GetDictionaryEntry( 19618, socket.language )); // You are already working on this quest.
-			return;
+			if( questProgressArray[i].questID == questID && questProgressArray[i].serial == playerSerial ) 
+			{
+				socket.SysMessage( GetDictionaryEntry( 19618, socket.language )); // You are already working on this quest.
+				return;
+			}
 		}
 	}
 
@@ -294,7 +300,7 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 					var hasItem = false;
 
 					// Iterate through all items in the player's backpack
-					for( currentItem = pack.FirstItem(  ); !pack.FinishedItems(  ); currentItem = pack.NextItem(  ))
+					for( currentItem = pack.FirstItem(); !pack.FinishedItems(); currentItem = pack.NextItem())
 					{
 						if( !ValidateObject( currentItem )) 
 						{
@@ -302,7 +308,8 @@ function UpdateQuestProgress( player, questID, identifier, progressValue, type )
 						}
 
 						// Check if the item matches the delivery item and has the correct tag
-						if( currentItem.GetTag( "QuestItem" ) && String( currentItem.sectionID ) == String( quest.deliveryItem.sectionID ) && currentItem.amount >= quest.deliveryItem.amount )
+						var questSectionID = deliveryItem.GetTag( "QuestSectionID" ) || deliveryItem.sectionID;
+						if( currentItem.GetTag( "QuestItem" ) && String( currentItem.sectionID ) == String( quest.deliveryItem.sectionID || currentItem.sectionID == questSectionID  ) && currentItem.amount >= quest.deliveryItem.amount )
 						{
 							hasItem = true;
 
@@ -422,7 +429,6 @@ function CompleteQuest( player, questID )
 	for( var i = 0; i < questProgressArray.length; i++ )
 	{
 		var questEntry = questProgressArray[i];
-
 		// Ensure the quest is tied to the current player and matches the questID
 		if( questEntry.serial != player.serial || questEntry.questID != questID )
 		{
@@ -478,9 +484,9 @@ function QuestRewards( player, quest, socket )
 {
 	var bankBox = player.FindItemLayer( 29 );
 
-	quest.rewards.forEach(function(reward)
+	quest.rewards.forEach( function( reward )
 	{
-		switch (reward.type)
+		switch( reward.type )
 		{
 			case "gold":
 				GoldReward( player, reward, bankBox, socket );
@@ -605,7 +611,7 @@ function ItemCollected( player, item, isToggledOff )
 				var target = quest.targetItems[j];
 
 
-				var questSectionID = item.GetTag("QuestSectionID") || item.sectionID;
+				var questSectionID = item.GetTag( "QuestSectionID" ) || item.sectionID;
 				if( String( target.sectionID ) == String( item.sectionID ) || ( target.sectionID == questSectionID ))
 				{
 					var currentCount = questEntry.collectedItems[item.sectionID] || 0;
@@ -635,12 +641,6 @@ function ItemCollected( player, item, isToggledOff )
 							item.RemoveScriptTrigger( 5806 ); // Quest Item script trigger
 
 							socket.SysMessage( "You removed " + amountToRemove + " Quest Item(s)." );
-							if (DebugMessages)
-							{
-								socket.SysMessage("Current collected count: " + currentCount);
-								socket.SysMessage("Is toggled off? " + isToggledOff);
-								socket.SysMessage("Quest item sectionID: " + item.sectionID);
-							}
 						}
 						else
 						{
@@ -792,7 +792,8 @@ function AccelerateSkillGain( pPlayer, skill, skillGainAmount )
 }
 
 //Helper Function for skillnames
-function GetSkillName(skillID) {
+function GetSkillName(skillID)
+{
 	var skillNames = [
 		"alchemy", "anatomy", "animallore", "itemid", "armslore", "parrying", "begging",
 		"blacksmith", "bowcraft", "peacemaking", "camping", "carpentry", "cartography",
@@ -993,7 +994,7 @@ function ReadFailedQuests( player )
 		var currentQuestID = null;
 		var currentSerial = null;
 
-		while ( !mFile.EOF())
+		while( !mFile.EOF() )
 		{
 			var line = mFile.ReadUntil( "\n" );
 			line = manualTrim( line ); // Remove leading/trailing spaces
@@ -1008,7 +1009,7 @@ function ReadFailedQuests( player )
 			var parts = line.split( "=" );
 			if( parts.length == 2 )
 			{
-				var key = manualTrim( parts[0] ).toLowerCase(  );
+				var key = manualTrim( parts[0] ).toLowerCase();
 				var value = manualTrim( parts[1] );
 
 				if( key == "questid" )
@@ -1140,7 +1141,7 @@ function ReadArchivedQuests( player )
 		var currentQuestID = null;
 		var currentSerial = null;
 
-		while ( !mFile.EOF())
+		while( !mFile.EOF() )
 		{
 			var line = mFile.ReadUntil( "\n" );
 			line = manualTrim( line ); // Remove leading/trailing spaces
@@ -1162,13 +1163,14 @@ function ReadArchivedQuests( player )
 			var parts = line.split( "=" );
 			if( parts.length == 2 ) 
 			{
-				var key = manualTrim( parts[0] ).toLowerCase(  );
+				var key = manualTrim( parts[0] ).toLowerCase();
 				var value = manualTrim( parts[1] );
 
 				if( key == "questid" ) 
 				{
 					currentQuestID = parseInt( value, 10 ); // Parse quest ID
-				} else if( key == "serial" )
+				}
+				else if( key == "serial" )
 				{
 					currentSerial = parseInt( value, 10 ); // Parse player serial
 				}
@@ -1184,13 +1186,6 @@ function ReadArchivedQuests( player )
 		mFile.Close();
 		mFile.Free();
 	} 
-	else
-	{
-		if( DebugMessages )
-		{
-			player.SysMessage( "No archived quest file found or unable to read." );
-		}
-	}
 
 	return archivedQuests; // Return array of quest IDs
 }
@@ -1208,7 +1203,7 @@ function WriteQuestProgress( player, questProgressArray )
 		{
 			var progressEntry = questProgressArray[i];
 
-			if( DebugMessages ) 
+			/*if( DebugMessages ) 
 			{
 				var debugStr = "Serial=" + progressEntry.serial +
 					", QuestID=" + progressEntry.questID +
@@ -1227,7 +1222,7 @@ function WriteQuestProgress( player, questProgressArray )
 				}
 
 				player.SysMessage( "Saving progressEntry: " + debugStr );
-			}
+			}*/
 
 			// Serialize kills
 			var killsStr = "";
@@ -1263,11 +1258,11 @@ function WriteQuestProgress( player, questProgressArray )
 				}
 			}
 
-			if( DebugMessages )
+			/*if( DebugMessages )
 			{
 				// Debug: Print serialized kills
 				player.SysMessage( "Writing harvestKills: " + killsStr );
-			}
+			}*/
 
 			// Write all required fields
 			var formattedEntry =
@@ -1307,18 +1302,18 @@ function ReadQuestProgress( player )
 	if( mFile && mFile.Length() >= 0 )
 	{
 		var currentEntry = null;
-		while ( !mFile.EOF())
+		while( !mFile.EOF() )
 		{
 			var line = mFile.ReadUntil( "\n" );
 
 			// Normalize line: Remove unexpected characters
 			line = manualTrim( line.replace( /[^\x20-\x7E]/g, "" ));
 
-			if( DebugMessages ) 
+			/*if( DebugMessages ) 
 			{
 				// Debug: Print normalized line
 				player.SysMessage( "Normalized line: " + line );
-			}
+			}*/
 
 			if( line == "" )
 			{
@@ -1337,14 +1332,14 @@ function ReadQuestProgress( player )
 				if( !currentEntry )
 					currentEntry = {};
 
-				var key = manualTrim( parts[0] ).toLowerCase(  ); // Convert key to lowercase
+				var key = manualTrim( parts[0] ).toLowerCase(); // Convert key to lowercase
 				var value = manualTrim( parts[1] );
 
-				if( DebugMessages )
+				/*if( DebugMessages )
 				{
 					// Debug: Log parsed key-value pairs
 					player.SysMessage( "Parsed key: " + key + ", value: " + value );
-				}
+				}*/
 
 				currentEntry[key] = value;
 			}
@@ -1360,13 +1355,13 @@ function ReadQuestProgress( player )
 		mFile.Close();
 		mFile.Free();
 	}
-	else
+	/*else
 	{
 		if( DebugMessages )
 		{
 			player.SysMessage( "Failed to open or read quest progress file." );
 		}
-	}
+	}*/
 	return questProgressArray;
 }
 
@@ -1394,18 +1389,18 @@ function processCollectedItems( entry, player )
 	entry.collectedItems = {};
 	var collectedItemsStr = entry.collecteditems || ""; // Use consistent key
 
-	if( DebugMessages )
+	/*if( DebugMessages )
 	{
 		// Debug: Log the raw collected items string
 		player.SysMessage( "Processing collected items: " + collectedItemsStr );
-	}
+	}*/
 
 	if( collectedItemsStr == "" ) 
 	{
-		if( DebugMessages ) 
+		/*if( DebugMessages ) 
 		{
 			player.SysMessage( "No collected items to process." );
-		}
+		}*/
 		return;
 	}
 
@@ -1419,19 +1414,19 @@ function processCollectedItems( entry, player )
 			var value = parseInt( manualTrim( pair[1] ), 10 );
 			entry.collectedItems[key] = value;
 
-			if( DebugMessages )
+			/*if( DebugMessages )
 			{
 				// Debug: Log each parsed collected item entry
 				player.SysMessage( "Parsed collected item - ID: " + key + ", Count: " + value );
-			}
+			}*/
 		}
 	}
 
-	if( DebugMessages )
+	/*if( DebugMessages )
 	{
 		// Debug: Log the final processed collected items object
 		player.SysMessage( "Final collectedItems object: " + objectToString( entry.collectedItems ));
-	}
+	}*/
 }
 
 function processKills( entry, player )
@@ -1442,19 +1437,19 @@ function processKills( entry, player )
 	// Use the correct key to extract the raw kills string
 	var killsStr = entry.harvestkills || ""; // Note: lowercase to match file format
 
-	if( DebugMessages )
+	/*if( DebugMessages )
 	{
 		// Debug: Log the raw kills string
 		player.SysMessage( "Processing kills: " + killsStr );
-	}
+	}*/
 
 	// If killsStr is empty, there’s nothing to process
 	if( killsStr == "" )
 	{
-		if( DebugMessages )
+		/*if( DebugMessages )
 		{
 			player.SysMessage( "No kills to process." );
-		}
+		}*/
 		return;
 	}
 
@@ -1468,19 +1463,19 @@ function processKills( entry, player )
 			var value = parseInt( manualTrim( pair[1] ), 10 );
 			entry.harvestKills[key] = value;
 
-			if( DebugMessages )
+			/*if( DebugMessages )
 			{
 				// Debug: Log each parsed kill entry
 				player.SysMessage( "Parsed kill - NPC: " + key + ", Count: " + value );
-			}
+			}*/
 		}
 	}
 
-	if( DebugMessages ) 
+	/*if( DebugMessages ) 
 	{
 		// Debug: Log the reconstructed harvestKills object
 		player.SysMessage( "Final harvestKills object: " + objectToString( entry.harvestKills ));
-	}
+	}*/
 }
 
 //////////////////////////////////////////////////////////////////////////////////

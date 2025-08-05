@@ -1011,8 +1011,8 @@ function QuestList(questID)
 			description: "Kill 1 dog and 1 cat.",
 			type: "kill",
 			targetKills: [
-				{ npcID: "dog", amount: 1 }, // Kill 5 orcs
-				{ npcID: "cat", amount: 1 }  // Kill 3 cats
+				{ sectionID: "dog", amount: 1 }, // Kill 5 orcs
+				{ sectionID: "cat", amount: 1 }  // Kill 3 cats
 			],
 			rewards: [
 				{ type: "gold", amount: 1000 },
@@ -1040,7 +1040,7 @@ function QuestList(questID)
 				{ sectionID: "0x13e3", amount: 1 } // Collect 3 apples
 			],
 			targetKills: [
-				{ npcID: "dog", amount: 1 }, // Kill 1 dog
+				{ sectionID: "dog", amount: 1 }, // Kill 1 dog
 			],
 			rewards: [
 				{ type: "gold", amount: 500 }, // Give 500 gold
@@ -1065,7 +1065,7 @@ function QuestList(questID)
 			title: "Timed Hunt Animals",
 			type: "timekills",
 			targetKills: [
-				{ npcID: "dog", amount: 1 }, // Kill 1 dog
+				{ sectionID: "dog", amount: 1 }, // Kill 1 dog
 			],
 			timeLimit: 100, // Time limit in seconds
 			rewards: [
@@ -1087,7 +1087,7 @@ function QuestList(questID)
 			description: "Defeat 5 bandits in the nearby forest.",
 			type: "kill",
 			questTurnIn: 1, // 0 = auto-complete
-			targetKills: [{ npcID: "cat", amount: 1 }],
+			targetKills: [{ sectionID: "cat", amount: 1 }],
 			rewards: [{ type: "gold", amount: 1000 }],
 			nextQuestID: "1008" // Chain to the next quest
 		},
@@ -1095,8 +1095,8 @@ function QuestList(questID)
 			title: "Deliver Supplies to the Guard",
 			description: "Bring the supplies to the guard at the eastern gate.",
 			type: "delivery",
-			targetDelivery: { npcID: "nail", location: { x: 1000, y: 2000, z: 0 } },
-			deliveryItem: { sectionID: "0x1F4C", amount: 1 },
+			targetDelivery: { sectionID: "nail", location: { x: 1068, y: 1608, z: 0, "world": 0 } },
+			deliveryItem: { sectionID: "0x0E21", amount: 1, name: "Sealed Package" },
 			rewards: [
 				{ type: "gold", amount: 1000 },
 				{ type: "item", sectionID: "0x1B7A", amount: 1 }
@@ -1116,10 +1116,10 @@ function QuestList(questID)
 				"sectionID": "nail", // Section ID of Nail
 				"name": "Nail the Receiver", // Name of the NPC
 				"location": {
-					"x": 1234, // X coordinate
-					"y": 5678, // Y coordinate
+					"x": 1068, // X coordinate
+					"y": 1608, // Y coordinate
 					"z": 0,    // Z coordinate
-					"world": 1 // World number
+					"world": 0 // World number
 				}
 			},
 			"rewards": [
