@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Grape-Picking Script
 // 20/02/2006 Xuri; xuri@uox3.org
 // When (dynamic) grapevines are double-clicked, they're setup with

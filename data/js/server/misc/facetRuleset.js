@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const coreShardEra = GetServerSetting( "CoreShardEra" );
 const timeBetweenMurdererVisit = 2592000; // 30 days between each time a murderer can visit Ilshenar
 

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Warning Script
 // Last updated: 10/11/2021
 //

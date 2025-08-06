@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Teleporter into the City of Wind, which comes with a skill requirement
 // Only characters with 71.5 Magery or above can enter the city
 

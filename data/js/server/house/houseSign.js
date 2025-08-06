@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // House menu that appears when double-clicking the sign on a house
 // Uses script trigger 15001, applied via jse_typeassociations.scp based on type 203 - IT_HOUSESIGN
 var lockdowns = 0;

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Garlic-Picking Script
 // 14/06/2025 Xuri; xuri@uox3.org
 // When (dynamic)garlic are double-clicked, it's setup with

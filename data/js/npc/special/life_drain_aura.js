@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // For creatures that can drain life of nearby players/pets when they are hit in combat
 function onDamage( damaged, attacker, damageValue, damageType )
 {

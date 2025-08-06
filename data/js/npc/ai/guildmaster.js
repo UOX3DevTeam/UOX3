@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script handles interactions with NPC guildmasters, such as joining/leaving and making use
 // of special services offered by these NPCs - such as selling disguises (Thieves Guild)
 //

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // When attached to a character, this script will check, after being attacked in combat,
 // whether the character is allowed to split into copies of itself. Primary example of this
 // would be a slime NPC, which has a chance to split into two upon being attacked

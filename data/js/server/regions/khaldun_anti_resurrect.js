@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function onSpellTargetSelect( myTarget, pCaster, spellID )
 {
 	if( !ValidateObject( pCaster ))

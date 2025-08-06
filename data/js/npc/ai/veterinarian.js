@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const petBondingEnabled = GetServerSetting( "PetBondingEnabled" );
 const vetGumpCooldown = 4000; // milliseconds
 const scriptID = 3109;
@@ -252,7 +254,7 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	if(( now - deathTime ) < waitTime)
 	{
-		pSock.SysMessage( GetDictionaryEntry( 19340, pSock.language )); // That creature’s spirit lacks cohesion. Try again in a few minutes.
+		pSock.SysMessage( GetDictionaryEntry( 19340, pSock.language )); // That creatureï¿½s spirit lacks cohesion. Try again in a few minutes.
 		return;
 	}
 

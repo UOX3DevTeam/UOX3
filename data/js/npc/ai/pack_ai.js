@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Simple Pack "AI"
 // When one member of a pack is attacked (or attacks), they call upon any nearby members of the pack who are
 // within line of sight to also attack the same target

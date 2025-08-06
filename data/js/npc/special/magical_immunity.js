@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // NPCs like Shadow Iron Elementals are immune to magic
 function onDamage( damaged, attacker, damageValue, damageType )
 {

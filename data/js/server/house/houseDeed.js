@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script runs some ownership checks on houses before allowing a player to place
 // additional houses. The actual house-placement part is handled in code.
 

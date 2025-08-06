@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Fire Breath
 const fireBreathDelay = 5;
 const fireBreathMaxRange = 12;

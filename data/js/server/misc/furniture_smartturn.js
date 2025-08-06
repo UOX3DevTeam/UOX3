@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Furniture Smart Turn
 // Will turn supported furniture clockwise when said furniture is double-clicked or dropped on the ground
 

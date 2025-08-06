@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Dungeon Trap script
 // Last Updated: 10/11/2021
 //

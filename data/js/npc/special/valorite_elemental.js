@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Valorite Elementals reflect back part of any physical damage dealt
 function onDamage( damaged, attacker, damageValue, damageType )
 {

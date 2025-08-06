@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Immortality! Character can still take damage, but will never die
 function onDeathBlow( pKilled, pKiller )
 {

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These house commands are triggered by client sending some specific keywords that are
 // detected as such by UOX3, and then forwarded to this script.
 //

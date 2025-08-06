@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Cotton-Picking Script
 // 20/02/2006 Xuri; xuri@uox3.org
 // When a (dynamic) cotton plant is double-clicked, it may yield some cotton.

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Stable-master, by Xuri (xuri@xoduz.org)
 // Version: 1.2
 // Last Updated: September 10th 2022

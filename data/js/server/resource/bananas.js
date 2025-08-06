@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Banana-Picking Script
 // 20/02/2006 Xuri; xuri@uox3.org
 // When a (dynamic) banana tree is double-clicked, it's setup with

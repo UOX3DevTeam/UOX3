@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Immunity to Physical damage, aka standard melee damage
 function onDamage( damaged, attacker, damageValue, damageType )
 {

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Honey/Wax-Picking Script
 // Originally written by Cav
 // Rewritten by Xuri 24/01/2005 ;xuri@uox3.org

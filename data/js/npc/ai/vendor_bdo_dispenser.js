@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script handles BOD offers from shopkeepers
 const offerBodsFromItemSales = GetServerSetting( "OfferBODsFromItemSales" ); // If true, BODs can be offered by vendor upon selling items to them
 const offerBodsFromContextMenu = GetServerSetting( "OfferBODsFromContextMenu" ); // Not present in LBR, disabled by default. Needs to be a server setting

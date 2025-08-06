@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Helpful clilocs
 //  1042971 - ~1_NOTHING~	// Any custom string
 // 	1062613 - "~1_NAME~" 	// String in quotes, first letter of first word NOT capitalized automatically

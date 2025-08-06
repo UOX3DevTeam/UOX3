@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Teleporter between Orc Caves levels 2 and 3
 function onCollide( pSock, pChar, iObject )
 {

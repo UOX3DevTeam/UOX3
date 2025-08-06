@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Handle Colossal Blow special ability - a stunning attack that applies a peacemaking effect
 function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {

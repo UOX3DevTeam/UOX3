@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script ensures dungeon treasures will decay after a certain amount of time, so they
 // can respawn elsewhere.
 function onCreateDFN( objMade, objType )

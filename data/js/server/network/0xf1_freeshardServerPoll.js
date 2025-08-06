@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Handler for Freeshard Server Poll requests from
 // CUO Web (https://play.classicuo.org)
 // Last Updated: 3. Decemeber, 2024

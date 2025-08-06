@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script is not functioning correctly and is not used
 // It is thought solely for educational purposes
 

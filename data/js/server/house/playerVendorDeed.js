@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Player Vendor Deeds
 function onUseChecked( pUser, iUsed )
 {

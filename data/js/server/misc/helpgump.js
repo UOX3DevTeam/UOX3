@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const shardName = GetServerSetting( "ServerName" );
 const shardURL = "https://myshard.example.com";
 const maxSafeTeleportsPerDay = GetServerSetting( "MaxSafeTeleportsPerDay" ); // Determines amount of "safe teleports" players get per day

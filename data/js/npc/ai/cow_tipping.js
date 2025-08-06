@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Cow-Tipping!
 
 function onCharDoubleClick( pUser, targChar )

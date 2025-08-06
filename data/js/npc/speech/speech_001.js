@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // UOX3 Speech File (JavaScript)
 // Converted by Dark-Storm
 // Date: 29.12.2001 2:07 am

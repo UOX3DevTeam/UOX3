@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // houseCommands.js - v1.0.1
 // Last Updated 2022-09-09
 //

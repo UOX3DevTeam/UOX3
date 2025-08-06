@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Carrot-Picking Script
 // 14/06/2025 Xuri; xuri@uox3.org
 // When (dynamic)carrots are double-clicked, it's setup with

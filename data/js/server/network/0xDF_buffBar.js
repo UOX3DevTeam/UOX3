@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // how to use
 // TriggerEvent( 2204, "AddBuff", mChar, buffIcon, priCliloc, scndCliloc, seconds, " " + ourObj.name ); name sent
 // TriggerEvent( 2204, "AddBuff", mChar, buffIcon, priCliloc, scndCliloc, seconds, " " + "blah blah msg" ); any msg sent

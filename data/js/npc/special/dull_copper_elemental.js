@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function onDeath( pDead, iCorpse )
 {
 	iCorpse.StaticEffect( 0x36B0, 0, 0x09 );

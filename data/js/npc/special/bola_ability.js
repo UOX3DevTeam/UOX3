@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Allows NPC to swing a bola and dismount a mounted player/character
 function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )
 {

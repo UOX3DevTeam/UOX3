@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // script for a deed for carpentered multi item
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
 

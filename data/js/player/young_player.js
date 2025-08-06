@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 const skillProps = [
 	"alchemy", "anatomy", "animallore", "itemid", "armslore", "parrying", "begging",
 	"blacksmithing", "bowcraft", "peacemaking", "camping", "carpentry", "cartography", "cooking",

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Strongbox
 function onUseChecked( pUser, iUsed )
 {

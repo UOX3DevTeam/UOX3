@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Milk Resource Script
 // 17/08/2002 Cav; tbacavalier@bigpond.com
 // For use only with the UOX3 emulator or any other with the authors permission

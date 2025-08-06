@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script handles the return of stolen items to their owners in the event of
 // player dying within X seconds (see stealing.js) of stealing the items
 

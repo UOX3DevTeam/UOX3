@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Wheat-Picking Script
 // 20/02/2006 Xuri; xuri@uox3.org
 // When (dynamic)wheat is double-clicked, it's setup with

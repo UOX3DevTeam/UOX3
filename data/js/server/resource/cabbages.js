@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Cabbage-Picking Script
 // 14/06/2025 Xuri; xuri@uox3.org
 // When (dynamic)cabbages are double-clicked, it's setup with

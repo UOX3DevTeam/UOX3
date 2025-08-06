@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Trash Barrel, adapted from Xuri's Device-For-Disposal-Of-Unwanted-Items (aka Trash-can) script
 // Last Updated: 11. October 2020
 

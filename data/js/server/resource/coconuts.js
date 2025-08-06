@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Coconut-Picking Script
 // 20/02/2006 Xuri; xuri@uox3.org
 // When a (dynamic) coconut palm is double-clicked, it's setup with

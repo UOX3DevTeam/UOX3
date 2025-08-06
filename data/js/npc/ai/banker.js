@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 //	Banker AI
 //	Responds to bank-commands:
 // 	BANK, BALANCE/STATEMENT, CHECK, WITHDRAW # and DEPOSIT # or DEPOSIT without arguments to get target cursor

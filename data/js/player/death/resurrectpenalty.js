@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function ResurrectFamePenalty( pUser )
 {
 	if( pUser.fame > 0 )

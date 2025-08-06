@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Global Script
 // Supported Events trigger for every character/item, use with care
 function onLogin( socket, pChar )

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Pitchers and Bottles - Jugs and Mugs, by Xuri (xuri@uox3.org)
 // Version: 1.6
 // Last Updated: July 24th 2021
@@ -804,7 +806,7 @@ function switchPitcherID( pSock, Pitcher )
 			//Pitcher.name = "empty glass pitcher";
 			break;
 		case 0x0ff9:case 0x09f0: case 0x1f95:case 0x1f97:case 0x1f99:case 0x1f9b:case 0x1f9d:
-			Pitcher.id = 0x0ff6; //left facing¨
+			Pitcher.id = 0x0ff6; //left facingï¿½
 			//Pitcher.name = "empty glass pitcher";
 			break;
 		case 0x099b:case 0x099f:case 0x09c7:

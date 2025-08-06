@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script handles speech and speech responses by humanoid monsters such as orcs, lizardmen and
 // ratmen, as well as intelligent creatures such as wisps
 

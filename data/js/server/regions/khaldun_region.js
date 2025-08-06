@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function onEnterRegion( pEntering, regionEntered )
 {
 	if( regionEntered == 42 ) // Khaldun

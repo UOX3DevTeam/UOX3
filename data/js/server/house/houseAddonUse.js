@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Used to trigger hard-coded targeting actions for some items that normally rely on their item
 // type for functionality, but then lose that functionality when becoming a house addon, since
 // all house addons end up with item type IT_HOUSEADDON

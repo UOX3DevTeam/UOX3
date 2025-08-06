@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Damage Aura/AoE ability for NPCs
 // To add a damage aura to an NPC, add their ID and details of their aura to the GetAuraInit and
 // GetAuraProperties functions at the bottom of the script, and then assign script 3503 to the NPC!

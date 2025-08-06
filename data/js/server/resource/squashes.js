@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Squash-Picking Script
 // 14/06/2025 Xuri; xuri@uox3.org
 // When (dynamic)squashes are double-clicked, it's setup with

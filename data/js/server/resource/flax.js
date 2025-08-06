@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Flax-Picking Script
 // 20/02/2006 Xuri; xuri@uox3.org
 // When a (dynamic) flax plant is double-clicked, it may yield some flax.

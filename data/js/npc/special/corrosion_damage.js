@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Acidic creatures have a chance to corrode the weapons of its attackers
 function onDamage( damaged, attacker, damageValue, damageType )
 {

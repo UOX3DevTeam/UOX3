@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function onDamage( damaged, attacker, damageValue, damageType )
 {
 	if( !ValidateObject( attacker ) || damaged == attacker )

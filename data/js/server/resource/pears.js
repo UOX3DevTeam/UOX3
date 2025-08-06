@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Pear-Picking Script
 // 20/02/2006 Xuri; xuri@sensewave.com
 // When a (dynamic) pear tree is double-clicked, it's setup with

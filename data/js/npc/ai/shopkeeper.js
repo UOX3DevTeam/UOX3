@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script handles special interactions between players and shopkeepers
 // that take place when players attempt (and/or succeed) at trading with these
 

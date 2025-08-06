@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Pumpkin-Picking Script
 // 14/06/2025 Xuri; xuri@uox3.org
 // When (dynamic)pumpkins are double-clicked, it's setup with

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Hirelings, by Xuri (xuri@uox3.org)
 // Version: 1.1
 // Last Updated: September 10th 2022

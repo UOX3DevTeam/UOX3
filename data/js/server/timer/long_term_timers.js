@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script can be used for long term JS timers (max 49 days!) for objects
 // Script will be automatically removed from object when no long term timers are active
 const scriptID = 3;
