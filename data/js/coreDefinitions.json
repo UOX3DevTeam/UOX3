@@ -2191,7 +2191,8 @@
           "type": "number"
         }
       ],
-      "methods": []
+      "methods": [],
+      "comments": "Spell has no methods"
     },
     {
       "name": "Skill",
@@ -5352,7 +5353,9 @@
           "cppType": "JSPROP_ENUMANDPERM",
           "type": "number"
         }
-      ]
+      ],
+      "methods": [],
+      "comments": "No methods for resource"
     },
     {
       "name": "UnicodeTypes",
@@ -5601,7 +5604,210 @@
     },
     {
       "name": "TownRegion",
-      "aka": "UOXRegion"
+      "aka": "UOXRegion",
+      "properties": [
+        {
+          "name": "name",
+          "cppID": "CREGP_NAME",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        },
+        {
+          "name": "mayor",
+          "cppID": "CREGP_MAYOR",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "CharOrNull"
+        },
+        {
+          "name": "race",
+          "cppID": "CREGP_RACE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "tax",
+          "cppID": "CREGP_TAX",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "taxResource",
+          "cppID": "CREGP_TAXRESOURCE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "canMark",
+          "cppID": "CREGP_CANMARK",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "canRecall",
+          "cppID": "CREGP_CANRECALL",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "canGate",
+          "cppID": "CREGP_CANGATE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "canTeleport",
+          "cppID": "CREGP_CANTELEPORT",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "canPlaceHouse",
+          "cppID": "CREGP_CANPLACEHOUSE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isGuarded",
+          "cppID": "CREGP_ISGUARDED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "canCastAggressive",
+          "cppID": "CREGP_CANCASTAGGRESSIVE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isSafeZone",
+          "cppID": "CREGP_ISSAFEZONE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "health",
+          "cppID": "CREGP_HEALTH",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "isDungeon",
+          "cppID": "CREGP_ISDUNGEON",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "isDisabled",
+          "cppID": "CREGP_ISDISABLED",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "boolean"
+        },
+        {
+          "name": "worldNumber",
+          "cppID": "CREGP_WORLDNUMBER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "instanceID",
+          "cppID": "CREGP_INSTANCEID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "chanceBigOre",
+          "cppID": "CREGP_CHANCEBIGORE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "numOrePrefs",
+          "cppID": "CREGP_NUMOREPREFERENCES",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "population",
+          "cppID": "CREGP_POPULATION",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "number",
+          "readOnly": true
+        },
+        {
+          "name": "members",
+          "cppID": "CREGP_MEMBERS",
+          "cppType": "JSPROP_ENUMPERMRO",
+          "type": "string",
+          "readOnly": true
+        },
+        {
+          "name": "id",
+          "cppID": "CREGP_ID",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "scriptTrigger",
+          "cppID": "CREGP_SCRIPTTRIGGER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "scriptTriggers",
+          "cppID": "CREGP_SCRIPTTRIGGERS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number[]"
+        },
+        {
+          "name": "numGuards",
+          "cppID": "CREGP_NUMGUARDS",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "taxes",
+          "cppID": "CREGP_TAXES",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "reserves",
+          "cppID": "CREGP_RESERVES",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "appearance",
+          "cppID": "CREGP_APPEARANCE",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "music",
+          "cppID": "CREGP_MUSIC",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "weather",
+          "cppID": "CREGP_WEATHER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "number"
+        },
+        {
+          "name": "owner",
+          "cppID": "CREGP_OWNER",
+          "cppType": "JSPROP_ENUMANDPERM",
+          "type": "string"
+        }
+      ],
+      "methods": [
+        { "name": "AddScriptTrigger",    "cppName": "CRegion_AddScriptTrigger",    "params": { "num": 1, "list": [ { "name": "scriptId", "type": "number", "required": true } ] }, "returns": "void" },
+        { "name": "RemoveScriptTrigger", "cppName": "CRegion_RemoveScriptTrigger", "params": { "num": 1, "list": [ { "name": "scriptId", "type": "number", "required": true } ] }, "returns": "void" },
+        { "name": "GetOrePref",          "cppName": "CRegion_GetOrePref",          "params": { "num": 1, "list": [ { "name": "oreId",    "type": "number", "required": true } ] }, "returns": "MiningData" },
+        { "name": "GetOreChance",        "cppName": "CRegion_GetOreChance",        "params": { "num": 0, "list": [] }, "returns": "void" }
+      ]
     },
     {
       "name": "SpawnRegion",
@@ -6333,6 +6539,19 @@
           },
           "returns": "void"
         }
+      ]
+    },
+    {
+      "name": "MiningData",
+      "aka": "MiningData_st",
+      "properties": [
+        { "name": "oreName",   "type": "string" },
+        { "name": "colour",    "type": "number" },
+        { "name": "minSkill",  "type": "number" },
+        { "name": "name",      "type": "string" },
+        { "name": "makemenu",  "type": "number" },
+        { "name": "oreChance", "type": "number" },
+        { "name": "scriptID",  "type": "number" }
       ]
     }
   ],
