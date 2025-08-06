@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 // Hits all nearby characters when they attack with their axe
 
 function onAttack( pAttacker, pDefender, hitStatus, hitLoc, damageDealt )

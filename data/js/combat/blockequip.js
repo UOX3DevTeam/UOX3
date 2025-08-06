@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function onEquipAttempt( pEquipper, iEquipped )
 {
 	var blockEquip = pEquipper.GetTempTag( "blockEquip" );

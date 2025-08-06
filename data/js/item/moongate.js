@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Moongate.js (v1.5)
 // Gump driven gates for location and facet travel 
 // Originally written by Rais 7th Feb 02

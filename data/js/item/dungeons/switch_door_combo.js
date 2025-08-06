@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Switch Door Combo
 //
 // This script can be used to link up switches to doors, which will be

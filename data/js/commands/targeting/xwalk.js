@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Remote Movement Commands!
 //
 // Use 'xwalk <target> <target-location> to make the targeted character walk to targeted location

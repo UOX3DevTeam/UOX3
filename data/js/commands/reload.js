@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // These commands are alternate ways (to UOX3 console commands) for
 // reloading INI, DFNs, JS files, etc.
 

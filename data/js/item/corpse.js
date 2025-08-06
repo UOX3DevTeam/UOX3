@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script is assigned to all corpses by default, in code, but can be overridden on individual items and/or via global script
 const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
 

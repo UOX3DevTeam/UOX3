@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 const dblClck = true; // If true enables lampposts to be double clicked on and off.
 const dynamicLampPosts = true; // This enables and disables lamp post to change from on and off with light settings.
 const brightLvl = 10; // This Setting is for how bright or dark it has to be for lamps to turn on and off. the Higher the number the Darker the Lower the Number the lighter.

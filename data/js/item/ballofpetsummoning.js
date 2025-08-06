@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 var maxControlSlots = GetServerSetting("MaxControlSlots");
 var maxFollowers = GetServerSetting("MaxFollowers");
 function onCreateDFN( objMade, objType )

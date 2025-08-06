@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script handles New Player Tickets given to all newly created characters on Young accounts
 
 // Rewards enabled/disabled based on CoreShardEra setting in UOX.INI
@@ -234,6 +236,6 @@ function onGumpPress( socket, pButton, gumpData )
 function onTooltip( iUsed, pSocket )
 {
 	var tooltipText = "";
-	tooltipText = GetDictionaryEntry( 18770, pSocket.language ); // This is half a prize ticket! Double-click this ticket and target any other ticket marked NEW PLAYER and get a prize! This ticket will only work for YOU, so don’t give it away!
+	tooltipText = GetDictionaryEntry( 18770, pSocket.language ); // This is half a prize ticket! Double-click this ticket and target any other ticket marked NEW PLAYER and get a prize! This ticket will only work for YOU, so donï¿½t give it away!
 	return tooltipText;
 }

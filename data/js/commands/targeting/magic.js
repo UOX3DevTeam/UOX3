@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands are shortcuts for casting gate, recall and mark spells with no mana/reagent costs
 
 function CommandRegistration()

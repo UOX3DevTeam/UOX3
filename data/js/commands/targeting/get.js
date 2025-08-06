@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command allows GM to fetch
 
 function CommandRegistration()

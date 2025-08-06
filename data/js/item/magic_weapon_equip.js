@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script is attached to magical weapons generated as loot/treasure by the magic_items.js script
 // It handles attaching/removing necessary scripts to the player as they equip/unequip those
 // magic weapons

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands are used for teleporting targeted objects to user's location, or teleport them
 // to a specified location
 

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // use dough : target heat source : bread
 // use dough : target jar of honey : sweet dough
 // use dough : target apple : Unbaked Apple Pie

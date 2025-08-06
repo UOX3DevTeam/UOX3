@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command is used to toggle houseicons for multis
 // NOTE: Currently does not work, because multis no longer have separate "items" that can
 // be displayed!

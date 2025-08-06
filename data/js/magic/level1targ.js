@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function SpellRegistration()
 {
 	RegisterSpell( 3, true );	// feeblemind

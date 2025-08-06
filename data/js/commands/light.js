@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // These commands can be used to update the light levels in the game
 
 function CommandRegistration()

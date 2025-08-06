@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script handles dying of hairs and beards
 function onUseChecked( pUser, iUsed )
 {

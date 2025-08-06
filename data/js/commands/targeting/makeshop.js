@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command turns a targeted NPC into a shopkeeper
 
 function CommandRegistration()

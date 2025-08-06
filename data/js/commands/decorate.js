@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Decorate command - by Xuri (xuri@uox3.org)
 // v1.7
 //		1.7 - 10/06/2025

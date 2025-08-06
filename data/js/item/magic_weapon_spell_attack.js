@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script is attached to characters when a magic weapon with a spell effect is equipped
 const scriptID = 3305;
 

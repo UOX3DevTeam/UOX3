@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command is used to enable/disable spawn regions in specific facets
 const facetList = [ "felucca", "trammel", "ilshenar", "malas", "tokuno", "termur" ];
 

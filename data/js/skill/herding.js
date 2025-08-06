@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Herding is triggered via double-clicking a Shepherd's Crook or regular Crook
 function onUseChecked( pUser, iUsed )
 {

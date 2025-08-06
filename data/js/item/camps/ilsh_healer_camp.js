@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script creates and decorates a healer camp when an item with the script attached is created
 // Associated Healer NPCs are spawned using regional spawn system
 function onCreateDFN( baseCampItem, objType )

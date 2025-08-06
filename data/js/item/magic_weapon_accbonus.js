@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Accuracy bonus for magical items
 // See magicweapons.js for details on full setup
 

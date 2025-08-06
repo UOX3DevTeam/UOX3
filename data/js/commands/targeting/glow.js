@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands let GMs add "glow" (light) effects to objects, including carried ones
 
 function CommandRegistration()

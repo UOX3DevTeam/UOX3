@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Commands dealing with getting/setting/adding/removing JS scripts to/from objects
 
 function CommandRegistration()

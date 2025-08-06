@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command is used to show the item type and some details about that for targeted object
 
 function CommandRegistration()

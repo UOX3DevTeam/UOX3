@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 const savageShamanScriptID = 3213; // scriptID of this script from jse_fileassociations.scp
 
 // Chance of triggering Tribal Dance for Savage Shamans when hit in combat

@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 function onDeath( pDead, iCorpse )
 {
 	var masterBrute = CalcCharFromSer( parseInt( pDead.GetTempTag( "masterBruteSerial" )));

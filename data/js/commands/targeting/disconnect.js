@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Commands to handle kicking, banning and unbanning players from the server
 
 function CommandRegistration()

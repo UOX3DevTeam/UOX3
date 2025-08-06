@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function SpellRegistration()
 {
 	RegisterSpell( 1, true );	// say, clumsy, same as in the spells.dfn file

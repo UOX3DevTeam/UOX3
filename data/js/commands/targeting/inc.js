@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands lets GM quickly increase or decrease an object's x, y or z coordinate, or ID
 
 function CommandRegistration()

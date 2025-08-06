@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 const dragonArmors = [ "0x2645", "0x2647", "0x2643", "0x2641", "0x2657" ];
 
 // Choose and apply scale material to chaos dragoon armor

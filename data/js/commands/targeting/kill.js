@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands handle killing of characters, or their hairs/beards, or resurrecting dead chars
 
 function CommandRegistration()

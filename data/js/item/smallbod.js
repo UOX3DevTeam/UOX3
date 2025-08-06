@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 const scriptID = 5042;
 
 const BODTypesToSkillNames = {

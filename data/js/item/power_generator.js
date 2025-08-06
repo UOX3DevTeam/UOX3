@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Power Generators spawn Golems and Golem Controllers periodically until they are destroyed
 // They can be destroyed via a control panel with a randomized puzzle that needs to be solved
 // If incorrect options are selected in this puzzle, the player is shocked with electricity

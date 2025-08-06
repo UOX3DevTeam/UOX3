@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 const healSlipScriptID = 4014; // script ID assigned to this script in jse_fileassociations.scp
 const coreShardEra = GetServerSetting( "CoreShardEra" );
 

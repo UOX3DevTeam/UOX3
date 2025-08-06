@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 function onAttack(pAttacker, pDefender) 
 {
 	if( RandomNumber( 1, 100 ) <= 10 )

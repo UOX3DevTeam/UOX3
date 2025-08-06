@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Switch pattern: 3 - 4 - 1 - 5
 
 function onUseChecked( pUser, iSwitch )

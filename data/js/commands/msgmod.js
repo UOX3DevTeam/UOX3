@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command can be used to toggle the the GM moderation mode for bulletin boards
 
 function CommandRegistration()

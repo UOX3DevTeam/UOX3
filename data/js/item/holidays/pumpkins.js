@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Other settings
 const randomizePumpkinCountdown = false; // If true, add/remove +1/-1 seconds to explosion potion countdowns
 
@@ -42,8 +44,8 @@ function getRandomPumpkinName( objMade )
 }
 
 // 2006 Pumpkins
-// Missing: The Shadow Colored Jack O’ Lanterns, both big and small, are also useable. When used and targeted anywhere, they explode in a large 5×5 tile field of flames.
-// Missing: The Shadow Colored Jack O’ Lanterns, both big and small, are also useable.When used and targeted anywhere, they explode in a large 5×5 tile field of flames.
+// Missing: The Shadow Colored Jack Oï¿½ Lanterns, both big and small, are also useable. When used and targeted anywhere, they explode in a large 5ï¿½5 tile field of flames.
+// Missing: The Shadow Colored Jack Oï¿½ Lanterns, both big and small, are also useable.When used and targeted anywhere, they explode in a large 5ï¿½5 tile field of flames.
 // Using explosion potion effect.
 // Missing: colors as well for the pumpkins
 

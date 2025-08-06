@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command can be used to kill all characters (or a percentage of all characters)
 
 function CommandRegistration()

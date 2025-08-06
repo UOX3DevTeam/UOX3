@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // tailoring script
 // Last Updated: October 31st 2021
 // five balls of yarn/spools of thread : loom : bolt of cloth

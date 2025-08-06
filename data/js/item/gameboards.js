@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Gameboards
 function onUseChecked( pUser, iUsed )
 {

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // List of valid map water tiles, used to determine location of shipwreck
 const mapWaterTiles = [ 0x00a8, 0x00a9, 0x00aa, 0x00ab ];
 

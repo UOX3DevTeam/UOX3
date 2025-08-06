@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function onCharDoubleClick( pUser, targChar )
 {
 	// Override restrictions for GMs and Admins

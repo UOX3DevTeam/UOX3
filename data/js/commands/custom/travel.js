@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command is a shortcut for opening up itemmenu 6000, which has teleport locations
 
 function CommandRegistration()

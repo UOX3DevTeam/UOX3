@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Miscellaneous Custom Commands || by Xuri (xuri at uox3.org)
 // v1.09
 // Last Updated: 2. March 2021

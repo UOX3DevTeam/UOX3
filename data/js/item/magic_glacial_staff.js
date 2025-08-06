@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Glacial Staff with 3 special spells, 2 of which are randomly enabled for any glacial staff upon creation
 // Ice Ball - Des Corp Del
 // Ice Strike - In Corp Del

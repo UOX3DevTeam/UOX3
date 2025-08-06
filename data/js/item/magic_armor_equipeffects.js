@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Equip-effects for magical armors
 // See magicarmor.js for details on full setup
 

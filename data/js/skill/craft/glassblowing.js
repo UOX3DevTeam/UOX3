@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const LabelHue = 0x480;				// Color of the text.
 const LabelColor = 0x7FFF;			// Second Color of text.
 const scriptID = 4036;				// Use this to tell the gump what script to close.

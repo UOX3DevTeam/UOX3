@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 const PuzzleChestCylinder = {
 	None: 0xE73,
 	LightBlue: 0x186F,

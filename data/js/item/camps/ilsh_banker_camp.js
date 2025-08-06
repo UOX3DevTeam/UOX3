@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script creates and decorates a banker gypsy camp when an item with the script attached is created
 // Associated Banker NPCs are spawned using regional spawn system
 function onCreateDFN( baseCampItem, objType )

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 const mapWaterTiles = [ 0x00a8,0x00a9,0x00aa,0x00ab ];
 const staticWaterTiles = [
 	0x1797, 0x179c,

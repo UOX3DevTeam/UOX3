@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Bank Checks (by Xuri)
 // v1.02
 // Last Updated: 5. July 2021

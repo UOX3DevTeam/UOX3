@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // tailoring script
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
 // 21/07/2003 Xuri; Updated/Rewrote the script

@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 // Exodus clockwork monsters are protected by a green shield that renders them
 // immune to physical damage, until the shield in question has been destroyed
 // using magical damage! Once the shield is destroyed, they can be damaged by normal

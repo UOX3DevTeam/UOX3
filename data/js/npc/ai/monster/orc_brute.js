@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 // Throws orc lord at attackers who cast magic at him
 // Dispells summoned creatures
 

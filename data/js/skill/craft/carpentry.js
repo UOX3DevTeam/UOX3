@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const textHue = 0x480;				// Color of the text.
 const scriptID = 4025;				// Use this to tell the gump what script to close.
 const gumpDelay = 2000;				// Timer for the gump to reappear after crafting.

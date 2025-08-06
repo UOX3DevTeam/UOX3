@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Enables pet bonding through feeding. When true, pets must be fed after taming to start the 
 // 7-day bonding countdown. Without feeding, bonding will not begin.
 const enablePetBondingViaFood = true;

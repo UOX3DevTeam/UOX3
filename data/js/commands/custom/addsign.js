@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command is a shortcut to add house signs - brings up a menu to select from
 
 function CommandRegistration()

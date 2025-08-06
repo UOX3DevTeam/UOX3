@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Syntax: 'RNDTILE <startID> <endID> <hue> <Z>(optional) <movable true/false>(optional)
 // Example 1: 'RNDTILE 0x04a9 0x04ac 0x0			//random floor tiles of hue 0x0
 // Example 2: 'RNDTILE 0x04a9 0x04ac 0x0 20 		//random floor tiles of hue 0x0 at Z 20

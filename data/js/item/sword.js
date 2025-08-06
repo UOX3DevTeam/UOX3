@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script handles the double-click functionality of all swords/knives
 
 function onUseChecked( pUser, iUsed )

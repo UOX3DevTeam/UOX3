@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Equip-effects for masks of orcish kin
 function onEquipAttempt( pEquipper, iEquipped )
 {

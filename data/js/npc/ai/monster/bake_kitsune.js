@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 function inRange( bakeKitsune, objInRange ) 
 {
 	if( !ValidateObject( objInRange ) || objInRange.npc || !objInRange.online || objInRange.dead || objInRange.isGM || objInRange.isCounselor || myNPC.tamed )

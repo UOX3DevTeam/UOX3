@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function onUseChecked( pUser, iUsed )
 {
     const pSocket = pUser.socket;

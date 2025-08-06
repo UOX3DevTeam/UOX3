@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script handles all double-click functionality of axes (including lumberjacking)
 
 function onUseChecked( pUser, iUsed )

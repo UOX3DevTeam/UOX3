@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command lets GMs apply certain other commands to all objects within an area
 
 function CommandRegistration()

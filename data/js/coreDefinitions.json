@@ -849,7 +849,7 @@
           { "name": "...extra", "type": "any[]", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "DoesEventExist",

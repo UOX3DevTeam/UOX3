@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command allows GMs to duplicate the selected object and create one or more identical ones
 
 function CommandRegistration()

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands let GMs send players to jail/release players from jail
 
 function CommandRegistration()

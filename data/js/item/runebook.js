@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Runebook.js (v1.01)
 // Rewritten mostly from scratch by Xuri (xuri@uox3.org)
 // Inspired by the original Runebook script by Rais

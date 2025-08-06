@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function CommandRegistration()
 {
 	RegisterCommand( "showtime", 4, true );

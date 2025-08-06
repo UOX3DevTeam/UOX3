@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script creates and decorates an orc camp when an item with the script attached is created
 // Associated Orc NPCs (or eventual Prisoner escortees) are spawned separately using regional spawn system
 function onCreateDFN( baseCampItem, objType )

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command tells the command user the current in-game time
 
 function CommandRegistration()

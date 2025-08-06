@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 // Ethereal Warrior
 
 // ethWar_SearchAmount = Number of times healer will look around for chars to resurrect before stopping

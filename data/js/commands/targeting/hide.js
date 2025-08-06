@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands let GMs permanently hide or unhide objects
 
 function CommandRegistration()

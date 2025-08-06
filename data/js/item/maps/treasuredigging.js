@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 //http://web.archive.org/web/20020408163252/http://uo.stratics.com/content/basics/treasure.shtml
 
 function TreasureDigging( pUser )

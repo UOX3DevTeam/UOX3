@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 // Shadowfiend AI
 
 // shadowfiend_SearchAmount = Number of times shadowfiend will look around for hidden chars to seek out before stopping

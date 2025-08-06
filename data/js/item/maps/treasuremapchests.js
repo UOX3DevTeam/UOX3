@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function onCreateDFN( objMade, objType )
 {
 	if( !ValidateObject( objMade ))

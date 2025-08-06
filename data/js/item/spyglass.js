@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 var moonPhase = new Array( "a full moon", "waning gibbous", "in it's last quarter", "waning crescent", "a new moon", "waxing crescent", "in it's first quarter", "waxing gibbous" );
 
 function onUseChecked( pUser, iUsed )

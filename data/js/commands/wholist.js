@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Menu displaying all player characterss/NPCs in the world, with options for search/filter/edit
 
 function CommandRegistration()

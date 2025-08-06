@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Handles functionality of special consumables thieves can steal from monsters
 
 const manaDraughtTimer = 60000 * 10; // 10 minutes

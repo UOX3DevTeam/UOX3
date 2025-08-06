@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function onSpecialMove( pUser, abilityID )
 {
 	// Define the array of restricted ability IDs

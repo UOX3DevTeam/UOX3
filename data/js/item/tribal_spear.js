@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Very high chance of tribal spear breaking upon being picked up from Savage's corpse
 function onPickup( iPickedUp, pGrabber )
 {

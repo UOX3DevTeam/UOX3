@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Moonstone Script
 
 // invalidTiles contains hex-id's of various maptiles that count as "invalid" if the user

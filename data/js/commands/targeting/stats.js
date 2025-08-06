@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // GM commands to adjust character stats
 
 function CommandRegistration()

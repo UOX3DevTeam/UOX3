@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function onEquip( pEquipper, iEquipped ) 
 {
 	pEquipper.AddScriptTrigger( 7003 );

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Let's test our spell casting scripts... what fun!
 
 function SpellRegistration()

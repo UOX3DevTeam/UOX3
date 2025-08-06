@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command lets GMs pick up and move even items that are marked as non-movable
 function CommandRegistration()
 {

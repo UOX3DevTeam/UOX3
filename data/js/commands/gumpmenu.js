@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function CommandRegistration()
 {
 	RegisterCommand( "gumpmenu", 8, true );

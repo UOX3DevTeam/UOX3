@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command lets GMs move a targeted object to their own backpack
 
 function CommandRegistration()

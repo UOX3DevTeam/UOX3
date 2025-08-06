@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command is used to set values for various properties on objects
 
 function CommandRegistration()

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Script for Tribal Paint/Savage Kin Paint consumable
 function onUseChecked( pUser, iUsed )
 {

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Attempts to "fix" the Z position of a character stuck in the ground
 function CommandRegistration()
 {

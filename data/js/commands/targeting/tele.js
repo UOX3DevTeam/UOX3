@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // GM commands for teleporting user and/or other objects around
 
 function CommandRegistration()

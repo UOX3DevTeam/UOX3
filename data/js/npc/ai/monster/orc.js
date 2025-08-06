@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 // This event runs instead of regular, hard-coded target selection for AI_EVIL
 
 const monstersVsAnimals = GetServerSetting( "MonstersVsAnimals" );

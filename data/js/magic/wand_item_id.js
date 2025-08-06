@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Item Identification as cast by Wands/Gnarled Staffs
 function SpellRegistration()
 {

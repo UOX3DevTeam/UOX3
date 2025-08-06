@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 const disguiseDuration = 1000 * 60 * 120; // 2 hours
 
 const humanMaleHair = [

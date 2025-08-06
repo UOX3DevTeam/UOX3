@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands let shard admins wipe either all or a selection of objects based on certain
 // conditions specified in command parameters
 

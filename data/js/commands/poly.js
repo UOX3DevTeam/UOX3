@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command is a shortcut for changing the body ID of user
 
 function CommandRegistration()

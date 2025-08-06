@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 // Ancient Lich can summon other undeads, and even transform into them to "hide"
 const undeadSummonList = [
 	"skeleton", "zombie", "spectre"

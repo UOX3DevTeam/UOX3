@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Settings
 // If true, UOX3 will attempt to automatically make training dummies damageable if they're not already
 const damageableDummies = true;

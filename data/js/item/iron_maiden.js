@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Iron Maiden
 // Giver of very intimate, spiky hugs
 

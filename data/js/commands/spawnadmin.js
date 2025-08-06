@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Menu displaying all item-based spawners, letting you edit them on-the-fly from menu
 
 function CommandRegistration()

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function onTooltip( equipment, pSocket )
 {
 	var healingBonus = parseInt( equipment.GetTag( "healingBonus" ));

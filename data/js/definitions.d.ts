@@ -1147,7 +1147,7 @@ declare global {
   function StaticAt( x: number, y: number, worldNum: number, tileId?: number ): boolean;
   function StaticInRange( x: number, y: number, worldNum: number, radius: number, tileId: number ): boolean;
   function StringToNum( value: string ): number;
-  function TriggerEvent( scriptId: number, eventToFire: string, ...extra: any[] ): void;
+  function TriggerEvent( scriptId: number, eventToFire: string, ...extra: any[] ): boolean;
   function TriggerTrap( src: CharOrSocket, item: Item ): void;
   function UseItem( src: CharOrSocket, item: Item ): void;
   function ValidateObject( obj: CharOrItem ): boolean;

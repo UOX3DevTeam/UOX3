@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function onWarModeToggle( pChar )
 {
 	if( pChar.GetTimer( Timer.PEACETIMER ) > GetCurrentClock() )

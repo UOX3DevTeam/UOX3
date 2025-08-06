@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function onMoveDetect( iDirt, pChar, rangeToChar, oldCharX, oldCharY ) 
 {
 	var socket = pChar.socket;

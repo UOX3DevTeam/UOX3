@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function onUseChecked( pUser, iUsed )
 {
 	if ( pUser.visible == 1 || pUser.visible == 2 )

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Guildstone Deed/Stone
 function onUseChecked( pUser, iUsed )
 {

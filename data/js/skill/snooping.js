@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Snooping - called when player snoops another PC/NPC's or tamed animal's pack
 
 const maxSnoopDistance = 1; // Determines the max distance at which snooping is possible

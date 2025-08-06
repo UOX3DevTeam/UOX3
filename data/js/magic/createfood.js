@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function SpellRegistration()
 {
 	RegisterSpell( 2, true );	// Create Food, ID from spells.dfn

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 //Script to allow GMs to instantly bond a pet.
 
 function CommandRegistration()

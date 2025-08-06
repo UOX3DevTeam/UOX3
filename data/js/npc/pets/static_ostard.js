@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // create pet from static script
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
 // Updated by Xuri

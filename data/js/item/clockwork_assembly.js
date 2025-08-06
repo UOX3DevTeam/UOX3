@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Tool used by Tinkerers to craft Iron Golems
 const maxControlSlots = GetServerSetting( "MaxControlSlots" );
 

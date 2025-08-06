@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Also supports "Enchanted" sextant given to Young players as part of the New Player Experience,
 // which points players in direction of nearest moongate, and to nearest bank
 

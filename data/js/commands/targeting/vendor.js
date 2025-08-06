@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This command is a shortcut for the "vendor buy/vendor sell" voice commands,
 // and to turn shopkeeper NPCs into normal NPCs
 

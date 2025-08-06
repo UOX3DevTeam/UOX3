@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command cleans up corpses and moongates. Should normally never have to be used,
 // since these things are handled by the automatic garbage collection anyway
 

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function ConsoleRegistration()
 {
 	RegisterKey( 'q', "shutdown" );

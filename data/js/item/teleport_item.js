@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Generic teleport script that uses morex, morey, morez, more and more0 on item
 // to determine teleport destination for players who double-click item
 

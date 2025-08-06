@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Skill-boosting Equipment
 
 // Original item rewards

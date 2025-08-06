@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Alternative castle gate opener
 // Last Updated: 12/11/2021
 //

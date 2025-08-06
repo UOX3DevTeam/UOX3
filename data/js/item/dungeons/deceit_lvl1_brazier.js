@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Brazier spawns lich
 
 function onUseChecked( pUser, iUsed )

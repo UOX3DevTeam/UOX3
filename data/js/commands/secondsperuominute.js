@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command displays the value of the "secondsperuominute" setting from UOX.INI
 
 function CommandRegistration()

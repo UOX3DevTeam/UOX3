@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 const monstersVsAnimals = GetServerSetting( "MonstersVsAnimals" );
 const animalAttackChance = GetServerSetting( "AnimalAttackChance" );
 

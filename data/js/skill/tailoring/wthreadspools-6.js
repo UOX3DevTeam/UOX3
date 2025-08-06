@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // tailoring script
 // Last Updated: October 31st 2021
 // bale of cotton : spinning wheel : six spools of thread

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // baking script
 
 function onUseChecked ( pUser, iUsed )

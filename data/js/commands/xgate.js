@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command opens a gate to a specific location
 function CommandRegistration()
 {

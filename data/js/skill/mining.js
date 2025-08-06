@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script handles all functionality related to mining, grave digging
 
 // The MineCheck setting determines where players are able to mine

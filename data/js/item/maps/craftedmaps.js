@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 /*When a player uses a certain item (referred to as mapItem), it triggers the onUseChecked function.
 This function then sets up various preset maps based on the item used, such as maps for different cities or worlds within the game.
 

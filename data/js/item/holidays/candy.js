@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 function onUseChecked(pUser, iUsed)
 {
 	var socket = pUser.socket;
@@ -40,9 +42,9 @@ function onUseChecked(pUser, iUsed)
 				"Noooo!",
 				"Please don't eat me... *whimper",
 				"Not the face!",
-				"Ahhhhhh! My foot’s gone!",
+				"Ahhhhhh! My footï¿½s gone!",
 				"Please. No! I have gingerkids!",
-				"No, no! I’m really made of poison. Really.",
+				"No, no! Iï¿½m really made of poison. Really.",
 				"Run, run as fast as you can! You can't catch me! I'm the gingerbread man!"
 			];
 

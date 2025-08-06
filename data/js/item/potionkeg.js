@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This script handles functionality of potion kegs
 const maxPotion = 100; // Max potions in a potion keg
 const limitLockedDownKegUsage = false; // If set to true, only owner/co-owners/friends can use locked down potion kegs

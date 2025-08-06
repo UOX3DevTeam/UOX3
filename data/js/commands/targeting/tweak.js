@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // The 'tweak command lets GMs and Admins modify properties of targeted objects
 // This script replaces the previously hard-coded command
 //

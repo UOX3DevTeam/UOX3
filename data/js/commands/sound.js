@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // These commands are used to play specific SFX and/or Music for the command user
 
 function CommandRegistration()

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands are used to remove/delete objects
 
 function CommandRegistration()

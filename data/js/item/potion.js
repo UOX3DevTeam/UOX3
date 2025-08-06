@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // If enabled in INI setting, explosion potions get bonus damage from alchemy skill
 // using this formula: ( attacker's alchemy skill / 10 ) / alchemyBonusModifier
 // Example: (1000 skillpoints / 10 ) / 5 = 20 bonus damage

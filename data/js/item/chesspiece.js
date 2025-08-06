@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // If guided movement is enabled, pieces will snap to the center of the square they are moved to
 const enableGuidedMovement = true;
 

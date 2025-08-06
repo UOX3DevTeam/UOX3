@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // This script triggers for items right after they've been crafted
 const scriptID = 4033;
 

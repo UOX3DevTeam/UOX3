@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 /*
 This file is here for you to have a gump with placing single item addons, example as the wreath you can select the direction and target the area you wish it to be placed.
 */

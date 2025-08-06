@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands show item or character properties for targeted objects
 function CommandRegistration()
 {

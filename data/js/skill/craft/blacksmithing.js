@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 const textHue = 0x480;				// Color of the text.
 const blacksmithID = 4023;			// Use this to tell the gump what script to close.
 const bronzeID = 4015;

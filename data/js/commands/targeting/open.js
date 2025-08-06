@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // These commands are used to open specific layers on a targeted character
 function CommandRegistration()
 {

@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Scissor-usage; Sheep-shearing, cloth-cutting
 // 24/07/2021 Xuri; xuri@uox3.org
 // This script contains all the default functions of the scissors,

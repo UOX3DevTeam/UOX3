@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Enable and Disable the weapon Special Moves
 const paralyzingBlow = true;
 const crushingBlow = true;
@@ -97,7 +99,7 @@ function CrushingBlow( pAttacker, pDefender )
 
 /*
 If a swordsman is using a two-handed weapon, he may sometimes deliver a Concussion Blow,
-during which the victim’s intelligence is halved for 30 seconds. The effects of a concussion blow are not cumulative,
+during which the victimï¿½s intelligence is halved for 30 seconds. The effects of a concussion blow are not cumulative,
 once a target is the victim of a concussion blow, they cannot be hit in that manner again for 30 seconds. 
 The base chance to deliver this special blow is your Anatomy skill level divided by 4.
 */

@@ -1,3 +1,5 @@
+/// <reference path="../../../definitions.d.ts" />
+// @ts-check
 function onCombatStart( pKappa, pDefender )
 {
 	if(IsNearWater( pKappa ))

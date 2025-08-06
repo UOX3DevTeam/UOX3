@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This ADMIN-only command will iterate through all items in the worldfiles and
 // update - for containers only - the...
 // 		weight (if container is empty and does no weight-value is already defined)

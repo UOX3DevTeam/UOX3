@@ -1,3 +1,5 @@
+/// <reference path="../../definitions.d.ts" />
+// @ts-check
 // Repeating Commands || by Xuri ( xuri at uox3.org )
 // v1.15
 // Last updated: 06/11/2021

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 function onUseUnChecked( pUser, iUsed )
 {
 	var userSocket = pUser.socket;

@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Magical Items, Pre-AoS style
 // v1.01
 // by Xuri

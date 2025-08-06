@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command deletes _ALL_ items in the world that matches specified ID
 
 function CommandRegistration()

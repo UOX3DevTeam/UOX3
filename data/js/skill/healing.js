@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // Main Sources
 // 	Publish 71 - https://wiki.stratics.com/index.php?title=UO:Publish_Notes_from_2011-07-21
 
@@ -667,7 +669,7 @@ function onTimer( mChar, timerID )
 
 								if(( now - deathTime ) < waitTime)
 								{
-									socket.SysMessage( GetDictionaryEntry( 19340, pSock.language )); // That creature’s spirit lacks cohesion. Try again in a few minutes.
+									socket.SysMessage( GetDictionaryEntry( 19340, pSock.language )); // That creatureï¿½s spirit lacks cohesion. Try again in a few minutes.
 									return;
 								}
 

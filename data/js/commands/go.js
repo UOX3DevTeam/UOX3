@@ -1,3 +1,5 @@
+/// <reference path="../definitions.d.ts" />
+// @ts-check
 // This command is used to quickly teleport to a specific place, character, or set of coordinates
 // See location map at bottom of file for list of locations to teleport directly to using
 // 'go [locationName]
