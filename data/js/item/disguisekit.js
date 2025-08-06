@@ -96,6 +96,7 @@ const gargoyleFemaleHorns = [
 	[0, 0, 0, 0, 2200] // None/Bald
 ];
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;

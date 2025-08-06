@@ -1,6 +1,7 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
 // Herding is triggered via double-clicking a Shepherd's Crook or regular Crook
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

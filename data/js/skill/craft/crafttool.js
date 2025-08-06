@@ -11,6 +11,7 @@ const Cooking = 4034;
 const Cartography = 4035;
 const Glassblowing = 4036;
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

@@ -67,6 +67,7 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 	return;
 }
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	if( ValidateObject( pUser ) && ValidateObject( iUsed ) && iUsed.isItem )

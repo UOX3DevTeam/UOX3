@@ -90,6 +90,7 @@ function onCreateDFN( objMade, objType )
 	}
 }
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, pItem )
 {
 	var socket = pUser.socket;

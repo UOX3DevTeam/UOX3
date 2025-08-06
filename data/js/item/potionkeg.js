@@ -5,6 +5,7 @@ const maxPotion = 100; // Max potions in a potion keg
 const limitLockedDownKegUsage = false; // If set to true, only owner/co-owners/friends can use locked down potion kegs
 const limitLockedDownPotionDrop = false; // If set to true, only owner/co-owner/friends can drop potions on locked down potion kegs
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, potionKeg )
 {
 	var socket = pUser.socket;

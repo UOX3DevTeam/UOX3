@@ -6,6 +6,7 @@ const manaDraughtTimer = 60000 * 10; // 10 minutes
 const seedOfLifeTimer = 60000 * 10; // 10 minutes
 const balmLotionTimer = 60000 * 30; // 30 minutes
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;

@@ -348,9 +348,9 @@ declare global {
   }
   enum CommandLevels {
     CL_PLAYER = 0,
-    CL_CNS,      
-    CL_GM,       
-    CL_ADMIN,    
+    CL_CNS = 1,  
+    CL_GM = 2,   
+    CL_ADMIN = 3,
   }
   interface Console {
               logEcho: number;
@@ -413,9 +413,9 @@ declare global {
   type GuildOrNull = Guild | null | undefined;
   enum GuildTypes {
     GT_STANDARD = 0,
-    GT_ORDER,      
-    GT_CHAOS,      
-    GT_UNKNOWN,    
+    GT_ORDER = 1,  
+    GT_CHAOS = 2,  
+    GT_UNKNOWN = 3,
   }
   interface Item extends BaseObject {
               ac:                number;
@@ -1001,24 +1001,24 @@ declare global {
   type UOXResource_class = UOXResource;
   enum VisibleTypes {
     VT_VISIBLE = 0,    // Visible to All
-    VT_TEMPHIDDEN,     // Hidden (With Skill) / Visible To Item Owner
-    VT_INVISIBLE,      // Magically Hidden
-    VT_PERMHIDDEN,     // Permanent Hidden (GM Hidden)
-    VT_GHOSTHIDDEN,    // Hidden because the player is a ghost
+    VT_TEMPHIDDEN = 1, // Hidden (With Skill) / Visible To Item Owner
+    VT_INVISIBLE = 2,  // Magically Hidden
+    VT_PERMHIDDEN = 3, // Permanent Hidden (GM Hidden)
+    VT_GHOSTHIDDEN = 4, // Hidden because the player is a ghost
   }
   enum WeatherType {
     NONE = 0,    
-    PHYSICAL,    
-    LIGHT,       
-    RAIN,        
-    COLD,        
-    HEAT,        
-    LIGHTNING,   
-    POISON,      
-    SNOW,        
-    STORM,       
-    STORMBREW,   
-    WEATHNUM,    
+    PHYSICAL = 1,
+    LIGHT = 2,   
+    RAIN = 3,    
+    COLD = 4,    
+    HEAT = 5,    
+    LIGHTNING = 6,
+    POISON = 7,  
+    SNOW = 8,    
+    STORM = 9,   
+    STORMBREW = 10,
+    WEATHNUM = 11,
   }
 
 // Global Functions
@@ -1263,7 +1263,7 @@ declare global {
   function onUnequip( equipper: Character, equipping: Item ): void;
   function onUnequipAttempt( equipper: Character, equipping: Item ): void;
   function onUseBandageMacro( mSock: Socket, targChar: Character, bandageItem: Item ): void;
-  function onUseChecked( user: Character, iUsing: Item ): void;
+  function onUseChecked( user: Character, iUsing: Item ): boolean;
   function onUseUnChecked( user: Character, iUsing: Item ): void;
   function onVirtueGumpPress( mChar: Character, tChar: Character, buttonId: number ): void;
   function onWarModeToggle( mChar: Character ): void;

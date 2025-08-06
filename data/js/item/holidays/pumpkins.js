@@ -49,6 +49,7 @@ function getRandomPumpkinName( objMade )
 // Using explosion potion effect.
 // Missing: colors as well for the pumpkins
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed ) 
 {
 	var socket = pUser.socket;

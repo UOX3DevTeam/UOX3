@@ -93,6 +93,7 @@ const validMapSandTilesIDs = [
 	0x659, 0x65A, 0x657, 0x658, 0x659, 0x65A, 0x667, 0x668, 0x669, 0x66A
 ];
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

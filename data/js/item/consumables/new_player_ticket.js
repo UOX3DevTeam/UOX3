@@ -10,6 +10,7 @@ const spellBookReward = ( EraStringToNum( GetServerSetting( "CoreShardEra" )) >=
 const rangerArmorOverride = false;
 const spellBookRewardOverride = false;
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

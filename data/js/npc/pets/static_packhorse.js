@@ -48,6 +48,7 @@ function onBoughtFromVendor( pSock, Vendor, iBought, numItemsBought )
 	}
 }
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var nSpawned = SpawnNPC( "packhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );

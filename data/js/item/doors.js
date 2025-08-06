@@ -15,6 +15,7 @@ const keylessGuestAccess 	= GetServerSetting( "KeylessGuestAccess" );
 // Fetch setting for whether all characters on a player's account co-own houses together
 const coOwnHousesOnSameAccount = GetServerSetting( "CoOwnHousesOnSameAccount" );
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

@@ -28,6 +28,7 @@ function onCreateDFN( objMade, objType )
 	}
 }
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	if( pUser.visible == 1 || pUser.visible == 2 )

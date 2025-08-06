@@ -1,6 +1,7 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 // Strongbox
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;

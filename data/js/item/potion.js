@@ -10,6 +10,7 @@ const alchemyBonusModifier = parseInt( GetServerSetting( "AlchemyBonusModifier" 
 const randomizePotionCountdown = false; // If true, add/remove +1/-1 seconds to explosion potion countdowns
 const reqFreeHands = true;
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

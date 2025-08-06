@@ -3,6 +3,7 @@
 const scriptID = 19100;// this is the script id
 const PlantDelayTimer = 82800000;//82800000 Every 23 hours plant grows
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var gumpID = scriptID + 0xffff;

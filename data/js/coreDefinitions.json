@@ -5502,45 +5502,45 @@
       "name": "CommandLevels",
       "values": [
         { "label": "CL_PLAYER", "value": 0 },
-        { "label": "CL_CNS" },
-        { "label": "CL_GM" },
-        { "label": "CL_ADMIN" }
+        { "label": "CL_CNS"   , "value": 1 },
+        { "label": "CL_GM"    , "value": 2 },
+        { "label": "CL_ADMIN" , "value": 3 }
       ]
     },
     {
       "name": "GuildTypes",
       "values": [
         { "label": "GT_STANDARD", "value": 0 },
-        { "label": "GT_ORDER"                },
-        { "label": "GT_CHAOS"                },
-        { "label": "GT_UNKNOWN"              }
+        { "label": "GT_ORDER"   , "value": 1 },
+        { "label": "GT_CHAOS"   , "value": 2 },
+        { "label": "GT_UNKNOWN" , "value": 3 }
       ]
     },
     {
       "name": "VisibleTypes",
       "values": [
-        { "label": "VT_VISIBLE", "value": 0, "comment": "Visible to All" },
-        { "label": "VT_TEMPHIDDEN", "comment": "Hidden (With Skill) / Visible To Item Owner" },
-        { "label": "VT_INVISIBLE", "comment": "Magically Hidden" },
-        { "label": "VT_PERMHIDDEN", "comment": "Permanent Hidden (GM Hidden)" },
-        { "label": "VT_GHOSTHIDDEN", "comment": "Hidden because the player is a ghost" }
+        { "label": "VT_VISIBLE",     "value": 0, "comment": "Visible to All" },
+        { "label": "VT_TEMPHIDDEN",  "value": 1, "comment": "Hidden (With Skill) / Visible To Item Owner" },
+        { "label": "VT_INVISIBLE",   "value": 2, "comment": "Magically Hidden" },
+        { "label": "VT_PERMHIDDEN",  "value": 3, "comment": "Permanent Hidden (GM Hidden)" },
+        { "label": "VT_GHOSTHIDDEN", "value": 4, "comment": "Hidden because the player is a ghost" }
       ]
     },
     {
       "name": "WeatherType",
       "values": [
-        { "label": "NONE", "value": 0 },
-        { "label": "PHYSICAL" },
-        { "label": "LIGHT" },
-        { "label": "RAIN" },
-        { "label": "COLD" },
-        { "label": "HEAT" },
-        { "label": "LIGHTNING" },
-        { "label": "POISON" },
-        { "label": "SNOW" },
-        { "label": "STORM" },
-        { "label": "STORMBREW" },
-        { "label": "WEATHNUM" }
+        { "label": "NONE",      "value": 0 },
+        { "label": "PHYSICAL" , "value": 1 },
+        { "label": "LIGHT"    , "value": 2 },
+        { "label": "RAIN"     , "value": 3 },
+        { "label": "COLD"     , "value": 4 },
+        { "label": "HEAT"     , "value": 5 },
+        { "label": "LIGHTNING", "value": 6 },
+        { "label": "POISON"   , "value": 7 },
+        { "label": "SNOW"     , "value": 8 },
+        { "label": "STORM"    , "value": 9 },
+        { "label": "STORMBREW", "value": 10 },
+        { "label": "WEATHNUM" , "value": 11 }
       ]
     },
     {
@@ -7775,7 +7775,7 @@
           { "name": "iUsing", "type": "Item", "required": true }
         ]
       },
-      "returns": "void"
+      "returns": "boolean"
     },
     {
       "name": "onUseUnChecked",

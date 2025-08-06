@@ -4,6 +4,7 @@
 // v1.02
 // Last Updated: 5. July 2021
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;

@@ -2,6 +2,7 @@
 // @ts-check
 // This script handles all double-click functionality of axes (including lumberjacking)
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

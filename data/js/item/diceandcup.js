@@ -1,11 +1,13 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	Roll( pUser, iUsed );
 	return false;
 }
 
+/** @type {( pUser: Character, iUsed: Item ) => void} */
 function Roll( pUser, iUsed )
 {
 	if( pUser.visible == 1 || pUser.visible == 2 )

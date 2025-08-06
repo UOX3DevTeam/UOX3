@@ -9,6 +9,7 @@ const cottonGrowthIntervalMin = 30000; // Min delay in milliseconds between each
 const cottonGrowthIntervalMax = 90000; // Max delay in milliseconds between each growth phase
 const cottonResourceDecay = 3600; // Time (in seconds) it takes for resource to decay, allowing another to spawn in its place if spawned using spawn regions. 0 to disable decay
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var isInRange = pUser.InRange( iUsed, 3 );

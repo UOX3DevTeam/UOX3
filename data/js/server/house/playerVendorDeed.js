@@ -1,6 +1,7 @@
 /// <reference path="../../definitions.d.ts" />
 // @ts-check
 // Player Vendor Deeds
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	// Check if object is in player's backpack

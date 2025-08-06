@@ -13,6 +13,7 @@
 // Raw Eggs : Heat source : Fried Eggs
 // sauage or cheese pizza : Heat source : pizza
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	// get users socket

@@ -3,6 +3,7 @@
 // Iron Maiden
 // Giver of very intimate, spiky hugs
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

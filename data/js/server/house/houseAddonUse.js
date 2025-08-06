@@ -7,6 +7,7 @@
 // Instead, this script is triggered via entries in jse_objectassociations.scp, and call on the
 // hard-coded target requests that would normally be executed for the non-addon variant of the
 // items
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	if( !ValidateObject( iUsed ))

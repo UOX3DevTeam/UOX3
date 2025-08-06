@@ -100,6 +100,7 @@ function CheckForValidSOSLocation( xLoc, yLoc, worldNum )
 	return valid;
 }
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

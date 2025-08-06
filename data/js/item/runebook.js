@@ -14,6 +14,7 @@ const scriptID = 5029;		// Script ID assigned to this script in jse_fileassociat
 const useDelay = 7000; 		// 7 seconds between each time a runebook can be used
 const tooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 
+/** @type {( pUser: Character, runeBook: Item ) => boolean} */
 function onUseChecked( pUser, runeBook )
 {
 	// Use maximum charges set on runebook, if any

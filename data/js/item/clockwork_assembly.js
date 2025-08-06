@@ -7,6 +7,7 @@ const maxControlSlots = GetServerSetting( "MaxControlSlots" );
 const maxFollowers = GetServerSetting( "MaxFollowers" );
 const golemControlSlots = 4;
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

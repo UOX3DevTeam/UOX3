@@ -13,6 +13,7 @@ const canOwnAndCoOwnHouses = GetServerSetting( "CanOwnAndCoOwnHouses" );
 const maxHousesOwnable = GetServerSetting( "MaxHousesOwnable" );
 const maxHousesCoOwnable = GetServerSetting( "MaxHousesCoOwnable" );
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	if( iUsed.morex == 0 )

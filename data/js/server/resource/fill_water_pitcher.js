@@ -5,6 +5,7 @@
 // For use only with the UOX3 emulator or any other with the authors permission
 // Target resource, fill water pitcher
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	//var iPackOwner = GetPackOwner( iUsed, 0 );

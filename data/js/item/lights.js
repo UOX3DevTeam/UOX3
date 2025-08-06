@@ -5,6 +5,7 @@ const dynamicLampPosts = true; // This enables and disables lamp post to change 
 const brightLvl = 10; // This Setting is for how bright or dark it has to be for lamps to turn on and off. the Higher the number the Darker the Lower the Number the lighter.
 const unequipEnabled = false; // This setting allows the touch and candle to be turned off automatic if unequiped.
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;

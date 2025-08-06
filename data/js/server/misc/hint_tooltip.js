@@ -31,6 +31,7 @@ function onTooltip( myObj )
 	return tooltipText;
 }
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	iUsed.TextMessage( GetHintMessage( iUsed, false ), false, 0x3b2, 0, pUser.serial );

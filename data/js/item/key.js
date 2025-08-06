@@ -27,6 +27,7 @@ const keyScriptID = 5013; // Script-ID from JSE_FILEASSOCIATIONS.SCP! Change to 
 const coOwnHousesOnSameAccount = GetServerSetting( "CoOwnHousesOnSameAccount" );
 
 // Adding keys to keyrings
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;

@@ -6,6 +6,7 @@
 // from sheep-shearing to cloth cutting.
 var aosEnabled = 0;
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

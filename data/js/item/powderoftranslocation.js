@@ -1,5 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iPowder )
 {
 	var socket = pUser.socket;

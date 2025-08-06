@@ -19,6 +19,7 @@ const staticWaterTiles = [
 	0x5653, 0x565e
 ];
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

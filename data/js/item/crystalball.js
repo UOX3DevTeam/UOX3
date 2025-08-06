@@ -1,5 +1,6 @@
 /// <reference path="../definitions.d.ts" />
 // @ts-check
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	if ( pUser.visible == 1 || pUser.visible == 2 )

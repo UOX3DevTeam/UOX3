@@ -40,6 +40,7 @@
 
 const switchScriptID = 4761; // ID of this script in jse_fileassociations.scp
 
+/** @type {( pUser: Character, iSwitch: Item ) => boolean} */
 function onUseChecked( pUser, iSwitch )
 {
 	if( !ValidateObject( pUser ) || !ValidateObject( iSwitch ))

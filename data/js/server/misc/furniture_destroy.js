@@ -8,6 +8,7 @@
 // use axe : target furniture : destroy it when its not locked down
 // 09/02/2003 Updated by Xuri; xuri@sensewave.com
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed ) 
 {
 	// is it in users pack?

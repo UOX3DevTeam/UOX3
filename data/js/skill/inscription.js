@@ -5,6 +5,7 @@ function SkillRegistration()
 	RegisterSkill( 23, true );	// Inscription
 }
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

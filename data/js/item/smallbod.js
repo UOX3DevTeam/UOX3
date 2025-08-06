@@ -40,6 +40,7 @@ function onCreateDFN( objMade, objType )
 	}
 }
 
+/** @type {( pUser: Character, smallBOD: Item ) => boolean} */
 function onUseChecked( pUser, smallBOD )
 {
 	var gumpID = scriptID + 0xffff;

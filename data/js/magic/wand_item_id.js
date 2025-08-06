@@ -128,6 +128,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
     TriggerEvent( 818, "onCallback0", mSock, ourTarg );
 }
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
     pUser.CastSpell( 65 );

@@ -17,6 +17,7 @@
 // Todo: Descriptions for how full a liquid container is
 const pitcherScriptID = 2100;
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;

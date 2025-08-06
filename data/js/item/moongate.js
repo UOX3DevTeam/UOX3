@@ -33,6 +33,7 @@ var enableMalas = GetMoongateFacetStatus( 3 );
 var enableTokuno = GetMoongateFacetStatus( 4 );
 var enableTerMur = GetMoongateFacetStatus( 5 );
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed ) 
 { 
 	// get users socket

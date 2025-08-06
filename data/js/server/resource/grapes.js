@@ -10,6 +10,7 @@
 const grapeGrowthDelay = 120000; //Delay in milliseconds before resources respawns
 const maxGrapeResource = 5; //maximum amount of resources on a given item
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var isInRange = pUser.InRange( iUsed, 3 );

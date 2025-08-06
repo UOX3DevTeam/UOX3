@@ -2,6 +2,7 @@
 // @ts-check
 // This script handles the double-click functionality of all swords/knives
 
+/** @type {( pUser: Character, iUsed: Item ) => boolean} */
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
