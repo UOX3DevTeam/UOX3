@@ -6010,7 +6010,40 @@
           "type": "number"
         }
       ],
-      "methods": []
+      "methods": [
+        { "name": "AddToBanList",         "cppName": "CMulti_AddToBanList",         "params": { "num": 1, "list": [ { "name": "newBan", "type": "Character", "required": true } ] }, "returns": "void" },
+        { "name": "AddToFriendList",      "cppName": "CMulti_AddToFriendList",      "params": { "num": 1, "list": [ { "name": "newFriend", "type": "Character", "required": true } ] }, "returns": "void" },
+        { "name": "AddToGuestList",       "cppName": "CMulti_AddToGuestList",       "params": { "num": 1, "list": [ { "name": "newGuest", "type": "Character", "required": true } ] }, "returns": "void" },
+        { "name": "AddToOwnerList",       "cppName": "CMulti_AddToOwnerList",       "params": { "num": 1, "list": [ { "name": "newOwner", "type": "Character", "required": true } ] }, "returns": "void" },
+        { "name": "AddTrashCont",         "cppName": "CMulti_AddTrashCont",         "params": { "num": 1, "list": [ { "name": "trash", "type": "Item", "required": true } ] }, "returns": "void" },
+        { "name": "ClearBanList",         "cppName": "CMulti_ClearBanList",         "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "ClearFriendList",      "cppName": "CMulti_ClearFriendList",      "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "ClearGuestList",       "cppName": "CMulti_ClearGuestList",       "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "ClearOwnerList",       "cppName": "CMulti_ClearOwnerList",       "params": { "num": 0, "list": [] }, "returns": "void" },
+        { "name": "FinishedChars",        "cppName": "CMulti_FinishedChars",        "params": { "num": 0, "max": 1, "list": [ { "name": "listType", "type": "string", "required": false } ] }, "returns": "boolean" },
+        { "name": "FirstChar",            "cppName": "CMulti_FirstChar",            "params": { "num": 0, "max": 1, "list": [ { "name": "listType", "type": "string", "required": false } ] }, "returns": "CharOrNull" },
+        { "name": "GetMultiCorner",       "cppName": "CMulti_GetMultiCorner",       "params": { "num": 1, "list": [ { "name": "corner", "type": "number", "required": true } ] }, "returns": "string" },
+        { "name": "GetTiller",            "cppName": "CMulti_GetTiller",            "params": { "num": 0, "list": [] }, "returns": "ItemOrNull" },
+        { "name": "IsInMulti",            "cppName": "CMulti_IsInMulti",            "params": { "num": 1, "list": [ { "name": "toCheck", "type": "BaseObject", "required": true } ] }, "returns": "boolean" },
+        { "name": "IsOnBanList",          "cppName": "CMulti_IsOnBanList",          "params": { "num": 1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "IsOnFriendList",       "cppName": "CMulti_IsOnFriendList",       "params": { "num": 1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "IsOnGuestList",        "cppName": "CMulti_IsOnGuestList",        "params": { "num": 1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "IsOnOwnerList",        "cppName": "CMulti_IsOnOwnerList",        "params": { "num": 1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "IsOwner",              "cppName": "CMulti_IsOwner",              "params": { "num": 1, "list": [ { "name": "toCheck", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "IsSecureContainer",    "cppName": "CMulti_IsSecureContainer",    "params": { "num": 1, "list": [ { "name": "toChcek", "type": "Item", "required": true } ] }, "returns": "boolean" },
+        { "name": "KillKeys",             "cppName": "CMulti_KillKeys",             "params": { "num": 0, "max": 1, "list": [ { "name": "specific", "type": "Character", "required": false } ] }, "returns": "void" },
+        { "name": "LockDownItem",         "cppName": "CMulti_LockDownItem",         "params": { "num": 1, "list": [ { "name": "toLock", "type": "Item", "required": true } ] }, "returns": "boolean" },
+        { "name": "NextChar",             "cppName": "CMulti_NextChar",             "params": { "num": 0, "max": 1, "list": [ { "name": "listType", "type": "string", "required": false } ] }, "returns": "CharOrNull" },
+        { "name": "ReleaseItem",          "cppName": "CMulti_ReleaseItem",          "params": { "num": 1, "list": [ { "name": "toRelease", "type": "Item", "required": true } ] }, "returns": "boolean" },
+        { "name": "RemoveFromBanList",    "cppName": "CMulti_RemoveFromBanList",    "params": { "num": 1, "list": [ { "name": "toRemove", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "RemoveFromFriendList", "cppName": "CMulti_RemoveFromFriendList", "params": { "num": 1, "list": [ { "name": "toRemove", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "RemoveFromGuestList",  "cppName": "CMulti_RemoveFromGuestList",  "params": { "num": 1, "list": [ { "name": "toRemove", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "RemoveFromOwnerList",  "cppName": "CMulti_RemoveFromOwnerList",  "params": { "num": 1, "list": [ { "name": "toRemove", "type": "Character", "required": true } ] }, "returns": "boolean" },
+        { "name": "RemoveTrashCont",      "cppName": "CMulti_RemoveTrashCont",      "params": { "num": 1, "list": [ { "name": "toRemove", "type": "Item", "required": true } ] }, "returns": "boolean" },
+        { "name": "SecureContainer",      "cppName": "CMulti_SecureContainer",      "params": { "num": 1, "list": [ { "name": "toSecure", "type": "Item", "required": true } ] }, "returns": "boolean" },
+        { "name": "TurnBoat",             "cppName": "CMulti_TurnBoat",             "params": { "num": 1, "list": [ { "name": "direction", "type": "number", "required": true } ] }, "returns": "void" },
+        { "name": "UnsecureContainer",    "cppName": "CMulti_UnsecureContainer",    "params": { "num": 1, "list": [ { "name": "toUnsecure", "type": "Item", "required": true } ] }, "returns": "boolean" }
+      ]
     },
     {
       "name": "Boat",

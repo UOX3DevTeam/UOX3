@@ -549,6 +549,38 @@ declare global {
               tradeTimestamp:      string;
               trashContainers:     number;
               vendors:             number;
+    AddToBanList( newBan: Character ): void;
+    AddToFriendList( newFriend: Character ): void;
+    AddToGuestList( newGuest: Character ): void;
+    AddToOwnerList( newOwner: Character ): void;
+    AddTrashCont( trash: Item ): void;
+    ClearBanList(): void;
+    ClearFriendList(): void;
+    ClearGuestList(): void;
+    ClearOwnerList(): void;
+    FinishedChars( listType?: string ): boolean;
+    FirstChar( listType?: string ): CharOrNull;
+    GetMultiCorner( corner: number ): string;
+    GetTiller(): ItemOrNull;
+    IsInMulti( toCheck: BaseObject ): boolean;
+    IsOnBanList( toCheck: Character ): boolean;
+    IsOnFriendList( toCheck: Character ): boolean;
+    IsOnGuestList( toCheck: Character ): boolean;
+    IsOnOwnerList( toCheck: Character ): boolean;
+    IsOwner( toCheck: Character ): boolean;
+    IsSecureContainer( toChcek: Item ): boolean;
+    KillKeys( specific?: Character ): void;
+    LockDownItem( toLock: Item ): boolean;
+    NextChar( listType?: string ): CharOrNull;
+    ReleaseItem( toRelease: Item ): boolean;
+    RemoveFromBanList( toRemove: Character ): boolean;
+    RemoveFromFriendList( toRemove: Character ): boolean;
+    RemoveFromGuestList( toRemove: Character ): boolean;
+    RemoveFromOwnerList( toRemove: Character ): boolean;
+    RemoveTrashCont( toRemove: Item ): boolean;
+    SecureContainer( toSecure: Item ): boolean;
+    TurnBoat( direction: number ): void;
+    UnsecureContainer( toUnsecure: Item ): boolean;
   }
   type MultiOrNull = Multi | null | undefined;
   class Packet {
