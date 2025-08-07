@@ -4,7 +4,6 @@ function onQuestToggle( pUser, iUsed )
 
 	if( !ValidateObject( pUser ))
 	{
-		pUser.SysMessage( "Invalid pUser." );
 		return false;
 	}
 

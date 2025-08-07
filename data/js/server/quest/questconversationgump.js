@@ -103,16 +103,23 @@ function onGumpPress( pSock, pButton, gumpData )
 	var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
 	var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
 	var quest = TriggerEvent( 5801, "QuestList", playerQuestID );
+	var loginQuestID = parseInt( pUser.GetTempTag( "questConversationID" ));
 
-	switch ( pButton ) 
+	switch( pButton )
 	{
 		case 0: // Close gump
 			break;
 		case 1: // Accept quest
-			TriggerEvent( 5800, "StartQuest", pUser, playerQuestID );
+			if (loginQuestID >= 0 && loginQuestID != null)
+			{
+				TriggerEvent( 5800, "StartQuest", pUser, loginQuestID );
+			}
+			else
+			{
+				TriggerEvent( 5800, "StartQuest", pUser, playerQuestID );
+			}
 			pUser.SoundEffect( 0x5B4, true );
 			break;
-
 		case 2: // Refuse quest
 			questNpc.TextMessage( quest.refuse );
 			break;
@@ -685,9 +692,7 @@ function QuestNpcInterAction( pUser, questNpc )
 
 	// Validate the targeted object and player
 	if( !ValidateObject( pUser ) || !ValidateObject( questNpc ))
-	{
 		return false;
-	}
 
 	// Check if the player is within range
 	if( !questNpc.InRange( pUser, 2 ))
@@ -696,66 +701,56 @@ function QuestNpcInterAction( pUser, questNpc )
 		return false;
 	}
 
-	// Check if the NPC is a delivery recipient
+	// Get both delivery and normal quest IDs from the NPC
 	var deliveryQuestID = parseInt( questNpc.GetTag( "DeliveryQuestID" ));
-	if( deliveryQuestID )
+	var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
+
+	// Read archived quest IDs
+	var archivedQuests = TriggerEvent( 5800, "ReadArchivedQuests", pUser );
+
+	// Check if delivery quest has already been completed
+	var deliveryAlreadyCompleted = false;
+	for( var i = 0; i < archivedQuests.length; i++ )
+	{
+		var archivedID = parseInt(archivedQuests[i], 10 );
+		if( archivedID == deliveryQuestID )
+		{
+			deliveryAlreadyCompleted = true;
+			break;
+		}
+	}
+
+	// Only process delivery if not completed
+	if( deliveryQuestID && !deliveryAlreadyCompleted )
 	{
 		if( TriggerEvent( 5800, "CheckQuest", pUser, deliveryQuestID, "check" ))
-		{ // Validate quest eligibility
-			ProcessDeliveryQuest( pUser, questNpc, deliveryQuestID );
-		}
-		else
 		{
-			return false;
+			ProcessDeliveryQuest( pUser, questNpc, deliveryQuestID );
+			return true; // exit after handling delivery
 		}
-		// Handle delivery quest
-		//if( processDeliveryQuest( pUser, questNpc, deliveryQuestID )) 
-		//{
-		///	return; // Delivery quest handled successfully
-		//}
 	}
 
-	// Fetch the initial quest ID from the NPC's tag
-	var initialQuestID = parseInt( questNpc.GetTag( "QuestID" ), 10 );
-	if( !initialQuestID ) 
-	{
+	// Continue normal quest interaction
+	if( !initialQuestID )
 		return false;
-	}
 
-	// Resolve the player's current quest ID in the chain
 	var playerQuestID = ResolvePlayerQuestID( pUser, initialQuestID );
-
 	if( !playerQuestID )
 	{
 		questNpc.TurnToward( pUser );
-		questNpc.TextMessage( GetDictionaryEntry( 19612, socket.language ));//You have completed all quests
+		questNpc.TextMessage( GetDictionaryEntry( 19612, socket.language )); // You have completed all quests
 		return false;
 	}
 
-	// Check if the quest is already completed
-	var archivedQuests = TriggerEvent( 5800, "ReadArchivedQuests", pUser );
-
+	// Check if the player's current quest is archived (completed)
 	for( var i = 0; i < archivedQuests.length; i++ )
 	{
-		var archivedQuestID = parseInt( archivedQuests[i], 10 ); // Ensure it's treated as an integer
-		if( archivedQuestID == playerQuestID ) // Compare consistently
+		var archivedQuestID = parseInt( archivedQuests[i], 10 );
+		if( archivedQuestID == playerQuestID )
 		{
-			targObj.TurnToward( pUser );
-			targObj.TextMessage( "I'm sorry, I have nothing for you at this time.");
+			questNpc.TurnToward( pUser );
+			questNpc.TextMessage( "I'm sorry, I have nothing for you at this time." );
 			return false;
-		}
-	}
-
-	// Fetch player's progress for the current quest
-	var questProgressArray = TriggerEvent( 5800, "ReadQuestProgress", pUser );
-	var currentQuestProgress = null;
-
-	for( var i = 0; i < questProgressArray.length; i++ ) 
-	{
-		if( questProgressArray[i].questID == playerQuestID ) 
-		{
-			currentQuestProgress = questProgressArray[i];
-			break;
 		}
 	}
 
@@ -769,6 +764,7 @@ function QuestNpcInterAction( pUser, questNpc )
 function ProcessDeliveryQuest( player, questNpc, deliveryQuestID )
 {
 	var socket = player.socket;
+
 	// Fetch the quest details
 	var quest = TriggerEvent( 5801, "QuestList", deliveryQuestID );
 	if( !quest || quest.type != "delivery" )

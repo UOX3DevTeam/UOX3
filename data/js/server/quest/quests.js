@@ -1140,6 +1140,31 @@ function QuestList(questID)
 				{ type: "gold", amount: 2000, name: "Gold"},
 				{ type: "item", sectionID: "0x1F4C", amount: 1, name: "Recall Scroll" }
 			]
+		},
+		"9001": {
+			title: "Urgent Delivery",
+			description: "A mysterious package has been left for you. Deliver it to Nail in Britain.",
+			type: "delivery",
+			deliveryItem: {
+				sectionID: "0x0E21",
+				name: "Sealed Package",
+				amount: 1
+			},
+			"targetDelivery": {
+				"sectionID": "nail", // Section ID of Nail
+				"name": "Nail the Receiver", // Name of the NPC
+				"location": {
+					"x": 1068, // X coordinate
+					"y": 1608, // Y coordinate
+					"z": 0,    // Z coordinate
+					"world": 0 // World number
+				}
+			},
+			rewards: [
+				{ type: "gold", amount: 500 },
+				{ type: "item", sectionID: "reward_ring_of_swiftness", name: "Ring of Swiftness", amount: 1 }
+			],
+			oneTimeQuest: 1
 		}
 	};
 	// Return the full quest list if no questID is provided

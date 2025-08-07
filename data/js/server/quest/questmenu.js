@@ -145,13 +145,13 @@ function QuestMenu( pUser )
 
 	// Add Options Menu Page
 	gump.AddPage( totalPages + filteredQuests.length + 1 );
-	gump.AddBackground( 350, 120, 306, 350, 1579 ); // Options Menu Background
+	gump.AddBackground( 350, 120, 306, 400, 1579 ); // Options Menu Background
 	gump.AddPageButton( 40, 550, 1588, 1589, totalPages + filteredQuests.length + 1 ); // Options Menu Button
 	gump.AddText( 65, 555, 500, "Options Menu" );
 	var wordHue = 0;
 	if( useTransparentBackground )
 	{
-		gump.AddCheckerTrans( 350, 120, 306, 350 ); // Transparent background
+		gump.AddCheckerTrans( 350, 120, 306, 400 ); // Transparent background
 		wordHue = 1152;
 	}
 	gump.AddHTMLGump( 47, 230, 266, 300, true, false,
@@ -180,8 +180,14 @@ function QuestMenu( pUser )
 		//gump.AddButton( 370, yPosition, isSelected ? 1141 : 1143, isSelected ? 1141 : 1143, 1, 0, i + 1000 ); // Category buttons
 		gump.AddText( 400, yPosition, isSelected ? 500 : wordHue, categories[i] );
 	}
-	gump.AddButton( 380, 420, 238, 240, 1, 0, 2000 );//apple button
-	gump.AddButton( 550, 420, 247, 249, 1, 0, 1 );//okay button
+
+	var showLoginQuests = playerSettings["ShowLoginQuestOffers"] != false;
+	var loginQuestToggleText = showLoginQuests ? "Disable Quest Prompt" : "Enable Quest Prompt";
+	gump.AddCheckbox( 370, 450, 210, 0, 2002 ); // CheckBox for login quest toggle
+	gump.AddText( 400, 450, wordHue, loginQuestToggleText );
+
+	gump.AddButton( 380, 480, 238, 240, 1, 0, 2000 );//apple button
+	gump.AddButton( 550, 480, 247, 249, 1, 0, 1 );//okay button
 
 	// Add a fallback for when no quests are found
 	if( filteredQuests.length == 0 )
@@ -198,7 +204,6 @@ function manualTrim( str )
 {
 	return str.replace(/^\s+|\s+$/g, "");
 }
-
 
 function CompletedQuestsMenu( pUser ) 
 {
@@ -311,7 +316,6 @@ function CompletedQuestsMenu( pUser )
 	gump.Free();
 }
 
-
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
@@ -372,6 +376,18 @@ function onGumpPress( pSock, pButton, gumpData )
 			pSock.SysMessage( "Transparency " + (playerSettings["UseTransparentBackground"] ? "enabled" : "disabled" ) + "." );
 
 			// Refresh the options menu
+			pSock.CloseGump( gumpID, 0 );
+			QuestMenu( pUser );
+		}
+		else if( OtherButton == 2002 ) 
+		{
+			var playerSettings = TriggerEvent( 5800, "ReadPlayerSettings", pUser ) || {};
+			var current = playerSettings["ShowLoginQuestOffers"] !== false;
+			playerSettings["ShowLoginQuestOffers"] = !current;
+			TriggerEvent( 5800, "SavePlayerSettings", pUser, playerSettings );
+	
+			pSock.SysMessage( "Login Quest Prompts " + ( playerSettings["ShowLoginQuestOffers"] ? "enabled" : "disabled" ) + "." );
+
 			pSock.CloseGump( gumpID, 0 );
 			QuestMenu( pUser );
 		}
